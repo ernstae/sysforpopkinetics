@@ -301,17 +301,17 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = ../libcommon/Symbol.h 
-INPUT                 += ../libcommon/SymbolTable.h
-INPUT                 += ../libcommon/client.h 
-INPUT                 += ../libcommon/SpkCompilerUtil.h
-INPUT                 += ../libcommon/SpkMLToCpp.h
-INPUT                 += ../libcommon/ExpNodeCarrier.h
-INPUT                 += ../libcommon/ExpTreeGenerator.h
+INPUT                  = ../libspkcompiler/Symbol.h 
+INPUT                 += ../libspkcompiler/SymbolTable.h
+INPUT                 += ../libspkcompiler/client.h 
+INPUT                 += ../libspkcompiler/SpkCompilerUtil.h
+INPUT                 += ../libspkcompiler/SpkMLToCpp.h
+INPUT                 += ../libspkcompiler/ExpNodeCarrier.h
+INPUT                 += ../libspkcompiler/ExpTreeGenerator.h
 INPUT                 += ../driver/compiler.cpp 
-INPUT                 += ../libnonmem/NonmemTranslator.h
-#INPUT                += ../libnonmem/lex.yy.c 
-#INPUT                += ../libnonmem/nmabb.tab.cpp
+INPUT                 += ../libspkcompiler/nonmem/NonmemTranslator.h
+#INPUT                += ../libspkcompiler/nonmem/lex.yy.c 
+#INPUT                += ../libspkcompiler/nonmem/nmabb.tab.cpp
 
 # If the value of the INPUT tag contains directories, you can use the 
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
