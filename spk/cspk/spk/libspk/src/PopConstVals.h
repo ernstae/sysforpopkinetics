@@ -39,6 +39,7 @@
 class PopConstVals
 {
 public:
+    PopConstVals();
     PopConstVals(int size, Optimizer& optimizer, int objective,
         const DoubleMatrix& low, const DoubleMatrix& up, const DoubleMatrix& step);
     PopConstVals(const PopConstVals& right);
@@ -56,9 +57,6 @@ public:
     const      DoubleMatrix getLow() const;
     const      DoubleMatrix getUp() const;
     const      DoubleMatrix getStep() const;
-
- protected:
-    PopConstVals();
 
 private:
     int          _size;
