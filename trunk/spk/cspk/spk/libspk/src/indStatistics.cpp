@@ -571,19 +571,21 @@ void indStatistics( const valarray<double>&  indPar,
     // Degree of freedom
     const int nFree = nY - nB;
     
-    if( nFree < 1 )
-	{
-	  const int max = SpkError::maxMessageLen();
-	  char message[max];
-	  sprintf( message, "The degree of freedom must be positive." );
-
-        throw SpkException(
-                SpkError::SPK_USER_INPUT_ERR, 
-                message,
-                __LINE__, __FILE__
-        );
-	}
-
+    if( indParCIOut )
+      {
+	if( nFree < 1 )
+	  {
+	    const int max = SpkError::maxMessageLen();
+	    char message[max];
+	    sprintf( message, "The degree of freedom (#of measurements<%d> - #of random effects<%d>) must be positive.", nY, nB );
+	    
+	    throw SpkException(
+			       SpkError::SPK_USER_INPUT_ERR, 
+			       message,
+			       __LINE__, __FILE__
+			       );
+	  }
+      }
     //----------------------------------------------------------------
     // Calculate Covariance of individual parameter estimates 
     //----------------------------------------------------------------
