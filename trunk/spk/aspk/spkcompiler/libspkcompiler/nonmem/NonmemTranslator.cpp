@@ -325,150 +325,52 @@ void NonmemTranslator::translate( DOMDocument* tree )
   nonmemModel = model_type.first;
   nonmemParameterization = model_type.second;
 
-  FILE * out;
-  emit_IndData( out, nIndividuals, gSpkExpSymbolTable, label_alias_mapping, data_for, order_id_pair );
-  
+  emit( nIndividuals, gSpkExpSymbolTable, label_alias_mapping, data_for, order_id_pair );
   return;
 }
 
 void NonmemTranslator::initSymbolTable( SymbolTable& )
 {
 }
-
-/*
-std::vector<string> NonmemTranslator::emitData( 		
-		 int nIndividuals,
-		 SymbolTable* table,
-		 const std::map<NonmemTranslator::LABEL, NonmemTranslator::ALIAS> & label_alias_mapping,
-		 const std::map<NonmemTranslator::LABEL, NonmemTranslator::MEASUREMENT> data_for[],
-		 const string order_id_pair[]
-		 )
+std::vector<std::string> NonmemTranslator::emit(
+		  int nIndividuals,
+                  const SymbolTable * table,
+                  const std::map<LABEL, ALIAS> & label_alias_mapping,
+                  const std::map<LABEL, MEASUREMENT> data_for[],
+                  const std::string order_id_pair[]
+)
 {
-  //=================================================================================
-  //
-  // Convert the gathered information into C++ source code.
-  //
-  //=================================================================================
+  char IndData_h[] = "IndData.h";
+  FILE * pIndData_h = fopen( IndData_h, "w" );
+  emit_IndData(   pIndData_h, 
+		  nIndividuals, 
+		  gSpkExpSymbolTable, 
+		  label_alias_mapping, 
+		  data_for, 
+		  order_id_pair );
+  fclose( pIndData_h );
 
-  //
-  // Write the definition of "class IndRecords".
-  //
-  const char* str_IndRecords = "IndRecords";
-
-  cout << "class " << str_IndRecords << "{\n";
-  cout << "public:\n";
-  cout << "\t" << str_IndRecords << "(\n";
-  map<NonmemTranslator::LABEL, NonmemTranslator::ALIAS>::const_iterator names
-    = label_alias_mapping.begin();
-  while( names != label_alias_mapping.end() )
-    {
-      if( names != label_alias_mapping.begin() )
-	{
-	  cout << ", \n";
-	}
-      cout << "\t\t" << "const double * " << names->first << "In";
-      ++names;
-    }
-  cout << "\n";
-  cout << "\t)\n";
-  cout << "\t : ";
-  names = label_alias_mapping.begin();
-  while( names != label_alias_mapping.end() )
-    {
-      if( names != label_alias_mapping.begin() )
-	{
-	  cout << ",\n\t";
-	}
-      cout << names->first << "(" << names->first << "In" << ")";
-      if( names->second != "" )
-	{
-	  cout << ", " << names->second << "(" << names->first << ")";
-	}
-      ++names;
-    }
-  cout << "\n";
-  cout << "\t{ }\n";
-  cout << "\n";
+  char IndData_cpp[] = "IndData.cpp";
+  FILE * pIndData_cpp = fopen( IndData_cpp, "w" );
+  emit_initIndDataObjects( 
+		  pIndData_cpp, 
+		  nIndividuals, 
+		  gSpkExpSymbolTable, 
+		  label_alias_mapping, 
+		  data_for, 
+		  order_id_pair );
   
-  names = label_alias_mapping.begin();
-  while( names != label_alias_mapping.end() )
-    {
-      cout << "\tconst double * " << names->first << ";\n";
-      if( names->second != "" )
-	{
-	  cout << "\tconst double * " << names->second << ";\n";
-	}
-      ++names;
-    }
+  emit_releaseIndDataObjects( 
+		  pIndData_cpp, 
+		  nIndividuals, 
+		  gSpkExpSymbolTable, 
+		  label_alias_mapping, 
+		  data_for, 
+		  order_id_pair );
 
-  cout << "\n";
-  cout << "protected:\n";
-  cout << "\t" << str_IndRecords << "(){}\n";
-  cout << "\t" << str_IndRecords << "( const " << str_IndRecords << "& ){}\n";
-  cout << "\t" << str_IndRecords << "* operator=( const " << str_IndRecords << "& ){}\n";
-  cout << "};\n";
-
-  //
-  // Declare an array of #nIndividual number of IndRecords objects.
-  //
-  cout << "const int nIndividuals = " << nIndividuals << ";\n";
-  cout << str_IndRecords << " * data[nIndividuals+1]" << ";\n";
-  cout << "\n";
-
-  //
-  // Write the initialization code for IndRecords records for each individual.
-  //
-  map< NonmemTranslator::LABEL, NonmemTranslator::MEASUREMENT >::const_iterator map_records;
-  for( int i=0; i<nIndividuals; i++ )
-    {
-      cout << "// " << order_id_pair[i] << "'s data (process order = " << i+1 << ")\n";
-      map_records = data_for[i].begin();
-      while( map_records != data_for[i].end() )
-	{
-	  cout << "const double " << map_records->first << "_" << order_id_pair[i] << "[] = ";
-       	  cout << "{ ";
-	  for( int j=0; j<map_records->second.size(); j++ )
-	    {
-	      if( j>0 )
-		cout << ", ";
-	      cout << map_records->second[j];
-	    }
-	  cout << " };\n";
-	  ++map_records;
-	}
-      
-      cout << str_IndRecords << " * data" << "_" << order_id_pair[i] << " = new " << str_IndRecords << "( ";
-      map_records = data_for[i].begin();
-      while( map_records != data_for[i].end() )
-	{
-	  if( map_records != data_for[i].begin() )
-	    cout << ", ";
-	  cout << map_records->first << "_" << order_id_pair[i];
-	  ++map_records;
-	}
-      cout << " );\n";
-      cout << "data_for[" << i << "] = " << "data_" << i << ";\n";
-      cout << endl;
-   }
-
-  //
-  // Clean-up code
-  //
-  cout << "// Release memory allocated for " << str_IndRecords << " objects.\n";
-  cout << "for( int i=0; i<nIndividuals; i++ )\n";
-  cout << "{\n";
-  cout << "   delete data[i];\n";
-  cout << "}\n";
-
-  vector<string> filenames;
-  return filenames;
-}
-*/
-void NonmemTranslator::emitDriver()
-{
-}
-void NonmemTranslator::emitModel()
-{
+  fclose( pIndData_cpp );
+  
+	
 }
 const struct SpkParameters * NonmemTranslator::getSpkParameters() const
 {
