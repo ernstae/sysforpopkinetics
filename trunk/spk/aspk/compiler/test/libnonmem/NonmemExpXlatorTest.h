@@ -8,9 +8,12 @@
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestSuite.h>
 
+#include "ExpTreeGenerator.h"
+
 class NonmemExpXlatorTest : public CppUnit::TestFixture {
 
   FILE * file;
+  ExpTreeGenerator expTreeUtil;
 public:
     static CppUnit::Test * suite();
     virtual void setUp();

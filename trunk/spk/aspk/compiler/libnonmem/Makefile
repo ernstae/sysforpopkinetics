@@ -28,10 +28,10 @@ BISON_OBJS = explang.tab.cpp explang.tab.h explang.output
 
 OBJECTS = explang.tab.o lex.yy.o
 
-all:	explang.tab.o lex.yy.o NonmemCompiler.o
+all:	explang.tab.o lex.yy.o NonmemSpkMLToCpp.o
 
-NonmemCompiler.o : NonmemCompiler.h NonmemCompiler.cpp explang.tab.h
-	$(COMPILE.cc) $(CPPFLAGS) -I../libcommon/ NonmemCompiler.cpp
+NonmemSpkMLToCpp.o : NonmemSpkMLToCpp.h NonmemSpkMLToCpp.cpp ../libcommon/SpkMLToCpp.h ../libcommon/SpkMLToCpp.cpp ../libcommon/client.h
+	$(COMPILE.cc) $(CPPFLAGS) -I../libcommon/ NonmemSpkMLToCpp.cpp
 
 explang.tab.o : explang.tab.cpp explang.tab.h explang.y $(COMMON_HEADERS)
 	$(COMPILE.cc) $(CPPFLAGS) -I../libcommon/ explang.tab.cpp

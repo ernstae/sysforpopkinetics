@@ -18,7 +18,7 @@ int errors = 0;
 
 void SymbolTableTest::setUp()
 {
-  table = new SymbolTable( client::NONMEM );
+  table = new SymbolTable;
 }
 void SymbolTableTest::tearDown()
 {

@@ -77,19 +77,13 @@ class SymbolTable{
  public:
   /**
    * Default constructor
-   * @param whoIn is an client enum indicating the type of client.
    */
-  SymbolTable( client::type whoIn );
+  SymbolTable( );
 
   /**
    * Destructor
    */
   ~SymbolTable();
-
-  /**
-   * A data structure composed of SPK required variables.
-   */
-  struct FitParameters *spkSymbols;
 
   /**
    * Searches an entry matches to the name.
@@ -151,7 +145,6 @@ class SymbolTable{
   void dump() const;
 
  protected:
-  SymbolTable(){};
   SymbolTable( const SymbolTable& ){};
   SymbolTable & operator=( const SymbolTable& ){};
 

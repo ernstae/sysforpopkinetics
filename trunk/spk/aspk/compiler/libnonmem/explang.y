@@ -63,20 +63,6 @@ int gSpkExpErrors = 0;
 int gSpkExpLines  = 0;
 
 /**
- * Global pointer to a ExpTreeGenerator object.
- *
- * This pointer has to be initialized to point to a valid object
- * in the caller (of yyparse()) space.  The allocated resource
- * must be released by the caller too.
- *
- * @note If the pointer is found to be pointing to NULL at
- * the very beginning of parsing, yyparse() will allocate
- * memory for an object and make this pointer to point to the object
- * but it is still of the caller's responsibility to release the memory.
- */
-ExpTreeGenerator * gSpkExpTreeGenerator;
-
-/**
  * Global pointer to a DOMDocument object.
  *
  * This pointer has to be initialized to point to a valid object
@@ -84,10 +70,10 @@ ExpTreeGenerator * gSpkExpTreeGenerator;
  * must be released by the caller too.
  *
  * @note If the pointer is found to be pointing to NULL at
- * the very beginning of parsing, yyparse() will allocate
- * memory for an object and make this pointer to point to the object
- * but it is still of the caller's responsibility to release the memory.
+ * the very beginning of parsing, yyparse() will call yyerror()
+ * and probably terminate the program execution completely.
  */
+
 DOMDocument * gSpkExpTree;
 
 /**
@@ -98,9 +84,8 @@ DOMDocument * gSpkExpTree;
  * must be released by the caller too.
  *
  * @note If the pointer is found to be pointing to NULL at
- * the very beginning of parsing, yyparse() will allocate
- * memory for an object and make this pointer to point to the object
- * but it is still of the caller's responsibility to release the memory.
+ * the very beginning of parsing, yyparse() will call
+ * yyerror() and probably terminate the program execution completely.
  */
 SymbolTable * gSpkExpSymbolTable;
 
@@ -184,6 +169,8 @@ extern "C"{
   static bool inConditional = false;
 
   static int DEFAULT_BUFF_SIZE = 128;
+
+  ExpTreeGenerator expTreeUtils;
 %}
 
 %union{
@@ -291,17 +278,15 @@ input:
 //
 /* empty */ {
 
-  if( gSpkExpTreeGenerator == NULL )
+  if( gSpkExpTree == NULL )
     {
-      gSpkExpTreeGenerator = new ExpTreeGenerator;
+      yyerror( "gSpkExpTree is not allocated memory!" );
     }
-  gSpkExpTree = gSpkExpTreeGenerator->getRoot();
-
   if( gSpkExpSymbolTable == NULL )
     {
-      gSpkExpSymbolTable = new SymbolTable( client::NONMEM );
+      yyerror( "gSpkExpSymbolTable is not allocated memory!" );
     }
-  struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+  struct ExpNodeCarrier * carrier = expTreeUtils.createExpNodeCarrier();
   carrier->node = gSpkExpTree->getDocumentElement();
   $$ = carrier;
 }
@@ -313,7 +298,7 @@ input line {
   struct ExpNodeCarrier * carrier;
 
   if( $1 == NULL )
-    carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+    carrier = expTreeUtils.createExpNodeCarrier();
   else
     carrier = $1;
 
@@ -343,7 +328,7 @@ input { inConditional=true; } if_stmt_or_block { inConditional=false; } {
   struct ExpNodeCarrier * carrier;
 
   if( $1 == NULL )
-    carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+    carrier = expTreeUtils.createExpNodeCarrier();
   else
     carrier = $1;
 
@@ -420,7 +405,7 @@ line :
 COMMENT '\n' {
   gSpkExpLines++;
 
-  struct ExpNodeCarrier* carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+  struct ExpNodeCarrier* carrier = expTreeUtils.createExpNodeCarrier();
   DOMElement * myComment = gSpkExpTree->createElement( X( STR_COMMENT ) );
 
   // a value can be empty.
@@ -500,7 +485,7 @@ exit_stmt {
 //==================================================================================
 exit_stmt :
 EXIT {
-  struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+  struct ExpNodeCarrier * carrier = expTreeUtils.createExpNodeCarrier();
 
   DOMElement * exit_stmt = gSpkExpTree->createElement( X( STR_EXIT ) );
   carrier->node = exit_stmt; 
@@ -511,7 +496,7 @@ EXIT DIGIT_STRING {
   //
   // The number specifies the PRED exit code; it must be 1 or 2.  The default is 1.
   //
-  struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+  struct ExpNodeCarrier * carrier = expTreeUtils.createExpNodeCarrier();
 
   DOMElement * exit_stmt = gSpkExpTree->createElement( X( STR_EXIT ) );
   char message[DEFAULT_BUFF_SIZE];
@@ -525,7 +510,7 @@ EXIT DIGIT_STRING DIGIT_STRING {
   //
   // The first number is a PRED exit code (1 or 2) and
   // the second number is the user error code, which must be 0-999.  The default is 0.
-  struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+  struct ExpNodeCarrier * carrier = expTreeUtils.createExpNodeCarrier();
 
   DOMElement * exit_stmt = gSpkExpTree->createElement( X( STR_EXIT ) );
   char message[DEFAULT_BUFF_SIZE];
@@ -602,7 +587,7 @@ assignment_stmt :
 
   if( rhs_structure_str == NULL || strcmp( rhs_structure_str, "") == 0 )
     {
-      rhs_structure_str = Symbol::C_UNKNOWN;
+      rhs_structure_str = Symbol::C_SCALAR;
     }
 
   // Convert the string representation of structure to enum.
@@ -613,10 +598,10 @@ assignment_stmt :
   ////////////////////////////////////////////////////////////////////////////////
   // Beginning of symbol table maintenance block.
   //
-  const char * lhs_datatype_str = Symbol::C_UNKNOWN;
-  const char * lhs_structure_str = Symbol::C_UNKNOWN;
-  enum Symbol::SYMBOLTYPE lhs_datatype = Symbol::UNKNOWN;
-  enum Symbol::SYMBOLTYPE lhs_structure = Symbol::UNKNOWN;
+  const char * lhs_datatype_str = Symbol::C_DOUBLE;
+  const char * lhs_structure_str = Symbol::C_SCALAR;
+  enum Symbol::SYMBOLTYPE lhs_datatype = Symbol::DOUBLE;
+  enum Symbol::SYMBOLTYPE lhs_structure = Symbol::SCALAR;
 
   // Check if the variable name exists in the symbol table already.
   // If it does, update the entry.  If not, insert the variable name as new.
@@ -720,7 +705,7 @@ assignment_stmt :
   assign->appendChild( lhs );
   assign->appendChild( rhs );
 
-  struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+  struct ExpNodeCarrier * carrier = expTreeUtils.createExpNodeCarrier();
   carrier->node = assign;
   $$ = carrier;  
 }
@@ -732,11 +717,11 @@ assignment_stmt :
 //
 // A variable is a named object that may represents a whole object or
 // subset of a whole object.  It returns a tree topped with a labele "var" and
-// its type is UNKNOWN at this point unless the variable name is found in the
+// its type is DOUBLE by default unless the variable name is found in the
 // symbol table.
 //
 // For whole objects:
-//    <var name="" type="UNKNOWN">
+//    <var name="" type="DOUBLE">
 //
 // For subobjects:
 //    the subobject's tree is the root tree of this variable.
@@ -755,7 +740,7 @@ whole_object :
 NAME { 
   DOMElement * var = gSpkExpTree->createElement( X( STR_VARIABLE ) );
   var->setAttribute( X( STR_NAME ), X( $1 ) );
-  var->setAttribute( X( STR_SIGN ), X( STR_PLUS ) );
+  var->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );
 
   ///////////////////////////////////////////////////////////////
   // Symbol table lookup
@@ -789,8 +774,8 @@ NAME {
 	}
       else
 	{
-	  datatype  = Symbol::UNKNOWN;
-	  structure = Symbol::UNKNOWN;
+	  datatype  = Symbol::DOUBLE;
+	  structure = Symbol::SCALAR;
 	  rows = 1;
 	  cols = 1;
 	}
@@ -813,7 +798,7 @@ NAME {
   var->setAttribute( X( STR_ROWS ),      X( rows_str ) );
   var->setAttribute( X( STR_COLS ),      X( cols_str ) );
 
-  struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+  struct ExpNodeCarrier * carrier = expTreeUtils.createExpNodeCarrier();
   carrier->node = var;
   $$ = carrier;
 } // scalar, vector, matrix
@@ -856,7 +841,7 @@ NAME '(' slice ')' {
     }
   else
     {
-      vector->setAttribute( X( STR_TYPE ), X( Symbol::C_UNKNOWN ) );
+      vector->setAttribute( X( STR_TYPE ), X( Symbol::C_DOUBLE ) );
     }
 
   vector->setAttribute( X( STR_STRUCTURE) , $3->node->getAttribute( X( STR_STRUCTURE ) ) );
@@ -866,7 +851,7 @@ NAME '(' slice ')' {
 
   vector->appendChild( $3->node );
 
-  struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+  struct ExpNodeCarrier * carrier = expTreeUtils.createExpNodeCarrier();
   carrier->node = vector;
   $$ = carrier;
 }
@@ -902,7 +887,7 @@ NAME '(' slice ',' slice ')' {
     }
   else
     {
-      matrix->setAttribute( X( STR_TYPE ), X( Symbol::C_UNKNOWN ) );
+      matrix->setAttribute( X( STR_TYPE ), X( Symbol::C_DOUBLE ) );
     }
 
   if( XMLString::equals( $3->node->getAttribute( X( STR_STRUCTURE ) ), X( Symbol::C_SCALAR ) ) )
@@ -949,12 +934,12 @@ NAME '(' slice ',' slice ')' {
     {
       yyerror( "The return type of \"slice\" should be either scalar or vector" );
     }
-  matrix->setAttribute( X( STR_SIGN ),      X( Symbol::C_UNKNOWN ) );
+  matrix->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );
 
   matrix->appendChild( $3->node );
   matrix->appendChild( $5->node );
 
-  struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+  struct ExpNodeCarrier * carrier = expTreeUtils.createExpNodeCarrier();
   carrier->node = matrix;
   $$ = carrier;
 }
@@ -995,20 +980,20 @@ int_expr {
   DOMElement * index_expr = gSpkExpTree->createElement( X( STR_INDEX ) );
 
   index_expr->appendChild( $1->node );
-  index_expr->setAttribute( X( STR_TYPE ), X( Symbol::C_UNKNOWN ) );
+  index_expr->setAttribute( X( STR_TYPE ), X( Symbol::C_DOUBLE) );
   index_expr->setAttribute( X( STR_STRUCTURE ), X( Symbol::C_SCALAR ) ) ;
   index_expr->setAttribute( X( STR_ROWS ), X( "1" ) );
   index_expr->setAttribute( X( STR_COLS ), X( "1" ) );
   index_expr->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );
 
-  struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+  struct ExpNodeCarrier * carrier = expTreeUtils.createExpNodeCarrier();
   carrier->node = index_expr;
   $$ = carrier;
 }
 |
 start_subscript ':' end_subscript { 
 
-  struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+  struct ExpNodeCarrier * carrier = expTreeUtils.createExpNodeCarrier();
   DOMElement * mySlice  = gSpkExpTree->createElement( X( STR_INDEX ) );
   // type & structure?
 
@@ -1035,7 +1020,7 @@ start_subscript ':' end_subscript {
   mySlice->appendChild( myStride );
 
   mySlice->setAttribute( X( STR_STRUCTURE ), X( Symbol::C_VECTOR ) );
-  mySlice->setAttribute( X( STR_TYPE ), X( Symbol::C_UNKNOWN ) );
+  mySlice->setAttribute( X( STR_TYPE ), X( Symbol::C_DOUBLE ) );
   mySlice->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );
   mySlice->setAttribute( X( STR_ROWS ), X( Symbol::C_UNKNOWN ) );
   mySlice->setAttribute( X( STR_COLS ), X( Symbol::C_UNKNOWN ) );
@@ -1045,7 +1030,7 @@ start_subscript ':' end_subscript {
 }
 |
 start_subscript ':' end_subscript ':' stride { 
-  struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+  struct ExpNodeCarrier * carrier = expTreeUtils.createExpNodeCarrier();
   DOMElement * mySlice  = gSpkExpTree->createElement( X( STR_INDEX ) );
   // type & structure?
 
@@ -1067,7 +1052,7 @@ start_subscript ':' end_subscript ':' stride {
   mySlice->appendChild( myStride );
 
   mySlice->setAttribute( X( STR_STRUCTURE ), X( Symbol::C_VECTOR ) );
-  mySlice->setAttribute( X( STR_TYPE ), X( Symbol::C_UNKNOWN ) );
+  mySlice->setAttribute( X( STR_TYPE ), X( Symbol::C_DOUBLE ) );
   mySlice->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );
   mySlice->setAttribute( X( STR_ROWS ), X( Symbol::C_UNKNOWN ) );
   mySlice->setAttribute( X( STR_COLS ), X( Symbol::C_UNKNOWN ) );
@@ -1163,7 +1148,7 @@ function_ref { $$ = $1; }
   paren->setAttribute( X( STR_COLS ), $2->node->getAttribute( X( STR_COLS ) ) );
   paren->appendChild( $2->node );
 
-  struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+  struct ExpNodeCarrier * carrier = expTreeUtils.createExpNodeCarrier();
   carrier->node = paren;
   $$ = carrier;
  }
@@ -1223,7 +1208,7 @@ IF '(' logical_expr ')' assignment_stmt {
   then_block->appendChild( $5->node );
   if_stmt->appendChild( then_block );
 
-  struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+  struct ExpNodeCarrier * carrier = expTreeUtils.createExpNodeCarrier();
   carrier->node = if_stmt;
   $$ = carrier;
 }
@@ -1270,7 +1255,7 @@ if_then_stmt '\n'  { inConditional = true; } block  { inConditional = false; }
   node->appendChild( then_block );
   node->appendChild( else_block );
 
-  struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+  struct ExpNodeCarrier * carrier = expTreeUtils.createExpNodeCarrier();
   carrier->node = node;
   $$ = carrier;
 }
@@ -1301,7 +1286,7 @@ if_then_stmt '\n' { inConditional = true; } block  { inConditional = false; } {
   node->appendChild( myConditional_expr );
   node->appendChild( then_block );
 
-  struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+  struct ExpNodeCarrier * carrier = expTreeUtils.createExpNodeCarrier();
   carrier->node = node;
   $$ = carrier;
 }
@@ -1312,7 +1297,7 @@ ELSE '\n' { inConditional = true; } block  { inConditional = false; } {
   DOMElement * else_block = gSpkExpTree->createElement( X( STR_ELSE ) );
   else_block->appendChild( $4->node );
 
-  struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+  struct ExpNodeCarrier * carrier = expTreeUtils.createExpNodeCarrier();
   carrier->node = else_block;
   $$ = carrier;
 }
@@ -1358,7 +1343,7 @@ IF '(' logical_expr ')' THEN {
 block :
 /* empty */
 { 
-  struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+  struct ExpNodeCarrier * carrier = expTreeUtils.createExpNodeCarrier();
   DOMElement * block = gSpkExpTree->createElement( X( "block" ) );
   carrier->node = block;
   $$ = carrier;
@@ -1407,12 +1392,12 @@ DIGIT_STRING {
   //
   // This is an integer constant.
   //
-  struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+  struct ExpNodeCarrier * carrier = expTreeUtils.createExpNodeCarrier();
 
   DOMElement * int_constant = gSpkExpTree->createElement( X(STR_CONSTANT) );
   int_constant->setAttribute( X( STR_TYPE ), X( Symbol::C_INT ) );
   int_constant->setAttribute( X( STR_STRUCTURE ), X( Symbol::C_SCALAR ) );
-  int_constant->setAttribute( X( STR_SIGN ), X( STR_PLUS ) );
+  int_constant->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );
   int_constant->setAttribute( X( STR_VALUE ), X( $1 ) );
   int_constant->setAttribute( X( STR_ROWS ), X( "1" ) );
   int_constant->setAttribute( X( STR_COLS ), X( "1" ) );
@@ -1438,11 +1423,11 @@ SIGNIFICAND {
   //
   // This is a real constant in the form of "0.0".
   //
-  struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+  struct ExpNodeCarrier * carrier = expTreeUtils.createExpNodeCarrier();
   DOMElement * real_constant = gSpkExpTree->createElement( X(STR_CONSTANT) );
   real_constant->setAttribute( X( STR_TYPE ), X( Symbol::C_DOUBLE ) );
   real_constant->setAttribute( X( STR_STRUCTURE ), X( Symbol::C_SCALAR ) );
-  real_constant->setAttribute( X( STR_SIGN ), X( STR_PLUS ) );
+  real_constant->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN) );
   real_constant->setAttribute( X( STR_VALUE ), X( $1 ) );
   real_constant->setAttribute( X( STR_ROWS ), X( "1" ) );
   real_constant->setAttribute( X( STR_COLS ), X( "1" ) );
@@ -1454,11 +1439,11 @@ ENG_NOTATION {
   // 
   // This is a real constant in the form of "0.0E0"
   //
-  struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+  struct ExpNodeCarrier * carrier = expTreeUtils.createExpNodeCarrier();
   DOMElement * real_constant = gSpkExpTree->createElement( X(STR_CONSTANT) );
   real_constant->setAttribute( X( STR_TYPE ), X( Symbol::C_DOUBLE ) );
   real_constant->setAttribute( X( STR_STRUCTURE ), X( Symbol::C_SCALAR ) );
-  real_constant->setAttribute( X( STR_SIGN ), X( STR_PLUS ) );
+  real_constant->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );
   real_constant->setAttribute( X( STR_VALUE ), X( $1 ) );
   real_constant->setAttribute( X( STR_ROWS ), X( "1" ) );
   real_constant->setAttribute( X( STR_COLS ), X( "1" ) );
@@ -1486,7 +1471,7 @@ TRUE {
   //
   // This is a boolean value "true".
   //
-  struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+  struct ExpNodeCarrier * carrier = expTreeUtils.createExpNodeCarrier();
   DOMElement * bool_constant = gSpkExpTree->createElement( X(STR_CONSTANT) );
   bool_constant->setAttribute( X( STR_TYPE ), X( Symbol::C_BOOL ) );
   bool_constant->setAttribute( X( STR_STRUCTURE ), X( Symbol::C_SCALAR ) );
@@ -1502,7 +1487,7 @@ FALSE {
   //
   // This is a boolean value "false".
   //
-  struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+  struct ExpNodeCarrier * carrier = expTreeUtils.createExpNodeCarrier();
   DOMElement * bool_constant = gSpkExpTree->createElement( X(STR_CONSTANT) );
   bool_constant->setAttribute( X( STR_TYPE ), X( Symbol::C_BOOL ) );
   bool_constant->setAttribute( X( STR_STRUCTURE ), X( Symbol::C_SCALAR ) );
@@ -1637,7 +1622,7 @@ DEFINED_UNARY_FUNCTION '(' arithmatic_expr ')' {
   function->setAttribute( X( STR_ARGC ), X( "1" ) );
   function->setAttribute( X( STR_TYPE ), X( Symbol::C_DOUBLE ) );
   function->setAttribute( X( STR_STRUCTURE ), $3->node->getAttribute( X( STR_STRUCTURE ) ) );
-  function->setAttribute( X( STR_SIGN ), $3->node->getAttribute( X( Symbol::C_UNKNOWN ) ) );// the sign is actually undetermined.
+  function->setAttribute( X( STR_SIGN ), $3->node->getAttribute( X( Symbol::C_UNKNOWN ) ) );// the sign is actually undermined
   function->setAttribute( X( STR_ROWS ), $3->node->getAttribute( X( STR_ROWS ) ) );
   function->setAttribute( X( STR_COLS ), $3->node->getAttribute( X( STR_COLS ) ) );
 

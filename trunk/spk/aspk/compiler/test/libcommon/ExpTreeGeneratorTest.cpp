@@ -6,12 +6,10 @@
 #include <cppunit/TextTestResult.h>
 #include <cppunit/ui/text/TestRunner.h>
 
-#include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/dom/DOM.hpp>
 
 #include "ExpTreeGenerator.h"
 #include "ExpTreeGeneratorTest.h"
-#include "SpkCompilerUtil.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -25,34 +23,34 @@ void ExpTreeGeneratorTest::tearDown()
 }
 void ExpTreeGeneratorTest::testCreate()
 {
-  ExpTreeGenerator tree;
-  DOMDocument * getRoot = tree.getRoot();
-  CPPUNIT_ASSERT_MESSAGE( "ExpTreeGenerator::handerl() returned NULL.", getRoot != NULL );
+  ExpTreeGenerator util;
+  DOMDocument * tree = util.createTree("unit");
+  CPPUNIT_ASSERT_MESSAGE( "ExpTreeGenerator::createTree() returned NULL.", tree != NULL );
 
-  DOMElement  * root = getRoot->getDocumentElement();
+  DOMElement  * root = tree->getDocumentElement();
   CPPUNIT_ASSERT_MESSAGE( "DOMDocument::getDocumentElement() returned NULL.", root != NULL );
 }
 
 void ExpTreeGeneratorTest::testGetRoot()
 {
-  ExpTreeGenerator tree;
-  DOMDocument * getRoot = tree.getRoot();
-  CPPUNIT_ASSERT_MESSAGE( "ExpTreeGenerator::handerl() returned NULL.", getRoot != NULL );
+  ExpTreeGenerator util;
+  DOMDocument * tree = util.createTree( "unit" );
+  CPPUNIT_ASSERT_MESSAGE( "ExpTreeGenerator::createTree() returned NULL.", tree != NULL );
 
-  DOMElement  * root = getRoot->getDocumentElement();
+  DOMElement  * root = tree->getDocumentElement();
   CPPUNIT_ASSERT_MESSAGE( "DOMDocument::getDocumentElement() returned NULL.", root != NULL );
 
-  DOMElement * node1 = getRoot->createElement( X( "node1" ) );
+  DOMElement * node1 = tree->createElement( X( "node1" ) );
   CPPUNIT_ASSERT_MESSAGE( "DOMDocument::createElement() returned NULL.", node1 != NULL );
 
 }
 void ExpTreeGeneratorTest::testExpNodeCarrier()
 {
-  ExpTreeGenerator tree;
-  DOMDocument * getRoot = tree.getRoot();
-  struct ExpNodeCarrier *node1 = tree.createExpNodeCarrier();
-  node1->node = getRoot->createElement( X("node1") );
-  int n = tree.releaseExpNodeCarriers();
+  ExpTreeGenerator util;
+  DOMDocument * tree = util.createTree("unit");
+  struct ExpNodeCarrier *node1 = util.createExpNodeCarrier();
+  node1->node = tree->createElement( X("node1") );
+  int n = util.releaseExpNodeCarriers();
   CPPUNIT_ASSERT_MESSAGE( "ExpTreeGenerator:releaseExpNodeCarriers() should have released one ExpNodeCarrier object.", n == 1 );
 }
 

@@ -13,34 +13,28 @@
 using namespace std;
 using namespace xercesc;
 
-extern "C"{
-  int yylex(void);  
-  int yyparse(void);
-};
-extern int                gSpkExpLines;
-extern int                gSpkExpErrors;
-extern ExpTreeGenerator * gSpkExpTreeGenerator;
-extern SymbolTable      * gSpkExpSymbolTable;
-extern FILE             * yyin;
-extern int                yydebug;
-
+static bool isXmlPlatformUtilsInitialized = false;
 
 ExpTreeGenerator::ExpTreeGenerator()
-  : isToTerminate( true ) // Remember that this object initialized XMLPlatformUtils.
-{
-  try
-    {
-        XMLPlatformUtils::Initialize();
-    }
 
-  catch(const XMLException& toCatch)
+{
+  if( !isXmlPlatformUtilsInitialized )
     {
-        char *pMsg = XMLString::transcode(toCatch.getMessage());
-        cerr << "Error during Xerces-c Initialization.\n"
-             << "  Exception message:"
-             << pMsg;
-        XMLString::release(&pMsg);
-        throw;
+      try
+	{
+	  XMLPlatformUtils::Initialize();
+	}
+      
+      catch(const XMLException& toCatch)
+	{
+	  char *pMsg = XMLString::transcode(toCatch.getMessage());
+	  cerr << "Error during Xerces-c Initialization.\n"
+	       << "  Exception message:"
+	       << pMsg;
+	  XMLString::release(&pMsg);
+	  throw;
+	}
+      isXmlPlatformUtilsInitialized = true;
     }
 
   //
@@ -52,36 +46,23 @@ ExpTreeGenerator::ExpTreeGenerator()
   impl =  DOMImplementationRegistry::getDOMImplementation( core );
   assert( impl != NULL );
 
-  doc = createTree( X( "unit" ) );
-  assert( doc != NULL );
-  root = doc->getDocumentElement();
 }
-ExpTreeGenerator::ExpTreeGenerator( bool shouldTerminate )
-  : isToTerminate( shouldTerminate )
-{
-  //
-  // The string passed to getDOMImplementation is a list of features.  
-  // "Core"... I do not know what it really means but do never change it!
-  // 
-  const XMLCh* core = X("core");
-  assert( core != NULL );
-  impl =  DOMImplementationRegistry::getDOMImplementation( core );
-  assert( impl != NULL );
 
-  doc = createTree( X( "unit" ) );
-  assert( doc != NULL );
-  root = doc->getDocumentElement();
-}
-DOMDocument* ExpTreeGenerator::createTree( const XMLCh* unit )
+DOMDocument* ExpTreeGenerator::createTree( const char* name )
 {
-  assert( unit != NULL );
+  createTree( X(name) );
+}
+DOMDocument* ExpTreeGenerator::createTree( const XMLCh* name )
+{
+  assert( name != NULL );
 
   try{
      DOMDocument * newTree = impl->createDocument(
                     0,               // root element namespace URI.
-                    unit,            // root element name
+                    name,            // root element name
                     0);              // document type object (DTD).
      assert( newTree != NULL );
+     trees.push_back( newTree );
      return newTree;
   }
   catch( const DOMException & e ) 
@@ -122,14 +103,20 @@ DOMDocument* ExpTreeGenerator::createTree( const XMLCh* unit )
 ExpTreeGenerator::~ExpTreeGenerator()
 {
   releaseExpNodeCarriers();
-  doc->release();
-
-  if( isToTerminate )
-    XMLPlatformUtils::Terminate();
+  releaseTrees();
 }
+/*
 DOMDocument* ExpTreeGenerator::getRoot() const
 {
   return doc;
+}
+*/
+int ExpTreeGenerator::releaseTrees()
+{
+  int n = trees.size();
+  for( int i=0; i<n; i++ )
+    trees[i]->release();
+  return n;
 }
 struct ExpNodeCarrier* ExpTreeGenerator::createExpNodeCarrier( )
 {
@@ -148,7 +135,7 @@ int ExpTreeGenerator::releaseExpNodeCarriers()
   nodes.erase( nodes.begin(), nodes.end() );
   return n;
 }
-void ExpTreeGenerator::printToStdout() const
+void ExpTreeGenerator::printToStdout( const DOMDocument * root ) const
 {
   XMLFormatTarget *myFormTarget = new StdOutFormatTarget();
   DOMWriter* writer = ((DOMImplementationLS*)impl)->createDOMWriter();
@@ -162,7 +149,7 @@ void ExpTreeGenerator::printToStdout() const
   delete myFormTarget;
 
 }
-void ExpTreeGenerator::printToFile( const char* filename ) const
+void ExpTreeGenerator::printToFile( const DOMDocument * root, const char* filename ) const
 {
   XMLFormatTarget *myFormTarget; // = new StdOutFormatTarget();
   myFormTarget = new LocalFileFormatTarget( filename );

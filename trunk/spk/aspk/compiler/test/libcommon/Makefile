@@ -15,8 +15,7 @@ LIBCOMM    = ../../libcommon
 XERCESLIB  = xerces-c
 CPPUNITLIB = cppunit
 
-CORE_OBJS   = $(LIBCOMM)/SpkCompiler.o \
-	      $(LIBCOMM)/ExpTreeGenerator.o \
+CORE_OBJS   = $(LIBCOMM)/ExpTreeGenerator.o \
               $(LIBCOMM)/SpkCompilerUtil.o \
               $(LIBCOMM)/SymbolTable.o \
               $(LIBCOMM)/Symbol.o
@@ -24,7 +23,7 @@ CORE_OBJS   = $(LIBCOMM)/SpkCompiler.o \
 
 TEST_OBJS   = ExpTreeGeneratorTest.o SpkCompilerUtilTest.o SymbolTableTest.o SymbolTest.o
 
-CORE_H      = $(LIBCOMM)/SpkCompiler.h \
+CORE_H      = $(LIBCOMM)/SpkMLToCpp.h \
               $(LIBCOMM)/ExpTreeGenerator.h \
               $(LIBCOMM)/ExpNodeCarrier.h \
               $(LIBCOMM)/SpkCompilerUtil.h \

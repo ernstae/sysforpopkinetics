@@ -4,14 +4,11 @@
 #include "client.h"
 
 using namespace std;
-SymbolTable::SymbolTable( client::type whoIn )
-  : who( whoIn )
+SymbolTable::SymbolTable( )
 {
-  spkSymbols = new FitParameters;
 }
 SymbolTable::~SymbolTable()
 { 
-  delete spkSymbols;
 }
 void SymbolTable::dump() const
 {

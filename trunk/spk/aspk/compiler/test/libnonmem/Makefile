@@ -22,28 +22,28 @@ TEST_HS    = NonmemCompilerTest.h NonmemExpXlatorTest.h
 
 TEST_CPPS  = NonmemCompilerTest.cpp NonmemExpXlatorTest.cpp
 
-CORE_OBJS  = $(LIBNONMEM)/NonmemCompiler.o \
+CORE_OBJS  = $(LIBNONMEM)/NonmemSpkMLToCpp.o \
              $(LIBNONMEM)/explang.tab.o \
              $(LIBNONMEM)/lex.yy.o \
-             $(LIBCOMM)/SpkCompiler.o \
+             $(LIBCOMM)/SpkMLToCpp.o \
 	     $(LIBCOMM)/ExpTreeGenerator.o \
              $(LIBCOMM)/SpkCompilerUtil.o \
              $(LIBCOMM)/SymbolTable.o \
              $(LIBCOMM)/Symbol.o
 
-CORE_HS    = $(LIBNONMEM)/NonmemCompiler.h \
+CORE_HS    = $(LIBNONMEM)/NonmemSpkMLToCpp.h \
              $(LIBNONMEM)/explang.tab.h \
-             $(LIBCOMM)/SpkCompiler.h \
+             $(LIBCOMM)/SpkMLToCpp.h \
              $(LIBCOMM)/ExpTreeGenerator.h \
              $(LIBCOMM)/SpkCompilerUtil.h \
              $(LIBCOMM)/SymbolTable.h \
              $(LIBCOMM)/Symbol.h \
              $(LIBCOMM)/client.h
 
-CORE_CPPS  = $(LIBNONMEM)/NonmemCompiler.cpp \
+CORE_CPPS  = $(LIBNONMEM)/NonmemSpkMLToCpp.cpp \
              $(LIBNONMEM)/explang.tab.cpp \
              $(LIBNONMEM)/lex.yy.c \
-             $(LIBCOMM)/SpkCompiler.cpp \
+             $(LIBCOMM)/SpkMLToCpp.cpp \
              $(LIBCOMM)/ExpTreeGenerator.cpp \
              $(LIBCOMM)/SpkCompilerUtil.cpp \
              $(LIBCOMM)/SymbolTable.cpp \
@@ -55,8 +55,8 @@ testall : testall.cpp $(CORE_OBJS) $(TEST_OBJS)
 NonmemCompilerTest.o : NonmemCompilerTest.cpp NonmemCompilerTest.h $(CORE_HS) $(CORE_CPPS)
 	$(COMPILE.cc) -I$(LIBCOMM)/ -I$(LIBNONMEM)/ NonmemCompilerTest.cpp
 
-NonmemExpXlatorTest : NonmemExpXlatorTest.cpp $(CORE_HS) $(CORE_CPPS) $(LIBNONMEM)/explang.l $(LIBNONMEM)/explang.tab.y
-	$(LINK.cc) -I$(LIBCOMM)/ -I$(LIBNONMEM)/ NonmemExpXlatorTest.cpp $(CORE_OBJS) -l$(XERCESLIB) -o $@
+NonmemExpXlatorTest.o : NonmemExpXlatorTest.cpp $(CORE_HS) $(CORE_CPPS) $(LIBNONMEM)/explang.l $(LIBNONMEM)/explang.y
+	$(COMPILE.cc) -I$(LIBCOMM) -I$(LIBNONMEM)/ NonmemExpXlatorTest.cpp
 
 clean:
 	rm $(TEST_OBJS)
