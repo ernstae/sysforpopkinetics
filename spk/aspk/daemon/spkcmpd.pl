@@ -169,12 +169,6 @@ sub fork_compiler {
     my $job_id     = $jrow->{"job_id"};
     my $pid;
 
-    # Block SIGCHLD while we are in this subroutine
-    my $sigset   = POSIX::SigSet->new;
-    my $blockset = POSIX::SigSet->new(SIGCHLD);
-    sigprocmask(SIG_BLOCK, $blockset, $sigset)
-	or death('emerg', "could not block SIGCHLD in repear");
-
     # NOTE: Working Directory Name
     #
     # The name of the compiler working directory can change over
@@ -291,8 +285,6 @@ sub fork_compiler {
 	  death("emerg", "fork of compiler failed");
       }
   }
-    sigprocmask(SIG_SETMASK, $sigset)
-	or death('emerg', "could not restore SIGCHLD in reaper");
 }
 sub format_error_report {
     my $content = shift;
@@ -303,123 +295,117 @@ sub format_error_report {
     $report .= "</spkreportML>\n";
 }
 sub reaper {
-    # Handler for SIGCHLD which processes any children which have terminated
-    # Block SIGCHLD while we are in here 
-    my $sigset   = POSIX::SigSet->new;
-    my $blockset = POSIX::SigSet->new(SIGCHLD);
-    sigprocmask(SIG_BLOCK, $blockset, $sigset)
-	or death('emerg', "could not block SIGCHLD in repear");
 
-    while ((my $child_pid = waitpid(-1, &WNOHANG)) > 0) {
-	my $child_exit_value    = $? >> 8;
-	my $child_signal_number = $? & 0x7f;
-	my $child_dumped_core   = $? & 0x80;
-	my $job_id;
-	my $save_working_dir = 1;
+    my $child_pid = shift;
+    my $value = shift;
+    my $child_exit_value    = $value >> 8;
+    my $child_signal_number = $value & 0x7f;
+    my $child_dumped_core   = $value & 0x80;
+    my $job_id;
+    my $save_working_dir = 1;
 
-	# Get the job_id from the file we wrote to working directory
-	# of this process
-	my $working_dir = "$prefix_working_dir$child_pid";
-	chdir "$tmp_dir/$working_dir";
-	open(FH, "job_id")
-	    or death('emerg', "can't open $tmp_dir/$working_dir/job_id");
-	read(FH, $job_id, -s FH);
+    # Get the job_id from the file we wrote to working directory
+    # of this process
+    my $working_dir = "$prefix_working_dir$child_pid";
+    chdir "$tmp_dir/$working_dir";
+    open(FH, "job_id")
+	or death('emerg', "can't open $tmp_dir/$working_dir/job_id");
+    read(FH, $job_id, -s FH);
+    close(FH);
+
+
+    # Normal termination
+    if ($child_exit_value == 0 && $child_signal_number == 0) {
+	# Make a tar file from the working directory
+	my @args = ($pathname_tar, 'cf', "cpp_source.tar");
+	push @args, glob("*");
+	system(@args);
+	my $exit_status = $? >> 8;
+	if ($exit_status != 0) {
+	    death('emerg', "tar failed creating file $working_dir.tar;"
+		  . " exit_status=$exit_status");
+
+	}
+	# Read the tar file into memory
+	my $buf;
+	open(FH, "cpp_source.tar")
+	    or death('emerg', "failed to open cpp_source.tar");
+	read(FH, $buf, -s FH)
+	    or death('emerg', "failed to read cpp_source.tar");
+
 	close(FH);
 
+	# Place the job in the run queue, storing the contents of the
+	# tar file in the cpp_source field of the job table entry
+	&en_q2r($dbh, $job_id, $buf)
+	    or death('emerg', "job_id=$job_id: errstr: $Spkdb::errstr");
+	syslog('info', "job_id=$job_id compiled and has moved to run queue");
 
-	# Normal termination
-	if ($child_exit_value == 0 && $child_signal_number == 0) {
-	    # Make a tar file from the working directory
-	    my @args = ($pathname_tar, 'cf', "cpp_source.tar");
-	    push @args, glob("*");
-	    system(@args);
-	    my $exit_status = $? >> 8;
-	    if ($exit_status != 0) {
-		death('emerg', "tar failed creating file $working_dir.tar;"
-                             . " exit_status=$exit_status");
-	    }
-	    # Read the tar file into memory
-	    my $buf;
-	    open(FH, "cpp_source.tar")
-		or death('emerg', "failed to open cpp_source.tar");
-	    read(FH, $buf, -s FH)
-		or death('emerg', "failed to read cpp_source.tar");
+	$save_working_dir = 0;
+    }
+    # Error termination
+    else {
+	my $err_msg = "";
+	my $err_rpt = "";
+	my $report = "";
+	my $status_msg = "";
+	my $end_code = "serr";
+
+	# Prepare part of an error message
+	if ($child_exit_value != 0) {
+	    $status_msg .= "exit value = $child_exit_value; ";
+	}
+	if ($child_signal_number == SIGSEGV) {
+	    $status_msg .= "segmentation fault; ";
+	}
+	elsif($child_signal_number != 0) {
+	    $status_msg .= "received signal number $child_signal_number";
+	}
+	if ($child_dumped_core) {
+	    $status_msg .= "core dump in $tmp_dir/$prefix_working_dir$job_id";
+	}
+	# Did the compiler find errors in the user's source?
+	if (-f $filename_cerr_report && -s $filename_cerr_report != 0) {
+	    open(FH, $filename_cerr_report);
+	    read(FH, $err_rpt, -s FH);
 	    close(FH);
-
-	    # Place the job in the run queue, storing the contents of the
-	    # tar file in the cpp_source field of the job table entry
-	    &en_q2r($dbh, $job_id, $buf)
-		or death('emerg', "job_id=$job_id: errstr: $Spkdb::errstr");
-	    syslog('info', "job_id=$job_id compiled and has moved to run queue");
-
+	    $err_msg = "failed compilation do to source errors";
+	    $end_code = "cerr";
 	    $save_working_dir = 0;
 	}
-	# Error termination
-	else {
-	    my $err_msg = "";
-	    my $err_rpt = "";
-	    my $report = "";
-	    my $status_msg = "";
-	    my $end_code = "serr";
-
-	    # Prepare part of an error message
-	    if ($child_exit_value != 0) {
-		$status_msg .= "exit value = $child_exit_value; ";
-	    }
-	    if ($child_signal_number == SIGSEGV) {
-		$status_msg .= "segmentation fault; ";
-	    }
-	    elsif($child_signal_number != 0) {
-		$status_msg .= "received signal number $child_signal_number";
-	    }
-	    if ($child_dumped_core) {
-		$status_msg .= "core dump in $tmp_dir/$prefix_working_dir$job_id";
-	    }
-	    # Did the compiler find errors in the user's source?
-	    if (-f $filename_cerr_report && -s $filename_cerr_report != 0) {
-		open(FH, $filename_cerr_report);
-		read(FH, $err_rpt, -s FH);
-		close(FH);
-		$err_msg = "failed compilation do to source errors";
-		$end_code = "cerr";
-		$save_working_dir = 0;
-	    }
-	    # Did the compiler die because of a software fault?
-	    elsif (-f $filename_serr){
-		open(FH, $filename_serr);
-		read(FH, $err_rpt, -s FH);
-		close(FH);
-		$err_msg = "failed due to an SPK compiler bug";
-	    } 
-	    # Did the compiler die because it was aborted by an operator
-	    # suspecting a bug?
-	    elsif ($child_signal_number == SIGABRT
-		   || $child_signal_number == SIGTERM) {
-		$err_msg = "killed by operator suspecting an SPK bug";
-		$err_rpt = $status_msg;
-	    }
-	    else {
-		$err_msg = "SPK compiler died unexpectedly";
-		$err_rpt = $status_msg;
-	    }
-	    $report = format_error_report("$err_msg: $err_rpt");
-	    &end_job($dbh, $job_id, $end_code, $report)
-		or death('emerg', "job_id=$job_id: $Spkdb::errstr");
-	    syslog('info',
-		   "job_id=$job_id failed compilation due to source errors");
-	}
-	if ($save_working_dir) {
-	    # Rename working directory to make evidence easier to find
-	    rename "$tmp_dir/$working_dir", "$tmp_dir/$prefix_working_dir$job_id"
-		or death('emerg', "couldn't rename working directory");
+	# Did the compiler die because of a software fault?
+	elsif (-f $filename_serr){
+	    open(FH, $filename_serr);
+	    read(FH, $err_rpt, -s FH);
+	    close(FH);
+	    $err_msg = "failed due to an SPK compiler bug";
+	} 
+	# Did the compiler die because it was aborted by an operator
+	# suspecting a bug?
+	elsif ($child_signal_number == SIGABRT
+	       || $child_signal_number == SIGTERM) {
+	    $err_msg = "killed by operator suspecting an SPK bug";
+	    $err_rpt = $status_msg;
 	}
 	else {
-	    # Remove the working directory
-	    File::Path::rmtree("$tmp_dir/$working_dir");
+	    $err_msg = "SPK compiler died unexpectedly";
+	    $err_rpt = $status_msg;
 	}
+	$report = format_error_report("$err_msg: $err_rpt");
+	&end_job($dbh, $job_id, $end_code, $report)
+	    or death('emerg', "job_id=$job_id: $Spkdb::errstr");
+	syslog('info',
+	       "job_id=$job_id failed compilation due to source errors");
     }
-    sigprocmask(SIG_SETMASK, $sigset)
-	or death('emerg', "could not restore SIGCHLD in reaper");
+    if ($save_working_dir) {
+	# Rename working directory to make evidence easier to find
+	rename "$tmp_dir/$working_dir", "$tmp_dir/$prefix_working_dir$job_id"
+	    or death('emerg', "couldn't rename working directory");
+    }
+    else {
+	# Remove the working directory
+	File::Path::rmtree("$tmp_dir/$working_dir");
+      }
 }
 sub start {
     # Open the system log and record that we have started
@@ -485,8 +471,7 @@ $SIG{'HUP'}  = 'IGNORE';
 $SIG{'INT'}  = 'IGNORE';
 $SIG{'QUIT'} = 'IGNORE';
 
-# Designate handlers for certain signals
-$SIG{'CHLD'} = \&reaper;
+# Designate a handler for the "terminate" signal
 $SIG{'TERM'} = \&stop;
 
 # Rerun any compiles that were interrupted when we last terminated
@@ -504,6 +489,8 @@ else {
 # Loop until interrupted by a signal
 use POSIX ":sys_wait_h";
 
+my $child_pid;
+
 while(1) {
     # If there is a job queued-to-compile, fork the compiler
     $row = &de_q2c($dbh);
@@ -515,7 +502,11 @@ while(1) {
     else {
 	death("emerg", "error reading database: $Spkdb::errstr");
     }
-    # sleep for a second
+    # Process any child processes which have terminated
+    while (($child_pid = waitpid(-1, &WNOHANG)) > 0) {    
+	reaper($child_pid, $?);
+    }
+    # Sleep for a second
     sleep(1); # DO NOT REMOVE THIS LINE 
               # or else this daemon will burn all your CPU cycles!
 };
