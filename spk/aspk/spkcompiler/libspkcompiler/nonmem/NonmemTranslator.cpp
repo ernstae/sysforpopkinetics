@@ -148,6 +148,7 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     fPred_h          ( "Pred.h" ),
     fOmega_h         ( "Omega.h" ),
     fOmega_cpp       ( "Omega.cpp" ),
+    fNonmemPars_h    ( "NonmemPars.h" ),
     fDriver_cpp      ( "driver.cpp" ),
     fSoftwareError_xml( "software_error.xml" ),
     fSpkRuntimeError_tmp( "spk_error.tmp" ),
@@ -539,6 +540,7 @@ void NonmemTranslator::parseSource()
   generateDataSet( );
   generateIndData( );
   generatePred( fPredEqn_cpp );
+  generateNonmemParsNamespace( );
   if( myTarget == POP )
     generatePopDriver();
   else
@@ -1818,24 +1820,29 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "  spk_N( " << myPopSize << " )" << endl;
   oDataSet_h << "{" << endl;
 
-  oDataSet_h << "int c_N = { ";
+  oDataSet_h << "int c_N[] = { ";
   for( int i=0; i<myPopSize; i++ )
     {
       if( i > 0 )
 	oDataSet_h << ", ";
       oDataSet_h << myRecordNums[i];
     }
-  oDataSet_h << " }" << endl; 
+  oDataSet_h << " };" << endl; 
   oDataSet_h << "spk_N = SPK_VA::valarray<int>( c_N, " << myPopSize << " );" << endl;
 
   const Symbol* pDV = table->findi( KeyStr::DV );
-  for( int i=0, cnt=0; i<myPopSize; i++ )
+  oDataSet_h << "double c_y[] = { ";
+  for( int i=0; i<myPopSize; i++ )
     {
-      for( int j=0; j<myRecordNums[i]; j++, cnt++ )
+      for( int j=0; j<myRecordNums[i]; j++ )
 	{
-	  oDataSet_h << "spk_y[" << cnt << "] = " << atof( pDV->initial[i][j].c_str() ) << ";" << endl;
+	  if( !(i==0&&j==0) )
+	    oDataSet_h << ", ";
+	  oDataSet_h << pDV->initial[i][j];
 	}
     }
+  oDataSet_h << " };" << endl;
+  oDataSet_h << "spk_y = SPK_VA::valarray<double>( c_y, " << myRecordNums.sum() << " );" << endl;
 
   // Initialize the entire data set.
   for( int who=0, sofar=0, nRecords=0; who < myPopSize; who++, sofar+=nRecords )
@@ -1844,7 +1851,7 @@ void NonmemTranslator::generateDataSet( ) const
       sprintf( c_who, "%d", who );
       int nRecords = pID->initial[who].size();
       const string id = pID->initial[who][0];
-      oDataSet_h << "spk_N[" << who << "] = " << nRecords << ";" << endl;
+
       //
       // The order in which the labels appear must be consistent
       // with the order in the constructor declaration.
@@ -2357,11 +2364,115 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   oPred_h << "#endif" << endl;
   oPred_h.close();
 }
+void NonmemTranslator::generateNonmemParsNamespace() const
+{
+  //==================================================================
+  // Generate the NonmemPars namespace.
+  //==================================================================
+  const Symbol* pTheta = table->findi(KeyStr::THETA);
+  const Symbol* pOmega = table->findi(KeyStr::OMEGA);
+  const Symbol* pSigma = table->findi(KeyStr::SIGMA);
+  const Symbol* pEta   = table->findi(KeyStr::ETA);
+  ofstream oNonmemPars( fNonmemPars_h );
+  assert( oNonmemPars.good() );
 
+  oNonmemPars << "#ifndef NONMEMPARS_H" << endl;
+  oNonmemPars << "#define NONMEMPARS_H" << endl;
+  oNonmemPars << endl;
+
+  oNonmemPars << "#include <valarray>" << endl;
+  if( myTarget == POP )
+    oNonmemPars << "#include <spkpred/PopPredModel.h>" << endl;
+  else
+    oNonmemPars << "#include <spkpred/IndPredModel.h>" << endl;
+  oNonmemPars << endl;
+  
+
+  oNonmemPars << "namespace NonmemPars{" << endl;
+
+  oNonmemPars << "using namespace std;" << endl;
+  oNonmemPars << "   const int nTheta = " << myThetaLen << ";" << endl;
+  oNonmemPars << "   double c_thetaUp[nTheta] = { ";
+  for( int j=0; j<myThetaLen; j++ )
+  {
+     if( j>0 )
+        oNonmemPars << ", ";
+     oNonmemPars << pTheta->upper[0][j];
+  }
+  oNonmemPars << " };" << endl;
+
+  oNonmemPars << "   double c_thetaLow[nTheta] = { ";
+  for( int j=0; j<myThetaLen; j++ )
+  {
+     if( j>0 )
+	oNonmemPars << ", ";
+     oNonmemPars << pTheta->lower[0][j];
+  }
+  oNonmemPars << " };" << endl;
+  oNonmemPars << "   double c_thetaIn[nTheta] = { ";
+  for( int j=0; j<myThetaLen; j++ )
+    {
+      if( j>0 )
+	oNonmemPars << ", ";
+      oNonmemPars << pTheta->initial[0][j];
+    }
+  oNonmemPars << " };" << endl;
+  if( myTarget == POP && myIsSimulate )
+    {
+      oNonmemPars << "   valarray<double> thetaIn ( c_thetaIn, nTheta );" << endl;
+    }
+  else
+    {
+      oNonmemPars << "   const valarray<double> thetaIn ( c_thetaIn, nTheta );" << endl;
+    }
+  oNonmemPars << endl;
+
+  oNonmemPars << "   const valarray<double> thetaLow( c_thetaLow, " << myThetaLen << " );" << endl;
+  oNonmemPars << "   const valarray<double> thetaUp ( c_thetaUp,  " << myThetaLen << " );" << endl;
+
+  oNonmemPars << "   const int nEta = " << myEtaLen << ";" << endl;
+  oNonmemPars << "   double c_etaIn[nEta] = { ";
+  for( int i=0; i<myEtaLen; i++ )
+    {
+      if( i > 0 )
+	oNonmemPars << ", ";
+      oNonmemPars << pEta->initial[0][i];
+    }
+  oNonmemPars << " };" << endl;
+  oNonmemPars << "   const valarray<double> etaIn( c_etaIn, " << myEtaLen << " );" << endl;
+  oNonmemPars << "   const enum " << (myTarget==POP? "Pop":"Ind") << "PredModel::covStruct omegaStruct = ";
+  oNonmemPars << (myTarget==POP? "Pop":"Ind") << "PredModel::" << (myOmegaStruct == Symbol::TRIANGLE? "FULL" : "DIAGONAL" ) << ";" << endl;
+  oNonmemPars << "   double c_omegaIn[" << myOmegaElemNum << "] = { "; 
+  for( int j=0; j<myOmegaElemNum; j++ )
+    {
+      if( j>0 )
+	oNonmemPars << ", ";
+      oNonmemPars << pOmega->initial[0][j];
+    }
+  oNonmemPars << " };" << endl;
+  oNonmemPars << "   const valarray<double> omegaIn( c_omegaIn, " << myOmegaElemNum << " );" << endl;
+
+  oNonmemPars << "   const int nEps = " << myEpsLen << ";" << endl;
+  oNonmemPars << "   const enum " << (myTarget==POP? "Pop":"Ind") << "PredModel::covStruct sigmaStruct = ";
+  oNonmemPars << (myTarget==POP? "Pop":"Ind") << "PredModel::" << (mySigmaStruct == Symbol::TRIANGLE? "FULL" : "DIAGONAL" ) << ";" << endl;
+  oNonmemPars << "   double c_sigmaIn[" << mySigmaElemNum << "] = { ";
+  for( int j=0; j<mySigmaElemNum; j++ )
+    {
+      if( j>0 )
+	oNonmemPars << ", ";
+      oNonmemPars << pSigma->initial[0][j];
+    }
+  oNonmemPars << " };" << endl;
+  oNonmemPars << "   const valarray<double> sigmaIn( c_sigmaIn, " << mySigmaElemNum << " );" << endl;
+  oNonmemPars << "};" << endl;
+
+  oNonmemPars << "#endif" << endl;
+  oNonmemPars.close();
+}
 void NonmemTranslator::generateIndDriver( ) const
 {
   //==================================================================
-  // Generate the driver
+  // Generate the SPK driver
   //==================================================================
   ofstream oDriver ( fDriver_cpp );
   assert( oDriver.good() );
@@ -2396,6 +2507,7 @@ void NonmemTranslator::generateIndDriver( ) const
      oDriver << "#include <spk/simulate.h>" << endl;
   oDriver << "#include \"IndData.h\"" << endl;
   oDriver << "#include \"DataSet.h\"" << endl;
+  oDriver << "#include \"NonmemPars.h\"" << endl;
   oDriver << endl;
   oDriver << "#include <spk/multiply.h>" << endl;
   oDriver << "#include <spk/cholesky.h>" << endl;
