@@ -3895,7 +3895,7 @@ void NonmemTranslator::generatePopDriver() const
      oDriver << "#include <spk/fitPopulation.h>" << endl;
      oDriver << "#include <spk/Optimizer.h>" << endl;
   }
-  if( myIsEstimate && myIsStat )
+  if( myIsStat )
     {
       oDriver << "#include <spk/popStatistics.h>" << endl;
       oDriver << "#include <spk/inverse.h>" << endl;
