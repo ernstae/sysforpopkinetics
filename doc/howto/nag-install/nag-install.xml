@@ -2,79 +2,344 @@
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "/usr/share/sgml/docbook/xml-dtd-4.2-1.0-14/docbookx.dtd" [
   <!ENTITY uw "University of Washington">
   <!ENTITY dept "Department of Bioengineering">
-  <!ENTITY whitechuck '<systemitem class="systemname">whitechuck</systemitem>'>
 ]>
-<article><title>Nag C Library Installation</title>
+<article><title>NAG Library Installation</title>
  <articleinfo>
     <revhistory>
       <revision>
 	<revnumber>1.0</revnumber>
-	<date>June 17, 2003</date>
-	<authorinitials>afw</authorinitials>
+	<date>July 31, 2003</date>
+	<authorinitials>sh</authorinitials>
 	<revremark>Initial version.</revremark>
       </revision>
     </revhistory>
   <abstract>
       <para>
-	For the time being, the SPK library (libspk) requires
-	the Nag C Library.  This document explains the installation
-	of this library on a RFPK Software Team workstation.
+      SPK Library relies on some of the components from NAG Library
+      such as a re-entrant optimizer, matrix mutiplication routine and so on.
+      The installation package comes as a simple compressed archive.
+      The installer is expected to unpack the package and manually place 
+      headers and libraries in appropriate places.  This tutorial
+      explains these steps.
       </para>
   </abstract>
- </articleinfo>
+  </articleinfo>
   <sect1>
     <title>Installation</title>
-    <para>
-      As an ordinary user, download the Linux version of the 
-      Nag C Library from 
-      <systemitem class="systemname">whitechuck</systemitem>
-      <screen>
+    <orderedlist>
+      <listitem>
+        <para>
+        As ordinary user, download the linux version of the Nag C library
+        from whitechuck:
+          <screen>
 cd /tmp
 scp whitechuck:/opt/download/lux06dbt.Z .
-      </screen>
-    </para>
-    <para>
-      Become root, and install the library and header files:
-      <screen>
+          </screen>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        Become root,
+          <screen>
 su -
-
+          </screen>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        Unpack the archive
+          <screen>
 cd /tmp
 tar xvzf lux06dbt.Z
-
+          </screen>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        Install the library and headers
+          <screen>
 cd cllux06db
 cp libnagc* /usr/local/lib
 cp include/* /usr/local/include
-
 cd /usr/local/lib
 ln -s libnagc.so.6 libnagc.so
-      </screen>
-    </para>
-    <para>
-      Set things up so that the runtime loader can find the
-      shared library.  As root, edit the file
-      <filename>/etc/ld.so.conf</filename> by adding the
-      following line:
-      <screen>
-/usr/local/lib
-      </screen>
-    </para>
-    <para>
-      Then run <command>ldconfig</command> to update the cache
-      for the runtime loader:
-      <screen>
-ldconfig -v
-      </screen>
-    </para>
-    <para>
-      Clean up:
-      <screen>
+          </screen> 
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        Make sure <filename>/usr/local/flexlm/licenses/license.dat</filename> 
+        contains the following license key entries:
+        </para>
+        <screen>
+FEATURE AXIOM NAG 9.900 01-aug-2003 0 DC7B338D21B243D05BD4 "ANY" DEMO
+FEATURE NAG_CL NAG 9.900 01-aug-2003 0 BCAB434D68B2D6C7A677 "ANY" DEMO
+FEATURE NAG_FD NAG 9.900 01-aug-2003 0 CC2B337D70AFC4E1AB5A "ANY" DEMO
+FEATURE NAG_FL NAG 29.900 01-aug-2003 0 ACEB433D64BFCCD99B66 "ANY" DEMO
+FEATURE IRIS_Explorer NAG 9.900 01-aug-2003 0 1CABA38D4AFFA3746894 "ANY" DEMO
+INCREMENT NAGWaref95 NAG 9.900 01-aug-2003 0 FCDB438DB6B7AA0ED3F7 "ANY" DEMO
+FEATURE NAGWareFtools NAG 9.900 01-aug-2003 0 EC7BB38DF7D06897E2EB "ANY" DEMO        </screen>
+      </listitem>
+      <listitem>
+        <para>
+        Clean up
+          <screen>
 cd /tmp
 rm lux06dbt.Z
 rm -rf cllux06db
-      </screen>
-    </para>
-    <para>
-      That should do it.
-    </para>
+          </screen>
+        </para>
+      </listitem>
+    </orderedlist> 
+  </sect1>
+
+  <sect1>
+    <title>Verification</title>
+    <orderedlist>
+      <listitem>
+        <para>
+          Copy and past the following code into a new file and save the file in somewhere
+          as <filename>nag_test.cpp</filename>.
+        </para>
+        <screen>
+#include &lt;iostream&gt;
+#include &lt;valarray&gt;
+#include &lt;cassert&gt;
+#include &lt;string&gt;
+
+using namespace std;
+static void NagDgemm(
+    char transa,            // Is matrix A transpose (At) or non (An)?
+    char transb,            // Is matrix B transpose (Bt) or non (Bn)? 
+    int m,                  // (An) A->nr, (At) A->nc
+    int n,                  // (Bn) B->nc, (Bt) B->nr
+    int k,                  // (An) A->nc, (Bn) B->nr, (At) A->nr, (Bt) B->nc
+    double alpha,           // scalar
+    const double A[],       // column major matrix
+    const double B[],       // column major matrix
+    double beta,            // scaler
+    double C[]              // column major matrix
+);
+
+static const valarray&lt;double&gt; multiply( const valarray&lt;double&gt; & A, int nColsA, 
+					const valarray&lt;double&gt;& B, int nColsB );
+
+void printInMatrix( const valarray&lt;double&gt; & A, int cols );
+
+int main()
+{
+  //     /        \
+  //     |  1  2  |
+  // A = |        |
+  //     |  3  4  |
+  //     \        /
+  //
+  valarra&lt;double&gt; A(4);
+  for( int i=0; i<4; i++ )
+    A[i] = i+1;
+
+  //
+  //     /     \
+  //     |  2  |
+  // B = |     |
+  //     |  2  |
+  //     \     /
+  //
+  valarray&lt;double&gt; B(2.0, 2);
+
+  valarray&lt;double&gt; C = multiply( A, 2, B, 1 );
+  valarray&lt;double&gt; correctC( 2 );
+  correctC[0] = 6.0;
+  correctC[1] = 14.0;
+
+  cout << "A = " << endl;
+  printInMatrix( A, 2 );
+  cout << endl;
+
+  cout << "B = " << endl;
+  printInMatrix( B, 1 );
+  cout << endl;
+
+  cout << "C = " << endl;
+  printInMatrix( C, 1 );
+  cout << endl;
+
+  if( C[0] == correctC[0] && C[1] == correctC[1] )
+    cout << "Test passed successfully!\n" << endl;
+  else
+    cout << "Test failed!\n" << endl;
+  return 0;
+}
+
+void printInMatrix( const valarray&lt;double&gt;& A, int cols )
+{
+  int rows = A.size() / cols;
+  assert( rows * cols * A.size() );
+
+  for( int i=0; i&lt;rows; i++ )
+    {
+      cout << "[ ";
+      for( int j=0; j&lt;cols; j++ )
+	{
+	  cout << A[j + i * cols] << " ";
+	}
+      cout << "]" << endl;
+    }
+}
+const valarray&lt;double&gt; multiply( const valarray&lt;double&gt;& A, int nColsA, 
+                                 const valarray&lt;double&gt;& B, int nColsB )
+{
+  using namespace std;
+
+  if( A.size() == 0 || B.size() == 0 )
+          return valarray&lt;double&gt;(0);
+
+  int nRowsA = A.size() / nColsA;
+  assert( nRowsA * nColsA == A.size() );
+
+  int nRowsB = B.size() / nColsB;
+  assert( nRowsB * nColsB == B.size() );
+
+  assert( nColsA == nRowsB );
+
+  valarray&lt;double&gt; AA = A;
+  valarray&lt;double&gt; BB = B;
+  valarray&lt;double&gt; C( nRowsA * nColsB );
+  
+  const double *pA = &&;AA[0];
+  const double *pB = &&;BB[0];
+  double* pC = &&;C[0];
+
+  NagDgemm('n', 'n', nRowsA, nColsB, nColsA, 1.0, pA, pB, 0.0, pC);
+  return C;
+};
+
+/*******************************************************************************
+ *
+ *                NagDgemm Implementation   
+ *
+ * Cpp interface to Nag's dgemm (f06yac)
+ *
+ * dgemm (f06yac) performs real matrix-matrix multiplication: 
+ *    C = (alpha * A B) + (beta * C)
+ *
+ * This function terminates the program when receives an invalid argument value.
+ *
+ *******************************************************************************/
+# include &lt;stdio.h&gt;
+# include &lt;stdlib.h&gt;
+
+extern "C"{
+# include "nag.h"
+# include "nag_types.h"
+# include "nag_names.h"
+# include "nagf06.h"
+}
+static void NagDgemm(
+    char transa,            // Is matrix A transpose (At) or non (An)?
+    char transb,            // Is matrix B transpose (Bt) or non (Bn)? 
+    int m,                  // (An) A->nr, (At) A->nc
+    int n,                  // (Bn) B->nc, (Bt) B->nr
+    int k,                  // (An) A->nc, (Bn) B->nr, (At) A->nr, (Bt) B->nc
+    double alpha,           // scalar
+    const double A[],       // row major matrix
+    const double B[],       // row major matrix
+    double beta,            // scaler
+    double C[]              // row major matrix
+){
+    const char* errmsg = 
+    "\nNagDgemm received an invalid value in the %s argument (%c)...terminating program.\n";
+
+
+    MatrixTranspose transA;
+    MatrixTranspose transB;
+
+    if( transa == 'n' || transa == 'N' ){
+        transA = NoTranspose;
+    }
+    else if( transa == 't' || transa == 'T' ){
+        transA = Transpose;
+    }
+    else{
+        fprintf(stderr, errmsg, "1st", transa);
+        exit(-1);
+    }
+
+    // for matrix B
+    if( transb == 'n' || transb == 'N'){
+        transB = NoTranspose;
+    }
+    else if( transb == 't' || transb == 'T' ){
+        transB = Transpose;
+    }
+    else{
+        fprintf(stderr, errmsg, "2nd", transb);
+        exit(-1);
+    }
+    
+    dgemm(
+        transA, 
+        transB, 
+        (Integer) m, 
+        (Integer) n, 
+        (Integer) k, 
+        alpha, 
+        A, 
+        (Integer) k, 
+        B, 
+        (Integer) n, 
+        beta, 
+        C, 
+        (Integer) n
+    );
+}
+        </screen>
+      </listitem>
+      <listitem>
+        <para>
+        Compile <filename>nag_test.cpp</filename> and statically link to the NAG library
+        which requires two other libraries: <filename>pthreadlib</filename> and 
+        <filename>mlib</filename>:
+        </para>
+        <screen>
+g++ nag_test.cpp -static -lnagc -lpthread -lm -o test
+        </screen>
+        <para>
+        The following warning messages will be displayed.  Please ignore.
+        </para>
+        <screen>
+s09zzft.o(.text+0x479b): `sys_errlist' is deprecated; use `strerror' or `strerror_r' instead
+s09zzft.o(.text+0x4785): `sys_nerr' is deprecated; use `strerror' or `strerror_r' instead
+        </screen>
+      </listitem>
+      <listitem>
+        <para>
+        If the above compilation completed sucessfully, you should be able to run
+        the built executable <filename>test</filename>:
+        </para>
+        <screen>
+./test
+        </screen>
+        <para>
+        and see the following output on screen.
+        </para>
+        <screen>
+[Honda@pasta myTemp]$ ./test
+A =
+[ 1 2 ]
+[ 3 4 ]
+
+B =
+[ 2 ]
+[ 2 ]
+
+C =
+[ 6 ]
+[ 14 ]
+
+Test passed successfully!
+        </screen>
+      </listitem>
+    </orderedlist>
   </sect1>
 </article>
