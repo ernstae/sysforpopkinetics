@@ -6,6 +6,7 @@
 #include <fstream>
 #include "ClientTranslator.h"
 #include "SymbolTable.h"
+#include "SpkCompilerException.h"
 
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOM.hpp>
@@ -97,17 +98,351 @@ void ClientTranslator::translate()
 //
 // <!ELEMENT row (value)*>
 // <!ATTLIST row position CDATA #REQUIRED>
+//   -- The 1st row (ie. position = 1 ) contains labels.
 //
-// <ELEMENT value (#PCDATA)>
+// <!ELEMENT value (#PCDATA)>
 // <!ATTLIST value type (numeric|string) #IMPLIED>
 //
 //***************************************************************************************
+
+/*
+ * Insert the ID field if the data set lacks the field.
+ * Returns the location (>=0) in which the ID field can be found.
+ */
+
+int ClientTranslator::insertID()
+{
+  //
+  // Precondition: The number of individuals has been determined.
+  //
+  assert( ourPopSize > 0 );
+
+  //
+  // Precondition: The type of analysis has been determined.
+  //
+  assert( ourTarget == POP || ourTarget == IND );
+
+  //
+  // Determine if there's the ID field in the data set or not.
+  //
+  DOMElement * spkdata   = data->getDocumentElement();
+  DOMNodeList * datasets = spkdata->getElementsByTagName( X_TABLE );
+  assert( datasets->getLength() == 1 );
+  DOMElement  * dataset  = dynamic_cast<DOMElement*>( datasets->item(0) );
+  DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
+  unsigned int pos = 0;
+  const XMLCh * x_id_val;
+  for( int i=0; i<records->getLength(); i++ )
+    {
+      const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( X_POSITION );
+      XMLString::textToBin( x_position, pos );
+      if( pos == 1 )
+	{
+	  DOMNodeList * values = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
+	  for( int j=0; j<values->getLength(); j++ )
+	    {
+	      const XMLCh* x_value = values->item(j)->getFirstChild()->getNodeValue();
+
+	      // If there's the label, ID, return immediately.
+	      if( XMLString::compareIString( x_value, X_ID ) == 0 )
+		{
+		  // The ID field is found in the j-th column.
+		  return j;
+		}
+	    }
+	  break;
+	}      
+    }
+
+
+  //
+  // If the data set is a population data and lacks the ID field,
+  // then every record should be assigned to a different ID.
+  //
+  char id[ 56 ];
+  if( ourTarget == POP )
+    {
+      for( int i=0; i<records->getLength(); i++ )
+	{
+	  const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( X_POSITION );
+	  XMLString::textToBin( x_position, pos );
+	  if( pos == 1 )
+	    {
+	      x_id_val = X_ID;
+	    }
+	  else
+	    {
+	      sprintf( id, "%d", pos-1 );
+	      x_id_val = XMLString::transcode( id );
+	    }
+	  DOMNodeList * values          = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
+	  DOMNode     * firstValueNode  = values->item(0);
+	  DOMElement  * newValueNode    = data->createElement( X_VALUE );
+	  DOMText     * newTerminalNode = data->createTextNode( x_id_val );
+	  newValueNode->appendChild( newTerminalNode );
+	  records->item(i)->insertBefore( newValueNode, firstValueNode );
+	}
+    }
+  //
+  // If the data set is an individual data set and lacks the ID field,
+  // all the records belongs to a subject whose ID=1.
+  //
+  else // ourTarget == IND
+    {
+      const XMLCh* X_1 = XMLString::transcode( "1" );
+      for( int i=0; i<records->getLength(); i++ )
+	{
+	  const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( X_POSITION );
+	  XMLString::textToBin( x_position, pos );
+	  if( pos == 1 )
+	    {
+	      x_id_val = X_ID;
+	    }
+	  else
+	    {
+	      x_id_val = X_1;
+	    }
+	  DOMNodeList * values          = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
+	  DOMNode     * firstValueNode  = values->item(0);
+	  DOMElement  * newValueNode    = data->createElement( X_VALUE );
+	  DOMText     * newTerminalNode = data->createTextNode( x_id_val );
+	  newValueNode->appendChild( newTerminalNode );
+	  records->item(i)->insertBefore( newValueNode, firstValueNode );
+	}
+    }
+  
+  unsigned int nItems = 0;
+  char c_nItemsPlus1[ 56 ];
+  XMLString::textToBin( dataset->getAttribute( X_COLUMNS ),
+			    nItems );
+  sprintf( c_nItemsPlus1, "%d", nItems + 1 );
+  dataset->setAttribute( X_COLUMNS, XMLString::transcode( c_nItemsPlus1)  );
+
+  // The ID is found in the 1st column.
+  return 0;
+}
 void ClientTranslator::parseData()
 {
+
+  const int locID = insertID();  
+  // Post condition: There's one and only one ID field in the data set parse tree.
+
   //
   // Precondition: The symbol table has no entry yet for data labels.
   //
   assert( table.getLabels()->size() == 0 );
+
+  //
+  // Precondition: The number of individuals has been determined.
+  //
+  assert( ourPopSize > 0 );
+
+  //
+  // Precondition: The type of analysis has been determined.
+  //
+  assert( ourTarget == POP || ourTarget == IND );
+
+  DOMElement * spkdata = data->getDocumentElement();
+  assert( XMLString::equals( spkdata->getNodeName(), X_SPKDATA ) );
+  const XMLCh* version = spkdata->getAttribute( X_VERSION );
+
+  assert( XMLString::equals( version, X_POINTONE ) );
+
+  //
+  // Process through n number of <table>s, where n >= 0.
+  // NOTE: For v0.1, n == 1.
+  //
+  DOMNodeList * dataSets = spkdata->getElementsByTagName( X_TABLE );
+  int nDataSets = dataSets->getLength();
+  assert( nDataSets <= 1 );
+
+  int nSubjects = 0;
+  for( int i=0; i<nDataSets; i++ )
+    {
+      DOMElement * dataSet = dynamic_cast<DOMElement*>( dataSets->item(i) );
+      unsigned int nFields;
+      XMLString::textToBin( dataSet->getAttribute( X_COLUMNS ),
+			    nFields );
+      unsigned int nRecords;
+      XMLString::textToBin( dataSet->getAttribute( X_ROWS ),
+			    nRecords );
+      if( nRecords == 0 )
+      {
+         // empty data set, skip to the next data set.
+         // continue;
+         // For ver 0.1, this is an error!
+	char m[ SpkCompilerError::maxMessageLen() ];
+	sprintf( m, "Empty data set!" );
+	SpkCompilerException e( SpkCompilerError::ASPK_DATAML_ERR, m, __LINE__, __FILE__ );
+	throw e;
+      }
+
+      map< string, map<string, vector<string> > > tmp_values;
+      vector<string> tmp_ids;
+      vector<string> tmp_labels(nFields);
+      vector<string> tmp_types (nFields);
+      valarray<int>  nDataRecords;
+
+      unsigned int pos;      
+      DOMNodeList * rows = dataSet->getElementsByTagName( X_ROW );
+      assert( rows->getLength() == nRecords );
+      for( int j=0; j<nRecords; j++ )
+	{
+	  DOMElement  * row    = dynamic_cast<DOMElement*>( rows->item(j) );
+	  const XMLCh* xml_position = row->getAttribute( X_POSITION );
+	  assert( xml_position != NULL );
+	  if( !XMLString::textToBin( xml_position, pos ) )
+	    assert( false ); // pos = j
+	  DOMNodeList * values = row->getElementsByTagName( X_VALUE );
+	  assert( values->getLength() == nFields );
+
+	  //
+	  // At the first iteration, k=0, the value of *id is set and it is used for the
+	  // rest of iterations.
+	  //
+	  const XMLCh* xml_value = values->item(locID)->getFirstChild()->getNodeValue();
+	  XMLCh* xml_value_noWS = XMLString::replicate( xml_value );
+	  XMLString::removeWS( xml_value_noWS );
+	  char * id = XMLString::transcode( xml_value_noWS );
+	  for( int k=0; k<nFields; k++ )
+	    {
+	      //
+	      // The values in the first row (ie. position=1) are data labels.
+	      //
+	      if( pos==1 )
+		{
+		  const XMLCh* xml_label = values->item(k)->getFirstChild()->getNodeValue();
+		  assert( xml_label != NULL );
+		  // At this point xml_label may contain white spaces.
+		  // Get rid of them!
+		  XMLCh* xml_label_noWS = XMLString::replicate( xml_label );
+		  XMLString::removeWS( xml_label_noWS );
+                  char * delme = XMLString::transcode( xml_label_noWS );
+		  tmp_labels[k] = string( delme );
+                  delete delme;
+		  XMLString::release( &xml_label_noWS );
+		  continue;
+		}
+
+	      const XMLCh* xml_type;
+	      if( dynamic_cast<DOMElement*>( values->item(k) )->hasAttribute( X_TYPE ) )
+		{
+		  xml_type = dynamic_cast<DOMElement*>( values->item(k) )->getAttribute( X_TYPE );
+		}
+	      else
+		{
+		  xml_type = X_NUMERIC;
+		}
+	      //
+	      // The value types in the second row (ie. position=2) are used as reference
+	      // against which the value types in the subsequent rows will be compared.
+	      //
+	      if( pos==2 )
+		{
+		  char * delme_c = XMLString::transcode(xml_type);
+		  string delme_s( delme_c );
+		  delete delme_c;
+		  tmp_types[k] = delme_s;
+		}	      
+
+	      //
+	      // For the subsequent rows (>2), the value types should match the entries in tmp_types[].
+	      //
+	      char * delme_c = XMLString::transcode( xml_type );
+              string delme_s( delme_c );
+	      delete delme_c;
+	      assert( delme_s == tmp_types[k] );
+	      
+	      const XMLCh* xml_value = values->item(k)->getFirstChild()->getNodeValue();
+	      XMLCh* xml_value_noWS = XMLString::replicate( xml_value );
+	      XMLString::removeWS( xml_value_noWS );
+
+              //
+              // If this item is an ID, check if the value changed since the previous iteration.
+              // If it does, increment the #of subjects and keep the new ID for future reference.
+	      //
+	      if( k == locID )
+		{
+		  id = XMLString::transcode( xml_value_noWS );
+		  if( find( tmp_ids.begin(), tmp_ids.end(), id ) == tmp_ids.end() )
+		    {
+		      tmp_ids.push_back( id );
+		      ++nSubjects;
+		    }
+		}
+              //
+              // If a data value is ".", that means 0.0.
+              //
+	      char * c_value = 
+                 ( XMLString::stringLen( xml_value )>0? XMLString::transcode( xml_value_noWS ) : NULL );
+              if( strcmp( c_value, "." ) == 0 )
+                 tmp_values[id][tmp_labels[k]].push_back( "0.0" );
+              else
+	         tmp_values[id][tmp_labels[k]].push_back( string(c_value) );
+	      delete c_value;
+	      XMLString::release( &xml_value_noWS );		  
+	    }
+	  delete id;
+	}
+      assert( nSubjects == ourPopSize ); 
+      assert( nSubjects == tmp_ids.size() );
+      nDataRecords.resize( nSubjects );
+
+
+      vector<string>::const_iterator pID = tmp_ids.begin();
+      for( int k=0; pID != tmp_ids.end(), k<nSubjects; k++, pID++ )
+	{
+	  nDataRecords[k] = tmp_values[*pID][tmp_labels[0]].size();
+	}
+      
+      //
+      // Register the data labels without any attributes yet.
+      //
+      int nLabels = tmp_labels.size();
+       for( int k=0; k<nLabels; k++ )
+	{
+	  table.insertLabel( tmp_labels[k], "", nDataRecords );  
+	}
+
+      //
+      // Move the extracted (from the parse tree) info into the symbol table.
+      //
+      // NOTE: The actual values in tmp_ids are stored in the same order they appeared
+      // in the table specification.  ie. tmp_ids[0] contains the first individual's ID.
+      //
+      int who=0;
+      for( vector<string>::const_iterator pID = tmp_ids.begin(); pID != tmp_ids.end(); pID++, who++ )
+	{
+	  for( int k=0; k<nLabels; k++ )
+	    {
+	      Symbol *s = table.findi( tmp_labels[k] );
+	      vector<string>::const_iterator itr = (tmp_values[*pID][tmp_labels[k]]).begin();
+	      for( int l=0; itr != tmp_values[*pID][tmp_labels[k]].end(); l++, itr++ )
+		{
+		  s->initial[who][l] = tmp_values[*pID][tmp_labels[k]][l];
+		}
+	    }
+	}
+    }
+}
+/*
+void ClientTranslator::parseData()
+{
+  insertID();
+  //
+  // Precondition: The symbol table has no entry yet for data labels.
+  //
+  assert( table.getLabels()->size() == 0 );
+
+  //
+  // Precondition: The number of individuals has been determined.
+  //
+  assert( ourPopSize > 0 );
+
+  //
+  // Precondition: The type of analysis has been determined.
+  //
+  assert( ourTarget == POP || ourTarget == IND );
 
   DOMElement * spkdata = data->getDocumentElement();
   assert( XMLString::equals( spkdata->getNodeName(), X_SPKDATA ) );
@@ -174,14 +509,7 @@ void ClientTranslator::parseData()
 	    }
 	  }
       }
-      
-      /*
-      DOMNodeList * description = dataSet->getElementsByTagName( X_DESCRIPTION );
-      assert( description == NULL || description->getLength() == 1 );
-      const XMLCh* xml_descript = dynamic_cast<DOMText*>(description->item(0)->getFirstChild())->getNodeValue();
-      char * descript = (XMLString::stringLen( xml_descript ) > 0 ? XMLString::transcode( xml_descript ) : NULL );
-      */
-      
+            
       DOMNodeList * rows = dataSet->getElementsByTagName( X_ROW );
       assert( rows->getLength() == nRecords );
       for( int j=0; j<nRecords; j++ )
@@ -284,7 +612,7 @@ void ClientTranslator::parseData()
 	    }
 	  delete id;
 	}
-     
+      assert( nSubjects == ourPopSize ); 
       assert( nSubjects == tmp_ids.size() );
       nDataRecords.resize( nSubjects );
 
@@ -337,3 +665,4 @@ void ClientTranslator::parseData()
 	}
     }
 }
+*/

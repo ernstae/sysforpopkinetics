@@ -47,6 +47,11 @@ class ClientTranslator{
   void translate();
 
   /**
+   * Insert the ID field (ie. node) in each record (subtree) if the data set lacks of it.
+   * Returns the location in which the ID field can be found.
+   */
+  int insertID();
+  /**
    * Parse the DOMDocument tree that represents
    * the SpkDataML document and register the foundings into the symbol table.
    *

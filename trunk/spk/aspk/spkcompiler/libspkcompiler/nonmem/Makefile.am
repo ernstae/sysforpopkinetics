@@ -4,7 +4,8 @@ INCLUDES      = -I@top_srcdir@/ -I..
 
 AM_LFLAGS     = -i -Pnm_ -olex.yy.c
 AM_YFLAGS     = -d --verbose --debug -p nm_
-CXXFLAGS      = -g -I..
+CXXFLAGS      = 
+AM_CXXFLAGS   = -g -I..
 
 MOSTLYCLEANFILES = explang.cpp explang.h explang.output lex_explang.c
 
