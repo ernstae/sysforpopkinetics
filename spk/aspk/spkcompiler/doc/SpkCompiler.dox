@@ -319,8 +319,8 @@ INPUT                 += ../libspkcompiler/emit_IndData.h
 INPUT                 += ../libspkcompiler/nonmem/emit_nonmem_driver.h
 INPUT                 += ../libspkcompiler/nonmem/emit_nonmem_model.h
 INPUT                 += ../libspkcompiler/nonmem/NonmemTranslator.h
-INPUT                 += ../libspkcompiler/lex_explang.c 
-INPUT                 += ../libspkcompiler/explang.cpp
+INPUT                 += ../libspkcompiler/nonmem/lex_explang.c 
+INPUT                 += ../libspkcompiler/nonmem/explang.cpp
 INPUT                 += ../driver/compiler.cpp 
 
 # If the value of the INPUT tag contains directories, you can use the 
