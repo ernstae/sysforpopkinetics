@@ -15,9 +15,24 @@
  * @example read_contentTest.cpp
  */
 /**
- * Extract the verion of SpkInML document, the @ref client type
+ * Analyze the <content> subtree in the input SpkInML document
+ * and return the verion of the document,
+ * the @ref client type
  * and the @ref SpkParameters::Analysis "analysis" type 
  * specified as attributes of the given DOMElement.
+ *
+ * DTD for <content> is as follows:
+ *
+ * @code
+ * <!ELEMENT content (#PCDATA)>
+ * <!ATTLIST content spkinml_ver CDATA #FIXED "1.0">
+ * <!ATTLIST content client (nonmem) #REQUIRED>
+ * <!ATTLIST content analysis (population|individual) #REQUIRED>
+ *
+ * @endcode
+ *
+ * @return false if any of "spkinml_ver", "client" or"analysis" attribute
+ * were missing in the <content> element, true otherwise.
  *
  * @param content_node is a pointer to the DOMElement node that
  * represents the root of <content> subtree.
@@ -31,8 +46,6 @@
  * @param analysisOut will contain an enum value extracted as
  * the value of a <content> attribute, "analysis".
  *
- * @return true if it finds "spkinml_ver", "client" and "analysis" attribute
- * values associated with the <content> tag.
  */
 bool read_content( xercesc::DOMElement * content_node, 
 		   std::string & spkml_verOut, 
