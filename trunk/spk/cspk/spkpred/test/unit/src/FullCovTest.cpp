@@ -750,17 +750,33 @@ void FullCovTest::threeByThreeCovTest()
   int nPar = omega.getNPar();
   assert( nPar == 6 );
 
+  // Create a known covariance matrix with a miminal
+  // representation that is easy to check,
+  //
+  //                      -                 -
+  //                     |  1.0   0.2   0.3  |
+  //      omegaKnown  =  |  0.2   4.0   0.5  |  .
+  //                     |  0.3   0.5   6.0  |
+  //                      -                 -
+  //
+  valarray<double> omegaCovKnown( nRow * nRow );
+  omegaCovKnown[0 + 0 * nRow] = 1.0;
+  omegaCovKnown[1 + 0 * nRow] = 0.2;
+  omegaCovKnown[2 + 0 * nRow] = 0.3;
+  omegaCovKnown[0 + 1 * nRow] = 0.2;
+  omegaCovKnown[1 + 1 * nRow] = 4.0;
+  omegaCovKnown[2 + 1 * nRow] = 0.5;
+  omegaCovKnown[0 + 2 * nRow] = 0.3;
+  omegaCovKnown[1 + 2 * nRow] = 0.5;
+  omegaCovKnown[2 + 2 * nRow] = 6.0;
+
   // Initialize the current value for the parameters.
   valarray<double> par( nPar );
-  par[0] = 0.1;
-  par[1] = 0.005;
-  par[2] = -3.0;
-  par[3] = -0.7;
-  par[4] = 0.008;
-  par[5] = 1.2;
+  omega.calcPar( omegaCovKnown, par );
 
   // Set the current value for the parameters.
   omega.setPar( par );
+
 
   //------------------------------------------------------------
   // Calculate various quantities for the test.
@@ -781,6 +797,7 @@ void FullCovTest::threeByThreeCovTest()
 
   valarray<double> omegaMinRep    ( nPar );
   valarray<double> omegaMinRep_par( nPar * nPar );
+  valarray<double> omegaExpMinRep ( nRow * nRow );
 
   valarray<double> omegaCovTimesInv( nRow * nRow );
 
@@ -813,6 +830,9 @@ void FullCovTest::threeByThreeCovTest()
   omega.calcCovMinRep    ( omegaCov,           omegaMinRep );
   omega.calcCovMinRep_par( omegaCov_par, nPar, omegaMinRep_par );
 
+  // Expand the minimal representation for the covariance matrix.
+  omega.expandCovMinRep( omegaMinRep, omegaExpMinRep );
+
   // Multiply the covariance matrix and its inverse.
   omegaCovTimesInv = multiply( omegaCov, nRow, omegaInv, nRow );
 
@@ -821,7 +841,6 @@ void FullCovTest::threeByThreeCovTest()
   // Calculate the known values.
   //------------------------------------------------------------
 
-  valarray<double> omegaCovKnown    ( nRow * nRow );
   valarray<double> omegaCov_parKnown( nRow * nRow * nPar );
   valarray<double> omegaInvKnown    ( nRow * nRow );
   valarray<double> omegaInv_parKnown( nRow * nRow * nPar );
@@ -836,6 +855,7 @@ void FullCovTest::threeByThreeCovTest()
 
   valarray<double> omegaMinRepKnown    ( nPar );
   valarray<double> omegaMinRep_parKnown( nPar * nPar );
+  valarray<double> omegaExpMinRepKnown ( nRow * nRow );
 
   valarray<double> omegaCovTimesInvKnown( nRow * nRow );
 
@@ -972,27 +992,36 @@ void FullCovTest::threeByThreeCovTest()
       omegaCovKnown[i + i * nRow];
   }    
 
-  // Set the known value for the minimal representation for the
-  // covariance matrix and its derivative.
+  // Set the known value for the minimal representation 
+  // for the covariance matrix.
+  omegaMinRepKnown[0] = 1.0;
+  omegaMinRepKnown[1] = 0.2;
+  omegaMinRepKnown[2] = 0.3;
+  omegaMinRepKnown[3] = 4.0;
+  omegaMinRepKnown[4] = 0.5;
+  omegaMinRepKnown[5] = 6.0;
+
+  // Set the known value for the derivative of the minimal
+  // representation for the covariance matrix.
   int nCovMinRep_parRow = nPar;
   int sumI = 0;
-  for ( i = 0; i < nRow; i++ )
+  for ( k = 0; k < nPar; k++ )
   {
-    sumI += i;
-
-    // Set the elements from this row including the diagonal.
-    for ( j = 0; j <= i; j++ )
+    sumI = 0;
+    for ( j = 0; j < nRow; j++ )
     {
-      omegaMinRepKnown[sumI + j] = omegaCovKnown[i + j * nRow];
-    
-      // Set the derivatives for this element.
-      for ( k = 0; k < nPar; k++ )
+      // Get the elements from this column including the diagonal.
+      for ( i = j; i < nRow; i++ )
       {
-        omegaMinRep_parKnown[( sumI + j     ) + k * nCovMinRep_parRow] = 
-          omegaCov_parKnown [( i * nRow + j ) + k * nCov_parRow];
-      }
-    }
-  }
+        omegaMinRep_parKnown[( sumI++ )       + k * nCovMinRep_parRow] = 
+          omegaCov_parKnown [( i + j * nRow ) + k * nCov_parRow];
+      }    
+    }    
+  }    
+
+  // The known value for the expanded minimal representation 
+  // should just be the original covariance matrix.
+  omegaExpMinRepKnown = omegaCovKnown;
 
   // The covariance matrix multiplied by its inverse should be
   // equal to the identity matrix.
@@ -1055,6 +1084,12 @@ void FullCovTest::threeByThreeCovTest()
     omegaMinRep_par,
     omegaMinRep_parKnown,
     "omegaMinRep_par",
+    tol );
+
+  compareToKnown( 
+    omegaExpMinRep,
+    omegaExpMinRepKnown,
+    "omegaExpMinRep",
     tol );
 
   compareToKnown( 
