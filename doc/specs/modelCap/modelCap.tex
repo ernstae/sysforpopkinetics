@@ -127,9 +127,496 @@ SPK will have the following major modeling capabilities:
 \begin{itemize}
   \item individual level estimation,
   \item individual level simulation,
-  \item population level estimation, and
-  \item population level simulation.
+  \item population level estimation,
+  \item population level simulation, and
+  \item population level likelihood evaluation.
 \end{itemize}
+
+
+%***************************************************************
+%
+\section{Modeling Capability Extensions}
+%
+%***************************************************************
+
+SPK will have some capabilities that go beyond those of NONMEM.
+
+In particular, the modeling capabilities associated with the 
+evaluation of population level likelihoods and with the 
+calculation of some types of residuals are unique to SPK.
+These capabilities are discussed in this section.
+
+
+%-----------------------------------------------------------------
+\subsection{Population Level Likelihood Evaluation}
+%-----------------------------------------------------------------
+
+SPK will allow for the evaluation of the population level likelihood
+using Monte Carlo integration techniques.
+
+%[Remove]====================================================
+%
+\begin{center}
+\framebox{FINISH THIS.}
+\end{center}
+%
+%[Remove]====================================================
+
+
+%-----------------------------------------------------------------
+\subsection{Residual Calculation}
+%-----------------------------------------------------------------
+
+Some of the residuals that SPK will calculate are different than those
+that can be calculated using NONMEM.
+
+
+%-----------------------------------------------------------------
+\subsubsection{Extended Least Squares Individual Level Residuals}
+%-----------------------------------------------------------------
+
+Although the residuals discussed in this section are calculated in the
+same way by SPK and NONMEM, this discussion is included here for
+completeness.
+
+When the extended least squares objective function is being used
+to perform individual level estimation,
+SPK's model for the $j^{\mbox{th}}$ value of an individual's data is
+  \begin{equation}
+    y_{(j)} = f_{(j)}(b) + e_{(j)} ,
+  \end{equation}
+where
+  \begin{equation}
+    e \sim \mbox{N}[ 0, R(b) ] ,
+  \end{equation}
+$b$ is the individual's vector of parameters, and $e$ is a vector of 
+random variables that describe the measurement noise.
+For a complete description of the models used at the individual 
+level by SPK and NONMEM, see Appendix \ref{App:IndLevelModels}.
+
+Let the vector of residuals for the individual be defined as the
+differences between their data and the expected values for their
+data as predicted by the model,
+  \begin{eqnarray}
+    r & = & y - \mbox{E}_{e} 
+              \left[ f(b) + e \right] \nonumber \\
+      & = & y - f(b) .
+  \end{eqnarray}
+The covariance matrix for the individual's data is
+given by
+  \begin{eqnarray}
+    \mbox{cov}[y] & = & \mbox{cov}_{e}
+          \left[ f(b) + e \right] \nonumber \\
+        & = & R(b) .
+  \end{eqnarray}
+The vector of weighted residuals for the individual is
+defined as 
+  \begin{equation}
+    w = \left\{ \mbox{cov}[y] \right\}^{-1/2} r,
+  \end{equation}
+where the term multiplying the residuals is the matrix square 
+root of the inverse of the covariance.
+
+The individual level residuals are calculated by evaluating the
+preceding quantities at the optimal values for the individuals'
+vectors of parameters that were determined during
+individual level estimation, i.e., by setting $b = \hat{b}$.
+
+The following table lists the residual related quantities, their
+values as calculated by SPK, and their values as calculated by NONMEM.
+In this case, the NONMEM values are calculated using its standard
+individual estimation mode.
+
+\begin{center}
+\begin{tabular}{|p{0.75in}|p{3.25in}|p{1.1in}|p{0.85in}|p{1.0in}|}
+\hline
+\hline
+  {\bf Quantity}
+    & {\bf SPK Value}
+    & {\bf Description}
+    & {\bf Name}
+    & {\bf NONMEM Value} \\
+  \hline
+  \hline
+  $\mbox{E} \left[ f \right]^{\mbox{(ELS)}}$
+    & $f(\hat{b})$
+    & Predicted value for an individual's data.
+    & PRED
+    & Same \\
+  \hline
+  $r^{\mbox{(ELS)}}$
+    & $y - f(\hat{b})$
+    & Residuals for an individual.
+    & RES 
+    & Same \\
+  \hline
+  $w^{\mbox{(ELS)}}$
+    & $\left\{ R(\hat{b}) \right\}^{-1/2}
+        [ y - f(\hat{b}) ] $
+    & Weighted residuals for an individual.
+    & WRES 
+    & Same \\
+  \hline
+  \hline
+\end{tabular}
+\end{center}
+
+
+%-----------------------------------------------------------------
+\subsubsection{Map Bayesian Individual Level Residuals}
+%-----------------------------------------------------------------
+
+When the Map Bayesian objective function is being used
+to perform individual level estimation,
+SPK's model for the $j^{\mbox{th}}$ value of an individual's data is
+  \begin{equation}
+    y_{(j)} = f_{(j)}(b) + e_{(j)} ,
+  \end{equation}
+where
+  \begin{equation}
+    b \sim \mbox{N}[ 0, D ] ,
+  \end{equation}
+  \begin{equation}
+    e \sim \mbox{N}[ 0, R(b) ] ,
+  \end{equation}
+$b$ is the individual's vector of parameters, and $e$ is a vector of 
+random variables that describe the measurement noise.
+Note that $b$ is also a random variable in this case.
+For a complete description of the models used at the individual 
+level by SPK and NONMEM, see Appendix \ref{App:IndLevelModels}.
+
+For this objective function, there is an additional set of residuals
+that come from the terms that include the individual parameters $b$.
+Let the vector of residuals for the individual parameters be defined as the
+differences between zero and the expected values for the individual parameters,
+  \begin{eqnarray}
+    \rho & = & 0 - \mbox{E}_{b} 
+              \left[ b \right] \nonumber \\
+      & = & - b .
+  \end{eqnarray}
+The covariance matrix for the individual parameters is
+  \begin{eqnarray}
+    \mbox{cov}[b] & = & \mbox{cov}_{b}
+          \left[ b \right] \nonumber \\
+        & = & D .
+  \end{eqnarray}
+The vector of weighted individual parameter residuals is
+defined as 
+  \begin{equation}
+    z = \left\{ \mbox{cov}[b] \right\}^{-1/2} \rho,
+  \end{equation}
+where the term multiplying the residuals is the matrix square 
+root of the inverse of the covariance.
+
+The individual level residuals are calculated by evaluating the
+preceding quantities at the optimal values for the individuals'
+vectors of parameters that were determined during
+individual level estimation,$\hat{b}$.
+
+The following table lists the residual related quantities, their
+values as calculated by SPK, and their values as calculated by NONMEM.
+In this case, the NONMEM values are calculated for all of the
+individuals in the population using the POSTHOC option in the
+\$ESTIMATION command.
+
+\begin{center}
+\begin{tabular}{|p{0.75in}|p{3.25in}|p{1.1in}|p{0.85in}|p{1.0in}|}
+\hline
+\hline
+  {\bf Quantity}
+    & {\bf SPK Value}
+    & {\bf Description}
+    & {\bf Name}
+    & {\bf NONMEM Value} \\
+  \hline
+  \hline
+  $\mbox{E} \left[ f \right]^{\mbox{(MB)}}$
+    & $f(\hat{b})$
+    & Predicted value for an individual's data.
+    & PRED 
+    & Same \\
+  \hline
+  $r^{\mbox{(MB)}}$
+    & $y - f(\hat{b})$
+    & Residuals for an individual.
+    & RES 
+    & Same \\
+  \hline
+  $w^{\mbox{(MB)}}$
+    & $\left\{ R(\hat{b}) \right\}^{-1/2}
+        [ y - f(\hat{b}) ] $
+    & Weighted residuals for an individual.
+    & WRES 
+    & Same \\
+  \hline
+  $\rho^{\mbox{(MB)}}$
+    & $-\hat{b}$
+    & Individual parameter residuals.
+    & ETARES
+    & Not available in NONMEM. \\
+  \hline
+  $z^{\mbox{(MB)}}$
+    & $\left\{ D \right\}^{-1/2} ( - \hat{b} )$
+    & Weighted individual parameter residuals.
+    & WETARES
+    & Not available in NONMEM. \\
+  \hline
+  \hline
+\end{tabular}
+\end{center}
+
+
+%-----------------------------------------------------------------
+\subsubsection{Population Level Residuals Background}
+%-----------------------------------------------------------------
+
+SPK's mixed effects model for the $j^{\mbox{th}}$ value of the 
+$i^{\mbox{th}}$ individual's data is
+  \begin{equation}
+    y_{i(j)} = f_{i(j)}(\alpha, b_i) + e_{i(j)} ,
+  \end{equation}
+where
+  \begin{equation}
+    b_i \sim \mbox{N}[ 0, D(\alpha) ] ,
+  \end{equation}
+  \begin{equation}
+    e_i \sim \mbox{N}[ 0, R_i(\alpha, b_i) ] ,
+  \end{equation}
+$\alpha$ is a vector of fixed effects parameters, 
+$b_i$ is the individual's vector of random effects parameters,
+and $e_i$ is a vector of random variables that describe the
+measurement noise.
+For a complete description of the models used at the population 
+level by SPK and NONMEM, see Appendix \ref{App:PopLevelModels}.
+
+Let the vector of residuals for the $i^{\mbox{th}}$ individual be
+defined as the differences between their data and the expected values 
+for their data as predicted by the model,
+  \begin{eqnarray}
+    r_i & = & y_i - \mbox{E}_{b,e} 
+                \left[ f_i(\alpha, b_i) + e_i \right] \nonumber \\
+        & = & y_i - \mbox{E}_{b} \left[ f_i(\alpha, b_i) \right] .
+  \end{eqnarray}
+The covariance matrix for the $i^{\mbox{th}}$ individual's data is
+given by
+  \begin{eqnarray}
+    \mbox{cov}[y_i] & = & \mbox{cov}_{b,e}
+          \left[ f_i(\alpha, b_i) + e_i \right] \nonumber \\
+        & = & \mbox{cov}_{b} \left[ f_i(\alpha, b_i) \right]
+                  + R_i(\alpha, b_i) .
+  \end{eqnarray}
+The vector of weighted residuals for the $i^{\mbox{th}}$ individual is
+defined as 
+  \begin{equation}
+    w_i = \left\{ \mbox{cov}[y_i] \right\}^{-1/2} r_i,
+  \end{equation}
+where the term multiplying the residuals is the matrix square 
+root of the inverse of the covariance.
+
+In order to calculate the residuals and weighted residuals, SPK makes
+some approximations that are based on the derivations and discussion
+in Sections (6.2) and (6.3) of Davidian and Giltinan\footnote{
+  Davidian M. and Giltinan D. M. (1998) 
+  {\em Nonlinear Models for Repeated Measurement Data}, Chapman \&
+  Hall/CRC, Boca Raton, Florida, pp. 152-66.
+}.
+
+To be specific, SPK makes the following Taylor series approximations 
+about the value $b^{\ast}_i$,
+  \begin{eqnarray}
+    f_i(\alpha, b_i) & \approx &  f_i(\alpha, b^{\ast}_i)
+      + \partial_b f_i(\alpha, b^{\ast}_i) ( b_i - b^{\ast}_i ) , \\
+    R_i(\alpha, b_i) & \approx &  R_i(\alpha, b^{\ast}_i) .
+  \end{eqnarray}
+The residuals are therefore approximated by
+  \begin{equation}
+    r_i \approx y_i - f_i(\alpha, b^{\ast}_i)
+      + \partial_b f_i(\alpha, b^{\ast}_i) \; b^{\ast}_i .
+  \end{equation}
+The covariance of the individual's data is approximated by
+  \begin{eqnarray}
+    \mbox{cov}[y_i] \approx \partial_b f_i(\alpha, b^{\ast}_i) \;
+        D(\alpha) \; \partial_b f_i(\alpha, b^{\ast}_i)^T
+      + R_i(\alpha, b^{\ast}_i) .
+  \end{eqnarray}
+
+As a diagnostic, SPK will also provide the weighted individual 
+parameter residuals at the population level.
+Let the vector of residuals for the $i^{\mbox{th}}$ individual's 
+parameters be defined as the differences between zero and the 
+values for their individual parameters,
+  \begin{equation}
+    \rho_i = - b_i .
+  \end{equation}
+The covariance matrix for the individual parameters is
+  \begin{eqnarray}
+    \mbox{cov}[b_i] & = & \mbox{cov}_{b}
+          \left[ b_i \right] \nonumber \\
+        & = & D(\alpha) .
+  \end{eqnarray}
+The vector of weighted individual parameter residuals is
+defined as 
+  \begin{equation}
+    z_i = \left\{ \mbox{cov}[b_i] \right\}^{-1/2} \rho_i,
+  \end{equation}
+where the term multiplying the residuals is the matrix square 
+root of the inverse of the covariance.
+
+
+%-----------------------------------------------------------------
+\subsubsection{First Order Population Residuals}
+%-----------------------------------------------------------------
+
+The first class of population residuals are calculated by evaluating the
+preceding approximations at the mean values for the individuals'
+vectors of random effects parameters, i.e.,
+by setting $b^{\ast}_i = 0$ for all of the individuals.
+This corresponds to the approximations made for the First Order (FO)
+objective function.
+
+The following table lists the residual related quantities, their
+values as calculated by SPK, and their values as calculated by NONMEM.
+In this case, the NONMEM values are calculated using 
+if First Order (FO) Method in the \$ESTIMATION command without 
+the POSTHOC option.
+
+\begin{center}
+\begin{tabular}{|p{0.75in}|p{3.25in}|p{1.1in}|p{0.85in}|p{1.0in}|}
+\hline
+\hline
+  {\bf Quantity}
+    & {\bf SPK Value}
+    & {\bf Description}
+    & {\bf Name}
+    & {\bf NONMEM Value} \\
+  \hline
+  \hline
+  $\mbox{E} \left[ f_i \right]^{\mbox{(FO)}}$
+    & $f_i(\alpha, 0)$
+    & Approximate predicted value for an individual's data.
+    & PRED 
+    & Same \\
+  \hline
+  $r^{\mbox{(FO)}}_i$
+    & $y_i - f_i(\alpha, 0)$
+    & Approximate residuals for an individual.
+    & RES 
+    & Same \\
+  \hline
+  $w^{\mbox{(FO)}}_i$
+    & $\begin{array}{l}
+        \left\{ \partial_b f_i(\alpha, 0) \;
+          D(\alpha) \; \partial_b f_i(\alpha, 0)^T
+          + R_i(\alpha, 0) \right\}^{-1/2} \\
+        \mbox{\hspace{0.5in}}
+        \ast [ y_i - f_i(\alpha, 0) ]
+      \end{array} $
+    & Approximate weighted residuals for an individual.
+    & WRES 
+    & Same \\
+  \hline
+  $\rho^{\mbox{(FO)}}_i$
+    & $0$
+    & Individual parameter residuals for an individual.
+    & ETARES
+    & Not available in NONMEM. \\
+  \hline
+  $z^{\mbox{(FO)}}_i$
+    & $0$
+    & Weighted individual parameter residuals for an individual.
+    & WETARES
+    & Not available in NONMEM. \\
+  \hline
+  \hline
+\end{tabular}
+\end{center}
+
+
+%-----------------------------------------------------------------
+\subsubsection{Conditional Population Residuals}
+%-----------------------------------------------------------------
+
+The second class of population residuals are calculated by evaluating the
+preceding approximations at the values determined for the individuals'
+vectors of random effects parameters during one of the conditional
+estimation methods, i.e.,  by setting $b^{\ast}_i = \hat{b}_i$ 
+for all of the individuals.
+The conditional estimation methods in SPK use either the Expected Hessian
+objective function, which is equivalent to NONMEM'S First Order
+Conditional Estimation (FOCE) method, or the Laplace
+objective, which is equivalent to NONMEM's Laplace method.
+
+The following table lists the residual related quantities, their
+values as calculated by SPK, and their values as calculated by NONMEM.
+In this case, the NONMEM values are calculated using 
+one of NONMEM's conditional estimation that are available in the
+\$ESTIMATION command.
+
+\begin{center}
+\begin{tabular}{|p{0.75in}|p{3.25in}|p{1.1in}|p{0.85in}|p{1.0in}|}
+\hline
+\hline
+  {\bf Quantity}
+    & {\bf SPK Value}
+    & {\bf Description}
+    & {\bf Name}
+    & {\bf NONMEM Value} \\
+  \hline
+  \hline
+  $\mbox{E} \left[ f_i \right]^{\mbox{(Cond)}}$
+    & $f_i(\alpha, \hat{b}_i) - \partial_b f_i(\alpha, \hat{b}_i) \; \hat{b}_i$
+    & Approximate predicted value for an individual's data.
+    & PRED 
+    & Same as FO values, i.e., $b^{\ast}_i = 0$ for all individuals\\
+  \hline
+  $r^{\mbox{(Cond)}}_i$
+    & $y_i - f_i(\alpha, \hat{b}_i) + \partial_b f_i(\alpha, \hat{b}_i) \; \hat{b}_i$
+    & Approximate residuals for an individual.
+    & RES 
+    & Same as FO values, i.e., $b^{\ast}_i = 0$ for all individuals\\
+  \hline
+  $w^{\mbox{(Cond)}}_i$
+    & $\begin{array}{l}
+        \left\{ \partial_b f_i(\alpha, \hat{b}_i) \;
+          D(\alpha) \; \partial_b f_i(\alpha, \hat{b}_i)^T
+          + R_i(\alpha, \hat{b}_i) \right\}^{-1/2} \\
+        \mbox{\hspace{0.5in}}
+        \ast [ y_i - f_i(\alpha, \hat{b}_i) 
+           + \partial_b f_i(\alpha, \hat{b}_i) \; \hat{b}_i ]
+      \end{array} $
+    & Approximate weighted residuals for an individual.
+    & WRES 
+    & Same as FO values, i.e., $b^{\ast}_i = 0$ for all individuals\\
+  \hline
+  $\rho^{\mbox{(Cond)}}_i$
+    & $-\hat{b_i}$
+    & Individual parameter residuals for an individual.
+    & ETARES
+    & Not available in NONMEM. \\
+  \hline
+  $z^{\mbox{(Cond)}}_i$
+    & $\left\{ D(\alpha) \right\}^{-1/2} ( - \hat{b_i} )$
+    & Weighted individual parameter residuals for an individual.
+    & WETARES
+    & Not available in NONMEM. \\
+  \hline
+  \hline
+\end{tabular}
+\end{center}
+
+
+%-----------------------------------------------------------------
+\subsection{Other Extensions}
+%-----------------------------------------------------------------
+
+%[Remove]====================================================
+%
+\begin{center}
+\framebox{ARE THERE OTHERS?}
+\end{center}
+%
+%[Remove]====================================================
+
 
 
 %***************************************************************
@@ -139,9 +626,10 @@ SPK will have the following major modeling capabilities:
 %***************************************************************
 
 SPK will not support all of NONMEM's modeling capabilities.
-In particular, the modeling capabilities associated with the 
-NM-TRAN records and keywords that are discussed in this section 
-will be restricted as described below.
+
+In particular, the modeling capabilities associated with some 
+of the NM-TRAN records and keywords will be restricted.
+These restriction are discussed in this section.
 
 
 %-----------------------------------------------------------------
@@ -684,6 +1172,114 @@ return false;
 }
 \end{verbatim}
 \end{quotation}
+
+\newpage
+
+
+%***************************************************************
+%
+\section{Appendix: Individual Level Models}
+%
+%***************************************************************
+
+\label{App:IndLevelModels}.
+
+This appendix describes the models used at the individual level 
+by SPK and NONMEM.
+
+
+%-----------------------------------------------------------------
+\subsection{SPK Model for an Individual's Data}
+%-----------------------------------------------------------------
+
+SPK's model for the $j^{\mbox{th}}$ value of an individual's
+data is 
+  \begin{equation}
+    y_{(j)} = f_{(j)}(b) + e_{(j)} ,
+  \end{equation}
+where
+  \begin{equation}
+    R_{(j,k)}(b) = \mbox{cov}[e_{(j)},e_{(k)}] ,
+  \end{equation}
+and $b$ is the individual's vector of parameters.
+If the MAP Bayesian objective function is used, then 
+  \begin{equation}
+    D_{(p,q)} = \mbox{cov}[b_{(p)},b_{(q)}] ,
+  \end{equation}
+is the covariance of the individual's parameters.
+
+The output of SPK's individual level estimation is
+  \begin{equation}
+    b^{\mbox{Out}} ,
+  \end{equation}
+which is an estimate for the optimal value for the individual's
+parameters.
+
+
+%-----------------------------------------------------------------
+\subsection{NONMEM Model for an Individual's Data}
+%-----------------------------------------------------------------
+
+NONMEM's model 
+\footnote{
+  {\em NONMEM User's Guide - Part V}, NONMEM Project Group, 
+  pp. 23-31, 1994.
+} 
+for the $j^{\mbox{th}}$ value of an individual's data is 
+  \begin{equation}
+    y_{(j)} = f(x_{j}, \theta) + 
+      \sum_{m=1}^{n_{\Omega}} h_{(m)}(x_{j}, \theta) \eta_{(m)} .
+  \end{equation}
+where
+  \begin{equation}
+    \Omega_{(m,n)} = \mbox{cov}[\eta_{(m)},\eta_{(n)}] ,
+  \end{equation}
+$\theta$ and $\Omega$ are a vector and diagonal matrix of 
+the individual's parameters, 
+$x_{j}$ is a vector of known quantities for the individual
+such as times and covariates,
+and $n_{\Omega}$ is the number of elements along the diagonal
+of $\Omega$.
+NONMEM does not support the MAP Bayesian objective function
+at the individual level.
+
+The output of NONMEM's individual level estimation is
+  \begin{equation}
+    \left\{ \theta^{\mbox{Out}}, \Omega^{\mbox{Out}} \right\} ,
+  \end{equation}
+which are estimates for the optimal values for the individual's
+parameters.
+
+
+%-----------------------------------------------------------------
+\subsection{Comparison of the Models for an Individual's Data}
+%-----------------------------------------------------------------
+
+In these two formulations, $b$ and $\eta$ are not equivalent,
+and  there is no relationship between the covariance matrices 
+$D$ and $\Omega$.
+
+Although $e$ and $\eta$ are also not equivalent, 
+the covariance matrices $R(b)$ and 
+$\Omega$ are related as follows,
+  \begin{eqnarray*}
+    R_{(j,k)}(b) & = &  \mbox{cov} \left[
+      \sum_{m=1}^{n_{\Omega}} h_{(m)}(x_{j}, \theta) \eta_{(m)},
+      \sum_{n=1}^{n_{\Omega}} h_{(n)}(x_{k}, \theta) \eta_{(n)} \right] \\
+    & = & \sum_{m=1}^{n_{\Omega}} \sum_{n=1}^{n_{\Omega}} 
+      h_{(m)}(x_{j}, \theta) 
+      \mbox{cov} [ \eta_{(m)} , \eta_{(n)} ]
+      h_{(n)}(x_{k}, \theta)  \\
+    & = & \sum_{m=1}^{n_{\Omega}} \sum_{n=1}^{n_{\Omega}} 
+      h_{(m)}(x_{j}, \theta) 
+      \Omega_{(m,n)}
+      h_{(n)}(x_{k}, \theta) \\
+    & = & \sum_{m=1}^{n_{\Omega}}
+      h_{(m)}(x_{j}, \theta) 
+      \Omega_{(m,m)}
+      h_{(m)}(x_{k}, \theta) .
+  \end{eqnarray*}
+
 
 \newpage
 
