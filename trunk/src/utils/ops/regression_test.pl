@@ -78,6 +78,8 @@ $cmd = "load_spktest.pl";
 $bit_bucket = `$cmd`;
 print "\t\t\t\t\tOK\n";
 
+my $start_time = time();
+my $elapsed_time = 0;
 print "starting the aspkserver test daemon";
 $bit_bucket = `/etc/rc.d/init.d/spkcmptestd start`;
 $? == 0
@@ -113,7 +115,12 @@ while ($active_jobs) {
 	    $job_done{$job_id} = 1;
 	}
     }
-    sleep 10;
+    if ($active_jobs == 0) {
+	 $elapsed_time = time() - $start_time;
+    } 
+    else {
+	sleep 10;
+    }
 };
 &disconnect($dbh);
 
@@ -164,6 +171,7 @@ for ('cerr', 'srun') {
     };
 }
 print "\nNumber of jobs that differed: $jobs_that_differed\n";
+print "\nTotal elapsed time for compiling and running: $elapsed_time seconds\n";
 
 exit $jobs_that_differed;
 
