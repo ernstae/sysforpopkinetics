@@ -712,7 +712,7 @@ void IndPredModel::evalAllPred() const
   //------------------------------------------------------------
 
   // This message will be used if an error occurs.
-  string taskIndAndValMessage;
+  string taskMessage;
 
   bool isObsEvent;
   double fCurr;
@@ -727,7 +727,7 @@ void IndPredModel::evalAllPred() const
     // Evaluate the predicted value for the data for this event.
     //----------------------------------------------------------
 
-    taskIndAndValMessage = "during the evaluation of the " +
+    taskMessage = "during the evaluation of the " +
       intToOrderString( j + 1 ) + 
       " predicted value for the individual's data.";
 
@@ -756,7 +756,7 @@ void IndPredModel::evalAllPred() const
       // This error code should be replaced with one that is accurate.
       throw e.push(
         SpkError::SPK_MODEL_DATA_MEAN_ERR,
-        ( "An SpkException was thrown" + taskIndAndValMessage ).c_str(),
+        ( "An SpkException was thrown" + taskMessage ).c_str(),
         __LINE__,
         __FILE__ );
     }
@@ -764,7 +764,7 @@ void IndPredModel::evalAllPred() const
     {
       throw SpkException(
         stde,
-        ( "A standard exception was thrown " + taskIndAndValMessage ).c_str(),
+        ( "A standard exception was thrown " + taskMessage ).c_str(),
         __LINE__, 
         __FILE__ );
     }  
@@ -772,7 +772,7 @@ void IndPredModel::evalAllPred() const
     {
       throw SpkException(
         SpkError::SPK_UNKNOWN_ERR, 
-        ( "An unknown exception was thrown " + taskIndAndValMessage ).c_str(),
+        ( "An unknown exception was thrown " + taskMessage ).c_str(),
         __LINE__, 
         __FILE__ );
     }
@@ -789,7 +789,7 @@ void IndPredModel::evalAllPred() const
       throw SpkException(
         SpkError::SPK_MODEL_DATA_MEAN_ERR,
         ( "A non-observation event was encountered " + 
-          taskIndAndValMessage ).c_str(),
+          taskMessage ).c_str(),
         __LINE__,
         __FILE__ );
     }
@@ -1453,7 +1453,7 @@ void IndPredModel::doDataMean( valarray<double>& ret ) const
   //------------------------------------------------------------
 
   // This message will be used if a value is not valid.
-  string taskIndAndValMessage;
+  string taskMessage;
   int j;
 
   // Set the values for the mean of the data:
@@ -1466,8 +1466,8 @@ void IndPredModel::doDataMean( valarray<double>& ret ) const
     // Set this element.
     dataMeanCurr[j] = Value( wCurr[j + fOffsetInW] );
 
-    taskIndAndValMessage = "during the evaluation of the " +
-      intToOrderString( j + 1 ) + " mean of the individual's data.";
+    taskMessage = "during the evaluation of the mean of the " +
+      intToOrderString( j + 1 ) + " value for the individual's data.";
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // [Revisit - Infinite Macro Does Not Seem to Work - Mitch]
@@ -1481,7 +1481,7 @@ void IndPredModel::doDataMean( valarray<double>& ret ) const
       // This error code should be replaced with one that is accurate.
       throw SpkException(
         SpkError::SPK_MODEL_DATA_MEAN_ERR,
-        ( "An infinite value was generated " + taskIndAndValMessage ).c_str(),
+        ( "An infinite value was generated " + taskMessage ).c_str(),
         __LINE__,
         __FILE__ );
     }
@@ -1496,7 +1496,7 @@ void IndPredModel::doDataMean( valarray<double>& ret ) const
       throw SpkException(
         SpkError::SPK_MODEL_DATA_MEAN_ERR,
         ( "A value that is Not a Number (NaN) was generated " + 
-          taskIndAndValMessage ).c_str(),
+          taskMessage ).c_str(),
         __LINE__,
         __FILE__ );
     }
@@ -1760,7 +1760,7 @@ void IndPredModel::doDataVariance( valarray<double>& ret ) const
   //------------------------------------------------------------
 
   // This message will be used if a value is not valid.
-  string taskIndAndValMessage = 
+  string taskMessage = 
     "during the evaluation of the variance of the individual's data.";
 
   // Check the diagonal elements of the data variance:
@@ -1783,7 +1783,7 @@ void IndPredModel::doDataVariance( valarray<double>& ret ) const
       // This error code should be replaced with one that is accurate.
       throw SpkException(
         SpkError::SPK_MODEL_DATA_MEAN_ERR,
-        ( "An infinite value was generated " + taskIndAndValMessage ).c_str(),
+        ( "An infinite value was generated " + taskMessage ).c_str(),
         __LINE__,
         __FILE__ );
     }
@@ -1799,7 +1799,7 @@ void IndPredModel::doDataVariance( valarray<double>& ret ) const
       throw SpkException(
         SpkError::SPK_MODEL_DATA_MEAN_ERR,
         ( "A value that is Not a Number (NaN) was generated " + 
-          taskIndAndValMessage ).c_str(),
+          taskMessage ).c_str(),
         __LINE__,
         __FILE__ );
     }
