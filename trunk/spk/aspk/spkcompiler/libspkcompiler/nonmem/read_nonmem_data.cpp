@@ -1,6 +1,7 @@
 #include "read_nonmem_data.h"
 #include "../SymbolTable.h"
 #include "../SpkParameters.h"
+#include <spk/SpkValarray.h>
 
 #include <xercesc/dom/DOM.hpp>
 #include <map>
@@ -9,6 +10,7 @@
 #include <valarray>
 #include <vector>
 
+using SPK_VA::valarray;
 using namespace xercesc;
 using namespace std;
 
@@ -16,8 +18,8 @@ void read_nonmem_data(
 	xercesc::DOMElement* dataNode, 
         int nIndividuals,
 	SymbolTable & table,
-	map<nonmem::LABEL, nonmem::ALIAS> &label_alias_mappingOut,
-	vector< map<nonmem::LABEL, nonmem::MEASUREMENT> > & data_forOut,
+	map<string, string> &label_alias_mappingOut,
+	vector< map<string, valarray<double> > > & data_forOut,
 	string order_id_pairOut[],
         struct SpkParameters & spkOut 
       )
@@ -37,6 +39,7 @@ void read_nonmem_data(
 						   NULL,
 						   false );
        
+  assert( doc->getElementsByTagName( X("individual"))->getLength() == nIndividuals );
   //=================================================================================
   //
   // Traversing the DATA tree to gather information.
@@ -186,7 +189,7 @@ void read_nonmem_data(
 	      // Register the label-values pair in the data_forOut map.
 	      //
 	      data_forOut[order].insert( 
-		   pair<nonmem::LABEL, nonmem::MEASUREMENT >
+		   pair<string, valarray<double> >
 		   (label, values) );
 
 	      Symbol Label( label, Symbol::VECTOR, Symbol::DOUBLE, true );

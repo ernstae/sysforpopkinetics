@@ -255,7 +255,7 @@ struct SpkParameters{
    * The kind of matrix used as a basis for analysing the final
    * estimation for the population parameter.
    * @code
-   * enum PopCovForm = {E, R, S}
+   * enum PopCovForm = {RSR, R, S}
    * @endcode
    * @note Required when any of @a isPopStderrorOut, @a isPopCorrelatonOut,
    * @a isPopCovarianceOut, @a isPopCoefficientOut or @a isPopConfidenceOut

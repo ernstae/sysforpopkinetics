@@ -1,4 +1,6 @@
 #include <spk/Objective.h>
+#include <spk/SpkValarray.h>
+
 #include "nonmem/NonmemTranslator.h"
 #include "SpkCompilerUtil.h"
 #include "read_content.h"
@@ -11,6 +13,7 @@
 
 #include <iostream>
 
+using SPK_VA::valarray;
 using namespace xercesc;
 using namespace std;
 
@@ -383,19 +386,11 @@ void NonmemTranslator::translate( DOMDocument* tree )
   DOMElement * contentTree
     = dynamic_cast<DOMElement*>( tree->getElementsByTagName( X("content") )->item(0) );
   assert( contentTree != NULL );
-  if( !read_content( contentTree, spkinml_verOut, client_typeOut, analysis_typeOut ) )
-    {
-      char buf[] = "Rough content checking failed!";
-      exit( error(buf, __LINE__, __FILE__) );
-    }
-  if( client_typeOut != client::NONMEM )
-    {
-      char buf[] = "Client type must be NONMEM!";
-      exit( error(buf, __LINE__, __FILE__) );
-    }
+  pair<bool, bool> p = read_content( contentTree, spkinml_verOut, client_typeOut, analysis_typeOut );
 
   ourSpk.analysis = analysis_typeOut;
-
+  ourSpk.isEstimation = p.first;
+  ourSpk.isSimulation = p.second;
 
   //
   // Read <driver> section.
@@ -430,7 +425,7 @@ void NonmemTranslator::translate( DOMDocument* tree )
   // | label_x |   | alias_x |
   // +---------+   +---------+
   //
-  map<nonmem::LABEL, nonmem::ALIAS> label_alias_mapping;
+  map<string, string> label_alias_mapping;
 
 
   //
@@ -457,7 +452,7 @@ void NonmemTranslator::translate( DOMDocument* tree )
   //                +---------+
   //                    ...
   // 
-  vector< map< nonmem::LABEL, nonmem::MEASUREMENT > > data_for( nIndividuals );
+  vector< map< string, valarray<double>  > > data_for( nIndividuals );
 
   //
   // This table records the processing order vs. the identifier pair of each
@@ -511,8 +506,8 @@ void NonmemTranslator::translate( DOMDocument* tree )
 std::vector<std::string> NonmemTranslator::emit(
 		  int nIndividuals,
                   const SymbolTable * table,
-                  const std::map<nonmem::LABEL, nonmem::ALIAS> & label_alias_mapping,
-                  const std::vector< std::map<nonmem::LABEL, nonmem::MEASUREMENT > > & data_for,
+                  const std::map<string, string> & label_alias_mapping,
+                  const std::vector< std::map<string, valarray<double>  > > & data_for,
                   const std::string order_id_pair[]
 )
 {

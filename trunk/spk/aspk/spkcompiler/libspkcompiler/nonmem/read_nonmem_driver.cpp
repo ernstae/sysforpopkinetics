@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "nonmem/read_nonmem_driver.h"
+#include <spk/popStatistics.h>
 
 using namespace std;
 using namespace xercesc;
@@ -54,7 +55,7 @@ int read_nonmem_driver(
   DOMDocument *doc = driverNode->getOwnerDocument( );
   DOMTreeWalker * walker = doc->createTreeWalker( driverNode, DOMNodeFilter::SHOW_ELEMENT, NULL, false  );
   DOMElement *driverElement = dynamic_cast<DOMElement*>( walker->firstChild() );
-
+  
   while( driverElement != NULL )
     {
       const char * driverElementName = C( driverElement->getNodeName() );
@@ -375,7 +376,7 @@ void read_theta( DOMElement* thetaNode,
 }
 
 //
-// <omega span="xxx" struct(diagonal|block)>
+// <omega dimension="xxx" struct(diagonal|block)>
 //        <in fixed=(yes|no)>
 //            <value>xxx</value>
 //            <value>xxx</value>
@@ -389,11 +390,11 @@ void read_omega( DOMElement* omegaNode,
   DOMTreeWalker * walker = doc->createTreeWalker( omegaNode, DOMNodeFilter::SHOW_ELEMENT, NULL, false  );
 
   //
-  // <omega span CDATA #REQUIRED>
+  // <omega dimension CDATA #REQUIRED>
   //
-  assert( XMLString::stringLen(omegaNode->getAttribute( X( "span" ) ) ) > 0 );
-  int span = atoi( C( omegaNode->getAttribute( X( "span" ) ) ) );
-  assert( span > 0 );
+  assert( XMLString::stringLen(omegaNode->getAttribute( X( "dimension" ) ) ) > 0 );
+  int dimension = atoi( C( omegaNode->getAttribute( X( "dimension" ) ) ) );
+  assert( dimension > 0 );
   
   //
   // <omega struct (diagonal|block) #REQUIRED>
@@ -405,7 +406,7 @@ void read_omega( DOMElement* omegaNode,
       assert( strcmp( C( omegaNode->getAttribute( X( "struct" ) ) ), 
 		      "block" ) == 0 );
     }
-  int dimensions = (isDiag? span : span*(span+1)/2 );
+  int dimensions = (isDiag? dimension : dimension*(dimension+1)/2 );
   nonmemOut.omegaIn.resize( dimensions );
   nonmemOut.omegaFixed.resize( dimensions );
   
@@ -433,7 +434,7 @@ void read_omega( DOMElement* omegaNode,
 }
 
 //
-// <sigma span="xxx" struct=(diagonal|block)>
+// <sigma dimension="xxx" struct=(diagonal|block)>
 //    <in fixed=(yes|no)>
 //       <value>xxx</value>
 //       <value>xxx</value>
@@ -448,11 +449,11 @@ void read_sigma( DOMElement* sigmaNode,
   DOMTreeWalker * walker = doc->createTreeWalker( sigmaNode, DOMNodeFilter::SHOW_ELEMENT, NULL, false  );
   
   //
-  // <simga span CDATA #REQUIRED>
+  // <simga dimension CDATA #REQUIRED>
   //
-  assert( XMLString::stringLen(sigmaNode->getAttribute( X( "span" ) ) ) > 0 );
-  int span = atoi( C( sigmaNode->getAttribute( X( "span" ) ) ) );
-  assert( span > 0 );
+  assert( XMLString::stringLen(sigmaNode->getAttribute( X( "dimension" ) ) ) > 0 );
+  int dimension = atoi( C( sigmaNode->getAttribute( X( "dimension" ) ) ) );
+  assert( dimension > 0 );
   
   //
   // <sigma struct (diagonal|block) #REQUIRED>
@@ -465,7 +466,7 @@ void read_sigma( DOMElement* sigmaNode,
 		      "block" ) == 0 );
     }
   
-  int dimensions = (isDiag? span : span*(span+1)/2 );
+  int dimensions = (isDiag? dimension : dimension*(dimension+1)/2 );
   nonmemOut.sigmaIn.resize( dimensions );
   nonmemOut.sigmaFixed.resize( dimensions );
   
@@ -614,7 +615,24 @@ void read_pop_stat(DOMElement* pop_statNode,
 {
   DOMDocument *doc = pop_statNode->getOwnerDocument( );
   DOMTreeWalker * walker = doc->createTreeWalker( pop_statNode, DOMNodeFilter::SHOW_ELEMENT, NULL, false  );
- 
+
+  // covariance formulation {RSR, R, S}
+  assert( pop_statNode->getAttribute( X("covariance_form") ) != NULL );
+  assert( XMLString::stringLen(pop_statNode->getAttribute( X("covariance_form") ) ) > 0 );
+  enum PopCovForm cov;
+  const char * cov_str = C( pop_statNode->getAttribute( X("covariance_form") ) );
+  if( strcmp( cov_str, "rsr" ) == 0 )
+	  cov = RSR;
+  else if( strcmp( cov_str, "r" ) == 0 )
+	  cov = R;
+  else if( strcmp( cov_str, "s" ) == 0 )
+	  cov = S;
+  else
+  {
+	  fprintf( stderr, "Invalid covariance form <%s> specified!!!\n", cov_str );
+          abort();	  
+  }
+  
   // stderror (yes|no)
   assert( pop_statNode->getAttribute( X("stderror") ) != NULL );
   assert( XMLString::stringLen(pop_statNode->getAttribute( X("stderror") ) ) > 0 );

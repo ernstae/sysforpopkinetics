@@ -16,8 +16,10 @@
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/framework/StdOutFormatTarget.hpp>
 #include <spk/printInMatrix.h>
+#include <spk/SpkValarray.h>
 #include <nonmem/read_nonmem_data.h>
 
+using SPK_VA::valarray;
 using namespace std;
 using namespace CppUnit;
 using namespace xercesc;
@@ -176,7 +178,7 @@ void read_nonmem_dataTest::testOrderMixedUp()
   // | label_x |   | alias_x |
   // +---------+   +---------+
   //
-  map<nonmem::LABEL, nonmem::ALIAS> label_alias_mapping;
+  map<string, string> label_alias_mapping;
 
 
   //
@@ -203,7 +205,7 @@ void read_nonmem_dataTest::testOrderMixedUp()
   //                +---------+
   //                    ...
   // 
-  vector< map<nonmem::LABEL, nonmem::MEASUREMENT > > data_for( nIndividuals );
+  vector< map<string, valarray<double>  > > data_for( nIndividuals );
 
   //
   // This table records the processing order vs. the identifier pair of each
@@ -235,7 +237,7 @@ void read_nonmem_dataTest::testOrderMixedUp()
       CPPUNIT_ASSERT_EQUAL( (int)data_for[i].size(), nObservations );
 
       //      cout << "order = " << i << ", ID = " << id << endl;
-      map<nonmem::LABEL, nonmem::MEASUREMENT >::const_iterator column 
+      map<string, valarray<double> >::const_iterator column 
 	= data_for[i].begin();
 
       for( int j=0; j<nObservations, column != data_for[i].end(); j++ )

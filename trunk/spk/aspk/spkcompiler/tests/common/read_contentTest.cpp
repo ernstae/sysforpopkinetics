@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestCaller.h>
@@ -75,11 +76,16 @@ void read_contentTest::test()
     contentNode->setAttribute( XMLString::transcode( "spkinml_ver" ), XMLString::transcode( "1.1" ) );
     contentNode->setAttribute( XMLString::transcode( "client" ), XMLString::transcode( client::STR_NOT_SUPPORTED ) );
     contentNode->setAttribute( XMLString::transcode( "analysis" ), XMLString::transcode( "individual" ) );
+    contentNode->setAttribute( XMLString::transcode( "estimation" ), XMLString::transcode( "yes" ) );
+    contentNode->setAttribute( XMLString::transcode( "simulation" ), XMLString::transcode( "yes" ) );
 
-    read_content( contentNode, verOut, clientOut, analysisOut );
+    pair<bool, bool> p = read_content( contentNode, verOut, clientOut, analysisOut );
+
     CPPUNIT_ASSERT_MESSAGE( verOut, verOut == "1.1" );
     CPPUNIT_ASSERT_MESSAGE( client::toString(clientOut), clientOut == client::NOT_SUPPORTED );
     CPPUNIT_ASSERT_MESSAGE( "should be population", analysisOut == SpkParameters::INDIVIDUAL );
+    CPPUNIT_ASSERT( p.first );
+    CPPUNIT_ASSERT( p.second );
 
     XMLPlatformUtils::Terminate();
 }

@@ -2,6 +2,7 @@
 #define READ_CONTENT_H
 
 #include <string>
+#include <map>
 #include <xercesc/dom/DOM.hpp>
 #include "client.h"
 #include "SpkParameters.h"
@@ -25,31 +26,38 @@
  *
  * @code
  * <!ELEMENT content (#PCDATA)>
- * <!ATTLIST content spkinml_ver CDATA #FIXED "1.0">
- * <!ATTLIST content client (nonmem) #REQUIRED>
- * <!ATTLIST content analysis (population|individual) #REQUIRED>
+ * 
+ * <!ATTLIST content spkinml_ver CDATA                  #FIXED "1.0">
+ * <!ATTLIST content client     (nonmem)                #REQUIRED>
+ * <!ATTLIST content analysis   (population|individual) #REQUIRED>
+ * <!ATTLIST content estimation (yes|no)                #REQUIRED>
+ * <!ATTLIST content simulation (yes|no)                #REQUIRED>
  *
  * @endcode
  *
- * @return false if any of "spkinml_ver", "client" or"analysis" attribute
- * were missing in the <content> element, true otherwise.
+ * @return a pair of boolean values.  The first element is true
+ * if the value of @a estimation attribute is @a yes and false if 
+ * @a no.  The second element is true if the value of @a simulation
+ * is @a yes and false if @a no.
  *
  * @param content_node is a pointer to the DOMElement node that
  * represents the root of <content> subtree.
  *
- * @param spkml_verOut will contain a string extracted as
- * the value of a <content> attribute, "spkinml_ver".
+ * @param spkml_verOut will be the value of @a spkinml_ver attribute.
  *
- * @param clientOut will contain an enum value extracted as
- * the value of a <content> attribute, "client".
+ * @param clientOut will be a @a client::type enum value equivalent
+ * to the value of @a client attribute.  
+ * @c nonmem yields in @c client::NONMEM.
  *
- * @param analysisOut will contain an enum value extracted as
- * the value of a <content> attribute, "analysis".
+ * @param analysisOut will be a @a SpkParameters::Analysis enum value
+ * equivalent to the value of @a analysis attribute.
+ * @c population yields in @c SpkParameters::POPULATION.
+ * @c individual yields in @c SpkParameters::INDIVIDUAL.
  *
  */
-bool read_content( xercesc::DOMElement * content_node, 
-		   std::string & spkml_verOut, 
-		   enum client::type & clientOut, 
-		   enum SpkParameters::Analysis& analysisOut  );
+std::pair<bool, bool> read_content( xercesc::DOMElement * content_node, 
+				    std::string & spkml_verOut, 
+				    enum client::type & clientOut, 
+				    enum SpkParameters::Analysis& analysisOut );
 
 #endif

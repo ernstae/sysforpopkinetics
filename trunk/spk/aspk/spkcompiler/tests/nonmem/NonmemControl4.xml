@@ -20,12 +20,12 @@
 			<value>0.9</value>
                 </up>
         </theta>
-        <sigma span="1" struct="diagonal">
+        <sigma dimension="1" struct="diagonal">
                 <in>
                         <value>0.4</value>
                 </in>
         </sigma>
-        <omega span="3" struct="block">
+        <omega dimension="3" struct="block">
                 <in>
                         <value>2.44949</value>
                         <value>0.00204124</value>
@@ -62,7 +62,7 @@
                  deriv2_out="no"/>
 
 
-	<pop_stat formulation="yes"
+	<pop_stat covariance_form="rsr"
                   stderror="yes" 
                   correlation="yes"
                   covariance="yes"
