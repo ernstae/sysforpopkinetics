@@ -252,7 +252,11 @@ $syntax/
 /$$
 This $xref/Optimizer//Optimizer/$$ object contains the information 
 that controls the optimization process.
-Each of its elements is described separately below.
+Most of this information is accessible via public get functions,
+e.g., the value epsilon is returned by the function getEpsilon.
+The following subsections specify how this function uses each
+of the elements of the Optimizer object that is accessed in
+this way.
 
 $subhead optimizer.epsilon$$
 This real number is used to specify the convergence criteria
@@ -300,23 +304,12 @@ $$
 For more details on the tracing see the description of the level 
 parameter for the optimizer QuasiNewton01Box.
 
-$subhead optimizer.nMaxIter$$
-
-$subhead optimizer.nMaxIter$$
-If the throwxEcepIfMaxIter parameter is true, then when
-the maximum number of iterations is exhausted, an exception will
-be thrown and the output values for this function will not be set.
-Otherwise, the calling program will
-need to check the parameter isTooManyIter to see if the 
-maximum number of iterations was exhausted.
-
 $subhead 
 
 optimizer.nIterCompleted$$
 
 This integer scalar holds the number of iteration that have been 
-completed in the optimizer.  The initial value of $code  0$$ is set 
-at the construction time.
+completed in the optimizer.
 
 $subhead 
 
@@ -339,7 +332,12 @@ optimizer.throwExcepIfMaxIter$$
 
 This flag indicates if the optimizer should throw an exception when
 the maximum number of iterations is exhausted.
-It is set to $code true$$ at the construction time.
+If this parameter is true, then when
+the maximum number of iterations is exhausted, an exception will
+be thrown and the output values for this function will not be set.
+Otherwise, the calling program will
+need to check the parameter isTooManyIter to see if the 
+maximum number of iterations was exhausted.
 
 $subhead 
 
