@@ -6,7 +6,8 @@ compiler_SOURCES = \
 	../config.h \
 	compiler.cpp
 
-AM_LDFLAGS = -lxerces-c -lspkcompiler
+AM_LDFLAGS = -lxerces-c -lspkcompiler -latlas_lapack -lcblas -latlas -lpthread -lm
+
 INCLUDES = \
 	-I@top_srcdir@/ \
 	-I@top_srcdir@/spkcompiler/ \
