@@ -307,14 +307,22 @@ void NonmemTranslator::translate( DOMDocument* tree )
   //
   string order_id_pair[ nIndividuals + 1 ];
 
-
   SymbolTable table;
+  Symbol theta( "theta", Symbol::VECTOR, Symbol::DOUBLE, true );
+  Symbol eta(   "eta",   Symbol::VECTOR, Symbol::DOUBLE, true );
+  Symbol omega( "omega", Symbol::MATRIX, Symbol::DOUBLE, true );
+  Symbol sigma( "sigma", Symbol::MATRIX, Symbol::DOUBLE, true );
+  table.insert( theta );
+  table.insert( eta );
+  table.insert( omega );
+  table.insert( sigma );
 
   assert( tree->getElementsByTagName( X("data") ) != NULL );
   DOMElement * dataNode = dynamic_cast<DOMElement*>( tree->getElementsByTagName( X("data") )->item(0) );
   assert( dataNode != NULL );
 
-  read_nonmem_data( dataNode, nIndividuals, table, label_alias_mapping, data_for, order_id_pair );
+  read_nonmem_data( dataNode, nIndividuals, table, label_alias_mapping, data_for, order_id_pair,
+                    ourSpk );
   
   assert( tree->getElementsByTagName( X("model") ) != NULL );
   DOMElement * modelNode = dynamic_cast<DOMElement*>( tree->getElementsByTagName( X("model") )->item(0) );
@@ -341,11 +349,10 @@ std::vector<std::string> NonmemTranslator::emit(
   char driver_cpp[]    = "main.cpp";
   char SpkModel_name[] = "SpkModel";
 
-
   FILE * pDriver_cpp = fopen( driver_cpp, "w" );
   emit_driver( pDriver_cpp, nIndividuals, SpkModel_name, ourSpk );
   fclose( pDriver_cpp );
-  
+ 
   char IndData_h[] = "IndData.h";
   FILE * pIndData_h = fopen( IndData_h, "w" );
   emit_IndData(   pIndData_h, 
@@ -376,7 +383,8 @@ std::vector<std::string> NonmemTranslator::emit(
 
   fclose( pIndData_cpp );
   
-	
+  vector<string> filenames(3);
+  return filenames;
 }
 const struct SpkParameters * NonmemTranslator::getSpkParameters() const
 {

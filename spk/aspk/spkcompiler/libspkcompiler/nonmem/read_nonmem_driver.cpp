@@ -78,6 +78,7 @@ int read_nonmem_driver(
       else if( strcmp( driverElementName, "pop_opt" ) == 0 )
 	{
 	  read_pop_opt( driverElement, spkOut, nonmemOut );
+          nIndividuals = spkOut.nIndividuals;
 	}
       else if( strcmp( driverElementName, "ind_opt" ) == 0 )
 	{

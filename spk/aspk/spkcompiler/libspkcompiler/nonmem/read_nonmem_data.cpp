@@ -1,10 +1,13 @@
 #include "read_nonmem_data.h"
 #include "../SymbolTable.h"
+#include "../SpkParameters.h"
 
 #include <xercesc/dom/DOM.hpp>
 #include <map>
 #include <string>
 #include <iostream>
+#include <valarray>
+#include <vector>
 
 using namespace xercesc;
 using namespace std;
@@ -15,10 +18,13 @@ void read_nonmem_data(
 	SymbolTable & table,
 	map<NonmemTranslator::LABEL, NonmemTranslator::ALIAS> &label_alias_mappingOut,
 	map<NonmemTranslator::LABEL, NonmemTranslator::MEASUREMENT> data_forOut[],
-	string order_id_pairOut[]
+	string order_id_pairOut[],
+        struct SpkParameters & spkOut 
       )
 {
   assert( dataNode != NULL );
+  spkOut.nMeasurementsAll.resize( nIndividuals );
+  std::vector<double> y_temp;
 
   //
   // Get the list of <individual> nodes.  Each <individual> node is the root
@@ -60,7 +66,7 @@ void read_nonmem_data(
   // If either of them is "skip" or "drop", ignore the entire measurement vector.
   //
   DOMElement * individual = dynamic_cast<DOMElement*>( walker->firstChild() );
-  for( int i=0; i<nIndividuals; i++ )
+  for( int i=0, y_pos=0; i<nIndividuals; i++ )
     {
       //      DOMElement * individual = dynamic_cast<DOMElement*>( individualsList->item(i) );
 
@@ -126,7 +132,6 @@ void read_nonmem_data(
 	  //
 	  const XMLCh * xml_label = item->getAttribute( X("label" ) );
 	  assert( !XMLString::isAllWhiteSpace( xml_label ) );
-
 	  const XMLCh * xml_synonym = item->getAttribute( X("synonym") );
 
 	  const XMLCh* X_SKIP = X("skip");
@@ -134,13 +139,13 @@ void read_nonmem_data(
 	  if( XMLString::equals( xml_label, X_SKIP ) || XMLString::equals( xml_label, X_DROP )
 	      || XMLString::equals( xml_synonym, X_SKIP ) || XMLString::equals( xml_synonym, X_DROP ) )
 	    {
-	      // This column is to be ignored.
+	      // This record is to be ignored.
 	    }
 	  else
 	    {
-	      const string label = string( C( xml_label ) );
+	      const string label   = string( C( xml_label ) );
 	      const string synonym = string( C( xml_synonym ) );
-
+	      
 	      label_alias_mappingOut[ label ] = synonym;
 	      //
 	      // Now, go though the set (column) of measurement data.
@@ -180,12 +185,20 @@ void read_nonmem_data(
 	      //
 	      // Register the label-values pair in the data_forOut map.
 	      //
-	      data_forOut[order].insert( pair<NonmemTranslator::LABEL, NonmemTranslator::MEASUREMENT >(label, values) );
+	      data_forOut[order].insert( 
+		   pair<NonmemTranslator::LABEL, NonmemTranslator::MEASUREMENT >
+		   (label, values) );
 
 	      Symbol Label( label, Symbol::VECTOR, Symbol::DOUBLE, true );
 	      Label.size( nMeasurements );
 	      table.insert( Label );
               
+              if( label == "dv" || synonym == "dv" )
+		{
+		  spkOut.nMeasurementsAll[order] = nMeasurements;
+                  for( int j=0; j<nMeasurements; j++ )
+		    y_temp.push_back( values[j] );
+		}      
 
 	      walker->parentNode();
 	    } 
@@ -195,4 +208,8 @@ void read_nonmem_data(
       walker->parentNode();
       individual = dynamic_cast<DOMElement*>( walker->nextSibling() );
     }
+
+  spkOut.measurementsAll.resize( y_temp.size() );
+  for( int i=0; i<y_temp.size(); i++ )
+    spkOut.measurementsAll[i] = y_temp[i];
 }

@@ -3,7 +3,9 @@
 
 #include <xercesc/dom/DOM.hpp>
 #include <map>
+#include <valarray>
 #include "../SymbolTable.h"
+#include "../SpkParameters.h"
 #include "NonmemTranslator.h"
 /**
  * @file read_nonmem_data.h
@@ -27,6 +29,7 @@ void read_nonmem_data(
 	SymbolTable & table,
 	std::map<NonmemTranslator::LABEL, NonmemTranslator::ALIAS> &label_alias_mappingOut,
 	std::map<NonmemTranslator::LABEL, NonmemTranslator::MEASUREMENT> data_forOut[],
-	std::string order_id_pairOut[]
+	std::string order_id_pairOut[],
+        struct SpkParameters & spk
 	);
 #endif
