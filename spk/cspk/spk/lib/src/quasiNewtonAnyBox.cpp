@@ -44,6 +44,8 @@
 /*
 $begin quasinewtonanybox$$
 $spell 
+  Bfgs
+  pos
   bool
   cmath
   complimentarity

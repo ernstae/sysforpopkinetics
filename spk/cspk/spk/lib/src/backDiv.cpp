@@ -43,6 +43,7 @@
 /*
 $begin backDiv$$
 $spell 
+    Exception exception
     div 
     const 
     lu 
@@ -88,7 +89,7 @@ $pre
 $$
 $head Description$$
 Solve $math%A x = B%$$ for $italic x$$, which is often expressed as $math%A \ B = x%$$,
-using LU decomposition for A being a postivie definite matrix.
+using LU decomposition for A being a positive definite matrix.
 Given A as a $math%m by n%$$ matrix and B as $math%m by l%$$ where $math%m = n%$$,
 the solution $math%x%$$ has $math%m by l%$$ dimensions.
 $pre
@@ -115,7 +116,7 @@ $syntax/
 
 &/B/
 /$$
-is the right hand side quantities reprented in the form of $math%m by l%$$ matrix.
+is the right hand side quantities represented in the form of $math%m by l%$$ matrix.
 
 $head Example$$
 If you compile, link, and run the following program:

@@ -45,7 +45,9 @@
 $begin ppkaOpt$$
 
 $spell
-	Model model
+  throwExcepIfMaxIter
+  struct
+  Model model
   bool
   cbc
   cmath
@@ -132,7 +134,7 @@ $syntax/void ppkaOpt( SpkModel&       /model/,
 
 $tend
 
-See also: $xref/ppkaOptParallel//ppkaOpt Parallel Version/$$, $xref/fitPopulation//fitPopulation/$$
+See also: $xref/fitPopulation//fitPopulation/$$
 $fend 25$$
 
 $center

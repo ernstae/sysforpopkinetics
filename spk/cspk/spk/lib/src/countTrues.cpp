@@ -44,6 +44,12 @@
 /*
 $begin countTrues$$
 $spell 
+  const
+  iostream
+  namespace
+  std
+  cout
+  endl
 $$
 
 $section Count Trues$$

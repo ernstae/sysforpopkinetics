@@ -1701,6 +1701,7 @@ $spell
   getPar
   Optimizer
   par
+  valarray
 $$
 
 $section Get the current objective function parameter value$$

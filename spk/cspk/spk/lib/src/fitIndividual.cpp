@@ -52,7 +52,10 @@
 $begin fitIndividual$$
 
 $spell
-	Model model
+  throwExcepIfMaxIter
+  const
+  struct
+  Model model
   SPK_VA
   Rval
   fval

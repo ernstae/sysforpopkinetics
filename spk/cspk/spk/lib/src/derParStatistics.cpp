@@ -44,6 +44,7 @@
 $begin derParStatistics$$
 
 $spell
+  Deg
   Model model
   valarray
   Cov
@@ -422,6 +423,7 @@ void derParStatistics(
 $begin derParStatisticsInactiveElem$$
 
 $spell
+  Deg
   Model model
   valarray
   Cov
@@ -637,7 +639,7 @@ If it points to NULL, it will remain unchanged.
 If it points to a valarray sized other than n * n, the resulting
 behavior is undetermined.
 
-The $math%(i, j)%$$-th element of the corration matrix
+The $math%(i, j)%$$-th element of the correlation matrix
 will be replaced by NaN if $code mask[i]$$ or $code mask[j]$$ is $math%false%$$.
 
 $syntax/

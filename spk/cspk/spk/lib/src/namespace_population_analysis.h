@@ -26,6 +26,7 @@ $spell
    laplace
    hessian
    const
+   namespace_population_analysis
 $$
 
 $section Population Analysis Namespace$$

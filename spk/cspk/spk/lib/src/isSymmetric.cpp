@@ -61,6 +61,11 @@
 /*
 $begin isSymmetric$$
 $spell 
+  iostream
+  namespace
+  std
+  cout
+  endl
   bool
   const
   valarray

@@ -211,7 +211,7 @@
   /yOut/
   /$$
   Simulated data for each subject is placed in the $code valarray<double>$$ 
-  $italic yOut$$.  The input size of $italic yOut$$ must be sized to the total number of measurments 
+  $italic yOut$$.  The input size of $italic yOut$$ must be sized to the total number of measurements 
   prior to the call.  $italic yOut$$ is a column vector; the first $italic N[0]$$
   elements correspond to the data for the 1st individual, the next $italic N[1]$$
   elements correspond to the data for the 2nd individual, etc.

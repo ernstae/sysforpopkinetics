@@ -45,6 +45,8 @@
 $begin mapOpt$$
 
 $spell
+  throwExcepIfMaxIter
+  struct 
   Model model
   valarray
   Rval

@@ -41,6 +41,8 @@ $begin mapObj$$
 $escape #$$
 
 $spell
+    throwExcepIfMaxIter
+    const
   Model model
     bool
     const

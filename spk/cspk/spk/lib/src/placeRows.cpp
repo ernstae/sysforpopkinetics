@@ -45,6 +45,15 @@
 /*
 $begin placeRows$$
 $spell 
+  std
+  namespace
+  cout
+  endl
+  Cols
+  Muls
+  Mul
+  iostream
+  const
 $$
 
 $section Place The Rows of A in Specified Rows of B$$
@@ -57,7 +66,7 @@ $bold Prototype:$$   $cend
 $syntax/const DoubleMatrix placeRows(const DoubleMatrix& A, DoubleMatrix& B, const DoubleMatrix& mask)/$$
 $tend
 
-See also: $xref/getMulRows//getMulRows/$$, $xref/getMulCols//getMulCols/$$, $xref/placeCols//placeCols/$$
+See also: $xref/getMulRows//getMulRows/$$, $xref/getMulCols//getMulCols/$$
 $fend 25$$
 
 $center

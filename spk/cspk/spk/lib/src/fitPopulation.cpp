@@ -54,6 +54,8 @@
 $begin fitPopulation$$
 
 $spell
+  throwExcepIfMaxIter
+  struct
   Model model
   Objective objective
   SPK_VA
@@ -167,8 +169,7 @@ $syntax/void fitPopulation(
 $tend
 
 See also: $xref/SpkModel//SpkModel/$$, $xref/SpkValarray//SPK_VA::valarray/$$,
-$xref/Optimizer//Optimizer/$$, $xref/Objective//Objective/$$, 
-$xref/DirBasedParallelControls//DirBasedParallelControls/$$.
+$xref/Optimizer//Optimizer/$$, $xref/Objective//Objective/$$ 
 
 $fend 25$$
 
@@ -800,19 +801,7 @@ $syntax/
 
 /dirBasedParallelControls/ (optional)
 /$$
-This is an object of the $xref/DirBasedParallelControls//DirBasedParallelControls/$$ 
-class.  This class encapsulates three controlling parameters for the program running
-in parallel processing mode.  
-The default value is set to execute in single process mode.
-$pre
-
-$$
-When running in parallel mode, this routine expects individual parameters to be
-optimized and returned by $xref/Node//Node(s)/$$.  If no Node participates, the system
-still sits and waits forever.  For overall discussion of parallel execution, 
-see $xref/ParallelOverall//Overall/$$.  For system requirements
-for parallel execution, see $xref/ParallelRequirements//Requirements/$$.
-
+This option is disabled.
 
 $head Example$$
 The following demonstrates running fitPopulation() in the single processing mode.
