@@ -218,6 +218,7 @@ sub death {
     if ($lockfile_exists) {
 	unlink($lockfile_path);
     }
+
     # Log final message, then close the system log
     syslog("info", "stop");
     closelog();
@@ -566,6 +567,17 @@ sub stop {
 
     # Remove reaper as catcher of SIGCHLD
     $SIG{'CHLD'} = 'DEFAULT';
+
+    # Remove the lockfile
+    if ($lockfile_exists) {
+	unlink($lockfile_path);
+	$lockfile_exists = 0;
+    }
+
+    # Close the connection to the database
+    if ($database_open) {
+	&disconnect($dbh)
+    }
 
     # Send the TERM signal to every member of our process group
     kill('TERM', -$$);
