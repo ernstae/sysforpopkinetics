@@ -10,8 +10,8 @@ for the Spk Database.  This class should never be instantiated.
  */
 
 public abstract class Spkdb {
-    private static Pattern userPattern;
-    private static Pattern passPattern;
+    private static Pattern pattern1;
+    private static Pattern pattern2;
     /**
      Open a connection to a database.  This object must be passed as a parameter
      to other methods of this class.  A process may have several connections open
@@ -51,6 +51,17 @@ public abstract class Spkdb {
 	conn.close();
 	return true;
     }
+    /**
+       Submit a job.
+       @param conn open connection to the database
+       @param abstraction short description of the job
+       @param datasetId key to a row in the dataset table
+       @param datasetVersion rcs version code for the dataset
+       @param modelId key to a rew in the model table
+       @param modelVersion rcs version code for the model
+       @param xmlSource source code for the job
+       @return key to the new row in the job table
+     */
     public static long newJob(Connection conn, 
 			      long userId,
 			      String abstraction,
@@ -175,7 +186,7 @@ public abstract class Spkdb {
        @param name name of this dataset (must be unique for the given user)
        @param abstraction short description of the dataset
        @param archive the entire data set in rcs-compatible format
-       @return unique number, which is the 
+       @return unique number, which is the key to the new row in the dataset table
      */
     public static long 
 	newDataset(Connection conn, long userId, String name, String abstraction, String archive)
@@ -195,6 +206,12 @@ public abstract class Spkdb {
 	}
 	return datasetId;
     }       
+    /**
+       Get a dataset.
+       @param conn open connection to the database
+       @param datasetId key to a row in the dataset table
+       @return dataset as an rcs-compatible archive 
+     */
     public static String getDataset(Connection conn, long datasetId)
 	throws SQLException, SpkdbException
     {
@@ -208,18 +225,26 @@ public abstract class Spkdb {
 	
 	return new String(byteDataset);
     }       
+    /**
+       Update a row in the dataset table.
+       @param conn open connection to the database
+       @param datasetId key to a row in the database table
+       @param name array of column names (cannot contain "dataset_id")
+       @param value array of column values
+       @return true or false
+     */
     public static boolean updateDataset(Connection conn, long datasetId, String name[], String value[])
 	throws SQLException, SpkdbException
     {
 	 String nameList = name[0];
 	 String valueList = "'" + value[0] + "'";
-	 userPattern = Pattern.compile("^dataset_id$");
-	 if (userPattern.matcher(name[0]).find()) {
+	 pattern1 = Pattern.compile("^dataset_id$");
+	 if (pattern1.matcher(name[0]).find()) {
 	     throw new SpkdbException("invalid attempt to change dataset_id");
 	 }
 	 String sql = "update dataset set " + name[0] + "='" + value[0] + "'";
 	 for (int i = 1; i < name.length; i++) {
-	     if (userPattern.matcher(name[i]).find()) {
+	     if (pattern1.matcher(name[i]).find()) {
 		 throw new SpkdbException("invalid attempt to change dataset_id");
 	     }
  	     sql += ", " + name[i] + "='" + value[i] + "'";
@@ -229,6 +254,16 @@ public abstract class Spkdb {
 	 stmt.executeUpdate(sql);
 	 return stmt.getUpdateCount() == 1;
     }
+    /**
+       Get datasets belonging to a given user
+       @param conn open connection to the database
+       @param userId key to the given user in the user table
+       @param maxNum maximum number of datasets to return
+       @return Object of a class which implements the java.ResultSet interface, containing
+       a sequence of subsets of rows of the dataset table.  Each subset contains the 
+       following columns: dataset_id, name, and abstract.
+
+     */
     public static ResultSet userDatasets(Connection conn, long userId, int maxNum)
 	throws SQLException, SpkdbException 
     {
@@ -241,6 +276,15 @@ public abstract class Spkdb {
 
 	return rs;
     }
+    /**
+       Add a new scientific model to the database.
+       @param conn open connection to the database
+       @param userId key to a user in the user table
+       @param name name of this model (must be unique for the given user)
+       @param abstraction short description of the model
+       @param archive the entire model in rcs-compatible format
+       @return unique number, which is the key to the new row in the model table
+     */
     public static long 
 	newModel(Connection conn, long userId, String name, String abstraction, String archive)
 	throws SQLException, SpkdbException
@@ -259,6 +303,12 @@ public abstract class Spkdb {
 	}
 	return modelId;
     }       
+    /**
+       Get a model
+       @param conn open connection to the database
+       @param modelId key to a row in the model table
+       @return model as an rcs-compatible archive 
+     */
     public static String getModel(Connection conn, long modelId)
 	throws SQLException, SpkdbException
     {
@@ -272,18 +322,26 @@ public abstract class Spkdb {
 	
 	return new String(byteModel);
     }       
+    /**
+       Update a row in the model table.
+       @param conn open connection to the database
+       @param modelId key to a row in the model table
+       @param name array of column names (cannot contain "model_id")
+       @param value array of column values
+       @return true or false
+     */
     public static boolean updateModel(Connection conn, long modelId, String name[], String value[])
 	throws SQLException, SpkdbException
     {
 	 String nameList = name[0];
 	 String valueList = "'" + value[0] + "'";
-	 userPattern = Pattern.compile("^model_id$");
-	 if (userPattern.matcher(name[0]).find()) {
+	 pattern1 = Pattern.compile("^model_id$");
+	 if (pattern1.matcher(name[0]).find()) {
 	     throw new SpkdbException("invalid attempt to change model_id");
 	 }
 	 String sql = "update model set " + name[0] + "='" + value[0] + "'";
 	 for (int i = 1; i < name.length; i++) {
-	     if (userPattern.matcher(name[i]).find()) {
+	     if (pattern1.matcher(name[i]).find()) {
 		 throw new SpkdbException("invalid attempt to change model_id");
 	     }
  	     sql += ", " + name[i] + "='" + value[i] + "'";
@@ -293,6 +351,16 @@ public abstract class Spkdb {
 	 stmt.executeUpdate(sql);
 	 return stmt.getUpdateCount() == 1;
     }
+    /**
+       Get models belonging to a given user
+       @param conn open connection to the database
+       @param userId key to the given user in the user table
+       @param maxNum maximum number of models to return
+       @return Object of a class which implements the java.ResultSet interface, containing
+       a sequence of subsets of rows of the model table.  Each subset contains the 
+       following columns: model_id, name, and abstract.
+
+     */
     public static ResultSet userModels(Connection conn, long userId, int maxNum)
 	throws SQLException, SpkdbException 
     {
@@ -305,10 +373,9 @@ public abstract class Spkdb {
 
 	return rs;
     }
-
     /**
        Inserts a new user in the database, returning a unique key.
-       @param conn connection object obtained by a previous call on connect()
+       @param conn open connection to the database
        @param name array of strings containing field names
        @param value array of values corresponding to field names in name
        @return long integer which is the unique key of the new row 
@@ -320,8 +387,8 @@ public abstract class Spkdb {
 	long userId = 0;
 	boolean userFound = false;
 	boolean passFound = false;
-	userPattern = Pattern.compile("^username$");
-	passPattern = Pattern.compile("^password$");
+	pattern1 = Pattern.compile("^username$");
+	pattern2 = Pattern.compile("^password$");
 	String nameList = name[0];
 	String valueList = "'" + value[0] + "'";
 	for (int i = 1; i < name.length; i++) {
@@ -329,8 +396,8 @@ public abstract class Spkdb {
 	    valueList += (", '" + value[i] + "'");
 	}
 	for (int i = 0; i < name.length; i++) {
-	   userFound = userFound || userPattern.matcher(name[i]).find();
-	   passFound = passFound || passPattern.matcher(name[i]).find();
+	   userFound = userFound || pattern1.matcher(name[i]).find();
+	   passFound = passFound || pattern2.matcher(name[i]).find();
 	}
 	if (!userFound || !passFound) {
 	    throw new SpkdbException("username and/or password missing in name list");
@@ -344,19 +411,28 @@ public abstract class Spkdb {
 	}
 	return userId;
     }
+    /**
+       Update a row in the user table.
+       @param conn open connection to the database
+       @param userId key to a row in the user table
+       @param name array of column names (cannot include "user_id" or "username")
+       @param value array of column values
+       @return true or false
+     */
     public static boolean updateUser(Connection conn, long userId, String name[], String value[])
 	throws SQLException, SpkdbException
     {
 	 String nameList = name[0];
 	 String valueList = "'" + value[0] + "'";
-	 userPattern = Pattern.compile("^username$");
-	 if (userPattern.matcher(name[0]).find()) {
-	     throw new SpkdbException("invalid attempt to change username");
+	 pattern1 = Pattern.compile("^username$");
+	 pattern2   = Pattern.compile("^user_id$");
+	 if (pattern1.matcher(name[0]).find() || pattern2.matcher(name[0]).find()) {
+	     throw new SpkdbException("invalid attempt to change username or user_id");
 	 }
 	 String sql = "update user set " + name[0] + "='" + value[0] + "'";
 	 for (int i = 1; i < name.length; i++) {
-	     if (userPattern.matcher(name[i]).find()) {
-		 throw new SpkdbException("invalid attempt to change username");
+	     if (pattern1.matcher(name[i]).find() || pattern2.matcher(name[0]).find()) {
+		 throw new SpkdbException("invalid attempt to change username or user_id");
 	     }
  	     sql += ", " + name[i] + "='" + value[i] + "'";
 	 }
@@ -365,6 +441,13 @@ public abstract class Spkdb {
 	 stmt.executeUpdate(sql);
 	 return stmt.getUpdateCount() == 1;
     }
+    /**
+       Get a row from the user table
+       @param conn open connection to the database
+       @param username name which is an alternate key to the user table
+       @return Object of a class which implements the java.sql.ResultSet interface, 
+       containing a complete row of the user table.
+     */
     public static ResultSet getUser(Connection conn, String username)
 	throws SQLException, SpkdbException
     {

@@ -198,7 +198,7 @@
 	      <entry><link linkend="java_binding">Database API, Java Binding</link></entry>
 	      <entry>Alan Westhagen</entry>
 	      <entry>02/09/2004</entry>
-	      <entry></entry>
+	      <entry>02/09/2004</entry>
 	    </row>
 	    <row>
 	      <entry><link linkend="build_imp">Cspk Object Build</link></entry>
@@ -368,6 +368,11 @@
 	The Java binding is an implementation of the API for use by
 	processes programmed in the Java language.
       </para>
+      <para>
+	This milestone is now complete. Documentation can be viewed 
+	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/dbAPIjava/index.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
+      </para>
     </sect2>
     <sect2 id="perl_binding">
       <title>Database API, Perl Binding</title>
@@ -376,7 +381,7 @@
 	processes programmed in the Perl language.
       </para>
       <para>
-	This document is now complete and can be viewed
+	This milestone document is now complete. Documentation can be viewed
 	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/dbAPIperl/Spkdb.html">here</ulink>.
 	Return to <link linkend="milestone_table">table</link>.
       </para>
