@@ -2577,19 +2577,6 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "   return;" << endl;
 
   oIndData_h << "}" << endl;
-  /*
-  oDriver << "   assert( Ri.size() == n * n );" << endl;
-  oDriver << "   assert( residual.size() == n );" << endl;
-  oDriver << "   valarray<double> r( n );" << endl;
-  oDriver << "   for( int i=0; i<n; i++ ) r[i] = CppAD::Value( residual[i] );" << endl;
-  oDriver << "   valarray<double> C( 0.0, n * n );" << endl;
-  oDriver << "   C = cholesky( Ri, n );" << endl;
-  oDriver << "   valarray<double> w = multiply( C, n, r, 1 );" << endl;
-  oDriver << "   vector< CppAD::AD<double> > Cr(n);" << endl;
-  oDriver << "   for( int i=0; i<n; i++ ) Cr[i] = w[i];" << endl;
-  oDriver << "   return Cr;" << endl;
-
-   */
   oIndData_h << "#endif" << endl;
 
   oIndData_h.close();
@@ -2877,39 +2864,6 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   oPred_h << "#include <CppAD/CppAD.h>" << endl;
   oPred_h << "#include \"DataSet.h\"" << endl;
   oPred_h << endl;
-  
-  oPred_h << "const CppAD::AD<double> pow( const CppAD::AD<double>& x, int n )" << endl;
-  oPred_h << "{" << endl;
-  oPred_h << "   CppAD::AD<double> y = 1.0;" << endl;
-  oPred_h << "   if( n > 0 )" << endl;
-  oPred_h << "   {" << endl;
-  oPred_h << "      for( int i=0; i<n; i++ )" << endl;
-  oPred_h << "      {" << endl;
-  oPred_h << "         y *= x;" << endl;
-  oPred_h << "      }" << endl;
-  oPred_h << "   }" << endl;
-  oPred_h << "   else if( n < 0 )" << endl;
-  oPred_h << "   {" << endl;
-  oPred_h << "      for( int i=n; i<0; i++ )" << endl;
-  oPred_h << "      {" << endl;
-  oPred_h << "         y /= x;" << endl;
-  oPred_h << "      }" << endl;
-  oPred_h << "   }" << endl;
-  oPred_h << "   return y;" << endl;
-  oPred_h << "}" << endl;
-  oPred_h << "const CppAD::AD<double> pow( int x, const CppAD::AD<double>& n )" << endl;
-  oPred_h << "{" << endl;
-  oPred_h << "   return pow( static_cast< CppAD::AD<double> >( x ), n );" << endl;
-  oPred_h << "}" << endl;
-  oPred_h << "const CppAD::AD<double> pow( const CppAD::AD<double>& x, double n )" << endl;
-  oPred_h << "{" << endl;
-  oPred_h << "   return pow( x, CppAD::AD<double>( n ) );" << endl;
-  oPred_h << "}" << endl;
-  oPred_h << "const CppAD::AD<double> pow( double x, const CppAD::AD<double>& n )" << endl;
-  oPred_h << "{" << endl;
-  oPred_h << "   return pow( CppAD::AD<double>( x ), n );" << endl;
-  oPred_h << "}" << endl;
-
   oPred_h << endl;
   
   
@@ -3631,27 +3585,6 @@ void NonmemTranslator::generateIndDriver( ) const
 
   oDriver << "enum RETURN_CODE { SUCCESS=0, CONVERGENCE_FAILURE=1, FILE_ACCESS_FAILURE=2, OTHER_FAILURE };" << endl;
   oDriver << endl;
-
-  oDriver << "namespace{" << endl;
-  oDriver << "// Compute the residuals for i-th individual." << endl;
-  oDriver << "const vector<CppAD::AD<double> > wres( int n," << endl;
-  oDriver << "                                       const valarray<double> & Ri," << endl;
-  oDriver << "                                       const vector  < CppAD::AD<double> > & residual )" << endl;
-  oDriver << "{" << endl;
-  oDriver << "   assert( Ri.size() == n * n );" << endl;
-  oDriver << "   assert( residual.size() == n );" << endl;
-  oDriver << "   valarray<double> r( n );" << endl;
-  oDriver << "   for( int i=0; i<n; i++ ) r[i] = CppAD::Value( residual[i] );" << endl;
-  oDriver << "   valarray<double> C( 0.0, n * n );" << endl;
-  oDriver << "   C = cholesky( Ri, n );" << endl;
-  oDriver << "   valarray<double> w = multiply( C, n, r, 1 );" << endl;
-  oDriver << "   vector< CppAD::AD<double> > Cr(n);" << endl;
-  oDriver << "   for( int i=0; i<n; i++ ) Cr[i] = w[i];" << endl;
-  oDriver << "   return Cr;" << endl;
-  oDriver << "}" << endl;
-  oDriver << endl;
-  oDriver << "};" << endl;
-
   oDriver << "int main( int argc, const char argv[] )" << endl;
   oDriver << "{" << endl;
 
@@ -4350,26 +4283,6 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "using SPK_VA::valarray;" << endl;
   oDriver << "using namespace std;" << endl;
   oDriver << endl;
-
-  oDriver << "namespace{" << endl;
-  oDriver << "const vector<CppAD::AD<double> > wres( int n," << endl;
-  oDriver << "                                       const valarray<double> & Ri," << endl;
-  oDriver << "                                       const vector  < CppAD::AD<double> > & residual )" << endl;
-  oDriver << "{" << endl;
-  oDriver << "   assert( Ri.size() == n * n );" << endl;
-  oDriver << "   assert( residual.size() == n );" << endl;
-  oDriver << "   valarray<double> r( n );" << endl;
-  oDriver << "   for( int i=0; i<n; i++ ) r[i] = CppAD::Value( residual[i] );" << endl;
-  oDriver << "   valarray<double> C( 0.0, n * n );" << endl;
-  oDriver << "   C = cholesky( Ri, n );" << endl;
-  oDriver << "   valarray<double> w = multiply( C, n, r, 1 );" << endl;
-  oDriver << "   vector< CppAD::AD<double> > Cr(n);" << endl;
-  oDriver << "   for( int i=0; i<n; i++ ) Cr[i] = w[i];" << endl;
-  oDriver << "   return Cr;" << endl;
-  oDriver << "}" << endl;
-  oDriver << endl;
-  oDriver << "};" << endl;
-
   oDriver << "enum RETURN_CODE { SUCCESS=0, CONVERGENCE_FAILURE=1, FILE_ACCESS_FAILURE=2, OTHER_FAILURE };" << endl;
   oDriver << endl;
 
@@ -4650,14 +4563,6 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << "         model.selectIndividual(i);" << endl;
       oDriver << "         model.setIndPar( bOut[ slice( i*nB, nB, 1 ) ] );" << endl;
       oDriver << "         model.dataVariance( RiOut );" << endl;
-      /*
-     oDriver << "         for( int j=0; j<N[i]; j++ )" << endl;
-     oDriver << "         {" << endl;
-     oDriver << "            set.data[i]->" << UserStr.RES << "[j] = y[j] - set.data[i]->" << UserStr.PRED << "[j] ;" << endl;
-     oDriver << "         }" << endl;
-     oDriver << "         set.data[i]->" << UserStr.WRES << " = wres( N[i], RiOut, set.data[i]->" << UserStr.RES << " ); " << endl;
-     oDriver << "       }" << endl;
-      */
       oDriver << "         R[i].resize( N[i] * N[i] );" << endl;
       oDriver << "         R[i] = RiOut;" << endl;
       oDriver << "      }" << endl;
@@ -4826,10 +4731,11 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "}" << endl;
   oDriver << endl;
 
-  oDriver << "oResults << \"<pop_analysis_result>\" << endl;" << endl;
-  oDriver << endl;
   if( myIsEstimate )
     {
+      oDriver << "oResults << \"<pop_analysis_result>\" << endl;" << endl;
+      oDriver << endl;
+
       oDriver << "oResults << \"<pop_opt_result elapsedtime=\\\"\" << optTimeSec << \"\\\">\" << endl;" << endl;
       oDriver << "oResults << \"<pop_obj_out>\" << endl;" << endl;
       oDriver << "oResults << \"<value>\" << alpObjOut << \"</value>\" << endl;" << endl;
