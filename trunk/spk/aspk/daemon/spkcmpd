@@ -10,20 +10,33 @@ DBUSER=tester
 DBPASSWD=tester
 
 SERVICE_NAME=spkcmpd
-
 LOCKFILE_PATH=/tmp/lock_$SERVICE_NAME
 
 #restart()
 start() {
     /usr/local/bin/${SERVICE_NAME}.pl $DATABASE $HOST $DBUSER $DBPASSWD
+    echo "started"
 }
 stop() {
-    PID=`cat $LOCKFILE_PATH`
-    kill $PID
+    if [ -f $LOCKFILE_PATH ]; then
+       PID=`cat $LOCKFILE_PATH`
+       kill $PID
+       while sleep 1 && [ -f $LOCKFILE_PATH ]; do
+	   if [ -z $SENT ]; then
+	       echo "waiting for child processes to terminate"
+	       SENT=sent
+	   fi
+       done
+       echo "stopped"
+    else
+	echo "$SERVICE_NAME is not running"
+    fi
 }
 
 case $1 in
     restart)
+	stop
+	start
 	;;
     start)
 	start

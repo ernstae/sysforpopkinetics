@@ -4,5 +4,5 @@ SERVICE_NAME=spkcmpd
 
 cp $SERVICE_NAME /etc/rc.d/init.d
 cp ${SERVICE_NAME}.pl /usr/local/bin
-cp spkcompiler /usr/local/bin
+cp spkcompilerx /usr/local/bin
 
