@@ -314,7 +314,7 @@ const valarray<double> inverse( const valarray<double> &A, int n )
   {
      // i-th value is a source of failure
      char mess[ SpkError::maxMessageLen() ];
-     sprintf( mess, "Cholesky factorization failed: %d-th value is a source of problem.\n", cholStatus );
+     sprintf( mess, "Cholesky factorization failed: the leading minor of order %d is not positive definite.\n", cholStatus );
      throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
   }
 
