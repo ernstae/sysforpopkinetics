@@ -503,6 +503,7 @@ void mapObj(  SpkModel &model,
     model.dataMean(f);
     dvecF.fromValarray( f, 1 );
     assert( dvecF.nr() == nY );
+//cout << __FILE__ << ", " << __LINE__ << "f(b) = " << "f(" << b << ") = " << f << endl;
 
     //subtract(dvecY, dvecF, dvecResidual);
     residual = y - f;

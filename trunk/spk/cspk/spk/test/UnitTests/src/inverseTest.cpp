@@ -69,7 +69,6 @@ Test* inverseTest::suite()
     suiteOfTests->addTest(new TestCaller<inverseTest>("twoByTwoValarray", &inverseTest::twoByTwoValarray));
     suiteOfTests->addTest(new TestCaller<inverseTest>("threeByThreeValarray", &inverseTest::threeByThreeValarray));
 
-#ifdef NDEBUG
     //
     // det() function has an assert() statement testing the symmetricity of the matrix.
     // It is, therefore, tripped and terminates the program when the following tests are run
@@ -77,7 +76,6 @@ Test* inverseTest::suite()
     // 
     suiteOfTests->addTest(new TestCaller<inverseTest>("noSymPosDetTest", &inverseTest::noSymPosDetTest));
     suiteOfTests->addTest(new TestCaller<inverseTest>("noSymPosDetValarray", &inverseTest::noSymPosDetValarray));
-#endif
     return suiteOfTests;
 }
 

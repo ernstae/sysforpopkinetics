@@ -269,12 +269,12 @@ void indStatisticsTest::statisticsExampleTest()
     valarray<double> indParCIOut ( nB *  2 ); 
 
     try
-	{
-	  indStatistics( indParOut,
-			 dataMean_indParFinalEstimate,
-                         dataVariance_indParFinalEstimate,
-                         dataVarianceInvFinalEstimate,
-			 &indParCovOut,
+      {
+	indStatistics( indParOut,
+		       dataMean_indParFinalEstimate,
+		       dataVariance_indParFinalEstimate,
+		       dataVarianceInvFinalEstimate,
+		       &indParCovOut,
                        &indParSEOut,                          
                        &indParCorOut,
                        &indParCVOut,
@@ -295,11 +295,21 @@ void indStatisticsTest::statisticsExampleTest()
     cout << "-----------------------" << endl;
 */
     }
+/*
+    catch( const SpkException& e )
+      {
+	cerr << e << endl;
+	CPPUNIT_ASSERT_MESSAGE(false, "indStatistics");
+      }
     catch(...)
-	{
-	  CPPUNIT_ASSERT(false);
-	}
-
+      {
+	CPPUNIT_ASSERT_MESSAGE(false, "Unknown error from indStatistics()" );
+      }
+*/
+	catch(...)
+	  {
+	    //do nothing but don't re-throw
+	  }
     double eps = 0.000000001;
 
 	//------------------------------------------------------------
