@@ -97,6 +97,7 @@ namespace // [Begin: unnamed namespace]
 // Standard library header files.
 #include <cassert>
 #include <limits>
+#include <cmath>
 #include <sstream>
 #include <vector>
 
@@ -3748,19 +3749,27 @@ void PopPredModel::getIndParLimits(
   // Set limits for the individual parameters.
   //------------------------------------------------------------
 
+  // Get the current value for variance of the individual parameter,
+  //
+  //     D ( alpha )  =  omega( omegaPar )  .
+  //
+  valarray<double> omegaTemp( nEta * nEta );
+  pOmegaCurr->cov( omegaTemp );
+
+  double stdDev;
   int k;
 
-  // Set the limits based on the covariance matrix for the individual
-  // parameters, D.
-  for ( k = 0; k < nIndPar; k++ )
+  // Set the limits.
+  for ( k = 0; k < nEta; k++ )
   {
-    // [Remove]===========================================
-    //
-    indParLow[k] = -100.0;
-    indParUp [k] = +100.0;
-    //
-    // [Remove]===========================================
+    // Calculate the standard devation for this element.
+    stdDev = std::sqrt( omegaTemp[k + k * nEta] );
+
+    // Set the limits to be a multiple of the standard devatiation.
+    indParLow[k] = -3.0 * stdDev;
+    indParUp [k] = +3.0 * stdDev;
   }
+  assert( nIndPar == nEta );
 
 }
 
