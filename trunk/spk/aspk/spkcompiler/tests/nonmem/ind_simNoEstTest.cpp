@@ -99,6 +99,7 @@ if( actual != expected ) \\\n \
   const char *strDV    = "DV";
   const char *strCP    = "CP";
   const char *strMDV   = "MDV";
+  const char *strORGDV = "ORGDV";
   const char *label[]  = { strID, strDV, strTIME, strMDV };
   map<const char*, const char*> label_alias;
   int nLabels          = 4;
