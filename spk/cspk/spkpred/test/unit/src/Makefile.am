@@ -14,7 +14,7 @@ testall_SOURCES = \
 
 testall_CXXFLAGS = -I/usr/local/cppunit/include
 
-testall_LDFLAGS = -lspkpred -lspk -lspkopt /usr/local/lib/libnagc.a -lpthread -lm -lcppunit
+testall_LDFLAGS = -lspkpred -lspk -lspkopt -llapack -latlas_lapack -lcblas -latlas -lpthread -lm -lcppunit
 
 INCLUDES = -I@top_srcdir@/
 pkginclude_HEADERS = \
