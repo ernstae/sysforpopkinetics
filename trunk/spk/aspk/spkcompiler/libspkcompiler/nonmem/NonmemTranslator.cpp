@@ -4,7 +4,7 @@
 #include "nonmem/read_nonmem_driver.h"
 #include "nonmem/read_nonmem_data.h"
 #include "nonmem/read_nonmem_model.h"
-#include "emit_IndDataClass.h"
+#include "emit_IndData.h"
 
 #include <xercesc/dom/DOM.hpp>
 
@@ -326,7 +326,7 @@ void NonmemTranslator::translate( DOMDocument* tree )
   nonmemParameterization = model_type.second;
 
   FILE * out;
-  emit_IndDataClass( out, nIndividuals, gSpkExpSymbolTable, label_alias_mapping, data_for, order_id_pair );
+  emit_IndData( out, nIndividuals, gSpkExpSymbolTable, label_alias_mapping, data_for, order_id_pair );
   
   return;
 }
