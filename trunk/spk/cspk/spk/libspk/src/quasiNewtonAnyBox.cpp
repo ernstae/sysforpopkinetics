@@ -272,10 +272,10 @@ It must be greater than $math%0.0%$$.
 $pre
 
 $$
-A  value $math%xOut%$$ is accepted as an 
-estimate for $math%xHat%$$ if 
+A  value $math%xOut%$$ is accepted as an estimate for 
+$math%xHat%$$ if 
 $math%
-	abs( xOut - xHat ) \le epsilon ( xUp - xLow )
+	abs( xOut - xHat ) \le epsilon ( xUp - xLow )  ,
 %$$
 where $math%abs%$$ is the element-by-element absolute value function
 and $math%xHat%$$ is the true minimizer of the objective function.
@@ -492,43 +492,6 @@ extern "C" {
 
 namespace // [Begin: unnamed namespace]
 {
-  void scaleElem(
-    int n,
-    const double* const px, 
-    const double* const pxLow, 
-    const double* const pxDiff,
-    double* py );
-
-  void unscaleElem(
-    int n,
-    const double* const py, 
-    const double* const pxLow, 
-    const double* const pxUp, 
-    const double* const pxDiff,
-    double* px );
-
-  void scaleGradElem(
-    int n,
-    const double* const pg, 
-    const double* const pxDiff,
-    double* pScaledG );
-
-  bool isWithinTol(
-    double tol, 
-    const DoubleMatrix& dvecXHat, 
-    const DoubleMatrix& dvecXLow, 
-    const DoubleMatrix& dvecXUp, 
-    const DoubleMatrix& drowG,
-    const DoubleMatrix& dmatR );
-
-  DoubleMatrix arrayToDoubleMatrix(
-    const double* const pdAIn, 
-    int nRows, 
-    int nCols );
-
-  DoubleMatrix getLowerTriangle( const DoubleMatrix& dmatA );
-
-  bool isLowerTriangular( const DoubleMatrix& dmatA );
 
 } // [End: unnamed namespace]
 
@@ -832,13 +795,7 @@ void quasiNewtonAnyBox(
   double* gScaled = memoryDbl( nObjPar );
   double* hScaled = memoryDbl( nObjPar * nObjPar );
 
-  // Check to see if the lower and upper bounds for each element of x are 
-  // equal and then set the bounds and the initial value y accordingly.
-  //
-  // Sachiko: For efficiency, intialize these vectors with default values before the loop.
-  yLow.fill(0);
-  yUp.fill(0);
-  y.fill(0);
+  // Set the bounds and initial values for y.
   for ( i = 0; i < nObjPar; i++ )
   {
     pdXDiffData[i] = pdXUpData[i] - pdXLowData[i]; 
@@ -847,15 +804,19 @@ void quasiNewtonAnyBox(
     {
       // The x bounds are not equal, so constrain this element 
       // to the interval [0,1].
-      //yLow[i] = 0.0;
-      yUp[i]  = 1.0;
-      
-      //yCurr[i] = scaleElem( pdXInData[i], pdXLowData[i], pdXDiffData[i] );
+      yLow[i]  = 0.0;
+      yUp[i]   = 1.0;
+      yCurr[i] = ( pdXInData[i] - pdXLowData[i] ) / pdXDiffData[i];
+    }
+    else
+    {
+      // The x bounds are equal, so constrain this element 
+      // to the point 0.
+      yLow[i]  = 0.0;
+      yUp[i]   = 0.0;
+      yCurr[i] = 0.0
     }
   }
-
-  // This function sets 0.0 to the corresponding output element when diff[i] is 0.0.
-  scaleElem(nObjPar, pdXInData, pdXLowData, pdXDiffData, yCurr);
 
 
   //------------------------------------------------------------
@@ -984,25 +945,34 @@ void quasiNewtonAnyBox(
   // If the return value of QuasiNewton01Box is "ok", then the
   // infinity norm (element with the maximum absolute value) 
   // of the projected gradient is less than or equal to delta.
-  // The scale is the value this norm will be divided by to get
-  // a delta value for which the current y value will still not be the soluton.
- that the will not be converged for.
+  // The scale is the value this norm will be divided.
   double delta;
   double deltaScale = 10.0;
 
   // Initialize the convergence flag and iteration counter.
-  bool isWithinTol;
+  bool isAcceptable;
   int iterCurr;
   if ( nMaxIter > 0 )
   {
-    isWithinTol = false;
+    isAcceptable = false;
     iterCurr = 1;
   }
   else
   {
     // If zero iterations have been requested, then the input value
     // for x is accepted as the final value.
-    isWithinTol = true;
+    isAcceptable = true;
+    iterCurr = 0;
+  }
+
+  // Initialize the convergence flag and iteration counter.
+  bool isAcceptable = false;
+  int iterCurr = 1;
+  if ( nMaxIter == 0 )
+  {
+    // If zero iterations have been requested, then the input value
+    // for x is accepted as the final value.
+    isAcceptable = true;
     iterCurr = 0;
   }
 
@@ -1023,7 +993,7 @@ void quasiNewtonAnyBox(
   {
     // Attempt to satisfy this function's convergence criterion before
     // the maximum number of iterations have been performed.
-    while ( !isWithinTol && iterCurr <= nMaxIter )
+    while ( !isAcceptable && iterCurr <= nMaxIter )
     {
       // See if this function's convergence criterion has been met.
       if ( isWithinTol( 
@@ -1034,7 +1004,7 @@ void quasiNewtonAnyBox(
         gScaled,
         hScaled ) )
       {
-        isWithinTol = true;
+        isAcceptable = true;
       }
       else
       {
@@ -1146,7 +1116,7 @@ void quasiNewtonAnyBox(
 
   optimizer.setNIterCompleted( iterCurr );
 
-  if ( isWithinTol )                // This function's convergence
+  if ( isAcceptable )               // This function's convergence
                                     // criterion was satisfied.
   {
     optimizer.setIsTooManyIter( false );
@@ -1228,35 +1198,6 @@ SHOULD gScaled BE UNSCALED BEFORE ITS COPIED TO f_x?
 
 namespace // [Begin: unnamed namespace]
 {
-
-/*************************************************************************
- * Function: scaleElem
- *
- *
- * Returns the scaled value for x.  
- * Sets 0.0 to the corresponding output element when diff[i] is 0.0. 
- *
- * Note - Sachiko:
- * No possibility for "div by zero" error.
- *
- *************************************************************************/
-
-void scaleElem(
-  int n,
-  const double* const px, 
-  const double* const pxLow, 
-  const double* const pxDiff,
-  double* py )
-{
-    for(int i=0; i<n; i++)
-    {
-      if (pxDiff[i] != 0.0)
-        py[i] = ( px[i] - pxLow[i] ) / pxDiff[i];
-      else 
-        py[i] = 0.0;
-    }
-}
-
 
 /*************************************************************************
  * Function: unscaleElem
@@ -1357,8 +1298,7 @@ void scaleGradElem(
  *
  * tol
  *
- * Tolerance that deltaX must be less than.  tol must be greater than 0.0 and 
- * less than 1.0.   
+ * Tolerance that deltaX must be less than.  tol must be greater than 0.0.
  *
  *
  * dvecXHat
@@ -1414,8 +1354,6 @@ bool isWithinTol(
   int i, j, k;
 
   int n = dvecXHat.nr();
-
-  assert( tol > 0.0 && tol < 1.0 );
 
   assert( dvecXHat.nr() == n && dvecXHat.nc() == 1 );
   assert( dvecXLow.nr() == n && dvecXLow.nc() == 1 );
