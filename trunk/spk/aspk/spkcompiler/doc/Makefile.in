@@ -24,11 +24,12 @@ SOURCE = ../libspkcompiler/client.h \
          ../libspkcompiler/SpkMLToCpp.h \
          ../libspkcompiler/SpkParameters.h \
          ../libspkcompiler/Symbol.h \
-         ../libspkcompiler/SymbolTable.h
+         ../libspkcompiler/SymbolTable.h \
+	 SpkML.dtd
 
 html : SpkCompiler.dox $(SOURCE) 
 	doxygen SpkCompiler.dox
-
+	java -classpath ./tools/dtddoc/java/dtdparser119.jar:./tools/dtddoc/java/jakarta-oro-2.0.6.jar:.:./tools/dtddoc/java DTDDoc SpkML.dtd SpkML_html
 clean : 
 	rm -r html
 	rm -r latex
