@@ -1742,6 +1742,7 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "#define DATASET_H" << endl;
 
   oDataSet_h << "#include <vector>" << endl;
+  oDataSet_h << "#include <spk/SpkValarray.h>" << endl;
   oDataSet_h << "#include \"IndData.h\"" << endl;
   oDataSet_h << endl;
 
@@ -1767,6 +1768,7 @@ void NonmemTranslator::generateDataSet( ) const
 
   oDataSet_h << "std::vector<IndData<T>*> data;" << endl;
   oDataSet_h << "const int popSize;" << endl;
+  oDataSet_h << "int getMeasurements( SPK_VA::valarray<double>& spk_yOut, SPK_VA::valarray<int>& spk_NOut ) const;" << endl;
   oDataSet_h << endl;
 
   //
@@ -1779,6 +1781,9 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "DataSet( const DataSet& );" << endl;
   oDataSet_h << "DataSet& operator=( const DataSet& );" << endl;
   oDataSet_h << endl;
+  oDataSet_h << "private:" << endl;
+  oDataSet_h << "SPK_VA::valarray<double> spk_y; // a long vector containg all measurements" << endl;
+  oDataSet_h << "SPK_VA::valarray<int>    spk_N; // a vector containing the # of measurements for each individual." << endl;
 
   oDataSet_h << "};" << endl;
 
@@ -1787,6 +1792,19 @@ void NonmemTranslator::generateDataSet( ) const
   // Definition
   //-----------------------------------------------
        
+  // getMeasurements( y, N )
+  oDataSet_h << "template <class T>" << endl;
+  oDataSet_h << "int DataSet<T>::getMeasurements( SPK_VA::valarray<double>& spk_yOut, SPK_VA::valarray<int>& spk_NOut ) const" << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   int n = " << myRecordNums.sum() << ";" << endl;
+  oDataSet_h << "   spk_yOut.resize(n);" << endl;
+  oDataSet_h << "   spk_yOut = spk_y;" << endl;
+  oDataSet_h << "   spk_NOut.resize(" << myPopSize << ");" << endl;
+  oDataSet_h << "   spk_NOut = spk_N;" << endl;
+  oDataSet_h << "   return n;" << endl;
+  oDataSet_h << "}" << endl;
+
+
   //
   // The constructor
   //
@@ -1794,18 +1812,39 @@ void NonmemTranslator::generateDataSet( ) const
   //
   oDataSet_h << "template <class T>" << endl;
   oDataSet_h << "DataSet<T>::DataSet()" << endl;
-  oDataSet_h << ": data(" << myPopSize << ")," << endl;
-  oDataSet_h << "  popSize( " << myPopSize << " )" << endl;
+  oDataSet_h << ": data( " << myPopSize << " )," << endl;
+  oDataSet_h << "  popSize( " << myPopSize << " )," << endl;
+  oDataSet_h << "  spk_y( " << myRecordNums.sum() << " )," << endl;
+  oDataSet_h << "  spk_N( " << myPopSize << " )" << endl;
   oDataSet_h << "{" << endl;
-      
+
+  oDataSet_h << "int c_N = { ";
+  for( int i=0; i<myPopSize; i++ )
+    {
+      if( i > 0 )
+	oDataSet_h << ", ";
+      oDataSet_h << myRecordNums[i];
+    }
+  oDataSet_h << " }" << endl; 
+  oDataSet_h << "spk_N = SPK_VA::valarray<int>( c_N, " << myPopSize << " );" << endl;
+
+  const Symbol* pDV = table->findi( KeyStr::DV );
+  for( int i=0, cnt=0; i<myPopSize; i++ )
+    {
+      for( int j=0; j<myRecordNums[i]; j++, cnt++ )
+	{
+	  oDataSet_h << "spk_y[" << cnt << "] = " << atof( pDV->initial[i][j].c_str() ) << ";" << endl;
+	}
+    }
+
   // Initialize the entire data set.
-  for( int who=0; who < myPopSize; who++ )
+  for( int who=0, sofar=0, nRecords=0; who < myPopSize; who++, sofar+=nRecords )
     {
       char c_who[256];
       sprintf( c_who, "%d", who );
       int nRecords = pID->initial[who].size();
       const string id = pID->initial[who][0];
-
+      oDataSet_h << "spk_N[" << who << "] = " << nRecords << ";" << endl;
       //
       // The order in which the labels appear must be consistent
       // with the order in the constructor declaration.
@@ -1817,7 +1856,6 @@ void NonmemTranslator::generateDataSet( ) const
       oDataSet_h << "// Subject <" << id << "> " << endl;
       oDataSet_h << "// # of sampling points = " << nRecords << endl;
       oDataSet_h << "//------------------------------------" << endl;
-	  
       //
       // Initialize C arrays with data values.
       // The C arrays are passed to the valarray's constructor.
@@ -1828,7 +1866,7 @@ void NonmemTranslator::generateDataSet( ) const
 	  const Symbol * s = table->findi( *pLabel );
 	  bool isID = (*pLabel == pID->name);
 	  string carray_name   = s->name + "_" + c_who + "_c";
-	  string valarray_name = s->name + "_" + c_who;
+	  string vector_name = s->name + "_" + c_who;
 
 	  oDataSet_h << (isID? "char*":"T") << " " << carray_name << "[] = { ";
 	  for( int j=0; j<nRecords; j++ )
@@ -1842,11 +1880,10 @@ void NonmemTranslator::generateDataSet( ) const
 	    }
 	  oDataSet_h << " };" << endl;
 	  oDataSet_h << "std::vector<" << (isID? "char*":"T") << "> ";
-	  oDataSet_h << valarray_name;
-	  // oDataSet_h << "(" << carray_name << ", " << nRecords << ");" << endl;
+	  oDataSet_h << vector_name;
 	  oDataSet_h << "( " << nRecords << " );" << endl;
 	  oDataSet_h << "copy( " << carray_name << ", " << carray_name << "+" << nRecords;
-	  oDataSet_h << ", " << valarray_name << ".begin() );" << endl;
+	  oDataSet_h << ", " << vector_name << ".begin() );" << endl;
 	}
 
       //
@@ -1866,9 +1903,9 @@ void NonmemTranslator::generateDataSet( ) const
 	  string array_name = s->name + "_" + c_who;
 	  oDataSet_h << array_name;
 	}
-	  
+
       oDataSet_h << " );" << endl;
-      oDataSet_h << endl;
+      oDataSet_h << endl; 
     }
 
   oDataSet_h << "}" << endl;
@@ -2202,8 +2239,13 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   // Store the current values in temporary storage
   // : the user defined variable values and the NONMEM required variable values.
   oPred_h << UserStr::PRED << " = " << UserStr::F << ";" << endl;
-  oPred_h << UserStr::RES  << " = perm->data[spk_i]->";
+
+  // REVISIT SACHIKO 06/07/04
+  // Causes to make the RES value sticky. 
+  /*
+    oPred_h << UserStr::RES  << " = perm->data[spk_i]->";
   oPred_h << UserStr::DV << "[spk_j] - " << UserStr::PRED << ";" << endl;
+  */
 
   for( pRawTable = rawTable->begin(); pRawTable != rawTable->end(); pRawTable++ )
     {
@@ -2574,8 +2616,11 @@ void NonmemTranslator::generateIndDriver( ) const
        oDriver << "   //FpErrorChecker::check( __LINE__, __FILE__ );" << endl;
        oDriver << "   haveCompleteData = true;" << endl;
        oDriver << "}" << endl;
-       oDriver << "catch( const SpkException& e )" << endl;
+       oDriver << "catch( SpkException& e )" << endl;
        oDriver << "{" << endl;
+       oDriver << "   char mess[ SpkError::maxMessageLen() ];" << endl;
+       oDriver << "   sprintf( mess, \"Failed in data simulation.\\n\" );" << endl;
+       oDriver << "   e.push( SpkError::SPK_SIMULATION_ERR, mess, __LINE__, __FILE__ );" << endl;
        oDriver << "   oRuntimeError << e << endl;  // Printing out to a file." << endl;
        oDriver << "   cerr << e << endl;    // Printing out to the standard error." << endl; 
        oDriver << "   haveCompleteData = false;" << endl;
@@ -2653,8 +2698,11 @@ void NonmemTranslator::generateIndDriver( ) const
       oDriver << "     //FpErrorChecker::check( __LINE__, __FILE__ );" << endl;
       oDriver << "     isOptSuccess = true;" << endl;
       oDriver << "  }" << endl;
-      oDriver << "  catch( const SpkException& e )" << endl;
+      oDriver << "  catch( SpkException& e )" << endl;
       oDriver << "  {" << endl;
+      oDriver << "     char mess[ SpkError::maxMessageLen() ];" << endl;
+      oDriver << "     sprintf( mess, \"Failed in population parameter estimation.\\n\" );" << endl;
+      oDriver << "     e.push( SpkError::SPK_OPT_ERR, mess, __LINE__, __FILE__ );" << endl;
       oDriver << "     oRuntimeError << e << endl;" << endl;
       oDriver << "     cerr << e << endl;" << endl;
       oDriver << "     isOptSuccess = false;" << endl;
@@ -2740,8 +2788,11 @@ void NonmemTranslator::generateIndDriver( ) const
           oDriver << "      //FpErrorChecker::check( __LINE__, __FILE__ );" << endl;
 	  oDriver << "      isStatSuccess = true;" << endl;
           oDriver << "   }" << endl;
-          oDriver << "   catch( const SpkException& e )" << endl;
+          oDriver << "   catch( SpkException& e )" << endl;
           oDriver << "   {" << endl;
+	  oDriver << "      char mess[ SpkError::maxMessageLen() ];" << endl;
+          oDriver << "      sprintf( mess, \"Failed to compute statistics value(s).\\n\" );" << endl;
+          oDriver << "      e.push( SpkError::SPK_STATISTICS_ERR, mess, __LINE__, __FILE__ );" << endl;
           oDriver << "      oRuntimeError << e << endl;" << endl;
           oDriver << "      cerr << e << endl;" << endl;
           oDriver << "      isStatSuccess = false;" << endl;
@@ -2764,8 +2815,11 @@ void NonmemTranslator::generateIndDriver( ) const
 	      oDriver << "      invCovOut = inverse( covOut, nB );" << endl;
               oDriver << "      //FpErrorChecker::check( __LINE__, __FILE__ );" << endl;
 	      oDriver << "   }" << endl;
-	      oDriver << "   catch( const SpkException& e )" << endl;
+	      oDriver << "   catch( SpkException& e )" << endl;
 	      oDriver << "   {" << endl;
+	      oDriver << "      char mess[ SpkError::maxMessageLen() ];" << endl;
+              oDriver << "      sprintf( mess, \"Failed to invert the covariance of population parameters.\\n\" );" << endl;
+	      oDriver << "      e.push( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );" << endl;
 	      oDriver << "      oRuntimeError << e << endl;" << endl;
               oDriver << "      cerr << e << endl;" << endl;
 	      oDriver << "      isStatSuccess = false;" << endl;
@@ -2773,7 +2827,7 @@ void NonmemTranslator::generateIndDriver( ) const
 	      oDriver << "   }" << endl;
 	      oDriver << "   catch( ... )" << endl;
 	      oDriver << "   {" << endl;
-	      oDriver << "      char message[] = \"Unknown exception: failed to invert the covariance of the final estimate of individual parameter!!!\";" << endl;
+	      oDriver << "      char message[] = \"Unknown exception: failed to invert the covariance of the individual parameter!!!\";" << endl;
               oDriver << "      oRuntimeError << message << endl;" << endl;
               oDriver << "      cerr << message << endl;" << endl;
 	      oDriver << "      isStatSuccess = false;" << endl;
@@ -2793,6 +2847,16 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "/*   ReportML Document                                             */" << endl;
   oDriver << "/*                                                                 */" << endl;
   oDriver << "/*******************************************************************/" << endl;
+  oDriver << "valarray<double> ROut( nY, nY );" << endl;
+  oDriver << "model.setIndPar( bOut );" << endl;
+  oDriver << "model.dataVariance( ROut );" << endl;
+  oDriver << "for( int j=0; j<nY; j++ )" << endl;
+  oDriver << "{" << endl;
+  oDriver << "   set.data[0]->" << UserStr::RES << "[j] = y[j] - set.data[0]->" << UserStr::PRED << "[j];" << endl;
+  oDriver << "}" << endl;
+  oDriver << "set.data[0]->" << UserStr::WRES << " = wres( nY, ROut, set.data[0]->" << UserStr::RES << " ); " << endl;
+  oDriver << endl;
+
   oDriver << "ofstream oResults( \"" << fResult_xml << "\" );" << endl;
   oDriver << "if( !oResults.good() )" << endl;
   oDriver << "{" << endl;
@@ -3446,8 +3510,11 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << "   //FpErrorChecker::check( __LINE__, __FILE__ );" << endl;
       oDriver << "   haveCompleteData = true;" << endl;
       oDriver << "}" << endl;
-      oDriver << "catch( const SpkException& e )" << endl;
+      oDriver << "catch( SpkException& e )" << endl;
       oDriver << "{" << endl;
+      oDriver << "   char mess[ SpkError::maxMessageLen() ];" << endl;
+      oDriver << "   sprintf( mess, \"Failed in data simulation.\\n\" );" << endl;
+      oDriver << "   e.push( SpkError::SPK_SIMULATION_ERR, mess, __LINE__, __FILE__ );" << endl;
       oDriver << "   oRuntimeError << e << endl;  // Printing out to a file." << endl;
       oDriver << "   cerr << e << endl;    // Printing out to the standard error." << endl; 
       oDriver << "   haveCompleteData = false;" << endl;
@@ -3537,8 +3604,11 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << "      //FpErrorChecker::check( __LINE__, __FILE__ );" << endl;
       oDriver << "      isOptSuccess = true;" << endl;
       oDriver << "   }" << endl;
-      oDriver << "   catch( const SpkException& e )" << endl;
+      oDriver << "   catch( SpkException& e )" << endl;
       oDriver << "   {" << endl;
+      oDriver << "      char mess[ SpkError::maxMessageLen() ];" << endl;
+      oDriver << "      sprintf( mess, \"Failed in population parameter estimation.\\n\" );" << endl;
+      oDriver << "      e.push( SpkError::SPK_OPT_ERR, mess, __LINE__, __FILE__ );" << endl;
       oDriver << "      oRuntimeError << e << endl;" << endl;
       oDriver << "      cerr << e << endl;" << endl;
       oDriver << "      isOptSuccess = false;" << endl;
@@ -3597,6 +3667,7 @@ void NonmemTranslator::generatePopDriver() const
 	  oDriver << "   gettimeofday( &statBegin, NULL );" << endl;
           oDriver << "   try" << endl;
           oDriver << "   {" << endl;
+	  oDriver << "      // Symmetrize the second derivative of the objective." << endl;
           oDriver << "      popStatistics( model, " << endl;
           oDriver << "                     objective," << endl;
           oDriver << "                     N," << endl;
@@ -3616,8 +3687,11 @@ void NonmemTranslator::generatePopDriver() const
           oDriver << "      //FpErrorChecker::check( __LINE__, __FILE__ );" << endl;
           oDriver << "      isStatSuccess = true;" << endl;
           oDriver << "   }" << endl;
-          oDriver << "   catch( const SpkException& e )" << endl;
+          oDriver << "   catch( SpkException& e )" << endl;
           oDriver << "   {" << endl;
+	  oDriver << "      char mess[ SpkError::maxMessageLen() ];" << endl;
+          oDriver << "      sprintf( mess, \"Failed to compute statistics value(s).\\n\" );" << endl;
+          oDriver << "      e.push( SpkError::SPK_STATISTICS_ERR, mess, __LINE__, __FILE__ );" << endl;
           oDriver << "      oRuntimeError << e << endl;" << endl;
           oDriver << "      cerr << e << endl;" << endl;
           oDriver << "      isStatSuccess = false;" << endl;
@@ -3639,8 +3713,11 @@ void NonmemTranslator::generatePopDriver() const
 	      oDriver << "      invCovOut = inverse( covOut, nAlp );" << endl;
               oDriver << "      //FpErrorChecker::check( __LINE__, __FILE__ );" << endl;
 	      oDriver << "   }" << endl;
-	      oDriver << "   catch( const SpkException& e )" << endl;
+	      oDriver << "   catch( SpkException& e )" << endl;
 	      oDriver << "   {" << endl;
+	      oDriver << "      char mess[ SpkError::maxMessageLen() ];" << endl;
+              oDriver << "      sprintf( mess, \"Failed to invert the covariance of population parameters.\\n\" );" << endl;
+	      oDriver << "      e.push( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );" << endl;
 	      oDriver << "      oRuntimeError << e << endl;" << endl;
 	      oDriver << "      cerr << e << endl;" << endl;
 	      oDriver << "      isStatSuccess = false;" << endl;
@@ -3648,7 +3725,7 @@ void NonmemTranslator::generatePopDriver() const
 	      oDriver << "   }" << endl;
 	      oDriver << "   catch( ... )" << endl;
 	      oDriver << "   {" << endl;
-	      oDriver << "      char message[] = \"Unknown exception: failed to invert the covariance of the final estimate of individual parameter!!!\";" << endl;
+	      oDriver << "      char message[] = \"Unknown exception: failed to invert the covariance of the population parameter!!!\";" << endl;
               oDriver << "      oRuntimeError << message << endl;" << endl;
               oDriver << "      cerr << message << endl;" << endl;
 	      oDriver << "      isStatSuccess = false;" << endl;
