@@ -135,6 +135,11 @@ class NonmemTranslator : public ClientTranslator
   void generateNonmemParsNamespace() const;
 
   //
+  // Generate C++ source code for utility functions.
+  //
+  //void generateUtils() const;
+
+  //
   // Generate C++ source code for the driver for population analysis.
   //
   void generatePopDriver( ) const;
@@ -171,23 +176,19 @@ class NonmemTranslator : public ClientTranslator
   // The header file for the Pred template class.
   const char *fPred_h;
 
-  // The header file for Omega class.
-  const char *fOmega_h;
-
-  // The definition file for Omega class.
-  const char * fOmega_cpp;
- 
   // The NonmemPars namespace definition.
   const char * fNonmemPars_h;
+
+  // The halfCvec template function definition.
+  const char * fHalfCvec_h;
 
   // The SPK driver definition.
   const char * fDriver_cpp;
 
-  // A temporary file for runtime error messages.
+  // A temporary file for storing runtime error messages.  The
+  // compiler use only the name of the file, which will be inserted
+  // into the generated driver.cpp.
   const char * fSpkRuntimeError_tmp;
-
-  // The plain text file containg g++ or SPK Compiler errors
-  const char * fSoftwareError_xml;
 
   // The result XML
   const char * fResult_xml;
@@ -198,69 +199,70 @@ class NonmemTranslator : public ClientTranslator
   // Pointer to the central symbol tabel held in the super class
   SymbolTable * table;
 
-  //========================================
-  // Dynamically allocated string objects
-  //----------------------------------------
-  XMLCh* X_YES;
-  XMLCh* X_NO;
-  XMLCh* X_FIXED;
-  XMLCh* X_IN;
-  XMLCh* X_LOW;
-  XMLCh* X_UP;
-  XMLCh* X_DIAGONAL;
-  XMLCh* X_BLOCK;
-  XMLCh* X_VALUE;
-  XMLCh* X_STRUCT;
-  XMLCh* X_DIMENSION;
-  XMLCh* X_LABEL;
-  XMLCh* X_COV_R;
-  XMLCh* X_COV_RSR;
-  XMLCh* X_COV_S;
-  XMLCh* X_IS_ERR_OUT;
-  XMLCh* X_IS_CORR_OUT;
-  XMLCh* X_IS_COV_OUT;
-  XMLCh* X_IS_INV_COV_OUT;
-  XMLCh* X_IS_COEF_OUT;
-  XMLCh* X_IS_CONF_OUT;
+  //=========================================================
+  // constant strings used as <tag> names and values
+  //---------------------------------------------------------
+  XMLCh* X_YES;                 static const char* C_YES;             
+  XMLCh* X_NO;                  static const char* C_NO;
+  XMLCh* X_FIXED;               static const char* C_FIXED;
+  XMLCh* X_IN;                  static const char* C_IN;
+  XMLCh* X_LOW;                 static const char* C_LOW;
+  XMLCh* X_UP;                  static const char* C_UP;
+  XMLCh* X_DIAGONAL;            static const char* C_DIAGONAL;
+  XMLCh* X_BLOCK;               static const char* C_BLOCK;
+  XMLCh* X_VALUE;               static const char* C_VALUE;
+  XMLCh* X_STRUCT;              static const char* C_STRUCT;
+  XMLCh* X_DIMENSION;           static const char* C_DIMENSION;
+  XMLCh* X_LABEL;               static const char* C_LABEL;
+  XMLCh* X_LABELS;              static const char* C_LABELS;
+  XMLCh* X_COV_R;               static const char* C_COV_R;
+  XMLCh* X_COV_RSR;             static const char* C_COV_RSR;
+  XMLCh* X_COV_S;               static const char* C_COV_S;
+  XMLCh* X_IS_ERR_OUT;          static const char* C_IS_STDERROR_OUT;
+  XMLCh* X_IS_CORR_OUT;         static const char* C_IS_CORRELATION_OUT;
+  XMLCh* X_IS_COV_OUT;          static const char* C_IS_COVARIANCE_OUT;
+  XMLCh* X_IS_INV_COV_OUT;      static const char* C_IS_INVERSE_COVARIANCE_OUT;
+  XMLCh* X_IS_COEF_OUT;         static const char* C_IS_COEFFICIENT_OUT;
+  XMLCh* X_IS_CONF_OUT;         static const char* C_IS_CONFIDENCE_OUT;
   
-  XMLCh* X_NONMEM;
-  XMLCh* X_POP_ANALYSIS;
-  XMLCh* X_IND_ANALYSIS;
-  XMLCh* X_CONSTRAINT;
-  XMLCh* X_MODEL;
-  XMLCh* X_PRED;
-  XMLCh* X_PRESENTATION;
-  XMLCh* X_TABLE;
-  XMLCh* X_SCATTERPLOT;
-  XMLCh* X_COLUMN;
-  XMLCh* X_X;
-  XMLCh* X_Y;
-  XMLCh* X_BY;
-  XMLCh* X_APPROXIMATION;
-  XMLCh* X_FO;
-  XMLCh* X_FOCE;
-  XMLCh* X_LAPLACE;
-  XMLCh* X_POP_SIZE;
-  XMLCh* X_IS_ESTIMATION;
-  XMLCh* X_IS_ETA_OUT;
-  XMLCh* X_IS_RESTART;
-  XMLCh* X_DATA_LABELS;
-  XMLCh* X_FILENAME;
-  XMLCh* X_NAME;
-  XMLCh* X_SYNONYM;
-  XMLCh* X_THETA;
-  XMLCh* X_LENGTH;
-  XMLCh* X_OMEGA;
-  XMLCh* X_SIGMA;
-  XMLCh* X_SIMULATION;
-  XMLCh* X_SEED;
-  XMLCh* X_POP_STAT;
-  XMLCh* X_COVARIANCE_FORM;
-  XMLCh* X_MITR;
-  XMLCh* X_IND_STAT;
-  XMLCh* X_SIG_DIGITS;
-  XMLCh* X_ONLYSIMULATION;
-  XMLCh* X_SUBPROBLEMS;
+  XMLCh* X_NONMEM;              static const char* C_NONMEM;
+  XMLCh* X_POP_ANALYSIS;        static const char* C_POP_ANALYSIS;
+  XMLCh* X_IND_ANALYSIS;        static const char* C_IND_ANALYSIS;
+  XMLCh* X_CONSTRAINT;          static const char* C_CONSTRAINT;
+  XMLCh* X_MODEL;               static const char* C_MODEL;
+  XMLCh* X_PRED;                static const char* C_PRED;
+  XMLCh* X_PRESENTATION;        static const char* C_PRESENTATION;
+  XMLCh* X_TABLE;               static const char* C_TABLE;
+  XMLCh* X_SCATTERPLOT;         static const char* C_SCATTERPLOT;
+  XMLCh* X_COLUMN;              static const char* C_COLUMN;
+  XMLCh* X_X;                   static const char* C_X;
+  XMLCh* X_Y;                   static const char* C_Y;
+  XMLCh* X_BY;                  static const char* C_BY;
+  XMLCh* X_APPROXIMATION;       static const char* C_APPROXIMATION;
+  XMLCh* X_FO;                  static const char* C_FO;
+  XMLCh* X_FOCE;                static const char* C_FOCE;
+  XMLCh* X_LAPLACE;             static const char* C_LAPLACE;
+  XMLCh* X_POP_SIZE;            static const char* C_POP_SIZE;
+  XMLCh* X_IS_ESTIMATION;       static const char* C_IS_ESTIMATION;
+  XMLCh* X_IS_ETA_OUT;          static const char* C_IS_ETA_OUT;
+  XMLCh* X_IS_RESTART;          static const char* C_IS_RESTART;
+  XMLCh* X_DATA_LABELS;         static const char* C_DATA_LABELS;
+  XMLCh* X_FILENAME;            static const char* C_FILENAME;
+  XMLCh* X_NAME;                static const char* C_NAME;
+  XMLCh* X_SYNONYM;             static const char* C_SYNONYM;
+  XMLCh* X_THETA;               static const char* C_THETA;
+  XMLCh* X_LENGTH;              static const char* C_LENGTH;
+  XMLCh* X_OMEGA;               static const char* C_OMEGA;
+  XMLCh* X_SIGMA;               static const char* C_SIGMA;
+  XMLCh* X_SIMULATION;          static const char* C_SIMULATION;
+  XMLCh* X_SEED;                static const char* C_SEED;
+  XMLCh* X_POP_STAT;            static const char* C_POP_STAT;
+  XMLCh* X_COVARIANCE_FORM;     static const char* C_COVARIANCE_FORM;
+  XMLCh* X_MITR;                static const char* C_MITR;
+  XMLCh* X_IND_STAT;            static const char* C_IND_STAT;
+  XMLCh* X_SIG_DIGITS;          static const char* C_SIG_DIGITS;
+  XMLCh* X_ONLYSIMULATION;      static const char* C_ONLYSIMULATION;
+  XMLCh* X_SUBPROBLEMS;         static const char* C_SUBPROBLEMS;
   //========================================
 
 };
