@@ -39,4 +39,9 @@ void simulate( SpkModel &indModel,
 	       const SPK_VA::valarray<double> &b,
 	       SPK_VA::valarray<double>       &yOut,
 	       int seed );
+
+void simulate( SpkModel &indModel,
+	       int                    n,
+	       const SPK_VA::valarray<double> &b,
+	       SPK_VA::valarray<double>       &yOut );
 #endif
