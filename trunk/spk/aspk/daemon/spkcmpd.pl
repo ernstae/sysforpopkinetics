@@ -413,7 +413,7 @@ sub reaper {
 	}
 	else {
 	    # Remove the working directory
-	    File::Path::rmtree("$tmp_dir/$working_dir");
+#	    File::Path::rmtree("$tmp_dir/$working_dir");
 	}
     }
     sigprocmask(SIG_SETMASK, $sigset)
