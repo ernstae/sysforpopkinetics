@@ -38,9 +38,9 @@ class NonmemTranslator : public ClientTranslator
     std::string SIGMA;
     std::string RES;
     std::string WRES;
-    std::string PRED;
     std::string ETARES;
     std::string WETARES;
+    std::string PRED;
     std::string DV;
     std::string ORGDV;
     std::string MDV;

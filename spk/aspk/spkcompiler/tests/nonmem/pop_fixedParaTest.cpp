@@ -67,8 +67,8 @@ namespace{
   char PTHREADLIB[] = "pthread";
   char MLIB[]       = "m";
   char XERCESCLIB[] = "xerces-c";
-  char LDPATH[]     = "-Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest";
-  char CPPFLAG[]    = "-g -I/usr/local/include/spktest";
+  char LDPATH[]     = "../../spkcompiler/libcommon.a ../../spkcompiler/nonmem/libnonmem.a -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest";
+  char CPPFLAG[]    = "-g -I./ -I../ -I../../spkcompiler -I/usr/local/include/spktest";
   char LDFLAG[514];
 
   char MY_ASSERT_EQUAL[] =

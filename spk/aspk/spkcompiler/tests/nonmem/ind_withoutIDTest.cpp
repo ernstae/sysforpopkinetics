@@ -125,8 +125,8 @@ namespace{
   char PTHREADLIB[] = "pthread";
   char MLIB[]       = "m";
   char XERCESCLIB[] = "xerces-c";
-  char LDPATH[]     = "-Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest";
-  char CPPFLAG[]    = "-g -I/usr/local/include/spktest";
+  char LDPATH[]     = "../../spkcompiler/libcommon.a ../../spkcompiler/nonmem/libnonmem.a -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest";
+  char CPPFLAG[]    = "-g -I./ -I../ -I../../spkcompiler -I/usr/local/include/spktest";
   char LDFLAG[514];
 
   char MY_ASSERT_EQUAL[] =
@@ -1048,13 +1048,11 @@ void ind_withoutIDTest::testIndDataClass()
 
   o << "   const valarray<double> y = A.getMeasurements();" << endl;
   o << "   MY_ASSERT_EQUAL( " << nRecords-nFixed << ", y.size() );" << endl;
-  o << "   A.compResiduals();" << endl;
   o << "   for( int j=0, k=0; j<n; j++ )" << endl;
   o << "   {" << endl;
   o << "      if( A." << strMDV << "[j] != 1 )" << endl;
   o << "      {" << endl;
   o << "         MY_ASSERT_EQUAL( A." << strDV << "[j], y[k] );" << endl;
-  o << "         MY_ASSERT_EQUAL( A." << strDV << "[j]-A." << strPRED << "[j], A." << strRES << "[j] );" << endl;
   o << "         k++;" << endl;
   o << "      }" << endl;
   o << "   }" << endl;
@@ -1131,13 +1129,11 @@ void ind_withoutIDTest::testDataSetClass()
   o << endl;
 
   o << "   const valarray<double> y = set.getAllMeasurements();" << endl;
-  o << "   set.compAllResiduals( );" << endl;  
   o << "   for( int j=0, k=0; j<n; j++ )" << endl;
   o << "   {" << endl;
   o << "      if( set.data[0]->" << strMDV << "[j] != 1 )" << endl;
   o << "      {" << endl;
   o << "         MY_ASSERT_EQUAL( set.data[0]->" << strDV << "[j], y[k] );" << endl;
-  o << "         MY_ASSERT_EQUAL( set.data[0]->" << strDV << "[j]-set.data[0]->" << strPRED << "[j], set.data[0]->" << strRES << "[j] );" << endl;
   o << "         k++;" << endl;
   o << "      }" << endl;
   o << "   }" << endl;
