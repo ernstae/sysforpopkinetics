@@ -16,6 +16,7 @@ public:
     virtual void setUp();
     virtual void tearDown();
 
+    void testHAHN1_1();
     void testScalarAssignmentToScalar();
     void testVectorElementAssignmentToScalar();
     void testFunctions();
