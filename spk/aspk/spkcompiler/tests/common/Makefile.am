@@ -40,7 +40,7 @@ testall_INCLUDES = \
 	SpkCompilerErrorTest.h \
 	SpkCompilerErrorTest.cpp
 
-AM_LDFLAGS = -lxerces-c -lcppunit -L$(INST_BASE)/lib/spktest -lspkcompiler
+AM_LDFLAGS = -lxerces-c -lcppunit -L/usr/local/lib/ -L$(INST_BASE)/lib/spktest -lspkcompiler
 
 INCLUDES = \
 	-I@top_srcdir@/ \

@@ -40,4 +40,4 @@ OBJECTS = \
 	gcc $(CPPFLAGS) $< -o $@
 
 RunTest: $(OBJECTS) $(INCLUDES)
-	g++ $(OBJECTS) -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -lspk -lspkopt -lgsl -latlas_lapack -lcblas -latlas -lxerces-c -o RunTest
+	g++ $(OBJECTS) -Wl,--rpath -Wl,/usr/local/lib -L/usr/local/lib -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -lspk -lspkopt -lgsl -latlas_lapack -lcblas -latlas -lxerces-c -o RunTest
