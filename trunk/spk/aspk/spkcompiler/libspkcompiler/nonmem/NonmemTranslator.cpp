@@ -628,12 +628,11 @@ void NonmemTranslator::parseSource()
       myRecordNums[i] = id->initial[i].size();
     }
 
-  if( myIsSimulate ) 
-    {
-      Symbol * s  = table->insertLabel( DefaultStr.ORGDV, "", myRecordNums );
-      for( int i=0; i<ourPopSize; i++ )
-	s->initial[i] = "0";
-    }
+  // ORGDV is a place for the original data set to be kept
+  // when a new data set is simulated.
+  Symbol * s  = table->insertLabel( DefaultStr.ORGDV, "", myRecordNums );
+  for( int i=0; i<ourPopSize; i++ )
+    s->initial[i] = "0";
  
   // Keep the user-typed Nonmem Keyword strings
   Symbol * p;
@@ -2739,11 +2738,6 @@ void NonmemTranslator::generateIndData( ) const
 	  // measurements and the original DV values are moved/stored in ORGDV.
 	  // Thus, in case of data simulation, DV (and ORGDV) has to be writable.
 	  // Otherwise, DV is read-only.
-	  if( isDV || isORGDV )
-	    {
-	      if( !myIsSimulate )
-		oIndData_h << "const ";
-	    }
 	  oIndData_h << "std::vector<";
 	  if( isID )
 	    {
@@ -2758,11 +2752,6 @@ void NonmemTranslator::generateIndData( ) const
 	  // If the current symbol has an alias, declare the alias as well.
 	  if( varAlias != "" )
 	    {
-	      if( isDV || isORGDV )
-		{
-		  if( !myIsSimulate )
-		    oIndData_h << "const ";
-		}
 	      oIndData_h << "std::vector<";
 	      if( isID )
 		{
@@ -4289,11 +4278,8 @@ void NonmemTranslator::generateNonmemParsNamespace() const
     {
       oNonmemPars << "// only THETA, OMEGA and ETA." << endl;
     }
-  if( myIsSimulate )
-    {
-      oNonmemPars << "// It also contains the input value(s) necessary to simulate a data set " << endl;
-      oNonmemPars << "// since it is also requested." << endl;
-    }
+  oNonmemPars << "// It also contains the input value(s) necessary to simulate a data set " << endl;
+  oNonmemPars << "// when requested." << endl;
   oNonmemPars << "// " << endl;
   oNonmemPars << "//=============================================================" << endl;
 
@@ -4370,18 +4356,9 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << endl;
 
   oNonmemPars << "   const valarray<bool> thetaFixed( c_thetaFixed, " << myThetaLen << " );" << endl;
-  if( ourTarget == POP && myIsSimulate )
-    {
-      oNonmemPars << "   // A valarray object that *will* contain the initial values for THETA." << endl;
-      oNonmemPars << "   // The object is intentionally non-constant because you will have to simulate the values " << endl;
-      oNonmemPars << "   // and place them  in this placeholder." << endl;
-      oNonmemPars << "   valarray<double> thetaIn ( c_thetaIn, nTheta );" << endl;
-    }
-  else
-    {
-      oNonmemPars << "   // A valarray object containing the initial values for THETA." << endl;
-      oNonmemPars << "   const valarray<double> thetaIn ( c_thetaIn, nTheta );" << endl;
-    }
+  oNonmemPars << "   // A valarray object that *will* contain the initial values for THETA." << endl;
+  oNonmemPars << "   // The object value may be replaced if a new data set is simulated." << endl;
+  oNonmemPars << "   valarray<double> thetaIn ( c_thetaIn, nTheta );" << endl;
   oNonmemPars << endl;
 
   oNonmemPars << "   //-------------------------------------------" << endl;
@@ -4537,44 +4514,50 @@ void NonmemTranslator::generateIndDriver( ) const
   const Symbol* pEta   = table->findi(KeyStr.ETA);
   const Symbol* pOmega = table->findi(KeyStr.OMEGA);
 
-  oDriver << "// " << myDescription                  << endl;
-  oDriver << "#include <iostream>"                   << endl;
-  oDriver << "#include <fstream>"                    << endl;
-  oDriver << "#include <sys/time.h>"                 << endl;
-  oDriver << "#include <vector>"                     << endl;
+  oDriver << "// " << myDescription              << endl;
+  oDriver << "#include <iostream>"               << endl;
+  oDriver << "#include <fstream>"                << endl;
+  oDriver << "#include <sys/time.h>"             << endl;
+  oDriver << "#include <vector>"                 << endl;
   oDriver << endl;
 
-  oDriver << "#include <spk/SpkValarray.h>"          << endl;
-  oDriver << "#include <spk/SpkException.h>"         << endl;
-  oDriver << "#include <spk/WarningsManager.h>"      << endl;
-  oDriver << "#include <CppAD/CppAD.h>"              << endl;
+  oDriver << "#include <spk/SpkValarray.h>"      << endl;
+  oDriver << "#include <spk/SpkException.h>"     << endl;
+  oDriver << "#include <spk/WarningsManager.h>"  << endl;
+  oDriver << "#include <CppAD/CppAD.h>"          << endl;
   oDriver << endl;
 
-  oDriver << "// For parameter estimation" << endl;
-  oDriver << "#include <spk/fitIndividual.h>"     << endl;
-  oDriver << "#include <spk/Optimizer.h>"         << endl;
+  oDriver << "// For parameter estimation"       << endl;
+  oDriver << "#include <spk/fitIndividual.h>"    << endl;
+  oDriver << "#include <spk/Optimizer.h>"        << endl;
   oDriver << endl;
 
-  oDriver << "// For statistics" << endl;
+  oDriver << "// For statistics"                 << endl;
   oDriver << "#include <spk/inverse.h>"          << endl;
   oDriver << "#include <spk/indStatistics.h>"    << endl;
   oDriver << "#include <spk/derParStatistics.h>" << endl;
+  oDriver << "#include <spk/multiply.h>"         << endl;
+  oDriver << "#include <spk/cholesky.h>"         << endl;
   oDriver << endl;
 
+  oDriver << "// Helper" << endl;
   oDriver << "#include <spk/printInMatrix.h>"    << endl;
-  if( myIsSimulate )
-    oDriver << "#include <spk/simulate.h>"          << endl;
-  oDriver << "#include \"IndData.h\""                << endl;
-  oDriver << "#include \"DataSet.h\""                << endl;
-  oDriver << "#include \"NonmemPars.h\""             << endl;
   oDriver << endl;
-  oDriver << "#include <spk/multiply.h>"             << endl;
-  oDriver << "#include <spk/cholesky.h>"             << endl;
+
+  oDriver << "// For data simulation"            << endl;
+  oDriver << "#include <spk/simulate.h>"         << endl;
+  oDriver << endl;
+
+  oDriver << "// SPK Compiler generated headers/classes" << endl;
+  oDriver << "#include \"IndData.h\""            << endl;
+  oDriver << "#include \"DataSet.h\""            << endl;
+  oDriver << "#include \"NonmemPars.h\""         << endl;
+  oDriver << endl;
 
   oDriver << "///////////////////////////////////////////////////////////////////////////////////" << endl;
-  oDriver << "//   NONMEM PRED SPECIFIC"             << endl;
-  oDriver << "#include \"Pred.h\""                   << endl;
-  oDriver << "#include <spkpred/IndPredModel.h>"     << endl;
+  oDriver << "//   NONMEM PRED SPECIFIC"         << endl;
+  oDriver << "#include \"Pred.h\""               << endl;
+  oDriver << "#include <spkpred/IndPredModel.h>" << endl;
   oDriver << "//" << endl;
   oDriver << "///////////////////////////////////////////////////////////////////////////////////" << endl;
   oDriver << endl;
@@ -4683,39 +4666,38 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "/*   Data Initialization                                           */" << endl;
   oDriver << "/*                                                                 */" << endl;
   oDriver << "/*******************************************************************/" << endl;
-  if( myIsSimulate )
-    {
-      oDriver << "valarray<double> y   ( nY );" << endl;
-      oDriver << "valarray<double> yOut( nY );" << endl;
-      oDriver << "try" << endl;
-      oDriver << "{" << endl;
-      oDriver << "   simulate( model, nY, bIn, yOut, NonmemPars::seed );" << endl;
-      oDriver << "   set.replaceAllMeasurements( yOut );" << endl;
-      oDriver << "   y   = yOut;" << endl;
-      oDriver << "   haveCompleteData = true;" << endl;
-      oDriver << "}" << endl;
-      oDriver << "catch( SpkException& e )" << endl;
-      oDriver << "{" << endl;
-      oDriver << "   char mess[ SpkError::maxMessageLen() ];" << endl;
-      oDriver << "   sprintf( mess, \"Failed in data simulation.\\n\" );" << endl;
-      oDriver << "   e.push( SpkError::SPK_SIMULATION_ERR, mess, __LINE__, __FILE__ );" << endl;
-      oDriver << "   errors.cat( e );" << endl;
-      oDriver << "   haveCompleteData = false;" << endl;
-      oDriver << "}" << endl;
-      oDriver << "catch( ... )" << endl;
-      oDriver << "{" << endl;
-      oDriver << "   char message[] =\"Unknown exception: failed in data simulation!!!\";" << endl;
-      oDriver << "   SpkError e( SpkError::SPK_UNKNOWN_ERR, message, __LINE__, __FILE__ );" << endl;
-      oDriver << "   errors.push( e );" << endl;
-      oDriver << "   haveCompleteData = false;" << endl;
-      oDriver << "}" << endl;
-    }
-  else
-    {
-      oDriver << "valarray<double> y = set.getAllMeasurements();" << endl;
-      oDriver << "haveCompleteData = true;" << endl;
-      oDriver << endl;
-    }
+  oDriver << "valarray<double> y   ( nY );" << endl;
+  oDriver << "if( isSimRequested )" << endl;
+  oDriver << "{" << endl;
+  oDriver << "   valarray<double> yOut( nY );" << endl;
+  oDriver << "   try" << endl;
+  oDriver << "   {" << endl;
+  oDriver << "      simulate( model, nY, bIn, yOut, NonmemPars::seed );" << endl;
+  oDriver << "      set.replaceAllMeasurements( yOut );" << endl;
+  oDriver << "      y   = yOut;" << endl;
+  oDriver << "      haveCompleteData = true;" << endl;
+  oDriver << "   }" << endl;
+  oDriver << "   catch( SpkException& e )" << endl;
+  oDriver << "   {" << endl;
+  oDriver << "      char mess[ SpkError::maxMessageLen() ];" << endl;
+  oDriver << "      sprintf( mess, \"Failed in data simulation.\\n\" );" << endl;
+  oDriver << "      e.push( SpkError::SPK_SIMULATION_ERR, mess, __LINE__, __FILE__ );" << endl;
+  oDriver << "      errors.cat( e );" << endl;
+  oDriver << "      haveCompleteData = false;" << endl;
+  oDriver << "   }" << endl;
+  oDriver << "   catch( ... )" << endl;
+  oDriver << "   {" << endl;
+  oDriver << "      char message[] =\"Unknown exception: failed in data simulation!!!\";" << endl;
+  oDriver << "      SpkError e( SpkError::SPK_UNKNOWN_ERR, message, __LINE__, __FILE__ );" << endl;
+  oDriver << "      errors.push( e );" << endl;
+  oDriver << "      haveCompleteData = false;" << endl;
+  oDriver << "   }" << endl;
+  oDriver << "}" << endl;
+  oDriver << "else" << endl;
+  oDriver << "{" << endl;
+  oDriver << "   y = set.getAllMeasurements();" << endl;
+  oDriver << "   haveCompleteData = true;" << endl;
+  oDriver << "}" << endl;
 
   oDriver << "/*******************************************************************/" << endl;
   oDriver << "/*                                                                 */" << endl;
@@ -4969,11 +4951,14 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "   }" << endl;
   oDriver << "   oResults << \"</theta_out>\" << endl;" << endl;
   // omega 
-  oDriver << "   oResults << \"<omega_out dimension=\\\"\" << NonmemPars::omegaDim << \"\\\" ";
-  if( myOmegaStruct == Symbol::TRIANGLE )
-    oDriver << "   struct=\\\"diagonal\\\">\" << endl;" << endl;
-  else
-    oDriver << "   struct=\\\"block\\\">\" << endl;" << endl;
+  oDriver << "   oResults << \"<omega_out dimension=\" << \"\\\"\" << NonmemPars::omegaDim << \"\\\"\";" << endl;
+  oDriver << "   oResults << \" struct=\" << \"\\\"\";" << endl;
+  oDriver << "   if( NonmemPars::omegaStruct==IndPredModel::DIAGONAL )" << endl;
+  oDriver << "      oResults << \"diagonal\";" << endl;
+  oDriver << "   else" << endl;
+  oDriver << "      oResults << \"block\";" << endl;
+  oDriver << "   oResults << \"\\\"\" << \">\" << endl;" << endl;
+
   oDriver << "   for( int i=0; i<NonmemPars::omegaOrder; i++ )" << endl;
   oDriver << "   {" << endl;
   oDriver << "      oResults << \"<value>\" << omegaOut[i] << \"</value>\" << endl;" << endl;
@@ -5129,19 +5114,21 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "#include <spk/inverse.h>"          << endl;
   oDriver << "#include <spk/lTilde.h>"           << endl;
   oDriver << "#include <spk/NaiveFoModel.h>"     << endl;
+  oDriver << "#include <spk/multiply.h>"   << endl;
+  oDriver << "#include <spk/cholesky.h>"   << endl;
   oDriver << endl;
 
-  if( myIsSimulate )
-    oDriver << "#include <spk/simulate.h>" << endl;
+  oDriver << "// For data simulation" << endl;
+  oDriver << "#include <spk/simulate.h>" << endl;
+  oDriver << endl;
+
+  oDriver << "// SPK Compiler generated headers/classes" << endl;
   oDriver << "#include \"IndData.h\""      << endl;
   oDriver << "#include \"DataSet.h\""      << endl;
   oDriver << endl;
 
-  oDriver << "#include <spk/multiply.h>"   << endl;
-  oDriver << "#include <spk/cholesky.h>"   << endl;
-
   oDriver << "///////////////////////////////////////////////////////////////////" << endl;
-  oDriver << "//   NONMEM PRED specific"   << endl;
+  oDriver << "//   NONMEM specific"   << endl;
   oDriver << "#include \"Pred.h\"" << endl;
   oDriver << "#include <spkpred/PopPredModel.h>" << endl;
   oDriver << "#include \"NonmemPars.h\""   << endl;
@@ -5292,39 +5279,39 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "/*   Data Initialization                                           */" << endl;
   oDriver << "/*                                                                 */" << endl;
   oDriver << "/*******************************************************************/" << endl;
-  if( myIsSimulate )
-    {
-      oDriver << "valarray<double> y   ( nY );" << endl;
-      oDriver << "valarray<double> yOut( nY );" << endl;
-      oDriver << "try" << endl;
-      oDriver << "{" << endl;
-      oDriver << "   simulate( model, alpIn, N, bLow, bUp, yOut, bOut, NonmemPars::seed );" << endl;
-      oDriver << "   bIn = bOut;" << endl;
-      oDriver << "   set.replaceAllMeasurements( yOut );" << endl;
-      oDriver << "   y   = yOut;" << endl;
-      oDriver << "   haveCompleteData = true;" << endl;
-      oDriver << "}" << endl;
-      oDriver << "catch( SpkException& e )" << endl;
-      oDriver << "{" << endl;
-      oDriver << "   char mess[ SpkError::maxMessageLen() ];" << endl;
-      oDriver << "   sprintf( mess, \"Failed in data simulation.\\n\" );" << endl;
-      oDriver << "   e.push( SpkError::SPK_SIMULATION_ERR, mess, __LINE__, __FILE__ );" << endl;
-      oDriver << "   errors.cat( e );" << endl;
-      oDriver << "   haveCompleteData = false;" << endl;
-      oDriver << "}" << endl;
-      oDriver << "catch( ... )" << endl;
-      oDriver << "{" << endl;
-      oDriver << "   char message[] =\"Unknown exception: failed in data simulation!!!\";" << endl;
-      oDriver << "   SpkError e( SpkError::SPK_UNKNOWN_ERR, message, __LINE__, __FILE__ );" << endl;
-      oDriver << "   haveCompleteData = false;" << endl;
-      oDriver << "}" << endl;
-    }
-  else
-    {
-      oDriver << "valarray<double> y = set.getAllMeasurements();" << endl;
-      oDriver << "haveCompleteData = true;" << endl;
-      oDriver << endl;
-    }
+  oDriver << "valarray<double> y ( nY );" << endl;
+  oDriver << "if( isSimRequested )" << endl;
+  oDriver << "{" << endl;
+  oDriver << "   valarray<double> yOut( nY );" << endl;
+  oDriver << "   try" << endl;
+  oDriver << "   {" << endl;
+  oDriver << "      simulate( model, alpIn, N, bLow, bUp, yOut, bOut, NonmemPars::seed );" << endl;
+  oDriver << "      bIn = bOut;" << endl;
+  oDriver << "      set.replaceAllMeasurements( yOut );" << endl;
+  oDriver << "      y   = yOut;" << endl;
+  oDriver << "      haveCompleteData = true;" << endl;
+  oDriver << "   }" << endl;
+  oDriver << "   catch( SpkException& e )" << endl;
+  oDriver << "   {" << endl;
+  oDriver << "      char mess[ SpkError::maxMessageLen() ];" << endl;
+  oDriver << "      sprintf( mess, \"Failed in data simulation.\\n\" );" << endl;
+  oDriver << "      e.push( SpkError::SPK_SIMULATION_ERR, mess, __LINE__, __FILE__ );" << endl;
+  oDriver << "      errors.cat( e );" << endl;
+  oDriver << "      haveCompleteData = false;" << endl;
+  oDriver << "   }" << endl;
+  oDriver << "   catch( ... )" << endl;
+  oDriver << "   {" << endl;
+  oDriver << "      char message[] =\"Unknown exception: failed in data simulation!!!\";" << endl;
+  oDriver << "      SpkError e( SpkError::SPK_UNKNOWN_ERR, message, __LINE__, __FILE__ );" << endl;
+  oDriver << "      haveCompleteData = false;" << endl;
+  oDriver << "   }" << endl;
+  oDriver << "}" << endl;
+  oDriver << "else" << endl;
+  oDriver << "{" << endl;
+  oDriver << "   y = set.getAllMeasurements();" << endl;
+  oDriver << "   haveCompleteData = true;" << endl;
+  oDriver << endl;
+  oDriver << "}" << endl;
 
   oDriver << "/*******************************************************************/" << endl;
   oDriver << "/*                                                                 */" << endl;
@@ -5644,22 +5631,28 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "   }" << endl;
   oDriver << "   oResults << \"</theta_out>\" << endl;" << endl;
   // Omega 
-  oDriver << "   oResults << \"<omega_out dimension=\\\"\" << NonmemPars::omegaDim << \"\\\" ";
-  if( myOmegaStruct == Symbol::TRIANGLE )
-    oDriver << "struct=\\\"block\\\">\" << endl;" << endl;
-  else
-    oDriver << "struct=\\\"diagonal\\\">\" << endl;" << endl;
+  oDriver << "   oResults << \"<omega_out dimension=\" << \"\\\"\" << NonmemPars::omegaDim << \"\\\"\";" << endl;
+  oDriver << "   oResults << \" struct=\" << \"\\\"\";" << endl;
+  oDriver << "   if( NonmemPars::omegaStruct==PopPredModel::DIAGONAL )" << endl;
+  oDriver << "      oResults << \"diagonal\";" << endl;
+  oDriver << "   else" << endl;
+  oDriver << "      oResults << \"block\";" << endl;
+  oDriver << "   oResults << \"\\\"\" << \">\" << endl;" << endl;
+
   oDriver << "   for( int i=0; i<NonmemPars::omegaOrder; i++ )" << endl;
   oDriver << "   {" << endl;
   oDriver << "      oResults << \"<value>\" << omegaOut[i] << \"</value>\" << endl;" << endl;
   oDriver << "   }" << endl;
   oDriver << "   oResults << \"</omega_out>\" << endl;" << endl;
   // Sigma
-  oDriver << "   oResults << \"<sigma_out dimension=\\\"\" << NonmemPars::sigmaDim << \"\\\" ";
-  if( mySigmaStruct == Symbol::TRIANGLE )
-    oDriver << "struct=\\\"block\\\">\" << endl;" << endl;
-  else
-    oDriver << "struct=\\\"diagonal\\\">\" << endl;" << endl;
+  oDriver << "   oResults << \"<sigma_out dimension=\" << \"\\\"\" << NonmemPars::sigmaDim << \"\\\"\";" << endl;
+  oDriver << "   oResults << \" struct=\" << \"\\\"\";" << endl;
+  oDriver << "   if( NonmemPars::sigmaStruct==PopPredModel::DIAGONAL )" << endl;
+  oDriver << "      oResults << \"diagonal\";" << endl;
+  oDriver << "   else" << endl;
+  oDriver << "      oResults << \"block\";" << endl;
+  oDriver << "   oResults << \"\\\"\" << \">\" << endl;" << endl;
+
   oDriver << "   for( int i=0; i<NonmemPars::sigmaOrder; i++ )" << endl;
   oDriver << "   {" << endl;
   oDriver << "      oResults << \"<value>\" << sigmaOut[i] << \"</value>\" << endl;" << endl;
