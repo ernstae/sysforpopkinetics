@@ -21,7 +21,7 @@
  *
  * - @ref EXIT_CODE "Normal Exit Code":
  *   - <code>SUCCESS</code> (0)       --- The compilation completed successfully
- *                         A makefile, <code>generatedMakefile</code>, along with the source
+ *                         A makefile, <code>Makefile.SPK</code>, along with the source
  *                         code files are generated in the current directory.
  *   - <code>XML_PARSE_ERR</code> (1) --- Syntax errors are found in either/both SOURCE or/and DATA.
  *                         <code>compilation_error.xml</code> will be generated in the current directory.
@@ -31,12 +31,12 @@
  *                        the current directory.
  *
  * - Generated files (upon <em>successful</em> completion):
- *   - <code>driver.cpp</code> --- The CSPK driver for the given pair of SpkSourceML
+ *   - <code>spkDriver.cpp</code> --- The CSPK driver for the given pair of SpkSourceML
  *       and SpkDataML documents.
  *   - <code>Pred.h</code>    --- Declare and define a template class, Pred.
  *   - <code>DataSet.h</code> --- Declare and define a template class, DataSet.
  *   - <code>IndData.h</code> --- Declare and define a template class, IndData.
- *   - <code>generatedMakefile</code> --- Makefile file to build an executable from 
+ *   - <code>Makefile.SPK</code> --- Makefile file to build an executable from 
  *       the above files.
  * 
  * - Generated files (upon <em>abnormal</em> completion):
@@ -114,7 +114,7 @@ namespace{
     strcat( o, "\n" );
     strcat( o, "<Exit Code>\n" );
     strcat( o, "   0: The compilation completed successfully.\n" );
-    strcat( o, "      A makefile, \"generatedMakefile\", along with the source\n" );
+    strcat( o, "      A makefile, \"Makefile.SPK\", along with the source\n" );
     strcat( o, "      code files are generated in the current directory.\n" );
     strcat( o, "   1: Syntax errors are found in either/both SOURCE or/and DATA.\n" );
     strcat( o, "      compilation_error.xml will be generated in the current directory.\n" );
