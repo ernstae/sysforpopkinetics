@@ -544,7 +544,7 @@ namespace // [Begin: unnamed namespace]
 
 
     //----------------------------------------------------------
-    // Information required by the objective function.
+    // Information needed to evaluate the objective and its gradient.
     //----------------------------------------------------------
 
   private:
