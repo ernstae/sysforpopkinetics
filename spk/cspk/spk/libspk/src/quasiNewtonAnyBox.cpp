@@ -1276,7 +1276,7 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   // with sufficient accuracy.
   quadMax = 100;
 
-  deltaScale = 0.1;
+  double deltaScale;
 
   int i = 0;
   while ( i < nMaxIter )
@@ -1311,13 +1311,6 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
       return;
     }
 
-    // If QuasiNewton01Box's convergence criterion has been met,
-    // then the infinity norm of the current gradient is less than
-    // delta, and it needs to be decreased so that the optimizer
-    // can continue iterating toward the minimum to try to satisfy
-    // the conververgence criterion for this function.
-
-
     // Set delta to be the maximum of the absolute values of the
     // elements (infinity norm) of the current gradient,
     //
@@ -1328,15 +1321,21 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
     // sufficient for the current x value.
     deltaCurr = MaxAbs( gCur );
 
+    // If QuasiNewton01Box's convergence criterion has been met,
+    // then the infinity norm of the current gradient is less than
+    // delta, and it needs to be decreased so that the optimizer
+    // can continue iterating toward the minimum to try to satisfy
+    // the conververgence criterion for this function.
     if ( quasiNewtonOutput == ok )
     {
-      deltaCurr *= deltaScale;
+      deltaScale /= 10.0;
     }
-
-    if ( deltaCurr < delta )
+    else
     {
-      delta = deltaCurr;
+      deltaScale = 1.0;
     }
+    
+    delta = deltaCurr * deltaScale;
   }
 
 
