@@ -30,6 +30,7 @@ stop() {
 	       SENT=sent
 	   fi
        done
+       rm -f $LOCKFILE_PATH
        echo "stopped"
     else
 	echo "$SERVICE_NAME is not running"
