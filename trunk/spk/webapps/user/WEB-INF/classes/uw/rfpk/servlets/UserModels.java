@@ -7,7 +7,6 @@ import java.nio.*;
 import java.sql.*;
 import rfpk.spk.spkdb.*;
 import java.util.Vector;
-import java.text.SimpleDateFormat;
 import org.apache.commons.jrcs.rcs.*;
 import org.apache.commons.jrcs.util.ToString;
 import org.apache.commons.jrcs.diff.*;
@@ -76,7 +75,7 @@ public class UserModels extends HttpServlet
  	        int maxNum = Integer.parseInt(messageIn[1]); 
                 long leftOff = Long.parseLong(messageIn[2]);
                 if(messageIn[3].equals("true"))
-                    username = "library";
+                    username = "librarian";
            
                 // Connect to the database
                 ServletContext context = getServletContext();
@@ -94,16 +93,15 @@ public class UserModels extends HttpServlet
                 ResultSet userModelsRS = Spkdb.userModels(con, userId, maxNum, leftOff);  
              
                 // Fill in the List
-                SimpleDateFormat formater = new SimpleDateFormat("EEE, MMM, d yyyy 'at' HH:mm:ss z");
                 while(userModelsRS.next())
                 {                  
                     // Get model id
                     long modelId = userModelsRS.getLong("model_id"); 
                     
                     // Get model archive
-                    ResultSet modelRS = Spkdb.getModel(con, modelId);
-                    modelRS.next();
-                    String modelArchive = modelRS.getString("archive");
+	            Blob blobArchive = userModelsRS.getBlob("archive");
+	            long length = blobArchive.length(); 
+	            String modelArchive = new String(blobArchive.getBytes(1L, (int)length));                    
                     Archive archive = new Archive("", new ByteArrayInputStream(modelArchive.getBytes()));
                     
                     // Fill in the list 
