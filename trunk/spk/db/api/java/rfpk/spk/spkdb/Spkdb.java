@@ -117,16 +117,17 @@ public abstract class Spkdb {
        @param maxNum maximum number of jobs to provide status for
        @param leftOff least jobId previously returned (0 if first call in sequence)
        @return Object of a class which implements the java.ResultSet interface, containing
-       a sequence of subsets of rows of the job table.  Each subset contains the 
-       following columns: job_id, abstract, dataset_id, dataset_version, model_id,
-       model_version, state_code, start_time, event_time and end_code.
+       a sequence of subsets of rows of the job table. Each row contains all columns of the
+       job table.  Three fields, xml_source, cpp_source, and report, which are defined in
+       the SQL schema to have type "long blob" are returned as Blob types.
      */
     public static ResultSet userJobs(Connection conn, long userId, int maxNum, long leftOff)
 	throws SQLException, SpkdbException 
     {
 	String
-	    sql = "select job_id, abstract, dataset_id, dataset_version, model_id, "
-	    + "state_code, start_time, event_time, end_code "
+	    //	    sql = "select job_id, abstract, dataset_id, dataset_version, model_id, "
+	    //	    + "state_code, start_time, event_time, end_code "
+	    sql = "select * "
 	    + "from job where user_id=" + userId;
 	if (leftOff != 0) {
 	    sql += " and job_id < " + leftOff;

@@ -1,4 +1,3 @@
-
 import rfpk.spk.spkdb.*;
 import java.sql.*;
 
@@ -9,8 +8,7 @@ public class TestSpkdb {
 	String firstName = "Mike";
 	String surname = "Jordan";
 	final int maxTests = 36;
-	String xmlSource = "<spksource></spksource>";
-
+	String xmlSource = "<spksource>\n\tline1\n\tline2\n</spksource>";
 	boolean b = true;
 	boolean target = true;
 	String s = "connection";
@@ -187,16 +185,22 @@ public class TestSpkdb {
 		    break;
 		case 14:
 		    target = true;
-		    s = "userJobs, maxNum = 1";
+		    s = "userJobs, maxNum = 1\n";
 		    rs = Spkdb.userJobs(conn, userId, 1, 0);
 		    if (rs.next()) {
 			b = rs.getLong("job_id") == newestJobId;
+			Blob report = rs.getBlob("xml_source");
+			java.io.InputStream in = report.getBinaryStream();
+			int c;
+			while ((c = in.read()) != -1) {
+			    s += (char)c;
+			}
 		    } 
 		    else {
 			s += ": no record for userId = " + userId;
 			b = false;
 		    } 
-
+		    
 		    break;
 		case 15:
 		    b = target = true;
