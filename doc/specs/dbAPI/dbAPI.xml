@@ -984,7 +984,7 @@
 		<row>
 		  <entry>success</entry>
 		  <entry>row </entry>
-		  <entry>job_id, dataset_id, xml_source</entry>
+		  <entry>job_id, dataset_id, dataset_version, xml_source</entry>
 		</row>
 		<row>
 		  <entry>failure</entry>

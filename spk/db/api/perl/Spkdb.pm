@@ -29,7 +29,7 @@ use Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = (
     'connect', 'disconnect', 'new_job', 'job_status', 'user_jobs', 
-    'de_q2c', 'en_q2c',
+    'de_q2c', 'en_q2c', 'get_cmp_jobs', 'get_run_jobs',
     'en_q2r', 'de_q2r', 'end_job', 'job_report',
     'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
     'new_model', 'get_model', 'update_model', 'user_models',
@@ -354,6 +354,7 @@ Returns
     containing the following fields:
         job_id
         dataset_id
+        dataset_version
         xml_source
     false if compiler queue is empty   
 
@@ -371,7 +372,7 @@ sub de_q2c() {
     
     $dbh->begin_work;
 
-    my $sql = "select job_id, dataset_id, xml_source from job "
+    my $sql = "select job_id, dataset_id, dataset_version, xml_source from job "
 	    .       "where state_code='q2c' "
             .       "order by event_time "
             .       "limit 1 "
@@ -841,17 +842,16 @@ sub new_dataset() {
 
 Retrieve the dataset corresponding to a name
 
-    $row = &Spkdb::get_dataset($dbh, $user_id, $name);
+    $row = &Spkdb::get_dataset($dbh, $dataset_id);
 
 $dbh is the handle to an open database connection
 
-$user_id is the integer which uniquely identifies the user
-
-$name is the name of a dataset
+$dataset_id is the integer which uniquely identifies the dataset
 
 Returns
 
   success: reference to a hash table of column/value pairs
+           0 if no datatset corresponds to the given dataset_id
   failure: undef
     $Spkdb::errstr contains an error message string
     $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
@@ -861,12 +861,11 @@ Returns
 
 sub get_dataset() {
     my $dbh = shift;
-    my $user_id = shift;
-    my $name = shift;
+    my $dataset_id = shift;
     $err = 0;
     $errstr = "";
 
-    my $sql = "select * from dataset where user_id=$user_id and name='$name';";
+    my $sql = "select * from dataset where dataset_id = $dataset_id;";
     my $sth = $dbh->prepare($sql);
     unless ($sth) {
 	$err = $PREPARE_FAILED;
@@ -882,7 +881,7 @@ sub get_dataset() {
     my $count = $sth->rows;
 
     if ($count == 0) {
-	return;
+	return 0;
     }
     unless ($count == 1) {
 	$err = $TOO_MANY;
@@ -1088,13 +1087,12 @@ Retrieve the model corresponding to a name
 
 $dbh is the handle to an open database connection
 
-$user_id is the integer which uniquely identifies the user
-
-$name is the name of a model
+$model_id is the integer which uniquely identifies the model
 
 Returns
 
   success: reference to a hash table of column/value pairs
+           0 if no model corresponds to the model_id
   failure: undef
     $Spkdb::errstr contains an error message string
     $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
@@ -1104,12 +1102,11 @@ Returns
 
 sub get_model() {
     my $dbh = shift;
-    my $user_id = shift;
-    my $name = shift;
+    my $model_id = shift;
     $err = 0;
     $errstr = "";
 
-    my $sql = "select * from model where user_id=$user_id and name='$name';";
+    my $sql = "select * from model where model_id=$model_id;";
     my $sth = $dbh->prepare($sql);
     unless ($sth) {
 	$err = $PREPARE_FAILED;
@@ -1125,7 +1122,7 @@ sub get_model() {
     my $count = $sth->rows;
 
     if ($count == 0) {
-	return undef;
+	return 0;
     }
     unless ($count == 1) {
 	$err = $TOO_MANY;
