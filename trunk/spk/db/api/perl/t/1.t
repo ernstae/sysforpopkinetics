@@ -16,7 +16,7 @@ my $rv;
 
 
 
-my $tmp_name = "junk$$";
+my $tmp_name = "/tmp/junk$$";
 my $admin = "../../admin";
 my $schema = "$admin/schema.sql";
 my $drop   = "$admin/drop.sql";
