@@ -104,11 +104,20 @@
      for SIGMA matrix.
 -->
 <!ELEMENT sigma (in)>
+
 <!--
      <sigma> takes "span" attribute which
      specifies the span of SIGMA matrix.
 -->
 <!ATTLIST sigma span CDATA #REQUIRED>
+
+<!---
+     <sigma> may take "same_as_previous" attribute
+     which indicates the sigma's initial values are
+     the same as the values in the sigma record
+     appeared immediately before this specification.
+--->
+<!ATTLIST sigma same_as_previous (yes|no) #FIXED "no">
 
 <!--
      <sigma> takes "struct" attribute which
@@ -140,6 +149,14 @@
      <eta> section contains the initial estimate (in)
      for ETA vector.
 -->
+
+<!---
+     <omega> may take "same_as_previous" attribute
+     which indicates the omega's initial values are
+     the same as the values in the omega record
+     appeared immediately before this specification.
+--->
+
 <!ELEMENT eta (in)>
 
 <!--
