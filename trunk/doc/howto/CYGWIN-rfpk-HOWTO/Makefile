@@ -5,11 +5,12 @@ S = f:/cygwin/usr/local/lib/xml/stylesheets/docbook-xsl
 HTML = $S/html/docbook.xsl
 FO = $S/fo/docbook.xsl
 # comment
-all:	html fo
-
 html:	$D.html
 
+all:	html fo
+
 fo:	$D.fo
+
 
 $D.html:	$D.xml
 	java -cp ${JARS} ${PROC} -in $D.xml -xsl ${HTML} -out $D.html
