@@ -9,6 +9,7 @@
 #include "src/allTrueTest.h"
 #include "src/BlockAllocTest.h"
 #include "src/blockDiagonalDerivativeTest.h"
+#include "src/calcMeanTest.h"
 #include "src/centdiffModelTest.h"
 #include "src/centdiffTest.h"
 #include "src/choleskyTest.h"
@@ -77,6 +78,7 @@
 #include "src/residualsTest.h"
 #include "src/rvecInverseTest.h"
 #include "src/rvecTest.h"
+#include "src/simulateTest.h"
 #include "src/SpkErrorTest.h"
 #include "src/SpkExceptionTest.h"
 #include "src/SpkModelErrorTest.h"
@@ -103,6 +105,7 @@ int main( int argc, const char * argv[] )
   runner.addTest( allTrueTest::suite() );
   runner.addTest( BlockAllocTest::suite() );
   runner.addTest( blockDiagonalDerivativeTest::suite() );
+  runner.addTest( calcMeanTest::suite() );
   runner.addTest( centdiffModelTest::suite() );
   runner.addTest( centdiffTest::suite() );
   runner.addTest( choleskyTest::suite() );
@@ -171,6 +174,7 @@ int main( int argc, const char * argv[] )
   runner.addTest( residualsTest::suite() );
   runner.addTest( rvecInverseTest::suite() );
   runner.addTest( rvecTest::suite() );
+  runner.addTest( simulateTest::suite() );
   runner.addTest( SpkErrorTest::suite() );
   runner.addTest( SpkExceptionTest::suite() );
   runner.addTest( SpkModelErrorTest::suite() );

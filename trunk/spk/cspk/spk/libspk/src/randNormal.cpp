@@ -46,7 +46,7 @@
 ********************************************************************************/
 #include <nag.h>
 #include <nagf03.h>  // for Cholesky factoring
-
+#include <nagg05.h>  // random number generator
 #include "SpkValarray.h"
 #include "multiply.h"
 #include "randNormal.h"

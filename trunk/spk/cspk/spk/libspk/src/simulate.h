@@ -19,12 +19,19 @@
 %************************************************************************
 
 */
-#ifndef RAND_NORMAL_H
-#define RAND_NORMAL_H
+#ifndef SIMULATE_H
+#define SIMULATE_H
 
-#include <nag.h>
+#include "SpkModel.h"
 #include "SpkValarray.h"
 
-SPK_VA::valarray<double> randNormal( const SPK_VA::valarray<double> & V, int n );
+bool simulate( SpkModel &model,		
+	       const SPK_VA::valarray<double> &alp,
+	       const SPK_VA::valarray<int>    &N,
+	       const SPK_VA::valarray<double> &bLow,
+	       const SPK_VA::valarray<double> &bUp,
+	       SPK_VA::valarray<double>       &yOut,
+	       SPK_VA::valarray<double>       &bAllOut,
+	       int seed );
 
 #endif
