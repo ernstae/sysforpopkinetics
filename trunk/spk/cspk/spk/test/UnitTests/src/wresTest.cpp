@@ -28,11 +28,18 @@
  *
  * Author: Sachiko Honda
  *
+ * Modified later by: Mitch Watrous
+ *
  *************************************************************************/
+
+/*------------------------------------------------------------------------
+ * Include Files
+ *------------------------------------------------------------------------*/
 
 #include <iostream>
 #include <cassert>
 #include <valarray>
+#include <spk/isDblEpsEqual.h>
 #include <spk/wres.h>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
@@ -40,6 +47,13 @@
 
 using namespace CppUnit;
 using namespace std;
+
+
+/*************************************************************************
+ *
+ * CppUnit framework functions.
+ *
+ *************************************************************************/
 
 void wresTest::setUp()
 {
@@ -63,99 +77,153 @@ Test* wresTest::suite()
 }
 
 
+/*************************************************************************
+ *
+ * Function: emptyCase
+ *
+ *************************************************************************/
+
 void wresTest::emptyCase()
 {
   int n = 0;
   valarray<double> y(n);
-  valarray<double> yHat(n);
-  valarray<double> R(n*n);
+  valarray<double> f(n);
+  valarray<double> cov(n*n);
 
   valarray<double> r(n);
   valarray<double> wr(n);
-  wres( y, yHat, R, r, wr );
+  wres( y, f, cov, &r, &wr );
   CPPUNIT_ASSERT( true );
 }
+
+
+/*************************************************************************
+ *
+ * Function: oneCase
+ *
+ *************************************************************************/
+
 void wresTest::oneCase()
 {
   int n = 1;
 
   //
-  // y = [ 1.0 ]
+  // y  =  [ 1.0 ]
   //
   valarray<double> y( 1.0, n );
 
   //
-  // y^ = [ 1.5 ]
+  // f  =  [ 1.5 ]
   //
-  valarray<double> yHat( 1.5, n );
+  valarray<double> f( 1.5, n );
 
   //
-  //     /       \   /       \   /       \
-  // R = |  4.0  | = |  2.0  | * |  2.0  |
-  //     \       /   \       /   \       /
+  //         /       \     /       \   /       \
+  // cov  =  |  4.0  |  =  |  2.0  | * |  2.0  |
+  //         \       /     \       /   \       /
   //
-  valarray<double> R( 4.0, n * n );
+  valarray<double> cov( 4.0, n * n );
 
   valarray<double> r(n);
   valarray<double> wr(n);
-  wres( y, yHat, R, r, wr );
+  wres( y, f, cov, &r, &wr );
   
   //
-  // r = [ -0.5 ]
+  // r  =  y - f
   //
-  CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.5, r[0], 0.0 );
+  //    =  [ -0.5 ]
+  //
+  CPPUNIT_ASSERT( isDblEpsEqual( -0.5, r[0], fabs( r[0] ) ) );
 
   //
-  // wres = [ -1.0 ]
+  //              -1/2
+  // wr   =   cov      *  r
   //
-  CPPUNIT_ASSERT_DOUBLES_EQUAL( -1.0, wr[0], 0.0 );
+  //      =  [ -0.25 ]
+  //
+  CPPUNIT_ASSERT( isDblEpsEqual( -0.25, wr[0], fabs( wr[0] ) ) );
 }
+
+
+/*************************************************************************
+ *
+ * Function: threeCase
+ *
+ *************************************************************************/
+
 void wresTest::threeCase()
 {
   int n = 3;
 
   //
-  // y = [ 1.1, 2.2, 3.3 ]
+  // y  =  [ 1.1, 2.2, 3.3 ]
   //
   double yIn[] = { 1.1, 2.2, 3.3 };
   valarray<double> y( yIn, n );
 
   //
-  // y^ = [ 1.0, 2.0, 3.0 ]
+  // f  =  [ 1.0, 2.0, 3.0 ]
   //
-  double yHatIn[] = { 1.0, 2.0, 3.0 };
-  valarray<double> yHat( yHatIn, n );
+  double fIn[] = { 1.0, 2.0, 3.0 };
+  valarray<double> f( fIn, n );
 
   //
   //
-  //     /                   \    /                \   /                 \
-  //     |  1.0   0.0   0.0  |   |  1.0  0.0  0.0  |   |  1.0  0.0  0.0  |
-  // R = |  0.0   4.0   0.0  | = |  0.0  2.0  0.0  | * |  0.0  2.0  0.0  |
-  //     |  0.0   0.0   9.0  |   |  0.0  0.0  3.0  |   |  0.0  0.0  3.0  |
-  //     \                   /    \                /   \                 /
+  //         /                   \
+  //         |  1.0   0.2   0.3  |
+  // cov  =  |  0.2   4.0   0.5  |  .
+  //         |  0.3   0.5   6.0  |
+  //         \                   /
   //
-  //
-  valarray<double> R( 0.0, n * n );
-  //R[ slice( 0, n, n+1 ) ] = 1.0;
-  R[0] = 1.0;
-  R[4] = 4.0;
-  R[8] = 9.0;
+  valarray<double> cov( n * n );
+  cov[0 + 0 * n] = 1.0;
+  cov[1 + 0 * n] = 0.2;
+  cov[2 + 0 * n] = 0.3;
+  cov[0 + 1 * n] = 0.2;
+  cov[1 + 1 * n] = 4.0;
+  cov[2 + 1 * n] = 0.5;
+  cov[0 + 2 * n] = 0.3;
+  cov[1 + 2 * n] = 0.5;
+  cov[2 + 2 * n] = 6.0;
 
   valarray<double> r(n);
   valarray<double> wr(n);
-  wres( y, yHat, R, r, wr );
+  wres( y, f, cov, &r, &wr );
 
   //
-  // r = [ 0.1, 0.2, 0.3 ]
+  // r  =  y - f
   //
-  CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.1, r[0], fabs(0.1-r[0])/0.1 );
-  CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.2, r[1], fabs(0.1-r[1])/0.1 );
-  CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.3, r[2], fabs(0.1-r[2])/0.1 );
+  //    =  [ 0.1, 0.2, 0.3 ]
+  //
+  CPPUNIT_ASSERT( isDblEpsEqual( 0.1, r[0], fabs( r[0] ) ) );
+  CPPUNIT_ASSERT( isDblEpsEqual( 0.2, r[1], fabs( r[1] ) ) );
+  CPPUNIT_ASSERT( isDblEpsEqual( 0.3, r[2], fabs( r[2] ) ) );
 
   //
-  // wr = [ 0.1, 0.2, 0.3 ]
+  //            -1/2
+  // wr  =   cov      *  r  ,
+  //
+  //     = [ 0.0848385640149240, 0.0910497809638078,  0.1155754330865829 ]
   // 
-  CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.1, wr[0], fabs(0.1-wr[0])/0.1 );
-  CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.4, wr[1], fabs(0.1-wr[1])/0.1 );
-  CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.9, wr[2], fabs(0.1-wr[2])/0.1 );
+  // These values were calculated using the following Octave code.
+  //
+  //     format long
+  //     
+  //     y  =  [ 1.1;
+  //             2.2;
+  //             3.3 ]
+  //     
+  //     f  =  [ 1.0;
+  //             2.0;
+  //             3.0 ]
+  //     
+  //     cov = [ 1.0,   0.2,   0.3;
+  //             0.2,   4.0,   0.5;
+  //             0.3,   0.5,   6.0  ]
+  //     
+  //     wres = sqrtm( inverse( cov ) ) * ( y - f )
+  //
+  CPPUNIT_ASSERT( isDblEpsEqual( 0.0848385640149240, wr[0], fabs( wr[0] ) ) );
+  CPPUNIT_ASSERT( isDblEpsEqual( 0.0910497809638078, wr[1], fabs( wr[1] ) ) );
+  CPPUNIT_ASSERT( isDblEpsEqual( 0.1155754330865829, wr[2], fabs( wr[2] ) ) );
 }

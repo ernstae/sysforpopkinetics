@@ -89,6 +89,8 @@ testall_SOURCES = \
 	IndInputDataPackageTest.h \
 	IndOutputDataPackageTest.cpp \
 	IndOutputDataPackageTest.h \
+	indResidualsTest.cpp \
+	indResidualsTest.h \
 	IndResultsTest.cpp \
 	IndResultsTest.h \
 	indStatisticsTest.cpp \
@@ -145,6 +147,8 @@ testall_SOURCES = \
 	placeRowsTest.h \
 	PopConstValsTest.cpp \
 	PopConstValsTest.h \
+	popResidualsTest.cpp \
+	popResidualsTest.h \
 	popStatisticsTest.cpp \
 	popStatisticsTest.h \
 	PopVarsTest.cpp \
@@ -236,6 +240,7 @@ pkginclude_HEADERS = \
 	IkronBtimesCTest.h \
 	IndInputDataPackageTest.h \
 	IndOutputDataPackageTest.h \
+	indResidualsTest.h \
 	IndResultsTest.h \
 	indStatisticsTest.h \
 	IndVarsTest.h \
@@ -264,6 +269,7 @@ pkginclude_HEADERS = \
 	OptimizerTest.h \
 	placeRowsTest.h \
 	PopConstValsTest.h \
+	popResidualsTest.h \
 	popStatisticsTest.h \
 	PopVarsTest.h \
 	ppkaOptTest.h \
