@@ -327,10 +327,6 @@ void indResidualsTest::threeDataValuesTest()
 
   valarray<double> indParWtdOut( nB );
 
-  // Set this flag so that the weighted individual parameters will be
-  // calculated.
-  bool withD = true;
-
 
   //------------------------------------------------------------
   // Calculate the residuals.
@@ -345,8 +341,7 @@ void indResidualsTest::threeDataValuesTest()
       &indPredOut,
       &indResOut,
       &indResWtdOut,
-      &indParWtdOut,
-      withD );
+      &indParWtdOut );
   }
   catch( const SpkException& e )
   {
