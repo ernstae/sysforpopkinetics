@@ -23,8 +23,7 @@
  *
  * File: indResiduals.cpp
  *
- *
- * Calculates residuals and/or weighted residuals for an individual.
+ * Calculates residuals for an individual.
  *
  * Author: Mitch Watrous
  *
@@ -56,10 +55,10 @@ $spell
   resWtd
 $$
 
-$section Calculating Predicted Values, Residuals, Weighted Residuals, and Weighted Individual Parameters for an Individual$$
+$section Computing Residuals for an Individual$$
 
 $index indResiduals$$
-$cindex /Calculating Predicted /Values\, Residuals\, Weighted /Residuals\, /and Weighted /Individual /Parameters /for /an Individual$$
+$cindex /Computing Residuals /for /an Individual$$
 
 $table
 $bold Prototype:$$ $cend
@@ -69,7 +68,8 @@ $syntax/void indResiduals( SpkModel&                        /model/,
                    SPK_VA::valarray<double>*        /pIndPredOut/,
                    SPK_VA::valarray<double>*        /pIndResOut/,
                    SPK_VA::valarray<double>*        /pIndResWtdOut/,
-                   SPK_VA::valarray<double>*        /pIndParWtdOut/ )
+                   SPK_VA::valarray<double>*        /pIndParResOut/,
+                   SPK_VA::valarray<double>*        /pIndParResWtdOut/ )
 /$$
 $tend
 
@@ -87,9 +87,9 @@ $head Description$$
 Calculates predicted values, residuals and/or weighted residuals for an 
 individual using the covariance of the individual's data $math%R(b)%$$ as 
 the weight.
-Also, calculates weighted individual parameters for an individual
-using the covariance of the individual parameters $math%D%$$ as the
-weight.
+Also, calculates individual parameter residuals and weighted individual 
+parameter residuals for an individual using the covariance of the 
+individual parameters $math%D%$$ as the weight.
 $pre
 
 $$
@@ -117,12 +117,19 @@ root of the inverse of the covariance.
 $pre
 
 $$
-The weighted individual parameters $math%bWtd%$$ for the individual 
-are calculated as follows:
+The individual parameter residuals $math%bRes%$$ and the weighted
+individual parameter residuals $math%bResWtd%$$ for the individual 
+are calculated as follows: 
 $math%
 
-              -1/2
-    bWtd  =  D      *  b   .
+    bRes  =  - b  ,
+
+%$$
+and
+$math%
+
+                 -1/2
+    bResWtd  =  D      * ( - b )  .
 
 %$$
 (The equations above use
@@ -135,7 +142,7 @@ $syntax/
 This function expects $italic model$$ to be a function of $math%b%$$.
 Refer to $xref/glossary/Model Functions Depend on only b/Model Functions Depend on only b/$$
 for details.
-If weighted individual parameters are going to be calculated,
+If weighted individual parameter residuals are going to be calculated,
 then the function $tref SpkModel_indParVariance$$ must be defined 
 for this model in order to calculate the covariance of the 
 individual parameters $math%D%$$.
@@ -213,25 +220,42 @@ pointed to by $italic pIndResWtdOut$$.
 
 $syntax/
 
-/pIndParWtdOut/ 
+/pIndParResOut/ 
 /$$
 
-If $italic pIndParWtdOut$$ is not $code NULL$$, then the 
-$code SPK_VA::valarray<double>$$ object pointed to by $italic pIndParWtdOut$$ 
+If $italic pIndParResOut$$ is not $code NULL$$, then the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic pIndParResOut$$ 
 must be declared in the function that calls this function, and its size 
 must be equal to $math%nB%$$.  
-If $italic pIndParWtdOut$$ is not $code NULL$$ and this function 
+If $italic pIndParResOut$$ is not $code NULL$$ and this function 
 completed successfully, then the $code SPK_VA::valarray<double>$$ object 
-pointed to by $italic pIndParWtdOut$$ will contain the vector of weighted
-individual parameters for this individual $math%bWtd%$$.
+pointed to by $italic pIndParResOut$$ will contain the vector of 
+individual parameter residuals for this individual $math%bRes%$$.
 Otherwise, this function will not attempt to change the 
 contents of the $code SPK_VA::valarray<double>$$ object 
-pointed to by $italic pIndParWtdOut$$. 
+pointed to by $italic pIndParResOut$$. 
+
+$syntax/
+
+/pIndParResWtdOut/ 
+/$$
+
+If $italic pIndParResWtdOut$$ is not $code NULL$$, then the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic pIndParResWtdOut$$ 
+must be declared in the function that calls this function, and its size 
+must be equal to $math%nB%$$.  
+If $italic pIndParResWtdOut$$ is not $code NULL$$ and this function 
+completed successfully, then the $code SPK_VA::valarray<double>$$ object 
+pointed to by $italic pIndParResWtdOut$$ will contain the vector of weighted
+individual parameter residuals for this individual $math%bResWtd%$$.
+Otherwise, this function will not attempt to change the 
+contents of the $code SPK_VA::valarray<double>$$ object 
+pointed to by $italic pIndParResWtdOut$$. 
 $pre
 
 $$
-These weighted individual parameters may only be calculated if 
-the function $tref SpkModel_indParVariance$$ is defined for the 
+These weighted individual parameter residuals may only be calculated 
+if the function $tref SpkModel_indParVariance$$ is defined for the 
 input argument $italic model$$.
 
 $end
@@ -242,6 +266,7 @@ $end
  *------------------------------------------------------------------------*/
 
 // SPK library header files.
+#include "identity.h"
 #include "indResiduals.h"
 #include "SpkException.h"
 #include "SpkValarray.h"
@@ -264,7 +289,8 @@ void indResiduals( SpkModel&                model,
                    valarray<double>*        pIndPredOut,
                    valarray<double>*        pIndResOut,
                    valarray<double>*        pIndResWtdOut,
-                   valarray<double>*        pIndParWtdOut )
+                   valarray<double>*        pIndParResOut,
+                   valarray<double>*        pIndParResWtdOut )
 {
   //----------------------------------------------------------------
   // Preliminaries.
@@ -273,7 +299,11 @@ void indResiduals( SpkModel&                model,
   using namespace std;
 
   // Return if there are no output values to calculate.
-  if ( pIndPredOut == 0 && pIndResOut == 0 && pIndResWtdOut == 0 && pIndParWtdOut == 0 )
+  if ( pIndPredOut      == 0 && 
+       pIndResOut       == 0 && 
+       pIndResWtdOut    == 0 && 
+       pIndParResOut    == 0 && 
+       pIndParResWtdOut == 0 )
   {
     return;
   }
@@ -322,13 +352,25 @@ void indResiduals( SpkModel&                model,
     }
   }
 
-  if ( pIndParWtdOut )
+  if ( pIndParResOut )
   {
-    if ( nB != pIndParWtdOut->size() )
+    if ( nB != pIndParResOut->size() )
     {
       throw SpkException(
         SpkError::SPK_USER_INPUT_ERR, 
-        "The vector of weighted individual parameters has the wrong size.",
+        "The vector of individual parameter residuals has the wrong size.",
+        __LINE__,
+        __FILE__ );
+    }
+  }
+
+  if ( pIndParResWtdOut )
+  {
+    if ( nB != pIndParResWtdOut->size() )
+    {
+      throw SpkException(
+        SpkError::SPK_USER_INPUT_ERR, 
+        "The vector of weighted individual parameter residuals has the wrong size.",
         __LINE__,
         __FILE__ );
     }
@@ -367,22 +409,34 @@ void indResiduals( SpkModel&                model,
     pIndResWtdTemp = 0;
   }
 
-  // It is not necessary to calculate the individual parameter
-  // residuals, i.e., their difference from zero.
-  valarray<double>* pIndParResTemp = 0;
-
-  // If this function is going to return the weighted individual parameter,
-  // initialize the temporary array to hold them.  Otherwise, set the
-  // temporary pointer to zero so that they will not be calculated.
-  valarray<double> indParWtdTemp;
-  valarray<double>* pIndParWtdTemp = &indParWtdTemp;
-  if ( pIndParWtdOut )
+  // If this function is going to return the individual parameter
+  // residuals, initialize the temporary array to hold them.
+  // Otherwise, set the temporary pointer to zero so that they will
+  // not be calculated.
+  valarray<double> indParResTemp;
+  valarray<double>* pIndParResTemp = &indParResTemp;
+  if ( pIndParResOut )
   {
-    indParWtdTemp.resize( nB );
+    indParResTemp.resize( nB );
   }
   else
   {
-    pIndParWtdTemp = 0;
+    pIndParResTemp = 0;
+  }
+
+  // If this function is going to return the weighted individual
+  // parameter residuals, initialize the temporary array to hold them.
+  // Otherwise, set the temporary pointer to zero so that they will
+  // not be calculated.
+  valarray<double> indParResWtdTemp;
+  valarray<double>* pIndParResWtdTemp = &indParResWtdTemp;
+  if ( pIndParResWtdOut )
+  {
+    indParResWtdTemp.resize( nB );
+  }
+  else
+  {
+    pIndParResWtdTemp = 0;
   }
 
 
@@ -422,10 +476,10 @@ void indResiduals( SpkModel&                model,
 
 
   //----------------------------------------------------------------
-  // Calculate the weighted individual parameters.
+  // Calculate the individual parameter residuals and weighted residuals.
   //----------------------------------------------------------------
 
-  if ( pIndParWtdOut )
+  if ( pIndParResOut || pIndParResWtdOut )
   {
     valarray<double> D( nB * nB );
 
@@ -433,13 +487,24 @@ void indResiduals( SpkModel&                model,
     //
     //     D(alpha)  .
     //
-    model.indParVariance( D );
+    if ( pIndParResWtdOut )
+    {
+      model.indParVariance( D );
+    }
+    else
+    {
+      // If the weighted individual parameter residuals are not going
+      // to be calculated, then D is not needed.  So, just set it
+      // equal to an identity matrix with the right dimensions.
+      identity( nB, D );
+    }
 
     valarray<double> zeroes( nB );
     zeroes = 0.0;
 
-    // Calculate the weighted individual parameters.
-    wres( zeroes, indPar, D, pIndParResTemp, pIndParWtdTemp );
+    // Calculate the individual parameter residuals and/or weighted
+    // individual parameter residuals.
+    wres( zeroes, indPar, D, pIndParResTemp, pIndParResWtdTemp );
   }
 
 
@@ -465,11 +530,18 @@ void indResiduals( SpkModel&                model,
     *pIndResWtdOut = indResWtdTemp;
   }
 
-  // Set the weighted individual parameters for this individual, if
+  // Set the individual parameter residuals for this individual, if
   // necessary.
-  if ( pIndParWtdOut )
+  if ( pIndParResOut )
   {
-    *pIndParWtdOut = indParWtdTemp;
+    *pIndParResOut = indParResTemp;
+  }
+
+  // Set the weighted individual parameter residuals for this
+  // individual, if necessary.
+  if ( pIndParResWtdOut )
+  {
+    *pIndParResWtdOut = indParResWtdTemp;
   }
 
 }
