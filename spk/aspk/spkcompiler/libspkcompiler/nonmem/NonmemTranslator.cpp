@@ -318,14 +318,21 @@ void NonmemTranslator::translate( DOMDocument* tree )
   table.insert( sigma );
 
   assert( tree->getElementsByTagName( X("data") ) != NULL );
-  DOMElement * dataNode = dynamic_cast<DOMElement*>( tree->getElementsByTagName( X("data") )->item(0) );
+  DOMElement * dataNode = dynamic_cast<DOMElement*>( 
+    tree->getElementsByTagName( X("data") )->item(0) );
   assert( dataNode != NULL );
 
-  read_nonmem_data( dataNode, nIndividuals, table, label_alias_mapping, data_for, order_id_pair,
+  read_nonmem_data( dataNode, 
+		    nIndividuals, 
+		    table, 
+		    label_alias_mapping, 
+		    data_for, 
+		    order_id_pair,
                     ourSpk );
   
   assert( tree->getElementsByTagName( X("model") ) != NULL );
-  DOMElement * modelNode = dynamic_cast<DOMElement*>( tree->getElementsByTagName( X("model") )->item(0) );
+  DOMElement * modelNode = dynamic_cast<DOMElement*>( 
+     tree->getElementsByTagName( X("model") )->item(0) );
   assert( modelNode != NULL );
 
   gSpkExpSymbolTable = &table;
@@ -334,7 +341,11 @@ void NonmemTranslator::translate( DOMDocument* tree )
   nonmemModel = model_type.first;
   nonmemParameterization = model_type.second;
 
-  ourGeneratedFileNames = emit( nIndividuals, gSpkExpSymbolTable, label_alias_mapping, data_for, order_id_pair );
+  ourGeneratedFileNames = emit(nIndividuals, 
+			       gSpkExpSymbolTable, 
+			       label_alias_mapping, 
+			       data_for, 
+			       order_id_pair );
 
   return;
 }
