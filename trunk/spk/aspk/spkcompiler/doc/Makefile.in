@@ -24,17 +24,27 @@ SOURCE = ../libspkcompiler/client.h \
          ../libspkcompiler/SpkMLToCpp.h \
          ../libspkcompiler/SpkParameters.h \
          ../libspkcompiler/Symbol.h \
-         ../libspkcompiler/SymbolTable.h \
-	 SpkML.dtd
+         ../libspkcompiler/SymbolTable.h 
 
-html : SpkCompiler.dox $(SOURCE) 
+html : compiler_html spkml_html
+
+compiler_html : SpkCompiler.dox $(SOURCE) 
 	doxygen SpkCompiler.dox
+
+spkml_html : SpkML.dtd
+	javac -classpath ./tools/dtddoc/java/dtdparser119.jar:./tools/dtddoc/java/jakarta-oro-2.0.6.jar ./tools/dtddoc/java/DTDDoc.java
 	java -classpath ./tools/dtddoc/java/dtdparser119.jar:./tools/dtddoc/java/jakarta-oro-2.0.6.jar:.:./tools/dtddoc/java DTDDoc SpkML.dtd SpkML_html
+
 clean : 
 	rm -r html
 	rm -r latex
+	rm -r SpkML_html
 
 all  : SpkCompiler.dox
 	rm -r html
 	rm -r latex
-	doxygen SpkCompiler.dox 
+	rm -r SpkML_html
+	doxygen SpkCompiler.dox
+	javac -classpath ./tools/dtddoc/java/dtdparser119.jar:./tools/dtddoc/java/jakarta-oro-2.0.6.jar ./tools/dtddoc/java/DTDDoc.java
+	java -classpath ./tools/dtddoc/java/dtdparser119.jar:./tools/dtddoc/java/jakarta-oro-2.0.6.jar:.:./tools/dtddoc/java DTDDoc SpkML.dtd SpkML_html
+
