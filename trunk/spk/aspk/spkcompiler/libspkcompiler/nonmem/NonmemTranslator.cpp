@@ -2062,7 +2062,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << endl;
 
   oDriver << "const int nY = " << myRecordNums[0] << ";" << endl;
-  oDriver << "DataSet<CppAD::AD<double> > set;" << endl;
+  oDriver << "DataSet< CppAD::AD<double> > set;" << endl;
   oDriver << endl;
   
   oDriver << "const bool isSimRequested = " << (myIsSimulate? "true":"false") << ";" << endl;
@@ -2288,7 +2288,7 @@ void NonmemTranslator::generateIndDriver( ) const
       oDriver << "                   &bObjOut," << endl;
       oDriver << "                   &bObj_bOut," << endl;
       oDriver << "                   &bObj_b_bOut," << endl;
-      oDriver << "                    true);" << endl;
+      oDriver << "                    false );" << endl;
       oDriver << "     FpErrorChecker::check( __LINE__, __FILE__ );" << endl;
       oDriver << "     isOptSuccess = true;" << endl;
       oDriver << "  }" << endl;
@@ -2700,7 +2700,7 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << endl;
 
   oDriver << "const int nPop = " << myPopSize << ";" << endl;
-  oDriver << "DataSet<double> set;" << endl;
+  oDriver << "DataSet<Value> set;" << endl;
   oDriver << endl;
 
   oDriver << "const bool isSimRequested  = " << (myIsSimulate? "true":"false") << ";" << endl;
