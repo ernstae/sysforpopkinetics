@@ -400,14 +400,25 @@ sub insert_error {
     $daemon_text_xml    .= "\n<description>Exit status from the driver</description>\n";
     $daemon_text_xml    .= "<file_name>N/A</file_name>\n";
     $daemon_text_xml    .= "<line_number>N/A</line_number>\n";
-    $daemon_text_xml    .= "<message>$daemon_text</message>\n";
+    $daemon_text_xml    .= "<message>";
+    if ( $daemon_text ){
+       $daemon_text_xml .= $daemon_text;
+    }
+    else{
+       $daemon_text_xml .= "N/A";
+    }
+    $daemon_text_xml    .= "</message>\n";
     $daemon_text_xml    .= "</error>\n";
-    my $driver_text_xml  = '<error>';
-    $driver_text_xml    .= "\n<description>Assertion text from driver</description>\n";
-    $driver_text_xml    .= "<file_name>N/A</file_name>\n";
-    $driver_text_xml    .= "<line_number>N/A</line_number>\n";
-    $driver_text_xml    .= "<message>$driver_text</message>\n";
-    $driver_text_xml    .= "</error>\n";
+ 
+    my $driver_text_xml  = "";
+    if( $driver_text ){
+       $driver_text_xml .= '<error>';
+       $driver_text_xml .= "\n<description>Assertion text from driver</description>\n";
+       $driver_text_xml .= "<file_name>N/A</file_name>\n";
+       $driver_text_xml .= "<line_number>N/A</line_number>\n";
+       $driver_text_xml .= "<message>$driver_text</message>\n";
+       $driver_text_xml .= "</error>\n";
+    }
 
     $report =~ s/<\/error_list>/$daemon_text_xml $driver_text_xml<\/error_list>\n/;
     return $report;
