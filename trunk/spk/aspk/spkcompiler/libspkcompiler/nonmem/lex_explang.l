@@ -135,7 +135,9 @@ tok_endif                   "ENDIF"
 <<EOF>>                     { return EOF_MARKER; }
 \n                          { ++gSpkExpLines; return '\n'; }
 .                           { 
-                              nm_error( "Invalid charactor!" ); 
+                              char buf[128];
+                              sprintf( buf, "Invalid charactor <%s> !", nm_text );
+                              nm_error( buf ); 
                               // nm_terminate();  
                             }
 %%

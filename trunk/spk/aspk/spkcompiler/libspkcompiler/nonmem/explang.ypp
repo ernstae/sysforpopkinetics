@@ -123,7 +123,7 @@ extern "C"{
     { 
       ++gSpkExpErrors;
       cerr <<  "!!! Error (" << gSpkExpErrors << ") at line " << gSpkExpLines << ": " << endl;
-      cerr << "\t" << err_message << endl;
+      cerr << "\t" << err_message << " in the model definition." << endl;
     
       return -1;
     }
@@ -966,7 +966,7 @@ int_literal_constant :
 DIGIT_STRING { 
 
   //
-  // This is an integer constant.
+  // This is an integer constant.  
   //
   $$ = $1;
 }
