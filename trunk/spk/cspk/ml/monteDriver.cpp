@@ -347,17 +347,16 @@ int main(int argc, const char *argv[])
 	cout << "<pop_monte_result elapsedtime=\"" << pop_obj_seconds << "\">" << endl;
 	
 	// report the Monte Carlo integration results
-	OutputValue( result, "pop_obj_estimate", pop_obj_estimate); 
+	OutputValue( "pop_obj_estimate", pop_obj_estimate); 
 
 	if( monte | grid )
 	{	// estimate of the standard error in pop_obj_estimate
-		OutputValue( result, "pop_obj_stderr", pop_obj_stderr); 
+		OutputValue( "pop_obj_stderr", pop_obj_stderr); 
 	}
 
 	// return from main program
         cout << "</pop_monte_result>" << endl;
 	cout << "</spkreport>" << endl; 
-        result.close();
 
 	return ReturnSuccess;
 }
