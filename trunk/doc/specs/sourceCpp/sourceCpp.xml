@@ -9,6 +9,16 @@
    <articleinfo>
       <revhistory>
          <revision>
+            <revnumber>1.12</revnumber>
+            <date>September 8, 2004</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>
+            The data type of DataSet::getAllMeasurements() and DataSet::getN()
+            were specified incorrectly.  They were said std::vector, but
+            acturally are std::valarray.
+            </revremark>
+         </revision>
+         <revision>
             <revnumber>1.11</revnumber>
             <date>September 8, 2004</date>
             <authorinitials>sh</authorinitials>
@@ -560,7 +570,7 @@ indexes to those records which have measurements : { 2, 3, 4, 6, 7, 8, 9, 10 }
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term><literal>const std::vector&lt;double&gt; getAllMeasurements() const</literal></term>
+            <term><literal>const std::valarray&lt;double&gt; getAllMeasurements() const</literal></term>
             <listitem>
                <para>
                Returns a vector of measurements from the entire data set for the population.
@@ -569,7 +579,7 @@ indexes to those records which have measurements : { 2, 3, 4, 6, 7, 8, 9, 10 }
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term><literal>const std::vector&lt;int&gt; getN() const</literal></term>
+            <term><literal>const std::valarray&lt;int&gt; getN() const</literal></term>
             <listitem>
                <para>
                Returns a vector of numbers of measurements.  The i-th element of the vector
