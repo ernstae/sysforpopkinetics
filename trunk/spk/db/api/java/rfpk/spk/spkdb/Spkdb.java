@@ -1,7 +1,9 @@
 package rfpk.spk.spkdb;
 import java.sql.*;
+import java.util.*;
 import java.util.regex.*;
 import rfpk.spk.spkdb.*;
+import java.io.*;
 /**
 defines a set of static methods which provide a java API 
 for the Spk Database.  This class should never be instantiated.
@@ -47,6 +49,37 @@ public abstract class Spkdb {
     public static boolean disconnect(Connection conn) throws SQLException {
 	conn.close();
 	return true;
+    }
+    public static long newJob(Connection conn, 
+			      long userId,
+			      String abstraction,
+			      long datasetId,
+			      String datasetVersion,
+			      long modelId,
+			      String modelVersion,
+			      String xmlSourceFileName)
+	throws SQLException, SpkdbException, FileNotFoundException
+    {
+	long jobId = 0;
+	java.util.Date date = new java.util.Date(); 
+	long eventTime = date.getTime()/1000;
+	long startTime = eventTime;
+	File xmlSource = new File(xmlSourceFileName);
+	String stateCode = "q2c";
+	String sql = "insert into job (state_code, user_id, abstract, dataset_id, "
+                                    + "dataset_version, model_id, model_version, "
+                                    + "xml_source, start_time, event_time)"
+                           + " values ('" + stateCode + "'," + userId + ",'" + abstraction + "'," + datasetId
+                                   + ",'" + datasetVersion + "'," + modelId + ",'" + modelVersion
+                                   + "', ?," + startTime + "," + eventTime + ");";
+	PreparedStatement pstmt = conn.prepareStatement(sql);
+	pstmt.setBinaryStream(1, new FileInputStream(xmlSourceFileName), (int)xmlSource.length());
+	pstmt.executeUpdate();
+	ResultSet rs = pstmt.getGeneratedKeys();
+	if (rs.next()) {
+	    jobId = rs.getLong(1);
+	}
+	return jobId;
     }
     /**
        Inserts a new user in the database, returning a unique key.
@@ -107,5 +140,13 @@ public abstract class Spkdb {
 	 stmt.executeUpdate(sql);
 	 return stmt.getUpdateCount() == 1;
     }
-				    
+    public static ResultSet getUser(Connection conn, long userId)
+	throws SQLException, SpkdbException
+    {
+	String sql = "select * from user where user_id=" + String.valueOf(userId) + ";";
+	Statement stmt = conn.createStatement();
+	stmt.execute(sql);
+	ResultSet rs = stmt.getResultSet();
+	return rs;
+    }
 }
