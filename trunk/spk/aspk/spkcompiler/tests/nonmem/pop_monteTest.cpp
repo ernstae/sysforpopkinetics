@@ -67,8 +67,8 @@ namespace{
   char PTHREADLIB[] = "pthread";
   char MLIB[]       = "m";
   char XERCESCLIB[] = "xerces-c";
-  char LDPATH[]     = "-Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest";
-  char CPPFLAG[]    = "-g -I/usr/local/include/spktest";
+  char LDPATH[]     = "../../spkcompiler/libcommon.a ../../spkcompiler/nonmem/libnonmem.a -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest";
+  char CPPFLAG[]    = "-g -I./ -I../ -I../../spkcompiler -I/usr/local/include/spktest";
   char LDFLAG[514];
 
   char MY_ASSERT_EQUAL[] =
@@ -930,6 +930,7 @@ void pop_monteTest::testDriver()
   // 2 indicates some file access problem.
   // Since I didn't set the problem so that it makes sense in either scientifically
   // or mathematially, the return code of anything other than 2 is ignored here.
+  remove( "keep_monteDriver.cpp" );
   system( "link monteDriver.cpp keep_monteDriver.cpp" );
   exitcode = system( command );
   if( exitcode == 1 )

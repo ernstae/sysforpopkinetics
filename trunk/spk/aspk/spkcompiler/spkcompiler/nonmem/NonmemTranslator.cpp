@@ -1,4 +1,3 @@
-// New! 01/28/2005
 #include <fstream>
 
 #include "NonmemTranslator.h"
@@ -161,132 +160,132 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
 {
   table = ClientTranslator::getSymbolTable();
 
-  DefaultStr.THETA = "THETA";
-  DefaultStr.ETA   = "ETA";
-  DefaultStr.EPS   = "EPS";
-  DefaultStr.OMEGA = "OMEGA";
-  DefaultStr.SIGMA = "SIGMA";
-  DefaultStr.RES   = "RES";
-  DefaultStr.WRES  = "WRES";
-  DefaultStr.PRED  = "PRED";
-  DefaultStr.ETARES= "ETARES";
-  DefaultStr.WETARES="WETARES";
-  DefaultStr.DV    = "DV";
-  DefaultStr.ORGDV = "ORGDV";
-  DefaultStr.MDV   = "MDV";
-  DefaultStr.ID    = "ID";
-  DefaultStr.F     = "F";
-  DefaultStr.Y     = "Y";
+  DefaultStr.THETA   = "THETA";
+  DefaultStr.ETA     = "ETA";
+  DefaultStr.EPS     = "EPS";
+  DefaultStr.OMEGA   = "OMEGA";
+  DefaultStr.SIGMA   = "SIGMA";
+  DefaultStr.RES     = "RES";
+  DefaultStr.WRES    = "WRES";
+  DefaultStr.ETARES  = "ETARES";
+  DefaultStr.WETARES = "WETARES";
+  DefaultStr.PRED    = "PRED";
+  DefaultStr.DV      = "DV";
+  DefaultStr.ORGDV   = "ORGDV";
+  DefaultStr.MDV     = "MDV";
+  DefaultStr.ID      = "ID";
+  DefaultStr.F       = "F";
+  DefaultStr.Y       = "Y";
 
-  UserStr.THETA = DefaultStr.THETA;
-  UserStr.ETA   = DefaultStr.ETA;
-  UserStr.EPS   = DefaultStr.EPS;
-  UserStr.OMEGA = DefaultStr.OMEGA;
-  UserStr.SIGMA = DefaultStr.SIGMA;
-  UserStr.RES   = DefaultStr.RES;
-  UserStr.WRES  = DefaultStr.WRES;
-  UserStr.PRED  = DefaultStr.PRED;
-  UserStr.ETARES= DefaultStr.ETARES;
-  UserStr.WETARES=DefaultStr.WETARES;
-  UserStr.DV    = DefaultStr.DV;
-  UserStr.ORGDV = DefaultStr.ORGDV;
-  UserStr.MDV   = DefaultStr.MDV;
-  UserStr.ID    = DefaultStr.ID;
-  UserStr.F     = DefaultStr.F;
-  UserStr.Y     = DefaultStr.Y;
+  UserStr.THETA      = DefaultStr.THETA;
+  UserStr.ETA        = DefaultStr.ETA;
+  UserStr.EPS        = DefaultStr.EPS;
+  UserStr.OMEGA      = DefaultStr.OMEGA;
+  UserStr.SIGMA      = DefaultStr.SIGMA;
+  UserStr.RES        = DefaultStr.RES;
+  UserStr.WRES       = DefaultStr.WRES;
+  UserStr.ETARES     = DefaultStr.ETARES;
+  UserStr.WETARES    = DefaultStr.WETARES;
+  UserStr.PRED       = DefaultStr.PRED;
+  UserStr.DV         = DefaultStr.DV;
+  UserStr.ORGDV      = DefaultStr.ORGDV;
+  UserStr.MDV        = DefaultStr.MDV;
+  UserStr.ID         = DefaultStr.ID;
+  UserStr.F          = DefaultStr.F;
+  UserStr.Y          = DefaultStr.Y;
 
   // These are used as insensitive search keys to find the values of
   // NONMEM-predefined variables in the symbol table or to be extracted
   // as C++ variable names when cases are supposed to be insensitive.
-  KeyStr.THETA = SymbolTable::key( DefaultStr.THETA );
-  KeyStr.ETA   = SymbolTable::key( DefaultStr.ETA );
-  KeyStr.EPS   = SymbolTable::key( DefaultStr.EPS );
-  KeyStr.OMEGA = SymbolTable::key( DefaultStr.OMEGA );
-  KeyStr.SIGMA = SymbolTable::key( DefaultStr.SIGMA );
-  KeyStr.RES   = SymbolTable::key( DefaultStr.RES );
-  KeyStr.WRES  = SymbolTable::key( DefaultStr.WRES );
-  KeyStr.ETARES= SymbolTable::key( DefaultStr.ETARES );
-  KeyStr.WETARES=SymbolTable::key( DefaultStr.WETARES );
-  KeyStr.PRED  = SymbolTable::key( DefaultStr.PRED );
-  KeyStr.DV    = SymbolTable::key( DefaultStr.DV );
-  KeyStr.ORGDV = SymbolTable::key( DefaultStr.ORGDV );
-  KeyStr.MDV   = SymbolTable::key( DefaultStr.MDV );
-  KeyStr.ID    = SymbolTable::key( DefaultStr.ID );
-  KeyStr.F     = SymbolTable::key( DefaultStr.F );
-  KeyStr.Y     = SymbolTable::key( DefaultStr.Y );
+  KeyStr.THETA       = SymbolTable::key( DefaultStr.THETA );
+  KeyStr.ETA         = SymbolTable::key( DefaultStr.ETA );
+  KeyStr.EPS         = SymbolTable::key( DefaultStr.EPS );
+  KeyStr.OMEGA       = SymbolTable::key( DefaultStr.OMEGA );
+  KeyStr.SIGMA       = SymbolTable::key( DefaultStr.SIGMA );
+  KeyStr.RES         = SymbolTable::key( DefaultStr.RES );
+  KeyStr.WRES        = SymbolTable::key( DefaultStr.WRES );
+  KeyStr.ETARES      = SymbolTable::key( DefaultStr.ETARES );
+  KeyStr.WETARES     = SymbolTable::key( DefaultStr.WETARES );
+  KeyStr.PRED        = SymbolTable::key( DefaultStr.PRED );
+  KeyStr.DV          = SymbolTable::key( DefaultStr.DV );
+  KeyStr.ORGDV       = SymbolTable::key( DefaultStr.ORGDV );
+  KeyStr.MDV         = SymbolTable::key( DefaultStr.MDV );
+  KeyStr.ID          = SymbolTable::key( DefaultStr.ID );
+  KeyStr.F           = SymbolTable::key( DefaultStr.F );
+  KeyStr.Y           = SymbolTable::key( DefaultStr.Y );
 
   // TAG names
-  X_DESCRIPTION    = XMLString::transcode( C_DESCRIPTION );
-  X_IN             = XMLString::transcode( C_IN );
-  X_NONMEM         = XMLString::transcode( C_NONMEM );
-  X_POP_ANALYSIS   = XMLString::transcode( C_POP_ANALYSIS );
-  X_IND_ANALYSIS   = XMLString::transcode( C_IND_ANALYSIS );
-  X_CONSTRAINT     = XMLString::transcode( C_CONSTRAINT );
-  X_MONTE_CARLO    = XMLString::transcode( C_MONTE_CARLO );
-  X_MODEL          = XMLString::transcode( C_MODEL );
-  X_PRED           = XMLString::transcode( C_PRED );
-  X_PRESENTATION   = XMLString::transcode( C_PRESENTATION );
-  X_TABLE          = XMLString::transcode( C_TABLE );
-  X_SCATTERPLOT    = XMLString::transcode( C_SCATTERPLOT );
-  X_COLUMN         = XMLString::transcode( C_COLUMN );
-  X_LOW            = XMLString::transcode( C_LOW );
-  X_UP             = XMLString::transcode( C_UP );
-  X_LABEL          = XMLString::transcode( C_LABEL );
-  X_LABELS         = XMLString::transcode( C_LABELS );
-  X_X              = XMLString::transcode( C_X );
-  X_Y              = XMLString::transcode( C_Y );
-  X_SPLIT          = XMLString::transcode( C_SPLIT );
-  X_THETA          = XMLString::transcode( C_THETA );
-  X_OMEGA          = XMLString::transcode( C_OMEGA );
-  X_SIGMA          = XMLString::transcode( C_SIGMA );
-  X_SIMULATION     = XMLString::transcode( C_SIMULATION );
-  X_POP_STAT       = XMLString::transcode( C_POP_STAT );
-  X_IND_STAT       = XMLString::transcode( C_IND_STAT );
+  X_DESCRIPTION     = XMLString::transcode( C_DESCRIPTION );
+  X_IN              = XMLString::transcode( C_IN );
+  X_NONMEM          = XMLString::transcode( C_NONMEM );
+  X_POP_ANALYSIS    = XMLString::transcode( C_POP_ANALYSIS );
+  X_IND_ANALYSIS    = XMLString::transcode( C_IND_ANALYSIS );
+  X_CONSTRAINT      = XMLString::transcode( C_CONSTRAINT );
+  X_MONTE_CARLO     = XMLString::transcode( C_MONTE_CARLO );
+  X_MODEL           = XMLString::transcode( C_MODEL );
+  X_PRED            = XMLString::transcode( C_PRED );
+  X_PRESENTATION    = XMLString::transcode( C_PRESENTATION );
+  X_TABLE           = XMLString::transcode( C_TABLE );
+  X_SCATTERPLOT     = XMLString::transcode( C_SCATTERPLOT );
+  X_COLUMN          = XMLString::transcode( C_COLUMN );
+  X_LOW             = XMLString::transcode( C_LOW );
+  X_UP              = XMLString::transcode( C_UP );
+  X_LABEL           = XMLString::transcode( C_LABEL );
+  X_LABELS          = XMLString::transcode( C_LABELS );
+  X_X               = XMLString::transcode( C_X );
+  X_Y               = XMLString::transcode( C_Y );
+  X_SPLIT           = XMLString::transcode( C_SPLIT );
+  X_THETA           = XMLString::transcode( C_THETA );
+  X_OMEGA           = XMLString::transcode( C_OMEGA );
+  X_SIGMA           = XMLString::transcode( C_SIGMA );
+  X_SIMULATION      = XMLString::transcode( C_SIMULATION );
+  X_POP_STAT        = XMLString::transcode( C_POP_STAT );
+  X_IND_STAT        = XMLString::transcode( C_IND_STAT );
 
   // Attribute names 
-  X_FIXED          = XMLString::transcode( C_FIXED );
-  X_VALUE          = XMLString::transcode( C_VALUE );
-  X_STRUCT         = XMLString::transcode( C_STRUCT );
-  X_DIMENSION      = XMLString::transcode( C_DIMENSION );
-  X_IS_ERR_OUT     = XMLString::transcode( C_IS_STDERROR_OUT );
-  X_IS_CORR_OUT    = XMLString::transcode( C_IS_CORRELATION_OUT );
-  X_IS_COV_OUT     = XMLString::transcode( C_IS_COVARIANCE_OUT );
-  X_IS_INV_COV_OUT = XMLString::transcode( C_IS_INVERSE_COVARIANCE_OUT );
-  X_IS_COEF_OUT    = XMLString::transcode( C_IS_COEFFICIENT_OUT );
-  X_IS_CONF_OUT    = XMLString::transcode( C_IS_CONFIDENCE_OUT );
-  X_APPROXIMATION  = XMLString::transcode( C_APPROXIMATION );
-  X_METHOD         = XMLString::transcode( C_METHOD );
-  X_NUMBEREVAL     = XMLString::transcode( C_NUMBEREVAL );
-  X_POP_SIZE       = XMLString::transcode( C_POP_SIZE  );
-  X_IS_ESTIMATION  = XMLString::transcode( C_IS_ESTIMATION );
-  X_IS_ETA_OUT     = XMLString::transcode( C_IS_ETA_OUT );
-  X_IS_RESTART     = XMLString::transcode( C_IS_RESTART );
-  X_DATA_LABELS    = XMLString::transcode( C_DATA_LABELS );
-  X_FILENAME       = XMLString::transcode( C_FILENAME );
-  X_NAME           = XMLString::transcode( C_NAME );
-  X_SYNONYM        = XMLString::transcode( C_SYNONYM );
-  X_LENGTH         = XMLString::transcode( C_LENGTH );
-  X_SEED           = XMLString::transcode( C_SEED );
-  X_SUBPROBLEMS    = XMLString::transcode( C_SUBPROBLEMS );
-  X_COVARIANCE_FORM= XMLString::transcode( C_COVARIANCE_FORM );
-  X_MITR           = XMLString::transcode( C_MITR );
-  X_SIG_DIGITS     = XMLString::transcode( C_SIG_DIGITS );
+  X_FIXED           = XMLString::transcode( C_FIXED );
+  X_VALUE           = XMLString::transcode( C_VALUE );
+  X_STRUCT          = XMLString::transcode( C_STRUCT );
+  X_DIMENSION       = XMLString::transcode( C_DIMENSION );
+  X_IS_ERR_OUT      = XMLString::transcode( C_IS_STDERROR_OUT );
+  X_IS_CORR_OUT     = XMLString::transcode( C_IS_CORRELATION_OUT );
+  X_IS_COV_OUT      = XMLString::transcode( C_IS_COVARIANCE_OUT );
+  X_IS_INV_COV_OUT  = XMLString::transcode( C_IS_INVERSE_COVARIANCE_OUT );
+  X_IS_COEF_OUT     = XMLString::transcode( C_IS_COEFFICIENT_OUT );
+  X_IS_CONF_OUT     = XMLString::transcode( C_IS_CONFIDENCE_OUT );
+  X_APPROXIMATION   = XMLString::transcode( C_APPROXIMATION );
+  X_METHOD          = XMLString::transcode( C_METHOD );
+  X_NUMBEREVAL      = XMLString::transcode( C_NUMBEREVAL );
+  X_POP_SIZE        = XMLString::transcode( C_POP_SIZE  );
+  X_IS_ESTIMATION   = XMLString::transcode( C_IS_ESTIMATION );
+  X_IS_ETA_OUT      = XMLString::transcode( C_IS_ETA_OUT );
+  X_IS_RESTART      = XMLString::transcode( C_IS_RESTART );
+  X_DATA_LABELS     = XMLString::transcode( C_DATA_LABELS );
+  X_FILENAME        = XMLString::transcode( C_FILENAME );
+  X_NAME            = XMLString::transcode( C_NAME );
+  X_SYNONYM         = XMLString::transcode( C_SYNONYM );
+  X_LENGTH          = XMLString::transcode( C_LENGTH );
+  X_SEED            = XMLString::transcode( C_SEED );
+  X_SUBPROBLEMS     = XMLString::transcode( C_SUBPROBLEMS );
+  X_COVARIANCE_FORM = XMLString::transcode( C_COVARIANCE_FORM );
+  X_MITR            = XMLString::transcode( C_MITR );
+  X_SIG_DIGITS      = XMLString::transcode( C_SIG_DIGITS );
 
   // Attribute values
-  X_YES            = XMLString::transcode( C_YES );
-  X_NO             = XMLString::transcode( C_NO );
-  X_DIAGONAL       = XMLString::transcode( C_DIAGONAL );
-  X_BLOCK          = XMLString::transcode( C_BLOCK );
-  X_COV_R          = XMLString::transcode( C_COV_R );
-  X_COV_RSR        = XMLString::transcode( C_COV_RSR );
-  X_COV_S          = XMLString::transcode( C_COV_S );
-  X_FO             = XMLString::transcode( C_FO );
-  X_FOCE           = XMLString::transcode( C_FOCE );
-  X_LAPLACE        = XMLString::transcode( C_LAPLACE );
-  X_ANALYTIC       = XMLString::transcode( C_ANALYTIC );
-  X_GRID           = XMLString::transcode( C_GRID );
-  X_PLAIN          = XMLString::transcode( C_PLAIN );
-  X_MISER          = XMLString::transcode( C_MISER );
+  X_YES             = XMLString::transcode( C_YES );
+  X_NO              = XMLString::transcode( C_NO );
+  X_DIAGONAL        = XMLString::transcode( C_DIAGONAL );
+  X_BLOCK           = XMLString::transcode( C_BLOCK );
+  X_COV_R           = XMLString::transcode( C_COV_R );
+  X_COV_RSR         = XMLString::transcode( C_COV_RSR );
+  X_COV_S           = XMLString::transcode( C_COV_S );
+  X_FO              = XMLString::transcode( C_FO );
+  X_FOCE            = XMLString::transcode( C_FOCE );
+  X_LAPLACE         = XMLString::transcode( C_LAPLACE );
+  X_ANALYTIC        = XMLString::transcode( C_ANALYTIC );
+  X_GRID            = XMLString::transcode( C_GRID );
+  X_PLAIN           = XMLString::transcode( C_PLAIN );
+  X_MISER           = XMLString::transcode( C_MISER );
 
   myPopEpsilon = pow( 10.0, -(mySigDigits+1.0) );
   myIndEpsilon = pow( 10.0, -(mySigDigits+1.0) );
@@ -640,7 +639,7 @@ void NonmemTranslator::parseSource()
 
   // ORGDV is a place for the original data set to be kept
   // if a new data set is simulated.
-  Symbol * s  = table->insertUserVar( DefaultStr.ORGDV );
+  Symbol * s = table->insertUserVar( DefaultStr.ORGDV );
  
   // Keep the user-typed Nonmem Keyword strings
   Symbol * p;
@@ -701,20 +700,19 @@ void NonmemTranslator::parseSource()
   if( ourTarget == POP )
     {
       if( (p = table->findi( KeyStr.ETARES )) != Symbol::empty() )
-         UserStr.ETARES = p->name;
+	UserStr.ETARES = p->name;
       else
-        {
-           table->insertUserVar( DefaultStr.ETARES );
-           UserStr.ETARES = DefaultStr.ETARES;
-        }
-  
+	{
+	  table->insertNMVector( DefaultStr.ETARES, myEtaLen );
+	  UserStr.ETARES = DefaultStr.ETARES;
+	}
       if( (p = table->findi( KeyStr.WETARES )) != Symbol::empty() )
-         UserStr.WETARES = p->name;
+	UserStr.WETARES = p->name;
       else
-        {
-           table->insertUserVar( DefaultStr.WETARES );
-           UserStr.WETARES = DefaultStr.WETARES;
-        }
+	{
+	  table->insertNMVector( DefaultStr.WETARES, myEtaLen );
+	  UserStr.WETARES = DefaultStr.WETARES;
+	}
     }
 
   if( (p = table->findi( KeyStr.MDV )) != Symbol::empty() )
@@ -3000,7 +2998,9 @@ void NonmemTranslator::generateIndData( ) const
 	{
 	  if( keyVarName == KeyStr.THETA 
 	      || keyVarName == KeyStr.ETA 
-	      || keyVarName == KeyStr.EPS )
+	      || keyVarName == KeyStr.EPS 
+	      || keyVarName == KeyStr.ETARES
+	      || keyVarName == KeyStr.WETARES )
 	    oIndData_h << "std::vector< std::vector<spk_ValueType> > " << varName << ";" << endl;
 
 	  // The values of Omega and Sigma matrices are
@@ -3009,7 +3009,6 @@ void NonmemTranslator::generateIndData( ) const
 	  if( keyVarName == KeyStr.OMEGA 
               || keyVarName == KeyStr.SIGMA )
 	    {}
-
 	}
       // Handling all others (ie. the user defined variables)
       // 
@@ -3027,8 +3026,20 @@ void NonmemTranslator::generateIndData( ) const
   // Destructor
   // ----------
   oIndData_h << "~IndData();" << endl;
+
+  //----------------------------------------
+  // Public member declarations
+  //----------------------------------------
   oIndData_h << "const SPK_VA::valarray<double> getMeasurements() const;" << endl;
-  oIndData_h << "void replaceMeasurements( const SPK_VA::valarray<double>& yyi );" << endl;
+  oIndData_h << "void replaceMeasurements( const SPK_VA::valarray<double>& yyi );"  << endl;
+  oIndData_h << "void replacePred   ( const SPK_VA::valarray<double>& predIn );"     << endl;
+  oIndData_h << "void replaceRes    ( const SPK_VA::valarray<double>& resIn );"     << endl;
+  oIndData_h << "void replaceWRes   ( const SPK_VA::valarray<double>& wresIn );"    << endl;
+  if( ourTarget == POP )
+  {
+     oIndData_h << "void replaceEtaRes ( const SPK_VA::valarray<double>& etaresIn );"  << endl;
+     oIndData_h << "void replaceWEtaRes( const SPK_VA::valarray<double>& wetaresIn );" << endl;
+  }
   oIndData_h << endl;
 
   //----------------------------------------
@@ -3164,7 +3175,14 @@ void NonmemTranslator::generateIndData( ) const
   if( myThetaLen > 0 )
     oIndData_h << "      " << UserStr.THETA << "[i].resize( " << myThetaLen << " );" << endl;
   if( myEtaLen > 0 )
-    oIndData_h << "      " << UserStr.ETA   << "[i].resize( " << myEtaLen << " );" << endl;
+    {
+      oIndData_h << "      " << UserStr.ETA     << "[i].resize( " << myEtaLen << " );" << endl;
+      if( ourTarget == POP )
+	{
+	  oIndData_h << "      " << UserStr.ETARES  << "[i].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << UserStr.WETARES << "[i].resize( " << myEtaLen << " );" << endl;
+	}
+    }
   if( myEpsLen > 0 )
     oIndData_h << "      " << UserStr.EPS   << "[i].resize( " << myEpsLen << " );" << endl;
 
@@ -3241,10 +3259,94 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "      }" << endl;
   oIndData_h << "   }" << endl;
   oIndData_h << "}" << endl;
-  
-  // -------------
+ 
+  // --------------------
+  // replacePred()
+  // --------------------
+  oIndData_h << "template <class spk_ValueType>" << endl;
+  oIndData_h << "void IndData<spk_ValueType>::replacePred( const SPK_VA::valarray<double>& predIn )"     << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "   assert( predIn.size() == n );" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.PRED << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != " << UserStr.PRED << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   {" << endl;
+  oIndData_h << "      *itr = predIn[i];" << endl;
+  oIndData_h << "   }" << endl;
+  oIndData_h << "}" << endl;
+  oIndData_h << endl;
+
+  // --------------------
+  // replaceRes()
+  // --------------------
+  oIndData_h << "template <class spk_ValueType>" << endl;
+  oIndData_h << "void IndData<spk_ValueType>::replaceRes( const SPK_VA::valarray<double>& resIn )"     << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "   assert( resIn.size() == n );" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.RES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != " << UserStr.RES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   {" << endl;
+  oIndData_h << "      *itr = resIn[i];" << endl;
+  oIndData_h << "   }" << endl;
+  oIndData_h << "}" << endl;
+  oIndData_h << endl;
+
+  // --------------------
+  // replaceWRes()
+  // --------------------
+  oIndData_h << "template <class spk_ValueType>" << endl;
+  oIndData_h << "void IndData<spk_ValueType>::replaceWRes( const SPK_VA::valarray<double>& wresIn )"    << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "   assert( wresIn.size() == n );" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.WRES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != " << UserStr.WRES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   {" << endl;
+  oIndData_h << "      *itr = wresIn[i];" << endl;
+  oIndData_h << "   }" << endl;
+  oIndData_h << "}" << endl;
+  oIndData_h << endl;
+
+  if( ourTarget == POP )
+    {
+      // --------------------
+      // replaceEtaRes()
+      // --------------------
+      oIndData_h << "template <class spk_ValueType>" << endl;
+      oIndData_h << "void IndData<spk_ValueType>::replaceEtaRes( const SPK_VA::valarray<double>& etaresIn )"    << endl;
+      oIndData_h << "{" << endl;
+      oIndData_h << "   const int nEta = " << myEtaLen << ";" << endl;
+      oIndData_h << "   assert( etaresIn.size() == nEta );" << endl;
+      oIndData_h << "   for( int i=0; i<n; i++ )" << endl;
+      oIndData_h << "   {" << endl;
+      oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
+      oIndData_h << "      {" << endl;
+      oIndData_h << "         " << UserStr.ETARES << "[i][j] = etaresIn[j];" << endl;
+      oIndData_h << "      }" << endl;
+      oIndData_h << "   }" << endl;
+      oIndData_h << "}" << endl;
+      oIndData_h << endl;
+      
+      // --------------------
+      // replaceWEtaRes()
+      // --------------------
+      oIndData_h << "template <class spk_ValueType>" << endl;
+      oIndData_h << "void IndData<spk_ValueType>::replaceWEtaRes( const SPK_VA::valarray<double>& wetaresIn )"    << endl;
+      oIndData_h << "{" << endl;
+      oIndData_h << "   const int nEta = " << myEtaLen << ";" << endl;
+      oIndData_h << "   assert( wetaresIn.size() == nEta);" << endl;
+      oIndData_h << "   for( int i=0; i<n; i++ )" << endl;
+      oIndData_h << "   {" << endl;
+      oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
+      oIndData_h << "      {" << endl;
+      oIndData_h << "         " << UserStr.WETARES << "[i][j] = wetaresIn[j];" << endl;
+      oIndData_h << "      }" << endl;
+      oIndData_h << "   }" << endl;
+      oIndData_h << "}" << endl;
+      oIndData_h << endl;
+    }
+
+  // -------------------
   // assignToDbl()
-  // -------------
+  // -------------------
   // This is to make an assignment operation, a = b, transparent for situations where a is double and b is CppAD<double>
   // and a an b are both double.
   //
@@ -3423,6 +3525,12 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "   int getPopSize() const;" << endl;
   oDataSet_h << "   const SPK_VA::valarray<int> getN() const;" << endl;
   oDataSet_h << "   void replaceAllMeasurements( const SPK_VA::valarray<double> & yy );" << endl;
+  oDataSet_h << "   void replaceAllPred   ( const SPK_VA::valarray<double>& predAllIn );"     << endl;
+  oDataSet_h << "   void replaceAllRes    ( const SPK_VA::valarray<double>& resAllIn );"     << endl;
+  oDataSet_h << "   void replaceAllWRes   ( const SPK_VA::valarray<double>& wresAllIn );"    << endl;
+  oDataSet_h << "   void replaceAllEtaRes ( const SPK_VA::valarray<double>& etaresAllIn );"  << endl;
+  oDataSet_h << "   void replaceAllWEtaRes( const SPK_VA::valarray<double>& wetaresAllIn );" << endl;
+  oDataSet_h << endl;
   oDataSet_h << "   friend std::ostream& operator<< <spk_ValueType>( std::ostream& o, const DataSet<spk_ValueType>& A );" << endl;
   oDataSet_h << endl;
  
@@ -3499,7 +3607,7 @@ void NonmemTranslator::generateDataSet( ) const
 	{
 	  const Symbol * s = table->findi( *pLabel );
 	  bool isID = (*pLabel == pID->name);
-	  string carray_name   = s->name + "_" + c_who + "_c";
+	  string carray_name = s->name + "_" + c_who + "_c";
 	  string vector_name = s->name + "_" + c_who;
 
 	  oDataSet_h << (isID? "char*":"spk_ValueType") << " " << carray_name << "[] = { ";
@@ -3651,6 +3759,65 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
 
+  oDataSet_h << "template <class spk_ValueType>" << endl;
+  oDataSet_h << "void DataSet<spk_ValueType>::replaceAllPred   ( const SPK_VA::valarray<double>& predAllIn )"     << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   const int n = data.size();" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   {" << endl;
+  oDataSet_h << "      data[i]->replacePred( predAllIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "   }" << endl;
+  oDataSet_h << "}" << endl;
+  oDataSet_h << endl;
+
+  oDataSet_h << "template <class spk_ValueType>" << endl;
+  oDataSet_h << "void DataSet<spk_ValueType>::replaceAllRes    ( const SPK_VA::valarray<double>& resAllIn )"     << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   const int n = data.size();" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   {" << endl;
+  oDataSet_h << "      data[i]->replaceRes( resAllIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "   }" << endl;
+  oDataSet_h << "}" << endl;
+  oDataSet_h << endl;
+
+  oDataSet_h << "template <class spk_ValueType>" << endl;
+  oDataSet_h << "void DataSet<spk_ValueType>::replaceAllWRes   ( const SPK_VA::valarray<double>& wresAllIn )"    << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   const int n = data.size();" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   {" << endl;
+  oDataSet_h << "      data[i]->replaceWRes( wresAllIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "   }" << endl;
+  oDataSet_h << "}" << endl;
+  oDataSet_h << endl;
+
+  oDataSet_h << "template <class spk_ValueType>" << endl;
+  oDataSet_h << "void DataSet<spk_ValueType>::replaceAllEtaRes ( const SPK_VA::valarray<double>& etaresAllIn )"  << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   const int n = data.size();" << endl;
+  oDataSet_h << "   const int nEta = " << myEtaLen << "; // the length of eta" << endl;
+  oDataSet_h << "   assert( etaresAllIn.size() == n * nEta );" << endl;
+  oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
+  oDataSet_h << "   {" << endl;
+  oDataSet_h << "      data[i]->replaceEtaRes( etaresAllIn[ SPK_VA::slice(i*nEta, nEta, 1) ] );" << endl;
+  oDataSet_h << "   }" << endl;
+  oDataSet_h << "}" << endl;
+  oDataSet_h << endl;
+
+  oDataSet_h << "template <class spk_ValueType>" << endl;
+  oDataSet_h << "void DataSet<spk_ValueType>::replaceAllWEtaRes( const SPK_VA::valarray<double>& wetaresAllIn )" << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   const int n = data.size();" << endl;
+  oDataSet_h << "   const int nEta = " << myEtaLen << "; // the length of eta" << endl;
+  oDataSet_h << "   assert( wetaresAllIn.size() == n * nEta );" << endl;
+  oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
+  oDataSet_h << "   {" << endl;
+  oDataSet_h << "      data[i]->replaceWEtaRes( wetaresAllIn[ SPK_VA::slice(i*nEta, nEta, 1) ] );" << endl;
+  oDataSet_h << "   }" << endl;
+  oDataSet_h << "}" << endl;
+  oDataSet_h << endl;
+
   // ---------
   // Extractor
   // ---------
@@ -3659,7 +3826,6 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "std::ostream& operator<<( std::ostream& o, const DataSet<spk_ValueType>& A )" << endl;
   oDataSet_h << "{" << endl;
 
-  //t = table->getTable();
   if( pID == Symbol::empty() )
     {
       char mess [ SpkCompilerError::maxMessageLen() ];
@@ -3667,11 +3833,27 @@ void NonmemTranslator::generateDataSet( ) const
       SpkCompilerException e( SpkCompilerError::ASPK_PROGRAMMER_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
-  const int nItems = t->size();
-  int nColumns = nItems + myThetaLen-1 + myEtaLen-1 + (ourTarget==POP? (myEpsLen - 1) : 0 )
-    - (table->findi(KeyStr.OMEGA) == Symbol::empty()? 0 : 1 )
-    - (table->findi(KeyStr.SIGMA) == Symbol::empty()? 0 : 1 );
 
+  // Compute the number of items that are supposed to be printed out in <presentation_data>.
+  // This includes User defined scalar variables, NONMEM (scalar/vector/matrix)
+  // and RES/WRES.
+  // 
+  // THETA/ETA/OMEGA/(EPS)/(SIGMA) are vectors or matrices.
+  // <presentation_data> prints out elements of these objects one by one.
+  // That is, if THETA had a length of 2, it prints out THETA(1) and THETA(2) individually.
+  // The names such as "THETA" is already in the symbol table, so when we get the size of
+  // SymbolTable object, it returns the number that already contains the count for "THETA".
+  // So, we increment the country by (2-1)=1. 
+  const int nItems = t->size();
+  int nColumns = nItems 
+               + myThetaLen-1
+               + myEtaLen-1 
+               + (ourTarget==POP? (myEpsLen - 1) : 0 ) // for EPS
+               + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for ETARES
+               + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for WETARES
+               - (table->findi(KeyStr.OMEGA)   == Symbol::empty()? 0 : 1 )
+               - (table->findi(KeyStr.SIGMA)   == Symbol::empty()? 0 : 1 );
+  
   map<const string, Symbol>::const_iterator pEntry = t->begin();
   const vector<string>::const_iterator pLabelBegin = table->getLabels()->begin();
   const vector<string>::const_iterator pLabelEnd   = table->getLabels()->end();
@@ -3701,8 +3883,10 @@ void NonmemTranslator::generateDataSet( ) const
     {
       if( pEntry->first != KeyStr.ID )
 	{
-	  // Skip Omega and Sigma.  These values are not directly computed by Pred::eval().
-	  if( pEntry->first != KeyStr.OMEGA && pEntry->first != KeyStr.SIGMA )
+	  // Skip Omega and Sigma.
+          // These values are not computed by Pred::eval().
+	  if(    pEntry->first != KeyStr.OMEGA 
+	      && pEntry->first != KeyStr.SIGMA )
 	    {
 	      whatGoesIn.push_back( pEntry->second.name );
 	      
@@ -3717,8 +3901,11 @@ void NonmemTranslator::generateDataSet( ) const
 		      cntColumns++;
 		    }
 		}
-	      // eta: This is a vector.  So, all elements values have to be printed out individually.
-	      else if( pEntry->first == KeyStr.ETA )
+	      // eta, etares, wetares: These are vectors of length myEtaLen.
+              // So, all elements values have to be printed out individually.
+	      else if( pEntry->first == KeyStr.ETA
+		       || pEntry->first == KeyStr.ETARES 
+		       || pEntry->first == KeyStr.WETARES ) 
 		{
 		  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
 		    {
@@ -3728,7 +3915,8 @@ void NonmemTranslator::generateDataSet( ) const
 		      cntColumns++;
 		    }
 		}
-	      // eps: This is a vector.  So, all elements values have to be printed out individually.
+	      // eps: This is a vector of length myEpsLen.
+              // So, all elements values have to be printed out individually.
 	      else if( pEntry->first == KeyStr.EPS )
 		{
 		  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
@@ -3752,6 +3940,7 @@ void NonmemTranslator::generateDataSet( ) const
     }
 
   // Sanity check; is the actual number of labels (ie. columns) match the value given by the user earlier?
+
   if( cntColumns != nColumns )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
@@ -3760,6 +3949,7 @@ void NonmemTranslator::generateDataSet( ) const
       SpkCompilerException e( SpkCompilerError::ASPK_PROGRAMMER_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
+
   oDataSet_h << "   o << \"</data_labels>\" << endl;" << endl;
   oDataSet_h << endl;
   //
@@ -3789,7 +3979,9 @@ void NonmemTranslator::generateDataSet( ) const
 	      cntColumns++;
 	    }
 	}
-      else if( keyWhatGoesIn == KeyStr.ETA )
+      else if( keyWhatGoesIn == KeyStr.ETA
+	       || keyWhatGoesIn == KeyStr.ETARES
+	       || keyWhatGoesIn == KeyStr.WETARES )
 	{
 	  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
 	    {
@@ -3826,7 +4018,7 @@ void NonmemTranslator::generateDataSet( ) const
   if( cntColumns != nColumns )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "The number of data items, %d, does not the number of labels, %d.",
+      sprintf( mess, "The number of data items (%d), does not the number of labels (%d).",
 	       cntColumns, nColumns );
       SpkCompilerException e( SpkCompilerError::ASPK_PROGRAMMER_ERR, mess, __LINE__, __FILE__ );
       throw e;
@@ -4231,8 +4423,11 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 	{
 	  // ignore.  these don't get used within PRED.
 	}
-      else if( keyLabel == KeyStr.WRES   || keyLabel == KeyStr.RES 
-            || keyLabel == KeyStr.ETARES || keyLabel == KeyStr.WETARES )
+      else if( keyLabel == KeyStr.WRES   || keyLabel == KeyStr.RES  )
+	{
+	  // ignore.  These values are only computed outside at the final estimate.
+	}
+      else if( keyLabel == KeyStr.ETARES   || keyLabel == KeyStr.WETARES  )
 	{
 	  // ignore.  These values are only computed outside at the final estimate.
 	}
@@ -4269,9 +4464,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       if( keyLabel == KeyStr.OMEGA 
           || keyLabel == KeyStr.SIGMA 
           || keyLabel == KeyStr.WRES 
-          || keyLabel == KeyStr.RES
-          || keyLabel == KeyStr.ETARES
-          || keyLabel == KeyStr.WETARES )
+          || keyLabel == KeyStr.RES )
 	continue;
 
       if( find( labels->begin(), labels->end(), label ) == labels->end() )
@@ -4983,17 +5176,17 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << endl;
   oDriver << "  //////////////////////////////////////////////////////////////////////" << endl;
   oDriver << "  //   NONMEM Specific" << endl;
-  oDriver << "  if( isOptRequested && isOptSuccess )"    << endl;
+  oDriver << "  if( isOptRequested && isOptSuccess )" << endl;
   oDriver << "  {" << endl;
-  oDriver << "     indResiduals( model, y, bOut, "       << endl;
-  oDriver << "                   &predOut, "             << endl;
-  oDriver << "                   &resOut, "              << endl;
-  oDriver << "                   &resWtdOut, "           << endl;
-  oDriver << "                   NULL, "           << endl;
-  oDriver << "                   NULL );"       << endl;
-  oDriver << "     copy( &predOut     [0], &predOut     [nY], set.data[0]->PRED   .begin() );"      << endl;
-  oDriver << "     copy( &resOut      [0], &resOut      [nY], set.data[0]->RES    .begin() );"       << endl;
-  oDriver << "     copy( &resWtdOut   [0], &resWtdOut   [nY], set.data[0]->WRES   .begin() );"    << endl;
+  oDriver << "     indResiduals( model, y, bOut, "    << endl;
+  oDriver << "                   &predOut, "          << endl;
+  oDriver << "                   &resOut, "           << endl;
+  oDriver << "                   &resWtdOut, "        << endl;
+  oDriver << "                   NULL, "              << endl;
+  oDriver << "                   NULL );"             << endl;
+  oDriver << "     set.replaceAllRes ( resOut );"     << endl;
+  oDriver << "     set.replaceAllWRes( resWtdOut );"  << endl;
+  oDriver << "     set.replaceAllPred( predOut );" << endl;
   oDriver << "  }" << endl;
   oDriver << "  //" << endl;
   oDriver << "  //////////////////////////////////////////////////////////////////////" << endl;    
@@ -5687,24 +5880,17 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "   //   NONMEM Specific" << endl;
   oDriver << "   if( isOptRequested && isOptSuccess )" << endl;
   oDriver << "   {" << endl;
-  oDriver << "     popResiduals( model, objective, N, y, alpOut, bOut," << endl;
+  oDriver << "      popResiduals( model, objective, N, y, alpOut, bOut," << endl;
   oDriver << "                   &predOut, "       << endl;
   oDriver << "                   &resOut, "        << endl;
   oDriver << "                   &resWtdOut, "     << endl;
   oDriver << "                   &parResOut, "     << endl;
   oDriver << "                   &parResWtdOut );" << endl;
-  oDriver << "      for( int i=0, k=0; i<nPop; k+=N[i++] )" << endl;
-  oDriver << "      {" << endl;
-  oDriver << "         valarray<double> temp( N[i] );" << endl;
-  oDriver << "         temp = predOut[ slice( k, N[i], 1 ) ];" << endl;
-  oDriver << "         copy( &temp[0], &temp[N[i]], set.data[i]->PRED.begin() );" << endl;
-  oDriver << "         temp = resOut[ slice( k, N[i], 1 ) ];" << endl;
-  oDriver << "         copy( &temp[0], &temp[N[i]], set.data[i]->RES .begin() );" << endl;
-  oDriver << "         temp = resWtdOut[ slice( k, N[i], 1 ) ];" << endl;
-  oDriver << "         copy( &temp[0], &temp[N[i]], set.data[i]->WRES.begin() );" << endl;
-  oDriver << "         copy( &parResOut[nB*i], &parResOut[nB], set.data[i]->ETARES.begin() );" << endl;
-  oDriver << "         copy( &parResWtdOut[nB*i], &parResWtdOut[nB], set.data[i]->WETARES.begin() );" << endl;
-  oDriver << "      }" << endl;
+  oDriver << "      set.replaceAllPred   ( predOut );" << endl;
+  oDriver << "      set.replaceAllRes    ( resOut );" << endl;
+  oDriver << "      set.replaceAllWRes   ( resWtdOut );" << endl;
+  oDriver << "      set.replaceAllEtaRes ( parResOut );" << endl;
+  oDriver << "      set.replaceAllWEtaRes( parResWtdOut );" << endl;
   oDriver << "   }" << endl;
   oDriver << "}" << endl;
   oDriver << "   //" << endl;

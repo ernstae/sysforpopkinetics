@@ -2,10 +2,13 @@ noinst_PROGRAMS      = testall
 
 AM_LDFLAGS           = -lxerces-c \
                        -lcppunit \
-	               ../../spkcompiler/nonmem/libnonmem.a \
-		       ../../spkcompiler/libcommon.a
+		       ../../spkcompiler/libcommon.a \
+		       ../../spkcompiler/nonmem/libnonmem.a
 
 AM_CPPFLAGS          = -I@top_srcdir@
+
+testall_DEPENDENCIES = ../../spkcompiler/libcommon.a \
+		       ../../spkcompiler/nonmem/libnonmem.a
 
 MAINTEINERCLEANFILES = Makefile.in
 
@@ -24,7 +27,8 @@ MOSTLYCLEANFILES     = Pred.h \
                        result.xml \
                        Makefile.SPK \
                        spk_error.tmp \
-                       sotware_error 
+                       sotware_error \
+		       checkpoint.xml
 
 testall_SOURCES      = \
 	               test_nonmem.cpp \

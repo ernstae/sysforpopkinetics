@@ -934,13 +934,11 @@ void ind_simTest::testDataSetClass()
   o << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strY    << ".size() );" << endl;
   o << endl;
 
-  o << "   set.compAllResiduals( );" << endl;  
   o << "   for( int j=0, k=0; j<n; j++ )" << endl;
   o << "   {" << endl;
   o << "      if( set.data[0]->" << strMDV << "[j] != 1 )" << endl;
   o << "      {" << endl;
   o << "         MY_ASSERT_EQUAL( set.data[0]->" << strDV << "[j], yy[k] );" << endl;
-  o << "         MY_ASSERT_EQUAL( set.data[0]->" << strDV << "[j]-set.data[0]->" << strPRED << "[j], set.data[0]->" << strRES << "[j] );" << endl;
   o << "         k++;" << endl;
   o << "      }" << endl;
   o << "   }" << endl;

@@ -57,9 +57,12 @@ void nm_terminate()
 */
 void lex_explangTest::setUp()
 {
+   gSpkExpErrorMessages = new char[ 1028 ];
+   strcpy( gSpkExpErrorMessages, "" );
 }
 void lex_explangTest::tearDown()
 {
+   delete gSpkExpErrorMessages;
 }
 void lex_explangTest::testWhiteSpaces()
 {
@@ -126,17 +129,7 @@ void lex_explangTest::testIllegalComment()
   nm_in = fopen( testInput, "r" );
   nm_restart( nm_in );
   int TOKEN = 0;
-  try{
-     TOKEN = nm_lex();
-  }
-  catch ( const char* message )
-    {
-      cerr << message << endl;
-    }
-  catch( ... )
-    {
-      cerr << "Abnormal return." << endl;
-    }
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( 1, gSpkExpErrors );
   CPPUNIT_ASSERT_EQUAL( 0, gSpkExpLines ); // lex should not modify the counter
 
@@ -182,13 +175,7 @@ void lex_explangTest::testNameLength()
   nm_in = fopen( testInput, "r" );
   nm_restart( nm_in );
   gSpkExpErrors = 0;
-  try{
-     int TOKEN = nm_lex();
-  }
-  catch( const char* e )
-  {
-     cerr << e << endl;
-  }
+  int TOKEN = nm_lex();
   CPPUNIT_ASSERT( gSpkExpErrors > 0 );
   CPPUNIT_ASSERT_EQUAL( 0, gSpkExpLines ); // lex should not modify the counter
 
@@ -655,12 +642,10 @@ CppUnit::Test * lex_explangTest::suite()
      new CppUnit::TestCaller<lex_explangTest>(
          "testNameLength", 
 	 &lex_explangTest::testNameLength ) );
-
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<lex_explangTest>(
          "testEngineeringNotation", 
 	 &lex_explangTest::testEngineeringNotation ) );
-
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<lex_explangTest>(
          "testFloatingPoint", 
@@ -674,32 +659,26 @@ CppUnit::Test * lex_explangTest::suite()
      new CppUnit::TestCaller<lex_explangTest>(
          "testExit", 
 	 &lex_explangTest::testExit ) );
-
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<lex_explangTest>(
          "testControl", 
 	 &lex_explangTest::testControl ) );
-
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<lex_explangTest>(
          "testBool", 
 	 &lex_explangTest::testBool ) );
-
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<lex_explangTest>(
          "testBinaryFunc", 
 	 &lex_explangTest::testBinaryFunc ) );
-
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<lex_explangTest>(
          "testUnaryFunc", 
 	 &lex_explangTest::testUnaryFunc ) );
-
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<lex_explangTest>(
          "testArray", 
 	 &lex_explangTest::testArray ) );
-
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<lex_explangTest>(
          "testLogical", 
