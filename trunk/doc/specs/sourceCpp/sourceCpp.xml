@@ -196,6 +196,17 @@ For the terms,
             </listitem>
          </varlistentry>
          <varlistentry>
+            <term><literal>const valarray&lt;double&gt; thetaFixed</literal></term>
+            <listitem>
+               <para>
+               contains a vector of boolean flags telling the corresponding i-th element of 
+               <emphasis>theta</emphasis> is fixed to the initial estimate value.
+               <literal>thetaFixed[i]</literal> = true tells <emphasis>theta(i+1)</emphasis> is
+               fixed.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
             <term><literal>const int nEta</literal></term>
             <listitem>
                <para>
