@@ -688,7 +688,7 @@ $SIG{'QUIT'} = 'IGNORE';
 # Designate a handler for the "terminate" signal
 $SIG{'TERM'} = \&stop;
 
-# rerun any runs that were interrupted when we last terminated
+# rerun any jobs that were interrupted when we last terminated
 my $job_array = &get_run_jobs($dbh);
 syslog('info', "looking for interrupted computational runs");
 if (defined $job_array) {
