@@ -145,10 +145,10 @@ void DiagCovTest::oneByOneCovTest()
   //------------------------------------------------------------
 
   // Set the number of rows in the covariance matrix.
-  const int nCovRow = 1;
+  const int nRow = 1;
 
   // Construct the covariance matrix.
-  DiagCov omega( nCovRow );
+  DiagCov omega( nRow );
 
   // Get the number of parameters.
   int nPar = omega.getNPar();
@@ -166,18 +166,18 @@ void DiagCovTest::oneByOneCovTest()
   // Calculate various quantities for the test.
   //------------------------------------------------------------
 
-  valarray<double> omegaCov    ( nCovRow * nCovRow );
-  valarray<double> omegaCov_par( nCovRow * nCovRow * nPar );
-  valarray<double> omegaInv    ( nCovRow * nCovRow );
-  valarray<double> omegaInv_par( nCovRow * nCovRow * nPar );
+  valarray<double> omegaCov    ( nRow * nRow );
+  valarray<double> omegaCov_par( nRow * nRow * nPar );
+  valarray<double> omegaInv    ( nRow * nRow );
+  valarray<double> omegaInv_par( nRow * nRow * nPar );
 
   valarray<double> parLow( nPar );
   valarray<double> parUp ( nPar );
 
-  valarray<double> omegaAtParLow( nCovRow * nCovRow );
-  valarray<double> omegaAtParUp ( nCovRow * nCovRow );
+  valarray<double> omegaAtParLow( nRow * nRow );
+  valarray<double> omegaAtParUp ( nRow * nRow );
 
-  valarray<double> omegaCovTimesInv( nCovRow * nCovRow );
+  valarray<double> omegaCovTimesInv( nRow * nRow );
 
   // Calculate the covariance matrix, its derivative, its inverse,
   // and the derivative of its inverse.
@@ -197,22 +197,22 @@ void DiagCovTest::oneByOneCovTest()
   omega.cov( omegaAtParUp );
 
   // Multiply the covariance matrix and its inverse.
-  omegaCovTimesInv = multiply( omegaCov, nCovRow, omegaInv, nCovRow );
+  omegaCovTimesInv = multiply( omegaCov, nRow, omegaInv, nRow );
 
 
   //------------------------------------------------------------
   // Calculate the known values.
   //------------------------------------------------------------
 
-  valarray<double> omegaCovKnown    ( nCovRow * nCovRow );
-  valarray<double> omegaCov_parKnown( nCovRow * nCovRow * nPar );
-  valarray<double> omegaInvKnown    ( nCovRow * nCovRow );
-  valarray<double> omegaInv_parKnown( nCovRow * nCovRow * nPar );
+  valarray<double> omegaCovKnown    ( nRow * nRow );
+  valarray<double> omegaCov_parKnown( nRow * nRow * nPar );
+  valarray<double> omegaInvKnown    ( nRow * nRow );
+  valarray<double> omegaInv_parKnown( nRow * nRow * nPar );
 
-  valarray<double> omegaAtParLowKnown( nCovRow * nCovRow );
-  valarray<double> omegaAtParUpKnown ( nCovRow * nCovRow );
+  valarray<double> omegaAtParLowKnown( nRow * nRow );
+  valarray<double> omegaAtParUpKnown ( nRow * nRow );
 
-  valarray<double> omegaCovTimesInvKnown( nCovRow * nCovRow );
+  valarray<double> omegaCovTimesInvKnown( nRow * nRow );
 
   // The diagonal elements should be 
   //
@@ -236,7 +236,7 @@ void DiagCovTest::oneByOneCovTest()
 
   // The covariance matrix multiplied by its inverse should be
   // equal to the identity matrix.
-  identity( nCovRow, omegaCovTimesInvKnown );
+  identity( nRow, omegaCovTimesInvKnown );
 
 
   //------------------------------------------------------------
@@ -316,13 +316,13 @@ void DiagCovTest::twoByTwoCovTest()
   //------------------------------------------------------------
 
   // Set the number of rows in the covariance matrix.
-  const int nCovRow = 2;
+  const int nRow = 2;
 
   // Set the number of rows in the derivative of the covariance matrix.
-  int nCov_parRow = nCovRow * nCovRow;
+  int nCov_parRow = nRow * nRow;
 
   // Construct the covariance matrix.
-  DiagCov omega( nCovRow );
+  DiagCov omega( nRow );
 
   // Get the number of parameters.
   int nPar = omega.getNPar();
@@ -340,18 +340,18 @@ void DiagCovTest::twoByTwoCovTest()
   // Calculate various quantities for the test.
   //------------------------------------------------------------
 
-  valarray<double> omegaCov    ( nCovRow * nCovRow );
-  valarray<double> omegaCov_par( nCovRow * nCovRow * nPar );
-  valarray<double> omegaInv    ( nCovRow * nCovRow );
-  valarray<double> omegaInv_par( nCovRow * nCovRow * nPar );
+  valarray<double> omegaCov    ( nRow * nRow );
+  valarray<double> omegaCov_par( nRow * nRow * nPar );
+  valarray<double> omegaInv    ( nRow * nRow );
+  valarray<double> omegaInv_par( nRow * nRow * nPar );
 
   valarray<double> parLow( nPar );
   valarray<double> parUp ( nPar );
 
-  valarray<double> omegaAtParLow( nCovRow * nCovRow );
-  valarray<double> omegaAtParUp ( nCovRow * nCovRow );
+  valarray<double> omegaAtParLow( nRow * nRow );
+  valarray<double> omegaAtParUp ( nRow * nRow );
 
-  valarray<double> omegaCovTimesInv( nCovRow * nCovRow );
+  valarray<double> omegaCovTimesInv( nRow * nRow );
 
   // Calculate the covariance matrix, its derivative, its inverse,
   // and the derivative of its inverse.
@@ -371,22 +371,22 @@ void DiagCovTest::twoByTwoCovTest()
   omega.cov( omegaAtParUp );
 
   // Multiply the covariance matrix and its inverse.
-  omegaCovTimesInv = multiply( omegaCov, nCovRow, omegaInv, nCovRow );
+  omegaCovTimesInv = multiply( omegaCov, nRow, omegaInv, nRow );
 
 
   //------------------------------------------------------------
   // Calculate the known values.
   //------------------------------------------------------------
 
-  valarray<double> omegaCovKnown    ( nCovRow * nCovRow );
-  valarray<double> omegaCov_parKnown( nCovRow * nCovRow * nPar );
-  valarray<double> omegaInvKnown    ( nCovRow * nCovRow );
-  valarray<double> omegaInv_parKnown( nCovRow * nCovRow * nPar );
+  valarray<double> omegaCovKnown    ( nRow * nRow );
+  valarray<double> omegaCov_parKnown( nRow * nRow * nPar );
+  valarray<double> omegaInvKnown    ( nRow * nRow );
+  valarray<double> omegaInv_parKnown( nRow * nRow * nPar );
 
-  valarray<double> omegaAtParLowKnown( nCovRow * nCovRow );
-  valarray<double> omegaAtParUpKnown ( nCovRow * nCovRow );
+  valarray<double> omegaAtParLowKnown( nRow * nRow );
+  valarray<double> omegaAtParUpKnown ( nRow * nRow );
 
-  valarray<double> omegaCovTimesInvKnown( nCovRow * nCovRow );
+  valarray<double> omegaCovTimesInvKnown( nRow * nRow );
 
   // Create a matrices that have only zeroes.
   omegaCovKnown     = 0.0;
@@ -401,8 +401,8 @@ void DiagCovTest::twoByTwoCovTest()
   //
   for ( i = 0; i < nPar; i++ )
   {
-    omegaCovKnown[i + i * nCovRow] = exp( 2.0 * par[i] );
-    omegaInvKnown[i + i * nCovRow] = exp( -2.0 * par[i] );
+    omegaCovKnown[i + i * nRow] = exp( 2.0 * par[i] );
+    omegaInvKnown[i + i * nRow] = exp( -2.0 * par[i] );
   }
 
   // The partial derivatives of the diagonal elements of
@@ -416,7 +416,7 @@ void DiagCovTest::twoByTwoCovTest()
   for ( i = 0; i < nPar; i++ )
   {
     // Set the row in the rvec version of the covariance.
-    row = i * nCovRow + i;
+    row = i * nRow + i;
 
     omegaCov_parKnown[row + i * nCov_parRow] = 2.0 * exp( 2.0 * par[i] );
     omegaInv_parKnown[row + i * nCov_parRow] = -2.0 * exp( -2.0 * par[i] );
@@ -431,13 +431,13 @@ void DiagCovTest::twoByTwoCovTest()
   //
   for ( i = 0; i < nPar; i++ )
   {
-    omegaAtParLowKnown[i + i * nCovRow] = omegaCovKnown[i + i * nCovRow] / 100.0;
-    omegaAtParUpKnown[ i + i * nCovRow] = omegaCovKnown[i + i * nCovRow] * 100.0;
+    omegaAtParLowKnown[i + i * nRow] = omegaCovKnown[i + i * nRow] / 100.0;
+    omegaAtParUpKnown[ i + i * nRow] = omegaCovKnown[i + i * nRow] * 100.0;
   }
 
   // The covariance matrix multiplied by its inverse should be
   // equal to the identity matrix.
-  identity( nCovRow, omegaCovTimesInvKnown );
+  identity( nRow, omegaCovTimesInvKnown );
 
 
   //------------------------------------------------------------
@@ -515,10 +515,10 @@ void DiagCovTest::isCachingProperlyTest()
   //------------------------------------------------------------
 
   // Set the number of rows in the covariance matrix.
-  const int nCovRow = 1;
+  const int nRow = 1;
 
   // Construct the covariance matrix.
-  DiagCov omega( nCovRow );
+  DiagCov omega( nRow );
 
   // Get the number of parameters.
   int nPar = omega.getNPar();
@@ -530,24 +530,19 @@ void DiagCovTest::isCachingProperlyTest()
 
 
   //------------------------------------------------------------
-  // Calculate various quantities for the test.
+  // Prepare to see if values are being cached.
   //------------------------------------------------------------
 
-  valarray<double> omegaCov    ( nCovRow * nCovRow );
-  valarray<double> omegaCov_par( nCovRow * nCovRow * nPar );
-  valarray<double> omegaInv    ( nCovRow * nCovRow );
-  valarray<double> omegaInv_par( nCovRow * nCovRow * nPar );
+  valarray<double> omegaCov    ( nRow * nRow );
+  valarray<double> omegaCov_par( nRow * nRow * nPar );
+  valarray<double> omegaInv    ( nRow * nRow );
+  valarray<double> omegaInv_par( nRow * nRow * nPar );
 
   valarray<double> parLow( nPar );
   valarray<double> parUp ( nPar );
 
   // Get the limits for the covariance matrix parameters.
   omega.getParLimits( parLow, parUp );
-
-
-  //------------------------------------------------------------
-  // See if values are being cached.
-  //------------------------------------------------------------
 
   // Evaluate the covariance matrix, its derivative, its inverse,
   // and the derivative of its inverse at the current parameter
@@ -558,50 +553,60 @@ void DiagCovTest::isCachingProperlyTest()
   omega.inv    ( omegaInv );
   omega.inv_par( omegaInv_par );
 
+
+  //------------------------------------------------------------
+  // See if cached values are used when the parameter changes.
+  //------------------------------------------------------------
+
   // Evaluate the quantities at a different parameter value.
   // The cached values should not be used in this case.
   omega.setPar( parLow );
-  omega.cov    ( omegaCov );
-  omega.cov_par( omegaCov_par );
-  omega.inv    ( omegaInv );
-  omega.inv_par( omegaInv_par );
 
+  omega.cov    ( omegaCov );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for omegaCov was used when it was not valid.",
     omega.getUsedCachedCov() == false );
 
+  omega.cov_par( omegaCov_par );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for omegaCov_par was used when it was not valid.",
     omega.getUsedCachedCov_par() == false );
 
+  omega.inv    ( omegaInv );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for omegaInv was used when it was not valid.",
     omega.getUsedCachedInv() == false );
 
+  omega.inv_par( omegaInv_par );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for omegaInv_par was used when it was not valid.",
     omega.getUsedCachedInv_par() == false );
 
+
+  //------------------------------------------------------------
+  // See if cached values are used when the parameter does not change.
+  //------------------------------------------------------------
+
   // Evaluate the quantities at the same parameter value.
   // The cached values should be used in this case.
   omega.setPar( parLow );
-  omega.cov    ( omegaCov );
-  omega.cov_par( omegaCov_par );
-  omega.inv    ( omegaInv );
-  omega.inv_par( omegaInv_par );
 
+  omega.cov    ( omegaCov );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for omegaCov was not used when it was valid.",
     omega.getUsedCachedCov() == true );
 
+  omega.cov_par( omegaCov_par );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for omegaCov_par was not used when it was valid.",
     omega.getUsedCachedCov_par() == true );
 
+  omega.inv    ( omegaInv );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for omegaInv was not used when it was valid.",
     omega.getUsedCachedInv() == true );
 
+  omega.inv_par( omegaInv_par );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for omegaInv_par was not used when it was valid.",
     omega.getUsedCachedInv_par() == true );
