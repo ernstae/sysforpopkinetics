@@ -178,6 +178,9 @@ class NonmemTranslator : public ClientTranslator
   // The string for the file burner.
   const char *BURNER;
 
+  // Pointer to the central symbol tabel held in the super class
+  SymbolTable * table;
+
   //========================================
   // Dynamically allocated string objects
   //----------------------------------------
