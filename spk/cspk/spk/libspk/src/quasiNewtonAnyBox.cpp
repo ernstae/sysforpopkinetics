@@ -1092,7 +1092,7 @@ GET THE PROPER WARM START STUFF
 
 
   //------------------------------------------------------------
-  // Determine if the optimization was successful.
+  // Check the status of the optimization.
   //------------------------------------------------------------
 
   bool ok            = false;
@@ -1107,7 +1107,7 @@ GET THE PROPER WARM START STUFF
   {
     optimizer.setIsTooManyIter( false );
     optimizer.setNIterCompleted( iterCurr );
-    if( optimizer.getSaveStateInfoAfterConv() )
+    if( optimizer.getSaveStateAfterConv() )
     {
       saveStateInfo = true;
     }
@@ -1154,7 +1154,7 @@ GET THE PROPER WARM START STUFF
 
 
   //------------------------------------------------------------
-  // If the optimization succeeded, set the values to be returned.
+  // If the optimization didn't cause an exception, set the return values.
   //------------------------------------------------------------
 
   // If the state information should be saved for future warm starts,
