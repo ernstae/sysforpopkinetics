@@ -45,7 +45,7 @@
 
 // Our stuff
 #include "../libcommon/SymbolTable.h"
-#include "../libcommon/ParseTree.h"
+#include "../libcommon/ExpTreeGenerator.h"
 #include "../libcommon/NodeCarrier.h"
 #include "../libcommon/SpkCompilerUtil.h"
 
@@ -63,26 +63,44 @@ int gSpkExpErrors = 0;
 int gSpkExpLines  = 0;
 
 /**
- * Global pointer to a PaserTree utility object.
+ * Global pointer to a ExpTreeGenerator object.
  *
  * This pointer has to be initialized to point to a valid object
- * in the caller (of yyparse()) space.
+ * in the caller (of yyparse()) space.  The allocated resource
+ * must be released by the caller too.
+ *
+ * @note If the pointer is found to be pointing to NULL at
+ * the very beginning of parsing, yyparse() will allocate
+ * memory for an object and make this pointer to point to the object
+ * but it is still of the caller's responsibility to release the memory.
  */
-ParseTree   * gSpkExpUtil;
+ExpTreeGenerator * gSpkTreeGenerator;
 
 /**
  * Global pointer to a DOMDocument object.
  *
  * This pointer has to be initialized to point to a valid object
- * in the caller (of yyparse()) space.
+ * in the caller (of yyparse()) space.  The allocated resource
+ * must be released by the caller too.
+ *
+ * @note If the pointer is found to be pointing to NULL at
+ * the very beginning of parsing, yyparse() will allocate
+ * memory for an object and make this pointer to point to the object
+ * but it is still of the caller's responsibility to release the memory.
  */
-DOMDocument * gSpkExpDOMDocument;
+DOMDocument * gSpkExpTree;
 
 /**
  * Global pointer to a SymbolTable object.
  *
  * This pointer has to be initialized to point to a valid object
- * in the caller (of yyparse()) space.
+ * in the caller (of yyparse()) space.  The allocated resource
+ * must be released by the caller too.
+ *
+ * @note If the pointer is found to be pointing to NULL at
+ * the very beginning of parsing, yyparse() will allocate
+ * memory for an object and make this pointer to point to the object
+ * but it is still of the caller's responsibility to release the memory.
  */
 SymbolTable * gSpkExpSymbolTable;
 
@@ -270,8 +288,19 @@ input:
 // A unit can be empty.
 //
 /* empty */ {
-  struct NodeCarrier * carrier = gSpkExpUtil->createNodeCarrier();
-  carrier->node = gSpkExpDOMDocument->getDocumentElement();
+
+  if( gSpkExpTreeGenerator == NULL )
+    {
+      gSpkExpTreeGenerator = new ExpTreeGenerator;
+    }
+  gSpkExpTree = gSpkExpTreeGenerator->getRoot();
+
+  if( gSpkExpSymbolTable == NULL )
+    {
+      gSpkExpSymboLTable = new SymbolTable( client::NONMEM );
+    }
+  struct NodeCarrier * carrier = gSpkExpTreeGenerator->createNodeCarrier();
+  carrier->node = gSpkExpTree->getDocumentElement();
   $$ = carrier;
 }
 | 
@@ -282,11 +311,11 @@ input line {
   struct NodeCarrier * carrier;
 
   if( $1 == NULL )
-    carrier = gSpkExpUtil->createNodeCarrier();
+    carrier = gSpkExpTreeGenerator->createNodeCarrier();
   else
     carrier = $1;
 
-  carrier->node = gSpkExpDOMDocument->getDocumentElement();
+  carrier->node = gSpkExpTree->getDocumentElement();
 
   //
   // If the line just read is empty, do nothing.
@@ -312,11 +341,11 @@ input { inConditional=true; } if_stmt_or_block { inConditional=false; } {
   struct NodeCarrier * carrier;
 
   if( $1 == NULL )
-    carrier = gSpkExpUtil->createNodeCarrier();
+    carrier = gSpkExpTreeGenerator->createNodeCarrier();
   else
     carrier = $1;
 
-  carrier->node = gSpkExpDOMDocument->getDocumentElement();
+  carrier->node = gSpkExpTree->getDocumentElement();
 
   //
   // If the line just read is empty, do nothing.
@@ -389,8 +418,8 @@ line :
 COMMENT '\n' {
   gSpkExpLines++;
 
-  struct NodeCarrier* carrier = gSpkExpUtil->createNodeCarrier();
-  DOMElement * myComment = gSpkExpDOMDocument->createElement( X( STR_COMMENT ) );
+  struct NodeCarrier* carrier = gSpkExpTreeGenerator->createNodeCarrier();
+  DOMElement * myComment = gSpkExpTree->createElement( X( STR_COMMENT ) );
 
   // a value can be empty.
   myComment->setAttribute( X( STR_VALUE ), X($1) );
@@ -415,7 +444,7 @@ statement COMMENT '\n' {
 
   struct NodeCarrier* carrier = $1;
 
-  DOMElement * myComment = gSpkExpDOMDocument->createElement( X( STR_COMMENT ) );
+  DOMElement * myComment = gSpkExpTree->createElement( X( STR_COMMENT ) );
   myComment->setAttribute( X( STR_VALUE ), X($2) );
   $1->node->appendChild( myComment );
 
@@ -469,9 +498,9 @@ exit_stmt {
 //==================================================================================
 exit_stmt :
 EXIT {
-  struct NodeCarrier * carrier = gSpkExpUtil->createNodeCarrier();
+  struct NodeCarrier * carrier = gSpkExpTreeGenerator->createNodeCarrier();
 
-  DOMElement * exit_stmt = gSpkExpDOMDocument->createElement( X( STR_EXIT ) );
+  DOMElement * exit_stmt = gSpkExpTree->createElement( X( STR_EXIT ) );
   carrier->node = exit_stmt; 
   $$ = carrier;
 }
@@ -480,9 +509,9 @@ EXIT DIGIT_STRING {
   //
   // The number specifies the PRED exit code; it must be 1 or 2.  The default is 1.
   //
-  struct NodeCarrier * carrier = gSpkExpUtil->createNodeCarrier();
+  struct NodeCarrier * carrier = gSpkExpTreeGenerator->createNodeCarrier();
 
-  DOMElement * exit_stmt = gSpkExpDOMDocument->createElement( X( STR_EXIT ) );
+  DOMElement * exit_stmt = gSpkExpTree->createElement( X( STR_EXIT ) );
   char message[DEFAULT_BUFF_SIZE];
   sprintf( message, "User requested termination with predefined code, %d.\n", $2 );
   exit_stmt->setAttribute( X( STR_VALUE ), X( message ) );
@@ -494,9 +523,9 @@ EXIT DIGIT_STRING DIGIT_STRING {
   //
   // The first number is a PRED exit code (1 or 2) and
   // the second number is the user error code, which must be 0-999.  The default is 0.
-  struct NodeCarrier * carrier = gSpkExpUtil->createNodeCarrier();
+  struct NodeCarrier * carrier = gSpkExpTreeGenerator->createNodeCarrier();
 
-  DOMElement * exit_stmt = gSpkExpDOMDocument->createElement( X( STR_EXIT ) );
+  DOMElement * exit_stmt = gSpkExpTree->createElement( X( STR_EXIT ) );
   char message[DEFAULT_BUFF_SIZE];
   sprintf( message, "User requested termination with predefined code, %d.\n", $2 );
 
@@ -528,18 +557,18 @@ EXIT DIGIT_STRING DIGIT_STRING {
 assignment_stmt :
 {inRHS=false;}variable '=' {inRHS=true;} expr {inRHS=false;}{
 
-  DOMElement * assign = gSpkExpDOMDocument->createElement( X( STR_OPERATOR ) );
+  DOMElement * assign = gSpkExpTree->createElement( X( STR_OPERATOR ) );
   assign->setAttribute( X( STR_OPERAND ), X( STR_BINARY ) );
   assign->setAttribute( X( STR_VALUE ),   X( STR_ASSIGN ) );
 
-  DOMElement *lhs = gSpkExpDOMDocument->createElement( X( STR_LHS ) );
+  DOMElement *lhs = gSpkExpTree->createElement( X( STR_LHS ) );
   lhs->appendChild( $2->node );
   lhs->setAttribute( X(STR_TYPE), $2->node->getAttribute( X(STR_TYPE) ) );
   lhs->setAttribute( X(STR_STRUCTURE), $2->node->getAttribute( X(STR_STRUCTURE) ) );
   lhs->setAttribute( X(STR_ROWS), $2->node->getAttribute( X(STR_ROWS) ) );
   lhs->setAttribute( X(STR_COLS), $2->node->getAttribute( X(STR_COLS) ) );
 
-  DOMElement *rhs = gSpkExpDOMDocument->createElement( X( STR_RHS ) ); 
+  DOMElement *rhs = gSpkExpTree->createElement( X( STR_RHS ) ); 
   rhs->appendChild( $5->node );
   rhs->setAttribute( X(STR_TYPE), $5->node->getAttribute( X(STR_TYPE) ) );
   rhs->setAttribute( X(STR_STRUCTURE), $5->node->getAttribute( X(STR_STRUCTURE) ) );
@@ -689,7 +718,7 @@ assignment_stmt :
   assign->appendChild( lhs );
   assign->appendChild( rhs );
 
-  struct NodeCarrier * carrier = gSpkExpUtil->createNodeCarrier();
+  struct NodeCarrier * carrier = gSpkExpTreeGenerator->createNodeCarrier();
   carrier->node = assign;
   $$ = carrier;  
 }
@@ -722,7 +751,7 @@ subobject {
 ;
 whole_object :
 NAME { 
-  DOMElement * var = gSpkExpDOMDocument->createElement( X( STR_VARIABLE ) );
+  DOMElement * var = gSpkExpTree->createElement( X( STR_VARIABLE ) );
   var->setAttribute( X( STR_NAME ), X( $1 ) );
   var->setAttribute( X( STR_SIGN ), X( STR_PLUS ) );
 
@@ -782,7 +811,7 @@ NAME {
   var->setAttribute( X( STR_ROWS ),      X( rows_str ) );
   var->setAttribute( X( STR_COLS ),      X( cols_str ) );
 
-  struct NodeCarrier * carrier = gSpkExpUtil->createNodeCarrier();
+  struct NodeCarrier * carrier = gSpkExpTreeGenerator->createNodeCarrier();
   carrier->node = var;
   $$ = carrier;
 } // scalar, vector, matrix
@@ -815,7 +844,7 @@ matrix_section_variable {
 vector_section_variable : 
 NAME '(' slice ')' { 
 
-  DOMElement * vector = gSpkExpDOMDocument->createElement( X( Symbol::C_VECTOR) );
+  DOMElement * vector = gSpkExpTree->createElement( X( Symbol::C_VECTOR) );
   vector->setAttribute( X( STR_NAME), X( $1 ) );
   vector->setAttribute( X( STR_TYPE ), X( Symbol::C_UNKNOWN ) );
   vector->setAttribute( X( STR_STRUCTURE ), X( Symbol::C_VECTOR ) );
@@ -823,7 +852,7 @@ NAME '(' slice ')' {
 
   vector->appendChild( $3->node );
 
-  struct NodeCarrier * carrier = gSpkExpUtil->createNodeCarrier();
+  struct NodeCarrier * carrier = gSpkExpTreeGenerator->createNodeCarrier();
   carrier->node = vector;
   $$ = carrier;
 }
@@ -846,7 +875,7 @@ NAME '(' slice ')' {
 matrix_section_variable :
 NAME '(' slice ',' slice ')' { 
 
-  DOMElement * matrix = gSpkExpDOMDocument->createElement( X( Symbol::C_MATRIX ) );
+  DOMElement * matrix = gSpkExpTree->createElement( X( Symbol::C_MATRIX ) );
   matrix->setAttribute( X( STR_NAME ), X( $1 ) );
   matrix->setAttribute( X( STR_TYPE ), X( Symbol::C_UNKNOWN ) );
   matrix->setAttribute( X( STR_STRUCTURE ), X( Symbol::C_MATRIX ) );
@@ -855,7 +884,7 @@ NAME '(' slice ',' slice ')' {
   matrix->appendChild( $3->node );
   matrix->appendChild( $5->node );
 
-  struct NodeCarrier * carrier = gSpkExpUtil->createNodeCarrier();
+  struct NodeCarrier * carrier = gSpkExpTreeGenerator->createNodeCarrier();
   carrier->node = matrix;
   $$ = carrier;
 }
@@ -893,30 +922,30 @@ NAME '(' slice ',' slice ')' {
 slice :
 int_expr { 
 
-  DOMElement * index_expr = gSpkExpDOMDocument->createElement( X( STR_INDEX ) );
+  DOMElement * index_expr = gSpkExpTree->createElement( X( STR_INDEX ) );
 
   index_expr->appendChild( $1->node );
 
-  struct NodeCarrier * carrier = gSpkExpUtil->createNodeCarrier();
+  struct NodeCarrier * carrier = gSpkExpTreeGenerator->createNodeCarrier();
   carrier->node = index_expr;
   $$ = carrier;
 }
 |
 start_subscript ':' end_subscript { 
 
-  struct NodeCarrier * carrier = gSpkExpUtil->createNodeCarrier();
-  DOMElement * mySlice  = gSpkExpDOMDocument->createElement( X( STR_INDEX ) );
+  struct NodeCarrier * carrier = gSpkExpTreeGenerator->createNodeCarrier();
+  DOMElement * mySlice  = gSpkExpTree->createElement( X( STR_INDEX ) );
   // type & structure?
 
-  DOMElement * myStart  = gSpkExpDOMDocument->createElement( X( STR_START ) );
+  DOMElement * myStart  = gSpkExpTree->createElement( X( STR_START ) );
   // type & structure?
 
-  DOMElement * myEnd    = gSpkExpDOMDocument->createElement( X( STR_END ) );
+  DOMElement * myEnd    = gSpkExpTree->createElement( X( STR_END ) );
   // type & structure?
  
-  DOMElement * myStride = gSpkExpDOMDocument->createElement( X( STR_STRIDE ) );
+  DOMElement * myStride = gSpkExpTree->createElement( X( STR_STRIDE ) );
 
-  DOMElement * myStrideVal = gSpkExpDOMDocument->createElement( X( STR_CONSTANT ) );
+  DOMElement * myStrideVal = gSpkExpTree->createElement( X( STR_CONSTANT ) );
   myStrideVal->setAttribute( X( STR_VALUE ), X( "1" ) );
   myStrideVal->setAttribute( X( STR_TYPE ),  X( Symbol::C_INT ) );
   myStrideVal->setAttribute( X( STR_STRUCTURE ), X( Symbol::C_SCALAR ) );
@@ -935,17 +964,17 @@ start_subscript ':' end_subscript {
 }
 |
 start_subscript ':' end_subscript ':' stride { 
-  struct NodeCarrier * carrier = gSpkExpUtil->createNodeCarrier();
-  DOMElement * mySlice  = gSpkExpDOMDocument->createElement( X( STR_INDEX ) );
+  struct NodeCarrier * carrier = gSpkExpTreeGenerator->createNodeCarrier();
+  DOMElement * mySlice  = gSpkExpTree->createElement( X( STR_INDEX ) );
   // type & structure?
 
-  DOMElement * myStart  = gSpkExpDOMDocument->createElement( X( STR_START ) );
+  DOMElement * myStart  = gSpkExpTree->createElement( X( STR_START ) );
   // type & structure?
 
-  DOMElement * myEnd    = gSpkExpDOMDocument->createElement( X( STR_END ) );
+  DOMElement * myEnd    = gSpkExpTree->createElement( X( STR_END ) );
   // type & structure?
 
-  DOMElement * myStride = gSpkExpDOMDocument->createElement( X( STR_STRIDE ) );
+  DOMElement * myStride = gSpkExpTree->createElement( X( STR_STRIDE ) );
   // type & structure?
 
   myStart ->appendChild( $1->node );
@@ -1039,7 +1068,7 @@ array_constructor { $$ = $1; }
 function_ref { $$ = $1; }
 |
 '(' expr ')' { 
-  DOMElement * paren = gSpkExpDOMDocument->createElement( X( STR_PRIORITIZED ) );
+  DOMElement * paren = gSpkExpTree->createElement( X( STR_PRIORITIZED ) );
   paren->setAttribute( X( STR_TYPE ), $2->node->getAttribute( X( STR_TYPE ) ) );
   paren->setAttribute( X( STR_STRUCTURE ), $2->node->getAttribute( X( STR_STRUCTURE ) ) );
   paren->setAttribute( X( STR_SIGN ), $2->node->getAttribute( X( STR_SIGN ) ) );
@@ -1047,7 +1076,7 @@ function_ref { $$ = $1; }
   paren->setAttribute( X( STR_COLS ), $2->node->getAttribute( X( STR_COLS ) ) );
   paren->appendChild( $2->node );
 
-  struct NodeCarrier * carrier = gSpkExpUtil->createNodeCarrier();
+  struct NodeCarrier * carrier = gSpkExpTreeGenerator->createNodeCarrier();
   carrier->node = paren;
   $$ = carrier;
  }
@@ -1098,16 +1127,16 @@ IF '(' logical_expr ')' assignment_stmt {
     yyerror( "Wrong type!  Only expressions that evalute to true/false are accepted!" );
   }
 
-  DOMElement * if_stmt   = gSpkExpDOMDocument->createElement( X( STR_IF ) );
-  DOMElement * condition = gSpkExpDOMDocument->createElement( X( STR_CONDITION ) );
+  DOMElement * if_stmt   = gSpkExpTree->createElement( X( STR_IF ) );
+  DOMElement * condition = gSpkExpTree->createElement( X( STR_CONDITION ) );
   condition->appendChild( $3->node );
   if_stmt->appendChild( condition );
 
-  DOMElement * then_block = gSpkExpDOMDocument->createElement( X( STR_THEN ) );
+  DOMElement * then_block = gSpkExpTree->createElement( X( STR_THEN ) );
   then_block->appendChild( $5->node );
   if_stmt->appendChild( then_block );
 
-  struct NodeCarrier * carrier = gSpkExpUtil->createNodeCarrier();
+  struct NodeCarrier * carrier = gSpkExpTreeGenerator->createNodeCarrier();
   carrier->node = if_stmt;
   $$ = carrier;
 }
@@ -1138,22 +1167,22 @@ if_construct :
 if_then_stmt '\n'  { inConditional = true; } block  { inConditional = false; }
              ELSE '\n' { inConditional = true; } block { inConditional = false; } ENDIF '\n' { 
 
-  DOMElement * node = gSpkExpDOMDocument->createElement( X( STR_IF ) );
+  DOMElement * node = gSpkExpTree->createElement( X( STR_IF ) );
 
-  DOMElement * myConditional_expr = gSpkExpDOMDocument->createElement( X( STR_CONDITION ) );
+  DOMElement * myConditional_expr = gSpkExpTree->createElement( X( STR_CONDITION ) );
   myConditional_expr->appendChild( $1->node );
 
-  DOMElement * then_block = gSpkExpDOMDocument->createElement( X( STR_THEN ) );
+  DOMElement * then_block = gSpkExpTree->createElement( X( STR_THEN ) );
   then_block->appendChild( $4->node );
 
-  DOMElement * else_block = gSpkExpDOMDocument->createElement( X( STR_ELSE ) );
+  DOMElement * else_block = gSpkExpTree->createElement( X( STR_ELSE ) );
   else_block->appendChild( $9->node );
 
   node->appendChild( myConditional_expr );
   node->appendChild( then_block );
   node->appendChild( else_block );
 
-  struct NodeCarrier * carrier = gSpkExpUtil->createNodeCarrier();
+  struct NodeCarrier * carrier = gSpkExpTreeGenerator->createNodeCarrier();
   carrier->node = node;
   $$ = carrier;
 }
@@ -1199,8 +1228,8 @@ IF '(' logical_expr ')' THEN {
 block :
 /* empty */
 { 
-  struct NodeCarrier * carrier = gSpkExpUtil->createNodeCarrier();
-  DOMElement * block = gSpkExpDOMDocument->createElement( X( "block" ) );
+  struct NodeCarrier * carrier = gSpkExpTreeGenerator->createNodeCarrier();
+  DOMElement * block = gSpkExpTree->createElement( X( "block" ) );
   carrier->node = block;
   $$ = carrier;
 }
@@ -1248,9 +1277,9 @@ DIGIT_STRING {
   //
   // This is an integer constant.
   //
-  struct NodeCarrier * carrier = gSpkExpUtil->createNodeCarrier();
+  struct NodeCarrier * carrier = gSpkExpTreeGenerator->createNodeCarrier();
 
-  DOMElement * int_constant = gSpkExpDOMDocument->createElement( X(STR_CONSTANT) );
+  DOMElement * int_constant = gSpkExpTree->createElement( X(STR_CONSTANT) );
   int_constant->setAttribute( X( STR_TYPE ), X( Symbol::C_INT ) );
   int_constant->setAttribute( X( STR_STRUCTURE ), X( Symbol::C_SCALAR ) );
   int_constant->setAttribute( X( STR_SIGN ), X( STR_PLUS ) );
@@ -1279,8 +1308,8 @@ SIGNIFICAND {
   //
   // This is a real constant in the form of "0.0".
   //
-  struct NodeCarrier * carrier = gSpkExpUtil->createNodeCarrier();
-  DOMElement * real_constant = gSpkExpDOMDocument->createElement( X(STR_CONSTANT) );
+  struct NodeCarrier * carrier = gSpkExpTreeGenerator->createNodeCarrier();
+  DOMElement * real_constant = gSpkExpTree->createElement( X(STR_CONSTANT) );
   real_constant->setAttribute( X( STR_TYPE ), X( Symbol::C_DOUBLE ) );
   real_constant->setAttribute( X( STR_STRUCTURE ), X( Symbol::C_SCALAR ) );
   real_constant->setAttribute( X( STR_SIGN ), X( STR_PLUS ) );
@@ -1295,8 +1324,8 @@ ENG_NOTATION {
   // 
   // This is a real constant in the form of "0.0E0"
   //
-  struct NodeCarrier * carrier = gSpkExpUtil->createNodeCarrier();
-  DOMElement * real_constant = gSpkExpDOMDocument->createElement( X(STR_CONSTANT) );
+  struct NodeCarrier * carrier = gSpkExpTreeGenerator->createNodeCarrier();
+  DOMElement * real_constant = gSpkExpTree->createElement( X(STR_CONSTANT) );
   real_constant->setAttribute( X( STR_TYPE ), X( Symbol::C_DOUBLE ) );
   real_constant->setAttribute( X( STR_STRUCTURE ), X( Symbol::C_SCALAR ) );
  real_constant->setAttribute( X( STR_SIGN ), X( STR_PLUS ) );
@@ -1327,8 +1356,8 @@ TRUE {
   //
   // This is a boolean value "true".
   //
-  struct NodeCarrier * carrier = gSpkExpUtil->createNodeCarrier();
-  DOMElement * bool_constant = gSpkExpDOMDocument->createElement( X(STR_CONSTANT) );
+  struct NodeCarrier * carrier = gSpkExpTreeGenerator->createNodeCarrier();
+  DOMElement * bool_constant = gSpkExpTree->createElement( X(STR_CONSTANT) );
   bool_constant->setAttribute( X( STR_TYPE ), X( Symbol::C_BOOL ) );
   bool_constant->setAttribute( X( STR_STRUCTURE ), X( Symbol::C_SCALAR ) );
   bool_constant->setAttribute( X( STR_SIGN ), X( STR_PLUS ) );// + sign means the same as non-negate, - means negate
@@ -1343,8 +1372,8 @@ FALSE {
   //
   // This is a boolean value "false".
   //
-  struct NodeCarrier * carrier = gSpkExpUtil->createNodeCarrier();
-  DOMElement * bool_constant = gSpkExpDOMDocument->createElement( X(STR_CONSTANT) );
+  struct NodeCarrier * carrier = gSpkExpTreeGenerator->createNodeCarrier();
+  DOMElement * bool_constant = gSpkExpTree->createElement( X(STR_CONSTANT) );
   bool_constant->setAttribute( X( STR_TYPE ), X( Symbol::C_BOOL ) );
   bool_constant->setAttribute( X( STR_STRUCTURE ), X( Symbol::C_SCALAR ) );
   bool_constant->setAttribute( X( STR_SIGN ), X( STR_PLUS ) );// + sign means the same as non-negate, - means negate
@@ -1385,7 +1414,7 @@ OPEN_ARRAY_ELEM_LIST array_element_list CLOSE_ARRAY_ELEM_LIST {
 array_element_list :
 expr {
 
-  DOMElement * elements_list = gSpkExpDOMDocument->createElement( X( STR_ARRAY_ELEMENT_LIST ) );
+  DOMElement * elements_list = gSpkExpTree->createElement( X( STR_ARRAY_ELEMENT_LIST ) );
   elements_list->setAttribute( X( STR_TYPE ), $1->node->getAttribute( X( STR_TYPE ) ) );
   elements_list->setAttribute( X( STR_STRUCTURE ), $1->node->getAttribute( X( STR_STRUCTURE ) ) );
   elements_list->setAttribute( X( STR_SIGN ), $1->node->getAttribute( X( STR_SIGN ) ) );
@@ -1474,7 +1503,7 @@ array_element_list ',' expr {
 function_ref :
 DEFINED_UNARY_FUNCTION '(' arithmatic_expr ')' { 
 
-  DOMElement * function = gSpkExpDOMDocument->createElement( X( STR_FUNCTION ) );
+  DOMElement * function = gSpkExpTree->createElement( X( STR_FUNCTION ) );
   function->setAttribute( X( STR_ARGC ), X( "1" ) );
   function->setAttribute( X( STR_TYPE ), X( Symbol::C_DOUBLE ) );
   function->setAttribute( X( STR_STRUCTURE ), $3->node->getAttribute( X( STR_STRUCTURE ) ) );
@@ -1536,19 +1565,19 @@ DEFINED_UNARY_FUNCTION '(' arithmatic_expr ')' {
 arithmatic_expr :
 arithmatic_expr '+' arithmatic_expr {
 
-  DOMElement * op = gSpkExpDOMDocument->createElement( X( STR_OPERATOR ) );
+  DOMElement * op = gSpkExpTree->createElement( X( STR_OPERATOR ) );
   op->setAttribute( X( STR_OPERAND ), X( STR_BINARY ) );
   op->setAttribute( X( STR_VALUE ), X( STR_ADD ) );
   op->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );  // the sign is actual undetermined.
 
-  DOMElement * lhs   = gSpkExpDOMDocument->createElement( X( STR_LHS ) );
+  DOMElement * lhs   = gSpkExpTree->createElement( X( STR_LHS ) );
   lhs->setAttribute( X( STR_TYPE ), $1->node->getAttribute( X( STR_TYPE ) ) );
   lhs->setAttribute( X( STR_STRUCTURE ), $1->node->getAttribute( X( STR_STRUCTURE ) ) );
   lhs->setAttribute( X( STR_SIGN ), $1->node->getAttribute( X( STR_SIGN ) ) );
   lhs->setAttribute( X( STR_ROWS ), $1->node->getAttribute( X( STR_ROWS ) ) );
   lhs->setAttribute( X( STR_COLS ), $1->node->getAttribute( X( STR_COLS ) ) );
 
-  DOMElement * rhs   = gSpkExpDOMDocument->createElement( X( STR_RHS ) );
+  DOMElement * rhs   = gSpkExpTree->createElement( X( STR_RHS ) );
   rhs->setAttribute( X( STR_TYPE ), $3->node->getAttribute( X( STR_TYPE ) ) );
   rhs->setAttribute( X( STR_STRUCTURE ), $3->node->getAttribute( X( STR_STRUCTURE ) ) );
   rhs->setAttribute( X( STR_SIGN ), $3->node->getAttribute( X( STR_SIGN ) ) );
@@ -1635,19 +1664,19 @@ arithmatic_expr '+' arithmatic_expr {
 |
 arithmatic_expr '-' arithmatic_expr { 
 
-  DOMElement * op = gSpkExpDOMDocument->createElement( X( STR_OPERATOR ) );
+  DOMElement * op = gSpkExpTree->createElement( X( STR_OPERATOR ) );
   op->setAttribute( X( STR_OPERAND ), X( STR_BINARY ) );
   op->setAttribute( X( STR_VALUE ), X( STR_SUBTRACT ) );
   op->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) ); // the sign is actually undetermined.
 
-  DOMElement * lhs   = gSpkExpDOMDocument->createElement( X( STR_LHS ) );
+  DOMElement * lhs   = gSpkExpTree->createElement( X( STR_LHS ) );
   lhs->setAttribute( X( STR_TYPE ), $1->node->getAttribute( X( STR_TYPE ) ) );
   lhs->setAttribute( X( STR_STRUCTURE ), $1->node->getAttribute( X( STR_STRUCTURE ) ) );
   lhs->setAttribute( X( STR_SIGN ), $1->node->getAttribute( X( STR_SIGN ) ) );
   lhs->setAttribute( X( STR_ROWS ), $1->node->getAttribute( X( STR_ROWS ) ) );
   lhs->setAttribute( X( STR_COLS ), $1->node->getAttribute( X( STR_COLS ) ) );
 
-  DOMElement * rhs   = gSpkExpDOMDocument->createElement( X( STR_RHS ) );
+  DOMElement * rhs   = gSpkExpTree->createElement( X( STR_RHS ) );
   rhs->setAttribute( X( STR_TYPE ), $3->node->getAttribute( X( STR_TYPE ) ) );
   rhs->setAttribute( X( STR_STRUCTURE ), $3->node->getAttribute( X( STR_STRUCTURE ) ) );
   rhs->setAttribute( X( STR_SIGN ), $3->node->getAttribute( X( STR_SIGN ) ) );
@@ -1759,19 +1788,19 @@ arithmatic_expr '-' arithmatic_expr {
 |
 arithmatic_expr '*' arithmatic_expr {
 
-  DOMElement * op = gSpkExpDOMDocument->createElement( X( STR_OPERATOR ) );
+  DOMElement * op = gSpkExpTree->createElement( X( STR_OPERATOR ) );
   op->setAttribute( X( STR_OPERAND ), X( STR_BINARY ) );
   op->setAttribute( X( STR_VALUE ), X( STR_MULTIPLY ) );
   op->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );// the sign is actually undermined.
 
-  DOMElement * lhs   = gSpkExpDOMDocument->createElement( X( STR_LHS ) );
+  DOMElement * lhs   = gSpkExpTree->createElement( X( STR_LHS ) );
   lhs->setAttribute( X( STR_TYPE ), $1->node->getAttribute( X( STR_TYPE ) ) );
   lhs->setAttribute( X( STR_STRUCTURE ), $1->node->getAttribute( X( STR_STRUCTURE ) ) );
   lhs->setAttribute( X( STR_SIGN ), $1->node->getAttribute( X( STR_SIGN ) ) );
   lhs->setAttribute( X( STR_ROWS ), $1->node->getAttribute( X( STR_ROWS ) ) );
   lhs->setAttribute( X( STR_COLS ), $1->node->getAttribute( X( STR_COLS ) ) );
 
-  DOMElement * rhs   = gSpkExpDOMDocument->createElement( X( STR_RHS ) );
+  DOMElement * rhs   = gSpkExpTree->createElement( X( STR_RHS ) );
   rhs->setAttribute( X( STR_TYPE ), $3->node->getAttribute( X( STR_TYPE ) ) );
   rhs->setAttribute( X( STR_STRUCTURE ), $3->node->getAttribute( X( STR_STRUCTURE ) ) );
   rhs->setAttribute( X( STR_SIGN ), $3->node->getAttribute( X( STR_SIGN ) ) );
@@ -1855,19 +1884,19 @@ arithmatic_expr '*' arithmatic_expr {
 |
 arithmatic_expr '/' arithmatic_expr {
 
-  DOMElement * op = gSpkExpDOMDocument->createElement( X( STR_OPERATOR ) );
+  DOMElement * op = gSpkExpTree->createElement( X( STR_OPERATOR ) );
   op->setAttribute( X( STR_OPERAND ), X( STR_BINARY ) );
   op->setAttribute( X( STR_VALUE ), X( STR_DIVIDE ) );
   op->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );// the sign is actually undermined.
 
-  DOMElement * lhs   = gSpkExpDOMDocument->createElement( X( STR_LHS ) );
+  DOMElement * lhs   = gSpkExpTree->createElement( X( STR_LHS ) );
   lhs->setAttribute( X( STR_TYPE ), $1->node->getAttribute( X( STR_TYPE ) ) );
   lhs->setAttribute( X( STR_STRUCTURE ), $1->node->getAttribute( X( STR_STRUCTURE ) ) );
   lhs->setAttribute( X( STR_SIGN ), $1->node->getAttribute( X( STR_SIGN ) ) );
   lhs->setAttribute( X( STR_ROWS ), $1->node->getAttribute( X( STR_ROWS ) ) );
   lhs->setAttribute( X( STR_COLS ), $1->node->getAttribute( X( STR_COLS ) ) );
 
-  DOMElement * rhs   = gSpkExpDOMDocument->createElement( X( STR_RHS ) );
+  DOMElement * rhs   = gSpkExpTree->createElement( X( STR_RHS ) );
   rhs->setAttribute( X( STR_TYPE ), $3->node->getAttribute( X( STR_TYPE ) ) );
   rhs->setAttribute( X( STR_STRUCTURE ), $3->node->getAttribute( X( STR_STRUCTURE ) ) );
   rhs->setAttribute( X( STR_SIGN ), $3->node->getAttribute( X( STR_SIGN ) ) );
@@ -1951,19 +1980,19 @@ arithmatic_expr '/' arithmatic_expr {
 |
 arithmatic_expr POWER_OP arithmatic_expr {
 
-  DOMElement * function = gSpkExpDOMDocument->createElement( X( STR_FUNCTION ) );
+  DOMElement * function = gSpkExpTree->createElement( X( STR_FUNCTION ) );
   function->setAttribute( X( STR_ARGC ), X( "2" ) );
   function->setAttribute( X( STR_NAME ), X( STR_POWER ) );
   function->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );// the sign is actually undermined.
 
-  DOMElement * lhs   = gSpkExpDOMDocument->createElement( X( STR_LHS ) );
+  DOMElement * lhs   = gSpkExpTree->createElement( X( STR_LHS ) );
   lhs->setAttribute( X( STR_TYPE ), $1->node->getAttribute( X( STR_TYPE ) ) );
   lhs->setAttribute( X( STR_STRUCTURE ), $1->node->getAttribute( X( STR_STRUCTURE ) ) );
   lhs->setAttribute( X( STR_SIGN ), $1->node->getAttribute( X( STR_SIGN ) ) );
   lhs->setAttribute( X( STR_ROWS ), $1->node->getAttribute( X( STR_ROWS ) ) );
   lhs->setAttribute( X( STR_COLS ), $1->node->getAttribute( X( STR_COLS ) ) );
 
-  DOMElement * rhs   = gSpkExpDOMDocument->createElement( X( STR_RHS ) );
+  DOMElement * rhs   = gSpkExpTree->createElement( X( STR_RHS ) );
   rhs->setAttribute( X( STR_TYPE ), $3->node->getAttribute( X( STR_TYPE ) ) );
   rhs->setAttribute( X( STR_STRUCTURE ), $3->node->getAttribute( X( STR_STRUCTURE ) ) );
   rhs->setAttribute( X( STR_SIGN ), $3->node->getAttribute( X( STR_SIGN ) ) );
@@ -2073,14 +2102,14 @@ primary { $$ = $1; }
 relational_expr :
 relational_expr EQ_OP relational_expr {
 
-  DOMElement * op = gSpkExpDOMDocument->createElement( X( STR_OPERATOR ) );
+  DOMElement * op = gSpkExpTree->createElement( X( STR_OPERATOR ) );
   op->setAttribute( X( STR_OPERAND ), X( STR_BINARY ) );
   op->setAttribute( X( STR_VALUE ), X( STR_EQ ) );
   op->setAttribute( X( STR_TYPE ), X( Symbol::C_BOOL ) );
   op->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );// -sign means negate.  the sign is actually undetermined.
 
-  DOMElement * lhs    = gSpkExpDOMDocument->createElement( X( STR_LHS ) );
-  DOMElement * rhs   = gSpkExpDOMDocument->createElement( X( STR_RHS ) );
+  DOMElement * lhs    = gSpkExpTree->createElement( X( STR_LHS ) );
+  DOMElement * rhs   = gSpkExpTree->createElement( X( STR_RHS ) );
   lhs->appendChild( $1->node );
   rhs->appendChild( $3->node );
   op->appendChild( lhs );
@@ -2093,14 +2122,14 @@ relational_expr EQ_OP relational_expr {
 |
 relational_expr NE_OP relational_expr { 
 
-  DOMElement * op = gSpkExpDOMDocument->createElement( X( STR_OPERATOR ) );
+  DOMElement * op = gSpkExpTree->createElement( X( STR_OPERATOR ) );
   op->setAttribute( X( STR_OPERAND ), X( STR_BINARY ) );
   op->setAttribute( X( STR_VALUE ), X( STR_NE ) );
   op->setAttribute( X( STR_TYPE ), X( Symbol::C_BOOL ) );
   op->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );// -sign means negate.  the sign is actually undetermined.
 
-  DOMElement * lhs    = gSpkExpDOMDocument->createElement( X( STR_LHS ) );
-  DOMElement * rhs   = gSpkExpDOMDocument->createElement( X( STR_RHS ) );
+  DOMElement * lhs    = gSpkExpTree->createElement( X( STR_LHS ) );
+  DOMElement * rhs   = gSpkExpTree->createElement( X( STR_RHS ) );
   lhs->appendChild( $1->node );
   rhs->appendChild( $3->node );
   op->appendChild( lhs );
@@ -2113,14 +2142,14 @@ relational_expr NE_OP relational_expr {
 |
 relational_expr LT_OP relational_expr { 
 
-  DOMElement * op = gSpkExpDOMDocument->createElement( X( STR_OPERATOR ) );
+  DOMElement * op = gSpkExpTree->createElement( X( STR_OPERATOR ) );
   op->setAttribute( X( STR_OPERAND ), X( STR_BINARY ) );
   op->setAttribute( X( STR_VALUE ), X( STR_LT ) );
   op->setAttribute( X( STR_TYPE ), X( Symbol::C_BOOL ) );
   op->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );// -sign means negate.  the sign is actually undetermined.
 
-  DOMElement * lhs    = gSpkExpDOMDocument->createElement( X( STR_LHS ) );
-  DOMElement * rhs   = gSpkExpDOMDocument->createElement( X( STR_RHS ) );
+  DOMElement * lhs    = gSpkExpTree->createElement( X( STR_LHS ) );
+  DOMElement * rhs   = gSpkExpTree->createElement( X( STR_RHS ) );
   lhs->appendChild( $1->node );
   rhs->appendChild( $3->node );
   op->appendChild( lhs );
@@ -2133,14 +2162,14 @@ relational_expr LT_OP relational_expr {
 |
 relational_expr LE_OP relational_expr {
 
-  DOMElement * op = gSpkExpDOMDocument->createElement( X( STR_OPERATOR ) );
+  DOMElement * op = gSpkExpTree->createElement( X( STR_OPERATOR ) );
   op->setAttribute( X( STR_OPERAND ), X( STR_BINARY ) );
   op->setAttribute( X( STR_VALUE ), X( STR_LE ) );
   op->setAttribute( X( STR_TYPE ), X( Symbol::C_BOOL ) );
   op->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );// -sign means negate.  the sign is actually undetermined.
 
-  DOMElement * lhs    = gSpkExpDOMDocument->createElement( X( STR_LHS ) );
-  DOMElement * rhs   = gSpkExpDOMDocument->createElement( X( STR_RHS ) );
+  DOMElement * lhs    = gSpkExpTree->createElement( X( STR_LHS ) );
+  DOMElement * rhs   = gSpkExpTree->createElement( X( STR_RHS ) );
   lhs->appendChild( $1->node );
   rhs->appendChild( $3->node );
   op->appendChild( lhs );
@@ -2153,14 +2182,14 @@ relational_expr LE_OP relational_expr {
 |
 relational_expr GT_OP relational_expr {
 
-  DOMElement * op = gSpkExpDOMDocument->createElement( X( STR_OPERATOR ) );
+  DOMElement * op = gSpkExpTree->createElement( X( STR_OPERATOR ) );
   op->setAttribute( X( STR_OPERAND ), X( STR_BINARY ) );
   op->setAttribute( X( STR_VALUE ), X( STR_GT ) );
   op->setAttribute( X( STR_TYPE ), X( Symbol::C_BOOL ) );
   op->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );// -sign means negate.  the sign is actually undetermined.
 
-  DOMElement * lhs    = gSpkExpDOMDocument->createElement( X( STR_LHS ) );
-  DOMElement * rhs   = gSpkExpDOMDocument->createElement( X( STR_RHS ) );
+  DOMElement * lhs    = gSpkExpTree->createElement( X( STR_LHS ) );
+  DOMElement * rhs   = gSpkExpTree->createElement( X( STR_RHS ) );
   lhs->appendChild( $1->node );
   rhs->appendChild( $3->node );
   op->appendChild( lhs );
@@ -2173,14 +2202,14 @@ relational_expr GT_OP relational_expr {
 |
 relational_expr GE_OP relational_expr {
 
-  DOMElement * op = gSpkExpDOMDocument->createElement( X( STR_OPERATOR ) );
+  DOMElement * op = gSpkExpTree->createElement( X( STR_OPERATOR ) );
   op->setAttribute( X( STR_OPERAND ), X( STR_BINARY ) );
   op->setAttribute( X( STR_VALUE ), X( STR_GE ) );
   op->setAttribute( X( STR_TYPE ), X( Symbol::C_BOOL ) );
   op->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );// -sign means negate.  the sign is actually undetermined.
 
-  DOMElement * lhs    = gSpkExpDOMDocument->createElement( X( STR_LHS ) );
-  DOMElement * rhs   = gSpkExpDOMDocument->createElement( X( STR_RHS ) );
+  DOMElement * lhs    = gSpkExpTree->createElement( X( STR_LHS ) );
+  DOMElement * rhs   = gSpkExpTree->createElement( X( STR_RHS ) );
   lhs->appendChild( $1->node );
   rhs->appendChild( $3->node );
   op->appendChild( lhs );
@@ -2227,14 +2256,14 @@ logical_constant {
 logical_expr :
 logical_expr EQV_OP logical_expr {
 
-  DOMElement * op = gSpkExpDOMDocument->createElement( X( STR_OPERATOR ) );
+  DOMElement * op = gSpkExpTree->createElement( X( STR_OPERATOR ) );
   op->setAttribute( X( STR_OPERAND ), X( STR_BINARY ) );
   op->setAttribute( X( STR_VALUE ), X( STR_NXOR ) );
   op->setAttribute( X( STR_TYPE ), X( Symbol::C_BOOL ) );
   op->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );// -sign means negate.  the sign is actually undetermined.
 
-  DOMElement * lhs    = gSpkExpDOMDocument->createElement( X( STR_LHS ) );
-  DOMElement * rhs   = gSpkExpDOMDocument->createElement( X( STR_RHS ) );
+  DOMElement * lhs    = gSpkExpTree->createElement( X( STR_LHS ) );
+  DOMElement * rhs   = gSpkExpTree->createElement( X( STR_RHS ) );
   lhs->appendChild( $1->node );
   rhs->appendChild( $3->node );
   op->appendChild( lhs );
@@ -2247,14 +2276,14 @@ logical_expr EQV_OP logical_expr {
 |
 logical_expr NEQV_OP logical_expr {
 
-  DOMElement * op = gSpkExpDOMDocument->createElement( X( STR_OPERATOR ) );
+  DOMElement * op = gSpkExpTree->createElement( X( STR_OPERATOR ) );
   op->setAttribute( X( STR_OPERAND ), X( STR_BINARY ) );
   op->setAttribute( X( STR_VALUE ), X( STR_XOR ) );
   op->setAttribute( X( STR_TYPE ), X( Symbol::C_BOOL ) );
   op->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );// -sign means negate.  the sign is actually undetermined.
 
-  DOMElement * lhs    = gSpkExpDOMDocument->createElement( X( STR_LHS ) );
-  DOMElement * rhs   = gSpkExpDOMDocument->createElement( X( STR_RHS ) );
+  DOMElement * lhs    = gSpkExpTree->createElement( X( STR_LHS ) );
+  DOMElement * rhs   = gSpkExpTree->createElement( X( STR_RHS ) );
   lhs->appendChild( $1->node );
   rhs->appendChild( $3->node );
   op->appendChild( lhs );
@@ -2267,14 +2296,14 @@ logical_expr NEQV_OP logical_expr {
 |
 logical_expr OR_OP logical_expr {
 
-  DOMElement * op = gSpkExpDOMDocument->createElement( X( STR_OPERATOR ) );
+  DOMElement * op = gSpkExpTree->createElement( X( STR_OPERATOR ) );
   op->setAttribute( X( STR_OPERAND ), X( STR_BINARY ) );
   op->setAttribute( X( STR_VALUE ), X( STR_OR ) );
   op->setAttribute( X( STR_TYPE ), X( Symbol::C_BOOL ) );
   op->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );// -sign means negate.  the sign is actually undetermined.
 
-  DOMElement * lhs = gSpkExpDOMDocument->createElement( X( STR_LHS ) );
-  DOMElement * rhs = gSpkExpDOMDocument->createElement( X( STR_RHS ) );
+  DOMElement * lhs = gSpkExpTree->createElement( X( STR_LHS ) );
+  DOMElement * rhs = gSpkExpTree->createElement( X( STR_RHS ) );
   lhs->appendChild( $1->node );
   rhs->appendChild( $3->node );
   op->appendChild( lhs );
@@ -2287,14 +2316,14 @@ logical_expr OR_OP logical_expr {
 |
 logical_expr AND_OP logical_expr {
 
-  DOMElement * op = gSpkExpDOMDocument->createElement( X( STR_OPERATOR ) );
+  DOMElement * op = gSpkExpTree->createElement( X( STR_OPERATOR ) );
   op->setAttribute( X( STR_OPERAND ), X( STR_BINARY ) );
   op->setAttribute( X( STR_VALUE ), X( STR_AND ) );
   op->setAttribute( X( STR_TYPE ), X( Symbol::C_BOOL ) );
   op->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );// -sign means negate.  the sign is actually undetermined.
 
-  DOMElement * lhs    = gSpkExpDOMDocument->createElement( X( STR_LHS ) );
-  DOMElement * rhs   = gSpkExpDOMDocument->createElement( X( STR_RHS ) );
+  DOMElement * lhs   = gSpkExpTree->createElement( X( STR_LHS ) );
+  DOMElement * rhs   = gSpkExpTree->createElement( X( STR_RHS ) );
   lhs->appendChild( $1->node );
   rhs->appendChild( $3->node );
   op->appendChild( lhs );
@@ -2307,13 +2336,13 @@ logical_expr AND_OP logical_expr {
 |
 NOT_OP logical_expr {
 
-  DOMElement * op = gSpkExpDOMDocument->createElement( X( STR_OPERATOR ) );
+  DOMElement * op = gSpkExpTree->createElement( X( STR_OPERATOR ) );
   op->setAttribute( X( STR_OPERAND ), X( STR_UNARY ) );
   op->setAttribute( X( STR_VALUE ), X( STR_NEGATE ) );
   op->setAttribute( X( STR_TYPE ), X( Symbol::C_BOOL ) );
   op->setAttribute( X( STR_SIGN ), X( STR_MINUS ) );// -sign means negate.
 
-  DOMElement * rhs   = gSpkExpDOMDocument->createElement( X( STR_RHS ) );
+  DOMElement * rhs   = gSpkExpTree->createElement( X( STR_RHS ) );
   rhs->appendChild( $2->node );
   op->appendChild( rhs );
 

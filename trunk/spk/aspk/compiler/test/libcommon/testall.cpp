@@ -5,7 +5,7 @@
 #include "SymbolTest.h"
 #include "SymbolTableTest.h"
 #include "SpkCompilerUtilTest.h"
-#include "ParseTreeTest.h"
+#include "ExpTreeGeneratorTest.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -17,7 +17,7 @@ int main( int argc, const char * argv[] )
   runner.addTest( SymbolTest::suite() );
   runner.addTest( SymbolTableTest::suite() );
   runner.addTest( SpkCompilerUtilTest::suite() );
-  runner.addTest( ParseTreeTest::suite() );
+  runner.addTest( ExpTreeGeneratorTest::suite() );
   
   runner.run();
 
