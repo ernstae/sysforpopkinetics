@@ -7,6 +7,7 @@ $spell
 	std
 	const
 	valarray
+	neg
 $$
 
 $index integral, population objective$$
@@ -26,7 +27,7 @@ $syntax%void MontePopObj(
 	const std::valarray<double> &%U%               ,
 	size_t                       %numberEval%      ,
 	//
-	double                      &%integralEstimate%,
+	double                      &%negLogLikeEstimate%,
 	double                      &%estimateStd%
 )%$$
 $tend
@@ -34,11 +35,11 @@ $tend
 $fend 25$$
 
 $head Description$$
-Monte-Carlo integration is used to approximate the
-objective function corresponding to the entire population;
+Monte-Carlo integration is used to approximate the negative log-likelihood
+function corresponding to the entire population;
 i.e.,
 $latex \[
-	\sum_{i=0}^{M-1} \int_L^U \exp [ - G_i (b) ] \D b
+	- \sum_{i=0}^{M-1} \log \{ \int_L^U \exp [ - G_i (b) ] \D b \}
 \] $$
 where $italic M$$ is the number of individuals in the population study
 and for $latex i = 0 , \ldots , M-1$$ 
@@ -107,18 +108,19 @@ Then it will changed to correspond to the next value.
 The value of $italic \alpha$$ will be the same
 for all the evaluations.
 
-$head integralEstimate$$
-The input value of $italic integralEstimate$$ does not matter.
+$head negLogLikeEstimate$$
+The input value of $italic negLogLikeEstimate$$ does not matter.
 Its output value
-is an approximation for the integral.
+is an approximation for the negative log-likelihood.
 This is an approximately normal random variable with 
-mean equal to the integral and standard deviation
-equal to $italic estimateStd$$.
+mean equal to the negative log of the true integral
+and standard deviation equal to $italic estimateStd$$.
 
 $head estimateStd$$
 The input value of $italic estimateStd$$ does not matter.
 Its output value
-is an approximation for the standard deviation of $italic estimateIntegral$$.
+is an approximation for the standard deviation of 
+$italic negLogLikeEstimate$$.
 
 $end
 
@@ -139,10 +141,10 @@ void MontePopObj(
 	const std::valarray<double> &U               ,
 	size_t                       numberEval      ,
 	//
-	double                      &integralEstimate,
+	double                      &negLogLikeEstimate,
 	double                      &estimateStd     ) 
 {
-	integralEstimate        = 0.;
+	negLogLikeEstimate      = 0.;
 	double estimateVariance = 0.;
 	size_t i;
 	for(i = 0; i < N.size(); i++)
@@ -150,8 +152,9 @@ void MontePopObj(
 		double stdOne;
 		MapMonte(model, N, y, alpha, L, U, i, 
 			numberEval, estimateOne, stdOne);
-		integralEstimate  += estimateOne;
-		estimateVariance  += stdOne * stdOne;
+		negLogLikeEstimate  -= log( estimateOne );
+		estimateVariance    += stdOne * stdOne 
+		                     / estimateOne * estimateOne;
 	}
 	estimateStd = sqrt( estimateVariance );
 }
