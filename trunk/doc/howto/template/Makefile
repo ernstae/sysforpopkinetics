@@ -2,7 +2,7 @@ include ../../webdir.mk
 T = SUBJECT
 HTML_OPS = --nochunks
 STYLE = ../../stylesheet
-WEB = $(WEBDIR)/guide/$T
+WEB = $(WEBDIR)/howto/rhel3/$T
 PNG = $(wildcard *.png)
 
 all:	html pdf rtf

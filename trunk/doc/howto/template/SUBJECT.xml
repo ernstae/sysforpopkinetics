@@ -10,18 +10,26 @@
       <para>
       </para>
       <para>
-	The information in this guide is essential to individuals and
-	groups participating in the development of the System for
-	Population Kinetics (SPK), an open source project of the 
-	RFPK Laboratory of the &dept; of the &uw;.  RFPK's work
-	is supported, in part, by grant P41 EB-001975
-	of the National Institutes of Health (NIH) of the U.S.
-	Department of Health and Human Services.	
+	The information in this document is targeted primarily towards
+	the RFPK Software Team and associates and is specific to the
+	computer systems and network installed in the RFPK Laboratory
+	of the &dept; of the &uw;.  RFPK is the Resource for
+	Population Kinetics.  Its work is supported, in part, by grant
+	P41 EB-001975 of the National Institutes of Health (NIH) of
+	the U.S.  Department of Health and Human Services.
       </para>
       <para>
 	<link linkend="copyright">Copyright</link> (c) 2004, by the &uw;.
       </para>
     </abstract>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>July 4, 1776</date>
+	<authorinitials></authorinitials>
+	<revremark></revremark>
+      </revision>
+    </revhistory>
   </articleinfo>
   <sect1>
     <title></title>
