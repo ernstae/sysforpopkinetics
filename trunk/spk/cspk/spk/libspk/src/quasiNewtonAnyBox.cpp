@@ -250,20 +250,160 @@ $syntax/
 
 /optimizer/
 /$$
-This $xref/Optimizer//Optimizer/$$ class object has three attributes.  
-These attributes are parameters of the optimizer used in the optimization.
+This $xref/Optimizer//Optimizer/$$ object contains the information 
+that controls the optimization process.
+
+$subhead epsilon$$
+This real number is used to specify the convergence criteria
+for the optimizer.
+It must be greater than $math%0.0%$$.
+
+  // *                                                                    *
+  // *     abs( xOut - xStar )  <=  epsilon (xUp - xLow) .                *
+  // *                                                                    *
+
+$subhead 
+
+/nMaxIter/
+/$$
+This integer must be greater than or equal to zero.
+It specifies the maximum number of 
+iterations to attempt before giving up on convergence.
+If $italic nMaxIter$$ is zero, then the top-level search
+function ($mref%fitIndividual%fitPopulation%$$) will simply
+compute the objective function without performing a search.
+$pre
+
+$$
+traceLevel
+
+This integer scalar specifies the amount of tracing.
+Tracing is done using a scaled version of the
+objective function.  For this scaled version the elements of
+the parameter vector are constrained to the interval $math%[0, 1]%$$. 
+If $math%level \ge 1%$$, trace values are directed to standard output 
+(stdout).  
+Larger values of $italic traceLevel$$ entail more tracing, 
+with $math%4%$$ being the highest level of tracing.
+For details on the tracing see the description of the level 
+parameter for the optimizer QuasiNewton01Box.
+$pre
+
+$$
 If the number of iterations parameter is equal to zero, then the input
 value for x is accepted as the final value, and any requested output
 values are evaluated at that final value.
 In this case, a warm start will not be performed in order to ensure
 that the objective function, its gradient, and its Hessian will all be
 evaluated at the input value for x.
+$pre
+
+$$
 If the throwxEcepIfMaxIter parameter is true, then when
 the maximum number of iterations is exhausted, an exception will
 be thrown and the output values for this function will not be set.
 Otherwise, the calling program will
 need to check the parameter isTooManyIter to see if the 
-maximum number of iterations was exhausted, 
+maximum number of iterations was exhausted.
+
+$subhead 
+
+/nIterCompleted/
+/$$
+This integer scalar holds the number of iteration that have been 
+completed in the optimizer.  The initial value of $code  0$$ is set 
+at the construction time.
+
+$subhead 
+
+/isTooManyIter/
+/$$
+This flag indicates that if the too-many-iteration failure has occurred.  
+It is set to $code false$$ at the construction time.
+
+$subhead 
+
+/saveStateAtEndOfOpt/
+/$$
+This flag indicates if the state information required for a warm start
+should be saved at the end of the optimization process.
+It is set to $code false$$ at the construction time.
+
+$subhead 
+
+/throwExcepIfMaxIter/
+/$$
+This flag indicates if the optimizer should throw an exception when
+the maximum number of iterations is exhausted.
+It is set to $code true$$ at the construction time.
+
+$subhead 
+
+/isSubLevelOpt/
+/$$
+This flag indicates that if the optimizer is for a sub level optimization.  
+It is set to $code false$$ at the construction time.  It is for SPK internal
+use only.
+
+$subhead 
+
+/isWarmStart/
+/$$
+This flag indicates that if the optimization should run a warm start.  
+It is set to $code false$$ at the construction time.
+
+$subhead 
+
+/stateInfo/
+/$$
+This $code StateInfo$$ object contains the optimizer state information
+required to perform a warm start.
+Each of its elements is described separately below.
+
+$subhead 
+
+/stateInfo.n/
+/$$
+The element $italic n$$ specifies the number of components
+in the element vector $italic x$$.
+
+$subhead 
+
+/stateInfo.r/
+/$$
+The element $italic r$$ contains the current trust region radius
+(as an infinity norm bound on the step size).
+
+$subhead 
+
+/stateInfo.f/
+/$$
+The element $italic f$$ contains the value for $math%f(x)%$$
+at the point $math%x%$$.
+
+$subhead 
+
+/stateInfo.x/
+/$$
+The element $italic x$$ is a vector of length $italic n$$.
+It specifies the point at which the objective function, 
+its gradient, and its Hessian were evaluated.
+
+$subhead 
+
+/stateInfo.g/
+/$$
+The vector $italic g$$ must have length $math%n%$$.
+It contains the gradient of $math%f(x)%$$
+at the point $math%x%$$.
+
+$subhead 
+
+/stateInfo.h/
+/$$
+The vector $italic h$$ must have length $math%n^2%$$.
+It contains an approximation for the hessian of $math%f(x)%$$
+at the point $math%x%$$.
 
 $syntax/
 
@@ -750,8 +890,7 @@ void quasiNewtonAnyBox(
   // Validate the inputs (debug mode).
   //------------------------------------------------------------
 
-  assert( epsilon >  0.0 );
-  assert( epsilon <= 1.0 );
+  assert( epsilon > 0.0 );
 
   assert( dvecXLow.nr() == dvecXUp.nr() );
   assert( dvecXLow.nr() == dvecXIn.nr() );
