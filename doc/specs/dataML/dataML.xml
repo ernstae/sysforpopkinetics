@@ -6,7 +6,16 @@
 ]>
 <article><title>XML Representation of Data Set</title>
  <articleinfo>
+
     <revhistory>
+      <revision>
+	<revnumber>1.4</revnumber>
+	<date>September 7, 2004</date>
+	<authorinitials>sh</authorinitials>
+	<revremark>
+        Restricted the values that can be used within &lt;value&gt; tag.
+        </revremark>
+      </revision>
       <revision>
 	<revnumber>1.3</revnumber>
 	<date>December 8, 2003</date>
@@ -121,7 +130,12 @@ even though the actual syntax may not match any of them.
    <varlistentry>
       <term><varname>value</varname></term>
       <listitem>
-         <para>A value in the row.</para>
+         <para>A value in the row.  When the data type is specified as "numeric", only 
+         numerical characters (ie. 0, 1, 2, 3, 4, 5, 6, 7, 8, 9) are accepted.
+         For "string" type, only alphabet (ie., a, b, c, ..., A, B, C,...),
+         underscores (ie. _) and spaces are accepted.
+         accepted.
+         </para>
          <variablelist>
             <varlistentry>
                <term>type</term>
