@@ -264,8 +264,20 @@ extract_model_or_dataset("model",   keys %model_list);
 extract_model_or_dataset("dataset", keys %dataset_list);
 
 
+# Add all developers to the list of users
+
+my $sql = "select user_id from user where dev=1";
+my $sth_in = $spkdb_dbh->prepare($sql)
+    or death("prepare of '$sql' failed");
+$sth_in->execute()
+    or death("execute of '$sql' failed");
+my $row_array = $sth_in->fetchall_arrayref({});
+foreach my $row (@$row_array) {
+    $user_list{$row->{'user_id'}} = 0;
+}
+
 # Prepare a statement to select a user from spkdb
-my $sth_in = $spkdb_dbh->prepare("select * from user where user_id=?;")
+$sth_in = $spkdb_dbh->prepare("select * from user where user_id=?;")
     or death("prepare of 'select * from user' failed");
 
 # Loop through the users in %user_list, which represents the set of users of our
@@ -283,7 +295,7 @@ for my $user_id (keys %user_list) {
     $spktmp_dbh->do($sql)
 	or death("failed to do '$sql'");
 }
-$sth_in->finish;  # free as statement handle, no longer needed
+$sth_in->finish;  # free statement handle, no longer needed
 
 # Call on mysqldump to extract userdata.sql from spktmp
 system("$mysqldump -u$dbuser -p$dbpass -tc $spktmpname --tables "
