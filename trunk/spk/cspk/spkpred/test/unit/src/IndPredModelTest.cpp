@@ -58,7 +58,7 @@
 //
 // [Remove]=========================================
 // CppAD header files.
-#include <../cppad/CppAD.h>
+#include <cppad/include/CppAD.h>
 
 // CppUnit framework header files.
 #include <cppunit/TestSuite.h>
