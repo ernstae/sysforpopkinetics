@@ -176,7 +176,7 @@ void read_nonmem_dataTest::testOrderMixedUp()
   // | label_x |   | alias_x |
   // +---------+   +---------+
   //
-  map<NonmemTranslator::LABEL, NonmemTranslator::ALIAS> label_alias_mapping;
+  map<nonmem::LABEL, nonmem::ALIAS> label_alias_mapping;
 
 
   //
@@ -203,7 +203,7 @@ void read_nonmem_dataTest::testOrderMixedUp()
   //                +---------+
   //                    ...
   // 
-  map<NonmemTranslator::LABEL, NonmemTranslator::MEASUREMENT > data_for[ nIndividuals +1 ];
+  map<nonmem::LABEL, nonmem::MEASUREMENT > data_for[ nIndividuals +1 ];
 
   //
   // This table records the processing order vs. the identifier pair of each
@@ -235,7 +235,7 @@ void read_nonmem_dataTest::testOrderMixedUp()
       CPPUNIT_ASSERT_EQUAL( (int)data_for[i].size(), nObservations );
 
       //      cout << "order = " << i << ", ID = " << id << endl;
-      map<NonmemTranslator::LABEL, NonmemTranslator::MEASUREMENT >::const_iterator column 
+      map<nonmem::LABEL, nonmem::MEASUREMENT >::const_iterator column 
 	= data_for[i].begin();
 
       for( int j=0; j<nObservations, column != data_for[i].end(); j++ )
