@@ -835,7 +835,8 @@ void NonmemTranslatorIndTest::testParseIndSource()
       CPPUNIT_ASSERT_MESSAGE( message, true );
     }
 
-
+  remove( fData );
+  remove( fSource );
   remove( fIndDataDriver );
   remove( fIndDataDriver_cpp );
   remove( fDataSetDriver );
@@ -1641,7 +1642,8 @@ void NonmemTranslatorIndTest::testParseIndNoID()
       sprintf( message, "%s failed for reasons other than convergence propblem or access permission <%d>!", fDriver, exitcode );
       CPPUNIT_ASSERT_MESSAGE( message, true );
     }
-
+  remove( fData );
+  remove( fSource );
   remove( fIndDataDriver );
   remove( fIndDataDriver_cpp );
   remove( fDataSetDriver );
