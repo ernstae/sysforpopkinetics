@@ -2040,6 +2040,9 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "using namespace std;" <<endl;
   oDriver << endl;
 
+  oDriver << "enum RETURN_CODE { SUCCEEDED=0, FAILED };" << endl;
+  oDriver << endl;
+
   oDriver << "int main( int argc, const char argv[] )" << endl;
   oDriver << "{" << endl;
 
@@ -2052,8 +2055,9 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "ofstream oError( fError );" << endl;
   oDriver << "if( !oError.good() )" << endl;
   oDriver << "  {" << endl;
-  oDriver << "      cerr << \"Faital error!!!  Failed to create a file, spk_error.tmp!!!  Terminating...\" << endl;" << endl;
-  oDriver << "      return -1;" << endl;
+  oDriver << "      fprintf( stderr, \"%s:%d: Failed to create a temporary file, %s.\", ";
+  oDriver << " __FILE__, __LINE__, fError );" << endl;
+  oDriver << "      return FAILED;" << endl;
   oDriver << "  }" << endl;
   oDriver << endl;
 
@@ -2214,13 +2218,16 @@ void NonmemTranslator::generateIndDriver( ) const
        oDriver << "}" << endl;
        oDriver << "catch( const SpkException& e )" << endl;
        oDriver << "{" << endl;
-       oDriver << "   oError << e << endl;" << endl;
+       oDriver << "   oError << e << endl;  // Printing out to a file." << endl;
+       oDriver << "   cerr << e << endl;    // Printing out to the standard error." << endl; 
        oDriver << "   haveCompleteData = false;" << endl;
        oDriver << "   FpErrorChecker::clear();" << endl;
        oDriver << "}" << endl;
        oDriver << "catch( ... )" << endl;
        oDriver << "{" << endl;
-       oDriver << "   oError << \"Unknown exception: failed in data simulation!!!\" << endl;" << endl;
+       oDriver << "   char message[] =\"Unknown exception: failed in data simulation!!!\";" << endl;
+       oDriver << "   oError << message << endl;  // Printing out to a file." << endl;
+       oDriver << "   cerr << message << endl;    // Printing out to the standard error." << endl;
        oDriver << "   haveCompleteData = false;" << endl;
        oDriver << "   FpErrorChecker::clear();" << endl;
        oDriver << "}" << endl;
@@ -2291,12 +2298,15 @@ void NonmemTranslator::generateIndDriver( ) const
       oDriver << "  catch( const SpkException& e )" << endl;
       oDriver << "  {" << endl;
       oDriver << "     oError << e << endl;" << endl;
+      oDriver << "     cerr << e << endl;" << endl;
       oDriver << "     isOptSuccess = false;" << endl;
       oDriver << "     FpErrorChecker::clear();" << endl;
       oDriver << "  }" << endl;
       oDriver << "  catch( ... )" << endl;
       oDriver << "  {" << endl;
-      oDriver << "     oError << \"Unknown exception: failed in parameter estimation!!!\" << endl;" << endl;
+      oDriver << "     char message[] = \"Unknown exception: failed in parameter estimation!!!\";" << endl;
+      oDriver << "     oError << message << endl;" << endl;
+      oDriver << "     cerr << message << endl;" << endl;
       oDriver << "     isOptSuccess = false;" << endl;
       oDriver << "     FpErrorChecker::clear();" << endl;
       oDriver << "  }" << endl;
@@ -2367,12 +2377,15 @@ void NonmemTranslator::generateIndDriver( ) const
           oDriver << "   catch( const SpkException& e )" << endl;
           oDriver << "   {" << endl;
           oDriver << "      oError << e << endl;" << endl;
+          oDriver << "      cerr << e << endl;" << endl;
           oDriver << "      isStatSuccess = false;" << endl;
           oDriver << "      FpErrorChecker::clear();" << endl;
           oDriver << "   }" << endl;
           oDriver << "   catch( ... )" << endl;
           oDriver << "   {" << endl;
-          oDriver << "      oError << \"Unknown exception: failed in statistics calculation!!!\" << endl;" << endl;
+          oDriver << "      char message[] = \"Unknown exception: failed in statistics calculation!!!\";" << endl;
+          oDriver << "      oError << message << endl;" << endl;
+          oDriver << "      cerr << message << endl;" << endl;
           oDriver << "      isStatSuccess = false;" << endl;
           oDriver << "      FpErrorChecker::clear();" << endl;
           oDriver << "   }" << endl;
@@ -2388,12 +2401,15 @@ void NonmemTranslator::generateIndDriver( ) const
 	      oDriver << "   catch( const SpkException& e )" << endl;
 	      oDriver << "   {" << endl;
 	      oDriver << "      oError << e << endl;" << endl;
+              oDriver << "      cerr << e << endl;" << endl;
 	      oDriver << "      isStatSuccess = false;" << endl;
               oDriver << "      FpErrorChecker::clear();" << endl;
 	      oDriver << "   }" << endl;
 	      oDriver << "   catch( ... )" << endl;
 	      oDriver << "   {" << endl;
-	      oDriver << "      oError << \"Unknown exception: failed to invert the covariance of the final estimate of individual parameter!!!\" << endl;" << endl;
+	      oDriver << "      char message[] = \"Unknown exception: failed to invert the covariance of the final estimate of individual parameter!!!\"" << endl;
+              oDriver << "      oError << message << endl;" << endl;
+              oDriver << "      cerr << message << endl;" << endl;
 	      oDriver << "      isStatSuccess = false;" << endl;
               oDriver << "      FpErrorChecker::clear();" << endl;
 	      oDriver << "   }" << endl;
@@ -2410,11 +2426,12 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "/*   ResultML Document                                             */" << endl;
   oDriver << "/*                                                                 */" << endl;
   oDriver << "/*******************************************************************/" << endl;
-  oDriver << "ofstream oResults( \"result.xml\" );" << endl;
+  oDriver << "char fResults[] = \"result.xml\";" << endl;
+  oDriver << "ofstream oResults( fResults );" << endl;
   oDriver << "if( !oResults.good() )" << endl;
   oDriver << "{" << endl;
-  oDriver << "   cerr << \"Failed to open a file, result.xml!!!\" << endl;" << endl;
-  oDriver << "   return 1;" << endl;
+  oDriver << "   fprintf( stderr, \"Failed to open a file, %s !!!\", fResults );" << endl;
+  oDriver << "   return FAILED;" << endl;
   oDriver << "}" << endl;
 
   oDriver << "oResults << \"<spkreportML>\" << endl;" << endl;
@@ -2426,7 +2443,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "while( iError.good() )" << endl;
   oDriver << "{" << endl;
   oDriver << "   iError.getline(buf, SpkError::maxMessageLen() );" << endl;
-  oDriver << "   oResults << buf << endl;" << endl;
+  oDriver << "   oResults << buf << endl;" << endl;   // Write to the SpkReportML document.
   oDriver << "}" << endl;
   oDriver << "oResults << \"</error_message>\" << endl;" << endl;
   oDriver << "iError.close();" << endl;
@@ -2437,7 +2454,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "{" << endl;
   oDriver << "   oResults << \"</spkreportML>\" << endl;" << endl;
   oDriver << "   oResults.close();" << endl;
-  oDriver << "   return 1;" << endl;
+  oDriver << "   return FAILED;" << endl;
   oDriver << "}" << endl;
   oDriver << endl;
 
@@ -2666,6 +2683,9 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "using namespace std;" << endl;
   oDriver << endl;
 
+  oDriver << "enum RETURN_CODE { SUCCEEDED=0, FAILED }" << endl;
+  oDriver << endl;
+
   oDriver << "int main( int argc, const char argv[] )" << endl;
   oDriver << "{" << endl;
 
@@ -2673,9 +2693,9 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "ofstream oError( fError );" << endl;
   oDriver << "if( !oError.good() )" << endl;
   oDriver << "{" << endl;
-  oDriver << "   cerr << \"Faital error!!!  Faild to create a file, \";" << endl;
-  oDriver << "   cerr << fError << \"!!!  Terminating...\" << endl;" << endl;
-  oDriver << "   return -1;" << endl;
+  oDriver << "      fprintf( stderr, \"%s:%d: Failed to create a temporary file, %s.\", ";
+  oDriver << " __FILE__, __LINE__, fError );" << endl;
+  oDriver << "      return FAILED;" << endl;
   oDriver << "}" << endl;
   oDriver << endl;
 
@@ -2909,13 +2929,16 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << "}" << endl;
       oDriver << "catch( const SpkException& e )" << endl;
       oDriver << "{" << endl;
-      oDriver << "   oError << e << endl;" << endl;
+      oDriver << "   oError << e << endl;  // Printing out to a file." << endl;
+      oDriver << "   cerr << e << endl;    // Printing out to the standard error." << endl; 
       oDriver << "   haveCompleteData = false;" << endl;
       oDriver << "   FpErrorChecker::clear();" << endl;
       oDriver << "}" << endl;
       oDriver << "catch( ... )" << endl;
       oDriver << "{" << endl;
-      oDriver << "   oError << \"!!! Unknown exception: failed in data simulation!!!\" << endl;" << endl;
+      oDriver << "   char message[] =\"Unknown exception: failed in data simulation!!!\";" << endl;
+      oDriver << "   oError << message << endl;  // Printing out to a file." << endl;
+      oDriver << "   cerr << message << endl;    // Printing out to the standard error." << endl;
       oDriver << "   haveCompleteData = false;" << endl;
       oDriver << "   FpErrorChecker::clear();" << endl;
       oDriver << "}" << endl;
@@ -2998,12 +3021,15 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << "   catch( const SpkException& e )" << endl;
       oDriver << "   {" << endl;
       oDriver << "      oError << e << endl;" << endl;
+      oDriver << "      cerr << e << endl;" << endl;
       oDriver << "      isOptSuccess = false;" << endl;
       oDriver << "      FpErrorChecker::clear();" << endl;
       oDriver << "   }" << endl;
       oDriver << "   catch( ... )" << endl;
       oDriver << "   {" << endl;
-      oDriver << "      oError << \"Unknown exception: failed in parameter estimation!!!\" << endl;" << endl;
+      oDriver << "      char message[] = \"Unknown exception: failed in parameter estimation!!!\";" << endl;
+      oDriver << "      oError << message << endl;" << endl;
+      oDriver << "      cerr << message << endl;" << endl;
       oDriver << "      isOptSuccess = false;" << endl;
       oDriver << "      FpErrorChecker::clear();" << endl;
       oDriver << "   }" << endl;
@@ -3075,12 +3101,15 @@ void NonmemTranslator::generatePopDriver() const
           oDriver << "   catch( const SpkException& e )" << endl;
           oDriver << "   {" << endl;
           oDriver << "      oError << e << endl;" << endl;
+          oDriver << "      cerr << e << endl;" << endl;
           oDriver << "      isStatSuccess = false;" << endl;
           oDriver << "      FpErrorChecker::clear();" << endl;
           oDriver << "   }" << endl;
           oDriver << "   catch( ... )" << endl;
           oDriver << "   {" << endl;
-          oDriver << "      oError << \"Unknown exception: failed in statistics calculation!!!\" << endl;" << endl;
+          oDriver << "      char message[] = \"Unknown exception: failed in statistics calculation!!!\";" << endl;
+          oDriver << "      oError << message << endl;" << endl;
+          oDriver << "      cerr << message << endl;" << endl;
           oDriver << "      isStatSuccess = false;" << endl;
           oDriver << "      FpErrorChecker::clear();" << endl;
           oDriver << "   }" << endl;
@@ -3095,12 +3124,15 @@ void NonmemTranslator::generatePopDriver() const
 	      oDriver << "   catch( const SpkException& e )" << endl;
 	      oDriver << "   {" << endl;
 	      oDriver << "      oError << e << endl;" << endl;
+	      oDriver << "      cerr << e << endl;" << endl;
 	      oDriver << "      isStatSuccess = false;" << endl;
               oDriver << "      FpErrorChecker::clear();" << endl;
 	      oDriver << "   }" << endl;
 	      oDriver << "   catch( ... )" << endl;
 	      oDriver << "   {" << endl;
-	      oDriver << "      oError << \"Unknown exception: failed to invert the covariance of the final estimate of individual parameter!!!\" << endl;" << endl;
+	      oDriver << "      char message[] = \"Unknown exception: failed to invert the covariance of the final estimate of individual parameter!!!\"" << endl;
+              oDriver << "      oError << message << endl;" << endl;
+              oDriver << "      cerr << message << endl;" << endl;
 	      oDriver << "      isStatSuccess = false;" << endl;
               oDriver << "      FpErrorChecker::clear();" << endl;
 	      oDriver << "   }" << endl;
@@ -3110,18 +3142,19 @@ void NonmemTranslator::generatePopDriver() const
 	  oDriver << "}" << endl;
        }
     }
-
+  oDriver << endl;
 
   oDriver << "/*******************************************************************/" << endl;
   oDriver << "/*                                                                 */" << endl;
   oDriver << "/*   ResultML Document                                             */" << endl;
   oDriver << "/*                                                                 */" << endl;
   oDriver << "/*******************************************************************/" << endl;
-  oDriver << "ofstream oResults( \"result.xml\" );" << endl;
+  oDriver << "char fResults[] = \"result.xml\";" << endl;
+  oDriver << "ofstream oResults( fResults );" << endl;
   oDriver << "if( !oResults.good() )" << endl;
   oDriver << "{" << endl;
-  oDriver << "   cerr << \"Failed to open a file, result.xml!!!\" << endl;" << endl;
-  oDriver << "   return 1;" << endl;
+  oDriver << "   fprintf( stderr, \"Failed to open a file, %s !!!\", fResults );" << endl;
+  oDriver << "   return FAILED;" << endl;
   oDriver << "}" << endl;
 
   oDriver << "oResults << \"<spkreportML>\" << endl;" << endl;
@@ -3145,7 +3178,7 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "{" << endl;
   oDriver << "   oResults << \"</spkreportML>\" << endl;" << endl;
   oDriver << "   oResults.close();" << endl;
-  oDriver << "   return 1;" << endl;
+  oDriver << "   return FAILED;" << endl;
   oDriver << "}" << endl;
   oDriver << endl;
 
