@@ -9,6 +9,22 @@
    <articleinfo>
       <revhistory>
          <revision>
+            <revnumber>1.16</revnumber>
+            <date>November, 2004</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>
+            Specifying the return value of fitDriver.cpp and monteDriver.cpp.
+            </revremark>
+         </revision>
+         <revision>
+            <revnumber>1.15</revnumber>
+            <date>September 30, 2004</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>
+            Specifying fixing elements of THETA.
+            </revremark>
+         </revision>
+         <revision>
             <revnumber>1.14</revnumber>
             <date>September 8, 2004</date>
             <authorinitials>sh</authorinitials>
@@ -1038,9 +1054,46 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
    <sect1>
       <title><filename>fitDriver.cpp</filename></title>
       <para>
-      This is a driver for the following steps:
+      This is a driver for data simulation, optimization and statistics 
+      computation.
       </para>
+      <variablelist>
+         <title>Return value</title>
+         <varlistentry>
+            <term>0</term>
+            <listitem>
+               <para>
+               Successful/normal completion.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>1</term>
+            <listitem>
+               <para>
+               Abnormal completion due to the optimization failure.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>2</term>
+            <listitem>
+               <para>
+               Abnormal completion due to a file/directory access failure.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>&gt;2</term>
+            <listitem>
+               <para>
+               Abnormal completion for unknown reasons.
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
       <orderedlist>
+         <title>Execution Steps</title>
          <listitem>
             <para>Instanciate an SpkModel and a Pred.</para>
          </listitem>
@@ -1055,7 +1108,7 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
             && the estimation step has completed successfully.</para>
          </listitem>
          <listitem>
-            <para>Prepare and save a <ulink url="../reportML/reportML.html">reportML</ulink>
+            <para>Prepare and save a <ulink url="../reportML/reportML.html">reportML</ulink> in the current working directory.
             document.
             </para>
          </listitem>
@@ -1064,11 +1117,53 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
    <sect1>
       <title><filename>monteDriver.cpp</filename></title>
       <para>
-      This is a driver for Monte Carlo simulation
-      
-      The the following steps:
+      This is a driver for a post-integration process (ex. Monte Carlo).
       </para>
+      <variablelist>
+         <title>Return value</title>
+         <varlistentry>
+            <term>0</term>
+            <listitem>
+               <para>
+               Successful/normal completion.
+               </para>
+            </listitem>
+         </varlistentry>
+         <!-- varlistentry>
+            <term>1</term>
+            <listitem>
+               <para>
+               Abnormal completion due to the optimization failure.
+               </para>
+            </listitem>
+         </varlistentry -->
+         <varlistentry>
+            <term>2</term>
+            <listitem>
+               <para>
+               Abnormal completion due to a file/directory access failure.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>3</term>
+            <listitem>
+               <para>
+               Abnormal completion due to the (post-) integration failure.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>&gt;3</term>
+            <listitem>
+               <para>
+               Abnormal completion for unknown reasons.
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
       <orderedlist>
+         <title>Execution Steps</title>
          <listitem>
             <para>Instanciate an SpkModel and a Pred.</para>
          </listitem>
@@ -1080,7 +1175,7 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
             </para>
          </listitem>
          <listitem>
-            <para>Prepare and save a <ulink url="../reportML/reportML.html">reportML</ulink>
+            <para>Prepare and save a <ulink url="../reportML/reportML.html">reportML</ulink> in the current working directory.
             document.
             </para>
          </listitem>
