@@ -546,7 +546,6 @@ $end
 #include <cassert>
 #include <cfloat>
 #include <functional>
-#include <strstream>
 #include "estimateB.h"
 #include "SpkModel.h"
 #include "mapOpt.h"
@@ -795,15 +794,12 @@ void estimateB(
 				// This should dump all the parameter values to a file and 
 				// give the filename as an error message.
 				//
-				strstream stream;
-				stream << e.what() << endl;
-				stream << "An standard error was thrown during ";
-				stream << "an attempt to approximate the first derivative of Lambda with respect to the population parameter.";
-				stream.put(NULL);
-				throw SpkException(
-					e, 
-					stream.str(),
-					__LINE__, __FILE__);
+ 			        const int max = SpkError::maxMessageLen();
+                                char buf[max];
+				sprintf( buf, "%s\nAn standard error was thrown during an approximation \
+                                               of the first derivative of Lambda with respect to the population parameter.",
+					 e.what() );
+				throw SpkException( e, buf, __LINE__, __FILE__ );
 			}
 			catch( ... )
 			{ 
