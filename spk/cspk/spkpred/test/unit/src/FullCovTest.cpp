@@ -556,17 +556,26 @@ void FullCovTest::twoByTwoCovTest()
   omegaInv_parKnown[2 + 2 * nCov_parRow] = omegaInv_parKnown[1 + 2 * nCov_parRow];
   omegaInv_parKnown[3 + 2 * nCov_parRow] = - 2.0 * exp( - 2.0 * par[2] );
 
-  // The diagonal elements of the covariance matrix should be
-  // constrained as follows,
+  // The diagonal elements of the covariance matrix at the lower
+  // limits of all of its parameters should be:
   //
-  //                1      (curr)                                        (curr)
-  //     ( i + 1 ) ---  cov        <=   cov        <=  ( i + 1 ) 100  cov        .
-  //               100     (i,i)           (i,i)                         (i,i) 
+  //                  (low)          1                   (curr)
+  //     cov     ( par      )  =  [ ---  +  i  100 ]  cov        .
+  //        (i,i)                   100                  (i,i) 
+  //
+  // The diagonal elements of the covariance matrix at the upper
+  // limits of all of its parameters should be:
+  //
+  //                  (up)                              (curr)
+  //     cov     ( par     )   =  [ ( i + 1 ) 100 ]  cov        .
+  //        (i,i)                                       (i,i) 
   //
   for ( i = 0; i < nRow; i++ )
   {
-    omegaDiagAtParLowKnown[i] = ( i + 1 ) * omegaCovKnown[i + i * nRow] / 100.0;
-    omegaDiagAtParUpKnown [i] = ( i + 1 ) * omegaCovKnown[i + i * nRow] * 100.0;
+    omegaDiagAtParLowKnown[i] = ( 1.0 / 100.0 + i * 100.0 ) * 
+      omegaCovKnown[i + i * nRow];
+    omegaDiagAtParUpKnown [i] = ( i + 1 ) * 100.0 *
+      omegaCovKnown[i + i * nRow];
   }    
 
   // The covariance matrix multiplied by its inverse should be
@@ -858,17 +867,26 @@ void FullCovTest::threeByThreeCovTest()
   // Calculate the inverse of the covariance.
   omegaInvKnown = inverse( omegaCovKnown, nRow );
 
-  // The diagonal elements of the covariance matrix should be
-  // constrained as follows,
+  // The diagonal elements of the covariance matrix at the lower
+  // limits of all of its parameters should be:
   //
-  //                1      (curr)                                        (curr)
-  //     ( i + 1 ) ---  cov        <=   cov        <=  ( i + 1 ) 100  cov        .
-  //               100     (i,i)           (i,i)                         (i,i) 
+  //                  (low)          1                   (curr)
+  //     cov     ( par      )  =  [ ---  +  i  100 ]  cov        .
+  //        (i,i)                   100                  (i,i) 
+  //
+  // The diagonal elements of the covariance matrix at the upper
+  // limits of all of its parameters should be:
+  //
+  //                  (up)                              (curr)
+  //     cov     ( par     )   =  [ ( i + 1 ) 100 ]  cov        .
+  //        (i,i)                                       (i,i) 
   //
   for ( i = 0; i < nRow; i++ )
   {
-    omegaDiagAtParLowKnown[i] = ( i + 1 ) * omegaCovKnown[i + i * nRow] / 100.0;
-    omegaDiagAtParUpKnown [i] = ( i + 1 ) * omegaCovKnown[i + i * nRow] * 100.0;
+    omegaDiagAtParLowKnown[i] = ( 1.0 / 100.0 + i * 100.0 ) * 
+      omegaCovKnown[i + i * nRow];
+    omegaDiagAtParUpKnown [i] = ( i + 1 ) * 100.0 *
+      omegaCovKnown[i + i * nRow];
   }    
 
   // The covariance matrix multiplied by its inverse should be

@@ -617,24 +617,24 @@ void FullCov::getParLimits(
   //     100     (i,i)           (i,i)               (i,i) 
   //
   // These limits for the covariance diagonal elements imply
-  // these limits for the parameters that are not on the 
-  // diagonal of the Cholesky factor for the covariance (k < i):
-  //
-  //         ------------------                               ------------------
-  //        /   1      (curr)                                /          (curr)  
-  //       /   ---  cov          <=   par             <=    /   100  cov          ,
-  //     \/    100     (i,i)             (sum(i)+k)       \/            (i,i)   
-  //
-  // and these limits for the parameters that are on the diagonal
+  // these limits for the parameters that are on the diagonal
   // of the Cholesky factor:
   //
   //              -                -                                     -                -
   //             |                  |                                   |                  |
   //      1      |   1      (curr)  |                            1      |          (curr)  |
-  //     --- log |  ---  cov        |  <=   par             <=  --- log |  100  cov        |  .
+  //     --- log |  ---  cov        |  <=   par             <=  --- log |  100  cov        |  ,
   //      2      |  100     (i,i)   |          (sum(i)+i)        2      |          (i,i)   |
   //             |                  |                                   |                  |
   //              -                -                                     -                -
+  //
+  // and these limits for the parameters that are not on the 
+  // diagonal of the Cholesky factor for the covariance (k < i):
+  //
+  //            ------------------                                  ------------------
+  //           /          (curr)                                   /          (curr)  
+  //     -    /   100  cov          <=   par             <=  +    /   100  cov          ,
+  //        \/            (i,i)             (sum(i)+k)          \/            (i,i)   
   //
   // where
   //
@@ -651,8 +651,8 @@ void FullCov::getParLimits(
     // Set the limits for the parameters not on the diagonal.
     for ( k = 0; k < i; k++ )
     {
-      parLow[sumI + k] = sqrt( covDiag / 100.0 );
-      parUp [sumI + k] = sqrt( covDiag * 100.0 );
+      parLow[sumI + k] = - sqrt( covDiag * 100.0 );
+      parUp [sumI + k] = + sqrt( covDiag * 100.0 );
     }    
 
     // Set the limits for the parameter that is on the diagonal.
