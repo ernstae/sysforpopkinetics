@@ -1084,7 +1084,23 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term>&gt;2</term>
+            <term>4</term>
+            <listitem>
+               <para>
+               Abnormal completion due to the statisitcs calculation failure.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>5</term>
+            <listitem>
+               <para>
+               Abnormal completion dur to the data simulation failure.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>&gt;5</term>
             <listitem>
                <para>
                Abnormal completion for unknown reasons.
@@ -1092,27 +1108,31 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
             </listitem>
          </varlistentry>
       </variablelist>
-      <orderedlist>
-         <title>Execution Steps</title>
-         <listitem>
-            <para>Instanciate an SpkModel and a Pred.</para>
-         </listitem>
-         <listitem>
-            <para>Simulate a data set if requested.</para>
-         </listitem>
-         <listitem>
-            <para>Estimate parameters if requested.</para>
-         </listitem>
-         <listitem>
-            <para>Compute the reliability of final estimations if requested 
-            && the estimation step has completed successfully.</para>
-         </listitem>
-         <listitem>
-            <para>Prepare and save a <ulink url="../reportML/reportML.html">reportML</ulink> in the current working directory.
-            document.
-            </para>
-         </listitem>
-      </orderedlist>
+      <variablelist>
+         <title>Screen Output</title>
+                  <varlistentry>
+                     <term>Standard Error</term>
+                     <listitem>
+                        <para>
+<emphasis>Plain</emphasis> error messages that are directed to the standard error and cannot be
+caught by the driver normally still go to the standard error.
+Such messages may include an error generated as a rusult of violation of an assertion statement.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                     <term>Standard Output</term>
+                     <listitem>
+                        <para>
+The optimizer's tracing information which is generated for each iteration of
+optimization is directed to the standard output as long as tracing level 
+is requested to be greater than 0 by the user.  
+At the very end of the execution, an exit value is also printed in the following format:
+<literal>exit code = INT</literal>, where <literal>INT</literal> is one of the return values defined above.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+      </variablelist>
    </sect1>
    <sect1>
       <title><filename>monteDriver.cpp</filename></title>
@@ -1154,7 +1174,7 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term>&gt;3</term>
+            <term>&gt;5</term>
             <listitem>
                <para>
                Abnormal completion for unknown reasons.
@@ -1162,24 +1182,6 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
             </listitem>
          </varlistentry>
       </variablelist>
-      <orderedlist>
-         <title>Execution Steps</title>
-         <listitem>
-            <para>Instanciate an SpkModel and a Pred.</para>
-         </listitem>
-         <listitem>
-            <para>Simulate a data set if requested.</para>
-         </listitem>
-         <listitem>
-            <para>Perform Monte Carlo simulation for computing or approximating the integral.
-            </para>
-         </listitem>
-         <listitem>
-            <para>Prepare and save a <ulink url="../reportML/reportML.html">reportML</ulink> in the current working directory.
-            document.
-            </para>
-         </listitem>
-      </orderedlist>
    </sect1>
    <sect1>
       <title><filename>Makefile.SPK</filename></title>
