@@ -78,10 +78,16 @@ void emit_IndDataClassTest::test()
   FILE * IndData_h = fopen( "IndData.h", "w" );
   emit_IndDataClass( IndData_h, nIndividuals, &table, label_alias_mapping, data_for, order_id_pair );
   fclose( IndData_h );
+  
   FILE * IndData_cpp = fopen( "IndData.cpp", "w" );
   emit_initIndDataObjects( IndData_cpp, nIndividuals, &table, label_alias_mapping, data_for, order_id_pair );
   emit_releaseIndDataObjects( IndData_cpp, nIndividuals, &table, label_alias_mapping, data_for, order_id_pair );
   fclose( IndData_cpp );
+
+  if( system( "g++ -c IndData.cpp" ) != 0 )
+  {
+     cerr << "Failed to compile IndData.cpp!" << endl;
+  }
 }
 
 
