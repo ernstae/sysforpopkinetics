@@ -74,22 +74,25 @@ my $dbhost = "dbserver";
 my $dbuser = "reader";
 my $dbpass = "reader";
 
+my $usage = "usage: dump_spkdb.pl  [--[no]prefix] [--[no]userdata] [--spktest]";
+
 
 my ($sec, $min, $hour, $mday, $mon, $year) = localtime;
 my $date = sprintf "%04d-%02d-%02d-%02d%02d-%02d", $year+1900, $mon+1, $mday, $hour, $min, $sec;
 
 my %opt = ();
-GetOptions (\%opt, 'prefix!', 'userdata!');
+GetOptions (\%opt, 'prefix!', 'userdata!', 'spktest') 
+    or die "$usage\n";
 my $prefixed_file_names = 1;
 $prefixed_file_names = $opt{'prefix'} if (defined $opt{'prefix'});
 my $userdata = 1;
 $userdata = $opt{'userdata'} if (defined $opt{'userdata'});
+$db = "spktest" if (defined $opt{'spktest'});
 
 my $prefix = $prefixed_file_names ? "$db-$date-" : "";
 my $schema_name   = "${prefix}schema.sql";
 my $basedata_name = "${prefix}basedata.sql";
 my $userdata_name = "${prefix}userdata.sql";
-
 
 system("$mysqldump -h$dbhost -u$dbuser -p$dbpass  -d $db > $schema_name") == 0
     or die "Could not dump the schema\n";

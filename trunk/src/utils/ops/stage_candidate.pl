@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-push @INC, "/usr/local/bin";
+use lib "/usr/local/bin";
 use strict;
 use English;
 use File::Path;
@@ -92,6 +92,8 @@ use Candidate('make_directory', 'stage_directory');
                     spkprod
                 lib
                     spkprod
+                src
+                    spkprod
 
 =head1 FILES
 
@@ -122,8 +124,7 @@ use Candidate('make_directory', 'stage_directory');
 
 =cut
 
-#my $ops_root = "/usr/local/spk/ops";
-my $ops_root = ".";
+my $ops_root = "/usr/local/spk/ops";
 my $candidate_dir = "$ops_root/candidate";
 my $candidate = "candidate";
 my $rotate_conf = "rotate.conf";

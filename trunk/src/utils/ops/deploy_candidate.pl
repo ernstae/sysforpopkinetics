@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
-push @INC, "/usr/local/bin";
+use lib "/usr/local/bin";
 use strict;
+use Getopt::Long;
 use English;
 use File::Path;
 use Candidate('make_directory');
@@ -12,7 +13,7 @@ use Candidate('make_directory');
 
 =head1 SYNPOSIS
 
-    deploy_candidate.pl
+    deploy_candidate.pl [--test] [--help]
 
 =head1 ABSTRACT
 
@@ -38,8 +39,16 @@ use Candidate('make_directory');
     structure used for storing candidate systems, the contents and the
     format of files.
 
+=head1 OPTIONS
+
+    --test    If this option is provided, the most recent candidate will 
+              be copied into the test environment, rather than the 
+              production environment.  This should be used to restore the
+              test environment after a failed session of system testing.
+
 =cut
 
+my $usage = "usage: deploy_candidate.pl [--test] --[help]";
 
 my $ops_root = "/usr/local/spk/ops";
 my $candidate_dir = "$ops_root/candidate";
@@ -50,15 +59,21 @@ my $log_file_dir = "/etc/spk";
 my $log_file = "$log_file_dir/deployment_log";
 my $rotate_conf = "rotate.conf";
 
-my $mkdir_command = "/bin/mkdir";
 my $scp_command = "/usr/bin/scp";
 my $logrotate_command = "/usr/sbin/logrotate";
 
-if (@ARGV > 1 || (@ARGV == 1 && $ARGV[0] =~ "--help")) {
-    die "usage: $0 [ candidate.n ]\n";
-}
+my $tmp_dir = "/tmp/deploy_candidate-$$";
 
-$candidate = $ARGV[0] if @ARGV == 1;
+my $test = 0;
+
+my %opt = ();
+GetOptions (\%opt, 'test', 'help') 
+    or die "$usage\n";
+
+defined $opt{'help'} == 0
+    or die "$usage\n";
+
+$test = 1 if defined $opt{'test'};
 
 $EFFECTIVE_USER_ID == 0 
     or die "You must be root to run this program\n";
@@ -83,12 +98,19 @@ chomp $name;
 
 chdir $name;
 
-foreach my $d ("aspkserver", "cspkserver") {
-    my $sdir = "$candidate_dir/$name/$d";
+my $ddir = '';
+
+foreach my $s ("aspkserver", "cspkserver") {
+    my $sdir = "$candidate_dir/$name/$s";
     -d $sdir or die "Candidate subtree\n$sdir\nappears not to exist.\n";
     $sdir .= "/usr/local";
-    my $ddir = $d eq "aspkserver" ? "/usr/local" : "$d:/usr/local";
-
+    if ($test) {
+        $ddir = "$tmp_dir/$s";
+        &make_directory($ddir);
+    }
+    else {
+        $ddir = $s eq "aspkserver" ? "/usr/local" : "$s:/usr/local";
+    }
     foreach my $f (<$sdir/*>) {
 	my @args = ($scp_command, "-r", "$f", $ddir);
         system(@args);
@@ -99,5 +121,24 @@ foreach my $d ("aspkserver", "cspkserver") {
     }
 }
 
+exit 0 if (not $test);
 
+foreach my $d (glob "$tmp_dir/*/*") {
+    rename "$d/spkprod", "$d/spktest";
+}
 
+foreach my $s ("aspkserver", "cspkserver") {
+    my $sdir = "$tmp_dir/$s";
+    $ddir = $s eq "aspkserver" ? "/usr/local" : "$s:/usr/local";
+    foreach my $f (<$sdir/*>) {
+	my @args = ($scp_command, "-r", "$f", $ddir);
+        system(@args);
+        my $exit_status = $? >> 8;
+	if ($exit_status != 0) {
+	    die "'scp -r $sdir/$f $ddir' failed\n";
+	}
+    }
+}
+File::Path::rmtree($tmp_dir, 0, 0);
+
+exit 0;
