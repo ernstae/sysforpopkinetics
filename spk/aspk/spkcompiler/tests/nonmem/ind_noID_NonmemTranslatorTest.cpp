@@ -7,7 +7,7 @@
 #include <map>
 
 #include "ind_noID_NonmemTranslatorTest.h"
-#include <spkcompiler/series.h>
+#include "spkcompiler/series.h"
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestSuite.h>
@@ -19,8 +19,8 @@
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
-#include <spkcompiler/nonmem/NonmemTranslator.h>
-#include <spkcompiler/SymbolTable.h>
+#include "spkcompiler/nonmem/NonmemTranslator.h"
+#include "spkcompiler/SymbolTable.h"
 
 using namespace std;
 using namespace CppUnit;

@@ -6,7 +6,7 @@
 #define TEST_SYMBOLTABLE_H
 
 #include <cppunit/TestFixture.h>
-#include <spkcompiler/SymbolTable.h>
+#include "spkcompiler/SymbolTable.h"
 
 /**
  * A class that organizes a suite of tests for SymbolTable class.

@@ -7,7 +7,7 @@
 #include <map>
 
 #include "ind_fixedParaTest.h"
-#include <spkcompiler/series.h>
+#include "spkcompiler/series.h"
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestSuite.h>
@@ -19,9 +19,9 @@
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
-#include <spkcompiler/nonmem/NonmemTranslator.h>
-#include <spkcompiler/SymbolTable.h>
-#include <spkcompiler/SpkCompilerException.h>
+#include "spkcompiler/nonmem/NonmemTranslator.h"
+#include "spkcompiler/SymbolTable.h"
+#include "spkcompiler/SpkCompilerException.h"
 
 using namespace std;
 using namespace CppUnit;

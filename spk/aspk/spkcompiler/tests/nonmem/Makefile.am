@@ -5,8 +5,7 @@ AM_LDFLAGS           = -lxerces-c \
 	               ../../spkcompiler/nonmem/libnonmem.a \
 		       ../../spkcompiler/libcommon.a
 
-AM_CPPFLAGS          = -I../../spkcompiler \
-                       -I../../spkcompiler/nonmem
+AM_CPPFLAGS          = -I@top_srcdir@
 
 MAINTEINERCLEANFILES = Makefile.in
 
