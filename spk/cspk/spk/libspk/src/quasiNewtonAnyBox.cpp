@@ -1315,7 +1315,7 @@ void scaleGradElem(
  *
  * tol
  *
- * The tolerance for how close x must be to xHat.  It must be greater than 0.0.
+ * The tolerance for how close xHat must be to xTrue.  It must be greater than 0.0.
  *
  *
  * n
@@ -1355,10 +1355,30 @@ void scaleGradElem(
  * n * n elements before this function is called.
  *
  *
+ * deltaX
+ *
+ * On input, this must be allocated to hold n elements.  On output, it
+ * contains an approximation for the distance that xHat is from xTrue.
+ *
+ *
  * gProj
  *
  * On input, this must be allocated to hold n elements.  On output, it
  * contains the projected gradient evaluated at xHat.
+ *
+ *
+ * hWork
+ *
+ * On input, this must be allocated to hold n * n elements.  On output, it
+ * contains a version of the Hessian with some of its elements replaced by
+ * some of the elements of its Cholesky factor.
+ *
+ *
+ * rDiagRec
+ *
+ * On input, this must be allocated to hold n elements.  On output, it
+ * contains the reciprocals of the diagonals of the Cholesky factor of
+ * Hessian.
  *
  *************************************************************************/
 
