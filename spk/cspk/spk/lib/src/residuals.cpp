@@ -94,8 +94,8 @@ $begin residuals$$
 $section Calculating Residuals$$
 
 $spell
-resize
-Model model
+Model
+model
 const
 std
 namespace
@@ -118,6 +118,7 @@ bool
 Ri
 Spk
 valarray
+resize
 $$
 
 $index residual testing data model measurement $$
