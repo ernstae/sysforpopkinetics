@@ -10,7 +10,15 @@ public class UserInfo implements java.io.Serializable
     /** Constructor with no argument
      */     
     public UserInfo(){}
-
+    
+    /** Sets userId.
+     * @param userId the user ID as a character string.
+     */
+    public void setUserId(String userId)
+    {
+        this.userId = userId;
+    }
+    
     /** Sets userName.
      * @param userName the user name as a character string.
      */
@@ -34,7 +42,15 @@ public class UserInfo implements java.io.Serializable
     {
         this.lastName = lastName; 
     }
-    
+
+    /** Gets userId.
+     * @return The user ID as a character string.
+     */    
+    public String getUserId()
+    {
+        return userId;
+    }
+       
     /** Gets userName.
      * @return The user name as a character string.
      */    
@@ -59,6 +75,7 @@ public class UserInfo implements java.io.Serializable
         return lastName; 
     }  
     
+    private String userId = null;
     private String userName = null;
     private String firstName = null;
     private String lastName = null;
