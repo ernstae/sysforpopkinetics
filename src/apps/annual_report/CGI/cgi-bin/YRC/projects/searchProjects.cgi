@@ -17,7 +17,7 @@ my($USER);
 my($TITLE) = 'Search Projects Results';
 
 # FORCE IT TO BE SECURE
-YRC::WWW::SESSION->enforceSecure($query);
+#YRC::WWW::SESSION->enforceSecure($query);
 
 # OUR ENTIRE AUTHENTICATION CODE
 unless($USER = YRC::WWW::SESSION->getUserObject(YRC::WWW::SESSION->getSessionID($query))) {

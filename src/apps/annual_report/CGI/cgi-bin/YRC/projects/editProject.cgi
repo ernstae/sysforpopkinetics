@@ -19,7 +19,7 @@ my($USER);
 my($TITLE) = 'Edit Project Data';
 
 # FORCE IT TO BE SECURE
-YRC::WWW::SESSION->enforceSecure($query);
+#YRC::WWW::SESSION->enforceSecure($query);
 
 # OUR ENTIRE AUTHENTICATION CODE
 unless($USER = YRC::WWW::SESSION->getUserObject(YRC::WWW::SESSION->getSessionID($query))) {
@@ -357,12 +357,15 @@ END
 
 # SET UP NESTED ARRAY OF GROUPS
 @options = (
-                ['CGROUPS', 'Yates', 'Yates (MS)'],
-                ['CGROUPS', 'Aebersold', 'Aebersold (MS)'],
-                ['CGROUPS', 'TwoHybrid', 'Two Hybrid'],
-                ['CGROUPS', 'Microscopy', 'Microscopy'],
-                ['CGROUPS', 'Informatics', 'Informatics'],
-                ['CGROUPS', 'PSP', 'Protein Structure Prediction']
+                ['CGROUPS', 'IntMetab', 'IntMetab'],
+                ['CGROUPS', 'LipidMetab', 'LipidMetab'],
+                ['CGROUPS', 'PKPD', 'PKPD'],
+                ['CGROUPS', 'EnvTox', 'EnvTox'],
+                ['CGROUPS', 'CBNet', 'CBNet'],
+                ['CGROUPS', 'PMImageD', 'PMImageD'],
+                ['CGROUPS', 'SysMod', 'SysMod'],
+                ['CGROUPS', 'StatMod', 'StatMod'],
+                ['CGROUPS', 'SoftDev', 'SoftDev']
               );
 # SET UP DEFAULTS
 @tmparr = $PROJECT->queryGroups('C');
@@ -385,12 +388,15 @@ END
 
 # SET UP NESTED ARRAY OF GROUPS
 @options = (
-                ['techGROUPS', 'Yates', 'Yates (MS)'],
-                ['techGROUPS', 'Aebersold', 'Aebersold (MS)'],
-                ['techGROUPS', 'TwoHybrid', 'Two Hybrid'],
-                ['techGROUPS', 'Microscopy', 'Microscopy'],
-                ['techGROUPS', 'Informatics', 'Informatics'],
-                ['techGROUPS', 'PSP', 'Protein Structure Prediction']
+                ['techGROUPS', 'IntMetab', 'IntMetab'],
+                ['techGROUPS', 'LipidMetab', 'LipidMetab'],
+                ['techGROUPS', 'PKPD', 'PKPD'],
+                ['techGROUPS', 'EnvTox', 'EnvTox'],
+                ['techGROUPS', 'CBNet', 'CBNet'],
+                ['techGROUPS', 'PMImageD', 'PMImageD'],
+                ['techGROUPS', 'SysMod', 'SysMod'],
+                ['techGROUPS', 'StatMod', 'StatMod'],
+                ['techGROUPS', 'SoftDev', 'SoftDev']
               );
 # SET UP DEFAULTS
 @tmparr = $PROJECT->queryGroups('Tech');
@@ -415,12 +421,15 @@ END
 
 # SET UP NESTED ARRAY OF GROUPS                       
 @options = (
-                ['TGROUPS', 'Yates', 'Yates (MS)'],
-                ['TGROUPS', 'Aebersold', 'Aebersold (MS)'],
-                ['TGROUPS', 'TwoHybrid', 'Two Hybrid'],
-                ['TGROUPS', 'Microscopy', 'Microscopy'],
-                ['TGROUPS', 'Informatics', 'Informatics'],
-                ['TGROUPS', 'PSP', 'Protein Structure Prediction']
+                ['TGROUPS', 'IntMetab', 'IntMetab'],
+                ['TGROUPS', 'LipidMetab', 'LipidMetab'],
+                ['TGROUPS', 'PKPD', 'PKPD'],
+                ['TGROUPS', 'EnvTox', 'EnvTox'],
+                ['TGROUPS', 'CBNet', 'CBNet'],
+                ['TGROUPS', 'PMImageD', 'PMImageD'],
+                ['TGROUPS', 'SysMod', 'SysMod'],
+                ['TGROUPS', 'StatMod', 'StatMod'],
+                ['TGROUPS', 'SoftDev', 'SoftDev']
               );
 # SET UP DEFAULTS
 @tmparr = $PROJECT->queryGroups('T');
