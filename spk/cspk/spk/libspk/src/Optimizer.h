@@ -50,8 +50,8 @@
 //
 struct StateInfo
 {
-  // This particular set of state information is used
-  // by the optimizer QuasiNewton01Box.
+  // Note: the state information maintained by this class 
+  // is specific to the optimizer QuasiNewton01Box.
   int      n;
   double   r;
   double   f;
