@@ -235,7 +235,6 @@ void statistics( const SPK_VA::valarray<double>& x,       // vector of which qua
 	tn = 2.000 - ( degFree - 60 ) * 0.020 / 60.0;
       if( degFree > 120 )
 	tn = 1.960;
-      
       for( int i = 0; i < nX; i++ )
 	{
 	  distance = seTemp[ i ] * tn;
