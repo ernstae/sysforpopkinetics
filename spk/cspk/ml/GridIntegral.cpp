@@ -5,6 +5,7 @@ $spell
 	std
 	valarray
 	const
+	Feval
 $$
 
 $section Numerical Integration by Evaluation on a Grid$$
@@ -12,23 +13,31 @@ $section Numerical Integration by Evaluation on a Grid$$
 $table
 $bold Syntax$$
 $cnext
-$syntax%double GridIntegral(
+$syntax%void GridIntegral(
 	double (*%Feval%)(double *%X%, size_t %m%, void *p) ,
 	size_t                        %m%   ,
 	void                         *%p%   ,
 	const std::valarray<size_t>  *%N%   ,
 	const std::valarray<double>  &%L%   ,
-	const std::valarray<double>  &%U%   )%$$
+	const std::valarray<double>  &%U%   ,
+	double                       &%integralEstimate%,
+	double                       &%estimateStd%     )%$$
 
 $tend
 
 $fend 25$$
 
-$head Return Value$$
+$head integralEstimate$$
 is an approximation for the integral
 $latex \[
 	\int_L^U f(x) \D x
 \]$$
+
+$head estimateStd$$
+The input value of $italic estimateStd$$ does not matter.
+Its output value
+is an approximation for the standard deviation of $italic estimateIntegral$$.
+
 
 $head Feval$$
 The syntax
@@ -105,13 +114,15 @@ namespace {
 
 }
 
-double GridIntegral(
+void GridIntegral(
 	double (*Feval)(double *X, size_t m, void *p)  ,
 	size_t                                 m   ,
 	void                                  *p   ,
 	const std::valarray<size_t>           &N   ,
 	const std::valarray<double>           &L   ,
-	const std::valarray<double>           &U   )
+	const std::valarray<double>           &U   ,
+	double                                &integralEstimate,
+	double                                &estimateStd   )
 {
 	double sumF = 0.;
 	double *X  = new double[m];
@@ -148,9 +159,43 @@ double GridIntegral(
 	}
 	assert( count == Ntot );
 
+	// compute the sum of the absolute second partial
+	double sumAverage = 0.;
+	size_t j;
+	for(j = 0; j < m; j++)
+	{	double sumAbs = 0.;
+		size_t numAbs = 0;
+
+		// in the j-th coordinate direction
+		for(i = 0; i < m; i++)
+			I[i] = 0;
+
+		for(count = 0; count < Ntot; count++)
+		{	bool ok = (0 < I[j] && I[j]+1 < N[j]);
+			if( ok )
+			{	double F0 = F[ Index(m, N, I) ];
+				I[j] -= 1;
+				double Fm = F[ Index(m, N, I) ];
+				I[j] += 2;
+				double Fp = F[ Index(m, N, I) ];
+				I[j] -= 1;
+				assert( count == Index(m, N, I) );
+				//
+				sumAbs += fabs( Fp - 2. * F0 + Fm );
+				numAbs++;
+			}
+			Increment(m, N, I);
+		}
+		if( numAbs > 0 )
+			sumAverage += sumAbs / numAbs;
+	}
+
 	delete [] F;
 	delete [] X;
 	delete [] I;
 
-	return volume * sumF / double(count);
+	integralEstimate = volume * sumF / double(count);
+	estimateStd      = volume * sumAverage * sqrt( double(Ntot) ) / 24.;
+
+	return;
 }

@@ -26,13 +26,17 @@ bool GridIntegralTest(void)
 	valarray<double> Low(0., m);
 	valarray<double> Up(1., m);
 	
-	double GridIntegralOut = GridIntegral(F, m, p, ngrid, Low, Up);
+	double integralEstimate;
+	double estimateStd;
+	GridIntegral(F, m, p, ngrid, Low, Up, integralEstimate, estimateStd);
 
 	double prod = 1.;
 	double i;
 	for(i = 1.; i <= m; i += 1.)
 		prod *= (1. - exp(-i)) / i; 
 
-	ok &= fabs( GridIntegralOut - prod ) <= 1e-3;
+	ok &= estimateStd <= 1e-2;
+	ok &= fabs( integralEstimate - prod ) <= 2. * estimateStd;
 
+	return ok;
 }

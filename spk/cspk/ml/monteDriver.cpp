@@ -293,14 +293,20 @@ int main(int argc, const char *argv[])
 			} 
 			cerr << std::endl;
 # endif
-			pop_obj_estimate += GridIntegral(
+			double estimate;
+			double error;
+			GridIntegral(
 				ExpNegMapBay,
 				nB    , 
 				null  ,
 				Ngrid ,
 				bLow  ,
-				bUp
+				bUp   ,
+				estimate,
+				error
 			);
+			pop_obj_estimate += estimate,
+			pop_obj_stderr   += error;
 		}
 	}
 
@@ -339,7 +345,7 @@ int main(int argc, const char *argv[])
 	// report the Monte Carlo integration results
 	OutputValue("pop_obj_estimate", pop_obj_estimate); 
 
-	if( monte )
+	if( monte | grid )
 	{	// estimate of the standard error in pop_obj_estimate
 		OutputValue("pop_obj_stderr", pop_obj_stderr); 
 	}
