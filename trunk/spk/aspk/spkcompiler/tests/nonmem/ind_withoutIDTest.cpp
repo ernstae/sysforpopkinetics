@@ -100,6 +100,7 @@ namespace{
   char fDriver[]          = "driver";
   char fReportML[]        = "result.xml";
   char fSavedReportML[]   = "saved_result.xml";
+  char fTraceOut[]        = "trace_output";
 
   char fPrefix              [MAXCHARS];
   char fDataML              [MAXCHARS];
@@ -559,6 +560,7 @@ void ind_withoutIDTest::tearDown()
       remove( fMakefile );
       remove( fReportML );
       remove( fSavedReportML );
+      remove( fTraceOut );
     }
   
   XMLPlatformUtils::Terminate();
@@ -1047,7 +1049,18 @@ void ind_withoutIDTest::testIndDataClass()
           nMeasurements++;
 	}
     }
-  
+  o << endl;
+
+  o << "   A.compResiduals();" << endl;
+  o << "   for( int j=0, k=0; j<n; j++ )" << endl;
+  o << "   {" << endl;
+  o << "      if( A." << strMDV << "[j] != 1 )" << endl;
+  o << "      {" << endl;
+  o << "         MY_ASSERT_EQUAL( A." << strDV << "[j], y[k] );" << endl;
+  o << "         MY_ASSERT_EQUAL( A." << strDV << "[j]-A." << strPRED << "[j], A." << strRES << "[j] );" << endl;
+  o << "         k++;" << endl;
+  o << "      }" << endl;
+  o << "   }" << endl;
   o << endl;
 
   o << "}" << endl;
@@ -1103,33 +1116,35 @@ void ind_withoutIDTest::testDataSetClass()
       o << "   MY_ASSERT_EQUAL(  " << record[i][2] << ", set.data[0]->" << strMDV  << "[" << i << "] );" << endl;
     }
 
-  o << "for( int j=0; j<n; j++ )" << endl;
-  o << "{" << endl;
-  o << "   MY_ASSERT_EQUAL( " << thetaLen << ", set.data[0]->" << strTHETA << "[j].size() );" << endl;
-  o << "   MY_ASSERT_EQUAL( " << etaLen   << ", set.data[0]->" << strETA   << "[j].size() );" << endl;
-  o << "}" << endl;
+  o << "   for( int j=0; j<n; j++ )" << endl;
+  o << "   {" << endl;
+  o << "      MY_ASSERT_EQUAL( " << thetaLen << ", set.data[0]->" << strTHETA << "[j].size() );" << endl;
+  o << "      MY_ASSERT_EQUAL( " << etaLen   << ", set.data[0]->" << strETA   << "[j].size() );" << endl;
+  o << "   }" << endl;
 
   // The current values of RES/WRES/PRED should be always kept in memory
   // for displaying tables/scatterplots.
-  o << "MY_ASSERT_EQUAL( n, set.data[0]->" << strRES  << ".size() );" << endl;
-  o << "MY_ASSERT_EQUAL( n, set.data[0]->" << strWRES << ".size() );" << endl;
-  o << "MY_ASSERT_EQUAL( n, set.data[0]->" << strPRED << ".size() );" << endl;
-  o << "MY_ASSERT_EQUAL( n, set.data[0]->" << strF    << ".size() );" << endl;
-  o << "MY_ASSERT_EQUAL( n, set.data[0]->" << strY    << ".size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strRES  << ".size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strWRES << ".size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strPRED << ".size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strF    << ".size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strY    << ".size() );" << endl;
   o << endl;
 
-  o << "const valarray<double> y = set.getAllMeasurements();" << endl;
-  o << "for( int j=0, k=0; j<n; j++ )" << endl;
-  o << "{" << endl;
-  o << "   if( set.data[0]->" << strMDV << "[j] != 1 )" << endl;
+  o << "   const valarray<double> y = set.getAllMeasurements();" << endl;
+  o << "   set.compAllResiduals( );" << endl;  
+  o << "   for( int j=0, k=0; j<n; j++ )" << endl;
   o << "   {" << endl;
-  o << "      MY_ASSERT_EQUAL( set.data[0]->" << strDV << "[j], y[k] );" << endl;
-  o << "      k++;" << endl;
+  o << "      if( set.data[0]->" << strMDV << "[j] != 1 )" << endl;
+  o << "      {" << endl;
+  o << "         MY_ASSERT_EQUAL( set.data[0]->" << strDV << "[j], y[k] );" << endl;
+  o << "         MY_ASSERT_EQUAL( set.data[0]->" << strDV << "[j]-set.data[0]->" << strPRED << "[j], set.data[0]->" << strRES << "[j] );" << endl;
+  o << "         k++;" << endl;
+  o << "      }" << endl;
   o << "   }" << endl;
-  o << "}" << endl;
 
   o << endl;
-  o << "return 0;" << endl;
+  o << "  return 0;" << endl;
   o << "}" << endl;
   
   o.close();
@@ -1171,7 +1186,7 @@ void ind_withoutIDTest::testPredClass()
 
   o << "#include \"Pred.h\"" << endl;
   o << "#include \"DataSet.h\"" << endl;
-  o << "#include <cppad/include/CppAD.h>" << endl;
+  o << "#include <CppAD/CppAD.h>" << endl;
   o << "#include <spkpred/PredBase.h>" << endl;
   o << "#include <vector>" << endl;
   o << "#include <iostream>" << endl;
@@ -1317,7 +1332,7 @@ void ind_withoutIDTest::testDriver()
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
-  sprintf( command, "./%s", fDriver );
+  sprintf( command, "./%s > %s", fDriver, fTraceOut );
 
   // The exist code of 0 indicates success.  1 indicates convergence problem.
   // 2 indicates some file access problem.

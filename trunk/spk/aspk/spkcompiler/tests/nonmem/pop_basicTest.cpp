@@ -42,6 +42,7 @@ namespace{
   char fDriver[]          = "driver";
   char fReportML[]        = "result.xml";
   char fSavedReportML[]   = "saved_result.xml";
+  char fTraceOut[]        = "trace_output";
 
   char fPrefix              [MAXCHARS];
   char fDataML              [MAXCHARS];
@@ -416,6 +417,7 @@ void pop_basicTest::tearDown()
       remove( fMakefile );
       remove( fReportML );
       remove( fSavedReportML );
+      remove( fTraceOut );
     }
   XMLPlatformUtils::Terminate();
 }
@@ -915,20 +917,21 @@ void pop_basicTest::testIndDataClass()
   o << "   MY_ASSERT_EQUAL( n, A." << strY    << ".size() );" << endl;
   o << endl;
 
-
-  o << "  const valarray<double> y = A.getMeasurements();" << endl;
-  o << "  MY_ASSERT_EQUAL( " << nRecords-nFixed << ", y.size() );" << endl;
-  for( int i=0, nMeasurements; i<nRecords; i++ )
-    {
-      if( record[i][3] != 1 )
-	{
-	  o << "   MY_ASSERT_EQUAL( y[" << nMeasurements << "], A." << strDV   << "[" << i << "] );" << endl;
-          nMeasurements++;
-	}
-    }
-  
+  o << "   const valarray<double> y = A.getMeasurements();" << endl;
+  o << "   MY_ASSERT_EQUAL( " << nRecords-nFixed << ", y.size() );" << endl;
+  o << "   A.compResiduals();" << endl;
+  o << "   for( int j=0, k=0; j<n; j++ )" << endl;
+  o << "   {" << endl;
+  o << "      if( A." << strMDV << "[j] != 1 )" << endl;
+  o << "      {" << endl;
+  o << "         MY_ASSERT_EQUAL( A." << strDV << "[j], y[k] );" << endl;
+  o << "         MY_ASSERT_EQUAL( A." << strDV << "[j]-A." << strPRED << "[j], A." << strRES << "[j] );" << endl;
+  o << "         k++;" << endl;
+  o << "      }" << endl;
+  o << "   }" << endl;
   o << endl;
 
+  o << "   return 0;" << endl;
   o << "}" << endl;
   o.close();
 
@@ -1012,6 +1015,7 @@ void pop_basicTest::testDataSetClass()
     }
 
   o << "const valarray<double> y = set.getAllMeasurements();" << endl;
+  o << "set.compAllResiduals();" << endl;
   o << "for( int j=0, k=0 ; j<nIndividuals; j++ )" << endl;
   o << "{" << endl;
   o << "   for( int i=0; i<N[j]; i++, k++ )" << endl;
@@ -1019,6 +1023,7 @@ void pop_basicTest::testDataSetClass()
   o << "      if( set.data[j]->" << strMDV << "[i] != 1 )" << endl;
   o << "      {" << endl;
   o << "         MY_ASSERT_EQUAL( set.data[j]->" << strDV << "[i], y[k] );" << endl;
+  o << "         MY_ASSERT_EQUAL( set.data[j]->" << strDV << "[i]-set.data[j]->" << strPRED << "[i], set.data[j]->" << strRES << "[i] );" << endl;
   o << "      }" << endl;
   o << "   }" << endl;
   o << "}" << endl;
@@ -1255,7 +1260,7 @@ void pop_basicTest::testDriver()
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
-  sprintf( command, "./%s", fDriver );
+  sprintf( command, "./%s > %s", fDriver, fTraceOut );
 
   // The exist code of 0 indicates success.  1 indicates convergence problem.
   // 2 indicates some file access problem.

@@ -45,6 +45,7 @@ namespace{
   char fDriver[]          = "driver";
   char fReportML[]        = "result.xml";
   char fSavedReportML[]   = "saved_result.xml";
+  char fTraceOut[]        = "trace_output";
 
   char fPrefix              [MAXCHARS];
   char fDataML              [MAXCHARS];
@@ -551,6 +552,7 @@ void ind_simNoEstTest::tearDown()
       remove( fMakefile );
       remove( fReportML );
       remove( fSavedReportML );
+      remove( fTraceOut );
     }
   XMLPlatformUtils::Terminate();
 }
@@ -970,7 +972,7 @@ void ind_simNoEstTest::testDriver()
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
-  sprintf( command, "./%s", fDriver );
+  sprintf( command, "./%s > %s", fDriver, fTraceOut );
 
   // The exist code of 0 indicates success.  1 indicates convergence problem.
   // 2 indicates some file access problem.
