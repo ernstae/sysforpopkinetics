@@ -71,7 +71,7 @@ tok_false                   ".FALSE."
 
 tok_extended_intrinsic_op   {tok_intrinsic_operator}
 tok_defined_operator        ({tok_defined_unary_op}|{tok_defined_binary_op}|{tok_extended_intrinsic_op})
-tok_defined_function        ("EXP"|"LOG"|"LOG10"|"SQRT")
+tok_defined_function        ("ABS"|"ACOS"|"ASIN"|"ATAN"|"ATAN2"|"COS"|"COSH"|"EXP"|"LOG"|"LOG10"|"MAX"|"MIN"|"MOD"|"SIN"|"SINH"|"SQRT"|"TAN"|"TANH")
 
 tok_open_array_elem_list    "(/"
 tok_close_array_elem_list   "/)"
