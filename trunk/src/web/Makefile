@@ -1,2 +1,2 @@
 install:
-	scp index.html whitechuck:/var/www/html/soft/index.html
+	scp index.html 192.168.2.2:/usr/local/tomcat/instance/test/webapps/soft/
