@@ -10,11 +10,28 @@
 #include <cppunit/TestSuite.h>
 #include <cppunit/TextTestResult.h>
 #include <cppunit/ui/text/TestRunner.h>
-#include <spkcompiler/nonmem/explang.h>
+#include "spkcompiler/nonmem/explang.h"
+#include "spkcompiler/SymbolTable.h"
 
 using namespace std;
 using namespace CppUnit;
-
+extern int           gSpkExpErrors;
+extern char*         gSpkExpErrorMessages;
+extern int           gSpkExpLines;
+extern SymbolTable * gSpkExpSymbolTable;
+extern FILE *        gSpkExpOutput;
+extern "C"{
+  extern FILE *        nm_in;
+  extern int           NM_ACCEPT;
+  extern int           NM_ABORT;
+  extern int           nm_lex(void);
+  extern int           nm_parse(void);
+  extern int           nm_error(const char* m);
+  extern int           nm_restart(FILE* f);
+  extern int           nm_terminate();
+  extern int           nm_debug;
+};
+/*
 extern "C"{
   int nm_lex(void);
   FILE * nm_in;
@@ -23,10 +40,10 @@ extern "C"{
   void nm_terminate();
   int  nm_debug;
 
+//  int gSpkExpErrors;
+//  int gSpkExpLines;
 };
 
-int gSpkExpLines  = 0;
-int gSpkExpErrors = 0;
 void nm_error( char* m )
 {
   //cerr << m << endl;
@@ -37,6 +54,7 @@ void nm_terminate()
 {
   //fprintf( stderr, "Abnormal return from the lexical analyzer, nm_lex().\n" );
 }
+*/
 void lex_explangTest::setUp()
 {
 }

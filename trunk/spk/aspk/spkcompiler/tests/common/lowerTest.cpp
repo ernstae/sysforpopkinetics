@@ -8,7 +8,7 @@
 #include <cppunit/ui/text/TestRunner.h>
 
 
-#include <spkcompiler/lower.h>
+#include "spkcompiler/lower.h"
 #include "lowerTest.h"
 
 using namespace std;

@@ -8,7 +8,7 @@
 #include <cppunit/TextTestResult.h>
 #include <cppunit/ui/text/TestRunner.h>
 
-#include <spkcompiler/Symbol.h>
+#include "spkcompiler/Symbol.h"
 #include "SymbolTest.h"
 
 using namespace std;

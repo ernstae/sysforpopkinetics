@@ -7,7 +7,7 @@
 #include <cppunit/TextTestResult.h>
 #include <cppunit/ui/text/TestRunner.h>
 
-#include <spkcompiler/SymbolTable.h>
+#include "spkcompiler/SymbolTable.h"
 #include "SymbolTableTest.h"
 
 using namespace std;
