@@ -119,7 +119,6 @@ void advan2( enum NonmemTranslator::NonmemParameterization trans,
   bool isPred  = false;
   DOMElement * pk_error_pred = dynamic_cast<DOMElement*>( walker->firstChild() );
   while( pk_error_pred != NULL )
-  while( pk_error_pred != NULL )
     {
       const XMLCh* nodeName = pk_error_pred->getNodeName();
       if( XMLString::equals( nodeName, X( "pk" ) ) )
@@ -179,7 +178,16 @@ void advan2( enum NonmemTranslator::NonmemParameterization trans,
 	      // K = CL/V:  rate constant of elimination
 	      // KA:        rate constant of absorption
 	      //
-	      // 
+              Symbol cl    ( "cl",     Symbol::SCALAR, Symbol::DOUBLE, true );
+              Symbol v     ( "v",      Symbol::SCALAR, Symbol::DOUBLE, true );
+              Symbol k     ( "k",      Symbol::SCALAR, Symbol::DOUBLE, true );
+              Symbol ka    ( "ka",     Symbol::SCALAR, Symbol::DOUBLE, true );
+              table->insert( cl );
+              table->insert( v );
+	      table->insert( k );
+	      table->insert( ka );
+	      
+	      //
 	      // Additional PK Parameters:
 	      // (numbers correspond to compartments)
 	      // (1: input/Absorption compartment)
@@ -194,11 +202,7 @@ void advan2( enum NonmemTranslator::NonmemParameterization trans,
 	      // F0=F3=FO, 
 	      // XSCALE
 	      // 
-              Symbol cl    ( "cl",     Symbol::SCALAR, Symbol::DOUBLE, true );
-              Symbol v     ( "v",      Symbol::SCALAR, Symbol::DOUBLE, true );
-              Symbol k     ( "k",      Symbol::SCALAR, Symbol::DOUBLE, true );
-              Symbol ka    ( "ka",     Symbol::SCALAR, Symbol::DOUBLE, true );
-              Symbol s1    ( "s1",     Symbol::SCALAR, Symbol::DOUBLE, true );
+  	      Symbol s1    ( "s1",     Symbol::SCALAR, Symbol::DOUBLE, true );
               Symbol s2    ( "s2",     Symbol::SCALAR, Symbol::DOUBLE, true );
               Symbol s3    ( "s3",     Symbol::SCALAR, Symbol::DOUBLE, true );
               Symbol sO    ( "sO",     Symbol::SCALAR, Symbol::DOUBLE, true );
@@ -214,10 +218,6 @@ void advan2( enum NonmemTranslator::NonmemParameterization trans,
               Symbol f3    ( "f3",     Symbol::SCALAR, Symbol::DOUBLE, true );
               Symbol fO    ( "fO",     Symbol::SCALAR, Symbol::DOUBLE, true );
               Symbol xscale( "xscale", Symbol::SCALAR, Symbol::DOUBLE, true );
-              table->insert( cl );
-              table->insert( v );
-	      table->insert( k );
-	      table->insert( ka );
 	      table->insert( s1 );
 	      table->insert( s2 );
 	      table->insert( s3 );
@@ -247,7 +247,7 @@ void advan2( enum NonmemTranslator::NonmemParameterization trans,
 
 	  fclose(pPK_handler);
           fclose(pPK_output);
-	     
+	    
           /*   
 	  try{
 	      remove( pk_filename );

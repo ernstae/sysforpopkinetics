@@ -21,72 +21,6 @@
 #include "../client.h"
 #include "../ExpTreeGenerator.h"
 
-/**
- * The representation of a measurement (a series of data values)
- * for a subject.
- * @ingroup nonmem
- */
-class NonmemDataColumn
-{
-  public:
-  /**
-   * The label for the @ref measurement.
-   */	 
-  char* label;
-
-  /**
-   * An alias/synonym for the @ref label.
-   */
-  char* synonym;
-
-  /**
-   * A measurement (a series of data values) for a subject.
-   */
-  std::valarray<double> measurement;
-
-  /**
-   * Initializes the object and set @ref label and @ref synonym to NULL.
-   */
-  NonmemDataColumn() : label(0), synonym(0){}
-
-  /**
-   * Initializes the object and set @ref label and @ref synonym to NULL
-   * and reserves the length of @ref measurement vector to @b nMeasurements.
-   */
-  NonmemDataColumn( int nMeasurements ) 
-	  : measurement(nMeasurements), label(0), synonym(0){}
-};
-
-/**
- * The representation of a set of measurements associated
- * with a subject.
- *
- * @ingroup nonmem
- */
-class NonmemDataRecords
-{
- public:
-  /**
-   * An alpha-numerical value uniquely identifying the subject.
-   */
-  char* owner;
-
-  /**
-   * A set of measurements for the subject identified by @ref owner.
-   */
-  std::vector<NonmemDataColumn> records;
-
-  /**
-   * Initializes the object and set the @ref owner pointer to NULL.
-   */
-  NonmemDataRecords() : owner(0){}
-
-  /**
-   * Initializes the object and sets the @ref owner pointer to NULL and
-   * reserves the length of the @ref records vector to @b nRecords.
-   */
-  NonmemDataRecords( int nRecords ) : records( nRecords ) {}
-};
 
 /**
  * @struct NonmemParameters
@@ -99,12 +33,6 @@ class NonmemDataRecords
  */
 struct NonmemParameters
 {
-  /**
-   * All measurements for all subjects in a population.
-   * @ingroup NonmemParas
-   */
-  std::vector<NonmemDataRecords> data;
-
   /**
    * @defgroup theta theta
    * @ingroup NonmemParas
@@ -277,8 +205,6 @@ class NonmemTranslator : public ClientTranslator
 
   struct SpkParameters ourSpk;
   struct NonmemParameters ourNonmem;
-
-  std::vector<NonmemDataRecords> data_for_all_subjects;
 
   std::vector<std::string> ourGeneratedFileNames;
 
