@@ -3,31 +3,32 @@
   <!ENTITY uw "University of Washington">
   <!ENTITY dept "Department of Bioengineering">
 ]>
-<article><title>Job Entity Relationship Model</title>
+<article><title>Database Entity-Relationship Model</title>
  <articleinfo>
     <revhistory>
       <revision>
 	<revnumber>1.0</revnumber>
-	<date>August 6, 2003</date>
+	<date>November 17, 2003</date>
 	<authorinitials>afw</authorinitials>
 	<revremark>Initial version.</revremark>
       </revision>
     </revhistory>
   <abstract>
       <para>
-	An entity relationship model for Spk jobs is presented.
+	An entity relationship model for the Spk relational database
+	is presented.
       </para>
   </abstract>
  </articleinfo>
   <sect1>
     <title>Introduction</title>
     <para>
-      In Spk, job status and history are maintained in a relational
-      database.  This database is available for query by the
-      MDA, and is available for update by the ASPK and CSPK. 
-      Entity relationship (ER) modeling is a fundamental technique of
-      relational database design.  This document presents the ER
-      model for the Spk Job database.
+      In Spk, job status, job history, and user data
+      are maintained in a relational
+      database. The database is the sole means of communication
+      between the independent components of the system, which
+      are the MDA, Aspk compile, Aspk web server, and Cspk.
+      This document presents the ER model for this database.
     </para>
   </sect1>
   <sect1>
@@ -78,7 +79,7 @@
       </itemizedlist>
       <figure>
 	<title>Entity Relationship Diagram</title>
-	<graphic fileref="job-er.png"/>
+	<graphic fileref="erModelDiagram.png"/>
       </figure>
       </para>
   </sect1>
@@ -104,7 +105,7 @@
     <sect2>
       <title>History Segment</title>
       <para>
-	A history segment contains a state which the job assumed and
+	A history segment represents a state which the job assumed and
 	the time that it entered that state.  (See the Spk design
 	document "Job History Model").
       </para>

@@ -1,7 +1,7 @@
-T = job
+T = databaseAPI
 HTML_OPS = --nochunks
-STYLE = ../../../stylesheet
-WEB = whitechuck.rfpk.washington.edu:/var/www/html/soft/design/global/$T
+STYLE = ../../stylesheet
+WEB = whitechuck.rfpk.washington.edu:/var/www/html/soft/v0.1/specs/$T
 PNG = $(wildcard *.png)
 
 all:	html pdf rtf
