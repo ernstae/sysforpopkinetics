@@ -95,55 +95,58 @@ const char* NonmemTranslator::C_IS_CONFIDENCE_OUT          ( "is_confidence_out"
 
 
 NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
-  : ClientTranslator ( sourceIn, dataIn ),
-    fMakefile        ( "generatedMakefile" ),
-    fIndData_h       ( "IndData.h" ),
-    fDataSet_h       ( "DataSet.h" ),
-    fPredEqn_fortran ( "predEqn.fortran" ),
-    fPredEqn_cpp     ( "predEqn.cpp" ),
-    fPred_h          ( "Pred.h" ),
-    fNonmemPars_h    ( "NonmemPars.h" ),
-    fDriver_cpp      ( "driver.cpp" ),
+  : ClientTranslator    ( sourceIn, dataIn ),
+    fMakefile_SPK       ( "Makefile.SPK" ),
+    fMakefile_MC        ( "Makefile.MC" ),
+    fIndData_h          ( "IndData.h" ),
+    fDataSet_h          ( "DataSet.h" ),
+    fPredEqn_fortran    ( "predEqn.fortran" ),
+    fPredEqn_cpp        ( "predEqn.cpp" ),
+    fPred_h             ( "Pred.h" ),
+    fNonmemPars_h       ( "NonmemPars.h" ),
+    fMontePars_h        ( "MontePars.h" ),
+    fSpkDriver_cpp      ( "spkDriver.cpp" ),
+    fMonteDriver_cpp    ( "monteDriver.cpp" ),
     fSpkRuntimeError_tmp( "spk_error.tmp" ),
-    fResult_xml      ( "result.xml" ),
+    fResult_xml         ( "result.xml" ),
 
-    myDescription    ( NULL ),
-    myTarget         ( POP ),
-    myModelSpec      ( PRED ),
-    myIsEstimate     ( true ),
-    myIsSimulate     ( false ),
-    myIsStat         ( false ),
-    myIsOnlySimulation ( false ),
-    mySubproblemsN   ( 1 ),
-    myApproximation  ( FO ),
-    myPopSize        ( 1 ),
-    myIsEtaOut       ( false ),
-    myIsRestart      ( true ),
-    myThetaLen       ( 0 ),
-    myOmegaDim       ( 0 ),
-    myOmegaOrder     ( 0 ),
-    myOmegaStruct    ( Symbol::TRIANGLE ),
-    mySigmaDim       ( 0 ),
-    mySigmaOrder     ( 0 ),
-    mySigmaStruct    ( Symbol::TRIANGLE ),
-    myEtaLen         ( 0 ),
-    myEpsLen         ( 0 ),
-    mySigDigits      ( 3 ),
-    myPopMitr        ( 100 ),
-    myIndMitr        ( 100 ),
-    myPopEpsilon     ( pow( 10.0, -(mySigDigits+1.0) ) ),  // I'm not sure if pow() is really available at this stage.
-    myIndEpsilon     ( pow( 10.0, -(mySigDigits+1.0) ) ),  // I'm not sure if pow() is really available at this stage.
-    myPopTraceLevel  ( 1 ),
-    myIndTraceLevel  ( 1 ),
-    mySeed           ( 0 ),
-    myCovForm        ( "R" ),
-    myIsStderr       ( true ),
-    myIsCorrelation  ( true ),
-    myIsCov          ( true ),
-    myIsInvCov       ( true ),
-    myIsConfidence   ( true ),
-    myIsCoefficient  ( true ),
-    myRecordNums     ( 1 )
+    myDescription       ( NULL ),
+    myTarget            ( POP ),
+    myModelSpec         ( PRED ),
+    myIsEstimate        ( true ),
+    myIsSimulate        ( false ),
+    myIsStat            ( false ),
+    myIsOnlySimulation  ( false ),
+    mySubproblemsN      ( 1 ),
+    myApproximation     ( FO ),
+    myPopSize           ( 1 ),
+    myIsEtaOut          ( false ),
+    myIsRestart         ( true ),
+    myThetaLen          ( 0 ),
+    myOmegaDim          ( 0 ),
+    myOmegaOrder        ( 0 ),
+    myOmegaStruct       ( Symbol::TRIANGLE ),
+    mySigmaDim          ( 0 ),
+    mySigmaOrder        ( 0 ),
+    mySigmaStruct       ( Symbol::TRIANGLE ),
+    myEtaLen            ( 0 ),
+    myEpsLen            ( 0 ),
+    mySigDigits         ( 3 ),
+    myPopMitr           ( 100 ),
+    myIndMitr           ( 100 ),
+    myPopEpsilon        ( pow( 10.0, -(mySigDigits+1.0) ) ),  // I'm not sure if pow() is really available at this stage.
+    myIndEpsilon        ( pow( 10.0, -(mySigDigits+1.0) ) ),  // I'm not sure if pow() is really available at this stage.
+    myPopTraceLevel     ( 1 ),
+    myIndTraceLevel     ( 1 ),
+    mySeed              ( 0 ),
+    myCovForm           ( "R" ),
+    myIsStderr          ( true ),
+    myIsCorrelation     ( true ),
+    myIsCov             ( true ),
+    myIsInvCov          ( true ),
+    myIsConfidence      ( true ),
+    myIsCoefficient     ( true ),
+    myRecordNums        ( 1 )
 
 {
   table = ClientTranslator::getSymbolTable();
@@ -587,7 +590,8 @@ void NonmemTranslator::parseSource()
   generateDataSet();
   generateIndData();
   generatePred( fPredEqn_cpp );
-  generateNonmemParsNamespace( );
+  generateNonmemParsNamespace();
+  generateMonteParsNamespace();
   if( myTarget == POP )
     generatePopDriver();
   else
@@ -596,104 +600,30 @@ void NonmemTranslator::parseSource()
 }
 void NonmemTranslator::generateMakefile() const
 {
-  ofstream oMake( fMakefile );
+  ofstream oMake( fMakefile_SPK );
   if( !oMake.good() )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "Failed to create %s file.", fMakefile ); 
+     sprintf( mess, "Failed to create %s file.", fMakefile_SPK ); 
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
   }
-  oMake << "prod : driver.cpp Pred.h DataSet.h IndData.h NonmemPars.h" << endl;
-  oMake << "\tg++ -g driver.cpp -o driver ";
+  oMake << "prod : spkDriver.cpp Pred.h DataSet.h IndData.h NonmemPars.h" << endl;
+  oMake << "\tg++ -g spkDriver.cpp -o spkDriver ";
   oMake << "-L/usr/local/lib/spkprod -I/usr/local/include/spkprod -Wl,--rpath -Wl,/usr/local/lib/spkprod ";
   oMake << "-lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm";
   oMake << endl;
-  oMake << "test : driver.cpp Pred.h DataSet.h IndData.h NonmemPars.h" << endl;
-  oMake << "\tg++ -g driver.cpp -o driver ";
+  oMake << "test : spkDriver.cpp Pred.h DataSet.h IndData.h NonmemPars.h" << endl;
+  oMake << "\tg++ -g spkDriver.cpp -o spkDriver ";
   oMake << "-L/usr/local/lib/spktest -I/usr/local/include/spktest -Wl,--rpath -Wl,/usr/local/lib/spktest ";
   oMake << "-lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm";
   oMake << endl;
   oMake << "clean : " << endl;
-  oMake << "\trm -f software_error result.xml driver predEqn.cpp IndData.h DataSet.h Pred.h driver.cpp spk_error.tmp NonmemPars.h" << endl;
+  oMake << "\trm -f software_error result.xml spkDriver predEqn.cpp IndData.h DataSet.h Pred.h spkDriver.cpp spk_error.tmp NonmemPars.h" << endl;
   oMake.close();
   return;
 }
-/*
-void NonmemTranslator::generateUtils() const
-{
-  ofstream oHalfCvec( fHalfCvec_h );
-  assert( oHalfCvec.good() ); 
 
-  oHalfCvec << "#ifndef HALFCVEC_H" << endl;
-  oHalfCvec << "#define HALFCVEC_H" << endl;
-  oHalfCvec << "#include <iostream>" << endl;
-  oHalfCvec << "#include <vector>" << endl;
-  oHalfCvec << endl;
-  oHalfCvec << "template <class T>" << endl;
-  oHalfCvec << "const std::vector<T> half_cvec( const std::vector<T> & a, int dim );" << endl;
-  oHalfCvec << "//===========================================================" << endl;
-  oHalfCvec << "// Takes a vector containing the half triangle of a " << endl;
-  oHalfCvec << "// square matrix in the column major order and" << endl;
-  oHalfCvec << "// returns another vector containing the triangle" << endl;
-  oHalfCvec << "// in the row major order." << endl;
-  oHalfCvec << "//" << endl;
-  oHalfCvec << "// Given a std::vector a," << endl;
-  oHalfCvec << "//" << endl;
-  oHalfCvec << "//     a : { 1 2 3 4 5 6 }" << endl;
-  oHalfCvec << "//" << endl;
-  oHalfCvec << "// which stores the elements of half triangle of 3 by 3 matrix A in the" << endl;
-  oHalfCvec << "// column major order:" << endl;
-  oHalfCvec << "//" << endl;
-  oHalfCvec << "//         / 1 . . \\ " << endl;
-  oHalfCvec << "//     A : | 2 4 . | " << endl;
-  oHalfCvec << "//         \\ 3 5 6 / " << endl;
-  oHalfCvec << "//" << endl;
-  oHalfCvec << "// , half_cvec( a, 3 ) returns at;" << endl;
-  oHalfCvec << "//" << endl;
-  oHalfCvec << "//     at : { 1 2 4 3 5 6 }" << endl;
-  oHalfCvec << "//" << endl;
-  oHalfCvec << "// that is a vector containing the same matrix A in the row major order." << endl;
-  oHalfCvec << "//===========================================================" << endl;
-  oHalfCvec << " template <class T>" << endl;
-  oHalfCvec << "const std::vector<T> halfCvec( const std::vector<T> & a, int dim )" << endl;
-  oHalfCvec << "{" << endl;
-  oHalfCvec << "   const int n = dim;" << endl;
-  oHalfCvec << "   const int m = n * (n+1) / 2;" << endl;
-  oHalfCvec << endl;
-  oHalfCvec << "   std::vector<int> A(m*m);" << endl;
-  oHalfCvec << "   std::vector<int> at(m);" << endl;
-  oHalfCvec << "   for( int j=0, cnt=0; j<n; j++ )" << endl;
-  oHalfCvec << "   {" << endl;
-  oHalfCvec << "      for( int i=0; i<n; i++ )" << endl;
-  oHalfCvec << "      {" << endl;
-  oHalfCvec << "        if( i>=j )" << endl;
-  oHalfCvec << "        {" << endl;
-  oHalfCvec << "	   A[i+j*n] = a[cnt];" << endl;
-  oHalfCvec << "           cnt++;" << endl;
-  oHalfCvec << "        }" << endl;
-  oHalfCvec << "        else" << endl;
-  oHalfCvec << "           A[i+j*n] = 0;" << endl;
-  oHalfCvec << "      }" << endl;
-  oHalfCvec << "   }" << endl;
-  oHalfCvec << "   for( int j=0, cnt=0; j<n; j++ )" << endl;
-  oHalfCvec << "   {" << endl;
-  oHalfCvec << "      for( int i=0; i<n; i++)" << endl;
-  oHalfCvec << "      {" << endl;
-  oHalfCvec << "          if( i<=j )" << endl;
-  oHalfCvec << "          {" << endl;
-  oHalfCvec << "             at[cnt] = A[j+i*n];" << endl;
-  oHalfCvec << "             cnt++;" << endl;
-  oHalfCvec << "          }" << endl;
-  oHalfCvec << "      }" << endl;
-  oHalfCvec << "   }" << endl;
-  oHalfCvec << "   return at;" << endl;
-  oHalfCvec << "}" << endl;
-  oHalfCvec << "#endif" << endl;
-  oHalfCvec.close();
-  return;
-}
-*/
 void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
 {
   
@@ -3055,6 +2985,37 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   oPred_h << "#endif" << endl;
   oPred_h.close();
 }
+void NonmemTranslator::generateMonteParsNamespace() const
+{
+  //==================================================================
+  // Generate the MontePars namespace.
+  //==================================================================
+
+  ofstream oMontePars( fMontePars_h );
+  if( !oMontePars.good() )
+  {
+     char mess[ SpkCompilerError::maxMessageLen() ];
+     sprintf( mess, "Failed to create %s file.", fMontePars_h );
+     SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
+     throw e;
+  }
+  oMontePars << "//==============================================================================" << endl;
+  oMontePars << "// " << endl;
+  oMontePars << "// " << myDescription << endl;
+  oMontePars << "// " << endl;
+  oMontePars << "// The namespace MontePars exports the values needed by monteDriver.cpp." << endl;
+  oMontePars << "// " << endl;
+  oMontePars << "// The user requested the " << (myTarget==POP? "population":"individual") << " analysis." << endl;
+  oMontePars << "// " << endl;
+  oMontePars << "//==============================================================================" << endl;
+
+  oMontePars << "#ifndef MONTEPARS_H" << endl;
+  oMontePars << "#define MONTEPARS_H" << endl;
+
+  oMontePars << endl;
+
+  oMontePars << "#endif" << endl;
+}
 void NonmemTranslator::generateNonmemParsNamespace() const
 {
   //==================================================================
@@ -3294,11 +3255,11 @@ void NonmemTranslator::generateIndDriver( ) const
   // Generate the SPK driver
   assert( !(myIsOnlySimulation && myIsEstimate) );
   //==================================================================
-  ofstream oDriver ( fDriver_cpp );
+  ofstream oDriver ( fSpkDriver_cpp );
   if( !oDriver.good() )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "Failed to create %s file.", fDriver_cpp );
+     sprintf( mess, "Failed to create %s file.", fSpkDriver_cpp );
      SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
      throw e;
   }
@@ -4061,12 +4022,12 @@ void NonmemTranslator::generatePopDriver() const
   //==================================================================
   // Generate the driver
   //==================================================================
-  ofstream oDriver ( fDriver_cpp );
+  ofstream oDriver ( fSpkDriver_cpp );
   if( !oDriver.good() )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
       sprintf( mess, "Failed to create %s file.",
-	       fDriver_cpp );
+	       fSpkDriver_cpp );
       SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }

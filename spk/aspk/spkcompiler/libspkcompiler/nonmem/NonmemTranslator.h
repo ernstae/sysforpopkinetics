@@ -183,6 +183,11 @@ class NonmemTranslator : public ClientTranslator
   void generateNonmemParsNamespace() const;
 
   //
+  // Generate C++ source code for MontePars namespace.
+  //
+  void generateMonteParsNamespace() const;
+
+  //
   // Generate C++ source code for the driver for population analysis.
   //
   void generatePopDriver( ) const;
@@ -198,9 +203,13 @@ class NonmemTranslator : public ClientTranslator
   //
   void generateMakefile() const;
 
-  // The filename for a Make that builds an executable, driver, from
+  // The filename for a Make that builds an SPK runtime from
   // all the generated files.
-  const char *fMakefile;
+  const char *fMakefile_SPK;
+
+  // The filename for a Make that builds an Monte Carlo runtime from
+  // all the generated files.
+  const char *fMakefile_MC;
 
   // The header file name for the IndData template class.
   const char *fIndData_h;
@@ -222,11 +231,17 @@ class NonmemTranslator : public ClientTranslator
   // The NonmemPars namespace definition.
   const char * fNonmemPars_h;
 
+  // The MontePars namespace definition.
+  const char * fMontePars_h;
+
   // The halfCvec template function definition.
   const char * fHalfCvec_h;
 
   // The SPK driver definition.
-  const char * fDriver_cpp;
+  const char * fSpkDriver_cpp;
+
+  // The Monte Carlo driver definition.
+  const char * fMonteDriver_cpp;
 
   // A temporary file for storing runtime error messages.  The
   // compiler use only the name of the file, which will be inserted

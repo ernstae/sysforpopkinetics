@@ -31,17 +31,18 @@ namespace{
   bool okToClear = false;
 
   char fPrefix[128];
-  char fData[128];
-  char fSource[128];
+  char fDataML[128];
+  char fSourceML[128];
   char fIndDataDriver[128];
   char fIndDataDriver_cpp[128];
   char fDataSetDriver[128];
   char fDataSetDriver_cpp[128];
   char fPredDriver[128];
   char fPredDriver_cpp[128];
-  char fDriver[128];
-  char fDriver_cpp[128];
-  char fReport_xml[128];
+  char fSpkMakefile[128];
+  char fSpkDriver[128];
+  char fSpkDriver_cpp[128];
+  char fReportML[128];
 
   //============================================
   // Optimizer controls
@@ -339,9 +340,18 @@ void ind_noID_NonmemTranslatorTest::setUp()
 
   okToClean = false;
 
-  sprintf( fDriver, "driver" );
-  sprintf( fDriver_cpp, "driver.cpp" );
-  sprintf( fReport_xml, "result.xml" );
+  sprintf( fPrefix,            "ind_noID" );
+  sprintf( fDataML,            "%s_dataML.xml", fPrefix );
+  sprintf( fSourceML,          "%s_sourceML.xml", fPrefix );
+  sprintf( fIndDataDriver,     "%s_IndDataDriver", fPrefix );
+  sprintf( fIndDataDriver_cpp, "%s_IndDataDriver.cpp", fPrefix );
+  sprintf( fDataSetDriver,     "%s_DataSetDriver", fPrefix );
+  sprintf( fDataSetDriver_cpp, "%s_DataSetDriver.cpp", fPrefix );
+
+  sprintf( fSpkDriver,         "spkDriver" );
+  sprintf( fSpkDriver_cpp,     "spkDriver.cpp" );
+  sprintf( fSpkMakefile,       "Makefile.SPK" );
+  sprintf( fReportML,          "result.xml" );
 
   label_alias[strID]   = NULL;
   label_alias[strTIME] = NULL;
@@ -413,27 +423,26 @@ void ind_noID_NonmemTranslatorTest::tearDown()
   XMLString::release( &X_IND_COEFFICIENT_OUT );
   XMLString::release( &X_IND_CONFIDENCE_OUT );
   XMLString::release( &X_VALUE );
-  /*  
+  
   if( okToClean )
     {
-      remove( fData );
-      remove( fSource );
+      remove( fDataML );
+      remove( fSourceML );
       remove( fIndDataDriver );
       remove( fIndDataDriver_cpp );
       remove( fDataSetDriver );
       remove( fDataSetDriver_cpp );
       remove( fPredDriver );
       remove( fPredDriver_cpp );
-      remove( fDriver );
-      remove( fDriver_cpp );
+      remove( fSpkDriver );
+      remove( fSpkDriver_cpp );
       remove( "IndData.h" );
       remove( "DataSet.h" );
       remove( "Pred.h" );
       remove( "predEqn.cpp" );
-      remove( "generatedMakefile" );
+      remove( fSpkMakefile );
       remove( "result.xml" );
     }
-  */  
   XMLPlatformUtils::Terminate();
 
 }
@@ -450,9 +459,7 @@ void ind_noID_NonmemTranslatorTest::createDataML()
   // Generating a dataML document (with no ID)
   //
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  sprintf( fPrefix, "indWithNoID" );
-  sprintf( fData, "%s_dataML.xml", fPrefix );
-  ofstream oData( fData );
+  ofstream oData( fDataML );
   CPPUNIT_ASSERT( oData.good() );
   oData << "<spkdata version=\"0.1\">" << endl;
   oData << "<table columns=\"" << nItems-1 << "\" rows=\"" << nRecords+1 << "\">" << endl;
@@ -484,7 +491,7 @@ void ind_noID_NonmemTranslatorTest::createDataML()
   dataParser->setCreateEntityReferenceNodes( true );
   
   try{
-    dataParser->parse( fData );
+    dataParser->parse( fDataML );
     data = dataParser->getDocument();
   }
   catch( const XMLException& e )
@@ -492,7 +499,7 @@ void ind_noID_NonmemTranslatorTest::createDataML()
       XMLPlatformUtils::Terminate();
       char buf[maxChars + 1];
       sprintf( buf, "An error occurred during parsing %s.\n   Message: %s\n",
-	       fData, XMLString::transcode(e.getMessage() ) );
+	       fDataML, XMLString::transcode(e.getMessage() ) );
       
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
@@ -504,7 +511,7 @@ void ind_noID_NonmemTranslatorTest::createDataML()
           XMLPlatformUtils::Terminate();
           char buf[maxChars + 1];
           sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
-                   fData, e.code, XMLString::transcode(errText) );
+                   fDataML, e.code, XMLString::transcode(errText) );
 	  
           CPPUNIT_ASSERT_MESSAGE( buf, false );
 	}
@@ -513,7 +520,7 @@ void ind_noID_NonmemTranslatorTest::createDataML()
     {
       XMLPlatformUtils::Terminate();
       char buf[maxChars + 1];
-      sprintf( buf, "An unknown error occurred during parsing %s.\n", fData );
+      sprintf( buf, "An unknown error occurred during parsing %s.\n", fDataML );
       
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
@@ -530,8 +537,7 @@ void ind_noID_NonmemTranslatorTest::createSourceML()
   // Create an sourceML based upon the
   // parameters set so far.
   //============================================
-  sprintf( fSource, "%s_sourceML.xml", fPrefix );
-  ofstream oSource( fSource );
+  ofstream oSource( fSourceML );
   CPPUNIT_ASSERT( oSource.good() );
 
   oSource << "<spksource>" << endl;
@@ -646,7 +652,7 @@ void ind_noID_NonmemTranslatorTest::createSourceML()
   sourceParser->setCreateEntityReferenceNodes( true );
   
   try{
-    sourceParser->parse( fSource );
+    sourceParser->parse( fSourceML );
     source = sourceParser->getDocument();
   }
   catch( const XMLException& e )
@@ -654,7 +660,7 @@ void ind_noID_NonmemTranslatorTest::createSourceML()
       XMLPlatformUtils::Terminate();
       char buf[maxChars + 1];
       sprintf( buf, "An error occurred during parsing %s.\n   Message: %s\n",
-	       fSource, XMLString::transcode(e.getMessage() ) );
+	       fSourceML, XMLString::transcode(e.getMessage() ) );
       
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
@@ -666,7 +672,7 @@ void ind_noID_NonmemTranslatorTest::createSourceML()
           XMLPlatformUtils::Terminate();
           char buf[maxChars + 1];
           sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
-                   fSource, e.code, XMLString::transcode(errText) );
+                   fSourceML, e.code, XMLString::transcode(errText) );
 	  
           CPPUNIT_ASSERT_MESSAGE( buf, false );
 	}
@@ -675,7 +681,7 @@ void ind_noID_NonmemTranslatorTest::createSourceML()
     {
       XMLPlatformUtils::Terminate();
       char buf[maxChars + 1];
-      sprintf( buf, "An unknown error occurred during parsing %s.\n", fSource );
+      sprintf( buf, "An unknown error occurred during parsing %s.\n", fSourceML );
       
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
@@ -748,8 +754,6 @@ void ind_noID_NonmemTranslatorTest::testIndDataClass()
   // * WRES
   // * RES
   //============================================
-  sprintf( fIndDataDriver, "%s_IndDataDriver", fPrefix );
-  sprintf( fIndDataDriver_cpp, "%s_IndDataDriver.cpp", fPrefix );
   ofstream oIndDataDriver( fIndDataDriver_cpp );
   CPPUNIT_ASSERT( oIndDataDriver.good() );
 
@@ -842,8 +846,6 @@ void ind_noID_NonmemTranslatorTest::testDataSetClass()
   // data set correctly.
   //
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  sprintf( fDataSetDriver, "%s_DataSetDriver", fPrefix );
-  sprintf( fDataSetDriver_cpp, "%s_DataSetDriver.cpp", fPrefix );
   ofstream oDataSetDriver( fDataSetDriver_cpp );
   CPPUNIT_ASSERT( oDataSetDriver.good() );
 
@@ -914,6 +916,7 @@ void ind_noID_NonmemTranslatorTest::testDataSetClass()
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
+    okToClean = true;
 }
 
 CppUnit::Test * ind_noID_NonmemTranslatorTest::suite()

@@ -94,9 +94,10 @@ namespace{
   char fDataSetDriver_cpp[128];
   char fPredDriver[128];
   char fPredDriver_cpp[128];
-  char fDriver[128];
-  char fDriver_cpp[128];
-  char fReport_xml[128];
+  char fSpkDriver[128];
+  char fSpkDriver_cpp[128];
+  char fSpkMakefile[128];
+  char fReportML[128];
 
   //============================================
   // Optimizer controls
@@ -395,9 +396,18 @@ void ind_withID_NonmemTranslatorTest::setUp()
 
   okToClean = false;
 
-  sprintf( fDriver, "driver" );
-  sprintf( fDriver_cpp, "driver.cpp" );
-  sprintf( fReport_xml, "result.xml" );
+  sprintf( fPrefix,            "ind_withID" );
+  sprintf( fData,              "%s_dataML", fPrefix );
+  sprintf( fSource,            "%s_sourceML.xml", fPrefix );
+  sprintf( fDataSetDriver,     "%s_DataSetDriver", fPrefix );
+  sprintf( fDataSetDriver_cpp, "%s_DataSetDriver.cpp", fPrefix );
+  sprintf( fPredDriver,        "%s_PredDriver", fPrefix );
+  sprintf( fPredDriver_cpp,    "%s_PredDriver.cpp", fPrefix );
+
+  sprintf( fSpkDriver,         "spkDriver" );
+  sprintf( fSpkDriver_cpp,     "spkDriver.cpp" );
+  sprintf( fReportML,          "result.xml" );
+  sprintf( fSpkMakefile,       "Makefile.SPK" );
 
   label_alias[strID]   = NULL;
   label_alias[strTIME] = NULL;
@@ -480,13 +490,13 @@ void ind_withID_NonmemTranslatorTest::tearDown()
       remove( fDataSetDriver_cpp );
       remove( fPredDriver );
       remove( fPredDriver_cpp );
-      remove( fDriver );
-      remove( fDriver_cpp );
+      remove( fSpkDriver );
+      remove( fSpkDriver_cpp );
       remove( "IndData.h" );
       remove( "DataSet.h" );
       remove( "Pred.h" );
       remove( "predEqn.cpp" );
-      remove( "generatedMakefile" );
+      remove( fSpkMakefile );
       remove( "result.xml" );
     }
   
@@ -505,8 +515,6 @@ void ind_withID_NonmemTranslatorTest::createDataML()
   // Generating a dataML document (with ID)
   //
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  sprintf( fPrefix, "indWithID" );
-  sprintf( fData, "%s_dataML", fPrefix );
   ofstream oData( fData );
   CPPUNIT_ASSERT( oData.good() );
   oData << "<spkdata version=\"0.1\">" << endl;
@@ -588,7 +596,6 @@ void ind_withID_NonmemTranslatorTest::createSourceML()
   // Create an sourceML based upon the
   // parameters set so far.
   //============================================
-  sprintf( fSource, "%s_sourceML.xml", fPrefix );
   ofstream oSource( fSource );
   CPPUNIT_ASSERT( oSource.good() );
 
@@ -885,8 +892,6 @@ void ind_withID_NonmemTranslatorTest::testDataSetClass()
   // data set correctly.
   //
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  sprintf( fDataSetDriver, "%s_DataSetDriver", fPrefix );
-  sprintf( fDataSetDriver_cpp, "%s_DataSetDriver.cpp", fPrefix );
   ofstream oDataSetDriver( fDataSetDriver_cpp );
   CPPUNIT_ASSERT( oDataSetDriver.good() );
 
@@ -983,8 +988,6 @@ void ind_withID_NonmemTranslatorTest::testPredClass()
   // outside.
   //
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  sprintf( fPredDriver, "%s_PredDriver", fPrefix );
-  sprintf( fPredDriver_cpp, "%s_PredDriver.cpp", fPrefix );
   ofstream oPredDriver( fPredDriver_cpp );
   CPPUNIT_ASSERT( oPredDriver.good() );
 
@@ -1137,15 +1140,15 @@ void ind_withID_NonmemTranslatorTest::testDriver()
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   int  exitcode      = 0;
   char command[256];
-  sprintf( command, "make -f generatedMakefile test" );
+  sprintf( command, "make -f %s test", fSpkMakefile );
   if( system( command ) != 0 )
     {
       char message[256];
-      sprintf( message, "Compilation of the generated %s failed!", fDriver_cpp );
+      sprintf( message, "Compilation of the generated %s failed!", fSpkDriver_cpp );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
-  sprintf( command, "./%s", fDriver );
+  sprintf( command, "./%s", fSpkDriver );
   // The exist code of 0 indicates success.  1 indicates convergence problem.
   // 2 indicates some file access problem.
   // Since I didn't set the problem so that it makes sense in either scientifically
@@ -1154,23 +1157,28 @@ void ind_withID_NonmemTranslatorTest::testDriver()
   if( exitcode == 1 )
     {
       char message[256];
-      sprintf( message, "%s failed for convergence problem <%d>!", fDriver, exitcode );
+      sprintf( message, "%s failed for convergence problem <%d>!", fSpkDriver, exitcode );
       
       CPPUNIT_ASSERT_MESSAGE( message, true );
     }
   if( exitcode == 2 )
     {
       char message[256];
-      sprintf( message, "%s failed due to inproper file access permission <%d>!", fDriver, exitcode );
+      sprintf( message, "%s failed due to inproper file access permission <%d>!", fSpkDriver, exitcode );
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   if( exitcode > 2 )
     {
       char message[256];
-      sprintf( message, "%s failed for reasons other than convergence propblem or access permission <%d>!", fDriver, exitcode );
+      sprintf( message, "%s failed for reasons other than convergence propblem or access permission <%d>!", fSpkDriver, exitcode );
       
       CPPUNIT_ASSERT_MESSAGE( message, true );
      }
+
+  // This should be removed once testReportML() gets completed.
+
+  okToClean = true;
+
 }
 void ind_withID_NonmemTranslatorTest::testReportML()
 {
@@ -1187,7 +1195,7 @@ void ind_withID_NonmemTranslatorTest::testReportML()
   reportParser->setCreateEntityReferenceNodes( true );
   
   try{
-    reportParser->parse( fReport_xml );
+    reportParser->parse( fReportML );
     report = reportParser->getDocument();
   }
   catch( const XMLException& e )
@@ -1195,7 +1203,7 @@ void ind_withID_NonmemTranslatorTest::testReportML()
       XMLPlatformUtils::Terminate();
       char buf[maxChars + 1];
       sprintf( buf, "An error occurred during parsing %s.\n   Message: %s\n",
-	       fReport_xml, XMLString::transcode(e.getMessage() ) );
+	       fReportML, XMLString::transcode(e.getMessage() ) );
       
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
@@ -1208,7 +1216,7 @@ void ind_withID_NonmemTranslatorTest::testReportML()
           XMLPlatformUtils::Terminate();
           char buf[maxChars + 1];
           sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
-                   fReport_xml, e.code, XMLString::transcode(errText) );
+                   fReportML, e.code, XMLString::transcode(errText) );
           CPPUNIT_ASSERT_MESSAGE( buf, false );
 	}
     }
@@ -1216,7 +1224,7 @@ void ind_withID_NonmemTranslatorTest::testReportML()
     {
       XMLPlatformUtils::Terminate();
       char buf[maxChars + 1];
-      sprintf( buf, "An unknown error occurred during parsing %s.\n", fReport_xml );
+      sprintf( buf, "An unknown error occurred during parsing %s.\n", fReportML );
       
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }

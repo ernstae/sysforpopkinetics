@@ -10,11 +10,38 @@ MOSTLYCLEANFILES = Pred.h \
                    IndData.h \
                    DataSet.h \
                    test_nonmem \
-                   driver.cpp \
-                   driver \
+                   spkDriver.cpp \
+                   spkDriver \
+                   NonmemPars.h \
+                   MontePars.h \
                    result.xml \
-                   generatedMakefile \
-                   spk_error.tmp
+                   Makefile.SPK \
+                   spk_error.tmp \
+                   sotware_error \
+                   ind_noID_dataML.xml \
+                   ind_noID_sourceML.xml \
+                   ind_noID_DataSetDriver \
+                   ind_noID_DataSetDriver.cpp \
+                   ind_noID_IndDataDriver \
+                   ind_noID_IndDataDriver.cpp \
+                   ind_noID_PredDriver \
+                   ind_noID_PredDriver.cpp \
+                   ind_withID_dataML.xml \
+                   ind_withID_sourceML.xml \
+                   ind_withID_DataSetDriver \
+                   ind_withID_DataSetDriver.cpp \
+                   ind_withID_IndDataDriver \
+                   ind_withID_IndDataDriver.cpp \
+                   ind_withID_PredDriver \
+                   ind_withID_PredDriver.cpp \
+                   pop_dataML.xml \
+                   pop_sourceML.xml \
+                   pop_DataSetDriver \
+                   pop_DataSetDriver.cpp \
+                   pop_IndDataDriver \
+                   pop_IndDataDriver.cpp \
+                   pop_PredDriver \
+                   pop_PredDriver.cpp
 
 test_nonmem_SOURCES = \
 	../config.h \
