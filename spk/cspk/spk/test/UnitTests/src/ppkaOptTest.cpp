@@ -469,6 +469,8 @@ void ppkaOptTest::ppkaOptExampleTest(enum Objective whichObjective)
   {
       CPPUNIT_ASSERT_MESSAGE( "ppkaOpt failed for unknown reasons!", false );
   }
+
+
   //------------------------------------------------------------
   // Known values.
   //------------------------------------------------------------
