@@ -104,8 +104,10 @@ $index covariance, standard error, correlation matrix, individual parameters$$
 $table
 $bold Prototype:$$ $cend
 $syntax/void indStatistics(  
-                   SpkModel&                       /indModel/,
                    const SPK_VA::valarray<double>& /indPar/,
+                   const SPK_VA::valarray<double>& /dataMean_indPar/,
+                   const SPK_VA::valarray<double>& /dataVariance_indPar/,
+                   const SPK_VA::valarray<double>& /dataVarianceInv/,
                    SPK_VA::valarray<double>*       /indParCovOut/, 
                    SPK_VA::valarray<double>*       /indParSEOut/,                          
                    SPK_VA::valarray<double>*       /indParCorOut/,
@@ -161,14 +163,6 @@ $xref/glossary/Exception Handling Policy/Exception Handling Policy/$$.
 
 $head Arguments$$
 $syntax/
-/indModel/
-/$$
-This function expects $italic model$$ to be a function of
-parameters: $math%b%$$.
-Refer $xref/glossary/Model Functions Depend on only b/Model Functions 
-Depend on only b/$$ for details.
-
-$syntax/
 
 /indPar/
 /$$
@@ -179,6 +173,28 @@ $italic indParCorOut$$, $italic indParCVOut$$ and $italic indParCIOut$$
 will be evaluated at these estimates.  
 The $italic values of indPar$$ should be obtained by calling SPK function 
 $xref/fitIndividual//fitIndividual/$$.
+
+$syntax/
+
+/dataMean_indPar/
+/$$
+The $code SPK_VA::valarray<double>$$ $italic dataMean_indPar$ is the mean
+of data evaluated at $italic indPar$$.
+
+$syntax/
+
+/dataVariance_indPar/
+/$$
+The $code SPK_VA::valarray<double>$$ $italic dataVariance_indPar$ is 
+the value of the derivative of the variance of data with respect to the
+individual parameter, evaluated at $italic indPar$$.
+
+syntax/
+
+/dataVarianceInv/
+/$$
+The $code SPK_VA::valarray<double>$$ $italic dataVarianceInv$ is 
+the value of the inverse of the variance of data evaluated at $italic indPar$$.
 
 $syntax/
 
@@ -522,12 +538,14 @@ $end
 using SPK_VA::valarray;
 using SPK_VA::slice;
 
-void indStatistics( SpkModel&                indModel,
-                    const valarray<double>&  indPar,
+void indStatistics( const valarray<double>&  indPar,
+                    const valarray<double>&  dataMean_indPar,
+                    const valarray<double>&  dataVariance_indPar,
+                    const valarray<double>&  dataVarianceInv,
                     valarray<double>*        indParCovOut,
                     valarray<double>*        indParSEOut,                          
                     valarray<double>*        indParCorOut,
-					valarray<double>*        indParCVOut,
+		    valarray<double>*        indParCVOut,
                     valarray<double>*        indParCIOut )
 {
     using std::endl;
@@ -541,25 +559,19 @@ void indStatistics( SpkModel&                indModel,
        return;
   
     // Number of individual parameters
-    const int nB   = indPar.size();
-
-    //----------------------------------------------------------------
-    // Preparation. 
-    //----------------------------------------------------------------
-    indModel.setIndPar( indPar );
-    valarray<double> F_b, R_b, RInv; 
-	
-    indModel.dataMean_indPar( F_b );
-    indModel.dataVariance_indPar( R_b );
-	indModel.dataVarianceInv( RInv );
+    const int nB = static_cast<int>( indPar.size() );
+    assert( nB > 0 );
 
     // Number of data points
-    const int nY = static_cast<int>( sqrt( RInv.size() ) );
+    const int nY = static_cast<int>( dataMean_indPar.size() ) / nB;
+    assert( static_cast<int>( dataMean_indPar.size() ) == nY * nB );
+    assert( nY > 0 );
 
+    using namespace std;
     // Degree of freedom
-    const int nF = nY - nB;
-	
-    if( !nF )
+    const int nFree = nY - nB;
+    
+    if( nFree < 1 )
 	{
 	  const int max = SpkError::maxMessageLen();
 	  char message[max];
@@ -575,15 +587,15 @@ void indStatistics( SpkModel&                indModel,
     //----------------------------------------------------------------
     // Calculate Covariance of individual parameter estimates 
     //----------------------------------------------------------------
-    valarray<double> indParCov;
+    valarray<double> indParCov( nB * nB );
 
     try
 	{
-        indParCov = inverse( 0.5 * multiply( transpose( R_b, nB ), nY * nY,
-		                                     AkronBtimesC( RInv, nY, RInv, 
-										                   nY, R_b, nB ), nB )
-	                         + multiply( transpose( F_b, nB ), nY,
-				                         multiply( RInv, nY, F_b, nB ), nB ), 
+        indParCov = inverse( 0.5 * multiply( transpose( dataVariance_indPar, nB ), nY * nY,
+		                                     AkronBtimesC( dataVarianceInv, nY, dataVarianceInv, 
+										                   nY, dataVariance_indPar, nB ), nB )
+	                         + multiply( transpose( dataMean_indPar, nB ), nY,
+				                         multiply( dataVarianceInv, nY, dataMean_indPar, nB ), nB ), 
 	                         nB );
 	}
     catch(SpkException& e)
@@ -652,15 +664,15 @@ void indStatistics( SpkModel&                indModel,
 
         double tn, distance;
 
-		if( nF <= 30 )
-			tn = t[ nF - 1 ];
-		if( nF > 30 && nF <= 40 )
-			tn = 2.042 - ( nF - 30 ) * 0.021 / 10.0;
-		if( nF > 40 && nF <= 60 )
-            tn = 2.021 - ( nF - 40 ) * 0.021 / 20.0;
-		if( nF > 60 && nF <= 120 )
-            tn = 2.000 - ( nF - 60 ) * 0.020 / 60.0;
-        if( nF > 120 )
+		if( nFree <= 30 )
+			tn = t[ nFree - 1 ];
+		if( nFree > 30 && nFree <= 40 )
+			tn = 2.042 - ( nFree - 30 ) * 0.021 / 10.0;
+		if( nFree > 40 && nFree <= 60 )
+            tn = 2.021 - ( nFree - 40 ) * 0.021 / 20.0;
+		if( nFree > 60 && nFree <= 120 )
+            tn = 2.000 - ( nFree - 60 ) * 0.020 / 60.0;
+        if( nFree > 120 )
 			tn = 1.960;
 
 		for( int i = 0; i < nB; i++ )

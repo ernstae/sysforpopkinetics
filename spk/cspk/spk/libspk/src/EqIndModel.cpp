@@ -708,8 +708,9 @@ void EqIndModel::doSetIndPar( const valarray<double>& foB )
 {
 	if( isNotEqual( _B, foB ) )
 	{
+            _B.resize( foB.size() );
 	    _B = foB;
-        _pModel->setPopPar( foB );
+            _pModel->setPopPar( foB );
 	    isCachedRValid = false;
 	    isCachedRInvValid = false;
 	}
@@ -731,7 +732,7 @@ void EqIndModel::doDataMean( valarray<double>& foFOut ) const
   //
     foFOut.resize( _nY );
     //foFOut = 0.0;   // is this really needed?
-    valarray<double> fiOut;
+    valarray<double> fiOut( _nY );
 
 
     //
@@ -818,119 +819,125 @@ bool EqIndModel::doDataMean_indPar( valarray<double>& foF_B ) const
 //
 void EqIndModel::doDataVariance( valarray<double>& foROut ) const
 {
-	if( isCachedRValid )
+  if( isCachedRValid )
+    {
+      foROut = cachedR;
+      return;
+    }
+  
+  foROut.resize( _nY * _nY, 0.0 );
+  valarray<double> DOut( _nb * _nb );
+  _pModel->indParVariance(DOut);
+  assert( DOut.size() == _nb * _nb );
+  assert( isSymmetric( DOut, _nb ) );
+  
+  valarray<double> fi_bOut, fi_bDfi_bOutT, temp;
+  
+  EqIndModelFunction fiOb( _pModel );
+  
+  //
+  // [ Added by Sachiko, 09/25/2002 ]
+  // Compute Ri(B,0) + fi_b(B,0) * D(B) * fi_b(B,0)'
+  // where B is indeed alp but has been fed as the random effect
+  // to this individual model.
+  // Form a big matrix contains
+  // these results as diagonal elements.
+  //
+  //
+  //_pModel->setPopPar( _B );   // [ Added by Sachiko, 09/25/2002 ]
+  //                            // Conceptually this statement should be placed here
+  //                            // but shouldn't in practice because we know for
+  //                            // sure _pModel's popPar has been set to _B already
+  //                            // and hasn't been disturbed ever since.
+  //
+  //	_pModel->setIndPar( _b0 );
+  for( int i = 0, startRow = 0; i < _nInd; i++ )
+    {
+      _pModel->selectIndividual( i );
+      _pModel->setIndPar( _b0 );
+      //
+      // _pModel->setIndPar( _b0 )    // [ Added by Sachiko, 09/25/2002 ]
+      //                              // Conceptually this statement should be place here
+      //                              // but shouldn't in practice because we know for
+      //                              // sure _pModel's popPar has been set to _B already
+      //                              // and hasn't been disturbed ever since.
+      
+      //
+      // [ Added by Sachiko, 09/25/2002 ]
+      // Compute the approximation for fi_b( B, b(=0) ).
+      //
+      // Note that the approximation is with respect to the little b.
+      //
+      fi_bOut.resize( _N[ i ] * _nb );
+      fi_bOut = centdiff<EqIndModelFunction>( fiOb, 1, _b0, _bStep ); 
+      assert( fi_bOut.size() == _N[ i ] * _nb );
+      
+      _pModel->setIndPar( _b0 );
+      
+      valarray<double> RiOut( _N[ i ] * _N[ i ] );
+      _pModel->dataVariance(RiOut);
+      assert( isSymmetric( RiOut, _N[ i ] ) );
+      assert( RiOut.size() == _N[ i ] * _N[ i ] );
+      
+      fi_bDfi_bOutT.resize( _N[ i ] * _N[ i ] );
+      fi_bDfi_bOutT = multiply( multiply( fi_bOut, _nb, DOut, _nb ), _nb, transpose( fi_bOut, _nb ), _N[ i ] );
+      
+      //
+      // [ Added by Sachiko, 09/25/2002 ]
+      // Since D is symmetric, it should follow that x * D * x^T is also symmetric.
+      // In this particular case, x is fi_bOut.
+      // In addition, Ri is supposed to be symmetric too.  Therefore,
+      // x * Sym * x + Ri will be symmetric.
+      // However, the following addition may yield in round-off error.
+      // So, Make sure symmetrize it afterward.
+      temp.resize( _N[ i ] * _N[ i ] );
+      temp = fi_bDfi_bOutT + RiOut;
+      
+      //
+      // Symmetrize based upon the lower triangle.
+      //
+      for( int j=0; j<_N[ i ]; j++ )
 	{
-		foROut = cachedR;
-		return;
+	  // Copy the lower triangle data into the resulting matrix's upper triangle
+	  for( int p=0; p<j; p++ )
+	    {
+	      temp[ p + j * _N[ i ] ] = temp[ j + p * _N[ i ] ];
+	    }        
 	}
+      
+      
+      //
+      // Forming the matrix R(B), where B = alp.
+      //
+      replaceSubblock( foROut, _nY,
+		       temp, _N[ i ],
+		       startRow, 
+		       startRow );
+      startRow += _N[ i ];
+    }
+  
+  assert( isSymmetric( foROut, _nY ) );
+  isCachedRValid = true;
 
-    foROut.resize( _nY * _nY, 0.0 );
-    valarray<double> DOut;
-    _pModel->indParVariance(DOut);
-    assert( DOut.size() == _nb * _nb );
-    assert( isSymmetric( DOut, _nb ) );
-
-    valarray<double> fi_bOut, fi_bDfi_bOutT, temp;
-
-    EqIndModelFunction fiOb( _pModel );
-
-	//
-	// [ Added by Sachiko, 09/25/2002 ]
-	// Compute Ri(B,0) + fi_b(B,0) * D(B) * fi_b(B,0)'
-	// where B is indeed alp but has been fed as the random effect
-	// to this individual model.
-	// Form a big matrix contains
-	// these results as diagonal elements.
-	//
-	//
-	//_pModel->setPopPar( _B );   // [ Added by Sachiko, 09/25/2002 ]
-	//                            // Conceptually this statement should be placed here
-	//                            // but shouldn't in practice because we know for
-	//                            // sure _pModel's popPar has been set to _B already
-	//                            // and hasn't been disturbed ever since.
-	//
-//	_pModel->setIndPar( _b0 );
-	for( int i = 0, startRow = 0; i < _nInd; i++ )
-	{
-		_pModel->selectIndividual( i );
-        _pModel->setIndPar( _b0 );
-		//
-		// _pModel->setIndPar( _b0 )    // [ Added by Sachiko, 09/25/2002 ]
-		//                              // Conceptually this statement should be place here
-		//                              // but shouldn't in practice because we know for
-		//                              // sure _pModel's popPar has been set to _B already
-		//                              // and hasn't been disturbed ever since.
-
-		//
-		// [ Added by Sachiko, 09/25/2002 ]
-		// Compute the approximation for fi_b( B, b(=0) ).
-		//
-		// Note that the approximation is with respect to the little b.
-		//
-		fi_bOut = centdiff<EqIndModelFunction>( fiOb, 1, _b0, _bStep ); 
-		assert( fi_bOut.size() == _N[ i ] * _nb );
-
-		_pModel->setIndPar( _b0 );
-
-		valarray<double> RiOut;
-		_pModel->dataVariance(RiOut);
-		assert( isSymmetric( RiOut, _N[ i ] ) );
-		assert( RiOut.size() == _N[ i ] * _N[ i ] );
-
-
-		fi_bDfi_bOutT = multiply( multiply( fi_bOut, _nb, DOut, _nb ), _nb, transpose( fi_bOut, _nb ), _N[ i ] );
-
-		//
-		// [ Added by Sachiko, 09/25/2002 ]
-		// Since D is symmetric, it should follow that x * D * x^T is also symmetric.
-		// In this particular case, x is fi_bOut.
-		// In addition, Ri is supposed to be symmetric too.  Therefore,
-		// x * Sym * x + Ri will be symmetric.
-		// However, the following addition may yield in round-off error.
-		// So, Make sure symmetrize it afterward.
-		temp = fi_bDfi_bOutT + RiOut;
-
-		//
-		// Symmetrize based upon the lower triangle.
-		//
-		for( int j=0; j<_N[ i ]; j++ )
-		{
-			// Copy the lower triangle data into the resulting matrix's upper triangle
-			for( int p=0; p<j; p++ )
-			{
-				temp[ p + j * _N[ i ] ] = temp[ j + p * _N[ i ] ];
-			}        
-		}
-
-
-		//
-		// Forming the matrix R(B), where B = alp.
-		//
-		replaceSubblock( foROut, _nY,
-						 temp, _N[ i ],
-						 startRow, 
-						 startRow );
-		startRow += _N[ i ];
-	}
-
-	assert( isSymmetric( foROut, _nY ) );
-	isCachedRValid = true;
-	cachedR = foROut;
+  cachedR.resize( foROut.size() );
+  cachedR = foROut;
 }
 
 void EqIndModel::doDataVarianceInv( valarray<double>& foRInvOut ) const
 {
 	if( isCachedRInvValid )
 	{
-		foRInvOut = cachedRInv;
-		return;
+	  foRInvOut.resize( cachedRInv.size() );
+	  foRInvOut = cachedRInv;
+	  return;
 	}
 
     foRInvOut.resize( _nY * _nY, 0.0 );
-    valarray<double> DOut;
+    valarray<double> DOut( _nb * _nb );
     _pModel->indParVariance(DOut);
     assert( DOut.size() == _nb * _nb );
     assert( isSymmetric( DOut, _nb ) );
+
     valarray<double> fi_bOut, fi_bDfi_bOutT, temp;
     EqIndModelFunction fiOb( _pModel );
 
@@ -938,15 +945,22 @@ void EqIndModel::doDataVarianceInv( valarray<double>& foRInvOut ) const
     for( int i = 0, startRow = 0; i < _nInd; i++ )
     {
         _pModel->selectIndividual( i );
+	fi_bOut.resize( _N[ i ] * _nb );
         fi_bOut = centdiff<EqIndModelFunction>( fiOb, 1, _b0, _bStep ); 
         assert( fi_bOut.size() == _N[ i ] * _nb );
+
         _pModel->setIndPar( _b0 );
-        valarray<double> RiOut;
+        valarray<double> RiOut( _N[i] * _N[i] );
         _pModel->dataVariance(RiOut);
         assert( isSymmetric( RiOut, _N[ i ] ) );
         assert( RiOut.size() == _N[ i ] * _N[ i ] );
+
+        fi_bDfi_bOutT.resize( _N[i] * _N[i] );
         fi_bDfi_bOutT = multiply( multiply( fi_bOut, _nb, DOut, _nb ), _nb, transpose( fi_bOut, _nb ), _N[ i ] );
+
+	temp.resize( _N[ i ] * _N[ i ] );
         temp = fi_bDfi_bOutT + RiOut;
+
         //
         // Symmetrize based upon the lower triangle.
         //
@@ -966,6 +980,7 @@ void EqIndModel::doDataVarianceInv( valarray<double>& foRInvOut ) const
     }
 
 	isCachedRInvValid = true;
+	cachedRInv.resize( foRInvOut.size() );
 	cachedRInv = foRInvOut;                                                                                                  
 }
 
@@ -1009,11 +1024,13 @@ bool EqIndModel::doDataVariance_indPar( valarray<double>& foR_BOut ) const
       //
       // Approximating for fi_b( B, b(=0) )
       //
+      fi_bOut.resize( _N[ who] * _nb );
       fi_bOut = centdiff<EqIndModelFunction>( fiOb, 1, _b0, _bStep );
       assert( fi_bOut.size() == _N[ who ] * _nb );
       //
       // Approximating for fi_B_b( B, b(=0) ), where fi_B is the true derivative.
       //
+      fi_B_bOut.resize( _N[ who ] * _nB  * _nb );
       fi_B_bOut = centdiff<EqIndModelDerivative>( fi_aOb, 1, _b0, _bStep );
       assert( fi_B_bOut.size() == ( _N[ who ] * _nB ) * _nb );
 
@@ -1021,6 +1038,7 @@ bool EqIndModel::doDataVariance_indPar( valarray<double>& foR_BOut ) const
       // Flipping the true derivative portion and the approximation portion to form.
       // fi_b_B( B, b(=0) ), where fi_b is the approximation.
       //
+      fi_b_BOut.resize( _N[ who ] * _nb * _nB );
       fi_b_BOut = transposeRowBlocks( fi_B_bOut, _nb, _nB );
       assert( fi_b_BOut.size() == ( _N[ who ] * _nb ) * _nB );
 
@@ -1033,24 +1051,30 @@ bool EqIndModel::doDataVariance_indPar( valarray<double>& foR_BOut ) const
       //
       // Compute D(B)
       //
+      DOut.resize( _nb * _nb );
       _pModel->indParVariance( DOut );
       assert( DOut.size() == _nb * _nb );
 
       //
       // Compute D_B(B)
       //
+      D_BOut.resize( ( _nb * _nb ) * _nB );
       _pModel->indParVariance_popPar( D_BOut );
       assert( D_BOut.size() == ( _nb * _nb ) * _nB );
 
       //
       // Compute Ri_B( B, b(=0) )
       //
+      Ri_BOut.resize( ( _N[ who ] * _N[ who ] ) * _nB );
       _pModel->dataVariance_popPar( Ri_BOut );
       assert( Ri_BOut.size() == ( _N[ who ] * _N[ who ] ) * _nB );
 
+      fi_bOutT.resize(_nb * _N[ who] );
       fi_bOutT  = transpose( fi_bOut, _nb );
+      fi_B_bOut.resize(_N[ who ] * _nB * _nb );
       fi_B_bOut = transposeDerivative( fi_b_BOut, _N[ who ], _nb, _nB );
 
+      foRi_B.resize( _N[ who ] * _N[ who ] * _nB );
       foRi_B = ABA_x( fi_bOutT, _N[ who ],
                         DOut, _nb,
                         fi_B_bOut,

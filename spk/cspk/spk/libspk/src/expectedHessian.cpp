@@ -482,7 +482,7 @@ void expectedHessian(
     model.setPopPar(alp);
     model.setIndPar(b);
 
-    valarray<double> Dinv;
+    valarray<double> Dinv( nB * nB );
     model.indParVarianceInv(Dinv);
     DoubleMatrix dmatDinv( Dinv, nB );
     assert(dmatDinv.nr() == nB);
@@ -639,7 +639,7 @@ const DoubleMatrix expectedHessian_b(
     // DoubleMatrix Dinv_b( nB, nB );
     // Dinv_b.fill(0.0);
 
-    valarray<double> RInv_b;
+    valarray<double> RInv_b( nY * nY * nB );
     model.dataVarianceInv_indPar( RInv_b );
     DoubleMatrix dmatRInv_b( RInv_b, nB );
 
@@ -734,13 +734,13 @@ const DoubleMatrix expectedHessian_alp(
     model.setPopPar(alp);
     model.setIndPar(b);
 
-    valarray<double> DInv_a;
+    valarray<double> DInv_a( nB * nB * nA );
     model.indParVarianceInv_popPar( DInv_a );
     DoubleMatrix dmatDInv_a( DInv_a, nA );
     assert(dmatDInv_a.nr()==nB*nB);
     assert(dmatDInv_a.nc()==nA );
 
-    valarray<double> RInv_a;
+    valarray<double> RInv_a( nY * nY * nA );
     model.dataVarianceInv_popPar( RInv_a );
     DoubleMatrix dmatRInv_a( RInv_a, nA );
     assert(dmatRInv_a.nr() == nY*nY);
