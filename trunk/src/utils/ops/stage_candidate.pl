@@ -121,7 +121,7 @@ my $dashes = "----------------------------------";
 open FH, "> $notes" or die "Could not create $notes\n";
 open TH, $template  or die "Could not open $template\n";
 print FH "$dashes\n";
-print FH    "RELEASE NOTES FOR VERSION $version\n";
+print FH "RELEASE NOTES FOR VERSION $version\n";
 print FH  "$dashes\n";
 while (<TH>) {
     print FH;
