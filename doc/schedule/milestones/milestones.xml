@@ -259,12 +259,14 @@
       <title>Job History Model</title>
       <para>
 	From a usability standpoint, Spk is organized around the notion of
-	a <emphasis>job</emphasis>.  With the Model Design Agent (MDA), the
-	user can submit a model and data for processing.  Taken together,
-	the model and data comprise a new job.  On its route to completion,
+	a <emphasis>job</emphasis>. In order to run a population kinetics
+	model against a set of data, the user employs the MDA to
+	submit model, data, and certain directives to Spk for processing.
+	Taken together,	the model, data and directives 
+	comprise a new job. On its route to completion,
 	the job passes through a sequence of states, which constitute
-	its history.  The Job History Model defines the set of state
-	sequences that are possible for a job.
+	its history.  The Job History Model defines the set of job state
+	sequences that are possible.
       </para>
       <para>
 	This document is now complete and can be viewed
