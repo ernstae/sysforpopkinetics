@@ -4,8 +4,13 @@
 [
   <!ENTITY uw "University of Washington">
   <!ENTITY dept "Department of Bioengineering">
-  <!ENTITY cvs "<emphasis>cvs</emphasis>">
-  <!ENTITY ssh "<emphasis>ssh</emphasis>">
+  <!ENTITY commit "<command>commit</command>"> 
+  <!ENTITY checkout "<command>checkout</command>">
+  <!ENTITY cvs "<command>cvs</command>">
+  <!ENTITY diff "<command>diff</command>">
+  <!ENTITY merge "<command>merge</command>">
+  <!ENTITY ssh "<command>ssh</command>">
+  <!ENTITY update "<command>update</command>">
 ]>
 <article><title>CVS RFPK HOWTO</title>
  <articleinfo>
@@ -143,20 +148,21 @@
       of course, is the situation that the exclusive checkout
       model avoids.  With the CVS model, however,
       it really is not a problem.  When the user
-      asks CVS to
-      <emphasis>commit</emphasis> her changes, CVS will refuse, informing
+      executes the CVS &commit; command to incorporate her changes
+      in the repository,
+      CVS will refuse, informing
       her that there are potential conflicts and that she
-      will have to perform a <emphasis>merge</emphasis>.
+      will have to perform a &merge;
       To observe all the 
       differences between her working copy and the current
       copy in the CVS repository, she can run the CVS 
-      <emphasis>diff</emphasis> command.  She can then edit
+      &diff; command.  She can then edit
       her working copy to resolve any differences.  When
-      she finally runs the CVS <emphasis>merge</emphasis>
+      she finally runs the CVS &merge;
       command, CVS will provide an editing window in which
       she can make her final changes if any potential
       conflicts still remain.
-      Once she completes the merge, her revision
+      Once she completes the &merge;, her revision
       becomes the most recent revision in the repository.
     </para>
     <para>
@@ -172,7 +178,7 @@
   <sect1>
     <title>Repositories</title>
     <para>
-      All of the documents under revision control are stored in
+      All of the documents under revision control are stored in a
       <emphasis>repository</emphasis> on a server.  CVS permits
       several repositories on a single server.  At present,
       we have defined two.  One repository is for the work
@@ -232,7 +238,7 @@
       issue a CVS command from the command line on your
       workstation, the local copy of the &cvs; program communicates
       with the server via an encrypted channel that it
-      calls upon $ssh; to provide.  The command is actually 
+      calls upon &ssh; to provide.  The command is actually 
       executed on the server, with data being piped through the
       encrypted channel between the server and your workstation.
       This is, arguably, the most secure arrangement possible on
@@ -242,7 +248,7 @@
       Because CVS was originally designed to perform remote
       execution using not &ssh; but rather an insecure program
       called <emphasis>rsh</emphasis>, it is necessary to indicate
-      to CVS that only $ssh; should be used.  This can be accomplished
+      to CVS that only &ssh; should be used.  This can be accomplished
       by setting and exporting the <varname>CVS_RSH</varname> 
       environment variable.  Using the Bash shell, which is 
       standard with Cygwin, most Linux systems and many Unix
@@ -252,7 +258,7 @@
 	CVS_RSH=ssh
 	export CVS_RSH
       </programlisting>
-      To avoid having to type these two lines in every time you log
+      To avoid having to type these two lines every time you log
       in to a Linux or Unix shell or start the Cygwin shell
       window, you should add them to your
       <filename moreinfo="none">.bash_profile</filename> shell
@@ -275,7 +281,9 @@
         export CVSROOT
       </programlisting>
       where <emphasis>user</emphasis> is your login user name on 
-      the the server.  
+      <systemitem moreinfo="none" class="systemname">
+        whitechuck
+      </systemitem>.
       <emphasis>Note the r1 at the end of the line which
       defines CVSPATH</emphasis>.  This indicates that you
       want to use the 
@@ -283,6 +291,81 @@
       repository rather than
       <systemitem moreinfo="none" class="resource">r2</systemitem>
       or some other repository.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Getting a Working Copy</title>
+    <para>
+      To make changes to existing documents or to add new documents
+      you first need to get a working copy of the repository or
+      at least the part of the repository that you want to change.
+      You accomplish this with the CVS &checkout; command.
+    </para>
+    <para>
+      For example, you can checkout the entire
+      <systemitem moreinfo="none" class="resource">r1</systemitem>
+      repository with the following command:
+      <screen format="linespecific">
+	cvs checkout r1
+      </screen>
+    </para>
+    <para>
+      To checkout a particular module, in this case the
+      <emphasis>muscle</emphasis> module, you would use this
+      command:
+      <screen format="linespecific">
+	cvs checkout muscle
+      </screen>
+     </para>
+    <para>
+      When you issue a &checkout; command, CVS inserts a copy of 
+      the module in your current directory.  In the first example,
+      a directory named 
+      <filename moreinfo="none" class="directory">r1</filename>
+      appears in your current directory.  In the second example,
+      a directory named
+      <filename moreinfo="none" class="directory">muscle</filename>
+      appears.
+    </para>
+    <para>
+      Your working copy is a directory tree.  The root of that
+      tree is the repository or the module that you checked out.
+      Within the directories of this tree, you will find the
+      documents that are under version control.  You are free
+      to modify these documents, using your favorite text
+      editor. 
+    </para>
+    <para>
+      In each of the directories you will also find a subdirectory
+      named <filename moreinfo="none" class="directory">CVS</filename>,
+      which was placed there by CVS as part of the checkout process.
+      <emphasis>Do not modify the CVS directory or any of
+      its contents.</emphasis>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Getting Updates</title>
+    <para>
+      As you work on your modifications, your collaborators may have
+      been revising the documents of the same module you are working
+      on.  You can easily get your working copy updated with any
+      changes they have made.  
+    </para>
+    <para>
+      To use the CVS &update; command, your current directory 
+      must be one of the directories of your working copy.  The
+      command will update files in that directory and in any
+      subdirectories.  It will not update files in parent 
+      directories.  Thus positioned, simply issue the command:
+      <screen format="linespecific">
+	cvs update
+      </screen>
+    </para>
+    <para>
+      If the files you are currently working on have been revised
+      since your last &update; or &checkout; command, the updating
+      process may change them.  Revisions will be merged into these
+      files, but your changes will not be wiped out.
     </para>
   </sect1>
 </article>
