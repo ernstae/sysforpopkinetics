@@ -291,8 +291,8 @@ sub fork_driver {
     my $jrow = shift;
     my $job_id = $jrow->{'job_id'};
     my $cpp_source = $jrow->{'cpp_source'};
+    my $checkpoint = $jrow->{'checkpoint'};
     my $pid;
-
 
     # Create a working directory
     my $unique_name = $prefix_working_dir . "-job-" . $job_id;
@@ -320,6 +320,17 @@ sub fork_driver {
     }
     File::Path::rmtree($archive_name);
 
+    # Create checkpoint.xml if checkpoint field in job table is not NULL
+
+    if (defined $checkpoint && length $checkpoint) {
+	open(FH, ">$filename_checkpoint")
+	    or death('emerg', "could not create $filename_checkpoint file in $working_dir");
+	print FH $checkpoint;
+	close(FH);
+	if (-s $filename_checkpoint != length $checkpoint) {
+	    death('emerg', "write of $filename_checkpoint failed");
+	}
+    }
     # Fork the process into parent and child
 
   FORK: {
@@ -549,17 +560,17 @@ sub reaper {
     else {
         unlink($filename_serr);
     }
-
     if ($child_dumped_core) {
 	$err_msg .= "core dump in $working_dir; ";
     }
-    if ($end_code =~ "srun") {
+    if( -f $filename_checkpoint && -s $filename_checkpoint > 0 ){
 	# Read the checkpoint file into the checkpoint variable
 	open(FH, $filename_checkpoint)
 	    or death('emerg', "can't open $working_dir/$filename_checkpoint");
 	read(FH, $checkpoint, -s FH);
 	close(FH);
-
+    }
+    if ($end_code =~ "srun") {
 	# Read the results file into the report variable
 	open(FH, $filename_results)
 	    or death('emerg', "can't open $working_dir/$filename_results");
@@ -575,14 +586,6 @@ sub reaper {
     else {
 	# Get email address of user
 	my $email = &email_for_job($dbh, $job_id);
-
-        if( -f $filename_checkpoint && -s $filename_checkpoint > 0 ){
-           # Read the checkpoint file, if it exists, into the checkpoint variable.
-           open(FH, $filename_checkpoint)
-              or death( 'emerg', "can't open $working_dir/$filename_checkpoint");
-	   read(FH, $checkpoint, -s FH );
-           close(FH);
-        }
 
         if( -f $filename_results && -s $filename_results > 0 ){
            # Read the results file, if it exists, into the report variable.
