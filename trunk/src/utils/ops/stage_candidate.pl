@@ -3,6 +3,112 @@
 use strict;
 use English;
 use File::Path;
+use cand("stage_directory", "make_directory");
+
+=head1 NAME
+
+    stage_candidate.pl -- stage an SPK for subsequent deployment
+
+=head1 SYNPOSIS
+
+    stage_candidate.pl
+
+=head1 ABSTRACT
+
+    The stage_candidate.pl operations utility is part of the process of
+    moving an SPK system from test into production. It captures software
+    that has passed system test, and stores it for subsequent deployment.
+
+=head1 DESCRIPTION
+
+    In the RFPK installation of SPK, two identical platforms are maintained:
+    one for system test and the other for production. The migration of new
+    versions into production is the following:
+    1.  All of the software needed to run the server side of SPK is assembled
+        on the system test platform.
+    2.  The system is tested, using test sets with known results.
+    3.  If problems are detected, they are fixed, and steps 1 and 2 
+        repeated.  This occurs as many times as necessary, until system
+        test results are satisfactory.
+    4.  stage_candidate.pl is run, making a complete copy of the tested
+        system, in a form that can be deployed by a companion utilityk
+        called deploy_candidate.pl
+    5.  A system is not necessarily deployed immediately, unless it contains
+        fixes to bugs with serious impact on users.  Instead, deployments
+        are scheduled on a regular basis.  Therefore, it is normal for
+        several candidates to be assembled and tested, before deployment
+        of the most recent one takes place.
+    6.  stage_candidate will stage a number of candidates (the default is
+        four).
+
+=head2 DIRECTORY STRUCTURE
+
+    stage_candidate.pl stores candidates in a directory, which we will refer
+    to as the candidate directory.  Each candidate is represented by a
+    candidate reference file and a candidate data tree.
+
+=head3 CANDIDATE REFERENCE FILE
+
+    A candidate reference file (CRF) is a file that contains the directory
+    name of a candidate data tree, followed by a newline.  The CRF for the
+    newest candidate is named "candidate", the next most recent candidate
+    is called "candidate.1", the one before that "candidate.2", etc.
+
+=head3 CANDIDATE REFERENCE TREE
+
+    Each candidate reference tree (CRT) has a name that identifies it as
+    belonging to SPK and the date and time at which it was created.  The
+    format of the name is: spk-yyyy-mm-dd-hh-mm-ss.
+
+    The structure of each CRT is the following:
+
+    aspkserver
+        usr
+            local
+                bin
+                    spkprod
+                include
+                    spkprod
+                lib
+                    spkprod
+    cspkserver
+        usr
+            local
+                bin
+                    spkprod
+                include
+                    spkprod
+                lib
+                    spkprod
+
+=head1 FILES
+
+    /usr/local/spk/ops/candidate/rotate.conf
+ 
+        In order to rotate the candidate names (candidate -> candidate.1->
+        candidate.2 -> ...), stage_candidate calls the logrotate unix
+        utility for assistance.  The file rotate.conf is required by 
+        logrotate.  Here is an example of such a file:
+
+        "candidate" {
+            rotate 3
+            weekly
+        }
+
+        The value of the "rotate" directive tells the maximum depth of the
+        sequence of names.  In this case, there will be a "candidate.3"
+        but no "candidate.4".  The "weekly" directive has no effect in
+        this application, but is required by logrotate.
+        
+    /usr/local/spk/ops/candidate/rotate.status
+
+        This file is written by logrotate and simply tells the name of
+        the latest file in the rotation (which is alwyas "candidate") and
+        the date on which the most recent rotation occurred.  This file
+        is not of any use in this application, but is simply a side-effect
+        of the use of logrotate.
+
+=cut
 
 my $ops_root = "/usr/local/spk/ops";
 my $candidate_dir = "$ops_root/candidate";
@@ -11,8 +117,6 @@ my $rotate_conf = "rotate.conf";
 my $dir_prefix = "spk-";
 
 my $logrotate_command = "/usr/sbin/logrotate";
-my $mkdir_command = "/bin/mkdir";
-my $scp_command = "/usr/bin/scp";
 
 $EFFECTIVE_USER_ID == 0 
     or die "You must be root to run this program\n";
@@ -25,28 +129,6 @@ $EFFECTIVE_USER_ID == 0
            . 'it must include an entry for "candidate"'
            . "\n(see unix manual page LOGROTATE(8))\n\n";
 
-sub copy_directory {
-    my $host = shift;
-    my $path = shift;
-    my $source = "$host:$path/spktest";
-    my $dest = "$host/$path";
-    my @args = ($scp_command, "-r", $source, $dest);
-    system(@args);
-    my $exit_status = $? >> 8;
-    if ($exit_status != 0) {
-	die "'scp -r $source $dest' failed\n";
-    }
-}
-
-sub make_directory {
-    my $path = shift;
-    my @args = ($mkdir_command, "-p", $path);
-     system(@args);
-    my $exit_status = $? >> 8;
-    if ($exit_status != 0) {
-	die "Could not make directory '$path'\n";
-    }
-}
 
 my ($sec, $min, $hour, $mday, $mon, $year) = localtime;
 
@@ -91,17 +173,14 @@ make_directory "$new_dir/aspkserver/usr/local/bin/spktest";
 make_directory "$new_dir/aspkserver/usr/local/include/spktest";
 make_directory "$new_dir/aspkserver/usr/local/lib/spktest";
 
-exit;
-
 chdir $new_dir;
 
-copy_directory "aspkserver", "/usr/local/bin";
-copy_directory "aspkserver", "/usr/local/include";
-copy_directory "aspkserver", "/usr/local/lib";
-
-copy_directory "cspkserver", "/usr/local/bin";
-copy_directory "cspkserver", "/usr/local/include";
-copy_directory "cspkserver", "/usr/local/lib";
+stage_directory "aspkserver", "/usr/local/bin";
+stage_directory "aspkserver", "/usr/local/include";
+stage_directory "aspkserver", "/usr/local/lib";
+stage_directory "cspkserver", "/usr/local/bin";
+stage_directory "cspkserver", "/usr/local/include";
+stage_directory "cspkserver", "/usr/local/lib";
 
 
 
