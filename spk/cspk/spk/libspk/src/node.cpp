@@ -134,7 +134,6 @@ $end
 #include <cfloat>
 #include <fstream>
 #include <exception>
-#include <strstream>
 
 #include "DoubleMatrix.h"
 #include "node.h"
@@ -218,17 +217,13 @@ void node(const char* c_sharedDirectory, SpkModel& model)
 {
   File sharedDiskSpace(c_sharedDirectory, "");
 
-  strstream popItrStream;
-  popItrStream << sharedDiskSpace.getPath();
-  popItrStream << "pop.itr";
-  popItrStream.put(NULL);
-  const char* popItrFileFullpath = popItrStream.str();
+  string popItrString = sharedDiskSpace.getPath();
+  popItrString += "pop.itr";
+  const char* popItrFileFullpath = popItrString.c_str();
 
-  strstream sessionIDStream;
-  sessionIDStream << sharedDiskSpace.getPath();
-  sessionIDStream << "session.id";
-  sessionIDStream.put(NULL);
-  const char* sessionIDFileFullpath = sessionIDStream.str();
+  string sessionIDString = sharedDiskSpace.getPath();
+  sessionIDString += "session.id";
+  const char* sessionIDFileFullpath = sessionIDString.c_str();
   curSessionID = getMasterSessionID(sessionIDFileFullpath);
 
   string firstInputFile = sharedDiskSpace.getPath();
@@ -277,56 +272,55 @@ void node(const char* c_sharedDirectory, SpkModel& model)
       }
       catch(SpkException &e)
       {
-        strstream mess;
+        const int max = SpkError::maxMessageLen();
+        char mess[max];
 
         if( System::exist(sharedDiskSpace) )
         {
-          mess << "Fatal error occured while accessing the shared directory.";
+          sprintf( mess, "Fatal error occured while accessing the shared directory.\n" );
         }
         else
         {
-          mess << "The shared directory is no longer accessible.";
+          sprintf( mess, "The shared directory is no longer accessible.\n" );
         }
-        mess << endl << ends;
 
-        e.push(SpkError::SPK_UNKNOWN_ERR,mess.str(), __LINE__, __FILE__);
+        e.push(SpkError::SPK_UNKNOWN_ERR, mess, __LINE__, __FILE__);
         cerr << e << endl;
         abort();
       }
       catch(const std::exception& stde)
       {
-        strstream mess;
+        const int max = SpkError::maxMessageLen();
+        char mess[max];
 
         if( System::exist(sharedDiskSpace) )
         {
-          mess << "Fatal IO error occured while accessing the shared directory.";
+          sprintf( mess, "Fatal IO error occured while accessing the shared directory.\n" );
         }
         else
         {
-          mess << "The shared directory is no longer accessible.";
+          sprintf( mess, "The shared directory is no longer accessible.\n" );
         }
-        mess << endl << ends;
 
-        SpkException e(stde, "Fatal IO error occured while accessing the shared directory.", __LINE__, __FILE__);
+        SpkException e(stde, mess, __LINE__, __FILE__);
         cerr << e << endl;
         abort();
       }
       catch(...)
       {
-        strstream mess;
+        const int max = SpkError::maxMessageLen();
+        char mess[max];
 
         if( System::exist(sharedDiskSpace) )
         {
-          mess << "Fatal IO error occured while accessing the shared directory.";
+          sprintf( mess, "Fatal IO error occured while accessing the shared directory.\n" );
         }
         else
         {
-          mess << "The shared directory is no longer accessible.";
+          sprintf( mess, "The shared directory is no longer accessible.\n" );
         }
-        mess << endl << ends;
 
-        SpkException e(SpkError::SPK_UNKNOWN_ERR,
-            "Fatal error occured while accessing the shared directory.", __LINE__, __FILE__);
+        SpkException e(SpkError::SPK_UNKNOWN_ERR, mess, __LINE__, __FILE__);
         cerr << e << endl;
         abort();
       }
@@ -380,34 +374,35 @@ void node(const char* c_sharedDirectory, SpkModel& model)
       }
       catch( SpkException& e )
       {
-          std::strstream stream;
-          stream << "The " << who << "-th individual's analysis failed." << endl;
-          stream.put('\0');
+          const int max = SpkError::maxMessageLen();
+          char buf[max];
+          sprintf( buf, "\nThe %d-th individual's analysis failed.", who );
 
-          channel.post(e.push(SpkError::SPK_UNKNOWN_ERR, stream.str(), __LINE__,__FILE__));
+          channel.post(e.push(SpkError::SPK_UNKNOWN_ERR, buf, __LINE__,__FILE__));
           continue;
       }
       catch( const std::exception& stde )
       {
-          std::strstream stream;
-          stream << "The " << who << "-th individual's analysis failed." << endl;
-          stream.put('\0');
+          const int max = SpkError::maxMessageLen();
+          char buf[max];
+          sprintf( buf, "\nThe %d-th individual's analysis failed.", who );
+
 	  // PARALLEL -- FIX LATER
           //channel.post(SpkException(stde,
-	  //  stream.str(),
+	  //  buf,
 	  //  __LINE__,
 	  //  __FILE__));
           continue;
       }
       catch( ... )
       {
-          std::strstream stream;
-          stream << "The " << who << "-th individual's analysis failed." << endl;
-          stream.put('\0');
-	  // PARALLEL -- FIX LATER
+          const int max = SpkError::maxMessageLen();
+          char buf[max];
+          sprintf( buf, "\nThe %d-th individual's analysis failed.", who );
+
 	  //          channel.post(SpkException(
 	  //  SpkError::SPK_UNKNOWN_ERR,
-	  //  stream.str(),
+	  //  buf,
 	  //  __LINE__,
 	  //  __FILE__));
           continue;
