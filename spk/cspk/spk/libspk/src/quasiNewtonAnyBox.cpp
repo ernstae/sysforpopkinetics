@@ -477,7 +477,6 @@ $end
 // Standard library header files.
 #include <iostream>
 #include <fstream>
-#include <strstream>
 #include <iomanip>
 #include <cassert>
 #include <cmath>
@@ -570,7 +569,7 @@ namespace // [Begin: unnamed namespace]
 
   public:
     QuasiNewton01BoxObj(
-      QuasiNewtonAnyBoxObj*  pObjectiveIn;
+      QuasiNewtonAnyBoxObj*  pObjectiveIn,
       const DoubleMatrix*    pdvecXLowIn,
       const DoubleMatrix*    pdvecXUpIn,
       const DoubleMatrix*    pdvecXDiffIn )
@@ -579,13 +578,13 @@ namespace // [Begin: unnamed namespace]
       pdvecXLow   ( pdvecXLowIn ),
       pdvecXUp    ( pdvecXUpIn ),
       pdvecXDiff  ( pdvecXDiffIn ),
+      pdXLowData  ( pdvecXLow->data() ),
+      pdXUpData   ( pdvecXUp->data() ),
+      pdXDiffData ( pdvecXDiff->data() ),
       nX          ( pdvecXDiff->nr() )
     {
       dvecXCurr.resize( nX, 1 );
 
-      pdXLowData  = pdvecXLow.data();
-      pdXUpData   = pdvecXUp.data();
-      pdXDiffData = pdvecXDiff.data();
       pdXCurrData = dvecXCurr.data();
     }
 
@@ -605,17 +604,17 @@ namespace // [Begin: unnamed namespace]
     const DoubleMatrix* const pdvecXUp;       // Unscaled upper bounds.
     const DoubleMatrix* const pdvecXDiff;     // Difference between unscaled  
                                               // lower and upper bounds.
+    const double* pdXLowData;
+    const double* pdXUpData;
+    const double* pdXDiffData;
 
     const int nX;                             // Number of elements.
 
     DoubleMatrix dvecXCurr;                   // Current parameter value.
     DoubleMatrix drowF_xCurr;                 // Current gradient value.
 
-    double* pdvecXLowData;
-    double* pdvecXUpData;
-    double* pdvecXDiffData;
     double* pdXCurrData;
-    double* pdrowF_xCurrData;
+    double* pdF_xCurrData;
 
 
     //----------------------------------------------------------
