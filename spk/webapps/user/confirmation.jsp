@@ -1,4 +1,6 @@
-<%@page contentType="text/html"%>
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "xhtml1-transitional.dtd">
+<%@ page contentType="text/html" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
@@ -12,7 +14,7 @@
 
 <html>
 <head>
-  <title>Member Main Page</title>
+  <title>The User Information Stored</title>
   <link href=stylesheet.css type="text/css" rel=stylesheet>
 </head>
   <body>
@@ -32,26 +34,27 @@
 	  </td>
 	  <td colspan=1 vAlign=top width=10><img alt="trans gif" height=5 src="./images/white.gif" width=10/>
 	  <td colspan=1 vAlign=top>
-	    <h3>Welcome ${fn:escapeXml(validUser.firstName)}  ${fn:escapeXml(validUser.lastName)}</h1>
-	    <p>
-               Select one of the following:
-            </p>
-            <p>
-               Change my password<br>
-               <a href="getmda.jsp">Get my Model Design Agent</a><br>
-               View my job status<br>
-               View my model archive<br>
-               View my dataset archive<br>
-               View model library<br>
-               View my account information
-               <c:if test="${validUser.userName == 'scientist'}">
-                 <br>Manage user account
-                 <br>Manage model library
-               </c:if>           
-            </p>
+
+            <h3>This is the information stored in the user database:</h3>
+            <table>
+              <c:forEach items="${newUserDbInfo.rows}" var="row">
+              <c:forEach items="${row}" var="column">
+              <tr>
+                <td align=right>
+                  <b>${fn:escapeXml(column.key)}:</b>
+                </td>
+                <td>
+                  ${fn:escapeXml(column.value)}
+                </td>
+              </tr>
+              </c:forEach>
+              </c:forEach>
+            </table>
+            <p> 
                When you are done, please <a href="logout.jsp">log out</a>.
-       	  </td>
-	</tr>     
+            </p>
+          </td>
+        </tr>
       </tbody>
     </table>
   </body>

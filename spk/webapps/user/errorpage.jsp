@@ -13,7 +13,7 @@
     analyze it and correct whatever is causing it as soon as possible.
     <p>
     Please try again, and 
-    <a href="mailto:webmaster@rfpk.washington.edu">let us know</a> if the
+    <a href="mailto:rfpksoft@u.washington.edu">let us know</a> if the
     problem persists.
 
     <ora:fileWrite fileName="log">

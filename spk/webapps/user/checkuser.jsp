@@ -1,8 +1,11 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "xhtml1-transitional.dtd">
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 
 <%-- Remove the validUser session bean, if any --%>
 <c:remove var="validUser" />
+<c:remove var="digest" />
 
 <c:if test="${empty param.userName || empty param.password}">
   <c:redirect url="index.jsp" >
@@ -35,6 +38,7 @@
 --%>
 <c:set var="dbValues" value="${userInfo.rows[0]}" />
 <jsp:useBean id="validUser" scope="session" class="uw.rfpk.beans.UserInfo" >
+  <c:set target="${validUser}" property="userId" value="${dbValues.user_id}" />
   <c:set target="${validUser}" property="userName" value="${dbValues.username}" />
   <c:set target="${validUser}" property="firstName" value="${dbValues.first_name}" />
   <c:set target="${validUser}" property="lastName" value="${dbValues.surname}" />
@@ -45,7 +49,7 @@
     <c:redirect url="${param.origURL}" />
   </c:when>
   <c:otherwise>
-    <c:redirect url="main.jsp" />
+    <c:redirect url="usermain.jsp" />
   </c:otherwise>
 </c:choose>
 
