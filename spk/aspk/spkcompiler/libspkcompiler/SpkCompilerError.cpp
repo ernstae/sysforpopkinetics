@@ -54,11 +54,11 @@ static const char *const substr(const char * begin,
       //+ strlen("errorcode\n") + strlen("description\n") + strlen("linenum\n") + strlen("filename\n") + strlen("message\n");
       + 10 + 12 + 8 + 9 + 8;
 
-  const char SpkCompilerError::ERRORCODE_FIELD_NAME[] = "errorcode";
+  const char SpkCompilerError::ERRORCODE_FIELD_NAME[]             = "errorcode";
   const char SpkCompilerError::ERRORCODE_DESCRIPTION_FIELD_NAME[] = "description";
-  const char SpkCompilerError::FILENAME_FIELD_NAME[]  = "filename";
-  const char SpkCompilerError::LINENUM_FIELD_NAME[]   = "linenum";
-  const char SpkCompilerError::MESSAGE_FIELD_NAME[]   = "message";
+  const char SpkCompilerError::FILENAME_FIELD_NAME[]              = "filename";
+  const char SpkCompilerError::LINENUM_FIELD_NAME[]               = "linenum";
+  const char SpkCompilerError::MESSAGE_FIELD_NAME[]               = "message";
 
 
 /*------------------------------------------------------------------------
