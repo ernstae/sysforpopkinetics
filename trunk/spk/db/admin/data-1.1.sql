@@ -5,20 +5,6 @@
 -- Server version	4.0.17-standard
 
 --
--- Table structure for table `dataset`
---
-
-CREATE TABLE dataset (
-  dataset_id int(10) unsigned NOT NULL auto_increment,
-  name varchar(20) NOT NULL default '',
-  abstract varchar(100) NOT NULL default '',
-  archive longblob,
-  user_id int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (dataset_id),
-  UNIQUE KEY user_id (user_id,name)
-) TYPE=InnoDB;
-
---
 -- Dumping data for table `dataset`
 --
 
@@ -34,16 +20,6 @@ INSERT INTO dataset (dataset_id, name, abstract, archive, user_id) VALUES (9,'ne
 INSERT INTO dataset (dataset_id, name, abstract, archive, user_id) VALUES (10,'norris.txt','http://www.itl.nist.gov/div898/strd/lls/data/LINKS/v-Norris.shtml','head	1.1;\naccess;\nsymbols;\nlocks; strict;\ncomment	@# @;\n\n\n1.1\ndate	2004.04.27.16.47.10;	author vicini;	state Exp;\nbranches;\nnext	;\n\n\ndesc\n@@\n\n\n1.1\nlog\n@@\ntext\n@<?xml version=\"1.0\"?>\n<spkdata version=\"0.1\">\n   <table columns=\"2\" rows=\"37\">\n      <description>norris.txt</description>\n      <row position=\"1\">\n         <value type=\"string\">DV</value>\n         <value type=\"string\">TIME</value>\n      </row>\n      <row position=\"2\">\n         <value>0.1</value>\n         <value>0.2</value>\n      </row>\n      <row position=\"3\">\n         <value>338.8</value>\n         <value>337.4</value>\n      </row>\n      <row position=\"4\">\n         <value>118.1</value>\n         <value>118.2</value>\n      </row>\n      <row position=\"5\">\n         <value>888.0</value>\n         <value>884.6</value>\n      </row>\n      <row position=\"6\">\n         <value>9.2</value>\n         <value>10.1</value>\n      </row>\n      <row position=\"7\">\n         <value>228.1</value>\n         <value>226.5</value>\n      </row>\n      <row position=\"8\">\n         <value>668.5</value>\n         <value>666.3</value>\n      </row>\n      <row position=\"9\">\n         <value>998.5</value>\n         <value>996.3</value>\n      </row>\n      <row position=\"10\">\n         <value>449.1</value>\n         <value>448.6</value>\n      </row>\n      <row position=\"11\">\n         <value>778.9</value>\n         <value>777.0</value>\n      </row>\n      <row position=\"12\">\n         <value>559.2</value>\n         <value>558.2</value>\n      </row>\n      <row position=\"13\">\n         <value>0.3</value>\n         <value>0.4</value>\n      </row>\n      <row position=\"14\">\n         <value>0.1</value>\n         <value>0.6</value>\n      </row>\n      <row position=\"15\">\n         <value>778.1</value>\n         <value>775.5</value>\n      </row>\n      <row position=\"16\">\n         <value>668.8</value>\n         <value>666.9</value>\n      </row>\n      <row position=\"17\">\n         <value>339.3</value>\n         <value>338.0</value>\n      </row>\n      <row position=\"18\">\n         <value>448.9</value>\n         <value>447.5</value>\n      </row>\n      <row position=\"19\">\n         <value>10.8</value>\n         <value>11.6</value>\n      </row>\n      <row position=\"20\">\n         <value>557.7</value>\n         <value>556.0</value>\n      </row>\n      <row position=\"21\">\n         <value>228.3</value>\n         <value>228.1</value>\n      </row>\n      <row position=\"22\">\n         <value>998.0</value>\n         <value>995.8</value>\n      </row>\n      <row position=\"23\">\n         <value>888.8</value>\n         <value>887.6</value>\n      </row>\n      <row position=\"24\">\n         <value>119.6</value>\n         <value>120.2</value>\n      </row>\n      <row position=\"25\">\n         <value>0.3</value>\n         <value>0.3</value>\n      </row>\n      <row position=\"26\">\n         <value>0.6</value>\n         <value>0.3</value>\n      </row>\n      <row position=\"27\">\n         <value>557.6</value>\n         <value>556.8</value>\n      </row>\n      <row position=\"28\">\n         <value>339.3</value>\n         <value>339.1</value>\n      </row>\n      <row position=\"29\">\n         <value>888.0</value>\n         <value>887.2</value>\n      </row>\n      <row position=\"30\">\n         <value>998.5</value>\n         <value>999.0</value>\n      </row>\n      <row position=\"31\">\n         <value>778.9</value>\n         <value>779.0</value>\n      </row>\n      <row position=\"32\">\n         <value>10.2</value>\n         <value>11.1</value>\n      </row>\n      <row position=\"33\">\n         <value>117.6</value>\n         <value>118.3</value>\n      </row>\n      <row position=\"34\">\n         <value>228.9</value>\n         <value>229.2</value>\n      </row>\n      <row position=\"35\">\n         <value>668.4</value>\n         <value>669.1</value>\n      </row>\n      <row position=\"36\">\n         <value>449.2</value>\n         <value>448.9</value>\n      </row>\n      <row position=\"37\">\n         <value>0.2</value>\n         <value>0.5</value>\n      </row>\n   </table>\n</spkdata>\r\n@\n',3);
 
 --
--- Table structure for table `end`
---
-
-CREATE TABLE end (
-  end_code char(4) NOT NULL default '',
-  end_name char(20) default NULL,
-  PRIMARY KEY  (end_code)
-) TYPE=MyISAM;
-
---
 -- Dumping data for table `end`
 --
 
@@ -51,19 +27,6 @@ INSERT INTO end (end_code, end_name) VALUES ('cerr','Compiler Error');
 INSERT INTO end (end_code, end_name) VALUES ('herr','Hard Fault');
 INSERT INTO end (end_code, end_name) VALUES ('serr','Software Error');
 INSERT INTO end (end_code, end_name) VALUES ('srun','Successful Run');
-
---
--- Table structure for table `history`
---
-
-CREATE TABLE history (
-  history_id int(10) unsigned NOT NULL auto_increment,
-  event_time int(10) unsigned NOT NULL default '0',
-  state_code char(3) NOT NULL default '',
-  job_id int(10) unsigned NOT NULL default '0',
-  host varchar(100) NOT NULL default '',
-  PRIMARY KEY  (history_id)
-) TYPE=InnoDB;
 
 --
 -- Dumping data for table `history`
@@ -87,28 +50,6 @@ INSERT INTO history (history_id, event_time, state_code, job_id, host) VALUES (1
 INSERT INTO history (history_id, event_time, state_code, job_id, host) VALUES (16,1083109630,'q2c',16,'');
 
 --
--- Table structure for table `job`
---
-
-CREATE TABLE job (
-  job_id int(10) unsigned NOT NULL auto_increment,
-  user_id int(10) unsigned NOT NULL default '0',
-  abstract varchar(100) NOT NULL default '',
-  dataset_id int(10) unsigned NOT NULL default '0',
-  dataset_version varchar(10) NOT NULL default '',
-  model_id int(10) unsigned NOT NULL default '0',
-  model_version varchar(10) NOT NULL default '',
-  xml_source longblob,
-  state_code char(3) NOT NULL default '',
-  report longblob,
-  start_time int(10) unsigned NOT NULL default '0',
-  event_time int(10) unsigned NOT NULL default '0',
-  cpp_source longblob,
-  end_code varchar(4) default NULL,
-  PRIMARY KEY  (job_id)
-) TYPE=InnoDB;
-
---
 -- Dumping data for table `job`
 --
 
@@ -130,20 +71,6 @@ INSERT INTO job (job_id, user_id, abstract, dataset_id, dataset_version, model_i
 INSERT INTO job (job_id, user_id, abstract, dataset_id, dataset_version, model_id, model_version, xml_source, state_code, report, start_time, event_time, cpp_source, end_code) VALUES (16,3,'NORRIS LINEAR LEAST SQUARES',10,'1',13,'1','<?xml version=\"1.0\"?>\n<spksource>\n   <nonmem version=\"0.1\">\n      <constraint>\n         <ind_analysis is_estimation=\"yes\" is_restart=\"no\" mitr=\"450\">\n            <description>NORRIS LINEAR LEAST SQUARES</description>\n            <data_labels>\n               <label name=\"DV\"/>\n               <label name=\"TIME\"/>\n            </data_labels>\n            <theta length=\"2\">\n               <low>\n                  <value fixed=\"no\">0.02</value>\n                  <value fixed=\"no\">0.1</value>\n               </low>\n               <in>\n                  <value fixed=\"no\">0.2</value>\n                  <value fixed=\"no\">1</value>\n               </in>\n               <up>\n                  <value fixed=\"no\">2.0</value>\n                  <value fixed=\"no\">10.0</value>\n               </up>\n            </theta>\n            <omega dimension=\"1\" same_as_previous=\"no\" struct=\"diagonal\">\n               <in>\n                  <value fixed=\"no\">1</value>\n               </in>\n            </omega>\n            <ind_stat/>\n         </ind_analysis>\n      </constraint>\n      <model>\n         <pred>\r\nb0 = THETA(1)\r\r\nb1 = THETA(2)\r\r\nx = TIME\r\r\nF = b0 + b1*x  \r\r\nY = F + ETA(1)\r\n         </pred>\n      </model>\n      <presentation>\n         <table header=\"every\" process=\"estimation\" save_as=\"norris.out\">\n            <column appearance_order=\"1\" label=\"TIME\" sort_order=\"0\"/>\n            <column appearance_order=\"2\" label=\"F\" sort_order=\"0\"/>\n            <column appearance_order=\"3\" label=\"DV\" sort_order=\"0\"/>\n            <column appearance_order=\"4\" label=\"PRED\" sort_order=\"0\"/>\n            <column appearance_order=\"5\" label=\"RES\" sort_order=\"0\"/>\n            <column appearance_order=\"6\" label=\"WRES\" sort_order=\"0\"/>\n         </table>\n         <scatterplot begin=\"1\" end=\"900\" process=\"estimation\" unit_slope=\"show\" x0_line=\"show\" y0_line=\"show\">\n            <x label=\"DV\"/>\n            <x label=\"PRED\"/>\n            <y label=\"TIME\"/>\n         </scatterplot>\n      </presentation>\n   </nonmem>\n</spksource>\r\n','q2c',NULL,1083109630,1083109630,NULL,NULL);
 
 --
--- Table structure for table `model`
---
-
-CREATE TABLE model (
-  model_id int(10) unsigned NOT NULL auto_increment,
-  name varchar(20) NOT NULL default '',
-  abstract varchar(100) NOT NULL default '',
-  archive longblob,
-  user_id int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (model_id),
-  UNIQUE KEY user_id (user_id,name)
-) TYPE=InnoDB;
-
---
 -- Dumping data for table `model`
 --
 
@@ -162,16 +89,6 @@ INSERT INTO model (model_id, name, abstract, archive, user_id) VALUES (12,'nelso
 INSERT INTO model (model_id, name, abstract, archive, user_id) VALUES (13,'Norris','Linear regression','head	1.1;\naccess;\nsymbols;\nlocks; strict;\ncomment	@# @;\n\n\n1.1\ndate	2004.04.27.16.47.10;	author vicini;	state Exp;\nbranches;\nnext	;\n\n\ndesc\n@@\n\n\n1.1\nlog\n@@\ntext\n@$PROBLEM NORRIS LINEAR LEAST SQUARES\n$DATA norris.txt\n$INPUT DV TIME\n$PRED \nb0 = THETA(1)\n\nb1 = THETA(2)\n\nx = TIME\n\nF = b0 + b1*x  \n\nY = F + ETA(1)\n$THETA \n(0.02,0.2,2.0)\n(0.1,1,10.0)\n$OMEGA DIAGONAL(1) 1\n$ESTIMATION METHOD=0 SIGDIGITS=3 MAXEVALS=450 PRINT=5\n$COVARIANCE\n$TABLE TIME F FILE=norris.out\n$SCATTERPLOT DV PRED VS TIME FROM 1 TO 900 UNIT ABS0 ORD0\n@\n',3);
 
 --
--- Table structure for table `state`
---
-
-CREATE TABLE state (
-  state_code char(3) NOT NULL default '',
-  state_name char(20) default NULL,
-  PRIMARY KEY  (state_code)
-) TYPE=MyISAM;
-
---
 -- Dumping data for table `state`
 --
 
@@ -180,20 +97,6 @@ INSERT INTO state (state_code, state_name) VALUES ('cmp','Compiling');
 INSERT INTO state (state_code, state_name) VALUES ('q2r','Queued to run');
 INSERT INTO state (state_code, state_name) VALUES ('run','Running');
 INSERT INTO state (state_code, state_name) VALUES ('end','End');
-
---
--- Table structure for table `user`
---
-
-CREATE TABLE user (
-  user_id int(10) unsigned NOT NULL auto_increment,
-  first_name varchar(30) NOT NULL default '',
-  surname varchar(40) NOT NULL default '',
-  password varchar(32) NOT NULL default '',
-  username varchar(20) NOT NULL default '',
-  PRIMARY KEY  (user_id),
-  UNIQUE KEY username (username)
-) TYPE=InnoDB;
 
 --
 -- Dumping data for table `user`

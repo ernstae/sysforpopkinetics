@@ -19,11 +19,6 @@ CREATE TABLE dataset (
 ) TYPE=InnoDB;
 
 --
--- Dumping data for table `dataset`
---
-
-
---
 -- Table structure for table `end`
 --
 
@@ -32,15 +27,6 @@ CREATE TABLE end (
   end_name char(20) default NULL,
   PRIMARY KEY  (end_code)
 ) TYPE=MyISAM;
-
---
--- Dumping data for table `end`
---
-
-INSERT INTO end (end_code, end_name) VALUES ('cerr','Compiler Error');
-INSERT INTO end (end_code, end_name) VALUES ('herr','Hard Fault');
-INSERT INTO end (end_code, end_name) VALUES ('serr','Software Error');
-INSERT INTO end (end_code, end_name) VALUES ('srun','Successful Run');
 
 --
 -- Table structure for table `history`
@@ -54,11 +40,6 @@ CREATE TABLE history (
   host varchar(100) NOT NULL default '',
   PRIMARY KEY  (history_id)
 ) TYPE=InnoDB;
-
---
--- Dumping data for table `history`
---
-
 
 --
 -- Table structure for table `job`
@@ -83,11 +64,6 @@ CREATE TABLE job (
 ) TYPE=InnoDB;
 
 --
--- Dumping data for table `job`
---
-
-
---
 -- Table structure for table `model`
 --
 
@@ -102,11 +78,6 @@ CREATE TABLE model (
 ) TYPE=InnoDB;
 
 --
--- Dumping data for table `model`
---
-
-
---
 -- Table structure for table `state`
 --
 
@@ -115,16 +86,6 @@ CREATE TABLE state (
   state_name char(20) default NULL,
   PRIMARY KEY  (state_code)
 ) TYPE=MyISAM;
-
---
--- Dumping data for table `state`
---
-
-INSERT INTO state (state_code, state_name) VALUES ('q2c','Queued to compile');
-INSERT INTO state (state_code, state_name) VALUES ('cmp','Compiling');
-INSERT INTO state (state_code, state_name) VALUES ('q2r','Queued to run');
-INSERT INTO state (state_code, state_name) VALUES ('run','Running');
-INSERT INTO state (state_code, state_name) VALUES ('end','End');
 
 --
 -- Table structure for table `user`
@@ -136,12 +97,11 @@ CREATE TABLE user (
   surname varchar(40) NOT NULL default '',
   password varchar(32) NOT NULL default '',
   username varchar(20) NOT NULL default '',
+  company varchar(30) NOT NULL default '',
+  country varchar(20) NOT NULL default '',
+  state varchar(20) NOT NULL default '',
+  email varchar(30) NOT NULL default '',
   PRIMARY KEY  (user_id),
   UNIQUE KEY username (username)
 ) TYPE=InnoDB;
-
---
--- Dumping data for table `user`
---
-
 
