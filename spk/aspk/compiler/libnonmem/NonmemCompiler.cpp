@@ -461,9 +461,11 @@ void NonmemCompiler::interpretDriver()
 	  assert( span > 0 );
 
 	  // structure
-	  bool isDiag = ( strcmp( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "struct" ) ) ), "diagonal" ) == 0 );
+	  bool isDiag = ( strcmp( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "struct" ) ) ),
+			    "diagonal" ) == 0 );
 	  if( !isDiag )
-	    assert( strcmp( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "struct" ) ) ), "block" ) == 0 );
+	    assert( strcmp( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "struct" ) ) ), 
+			    "block" ) == 0 );
 
           int dimensions = (isDiag? span : span*(span+1)/2 );
 	  omegaIn.resize( dimensions );
@@ -498,9 +500,11 @@ void NonmemCompiler::interpretDriver()
 	  assert( span > 0 );
 
 	  //
-	  bool isDiag = ( strcmp( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "struct" ) ) ), "diagonal" ) == 0 );
+	  bool isDiag = ( strcmp( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "struct" ) ) ),
+			    "diagonal" ) == 0 );
 	  if( !isDiag )
-	    assert( strcmp( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "struct" ) ) ), "block" ) == 0 );
+	    assert( strcmp( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "struct" ) ) ), 
+			    "block" ) == 0 );
 
           int dimensions = (isDiag? span : span*(span+1)/2 );
 	  sigmaIn.resize( dimensions );
@@ -623,7 +627,11 @@ void NonmemCompiler::interpretModel()
 	  if( strcmp( name, "pk" ) == 0 )
 	    {
 	      isPkGiven = true;
+	      FILE * fo = fopen( "junk", "w" );
+	      fprintf( fo, "%s\n", C( model->getFirstChild()->getNodeValue() ) );
+	      FILE * yyin = fo;
 	      //yyparse();
+              fclose( fo );
 	    }
 	  else if( strcmp( name, "error" ) == 0 )
 	    {

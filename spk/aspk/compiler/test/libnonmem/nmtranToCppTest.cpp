@@ -20,8 +20,8 @@
 #include <xercesc/dom/DOMDocumentTraversal.hpp>
 #include <xercesc/dom/DOMNodeFilter.hpp>
 
-#include "SymbolTable.h"
-#include "ParseTree.h"
+#include "../../libcommon/SymbolTable.h"
+#include "../../libcommon/ParseTree.h"
 
 using namespace std;
 using namespace xercesc;
@@ -33,7 +33,7 @@ using namespace xercesc;
   extern int yydebug;
   extern FILE *yyin;
   
-extern int lines;
+extern int gSpkExpLines;
 
 /**
  * A global counter to keep track of # of errors detected during a call to yyparse().
@@ -45,7 +45,7 @@ extern int lines;
  * \note The documentation for the yyparse specification found in @c nmabb.y 
  * is not visible because DOXYGEN does not support YACC.
  */
-extern int errors;
+extern int gSpkExpErrors;
 
 /**
  * A global pointer to a ParseTree object (providing a set of utilities re. DOM-based tree).
@@ -67,7 +67,7 @@ ParseTree *util;
  * \todo Perhaps this pointer should not be exposed or should be accessed always though the
  * global pointer (util) to the ParseTree object.
  */
-DOMDocument *doc;
+//extern DOMDocument *gSpkExpDOMDocument;
 
 /**
  * A global pointer to the symbol table.
@@ -101,29 +101,29 @@ int main( int argc, const char* argv[] )
     }
 
   util = new ParseTree;
-  doc  = util->handler();
+  //  gSpkExpDOMDocument = util->handler();
 
-  errors = 0;
-  lines  = 0;
+  gSpkExpErrors = 0;
+  gSpkExpLines  = 0;
   table = new SymbolTable( client::NONMEM );
 
   yyparse();
 
   fclose( file );
-  if( errors == 0 )
+  if( gSpkExpErrors == 0 )
   {
     util->printToStdout( );
   }
   else
     {    
-      cerr << "!!! Compilation failed (" << errors << ") !!! " << endl;
+      cerr << "!!! Compilation failed (" << gSpkExpErrors << ") !!! " << endl;
     }
 
   cout << endl;
   table->dump();
 
-  cout << endl << "Read " << lines << " lines of code from " << argv[2] << endl;
-  cout << "Encountered " << errors << " errors." << endl;
+  cout << endl << "Read " << gSpkExpLines << " lines of code from " << argv[2] << endl;
+  cout << "Encountered " << gSpkExpErrors << " errors." << endl;
   
   delete table;
   delete util;
