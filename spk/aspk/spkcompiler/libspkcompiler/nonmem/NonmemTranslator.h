@@ -19,6 +19,7 @@
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/util/XMLChar.hpp>
 
+#include <spk/SpkValarray.h>
 #include "../SpkParameters.h"
 #include "../SpkMLToCpp.h"
 #include "../client.h"
@@ -118,22 +119,6 @@ namespace nonmem{
   const char * const STR_PK_XSCALE="xscale";
 
   bool isNonmemLabel( const std::string &var );
-
-  // LABEL data type:
-  // The reason for the key data type being "string"
-  // instead of "char*" is that, if I use "char*" type, 
-  // the memory address is rather used as a key, causing multiple entries
-  // getting registered in the map for the same string/name.
-  typedef std::string LABEL;
-
-  // ALIAS data type:
-  // The reason for the key data type being "string"
-  // instead of "char*" is to be consistent with LABEL data type.
-  typedef std::string ALIAS;
-
-  // MEASUREMENT data type:
-  // Let's just make them all expressed in double-precision.
-  typedef std::valarray<double> MEASUREMENT;
 
 };
 
@@ -275,8 +260,8 @@ class NonmemTranslator : public ClientTranslator
   std::vector<std::string> emit( 		
 		    int nIndividuals,
 		    const SymbolTable* table,
-		    const std::map<nonmem::LABEL, nonmem::ALIAS> & label_alias_mapping,
-		    const std::vector< std::map<nonmem::LABEL, nonmem::MEASUREMENT > > &data_for,
+		    const std::map<std::string, std::string> & label_alias_mapping,
+		    const std::vector< std::map<std::string, SPK_VA::valarray<double> > > &data_for,
 		    const std::string order_id_pair[]
 		 );
 };

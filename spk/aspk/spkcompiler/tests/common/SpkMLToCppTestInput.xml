@@ -20,12 +20,12 @@
                         <value>1.0</value>
                 </up>
         </theta>
-        <sigma span="1" struct="diagonal">
+        <sigma dimension="1" struct="diagonal">
                 <in>
                         <value>0.3</value>
                 </in>
         </sigma>
-        <omega span="3" struct="block">
+        <omega dimension="3" struct="block">
                 <in>
                         <value fixed="yes">0.1</value>
                         <value fixed="no">0.1</value>

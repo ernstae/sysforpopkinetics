@@ -40,34 +40,6 @@
 --->
 <!ATTLIST content estimation (yes|no) #REQUIRED>
 
-<!---
-     <content> takes "simulation" attribute which
-     requests/avoid the data simulation process.
-     When simulation is requested but estimation is avoided,
-     only the following elements are required for a population 
-     data simulation:
-
-         <data>		// a small set of data to begin with
-         <model>	// the entire model specification
-         <driver>       // only the components followed here
-            <pop_sim>
-            <pop_opt>
-               <theta>
-               <omega>
-               <sigma>
-               <eta>                  
-
-     For an individual data simulation:
-
-         <data>		// a small set of data to begin with
-         <model>	// the entire model specification
-         <driver>       // only the components followed here
-            <ind_sim>
-            <ind_opt>
-               <eta>
---->                  
-<!ATTLIST content simulation (yes|no) #REQUIRED>
-
 <!--
      <content> takes "analysis" attribute which
      chooses the level of
@@ -78,12 +50,24 @@
 -->
 <!ATTLIST content analysis (population|individual) #REQUIRED>
 
+<!--
+      <content> takes "is_simulation" attribute
+      which indicates as to whether to perform data simulation.
+-->
+<!ATTLIST content is_simulation (yes|no) #REQUIRED>
+
+<!--
+      <content> takes "is_simulation" attribute
+      which indicates as to whether to perform parameter estimation.
+-->
+<!ATTLIST content is_estimation (yes|no) #REQUIRED>
+
 <!---------------------------------------------------
      <driver> contains information necessary to
      define a SPK driver.
 ---------------------------------------------------->
 <!ELEMENT driver (theta, sigma+, omega+, eta, 
-	  pop_opt, ind_opt, pop_stat, ind_stat, pop_sim?, ind_sim?)>
+	  pop_opt, ind_opt, pop_stat, ind_stat, simulation?)>
 
 <!--
      <theta> section contains the initial estimate (in),
@@ -204,14 +188,18 @@
 <!ATTLIST pop_opt is_deriv1_out (yes|no) #REQUIRED>
 <!ATTLIST pop_opt is_deriv2_out (yes|no) #REQUIRED>
 
-<!ELEMENT pop_sim EMPTY>
-
-<!---
-     When <pop_sim> appears in the document, it must 
-     follow "seed" attribute, which is set to an integer
-     value used as a seed to generate random numbers.
+<!--
+     <simulation> element is required when the value
+     of "is_simulation" of <content> element is set to "yes".
 --->
-<!ATTLIST pop_sim seed CDATA #REQUIRED>
+<!ELEMENT simulation EMPTY>
+
+<!--
+     <simulation>, when it appears, requires "seed"
+     attribute to be set to some integer used
+     as a seed to generate random numbers.
+-->
+<!ATTLIST simulation seed CDATA #REQUIRED>
 
 <!--
       <ind_opt> is an empty element in which
@@ -230,13 +218,6 @@
 <!ATTLIST ind_opt is_deriv1_out (yes|no) #FIXED "no">
 <!ATTLIST ind_opt is_deriv2_out (yes|no) #FIXED "no">
 
-<!---
-     When <ind_sim> appears in the document, it must 
-     follow "seed" attribute, which is set to an integer
-     value used as a seed to generate random numbers.
---->
-<!ATTLIST ind_sim seed CDATA #REQUIRED>
-
 <!--
       <pop_stat> is an empty element in which
       statistics regarding the final population
@@ -245,7 +226,7 @@
 -->
 <!ELEMENT pop_stat EMPTY>
 
-<!ATTLIST pop_stat formulation        (rsr|r|s) #REQUIRED>
+<!ATTLIST pop_stat covariance_form    (rsr|r|s)  #REQUIRED>
 <!ATTLIST pop_stat is_stderror_out    (yes|no) #REQUIRED>
 <!ATTLIST pop_stat is_correlation_out (yes|no) #REQUIRED>
 <!ATTLIST pop_stat is_covariance_out  (yes|no) #REQUIRED>

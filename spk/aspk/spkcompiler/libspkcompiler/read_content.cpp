@@ -1,4 +1,5 @@
 #include <iostream>
+#include <map>
 
 #include "read_content.h"
 #include <xercesc/dom/DOM.hpp>
@@ -9,10 +10,10 @@
 using namespace std;
 using namespace xercesc;
 
-bool read_content( DOMElement * content_node, 
-		   string & spkml_verOut, 
-		   enum client::type & clientOut, 
-		   enum SpkParameters::Analysis& analysisOut  )
+pair<bool, bool> read_content( DOMElement * content_node, 
+			       string & spkml_verOut, 
+			       enum client::type & clientOut, 
+			       enum SpkParameters::Analysis& analysisOut  )
 {
   /*
   //
@@ -47,15 +48,34 @@ bool read_content( DOMElement * content_node,
     }
 
   //
-  // analysis level
+  // checking analysis level
   //
   const XMLCh* xml_analysis = content_node->getAttribute( X("analysis") );
   if( XMLString::equals( xml_analysis, X( "population" ) ) )
     analysisOut = SpkParameters::POPULATION;
-  else if( XMLString::equals( xml_analysis, X( "individual" ) ) )
+  else // if( XMLString::equals( xml_analysis, X( "individual" ) ) )
     analysisOut = SpkParameters::INDIVIDUAL;
-  else
-    return false;
 
-  return true;
+  // checking if parameter estimation is requested.
+  //
+  bool isEstimation = false;
+  const XMLCh* xml_estimation = content_node->getAttribute( X("estimation") );
+  assert( xml_estimation != NULL );
+  if( XMLString::equals( xml_estimation, X( "yes" ) ) )
+    isEstimation = true;
+  else 
+    isEstimation = false;
+
+  //
+  // checking if data simulation is requested.
+  //
+  bool isSimulation = false;
+  const XMLCh* xml_simulation = content_node->getAttribute( X("simulation") );
+  assert( xml_simulation != NULL );
+  if( XMLString::equals( xml_simulation, X( "yes" ) ) )
+    isSimulation = true;
+  else 
+    isSimulation = false;
+
+  return pair<bool, bool>( isEstimation, isSimulation );
 }
