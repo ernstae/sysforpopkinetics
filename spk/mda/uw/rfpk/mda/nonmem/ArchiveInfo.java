@@ -34,7 +34,9 @@ public class ArchiveInfo {
     /** The short description of the archive. */
     public String description = null;
     /** The version code of the existing archive. */
-    public String version = null;
+    public String version = null; 
+    /** The text of the version. */
+    public String text = null;    
     /** The log message for the version. */
     public String log = null;
     /** The indication of the archive being new or not. */

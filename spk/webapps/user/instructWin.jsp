@@ -60,7 +60,7 @@ author: Jiaji Du
               4.  You should see "Java(TM) 2 Runtime Environment, Standard
                   Edition", and then the version number.
             </p><p>
-              5.  Under the "Windows Platform" choose "Windows Installaton...", and 
+              5.  Under the "Windows Platform" choose "Windows Installation...", and 
                   choose "Open" when prompted by the File Download window.
             </p><p>
               6.  The InstallShield Wizard should start. Accept the License Agreement,

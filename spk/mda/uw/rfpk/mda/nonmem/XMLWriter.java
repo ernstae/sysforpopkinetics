@@ -72,8 +72,6 @@ public class XMLWriter
         {
             analysis.setAttribute("is_estimation", "yes");
             analysis.setAttribute("sig_digits", source.estimation[1]);
-            String restart = source.isRestart ? "yes" : "no";
-            analysis.setAttribute("is_restart", restart);
             analysis.setAttribute("mitr", source.estimation[2]);
             if(source.analysis.equals("population"))
             {
@@ -270,7 +268,8 @@ public class XMLWriter
     {
         if(source.analysis.equals("individual") && source.covariance != null)
 	{        
-            Element ind_stat = docSource.createElement("ind_stat");         
+            Element ind_stat = docSource.createElement("ind_stat");
+            ind_stat.setAttribute("covariance_form", source.covariance);
             parent.appendChild(ind_stat); 
         }
     }    

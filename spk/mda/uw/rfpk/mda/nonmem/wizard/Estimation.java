@@ -105,7 +105,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 2, 12);
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         add(jTextPane2, gridBagConstraints);
 
         jTextPane3.setBackground(new java.awt.Color(204, 204, 204));
@@ -119,7 +119,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridy = 5;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(10, 12, 3, 12);
+        gridBagConstraints.insets = new java.awt.Insets(2, 12, 0, 12);
         add(jTextPane3, gridBagConstraints);
 
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_NEVER);
@@ -129,7 +129,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         jTextArea1.setColumns(20);
         jTextArea1.setEditable(false);
         jTextArea1.setRows(2);
-        jTextArea1.setText("$ESTIMATION METHOD=0 SIGDIGITS=3 MAXEVALS=450 PRINT=5");
+        jTextArea1.setText("$ESTIMATION METHOD=0 NOPOSTHOC SIGDIGITS=3 MAXEVALS=450 PRINT=5");
         jTextArea1.setFocusable(false);
         jTextArea1.setMaximumSize(new java.awt.Dimension(400, 30));
         jTextArea1.setMinimumSize(new java.awt.Dimension(400, 30));
@@ -141,7 +141,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.ipady = 10;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 12, 12);
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         add(jScrollPane1, gridBagConstraints);
 
         jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
@@ -149,7 +149,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.insets = new java.awt.Insets(12, 0, 10, 4);
+        gridBagConstraints.insets = new java.awt.Insets(6, 0, 4, 4);
         add(jSeparator1, gridBagConstraints);
 
         jSeparator2.setMaximumSize(new java.awt.Dimension(350, 2));
@@ -199,12 +199,11 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(12, 6, 12, 3);
+        gridBagConstraints.insets = new java.awt.Insets(20, 6, 30, 3);
         add(jPanel1, gridBagConstraints);
 
-        jPanel2.setLayout(new java.awt.GridLayout(4, 1));
+        jPanel2.setLayout(new java.awt.GridBagLayout());
 
         jPanel2.setMaximumSize(new java.awt.Dimension(200, 92));
         jPanel2.setMinimumSize(new java.awt.Dimension(200, 92));
@@ -216,9 +215,11 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
             }
         });
 
-        jPanel2.add(jCheckBox1);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanel2.add(jCheckBox1, gridBagConstraints);
 
-        jCheckBox2.setText("Use random effects in the model");
+        jCheckBox2.setText("RUV depends on random effects");
         jCheckBox2.setEnabled(false);
         jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -226,7 +227,11 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
             }
         });
 
-        jPanel2.add(jCheckBox2);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanel2.add(jCheckBox2, gridBagConstraints);
 
         jCheckBox3.setText("Center random effects");
         jCheckBox3.setEnabled(false);
@@ -236,22 +241,30 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
             }
         });
 
-        jPanel2.add(jCheckBox3);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanel2.add(jCheckBox3, gridBagConstraints);
 
-        jCheckBox4.setText("Automatic error recovery");
+        jCheckBox4.setText("Make automatic error recovery");
         jCheckBox4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBox4ActionPerformed(evt);
             }
         });
 
-        jPanel2.add(jCheckBox4);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanel2.add(jCheckBox4, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(12, 3, 12, 6);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 6);
         add(jPanel2, gridBagConstraints);
 
         jPanel3.setLayout(new java.awt.GridBagLayout());
@@ -277,7 +290,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 18, 13, 8);
+        gridBagConstraints.insets = new java.awt.Insets(5, 18, 5, 8);
         jPanel3.add(jLabel3, gridBagConstraints);
 
         jComboBox1.setBackground(new java.awt.Color(255, 255, 255));
@@ -333,7 +346,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 12, 12);
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 5, 12);
         jPanel3.add(jTextField2, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -546,7 +559,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
                     // Initialize noabort
                     jCheckBox4.setSelected(text.indexOf("NOABORT") != -1);
                     // Initialize posthoc
-                    jCheckBox1.setSelected(text.indexOf("POSTHOC") != -1);
+                    jCheckBox1.setSelected(text.indexOf("POSTHOC") != -1);                  
                     // Initialize centering
                     jCheckBox3.setSelected(text.indexOf("CENTERING") != -1);
                     // Initialize interaction
@@ -667,7 +680,6 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         
         public String getHelpID() {
             return "Prepare_Input_Method_Selection";
-        }
-        
+        }        
     }
 }

@@ -95,12 +95,12 @@ public class Test{
 //            PK step = new PK(i);
 //            Pred step = new Pred(i);
 //            Problem step = new Problem(i);
-            Omega step = new Omega(i);
+//            Omega step = new Omega(i);
 //            Sigma step = new Sigma(i);
 //            ScatterPlot step = new ScatterPlot(i); 
 //            Simulation step = new Simulation(i);
 //            Subroutines step = new Subroutines(i);
-//            Table step = new Table(i);
+            Table step = new Table(i);
 //            Theta step = new Theta(i);
             MDAObject object = new MDAObject();
             Properties records = object.getRecords();

@@ -43,9 +43,12 @@ public class Input extends javax.swing.JPanel implements WizardStep {
     private boolean isValid = false;
     private MDAIterator iterator = null;
     private String[] input = null; 
-    private Vector data = null; 
+    private Vector data = null;
+    private String[][] dataArray = null;
+    private int nDataRow = 0;    
     private JWizardPane wizardPane = null;
     private TableModel tableModel = new ATableModel();
+    private String[] items = null;
     private String[] stdItems = new String[] { "DV", "MDV", "EVID", "TIME", "DATE", 
                                 "DATE1", "DATE2", "DATE3", "AMT", "RATE", "SS", 
                                 "ADDL", "II", "ABS", "LAG", "UPPER", "LOWER", "L1", 
@@ -454,6 +457,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
     }//GEN-LAST:event_addButtonActionPerformed
     
         private class ATableModel extends AbstractTableModel {
+        
         public String getColumnName(int c) {
              return "Column " + (c + 1);
         }
@@ -464,14 +468,16 @@ public class Input extends javax.swing.JPanel implements WizardStep {
             return nDataCol;
         }
         public int getRowCount() {
-            return ((Vector)data.get(0)).size() + 1;
+//            return ((Vector)data.get(0)).size() + 1;    // Show first individual data only
+            return nDataRow + 1;
         }
         public Object getValueAt(int r, int c) {
             Object value = null;
             if(r == 0)
                 value = input[c]; 
             else
-                value = ((String[])((Vector)data.get(0)).get(r - 1))[c];   
+//                value = ((String[])((Vector)data.get(0)).get(r - 1))[c];  // Show first individual data only
+                value = dataArray[r - 1][c];
             return value; 
         }
         public boolean isCellEditable(int r, int c) {
@@ -480,8 +486,9 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         public void setValueAt(Object value, int r, int c) {
             if(r == 0)
                 input[c] = (String)value; 
-            else
-                ((String[])((Vector)data.get(0)).get(r - 1))[c] = (String)value;             
+//            else
+//                ((String[])((Vector)data.get(0)).get(r - 1))[c] = (String)value;  // Show first individual data only
+//                dataArray[r - 1][c] = (String)value;
         }
     }
 
@@ -564,7 +571,8 @@ public class Input extends javax.swing.JPanel implements WizardStep {
             
             wizardPane = wizard;
             data = ((MDAObject)wizard.getCustomizedObject()).getData();
-            nDataCol = iterator.getNDataCol(); 
+            nDataCol = iterator.getNDataCol();
+            setDataArray();
             input = new String[nDataCol];
  
             for(int i = 0; i < nDataCol; i++)
@@ -580,9 +588,10 @@ public class Input extends javax.swing.JPanel implements WizardStep {
             {
                 jComboBox1.insertItemAt("ID", 1);
             }
-            if(iterator.getIsReload())
+            if(iterator.getIsReload() && iterator.getReload().getProperty("INPUT") != null &&
+               iterator.getIsDataXML())
             {
-                String[] items = iterator.getReload().getProperty("INPUT").substring(6).trim().split(" ");
+                items = iterator.getReload().getProperty("INPUT").substring(6).trim().split(" ");
                 if(iterator.getNDataCol() == items.length)
                 {
                     input = items;
@@ -597,6 +606,8 @@ public class Input extends javax.swing.JPanel implements WizardStep {
                                                   "Input Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
+            if(iterator.getIsDataXML())
+                input = items;
             
             // Create a column model for the main table.  
             TableColumnModel cm = new DefaultTableColumnModel() {
@@ -621,8 +632,29 @@ public class Input extends javax.swing.JPanel implements WizardStep {
             TableCellRenderer cellRenderer = new CellRenderer(); 
             for(int i = 0; i < nDataCol; i++)
                 cm.getColumn(i).setCellRenderer(cellRenderer);
+
+            if(items != null)
+            {
+                isValid = iterator.getNDataCol() == items.length;
+                wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
+            }
 	}
         
+        private void setDataArray()
+        {
+            int nRow = 0;
+            for(int i = 0; i < data.size(); i++)
+                nRow += ((Vector)data.get(i)).size();             
+            dataArray = new String[nRow][nDataCol];
+            int k = 0;
+            for(int i = 0; i < data.size(); i++)
+            {
+                Vector indData = (Vector)data.get(i);
+                for(int j = 0; j < indData.size(); j++)
+                    dataArray[k++] = (String[])indData.get(j);
+            }
+            nDataRow = nRow;
+        }        
 	public void hidingStep(JWizardPane wizard){
             if(iterator.getIsBack())
             {

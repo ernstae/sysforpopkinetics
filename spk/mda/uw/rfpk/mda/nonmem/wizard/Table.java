@@ -89,6 +89,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         jPanel1 = new javax.swing.JPanel();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jTextArea1 = new javax.swing.JTextArea();
         jTextField1 = new javax.swing.JTextField();
         addButton = new javax.swing.JButton();
         upButton = new javax.swing.JButton();
@@ -123,11 +124,11 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         });
 
         jTextPane3.setBackground(new java.awt.Color(204, 204, 204));
-        jTextPane3.setText("Select items from the comboBox and add them to the left list.  Then select items from the left list into the right list.");
+        jTextPane3.setText("Select items from the comboBox and add them to the left list.\nThen select items from the left list into the right list. ");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(10, 12, 6, 12);
+        gridBagConstraints.insets = new java.awt.Insets(10, 12, 0, 12);
         jDialog1.getContentPane().add(jTextPane3, gridBagConstraints);
 
         rightButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/netbeans/ui/wizard/plaf/basic/icons/next.gif")));
@@ -294,6 +295,15 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridy = 7;
         gridBagConstraints.gridwidth = 4;
         jDialog1.getContentPane().add(jPanel1, gridBagConstraints);
+
+        jTextArea1.setText("Note: SPK provides more output items than NONMEM does.\nETARES    - Residual for random effect parameters (ETA).*\nWETARES - Weighted residual for random effect parameters.*\nORGDV    - Original data values (DV) when simulated data exists.\n* For population estimation analysis only.");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
+        jDialog1.getContentPane().add(jTextArea1, gridBagConstraints);
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -726,7 +736,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         deleteItemButton.setEnabled(leftModel.size() > 0);
         leftButton.setEnabled(false); 
         jDialog1.setLocationRelativeTo(this); 
-        jDialog1.setSize(420,350);            
+        jDialog1.setSize(420, 435);            
         jDialog1.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -868,6 +878,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextPane jTextPane1;
     private javax.swing.JTextPane jTextPane2;
@@ -928,14 +939,22 @@ public class Table extends javax.swing.JPanel implements WizardStep {
             jComboBox1.addItem("RES");
             jComboBox1.addItem("WRES"); 
             if(!iterator.getIsInd() && which.equals("ESTIMATION") && iterator.getIsMethod1OrPosthoc())
+            {
                 for(int i = 0; i < iterator.getNEta(); i++)
                     jComboBox1.addItem("ETA(" + (i + 1) +")");
+                for(int i = 0; i < iterator.getNEta(); i++)
+                    jComboBox1.addItem("ETARES(" + (i + 1) +")");
+                for(int i = 0; i < iterator.getNEta(); i++)
+                    jComboBox1.addItem("WETARES(" + (i + 1) +")");
+            }
+            if(iterator.getIsSimulation())
+                jComboBox1.addItem("ORGDV");
             String record = null;
             if(!iterator.getIsPred())
                 record = object.getRecords().getProperty("PK");
             else
                 record = object.getRecords().getProperty("Pred");
-            String[] p = Utility.eliminateComments(record).split("\n");  
+            String[] p = Utility.eliminateComments(record).split("\n");
             for(int i = 1; i < p.length; i++)
             {
                 if(p[i].indexOf("=") > 0)

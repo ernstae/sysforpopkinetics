@@ -73,6 +73,7 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
 
         jTextArea1.setLineWrap(true);
         jTextArea1.setRows(2);
+        jTextArea1.setWrapStyleWord(true);
         jTextArea1.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 jTextArea1KeyTyped(evt);

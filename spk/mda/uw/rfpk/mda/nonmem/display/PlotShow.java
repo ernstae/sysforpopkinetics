@@ -22,6 +22,7 @@ import uw.rfpk.mda.nonmem.Utility;
 import java.awt.Component;
 import java.awt.geom.*;
 import java.awt.Color;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Comparator;
@@ -278,26 +279,22 @@ public class PlotShow extends JFrame {
             }
 
             // Display the plot
-            Plotter plotter = new Plotter(dataX,
-                                          dataY,
-                                          title,
-                                          tokens[4],
-                                          tokens[2],
+            JFrame frame = new JFrame(); 
+            Plotter plotter = new Plotter(dataX, dataY, title, tokens[4], tokens[2],
                                           new String[]{tokens[2]},
                                           new int[]{type},
-                                          new Color[]{Color.red},
+                                          new Color[]{Color.red, Color.green, Color.green, Color.green},
                                           plot[0][2].equals("show"),
                                           plot[0][3].equals("show"),
                                           plot[0][4].equals("show"),
-                                          new Color[]{Color.green, Color.green, Color.green},
-                                          null,
-                                          true, 
-                                          true, 
-                                          true,
-                                          true, 
-                                          0, 0, 0, 0);                                          
+                                          false, false, true, true, null, null, null, null,
+                                          5, 5, 6, 6, 4, 4, 4, 4, 0, 0, 0, 0,
+                                          new Font("SansSerif", Font.BOLD, 14),
+                                          new Font("SansSerif", Font.BOLD, 12),
+                                          new Font("SansSerif", Font.BOLD, 11),
+                                          new Font("SansSerif", Font.BOLD, 10),
+                                          0, 0, 0, 0, true, true, false, false, 2, 2, frame);                                          
             plotter.setToolTipText("");
-            JFrame frame = new JFrame();
             frame.getContentPane().add(plotter);
             frame.setLocation(50 * j, 40 * j);
             frame.setSize(500, 400);

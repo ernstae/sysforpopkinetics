@@ -128,7 +128,7 @@ public class Likelihood {
         {
             for(int i = 0; i < nEta; i++)
             {
-                String nGrid = JOptionPane.showInputDialog(null, "Enter number of grid points for random effect " + (i + 1), "10");
+                String nGrid = JOptionPane.showInputDialog(null, "Enter number of grid points for random effects." + (i + 1), "10");
                 if(nGrid == null || !Utility.isPosIntNumber(nGrid.trim()))
                 {
                     JOptionPane.showMessageDialog(null, "The number of grid points is missing",  
@@ -142,7 +142,7 @@ public class Likelihood {
         }
         else if(jobMethodCode.equals("ml") || jobMethodCode.equals("mi"))
         {
-            nEvaluation = JOptionPane.showInputDialog(null, "Enter number of individual objective evaluations", "1000");
+            nEvaluation = JOptionPane.showInputDialog(null, "Enter number of individual objective evaluations.", "1000");
             if(nEvaluation == null || !Utility.isPosIntNumber(nEvaluation.trim()))
             {
                 JOptionPane.showMessageDialog(null, "The number of individual objective evaluations is missing",  

@@ -62,20 +62,20 @@ public class Server {
      * @param dataInfo archive information of the dataset associated with the job.
      * @param jobMethodCode a String containing job method code.
      * @param jobParent a long representing the id of the parent job.
+     * @param isWarmStart a boolean "true" for warm start, "false" otherwise.
      */
-    public void submitJob(String source, String dataset, String modelArchive, 
-                          String jobAbstract, ArchiveInfo modelInfo, ArchiveInfo dataInfo,
-                          String jobMethodCode, long jobParent)
+    public void submitJob(String source, String jobAbstract, ArchiveInfo modelInfo, 
+                          ArchiveInfo dataInfo, String jobMethodCode, long jobParent, boolean isWarmStart)
     {
-        String[] messageOut = new String[21];
+        String[] messageOut = new String[22];
         messageOut[0] = secret;
         messageOut[1] = source;
         if(dataInfo.isNewArchive || dataInfo.isNewVersion)
-            messageOut[2] = dataset;
+            messageOut[2] = dataInfo.text;
         else
             messageOut[2] = "";
         if(modelInfo.isNewArchive || modelInfo.isNewVersion)
-            messageOut[3] = modelArchive;
+            messageOut[3] = modelInfo.text;
         else
             messageOut[3] = "";
         messageOut[4] = jobAbstract;
@@ -95,6 +95,7 @@ public class Server {
         messageOut[18] = String.valueOf(dataInfo.isNewVersion);
         messageOut[19] = jobMethodCode;
         messageOut[20] = String.valueOf(jobParent);
+        messageOut[21] = String.valueOf(isWarmStart);
          
         try
         {
@@ -528,7 +529,6 @@ public class Server {
                 JOptionPane.showMessageDialog(null, e, "Exception", JOptionPane.ERROR_MESSAGE);       
             }
         }
-        System.exit(0);
     }
     
     // Server host

@@ -20,6 +20,8 @@ package uw.rfpk.mda.nonmem;
 
 import javax.help.*; 
 import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.undo.*;
 import javax.swing.text.*;  
 import javax.print.*;
 import javax.print.attribute.*;
@@ -73,13 +75,13 @@ public class MDAFrame extends JFrame
 	}   
 
         setTitle(title);                              
-        initComponents();
+        initComponents();        
         cutMenu.addActionListener(new DefaultEditorKit.CutAction());  
         copyMenu.addActionListener(new DefaultEditorKit.CopyAction());  
         pasteMenu.addActionListener(new DefaultEditorKit.PasteAction()); 
         
         // Check server connection and get method table
-        if(args.length != 6)
+        if(args.length != 7)
             isOnline = false;
         else
         {
@@ -102,6 +104,8 @@ public class MDAFrame extends JFrame
             server = new Server(args);
             isTester = args[4].equals("1") ? true : false;
             isDeveloper = args[5].equals("1") ? true : false;
+            setTitle("Model Design Agent for " + args[6]);
+            username = args[6];
         }
         else
 	{
@@ -112,7 +116,7 @@ public class MDAFrame extends JFrame
             JobExamplesButton.setEnabled(false);
             ModelLibraryButton.setEnabled(false);
             DatasetLibraryButton.setEnabled(false);
-            CompareFilesButton.setEnabled(false); 
+            CompareFilesButton.setEnabled(false);
             jLabel16.setText("Status: Off Line");
         }
     
@@ -171,8 +175,9 @@ public class MDAFrame extends JFrame
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
         jTextField3 = new javax.swing.JTextField();
+        jScrollPane8 = new javax.swing.JScrollPane();
+        jTextArea8 = new javax.swing.JTextArea();
         jPanel3 = new javax.swing.JPanel();
         jRadioButton4 = new javax.swing.JRadioButton();
         jRadioButton5 = new javax.swing.JRadioButton();
@@ -181,11 +186,11 @@ public class MDAFrame extends JFrame
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jTextField4 = new javax.swing.JTextField();
-        jTextField5 = new javax.swing.JTextField();
         jTextField6 = new javax.swing.JTextField();
+        jScrollPane9 = new javax.swing.JScrollPane();
+        jTextArea9 = new javax.swing.JTextArea();
         jPanel5 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
-        jTextField7 = new javax.swing.JTextField();
         jRadioButton7 = new javax.swing.JRadioButton();
         jRadioButton8 = new javax.swing.JRadioButton();
         jTextField14 = new javax.swing.JTextField();
@@ -193,6 +198,8 @@ public class MDAFrame extends JFrame
         jRadioButton10 = new javax.swing.JRadioButton();
         jRadioButton11 = new javax.swing.JRadioButton();
         jRadioButton12 = new javax.swing.JRadioButton();
+        jScrollPane10 = new javax.swing.JScrollPane();
+        jTextArea10 = new javax.swing.JTextArea();
         buttonGroup1 = new javax.swing.ButtonGroup();
         errorMessageDialog = new javax.swing.JDialog();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -202,6 +209,7 @@ public class MDAFrame extends JFrame
         jTextArea5 = new javax.swing.JTextArea();
         objectiveDialog = new javax.swing.JDialog();
         jTextArea2 = new javax.swing.JTextArea();
+        jButton3 = new javax.swing.JButton();
         reportDialog = new javax.swing.JDialog();
         jPanel4 = new javax.swing.JPanel();
         previousButton = new javax.swing.JButton();
@@ -252,25 +260,14 @@ public class MDAFrame extends JFrame
         jLabel9 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         buttonGroup3 = new javax.swing.ButtonGroup();
-        ChildJob = new javax.swing.JDialog();
-        jTextArea6 = new javax.swing.JTextArea();
-        peRadioButton = new javax.swing.JRadioButton();
-        leRadioButton = new javax.swing.JRadioButton();
-        foRadioButton = new javax.swing.JRadioButton();
-        ehRadioButton = new javax.swing.JRadioButton();
-        laRadioButton = new javax.swing.JRadioButton();
-        mlRadioButton = new javax.swing.JRadioButton();
-        miRadioButton = new javax.swing.JRadioButton();
-        grRadioButton = new javax.swing.JRadioButton();
-        anRadioButton = new javax.swing.JRadioButton();
-        jTextArea7 = new javax.swing.JTextArea();
+        replaceDialog = new javax.swing.JDialog();
+        jLabel17 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        jTextField2 = new javax.swing.JTextField();
+        jTextField5 = new javax.swing.JTextField();
         jPanel13 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        mcRadioButton = new javax.swing.JRadioButton();
-        buttonGroup4 = new javax.swing.ButtonGroup();
-        buttonGroup5 = new javax.swing.ButtonGroup();
-        buttonGroup6 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jTextPane1 = new javax.swing.JTextPane();
         jTextPane2 = new javax.swing.JTextPane();
@@ -301,10 +298,52 @@ public class MDAFrame extends JFrame
         jSeparator6 = new javax.swing.JSeparator();
         exitMenu = new javax.swing.JMenuItem();
         jMenu7 = new javax.swing.JMenu();
+        // Listen for undo and redo events
+        textArea.getDocument().addUndoableEditListener(new UndoableEditListener() {
+            public void undoableEditHappened(UndoableEditEvent evt) {
+                undo.addEdit(evt.getEdit());
+            }
+        });
+
+        // Create an undo action and add it to the text component
+        textArea.getActionMap().put("Undo", new AbstractAction("Undo") {
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    if (undo.canUndo()) {
+                        undo.undo();
+                    }
+                } catch (CannotUndoException e) {
+                }
+            }
+        });
+
+        // Create an undo action and add it to the text component
+        textArea.getActionMap().put("Redo", new AbstractAction("Redo") {
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    if (undo.canRedo()) {
+                        undo.redo();
+                    }
+                } catch (CannotUndoException e) {
+                }
+            }
+        });
+
+        JMenuItem undo = jMenu7.add(textArea.getActionMap().get("Undo"));
+        JMenuItem redo = jMenu7.add(textArea.getActionMap().get("Redo"));
+
+        undo.setAccelerator(KeyStroke.getKeyStroke("control N"));
+        redo.setAccelerator(KeyStroke.getKeyStroke("control D"));
+        undo.setMnemonic('n');
+        redo.setMnemonic('d');
+        jSeparator7 = new javax.swing.JSeparator();
         cutMenu = new javax.swing.JMenuItem();
         copyMenu = new javax.swing.JMenuItem();
         pasteMenu = new javax.swing.JMenuItem();
+        deleteMenu = new javax.swing.JMenuItem();
+        jSeparator8 = new javax.swing.JSeparator();
         findMenu = new javax.swing.JMenuItem();
+        replaceMenu = new javax.swing.JMenuItem();
         jMenu9 = new javax.swing.JMenu();
         errorMenu = new javax.swing.JMenuItem();
         warningMenu = new javax.swing.JMenuItem();
@@ -366,12 +405,14 @@ public class MDAFrame extends JFrame
         gridBagConstraints.insets = new java.awt.Insets(12, 15, 12, 37);
         archiveDialog.getContentPane().add(cancelButton, gridBagConstraints);
 
-        jTabbedPane1.setMinimumSize(new java.awt.Dimension(280, 240));
-        jTabbedPane1.setPreferredSize(new java.awt.Dimension(280, 280));
+        jTabbedPane1.setMaximumSize(new java.awt.Dimension(290, 270));
+        jTabbedPane1.setMinimumSize(new java.awt.Dimension(290, 270));
+        jTabbedPane1.setPreferredSize(new java.awt.Dimension(290, 270));
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
-        jPanel2.setMinimumSize(new java.awt.Dimension(300, 200));
-        jPanel2.setPreferredSize(new java.awt.Dimension(300, 300));
+        jPanel2.setMaximumSize(new java.awt.Dimension(290, 250));
+        jPanel2.setMinimumSize(new java.awt.Dimension(290, 250));
+        jPanel2.setPreferredSize(new java.awt.Dimension(290, 250));
         jRadioButton1.setFont(new java.awt.Font("Default", 0, 12));
         jRadioButton1.setSelected(true);
         jRadioButton1.setText("New model (NONMEM control file)");
@@ -404,7 +445,7 @@ public class MDAFrame extends JFrame
         jPanel2.add(jRadioButton2, gridBagConstraints);
 
         jRadioButton3.setFont(new java.awt.Font("Default", 0, 12));
-        jRadioButton3.setText("Existing version of an existing model  ");
+        jRadioButton3.setText("Existing version of an existing model");
         buttonGroup1.add(jRadioButton3);
         jRadioButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -451,14 +492,6 @@ public class MDAFrame extends JFrame
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 0);
         jPanel2.add(jTextField1, gridBagConstraints);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 0);
-        jPanel2.add(jTextField2, gridBagConstraints);
-
         jTextField3.setEditable(false);
         jTextField3.setText("1");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -469,12 +502,30 @@ public class MDAFrame extends JFrame
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 0);
         jPanel2.add(jTextField3, gridBagConstraints);
 
+        jScrollPane8.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane8.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        jScrollPane8.setMaximumSize(new java.awt.Dimension(260, 48));
+        jScrollPane8.setMinimumSize(new java.awt.Dimension(260, 48));
+        jScrollPane8.setPreferredSize(new java.awt.Dimension(260, 48));
+        jTextArea8.setLineWrap(true);
+        jTextArea8.setRows(3);
+        jScrollPane8.setViewportView(jTextArea8);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 0);
+        jPanel2.add(jScrollPane8, gridBagConstraints);
+
         jTabbedPane1.addTab("Model", jPanel2);
 
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
-        jPanel3.setMinimumSize(new java.awt.Dimension(300, 200));
-        jPanel3.setPreferredSize(new java.awt.Dimension(300, 300));
+        jPanel3.setMaximumSize(new java.awt.Dimension(280, 250));
+        jPanel3.setMinimumSize(new java.awt.Dimension(280, 250));
+        jPanel3.setPreferredSize(new java.awt.Dimension(280, 250));
         jRadioButton4.setFont(new java.awt.Font("Default", 0, 12));
         jRadioButton4.setSelected(true);
         jRadioButton4.setText("New dataset");
@@ -555,14 +606,6 @@ public class MDAFrame extends JFrame
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 0);
         jPanel3.add(jTextField4, gridBagConstraints);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 0);
-        jPanel3.add(jTextField5, gridBagConstraints);
-
         jTextField6.setEditable(false);
         jTextField6.setText("1");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -572,11 +615,30 @@ public class MDAFrame extends JFrame
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 0);
         jPanel3.add(jTextField6, gridBagConstraints);
 
+        jScrollPane9.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane9.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        jScrollPane9.setMaximumSize(new java.awt.Dimension(260, 48));
+        jScrollPane9.setMinimumSize(new java.awt.Dimension(260, 48));
+        jScrollPane9.setPreferredSize(new java.awt.Dimension(260, 48));
+        jTextArea9.setLineWrap(true);
+        jTextArea9.setBorder(null);
+        jScrollPane9.setViewportView(jTextArea9);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 0);
+        jPanel3.add(jScrollPane9, gridBagConstraints);
+
         jTabbedPane1.addTab("Dataset", jPanel3);
 
         jPanel5.setLayout(new java.awt.GridBagLayout());
 
         jPanel5.setFocusable(false);
+        jPanel5.setMaximumSize(new java.awt.Dimension(280, 250));
+        jPanel5.setMinimumSize(new java.awt.Dimension(280, 250));
+        jPanel5.setPreferredSize(new java.awt.Dimension(280, 250));
         jLabel7.setFont(new java.awt.Font("Default", 0, 12));
         jLabel7.setText("short description (<=100 characters)     ");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -585,12 +647,6 @@ public class MDAFrame extends JFrame
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
         jPanel5.add(jLabel7, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 8;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        jPanel5.add(jTextField7, gridBagConstraints);
 
         jRadioButton7.setFont(new java.awt.Font("Default", 0, 12));
         jRadioButton7.setSelected(true);
@@ -689,6 +745,21 @@ public class MDAFrame extends JFrame
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         jPanel5.add(jRadioButton12, gridBagConstraints);
 
+        jScrollPane10.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane10.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        jScrollPane10.setMaximumSize(new java.awt.Dimension(260, 48));
+        jScrollPane10.setMinimumSize(new java.awt.Dimension(260, 48));
+        jScrollPane10.setPreferredSize(new java.awt.Dimension(260, 48));
+        jTextArea10.setLineWrap(true);
+        jTextArea10.setRows(3);
+        jScrollPane10.setViewportView(jTextArea10);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel5.add(jScrollPane10, gridBagConstraints);
+
         jTabbedPane1.addTab("Job", jPanel5);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -717,6 +788,15 @@ public class MDAFrame extends JFrame
         jTextArea2.setEditable(false);
         objectiveDialog.getContentPane().add(jTextArea2, java.awt.BorderLayout.CENTER);
 
+        jButton3.setText("Show Estimated Likelihood");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        objectiveDialog.getContentPane().add(jButton3, java.awt.BorderLayout.SOUTH);
+
         reportDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         reportDialog.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
@@ -726,8 +806,15 @@ public class MDAFrame extends JFrame
         reportDialog.setTitle("");
         reportDialog.setBackground(java.awt.Color.white);
         reportDialog.setModal(true);
+        reportDialog.addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                reportDialogWindowClosing(evt);
+            }
+        });
+
         previousButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/netbeans/ui/wizard/plaf/basic/icons/back.gif")));
-        previousButton.setText("Previous " + maxNum);
+        previousButton.setText("Previous Page");
+        previousButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
         previousButton.setMaximumSize(new java.awt.Dimension(127, 26));
         previousButton.setMinimumSize(new java.awt.Dimension(127, 26));
         previousButton.setPreferredSize(new java.awt.Dimension(127, 26));
@@ -740,7 +827,8 @@ public class MDAFrame extends JFrame
         jPanel4.add(previousButton);
 
         nextButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/netbeans/ui/wizard/plaf/basic/icons/next.gif")));
-        nextButton.setText("Next " + maxNum);
+        nextButton.setText("Next Page");
+        nextButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
         nextButton.setMaximumSize(new java.awt.Dimension(127, 26));
         nextButton.setMinimumSize(new java.awt.Dimension(127, 26));
         nextButton.setPreferredSize(new java.awt.Dimension(127, 26));
@@ -782,6 +870,12 @@ public class MDAFrame extends JFrame
         versionDialog.setTitle("");
         versionDialog.setLocationRelativeTo(reportDialog);
         versionDialog.setModal(true);
+        versionDialog.addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                versionDialogWindowClosing(evt);
+            }
+        });
+
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -1079,129 +1173,64 @@ public class MDAFrame extends JFrame
 
         diffHelpDialog.getContentPane().add(jPanel8, java.awt.BorderLayout.CENTER);
 
-        ChildJob.getContentPane().setLayout(new java.awt.GridBagLayout());
+        replaceDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        jTextArea6.setBackground(new java.awt.Color(204, 204, 204));
-        jTextArea6.setText("Select the estimation method you want to use. \nInitial conditions will be provided by the results \nfrom the parent job.");
+        replaceDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        replaceDialog.setTitle("Replacing String");
+        replaceDialog.setLocationRelativeTo(this);
+        replaceDialog.setModal(true);
+        replaceDialog.setResizable(false);
+        jLabel17.setText("Replace");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(12, 12, 6, 12);
-        ChildJob.getContentPane().add(jTextArea6, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 6, 0);
+        replaceDialog.getContentPane().add(jLabel17, gridBagConstraints);
 
-        peRadioButton.setText("Parameter estimation using the method");
-        buttonGroup4.add(peRadioButton);
+        jLabel18.setText("By");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
-        ChildJob.getContentPane().add(peRadioButton, gridBagConstraints);
+        replaceDialog.getContentPane().add(jLabel18, gridBagConstraints);
 
-        leRadioButton.setText("Likelihood evaluation using the method");
-        buttonGroup4.add(leRadioButton);
+        jTextField2.setPreferredSize(new java.awt.Dimension(120, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 6, 12);
+        replaceDialog.getContentPane().add(jTextField2, gridBagConstraints);
+
+        jTextField5.setPreferredSize(new java.awt.Dimension(120, 19));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
-        ChildJob.getContentPane().add(leRadioButton, gridBagConstraints);
-
-        foRadioButton.setText("First Order");
-        buttonGroup5.add(foRadioButton);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 12);
-        ChildJob.getContentPane().add(foRadioButton, gridBagConstraints);
-
-        ehRadioButton.setText("Expected Hessian");
-        buttonGroup5.add(ehRadioButton);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 12);
-        ChildJob.getContentPane().add(ehRadioButton, gridBagConstraints);
-
-        laRadioButton.setText("Laplace Approximation");
-        buttonGroup5.add(laRadioButton);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 12);
-        ChildJob.getContentPane().add(laRadioButton, gridBagConstraints);
-
-        mlRadioButton.setText("Plain Monte Carlo");
-        buttonGroup6.add(mlRadioButton);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 7;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 12);
-        ChildJob.getContentPane().add(mlRadioButton, gridBagConstraints);
-
-        miRadioButton.setText("Miser Monte Carlo");
-        buttonGroup6.add(miRadioButton);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 8;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 12);
-        ChildJob.getContentPane().add(miRadioButton, gridBagConstraints);
-
-        grRadioButton.setText("Grid Integration");
-        buttonGroup6.add(grRadioButton);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 9;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 12);
-        ChildJob.getContentPane().add(grRadioButton, gridBagConstraints);
-
-        anRadioButton.setText("Analytical Integration");
-        buttonGroup6.add(anRadioButton);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 10;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 12);
-        ChildJob.getContentPane().add(anRadioButton, gridBagConstraints);
-
-        jTextArea7.setBackground(new java.awt.Color(204, 204, 204));
-        jTextArea7.setText("If data simulation was used in the parent job, the\nsimulated data will be analyzed by the child job\nusing the estimation method you have selected.");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 11;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(6, 12, 6, 12);
-        ChildJob.getContentPane().add(jTextArea7, gridBagConstraints);
+        replaceDialog.getContentPane().add(jTextField5, gridBagConstraints);
 
         jButton1.setText("OK");
         jButton1.setMaximumSize(new java.awt.Dimension(75, 25));
         jButton1.setMinimumSize(new java.awt.Dimension(75, 25));
         jButton1.setPreferredSize(new java.awt.Dimension(75, 25));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         jPanel13.add(jButton1);
 
         jButton2.setText("Cancel");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         jPanel13.add(jButton2);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 12;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 12, 12);
-        ChildJob.getContentPane().add(jPanel13, gridBagConstraints);
-
-        mcRadioButton.setText("Markov Chain Monte Carlo");
-        buttonGroup5.add(mcRadioButton);
-        mcRadioButton.setEnabled(false);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 12);
-        ChildJob.getContentPane().add(mcRadioButton, gridBagConstraints);
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
+        replaceDialog.getContentPane().add(jPanel13, gridBagConstraints);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(0, 204, 204));
@@ -1549,8 +1578,10 @@ public class MDAFrame extends JFrame
         jMenuBar1.add(jMenu6);
 
         jMenu7.setText("Edit");
-        cutMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
-        cutMenu.setMnemonic('c');
+        jMenu7.add(jSeparator7);
+
+        cutMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.CTRL_MASK));
+        cutMenu.setMnemonic('u');
         cutMenu.setText("Cut");
         jMenu7.add(cutMenu);
 
@@ -1564,6 +1595,17 @@ public class MDAFrame extends JFrame
         pasteMenu.setText("Paste");
         jMenu7.add(pasteMenu);
 
+        deleteMenu.setText("Delete");
+        deleteMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteMenuActionPerformed(evt);
+            }
+        });
+
+        jMenu7.add(deleteMenu);
+
+        jMenu7.add(jSeparator8);
+
         findMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
         findMenu.setMnemonic('f');
         findMenu.setText("Find");
@@ -1574,6 +1616,15 @@ public class MDAFrame extends JFrame
         });
 
         jMenu7.add(findMenu);
+
+        replaceMenu.setText("Replace");
+        replaceMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                replaceMenuActionPerformed(evt);
+            }
+        });
+
+        jMenu7.add(replaceMenu);
 
         jMenuBar1.add(jMenu7);
 
@@ -1712,6 +1763,8 @@ public class MDAFrame extends JFrame
 
         jMenu9.add(tableMenu);
 
+        scatterPlotMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
+        scatterPlotMenu.setMnemonic('c');
         scatterPlotMenu.setText("Scatterplots");
         scatterPlotMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1746,6 +1799,8 @@ public class MDAFrame extends JFrame
         jMenuBar1.add(jMenu9);
 
         jMenu1.setText("Plot");
+        useMDAMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
+        useMDAMenu.setMnemonic('l');
         useMDAMenu.setText("Use MDA Plotter");
         useMDAMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1755,6 +1810,8 @@ public class MDAFrame extends JFrame
 
         jMenu1.add(useMDAMenu);
 
+        useRMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.CTRL_MASK));
+        useRMenu.setMnemonic('g');
         useRMenu.setText("Use R Language");
         useRMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1772,7 +1829,7 @@ public class MDAFrame extends JFrame
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.gridheight = 12;
+        gridBagConstraints.gridheight = 13;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
@@ -1784,15 +1841,99 @@ public class MDAFrame extends JFrame
         jLabel16.setText("Status:  On Line");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 13;
+        gridBagConstraints.gridy = 14;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(12, 16, 16, 12);
+        gridBagConstraints.insets = new java.awt.Insets(2, 12, 14, 12);
         jPanel1.add(jLabel16, gridBagConstraints);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
         pack();
     }//GEN-END:initComponents
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        replaceDialog.dispose();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        String text = textArea.getText();
+        String string1 = jTextField2.getText().trim();
+        String string2 = jTextField5.getText().trim();
+        if(string1.equals("") || text.toLowerCase().indexOf(string1.toLowerCase()) == -1)
+        {
+            JOptionPane.showMessageDialog(null, "The string '" + string1 + "' was not found in the text.", 
+                                          "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if(!string1.equals(""))
+        {
+            int pos = 0;
+            Vector positions = new Vector();            
+            while ((pos = text.toLowerCase().indexOf(string1.toLowerCase(), pos)) >= 0)
+            {
+                positions.add(new Integer(pos));
+                pos += string1.length();
+            }
+            for(int i = 0; i < positions.size(); i++)
+            {
+                int start = ((Integer)positions.get(i)).intValue() + 
+                             i * (string2.length() - string1.length());
+                textArea.select(start, start + string1.length());
+                textArea.replaceSelection(string2);
+            }
+        }
+        replaceDialog.dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void replaceMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_replaceMenuActionPerformed
+        replaceDialog.setSize(220, 150);
+        replaceDialog.show();
+    }//GEN-LAST:event_replaceMenuActionPerformed
+
+    private void deleteMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteMenuActionPerformed
+        textArea.replaceSelection("");
+    }//GEN-LAST:event_deleteMenuActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        new LikelihoodShow(this, false, output).show();
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void versionDialogWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_versionDialogWindowClosing
+        if(!isVersionListOn) return;
+        if(listType.equals("model"))
+        {
+            if(modelRadioButtonState == 1)
+                jRadioButton1.setSelected(true);
+            if(modelRadioButtonState == 3)
+                jRadioButton3.setSelected(true);
+        }
+        if(listType.equals("data"))
+        {
+            if(datasetRadioButtonState == 1)
+                jRadioButton4.setSelected(true);
+            if(datasetRadioButtonState == 3)
+                jRadioButton6.setSelected(true);
+        }
+        isVersionListOn = false;
+    }//GEN-LAST:event_versionDialogWindowClosing
+
+    private void reportDialogWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_reportDialogWindowClosing
+        if(isVersionListOn || isDiff) return;
+        if(listType.equals("model"))
+        {
+            if(modelRadioButtonState == 1)
+                jRadioButton1.setSelected(true);
+            if(modelRadioButtonState == 3)
+                jRadioButton3.setSelected(true);
+        }
+        if(listType.equals("data"))
+        {
+            if(datasetRadioButtonState == 1)
+                jRadioButton4.setSelected(true);
+            if(datasetRadioButtonState == 3)
+                jRadioButton6.setSelected(true);
+        }
+    }//GEN-LAST:event_reportDialogWindowClosing
 
     private void scatterPlotMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scatterPlotMenuActionPerformed
         scatterPlot(0);
@@ -1855,7 +1996,7 @@ public class MDAFrame extends JFrame
         if(operatingSystem.startsWith("Linux") || operatingSystem.startsWith("Unix"))
             c = new String[]{"xterm", "-e", "R"};
         else if(operatingSystem.startsWith("Windows"))
-            c = new String[]{"Rgui"};
+            c = new String[]{"Rgui"};                               
         try
         {
             Process process = Runtime.getRuntime().exec(c);
@@ -1904,6 +2045,7 @@ public class MDAFrame extends JFrame
     private void dataLibRButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dataLibRButtonActionPerformed
         isDiff = true;
         isLeft = false;
+        isWizard = false;
         isLibrary = true;
         dataArchive();
     }//GEN-LAST:event_dataLibRButtonActionPerformed
@@ -1911,6 +2053,7 @@ public class MDAFrame extends JFrame
     private void dataLibLButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dataLibLButtonActionPerformed
         isDiff = true;
         isLeft = true;
+        isWizard = false;        
         isLibrary = true;
         dataArchive();
     }//GEN-LAST:event_dataLibLButtonActionPerformed
@@ -1925,6 +2068,7 @@ public class MDAFrame extends JFrame
 
     private void DatasetLibraryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DatasetLibraryButtonActionPerformed
         isDiff = false;
+        isWizard = false;        
         isLibrary = true;
         dataArchive();        
     }//GEN-LAST:event_DatasetLibraryButtonActionPerformed
@@ -1942,6 +2086,7 @@ public class MDAFrame extends JFrame
     private void modelLibRButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modelLibRButtonActionPerformed
         isDiff = true;
         isLeft = false;
+        isWizard = false;        
         isLibrary = true;
         modelArchive();        
     }//GEN-LAST:event_modelLibRButtonActionPerformed
@@ -1949,12 +2094,14 @@ public class MDAFrame extends JFrame
     private void modelLibLButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modelLibLButtonActionPerformed
         isDiff = true;
         isLeft = true;
+        isWizard = false;        
         isLibrary = true;
         modelArchive();     
     }//GEN-LAST:event_modelLibLButtonActionPerformed
 
     private void ModelLibraryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ModelLibraryButtonActionPerformed
         isDiff = false;
+        isWizard = false;        
         isLibrary = true;
         modelArchive();        
     }//GEN-LAST:event_ModelLibraryButtonActionPerformed
@@ -1979,15 +2126,16 @@ public class MDAFrame extends JFrame
 
     private void findMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findMenuActionPerformed
         String string = JOptionPane.showInputDialog(null, "Enter a string to find.");
-        String text = textArea.getText();
-        if(string == null)
+        if(string == null || string.trim().equals(""))
             return;
+        String text = textArea.getText();
         if(string.equals("") || text.toLowerCase().indexOf(string.toLowerCase()) == -1)
         {
             JOptionPane.showMessageDialog(null, "The string '" + string + "' was not found.", 
                                               "Find Result", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
+
         removeHighlights(textArea); 
         try 
         {
@@ -2008,9 +2156,9 @@ public class MDAFrame extends JFrame
         catch (BadLocationException e) 
         {
             JOptionPane.showMessageDialog(null, e, "BadLocationException", JOptionPane.ERROR_MESSAGE);            
-        }        
+        }
     }//GEN-LAST:event_findMenuActionPerformed
-
+ 
     private void nextDiffButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextDiffButtonActionPerformed
         if(deltaLines == null || deltaLines.size() == 0)
             return;
@@ -2286,12 +2434,15 @@ public class MDAFrame extends JFrame
     private void dataRButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dataRButtonActionPerformed
         isDiff = true;
         isLeft = false;
+        isWizard = false;
+        isLibrary = false;
         dataArchive();
     }//GEN-LAST:event_dataRButtonActionPerformed
 
     private void modelRButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modelRButtonActionPerformed
         isDiff = true;
         isLeft = false;
+        isWizard = false;        
         isLibrary = false;
         modelArchive();
     }//GEN-LAST:event_modelRButtonActionPerformed
@@ -2311,12 +2462,15 @@ public class MDAFrame extends JFrame
     private void dataLButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dataLButtonActionPerformed
         isDiff = true;
         isLeft = true;
+        isWizard = false;
+        isLibrary = false;
         dataArchive();
     }//GEN-LAST:event_dataLButtonActionPerformed
 
     private void modelLButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modelLButtonActionPerformed
         isDiff = true;
         isLeft = true;
+        isWizard = false;        
         isLibrary = false;
         modelArchive();
     }//GEN-LAST:event_modelLButtonActionPerformed
@@ -2384,39 +2538,65 @@ public class MDAFrame extends JFrame
     }
 
     private void jRadioButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton3ActionPerformed
-        jTextField1.setEnabled(false);
-        jTextField2.setEnabled(false);
-        jTextField1.setText("");
-        jTextField2.setText("");
-        jTextField3.setText("");       
+        if(recentModel.name != null && recentModel.text.equals(modelArchive.text.trim()))
+        {
+            modelRadioButtonState = 3;
+            jTextField1.setText(recentModel.name);
+            jTextArea8.setText(recentModel.description);
+            jTextField3.setText(recentModel.version);
+            modelArchive.id = recentModel.id;
+            return;
+        }
+        jTextField1.setEditable(false);      
         listType = "model";
         isLibrary = false;
         showVersions = true;
         indexList = 0;
-        lists = new Vector();
-        showArchiveList(false);        
+        lists = new Vector();       
+        showArchiveList(false);
     }//GEN-LAST:event_jRadioButton3ActionPerformed
 
     private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
-        jTextField1.setEnabled(false);
-        jTextField2.setEnabled(false);
-        jTextField1.setText("");
-        jTextField2.setText("");
-        jTextField3.setText("");
-        listType = "model";
-        isLibrary = false;
-        showVersions = false;
-        indexList = 0;
-        lists = new Vector();        
-        showArchiveList(false);
+        int option = 1;
+        if(recentModel.name != null)
+            option = JOptionPane.showConfirmDialog(null, "Is this a new version of this recently downloaded model?" +
+                                                   "\nModel Name:     " + recentModel.name +
+                                                   "\nModel Version:  " + recentModel.version,
+                                                   "Question", JOptionPane.YES_NO_CANCEL_OPTION);
+        if(option == 0)
+        {
+            jTextField1.setEditable(false);
+            jTextField1.setText(recentModel.name);
+            jTextArea8.setText(recentModel.description);
+            jTextField3.setText(String.valueOf(Integer.parseInt(recentModel.version) + 1));
+            modelArchive.id = recentModel.id;
+            modelRadioButtonState = 2;
+        }
+        else if(option == 1)
+        {
+            jTextField1.setEditable(false);
+            listType = "model";
+            isLibrary = false;
+            showVersions = false;
+            indexList = 0;
+            lists = new Vector();            
+            showArchiveList(false);      
+        }
+        else
+        {
+            if(modelRadioButtonState == 1)
+                jRadioButton1.setSelected(true);
+            if(modelRadioButtonState == 3)
+                jRadioButton3.setSelected(true);            
+        }
     }//GEN-LAST:event_jRadioButton2ActionPerformed
 
     private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
-        jTextField1.setEnabled(true);
-        jTextField2.setEnabled(true); 
+        jTextField1.setEditable(true); 
         jTextField1.setText("");
-        jTextField2.setText("");
+        jTextArea8.setText("");
         jTextField3.setText("1");
+        modelRadioButtonState = 1;
     }//GEN-LAST:event_jRadioButton1ActionPerformed
 
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
@@ -2445,7 +2625,7 @@ public class MDAFrame extends JFrame
             return;        
         if(getArchive)
         {
-            if(!isDiff)
+            if(!isDiff && !isWizard)
                 saveFile();            
             if(listType.equals("model"))
             {
@@ -2470,6 +2650,14 @@ public class MDAFrame extends JFrame
                     }
                     else
                     {
+                        if(!isLibrary)
+                        {
+                            recentModel.id = archiveId;
+                            recentModel.name = archiveName;
+                            recentModel.text = archive;
+                            recentModel.version = version;
+                            recentModel.description = archiveDescription;
+                        }
                         jInternalFrame1.setTitle(title);
                         textArea.setText(archive);
                         textArea.setCaretPosition(0);                        
@@ -2506,13 +2694,40 @@ public class MDAFrame extends JFrame
                     }
                     else
                     {
-                        jInternalFrame1.setTitle(title);
-                        String text = XMLReader.parseDataXML(archive);
-                        if(text != null)
+                        if(isWizard)
                         {
-                            textArea.setText(text);
-                            textArea.setCaretPosition(0);                        
-                            file = null;
+                            if(!iterator.getIsInd() && archive.indexOf(">ID</value>") == -1)
+                            {
+                                JOptionPane.showMessageDialog(null, "Data item 'ID' was not found in the dataset." +
+                                                              "\nIt is required for the population analysis.",
+                                                              "Input Error", JOptionPane.ERROR_MESSAGE);
+                                iterator.setIsNewData(false);
+                                versionDialog.dispose();
+                                reportDialog.dispose();
+                                return;
+                            }                            
+                            iterator.setDataXML(archive, 1);
+                            iterator.setDatasetName(archiveName, 1);
+                            iterator.setIsNewData(true);
+                        }                        
+                        if(!isLibrary)
+                        {
+                            recentDataset.id = archiveId;
+                            recentDataset.name = archiveName;
+                            recentDataset.text = archive;                    
+                            recentDataset.version = version;
+                            recentDataset.description = archiveDescription;
+                        }
+                        else
+                        {
+                            String text = XMLReader.parseDataXML(archive);
+                            if(text != null)
+                            {
+                                textArea.setText(text);
+                                textArea.setCaretPosition(0);
+                                jInternalFrame1.setTitle(title);
+                                file = null;
+                            }
                         }
                     }
                 }
@@ -2520,13 +2735,19 @@ public class MDAFrame extends JFrame
         }
         else
         {
+            isVersionListOn = false;
             if(listType.equals("model"))
             {
                 String spkInput = textArea.getText();
                 int index2 = spkInput.indexOf("<spkmodel");        
                 String model = XMLReader.getModelArchive(spkInput.substring(index2 - 22)).trim();
                 if(model.equals(archive))
+                {
+                    jTextField1.setText(modelArchive.name);
+                    jTextArea8.setText(modelArchive.description);                    
                     jTextField3.setText(version);
+                    modelRadioButtonState = 3;
+                }
                 else
                 {
                     JOptionPane.showMessageDialog(null, "The version of the model you selected" + 
@@ -2543,7 +2764,10 @@ public class MDAFrame extends JFrame
                 String dataset = spkInput.substring(index1 - 22, index2 - 22).trim();
                 if(dataset.equals(archive))
                 {
+                    jTextField4.setText(dataArchive.name);
+                    jTextArea9.setText(dataArchive.description);                    
                     jTextField6.setText(version);
+                    datasetRadioButtonState = 3;
                 }
                 else
                 {
@@ -2561,10 +2785,22 @@ public class MDAFrame extends JFrame
 
     private void DataArchiveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DataArchiveButtonActionPerformed
         isDiff = false;
+        isWizard = false;
         isLibrary = false; 
         dataArchive();
     }//GEN-LAST:event_DataArchiveButtonActionPerformed
 
+    /** Reload data from the database.
+     * @param isLib a flag to specify if reloading data from the library.
+     */
+    public void reloadData(boolean isLib)
+    {
+        isWizard = true;
+        isDiff = false;
+        isLibrary = isLib;
+        dataArchive();
+    }
+        
     private void dataArchive()
     {
         listType = "data"; 
@@ -2577,6 +2813,7 @@ public class MDAFrame extends JFrame
     
     private void ModelArchiveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ModelArchiveButtonActionPerformed
         isDiff = false;
+        isWizard = false;        
         isLibrary = false;
         modelArchive();
     }//GEN-LAST:event_ModelArchiveButtonActionPerformed
@@ -2592,39 +2829,65 @@ public class MDAFrame extends JFrame
     }
     
     private void jRadioButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton4ActionPerformed
-        jTextField4.setEnabled(true);
-        jTextField5.setEnabled(true);
+        jTextField4.setEditable(true);
         jTextField4.setText("");
-        jTextField5.setText(""); 
+        jTextArea9.setText(""); 
         jTextField6.setText("1");
+        datasetRadioButtonState = 1;
     }//GEN-LAST:event_jRadioButton4ActionPerformed
 
     private void jRadioButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton6ActionPerformed
-        jTextField4.setEnabled(false);
-        jTextField5.setEnabled(false);
-        jTextField4.setText("");
-        jTextField5.setText("");
-        jTextField6.setText("");        
+        jTextField4.setEditable(false);
+        if(recentDataset.name != null && recentDataset.text.equals(dataArchive.text.trim()))
+        {
+            datasetRadioButtonState = 3;
+            jTextField4.setText(recentDataset.name);
+            jTextArea9.setText(recentDataset.description);
+            jTextField6.setText(recentDataset.version);
+            dataArchive.id = recentDataset.id;            
+            return;   
+        }
         listType = "data";
         isLibrary = false;
         showVersions = true;
         indexList = 0;
         lists = new Vector();
-        showArchiveList(false);        
+        showArchiveList(false);
     }//GEN-LAST:event_jRadioButton6ActionPerformed
 
     private void jRadioButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton5ActionPerformed
-        jTextField4.setEnabled(false);
-        jTextField5.setEnabled(false);
-        jTextField4.setText("");
-        jTextField5.setText("");
-        jTextField6.setText("");        
-        listType = "data";
-        isLibrary = false;
-        showVersions = false;
-        indexList = 0;
-        lists = new Vector();        
-        showArchiveList(false);
+        int option = 1;
+        if(recentDataset.name != null)
+            option = JOptionPane.showConfirmDialog(null, "Is this a new version of this recently downloaded dataset?" +
+                                                   "\nDataset Name:     " + recentDataset.name +
+                                                   "\nDataset Version:  " + recentDataset.version,
+                                                   "Question", JOptionPane.YES_NO_CANCEL_OPTION);
+        if(option == 0)
+        {
+            jTextField4.setEditable(false);            
+            jTextField4.setText(recentDataset.name);
+            jTextArea9.setText(recentDataset.description);
+            jTextField6.setText(String.valueOf(Integer.parseInt(recentDataset.version) + 1));
+            dataArchive.id = recentDataset.id;
+            datasetRadioButtonState = 2;            
+        }
+        else if(option == 1)
+        {
+            jTextField4.setEditable(false);      
+            listType = "data";
+            isLibrary = false;
+            showVersions = false;
+            indexList = 0;
+            lists = new Vector();          
+            showArchiveList(false);           
+        }
+        else
+        {
+            if(datasetRadioButtonState == 1)
+                jRadioButton4.setSelected(true);
+            if(datasetRadioButtonState == 3)
+                jRadioButton6.setSelected(true);            
+        }        
     }//GEN-LAST:event_jRadioButton5ActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
@@ -2639,9 +2902,11 @@ public class MDAFrame extends JFrame
             reportDialog.dispose();        
             return;
         }
-        if(getArchive)
+        else if(getArchive)
         {
             archiveName = ((String[][])lists.get(indexList))[index][1];
+            archiveId = id;
+            archiveDescription = ((String[][])lists.get(indexList))[index][4];
             versionDialog.setTitle(archiveName); 
             showVersionList(id);
         }
@@ -2649,36 +2914,48 @@ public class MDAFrame extends JFrame
         {
             if(listType.equals("model"))
             {
-                jTextField1.setText((String)(jTable1.getModel().getValueAt(index, 0)));
-                jTextField2.setText((String)(jTable1.getModel().getValueAt(index, 2)));
+                modelArchive.name = (String)(jTable1.getModel().getValueAt(index, 1));
+                modelArchive.description = (String)(jTable1.getModel().getValueAt(index, 4));
                 modelArchive.id = id; 
                 if(showVersions)
+                {
+                    isVersionListOn = true;
                     showVersionList(id);
+                }
                 else
                 {
                     String[][] modelVersions = server.getVersions(id, listType, isLibrary); 
                     if(modelVersions != null)
                     {
-                        jTextField3.setText(String.valueOf(modelVersions.length + 1)); 
-                        reportDialog.dispose();
+                        jTextField1.setText(modelArchive.name);
+                        jTextArea8.setText(modelArchive.description);                        
+                        jTextField3.setText(String.valueOf(modelVersions.length + 1));
                     }
+                    modelRadioButtonState = 2;
+                    reportDialog.dispose();
                 }
             }
             if(listType.equals("data"))
             {
-                jTextField4.setText((String)(jTable1.getModel().getValueAt(index, 0))); 
-                jTextField5.setText((String)(jTable1.getModel().getValueAt(index, 2)));
+                dataArchive.name = (String)(jTable1.getModel().getValueAt(index, 1));
+                dataArchive.description = (String)(jTable1.getModel().getValueAt(index, 4));
                 dataArchive.id = id;                                  
                 if(showVersions)
+                {
+                    isVersionListOn = true;
                     showVersionList(id);
+                }
                 else
                 {
                     String[][] datasetVersions = server.getVersions(id, listType, isLibrary);
                     if(datasetVersions != null)
                     {
-                        jTextField6.setText(String.valueOf(datasetVersions.length + 1));                     
-                        reportDialog.dispose();  
+                        jTextField4.setText(dataArchive.name); 
+                        jTextArea9.setText(dataArchive.description);                        
+                        jTextField6.setText(String.valueOf(datasetVersions.length + 1));
                     }
+                    datasetRadioButtonState = 2;    
+                    reportDialog.dispose();  
                 }
             }
         }
@@ -2710,12 +2987,23 @@ public class MDAFrame extends JFrame
         if(text.indexOf("<spksource>") == -1 || text.indexOf("<spkdata") == -1 || 
            text.indexOf("<spkmodel>") == -1)
         {
-            JOptionPane.showMessageDialog(null, "The text is not a SPK input file", 
+            JOptionPane.showMessageDialog(null, "The text is not a SPK input file",
                                           "Job Submission Error", 
-                                          JOptionPane.ERROR_MESSAGE);            
+                                          JOptionPane.ERROR_MESSAGE);
             return;
         }
 
+        if(text.indexOf("is_restart=\"yes\"", text.indexOf("<pop_analysis ") + 1) != -1 ||
+           text.indexOf("is_restart=\"yes\"", text.indexOf("<ind_analysis ") + 1) != -1)
+        {
+            JOptionPane.showMessageDialog(null, "This is a warm start job.  It must start with a parent job." +
+                                          "\nIf you want to submit a warm start job, click 'My Jobs'" +
+                                          "\nbutton, then find the parent job of the warm start job.",
+                                          "Job Submission Error", 
+                                          JOptionPane.ERROR_MESSAGE);
+            return;            
+        }
+        
         // If the user is going to use a likelihhod evaluation method modify the input file
         jobMethodClass = "";        
         if(jobId != 0 && text.indexOf("<pop_analysis ") != -1 && text.indexOf(" is_estimation=\"yes\" ") != -1 && 
@@ -2784,58 +3072,68 @@ public class MDAFrame extends JFrame
                     jobMethodCode = "so";
                 else
                 {
-                    JOptionPane.showMessageDialog(null, "Neither estimation nor simulation is included in the job",
-                                                  "Input Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Neither estimation nor simulation is included in this job." +
+                                                  "\nIf you want to submit a likelihood evaluation only job, click" +
+                                                  "\n'My Jobs' button, then select a job to use as the parent job.",
+                                                  "Job Submission Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             }
             else
             {
-                JOptionPane.showMessageDialog(null, "Neither population nor individual analysis is in the job",
-                                              "Input Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Neither population nor individual analysis is included in this job.",
+                                              "Job Submission Error", JOptionPane.ERROR_MESSAGE);
                 return;          
             }            
         }
 
         // Collect archive information
         getArchive = false;
+        int index1 = text.indexOf("<spkdata");
+        int index2 = text.indexOf("<spkmodel");
+        String dataset = text.substring(index1 - 22, index2 - 22);
+        String model = XMLReader.getModelArchive(text.substring(index2 - 22));         
         modelArchive = new ArchiveInfo();
         dataArchive = new ArchiveInfo();
-        jTabbedPane1.removeAll();
-        jTextField1.setText("");
-        jTextField2.setText("");
-        jTextField3.setText("1");
-        jTextField4.setText(data);
-        jTextField5.setText("");
-        jTextField6.setText("1");        
+        modelArchive.text = model;
+        dataArchive.text = dataset;
+        jTabbedPane1.removeAll(); 
         if(jobMethodClass == "le")
         {
             jRadioButton3.setSelected(true);
+            modelRadioButtonState = 3;
             jTextField1.setText(jobInfo.modelName);
-            jTextField2.setText(jobInfo.modelAbstract);
+            jTextArea8.setText(jobInfo.modelAbstract);
             jTextField3.setText(jobInfo.modelVersion);
-            modelArchive.id = Long.parseLong(jobInfo.modelId);
+            modelArchive.id = jobInfo.modelId;
             jobMethodCode = "ml";
             if(hasSimulation)
             {
-                jRadioButton4.setSelected(true);
+                jRadioButton4.doClick();
                 jTabbedPane1.add("Dataset", jPanel3);
             }
             else
             {
                 jRadioButton6.setSelected(true);
+                datasetRadioButtonState = 3;
                 jTextField4.setText(jobInfo.datasetName);
-                jTextField5.setText(jobInfo.datasetAbstract);
+                jTextArea9.setText(jobInfo.datasetAbstract);
                 jTextField6.setText(jobInfo.datasetVersion);
-                dataArchive.id = Long.parseLong(jobInfo.datasetId);                               
+                dataArchive.id = jobInfo.datasetId;                               
             }            
         }
         else
         {
-            jRadioButton1.setSelected(true);
-            jRadioButton4.setSelected(true);
+            if(recentModel.name != null && recentModel.text.equals(model.trim()))
+                jRadioButton3.doClick();
+            else
+                jRadioButton1.doClick();
+            if(recentDataset.name != null && recentDataset.text.equals(dataset.trim()))
+                jRadioButton6.doClick();
+            else
+                jRadioButton4.doClick();
             jTabbedPane1.add("Model", jPanel2);
-            jTabbedPane1.add("Dataset", jPanel3);
+            jTabbedPane1.add("Dataset", jPanel3);            
         }
         jTabbedPane1.add("Job", jPanel5);
         jRadioButton7.setSelected(false);
@@ -2864,6 +3162,10 @@ public class MDAFrame extends JFrame
         {
             jRadioButton7.setSelected(true);
             jRadioButton7.doClick();
+            jRadioButton8.setEnabled(false);
+            jRadioButton10.setEnabled(false);
+            jRadioButton11.setEnabled(false);
+            jRadioButton12.setEnabled(false);
         }
         else if(jobMethodCode.equals("ml"))
         {
@@ -2872,25 +3174,14 @@ public class MDAFrame extends JFrame
         }
         jTextField14.setText(((String[])methodTable.get(jobMethodCode))[0]);
 
-        if(jobId == 0)
-        {
-            jRadioButton8.setEnabled(false);
-            jRadioButton10.setEnabled(false);
-            jRadioButton11.setEnabled(false);
-            jRadioButton12.setEnabled(false);            
-        }
-        jTextField7.setText(problem); 
-        jTextField1.setEnabled(true);
-        jTextField2.setEnabled(true);
-        jTextField4.setEnabled(true);
-        jTextField5.setEnabled(true);
-        archiveDialog.setSize(300, 320);
+        jTextArea10.setText(problem); 
+
+        archiveDialog.setSize(300, 350);
         archiveDialog.setVisible(true);
     }//GEN-LAST:event_SubmitJobButtonActionPerformed
 
     private void WriteInputButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_WriteInputButtonActionPerformed
-        MDAIterator iterator = new MDAIterator(server, isOnline, 
-                                               this, isTester, isDeveloper, files, jobId);
+        iterator = new MDAIterator(server, isOnline, this, isTester, isDeveloper, files, jobId);
         writeInput(iterator);
     }//GEN-LAST:event_WriteInputButtonActionPerformed
 
@@ -3091,21 +3382,34 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_ThetaMenuActionPerformed
 
     private void objectiveMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_objectiveMenuActionPerformed
-        if(output != null && output.objective != null && output.methodCode != null)
+        if(output != null && (output.objective != null || output.likelihood != null) && output.methodCode != null)
         {
             String objective = null;
+            String objStdErr = "";            
+            String nEvaluation = "";
+            String computeTime = "";
             if(!((String[])methodTable.get(output.methodCode))[1].equals("le"))
-                objective = "Minimum Value of Objective Function:\n" + output.objective + "\n";
+            {
+                objective = "Minimum Value of Objective Function:\n" + output.objective;
+                jButton3.setEnabled(false);
+                objectiveDialog.setTitle("Objective");
+                objectiveDialog.setSize(300, 200);                
+            }
             else
-                objective = "Estimate for Likelihood Function:\n" + output.objective + "\n";
-            String objStdErr = "";
-            String jobMethod = "";
-            if(output.objStdErr != null)
-                objStdErr = "\nStandard Error in Likelihood Function:\n" + output.objStdErr + "\n";
-            jobMethod = "\nMethod Used in the Analysis:\n" + 
-                        ((String[])methodTable.get(output.methodCode))[0] + "\n";
-            jTextArea2.setText(objective + objStdErr + jobMethod);
-            objectiveDialog.setSize(300, 200);
+            {
+                objective = "Estimate for Likelihood Function:\n" + output.likelihood[0][1];
+                if(output.likelihood_std != null)
+                    objStdErr = "\n\nStandard Error in Likelihood Function:\n" + output.likelihood_std[0][1];          
+                jButton3.setEnabled(true);
+                objectiveDialog.setTitle("Likelihood");
+                nEvaluation = "\n\nNumber of Evaluations:\n" + output.nEvaluation;
+                computeTime = "\n\nComputing Time (second):\n" + output.computingTimes[0];
+                objectiveDialog.setSize(300, 280);
+            }
+            String jobMethod = "\n\nMethod Used in the Analysis:\n" + 
+                               ((String[])methodTable.get(output.methodCode))[0];
+            
+            jTextArea2.setText(objective + objStdErr + jobMethod + nEvaluation + computeTime);
             objectiveDialog.show();
         }
         else
@@ -3138,7 +3442,8 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_errorMenuActionPerformed
     
     private void exitMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuActionPerformed
-        server.endSession();
+        if(isOnline) server.endSession();
+        System.exit(0);
     }//GEN-LAST:event_exitMenuActionPerformed
 
     private void printMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printMenuActionPerformed
@@ -3179,7 +3484,7 @@ public class MDAFrame extends JFrame
         if(result == files.APPROVE_OPTION)
 	{
             file = files.getSelectedFile();
-            saveOperation(textArea.getText());
+            saveOperation(textArea.getText(), file);
             jInternalFrame1.setTitle(file.getName());
         }
     }//GEN-LAST:event_savaAsMenuActionPerformed
@@ -3187,7 +3492,7 @@ public class MDAFrame extends JFrame
     private void saveMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuActionPerformed
         if(file != null)
 	{
-            saveOperation(textArea.getText());
+            saveOperation(textArea.getText(), file);
         }
         else
 	{
@@ -3196,7 +3501,7 @@ public class MDAFrame extends JFrame
             if(result == files.APPROVE_OPTION)
 	    {
                 file = files.getSelectedFile();
-                saveOperation(textArea.getText());
+                saveOperation(textArea.getText(), file);
             }
         }
     }//GEN-LAST:event_saveMenuActionPerformed
@@ -3221,13 +3526,13 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_openMenuActionPerformed
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        String jobAbstract = jTextField7.getText();
+        String jobAbstract = jTextArea10.getText();
         
         // Collect model archive information 
         modelArchive.name = jTextField1.getText();
         if(modelArchive.name.length() > 20)
             modelArchive.name = modelArchive.name.substring(0, 20);
-        modelArchive.description = jTextField2.getText(); 
+        modelArchive.description = jTextArea8.getText(); 
         if(modelArchive.description.length() > 100)
             modelArchive.description = modelArchive.description.substring(0, 100);        
         modelArchive.version = "1." + jTextField3.getText();
@@ -3256,7 +3561,7 @@ public class MDAFrame extends JFrame
         dataArchive.name = jTextField4.getText();
         if(dataArchive.name.length() > 20)
             dataArchive.name = dataArchive.name.substring(0, 20);        
-        dataArchive.description = jTextField5.getText(); 
+        dataArchive.description = jTextArea9.getText(); 
         if(dataArchive.description.length() > 100)
             dataArchive.description = dataArchive.description.substring(0, 100);        
         dataArchive.version = "1." + jTextField6.getText();
@@ -3283,12 +3588,9 @@ public class MDAFrame extends JFrame
 
         // Get the XML documents as String objects
         String spkInput = textArea.getText();
-        int index1 = spkInput.indexOf("<spkdata");
-        int index2 = spkInput.indexOf("<spkmodel");
-        String source = spkInput.substring(0, index1 - 22);
-        String dataset = spkInput.substring(index1 - 22, index2 - 22);
-        String model = XMLReader.getModelArchive(spkInput.substring(index2 - 22));
-        
+        int index = spkInput.indexOf("<spkdata");
+        String source = spkInput.substring(0, index - 22);
+
         // Collect version logs
         if((modelArchive.isNewArchive || modelArchive.isNewVersion))
         {
@@ -3325,8 +3627,8 @@ public class MDAFrame extends JFrame
         }
 
         // Submit the job
-        server.submitJob(source, dataset, model, jobAbstract, modelArchive, dataArchive,
-                         jobMethodCode, jobParent);    
+        server.submitJob(source, jobAbstract, modelArchive, dataArchive,
+                         jobMethodCode, jobParent, false);
         
         // Close the dialog
         archiveDialog.dispose();
@@ -3338,7 +3640,8 @@ public class MDAFrame extends JFrame
     
     /** Exit the Application */
     private void exitForm(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_exitForm
-        server.endSession();       
+        if(isOnline) server.endSession();
+        System.exit(0);
     }//GEN-LAST:event_exitForm
 
     /** This method performs open file operation.
@@ -3385,8 +3688,11 @@ public class MDAFrame extends JFrame
         return text;
     }
     
-    // This method performs save file operation.
-    private void saveOperation(String text)
+    /** This method performs save file operation.
+     * @param text the content of the file to be saved.
+     * @param file the File object for the file to be saved
+     */
+    public void saveOperation(String text, File file)
     {
         try
         {
@@ -3450,23 +3756,12 @@ public class MDAFrame extends JFrame
             if(result == files.APPROVE_OPTION)
 	    {
                 file = files.getSelectedFile();
-                saveOperation(control);
+                saveOperation(control, file);
             }   
         }
         file = null;
         files.setSelectedFile(new File(""));
-        
-        // Set restart option
-        if(!records.getProperty("Estimation").equals("") &&
-           JOptionPane.showConfirmDialog(null, "Do you want SPK to continue estimation when the maximum\n " +
-                                         "allowable number of evaluations you specified is reached?",
-                                         "Question Dialog",
-                                         JOptionPane.YES_NO_OPTION,
-                                         JOptionPane.QUESTION_MESSAGE) == 0)
-            object.getSource().isRestart = true;
-        else
-            object.getSource().isRestart = false;
-        
+ 
         // Write SPK input file in XML format
         if(object.getSource() == null || object.getData() == null || control == null)
         {
@@ -3711,13 +4006,13 @@ public class MDAFrame extends JFrame
                     if(result == files.APPROVE_OPTION)
                     {
                         file = files.getSelectedFile();
-                        saveOperation(textArea.getText());
+                        saveOperation(textArea.getText(), file);
                     }
                 }
                 else
                 {
                     file = new File(pathName);
-                    saveOperation(textArea.getText());
+                    saveOperation(textArea.getText(), file);
                 }
             }  
         }
@@ -3729,25 +4024,26 @@ public class MDAFrame extends JFrame
         String[] header = null;
         String title = "";
         String[][] archiveList = null;
+        String name = isLibrary ? "library" : username;
         switch(listType.charAt(0))
         {            
             case 'j':
             {
                 timer.start();
-                title = "Job List"; 
+                title = "Job List - " + name; 
                 header = new String[]{"Job ID", "Submission Time", "Status Code", "Model.Version", "Dataset.Version", "Job Description"};
                 break;
             }
             case 'm':
             {
-                title = "Model List"; 
-                header = new String[]{"Model Name", "No. of Versions", "Last Revised Time", "Description"};
+                title = "Model List - " + name; 
+                header = new String[]{"Model ID", "Model Name", "No. of Versions", "Last Revised Time", "Description"};
                 break;
             }
             case 'd':
             {
-                title = "Dataset List";
-                header = new String[]{"Dataset Name", "No. of Versions", "Last Revised Time", "Description"};
+                title = "Dataset List - " + name;
+                header = new String[]{"Dataset ID", "Dataset Name", "No. of Versions", "Last Revised Time", "Description"};
                 break;
             }            
             default: return;
@@ -3814,8 +4110,8 @@ public class MDAFrame extends JFrame
         // Put the list in a table and then show the dialog containing the table
         if(archiveList.length < 0)
             return;
-        int start = listType.equals("job") ? 0:1;
-        DisplayTableModel reportModel = new DisplayTableModel(archiveList, header, start);
+    //    int start = listType.equals("job") ? 0:1;
+        DisplayTableModel reportModel = new DisplayTableModel(archiveList, header, 0);
         jTable1.setModel(reportModel);
         TableColumnModel columnModel = jTable1.getColumnModel();
         if(listType.equals("job"))
@@ -3829,10 +4125,12 @@ public class MDAFrame extends JFrame
         }
         else
         {
-            columnModel.getColumn(0).setPreferredWidth(200);
-            columnModel.getColumn(1).setPreferredWidth(120);
-            columnModel.getColumn(2).setPreferredWidth(200);
-            columnModel.getColumn(1).setCellRenderer(new CellRenderer());            
+            columnModel.getColumn(0).setPreferredWidth(100);            
+            columnModel.getColumn(1).setPreferredWidth(200);
+            columnModel.getColumn(2).setPreferredWidth(120);
+            columnModel.getColumn(3).setPreferredWidth(200);
+            columnModel.getColumn(0).setCellRenderer(new CellRenderer());
+            columnModel.getColumn(2).setCellRenderer(new CellRenderer());
         }
 
         columnModel.getColumn(header.length - 1).setPreferredWidth(300);
@@ -3856,7 +4154,14 @@ public class MDAFrame extends JFrame
             jTable2.setModel(versionModel);
             TableColumnModel columnModel = jTable2.getColumnModel();
             columnModel.getColumn(3).setPreferredWidth(500);
-            versionDialog.setTitle("Version List");
+            String title;
+            if(listType.equals("model"))
+                title = "Version List - Model ID: " + id;
+            else if(listType.equals("data"))
+                title = "Version List - Dataset ID: " + id;
+            else
+                return;
+            versionDialog.setTitle(title);
             versionDialog.setLocation(200, 200);
             versionDialog.setSize(800, 16 * versionList.length + 43); 
             versionDialog.show();
@@ -3915,8 +4220,8 @@ public class MDAFrame extends JFrame
             setHorizontalAlignment(SwingConstants.CENTER);
             return this;
 	}
-    }    
-    
+    }
+
     /** Returns the text in the MDA editor.
      * @return a String containing the text in the MDA editor.
      */
@@ -3928,7 +4233,7 @@ public class MDAFrame extends JFrame
     /** Set text to the editor.
      * @param text a string to display in the editor.
      */    
-    protected void setEditorText(String text)
+    public void setEditorText(String text)
     {
         textArea.setText(text);   
     }
@@ -3949,8 +4254,15 @@ public class MDAFrame extends JFrame
         jInternalFrame1.setTitle(title);   
     }
 
+    /** Get the helpBroker.
+     * @return the helpBroker.
+     */
+    public HelpBroker getHelpBroker()
+    {
+        return helpBroker;   
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JDialog ChildJob;
     private javax.swing.JButton CompareFilesButton;
     private javax.swing.JButton DataArchiveButton;
     private javax.swing.JButton DatasetLibraryButton;
@@ -3965,14 +4277,10 @@ public class MDAFrame extends JFrame
     private javax.swing.JButton SubmitJobButton;
     private javax.swing.JMenuItem ThetaMenu;
     private javax.swing.JButton WriteInputButton;
-    private javax.swing.JRadioButton anRadioButton;
     private javax.swing.JDialog archiveDialog;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.ButtonGroup buttonGroup3;
-    private javax.swing.ButtonGroup buttonGroup4;
-    private javax.swing.ButtonGroup buttonGroup5;
-    private javax.swing.ButtonGroup buttonGroup6;
     private javax.swing.JButton cancelButton;
     private javax.swing.JMenuItem closeMenu;
     private javax.swing.JButton compareButton;
@@ -3984,19 +4292,18 @@ public class MDAFrame extends JFrame
     private javax.swing.JButton dataLibLButton;
     private javax.swing.JButton dataLibRButton;
     private javax.swing.JButton dataRButton;
+    private javax.swing.JMenuItem deleteMenu;
     private javax.swing.JDialog diffDialog;
     private javax.swing.JDialog diffHelpDialog;
-    private javax.swing.JRadioButton ehRadioButton;
     private javax.swing.JMenuItem errorMenu;
     private javax.swing.JDialog errorMessageDialog;
     private javax.swing.JMenuItem exitMenu;
     private javax.swing.JMenuItem findMenu;
-    private javax.swing.JRadioButton foRadioButton;
-    private javax.swing.JRadioButton grRadioButton;
     private javax.swing.JButton helpButton;
     private javax.swing.JMenuItem invCovarianceMenu;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JInternalFrame jInternalFrame1;
     private javax.swing.JInternalFrame jInternalFrame2;
     private javax.swing.JInternalFrame jInternalFrame3;
@@ -4008,6 +4315,8 @@ public class MDAFrame extends JFrame
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -4047,25 +4356,31 @@ public class MDAFrame extends JFrame
     private javax.swing.JRadioButton jRadioButton8;
     private javax.swing.JRadioButton jRadioButton9;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane10;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
+    private javax.swing.JScrollPane jScrollPane8;
+    private javax.swing.JScrollPane jScrollPane9;
     private javax.swing.JSeparator jSeparator4;
     private javax.swing.JSeparator jSeparator5;
     private javax.swing.JSeparator jSeparator6;
+    private javax.swing.JSeparator jSeparator7;
+    private javax.swing.JSeparator jSeparator8;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
     private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextArea jTextArea10;
     private javax.swing.JTextArea jTextArea2;
     private javax.swing.JTextArea jTextArea3;
     private javax.swing.JTextArea jTextArea4;
     private javax.swing.JTextArea jTextArea5;
-    private javax.swing.JTextArea jTextArea6;
-    private javax.swing.JTextArea jTextArea7;
+    private javax.swing.JTextArea jTextArea8;
+    private javax.swing.JTextArea jTextArea9;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField14;
     private javax.swing.JTextField jTextField2;
@@ -4073,19 +4388,13 @@ public class MDAFrame extends JFrame
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField7;
     private javax.swing.JTextField jTextField8;
     private javax.swing.JTextField jTextField9;
     private javax.swing.JTextPane jTextPane1;
     private javax.swing.JTextPane jTextPane2;
     private javax.swing.JTextPane jTextPane3;
-    private javax.swing.JRadioButton laRadioButton;
-    private javax.swing.JRadioButton leRadioButton;
     private javax.swing.JButton localLButton;
     private javax.swing.JButton localRButton;
-    private javax.swing.JRadioButton mcRadioButton;
-    private javax.swing.JRadioButton miRadioButton;
-    private javax.swing.JRadioButton mlRadioButton;
     private javax.swing.JButton modelLButton;
     private javax.swing.JButton modelLibLButton;
     private javax.swing.JButton modelLibRButton;
@@ -4098,10 +4407,11 @@ public class MDAFrame extends JFrame
     private javax.swing.JMenuItem openMenu;
     private javax.swing.JMenu parameterMenu;
     private javax.swing.JMenuItem pasteMenu;
-    private javax.swing.JRadioButton peRadioButton;
     private javax.swing.JButton previousButton;
     private javax.swing.JMenuItem printMenu;
     private javax.swing.JButton refreshButton;
+    private javax.swing.JDialog replaceDialog;
+    private javax.swing.JMenuItem replaceMenu;
     private javax.swing.JDialog reportDialog;
     private javax.swing.JMenuItem savaAsMenu;
     private javax.swing.JMenuItem saveMenu;
@@ -4122,6 +4432,9 @@ public class MDAFrame extends JFrame
     private javax.swing.JDialog warningMessageDialog;
     // End of variables declaration//GEN-END:variables
 
+    /** The username. */
+    private String username = null;
+    
     /** The HelpBroker. */
     protected HelpBroker helpBroker = null;
     
@@ -4162,7 +4475,13 @@ public class MDAFrame extends JFrame
     private ArchiveInfo modelArchive = null;
     
     // The data archive information
-    private ArchiveInfo dataArchive = null; 
+    private ArchiveInfo dataArchive = null;
+    
+    /** The information of recently downloaded model */
+    protected ArchiveInfo recentModel = new ArchiveInfo();
+    
+    /** The information of recently downloaded dataset */
+    protected ArchiveInfo recentDataset = new ArchiveInfo();
     
     // The model (Nonmem Control file) text 
     private String control = null;
@@ -4194,6 +4513,9 @@ public class MDAFrame extends JFrame
     // Is diff
     private boolean isDiff = true;
     
+    // Is diff
+    private boolean isWizard = true;
+    
     // The text on the left to diff
     private String textL = null;
     
@@ -4218,6 +4540,12 @@ public class MDAFrame extends JFrame
     // Selected archive name
     private String archiveName = null;
     
+    // Selected archive id
+    private long archiveId = 0;
+    
+    // Selected archive description
+    private String archiveDescription = null;
+    
     // line separator
     private static final String ls = System.getProperty("line.separator");
     
@@ -4238,4 +4566,19 @@ public class MDAFrame extends JFrame
     
     // Index of positions of string found
     private int indexPosition = 0;
+    
+    // Model radioButton State
+    private int modelRadioButtonState = 1;
+    
+    // Dataset radioButton State
+    private int datasetRadioButtonState = 1;
+    
+    // Is the version list dialog showing.
+    private boolean isVersionListOn = false;
+    
+    /** MDA iterator */
+    protected MDAIterator iterator = null;
+    
+    // Undo Manager
+    private UndoManager undo = new UndoManager();
 }

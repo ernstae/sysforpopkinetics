@@ -238,7 +238,7 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("Enter the initial estimates and constraints for the elements of one or\nmore blocks of the random effect covariance matrix.  You may either \nenter data for a new  block or constrain the block to be equal to the \npreceding block.");
+        jTextPane1.setText("Enter the initial estimates and constraints for the elements of one or\nmore blocks of the random effect covariance matrix.  You may either \nenter data for a new  block or constrain the block to be equal to the \npreceding block.  However, in current development stage SPK compiler\nsupports only single-block covariance matrix.");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
@@ -421,6 +421,8 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
     private void jTable1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTable1KeyPressed
         if(evt.getKeyCode() == 10)
             jButton2.setEnabled(true);
+        else
+            jButton2.setEnabled(false);
     }//GEN-LAST:event_jTable1KeyPressed
 
     private void jRadioButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton4ActionPerformed
@@ -558,6 +560,15 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                                           JOptionPane.ERROR_MESSAGE);                         
                     return;
                 }
+                if(Double.parseDouble(value) <= 0)
+                {
+                    JOptionPane.showMessageDialog(null, 
+                                          "The element [" + (i + 1) + "," + (i + 1) + 
+                                          "] is not a positive number.",
+                                          "Input Error",    
+                                          JOptionPane.ERROR_MESSAGE);                       
+                    return;
+                }
                 if(value.length() > 8) 
                 {
                     JOptionPane.showMessageDialog(null, 
@@ -591,6 +602,15 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                                           JOptionPane.ERROR_MESSAGE);                          
                         return; 
                     }
+                    if(j == i + 1 && Double.parseDouble(value) <= 0)
+                    {
+                        JOptionPane.showMessageDialog(null, 
+                                          "The element [" + j + "," + j + 
+                                          "] is not a positive number.",
+                                          "Input Error",    
+                                          JOptionPane.ERROR_MESSAGE);                       
+                        return;
+                    }                    
                     if(value.length() > 8) 
                     {
                         JOptionPane.showMessageDialog(null, 

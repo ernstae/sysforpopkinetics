@@ -225,14 +225,15 @@ public class Summary {
         String dataVersion = output.dataVersion != null ? output.dataVersion : NA;
         String dataAbstract = output.dataAbstract != null ? output.dataAbstract : NA;
         String objective = output.objective != null ? output.objective : NA;
-        String objStdErr = output.objStdErr != null ? output.objStdErr : NA;
+        String likelihood = output.likelihood != null ? output.likelihood[0][1] : NA;
+        String objStdErr = output.likelihood_std != null ? output.likelihood_std[0][1] : NA;
         String objectiveItem = null;
         String objStdErrItem = "";
         if(!((String[])methodTable.get(output.methodCode))[1].equals("le"))
             objectiveItem = "\n\nMinimum Value of Objective Function: " + objective;
         else
         {
-            objectiveItem = "\n\nEstimate for Likelihood Function: " + objective;
+            objectiveItem = "\n\nEstimate for Likelihood Function: " + likelihood;
             objStdErrItem = "\n\nStandard Error in Likelihood Function: " + objStdErr;
         }
         String errorMessage = "";

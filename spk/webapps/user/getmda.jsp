@@ -114,7 +114,8 @@ author: Jiaji Du
               "<argument>" + sessionId + "</argument>\n"+    
               "<argument>" + secret + "</argument>\n"+ 
               "<argument>" + validUser.getTester() + "</argument>\n"+    
-              "<argument>" + validUser.getDeveloper() + "</argument>\n"+ 
+              "<argument>" + validUser.getDeveloper() + "</argument>\n"+
+              "<argument>" + validUser.getUserName() + "</argument>\n"+ 
               "</application-desc>\n"+
               "</jnlp>\n"
              );

@@ -18,9 +18,12 @@ distribution.
 **********************************************************************/
 package uw.rfpk.mda.nonmem.display;
 
+import uw.rfpk.mda.nonmem.MDAFrame;
 import java.awt.Color;
+import java.awt.Font;
 import javax.swing.JFrame;
 import javax.swing.DefaultListModel;
+import javax.help.*;
 
 /** This class's instance displays likelihood vs. parameter relationship.
  *
@@ -29,9 +32,12 @@ import javax.swing.DefaultListModel;
 public class LikelihoodShow extends javax.swing.JDialog {
     
     /** Creates new form LikelihoodShow */
-    public LikelihoodShow(java.awt.Frame parent, boolean modal) {
+    public LikelihoodShow(java.awt.Frame parent, boolean modal, Output output) {
         super(parent, modal);
         initComponents();
+        jButton1.addActionListener(new CSH.DisplayHelpFromSource(((MDAFrame)parent).getHelpBroker()));
+//        CSH.setHelpIDString(jButton1, "");
+        /*        
         dataX = new double[3][8][];
         dataY = new double[3][8][];
         plotData(1.15339 - 0.2, 1.15339, 1.15339 + 0.2, 9.63417, 9.53274, 9.63417,
@@ -40,7 +46,24 @@ public class LikelihoodShow extends javax.swing.JDialog {
                  0.202275, 0.20232, 0.202377, dataX[1], dataY[1]);
         plotData(-2.70494 - 0.0460517, -2.70494, -2.70494 + 0.0460517, 9.13116, 9.53274, 10.0175, 
                  0.184555, 0.20232, 0.221676, dataX[2], dataY[2]);
-        
+*/
+        int nAlpha = output.alpha[0].length;
+        dataX = new double[nAlpha][8][];
+        dataY = new double[nAlpha][8][];
+        double x2, dx, y1, y2, y3, s1, s2, s3;
+        for(int i = 0; i < nAlpha; i++)
+        {
+            String x = output.alpha[0][i];
+            x2 = Double.parseDouble(output.alpha[0][i]);
+            dx = Double.parseDouble(output.alpha[1][i]);
+            y1 = Double.parseDouble(output.likelihood[i][0]);
+            y2 = Double.parseDouble(output.likelihood[i][1]);
+            y3 = Double.parseDouble(output.likelihood[i][2]);
+            s1 = Double.parseDouble(output.likelihood_std[i][0]);
+            s2 = Double.parseDouble(output.likelihood_std[i][1]);
+            s3 = Double.parseDouble(output.likelihood_std[i][2]);            
+            plotData(x2 - dx, x2, x2 + dx, y1, y2, y3, s1, s2, s3, dataX[i], dataY[i]);
+        }
         maxY = dataY[0][0][0];
         minY = maxY;
         for(int k = 0; k <dataY.length; k++)
@@ -54,7 +77,7 @@ public class LikelihoodShow extends javax.swing.JDialog {
             model.addElement("Likelihood versus alpha-" + (i + 1));
         name = new String[]{"evaluated at parameter estimate", "evaluated at two bias positions", "parabolic curve fitted likelihood", "estimated standard error bound"};
         symbol = new int[]{0, 1, 10, 12, 12, 11, 11, 11};
-        color = new Color[]{Color.black, Color.black, Color.black, Color.black, Color.black,
+        color = new Color[]{Color.red, Color.blue, Color.black, Color.black, Color.black,
                             Color.black, Color.black, Color.black};
     }
     
@@ -65,9 +88,11 @@ public class LikelihoodShow extends javax.swing.JDialog {
      */
     private void initComponents() {//GEN-BEGIN:initComponents
         jTextField1 = new javax.swing.JTextField();
-        displayButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         plotList = new javax.swing.JList(model);
+        jPanel1 = new javax.swing.JPanel();
+        displayButton = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Plot List");
@@ -83,6 +108,10 @@ public class LikelihoodShow extends javax.swing.JDialog {
         jTextField1.setFocusable(false);
         getContentPane().add(jTextField1, java.awt.BorderLayout.NORTH);
 
+        jScrollPane1.setViewportView(plotList);
+
+        getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
         displayButton.setText("Display");
         displayButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -90,11 +119,15 @@ public class LikelihoodShow extends javax.swing.JDialog {
             }
         });
 
-        getContentPane().add(displayButton, java.awt.BorderLayout.SOUTH);
+        jPanel1.add(displayButton);
 
-        jScrollPane1.setViewportView(plotList);
+        jButton1.setText("Help");
+        jButton1.setMaximumSize(new java.awt.Dimension(81, 25));
+        jButton1.setMinimumSize(new java.awt.Dimension(81, 25));
+        jButton1.setPreferredSize(new java.awt.Dimension(81, 25));
+        jPanel1.add(jButton1);
 
-        getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
+        getContentPane().add(jPanel1, java.awt.BorderLayout.SOUTH);
 
         pack();
     }//GEN-END:initComponents
@@ -107,30 +140,26 @@ public class LikelihoodShow extends javax.swing.JDialog {
         for(int i = 0; i < selectedIndex.length; i++)
         {
             int j = selectedIndex[i];
+            JFrame frame = new JFrame(); 
             Plotter plotter = new Plotter(dataX[j],
                                           dataY[j],
                                           "Likelihood Versus Parameter",
                                           "Fixed Effect Parameter alpha-" + (j + 1),
                                           "Negative Log Likelihood",
-                                          name,
-                                          symbol,
-                                          color,
-                                          false,
-                                          false,
-                                          false,
-                                          null,
+                                          name, symbol, color,
+                                          false, false, false, false, false, true, true,
+                                          null, null, null,
                                           "Top",
-                                          true,
-                                          true,
-                                          true,
-                                          true,
-                                          0,
-                                          0,
-                                          maxY,
-                                          minY);
+                                          5, 5, 6, 6, 4, 4, 4, 4,                                          
+                                          0, 0, maxY, minY,
+                                          new Font("SansSerif", Font.BOLD, 14),
+                                          new Font("SansSerif", Font.BOLD, 12),
+                                          new Font("SansSerif", Font.BOLD, 11),
+                                          new Font("SansSerif", Font.BOLD, 10),
+                                          0, 0, 0, 0, true, true, false, false,
+                                          2, 2, frame);
 
             plotter.setToolTipText("");
-            JFrame frame = new JFrame();
             frame.getContentPane().add(plotter);
             frame.setLocation(50 * i, 40 * i);
 	    frame.setSize(500, 440);
@@ -138,6 +167,7 @@ public class LikelihoodShow extends javax.swing.JDialog {
 	    frame.setVisible(true);
         }
     }//GEN-LAST:event_displayButtonActionPerformed
+
     private void plotData(double x1, double x2, double x3,
                           double y1, double y2, double y3,
                           double s1, double s2, double s3,
@@ -224,12 +254,14 @@ public class LikelihoodShow extends javax.swing.JDialog {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        new LikelihoodShow(null, false).show();
+        new LikelihoodShow(null, false, null).show();
     }
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton displayButton;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JList plotList;

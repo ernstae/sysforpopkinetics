@@ -48,34 +48,52 @@ public class JobInfo extends javax.swing.JFrame {
         Properties jobInfo = frame.server.getJobInfo(id, isLibrary);
         if(jobInfo == null)
             return;
+        jobAbstract = jobInfo.getProperty("jobAbstract");
         modelName = jobInfo.getProperty("modelName");
         datasetName = jobInfo.getProperty("datasetName");
         modelVersion = jobInfo.getProperty("modelVersion");
         datasetVersion = jobInfo.getProperty("datasetVersion");
-        modelId = jobInfo.getProperty("modelId");
-        datasetId = jobInfo.getProperty("datasetId");
+        modelId = Long.parseLong(jobInfo.getProperty("modelId"));
+        datasetId = Long.parseLong(jobInfo.getProperty("datasetId"));
         modelAbstract = jobInfo.getProperty("modelAbstract");
         datasetAbstract = jobInfo.getProperty("datasetAbstract");
-        methodCode = jobInfo.getProperty("methodCode");
+        methodCode = jobInfo.getProperty("methodCode");        
         jTextField1.setText(modelName);
         jTextField3.setText(datasetName);
-        jTextField2.setText(modelVersion);        
+        jTextField2.setText(modelVersion);
         jTextField4.setText(datasetVersion);
         String[] row = (String[])frame.methodTable.get(methodCode);
         if(row == null)
             row = new String[]{"Not Available", ""};
-        jTextField5.setText(row[0]); 
+        jTextField5.setText(row[0]);
         jTextField6.setText(String.valueOf(jobId));
         jobParent = Long.parseLong(jobInfo.getProperty("parent"));
         jCheckBox1.setSelected(true);
         jCheckBox2.setSelected(true);
         jCheckBox3.setSelected(!row[1].equals("le"));
-        jCheckBox3.setEnabled(!row[1].equals("le"));        
+        jCheckBox3.setEnabled(!row[1].equals("le"));
+        if(row[1].equals("le"))
+            jTextArea5.setText("Since this is a likelihood evaluation only job it cannot be used\n" + 
+                               "as a parent to create a new job.");
+        jLabel5.setEnabled(jobParent != 0);
+        jButton6.setEnabled(jobParent != 0);
+        String endCode = jobInfo.getProperty("endCode");
+        if((methodCode.equals("fo") || methodCode.equals("eh")||
+            methodCode.equals("la") || methodCode.equals("ia")) && endCode.equals("srun"))
+        {
+            jTextArea6.setEnabled(true);
+            jButton7.setEnabled(true);
+        }
+        else
+        {
+            jTextArea6.setEnabled(false);
+            jButton7.setEnabled(false);
+        }          
         if(isParent)
         {
             java.awt.Point point = getLocation();
             point.translate(40, 30);
-            setLocation(point);            
+            setLocation(point);
         }
         show();
     }
@@ -91,6 +109,18 @@ public class JobInfo extends javax.swing.JFrame {
         historyDialog = new javax.swing.JDialog();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        warmStartDialog = new javax.swing.JDialog();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jTextField8 = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        OKButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
+        jComboBox1 = new javax.swing.JComboBox();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTextArea7 = new javax.swing.JTextArea();
         jTextArea1 = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -121,6 +151,8 @@ public class JobInfo extends javax.swing.JFrame {
         jTextArea4 = new javax.swing.JTextArea();
         jTextField6 = new javax.swing.JTextField();
         jTextArea5 = new javax.swing.JTextArea();
+        jTextArea6 = new javax.swing.JTextArea();
+        jButton7 = new javax.swing.JButton();
 
         historyDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -138,6 +170,116 @@ public class JobInfo extends javax.swing.JFrame {
 
         historyDialog.getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
+        warmStartDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
+
+        warmStartDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        warmStartDialog.setTitle("Warm Start Job Settings");
+        warmStartDialog.setLocationRelativeTo(this);
+        warmStartDialog.setModal(true);
+        jLabel8.setFont(new java.awt.Font("Default", 0, 12));
+        jLabel8.setText("\nJob short description (<=100 characters)   ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
+        warmStartDialog.getContentPane().add(jLabel8, gridBagConstraints);
+
+        jLabel9.setFont(new java.awt.Font("Default", 0, 12));
+        jLabel9.setText("Maximum number of iterations");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 0, 0);
+        warmStartDialog.getContentPane().add(jLabel9, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(6, 6, 0, 12);
+        warmStartDialog.getContentPane().add(jTextField8, gridBagConstraints);
+
+        jLabel10.setFont(new java.awt.Font("Default", 0, 12));
+        jLabel10.setText("Please enter the following information.");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
+        warmStartDialog.getContentPane().add(jLabel10, gridBagConstraints);
+
+        jLabel11.setFont(new java.awt.Font("Default", 0, 12));
+        jLabel11.setText("Number of significant digits ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.insets = new java.awt.Insets(5, 12, 4, 0);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        warmStartDialog.getContentPane().add(jLabel11, gridBagConstraints);
+
+        OKButton.setText("OK");
+        OKButton.setMaximumSize(new java.awt.Dimension(75, 25));
+        OKButton.setMinimumSize(new java.awt.Dimension(75, 25));
+        OKButton.setPreferredSize(new java.awt.Dimension(75, 25));
+        OKButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                OKButtonActionPerformed(evt);
+            }
+        });
+
+        jPanel2.add(OKButton);
+
+        cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
+
+        jPanel2.add(cancelButton);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
+        warmStartDialog.getContentPane().add(jPanel2, gridBagConstraints);
+
+        jComboBox1.setBackground(new java.awt.Color(255, 255, 255));
+        jComboBox1.setFont(new java.awt.Font("Dialog", 0, 12));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8" }));
+        jComboBox1.setMaximumSize(new java.awt.Dimension(32767, 20));
+        jComboBox1.setMinimumSize(new java.awt.Dimension(36, 20));
+        jComboBox1.setPreferredSize(new java.awt.Dimension(36, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(4, 6, 0, 12);
+        warmStartDialog.getContentPane().add(jComboBox1, gridBagConstraints);
+
+        jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane2.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        jScrollPane2.setMaximumSize(new java.awt.Dimension(32767, 48));
+        jScrollPane2.setMinimumSize(new java.awt.Dimension(7, 48));
+        jTextArea7.setLineWrap(true);
+        jTextArea7.setRows(3);
+        jTextArea7.setBorder(new javax.swing.border.CompoundBorder());
+        jTextArea7.setMaximumSize(new java.awt.Dimension(2147483647, 45));
+        jTextArea7.setMinimumSize(new java.awt.Dimension(0, 45));
+        jScrollPane2.setViewportView(jTextArea7);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
+        warmStartDialog.getContentPane().add(jScrollPane2, gridBagConstraints);
+
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -154,22 +296,24 @@ public class JobInfo extends javax.swing.JFrame {
         jTextArea1.setText("This job uses the following model and dataset:");
         jTextArea1.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(12, 12, 6, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 6, 12);
         getContentPane().add(jTextArea1, gridBagConstraints);
 
         jLabel1.setText("Name");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         getContentPane().add(jLabel1, gridBagConstraints);
 
         jLabel2.setText("Version");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         getContentPane().add(jLabel2, gridBagConstraints);
@@ -177,17 +321,17 @@ public class JobInfo extends javax.swing.JFrame {
         jLabel3.setText("Model");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.insets = new java.awt.Insets(6, 12, 2, 12);
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 2, 12);
         getContentPane().add(jLabel3, gridBagConstraints);
 
         jLabel4.setText("Dataset");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.insets = new java.awt.Insets(4, 12, 7, 12);
+        gridBagConstraints.gridy = 5;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 12, 7, 12);
         getContentPane().add(jLabel4, gridBagConstraints);
 
         jTextField1.setEditable(false);
@@ -198,7 +342,7 @@ public class JobInfo extends javax.swing.JFrame {
         jTextField1.setPreferredSize(new java.awt.Dimension(160, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(6, 0, 2, 0);
         getContentPane().add(jTextField1, gridBagConstraints);
@@ -211,7 +355,7 @@ public class JobInfo extends javax.swing.JFrame {
         jTextField2.setPreferredSize(new java.awt.Dimension(60, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(6, 12, 2, 12);
         getContentPane().add(jTextField2, gridBagConstraints);
@@ -224,7 +368,7 @@ public class JobInfo extends javax.swing.JFrame {
         jTextField3.setPreferredSize(new java.awt.Dimension(160, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 7, 0);
         getContentPane().add(jTextField3, gridBagConstraints);
@@ -237,14 +381,14 @@ public class JobInfo extends javax.swing.JFrame {
         jTextField4.setPreferredSize(new java.awt.Dimension(60, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(4, 12, 7, 12);
         getContentPane().add(jTextField4, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -257,10 +401,10 @@ public class JobInfo extends javax.swing.JFrame {
         jTextArea2.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(7, 12, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(7, 12, 0, 12);
         getContentPane().add(jTextArea2, gridBagConstraints);
 
         jButton1.setText("Model");
@@ -310,11 +454,11 @@ public class JobInfo extends javax.swing.JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 8;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(7, 12, 6, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(7, 12, 6, 12);
         getContentPane().add(jPanel1, gridBagConstraints);
 
         jCheckBox1.setFont(new java.awt.Font("Dialog", 0, 12));
@@ -322,10 +466,10 @@ public class JobInfo extends javax.swing.JFrame {
         jCheckBox1.setText("Start input preparation tool when Input button is clicked");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridy = 10;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         getContentPane().add(jCheckBox1, gridBagConstraints);
 
         jCheckBox2.setFont(new java.awt.Font("Dialog", 0, 12));
@@ -333,29 +477,30 @@ public class JobInfo extends javax.swing.JFrame {
         jCheckBox2.setText("Start output data processing when Output button is clicked");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 9;
+        gridBagConstraints.gridy = 11;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         getContentPane().add(jCheckBox2, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 11;
+        gridBagConstraints.gridy = 13;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         getContentPane().add(jSeparator2, gridBagConstraints);
 
         jTextArea3.setBackground(new java.awt.Color(204, 204, 204));
+        jTextArea3.setEditable(false);
         jTextArea3.setText("You may get the job's processing history.");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 13;
+        gridBagConstraints.gridy = 14;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.insets = new java.awt.Insets(10, 12, 8, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 12, 8, 12);
         getContentPane().add(jTextArea3, gridBagConstraints);
 
         jButton5.setText("Job History");
@@ -367,7 +512,7 @@ public class JobInfo extends javax.swing.JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 13;
+        gridBagConstraints.gridy = 14;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(7, 12, 5, 12);
         getContentPane().add(jButton5, gridBagConstraints);
@@ -376,10 +521,10 @@ public class JobInfo extends javax.swing.JFrame {
         jLabel5.setText("You may also get the job's parent job.");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 14;
+        gridBagConstraints.gridy = 15;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.insets = new java.awt.Insets(3, 12, 8, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 12, 8, 12);
         getContentPane().add(jLabel5, gridBagConstraints);
 
         jButton6.setText("Job Parent");
@@ -394,7 +539,7 @@ public class JobInfo extends javax.swing.JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 14;
+        gridBagConstraints.gridy = 15;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 5, 12);
         getContentPane().add(jButton6, gridBagConstraints);
@@ -402,28 +547,28 @@ public class JobInfo extends javax.swing.JFrame {
         jTextField5.setEditable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 12;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(8, 0, 0, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(8, 0, 0, 0);
         getContentPane().add(jTextField5, gridBagConstraints);
 
         jLabel6.setFont(new java.awt.Font("Dialog", 0, 12));
         jLabel6.setText("Method");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 12;
-        gridBagConstraints.insets = new java.awt.Insets(8, 12, 0, 12);
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(8, 12, 0, 12);
         getContentPane().add(jLabel6, gridBagConstraints);
 
         jLabel7.setFont(new java.awt.Font("Dialog", 0, 12));
-        jLabel7.setText("is used by the job.");
+        jLabel7.setText("is used in the job.");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 12;
-        gridBagConstraints.insets = new java.awt.Insets(8, 12, 0, 12);
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(8, 12, 0, 12);
         getContentPane().add(jLabel7, gridBagConstraints);
 
         jCheckBox3.setFont(new java.awt.Font("Dialog", 0, 12));
@@ -431,21 +576,22 @@ public class JobInfo extends javax.swing.JFrame {
         jCheckBox3.setText("Set the job as parent of a job created from this job's input");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 10;
+        gridBagConstraints.gridy = 12;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 6, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 6, 12);
         getContentPane().add(jCheckBox3, gridBagConstraints);
 
         jTextArea4.setBackground(new java.awt.Color(204, 204, 204));
-        jTextArea4.setText("The identification number of the job is:");
+        jTextArea4.setEditable(false);
+        jTextArea4.setText("The identification number of this job is:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 15;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(2, 12, 12, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 0, 12);
         getContentPane().add(jTextArea4, gridBagConstraints);
 
         jTextField6.setEditable(false);
@@ -454,25 +600,161 @@ public class JobInfo extends javax.swing.JFrame {
         jTextField6.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 15;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 14, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 0, 12);
         getContentPane().add(jTextField6, gridBagConstraints);
 
         jTextArea5.setBackground(new java.awt.Color(204, 204, 204));
-        jTextArea5.setText("To create input for a likelihood evaluation only job uncheck the\nfirst check box and make sure the third check box is checked.");
+        jTextArea5.setText("To submit a likelihood evaluation only job uncheck the first\ncheck box, check the third check box, click the Input button.");
         jTextArea5.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridy = 9;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 2, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 2, 12);
         getContentPane().add(jTextArea5, gridBagConstraints);
+
+        jTextArea6.setBackground(new java.awt.Color(204, 204, 204));
+        jTextArea6.setEditable(false);
+        jTextArea6.setText("You may continue this job's optimization.");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 16;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(2, 12, 12, 0);
+        getContentPane().add(jTextArea6, gridBagConstraints);
+
+        jButton7.setText("Warm Start");
+        jButton7.setMaximumSize(new java.awt.Dimension(104, 25));
+        jButton7.setMinimumSize(new java.awt.Dimension(104, 25));
+        jButton7.setPreferredSize(new java.awt.Dimension(104, 25));
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 16;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 8, 12);
+        getContentPane().add(jButton7, gridBagConstraints);
 
         pack();
     }//GEN-END:initComponents
+
+    private void OKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OKButtonActionPerformed
+        // Handle user's input
+        jobAbstract = jTextArea7.getText();
+        if(jobAbstract.length() > 100)
+            jobAbstract = jobAbstract.substring(0, 100);
+        String maxIter = jTextField8.getText().trim();
+        if(!Utility.isPosIntNumber(maxIter))
+        {
+            JOptionPane.showMessageDialog(null, "The Maximum number of iterations must be a positive integer.",
+                                          "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        String sigDig = (String)jComboBox1.getSelectedItem();
+        
+        // Create model and data archives
+        ArchiveInfo modelArchive = new ArchiveInfo();
+        ArchiveInfo dataArchive = new ArchiveInfo();
+        modelArchive.isNewArchive = false;
+        modelArchive.id = modelId;
+        dataArchive.isNewArchive = false;
+        dataArchive.id = datasetId;
+        dataArchive.isNewVersion = false;
+        dataArchive.version = "1." + datasetVersion;
+        int beginIndex, endIndex;
+        String analysis = methodCode.equals("ia") ? "<ind_analysis " : "<pop_analysis ";
+        if(maxIter.equals(maxIteration) && sigDig.equals(sigDigit))
+        {
+            modelArchive.isNewVersion = false;
+            modelArchive.version = "1." + modelVersion;
+        }
+        else
+        {
+            modelArchive.name = modelName;
+            modelArchive.isNewVersion = true;
+            modelArchive.description = modelAbstract;
+            modelArchive.log = JOptionPane.showInputDialog("Enter log for the new version of the model (<=100 characters).  ");
+            if(modelArchive.log == null)
+                modelArchive.log = "";
+            
+            // Change source and model
+            if(!maxIter.equals(maxIteration))
+            {
+                beginIndex = model.indexOf("MAXEVALS=", model.indexOf("$ESTIMATION")) + 9;
+                endIndex = Math.min(model.indexOf(" ", beginIndex), model.indexOf("\n", beginIndex));
+                model = model.substring(0, beginIndex) + maxIter + model.substring(endIndex);
+                beginIndex = source.indexOf("mitr=", source.indexOf(analysis)) + 6;
+                endIndex = Math.min(source.indexOf(" ", beginIndex), source.indexOf(">", beginIndex)) - 1;
+                source = source.substring(0, beginIndex) + maxIter + source.substring(endIndex);
+            }
+            if(!sigDig.equals(sigDigit))
+            {
+                beginIndex = model.indexOf("SIGDIGITS=", model.indexOf("$ESTIMATION")) + 10;
+                endIndex = Math.min(model.indexOf(" ", beginIndex), model.indexOf("\n", beginIndex));
+                model = model.substring(0, beginIndex) + sigDig + model.substring(endIndex);
+                beginIndex = source.indexOf("sig_digits=", source.indexOf(analysis)) + 11;
+                endIndex = Math.min(source.indexOf(" ", beginIndex), source.indexOf(">", beginIndex)) - 1;
+                source = source.substring(0, beginIndex) + sigDig + source.substring(endIndex);                
+            }
+            modelArchive.text = model;
+        }
+        
+        // Set is_restart="yes" in source
+        beginIndex= source.indexOf("is_restart=", source.indexOf(analysis));
+        if(beginIndex != -1)
+        {
+            endIndex = Math.min(source.indexOf(" ", beginIndex), source.indexOf(">", beginIndex)) - 1;
+            source = source.substring(0, beginIndex) + source.substring(endIndex);
+        }
+        source = source.replaceFirst(analysis, analysis + "is_restart=\"yes\" ");
+        
+        // submit the warm start job
+        frame.server.submitJob(source, jobAbstract, modelArchive, dataArchive, methodCode, id, true);
+
+        // Close the dialog
+        warmStartDialog.dispose();
+    }//GEN-LAST:event_OKButtonActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        warmStartDialog.dispose();
+    }//GEN-LAST:event_cancelButtonActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        Properties spkInput = frame.server.getInput(id, isLibrary);
+        frame.jobId = id;
+        if(spkInput != null)
+        {
+            // Get SPK input file
+            source = spkInput.getProperty("source");
+            model = spkInput.getProperty("model");
+            dataset = spkInput.getProperty("dataset");
+            jTextArea7.setText(jobAbstract);
+            int beginIndex = model.indexOf("MAXEVALS=", model.indexOf("$ESTIMATION")) + 9;
+            int endIndex = Math.min(model.indexOf(" ", beginIndex), model.indexOf("\n", beginIndex));
+            maxIteration = model.substring(beginIndex, endIndex);
+            jTextField8.setText(maxIteration);
+            beginIndex = model.indexOf("SIGDIGITS=", model.indexOf("$ESTIMATION")) + 10;
+            endIndex = Math.min(model.indexOf(" ", beginIndex), model.indexOf("\n", beginIndex));
+            sigDigit = model.substring(beginIndex, endIndex);
+            jComboBox1.setSelectedItem(sigDigit);
+            warmStartDialog.setSize(290, 230);
+            warmStartDialog.show();
+        }
+        setCursor(null);
+    }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         if(jobParent != 0)
@@ -491,9 +773,9 @@ public class JobInfo extends javax.swing.JFrame {
             jTable1.setModel(new DefaultTableModel(history, header));
             TableColumnModel columnModel = jTable1.getColumnModel();
             columnModel.getColumn(0).setPreferredWidth(250);
-            columnModel.getColumn(1).setPreferredWidth(150);            
+            columnModel.getColumn(1).setPreferredWidth(150);
             columnModel.getColumn(2).setPreferredWidth(250);
-            historyDialog.setTitle("Job History");
+            historyDialog.setTitle("Job History - Job ID: " + id);
             historyDialog.setLocation(200, 200);
             historyDialog.setSize(650, 16 * history.length + 60);
             historyDialog.show();
@@ -504,7 +786,7 @@ public class JobInfo extends javax.swing.JFrame {
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         Properties spkOutput = frame.server.getOutput(id, isLibrary);
-        if(spkOutput != null) 
+        if(spkOutput != null)
         {
             // Get SPK output file
             spkOutput.setProperty("jobId", String.valueOf(id));
@@ -521,9 +803,9 @@ public class JobInfo extends javax.swing.JFrame {
                 frame.saveFile();
                 
                 // Display the file content and name
-                frame.setEditorText(text); 
+                frame.setEditorText(text);
                 frame.setEditorCaretPosition(0);
-                frame.setEditorTitle("Output");   
+                frame.setEditorTitle("Output");
                 frame.file = null;
             }
         }
@@ -537,19 +819,29 @@ public class JobInfo extends javax.swing.JFrame {
         if(spkInput != null)
         {
             // Get SPK input file
-            String source = spkInput.getProperty("source");
-            String model = spkInput.getProperty("model");
-            String dataset = spkInput.getProperty("dataset");            
+            source = spkInput.getProperty("source");
+            model = spkInput.getProperty("model");
+            dataset = spkInput.getProperty("dataset");
+            frame.recentModel.id = modelId;
+            frame.recentModel.name = modelName;
+            frame.recentModel.text = model;
+            frame.recentModel.version = modelVersion;
+            frame.recentModel.description = modelAbstract;
+            frame.recentDataset.id = datasetId;
+            frame.recentDataset.name = datasetName;
+            frame.recentDataset.text = dataset;
+            frame.recentDataset.version = datasetVersion;
+            frame.recentDataset.description = datasetAbstract;
             
             // Handle the input file
             if(jCheckBox1.isSelected())
             {
                 // Start preparing input wizard
-                MDAIterator iterator = new MDAIterator(frame.server, 
-                                                       frame.isOnline, frame, frame.isTester, 
-                                                       frame.isDeveloper, frame.files, id);
-                iterator.setIsDataXML(true);
-                iterator.setIsReload(true);
+                frame.iterator = new MDAIterator(frame.server,
+                                                 frame.isOnline, frame, frame.isTester,
+                                                 frame.isDeveloper, frame.files, id);
+                frame.iterator.setIsDataXML(true);
+                frame.iterator.setIsReload(true);
                 if(id != 0 && source.indexOf("<pop_analysis ") != -1 && source.indexOf(" is_estimation=\"yes\" ") != -1 && 
                    JOptionPane.showConfirmDialog(null, "Do you want to set parameter initial values to the estimates from the parent job?",
                                                  "Question", JOptionPane.YES_NO_OPTION) == 0)
@@ -563,17 +855,17 @@ public class JobInfo extends javax.swing.JFrame {
                                                       "Input Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    model = Utility.replaceModelParameters(model, report);                
+                    model = Utility.replaceModelParameters(model, report);           
 
                     if(model.indexOf("$SIMULATION") != -1 &&
                        JOptionPane.showConfirmDialog(null, "Do you want to use the simulated data from the parent job?",
                                                      "Question", JOptionPane.YES_NO_OPTION) == 0)
                         Utility.replaceDataDVbySimDV(report, source, dataset);
                 }
-                iterator.setDataXML(dataset);
-                iterator.parseControl(model);
-                frame.writeInput(iterator);
-                iterator.getGettingStarted().setOptions();
+                frame.iterator.setDataXML(dataset, 0);
+                frame.iterator.parseControl(model);
+                frame.writeInput(frame.iterator);
+                frame.iterator.getGettingStarted().setOptions();
             }
             else
             {
@@ -581,11 +873,11 @@ public class JobInfo extends javax.swing.JFrame {
                 frame.saveFile();
                 
                 // Display the file content and name
-                frame.setEditorText(spkInput.getProperty("source") + dataset + 
-                                 "\n" + XMLWriter.setModel(model)); 
+                frame.setEditorText(spkInput.getProperty("source") + dataset +
+                                 "\n" + XMLWriter.setModel(model));
                 frame.setEditorCaretPosition(0);
-                frame.setEditorTitle("Input");   
-                frame.file = null;                
+                frame.setEditorTitle("Input");
+                frame.file = null;
             }
         }
         setCursor(null);
@@ -600,11 +892,17 @@ public class JobInfo extends javax.swing.JFrame {
             frame.saveFile();
                 
             // Display the file content and name
-            frame.setEditorText(XMLReader.parseDataXML(archive.getProperty("text"))); 
+            String text = archive.getProperty("text");
+            frame.setEditorText(XMLReader.parseDataXML(text)); 
             frame.setEditorCaretPosition(0);
             frame.setEditorTitle(archive.getProperty("name") + "." +
-                                   archive.getProperty("version"));   
-            frame.file = null;            
+                                 archive.getProperty("version"));   
+            frame.file = null;
+            frame.recentDataset.id = datasetId;
+            frame.recentDataset.name = datasetName;
+            frame.recentDataset.text = text;            
+            frame.recentDataset.version = datasetVersion;
+            frame.recentDataset.description = datasetAbstract;
         }
         setCursor(null);
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -618,11 +916,17 @@ public class JobInfo extends javax.swing.JFrame {
             frame.saveFile();
                 
             // Display the file content and name
-            frame.setEditorText(archive.getProperty("text")); 
+            String text = archive.getProperty("text");
+            frame.setEditorText(text); 
             frame.setEditorCaretPosition(0);
             frame.setEditorTitle(archive.getProperty("name") + "." +
                                  archive.getProperty("version"));   
-            frame.file = null;            
+            frame.file = null;
+            frame.recentModel.id = modelId;
+            frame.recentModel.name = modelName;
+            frame.recentModel.text = text;
+            frame.recentModel.version = modelVersion;
+            frame.recentModel.description = modelAbstract;            
         }
         setCursor(null);        
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -634,6 +938,8 @@ public class JobInfo extends javax.swing.JFrame {
     }//GEN-LAST:event_exitForm
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton OKButton;
+    private javax.swing.JButton cancelButton;
     private javax.swing.JDialog historyDialog;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
@@ -641,18 +947,26 @@ public class JobInfo extends javax.swing.JFrame {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JCheckBox jCheckBox3;
+    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JTable jTable1;
@@ -661,22 +975,35 @@ public class JobInfo extends javax.swing.JFrame {
     private javax.swing.JTextArea jTextArea3;
     private javax.swing.JTextArea jTextArea4;
     private javax.swing.JTextArea jTextArea5;
+    private javax.swing.JTextArea jTextArea6;
+    private javax.swing.JTextArea jTextArea7;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
+    private javax.swing.JTextField jTextField8;
+    private javax.swing.JDialog warmStartDialog;
     // End of variables declaration//GEN-END:variables
     
     // Job ID
     private long id = 0;
     
-    // Job method code
+    // Job source
+    private String source = null;
+    
+    // Job model
+    private String model = null;
+    
+    // Job dataset
+    private String dataset = null;
+    
+    /** Job method code */
     protected String methodCode = null;
     
     /** Model ID */
-    protected String modelId = null;    
+    protected long modelId = 0;    
     
     /** Model name */
     protected String modelName = null;
@@ -688,7 +1015,7 @@ public class JobInfo extends javax.swing.JFrame {
     protected String modelVersion = null;
     
     /** Dataset ID */
-    protected String datasetId = null; 
+    protected long datasetId = 0; 
     
     /** Dataset name */
     protected String datasetName = null;
@@ -707,4 +1034,13 @@ public class JobInfo extends javax.swing.JFrame {
     
     // Pareant job ID
     private long jobParent = 0;
+        
+    // Job abstract
+    private String jobAbstract = null;
+    
+    // Maximum number of iterations
+    private String maxIteration = null;
+    
+    // Number of significant digit
+    private String sigDigit = null;
 }
