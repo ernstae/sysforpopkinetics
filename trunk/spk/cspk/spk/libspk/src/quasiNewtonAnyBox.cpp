@@ -1013,6 +1013,9 @@ void quasiNewtonAnyBox(
     // the maximum number of iterations have been performed.
     while ( !isAcceptable && iterCurr <= nMaxIter )
     {
+      // Get the Cholesky factor of the current scaled Hessian.
+      calcCholFactor( nObjPar, hScaled, rScaled );
+
       // See if this function's convergence criterion has been met.
       if ( isWithinTol( 
         epsilon,
@@ -1433,11 +1436,6 @@ bool isWithinTol(
   //------------------------------------------------------------
   // Calculate the Hessian, projected gradient, and diagonal reciprocals.
   //------------------------------------------------------------
-
-      // Get the Cholesky factor of the current scaled Hessian.
-      calcCholFactor( nObjPar, hScaled, rScaled );
-
-
 
   // Prepare a version of the Hessian matrix H = R * R^(T) with its 
   // super-diagonal elements replaced by the sub-diagonal elements
