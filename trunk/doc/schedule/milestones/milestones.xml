@@ -123,7 +123,7 @@
 	      <entry><link linkend="sql_schema">Database SQL Schema</link></entry>
 	      <entry>Alan Westhagen</entry>
 	      <entry>11/21/2003</entry>
-	      <entry></entry>
+	      <entry>11/19/2003</entry>
 	    </row>
 	    <row>
 	      <entry><link linkend="optimizer">Optimizer Replacement</link></entry>
@@ -141,7 +141,7 @@
 	      <entry><link linkend="api_spec">Database API Spec</link></entry>
 	      <entry>Alan Westhagen</entry>
 	      <entry>12/12/2003</entry>
-	      <entry></entry>
+	      <entry>12/02/2003</entry>
 	    </row>
 	    <row>
 	      <entry><link linkend="perl_binding">Perl Binding for API</link></entry>
@@ -266,6 +266,10 @@
 	its history.  The Job History Model defines the set of state
 	sequences that are possible for a job.
       </para>
+      <para>
+	This document is now complete and can be viewed
+	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/jobHistory/jobHistory.html">here</ulink>.
+      </para>
     </sect2>
     <sect2 id="model_cap">
       <title>Model Capabilities Specification</title>
@@ -275,6 +279,10 @@
 	provided by Nonmem.  Version 0.1 will support only of limited
 	subset of these capabilities, as detailed in this specification.
       </para>
+      <para>
+	This document is now complete and can be viewed
+	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/modelCap/html/modelCap.html">here</ulink>.
+      </para>
     </sect2>
     <sect2 id="xml_input">
       <title>XML Representations of Models and Data</title>
@@ -282,6 +290,10 @@
 	A job contains a model and data.  These two objects are 
 	expressed in their own Extensible Markup Language (XML)
 	syntax, as defined in this specification.
+      </para>
+      <para>
+	This document is available for viewing
+	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/modelXML/modelXML.html">here</ulink>.
       </para>
     </sect2>
     <sect2 id="er_model">
@@ -291,6 +303,10 @@
 	communicate with each other by means of a relation database.
 	The entity-relationship model is the high-level design document
 	for this database.
+      </para>
+      <para>
+	This document is now available for viewing
+	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/erModel/erModel.html">here</ulink>.
       </para>
     </sect2>
     <sect2 id="results">
@@ -308,6 +324,10 @@
 	(SQL).  The schema can be executed by the MySQL relational database
 	management system to create a working database that implements
 	the entity-relationship model.
+      </para>
+      <para>
+	This document is now available for viewing
+	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/dbSchema/dbSchema.html">here</ulink>.
       </para>
     </sect2>
     <sect2 id="optimizer">
