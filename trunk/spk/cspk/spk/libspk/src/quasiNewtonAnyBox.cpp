@@ -1301,17 +1301,17 @@ void scaleGradElem(
  * Tolerance that deltaX must be less than.  tol must be greater than 0.0.
  *
  *
- * dvecXHat
+ * xHat
  *
  * Contains the estimate for the true minimizer xTrue.
  *
  *
- * dvecXLow
+ * xLow
  *
  * Contains the lower bound for x.
  *
  *
- * dvecXUp
+ * xUp
  *
  * Contains the upper bound for x.
  *
@@ -1331,21 +1331,13 @@ void scaleGradElem(
 
 #include "multiply.h"
 
-MAKE THIS WORK FOR C ARRAYS?
-MAKE THIS WORK FOR C ARRAYS?
-MAKE THIS WORK FOR C ARRAYS?
-MAKE THIS WORK FOR C ARRAYS?
-MAKE THIS WORK FOR C ARRAYS?
-MAKE THIS WORK FOR C ARRAYS?
-MAKE THIS WORK FOR C ARRAYS?
-
 bool isWithinTol( 
-  double tol, 
-  const DoubleMatrix& dvecXHat, 
-  const DoubleMatrix& dvecXLow, 
-  const DoubleMatrix& dvecXUp, 
-  const DoubleMatrix& drowG,
-  const DoubleMatrix& dmatR )
+  double         tol, 
+  const double*  xHat, 
+  const double*  xLow, 
+  const double*  xUp, 
+  const double*  drowG,
+  const double*  dmatR )
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -1353,30 +1345,16 @@ bool isWithinTol(
 
   int i, j, k;
 
-  int n = dvecXHat.nr();
-
-  assert( dvecXHat.nr() == n && dvecXHat.nc() == 1 );
-  assert( dvecXLow.nr() == n && dvecXLow.nc() == 1 );
-  assert( dvecXUp .nr() == n && dvecXUp .nc() == 1 );
-  assert( drowG   .nr() == 1 && drowG   .nc() == n );
-  assert( dmatR   .nr() == n && dmatR   .nc() == n );
+  int n = xHat.nr();
 
   assert( isLowerTriangular( dmatR ) );
 
   DoubleMatrix dvecDeltaX( n, 1 );
   DoubleMatrix drowGTemp( 1, n );
 
-
-  const double* pdXHatData   = dvecXHat  .data();
-  const double* pdXLowData   = dvecXLow  .data();
-  const double* pdXUpData    = dvecXUp   .data();
-  const double* pdGData      = drowG     .data();
-  const double* pdRData      = dmatR     .data();
-  double* pdDeltaXData = dvecDeltaX.data();
-  double* pdGTempData  = drowGTemp .data();
-
   // This is not necessary.  Sachiko
   //drowGTemp.fill(0.0);
+
 
   //------------------------------------------------------------
   // Calculate the Hessian, temporary gradient, and diagonal reciprocals.
@@ -1606,17 +1584,10 @@ bool isWithinTol(
     
 
   //------------------------------------------------------------
-  // Check to see if deltaX is within tolerance.
+  // Finish up.
   //------------------------------------------------------------
 
-  //
-  // Review - Sachiko: efficiency
-  // 
-  // There seems no real need for "isWithinTol" boolean variable.
-  //
-
-  bool isWithinTol = true;
-
+  // Check to see if deltaX is within tolerance.
   for ( i = 0; i < n; i++ )
   {
     // Only check the elements of xHat that were determined
@@ -1625,15 +1596,14 @@ bool isWithinTol(
     {
       if ( fabs( pdDeltaXData[i] ) > tol )
       {
-        isWithinTol = false;
-
-        // Get out of the routine as soon as disprove.
-        return isWithinTol;
+        // Get out of the routine as soon as possible if
+	// one of the elements is not within tolerance.
+        return false;
       }
     }
   }
 
-  return isWithinTol;
+  return true;
 }
 
 
