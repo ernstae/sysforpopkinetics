@@ -134,7 +134,8 @@ $$
 $pre
 $$
 $head Description$$
-Uses a quasi-Newton method to solve the problem
+Uses a quasi-Newton interior-trust method with exact complimentarity 
+to solve the problem
 $math%
     \minimize f(x) \with \respect \to x
     \subject \to xLow \le x \le xUp  .
@@ -198,7 +199,7 @@ $syntax%
 If there is a problem during the evaluation of this function,
 it should be indicated by throwing an exception.
 The function $code quasiNewtonAnyBox$$ will catch any exception,
-and then rethrow it as an SpkException.
+and then rethrow it as an $xref/SpkException//SpkException/$$.
 $pre
 
 $$
@@ -209,23 +210,31 @@ The vector $italic dvecXIn$$ has the same dimension as the vector
 $italic dvecXLow$$ described below.
 
 $subhead Gradient$$
-The objective function is alway evaluated at the same $italic x$$ value directly before
-evaluating the gradient of the objective function.
-The syntax
+The function that evaluates the gradient of the objective function 
+has this prototype:
 $syntax%
-    virtual void gradient( DoubleMatrix* pdrowF_xOut ) const = 0;
-
-    void objective.gradient( DoubleMatrix* pdrowF_xOut );
-    const char *objective.gradient(double *%g%)
+    virtual void gradient( DoubleMatrix* /pdrowF_xOut/ ) const = 0;
 %$$
-evaluates the gradient using the value of $italic x$$ in the previous 
-call to $syntax%%objective%.function%$$.
-If the return value of 
-$syntax%%objective%.gradient%$$ 
-is not "ok",
-$code QuasiNewton01Box$$ will abort its operation and return with its return value
-equal to the value returned by 
-$syntax%%objective%.gradient%$$ .
+If there is a problem during the evaluation of this function,
+it should be indicated by throwing an exception.
+The function $code quasiNewtonAnyBox$$ will catch any exception,
+and then rethrow it as an $xref/SpkException//SpkException/$$.
+$pre
+
+$$
+Note that this function does not have an argument that specifies 
+the value at which the gradient should be evaluated.
+The reason for this is that during the optimization process, i.e.,
+during the call to $code quasiNewtonAnyBox$$, the objective function
+is alway evaluated at the same $italic dvecXIn$$ value directly before
+the gradient of the objective function is evaluated.
+$pre
+
+$$
+If no exceptions are thrown, then on return the $code DoubleMatrix$$
+pointed to by $italic pdrowF_xOut$$ will be equal to the gradient of
+the objective evaluated at the value of $italic dvecXIn$$ from the
+previous call to the objective function.
 
 $syntax/
 
