@@ -3,7 +3,7 @@ bin_PROGRAMS = test_nonmem
 NONMEM = nonmem
 
 CXXFLAGS = -g
-MOSTLYCLEANFILES = Pred.h predEqn.cpp predEqn.fortran IndData.h DataSet.h testInd testPop test_nonmem testPopDriver.cpp testIndDriver.cpp driver.cpp driver result.xml generatedMakefile 
+MOSTLYCLEANFILES = Pred.h predEqn.cpp predEqn.fortran IndData.h DataSet.h testInd testPop test_nonmem testPopPred.cpp testPopPred testIndPred.cpp testIndPred driver.cpp driver result.xml generatedMakefile NonmemTranslatorIndTest.sourceML NonmemTranslatorPopTest.sourceML 
 
 test_nonmem_SOURCES = \
 	../config.h \

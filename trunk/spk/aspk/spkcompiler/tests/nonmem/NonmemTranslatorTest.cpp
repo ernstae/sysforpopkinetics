@@ -311,25 +311,32 @@ void NonmemTranslatorTest::testParsePopSource()
   Symbol * cp   = table->insertLabel( "CP",   "DV", N );
   Symbol * wt   = table->insertLabel( "WT", "", N );
   Symbol * dose = table->insertLabel( "DOSE", "", N );
+  Symbol * mdv  = table->insertLabel( "MDV", "", N );
  
   id->  initial[0][0] = "#1";
   time->initial[0][0] = "0.0";  cp->initial[0][0] = "0.0";   wt->initial[0][0] = "10.0";  dose->initial[0][0] = "10.0";
+  mdv-> initial[0][0] = "0";
 
   id->  initial[1][0] = "#2"; 
   time->initial[1][0] = "0.0";  cp->initial[1][0] = "0.0";   wt->initial[1][0] = "20.0";  dose->initial[1][0] = "10.0";
+  mdv-> initial[1][0] = "0";
   id->  initial[1][1] = "#2";
   time->initial[1][1] = "1.0";  cp->initial[1][1] = "10.0";  wt->initial[1][1] = "0.0";   dose->initial[1][1] = "0.0";
+  mdv-> initial[1][1] = "0";
 
   id->  initial[2][0] = "#3";
   time->initial[2][0] = "0.0";  cp->initial[2][0] = "0.0";   wt->initial[2][0] = "30.0";  dose->initial[2][0] = "10.0";
+  mdv-> initial[2][0] = "0";
   id->  initial[2][1] = "#3";   
   time->initial[2][1] = "1.0";  cp->initial[2][1] = "10.0";  wt->initial[2][1] = "0.0";   dose->initial[2][1] = "0.0";
+  mdv-> initial[2][1] = "0";
   id->  initial[2][2] = "#3";
   time->initial[2][2] = "2.0";  cp->initial[2][2] = "20.0";  wt->initial[2][2] = "0.0";   dose->initial[2][2] = "0.0";
+  mdv-> initial[2][2] = "0";
 
   xlator.parseSource();
 
-  if( system( "g++ driver.cpp -g -lspk -lnagc -latlas_lapack -lcblas -latlas -lpthread -lm -o driver" ) != 0 )
+  if( system( "g++ driver.cpp -g -lspk -lspkopt -latlas_lapack -lcblas -latlas -lpthread -lm -o driver" ) != 0 )
     {
       CPPUNIT_ASSERT_MESSAGE( "Compilation of the generated driver.cpp failed!", false );
     }
@@ -427,230 +434,522 @@ void NonmemTranslatorTest::testParsePopSource()
   // with the order in which the variables are actually
   // passed in the construction of these objects
   // done in the DataSet constructor.
-  char fTestDriver[] = "testPopDriver.cpp";
-  ofstream oTestDriver( fTestDriver );
-  if( oTestDriver.good() )
+  char fTestPred[] = "testPopPred.cpp";
+  ofstream oTestPred( fTestPred );
+  if( oTestPred.good() )
   {
-     oTestDriver << "#include <iostream>" << endl;
-     oTestDriver << "#include <vector>" << endl;
-     oTestDriver << "#include \"IndData.h\"" << endl;
-     oTestDriver << "#include \"DataSet.h\"" << endl;
-     oTestDriver << "#include \"Pred.h\"" << endl;
-     oTestDriver << "using namespace std;" << endl;
-     oTestDriver << "int main()" << endl;
-     oTestDriver << "{" << endl;
-     oTestDriver << "DataSet<double> set;" << endl;
+     oTestPred << "#include <iostream>" << endl;
+     oTestPred << "#include <vector>" << endl;
+     oTestPred << "#include \"IndData.h\"" << endl;
+     oTestPred << "#include \"DataSet.h\"" << endl;
+     oTestPred << "#include \"Pred.h\"" << endl;
+     oTestPred << endl;
+     oTestPred << "using namespace std;" << endl;
+     oTestPred << endl;
+     oTestPred << "template <typename T>" << endl;
+     oTestPred << "class Values{" << endl;
+     oTestPred << "public:" << endl;
+     oTestPred << "  Values( int n, int nTheta, int nEta, int nEps )" << endl;
+     oTestPred << "  : theta(n)," << endl;
+     oTestPred << "    eta  (n)," << endl;
+     oTestPred << "    eps  (n)," << endl;
+     oTestPred << "    ds   (n)," << endl;
+     oTestPred << "    w    (n)," << endl;
+     oTestPred << "    ka   (n)," << endl;
+     oTestPred << "    ke   (n)," << endl;
+     oTestPred << "    cl   (n)," << endl;
+     oTestPred << "    d    (n), " << endl;
+     oTestPred << "    e    (n), " << endl;
+     oTestPred << "    f    (n), " << endl;
+     oTestPred << "    y    (n)" << endl;
+     oTestPred << "  {" << endl;
+     oTestPred << "    for( int i=0; i<n; i++ )" << endl;
+     oTestPred << "      theta[i].resize( nTheta );" << endl;
+     oTestPred << "    for( int i=0; i<n; i++ )" << endl;
+     oTestPred << "      eta[i].resize( nEta );" << endl;
+     oTestPred << "    for( int i=0; i<n; i++ )" << endl;
+     oTestPred << "      eps[i].resize( nEps );" << endl;
+     oTestPred << "  }" << endl;
+     oTestPred << "  vector<T> ds;" << endl;
+     oTestPred << "  vector<T> w;" << endl;
+     oTestPred << "  vector<T> ka;" << endl;
+     oTestPred << "  vector<T> ke;" << endl;
+     oTestPred << "  vector<T> cl;" << endl;
+     oTestPred << "  vector<T> d;" << endl;
+     oTestPred << "  vector<T> e;" << endl;
+     oTestPred << "  vector<T> f;" << endl;
+     oTestPred << "  vector<T> y;" << endl;
+     oTestPred << "  vector< vector<T> > theta;" << endl;
+     oTestPred << "  vector< vector<T> > eta;" << endl;
+     oTestPred << "  vector< vector<T> > eps;" << endl;
+     oTestPred << endl;
+     oTestPred << "  Values( const Values<T>& right )" << endl;
+     oTestPred << "  : ds(right.ds)," << endl;
+     oTestPred << "    w (right.w)," << endl;
+     oTestPred << "    ka(right.ka)," << endl;
+     oTestPred << "    ke(right.ke)," << endl;
+     oTestPred << "     cl(right.cl)," << endl;
+     oTestPred << "     d(right.d)," << endl;
+     oTestPred << "     e(right.e)," << endl;
+     oTestPred << "     f(right.f)," << endl;
+     oTestPred << "     y(right.y)" << endl;
+     oTestPred << "  {" << endl;
+     oTestPred << "    for( int i=0; i<right.theta.size(); i++ )" << endl;
+     oTestPred << "      theta[i] = right.theta[i];" << endl;
+     oTestPred << "    for( int i=0; i<right.eta.size(); i++ )" << endl;
+     oTestPred << "      eta[i] = right.eta[i];" << endl;
+     oTestPred << "    for( int i=0; i<right.eps.size(); i++ )" << endl;
+     oTestPred << "      eps[i] = right.eps[i];" << endl;
+     oTestPred << "  }" << endl;
+     oTestPred << "  Values<T>& operator=( const Values<T>& right )" << endl;
+     oTestPred << "  {" << endl;
+     oTestPred << "    for( int i=0; i<right.theta.size(); i++ )" << endl;
+     oTestPred << "      theta[i] = right.theta[i];" << endl;
+     oTestPred << "    for( int i=0; i<right.eta.size(); i++ )" << endl;
+     oTestPred << "      eta[i] = right.eta[i];" << endl;
+     oTestPred << "    for( int i=0; i<right.eps.size(); i++ )" << endl;
+     oTestPred << "      eps[i] = right.eps[i];" << endl;
+     oTestPred << endl;
+     oTestPred << "    ds = right.ds;" << endl;
+     oTestPred << "    w  = right.w;" << endl;
+     oTestPred << "    ka = right.ka;" << endl;
+     oTestPred << "    ke = right.ke;" << endl;
+     oTestPred << "    cl = right.cl;" << endl;
+     oTestPred << "    d  = right.d;" << endl;
+     oTestPred << "    e  = right.e;" << endl;
+     oTestPred << "    f  = right.f;" << endl;
+     oTestPred << "    y  = right.y;" << endl;
+     oTestPred << "  }" << endl;
+     oTestPred << "};" << endl;
+     oTestPred << endl;
+     oTestPred << "void clean( int n, Values<double>** a, Values<double>** b)" << endl;
+     oTestPred << "{" << endl;
+     oTestPred << "  for( int i=0; i<n; i++ )" << endl;
+     oTestPred << "    {" << endl;
+     oTestPred << "        delete a[i];" << endl;
+     oTestPred << "        delete b[i];" << endl;
+     oTestPred << "    }" << endl;
+     oTestPred << "    return;" << endl;
+     oTestPred << "}" << endl;
+     oTestPred << endl;
+     oTestPred << "int main( int argc, const char* argv[] )" << endl;
+     oTestPred << "{" << endl;
+     oTestPred << "  //////////////////////////////////////////////////////////" << endl;
+     oTestPred << "  // *** Setting up a data set ***" << endl;
+     oTestPred << "  //" << endl;
+     oTestPred << "  const int  nIndividuals = " << pop_size << ";" << endl;
+     oTestPred << "  const int  N[] = { ";
+     for( int i=0; i<pop_size; i++ )
+       {
+	 if( i > 0 )
+	   oTestPred << ", ";
+	 oTestPred << N[i];
+       }
+     oTestPred << " };" << endl;
 
      for( int i=0; i<pop_size; i++ )
-     {
-        for( int j=0; j<N[i]; j++ )
-        {
-           oTestDriver << "if( set.data[" << i << "]->id[";
-           oTestDriver << j << "] != string(\"";
-           oTestDriver << id->initial[i][j] << "\") )" << endl;
-           oTestDriver << "{" << endl;
-           oTestDriver << "   cerr << \"set[" << i << "]->id[";
-           oTestDriver << j << "] != \\\"";
-           oTestDriver << id->initial[i][j] << "\\\"\" << endl; " << endl;
-              oTestDriver << "   cerr << \"was \" << set.data[";
-           oTestDriver << i << "]->id[" << j << "] << \".\" << endl;" << endl;
-           oTestDriver << "return 1;" << endl;
-           oTestDriver << "}" << endl;
+       {
+	 oTestPred << "  const char ID" << i << "[] = ";
+	 oTestPred << "\"" << id->initial[i][0] << "\";" << endl;
+       }
+     oTestPred << "  const char *ID[] = { ";
+     for( int i=0; i<pop_size; i++ )
+       {
+	 if( i > 0 )
+	   oTestPred << ", ";
+	 oTestPred << "ID" << i;
+       }
+     oTestPred << " };" << endl;
+     oTestPred << endl; 
 
-           oTestDriver << "if( set.data[" << i << "]->time[" << j << "] != ";
-           oTestDriver << time->initial[i][j] << " )" << endl;
-           oTestDriver << "{" << endl;
-           oTestDriver << "   cerr << \"set[" << i << "]->time[" << j << "] != \\\"";
-           oTestDriver << time->initial[i][j] << "\\\"\" << endl; " << endl;
-           oTestDriver << "   cerr << \"was \" << set.data[";
-           oTestDriver << i << "]->time[" << j << "] << \".\" << endl;" << endl;
-           oTestDriver << "return 1;" << endl;
-           oTestDriver << "}" << endl;
-        
-           oTestDriver << "if( set.data[" << i << "]->cp[" << j << "] != ";
-           oTestDriver << cp->initial[i][j] << " )" << endl;
-           oTestDriver << "{" << endl;
-           oTestDriver << "   cerr << \"set[" << i << "]->cp[" << j << "] != \\\"";
-           oTestDriver << cp->initial[i][j] << "\\\"\" << endl; " << endl;
-           oTestDriver << "   cerr << \"was \" << set.data[";
-           oTestDriver << i << "]->cp[" << j << "] << \".\" << endl;" << endl;
-           oTestDriver << "return 1;" << endl;
-           oTestDriver << "}" << endl;
-           
-           oTestDriver << "if( set.data[" << i << "]->dv[" << j << "] != ";
-           oTestDriver << cp->initial[i][j] << " )" << endl;
-           oTestDriver << "{" << endl;
-           oTestDriver << "   cerr << \"set[" << i << "]->dv[" << j << "] != \\\"";
-           oTestDriver << cp->initial[i][j] << "\\\"\" << endl; " << endl;
-           oTestDriver << "   cerr << \"was \" << set.data[";
-           oTestDriver << i << "]->dv[" << j << "] << \".\" << endl;" << endl;
-           oTestDriver << "return 1;" << endl;
-           oTestDriver << "}" << endl;
-	   oTestDriver << endl;
-        }
-     }
-     oTestDriver << "double thetaIn[] = {";
-     for( int i=0; i<thetaLen; i++ )
-     {
-        if( i>0 )
-           oTestDriver << ", ";
-        oTestDriver << i+1;
-     }
-     oTestDriver << "};" << endl;
-     oTestDriver << "double etaIn[] = {";
-     for( int i=0; i<etaLen; i++ )
-     {
-        if( i>0 )
-           oTestDriver << ", ";
-        oTestDriver << i+1;
-     }
-     oTestDriver << "};" << endl;
-     oTestDriver << "double epsIn[] = {";
-     for( int i=0; i<epsLen; i++ )
-     {
-        if( i>0 )
-           oTestDriver << ", ";
-        oTestDriver << i+1;
-     }
-     oTestDriver << "};" << endl;
-     oTestDriver << endl;
+     for( int i=0; i<pop_size; i++ )
+       {
+	 oTestPred << "  double time_" << i << "[] = { ";
+	 for( int j=0; j<N[i]; j++ )
+	   {
+	     if( j > 0 )
+	       oTestPred << ", ";
+	     oTestPred << time->initial[i][j];
+	   }
+	 oTestPred << " };" << endl;
+	 oTestPred << "  double cp_" << i << "  [] = { ";
+	 for( int j=0; j<N[i]; j++ )
+	   {
+	     if( j > 0 )
+	       oTestPred << ", ";
+	     oTestPred << cp->initial[i][j];
+	   }
+	 oTestPred << " };" << endl;
+ 	 oTestPred << "  double *dv_" << i << "    = cp_" << i << ";" << endl;
+	 oTestPred << "  double wt_" << i << "  [] = { ";
+	 for( int j=0; j<N[i]; j++ )
+	   {
+	     if( j > 0 )
+	       oTestPred << ", ";
+	     oTestPred << wt->initial[i][j];
+	   }
+	 oTestPred << " };" << endl;
+	 oTestPred << "  double dose_" << i << "[] = { ";
+	 for( int j=0; j<N[i]; j++ )
+	   {
+	     if( j > 0 )
+	       oTestPred << ", ";
+	     oTestPred << dose->initial[i][j];
+	   }
+	 oTestPred << " };" << endl;
+	 oTestPred << "  double mdv_" << i << " [] = { ";
+	 for( int j=0; j<N[i]; j++ )
+	   {
+	     if( j > 0 )
+	       oTestPred << ", ";
+	     oTestPred << mdv->initial[i][j];
+	   }
+	 oTestPred << " };" << endl;
+       }
 
-     oTestDriver << "int thetaLen = " << thetaLen << ";" << endl;
-     oTestDriver << "int etaLen   = " << etaLen   << ";" << endl;
-     oTestDriver << "int epsLen   = " << epsLen   << ";" << endl;
-     oTestDriver << "int index_theta = 0;" << endl;
-     oTestDriver << "int index_eta   = index_theta + thetaLen;" << endl;
-     oTestDriver << "int index_eps   = index_eta + etaLen;" << endl;
-     oTestDriver << "vector<double> indepVar( thetaLen + etaLen + epsLen );" << endl;
-     oTestDriver << "copy( thetaIn, thetaIn + thetaLen , indepVar.begin() + index_theta );" << endl;
-     oTestDriver << "copy( etaIn, etaIn + etaLen, indepVar.begin() + index_eta );" << endl;
-     oTestDriver << "copy( epsIn, epsIn + epsLen, indepVar.begin() + index_eps );" << endl;
-     oTestDriver << endl;
+     oTestPred << "  double *time[ nIndividuals ] = { ";
+     for( int i=0; i<pop_size; i++ )
+       {
+	 if( i > 0 )
+	   oTestPred << ", ";
+	 oTestPred << "time_" << i;
+       }
+     oTestPred << " };" << endl;
+     oTestPred << "  double *cp  [ nIndividuals ] = { ";
+     for( int i=0; i<pop_size; i++ )
+       {
+	 if( i > 0 )
+	   oTestPred << ", ";
+	 oTestPred << "cp_" << i;
+       }
+     oTestPred << " };" << endl;
+     oTestPred << "  double *dv  [ nIndividuals ] = { ";
+     for( int i=0; i<pop_size; i++ )
+       {
+	 if( i > 0 )
+	   oTestPred << ", ";
+	 oTestPred << "dv_" << i;
+       }
+     oTestPred << " };" << endl;
+     oTestPred << "  double *wt  [ nIndividuals ] = { ";
+     for( int i=0; i<pop_size; i++ )
+       {
+	 if( i > 0 )
+	   oTestPred << ", ";
+	 oTestPred << "wt_" << i;
+       }
+     oTestPred << " };" << endl;
+     oTestPred << "  double *dose[ nIndividuals ] = { ";
+     for( int i=0; i<pop_size; i++ )
+       {
+	 if( i > 0 )
+	   oTestPred << ", ";
+	 oTestPred << "dose_" << i;
+       }
+     oTestPred << " };" << endl;
+     oTestPred << "  double *mdv [ nIndividuals ] = { ";
+     for( int i=0; i<pop_size; i++ )
+       {
+	 if( i > 0 )
+	   oTestPred << ", ";
+	 oTestPred << "mdv_" << i;
+       }
+     oTestPred << " };" << endl;
+     oTestPred << endl;
 
-     oTestDriver << "int fLen = " << N[2] << ";" << endl;
-     oTestDriver << "int yLen = " << N[2] << ";" << endl;
-     oTestDriver << "int index_f = 0;" << endl;
-     oTestDriver << "int index_y = 1;" << endl;
-     oTestDriver << "vector<double> depVar( fLen + yLen );" << endl;
-     oTestDriver << "double fOut = 0.0;" << endl;
-     oTestDriver << "double yOut = 0.0;" << endl;
-     oTestDriver << endl;
-     oTestDriver << "double tol  = 0.0;" << endl;
-     oTestDriver << "double ans  = 0.0;" << endl;
-     oTestDriver << endl;
+     oTestPred << "  DataSet<double> set;" << endl;
 
-     oTestDriver << "Pred<double> pred(&set);" << endl;
-     oTestDriver << "bool ok = pred.eval( index_theta, thetaLen," << endl;
-     oTestDriver << "                     index_eta,   etaLen," << endl;
-     oTestDriver << "                     index_eps,   epsLen," << endl;
-     oTestDriver << "                     index_f,     fLen," << endl;
-     oTestDriver << "                     index_y,     yLen," << endl;
-     oTestDriver << "                     2, 0, " << endl;
-     oTestDriver << "                     indepVar," << endl;
-     oTestDriver << "                     depVar ); " << endl;
-     oTestDriver << "fOut = depVar[index_f];" << endl;
-     oTestDriver << "yOut = depVar[index_y];" << endl;
-     oTestDriver << "if( !ok )" << endl;
-     oTestDriver << "{" << endl;
-     oTestDriver << "   std::cerr << \"pred.eval() returned false, which is wrong.\" << endl;" << endl;
-     oTestDriver << "   return 1;" << endl;
-     oTestDriver << "}" << endl;
-     oTestDriver << "if( fOut != -0.0 )" << endl;
-     oTestDriver << "{" << endl;
-     oTestDriver << "   cerr << \"fOut should've been -0.0 but it was \" << fOut << endl;" << endl;
-     oTestDriver << "   return 1;" << endl;
-     oTestDriver << "}" <<endl;
-     oTestDriver << "if( yOut != 1.0 )" << endl;
-     oTestDriver << "{" << endl;
-     oTestDriver << "   cerr << \"yOut should've been 1.0 but it was \" << yOut << endl;" << endl;
-     oTestDriver << "   return 1;" << endl;
-     oTestDriver << "}" <<endl;
+     oTestPred << "  for( int i=0; i<nIndividuals; i++ )" << endl;
+     oTestPred << "  {" << endl;
+     oTestPred << "    for( int j=0; j<N[i]; j++ )" << endl;
+     oTestPred << "    {" << endl;
+     oTestPred << "      assert( set.data[i]->id  [j] == string(ID[i]) );"    << endl;
+     oTestPred << "      assert( set.data[i]->time[j] == time[i][j] );" << endl;
+     oTestPred << "      assert( set.data[i]->cp  [j] == cp  [i][j] );" << endl;
+     oTestPred << "      assert( set.data[i]->dv  [j] == dv  [i][j] );" << endl;
+     oTestPred << "      assert( set.data[i]->wt  [j] == wt  [i][j] );" << endl;
+     oTestPred << "      assert( set.data[i]->dose[j] == dose[i][j] );" << endl;
+     oTestPred << "      assert( set.data[i]->mdv [j] == mdv [i][j] );" << endl;
+     oTestPred << "    }" << endl;
+     oTestPred << "  }" << endl;
 
-     oTestDriver << "fOut = 0.0;" << endl;
-     oTestDriver << "yOut = 0.0;" << endl;
-     oTestDriver << "ok = pred.eval( index_theta, thetaLen," << endl;
-     oTestDriver << "                index_eta,   etaLen," << endl;
-     oTestDriver << "                index_eps,   epsLen," << endl;
-     oTestDriver << "                index_f,     fLen," << endl;
-     oTestDriver << "                index_y,     yLen," << endl;
-     oTestDriver << "                2, 1, " << endl;
-     oTestDriver << "                indepVar," << endl;
-     oTestDriver << "                depVar ); " << endl;
-     oTestDriver << "fOut = depVar[index_f];" << endl;
-     oTestDriver << "yOut = depVar[index_y];" << endl;
-     oTestDriver << "if( !ok )" << endl;
-     oTestDriver << "{" << endl;
-     oTestDriver << "   std::cerr << \"pred.eval() returned false, which is wrong.\" << endl;" << endl;
-     oTestDriver << "   return 1;" << endl;
-     oTestDriver << "}" << endl;
-     oTestDriver << "ans = 0.50331;" << endl;
-     oTestDriver << "tol = fabs(ans-fOut)/ans * 10.0;" << endl;
-     oTestDriver << "if( !( fOut >= ans-tol && fOut <= ans+tol ) )" << endl;
-     oTestDriver << "{" << endl;
-     oTestDriver << "   cerr << \"fOut should've been \" << ans << \" but it was \" << fOut << endl;" << endl;
-     oTestDriver << "   return 1;" << endl;
-     oTestDriver << "}" <<endl;
-     oTestDriver << "ans = 1.05033;" << endl;
-     oTestDriver << "tol = fabs(ans-yOut)/ans * 10.0;" << endl;
-     oTestDriver << "if( !( yOut >= ans-tol && yOut <= ans+tol ) )" << endl;
-     oTestDriver << "{" << endl;
-     oTestDriver << "   cerr << \"yOut should've been \" << ans << \" but it was \" << yOut << endl;" << endl;
-     oTestDriver << "   return 1;" << endl;
-     oTestDriver << "}" <<endl;
+     oTestPred << "  //" << endl;
+     oTestPred << "  //" << endl;
+     oTestPred << "  //////////////////////////////////////////////////////////" << endl;
+     oTestPred << endl;
 
-     oTestDriver << "fOut = 0.0;" << endl;
-     oTestDriver << "yOut = 0.0;" << endl;
-     oTestDriver << "ok = pred.eval( index_theta, thetaLen," << endl;
-     oTestDriver << "                index_eta,   etaLen," << endl;
-     oTestDriver << "                index_eps,   epsLen," << endl;
-     oTestDriver << "                index_f,     fLen," << endl;
-     oTestDriver << "                index_y,     yLen," << endl;
-     oTestDriver << "                2, 2, " << endl;
-     oTestDriver << "                indepVar," << endl;
-     oTestDriver << "                depVar ); " << endl;
-     oTestDriver << "fOut = depVar[index_f];" << endl;
-     oTestDriver << "yOut = depVar[index_y];" << endl;
-     oTestDriver << "if( !ok )" << endl;
-     oTestDriver << "{" << endl;
-     oTestDriver << "   std::cerr << \"pred.eval() returned false, which is wrong.\" << endl;" << endl;
-     oTestDriver << "   return 1;" << endl;
-     oTestDriver << "}" << endl;
-     oTestDriver << "ans = 0.0154668;" << endl;
-     oTestDriver << "tol = fabs(ans-fOut)/ans * 10.0;" << endl;
-     oTestDriver << "if( !( fOut >= ans-tol && fOut <= ans+tol ) )" << endl;
-     oTestDriver << "{" << endl;
-     oTestDriver << "   cerr << \"fOut should've been \" << ans << \" but it was \" << fOut << endl;" << endl;
-     oTestDriver << "   return 1;" << endl;
-     oTestDriver << "}" <<endl;
-     oTestDriver << "ans = 1.01547;" << endl;
-     oTestDriver << "tol = fabs(ans-yOut)/ans * 10.0;" << endl;
-     oTestDriver << "if( !( yOut >= ans-tol && yOut <= ans+tol ) )" << endl;
-     oTestDriver << "{" << endl;
-     oTestDriver << "   cerr << \"yOut should've been \" << ans << \" but it was \" << yOut << endl;" << endl;
-     oTestDriver << "   return 1;" << endl;
-     oTestDriver << "}" <<endl;
-
-     oTestDriver << "return 0;" << endl;
-     oTestDriver << "}" << endl;
+     oTestPred << "  //////////////////////////////////////////////////////////" << endl;
+     oTestPred << "  // Testing Pred" << endl;
+     oTestPred << "  //" << endl;
+     oTestPred << "  Pred<double> pred( &set );" << endl;
+     oTestPred << endl;
+     oTestPred << "  const int MAX_ITR = 2;" << endl;
+     oTestPred << endl;
+     oTestPred << "  const int thetaLen = 3;" << endl;
+     oTestPred << "  const int etaLen   = 3;" << endl;
+     oTestPred << "  const int epsLen   = 2;" << endl;
+     oTestPred << "  const int nAlp = thetaLen + epsLen;" << endl;
+     oTestPred << "  const int nB   = etaLen;" << endl;
+     oTestPred << "  int fLen;" << endl;
+     oTestPred << "  int yLen;" << endl;
+     oTestPred << endl;
+     oTestPred << "  const int thetaOffset = 0;" << endl;
+     oTestPred << "  const int etaOffset   = thetaLen;" << endl;
+     oTestPred << "  const int epsOffset   = thetaLen + etaLen;" << endl;
+     oTestPred << "  int fOffset;" << endl;
+     oTestPred << "  int yOffset;" << endl;
+     oTestPred << endl;
+     oTestPred << "  vector<double> indepVar( thetaLen + etaLen + epsLen );" << endl;
+     oTestPred << "  vector<double> theta( thetaLen );" << endl;
+     oTestPred << "  vector<double> eta  ( etaLen );" << endl;
+     oTestPred << "  vector<double> eps  ( epsLen );" << endl;
+     oTestPred << endl;
+     oTestPred << "  double ds;" << endl;
+     oTestPred << "  double w;" << endl;
+     oTestPred << "  double ka;" << endl;
+     oTestPred << "  double ke;" << endl;
+     oTestPred << "  double cl;" << endl;
+     oTestPred << endl;
+     oTestPred << "  Values<double> * perm[ nIndividuals ];" << endl;
+     oTestPred << "  Values<double> * temp[ nIndividuals ];" << endl;
+     oTestPred << "  for( int i=0; i<nIndividuals; i++ )" << endl;
+     oTestPred << "  {" << endl;
+     oTestPred << "    perm[i] = new Values<double>( N[i], thetaLen, etaLen, epsLen );" << endl;
+     oTestPred << "    temp[i] = new Values<double>( N[i], thetaLen, etaLen, epsLen );" << endl;
+     oTestPred << "  }" << endl;
+     oTestPred << endl;
+     oTestPred << "  for( int itr=0; itr<MAX_ITR; itr++ )" << endl;
+     oTestPred << "    {" << endl;
+     oTestPred << "      for( int i=0; i<nIndividuals; i++ )" << endl;
+     oTestPred << "	{" << endl;
+     oTestPred << "	  fLen    = N[i];" << endl;
+     oTestPred << "	  yLen    = N[i];" << endl;
+     oTestPred << "	  fOffset = 0;" << endl;
+     oTestPred << "	  yOffset = fLen;" << endl;
+     oTestPred << "	  vector<double> depVar( fLen + yLen );" << endl;
+     oTestPred << "	  fill( depVar.begin(), depVar.end(), 0.0 );" << endl;
+     oTestPred << endl;
+     oTestPred << "	  for( int k=0; k<thetaLen; k++ )" << endl;
+     oTestPred << "	    theta[k] = (k+1+itr)*0.1;" << endl;
+     oTestPred << "	  for( int k=0; k<etaLen; k++ )" << endl;
+     oTestPred << "	    eta[k]   = (k+1+itr)*10.0;" << endl;
+     oTestPred << "	  for( int k=0; k<epsLen; k++ )" << endl;
+     oTestPred << "	    eps[k]   = (k+1+itr);" << endl;
+     oTestPred << endl;
+     oTestPred << "	  copy( theta.begin(), theta.end(), indepVar.begin() );" << endl;
+     oTestPred << "	  copy( eta.  begin(), eta.  end(), indepVar.begin() + thetaLen );" << endl;
+     oTestPred << "	  copy( eps.  begin(), eps.  end(), indepVar.begin() + thetaLen + etaLen );" << endl;
+     oTestPred << endl;
+     oTestPred << "	  for( int j=0; j<N[i]; j++, fOffset++, yOffset++ )" << endl;
+     oTestPred << "	    {" << endl;
+     oTestPred << "	      //" << endl;
+     oTestPred << "	      //         *** PRED definition ***" << endl;
+     oTestPred << "	      //" << endl;
+     oTestPred << "	      // if( dose != 0 )" << endl;
+     oTestPred << "	      //   {" << endl;
+     oTestPred << "	      //     ds = dose * wt;" << endl;
+     oTestPred << "	      //     w = wt;" << endl;
+     oTestPred << "	      //   }" << endl;
+     oTestPred << "	      //" << endl;                                                                  
+     oTestPred << "	      // ka = theta[ ( 1 ) - 1 ] + eta[ ( 1 ) - 1 ];" << endl;
+     oTestPred << "	      // ke = theta[ ( 2 ) - 1 ] + eta[ ( 2 ) - 1 ];" << endl;
+     oTestPred << "	      // cl = theta[ ( 3 ) - 1 ] * w + eta[ ( 3 ) - 1 ];" << endl;
+     oTestPred << "	      // d = exp( -ke * time ) - exp( -ka * time );" << endl;
+     oTestPred << "	      // e = cl * ( ka - ke );" << endl;
+     oTestPred << "	      // f = ds * ke * ka / e * d;" << endl;
+     oTestPred << "	      // y = f + eps[ ( 1 ) - 1 ];" << endl;
+     oTestPred << "	      //" << endl;
+     oTestPred << endl;
+     oTestPred << "	      if( dose[i][j] != 0 )" << endl;
+     oTestPred << "		{" << endl;
+     oTestPred << "		  ds = dose[i][j] * wt[i][j];" << endl;
+     oTestPred << "		  w = wt[i][j];" << endl;
+     oTestPred << "		}" << endl;
+     oTestPred << "	      double ka = theta[0] + eta[0];" << endl;
+     oTestPred << "	      double ke = theta[1] + eta[1];" << endl;
+     oTestPred << "	      double cl = theta[2] * w + eta[2];" << endl;
+     oTestPred << "	      double d = exp( -ke * time[i][j] ) - exp( -ka * time[i][j] );" << endl;
+     oTestPred << "	      double e = cl * ( ka - ke );" << endl;
+     oTestPred << "	      double f = ds * ke * ka / e * d;" << endl;
+     oTestPred << "	      double y = f + eps[ 0 ];" << endl;
+     oTestPred << endl;
+     oTestPred << "           temp[i]->ds[j] = ds;" << endl;
+     oTestPred << "	      temp[i]->w [j] = w;" << endl;
+     oTestPred << "           temp[i]->ka[j] = ka;" << endl;
+     oTestPred << "           temp[i]->ke[j] = ke;" << endl;
+     oTestPred << "           temp[i]->cl[j] = cl;" << endl;
+     oTestPred << "           temp[i]->d [j] = d;" << endl;
+     oTestPred << "           temp[i]->e [j] = e;" << endl;
+     oTestPred << "           temp[i]->f [j] = f;" << endl;
+     oTestPred << "           temp[i]->y [j] = y;" << endl;
+     oTestPred << "	      copy( theta.begin(), theta.end(), temp[i]->theta[j].begin() );" << endl;
+     oTestPred << "	      copy( eta.begin(),   eta.end(),   temp[i]->eta  [j].begin() );" << endl;
+     oTestPred << "	      copy( eps.begin(),   eps.end(),   temp[i]->eps  [j].begin() );" << endl;
+     oTestPred << endl;
+     oTestPred << "	      if( i==nIndividuals-1 && j==N[i]-1 )" << endl;
+     oTestPred << "		{" << endl;
+     oTestPred << "		  for( int inner_i=0; inner_i<nIndividuals; inner_i++ )" << endl;
+     oTestPred << "		    {" << endl;
+     oTestPred << "		      copy( temp[inner_i]->ds.begin(), temp[inner_i]->ds.end(), " << endl;
+     oTestPred << "			    perm[inner_i]->ds.begin() );" << endl;
+     oTestPred << "		      copy( temp[inner_i]->w. begin(), temp[inner_i]->w. end(), " << endl;
+     oTestPred << "			    perm[inner_i]->w .begin() );" << endl;
+     oTestPred << "		      copy( temp[inner_i]->ka.begin(), temp[inner_i]->ka.end(), " << endl;
+     oTestPred << "			    perm[inner_i]->ka.begin() );" << endl;
+     oTestPred << "		      copy( temp[inner_i]->ke.begin(), temp[inner_i]->ke.end(), " << endl;
+     oTestPred << "			    perm[inner_i]->ke.begin() );" << endl;
+     oTestPred << "		      copy( temp[inner_i]->cl.begin(), temp[inner_i]->cl.end(), " << endl;
+     oTestPred << "			    perm[inner_i]->cl.begin() );" << endl;
+     oTestPred << "		      copy( temp[inner_i]->d .begin(), temp[inner_i]->d .end(), " << endl;
+     oTestPred << "			    perm[inner_i]->d .begin() );" << endl;
+     oTestPred << "		      copy( temp[inner_i]->e .begin(), temp[inner_i]->e .end(), " << endl;
+     oTestPred << "			    perm[inner_i]->e .begin() );" << endl;
+     oTestPred << "		      copy( temp[inner_i]->f .begin(), temp[inner_i]->f .end(), " << endl;
+     oTestPred << "			    perm[inner_i]->f .begin() );" << endl;
+     oTestPred << "		      copy( temp[inner_i]->y .begin(), temp[inner_i]->y .end(), " << endl;
+     oTestPred << "			    perm[inner_i]->y .begin() );" << endl;
+     oTestPred << endl;
+     oTestPred << "		      copy( temp[inner_i]->theta.begin(), temp[inner_i]->theta.end()," << endl;
+     oTestPred << "			    perm[inner_i]->theta.begin() );" << endl;
+     oTestPred << "		      copy( temp[inner_i]->eta.begin(),   temp[inner_i]->eta.end(),  " << endl;
+     oTestPred << "			    perm[inner_i]->eta.begin() );" << endl;
+     oTestPred << "		      copy( temp[inner_i]->eps.begin(),   temp[inner_i]->eps.end(),  " << endl;
+     oTestPred << "			    perm[inner_i]->eps.begin() );" << endl;
+     oTestPred << "		    }" << endl;
+     oTestPred << "		}" << endl;
+     oTestPred << "	      try{" << endl;
+     oTestPred << "		pred.eval( thetaOffset, thetaLen," << endl;
+     oTestPred << "			   etaOffset,   etaLen," << endl;
+     oTestPred << "			   epsOffset,   epsLen," << endl;
+     oTestPred << "			   fOffset,     fLen," << endl;
+     oTestPred << "			   yOffset,     yLen," << endl;
+     oTestPred << "			   i, j," << endl;
+     oTestPred << "			   indepVar," << endl;
+     oTestPred << "			   depVar );" << endl;
+     oTestPred << "	        }" << endl;
+     oTestPred << "	      catch( ... )" << endl;
+     oTestPred << "		{" << endl;
+     oTestPred << "		  cerr << \"Pred::eval() threw exception!!!\" << endl;" << endl;
+     oTestPred << "		  clean( nIndividuals, perm, temp );" << endl;
+     oTestPred << "		  return -1;" << endl;
+     oTestPred << "		}" << endl;
+     oTestPred << endl;
+     oTestPred << "	      for( int inner_i=0; inner_i<nIndividuals; inner_i++ )" << endl;
+     oTestPred << "		{" << endl;
+     oTestPred << "		  for( int inner_j=0; inner_j<N[inner_i]; inner_j++ )" << endl;
+     oTestPred << "		    {" << endl;
+     oTestPred << "                   cout << \".\";" << endl;
+     oTestPred << "		      if( set.data[inner_i]->ds[inner_j] != perm[inner_i]->ds[inner_j] )" << endl;
+     oTestPred << "			{" << endl;
+     oTestPred << "			  fprintf( stderr, " << endl;
+     oTestPred << "				   \"Failed!!!  The actual data set in DataSet object failed to keep a complete set of computed values!!!  Oppressive element: DataSet::data[%d]->ds[%d].\\n\"," << endl;
+     oTestPred << "				   inner_i, inner_j );" << endl;
+     oTestPred << "			  clean( nIndividuals, perm, temp );" << endl;
+     oTestPred << "			  return -1;" << endl;
+     oTestPred << "			}" << endl;
+     oTestPred << "		      else if( set.data[inner_i]->w[inner_j] != perm[inner_i]->w[inner_j] )" << endl;
+     oTestPred << "			{" << endl;
+     oTestPred << "			  fprintf( stderr, " << endl;
+     oTestPred << "				   \"Failed!!!  The actual data set in DataSet object failed to keep a complete set of computed values!!!  Oppressive element: DataSet::data[%d]->w[%d].\\n\"," << endl; 
+     oTestPred << "				   inner_i, inner_j );" << endl;
+     oTestPred << "			  clean( nIndividuals, perm, temp );" << endl;
+     oTestPred << "			  return -1;" << endl;
+     oTestPred << "			}" << endl;
+     oTestPred << "		      else if( set.data[inner_i]->ka[inner_j] != perm[inner_i]->ka[inner_j] )" << endl;
+     oTestPred << "			{" << endl;
+     oTestPred << "			  fprintf( stderr, " << endl;
+     oTestPred << "				   \"Failed!!!  The actual data set in DataSet object failed to keep a complete set of computed values!!!  Oppressive element: DataSet::data[%d]->ka[%d].\\n\"," << endl;
+     oTestPred << "				   inner_i, inner_j );" << endl;
+     oTestPred << "			  clean( nIndividuals, perm, temp );" << endl;
+     oTestPred << "			  return -1;" << endl;
+     oTestPred << "			}" << endl;
+     oTestPred << "		      else if( set.data[inner_i]->ke[inner_j] != perm[inner_i]->ke[inner_j] )" << endl;
+     oTestPred << "			{" << endl;
+     oTestPred << "			  fprintf( stderr, " << endl;
+     oTestPred << "				   \"Failed!!!  The actual data set in DataSet object failed to keep a complete set of computed values!!!  Oppressive element: DataSet::data[%d]->ke[%d].\\n\"," << endl;
+     oTestPred << "				   inner_i, inner_j );" << endl;
+     oTestPred << "			  clean( nIndividuals, perm, temp );" << endl;
+     oTestPred << "			  return -1;" << endl;
+     oTestPred << "			}" << endl;
+     oTestPred << "		      else if( set.data[inner_i]->cl[inner_j] != perm[inner_i]->cl[inner_j] )" << endl;
+     oTestPred << "			{" << endl;
+     oTestPred << "			  fprintf( stderr, " << endl;
+     oTestPred << "				   \"Failed!!!  The actual data set in DataSet object failed to keep a complete set of computed values!!!  Oppressive element: DataSet::data[%d]->cl[%d].\\n\"," << endl; 
+     oTestPred << "				   inner_i, inner_j );" << endl;
+     oTestPred << "			  clean( nIndividuals, perm, temp );" << endl;
+     oTestPred << "			  return -1;" << endl;
+     oTestPred << "			}" << endl;
+     oTestPred << "		      else if( set.data[inner_i]->d[inner_j] != perm[inner_i]->d[inner_j] )" << endl;
+     oTestPred << "			{" << endl;
+     oTestPred << "			  fprintf( stderr, " << endl;
+     oTestPred << "				   \"Failed!!!  The actual data set in DataSet object failed to keep a complete set of computed values!!!  Oppressive element: DataSet::data[%d]->d[%d].\\n\"," << endl; 
+     oTestPred << "				   inner_i, inner_j );" << endl;
+     oTestPred << "			  clean( nIndividuals, perm, temp );" << endl;
+     oTestPred << "			  return -1;" << endl;
+     oTestPred << "			}" << endl;
+     oTestPred << "		      else if( set.data[inner_i]->e[inner_j] != perm[inner_i]->e[inner_j] )" << endl;
+     oTestPred << "			{" << endl;
+     oTestPred << "			  fprintf( stderr, " << endl;
+     oTestPred << "				   \"Failed!!!  The actual data set in DataSet object failed to keep a complete set of computed values!!!  Oppressive element: DataSet::data[%d]->e[%d].\\n\"," << endl; 
+     oTestPred << "				   inner_i, inner_j );" << endl;
+     oTestPred << "			  clean( nIndividuals, perm, temp );" << endl;
+     oTestPred << "			  return -1;" << endl;
+     oTestPred << "			}" << endl;
+     oTestPred << "		      else if( set.data[inner_i]->f[inner_j] != perm[inner_i]->f[inner_j] )" << endl;
+     oTestPred << "			{" << endl;
+     oTestPred << "			  fprintf( stderr, " << endl;
+     oTestPred << "				   \"Failed!!!  The actual data set in DataSet object failed to keep a complete set of computed values!!!  Oppressive element: DataSet::data[%d]->f[%d].\\n\"," << endl; 
+     oTestPred << "				   inner_i, inner_j );" << endl;
+     oTestPred << "			  clean( nIndividuals, perm, temp );" << endl;
+     oTestPred << "			  return -1;" << endl;
+     oTestPred << "			}" << endl;
+     oTestPred << "		      else if( set.data[inner_i]->y[inner_j] != perm[inner_i]->y[inner_j] )" << endl;
+     oTestPred << "			{" << endl;
+     oTestPred << "			  fprintf( stderr, " << endl;
+     oTestPred << "				   \"Failed!!!  The actual data set in DataSet object failed to keep a complete set of computed values!!!  Oppressive element: DataSet::data[%d]->y[%d].\\n\"," << endl;
+     oTestPred << "				   inner_i, inner_j );" << endl;
+     oTestPred << "			  clean( nIndividuals, perm, temp );" << endl;
+     oTestPred << "			  return -1;" << endl;
+     oTestPred << "			}" << endl;
+     oTestPred << "		    }" << endl;
+     oTestPred << "		}" << endl;
+     oTestPred << "	    }" << endl;
+     oTestPred << "	  }" << endl;
+     oTestPred << "    }" << endl;
+     oTestPred << "  cout << endl;" << endl;
+     oTestPred << "  clean( nIndividuals, perm, temp );" << endl;
+     oTestPred << "  return 0;" << endl;
+     oTestPred << "}" << endl;
   }
   else
   {
      char buf[256];
-     sprintf( buf, "Failed to open %s as writable.", fTestDriver );
+     sprintf( buf, "Failed to open %s as writable.", fTestPred );
      CPPUNIT_ASSERT_MESSAGE( buf, false );
   }
-  if( system( "g++ testPopDriver.cpp -g -I./ -o testPop" ) != 0 )
+  if( system( "g++ testPopPred.cpp -g -I./ -o testPopPred" ) != 0 )
   {
-     CPPUNIT_ASSERT_MESSAGE( "Failed to compile/link the generated \"testPopDriver.cpp\".", false );
+     CPPUNIT_ASSERT_MESSAGE( "Failed to compile/link the generated \"testPopPred.cpp\".", false );
   }
-  if( system( "./testPop" ) != 0 )
+  if( system( "./testPopPred" ) != 0 )
   {
-     CPPUNIT_ASSERT_MESSAGE( "The generated/built \"testPop\" failed to run successfully.", false );
+     CPPUNIT_ASSERT_MESSAGE( "The generated/built \"testPopPred\" failed to run successfully.", false );
   }
 
   XMLPlatformUtils::Terminate();
-  //remove( gSource );
-  //remove( fTestDriver );
+  remove( gSource );
+  //remove( fTestPred );
+ 
+  rename( "driver.cpp", "popDriver.cpp" );
+
+  if( system( "g++ popDriver.cpp -g -lspk -lspkopt -latlas_lapack -lcblas -latlas -lpthread -lm -o popDriver" ) != 0 )
+  {
+     CPPUNIT_ASSERT_MESSAGE( "Failed to compile/link the generated \"driver.cpp\".", false );
+  }
+  if( system( "./popDriver" ) != 0 )
+  {
+     CPPUNIT_ASSERT_MESSAGE( "The generated/built \"popDriver\" failed to run successfully.", false );
+  }
 }
 void NonmemTranslatorTest::testParseIndSource()
 {
@@ -887,7 +1186,7 @@ void NonmemTranslatorTest::testParseIndSource()
 
   xlator.parseSource();
 
-  if( system( "g++ driver.cpp -g -lspk -lnagc -latlas_lapack -lcblas -latlas -lpthread -lm -o driver" ) != 0 )
+  if( system( "g++ driver.cpp -g -lspk -lspkopt -latlas_lapack -lcblas -latlas -lpthread -lm -o driver" ) != 0 )
     {
       CPPUNIT_ASSERT_MESSAGE( "Compilation of the generated driver.cpp failed!", false );
     }
@@ -946,203 +1245,214 @@ void NonmemTranslatorTest::testParseIndSource()
   // with the order in which the variables are actually
   // passed in the construction of these objects
   // done in the DataSet constructor.
-  char fTestDriver[] = "testIndDriver.cpp";
-  ofstream oTestDriver( fTestDriver );
+  char fTestPred[] = "testIndPred.cpp";
+  ofstream oTestPred( fTestPred );
   const int pop_size = 1;
-  if( oTestDriver.good() )
+  if( oTestPred.good() )
     {
-      oTestDriver << "#include <iostream>" << endl;
-      oTestDriver << "#include <vector>" << endl;
-      oTestDriver << "#include \"IndData.h\"" << endl;
-      oTestDriver << "#include \"DataSet.h\"" << endl;
-      oTestDriver << "#include \"Pred.h\"" << endl;
-      oTestDriver << "using namespace std;" << endl;
-      oTestDriver << "int main()" << endl;
-      oTestDriver << "{" << endl;
-      oTestDriver << "DataSet<double> set;" << endl;
+      oTestPred << "#include <iostream>" << endl;
+      oTestPred << "#include <vector>" << endl;
+      oTestPred << "#include \"IndData.h\"" << endl;
+      oTestPred << "#include \"DataSet.h\"" << endl;
+      oTestPred << "#include \"Pred.h\"" << endl;
+      oTestPred << "using namespace std;" << endl;
+      oTestPred << "int main()" << endl;
+      oTestPred << "{" << endl;
+      oTestPred << "DataSet<double> set;" << endl;
       
       for( int i=0; i<pop_size; i++ )
 	{
 	  for( int j=0; j<N[i]; j++ )
 	    { 
-	      oTestDriver << "if( set.data[" << i << "]->time[" << j << "] != ";
-	      oTestDriver << time->initial[i][j] << " )" << endl;
-	      oTestDriver << "{" << endl;
-	      oTestDriver << "   cerr << \"set[" << i << "]->time[" << j << "] != \\\"";
-	      oTestDriver << time->initial[i][j] << "\\\"\" << endl; " << endl;
-	      oTestDriver << "   cerr << \"was \" << set.data[";
-	      oTestDriver << i << "]->time[" << j << "] << \".\" << endl;" << endl;
-	      oTestDriver << "return 1;" << endl;
-	      oTestDriver << "}" << endl;
+	      oTestPred << "if( set.data[" << i << "]->time[" << j << "] != ";
+	      oTestPred << time->initial[i][j] << " )" << endl;
+	      oTestPred << "{" << endl;
+	      oTestPred << "   cerr << \"set[" << i << "]->time[" << j << "] != \\\"";
+	      oTestPred << time->initial[i][j] << "\\\"\" << endl; " << endl;
+	      oTestPred << "   cerr << \"was \" << set.data[";
+	      oTestPred << i << "]->time[" << j << "] << \".\" << endl;" << endl;
+	      oTestPred << "return 1;" << endl;
+	      oTestPred << "}" << endl;
 	      
-	      oTestDriver << "if( set.data[" << i << "]->cp[" << j << "] != ";
-	      oTestDriver << cp->initial[i][j] << " )" << endl;
-	      oTestDriver << "{" << endl;
-	      oTestDriver << "   cerr << \"set[" << i << "]->cp[" << j << "] != \\\"";
-	      oTestDriver << cp->initial[i][j] << "\\\"\" << endl; " << endl;
-	      oTestDriver << "   cerr << \"was \" << set.data[";
-	      oTestDriver << i << "]->cp[" << j << "] << \".\" << endl;" << endl;
-	      oTestDriver << "return 1;" << endl;
-	      oTestDriver << "}" << endl;
+	      oTestPred << "if( set.data[" << i << "]->cp[" << j << "] != ";
+	      oTestPred << cp->initial[i][j] << " )" << endl;
+	      oTestPred << "{" << endl;
+	      oTestPred << "   cerr << \"set[" << i << "]->cp[" << j << "] != \\\"";
+	      oTestPred << cp->initial[i][j] << "\\\"\" << endl; " << endl;
+	      oTestPred << "   cerr << \"was \" << set.data[";
+	      oTestPred << i << "]->cp[" << j << "] << \".\" << endl;" << endl;
+	      oTestPred << "return 1;" << endl;
+	      oTestPred << "}" << endl;
 	      
-	      oTestDriver << "if( set.data[" << i << "]->dv[" << j << "] != ";
-	      oTestDriver << cp->initial[i][j] << " )" << endl;
-	      oTestDriver << "{" << endl;
-	      oTestDriver << "   cerr << \"set[" << i << "]->dv[" << j << "] != \\\"";
-	      oTestDriver << cp->initial[i][j] << "\\\"\" << endl; " << endl;
-	      oTestDriver << "   cerr << \"was \" << set.data[";
-	      oTestDriver << i << "]->dv[" << j << "] << \".\" << endl;" << endl;
-	      oTestDriver << "return 1;" << endl;
-	      oTestDriver << "}" << endl;
-	      oTestDriver << endl;
+	      oTestPred << "if( set.data[" << i << "]->dv[" << j << "] != ";
+	      oTestPred << cp->initial[i][j] << " )" << endl;
+	      oTestPred << "{" << endl;
+	      oTestPred << "   cerr << \"set[" << i << "]->dv[" << j << "] != \\\"";
+	      oTestPred << cp->initial[i][j] << "\\\"\" << endl; " << endl;
+	      oTestPred << "   cerr << \"was \" << set.data[";
+	      oTestPred << i << "]->dv[" << j << "] << \".\" << endl;" << endl;
+	      oTestPred << "return 1;" << endl;
+	      oTestPred << "}" << endl;
+	      oTestPred << endl;
 	    }
 	}
-      oTestDriver << "double thetaIn[] = {";
+      oTestPred << "double thetaIn[] = {";
       for( int i=0; i<thetaLen; i++ )
 	{
 	  if( i>0 )
-	    oTestDriver << ", ";
-	  oTestDriver << i+1;
+	    oTestPred << ", ";
+	  oTestPred << i+1;
 	}
-      oTestDriver << "};" << endl;
-      oTestDriver << "double *epsIn = 0;" << endl;
-      oTestDriver << "double *etaIn = 0;" << endl;
-      oTestDriver << endl;
+      oTestPred << "};" << endl;
+      oTestPred << "double *epsIn = 0;" << endl;
+      oTestPred << "double *etaIn = 0;" << endl;
+      oTestPred << endl;
 
-      oTestDriver << "int thetaLen = " << thetaLen << ";" << endl;
-      oTestDriver << "int etaLen   = " << etaLen   << ";" << endl;
-      oTestDriver << "int epsLen   = " << epsLen   << ";" << endl;
-      oTestDriver << "int index_theta = 0;" << endl;
-      oTestDriver << "int index_eta   = index_theta + thetaLen;" << endl;
-      oTestDriver << "int index_eps   = index_eta + etaLen;" << endl;
-      oTestDriver << "vector<double> indepVar( thetaLen + etaLen + epsLen );" << endl;
-      oTestDriver << "copy( thetaIn, thetaIn + thetaLen , indepVar.begin() + index_theta );" << endl;
-      oTestDriver << "copy( etaIn, etaIn + etaLen, indepVar.begin() + index_eta );" << endl;
-      oTestDriver << "copy( epsIn, epsIn + epsLen, indepVar.begin() + index_eps );" << endl;
-      oTestDriver << endl;
+      oTestPred << "int thetaLen = " << thetaLen << ";" << endl;
+      oTestPred << "int etaLen   = " << etaLen   << ";" << endl;
+      oTestPred << "int epsLen   = " << epsLen   << ";" << endl;
+      oTestPred << "int index_theta = 0;" << endl;
+      oTestPred << "int index_eta   = index_theta + thetaLen;" << endl;
+      oTestPred << "int index_eps   = index_eta + etaLen;" << endl;
+      oTestPred << "vector<double> indepVar( thetaLen + etaLen + epsLen );" << endl;
+      oTestPred << "copy( thetaIn, thetaIn + thetaLen , indepVar.begin() + index_theta );" << endl;
+      oTestPred << "copy( etaIn, etaIn + etaLen, indepVar.begin() + index_eta );" << endl;
+      oTestPred << "copy( epsIn, epsIn + epsLen, indepVar.begin() + index_eps );" << endl;
+      oTestPred << endl;
 
-      oTestDriver << "int fLen = " << N[0] << ";" << endl;
-      oTestDriver << "int yLen = " << N[0] << ";" << endl;
-      oTestDriver << "int index_f = 0;" << endl;
-      oTestDriver << "int index_y = 1;" << endl;
-      oTestDriver << "vector<double> depVar( fLen + yLen );" << endl;
-      oTestDriver << "double yOut = 0.0;" << endl;
-      oTestDriver << "double fOut = 0.0;" << endl;
-      oTestDriver << endl;
-      oTestDriver << "double tol  = 0.0;" << endl;
-      oTestDriver << "double ans  = 0.0;" << endl;
-      oTestDriver << endl;
+      oTestPred << "int fLen = " << N[0] << ";" << endl;
+      oTestPred << "int yLen = " << N[0] << ";" << endl;
+      oTestPred << "int index_f = 0;" << endl;
+      oTestPred << "int index_y = 1;" << endl;
+      oTestPred << "vector<double> depVar( fLen + yLen );" << endl;
+      oTestPred << "double yOut = 0.0;" << endl;
+      oTestPred << "double fOut = 0.0;" << endl;
+      oTestPred << endl;
+      oTestPred << "double tol  = 0.0;" << endl;
+      oTestPred << "double ans  = 0.0;" << endl;
+      oTestPred << endl;
       
-      oTestDriver << "Pred<double> pred(&set);" << endl;
-      oTestDriver << "bool ok = pred.eval( index_theta, thetaLen," << endl;
-      oTestDriver << "                     index_eta,   etaLen," << endl;
-      oTestDriver << "                     index_eps,   epsLen," << endl;
-      oTestDriver << "                     index_f,     fLen," << endl;
-      oTestDriver << "                     index_y,     yLen," << endl;
-      oTestDriver << "                     0, 0, " << endl;
-      oTestDriver << "                     indepVar," << endl;
-      oTestDriver << "                     depVar ); " << endl;
-      oTestDriver << "fOut = depVar[index_f];" << endl;
-      oTestDriver << "yOut = depVar[index_y];" << endl;
-      oTestDriver << "if( !ok )" << endl;
-      oTestDriver << "{" << endl;
-      oTestDriver << "   std::cerr << \"pred.eval() returned false, which is wrong.\" << endl;" << endl;
-      oTestDriver << "   return 1;" << endl;
-      oTestDriver << "}" << endl;
-      oTestDriver << "if( fOut != -0.0 )" << endl;
-      oTestDriver << "{" << endl;
-      oTestDriver << "   cerr << \"fOut should've been -0.0 but it was \" << fOut << endl;" << endl;
-      oTestDriver << "   return 1;" << endl;
-      oTestDriver << "}" <<endl;
-      oTestDriver << "if( yOut !=0.0 )" << endl;
-      oTestDriver << "{" << endl;
-      oTestDriver << "   cerr << \"yOut should've been 0.0 but it was \" << yOut << endl;" << endl;
-      oTestDriver << "   return 1;" << endl;
-      oTestDriver << "}" <<endl;
+      oTestPred << "Pred<double> pred(&set);" << endl;
+      oTestPred << "bool ok = pred.eval( index_theta, thetaLen," << endl;
+      oTestPred << "                     index_eta,   etaLen," << endl;
+      oTestPred << "                     index_eps,   epsLen," << endl;
+      oTestPred << "                     index_f,     fLen," << endl;
+      oTestPred << "                     index_y,     yLen," << endl;
+      oTestPred << "                     0, 0, " << endl;
+      oTestPred << "                     indepVar," << endl;
+      oTestPred << "                     depVar ); " << endl;
+      oTestPred << "fOut = depVar[index_f];" << endl;
+      oTestPred << "yOut = depVar[index_y];" << endl;
+      oTestPred << "if( !ok )" << endl;
+      oTestPred << "{" << endl;
+      oTestPred << "   std::cerr << \"pred.eval() returned false, which is wrong.\" << endl;" << endl;
+      oTestPred << "   return 1;" << endl;
+      oTestPred << "}" << endl;
+      oTestPred << "if( fOut != -0.0 )" << endl;
+      oTestPred << "{" << endl;
+      oTestPred << "   cerr << \"fOut should've been -0.0 but it was \" << fOut << endl;" << endl;
+      oTestPred << "   return 1;" << endl;
+      oTestPred << "}" <<endl;
+      oTestPred << "if( yOut !=0.0 )" << endl;
+      oTestPred << "{" << endl;
+      oTestPred << "   cerr << \"yOut should've been 0.0 but it was \" << yOut << endl;" << endl;
+      oTestPred << "   return 1;" << endl;
+      oTestPred << "}" <<endl;
       
-      oTestDriver << "ok = pred.eval( index_theta, thetaLen," << endl;
-      oTestDriver << "                index_eta,   etaLen," << endl;
-      oTestDriver << "                index_eps,   epsLen," << endl;
-      oTestDriver << "                index_f,     fLen," << endl;
-      oTestDriver << "                index_y,     yLen," << endl;
-      oTestDriver << "                0, 1, " << endl;
-      oTestDriver << "                indepVar," << endl;
-      oTestDriver << "                depVar ); " << endl;
-      oTestDriver << "fOut = depVar[index_f];" << endl;
-      oTestDriver << "yOut = depVar[index_y];" << endl;
-      oTestDriver << "if( !ok )" << endl;
-      oTestDriver << "{" << endl;
-      oTestDriver << "   std::cerr << \"pred.eval() returned false, which is wrong.\" << endl;" << endl;
-      oTestDriver << "   return 1;" << endl;
-      oTestDriver << "}" << endl;
-      oTestDriver << "ans = 1.55029;" << endl;
-      oTestDriver << "tol = fabs(ans-fOut)/ans * 10.0;" << endl;
-      oTestDriver << "if( !( fOut >= ans-tol && fOut <= ans+tol ) )" << endl;
-      oTestDriver << "{" << endl;
-      oTestDriver << "   cerr << \"fOut should've been \" << ans << \" but it was \" << fOut << endl;" << endl;
-      oTestDriver << "   return 1;" << endl;
-      oTestDriver << "}" <<endl;
-      oTestDriver << "ans = 2.55029;" << endl;
-      oTestDriver << "tol = fabs(ans-yOut)/ans * 10.0;" << endl;
-      oTestDriver << "if( !( yOut >= ans-tol && yOut <= ans+tol ) )" << endl;
-      oTestDriver << "{" << endl;
-      oTestDriver << "   cerr << \"yOut should've been \" << ans << \" but it was \" << yOut << endl;" << endl;
-      oTestDriver << "   return 1;" << endl;
-      oTestDriver << "}" <<endl;
+      oTestPred << "ok = pred.eval( index_theta, thetaLen," << endl;
+      oTestPred << "                index_eta,   etaLen," << endl;
+      oTestPred << "                index_eps,   epsLen," << endl;
+      oTestPred << "                index_f,     fLen," << endl;
+      oTestPred << "                index_y,     yLen," << endl;
+      oTestPred << "                0, 1, " << endl;
+      oTestPred << "                indepVar," << endl;
+      oTestPred << "                depVar ); " << endl;
+      oTestPred << "fOut = depVar[index_f];" << endl;
+      oTestPred << "yOut = depVar[index_y];" << endl;
+      oTestPred << "if( !ok )" << endl;
+      oTestPred << "{" << endl;
+      oTestPred << "   std::cerr << \"pred.eval() returned false, which is wrong.\" << endl;" << endl;
+      oTestPred << "   return 1;" << endl;
+      oTestPred << "}" << endl;
+      oTestPred << "ans = 1.55029;" << endl;
+      oTestPred << "tol = fabs(ans-fOut)/ans * 10.0;" << endl;
+      oTestPred << "if( !( fOut >= ans-tol && fOut <= ans+tol ) )" << endl;
+      oTestPred << "{" << endl;
+      oTestPred << "   cerr << \"fOut should've been \" << ans << \" but it was \" << fOut << endl;" << endl;
+      oTestPred << "   return 1;" << endl;
+      oTestPred << "}" <<endl;
+      oTestPred << "ans = 2.55029;" << endl;
+      oTestPred << "tol = fabs(ans-yOut)/ans * 10.0;" << endl;
+      oTestPred << "if( !( yOut >= ans-tol && yOut <= ans+tol ) )" << endl;
+      oTestPred << "{" << endl;
+      oTestPred << "   cerr << \"yOut should've been \" << ans << \" but it was \" << yOut << endl;" << endl;
+      oTestPred << "   return 1;" << endl;
+      oTestPred << "}" <<endl;
       
-      oTestDriver << "fOut = 0.0;" << endl;
-      oTestDriver << "yOut = 0.0;" << endl;
-      oTestDriver << "ok = pred.eval( index_theta, thetaLen," << endl;
-      oTestDriver << "                index_eta,   etaLen," << endl;
-      oTestDriver << "                index_eps,   epsLen," << endl;
-      oTestDriver << "                index_f,     fLen," << endl;
-      oTestDriver << "                index_y,     yLen," << endl;
-      oTestDriver << "                0, 2, " << endl;
-      oTestDriver << "                indepVar," << endl;
-      oTestDriver << "                depVar ); " << endl;
-      oTestDriver << "fOut = depVar[index_f];" << endl;
-      oTestDriver << "yOut = depVar[index_y];" << endl;
-      oTestDriver << "if( !ok )" << endl;
-      oTestDriver << "{" << endl;
-      oTestDriver << "   std::cerr << \"pred.eval() returned false, which is wrong.\" << endl;" << endl;
-      oTestDriver << "   return 1;" << endl;
-      oTestDriver << "}" << endl;
-      oTestDriver << "ans = 0.780131;" << endl;
-      oTestDriver << "tol = fabs(ans-fOut)/ans * 10.0;" << endl;
-      oTestDriver << "if( !( fOut >= ans-tol && fOut <= ans+tol ) )" << endl;
-      oTestDriver << "{" << endl;
-      oTestDriver << "   cerr << \"fOut should've been \" << ans << \" but it was \" << fOut << endl;" << endl;
-      oTestDriver << "   return 1;" << endl;
-      oTestDriver << "}" <<endl;
-      oTestDriver << "ans = 1.78013;" << endl;
-      oTestDriver << "tol = fabs(ans-yOut)/ans * 10.0;" << endl;
-      oTestDriver << "if( !( yOut >= ans-tol && yOut <= ans+tol ) )" << endl;
-      oTestDriver << "{" << endl;
-      oTestDriver << "   cerr << \"yOut should've been \" << ans << \" but it was \" << yOut << endl;" << endl;
-      oTestDriver << "   return 1;" << endl;
-      oTestDriver << "}" <<endl;
+      oTestPred << "fOut = 0.0;" << endl;
+      oTestPred << "yOut = 0.0;" << endl;
+      oTestPred << "ok = pred.eval( index_theta, thetaLen," << endl;
+      oTestPred << "                index_eta,   etaLen," << endl;
+      oTestPred << "                index_eps,   epsLen," << endl;
+      oTestPred << "                index_f,     fLen," << endl;
+      oTestPred << "                index_y,     yLen," << endl;
+      oTestPred << "                0, 2, " << endl;
+      oTestPred << "                indepVar," << endl;
+      oTestPred << "                depVar ); " << endl;
+      oTestPred << "fOut = depVar[index_f];" << endl;
+      oTestPred << "yOut = depVar[index_y];" << endl;
+      oTestPred << "if( !ok )" << endl;
+      oTestPred << "{" << endl;
+      oTestPred << "   std::cerr << \"pred.eval() returned false, which is wrong.\" << endl;" << endl;
+      oTestPred << "   return 1;" << endl;
+      oTestPred << "}" << endl;
+      oTestPred << "ans = 0.780131;" << endl;
+      oTestPred << "tol = fabs(ans-fOut)/ans * 10.0;" << endl;
+      oTestPred << "if( !( fOut >= ans-tol && fOut <= ans+tol ) )" << endl;
+      oTestPred << "{" << endl;
+      oTestPred << "   cerr << \"fOut should've been \" << ans << \" but it was \" << fOut << endl;" << endl;
+      oTestPred << "   return 1;" << endl;
+      oTestPred << "}" <<endl;
+      oTestPred << "ans = 1.78013;" << endl;
+      oTestPred << "tol = fabs(ans-yOut)/ans * 10.0;" << endl;
+      oTestPred << "if( !( yOut >= ans-tol && yOut <= ans+tol ) )" << endl;
+      oTestPred << "{" << endl;
+      oTestPred << "   cerr << \"yOut should've been \" << ans << \" but it was \" << yOut << endl;" << endl;
+      oTestPred << "   return 1;" << endl;
+      oTestPred << "}" <<endl;
       
-      oTestDriver << "return 0;" << endl;
-      oTestDriver << "}" << endl;
+      oTestPred << "return 0;" << endl;
+      oTestPred << "}" << endl;
     }
   else
     {
       char buf[256];
-      sprintf( buf, "Failed to open %s as writable.", fTestDriver );
+      sprintf( buf, "Failed to open %s as writable.", fTestPred );
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
-  if( system( "g++ testIndDriver.cpp -g -I./ -o testInd" ) != 0 )
+  if( system( "g++ testIndPred.cpp -g -I./ -o testIndPred" ) != 0 )
   {
-     CPPUNIT_ASSERT_MESSAGE( "Failed to compile/link the generated \"testIndDriver.cpp\".", false );
+     CPPUNIT_ASSERT_MESSAGE( "Failed to compile/link the generated \"testIndPred.cpp\".", false );
   }
-  if( system( "./testInd" ) != 0 )
+  if( system( "./testIndPred" ) != 0 )
   {
-     CPPUNIT_ASSERT_MESSAGE( "The generated/built \"testInd\" failed to run successfully.", false );
+     CPPUNIT_ASSERT_MESSAGE( "The generated/built \"testIndPred\" failed to run successfully.", false );
   }
 
   XMLPlatformUtils::Terminate();
   //remove( fTestDriver );
-  //remove( gSource );
+  remove( gSource );
+
+  rename( "driver.cpp", "indDriver.cpp" );
+
+  if( system( "g++ indDriver.cpp -g -lspk -lspkopt -latlas_lapack -lcblas -latlas -lpthread -lm -o indDriver" ) != 0 )
+  {
+     CPPUNIT_ASSERT_MESSAGE( "Failed to compile/link the generated \"driver.cpp\".", false );
+  }
+  if( system( "./indDriver" ) != 0 )
+  {
+     CPPUNIT_ASSERT_MESSAGE( "The generated/built \"indDriver\" failed to run successfully.", false );
+  }
 }
 CppUnit::Test * NonmemTranslatorTest::suite()
 {
@@ -1152,12 +1462,12 @@ CppUnit::Test * NonmemTranslatorTest::suite()
      new CppUnit::TestCaller<NonmemTranslatorTest>(
          "testInheritance", 
 	 &NonmemTranslatorTest::testInheritance ) );
-  /*
+
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<NonmemTranslatorTest>(
          "testParseIndSource", 
 	 &NonmemTranslatorTest::testParseIndSource ) );
-  */
+
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<NonmemTranslatorTest>(
          "testParsePopSource", 
