@@ -2,6 +2,7 @@
 #include <cppunit/TextTestResult.h>
 #include <cppunit/ui/text/TestRunner.h>
 
+#include "clientTest.h"
 #include "SymbolTest.h"
 #include "SymbolTableTest.h"
 #include "SpkCompilerUtilTest.h"
@@ -18,6 +19,7 @@ int main( int argc, const char * argv[] )
 {
   CppUnit::TextUi::TestRunner runner;
 
+  runner.addTest( clientTest::suite() );
   runner.addTest( SymbolTest::suite() );
   runner.addTest( SymbolTableTest::suite() );
   runner.addTest( SpkCompilerUtilTest::suite() );
