@@ -3,6 +3,7 @@
 use strict;
 use English;
 use File::Path;
+use Candidate('make_directory');
 
 =head1 NAME
 
@@ -52,17 +53,6 @@ my $mkdir_command = "/bin/mkdir";
 my $scp_command = "/usr/bin/scp";
 my $logrotate_command = "/usr/sbin/logrotate";
 
-sub make_directory {
-    my $path = shift;
-    my @args = ($mkdir_command, "-p", $path);
-     system(@args);
-    my $exit_status = $? >> 8;
-    if ($exit_status != 0) {
-	die "Could not make directory '$path'\n";
-    }
-}
-
-
 if (@ARGV > 1 || (@ARGV == 1 && $ARGV[0] =~ "--help")) {
     die "usage: $0 [ candidate.n ]\n";
 }
@@ -73,7 +63,7 @@ $EFFECTIVE_USER_ID == 0
     or die "You must be root to run this program\n";
 
 -d $log_file_dir
-    or make_directory $log_file_dir;
+    or &make_directory("$log_file_dir");
 
 -d $candidate_dir
     or die "The candidate directory, $candidate_dir, appears not to exist.\n";

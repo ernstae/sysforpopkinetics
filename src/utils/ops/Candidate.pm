@@ -9,10 +9,11 @@ our @EXPORT_OK = (
     );
 my $mkdir_command = "/bin/mkdir";
 my $scp_command = "/usr/bin/scp";
-sub stage_directory() {
+ 
+sub stage_directory {
     my $host = shift;
     my $path = shift;
-    my $source = "$host:$path/spktest";
+    my $source = $host eq "aspkserver" ? "$path/spktest" : "$host:$path/spktest";
     my $dest = "$host$path";
     my @args = ($scp_command, "-r", $source, $dest);
     print "@args", "\n";
@@ -24,7 +25,7 @@ sub stage_directory() {
    rename "$dest/spktest", "$dest/spkprod";
 }
 
-sub make_directory() {
+sub make_directory {
     my $path = shift;
     my @args = ($mkdir_command, "-p", $path);
      system(@args);
