@@ -64,7 +64,7 @@ This record is present only when the estimation completed normally.
 When it is present, this record contains the estimates for the 
 negative log of the marginal likelihood as a function
 of the fixed effects.
-The attribute $code seconds$$ specifies
+The attribute $code elapsedtime$$ specifies
 the number of seconds it took to compute the results.
 
 $head alpha_center$$
@@ -119,7 +119,7 @@ $syntax%
 <spkreport>
 <error_list>
 </error_list>
-<pop_monte_result seconds="%PCDATA%" method="%PCDATA%" numberEval="%PCDATA%" >
+<pop_monte_result elapsedtime="%PCDATA%" method="%PCDATA%" number_eval="%PCDATA%" >
 	<column_major  name="alpha_center" nrows="%PCDATA%" ncols="1">
 		<column>
 			<value>
@@ -308,7 +308,7 @@ namespace {
 		const valarray<double> &alp       ,
 		const valarray<double> &bLow      ,
 		const valarray<double> &bUp       ,
-		const valarray<int>    &numberEval
+		const valarray<int>    &number_eval
 	)
 	{	pop_obj_estimate = 0.;
 		pop_obj_stderror = 0.;
@@ -316,7 +316,7 @@ namespace {
 		size_t nB        = bLow.size();
 
 		assert( bUp.size() == nB );
-		assert( numberEval.size() == nB );
+		assert( number_eval.size() == nB );
 
 		size_t i;
 		for(i = 0; i < nPop; i++)
@@ -360,7 +360,7 @@ namespace {
 				ExpNegMapBay,
 				nB          , 
 				null        ,
-				numberEval  ,
+				number_eval  ,
 				bLow        ,
 				bUp         ,
 				estimate    ,
@@ -380,9 +380,9 @@ namespace {
 		const valarray<double> &alp       ,
 		const valarray<double> &bLow      ,
 		const valarray<double> &bUp       ,
-		const valarray<int>    &numberEval
+		const valarray<int>    &number_eval
 	)
-	{	assert( numberEval.size() == 1 );
+	{	assert( number_eval.size() == 1 );
 
 		pop_obj_estimate = 0.;
 		pop_obj_stderror = 0.;
@@ -399,7 +399,7 @@ namespace {
 				bLow,
 				bUp,
 				i,
-				numberEval[0],
+				number_eval[0],
 				estimate,
 				error
 			);
@@ -421,8 +421,8 @@ int main(int argc, const char *argv[])
 
 	using namespace NonmemPars;
 
-	// numberEval
-	valarray<int>  numberEval = MontePars::numberEval;
+	// number_eval
+	valarray<int>  number_eval = MontePars::numberEval;
 
 	// method
 	std::string MethodName;
@@ -463,10 +463,10 @@ int main(int argc, const char *argv[])
 	}
 
 	size_t i;
-	for(i = 0; i < numberEval.size(); i++)
-	{	if( numberEval[i] <= 0 )
+	for(i = 0; i < number_eval.size(); i++)
+	{	if( number_eval[i] <= 0 )
 		{	cerr << "monteDriver: ";
-			cerr << "numberEval is not greater than zero" << endl;
+			cerr << "number_eval is not greater than zero" << endl;
 			return UnknownFailure;
 		}
 	}
@@ -578,7 +578,7 @@ int main(int argc, const char *argv[])
 					alp             ,
 					bLow            ,
 					bUp             ,
-					numberEval
+					number_eval
 				);
 				// Monte Carlo integral approximation
 				if( monte ) MonteIntegralAll(
@@ -590,7 +590,7 @@ int main(int argc, const char *argv[])
 					alp             ,
 					bLow            ,
 					bUp             ,
-					numberEval
+					number_eval
 				);
 				// save results
 				index            = i * 3 + m;
@@ -626,11 +626,11 @@ int main(int argc, const char *argv[])
 
 	// report the time in seconds that Monte Carlo integration required
 	double pop_obj_seconds = difftime(timeEnd.tv_sec, timeBegin.tv_sec );
-	cout << "<pop_monte_result seconds=\"" << pop_obj_seconds 
+	cout << "<pop_monte_result elapsedtime=\"" << pop_obj_seconds 
 	     << "\" method=\"" << MethodName 
-	     << "\" numberEval=\"" << numberEval[0];
-	for(i = 1; i < numberEval.size(); i++)
-		cout << ", " << numberEval[i];
+	     << "\" number_eval=\"" << number_eval[0];
+	for(i = 1; i < number_eval.size(); i++)
+		cout << ", " << number_eval[i];
 	cout << "\" >" << endl;
 
 	size_t indent = 4;
