@@ -51,70 +51,32 @@
     <sect2>
       <title>Installing the Database Software</title>
       <para>
-	For Spk, MySQL cannot be installed from the standard
-	<filename>.rpm</filename> files that can be downloaded from the
-	MySQL web site, because these binaries were not compiled to
-	include the OpenSSL option needed by Spk.  Instead, we
-	must download the source and compile it on each target machine.
-	After the source is compiled and installed, there is one
-	additional compatibility <filename>.rpm</filename> which
-	must also be installed to allow the server, which is the
-	latest stable release, to work with older clients.
+	The preferred way to install software in an RHEL system is with 
+	packages assembled for installation using the <command>rpm</command>
+	command (Redhat Package Manager).  Files for <command>rpm</command>,
+	which can be identified by the <filename>.rpm</filename> filename
+	suffix, are available for MySQL at the 
+	<ulink url="http://www.mysql.com/">MySQL</ulink> web site.  The needed
+	files, however, have already been downloaded, and are available on
+	<filename>whitechuck.rfpk.washington.edu</filename>.
       </para>
       <para>
-	The needed files have been assembled on
-	<emphasis>whitechuck</emphasis> for convenient download.
-      </para>
-      <para>
-	First, compile the source and install the resulting binaries:
+	In a terminal window:
 	<screen>
 cd /tmp
-scp whitechuck:mysql-source.tar .
+scp whitechuck:/opt/download/mysql-db.tar .
+tar xvf mysql-db.tar
 su
-cd /usr/local
-mv /tmp/mysql-source.tar .
-tar xvf mysql-source.tar
-cd mysql-source
-./configure --with-vio --with-openssl
-make
-make install
-rm /usr/local/mysql-source.tar
-exit
+cd mysql-db
+rpm -Uhv *
+rm -rf mysql-db.tar mysql-db
 	</screen>
       </para>
       <para>
-	Next install the compatibility rpm:
-	<screen>
-cd /tmp
-scp 'whitechuck:MySQL-shared-compat*.rpm' .
-su
-rpm -Uhv MySQL-shared-compat*.rpm
-exit
-rm MySQL-shared-compat*.rpm
-	</screen>
-      </para>
-      <para>
-	Set up MySQL so that it will be run automatically at
-	boot time and can be easily stopped and started from the
-	command line:
-	<screen>
-su
-cd /etc/rc.d/init.d
-cp /usr/local/mysql-source/mysql-4.0.18/support-files/mysql.server mysql
-chmod +x mysql
-/sbin/chkconfig --add mysql
-	</screen>
-      </para>
-      <para>
-	Finally, edit <filename>/etc/my.cnf</filename> so that client
-	utilities such as <command>mysql</command> and
-	<command>mysqladmin</command> will be write connection requests
-	to the correct Unix domain socket.  As root, edit
-	<filename>/etc/my.cnf</filename>, adding the following lines:
-	<screen>
-[client]
-socket=/var/lib/mysql/mysql.sock
-	</screen>
+	After the set of command listed above have been executed, MySQL
+	should be installed on your machine and the MySQL server should
+	be running.  Furthermore, the server will start automatically
+	each time that you boot your machine.
       </para>
     </sect2>
     <sect2>
@@ -138,7 +100,6 @@ socket=/var/lib/mysql/mysql.sock
 	<screen>
 su 
 /usr/bin/mysqladmin -u root password <emphasis>secret-code</emphasis>
-/usr/bin/mysqladmin -u root -h $HOSTNAME password <emphasis>secret-code</emphasis>
 	</screen>
       </para>
     </sect2>
@@ -165,14 +126,11 @@ quit;
       <para>
 	For testing of software, we need a user with access
 	rights to the <emphasis>spktest</emphasis> database.
-	In the following, <emphasis>host</emphasis> is the 
-	full domain name of the machine on which the database
-	is located; example: <emphasis>rose.rfpk.washington.edu</emphasis>
 	<screen>
 mysql -u root -p
 grant all on spktest.* to tester@localhost identified by 'tester';
 grant all on spktest.* to tester@localhost.localdomain identified by 'tester';
-grant all on spktest.* to tester@<emphasis>host</emphasis> identified by 'tester';
+grant all on spktest.* to tester@"%" identified by 'tester';
 quit;
 	</screen>
       </para>

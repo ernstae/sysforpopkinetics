@@ -127,7 +127,7 @@
       a request to have a certificate generated.  Finally you
       will, if all goes well, retrieve the certificate.
     </para>
-    <sect2>
+    <sect2 id="password">
       <title>Generate a Public and a Private Key</title>
       <para>
 	The first step is to produce a randomly generated
@@ -136,8 +136,8 @@
 	<filename>~root/.keystore</filename>, which is the default
 	for tomcat.
 	<screen>
-	  su -
-	  $JAVA_HOME/bin/keytool -genkey -alias tomcat -keyalg RSA -keystore .keystore
+su -
+$JAVA_HOME/bin/keytool -genkey -alias tomcat -keyalg RSA -keystore .keystore
 	</screen>
       </para>
       <para>
@@ -159,31 +159,31 @@
 	<emphasis>italics</emphasis> and the responses in normal text.
 	In response to the last question, simply press <keycap>Enter</keycap>.
 	<screen>
-	  <emphasis>Enter keystore password:</emphasis> Make@!This&*Good
+<emphasis>Enter keystore password:</emphasis> Make@!This&*Good
 
-	  <emphasis>What is your first and last name?
-	    [Unknown]:</emphasis> spk.rfpk.washington.edu
+<emphasis>What is your first and last name?
+    [Unknown]:</emphasis> spk.rfpk.washington.edu
 
-	  <emphasis>What is the name of your organizational unit?
-	    [Unknown]:</emphasis> RFPK
+<emphasis>What is the name of your organizational unit?
+    [Unknown]:</emphasis> RFPK
 
-	  <emphasis>What is the name of your organization?
-	    [Unknown]:</emphasis> University of Washington
+<emphasis>What is the name of your organization?
+    [Unknown]:</emphasis> University of Washington
 
-	  <emphasis>What is the name of your City or Locality?
-	    [Unknown]:</emphasis> Seattle
+<emphasis>What is the name of your City or Locality?
+    [Unknown]:</emphasis> Seattle
 
-	  <emphasis>What is the name of your State or Province?
-	    [Unknown]:</emphasis> WA
+<emphasis>What is the name of your State or Province?
+    [Unknown]:</emphasis> WA
 
-	  <emphasis>What is the two-letter country code for this unit?
-	    [Unknown]:</emphasis> US
+<emphasis>What is the two-letter country code for this unit?
+    [Unknown]:</emphasis> US
 
-	  <emphasis>Is CN=spk.rfpk.washington.edu, OU=University of Washington, O=RFPK, L=Seattle, ST=WA, C=US correct?
-	    [no]:</emphasis> yes
+<emphasis>Is CN=spk.rfpk.washington.edu, OU=University of Washington, O=RFPK, L=Seattle, ST=WA, C=US correct?
+    [no]:</emphasis> yes
 
-	  <emphasis>Enter key password for &lt;tomcat&gt;
-	    (RETURN if same as keystore password): </emphasis>
+<emphasis>Enter key password for &lt;tomcat&gt;
+    (RETURN if same as keystore password): </emphasis>
 	</screen>
       </para>
     </sect2>
@@ -360,8 +360,124 @@ EskaIXSx0PywbyfIR1wWxMpr8gbCjAEUHNF/
       <screen>
 $JAVA_HOME/bin/keytool -import -alias root -keystore .keystore -trustcacerts -file uw_root_cert.pem
 $JAVA_HOME/bin/keytool -import -alias tomcat -keystore .keystore -trustcacerts -file spk_cert.pem
-
       </screen>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Configuring Tomcat</title>
+    <para>
+      In this section, we will modify the Tomcat server configuration 
+      file, <filename>$CATALINA_HOME/conf/server.xml</filename> to
+      do the following:
+      <orderedlist>
+	<listitem>
+	  <para>
+	    Use tcp port 80 rather than 8080 for http connections and
+	    port 443 rather than 8443 for https connections.  Ports
+	    80 and 443 are the standard ports used by most web servers,
+	    and hence will be most likely allowed by users firewalls
+	    and proxies.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Activate the SSL feature, using our new certificate.
+	  </para>
+	</listitem>
+      </orderedlist>
+    </para>
+    <para>
+      Save a copy of <filename>server.xml</filename> as backup.
+      <screen>
+su 
+cd $CATALINA_HOME/conf
+cp server.xml server.xml.bak
+      </screen>
+    </para>
+    <para>
+      Now edit <filename>server.xml</filename> to make the necessary
+      changes.
+    </para>
+    <para>
+      Before changes, the element that configures the http port looks
+      like this:
+      <screen>
+&lt;Connector port="8080"
+      maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+      enableLookups="false" redirectPort="8443" acceptCount="100"
+      debug="0" connectionTimeout="20000"
+      disableUploadTimeout="true" /&gt;
+      </screen>
+      Afterward, it should look like this:
+      <screen>
+&lt;Connector port="80"
+      maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+      enableLookups="false" redirectPort="443" acceptCount="100"
+      debug="0" connectionTimeout="20000"
+      disableUploadTimeout="true" /&gt;
+      </screen>
+      Note that the <emphasis>port</emphasis> attribute has been changed
+      to <emphasis>80</emphasis> and the <emphasis>redirectPort</emphasis>
+      attribute to <emphasis>443</emphasis>.
+    </para>
+    <para>
+      The other element that needs to be changed is that which configures
+      the https port.  Before editing, it looks like this:
+      <screen>
+&lt;!-- Define a SSL Coyote HTTP/1.1 Connector on port 8443 --&gt;
+&lt;!--
+&lt;Connector port="8443"
+    maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+    enableLookups="false" disableUploadTimeout="true"
+    acceptCount="100" debug="0" scheme="https" secure="true"
+    clientAuth="false" sslProtocol="TLS" /&gt;
+--&gt;
+      </screen>
+      After editing, it should look like this:
+      <screen>
+&lt;!-- Define a SSL Coyote HTTP/1.1 Connector on port 8443 --&gt;
+ 
+&lt;Connector port="443"
+    maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+    enableLookups="false" disableUploadTimeout="true"
+    acceptCount="100" debug="0" scheme="https" secure="true"
+    clientAuth="false" sslProtocol="TLS"
+    keystoreFile="/root/.keystore" keystorePass="Make@!This&*Good"
+    /&gt'
+      </screen>
+      Note the following changes:
+      <itemizedlist>
+	<listitem>
+	  <para>
+	    Before, the entire element was commented out.  After,
+	    the comment brackets have been removed.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    The <emphasis>port</emphasis> attribute has been changed
+	    to <emphasis>443</emphasis>.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    A <emphasis>keystoreFile</emphasis> attribute has been added,
+	    to make explicit the location of the keystore file rather
+	    than to leave it as a default.  This is not absolutely
+	    necessary, but
+	    it might help another Tomcat administer find the file.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    A <emphasis>keystorePass</emphasis> attribute has been 
+	    added.  The value <emphasis>should not be
+	    "Make@!This&*Good"</emphasis> but rather should be the
+	    password that you supplied when you
+	    <link linkend="password">created</link> the keystore.
+	  </para>
+	</listitem>
+      </itemizedlist>
     </para>
   </sect1>
 </article>
