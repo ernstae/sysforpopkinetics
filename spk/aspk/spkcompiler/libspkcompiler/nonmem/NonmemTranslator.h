@@ -24,11 +24,6 @@ class NonmemTranslator : public ClientTranslator
 {
  public:
 
-  //
-  // Approximation method
-  //
-  enum APPROX     { FO, FOCE, LAPLACE };
-  enum TARGET     { IND, POP };
   enum MODEL_SPEC { PRED };
 //==============================================================
 // REVISIT SACHIKO
@@ -131,6 +126,8 @@ class NonmemTranslator : public ClientTranslator
    * @endhtmlonly
    */
   virtual void parseSource();
+
+  virtual int detAnalysisType();
 
  protected:
   NonmemTranslator();
@@ -335,7 +332,7 @@ class NonmemTranslator : public ClientTranslator
   // defined as a NonmemTranslator class member, is 
   // to hide the existence since it's just an object of convenience.
   //
-  enum TARGET       myTarget;  
+  //  enum TARGET       myTarget;  
   enum MODEL_SPEC   myModelSpec;
   enum INTEG_METHOD myIntegMethod;
 
@@ -345,10 +342,7 @@ class NonmemTranslator : public ClientTranslator
   bool              myIsStat; 
   bool              myIsMonte;
 
-  unsigned int      mySubproblemsN; 
-  APPROX            myApproximation;
-  unsigned int      myPopSize;
-  
+  unsigned int      mySubproblemsN;   
   bool              myIsEtaOut;
   bool              myIsRestart;
   unsigned int      myThetaLen;

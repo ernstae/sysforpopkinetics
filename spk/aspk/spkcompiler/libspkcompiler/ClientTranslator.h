@@ -17,6 +17,17 @@
  */
 class ClientTranslator{
  public:
+
+  /**
+   * Approximation method
+   */
+  enum APPROX     { FO, FOCE, LAPLACE };
+
+  /**
+   * Analysis type
+   */
+  enum TARGET     { IND, POP };
+
   /**
    * The constructor that takes arguments.
    *
@@ -67,6 +78,15 @@ class ClientTranslator{
    */
   virtual void parseSource() = 0;
 
+  /**
+   * Determine the number of individuals in the population and the
+   * type of analysis (population/individual).
+   * The number of individuals is set in ourPopSize and 
+   * the type of analysis is set in ourTarget.
+   * The return value of this routine is the number of individuals.
+   */
+  virtual int detAnalysisType() = 0;
+
 public:
 
   /**
@@ -93,6 +113,21 @@ public:
    * A pointer to the SpkDataML parse tree.
    */
   xercesc::DOMDocument * data;
+
+  /**
+   * The number of individuals in the population.
+   */
+  unsigned int ourPopSize;
+
+  /**
+   * Analysis type: Population or Individual
+   */
+  enum TARGET ourTarget;
+
+  /**
+   * Approximation method
+   */
+  enum APPROX ourApproximation;
 
   /**
    * The symbol table.

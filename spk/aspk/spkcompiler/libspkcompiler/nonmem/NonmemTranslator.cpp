@@ -116,20 +116,16 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     fMonteDriver_cpp    ( "monteDriver.cpp" ),
     fSpkRuntimeError_tmp( "spk_error.tmp" ),
     fResult_xml         ( "result.xml" ),
-
     myDescription       ( NULL ),
-    myTarget            ( POP ),
     myModelSpec         ( PRED ),
     myIsEstimate        ( true ),
     myIsSimulate        ( false ),
     myIsMonte           ( false ),
     myIsStat            ( false ),
     mySubproblemsN      ( 1 ),
-    myApproximation     ( FO ),
     myIntegMethod       ( PLAIN ),
     myIntegNumberEvals  ( 1 ), // this is a vector
     myIntegNEvals       ( 1 ),
-    myPopSize           ( 1 ),
     myIsEtaOut          ( false ),
     myIsRestart         ( true ),
     myThetaLen          ( 0 ),
@@ -377,6 +373,48 @@ NonmemTranslator::NonmemTranslator( const NonmemTranslator& )
 NonmemTranslator& NonmemTranslator::operator=( const NonmemTranslator& )
 {
 }
+int NonmemTranslator::detAnalysisType()
+{
+  DOMElement  * spksource = source->getDocumentElement();
+  DOMNodeList * pop_analysises = spksource->getElementsByTagName( X_POP_ANALYSIS );
+  DOMNodeList * ind_analysises = spksource->getElementsByTagName( X_IND_ANALYSIS );
+  DOMElement  * analysis;
+  if( pop_analysises->getLength() > 0 )
+    {
+      ourTarget = POP;
+      analysis = dynamic_cast<DOMElement*>( pop_analysises->item(0) );
+      //
+      // Finding out the population size
+      //
+      if( !analysis->hasAttribute( X_POP_SIZE ) )
+	{
+	  char mess[ SpkCompilerError::maxMessageLen() ];
+	  sprintf( mess, "Missing \"%s\" attribute in \"%s\" tag.", C_POP_ANALYSIS, C_POP_SIZE );
+	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
+	  throw e;
+	}
+      const XMLCh * xml_pop_size = analysis->getAttribute( X_POP_SIZE );
+      if( !XMLString::textToBin( xml_pop_size, ourPopSize ) )
+	{
+	  char mess[ SpkCompilerError::maxMessageLen() ];
+	  sprintf( mess, 
+		   "Invalid %s attribute value in \"%s\" tag: %s", C_POP_SIZE, C_POP_ANALYSIS,
+		   XMLString::transcode(xml_pop_size) );
+	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
+	  throw e;
+	}
+      return ourPopSize;
+    }
+  if( ind_analysises->getLength() > 0 )
+    {
+      ourTarget = IND;
+      analysis = dynamic_cast<DOMElement*>( ind_analysises->item(0) );
+      ourPopSize = 1;
+      return ourPopSize;
+    }
+
+  return ourPopSize;
+}
 void NonmemTranslator::parseSource()
 {
   if( table->getLabels()->size() <= 1 )
@@ -418,34 +456,23 @@ void NonmemTranslator::parseSource()
      throw e;
   }
 
-  DOMNodeList * pop_analysises = constraint->getElementsByTagName( X_POP_ANALYSIS );
-  DOMNodeList * ind_analysises = constraint->getElementsByTagName( X_IND_ANALYSIS );
   DOMElement * analysis;
   bool isAnalysisDone = false;
-  if( pop_analysises->getLength() == 1 )
+  if( ourTarget == POP )
     {
-      myTarget = POP;
+      DOMNodeList * pop_analysises = constraint->getElementsByTagName( X_POP_ANALYSIS );
       analysis = dynamic_cast<DOMElement*>( pop_analysises->item(0) );
       parsePopAnalysis( analysis );
       isAnalysisDone = true;
     }
-  else if( ind_analysises->getLength() == 1 )
+  else //if( ourTarget == IND )
     {
-      myTarget = IND;
+      DOMNodeList * ind_analysises = constraint->getElementsByTagName( X_IND_ANALYSIS );
       analysis = dynamic_cast<DOMElement*>( ind_analysises->item(0) );
-      myPopSize = 1;
       parseIndAnalysis( analysis );
       isAnalysisDone = true;
     }
-  else
-    {
-      // illegal
-      char mess[ SpkCompilerError::maxMessageLen()];
-      sprintf( mess, "\"%s\" must have a child, either \"%s\" or \"%s\".", 
-               C_CONSTRAINT, C_POP_ANALYSIS, C_IND_ANALYSIS );
-      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
-      throw e;
-    }
+
   //------------------------------------------------------
   // <model>
   // NOTE: only <pred> is allowed under <model> for v0.1.
@@ -502,7 +529,7 @@ void NonmemTranslator::parseSource()
     //    throw e;
     // }
 
-    if( myTarget != POP )
+    if( ourTarget != POP )
     {
        char mess[ SpkCompilerError::maxMessageLen() ];
        sprintf( mess, "Integral methods are only valid for the population analysis results.");
@@ -532,7 +559,7 @@ void NonmemTranslator::parseSource()
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
      sprintf( mess, "Before parsing \"%s\", \"%s\" must be parsed.", C_PRESENTATION, 
-              (myTarget==POP? C_POP_ANALYSIS : C_IND_ANALYSIS ) );
+              (ourTarget==POP? C_POP_ANALYSIS : C_IND_ANALYSIS ) );
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
   }
@@ -548,7 +575,7 @@ void NonmemTranslator::parseSource()
 
   DOMElement * presentation = dynamic_cast<DOMElement*>( presentations->item(0) );
 
-  myRecordNums.resize( myPopSize );
+  myRecordNums.resize( ourPopSize );
   Symbol * id = table->findi( KeyStr.ID );
   if( id == NULL || id == Symbol::empty() )
   {
@@ -558,7 +585,7 @@ void NonmemTranslator::parseSource()
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
   }
-  for( int i=0; i<myPopSize; i++ )
+  for( int i=0; i<ourPopSize; i++ )
     {
       myRecordNums[i] = id->initial[i].size();
     }
@@ -566,7 +593,7 @@ void NonmemTranslator::parseSource()
   if( myIsSimulate ) 
   {
      Symbol * s  = table->insertLabel( DefaultStr.ORGDV, "", myRecordNums );
-     for( int i=0; i<myPopSize; i++ )
+     for( int i=0; i<ourPopSize; i++ )
 	s->initial[i] = "0";
   }
  
@@ -631,7 +658,7 @@ void NonmemTranslator::parseSource()
   else
   {
      Symbol * s = table->insertLabel( DefaultStr.MDV, "", myRecordNums );
-     for( int i=0; i<myPopSize; i++ )
+     for( int i=0; i<ourPopSize; i++ )
 	s->initial[i] = "0";
      UserStr.MDV = DefaultStr.MDV;
   }
@@ -673,7 +700,7 @@ void NonmemTranslator::parseSource()
   
   if( myIsEstimate || myIsSimulate )
     {
-      if( myTarget == POP )
+      if( ourTarget == POP )
 	generatePopDriver();
       else 
 	generateIndDriver();
@@ -902,26 +929,6 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   const XMLCh * xml_is_estimation = pop_analysis->getAttribute( X_IS_ESTIMATION );
   myIsEstimate = ( XMLString::equals( xml_is_estimation, X_YES )? true : false );
 
-  //
-  // Finding out the population size
-  //
-  if( !pop_analysis->hasAttribute( X_POP_SIZE ) )
-    {
-      char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Missing \"%s\" attribute in \"%s\" tag.", C_POP_ANALYSIS, C_POP_SIZE );
-      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
-      throw e;
-    }
-  const XMLCh * xml_pop_size = pop_analysis->getAttribute( X_POP_SIZE );
-  if( !XMLString::textToBin( xml_pop_size, myPopSize ) )
-    {
-      char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, 
-	       "Invalid %s attribute value in \"%s\" tag: %s", C_POP_SIZE, C_POP_ANALYSIS,
-	       XMLString::transcode(xml_pop_size) );
-      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
-      throw e;
-    }
 
   if( myIsEstimate )
     {
@@ -938,11 +945,11 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       const XMLCh * xml_approx = pop_analysis->getAttribute( X_APPROXIMATION );
       
       if( XMLString::equals( xml_approx, X_FO ) )
-	myApproximation = FO;
+	ourApproximation = FO;
       else if( XMLString::equals( xml_approx, X_FOCE ) )
-	myApproximation = FOCE;
+	ourApproximation = FOCE;
       else if( XMLString::equals( xml_approx, X_LAPLACE ) )
-	myApproximation = LAPLACE;  
+	ourApproximation = LAPLACE;  
       else
 	{
 	  char mess[ SpkCompilerError::maxMessageLen() ];
@@ -2796,13 +2803,13 @@ void NonmemTranslator::generateDataSet( ) const
   //
   oDataSet_h << "template <class ValueType>" << endl;
   oDataSet_h << "DataSet<ValueType>::DataSet()" << endl;
-  oDataSet_h << ": popSize( " << myPopSize << " )," << endl;
-  oDataSet_h << "  data( " << myPopSize << " )," << endl;
-  oDataSet_h << "  N( " << myPopSize << " )" << endl;
+  oDataSet_h << ": popSize( " << ourPopSize << " )," << endl;
+  oDataSet_h << "  data( " << ourPopSize << " )," << endl;
+  oDataSet_h << "  N( " << ourPopSize << " )" << endl;
   oDataSet_h << "{" << endl;
 
   // Initialize the entire data set.
-  for( int who=0, sofar=0, nRecords=0; who < myPopSize; who++, sofar+=nRecords )
+  for( int who=0, sofar=0, nRecords=0; who < ourPopSize; who++, sofar+=nRecords )
     {
       char c_who[256];
       sprintf( c_who, "%d", who );
@@ -2975,7 +2982,7 @@ void NonmemTranslator::generateDataSet( ) const
       throw e;
     }
   const int nItems = t->size();
-  int nColumns = nItems + myThetaLen-1 + myEtaLen-1 + (myTarget==POP? (myEpsLen - 1) : 0 )
+  int nColumns = nItems + myThetaLen-1 + myEtaLen-1 + (ourTarget==POP? (myEpsLen - 1) : 0 )
     - (table->findi(KeyStr.OMEGA) == Symbol::empty()? 0 : 1 )
     - (table->findi(KeyStr.SIGMA) == Symbol::empty()? 0 : 1 );
 
@@ -3099,7 +3106,7 @@ void NonmemTranslator::generateDataSet( ) const
 	      cntColumns++;
 	    }
 	}
-      else if( keyWhatGoesIn == KeyStr.EPS && myTarget == POP )
+      else if( keyWhatGoesIn == KeyStr.EPS && ourTarget == POP )
 	{
 	  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
 	    {
@@ -3314,7 +3321,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   oPred_h << "template <class ValueType>" << endl;
   oPred_h << "Pred<ValueType>::Pred( const DataSet<ValueType>* dataIn )" << endl;
   oPred_h << ": perm( dataIn )," << endl;
-  oPred_h << "  nIndividuals( " << myPopSize << " )," << endl;
+  oPred_h << "  nIndividuals( " << ourPopSize << " )," << endl;
   oPred_h << "  isIterationCompleted( true )" << endl;
   oPred_h << "{" << endl;
   oPred_h << "}" << endl;
@@ -3395,7 +3402,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   oPred_h << " = spk_indepVar.begin() + spk_thetaOffset;" << endl;
   oPred_h << "typename std::vector<ValueType>::const_iterator " << UserStr.ETA;
   oPred_h << " = spk_indepVar.begin() + spk_etaOffset;" << endl;
-  if( myTarget == POP )
+  if( ourTarget == POP )
     {
       oPred_h << "typename std::vector<ValueType>::const_iterator " << UserStr.EPS;
       oPred_h << " = spk_indepVar.begin() + spk_epsOffset;" << endl;
@@ -3477,7 +3484,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   // Saving/moving computed values to ensure a complete set of values
   // is available even when a failure occurs.
   //
-  oPred_h << "if( spk_i == " << myPopSize << "-1 && spk_j == perm->data[spk_i]->";
+  oPred_h << "if( spk_i == " << ourPopSize << "-1 && spk_j == perm->data[spk_i]->";
   oPred_h << UserStr.ID << ".size()-1 )" << endl;
   oPred_h << "{" << endl;
   oPred_h << "  // This means, SPK advanced in iteration." << endl;
@@ -3564,7 +3571,7 @@ void NonmemTranslator::generateMonteParsNamespace() const
   oMontePars << "// " << endl;
   oMontePars << "// The namespace MontePars exports the values needed by monteDriver.cpp." << endl;
   oMontePars << "// " << endl;
-  oMontePars << "// The user requested the " << (myTarget==POP? "population":"individual");
+  oMontePars << "// The user requested the " << (ourTarget==POP? "population":"individual");
   oMontePars << " analysis." << endl;
   oMontePars << "// " << endl;
   oMontePars << "//==============================================================================" << endl;
@@ -3629,9 +3636,9 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << "// The namespace NonmemPars exports the values " << endl;
   oNonmemPars << "// given by the user or values drived from the user-given values." << endl;
   oNonmemPars << "// " << endl;
-  oNonmemPars << "// The user requested the " << (myTarget==POP? "population":"individual") << " analysis." << endl;
+  oNonmemPars << "// The user requested the " << (ourTarget==POP? "population":"individual") << " analysis." << endl;
   oNonmemPars << "// This means that this namespace would contain materials related to " << endl;
-  if( myTarget==POP )
+  if( ourTarget==POP )
     {
       oNonmemPars << "// all of THETA, OMEGA, ETA, SIGMA and EPS." << endl;
     }
@@ -3652,7 +3659,7 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << endl;
 
   oNonmemPars << "#include <valarray>" << endl;
-  if( myTarget == POP )
+  if( ourTarget == POP )
     oNonmemPars << "#include <spkpred/PopPredModel.h>" << endl;
   else
     oNonmemPars << "#include <spkpred/IndPredModel.h>" << endl;
@@ -3720,7 +3727,7 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << endl;
 
   oNonmemPars << "   const valarray<bool> thetaFixed( c_thetaFixed, " << myThetaLen << " );" << endl;
-  if( myTarget == POP && myIsSimulate )
+  if( ourTarget == POP && myIsSimulate )
     {
       oNonmemPars << "   // A valarray object that *will* contain the initial values for THETA." << endl;
       oNonmemPars << "   // The object is intentionally non-constant because you will have to simulate the values " << endl;
@@ -3761,8 +3768,8 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << "   // \"FULL\" indicates that possibly all elements of the symmetric matrix may be non-zero." << endl;
   oNonmemPars << "   // \"DIAGONAL\" indicates that only the diagonal elements are non-zero and the rest are all zero." << endl;
      
-  oNonmemPars << "   const enum " << (myTarget==POP? "Pop":"Ind") << "PredModel::covStruct omegaStruct = ";
-  oNonmemPars << (myTarget==POP? "Pop":"Ind") << "PredModel::";
+  oNonmemPars << "   const enum " << (ourTarget==POP? "Pop":"Ind") << "PredModel::covStruct omegaStruct = ";
+  oNonmemPars << (ourTarget==POP? "Pop":"Ind") << "PredModel::";
   oNonmemPars << (myOmegaStruct == Symbol::TRIANGLE? "FULL" : "DIAGONAL" ) << ";" << endl;
   oNonmemPars << endl;
 
@@ -3794,7 +3801,7 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << "   // EPS" << endl;
   oNonmemPars << "   //-------------------------------------------" << endl;  
   oNonmemPars << "   // The length of EPS vector, which determines the dimension of SIGMA." << endl;
-  if( myTarget == POP )
+  if( ourTarget == POP )
     {
       oNonmemPars << "   const int nEps = " << myEpsLen << ";" << endl;
       }
@@ -3810,7 +3817,7 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << "   //-------------------------------------------" << endl;
   oNonmemPars << "   // SIGMA" << endl;
   oNonmemPars << "   //-------------------------------------------" << endl;  
-  if( myTarget == POP )
+  if( ourTarget == POP )
     {
       oNonmemPars << "   // The structure of SIGMA matrix." << endl;
       oNonmemPars << "   // \"FULL\" indicates that possibly all elements of the symmetric matrix may be non-zero." << endl;
@@ -4019,7 +4026,7 @@ void NonmemTranslator::generateIndDriver( ) const
       oDriver << "const double eps   = " << myIndEpsilon    << ";" << endl;
       oDriver << "const int    mitr  = " << myIndMitr       << ";" << endl;
       oDriver << "const int    trace = " << myIndTraceLevel << ";" << endl;
-      oDriver << "Optimizer    opt( eps, mitr, trace );"           << endl;
+      oDriver << "Optimizer    indOpt( eps, mitr, trace );" << endl;
     }
   oDriver << endl;  
   oDriver << "model.getIndPar       ( bIn );"       << endl;
@@ -4085,7 +4092,7 @@ void NonmemTranslator::generateIndDriver( ) const
       oDriver << "   {" << endl;
       oDriver << "      fitIndividual( model," << endl;
       oDriver << "                     y," << endl;
-      oDriver << "                     opt," << endl;
+      oDriver << "                     indOpt," << endl;
       oDriver << "                     bLow," << endl;
       oDriver << "                     bUp," << endl;
       oDriver << "                     bIn," << endl;
@@ -4523,9 +4530,9 @@ void NonmemTranslator::generatePopDriver() const
   if( myIsEstimate )
     {
       oDriver << "Objective objective    = ";
-      if( myApproximation == FO )
+      if( ourApproximation == FO )
 	oDriver << "FIRST_ORDER;" << endl;
-      else if( myApproximation == FOCE )
+      else if( ourApproximation == FOCE )
 	oDriver << "EXPECTED_HESSIAN;" << endl;
       else
 	oDriver << "MODIFIED_LAPLACE;" << endl;
