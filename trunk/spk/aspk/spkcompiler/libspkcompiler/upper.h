@@ -7,6 +7,8 @@
 
 #include <string>
 /**
+ * Capitalize all letters in source.
+ *
  * @param source The source string (length >= 0).
  * @return       A new string object equivalent to the source with all 
  *               lower case letters converted to the upper case.
