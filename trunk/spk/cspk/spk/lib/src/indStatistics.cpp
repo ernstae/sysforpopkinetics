@@ -536,6 +536,7 @@ $$
 $end
 */
 
+
 #include <cmath>
 #include "indStatistics.h"
 #include "SpkException.h"
@@ -548,33 +549,6 @@ $end
 using SPK_VA::valarray;
 using SPK_VA::slice;
 
-namespace
-{
-  //=========================================================
-  // Expand the vector x to y. Insert "val" in places where mask[i] is false.
-  //=========================================================
-
-  void placeVal( const valarray<bool>   & mask,
-		 const valarray<double> & x,
-		 valarray<double>       & y,
-		 double val = NAN )
-  {
-    assert( mask.size() == y.size() );
-    const int nX = x.size();
-    const int nY = y.size();
-    
-    for( int i=0, ii=0; i<nY; i++ )
-      {
-	if( mask[i] )
-	  {
-	    y[i] = x[ii];
-	    ii++;
-	  }
-	else
-	  y[i] = val;
-      }
-  }
-}
 void indStatistics( const valarray<double>&  indPar,
                     const valarray<double>&  dataMean_indPar,
                     const valarray<double>&  dataVariance_indPar,
@@ -664,8 +638,310 @@ void indStatistics( const valarray<double>&  indPar,
     statistics( indPar, indParCov, nFree, indParSEOut, indParCorOut, indParCVOut, indParCIOut );
 }
 
+/*************************************************************************
+ *
+ * Function: indStatistics
+ *
+ *************************************************************************/
 
-void indStatistics( const SPK_VA::valarray<bool>           & mask,
+/*------------------------------------------------------------------------
+ * Function Specification
+ *------------------------------------------------------------------------*/
+/*
+
+$begin indStatistics$$
+
+$spell
+  Model model
+  valarray
+  Cov
+  Obj
+  enum
+  Laplace
+  subvector
+  dmat
+  const
+  dvec
+  int
+  cout
+  endl
+  nr
+  nc
+  iostream
+  iomanip
+  namespace
+  std
+  ios
+  covariance
+  ind
+  cerr
+  Spk
+  inv
+  optimizer
+  fp
+  Optimizer optimizer
+  Fo
+  Dir
+  Yi
+  inx
+  aval
+  bval
+  resize
+  bool
+  Dinv
+  Rinv
+  var
+  sqrt
+  cbc
+  covariances
+  cor
+  cmath
+  statistics
+  confint
+  exp
+  Cramer-Rao
+$$
+
+$section Computing statistics of individual parameter estimates$$
+
+$index indStatistics, coefficient of variation, confidence interval$$
+$index covariance, standard error, correlation matrix, individual parameters$$
+
+$table
+$bold Prototype:$$ $cend
+$syntax/void indStatistics(  
+                   const SPK_VA::valarray<double>& /mask/,
+                   const SPK_VA::valarray<double>& /indPar/,
+                   const SPK_VA::valarray<double>& /dataMean_indPar/,
+                   const SPK_VA::valarray<double>& /dataVariance_indPar/,
+                   const SPK_VA::valarray<double>& /dataVarianceInv/,
+                   SPK_VA::valarray<double>*       /indParCovOut/, 
+                   SPK_VA::valarray<double>*       /indParSEOut/,                          
+                   SPK_VA::valarray<double>*       /indParCorOut/,
+                   SPK_VA::valarray<double>*       /indParCVOut/,
+                   SPK_VA::valarray<double>*       /indParCIOut/
+                 )
+/$$
+$tend
+
+$fend 25$$
+
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$pre
+$$
+$head Description$$
+This function computes covariance matrix, standard error vector, correlation 
+matrix, coefficient of variation and confidence interval of individual parameter 
+estimates.  The covariance matrix is actually the lower limit of the true 
+covariance matrix.  It is calculated using the Cramer-Rao inequality:
+$math%         
+                             -1
+               Covariance \le A  
+               
+%$$
+where A is the Fisher information matrix.  The standard error 
+vector and the correlation matrix are calculated from the values of the 
+covariance matrix using their mathematical definitions, respectively. 
+The coefficient of variation is calculated as:
+$math%
+   
+               CV = SE / | b | * 100 
+
+%$$
+where CV stands for the coefficient of variation, SE stands for the standard 
+error and b stands for the value of the individual parameter estimate.
+The confidence interval is calculated from the values of the standard error 
+using its mathematical definition.
+
+$head Return Value$$
+Upon a successful completion, the function sets
+the given output value place holders to point to the result values.
+  
+$pre
+
+$$
+If an error is detected or failure occurs during the evaluation, a SpkException 
+object is thrown.  The state at which an exception is thrown is defined in
+$xref/glossary/Exception Handling Policy/Exception Handling Policy/$$.
+
+$head Arguments$$
+$syntax/
+/mask/
+/$$
+$code mask$$ is a vector of boolean values of length equal to the parameter
+vector, $code indPar$$.  $code mask[i]$$ tells as to whether $code indPar[i]$$
+is active or not.  If $math%mask[i]%$$ is $math%false%$$, the i-th element of
+the parameter vector are treated as if it does not exist and further 
+statistics computations are performed based upon the assumption.
+
+$syntax/
+
+/indPar/
+/$$
+The $code SPK_VA::valarray<double>$$ $italic indPar$$ contains the vector 
+$math%b%$$, which specifies the estimates of the individual parameters.  
+The returned values $italic indParCovOut$$, $italic indParSEOut$$, 
+$italic indParCorOut$$, $italic indParCVOut$$ and $italic indParCIOut$$  
+will be evaluated at these estimates.  
+The $italic values of indPar$$ should be obtained by calling SPK function 
+$xref/fitIndividual//fitIndividual/$$.
+
+$syntax/
+
+/dataMean_indPar/
+/$$
+The $code SPK_VA::valarray<double>$$ $italic dataMean_indPar$ is the mean
+of data evaluated at $italic indPar$$.
+
+$syntax/
+
+/dataVariance_indPar/
+/$$
+The $code SPK_VA::valarray<double>$$ $italic dataVariance_indPar$ is 
+the value of the derivative of the variance of data with respect to the
+individual parameter, evaluated at $italic indPar$$.
+
+syntax/
+
+/dataVarianceInv/
+/$$
+The $code SPK_VA::valarray<double>$$ $italic dataVarianceInv$ is 
+the value of the inverse of the variance of data evaluated at $italic indPar$$.
+
+$syntax/
+
+/indParCovOut/ 
+/$$
+If $italic indParCovOut$$ is not $code NULL$$, then the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic indParCovOut$$ 
+must be declared in the function that calls this function, and its size must 
+be equal to the square of the length of the individual parameter vector 
+$math%b%$$.  If $italic popParCovOut$$ is not $code NULL$$ and this function 
+completed successfully, then the $code SPK_VA::valarray<double>$$ object 
+pointed to by $italic indParCovOut$$ will contain the covariance matrix
+of the individual parameter estimates, in column major order, that is evaluated 
+at $italic indPar$$.  Otherwise, this function will not attempt to change the 
+contents of the $code SPK_VA::valarray<double>$$ object pointed to by 
+$italic indParCovOut$$.  
+
+The $math%(i,j)%$$-the element of the covariance matrix
+will be replaced by NaN if $code mask[i]$$ or $code mask[j]$$ is $math%false%$$.
+
+$syntax/
+
+/indParSEOut/ 
+/$$
+If $italic indParSEOut$$ is not $code NULL$$, then the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic indParSEOut$$ 
+must be declared in the function that calls this function, and its size must 
+be equal to the length of the individual parameter vector 
+$math%b%$$.  If $italic indParSEOut$$ is not $code NULL$$ and this function 
+completed successfully, then the $code SPK_VA::valarray<double>$$ object 
+pointed to by $italic indParSEOut$$ will contain the standard error vector
+of the individual parameter estimates, in column major order, that is evaluated 
+at $italic indPar$$.  Otherwise, this function will not attempt to change the 
+contents of the $code SPK_VA::valarray<double>$$ object pointed to by 
+$italic indParSEOut$$.  
+
+The $math%i$$-th element of the standard error vector
+will be replaced by NaN if $code mask[i]$$ is $math%false%$$.
+
+$syntax/
+
+/indParCorOut/ 
+/$$
+If $italic indParCorOut$$ is not $code NULL$$, then the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic indParCorOut$$ 
+must be declared in the function that calls this function, and its size must 
+be equal to the square of the length of the individual parameter vector 
+$math%b%$$.  If $italic popParCorOut$$ is not $code NULL$$ and this function 
+completed successfully, then the $code SPK_VA::valarray<double>$$ object 
+pointed to by $italic indParCorOut$$ will contain the correlation matrix
+of the individual parameter estimates, in column major order, that is evaluated 
+at $italic indPar$$.  Otherwise, this function will not attempt to change the 
+contents of the $code SPK_VA::valarray<double>$$ object pointed to by 
+$italic indParCorOut$$.  
+
+The $math%(i, j)$$-th element of the corration matrix
+will be replaced by NaN if $code mask[i]$$ or $code mask[j]$$ is $math%false%$$.
+
+$syntax/
+
+/indParCVOut/ 
+/$$
+If $italic indParCVOut$$ is not $code NULL$$, then the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic indParCVOut$$ 
+must be declared in the function that calls this function, and its size must 
+be equal to the length of the individual parameter vector 
+$math%b%$$.  If $italic indParCVOut$$ is not $code NULL$$ and this function 
+completed successfully, then the $code SPK_VA::valarray<double>$$ object 
+pointed to by $italic indParCVOut$$ will contain the standard error vector
+of the individual parameter estimates, in column major order, that is evaluated 
+at $italic indPar$$.  Otherwise, this function will not attempt to change the 
+contents of the $code SPK_VA::valarray<double>$$ object pointed to by 
+$italic indParCVOut$$.  
+
+The $math%i$$-th element of the coefficient vector
+will be replaced by NaN if $code mask[i]$$ is $math%false%$$.
+
+$syntax/
+
+/indParCIOut/ 
+/$$
+If $italic indParCIOut$$ is not $code NULL$$, then the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic indParCIOut$$ 
+must be declared in the function that calls this function, and its size must 
+be equal to the two times of the length of the individual parameter vector 
+$math%b%$$.  If $italic indParCIOut$$ is not $code NULL$$ and this function 
+completed successfully, then the $code SPK_VA::valarray<double>$$ object pointed 
+to by $italic indParCIOut$$ will contain the 95% confidence interval values 
+of the individual parameter estimates, in column major order, that is evaluated 
+at $italic indPar$$.  There are two columns in the object.  The first column 
+contains the lower limit, and the second column contains the upper limit of 
+the confidence interval of the individual parameter estimates.  Otherwise, 
+this function will not attempt to change the contents of the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic indParCIOut$$.  
+Note that in the calculation of the confidence interval, if the degree of freedom 
+(number of data - number of parameters) is greater than 120 it is treated as infinite.
+
+The $math%(i,1)$$ and $math%(i,2)%$$ elements of the confidence interval matrix
+will be replaced by NaN if $code mask[i]$$ is $math%false%$$.
+
+$end
+*/
+namespace
+{
+  //=========================================================
+  // Expand the vector x to y. Insert "val" in places where 
+  // mask[i] is false.
+  //=========================================================
+
+  void placeVal( const valarray<bool>   & mask,
+		 const valarray<double> & x,
+		 valarray<double>       & y,
+		 double val = NAN )
+  {
+    assert( mask.size() == y.size() );
+    const int nX = x.size();
+    const int nY = y.size();
+    
+    for( int i=0, ii=0; i<nY; i++ )
+      {
+	if( mask[i] )
+	  {
+	    y[i] = x[ii];
+	    ii++;
+	  }
+	else
+	  y[i] = val;
+      }
+  }
+}
+void indStatistics( const SPK_VA::valarray<bool>   & mask,
 		    const SPK_VA::valarray<double> & b,
 		    const SPK_VA::valarray<double> & f_b,
 		    const SPK_VA::valarray<double> & R_b,
