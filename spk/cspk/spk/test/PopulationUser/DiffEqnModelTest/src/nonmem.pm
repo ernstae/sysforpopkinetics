@@ -29,7 +29,10 @@ sub simulate
   my @command = ( "/bin/csh", "./nmfe5", $control, $log );
   
   print( "\n\n\n" );
-  system( @command ) or die "\nERROR!!! NONMEM simulation failed for some reason!!!\n\n";
+  if ( system( @command ) != 0 )
+  {
+    die "\nERROR!!! NONMEM simulation failed for some reason!!!\n\n";
+  }
   print( "\n\n\n" );
   
   if( not -f $newdata )
@@ -57,7 +60,10 @@ sub estimate
 #  print( "> ", join( " ", @command ) );
 
   print( "\n\n\n" );
-  system( @command ) or die "\nERROR!!! NONMEM estimation failed for some reason!!!\n\n";
+  if ( system( @command ) != 0 )
+  {
+    die "\nERROR!!! NONMEM estimation failed for some reason!!!\n\n";
+  }
   print( "\n\n\n" );
 
   if( not -f $output )
