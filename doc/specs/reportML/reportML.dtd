@@ -82,13 +82,13 @@ alter the normal execution flow.-->
 <!-- <pop_monte_result number_eval="1000"> The user's original request for the number of evaluations.  -->
 <!ATTLIST pop_monte_result number_eval CDATA #REQUIRED>
 
-<!-- <theta_out> Final value for theta when optimization completes (ie. converges) successfully.  If fails, this entry contains the value used at the beginning of the latest iteration.-->
+<!-- <theta_out> Final value for theta when optimization completes (ie. converges) successfully.  If fails, this entry contains the value from the last successfully completed iteration.-->
 <!ELEMENT theta_out (value)+>
 
 <!-- <theta_out length="0"> The length of the theta vector. -->
 <!ATTLIST theta_out length CDATA #REQUIRED>
 
-<!-- <omega_out> A minimal representation of the final value of Omega matrix when optimization completes (ie. converges) successfully.  If fails, this entry contains the value used at the beginning of the latest iteration.
+<!-- <omega_out> A minimal representation of the final value of Omega matrix when optimization completes (ie. converges) successfully.  If fails, this entry contains the value from the last successfully completed iteration.
 
 For full (ie. "block") matrix, <omega_out> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <omega_out> lists only the diagonal elements from the upper left corner. 
 
@@ -127,7 +127,7 @@ If A were <html:font color='red'>diagonal</html:font>, <omega_out> specifies as 
 <!ATTLIST omega_out dimension CDATA #REQUIRED>
 
 <!-- <sigma_out> 
-A minimal representation of NONMEM Omega matrix when optimization completes (ie. converges) successfully.  If fails, this entry contains the value used at the beginning of the latest iteration.
+A minimal representation of NONMEM Omega matrix when optimization completes (ie. converges) successfully.  If fails, this entry contains the value from the last successfully completed iteration.
 
 For full (ie. "block") matrix, <sigma_out> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <sigma_out> lists only the diagonal elements from the upper left corner.
 
