@@ -776,9 +776,26 @@ void quasiNewtonAnyBox(
   DoubleMatrix dvecYUp( nObjPars, 1 );
   DoubleMatrix dvecY( nObjPars, 1 );
 
+  // Instantiate a row vector to hold the scaled gradient, 
+  // gScaled(y) = fScaled_y(y).
+  DoubleMatrix drowGScaled( 1, nObjPars );
+
   double* pdYLowData = dvecYLow.data();
   double* pdYUpData  = dvecYUp .data();
   double* pdYData    = dvecY   .data();
+
+  double* pdGScaledData = drowGScaled.data();
+
+  Memory<double> dMemory(4 * n + 3 * n * n + m * n);
+  double  *xCur = dMemory(n);
+  double  *gCur = dMemory(n);
+  double  *gOut = dMemory(n);
+  double  *b    = dMemory(n);
+  double  *HCur = dMemory(n * n);
+  double  *Q    = dMemory(n * n);
+  double  *HOut = dMemory(n * n);
+  double  *A    = dMemory(m * n);
+
 
   // Check to see if the lower and upper bounds for each element of x are 
   // equal and then set the bounds and the initial value y accordingly.
@@ -804,11 +821,6 @@ void quasiNewtonAnyBox(
 
   // This function sets 0.0 to the corresponding output element when diff[i] is 0.0.
   scaleElem(nObjPars, pdXInData, pdXLowData, pdXDiffData, pdYData);
-
-  // Instantiate a row vector to hold the scaled gradient, 
-  // gScaled(y) = fScaled_y(y).
-  DoubleMatrix drowGScaled( 1, nObjPars );
-  double* pdGScaledData = drowGScaled.data();
 
 
   //------------------------------------------------------------
@@ -1206,6 +1218,7 @@ void scaleElem(
     }
 }
 
+
 /*************************************************************************
  * Function: unscaleElem
  *
@@ -1243,6 +1256,8 @@ void unscaleElem(
       }
     }
 }
+
+
 /*************************************************************************
  * Function: scaleGradElem
  *
@@ -1262,288 +1277,6 @@ void scaleGradElem(
 {
     for(int i=0; i<n; i++)
         pScaledG[i] = pxDiff[i] * pg[i];
-}
-
-/*************************************************************************
- * Function: fvalScaled
- *
- *
- * Note:  in the NAG documentation the objective function for nag_opt_nlp
- * (e04ucc) has the more generic name objfun, i.e., this function is an 
- * implementation of objfun specific to quasiNewtonAnyBox.
- *
- *
- * Description
- * -----------
- *
- * Evaluates the scaled version of the objective function, fScaled(y),
- * and (optionally) its gradient, gScaled(y), at the current point y.
- *
- *
- * Arguments
- * ---------
- *
- * n
- * Input: n, the number of variables.
- *
- * y[n]
- * Input: y, the vector of variables at which the value of fScaled(y) 
- * and/or all available elements of its gradient, gScaled(Y), are to 
- * be evaluated.
- *
- * objf
- * Output: if comm->flag = 0 or 2, this function sets objf to the 
- * value of the scaled objective function fScaled(y) at the current
- * point y. If it is not possible to evaluate fScaled(y), then
- * this function assigns a negative value to comm-> flag;
- * nag_opt_nlp will then terminate.
- *
- * gvalScaled[n]
- * Output: if comm->flag = 2, gvalScaled must contain all the
- * elements of the vector gScaled(y) given by
- *
- *                   -                                   -
- *                  |  (partial fScaled(y)/partial y(1))  | 
- *                  |  (partial fScaled(y)/partial y(2))  |
- *                  |                   .                 |
- *     gScaled(y) = |                   .                 |  ,
- *                  |                   .                 |
- *                  |  (partial fScaled(y)/partial y(n))  |
- *                   -                                   -
- *
- * where (partial fScaled(y)/partial y(i)) is the partial
- * derivative of the scaled objective function with respect to
- * the ith variable evaluated at the point y.
- * If the optional parameter obj_deriv = TRUE (the
- * default), all elements of gvalScaled must be set; if obj_deriv =
- * FALSE, any available elements of the vector gScaled(y) must
- * be assigned to the elements of gvalScaled; the remaining
- * elements must remain unchanged.
- *
- * comm
- * Pointer to structure of type Nag_Comm; the following
- * members are relevant to fvalScaled.
- *
- *      flag - Integer
- *      Input: fvalScaled is called with comm->flag set to 0
- *      or 2.
- *      If comm->flag = 0, then only fScaled(y) is returned.
- *      If comm->flag = 2, then both fScaled(y) and gScaled(y) 
- *      are returned.
- *      Output: if it is not possible to evaluate the scaled objective 
- *      and/or its gradient, then fvalScaled will reset comm->flag to 
- *      some negative number in order to force nag_opt_nlp to terminate
- *      immediately with the error indicator NE_USER_STOP.
- *      If fail is supplied to nag_opt_nlp, fail.errnum
- *      will be set to the setting of comm->flag.
- *
- *      first - Boolean
- *      Input: will be set to TRUE on the first call to
- *      fvalScaled and FALSE for all subsequent calls.
- *
- *      nf - Integer
- *      Input: the number of evaluations of the objective
- *      function; this value will be equal to the number
- *      of calls made to fvalScaled including the current one.
- *
- *      user - double *
- *      iuser - Integer *
- *      p - Pointer
- *      The type Pointer will be void * with a C compiler
- *      that defines void * and char * otherwise.
- *      Before calling nag_opt_nlp these pointers may be
- *      allocated memory by the user and initialized with
- *      various quantities for use by fvalScaled when called
- *      from nag_opt_nlp.
- *
- *************************************************************************/
-//
-// Note - Sachiko: Throw NO exception!
-//
-// This rotuine is called by the C nag optimizer.  Don't ever attempt
-// to throw an exception!  It will be never caught.
-//
-void NAG_CALL fvalScaled( 
-  Integer n, 
-  double *y, 
-  double *objf,
-  double *gvalScaled, 
-  Nag_Comm *comm )
-{
-  //------------------------------------------------------------
-  // Preliminaries.
-  //------------------------------------------------------------
-  //
-  // Review - Sachiko:  suggestion
-  //
-  // Instead of returning successfully, why not terminate the
-  // program.  comm->flag is only set by the optimizer callers,
-  // who are Rfpk programmers.  It seems like a successfully return
-  // is more troublesome later than early assert.
-  //
-  if ( comm->flag != 0 && comm->flag != 2 ) 
-  {
-    return;
-  }
-
-  // Cast the void pointer in the NAG communication structure so 
-  // that it now points to the scaling information structure.
-  FvalScaledInfo * pInfo = (FvalScaledInfo*) (comm->p);
-
-  // Get the pointer to the unscaled objective function.
-  FVAL_PROTOTYPE fval = pInfo->fval;
-
-  // Sachiko:  Avoid aliasing.  It creates excessive temporary objects.
-  //
-  // Get the pointers to the unscaled lower and upper bounds 
-  // and the differences between them.
-  /*
-  const DoubleMatrix* pdvecXLow  = pInfo->pdvecXLow;
-  const DoubleMatrix* pdvecXUp   = pInfo->pdvecXUp;
-  const DoubleMatrix* pdvecXDiff = pInfo->pdvecXDiff;
-  const double* pdXLowData  = pdvecXLow->data();
-  const double* pdXUpData   = pdvecXUp->data();
-  const double* pdXDiffData = pdvecXDiff->data();
-  */
-  const double *const pdXLowData  = pInfo->pdvecXLow->data();
-  const double *const pdXUpData   = pInfo->pdvecXUp->data();
-  const double *const pdXDiffData = pInfo->pdvecXDiff->data();
-
-  //------------------------------------------------------------
-  // Prepare the parameters for the unscaled objective function.
-  //------------------------------------------------------------
-
-  // Transform the elements of the y vector back to their 
-  // unscaled form. 
-  DoubleMatrix dvecX(n, 1);
-  double* pdXData = dvecX.data();
-  unscaleElem( n, y, pdXLowData, pdXUpData, pdXDiffData, pdXData );
-
-  // Check to see if the scaled objective function, fScaled(y), needs 
-  // to be returned by this function.  If not, set the pointer to zero
-  // so fval will not evaluate the unscaled objective function, f(x).
-  double  dFOut  = 0.0;
-  double* pdFOut = 0;
-  
-  //
-  // Review - Sachiko: redundant
-  //
-  // comm-flag is validated eariler.  It's only either 0 or 2 at this point.
-  // Assert, as a pre-condition, instead of if statement which has some 
-  // run time overhead.
-  //
-  if ( comm->flag == 0 || comm->flag == 2 ) 
-  {
-    pdFOut = &dFOut;
-  }
-  
-  // Check to see if the gradient of the scaled objective function, 
-  // gScaled(y), needs to be returned by this function.  If not, set 
-  // the pointer to zero so that fval will not evaluate the unscaled 
-  // gradient, g(x).s
-  DoubleMatrix drowGOut( 1, n );
-  DoubleMatrix* pdrowGOut = 0;
-
-  if ( comm->flag == 2 )
-  {
-    pdrowGOut = &drowGOut;
-  }
-
-
-  //------------------------------------------------------------
-  // Evaluate the unscaled objective function.
-  //------------------------------------------------------------
-
-  //
-  // Sachiko
-  // 
-  // the objective function now returns nothing.  Instead
-  // throw an exception.
-  // Catch it and pass it back through a placeholder permitted
-  // in the arbitrary information package.
-  //
-
-  try{
-          fval( dvecX, pdFOut, pdrowGOut, pInfo->pFvalInfo );
-  }
-  catch( SpkException& e )
-  {
-      // If there was a problem, set the flag to terminate nag_opt_nlp.
-      //
-      comm->flag = -1; 
-
-      // Extract the exception object from pFvalInfo.
-      pInfo->exceptionOb = e;
-      return;
-  }
-  catch( const std::exception& stde )
-  {
-      // If there was a problem, set the flag to terminate nag_opt_nlp.
-      //
-      comm->flag = -1; 
-
-      // Extract the exception object from pFvalInfo.
-      pInfo->exceptionOb = SpkException(
-          stde, 
-          "A standard exception was thrown during the evaluation of the given objective function.",
-          __LINE__, 
-          __FILE__ 
-        );
-      return;
-  }
-
-  catch(...)
-  {
-      // If there was a problem, set the flag to terminate nag_opt_nlp.
-      //
-      comm->flag = -1; 
-
-      // Extract the exception object from pFvalInfo.
-      pInfo->exceptionOb = SpkException(
-          SpkError::SPK_UNKNOWN_ERR, 
-          "Unknown exception was thrown during the evaluation of the given objective function.",
-          __LINE__, 
-          __FILE__ 
-        );
-      return;
-  }
-
-
-  //------------------------------------------------------------
-  // Set the scaled objective function and/or its gradient.
-  //------------------------------------------------------------
-
-  //
-  // Review - Sachiko: redundant
-  //
-  // comm-flag is validated eariler.  It's only either 0 or 2 at this point.
-  // Assert, as a pre-condition, instead of if statement which has some 
-  // run time overhead.
-  //
-      // If this function should return the value for the scaled 
-      // objective function, then set it.
-      if (comm->flag == 0 || comm->flag == 2)
-      {
-        assert( pdFOut != 0 );
-        *objf = *pdFOut;
-      }
-
-  // If this function should return the value for the gradient 
-  // of the scaled objective function, then set it.
-      if (comm->flag == 2)
-      {
-        assert( pdrowGOut != 0 );
-        double* pdGOutData = pdrowGOut->data();
-        int nGCols = pdrowGOut->nc();
-        assert( n == nGCols );
-    
-        scaleGradElem( n, pdGOutData, pdXDiffData, gvalScaled);
-      }
-
-  // If the fval function returns false, set the flag to -2.
-  // This is to terminate nag_opt_nlp and to escape from throwing SpkException.
-
-  return;
 }
 
 
@@ -1978,9 +1711,6 @@ DoubleMatrix getLowerTriangle( const DoubleMatrix& dmatA )
 
 
 
-// Updated 2-5-01 Alyssa
-// fixed for const correctness
-
 /*************************************************************************
  * Function: isLowerTriangular
  *
@@ -2005,16 +1735,6 @@ bool isLowerTriangular( const DoubleMatrix& dmatA )
     {
       if ( pdAData[i + j*n] != 0.0 )
       {
-          //
-          // Review - Sachiko: Error
-          //
-          // The caller is using this routine to test a certain property of a matrix
-          // and expectes this to return a boolean value.
-          // The test, in particular, is done in an assert() statement.
-          // If this routine terminates the program as a whole, it seems
-          // countereffective.  Remove assert(0), back to return false.
-          //
-          assert(0);      // Sooner assert by Brad 12/28/00
           return false;
       }
     }
