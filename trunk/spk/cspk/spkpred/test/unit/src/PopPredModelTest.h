@@ -68,6 +68,8 @@ private:
   void OneExpF_ModelBasedExpY_Test();
   void OneExpF_AdditivePlusThetaDepY_Test();
 
+  void OneExpF_AdditivePlusThetaDepY_FullSigma_Test();
+
   void isCachingProperlyTest();
 
 };
