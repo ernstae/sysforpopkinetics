@@ -367,7 +367,8 @@ whitechuck.rfpk.washington.edu/soft/index.html
       ordinary user permissions.
     </para>
     <para>
-      In a shell window:
+      In a shell window (note <command>su</command> is not followed
+      by the - option symbol):
       <screen>
 su
 cd /opt
@@ -431,7 +432,8 @@ ln -s /opt/extra/etc old_etc
       been set up.
     </para>
     <para>
-      From a terminal window:
+      From a terminal window (note that <command>su</command>
+      is not followed by the - option symbol):
       <screen>
 cd
 su
@@ -458,7 +460,11 @@ rsync -a --exclude '.g*' --exclude '.rhn*' old_home/* old_home/.* .
       interface.  For the time being, at least, the Softwar Team
       workstations are accessible by host name from the Internet,
       because they have had static IP addresses assigned.  
-      Do the following to restore your static IP address.
+    </para>
+    <para>
+      Do the following to restore your static IP address
+      (note that <command>su</command> is not followed by the
+      - option symbol):
       <screen>
 su 
 cd /etc/sysconfig/network-scripts
@@ -481,7 +487,7 @@ cp /home/$USER/old_etc/sysconfig/network-scripts/ifcfg-eth0 .
     <para>
       Now configure the Gnome desktop manager.
       <screen format="linespecific">
-	<guimenu moreinfo="none">Main</guimenu> => <guimenu moreinfo="none">Preferences</guimenu> => <guimenu moreinfo="none">More Preferences</guimenu> => <guimenuitem moreinfo="none">Sessions</guimenuitem> => right-click
+<guimenu moreinfo="none">Main</guimenu> => <guimenu moreinfo="none">Preferences</guimenu> => <guimenu moreinfo="none">More Preferences</guimenu> => <guimenuitem moreinfo="none">Sessions</guimenuitem> => left-click
       </screen>
       This will open the <interface moreinfo="none">Sessions</interface>
       window.  Press the 
@@ -505,7 +511,31 @@ cp /home/$USER/old_etc/sysconfig/network-scripts/ifcfg-eth0 .
       Finally, log in again.
     </para>
   </sect1>
-
+  <sect1>
+    <title>Get New CVS Workspace</title>
+    <para>
+      At this point, you have a copy of your CVS workspace
+      that was in the backup of your home directory.  If,
+      as recommended by this document, you did a 
+      <command>cvs commit</command> just before you started
+      the installation and after the backup was made, the
+      copy you now have is out of date. In order to get
+      an up-to-date workspace, the easiest method is to
+      delete the out-of-date copy and then do a
+      <command>cvs checkout</command>.
+    </para>
+    <para>
+      Assume that R2 contains the path of the root of your
+      workspace:
+      <screen>
+cd $R2
+cd ..
+rm -rf r2
+cvs checkout r2
+cvs update -dP
+      </screen>
+    </para>
+  </sect1>
   <sect1>
     <title>Restore Clock Synchronization</title>
     <para>
