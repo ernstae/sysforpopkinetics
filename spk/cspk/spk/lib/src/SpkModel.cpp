@@ -724,9 +724,9 @@ $index User-provided Model, set individual parameter$$
 
 $table
 $bold Virtual Private Interface:$$   $rend  
-$syntax/private: virtual void SpkModel::doSetIndPar( const SPK_VA::valarray<double>&  /indPar/ ) const = 0/$$ $rend
+$syntax/private: virtual void SpkModel::doSetIndPar( const SPK_VA::valarray<double>&  /indPar/ ) = 0/$$ $rend
 $bold Public Interface:$$ $rend
-$syntax/public: void SpkModel::setIndPar( const SPK_VA::valarray<double>&  /indPar/ ) const/$$ $rend
+$syntax/public: void SpkModel::setIndPar( const SPK_VA::valarray<double>&  /indPar/ )/$$ $rend
 $tend
 
 $fend 20$$
