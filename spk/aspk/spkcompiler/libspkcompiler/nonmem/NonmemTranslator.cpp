@@ -1051,6 +1051,16 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
 	      throw e;
 	    }
 	}
+      /*
+      else{
+	char mess[ SpkCompilerError::maxMessageLen() ];
+	sprintf( mess, "\"%s\" attribute is missing from \"%s\" tag.", 
+		 C_MITR, C_POP_ANALYSIS );
+	SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, 
+				__LINE__, __FILE__ );
+	throw e;
+      }
+      */
       const XMLCh* xml_sig_digits;
       if( pop_analysis->hasAttribute( X_SIG_DIGITS ) )
 	{
@@ -4596,7 +4606,7 @@ void NonmemTranslator::generateIndDriver( ) const
       oDriver << "            return FILE_ACCESS_FAILURE;" << endl;
       oDriver << "         }" << endl;      
       oDriver << "         optErrHeader  = \"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \\n\";" << endl;
-      oDriver << "         optErrHeader += \"Individual level optmization failure detauls. \\n\";" << endl;
+      oDriver << "         optErrHeader += \"Individual level optimization failure details. \\n\";" << endl;
       oDriver << "         optErrHeader += \"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \\n\";" << endl;
       oDriver << "         optErrHeader += \"\\n\";" << endl;
       oDriver << "         indOpt.getErrorInfo(" << endl;
@@ -5232,7 +5242,7 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << "      if( indOpt.isThereErrorInfo() )" << endl;
       oDriver << "      {" << endl;
       oDriver << "         optErrHeader  = \"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \\n\";" << endl;
-      oDriver << "         optErrHeader += \"Individual level optmization failure detauls. \\n\";" << endl;
+      oDriver << "         optErrHeader += \"Individual level optimization failure details. \\n\";" << endl;
       oDriver << "         optErrHeader += \"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \\n\";" << endl;
       oDriver << "         optErrHeader += \"\\n\";" << endl;
       oDriver << "         indOpt.getErrorInfo(" << endl;
