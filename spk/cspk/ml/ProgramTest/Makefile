@@ -16,7 +16,8 @@ INCLUDE = \
 	Pred.h \
 	DataSet.h \
 	IndData.h \
-	NonmemPars.h
+	NonmemPars.h \
+	MontePars.h
 #
 OBJECT = \
 	monteDriver.o \
@@ -34,7 +35,7 @@ OBJECT = \
 %.o : %.c $(INCLUDE) 
 	gcc $(CPPFLAGS) $< -o $@
 
-monteDriver : $(OBJECT)
+monteDriver : $(OBJECT) $(INCLUDE)
 	g++ -g $(OBJECT) -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -o monteDriver -lspk -lspkopt -lspkpred -lgsl -latlas_lapack -lcblas -latlas -lpthread -lm
 
 # Rule for local copy of monteDriver.cpp

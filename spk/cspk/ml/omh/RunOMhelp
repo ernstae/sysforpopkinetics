@@ -1,6 +1,6 @@
 cd htm
 rm *.xml
 rm *.htm
-~/OMhelp/omhelp ../../monteDriver.cpp -debug -xml 
-~/OMhelp/omhelp ../../monteDriver.cpp -debug -xml -printable
+$omhelp_dir/omhelp ../../monteDriver.cpp -debug -xml 
+$omhelp_dir/omhelp ../../monteDriver.cpp -debug -xml -printable
  

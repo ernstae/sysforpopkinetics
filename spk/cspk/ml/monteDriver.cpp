@@ -137,18 +137,18 @@ $subhead pop_obj_seconds$$
 is the number of seconds required to compute the result.
 
 $contents%
-	MonteSpkModel.omh%
-	NonmemPars.omh%
-	DataSet.omh%
-	PopPredModel.omh%
+	omh/MonteSpkModel.omh%
+	omh/NonmemPars.omh%
+        omh/MontePars.omh%
+	omh/DataSet.omh%
+	omh/PopPredModel.omh%
 	MontePopObj.cpp%
 	MapMonte.cpp%
 	MapBay.cpp%
-	LinearModel.h%
+	UnitTest/LinearModel.h%
 	AnalyticIntegral.cpp%
 	GridIntegral.cpp%
-	NearEqual.cpp%
-	WhatsNew.omh
+	UnitTest/NearEqual.cpp
 %$$
 
 $end
@@ -170,6 +170,7 @@ $end
 # include "Pred.h"
 # include "DataSet.h"
 # include "NonmemPars.h"
+# include "MontePars.h"
 
 # define monteDriverDebug 0
 
@@ -203,26 +204,20 @@ int main(int argc, const char *argv[])
 
 	using namespace NonmemPars;
 
-	// command line arguments
-	size_t iarg       = 1;
-	bool   analytic   = false;
-	bool   grid       = false;
-	bool   monte      = false;
-	int    numberEval = 0;
-	if( argc != 3 )
-	{	cerr << "usage: monteDriver <method> <numberEval>" << endl;
-		return ReturnFailure;
-	}
-	string arg = argv[1];
-	analytic = (arg == "analytic");
-	grid     = (arg == "grid");
-	monte    = (arg == "monte");
+	// method
+	bool   analytic   = MontePars::method == MontePars::analytic;
+	bool   grid       = MontePars::method == MontePars::grid;
+	bool   monte      = MontePars::method == MontePars::monte;
+
+	// numberEval
+	int    numberEval = MontePars::numberEval;
+
 	if( ! (analytic | grid | monte) )
 	{	cerr << "monteDriver: ";
 		cerr << "method is no analytic, grid, or monte" << endl;
 		return ReturnFailure;
 	}
-	numberEval = atoi( argv[2] );
+
 	if( numberEval <= 0 )
 	{	cerr << "monteDriver: ";
 		cerr << "numberEval is not greater than zero" << endl;
