@@ -532,9 +532,9 @@ namespace // [Begin: unnamed namespace]
     {
       dvecXCurr.resize( pdvecXDiff->nr(), 1 );
 
-      pdvecXLow   ( pdvecXLowIn ),
-      pdvecXUp    ( pdvecXUpIn ),
-      pdvecXDiff  ( pdvecXDiffIn )
+      pdXLowData  = pdvecXLow.data();
+      pdXUpData   = pdvecXUp.data();
+      pdXDiffData = pdvecXDiff.data();
       pdXCurrData = dvecXCurr.data();
     }
 
