@@ -312,7 +312,7 @@ public class Plotter extends JPanel
         return toolTip;    
     }
     
-    class Printer implements Printable{
+    private class Printer implements Printable{
         
         public int print(Graphics gc, PageFormat pageFormat, int pageIndex) throws PrinterException {
             if(pageIndex != 0)
@@ -457,14 +457,14 @@ public class Plotter extends JPanel
     private String titleX;
     private String titleY;
     private boolean xLine, yLine, uLine;
-    final static Color bg = Color.white;
-    final static Color fg = Color.black;
-    final static int leftInset = 100;
-    final static int rightInset = 20;
-    final static int topInset = 30;
-    final static int bottomInset = 60;
-    static Font lf = new Font("SansSerif", Font.BOLD, 12);
-    static Font tf = new Font("SansSerif", Font.BOLD, 16);
+    private final static Color bg = Color.white;
+    private final static Color fg = Color.black;
+    private final static int leftInset = 100;
+    private final static int rightInset = 20;
+    private final static int topInset = 30;
+    private final static int bottomInset = 60;
+    private static Font lf = new Font("SansSerif", Font.BOLD, 12);
+    private static Font tf = new Font("SansSerif", Font.BOLD, 16);
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem jMenuItem1;
