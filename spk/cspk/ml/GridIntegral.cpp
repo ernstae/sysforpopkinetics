@@ -69,6 +69,41 @@ $end
 # include <iostream>
 # include <valarray>
 
+namespace {
+
+	// map the vector I to a single index
+	size_t Index(
+		size_t m, 
+		const std::valarray<size_t> &N, 
+		const size_t                *I)
+	{	size_t index = 0;
+		size_t i;
+		i = m;
+		while( i-- )
+		{	index *= N[i];
+			index += I[i];
+		}
+		return index;
+	}
+
+	// increment the vector I
+	bool Increment(
+		size_t m, 
+		const std::valarray<size_t> &N, 
+		size_t                      *I)
+	{	size_t i = 0;
+		I[i]++;
+		while( i < m && I[i] == N[i] )
+		{	I[i] = 0;
+			i++;
+			if( i < m )
+				I[i]++;
+			else	return false;
+		}
+		return true;
+	}
+
+}
 
 double GridIntegral(
 	double (*F)(double *X, size_t m, void *p)  ,
@@ -104,15 +139,7 @@ double GridIntegral(
 		count++;
 
 		// next grid point index
-		i = 0;
-		I[i]++;
-		while( i < m && I[i] == N[i] )
-		{	I[i] = 0;
-			i++;
-			more &= i < m;
-			if( more )
-				I[i]++;
-		}
+		more = Increment(m, N, I);
 	}
 
 	delete [] X;
