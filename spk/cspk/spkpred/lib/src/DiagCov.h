@@ -102,6 +102,11 @@ public:
     const SPK_VA::valarray<double>& covIn,
     SPK_VA::valarray<double>&       covMinRepOut ) const;
 
+  void calcCovMinRep_par( 
+    const SPK_VA::valarray<double>& cov_parIn,
+    int                             nCov_parInCol,
+    SPK_VA::valarray<double>&       covMinRep_parOut ) const;
+
   void expandCovMinRep( 
     const SPK_VA::valarray<double>& covMinRepIn,
     SPK_VA::valarray<double>&       covOut ) const;
