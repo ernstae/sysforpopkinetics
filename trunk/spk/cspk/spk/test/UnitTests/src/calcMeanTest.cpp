@@ -85,6 +85,7 @@ void calcMeanTest::test()
   // Create a 5x5 matrix
   m = 5;
   n = 5;
+  mean.resize( m );
   valarray<double> five( m * n );
   for (i = 0; i < m*n; i++)
     {
