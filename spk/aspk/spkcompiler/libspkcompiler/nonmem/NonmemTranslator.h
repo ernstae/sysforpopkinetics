@@ -4,6 +4,8 @@
 #include "../ClientTranslator.h"
 #include "../SymbolTable.h"
 
+#include <iostream>
+
 #include <xercesc/dom/DOMDocument.hpp>
 
 class NonmemTranslator : public ClientTranslator
@@ -25,8 +27,25 @@ class NonmemTranslator : public ClientTranslator
   void parsePred( xercesc::DOMElement*, SymbolTable& table, char [] );
   void parseTables( xercesc::DOMNodeList*, std::vector<int>& );
   void parseScatterplots( xercesc::DOMNodeList*, std::vector<int>& );
-  void generateIndData();
+  void generateIndData() const;
+  /**
+   * Generate C++ source code for declaring and defining DataSet class which
+   * is a C++ representation of the set of patient records.
+   *
+   * @param pop_size The number of different IDs in the data set, 
+   * which is interpreted as the size of the population.
+   */
+  void generateDataSet( int pop_size ) const;
 
+  const char *fIndData_h;
+  const char *fIndData_cpp;
+  const char *fDataSet_h;
+  const char *fDataSet_cpp;
+  const char *header;
+
+  // These constant (XML) strings should be static but
+  // the attemp to statically initializing these values
+  // which use XMLString::transcode() causes segmentation errors.
   XMLCh* X_YES;
   XMLCh* X_NO;
   XMLCh* X_FIXED;

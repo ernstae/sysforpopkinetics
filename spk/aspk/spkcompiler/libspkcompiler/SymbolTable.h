@@ -70,7 +70,7 @@ class SymbolTable{
    * @return  A pointer to the Symbol object that is defined as the entry
    * one after the end of the table, which is the empty Symbol object.
    */
-  const Symbol* end() const;
+  //  const Symbol* end() const;
 
   /**
    * Create and insert a user-defined (scalar) variable into the table.
@@ -132,7 +132,10 @@ class SymbolTable{
    *
    * @return A pointer to a vector containing the labels (string). 
    */
-  const std::vector<std::string> getLabels() const;
+  const std::vector<std::string> * getLabels() const;
+
+
+  const std::map<const std::string, Symbol> * getTable() const;
 
 /**
  * Print out all registered symbols with their attributes.

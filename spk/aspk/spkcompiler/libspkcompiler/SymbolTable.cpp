@@ -24,10 +24,6 @@ SymbolTable::SymbolTable( const SymbolTable& )
 SymbolTable& SymbolTable::operator=( const SymbolTable& )
 {
 }
-const Symbol * SymbolTable::end() const
-{
-  return Symbol::empty();
-}
 Symbol* SymbolTable::find( const string& name )
 {
    string up = upper( name );
@@ -48,12 +44,16 @@ Symbol* SymbolTable::findi( const string& name )
 {
    string up = upper( name );
    map<string, Symbol>::iterator p = table.find( up );
+   if( p== table.end() )
+     return (const_cast<Symbol*>( Symbol::empty() ) );
    return &(p->second);
 }
 const Symbol* SymbolTable::findi( const string& name ) const
 {
    string up = upper( name );
    map<string, Symbol>::const_iterator p = table.find( up );
+   if( p == table.end() )
+     return Symbol::empty();
    return &(p->second);
 }
 Symbol* SymbolTable::insertUserVar( const string& name )
@@ -87,9 +87,13 @@ Symbol* SymbolTable::insertLabel( const string& label, const string& alias,
    labels.push_back( label );
    return &(table[ LABEL ]);
 }
-const vector<string> SymbolTable::getLabels() const
+const vector<string> * SymbolTable::getLabels() const
 {
-  return labels;
+  return &labels;
+}
+const map<const string, Symbol> * SymbolTable::getTable() const
+{
+  return &table;
 }
 ostream& operator<<( ostream& o, const SymbolTable& t )
 {

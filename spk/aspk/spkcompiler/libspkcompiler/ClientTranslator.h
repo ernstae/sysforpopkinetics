@@ -106,6 +106,7 @@ class ClientTranslator{
   ClientTranslator & operator=( const ClientTranslator& );
 
  private:
+
   XMLCh* X_SPKDATA;
   XMLCh* X_VERSION;
   XMLCh* X_TABLE;

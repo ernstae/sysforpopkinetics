@@ -573,7 +573,7 @@ subobject {
 ;
 whole_object :
 NAME { 
-  if( gSpkExpSymbolTable->findi( $1 ) == gSpkExpSymbolTable->end() )
+ if( gSpkExpSymbolTable->findi( $1 ) == Symbol::empty() )
   {
      if( inRHS )
      {
@@ -613,7 +613,7 @@ matrix_section_variable {
 vector_section_variable : 
 NAME '(' slice ')' { 
 
-   if( gSpkExpSymbolTable->findi( $1 ) == gSpkExpSymbolTable->end() )
+   if( gSpkExpSymbolTable->findi( $1 ) == Symbol::empty() )
    {
       if( inRHS )
       {
