@@ -635,7 +635,7 @@ void NonmemTranslatorIndTest::testParseIndSource()
 
   oPredDriver << "#include \"Pred.h\"" << endl;
   oPredDriver << "#include \"DataSet.h\"" << endl;
-  oPredDriver << "#include <../cppad/CppAD.h>" << endl;
+  oPredDriver << "#include <cppad/include/CppAD.h>" << endl;
   oPredDriver << "#include <spkpred/PredBase.h>" << endl;
   oPredDriver << "#include <vector>" << endl;
   oPredDriver << "using namespace std;" << endl;
@@ -701,7 +701,6 @@ void NonmemTranslatorIndTest::testParseIndSource()
   oPredDriver << "      assert( set.data[who]->eta[j][0] == C1*j );" << endl;
   oPredDriver << "      assert( set.data[who]->pred[j] == pred );" << endl;
   oPredDriver << "      assert( set.data[who]->res[j] == set.data[who]->dv[j] - pred );" << endl;
-  oPredDriver << "      //assert( set.data[who]->wres[j] ==  );" << endl;
   oPredDriver << "      assert( set.data[who]->f[j] == pred );" << endl;
   oPredDriver << "   }" << endl;
   //
@@ -749,7 +748,6 @@ void NonmemTranslatorIndTest::testParseIndSource()
   oPredDriver << "      assert( set.data[who]->eta[j][0] == C1*j );" << endl;
   oPredDriver << "      assert( set.data[who]->pred[j] == pred );" << endl;
   oPredDriver << "      assert( set.data[who]->res[j] == set.data[who]->dv[j] - pred );" << endl;
-  oPredDriver << "      //assert( set.data[who]->wres[j] ==  );" << endl;
   oPredDriver << "      assert( set.data[who]->f[j] == pred );" << endl;
   oPredDriver << "   }" << endl;
   //
@@ -1419,7 +1417,7 @@ void NonmemTranslatorIndTest::testParseIndNoID()
 
   oPredDriver << "#include \"Pred.h\"" << endl;
   oPredDriver << "#include \"DataSet.h\"" << endl;
-  oPredDriver << "#include <../cppad/CppAD.h>" << endl;
+  oPredDriver << "#include <cppad/include/CppAD.h>" << endl;
   oPredDriver << "#include <spkpred/PredBase.h>" << endl;
   oPredDriver << "#include <vector>" << endl;
   oPredDriver << "using namespace std;" << endl;
@@ -1485,7 +1483,6 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   oPredDriver << "      assert( set.data[who]->eta[j][0] == C1*j );" << endl;
   oPredDriver << "      assert( set.data[who]->pred[j] == pred );" << endl;
   oPredDriver << "      assert( set.data[who]->res[j] == set.data[who]->dv[j] - pred );" << endl;
-  oPredDriver << "      //assert( set.data[who]->wres[j] ==  );" << endl;
   oPredDriver << "      assert( set.data[who]->f[j] == pred );" << endl;
   oPredDriver << "   }" << endl;
   //
@@ -1533,7 +1530,6 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   oPredDriver << "      assert( set.data[who]->eta[j][0] == C1*j );" << endl;
   oPredDriver << "      assert( set.data[who]->pred[j] == pred );" << endl;
   oPredDriver << "      assert( set.data[who]->res[j] == set.data[who]->dv[j] - pred );" << endl;
-  oPredDriver << "      //assert( set.data[who]->wres[j] ==  );" << endl;
   oPredDriver << "      assert( set.data[who]->f[j] == pred );" << endl;
   oPredDriver << "   }" << endl;
   //

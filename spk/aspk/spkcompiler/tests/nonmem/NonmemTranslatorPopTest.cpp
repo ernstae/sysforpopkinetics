@@ -61,7 +61,7 @@ void NonmemTranslatorPopTest::testParsePopSource()
   //                           \      /
   // eta   (initial):          [ 0.0, 0.0 ]
   // eta   (fixed?):           [ F, F ]
-  // eps   (initial):          [ 0l0, 0.0 ]
+  // eps   (initial):          [ 0.0, 0.0 ]
   // eps   (fixed?):           [ F, F ]
   //
   // Covariance form:          R
@@ -122,14 +122,14 @@ void NonmemTranslatorPopTest::testParsePopSource()
       sigma_fix[i] = ( i%2==0? true : false );
     }
 
-  const int etaLen = thetaLen;
+  const int etaLen = omegaOrder;
   vector<double> eta_in (etaLen);
   vector<bool>   eta_fix(etaLen);
   fill( eta_in.begin(), eta_in.end(), 0.0 );
   for( int i=0; i<etaLen; i++ )
     eta_fix[i] = false;
 
-  const int epsLen = sigmaDim;
+  const int epsLen = sigmaOrder;
   vector<double> eps_in (epsLen);
   vector<bool>   eps_fix(epsLen);
   fill( eps_in.begin(), eps_in.end(), 0.0 );
@@ -518,18 +518,46 @@ void NonmemTranslatorPopTest::testParsePopSource()
 
   //=====================================================
 
-  //=====================================================
-  // Test to see the generated driver builds
-  // by using the generated make file.
-  // If it fails, complains.
-  //=====================================================
-  if( system( "make -f generatedMakefile" ) != 0 )
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  // Test driver.cpp to see if it compiles/links successfully.
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  char fDriver[]     = "driver";
+  char fDriver_cpp[] = "driver.cpp";
+  int  exitcode      = 0;
+  char command[256];
+
+  sprintf( command, "make -f generatedMakefile" );
+  if( system( command ) != 0 )
     {
-      CPPUNIT_ASSERT_MESSAGE( "Compilation of the generated driver.cpp failed!", false );
+      char message[256];
+      sprintf( message, "Compilation of the generated %s failed!", fDriver_cpp );
+      CPPUNIT_ASSERT_MESSAGE( message, false );
     }
-
-
-
+  sprintf( command, "./%s", fDriver );
+  
+  // The exist code of 0 indicates success.  1 indicates convergence problem.
+  // 2 indicates some file access problem.
+  // Since I didn't set the problem so that it makes sense in either scientifically
+  // or mathematially, the return code of anything other than 2 is ignored here.
+  exitcode = system( command );
+  if( exitcode == 1 )
+    {
+      char message[256];
+      sprintf( message, "%s failed for convergence problem <%d>!", fDriver, exitcode );
+      CPPUNIT_ASSERT_MESSAGE( message, true );
+    }
+  if( exitcode == 2 )
+    {
+      char message[256];
+      sprintf( message, "%s failed due to inproper file access permission <%d>!", fDriver, exitcode );
+      CPPUNIT_ASSERT_MESSAGE( message, false );
+    }
+  if( exitcode > 2 )
+    {
+      char message[256];
+      sprintf( message, "%s failed for reasons other than convergence propblem or access permission <%d>!", fDriver, exitcode );
+      CPPUNIT_ASSERT_MESSAGE( message, true );
+    }
 
   /*
   remove( gSource ); // clean up
@@ -559,7 +587,7 @@ void NonmemTranslatorPopTest::testParsePopSource()
   {
      oTestPred << "#include <iostream>" << endl;
      oTestPred << "#include <vector>" << endl;
-     oTestPred << "#include <../cppad/CppAD.h>" << endl;
+     oTestPred << "#include <cppad/include/CppAD.h>" << endl;
      oTestPred << "#include \"IndData.h\"" << endl;
      oTestPred << "#include \"DataSet.h\"" << endl;
      oTestPred << "#include \"Pred.h\"" << endl;
