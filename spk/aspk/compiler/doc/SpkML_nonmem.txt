@@ -369,10 +369,13 @@
 -->
 <!ATTLIST table save_as CDATA #IMPLIED>
 <!--
-     If "header" is "show", the header appears
-     on the first row of the table.
+     If "header" is "one", the header appears
+     on the first row of the entire table.
+     "none" requests no header at all.
+     "every" requests a header block per segment,
+     where a segment is composed of 900 records.
 -->
-<!ATTLIST table header (show|hide) #REQUIRED>
+<!ATTLIST table header (none|one|every) #REQUIRED>
 
 <!--
      <column> specifies the attributes of a column of data.
