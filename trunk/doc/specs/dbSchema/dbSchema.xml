@@ -18,6 +18,12 @@
 	<authorinitials>afw</authorinitials>
 	<revremark>Clarified description of xml_source.</revremark>
       </revision>
+      <revision>
+	<revnumber>1.02</revnumber>
+	<date>Decemter 26, 2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Added discussion of transaction processing.</revremark>
+      </revision>
     </revhistory>
   <abstract>
       <para>
@@ -199,11 +205,98 @@
     </para>
   </sect1>
   <sect1>
+    <title>Transaction Processing Considerations</title>
+    <para>
+      In general, multiple independent processes will be modifying
+      the database simultaneously. In designing the database, it is
+      imperative to anticipate situations in which two processes,
+      attempting to do the same thing at the same time, could damage
+      database logical integrity.
+    </para>
+    <para>
+      As an example, consider the selection of the highest priority
+      job from the compiler queue.  There may be several copies
+      of the Aspk Compiler running concurrently, and two of these
+      might attempt to a job from the queue simultaneously.
+      The selection of a job entails the following:
+      <orderedlist>
+	<listitem>
+	  <para>
+	    Select from the <emphasis>job</emphasis>
+	    table the job of highest priority
+	    which has state_code = 'q2c'.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Change the state_code field from 'q2c' to 'cmp', to 
+	    logically remove the job from the compiler queue.
+	  </para>
+	</listitem>
+      </orderedlist>
+    </para>
+    <para>
+      Both steps must occur as a single transaction, even though
+      time might elapse in between.  If this constraint is not 
+      enforced the following is one example of what might happen:
+      <orderedlist>
+	<listitem>
+	  <para>
+	    Compiler-1 selects the highest priority job.  
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Before Compiler-1 can change the state_code in the job,
+	    compiler-2 selects the same job.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Both Compiler-1 and Compiler-2 compile the job and 
+	    queue it to be run.  This is a waste of resources.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Since the job has been queued twice, it runs twice.  
+	    This is a huge waste of resources and is very likely
+	    to confuse the user.
+	  </para>
+	</listitem>
+      </orderedlist>
+    </para>
+    <para>
+      In Version 4 of MySQL, transaction support is provided for
+      tables of type 'InnoDB'.  To avoid the problem described above,
+      the <emphasis>job</emphasis> table must be created with with
+      'InnoDB' type, and within programs, the steps required for
+      removing a job from a queue occur between SQL <command>begin</command>
+      and <command>end</command> statements.
+    </para>
+    <para>
+      In the <link linkend="tables_and_fields">Tables and Fields</link> section,
+      transaction processing considerations will be discussed for each table.
+    </para>
+  </sect1>
+  <sect1>
     <title>SQL Schema</title>
     <para>
       The following SQL statements will create an empty copy of 
       the Spkdb database.
       <screen>
+use spkdb;
+
+-- MySQL dump 9.08
+--
+-- Host: localhost    Database: spktest
+---------------------------------------------------------
+-- Server version	4.0.14-standard-log
+
+--
+-- Table structure for table 'end'
+--
+
 CREATE TABLE end (
   end_code char(4) NOT NULL default '',
   end_name char(20) default NULL,
@@ -214,7 +307,7 @@ CREATE TABLE end (
 -- Dumping data for table 'end'
 --
 
-INSERT INTO end VALUES ('cerr','Compilation Error');
+INSERT INTO end VALUES ('cerr','Compiler Error');
 INSERT INTO end VALUES ('srun','Successful Run');
 
 --
@@ -222,12 +315,16 @@ INSERT INTO end VALUES ('srun','Successful Run');
 --
 
 CREATE TABLE history (
-  id int(10) unsigned NOT NULL auto_increment,
+  history_id int(10) unsigned NOT NULL auto_increment,
   time timestamp(14) NOT NULL,
   state_code char(3) default NULL,
   job_id int(10) unsigned default NULL,
-  PRIMARY KEY  (id)
-) TYPE=MyISAM;
+  PRIMARY KEY  (history_id)
+) TYPE=InnoDB;
+
+--
+-- Dumping data for table 'history'
+--
 
 
 --
@@ -249,6 +346,10 @@ CREATE TABLE job (
   PRIMARY KEY  (job_id)
 ) TYPE=InnoDB;
 
+--
+-- Dumping data for table 'job'
+--
+
 
 --
 -- Table structure for table 'model'
@@ -256,13 +357,19 @@ CREATE TABLE job (
 
 CREATE TABLE model (
   model_id int(10) unsigned NOT NULL auto_increment,
+  time timestamp(14) NOT NULL,
   name varchar(20) default NULL,
-  abstract varchar(100) default NULL,
+  abstract varchar(30) default NULL,
   archive longblob,
   user_id int(10) unsigned NOT NULL default '0',
-  time timestamp(14) NOT NULL,
-  PRIMARY KEY  (model_id)
-) TYPE=MyISAM;
+  PRIMARY KEY  (model_id),
+  UNIQUE KEY user_id (user_id,name)
+) TYPE=InnoDB;
+
+--
+-- Dumping data for table 'model'
+--
+
 
 --
 -- Table structure for table 'state'
@@ -296,11 +403,15 @@ CREATE TABLE user (
   username varchar(20) NOT NULL default '',
   PRIMARY KEY  (user_id),
   UNIQUE KEY username (username)
-) TYPE=MyISAM;
+) TYPE=InnoDB;
+
+--
+-- Dumping data for table 'user'
+--
       </screen>
     </para>
   </sect1>
-  <sect1>
+  <sect1 id="tables_and_fields">
     <title>Tables and Fields</title>
     <sect2>
       <title>end</title>
@@ -335,6 +446,11 @@ CREATE TABLE user (
 	    </tbody>
 	  </tgroup>
 	</table>
+      </para>
+      <bridgehead renderas="sect3">Transaction Processing Considerations</bridgehead>
+      <para>
+	This table is not updated by applications. There are no 
+	transaction processing issues.
       </para>
     </sect2>
     <sect2>
@@ -395,6 +511,14 @@ CREATE TABLE user (
 	    </tbody>
 	  </tgroup>
 	</table>
+      </para>
+      <bridgehead renderas="sect3">Transaction Processing Considerations</bridgehead>
+      <para>
+	Applications append rows to this table. Once in the table,
+	a row is never updated. The value of the key field,
+	<emphasis>history_id</emphasis>, is provided automatically
+	by MySQL, but is not used at present.  There are no
+	tranaction processing considerations.
       </para>
     </sect2>
     <sect2>
@@ -522,7 +646,38 @@ CREATE TABLE user (
 	  </tgroup>
 	</table>
       </para>
+      <bridgehead renderas="sect3">Transaction Processing Considerations</bridgehead>
+      <para>
+	Applications append rows to this table. This action does not
+	have any transaction processing implications, because the 
+	key field, <emphasis>job_id</emphasis>, is provided 
+	automatically by MySQL, as long as <emphasis>job_id</emphasis>
+	is declared with the <command>auto_increment</command>
+	modifier and the table has
+	<command>TYPE=InnoDB</command>.
+      </para>
+      <para>
+	On the other hand,
+	several Aspk Compilers may attempt to update the same row
+	of the table simultaneously, in the act of selecting a 
+	job to be compiled.  In order to maintain the integrity
+	of the table, the code that performs queue selection and
+	the associated update of the <emphasis>state_code</emphasis>
+	field must executed in transaction state.  In other words,
+	a SQL <command>begin</command> statement or its programming
+	language equivalent, must be executed before the queue selection
+	code starts, and a <command>commit</command> command must
+	be executed afterwards.
+      </para>
+      <para>
+	Similarly, several Cspk process may attempt simultaneously
+	to select the highest priority job that is ready to run.
+	The situation is fully equivalent to that of selecting
+	a job to compile, as described above, and the remedy is
+	the same, as well.
+      </para>
     </sect2>
+
     <sect2>
       <title>model</title>
       <para>
@@ -590,6 +745,26 @@ CREATE TABLE user (
 	  </tgroup>
 	</table>
       </para>
+      <bridgehead renderas="sect3">Transaction Processing Considerations</bridgehead>
+      <para>
+	The user, with the aid of the MDA, appends rows to this
+	table.  The key field, <emphasis>model_id</emphasis>,
+	is declared with the <command>auto_increment</command>
+	modifier and the table has <command>TYPE=InnoDB</command>.
+	hence MySQL insures that this field is unique.
+      </para>
+      <para>
+	The application requires each of a user's models to have a
+	different name. In order to avoid a potential concurrency
+	problem where two copies of the MDA attempt to add a 
+	model of the same name for the same user simultaneously,
+	this table must be created with a
+	<command>UNIQUE KEY user_id (user_id,name)</command>
+	modifier. With the
+	table thus defined, the responsibility for avoiding this
+	race condition is assumed by MySQL, and applications do
+	not have to be concerned with it.
+      </para>
     </sect2>
     <sect2>
       <title>state</title>
@@ -627,6 +802,11 @@ CREATE TABLE user (
 	    </tbody>
 	  </tgroup>
 	</table>
+      </para>
+      <bridgehead renderas="sect3">Transaction Processing Considerations</bridgehead>
+      <para>
+	This table is not updated by applications. There are no 
+	transaction processing issues.
       </para>
     </sect2>
     <sect2>
@@ -684,162 +864,7 @@ CREATE TABLE user (
 	  </tgroup>
 	</table>
       </para>
-    </sect2>
-  </sect1>
-  <sect1>
-    <title>Transaction Processing Considerations</title>
-    <para>
-      In general, multiple independent processes will be modifying
-      the database simultaneously. In designing the database, it is
-      imperative to anticipate situations in which two processes,
-      attempting to do the same thing at the same time, could damage
-      database logical integrity.
-    </para>
-    <para>
-      As an example, consider the selection of the highest priority
-      job from the compiler queue.  There may be several copies
-      of the Aspk Compiler running concurrently, and two of these
-      might attempt to a job from the queue simultaneously.
-      The selection of a job entails the following:
-      <orderedlist>
-	<listitem>
-	  <para>
-	    Select from the <emphasis>job</emphasis>
-	    table the job of highest priority
-	    which has state_code = 'q2c'.
-	  </para>
-	</listitem>
-	<listitem>
-	  <para>
-	    Change the state_code field from 'q2c' to 'cmp', to 
-	    logically remove the job from the compiler queue.
-	  </para>
-	</listitem>
-      </orderedlist>
-    </para>
-    <para>
-      Both steps must occur as a single transaction, even though
-      time might elapse in between.  If this constraint is not 
-      enforced the following is one example of what might happen:
-      <orderedlist>
-	<listitem>
-	  <para>
-	    Compiler-1 selects the highest priority job.  
-	  </para>
-	</listitem>
-	<listitem>
-	  <para>
-	    Before Compiler-1 can change the state_code in the job,
-	    compiler-2 selects the same job.
-	  </para>
-	</listitem>
-	<listitem>
-	  <para>
-	    Both Compiler-1 and Compiler-2 compile the job and 
-	    queue it to be run.  This is a waste of resources.
-	  </para>
-	</listitem>
-	<listitem>
-	  <para>
-	    Since the job has been queued twice, it runs twice.  
-	    This is a huge waste of resources and is very likely
-	    to confuse the user.
-	  </para>
-	</listitem>
-      </orderedlist>
-    </para>
-    <para>
-      In Version 4 of MySQL, transaction support is provided for
-      tables of type 'InnoDB'.  To avoid the problem described above,
-      the <emphasis>job</emphasis> table must be created with with
-      'InnoDB' type, and within programs, the steps required for
-      removing a job from a queue occur between SQL <command>begin</command>
-      and <command>end</command> statements.
-    </para>
-    <para>
-      In the following sub-sections, transaction processing considerations
-      will be discussed for each table.
-    </para>
-    <sect2>
-      <title>end</title>
-      <para>
-	This table is not updated by applications. There are no 
-	transaction processing issues.
-      </para>
-    </sect2>
-    <sect2>
-      <title>history</title>
-      <para>
-	Applications append rows to this table. Once in the table,
-	a row is never updated. The value of the key field,
-	<emphasis>history_id</emphasis>, is provided automatically
-	by MySQL, but is not used at present.  There are no
-	tranaction processing considerations.
-      </para>
-    </sect2>
-    <sect2>
-      <title>job</title>
-      <para>
-	Applications append rows to this table. This action does not
-	have any transaction processing implications, because the 
-	key field, <emphasis>job_id</emphasis>, is provided 
-	automatically by MySQL, as long as <emphasis>job_id</emphasis>
-	is declared with the <command>auto_increment</command>
-	modifier and the table has
-	<command>TYPE=InnoDB</command>.
-      </para>
-      <para>
-	On the other hand,
-	several Aspk Compilers may attempt to update the same row
-	of the table simultaneously, in the act of selecting a 
-	job to be compiled.  In order to maintain the integrity
-	of the table, the code that performs queue selection and
-	the associated update of the <emphasis>state_code</emphasis>
-	field must executed in transaction state.  In other words,
-	a SQL <command>begin</command> statement or its programming
-	language equivalent, must be executed before the queue selection
-	code starts, and a <command>commit</command> command must
-	be executed afterwards.
-      </para>
-      <para>
-	Similarly, several Cspk process may attempt simultaneously
-	to select the highest priority job that is ready to run.
-	The situation is fully equivalent to that of selecting
-	a job to compile, as described above, and the remedy is
-	the same, as well.
-      </para>
-    </sect2>
-    <sect2>
-      <title>model</title>
-      <para>
-	The user, with the aid of the MDA, appends rows to this
-	table.  The key field, <emphasis>model_id</emphasis>,
-	is declared with the <command>auto_increment</command>
-	modifier and the table has <command>TYPE=InnoDB</command>.
-	hence MySQL insures that this field is unique.
-      </para>
-      <para>
-	The application requires each of a user's models to have a
-	different name. In order to avoid a potential concurrency
-	problem where two copies of the MDA attempt to add a 
-	model of the same name for the same user simultaneously,
-	this table must be created with a
-	<command>UNIQUE KEY user_id (user_id,name)</command>
-	modifier. With the
-	table thus defined, the responsibility for avoiding this
-	race condition is assumed by MySQL, and applications do
-	not have to be concerned with it.
-      </para>
-    </sect2>
-    <sect2>
-      <title>state</title>
-      <para>
-	This table is not updated by applications. There are no 
-	transaction processing issues.
-      </para>
-    </sect2>
-    <sect2>
-      <title>User</title>
+      <bridgehead renderas="sect3">Transaction Processing Considerations</bridgehead>
       <para>
 	Users are added by an administrative application.  The
 	key field, <emphasis>user_id</emphasis>, is automatically

@@ -109,10 +109,6 @@ Returns
   success: a valid database handle
   failure: undef
 
-Side Effects
-
-  None.
-
 =cut
 
 sub connect() {
@@ -144,10 +140,6 @@ Close a connection to the database, releasing resources:
 $dbh is the handle of an open database connection.
 
 Returns undef.
-
-Side Effects
-
-  None.
 
 =cut 
 
@@ -189,11 +181,6 @@ Returns:
   failure: 0
         $errstr contains an error messages string
         $err == $Spkdb::INSERT_FAILED
-
-Side Effects
-
-    The state_code field of the job is set to 'q2c'.
-    The time field is automatically set to the time of insertion.
 
 =cut
 
@@ -255,10 +242,6 @@ Returns
     $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function fail
                 == $Spkdb::EXECUTE_FAILED if execute function fails
 
-Side Effects
-
-  None.
-
 =cut    
 
 sub job_status() {
@@ -310,10 +293,6 @@ Returns
     $Spkdb::errstr contains an error message string
     $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
                 == $Spkdb::EXECUTE_FAILED if execute function failed
-
-Side Effects
-
-  None.
 
 =cut
 
@@ -369,12 +348,6 @@ Returns
     $Spkdb::errstr contains an error message string
     $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
                 == $Spkdb::EXECUTE_FAILED if execute function failed
-
-Side Effects
-
-    The state code field of the job is set to cmp.
-    The time field is updated to the time of this state transition.
-
 
 =cut
 
@@ -445,12 +418,6 @@ Returns
     $Spkdb::errstr contains an error message string
     $Spkdb::err == $Spkdb::UPDATE_FAILED
 
-Side Effects
-
-  The state_code field of the job is changed to 'q2r'.
-  The cpp_source field of the job contains c++ source code.
-  The time field is updated to the time of this state transition.
-
 =cut
 
 sub en_q2r() {
@@ -506,12 +473,6 @@ Returns
     $Spkdb::errstr contains an error message string
     $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
                 == $Spkdb::EXECUTE_FAILED if execute function failed
-
-Side Effects
-
-    The state code field of the job is set to run.
-    The time field is updated to the time of this state transition.
-
 
 =cut
 
@@ -588,13 +549,6 @@ Returns
     $Spkdb::err == $Spkdb::INVALID_END
                 == $SPKDB::UPDATE_FAILED
 
-Side Effects
-
-  The state_code field of the job is changed to 'end'.
-  The end_code of the job is changed to $end_code.
-  The report field contains a report.
-  The time field is updated to the time of this state transition.
-
 =cut
 
 sub end_job() {
@@ -665,10 +619,6 @@ Returns
                     == $Spkdb::EXECUTE_FAILED if execute function failed
                     == $Spkdb::GET_FAILED if retieval failed
 
-Side Effects
-
-  None.
-
 =cut
 
 sub job_report() {
@@ -729,10 +679,6 @@ Returns
         $err == $Spkdb::MODEL_EXISTS     if user_id + name is not unique
              == $Spkdb::INSERT_FAILED    if the adding the new record failed
 
-Side Effects
-
-  The time field is set to the time of insertion.
-
 =cut
 
 sub new_model() {
@@ -789,10 +735,6 @@ Returns
     $Spkdb::errstr contains an error message string
     $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
                 == $Spkdb::EXECUTE_FAILED if execute function failed
-
-Side Effects
-
-  None.
 
 =cut
 
@@ -857,10 +799,6 @@ Returns
                 = $Spkdb::INVALID_CHANGE if you have asked to change a
                             field that must never be changed
                 = $Spkdb::UPDATE_FAILED  if failure for some other reason
-
-Side Effects
-
-  The time field is set to the time of update.
 
 =cut
 
@@ -928,10 +866,6 @@ Returns
     $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
                 == $Spkdb::EXECUTE_FAILED if execute function failed
 
-Side Effects
-
-  None.
-
 =cut
 
 sub user_models() {
@@ -991,10 +925,6 @@ Returns
         $err == $Spkdb::COLUMN_REQUIRED if username or password not supplied
              == $Spkdb::USER_EXISTS     if the username is not unique
              == $Spkdb::INSERT_FAILED   if the adding the new record failed
-
-Side Effects
-
-  None.
 
 =cut
 
@@ -1089,10 +1019,6 @@ Returns
     $Spkdb::err = $Spkdb::KEY_REQUIRED  if "user_id" not suppled
                 = $Spkdb::UPDATE_FAILED if failure for some other reason
 
-Side Effects
-
-  None.
-
 =cut
 
 sub update_user() {
@@ -1157,10 +1083,6 @@ Returns
     $Spkdb::errstr contains an error message string
     $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
                 == $Spkdb::EXECUTE_FAILED if execute function failed
-
-Side Effects
-
-  None.
 
 =cut
 
