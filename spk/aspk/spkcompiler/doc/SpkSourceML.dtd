@@ -58,7 +58,7 @@ For numbers, you can use the decimal format (ex. 0.1) or scientific notation (ex
 <!-- <up> Sequence of upper boundary values -->
 <!ELEMENT up (value)+>
 
-<!-- <data_labels> Sequence of data labels.  The <label>s are matched to the <item>s in <individual> in the order of appearance.
+<!-- <data_labels> Sequence of data labels.  The <label>s are matched to the columns of data values from left to rigth, in the order of appearance.
 
 For example, given the &lt;data_labels&gt; definition,
 <html:pre><html:code>
@@ -114,8 +114,7 @@ Either label or synonym may be one of the NONMEM reserved identifiers, among whi
 -->
 <!ELEMENT data_labels (label)+>
 
-<!-- <label> The name/label of the i-th item, where i is the order in which this label appears under <data_labels>.
--->
+<!-- <label> The name/label of the item. -->
 <!ELEMENT label EMPTY>
 
 <!-- <label name=""> A string begining with an alphabet followed by any combination of alphabets, numbers, _ (underscore) that serves as the label.  Case-sensitive.  -->
@@ -161,13 +160,13 @@ Either label or synonym may be one of the NONMEM reserved identifiers, among whi
 <!-- <pop_analysis is_sigma_out="yes"> Request to return the final value for sigma matrix; "yes" or "no", default to "yes".-->
 <!ATTLIST pop_analysis is_sigma_out (yes|no) #IMPLIED>
 
-<!-- <theta> theta vector.-->
+<!-- <theta> The NONMEM theta vector.-->
 <!ELEMENT theta (in | low | up)>
 
 <!-- <theta length="10"> Length of the theta vector. The value must match the number of values appeared under the tree. -->
 <!ATTLIST theta length CDATA #REQUIRED>
 
-<!-- <omega> Omega matrix. (in) will list the lower triangle elements if the matrix structure is said to be "block" or the diagonal elements if it is "diagonal", in the row-major order. 
+<!-- <omega> The NONMEM Omega matrix. (in) will list the lower triangle elements if the matrix structure is said to be "block" or the diagonal elements if it is "diagonal", in the row-major order. 
 -->
 <!ELEMENT omega (in)>
 
@@ -177,7 +176,7 @@ Either label or synonym may be one of the NONMEM reserved identifiers, among whi
 <!-- <omega struct="block"> Structure of Omega matrix, either "block" or "diagonal". -->
 <!ATTLIST omega struct (block|diagonal) #REQUIRED>
 
-<!-- <sigma> Sigma matrix. (in) will list the lower triangle elements if the matrix structure is said to be "block" or the diagonal elements if it is "diagonal" in the row-major order.
+<!-- <sigma> The NONMEM Sigma matrix. (in) will list the lower triangle elements if the matrix structure is said to be "block" or the diagonal elements if it is "diagonal" in the row-major order.
 -->
 <!ELEMENT sigma (in)>
 
@@ -192,7 +191,7 @@ Either label or synonym may be one of the NONMEM reserved identifiers, among whi
 
 <!-- <simulation> Request to simulate a data set. 
 
-If this element appears when the population analysis is chosen, n number of data sets will be generated, where n is the number of individuals in the population. If it is for the individual analysis, only one data set is generated.  The simulated data set replaces the original data set for parameter estimation (if requested).
+If this element appears when the population analysis is chosen, a data set for n number of individuals will be generated, where n is the number of individuals in the population. If it is for the individual analysis, a data set for a single individual will be generated.  The simulated data set replaces the original data set for parameter estimation (if requested).
 -->
 <!ELEMENT simulation EMPTY>
 
