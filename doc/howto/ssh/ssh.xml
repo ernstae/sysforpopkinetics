@@ -35,6 +35,12 @@
 	<authorinitials>afw</authorinitials>
 	<revremark>Returned to use of dsa encryption.</revremark>
       </revision>
+      <revision>
+	<revnumber>1.5</revnumber>
+	<date>December 10, 2004</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Expanded section on connections originating on a server.</revremark>
+      </revision>
     </revhistory>
     <abstract>
       <para>
@@ -479,32 +485,68 @@ ssh remote-host
     </sect2>
   </sect1>
   <sect1>
-    <title>Configuring Password-Free Remote Connection for a Server</title>
+    <title>Configuring Password-Free Connections Originating on a Server</title>
     <para>
       The previous section describes setting up the capability to 
       initiate password-free connections from a workstation.  If you 
       connect to a server via ssh and then wish to initiate
-      connections from that location, the workstation configuration
-      will not work, because you are not using the gnome interface
-      of the server.  An alternate system called <emphasis>keychain</emphasis>
-      must be used.  The process of configuring the server is exactly
-      the same as for a workstation, except that the step titled
-      <emphasis>Configure Gnome</emphasis> is replaced with the following
-      step titled <emphasis>Configure Keychain</emphasis>.
+      connections from that location to other machines, the workstation configuration
+      will not work, because the gnome desktop is not accessible.
+      An alternate configuration that uses <emphasis>keychain</emphasis>
+      must be used.
     </para>
     <sect2>
-      <title>Configure Keychain</title>
+      <title>Transfer and Install Your Key Pair</title>
       <para>
-	Download the keychain rpm from 
+	Suppose that the remote server is called <emphasis>server</emphasis>.  
+	Transfer your key pair to that machine.  As an ordinary user:
+	<screen>
+cd
+cd .ssh
+scp id_dsa id_dsa.pub <emphasis>server:</emphasis>
+ssh <emphasis>server</emphasis>
+mkdir .ssh
+chmod 755 .ssh
+mv id_dsa id_dsa.pub .ssh
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Configure For Password-Free Incoming Connections</title>
+      <para>
+	<screen>
+cd .ssh
+cat id_dsa.pub >> authorized_keys
+chmod 600 authorized_keys
+	</screen>	
+      </para>
+    </sect2>
+    <sect2>
+      <title>Configure For Password-Free Outgoing Connections</title>
+      <para>
+	Using the command <command>which keychain</command>, determine
+	whether or not the keychain program is already installed on 
+	the machine.  If not,
+	download the keychain rpm from 
 	<ulink url="http://www.gentoo.org/proj/en/keychain.xml">
 	  http://www.gentoo.org/proj/en/keychain.xml
-	</ulink> and install it.  Then add the following lines to
+	</ulink> and install it.
+      </para>
+      <para>
+	With your favorite text editor, add the following lines to
 	the <filename>.bash_profile</filename> file in your 
 	home directory on the server.
 	<screen>
 keychain ~/.ssh/id_dsa
 . ~/.keychain/${HOSTNAME}-sh
 	</screen>
+      </para>
+      <para>
+	Exit your ssh session with <emphasis>server</emphasis>, then 
+	log back in.  Now you should be able to connect password-free
+	with host on which you have added your public key
+	file (<filename>id_dsa.pub</filename> to the
+	<filename>~/.ssh/authorized_keys</filename> file.
       </para>
     </sect2>
   </sect1>
