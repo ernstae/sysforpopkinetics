@@ -94,6 +94,18 @@ public:
     SPK_VA::valarray<double>&  parLow,
     SPK_VA::valarray<double>&  parUp ) const;
 
+  void calcPar( 
+    const SPK_VA::valarray<double>& covIn,
+    SPK_VA::valarray<double>&       parOut ) const;
+
+  void calcCovMinRep( 
+    const SPK_VA::valarray<double>& covIn,
+    SPK_VA::valarray<double>&       covMinRepOut ) const;
+
+  void expandCovMinRep( 
+    const SPK_VA::valarray<double>& covMinRepIn,
+    SPK_VA::valarray<double>&       covOut ) const;
+
 
   //------------------------------------------------------------
   // Disallowed, implicitly generated member functions.
