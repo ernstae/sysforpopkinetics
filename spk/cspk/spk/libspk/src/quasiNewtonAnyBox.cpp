@@ -167,43 +167,13 @@ In the case of too-many-iterations, the final estimate of the solution is still
 normally returned.  
 
 $head Arguments$$
-$syntax/void (* /fval/)( 
-    const DoubleMatrix& /dvecX/, 
-    double* /pdFOut/, 
-    DoubleMatrix* /pdrowGOut/, 
-    const void* /pFvalInfo/
-)
-/$$
-The function $italic fval$$ evaluates $math%f(x)%$$ for a particular value 
-of the column vector $math%x%$$.  The return value of $italic fval$$ is true,
-if it succeeds and false otherwise.  The $code DoubleMatrix$$ $italic dvecX$$ 
-contains $math%x%$$, and it has the same dimensions as $italic dvecXIn$$.
-It specifies the point at which to evaluate $math%f(x)%$$.  
-If the return value of $italic fval$$ is true, and 
-if $italic pdFOut$$ is not equal to zero, then on output the $code double$$ 
-value pointed to by $italic pdFOut$$ will be equal to $math%f(x)%$$. 
-Note that the user must allocate memory for the value pointed 
-to by $italic pdFOut$$.
-If the return value of $italic fval$$ is true, and 
-if $italic pdrowGOut$$ is not equal to zero, then on output the 
-$code DoubleMatrix$$ pointed to by $italic pdrowGOut$$ will contain 
-a row vector equal to the derivative $math%f_x(x)%$$, which is
-also referred to as the gradient.  
-Note that the $code DoubleMatrix$$ pointed to by $italic pdrowGOut$$ must 
-have the same number of elements as $italic dvecX$$ and must be constructed 
-by the user.
-All of the elements of the derivative must be calculated by $italic fval$$.
-The pointer $italic pFvalInfo$$ is passed to the $italic fval$$ when it 
-is called by $code quasiNewtonAnyBox$$.
-It allows arbitrary information to be passed to $italic fval$$.
-
 $syntax/
-
-/pFvalInfo/
 /$$
-This pointer is passed to the function $italic fval$$ when it is called
-by $code quasiNewtonAnyBox$$.
-It allows arbitrary information to be passed to $italic fval$$.
+This function object is used to evaluate the objective function, 
+$math%f(x)%$$, and the gradient of the objective function, 
+$math%g(x)%$$, for a particular value of $math%x%$$.
+Note that the gradient of the objective function may also sometimes
+be denoted as $math%f_x(x)%$$.
 
 $syntax/
 
