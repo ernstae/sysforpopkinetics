@@ -61,7 +61,13 @@ The space between grid points in the $th i$$ component direction is
 $latex \[
 	( U_i - L_i ) / N_i
 \] $$
-(All the elements of $italic N$$ must be greater than zero.)
+(All the elements of $italic N$$ must be greater than one.)
+Note that $code GridIntegral$$ may use up to 
+$latex \[
+	2 * N[0] * N[1] *  \cdots  * N[m-1]
+\] $$
+function evaluations to evaluate the integral and approximate 
+the error.
 
 $head L$$
 The vector $italic L$$ has length $italic m$$ and specifies
@@ -112,7 +118,56 @@ namespace {
 		}
 		return true;
 	}
+	double  GridIntegral(
+		double (*Feval)(double *X, size_t m, void *p)  ,
+		size_t                                 m       ,
+		void                                  *p       ,
+		const std::valarray<int>              &N       ,
+		const std::valarray<double>           &L       ,
+		const std::valarray<double>           &U       )
+	{
+		double sumF = 0.;
+		double *X  = new double[m];
+		size_t *I  = new size_t[m];
 
+		// set I to initial grid point index
+		size_t Ntot   = 1; // total number of function evaluations
+		double Volume = 1; // total volume of the region of integration
+		size_t i;
+		for(i = 0; i < m; i++)
+		{	I[i] = 0;
+			Volume *= (U[i] - L[i]);
+			Ntot   *= N[i];
+			assert( N[i] > 0 );
+		}
+		double *F = new double[Ntot];
+
+		bool    more = true;
+		size_t count = 0;
+		while( more )
+		{	assert( count == Index(m, N, I) );
+
+			// next grid point value
+			for(i = 0; i < m; i++) X[i] = 
+				L[i] + (I[i] + .5) * (U[i] - L[i]) / N[i];
+
+			// add function value at this grid point
+			F[count] = Feval(X, m, p);
+			sumF    += F[count];
+			count++;
+
+			// next grid point index
+			more = Increment(m, N, I);
+		}
+		assert( count == Ntot );
+
+		delete [] F;
+		delete [] X;
+		delete [] I;
+
+		double integralEstimate = Volume * sumF / double(count);
+		return integralEstimate;
+	}
 }
 
 void GridIntegral(
@@ -125,80 +180,11 @@ void GridIntegral(
 	double                                &integralEstimate,
 	double                                &estimateStd   )
 {
-	double sumF = 0.;
-	double *X  = new double[m];
-	size_t *I  = new size_t[m];
+	integralEstimate  = GridIntegral(Feval, m, p, N, L, U);
 
-	// initial grid point and volume of rectangle
-	size_t Ntot   = 1;
-	double volume = 1;
-	size_t i;
-	for(i = 0; i < m; i++)
-	{	I[i] = 0;
-		volume *= (U[i] - L[i]);
-		Ntot   *= N[i];
-
-		assert( N[i] > 0 );
-	}
-	double *F = new double[Ntot];
-
-
-	bool    more = true;
-	size_t count = 0;
-	while( more )
-	{	assert( count == Index(m, N, I) );
-
-		// neXt grid point value
-		for(i = 0; i < m; i++)
-			X[i] = L[i] + (I[i] + .5) * (U[i] - L[i]) / N[i];
-
-		// add function value at this grid point
-		F[count] = Feval(X, m, p);
-		sumF    += F[count];
-		count++;
-
-		// next grid point index
-		more = Increment(m, N, I);
-	}
-	assert( count == Ntot );
-
-	// compute the sum of the absolute second partial
-	double sumAverage = 0.;
-	size_t j;
-	for(j = 0; j < m; j++)
-	{	double sumAbs = 0.;
-		size_t numAbs = 0;
-
-		// in the j-th coordinate direction
-		for(i = 0; i < m; i++)
-			I[i] = 0;
-
-		for(count = 0; count < Ntot; count++)
-		{	bool ok = (0 < I[j] && I[j]+1 < N[j]);
-			if( ok )
-			{	double F0 = F[ Index(m, N, I) ];
-				I[j] -= 1;
-				double Fm = F[ Index(m, N, I) ];
-				I[j] += 2;
-				double Fp = F[ Index(m, N, I) ];
-				I[j] -= 1;
-				assert( count == Index(m, N, I) );
-				//
-				sumAbs += fabs( Fp - 2. * F0 + Fm );
-				numAbs++;
-			}
-			Increment(m, N, I);
-		}
-		if( numAbs > 0 )
-			sumAverage += sumAbs / numAbs;
-	}
-
-	delete [] F;
-	delete [] X;
-	delete [] I;
-
-	integralEstimate = volume * sumF / double(count);
-	estimateStd      = volume * sumAverage * sqrt( double(Ntot) ) / 24.;
+	std::valarray<int> M = N - N / 2;
+	double compareEstimate = GridIntegral(Feval, m, p, M, L, U);
+	estimateStd            = fabs(integralEstimate - compareEstimate);
 
 	return;
 }

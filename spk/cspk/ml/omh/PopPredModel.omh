@@ -84,7 +84,7 @@ Initial value of the random effects covariance matrix
 
 $head nEps$$
 Number of measurement error components
-(see $xref/NonmemPars/Eps/nEps, l/NonmemPars::nEps/1/$$). 
+(see $xref/NonmemPars/Eps/nEps, s/NonmemPars::nEps/1/$$). 
 
 $head sigmaStruct$$
 Random effects covariance matrix
