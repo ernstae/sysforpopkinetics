@@ -1,4 +1,4 @@
-T = SUBJECT
+T = blasSPK
 HTML_OPS = --nochunks
 STYLE = ../../../stylesheet
 WEB = whitechuck:/var/www/html/soft/decision/research/$T
