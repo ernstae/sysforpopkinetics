@@ -93,6 +93,7 @@ public abstract class Spkdb {
 	if (rs.next()) {
 	    jobId = rs.getLong(1);
 	}
+	addToHistory(conn, jobId, stateCode, "unknown");
 	return jobId;
     }
     /**
@@ -127,7 +128,8 @@ public abstract class Spkdb {
 	throws SQLException, SpkdbException 
     {
 	String
-	    sql = "select * from job where user_id=" + userId;
+	    sql = "select job_id, abstract, state_code, start_time, event_time, "
+	    + "end_code from job where user_id=" + userId;
 	if (leftOff != 0) {
 	    sql += " and job_id < " + leftOff;
 	}
@@ -161,6 +163,7 @@ public abstract class Spkdb {
 	pstmt = conn.prepareStatement(sql);
 	pstmt.setBinaryStream(1, new ByteArrayInputStream(report.getBytes()), report.length());
 	pstmt.executeUpdate();
+	addToHistory(conn, jobId, "end", "unknown");
 	
 	return true;
     }
@@ -482,6 +485,18 @@ public abstract class Spkdb {
 	ResultSet rs = stmt.getResultSet();
 	return rs;
     }
+    public static boolean addToHistory(Connection conn, long jobId, String stateCode, String host)
+	throws SQLException, SpkdbException
+    {
+	java.util.Date date = new java.util.Date(); 
+	long eventTime = date.getTime()/1000;
+	String sql = "insert into history (job_id, state_code, event_time, host) "
+	         + "values(" + jobId + ", '" + stateCode + "'," + eventTime
+	         + ", '" + host + "');";
+	Statement stmt = conn.createStatement();
+	stmt.execute(sql);
+	return true;
+    }
     public static String md5sum(String password) {
 	String pd = "";
 	try {
@@ -502,4 +517,3 @@ public abstract class Spkdb {
 	return pd;
     }
 }
-
