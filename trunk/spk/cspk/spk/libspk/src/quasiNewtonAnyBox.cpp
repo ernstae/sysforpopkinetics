@@ -894,14 +894,6 @@ void quasiNewtonAnyBox(
   const bool      exponential = true;
   const double          delta = 1e-7;
 
-  // If zero iterations were requested or this is not a warm start,
-  // evaluate the objective function and its gradient.
-  These values will also be required if this is not a warm start, so calculate them here.
-  if ( nMaxIter == 0 || !isAWarmStart )
-  {
-    objective.function( yCurr, fScaled, gScaled, ... );
-  }
-
   // Since the optimizer always does a warm start, i.e. it
   // always makes use of the current values for the objective,
   // its gradient, Hessian, etc., set those values here.
