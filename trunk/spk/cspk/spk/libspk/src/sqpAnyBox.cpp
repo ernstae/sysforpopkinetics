@@ -1560,9 +1560,9 @@ static void NAG_CALL fvalScaled( Integer n,
   const double* pdXUpData   = pdvecXUp->data();
   const double* pdXDiffData = pdvecXDiff->data();
   */
-  const double *pdXLowData  = pInfo->pdvecXLow->data();
-  const double *pdXUpData   = pInfo->pdvecXUp->data();
-  const double *pdXDiffData = pInfo->pdvecXDiff->data();
+  const double *const pdXLowData  = pInfo->pdvecXLow->data();
+  const double *const pdXUpData   = pInfo->pdvecXUp->data();
+  const double *const pdXDiffData = pInfo->pdvecXDiff->data();
 
   //------------------------------------------------------------
   // Prepare the parameters for the unscaled objective function.
