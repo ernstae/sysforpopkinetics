@@ -54,8 +54,9 @@ namespace{
     
   unsigned int      myPopMitr       = 100;
   unsigned int      myIndMitr       = 100;
-  double            myPopEpsilon    = 1e-3;
-  double            myIndEpsilon    = 1e-3;
+  unsigned int      mySigDigits     = 3;
+  double            myPopEpsilon    = pow( 10.0, -(mySigDigits+1.0) );
+  double            myIndEpsilon    = pow( 10.0, -(mySigDigits+1.0) );
   int               myPopTraceLevel = 1;
   int               myIndTraceLevel = 1;
   unsigned int      mySeed = 0;
@@ -78,7 +79,7 @@ namespace{
   const string keyPRED  = SymbolTable::key( "pred" );
   const string keyMDV   = SymbolTable::key( "mdv" );
   const string keyID    = SymbolTable::key( "id" );
-
+  const string keySIMDV = SymbolTable::key( "simdv" );
   valarray<int> myRecordNums;
 };
 //========================================
@@ -175,6 +176,7 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   X_COVARIANCE_FORM= XMLString::transcode("covariance_form");
   X_MITR           = XMLString::transcode("mitr");
   X_IND_STAT       = XMLString::transcode("ind_stat");
+  X_SIG_DIGITS     = XMLString::transcode("sig_digits");
   assert( strcmp( fMakefile                   , "generatedMakefile" ) == 0 );
   assert( strcmp( fIndData_h                  , "IndData.h" ) == 0 );
   assert( strcmp( fDataSet_h                  , "DataSet.h" ) == 0 );
@@ -244,6 +246,7 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   assert( XMLString::equals( X_COVARIANCE_FORM, XMLString::transcode("covariance_form") ) );
   assert( XMLString::equals( X_MITR           , XMLString::transcode("mitr") ) );
   assert( XMLString::equals( X_IND_STAT       , XMLString::transcode("ind_stat") ) );
+  assert( XMLString::equals( X_SIG_DIGITS     , XMLString::transcode("sig_digits" ) ) );
 }
 NonmemTranslator::NonmemTranslator()
 {
@@ -307,6 +310,7 @@ NonmemTranslator::~NonmemTranslator()
   XMLString::release( &X_COVARIANCE_FORM );
   XMLString::release( &X_MITR );
   XMLString::release( &X_IND_STAT );
+  XMLString::release( &X_SIG_DIGITS );
 }
 NonmemTranslator::NonmemTranslator( const NonmemTranslator& )
 {
@@ -495,12 +499,28 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       myIsEtaOut = ( XMLString::equals( xml_is_eta_out, X_YES )? true : false );
     }
 
-  myIsRestart = true;
-  const XMLCh * xml_is_restart;
-  if( pop_analysis->hasAttribute( X_IS_RESTART ) )
+  if( myIsEstimate )
     {
-      xml_is_restart = pop_analysis->getAttribute( X_IS_RESTART );
-      myIsRestart = ( XMLString::equals( xml_is_restart, X_YES )? true : false );
+      myIsRestart = true;
+      const XMLCh * xml_is_restart;
+      if( pop_analysis->hasAttribute( X_IS_RESTART ) )
+	{
+	  xml_is_restart = pop_analysis->getAttribute( X_IS_RESTART );
+	  myIsRestart = ( XMLString::equals( xml_is_restart, X_YES )? true : false );
+	}
+      const XMLCh* xml_sig_digits;
+      if( pop_analysis->hasAttribute( X_SIG_DIGITS ) )
+	{
+	  xml_sig_digits = pop_analysis->getAttribute( X_SIG_DIGITS );
+	  if( XMLString::stringLen( xml_sig_digits ) > 0 )
+	    {
+	      if( !XMLString::textToBin( xml_sig_digits, mySigDigits ) )
+		assert( xml_sig_digits > 0 );
+	      assert( mySigDigits > 0 && mySigDigits < 9 );
+	      myIndEpsilon = pow( 10.0, -(mySigDigits + 1.0) );
+	      myPopEpsilon = myIndEpsilon;
+	    }
+	}
     }
 
   //================================================================================
@@ -897,18 +917,37 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   //================================================================================
   // * mitr   --- required when is_estimation == "yes"
   // * is_restart = {"yes", no}
+  // * sig_digits = 3
   myIsRestart = true;
-  myIndMitr = 0;
-  const XMLCh * xml_is_restart = ind_analysis->getAttribute( X_IS_RESTART );
-  if( XMLString::stringLen( xml_is_restart ) )
+  myIndMitr   = 0;
+  mySigDigits = 3;
+
+  const XMLCh * xml_is_restart;
+  if( ind_analysis->hasAttribute( X_SIG_DIGITS ) )
+    {
+      xml_is_restart = ind_analysis->getAttribute( X_IS_RESTART );
       myIsRestart = ( XMLString::equals( xml_is_restart, X_YES )? true : false );
+    }
   if( myIsEstimate )
     {
-      const XMLCh* xml_mitr = ind_analysis->getAttribute( X_MITR );
-      assert( XMLString::stringLen( xml_mitr ) > 0 );
-      if( !XMLString::textToBin( xml_mitr, myIndMitr ) )
-	assert( xml_mitr > 0 );
+      const XMLCh* xml_mitr;
+      if( ind_analysis->hasAttribute( X_MITR ) )
+	{
+	  xml_mitr = ind_analysis->getAttribute( X_MITR );
+	  if( !XMLString::textToBin( xml_mitr, myIndMitr ) )
+	    assert( xml_mitr != 0 );
+	}
+      const XMLCh* xml_sig_digits;
+      if( ind_analysis->hasAttribute( X_SIG_DIGITS ) )
+	{
+	  xml_sig_digits = ind_analysis->getAttribute( X_SIG_DIGITS );
+	  if( !XMLString::textToBin( xml_sig_digits, mySigDigits ) )
+	    assert( xml_sig_digits != 0 );
+	  assert( mySigDigits > 0 && mySigDigits < 9 );
+	  myIndEpsilon = pow( 10.0, -(mySigDigits + 1.0) );
+	}
     }
+  
   //================================================================================
   // Required elements
   //================================================================================
@@ -2031,6 +2070,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   // : the user defined variable values and the NONMEM required variable values.
   oPred_h << "pred = f;" << endl;
   oPred_h << "res  = perm->data[spk_i]->dv[spk_j] - f;" << endl;
+
   for( pRawTable = rawTable->begin(); pRawTable != rawTable->end(); pRawTable++ )
     {
       // THETA, ETA, EPS are given Pred::eval() as vectors by the caller.
@@ -2038,11 +2078,19 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       // which are scalar values.
       const string label     = pRawTable->second.name;
       const string label_key = SymbolTable::key( label );
-      if( label_key == keyTHETA 
-	  || label_key == keyETA 
-	  || label_key == keyEPS )
+      if( label_key == keyTHETA )
+	{
+	  oPred_h << "copy( " << label_key << ", " << label_key << "+spk_thetaLen, ";
+          oPred_h << "temp.data[ spk_i ]->" << label_key << "[ spk_j ].begin() ); " << endl;
+	}
+      else if( label_key == keyETA )
 	{
 	  oPred_h << "copy( " << label_key << ", " << label_key << "+spk_etaLen, ";
+          oPred_h << "temp.data[ spk_i ]->" << label_key << "[ spk_j ].begin() ); " << endl;
+	}
+      else if( label_key == keyEPS )
+	{
+	  oPred_h << "copy( " << label_key << ", " << label_key << "+spk_epsLen, ";
           oPred_h << "temp.data[ spk_i ]->" << label_key << "[ spk_j ].begin() ); " << endl;
 	}
       else if( label_key == keyOMEGA || label_key == keySIGMA )
@@ -2731,7 +2779,7 @@ void NonmemTranslator::generateIndDriver( ) const
   // LABELS
   //
   const map<const string, Symbol> * t = table->getTable();
-  const Symbol * pID = table->findi("id");
+  const Symbol * pID = table->findi(keyID);
   assert( pID != Symbol::empty() );
 
   map<const string, Symbol>::const_iterator pEntry = t->begin();
@@ -2754,10 +2802,50 @@ void NonmemTranslator::generateIndDriver( ) const
   // ...aaand, following ID is, all the left hand side quantities in the model definition.
   for( pEntry = t->begin(); pEntry!=t->end(); pEntry++ )
     {
-      if( pEntry->first != "id" && ( find( pLabelBegin, pLabelEnd, pEntry->second.name )==pLabelEnd ) )
+      if( pEntry->first != keyID 
+	  /* && ( find( pLabelBegin, pLabelEnd, pEntry->second.name )==pLabelEnd ) */ )
 	{
-	  whatGoesIn.push_back( pEntry->second.name );
-	  oDriver << "oResults << \"<label name=\\\"" << pEntry->second.name << "\\\"/>\" << endl;" << endl;
+	  // These ones are not stored by Pred::eval() or the data set.
+	  if( pEntry->first != keyOMEGA && pEntry->first != keySIGMA )
+	    {
+	      whatGoesIn.push_back( pEntry->second.name );
+	      
+	      if( pEntry->first == keyTHETA )
+		{
+		  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
+		    {
+		      oDriver << "oResults << \"<label name=\\\"";
+		      oDriver << pEntry->second.name << "(" << cntTheta+1 << ")";
+		      oDriver << "\\\"/>\" << endl;" << endl;		      
+		    }
+		}
+	      else if( pEntry->first == keyETA )
+		{
+		  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
+		    {
+		      oDriver << "oResults << \"<label name=\\\"";
+		      oDriver << pEntry->second.name << "(" << cntEta+1 << ")";
+		      oDriver << "\\\"/>\" << endl;" << endl;		      
+		    }
+		}
+	      /*
+	      else if( pEntry->first == keyEPS )
+		{
+		  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
+		    {
+		      oDriver << "oResults << \"<label name=\\\"";
+		      oDriver << pEntry->second.name << "(" << cntEps+1 << ")";
+		      oDriver << "\\\"/>\" << endl;" << endl;		      
+		    }
+		}
+	      */
+	      else
+		{
+		  oDriver << "oResults << \"<label name=\\\"";
+		  oDriver << pEntry->second.name;
+		  oDriver << "\\\"/>\" << endl;" << endl;
+		}
+	    }
 	}
     }
   oDriver << "//" << endl;
@@ -2772,9 +2860,9 @@ void NonmemTranslator::generateIndDriver( ) const
   for( pWhatGoesIn = whatGoesIn.begin(); pWhatGoesIn!=whatGoesIn.end(); pWhatGoesIn++ )
     {
       keyWhatGoesIn = SymbolTable::key( *pWhatGoesIn );
-      if( keyWhatGoesIn == "simdv" )
+      if( keyWhatGoesIn == keySIMDV )
 	{
-	  oDriver << "   oResults << \"<value>\" << ";
+	  oDriver << "   oResults << \"<value label=\\\"" << keyWhatGoesIn << "\\\"" << ">\" << ";
 	  oDriver << "yOut[cnt]";
 	  oDriver << " << \"</value>\" << endl;" << endl;
 	}
@@ -2782,7 +2870,8 @@ void NonmemTranslator::generateIndDriver( ) const
 	{
 	  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
 	    {
-	      oDriver << "   oResults << \"<value>\" << ";
+	      oDriver << "   oResults << \"<value label=\\\"";
+	      oDriver << keyWhatGoesIn << "(" << cntTheta << ")"<< "\\\"" << ">\" << ";
 	      oDriver << "set.data[0]->" << keyWhatGoesIn << "[j][" << cntTheta << "]";
 	      oDriver << " << \"</value>\" << endl;" << endl;
 	    }
@@ -2791,27 +2880,33 @@ void NonmemTranslator::generateIndDriver( ) const
 	{
 	  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
 	    {
-	      oDriver << "   oResults << \"<value>\" << ";
+	      oDriver << "   oResults << \"<value label=\\\"";
+	      oDriver << keyWhatGoesIn << "(" << cntEta << ")"<< "\\\"" << ">\" << ";
 	      oDriver << "set.data[0]->" << keyWhatGoesIn << "[j][" << cntEta << "]";
 	      oDriver << " << \"</value>\" << endl;" << endl;
 	    }
 	}
+      /*
       else if( keyWhatGoesIn == keyEPS )
 	{
+	  // EPS is irrevalent in the individual analysis
 	  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
 	    {
-	      oDriver << "   oResults << \"<value>\" << ";
+	      oDriver << "   oResults << \"<value label=\"" << keyWhatGoesIn << "\"" << ">\" << ";
 	      oDriver << "set.data[0]->" << keyWhatGoesIn << "[j][" << cntEps << "]";
 	      oDriver << " << \"</value>\" << endl;" << endl;
 	    }
 	}
+      */
+      /*
       else if( keyWhatGoesIn == keyOMEGA || keyWhatGoesIn == keySIGMA )
 	{
-	  // ignore
+	  // these shouldn't be the whatGoesIn list!
 	}
+      */
       else
 	{
-	  oDriver << "   oResults << \"<value>\" << ";
+	  oDriver << "   oResults << \"<value label=\\\"" << keyWhatGoesIn << "\\\"" << ">\" << ";
           oDriver << "set.data[0]->" << keyWhatGoesIn << "[j]";
 	  oDriver << " << \"</value>\" << endl;" << endl;
 	}
@@ -3512,7 +3607,7 @@ void NonmemTranslator::generatePopDriver() const
   // LABELS
   //
   const map<const string, Symbol> * t = table->getTable();
-  const Symbol * pID = table->findi("id");
+  const Symbol * pID = table->findi(keyID);
   assert( pID != Symbol::empty() );
   
   map<const string, Symbol>::const_iterator pEntry = t->begin();
@@ -3536,11 +3631,50 @@ void NonmemTranslator::generatePopDriver() const
   // ...aaand, following ID is, all the left hand side quantities in the model definition.
   for( pEntry = t->begin(); pEntry!=t->end(); pEntry++ )
     {
-      if( pEntry->first != "id" && ( find( pLabelBegin, pLabelEnd, pEntry->second.name )==pLabelEnd ) )
+      if( pEntry->first != keyID 
+	  /*&& ( find( pLabelBegin, pLabelEnd, pEntry->second.name )==pLabelEnd )*/ )
 	{
-	  whatGoesIn.push_back( pEntry->second.name );
-	  oDriver << "oResults << \"<label name=\\\"" << pEntry->second.name << "\\\"/>\" << endl;" << endl;
+	  // these three --- theta, omega and sigma --- don't get saved within Pred::eval()
+	  // and are already printed out in the reportML earlier during this step.
+	  if( pEntry->first != keyOMEGA && pEntry->first != keySIGMA )
+	    {
+	      whatGoesIn.push_back( pEntry->second.name );
+	      
+	      if( pEntry->first == keyTHETA )
+		{
+		  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
+		    {
+		      oDriver << "oResults << \"<label name=\\\"";
+		      oDriver << pEntry->second.name << "(" << cntTheta+1 << ")";
+		      oDriver << "\\\"/>\" << endl;" << endl;		      
+		    }
+		}
+	      else if( pEntry->first == keyETA )
+		{
+		  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
+		    {
+		      oDriver << "oResults << \"<label name=\\\"";
+		      oDriver << pEntry->second.name << "(" << cntEta+1 << ")";
+		      oDriver << "\\\"/>\" << endl;" << endl;		      
+		    }
+		}
+	      else if( pEntry->first == keyEPS )
+		{
+		  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
+		    {
+		      oDriver << "oResults << \"<label name=\\\"";
+		      oDriver << pEntry->second.name << "(" << cntEps+1 << ")";
+		      oDriver << "\\\"/>\" << endl;" << endl;		      
+		    }
+		}
+	      else
+		{
+		  oDriver << "oResults << \"<label name=\\\"";
+		  oDriver << pEntry->second.name;
+		  oDriver << "\\\"/>\" << endl;" << endl;
+		}
 	    }
+	}
     }
   oDriver << "//"  << endl;
   oDriver << "///////////////////////////////////////////////////////////////////" << endl;
@@ -3560,7 +3694,7 @@ void NonmemTranslator::generatePopDriver() const
       keyWhatGoesIn = SymbolTable::key( *pWhatGoesIn );
       if( keyWhatGoesIn == "simdv" )
 	{
-	  oDriver << "   oResults << \"<value>\" << ";
+	  oDriver << "   oResults << \"<value label=\\\"" << keyWhatGoesIn << "\\\"" << ">\" << ";
 	  oDriver << "yOut[cnt]";
 	  oDriver << " << \"</value>\" << endl;" << endl;
 	}
@@ -3568,7 +3702,8 @@ void NonmemTranslator::generatePopDriver() const
 	{
 	  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
 	    {
-	      oDriver << "   oResults << \"<value>\" << ";
+	      oDriver << "   oResults << \"<value label=\\\"";
+	      oDriver << keyWhatGoesIn << "(" << cntTheta << ")" << "\\\"" << ">\" << ";
 	      oDriver << "set.data[i]->" << keyWhatGoesIn << "[j][" << cntTheta << "]";
 	      oDriver << " << \"</value>\" << endl;" << endl;
 	    }
@@ -3577,7 +3712,8 @@ void NonmemTranslator::generatePopDriver() const
 	{
 	  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
 	    {
-	      oDriver << "   oResults << \"<value>\" << ";
+	      oDriver << "   oResults << \"<value label=\\\"";
+	      oDriver << keyWhatGoesIn << "(" << cntEta << ")"<< "\\\"" << ">\" << ";
 	      oDriver << "set.data[i]->" << keyWhatGoesIn << "[j][" << cntEta << "]";
 	      oDriver << " << \"</value>\" << endl;" << endl;
 	    }
@@ -3586,7 +3722,8 @@ void NonmemTranslator::generatePopDriver() const
 	{
 	  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
 	    {
-	      oDriver << "   oResults << \"<value>\" << ";
+	      oDriver << "   oResults << \"<value label=\\\"";
+	      oDriver << keyWhatGoesIn << "(" << cntEps << ")"<< "\\\"" << ">\" << ";
 	      oDriver << "set.data[i]->" << keyWhatGoesIn << "[j][" << cntEps << "]";
 	      oDriver << " << \"</value>\" << endl;" << endl;
 	    }
@@ -3597,7 +3734,7 @@ void NonmemTranslator::generatePopDriver() const
 	}
       else
 	{
-	  oDriver << "   oResults << \"<value>\" << ";
+	  oDriver << "   oResults << \"<value label=\\\"" << keyWhatGoesIn << "\\\"" << ">\" << ";
           oDriver << "set.data[i]->" << keyWhatGoesIn << "[j]";
 	  oDriver << " << \"</value>\" << endl;" << endl;
 	}
