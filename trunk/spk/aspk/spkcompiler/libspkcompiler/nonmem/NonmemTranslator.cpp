@@ -380,7 +380,7 @@ void NonmemTranslator::parseSource()
   if( table->getLabels()->size() <= 1 )
   {
      char mess[ SpkCompilerError::maxMessageLen()];
-     sprintf( mess, "Missing <%s> tag.", C_LABELS );
+     sprintf( mess, "Missing \"%s\" tag.", C_LABELS );
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
   }
@@ -390,7 +390,7 @@ void NonmemTranslator::parseSource()
   if( nonmems->getLength() != 1 )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Missing <%s> tag.", C_NONMEM );
+      sprintf( mess, "Missing \"%s\" tag.", C_NONMEM );
       SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -403,7 +403,7 @@ void NonmemTranslator::parseSource()
   if( constraints->getLength() != 1 )
   {
      char mess[ SpkCompilerError::maxMessageLen()];
-     sprintf( mess, "Missing <%s> tag.", C_CONSTRAINT );
+     sprintf( mess, "Missing \"%s\" tag.", C_CONSTRAINT );
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
   }
@@ -411,7 +411,7 @@ void NonmemTranslator::parseSource()
   if(  !constraint->hasChildNodes() )
   {
      char mess[ SpkCompilerError::maxMessageLen()];
-     sprintf( mess, "<%s> must have a child, either <%s> or <%s>.", C_CONSTRAINT, C_POP_ANALYSIS, C_IND_ANALYSIS );
+     sprintf( mess, "\"%s\" must have a child, either \"%s\" or \"%s\".", C_CONSTRAINT, C_POP_ANALYSIS, C_IND_ANALYSIS );
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
   }
@@ -439,7 +439,7 @@ void NonmemTranslator::parseSource()
     {
       // illegal
       char mess[ SpkCompilerError::maxMessageLen()];
-      sprintf( mess, "<%s> must have a child, either <%s> or <%s>.", C_CONSTRAINT, C_POP_ANALYSIS, C_IND_ANALYSIS );
+      sprintf( mess, "\"%s\" must have a child, either \"%s\" or \"%s\".", C_CONSTRAINT, C_POP_ANALYSIS, C_IND_ANALYSIS );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -451,7 +451,7 @@ void NonmemTranslator::parseSource()
   if( models->getLength() != 1 )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "Missing <%s> tag.", C_MODEL );
+     sprintf( mess, "Missing \"%s\" tag.", C_MODEL );
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
   }
@@ -461,7 +461,7 @@ void NonmemTranslator::parseSource()
   if(preds->getLength() != 1 )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "Missing <%s> tag.", C_PRED );
+     sprintf( mess, "Missing \"%s\" tag.", C_PRED );
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
   }
@@ -498,7 +498,7 @@ void NonmemTranslator::parseSource()
 	    {
 	      char mess[ SpkCompilerError::maxMessageLen() ];
 	      sprintf( mess, 
-		       "Invalid %s attribute value in <%s> tag: %s", C_NUMBEREVAL, C_MONTE_CARLO,
+		       "Invalid %s attribute value in \"%s\" tag: %s", C_NUMBEREVAL, C_MONTE_CARLO,
 		       XMLString::transcode(x_num) );
 	      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
 	      throw e;
@@ -514,7 +514,7 @@ void NonmemTranslator::parseSource()
   if( !isPredDone )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "Before parsing <%s>, <%s> must be parsed.", 
+     sprintf( mess, "Before parsing \"%s\", \"%s\" must be parsed.", 
               C_PRESENTATION, C_PRED );
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
@@ -522,7 +522,7 @@ void NonmemTranslator::parseSource()
   if( !isAnalysisDone )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "Before parsing <%s>, <%s> must be parsed.", C_PRESENTATION, 
+     sprintf( mess, "Before parsing \"%s\", \"%s\" must be parsed.", C_PRESENTATION, 
               (myTarget==POP? C_POP_ANALYSIS : C_IND_ANALYSIS ) );
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
@@ -532,7 +532,7 @@ void NonmemTranslator::parseSource()
   if( presentations->getLength() > 1 )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "One or none <%s> is allowed in a sourceML document.", C_PRESENTATION ); 
+     sprintf( mess, "One or none \"%s\" is allowed in a sourceML document.", C_PRESENTATION ); 
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
   }
@@ -834,7 +834,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   if( !pop_analysis->hasAttribute( X_IS_ESTIMATION ) )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "Missing \"%s\" attribute in <%s> tag.", C_POP_ANALYSIS, C_IS_ESTIMATION );
+     sprintf( mess, "Missing \"%s\" attribute in \"%s\" tag.", C_POP_ANALYSIS, C_IS_ESTIMATION );
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
      throw e;
   }
@@ -849,7 +849,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       if( !pop_analysis->hasAttribute( X_APPROXIMATION ) )
 	{
 	  char mess[ SpkCompilerError::maxMessageLen() ];
-	  sprintf( mess, "%s attribute is missing in <%s> tag.", C_APPROXIMATION, C_POP_ANALYSIS );
+	  sprintf( mess, "%s attribute is missing in \"%s\" tag.", C_APPROXIMATION, C_POP_ANALYSIS );
 	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
 	  throw e;
 	}
@@ -874,7 +874,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       if( !pop_analysis->hasAttribute( X_POP_SIZE ) )
 	{
 	  char mess[ SpkCompilerError::maxMessageLen() ];
-	  sprintf( mess, "Missing \"%s\" attribute in <%s> tag.", C_POP_ANALYSIS, C_POP_SIZE );
+	  sprintf( mess, "Missing \"%s\" attribute in \"%s\" tag.", C_POP_ANALYSIS, C_POP_SIZE );
 	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
 	  throw e;
 	}
@@ -883,7 +883,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
 	{
 	  char mess[ SpkCompilerError::maxMessageLen() ];
 	  sprintf( mess, 
-		   "Invalid %s attribute value in <%s> tag: %s", C_POP_SIZE, C_POP_ANALYSIS,
+		   "Invalid %s attribute value in \"%s\" tag: %s", C_POP_SIZE, C_POP_ANALYSIS,
 		   XMLString::transcode(xml_pop_size) );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
       throw e;
@@ -924,7 +924,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
 	      if( !XMLString::textToBin( xml_sig_digits, mySigDigits ) )
               {
                  char mess[ SpkCompilerError::maxMessageLen() ];
-                 sprintf( mess, "Invalid %s attribute value in <%s> tag?: \"%s\"", 
+                 sprintf( mess, "Invalid %s attribute value in \"%s\" tag?: \"%s\"", 
                           C_POP_ANALYSIS, C_SIG_DIGITS, XMLString::transcode( xml_sig_digits ) );
                  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
                  throw e;
@@ -933,7 +933,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
 	      if( !( mySigDigits > 0 && mySigDigits < 9 ) )
               {
                  char mess[ SpkCompilerError::maxMessageLen() ];
-                 sprintf( mess, "Invalid %s attribute value, \"%s\", in <%s> tag.  Valid (1-8)", 
+                 sprintf( mess, "Invalid %s attribute value, \"%s\", in \"%s\" tag.  Valid (1-8)", 
                           C_SIG_DIGITS, XMLString::transcode( xml_sig_digits ), C_POP_ANALYSIS );
                  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
                  throw e;
@@ -955,7 +955,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   if( data_labels_list->getLength() != 1 )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "There must be one and only one <%s> tag in the sourceML document.", 
+     sprintf( mess, "There must be one and only one \"%s\" tag in the sourceML document.", 
               C_DATA_LABELS );
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
      throw e;
@@ -968,7 +968,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
      {
 
         char mess[ SpkCompilerError::maxMessageLen() ];
-        sprintf( mess, "There must be at least one <%s> tag.",  C_LABEL );
+        sprintf( mess, "There must be at least one \"%s\" tag.",  C_LABEL );
         SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
         throw e;
      }
@@ -982,7 +982,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
 	 if( !xml_label->hasAttribute( X_NAME ) )
          {
             char mess[ SpkCompilerError::maxMessageLen() ];
-            sprintf( mess, "%s attribute is required in <%s> tag: missing in %d-th %s", C_NAME, C_LABEL,
+            sprintf( mess, "%s attribute is required in \"%s\" tag: missing in %d-th %s", C_NAME, C_LABEL,
             i, C_LABEL );
             SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
             throw e;
@@ -1019,7 +1019,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   if( theta_list->getLength() != 1 )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "There may be one and only one <%s> tag in the sourceML document.", C_THETA );
+     sprintf( mess, "There may be one and only one \"%s\" tag in the sourceML document.", C_THETA );
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
   }
@@ -1027,7 +1027,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   if( !theta->hasAttribute( X_LENGTH ) )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "Missing %s attribute in <%s> tag in the sourceML document.", C_LENGTH, C_THETA );
+     sprintf( mess, "Missing %s attribute in \"%s\" tag in the sourceML document.", C_LENGTH, C_THETA );
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
   }
@@ -1037,7 +1037,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
       sprintf( mess,
-	       "Invalid %s attribute value for <%s> tag? : %s\n", 
+	       "Invalid %s attribute value for \"%s\" tag? : %s\n", 
 	       XMLString::transcode( xml_theta_len ), C_THETA );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
@@ -1050,7 +1050,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
       sprintf( mess,
-	       "There may be one and only <%s> sug-tag for <%s> tag in the sourceML document.", 
+	       "There may be one and only \"%s\" sug-tag for \"%s\" tag in the sourceML document.", 
                C_IN, C_THETA );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
@@ -1062,7 +1062,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
       sprintf( mess,
-	       "The number of <%s> subtags does not match with the %s attribute specification for <%s> tag.", 
+	       "The number of \"%s\" subtags does not match with the %s attribute specification for \"%s\" tag.", 
                C_VALUE, C_LENGTH, C_THETA );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
@@ -1095,7 +1095,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
       sprintf( mess,
-	       "There may be one and only <%s> sug-tag for <%s> tag in the sourceML document.", 
+	       "There may be one and only \"%s\" sug-tag for \"%s\" tag in the sourceML document.", 
                C_LOW, C_THETA );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
@@ -1106,7 +1106,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
       sprintf( mess,
-	       "The number of <%s> subtags does not match with the %s attribute specification for <%s> tag.", 
+	       "The number of \"%s\" subtags does not match with the %s attribute specification for \"%s\" tag.", 
                C_VALUE, C_LENGTH, C_THETA );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
@@ -1133,7 +1133,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
       sprintf( mess,
-	       "There may be one and only <%s> sug-tag for <%s> tag in the sourceML document.", 
+	       "There may be one and only \"%s\" sug-tag for \"%s\" tag in the sourceML document.", 
                C_UP, C_THETA );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
@@ -1144,7 +1144,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
       sprintf( mess,
-	       "The number of <%s> subtags does not match with the %s attribute specification for <%s> tag.", 
+	       "The number of \"%s\" subtags does not match with the %s attribute specification for \"%s\" tag.", 
                C_VALUE, C_LENGTH, C_THETA );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
@@ -1181,7 +1181,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   {
      // v0.1 supports only one (full) Omega specification
      char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "There is one and only one <%s> tag in the sourceML document.",
+     sprintf( mess, "There is one and only one \"%s\" tag in the sourceML document.",
               C_OMEGA );
      SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
@@ -1190,7 +1190,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   if( !omega->hasAttribute( X_DIMENSION ) )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "Missing %s attribute in <%s> tag.",
+     sprintf( mess, "Missing %s attribute in \"%s\" tag.",
               C_DIMENSION, C_OMEGA );
      SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
@@ -1200,7 +1200,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
       sprintf( mess, 
-	       "Invalid %s attribute value, %s, in <%s> tag.", 
+	       "Invalid %s attribute value, %s, in \"%s\" tag.", 
 	       C_DIMENSION, XMLString::transcode( xml_omega_dim ), C_OMEGA );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
@@ -1209,7 +1209,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   if( !omega->hasAttribute( X_STRUCT ) )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "Missing %s attribute in <%s> tag.",
+     sprintf( mess, "Missing %s attribute in \"%s\" tag.",
               C_STRUCT, C_OMEGA );
      SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
@@ -1229,7 +1229,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
       sprintf( mess, 
-	       "Invalid %s attribute value, %s, in <%s> tag.", 
+	       "Invalid %s attribute value, %s, in \"%s\" tag.", 
 	       C_STRUCT, XMLString::transcode( xml_omega_struct ), C_OMEGA );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
@@ -1241,7 +1241,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
     if( omega_in_list->getLength() != 1 )
     {
        char mess[ SpkCompilerError::maxMessageLen() ];
-       sprintf( mess, "There is one and only one <%s> subtag in <%s> tag in the sourceML document.",
+       sprintf( mess, "There is one and only one \"%s\" subtag in \"%s\" tag in the sourceML document.",
                 C_IN, C_OMEGA );
        SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
        throw e;
@@ -1253,7 +1253,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
       sprintf( mess,
-	       "The number of <%s> subtags does not match with the %s attribute specification for <%s> tag.", 
+	       "The number of \"%s\" subtags does not match with the %s attribute specification for \"%s\" tag.", 
                C_VALUE, C_LENGTH, C_OMEGA );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
@@ -1289,7 +1289,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   { 
      // v0.1 supports only one (full) Sigma specification
      char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "There is one and only one <%s> tag in the sourceML document.",
+     sprintf( mess, "There is one and only one \"%s\" tag in the sourceML document.",
               C_SIGMA );
      SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
@@ -1298,7 +1298,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   if( !sigma->hasAttribute( X_DIMENSION ) )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "Missing %s attribute in <%s> tag.",
+     sprintf( mess, "Missing %s attribute in \"%s\" tag.",
               C_DIMENSION, C_SIGMA );
      SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
@@ -1308,7 +1308,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
       sprintf( mess, 
-	       "Invalid %s attribute value, %s, in <%s> tag.", 
+	       "Invalid %s attribute value, %s, in \"%s\" tag.", 
 	       C_DIMENSION, XMLString::transcode( xml_sigma_dim ), C_OMEGA );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
@@ -1317,7 +1317,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   if( !sigma->hasAttribute( X_STRUCT ) )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "Missing %s attribute in <%s> tag.",
+     sprintf( mess, "Missing %s attribute in \"%s\" tag.",
               C_STRUCT, C_SIGMA );
      SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
@@ -1337,7 +1337,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
       sprintf( mess, 
-	       "Invalid %s attribute value, %s, in <%s> tag.", 
+	       "Invalid %s attribute value, %s, in \"%s\" tag.", 
 	       C_STRUCT, XMLString::transcode( xml_sigma_struct ), C_SIGMA );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
@@ -1350,7 +1350,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
     if( sigma_in_list->getLength() != 1 )
     {
        char mess[ SpkCompilerError::maxMessageLen() ];
-       sprintf( mess, "There is one and only one <%s> subtag in <%s> tag in the sourceML document.",
+       sprintf( mess, "There is one and only one \"%s\" subtag in \"%s\" tag in the sourceML document.",
                 C_IN, C_SIGMA );
        SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
        throw e;
@@ -1362,7 +1362,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
       sprintf( mess,
-	       "The number of <%s> subtags does not match with the %s attribute specification for <%s> tag.", 
+	       "The number of \"%s\" subtags does not match with the %s attribute specification for \"%s\" tag.", 
                C_VALUE, C_LENGTH, C_SIGMA );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
@@ -1441,7 +1441,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       if( simulations->getLength() > 1 )
       {
          char mess[ SpkCompilerError::maxMessageLen() ];
-         sprintf( mess, "There may not be more than one <%s> tag in the sourceML document.  You got %d.",
+         sprintf( mess, "There may not be more than one \"%s\" tag in the sourceML document.  You got %d.",
                   C_SIMULATION, simulations->getLength() );
          SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
          throw e;
@@ -1451,7 +1451,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       if( !simulation->hasAttribute( X_SEED ) )
       {
          char mess[ SpkCompilerError::maxMessageLen() ];
-         sprintf( mess, "Missing %s attribute in <%s> tag.",
+         sprintf( mess, "Missing %s attribute in \"%s\" tag.",
                   C_SEED, C_SIMULATION );
          SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
          throw e;
@@ -1498,7 +1498,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       if( pop_stat_list->getLength() > 1 )
       {
           char mess[ SpkCompilerError::maxMessageLen() ];
-	  sprintf( mess, "There may be at most one <%s> tag in the sourceML document.", 
+	  sprintf( mess, "There may be at most one \"%s\" tag in the sourceML document.", 
 	           C_POP_STAT );
           SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
           throw e;
@@ -1507,7 +1507,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       if( !pop_stat->hasAttribute( X_COVARIANCE_FORM ) && myIsStat )
       {
           char mess[ SpkCompilerError::maxMessageLen() ];
-	  sprintf( mess, "Missing %s attribute in <%s> tag.", 
+	  sprintf( mess, "Missing %s attribute in \"%s\" tag.", 
 	           C_COVARIANCE_FORM, C_POP_STAT );
           SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
           throw e;
@@ -1605,7 +1605,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
       if( simulations->getLength() != 1 )
       {
          char mess[ SpkCompilerError::maxMessageLen() ];
-         sprintf( mess, "At most one <%s> tag may appear in the sourceML document.",
+         sprintf( mess, "At most one \"%s\" tag may appear in the sourceML document.",
                   C_SIMULATION );
          SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
          throw e;
@@ -1615,7 +1615,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
       if( !simulation->hasAttribute( X_SEED ) )
       {
          char mess[ SpkCompilerError::maxMessageLen() ];
-         sprintf( mess, "Missing %s attribute in <%s> tag.",
+         sprintf( mess, "Missing %s attribute in \"%s\" tag.",
                   C_SEED, C_SIMULATION );
          SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
          throw e;
@@ -1661,7 +1661,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   if( !ind_analysis->hasAttribute( X_IS_ESTIMATION ) )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "Missing %s attribute in <%s> tag.", C_IS_ESTIMATION, C_IND_ANALYSIS );
+     sprintf( mess, "Missing %s attribute in \"%s\" tag.", C_IS_ESTIMATION, C_IND_ANALYSIS );
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
   }
@@ -1673,7 +1673,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
       myIsEstimate = false;
   else
   {
-     fprintf( stderr, "Warning: Invalid %s attribute value, %s, in <%s> tag.  Applied \"%s\".",
+     fprintf( stderr, "Warning: Invalid %s attribute value, %s, in \"%s\" tag.  Applied \"%s\".",
               C_IS_ESTIMATION, xml_is_estimation, C_IND_ANALYSIS, C_YES );
      myIsEstimate = true;
   }
@@ -1747,7 +1747,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   if( data_labels_list->getLength() != 1 )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "There may be one and only one <%s> tag under <%s> tag.",
+     sprintf( mess, "There may be one and only one \"%s\" tag under \"%s\" tag.",
               C_DATA_LABELS, C_IND_ANALYSIS );
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
@@ -1760,7 +1760,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
      if( nLabels < 1 )
      {
         char mess[ SpkCompilerError::maxMessageLen() ];
-        sprintf( mess, "There must be at least one <%s> tag under <%s> tag.",
+        sprintf( mess, "There must be at least one \"%s\" tag under \"%s\" tag.",
                  C_LABEL, C_DATA_LABELS );
         SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
         throw e;
@@ -1775,7 +1775,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
          if( !xml_label->hasAttribute( X_NAME ) )
          {
             char mess[ SpkCompilerError::maxMessageLen() ];
-            sprintf( mess, "Missing %s attribute in <%s> tag.",
+            sprintf( mess, "Missing %s attribute in \"%s\" tag.",
                      C_NAME, C_LABEL );
             SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
             throw e;
@@ -1839,7 +1839,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   if( theta_list->getLength() != 1 )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "There may be one and only one <%s> tag under <%s> tag.",
+     sprintf( mess, "There may be one and only one \"%s\" tag under \"%s\" tag.",
               C_THETA, C_IND_ANALYSIS );
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
@@ -1848,7 +1848,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   if( !theta->hasAttribute( X_LENGTH ) )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "Missing %s attribute in <%s> tag.",
+     sprintf( mess, "Missing %s attribute in \"%s\" tag.",
               C_LENGTH, C_THETA );
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
@@ -1859,7 +1859,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   if( !XMLString::textToBin( xml_theta_len, myThetaLen ) )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Invalid %s attribute value, %s, in <%s> tag?", 
+      sprintf( mess, "Invalid %s attribute value, %s, in \"%s\" tag?", 
 	       C_LENGTH, XMLString::transcode( xml_theta_len ), C_THETA );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
@@ -1871,7 +1871,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
     if( theta_in_list->getLength() != 1 )
     {
        char mess[ SpkCompilerError::maxMessageLen() ];
-       sprintf( mess, "There may be one and only one <%s> tag under <%s> tag.",
+       sprintf( mess, "There may be one and only one \"%s\" tag under \"%s\" tag.",
                 C_IN, C_THETA );
        SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
        throw e;
@@ -1882,7 +1882,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
     if( myThetaLen != value_list->getLength() )
     {
        char mess[ SpkCompilerError::maxMessageLen() ];
-       sprintf( mess, "The number of <%s>s under <%s> tag does not match with the <%s>'s %s attribute specification.",
+       sprintf( mess, "The number of \"%s\"s under \"%s\" tag does not match with the \"%s\"'s %s attribute specification.",
                 C_VALUE, C_IN, C_THETA, C_LENGTH );
        SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
        throw e;
@@ -1914,7 +1914,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
     if( theta_low_list->getLength() != 1 )
     {
        char mess[ SpkCompilerError::maxMessageLen() ];
-       sprintf( mess, "There may be one and only one <%s> tag under <%s> tag.",
+       sprintf( mess, "There may be one and only one \"%s\" tag under \"%s\" tag.",
                 C_LOW, C_THETA );
        SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
        throw e;
@@ -1924,7 +1924,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
     if( myThetaLen != value_list->getLength() )
     {
        char mess[ SpkCompilerError::maxMessageLen() ];
-       sprintf( mess, "The number of <%s>s under <%s> tag does not match with the <%s>'s %s attribute specification.",
+       sprintf( mess, "The number of \"%s\"s under \"%s\" tag does not match with the \"%s\"'s %s attribute specification.",
                 C_VALUE, C_LOW, C_THETA, C_LENGTH );
        SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
        throw e;
@@ -1950,7 +1950,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
     if( theta_up_list->getLength() != 1 )
     {
        char mess[ SpkCompilerError::maxMessageLen() ];
-       sprintf( mess, "There may be one and only one <%s> tag under <%s> tag.",
+       sprintf( mess, "There may be one and only one \"%s\" tag under \"%s\" tag.",
                 C_UP, C_THETA );
        SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
        throw e;
@@ -1960,7 +1960,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
     if( myThetaLen != value_list->getLength() )
     {
        char mess[ SpkCompilerError::maxMessageLen() ];
-       sprintf( mess, "The number of <%s>s under <%s> tag does not match with the <%s>'s %s attribute specification.",
+       sprintf( mess, "The number of \"%s\"s under \"%s\" tag does not match with the \"%s\"'s %s attribute specification.",
                 C_VALUE, C_UP, C_THETA, C_LENGTH );
        SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
        throw e;
@@ -1998,7 +1998,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   {
      // v0.1 supports only one Omega specification
      char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "There may be one and only one <%s> tag under <%s> tag.",
+     sprintf( mess, "There may be one and only one \"%s\" tag under \"%s\" tag.",
               C_OMEGA, C_IND_ANALYSIS );
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
@@ -2007,7 +2007,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   if( !omega->hasAttribute( X_DIMENSION ) )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "Missing %s attribute in <%s> tag.",
+     sprintf( mess, "Missing %s attribute in \"%s\" tag.",
               C_DIMENSION, C_OMEGA );
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
@@ -2025,7 +2025,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   if( !omega->hasAttribute( X_STRUCT ) )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "Missing %s attribute in <%s> tag.",
+     sprintf( mess, "Missing %s attribute in \"%s\" tag.",
               C_STRUCT, C_OMEGA );
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
@@ -2051,7 +2051,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
     if( omega_in_list->getLength() != 1 )
     {
        char mess[ SpkCompilerError::maxMessageLen() ];
-       sprintf( mess, "There may be one and only one <%s> tag under <%s> tag.",
+       sprintf( mess, "There may be one and only one \"%s\" tag under \"%s\" tag.",
                 C_IN, C_OMEGA );
        SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
        throw e;
@@ -2062,7 +2062,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
     if( myOmegaOrder != value_list->getLength() )
     {
        char mess[ SpkCompilerError::maxMessageLen() ];
-       sprintf( mess, "The number of <%s>s under <%s> does not match with the %s attribute value specified in <%s>.",
+       sprintf( mess, "The number of \"%s\"s under \"%s\" does not match with the %s attribute value specified in \"%s\".",
                 C_VALUE, C_IN, C_LENGTH, C_OMEGA );
        SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
        throw e;
@@ -2131,7 +2131,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
       if( ind_stat_list->getLength() != 1 )
       {
          char mess[ SpkCompilerError::maxMessageLen() ];
-         sprintf( mess, "There may be one and only one <%s> tag in the sourceML document.",
+         sprintf( mess, "There may be one and only one \"%s\" tag in the sourceML document.",
                   C_IND_STAT );
          SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
          throw e;
@@ -3782,39 +3782,7 @@ void NonmemTranslator::generateIndDriver( ) const
     }
   else
     {
-      const Symbol* pDV = table->findi( KeyStr.DV );
-      if( pDV == Symbol::empty() )
-	{
-	  // "DV" may be registered as a synonym.  
-	  // In that case, have to search through the entries
-	  // in the map.
-	  const map<const string,Symbol> *t = table->getTable();
-	  map<const string,Symbol>::const_iterator itr = t->begin();
-	  for( ; itr != t->end(); itr++ )
-	    {
-	      if( SymbolTable::key( itr->second.synonym ) == KeyStr.DV )
-		{
-		  pDV = &itr->second;
-		  break;
-		}
-	    }
-	}
-      if( pDV == Symbol::empty() )
-	{
-	  char mess[ SpkCompilerError::maxMessageLen() ];
-	  sprintf( mess, "Label, \"DV\", is not defined." );
-	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
-	  throw e;
-	}
-      oDriver << "double c_y[] = { ";
-      for( int j=0; j<myRecordNums[0]; j++ )
-	{
-	  if( j > 0 )
-	    oDriver << ", ";
-	  oDriver << atof( pDV->initial[0][j].c_str() );
-	}
-      oDriver << " };" << endl;
-      oDriver << "valarray<double> y( c_y, nY );" << endl; 
+      oDriver << "valarray<double> y = set.getAllMeasurements();" << endl;
       oDriver << "haveCompleteData = true;" << endl;
       oDriver << endl;
     }
@@ -3854,7 +3822,7 @@ void NonmemTranslator::generateIndDriver( ) const
       oDriver << "     sprintf( mess, \"Failed in population parameter estimation.\\n\" );" << endl;
       oDriver << "     e.push( SpkError::SPK_OPT_ERR, mess, __LINE__, __FILE__ );" << endl;
       oDriver << "     oRuntimeError << e << endl;" << endl;
-      oDriver << "     cerr << e << endl;" << endl;
+      oDriver << "     cerr << e << endl;" << endl; 
       oDriver << "     isOptSuccess = false;" << endl;
       oDriver << "  }" << endl;
       oDriver << "  catch( ... )" << endl;
@@ -4617,42 +4585,7 @@ void NonmemTranslator::generatePopDriver() const
     }
   else
     {
-      const Symbol* pDV = table->findi( KeyStr.DV );
-      if( pDV == Symbol::empty() )
-	{
-	  // "DV" may be registered as a synonym.  
-	  // In that case, have to search through the entries
-	  // in the map.
-	  const map<const string,Symbol> *t = table->getTable();
-	  map<const string,Symbol>::const_iterator itr = t->begin();
-	  for( ; itr != t->end(); itr++ )
-	    {
-	      if( SymbolTable::key( itr->second.synonym ) == KeyStr.DV )
-		{
-		  pDV = &itr->second;
-		  break;
-		}
-	    }
-	}
-      if( pDV == Symbol::empty() )
-	{
-	  char mess[ SpkCompilerError::maxMessageLen() ];
-	  sprintf( mess, "\"DV\" is not defined." );
-	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
-	  throw e;
-	}
-      oDriver << "double c_y[] = { ";
-      for( int i=0; i<myPopSize; i++ )
-	{
-	  for( int j=0; j<myRecordNums[i]; j++ )
-	    {
-	      if( !(i==0&&j==0) )
-		oDriver << ", ";
-	      oDriver << atof( pDV->initial[i][j].c_str() );
-	    }
-	}
-      oDriver << " };" << endl;
-      oDriver << "valarray<double> y( c_y, nY );" << endl; 
+      oDriver << "valarray<double> y = set.getAllMeasurements();" << endl;
       oDriver << "haveCompleteData = true;" << endl;
       oDriver << endl;
     }
