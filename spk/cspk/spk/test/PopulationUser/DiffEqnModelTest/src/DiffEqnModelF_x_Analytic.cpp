@@ -270,6 +270,7 @@ static const valarray<double> fi_k(
 
 bool DiffEqnModel::doDataMean_indPar( valarray<double>& fi_bOut ) const 
 {
+  fi_bOut.resize( _Ni * _b.size() );
   if ( isCachedFibValid )
   {
     fi_bOut = cachedFib;
@@ -340,18 +341,19 @@ bool DiffEqnModel::doDataMean_indPar( valarray<double>& fi_bOut ) const
 
 bool DiffEqnModel::doDataMean_popPar( valarray<double>& fi_alpOut ) const 
 {
-	 if ( isCachedFiaValid )
-	 {
-       fi_alpOut = cachedFia;
-       return !allZero(fi_alpOut);
-	 }
+  fi_alpOut.resize( _Ni * _P );
 
-#ifndef DERIV_TEST
+  if ( isCachedFiaValid )
+    {
+      fi_alpOut = cachedFia;
+      return !allZero(fi_alpOut);
+    }
 
   cachedFia.resize( _Ni * _P );
-  cachedFia = 0.0;
-  
+  cachedFia = 0.0;  
   cachedFi.resize( _Ni );
+
+#ifndef DERIV_TEST
 
   valarray<double> fiOut(_Ni);
   //dataMean(fiOut);

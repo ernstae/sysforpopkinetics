@@ -882,9 +882,9 @@ tolTheta,
     //------------------------------------------------------------
 
     double           objNonmem;
-    valarray<double> thetaNonmem;
-    valarray<double> omegaNonmem;
-    valarray<double> sigmaNonmem;
+    valarray<double> thetaNonmem( thetaSpk.size() );
+    valarray<double> omegaNonmem( omegaSpk.size() );
+    valarray<double> sigmaNonmem( sigmaSpk.size() );
 
     if ( objective == MODIFIED_LAPLACE )
     {
