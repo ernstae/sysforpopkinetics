@@ -117,8 +117,8 @@ my @ancestor_list = get_ancestors(@ARGV);
 
 # Use dump_spkdb.pl to dump spkdb. We will keep schema.sql and basedata.sql,
 # but provide an empty userdata.sql.  The rest of the program is designed to
-# build a userdata.sql file for just the jobs selected by the users, their
-# ancestor jobs, and related rows of the history, model, dataset and user tables.
+# build a userdata.sql file for just the jobs selected on the command line, along with
+# their ancestor jobs, and related rows of the history, model, dataset and user tables.
 system("$dump_spkdb --noprefix --nouserdata") == 0 
     or death("$dump_spkdb failed");
 open FL, "> userdata.sql";  
@@ -264,9 +264,9 @@ extract_model_or_dataset("model",   keys %model_list);
 extract_model_or_dataset("dataset", keys %dataset_list);
 
 
-# Add all developers to the list of users
+# Add all developers and useradmin to the list of users
 
-my $sql = "select user_id from user where dev=1";
+my $sql = "select user_id from user where dev=1 or username='useradmin'";
 my $sth_in = $spkdb_dbh->prepare($sql)
     or death("prepare of '$sql' failed");
 $sth_in->execute()
