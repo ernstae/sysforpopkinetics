@@ -172,8 +172,17 @@ class NonmemTranslator : public ClientTranslator
   // The definition file for Omega class.
   const char * fOmega_cpp;
  
-  // The driver definition.
+  // The SPK driver definition.
   const char * fDriver_cpp;
+
+  // A temporary file for runtime error messages.
+  const char * fSpkRuntimeError_tmp;
+
+  // The plain text file containg g++ or SPK Compiler errors
+  const char * fSoftwareError_xml;
+
+  // The result XML
+  const char * fResult_xml;
 
   // The string for the file burner.
   const char *BURNER;
