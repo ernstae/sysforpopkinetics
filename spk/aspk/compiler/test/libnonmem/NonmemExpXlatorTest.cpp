@@ -33,21 +33,14 @@ extern DOMDocument * gSpkExpTree;
 
 void NonmemExpXlatorTest::setUp()
 {
-}
-void NonmemExpXlatorTest::tearDown()
-{
-}
-void NonmemExpXlatorTest::testParse()
-{
-  yydebug = 1;
+  yydebug = 0;
 
   // Populate the symbol table with pre-defined symbols.
   //
-  FILE * file = fopen( "exp.in", "r" );
+  file = fopen( "pk", "r" );
   if( !file )
     {
       fprintf( stderr, "Failed to open %s!\n", "exp.in" );
-      delete gSpkExpSymbolTable;
       CPPUNIT_ASSERT_MESSAGE( "???", false );
     }
   yyin = file;
@@ -58,6 +51,24 @@ void NonmemExpXlatorTest::testParse()
   gSpkExpTreeGenerator = new ExpTreeGenerator;
   gSpkExpTree = gSpkExpTreeGenerator->getRoot();
   gSpkExpSymbolTable = new SymbolTable( client::NONMEM );
+}
+void NonmemExpXlatorTest::tearDown()
+{
+  delete gSpkExpSymbolTable;
+  delete gSpkExpTreeGenerator;
+}
+void NonmemExpXlatorTest::testParse()
+{
+  Symbol dose( "DOSE", Symbol::VECTOR, Symbol::DOUBLE, false );
+  gSpkExpSymbolTable->insert( dose );
+  Symbol w( "W", Symbol::VECTOR, Symbol::DOUBLE, false );
+  gSpkExpSymbolTable->insert( w );
+  Symbol wt( "WT", Symbol::VECTOR, Symbol::DOUBLE, false );
+  gSpkExpSymbolTable->insert( wt );
+  Symbol time( "TIME", Symbol::VECTOR, Symbol::DOUBLE, false );
+  gSpkExpSymbolTable->insert( time );
+  Symbol ds( "DS", Symbol::VECTOR, Symbol::DOUBLE, false );
+  gSpkExpSymbolTable->insert( ds );
 
   yyparse();
 
@@ -78,9 +89,6 @@ void NonmemExpXlatorTest::testParse()
   cout << "Read " << gSpkExpLines << " lines of code from " << "exp.in" << endl;
   cout << "Encountered " << gSpkExpErrors << " errors." << endl;
   
-  delete gSpkExpSymbolTable;
-  delete gSpkExpTreeGenerator;
-  XMLPlatformUtils::Terminate();
 
 }
 CppUnit::Test * NonmemExpXlatorTest::suite()
