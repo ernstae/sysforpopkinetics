@@ -3,9 +3,11 @@ bin_PROGRAMS = testall
 testall_SOURCES = \
 	compareToKnown.cpp \
 	DiagCovTest.cpp \
+	IndPredModelTest.cpp \
 	testall.cpp \
 	compareToKnown.h \
 	DiagCovTest.h \
+	IndPredModelTest.h \
 	../config.h
 
 testall_CXXFLAGS = -I/usr/local/cppunit/include
@@ -15,4 +17,5 @@ testall_LDFLAGS = -lspkpred -lspk -lspkopt /usr/local/lib/libnagc.a -lpthread -l
 INCLUDES = -I@top_srcdir@/
 pkginclude_HEADERS = \
 	compareToKnown.h \
-	DiagCovTest.h
+	DiagCovTest.h \
+	IndPredModelTest.h

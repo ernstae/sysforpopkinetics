@@ -5,6 +5,7 @@
 #include <cppunit/ui/text/TestRunner.h>
 
 #include "src/DiagCovTest.h"
+#include "src/IndPredModelTest.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -28,7 +29,8 @@ int main( int argc, const char * argv[] )
   vector<CppUnit::Test*> tests_to_be_executed;
 
   master_list_of_tests[ "DiagCovTest" ]               = DiagCovTest::suite();
-  
+  master_list_of_tests[ "IndPredModelTest  " ]        = IndPredModelTest  ::suite();
+
   //
   // This is the case where user didn't select specific unit tests.
   // That means, run them all in the single process mode.
