@@ -28,6 +28,8 @@ using namespace xercesc;
 
 namespace{
   const unsigned int maxChars = 2047;
+  bool deleteBiproducts = true;
+
   char fPrefix[128];
   char fData[128];
   char fSource[128];
@@ -39,6 +41,7 @@ namespace{
   char fPredDriver_cpp[128];
   char fDriver[128];
   char fDriver_cpp[128];
+  char fReport_xml[128];
 
   //============================================
   // Optimizer controls
@@ -69,12 +72,19 @@ namespace{
   //    1      2.0     20.0      0
   //    1      2.5     30.0      0
   //============================================
-  const int    nRecords  =  3;
+  /*
+  const int    nRecords  =  4;
   const int    nItems    =  4;
   const double record0[] = { 1, 0.0,  0.0, 0 };
   const double record1[] = { 1, 1.0, 10.0, 0 };
   const double record2[] = { 1, 2.0, 20.0, 0 };
   const double record3[] = { 1, 3.0, 30.0, 0 }; 
+  */
+  const int    nRecords  =  3;
+  const int    nItems    =  4;
+  const double record0[] = { 1, 0.0, 1.8, 0 };
+  const double record1[] = { 1, 1.0, 2.0, 0 };
+  const double record2[] = { 1, 2.0, 2.2, 0 };
 
   double const * record[nRecords];
 
@@ -97,11 +107,10 @@ namespace{
   // the constraints and initial values for
   // theta.
   //============================================
-  //  const int    thetaLen                = 4;
-  const int thetaLen = 1;
-  const double theta_in [ thetaLen ]   = {  5.0 };
-  const double theta_up [ thetaLen ]   = { 10.0 };
-  const double theta_low[ thetaLen ]   = {  0.0 };
+  const int    thetaLen = 1;
+  const double theta_in [ thetaLen ]   = {  2.0 };
+  const double theta_up [ thetaLen ]   = {  4.0 };
+  const double theta_low[ thetaLen ]   = { -4.0 };
   const bool   theta_fix[ thetaLen ]   = { false };
 
   //============================================
@@ -113,7 +122,7 @@ namespace{
   const int    omegaDim                = 1;
   const Symbol::Structure omegaStruct  = Symbol::DIAGONAL;
   const int    omegaOrder              = 1;
-  const double omega_in[ omegaOrder ]  = { 1.0 };
+  const double omega_in[ omegaOrder ]  = { 2.0 };
   const bool   omega_fix[ omegaOrder ] = { false };
 
   //============================================
@@ -152,49 +161,24 @@ namespace{
   //============================================
   // The PRED model
   //============================================
-  const char PRED[] = "F = THETA(1) + THETA(2) * TIME\nY = F + ETA(1)";
+  const char PRED[] = "F = THETA(1)\nY = EXP( ETA(1) )\n";
+
+  //============================================
+  // XML strings
+  //============================================
+  XMLCh * X_ERROR_MESSAGES;
+  XMLCh * X_IND_ANALYSIS_RESULT;
+  XMLCh * X_PRESENTATION_DATA;
+  XMLCh * X_IND_STDERROR_OUT;
+  XMLCh * X_IND_COVARIANCE_OUT;
+  XMLCh * X_IND_INVERSE_COVARIANCE_OUT;
+  XMLCh * X_IND_CORRELATION_OUT;
+  XMLCh * X_IND_COEFFICIENT_OUT;
+  XMLCh * X_IND_CONFIDENCE_OUT;
+  XMLCh * X_VALUE;
 };
 
 void NonmemTranslatorIndTest::setUp()
-{
-  sprintf( fDriver, "driver" );
-  sprintf( fDriver_cpp, "driver.cpp" );
-
-  label_alias[strID]   = NULL;
-  label_alias[strTIME] = NULL;
-  label_alias[strDV]   = strCP;
-
-  record[0]  = record0;
-  record[1]  = record1;
-  record[2]  = record2;
-  record[3]  = record3;
-}
-void NonmemTranslatorIndTest::tearDown()
-{
-  remove( fData );
-  remove( fSource );
-  remove( fIndDataDriver );
-  remove( fIndDataDriver_cpp );
-  remove( fDataSetDriver );
-  remove( fDataSetDriver_cpp );
-  remove( fPredDriver );
-  remove( fPredDriver_cpp );
-  remove( fDriver );
-  remove( fDriver_cpp );
-  remove( "IndData.h" );
-  remove( "DataSet.h" );
-  remove( "Pred.h" );
-  remove( "predEqn.cpp" );
-  remove( "generatedMakefile" );
-  XMLPlatformUtils::Terminate();
-
-}
-//******************************************************************************
-//
-// Test a problem that takes a data set with the ID field filled in.
-//
-//******************************************************************************
-void NonmemTranslatorIndTest::testParseIndSource()
 {
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   //
@@ -213,6 +197,74 @@ void NonmemTranslatorIndTest::testParseIndSource()
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
 
+  deleteBiproducts = true;
+
+  sprintf( fDriver, "driver" );
+  sprintf( fDriver_cpp, "driver.cpp" );
+  sprintf( fReport_xml, "result.xml" );
+
+  label_alias[strID]   = NULL;
+  label_alias[strTIME] = NULL;
+  label_alias[strDV]   = strCP;
+
+  record[0]  = record0;
+  record[1]  = record1;
+  record[2]  = record2;
+
+  X_ERROR_MESSAGES             = XMLString::transcode( "error_messages" );
+  X_IND_ANALYSIS_RESULT        = XMLString::transcode( "ind_analysis_result" );
+  X_PRESENTATION_DATA          = XMLString::transcode( "presentation_data" );
+  X_IND_STDERROR_OUT           = XMLString::transcode( "ind_stderror_out" );
+  X_IND_COVARIANCE_OUT         = XMLString::transcode( "ind_covariance_out" );
+  X_IND_INVERSE_COVARIANCE_OUT = XMLString::transcode( "ind_inverse_covariance_out" );
+  X_IND_CORRELATION_OUT        = XMLString::transcode( "ind_correlation_out" );
+  X_IND_COEFFICIENT_OUT        = XMLString::transcode( "ind_coefficient_out" );
+  X_IND_CONFIDENCE_OUT         = XMLString::transcode( "ind_confidence_out" );
+  X_VALUE                      = XMLString::transcode( "value" );
+}
+void NonmemTranslatorIndTest::tearDown()
+{
+  XMLString::release( &X_ERROR_MESSAGES );
+  XMLString::release( &X_IND_ANALYSIS_RESULT );
+  XMLString::release( &X_PRESENTATION_DATA );
+  XMLString::release( &X_IND_STDERROR_OUT );
+  XMLString::release( &X_IND_COVARIANCE_OUT );
+  XMLString::release( &X_IND_INVERSE_COVARIANCE_OUT );
+  XMLString::release( &X_IND_CORRELATION_OUT );
+  XMLString::release( &X_IND_COEFFICIENT_OUT );
+  XMLString::release( &X_IND_CONFIDENCE_OUT );
+  XMLString::release( &X_VALUE );
+  
+  if( deleteBiproducts )
+    {
+      remove( fData );
+      remove( fSource );
+      remove( fIndDataDriver );
+      remove( fIndDataDriver_cpp );
+      remove( fDataSetDriver );
+      remove( fDataSetDriver_cpp );
+      remove( fPredDriver );
+      remove( fPredDriver_cpp );
+      remove( fDriver );
+      remove( fDriver_cpp );
+      remove( "IndData.h" );
+      remove( "DataSet.h" );
+      remove( "Pred.h" );
+      remove( "predEqn.cpp" );
+      remove( "generatedMakefile" );
+      remove( "result.xml" );
+    }
+  
+  XMLPlatformUtils::Terminate();
+
+}
+//******************************************************************************
+//
+// Test a problem that takes a data set with the ID field filled in.
+//
+//******************************************************************************
+void NonmemTranslatorIndTest::testParseIndSource()
+{
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   //
   // Generating a dataML document (with ID)
@@ -264,6 +316,7 @@ void NonmemTranslatorIndTest::testParseIndSource()
       char buf[maxChars + 1];
       sprintf( buf, "An error occurred during parsing %s.\n   Message: %s\n",
 	       fData, XMLString::transcode(e.getMessage() ) );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
   catch( const DOMException& e )
@@ -275,6 +328,7 @@ void NonmemTranslatorIndTest::testParseIndSource()
           char buf[maxChars + 1];
           sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
                    fData, e.code, XMLString::transcode(errText) );
+	  deleteBiproducts = false;
           CPPUNIT_ASSERT_MESSAGE( buf, false );
 	}
     }
@@ -283,6 +337,7 @@ void NonmemTranslatorIndTest::testParseIndSource()
       XMLPlatformUtils::Terminate();
       char buf[maxChars + 1];
       sprintf( buf, "An unknown error occurred during parsing %s.\n", fData );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
   
@@ -407,10 +462,12 @@ void NonmemTranslatorIndTest::testParseIndSource()
       char buf[maxChars + 1];
       sprintf( buf, "An error occurred during parsing %s.\n   Message: %s\n",
 	       fSource, XMLString::transcode(e.getMessage() ) );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( buf, false );
-    }
+     }
   catch( const DOMException& e )
     {
+      deleteBiproducts = false;
       XMLCh errText[maxChars + 1]; 
       if (DOMImplementation::loadDOMExceptionMsg(e.code, errText, maxChars))
 	{
@@ -426,6 +483,7 @@ void NonmemTranslatorIndTest::testParseIndSource()
       XMLPlatformUtils::Terminate();
       char buf[maxChars + 1];
       sprintf( buf, "An unknown error occurred during parsing %s.\n", fSource );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
 
@@ -563,6 +621,7 @@ void NonmemTranslatorIndTest::testParseIndSource()
     {
       char message[256];
       sprintf( message, "Compilation of the generated %s failed!", fIndDataDriver_cpp );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   sprintf( command, "./%s", fIndDataDriver );
@@ -570,8 +629,9 @@ void NonmemTranslatorIndTest::testParseIndSource()
     {
       char message[256];
       sprintf( message, "A test driver, %s, failed!", fIndDataDriver );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, false );
-    }
+   }
   
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   //
@@ -619,10 +679,24 @@ void NonmemTranslatorIndTest::testParseIndSource()
 
   // The current values of RES/WRES/PRED should be always kept in memory
   // for displaying tables/scatterplots.
-  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strRES  << ".size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strWRES << ".size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strPRED << ".size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strF    << ".size() );" << endl;
+  oDataSetDriver << "MY_ASSERT_EQUAL( n, set.data[0]->" << strRES  << ".size() );" << endl;
+  oDataSetDriver << "MY_ASSERT_EQUAL( n, set.data[0]->" << strWRES << ".size() );" << endl;
+  oDataSetDriver << "MY_ASSERT_EQUAL( n, set.data[0]->" << strPRED << ".size() );" << endl;
+  oDataSetDriver << "MY_ASSERT_EQUAL( n, set.data[0]->" << strF    << ".size() );" << endl;
+  oDataSetDriver << endl;
+  
+  oDataSetDriver << "valarray<double> y;" << endl;
+  oDataSetDriver << "valarray<int>    N;" << endl;
+  oDataSetDriver << "int total = set.getMeasurements( y, N );" << endl;
+  oDataSetDriver << "MY_ASSERT_EQUAL( n, total );" << endl;
+  oDataSetDriver << "MY_ASSERT_EQUAL( n, N[0] );" << endl;
+  oDataSetDriver << "for( int i=0; i<n; i++ )" << endl;
+  oDataSetDriver << "{" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( set.data[0]->" << strDV << "[i], y[i] );" << endl;
+  oDataSetDriver << "}" << endl;
+
+  oDataSetDriver << endl;
+  oDataSetDriver << "return 0;" << endl;
   oDataSetDriver << "}" << endl;
   
   oDataSetDriver.close();
@@ -632,6 +706,7 @@ void NonmemTranslatorIndTest::testParseIndSource()
     {
       char message[256];
       sprintf( message, "Compilation of the generated %s failed!", fDataSetDriver_cpp );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   sprintf( command, "./%s", fDataSetDriver );
@@ -639,6 +714,7 @@ void NonmemTranslatorIndTest::testParseIndSource()
     {
       char message[256];
       sprintf( message, "A test driver, %s, failed!", fDataSetDriver );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   
@@ -714,18 +790,17 @@ void NonmemTranslatorIndTest::testParseIndSource()
   oPredDriver << "                 indepVar, depVar );" << endl;
   // Test if F(j) gets placed in the proper location in the depVar vector.
   oPredDriver << "      double actualF   = CppAD::Value(depVar[ fOffset + j ]);"  << endl;
-  oPredDriver << "      double expectedF = CppAD::Value(indepVar[thetaOffset+0] " << endl;
-  oPredDriver << "                       + indepVar[thetaOffset+1] * set.data[who]->" << strTIME << "[j] );" << endl;
+  oPredDriver << "      double expectedF = CppAD::Value(indepVar[thetaOffset+0] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedF, actualF );" << endl;
   // Test if Y(j) gets placed in the proper location in the depVar vector.
   oPredDriver << "      double actualY   = CppAD::Value(depVar[ yOffset + j ]);" << endl;
-  oPredDriver << "      double expectedY = expectedF + CppAD::Value(indepVar[etaOffset+0]);" << endl;
+  oPredDriver << "      double expectedY = exp( CppAD::Value(indepVar[etaOffset+0]) );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedY, actualY );" << endl;
   oPredDriver << "   } // End of the first complete iteration over j" << endl;
   // Test if the DataSet objects hold the complete set of computed values from the just-finished iteration.
   oPredDriver << "   for( int j=0; j<n; j++ )" << endl;
   oPredDriver << "   {" << endl;
-  oPredDriver << "      double expectedPred = (C1*j) + (C1*j) * CppAD::Value(set.data[who]->" << strTIME << "[j]);" << endl;
+  oPredDriver << "      double expectedPred = (C1*j);" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][0] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA << "[j][0] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << strPRED << "[j] );" << endl;
@@ -752,18 +827,17 @@ void NonmemTranslatorIndTest::testParseIndSource()
   oPredDriver << "                 indepVar, depVar );" << endl;
   // Test if F(j) gets placed in the proper location in the depVar vector.
   oPredDriver << "      double actualF   = CppAD::Value(depVar[ fOffset + j ]);" << endl;
-  oPredDriver << "      double expectedF = CppAD::Value(indepVar[thetaOffset+0] " << endl;
-  oPredDriver << "                       + indepVar[thetaOffset+0]*set.data[who]->" << strTIME << "[j] );" << endl;
+  oPredDriver << "      double expectedF = CppAD::Value(indepVar[thetaOffset+0]);" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedF, actualF );" << endl;
   // Test if Y(j) gets placed in the proper location in the depVar vector.
   oPredDriver << "      double actualY   = CppAD::Value(depVar[ yOffset + j ]);" << endl;
-  oPredDriver << "      double expectedY = expectedF * CppAD::Value(indepVar[etaOffset+0]);" << endl;
+  oPredDriver << "      double expectedY = exp( CppAD::Value(indepVar[etaOffset+0]) );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedY, actualY );" << endl;
   oPredDriver << "   } // End of the first complete iteration over j" << endl;
   // Test if the DataSet objects hold the complete set of computed values from the most recent complete iteration.
   oPredDriver << "   for( int j=0; j<n; j++ )" << endl;
   oPredDriver << "   {" << endl;
-  oPredDriver << "      double expectedPred = (C1*j) + (C1*j) * CppAD::Value(set.data[who]->" << strTIME << "[j]);" << endl;
+  oPredDriver << "      double expectedPred = (C1*j);" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][0] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA << "[j][0] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << strPRED << "[j] );" << endl;
@@ -781,6 +855,7 @@ void NonmemTranslatorIndTest::testParseIndSource()
     {
       char message[256];
       sprintf( message, "Compilation of the generated %s failed!", fPredDriver_cpp );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   sprintf( command, "./%s", fPredDriver );
@@ -788,6 +863,7 @@ void NonmemTranslatorIndTest::testParseIndSource()
     {
       char message[256];
       sprintf( message, "A test driver, %s, failed!", fPredDriver );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   
@@ -796,11 +872,12 @@ void NonmemTranslatorIndTest::testParseIndSource()
   // Test driver.cpp to see if it compiles/links successfully.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   int  exitcode      = 0;
-  sprintf( command, "make -f generatedMakefile" );
+  sprintf( command, "make -f generatedMakefile test" );
   if( system( command ) != 0 )
     {
       char message[256];
       sprintf( message, "Compilation of the generated %s failed!", fDriver_cpp );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   sprintf( command, "./%s", fDriver );
@@ -813,6 +890,7 @@ void NonmemTranslatorIndTest::testParseIndSource()
     {
       char message[256];
       sprintf( message, "%s failed for convergence problem <%d>!", fDriver, exitcode );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, true );
     }
   if( exitcode == 2 )
@@ -825,10 +903,259 @@ void NonmemTranslatorIndTest::testParseIndSource()
     {
       char message[256];
       sprintf( message, "%s failed for reasons other than convergence propblem or access permission <%d>!", fDriver, exitcode );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, true );
+     }
+
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  // Verify the results
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+  xercesc::XercesDOMParser *reportParser = new xercesc::XercesDOMParser;
+  reportParser->setValidationScheme( XercesDOMParser::Val_Auto );
+  reportParser->setDoNamespaces( true );
+  reportParser->setDoSchema( true );
+  reportParser->setValidationSchemaFullChecking( true );
+  reportParser->setCreateEntityReferenceNodes( true );
+  
+  try{
+    reportParser->parse( fReport_xml );
+    report = reportParser->getDocument();
+  }
+  catch( const XMLException& e )
+    {
+      XMLPlatformUtils::Terminate();
+      char buf[maxChars + 1];
+      sprintf( buf, "An error occurred during parsing %s.\n   Message: %s\n",
+	       fReport_xml, XMLString::transcode(e.getMessage() ) );
+      deleteBiproducts = false;
+      CPPUNIT_ASSERT_MESSAGE( buf, false );
+    }
+  catch( const DOMException& e )
+    {
+      deleteBiproducts = false;
+      XMLCh errText[maxChars + 1]; 
+      if (DOMImplementation::loadDOMExceptionMsg(e.code, errText, maxChars))
+	{
+          XMLPlatformUtils::Terminate();
+          char buf[maxChars + 1];
+          sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
+                   fReport_xml, e.code, XMLString::transcode(errText) );
+          CPPUNIT_ASSERT_MESSAGE( buf, false );
+	}
+    }
+  catch( ... )
+    {
+      XMLPlatformUtils::Terminate();
+      char buf[maxChars + 1];
+      sprintf( buf, "An unknown error occurred during parsing %s.\n", fReport_xml );
+      deleteBiproducts = false;
+      CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
 
+  DOMNodeList *error_messages = report->getElementsByTagName( X_ERROR_MESSAGES );
+  if( error_messages->getLength() > 0 )
+    deleteBiproducts = false;
 
+  CPPUNIT_ASSERT( error_messages->getLength() == 0 );
+  /*
+  DOMNodeList * bObj_list     = report->getElementsByTagName( XMLString::transcode("ind_obj_out" ) );
+  DOMNodeList * thetaOut_list = report->getElementsByTagName( XMLString::transcode("theta_out" ) );
+  DOMNodeList * omegaOut_list = report->getElementsByTagName( XMLString::transcode("omega_out" ) );
+  vector<double> bOut(thetaLen+omegaOrder);
+  if( thetaOut_list->getLength() > 0 )
+    {
+      DOMElement* thetaOut = dynamic_cast<DOMElement*>( thetaOut_list->item(0) );
+      DOMNodeList* value_list = thetaOut->getElementsByTagName( X_VALUE );
+      int n = value_list->getLength();
+      CPPUNIT_ASSERT_EQUAL( thetaLen, n );
+      for( int i=0; i<n; i++ )
+	{
+	  bOut[i] = atof( XMLString::transcode( value_list->item(0)->getFirstChild()->getNodeValue() ) );
+	  printf( "bOut[%d] = %f\n", i, bOut[i] );
+	}
+    }
+  if( omegaOut_list->getLength() > 0 )
+    {
+      DOMElement* omegaOut = dynamic_cast<DOMElement*>( omegaOut_list->item(0) );
+      DOMNodeList* value_list = omegaOut->getElementsByTagName( X_VALUE );
+      int n = value_list->getLength();
+      CPPUNIT_ASSERT_EQUAL( omegaOrder, n );
+      for( int i=thetaLen; i<thetaLen+n; i++ )
+	{
+	  bOut[i] = atof( XMLString::transcode( value_list->item(0)->getFirstChild()->getNodeValue() ) );
+	  printf( "bOut[%d] = %f\n", i, bOut[i] );
+	}
+    }
+
+  const double eps = 1.0/10.0;
+
+  
+  //        /  2.0      \
+  // bOut = |           |
+  //        \  0.026667 /
+  //
+  double bOut_expected[] = { 2.0, 0.02667 };
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( bOut_expected[0], bOut[0], eps );
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( bOut_expected[1], bOut[1], eps );
+
+  //
+  // bCov = [ 0.5 * { R_b^t * (RInv kron RInv * R_b) } + f_b^t * ( RInv * f_b ) ]^-1
+  // 
+  //         /                \
+  // bCov =  | 0.00889    --- |
+  //         |  0.0       0.0 |
+  //         \                /
+  //
+  double cov_expected[] = { 0.008889, 0.0, 0.0 };
+  
+  //
+  // bSE  = [ sqrt( bCov(1,1), sqrt( bCov(2,2) ]
+  //
+  double se_expected[]  = { sqrt( cov_expected[0] ), sqrt( cov_expected[2] ) }; 
+
+  //
+  // bCV  = [ bSE(1) / b(1) * 100.0, bSE(2) / b(2) * 100.0 ]
+  //
+  double cv_expected[]  = { se_expected[0] / bOut_expected[0] * 100.0, se_expected[1] / bOut_expected[1] * 100.0 };
+
+  //        /             \
+  // bCor = |  1.0   ---  |
+  //        |  0.0   1.0  |
+  //        \             /
+  //
+  double cor_expected[] = { 1.0, 0.0, 1.0 };
+
+  //        /                                                         \
+  // bCI  = |  b(1) - (12.706 * bSE(1))    ---                        |      
+  //        |  b(2) - (12.706 * bSE(2))    b(2) - (12.706 * bSE(2))   |
+  //        \                                                         /
+  //
+  double ci_expected[] = { bOut_expected[0]-(12.706+se_expected[0]),
+			   bOut_expected[1]-(12.706*se_expected[1]),
+                           bOut_expected[0]-(12.706*se_expected[0]),
+                           bOut_expected[1]-(12.706*se_expected[1])
+                         };
+
+  vector<double> se_val;
+  vector<double> inv_cov_val;
+  vector<double> cov_val;
+  vector<double> ci_val;
+  vector<double> cv_val;
+  vector<double> cor_val;
+
+  DOMNodeList *ind_analysis_result = report->getElementsByTagName( X_IND_ANALYSIS_RESULT );
+  CPPUNIT_ASSERT( ind_analysis_result->getLength() == 1 );
+  DOMElement *ind_stat_result = dynamic_cast<DOMElement*>( ind_analysis_result->item( 0 ) );
+  CPPUNIT_ASSERT( ind_stat_result != NULL );
+  DOMNodeList * se_list = ind_stat_result->getElementsByTagName( X_IND_STDERROR_OUT );
+  if( se_list->getLength() == 1 )
+    {
+      DOMElement * se = dynamic_cast<DOMElement*>( se_list->item(0) );
+      CPPUNIT_ASSERT( se != NULL );
+      DOMNodeList * value_list = se->getElementsByTagName( X_VALUE );
+      int n = value_list->getLength();
+      se_val.resize( n );
+      for( int i=0; i<n; i++ )
+      {
+	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
+	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
+	if( x_val != NULL )
+	  se_val[i] = atof( XMLString::transcode( x_val ) );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( se_expected[i], se_val[i], eps );
+	printf( "se[%d] = %f\n", i, se_val[i] );
+      }
+    }
+  DOMNodeList * cov_list =ind_stat_result->getElementsByTagName(  X_IND_COVARIANCE_OUT ) ;
+  if( cov_list->getLength() == 1 )
+    {
+      DOMElement * cov = dynamic_cast<DOMElement*>( cov_list->item(0) );
+      CPPUNIT_ASSERT( cov != NULL );
+      DOMNodeList * value_list = cov->getElementsByTagName( X_VALUE );
+      int n = value_list->getLength();
+      cov_val.resize( n );
+      for( int i=0; i<n; i++ )
+      {
+	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
+	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
+	if( x_val != NULL )
+	  cov_val[i] = atof( XMLString::transcode( x_val ) );
+	printf( "cov[%d] = %f\n", i, cov_val[i] );
+      }
+    }
+  DOMNodeList * invcov_list =ind_stat_result->getElementsByTagName(  X_IND_INVERSE_COVARIANCE_OUT ) ;
+  if( invcov_list->getLength() == 1 )
+    {
+      DOMElement * invcov = dynamic_cast<DOMElement*>( invcov_list->item(0) );
+      CPPUNIT_ASSERT( invcov != NULL );
+      DOMNodeList * value_list = invcov->getElementsByTagName( X_VALUE );
+      int n = value_list->getLength();
+      inv_cov_val.resize( n );
+      for( int i=0; i<n; i++ )
+      {
+	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
+	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
+	if( x_val != NULL )
+	  inv_cov_val[i] = atof( XMLString::transcode( x_val ) );
+	printf( "inv_cov[%d] = %f\n", i, inv_cov_val[i] );
+      }
+    }
+  DOMNodeList * cor_list =ind_stat_result->getElementsByTagName(  X_IND_CORRELATION_OUT ) ;
+  if( cor_list->getLength() == 1 )
+    {
+      DOMElement * cor = dynamic_cast<DOMElement*>( cor_list->item(0) );
+      CPPUNIT_ASSERT( cor != NULL );
+      DOMNodeList * value_list = cor->getElementsByTagName( X_VALUE );
+      int n = value_list->getLength();
+      cor_val.resize( n );
+      for( int i=0; i<n; i++ )
+      {
+	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
+	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
+	if( x_val != NULL )
+	  cor_val[i] = atof( XMLString::transcode( x_val ) );
+	printf( "cor[%d] = %f\n", i, cor_val[i] );
+      }
+    }
+  DOMNodeList * cv_list =ind_stat_result->getElementsByTagName(  X_IND_COEFFICIENT_OUT ) ;
+  if( cv_list->getLength() == 1 )
+    {
+      DOMElement * cv = dynamic_cast<DOMElement*>( cv_list->item(0) );
+      CPPUNIT_ASSERT( cv != NULL );
+      DOMNodeList * value_list = cv->getElementsByTagName( X_VALUE );
+      int n = value_list->getLength();
+      cv_val.resize( n );
+      for( int i=0; i<n; i++ )
+      {
+	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
+	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
+	if( x_val != NULL )
+	  cv_val[i] = atof( XMLString::transcode( x_val ) );
+	printf( "cv[%d] = %f\n", i, cv_val[i] );
+      }
+    }
+  DOMNodeList * ci_list =ind_stat_result->getElementsByTagName(  X_IND_CONFIDENCE_OUT ) ;
+  if( ci_list->getLength() == 1 )
+    {
+      DOMElement * ci = dynamic_cast<DOMElement*>( ci_list->item(0) );
+      CPPUNIT_ASSERT( ci != NULL );
+      DOMNodeList * value_list = ci->getElementsByTagName( X_VALUE );
+      int n = value_list->getLength();
+      ci_val.resize( n );
+      for( int i=0; i<n; i++ )
+      {
+	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
+	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
+	if( x_val != NULL )
+	  ci_val[i] = atof( XMLString::transcode( x_val ) );
+	printf( "ci[%d] = %f\n", i, ci_val[i] );
+      }
+    }
+  */
+
+
+  DOMNodeList *presentation_data = report->getElementsByTagName( X_PRESENTATION_DATA );
+  CPPUNIT_ASSERT( presentation_data->getLength() == 1 );
 }
 //******************************************************************************
 //
@@ -837,22 +1164,6 @@ void NonmemTranslatorIndTest::testParseIndSource()
 //******************************************************************************
 void NonmemTranslatorIndTest::testParseIndNoID()
 {
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  //
-  // Initializing the XML
-  //
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  try
-    {
-      XMLPlatformUtils::Initialize();
-    }
-  catch( const XMLException& toCatch )
-    {
-      char buf[maxChars + 1];
-      sprintf( buf, "Error during Xerces-c initialization.\nException message: %s.\n", 
-               XMLString::transcode( toCatch.getMessage() ) );
-      CPPUNIT_ASSERT_MESSAGE( buf, false );
-    }
 
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   //
@@ -902,6 +1213,7 @@ void NonmemTranslatorIndTest::testParseIndNoID()
       char buf[maxChars + 1];
       sprintf( buf, "An error occurred during parsing %s.\n   Message: %s\n",
 	       fData, XMLString::transcode(e.getMessage() ) );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
   catch( const DOMException& e )
@@ -913,6 +1225,7 @@ void NonmemTranslatorIndTest::testParseIndNoID()
           char buf[maxChars + 1];
           sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
                    fData, e.code, XMLString::transcode(errText) );
+	  deleteBiproducts = false;
           CPPUNIT_ASSERT_MESSAGE( buf, false );
 	}
     }
@@ -921,6 +1234,7 @@ void NonmemTranslatorIndTest::testParseIndNoID()
       XMLPlatformUtils::Terminate();
       char buf[maxChars + 1];
       sprintf( buf, "An unknown error occurred during parsing %s.\n", fData );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
   
@@ -1058,6 +1372,7 @@ void NonmemTranslatorIndTest::testParseIndNoID()
       char buf[maxChars + 1];
       sprintf( buf, "An error occurred during parsing %s.\n   Message: %s\n",
 	       fSource, XMLString::transcode(e.getMessage() ) );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
   catch( const DOMException& e )
@@ -1069,6 +1384,7 @@ void NonmemTranslatorIndTest::testParseIndNoID()
           char buf[maxChars + 1];
           sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
                    fSource, e.code, XMLString::transcode(errText) );
+	  deleteBiproducts = false;
           CPPUNIT_ASSERT_MESSAGE( buf, false );
 	}
     }
@@ -1077,6 +1393,7 @@ void NonmemTranslatorIndTest::testParseIndNoID()
       XMLPlatformUtils::Terminate();
       char buf[maxChars + 1];
       sprintf( buf, "An unknown error occurred during parsing %s.\n", fSource );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
 
@@ -1217,6 +1534,7 @@ void NonmemTranslatorIndTest::testParseIndNoID()
     {
       char message[256];
       sprintf( message, "Compilation of the generated %s failed!", fIndDataDriver_cpp );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   sprintf( command, "./%s", fIndDataDriver );
@@ -1224,6 +1542,7 @@ void NonmemTranslatorIndTest::testParseIndNoID()
     {
       char message[256];
       sprintf( message, "A test driver, %s, failed!", fIndDataDriver );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   
@@ -1278,6 +1597,20 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strPRED << ".size() );" << endl;
 
   oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strF    << ".size() );" << endl;
+  oDataSetDriver << endl;
+
+  oDataSetDriver << "valarray<double> y;" << endl;
+  oDataSetDriver << "valarray<int>    N;" << endl;
+  oDataSetDriver << "int total = set.getMeasurements( y, N );" << endl;
+  oDataSetDriver << "MY_ASSERT_EQUAL( n, total );" << endl;
+  oDataSetDriver << "MY_ASSERT_EQUAL( n, N[0] );" << endl;
+  oDataSetDriver << "for( int i=0; i<n; i++ )" << endl;
+  oDataSetDriver << "{" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( set.data[0]->" << strDV << "[i], y[i] );" << endl;
+  oDataSetDriver << "}" << endl;
+
+  oDataSetDriver << endl;
+  oDataSetDriver << "return 0;" << endl;
   oDataSetDriver << "}" << endl;
   
   oDataSetDriver.close();
@@ -1287,6 +1620,7 @@ void NonmemTranslatorIndTest::testParseIndNoID()
     {
       char message[256];
       sprintf( message, "Compilation of the generated %s failed!", fDataSetDriver_cpp );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   sprintf( command, "./%s", fDataSetDriver );
@@ -1294,6 +1628,7 @@ void NonmemTranslatorIndTest::testParseIndNoID()
     {
       char message[256];
       sprintf( message, "A test driver, %s, failed!", fDataSetDriver );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   
@@ -1366,18 +1701,17 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   oPredDriver << "                 indepVar, depVar );" << endl;
   // Test if F(j) gets placed in the proper location in the depVar vector.
   oPredDriver << "      double actualF   = CppAD::Value(depVar[ fOffset + j ]);"  << endl;
-  oPredDriver << "      double expectedF = CppAD::Value(indepVar[thetaOffset+0] " << endl;
-  oPredDriver << "                       + indepVar[thetaOffset+1] * set.data[who]->" << strTIME << "[j] );" << endl;
+  oPredDriver << "      double expectedF = CppAD::Value(indepVar[thetaOffset+0]);" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedF, actualF );" << endl;
   // Test if Y(j) gets placed in the proper location in the depVar vector.
   oPredDriver << "      double actualY   = CppAD::Value(depVar[ yOffset + j ]);" << endl;
-  oPredDriver << "      double expectedY = expectedF + CppAD::Value(indepVar[etaOffset+0]);" << endl;
+  oPredDriver << "      double expectedY = exp( CppAD::Value(indepVar[etaOffset+0]) );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedY, actualY )" << endl;
   oPredDriver << "   } // End of the first complete iteration over j" << endl;
   // Test if the DataSet objects hold the complete set of computed values from the just-finished iteration.
   oPredDriver << "   for( int j=0; j<n; j++ )" << endl;
   oPredDriver << "   {" << endl;
-  oPredDriver << "      double expectedPred = (C1*j) + (C1*j) * CppAD::Value(set.data[who]->" << strTIME << "[j]);" << endl;
+  oPredDriver << "      double expectedPred = (C1*j);" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][0] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA << "[j][0] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << strPRED << "[j] );" << endl;
@@ -1404,19 +1738,17 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   oPredDriver << "                 indepVar, depVar );" << endl;
   // Test if F(j) gets placed in the proper location in the depVar vector.
   oPredDriver << "      double actualF   = CppAD::Value(depVar[ fOffset + j ]);" << endl;
-  oPredDriver << "      double expectedF = CppAD::Value(indepVar[thetaOffset+0] " << endl;
-  oPredDriver << "                       + indepVar[thetaOffset+0]*set.data[who]->";
-  oPredDriver << strTIME << "[j] );" << endl;
+  oPredDriver << "      double expectedF = CppAD::Value(indepVar[thetaOffset+0]); " << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedF, actualF );" << endl;
   // Test if Y(j) gets placed in the proper location in the depVar vector.
   oPredDriver << "      double actualY   = CppAD::Value(depVar[ yOffset + j ]);" << endl;
-  oPredDriver << "      double expectedY = expectedF * CppAD::Value(indepVar[etaOffset+0]);" << endl;
+  oPredDriver << "      double expectedY = exp( CppAD::Value(indepVar[etaOffset+0]) );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedY, actualY );" << endl;
   oPredDriver << "   } // End of the first complete iteration over j" << endl;
   // Test if the DataSet objects hold the complete set of computed values from the most recent complete iteration.
   oPredDriver << "   for( int j=0; j<n; j++ )" << endl;
   oPredDriver << "   {" << endl;
-  oPredDriver << "      double expectedPred = (C1*j) + (C1*j) * CppAD::Value(set.data[who]->" << strTIME << "[j]);" << endl;
+  oPredDriver << "      double expectedPred = (C1*j);" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][0] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA << "[j][0] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << strPRED << "[j] );" << endl;
@@ -1434,6 +1766,7 @@ void NonmemTranslatorIndTest::testParseIndNoID()
     {
       char message[256];
       sprintf( message, "Compilation of the generated %s failed!", fPredDriver_cpp );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   sprintf( command, "./%s", fPredDriver );
@@ -1441,6 +1774,7 @@ void NonmemTranslatorIndTest::testParseIndNoID()
     {
       char message[256];
       sprintf( message, "A test driver, %s, failed!", fPredDriver );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   
@@ -1450,11 +1784,12 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   int  exitcode      = 0;
 
-  sprintf( command, "make -f generatedMakefile" );
+  sprintf( command, "make -f generatedMakefile test" );
   if( system( command ) != 0 )
     {
       char message[256];
       sprintf( message, "Compilation of the generated %s failed!", fDriver_cpp );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   sprintf( command, "./%s", fDriver );
@@ -1468,20 +1803,74 @@ void NonmemTranslatorIndTest::testParseIndNoID()
     {
       char message[256];
       sprintf( message, "%s failed for convergence problem <%d>!", fDriver, exitcode );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, true );
     }
   if( exitcode == 2 )
     {
       char message[256];
       sprintf( message, "%s failed due to inproper file access permission <%d>!", fDriver, exitcode );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   if( exitcode > 2 )
     {
       char message[256];
       sprintf( message, "%s failed for reasons other than convergence propblem or access permission <%d>!", fDriver, exitcode );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, true );
     }
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  // Verify the results
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+  xercesc::XercesDOMParser *reportParser = new xercesc::XercesDOMParser;
+  reportParser->setValidationScheme( XercesDOMParser::Val_Auto );
+  reportParser->setDoNamespaces( true );
+  reportParser->setDoSchema( true );
+  reportParser->setValidationSchemaFullChecking( true );
+  reportParser->setCreateEntityReferenceNodes( true );
+  
+  try{
+    reportParser->parse( fReport_xml );
+    report = reportParser->getDocument();
+  }
+  catch( const XMLException& e )
+    {
+      XMLPlatformUtils::Terminate();
+      char buf[maxChars + 1];
+      sprintf( buf, "An error occurred during parsing %s.\n   Message: %s\n",
+	       fReport_xml, XMLString::transcode(e.getMessage() ) );
+      deleteBiproducts = false;
+      CPPUNIT_ASSERT_MESSAGE( buf, false );
+    }
+  catch( const DOMException& e )
+    {
+      deleteBiproducts = false;
+      XMLCh errText[maxChars + 1]; 
+      if (DOMImplementation::loadDOMExceptionMsg(e.code, errText, maxChars))
+	{
+          XMLPlatformUtils::Terminate();
+          char buf[maxChars + 1];
+          sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
+                   fReport_xml, e.code, XMLString::transcode(errText) );
+          CPPUNIT_ASSERT_MESSAGE( buf, false );
+	}
+    }
+  catch( ... )
+    {
+      XMLPlatformUtils::Terminate();
+      char buf[maxChars + 1];
+      sprintf( buf, "An unknown error occurred during parsing %s.\n", fReport_xml );
+      deleteBiproducts = false;
+      CPPUNIT_ASSERT_MESSAGE( buf, false );
+    }
+
+  DOMNodeList *error_messages = report->getElementsByTagName( X_ERROR_MESSAGES );
+  if( error_messages->getLength() > 0 )
+    deleteBiproducts = false;
+
+  CPPUNIT_ASSERT( error_messages->getLength() == 0 );
 }
 
 CppUnit::Test * NonmemTranslatorIndTest::suite()
@@ -1493,12 +1882,10 @@ CppUnit::Test * NonmemTranslatorIndTest::suite()
      new CppUnit::TestCaller<NonmemTranslatorIndTest>(
          "testParseIndSource", 
 	 &NonmemTranslatorIndTest::testParseIndSource ) );
-  /*
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<NonmemTranslatorIndTest>(
          "testParseIndNoID", 
 	 &NonmemTranslatorIndTest::testParseIndNoID ) );
-  */
   return suiteOfTests;
 }
 
