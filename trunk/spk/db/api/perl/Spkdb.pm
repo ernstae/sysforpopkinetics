@@ -29,7 +29,7 @@ use Sys::Hostname;
 use Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = (
-    'connect', 'disconnect', 'new_job', 'job_status', 'user_jobs', 
+    'connect', 'disconnect', 'new_job', 'get_job', 'job_status', 'user_jobs', 
     'de_q2c', 'get_cmp_jobs', 'get_run_jobs',
     'en_q2r', 'de_q2r', 'end_job', 'job_report',
     'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
@@ -228,6 +228,59 @@ sub new_job() {
     &add_to_history($dbh, $job_id, $state_code);
 
     return $job_id;
+}
+
+=head2 get_job -- retrieve a job for a user
+
+Retrieve the job corresponding to a job_id
+
+    $row = &Spkdb::get_job($dbh, $job_id);
+
+$dbh is the handle to an open database connection
+
+$job_id is the integer which uniquely identifies the job
+
+Returns
+
+  success: reference to a hash table of column/value pairs
+           0 if no datatset corresponds to the given job_id
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed
+
+=cut
+
+sub get_job() {
+    my $dbh = shift;
+    my $job_id = shift;
+    $err = 0;
+    $errstr = "";
+
+    my $sql = "select * from job where job_id = $job_id;";
+    my $sth = $dbh->prepare($sql);
+    unless ($sth) {
+	$err = $PREPARE_FAILED;
+	$errstr = "could not prepare statement: $sql";
+	return undef;
+    }
+    unless ($sth->execute())
+    {
+	$err = $EXECUTE_FAILED;
+	$errstr = "could not execute state: $sql; error returned "
+	    . $sth->errstr;
+    }
+    my $count = $sth->rows;
+
+    if ($count == 0) {
+	return 0;
+    }
+    unless ($count == 1) {
+	$err = $TOO_MANY;
+	$errstr = "duplicate job record";
+	return undef;
+    }
+    return $sth->fetchrow_hashref();
 }
 
 =head2 job_status -- return the current state of a job

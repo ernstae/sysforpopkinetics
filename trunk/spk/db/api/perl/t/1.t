@@ -2,7 +2,7 @@
 
 use strict;
 
-use Test::Simple tests => 51;  # number of ok() tests
+use Test::Simple tests => 52;  # number of ok() tests
 
 use Spkdb (
     'connect', 'disconnect', 'new_job', 'job_status', 
@@ -19,10 +19,7 @@ my $admin = "../../admin";
 my $schema = "$admin/schema.sql";
 my $data = "$admin/data.sql";
 my $drop   = "$admin/drop.sql";
-system "echo 'use spktest;' > $tmp_name";
-system "cat $tmp_name $drop   | mysql --force -ptester -utester > /dev/null 2>&1";
-system "cat $tmp_name $schema | mysql --force -ptester -utester";
-system "cat $tmp_name $data   | mysql --force -ptester -utester";
+system "load_spktest.pl --schema ../schema.sql --basedata ../basedata.sql --userdata ../userdata.sql";
 
 my $dbh = &connect("spktest", "localhost", "tester", "tester");
 
@@ -86,6 +83,9 @@ sleep(1);
 &new_job($dbh, $user_id, "Job 2", 33, "1.01", 55, "2.22", "source");
 sleep(1);
 my $newest_job_id = &new_job($dbh, $user_id, "Job 3", "88", "4.01", 22, "1.11", "source");
+
+$row = &Spkdb::get_job($dbh, 2);
+ok($row && $row->{"job_id"} == 2, "get_job");
 
 my $row_array = &Spkdb::user_jobs($dbh,  $user_id, 1);
 $row = $row_array->[0];
