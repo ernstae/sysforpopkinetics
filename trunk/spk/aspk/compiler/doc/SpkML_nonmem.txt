@@ -46,7 +46,7 @@
      <driver> contains information necessary to
      define a SPK driver.
 ---------------------------------------------------->
-<!ELEMENT driver (theta, sigma, omega, eta?, pop_opt, ind_opt, pop_stat, ind_stat)>
+<!ELEMENT driver (theta, sigma, omega+, eta, pop_opt, ind_opt, pop_stat, ind_stat)>
 
 <!--
      <theta> section contains the initial estimate (in),
@@ -115,6 +115,7 @@
      <value> contains a double-precision number.
 -->
 <!ELEMENT value ($PCDATA)>
+<!ATTLIST value fixed (yes|no) #REQUIRED>
 
 <!--
      <in> contains a set of initial estimates.
