@@ -45,10 +45,10 @@ namespace{
   bool              myIsRestart     = true;
   unsigned int      myThetaLen      = 0;
   unsigned int      myOmegaDim      = 0;
-  unsigned int      myOmegaElemNum  = 0;
+  unsigned int      myOmegaOrder    = 0;
   Symbol::Structure myOmegaStruct   = Symbol::TRIANGLE;
   unsigned int      mySigmaDim      = 0;
-  int               mySigmaElemNum  = 0;
+  int               mySigmaOrder    = 0;
   Symbol::Structure mySigmaStruct   = Symbol::TRIANGLE;
   int               myEtaLen        = 0;
   int               myEpsLen        = 0;
@@ -815,12 +815,12 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   if( XMLString::equals( xml_omega_struct, X_DIAGONAL ) )
     {
       myOmegaStruct = Symbol::DIAGONAL;
-      myOmegaElemNum = myOmegaDim;
+      myOmegaOrder = myOmegaDim;
     }
   else //( XMLString::equals( xml_omega_struct, X_BLOCK ) )
     {
       myOmegaStruct = Symbol::TRIANGLE;
-      myOmegaElemNum = series( 1, 1, myOmegaDim );
+      myOmegaOrder = series( 1, 1, myOmegaDim );
     }
 
   Symbol * sym_omega = table->insertNMMatrix( DefaultStr::OMEGA, myOmegaStruct, myOmegaDim );
@@ -831,8 +831,8 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
     DOMElement * omega_in = dynamic_cast<DOMElement*>( omega_in_list->item(0) );
 
     DOMNodeList * value_list = omega_in->getElementsByTagName( X_VALUE );
-    assert( myOmegaElemNum == value_list->getLength() );
-    for( int i=0; i<myOmegaElemNum; i++ )
+    assert( myOmegaOrder == value_list->getLength() );
+    for( int i=0; i<myOmegaOrder; i++ )
       {
 	char str_val[128];
         bool isFixed = false;
@@ -878,12 +878,12 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   if( XMLString::equals( xml_sigma_struct, X_DIAGONAL ) )
     {
       mySigmaStruct = Symbol::DIAGONAL;
-      mySigmaElemNum = mySigmaDim;
+      mySigmaOrder = mySigmaDim;
     }
   else //( XMLString::equals( xml_sigma_struct, X_BLOCK ) )
     {
       mySigmaStruct = Symbol::TRIANGLE;
-      mySigmaElemNum = series( 1, 1, mySigmaDim );
+      mySigmaOrder = series( 1, 1, mySigmaDim );
     }
 
   Symbol * sym_sigma = table->insertNMMatrix( DefaultStr::SIGMA, mySigmaStruct, mySigmaDim ); 
@@ -894,8 +894,8 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
     DOMElement * sigma_in = dynamic_cast<DOMElement*>( sigma_in_list->item(0) );
 
     DOMNodeList * value_list = sigma_in->getElementsByTagName( X_VALUE );
-    assert( mySigmaElemNum == value_list->getLength() );
-    for( int i=0; i<mySigmaElemNum; i++ )
+    assert( mySigmaOrder == value_list->getLength() );
+    for( int i=0; i<mySigmaOrder; i++ )
       {
 	char str_val[128];
         bool isFixed = false;
@@ -1274,7 +1274,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
 
   assert( XMLString::stringLen( xml_omega_struct ) > 0 );
   myOmegaStruct = Symbol::DIAGONAL;
-  myOmegaElemNum = myOmegaDim;
+  myOmegaOrder = myOmegaDim;
 
   Symbol * sym_omega = table->insertNMMatrix( DefaultStr::OMEGA, myOmegaStruct, myOmegaDim );
   {
@@ -1284,8 +1284,8 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
     DOMElement * omega_in = dynamic_cast<DOMElement*>( omega_in_list->item(0) );
 
     DOMNodeList * value_list = omega_in->getElementsByTagName( X_VALUE );
-    assert( myOmegaElemNum == value_list->getLength() );
-    for( int i=0; i<myOmegaElemNum; i++ )
+    assert( myOmegaOrder == value_list->getLength() );
+    for( int i=0; i<myOmegaOrder; i++ )
       {
 	char str_val[128];
         bool isFixed = false;
@@ -1314,7 +1314,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   // ETA
   // Eta plays the same role as EPS as in the population analysis.
   // Variance of data?
-  myEtaLen = myOmegaElemNum;
+  myEtaLen = myOmegaOrder;
   table->insertNMVector( DefaultStr::ETA, myEtaLen );
   
   //================================================================================
@@ -1770,7 +1770,14 @@ void NonmemTranslator::generateDataSet( ) const
 
   oDataSet_h << "std::vector<IndData<T>*> data;" << endl;
   oDataSet_h << "const int popSize;" << endl;
+  
+  //========================================================================================================================
+  // REVISIT SACHIKO: 05/09/04
+  // SPK's y cannot be initialized at my compilation time.  The values have to be initialized with the simulated data set
+  // if the user requested a data simulation.
+  //========================================================================================================================  
   oDataSet_h << "int getMeasurements( SPK_VA::valarray<double>& spk_yOut, SPK_VA::valarray<int>& spk_NOut ) const;" << endl;
+  
   oDataSet_h << endl;
 
   //
@@ -1805,7 +1812,6 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "   spk_NOut = spk_N;" << endl;
   oDataSet_h << "   return n;" << endl;
   oDataSet_h << "}" << endl;
-
 
   //
   // The constructor
@@ -2247,13 +2253,6 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   // : the user defined variable values and the NONMEM required variable values.
   oPred_h << UserStr::PRED << " = " << UserStr::F << ";" << endl;
 
-  // REVISIT SACHIKO 06/07/04
-  // Causes to make the RES value sticky. 
-  /*
-    oPred_h << UserStr::RES  << " = perm->data[spk_i]->";
-  oPred_h << UserStr::DV << "[spk_j] - " << UserStr::PRED << ";" << endl;
-  */
-
   for( pRawTable = rawTable->begin(); pRawTable != rawTable->end(); pRawTable++ )
     {
       // THETA, ETA, EPS are given Pred::eval() as vectors by the caller.
@@ -2442,28 +2441,28 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << "   const valarray<double> etaIn( c_etaIn, " << myEtaLen << " );" << endl;
   oNonmemPars << "   const enum " << (myTarget==POP? "Pop":"Ind") << "PredModel::covStruct omegaStruct = ";
   oNonmemPars << (myTarget==POP? "Pop":"Ind") << "PredModel::" << (myOmegaStruct == Symbol::TRIANGLE? "FULL" : "DIAGONAL" ) << ";" << endl;
-  oNonmemPars << "   double c_omegaIn[" << myOmegaElemNum << "] = { "; 
-  for( int j=0; j<myOmegaElemNum; j++ )
+  oNonmemPars << "   double c_omegaIn[" << myOmegaOrder << "] = { "; 
+  for( int j=0; j<myOmegaOrder; j++ )
     {
       if( j>0 )
 	oNonmemPars << ", ";
       oNonmemPars << pOmega->initial[0][j];
     }
   oNonmemPars << " };" << endl;
-  oNonmemPars << "   const valarray<double> omegaIn( c_omegaIn, " << myOmegaElemNum << " );" << endl;
+  oNonmemPars << "   const valarray<double> omegaIn( c_omegaIn, " << myOmegaOrder << " );" << endl;
 
   oNonmemPars << "   const int nEps = " << myEpsLen << ";" << endl;
   oNonmemPars << "   const enum " << (myTarget==POP? "Pop":"Ind") << "PredModel::covStruct sigmaStruct = ";
   oNonmemPars << (myTarget==POP? "Pop":"Ind") << "PredModel::" << (mySigmaStruct == Symbol::TRIANGLE? "FULL" : "DIAGONAL" ) << ";" << endl;
-  oNonmemPars << "   double c_sigmaIn[" << mySigmaElemNum << "] = { ";
-  for( int j=0; j<mySigmaElemNum; j++ )
+  oNonmemPars << "   double c_sigmaIn[" << mySigmaOrder << "] = { ";
+  for( int j=0; j<mySigmaOrder; j++ )
     {
       if( j>0 )
 	oNonmemPars << ", ";
       oNonmemPars << pSigma->initial[0][j];
     }
   oNonmemPars << " };" << endl;
-  oNonmemPars << "   const valarray<double> sigmaIn( c_sigmaIn, " << mySigmaElemNum << " );" << endl;
+  oNonmemPars << "   const valarray<double> sigmaIn( c_sigmaIn, " << mySigmaOrder << " );" << endl;
   oNonmemPars << "};" << endl;
 
   oNonmemPars << "#endif" << endl;
@@ -2594,75 +2593,18 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "//   NONMEM Specific" << endl;
   oDriver << endl;
 
-  oDriver << "const int nTheta = " << myThetaLen << ";" << endl;
-  oDriver << endl;
-
-  oDriver << "double c_thetaIn[nTheta] = { ";
-  for( int j=0; j<myThetaLen; j++ )
-    {
-      if( j>0 )
-	oDriver << ", ";
-      oDriver << pTheta->initial[0][j];
-    }
-  oDriver << " };" << endl;
-  if( myIsSimulate )
-    {
-      oDriver << "valarray<double> thetaIn ( c_thetaIn, nTheta );" << endl;
-    }
-  else
-    {
-      oDriver << "const valarray<double> thetaIn ( c_thetaIn, nTheta );" << endl;
-    }
-  oDriver << endl;
-  
-  oDriver << "double c_thetaUp[nTheta] = { ";
-  for( int j=0; j<myThetaLen; j++ )
-  {
-     if( j>0 )
-        oDriver << ", ";
-     oDriver << pTheta->upper[0][j];
-  }
-  oDriver << " };" << endl;
-  oDriver << "const valarray<double> thetaUp  ( c_thetaUp, nTheta );" << endl;
-  oDriver << endl;
-
-  oDriver << "double c_thetaLow[nTheta] = { ";
-  for( int j=0; j<myThetaLen; j++ )
-  {
-     if( j>0 )
-	oDriver << ", ";
-     oDriver << pTheta->lower[0][j];
-  }
-  oDriver << " };" << endl;
-  oDriver << "const valarray<double> thetaLow ( c_thetaLow, nTheta );" << endl;
-  oDriver << endl;
-
   if( myIsEstimate )
     {
-      oDriver << "valarray<double> thetaStep( nTheta );" << endl;
+      oDriver << "valarray<double> thetaStep( NonmemPars::nTheta );" << endl;
     }
   oDriver << endl;
-  oDriver << "valarray<double> thetaOut( nTheta );" << endl;
+  oDriver << "valarray<double> thetaOut( NonmemPars::nTheta );" << endl;
   oDriver << endl;
   
-  // eta
-  oDriver << "const int nEta     = " << myEtaLen << ";" << endl;
-
   // Omega
-  oDriver << "const int nOmega   = " << myOmegaElemNum;
-  oDriver << "; // #of elements in Omega matrix" << endl;
-  oDriver << "const int dimOmega = " << myOmegaDim;
-  oDriver << "; // dimension of Omeaga matrix" << endl;
-  oDriver << "double c_omegaIn[nOmega] = { "; 
-  for( int j=0; j<myOmegaElemNum; j++ )
-    {
-      if( j>0 )
-	oDriver << ", ";
-      oDriver << pOmega->initial[0][j];
-    }
-  oDriver << " };" << endl;
-  oDriver << "const valarray<double> omegaIn( c_omegaIn, nOmega );" << endl;
-  oDriver << "valarray<double> omegaOut( nOmega );" << endl;
+  oDriver << "const int dimOmega   = " << myOmegaDim      << "; // the dimension of square matrix Omega" << endl;
+  oDriver << "const int orderOmega = " << myOmegaOrder  << "; // the order of Omega" << endl;
+  oDriver << "valarray<double> omegaOut( orderOmega );" << endl;
   oDriver << endl;
   oDriver << "//" << endl;
   oDriver << "//////////////////////////////////////////////////////////////" << endl;
@@ -2671,12 +2613,14 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "//////////////////////////////////////////////////////////////////////" << endl;
   oDriver << "//   NONMEM PRED Specific" << endl;
   oDriver << "Pred<CppAD::AD<double> > mPred(&set);" << endl;
-  if( myOmegaStruct == Symbol::TRIANGLE )
-    oDriver << "enum IndPredModel::covStruct omegaStruct = IndPredModel::FULL;" << endl;
-  else 
-    oDriver << "enum IndPredModel::covStruct omegaStruct = IndPredModel::DIAGONAL;" << endl;
-  
-  oDriver << "IndPredModel model( mPred, (int)nTheta, thetaLow, thetaUp, thetaIn, (int)nEta, omegaStruct, omegaIn );" << endl;
+  oDriver << "IndPredModel model( mPred, " << endl;
+  oDriver << "                    NonmemPars::nTheta, " << endl;
+  oDriver << "                    NonmemPars::thetaLow, " << endl;
+  oDriver << "                    NonmemPars::thetaUp, " << endl;
+  oDriver << "                    NonmemPars::thetaIn, " << endl;
+  oDriver << "                    NonmemPars::nEta, " << endl;
+  oDriver << "                    NonmemPars::omegaStruct, " << endl;
+  oDriver << "                    NonmemPars::omegaIn );" << endl;
   oDriver << "//" << endl;
   oDriver << "//////////////////////////////////////////////////////////////////////" << endl;
   oDriver << endl;
@@ -3017,8 +2961,8 @@ void NonmemTranslator::generateIndDriver( ) const
       oDriver << "//////////////////////////////////////////////////////////////////////" << endl;
       oDriver << "//    NONMEM Specific" << endl;
       // theta (b)
-      oDriver << "oResults << \"<theta_out length=\\\"\" << nTheta << \"\\\">\" << endl;" << endl;
-      oDriver << "for( int i=0; i<nTheta; i++ )" << endl;
+      oDriver << "oResults << \"<theta_out length=\\\"\" << NonmemPars::nTheta << \"\\\">\" << endl;" << endl;
+      oDriver << "for( int i=0; i<NonmemPars::nTheta; i++ )" << endl;
       oDriver << "{" << endl;
       oDriver << "   oResults << \"<value>\" << thetaOut[i] << \"</value>\" << endl;" << endl;
       oDriver << "}" << endl;
@@ -3029,7 +2973,7 @@ void NonmemTranslator::generateIndDriver( ) const
 	oDriver << "struct=\\\"diagonal\\\">\" << endl;" << endl;
       else
 	oDriver << "struct=\\\"block\\\">\" << endl;" << endl;
-      oDriver << "for( int i=0; i<nOmega; i++ )" << endl;
+      oDriver << "for( int i=0; i<orderOmega; i++ )" << endl;
       oDriver << "{" << endl;
       oDriver << "   oResults << \"<value>\" << omegaOut[i] << \"</value>\" << endl;" << endl;
       oDriver << "}" << endl;
@@ -3175,17 +3119,6 @@ void NonmemTranslator::generateIndDriver( ) const
 		      cntColumns++;
 		    }
 		}
-	      /*
-	      else if( pEntry->first == KeyStr::EPS )
-		{
-		  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
-		    {
-		      oDriver << "oResults << \"<label name=\\\"";
-		      oDriver << pEntry->second.name << "(" << cntEps+1 << ")";
-		      oDriver << "\\\"/>\" << endl;" << endl;		      
-		    }
-		}
-	      */
 	      else
 		{
 		  oDriver << "oResults << \"<label name=\\\"";
@@ -3239,24 +3172,6 @@ void NonmemTranslator::generateIndDriver( ) const
 	      cntColumns++;
 	    }
 	}
-      /*
-      else if( keyWhatGoesIn == KeyStr::EPS )
-	{
-	  // EPS is irrevalent in the individual analysis
-	  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
-	    {
-	      oDriver << "   oResults << \"<value ref=\"" << *pWhatGoesIn << "\"" << ">\" << ";
-	      oDriver << "set.data[0]->" << *pWhatGoesIn << "[j][" << cntEps << "]";
-	      oDriver << " << \"</value>\" << endl;" << endl;
-	    }
-	}
-      */
-      /*
-      else if( keyWhatGoesIn == KeyStr::OMEGA || keyWhatGoesIn == KeyStr::SIGMA )
-	{
-	  // these shouldn't be the whatGoesIn list!
-	}
-      */
       else
 	{
 	  oDriver << "   oResults << \"<value ref=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
@@ -3333,6 +3248,7 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "#include \"Pred.h\"" << endl;
   oDriver << "#include <spkpred/PopPredModel.h>" << endl;
   oDriver << "#include <cppad/include/CppAD.h>" << endl;
+  oDriver << "#include \"NonmemPars.h\"" << endl;
   oDriver << "//" << endl;
   oDriver << "///////////////////////////////////////////////////////////////////" << endl;
   oDriver << endl;
@@ -3414,84 +3330,26 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "///////////////////////////////////////////////////////////////////" << endl;
   oDriver << "// NONMEM Sepcific" << endl;
   // theta
-  oDriver << "const int nTheta          = " << myThetaLen << "; // length of theta vector" << endl;
-  oDriver << "double c_thetaIn[nTheta]  = { ";
-  for( int j=0; j<myThetaLen; j++ )
-    {
-      if( j>0 )
-	oDriver << ", ";
-      oDriver << pTheta->initial[0][j];
-    }
-  oDriver << " };" << endl;
-  oDriver << "const valarray<double> thetaIn( c_thetaIn, nTheta );" << endl;
-  oDriver << "double c_thetaUp[nTheta]  = { ";
-  for( int j=0; j<myThetaLen; j++ )
-    {
-      if( j>0 )
-	oDriver << ", ";
-      oDriver << pTheta->upper[0][j];
-    }
-  oDriver << " };" << endl;
-  oDriver << "const valarray<double> thetaUp( c_thetaUp, nTheta );" << endl;
-  oDriver << "double c_thetaLow[nTheta] = { ";
-  for( int j=0; j<myThetaLen; j++ )
-    {
-      if( j>0 )
-	oDriver << ", ";
-      oDriver << pTheta->lower[0][j];
-    }
-  oDriver << " };" << endl;
-  oDriver << "const valarray<double> thetaLow( c_thetaLow, nTheta );" << endl;
-  oDriver << "valarray<double> thetaOut( nTheta );" << endl;
+  oDriver << "valarray<double> thetaOut( NonmemPars::nTheta );" << endl;
   oDriver << endl;
 
   // Omega
-  oDriver << "const int nOmega         = " << myOmegaElemNum;
-  oDriver << "; // #of elements in Omega matrix" << endl;
-  oDriver << "const int dimOmega       = " << myOmegaDim;
-  oDriver << "; // dimension of Omeaga matrix" << endl;
-  oDriver << "double c_omegaIn[nOmega] = { "; 
-  for( int j=0; j<myOmegaElemNum; j++ )
-    {
-      if( j>0 )
-	oDriver << ", ";
-      oDriver << pOmega->initial[0][j];
-    }
-  oDriver << " };" << endl;
-  oDriver << "const valarray<double> omegaIn( c_omegaIn, nOmega );" << endl;
-  oDriver << "valarray<double> omegaOut( nOmega );" << endl;
+  oDriver << "const int orderOmega = " << myOmegaOrder << "; // #of elements in Omega matrix" << endl;
+  oDriver << "const int dimOmega   = " << myOmegaDim   << "; // dimension of Omeaga matrix" << endl;
+  oDriver << "valarray<double> omegaOut( orderOmega );" << endl;
   oDriver << endl;
   
   // Sigma
-  oDriver << "const int nSigma         = " << mySigmaElemNum;
+  oDriver << "const int orderSigma         = " << mySigmaOrder;
   oDriver << "; // #of elements in Sigma matrix" << endl;
   oDriver << "const int dimSigma = " << mySigmaDim;
   oDriver << "; // order of Sigma matrix" << endl;
-  oDriver << "const int nEps           = dimSigma;" << endl;
-  oDriver << "double c_sigmaIn[nSigma] = { ";
-  for( int j=0; j<mySigmaElemNum; j++ )
-    {
-      if( j>0 )
-	oDriver << ", ";
-      oDriver << pSigma->initial[0][j];
-    }
-  oDriver << " };" << endl;
-  oDriver << "const valarray<double> sigmaIn ( c_sigmaIn, nSigma );" << endl;
-  oDriver << "valarray<double> sigmaOut( nSigma );" << endl;
+  oDriver << "valarray<double> sigmaOut( orderSigma );" << endl;
   oDriver << endl;
 
-  oDriver << "const int nEta              = " << myEtaLen << ";" << endl;
-  oDriver << "double c_etaIn[nEta] = { ";
-  for( int i=0; i<myEtaLen; i++ )
-    {
-      if( i > 0 )
-	oDriver << ", ";
-      oDriver << pEta->initial[0][i];
-    }
-  oDriver << " };" << endl;
-  oDriver << "const valarray<double> etaIn ( c_etaIn, nEta );" << endl;
-  oDriver << "valarray<double> etaOut( nEta );" << endl;
-  oDriver << "valarray<double> etaAllOut( nEta * nPop );" << endl;
+
+  oDriver << "valarray<double> etaOut( NonmemPars::nEta );" << endl;
+  oDriver << "valarray<double> etaAllOut( NonmemPars::nEta * nPop );" << endl;
   oDriver << endl;
   oDriver << "//" << endl;
   oDriver << "///////////////////////////////////////////////////////////////////" << endl;
@@ -3500,27 +3358,19 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "///////////////////////////////////////////////////////////////////" << endl;
   oDriver << "//   NONMEM PRED Specific" << endl;
   oDriver << "Pred< CppAD::AD<double> > mPred(&set);" << endl;
-  if( myOmegaStruct == Symbol::TRIANGLE )
-    oDriver << "enum PopPredModel::covStruct omegaStruct = PopPredModel::FULL;" << endl;
-  else
-    oDriver << "enum PopPredModel::covStruct omegaStruct = PopPredModel::DIAGONAL;" << endl;
-  if( mySigmaStruct == Symbol::TRIANGLE )
-    oDriver << "enum PopPredModel::covStruct sigmaStruct = PopPredModel::FULL;" << endl;
-  else
-    oDriver << "enum PopPredModel::covStruct sigmaStruct = PopPredModel::DIAGONAL;" << endl;
 
   oDriver << "PopPredModel model( mPred," << endl;
-  oDriver << "                    nTheta," << endl;
-  oDriver << "                    thetaLow," << endl;
-  oDriver << "                    thetaUp," << endl;
-  oDriver << "                    thetaIn," << endl;
-  oDriver << "                    nEta," << endl;
-  oDriver << "                    etaIn," << endl;
-  oDriver << "                    nEps," << endl;
-  oDriver << "                    omegaStruct," << endl;
-  oDriver << "                    omegaIn," << endl;
-  oDriver << "                    sigmaStruct," << endl;
-  oDriver << "                    sigmaIn );" << endl;
+  oDriver << "                    NonmemPars::nTheta," << endl;
+  oDriver << "                    NonmemPars::thetaLow," << endl;
+  oDriver << "                    NonmemPars::thetaUp," << endl;
+  oDriver << "                    NonmemPars::thetaIn," << endl;
+  oDriver << "                    NonmemPars::nEta," << endl;
+  oDriver << "                    NonmemPars::etaIn," << endl;
+  oDriver << "                    NonmemPars::nEps," << endl;
+  oDriver << "                    NonmemPars::omegaStruct," << endl;
+  oDriver << "                    NonmemPars::omegaIn," << endl;
+  oDriver << "                    NonmemPars::sigmaStruct," << endl;
+  oDriver << "                    NonmemPars::sigmaIn );" << endl;
   oDriver << "//" << endl;
   oDriver << "///////////////////////////////////////////////////////////////////" << endl;
   oDriver << endl;
@@ -3917,9 +3767,9 @@ void NonmemTranslator::generatePopDriver() const
 
       oDriver << "///////////////////////////////////////////////////////////////////" << endl;
       oDriver << "//   NONMEM Specific" << endl;
-      oDriver << "oResults << \"<theta_out length=\\\"\" << nTheta << \"\\\">\" << endl;" << endl;
+      oDriver << "oResults << \"<theta_out length=\\\"\" << NonmemPars::nTheta << \"\\\">\" << endl;" << endl;
       // theta
-      oDriver << "for( int i=0; i<nTheta; i++ )" << endl;
+      oDriver << "for( int i=0; i<NonmemPars::nTheta; i++ )" << endl;
       oDriver << "{" << endl;
       oDriver << "   oResults << \"<value>\" << thetaOut[i] << \"</value>\" << endl;" << endl;
       oDriver << "}" << endl;
@@ -3930,7 +3780,7 @@ void NonmemTranslator::generatePopDriver() const
 	oDriver << "struct=\\\"block\\\">\" << endl;" << endl;
       else
 	oDriver << "struct=\\\"diagonal\\\">\" << endl;" << endl;
-      oDriver << "for( int i=0; i<nOmega; i++ )" << endl;
+      oDriver << "for( int i=0; i<orderOmega; i++ )" << endl;
       oDriver << "{" << endl;
       oDriver << "   oResults << \"<value>\" << omegaOut[i] << \"</value>\" << endl;" << endl;
       oDriver << "}" << endl;
@@ -3941,7 +3791,7 @@ void NonmemTranslator::generatePopDriver() const
 	oDriver << "struct=\\\"block\\\">\" << endl;" << endl;
       else
 	oDriver << "struct=\\\"diagonal\\\">\" << endl;" << endl;
-      oDriver << "for( int i=0; i<nSigma; i++ )" << endl;
+      oDriver << "for( int i=0; i<orderSigma; i++ )" << endl;
       oDriver << "{" << endl;
       oDriver << "   oResults << \"<value>\" << sigmaOut[i] << \"</value>\" << endl;" << endl;
       oDriver << "}" << endl;

@@ -130,6 +130,11 @@ class NonmemTranslator : public ClientTranslator
   void generatePred( const char* predDefFilename ) const;
 
   //
+  // Generate C++ source code for NonmemPars namespace.
+  //
+  void generateNonmemParsNamespace() const;
+
+  //
   // Generate C++ source code for the driver for population analysis.
   //
   void generatePopDriver( ) const;
@@ -172,6 +177,9 @@ class NonmemTranslator : public ClientTranslator
   // The definition file for Omega class.
   const char * fOmega_cpp;
  
+  // The NonmemPars namespace definition.
+  const char * fNonmemPars_h;
+
   // The SPK driver definition.
   const char * fDriver_cpp;
 
