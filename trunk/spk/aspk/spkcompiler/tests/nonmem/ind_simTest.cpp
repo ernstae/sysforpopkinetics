@@ -891,8 +891,8 @@ void ind_simTest::testDataSetClass()
   o << MY_ASSERT_EQUAL << endl;
   o << "int main()" << endl;
   o << "{" << endl;
-  o << "   const int n = " << nRecords << ";" << endl;
   o << "   DataSet<double> set;" << endl;
+  o << "   const int n = set.getN()[0];" << endl;
 
   // { ID, DV=CP, TIME, MDV }
   for( int i=0; i<nRecords; i++ )
@@ -1265,7 +1265,7 @@ void ind_simTest::testReportML()
   DOMNodeList *presentation_data = report->getElementsByTagName( X_PRESENTATION_DATA );
   CPPUNIT_ASSERT( presentation_data->getLength() == 1 );
 
-//  okToClean = true;
+  okToClean = true;
 }
 
 CppUnit::Test * ind_simTest::suite()

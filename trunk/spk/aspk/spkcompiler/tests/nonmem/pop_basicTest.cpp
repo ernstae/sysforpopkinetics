@@ -973,13 +973,8 @@ void pop_basicTest::testDataSetClass()
   o << "int main()" << endl;
   o << "{" << endl;
   o << "   const int nIndividuals = " << nIndividuals << ";" << endl;
-  o << "   valarray<int> N(nIndividuals);" << endl;
-  for( int i=0; i<nIndividuals; i++ )
-    {
-      o << "   N[" << i << "] = " << N[i] << ";" << endl;
-    }
   o << "   DataSet<double> set;" << endl;
-
+  o << "   valarray<int> N = set.getN();" << endl;
   // { ID, DV=CP, TIME, MDV }
   for( int j=0, k=0; j<nIndividuals; j++ )
   {
@@ -1081,10 +1076,8 @@ void pop_basicTest::testPredClass()
   o << "{" << endl;
   o << "   bool ok = true;" << endl;
   o << "   const int nIndividuals = " << nIndividuals << ";" << endl;
-  o << "   valarray<int> N(nIndividuals);" << endl;
-  for( int i=0; i<nIndividuals; i++ )
-    o << "   N[" << i << "] = " << N[i] << ";" << endl;
   o << "   DataSet< CppAD::AD<double> > set;" << endl;
+  o << "   const valarray<int> N = set.getN();" << endl;
   o << "   Pred< CppAD::AD<double> > pred( &set );" << endl;
   o << "   const double C1 = 1.0;" << endl;
   o << "   const double C2 = 2.0;" << endl;
@@ -1552,7 +1545,7 @@ void pop_basicTest::testReportML()
   DOMNodeList *presentation_data = report->getElementsByTagName( X_PRESENTATION_DATA );
   CPPUNIT_ASSERT( presentation_data->getLength() == 1 );
 
-  //  okToClean = true;
+  okToClean = true;
 }
 
 CppUnit::Test * pop_basicTest::suite()

@@ -892,8 +892,8 @@ void ind_simNoEstTest::testDataSetClass()
   o << MY_ASSERT_EQUAL << endl;
   o << "int main()" << endl;
   o << "{" << endl;
-  o << "   const int n = " << nRecords << ";" << endl;
   o << "   DataSet<double> set;" << endl;
+  o << "   const int n = set.getN()[0];" << endl;
 
   // { ID, DV=CP, TIME, MDV }
   for( int i=0; i<nRecords; i++ )
@@ -1077,7 +1077,7 @@ void ind_simNoEstTest::testReportML()
   CPPUNIT_ASSERT( presentation_data_sets->getLength() == 1 );
 
 
-//  okToClean = true;
+  okToClean = true;
 }
 
 CppUnit::Test * ind_simNoEstTest::suite()
