@@ -48,22 +48,29 @@
 using SPK_VA::valarray;
 using namespace CppUnit;
 
-static const int    nY = 2;
-static const int    nB = 4;
+namespace // [Begin: unnamed namespace]
+{
+const int    nY = 2;
+const int    nB = 4;
 
-static double epsilon;
-static int    maxItr;
-static int    level;
-static valarray<double> y;
-static valarray<double> bLow;
-static valarray<double> bUp;
-static valarray<double> bIn;
-static valarray<double> bStep;
-static valarray<double> bOut;
-static double mapObjOut;
-static valarray<double> mapObj_bOut;
-static valarray<double> mapObj_b_bOut;
-static bool withD;
+double epsilon;
+int    maxItr;
+int    level;
+valarray<double> y;
+valarray<double> bLow;
+valarray<double> bUp;
+valarray<double> bIn;
+valarray<double> bStep;
+valarray<double> bOut;
+double mapObjOut;
+valarray<double> mapObj_bOut;
+valarray<double> mapObj_b_bOut;
+bool withD;
+
+} // [End: unnamed namespace]
+
+//
+// [Remove]===========================
 
 void fitIndividualErrorTest::setUp()
 {
