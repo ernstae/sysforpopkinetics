@@ -40,9 +40,10 @@ public class Server {
      * @param dataInfo Archive information of the dataset associated with the job.
      */
     public void submitJob(String source, String dataset, String modelArchive, 
-                          String jobAbstract, ArchiveInfo modelInfo, ArchiveInfo dataInfo)
+                          String jobAbstract, ArchiveInfo modelInfo, ArchiveInfo dataInfo,
+                          String jobMethodCode, long jobParent)
     {
-        String[] messageOut = new String[19];
+        String[] messageOut = new String[21];
         messageOut[0] = secret;
         messageOut[1] = source;
         if(dataInfo.isNewArchive || dataInfo.isNewVersion)
@@ -68,6 +69,8 @@ public class Server {
         messageOut[16] = String.valueOf(dataInfo.id);
         messageOut[17] = String.valueOf(dataInfo.isNewArchive);
         messageOut[18] = String.valueOf(dataInfo.isNewVersion);
+        messageOut[19] = jobMethodCode;
+        messageOut[20] = String.valueOf(jobParent);
          
         try
         {

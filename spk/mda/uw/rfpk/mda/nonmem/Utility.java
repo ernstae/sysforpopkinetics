@@ -609,4 +609,66 @@ public class Utility {
             }
         }
     }
+    
+    /** Check if math functions used in the step are compatible with NONMEM.
+     * @param text The program to be checked.
+     * @param step The step title.
+     * @return A Vector containing the names of the functions not supported by NONMEM in the text. 
+     */
+    public static Vector checkMathFunction(String text, String step)
+    {
+        String[] functions = {"ABS", "ACOS", "ASIN", "ATAN", "ATAN2", "COS", "COSH",
+                              "MAX", "MIN", "MOD", "SIN", "SINH", "TAN", "TANH"};
+        Vector names = new Vector();                   
+        for(int i = 0; i < functions.length; i++)
+        {
+            if(text.indexOf(functions[i]) != -1)
+            {
+                names.add(functions[i]);
+                JOptionPane.showMessageDialog(null, "If you use '" + functions[i] + "' as a math function call" +
+                                              " in the '" + step + "' your control file may be incompatible with NONMEM.",
+                                              "Warning Message", JOptionPane.WARNING_MESSAGE);
+            }
+        }
+        return names;
+    }
+    
+    /** check if parenthesis are mismatched.
+     * @param text The program to be checked.
+     * @param step The step title.
+     * @return A Vector containing the line numbers of the lines with mismatched parenthesis.
+     */
+    public static Vector checkParenthesis(String text, String step)
+    {
+        String[] lines = text.split("\n");
+        Vector mismatches = new Vector();
+        int n;
+        for(int i = 0; i < lines.length; i++)
+        {
+            n = 0;
+            for(int j = 0; j < lines[i].length(); j++)
+            {
+                if(lines[i].charAt(j) == ';')
+                    break;
+                if(lines[i].charAt(j) == '(')
+                    n++;
+                if(lines[i].charAt(j) == ')')
+                    n--;                
+            }
+            if(n != 0)
+            {
+                mismatches.add(new Integer(i));
+                if(n > 0)
+                    JOptionPane.showMessageDialog(null, "Parenthesis mismatch was found in '" + step +
+                                                  "' line " + (i + 1) + ", ' ) ' is expected.", "Input Error",
+                                                  JOptionPane.ERROR_MESSAGE);
+                else
+                    JOptionPane.showMessageDialog(null, "Parenthesis mismatch was found in '" + step +
+                                                  "' line " + (i + 1) + ", ' ( ' is expected.\n" + 
+                                                  "Please click the 'Back' button and correct it.", "Input Error",
+                                                  JOptionPane.ERROR_MESSAGE);
+            } 
+        }
+        return mismatches;
+    }
 }

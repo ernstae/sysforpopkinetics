@@ -225,18 +225,6 @@ public class Database {
         // Prepare for the return
         Vector jobList = new Vector();
 
-        // Set state_code conversion
-        Properties state = new Properties();
-        String[] code = {"q2c", "cmp", "q2r", "run", "end"};
-        String[] name = {"Queued to compile", "Compiling", "Queued to run", "Running", "End"};
-        for(int j = 0; j < 5; j++)
-            state.setProperty(code[j], name[j]); 
-        
-        // Set end_code conversion
-        Properties end = new Properties();
-        end.setProperty("cerr", "Error found");
-        end.setProperty("srun", "Job finished");
-        
         try
         {
             // Connect to the database
@@ -249,6 +237,18 @@ public class Database {
 
             // Get user jobs
             ResultSet userJobsRS = Spkdb.userJobs(con, userId, maxNum, leftOff);
+            
+            // Set state_code conversion
+            ResultSet stateRS = Spkdb.getStateTable(con);
+            Properties state = new Properties();                
+            while(stateRS.next())
+                state.setProperty(stateRS.getString(1), stateRS.getString(2));
+
+            // Set end_code conversion
+            ResultSet endRS = Spkdb.getEndTable(con);                
+            Properties end = new Properties();
+            while(endRS.next())
+                end.setProperty(endRS.getString(1), endRS.getString(2));
             
             // Disconnect to the database
             Spkdb.disconnect(con);

@@ -270,7 +270,7 @@ public class XMLReader {
             getPopEstimationResult(pop_analysis_result);
             NodeList stat_resultList = pop_analysis_result.getElementsByTagName("pop_stat_result");
             if(stat_resultList.getLength() > 0)
-                getStatisticsResult((Element)stat_resultList.item(0)); 
+                getStatisticsResult((Element)stat_resultList.item(0));
         }
 
         // Get individual analysis result
@@ -398,7 +398,7 @@ public class XMLReader {
         if(omega_outList.getLength() > 0)
         {
             Element omega_out = (Element)omega_outList.item(0);
-            String struct = omega_out.getAttribute("struct");
+            output.omegaStruct = omega_out.getAttribute("struct");
             int dimension = Integer.parseInt(omega_out.getAttribute("dimension"));
             NodeList valueList = omega_out.getElementsByTagName("value");
             int length = valueList.getLength();
@@ -412,14 +412,14 @@ public class XMLReader {
                     output.omega[i][0] = "ETA" + (i + 1);
                     for(int j = 1; j <= i + 1; j++) 
                     {
-                        if(struct.equals("diagonal"))
+                        if(output.omegaStruct.equals("diagonal"))
                         {
                             if(i == j - 1)
                                 output.omega[i][j] = valueList.item(k++).getFirstChild().getNodeValue();
                             else
                                 output.omega[i][j] = "0";
                         }
-                        else if(struct.equals("block"))
+                        else if(output.omegaStruct.equals("block"))
                             output.omega[i][j] = valueList.item(k++).getFirstChild().getNodeValue();                    
                         else
                             JOptionPane.showMessageDialog(null, "The OMEGA structure wrong", 
@@ -438,7 +438,7 @@ public class XMLReader {
         if(sigma_outList.getLength() > 0)
         {
             Element sigma_out = (Element)sigma_outList.item(0);
-            String struct = sigma_out.getAttribute("struct");
+            output.sigmaStruct = sigma_out.getAttribute("struct");
             int dimension = Integer.parseInt(sigma_out.getAttribute("dimension"));            
             NodeList valueList = sigma_out.getElementsByTagName("value");
             int length = valueList.getLength();
@@ -452,14 +452,14 @@ public class XMLReader {
                     output.sigma[i][0] = "EPS" + (i + 1);
                     for(int j = 1; j <= i + 1; j++) 
                     {
-                        if(struct.equals("diagonal"))
+                        if(output.sigmaStruct.equals("diagonal"))
                         {
                             if(i == j - 1)
                                 output.sigma[i][j] = valueList.item(k++).getFirstChild().getNodeValue();
                             else
                                 output.sigma[i][j] = "0";
                         }
-                        else if(struct.equals("block"))
+                        else if(output.sigmaStruct.equals("block"))
                             output.sigma[i][j] = valueList.item(k++).getFirstChild().getNodeValue();                    
                         else
                             JOptionPane.showMessageDialog(null, "The SIGMA structure wrong", 
@@ -503,28 +503,43 @@ public class XMLReader {
     private void getStatisticsLabels(Element stat_result)
     {
         int thetaLength = output.theta.length;
-        int omegaLength = output.omega.length; 
-        int sigmaLength = output.sigma.length;
-        output.statLabels = new String[thetaLength + 
-                                       (omegaLength + 1) * omegaLength / 2 +
-                                       (sigmaLength + 1) * sigmaLength / 2 ];
+        int omegaLength = output.omega.length;
+        if(output.omegaStruct.equals("block"))
+            omegaLength = (omegaLength + 1) * omegaLength / 2;
+        int sigmaLength = 0;
+        if(output.analysis.equals("population"))
+        {
+            sigmaLength = output.sigma.length;
+            if(output.sigmaStruct.equals("block"))
+                sigmaLength = (sigmaLength + 1) * sigmaLength / 2;            
+        }
+        output.statLabels = new String[thetaLength + omegaLength + sigmaLength];
+                                      
         int k = 0;
         for(int i = 0; i < thetaLength; i++)
             output.statLabels[k++] = "TH " + (i + 1);
-        for(int i = 0; i < omegaLength; i++)
-            for(int j = i; j < omegaLength; j++)
-                output.statLabels[k++] = "OM" + (i + 1) + (j + 1);  
-        for(int i = 0; i < sigmaLength; i++) 
-            for(int j = i; j < sigmaLength; j++)
-                output.statLabels[k++] = "SG" + (i + 1) + (j + 1);   
+        if(output.omegaStruct.equals("block"))
+            for(int i = 0; i < omegaLength; i++)
+                for(int j = i; j < omegaLength; j++)
+                    output.statLabels[k++] = "OM" + (i + 1) + (j + 1);
+        else
+            for(int i = 0; i < omegaLength; i++)
+                output.statLabels[k++] = "OM" + (i + 1) + (i + 1);
+        if(output.sigmaStruct != null && output.sigmaStruct.equals("block"))        
+            for(int i = 0; i < sigmaLength; i++) 
+                for(int j = i; j < sigmaLength; j++)
+                    output.statLabels[k++] = "SG" + (i + 1) + (j + 1);
+        else
+            for(int i = 0; i < sigmaLength; i++)
+                output.statLabels[k++] = "SG" + (i + 1) + (i + 1);        
     }
         
     // Get standard error
     private void getStdError(Element stat_result)
     {
-        String stdErr = "pop_stderr_out";
+        String stdErr = "pop_stderror_out";
         if(stat_result.getNodeName().equals("ind_stat_result"))
-            stdErr = "ind_stderr_out";
+            stdErr = "ind_stderror_out";
         NodeList stderr_outList = stat_result.getElementsByTagName(stdErr);
         if(stderr_outList.getLength() > 0)
         {
@@ -543,23 +558,46 @@ public class XMLReader {
                 int k = dimension;
                 int l = dimension;
                 dimension = output.omega.length;
-                output.stdErrOmega = new String[dimension][]; 
+                output.stdErrOmega = new String[dimension][];
+                
                 for(int i = 0; i < dimension; i++)
                 {
                     output.stdErrOmega[i] = new String[i + 2];
                     output.stdErrOmega[i][0] = "ETA" + (i + l);
-                    for(int j = 1; j <= i + 1; j++) 
-                        output.stdErrOmega[i][j] = valueList.item(k++).getFirstChild().getNodeValue();                    
+                    for(int j = 1; j <= i + 1; j++)
+                    {
+                        if(output.omegaStruct.equals("diagonal"))
+                        {
+                            if(i == j - 1)
+                                output.stdErrOmega[i][j] = valueList.item(k++).getFirstChild().getNodeValue();
+                            else
+                                output.stdErrOmega[i][j] = "";
+                        }
+                        else if(output.omegaStruct.equals("block"))                                         
+                            output.stdErrOmega[i][j] = valueList.item(k++).getFirstChild().getNodeValue();                    
+                    }
                 }
                 l += dimension;
+                if(output.sigma == null)
+                    return;
                 dimension = output.sigma.length;
                 output.stdErrSigma = new String[dimension][]; 
                 for(int i = 0; i < dimension; i++)
                 {
                     output.stdErrSigma[i] = new String[i + 2];
-                    output.stdErrSigma[i][0] = "EPS" + (i + 1);
-                    for(int j = 1; j <= i + 1; j++) 
-                        output.stdErrSigma[i][j] = valueList.item(k++).getFirstChild().getNodeValue();                    
+                    output.stdErrSigma[i][0] = "EPS" + (i + 1);                    
+                    for(int j = 1; j <= i + 1; j++)                    
+                    {
+                        if(output.sigmaStruct.equals("diagonal"))
+                        {
+                            if(i == j - 1)
+                                output.stdErrSigma[i][j] = valueList.item(k++).getFirstChild().getNodeValue();
+                            else
+                                output.stdErrSigma[i][j] = "";
+                        }
+                        else if(output.sigmaStruct.equals("block"))                    
+                            output.stdErrSigma[i][j] = valueList.item(k++).getFirstChild().getNodeValue();                    
+                    }
                 }                
             }
         }

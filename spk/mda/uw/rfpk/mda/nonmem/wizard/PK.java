@@ -13,6 +13,13 @@ import javax.swing.text.DefaultEditorKit;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JOptionPane;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
+import java.awt.Color;
+import java.util.Vector;
 
 /**
  * This class defines a step to create the $PK record
@@ -25,7 +32,13 @@ public class PK extends javax.swing.JPanel implements WizardStep {
     private MDAIterator iterator = null;
     private JWizardPane wizardPane = null;
     private boolean isValid = false;
-
+    private boolean isHighlighted = false;    
+    private DefaultHighlighter highlighter = new DefaultHighlighter();
+    private DefaultHighlighter.DefaultHighlightPainter highlight_painter1 =
+            new DefaultHighlighter.DefaultHighlightPainter(new Color(255,255,0));
+    private DefaultHighlighter.DefaultHighlightPainter highlight_painter2 =
+            new DefaultHighlighter.DefaultHighlightPainter(new Color(255,0,0));
+    
     /** Creates new form PK 
      * @param iter A MDAIterator object to initialize the field iterator
      */
@@ -170,17 +183,71 @@ public class PK extends javax.swing.JPanel implements WizardStep {
                 return;
             }            
             MDAObject object = (MDAObject)wizard.getCustomizedObject();        
-            String record = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase(); 
-            if(!record.equals("") && !Utility.checkTag(record, getStepTitle()))
+            String record = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
+            String title = getStepTitle();
+            if(!record.equals("") && !Utility.checkTag(record, title))
             {
                 object.getRecords().setProperty("PK", "$PK " + "\n" + record);
                 object.getSource().pk = "\n" + record + "\n";
                 // Eliminate comments
-                record = Utility.eliminateComments(record); 
+                String code = Utility.eliminateComments(record); 
                 // Find number of THETAs
-                iterator.setNTheta(Utility.find(record, "THETA"));
+                iterator.setNTheta(Utility.find(code, "THETA"));
                 // Find number of ETAs
-                iterator.setNEta(Utility.find(record.replaceAll("THETA", ""), "ETA"));
+                iterator.setNEta(Utility.find(code.replaceAll("THETA", ""), "ETA"));
+                // Check NONMEM compatibility
+                Vector names = Utility.checkMathFunction(code, title);
+                // Check parenthesis mismatch
+                Vector lines = Utility.checkParenthesis(record, title);
+                // Highlight the incompatible function names and mismatched parenthesis lines
+                if(isHighlighted)
+                {                
+                    highlighter.removeAllHighlights();
+                    isHighlighted = false;
+                }
+                if(names.size() > 0 || lines.size() > 0)
+                {
+                    jTextArea1.setHighlighter(highlighter);
+                    Element paragraph = jTextArea1.getDocument().getDefaultRootElement();          
+                    String[] text = jTextArea1.getText().split("\n");
+                    try
+                    {
+                        for(int i = 0; i < text.length; i++)
+                        {
+                            for(int j = 0; j < names.size(); j++)
+                            {
+                                int comment = text[i].indexOf(";");
+                                if(comment != 0)
+                                {
+                                    String line = text[i];
+                                    if(comment > 0)
+                                        line = text[i].substring(0, comment);
+                                    int pos = 0;
+                                    int offset = paragraph.getElement(i).getStartOffset();
+                                    String name = (String)names.get(j);
+                                    while ((pos = text[i].indexOf(name, pos)) >= 0) 
+                                    {                
+                                        highlighter.addHighlight(pos + offset, pos + offset + name.length(), highlight_painter1);
+                                        pos += name.length();
+                                        isHighlighted = true;
+                                    }
+                                }
+                            }
+                        }
+                        for(int i = 0; i < lines.size(); i++)
+                        {
+                            int n = ((Integer)lines.get(i)).intValue(); 
+                            highlighter.addHighlight(paragraph.getElement(n).getStartOffset(),
+                                                     paragraph.getElement(n).getEndOffset() - 1,
+                                                     highlight_painter2); 
+                            isHighlighted = true;                    
+                        }
+                    }
+                    catch(BadLocationException e) 
+                    {
+                        JOptionPane.showMessageDialog(null, e, "BadLocationException", JOptionPane.ERROR_MESSAGE);
+                    }                    
+                }                
             }
 	}
         

@@ -20,16 +20,17 @@ import javax.swing.SwingConstants;
  */
 public class MatrixShow extends javax.swing.JFrame {
     
-    /** Creates new form MatrixShow
-     * @param data a String[][] object containing the matrix of data values
-     * @param header a String[] object containing the headers
-     * @param title a String object containing the title of the window     
-     * @param text a String[] object containing the text to display in the window
-     * @param width the width of the window
-     * @param height the height of the window
+    /** Creates new form MatrixShow.
+     * @param data a String[][] object containing the matrix of data values.
+     * @param header a String[] object containing the headers.
+     * @param title a String object containing the title of the window.   
+     * @param text a String[] object containing the text to display in the window.
+     * @param width the width of the window.
+     * @param height the height of the window.
+     * @param isDiagonal true if the matrix is diagonal, false otherwise.
      */
     public MatrixShow(String[][] data, String[] header, String title, String text,
-                      int width, int height)
+                      int width, int height, boolean isDiagonal)
     {
         initComponents();
         setTitle(title);
@@ -40,9 +41,13 @@ public class MatrixShow extends javax.swing.JFrame {
         // Format the data
         int dimension = data.length;
         DecimalFormat f = new DecimalFormat("0.00E00");
-        for(int i = 0; i < dimension; i++)
-            for(int j = 1; j < data[i].length; j++)
-                data[i][j] = Utility.formatData(6, f.format(Double.parseDouble(data[i][j])));
+        if(isDiagonal)
+            for(int i = 0; i < dimension; i++)
+                data[i][i + 1] = Utility.formatData(6, f.format(Double.parseDouble(data[i][i + 1])));
+        else
+            for(int i = 0; i < dimension; i++)
+                for(int j = 1; j < data[i].length; j++)
+                    data[i][j] = Utility.formatData(6, f.format(Double.parseDouble(data[i][j])));
 
         // Set table model
         DisplayTableModel tableModel = new DisplayTableModel(data, header);

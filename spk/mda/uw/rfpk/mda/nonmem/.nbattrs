@@ -4,6 +4,9 @@
     <fileobject name="DataFormater.java">
         <attr name="class_dependency_javax.swing.JFrame" stringvalue="DataFormater"/>
     </fileobject>
+    <fileobject name="JobInfo.java">
+        <attr name="class_dependency_javax.swing.JFrame" stringvalue="JobInfo"/>
+    </fileobject>
     <fileobject name="MDAFrame.java">
         <attr name="class_dependency_javax.swing.table.AbstractTableModel" stringvalue="MDAFrame.DisplayTableModel"/>
         <attr name="class_dependency_java.awt.event.AdjustmentListener" stringvalue="MDAFrame.ScrollBarListener"/>

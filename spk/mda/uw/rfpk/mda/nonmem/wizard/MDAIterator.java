@@ -18,7 +18,8 @@ import java.util.StringTokenizer;
  * This class defines a iterator for the wizard.
  * @author  jiaji Du
  */
-public class MDAIterator implements StepIterator{   
+public class MDAIterator implements StepIterator{ 
+
     private Vector steps = new Vector(); 
     private int actual = 0;
     private boolean isFirst = true;
@@ -375,7 +376,7 @@ public class MDAIterator implements StepIterator{
             actual = current;
             current = -1;
         }
-        isBack = false;
+//        isBack = false;
         return (WizardStep)steps.get(actual); 
     }
     
@@ -419,7 +420,7 @@ public class MDAIterator implements StepIterator{
     /** Reload either a SPK input file or a model opened in MDA editor window. */
     public void reloadInput()
     {
-        String text = frame.getText();
+        String text = frame.getEditorText();
         if(text.indexOf("<spksource>") != -1 && text.indexOf("<spkdata") != -1 && 
            text.indexOf("<spkmodel>") != -1)
         {
