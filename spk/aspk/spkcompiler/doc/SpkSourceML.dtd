@@ -392,7 +392,7 @@ NOTE: This element contains a set of equations written in the NONMEM abbriviated
 
 There can be as many as 10 <table>s and 20 <scatterplot>s.
 -->
-<!ELEMENT presentation (table+ | scatterplot+)>
+<!ELEMENT presentation (table? | scatterplot?)>
 
 <!-- <table> Information to request to produce a table. The table columns are placed in the order of which the <column> appears. There are as many as 10 tables.-->
 <!ELEMENT table (description? | column+)>
