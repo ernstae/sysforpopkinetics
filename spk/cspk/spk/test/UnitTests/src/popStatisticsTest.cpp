@@ -481,8 +481,6 @@ void popStatisticsTest::statisticsExampleTest(enum Objective whichObjective)
 	  CPPUNIT_ASSERT_MESSAGE( "popStatistics failed for unknown reasons!", false);
 	}
       
-      if( whichObjective == FIRST_ORDER && form != 2 )
-	continue;
       /*
 	cout << "formulation = " << form << endl;
 	cout << "popParCovOut = " << endl;
@@ -525,21 +523,51 @@ void popStatisticsTest::statisticsExampleTest(enum Objective whichObjective)
 	  DoubleMatrix dvecBStep( bStep );
 	  DoubleMatrix dmatLTilde_alpOut( nAlp, nAlp );
 	  
-	  lTilde( model, 
-		  whichObjective, 
-		  dvecY, 
-		  dvecN,
-		  indOptimizer,
-		  dvecAlp,
-		  dvecBLow,
-		  dvecBUp,
-		  dvecBStep,
-		  dmatBIn,
-		  0,
-		  0, 
-		  0, 
-		  &dmatLTilde_alpOut );
-	  
+          // Calculate the derivatives of each individual's
+          // contribution to the population objective function
+          if( whichObjective != FIRST_ORDER )
+          {
+            // If the first order objective is not being used, then
+            // calculate the derivatives in the normal way.
+            lTilde( model, 
+                    whichObjective, 
+                    dvecY, 
+                    dvecN,
+                    indOptimizer,
+                    dvecAlp,
+                    dvecBLow,
+                    dvecBUp,
+                    dvecBStep,
+                    dmatBIn,
+                    0,
+                    0, 
+                    0, 
+                    &dmatLTilde_alpOut );
+          }
+          else
+          {
+            // If the first order objective is being used, then
+            // use the naive first order model to calculate the
+            // derivatives.
+            NaiveFoModel naiveFoModel( &model, bStep );
+            enum Objective naiveFoObjective = NAIVE_FIRST_ORDER;
+      
+            lTilde( naiveFoModel,
+                    naiveFoObjective, 
+                    dvecY, 
+                    dvecN,
+                    indOptimizer,
+                    dvecAlp,
+                    dvecBLow,
+                    dvecBUp,
+                    dvecBStep,
+                    dmatBIn,
+                    0,
+                    0, 
+                    0, 
+                    &dmatLTilde_alpOut );
+          }
+
 	  valarray<double> S( 0.0, nAlp * nAlp );
 	  double* pdmatLTilde_alpOut = dmatLTilde_alpOut.data();
 	  for( int i = 0; i < nInd * 2; i += 2 )
