@@ -116,9 +116,19 @@ int read_nonmem_driver(
     spkOut.popParIn .resize( nAlp );
     spkOut.popParUp .resize( nAlp );
     spkOut.popParLow.resize( nAlp );
-    spkOut.popParIn [ slice( 0, nTheta, 1 ) ] = nonmemOut.thetaIn [ slice( 0, nTheta, 1 ) ];
-    spkOut.popParUp [ slice( 0, nTheta, 1 ) ] = nonmemOut.thetaUp [ slice( 0, nTheta, 1 ) ];
-    spkOut.popParLow[ slice( 0, nTheta, 1 ) ] = nonmemOut.thetaLow[ slice( 0, nTheta, 1 ) ];
+
+    spkOut.popParIn [ slice( 0, nTheta, 1 ) ] 
+      = nonmemOut.thetaIn;
+    spkOut.popParIn [ slice( nTheta, nOmega, 1 ) ]
+      = nonmemOut.omegaIn;
+    spkOut.popParIn [ slice( nTheta+nOmega, nSigma, 1 ) ] 
+      = nonmemOut.sigmaIn;
+
+    spkOut.popParUp [ slice( 0, nTheta, 1 ) ] 
+      = nonmemOut.thetaUp;
+
+    spkOut.popParLow[ slice( 0, nTheta, 1 ) ] 
+      = nonmemOut.thetaLow;
     
     // map b = eta
     int nEta   = nonmemOut.etaIn.size(); 
@@ -126,10 +136,20 @@ int read_nonmem_driver(
     spkOut.indParIn .resize( nB );
     spkOut.indParUp .resize( nB );
     spkOut.indParLow.resize( nB );
-    spkOut.indParIn [ slice( 0, nEta, 1 ) ] = nonmemOut.etaIn [ slice( 0, nEta, 1 ) ];
-    spkOut.indParUp [ slice( 0, nEta, 1 ) ] = nonmemOut.etaIn [ slice( 0, nEta, 1 ) ];
-    spkOut.indParLow[ slice( 0, nEta, 1 ) ] = nonmemOut.etaIn [ slice( 0, nEta, 1 ) ];
+    spkOut.indParIn [ slice( 0, nEta, 1 ) ] 
+      = nonmemOut.etaIn;
     
+    //
+    // REVISIT - Sachiko 09/08/03
+    // How do we decide the eta boundary values?
+    //
+    /*
+    spkOut.indParUp [ slice( 0, nEta, 1 ) ] 
+      = nonmemOut.etaUp;
+    spkOut.indParLow[ slice( 0, nEta, 1 ) ] 
+      = nonmemOut.etaLow;
+    */
+ 
     return nIndividuals;
 }
 
