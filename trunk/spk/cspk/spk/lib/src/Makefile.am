@@ -119,6 +119,7 @@ libspk_la_SOURCES = \
 	transposeRowBlocks.cpp \
 	UTranTimesSymKronSymTimesU.cpp \
 	UTranTimesSymKronSymTimesU_x.cpp \
+	WarningsManager.cpp \
 	ABA_x.h \
 	add.h \
 	AkronBtimesC.h \
@@ -231,7 +232,8 @@ libspk_la_SOURCES = \
 	transposeDerivative.h \
 	transposeRowBlocks.h \
 	UTranTimesSymKronSymTimesU.h \
-	UTranTimesSymKronSymTimesU_x.h
+	UTranTimesSymKronSymTimesU_x.h \
+	WarningsManager.h
  
 libspk_release_la_SOURCES = \
 	ABA_x.cpp \
@@ -338,6 +340,7 @@ libspk_release_la_SOURCES = \
 	transposeRowBlocks.cpp \
 	UTranTimesSymKronSymTimesU.cpp \
 	UTranTimesSymKronSymTimesU_x.cpp \
+	WarningsManager.cpp \
 	ABA_x.h \
 	add.h \
 	AkronBtimesC.h \
@@ -449,7 +452,8 @@ libspk_release_la_SOURCES = \
 	transposeDerivative.h \
 	transposeRowBlocks.h \
 	UTranTimesSymKronSymTimesU.h \
-	UTranTimesSymKronSymTimesU_x.h 
+	UTranTimesSymKronSymTimesU_x.h \
+	WarningsManager.h
 
 pkginclude_HEADERS = \
 	ABA_x.h \
@@ -564,4 +568,5 @@ pkginclude_HEADERS = \
 	transposeDerivative.h \
 	transposeRowBlocks.h \
 	UTranTimesSymKronSymTimesU.h \
-	UTranTimesSymKronSymTimesU_x.h 
+	UTranTimesSymKronSymTimesU_x.h \
+	WarningsManager.h
