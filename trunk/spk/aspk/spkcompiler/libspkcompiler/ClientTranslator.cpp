@@ -3,6 +3,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <fstream>
 #include "ClientTranslator.h"
 #include "SymbolTable.h"
 
@@ -88,7 +89,7 @@ void ClientTranslator::parseData()
   //
   // Precondition: The symbol table has no entry yet for data labels.
   //
-  assert( table.getLabels().size() == 0 );
+  assert( table.getLabels()->size() == 0 );
 
   DOMElement * spkdata = data->getDocumentElement();
   assert( XMLString::equals( spkdata->getNodeName(), X_SPKDATA ) );
@@ -106,7 +107,8 @@ void ClientTranslator::parseData()
   int nDataTables = dataTables->getLength();
   assert( nDataTables == 1 );
 
-  for( int i=0, nIDs=0; i<nDataTables; i++ )
+  int nIDs = 0;
+  for( int i=0; i<nDataTables; i++ )
     {
       DOMElement * dataTable = dynamic_cast<DOMElement*>( dataTables->item(i) );
       unsigned int nVals;
@@ -244,4 +246,3 @@ void ClientTranslator::parseData()
 	}
     }
 }
-
