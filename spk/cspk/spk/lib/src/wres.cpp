@@ -24,9 +24,11 @@
  * File: wres.cpp
  *
  *
- * Computes residuals and weighted residuals.
+ * Calculates residuals and weighted residuals.
  *
  * Author: Sachiko Honda
+ *
+ * Modified later by: Mitch Watrous
  *
  *************************************************************************/
 
@@ -42,11 +44,30 @@
 
 /*
 $begin wres$$
-$spell 
-namespace cout endl yHat valarray SPK_VA
+$spell
+  cov
+  Enumerator
+  Model model
+  valarray
+  Obj
+  enum
+  Laplace
+  const
+  int
+  covariance
+  ind
+  iostream
+  namespace
+  std
+  cout
+  endl
+  Spk
+  subvector
+  res
+  wres
 $$
 
-$section Weighted Residuals$$
+$section Calculating Residuals and Weighted Residuals$$
 
 $index wres$$
 $index residual, weighted$$
@@ -54,10 +75,10 @@ $index residual, weighted$$
 $table
 $bold Prototype:$$   $cend  
 $syntax/void wres( const SPK_VA::valarray<double>& /y/,
-                   const SPK_VA::valarray<double>& /yHat/,
-                   const SPK_VA::valarray<double>& /R/,
-                   SPK_VA::valarray<double>& /r/,
-                   SPK_VA::valarray<double>& /wr/ )/$$
+                   const SPK_VA::valarray<double>& /f/,
+                   const SPK_VA::valarray<double>& /cov/,
+                   SPK_VA::valarray<double>*       /pResOut/,
+                   SPK_VA::valarray<double>*       /pWresOut/ )/$$
 $tend
 
 $fend 25$$
@@ -70,14 +91,28 @@ $$
 $pre
 $$
 $head Description$$
-Computes residuals and weighted residuals using the variance of measurement data
-as the weight.  Residuals, $math%r%$$ and
-Weighted residuals, $math%wr%$$, are computed as follows:
+Calculates residuals and weighted residuals using the covariance 
+of the data $math%cov%$$ as the weight.
+$pre
 
+$$
+The residuals $math%res%$$ and weighted residuals $math%wres%$$ 
+are calculated as follows:
 $math%
-   r = y - y^
-  wr = C * r, such that R = C * C^t
+
+    res  =  y - f
+
 %$$
+and
+$math%
+
+                -1/2
+    wres  =  cov     * res  ,
+
+%$$
+
+where the term multiplying the residuals is the matrix square 
+root of the inverse of the covariance.
 
 $head Arguments$$
 
@@ -90,34 +125,51 @@ If $math%y%$$ were empty, the function returns immediately.
 
 $syntax/
 
-&/yHat/
+&/f/
 /$$
-contains the predicted values computed by the model.
-The size of $math%y^%$$ must be equal to $math%n%$$.
+contains the predicted values calculated by the model.
+The size of $math%f%$$ must be equal to $math%n%$$.
 
 $syntax/
 
-&/R/
+&/cov/
 /$$
 represents a matrix in the column major order that contains
-the covariance of measurement data.  The matrix, therefore,
+the covariance of the measurement data.  The matrix, therefore,
 is assumed to have the positive definite property.
-The size of $math%R%$$ must be equal to $math%n^2%$$.
+The size of $math%cov%$$ must be equal to $math%n^2%$$.
 
 $syntax/
 
-&/r/
+/pResOut/ 
 /$$
-is a vector of length $math%n%$$ (ie. preallocated) and
-will contain the residuals if computation went successful.
-
+If $italic pResOut$$ is not $code NULL$$, then the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic pResOut$$ 
+must be declared in the function that calls this function, 
+and its size must be equal to $italic n$$.  
+If $italic pResOut$$ is not $code NULL$$ and this function 
+completed successfully, then the $code SPK_VA::valarray<double>$$ object 
+pointed to by $italic pResOut$$ will contain the vector of residuals 
+$math%res%$$ in the same order as the data values.  
+Otherwise, this function will not attempt to change the 
+contents of the $code SPK_VA::valarray<double>$$ object 
+pointed to by $italic pResOut$$. 
 
 $syntax/
 
-&/wr/
+/pWresOut/ 
 /$$
-is a vector of length $math%n%$$ (ie. preallocated) and
-will contain the weighted residuals if computation went successful.
+If $italic pWresOut$$ is not $code NULL$$, then the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic pWresOut$$ 
+must be declared in the function that calls this function, 
+and its size must be equal to $italic n$$.  
+If $italic pWresOut$$ is not $code NULL$$ and this function 
+completed successfully, then the $code SPK_VA::valarray<double>$$ object 
+pointed to by $italic pWresOut$$ will contain the vector of weighted
+residuals $math%wres%$$ in the same order as the data values.  
+Otherwise, this function will not attempt to change the 
+contents of the $code SPK_VA::valarray<double>$$ object 
+pointed to by $italic pWresOut$$. 
 
 $head Example$$
 If you compile, link, and run the following program:
@@ -139,36 +191,36 @@ $codep
        valarray<double> y( yIn, n );
 
        //
-       // y^ = [ 1.0  2.0 ]
+       // f = [ 1.0  2.0 ]
        //
-       double yHatIn[] = { 1.0, 2.0 };
-       valarray<double> yHat( yHatIn, n );
+       double fIn[] = { 1.0, 2.0 };
+       valarray<double> f( fIn, n );
 
        //
-       //     /            \
-       //     |  1.0  0.0  |
-       // R = |            |
-       //     |  0.0  4.0  |
-       //     \            /
+       //       /            \
+       //       |  1.0  0.0  |
+       // cov = |            |
+       //       |  0.0  4.0  |
+       //       \            /
        //
-       double RIn[] = { 1.0, 0.0, 0.0, 4.0 };
-       valarray<double> R( RIn, n*n );
+       double covIn[] = { 1.0, 0.0, 0.0, 4.0 };
+       valarray<double> cov( covIn, n*n );
 
-       valarray<double> r(n);
-       valarray<double> wr(n);
+       valarray<double> resOut(n);
+       valarray<double> wresOut(n);
 
-       wres( y, yHat, R, r, wr );
+       wres( y, f, cov, &resOut, &wresOut );
 
-       cout << "r  = " <<  r << endl;
-       cout << "wr = " << wr << endl;
+       cout << "res  = " <<  resOut << endl;
+       cout << "wres = " << wresOut << endl;
     }
 
 $$
 then it will display the following when it is run:
 $codep
 
-    r  = { 0.1, 0.2 }
-    wr = { 0.1, 0.4 }
+    res  = { 0.1, 0.2 }
+    wres = { 0.1, 0.4 }
 $$
 $end
 */
@@ -177,58 +229,256 @@ $end
 /*------------------------------------------------------------------------
  * Include files
  *------------------------------------------------------------------------*/
+
+// SPK library header files.
+#include "inverse.h"
+#include "multiply.h"
+#include "transpose.h"
+#include "SpkError.h"
+#include "SpkException.h"
+#include "SpkValarray.h"
 #include "wres.h"
 
-#include "SpkValarray.h"
-#include "cholesky.h"
-#include "multiply.h"
-#include "SpkException.h"
-#include "SpkError.h"
+// LAPACK C interface headers.
+#include "c2dsyev.h"
+
+// Standard header files.
+#include <cmath>
 
 using SPK_VA::valarray;
 using namespace std;
 
+
+/*------------------------------------------------------------------------
+ * Function definition
+ *------------------------------------------------------------------------*/
+
 void wres( const valarray<double>& y, 
-	   const valarray<double>& yHat,
-	   const valarray<double>& R,
-	   valarray<double>& r,
-	   valarray<double>& wr )
+           const valarray<double>& f,
+           const valarray<double>& cov,
+           valarray<double>*       pResOut,
+           valarray<double>*       pWresOut )
 {
-  // w = C * r, where C is such that R = C * C^t
-  int n = y.size();
-  assert( yHat.size() == n );
-  assert( R.size()    == n * n );
-  assert( r.size()    == n );
-  assert( wr.size()   == n );
-  if( n == 0 )
+  //----------------------------------------------------------------
+  // Preliminaries.
+  //----------------------------------------------------------------
+
+  using namespace std;
+
+  // Return if there are no output values to calculate.
+  if( pResOut == 0 && pWresOut == 0 )
+  {
     return;
-
-  valarray<double> C( 0.0, n * n );
-
-  try{
-    // Compute residuals
-    r = y - yHat;
-
-    // Factorize R, assuming R is pos/sym/def.
-    C = cholesky( R, n );
-
-    // Compute weighted residuals = C * r
-    wr = multiply( C, n, r, 1 );
   }
-  catch( SpkException& e )
+
+  int n = y.size();
+
+
+  //----------------------------------------------------------------
+  // Validate the inputs.
+  //----------------------------------------------------------------
+
+  if ( f.size() != n )
+  {
+    throw SpkException(
+      SpkError::SPK_USER_INPUT_ERR, 
+      "The number of model predicted values for the data does not match the number of data values.",
+      __LINE__,
+      __FILE__ );
+  }
+
+  if ( cov.size() != n * n )
+  {
+    throw SpkException(
+      SpkError::SPK_USER_INPUT_ERR, 
+      "The dimensions of the covarianc of the data are not consistent with the number of data values.",
+      __LINE__,
+      __FILE__ );
+  }
+
+  if ( pResOut )
+  {
+    if ( n != pResOut->size() )
     {
-      char m[ SpkError::maxMessageLen() ];
-      sprintf( m, "Failed to compute weighted residuals." );
-      e.push( SpkError::SPK_UNKNOWN_ERR, m, __LINE__, __FILE__ );
-      throw e;
+      throw SpkException(
+        SpkError::SPK_USER_INPUT_ERR, 
+        "The vector of residuals has the wrong size.",
+        __LINE__,
+        __FILE__ );
     }
-  catch( ... )
+  }
+
+  if ( pWresOut )
+  {
+    if ( n != pWresOut->size() )
     {
-      char m[ SpkError::maxMessageLen() ];
-      sprintf( m, "Failed to compute weighted residuals." );
-      SpkException e ( SpkError::SPK_UNKNOWN_ERR, m, __LINE__, __FILE__ );
-      throw e;
+      throw SpkException(
+        SpkError::SPK_USER_INPUT_ERR, 
+        "The vector of weighted residuals has the wrong size.",
+        __LINE__,
+        __FILE__ );
+    }
+  }
+
+
+  //----------------------------------------------------------------
+  // Prepare the output values.
+  //----------------------------------------------------------------
+
+  // Return if there are no output values to calculate.
+  if( n == 0 )
+  {
+    return;
+  }
+
+  // Instantiate the temporary array to hold the residuals.
+  valarray<double> resTemp( n );
+
+  // If this function is going to return the weighted residuals,
+  // initialize the temporary array to hold them.
+  valarray<double> wresTemp;
+  if ( pWresOut )
+  {
+    wresTemp.resize( n );
+  }
+
+
+  //----------------------------------------------------------------
+  // Calculate the square root of the covariance inverse.
+  //----------------------------------------------------------------
+
+  int i;
+
+  valarray<double> covInvEigenVec( n * n );
+  valarray<double> covInvSqrRoot ( n * n );
+
+  // Calculate the matrix square root of the inverse of the covariance
+  //
+  //         -1/2
+  //     cov       .
+  //
+  try
+  {
+    // Temporarily set the matrix of eigenvectors equal to
+    // the inverse of the covariance.
+    covInvEigenVec = inverse( cov, n );
+
+    // Set the arguments for the C interface to the
+    // to the Fortran symmetric eigenvector routine.
+    int ijob   = int( 'V' ); // Calculate eigenvalues and eigen vectors.
+    int iuplo  = int( 'U' ); // The upper triangle of the matrix is set.
+    int lwork  = 3 * n + 1;  // Length of the work vector.
+    int info;                // Return flag.
+
+    valarray<double> covInvEigenVal( n );      // Eigenvalues in ascending order.
+    valarray<double> work          ( lwork );  // Workspace.
+
+    // Calculate the eigenvalues and eigenvectors of the 
+    // inverse of the covariance.
+    c2dsyev_(
+      &ijob,
+      &iuplo,
+      &n,
+      &covInvEigenVec[0],
+      &n,
+      &covInvEigenVal[0],
+      &work[0],
+      &lwork,
+      &info);
+
+    // Check that the eigenvalue calculation worked.
+    if ( info )
+    {
+      throw SpkException(
+        SpkError::SPK_UNKNOWN_ERR,  
+        "The weighted residuals calculation failed while evaluating the eigenvalues of the covariance inverse.",
+        __LINE__, 
+        __FILE__ );
     }
 
-  return;
+    // Create a diagonal matrix with the square roots of the
+    // eigenvalues along its diagonal.
+    valarray<double> lambdaSqrRoot( 0.0, n * n );
+    for ( i = 0; i < n; i++ )
+    {
+      lambdaSqrRoot[i + i * n] = sqrt( covInvEigenVal[i] );
+    }
+
+    // Get the transpose of the matrix of eigenvectors.
+    valarray<double> covInvEigenVecTran( n * n );
+    covInvEigenVecTran = transpose( covInvEigenVec, n );
+
+    // Calculate the matrix square root of the covariance inverse
+    //
+    //         -1/2              1/2   T
+    //     cov       =  Z  Lambda     Z   ,
+    //
+    // where Z is the matrix of eigenvectors and Lambda is the
+    // diagonal matrix of eigenvalues.
+    valarray<double> temp( n * n );
+    temp          = multiply( covInvEigenVec, n, lambdaSqrRoot,      n );
+    covInvSqrRoot = multiply( temp,           n, covInvEigenVecTran, n );
+  }
+  catch( ... )
+  {
+    throw SpkException(
+      SpkError::SPK_UNKNOWN_ERR,  
+      "The weighted residuals calculation failed while evaluating the square root of the covariance inverse.",
+      __LINE__, 
+      __FILE__ );
+  }
+
+
+  //----------------------------------------------------------------
+  // Calculate the residuals and/or weighted residuals.
+  //----------------------------------------------------------------
+
+  // Calculate the residuals.
+  resTemp = y - f;
+
+  // Calculate the weighted residuals, 
+  //
+  //                 -1/2
+  //     wres  =  cov     * res  .
+  //
+  if ( pWresOut )
+  {
+    wresTemp = multiply( covInvSqrRoot, n, resTemp, 1 );
+  }
+
+
+  //----------------------------------------------------------------
+  // Set the output values.
+  //----------------------------------------------------------------
+
+  // Set the residuals, if necessary.
+  if ( pResOut )
+  {
+    *pResOut = resTemp;
+  }
+
+  // Set the weighted residuals, if necessary.
+  if ( pWresOut )
+  {
+    *pWresOut = wresTemp;
+  }
 }
+
+
+/*************************************************************************
+ *
+ * Function: wres
+ *
+ *************************************************************************/
+
+// This function is for backward compatability and can be removed
+// if it is no longer needed.
+void wres( const valarray<double>& y, 
+           const valarray<double>& f,	      
+           const valarray<double>& cov,	      
+           valarray<double>&       resOut,   
+           valarray<double>&       wresOut )
+{
+  wres( y, f, cov, &resOut, &wresOut );
+}
+
