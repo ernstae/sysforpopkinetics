@@ -29,7 +29,7 @@ spkrund.pl database host dbuser dbpasswd
 =head1 ABSTRACT
 
 The SPK run daemon executes continuously on the CSPK server. It
-selects jobs from the run queue, forks processes to compile, link
+selects jobs from the run queue, forks processes to comopile, link
 and run them and inserts results into the database.
 
 =head1 DESCRIPTION
@@ -112,7 +112,7 @@ use Fcntl qw(:DEFAULT :flock);
 use File::Path;
 use POSIX qw(:signal_h);
 use Proc::Daemon;
-use Spkdb('connect', 'disconnect', 'de_q2r', 'en_q2r', 'get_run_jobs', 'end_job');
+use Spkdb('connect', 'disconnect', 'de_q2r', 'en_q2r', 'get_run_jobs', 'end_job', 'email_for_job');
 use Sys::Syslog('openlog', 'syslog', 'closelog');
 
 my $database = shift;
@@ -121,17 +121,23 @@ my $dbuser   = shift;
 my $dbpasswd = shift;
 my $mode     = shift;
 
+my $bugzilla_production_only = 1;
+my $bugzilla_url = "http://192.168.2.3:8081/";
+
 my $max_concurrent = 1;
 my $concurrent = 0;
 
 my $service_root = "spkrun";
-
+my $bugzilla_product = "SPK";
+my $submit_to_bugzilla = 1;
 if ($mode =~ "test") {
+    $submit_to_bugzilla = !$bugzilla_production_only;
     $service_root .= "test";
+    $bugzilla_product = "SPKtest";
 }
+
 my $service_name = "$service_root" . "d";
 my $prefix_working_dir = "$service_root" . "-";
-
 
 my $dbh;
 my $build_failure_exit_value = 101;
@@ -145,8 +151,10 @@ my $filename_source = "source.xml";
 my $filename_runner = "driver";
 my $lockfile_path = "/tmp/lock_$service_name";
 my $lockfile_exists = 0;
+my $pathname_bugzilla_submit = "/usr/local/bin/bugzilla-submit";
 my $pathname_make = "/usr/bin/make";
 my $pathname_tar = "/bin/tar";
+my $spk_version = "0.1";
 my $tmp_dir = "/tmp";
 
 sub death {
@@ -401,9 +409,36 @@ sub reaper {
 	if ($child_dumped_core) {
 	    $err_msg .= "core dump in $tmp_dir/$prefix_working_dir$job_id; ";
 	}
+
+	# Get email address of user
+	my $email = &email_for_job($dbh, $job_id);
+
 	# Format error report and place a message in system log
 	$report = format_error_report("$err_msg $err_rpt");
 	syslog('info', "job_id=$job_id: $err_msg");
+
+	# Submit runtime bugs to bugzilla
+	if ($submit_to_bugzilla && ($end_code == "serr" || $end_code == "herr")) {
+	    my $summary = $end_code == "serr" ? "soft" : "hard";
+	    my @args = ($pathname_bugzilla_submit);
+	    push @args, "--product",     $bugzilla_product;
+	    push @args, "--version",     $spk_version;
+	    push @args, "--component",   "CSPK";
+	    push @args, "--priority",    "P4";
+	    push @args, "--severity",    "critical";
+	    push @args, "--summary",     "'job_id=$job_id, runtime $summary error'";
+	    if (defined $email) {
+		push @args, "--cc", $email;
+	    }
+	    push @args, "--description", $err_msg;
+	    push @args, "--no-stdin";
+	    push @args, "$bugzilla_url";
+	    system(@args);
+	    my $exit_status = $? >> 8;
+	    if ($exit_status != 0) {
+		syslog('emerg', "bugzilla-submit failed with exit_status=$exit_status");
+	    }
+	}
 
 	# Rename working directory to make evidence easier to find
 	rename "$tmp_dir/$working_dir", "$tmp_dir/$prefix_working_dir$job_id"
