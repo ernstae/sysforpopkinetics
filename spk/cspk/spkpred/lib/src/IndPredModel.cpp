@@ -81,14 +81,6 @@ namespace // [Begin: unnamed namespace]
 #include <spk/SpkModel.h>
 #include <spk/SpkValarray.h>
 
-// [Remove]=========================================
-//
-// Currently CppAD does not install using automake and its directory
-// structure which means the paths for CppAD header files here and in
-// CppAD itself will have to be changed to be consistent with the rest
-// of the libraries that make up CSPK.
-//
-// [Remove]=========================================
 // CppAD header files.
 #include <cppad/include/CppAD.h>
 #include <cppad/include/Independent.h>
