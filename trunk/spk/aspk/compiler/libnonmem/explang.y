@@ -653,7 +653,7 @@ assignment_stmt :
       if( s->objectType() == Symbol::UNKNOWN )
 	{
 	  lhs_structure     = rhs_structure;
-	  lhs_rows          = rhs_rows;
+       	  lhs_rows          = rhs_rows;
 	  lhs_cols          = rhs_cols;
 	 }
       else if( s->objectType() == Symbol::MATRIX )
@@ -1373,7 +1373,7 @@ ENG_NOTATION {
   DOMElement * real_constant = gSpkExpTree->createElement( X(STR_CONSTANT) );
   real_constant->setAttribute( X( STR_TYPE ), X( Symbol::C_DOUBLE ) );
   real_constant->setAttribute( X( STR_STRUCTURE ), X( Symbol::C_SCALAR ) );
- real_constant->setAttribute( X( STR_SIGN ), X( STR_PLUS ) );
+  real_constant->setAttribute( X( STR_SIGN ), X( STR_PLUS ) );
   real_constant->setAttribute( X( STR_VALUE ), X( $1 ) );
   real_constant->setAttribute( X( STR_ROWS ), X( "1" ) );
   real_constant->setAttribute( X( STR_COLS ), X( "1" ) );
@@ -1696,8 +1696,8 @@ arithmatic_expr '+' arithmatic_expr {
   const XMLCh* rhs_rows = $3->node->getAttribute( X( STR_ROWS ) );
   const XMLCh* lhs_cols = $1->node->getAttribute( X( STR_COLS ) );
   const XMLCh* rhs_cols = $3->node->getAttribute( X( STR_COLS ) );
-  assert( atoi(C(lhs_rows))==atoi(C(rhs_rows)) || atoi(C(lhs_rows))==1 || atoi(C(rhs_rows))==1 );
-  assert( atoi(C(lhs_cols))==atoi(C(rhs_cols)) || atoi(C(lhs_cols))==1 || atoi(C(rhs_cols))==1 );
+  //assert( atoi(C(lhs_rows))==atoi(C(rhs_rows)) || atoi(C(lhs_rows))==1 || atoi(C(rhs_rows))==1 );
+  //assert( atoi(C(lhs_cols))==atoi(C(rhs_cols)) || atoi(C(lhs_cols))==1 || atoi(C(rhs_cols))==1 );
 
   op->setAttribute( X( STR_ROWS ), ( atoi(C(lhs_rows))>atoi(C(rhs_rows))? lhs_rows : rhs_rows ) );
   op->setAttribute( X( STR_COLS ), ( atoi(C(lhs_cols))>atoi(C(rhs_cols))? lhs_cols : rhs_cols ) );
@@ -1793,8 +1793,8 @@ arithmatic_expr '-' arithmatic_expr {
   const XMLCh* rhs_rows = $3->node->getAttribute( X( STR_ROWS ) );
   const XMLCh* lhs_cols = $1->node->getAttribute( X( STR_COLS ) );
   const XMLCh* rhs_cols = $3->node->getAttribute( X( STR_COLS ) );
-  assert( atoi(C(lhs_rows))==atoi(C(rhs_rows)) || atoi(C(lhs_rows))==1 || atoi(C(rhs_rows))==1 );
-  assert( atoi(C(lhs_cols))==atoi(C(rhs_cols)) || atoi(C(lhs_cols))==1 || atoi(C(rhs_cols))==1 );
+  //assert( atoi(C(lhs_rows))==atoi(C(rhs_rows)) || atoi(C(lhs_rows))==1 || atoi(C(rhs_rows))==1 );
+  //assert( atoi(C(lhs_cols))==atoi(C(rhs_cols)) || atoi(C(lhs_cols))==1 || atoi(C(rhs_cols))==1 );
 
   op->setAttribute( X( STR_ROWS ), ( atoi(C(lhs_rows))>atoi(C(rhs_rows))? lhs_rows : rhs_rows ) );
   op->setAttribute( X( STR_COLS ), ( atoi(C(lhs_cols))>atoi(C(rhs_cols))? lhs_cols : rhs_cols ) );
@@ -1916,8 +1916,8 @@ arithmatic_expr '*' arithmatic_expr {
   const XMLCh* rhs_rows = $3->node->getAttribute( X( STR_ROWS ) );
   const XMLCh* lhs_cols = $1->node->getAttribute( X( STR_COLS ) );
   const XMLCh* rhs_cols = $3->node->getAttribute( X( STR_COLS ) );
-  assert( atoi(C(lhs_rows))==atoi(C(rhs_rows)) || atoi(C(lhs_rows))==1 || atoi(C(rhs_rows))==1 );
-  assert( atoi(C(lhs_cols))==atoi(C(rhs_cols)) || atoi(C(lhs_cols))==1 || atoi(C(rhs_cols))==1 );
+  //assert( atoi(C(lhs_rows))==atoi(C(rhs_rows)) || atoi(C(lhs_rows))==1 || atoi(C(rhs_rows))==1 );
+  //assert( atoi(C(lhs_cols))==atoi(C(rhs_cols)) || atoi(C(lhs_cols))==1 || atoi(C(rhs_cols))==1 );
 
   op->setAttribute( X( STR_ROWS ), ( atoi(C(lhs_rows))>atoi(C(rhs_rows))? lhs_rows : rhs_rows ) );
   op->setAttribute( X( STR_COLS ), ( atoi(C(lhs_cols))>atoi(C(rhs_cols))? lhs_cols : rhs_cols ) );
@@ -2012,8 +2012,8 @@ arithmatic_expr '/' arithmatic_expr {
   const XMLCh* rhs_rows = $3->node->getAttribute( X( STR_ROWS ) );
   const XMLCh* lhs_cols = $1->node->getAttribute( X( STR_COLS ) );
   const XMLCh* rhs_cols = $3->node->getAttribute( X( STR_COLS ) );
-  assert( atoi(C(lhs_rows))==atoi(C(rhs_rows)) || atoi(C(lhs_rows))==1 || atoi(C(rhs_rows))==1 );
-  assert( atoi(C(lhs_cols))==atoi(C(rhs_cols)) || atoi(C(lhs_cols))==1 || atoi(C(rhs_cols))==1 );
+  //assert( atoi(C(lhs_rows))==atoi(C(rhs_rows)) || atoi(C(lhs_rows))==1 || atoi(C(rhs_rows))==1 );
+  //assert( atoi(C(lhs_cols))==atoi(C(rhs_cols)) || atoi(C(lhs_cols))==1 || atoi(C(rhs_cols))==1 );
 
   op->setAttribute( X( STR_ROWS ), ( atoi(C(lhs_rows))>atoi(C(rhs_rows))? lhs_rows : rhs_rows ) );
   op->setAttribute( X( STR_COLS ), ( atoi(C(lhs_cols))>atoi(C(rhs_cols))? lhs_cols : rhs_cols ) );
@@ -2104,13 +2104,13 @@ arithmatic_expr POWER_OP arithmatic_expr {
   {
     assert( false );
   }
-
+  
   const XMLCh* lhs_rows = $1->node->getAttribute( X( STR_ROWS ) );
   const XMLCh* rhs_rows = $3->node->getAttribute( X( STR_ROWS ) );
   const XMLCh* lhs_cols = $1->node->getAttribute( X( STR_COLS ) );
   const XMLCh* rhs_cols = $3->node->getAttribute( X( STR_COLS ) );
-  assert( atoi(C(lhs_rows))==atoi(C(rhs_rows)) || atoi(C(lhs_rows))==1 || atoi(C(rhs_rows))==1 );
-  assert( atoi(C(lhs_cols))==atoi(C(rhs_cols)) || atoi(C(lhs_cols))==1 || atoi(C(rhs_cols))==1 );
+  //assert( atoi(C(lhs_rows))==atoi(C(rhs_rows)) || atoi(C(lhs_rows))==1 || atoi(C(rhs_rows))==1 );
+  //assert( atoi(C(lhs_cols))==atoi(C(rhs_cols)) || atoi(C(lhs_cols))==1 || atoi(C(rhs_cols))==1 );
 
   function->setAttribute( X( STR_ROWS ), ( atoi(C(lhs_rows))>atoi(C(rhs_rows))? lhs_rows : rhs_rows ) );
   function->setAttribute( X( STR_COLS ), ( atoi(C(lhs_cols))>atoi(C(rhs_cols))? lhs_cols : rhs_cols ) );
