@@ -120,6 +120,22 @@ public abstract class Spkdb {
 	
 	return true;
     }
+    public static String jobReport(Connection conn, long jobId)
+	throws SQLException, SpkdbException
+    {
+	String sql = "select state_code, report from job where job_id=" + jobId + ";";
+	Statement stmt = conn.createStatement();
+	ResultSet rs = stmt.executeQuery(sql);
+	rs.next();
+	if (rs.getString("state_code").compareTo("end") != 0) {
+	    throw new SpkdbException("no report because job is not in 'end' state");
+	}
+	Blob blobReport = rs.getBlob("report");
+	long len = blobReport.length();
+	byte[] byteReport = blobReport.getBytes(1L, (int)len);
+	
+	return new String(byteReport);
+    }
     /**
        Inserts a new user in the database, returning a unique key.
        @param conn connection object obtained by a previous call on connect()
