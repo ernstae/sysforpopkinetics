@@ -14,32 +14,32 @@
 #include "../client.h"
 #include "../ExpTreeGenerator.h"
 
-class DataColumn
+class NonmemDataColumn
 {
   public:
   char* label;
   char* synonym;
   std::valarray<double> values;
 
-  DataColumn() : label(0), synonym(0){}
-  DataColumn( int nMeasurements ) :values(nMeasurements), label(0), synonym(0){}
+  NonmemDataColumn() : label(0), synonym(0){}
+  NonmemDataColumn( int nMeasurements ) :values(nMeasurements), label(0), synonym(0){}
 };
 
-class DataRecords
+class NonmemDataRecords
 {
  public:
   char* owner;
-  std::vector<DataColumn> records;
+  std::vector<NonmemDataColumn> records;
 
-  DataRecords() : owner(0){}
-  DataRecords( int nRecords ) : records( nRecords ) {}
+  NonmemDataRecords() : owner(0){}
+  NonmemDataRecords( int nRecords ) : records( nRecords ) {}
 };
 struct NonmemParameters
 {
   /**
    * all data
    */
-  std::vector<DataRecords> data;
+  std::vector<NonmemDataRecords> data;
 
   /**
    * theta
@@ -101,7 +101,7 @@ class NonmemTranslator : public ClientTranslator
   struct SpkParameters spk;
   struct NonmemParameters nonmem;
 
-  std::vector<DataRecords> data_for_all_subjects;
+  std::vector<NonmemDataRecords> data_for_all_subjects;
 
   virtual void assemble ( xercesc::DOMDocument * tree );
   virtual void emit     ( xercesc::DOMDocument * tree );
