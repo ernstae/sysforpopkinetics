@@ -43,7 +43,9 @@
 
 class popStatisticsTest : public CppUnit::TestFixture
 {
-	void statisticsExampleTest(enum Objective whichObjective);
+  void statisticsExampleTest(enum Objective whichObjective);
+    void coreStatTest( enum Objective );
+
 public: 
     static CppUnit::Test* suite();
 
@@ -52,7 +54,7 @@ public:
 
     void modifiedLaplaceTest();
     void expectedHessianTest();
-	void firstOrderTest();
+    void firstOrderTest();
     void naiveFirstOrderTest();
 
     };
