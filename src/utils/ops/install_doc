@@ -1,0 +1,19 @@
+#!/bin/bash
+
+source ../../../doc/webdir.sh
+
+USAGE="usage: $0 path"
+
+if [ $# -ne 1 ];
+then
+    echo "Wrong number of arguments"
+    echo $USAGE
+    exit 1
+fi
+
+doc=${1%.pl}
+
+pod2html ${doc}.pl > ${doc}.html
+scp ${doc}.html $WEBHOST:$WEBDIR/ops/utils/${doc}.html
+
+exit 0
