@@ -115,16 +115,23 @@ public abstract class Spkdb {
        @param conn open connection to the database 
        @param userId key to the given user in user table
        @param maxNum maximum number of jobs to provide status for
+       @param leftOff least jobId previously returned (0 if first call in sequence)
        @return Object of a class which implements the java.ResultSet interface, containing
        a sequence of subsets of rows of the job table.  Each subset contains the 
-       following columns: job_id, abstact, state_code, start_time, event_time and end_code.
+       following columns: job_id, abstract, dataset_id, dataset_version, model_id,
+       model_version, state_code, start_time, event_time and end_code.
      */
-    public static ResultSet userJobs(Connection conn, long userId, int maxNum)
+    public static ResultSet userJobs(Connection conn, long userId, int maxNum, long leftOff)
 	throws SQLException, SpkdbException 
     {
-	String sql = "select job_id, abstract, state_code, start_time, event_time, end_code "
-                     + "from job where user_id=" + userId 
-                     + " order by job_id desc limit " + maxNum + ";";
+	String
+	    sql = "select job_id, abstract, dataset_id, dataset_version, model_id, "
+	    + "state_code, start_time, event_time, end_code "
+	    + "from job where user_id=" + userId;
+	if (leftOff != 0) {
+	    sql += " and job_id < " + leftOff;
+	}
+	sql += " order by job_id desc limit " + maxNum + ";";
 	Statement stmt = conn.createStatement();
         stmt.execute(sql);
 	ResultSet rs = stmt.getResultSet();
@@ -156,6 +163,25 @@ public abstract class Spkdb {
 	pstmt.executeUpdate();
 	
 	return true;
+    }
+    /**
+       Get the xmlSource of a job
+       @param conn open connection to the database
+       @param jobId key to the given job in the job table
+       @return String containing xmlSource
+     */
+    public static String jobSource(Connection conn, long jobId)
+	throws SQLException, SpkdbException
+    {
+	String sql = "select state_code, xml_source from job where job_id=" + jobId + ";";
+	Statement stmt = conn.createStatement();
+	ResultSet rs = stmt.executeQuery(sql);
+	rs.next();
+	Blob blobSource = rs.getBlob("xml_source");
+	long len = blobSource.length();
+	byte[] byteSource = blobSource.getBytes(1L, (int)len);
+	
+	return new String(byteSource);
     }
     /**
        Get the final report of a job.
@@ -259,17 +285,22 @@ public abstract class Spkdb {
        @param conn open connection to the database
        @param userId key to the given user in the user table
        @param maxNum maximum number of datasets to return
+       @param leftOff least datasetId previously returned (0 if first call in sequence)
        @return Object of a class which implements the java.ResultSet interface, containing
        a sequence of subsets of rows of the dataset table.  Each subset contains the 
        following columns: dataset_id, name, and abstract.
 
      */
-    public static ResultSet userDatasets(Connection conn, long userId, int maxNum)
+    public static ResultSet userDatasets(Connection conn, long userId, int maxNum, long leftOff)
 	throws SQLException, SpkdbException 
     {
-	String sql = "select dataset_id, name, abstract "
-                     + "from dataset where user_id=" + userId 
-                     + " order by dataset_id desc limit " + maxNum + ";";
+	String
+	    sql = "select dataset_id, name, abstract "
+	    + "from dataset where user_id=" + userId;
+	if (leftOff != 0) {
+	    sql += " and dataset_id < " + leftOff;
+	}
+	sql += " order by dataset_id desc limit " + maxNum + ";";
 	Statement stmt = conn.createStatement();
         stmt.execute(sql);
 	ResultSet rs = stmt.getResultSet();
@@ -356,17 +387,22 @@ public abstract class Spkdb {
        @param conn open connection to the database
        @param userId key to the given user in the user table
        @param maxNum maximum number of models to return
+       @param leftOff least modelId previously returned (0 if first call in sequence)
        @return Object of a class which implements the java.ResultSet interface, containing
        a sequence of subsets of rows of the model table.  Each subset contains the 
        following columns: model_id, name, and abstract.
 
      */
-    public static ResultSet userModels(Connection conn, long userId, int maxNum)
+    public static ResultSet userModels(Connection conn, long userId, int maxNum, long leftOff)
 	throws SQLException, SpkdbException 
     {
-	String sql = "select model_id, name, abstract "
-                     + "from model where user_id=" + userId 
-                     + " order by model_id desc limit " + maxNum + ";";
+	String 
+	    sql = "select model_id, name, abstract "
+	    + "from model where user_id=" + userId;
+	if (leftOff != 0) {
+	    sql += " and model_id < " + leftOff;
+	}
+	sql += " order by model_id desc limit " + maxNum + ";";
 	Statement stmt = conn.createStatement();
         stmt.execute(sql);
 	ResultSet rs = stmt.getResultSet();
