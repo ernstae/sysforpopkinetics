@@ -3,6 +3,7 @@ HTML_OPS = --nochunks
 STYLE = ../../stylesheet
 WEB = whitechuck.rfpk.washington.edu:/var/www/html/soft/v0.1/specs/$T
 PNG = $(wildcard *.png)
+HTML = $(wildcard SpkML_html/*.html)
 
 all:	html pdf rtf
 
@@ -21,8 +22,11 @@ rtf:	$T.rtf
 %.rtf : %.xml
 	docbook2rtf --dsl $(STYLE)/local.dsl#print $<
 
-install:
+install: $(HTML)
 	scp $T.html $(WEB)
+	for i in $(HTML); do \
+	     scp $$i $(WEB); \
+	done
 	scp $T.pdf  $(WEB)
 	for i in $(PNG); do \
 	     scp $$i $(WEB); \
