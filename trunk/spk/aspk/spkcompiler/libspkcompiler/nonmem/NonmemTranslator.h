@@ -43,9 +43,6 @@ class NonmemTranslator : public ClientTranslator
   const char *fDataSet_cpp;
   const char *header;
 
-  // These constant (XML) strings should be static but
-  // the attemp to statically initializing these values
-  // which use XMLString::transcode() causes segmentation errors.
   XMLCh* X_YES;
   XMLCh* X_NO;
   XMLCh* X_FIXED;
