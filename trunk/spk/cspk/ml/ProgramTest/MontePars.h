@@ -12,7 +12,7 @@
 
 namespace MontePars{
    enum METHOD { monte, analytic, grid };
-   const enum METHOD method = monte;
+   const enum METHOD method = analytic;
    const int numberEval = 10000;
 };
 

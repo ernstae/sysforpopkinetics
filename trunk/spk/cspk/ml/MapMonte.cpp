@@ -177,6 +177,30 @@ void MapMonte(
 	// pseudo constructor for this case (uses all the data)
 	MapBaySet(&model, yi, alpha, individual, numberRandomEffects);
 
+	// integrate over the region defined by L, U
+	double *Lower = new double[ numberRandomEffects ];
+	double *Mid   = new double[ numberRandomEffects ];
+	double *Upper = new double[ numberRandomEffects ];
+	size_t j;
+	for(j = 0; j < numberRandomEffects; j++)
+	{	Lower[j] = L[j];
+		Mid[j]   = .5 * (L[j] + U[j]);
+		Upper[j] = U[j];
+	}
+
+# if MapMonteDebug
+	double mapBay = MapBay(Mid, numberRandomEffects, Null);
+	std::cout << "MapMonte: individual = " << individual;
+	std::cout << ", MapBay(.5*(U + L)) = " << mapBay;
+	std::cout << ", y_i = ";
+	for(j = 0; j < yi.size(); j++)
+	{	std::cout << yi[j];
+		if( j + 1 < yi.size() )
+			std::cout << ", ";
+	} 
+	std::cout << std::endl;
+# endif
+
 	// type of Gsl random number generator
 	const gsl_rng_type *rngType = gsl_rng_default;
 
@@ -199,28 +223,6 @@ void MapMonte(
 	gsl_monte_plain_state *state = 
 		gsl_monte_plain_alloc (numberRandomEffects);
 
-	// integrate over the region defined by L, U
-	double *Lower = new double[ numberRandomEffects ];
-	double *Mid   = new double[ numberRandomEffects ];
-	double *Upper = new double[ numberRandomEffects ];
-	size_t j;
-	for(j = 0; j < numberRandomEffects; j++)
-	{	Lower[j] = L[j];
-		Mid[j]   = .5 * (L[j] + U[j]);
-		Upper[j] = U[j];
-	}
-# if MapMonteDebug
-	double mapBay = MapBay(Mid, numberRandomEffects, Null);
-	std::cout << "MapMonte: individual = " << individual;
-	std::cout << ", MapBay(.5*(U + L)) = " << mapBay;
-	std::cout << ", y_i = ";
-	for(j = 0; j < yi.size(); j++)
-	{	std::cout << yi[j];
-		if( j + 1 < yi.size() )
-			std::cout << ", ";
-	} 
-	std::cout << std::endl;
-# endif
 	gsl_monte_plain_integrate(
 		&Integrand                    , 
 		Lower                         , 
