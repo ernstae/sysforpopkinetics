@@ -369,11 +369,15 @@ scp ~/.ssh/id_dsa.pub whitechuck.rfpk.washington.edu:
 	public key authentication is not yet configured.
       </para>
       <para>
-	<emphasis>Log in to the remote machine</emphasis> using your
-	username and password. Then use
-	<command moreinfo="none">ls -al</command> to determine whether or
-	not <filename moreinfo="none">.ssh</filename> exists in your
-	home directory on that machine. If not, create the directory
+	Log in to the remote machine using your username and password,
+	then use the command <command>ls -al</command> to determine whether or not
+	not <filename moreinfo="none">.ssh</filename> exists in your home
+	directory on that machine:
+	<screen>
+ssh whitechuck
+ls -al
+	</screen>
+	If <filename>.ssh</filename> does not exist, create it 
 	and set the permission mode bits:
 	<screen format="linespecific">
 mkdir .ssh
