@@ -1602,57 +1602,46 @@ void IndPredModelTest::isCachingProperlyTest()
   model.setIndPar( indParLow );
 
   model.dataMean( dataMean );
-
-  // This test must be done here before the cached value for this
-  // quantity is used by the next model function.
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for dataMean was used when it was not valid.",
+    model.getUsedCachedDataMean() == false );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached Pred block AD function object was used when it was not valid.",
     model.getUsedCachedPredADFun() == false );
 
   model.dataVariance( dataVariance );
-
-  // This test must be done here before the cached value for this
-  // quantity is used by the next model function.
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for dataVariance was used when it was not valid.",
+    model.getUsedCachedDataVariance() == false );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached Pred block first derivatives were used when they were not valid.",
     model.getUsedCachedPredFirstDeriv() == false );
-
-  // This test must be done here before the cached value for this
-  // quantity is used by the next model function.
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for omega was used when it was not valid.",
     model.getUsedCachedOmega() == false );
 
-  model.dataVarianceInv         ( dataVarianceInv );
-  ok = model.dataMean_indPar    ( dataMean_indPar );
-  ok = model.dataVariance_indPar( dataVariance_indPar );
+  model.dataVarianceInv( dataVarianceInv );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for dataVarianceInv was used when it was not valid.",
+    model.getUsedCachedDataVarianceInv() == false );
 
-  // This test must be done here before the cached value for this
-  // quantity is used by the next model function.
+  ok = model.dataMean_indPar( dataMean_indPar );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for dataMean_indPar was used when it was not valid.",
+    model.getUsedCachedDataMean_indPar() == false );
+
+  ok = model.dataVariance_indPar( dataVariance_indPar );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for dataVariance_indPar was used when it was not valid.",
+    model.getUsedCachedDataVariance_indPar() == false );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached Pred block second derivatives were used when they were not valid.",
     model.getUsedCachedPredSecondDeriv() == false );
-
-  // This test must be done here before the cached value for this
-  // quantity is used by the next model function.
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for omega_omegaPar was used when it was not valid.",
     model.getUsedCachedOmega_omegaPar() == false );
 
   ok = model.dataVarianceInv_indPar( dataVarianceInv_indPar );
-
-  CPPUNIT_ASSERT_MESSAGE( 
-    "The cached value for dataMean was used when it was not valid.",
-    model.getUsedCachedDataMean() == false );
-
-  CPPUNIT_ASSERT_MESSAGE( 
-    "The cached value for dataMean_indPar was used when it was not valid.",
-    model.getUsedCachedDataMean_indPar() == false );
-
-  CPPUNIT_ASSERT_MESSAGE( 
-    "The cached value for dataVarianceInv was used when it was not valid.",
-    model.getUsedCachedDataVarianceInv() == false );
-
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for dataVarianceInv_indPar was used when it was not valid.",
     model.getUsedCachedDataVarianceInv_indPar() == false );
@@ -1665,46 +1654,42 @@ void IndPredModelTest::isCachingProperlyTest()
   // Evaluate the quantities at the same parameter value.
   // The cached values should be used in this case.
   model.setIndPar( indParLow );
-  model.dataMean( dataMean );
 
-  // This test must be done here before the cached value for this
-  // quantity is used by the next model function.
+  model.dataMean( dataMean );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for dataMean was not used when it was valid.",
+    model.getUsedCachedDataMean() == true );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached Pred block AD function object was not used when it was valid.",
     model.getUsedCachedPredADFun() == true );
 
   model.dataVariance( dataVariance );
-
-  // This test must be done here before the cached value for this
-  // quantity is used by the next model function.
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for dataVariance was not used when it was valid.",
+    model.getUsedCachedDataVariance() == true );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached Pred block first derivatives were not used when they were valid.",
     model.getUsedCachedPredFirstDeriv() == true );
-
-  // This test must be done here before the cached value for this
-  // quantity is used by the next model function.
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for omega was not used when it was valid.",
     model.getUsedCachedOmega() == true );
 
-  model.dataVarianceInv         ( dataVarianceInv );
-  ok = model.dataMean_indPar    ( dataMean_indPar );
-  ok = model.dataVariance_indPar( dataVariance_indPar );
-
-  ok = model.dataVarianceInv_indPar( dataVarianceInv_indPar );
-
-  CPPUNIT_ASSERT_MESSAGE( 
-    "The cached value for dataMean was not used when it was valid.",
-    model.getUsedCachedDataMean() == true );
-
-  CPPUNIT_ASSERT_MESSAGE( 
-    "The cached value for dataMean_indPar was not used when it was valid.",
-    model.getUsedCachedDataMean_indPar() == true );
-
+  model.dataVarianceInv( dataVarianceInv );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for dataVarianceInv was not used when it was valid.",
     model.getUsedCachedDataVarianceInv() == true );
 
+  ok = model.dataMean_indPar( dataMean_indPar );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for dataMean_indPar was not used when it was valid.",
+    model.getUsedCachedDataMean_indPar() == true );
+
+  ok = model.dataVariance_indPar( dataVariance_indPar );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for dataVariance_indPar was not used when it was valid.",
+    model.getUsedCachedDataVariance_indPar() == true );
+
+  ok = model.dataVarianceInv_indPar( dataVarianceInv_indPar );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for dataVarianceInv_indPar was not used when it was valid.",
     model.getUsedCachedDataVarianceInv_indPar() == true );
@@ -1714,14 +1699,14 @@ void IndPredModelTest::isCachingProperlyTest()
   // See if these cached values are not used when the parameter does not change.
   //------------------------------------------------------------
 
-  // Because the cached value for dataVariance_indPar contain the
+  // Because the cached value for dataVariance_indPar contains the
   // second derivatives of the Pred block, this cached value is
   // not required and therefore is not used in this case.
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached Pred block second derivatives were used when they should not have been.",
     model.getUsedCachedPredSecondDeriv() == false );
 
-  // Because the cached value for dataVariance_indPar contain the
+  // Because the cached value for dataVariance_indPar contains the
   // derivatives of omega, this cached value is not required and
   // therefore is not used in this case.
   CPPUNIT_ASSERT_MESSAGE( 
