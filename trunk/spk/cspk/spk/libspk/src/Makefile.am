@@ -90,6 +90,7 @@ libspk_la_SOURCES = \
 	PopVars.cpp \
 	ppkaOpt.cpp \
 	ppkaOptParallel.cpp \
+	randNormal.cpp \
 	replaceIth.cpp \
 	replaceJth.cpp \
 	replaceSubblock.cpp \
@@ -194,6 +195,7 @@ libspk_la_SOURCES = \
 	PopVars.h \
 	ppkaOpt.h \
 	printInMatrix.h \
+	randNormal.h \
 	replaceIth.h \
 	replaceJth.h \
 	replaceSubblock.h \
@@ -297,6 +299,7 @@ libspk_release_la_SOURCES = \
 	PopVars.cpp \
 	ppkaOpt.cpp \
 	ppkaOptParallel.cpp \
+	randNormal.cpp \
 	replaceIth.cpp \
 	replaceJth.cpp \
 	replaceSubblock.cpp \
@@ -401,6 +404,7 @@ libspk_release_la_SOURCES = \
 	PopVars.h \
 	ppkaOpt.h \
 	printInMatrix.h \
+	randNormal.h \
 	replaceIth.h \
 	replaceJth.h \
 	replaceSubblock.h \
@@ -511,6 +515,7 @@ pkginclude_HEADERS = \
 	PopVars.h \
 	ppkaOpt.h \
 	printInMatrix.h \
+	randNormal.h \
 	replaceIth.h \
 	replaceJth.h \
 	replaceSubblock.h \
