@@ -227,33 +227,16 @@ const SpkCompilerError& SpkCompilerError::operator=(const SpkCompilerError& righ
         abort();
     }
 }
-std::string& operator<<(std::string& s, const SpkCompilerError& e) 
-{
-    ostringstream stream;
-    stream << e;
-    s = stream.str();
-    return s;
-}
-std::string& operator>>(std::string& s, SpkCompilerError& e)
-{
-    std::istringstream stream(s);
-    stream >> e;
-    s = stream.str();
-    return s;
-}
 
 std::ostream& operator<<(std::ostream& stream, const SpkCompilerError& e)
 {
+    stream.flush();
+
     stream << SpkCompilerError::ERRORCODE_FIELD_NAME << endl;
     stream << e.myErrorCode << endl;
 
     stream << SpkCompilerError::ERRORCODE_DESCRIPTION_FIELD_NAME << endl;
-    ///////////////////////////////////////////////
-    //  04/02/04 SACHIKO
-    // COME BACK HERE!!!
-    // Does this need the trailing '\r'?  Why???
-    ///////////////////////////////////////////////
-    stream << SpkCompilerError::describe( e.myErrorCode ) << endl << '\r';
+    stream << SpkCompilerError::describe( e.myErrorCode ) << endl;
 
     stream << SpkCompilerError::LINENUM_FIELD_NAME   << endl;
     stream << e.myLineNum   << endl;
@@ -262,55 +245,9 @@ std::ostream& operator<<(std::ostream& stream, const SpkCompilerError& e)
     stream << e.myFileName  << endl;
     
     stream << SpkCompilerError::MESSAGE_FIELD_NAME   << endl;
-    stream << e.myMessage;
-    stream.put('\0');
+    stream << e.myMessage << endl; 
    
-    return stream;
-}
-std::istream& operator>>(std::istream& stream, SpkCompilerError& e)
-{
-    char buf[256];
-
-    stream >> buf;
-    assert(strcmp(buf, SpkCompilerError::ERRORCODE_FIELD_NAME)==0);
-    stream >> buf;
-    e.myErrorCode = static_cast<SpkCompilerError::ErrorCode>(atoi(buf));
-
-    stream >> buf;
-    assert(strcmp(buf, SpkCompilerError::ERRORCODE_DESCRIPTION_FIELD_NAME)==0);
-    stream.getline( buf, 256 ); // eat the trailing '\n'
-    stream.getline( buf, 256, '\r');
-    // don't do anything
-
-    stream >> buf;
-    assert(strcmp(buf, SpkCompilerError::LINENUM_FIELD_NAME)==0);
-    stream >> buf;
-    e.myLineNum = atoi(buf);
-
-    stream >> buf;
-    assert(strcmp(buf, SpkCompilerError::FILENAME_FIELD_NAME)==0);
-    stream >> e.myFileName;
-
-    stream >> buf;
-    assert(strcmp(buf, SpkCompilerError::MESSAGE_FIELD_NAME)==0);
-    //
-    // istream::getline(...) does not eat leading whitespaces, 
-    // while istream::opeartor>>(...) does eat and gets the first relevant text string.
-    // Since the serialized SpkCompilerError::myFileName is terminated with a new line charactor, '\n',
-    // that new line charactor must be eaten first.  Otherwise,
-    // since getline() reads from whereever istream::seek() returns to 
-    // a new line charactor, the first attempt gets only empty (or just '\n') in the
-    // buffer.  So, the first getline among the two is to eat the '\n' and the 
-    // leading whitespaces.  The second getline is really getting a relevent text string.
-    //
-    // The second getline reads till a special charactor, '\r', appears.
-    // When the stream object contains more than one serialized SpkCompilerError objects,
-    // each object must be separated by '\r'.  Otherwise it reads till NULL appears.
-    //
-    stream.getline(buf, 256);
-    stream.getline(buf, 256, '\r');
-
-    strcpy(e.myMessage, buf);
+    stream.flush();
     return stream;
 }
 

@@ -131,12 +131,8 @@ class SpkCompilerError
   const char* message() const throw();
 
   // serialize
-  friend std::string& operator<<(std::string& s, const SpkCompilerError& e);
   friend std::ostream& operator<<(std::ostream& stream, const SpkCompilerError& e);
 
-  // unserialize
-  friend std::string& operator>>(std::string& s, SpkCompilerError& e);
-  friend std::istream& operator>>(std::istream& stream, SpkCompilerError& e);
 };
 
 #endif

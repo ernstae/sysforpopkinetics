@@ -232,47 +232,16 @@ int SpkCompilerException::findFile( const char* filename ) const throw()
     return -1;
 }
 
-std::string& operator<<(std::string& s, const SpkCompilerException& e)
-{
-    std::ostringstream stream;
-    stream << e;
-    s = stream.str();
-    return s;
-}
 std::ostream& operator<<(std::ostream& stream, const SpkCompilerException& e)
 {
-    std::string buf;
-
+    stream.flush();
     stream << "count" << endl;
     stream << e.size() << endl;
     for( int i=0; i<e.size(); i++)
     {
-        buf << e.myError_list[i];
-        stream << buf << '\r' << endl << endl;
+        stream << e.myError_list[i] << endl;
     }
-    stream.put('\0');
+    stream.flush();
     return stream;
 }
 
-std::string& operator>>(std::string& s, SpkCompilerException& e)
-{
-    std::istringstream stream(s);
-    stream >> e;
-    s = stream.str();
-    return s;
-}
-std::istream& operator>>(std::istream& stream, SpkCompilerException& e)
-{
-    char buf[256];
-
-    stream >> buf;
-    assert(strcmp(buf, "count")==0);
-    stream >> buf;
-    e.myCnt = atoi(buf);
-
-    for( int i=0; i<e.size(); i++ )
-    {
-        stream >> e.myError_list[i];
-    }
-    return stream;
-}
