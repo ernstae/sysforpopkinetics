@@ -4,7 +4,8 @@
 #
 CPPFLAGS = \
 	-g \
-	-c 
+	-c \
+        -I/usr/local/include/spktest
 
 INCLUDE = \
 	AnalyticIntegral.h \
@@ -34,4 +35,4 @@ OBJECT = \
 	gcc $(CPPFLAGS) $< -o $@
 
 monteDriver : $(OBJECT)
-	g++ -g $(OBJECT) -o monteDriver -lspk -lspkopt -lspkpred -lgsl -latlas_lapack -lcblas -latlas -lpthread -lm
+	g++ -g $(OBJECT) -o monteDriver -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -lspk -lspkopt -lspkpred -lgsl -latlas_lapack -lcblas -latlas -lpthread -lm
