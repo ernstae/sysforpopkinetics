@@ -180,35 +180,11 @@ class SpkMLToCpp
    * 
    * If errors are detected during the translation process,
    * an SpkException object will be thrown.
-   */
-  void translate();
-
-  /**
-   * Obtain a pointer to an SpkParameters data structure 
-   * object used to record values expressed in such a way
-   * that SPK can understand.
-   * 
-   * @return a SpkParameter data structure object which
-   * lists values gathered druing a translation process if
-   * translate() has been completed successfully prior to
-   * the call,  If not, the values are undetermined.
-   */
-  const struct SpkParameters * getSpkParameters() const;
-
-  /**
-   * Obtain a pointer to an 
-   * object used to record values expressed in the client
-   * specific language/terms.  For this reason, the data type
-   * of the returned value is void*.  The caller has to know
-   * which specific data type to cast into in order to
-   * access the elements.
    *
-   * @return a void pointer to an object which
-   * lists values gathered during a translation process if
-   * translate() has been completed successfully prior to
-   * the call.  If not, the values are undetermined.
+   * @return a pointer to the ClientTranslator object whose
+   * "virtual void translate()" was used to perform this operation.
    */
-  const void * getClientParameters() const;
+  const ClientTranslator* translate() const;
 
   /**
    * Obtain a pointer to a character array specifying the name

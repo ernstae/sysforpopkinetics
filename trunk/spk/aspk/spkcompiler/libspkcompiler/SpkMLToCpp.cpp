@@ -30,18 +30,10 @@ SpkMLToCpp::~SpkMLToCpp()
   terminateDOM();
 }
 
-void SpkMLToCpp::translate()
+const ClientTranslator* SpkMLToCpp::translate() const
 {
   client_translator->translate( tree );
-}
-
-const struct SpkParameters * SpkMLToCpp::getSpkParameters() const
-{
-  return client_translator->getSpkParameters();
-}
-const void* SpkMLToCpp::getClientParameters() const
-{
-  return client_translator->getClientParameters();
+  return client_translator;
 }
 
 SpkMLToCpp::SpkMLToCpp()
