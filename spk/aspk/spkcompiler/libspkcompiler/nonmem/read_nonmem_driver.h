@@ -3,8 +3,8 @@
 
 #include <xercesc/dom/DOM.hpp>
 
-#include "SpkParameters.h"
-#include "nonmem/NonmemTranslator.h"
+#include "../SpkParameters.h"
+#include "NonmemTranslator.h"
 
 /**
  * @file read_nonmem_driver.h

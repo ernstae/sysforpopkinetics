@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "nonmem/read_nonmem_driver.h"
+#include "SpkCompilerUtil.h"
 #include <spk/popStatistics.h>
 
 using namespace std;
