@@ -447,6 +447,8 @@ extern "C" {
 #include "transpose.h"
 #include "quasiNewtonAnyBox.h"
 #include "DoubleMatrix.h"
+#include "isLessThanOrEqualTo.h"
+#include "allTrue.h"
 #include "SpkException.h"
 
 
@@ -703,7 +705,6 @@ namespace // [Begin: unnamed namespace]
 } // [End: unnamed namespace]
 
 
-
 /*------------------------------------------------------------------------
  * Function definition
  *------------------------------------------------------------------------*/
@@ -736,9 +737,9 @@ void quasiNewtonAnyBox(
   const double* pdXUpData  = dvecXUp.data();
   const double* pdXInData  = dvecXIn.data();
 
-  int     nXLowRows  = dvecXLow.nr();
-  int     nXUpRows   = dvecXUp.nr();
-  int     nXInRows   = dvecXIn.nr();
+  int nXLowRows  = dvecXLow.nr();
+  int nXUpRows   = dvecXUp.nr();
+  int nXInRows   = dvecXIn.nr();
 
   assert( nXLowRows == nXUpRows );
   assert( nXLowRows == nXInRows );
@@ -748,7 +749,8 @@ void quasiNewtonAnyBox(
 
   // If the final x value should be returned, do some initializations.
   double* pdXOutData;
-  if ( pdvecXOut ) {
+  if ( pdvecXOut )
+  {
     int nXOutRows = pdvecXOut->nr();
     pdXOutData    = pdvecXOut->data();
     assert( nXOutRows == nObjPars );
@@ -758,19 +760,11 @@ void quasiNewtonAnyBox(
 
   double* pdXDiffData = dvecXDiff.data();
 
-  //======================[Begin: debug only code]======================
-  #ifdef _DEBUG
-  //
   // Validate the lower and upper bounds and verify that the 
   // initial x value is between them.
-  //
-  for ( i = 0; i < nObjPars; i++ ) {
-    assert( pdXLowData[i] <= pdXUpData[i] );
-    assert( pdXInData[i] >= pdXLowData[i] && pdXInData[i] <= pdXUpData[i] );
-  }
-  //
-  #endif
-  //======================[End:   debug only code]======================
+  assert( allTrue( dvecXLow <= dvecXUp ) );
+  assert( allTrue( dvecXLow <= dvecXIn ) );
+  assert( allTrue( dvecXIn  <= dvecXUp ) );
 
 
   //------------------------------------------------------------
@@ -878,7 +872,7 @@ void quasiNewtonAnyBox(
   std::ostream    os = std::cout;
   size_t        level;
   size_t       nIterMax;
-  size_t      quadMax;
+  size_t      nQuadMax;
   size_t            n;
   double        delta;
   Fun          &objective;
@@ -893,7 +887,7 @@ void quasiNewtonAnyBox(
 
   const char *msg;
   const size_t              n = 5;
-  const size_t        quadMax = 20 * n;
+  const size_t        nQuadMax = 20 * n;
   const bool      exponential = true;
   const double          delta = 1e-7;
 
@@ -963,7 +957,7 @@ void quasiNewtonAnyBox(
   // Set the maximum number of interior point iterations so
   // that the optimizer can solve the quadratic subproblems
   // with sufficient accuracy.
-  quadMax = 20 * nObjPars;
+  nQuadMax = 20 * nObjPars;
 
   // If the return value of QuasiNewton01Box is "ok", then the
   // infinity norm (element with the maximum absolute value) 
@@ -1024,7 +1018,7 @@ void quasiNewtonAnyBox(
           os,
           level,
           nIterMax,
-          quadMax,
+          nQuadMax,
           n,
           delta,
           objective,
