@@ -114,7 +114,7 @@ public class TestSpkdb {
 		case 9:
 		    target = true;
 		    s = "getUser";
-		    ResultSet rs = Spkdb.getUser(conn, userId);
+		    ResultSet rs = Spkdb.getUser(conn, username );
 		    if (rs.next()) {
 			String name = rs.getString("first_name");
 			b = name.compareTo("Gerry") == 0;
