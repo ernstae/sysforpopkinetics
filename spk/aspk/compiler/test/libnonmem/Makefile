@@ -16,11 +16,11 @@ LIBNONMEM  = ../../libnonmem
 XERCESLIB  = xerces-c
 CPPUNITLIB = cppunit
 
-TEST_OBJS  = NonmemCompilerTest.o
+TEST_OBJS  = NonmemCompilerTest.o NonmemExpXlatorTest.o
 
-TEST_HS    = NonmemCompilerTest.h
+TEST_HS    = NonmemCompilerTest.h NonmemExpXlatorTest.h
 
-TEST_CPPS  = NonmemCompilerTest.cpp
+TEST_CPPS  = NonmemCompilerTest.cpp NonmemExpXlatorTest.cpp
 
 CORE_OBJS  = $(LIBNONMEM)/NonmemCompiler.o \
              $(LIBNONMEM)/nmabb.tab.o \
@@ -49,13 +49,14 @@ CORE_CPPS  = $(LIBNONMEM)/NonmemCompiler.cpp \
              $(LIBCOMM)/SymbolTable.cpp \
              $(LIBCOMM)/Symbol.cpp
 
-TEST_HS    = NonmemCompilerTest.h
-
 testall : testall.cpp $(CORE_OBJS) $(TEST_OBJS)
 	$(LINK.cc) -I$(LIBCOMM) -I$(LIBNONMEM) testall.cpp $(TEST_OBJS) $(CORE_OBJS) -l$(XERCESLIB) -l$(CPPUNITLIB) -o $@
 
 NonmemCompilerTest.o : NonmemCompilerTest.cpp NonmemCompilerTest.h $(CORE_HS) $(CORE_CPPS)
 	$(COMPILE.cc) -I$(LIBCOMM)/ -I$(LIBNONMEM)/ NonmemCompilerTest.cpp
+
+NonmemExpXlatorTest : NonmemExpXlatorTest.cpp $(CORE_HS) $(CORE_CPPS) $(LIBNONMEM)/nmabb.l $(LIBNONMEM)/nmabb.tab.y
+	$(LINK.cc) -I$(LIBCOMM)/ -I$(LIBNONMEM)/ NonmemExpXlatorTest.cpp $(CORE_OBJS) -l$(XERCESLIB) -o $@
 
 clean:
 	rm $(TEST_OBJS)
