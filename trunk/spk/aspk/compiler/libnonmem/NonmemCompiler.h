@@ -3,7 +3,7 @@
 
 #include <map>
 #include "../libcommon/SpkCompiler.h"
-#include "nmabb.tab.h"
+#include "../libnonmem/nmabb.tab.h"
 
 extern "C"{
   int yylex(void);  
