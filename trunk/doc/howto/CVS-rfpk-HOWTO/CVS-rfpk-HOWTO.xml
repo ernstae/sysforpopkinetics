@@ -23,12 +23,12 @@
     <para>
 	CVS, a widely used tool for managing revisions to documents
 	is now available to RFPK Team Members.  CVS is especially
-	useful when a number of authors or developers work on
+	useful when a number of authors or developers work 
 	on the same set of documents, especially when these 
 	collaborators are not always located in the same office
 	or the same campus.  This tutorial provides background
 	on revision control systems in general, and shows how
-	to get started with CVS as installed at RFPK.
+	to get started with CVS, in particular.
     </para>
   </abstract>
  </articleinfo>
@@ -47,7 +47,7 @@
     and Linux.  It is especially useful when multiple authors, 
     geographically dispersed, collaborate on the same documents.  
     As configured at RFPK, CVS can be accessed with excellent 
-    security from anywhere that there is an internet connection.
+    security from anywhere that there is an Internet connection.
   </para>
   <para>
     CVS is available to anyone in RFPK who has a need to manage 
@@ -67,11 +67,12 @@
     Alan Westhagen (afw@u.washington.edu).
   </para>     
   <para>
-    The CVS repository is on the Linux system with Internet
-    domain name, 
+    The CVS repository is on a Linux system, which has the Internet
+    domain name 
     <systemitem moreinfo="none" class="domainname">
 	whitechuck.rfpk.washington.edu
     </systemitem>
+    .
     In order to use the CVS repositories on this system, you
     need to be installed as one of its users.  Please contact
     Mike Macaulay (macaulay@apl.washington.edu) to add your
@@ -92,47 +93,47 @@
       All of these
       systems were designed to work very much as 
       does SCCS, the senior member of the group, which was developed
-      at Bell Labs in the 1970s.  As does SCCS, they all store
+      at Bell Labs in the 1970s.  Like SCCS, they all store
       revisions as differences between the revised version and
-      the original, rather than complete copies of each version, using
-      the same algorithms that were incorporated in SCCS. 
+      the original, rather than as complete copies of each version, using
+      the algorithms originally incorporated in SCCS. 
     </para>
     <para>
-      In one important respect, however, CVS differs from the
+      In one important respect, CVS differs from the
       others.  With all of the other systems, only one user
       is allowed to work on a particular document at
       any one time.  When a user wants to make changes to 
       a text, she must first <emphasis>check it out</emphasis>,
-      which means that the revision control systems gives
+      which means that the revision control system gives
       her the exclusive right to make changes until she 
-      subsequently <emphasis>commits</emphasis> her modifications
-      and relinquishes exclusive control.  If someone else
+      subsequently <emphasis>checks in</emphasis> her modifications
+      and thus relinquishes exclusive control.  If someone else
       has checked out the document that she wants to change,
       she must wait until that person relinquishes it.  If she
-      is slow at making her changes, others must wait for
+      is slow to make her changes, others must wait for
       her.
     </para>
     <para>
-      CVS, too, also originally designed to encorporate the
+      CVS, too, was originally designed to incorporate the
       exclusive checkout model.  This strategy was abandoned, however.
       The change came about in response to a new set
       of requirements that arose primarily as a result of the rapid expansion
-      of the Internet in the 1990s.  Previously, software 
+      of the Internet.  Previously, software 
       development groups had almost always consisted of individuals
       working in the same office or the same building.  In fact,
       the leading software development methodologies required
       this.  When you are in the same office, it is relatively
       easy to negotiate directly with your co-workers about who
       should have exclusive modification access to a particular
-      document.  When, conversely, you have people who are working on different
-      continents and in different timezones and communications
-      is asynchronous via email, it may take days to get a 
-      co-worker to relinquish control.  Similarly, with 
+      document.  When, conversely, you have people working on
+      different continents and in different time-zones and who
+      communicate asynchronously via email, it may take days
+      to get a co-worker to relinquish control.  Similarly, with 
       frequent travel, it became a necessity for team members
-      to continue to work at hotels which may or may not have had
-      good Internet conectivity, or even while on airplanes
+      to continue to work at hotels with unpredictable 
+      Internet connectivity, or even on airplanes
       or in airports.  The exclusive checkout model had become
-      an impediment to productivity in the new global environement.
+      an impediment to productivity in the new global work place.
     </para>
     <para>
       The break-through came with the reversal of the checkout 
@@ -148,9 +149,9 @@
       to the project, she is in no way impeding her collaborators.
       When her computer comes back on line, whether by dial-up
       connection, connection at an Internet cafe, or the connection
-      at her office, she can have her working copy
-      updated with any changes her co-workers have committed just
-      by issue a single command to CVS.
+      at her office, she can quickly have her working copy
+      updated with any changes her co-workers have made while
+      she was cut off from the network.
     </para>
     <para>
       What happens if the user's changes conflict with changes
@@ -163,23 +164,23 @@
       in the repository,
       CVS will refuse, informing
       her that there are potential conflicts and that she
-      will have to perform a &merge;
-      To observe all the 
-      differences between her working copy and the current
-      copy in the CVS repository, she can run the CVS 
-      &diff; command.  She can then edit
+      will need to perform an &update;.
+      The update merges the current copy in the CVS repository
+      with her working copy, highlighting the differences.
+      She can then edit
       her working copy to resolve any differences.  When
-      she finally runs the CVS &merge;
-      command, CVS will provide an editing window in which
-      she can make her final changes if any potential
-      conflicts still remain.
-      Once she completes the &merge;, her revision
-      becomes the most recent revision in the repository.
+      she once again runs the CVS &commit;
+      command, her revised conflict-free revision will 
+      then be accepted, unless, of course, one of her 
+      colleagues has committed additional changes while
+      she was resolving the previous ones, in which case
+      the resolution process may require another iteration.
     </para>
     <para>
-      Occasionally having to enter into a merging process is
+      Occasionally having to enter into a conflict resolution
+      process is
       the price users of CVS pay for the freedom to make revisions
-      whenever and wherever they can be done most effectively.
+      whenever and wherever they can be made most effectively.
       Especially given the importance of collaboration with 
       partners at other institutions within the academic and
       scientific world, CVS will be a valuable addition to
@@ -198,17 +199,18 @@
     </para>
     <para>
       The repository set up for Ranjan and Brad
-      has its root in the directory at the absolute path 
+      has its root in the directory located at the
+      absolute path address
       <filename moreinfo="none" class='directory'>
 	/usr/local/cvs_repos/rfpk/r1
       </filename> 
-      on the server with Internet domain name
+      on a server with domain name
       <systemitem moreinfo="none" class="systemname">
 	whitechuck.rfpk.washington.edu
       </systemitem>
       The other repository on
       <systemitem moreinfo="none">whitechuck</systemitem>
-      has its root in the directory at absolute path
+      has its root in the directory
       <systemitem moreinfo="none">
 	/usr/local/cvs_repos/rfpk/r2
       </systemitem>
@@ -216,22 +218,23 @@
     </para>
     <para>
       Within a repository, sets of documents are organized as
-      modules.  A module could be all the source code for a 
+      modules.  A module could comprise all  the source code for a 
       computer application, or all the source code for a part
       of the application.  It could be all the documents 
       required for an academic paper, or all the chapters of
-      a book.  Within the operating system of the computer,
-      the repository is directory hierarchy.  A module name
-      can be associated with any directory in the hierarchy,
-      with a single file, or even with a list of files.
+      a book. 
     </para>
     <para>
+      Within the operating system of the computer,
+      the repository is a directory hierarchy.  A module name
+      can be associated with any directory in the hierarchy,
+      with a single file, or even with a list of files.
       For example, the first module added to the 
       <systemitem moreinfo="none">r1</systemitem> repository
       was the module called <emphasis>muscle</emphasis>,
       so named because it holds a paper that Ranjan and
-      Brad are collaborating on which has something to 
-      do with muscle tissue.
+      Brad are collaborating on which is about oxygen uptake
+      in muscles.
     </para>
   </sect1>
   <sect1>
@@ -258,12 +261,12 @@
     <para>
       Because CVS was originally designed to perform remote
       execution using not &ssh; but rather an insecure program
-      called <emphasis>rsh</emphasis>, it is necessary to indicate
+      called <command>rsh</command>, it is necessary to indicate
       to CVS that only &ssh; should be used.  This can be accomplished
       by setting and exporting the <varname>CVS_RSH</varname> 
       environment variable.  Using the Bash shell, which is 
       standard with Cygwin, most Linux systems and many Unix
-      systems, you would input the following commands at the
+      systems, you would input the following commands
       to the command-line interface:
       <programlisting format="linespecific">
 	CVS_RSH=ssh
@@ -333,14 +336,14 @@
       the module in your current directory.  In the first example,
       a directory named 
       <filename moreinfo="none" class="directory">r1</filename>
-      appears in your current directory.  In the second example,
+      would appear in your current directory.  In the second example,
       a directory named
       <filename moreinfo="none" class="directory">muscle</filename>
-      appears.
+      would appear.
     </para>
     <para>
       Your working copy is a directory tree.  The root of that
-      tree is the repository or the module that you checked out.
+      tree is named for the repository or the module that you checked out.
       Within the directories of this tree, you will find the
       documents that are under version control.  You are free
       to modify these documents, using your favorite text
@@ -401,7 +404,7 @@
     </para>
     <para>
       Just as with &update; and most other CVS commands, to use
-      the CVS &commit; command, your current directory must be
+      the CVS &commit; command your current directory must be
       one of the directories of your working copy.  The command
       will consider modifications to files in the current 
       directory or in any of its subdirectories.  It will
@@ -409,13 +412,13 @@
     </para>
     <para>
       To commit modifications to files in the current directory
-      and, recursively, any of the subdirectories, using the
+      and, recursively, any of the subdirectories, use the
       command:
       <screen format="linespecific">
 	cvs commit
       </screen>
       If you only want to commit changes to specific files, then
-      list them explicitely in the command:
+      list them explicitly in the command:
       <screen format="linespecific">
 	cvs commit <emphasis>file1 file2 ... filen</emphasis>
       </screen>
@@ -431,7 +434,7 @@
       revision history in the repository.
     </para>
     <para>
-      If you do not proved the <option>-m</option>, cvs will 
+      If you do not provide the <option>-m</option> option, CVS will 
       start a text editor for you, so that you can type in
       the revision message.  Depending on what system you
       are running on, the default editor might be 
@@ -452,22 +455,20 @@
       If someone else has made changes to the repository copy of
       a file since you checked out or updated your working copy,
       the &commit; command will report errors and will fail
-      to incorporate you changes in the repository.  Here is
+      to incorporate your changes in the repository.  Here is
       an example of the output that you might expect to 
       see.  A user called <emphasis>jones</emphasis> has attempted
       to commit a file called <emphasis>Makefile</emphasis>, and
       the CVS &commit; command has returned the following output:
       <screen>
-	cvs commit: Examining .
-	jones@whitechuck.rfpk.washington.edu's password:
 	cvs server: Up-to-date check failed for `Makefile'
 	cvs [server aborted]: correct above errors first!
 	cvs commit: saving log message in /tmp/cvs610c74f4.1
       </screen>
     </para>
     <para>
-      In the above example, &commit; is reports that a 
-      failure in the <emphasis>up-to-date check</emphasis>,
+      In the above example, &commit; reports a 
+      failure in the <emphasis>up-to-date check</emphasis>
       for a particular file, which simply means that 
       a copy of this file has been committed since your
       working copy was last checked out or updated.  To 
@@ -549,14 +550,14 @@
     <para>
       The simplest form of the &diff; command reports
       all differences between files in the current directory
-      and, recursively, all subdirectoriers and their
+      and, recursively, all subdirectories and their
       counterparts in the repository:
       <screen format="linespecific">
 	cvs diff
       </screen>
     </para>
     <para>
-      Since the differences may be voluminuous, you may want
+      Since the differences may be voluminous, you may want
       to pipe the output into a pager command, such as
       <command moreinfo="none">more</command> or 
       <command moreinfo="none">less</command>:
@@ -592,7 +593,7 @@
       use the <option>-r</option> option letter to introduce the tag
       associated with the version:
       <screen format="linespecific">
-	cvs diff -r <emphasis>tag</emphasis>
+	cvs diff -r <emphasis>some-tag</emphasis>
       </screen>
     </para>
     <para>
@@ -607,12 +608,13 @@
       output from the &diff; command.  The <option>-b</option>
       option ignores the difference in the amount of whitespace
       between files.  The <option>-B</option> option ignores
-      difference due to the insertion or deletion of blank lines.
+      differences due to the insertion or deletion of blank lines.
     </para>
     <para>
       The normal output from the CVS &diff; command simply shows
-      lines that are in one file but not in the other and vice
-      versa.  It does not show lines lines present in both
+      lines that are in one file but not in the other and 
+      <emphasis>vice versa</emphasis>.
+      It does not show lines present in both
       files which surround these difference.  The 
       <option>-c</option> option provides three lines of 
       <emphasis>context</emphasis> before and after each set
@@ -634,9 +636,8 @@
       <filename moreinfo="none" class="directory">howto</filename>
       which contains a directory for each document of this
       type, and that this latter directory contains the individual
-      documents.  For example, the file and directory structure
-      for this tutorial is as follows, as a directory containing
-      two files:
+      documents.  For example, this tutorial consists of a directory
+      and two files:
       <screen format="linespecific">
 	howto/CVS-rfpk-HOWTO
 	howto/CVS-rfpk-HOWTO/CVS-rfpk-HOWTO.xml
@@ -646,8 +647,8 @@
     <para>
       Now suppose that the document that we wish to add will
       be a tutorial about installing SPK.  In this example
-      the text of the document will be a file called
-      <filename moreinfo="none">SPK-rfpk-HOWTO.xml</filename>.
+      the text of the document will be called
+      <filename moreinfo="none">SPKinstall-rfpk-HOWTO.xml</filename>.
       There will also be a description file for the 
       <command moreinfo="none">make</command> utility which
       will be named 
@@ -656,7 +657,7 @@
       we will place these two files in a directory that
       we will name
       <filename moreinfo="none" class="directory">
-	SPK-rfpk-HOWTO
+	SPKinstall-rfpk-HOWTO
       </filename>.
     </para>
     <para>
@@ -671,13 +672,16 @@
 	    <orderedlist inheritnum="ignore" continuation="restarts">
 	      <listitem>
 		<para>
-		  Within our working copy, make the 
+		  Within our working copy, go to the
 		  <filename moreinfo="none" class="directory">
 		    howto
 		  </filename> 
-		  directory be the current directory by using the
-		  <option>cd</option> command.  This is the 
-		  directory in which we will create our new 
+		  directory by using the
+		  <option>cd</option> command.  
+		  <filename moreinfo="none" class="directory">
+		    howto
+		  </filename> 
+		  is the directory in which we will create our new 
 		  document.
 		</para>
 	      </listitem>
@@ -686,31 +690,33 @@
 		  Create the new directory in our working copy,
 		  and then have CVS add it to the repository:
 <screen format="linespecific">
-    mkdir SPK-rfpk-HOWTO
-    cvs add SPK-rfpk-HOWTO
+    mkdir SPKinstall-rfpk-HOWTO
+    cvs add SPKinstall-rfpk-HOWTO
 </screen>
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
-		  Next we make the new document directory current
+		  Next go to the new directory 
 <screen format="linespecific">
-    cd SPK-rfpk-HOWTO
+    cd SPKinstall-rfpk-HOWTO
 </screen>
 		  and use our favorite text editor to create the
 		  initial versions of the files 
-		  <filename moreinfo="none">SPK-rfpk-HOWTO.xml</filename>
+		  <filename moreinfo="none">
+		    SPKinstall-rfpk-HOWTO.xml
+		  </filename>
 		  and
 		  <filename moreinfo="none">Makefile</filename>.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
-		  Finally, we have CVS add the new files to the
-		  repository structure and then we commit our
+		  Finally, have CVS add the new files to the
+		  repository structure and then commit our
 		  initial versions:
 <screen format="linespecific">
-    cvs add SPK-rfpk-HOWTO.xml Makefile
+    cvs add SPKinstall-rfpk-HOWTO.xml Makefile
     cvs commit
 </screen>
 		</para>
@@ -730,8 +736,7 @@
       longer have a use for the file called 
       <filename moreinfo="none">Makefile</filename>
       that we added to the repository in the example in the
-      <link linkend="add-sect">section</link> above about the 
-      &add; command.  
+      <link linkend="add-sect">section</link> above. 
       We can remove the file as follows:
       <orderedlist inheritnum="ignore" continuation="restarts">
 	<listitem>
@@ -762,10 +767,10 @@
     <title>Conclusion</title>
     <para>
       The commands describe above should be enough to get
-      you started.  In the books, free for downloading
-      from the URLs listed in the
+      you started.  In the books that are free for downloading
+      via the URLs listed in the
       <link linkend="intro">introduction</link>,
-      there additional commands and a great deal of useful
+      there are additional commands and a great deal of useful
       information.
     </para>
     <para>
