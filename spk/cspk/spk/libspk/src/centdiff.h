@@ -519,7 +519,6 @@ const SPK_VA::valarray<DataType> centdiff( const UnaFun &f, int fvalCols, const 
       }
     }
 #endif
-
     // Compute the center values to figure out the output matrix's dimensions (n by m)
     // The operation immediately below will fail at compilation if f(x) does not evaluate to a matrix.
     SPK_VA::valarray<DataType> ctr = f(x);
@@ -527,8 +526,8 @@ const SPK_VA::valarray<DataType> centdiff( const UnaFun &f, int fvalCols, const 
     assert( ctr.size() == fvalRows * fvalCols );
     const int nY = fvalRows * fvalCols;
 
-    SPK_VA::valarray<DataType> xU;
-    SPK_VA::valarray<DataType> xL;
+    SPK_VA::valarray<DataType> xU(nX);
+    SPK_VA::valarray<DataType> xL(nX);
 
     SPK_VA::valarray<DataType> delta(nY);
 

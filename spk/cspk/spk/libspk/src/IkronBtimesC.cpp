@@ -501,9 +501,8 @@ const valarray<double> IkronBtimesC(
 
   // Transpose of I is I
 
-  valarray<double> Cj;     // nRowsC x 1
-  valarray<double> BCjAt;  // ( nRowsB x 1 ) x ( nColsI x nRowsI ) = nRowsB x nRowsI
-  valarray<double> BCj;
+  valarray<double> Cj( nRowsC );
+  valarray<double> BCj( nRowsB * nColsI );
 
   for( int j = 0; j < nColsC; j++ )
   {
