@@ -513,15 +513,40 @@ namespace // [Begin: unnamed namespace]
   class QuasiNewton01BoxObj
   {
   public:
-    const char* function( const double* xIn, double& fOut );
-    const char* gradient( double* gOut );
+    virtual const char* function( const double* xIn, double& fOut ) = 0;
+    virtual const char* gradient( double* gOut ) = 0;
 
   private:
-    const DoubleMatrix* pdvecXLow;      // Unscaled lower bounds.
-    const DoubleMatrix* pdvecXUp;       // Unscaled upper bounds.
-    const DoubleMatrix* pdvecXDiff;     // Difference between unscaled  
-                                        // lower and upper bounds.
+    const DoubleMatrix* const pdvecXLow;      // Unscaled lower bounds.
+    const DoubleMatrix* const pdvecXUp;       // Unscaled upper bounds.
+    const DoubleMatrix* const pdvecXDiff;     // Difference between unscaled  
+                                              // lower and upper bounds.
+
     SpkException exceptionOb;
+  };
+
+  class QuasiNewtonAnyBoxObj : public QuasiNewton01BoxObj
+  {
+  public:
+    const char* function( const double* xIn, double& fOut ) = 0;
+    const char* gradient( double* gOut ) = 0;
+  };
+
+  class PpkaOptObj : public QuasiNewtonAnyBoxObj
+  {
+  public:
+    const char* function( const double* xIn, double& fOut )
+    {
+      // Calculate LTilde.
+
+      // PROBLEM: THIS FUNCTION DOESN'T KNOW ABOUT XLOW, XUP, ETC.
+    }
+    const char* gradient( double* gOut ) = 0;
+    {
+      // Calculate LTilde_x.
+
+      // PROBLEM: THIS FUNCTION DOESN'T KNOW ABOUT XLOW, XUP, ETC.
+    }
   };
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
