@@ -9,11 +9,12 @@
 using namespace std;
 using namespace xercesc;
 
-bool read_content( DOMDocument* tree, 
+bool read_content( DOMElement * content_node, 
 		   string & spkml_verOut, 
 		   enum client::type & clientOut, 
 		   enum SpkParameters::Analysis& analysisOut  )
 {
+  /*
   //
   // Get the version of SpkInML this document is supposed to comply with.
   //
@@ -23,6 +24,7 @@ bool read_content( DOMDocument* tree,
   DOMElement * content_node
     = dynamic_cast<DOMElement*>(tree->getElementsByTagName( X("content") )->item(0));
   assert( content_node != NULL );
+  */
 
   //
   // Verify SpkInML version specification
