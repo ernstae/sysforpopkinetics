@@ -16,10 +16,12 @@ libspkpred_la_SOURCES = \
 	DiagCov.cpp \
 	IndPredModel.cpp \
 	isEqual.cpp \
+	PopPredModel.cpp \
 	Cov.h \
 	DiagCov.h \
 	IndPredModel.h \
 	isEqual.h \
+	PopPredModel.h \
 	PredBase.h
 
 libspkpred_release_la_SOURCES = \
@@ -27,10 +29,12 @@ libspkpred_release_la_SOURCES = \
 	DiagCov.cpp \
 	IndPredModel.cpp \
 	isEqual.cpp \
+	PopPredModel.cpp \
 	Cov.h \
 	DiagCov.h \
 	IndPredModel.h \
 	isEqual.h \
+	PopPredModel.h \
 	PredBase.h
 
 INCLUDES = -I@top_srcdir@/
@@ -39,5 +43,6 @@ pkginclude_HEADERS = \
 	DiagCov.h \
 	IndPredModel.h \
 	isEqual.h \
+	PopPredModel.h \
 	PredBase.h
 
