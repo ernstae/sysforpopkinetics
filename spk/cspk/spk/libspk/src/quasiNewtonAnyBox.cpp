@@ -1224,7 +1224,7 @@ v  //***************************************************************************
 
 
   //------------------------------------------------------------
-  // Optimize the scaled objective function.
+  // Prepare to optimize the scaled objective function.
   //------------------------------------------------------------
 
   //
@@ -1386,10 +1386,15 @@ v  //***************************************************************************
     iterCurr = 0;
   }
 
-  // Attempt to satisfy this function's convergence criterion before
-  // the maximum number of iterations have been performed.
+
+  //------------------------------------------------------------
+  // Optimize the scaled objective function.
+  //------------------------------------------------------------
+
   try
   {
+    // Attempt to satisfy this function's convergence criterion before
+    // the maximum number of iterations have been performed.
     while ( !isWithinTol && iterCurr <= nMaxIter )
     {
       // See if this function's convergence criterion has been met.
