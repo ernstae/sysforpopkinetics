@@ -8,27 +8,17 @@
 #include "SpkCompilerError.h"
 
 //
-// A namespace used within SpkCompilerException class members.
-//
-/*
-namespace SpkCompilerException_const
-{
-    using namespace SpkCompilerError_const;
-    const int MAX_ERRORS        = 16;
-    const int MAX_ERRORS_DIGITS =  2;
-    const int EXCEPTION_SIZE    = MAX_ERRORS_DIGITS +  6 + ( MAX_ERRORS * ERROR_SIZE );
-}
-*/
-//
 // SpkCompilerException class declaration
 //
 class SpkCompilerException
 {
 public:	
     static unsigned int maxErrors() throw();
+
     static const int MAX_ERRORS;
     static const int MAX_ERRORS_DIGITS;
     static const int EXCEPTION_SIZE;
+
     // default constructor
     SpkCompilerException() throw();
 
