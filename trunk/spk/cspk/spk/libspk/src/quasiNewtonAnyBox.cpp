@@ -783,7 +783,8 @@ void quasiNewtonAnyBox(
   // Initializations for the scaled objective function.
   //------------------------------------------------------------
 
-  Memory<double> memoryDbl( 3 * nObjPar + nObjPar + nObjPar * nObjPar );
+  // Allocate all of the memory at the same time.
+  Memory<double> memoryDbl( 7 * nObjPar + 3 * nObjPar * nObjPar );
 
   // The various y vectors are scaled versions of their x counterparts.
   double* yLow  = memoryDbl( nObjPar );
@@ -795,10 +796,14 @@ void quasiNewtonAnyBox(
   double* gScaled = memoryDbl( nObjPar );
   double* hScaled = memoryDbl( nObjPar * nObjPar );
 
-  // These are the scaled gradient, gScaled(y) = fScaled_y(y),
-  // and scaled Hessian, hScaled(y) = fScaled_y_y(y).
-  double* gScaledProj = memoryDbl( nObjPar );
-  double* hScaled = memoryDbl( nObjPar * nObjPar );
+  // These variables are used by the function isWithinTol.  They
+  // are allocated here so that they don't have to be reallocated
+  // everytime that function is called.
+  double* deltaY         = memoryDbl( nObjPar );
+  double* gScaledProj    = memoryDbl( nObjPar );
+  double* hScaledWork    = memoryDbl( nObjPar * nObjPar );
+  double* rScaled        = memoryDbl( nObjPar * nObjPar );
+  double* rScaledDiagRec = memoryDbl( nObjPar );
 
   // Set the bounds and initial values for y.
   for ( i = 0; i < nObjPar; i++ )
@@ -1000,6 +1005,9 @@ void quasiNewtonAnyBox(
     // the maximum number of iterations have been performed.
     while ( !isAcceptable && iterCurr <= nMaxIter )
     {
+      // Get the Cholesky factor of the current scaled Hessian.
+      calcCholFactor( nObjPar, hScaled, rScaled );
+
       // See if this function's convergence criterion has been met.
       if ( isWithinTol( 
         epsilon,
@@ -1007,8 +1015,11 @@ void quasiNewtonAnyBox(
         yLow,
         yUp,
         gScaled,
-        hScaled,
-	gScaledProj ) )
+        rScaled,
+	deltaY,
+	gScaledProj,
+	rScaledDiagRec,
+	hScaledWork ) )
       {
         isAcceptable = true;
       }
@@ -1350,7 +1361,10 @@ bool isWithinTol(
   const double*  xUp,
   const double*  g,
   const double*  r,
-  double*        gProj )
+  double*        deltaX,
+  double*        gProj,
+  double*        rDiagRec,
+  double*        hWork )
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -1362,11 +1376,6 @@ bool isWithinTol(
 
   assert( isLowerTriangular( r ) );
 
-  DoubleMatrix dvecDeltaX( n, 1 );
-
-  // This is not necessary.  Sachiko
-  //gProj.fill(0.0);
-
 
   //------------------------------------------------------------
   // Calculate the Hessian, projected gradient, and diagonal reciprocals.
@@ -1375,7 +1384,6 @@ bool isWithinTol(
   // Prepare a version of the Hessian matrix H = R * R^(T) with its 
   // super-diagonal elements replaced by the sub-diagonal elements
   // of its (lower triangular) Cholesky factor R.
-  DoubleMatrix dmatH(n,n);
   double* pdHData = dmatH.data();
   for ( i = 0; i < n; i++ )
   {
@@ -1401,7 +1409,6 @@ bool isWithinTol(
 
   // Instantiate a column vector p that will contain the 
   // reciprocals of the diagonal elements of R.
-  DoubleMatrix dvecP( n, 1 );
   double* pdPData = dvecP.data();
 
   // Each of these flags will be true if the corresponding 
