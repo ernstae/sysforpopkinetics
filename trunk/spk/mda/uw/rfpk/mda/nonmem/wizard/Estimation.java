@@ -46,44 +46,40 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         java.awt.GridBagConstraints gridBagConstraints;
 
         buttonGroup1 = new javax.swing.ButtonGroup();
-        jDialog1 = new javax.swing.JDialog();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        help = new javax.swing.JTextArea();
         jTextPane1 = new javax.swing.JTextPane();
         jTextPane2 = new javax.swing.JTextPane();
         jTextPane3 = new javax.swing.JTextPane();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jRadioButton3 = new javax.swing.JRadioButton();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        jCheckBox2 = new javax.swing.JCheckBox();
-        jCheckBox3 = new javax.swing.JCheckBox();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jComboBox1 = new javax.swing.JComboBox();
-        jTextField2 = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         jSeparator1 = new javax.swing.JSeparator();
         jSeparator2 = new javax.swing.JSeparator();
+        jPanel1 = new javax.swing.JPanel();
+        jRadioButton1 = new javax.swing.JRadioButton();
+        jRadioButton2 = new javax.swing.JRadioButton();
+        jRadioButton3 = new javax.swing.JRadioButton();
+        jPanel2 = new javax.swing.JPanel();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        jCheckBox2 = new javax.swing.JCheckBox();
+        jCheckBox3 = new javax.swing.JCheckBox();
         jCheckBox4 = new javax.swing.JCheckBox();
-
-        jDialog1.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        help.setEditable(false);
-        jScrollPane2.setViewportView(help);
-
-        jDialog1.getContentPane().add(jScrollPane2, java.awt.BorderLayout.CENTER);
+        jPanel3 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox();
+        jTextField1 = new javax.swing.JTextField();
+        jTextField2 = new javax.swing.JTextField();
 
         setLayout(new java.awt.GridBagLayout());
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("Select an estimation method and available option or options on the right.");
+        jTextPane1.setText("Select an estimation method and available option(s) on the right.");
+        jTextPane1.setMaximumSize(new java.awt.Dimension(377, 21));
+        jTextPane1.setMinimumSize(new java.awt.Dimension(377, 21));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         add(jTextPane1, gridBagConstraints);
 
@@ -92,199 +88,45 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         jTextPane2.setText("Enter or select values for the following options.");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 2, 12);
         add(jTextPane2, gridBagConstraints);
 
         jTextPane3.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane3.setEditable(false);
-        jTextPane3.setText("The $ESTIMATION record you have created.");
+        jTextPane3.setText("The option(s) you have entered expressed in NONMEM syntax");
+        jTextPane3.setFocusable(false);
+        jTextPane3.setMaximumSize(new java.awt.Dimension(360, 20));
+        jTextPane3.setMinimumSize(new java.awt.Dimension(360, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 10;
+        gridBagConstraints.gridy = 5;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(10, 12, 3, 12);
         add(jTextPane3, gridBagConstraints);
 
-        jRadioButton1.setText("First order (FO) method");
-        buttonGroup1.add(jRadioButton1);
-        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton1ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(6, 12, 0, 8);
-        add(jRadioButton1, gridBagConstraints);
-
-        jRadioButton2.setText("First order conditional estimation (FOCE)");
-        buttonGroup1.add(jRadioButton2);
-        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton2ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 8);
-        add(jRadioButton2, gridBagConstraints);
-
-        jRadioButton3.setText("Laplace method");
-        buttonGroup1.add(jRadioButton3);
-        jRadioButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton3ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 8);
-        add(jRadioButton3, gridBagConstraints);
-
-        jCheckBox1.setText("POSTHOC");
-        jCheckBox1.setEnabled(false);
-        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox1ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(6, 4, 0, 12);
-        add(jCheckBox1, gridBagConstraints);
-
-        jCheckBox2.setText("INTERACTION");
-        jCheckBox2.setEnabled(false);
-        jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox2ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 4, 0, 12);
-        add(jCheckBox2, gridBagConstraints);
-
-        jCheckBox3.setText("CENTERING");
-        jCheckBox3.setEnabled(false);
-        jCheckBox3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox3ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 4, 0, 12);
-        add(jCheckBox3, gridBagConstraints);
-
-        jLabel1.setText("Maximum allowable number of evaluations");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 7;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(4, 18, 4, 8);
-        add(jLabel1, gridBagConstraints);
-
-        jLabel2.setText("Number of significant digits of the estimate");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 18, 0, 8);
-        add(jLabel2, gridBagConstraints);
-
-        jLabel3.setText("Iteration summaries print out interval steps");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 8;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 18, 8, 8);
-        add(jLabel3, gridBagConstraints);
-
-        jTextField1.setText("450");
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 7;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 4, 0, 12);
-        add(jTextField1, gridBagConstraints);
-
-        jComboBox1.setBackground(new java.awt.Color(255, 255, 255));
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8" }));
-        jComboBox1.setSelectedIndex(2);
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 4, 0, 12);
-        add(jComboBox1, gridBagConstraints);
-
-        jTextField2.setText("5");
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 8;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 12, 12);
-        add(jTextField2, gridBagConstraints);
-
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        jScrollPane1.setMaximumSize(new java.awt.Dimension(400, 30));
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(400, 30));
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(400, 30));
         jTextArea1.setColumns(20);
         jTextArea1.setEditable(false);
         jTextArea1.setRows(2);
+        jTextArea1.setText("$ESTIMATION METHOD=0 SIGDIGITS=3 MAXEVALS=450 PRINT=5");
+        jTextArea1.setFocusable(false);
+        jTextArea1.setMaximumSize(new java.awt.Dimension(400, 30));
+        jTextArea1.setMinimumSize(new java.awt.Dimension(400, 30));
         jScrollPane1.setViewportView(jTextArea1);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 11;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.ipady = 10;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 12, 12);
         add(jScrollPane1, gridBagConstraints);
 
@@ -292,33 +134,199 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridheight = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.insets = new java.awt.Insets(6, 0, 0, 4);
+        gridBagConstraints.insets = new java.awt.Insets(12, 0, 10, 4);
         add(jSeparator1, gridBagConstraints);
 
+        jSeparator2.setMaximumSize(new java.awt.Dimension(350, 2));
+        jSeparator2.setMinimumSize(new java.awt.Dimension(350, 2));
+        jSeparator2.setPreferredSize(new java.awt.Dimension(350, 2));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 9;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         add(jSeparator2, gridBagConstraints);
 
-        jCheckBox4.setText("NOABORT");
+        jPanel1.setLayout(new java.awt.GridLayout(3, 1));
+
+        jRadioButton1.setSelected(true);
+        jRadioButton1.setText("First order");
+        buttonGroup1.add(jRadioButton1);
+        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton1ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jRadioButton1);
+
+        jRadioButton2.setText("Expected Hessian");
+        buttonGroup1.add(jRadioButton2);
+        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton2ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jRadioButton2);
+
+        jRadioButton3.setText("Laplace Approximation");
+        buttonGroup1.add(jRadioButton3);
+        jRadioButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton3ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jRadioButton3);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 6, 12, 3);
+        add(jPanel1, gridBagConstraints);
+
+        jPanel2.setLayout(new java.awt.GridLayout(4, 1));
+
+        jPanel2.setMaximumSize(new java.awt.Dimension(200, 92));
+        jPanel2.setMinimumSize(new java.awt.Dimension(200, 92));
+        jPanel2.setPreferredSize(new java.awt.Dimension(200, 92));
+        jCheckBox1.setText("Obtain individual estimates");
+        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox1ActionPerformed(evt);
+            }
+        });
+
+        jPanel2.add(jCheckBox1);
+
+        jCheckBox2.setText("Use random effects in the model");
+        jCheckBox2.setEnabled(false);
+        jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox2ActionPerformed(evt);
+            }
+        });
+
+        jPanel2.add(jCheckBox2);
+
+        jCheckBox3.setText("Center random effects");
+        jCheckBox3.setEnabled(false);
+        jCheckBox3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox3ActionPerformed(evt);
+            }
+        });
+
+        jPanel2.add(jCheckBox3);
+
+        jCheckBox4.setText("Automatic error recovery");
         jCheckBox4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBox4ActionPerformed(evt);
             }
         });
 
+        jPanel2.add(jCheckBox4);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(12, 3, 12, 6);
+        add(jPanel2, gridBagConstraints);
+
+        jPanel3.setLayout(new java.awt.GridBagLayout());
+
+        jLabel2.setText("Number of significant digits in the estimate");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 18, 5, 8);
+        jPanel3.add(jLabel2, gridBagConstraints);
+
+        jLabel1.setText("Maximum allowable number of evaluations");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(4, 18, 4, 8);
+        jPanel3.add(jLabel1, gridBagConstraints);
+
+        jLabel3.setText("Iteration summaries print out interval steps");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 18, 13, 8);
+        jPanel3.add(jLabel3, gridBagConstraints);
+
+        jComboBox1.setBackground(new java.awt.Color(255, 255, 255));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8" }));
+        jComboBox1.setSelectedIndex(2);
+        jComboBox1.setMaximumSize(new java.awt.Dimension(100, 24));
+        jComboBox1.setMinimumSize(new java.awt.Dimension(100, 24));
+        jComboBox1.setPreferredSize(new java.awt.Dimension(100, 24));
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 4, 0, 12);
-        add(jCheckBox4, gridBagConstraints);
+        jPanel3.add(jComboBox1, gridBagConstraints);
+
+        jTextField1.setText("450");
+        jTextField1.setMaximumSize(new java.awt.Dimension(60, 20));
+        jTextField1.setMinimumSize(new java.awt.Dimension(60, 20));
+        jTextField1.setPreferredSize(new java.awt.Dimension(60, 20));
+        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField1ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 4, 3, 12);
+        jPanel3.add(jTextField1, gridBagConstraints);
+
+        jTextField2.setText("5");
+        jTextField2.setMaximumSize(new java.awt.Dimension(60, 20));
+        jTextField2.setMinimumSize(new java.awt.Dimension(60, 20));
+        jTextField2.setPreferredSize(new java.awt.Dimension(60, 20));
+        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField2ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 12, 12);
+        jPanel3.add(jTextField2, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 3;
+        add(jPanel3, gridBagConstraints);
 
     }//GEN-END:initComponents
 
@@ -362,7 +370,9 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         method = "METHOD=1 LAPLACIAN ";
         jCheckBox1.setEnabled(false);
         jCheckBox2.setEnabled(false);
-        jCheckBox3.setEnabled(true); 
+        jCheckBox3.setEnabled(true);
+        jCheckBox1.setSelected(false);
+        jCheckBox2.setSelected(false);
         posthoc = "";
         interaction = "";
         setRecord();
@@ -372,7 +382,8 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         method = "METHOD=1 ";
         jCheckBox1.setEnabled(false);
         jCheckBox2.setEnabled(true);
-        jCheckBox3.setEnabled(true); 
+        jCheckBox3.setEnabled(true);
+        jCheckBox1.setSelected(false);
         posthoc = "";
         setRecord();
     }//GEN-LAST:event_jRadioButton2ActionPerformed
@@ -382,6 +393,8 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         jCheckBox1.setEnabled(true);
         jCheckBox2.setEnabled(false);
         jCheckBox3.setEnabled(false);
+        jCheckBox2.setSelected(false);
+        jCheckBox3.setSelected(false);
         interaction = "";
         centering = "";
         setRecord();
@@ -435,21 +448,21 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JTextArea help;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JCheckBox jCheckBox3;
     private javax.swing.JCheckBox jCheckBox4;
     private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JDialog jDialog1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JTextArea jTextArea1;
@@ -475,25 +488,78 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
 	}
        
   	public String getContentItem(){
-  	    return "$ESTIMATION Record";
+  	    return "Method Selection";
   	}
 
 	public String getStepTitle(){
-	    return "$ESTIMATION Record";
+	    return "Method Selection";
 	}
 
 	public void showingStep(JWizardPane wizard){
             wizardPane = wizard;
-	}
+            if(iterator.getIsReload())
+            {
+                String text = iterator.getReload().getProperty("ESTIMATION");
+                if(text != null)
+                {
+                    iterator.getReload().remove("ESTIMATION");
+                    text = text.trim() + " ";
+                    // Initialize method
+                    if(text.indexOf("METHOD") == -1 || text.indexOf("METHOD=0") != -1) 
+                        jRadioButton1.doClick();
+                    if(text.indexOf("METHOD=1") != -1 && text.indexOf("METHOD=1 LAPLACAN") == -1)
+                        jRadioButton2.doClick();
+                    if(text.indexOf("METHOD=1 LAPLACAN") != -1)
+                        jRadioButton3.doClick();
+                    // Initialize sigdigits
+                    int ind= text.indexOf("SIGDIGITS");
+                    if(ind != -1)
+                        jComboBox1.setSelectedItem(text.substring(ind + 10, ind + 11)); 
+                    else
+                        jComboBox1.setSelectedItem("3");
+                    // Initialize maxevals
+                    ind = text.indexOf("MAXEVALS");
+                    if(ind != -1)
+                        jTextField1.setText(text.substring(ind + 9, text.indexOf(" ", ind)));
+                    else
+                        jTextField1.setText("450");     // A generous number
+                    // Initialize print
+                    ind = text.indexOf("PRINT");
+                    if(ind != -1)
+                        jTextField2.setText(text.substring(ind + 6, text.indexOf(" ", ind)));
+                    else
+                        jTextField2.setText("9999");      // A generous number
+                    // Initialize noabort
+                    jCheckBox4.setSelected(text.indexOf("NOABORT") != -1);
+                    // Initialize posthoc
+                    jCheckBox1.setSelected(text.indexOf("POSTHOC") != -1);
+                    // Initialize centering
+                    jCheckBox3.setSelected(text.indexOf("CENTERING") != -1);
+                    // Initialize interaction
+                    jCheckBox2.setSelected(text.indexOf("INTERACTION") != -1);
+            
+                    if(text.indexOf("METHOD=1") != -1 || text.indexOf("POSTHOC") != -1)
+                        iterator.setIsMethod1OrPosthoc(true);          
+                    jTextArea1.setText("$ESTIMATION " + text.substring(11).trim());
+                }
+            }
+            isValid = true;
+            wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());            
+     	}
 
 	public void hidingStep(JWizardPane wizard){
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }            
             if(method.equals("METHOD=1 ") || posthoc.equals("POSTHOC "))
                 iterator.setIsMethod1OrPosthoc(true);
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             String record = jTextArea1.getText().trim();
             object.getRecords().setProperty("Estimation", record); 
             
-            String[] estimation = new String[7];
+            String[] estimation = new String[8];
             // Find method
             if(record.indexOf("METHOD") == -1 || record.indexOf("METHOD=0") != -1) 
                 estimation[0] = "fo";
@@ -507,29 +573,24 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
                 estimation[1] = record.substring(ind + 10, ind + 11); 
             else
                 estimation[1] = "3";
+            record += " ";
             // Find maxevals
             ind = record.indexOf("MAXEVALS");
             if(ind != -1)
-                if(record.indexOf(" ", ind) != -1)
-                    estimation[2] = record.substring(ind + 9, record.indexOf(" ", ind));
-                else
-                    estimation[2] = record.substring(ind + 9);
+                estimation[2] = record.substring(ind + 9, record.indexOf(" ", ind));
             else
                 estimation[2] = "450";      // A generous number
             // Find print
             ind = record.indexOf("PRINT");
             if(ind != -1)
-                if(record.indexOf(" ", ind) != -1)                
-                    estimation[3] = record.substring(ind + 6, record.indexOf(" ", ind));
-                else
-                    estimation[3] = record.substring(ind + 6);
+                estimation[3] = record.substring(ind + 6, record.indexOf(" ", ind));
             else
                 estimation[3] = "9999";      // A generous number
-            // Find restart
+            // Find noabort
             if(record.indexOf("NOABORT") != -1)
-                estimation[4] = "yes";
-            else
                 estimation[4] = "no";
+            else
+                estimation[4] = "yes";
             // Find posthoc
             if(record.indexOf("POSTHOC") != -1)
                 estimation[5] = "yes";
@@ -537,9 +598,14 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
                 estimation[5] = "no";
             // Find centering
             if(record.indexOf("CENTERING") != -1)
-                estimation[5] = "yes";
+                estimation[6] = "yes";
             else
-                estimation[5] = "no";
+                estimation[6] = "no";
+            // Find interaction
+            if(record.indexOf("INTERACTION") != -1)
+                estimation[7] = "yes";
+            else
+                estimation[7] = "no";
             
             object.getSource().estimation = estimation;
 	}
@@ -551,9 +617,12 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
                 public void actionPerformed(ActionEvent e){ 
-                    jDialog1.setTitle("Help for " + getStepTitle());
-                    jDialog1.setSize(600, 500);
-                    jDialog1.show();
+                    if(!iterator.getIsOnline()) 
+                        new Help("Help for $ESTIMATION Record", 
+                                 Estimation.class.getResource("/uw/rfpk/mda/nonmem/help/Estimation.html"));
+                    else
+                        Utility.openURL("https://" + iterator.getServerName() + 
+                                        ":" + iterator.getServerPort() + "/user/help/Estimation.html");  
                 }
             };
 	}

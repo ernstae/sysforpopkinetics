@@ -43,7 +43,7 @@
             </p>
 
             <form action="checkuser.jsp" method="post">
-              <input type="hidden" name="OrigURL" value="${fn:escapeXml(param.origURL)}">                  
+              <input type="hidden" name="origURL" value="${fn:escapeXml(param.origURL)}">                  
               <table border="0" cellspacing = "5">
                 <tr>
                   <th align="right">User Name:</th>

@@ -5,6 +5,11 @@
   <body>
     <h2>Instructions for Using Model Design Agent</h2>
     <p>
+       <% String url = getServletContext().getInitParameter("bugzillaURL");
+          String bugzilla = "If you find any errors in the Model Design Agent please <a href=" + url + ">submit a bug report</a>."; %>
+       <%=bugzilla%>
+    </p>
+    <p>
        Function of the buttons:
     </p>
     <table border=1 cellspacing=2>

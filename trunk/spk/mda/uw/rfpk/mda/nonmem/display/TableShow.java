@@ -31,7 +31,7 @@ public class TableShow extends javax.swing.JFrame {
         this.dataAll = dataAll;
         this.labelAll = labelAll;
         this.dataLabelMap = dataLabelMap;
-        
+       
         // Replace the label name by the alias if exist
         for(int i = 0; i < labelAll.size(); i++)
         {

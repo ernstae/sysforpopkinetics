@@ -1,6 +1,7 @@
 package uw.rfpk.mda.nonmem;
 
 import uw.rfpk.mda.nonmem.wizard.Source;
+import uw.rfpk.mda.nonmem.wizard.MDAIterator;
 import uw.rfpk.mda.nonmem.wizard.MDAObject;
 import uw.rfpk.mda.nonmem.Utility;
 import org.w3c.dom.Document;
@@ -12,7 +13,7 @@ import java.io.PrintWriter;
 import java.io.FileWriter;
 import javax.swing.JOptionPane; 
 
-/** This class defines an object that generates an XML SPk input file.
+/** This class defines an object that generates an XML SPK input file.
  *  
  * @author  Jiaji Du
  * @version 1.0
@@ -57,7 +58,9 @@ public class XMLWriter
         if(source.estimation != null)
         {
             analysis.setAttribute("is_estimation", "yes");
-            analysis.setAttribute("is_restart", source.estimation[4]);
+            analysis.setAttribute("sig_digits", source.estimation[1]);
+            String restart = source.isRestart ? "yes" : "no";
+            analysis.setAttribute("is_restart", restart);
             analysis.setAttribute("mitr", source.estimation[2]);
             if(source.analysis.equals("population"))
             {
@@ -65,7 +68,9 @@ public class XMLWriter
                 if(source.estimation[0].equals("fo"))
                     analysis.setAttribute("is_eta_out", source.estimation[5]);
                 analysis.setAttribute("pop_size", String.valueOf(data.size()));
+                analysis.setAttribute("interaction", source.estimation[7]);
             }
+            analysis.setAttribute("abort", source.estimation[4]);
         }
         else
         {
@@ -256,7 +261,7 @@ public class XMLWriter
     {
         if(source.analysis.equals("individual") && source.covariance != null)
 	{        
-            Element ind_stat = docSource.createElement("ind_stat");
+            Element ind_stat = docSource.createElement("ind_stat");         
             parent.appendChild(ind_stat); 
         }
     }    
@@ -267,7 +272,9 @@ public class XMLWriter
         if(source.simulation != null)
         {
             Element simulation = docSource.createElement("simulation");
-            simulation.setAttribute("seed", source.simulation);
+            simulation.setAttribute("seed", source.simulation[0]);
+            simulation.setAttribute("onlysimulation", source.simulation[1]);
+            simulation.setAttribute("subproblems", source.simulation[2]);
             parent.appendChild(simulation);
         }
     }
@@ -378,7 +385,7 @@ public class XMLWriter
                     table.setAttribute("save_as", tableI[0][0]);
                 table.setAttribute("header", tableI[0][1]); 
                 parent.appendChild(table);
-
+                
                 for(int j = 0; j < tableI[1].length; j++)
 	        {
                     Element column = docSource.createElement("column");
@@ -386,7 +393,7 @@ public class XMLWriter
                     column.setAttribute("appearance_order", tableI[2][j]); 
                     column.setAttribute("sort_order", tableI[3][j]);   
                     table.appendChild(column);
-	        }
+                }
 	    }
         }
     }
@@ -509,7 +516,7 @@ public class XMLWriter
             position += size;
         }
     }
-   
+
     // This method generates model section of the SPK input file.    
     private void setModel()
     {    
@@ -517,6 +524,19 @@ public class XMLWriter
         Element spkmodel = docModel.createElement("spkmodel"); 
         docModel.appendChild(spkmodel);
         spkmodel.appendChild(docModel.createTextNode(System.getProperty("line.separator") + control));        
+    }    
+    
+    /** This method generates model section of the SPK input file.
+     * @param text The model text.
+     * @ return A String object containing the text of the model XML document.
+     */
+    public static String setModel(String text)
+    {    
+        Document document = new DocumentImpl();  
+        Element spkmodel = document.createElement("spkmodel"); 
+        document.appendChild(spkmodel);
+        spkmodel.appendChild(document.createTextNode(System.getProperty("line.separator") + text));
+        return Utility.formatXML(((DocumentImpl)document).saveXML(document));      
     }
     
     /** Generate SPK output file content.
@@ -546,7 +566,7 @@ public class XMLWriter
 
         // Return Spk output
         String ls = System.getProperty("line.separator");
-        return job + ls + spkOutput.getProperty("report") + ls + spkOutput.getProperty("source");        
+        return job + ls + spkOutput.getProperty("report") + spkOutput.getProperty("source");        
     }
     
     /** This method saves the XML document as a text file in XML format.
@@ -558,15 +578,15 @@ public class XMLWriter
 	{
             PrintWriter writer = new PrintWriter(new FileWriter(file));
             String ls = System.getProperty("line.separator");
-            writer.println(Utility.formatXML(((DocumentImpl)docSource).saveXML(docSource)) + ls +
-                           Utility.formatXML(((DocumentImpl)docData).saveXML(docData)) + ls +
+            writer.println(Utility.formatXML(((DocumentImpl)docSource).saveXML(docSource)) + ls + 
+                           Utility.formatXML(((DocumentImpl)docData).saveXML(docData)) + ls + 
                            Utility.formatXML(((DocumentImpl)docModel).saveXML(docModel))); 
             writer.close();
         }
         catch(Exception e)
 	{
             JOptionPane.showMessageDialog(null, "Error saving file.",  // Display saving file
-                                          "File Error",               // error message
+                                          "File Error",                // error message
                                           JOptionPane.ERROR_MESSAGE);
 	}    
     }

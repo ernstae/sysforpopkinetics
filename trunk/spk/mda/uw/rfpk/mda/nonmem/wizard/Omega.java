@@ -72,9 +72,6 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
         jCheckBox1 = new javax.swing.JCheckBox();
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
-        jDialog2 = new javax.swing.JDialog();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        help = new javax.swing.JTextArea();
         jComboBox1 = new javax.swing.JComboBox();
         addButton = new javax.swing.JButton();
         upButton = new javax.swing.JButton();
@@ -161,12 +158,6 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(6, 12, 0, 12);
         jDialog1.getContentPane().add(jCheckBox1, gridBagConstraints);
 
-        jDialog2.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        help.setEditable(false);
-        jScrollPane3.setViewportView(help);
-
-        jDialog2.getContentPane().add(jScrollPane3, java.awt.BorderLayout.CENTER);
-
         setLayout(new java.awt.GridBagLayout());
 
         setEnabled(false);
@@ -236,16 +227,16 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("Enter the initial estimates and constraints for the elements of one or\nserveral blocks of the OMEGA matrix.  You may either enter data for a\nnew  block or constrain the block to be equal to the preceding block.");
+        jTextPane1.setText("Enter the initial estimates and constraints for the elements of one or\nmore blocks of the random effect covariance matrix.  You may either \nenter data for a new  block or constrain the block to be equal to the \npreceding block.");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 16, 12, 12);
+        gridBagConstraints.insets = new java.awt.Insets(0, 16, 0, 12);
         add(jTextPane1, gridBagConstraints);
 
         jTextPane2.setBackground(new java.awt.Color(204, 204, 204));
-        jTextPane2.setText("List of the  \nblocks\nyou have \nentered.");
+        jTextPane2.setText("List of the  \nblocks\nyou have \nentered in\nNONMEM syntax");
         jTextPane2.setPreferredSize(new java.awt.Dimension(60, 66));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -253,7 +244,7 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(11, 16, 44, 0);
+        gridBagConstraints.insets = new java.awt.Insets(11, 16, 30, 0);
         add(jTextPane2, gridBagConstraints);
 
         changeButton.setText("Change");
@@ -497,6 +488,17 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                                           JOptionPane.ERROR_MESSAGE);                         
                     return;
                 }
+                if(value.length() > 8) 
+                {
+                    JOptionPane.showMessageDialog(null, 
+                                          "The element [" + (i + 1) + "," + (i + 1) + 
+                                          "] has more than 8 characters.\n" + 
+                                          "It is fine for SPK, but the generated control\n" +
+                                          "file may not be taken by NONMEM.",
+                                          "Warning Message",    
+                                          JOptionPane.INFORMATION_MESSAGE);                         
+                    return;
+                }                
                 element = element + " " + value; 
                 if(tableModel.getValueAt(i, 2).toString() == "true") 
                     element = element + " FIXED"; 
@@ -519,6 +521,17 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                                           JOptionPane.ERROR_MESSAGE);                          
                         return; 
                     }
+                    if(value.length() > 8) 
+                    {
+                        JOptionPane.showMessageDialog(null, 
+                                          "The element [" + (i + 1) + "," + (i + 1) + 
+                                          "] has more than 8 characters.\n" + 
+                                          "It is fine for SPK, but the generated control\n" +
+                                          "file may not be taken by NONMEM.",
+                                          "Warning Message",    
+                                          JOptionPane.INFORMATION_MESSAGE);                         
+                        return;
+                    }                    
                     element = element + " " + value;
                     if(isBlockFixed) 
                         element = element + " FIXED";
@@ -883,13 +896,11 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JButton changeButton;
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton downButton;
-    private javax.swing.JTextArea help;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JDialog jDialog1;
-    private javax.swing.JDialog jDialog2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JList jList1;
     private javax.swing.JRadioButton jRadioButton1;
@@ -898,7 +909,6 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JRadioButton jRadioButton4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JTable jTable1;
@@ -923,15 +933,57 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
 	}
        
   	public String getContentItem(){
-  	    return "$OMEGA Record";
+  	    return "Random Effects\nCovariance";
   	}
 
 	public String getStepTitle(){
-	    return "$OMEGA Record";
+	    return "Random Effects Covariance";
 	}
 
 	public void showingStep(JWizardPane wizard){
             wizardPane = wizard;
+            if(iterator.getIsReload())
+            {
+                String text = iterator.getReload().getProperty("OMEGA");
+                if(text != null)
+                {
+                    iterator.getReload().remove("OMEGA");
+                    model.removeAllElements();
+                    dimList.removeAllElements();
+                    String[] values = text.trim().split(",");
+                    nEta = 0;
+                    for(int i = 0; i < values.length; i++)
+                    {
+                        model.addElement("$" + values[i]);
+                        int beginIndex = values[i].indexOf("(") + 1;
+                        int endIndex = values[i].indexOf(")");
+                        if(beginIndex != -1 && endIndex != -1)
+                        {
+                            int dim = Integer.parseInt(values[i].substring(beginIndex, endIndex));
+                            dimList.add(new Integer(dim));
+                            nEta += dim;
+                        }
+                        else
+                            JOptionPane.showMessageDialog(null, "Error in $OMEGA of the reloaded model.",
+                                                          "Input Error", JOptionPane.ERROR_MESSAGE);                            
+                    }
+                    index = values.length - 1;
+                    jList1.setSelectedIndex(index);
+                    
+                    // Set delete button
+                    deleteButton.setEnabled(index > -1);
+                    
+                    // Set left buttons
+                    if(nEta == iterator.getNEta())
+                    {
+                        isValid = true;
+                        wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
+                    }
+                    
+                    // Set up and down buttons
+                    Utility.setUpDownButton(index, model, upButton, downButton);
+                }
+            }
             if(nEta != iterator.getNEta())
             {
                 nEta = iterator.getNEta();  
@@ -941,14 +993,18 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
 	}
 
 	public void hidingStep(JWizardPane wizard){
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }            
             int size = model.getSize();
             if(size != 0)
             {
                 MDAObject object = (MDAObject)wizard.getCustomizedObject();
                 String record = (String)model.get(0);
-                String ls = System.getProperty("line.separator");
                 for(int i = 1; i < size; i++)
-                    record = record + ls + model.get(i);
+                    record = record + "\n" + model.get(i);
                 object.getRecords().setProperty("Omega", record);
                 String[][] omega = new String[size][];
                 for(int i = 0; i < size; i++)
@@ -974,9 +1030,12 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
                 public void actionPerformed(ActionEvent e){ 
-                    jDialog2.setTitle("Help for " + getStepTitle());
-                    jDialog2.setSize(600, 500);
-                    jDialog2.show();
+                    if(!iterator.getIsOnline()) 
+                        new Help("Help for $OMEGA Record", 
+                                 Omega.class.getResource("/uw/rfpk/mda/nonmem/help/Omega.html"));
+                    else
+                        Utility.openURL("https://" + iterator.getServerName() + 
+                                        ":" + iterator.getServerPort() + "/user/help/Omega.html");  
                 }
             };
 	}

@@ -10,6 +10,10 @@ import uw.rfpk.mda.nonmem.Utility;
 import org.netbeans.ui.wizard.*;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
+import javax.swing.text.BadLocationException;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -24,10 +28,16 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
     private JComponent panel = this;
     private JWizardPane wizardPane = null;
     private boolean isValid = false;
+    private boolean isHighlight = false;
     private String PROBLEM = null;
-
+    private MDAIterator iterator = null;
+    private DefaultHighlighter highlighter = new DefaultHighlighter();
+    private DefaultHighlighter.DefaultHighlightPainter highlight_painter =
+            new DefaultHighlighter.DefaultHighlightPainter(new Color(200,200,250));
+    
     /** Creates new form PROBLEM */
-    public Problem() {
+    public Problem(MDAIterator iter) {
+        iterator = iter;
         initComponents();
     }
     
@@ -39,17 +49,8 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
     private void initComponents() {//GEN-BEGIN:initComponents
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jDialog1 = new javax.swing.JDialog();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        help = new javax.swing.JTextArea();
         jTextArea1 = new javax.swing.JTextArea();
         jTextPane1 = new javax.swing.JTextPane();
-
-        jDialog1.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        help.setEditable(false);
-        jScrollPane1.setViewportView(help);
-
-        jDialog1.getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -58,6 +59,11 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
         jTextArea1.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 jTextArea1KeyTyped(evt);
+            }
+        });
+        jTextArea1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTextArea1MouseClicked(evt);
             }
         });
 
@@ -71,7 +77,7 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
         add(jTextArea1, gridBagConstraints);
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
-        jTextPane1.setText("Enter the title of the problem into the following text area.  \nThe text becomes the heading of the NONMEM printout.\nOnly the first 72 characters of the text are used. ");
+        jTextPane1.setText("Enter the title of the problem into the following text area.  \nOnly the first 72 characters of the text are used. ");
         jTextPane1.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -83,16 +89,27 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
 
     }//GEN-END:initComponents
 
+    private void jTextArea1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea1MouseClicked
+        highlighter.removeAllHighlights();
+        isHighlight = false;
+    }//GEN-LAST:event_jTextArea1MouseClicked
+
     private void jTextArea1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextArea1KeyTyped
-        isValid = true;
-        wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());           
+        if(isHighlight)
+        {
+            jTextArea1.setText("");
+            highlighter.removeAllHighlights();
+            isHighlight = false;
+        }
+        if(!jTextArea1.getText().equals(""))
+        {
+            isValid = true;
+            wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
+        }
     }//GEN-LAST:event_jTextArea1KeyTyped
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextArea help;
-    private javax.swing.JDialog jDialog1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextPane jTextPane1;
     // End of variables declaration//GEN-END:variables
@@ -112,20 +129,54 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
 	}
        
   	public String getContentItem(){
-  	    return "$PROBLEM Record";
+  	    return "Problem Identifier";
   	}
 
 	public String getStepTitle(){
-	    return "$PROBLEM Record";
+	    return "Problem Identifier";
 	}
 
 	public void showingStep(JWizardPane wizard){
-            wizardPane = wizard; 
+            wizardPane = wizard;
+            if(iterator.getIsReload())
+            {
+                String text = iterator.getReload().getProperty("PROBLEM");
+                if(text != null)
+                {
+                    iterator.getReload().remove("PROBLEM");
+                    jTextArea1.setText(text.substring(text.concat(" ").indexOf(" ")).trim());
+                    isValid = true;
+                    wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
+                }
+            }
+            String text = jTextArea1.getText();
+            jTextArea1.setCaretPosition(text.length());
+            jTextArea1.setHighlighter(highlighter);
+            try
+            {
+                highlighter.addHighlight(0, text.length(), highlight_painter);
+                isHighlight = true;
+            }
+            catch(BadLocationException e) 
+            {
+                JOptionPane.showMessageDialog(null, e, "BadLocationException", JOptionPane.ERROR_MESSAGE);
+            }
             jTextArea1.requestFocusInWindow();
         }
+        
 	public void hidingStep(JWizardPane wizard){
-            String record = jTextArea1.getText();
-            if(Utility.checkTag(record, "Problem title")) 
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }            
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }
+            String record = jTextArea1.getText().replaceAll("\n", "");
+            if(Utility.checkTag(record, getStepTitle())) 
                 return;   
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             object.getRecords().setProperty("Problem", "$PROBLEM " + record);
@@ -139,9 +190,12 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
                 public void actionPerformed(ActionEvent e){ 
-                    jDialog1.setTitle("Help for " + getStepTitle());
-                    jDialog1.setSize(600, 500);
-                    jDialog1.show();
+                    if(!iterator.getIsOnline()) 
+                        new Help("Help for $PROBLEM Record", 
+                                 Problem.class.getResource("/uw/rfpk/mda/nonmem/help/Problem.html"));
+                    else
+                        Utility.openURL("https://" + iterator.getServerName() + 
+                                        ":" + iterator.getServerPort() + "/user/help/Problem.html");  
                 }
             };
 	}

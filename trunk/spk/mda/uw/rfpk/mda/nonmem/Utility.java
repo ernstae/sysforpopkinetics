@@ -12,9 +12,20 @@ import javax.swing.JOptionPane;
 import java.util.Vector;
 import java.util.StringTokenizer;
 import java.io.*;
+import javax.jnlp.*;
+import java.net.URL;
+import org.apache.xerces.parsers.DOMParser;
+import org.apache.xerces.dom.DocumentImpl;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+import org.xml.sax.InputSource;
 
 /**
- * This class defines static functions used by steps
+ * This class defines static functions used by steps.
  * @author  jiaji Du
  */
 public class Utility {
@@ -23,9 +34,9 @@ public class Utility {
     public Utility() {
     }
     
-    /** Eliminates comments in a text
-     * @param text A String object containing the text to have comments eliminited
-     * @return A String object containing the text without comments
+    /** Eliminates comments in a text.
+     * @param text A String object containing the text to have comments eliminited.
+     * @return A String object containing the text without comments.
      */    
     public static String eliminateComments(String text)
     {
@@ -43,9 +54,9 @@ public class Utility {
         
     /** Find substrings that has the patten of s(i), where s is a character string 
      * i is an integer number.  Than find the largest i among all the substrings.
-     * @param record The String object containing the text to search in
-     * @param s A String object containing the character string described above 
-     * @return An int, the largest number found as described above
+     * @param record The String object containing the text to search in.
+     * @param s A String object containing the character string described above. 
+     * @return An int, the largest number found as described above.
      */    
     public static int find(String record, String s)
     {
@@ -81,10 +92,10 @@ public class Utility {
         return n;
     }
     
-    /** Prepare the default $PK code
-     * @param advan An int, the ADVAN number
-     * @param trans An int, the TRANS number
-     * @return A String object, the default $PK code
+    /** Prepare the default $PK code.
+     * @param advan An int, the ADVAN number.
+     * @param trans An int, the TRANS number.
+     * @return A String object, the default $PK code.
      */    
     public static String defaultPK( int advan, String trans)
     {
@@ -154,11 +165,11 @@ public class Utility {
         return pk;
     }
     
-    /** Set "Up" and "Down" buttons 
-     * @param index An int, the selected index in the list
-     * @param model A DefaultListModel object, the model for the list,
-     * @param upButton A JButton object, the "Up" button
-     * @param downButton A JButton object, the "Down" button
+    /** Set "Up" and "Down" buttons.
+     * @param index An int, the selected index in the list.
+     * @param model A DefaultListModel object, the model for the list.
+     * @param upButton A JButton object, the "Up" button.
+     * @param downButton A JButton object, the "Down" button.
      */    
     public static void setUpDownButton(int index, DefaultListModel model, JButton upButton, JButton downButton)
     {
@@ -166,10 +177,10 @@ public class Utility {
         downButton.setEnabled(index < model.getSize() - 1);
     }
     
-    /** Determine if a character sting represents a floating point number
-     * @param s A String object containing the the character string 
+    /** Determine if a character sting represents a floating point number.
+     * @param s A String object containing the the character string.
      * @return A boolean, true for the string is a floating point number,
-     * false for otherwise
+     * false for otherwise.
      */    
     public static boolean isFloatNumber(String s)
     {
@@ -196,10 +207,10 @@ public class Utility {
         return true;
     }
     
-    /** Determine if a character sting represents an integer number
-     * @param s A String object containing the character string 
+    /** Determine if a character sting represents an integer number.
+     * @param s A String object containing the character string.
      * @return A boolean, true for the string is an integer number,
-     * false for otherwise
+     * false for otherwise.
      */    
     public static boolean isPosIntNumber(String s)
     {
@@ -220,17 +231,109 @@ public class Utility {
             return false;
         return true;
     }
-
-    /** Parse the data file and put the data in a Vector object
-     * @param filename A String object containing the data file name
+    
+    /** Parse the data XML document and put the data in a Vector object.
+     * @param dataXMl A String object containing the data XML.
      * @param data A Vector in which each contained object is also a Vector that
      * contains the data of one individual.  The individual data vector contains 
      * String arrays.  The number of arrays is the number of the data records 
-     * for the individual.  Each array contains data items of number of columns
-     * @param isInd A boolean true for individual analysis, false for population analysis
-     * @return A int value that is the number of data columns in the data file
+     * for the individual.  Each array contains data items of number of columns.
+     * @param isInd A boolean true for individual analysis, false for population analysis.
+     * @return A int value that is the number of data columns in the data file.
+     * In caes of error, -1 is returned.
      */        
-    public static int parseData(String filename, Vector data, boolean isInd)
+    public static int parseDataXML(String dataXML, Vector data, boolean isInd)
+    {
+        int nDataCol = -1;
+        Document docData = null;
+        Element row, value;
+        try
+        {
+            // Parse the XML documents
+            DOMParser parser = new DOMParser(); 
+            parser.parse(new InputSource(new ByteArrayInputStream(dataXML.getBytes()))); 
+            docData = parser.getDocument();            
+        }
+        catch(SAXException e)
+        {
+            JOptionPane.showMessageDialog(null, e, "SAXException", JOptionPane.ERROR_MESSAGE);
+            return -1;
+        }
+        catch(IOException e)
+        {
+            JOptionPane.showMessageDialog(null, e, "IOException", JOptionPane.ERROR_MESSAGE);
+            return -1;
+        }    
+        
+        //Get root element of spkdata
+        Element spkdata = docData.getDocumentElement();  
+        
+        // Get rows
+        NodeList rowList = spkdata.getElementsByTagName("row"); 
+        if(rowList.getLength() > 1)
+        {
+            Vector indData = new Vector();
+            
+            // Put the first row in a String[]
+            row = (Element)rowList.item(1);
+            NodeList valueList = row.getElementsByTagName("value");
+            nDataCol = valueList.getLength();
+
+            String[] firstRowItems = new String[nDataCol];
+            for(int j = 0; j < nDataCol; j++)
+            {
+                value = (Element)valueList.item(j);
+                firstRowItems[j] = value.getFirstChild().getNodeValue();                 
+            }
+            indData.add(firstRowItems);            
+            
+            String firstItem = null;
+            if(!isInd)
+                firstItem = firstRowItems[0];       
+            
+            for(int i = 2; i < rowList.getLength(); i++)
+            {
+                row = (Element)rowList.item(i);
+                valueList = row.getElementsByTagName("value");
+
+                String[] items = new String[nDataCol];
+                for(int j = 0; j < nDataCol; j++)
+                {
+                    value = (Element)valueList.item(j);
+                    items[j] = value.getFirstChild().getNodeValue();                 
+                }
+                
+                if(isInd)
+                    indData.add(items);
+                else
+                {
+                    if(items[0].equals(firstItem))
+                        indData.add(items);
+                    else
+                    {
+                        data.add(indData);
+                        indData = new Vector();
+                        indData.add(items);
+                        firstItem = items[0];
+                    }
+                }
+            }
+            data.add(indData);
+        }        
+        return nDataCol;        
+    }  
+        
+    /** Parse the data file and put the data in a Vector object.
+     * @param filename A String object containing the data file name.
+     * @param data A Vector in which each contained object is also a Vector that
+     * contains the data of one individual.  The individual data vector contains 
+     * String arrays.  The number of arrays is the number of the data records 
+     * for the individual.  Each array contains data items of number of columns.
+     * @param isInd A boolean true for individual analysis, false for population analysis.
+     * @return A int value that is the number of data columns in the data file.
+     * In case of error, -1 is returned.
+     */        
+    public static int parseDataFile(String filename, Vector data, boolean isInd)
     {
         Vector indData = new Vector();
         int nTokens = 0;
@@ -327,10 +430,10 @@ public class Utility {
     }    
     
     /** Determine if a character sting includes character '<' or '>'.
-     * @param text A String object containing the character string to be checked
-     * @param name A String object containing the character string as the name
+     * @param text A String object containing the character string to be checked.
+     * @param name A String object containing the character string as the name.
      * @return A boolean, true for the string includes the character,
-     * false for otherwise
+     * false for otherwise.
      */    
     public static boolean checkTag(String text, String name)
     {
@@ -351,9 +454,9 @@ public class Utility {
         return false;
     }
 
-    /** Determine if a character sting is a name of a standard data item
+    /** Determine if a character sting is a name of a standard data item.
      * @return A boolean, true for it is a name of a standard data item,
-     * false for otherwise
+     * false for otherwise.
      * @param item A String object containing a data item name.
      */      
     public static boolean isStdItem(String item)
@@ -368,8 +471,8 @@ public class Utility {
         return false;    
     }
     
-    /** This function format the XML file for better deadability
-     * @return A String object as the formated file content
+    /** This function format the XML file for better deadability.
+     * @return A String object as the formated file content.
      * @param text A String object containing a one-line XML document.
      */    
     public static String formatXML(String text)
@@ -399,10 +502,10 @@ public class Utility {
         return buffer.toString();
     } 
     
-    /** This function format the data for better deadability
-     * @return A String object as the formated file content
-     * @param n Sum of number of significent digits and three
-     * @param value A String object containg the data value
+    /** This function format the data for better deadability.
+     * @return A String object as the formated file content.
+     * @param n Sum of number of significent digits and three.
+     * @param value A String object containg the data value.
      */      
     public static String formatData(int n, String value)
     {
@@ -414,5 +517,96 @@ public class Utility {
             value = sb.insert(n, '+').toString();
         }
         return value; 
+    }
+    
+    /** This function opens an URL.
+     * @param String The URL to open.
+     */
+    public static void openURL(String url)
+    {
+        // Find a browser
+        if(System.getProperty("os.name").startsWith("Windows"))
+        {
+            try 
+            {
+               // Lookup the javax.jnlp.BasicService object
+               BasicService bs = (BasicService)ServiceManager.lookup("javax.jnlp.BasicService");
+
+               // Invoke the showDocument method
+               bs.showDocument(new java.net.URL(url));
+            } 
+            catch(UnavailableServiceException ue) 
+            {
+                JOptionPane.showMessageDialog(null, ue, "UnavailableServiceException", 
+                                              JOptionPane.ERROR_MESSAGE); 
+            }
+            catch(java.net.MalformedURLException me)
+            {
+                JOptionPane.showMessageDialog(null, me, "MalformedURLException", 
+                                              JOptionPane.ERROR_MESSAGE);             
+            }            
+        }
+        else
+        {
+            try
+            {
+                String path = System.getProperty("user.dir") + "/.browser";
+                File file = new File(path);
+                if(file.exists())
+                {
+                    BufferedReader reader = new BufferedReader(new FileReader(path));
+                    Runtime.getRuntime().exec(new String[]{reader.readLine(), url});
+                    return;
+                }
+                
+                String[][] command = {{"which", "firebird"},
+                                      {"which", "mozilla"},
+                                      {"which", "netscape"},
+                                      {"which", "opera"},
+                                      {"which", "galeon"},
+                                      {"which", "konqueror"},
+                                      {"which", "lynx"}};
+           
+                Process process = null;
+                int status = 1;
+                int i = 0;
+                while(status == 1 && i < command.length)
+                {
+                    process = Runtime.getRuntime().exec(command[i]);
+                    status = process.waitFor();
+                    i++;
+                }
+                if(status == 0)
+                    Runtime.getRuntime().exec(new String[]{command[i - 1][1], url});
+                else
+                {
+                    String browser = JOptionPane.showInputDialog(null, "Enter web browser name.");
+                    if(browser != null)
+                    {
+                        process = Runtime.getRuntime().exec(new String[]{"which", browser.toLowerCase()});
+                        if(process.waitFor() == 0)
+                        {
+                            Runtime.getRuntime().exec(new String[]{browser.trim().toLowerCase(), url});
+                            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+                            writer.write(browser.trim().toLowerCase());
+                            writer.close();
+                        }
+                        else
+                            JOptionPane.showMessageDialog(null, "Web browser, " + browser +
+                                                          ", was not found on this computer.", 
+                                                          "Web Browser Error", 
+                                                          JOptionPane.ERROR_MESSAGE);
+                    }
+                }                    
+            }
+            catch(IOException e)
+            {
+                JOptionPane.showMessageDialog(null, e, "IOException", JOptionPane.ERROR_MESSAGE);                 
+            }
+            catch(InterruptedException e)
+            {
+                JOptionPane.showMessageDialog(null, e, "InterruptedException", JOptionPane.ERROR_MESSAGE);              
+            }
+        }
     }
 }

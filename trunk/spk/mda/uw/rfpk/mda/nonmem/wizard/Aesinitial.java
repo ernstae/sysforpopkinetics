@@ -24,9 +24,11 @@ public class Aesinitial extends javax.swing.JPanel implements WizardStep {
     private JComponent panel = this;
     private boolean isValid = false;
     private JWizardPane wizardPane = null; 
+    private MDAIterator iterator = null;
 
     /** Creates new form Aesinitial */
-    public Aesinitial() {
+    public Aesinitial(MDAIterator iter) {
+        iterator = iter;
         initComponents();
         jButton1.addActionListener(new DefaultEditorKit.CutAction());
         jButton2.addActionListener(new DefaultEditorKit.CopyAction()); 
@@ -41,9 +43,6 @@ public class Aesinitial extends javax.swing.JPanel implements WizardStep {
     private void initComponents() {//GEN-BEGIN:initComponents
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jDialog1 = new javax.swing.JDialog();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        help = new javax.swing.JTextArea();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         jPanel1 = new javax.swing.JPanel();
@@ -51,12 +50,6 @@ public class Aesinitial extends javax.swing.JPanel implements WizardStep {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-
-        jDialog1.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        help.setEditable(false);
-        jScrollPane2.setViewportView(help);
-
-        jDialog1.getContentPane().add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
         setLayout(new java.awt.BorderLayout());
 
@@ -76,6 +69,7 @@ public class Aesinitial extends javax.swing.JPanel implements WizardStep {
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
         jTextPane1.setText("Enter abbreviated code for $AESINITIAL.   ");
+        jTextPane1.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         jPanel1.add(jTextPane1, gridBagConstraints);
@@ -113,14 +107,11 @@ public class Aesinitial extends javax.swing.JPanel implements WizardStep {
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextArea help;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JDialog jDialog1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextPane jTextPane1;
     // End of variables declaration//GEN-END:variables
@@ -149,20 +140,33 @@ public class Aesinitial extends javax.swing.JPanel implements WizardStep {
 
 	public void showingStep(JWizardPane wizard){
             wizardPane = wizard;
-            String value = ((MDAObject)wizard.getCustomizedObject()).getRecords().getProperty("Aesinitial");
-            if(!value.equals(""))
-                jTextArea1.setText(value.substring(13));
-            jTextArea1.requestFocusInWindow();
+            jTextArea1.requestFocusInWindow(); 
+            if(iterator.getIsReload())
+            {
+                String text = iterator.getReload().getProperty("AESINITIAL");
+                if(text != null)
+                {
+                    jTextArea1.setText(text.substring(11).trim());
+                    iterator.getReload().remove("AESINITIAL");
+                    isValid = true;
+                    wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());                    
+                }
+            }            
 	}
 
 	public void hidingStep(JWizardPane wizard){
-            MDAObject object = (MDAObject)wizard.getCustomizedObject();            
-            String ls = System.getProperty("line.separator");            
-            String record = jTextArea1.getText().trim().replaceAll("\n", ls);
-            if(!record.equals("") && !Utility.checkTag(record, "AESINITIAL code"))
+            if(iterator.getIsBack())
             {
-                object.getRecords().setProperty("Aesinitial", "$AESINITIAL " + ls + record);
-                object.getSource().aesinitial = ls + record + ls;
+                iterator.setIsBack(false);
+                return;
+            }            
+            MDAObject object = (MDAObject)wizard.getCustomizedObject();                       
+            String aesinitialCode = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
+            if(!aesinitialCode.equals("") && !Utility.checkTag(aesinitialCode, getStepTitle()))
+            {
+                String record = "$AESINITIAL " + "\n" + aesinitialCode;
+                object.getRecords().setProperty("Aesinitial", record);
+                object.getSource().aesinitial = record.substring(12) + "\n";
             }
 	}
 
@@ -173,9 +177,12 @@ public class Aesinitial extends javax.swing.JPanel implements WizardStep {
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
                 public void actionPerformed(ActionEvent e){ 
-                    jDialog1.setTitle("Help for " + getStepTitle());
-                    jDialog1.setSize(600, 500);
-                    jDialog1.show();
+                    if(!iterator.getIsOnline()) 
+                        new Help("Help for $AESINITIAL Record", 
+                                 Aesinitial.class.getResource("/uw/rfpk/mda/nonmem/help/Aesinitial.html"));                        
+                    else
+                        Utility.openURL("https://" + iterator.getServerName() + 
+                                        ":" + iterator.getServerPort() + "/user/help/Aesinitial.html");  
                 }
             };
 	}

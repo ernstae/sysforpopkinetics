@@ -26,7 +26,7 @@
     <!-- Used by Web Start jnlp file -->
     <context-param>
         <param-name>jnlp_directory</param-name>
-        <param-value>/usr/local/tomcat/instance/testssl/webapps/user/jnlp/</param-value>
+        <param-value>/home/jiaji/jakarta-tomcat-5.0.19/webapps/user/jnlp/</param-value>
         <description>The directory for the jnlp file</description>
     </context-param>
 
@@ -39,7 +39,7 @@
 
     <context-param>
         <param-name>database_host</param-name>
-        <param-value>192.168.1.2</param-value>
+        <param-value>rose.rfpk.washington.edu</param-value>
         <description>The host of the database</description>
     </context-param>
 
@@ -61,14 +61,26 @@
         javax.servlet.jsp.jstl.sql.dataSource
       </param-name>
       <param-value>
-        jdbc:mysql://192.168.1.2:3306/spktest,com.mysql.jdbc.Driver,tester,tester
+        jdbc:mysql:/rose.rfpk.washington.edu:3306/spktest,com.mysql.jdbc.Driver,tester,tester
       </param-value>
     </context-param>
 
     <context-param>
         <param-name>maxNum</param-name>
-        <param-value>6</param-value>
+        <param-value>2</param-value>
         <description>The maximum number of rows</description>
+    </context-param>
+
+    <context-param>
+        <param-name>timeLimit</param-name>
+        <param-value>10</param-value>
+        <description>The time limit for running diff in seconds</description>
+    </context-param>
+
+    <context-param>
+        <param-name>bugzillaURL</param-name>
+        <param-value>http://192.168.2.3:8081/index.cgi</param-value>
+        <description>The URL of the Bugzilla main page</description>
     </context-param>
 
     <!-- Session expiration -->

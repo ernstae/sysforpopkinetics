@@ -56,9 +56,6 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         jTextPane3 = new javax.swing.JTextPane();
         jCheckBox6 = new javax.swing.JCheckBox();
         jCheckBox7 = new javax.swing.JCheckBox();
-        jDialog2 = new javax.swing.JDialog();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        help = new javax.swing.JTextArea();
         jTextField3 = new javax.swing.JTextField();
         addButton = new javax.swing.JButton();
         upButton = new javax.swing.JButton();
@@ -172,12 +169,6 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(1, 24, 1, 12);
         jDialog1.getContentPane().add(jCheckBox7, gridBagConstraints);
 
-        jDialog2.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        help.setEditable(false);
-        jScrollPane2.setViewportView(help);
-
-        jDialog2.getContentPane().add(jScrollPane2, java.awt.BorderLayout.CENTER);
-
         setLayout(new java.awt.GridBagLayout());
 
         jTextField3.setText(" ");
@@ -192,8 +183,8 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(10, 12, 17, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 12, 17, 12);
         add(jTextField3, gridBagConstraints);
 
         addButton.setText("Add");
@@ -254,7 +245,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         add(jTextPane1, gridBagConstraints);
 
         jTextPane2.setBackground(new java.awt.Color(204, 204, 204));
-        jTextPane2.setText("List of the\ncompart-\nments\nyou have\nentered.");
+        jTextPane2.setText("List of the\ncompart-\nments\nyou have\nentered in\nNONMEM\nsyntax");
         jTextPane2.setMinimumSize(new java.awt.Dimension(0, 81));
         jTextPane2.setPreferredSize(new java.awt.Dimension(0, 81));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -262,8 +253,8 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridy = 5;
         gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(11, 12, 12, 11);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(11, 12, 44, 11);
         add(jTextPane2, gridBagConstraints);
 
         changeButton.setText("Change");
@@ -292,8 +283,8 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(7, 16, 14, 16);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(7, 16, 14, 16);
         add(deleteButton, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -356,8 +347,8 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.insets = new java.awt.Insets(9, 12, 18, 2);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(9, 12, 18, 2);
         add(jLabel3, gridBagConstraints);
 
         jButton1.setText("Attributes");
@@ -370,8 +361,8 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.insets = new java.awt.Insets(7, 12, 14, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(7, 12, 14, 12);
         add(jButton1, gridBagConstraints);
 
         jTextField1.setPreferredSize(new java.awt.Dimension(4, 25));
@@ -610,7 +601,6 @@ public class Model extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JButton changeButton;
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton downButton;
-    private javax.swing.JTextArea help;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JCheckBox jCheckBox1;
@@ -621,14 +611,12 @@ public class Model extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JCheckBox jCheckBox6;
     private javax.swing.JCheckBox jCheckBox7;
     private javax.swing.JDialog jDialog1;
-    private javax.swing.JDialog jDialog2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JList jList1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
@@ -657,18 +645,63 @@ public class Model extends javax.swing.JPanel implements WizardStep {
 	}
        
   	public String getContentItem(){
-  	    return "$MODEL Record";
+  	    return "Model Specification";
   	}
 
 	public String getStepTitle(){
-	    return "$MODEL Record";
+	    return "Model Specification";
 	}
 
 	public void showingStep(JWizardPane wizard){
             wizardPane = wizard;
+            if(iterator.getIsReload())
+            {
+                String text = iterator.getReload().getProperty("MODEL");
+                if(text != null)
+                {
+                    text = text.trim().concat(" ");
+                    iterator.getReload().remove("MODEL");
+                    int beginIndex = text.indexOf("NCOMPARTMENTS=") + 14;
+                    int endIndex = 0;
+                    if(beginIndex != -1)
+                    {
+                        endIndex = text.indexOf(" ", beginIndex); 
+                        jTextField1.setText(text.substring(beginIndex, endIndex));
+                    }
+                    beginIndex = text.indexOf("NEQUILIBRIUM=") + 13;
+                    if(beginIndex != -1)
+                    {
+                        endIndex = text.indexOf(" ", beginIndex); 
+                        jTextField2.setText(text.substring(beginIndex, endIndex));
+                    }
+                    beginIndex = text.indexOf("NPARAMETERS=") + 12;
+                    if(beginIndex != -1)
+                    {
+                        endIndex = text.indexOf(" ", beginIndex); 
+                        jTextField3.setText(text.substring(beginIndex, endIndex));
+                    }
+                    model.removeAllElements();
+                    beginIndex = text.indexOf("COMP=(");
+                    while(beginIndex != -1)
+                    {
+                        endIndex = text.indexOf(")", beginIndex); 
+                        model.addElement(text.substring(beginIndex, endIndex + 1));
+                        beginIndex = text.indexOf("COMP=(", endIndex);
+                    }
+                    index = model.size() - 1;
+                    jList1.setSelectedIndex(index);
+                    isValid = true;
+                    wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());                    
+                }
+            }
 	}
 
 	public void hidingStep(JWizardPane wizard){
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }            
             int size = model.getSize();
             if(size == 0)
                 return;
@@ -676,18 +709,19 @@ public class Model extends javax.swing.JPanel implements WizardStep {
             String record = "";
             String n1 = jTextField1.getText().trim();
             if(!n1.equals(""))
-                record = record + "NCOMPARTMENTS=" + n1 + " ";
+                record += " NCOMPARTMENTS=" + n1;
             String n2 = jTextField2.getText().trim();
             if(!n2.equals(""))
-                record = record + "NEQUILIBRIUM=" + n2 + " ";
+                record += " NEQUILIBRIUM=" + n2;
             String n3 = jTextField3.getText().trim();
             if(!n3.equals(""))
-                record = record + "NPARAMETERS=" + n3;
+                record += " NPARAMETERS=" + n3 + " ";
             
-            String ls = System.getProperty("line.separator");
             for(int i = 0; i < size; i++)
-                record = record + ls + model.get(i);
-            object.getRecords().setProperty("Model", "$MODEL" + record); 
+                record += "\n" + ((String)model.get(i)).replaceAll("\r", "");
+            object.getRecords().setProperty("Model", "$MODEL" + record);
+            
+            // Set source
             String[][] compartments = new String[size + 1][];
             compartments[0] = new String[3]; 
             if(!n1.equals(""))
@@ -705,39 +739,39 @@ public class Model extends javax.swing.JPanel implements WizardStep {
             for(int i = 1; i <= size; i++)
             {
                 String compartment = (String)model.get(i - 1);
-                String name = compartment.substring(6, compartment.length() - 1).split(" ")[0];                
+                String name = compartment.substring(6, compartment.indexOf(",", 6));              
                 compartments[i] = new String[8];
                 if(name.startsWith("\"") || name.startsWith("'"))
                 {
                     name = name.substring(1, name.length() - 1);                    
                 }
                 compartments[i][0] = name; 
-                if(compartment.indexOf(" INITIALOFF") != -1)
+                if(compartment.indexOf(",INITIALOFF") != -1)
                     compartments[i][1] = "yes";
                 else
                     compartments[i][1] = "no";
                 
-                if(compartment.indexOf(" NOOFF") != -1)
+                if(compartment.indexOf(",NOOFF") != -1)
                     compartments[i][2] = "yes";
                 else
                     compartments[i][2] = "no";
-                if(compartment.indexOf(" NODOSE") != -1)
+                if(compartment.indexOf(",NODOSE") != -1)
                     compartments[i][3] = "yes";
                 else
                     compartments[i][3] = "no";
-                if(compartment.indexOf(" EQUILIBRIUM") != -1)
+                if(compartment.indexOf(",EQUILIBRIUM") != -1)
                     compartments[i][4] = "yes";
                 else
                     compartments[i][4] = "no";
-                if(compartment.indexOf(" EXCLUDE") != -1)
+                if(compartment.indexOf(",EXCLUDE") != -1)
                     compartments[i][5] = "yes";
                 else
                     compartments[i][5] = "no";
-                if(compartment.indexOf(" DEFOBSERVATION") != -1)
+                if(compartment.indexOf(",DEFOBSERVATION") != -1)
                     compartments[i][6] = "yes";
                 else
                     compartments[i][6] = "no";
-                if(compartment.indexOf(" DEFDOSE") != -1)
+                if(compartment.indexOf(",DEFDOSE") != -1)
                     compartments[i][7] = "yes";
                 else
                     compartments[i][7] = "no";
@@ -752,9 +786,12 @@ public class Model extends javax.swing.JPanel implements WizardStep {
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
                 public void actionPerformed(ActionEvent e){ 
-                    jDialog2.setTitle("Help for " + getStepTitle());
-                    jDialog2.setSize(600, 500);
-                    jDialog2.show();
+                    if(!iterator.getIsOnline()) 
+                        new Help("Help for $MODEL Record", 
+                                 Model.class.getResource("/uw/rfpk/mda/nonmem/help/Model.html"));
+                    else
+                        Utility.openURL("https://" + iterator.getServerName() + 
+                                        ":" + iterator.getServerPort() + "/user/help/Model.html");  
                 }
             };
 	}

@@ -19,7 +19,9 @@ public class Source {
     /** population or individual */
     public String analysis = null;        
     /** if estimation using simulated data */
-    public boolean isUsingSimulatedData;  
+    public boolean isUsingSimulatedData;
+    /** if continuing when maximum number of iterations is reached */
+    public boolean isRestart;    
     /** problem heading */
     public String problem = null;         
     /** data file path and name */
@@ -48,12 +50,12 @@ public class Source {
     public String[][] omega = null;
     /** (form, dim, elem1, elem2, ...)s */
     public String[][] sigma = null; 
-    /** method, sigdigits, maxevals, print, restart, ind_out, centering */
+    /** method, sigdigits, maxevals, print, noabort, ind_out, centering, interaction */
     public String[] estimation = null; 
     /** formulation */
     public String covariance = null;
-    /** seed number */
-    public String simulation = null;
+    /** seed number, onlysimulation, subproblems */
+    public String[] simulation = null;
     /** ((file, header), (list1), (appearance orders), (sorting orders))s */
     public String[][][] tableEst = null;
     /** ((from, to, unit, X0, Y0), (list1), (list2), (list3))s */

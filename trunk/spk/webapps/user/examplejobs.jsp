@@ -63,6 +63,10 @@
               <th>End Code</th>
               <th>Description</th>
               <jsp:useBean id="conversion" scope="request" class="uw.rfpk.beans.Conversion" />
+              <% conversion.initConversion(getServletContext().getInitParameter("database_name"),
+                                           getServletContext().getInitParameter("database_host"),
+                                           getServletContext().getInitParameter("database_username"),
+                                           getServletContext().getInitParameter("database_password")); %>
               <c:forEach items="${userJobs.rows}" var="row">
               <c:set target="${conversion}" property="time" value="${row.start_time}" />
               <c:set target="${conversion}" property="state" value="${row.state_code}" />
@@ -87,7 +91,7 @@
           <p>
           <c:choose>
             <c:when test="${param.start > 0}">
-              <a href="userjobs.jsp?start=${param.start - noOfRows}">
+              <a href="examplejobs.jsp?start=${param.start - noOfRows}">
                 Previous Page</a>
             </c:when>
             <c:otherwise>
@@ -96,7 +100,7 @@
           </c:choose>
           <c:choose>
             <c:when test="${userJobs.limitedByMaxRows}">
-              <a href="userjobs.jsp?start=${param.start + noOfRows}">
+              <a href="examplejobs.jsp?start=${param.start + noOfRows}">
                 Next Page</a>
             </c:when>
           <c:otherwise>

@@ -85,12 +85,14 @@
                      for(int i = 0; i < size; i++)
                      { 
                          String[] model = (String[])modelList.get(i);
-                         String link = "<a href=versions.jsp?id=" + model[0] + "&type=model>" + model[1] + "</a>"; %>           
+                         String link = "<a href=versions.jsp?id=" + model[0] + "&type=model>" + model[1] + "</a>"; 
+                         String description = model[4].startsWith("http://") || model[4].startsWith("https://") ?
+                                              "<a href=" + model[4] + ">" + model[4] + "</a>" : model[4]; %>           
                   <tr>
                     <td><%=link%></td>
                     <td align="center"><%=model[2]%></td>
                     <td><%=model[3]%></td>
-                    <td><%=model[4]%></td>
+                    <td><%=description%></td>
                   </tr>
                   <% } %>
                  </table>
@@ -99,7 +101,7 @@
                  {
                      long start = Long.parseLong((String)startList.get(counter - 1)) + 1;
                      int count = counter - 1;
-                     String pageLink = "<a href=usermodels.jsp?start=" + String.valueOf(start) + 
+                     String pageLink = "<a href=modellibrary.jsp?start=" + String.valueOf(start) + 
                                        "&counter=" + String.valueOf(count) + ">Previous Page</a>"; %>
                      <%=pageLink%>
               <% }
@@ -110,7 +112,7 @@
                  if(isMore)
                  {
                      int count = counter + 1;
-                     String pageLink = "<a href=usermodels.jsp?start=" + ((String[])modelList.get(size - 1))[0] + 
+                     String pageLink = "<a href=modellibrary.jsp?start=" + ((String[])modelList.get(size - 1))[0] + 
                                        "&counter=" + String.valueOf(count) + ">Next Page</a>"; %>
                      <%=pageLink%>
               <% }

@@ -6,6 +6,7 @@
 
 package uw.rfpk.mda.nonmem.wizard;
 
+import uw.rfpk.mda.nonmem.Utility;
 import org.netbeans.ui.wizard.*;
 import javax.swing.JComponent;
 import java.awt.Component;
@@ -23,6 +24,7 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
     private MDAIterator iterator = null;
     private boolean isValid = false;
     private int advan = 0;
+    private boolean isInit = false;
 
     /** Creates new form Subroutines 
      * @param iter A MDAIterator object to initialize the field iterator
@@ -40,9 +42,6 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
     private void initComponents() {//GEN-BEGIN:initComponents
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jDialog1 = new javax.swing.JDialog();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        help = new javax.swing.JTextArea();
         jTextPane1 = new javax.swing.JTextPane();
         jLabel1 = new javax.swing.JLabel();
         jComboBox2 = new javax.swing.JComboBox();
@@ -53,12 +52,6 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
         jTextPane3 = new javax.swing.JTextPane();
         jSeparator1 = new javax.swing.JSeparator();
         jComboBox1 = new javax.swing.JComboBox();
-
-        jDialog1.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        help.setEditable(false);
-        jScrollPane2.setViewportView(help);
-
-        jDialog1.getContentPane().add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -133,7 +126,7 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
 
         jTextPane3.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane3.setEditable(false);
-        jTextPane3.setText("The $SUBROUTINES record you have created.");
+        jTextPane3.setText("The options you have selected in NONMEM syntax");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
@@ -174,6 +167,8 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
+        if(isInit)
+            return;
         iterator.setTrans(((String)jComboBox2.getSelectedItem()));
         setRecord();
     }//GEN-LAST:event_jComboBox2ActionPerformed
@@ -193,14 +188,11 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextArea help;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JComboBox jComboBox2;
-    private javax.swing.JDialog jDialog1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextPane jTextPane1;
@@ -223,15 +215,31 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
 	}
        
   	public String getContentItem(){
-  	    return "$SUBROUTINES Record";
+  	    return "Model Library";
   	}
 
 	public String getStepTitle(){
-	    return "$SUBROUTINES Record";
+	    return "Model Library";
 	}
 
 	public void showingStep(JWizardPane wizard){
-            advan = iterator.getAdvan();  
+            int advanCurrent = iterator.getAdvan();
+            String text = null;
+            
+            // If advan was not changed and no reload for subroutines
+            if(iterator.getIsReload())
+                text = iterator.getReload().getProperty("SUBROUTINES");            
+            if(advan == advanCurrent && text == null)
+                return;
+            
+            // Set advan to the current value
+            advan = advanCurrent;
+            
+            // remove the reload for subroutines
+            if(text != null)
+                iterator.getReload().remove("SUBROUTINES");
+
+            // Initialize the GUI according to the advan and the reload for subroutines
             if(advan == 6 || advan == 8 || advan == 9 || advan == 10)
             {
                 jTextPane1.setText("You have selected to use SUBROUTINE ADVAN" + String.valueOf(advan) +
@@ -239,6 +247,12 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
                                    " in the computation for each compartment.");
                 jComboBox1.setEnabled(true); 
                 jLabel1.setEnabled(true);
+                if(text != null)
+                {
+                    int tolIndex = text.indexOf("TOL=") + 4;
+                    if(tolIndex != -1)
+                        jComboBox1.setSelectedItem(text.substring(tolIndex, tolIndex + 1));
+                }
             }
             else
             {
@@ -248,11 +262,47 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
                 jComboBox1.setEnabled(false); 
                 jLabel1.setEnabled(false);
             }
+              
+            // Initialize jComboBox2 according to the advan
+            isInit = true;
+            jComboBox2.removeAllItems();
+            switch(advan)
+            {
+                case 1:
+                case 2: 
+                    jComboBox2.addItem("TRANS1");
+                    jComboBox2.addItem("TRANS2");                 
+                    break;
+                case 3:
+                case 4:
+                    jComboBox2.addItem("TRANS1");
+                    jComboBox2.addItem("TRANS3");
+                    jComboBox2.addItem("TRANS4");
+                    jComboBox2.addItem("TRANS5");                    
+                    break;
+                case 10:
+                    jComboBox2.addItem("TRANS1");                    
+                    break;
+                case 11:
+                case 12:
+                    jComboBox2.addItem("TRANS1");
+                    jComboBox2.addItem("TRANS4");
+                    jComboBox2.addItem("TRANS6");                    
+                    break;
+            }
+            isInit = false;
             if(advan <= 4 || advan >= 10)
             {
                 jComboBox2.setEnabled(true); 
                 jTextPane2.setText("You need to select a translator subroutine or use the default TRANS1.");
-                jLabel2.setEnabled(true);     
+                jLabel2.setEnabled(true);
+                if(text != null)
+                {
+                    text = text.trim().concat(" "); 
+                    int transIndex = text.indexOf("TRANS");
+                    if(transIndex != -1)
+                        jComboBox2.setSelectedItem(text.substring(transIndex, transIndex + 6));
+                }                
             }
             else
             {
@@ -260,63 +310,46 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
                 jComboBox2.setEnabled(false); 
                 jLabel2.setEnabled(false);
             }
-            switch(advan)
-            {
-                case 1:
-                case 2: 
-                    jComboBox2.addItem("TRANS1");
-                    jComboBox2.addItem("TRANS2"); 
-                    break;
-                case 3:
-                case 4: 
-                    jComboBox2.addItem("TRANS1");
-                    jComboBox2.addItem("TRANS3");
-                    jComboBox2.addItem("TRANS4");
-                    jComboBox2.addItem("TRANS5");
-                    break;
-                case 10:
-                    jComboBox2.addItem("TRANS1");
-                    break;
-                case 11:
-                case 12:
-                    jComboBox2.addItem("TRANS1");
-                    jComboBox2.addItem("TRANS4");
-                    jComboBox2.addItem("TRANS6");
-                    break;
-            }
+            
+            // Set text to the text area
             if(jLabel1.isEnabled())
-                jTextArea1.setText("$SUBROUTINES ADVAN" + String.valueOf(advan) + " TOL=" +
-                                   ((String)jComboBox1.getSelectedItem()).trim());
+            {
+                if(jLabel2.isEnabled())
+                    text = "$SUBROUTINES ADVAN" + String.valueOf(advan) + 
+                           " " + ((String)jComboBox2.getSelectedItem()).trim() + 
+                           " TOL=" + ((String)jComboBox1.getSelectedItem()).trim();
+                else
+                    text = "$SUBROUTINES ADVAN" + String.valueOf(advan) + " " +
+                           " TOL=" + ((String)jComboBox1.getSelectedItem()).trim();                    
+            }
             else
-                jTextArea1.setText("$SUBROUTINES ADVAN" + String.valueOf(advan));
+            {
+                if(jLabel2.isEnabled())
+                    text = "$SUBROUTINES ADVAN" + String.valueOf(advan) + 
+                           " " + ((String)jComboBox2.getSelectedItem()).trim();
+                else
+                    text = "$SUBROUTINES ADVAN" + String.valueOf(advan);                    
+            }
+            jTextArea1.setText(text);
 	}
 
 	public void hidingStep(JWizardPane wizard){
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }            
             String record = jTextArea1.getText();
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             object.getRecords().setProperty("Subroutines", record);
-            String[] subroutines = new String[3]; 
+            String[] subroutines = new String[3];
             subroutines[0] = "advan" + String.valueOf(advan);
-            if(advan == 6 || advan == 8 || advan == 9 || advan == 10)
-            {
-                subroutines[1] = record.split(" ")[2].substring(4);
-            }
-            else
-            {
-                subroutines[1] = null;
-            }
-            if(advan <= 4 || advan >= 11)
-            {
-                subroutines[2] = record.split(" ")[1].toLowerCase(); 
-            }
-            else if( advan == 10)
-            {
-                subroutines[2] = record.split(" ")[2].toLowerCase();
-            }
-            else
-            {
-                subroutines[2] = null;
-            }
+            int indexTol = record.indexOf("TOL=");
+            if(indexTol != -1)
+                subroutines[1] = record.substring(indexTol + 4, indexTol + 5);
+            int indexTrans = record.indexOf("TRANS");
+            if(indexTrans != -1)
+                subroutines[2] = "trans" + record.substring(indexTrans + 5, indexTrans + 6);            
             object.getSource().subroutines = subroutines;
 	}
 
@@ -327,9 +360,12 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
                 public void actionPerformed(ActionEvent e){ 
-                    jDialog1.setTitle("Help for " + getStepTitle());
-                    jDialog1.setSize(600, 500);
-                    jDialog1.show();
+                    if(!iterator.getIsOnline()) 
+                        new Help("Help for $SUBROUTINES Record", 
+                                 Subroutines.class.getResource("/uw/rfpk/mda/nonmem/help/Subroutines.html"));
+                    else
+                        Utility.openURL("https://" + iterator.getServerName() + 
+                                        ":" + iterator.getServerPort() + "/user/help/Subroutines.html");  
                 }
             };
 	}

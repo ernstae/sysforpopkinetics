@@ -38,12 +38,12 @@
 	    <p> 
               <jsp:useBean id="validUser"scope="session" class="uw.rfpk.beans.UserInfo" />
               <jsp:useBean id="version" scope="session" class="uw.rfpk.beans.VersionList" />
-              <% version.setDbHost(getServletContext().getInitParameter("database_host"));
-                 version.setDbName(getServletContext().getInitParameter("database_name"));
-                 version.setDbUser(getServletContext().getInitParameter("database_username"));
-                 version.setDbPass(getServletContext().getInitParameter("database_password"));
-                 String[][] versionList = version.getVersionList(Long.parseLong(request.getParameter("id")), 
-                                                                  request.getParameter("type"));
+              <% String[][] versionList = version.getVersionList(Long.parseLong(request.getParameter("id")), 
+                                                                 request.getParameter("type"),
+                                                                 getServletContext().getInitParameter("database_name"),
+                                                                 getServletContext().getInitParameter("database_host"),
+                                                                 getServletContext().getInitParameter("database_username"),
+                                                                 getServletContext().getInitParameter("database_password"));
                  int size = versionList.length; 
                  if(size == 0)
                  { %>
