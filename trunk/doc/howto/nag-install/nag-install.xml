@@ -36,6 +36,13 @@
 	<authorinitials>sh</authorinitials>
 	<revremark>Added revision records.</revremark>
       </revision>
+      <revision>
+	<revnumber>1.5</revnumber>
+	<date>Auguest 26, 2003</date>
+	<authorinitials>sh</authorinitials>
+	<revremark>Updated the license keys valid through Aug. 2004.</revremark>
+      </revision>
+
    </revhistory>
   <abstract>
       <para>
