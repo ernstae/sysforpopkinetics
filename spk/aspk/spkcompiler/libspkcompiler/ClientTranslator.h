@@ -46,7 +46,7 @@ class ClientTranslator
    * @param tree is the DOMDocument-based tree representation
    * of an SpkML input document.
    */
-  virtual void translate ( xercesc::DOMDocument * tree ) = 0;
+  virtual std::vector<std::string> translate ( xercesc::DOMDocument * tree ) = 0;
 
   /**
    * Obtain a pointer to an SpkParameters data structure object used

@@ -12,6 +12,7 @@
  */
 #include <vector>
 #include <valarray>
+#include <map>
 #include <xercesc/dom/DOM.hpp>
 
 #include "../SpkParameters.h"
@@ -194,17 +195,42 @@ struct NonmemParameters
 class NonmemTranslator : public ClientTranslator
 {
  public:
-  /**
-   * The only legal constructor.  The DOM parse tree generated
-   * from the input SpkML document, pointed by @b doc,
-   * is traversed and translated into C++ source.
-   *
-   * @param doc points to the rooot of DOM parse tree.
-   * 
-   */
-  NonmemTranslator( xercesc::DOMDocument * doc );
-  ~NonmemTranslator();
+  enum NonmemModel { NONE, 
+		   ADVAN1, ADVAN2, ADVAN3, ADVAN4, ADVAN5, 
+		   ADVAN6, ADVAN7, ADVAN8, ADVAN9, ADVAN10, 
+		   ADVAN11, ADVAN12 };
+  const char * const STR_NONE;
+  const char * const STR_ADVAN1;
+  const char * const STR_ADVAN2;
+  const char * const STR_ADVAN3;
+  const char * const STR_ADVAN4;
+  const char * const STR_ADVAN5;
+  const char * const STR_ADVAN6;
+  const char * const STR_ADVAN7;
+  const char * const STR_ADVAN8;
+  const char * const STR_ADVAN9;
+  const char * const STR_ADVAN10;
+  const char * const STR_ADVAN11;
+  const char * const STR_ADVAN12;
 
+  // LABEL data type:
+  // The reason for the key data type being "string"
+  // instead of "char*" is that, if I use "char*" type, 
+  // the memory address is rather used as a key, causing multiple entries
+  // getting registered in the map for the same string/name.
+  typedef std::string LABEL;
+
+  // ALIAS data type:
+  // The reason for the key data type being "string"
+  // instead of "char*" is to be consistent with LABEL data type.
+  typedef std::string ALIAS;
+
+  // MEASUREMENT data type:
+  // Let's just make them all expressed in double-precision.
+  typedef std::valarray<double> MEASUREMENT;
+
+  NonmemTranslator();
+  ~NonmemTranslator();
   
   /**
    * Obtain a pointer to the NonmemParameters data structure object.
@@ -216,45 +242,53 @@ class NonmemTranslator : public ClientTranslator
   virtual const void * getClientParameters() const;
   
   virtual const struct SpkParameters * getSpkParameters() const;
-  virtual void translate ( xercesc::DOMDocument * tree );
+  virtual std::vector<std::string> translate ( xercesc::DOMDocument * tree );
   virtual const char * getDriverFilename() const;
   virtual const std::vector< const char * > getModelFilenameList() const;
   
  protected:
 
-  NonmemTranslator();
   NonmemTranslator( const NonmemTranslator& right );
   const NonmemTranslator& operator=( const NonmemTranslator& right );
 
  private:
 
-  enum CannedModel { NONE, 
-		   ADVAN1, ADVAN2, ADVAN3, ADVAN4, ADVAN5, 
-		   ADVAN6, ADVAN7, ADVAN8, ADVAN9, ADVAN10, 
-		   ADVAN11, ADVAN12 };
-  enum CannedModel canned_model;
-  bool isCannedModelUsed;
+  enum NonmemModel nonmemModel;
+  enum NonmemModel toEnum( const char* ) const;
+  const char* const toString( enum NonmemModel e ) const;
 
   ExpTreeGenerator expTreeUtils;
 
-  const xercesc::DOMDocument * tree;
-
-  struct SpkParameters spk;
-  struct NonmemParameters nonmem;
+  struct SpkParameters ourSpk;
+  struct NonmemParameters ourNonmem;
 
   std::vector<NonmemDataRecords> data_for_all_subjects;
 
-  virtual void assemble ( xercesc::DOMDocument * tree );
-  virtual void emit     ( xercesc::DOMDocument * tree );
-
   void initSymbolTable( SymbolTable& );
-  void interpretContent();
-  void interpretDriver();
-  void interpretModel();
-  void interpretData();
+  bool readContent( DOMDocument* tree,
+		    SpkParameters& spkOut );// returns true if rough content checking passes
+  int  readDriver(  DOMDocument* tree, 
+		    SpkParameters& spkOut, 
+		    NonmemParameters & nonmemOut );// returns the number of individuals
+  void readModel(   xercesc::DOMDocument* tree, 
+		    int nIndividuals,
+		    SymbolTable * table);
+  void readData (   xercesc::DOMDocument* tree, 
+		    int nIndividuals,
+		    SymbolTable * table,
+		    std::map<LABEL, ALIAS> & label_alias_mappingOut,
+		    std::map<LABEL, MEASUREMENT> data_forOut[],
+		    std::string order_id_pairOut[]);
 
   void emitDriver();
   void emitModel();
+  std::vector<std::string> emitData( 		
+		    int nIndividuals,
+		    SymbolTable* table,
+		    const std::map<LABEL, ALIAS> & label_alias_mapping,
+		    const std::map<LABEL, MEASUREMENT> data_for[],
+		    const std::string order_id_pair[]
+		 );
 };
 #endif
 

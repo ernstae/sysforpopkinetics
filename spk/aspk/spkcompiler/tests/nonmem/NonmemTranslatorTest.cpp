@@ -80,6 +80,8 @@ void NonmemTranslatorTest::testTranslate()
   CPPUNIT_ASSERT_EQUAL_MESSAGE( "#of individuals is supposed to be 12!", 
 			  nIndividuals, spkRequired->nIndividuals );
 
+  CPPUNIT_ASSERT_MESSAGE( "The analysis type is supposed to be SpkParameters::POPULATION!",
+			  spkRequired->analysis == SpkParameters::POPULATION );
   // <optimization> section
   CPPUNIT_ASSERT_MESSAGE( "The objective is supposed to be FIRST_ORDER!", 
 			  spkRequired->objective == FIRST_ORDER );

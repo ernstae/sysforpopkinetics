@@ -19,6 +19,9 @@
  * SPK estimate the population parameters, expressed in the SPK terms. 
  */
 struct SpkParameters{
+  enum Analysis { POPULATION, INDIVIDUAL };
+
+  enum Analysis         analysis;
   enum Objective        objective;
   int                   nIndividuals;
   std::valarray<int>    nMeasurementsAll;
