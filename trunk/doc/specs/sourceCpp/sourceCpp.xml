@@ -4,274 +4,119 @@
   <!ENTITY uw "University of Washington">
   <!ENTITY dept "Department of Bioengineering">
 ]>
-<article><title>ASPK Compiler Output (C++)</title>
- <articleinfo>
-    <revhistory>
-      <revision>
-	<revnumber>1.0</revnumber>
-	<date>December 8, 2003</date>
-	<authorinitials>sh</authorinitials>
-	<revremark>Initial version.</revremark>
-      </revision>
-    </revhistory>
-  <abstract>
+<article>
+   <title>SPK Compiler Output (C++)</title>
+   <articleinfo>
+      <revhistory>
+         <revision>
+            <revnumber>1.6</revnumber>
+            <date>July 1, 2004</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>Complete reorganization.</revremark>
+         </revision>
+         <revision>
+            <revnumber>1.5</revnumber>
+            <date>April 6, 2004</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>Updated the doc re. $PRED: Pred class derived from PredBase.</revremark>
+         </revision>
+         <revision>
+            <revnumber>1.4</revnumber>
+            <date>March 13, 2004</date>
+            <authorinitials>alan</authorinitials>
+            <revremark>Changes to move documentation to web server.</revremark>
+         </revision>
+         <revision>
+            <revnumber>1.3</revnumber>
+            <date>January 6, 2004</date>
+            <authorinitials>alan</authorinitials>
+            <revremark>Changed version of Docbook DTD from 4.1.2 to 4.2 in all .xml files</revremark>
+         </revision>
+         <revision>
+            <revnumber>1.2</revnumber>
+            <date>January 5, 2004</date>
+            <authorinitials>alan</authorinitials>
+            <revremark>Clean up.</revremark>
+         </revision>
+         <revision>
+	    <revnumber>1.1</revnumber>
+	    <date>December 8, 2003</date>
+	    <authorinitials>sh</authorinitials>
+	    <revremark>Initial version.</revremark>
+         </revision>
+      </revhistory>
+      <abstract>
+         <para>
+SPK Compiler, given a pair of SpkSourceML and SpkDataML documents, produces
+a number of C++ source code files in two stages.  The first set of files
+being generated defines the problem to solve and its constraints.
+The second set of files executes and process the information in different ways.  
+The last set assembles and report the results.
+         </para>
+         <para>
+In this documentation, you will find the specifications for those parameters
+and interfaces which are public to SPK application developers.
+         </para>
+      </abstract>
+   </articleinfo>
+   <sect1>
+      <title>Related Articles</title>
       <para>
-This document specifies the requirements for the source code (C++) that
-ASPK Compiler produces and that, 
-as a whole, is built to an executable that ultimately makes 
-the SPK Library produce what the end-user asks for.  The source code is,
-therefore, the C++ translation of 
-<ulink url="../sourceML/sourceML.html">
-SpkSourceML</ulink> and 
-<ulink url="../dataML/dataML.html">
-SpkDataML</ulink> given by MDA, as well as it is to produce an instance of
-<ulink url="../reportML/reportML.html">
-SpkReportML</ulink>.  
-The generated C++ source code is packaged as an archive and put into the CSPK job queue.
+         <itemizedlist>
+            <listitem>
+               <para>
+                  <ulink url="../modelCap/html/modelCap.html">
+                  Modeling Capabilities Specification</ulink>
+               </para>
+            </listitem>
+            <listitem>
+               <para>
+                  <ulink url="http://muir.rfpk.washington.edu:800/SoftwareTeamArchive/Nonmem.doc">
+                  NONMEM Description for RFPK (.doc)
+                  </ulink>
+               </para>
+            </listitem>
+         </itemizedlist>
       </para>
-  </abstract>
- </articleinfo>
-  <sect1>
-    <title>Related Articles</title>
-    <para>
-       <itemizedlist>
-          <listitem>
-             <para>
-                <ulink url="../modelCap/html/modelCap.html">
-                Modeling Capabilities Specification</ulink>
-             </para>
-          </listitem>
-          <listitem>
-             <para>
-                <ulink url="http://muir.rfpk.washington.edu:800/SoftwareTeamArchive/Nonmem.doc">
-                NONMEM Description for RFPK (.doc)
-                </ulink>
-             </para>
-          </listitem>
-       </itemizedlist>
-    </para>
-  </sect1>
-  <sect1>
-    <title>Three Logical Units</title>
-    <para>
-The C++ source code as a whole defines the following three units at large:
-
-       <itemizedlist>
-          <listitem>
-             <para><link linkend="models">Models</link></para>
-          </listitem>
-          <listitem>
-             <para><link linkend="dataset">Data Set</link></para>
-          </listitem>
-          <listitem>
-             <para><link linkend="driver">Driver</link></para>
-          </listitem>
-       </itemizedlist>
-    </para>
-  </sect1>
-  <sect1>
-     <title>Models</title>
-     <anchor id="models"/>
-     <para>
-The models are functions of different set of parameters depending on the situation.
-When SPK is used to estimate a single subject's parameters only, it is said to be
-performing the individual analysis, in which case, the models are functions of only
-the individual's parameters.  The SPK model for the measurement in this case is defined
-as:
-   y = f( b*) + e,
-where e~N(0, R(b*)) and, if the variance of prior distribution is known, 
-b*~N(0, D(alpha*)).
-     </para>
-     <para>
-When it is used to estimate the fixed effects
-among a group of subjects, it is said to be doing the population analysis, in which case,
-the models are functions of both the population parameters (fixed effects) and
-the individuals' parameters (random effects).
-The SPK's mixed effect model for the measurements in this case is defined as:
-yi = fi( alpha*, bi* ) + ei, 
-where ei~N( 0, Ri(alpha*, bi*) ) and bi*~N( 0.0, D(alpha*) ).
-     </para>
-     <para>
-Thus, this section describes how clients' models are transformed to the SPK models.
-For the version 0.1, we forcus on the following clients' models:
-        <itemizedlist>
-           <listitem>
-              <para><link linkend="nonmem_models">NONMEM Models</link></para>
-           </listitem>
-        </itemizedlist>
-     </para>
-     <sect2>
-        <title>Where the NONMEM Models Fit in to the Problem to Solve</title>
-        <anchor id="nonmem_models"/>
-        <para>
-NONMEM models are written in a way different from SPK because
-the problem NONMEM is different from the one SPK solves.
-This section is to give you the brief background as to how these two
-different problems are made equivalent conceptually and in the following
-section, you will find out how the ASPK Compiler actually translates 
-the NONMEM models to fit into the SPK's framework, software-wise.
-        </para>
-        <para>
-           <emphasis>
-The complete discussion of mathematical transformation is beyond the scope of
-this document.  One of the text you can find more information about this is
-<ulink url="../modelCap/html/modelCap.html">
-Modeling Capabilities Specification</ulink>: Appendix B.
-           </emphasis>
-        </para>
-        <para>
-Here's the side-by-side brief comparizon of the two problems:
-           <anchor id="tableProblemMap"/>
-           <table>
-              <title>Problems to Solve</title>
-              <tgroup cols='3'>
-                 <thead>
-                    <row>
-                       <entry align='center'>Analysis</entry>
-                       <entry align='center'>SPK</entry>
-                       <entry align='center'>NONMEM</entry>
-                    </row>
-                 </thead>
-                 <tbody>
-                    <row>
-                       <entry>Individual</entry>
-                       <entry>
-                          <literallayout>y = f(b) + e --- <emphasis>(1)</emphasis></literallayout>
-                       </entry>
-                       <entry>
-                          <literallayout>y = f(x, theta) + h(x, theta) * eps --- <emphasis>(2)</emphasis></literallayout>
-                       </entry>
-                    </row>
-                    <row>
-                       <entry>Population</entry>
-                       <entry>
-                          <literallayout>y<emphasis>i</emphasis> = f<emphasis>i</emphasis>(alp, b<emphasis>i</emphasis>) + e<emphasis>i</emphasis> --- <emphasis>(3)</emphasis></literallayout>
-                       </entry>
-                       <entry>
-                          <literallayout>y<emphasis>i</emphasis> = f(x<emphasis>i</emphasis>, theta, eta<emphasis>i</emphasis>) + h(x<emphasis>i</emphasis>, theta, eta<emphasis>i</emphasis>) * eps<emphasis>i</emphasis> --- <emphasis>(4)</emphasis></literallayout>
-                       </entry>
-                    </row>
-                 </tbody>
-              </tgroup>
-           </table>
-        </para>
-        <para>
-Some of the parameters in the equations above are already equivalent but some are not.
-The following two tables summerieze the parameter and function mappings:
-           <anchor id="tableParameterMap"/>
-           <table>
-              <title>Parameter Mapping</title>
-              <tgroup cols="4">
-                 <thead>
-                    <row>
-                       <entry align="center">Analysis</entry>
-                       <entry align="center">Parameter</entry>
-                       <entry align="center">SPK</entry>
-                       <entry align="center">NONMEM</entry>
-                    </row>
-                 </thead>
-                 <tbody>
-                    <row>
-                       <entry morerows="1">Individual</entry>
-                       <entry>Individual's Parameter</entry>
-                       <entry>b</entry>
-                       <entry>theta</entry>
-                    </row>
-                    <row>
-                       <entry>Prior Distribution</entry>
-                       <entry>D (constant value)</entry>
-                       <entry>Omega, where Omega is constant.</entry>
-                    </row>
-                    <row>
-                       <entry morerows="2">Population</entry>
-                       <entry>Individual's Parameter</entry>
-                       <entry>bi</entry>
-                       <entry>etai</entry>
-                    </row>
-                    <row>
-                       <entry>Population Parameter</entry>
-                       <entry>alpha</entry>
-                       <entry>{ theta, Omega, Sigma }</entry>
-                    </row>
-                    <row>
-                       <entry>Prior Distribution</entry>
-                       <entry>see the table 2</entry>
-                       <entry>see the table 2</entry>
-                    </row>
-                 </tbody>
-              </tgroup>
-           </table>
-        </para>
-        <para>
-           <anchor id="tableFunctionMap"/>
-           <table>
-              <title>Function Mapping</title>
-              <tgroup cols="4">
-                 <thead>
-                    <row>
-                       <entry align="center">Analysis</entry>
-                       <entry align="center">Parameter</entry>
-                       <entry align="center">SPK</entry>
-                       <entry align="center">NONMEM</entry>
-                    </row>
-                 </thead>
-                 <tbody>
-	            <row>
-                       <entry morerows="1">Individual</entry>
-                       <entry>Mean of Data</entry>
-                       <entry>f(b)</entry>
-                       <entry>{ f0(x0, theta), f1(x1, theta), ... f(xn, theta) }</entry>
-                    </row>
-                    <row>
-                       <entry>Variance of Data</entry>
-                       <entry>R(b)</entry>
-                       <entry>cov[ sum{ h(m)(x, theta)*eps } | m=1:nSigma ]</entry>
-                    </row>
-                    <row>
-                       <entry morerows="2">Population</entry>
-                       <entry>Mean of Data</entry>
-                       <entry>fi(alpha, bi)</entry>
-                       <entry>{ fi0(xi0, theta, etai), f1(xi1, theta, etai), ... fi(xin, theta, etai) }</entry>
-                    </row>
-                    <row>
-                       <entry>Variance of Data</entry>
-                       <entry>Ri(alpha, bi)</entry>
-                       <entry>cov[ sum{h(m)(xi, theta, etai)*epsi} | m=1:nSigma ]</entry>
-                    </row>
-                    <row>
-                       <entry>Variance Between Individual Parameters</entry>
-                       <entry>D(alpha)</entry>
-                       <entry>Omega, where Omega is subject to optimization</entry>
-                    </row>
-                 </tbody>
-              </tgroup>
-           </table>
-        </para>
-     </sect2>
-     <sect2>
-        <title>C++ Implementation of NONMEM PRED Model</title>
-        <para>
-For v0.1, ASPK Compiler supports only the NONMEM's most general modeling framework,
-<literal>$PRED</literal>.  
-        </para>
-        <para>
+   </sect1>
+   <sect1>
+      <title><filename>Pred.h</filename></title>
+      <para>
+<filename>Pred.h</filename> defines a template class, <classname>Pred</classname>,
+which is derived from an abstract class, <classname>PredBase</classname>.
+The only virtual member in the base class is a boolean valued function, 
+<function>eval</function>.
+      </para>
+      <para>
 The definition of <literal>$PRED</literal>, which is written 
 in NM-TRAN (ie. a subset of FORTRAN 77), is translated into C++ and 
-inserted into a dynamically generated (by the SPK Compiler) 
-subclass of a pre-specified abstract class, <classname>PredBase</classname>.  
+inserted into a generated (by the SPK Compiler) 
+subclass of an existing abstract class, <classname>PredBase</classname>.
 <classname>PredBase</classname>
-declares a pure virtual member function called <function>eval(...)</function>,
-and this is where the C++ version of <literal>$PRED</literal> definition
-is embedded in.
-        </para>
-        <para>
-The following is the <classname>PredBase</classname>:
-           <programlisting>
+declares a pure virtual member function called <function>eval()</function>,
+that is to be implemented.  SPK Compiler produces a C++ source code for
+<classname>Pred</classname>, a concrete template sub-class of the abstract
+base and store the definition in a file named, <filename>Pred.h</filename>.
+The C++ version of PRED definition takes up the core computational portion
+of the function implementation.
+      </para>
+      <sect2>
+         <title>Abstract Base Class: <classname>PredBase</classname></title>
+         <anchor id="predbase"/>
+         <para>
+            <classname>PredBase</classname> declares a pure virtual function, 
+            <function>eval()</function>.  This function evaluates
+            the C++ translation of user's $PRED model for the j-th component of
+            the i-th individual's measurement data.  The class <classname>PredBase</classname>
+            is part of <literal>spkpred</literal> library and declared in 
+            <filename>PredBase.h</filename>.
+         </para>
+         <programlisting>
+// This class is defined in &lt;spk/PredBase.h&gt;.
 template &lt;class T&gt;
-class PredBase
-{
-public:
-  virtual bool eval( int spk_thetaOffset, int spk_thetaLen,
+PredBase{
+   public:
+      virtual bool eval( int spk_thetaOffset, int spk_thetaLen,
 		     int spk_etaOffset,   int spk_etaLen,
 		     int spk_epsOffset,   int spk_epsLen,
 		     int spk_fOffset,     int spk_fLen,
@@ -280,32 +125,30 @@ public:
 		     int spk_j,
 		     const std::vector&lt;T&gt; & spk_indepVar,
 		     std::vector&lt;T&gt; & spk_depVar ) = 0;
- protected:
-  ~PredBase(){}
-  PredBase(){}
-  PredBase( const PredBase& ){}
-  PredBase & operator=( const PredBase&lt;T&gt;& ){}
-};
-           </programlisting>
-        </para>
-
-        <formalpara>
-           <title>Description</title>
-           <para>
+      virtual ~PredBase(){}
+   protected:
+      PredBase(){}
+      PredBase( const PredBase& ){}
+      PredBase& operator=( const PredBase& ){}
+}
+         </programlisting>
+         <formalpara>
+            <title>Description</title>
+            <para>
 <classname>Pred</classname>::<function>eval(...)</function> 
 is called to evalute the PK value and
 the estimate for the measure at every sampling point with
 the current values of the population
 parameter and the individual parameter for the particular subject
 every time the optimizer comes up with a new set of values. 
-           </para>
-        </formalpara>
-        <formalpara>
-           <title>Requirements</title>
-           <para>
-              <itemizedlist>
-                 <listitem>
-                    <para>
+            </para>
+            </formalpara>
+            <formalpara>
+               <title>Requirements</title>
+               <para>
+                  <itemizedlist>
+                     <listitem>
+                        <para>
 At the end of an iteration of population parameter optimization,
 a <emphasis>complete</emphasis> set of values assigned 
 to the all variables appeared 
@@ -315,171 +158,175 @@ each individual shall be kept and be available externally.
 This implies that the values from the previous iteration shall
 be available if the current iteration failed in the middle
 of computation.
-                    </para>
-                 </listitem>  
-                 <listitem>
-                    <para>
+                        </para>
+                     </listitem>  
+                     <listitem>
+                        <para>
 The user's portion of code originally written in FORTRAN (which is
 case-insensitive) shall be able to use the upper or lower case letters
 interexchangingly.
-                    </para>
-                 </listitem>
-                 <listitem>
-                    <para>
+                        </para>
+                     </listitem>
+                     <listitem>
+                        <para>
 The user may define arbitrary varibles and use any NONMEM reserved words
 within their portion of code.
-                    </para>
-                 </listitem>
-              </itemizedlist>
-           </para>
-        </formalpara>
-        <formalpara>
-           <title>Returned Value</title>
-           <para>
+                        </para>
+                     </listitem>
+                  </itemizedlist>
+               </para>
+            </formalpara>
+            <formalpara>
+               <title>Returned Value</title>
+               <para>
 <literal>true</literal> if the MDV for the the i-th individual's j-th data record were marked 0.  
 <literal>false</literal> if it were 1.  MDV is a flag (0/1) indicating
 as to whether the data record contains the DV (Dependent Variable, our 
 <literal>y</literal>).  This information comes from the user's 
-data set.  If the data record did not have this field, ASPK Compiler
+data set.  If the data record did not have this field, SPK Compiler
 assumes every record contains a DV data item, in which case, MDV=0.
 For v0.1, only the MDV data items of value 0 is supported.
-           </para>
-        </formalpara>
-        <variablelist>
-           <title>Arguments</title>
-           <varlistentry>
-              <term>spk_thetaOffset</term>
-               <listitem>
-	         <para>
-                 The index to the head of THETA vector within spk_indepVar.
-                 </para>
-              </listitem>
-           </varlistentry>
-           <varlistentry>
-              <term>spk_thetaLen</term>
-              <listitem>
-                 <para>
-                 The length of THETA vector.  The vector elements are assumed to be placed
-                 from <literal>spk_indepVar[spk_thetaOffset]</literal> 
-                 to <literal>spk_indepVar[spk_theetaOffset + spk_theetaLen]</literal>.
-                 </para>
-              </listitem>
-           </varlistentry>
-           <varlistentry>
-              <term>spk_etaOffset</term>
-              <listitem>
-                 <para>
-                 The index to the head of ETA vector within spk_indepVar.
-                 </para>
-              </listitem>
-           </varlistentry>
-           <varlistentry>
-              <term>spk_etaLen</term>
-              <listitem>
-                 <para>
-                 The length of ETA vector.  The vector elements are assumed to be placed
-                 from <literal>spk_indepVar[spk_etaOffset]</literal>
-                 to <literal>spk_indepVar[spk_etaOffset + spk_etaLen]</literal>.
-                 </para>
-              </listitem>
-           </varlistentry>
-           <varlistentry>
-              <term>spk_epsOffset</term>
-              <listitem>
-                 <para>
-                 The index to the head of EPS vector within spk_indepVar.
-                 </para>
-              </listitem>
-           </varlistentry>
-           <varlistentry>
-              <term>spk_epsLen</term>
-              <listitem>
-                 <para>
-                 The length of EPS vector.
-                 The vector elements are assumed to be placed
-                 from <literal>spk_indepVar[spk_thetaOffset]</literal> 
-                 to <literal>spk_indepVar[spk_theetaOffset + spk_theetaLen]</literal>.
-                 </para>
-              </listitem>
-           </varlistentry>
-           <varlistentry>
-              <term>spk_fOffset</term>
-              <listitem>
-                 <para>
-                 The index to the memory location within spk_depVar in which
-                 the computed <literal>F</literal> (ie. prediction) 
-                 for the j-th measurement of the i-th individual
-                 shall be placed.
-                 </para>
-              </listitem>
-           </varlistentry>
-           <varlistentry>
-              <term>spk_fLen</term>
-              <listitem>
-                 <para>
-                 The total length of <literal>F</literal> vector.
-                 </para>
-              </listitem>
-           </varlistentry>
-           <varlistentry>
-              <term>spk_yOffset</term>
-              <listitem>
-                 <para>
-                 The index to the memory location within spk_depVar in which
-                 the computed <literal>Y</literal> (ie. data variance) 
-                 for the j-th measurement of the i-th individual
-                 shall be placed.
-                 </para>
-              </listitem>
-           </varlistentry>
-           <varlistentry>
-              <term>spk_yLen</term>
-              <listitem>
-                 <para>
-                 The total length of <literal>Y</literal> vector.
-                 </para>
-              </listitem>
-           </varlistentry>
-           <varlistentry>
-              <term>spk_i</term>
-              <listitem>
-                 <para>
-                 The index to the individual of interest 
-                 within the population (0 indicates the first individual).
-                 </para>
-              </listitem>
-           </varlistentry>
-           <varlistentry>
-              <term>spk_j</term>
-              <listitem>
-                 <para>
-                 The index to the sampling point of interest.
-                 </para>
-              </listitem>
-           </varlistentry>
-           <varlistentry>
-              <term>spk_indepVar</term>
-              <listitem>
-                 <para>
-                 The vector containing independent variables: 
-                 <literal>THETA</literal>, <literal>ETA</literal> and <literal>EPS</literal>.
-                 </para>
-              </listitem>
-           </varlistentry>
-           <varlistentry>
-              <term>spk_depVar</term>
-              <listitem>
-                 <para>
-                 (output) The vector whose spk_yOffset-th and spk_yOffset-th elements
-                 are replaced with newly computed values.
-                 </para>
-              </listitem>
-           </varlistentry>
-        </variablelist>
-     </sect2>
-     <sect2>
-        <title>An Example of $PRED</title>
-        <programlisting>
+               </para>
+            </formalpara>
+            <variablelist>
+               <title>Arguments</title>
+               <varlistentry>
+                  <term>spk_thetaOffset</term>
+                  <listitem>
+	             <para>
+                    The index to the head of <emphasis>theta</emphasis> vector within spk_indepVar.
+                    </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term>spk_thetaLen</term>
+                  <listitem>
+                     <para>
+                    The length of <emphasis>theta</emphasis> vector.  The vector elements are assumed to be placed
+                    from <literal>spk_indepVar[spk_thetaOffset]</literal> 
+                    to <literal>spk_indepVar[spk_theetaOffset + spk_theetaLen]</literal>.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term>spk_etaOffset</term>
+                  <listitem>
+                     <para>
+                    The index to the head of <emphasis>eta</emphasis> vector within spk_indepVar.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term>spk_etaLen</term>
+                  <listitem>
+                     <para>
+                     The length of <emphasis>eta</emphasis> vector.  The vector elements are assumed to be placed
+                     from <literal>spk_indepVar[spk_etaOffset]</literal>
+                     to <literal>spk_indepVar[spk_etaOffset + spk_etaLen]</literal>.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term>spk_epsOffset</term>
+                  <listitem>
+                     <para>
+                     The index to the head of EPS vector within spk_indepVar.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term>spk_epsLen</term>
+                  <listitem>
+                     <para>
+                     The length of EPS vector.
+                     The vector elements are assumed to be placed
+                     from <literal>spk_indepVar[spk_thetaOffset]</literal> 
+                     to <literal>spk_indepVar[spk_theetaOffset + spk_theetaLen]</literal>.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term>spk_fOffset</term>
+                  <listitem>
+                     <para>
+                     The index to the element in spk_depVar in which
+                     the prediction for the j-th measurement for the i-th individual, 
+                     <literal>F</literal>, shall be placed.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term>spk_fLen</term>
+                 <listitem>
+                     <para>
+                     The number of measurements for the i-th individual.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term>spk_yOffset</term>
+                  <listitem>
+                     <para>
+                     The index to the memory location within spk_depVar in which
+                     the error model value for the j-th measurement for the i-th individual,
+                     <literal>Y</literal>, shall be placed.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term>spk_yLen</term>
+                  <listitem>
+                     <para>
+                     The number of measurments for the i-th individual..
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term>spk_i</term>
+                  <listitem>
+                     <para>
+                     Index to the i-th individual 
+                     within the population (0 indicates the first individual).
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term>spk_j</term>
+                  <listitem>
+                     <para>
+                     Index to the j-th measurement of the i-th individual.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term>spk_indepVar</term>
+                  <listitem>
+                     <para>
+                     The vector containing independent variables: 
+                     <emphasis>theta</emphasis>, <emphasis>eta</emphasis> 
+                     and <emphasis>eps</emphasis>.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term>spk_depVar</term>
+                  <listitem>
+                     <para>
+                     (output) The <literal>spk_yOffset</literal>-th element will be 
+                     replaced by the predicted value for the i-th individual's j-th measurement.
+                     The <literal>spk_yOffset</literal>-th elements will be 
+                     are replaced by the error model value for the i-th individual's j-th measurement.
+                     </para>
+                  </listitem>
+               </varlistentry>
+            </variablelist>
+         </sect2>
+         <sect2>
+            <title>An instance of $PRED and <filename>Pred.h</filename></title>
+            <anchor id="pred"/>
+            <sect3>
+               <title>$PRED</title>
+               <programlisting>
    ;THETA(1)=MEAN ABSORPTION RATE CONSTANT (1/HR)
    ;THETA(2)=MEAN ELIMINATION RATE CONSTANT (1/HR)
    ;THETA(3)=SLOPE OF CLEARANCE VS WEIGHT RELATIONSHIP (LITERS/HR/KG)
@@ -497,12 +344,11 @@ For v0.1, only the MDV data items of value 0 is supported.
    E=CL*(KA-KE)
    F=DS*KE*KA/E*D
    Y=F+EPS(1)
-        </programlisting>
-      </sect2>
-      <sect2>
-         <title>A C++ Realization of $PRED</title>
-         <programlisting>
-// THIS FILE IS GENERATED BY THE ASPK COMPILER
+               </programlisting>
+           </sect3>
+           <sect3>
+              <title><filename>Pred.h</filename></title>
+              <programlisting>
 #ifndef PRED_H
 #define PRED_H
 
@@ -515,60 +361,48 @@ template &lt;class T&gt;
 class Pred : public PredBase
 {
 public:
-Pred( const DataSet&lt;T&gt; * dataIn );
-~Pred();
-bool eval( int spk_thetaOffset, int spk_thetaLen,
-           int spk_etaOffset,   int spk_etaLen,
-           int spk_epsOffset,   int spk_epsLen,
-           int spk_fOffset,     int spk_fLen,
-           int spk_yOffset,     int spk_yLen,
-           int spk_i,
-           int spk_j,
-           const std::vector&lt;T&gt;& spk_indepVar,
-           std::vector&lt;T&gt;& spk_depVar );
+   virtual bool eval( int spk_thetaOffset, int spk_thetaLen,
+                      int spk_etaOffset,   int spk_etaLen,
+                      int spk_epsOffset,   int spk_epsLen,
+                      int spk_fOffset,     int spk_fLen,
+                      int spk_yOffset,     int spk_yLen,
+                      int spk_i,
+                      int spk_j,
+                      const std::vector&lt;T&gt;& spk_indepVar,
+                      std::vector&lt;T&gt;& spk_depVar );
+   Pred( const DataSet&lt;T&gt; * dataIn ){}
+   ~Pred(){}
 
 protected:
-Pred();
-Pred( const Pred& );
-Pred & operator=( const Pred& );
+   Pred(){}
+   Pred( const Pred& ){}
+   Pred & operator=( const Pred& ){}
 private:
-const int nIndividuals;
-const DataSet&lt;T&gt; *perm;
-DataSet&lt;T&gt; temp;
-mutable bool isIterationCompleted;
-mutable std::string id;
-mutable T time;
-mutable T cp;
-mutable T dv;
-mutable T wt;
-mutable T dose;
-mutable T mdv;
-mutable T cl;
-mutable T d;
-mutable T ds;
-mutable T e;
-mutable T f;
-mutable T ka;
-mutable T ke;
-mutable T omega;
-mutable T pred;
-mutable T res;
-mutable T sigma;
-mutable T w;
-mutable T wres;
-mutable T y;
+   // # of individuals in the population
+   const int nIndividuals;
+
+   // A pointer to the data set
+   const DataSet&lt;T&gt; *set;
+
+   // temporary placeholders for the user's equations to be able to access
+   // the data items freely.
+   mutable std::string id;
+   mutable T time;
+   mutable T cp;
+   mutable T dv;
+   mutable T wt;
+   mutable T dose;
+   mutable T mdv;
+   mutable T cl;
+   mutable T d;
+   mutable T ds;
+   mutable T e;
+   mutable T f;
+   mutable T y;
+   mutable T ka;
+   mutable T ke;
 };
-template &lt;class T&gt;
-Pred&lt;T&gt;::Pred( const DataSet&lt;T&gt;* dataIn )
-: perm( dataIn ),
-  nIndividuals( 3 ),
-  isIterationCompleted( true )
-{
-}
-template &lt;class T&gt;
-Pred&lt;T&gt;::~Pred()
-{
-}
+
 template &lt;class T&gt;
 bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
                     int spk_etaOffset,   int spk_etaLen,
@@ -580,520 +414,533 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
                     const std::vector&lt;T&gt;& spk_indepVar,
                     std::vector&lt;T&gt;& spk_depVar )
 {
-  assert( spk_thetaLen == 3 );
-  assert( spk_etaLen   == 3 );
-  assert( spk_epsLen   == 2 );
 
-id = perm->data[spk_i]->id[spk_j];
-time = perm->data[spk_i]->time[spk_j];
-cp = perm->data[spk_i]->cp[spk_j];
-dv = perm->data[spk_i]->dv[spk_j];
-wt = perm->data[spk_i]->wt[spk_j];
-dose = perm->data[spk_i]->dose[spk_j];
-mdv = perm->data[spk_i]->mdv[spk_j];
-typename std::vector&lt;T&gt;::const_iterator theta1 = spk_indepVar.begin() + spk_thetaOffset + 0;
-typename std::vector&lt;T&gt;::const_iterator theta2 = spk_indepVar.begin() + spk_thetaOffset + 1;
-typename std::vector&lt;T&gt;::const_iterator theta3 = spk_indepVar.begin() + spk_thetaOffset + 2;
-typename std::vector&lt;T&gt;::const_iterator eta1 = spk_indepVar.begin() + spk_etaOffset + 0;
-typename std::vector&lt;T&gt;::const_iterator eta2 = spk_indepVar.begin() + spk_etaOffset + 1;
-typename std::vector&lt;T&gt;::const_iterator eta3 = spk_indepVar.begin() + spk_etaOffset + 2;
-typename std::vector&lt;T&gt;::const_iterator eps1 = spk_indepVar.begin() + spk_epsOffset + 0;
-typename std::vector&lt;T&gt;::const_iterator eps2 = spk_indepVar.begin() + spk_epsOffset + 1;
-typename std::vector&lt;T&gt;::const_iterator theta = spk_indepVar.begin() + spk_thetaOffset;
-typename std::vector&lt;T&gt;::const_iterator eta = spk_indepVar.begin() + spk_etaOffset;
-typename std::vector&lt;T&gt;::const_iterator eps = spk_indepVar.begin() + spk_epsOffset;
-T f = 0.0;
-T y = 0.0;
-//=========================================
-// Begin User Code                         
-//-----------------------------------------
+   //==================================================================================
+   // Preliminaries:
+   //
+   // Place the data items to temporary variables for easy data access.
+   //==================================================================================
+   id   = set->data[spk_i]->id[spk_j];
+   time = set->data[spk_i]->time[spk_j];
+   cp   = set->data[spk_i]->cp[spk_j];
+   dv   = set->data[spk_i]->dv[spk_j];
+   wt   = set->data[spk_i]->wt[spk_j];
+   dose = set->data[spk_i]->dose[spk_j];
+   mdv  = set->data[spk_i]->mdv[spk_j];
+   typename std::vector&lt;T&gt;::const_iterator theta1 = spk_indepVar.begin() + spk_thetaOffset + 0;
+   typename std::vector&lt;T&gt;::const_iterator theta2 = spk_indepVar.begin() + spk_thetaOffset + 1;
+   typename std::vector&lt;T&gt;::const_iterator theta3 = spk_indepVar.begin() + spk_thetaOffset + 2;
+   typename std::vector&lt;T&gt;::const_iterator eta1   = spk_indepVar.begin() + spk_etaOffset   + 0;
+   typename std::vector&lt;T&gt;::const_iterator eta2   = spk_indepVar.begin() + spk_etaOffset   + 1;
+   typename std::vector&lt;T&gt;::const_iterator eta3   = spk_indepVar.begin() + spk_etaOffset   + 2;
+   typename std::vector&lt;T&gt;::const_iterator eps1   = spk_indepVar.begin() + spk_epsOffset   + 0;
+   typename std::vector&lt;T&gt;::const_iterator eps2   = spk_indepVar.begin() + spk_epsOffset   + 1;
+   typename std::vector&lt;T&gt;::const_iterator theta  = spk_indepVar.begin() + spk_thetaOffset;
+   typename std::vector&lt;T&gt;::const_iterator eta    = spk_indepVar.begin() + spk_etaOffset;
+   typename std::vector&lt;T&gt;::const_iterator eps    = spk_indepVar.begin() + spk_epsOffset;
+   f = 0.0;
+   y = 0.0;
 
-// THETA(1)=MEAN ABSORPTION RATE CONSTANT (1/HR)
-// THETA(2)=MEAN ELIMINATION RATE CONSTANT (1/HR)
-// THETA(3)=SLOPE OF CLEARANCE VS WEIGHT RELATIONSHIP (LITERS/HR/kg)
-// DOSE=WT-ADJUSTED DOSE (mg/kg)
-// DS=NON-WT-ADJUSTED DOSE (mg)
-if( dose != 0 )
-{
-ds = dose * wt;
-w = wt;
-}
+   //==================================================================================
+   // Begin User Code                         
+   //----------------------------------------------------------------------------------
+   // THETA(1)=MEAN ABSORPTION RATE CONSTANT (1/HR)
+   // THETA(2)=MEAN ELIMINATION RATE CONSTANT (1/HR)
+   // THETA(3)=SLOPE OF CLEARANCE VS WEIGHT RELATIONSHIP (LITERS/HR/kg)
+   // DOSE=WT-ADJUSTED DOSE (mg/kg)
+   // DS=NON-WT-ADJUSTED DOSE (mg)
+   if( dose != 0 )
+   {
+      ds = dose * wt;
+      w = wt;
+   }
 
-ka = theta[ ( 1 ) - 1 ] + eta[ ( 1 ) - 1 ];
-ke = theta[ ( 2 ) - 1 ] + eta[ ( 2 ) - 1 ];
-cl = theta[ ( 3 ) - 1 ] * w + eta[ ( 3 ) - 1 ];
-d = exp( -ke * time ) - exp( -ka * time );
-e = cl * ( ka - ke );
-f = ds * ke * ka / e * d;
-y = f + eps[ ( 1 ) - 1 ];
-//-----------------------------------------
-// End User Code                           
-//=========================================
-temp.data[ spk_i ]->cl[ spk_j ] = cl;
-temp.data[ spk_i ]->d[ spk_j ] = d;
-temp.data[ spk_i ]->ds[ spk_j ] = ds;
-temp.data[ spk_i ]->e[ spk_j ] = e;
-copy( eps, eps + 2, temp.data[ spk_i ]->eps.begin() );
-copy( eta, eta + 3, temp.data[ spk_i ]->eta.begin() );
-temp.data[ spk_i ]->f[ spk_j ] = f;
-temp.data[ spk_i ]->ka[ spk_j ] = ka;
-temp.data[ spk_i ]->ke[ spk_j ] = ke;
-temp.data[ spk_i ]->omega[ spk_j ] = omega;
-temp.data[ spk_i ]->pred[ spk_j ] = pred;
-temp.data[ spk_i ]->res[ spk_j ] = res;
-temp.data[ spk_i ]->sigma[ spk_j ] = sigma;
-copy( theta, theta + 3, temp.data[ spk_i ]->theta.begin() );
-temp.data[ spk_i ]->w[ spk_j ] = w;
-temp.data[ spk_i ]->wres[ spk_j ] = wres;
-temp.data[ spk_i ]->y[ spk_j ] = y;
+   ka = theta[ ( 1 ) - 1 ] + eta[ ( 1 ) - 1 ];
+   ke = theta[ ( 2 ) - 1 ] + eta[ ( 2 ) - 1 ];
+   cl = theta[ ( 3 ) - 1 ] * w + eta[ ( 3 ) - 1 ];
+   d = exp( -ke * time ) - exp( -ka * time );
+   e = cl * ( ka - ke );
+   f = ds * ke * ka / e * d;
+   y = f + eps[ ( 1 ) - 1 ];
+   //----------------------------------------------------------------------------------
+   // End User Code                           
+   //==================================================================================
 
-if( spk_i == 3-1 && spk_j == perm->data[spk_i]->id.size()-1 )
-{
-  // This means, SPK advanced in iteration.
-  // Move temporary storage to permanent storage.
-  isIterationCompleted = true;
-  for( int i=0; i < nIndividuals; i++ )
-  {
-    perm->data[ i ]->cl = temp.data[ i ]->cl;
-    perm->data[ i ]->d = temp.data[ i ]->d;
-    perm->data[ i ]->ds = temp.data[ i ]->ds;
-    perm->data[ i ]->e = temp.data[ i ]->e;
-    perm->data[ i ]->eps = temp.data[ i ]->eps;
-    perm->data[ i ]->eta = temp.data[ i ]->eta;
-    perm->data[ i ]->f = temp.data[ i ]->f;
-    perm->data[ i ]->ka = temp.data[ i ]->ka;
-    perm->data[ i ]->ke = temp.data[ i ]->ke;
-    perm->data[ i ]->omega = temp.data[ i ]->omega;
-    perm->data[ i ]->pred = temp.data[ i ]->pred;
-    perm->data[ i ]->res = temp.data[ i ]->res;
-    perm->data[ i ]->sigma = temp.data[ i ]->sigma;
-    perm->data[ i ]->theta = temp.data[ i ]->theta;
-    perm->data[ i ]->w = temp.data[ i ]->w;
-    perm->data[ i ]->wres = temp.data[ i ]->wres;
-    perm->data[ i ]->y = temp.data[ i ]->y;
-  }
-}
-else
-{
-  isIterationCompleted = false;
+
+   //==================================================================================
+   // Wrap up:
+   //
+   // Place values to expected locations in given vectors.
+   //==================================================================================
+   spk_depVar[ spk_fOffset ] = f;
+   spk_depVar[ spk_yOffset ] = y;
+
+
+   //==================================================================================
+   // Return:
+   //
+   // Return true if MDV (missing dependent variable) for this record is false.
+   // Otherwise return false (which is not supported for ver 0.1).
+   //==================================================================================
+   if( set->data[ spk_i ]->mdv[ spk_j ] == 0 )
+      return true;
+   else 
+      return false;
 }
 
-spk_depVar[ spk_fOffset ] = f;
-spk_depVar[ spk_yOffset ] = y;
-if( perm->data[ spk_i ]->mdv[ spk_j ] == 0 )
-   return true;
-else return false;
-}
-template &lt;class T&gt;
-Pred&lt;T&gt;::Pred()
-{
-}
-template &lt;class T&gt;
-Pred&lt;T&gt;::Pred( const Pred&lt;T&gt;& )
-{
-}
-template &lt;class T&gt;
-Pred&lt;T&gt; & Pred&lt;T&gt;::operator=( const Pred&lt;T&gt;& )
-{
-}
 #endif
-
-         </programlisting>
+            </programlisting>
+         </sect3>
       </sect2>
    </sect1>
    <sect1>
-     <title>Data Set</title>
-     <anchor id="dataset"/>
-     <para>
-A data set is a set of data records for one or more subjects
-and a data record is a set of related data items.  
-A data record contains not only sampling times and measurements but also
-may contain other useful information that may indicate the type or/and the state
-of the corresponding record.  The data item labeled as DV
-(Dependent Variable) is what we SPK calls <emphasis>y</emphasis>, the measurements.
-The data set has to be kept internally (to SPK) 
-in such a way that the following requirements are met:
-     </para>
-     <formalpara>
-        <title>Requirements</title>
-        <para>
-           <itemizedlist>
-              <listitem>
-                 <para>
-The DV (Dependent Variable) values are recognized as our <emphasis>y</emphasis>,
-the measurements.
-                 </para>
-              </listitem>
-              <listitem>
-                 <para>
-A set of same kind of data items is refered both by its label and by the alias
-if it is associated.
-                 </para>
-              </listitem>
-              <listitem>
-                 <para>
-A data item is accessible by its owner's order (not ID) and the order in which the item
-appears within the owner's data records as indeces staring from 0.
-ie. <literal>xxx[i][j]</literal> refers to the (i+1)-th subject's (j+1)-th data item labeled as 
-<literal>xxx</literal>.
-                 </para>
-              </listitem>
-           </itemizedlist>
-        </para>
-     </formalpara>
-        <table>
-           <title>An Example of Data Set</title>
-           <tgroup cols="5">
-              <thead>
-                 <row>
-                    <entry align="center"><emphasis>Label</emphasis></entry>
-                    <entry align="center">ID</entry>
-                    <entry align="center">AMT</entry>
-                    <entry align="center">TIME</entry>
-                    <entry align="center">DV</entry>
-                    <entry align="center">WT</entry>
-                 </row>
-                 <row>
-                    <entry align="center"><emphasis>Alias</emphasis></entry>
-                    <entry align="center">---</entry>
-                    <entry align="center">DOSE</entry>
-                    <entry align="center">---</entry>
-                    <entry align="center">CP</entry>
-                    <entry align="center">---</entry>
-                 </row>
-              </thead>
-              <tbody>
-                 <row>
-                    <entry morerows="5" align="center">---</entry>
-                    <entry morerows="1" align="center">1</entry>
-                    <entry align="center">4.02</entry>
-                    <entry align="center">0.0</entry>
-                    <entry align="center">0.74</entry>
-                    <entry align="center">79.6</entry>
-                 </row>
-                 <row>
-                    <entry align="center">0.0</entry>
-                    <entry align="center">0.25</entry>
-                    <entry align="center">2.84</entry>
-                    <entry align="center">0.0</entry>
-                 </row>
-                 <row>
-                    <entry morerows="2" align="center">2</entry>
-                    <entry align="center">4.40</entry>
-                    <entry align="center">0.0</entry>
-                    <entry align="center">0.0</entry>
-                    <entry align="center">72.4</entry>
-                 </row>
-                 <row>
-                    <entry align="center">0.0</entry>
-                    <entry align="center">0.27</entry>
-                    <entry align="center">1.72</entry>
-                    <entry align="center">0.0</entry>
-                 </row>
-                 <row>
-                    <entry align="center">0.0</entry>
-                    <entry align="center">0.52</entry>
-                    <entry align="center">7.91</entry>
-                    <entry align="center">0.0</entry>
-                 </row>
-              </tbody>
-           </tgroup>
-        </table>
-     <sect2>     
-        <title>A Realization of The Data Set Requirements</title>
-        <anchor id="inddata"/>
-        <programlisting>
-// IndData.h
-#include &lt;vector&gt;
-#include &lt;valarray&gt;
+      <title><filename>IndData.h</filename></title>
+      <para>
+      <filename>IndData.h</filename> declares/defines a template class, <classname>IndData</classname>.
+      <classname>IndData</classname> holds a set of data records for an individual.
+      A data record is a s set of <emphasis>at least</emphasis> two data items: DV and MDV.
+      DV is an abbribiation for Dependent Variable (see NONMEM documentations for definition)
+      and MDV is for Missing Dependent Variable.  When the MDV value is 1 (ie. logical true),
+      the value in DV is said to be missing or to be ignored.  When it is 0 (ie. logical false),
+      the corresponding DV value is taken as a measurement against which estimate is made.
+      </para>
+      <para>
+      All the data records are declared read-only within the class: ID, DV, MDV and the rest of the data items.
+      An <classname>IndData</classname> object, however, would have another set of items for each record.
+      These are meant to hold computed values for the left hand side of equations defined in the 
+      <emphasis>PRED</emphasis> model definition every time it is evaluated.  This set of placeholders
+      are, therefore, writable.  For example, if a data set had 3 records.  Each record is composed of
+      a sampling time (TIME), a measurement (DV) and a MDV flag value.  A corresponding model looks like:
+         <programlisting>
+TMP1 = THETA(1) * 2.0
+F = TMP1 + ETA(1)
+         </programlisting>
+      Then, an <classname>IndData</classname> object would have fields: TIME, DV and MDV as read-only and
+      TMP1 and F as well as THETA(1) and ETA(1) as writable.  These values are accessible from a member function,
+      <function>getValues()</function>.
+      </para>
+      <variablelist>
+         <title>Public Methods</title>
+         <varlistentry>
+            <term><literal>const std::string getID() const</literal></term>
+            <listitem>
+               <para>
+               Returns the ID for this individual.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const std::vector&lt;double&gt; getMeasurements() const</literal></term>
+            <listitem>
+               <para>
+               Returns a vector of only those DV values which corresponding MDV != 1.
+               Thus, the i-th element of the vector is not necessary the DV value from the i-th record.
+               For example, if there are 10 records among which 1st and 5th records have MDV=1.
+               The 1st element of the vector is the DV value from the 2nd record in the original set
+               and the 5th element is from the 7th record.
+               <programlisting>
+indexes to all records                           : { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }
+indexes to those records which have measurements : { 2, 3, 4, 6, 7, 8, 9, 10 }
+               </programlisting>
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const std::vector&lt;double&gt; getValues( const std::string& label ) 
+                           const</literal></term>
+            <listitem>
+               <para>
+               Returns a vector of read-only values of <literal>label</literal> from the data set.
+               The i-th element of the vector is the value from the i-th record.
+               Case in <literal>label</literal> is ignored.  If <literal>label</literal> is
+               not found, an SpkCompilerException is thrown.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>std::vector&lt;double&gt; getValues( const std::string& label ) </literal></term>
+            <listitem>
+               <para>
+               Returns a vector of writable values/placeholders for <literal>label</literal> from the data set.
+               The i-th element of the vector corresponds to the value from the i-th record.
+               Case in <literal>label</literal> is ignored.  If <literal>label</literal> is
+               not found, an SpkCompilerException is thrown.
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
+   </sect1>
+   <sect1>
+      <title><filename>DataSet.h</filename></title>
+      <para>
+      <filename>DataSet.h</filename> declares/defines a template class, <classname>DataSet</classname>.
+      <classname>DataSet</classname> holds the entire data set for the population of size > 0.
+      </para>
+      <para>
+      The first individual's data set is indexed by 0.
+      </para>
+      <variablelist>
+         <title>Public Methods</title>
+         <varlistentry>
+            <term><literal>bool simulate( unsigned int seed, SpkModel& model )</literal></term>
+            <listitem>
+               <para>
+               Simulate a data set for the population and replaces the existing measurement values
+               with the new values for all individuals.
+               Returns true if simulation was successful.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>int getPopSize() const </literal></term>
+            <listitem>
+               <para>
+               Returns the number of individuals in the population.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const std::vector&lt;double&gt; getAllMeasurements() const</literal></term>
+            <listitem>
+               <para>
+               Returns a vector of measurements from the entire data set for the population.
+               The measurements values are taken from those data records with MDV != 1.
+               If <literal>simulate</literal> has been executed in advance, the values returned
+               by this method are simulated data.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const std::vector&lt;int&gt; getN() const </literal></term>
+            <listitem>
+               <para>
+               Returns a vector of numbers of measurements.  The i-th element of the vector
+               indicates the number of measurements for the i-th individual.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const std::vector&lt;double&gt; getMeasurements( int i ) const </literal></term>
+            <listitem>
+               <para>
+               Returns the i-th individual's measurements.
+               If <literal>simulate</literal> has been executed in advance, the values returned
+               by this method are simulated data.  
+               If <literal>i</literal> is out of bound, an SpkCompilerException will be thrown.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const std::vector&lt;double&gt; getValues( const std::string& label, int i ) const </literal></term>
+            <listitem>
+               <para>
+               Returns a vector of <literal>label</literal> read-only values for the i-th individual. 
+               If <literal>i</literal> is out of bound, an SpkCompilerException will be thrown.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>std::vector&lt;double&gt; getValues( const std::string& label, int i ) </literal></term>
+            <listitem>
+               <para>
+               Returns a writable vector of <literal>label</literal> values/placeholders 
+               for the i-th individual. 
+               If <literal>i</literal> is out of bound, an SpkCompilerException will be thrown.
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
+   </sect1>
+   <sect1>
+      <title><filename>NonmemPars.h</filename></title>
+      <para>
+      <filename>NonmemPars.h</filename> exports a namespace, <literal>NonmemPars</literal>, containing
+      parameters given by the end-user and values that can be derived from these parameters
+      at SPK-compilation time.
+      </para>
+      <variablelist>
+         <title>Public Properties</title>
+         <varlistentry>
+            <term><literal>const int nTheta</literal></term>
+            <listitem>
+               <para>
+               is the length of <emphasis>theta</emphasis> vector.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;double&gt; thetaUp</literal></term>
+            <listitem>
+               <para>
+               contains the upper boundary value for <emphasis>theta</emphasis>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;double&gt; thetaLow</literal></term>
+            <listitem>
+               <para>
+               contains the lower boundary value for <emphasis>theta</emphasis>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;double&gt; thetaIn</literal></term>
+            <listitem>
+               <para>
+               contains the initial estimate for <emphasis>theta</emphasis>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const enum PopPredModel::covStruct omegaStruct</literal></term>
+            <listitem>
+               <para>
+               is present only if the user has requested the population analysis.
+               The value is either <literal>PopPredModel::DIAGONAL</literal> or 
+               <literal>PopPredModel::FULL</literal>.
+               <literal>DIAGONAL</literal> indicates that only the diagonal elements of 
+               <emphasis>Omega</emphasis> matrix
+               are subject to optimization.  <literal>FULL</literal> indicates that potentially all elements
+               are subject to optimization.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const enum IndPredModel::covStruct omegaStruct</literal></term>
+            <listitem>
+               <para>
+               is present only if the individual analysis is requested.
+               The value is always IndPredModel::DIAGONAL for such analysis. 
+               Only the diagonal elements of <emphasis>Omega</emphasis> matrix
+               are subject to optimization.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const int omegaOrdrer</literal></term>
+            <listitem>
+               <para>
+               is the number of elements in <emphasis>Omega</emphasis> matrix that are subject to optimization
+               (ie. the order of <emphasis>Omega</emphasis>).
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;double&gt; omegaIn</literal></term>
+            <listitem>
+               <para>
+               is the initial estimates for the elements of <emphasis>Omega</emphasis>
+               that are subject to optimization.  Thus, the length of <literal>omegaIn</literal>
+               is <literal>omegaOrder</literal>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const int nEta</literal></term>
+            <listitem>
+               <para>
+               is the length of <emphasis>eta</emphasis> vector, 
+               which is the order of <emphasis>Omega</emphasis>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;double&gt; etaIn</literal></term>
+            <listitem>
+               <para>
+               is the initial estimate for <emphasis>eta</emphasis> vector.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const enum PopPredModel::covStruct sigmaStruct</literal></term>
+            <listitem>
+               <para>
+               is present only if the population analysis is requested.
+               The value is either <literal>PopPredModel::DIAGONAL</literal>
+               or <literal>PopPredModel::FULL</literal>.
+               <literal>DIAGONAL</literal> indicates that only the diagonal elements of 
+               <emphasis>Sigma</emphasis> matrix
+               are subject to optimization.  <literal>FULL</literal> indicates that potentially all elements
+               are subject to optimization.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;double&gt; sigmaIn</literal></term>
+            <listitem>
+               <para>
+               is the initial estimates for the elements of <emphasis>Sigma</emphasis>
+               that are subject to optimization.  Thus, the length of <literal>simgaIn</literal>
+               is <literal>sigmaOrder</literal>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const int nEps</literal></term>
+            <listitem>
+               <para>
+               is the length of <emphasis>eps</emphasis> vector,
+               which is the order of <emphasis>Sigma</emphasis>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const int seed</literal></term>
+            <listitem>
+               <para>
+               specifies the seed for random number generation.
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
+   </sect1>
+   <sect1>
+      <title><filename>MontePars.h</filename></title>
+      <para>
+         <filename>MontePars.h</filename> exports a namespace, <filename>MontePars</filename>.
+         The namespace contains control parameters for Monte Carlo simulation.
+         This file is generated only if Monte Carlo simulation is requested.
+      </para>
+      <variablelist>
+         <varlistentry>
+            <term><literal>const enum { analytic, grid, monte } method</literal></term>
+            <listitem>
+               <para>specifies the method for approximating (or computing) the integral.
+               <variablelist>
+                  <varlistentry>
+                     <term><literal>analitic</literal></term>
+                     <listitem>
+                        <para>Closed form solution only valid for <emphasis>LinearModel</emphasis> (consult Brad for details)
+                        </para>
+                     </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                     <term><literal>grid</literal></term>
+                     <listitem>
+                        <para>Approximation integral using evaluation on a uniform grid
+                        </para>
+                     </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                     <term><literal>monte</literal></term>
+                     <listitem>
+                        <para>Monte-Carlo approximation for integral
+                        </para>
+                     </listitem>
+                  </varlistentry>
+               </variablelist>
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const int numberEval</literal></term>
+            <listitem>
+               <para>
+               specifies the number of function evalautions to use for each
+               individual in the population.
+               Actually it is the maximum number when <emphasis>method</emphasis> is
+               <literal>grid</literal> and it is not used when <varname>method</varname> is <literal>analytic</literal>.
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
+   </sect1>
+   <sect1>
+      <title><filename>spkDriver.cpp</filename></title>
+      <para>
+      </para>
+   </sect1>
+   <sect1>
+      <title><filename>monteDriver.cpp</filename></title>
+      <para>
+      </para>
+   </sect1>
+   <sect1>
+      <title><filename>Makefile.SPK</filename></title>
+      <para>
+      This Make file defines rules to build targets that perform
+      the population/individual parameter estimation (if requested)
+      and statistics computation (if requested).
+      </para>
+      <formalpara>
+         <title>Targets</title>
+         <para>
+            <variablelist>
+               <varlistentry>
+                  <term>proc <emphasis>(default)</emphasis></term>
+                  <listitem>
+                     <para>
+                     Compile all SPK-Compiler-generated C++ source code files,
+                     link to <emphasis>production</emphasis> libraries and build an
+                     SPK driver, <filename>spkDriver</filename>.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term>test</term>
+                  <listitem>
+                     <para>
+                     Compile all SPK-Compiler-generated C++ source code files,
+                     link to <emphasis>test</emphasis> libraries and build an
+                     SPK driver, <filename>spkDriver</filename>.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term>clean</term>
+                  <listitem>
+                     <para>
+                     Delete all artifacts generated by SPK Compiler except for Make files.
+                     </para>
+                  </listitem>
+               </varlistentry>
+            </variablelist>
+         </para>
+      </formalpara>
+   </sect1>
+   <sect1>
+      <title><filename>Makefile.MC</filename></title>
+      <para>
+      This Make file defines rule to build targets that perform
+      the Monte Carlo simulation.
+      </para>
+      <formalpara>
+         <title>Targets</title>
+         <para>
+            <variablelist>
+               <varlistentry>
+                  <term>proc <emphasis>(default)</emphasis></term>
+                  <listitem>
+                     <para>
+                     Compile all SPK-Compiler-generated C++ source code files,
+                     link to <emphasis>production</emphasis> libraries and build an
+                     Monte Carlo simulator, <filename>monteDriver</filename>.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term>test</term>
+                  <listitem>
+                     <para>
+                     Compile all SPK-Compiler-generated C++ source code files,
+                     link to <emphasis>test</emphasis> libraries and build an
+                     Monte Carlo simulator, <filename>monteDriver</filename>.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term>clean</term>
+                  <listitem>
+                     <para>
+                     Delete all artifacts generated by SPK Compiler except for Make files.
+                     </para>
+                  </listitem>
+               </varlistentry>
+            </variablelist>
+         </para>
+      </formalpara>
+   </sect1>
 
-template &lt;class T&gt;
-class IndData{
-   public:
-      IndData( 
-         const valarray&lt;T&gt;& idIn, 
-         const valarray&lt;T&gt;& amtIn,
-         const valarray&lt;T&gt;& timeIn,
-         const valarray&lt;T&gt;& dvIn,
-         const valarray&lt;T&gt;& wtIn );
-      const valarray&lt;T&gt; id;
-      const valarray&lt;T&gt; amt;
-      const valarray&lt;T&gt; dose;
-      const valarray&lt;T&gt; time;
-      const valarray&lt;T&gt; dv;
-      const valarray&lt;T&gt; cp;
-      const valarray&lt;T&gt; wt;
-
-      const valarray&lt;T&gt; theta;
-      const valarray&lt;T&gt; eta;
-      const valarray&lt;T&gt; eps;
-      const valarray&lt;T&gt; ds;
-      const valarray&lt;T&gt; w;
-      const valarray&lt;T&gt; ka;
-      const valarray&lt;T&gt; ke;
-      const valarray&lt;T&gt; cl;
-      const valarray&lt;T&gt; d;
-      const valarray&lt;T&gt; e;
-      const valarray&lt;T&gt; f;
-      const valarray&lt;T&gt; y;
-
-      ~IndData();
-
-   protected:
-      IndData();
-      IndData( const IndData&lt;T&gt; & );
-      const IndData& operator=( const IndData&lt;T&gt; & );
-};
-
-template &lt;class T&gt;
-class IndDataSet{
-   public:
-      IndDataSet( int               nIn, 
-                  const valarray&lt;T&gt; idIn[], 
-                  const valarray&lt;T&gt; amtIn[],
-                  const valarray&lt;T&gt; timeIn[],
-                  const valarray&lt;T&gt; dvIn[],
-                  const valarray&lt;T&gt; wtIn[] );
-      ~IndDataSet();
-      const IndData& operator[]( int n ) const;
-   private:
-      std::vector&lt;IndData*&gt; all;
-      const int n;
-   protected:
-      IndDataSet();
-      IndDataSet( const IndDataSet&lt;T&gt; & );
-      const IndDataSet& operator=( const IndDataSet&lt;T&gt; & );
-};
-        </programlisting>
-        <para/>
-        <programlisting>
-// IndData.cpp
-#include "IndData.h"
-#include &lt;valarray&gt;
-#include &lt;string&gt;
-#include &lt;vector&gt;
-#include &lt;map&gt;
-
-template &lt;class T&gt;
-IndData::IndData( 
-         const valarray&lt;T&gt;& idIn, 
-         const valarray&lt;T&gt;& amtIn,
-         const valarray&lt;T&gt;& timeIn,
-         const valarray&lt;T&gt;& dvIn,
-         const valarray&lt;T&gt;& wtIn
-  )
-:
-        id(idIn),
-        amt(amtIn), dose(amtIn),
-        time(timeIn),
-        dv(dvIn), cp(dvIn),
-        wt(wtIn)
-{}
-template &lt;class T&gt;
-IndData::~IndData(){}
-
-template &lt;class T&gt;
-IndData::IndData(){}
-
-template &lt;class T&gt;
-IndData::IndData( const IndData & ){}
-
-template &lt;class T&gt;
-const IndData& IndData::operator=( const IndData& ){}
-
-template &lt;class T&gt;
-IndDataSet::IndDataSet( int nIn, 
-      const valarray&lt;T&gt; idIn[], 
-      const valarray&lt;T&gt; amtIn[],
-      const valarray&lt;T&gt; timeIn[],
-      const valarray&lt;T&gt; dvIn[],
-      const valarray&lt;T&gt; wtIn[] )
-      : n(nIn), all(nIn)
-{
-   for( int i=0; i&lt;n; i++ )
-   {
-      all[i] = new IndData( idIn[i], amtIn[i], timeIn[i], dvIn[i], wt[i] );
-   }
-}
-
-template &lt;class T&gt;
-IndDataSet::~IndDataSet()
-{
-   for( int i=0; i&lt;n; i++ )
-      delete all[i];
-}
-
-template &lt;class T&gt;
-const IndData & IndDataSet::operator[]( int i ) const
-{
-   return *all[i];
-}
-
-template &lt;class T&gt;
-IndDataSet::IndDataSet(){}
-
-template &lt;class T&gt;
-IndDataSet::IndDataSet( const IndDataSet&lt;T&gt; & ){}
-
-template &lt;class T&gt;
-const IndDataSet & IndDataSet::operator=( const IndDataSet&lt;T&gt; & ){}
-        </programlisting>
-     </sect2>
-  </sect1>
-  <sect1>
-     <title>Driver</title>
-     <anchor id="driver"/>
-     <para>
-Besides models and data set, SPK needs a driver which initializes the parameters to
-certain modules and call them.  
-The parameters control the user defined models' behaviors and the SPK's optimization effort.
-The driver is also responsible for preparing a report upon the normal
-completion (regardless of whether successful or not).
-     </para>
-     <para>
-Below are lists of tasks the driver must accomplish:
-     </para>
-     <para>
-        <orderedlist>
-           <title>Parameter Intializations and Routine Calls</title>
-           <listitem>
-              <para>
-Initializing the parameters to <function>simulation()</function> 
-and call it to obtain a data set when the data simulation is requested.
-              </para>
-           </listitem>
-           <listitem>
-              <para>
-Organizing the data set (ie. <link linkend="inddata">IndDataSet</link>).
-              </para>
-           </listitem>
-           <listitem>
-              <para>
-Initializing the parameters to <function>fitPopualation()</function> 
-and call it when the pop analysis is requested, or call 
-<function>fitIndividual()</function> instead
-if the individual analysis is requested.
-              </para>
-           </listitem>
-           <listitem>
-              <para>
-Initializing the paramteres to <function>popStatistics()</function>
-and call it when the population analysis is completed and statistics are requested,
-or call <function>indStatistics()</function> instead if the individual
-analysis were completed.
-              </para>
-           </listitem>
-        </orderedlist>
-        <orderedlist continuation="continues">
-           <title>Report preparation</title>
-           <listitem>
-              <para>
-Composing an error/warning message if errors/warnings have been detected.
-              </para>
-           </listitem>
-           <listitem>
-              <para>
-Converting the objective value (if available) to the NONMEM equivalent.
-              </para>
-           </listitem>
-           <listitem>
-              <para>
-Obtaining the PRED values.
-                 <table>
-                    <title>Values</title>
-                    <tgroup cols="5">
-                       <thead>
-                          <row>
-                             <entry align="center">Simulation</entry>
-                             <entry align="center">Estimation</entry>
-                             <entry align="center">THETA</entry>
-                             <entry align="center">ETA</entry>
-                             <entry align="center">PRED, RES, WRES</entry>
-                             <entry align="center">Others/Arbitrary</entry>
-                          </row>
-                       </thead>
-                       <tbody>
-                          <row>
-                             <entry align="center">---</entry>
-                             <entry align="center">---</entry>
-                             <entry align="center">initial</entry>
-                             <entry align="center">0</entry>
-                             <entry align="center">typical</entry>
-                             <entry align="center">typical</entry>
-                          </row>
-                          <row>
-                             <entry align="center">---</entry>
-                             <entry align="center">FO</entry>
-                             <entry align="center">finial</entry>
-                             <entry align="center">0</entry>
-                             <entry align="center">typical</entry>
-                             <entry align="center">typical</entry>
-                          </row>
-                          <row>
-                             <entry align="center">---</entry>
-                             <entry align="center">FOCE/Laplace</entry>
-                             <entry align="center">final</entry>
-                             <entry align="center">conditional</entry>
-                             <entry align="center">conditional</entry>
-                             <entry align="center">conditional</entry>
-                          </row>
-                          <row>
-                             <entry align="center">yes</entry>
-                             <entry align="center">---</entry>
-                             <entry align="center">initial</entry>
-                             <entry align="center">0</entry>
-                             <entry align="center">typical</entry>
-                             <entry align="center">typical</entry>
-                          </row>
-                          <row>
-                             <entry align="center">yes</entry>
-                             <entry align="center">FO</entry>
-                             <entry align="center">final</entry>
-                             <entry align="center">0</entry>
-                             <entry align="center">typical</entry>
-                             <entry align="center">typical</entry>
-                          </row>
-                          <row>
-                             <entry align="center">yes</entry>
-                             <entry align="center">FOCE/Laplace</entry>
-                             <entry align="center">final</entry>
-                             <entry align="center">conditional</entry>
-                             <entry align="center">conditional</entry>
-                             <entry align="center">conditional</entry>
-                          </row>
-                       </tbody>
-                    </tgroup>
-                 </table>
-                 <variablelist>
-                    <varlistentry>
-                       <term>typical</term>
-                       <listitem>
-                          <para>means average, which implies the value is evaluated at ETA=0.</para>
-                       </listitem>
-                    </varlistentry>
-                    <varlistentry>
-                       <term>conditional</term>
-                       <listitem>
-                          <para>means whatever available. Typically implies, the value is evaluated at the final estimate of THETA if it is available.
-                          </para>
-                       </listitem>
-                    </varlistentry>
-                 </variablelist>
-              </para>
-           </listitem>
-           <listitem>
-              <para>
-Composing a <ulink url="../reportML/reportML.html">SpkReportML</ulink> document for reporting the errors (if occured),
-the population/individual analysis results, the PRED values and statistics values.
-              </para>
-           </listitem>
-        </orderedlist>
-     </para>
-     <sect2>
-        <title>A Realization of The Driver Requirements</title>
-        <programlisting>
-<emphasis>TBA</emphasis>
-        </programlisting>
-     </sect2>
-  </sect1>
 </article>
