@@ -1312,6 +1312,8 @@ void Optimizer::setStateInfo( const StateInfo& s )
         char errmsg[] = "The number of variables is incorrect. Check calling setupWarmStart().";
         throw SpkException( SpkError::SPK_USER_INPUT_ERR, errmsg, __LINE__, __FILE__ );
   }
+  stateInfo.r = s.r;
+  stateInfo.f = s.f;
   if( stateInfo.x && stateInfo.g && stateInfo.h ) 
   {
       for( int i = 0; i < stateInfo.n; i++ )
