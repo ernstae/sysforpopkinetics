@@ -22,7 +22,7 @@ bool GridIntegralTest(void)
 
 	size_t m        = 2;
 	void  *p        = 0;
-	valarray<size_t> ngrid(50, m);
+	valarray<int>    ngrid(50, m);
 	valarray<double> Low(0., m);
 	valarray<double> Up(1., m);
 	
