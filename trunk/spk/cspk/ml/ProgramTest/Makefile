@@ -5,7 +5,9 @@
 CPPFLAGS = \
 	-g \
 	-c \
-	-I/usr/local/include/spktest/
+	-I/usr/local/include/spktest/ \
+	-I. \
+	-I..
 
 INCLUDE = \
 	../AnalyticIntegral.h \
@@ -16,10 +18,11 @@ INCLUDE = \
 	Pred.h \
 	DataSet.h \
 	IndData.h \
-	NonmemPars.h 
+	NonmemPars.h \
+	MontePars.h
 #
 OBJECT = \
-	monteDriver.o \
+	../monteDriver.o \
 	../AnalyticIntegral.o \
 	../GridIntegral.o \
 	../MontePopObj.o \
@@ -29,10 +32,6 @@ OBJECT = \
 monteDriver : $(OBJECT) $(INCLUDE)
 	g++ -g $(OBJECT) -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -o monteDriver -lspk -lspkopt -lspkpred -lgsl -latlas_lapack -lcblas -latlas -lpthread -lm
 
-# Special rule for monteDriver
-monteDriver.o: $(INCLUDE) MontePars.h
-	g++ $(CPPFLAGS) monteDriver.cpp 
-
 # Rule for compiling C++ soruce files
 %.o : %.cpp $(INCLUDE) 
 	g++ $(CPPFLAGS) $< -o $@
@@ -40,11 +39,3 @@ monteDriver.o: $(INCLUDE) MontePars.h
 # Rule for compiling C soruce files
 %.o : %.c $(INCLUDE) 
 	gcc $(CPPFLAGS) $< -o $@
-
-# Rule for local copy of monteDriver.cpp
-monteDriver.cpp: ../monteDriver.cpp
-	sed < ../monteDriver.cpp > monteDriver.cpp \
-		-e "s%AnalyticIntegral.h%../&%" \
-		-e "s%GridIntegral.h%../&%" \
-		-e "s%MontePopObj.h%../&%" \
-		-e "s%MapBay.h%../&%"
