@@ -364,6 +364,7 @@ void pop_monteTest::setUp()
   if( strcmp( monteMethod, "grid" ) == 0 )
   {
      monteNEvals = etaLen;
+     defaultEvals = 10;
   }
   else
   {
