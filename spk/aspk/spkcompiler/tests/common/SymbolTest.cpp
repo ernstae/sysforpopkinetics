@@ -43,7 +43,7 @@ void SymbolTest::testConstructor()
    // Test a label entry
    string label( "CP" );
    string synonym( "DV" );
-   vector<int> label_dim( 3 );
+   valarray<int> label_dim( 3 );
    label_dim[0] = 5;
    label_dim[1] = 3;
    label_dim[2] = 2;
@@ -60,7 +60,7 @@ void SymbolTest::testConstructor()
    
    // Test a triangle matrix entry
    string omega_name( "omega" );
-   vector<int> omega_dim( 1 );
+   valarray<int> omega_dim( 1 );
    omega_dim[0] = 3;
    Symbol omega( omega_name, "", nonmem, matrix, triangle, omega_dim );
    CPPUNIT_ASSERT_EQUAL( omega_name, omega.name );
@@ -77,7 +77,7 @@ void SymbolTest::testConstructor()
    
    // Test a diagonal matrix entry
    string sigma_name( "sigma" );
-   vector<int> sigma_dim( 1 );
+   valarray<int> sigma_dim( 1 );
    sigma_dim[0] = 3;
    Symbol sigma( sigma_name, "", nonmem, matrix, diagonal, sigma_dim );
    CPPUNIT_ASSERT_EQUAL( sigma_name, sigma.name );
@@ -94,7 +94,7 @@ void SymbolTest::testConstructor()
 
    // Test a vector variable entry
    string theta_name( "theta" );
-   vector<int> theta_dim( 1 );
+   valarray<int> theta_dim( 1 );
    theta_dim[0] = 3;
    Symbol theta( theta_name, "", nonmem, vec, full, theta_dim );
    CPPUNIT_ASSERT_EQUAL( theta_name, theta.name );
@@ -111,7 +111,7 @@ void SymbolTest::testConstructor()
 
    // Test a user defined variable entry
    string aaa_name( "aaa" );
-   vector<int> aaa_dim( 1 );
+   valarray<int> aaa_dim( 1 );
    aaa_dim[0] = 1;
    Symbol aaa( aaa_name, "", user, scalar, full, aaa_dim );
    CPPUNIT_ASSERT_EQUAL( aaa_name, aaa.name );
@@ -142,7 +142,7 @@ void SymbolTest::testCopy()
    // Test a label entry
    string label( "CP" );
    string synonym( "DV" );
-   vector<int> label_dim( 3 );
+   valarray<int> label_dim( 3 );
    label_dim[0] = 5;
    label_dim[1] = 3;
    label_dim[2] = 2;
@@ -162,7 +162,7 @@ void SymbolTest::testCopy()
    
    // Test a triangle matrix entry
    string omega_name( "omega" );
-   vector<int> omega_dim( 1 );
+   valarray<int> omega_dim( 1 );
    omega_dim[0] = 3;
    Symbol omega( omega_name, "", nonmem, matrix, triangle, omega_dim );
    Symbol omega2( omega );
@@ -186,7 +186,7 @@ void SymbolTest::testCopy()
    
    // Test a diagonal matrix entry
    string sigma_name( "sigma" );
-   vector<int> sigma_dim( 1 );
+   valarray<int> sigma_dim( 1 );
    sigma_dim[0] = 3;
    Symbol sigma( sigma_name, "", nonmem, matrix, diagonal, sigma_dim );
    Symbol sigma2( sigma );
@@ -210,7 +210,7 @@ void SymbolTest::testCopy()
 
    // Test a vector variable entry
    string theta_name( "theta" );
-   vector<int> theta_dim( 1 );
+   valarray<int> theta_dim( 1 );
    theta_dim[0] = 3;
    Symbol theta( theta_name, "", nonmem, vec, full, theta_dim );
    Symbol theta2( theta );
@@ -234,7 +234,7 @@ void SymbolTest::testCopy()
 
    // Test a user defined variable entry
    string aaa_name( "aaa" );
-   vector<int> aaa_dim( 1 );
+   valarray<int> aaa_dim( 1 );
    aaa_dim[0] = 1;
    Symbol aaa( aaa_name, "", user, scalar, full, aaa_dim );
    Symbol aaa2( aaa );
@@ -272,7 +272,7 @@ void SymbolTest::testAssign()
    // Test a label entry
    string label( "CP" );
    string synonym( "DV" );
-   vector<int> label_dim( 3 );
+   valarray<int> label_dim( 3 );
    label_dim[0] = 5;
    label_dim[1] = 3;
    label_dim[2] = 2;
@@ -292,7 +292,7 @@ void SymbolTest::testAssign()
    
    // Test a triangle matrix entry
    string omega_name( "omega" );
-   vector<int> omega_dim( 1 );
+   valarray<int> omega_dim( 1 );
    omega_dim[0] = 3;
    Symbol omega( omega_name, "", nonmem, matrix, triangle, omega_dim );
    Symbol omega2 = omega;
@@ -316,7 +316,7 @@ void SymbolTest::testAssign()
    
    // Test a diagonal matrix entry
    string sigma_name( "sigma" );
-   vector<int> sigma_dim( 1 );
+   valarray<int> sigma_dim( 1 );
    sigma_dim[0] = 3;
    Symbol sigma( sigma_name, "", nonmem, matrix, diagonal, sigma_dim );
    Symbol sigma2 = sigma;
@@ -340,7 +340,7 @@ void SymbolTest::testAssign()
 
    // Test a vector variable entry
    string theta_name( "theta" );
-   vector<int> theta_dim( 1 );
+   valarray<int> theta_dim( 1 );
    theta_dim[0] = 3;
    Symbol theta( theta_name, "", nonmem, vec, full, theta_dim );
    Symbol theta2 = theta;
@@ -364,7 +364,7 @@ void SymbolTest::testAssign()
 
    // Test a user defined variable entry
    string aaa_name( "aaa" );
-   vector<int> aaa_dim( 1 );
+   valarray<int> aaa_dim( 1 );
    aaa_dim[0] = 1;
    Symbol aaa( aaa_name, "", user, scalar, full, aaa_dim );
    Symbol aaa2 = aaa;
@@ -401,7 +401,7 @@ void SymbolTest::testCreateLabel()
 
    string label( "CP" );
    string synonym( "DV" );
-   vector<int> dim(3);
+   valarray<int> dim(3);
    dim[0] = 5;
    dim[1] = 2;
    dim[2] = 3;
@@ -488,7 +488,7 @@ void SymbolTest::testCreateUserVar()
    enum Symbol::Structure triangle   = Symbol::TRIANGLE;
 
    string var( "aaa" );
-   vector<int> dim(1);
+   valarray<int> dim(1);
    dim[0] = 1;
    Symbol aaa = Symbol::createUserVar( var );
    CPPUNIT_ASSERT_EQUAL( var,          aaa.name );
@@ -520,7 +520,7 @@ void SymbolTest::testEquality()
    string str_AAA( "AAA" );
    string str_bbb( "bbb" );
    string str_BBB( "BBB" );
-   vector<int> dims( 3 );
+   valarray<int> dims( 3 );
    dims[0] = 1;
    dims[1] = 2;
    dims[2] = 3;
