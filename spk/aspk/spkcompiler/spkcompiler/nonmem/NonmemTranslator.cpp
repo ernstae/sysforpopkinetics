@@ -150,7 +150,7 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     myPopTraceLevel     ( 1 ),
     myIndTraceLevel     ( 1 ),
     mySeed              ( 0 ),
-    myCovForm           ( "RSR" ),
+    myCovForm           ( "RSR" ), // default for population level
     myIsStderr          ( true ),
     myIsCorrelation     ( true ),
     myIsCov             ( true ),
@@ -2671,7 +2671,9 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
 	}
       DOMElement * ind_stat = dynamic_cast<DOMElement*>( ind_stat_list->item(0) );
       const XMLCh* xml_stderr = ind_stat->getAttribute( X_IS_ERR_OUT );
-      const XMLCh* cov_form = ind_stat->getAttribute( X_COVARIANCE_FORM ); // r, rsr, s, hsh, h
+      const XMLCh* cov_form = X_COV_H;
+      if( ind_stat->hasAttribute( X_COVARIANCE_FORM ) )
+          cov_form = ind_stat->getAttribute( X_COVARIANCE_FORM );
       if( XMLString::equals( cov_form, X_COV_S ) )
 	myCovForm = "S";
       else if( XMLString::equals( cov_form, X_COV_RSR ) )
