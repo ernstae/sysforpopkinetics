@@ -164,7 +164,9 @@ public class Database {
                          datasetVersion, 
                          modelId, 
                          modelVersion, 
-                         source);
+                         source,
+                         "",
+                         0);
             JOptionPane.showMessageDialog(null, "A new job, " + jobAbstract +
                                           ", has been added to the database.",  
                                           "Job submission information",
