@@ -286,17 +286,13 @@ class NonmemTranslator : public ClientTranslator
 		    int nIndividuals,
 		    SymbolTable * table);
 
-  void emitDriver();
-  void emitModel();
-  /*
-   * std::vector<std::string> emitData( 		
+  std::vector<std::string> emit( 		
 		    int nIndividuals,
-		    SymbolTable* table,
+		    const SymbolTable* table,
 		    const std::map<LABEL, ALIAS> & label_alias_mapping,
 		    const std::map<LABEL, MEASUREMENT> data_for[],
 		    const std::string order_id_pair[]
 		 );
-   */
 };
 
 #endif
