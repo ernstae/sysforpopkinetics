@@ -6,14 +6,13 @@
 ]>
 <article><title>XML Representation of SPK Results and Other Reports</title>
  <articleinfo>
-    <revision>
-      <revnumber>1.2</revnumber>
-      <date>April 30, 2004</date>
-      <authorinitials>sh</authorinitials>
-      <revremark>Took out "ML" from "spksourceML".</revremark>
-    </revision>
-    <revision>
     <revhistory>
+      <revision>
+        <revnumber>1.2</revnumber>
+        <date>April 30, 2004</date>
+        <authorinitials>sh</authorinitials>
+        <revremark>Took out "ML" from "spksourceML".</revremark>
+      </revision>
       <revision>
 	<revnumber>1.1</revnumber>
 	<date>April 10, 2004</date>
