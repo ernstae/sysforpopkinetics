@@ -677,21 +677,23 @@ void NonmemTranslator::generateMakefile() const
   oSpkMake << "prod : spkDriver.cpp Pred.h DataSet.h IndData.h NonmemPars.h" << endl;
   oSpkMake << "\tg++ -g spkDriver.cpp -o spkDriver ";
   oSpkMake << "-L/usr/local/lib/spkprod -I/usr/local/include/spkprod -Wl,--rpath -Wl,/usr/local/lib/spkprod ";
-  oSpkMake << "-lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm";
+  oSpkMake << "-lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm" << endl;
   oSpkMake << endl;
   oSpkMake << "test : spkDriver.cpp Pred.h DataSet.h IndData.h NonmemPars.h" << endl;
   oSpkMake << "\tg++ -g spkDriver.cpp -o spkDriver ";
   oSpkMake << "-L/usr/local/lib/spktest -I/usr/local/include/spktest -Wl,--rpath -Wl,/usr/local/lib/spktest ";
-  oSpkMake << "-lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm";
+  oSpkMake << "-lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm" << endl;
   oSpkMake << endl;
   oSpkMake << "clean : " << endl;
   oSpkMake << "\trm -f software_error result.xml spkDriver predEqn.cpp IndData.h DataSet.h Pred.h spkDriver.cpp spk_error.tmp NonmemPars.h" << endl;
   oSpkMake.close();
 
+  /*
   if( !myIsMonte )
     {
       return;
     }
+  */
   ofstream oMonteMake( fMakefile_MC );
   if( !oMonteMake.good() )
   {
@@ -700,18 +702,39 @@ void NonmemTranslator::generateMakefile() const
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
   }
-  oMonteMake << "prod : monteDriver.cpp Pred.h DataSet.h IndData.h NonmemPars.h MontePars.h" << endl;
-  oMonteMake << "\tg++ -g monteDriver.cpp -o monteDriver ";
+  oMonteMake << "prod : $(OBJ)" << endl;
+  oMonteMake << "\tg++ -g $(OBJ) -o monteDriver ";
   oMonteMake << "-L/usr/local/lib/spkprod -I/usr/local/include/spkprod -Wl,--rpath -Wl,/usr/local/lib/spkprod ";
-  oMonteMake << "-lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm";
+  oMonteMake << "-lspk -lspkopt -lspkpred -lgsl -latlas_lapack -lcblas -latlas -lpthread -lm" << endl;
   oMonteMake << endl;
-  oMonteMake << "test : monteDriver.cpp Pred.h DataSet.h IndData.h NonmemPars.h MontePars.h" << endl;
-  oMonteMake << "\tg++ -g monteDriver.cpp -o monteDriver ";
+  oMonteMake << "test : $(OBJ)" << endl;
+  oMonteMake << "\tg++ -g $(OBJ) -o monteDriver ";
   oMonteMake << "-L/usr/local/lib/spktest -I/usr/local/include/spktest -Wl,--rpath -Wl,/usr/local/lib/spktest ";
-  oMonteMake << "-lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm";
+  oMonteMake << "-lspk -lspkopt -lspkpred -lgsl -latlas_lapack -lcblas -latlas -lpthread -lm" << endl;
   oMonteMake << endl;
+  oMonteMake << "HDR: AnalyticIntegral.h \\" << endl;
+  oMonteMake << "\tGridIntegral.h \\" << endl;
+  oMonteMake << "\tMontePopObj.h \\" << endl;
+  oMonteMake << "\tMapBay.h \\" << endl;
+  oMonteMake << "\tPred.h \\" << endl;
+  oMonteMake << "\tDataSet.h \\" << endl;
+  oMonteMake << "\tIndData.h \\" << endl;
+  oMonteMake << "\tNonmemPars.h \\" << endl;
+  oMonteMake << "\tMontePars.h" << endl;
+  oMonteMake << endl;
+  oMonteMake << "OBJ: monteDriver.o \\" << endl;
+  oMonteMake << "\tAnalyticIntegral.o \\" << endl;
+  oMonteMake << "\tGridIntegral.o \\" << endl;
+  oMonteMake << "\tMontePopObj.o \\" << endl;
+  oMonteMake << "\tMapBay.o \\" << endl;
+  oMonteMake << "\tMapMonte.o" << endl;
+  oMonteMake << endl;
+  oMonteMake << "%.o : %.cpp $(HDR)" << endl;
+  oMonteMake << "\tg++ $(CPPFLAGS) $< -o $@" << endl;
+  oMonteMake << endl;
+
   oMonteMake << "clean : " << endl;
-  oMonteMake << "\trm -f software_error result.xml spkDriver predEqn.cpp IndData.h DataSet.h Pred.h monteDriver.cpp spk_error.tmp NonmemPars.h MontePars.h" << endl;
+  oMonteMake << "\trm -f $(OBJ) software_error result.xml spkDriver predEqn.cpp IndData.h DataSet.h Pred.h monteDriver.cpp spk_error.tmp NonmemPars.h MontePars.h" << endl;
   oMonteMake.close();
 
   return;
@@ -3306,7 +3329,7 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << (myOmegaStruct == Symbol::TRIANGLE? "FULL" : "DIAGONAL" ) << ";" << endl;
   oNonmemPars << endl;
 
-  oNonmemPars << "   // The dimension of OMEGA (square) matrix." << endl;
+  oNonmemPars << "   // The dimension of OMEGA matrix is detemined by the length of ETA vector." << endl;
   oNonmemPars << "   const int omegaDim = nEta;" << endl;
   oNonmemPars << endl;
 
@@ -3314,7 +3337,7 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << "   // If the matrix is full, the value is equal to the number of " << endl;
   oNonmemPars << "   // elements in a half triangle (diagonal elements included)." << endl;
   oNonmemPars << "   // If the matrix is diagonal, it is equal to the dimension of the symmetric matrix." << endl;
-  oNonmemPars << "   const int omegaOrder = " << (myOmegaStruct==Symbol::DIAGONAL? "nEta" : "nEta + (nEta+1) / 2" ) << ";" << endl;
+  oNonmemPars << "   const int omegaOrder = " << (myOmegaStruct==Symbol::DIAGONAL? "omegaDim" : "omegaDim + (omegaDim+1) / 2" ) << ";" << endl;
   oNonmemPars << endl;
 
   oNonmemPars << "   // A C-arrary containing the initial estimates for OMEGA." << endl;
@@ -3357,8 +3380,9 @@ void NonmemTranslator::generateNonmemParsNamespace() const
       oNonmemPars << "   // \"DIAGONAL\" indicates that only the diagonal elements are non-zero and the rest are all zero." << endl;
       oNonmemPars << "   const enum PopPredModel::covStruct sigmaStruct = ";
       oNonmemPars << "PopPredModel::" << (mySigmaStruct == Symbol::TRIANGLE? "FULL" : "DIAGONAL" ) << ";" << endl;
+      oNonmemPars << endl;
 
-      oNonmemPars << "   // The dimension of SIGMA (square) matrix." << endl;
+      oNonmemPars << "   // The dimension of SIGMA matrix is detemined by the length of EPS vector." << endl;
       oNonmemPars << "   const int sigmaDim = nEps;" << endl;
       oNonmemPars << endl;
 
@@ -3366,7 +3390,7 @@ void NonmemTranslator::generateNonmemParsNamespace() const
       oNonmemPars << "   // If the matrix is full, the value is equal to the number of " << endl;
       oNonmemPars << "   // elements in a half triangle (diagonal elements included)." << endl;
       oNonmemPars << "   // If the matrix is diagonal, it is equal to the dimension of the symmetric matrix." << endl;
-      oNonmemPars << "   const int sigmaOrder = nEps" << (mySigmaStruct==Symbol::DIAGONAL? ";" : " * ( nEps + 1 ) / 2;") << endl;
+      oNonmemPars << "   const int sigmaOrder = " << (mySigmaStruct==Symbol::DIAGONAL? "sigmaDim;" : "sigmaDim * ( sigmaDim + 1 ) / 2;") << endl;
 
       oNonmemPars << "   // A C-arrary containing the initial estimates for SIGMA." << endl;
       oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
@@ -3436,8 +3460,7 @@ void NonmemTranslator::generateIndDriver( ) const
 
   oDriver << "#include <spk/SpkValarray.h>" << endl;
   oDriver << "#include <spk/SpkException.h>" << endl;
-  oDriver << "//#include <spk/FpErrorChecker.h>" << endl;
-  oDriver << "#include <cppad/include/CppAD.h>" << endl;
+  oDriver << "#include <CppAD/CppAD.h>" << endl;
   if( myIsEstimate )
   {
      oDriver << "#include <spk/fitIndividual.h>" << endl;
@@ -3491,11 +3514,6 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "   return Cr;" << endl;
   oDriver << "}" << endl;
   oDriver << endl;
-  oDriver << "int series( int a, int d, int n )" << endl;
-  oDriver << "{" << endl;
-  oDriver << "   int l = a + (n-1)*d;" << endl;
-  oDriver << "   return n * (a+l) / 2;" << endl;
-  oDriver << "}" << endl;
   oDriver << "};" << endl;
 
   oDriver << "int main( int argc, const char argv[] )" << endl;
@@ -3513,9 +3531,6 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << " __FILE__, __LINE__, \"" << fSpkRuntimeError_tmp << "\" );" << endl;
   oDriver << "      return FILE_ACCESS_FAILURE;" << endl;
   oDriver << "  }" << endl;
-  oDriver << endl;
-
-  oDriver << "//FpErrorChecker fperror;" << endl;
   oDriver << endl;
 
   oDriver << "const int nY = " << myRecordNums[0] << ";" << endl;
@@ -3613,7 +3628,6 @@ void NonmemTranslator::generateIndDriver( ) const
        oDriver << "   }" << endl;
        oDriver << "   y   = yOut;" << endl;
        
-       oDriver << "   //FpErrorChecker::check( __LINE__, __FILE__ );" << endl;
        oDriver << "   haveCompleteData = true;" << endl;
        oDriver << "}" << endl;
        oDriver << "catch( SpkException& e )" << endl;
@@ -3624,7 +3638,6 @@ void NonmemTranslator::generateIndDriver( ) const
        oDriver << "   oRuntimeError << e << endl;  // Printing out to a file." << endl;
        oDriver << "   cerr << e << endl;    // Printing out to the standard error." << endl; 
        oDriver << "   haveCompleteData = false;" << endl;
-       oDriver << "   //FpErrorChecker::clear();" << endl;
        oDriver << "}" << endl;
        oDriver << "catch( ... )" << endl;
        oDriver << "{" << endl;
@@ -3632,7 +3645,6 @@ void NonmemTranslator::generateIndDriver( ) const
        oDriver << "   oRuntimeError << message << endl;  // Printing out to a file." << endl;
        oDriver << "   cerr << message << endl;    // Printing out to the standard error." << endl;
        oDriver << "   haveCompleteData = false;" << endl;
-       oDriver << "   //FpErrorChecker::clear();" << endl;
        oDriver << "}" << endl;
     }
   else
@@ -3701,7 +3713,6 @@ void NonmemTranslator::generateIndDriver( ) const
       oDriver << "                   &bObj_bOut," << endl;
       oDriver << "                   &bObj_b_bOut," << endl;
       oDriver << "                    false );" << endl;
-      oDriver << "     //FpErrorChecker::check( __LINE__, __FILE__ );" << endl;
       oDriver << "     isOptSuccess = true;" << endl;
       oDriver << "  }" << endl;
       oDriver << "  catch( SpkException& e )" << endl;
@@ -3712,7 +3723,6 @@ void NonmemTranslator::generateIndDriver( ) const
       oDriver << "     oRuntimeError << e << endl;" << endl;
       oDriver << "     cerr << e << endl;" << endl;
       oDriver << "     isOptSuccess = false;" << endl;
-      oDriver << "     //FpErrorChecker::clear();" << endl;
       oDriver << "  }" << endl;
       oDriver << "  catch( ... )" << endl;
       oDriver << "  {" << endl;
@@ -3720,7 +3730,6 @@ void NonmemTranslator::generateIndDriver( ) const
       oDriver << "     oRuntimeError << message << endl;" << endl;
       oDriver << "     cerr << message << endl;" << endl;
       oDriver << "     isOptSuccess = false;" << endl;
-      oDriver << "     //FpErrorChecker::clear();" << endl;
       oDriver << "  }" << endl;
       oDriver << "  gettimeofday( &optEnd, NULL );" << endl;
       oDriver << "  optTimeSec = difftime( optEnd.tv_sec, optBegin.tv_sec );" << endl;
@@ -3809,7 +3818,6 @@ void NonmemTranslator::generateIndDriver( ) const
           oDriver << "                        " << ( myIsConfidence?        "&stdParConfidenceOut" : "NULL" ) << endl;
           oDriver << "                      );" << endl;
 	  oDriver << "      stdParInvCovOut = inverse( stdParCovOut, nB );" << endl;
-	  oDriver << "      //FpErrorChecker::check( __LINE__, __FILE__ );" << endl;
 	  oDriver << "      isStatSuccess = true;" << endl;
 	  oDriver << "   }" << endl;
 	  oDriver << "   catch( SpkException& e )" << endl;
@@ -3820,7 +3828,6 @@ void NonmemTranslator::generateIndDriver( ) const
 	  oDriver << "      oRuntimeError << e << endl;" << endl;
 	  oDriver << "      cerr << e << endl;" << endl;
 	  oDriver << "      isStatSuccess = false;" << endl;
-	  oDriver << "      //FpErrorChecker::clear();" << endl;
 	  oDriver << "   }" << endl;
 	  oDriver << "   catch( ... )" << endl;
 	  oDriver << "   {" << endl;
@@ -3828,7 +3835,6 @@ void NonmemTranslator::generateIndDriver( ) const
 	  oDriver << "      oRuntimeError << message << endl;" << endl;
 	  oDriver << "      cerr << message << endl;" << endl;
 	  oDriver << "      isStatSuccess = false;" << endl;
-	  oDriver << "      //FpErrorChecker::clear();" << endl;
 	  oDriver << "   }" << endl;
 	  oDriver << endl;
 
@@ -3928,7 +3934,6 @@ void NonmemTranslator::generateIndDriver( ) const
 
       if( myIsStat )
 	{
-	  oDriver << "int covElemNum = series(1, 1, nB);" << endl;
 	  oDriver << "oResults << \"<ind_stat_result elapsedtime=\\\"\" << statTimeSec << \"\\\">\" << endl;" << endl;
 	  if( myIsCov )
 	    {
@@ -4203,8 +4208,7 @@ void NonmemTranslator::generatePopDriver() const
 
   oDriver << "#include <spk/SpkValarray.h>" << endl;
   oDriver << "#include <spk/SpkException.h>" << endl;
-  oDriver << "//#include <spk/FpErrorChecker.h>" << endl;
-  oDriver << "#include <cppad/include/CppAD.h>" << endl;
+  oDriver << "#include <CppAD/CppAD.h>" << endl;
 
   if( myIsEstimate )
     {
@@ -4256,11 +4260,6 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "   return Cr;" << endl;
   oDriver << "}" << endl;
   oDriver << endl;
-  oDriver << "int series( int a, int d, int n )" << endl;
-  oDriver << "{" << endl;
-  oDriver << "   int l = a + (n-1)*d;" << endl;
-  oDriver << "   return n * (a+l) / 2;" << endl;
-  oDriver << "}" << endl;
   oDriver << "};" << endl;
 
   oDriver << "enum RETURN_CODE { SUCCESS=0, CONVERGENCE_FAILURE=1, FILE_ACCESS_FAILURE=2, OTHER_FAILURE };" << endl;
@@ -4278,7 +4277,6 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "}" << endl;
   oDriver << endl;
 
-  oDriver << "//FpErrorChecker fperror;" << endl;
   oDriver << endl;
 
   oDriver << "const int nPop = " << myPopSize << ";" << endl;
@@ -4316,17 +4314,11 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << endl;
 
   // Omega
-  oDriver << "const int orderOmega = " << myOmegaOrder << "; // #of elements in Omega matrix" << endl;
-  oDriver << "const int dimOmega   = " << myOmegaDim   << "; // dimension of Omeaga matrix" << endl;
-  oDriver << "valarray<double> omegaOut( orderOmega );" << endl;
+  oDriver << "valarray<double> omegaOut( NonmemPars::omegaOrder );" << endl;
   oDriver << endl;
   
   // Sigma
-  oDriver << "const int orderSigma         = " << mySigmaOrder;
-  oDriver << "; // #of elements in Sigma matrix" << endl;
-  oDriver << "const int dimSigma = " << mySigmaDim;
-  oDriver << "; // order of Sigma matrix" << endl;
-  oDriver << "valarray<double> sigmaOut( orderSigma );" << endl;
+  oDriver << "valarray<double> sigmaOut( NonmemPars::sigmaOrder );" << endl;
   oDriver << endl;
 
 
@@ -4451,7 +4443,6 @@ void NonmemTranslator::generatePopDriver() const
 	oDriver << "   }" << endl;
 	oDriver << "   y   = yOut;" << endl;
       }
-      oDriver << "   //FpErrorChecker::check( __LINE__, __FILE__ );" << endl;
       oDriver << "   haveCompleteData = true;" << endl;
       oDriver << "}" << endl;
       oDriver << "catch( SpkException& e )" << endl;
@@ -4462,7 +4453,6 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << "   oRuntimeError << e << endl;  // Printing out to a file." << endl;
       oDriver << "   cerr << e << endl;    // Printing out to the standard error." << endl; 
       oDriver << "   haveCompleteData = false;" << endl;
-      oDriver << "   //FpErrorChecker::clear();" << endl;
       oDriver << "}" << endl;
       oDriver << "catch( ... )" << endl;
       oDriver << "{" << endl;
@@ -4470,7 +4460,6 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << "   oRuntimeError << message << endl;  // Printing out to a file." << endl;
       oDriver << "   cerr << message << endl;    // Printing out to the standard error." << endl;
       oDriver << "   haveCompleteData = false;" << endl;
-      oDriver << "   //FpErrorChecker::clear();" << endl;
       oDriver << "}" << endl;
 
       // RETURN HERE!!! 6/23/04
@@ -4570,7 +4559,6 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << "                    &alpObjOut," << endl;
       oDriver << "                    &alpObj_alpOut," << endl;
       oDriver << "                    &alpObj_alp_alpOut );" << endl;
-      oDriver << "      //FpErrorChecker::check( __LINE__, __FILE__ );" << endl;
       oDriver << "      isOptSuccess = true;" << endl;
       oDriver << "   }" << endl;
       oDriver << "   catch( SpkException& e )" << endl;
@@ -4581,7 +4569,6 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << "      oRuntimeError << e << endl;" << endl;
       oDriver << "      cerr << e << endl;" << endl;
       oDriver << "      isOptSuccess = false;" << endl;
-      oDriver << "      //FpErrorChecker::clear();" << endl;
       oDriver << "   }" << endl;
       oDriver << "   catch( ... )" << endl;
       oDriver << "   {" << endl;
@@ -4589,7 +4576,6 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << "      oRuntimeError << message << endl;" << endl;
       oDriver << "      cerr << message << endl;" << endl;
       oDriver << "      isOptSuccess = false;" << endl;
-      oDriver << "      //FpErrorChecker::clear();" << endl;
       oDriver << "   }" << endl;
       oDriver << "   gettimeofday( &optEnd, NULL );" << endl;
       oDriver << "   optTimeSec = difftime( optEnd.tv_sec, optBegin.tv_sec );" << endl;
@@ -4658,7 +4644,6 @@ void NonmemTranslator::generatePopDriver() const
 	  oDriver << "                     NULL, " << endl;
 	  oDriver << "                     NULL, " << endl;
 	  oDriver << "                     NULL );" << endl;
-	  oDriver << "      //FpErrorChecker::check( __LINE__, __FILE__ );" << endl;
           oDriver << "      derParStatistics( alpCov," << endl;
           oDriver << "                        stdPar," << endl;
           oDriver << "                        stdPar_alp," << endl;
@@ -4679,7 +4664,6 @@ void NonmemTranslator::generatePopDriver() const
 	  oDriver << "      oRuntimeError << e << endl;" << endl;
 	  oDriver << "      cerr << e << endl;" << endl;
 	  oDriver << "      isStatSuccess = false;" << endl;
-	  oDriver << "      //FpErrorChecker::clear();" << endl;
 	  oDriver << "   }" << endl;
 	  oDriver << "   catch( ... )" << endl;
 	  oDriver << "   {" << endl;
@@ -4687,7 +4671,6 @@ void NonmemTranslator::generatePopDriver() const
 	  oDriver << "      oRuntimeError << message << endl;" << endl;
 	  oDriver << "      cerr << message << endl;" << endl;
 	  oDriver << "      isStatSuccess = false;" << endl;
-	  oDriver << "      //FpErrorChecker::clear();" << endl;
 	  oDriver << "   }" << endl;
 
 	  if( myIsInvCov )
@@ -4696,7 +4679,6 @@ void NonmemTranslator::generatePopDriver() const
 	      oDriver << "   {" << endl;
               oDriver << "      if( isStatSuccess )" << endl;
 	      oDriver << "         stdParInvCovOut = inverse( stdParCovOut, nAlp );" << endl;
-	      oDriver << "      //FpErrorChecker::check( __LINE__, __FILE__ );" << endl;
 	      oDriver << "   }" << endl;
 	      oDriver << "   catch( SpkException& e )" << endl;
 	      oDriver << "   {" << endl;
@@ -4706,7 +4688,6 @@ void NonmemTranslator::generatePopDriver() const
 	      oDriver << "      oRuntimeError << e << endl;" << endl;
 	      oDriver << "      cerr << e << endl;" << endl;
 	      oDriver << "      isStatSuccess = false;" << endl;
-	      oDriver << "      //FpErrorChecker::clear();" << endl;
 	      oDriver << "   }" << endl;
 	      oDriver << "   catch( ... )" << endl;
 	      oDriver << "   {" << endl;
@@ -4714,7 +4695,6 @@ void NonmemTranslator::generatePopDriver() const
 	      oDriver << "      oRuntimeError << message << endl;" << endl;
 	      oDriver << "      cerr << message << endl;" << endl;
 	      oDriver << "      isStatSuccess = false;" << endl;
-	      oDriver << "      //FpErrorChecker::clear();" << endl;
 	      oDriver << "   }" << endl;
 	    }
 	  oDriver << "   gettimeofday( &statEnd, NULL );" << endl;
@@ -4798,23 +4778,23 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << "}" << endl;
       oDriver << "oResults << \"</theta_out>\" << endl;" << endl;
       // Omega 
-      oDriver << "oResults << \"<omega_out dimension=\\\"\" << dimOmega << \"\\\" ";
+      oDriver << "oResults << \"<omega_out dimension=\\\"\" << NonmemPars::omegaDim << \"\\\" ";
       if( myOmegaStruct == Symbol::TRIANGLE )
 	oDriver << "struct=\\\"block\\\">\" << endl;" << endl;
       else
 	oDriver << "struct=\\\"diagonal\\\">\" << endl;" << endl;
-      oDriver << "for( int i=0; i<orderOmega; i++ )" << endl;
+      oDriver << "for( int i=0; i<NonmemPars::omegaOrder; i++ )" << endl;
       oDriver << "{" << endl;
       oDriver << "   oResults << \"<value>\" << omegaOut[i] << \"</value>\" << endl;" << endl;
       oDriver << "}" << endl;
       oDriver << "oResults << \"</omega_out>\" << endl;" << endl;
       // Sigma
-      oDriver << "oResults << \"<sigma_out dimension=\\\"\" << dimSigma << \"\\\" ";
+      oDriver << "oResults << \"<sigma_out dimension=\\\"\" << NonmemPars::sigmaDim << \"\\\" ";
       if( mySigmaStruct == Symbol::TRIANGLE )
 	oDriver << "struct=\\\"block\\\">\" << endl;" << endl;
       else
 	oDriver << "struct=\\\"diagonal\\\">\" << endl;" << endl;
-      oDriver << "for( int i=0; i<orderSigma; i++ )" << endl;
+      oDriver << "for( int i=0; i<NonmemPars::sigmaOrder; i++ )" << endl;
       oDriver << "{" << endl;
       oDriver << "   oResults << \"<value>\" << sigmaOut[i] << \"</value>\" << endl;" << endl;
       oDriver << "}" << endl;
@@ -4827,7 +4807,6 @@ void NonmemTranslator::generatePopDriver() const
       if( myIsStat )
 	{
 	  oDriver << "oResults << \"<pop_stat_result elapsedtime=\\\"\" << statTimeSec << \"\\\">\" << endl;" << endl;
-	  oDriver << "int covElemNum = series( 1, 1, nAlp );" << endl;
 	  if( myIsCov )
 	    {
 	      oDriver << "oResults << \"<pop_covariance_out struct=\\\"block\\\" dimension=\\\"\" << nAlp << \"\\\">\" << endl;" << endl;
