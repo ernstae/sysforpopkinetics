@@ -107,7 +107,6 @@ libspk_la_SOURCES = \
 	simulate.cpp \
 	statistics.cpp \
 	StatusList.cpp \
-        statWrapper.cpp \
 	subtract.cpp \
 	symmetrize.cpp \
 	SpkError.cpp \
@@ -225,7 +224,6 @@ libspk_la_SOURCES = \
 	SpkValarray.h \
 	SpkWarning.h \
 	statistics.h \
-        statWrapper.h \
 	StatusList.h \
 	subtract.h \
 	symmetrize.h \
@@ -330,7 +328,6 @@ libspk_release_la_SOURCES = \
 	simulate.cpp \
 	statistics.cpp \
 	StatusList.cpp \
-        statWrapper.cpp \
 	subtract.cpp \
 	symmetrize.cpp \
 	SpkError.cpp \
@@ -448,7 +445,6 @@ libspk_release_la_SOURCES = \
 	SpkWarning.h \
 	statistics.h \
 	StatusList.h \
-        statWrapper.h \
 	subtract.h \
 	symmetrize.h \
 	System.h \
@@ -565,7 +561,6 @@ pkginclude_HEADERS = \
 	SpkWarning.h \
 	statistics.h \
 	StatusList.h \
-        statWrapper.h \
 	subtract.h \
 	symmetrize.h \
 	System.h \
