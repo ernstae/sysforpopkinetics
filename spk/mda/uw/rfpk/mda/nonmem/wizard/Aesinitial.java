@@ -176,7 +176,7 @@ public class Aesinitial extends javax.swing.JPanel implements WizardStep {
             }            
             MDAObject object = (MDAObject)wizard.getCustomizedObject();                       
             String aesinitialCode = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
-            if(!aesinitialCode.equals("") && !Utility.checkTag(aesinitialCode, getStepTitle()))
+            if(!aesinitialCode.equals(""))
             {
                 String record = "$AESINITIAL " + "\n" + aesinitialCode;
                 object.getRecords().setProperty("Aesinitial", record);
@@ -200,5 +200,10 @@ public class Aesinitial extends javax.swing.JPanel implements WizardStep {
                 }
             };
 	}
+        
+        public String getHelpID() {
+            return "Aesinitial";
+        }
+        
     }
 }

@@ -38,9 +38,8 @@ import uw.rfpk.beans.UserInfo;
  * API method, getJob, to get model_id, model_version, dataset_id, dataset_version,
  * method_code and parent. Then, the model_id is passed in the database API method getModel
  * to get model name and the dataset_id is passed in the database API method getDataset to 
- * get dataset name.  The servlet converts the method_code into method-name using database
- * API method getMethodTable and puts model_name, model_version, dataset_name, dataset_version,
- * parent(id) and method_name into a java.util.Properties object.  The servlet sends back 
+ * get dataset name.  The servlet  puts model_name, model_version, dataset_name, dataset_version,
+ * parent(id) and method_code into a java.util.Properties object.  The servlet sends back 
  * two objects.  The first object is a String containing the error message if there 
  * is an error or an empty String if there is not any error.  The second object is the 
  * Properties object containing the returned data.
@@ -87,7 +86,6 @@ public class GetJobInfo extends HttpServlet
             // Read the data from the client 
             String[] messageIn = (String[])in.readObject();
             String secret = messageIn[0];
-            Vector jobIds = (Vector)(req.getSession().getAttribute("JOBIDS"));  
             if(secret.equals((String)req.getSession().getAttribute("SECRET")))               
             {           
                 long jobId = Long.parseLong(messageIn[1]);
@@ -113,18 +111,9 @@ public class GetJobInfo extends HttpServlet
                  // Check if the job belongs to the user
                 if(jobRS.getLong("user_id") == userId)
                 {            
-                    // Set method_code - name conversion
-                    ResultSet methodRS = Spkdb.getMethodTable(con);
-                    Properties conversion = new Properties();                
-                    while(methodRS.next())
-                        conversion.setProperty(methodRS.getString(1), methodRS.getString(2));                    
-                    
                     // Get job information
                     long parent = jobRS.getLong("parent");
                     String methodCode = jobRS.getString("method_code");
-                    String method = "";
-                    if(methodCode != null)
-                        method = conversion.getProperty(methodCode, "Not Available");                    
                     long modelId = jobRS.getLong("model_id");
                     long datasetId = jobRS.getLong("dataset_id"); 
                     String modelVersion = jobRS.getString("model_version");
@@ -145,7 +134,7 @@ public class GetJobInfo extends HttpServlet
                     jobInfo.setProperty("datasetName", datasetName);
                     jobInfo.setProperty("datasetVersion", datasetVersion.substring(2));
                     jobInfo.setProperty("parent", String.valueOf(parent));
-                    jobInfo.setProperty("method", method);                    
+                    jobInfo.setProperty("methodCode", methodCode);
                 }
                 else
                 {

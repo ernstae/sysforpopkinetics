@@ -18,8 +18,8 @@ distribution.
 **********************************************************************/
 package uw.rfpk.mda.nonmem;
 
+import javax.help.*; 
 import javax.swing.*;
-import javax.swing.Timer;
 import javax.swing.text.*;  
 import javax.print.*;
 import javax.print.attribute.*;
@@ -29,16 +29,14 @@ import java.io.*;
 import java.net.URL; 
 import java.util.Vector;
 import java.util.Properties;
+import java.util.HashMap;
 import java.awt.print.*;
 import java.awt.font.*;
-import java.text.DecimalFormat;
 import org.netbeans.ui.wizard.*;
 import uw.rfpk.mda.nonmem.wizard.*;
 import uw.rfpk.mda.nonmem.display.*;
 import javax.swing.table.*;  
-import java.util.Date;
-import java.text.SimpleDateFormat;
-//import java.text.NumberFormat;
+import java.text.DecimalFormat;
 
 /**
  * This class creates a window for the model design agent.,  There are eleven buttons, 
@@ -55,6 +53,12 @@ public class MDAFrame extends JFrame
      */
     public MDAFrame(String title, String[] args)
     {
+        if(args.length == 0)
+        {
+            LogInDialog logIn = new LogInDialog(this, true);
+            args = logIn.getArgs();
+        }
+        
         String metal    = "javax.swing.plaf.metal.MetalLookAndFeel";
         String windows  = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
     
@@ -66,31 +70,33 @@ public class MDAFrame extends JFrame
         catch (Exception e) 
         {
 	
-	}        
-        
+	}   
+
         setTitle(title);                              
         initComponents();
         cutMenu.addActionListener(new DefaultEditorKit.CutAction());  
         copyMenu.addActionListener(new DefaultEditorKit.CopyAction());  
         pasteMenu.addActionListener(new DefaultEditorKit.PasteAction()); 
         
+        // Check server connection and get method table
         if(args.length != 6)
             isOnline = false;
         else
         {
             try
             {
-                // Talk to the server to see if it is on line
-                Network network = new Network("https://" + args[0] + ":" + args[1] + 
+                // Talk to the server to see if it is on line and get method table if it is 
+                Network network = new Network("https://" + args[0] + ":" + args[1] +
                                       "/user/servlet/uw.rfpk.servlets.TestConnection",
                                       args[2]);
-                network.talk("");
+                methodTable = (HashMap)network.talk(args[3]);
             }
             catch(Exception e)
 	    {
-                isOnline = false;  
+                isOnline = false;
             }  
         }
+
         if(isOnline)
       	{
             server = new Server(args);
@@ -121,6 +127,30 @@ public class MDAFrame extends JFrame
         };
         timer = new Timer(30000, taskPerformer);
         timer.setRepeats(false);
+        
+        // Setup help
+        setupHelp();
+    }
+    
+    private void setupHelp()
+    {
+        HelpSet hs = null;
+        try
+        {
+            ClassLoader cl = MDAFrame.class.getClassLoader();
+            String hsName = "helpfile.hs";
+            URL hsURL = HelpSet.findHelpSet(cl, hsName);
+            hs = new HelpSet(null, hsURL);
+        }
+        catch(Exception e)
+        {
+            System.out.println(e);
+            return;
+        }
+        helpBroker = hs.createHelpBroker();
+        helpBroker.enableHelpKey(this.getRootPane(), "Introduction", hs);
+        CSH.setHelpIDString(helpButton, "Introduction");
+        HelpButton.addActionListener(new CSH.DisplayHelpFromSource(helpBroker));
     }
     
     /** This method is called from within the constructor to
@@ -160,11 +190,11 @@ public class MDAFrame extends JFrame
         jTextField7 = new javax.swing.JTextField();
         jRadioButton7 = new javax.swing.JRadioButton();
         jRadioButton8 = new javax.swing.JRadioButton();
-        jLabel20 = new javax.swing.JLabel();
         jTextField14 = new javax.swing.JTextField();
         jRadioButton9 = new javax.swing.JRadioButton();
-        jLabel22 = new javax.swing.JLabel();
-        jTextField15 = new javax.swing.JTextField();
+        jRadioButton10 = new javax.swing.JRadioButton();
+        jRadioButton11 = new javax.swing.JRadioButton();
+        jRadioButton12 = new javax.swing.JRadioButton();
         buttonGroup1 = new javax.swing.ButtonGroup();
         errorMessageDialog = new javax.swing.JDialog();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -538,14 +568,14 @@ public class MDAFrame extends JFrame
         jLabel7.setText("short description (<=100 characters)     ");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
+        gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
         jPanel5.add(jLabel7, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 8;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         jPanel5.add(jTextField7, gridBagConstraints);
 
@@ -561,11 +591,10 @@ public class MDAFrame extends JFrame
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
         jPanel5.add(jRadioButton7, gridBagConstraints);
 
         jRadioButton8.setFont(new java.awt.Font("Default", 0, 12));
-        jRadioButton8.setText("Numerical Integration on Likelihood ");
+        jRadioButton8.setText("Monte Carlo integration on likelihood ");
         buttonGroup3.add(jRadioButton8);
         jRadioButton8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -577,17 +606,7 @@ public class MDAFrame extends JFrame
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
         jPanel5.add(jRadioButton8, gridBagConstraints);
-
-        jLabel20.setFont(new java.awt.Font("Default", 0, 12));
-        jLabel20.setText("method for estimation");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
-        jPanel5.add(jLabel20, gridBagConstraints);
 
         jTextField14.setEditable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -608,28 +627,54 @@ public class MDAFrame extends JFrame
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 5;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
         jPanel5.add(jRadioButton9, gridBagConstraints);
 
-        jLabel22.setFont(new java.awt.Font("Default", 0, 12));
-        jLabel22.setText("number of individual objective evaluations");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 7;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
-        jPanel5.add(jLabel22, gridBagConstraints);
+        jRadioButton10.setFont(new java.awt.Font("Default", 0, 12));
+        jRadioButton10.setText("Grid integration on likelihood");
+        buttonGroup3.add(jRadioButton10);
+        jRadioButton10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton10ActionPerformed(evt);
+            }
+        });
 
-        jTextField15.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 8;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 0);
-        jPanel5.add(jTextField15, gridBagConstraints);
+        jPanel5.add(jRadioButton10, gridBagConstraints);
+
+        jRadioButton11.setFont(new java.awt.Font("Default", 0, 12));
+        jRadioButton11.setText("Analytical integration on likelihood");
+        buttonGroup3.add(jRadioButton11);
+        jRadioButton11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton11ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanel5.add(jRadioButton11, gridBagConstraints);
+
+        jRadioButton12.setFont(new java.awt.Font("Dialog", 0, 12));
+        jRadioButton12.setText("Miser M.C. integration on likelihood");
+        buttonGroup3.add(jRadioButton12);
+        jRadioButton12.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton12ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanel5.add(jRadioButton12, gridBagConstraints);
 
         jTabbedPane1.addTab("Job", jPanel5);
 
@@ -641,7 +686,6 @@ public class MDAFrame extends JFrame
         errorMessageDialog.setTitle("Error Message");
         errorMessageDialog.setLocationRelativeTo(this);
         jTextArea1.setEditable(false);
-        jTextArea1.setFont(new java.awt.Font("Courier 10 Pitch", 0, 12));
         jScrollPane2.setViewportView(jTextArea1);
 
         errorMessageDialog.getContentPane().add(jScrollPane2, java.awt.BorderLayout.CENTER);
@@ -1640,6 +1684,21 @@ public class MDAFrame extends JFrame
         pack();
     }//GEN-END:initComponents
 
+    private void jRadioButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton12ActionPerformed
+        jobMethodCode = "mi";
+        jTextField14.setText(((String[])methodTable.get("mi"))[0]);
+    }//GEN-LAST:event_jRadioButton12ActionPerformed
+
+    private void jRadioButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton11ActionPerformed
+        jobMethodCode = "an";
+        jTextField14.setText(((String[])methodTable.get("an"))[0]);
+    }//GEN-LAST:event_jRadioButton11ActionPerformed
+
+    private void jRadioButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton10ActionPerformed
+        jobMethodCode = "gr";
+        jTextField14.setText(((String[])methodTable.get("gr"))[0]);
+    }//GEN-LAST:event_jRadioButton10ActionPerformed
+
     private void warningMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_warningMenuActionPerformed
         if(output != null && output.warning != null)
         {
@@ -1653,12 +1712,13 @@ public class MDAFrame extends JFrame
                 warning += "\n";
             }
             jTextArea5.setText(warning);
+            jTextArea5.setCaretPosition(0);            
             warningMessageDialog.setSize(400, 300);
             warningMessageDialog.show();
         }
         else
             JOptionPane.showMessageDialog(null, "The warning message is not available",
-                                          "Warning Message Error",
+                                          "Message Not Found Error",
                                           JOptionPane.ERROR_MESSAGE);
     }//GEN-LAST:event_warningMenuActionPerformed
 
@@ -1704,29 +1764,34 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_dotsMenuActionPerformed
 
     private void jRadioButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton9ActionPerformed
-        jTextField14.setText("Markov Chain M. C.");
-        jTextField15.setEnabled(true);
-        jTextField15.setText("1000");
+        jobMethodCode = "mc";
+        jTextField14.setText(((String[])methodTable.get("mc"))[0]);
     }//GEN-LAST:event_jRadioButton9ActionPerformed
 
     private void jRadioButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton8ActionPerformed
-        jTextField14.setText("M. C. Likelihood");
-        jTextField15.setEnabled(true);        
-        jTextField15.setText("1000");
+        jobMethodCode = "ml";
+        jTextField14.setText(((String[])methodTable.get("ml"))[0]);
     }//GEN-LAST:event_jRadioButton8ActionPerformed
 
     private void jRadioButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton7ActionPerformed
-        jTextField14.setText(method);
-        jTextField15.setText("");
-        jTextField15.setEnabled(false);        
+        jobMethodCode = method;
+        jTextField14.setText(((String[])methodTable.get(method))[0]);
     }//GEN-LAST:event_jRadioButton7ActionPerformed
 
     private void traceMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_traceMenuActionPerformed
-        saveFile();
-        textArea.setText(output.trace);
-        textArea.setCaretPosition(0);
-        jInternalFrame1.setTitle("Optimizer trace");   
-        file = null;        
+        if(output != null && output.trace != null)
+        {
+            saveFile();
+            textArea.setText(output.trace);
+            textArea.setCaretPosition(0);
+            jInternalFrame1.setTitle("Optimization trace");   
+            file = null;            
+        }
+        else
+            JOptionPane.showMessageDialog(null, "The optimization trace is not available.", 
+                                          "Message Not Found Error",               
+                                          JOptionPane.ERROR_MESSAGE);
+        
     }//GEN-LAST:event_traceMenuActionPerformed
 
     private void dataLibRButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dataLibRButtonActionPerformed
@@ -1758,11 +1823,13 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_DatasetLibraryButtonActionPerformed
 
     private void HelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HelpButtonActionPerformed
+/*
         if(!isOnline)
             new Help("Instructions for Using Model Design Agent", 
                      GettingStarted.class.getResource("/uw/rfpk/mda/nonmem/help/MDAHelp.html"));
         else
-            Utility.openURL("https://" + serverName + ":" + serverPort + "/user/help/MDAHelp.jsp");  
+            Utility.openURL("https://" + serverName + ":" + serverPort + "/user/help/MDAHelp.jsp");
+*/  
     }//GEN-LAST:event_HelpButtonActionPerformed
 
     private void modelLibRButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modelLibRButtonActionPerformed
@@ -1896,7 +1963,7 @@ public class MDAFrame extends JFrame
         }       
         
         String[] deltas = revision.split("\n");
-        textArea.setText(revision);                
+            
         // Mark the tests
         int cL = -1; 
         int cR = -1;
@@ -2371,6 +2438,7 @@ public class MDAFrame extends JFrame
                 }
                 else
                 {
+
                     JOptionPane.showMessageDialog(null, "The version of the dataset you selected" + 
                                                   " is different from the dataset in the input file.", 
                                                   "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -2508,259 +2576,13 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_jTable1MouseClicked
 
     private void summaryMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_summaryMenuActionPerformed
-        makeSummary();
-    }//GEN-LAST:event_summaryMenuActionPerformed
-
-    private void makeSummary()
-    {
-        // Ask the user wether to save the text to a file
         saveFile();
-        
-        // Preparation
-        DecimalFormat f = new DecimalFormat("0.00E00");
-//        NumberFormat p = NumberFormat.getPercentInstance();
-//        p.setMaximumFractionDigits(1);
-//        p.setMinimumFractionDigits(1);
-        String par = "", ser = "", rse = "", sd = "", cv = "", n, lb = "", ub = ""; 
-        String NA = "N/A";
-        
-        if(output.objective == null)
-            output.objective = NA;
-        
-        String theta = ""; 
-        String omega = "";
-        String sigma = "";
-        int k = 0;
-        // Write theta
-        if(output.theta != null)
-        {
-            theta = "THETA" + "\n";
-            for(int i = 0; i < output.theta.length; i++)
-            {
-                n = String.valueOf(i + 1);        
-                par = output.theta[i] != null ? 
-                      Utility.formatData(6, f.format(Double.parseDouble(output.theta[i]))) : NA;
-                ser = output.stdErrTheta != null && output.stdErrTheta[i] != null ? 
-                      Utility.formatData(6, f.format(Double.parseDouble(output.stdErrTheta[i]))) : NA;
-                rse = output.coefVariation != null && output.coefVariation[i] != null ? 
-                      Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[i]))) : NA;
-                lb = output.confInterval != null && output.confInterval[0][i] != null ? 
-                     Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][i]))) : NA;
-                ub = output.confInterval != null && output.confInterval[1][i] != null ? 
-                     Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][i]))) : NA;
-                theta = theta + getSpace(5 - n.length()) + n + "     " + par + getSpace(12 - par.length()) + ser +
-                        getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub + "\n";  
-                k++;
-            }
-        }
-        
-        // Write omega
-        if(output.omega != null && output.omegaStruct != null)
-        {
-            for(int l = 0; l < output.omega.length; l++)
-            {
-                omega += "OMEGA" + "\n";
-                if(output.omegaStruct[l].equals("block"))
-                {
-                    for(int j = 1; j < output.omega[l].length + 1; j++)
-                    {
-                        for(int i = j - 1; i < output.omega[l].length; i++)  
-                        {
-                            par = output.omega[l][i][j] != null ? 
-                                  Utility.formatData(6, f.format(Double.parseDouble(output.omega[l][i][j]))) : NA;
-                            ser = output.stdErrOmega != null && output.stdErrOmega[l][i][j] != null ? 
-                                  Utility.formatData(6, f.format(Double.parseDouble(output.stdErrOmega[l][i][j]))) : NA;
-                            rse = output.coefVariation != null && output.coefVariation[k] != null ? 
-                                  Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
-                            lb = output.confInterval != null && output.confInterval[0][k] != null ? 
-                                 Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
-                            ub = output.confInterval != null && output.confInterval[1][k] != null ? 
-                                 Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k++]))) : NA;
-                            cv = output.omega[l][i][j] != null && Double.parseDouble(output.omega[l][i][j]) >= 0 ? 
-                                 Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(output.omega[l][i][j])))) : NA;
-                            omega = omega + "  " + j + "," + (i + 1) + "     " + par + getSpace(12 - par.length()) + ser +                            
-                                    getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub;
-                            if(j == i + 1)
-                                omega += getSpace(14 - ub.length()) + cv;                    
-                            omega += "\n";                     
-                        }
-                    }
-                }
-
-                if(output.omegaStruct[l].equals("diagonal"))
-                {
-                    for(int i = 0; i < output.omega[l].length; i++)
-                    {
-                        par = output.omega[l][i][i + 1] != null ?
-                              Utility.formatData(6, f.format(Double.parseDouble(output.omega[l][i][i + 1]))) : NA;
-                        ser = output.stdErrOmega != null && output.stdErrOmega[l][i][i + 1] != null ? 
-                              Utility.formatData(6, f.format(Double.parseDouble(output.stdErrOmega[l][i][i + 1]))) : NA;
-                        rse = output.coefVariation != null && output.coefVariation[k] != null ? 
-                              Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
-                        lb = output.confInterval != null && output.confInterval[0][k] != null ? 
-                             Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
-                        ub = output.confInterval != null && output.confInterval[1][k] != null ? 
-                             Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k++]))) : NA;
-                        cv = output.omega[l][i][i + 1] != null && Double.parseDouble(output.omega[l][i][i + 1]) >= 0 ? 
-                             Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(output.omega[l][i][i + 1])))) : NA;
-                        omega = omega + "  " + (i + 1) + "," + (i + 1) + "     " + par + getSpace(12 - par.length()) + ser +                            
-                                getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub +
-                                getSpace(14 - ub.length()) + cv + "\n";
-                    }
-                }
-            }
-        }
-        
-        // Write sigma
-        if(output.sigma != null && output.sigmaStruct != null)
-        {
-            for(int l = 0; l < output.sigma.length; l++)
-            {
-                sigma += "SIGMA" + "\n";                
-                if(output.sigmaStruct[l].equals("block"))
-                {            
-                    for(int j = 1; j < output.sigma[l].length + 1; j++)
-                    {
-                        for(int i = j - 1; i < output.sigma[l].length; i++)  
-                        {                        
-                            par = output.sigma[l][i][j] != null ? 
-                                  Utility.formatData(6, f.format(Double.parseDouble(output.sigma[l][i][j]))) : NA;
-                            ser = output.stdErrSigma != null && output.stdErrSigma[l][i][j] != null ? 
-                                  Utility.formatData(6, f.format(Double.parseDouble(output.stdErrSigma[l][i][j]))) : NA;   
-                            rse = output.coefVariation != null && output.coefVariation[k] != null ? 
-                                  Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
-                            lb = output.confInterval != null && output.confInterval[0][k] != null ? 
-                                 Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
-                            ub = output.confInterval != null && output.confInterval[1][k] != null ? 
-                                 Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k++]))) : NA;
-                            sd = output.sigma[l][i][j] != null && Double.parseDouble(output.sigma[l][i][j]) >= 0 ? 
-                                 Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(output.sigma[l][i][j])))) : NA;
-                            sigma = sigma + "  " + j + "," + (i + 1) + "     " + par + getSpace(12 - par.length()) + ser +               
-                                    getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub;                   
-                            if(j == i + 1)
-                                sigma += getSpace(14 - ub.length()) + sd;
-                            sigma += "\n";                    
-                        }
-                    }
-                }
- 
-                if(output.sigmaStruct[l].equals("diagonal"))
-                {        
-                    for(int i = 0; i < output.sigma[l].length; i++)
-                    {
-                        par = output.sigma[l][i][i + 1] != null ?
-                              Utility.formatData(6, f.format(Double.parseDouble(output.sigma[l][i][i + 1]))) : NA;
-                        ser = output.stdErrSigma != null && output.stdErrSigma[l][i][i + 1] != null ? 
-                              Utility.formatData(6, f.format(Double.parseDouble(output.stdErrSigma[l][i][i + 1]))) : NA;
-                        rse = output.coefVariation != null && output.coefVariation[k] != null ? 
-                              Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
-                        lb = output.confInterval != null && output.confInterval[0][k] != null ? 
-                             Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
-                        ub = output.confInterval != null && output.confInterval[1][k] != null ? 
-                             Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k++]))) : NA;
-                        cv = output.sigma[l][i][i + 1] != null && Double.parseDouble(output.sigma[l][i][i + 1]) >= 0 ? 
-                             Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(output.sigma[l][i][i + 1])))) : NA;
-                        sigma = sigma + "  " + (i + 1) + "," + (i + 1) + "     " + par + getSpace(12 - par.length()) + ser +                            
-                                getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub +
-                                getSpace(14 - ub.length()) + cv + "\n";
-                    }
-                }
-            }
-        }       
-        
-        // Galculate computing time
-        String computingTime = null;
-        if(output.computingTimes != null && output.computingTimes.length > 0)
-        {
-            double elapsedTime = 0;
-            for(int i = 0; i < output.computingTimes.length; i++)
-            {
-                if(output.computingTimes[i] != null && !output.computingTimes[i].equals(""))
-                    elapsedTime += Double.parseDouble(output.computingTimes[i]);
-                else
-                {
-                    computingTime = NA;
-                    break;
-                }
-            }
-            if(!computingTime.equals(NA))
-                computingTime = String.valueOf(elapsedTime) + " s";
-        }
-        else
-            computingTime = NA;
-
-        String jobAbstract = output.jobAbstract != null ? output.jobAbstract : NA;
-        String submissionTime = output.submissionTime != null ? formatTime(output.submissionTime) : NA;
-        String completionTime = output.completionTime != null ? formatTime(output.completionTime) : NA;        
-        String analysis = output.analysis != null ? output.analysis : NA;
-        String method = output.method != null ? output.method : NA;
-        String modelName = output.modelName != null ? output.modelName : NA;
-        String modelVersion = output.modelVersion != null ? output.modelVersion : NA;
-        String modelAbstract = output.modelAbstract != null ? output.modelAbstract : NA;
-        String dataName = output.dataName != null ? output.dataName : NA;
-        String dataVersion = output.dataVersion != null ? output.dataVersion : NA;
-        String dataAbstract = output.dataAbstract != null ? output.dataAbstract : NA;
-        String errorMessage = output.error != null ? "\n" + output.error : NA;
-        String objective = output.objective != null ? output.objective : NA;
-        String integrationMethod = output.mcMethod != null ? output.mcMethod : NA;
-        String objStdErr = output.objStdErr != null ? output.objStdErr : NA;
-        String warningMessage = "";
-        if(output.warning != null)
-        {
-            warningMessage = "\n";
-            for(int i = 0; i < output.warning.length; i++)
-            {
-                warningMessage += "<Warning Message " + (i + 1) + ">\n" + output.warning[i][0] + "\n";
-                if(isDeveloper)
-                    warningMessage += "This message was issued from file: " + output.warning[i][1] + 
-                                      " at line: " + output.warning[i][2] + "\n";
-            }
-        }
-        else
-            warningMessage = NA;
-        
-        // Write summary
-        String summary = "Summary Report" + "\n\n\n" +
-                         "Job Description: " + jobAbstract + "\n\n" +
-                         "Time of Job Submisison: " + submissionTime + "\n\n" +
-                         "Time of Job Completion: " + completionTime + "\n\n" +
-                         "SPK Computing Time: " + computingTime + "\n\n" +
-                         "Analysis Type: " + analysis + "\n\n" +
-                         "Estimation Method: " + method + "\n\n" +                         
-                         "Model Name: " + modelName + "\n\n" +
-                         "Model Version: " + modelVersion + "\n\n" +
-                         "Model Description: " + modelAbstract + "\n\n" +
-                         "Dataset Name: " + dataName + "\n\n" +
-                         "Dataset Version: " + dataVersion + "\n\n" +
-                         "Dataset Description: " + dataAbstract + "\n\n" +                      
-                         "Error Messages: " + errorMessage + "\n\n" +
-                         "Warning Messages: " + warningMessage + "\n" +
-                         "Minimum Value of Objective Function: " + objective + "\n\n" +
-                         "Numerical Integration Method: " + integrationMethod + "\n\n" +
-                         "Standard Error of the Objective Function Value: " + objStdErr + "\n\n" +
-                         "Parameter Estimation Result: ";
-        if(output.theta == null)
-            summary += NA;
-        else
-        {
-            String variability = "*It is residual variability.";
-            if(output.analysis.equals("population"))
-                variability = "*For OMEGA, it is interindividual variability. For SIGMA, it is residual variability.";
-            summary += "\n" +
-                         "=====================================================================================" + "\n\n" +
-                         "Parameter  Estimate  Std. Error  Coef. of Var.  95% Confidence Interval  Variability*" + "\n" +
-                         "                                                  L-bound     U-bound"                 + "\n" + 
-                         theta + "\n" + omega + "\n";
-            if(output.analysis.equals("population"))             
-                summary += sigma + "\n";
-            summary += variability + "\n\n" +
-                       "=====================================================================================";                    
-        }
-        textArea.setText(summary);
+        textArea.setText(Summary.makeSummary(output, isOnline, isDeveloper, jobMethodCode, methodTable));
         textArea.setCaretPosition(0);
         jInternalFrame1.setTitle("");
         file = null;
-    }
+    }//GEN-LAST:event_summaryMenuActionPerformed
+
     
     private void ReadOutputButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ReadOutputButtonActionPerformed
         readOutput(textArea.getText());
@@ -2785,6 +2607,20 @@ public class MDAFrame extends JFrame
             return;
         }
 
+        // If the user is going to use a likelihhod evaluation method modify the input file
+        jobMethodCode = "fo";
+        if(jobId != 0 && text.indexOf("<pop_analysis ") != -1 && text.indexOf(" is_estimation=\"yes\" ") != -1 && 
+           JOptionPane.showConfirmDialog(null, "Are you going to use a likelihood evaluation only method?",
+                                         "Question", JOptionPane.YES_NO_OPTION) == 0)
+        {
+            // Get report
+            String report = server.getOutput(jobId, isLibrary).getProperty("report");
+            text = Likelihood.changeInput(text, report, jobId, isLibrary);
+            textArea.setText(text);
+            textArea.setCaretPosition(0);
+            jobMethodCode = "ml";
+        }
+                
         // Find $PROBLEM
         int beginIndex = text.indexOf("\n$PROBLEM") + 9; 
         int endIndex = text.indexOf("\n", beginIndex);
@@ -2795,51 +2631,111 @@ public class MDAFrame extends JFrame
         endIndex = text.indexOf("\n", beginIndex);
         String data = text.substring(beginIndex, endIndex).trim();
         
-        // Find estimation method
-        beginIndex = text.indexOf("<pop_analysis ");
-        if(beginIndex == -1)
-            beginIndex = text.indexOf("<ind_analysis ");
-        if(beginIndex == -1)
+        // Find method
+        if(!jobMethodCode.equals("ml"))
         {
-            JOptionPane.showMessageDialog(null, "No analysis is specified in the input file",
-                                          "Input Error", JOptionPane.ERROR_MESSAGE);
-            return;   
+            if(text.indexOf("<ind_analysis") != -1)
+            {
+                beginIndex = text.indexOf("<ind_analysis ");
+                if(text.indexOf("is_estimation=\"yes\"", beginIndex) != -1)
+                    jobMethodCode = "ia";
+                else if(text.indexOf("<simulation ") != -1)
+                    jobMethodCode = "so";
+                else
+                {
+                    JOptionPane.showMessageDialog(null, "Neither estimation nor simulation is included in the job",
+                                                  "Input Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }                
+            }
+            else if(text.indexOf("<pop_analysis ") != -1)
+            {
+                beginIndex = text.indexOf("<pop_analysis ");
+                String analysis = text.substring(beginIndex, text.indexOf(">", beginIndex));
+                if(analysis.indexOf("is_estimation=\"yes\"") != -1)
+                {
+                    beginIndex = analysis.indexOf(" approximation=") + 16;
+                    endIndex = analysis.indexOf("\"", beginIndex);
+                    String approximation = analysis.substring(beginIndex, endIndex);
+                    method = "";
+                    if(approximation.equals("fo")) method = "fo";
+                    else if(approximation.equals("foce")) method = "eh";
+                    else if(approximation.equals("laplace")) method = "la";
+                    if(!method.equals("")) jobMethodCode = method;
+                }
+                else if(analysis.indexOf("is_estimation=\"no\"") != -1 && text.indexOf("<simulation ") != -1)
+                    jobMethodCode = "so";
+                else
+                {
+                    JOptionPane.showMessageDialog(null, "Neither estimation nor simulation is included in the job",
+                                                  "Input Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "Neither population nor individual analysis is in the job",
+                                              "Input Error", JOptionPane.ERROR_MESSAGE);
+                return;          
+            }            
         }
-        endIndex = text.indexOf(">", beginIndex);
-        String analysis = text.substring(beginIndex, endIndex);
-        beginIndex = analysis.indexOf(" approximation=");
-        if(beginIndex != -1)
-        {
-            beginIndex += 16;
-            endIndex = analysis.indexOf("\"", beginIndex);
-            method = analysis.substring(beginIndex, endIndex);
-            if(method.equals("fo")) method = "First Order";
-            if(method.equals("foce")) method = "Expected Hessian";
-            if(method.equals("laplace")) method = "Laplace Approximation";            
-        }
-        else
-            method = "";
         
         // Collect archive information
         getArchive = false;
         modelArchive = new ArchiveInfo();
-        dataArchive = new ArchiveInfo(); 
+        dataArchive = new ArchiveInfo();
         jRadioButton1.setSelected(true);
         jRadioButton2.setSelected(false);
         jRadioButton3.setSelected(false);
         jRadioButton4.setSelected(true);
         jRadioButton5.setSelected(false);
         jRadioButton6.setSelected(false);
-        jRadioButton7.setSelected(true);
+        jRadioButton7.setSelected(false);
         jRadioButton8.setSelected(false);
         jRadioButton9.setSelected(false);
-        if(method.equals(""))
+        jRadioButton10.setSelected(false);
+        jRadioButton11.setSelected(false);
+        jRadioButton12.setSelected(false);
+        jRadioButton7.setEnabled(((String[])methodTable.get("fo"))[2].equals("0") ||
+                                 ((String[])methodTable.get("eh"))[2].equals("0") ||
+                                 ((String[])methodTable.get("la"))[2].equals("0") || isDeveloper);
+        jRadioButton8.setEnabled(((String[])methodTable.get("ml"))[2].equals("0") || isDeveloper);
+        jRadioButton10.setEnabled(((String[])methodTable.get("gr"))[2].equals("0") || isDeveloper);
+        jRadioButton11.setEnabled(((String[])methodTable.get("an"))[2].equals("0") || isDeveloper);
+        jRadioButton12.setEnabled(((String[])methodTable.get("mi"))[2].equals("0") || isDeveloper);        
+        if(jobMethodCode.equals("ia") || jobMethodCode.equals("so"))
         {
-            jRadioButton7.setSelected(false);
             jRadioButton7.setEnabled(false);
-        }
-        if(text.indexOf("<sigma ") == -1 || method.equals(""))
             jRadioButton8.setEnabled(false);
+            jRadioButton9.setEnabled(false);
+            jRadioButton10.setEnabled(false);
+            jRadioButton11.setEnabled(false);
+            jRadioButton12.setEnabled(false);
+        }
+        else if(jobMethodCode.equals("fo") || jobMethodCode.equals("eh") || jobMethodCode.equals("la"))
+        {
+            jRadioButton8.setEnabled(false);
+            jRadioButton10.setEnabled(false);
+            jRadioButton11.setEnabled(false);
+            jRadioButton12.setEnabled(false);
+            jRadioButton7.setSelected(true);
+            jRadioButton7.doClick();
+        }
+        else if(jobMethodCode.equals("ml"))
+        {
+            jRadioButton7.setEnabled(false);
+            jRadioButton9.setEnabled(false);
+            jRadioButton8.setSelected(true);
+        }
+        jTextField14.setText(((String[])methodTable.get(jobMethodCode))[0]);
+
+        if(jobId == 0)
+        {
+            jRadioButton8.setEnabled(false);
+            jRadioButton10.setEnabled(false);
+            jRadioButton11.setEnabled(false);
+            jRadioButton12.setEnabled(false);            
+        }
         jTextField1.setText("");
         jTextField2.setText("");
         jTextField3.setText("1");
@@ -2851,9 +2747,6 @@ public class MDAFrame extends JFrame
         jTextField2.setEnabled(true);
         jTextField4.setEnabled(true);
         jTextField5.setEnabled(true);
-        jTextField14.setText(method);
-        jTextField15.setText("");
-        jTextField15.setEnabled(false);
         archiveDialog.setSize(300, 320);
         archiveDialog.setVisible(true);
     }//GEN-LAST:event_SubmitJobButtonActionPerformed
@@ -3060,18 +2953,17 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_ThetaMenuActionPerformed
 
     private void objectiveMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_objectiveMenuActionPerformed
-        if(output != null && output.objective != null && output.method != null)
+        if(output != null && output.objective != null)
         {
             String objective = "Minimum Value of the Objective Function:\n" + output.objective + "\n";
             String objStdErr = "";
-            String mcMethod = "";
-            if(output.method.equals("M.C. Likelihood") && output.objStdErr != null)
-            {
-                mcMethod = "\nThe integration method is '" + output.mcMethod + "'.";
-                objStdErr = "\nStandard Deviation of the Objective Function Value:\n" + output.objStdErr + "\n";
-            }
-            String method = "\nEstimation Method Used in the Analysis:\n" + output.method + "\n";
-            jTextArea2.setText(objective + objStdErr + method + mcMethod);
+            String jobMethod = "";
+            if(output.objStdErr != null)
+                objStdErr = "\nStandard Error of the Objective Function Value:\n" + output.objStdErr + "\n";
+            if(output.methodCode != null)
+                jobMethod = "\nMethod Used in the Analysis:\n" + 
+                            ((String[])methodTable.get(output.methodCode))[0] + "\n";
+            jTextArea2.setText(objective + objStdErr + jobMethod);
             objectiveDialog.setSize(300, 200);
             objectiveDialog.show();
         }
@@ -3084,18 +2976,28 @@ public class MDAFrame extends JFrame
     private void errorMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_errorMenuActionPerformed
         if(output != null && output.error != null)
         {
-            jTextArea1.setText(output.error);
+            String error = "";
+            for(int i = 0; i < output.error.length; i++)
+            {
+                error += "<Error Message " + (i + 1) + ">\n" + output.error[i][0] + "\n";
+                if(isDeveloper)
+                    error += "This message was issued from file: " + output.error[i][1] + 
+                               " at line: " + output.error[i][2] + "\n";
+                error += "\n";
+            }
+            jTextArea1.setText(error);
+            jTextArea1.setCaretPosition(0);            
             errorMessageDialog.setSize(400, 300);
             errorMessageDialog.show();
         }
         else
-             JOptionPane.showMessageDialog(null, "The error message is not available", 
-                                          "Error Message Error",               
+            JOptionPane.showMessageDialog(null, "The error message is not available",
+                                          "Message Not Found Error",
                                           JOptionPane.ERROR_MESSAGE);
     }//GEN-LAST:event_errorMenuActionPerformed
     
     private void exitMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuActionPerformed
-        dispose();
+        server.endSession();
     }//GEN-LAST:event_exitMenuActionPerformed
 
     private void printMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printMenuActionPerformed
@@ -3194,14 +3096,14 @@ public class MDAFrame extends JFrame
             modelArchive.log = "";
         
         // Check input errors
-        if(modelArchive.name.equals("") && !jRadioButton8.isSelected())
+        if(modelArchive.name.equals(""))
         {
             JOptionPane.showMessageDialog(null, "The model name is requried",  
                                           "Input Error",            
                                           JOptionPane.ERROR_MESSAGE);                 
             return; 
         }            
-        if(modelArchive.version.equals("") && !jRadioButton8.isSelected())
+        if(modelArchive.version.equals(""))
         {
             JOptionPane.showMessageDialog(null, "The model version is requried",  
                                           "Input Error",            
@@ -3223,14 +3125,14 @@ public class MDAFrame extends JFrame
             dataArchive.log = "";
         
         // Check input errors  
-        if(dataArchive.name.equals("") && !jRadioButton8.isSelected())
+        if(dataArchive.name.equals(""))
         {
             JOptionPane.showMessageDialog(null, "The dataset name is requried",  
                                           "Input Error",            
-                                          JOptionPane.ERROR_MESSAGE);                 
+                                          JOptionPane.ERROR_MESSAGE);
             return; 
         }            
-        if(dataArchive.version.equals("") && !jRadioButton8.isSelected())
+        if(dataArchive.version.equals(""))
         {
             JOptionPane.showMessageDialog(null, "The dataset version is requried",  
                                           "Input Error",            
@@ -3247,60 +3149,32 @@ public class MDAFrame extends JFrame
         String model = XMLReader.getModelArchive(spkInput.substring(index2 - 22));
         
         // Collect version logs
-        if((modelArchive.isNewArchive || modelArchive.isNewVersion) && !jRadioButton8.isSelected())
+        if((modelArchive.isNewArchive || modelArchive.isNewVersion) && (jRadioButton7.isSelected() || jRadioButton9.isSelected()))
         {
             modelArchive.log = JOptionPane.showInputDialog("Enter log for the new version of the model (<=100 characters).  ");
             if(modelArchive.log == null)
                 modelArchive.log = "";
         }
-        if((dataArchive.isNewArchive || dataArchive.isNewVersion) && !jRadioButton8.isSelected())
+        if((dataArchive.isNewArchive || dataArchive.isNewVersion) && (jRadioButton7.isSelected() || jRadioButton9.isSelected()))
         {
             dataArchive.log = JOptionPane.showInputDialog("Enter log for the new version of the dataset (<=100 characters).");
             if(dataArchive.log == null)
                 dataArchive.log = "";
         }
         
-        // Get job method code
-        String jobMethodCode = "no";
-        if(jTextField14.getText().equals("First Order")) jobMethodCode = "fo";
-        if(jTextField14.getText().equals("Expected Hessian")) jobMethodCode = "eh";
-        if(jTextField14.getText().equals("Laplace Approximation")) jobMethodCode = "la";
-        if(jTextField14.getText().equals("M. C. Likelihood")) jobMethodCode = "ml";
-        if(jTextField14.getText().equals("Markov Chain M. C.")) jobMethodCode = "mc";
-
         // Remove number of objective function evaluations
         int indexMC = source.indexOf("<monte_carlo ");
         if(indexMC != -1)
             source = source.substring(0, indexMC - 3) + source.substring(source.indexOf("</nonmem>"));
         
+        // Get job method class
+        String jobMethodClass = ((String[])methodTable.get(jobMethodCode))[1];
+        
         // Add number of objective function evaluations
-        if(jobMethodCode.equals("ml"))
+        if(jobMethodClass.equals("le"))
         {
-            if(!Utility.isPosIntNumber(jTextField15.getText().trim()))
-            {
-                JOptionPane.showMessageDialog(null, "The number of individual objective evaluations is missing",  
-                                              "Input Error",            
-                                              JOptionPane.ERROR_MESSAGE);                 
+            if(Likelihood.insertLeElement(source, jobMethodCode) == null)
                 return;
-            }
-            else
-            {
-                Object[] options = {"Monte Carlo", "Grid"};
-                if(isDeveloper)
-                    options = new Object[]{"Monte Carlo", "Grid", "Analytic"};
-                Object selectedValue = JOptionPane.showInputDialog(null, "Please select an integration method.", 
-                                                                   "Input for Likelihood Evaluation.", 
-                                                                   JOptionPane.INFORMATION_MESSAGE, null,
-                                                                   options, options[0]);
-                String integrationMethod = "monte";
-                if(((String)selectedValue).equals("Grid"))
-                    integrationMethod = "grid";
-                else if(((String)selectedValue).equals("Analytic"))
-                    integrationMethod = "analytic";
-                source = source.replaceFirst("</nonmem>", "   <monte_carlo number_eval=\"" + 
-                                             jTextField15.getText().trim() + "\" method=\"" + 
-                                             integrationMethod + "\" />\n   </nonmem>");
-            }
         }
         
         // Get job parent
@@ -3310,18 +3184,7 @@ public class MDAFrame extends JFrame
             jobParent = jobId;
             jobId = 0;
         }
-        else
-        {
-            if(jRadioButton8.isSelected())
-                JOptionPane.showMessageDialog(null, "The required Job Parent for the method was not found.\n" +
-                                              "Please click the Input button on the Job Information Dialog.",
-                                              "Information Dialog", JOptionPane.INFORMATION_MESSAGE);
-            else
-                JOptionPane.showMessageDialog(null, "Job parent was not found.  If the job has a parent,\n" +
-                                              "please click the Input button on the Job Information Dialog.",
-                                              "Information Dialog", JOptionPane.INFORMATION_MESSAGE);
-        }
-        
+
         // Submit the job
         server.submitJob(source, dataset, model, jobAbstract, modelArchive, dataArchive,
                          jobMethodCode, jobParent);    
@@ -3336,10 +3199,10 @@ public class MDAFrame extends JFrame
     
     /** Exit the Application */
     private void exitForm(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_exitForm
-        System.exit(0);
+        server.endSession();       
     }//GEN-LAST:event_exitForm
 
-    // This method performs save file operation.
+    // This method performs open file operation.
     private String[] openOperation()
     {
         // Prepare for the return
@@ -3452,7 +3315,8 @@ public class MDAFrame extends JFrame
         files.setSelectedFile(new File(""));
         
         // Set restart option
-        if(JOptionPane.showConfirmDialog(null, "Do you want SPK to continue estimation when the maximum\n " +
+        if(!records.getProperty("Estimation").equals("") &&
+           JOptionPane.showConfirmDialog(null, "Do you want SPK to continue estimation when the maximum\n " +
                                          "allowable number of evaluations you specified is reached?",
                                          "Question Dialog",
                                          JOptionPane.YES_NO_OPTION,
@@ -3462,10 +3326,18 @@ public class MDAFrame extends JFrame
             object.getSource().isRestart = false;
         
         // Write SPK input file in XML format
-        XMLWriter writer = new XMLWriter(modelArchive, dataArchive, control, object);
-        textArea.setText(writer.getDocument()); 
-        textArea.setCaretPosition(0);        
-        jInternalFrame1.setTitle("SPK input");
+        if(object.getSource() == null || object.getData() == null || control == null)
+        {
+            JOptionPane.showMessageDialog(null, "Input information is not complete.", 
+                                          "Input Error", JOptionPane.ERROR_MESSAGE);
+        }
+        else
+        {
+            XMLWriter writer = new XMLWriter(control, object);
+            textArea.setText(writer.getDocument()); 
+            textArea.setCaretPosition(0);        
+            jInternalFrame1.setTitle("SPK input");
+        }
         WriteInputButton.setEnabled(true);
     }
    
@@ -3542,12 +3414,10 @@ public class MDAFrame extends JFrame
                                         {                                            
                                             out.write(getSpace(12 - header[j].length()));
                                             out.write(header[j]);
-                                        }      
-                                    }
-                                    else
+                                        }
                                         out.write(ls);
-                                    out.write(ls);
-                                    
+                                    }
+
                                     // Format and write data
                                     for(k = start; k < nRows && k < start + 900; k++) 
                                     {
@@ -3641,7 +3511,11 @@ public class MDAFrame extends JFrame
         JOptionPane.showMessageDialog(null, "Output processing is finished. Result is ready for presentation.",  
                                       "MDA Status Information",             
                                       JOptionPane.INFORMATION_MESSAGE);
-        makeSummary();
+        saveFile();
+        textArea.setText(Summary.makeSummary(output, isOnline, isDeveloper, jobMethodCode, methodTable));
+        textArea.setCaretPosition(0);
+        jInternalFrame1.setTitle("");
+        file = null;
     }
     
     // This function return spaces
@@ -3706,14 +3580,6 @@ public class MDAFrame extends JFrame
         }
     }
     
-    // Format timestamp
-    private String formatTime(String time)
-    {
-        Date date = new Date(Long.parseLong(time + "000"));
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE, MMM, d yyyy 'at' HH:mm:ss z");
-        return formatter.format(date); 
-    }
-    
     // Display a list of jobs or models or versions that belongs to the user
     private void showArchiveList(boolean isRepeatCall)
     {
@@ -3726,7 +3592,7 @@ public class MDAFrame extends JFrame
             {
                 timer.start();
                 title = "Job List"; 
-                header = new String[]{"Submission Time", "Status Code", "Model.Version", "Dataset.Version", "Job Description"};
+                header = new String[]{"Job ID", "Submission Time", "Status Code", "Model.Version", "Dataset.Version", "Job Description"};
                 break;
             }
             case 'm':
@@ -3805,22 +3671,35 @@ public class MDAFrame extends JFrame
         // Put the list in a table and then show the dialog containing the table
         if(archiveList.length < 0)
             return;
-        
-        DisplayTableModel reportModel = new DisplayTableModel(archiveList, header, 1);  
+        int start = listType.equals("job") ? 0:1;
+        DisplayTableModel reportModel = new DisplayTableModel(archiveList, header, start);
         jTable1.setModel(reportModel);
         TableColumnModel columnModel = jTable1.getColumnModel();
-        columnModel.getColumn(0).setPreferredWidth(200);
-        columnModel.getColumn(1).setPreferredWidth(120);
-        columnModel.getColumn(2).setPreferredWidth(150);
-        columnModel.getColumn(3).setPreferredWidth(150);        
-        columnModel.getColumn(1).setCellRenderer(new CellRenderer());
-        columnModel.getColumn(header.length - 1).setPreferredWidth(350);
+        if(listType.equals("job"))
+        {
+            columnModel.getColumn(0).setPreferredWidth(100);
+            columnModel.getColumn(1).setPreferredWidth(200);
+            columnModel.getColumn(2).setPreferredWidth(120);
+            columnModel.getColumn(3).setPreferredWidth(150);
+            columnModel.getColumn(4).setPreferredWidth(150);
+            columnModel.getColumn(0).setCellRenderer(new CellRenderer()); 
+        }
+        else
+        {
+            columnModel.getColumn(0).setPreferredWidth(200);
+            columnModel.getColumn(1).setPreferredWidth(120);
+            columnModel.getColumn(2).setPreferredWidth(200);
+            columnModel.getColumn(1).setCellRenderer(new CellRenderer());            
+        }
+
+        columnModel.getColumn(header.length - 1).setPreferredWidth(300);
         int length = archiveList.length;
         if(length > maxNum)
             length--;        
         reportDialog.setSize(1000, 16 * length + 90);  
         reportDialog.setTitle(title);
-        reportDialog.show();
+        reportDialog.setFocusableWindowState(false);
+        reportDialog.setVisible(true);
     }
     
     // Display a list of jobs or models or versions that belongs to the user
@@ -3926,7 +3805,7 @@ public class MDAFrame extends JFrame
     {
         jInternalFrame1.setTitle(title);   
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton CompareFilesButton;
     private javax.swing.JButton DataArchiveButton;
@@ -3981,8 +3860,6 @@ public class MDAFrame extends JFrame
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -4008,6 +3885,9 @@ public class MDAFrame extends JFrame
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JRadioButton jRadioButton1;
+    private javax.swing.JRadioButton jRadioButton10;
+    private javax.swing.JRadioButton jRadioButton11;
+    private javax.swing.JRadioButton jRadioButton12;
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JRadioButton jRadioButton4;
@@ -4036,7 +3916,6 @@ public class MDAFrame extends JFrame
     private javax.swing.JTextArea jTextArea5;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField14;
-    private javax.swing.JTextField jTextField15;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
@@ -4086,18 +3965,27 @@ public class MDAFrame extends JFrame
     private javax.swing.JDialog warningMessageDialog;
     // End of variables declaration//GEN-END:variables
 
+    /** The HelpBroker. */
+    protected HelpBroker helpBroker = null;
+    
+    /** The method table for the database. */
+    protected HashMap methodTable = null;
+    
     /** The flag for the user being a tester. */
     protected boolean isTester = false;
     
-    /** the flag for the user being a developer. */
+    /** The flag for the user being a developer. */
     protected boolean isDeveloper = false;    
     
     /** The current job id. */
     protected long jobId = 0; 
-    
-    // Method for estimation in SPK input file
-    private String method = "Not Available";
 
+    // Job method code
+    private String jobMethodCode = null;
+    
+    // Analytical approximation method
+    private String method = null;
+    
     /** The Server name. */
     protected String serverName = null;
     
@@ -4105,8 +3993,8 @@ public class MDAFrame extends JFrame
     protected boolean isOnline = true;
     
     /** The server port. */
-    protected String serverPort = null; 
-    
+    protected String serverPort = null;
+
     // File chooser
     private JFileChooser files = new JFileChooser();
 
@@ -4182,6 +4070,6 @@ public class MDAFrame extends JFrame
     // Maximum number of items
     private static final int maxNum = 12;
     
-    // Timer for refreshing report dialog
+    // Timer for refreshing the job list dialog
     private Timer timer = null;
 }

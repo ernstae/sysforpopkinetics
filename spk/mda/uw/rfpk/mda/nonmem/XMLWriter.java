@@ -39,17 +39,13 @@ public class XMLWriter
 {
     /** Constructor to initialize data members and then call private functions to
      * generate spksource, spkdata and spkmodel XML documents.
-     * @param modelArchive an Archive object containing information for the model.
-     * @param dataArchive an Archive object containing information for the data.
      * @param control a String object containing the text of the NONMEM control file.
      * @param object a MDAObject object containing control and data information.
      */    
-    public XMLWriter(ArchiveInfo modelArchive, ArchiveInfo dataArchive, String control, MDAObject object)
+    public XMLWriter(String control, MDAObject object)
     {
         this.source = object.getSource();
         this.data = object.getData();
-        this.modelArchive = modelArchive;
-        this.dataArchive = dataArchive;
         this.control = control;
         setSource(); 
         setData();
@@ -120,7 +116,7 @@ public class XMLWriter
         {
             Element description = docSource.createElement("description");
             parent.appendChild(description);
-            description.appendChild(docSource.createTextNode(source.problem));
+            description.appendChild(docSource.createTextNode(replaceCharacter(source.problem)));
         }
     }
 
@@ -136,10 +132,9 @@ public class XMLWriter
                 Element label = docSource.createElement("label");
                 data_labels.appendChild(label);
                 String[] names = source.input[i].split("=");
-                String name = names[0];
-                label.setAttribute("name", name);
+                label.setAttribute("name", replaceCharacter(names[0]));
                 if(names.length == 2 && Utility.isStdItem(names[0])) 
-                    label.setAttribute("synonym", names[1]);
+                    label.setAttribute("synonym", replaceCharacter(names[1]));
             }            
         }
     }
@@ -197,14 +192,12 @@ public class XMLWriter
                 Element sigma = docSource.createElement("sigma");    
                 sigma.setAttribute("struct", source.sigma[i][0]);
                 sigma.setAttribute("dimension", source.sigma[i][1]);
-                if(source.sigma[i][2].equals("SAME"))
-                    sigma.setAttribute("same_as_previous", "yes");
-                else
-                    sigma.setAttribute("same_as_previous", "no");
+                sigma.setAttribute("same_as_previous", source.sigma[i][2]);
+
                 Element in = docSource.createElement("in");
                 sigma.appendChild(in);
                 int nData = source.sigma[i].length;
-                for(int j = 2; j < nData; j++)
+                for(int j = 3; j < nData; j++)
 	        {   
                     Element value = docSource.createElement("value");
                     if(source.sigma[i][j].endsWith("F"))
@@ -235,14 +228,12 @@ public class XMLWriter
                 Element omega = docSource.createElement("omega");     
                 omega.setAttribute("struct", source.omega[i][0]);
                 omega.setAttribute("dimension", source.omega[i][1]);
-                if(source.omega[i][2].equals("SAME"))
-                    omega.setAttribute("same_as_previous", "yes");
-                else
-                    omega.setAttribute("same_as_previous", "no");
+                omega.setAttribute("same_as_previous", source.omega[i][2]);
+
                 Element in = docSource.createElement("in");
                 omega.appendChild(in);
                 int nData = source.omega[i].length;
-                for(int j = 2; j < nData; j++)
+                for(int j = 3; j < nData; j++)
 	        {   
                     Element value = docSource.createElement("value");
                     if(source.omega[i][j].endsWith("F"))
@@ -291,8 +282,7 @@ public class XMLWriter
         {
             Element simulation = docSource.createElement("simulation");
             simulation.setAttribute("seed", source.simulation[0]);
-            simulation.setAttribute("onlysimulation", source.simulation[1]);
-            simulation.setAttribute("subproblems", source.simulation[2]);
+            simulation.setAttribute("subproblems", source.simulation[1]);
             parent.appendChild(simulation);
         }
     }
@@ -319,7 +309,7 @@ public class XMLWriter
             for(int i = 1; i < source.model.length; i++)
             {
                 Element compartment = docSource.createElement("compartment");
-                compartment.setAttribute("name", source.model[i][0]);
+                compartment.setAttribute("name", replaceCharacter(source.model[i][0]));
                 compartment.setAttribute("initial_off", source.model[i][1]);
                 compartment.setAttribute("no_off", source.model[i][2]);                
                 compartment.setAttribute("no_dose", source.model[i][3]);
@@ -338,28 +328,28 @@ public class XMLWriter
         if(source.des != null)
         {
             Element diffeqn = docSource.createElement("diffeqn"); 
-            diffeqn.appendChild(docSource.createTextNode(source.des));
+            diffeqn.appendChild(docSource.createTextNode(replaceCharacter(source.des)));
             model.appendChild(diffeqn);
         }
         // Generate pk
         if(source.pk != null)
         {            
             Element pk = docSource.createElement("pk");
-            pk.appendChild(docSource.createTextNode(source.pk));
+            pk.appendChild(docSource.createTextNode(replaceCharacter(source.pk)));
             model.appendChild(pk); 
         }
         // Generate error
         if(source.error != null)
         { 
             Element error = docSource.createElement("error");
-            error.appendChild(docSource.createTextNode(source.error));
+            error.appendChild(docSource.createTextNode(replaceCharacter(source.error)));
             model.appendChild(error);
         }
         // Generate pred
         if(source.pred != null)
         {            
             Element pred = docSource.createElement("pred");
-            pred.appendChild(docSource.createTextNode(source.pred));
+            pred.appendChild(docSource.createTextNode(replaceCharacter(source.pred)));
             model.appendChild(pred); 
         }
         parent.appendChild(model); 
@@ -403,14 +393,14 @@ public class XMLWriter
                 else
                     table.setAttribute("process", "simulation");
                 if(tableI[0][0] != null)
-                    table.setAttribute("save_as", tableI[0][0]);
+                    table.setAttribute("save_as", replaceCharacter(tableI[0][0]));
                 table.setAttribute("header", tableI[0][1]); 
                 parent.appendChild(table);
                 
                 for(int j = 0; j < tableI[1].length; j++)
 	        {
                     Element column = docSource.createElement("column");
-                    column.setAttribute("label", tableI[1][j]);
+                    column.setAttribute("label", replaceCharacter(tableI[1][j]));
                     column.setAttribute("appearance_order", tableI[2][j]); 
                     column.setAttribute("sort_order", tableI[3][j]);   
                     table.appendChild(column);
@@ -453,7 +443,7 @@ public class XMLWriter
                 for(int j = 0; j < xlength; j++)
 	        {
                     Element x = docSource.createElement("x");
-                    x.setAttribute("label", scatter[2][j]);
+                    x.setAttribute("label", replaceCharacter(scatter[2][j]));
                     scatterplot.appendChild(x);
 		}
 
@@ -461,7 +451,7 @@ public class XMLWriter
                 for(int j = 0; j < ylength; j++)
 	        {
                     Element y = docSource.createElement("y");
-                    y.setAttribute("label", scatter[1][j]);
+                    y.setAttribute("label", replaceCharacter(scatter[1][j]));
                     scatterplot.appendChild(y);
 	        }
      
@@ -471,7 +461,7 @@ public class XMLWriter
                     for(int j = 0; j < splitlength; j++)
 	            {
                         Element split = docSource.createElement("split");
-                        split.setAttribute("label", scatter[3][j]);
+                        split.setAttribute("label", replaceCharacter(scatter[3][j]));
                         scatterplot.appendChild(split);
 		    }
 	        }
@@ -500,7 +490,7 @@ public class XMLWriter
         spkdata.appendChild(table);
         
         Element description = docData.createElement("description");
-        description.appendChild(docData.createTextNode(source.data));
+        description.appendChild(docData.createTextNode(replaceCharacter(source.data)));
         table.appendChild(description);
 
         Element row = docData.createElement("row");
@@ -544,7 +534,7 @@ public class XMLWriter
         docModel = new DocumentImpl();  
         Element spkmodel = docModel.createElement("spkmodel"); 
         docModel.appendChild(spkmodel);
-        spkmodel.appendChild(docModel.createTextNode(System.getProperty("line.separator") + control));        
+        spkmodel.appendChild(docModel.createTextNode("\n" + replaceCharacter(control) + "\n"));        
     }    
     
     /** This method generates model section of the SPK input file.
@@ -556,12 +546,12 @@ public class XMLWriter
         Document document = new DocumentImpl();  
         Element spkmodel = document.createElement("spkmodel"); 
         document.appendChild(spkmodel);
-        spkmodel.appendChild(document.createTextNode(System.getProperty("line.separator") + text));
+        spkmodel.appendChild(document.createTextNode("\n" + replaceCharacter(text) + "\n"));
         return Utility.formatXML(((DocumentImpl)document).saveXML(document));      
     }
     
     /** Generate SPK output file content.
-     * @param spkOutput a Properties object containing SPK output data returned from database.
+     * @param spkOutput a Properties object containing job id and SPK output data returned from database.
      * @return a String object containing the SPK output file content.
      */
     public static String setOutput(Properties spkOutput)
@@ -569,18 +559,19 @@ public class XMLWriter
         // Generate Job XML
         Document docJob = new DocumentImpl();
         Element spkjob = docJob.createElement("spkjob");
-        spkjob.setAttribute("abstract", spkOutput.getProperty("jobAbstract")); 
+        spkjob.setAttribute("id", spkOutput.getProperty("jobId"));
+        spkjob.setAttribute("abstract", replaceCharacter(spkOutput.getProperty("jobAbstract"))); 
         spkjob.setAttribute("submission_time", spkOutput.getProperty("startTime"));
         spkjob.setAttribute("completion_time", spkOutput.getProperty("eventTime"));
-        spkjob.setAttribute("method", spkOutput.getProperty("method"));
+        spkjob.setAttribute("method_code", spkOutput.getProperty("methodCode"));
         Element model = docJob.createElement("model");
         Element data = docJob.createElement("data");
-        model.setAttribute("name", spkOutput.getProperty("modelName"));
+        model.setAttribute("name", replaceCharacter(spkOutput.getProperty("modelName")));
         model.setAttribute("version", spkOutput.getProperty("modelVersion"));
-        model.setAttribute("abstract", spkOutput.getProperty("modelAbstract")); 
-        data.setAttribute("name", spkOutput.getProperty("datasetName"));
+        model.setAttribute("abstract", replaceCharacter(spkOutput.getProperty("modelAbstract"))); 
+        data.setAttribute("name", replaceCharacter(spkOutput.getProperty("datasetName")));
         data.setAttribute("version", spkOutput.getProperty("datasetVersion"));
-        data.setAttribute("abstract", spkOutput.getProperty("datasetAbstract"));
+        data.setAttribute("abstract", replaceCharacter(spkOutput.getProperty("datasetAbstract")));
         spkjob.appendChild(model);
         spkjob.appendChild(data);
         docJob.appendChild(spkjob);
@@ -591,6 +582,48 @@ public class XMLWriter
         return job + ls + spkOutput.getProperty("report") + spkOutput.getProperty("source");        
     }
     
+    // Generate a dataset XML
+    public static String setData(String[][] dataAll, String[] dataLabels, String datasetDescription)
+    {
+        int nRows = dataAll.length;
+        int nColumns = dataAll[0].length;
+        Document docData = new DocumentImpl(); 
+        Element spkdata = docData.createElement("spkdata");
+        spkdata.setAttribute("version", "0.1");
+        docData.appendChild(spkdata);
+        Element table = docData.createElement("table");
+        table.setAttribute("columns", String.valueOf(nColumns));
+        table.setAttribute("rows", String.valueOf(nRows));        
+        spkdata.appendChild(table);
+        Element description = docData.createElement("description");
+        description.appendChild(docData.createTextNode(replaceCharacter(datasetDescription)));
+        table.appendChild(description);
+        Element row = docData.createElement("row");
+        row.setAttribute("position", "1");
+        table.appendChild(row);
+        for(int k = 0; k < nColumns; k++)
+        {
+            Element value = docData.createElement("value");
+            value.setAttribute("type", "string");                    
+            value.appendChild(docData.createTextNode(dataLabels[k]));
+            row.appendChild(value);                    
+        }
+        for(int j = 0; j < nRows; j++)
+	{                
+            row = docData.createElement("row");
+            row.setAttribute("position", String.valueOf(j + 2));
+	    table.appendChild(row); 
+            for(int k = 0; k < nColumns; k++)
+            {
+                Element value = docData.createElement("value");
+                if(k == 0 && dataLabels[k].equals("ID"))
+                    value.setAttribute("type", "string");                    
+                value.appendChild(docData.createTextNode(dataAll[j][k]));                    
+                row.appendChild(value);                    
+            }
+        }
+        return Utility.formatXML(((DocumentImpl)docData).saveXML(docData));
+    }    
     /** This method saves the XML document as a text file in XML format.
      * @param file a String object as the filename of the file to be saved.
      */    
@@ -633,6 +666,16 @@ public class XMLWriter
         return false;
     }
     
+    private static String replaceCharacter(String text)
+    {
+        text = text.replaceAll("<", "&lt;");
+        text = text.replaceAll("&", "&amp;");
+        text = text.replaceAll(">", "&gt;");
+        text = text.replaceAll("\"", "&quot;");
+        text = text.replaceAll("'", "&apos;");
+        return text;
+    }
+    
     // XML documents
     private Document docSource, docData, docModel;
 
@@ -641,12 +684,6 @@ public class XMLWriter
     
     // Data vector
     private Vector data;
-    
-    // Model archive information
-    private ArchiveInfo modelArchive;
-    
-    // Data archive information
-    private ArchiveInfo dataArchive;  
     
     // Control file text
     private String control;

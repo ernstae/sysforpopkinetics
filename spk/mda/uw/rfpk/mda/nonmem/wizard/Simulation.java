@@ -61,10 +61,8 @@ public class Simulation extends javax.swing.JPanel implements WizardStep {
         jTextArea1 = new javax.swing.JTextArea();
         jLabel2 = new javax.swing.JLabel();
         jTextField2 = new javax.swing.JTextField();
-        jCheckBox1 = new javax.swing.JCheckBox();
         jTextPane3 = new javax.swing.JTextPane();
         jTextPane4 = new javax.swing.JTextPane();
-        jTextPane5 = new javax.swing.JTextPane();
         jButton1 = new javax.swing.JButton();
 
         setLayout(new java.awt.GridBagLayout());
@@ -163,15 +161,6 @@ public class Simulation extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(12, 0, 12, 36);
         add(jTextField2, gridBagConstraints);
 
-        jCheckBox1.setText("Only Simulation");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 35, 11, 12);
-        add(jCheckBox1, gridBagConstraints);
-
         jTextPane3.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane3.setEditable(false);
         jTextPane3.setText("Click the \"Enter\" button to continue.");
@@ -199,21 +188,6 @@ public class Simulation extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         add(jTextPane4, gridBagConstraints);
-
-        jTextPane5.setBackground(new java.awt.Color(204, 204, 204));
-        jTextPane5.setEditable(false);
-        jTextPane5.setText("Only Simulation means that Pred-defined data items are computed \nusing simulated etas and initial thetas and WRES values are 0.");
-        jTextPane5.setFocusable(false);
-        jTextPane5.setMaximumSize(new java.awt.Dimension(420, 35));
-        jTextPane5.setMinimumSize(new java.awt.Dimension(420, 35));
-        jTextPane5.setPreferredSize(new java.awt.Dimension(420, 35));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
-        add(jTextPane5, gridBagConstraints);
 
         jButton1.setText("Enter");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -268,14 +242,12 @@ public class Simulation extends javax.swing.JPanel implements WizardStep {
             if(Integer.parseInt(nProblem) > 1)
                 subProblems = " SUBPROBLEMS=" + nProblem;
         }
-        String onlySimulation = jCheckBox1.isSelected() ? " ONLYSIMULATION" : "";
-        jTextArea1.setText("$SIMULATION (" + seed + ")" + onlySimulation + subProblems);
+        jTextArea1.setText("$SIMULATION (" + seed + ")" + subProblems);
     }//GEN-LAST:event_jButton1ActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
-    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -287,7 +259,6 @@ public class Simulation extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JTextPane jTextPane2;
     private javax.swing.JTextPane jTextPane3;
     private javax.swing.JTextPane jTextPane4;
-    private javax.swing.JTextPane jTextPane5;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -312,23 +283,19 @@ public class Simulation extends javax.swing.JPanel implements WizardStep {
 	    return "Simulation";
 	}
 
-	public void showingStep(JWizardPane wizard){
-            jCheckBox1.setEnabled(!iterator.getIsEstimation());            
+	public void showingStep(JWizardPane wizard){        
             if(iterator.getIsReload())
             {
                 String text = iterator.getReload().getProperty("SIMULATION");
                 if(text != null)
                 {
                     iterator.getReload().remove("SIMULATION");
-                    jCheckBox1.setSelected(text.indexOf(" ONLYSIMULATION") != -1);
                     jTextField1.setText(text.substring(text.indexOf("(") + 1, text.indexOf(")")));
                     if(text.indexOf(" SUBPROBLEMS") != -1)
                         jTextField2.setText(text.substring(text.indexOf("=") + 1).trim());
                     else
                         jTextField2.setText("1");
-                    jTextArea1.setText("$SIMULATION" + text.substring(11).trim());
-                    if(iterator.getIsEstimation())
-                        jCheckBox1.setEnabled(false);                    
+                    jTextArea1.setText("$SIMULATION " + text.substring(11).trim());
                 }
             }
      	}
@@ -342,16 +309,12 @@ public class Simulation extends javax.swing.JPanel implements WizardStep {
             String record = jTextArea1.getText();
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             object.getRecords().setProperty("Simulation", record);
-            String[] simu = new String[3];
+            String[] simu = new String[2];
             simu[0] = record.substring(record.indexOf("(") + 1, record.indexOf(")"));
-            if(record.indexOf(" ONLYSIMULATION") != -1)
-                simu[1] = "yes";
-            else
-                simu[1] = "no";
             if(record.indexOf(" SUBPROBLEMS") != -1)
-                simu[2] = record.substring(record.indexOf("=") + 1);
+                simu[1] = record.substring(record.indexOf("=") + 1);
             else
-                simu[2] = "1";
+                simu[1] = "1";
             object.getSource().simulation = simu;
 	}
 
@@ -371,5 +334,10 @@ public class Simulation extends javax.swing.JPanel implements WizardStep {
                 }
             };
 	}
+        
+        public String getHelpID() {
+            return "Prepare_Input_Simulation";
+        }
+        
     }
 }

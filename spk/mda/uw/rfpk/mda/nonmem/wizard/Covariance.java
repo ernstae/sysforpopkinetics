@@ -256,5 +256,10 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
                 }
             };
 	}
+        
+        public String getHelpID() {
+            return "Prepare_Input_Estimate_Statistics";
+        }
+        
     }
 }

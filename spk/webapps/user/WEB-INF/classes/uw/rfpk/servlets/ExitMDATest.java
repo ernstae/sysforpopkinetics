@@ -22,22 +22,13 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
 import java.nio.*;
-import java.sql.*;
-import rfpk.spk.spkdb.*;
-import java.util.HashMap;
 
-/** This servlet is to test connection between the Model Design Agent and the associated
- * web server and get the content of the method table from the database for MDA.  
- * It receives a String object that is the secret code used to check authentication.
- * The servlet calls database API method getMethodTable to get the content of the table
- * and put the data into a java.util.HashMap object.  The servlet sends back two objects.
- * The first object is a String object containing error message if there is an error or 
- * an empty String if there is not any error.  The second object is the java.util.HashMap 
- * object containing the method table content.  
+/** This servlet invalidates the session.  It receives a String object that is
+ * the secret code to identify the client and returns an empty String object.
  *
  * @author Jiaji Du
  */
-public class TestConnection extends HttpServlet
+public class ExitMDATest extends HttpServlet
 {
     /**
      * Dispatches client requests to the protected service method.
@@ -52,8 +43,7 @@ public class TestConnection extends HttpServlet
     {
         // Prepare output message
         String messageOut = "";
-        HashMap methodTable = null;
-       
+        
         // Get the input stream for reading data from the client
         ObjectInputStream in = new ObjectInputStream(req.getInputStream());  
       
@@ -64,59 +54,32 @@ public class TestConnection extends HttpServlet
         // that we can tell the server the length of the data
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
       
-        // Create the output stream to be used to write the data
-        // to our buffer
-        ObjectOutputStream out = new ObjectOutputStream(byteOut);
-        
+        // Create the output stream to be used to write the data to our buffer
+        ObjectOutputStream out = new ObjectOutputStream(byteOut);        
         try
         {
             // Read the data from the client 
-            String secret = (String)in.readObject();
-            if(secret.equals((String)req.getSession().getAttribute("SECRET")))               
-            {   
-                // Connect to the database
-                ServletContext context = getServletContext();
-                Connection con = Spkdb.connect(context.getInitParameter("database_name"),
-                                               context.getInitParameter("database_host"),
-                                               context.getInitParameter("database_username"),
-                                               context.getInitParameter("database_password"));
-
-                // Get method table
-                methodTable = new HashMap(7);              
-                ResultSet methodRS = Spkdb.getMethodTable(con);                
-                while(methodRS.next())
-                {
-                    String[] row = new String[3];                    
-                    row[0] = methodRS.getString("method_name");
-                    row[1] = methodRS.getString("class_code");
-                    row[2] = String.valueOf(methodRS.getInt("test_only"));
-                    methodTable.put(methodRS.getString("method_code"), row);                   
-                }
+            String secret = (String)in.readObject();            
+            if(secret.equals((String)req.getSession().getAttribute("SECRET")))             
+            {                 
+                req.getSession().invalidate();
             }
             else
             {
                 // Write the outgoing messages
                 messageOut = "Authentication error.";              
-            }            
-        }
-        catch(SQLException e)
-        {
-            messageOut = e.getMessage();
-        }
-        catch(SpkdbException e)
-        {
-            messageOut = e.getMessage();
+            } 
         }
         catch(ClassNotFoundException e)
         {
             messageOut = e.getMessage();
         }
-        
+       
         // Write the data to our internal buffer
         out.writeObject(messageOut);
         if(messageOut.equals(""))
-            out.writeObject(methodTable);
-
+            out.writeObject("");
+        
         // Flush the contents of the output stream to the byte array
         out.flush();
         

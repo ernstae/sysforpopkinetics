@@ -79,14 +79,20 @@
 
     <context-param>
         <param-name>bugzillaURL</param-name>
-        <param-value>http://192.168.2.3:8081/index.cgi</param-value>
+        <param-value>http://192.168.2.2:8081/index.cgi</param-value>
         <description>The URL of the Bugzilla main page</description>
+    </context-param>
+
+    <context-param>
+        <param-name>MDA_test_host</param-name>
+        <param-value>192.168.1.5</param-value>
+        <description>The host of the client for testing</description>
     </context-param>
 
     <!-- Session expiration -->
     <session-config>
         <session-timeout>
-            30
+            480
         </session-timeout>
     </session-config>
 

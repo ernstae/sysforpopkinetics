@@ -158,8 +158,11 @@ public class TableShow extends javax.swing.JFrame {
     {
         // Get data for the table from the presentation data
         for(int i = 0; i < tableI[1].length; i++)
-        {            
-            int index = aliasAll.indexOf(tableI[1][i]); 
+        {
+            // If the table is for simulation, replace the alias of DV in the table to SIMDV
+//            if(tableI[0][2].equals("simulation") && tableI[1][i].equals(dataLabelMap.getProperty("DV")))
+//                tableI[1][i] = "SIMDV";
+            int index = aliasAll.indexOf(tableI[1][i]);
             for(int j = 0; j < dataAll.length; j++)
                 data[j][i + 1] = String.valueOf(dataAll[j][index]);
         }

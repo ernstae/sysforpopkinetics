@@ -392,5 +392,10 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
                 }
             };
 	}
+        
+        public String getHelpID() {
+            return "Subroutines";
+        }
+        
     }
 }

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE attributes PUBLIC "-//NetBeans//DTD DefaultAttributes 1.0//EN" "http://www.netbeans.org/dtds/attributes-1_0.dtd">
 <attributes version="1.0">
+    <fileobject name="OpenBrowser.java">
+        <attr name="class_dependency_javax.swing.JButton" stringvalue="OpenBrowser"/>
+    </fileobject>
     <fileobject name="PlotTool.java">
         <attr name="class_dependency_javax.swing.JFrame" stringvalue="PlotTool"/>
     </fileobject>
@@ -16,5 +19,9 @@
     </fileobject>
     <fileobject name="Printer.java">
         <attr name="class_dependency_java.awt.print.Printable" stringvalue="Printer"/>
+    </fileobject>
+    <fileobject name="LogInDialog.java">
+        <attr name="class_dependency_javax.swing.JDialog" stringvalue="LogInDialog"/>
+        <attr name="class_dependency_javax.net.ssl.HostnameVerifier" stringvalue="LogInDialog.NoHostnameVerifier"/>
     </fileobject>
 </attributes>

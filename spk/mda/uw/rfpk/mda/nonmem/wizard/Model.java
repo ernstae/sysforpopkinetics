@@ -860,5 +860,10 @@ public class Model extends javax.swing.JPanel implements WizardStep {
                 }
             };
 	}
+        
+        public String getHelpID() {
+            return "Model";
+        }
+        
     }
 }

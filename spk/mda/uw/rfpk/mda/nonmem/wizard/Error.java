@@ -173,7 +173,7 @@ public class Error extends javax.swing.JPanel implements WizardStep {
             }            
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             String errorCode = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase(); 
-            if(!errorCode.equals("") && !Utility.checkTag(errorCode, getStepTitle()))
+            if(!errorCode.equals(""))
             {
                 // Eliminate comments
                 errorCode = Utility.eliminateComments(errorCode); 
@@ -204,5 +204,10 @@ public class Error extends javax.swing.JPanel implements WizardStep {
                 }
             };
 	}
+        
+        public String getHelpID() {
+            return "Error";
+        }
+        
     }
 }

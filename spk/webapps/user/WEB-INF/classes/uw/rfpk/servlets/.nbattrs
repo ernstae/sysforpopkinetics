@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE attributes PUBLIC "-//NetBeans//DTD DefaultAttributes 1.0//EN" "http://www.netbeans.org/dtds/attributes-1_0.dtd">
 <attributes version="1.0">
+    <fileobject name="ExitMDATest.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="ExitMDATest"/>
+    </fileobject>
     <fileobject name="UserJobs.java">
         <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="UserJobs"/>
     </fileobject>
@@ -25,15 +28,22 @@
     <fileobject name="UserDatasets.java">
         <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="UserDatasets"/>
     </fileobject>
+    <fileobject name="InitMDATest.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="InitMDATest"/>
+    </fileobject>
+    <fileobject name="GetJnlp.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="GetJnlp"/>
+    </fileobject>
     <fileobject name="GetHistory.java">
         <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="GetHistory"/>
     </fileobject>
-    <fileobject name="DiffFiles.java">
-        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="DiffFiles"/>
-        <attr name="class_dependency_java.lang.Runnable" stringvalue="DiffFiles.Timer"/>
-    </fileobject>
     <fileobject name="GetJobArchive.java">
         <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="GetJobArchive"/>
+    </fileobject>
+    <fileobject name="DiffFiles.java">
+        <attr name="class_dependency_javax.servlet.SingleThreadModel" stringvalue="DiffFiles"/>
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="DiffFiles"/>
+        <attr name="class_dependency_java.lang.Runnable" stringvalue="DiffFiles.Timer"/>
     </fileobject>
     <fileobject name="GetOutput.java">
         <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="GetOutput"/>

@@ -27,7 +27,7 @@ author: Jiaji Du
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%-- Verify that the user is logged in --%>
-<c:if test="${validUser == null || validUser.userName != 'useradmin'}">
+<c:if test="${validUser == null || validUser.developer != '1'}">
   <jsp:forward page="index.jsp">
     <jsp:param name="origURL" value="${pageContext.request.requestURL}" />
     <jsp:param name="errorMsg" value="Please log in first." />
@@ -45,7 +45,7 @@ author: Jiaji Du
 
     <%-- Get users --%>
     <sql:query var="userList"
-      sql="SELECT * FROM user ORDER BY surname" 
+      sql="SELECT * FROM user WHERE username!='useradmin' AND username!='librarian' ORDER BY surname" 
       startRow="${param.start}" maxRows="${noOfRows}"
     />
     <table align=left border=0 width=602>
@@ -85,15 +85,8 @@ author: Jiaji Du
               <th>Tester</th>
               <th>Developer</th>
               <c:forEach items="${userList.rows}" var="row">
-              <tr>
-              <c:choose>
-                <c:when test="${param.goal == 'enter'}">
-                  <td><a href=getuser.jsp?userName=${fn:escapeXml(row.username)}&password=${fn:escapeXml(row.password)}>${fn:escapeXml(row.user_id)}</a></td>
-                </c:when>
-                <c:otherwise>
-                  <td><a href=updateuser.jsp?userId=${fn:escapeXml(row.user_id)}>${fn:escapeXml(row.user_id)}</a></td>
-                </c:otherwise>
-              </c:choose>
+              <tr>   
+                <td><a href=getuser.jsp?userName=${fn:escapeXml(row.username)}&password=${fn:escapeXml(row.password)}>${fn:escapeXml(row.user_id)}</a></td>
                 <td>${fn:escapeXml(row.username)}</td>
                 <td>${fn:escapeXml(row.first_name)}</td>
                 <td>${fn:escapeXml(row.surname)}</td>
@@ -125,7 +118,7 @@ author: Jiaji Du
           <p>
           <c:choose>
             <c:when test="${param.start > 0}">
-              <a href="userlist.jsp?goal=${param.goal}&start=${param.start - noOfRows}">
+              <a href="userlistdev.jsp?start=${param.start - noOfRows}">
                 Previous Page</a>
             </c:when>
             <c:otherwise>
@@ -134,7 +127,7 @@ author: Jiaji Du
           </c:choose>
           <c:choose>
             <c:when test="${userList.limitedByMaxRows}">
-              <a href="userlist.jsp?goal=${param.goal}&start=${param.start + noOfRows}">
+              <a href="userlistdev.jsp?start=${param.start + noOfRows}">
                 Next Page</a>
             </c:when>
           <c:otherwise>

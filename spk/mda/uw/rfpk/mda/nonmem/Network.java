@@ -41,7 +41,9 @@ public class Network
     public Network(String url, String sessionId) throws Exception
     {
         // Create an url connection
-        URL urls = new URL(url + ";jsessionid=" + sessionId);        
+        URL urls = null;
+        if(sessionId.equals("")) urls = new URL(url);
+        else urls = new URL(url + ";jsessionid=" + sessionId);
         con = urls.openConnection();         
         con.setUseCaches(false);
         con.setDoOutput(true);

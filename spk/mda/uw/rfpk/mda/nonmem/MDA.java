@@ -22,6 +22,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+import javax.net.ssl.*;
 import javax.swing.JOptionPane; 
 
 /**
@@ -40,42 +41,24 @@ public class MDA
     {
         if(args.length != 0)
         {
-            // Determine OS and temporary directory
-            String operatingSystem = System.getProperty("os.name");
-            String tempDirectory = System.getProperty("java.io.tmpdir");
-            
-            // Get path for lock file
-            String path = null;
-            if(operatingSystem.startsWith("Linux") || operatingSystem.startsWith("Unix"))
-                path = tempDirectory + "/" + args[0] + ".lock";
-            else if(operatingSystem.startsWith("Windows"))
-                path = tempDirectory + args[0] + ".lock"; 
-            else
-                path = args[0] + ".lock";
-            
             // Create lock file if there is none
+            String path = System.getProperty("user.home") + System.getProperty("file.separator") +
+                          args[2] + ".lock";
+
             File lockFile = null;
             try
             {
-                lockFile = new File(path);
+                lockFile = new File(path);           
                 if(lockFile.createNewFile())
-                {
-                    lockFile.deleteOnExit();
-                }
+                    lockFile.deleteOnExit();                    
                 else
-                {
                     System.exit(0);
-                }
             }
             catch(IOException ioe )
             {
                 JOptionPane.showMessageDialog(null, "Error creating lock file", 
                                               "File Error",                     
                                               JOptionPane.ERROR_MESSAGE);
-            }
-            finally
-            {
-                lockFile.delete();
             }
         }   
         theApp = new MDA();                       // Create the application object
@@ -90,7 +73,7 @@ public class MDA
 
         // Set the position to screen center & size to 3/4 screen size
         window.setBounds(wndSize.width/8, wndSize.height/8,        // Position
-                         3*wndSize.width/4, 3*wndSize.height/4);   // Size 
+                         3*wndSize.width/4, 3*wndSize.height/4);   // Size
         window.setVisible(true);                        // Display the window
     }
 

@@ -52,16 +52,20 @@ public class JobInfo extends javax.swing.JFrame {
         jTextField3.setText(jobInfo.getProperty("datasetName"));
         jTextField2.setText(jobInfo.getProperty("modelVersion"));
         jTextField4.setText(jobInfo.getProperty("datasetVersion"));
-        jTextField5.setText(jobInfo.getProperty("method"));
+        String[] row = (String[])frame.methodTable.get(jobInfo.getProperty("methodCode"));
+        if(row == null)
+            row = new String[]{"Not Available", ""};
+        jTextField5.setText(row[0]); 
+        jTextField6.setText(String.valueOf(jobId));
         jobParent = Long.parseLong(jobInfo.getProperty("parent"));
         jCheckBox1.setSelected(true);
         jCheckBox2.setSelected(true);
-        jCheckBox3.setSelected(!jobInfo.getProperty("method").equals("M.C. Likelihood"));
-        jCheckBox3.setEnabled(!jobInfo.getProperty("method").equals("M.C. Likelihood"));        
+        jCheckBox3.setSelected(!row[1].equals("le"));
+        jCheckBox3.setEnabled(!row[1].equals("le"));        
         if(isParent)
         {
             java.awt.Point point = getLocation();
-            point.translate(40,  30);
+            point.translate(40, 30);
             setLocation(point);            
         }
         show();
@@ -105,6 +109,8 @@ public class JobInfo extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jCheckBox3 = new javax.swing.JCheckBox();
+        jTextArea4 = new javax.swing.JTextArea();
+        jTextField6 = new javax.swing.JTextField();
 
         historyDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -298,7 +304,7 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 8, 12);
         getContentPane().add(jPanel1, gridBagConstraints);
 
         jCheckBox1.setFont(new java.awt.Font("Dialog", 0, 12));
@@ -363,7 +369,7 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridy = 13;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(3, 12, 15, 12);
+        gridBagConstraints.insets = new java.awt.Insets(3, 12, 9, 12);
         getContentPane().add(jLabel5, gridBagConstraints);
 
         jButton6.setText("Job Parent");
@@ -380,7 +386,7 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 13;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 12, 12);
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 6, 12);
         getContentPane().add(jButton6, gridBagConstraints);
 
         jTextField5.setEditable(false);
@@ -421,6 +427,29 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 6, 12);
         getContentPane().add(jCheckBox3, gridBagConstraints);
 
+        jTextArea4.setBackground(new java.awt.Color(204, 204, 204));
+        jTextArea4.setText("The identification number of the job is:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 14;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(2, 12, 12, 12);
+        getContentPane().add(jTextArea4, gridBagConstraints);
+
+        jTextField6.setEditable(false);
+        jTextField6.setFont(new java.awt.Font("Monospaced", 0, 12));
+        jTextField6.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jTextField6.setFocusable(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 14;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 14, 12);
+        getContentPane().add(jTextField6, gridBagConstraints);
+
         pack();
     }//GEN-END:initComponents
 
@@ -457,6 +486,7 @@ public class JobInfo extends javax.swing.JFrame {
         if(spkOutput != null) 
         {
             // Get SPK output file
+            spkOutput.setProperty("jobId", String.valueOf(id));
             String text = XMLWriter.setOutput(spkOutput);
             
             // Handle the output file
@@ -545,10 +575,10 @@ public class JobInfo extends javax.swing.JFrame {
             frame.saveFile();
                 
             // Display the file content and name
-            frame.setEditorText(archive.getProperty("text").replaceAll("\n", ls)); 
+            frame.setEditorText(archive.getProperty("text")); 
             frame.setEditorCaretPosition(0);
             frame.setEditorTitle(archive.getProperty("name") + "." +
-                                   archive.getProperty("version"));   
+                                 archive.getProperty("version"));   
             frame.file = null;            
         }
         setCursor(null);        
@@ -586,18 +616,24 @@ public class JobInfo extends javax.swing.JFrame {
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextArea jTextArea2;
     private javax.swing.JTextArea jTextArea3;
+    private javax.swing.JTextArea jTextArea4;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
+    private javax.swing.JTextField jTextField6;
     // End of variables declaration//GEN-END:variables
     
+    // Job ID
     private long id = 0;
+    
+    // Is library
     private boolean isLibrary = false;
+    
+    // MDA frame reference
     private MDAFrame frame = null;
+    
+    // Pareant job ID
     private long jobParent = 0;
- 
-    // line separator
-    private static final String ls = System.getProperty("line.separator");    
 }

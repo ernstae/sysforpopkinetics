@@ -129,8 +129,8 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
         ));
         jTable1.setMinimumSize(new java.awt.Dimension(600, 300));
         jTable1.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                jTable1KeyTyped(evt);
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTable1KeyPressed(evt);
             }
         });
 
@@ -418,6 +418,11 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
 
     }//GEN-END:initComponents
 
+    private void jTable1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTable1KeyPressed
+        if(evt.getKeyCode() == 10)
+            jButton2.setEnabled(true);
+    }//GEN-LAST:event_jTable1KeyPressed
+
     private void jRadioButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton4ActionPerformed
         if(model.getSize() == 0)
         {
@@ -461,13 +466,9 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
         changeButton.setEnabled(false);
     }//GEN-LAST:event_jRadioButton2ItemStateChanged
 
-    private void jTable1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTable1KeyTyped
-        jButton2.setEnabled(true);
-    }//GEN-LAST:event_jTable1KeyTyped
-
     private void jList1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jList1MouseClicked
         index = jList1.getSelectedIndex();
-        
+/*        
         // Reload selected value
         String selectedValue = (String)jList1.getSelectedValue();
         if(selectedValue.endsWith("SAME"))
@@ -522,7 +523,8 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
                     jCheckBox1.setSelected(isAllFixed);
                 }
             }
-        }        
+        }
+*/
         jButton2.setEnabled(true);
         changeButton.setEnabled(true);
         deleteButton.setEnabled(true);        
@@ -786,7 +788,7 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
         }
 
         // Set change and delete buttons, and the check box for block with "SAME"
-        if(model.getSize() == 0)
+        if(model.getSize() == 0 || index == -1)
         {
             changeButton.setEnabled(false);
             deleteButton.setEnabled(false);
@@ -879,10 +881,12 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
             dimSum = dimSum + ((Integer)dimList.get(i)).intValue();  
         if(dimSum > nEps)
         {
+            String step = iterator.getIsPred() ? "Model Definition step ($PRED record)." : 
+                                                 "Model Parameters step ($PK record).";
             JOptionPane.showMessageDialog(null, 
-                                          "The dimension of the SIGMA matrix " +
-                                          "is greater than \nthe number of EPS " +
-                                          "found in $PK or $PRED record.",   
+                                          "The dimension of the residual unknown variability covariance (SIGMA) matrix" +
+                                          "\nis greater than the number of residual parameters (EPS) " +
+                                          "found in " + step,   
                                           "Input Error",    
                                           JOptionPane.ERROR_MESSAGE); 
             if(isValid)
@@ -1045,7 +1049,8 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
                             nEps += dim;
                         }
                         else
-                            JOptionPane.showMessageDialog(null, "Error in $SIGMA of reloaded model.",
+                            JOptionPane.showMessageDialog(null, "Error in residual unknown variability covariance" +
+                                                          "\n($SIGMA record) of reloaded model.",
                                                           "Input Error", JOptionPane.ERROR_MESSAGE);
                     }
                     index = values.length - 1;
@@ -1090,10 +1095,12 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
                 String[][] sigma = new String[nEps][];
                 for(int i = 0; i < size; i++)
                 {
+                    String same = "no";
                     String block = (String)model.get(i);
                     int k = i;
                     while(block.indexOf("SAME") != -1)
                     {
+                        same = "yes";
                         block = (String)model.get(--k);   
                     }                    
                     block = block.replaceAll(" FIXED", "F");
@@ -1102,11 +1109,12 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
                     String dimen = items[1].substring(items[1].indexOf("(") + 1, 
                                                      items[1].length() - 1);
                     items = block.substring(block.indexOf(")") + 2).trim().split(" ");                
-                    sigma[i] = new String[items.length + 2];
+                    sigma[i] = new String[items.length + 3];
                     sigma[i][0] = struc;
-                    sigma[i][1] = dimen;                    
+                    sigma[i][1] = dimen;
+                    sigma[i][2] = same;
                     for(int j = 0; j < items.length; j++)
-                        sigma[i][j + 2] = items[j];                    
+                        sigma[i][j + 3] = items[j];                    
                 }
                 object.getSource().sigma = sigma;
             }
@@ -1128,5 +1136,10 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
                 }
             };
 	}
+        
+        public String getHelpID() {
+            return "Prepare_Input_Residual_Unknown_Variability_Covariance";
+        }
+        
     }
 }

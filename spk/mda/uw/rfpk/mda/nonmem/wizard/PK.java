@@ -197,7 +197,7 @@ public class PK extends javax.swing.JPanel implements WizardStep {
             MDAObject object = (MDAObject)wizard.getCustomizedObject();        
             String record = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
             String title = getStepTitle();
-            if(!record.equals("") && !Utility.checkTag(record, title))
+            if(!record.equals(""))
             {
                 object.getRecords().setProperty("PK", "$PK " + "\n" + record);
                 object.getSource().pk = "\n" + record + "\n";
@@ -285,5 +285,10 @@ public class PK extends javax.swing.JPanel implements WizardStep {
                 }
             };
 	}
+        
+        public String getHelpID() {
+            return "PK";
+        }
+        
     }
 }

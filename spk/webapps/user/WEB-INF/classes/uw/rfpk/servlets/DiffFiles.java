@@ -35,7 +35,7 @@ import java.nio.*;
  *
  * @author Jiaji Du
  */
-public class DiffFiles extends HttpServlet
+public class DiffFiles extends HttpServlet implements javax.servlet.SingleThreadModel
 {
     /**
      * Dispatches client requests to the protected service method.
@@ -48,11 +48,12 @@ public class DiffFiles extends HttpServlet
     public void service(HttpServletRequest req, HttpServletResponse resp)
 	throws ServletException, IOException
     {
-        // Prepare output message
+        // Prepare output messages
+        String messageOut = ""; 
         String revision = "";
         
         // Set time limit
-        timeLimit = Integer.parseInt(getServletContext().getInitParameter("timeLimit"));
+        int timeLimit = Integer.parseInt(getServletContext().getInitParameter("timeLimit"));
         
         // Get the input stream for reading data from the client
         ObjectInputStream in = new ObjectInputStream(req.getInputStream());  
@@ -92,7 +93,7 @@ public class DiffFiles extends HttpServlet
                 out2.close();
                 
                 // Start timer              
-                (new Thread(new Timer())).start(); 
+                (new Thread(new Timer(timeLimit))).start(); 
 
                 // Create a subprocess
                 String[] c = new String[]{"diff", file1.getPath(), file2.getPath()}; 
@@ -151,6 +152,9 @@ public class DiffFiles extends HttpServlet
         {
             file1.delete();
             file2.delete();
+            file1 = null;
+            file2 = null;
+            process = null;
         }
         
         // Write the data to our internal buffer
@@ -175,8 +179,12 @@ public class DiffFiles extends HttpServlet
         servletOut.close();
     }
     
-    class Timer implements Runnable
+    private class Timer implements Runnable
     {
+        public Timer(int limit)
+        {
+            timeLimit = limit;
+        }
         public void run() 
         {
             try
@@ -188,6 +196,8 @@ public class DiffFiles extends HttpServlet
             {
             }
         }
+        // Time limit
+        private int timeLimit;
     }
     
     // Declare File objects
@@ -196,9 +206,5 @@ public class DiffFiles extends HttpServlet
     
     // Sub process
     private Process process = null;
-    private String messageOut = "";
-    
-    // Time limit
-    private int timeLimit;
 }
 

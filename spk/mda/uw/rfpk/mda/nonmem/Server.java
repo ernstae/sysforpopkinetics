@@ -500,7 +500,27 @@ public class Server {
         }       
         return revision;
     }
-     
+    
+    /** Ends a session of web application. */
+    public void endSession()
+    {
+        if(JOptionPane.showConfirmDialog(null, "Do you want to log out of the MySPK session?",
+                                         "Question", JOptionPane.YES_NO_OPTION) == 0)
+        {
+            try
+            {
+                Network network = new Network("https://" + serverHost + ":" + serverPort +
+                                              "/user/servlet/uw.rfpk.servlets.ExitMDATest", sessionId);
+                network.talk(secret);
+            }
+            catch(Exception e)
+            {
+                JOptionPane.showMessageDialog(null, e, "Exception", JOptionPane.ERROR_MESSAGE);       
+            }
+        }
+        System.exit(0);
+    }
+    
     // Server host
     private String serverHost = null;
     

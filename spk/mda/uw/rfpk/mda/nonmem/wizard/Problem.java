@@ -190,8 +190,6 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
                 return;
             }
             String record = jTextArea1.getText().replaceAll("\n", "");
-            if(Utility.checkTag(record, getStepTitle())) 
-                return;   
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             object.getRecords().setProperty("Problem", "$PROBLEM " + record);
             object.getSource().problem = record;            
@@ -213,5 +211,10 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
                 }
             };
 	}
+        
+        public String getHelpID() {
+            return "Prepare_Input__Problem_Identifier";
+        }
+        
     }
 }

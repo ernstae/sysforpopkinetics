@@ -46,6 +46,7 @@ public class PlotShow extends JFrame {
                     Properties dataLabelMap, String type)
     {
         this.plotAll = plotAll;
+        this.dataLabelMap = dataLabelMap;
         this.type = type;
         
         // Display the window
@@ -85,21 +86,30 @@ public class PlotShow extends JFrame {
             double[][] data = new double[length][l1 + l2 + l3];
             ArrayList alias = new ArrayList();
             for(int j = 0; j < l3; j++)
-            {            
+            {
+                // If the plot is for simulation, replace the alias of DV in the plot to SIMDV
+//                if(plotI[0][5].equals("simulation") && plotI[3][j].equals(dataLabelMap.getProperty("DV")))
+//                    plotI[3][j] = "SIMDV";                
                 int index = aliasAll.indexOf(plotI[3][j]); 
                 for(int k = 0; k < length; k++)
                     data[k][j] = dataAll[k + from][index];
                 alias.add(plotI[3][j]);
             }            
             for(int j = 0; j < l1; j++)
-            {            
+            {
+                // If the plot is for simulation, replace the alias of DV in the plot to SIMDV
+//                if(plotI[0][5].equals("simulation") && plotI[1][j].equals(dataLabelMap.getProperty("DV")))
+//                    plotI[1][j] = "SIMDV";                 
                 int index = aliasAll.indexOf(plotI[1][j]); 
                 for(int k = 0; k < length; k++)
                     data[k][j + l3] = dataAll[k + from][index];
                 alias.add(plotI[1][j]);                
             }
             for(int j = 0; j < l2; j++)
-            {            
+            {
+                // If the plot is for simulation, replace the alias of DV in the plot to SIMDV
+//                if(plotI[0][5].equals("simulation") && plotI[2][j].equals(dataLabelMap.getProperty("DV")))
+//                    plotI[2][j] = "SIMDV"; 
                 int index = aliasAll.indexOf(plotI[2][j]); 
                 for(int k = 0; k < length; k++)
                     data[k][j + l1 + l3] = dataAll[k + from][index];
@@ -243,14 +253,17 @@ public class PlotShow extends JFrame {
             double[][] dataX = new double[1][];    
             double[][] dataY = new double[1][];
             String title = "";
+            int columnX = alias.indexOf(tokens[4]);
+            int columnY = alias.indexOf(tokens[2]);
+            
             if(plot[3] == null)
             {
                 dataX[0] = new double[data.length];
                 dataY[0] = new double[data.length];
                 for(int i = 0; i < data.length; i++)
                 {
-                    dataX[0][i] = data[i][alias.indexOf(tokens[4])];
-                    dataY[0][i] = data[i][alias.indexOf(tokens[2])];
+                    dataX[0][i] = data[i][columnX];
+                    dataY[0][i] = data[i][columnY];
                 }
             }
             else
@@ -263,8 +276,8 @@ public class PlotShow extends JFrame {
                 dataY[0] = new double[length];
                 for(int i = 0; i < length; i++) 
                 {
-                    dataX[0][i] = data[portion.index1 + i][alias.indexOf(tokens[4])];
-                    dataY[0][i] = data[portion.index1 + i][alias.indexOf(tokens[2])];                
+                    dataX[0][i] = data[portion.index1 + i][columnX];
+                    dataY[0][i] = data[portion.index1 + i][columnY];                
                 }      
                 title = "This plot is for " + tokens[5];
                 if(plot[3].length > 1)
@@ -338,5 +351,6 @@ public class PlotShow extends JFrame {
     private double[][][] dataList = null; 
     private ArrayList aliasList = new ArrayList();  
     private ArrayList splitList = new ArrayList();
+    private Properties dataLabelMap = null;
     private String type = null;
 }

@@ -322,11 +322,11 @@ public class MDAIterator implements StepIterator{
      */    
     public Properties getReload() { return reload; }      
     
-    /** Get gettingStarted object reference.
-     * @return a gettingStarted object reference.
+    /** Get GettingStarted object reference.
+     * @return a GettingStarted object reference.
      */    
-    public GettingStarted getGettingStarted() { return gettingStarted; }      
-        
+    public GettingStarted getGettingStarted() { return gettingStarted; }
+
     /** Set the step sequence according to user input in Getting started step. */
     public void setSteps(){
         if(actual == 0)
@@ -449,8 +449,11 @@ public class MDAIterator implements StepIterator{
         --actual;
     }
     
-    /** Reload either a SPK input file or a model opened in MDA editor window. */
-    public void reloadInput()
+    /** Reload either a SPK input file or a model opened in MDA editor window. 
+     * @return 0 if either a model or a Spk input file is opened in the MDA editor
+     * window, -1 otherwise.
+     */
+    public int reloadInput()
     {
         String text = frame.getEditorText();
         if(text.indexOf("<spksource>") != -1 && text.indexOf("<spkdata") != -1 && 
@@ -470,11 +473,12 @@ public class MDAIterator implements StepIterator{
         }
         else
         {
-            JOptionPane.showMessageDialog(null, "Either a SPK input file or a model\n" +
-                                          "is not opened in the MDA editor window.",
+            JOptionPane.showMessageDialog(null, "Neither a SPK input file nor a model\n" +
+                                          "is opened in the MDA editor window.",
                                           "Input Error", JOptionPane.ERROR_MESSAGE);
-            return;   
+            return -1;   
         }
+        return 0;
     }
   
     /** Parse a model (NONMEM control file).

@@ -39,9 +39,9 @@ import javax.swing.JOptionPane;
  * 
  * @author  Jiaji Du
  */
-public class XMLReader {
-    
-    /** Creates a new instance of XMLReader.
+public class XMLReader 
+{
+     /** Creates a new instance of XMLReader.
      * @param text a Sting object containing two xml documents: spkreport and spksource.
      * @param output an Output object to hold output information.
      */
@@ -95,9 +95,10 @@ public class XMLReader {
         //Get root element of spksource        
         Element spkjob = docJob.getDocumentElement();
         output.submissionTime = spkjob.getAttribute("submission_time");
-        output.completionTime = spkjob.getAttribute("completion_time"); 
+        output.completionTime = spkjob.getAttribute("completion_time");
+        output.jobId = spkjob.getAttribute("id");
         output.jobAbstract = spkjob.getAttribute("abstract");
-        output.method = spkjob.getAttribute("method");
+        output.methodCode = spkjob.getAttribute("method_code");
         NodeList modelList = spkjob.getElementsByTagName("model");
         if(modelList.getLength() > 0)
         {
@@ -275,7 +276,7 @@ public class XMLReader {
         Element spkreport = docReport.getDocumentElement();
         
         // Get error message 
-        NodeList error_messageList = spkreport.getElementsByTagName("error_message");
+        NodeList error_messageList = spkreport.getElementsByTagName("error_list");
         if(error_messageList.getLength() > 0)
             getErrorMessage((Element)error_messageList.item(0));
      
@@ -305,30 +306,19 @@ public class XMLReader {
             NodeList pop_obj_estimateList = pop_monte_result.getElementsByTagName("pop_obj_estimate");
             if(pop_obj_estimateList.getLength() > 0)
             {
-                output.mcMethod = "Monte Carlo";
-                output.objective = ((Element)pop_obj_estimateList.item(0)).getFirstChild().getNodeValue();
+                Element objective = (Element)pop_obj_estimateList.item(0);
+                NodeList valueList = objective.getElementsByTagName("value");
+                if(valueList.getLength() > 0)
+                    output.objective = ((Element)valueList.item(0)).getFirstChild().getNodeValue().trim();          
             }
-            else
+            NodeList obj_stderrorList = pop_monte_result.getElementsByTagName("pop_obj_stderr");
+            if(obj_stderrorList.getLength() > 0)
             {
-                NodeList pop_obj_analyticList = pop_monte_result.getElementsByTagName("pop_obj_analytic");
-                if(pop_obj_analyticList.getLength() > 0)
-                {
-                    output.mcMethod = "Analytic";
-                    output.objective = ((Element)pop_obj_analyticList.item(0)).getFirstChild().getNodeValue();
-                }
-                else
-                {
-                    NodeList pop_obj_gridList = pop_monte_result.getElementsByTagName("pop_obj_grid");
-                    if(pop_obj_gridList.getLength() > 0)
-                    {
-                        output.mcMethod = "Grid";
-                        output.objective = ((Element)pop_obj_gridList.item(0)).getFirstChild().getNodeValue();
-                    }                   
-                }
+                Element stdErr = (Element)obj_stderrorList.item(0);
+                NodeList valueList = stdErr.getElementsByTagName("value");
+                if(valueList.getLength() > 0)
+                    output.objStdErr = ((Element)valueList.item(0)).getFirstChild().getNodeValue().trim();             
             }
-            NodeList obj_stderror_list = pop_monte_result.getElementsByTagName("pop_obj_stderror");
-            if(obj_stderror_list.getLength() > 0)
-                output.objStdErr = ((Element)obj_stderror_list.item(0)).getFirstChild().getNodeValue();
         }        
         
         // Get individual analysis result
@@ -356,11 +346,22 @@ public class XMLReader {
     // Get error message    
     private void getErrorMessage(Element error_message)
     {
-        Node node = error_message.getFirstChild();
-        if(node != null)
-            output.error = node.getNodeValue();  
-        else
-            output.error = "No error message found";
+        NodeList errorList = error_message.getElementsByTagName("error");
+        if(errorList.getLength() != 0)
+            output.error = new String[errorList.getLength()][3];
+        for(int i = 0; i < errorList.getLength(); i++)
+        {
+            Element error = (Element)errorList.item(i);
+            NodeList list = error.getElementsByTagName("message");
+            if(list.getLength() != 0)
+                output.error[i][0] = list.item(0).getFirstChild().getNodeValue();
+            list = error.getElementsByTagName("file_name");
+            if(list.getLength() != 0)
+                output.error[i][1] = list.item(0).getFirstChild().getNodeValue();           
+            list = error.getElementsByTagName("line_number");
+            if(list.getLength() != 0)
+                output.error[i][2] = list.item(0).getFirstChild().getNodeValue();           
+        }
     }
 
     // Get warning message    
@@ -453,7 +454,7 @@ public class XMLReader {
         }
     }    
     
-    // Get Theta
+    // Get Theta out
     private void getTheta(Element parent)
     {
         NodeList theta_outList = parent.getElementsByTagName("theta_out"); 
@@ -671,7 +672,28 @@ public class XMLReader {
                 {
                     dimension = output.omega[l].length;
                     output.stdErrOmega[l] = new String[dimension][];
-                
+                    
+                    for(int i = 0; i < dimension; i++)
+                    {
+                        output.stdErrOmega[l][i] = new String[i + 2];
+                        output.stdErrOmega[l][i][0] = "ETA" + (i + 1);
+                    }
+                    for(int j = 1; j <= dimension; j++)
+                    {                    
+                        for(int i = j - 1; i < dimension; i++)
+                        {
+                            if(output.omegaStruct[l].equals("diagonal"))
+                            {
+                                if(i == j - 1)
+                                    output.stdErrOmega[l][i][j] = valueList.item(k++).getFirstChild().getNodeValue();
+                                else
+                                    output.stdErrOmega[l][i][j] = "";
+                            }
+                            else if(output.omegaStruct[l].equals("block"))                                         
+                                output.stdErrOmega[l][i][j] = valueList.item(k++).getFirstChild().getNodeValue();                    
+                        }
+                    }
+/*
                     for(int i = 0; i < dimension; i++)
                     {
                         output.stdErrOmega[l][i] = new String[i + 2];
@@ -689,6 +711,7 @@ public class XMLReader {
                                 output.stdErrOmega[l][i][j] = valueList.item(k++).getFirstChild().getNodeValue();                    
                         }
                     }
+*/
                 }
                 if(output.sigma == null)
                     return;
@@ -701,8 +724,11 @@ public class XMLReader {
                     for(int i = 0; i < dimension; i++)
                     {
                         output.stdErrSigma[l][i] = new String[i + 2];
-                        output.stdErrSigma[l][i][0] = "EPS" + (i + 1);                    
-                        for(int j = 1; j <= i + 1; j++)                    
+                        output.stdErrSigma[l][i][0] = "EPS" + (i + 1);
+                    }
+                    for(int j = 1; j <= dimension; j++)
+                    {                    
+                        for(int i = j - 1; i < dimension; i++)                                            
                         {
                             if(output.sigmaStruct[l].equals("diagonal"))
                             {
@@ -1001,7 +1027,103 @@ public class XMLReader {
         return modelArchive;
     }
     
-    // Report document and source document
+    // Get data labels from source
+    public static String[] getDataLabels(String source)
+    {
+        Document docSource;
+        try
+        {
+            DOMParser parser = new DOMParser();
+            parser.parse(new InputSource(new ByteArrayInputStream(source.getBytes()))); 
+            docSource = parser.getDocument();
+        }
+        catch(SAXException e)
+        {
+            return null;
+        }
+        catch(IOException e)
+        {
+            return null;
+        }
+        Element spksource = docSource.getDocumentElement();
+        NodeList dataLabelList = spksource.getElementsByTagName("data_labels");
+        Element data_labels = (Element)dataLabelList.item(0);
+        NodeList labelList = data_labels.getElementsByTagName("label");
+        String[] dataLabels = new String[labelList.getLength()];
+        for(int i = 0; i < labelList.getLength(); i++)
+        {
+            Element label = (Element)labelList.item(i);
+            dataLabels[i] = label.getAttribute("name");
+        }
+        return dataLabels;
+    }
+    
+    /** Get required data from presentation_data.
+     * @param data an XML document containing presentation_data element of report.
+     * @param dataLabels a String array containing the labels of the data to get.
+     * @return a two-dimensional String array containing the requested data.
+     */
+    public static String[][] getData(String data, String[] dataLabels)
+    {
+        Document docDataAll;
+        try
+        {
+            DOMParser parser = new DOMParser();
+            parser.parse(new InputSource(new ByteArrayInputStream(data.getBytes()))); 
+            docDataAll = parser.getDocument();
+        }
+        catch(SAXException e)
+        {
+            return null;
+        }
+        catch(IOException e)
+        {
+            return null;
+        }        
+        Element presentation_data = docDataAll.getDocumentElement();
+        int nDataItem = dataLabels.length;
+        int nColumns = Integer.parseInt(presentation_data.getAttribute("columns"));
+        int nRows = Integer.parseInt(presentation_data.getAttribute("rows"));
+        ArrayList dataItems = new ArrayList(nColumns);
+        String[][] dataAll = new String[nRows][nDataItem];
+        
+        // Get data label list
+        NodeList labelList = presentation_data.getElementsByTagName("label");
+        int nLabels = labelList.getLength();
+        if(nColumns == 0 || nRows == 0 || nLabels != nColumns)
+            return null;
+        if(nColumns > 0)
+        {
+            dataItems = new ArrayList(nColumns);             
+            for(int i = 0; i < nColumns; i++)
+            {
+                Element label = (Element)labelList.item(i);
+                dataItems.add(i, label.getAttribute("name"));               
+            }
+        }
+        NodeList rowList = presentation_data.getElementsByTagName("row");
+        if(rowList.getLength() != nRows)
+            return null;
+        if(nRows > 0)
+        {
+            // Get all output data 
+            for(int i = 0; i < nRows; i++)
+            {
+                Element dataRow = (Element)rowList.item(i);
+                NodeList valueList = dataRow.getElementsByTagName("value");
+                if(valueList.getLength() != nColumns)
+                    return null;
+                for(int j = 0; j < nDataItem; j++)
+                {
+                    int k = dataItems.indexOf(dataLabels[j]);
+                    dataAll[i][j] = valueList.item(k).getFirstChild().getNodeValue();
+                }
+            }
+        }
+        return dataAll;
+    }
+    
+    // Job document, report document and source document
     private Document docJob, docReport, docSource;
     
     // Output object

@@ -443,8 +443,8 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
     }//GEN-LAST:event_jPopupMenu1PopupMenuCanceled
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        iterator.reloadInput();
-        setOptions();
+        if(iterator.reloadInput() == 0)
+            setOptions();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /** Set the options on the first step. */
@@ -733,5 +733,10 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
                 }
             };
 	}
+        
+        public String getHelpID() {
+            return "Prepare_Input__Getting_Started";
+        }
+        
     }
 }

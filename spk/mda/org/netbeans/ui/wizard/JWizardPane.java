@@ -419,10 +419,10 @@ public class JWizardPane extends JComponent {
 	rb.add( new Integer(b));
 
 	// HELP button
-	if (currentStep.getStepDescription().getHelpAction() instanceof ActionListener) {
+//	if (currentStep.getStepDescription().getHelpAction() instanceof ActionListener) {
 	    b = HELP_OPTION;
 	    rb.add( new Integer(b));
-	}
+//	}
 	
 	return rb;
     }
