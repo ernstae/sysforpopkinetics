@@ -2,7 +2,7 @@
 
 use strict;
 
-use Test::Simple tests => 42;  # number of ok() tests
+use Test::Simple tests => 45;  # number of ok() tests
 
 use Spkdb (
     'connect', 'disconnect', 'new_job', 'job_status', 
@@ -102,6 +102,7 @@ foreach $row (@$row_array) {
 }
 ok($flag, "user_jobs for maxnum = 3");
 
+
 $row = &de_q2c($dbh);
 ok($row && $row->{"job_id"} == $job_id
              && $row->{"xml_source"},       "de_q2c, first job");
@@ -110,6 +111,16 @@ $row = &de_q2c($dbh);
 ok($row && $row->{"job_id"} == $job_id + 1
              && $row->{"xml_source"},       "de_q2c, second job");
 
+$row_array = &Spkdb::get_cmp_jobs($dbh);
+my $j_id = $job_id;
+$flag = 1;
+foreach $row (@$row_array) {
+    if ($row->{"job_id"} != $j_id++) {
+	$flag = 0;
+    }
+}
+ok($flag, "get_cmp_jobs");
+
 ok(&en_q2r($dbh, $job_id + 1, "1st compiled"), "en_2qr");
 
 sleep(1);
@@ -117,6 +128,19 @@ sleep(1);
 sleep(1);
 $row = &de_q2r($dbh);
 ok($row && $row->{"job_id"} == $job_id + 1, "de_q2r");
+$row = &de_q2r($dbh);
+ok($row && $row->{"job_id"} == $job_id, "de_q2r");
+
+
+$row_array = &Spkdb::get_run_jobs($dbh);
+$j_id = $job_id;
+$flag = 1;
+foreach $row (@$row_array) {
+    if ($row->{"job_id"} != $j_id++) {
+	$flag = 0;
+    }
+}
+ok($flag, "get_run_jobs");
 
 sleep(1);
 ok(&end_job($dbh, $job_id + 1, "srun", "end report"), "end_job");
