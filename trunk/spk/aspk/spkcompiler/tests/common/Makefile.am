@@ -11,7 +11,7 @@ test_common_SOURCES = \
         lowerTest.h \
         upperTest.cpp \
         upperTest.h \
-	factorialTest.cpp \
+	seriesTest.cpp \
 	clientTest.cpp \
         clientTest.h \
 	SymbolTest.cpp \
@@ -25,7 +25,7 @@ test_common_INCLUDES = \
 	clientTest.h \
         lowerTest.h \
         upperTest.h \
-        factorialTest.h \
+        seriesTest.h \
 	SymbolTest.h \
 	SymbolTableTest.h \
 	ClientTranslatorTest.h
