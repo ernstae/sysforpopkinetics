@@ -59,6 +59,7 @@ namespace{
   int               myIndTraceLevel = 1;
   unsigned int      mySeed = 0;
 
+  string            myCovForm       = "R";
   bool              myIsStderr      = false;
   bool              myIsCorrelation = false;
   bool              myIsCov         = false;
@@ -110,6 +111,9 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     X_STRUCT         ( XMLString::transcode("struct") ),
     X_DIMENSION      ( XMLString::transcode("dimension") ),
     X_LABEL          ( XMLString::transcode("label") ),
+    X_COV_R          ( XMLString::transcode("R") ),
+    X_COV_RSR        ( XMLString::transcode("RSR") ),
+    X_COV_S          ( XMLString::transcode("S") ),
     X_IS_ERR_OUT     ( XMLString::transcode("is_stderr_out") ),
     X_IS_CORR_OUT    ( XMLString::transcode("is_correlation_out") ),
     X_IS_COV_OUT     ( XMLString::transcode("is_covariance_out") ),
@@ -170,6 +174,9 @@ NonmemTranslator::~NonmemTranslator()
   XMLString::release( &X_STRUCT );
   XMLString::release( &X_DIMENSION );
   XMLString::release( &X_LABEL );
+  XMLString::release( &X_COV_R );
+  XMLString::release( &X_COV_RSR );
+  XMLString::release( &X_COV_S );
   XMLString::release( &X_IS_ERR_OUT );
   XMLString::release( &X_IS_CORR_OUT );
   XMLString::release( &X_IS_COV_OUT );
@@ -590,6 +597,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
 	  }
 	sym_omega->initial[0][i] = str_val;
 	sym_omega->fixed[0][i]   = isFixed;
+	//	sym_omega->up[0][i]      = 
       }
   }
 
@@ -689,6 +697,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
     }
   
   DOMNodeList * pop_stat_list = pop_analysis->getElementsByTagName( X_POP_STAT );
+  myCovForm       = "R";  //default
   myIsStderr      = false;//default
   myIsCorrelation = false;//default
   myIsCov         = false;//default
@@ -703,6 +712,12 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       DOMElement * pop_stat = dynamic_cast<DOMElement*>( pop_stat_list->item(0) );
       assert( pop_stat->hasAttribute( X_COVARIANCE_FORM ) );
       const XMLCh* cov_form = pop_stat->getAttribute( X_COVARIANCE_FORM ); // r, rsr, s
+      if( XMLString::equals( cov_form, X_COV_S ) )
+	myCovForm = "S";
+      else if( XMLString::equals( cov_form, X_COV_RSR ) )
+	myCovForm = "RSR";
+      else
+	myCovForm = "R";
 
       if( pop_stat->hasAttribute( X_IS_ERR_OUT ) )
 	{
@@ -1701,7 +1716,7 @@ void NonmemTranslator::generateIndDriver( ) const
     {
       if( j>0 )
 	oDriver << ", ";
-      oDriver << atof( pTheta->initial[0][j].c_str() );
+      oDriver << pTheta->initial[0][j];
     }
   oDriver << " };" << endl;
   if( myIsSimulate )
@@ -1719,7 +1734,7 @@ void NonmemTranslator::generateIndDriver( ) const
   {
      if( j>0 )
         oDriver << ", ";
-     oDriver << atof( pTheta->upper[0][j].c_str() );
+     oDriver << pTheta->upper[0][j];
   }
   oDriver << " };" << endl;
   oDriver << "const valarray<double> bUp  ( c_bUp, nB );" << endl;
@@ -1730,7 +1745,7 @@ void NonmemTranslator::generateIndDriver( ) const
   {
      if( j>0 )
 	oDriver << ", ";
-     oDriver << atof( pTheta->lower[0][j].c_str() );
+     oDriver << pTheta->lower[0][j];
   }
   oDriver << " };" << endl;
   oDriver << "const valarray<double> bLow ( c_bLow, nB );" << endl;
@@ -1743,7 +1758,7 @@ void NonmemTranslator::generateIndDriver( ) const
 	{
 	  if( j>0 )
 	    oDriver << ", ";
-	  oDriver << atof( pTheta->step[0][j].c_str() );
+	  oDriver << pTheta->step[0][j];
 	}
       oDriver << " };" << endl;
       oDriver << "const valarray<double> bStep( c_bStep, nB );" << endl;
@@ -2075,6 +2090,548 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "}" << endl;
   oDriver.close();
 }
+
 void NonmemTranslator::generatePopDriver() const
 {
+  //==================================================================
+  // Generate the driver
+  //==================================================================
+  ofstream oDriver ( fDriver_cpp );
+  assert( oDriver.good() );
+  
+  oDriver << "#include <iostream>" << endl;
+  oDriver << "#include <fstream>" << endl;
+  oDriver << "#include <sys/time.h>" << endl;
+  oDriver << "#include \"IndData.h\"" << endl;
+  oDriver << "#include \"DataSet.h\"" << endl;
+  oDriver << "#include \"Pred.h\"" << endl;
+  oDriver << "#include \"Omega.h\"" << endl;
+  oDriver << endl;
+
+  oDriver << "#include <spk/SpkValarray.h>" << endl;
+  oDriver << "#include <spk/SpkException.h>" << endl;
+  oDriver << "#include <spk/NonmemdModels.h>" << endl;
+  if( myIsEstimate )
+  {
+     oDriver << "#include <spk/fitPopulation.h>" << endl;
+     oDriver << "#include <spk/Optimizer.h>" << endl;
+  }
+  if( myIsEstimate && myIsStat )
+     oDriver << "#include <spk/popStatistics.h>" << endl;
+  if( myIsSimulate )
+     oDriver << "#include <spk/simulation.h>" << endl;
+  oDriver << endl;
+
+  oDriver << "using SPK_VA;" << endl;
+  oDriver << "int main( int argc, const char argv[] )" << endl;
+  oDriver << "{" << endl;
+
+  oDriver << "DataSet<double> set;" << endl;
+  oDriver << "Pred<double>    mPred(&set);" << endl;
+  oDriver << "Omega<double>   mOmega;" << endl;
+  oDriver << "NonmemPredBasedModel model( set, mPred, mOmega... );" << endl;
+
+  oDriver << "const int nPop     = " << myPopSize            << "; // #of subjects" << endl;
+  oDriver << "const int nTheta   = " << myThetaLen           << "; // length of theta vector" << endl;
+  oDriver << "const int nOmega   = " << myOmegaElemNum       << "; // #of elements in Omega matrix" << endl;
+  oDriver << "const int dimOmega = " << myOmegaDim           << "; // dimension of Omeaga matrix" << endl;
+  oDriver << "const int nSigma   = " << mySigmaElemNum       << "; // #of elements in Sigma matrix" << endl;
+  oDriver << "const int dimSigma = " << mySigmaDim           << "; // dimension of Sigma matrix" << endl;
+  oDriver << "const int nAlp     = nTheta + nOmega + nSigma" << "; // length of alp vector" << endl;
+  oDriver << "const int nB       = " << myThetaLen           << "; // length of b vector" << endl;
+  oDriver << "int c_N[nPop]      = { ";
+  for( int i=0; i<myPopSize; i++ )
+    {
+      if( i>0 )
+	oDriver << ", ";
+      oDriver << myRecordNums[i];
+    }
+  oDriver << " };" << endl;
+  oDriver << "const valarray<int> N( c_N, nPop );" << endl; 
+  oDriver << "const int nY       = N.sum();" << endl; // total number of measurments" << endl;
+
+  if( myIsSimulate )
+    oDriver << "const unsigned int seed = " << mySeed << ";" << endl;
+  oDriver << "enum PopCovForm covForm = " << myCovForm << ";" << endl;
+
+  oDriver << endl;
+
+
+  //=======================================================================
+  // START FROM HERE
+  //
+  // ALP! {theta, omega, sigma} 
+  //
+  const Symbol* pTheta = table.findi("theta");
+  const Symbol* pOmega = table.findi("omega");
+  const Symbol* pSigma = table.findi("sigma");
+
+  oDriver << "double c_alpIn[nAlp] = { ";
+  for( int j=0; j<myThetaLen; j++ )
+    {
+      if( j>0 )
+	oDriver << ", ";
+      oDriver << pTheta->initial[0][j];
+    }
+  for( int j=0; j<myOmegaElemNum; j++ )
+    {
+      oDriver << ", ";
+      oDriver << pOmega->initial[0][j];
+    }
+  for( int j=0; j<mySigmaElemNum; j++ )
+    {
+      oDriver << ", ";
+      oDriver << pSigma->initial[0][j];
+    }
+  oDriver << " };" << endl;
+  oDriver << "const valarray<double> alpIn ( nAlp, c_alpIn );" << endl;
+  oDriver << "double c_alpUp[nAlp] = { ";
+  for( int j=0; j<myThetaLen; j++ )
+    {
+      if( j>0 )
+	oDriver << ", ";
+      oDriver << pTheta->upper[0][j];
+    }
+  for( int j=0; j<myOmegaElemNum; j++ )
+    {
+      oDriver << ", ";
+      oDriver << pOmega->upper[0][j];
+    }
+  for( int j=0; j<mySigmaElemNum; j++ )
+    {
+      oDriver << ", ";
+      oDriver << pSigma->upper[0][j];
+    }
+  oDriver << " };" << endl;
+  oDriver << "const valarray<double> alpUp ( nAlp, c_alpUp );" << endl;
+  oDriver << "double c_alpLow[nAlp] = { ";
+  for( int j=0; j<myThetaLen; j++ )
+    {
+      if( j>0 )
+	oDriver << ", ";
+      oDriver << pTheta->lower[0][j];
+    }
+  for( int j=0; j<myOmegaElemNum; j++ )
+    {
+      oDriver << ", ";
+      oDriver << atof( pOmega->lower[0][j].c_str() );
+    }
+  for( int j=0; j<mySigmaElemNum; j++ )
+    {
+      oDriver << ", ";
+      oDriver << pSigma->lower[0][j];
+    }
+  oDriver << " };" << endl;
+  oDriver << "const valarray<double> alpLow( nAlp, c_alpLow );" << endl;
+  //
+  //=======================================================================
+  const Symbol* pEta = table.findi("eta");
+  oDriver << "double c_bIn[nB * nPop] = { ";
+  for( int i=0; i<myPopSize; i++ )
+    {
+      for( int j=0; j<myEtaLen; j++ )
+	{
+	  if( !( i==0 && j==0 ) )
+	    oDriver << ", ";
+	  oDriver << pEta->initial[0][j];
+	}
+    }
+  oDriver << " };" << endl;
+  oDriver << "const valarray<double> bIn ( nB, c_bIn );" << endl;
+  oDriver << endl;
+  
+  oDriver << "double c_bUp[nB] = { ";
+  for( int j=0; j<myEtaLen; j++ )
+  {
+     if( j>0 )
+        oDriver << ", ";
+     oDriver << pEta->upper[0][j];
+  }
+  oDriver << " };" << endl;
+  oDriver << "const valarray<double> bUp  ( c_bUp, nB );" << endl;
+  oDriver << endl;
+
+  oDriver << "double c_bLow[nB] = { ";
+  for( int j=0; j<myEtaLen; j++ )
+  {
+     if( j>0 )
+	oDriver << ", ";
+     oDriver << pEta->lower[0][j];
+  }
+  oDriver << " };" << endl;
+  oDriver << "const valarray<double> bLow ( c_bLow, nB );" << endl;
+  oDriver << endl;
+
+  if( myIsEstimate )
+    {
+      oDriver << "double c_bStep[nB] = { ";
+      for( int j=0; j<myEtaLen; j++ )
+	{
+	  if( j>0 )
+	    oDriver << ", ";
+	  oDriver << pEta->step[0][j];
+	}
+      oDriver << " };" << endl;
+      oDriver << "const valarray<double> bStep( c_bStep, nB );" << endl;
+    }
+  oDriver << endl;
+
+  oDriver << "valarray<double> bOut( nB * nPop );" << endl;
+
+  // do data simulation first to replace DV data in IndData objects
+  if( myIsSimulate )
+    {
+       oDriver << "valarray<double> y   ( nY );" << endl;
+       oDriver << "valarray<double> yOut( nY );" << endl;
+       oDriver << "try" << endl;
+       oDriver << "{" << endl;
+       oDriver << "   simulate( model, seed, N, bLow, bUp, yOut, bOut );" << endl;
+       if( myIsEstimate )
+	 {
+	   oDriver << "   bIn = bOut;" << endl;
+	   oDriver << "   y   = yOut;" << endl;
+	 }
+       oDriver << "}" << endl;
+       oDriver << "catch( const SpkException& e )" << endl;
+       oDriver << "{" << endl;
+       oDriver << "   cerr << e << endl;" << endl;
+       oDriver << "   return 1;" << endl;
+       oDriver << "}" << endl;
+       oDriver << "catch( ... )" << endl;
+       oDriver << "{" << endl;
+       oDriver << "   cerr << \"Unknown exception: failed in data simulation!!!\" << endl;" << endl;
+       oDriver << "   return 1;" << endl;
+       oDriver << "}" << endl;
+    }
+  else
+    {
+      const Symbol* pDV = table.findi("dv");
+      if( pDV == Symbol::empty() )
+	{
+	  // "DV" may be registered as a synonym.  
+	  // In that case, have to search through the entries
+	  // in the map.
+	  const map<const string,Symbol> *t = table.getTable();
+          map<const string,Symbol>::const_iterator itr = t->begin();
+          for( ; itr != t->end(); itr++ )
+	    {
+	      if( lower( itr->second.synonym ) == "dv" )
+		{
+		  pDV = &itr->second;
+		  break;
+		}
+	    }
+	}
+      assert( pDV != Symbol::empty() );
+      oDriver << "double c_y[nY] = { ";
+	  for( int j=0; j<myRecordNums[0]; j++ )
+	    {
+	      if( j > 0 )
+		oDriver << ", ";
+	      oDriver << atof( pDV->initial[0][j].c_str() );
+	    }
+      oDriver << " };" << endl;
+      oDriver << "valarray<double> y( nY, c_y );" << endl; 
+      oDriver << endl;
+    }
+  if( myIsEstimate )
+    {
+       oDriver << "double           alpObjOut;" << endl;
+       oDriver << "valarray<double> alpObj_alpOut( nAlp );" << endl;
+       oDriver << "valarray<double> alpObj_alp_alpOut( nAlp * nAlp );" << endl;
+       oDriver << endl;
+       oDriver << "const double popEps   = " << myPopEpsilon    << ";" << endl;
+       oDriver << "const int    popMitr  = " << myPopMitr       << ";" << endl;
+       oDriver << "const int    popTrace = " << myPopTraceLevel << ";" << endl;
+       oDriver << "Optimizer    popOpt( popEps, popMitr, popTrace );" << endl;
+       oDriver << endl;
+       oDriver << "const double indEps   = " << myIndEpsilon    << ";" << endl;
+       oDriver << "const int    indMitr  = " << myIndMitr       << ";" << endl;
+       oDriver << "const int    indTrace = " << myIndTraceLevel << ";" << endl;
+       oDriver << "Optimizer    indOpt( indEps, indMitr, indTrace );" << endl;
+       oDriver << endl;
+       oDriver << "timeval optBegin, optEnd;" << endl;
+       oDriver << "gettimeofday( &optBegin, NULL );" << endl;
+       oDriver << "try" << endl;
+       oDriver << "{" << endl;
+       oDriver << "   fitPopulation( model," << endl;
+       oDriver << "                  y," << endl;
+       oDriver << "                  N," << endl;
+       oDriver << "                  popOpt," << endl;
+       oDriver << "                  alpLow," << endl;
+       oDriver << "                  alpUp," << endl;
+       oDriver << "                  alpIn," << endl;
+       oDriver << "                  alpStep," << endl;
+       oDriver << "                 &alpOut," << endl;
+       oDriver << "                  indOpt," << endl;
+       oDriver << "                  bLow," << endl;
+       oDriver << "                  bUp," << endl;
+       oDriver << "                  bIn," << endl;
+       oDriver << "                  bStep," << endl;
+       oDriver << "                 &bOut," << endl;
+       oDriver << "                 &alpObjOut," << endl;
+       oDriver << "                 &alpObj_alpOut," << endl;
+       oDriver << "                 &alpObj_alp_alpOut );" << endl;
+       oDriver << "}" << endl;
+       oDriver << "catch( const SpkException& e )" << endl;
+       oDriver << "{" << endl;
+       oDriver << "   cerr << e << endl;" << endl;
+       oDriver << "   return 1;" << endl;
+       oDriver << "}" << endl;
+       oDriver << "catch( ... )" << endl;
+       oDriver << "{" << endl;
+       oDriver << "   cerr << \"Unknown exception: failed in parameter estimation!!!\" << endl;" << endl;
+       oDriver << "   return 1;" << endl;
+       oDriver << "}" << endl;
+       oDriver << "gettimeofday( &optEnd, NULL );" << endl;
+       oDriver << "double optTimeSec = difftime( optEnd.tv_sec, optBegin.tv_sec );" << endl;
+
+       // Statistics can be only computed when the parameter estimation has been done.
+       if( myIsStat )
+       {
+  	  oDriver << "timeval statBegin, statEnd;" << endl;
+          if( myIsCov )
+	    oDriver << "valarray<double> covOut( nAlp * nAlp );" << endl;
+	  if( myIsStderr )
+	    oDriver << "valarray<double> seOut( nAlp );" << endl;
+	  if( myIsCorrelation )
+	    oDriver << "valarray<double> correlationOut( nAlp * nAlp );" << endl;
+	  if( myIsCoefficient )
+	    oDriver << "valarray<double> coefficientOut( nAlp );" << endl;
+	  if( myIsConfidence )
+	    oDriver << "valarray<double> confidenceOut( 2 * nAlp );" << endl;
+	  if( myIsInvCov )
+	    oDriver << "valarray<double> invCov( nAlp * nAlp );" << endl;
+
+          // indStatistics
+	  oDriver << "gettimeofday( &statBegin, NULL );" << endl;
+          oDriver << "try" << endl;
+          oDriver << "{" << endl;
+          oDriver << "   popStatistics( model, " << endl;
+          oDriver << "                  " << myApproximation << "," << endl;
+          oDriver << "                  N," << endl;
+          oDriver << "                  y," << endl;
+	  oDriver << "                  alpOut, " << endl;
+          oDriver << "                  alpObj_alpOut, " << endl;
+          oDriver << "                  bOut," << endl;
+          oDriver << "                  bLow," << endl;
+          oDriver << "                  bUp," << endl;
+          oDriver << "                  bStep," << endl;
+          oDriver << "                  covForm," << endl;
+          oDriver << "                  " << (myIsCov?         "covOut"        :"NULL") << ", " << endl;
+          oDriver << "                  " << (myIsStderr?      "seOut"         :"NULL") << ", " << endl;
+          oDriver << "                  " << (myIsCorrelation? "correlationOut":"NULL") << ", " << endl;
+          oDriver << "                  " << (myIsCoefficient? "coeficientOut" :"NULL") << ", " << endl;
+          oDriver << "                  " << (myIsConfidence?  "confidenceOut" :"NULL") << " );" << endl;
+          oDriver << "}" << endl;
+          oDriver << "catch( const SpkException& e )" << endl;
+          oDriver << "{" << endl;
+          oDriver << "   cerr << e << endl;" << endl;
+          oDriver << "   return 1;" << endl;
+          oDriver << "}" << endl;
+          oDriver << "catch( ... )" << endl;
+          oDriver << "{" << endl;
+          oDriver << "   cerr << \"Unknown exception: failed in statistics calculation!!!\" << endl;" << endl;
+          oDriver << "   return 1;" << endl;
+          oDriver << "}" << endl;
+
+	  if( myIsInvCov )
+	    {
+	      oDriver << "try" << endl;
+	      oDriver << "{" << endl;
+	      oDriver << "   invCovOut = inverse( covOut, nAlp );" << endl;
+	      oDriver << "}" << endl;
+	      oDriver << "catch( const SpkException& e )" << endl;
+	      oDriver << "{" << endl;
+	      oDriver << "   cerr << e << endl;" << endl;
+	      oDriver << "   return 1;" << endl;
+	      oDriver << "}" << endl;
+	      oDriver << "catch( ... )" << endl;
+	      oDriver << "{" << endl;
+	      oDriver << "   cerr << \"Unknown exception: failed to invert the covariance of the final estimate of individual parameter!!!\" << endl;" << endl;
+	      oDriver << "   return 1;" << endl;
+	      oDriver << "}" << endl;
+	    }
+	  oDriver << "gettimeofday( &statEnd, NULL );" << endl;
+	  oDriver << "double statTimeSec = difftime( statEnd.tv_sec, statBegin.tv_sec );" << endl;
+       }
+    }
+
+
+  //
+  // Results assembly
+  //
+  oDriver << "ofstream oResults( \"result.xml\" );" << endl;
+  oDriver << "if( !oResults.good() )" << endl;
+  oDriver << "{" << endl;
+  oDriver << "   cerr << \"Failed to open a file, result.xml!!!\" << endl;" << endl;
+  oDriver << "   return 1;" << endl;
+  oDriver << "}" << endl;
+
+  oDriver << "oResults << \"<spkreportML>\" << endl;" << endl;
+
+  oDriver << "oResults << \"<pop_analysis_result>\" << endl;" << endl;
+
+  if( myIsEstimate )
+    {
+      oDriver << "oResults << \"<pop_opt_result elapsedtime=\\\"\" << optTimeSec << \"\\\">\" << endl;" << endl;
+      oDriver << "oResults << \"<pop_obj_out>\" << endl;" << endl;
+      oDriver << "oResults << \"<value>\" << alpObjOut << \"</value>\" << endl;" << endl;
+      oDriver << "oResults << \"</alp_obj_out>\" << endl;" << endl;
+      oDriver << "oResults << \"<theta_out>\" << endl;" << endl;
+      // theta
+      oDriver << "for( int i=0; i<nTheta; i++ )" << endl;
+      oDriver << "{" << endl;
+      oDriver << "   oResults << \"<value>\" << alpOut[i] << \"</value>\" << endl;" << endl;
+      oDriver << "}" << endl;
+      oDriver << "oResults << \"</theta_out>\" << endl;" << endl;
+      // Omega 
+      oDriver << "oResults << \"<omega_out>\" << endl;" << endl;
+      oDriver << "for( int i=nTheta; i<nTheta+nOmega; i++ )" << endl;
+      oDriver << "{" << endl;
+      oDriver << "   oResults << \"<value>\" << alpOut[i] << \"</value>\" << endl;" << endl;
+      oDriver << "}" << endl;
+      oDriver << "oResults << \"</omega_out>\" << endl;" << endl;
+      // Sigma
+      oDriver << "oResults << \"<sigma_out>\" << endl;" << endl;
+      oDriver << "for( int i=nTheta+nOmega; i<nTheta+nOmega+nSigma; i++ )" << endl;
+      oDriver << "{" << endl;
+      oDriver << "   oResults << \"<value>\" << alpOut[i] << \"</value>\" << endl;" << endl;
+      oDriver << "}" << endl;
+      oDriver << "oResults << \"</sigma_out>\" << endl;" << endl;
+      oDriver << "oResults << \"</pop_opt_result>\" << endl;" << endl;
+      if( myIsStat )
+	{
+	  oDriver << "oResults << \"<pop_stat_result elapsedtime=\\\"\" << statTimeSec << \"\\\">\" << endl;" << endl;
+	  oDriver << "int covElemNum = " << series( 1, 1, myThetaLen ) << ";" << endl;
+	  if( myIsCov )
+	    {
+	      oDriver << "oResults << \"<pop_covariance_out struct=\\\"block\\\" dimension=\\\"\" << nB << \"\\\">\" << endl;" << endl;
+	      oDriver << "for( int i=0; i<covElemNum; i++ )" << endl;
+	      oDriver << "{" << endl;
+	         oDriver << "oResults << \"   <value>\" << covOut[i] << \"</value>\" << endl;" << endl;
+	      oDriver << "}" << endl;
+
+	      oDriver << "oResults << \"</pop_covariance_out>\" << endl;" << endl;
+	    }
+	  if( myIsInvCov )
+	    {
+	      oDriver << "oResults << \"<pop_inverse_covariance_out struct=\\\"block\\\" dimension=\\\"\" << nB << \"\\\">\" << endl;" << endl;
+	      oDriver << "for( int i=0; i<covElemNum; i++ )" << endl;
+	      oDriver << "{" << endl;
+	         oDriver << "oResults << \"   <value>\" << invCovOut[i] << \"</value>\" << endl;" << endl;
+	      oDriver << "}" << endl;
+
+	      oDriver << "oResults << \"</pop_inverse_covariance_out>\" << endl;" << endl;
+	    }
+	  if( myIsStderr )
+	    {
+	      oDriver << "oResults << \"<pop_stderror_out length=\\\"\" << nB << \"\\\">\" << endl;" << endl;
+	      oDriver << "for( int i=0; i<nB; i++ )" << endl;
+	      oDriver << "{" << endl;
+	         oDriver << "oResults << \"   <value>\" << seOut[i] << \"</value>\" << endl;" << endl;
+	      oDriver << "}" << endl;
+
+	      oDriver << "oResults << \"</pop_stderror_out>\" << endl;" << endl;
+	    }
+	  if( myIsCorrelation )
+	    {
+	      oDriver << "oResults << \"<pop_correlation_out struct=\\\"block\\\" dimension=\\\"\" << nB << \"\\\">\" << endl;" << endl;
+	      oDriver << "for( int i=0; i<covElemNum; i++ )" << endl;
+	      oDriver << "{" << endl;
+	         oDriver << "oResults << \"   <value>\" << correlationOut[i] << \"</value>\" << endl;" << endl;
+	      oDriver << "}" << endl;
+
+	      oDriver << "oResults << \"</pop_correlation_out>\" << endl;" << endl;
+	    }
+	  if( myIsCoefficient )
+	    {
+	      oDriver << "oResults << \"<pop_coefficient_out length=\\\"\" << nB << \"\\\">\" << endl;" << endl;
+	      oDriver << "for( int i=0; i<nB; i++ )" << endl;
+	      oDriver << "{" << endl;
+	         oDriver << "oResults << \"   <value>\" << coefficientOut[i] << \"</value>\" << endl;" << endl;
+	      oDriver << "}" << endl;
+
+	      oDriver << "oResults << \"</pop_coefficient_out>\" << endl;" << endl;
+	    }
+	  if( myIsConfidence )
+	    {
+	      oDriver << "oResults << \"<pop_confidence_out length=\\\"\" << nB*2 << \"\\\">\" << endl;" << endl;
+	      oDriver << "for( int i=0; i<nB*2; i++ )" << endl;
+	      oDriver << "{" << endl;
+	         oDriver << "oResults << \"   <value>\" << confidenceOut[i] << \"</value>\" << endl;" << endl;
+	      oDriver << "}" << endl;
+
+	      oDriver << "oResults << \"</pop_confidence_out>\" << endl;" << endl;
+	    }
+	  oDriver << "oResults << \"</pop_stat_result>\" << endl;" << endl;
+	}
+    }
+
+  oDriver << "oResults << \"</pop_analysis_result>\" << endl;" << endl;
+
+  //=============================================================================
+  // LABELS
+  //
+  const map<const string, Symbol> * t = table.getTable();
+  const Symbol * pID = table.findi("id");
+  assert( pID != Symbol::empty() );
+
+  map<const string, Symbol>::const_iterator pEntry = t->begin();
+  const vector<string>::const_iterator pLabelBegin = table.getLabels()->begin();
+  const vector<string>::const_iterator pLabelEnd   = table.getLabels()->end();
+  vector<string> whatGoesIn;  // will hold those labels in the order that actually go into the data section.
+
+  oDriver << "oResults << \"<presentation_data>\" << endl;" << endl;
+  oDriver << "oResults << \"<data_labels>\" << endl;" << endl;
+
+  // Put ID first in the sequence
+  whatGoesIn.push_back( pID->name );
+  oDriver << "oResults << \"<label name=\\\"" << pID->name << "\\\"/>\" << endl;" << endl;
+
+  // ...aaand, following ID is, all the left hand side quantities in the model definition.
+  for( pEntry = t->begin(); pEntry!=t->end(); pEntry++ )
+    {
+      if( pEntry->first != "id" && ( find( pLabelBegin, pLabelEnd, pEntry->second.name )==pLabelEnd ) )
+	{
+	  whatGoesIn.push_back( pEntry->second.name );
+	  oDriver << "oResults << \"<label name=\\\"" << pEntry->second.name << "\\\"/>\" << endl;" << endl;
+	}
+    }
+  oDriver << "oResults << \"</data_labels>\" << endl;" << endl;
+
+  vector<string>::const_iterator pWhatGoesIn;
+  oDriver << "for( int j=0, cnt=1; j<nPop; j++ )" << endl;
+  oDriver << "{" << endl;
+  oDriver << "   for( int i=0; i<N[j]; i++, cnt++ )" << endl;
+  oDriver << "   {" << endl;
+  oDriver << "      oResults << \"<row position=\\\"\" << cnt << \"\\\">\" << endl;" << endl;
+  for( pWhatGoesIn = whatGoesIn.begin(); pWhatGoesIn!=whatGoesIn.end(); pWhatGoesIn++ )
+    {
+      oDriver << "      oResults << \"<value>\" << "; 
+      if( *pWhatGoesIn == "SIMDV" )
+	{
+	  oDriver << "yOut[cnt]";
+	}
+      else
+	{
+	  oDriver << "set.data[j]->" << *pWhatGoesIn << "[i]";
+	}
+      oDriver << " << \"</value>\" << endl;" << endl;
+    }
+  oDriver << "      oResults << \"</row>\" << endl;" << endl;
+  oDriver << "   }" << endl;
+  oDriver << "}" << endl;
+
+  oDriver << "oResults << \"</presentation_data>\" << endl;" << endl;
+  //
+  //=============================================================================
+
+  oDriver << "oResults << \"</spkreportML>\" << endl;" << endl;
+
+  oDriver << "oResults.close();" << endl;
+
+  oDriver << "return 0;" << endl;
+  oDriver << "}" << endl;
+  oDriver.close();
 }
