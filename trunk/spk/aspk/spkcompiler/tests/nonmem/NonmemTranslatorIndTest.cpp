@@ -28,48 +28,169 @@ using namespace xercesc;
 
 namespace{
   const unsigned int maxChars = 2047;
+  char fPrefix[128];
+  char fData[128];
+  char fSource[128];
+  char fIndDataDriver[128];
+  char fIndDataDriver_cpp[128];
+  char fDataSetDriver[128];
+  char fDataSetDriver_cpp[128];
+  char fPredDriver[128];
+  char fPredDriver_cpp[128];
+  char fDriver[128];
+  char fDriver_cpp[128];
+
+  //============================================
+  // Optimizer controls
+  //============================================
+  const int  mitr       = 100;
+  const bool isEstimate = true;
+  const char approx[]   = "foce";
+
+  //============================================
+  // Setting up the array filled with data 
+  // labels for internal (test) use.
+  //============================================
+  const char *strID   = "ID";
+  const char *strTIME = "TIME";
+  const char *strDV   = "DV";
+  const char *strCP   = "CP";
+  const char *strMDV  = "MDV";
+  const char *label[] = { strID, strTIME, strDV, strMDV };
+  map<const char*, const char*> label_alias;
+  int nLabels         = 4;
+
+  //============================================
+  // <Data Set>
+  //
+  //   ID     TIME     DV=CP    MDV
+  //    1      0.0      0.0      0
+  //    1      1.0     10.0      0
+  //    1      2.0     20.0      0
+  //    1      2.5     30.0      0
+  //============================================
+  const int    nRecords  =  4;
+  const int    nItems    =  4;
+  const double record0[] = { 1, 0.0,  0.0, 0 };
+  const double record1[] = { 1, 1.0, 10.0, 0 };
+  const double record2[] = { 1, 2.0, 20.0, 0 };
+  const double record3[] = { 1, 3.0, 30.0, 0 }; 
+
+  double const * record[nRecords];
+
+  //============================================
+  // Define NONMEM keywords
+  //============================================
+  const char *strTHETA = "THETA";
+  const char *strOMEGA = "OMEGA";
+  const char *strSIGMA = "SIGMA";
+  const char *strETA   = "ETA";
+  const char *strEPS   = "EPS";
+  const char *strPRED  = "PRED";
+  const char *strRES   = "RES";
+  const char *strWRES  = "WRES";
+  const char *strF     = "F";
+  const char *strY     = "Y";
+
+  //============================================
+  // The user is requested to feed in
+  // the constraints and initial values for
+  // theta.
+  //============================================
+  const int    thetaLen                = 1;
+  const double theta_in [ thetaLen ]   = {  5.0 };
+  const double theta_up [ thetaLen ]   = { 10.0 };
+  const double theta_low[ thetaLen ]   = {  0.0 };
+  const bool   theta_fix[ thetaLen ]   = { false };
+
+  //============================================
+  // The SPK Compiler decides the constraints
+  // of Omega matrix. Just feed the initial
+  // values.  Here, test with a simple
+  // diagonal --- 1 dimensional! --- matrix.
+  //============================================
+  const int    omegaDim                = 1;
+  const Symbol::Structure omegaStruct  = Symbol::DIAGONAL;
+  const int    omegaOrder              = 1;
+  const double omega_in[ omegaOrder ]  = { 1.0 };
+  const bool   omega_fix[ omegaOrder ] = { false };
+
+  //============================================
+  // The SPK Compiler determines the initial
+  // values for eta, the variance of data
+  // in the individual analysis case.
+  // The size of this vector is determined by
+  // the order of Omega matrix.
+  //============================================
+  const int etaLen = omegaOrder;
+
+  //============================================
+  // EPS is irrevalent in the individual 
+  // analysis case.  It'll be ignored.
+  //============================================
+  const int epsLen = 0;
+
+  //============================================
+  // Make requests for statistics.
+  //============================================
+  const bool ind_stderr         = true;
+  const bool ind_coefficent     = true;
+  const bool ind_confidence     = true;
+  const bool ind_covariance     = true;
+  const bool ind_inv_covariance = true;
+  const bool ind_correlation    = true;
+
+  //============================================
+  // Make a request on data simulation.
+  //============================================
+  const bool isSimulate         = false;
+  const int  seed               = 1;
+  const bool onlySimulation     = false;
+  const int  subproblems        = 1;
+
+  //============================================
+  // The PRED model
+  //============================================
+  const char PRED[] = "F = THETA(1) + THETA(2) * TIME\nY = F + ETA(1)";
 };
 
 void NonmemTranslatorIndTest::setUp()
 {
+  label_alias[strID]   = NULL;
+  label_alias[strTIME] = NULL;
+  label_alias[strDV]   = strCP;
+  int nLabel_Alias     = label_alias.size();
+
+  record[0]  = record0;
+  record[1]  = record1;
+  record[2]  = record2;
+  record[3]  = record3;
 }
 void NonmemTranslatorIndTest::tearDown()
 {
+  remove( fData );
+  remove( fSource );
+  remove( fIndDataDriver );
+  remove( fIndDataDriver_cpp );
+  remove( fDataSetDriver );
+  remove( fDataSetDriver_cpp );
+  remove( fPredDriver );
+  remove( fPredDriver_cpp );
+  remove( fDriver );
+  remove( "driver.cpp" );
+  remove( "IndData.h" );
+  remove( "DataSet.h" );
+  remove( "Pred.h" );
+  remove( "predEqn.cpp" );
+  remove( "generatedMakefile" );
+
+  XMLPlatformUtils::Terminate();
+
 }
 //******************************************************************************
 //
 // Test a problem that takes a data set with the ID field filled in.
 //
-// <Data Set>
-//
-//   ID     TIME     CP=DV
-//    1      0.0      0.0 
-//    1      1.0     10.0
-//    1      2.0     20.0
-//
-// <Parameter Estimation Constraints>
-// theta (initial):  {  5 }
-// theta (upper):    { 10 }
-// theta (lower):    {  0 }
-// Omega (initial):  /   \
-//                   | 1 |
-//                   \   /  treat it as a diagonal case
-//
-// <Statistics values request>
-// standard error:            yes
-// coefficent of variation    yes
-// confidence interval        yes
-// covariance                 yes
-// inverse of covariance      no
-// correlation matrix         yes
-//
-// <Data simulation>
-// Only simulation?           no
-// #of subproblems            1
-// Seed                       1
-//
-// <Model>
-//  F= THETA(1) + ETA(1)*TIME
 //******************************************************************************
 void NonmemTranslatorIndTest::testParseIndSource()
 {
@@ -95,52 +216,31 @@ void NonmemTranslatorIndTest::testParseIndSource()
   // Generating a dataML document (with ID)
   //
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  const char fData[] = "NonmemTranslatorIndTest.dataML";
+  sprintf( fPrefix, "indWithID" );
+  sprintf( fData, "%s_dataML", fPrefix );
   ofstream oData( fData );
   CPPUNIT_ASSERT( oData.good() );
   oData << "<spkdata version=\"0.1\">" << endl;
-  oData << "<table columns=\"3\" rows=\"4\">" << endl;
+  oData << "<table columns=\"" << nLabels << "\" rows=\"" << nRecords + 1 << "\">" << endl;
   oData << "<description>" << endl;
   oData << "The data set (with ID) for the individual analysis test" << endl;
   oData << "</description>" << endl;
   oData << "<row position=\"1\">" << endl;
-  oData << "<value type=\"string\">ID</value>" << endl;
-  oData << "<value type=\"string\">TIME</value>" << endl;
-  oData << "<value type=\"string\">DV</value>" << endl;
+  for( int i=0; i<nItems; i++ )
+    {
+      oData << "<value type=\"string\">" << label[i] << "</value>" << endl;
+    }
   oData << "</row>" << endl;
-  oData << "<row position=\"2\">" << endl;
-  oData << "<value type=\"string\">" << endl;
-  oData << "1" << endl;
-  oData << "</value>" << endl;
-  oData << "<value type=\"numeric\">" << endl;
-  oData << "0.0" << endl;
-  oData << "</value>" << endl;
-  oData << "<value type=\"numeric\">" << endl;
-  oData << "0.0" << endl;
-  oData << "</value>" << endl;
-  oData << "</row>" << endl;
-  oData << "<row position=\"3\">" << endl;
-  oData << "<value type=\"string\">" << endl;
-  oData << "1" << endl;
-  oData << "</value>" << endl;
-  oData << "<value type=\"numeric\">" << endl;
-  oData << "1.0" << endl;
-  oData << "</value>" << endl;
-  oData << "<value type=\"numeric\">" << endl;
-  oData << "10.0" << endl;
-  oData << "</value>" << endl;
-  oData << "</row>" << endl;
-  oData << "<row position=\"4\">" << endl;
-  oData << "<value type=\"string\">" << endl;
-  oData << "1" << endl;
-  oData << "</value>" << endl;
-  oData << "<value type=\"numeric\">" << endl;
-  oData << "2.0" << endl;
-  oData << "</value>" << endl;
-  oData << "<value type=\"numeric\">" << endl;
-  oData << "20.0" << endl;
-  oData << "</value>" << endl;
-  oData << "</row>" << endl;
+  for( int i=0; i<nRecords; i++ )
+    {
+      oData << "<row position=\"" << i+2 << "\">" << endl;
+      oData << "<value type=\"string\">"  << record[i][0] << "</value>" << endl;
+      for( int j=1; j<nItems; j++ )
+	{
+	  oData << "<value type=\"numeric\">" << record[i][j] << "</value>" << endl;
+	}
+      oData << "</row>" << endl;
+    }
   oData << "</table>" << endl;
   oData << "</spkdata>" << endl;
   oData.close();
@@ -191,105 +291,12 @@ void NonmemTranslatorIndTest::testParseIndSource()
   //
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-  //============================================
-  // Optimizer controls
-  //============================================
-  const char approx[]   = "foce";
-  const int  mitr       = 100;
-  const bool isEstimate = true;
-
-  //============================================
-  // Setting up the array filled with data 
-  // labels for internal (test) use.
-  //============================================
-  const string strID   = "ID";
-  const string strTIME = "TIME";
-  const string strCP   = "CP";
-  const string strDV   = "DV";
-  map<string, string> labels;
-  labels[ strID ]   = "";
-  labels[ strTIME ] = "";
-  labels[ strCP ]   = "DV";
-  int nLabels    = labels.size();
-
-  //============================================
-  // Define NONMEM keywords
-  //============================================
-  const string strTHETA = "THETA";
-  const string strOMEGA = "OMEGA";
-  const string strSIGMA = "SIGMA";
-  const string strETA   = "ETA";
-  const string strEPS   = "EPS";
-  const string strPRED  = "PRED";
-  const string strRES   = "RES";
-  const string strWRES  = "WRES";
-  const string strMDV   = "MDV";
-  const string strF     = "F";
-  const string strY     = "Y";
-
-  //============================================
-  // The user is requested to feed in
-  // the constraints and initial values for
-  // theta.
-  //============================================
-  const int    thetaLen                = 1;
-  const double theta_in [ thetaLen ]   = {  5.0 };
-  const double theta_up [ thetaLen ]   = { 10.0 };
-  const double theta_low[ thetaLen ]   = {  0.0 };
-  const bool   theta_fix[ thetaLen ]   = { false };
-
-  //============================================
-  // The SPK Compiler decides the constraints
-  // of Omega matrix. Just feed the initial
-  // values.  Here, test with a simple
-  // diagonal --- 1 dimensional! --- matrix.
-  //============================================
-  const int    omegaDim                = 1;
-  const Symbol::Structure omegaStruct  = Symbol::DIAGONAL;
-  assert( omegaStruct == Symbol::DIAGONAL );
-  const int    omegaOrder              = 1;
-  const double omega_in[ omegaOrder ]  = { 1.0 };
-  const bool   omega_fix[ omegaOrder ] = { false };
-
-  //============================================
-  // The SPK Compiler determines the initial
-  // values for eta, the variance of data
-  // in the individual analysis case.
-  // The size of this vector is determined by
-  // the order of Omega matrix.
-  //============================================
-  const int etaLen = omegaOrder;
-
-  //============================================
-  // EPS is irrevalent in the individual 
-  // analysis case.  It'll be ignored.
-  //============================================
-  const int epsLen = 0;
-
-  //============================================
-  // Make requests for statistics.
-  //============================================
-  const bool ind_stderr         = true;
-  const bool ind_coefficent     = true;
-  const bool ind_confidence     = true;
-  const bool ind_covariance     = true;
-  const bool ind_inv_covariance = true;
-  const bool ind_correlation    = true;
-
-  //============================================
-  // Make a request on data simulation.
-  //============================================
-//  const bool isSimulate         = true;
-  const bool isSimulate         = false;
-  const int  seed               = 1;
-  const bool onlySimulation     = false;
-  const int  subproblems        = 1;
   
   //============================================
   // Create an sourceML based upon the
   // parameters set so far.
   //============================================
-  const char fSource[] = "NonmemTranslatorIndTest.sourceML";
+  sprintf( fSource, "%s_sourceML.xml", fPrefix );
   ofstream oSource( fSource );
   CPPUNIT_ASSERT( oSource.good() );
 
@@ -304,9 +311,13 @@ void NonmemTranslatorIndTest::testParseIndSource()
   oSource << "is_estimation=\"" << (isEstimate? "yes" : "no") << "\">" << endl;
 
   oSource << "<data_labels>" << endl;
-  oSource << "<label name=\"" << strID << "\"/>" << endl;
-  oSource << "<label name=\"" << strTIME << "\"/>" << endl;
-  oSource << "<label name=\"" << strCP << "\" synonym=\"" << strDV << "\"/>" << endl;
+  for( int i=0; i<nLabels; i++ )
+    {
+      oSource << "<label name=\"" << label[i] << "\"";
+      if( label_alias[ label[i] ] != NULL )
+	oSource << " synonym=\"" << label_alias[ label[i] ] << "\"";
+      oSource << "/>" << endl;
+    }
   oSource << "</data_labels>" << endl;
 
   oSource << "<theta length=\"" << thetaLen << "\">" << endl;
@@ -314,8 +325,7 @@ void NonmemTranslatorIndTest::testParseIndSource()
   for( int i=0; i<thetaLen; i++ )
     {
       oSource << "<value";
-      if( theta_fix[i] )
-	oSource << " fixed=\"yes\"";
+      oSource << " fixed=\"" << (theta_fix[i]? "yes" : "no") << "\"";
       oSource << ">" << theta_in[i] << "</value>" << endl;
     }
   oSource << "</in>" << endl;
@@ -338,8 +348,7 @@ void NonmemTranslatorIndTest::testParseIndSource()
   for( int i=0; i<omegaOrder; i++ )
     {
       oSource << "<value";
-      if( omega_fix[i] )
-	oSource << " fixed=\"yes\"";
+      oSource << " fixed=\"" << (omega_fix[i]? "yes" : "no") << "\"";
       oSource << ">" << omega_in[i] << "</value>" << endl;
     }
   oSource << "</in>" << endl;
@@ -353,34 +362,24 @@ void NonmemTranslatorIndTest::testParseIndSource()
 
   if( isSimulate )
     {
-      oSource << "<simulation seed=\"" << seed << "\"/>" << endl;
+      oSource << "<simulation seed=\"" << seed << "\"";
+      if( onlySimulation )
+	oSource << " only_simulation=\"yes\"";
+      if( subproblems > 1 )
+        oSource << " subproblems=\"" << subproblems << "\"";
+      oSource << "/>" << endl;
     }
   oSource << "</ind_analysis>" << endl;
   oSource << "</constraint>" << endl;
 
   oSource << "<model>" << endl;
   oSource << "<pred>" << endl;
-  oSource << "   " << strF << " = " << strTHETA << "(1) + " << strETA << "(1) * " << strTIME << endl;
+  oSource << "   " << PRED << endl;
   oSource << "</pred>" << endl;
   oSource << "</model>" << endl;
-      
-  oSource << "<presentation>" << endl;
-  oSource << "<table header=\"one\" save_as=\"xxx\">" << endl;
-  oSource << "<column label=\"" << strTIME << "\" appearance_order=\"1\" sort_order=\"1\"/>" << endl;
-  oSource << "<column label=\"" << strTHETA << "(1)\" appearance_order=\"2\"/>" << endl;
-  oSource << "<column label=\"" << strTHETA << "(3)\" appearance_order=\"4\"/>" << endl;
-  oSource << "<column label=\"" << strTHETA << "(2)\" appearance_order=\"3\"/>" << endl;
-  oSource << "</table>" << endl;
-  oSource << "<table header=\"every\">" << endl;
-  oSource << "<column label=\"" << strTIME << "\" appearance_order=\"1\" sort_order=\"1\"/>" << endl;
-  oSource << "<column label=\"" << strDV << "\" appearance_order=\"2\"/>" << endl;
-  oSource << "</table>" << endl;
-  oSource << "<scatterplot>" << endl;
-  oSource << "<x label=\"" << strTIME << "\"/>" << endl;
-  oSource << "<y label=\"" << strPRED << "\"/>" << endl;
-  oSource << "</scatterplot>" << endl;
-  oSource << "</presentation>" << endl;
-      
+
+  oSource << "<presentation/>" << endl;
+    
   oSource << "</nonmem>" << endl;
   oSource << "</spksource>" << endl;
   oSource.close();
@@ -492,8 +491,8 @@ void NonmemTranslatorIndTest::testParseIndSource()
   // * WRES
   // * RES
   //============================================
-  char fIndDataDriver[]     = "indWithID_IndDataDriver";
-  char fIndDataDriver_cpp[] = "indWithID_IndDataDriver.cpp";
+  strcpy( fIndDataDriver, "indWithID_IndDataDriver" );
+  strcpy( fIndDataDriver_cpp, "indWithID_IndDataDriver.cpp" );
   ofstream oIndDataDriver( fIndDataDriver_cpp );
   CPPUNIT_ASSERT( oIndDataDriver.good() );
 
@@ -513,54 +512,38 @@ void NonmemTranslatorIndTest::testParseIndSource()
   oIndDataDriver << endl;
   oIndDataDriver << "int main()" << endl;
   oIndDataDriver << "{" << endl;
-  oIndDataDriver << "   const int n = 3;" << endl;
+  oIndDataDriver << "   const int n = " << nRecords << ";" << endl;
   oIndDataDriver << "   const int thetaLen = " << thetaLen << ";" << endl;
   oIndDataDriver << "   const int etaLen = " << etaLen << ";" << endl;
   oIndDataDriver << "   vector<char*> a_id(n);" << endl;
-  oIndDataDriver << "   char id1[] = \"1\";" << endl;
-  oIndDataDriver << "   a_id[0] = id1;" << endl;
-  oIndDataDriver << "   a_id[1] = id1;" << endl;
-  oIndDataDriver << "   a_id[2] = id1;" << endl;
   oIndDataDriver << "   vector<double> a_time(n);" << endl;
-  oIndDataDriver << "   a_time[0] = 0.0;" << endl;
-  oIndDataDriver << "   a_time[1] = 1.0;" << endl;
-  oIndDataDriver << "   a_time[2] = 2.0;" << endl;
   oIndDataDriver << "   vector<double> a_cp(n);" << endl;
-  oIndDataDriver << "   a_cp[0] = 0.0;" << endl;
-  oIndDataDriver << "   a_cp[1] = 10.0;" << endl;
-  oIndDataDriver << "   a_cp[2] = 20.0;" << endl;
   oIndDataDriver << "   vector<double> a_mdv(n);" << endl;
-  oIndDataDriver << "   a_mdv[0] = 0;" << endl;
-  oIndDataDriver << "   a_mdv[1] = 0;" << endl;
-  oIndDataDriver << "   a_mdv[2] = 0;" << endl;
+
+  for( int i=0; i<nRecords; i++ )
+  {
+    oIndDataDriver << "   a_id["   << i << "] = \"" << record[i][0] << "\";" << endl;
+    oIndDataDriver << "   a_time[" << i << "] = "   << record[i][1] << ";" << endl;
+    oIndDataDriver << "   a_cp["   << i << "] = "   << record[i][2] << ";" << endl;
+    oIndDataDriver << "   a_mdv["  << i << "] = "   << record[i][3] << ";" << endl;
+  }
 
   oIndDataDriver << "   IndData<double> A( n, a_id, a_time, a_cp, a_mdv );" << endl;
 
-  oIndDataDriver << "   assert( strcmp( A." << strID << "[0], id1 ) == 0 );" << endl;
-  oIndDataDriver << "   assert( strcmp( A." << strID << "[1], id1 ) == 0 );" << endl;
-  oIndDataDriver << "   assert( strcmp( A." << strID << "[2], id1 ) == 0 );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  0.0, A." << strTIME << "[0] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  1.0, A." << strTIME << "[1] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  2.0, A." << strTIME << "[2] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  0.0, A." << strCP << "[0] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 10.0, A." << strCP << "[1] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 20.0, A." << strCP << "[2] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  0.0, A." << strDV << "[0] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 10.0, A." << strDV << "[1] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 20.0, A." << strDV << "[2] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  0,   A." << strMDV << "[0] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  0,   A." << strMDV << "[1] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  0,   A." << strMDV << "[2] );" << endl;
+  for( int i=0; i<nRecords; i++ )
+    {
+      oIndDataDriver << "   assert( strcmp( A." << strID << "[" << i << "], \"" << record[i][0] << "\" ) == 0 );" << endl;
+      oIndDataDriver << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", A." << strTIME << "[" << i << "] );" << endl;
+      // CP=DV
+      oIndDataDriver << "   MY_ASSERT_EQUAL(  " << record[i][2] << ", A." << strCP   << "[" << i << "] );" << endl;
+      oIndDataDriver << "   MY_ASSERT_EQUAL(  " << record[i][2] << ", A." << strDV   << "[" << i << "] );" << endl;
+      oIndDataDriver << "   MY_ASSERT_EQUAL(  " << record[i][3] << ", A." << strMDV  << "[" << i << "] );" << endl;
+      // There have to be placeholders for the current values of theta/eta for
+      // each call to Pred::eval().
+      oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, A." << strTHETA << "["<< i << "].size() );" << endl;
+      oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen,   A." << strETA   << "[" << i << "].size() );" << endl;
+    }
   
-  // There have to be placeholders for the current values of theta/eta for
-  // each call to Pred::eval().
-  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, A." << strTHETA << "[0].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, A." << strTHETA << "[1].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, A." << strTHETA << "[2].size() );" << endl;
-  //  oIndDataDriver << "   MY_ASSERT_EQUAL( omegaOrder, A." << strOMEGA << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen, A." << strETA << "[0].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen, A." << strETA << "[1].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen, A." << strETA << "[2].size() );" << endl;
 
   // The current values of RES/WRES/PRED should be always kept in memory
   // for displaying tables/scatterplots.
@@ -594,8 +577,8 @@ void NonmemTranslatorIndTest::testParseIndSource()
   // data set correctly.
   //
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  char fDataSetDriver[]     = "indWithID_DataSetDriver";
-  char fDataSetDriver_cpp[] = "indWithID_DataSetDriver.cpp";
+  sprintf( fDataSetDriver, "%s_DataSetDriver", fPrefix );
+  sprintf( fDataSetDriver_cpp, "%s_DataSetDriver.cpp", fPrefix );
   ofstream oDataSetDriver( fDataSetDriver_cpp );
   CPPUNIT_ASSERT( oDataSetDriver.good() );
 
@@ -615,38 +598,29 @@ void NonmemTranslatorIndTest::testParseIndSource()
   oDataSetDriver << endl;  
   oDataSetDriver << "int main()" << endl;
   oDataSetDriver << "{" << endl;
-  oDataSetDriver << "   const int n = 3;" << endl;
+  oDataSetDriver << "   const int n = " << nRecords << ";" << endl;
   oDataSetDriver << "   DataSet<double> set;" << endl;
-  oDataSetDriver << "   assert( strcmp( set.data[0]->" << strID << "[0], \"1\" ) == 0 );" << endl;
-  oDataSetDriver << "   assert( strcmp( set.data[0]->" << strID << "[1], \"1\" ) == 0 );" << endl;
-  oDataSetDriver << "   assert( strcmp( set.data[0]->" << strID << "[2], \"1\" ) == 0 );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << strTIME << "[0] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  1.0, set.data[0]->" << strTIME << "[1] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  2.0, set.data[0]->" << strTIME << "[2] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << strCP << "[0] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 10.0, set.data[0]->" << strCP << "[1] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 20.0, set.data[0]->" << strCP << "[2] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << strDV << "[0] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 10.0, set.data[0]->" << strDV << "[1] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 20.0, set.data[0]->" << strDV << "[2] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << strMDV << "[0] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << strMDV << "[1] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << strMDV << "[2] );" << endl;
+  for( int i=0; i<nRecords; i++ )
+    {
+      oDataSetDriver << "   assert( strcmp( set.data[0]->" << strID << "[" << i << "], \"" << record[i][0] << "\" ) == 0 );" << endl;
+      oDataSetDriver << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", set.data[0]->" << strTIME << "[" << i << "] );" << endl;
+      oDataSetDriver << "   MY_ASSERT_EQUAL(  " << record[i][2] << ", set.data[0]->" << strCP   << "[" << i << "] );" << endl;
+      oDataSetDriver << "   MY_ASSERT_EQUAL(  " << record[i][2] << ", set.data[0]->" << strDV   << "[" << i << "] );" << endl;
+      oDataSetDriver << "   MY_ASSERT_EQUAL(  " << record[i][3] << ", set.data[0]->" << strMDV  << "[" << i << "] );" << endl;
+    }
 
   oDataSetDriver << "for( int j=0; j<n; j++ )" << endl;
   oDataSetDriver << "{" << endl;
   oDataSetDriver << "   MY_ASSERT_EQUAL( " << thetaLen << ", set.data[0]->" << strTHETA << "[j].size() );" << endl;
-  //  oDataSetDriver << "   MY_ASSERT_EQUAL( " << omegaOrder << ", set.data[0]->" << strOMEGaO << "[j].size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( " << etaLen << ", set.data[0]->" << strETA << "[j].size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( " << etaLen   << ", set.data[0]->" << strETA << "[j].size() );" << endl;
   oDataSetDriver << "}" << endl;
 
   // The current values of RES/WRES/PRED should be always kept in memory
   // for displaying tables/scatterplots.
-  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strRES << ".size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strRES  << ".size() );" << endl;
   oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strWRES << ".size() );" << endl;
   oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strPRED << ".size() );" << endl;
-
-  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strF << ".size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strF    << ".size() );" << endl;
   oDataSetDriver << "}" << endl;
   
   oDataSetDriver.close();
@@ -677,8 +651,8 @@ void NonmemTranslatorIndTest::testParseIndSource()
   // outside.
   //
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  char fPredDriver[]     = "indWithID_PredDriver";
-  char fPredDriver_cpp[] = "indWithID_PredDriver.cpp";
+  sprintf( fPredDriver, "%s_PredDriver", fPrefix );
+  sprintf( fPredDriver_cpp, "%s_PredDriver.cpp", fPrefix );
   ofstream oPredDriver( fPredDriver_cpp );
   CPPUNIT_ASSERT( oPredDriver.good() );
 
@@ -705,7 +679,7 @@ void NonmemTranslatorIndTest::testParseIndSource()
   oPredDriver << "   DataSet< CppAD::AD<double> > set;" << endl;
   oPredDriver << "   Pred< CppAD::AD<double> > pred( &set );" << endl;
   oPredDriver << "   const int who         = 0;" << endl;
-  oPredDriver << "   const int n           = 3; // #of measurements" << endl;
+  oPredDriver << "   const int n           = " << nRecords << "; // #of measurements" << endl;
   oPredDriver << "   const int thetaLen    = " << thetaLen << ";" << endl;
   oPredDriver << "   const int etaLen      = " << etaLen << ";" << endl;
   oPredDriver << "   const int epsLen      = " << epsLen << ";" << endl;
@@ -726,8 +700,9 @@ void NonmemTranslatorIndTest::testParseIndSource()
   oPredDriver << endl;
   oPredDriver << "   for( int j=0; j<n; j++ )" << endl;
   oPredDriver << "   {" << endl;
-  oPredDriver << "      indepVar[thetaOffset+0] = C1*j; // theta(0)" << endl;
-  oPredDriver << "      indepVar[etaOffset  +0] = C1*j; // eta(0)" << endl;
+  oPredDriver << "      indepVar[thetaOffset+0] = C1*j; // theta(1)" << endl;
+  oPredDriver << "      indepVar[thetaOffset+1] = C1*j; // theta(2)" << endl;
+  oPredDriver << "      indepVar[etaOffset  +0] = C1*j; // eta(1)" << endl;
   oPredDriver << "      pred.eval( thetaOffset, thetaLen," << endl;
   oPredDriver << "                 etaOffset,   etaLen," << endl;
   oPredDriver << "                 epsOffset,   epsLen ," << endl;
@@ -736,13 +711,13 @@ void NonmemTranslatorIndTest::testParseIndSource()
   oPredDriver << "                 who, j, " << endl;
   oPredDriver << "                 indepVar, depVar );" << endl;
   // Test if F(j) gets placed in the proper location in the depVar vector.
-  oPredDriver << "      double actualF   = CppAD::Value(depVar[ fOffset + j ]);" << endl;
+  oPredDriver << "      double actualF   = CppAD::Value(depVar[ fOffset + j ]);"  << endl;
   oPredDriver << "      double expectedF = CppAD::Value(indepVar[thetaOffset+0] " << endl;
-  oPredDriver << "                       + indepVar[etaOffset+0]*set.data[who]->" << strTIME << "[j] );" << endl;
+  oPredDriver << "                       + indepVar[thetaOffset+1] * set.data[who]->" << strTIME << "[j] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedF, actualF );" << endl;
   // Test if Y(j) gets placed in the proper location in the depVar vector.
   oPredDriver << "      double actualY   = CppAD::Value(depVar[ yOffset + j ]);" << endl;
-  oPredDriver << "      double expectedY = 0.0;" << endl;
+  oPredDriver << "      double expectedY = expectedF + CppAD::Value(indepVar[etaOffset+0]);" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedY, actualY );" << endl;
   oPredDriver << "   } // End of the first complete iteration over j" << endl;
   // Test if the DataSet objects hold the complete set of computed values from the just-finished iteration.
@@ -777,11 +752,11 @@ void NonmemTranslatorIndTest::testParseIndSource()
   // Test if F(j) gets placed in the proper location in the depVar vector.
   oPredDriver << "      double actualF   = CppAD::Value(depVar[ fOffset + j ]);" << endl;
   oPredDriver << "      double expectedF = CppAD::Value(indepVar[thetaOffset+0] " << endl;
-  oPredDriver << "                       + indepVar[etaOffset+0]*set.data[who]->" << strTIME << "[j] );" << endl;
+  oPredDriver << "                       + indepVar[thetaOffset+0]*set.data[who]->" << strTIME << "[j] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedF, actualF );" << endl;
   // Test if Y(j) gets placed in the proper location in the depVar vector.
   oPredDriver << "      double actualY   = CppAD::Value(depVar[ yOffset + j ]);" << endl;
-  oPredDriver << "      double expectedY = 0.0;" << endl;
+  oPredDriver << "      double expectedY = expectedF * CppAD::Value(indepVar[etaOffset+0]);" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedY, actualY );" << endl;
   oPredDriver << "   } // End of the first complete iteration over j" << endl;
   // Test if the DataSet objects hold the complete set of computed values from the most recent complete iteration.
@@ -820,8 +795,8 @@ void NonmemTranslatorIndTest::testParseIndSource()
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Test driver.cpp to see if it compiles/links successfully.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  char fDriver[]     = "driver";
-  char fDriver_cpp[] = "driver.cpp";
+  sprintf( fDriver, "driver" );
+  sprintf( fDriver_cpp, "driver.cpp" );
   int  exitcode      = 0;
   sprintf( command, "make -f generatedMakefile" );
   if( system( command ) != 0 )
@@ -855,59 +830,12 @@ void NonmemTranslatorIndTest::testParseIndSource()
       CPPUNIT_ASSERT_MESSAGE( message, true );
     }
 
-  remove( fData );
-  remove( fSource );
-  remove( fIndDataDriver );
-  remove( fIndDataDriver_cpp );
-  remove( fDataSetDriver );
-  remove( fDataSetDriver_cpp );
-  remove( fPredDriver );
-  remove( fPredDriver_cpp );
-  remove( fDriver );
-  remove( "driver.cpp" );
-  remove( "IndData.h" );
-  remove( "DataSet.h" );
-  remove( "Pred.h" );
-  remove( "predEqn.cpp" );
-  remove( "generatedMakefile" );
-
-  XMLPlatformUtils::Terminate();
 
 }
 //******************************************************************************
 //
 // Test a problem that takes a data set WITHOUT! ID field filled in.
 //
-// <Data Set>
-//
-//   TIME     CP=DV
-//    0.0      0.0 
-//    1.0     10.0
-//    2.0     20.0
-//
-// <Parameter Estimation Constraints>
-// theta (initial):  {  5 }
-// theta (upper):    { 10 }
-// theta (lower):    {  0 }
-// Omega (initial):  /   \
-//                   | 1 |
-//                   \   /  treat it as a diagonal case
-//
-// <Statistics values request>
-// standard error:            yes
-// coefficent of variation    yes
-// confidence interval        yes
-// covariance                 yes
-// inverse of covariance      no
-// correlation matrix         yes
-//
-// <Data simulation>
-// Only simulation?           no
-// #of subproblems            1
-// Seed                       1
-//
-// <Model>
-//  F= THETA(1) + ETA(1)*TIME
 //******************************************************************************
 void NonmemTranslatorIndTest::testParseIndNoID()
 {
@@ -933,42 +861,28 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   // Generating a dataML document (with no ID)
   //
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  const char fData[] = "NonmemTranslatorIndNoIDTest.dataML";
+  sprintf( fPrefix, "indWithNoID" );
+  sprintf( fData, "%s_dataML.xml", fPrefix );
   ofstream oData( fData );
   CPPUNIT_ASSERT( oData.good() );
   oData << "<spkdata version=\"0.1\">" << endl;
-  oData << "<table columns=\"2\" rows=\"4\">" << endl;
+  oData << "<table columns=\"" << nItems-1 << "\" rows=\"" << nRecords+1 << "\">" << endl;
   oData << "<description>" << endl;
   oData << "The data set (with no ID) for the individual analysis test" << endl;
   oData << "</description>" << endl;
   oData << "<row position=\"1\">" << endl;
-  oData << "<value type=\"string\">TIME</value>" << endl;
-  oData << "<value type=\"string\">DV</value>" << endl;
+  for( int i=1; i<nItems; i++ )
+    {
+      oData << "<value type=\"string\">" << label[i] << "</value>" << endl;
+    }
   oData << "</row>" << endl;
-  oData << "<row position=\"2\">" << endl;
-  oData << "<value type=\"numeric\">" << endl;
-  oData << "0.0" << endl;
-  oData << "</value>" << endl;
-  oData << "<value type=\"numeric\">" << endl;
-  oData << "0.0" << endl;
-  oData << "</value>" << endl;
-  oData << "</row>" << endl;
-  oData << "<row position=\"3\">" << endl;
-  oData << "<value type=\"numeric\">" << endl;
-  oData << "1.0" << endl;
-  oData << "</value>" << endl;
-  oData << "<value type=\"numeric\">" << endl;
-  oData << "10.0" << endl;
-  oData << "</value>" << endl;
-  oData << "</row>" << endl;
-  oData << "<row position=\"4\">" << endl;
-  oData << "<value type=\"numeric\">" << endl;
-  oData << "2.0" << endl;
-  oData << "</value>" << endl;
-  oData << "<value type=\"numeric\">" << endl;
-  oData << "20.0" << endl;
-  oData << "</value>" << endl;
-  oData << "</row>" << endl;
+  for( int i=0; i<nRecords; i++ )
+    {
+      oData << "<row position=\"" << i+2 << "\">" << endl;
+      for( int j=1; j<nItems; j++ )
+	oData << "<value type=\"numeric\">" << record[i][j] << "</value>" << endl;
+      oData << "</row>" << endl;
+    }
   oData << "</table>" << endl;
   oData << "</spkdata>" << endl;
   oData.close();
@@ -1018,106 +932,12 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   // Preparation for creating a sourceML document
   //
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-  //============================================
-  // Optimizer controls
-  //============================================
-  const char approx[]   = "foce";
-  const int  mitr       = 100;
-  const bool isEstimate = true;
-
-  //============================================
-  // Setting up the array filled with data 
-  // labels for internal (test) use.
-  //============================================
-  const string strID   = "ID";
-  const string strTIME = "TIME";
-  const string strCP   = "CP";
-  const string strDV   = "DV";
-  map<string, string> labels;
-  labels[strID]   = "";
-  labels[strTIME] = "";
-  labels[strCP]   = strDV;
-  int nLabels     = labels.size();
-
-  //============================================
-  // Define NONMEM keywords
-  //============================================
-  const string strTHETA = "THETA";
-  const string strOMEGA = "OMEGA";
-  const string strSIGMA = "SIGMA";
-  const string strETA   = "ETA";
-  const string strEPS   = "EPS";
-  const string strPRED  = "PRED";
-  const string strRES   = "RES";
-  const string strWRES  = "WRES";
-  const string strMDV   = "MDV";
-  const string strF     = "F";
-  const string strY     = "Y";
-
-  //============================================
-  // The user is requested to feed in
-  // the constraints and initial values for
-  // theta.
-  //============================================
-  const int    thetaLen                = 1;
-  const double theta_in [ thetaLen ]   = {  5.0 };
-  const double theta_up [ thetaLen ]   = { 10.0 };
-  const double theta_low[ thetaLen ]   = {  0.0 };
-  const bool   theta_fix[ thetaLen ]   = { false };
-
-  //============================================
-  // The SPK Compiler decides the constraints
-  // of Omega matrix. Just feed the initial
-  // values.  Here, test with a simple
-  // diagonal --- 1 dimensional! --- matrix.
-  //============================================
-  const int    omegaDim                = 1;
-  const Symbol::Structure omegaStruct  = Symbol::DIAGONAL;
-  assert( omegaStruct == Symbol::DIAGONAL );
-  const int    omegaOrder              = 1;
-  const double omega_in[ omegaOrder ]  = { 1.0 };
-  const bool   omega_fix[ omegaOrder ] = { false };
-
-  //============================================
-  // The SPK Compiler determines the initial
-  // values for eta, the variance of data
-  // in the individual analysis case.
-  // The size of this vector is determined by
-  // the order of Omega matrix.
-  //============================================
-  const int etaLen = omegaOrder;
-
-  //============================================
-  // EPS is irrevalent in the individual 
-  // analysis case.  It'll be ignored.
-  //============================================
-  const int epsLen = 0;
-
-  //============================================
-  // Make requests for statistics.
-  //============================================
-  const bool ind_stderr         = true;
-  const bool ind_coefficent     = true;
-  const bool ind_confidence     = true;
-  const bool ind_covariance     = true;
-  const bool ind_inv_covariance = true;
-  const bool ind_correlation    = true;
-
-  //============================================
-  // Make a request on data simulation.
-  //============================================
-//  const bool isSimulate         = true;
-  const bool isSimulate         = false;
-  const int  seed               = 1;
-  const bool onlySimulation     = false;
-  const int  subproblems        = 1;
   
   //============================================
   // Create an sourceML based upon the
   // parameters set so far.
   //============================================
-  const char fSource[] = "NonmemTranslatorIndNoIDTest.sourceML";
+  sprintf( fSource, "%s_sourceML.xml", fPrefix );
   ofstream oSource( fSource );
   CPPUNIT_ASSERT( oSource.good() );
 
@@ -1132,8 +952,15 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   oSource << "is_estimation=\"" << (isEstimate? "yes" : "no") << "\">" << endl;
 
   oSource << "<data_labels>" << endl;
-  oSource << "<label name=\"TIME\"/>" << endl;
-  oSource << "<label name=\"CP\" synonym=\"DV\"/>" << endl;
+  for( int i=1; i<nItems; i++ )
+    {
+      oSource << "<label name=\"" << label[i] << "\"";
+      if( label_alias[ label[i] ] != NULL )
+	{
+	  oSource << " synonym=\"" << label_alias[label[i]] << "\"";
+	}
+      oSource << "/>" << endl;
+    }
   oSource << "</data_labels>" << endl;
 
   oSource << "<theta length=\"" << thetaLen << "\">" << endl;
@@ -1173,10 +1000,10 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   oSource << "</omega>" << endl;
 
   oSource << "<ind_stat ";
-  oSource << "is_standarderr_out=\""        << (ind_stderr? "yes":"no") << "\" ";
-  oSource << "is_covariance_out=\""         << (ind_covariance? "yes":"no") << "\" ";
+  oSource << "is_standarderr_out=\""        << (ind_stderr?         "yes":"no") << "\" ";
+  oSource << "is_covariance_out=\""         << (ind_covariance?     "yes":"no") << "\" ";
   oSource << "is_inverse_covariance_out=\"" << (ind_inv_covariance? "yes":"no") << "\" ";
-  oSource << "is_correlation_out=\""        << (ind_correlation? "yes":"no") << "\"/>" << endl;
+  oSource << "is_correlation_out=\""        << (ind_correlation?    "yes":"no") << "\"/>" << endl;
 
   if( isSimulate )
     {
@@ -1187,24 +1014,24 @@ void NonmemTranslatorIndTest::testParseIndNoID()
 
   oSource << "<model>" << endl;
   oSource << "<pred>" << endl;
-  oSource << "   F= THETA(1) + ETA(1)*TIME" << endl;
+  oSource << "   " << PRED << endl;
   oSource << "</pred>" << endl;
   oSource << "</model>" << endl;
       
   oSource << "<presentation>" << endl;
   oSource << "<table header=\"one\" save_as=\"xxx\">" << endl;
-  oSource << "<column label=\"TIME\" appearance_order=\"1\" sort_order=\"1\"/>" << endl;
-  oSource << "<column label=\"THETA(1)\" appearance_order=\"2\"/>" << endl;
-  oSource << "<column label=\"THETA(3)\" appearance_order=\"4\"/>" << endl;
-  oSource << "<column label=\"THETA(2)\" appearance_order=\"3\"/>" << endl;
+  oSource << "<column label=\"" << strTIME  << "\" appearance_order=\"1\" sort_order=\"1\"/>" << endl;
+  oSource << "<column label=\"" << strTHETA << "(1)\" appearance_order=\"2\"/>" << endl;
+  oSource << "<column label=\"" << strTHETA << "(3)\" appearance_order=\"4\"/>" << endl;
+  oSource << "<column label=\"" << strTHETA << "(2)\" appearance_order=\"3\"/>" << endl;
   oSource << "</table>" << endl;
   oSource << "<table header=\"every\">" << endl;
-  oSource << "<column label=\"TIME\" appearance_order=\"1\" sort_order=\"1\"/>" << endl;
-  oSource << "<column label=\"DV\" appearance_order=\"2\"/>" << endl;
+  oSource << "<column label=\"" << strTIME << "\" appearance_order=\"1\" sort_order=\"1\"/>" << endl;
+  oSource << "<column label=\"" << strCP   << "\" appearance_order=\"2\"/>" << endl;
   oSource << "</table>" << endl;
   oSource << "<scatterplot>" << endl;
-  oSource << "<x label=\"TIME\"/>" << endl;
-  oSource << "<y label=\"PRED\"/>" << endl;
+  oSource << "<x label=\"" << strTIME << "\"/>" << endl;
+  oSource << "<y label=\"" << strPRED << "\"/>" << endl;
   oSource << "</scatterplot>" << endl;
   oSource << "</presentation>" << endl;
       
@@ -1274,21 +1101,21 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   xlator.parseData();
   SymbolTable *table = xlator.getSymbolTable();
 
-  Symbol * id   = table->findi( "ID" );
+  Symbol * id   = table->findi( strID );
   CPPUNIT_ASSERT( id != Symbol::empty() );
-  Symbol * time = table->findi( "TIME" );
+  Symbol * time = table->findi( strTIME );
   CPPUNIT_ASSERT( time != Symbol::empty() );
-  Symbol * dv   = table->findi( "DV" );
+  Symbol * dv   = table->findi( strDV );
   CPPUNIT_ASSERT( dv != Symbol::empty() );
+  Symbol * mdv   = table->findi( strMDV );
+  CPPUNIT_ASSERT( mdv != Symbol::empty() );
 
   //============================================
   // Parse the sourceML document
   //============================================
   xlator.parseSource();
 
-  Symbol * mdv   = table->findi( "MDV" );
-  CPPUNIT_ASSERT( mdv != Symbol::empty() );
-  Symbol * cp   = table->findi( "CP" );
+  Symbol * cp   = table->findi( strCP );
   CPPUNIT_ASSERT( cp != Symbol::empty() );
 
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1319,8 +1146,8 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   // * WRES
   // * RES
   //============================================
-  char fIndDataDriver[]     = "indNoID_IndDataDriver";
-  char fIndDataDriver_cpp[] = "indNoID_IndDataDriver.cpp";
+  sprintf( fIndDataDriver, "%s_IndDataDriver", fPrefix );
+  sprintf( fIndDataDriver_cpp, "%s_IndDataDriver.cpp", fPrefix );
   ofstream oIndDataDriver( fIndDataDriver_cpp );
   CPPUNIT_ASSERT( oIndDataDriver.good() );
 
@@ -1340,54 +1167,41 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   oIndDataDriver << endl;
   oIndDataDriver << "int main()" << endl;
   oIndDataDriver << "{" << endl;
-  oIndDataDriver << "   const int n = 3;" << endl;
-  oIndDataDriver << "   vector<char*> a_id(n);" << endl;
-  oIndDataDriver << "   char id1[] = \"1\";" << endl;
-  oIndDataDriver << "   a_id[0] = id1;" << endl;
-  oIndDataDriver << "   a_id[1] = id1;" << endl;
-  oIndDataDriver << "   a_id[2] = id1;" << endl;
-  oIndDataDriver << "   vector<double> a_time(n);" << endl;
-  oIndDataDriver << "   a_time[0] = 0.0;" << endl;
-  oIndDataDriver << "   a_time[1] = 1.0;" << endl;
-  oIndDataDriver << "   a_time[2] = 2.0;" << endl;
-  oIndDataDriver << "   vector<double> a_cp(n);" << endl;
-  oIndDataDriver << "   a_cp[0] = 0.0;" << endl;
-  oIndDataDriver << "   a_cp[1] = 10.0;" << endl;
-  oIndDataDriver << "   a_cp[2] = 20.0;" << endl;
-  oIndDataDriver << "   vector<double> a_mdv(n);" << endl;
-  oIndDataDriver << "   a_mdv[0] = 0;" << endl;
-  oIndDataDriver << "   a_mdv[1] = 0;" << endl;
-  oIndDataDriver << "   a_mdv[2] = 0;" << endl;
+  oIndDataDriver << "   const int n = " << nRecords << ";" << endl;
+  oIndDataDriver << "   vector<char*>  a_" << strID << "(n);" << endl;
+  for( int j=0; j<nRecords; j++ )
+    oIndDataDriver << "   a_" << strID << "[" << j << "] = \"" << record[j][0] << "\";" << endl;
+  for( int j=1; j<nItems; j++ )
+    {    
+      oIndDataDriver << "   vector<double>  a_" << label[j] << "(n);" << endl;
+      for( int i=0; i<nRecords; i++ )
+	{
+	  oIndDataDriver << "   a_" << label[j] << "[" << i << "] = " << record[i][j] << ";" << endl;
+	}
+    }
 
-  oIndDataDriver << "   IndData<double> A( n, a_id, a_time, a_cp, a_mdv );" << endl;
+  oIndDataDriver << "   IndData<double> A( n";
+  for( int i=0; i<nLabels; i++ )
+    oIndDataDriver << ", a_" << label[i];
+  oIndDataDriver << " );" << endl;
 
-  oIndDataDriver << "   assert( strcmp( A." << strID << "[0], id1 ) == 0 );" << endl;
-  oIndDataDriver << "   assert( strcmp( A." << strID << "[1], id1 ) == 0 );" << endl;
-  oIndDataDriver << "   assert( strcmp( A." << strID << "[2], id1 ) == 0 );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  0.0, A." << strTIME << "[0] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  1.0, A." << strTIME << "[1] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  2.0, A." << strTIME << "[2] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  0.0, A." << strCP << "[0] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 10.0, A." << strCP << "[1] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 20.0, A." << strCP << "[2] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  0.0, A." << strDV << "[0] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 10.0, A." << strDV << "[1] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 20.0, A." << strDV << "[2] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  0,   A." << strMDV << "[0] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  0,   A." << strMDV << "[1] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  0,   A." << strMDV << "[2] );" << endl;
+  for( int i=0; i<nRecords; i++ )
+    {
+      oIndDataDriver << "   assert( strcmp( A." << strID << "[" << i << "], \"" << record[i][0] << "\" ) == 0 );" << endl;
+      oIndDataDriver << "   MY_ASSERT_EQUAL( "  << record[i][1] << ", A." << strTIME << "[" << i << "] );" << endl;
+      oIndDataDriver << "   MY_ASSERT_EQUAL( "  << record[i][2] << ", A." << strCP   << "[" << i << "] );" << endl;
+      oIndDataDriver << "   MY_ASSERT_EQUAL( "  << record[i][2] << ", A." << strDV   << "[" << i << "] );" << endl;
+      oIndDataDriver << "   MY_ASSERT_EQUAL( "  << record[i][3] << ", A." << strMDV  << "[" << i << "] );" << endl;
+    }
   
   // There have to be placeholders for the current values of theta/eta for
   // each call to Pred::eval().
   oIndDataDriver << "   const int thetaLen   = " << thetaLen << ";" << endl;
   oIndDataDriver << "   const int etaLen     = " << etaLen << ";" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, A." << strTHETA << "[0].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, A." << strTHETA << "[1].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, A." << strTHETA << "[2].size() );" << endl;
-  //  oIndDataDriver << "   MY_ASSERT_EQUAL( omegaOrder,  A." << strOMEGA << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen, A." << strETA << "[0].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen, A." << strETA << "[1].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen, A." << strETA << "[2].size() );" << endl;
+  for( int i=0; i<thetaLen; i++ )
+    oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, A." << strTHETA << "[" << i << "].size() );" << endl;
+  for( int i=0; i<etaLen; i++ )
+    oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen, A." << strETA << "[" << i << "].size() );" << endl;
 
   // The current values of RES/WRES/PRED should be always kept in memory
   // for displaying tables/scatterplots.
@@ -1421,8 +1235,8 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   // data set correctly.
   //
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  char fDataSetDriver[]     = "indNoID_DataSetDriver";
-  char fDataSetDriver_cpp[] = "indNoID_DataSetDriver.cpp";
+  sprintf( fDataSetDriver, "%s_DataSetDriver", fPrefix );
+  sprintf( fDataSetDriver_cpp, "%s_DataSetDriver.cpp", fPrefix );
   ofstream oDataSetDriver( fDataSetDriver_cpp );
   CPPUNIT_ASSERT( oDataSetDriver.good() );
 
@@ -1441,40 +1255,31 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   oDataSetDriver << endl;  oDataSetDriver << "using namespace std;" << endl;
   oDataSetDriver << "int main()" << endl;
   oDataSetDriver << "{" << endl;
-  oDataSetDriver << "   const int n = 3;" << endl;
+  oDataSetDriver << "   const int n = " << nRecords << ";" << endl;
   oDataSetDriver << "   const int thetaLen = " << thetaLen << ";" << endl;
   oDataSetDriver << "   const int etaLen   = " << etaLen << ";" << endl;
   oDataSetDriver << "   DataSet<double> set;" << endl;
-  oDataSetDriver << "   assert( strcmp( set.data[0]->" << strID << "[0], \"1\" ) == 0 );" << endl;
-  oDataSetDriver << "   assert( strcmp( set.data[0]->" << strID << "[1], \"1\" ) == 0 );" << endl;
-  oDataSetDriver << "   assert( strcmp( set.data[0]->" << strID << "[2], \"1\" ) == 0 );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << strTIME << "[0] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  1.0, set.data[0]->" << strTIME << "[1] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  2.0, set.data[0]->" << strTIME << "[2] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << strCP << "[0] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 10.0, set.data[0]->" << strCP << "[1] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 20.0, set.data[0]->" << strCP << "[2] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << strDV << "[0] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 10.0, set.data[0]->" << strDV << "[1] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 20.0, set.data[0]->" << strDV << "[2] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  0,   set.data[0]->" << strMDV << "[0] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  0,   set.data[0]->" << strMDV << "[1] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  0,   set.data[0]->" << strMDV << "[2] );" << endl;
+  for( int i=0; i<nRecords; i++ )
+  {
+    oDataSetDriver << "   assert( strcmp( set.data[0]->" << strID << "[" << i << "], \"" << record[i][0] << "\" ) == 0 );" << endl;
+    oDataSetDriver << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", set.data[0]->" << strTIME << "[" << i << "] );" << endl;
+    oDataSetDriver << "   MY_ASSERT_EQUAL(  " << record[i][2] << ", set.data[0]->" << strCP   << "[" << i << "] );" << endl;
+    oDataSetDriver << "   MY_ASSERT_EQUAL(  " << record[i][2] << ", set.data[0]->" << strDV   << "[" << i << "] );" << endl;
+    oDataSetDriver << "   MY_ASSERT_EQUAL(  " << record[i][3] << ", set.data[0]->" << strMDV  << "[" << i << "] );" << endl;
+  }
 
-  oDataSetDriver << "for( int j=0; j<n; j++ )" << endl;
-  oDataSetDriver << "{" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( thetaLen, set.data[0]->" << strTHETA << "[j].size() );" << endl;
-  //  oDataSetDriver << "   MY_ASSERT_EQUAL( omegaOrder, set.data[0]->" << strOMEGA << "[j].size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( etaLen, set.data[0]->" << strETA << "[j].size() );" << endl;
-  oDataSetDriver << "}" << endl;
+  for( int i=0; i<thetaLen; i++ )
+    oDataSetDriver << "   MY_ASSERT_EQUAL( thetaLen, set.data[0]->" << strTHETA << "[" << i << "].size() );" << endl;
+  for( int i=0; i<etaLen; i++ )
+    oDataSetDriver << "   MY_ASSERT_EQUAL( etaLen,   set.data[0]->" << strETA   << "[" << i << "].size() );" << endl;
 
   // The current values of RES/WRES/PRED should be always kept in memory
   // for displaying tables/scatterplots.
-  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strRES << ".size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strRES  << ".size() );" << endl;
   oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strWRES << ".size() );" << endl;
   oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strPRED << ".size() );" << endl;
 
-  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strF << ".size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strF    << ".size() );" << endl;
   oDataSetDriver << "}" << endl;
   
   oDataSetDriver.close();
@@ -1505,8 +1310,8 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   // outside.
   //
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  char fPredDriver[]     = "indNoID_PredDriver";
-  char fPredDriver_cpp[] = "indNoID_PredDriver.cpp";
+  sprintf( fPredDriver, "%s_PredDriver", fPrefix );
+  sprintf( fPredDriver_cpp, "%s_PredDriver.cpp", fPrefix );
   ofstream oPredDriver( fPredDriver_cpp );
   CPPUNIT_ASSERT( oPredDriver.good() );
 
@@ -1531,7 +1336,7 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   oPredDriver << "   DataSet< CppAD::AD<double> > set;" << endl;
   oPredDriver << "   Pred< CppAD::AD<double> > pred( &set );" << endl;
   oPredDriver << "   const int who         = 0;" << endl;
-  oPredDriver << "   const int n           = 3; // #of measurements" << endl;
+  oPredDriver << "   const int n           = " << nRecords << "; // #of measurements" << endl;
   oPredDriver << "   const int thetaLen    = " << thetaLen << ";" << endl;
   oPredDriver << "   const int etaLen      = " << etaLen << ";" << endl;
   oPredDriver << "   const int epsLen      = " << epsLen << ";" << endl;
@@ -1562,14 +1367,13 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   oPredDriver << "                 who, j, " << endl;
   oPredDriver << "                 indepVar, depVar );" << endl;
   // Test if F(j) gets placed in the proper location in the depVar vector.
-  oPredDriver << "      double actualF   = CppAD::Value(depVar[ fOffset + j ]);" << endl;
+  oPredDriver << "      double actualF   = CppAD::Value(depVar[ fOffset + j ]);"  << endl;
   oPredDriver << "      double expectedF = CppAD::Value(indepVar[thetaOffset+0] " << endl;
-  oPredDriver << "                       + indepVar[etaOffset+0]*set.data[who]->";
-  oPredDriver << strTIME << "[j] );" << endl;
+  oPredDriver << "                       + indepVar[thetaOffset+1] * set.data[who]->" << strTIME << "[j] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedF, actualF );" << endl;
   // Test if Y(j) gets placed in the proper location in the depVar vector.
   oPredDriver << "      double actualY   = CppAD::Value(depVar[ yOffset + j ]);" << endl;
-  oPredDriver << "      double expectedY = 0.0;" << endl;
+  oPredDriver << "      double expectedY = expectedF + CppAD::Value(indepVar[etaOffset+0]);" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedY, actualY )" << endl;
   oPredDriver << "   } // End of the first complete iteration over j" << endl;
   // Test if the DataSet objects hold the complete set of computed values from the just-finished iteration.
@@ -1604,12 +1408,12 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   // Test if F(j) gets placed in the proper location in the depVar vector.
   oPredDriver << "      double actualF   = CppAD::Value(depVar[ fOffset + j ]);" << endl;
   oPredDriver << "      double expectedF = CppAD::Value(indepVar[thetaOffset+0] " << endl;
-  oPredDriver << "                       + indepVar[etaOffset+0]*set.data[who]->";
+  oPredDriver << "                       + indepVar[thetaOffset+0]*set.data[who]->";
   oPredDriver << strTIME << "[j] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedF, actualF );" << endl;
   // Test if Y(j) gets placed in the proper location in the depVar vector.
   oPredDriver << "      double actualY   = CppAD::Value(depVar[ yOffset + j ]);" << endl;
-  oPredDriver << "      double expectedY = 0.0;" << endl;
+  oPredDriver << "      double expectedY = expectedF * CppAD::Value(indepVar[etaOffset+0]);" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedY, actualY );" << endl;
   oPredDriver << "   } // End of the first complete iteration over j" << endl;
   // Test if the DataSet objects hold the complete set of computed values from the most recent complete iteration.
@@ -1648,8 +1452,8 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Test driver.cpp to see if it compiles/links successfully.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  char fDriver[]     = "driver";
-  char fDriver_cpp[] = "driver.cpp";
+  sprintf( fDriver, "driver" );
+  sprintf( fDriver_cpp, "driver.cpp" );
   int  exitcode      = 0;
 
   sprintf( command, "make -f generatedMakefile" );
@@ -1684,38 +1488,23 @@ void NonmemTranslatorIndTest::testParseIndNoID()
       sprintf( message, "%s failed for reasons other than convergence propblem or access permission <%d>!", fDriver, exitcode );
       CPPUNIT_ASSERT_MESSAGE( message, true );
     }
-  remove( fData );
-  remove( fSource );
-  remove( fIndDataDriver );
-  remove( fIndDataDriver_cpp );
-  remove( fDataSetDriver );
-  remove( fDataSetDriver_cpp );
-  remove( fPredDriver );
-  remove( fPredDriver_cpp );
-  remove( fDriver );
-  remove( "driver.cpp" );
-  remove( "IndData.h" );
-  remove( "DataSet.h" );
-  remove( "Pred.h" );
-  remove( "predEqn.cpp" );
-  remove( "generatedMakefile" );
-
-  XMLPlatformUtils::Terminate();
-
 }
 
 CppUnit::Test * NonmemTranslatorIndTest::suite()
 {
   CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite( "NonmemTranslatorIndTest" );
 
+
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<NonmemTranslatorIndTest>(
          "testParseIndSource", 
 	 &NonmemTranslatorIndTest::testParseIndSource ) );
+
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<NonmemTranslatorIndTest>(
          "testParseIndNoID", 
 	 &NonmemTranslatorIndTest::testParseIndNoID ) );
+
   return suiteOfTests;
 }
 
