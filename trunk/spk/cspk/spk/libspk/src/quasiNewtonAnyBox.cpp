@@ -1341,6 +1341,7 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
     optimizer.setIsTooManyIter( false );
     optimizer.setNIterCompleted( iterCurr );
     optimizer.deleteStateInfo();
+
     ok = true;
   }
   else if ( iterCurr == nMaxIter )  // The maximum number of iterations 
@@ -1348,10 +1349,9 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   {
     optimizer.setIsTooManyIter( true );
     optimizer.setNIterCompleted( iterCurr );
-
-    // Save state information for warm start
     if( !optimizer.getIsSubLevelOpt() && optimizer.getStateInfo().n )
     {
+      // Save state information for warm start.
       stateInfo.n      = n;
       stateInfo.x      = y;
       stateInfo.state  = options.state;
@@ -1363,17 +1363,25 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
     }
     else
     {
-      ok = false;
+      optimizer.deleteStateInfo();
+
       errorCode = SpkError::SPK_TOO_MANY_ITER;
       message << "Maximum number of iterations performed without convergence.";
+
+      ok = false;
     }
   }
   else                              // This function's convergence
                                     // criterion was not satisfied.
   {
-    ok = false;
+    optimizer.setIsTooManyIter( false );
+    optimizer.setNIterCompleted( iterCurr );
+    optimizer.deleteStateInfo();
+
     errorCode = SpkError::SPK_NOT_CONVERGED;
     message << "Unable to satisfy convergence criterion for quasiNewtonAnyBox.";
+
+    ok = false;
   }
 
   if ( !ok )
