@@ -558,7 +558,7 @@ void mapObj(  SpkModel &model,
             double term2 = 0.0;
             for( int ind =0; ind < nInd; ind++ )
 			{
-                int Ni = pN[ ind ];
+                int Ni = static_cast<int>( pN[ ind ] );
                 det( getSubblock( dmatR, start, start, Ni, Ni ), &db, &lc );
                 term1 += log( db ) + lc * log(2.0);
                 for( int j = start; j < start + Ni; j++ )
