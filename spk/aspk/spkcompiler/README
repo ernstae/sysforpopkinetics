@@ -1,7 +1,21 @@
+              --- SPK Compiler Library & Driver ---
+
+0. Dependencies
 1. The Directory Structure
 2. How to Build/Install SPK Compiler Libraries
 3. How to Build/Install SPK Compiler Driver
 4. How to Build the Tests
+
+<Dependencies>
+The library requires ATLAS LAPACK and CBLAS.  The instructions to find
+or install these libraries can be found in RFPK Software Group's internal
+website.
+
+The test suites require CppUnit.  Likewise, the instructions can be found
+in the group's website.
+
+To build the documentations, you need JAVAC, which can be found in the SUN site.
+
 
 <The Directory Structure>
 
