@@ -2544,8 +2544,8 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "const int nSigma   = " << mySigmaElemNum;
   oDriver << "; // #of elements in Sigma matrix" << endl;
   oDriver << "const int dimSigma = " << mySigmaDim;
-  oDriver << "const int nEps = dimSigma;" << endl;
   oDriver << "; // order of Sigma matrix" << endl;
+  oDriver << "const int nEps = dimSigma;" << endl;
   oDriver << "double c_sigmaIn[nSigma] = { ";
   for( int j=0; j<mySigmaElemNum; j++ )
     {
@@ -3061,8 +3061,9 @@ void NonmemTranslator::generatePopDriver() const
   
   oDriver << "oResults.close();" << endl;
   oDriver << "remove( fError );" << endl;
-  
-  oDriver << "return 0;" << endl;
+  oDriver << "cout << ( (optSucceeded && statSucceeded && haveCompleteData)? \"success\" : \"failure\") << endl;" << endl;
+
+  oDriver << "return !(haveCompleteData && optSucceeded && statSucceeded);" << endl;
   oDriver << "}" << endl;
   oDriver.close();
 }
