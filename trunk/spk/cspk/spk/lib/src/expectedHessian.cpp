@@ -97,11 +97,11 @@ true fixed and random population parameter values respectively,
 the expected value of the Hessian of $mref/Lambda/$$ with
 respect to $math%b%$$ is
 $math%
-                                 T  -1
-H(alp, b) = D(alp) + f_b (alp, b)  R (alp, b) f_b (alp, b)
+             -1                    T  -1
+H(alp, b) = D  (alp) + f_b (alp, b)  R  (alp, b) f_b (alp, b)
 
             1            T        -1           -1
-          + - R_b(alp, b)  kron[ R  (alp, b), R (alp, b) ] R_b(alp, b)
+          + - R_b(alp, b)  kron[ R  (alp, b), R  (alp, b) ] R_b(alp, b)
             2
 %$$
 (The equation above uses
