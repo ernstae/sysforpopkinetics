@@ -6,7 +6,8 @@
 
 #include "lex_explangTest.h"
 #include "explangTest.h"
-#include "NonmemTranslatorTest.h"
+#include "NonmemTranslatorIndTest.h"
+#include "NonmemTranslatorPopTest.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -16,9 +17,10 @@ int main( int argc, const char * argv[] )
   map<string, CppUnit::Test*> master;
   vector<CppUnit::Test*> subset;
 
-  master[ "lex_explangTest" ]        = lex_explangTest::suite();
-  master[ "explangTest" ]            = explangTest::suite();
-  master[ "NonmemTranslatorTest" ]   = NonmemTranslatorTest::suite();
+  master[ "lex_explangTest" ]         = lex_explangTest::suite();
+  master[ "explangTest" ]             = explangTest::suite();
+  master[ "NonmemTranslatorIndTest" ] = NonmemTranslatorIndTest::suite();
+  master[ "NonmemTranslatorPopTest" ] = NonmemTranslatorPopTest::suite();
 
   if( argc == 1 )
     {
