@@ -1219,9 +1219,10 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   }
 
   // Set the number of quasi-Newton iterations high enough so 
-  // that the optimizer can build up a reasonable accurate 
+  // that the optimizer can build up a reasonably accurate 
   // approximation for the Hessian, but not so high that it
-  // will spend too much time in the optimizer.
+  // will spend too much time in the optimizer before checking
+  // this function's convergence criterion.
   itrMax = 5;
 
   // Set the maximum number of interior point iterations so
@@ -1229,53 +1230,50 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   // with sufficient accuracy.
   quadMax = 100;
 
-  // The argument delta specifies the convergence criteria.
-  // If the return value of QuasiNewton01Box is "ok",
-  //the infinity norm of the projected gradient at 
-  // x = xOut is less than or equal delta.
+  // If the return value of QuasiNewton01Box is "ok", then the
+  // infinity norm (element with the maximum absolute value) 
+  // of the projected gradient is less than or equal to delta.
   double delta;
-  double deltaScale = 0.1;
+  double deltaScale = 10.0;
 
   bool isWithinTol = false;
   int i = 0;
   while ( !isWithinTol && i < nMaxIter )
   {
-    // See if this functions convergence criterion has been met.
-    // If the final y value is actually within epsilon tolerance of 
-    // the true value yStar, then go on.  Note that NAG arrays use
-    // row-major order.
-    if ( isWithinTol( epsilon, dvecY, dvecYLow, dvecYUp, drowGScaled, 
-             getLowerTriangle( arrayToDoubleMatrix( options.h, n, n ) ) ) )
+    // See if this function's convergence criterion has been met.
+    if ( isWithinTol( 
+        epsilon,
+        dvecY,
+        dvecYLow,
+        dvecYUp,
+        drowGScaled,
+        getLowerTriangle( arrayToDoubleMatrix( options.h, n, n ) ) ) )
     {
       isWithinTol = true;
     }
     else
     {
-      // Set delta to be the maximum of the absolute values of the
-      // elements (infinity norm) of the current gradient,
-      //
-      //            ~
-      //     delta  =  max { | G_i | }  .
-      //
-      // This ensures that the subproblems only be solved with accuracy
-      // sufficient for the current x value.
-      delta = MaxAbs( gCur ) * deltaScale;
+      // Set delta to be less than the maximum of the absolute values of
+      // the elements of the current gradient so that the subproblems
+      // only be solved with accuracy sufficient for the current x value.
+      delta = MaxAbs( gCur ) / deltaScale;
 
+      // 
       msg = QuasiNewton01Box(
         os,
-	level,
-	ItrMax,
-	QuadMax,
-	n,
-	delta,
-	obj,
-	ItrCur,
-	QuadCur,
-	rCur,
-	fCur,
-	xCur,
-	gCur,
-	HCur );
+        level,
+        ItrMax,
+        QuadMax,
+        n,
+        delta,
+        obj,
+        ItrCur,
+        QuadCur,
+        rCur,
+        fCur,
+        xCur,
+        gCur,
+        HCur );
 
       // Add the number of iterations that were performed.
       i += itrCur;
