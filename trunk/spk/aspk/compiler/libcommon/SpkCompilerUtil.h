@@ -1,6 +1,10 @@
 #ifndef SPKCOMPILERUTIL_H
 #define SPKCOMPILERUTIL_H
 
+/**
+ * @file SpkCompilerUtil.h
+ * Dealres SpkCompilerUtil class.
+ */
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/dom/DOM.hpp>
 

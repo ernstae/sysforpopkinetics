@@ -303,13 +303,13 @@ WARN_LOGFILE           =
 
 INPUT                  = ../libcommon/Symbol.h 
 INPUT                 += ../libcommon/SymbolTable.h
-INPUT                 += ../libcommon/NodeCarrier.h 
-INPUT                 += ../libcommon/ParseTree.h
 INPUT                 += ../libcommon/client.h 
 INPUT                 += ../libcommon/SpkCompilerUtil.h
-INPUT                 += ../libcommon/SpkCompiler.h
+INPUT                 += ../libcommon/SpkMLToCpp.h
+INPUT                 += ../libcommon/ExpNodeCarrier.h
+INPUT                 += ../libcommon/ExpTreeGenerator.h
 INPUT                 += ../driver/compiler.cpp 
-INPUT                 += ../libnonmem/NonmemCompiler.h
+INPUT                 += ../libnonmem/NonmemTranslator.h
 #INPUT                += ../libnonmem/lex.yy.c 
 #INPUT                += ../libnonmem/nmabb.tab.cpp
 

@@ -1,49 +1,36 @@
-COMDIR     = ..
-
 YACC       = bison
 YFLAGS     = -d --verbose --debug
 
 LEX        = flex
 LFLAGS     = -i
-LEX.l      = $(LEX) $(LFLAGS)
-LLIB       = fl
+#LLIB       = fl
 
 # C compiler
-C          = gcc
 CFLAGS     = -g
-COMPILE.c  = $(C) $(CFLAGS) -c
-
-# C++ compiler
-CPP        = g++
-CPPFLAGS   = -g
-COMPILE.cc = $(CPP) $(CPPGLAGS) -c
-
-# linker
-LD   = ld
-#LDFLAGS   = 
 
 FLEX_OBJS = lex.yy.c
 
 BISON_OBJS = explang.tab.cpp explang.tab.h explang.output
 
-OBJECTS = explang.tab.o lex.yy.o
+OBJECTS = explang.tab.o lex.yy.o NonmemTranslator.o
 
-all:	explang.tab.o lex.yy.o NonmemTranslator.o
 
-NonmemTranslator.o : NonmemTranslator.h NonmemTranslator.cpp ../libcommon/SpkMLToCpp.h ../libcommon/SpkMLToCpp.cpp ../libcommon/client.h
-	$(COMPILE.cc) $(CPPFLAGS) -I../libcommon/ NonmemTranslator.cpp
+all: $(OBJECTS)
 
-explang.tab.o : explang.tab.cpp explang.tab.h explang.y $(COMMON_HEADERS)
-	$(COMPILE.cc) $(CPPFLAGS) -I../libcommon/ explang.tab.cpp
+NonmemTranslator.o : NonmemTranslator.h NonmemTranslator.cpp ../libcommon/SpkMLToCpp.h ../libcommon/SpkMLToCpp.cpp ../libcommon/client.h explang.tab.h
+	$(CC) $(CPPFLAGS) -c -I../libcommon/ NonmemTranslator.cpp
+
+explang.tab.o : explang.tab.cpp explang.tab.h
+	$(CC) $(CPPFLAGS)  -c explang.tab.cpp
 
 lex.yy.o : lex.yy.c explang.tab.h explang.l
-	$(COMPILE.c) $(CFLAGS) lex.yy.c
+	$(CC) $(CFLAGS) -c lex.yy.c
 
 lex.yy.c : explang.l explang.tab.h
-	$(LEX.l) explang.l
+	$(LEX) $(LFLAGS) explang.l
 
 explang.tab.h explang.tab.cpp : explang.y
-	$(YACC.y) explang.y
+	$(YACC) $(YFLAGS) explang.y
 	mv explang.tab.c explang.tab.cpp
 
 clean:
