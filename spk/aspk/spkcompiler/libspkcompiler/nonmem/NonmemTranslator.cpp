@@ -2440,7 +2440,7 @@ void NonmemTranslator::generateIndDriver( ) const
 
   oDriver << "/*******************************************************************/" << endl;
   oDriver << "/*                                                                 */" << endl;
-  oDriver << "/*   ResultML Document                                             */" << endl;
+  oDriver << "/*   ReportML Document                                             */" << endl;
   oDriver << "/*                                                                 */" << endl;
   oDriver << "/*******************************************************************/" << endl;
   oDriver << "char fResults[] = \"result.xml\";" << endl;
@@ -2451,7 +2451,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "   return FAILED;" << endl;
   oDriver << "}" << endl;
 
-  oDriver << "oResults << \"<spkreportML>\" << endl;" << endl;
+  oDriver << "oResults << \"<spkreport>\" << endl;" << endl;
   oDriver << endl;
 
   oDriver << "char buf[ SpkError::maxMessageLen() ];" << endl;
@@ -2692,6 +2692,7 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "//   NONMEM PRED specific" << endl;
   oDriver << "#include \"Pred.h\"" << endl;
   oDriver << "#include <spkpred/PopPredModel.h>" << endl;
+  oDriver << "#include <../cppad/CppAD.h>" << endl;
   oDriver << "//" << endl;
   oDriver << "///////////////////////////////////////////////////////////////////" << endl;
   oDriver << endl;
@@ -2700,7 +2701,7 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "using namespace std;" << endl;
   oDriver << endl;
 
-  oDriver << "enum RETURN_CODE { SUCCEEDED=0, FAILED }" << endl;
+  oDriver << "enum RETURN_CODE { SUCCEEDED=0, FAILED };" << endl;
   oDriver << endl;
 
   oDriver << "int main( int argc, const char argv[] )" << endl;
@@ -2720,7 +2721,7 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << endl;
 
   oDriver << "const int nPop = " << myPopSize << ";" << endl;
-  oDriver << "DataSet<Value> set;" << endl;
+  oDriver << "DataSet< CppAD::AD<double> > set;" << endl;
   oDriver << endl;
 
   oDriver << "const bool isSimRequested  = " << (myIsSimulate? "true":"false") << ";" << endl;
@@ -2817,19 +2818,17 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << endl;
 
   oDriver << "const int nEta              = " << myEtaLen << ";" << endl;
-  oDriver << "double c_etaIn[nEta * nPop] = { ";
-  for( int i=0; i<myPopSize; i++ )
+  oDriver << "double c_etaIn[nEta] = { ";
+  for( int i=0; i<myEtaLen; i++ )
     {
-      for( int j=0; j<myEtaLen; j++ )
-	{
-	  if( !( i==0 && j==0 ) )
-	    oDriver << ", ";
-	  oDriver << pEta->initial[0][j];
-	}
+      if( i > 0 )
+	oDriver << ", ";
+      oDriver << pEta->initial[0][i];
     }
   oDriver << " };" << endl;
-  oDriver << "const valarray<double> etaIn ( c_etaIn, nEta * nPop );" << endl;
-  oDriver << "valarray<double> etaOut( nEta * nPop );" << endl;
+  oDriver << "const valarray<double> etaIn ( c_etaIn, nEta );" << endl;
+  oDriver << "valarray<double> etaOut( nEta );" << endl;
+  oDriver << "valarray<double> etaAllOut( nEta * nPop );" << endl;
   oDriver << endl;
   oDriver << "//" << endl;
   oDriver << "///////////////////////////////////////////////////////////////////" << endl;
@@ -2837,7 +2836,7 @@ void NonmemTranslator::generatePopDriver() const
 
   oDriver << "///////////////////////////////////////////////////////////////////" << endl;
   oDriver << "//   NONMEM PRED Specific" << endl;
-  oDriver << "Pred<double> mPred(&set);" << endl;
+  oDriver << "Pred< CppAD::AD<double> > mPred(&set);" << endl;
   if( myOmegaStruct == Symbol::TRIANGLE )
     oDriver << "enum PopPredModel::covStruct omegaStruct = PopPredModel::FULL;" << endl;
   else
@@ -2847,12 +2846,14 @@ void NonmemTranslator::generatePopDriver() const
   else
     oDriver << "enum PopPredModel::covStruct sigmaStruct = PopPredModel::DIAGONAL;" << endl;
 
-  oDriver << "PopPredModel model( nTheta," << endl;
+  oDriver << "PopPredModel model( mPred," << endl;
+  oDriver << "                    nTheta," << endl;
   oDriver << "                    thetaLow," << endl;
   oDriver << "                    thetaUp," << endl;
   oDriver << "                    thetaIn," << endl;
   oDriver << "                    nEta," << endl;
   oDriver << "                    etaIn," << endl;
+  oDriver << "                    nEps," << endl;
   oDriver << "                    omegaStruct," << endl;
   oDriver << "                    omegaIn," << endl;
   oDriver << "                    sigmaStruct," << endl;
@@ -2881,7 +2882,8 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "model.getPopParStep     ( alpStep );" << endl;
   oDriver << endl;
 
-  oDriver << "valarray<double> bIn  ( nB );" << endl;
+  oDriver << "valarray<double> bIn  ( nB * nPop );" << endl;
+  oDriver << "valarray<double> biIn ( nB );" << endl;
   oDriver << "valarray<double> bUp  ( nB );" << endl;
   oDriver << "valarray<double> bLow ( nB );" << endl;
   if( myIsEstimate )
@@ -2889,7 +2891,12 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << "valarray<double> bStep( nB );" << endl;
     }
   oDriver << "valarray<double> bOut ( nB * nPop );" << endl;
-  oDriver << "model.getIndPar       ( bIn );" << endl;
+  oDriver << "for( int i=0; i<nPop; i++ )" << endl;
+  oDriver << "{" << endl;
+  oDriver << "   model.selectIndividual( i ); " << endl;
+  oDriver << "   model.getIndPar( biIn );" << endl;
+  oDriver << "   bIn[ slice(i*nB, nB, 1) ] = biIn;" << endl;
+  oDriver << "}" << endl;
   oDriver << "model.getIndParLimits ( bLow, bUp );" << endl;
   if( myIsEstimate )
     {
@@ -3061,7 +3068,12 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << "      model.getTheta( thetaOut );" << endl;
       oDriver << "      model.getOmega( omegaOut );" << endl;
       oDriver << "      model.getSigma( sigmaOut );" << endl;
-      oDriver << "      model.getEta( etaOut );"   << endl;
+      oDriver << "      for( int i=0; i<nPop; i++ )" << endl;
+      oDriver << "      {" << endl;
+      oDriver << "         model.selectIndividual( i ); " << endl;
+      oDriver << "         model.getEta( etaOut );"   << endl;
+      oDriver << "         etaAllOut[ slice( i*nEta, nEta, 1 ) ] = etaOut; " << endl;
+      oDriver << "      }" << endl;
       oDriver << "   }" << endl;
       oDriver << "   //" << endl;
       oDriver << "   ///////////////////////////////////////////////////////////////////" << endl;      
@@ -3163,7 +3175,7 @@ void NonmemTranslator::generatePopDriver() const
 
   oDriver << "/*******************************************************************/" << endl;
   oDriver << "/*                                                                 */" << endl;
-  oDriver << "/*   ResultML Document                                             */" << endl;
+  oDriver << "/*   ReportML Document                                             */" << endl;
   oDriver << "/*                                                                 */" << endl;
   oDriver << "/*******************************************************************/" << endl;
   oDriver << "char fResults[] = \"result.xml\";" << endl;
@@ -3174,7 +3186,7 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "   return FAILED;" << endl;
   oDriver << "}" << endl;
 
-  oDriver << "oResults << \"<spkreportML>\" << endl;" << endl;
+  oDriver << "oResults << \"<spkreport>\" << endl;" << endl;
   oDriver << endl;
 
   // Error messages, if any
@@ -3193,7 +3205,7 @@ void NonmemTranslator::generatePopDriver() const
 
   oDriver << "if( !haveCompleteData )" << endl;
   oDriver << "{" << endl;
-  oDriver << "   oResults << \"</spkreportML>\" << endl;" << endl;
+  oDriver << "   oResults << \"</spkreport>\" << endl;" << endl;
   oDriver << "   oResults.close();" << endl;
   oDriver << "   return FAILED;" << endl;
   oDriver << "}" << endl;
@@ -3378,7 +3390,7 @@ void NonmemTranslator::generatePopDriver() const
   //
   //=============================================================================
   
-  oDriver << "oResults << \"</spkreportML>\" << endl;" << endl;
+  oDriver << "oResults << \"</spkreport>\" << endl;" << endl;
   
   oDriver << "oResults.close();" << endl;
   oDriver << "remove( fError );" << endl;
