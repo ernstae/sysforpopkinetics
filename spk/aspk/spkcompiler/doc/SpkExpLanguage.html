@@ -1,0 +1,202 @@
+<html>
+<head>
+<title>
+Spk-Supported Expression Language
+</title>
+</head>
+<body>
+<h1>
+Spk-Supported Expression Language
+</h1>
+This document lists those types of data, operations and functions 
+which SPK Compiler supports and maps these to equivalent components in C++/Spk.
+
+<h2>
+Data Types
+</h2>
+The data types on the left hand side colunm in the following table 
+must be implemented in the client expression language.  These types do not have to
+be unique from each other.  For example, a boolean value may be expressed
+as two discrete integer values.  The corresponding
+C++/Spk components are listed on the right hand side column of the table.
+
+<table border=1>
+<tr><th>Data Type</th>     <th>C++/Spk</th></tr>
+<tr><td>integer scalar</td><td><code>int</code></td></tr>
+<tr><td>real scalar</td>   <td><code>double</code></td></tr>
+<tr><td>boolean scalar</td><td><code>bool</code></td></tr>
+<tr><td>vector</td>        <td><code>valarray&lt;int&gt;(n), valarray&lt;double&gt;(n)</code></td></tr>
+<tr><td>matrix</td>        <td><code>valarray&lt;int&gt;(m*n), valarray&lt;double&gt;(m*n)</code></td></tr>
+</table>
+
+
+<h2>
+Assignment Operator
+</h2>
+An assignment operator must be implemented in the the client expression language. 
+The behavior of the operation when the data types of left hand side and right hand side do not
+match is determined by the rule imposed by the client language.
+
+<h2>
+Boolean Operators
+</h2>
+The following types of boolean operators must be implemented in the client expression language.
+The data type these operators can handle is currently limited only to scalars.
+<table border=1>
+<th>Operation</th>                                            <th>C++/Spk</th></tr>  
+<td>true if <i>a</i> is equal to <i>b</i></td>                <td><code>a == b</code></td></tr>
+<td>true if <i>a</i> is NOT equal to <i>b</i></td>            <td><code>a != b</code></td></tr>
+<td>true if <i>a</i> is less than or equal to <i>b</i></td>   <td><code>a &lt;= b</code></td></tr>
+<td>true if <i>a</i> is greater than or equal to <i>b</i></td><td><code>a &gt;= b</code></td></tr>
+<td>true if <i>a</i> is less than <i>b</i></td>               <td><code>a &lt; b</code></td></tr>
+<td>true if <i>a</i> is greater than <i>b</i></td>            <td><code>a &gt; b</code></td></tr>
+</table>
+<h2>
+Control Statement
+</h2>
+A statement block that switches execution paths depending on the evaluation of logical statement
+(ie. IF statement) must be implemented in the client expression language.
+The corresponding C++/Spk statement block that executes this statement is shown below:
+<pre><code>
+if( <i>boolean_expression</i> )
+{
+    <i>expressions</i>
+}
+else if
+{
+    <i>expressions</i>
+}
+else
+{
+    <i>expressions</i>
+}
+
+</code></pre>
+
+<h2>
+Arithmatic Operators / Functions
+</h2>
+The following table summerizes the arithmatic operations that must be implemented by the client expression language and
+their corresponding C++/Spk code.
+
+<table border=1>
+<tr><th rowspan=2>Arithmatrics</th>  <th colspan=3>C++/Spk</th></tr>
+<tr>                       <th>Scalar</th>              <th>Vector</th>                                       <th>Matrix</th></tr>
+<tr><th>element access</th>
+<td>N/A</td>                 
+<td><code>valarray[ i ]</code></td>                   
+<td><code>valarray[ i + j * nRows ]</code></td>
+</tr>
+<tr>
+<th>column access</th> 
+<td>N/A</td>                 
+<td><code>valarray[ slice( begin, n, 1 ) ]</code></td>
+<td><code>valarray[ slice(nRows*j, nRows, 1) ]</code></td>
+</tr>
+<tr>
+<th>row access</th>    
+<td>N/A</td>                 
+<td>N/A</td>                                          
+<td><code>valarray[ slice(i, nCols, nRows) ]</code></td>
+</tr>
+<tr>
+<th>addition</th>      
+<td><code>scalar + scalar</code></td>     
+<td><code>valarray + valarray</code></td>             
+<td><code>valaray + valarray</code></td>
+</tr>
+<tr><th>subtraction</th>   
+<td><code>scalar - scalar</code></td>     
+<td><code>valarray - valarray</code></td>             
+<td><code>valarray - valarray</code></td>
+</tr>
+<tr><th>multiplication</th>
+<td><code>scalar * scalar</code></td>     
+<td><code>valarray * valarray</code></td>             
+<td><code>valarray * valarray</code></td>
+</tr>
+<tr><th>division</th>      
+<td><code>scalar / scalar</code></td>     
+<td><code>valarray / valarray</code></td>             
+<td><code>valarray / valarray</code></td> 
+</tr>
+<tr><th>modulo</th>        
+<td><code>fmod(scalar, scalar)</code></td>
+<td><code>fmod(valarray, valarray)</code></td>        
+<td><code>fmod(valarray, valarray)</code></td>
+</tr>
+<tr><th>matrix multiplication</th>
+<td>N/A</td>          
+<td>N/A</td>                                          
+<td><code>multiply( valarray, nCols, valarray, nCols </code>)</td>
+</tr>
+<tr><th>matrix (back) division</th>
+<td>N/A</td>         
+<td>N/A</td>                                          
+<td><code>backDiv( valarray, nCols, valarray, nCols )</code></td>
+</tr>
+<tr><th>absolute value</th>
+<td><code>fabs(scalar)</code></td>        
+<td><code>abs(valarray)</code></td>                   
+<td><code>abs(valarray)</code></td>
+</tr>
+<tr><th>square root</th>   
+<td><code>sqrt(scalar)</code></td>        
+<td><code>sqrt(valarray)</code></td>                  
+<td><code>sqrt(valarray)</code></td>
+</tr>
+<tr><th>a^b</th>           
+<td><code>pow(sclar, scalar)</code></td>  
+<td><code>pow(valarray, valarray)</code></td>         
+<td><code>pow(valarray, valarray)</code></td>
+</tr>
+<tr><th>exponent</th>      
+<td><code>exp(scalar)</code></td>         
+<td><code>exp(valarray)</code></td>                   
+<td><code>exp(valarray)</code></td>
+</tr>
+<tr><th>natural log</th>   
+<td><code>log(scalar)</code></td>         
+<td><code>log(valarray)</td>                          
+<td><code>log(valarray)</code></td>
+</tr>
+<tr><th>base 10 log</th>   
+<td><code>log10(scalar)</code></td>       
+<td><code>log10(valarray)</code></td>                 
+<td><code>log10(valarray)</code></td>
+</tr>
+<tr><th>cosine</th>        
+<td><code>cos(scalar)</code></td>         
+<td><code>cos(valarray)</code></td>                   
+<td><code>cos(valarray)</code></td>
+</tr>
+<tr><th>sine</th>          
+<td><code>sin(scalar)</code></td>         
+<td><code>sin(valarray)</code></td>                   
+<td><code>sin(valarray)</code></td>
+</tr>
+<tr><th>tangent</th>       
+<td><code>tan(scalar)</code></td>         
+<td><code>tan(valarray)</code></td>                   
+<td><code>tan(valarray)</code></td>
+</tr>
+<tr><th>arc cosine</th>    
+<td><code>acos(scalar)</code></td>        
+<td><code>acos(valarray)</code></td>                  
+<td><code>acos(valarray)</code></td>
+</tr>
+<tr><th>arc sine</th>      
+<td><code>asin(scalar)</code></td>        
+<td><code>asin(valarray)</code></td>                  
+<td><code>asin(valarray)</code></td>
+</tr>
+<tr><th>arc tangent</th>   
+<td><code>atan(scalar)</code></td>        
+<td><code>atan(valarray)</code></td>                  
+<td><code>atan(valarray)</code></td>
+</tr>
+
+</table>
+
+</body>
+</html>
