@@ -3480,14 +3480,15 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << "   //   NONMEM Specific" << endl;
       oDriver << "   if( isOptSuccess )" << endl;
       oDriver << "   {" << endl;
+      oDriver << "      valarray<double> biOut(nB);" << endl;
       oDriver << "      model.getTheta( thetaOut );" << endl;
       oDriver << "      model.getOmega( omegaOut );" << endl;
       oDriver << "      model.getSigma( sigmaOut );" << endl;
       oDriver << "      for( int i=0; i<nPop; i++ )" << endl;
       oDriver << "      {" << endl;
       oDriver << "         model.selectIndividual( i ); " << endl;
-      oDriver << "         model.getEta( etaOut );"   << endl;
-      oDriver << "         etaAllOut[ slice( i*nEta, nEta, 1 ) ] = etaOut; " << endl;
+      oDriver << "         model.getIndPar( biOut );"   << endl;
+      oDriver << "         bOut[ slice( i*nB, nB, 1 ) ] = biOut; " << endl;
       oDriver << "      }" << endl;
       oDriver << "   }" << endl;
       oDriver << "   //" << endl;
