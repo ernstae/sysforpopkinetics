@@ -6,6 +6,7 @@ libdir        = $(INST_BASE)/lib/spktest
 pkgincludedir = $(INST_BASE)/include/spktest/spk
 
 AM_CPPFLAGS = -I$(INST_BASE)/include/spktest
+AM_LDFLAGS  = -llapack -lg2c
 
 CXXFLAGS   =
 CXXCOMPILE =
@@ -13,6 +14,9 @@ CFLAGS     =
 
 libspk_la_CXXFLAGS         = -g
 libspk_release_la_CXXFLAGS = -O3
+
+FFLAGS =
+F77COMPILE = -g
 
 libspk_la_SOURCES = \
 	ABA_x.cpp \
@@ -25,6 +29,7 @@ libspk_la_SOURCES = \
 	BlockAlloc.cpp \
 	blockDiagonalDerivative.cpp \
 	broadCastEndOfSpk.cpp \
+	c2dsyev.f \
 	calcMean.cpp \
 	centdiff.cpp \
 	Channel.cpp \
@@ -64,6 +69,7 @@ libspk_la_SOURCES = \
 	IkronBtimesC.cpp \
 	IndInputDataPackage.cpp \
 	IndOutputDataPackage.cpp \
+	indResiduals.cpp \
 	IndResults.cpp \
 	indStatistics.cpp \
 	IndVars.cpp \
@@ -93,6 +99,7 @@ libspk_la_SOURCES = \
 	Optimizer.cpp \
 	placeRows.cpp \
 	PopConstVals.cpp \
+	popResiduals.cpp \
 	popStatistics.cpp \
 	PopVars.cpp \
 	ppkaOpt.cpp \
@@ -130,6 +137,7 @@ libspk_la_SOURCES = \
 	BlockAlloc.h \
 	blockDiagonalDerivative.h \
 	broadCastEndOfSpk.h \
+	c2dsyev.h \
 	calcMean.h \
 	centdiff.h \
 	Channel.h \
@@ -169,6 +177,7 @@ libspk_la_SOURCES = \
 	IkronBtimesC.h \
 	identity.h \
 	IndDataPackage.h \
+	indResiduals.h \
 	IndResults.h \
 	indStatistics.h \
 	IndVars.h \
@@ -204,6 +213,7 @@ libspk_la_SOURCES = \
 	pi.h \
 	placeRows.h \
 	PopConstVals.h \
+	popResiduals.h \
 	popStatistics.h \
 	PopVars.h \
 	ppkaOpt.h \
@@ -247,6 +257,7 @@ libspk_release_la_SOURCES = \
 	BlockAlloc.cpp \
 	blockDiagonalDerivative.cpp \
 	broadCastEndOfSpk.cpp \
+	c2dsyev.f \
 	calcMean.cpp \
 	centdiff.cpp \
 	Channel.cpp \
@@ -286,6 +297,7 @@ libspk_release_la_SOURCES = \
 	IkronBtimesC.cpp \
 	IndInputDataPackage.cpp \
 	IndOutputDataPackage.cpp \
+	indResiduals.cpp \
 	IndResults.cpp \
 	indStatistics.cpp \
 	IndVars.cpp \
@@ -315,6 +327,7 @@ libspk_release_la_SOURCES = \
 	Optimizer.cpp \
 	placeRows.cpp \
 	PopConstVals.cpp \
+	popResiduals.cpp \
 	popStatistics.cpp \
 	PopVars.cpp \
 	ppkaOpt.cpp \
@@ -352,6 +365,7 @@ libspk_release_la_SOURCES = \
 	BlockAlloc.h \
 	blockDiagonalDerivative.h \
 	broadCastEndOfSpk.h \
+	c2dsyev.h \
 	calcMean.h \
 	centdiff.h \
 	Channel.h \
@@ -391,6 +405,7 @@ libspk_release_la_SOURCES = \
 	IkronBtimesC.h \
 	identity.h \
 	IndDataPackage.h \
+	indResiduals.h \
 	IndResults.h \
 	indStatistics.h \
 	IndVars.h \
@@ -426,6 +441,7 @@ libspk_release_la_SOURCES = \
 	pi.h \
 	placeRows.h \
 	PopConstVals.h \
+	popResiduals.h \
 	popStatistics.h \
 	PopVars.h \
 	ppkaOpt.h \
@@ -468,6 +484,7 @@ pkginclude_HEADERS = \
 	BlockAlloc.h \
 	blockDiagonalDerivative.h \
 	broadCastEndOfSpk.h \
+	c2dsyev.h \
 	calcMean.h \
 	centdiff.h \
 	Channel.h \
@@ -507,6 +524,7 @@ pkginclude_HEADERS = \
 	identity.h \
 	IkronBtimesC.h \
 	IndDataPackage.h \
+	indResiduals.h \
 	IndResults.h \
 	indStatistics.h \
 	IndVars.h \
@@ -542,6 +560,7 @@ pkginclude_HEADERS = \
 	pi.h \
 	placeRows.h \
 	PopConstVals.h \
+	popResiduals.h \
 	popStatistics.h \
 	PopVars.h \
 	ppkaOpt.h \

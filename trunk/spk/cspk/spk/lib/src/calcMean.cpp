@@ -62,7 +62,7 @@ valarray<double> calcMean(const valarray<double> &V, int Q)
 /*
 $begin calcMean$$
 
-$section Calculates the mean values of a set of data $$
+$section Calculating the Mean Values of a Set of Data $$
 
 $spell
 calculat
@@ -75,7 +75,9 @@ cout
 endl
 ith
 jth
-
+valarray
+const
+spk
 $$
 
 $index calculat testing model mean matrix $$

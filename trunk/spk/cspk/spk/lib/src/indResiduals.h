@@ -21,32 +21,29 @@
 */
 /*************************************************************************
  *
- * File: wres.h
+ * File: indResiduals.h
  *
  *
- * Calculates residuals and weighted residuals.
+ * Calculates residuals and/or weighted residuals for an individual.
  *
- * Author: Sachiko Honda
- *
- * Modified later by: Mitch Watrous
+ * Author: Mitch Watrous
  *
  *************************************************************************/
 
-#ifndef WRES_H
-#define WRES_H
+#ifndef INDRESIDUALS_H
+#define INDRESIDUALS_H
 
 #include "SpkValarray.h"
+#include "SpkModel.h"
+#include "Objective.h"
 
-void wres( const SPK_VA::valarray<double>& y, 
-           const SPK_VA::valarray<double>& f,
-           const SPK_VA::valarray<double>& cov,
-           SPK_VA::valarray<double>*       pResOut,
-           SPK_VA::valarray<double>*       pWresOut );
-
-void wres( const SPK_VA::valarray<double>& y, 
-           const SPK_VA::valarray<double>& f,	      
-           const SPK_VA::valarray<double>& cov,	      
-           SPK_VA::valarray<double>&       resOut,   
-           SPK_VA::valarray<double>&       wresOut );
+void indResiduals( SpkModel&                        model,
+                   const SPK_VA::valarray<double>&  measurements,
+                   const SPK_VA::valarray<double>&  indPar,
+                   SPK_VA::valarray<double>*        pIndPredOut,
+                   SPK_VA::valarray<double>*        pIndResOut,
+                   SPK_VA::valarray<double>*        pIndResWtdOut,
+                   SPK_VA::valarray<double>*        pIndParWtdOut,
+                   bool                             withD );
 
 #endif

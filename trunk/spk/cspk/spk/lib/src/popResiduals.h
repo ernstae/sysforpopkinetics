@@ -21,32 +21,31 @@
 */
 /*************************************************************************
  *
- * File: wres.h
+ * File: popResiduals.h
  *
  *
- * Calculates residuals and weighted residuals.
+ * Calculates residuals and/or weighted residuals for all of the
+ * individuals in the population.
  *
- * Author: Sachiko Honda
- *
- * Modified later by: Mitch Watrous
+ * Author: Mitch Watrous
  *
  *************************************************************************/
 
-#ifndef WRES_H
-#define WRES_H
+#ifndef POPRESIDUALS_H
+#define POPRESIDUALS_H
 
 #include "SpkValarray.h"
+#include "SpkModel.h"
+#include "Objective.h"
 
-void wres( const SPK_VA::valarray<double>& y, 
-           const SPK_VA::valarray<double>& f,
-           const SPK_VA::valarray<double>& cov,
-           SPK_VA::valarray<double>*       pResOut,
-           SPK_VA::valarray<double>*       pWresOut );
-
-void wres( const SPK_VA::valarray<double>& y, 
-           const SPK_VA::valarray<double>& f,	      
-           const SPK_VA::valarray<double>& cov,	      
-           SPK_VA::valarray<double>&       resOut,   
-           SPK_VA::valarray<double>&       wresOut );
+void popResiduals( SpkModel&                        model,
+                   enum Objective                   objective,
+                   const SPK_VA::valarray<int>&     nMeasurementsAll,
+                   const SPK_VA::valarray<double>&  measurementsAll,
+                   const SPK_VA::valarray<double>&  popPar,
+                   const SPK_VA::valarray<double>&  indParAll,
+                   SPK_VA::valarray<double>*        pPopPredOut,
+                   SPK_VA::valarray<double>*        pPopResOut,
+                   SPK_VA::valarray<double>*        pPopResWtdOut );
 
 #endif

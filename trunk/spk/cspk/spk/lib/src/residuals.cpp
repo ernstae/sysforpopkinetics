@@ -91,10 +91,11 @@ valarray<double> residuals(SpkModel &model,
 /*
 $begin residuals$$
 
-$section Generates residuals $$
+$section Calculating Residuals$$
 
 $spell
-	Model model
+Model
+model
 const
 std
 namespace
@@ -116,6 +117,7 @@ nonnegative
 bool
 Ri
 Spk
+valarray
 $$
 
 $index residual testing data model measurement $$
