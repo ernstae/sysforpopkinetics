@@ -29,16 +29,6 @@
  * Author: Sachiko Honda
  *
  *************************************************************************/
-
-
-/*************************************************************************
- *
- * Function: IndInputDataPackageTest
- *
- *
- * Performs the unit test for IndInputDataPackage.
- *
- *************************************************************************/
 #include <sstream>
 #include <spk/IndDataPackage.h>
 #include <spk/PopConstVals.h>

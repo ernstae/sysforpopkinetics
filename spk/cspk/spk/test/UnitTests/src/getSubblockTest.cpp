@@ -28,15 +28,6 @@
  *
  * Author: Sachiko Honda
  *
- *************************************************************************/
-
-/*************************************************************************
- *
- * Function: getSubblockTest
- *
- *
- * Performs the unit test for getSubblock.
- *
  * Note: This routine has been also tested for illegal indices.
  *
  *************************************************************************/
