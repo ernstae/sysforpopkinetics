@@ -31,10 +31,15 @@
 	<authorinitials>afw</authorinitials>
 	<revremark>Modified for firewall.</revremark>
       </revision>
+      <revision>
+	<revnumber>1.04</revnumber>
+	<date>June 24, 2004</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Modified treatment of cluster.</revremark>
+      </revision>
     </revhistory>
   <abstract>
     <para>
-
 	It is important that the system clocks in the Linux 
 	workstations of the RFPK Software Team be closely 
 	synchronized to the clock in the server which hosts the CVS
@@ -102,7 +107,7 @@
     </para>
     <para>
       The changes will be made to the <filename>/etc/hosts</filename> file.
-      There are three cases:
+      There are the following cases:
       <orderedlist numeration="lowerroman">
 	<listitem>
 	  <para>
@@ -133,6 +138,16 @@
 	    </screen>
 	  </para>
 	</listitem>
+	<listitem>
+	  <para>
+	    The machine is one of the computational (not frontend) nodes
+	    in the cluster topology that contains a frontend.  The entry
+	    in <filename>/etc/hosts</filename> should look like this
+	    <screen>
+192.168.3.1    timeserver frontend
+	    </screen>
+	  </para>
+	</listitem>
       </orderedlist>
     </para>
   </sect1>
@@ -141,15 +156,9 @@
     <para>
       In this section, we will edit several configuration files. To do this, 
       you will need root privilege.
-    </para>
-    <para>
-      We will start by putting the file
-      <filename moreinfo="none">/etc/ntp.conf</filename> under local
-      source control:
       <screen format="linespecific">
 su -
 cd /etc
-ci -l ntp.conf
       </screen>
       Edit <filename>ntp.conf</filename>
       with your favorite editor, setting the default behavior to 
@@ -176,13 +185,7 @@ restrict default nomodify
 restrict timeserver nomodify notrap noquery
 server timeserver
       </screen>
-    </para>
-    <para>
-      After making the above changes, use the <command moreinfo="none">rcsdiff</command>
-      command to check your work:
-      <screen format="linespecific">
-rcsdiff ntp.conf
-      </screen>
+      Save the file, after you have made your changes.
     </para>
     <para>
       Finally, we need to recreate the 
@@ -193,6 +196,7 @@ rcsdiff ntp.conf
       <screen format="linespecific">
 cd /etc/ntp
 echo timeserver > step-tickers
+echo time.nist.gov >> step-tickers
       </screen>
     </para>
   </sect1>
@@ -222,14 +226,14 @@ echo timeserver > step-tickers
 *whitechuck.rfpk bigben.cac.wash  2 u  192  256  377    0.684    0.075   0.024
       </screen>
       If delay, offset, and jitter are not small numbers, the clock has not
-      sychronized which may indicate that there is an error your configuration.
+      synchronized, which may indicate that there is an error your configuration.
     </para>
   </sect1>
   <sect1>
-    <title>Configuring the RFPK Time Server on Timeserver</title>
+    <title id="timeserver">Configuring the RFPK Timeserver</title>
     <para>
       The RFPK time server
-      needs to be configured somewhat differently from the 
+      needs to be set up somewhat differently from the 
       workstations.
     </para>
     <para>
@@ -254,15 +258,14 @@ server tick.usno.navy.mil
       </screen>
     </para>
     <para>
-      Unlike the workstation case, the server must be opened to 
+      Unlike the workstation case, the server must be open to 
       clients.  Just following the commented CLIENT NETWORK
       section, add the following
       <screen>
-restrict 128.95.35.0 mask 255.255.255.0 notrust nomodify notrap
+restrict 192.168.0.0 mask 255.255.0.0 notrust nomodify notrap
       </screen>
       which enables service requests coming from any of the
-      256 IP addresses starting 128.95.35, which is the range
-      encompassing the IPs for workstations located in the 
+      IP addresses behind the firewall in the 
       lab at AERL 241.  
     </para>
     <para>
@@ -274,28 +277,51 @@ restrict 128.95.35.0 mask 255.255.255.0 notrust nomodify notrap
   <sect1>
     <title>Configuring Time Service for the Cluster</title>
     <para>
-      The gateway node should be configured to be the same as
-      <systemitem moreinfo="none" class="systemname">timeserver</systemitem>,
-      except that 
-      <systemitem moreinfo="none" class="systemname">
-	bigben.cac.washington.edu
-      </systemitem>
-      should be replaced by
-      <systemitem moreinfo="none" class="systemname">
-	timeserver
-      </systemitem> 
-      and the range of client IP addresses should be
-      "192.168.3.0 mask 255.255.255.0".
+      Two different network topologies are used on the cluster.
+      In one topology, cspk1 is a frontend or gateway
+      node and other nodes are compute nodes.  In the other
+      configuration, each node is an individual host on the
+      green LAN.
     </para>
-    <para>
-      Each of the other nodes should be configured as workstations,
-      except that the trusted server specification should be the
-      following:
-      <screen>
-restrict 192.168.3.1 mask 255.255.255.255 nomodify notrap noquery
-server 192.168.3.1
-      </screen>
-    </para>
+    <sect2>
+      <title>Daemon Setup for the Cluster</title>
+      <para>
+	Because of a deficiency in the ethernet interfaces in
+	our Linux Labs cluster (all nodes have the same MAC address)
+	the normal configuration for starting up a network daemon
+	when the system boots does not work.  Instead, the 
+	command, <command>/etc/rc.d/init.d/ntpd start</command>,
+	must be appended to the end of the file
+	<filename>/etc/rc.d/rc.local</filename>.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Configuration Files for the Frontend Topology</title>
+      <para>
+	For the topology that has its own frontend, the 
+	the frontend should be set up as timeserver, as 
+	described <link linkend="timeserver">above</link>.
+	The line that defines the range of client IP addresses
+	should look like this:
+	<screen>
+restrict 192.168.3.0 mask 255.255.0.0 notrust nomodify notrap
+	</screen>
+	In each of the computation nodes that use the
+	frontend as a gateway, the
+	<filename>/etc/hosts</filename> file should contain
+	a definition for timeserver like this:
+	<screen>
+192.168.3.1     timeserver frontend
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Configuration Files for Topology without Frontend</title>
+      <para>
+	In this case, the nodes have the same ntp configuration as
+	have workstations.
+      </para>
+    </sect2>
   </sect1>
 </article>
 
