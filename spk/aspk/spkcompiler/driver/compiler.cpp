@@ -290,7 +290,7 @@ int main( int argc, char * argv[] )
   }
                                                                                 
   client::type cl = getClientName( source );
-  if( cl != client::NOT_SUPPORTED )
+  if( cl == client::NOT_SUPPORTED )
     {
       XMLPlatformUtils::Terminate();
       fprintf( stderr, "Not a supported client!" );
@@ -310,6 +310,7 @@ int main( int argc, char * argv[] )
   xlator->translate();
   delete xlator;
 
+  cout << "Completed successfully" << endl;
   remove( compilation_error_xml );
   return SUCCESS;
 }
