@@ -177,12 +177,6 @@
 	      <entry>01/08/2004</entry>
 	    </row>
 	    <row>
-	      <entry><link linkend="c_binding">Database API, C Binding</link></entry>
-	      <entry>Alan Westhagen</entry>
-	      <entry>01/09/2004</entry>
-	      <entry></entry>
-	    </row>
-	    <row>
 	      <entry><link linkend="comp_pop">Aspk Compiler Output (Pop)</link></entry>
 	      <entry>Sachiko Honda</entry>
 	      <entry>01/19/2004</entry>
@@ -353,13 +347,6 @@
 	This document is now complete and can be viewed
 	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/dbAPI/dbAPI.html">here</ulink>.
 	Return to <link linkend="milestone_table">table</link>.
-      </para>
-    </sect2>
-    <sect2 id="c_binding">
-      <title>Database API, C Binding</title>
-      <para>	
-	The C binding is an implementation of the API for use by
-	processes programmed in the C language.
       </para>
     </sect2>
     <sect2 id="java_binding">

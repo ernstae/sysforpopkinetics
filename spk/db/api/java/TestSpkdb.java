@@ -3,6 +3,7 @@ import java.sql.*;
 
 public class TestSpkdb {
     public static void main(String args[]) {
+	String host = args[0];
 	String username = "air";
 	String password = "codered";
 	String firstName = "Mike";
@@ -31,7 +32,7 @@ public class TestSpkdb {
 	Connection conn;
 
 	try {
-	    conn = Spkdb.connect("spktest", "localhost.localdomain", "tester", "tester");
+	    conn = Spkdb.connect("spktest", host, "tester", "tester");
 	} catch (Exception e) {
 	    s += " >> " + e;
 	    b = false;
