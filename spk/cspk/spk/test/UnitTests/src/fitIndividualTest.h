@@ -63,6 +63,7 @@ public:
     void fitIndividualExampleTest();
     void fitIndividualQuadraticTest();
     void fitIndividualZeroIterationsTest();
+    void fitIndividualLimitsWarningsTest();
 };
 
 #endif
