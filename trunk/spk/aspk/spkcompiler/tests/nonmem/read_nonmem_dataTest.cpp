@@ -221,7 +221,8 @@ void read_nonmem_dataTest::testOrderMixedUp()
 		    table,
 		    label_alias_mapping, 
 		    data_for,
-		    order_id_pair );
+		    order_id_pair,
+		    spk );
 
   CPPUNIT_ASSERT_EQUAL( (int)label_alias_mapping.size(), nObservations );
   
