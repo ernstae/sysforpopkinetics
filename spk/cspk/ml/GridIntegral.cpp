@@ -131,7 +131,8 @@ double GridIntegral(
 	bool    more = true;
 	size_t count = 0;
 	while( more )
-	{
+	{	assert( count == Index(m, N, I) );
+
 		// neXt grid point value
 		for(i = 0; i < m; i++)
 			X[i] = L[i] + (I[i] + .5) * (U[i] - L[i]) / N[i];
