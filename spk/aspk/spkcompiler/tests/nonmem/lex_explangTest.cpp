@@ -50,13 +50,16 @@ void lex_explangTest::testWhiteSpaces()
   fprintf( input, "\t\n" );
 
   fclose( input );
+
+  gSpkExpLines  = 0;
+  gSpkExpErrors = 0;
   yyin = fopen( testInput, "r" );
   yyrestart( yyin );
   int TOKEN = yylex();
   fclose( yyin );
   CPPUNIT_ASSERT( TOKEN == '\n' );
-  CPPUNIT_ASSERT( gSpkExpErrors == 0 );
-  CPPUNIT_ASSERT( gSpkExpLines  == 1 );
+  CPPUNIT_ASSERT_EQUAL( 0, gSpkExpErrors );
+  CPPUNIT_ASSERT_EQUAL( 1, gSpkExpLines );
   remove( testInput );
 }
 void lex_explangTest::testComment()

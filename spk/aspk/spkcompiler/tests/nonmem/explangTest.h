@@ -1,16 +1,16 @@
 /**
- * \file NonmemExpXlatorTest.h
- * \brief A test suite for Nonmem Expression Translator.
+ * \file explangTest.h
+ * \brief A test suite for the NONMEM parser, yyparse().
  */
-#ifndef TEST_NONMEM_EXPXLATOR_TEST_H
-#define TEST_NONMEM_EXPXLATOR_TEST_H
+#ifndef TEST_EXPLANG_TEST_H
+#define TEST_EXPLANG_TEST_H
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestSuite.h>
 
 #include <libspkcompiler/ExpTreeGenerator.h>
 
-class NonmemExpXlatorTest : public CppUnit::TestFixture {
+class explangTest : public CppUnit::TestFixture {
 
   FILE * file;
   ExpTreeGenerator expTreeUtil;
