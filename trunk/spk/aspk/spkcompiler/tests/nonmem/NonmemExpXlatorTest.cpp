@@ -37,7 +37,6 @@ void NonmemExpXlatorTest::setUp()
 }
 void NonmemExpXlatorTest::tearDown()
 {
-  delete gSpkExpSymbolTable;
 }
 void NonmemExpXlatorTest::testSimplest()
 {
@@ -74,6 +73,7 @@ void NonmemExpXlatorTest::testSimplest()
 
   //cout << endl;
   //gSpkExpSymbolTable->dump();
+  delete gSpkExpSymbolTable;
 }
 void NonmemExpXlatorTest::testParse()
 {
@@ -83,7 +83,7 @@ void NonmemExpXlatorTest::testParse()
 
   // Populate the symbol table with pre-defined symbols.
   //
-  char input[] = "exp.in";
+  char input[] = "nmtran1.in";
   file = fopen( input, "r" );
 
   sprintf( errmess, "Failed to open %s!\n", input );
@@ -97,7 +97,7 @@ void NonmemExpXlatorTest::testParse()
   gSpkExpSymbolTable = new SymbolTable;
   
   //
-  // NONMEM keywords
+  // NONMEM core keywords
   //
   Symbol theta( "THETA", Symbol::VECTOR, Symbol::DOUBLE, true );
   theta.size( 3 );
@@ -115,24 +115,39 @@ void NonmemExpXlatorTest::testParse()
   eta.size( 5 );
   gSpkExpSymbolTable->insert( eta );
 
+  //
+  // ADVAN, TRANS parameters
+  //
+  Symbol ka( "KA", Symbol::SCALAR, Symbol::DOUBLE, true );
+  Symbol ke( "KE", Symbol::SCALAR, Symbol::DOUBLE, true );
+  Symbol cl( "CL", Symbol::SCALAR, Symbol::DOUBLE, true );
+  Symbol f ( "F",  Symbol::SCALAR, Symbol::DOUBLE, true );
+  gSpkExpSymbolTable->insert( ka );
+  gSpkExpSymbolTable->insert( ke );
+  gSpkExpSymbolTable->insert( cl );
+  gSpkExpSymbolTable->insert( f );
+
   // 
   // As if these are from data file.
   //
   const int nMeasurements = 3;
-  Symbol dose( "DOSE", Symbol::VECTOR, Symbol::DOUBLE, false );
+  Symbol dose( "DOSE", Symbol::VECTOR, Symbol::DOUBLE, true );
   dose.size( nMeasurements );
   gSpkExpSymbolTable->insert( dose );
 
-  Symbol wt( "WT", Symbol::VECTOR, Symbol::DOUBLE, false );
+  Symbol wt( "WT", Symbol::VECTOR, Symbol::DOUBLE, true );
   wt.size( nMeasurements );
   gSpkExpSymbolTable->insert( wt );
 
-  Symbol time( "TIME", Symbol::VECTOR, Symbol::DOUBLE, false );
+  Symbol time( "TIME", Symbol::VECTOR, Symbol::DOUBLE, true );
   time.size( nMeasurements );
   gSpkExpSymbolTable->insert( time );
 
-  Symbol ds( "DS", Symbol::VECTOR, Symbol::DOUBLE, false );
+  Symbol ds( "DS", Symbol::VECTOR, Symbol::DOUBLE, true );
   ds.size( nMeasurements );
+  gSpkExpSymbolTable->insert( ds );
+
+
   gSpkExpSymbolTable->insert( ds );
 
   yyparse();
@@ -156,11 +171,12 @@ CppUnit::Test * NonmemExpXlatorTest::suite()
      new CppUnit::TestCaller<NonmemExpXlatorTest>(
          "testSimplest", 
 	 &NonmemExpXlatorTest::testSimplest ) );
+ 
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<NonmemExpXlatorTest>(
          "testParse",
 	 &NonmemExpXlatorTest::testParse ) );
-
+ 
    return suiteOfTests;
 }
 
