@@ -11,4 +11,6 @@ MOSTLYCLEANFILES = explang.cpp explang.h explang.output lex_explang.c
 libnonmem_la_SOURCES = \
 	config.h \
 	explang.ypp \
-        lex_explang.l
+        lex_explang.l \
+	NonmemTranslator.cpp \
+	NonmemTranslator.h
