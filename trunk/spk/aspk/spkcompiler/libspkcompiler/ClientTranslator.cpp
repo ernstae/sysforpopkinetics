@@ -236,22 +236,21 @@ void ClientTranslator::parseData()
 	      assert( delme_s == tmp_types[k] );
 	      
 	      const XMLCh* xml_value = values->item(k)->getFirstChild()->getNodeValue();
-              if( k == 0 )
-	      {
-		// This must be the ID field if it ever exists.
-                // Store the ID value if it is new and increment the # subjects.
+	      if( k == 0 )
+              {
 		if( !isIDMissing )
+		{
+		  id = XMLString::transcode( xml_value );
+		  if( find( tmp_ids.begin(), tmp_ids.end(), id ) == tmp_ids.end() )
+		    {
+		      tmp_ids.push_back( id );
+		      ++nSubjects;
+		    }
+		}
+		  else
 		  {
-		    id = XMLString::transcode( xml_value );
-		    if( find( tmp_ids.begin(), tmp_ids.end(), id ) == tmp_ids.end() )
-		      {
-			tmp_ids.push_back( id );
-			++nSubjects;
-		      }
-		  }
-		else
-		  {
-		    id = "ID";
+		    id = new char[2];
+		    strcpy( id, "1" );
 		  }
 	      }
               //
@@ -272,6 +271,12 @@ void ClientTranslator::parseData()
       nDataRecords.resize( nSubjects );
 
 
+      vector<string>::const_iterator id = tmp_ids.begin();
+      for( int k=0; id != tmp_ids.end(), k<nSubjects; k++, id++ )
+	{
+	  nDataRecords[k] = tmp_values[*id][tmp_labels[0]].size();
+	}
+      
       //
       // Figure out the number of data records for each individual
       // and save them in a temporary array.
@@ -280,28 +285,22 @@ void ClientTranslator::parseData()
 	{
 	  nDataRecords[0] = nRecords;
 	  table.insertLabel( "ID", "",nDataRecords );
+	  tmp_labels.insert( tmp_labels.begin(), "ID");
+	  tmp_values["1"]["ID"].resize( nDataRecords[0] );
+	  fill( tmp_values["1"]["ID"].begin(), tmp_values["1"]["ID"].end(), "1" );
 	  for( int k=0; k<nFields; k++ )
 	    {
 	      table.insertLabel( tmp_labels[k], "", nDataRecords );
-	      
 	    }
 	}
-      else
-	{
-	  vector<string>::const_iterator id = tmp_ids.begin();
-	  for( int k=0; id != tmp_ids.end(), k<nSubjects; k++, id++ )
-	    {
-	      nDataRecords[k] = tmp_values[*id][tmp_labels[0]].size();
-	    }
 
-	  //
-	  // Register the data labels without any attributes yet.
-	  //
-	  for( int k=0; k<nFields; k++ )
-	    {
-	      table.insertLabel( tmp_labels[k], "", nDataRecords );
-	      
-	    }
+      //
+      // Register the data labels without any attributes yet.
+      //
+      int nLabels = tmp_labels.size();
+       for( int k=0; k<nLabels; k++ )
+	{
+	  table.insertLabel( tmp_labels[k], "", nDataRecords );  
 	}
 
       //
@@ -311,9 +310,9 @@ void ClientTranslator::parseData()
       // in the table specification.  ie. tmp_ids[0] contains the first individual's ID.
       //
       int who=0;
-      for( vector<string>::const_iterator id = tmp_ids.begin(); id != tmp_ids.end(); id++, who++ )
+     for( vector<string>::const_iterator id = tmp_ids.begin(); id != tmp_ids.end(); id++, who++ )
 	{
-	  for( int k=0; k<nFields; k++ )
+	  for( int k=0; k<nLabels; k++ )
 	    {
 	      Symbol *s = table.findi( tmp_labels[k] );
 	      vector<string>::const_iterator itr = (tmp_values[*id][tmp_labels[k]]).begin();
