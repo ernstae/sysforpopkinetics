@@ -294,6 +294,10 @@ const DoubleMatrix centdiff( const UnaFun &f, const DoubleMatrix &x, const Doubl
         }
     }
 
+    // Compute the center value again to restore any state variables
+    // for f to their original values.
+    ctr = f(x);
+
     return jacob;
 }
 /*************************************************************************
@@ -561,6 +565,11 @@ const SPK_VA::valarray<DataType> centdiff( const UnaFun &f, int fvalCols, const 
             }
         }
     }
+
+    // Compute the center value again to restore any state variables
+    // for f to their original values.
+    ctr = f(x);
+
     return jacob;
    
 }
