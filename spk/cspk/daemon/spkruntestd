@@ -5,7 +5,7 @@
 #
 
 DATABASE=spktest
-DBHOST=localhost
+DBHOST=dbserver
 DBUSER=tester
 DBPASSWD=tester
 BIN=/usr/local/bin/spktest
