@@ -4598,15 +4598,15 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << endl;
   
   oDriver << "const bool isSimRequested  = " << ( myIsSimulate? "true":"false" ) << ";" << endl;
-  oDriver << "bool haveCompleteData      = " << ( myIsSimulate? "false":"true" ) << ";" << endl;
+  oDriver << "bool haveCompleteData      = !isSimRequested;" << endl;
   oDriver << endl;
 
   oDriver << "const bool isOptRequested  = " << ( myIsEstimate? "true":"false" ) << ";" << endl;
-  oDriver << "bool isOptSuccess          = " << ( myIsEstimate? "false":"true" ) << ";" << endl;
+  oDriver << "bool isOptSuccess          = !isOptRequested;" << endl;
   oDriver << endl;
 
   oDriver << "const bool isStatRequested = " << ( myIsStat? "true":"false" ) << ";"     << endl;
-  oDriver << "bool isStatSuccess         = " << ( myIsStat? "false":"true" ) << ";"     << endl;
+  oDriver << "bool isStatSuccess         = !isStatRequested;" << endl;
   oDriver << endl;
 
   oDriver << "const int nRepeats         = " << mySubproblemsN << ";" << endl;
@@ -5166,11 +5166,11 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << endl;
 
   oDriver << "const bool isSimRequested  = " << (myIsSimulate? "true":"false") << ";" << endl;
-  oDriver << "bool haveCompleteData      = false;" << endl;
+  oDriver << "bool haveCompleteData      = !isSimRequested;" << endl;
   oDriver << endl;
 
   oDriver << "const bool isOptRequested  = " << (myIsEstimate? "true":"false") << ";" << endl;
-  oDriver << "bool isOptSuccess          = " << (myIsEstimate? "false":"true") << ";" << endl;
+  oDriver << "bool isOptSuccess          = isOptRequested;" << endl;
   if( myIsEstimate )
     {
       oDriver << "Objective objective    = ";
@@ -5183,7 +5183,7 @@ void NonmemTranslator::generatePopDriver() const
     }
 
   oDriver << "const bool isStatRequested = " << (myIsStat? "true":"false") << ";" << endl;
-  oDriver << "bool isStatSuccess         = " << (myIsStat? "false":"true") << ";" << endl;
+  oDriver << "bool isStatSuccess         = !isStatRequested;" << endl;
   if( myIsStat )
     oDriver << "enum PopCovForm covForm  = " << myCovForm << ";" << endl;
   oDriver << endl;
