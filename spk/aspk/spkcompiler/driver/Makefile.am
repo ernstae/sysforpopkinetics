@@ -25,5 +25,5 @@ AM_LDFLAGS = -lspkcompiler -lxerces-c -L$(INST_BASE)/lib -L$(INST_BASE)/lib/spkt
 
 INCLUDES = \
 	-I@top_srcdir@/ \
-        -I$(INST_BASE)/include
+        -I$(INST_BASE)/include \
 	-I$(INST_BASE)/include/spktest
