@@ -4,8 +4,6 @@ use strict;
 use English;
 use File::Path;
 
-use cand("make_directory");
-
 =head1 NAME
 
     deploy_candidate.pl -- deploy an SPK candidate system to production
@@ -50,9 +48,20 @@ my $log_file_dir = "/etc/spk";
 my $log_file = "$log_file_dir/deployment_log";
 my $rotate_conf = "rotate.conf";
 
+my $mkdir_command = "/bin/mkdir";
 my $scp_command = "/usr/bin/scp";
-
 my $logrotate_command = "/usr/sbin/logrotate";
+
+sub make_directory {
+    my $path = shift;
+    my @args = ($mkdir_command, "-p", $path);
+     system(@args);
+    my $exit_status = $? >> 8;
+    if ($exit_status != 0) {
+	die "Could not make directory '$path'\n";
+    }
+}
+
 
 if (@ARGV > 1 || (@ARGV == 1 && $ARGV[0] =~ "--help")) {
     die "usage: $0 [ candidate.n ]\n";
@@ -68,10 +77,6 @@ $EFFECTIVE_USER_ID == 0
 
 -d $candidate_dir
     or die "The candidate directory, $candidate_dir, appears not to exist.\n";
-
-my $date;
-#my ($sec, $min, $hour, $mday, $mon, $year) = localtime;
-#my $date = sprintf "%04d-%02d-%02d-%02d%02d-%02d", $year+1900, $mon+1, $mday, $hour, $min, $sec;
 
 chdir $candidate_dir;
 
@@ -91,7 +96,8 @@ foreach my $d ("aspkserver", "cspkserver") {
     my $sdir = "$candidate_dir/$name/$d";
     -d $sdir or die "Candidate subtree\n$sdir\nappears not to exist.\n";
     $sdir .= "/usr/local";
-    my $ddir = "$d:/tmp/usr/local";
+    my $ddir = "$d:/usr/local";
+
     foreach my $f (<$sdir/*>) {
 	my @args = ($scp_command, "-r", "$f", $ddir);
         system(@args);
