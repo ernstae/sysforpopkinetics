@@ -44,12 +44,14 @@
 #define OPTIMIZER_H
 
 #include <iostream> 
-#include "nag.h"
-#include "nag_types.h"
 
-// Structire: StateInfo
+//
+// Structure: StateInfo
+//
 struct StateInfo
 {
+  // This particular set of state information is used
+  // by the optimizer QuasiNewton01Box.
   int      n;
   double   r;
   double   f;
@@ -58,8 +60,9 @@ struct StateInfo
   double*  h;   // Length n * n.
 };
 
-// Class Optimizer
-
+//
+// Class: Optimizer
+//
 class Optimizer
 {
 public:
@@ -121,6 +124,7 @@ private:
   bool      throwExcepIfMaxIter;
   bool      isSubLevelOpt;
   bool      isWarmStart;
+
   StateInfo stateInfo;
 };
             
