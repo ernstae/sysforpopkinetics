@@ -1201,7 +1201,7 @@ void quasiNewtonAnyBox(
   }
 
   // If the final value for the objective function should be
-  // returned, then set it equal to the value from nag_opt_nlp.
+  // returned, then set it equal to the scaled value.
   if ( pdFOut )
   {
     *pdFOut = fScaled;
@@ -1239,7 +1239,7 @@ namespace // [Begin: unnamed namespace]
  * Function: unscaleElem
  *
  *
- * Returns the unscaled value for y.   
+ * Returns the unscaled value for y.
  *
  *************************************************************************/
 
@@ -1255,7 +1255,7 @@ void unscaleElem(
 
   for ( i = 0; i < n; i++ )
   {
-    if ( y[i] != 1.0 ) 
+    if ( y[i] != 1.0 )
     {
       // Transform the element of the y vector back to the unscaled 
       // form. Note that for those elements of x for which the
@@ -1277,21 +1277,57 @@ void unscaleElem(
  * Function: scaleGradElem
  *
  *
- * Returns the scaled value for g.
+ * Returns the scaled value for g, the gradient of the scaled 
+ * objective function with respect to y.
  *
  *************************************************************************/
 
 void scaleGradElem(
-  int                  n,
+  int            n,
   const double*  g, 
   const double*  xDiff,
-  double*              gScaled )
+  double*        gScaled )
 {
   int i;
 
   for ( i = 0; i < n; i++ )
   {
     gScaled[i] = xDiff[i] * g[i];
+  }
+}
+
+
+/*************************************************************************
+ * Function: unscaleGradElem
+ *
+ *
+ * Returns the unscaled value for g, the gradient of the unscaled 
+ * objective function with respect to x.
+ *
+ *************************************************************************/
+
+void unscaleGradElem(
+  int            n,
+  const double*  gScaled, 
+  const double*  xDiff,
+  double*        g )
+{
+  int i;
+
+  for ( i = 0; i < n; i++ )
+  {
+    if ( xDiff[i] != 0.0 )
+    {
+      g[i] = gScaled[i] / xDiff[i];
+    }
+    else
+    {
+      // Since the scaled gradient for this element is always zero, and
+      // since the corresponding x and y values are fixed to their initial
+      // values, neither objective function depends on this element.
+      // Therefore set this unscaled gradient element equal to zero.
+      g[i] = 0.0;
+    }
   }
 }
 
