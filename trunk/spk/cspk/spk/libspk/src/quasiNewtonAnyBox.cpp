@@ -1013,8 +1013,10 @@ void quasiNewtonAnyBox(
     // the maximum number of iterations have been performed.
     while ( !isAcceptable && iterCurr <= nMaxIter )
     {
-      // Get the Cholesky factor of the current scaled Hessian.
+      // Get the Cholesky factor of the current scaled Hessian
+      // and put its elements in row-major order.
       calcCholFactor( nObjPar, hScaled, rScaled );
+?      transpose( rScaled );
 
       // See if this function's convergence criterion has been met.
       if ( isWithinTol( 
@@ -1023,6 +1025,9 @@ void quasiNewtonAnyBox(
         yLow,
         yUp,
         gScaled,
+
+	CONSIDER: hRMOScaled
+
 	hScaled,
         rScaled,
 	deltaY,
@@ -1335,40 +1340,36 @@ void scaleGradElem(
  *
  * xHat
  *
- * The estimate for the true minimizer xTrue.  It must be allocated to hold
- * n elements before this function is called.
+ * The estimate for the true minimizer xTrue.  It must be of length n.
  *
  *
  * xLow
  *
- * The lower bound for x.  It must be allocated to hold n elements before
- * this function is called.
+ * The lower bound for x.  It must be of length n.
  *
  *
  * xUp
  *
- * The upper bound for x.  It must be allocated to hold n elements before
- * this function is called.
+ * The upper bound for x.  It must be of length n.
  *
  *
  * g
  *
- * The gradient g(x) evaluated at xHat.  It must be allocated to hold
- * n elements before this function is called.
+ * The gradient g(x) evaluated at xHat.  It must be of length n.
  *
  *
  * h
  *
- * The Hessian H(x) evaluated at xHat.  It must be allocated to hold
- * n * n elements before this function is called.
+ * The Hessian H(x) evaluated at xHat.  It must be of length n * n, and
+ * its elements must be in row-major order.
  *
  *
  * r
  *
  * The lower triangular Cholesky factor R(x) of the  Hessian H(x) 
  * evaluated at xHat.  Note that the existence of R implies that H is
- * symmetric and positive-definite.  It must be allocated to hold
- * n * n elements before this function is called.
+ * symmetric and positive-definite.  It must be of length n * n, and
+ * its elements must be in row-major order.
  *
  *
  * deltaX
@@ -1386,8 +1387,9 @@ void scaleGradElem(
  * hWork
  *
  * On input, this must be allocated to hold n * n elements.  On output, 
- * it contains a modified version of the Hessian with some of its elements 
- * replaced by some of the elements of its Cholesky factor.
+ * it contains a modified version of the Hessian with its elements in
+ * row-major order and with some of its elements replaced by some of the 
+ * elements of its Cholesky factor.
  *
  *
  * rDiagRec
@@ -1445,12 +1447,31 @@ bool isWithinTol(
     // Copy the sub-diagonal elements from the lower triangle of H.
     for ( j = 0; j <= i ; j++ )
     {
+
+h is in row major order
+h is in row major order
+h is in row major order
+h is in row major order
+h is in row major order
+h is in row major order
+h is in row major order
+
       hWork[i + j * n] = h[i + j * n];
     }
   
     // Copy the super-diagonal elements from the lower triangle of R.
     for ( j = i + 1; j < n; j++ )
     {
+
+r (the Cholesky factor of h) is in column major order
+r (the Cholesky factor of h) is in column major order
+r (the Cholesky factor of h) is in column major order
+r (the Cholesky factor of h) is in column major order
+r (the Cholesky factor of h) is in column major order
+r (the Cholesky factor of h) is in column major order
+r (the Cholesky factor of h) is in column major order
+r (the Cholesky factor of h) is in column major order
+
       hWork[i + j * n] = r[j + i * n];
     }
   }
@@ -1582,6 +1603,15 @@ bool isWithinTol(
   // dmatH are stored in column-major order.  This is the reason  
   // the sub-diagonal elements of r were copied to the 
   // super-diagonal elements of dmatH.
+
+A (which is just H) is in row major order
+A (which is just H) is in row major order
+A (which is just H) is in row major order
+A (which is just H) is in row major order
+A (which is just H) is in row major order
+A (which is just H) is in row major order
+A (which is just H) is in row major order
+
   double* a = hWork;
 
   // Parameter: tda.
