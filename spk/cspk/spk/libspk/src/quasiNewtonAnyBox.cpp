@@ -1437,9 +1437,9 @@ bool isWithinTol(
   // Prepare the modified version of the Hessian.
   //------------------------------------------------------------
 
-  // Prepare a version of the Hessian with its super-diagonal 
-  // elements replaced by the sub-diagonal elements of its 
-  // Cholesky factor, which is itself lower triangular.
+  // Create an initiaal version of the Hessian with its super-diagonal 
+  // elements replaced by the sub-diagonal elements of its Cholesky
+  // factor, which is itself lower triangular.
   for ( i = 0; i < n; i++ )
   {
     // Copy the sub-diagonal elements from the lower triangle of H.
@@ -1457,7 +1457,7 @@ bool isWithinTol(
 
 
   //------------------------------------------------------------
-  // Calculate the Hessian, projected gradient, and diagonal reciprocals.
+  // Calculate the projected gradient and finish the modified Hessian.
   //------------------------------------------------------------
 
   // Modify the Hessian, and set the elements of gProj and p.
