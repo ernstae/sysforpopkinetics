@@ -1649,17 +1649,37 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   oPred_h << "#include <../cppad/CppAD.h>" << endl;
   oPred_h << "#include \"DataSet.h\"" << endl;
   oPred_h << endl;
-
-  oPred_h << "const CppAD::AD<double> pow( const CppAD::AD<double>& x, double y )" << endl;
+  
+  oPred_h << "const CppAD::AD<double> pow( const CppAD::AD<double>& x, int y )" << endl;
   oPred_h << "{" << endl;
-  oPred_h << "   return pow( CppAD::Value(x), y );" << endl;
+  oPred_h << "   CppAD::AD<double> xToY = x;" << endl;
+  oPred_h << "   for( int i=0; i<y; i++ )" << endl;
+  oPred_h << "   {" << endl;
+  oPred_h << "      xToY *= x;" << endl;
+  oPred_h << "   }" << endl;
+  oPred_h << "   return xToY;" << endl;
+  oPred_h << "}" << endl;
+  oPred_h << "const CppAD::AD<double> pow( int x, const CppAD::AD<double>& y )" << endl;
+  oPred_h << "{" << endl;
+  oPred_h << "   CppAD::AD<double> xToY = x;" << endl;
+  oPred_h << "   for( int i=0; i<y; i++ )" << endl;
+  oPred_h << "   {" << endl;
+  oPred_h << "      xToY *= x;" << endl;
+  oPred_h << "   }" << endl;
+  oPred_h << "   return xToY;" << endl;
   oPred_h << "}" << endl;
   oPred_h << "const CppAD::AD<double> pow( double x, const CppAD::AD<double>& y )" << endl;
   oPred_h << "{" << endl;
-  oPred_h << "   return pow( x, CppAD::Value(y) );" << endl;
+  oPred_h << "   return pow( CppAD::AD<double>(x), y );" << endl;
   oPred_h << "}" << endl;
+  oPred_h << "const CppAD::AD<double> pow( const CppAD::AD<double>& x, double y )" << endl;
+  oPred_h << "{" << endl;
+  oPred_h << "   return pow( x, CppAD::AD<double>(y) );" << endl;
+  oPred_h << "}" << endl;
+
   oPred_h << endl;
-      
+  
+  
   //----------------------------------------------
   // Declaration
   //----------------------------------------------
@@ -1961,8 +1981,8 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   ///////////////////////////////////////////////////////////////////////////////////
 
   // Set the output values
-  oPred_h << "spk_depVar[ spk_fOffset ] = f;" << endl;
-  oPred_h << "spk_depVar[ spk_yOffset ] = y;" << endl;
+  oPred_h << "spk_depVar[ spk_fOffset+spk_j ] = f;" << endl;
+  oPred_h << "spk_depVar[ spk_yOffset+spk_j ] = y;" << endl;
 
   // Pred::eval() returns true if MDV(i,j) is 0, which means DV is NOT missing.
   // In this iteration, it is assumed that MDV=true for all, so return true.
