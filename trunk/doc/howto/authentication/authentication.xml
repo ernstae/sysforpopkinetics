@@ -163,25 +163,34 @@ $JAVA_HOME/bin/keytool -genkey -alias tomcat -keyalg RSA -keystore keystore
     <para>
       Here is the list of questions and suggested responses.
       The questions are in 
-      <emphasis>italics</emphasis> and the responses in normal text:
+      <emphasis>italics</emphasis> and the responses in normal text.
+      In response to the last question, simply press <keycap>Enter</keycap>.
       <screen>
 <emphasis>Enter keystore password:</emphasis> Make@!This&*Good
+
 <emphasis>What is your first and last name?
 [Unknown]:</emphasis> spk.rfpk.washington.edu
+
 <emphasis>What is the name of your organizational unit?
 [Unknown]:</emphasis> RFPK
+
 <emphasis>What is the name of your organization?
 [Unknown]:</emphasis> University of Washington
-<emphasis><What is the name of your City or Locality?
-[Unknown]:/emphasis> Seattle
+
+<emphasis>What is the name of your City or Locality?
+[Unknown]:</emphasis> Seattle
+
 <emphasis>What is the name of your State or Province?
 [Unknown]:</emphasis> WA
+
 <emphasis>What is the two-letter country code for this unit?
 [Unknown]:</emphasis> US
+
 <emphasis>Is CN=spk.rfpk.washington.edu, OU=University of Washington, O=RFPK, L=Seattle, ST=WA, C=US correct?
 [no]:</emphasis> yes
+
 <emphasis>Enter key password for &lt;tomcat&gt;
-    (RETURN if same as keystore password): </emphasis> (press enter)
+    (RETURN if same as keystore password): </emphasis>
       </screen>
     </para>
   </sect1>
