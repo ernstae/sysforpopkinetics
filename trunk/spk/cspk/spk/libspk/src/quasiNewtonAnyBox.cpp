@@ -1515,8 +1515,8 @@ bool isWithinTol(
     // Determine which elements are free, i.e., are not being held by 
     // their bounds.
     if ( ( xHat[i] >  xLow[i] && xHat[i] < xUp[i] )
-      || ( xHat[i] == xLow[i] && g[i] < 0.0 ) 
-      || ( xHat[i] == xUp[i]  && g[i] > 0.0 ) )
+      || ( xHat[i] == xLow[i] && g[i]    < 0.0 ) 
+      || ( xHat[i] == xUp[i]  && g[i]    > 0.0 ) )
     {
       //--------------------------------------------------------
       // This element is free:  its deltaX should be computed.
@@ -1528,8 +1528,8 @@ bool isWithinTol(
       gProj[i] = g[i];
 
       // Set the reciprocal of the corresponding R diagonal.
-      assert( r[i + i * n] != 0.0 );
-      rDiagRec[i] = 1.0 / r[i + i * n];
+      assert( r[i * n + i] != 0.0 );
+      rDiagRec[i] = 1.0 / r[i * n + i];
     }
     else
     {
@@ -1544,19 +1544,19 @@ bool isWithinTol(
 
       // Set the correponding diagonal element of the modified Hessian
       // equal to one.
-      hWork[i + i * n] = 1.0;
+      hWork[i * n + i] = 1.0;
 
       // Zero the rest of the elements in the corresponding row
       // and column of the modified Hessian.
       for ( j = 0; j < i; j++ )
       {
         hWork[i * n + j] = 0.0;
-        hWork[j + i * n] = 0.0;
+        hWork[j * n + i] = 0.0;
       }
       for ( j = i + 1; j < n; j++ )
       {
         hWork[i * n + j] = 0.0;
-        hWork[j + i * n] = 0.0;
+        hWork[j * n + i] = 0.0;
       }
   
       // Set the reciprocal of the corresponding R diagonal equal to one.
