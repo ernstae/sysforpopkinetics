@@ -4967,6 +4967,11 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << endl;
   oDriver << "   // Get the latest value of theta and Omega." << endl;
   oDriver << "   // These values may be garbage if optimization had failed." << endl;
+  oDriver << "   if( !isOptSuccess )" << endl;
+  oDriver << "   {" << endl;
+  oDriver << "      indOpt.getPar( bOut );" << endl;
+  oDriver << "      model.setIndPar( bOut );" << endl;
+  oDriver << "   }" << endl;
   oDriver << "   model.getTheta( thetaOut );" << endl;
   oDriver << "   model.getOmega( omegaOut );" << endl;
   oDriver << "   if( !isOptSuccess )" << endl;
@@ -5617,6 +5622,11 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << endl;
   oDriver << "   // Get the latest values of theta, Omega and Sigma." << endl;
   oDriver << "   // These values may be garbage if optimization had failed." << endl;
+  oDriver << "   if( !isOptSuccess )" << endl;
+  oDriver << "   {" << endl;
+  oDriver << "      indOpt.getPar( alpOut );" << endl;
+  oDriver << "      model.setPopPar( alpOut );" << endl;
+  oDriver << "   }" << endl;
   oDriver << "   model.getTheta( thetaOut );" << endl;
   oDriver << "   model.getOmega( omegaOut );" << endl;
   oDriver << "   model.getSigma( sigmaOut );" << endl;
