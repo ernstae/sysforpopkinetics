@@ -109,6 +109,7 @@ class ClientTranslator{
 
   XMLCh* X_SPKDATA;
   XMLCh* X_VERSION;
+  XMLCh* X_POINTONE;
   XMLCh* X_TABLE;
   XMLCh* X_COLUMNS;
   XMLCh* X_ROWS;
