@@ -1,3 +1,4 @@
+#include <spk/Objective.h>
 #include "nonmem/NonmemTranslator.h"
 #include "SpkCompilerUtil.h"
 #include "read_content.h"
@@ -5,7 +6,7 @@
 #include "nonmem/read_nonmem_data.h"
 #include "nonmem/read_nonmem_model.h"
 #include "emit_IndData.h"
-
+#include "emit_driver.h"
 #include <xercesc/dom/DOM.hpp>
 
 #include <iostream>
@@ -329,9 +330,6 @@ void NonmemTranslator::translate( DOMDocument* tree )
   return;
 }
 
-void NonmemTranslator::initSymbolTable( SymbolTable& )
-{
-}
 std::vector<std::string> NonmemTranslator::emit(
 		  int nIndividuals,
                   const SymbolTable * table,
@@ -340,6 +338,14 @@ std::vector<std::string> NonmemTranslator::emit(
                   const std::string order_id_pair[]
 )
 {
+  char driver_cpp[]    = "main.cpp";
+  char SpkModel_name[] = "SpkModel";
+
+
+  FILE * pDriver_cpp = fopen( driver_cpp, "w" );
+  emit_driver( pDriver_cpp, nIndividuals, SpkModel_name, ourSpk );
+  fclose( pDriver_cpp );
+  
   char IndData_h[] = "IndData.h";
   FILE * pIndData_h = fopen( IndData_h, "w" );
   emit_IndData(   pIndData_h, 

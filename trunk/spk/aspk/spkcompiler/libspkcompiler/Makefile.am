@@ -37,7 +37,9 @@ libspkcompiler_la_SOURCES = \
 	SpkCompilerUtil.cpp \
 	SpkCompilerUtil.h \
         emit_IndData.cpp \
-        emit_IndData.h 
+        emit_IndData.h \
+	emit_driver.cpp \
+	emit_driver.h
 
 pkginclude_HEADERS = \
         $(NONMEM)/NonmemTranslator.h \
@@ -55,5 +57,6 @@ pkginclude_HEADERS = \
 	client.h \
 	SpkMLToCpp.h \
 	SpkCompilerUtil.h \
-	emit_IndData.h 
+	emit_IndData.h \
+	emit_driver.h
 
