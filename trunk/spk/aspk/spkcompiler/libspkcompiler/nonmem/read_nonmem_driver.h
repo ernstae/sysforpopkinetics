@@ -77,8 +77,9 @@
  * @param driverTree A pointer to the DOMElement that is the root of
  * <driver> subtree.
  *
+ *
  * @param spkInfoOut Most elements of @ref SpkParameters "spkInfoOut"
- * will be altered to match the information found in the subtree as following:
+ * will be altered to match the information found in the subtree as followings:
  *
  * - @ref SpkParameters::objective "objective" will be set to the value of
  * @a approximation attribute of @a pop_opt element.
@@ -224,6 +225,79 @@
  *
  * - @ref SpkParameters::seed "seed" is set to the value of
  * @a seed attribute of @a simulation element.
+ *
+ * @param nonmemInfoOut Most elements of @ref SpkParameters "nonmemInfoOut"
+ * will be altered to match the information found in the subtree as followings:
+ *
+ * - @ref NonmemParameters::thetaFixed "thetaFixed" is set to a sequence
+ * of boolean values in which i-th element is true if the value of i-th 
+ * @a in value under @a theta element has the attribute @a fixed set to
+ * "yes"; otherwise @a false.
+ *
+ * - @ref NonmemParameters::thetaIn "thetaIn" is set to the 
+ * @a in values of @a theta element in the order of appearance.  
+ * The length of @ref NonmemParameters::thetaIn "thetaIn" is
+ * determined by the value of @a length attribute of @a theta.
+ *
+ * - @ref NonmemParameters::thetaLow "thetaLow" is set to the 
+ * of @a low values of @a theta element in the order of appearance.
+ * The length of @ref NonmemParameters::thetaIn "thetaIn" is
+ * determined by the value of @a length attribute of @a theta.
+ *
+ * - @ref NonmemParameters::thetaLow "thetaUp" is set to the 
+ * @a up values of @a theta element in the order of appearance.
+ * The length of @ref NonmemParameters::thetaIn "thetaIn" is
+ * determined by the value of @a length attribute of @a theta.
+ *
+ * - @ref NonmemParameters::omegaFixed "omegaFixed" is set to a sequence
+ * of boolean values in which i-th element is true if the value of i-th 
+ * @a in value under @a omega element has the attribute @a fixed set to
+ * "yes"; otherwise @a false.  
+ * The size of @ref NonmemParameters::omegaFixed "omegaFixed" vector
+ * is determined by the structure of Omega matrix.  
+ * If @a struct attribute of @a omega is @a block, it is equal to
+ * the factorial of the value of @a dimension attribute.
+ * If @a struct is @a diagonal, the size is equal to the value of
+ * @a dimension.
+ *
+ * - @ref NonmemParameters::omegaIn "omegaIn" is set to the
+ * @a in values of @a omega element in the order of appearance.
+ * The size of @ref NonmemParameters::omegaFixed "omegaFixed" vector
+ * is determined by the structure of Omega matrix.  
+ * If @a struct attribute of @a omega is @a block, it is equal to
+ * the factorial of the value of @a dimension attribute.
+ * If @a struct is @a diagonal, the size is equal to the value of
+ * @a dimension.
+ *
+ * - @ref NonmemParameters::sigmaFixed "sigmaFixed" is set to a sequence
+ * of boolean values in which i-th element is true if the value of i-th 
+ * @a in value under @a sigma element has the attribute @a fixed set to
+ * "yes"; otherwise @a false.  
+ * The size of @ref NonmemParameters::sigmaFixed "sigmaFixed" vector
+ * is determined by the structure of Sigma matrix.  
+ * If @a struct attribute of @a sigma is @a block, it is equal to
+ * the factorial of the value of @a dimension attribute.
+ * If @a struct is @a diagonal, the size is equal to the value of
+ * @a dimension.
+ *
+ * - @ref NonmemParameters::sigmaIn "sigmaIn" is set to the
+ * @a in values of @a sigma element in the order of appearance.
+ * The size of @ref NonmemParameters::sigmaFixed "sigmaFixed" vector
+ * is determined by the structure of Sigma matrix.  
+ * If @a struct attribute of @a sigma is @a block, it is equal to
+ * the factorial of the value of @a dimension attribute.
+ * If @a struct is @a diagonal, the size is equal to the value of
+ * @a dimension.
+ *
+ * - @ref NonmemParameters::etaFixed "etaFixed" is set to a sequence
+ * of boolean values in which i-th element is true if the value of i-th 
+ * @a in value under @a eta element has the attribute @a fixed set to
+ * "yes"; otherwise @a false.
+ *
+ * - @ref NonmemParameters::etaIn "etaIn" is set to the 
+ * @a in values of @a eta element in the order of appearance.  
+ * The length of @ref NonmemParameters::etaIn "etaIn" is
+ * determined by the value of @a length attribute of @a eta element.
  */
 int read_nonmem_driver( 
    xercesc::DOMElement* driverTree, 
