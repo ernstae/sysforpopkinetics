@@ -174,7 +174,7 @@
 	      <entry><link linkend="out_opt">User Output Spec</link></entry>
 	      <entry>Jiaji Du</entry>
 	      <entry>01/05/2004</entry>
-	      <entry></entry>
+	      <entry>01/08/2004</entry>
 	    </row>
 	    <row>
 	      <entry><link linkend="c_binding">Database API, C Binding</link></entry>
@@ -491,6 +491,11 @@
 	MDA will do in terms of transforming this data into input for
 	other analysis tools as well as doing a simple presentation
 	of data on the user's screen.
+      </para>
+      <para>
+	This document is now complete and can be viewed
+	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/userOutput/userOutput.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
       </para>
     </sect2>
     <sect2 id="web_spec">
