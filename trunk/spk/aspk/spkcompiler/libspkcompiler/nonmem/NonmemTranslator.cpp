@@ -549,7 +549,12 @@ void NonmemTranslator::generateMakefile() const
 {
   ofstream oMake( fMakefile );
   assert( oMake.good() );
-  oMake << "driver : driver.cpp Pred.h DataSet.h IndData.h" << endl;
+  oMake << "prod : driver.cpp Pred.h DataSet.h IndData.h" << endl;
+  oMake << "\tg++ -g driver.cpp -o driver ";
+  oMake << "-L/usr/local/lib/spkprod -I/usr/local/include/spkprod ";
+  oMake << "-lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm";
+  oMake << endl;
+  oMake << "test : driver.cpp Pred.h DataSet.h IndData.h" << endl;
   oMake << "\tg++ -g driver.cpp -o driver ";
   oMake << "-L/usr/local/lib/spktest -I/usr/local/include/spktest ";
   oMake << "-lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm";
