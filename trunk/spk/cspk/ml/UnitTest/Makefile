@@ -1,4 +1,7 @@
 #
+# search the directory above for source files
+VPATH = ..
+#
 CPPFLAGS = \
 	-g \
 	-c \
@@ -7,19 +10,19 @@ CPPFLAGS = \
 	-I..
 
 INCLUDES = \
-	../GridIntegral.h \
-	../MapBay.h \
-	../MapMonte.h \
+	GridIntegral.h \
+	MapBay.h \
+	MapMonte.h \
 	MontePars.h \
 	LinearModel.h \
 	NearEqual.h
 
 OBJECTS = \
-	../GridIntegral.o \
-	../AnalyticIntegral.o \
-	../MapMonte.o \
-	../MapBay.o \
-	../MontePopObj.o \
+	GridIntegral.o \
+	AnalyticIntegral.o \
+	MapMonte.o \
+	MapBay.o \
+	MontePopObj.o \
 	MapBayTest.o \
 	GridIntegralTest.o \
 	MapMonteTest.o \
