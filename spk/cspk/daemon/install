@@ -1,10 +1,8 @@
 #!/bin/sh
 
 SERVICE_NAME=spkrund
-SCRIPT_NAME=spkrunner
 
 cp $SERVICE_NAME /etc/rc.d/init.d
 cp ${SERVICE_NAME}.pl /usr/local/bin
-cp $SCRIPT_NAME /usr/local/bin
 
 
