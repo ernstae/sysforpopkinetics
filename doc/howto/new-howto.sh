@@ -10,10 +10,10 @@
 # to this script.
 #
 # A directory named 
-#    SUBJECT-rfpk-HOWTO
-# The following files within SUBJECT-rfpk.HOWTO
+#    SUBJECT
+# The following files within SUBJECT
 #        Makefile
-#        SUBJECT-rfpk-HOWTO.xml
+#        SUBJECT.xml
 #
 
 if [ $# -eq 0 ] || [ $1 == -h ] || [ $1 == --help ]; then
@@ -24,13 +24,17 @@ if [ $# -eq 0 ] || [ $1 == -h ] || [ $1 == --help ]; then
 fi
 
 SUBJECT=$1
-NAME=$SUBJECT-rfpk-HOWTO
+WEBDIR=/var/www/html/soft/howto/$SUBJECT
+WEBHOST=whitechuck
 
-mkdir $NAME
-cp template/Makefile $NAME/makefile
-cp template/SUBJECT-rfpk-HOWTO.xml $NAME/$NAME.xml
-cd $NAME
+mkdir $SUBJECT
+cp template/Makefile $SUBJECT/makefile
+cp template/SUBJECT.xml $SUBJECT/x.xml
+cd $SUBJECT
 sed  "s/SUBJECT/$SUBJECT/" < makefile > Makefile
-rm makefile
+sed  "s/Subject/$SUBJECT/" < x.xml > $SUBJECT.xml
+rm makefile x.xml
+
+ssh $WEBHOST "mkdir $WEBDIR > /dev/null 2>&1"
 
 exit 0
