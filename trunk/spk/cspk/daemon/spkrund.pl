@@ -157,7 +157,7 @@ use Proc::Daemon;
 use Spkdb('connect', 'disconnect', 'de_q2r', 'en_q2r', 'get_run_jobs', 'end_job',
 	  'job_history', 'email_for_job');
 use Sys::Syslog('openlog', 'syslog', 'closelog');
-use Sys::hostname;
+use Sys::Hostname;
 
 my $database = shift;
 my $host     = shift;
@@ -185,12 +185,12 @@ my $filename_job_id = "job_id";
 my $filename_makefile = "Makefile.SPK";
 my $filename_optimizer_trace = "optimizer_trace.txt";
 my $filename_results = "result.xml";
-my $filename_runner = "spkDriver";
+my $filename_runner = "driver";
 my $filename_serr = "software_error";
 my $filename_source = "source.xml";
 
-my $spk_library_path = "/usr/local/cspk/LLv1/lib/spkprod";
-my $cpath = "/usr/local/cspk/LLv1/include/spkprod";
+my $spk_library_path = "/usr/local/lib/spkprod";
+my $cpath = "/usr/local/include/spkprod";
 
 
 if ($mode =~ "test") {
@@ -198,8 +198,8 @@ if ($mode =~ "test") {
     $service_root .= "test";
     $bugzilla_product = "TestProduct";
     $retain_working_dir = 1;
-    $spk_library_path = "/usr/local/cspk/LLv1/lib/spktest";
-    $cpath = "/usr/local/cspk/LLv1/include/spktest";
+    $spk_library_path = "/usr/local/lib/spktest";
+    $cpath = "/usr/local/include/spktest";
 }
 my $service_name = "$service_root" . "d";
 my $prefix_working_dir = $service_root;
@@ -348,7 +348,8 @@ sub fork_runner {
 }
 sub format_error_report {
     my $content = shift;
-    my $report = "<spkreport>\n";
+    my $report = '<?xml version="1.0"?>';
+    $report   .= "<spkreport>\n";
     $report   .= "  <error_message>\n";
     $report   .= "    $content\n";
     $report   .= "  </error_message>\n";
@@ -572,7 +573,7 @@ if (defined $job_array) {
 	my $history_array = &job_history($dbh, $job_row->{'job_id'});
 	my $history_row = $history_array->[@$history_array - 1];
 	print "host = $history_row->{'host'}\n";
-	if ($history_row->{'host'} == Hostname::hostname) {
+	if ($history_row->{'host'} eq hostname) {
 	    &fork_runner($job_row);
 	}
     }

@@ -2,8 +2,8 @@
 
 SERVICE_ROOT=spkrun
 
-cp ${SERVICE_ROOT}d /etc/rc.d/init.d
 cp ${SERVICE_ROOT}testd /etc/rc.d/init.d
 cp ${SERVICE_ROOT}d.pl /usr/local/bin/spktest
-
+echo "installed /etc/rc.d/init.d/${SERVICE_ROOT}testd "
+echo "installed /usr/local/bin/spktest/${SERVICE_ROOT}d.pl"
 
