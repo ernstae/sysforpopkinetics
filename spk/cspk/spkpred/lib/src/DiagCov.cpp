@@ -74,9 +74,9 @@ using SPK_VA::valarray;
  *
  *************************************************************************/
 
-DiagCov::DiagCov( int nCovRowIn )
+DiagCov::DiagCov( int nRowIn )
   :
-  Cov( nCovRowIn, nCovRowIn )
+  Cov( nRowIn, nRowIn )
 {
 }
 
@@ -96,7 +96,7 @@ void DiagCov::cov( valarray<double>& covOut ) const
   // Preliminaries.
   //------------------------------------------------------------
 
-  covOut.resize( nCovRow * nCovRow );
+  covOut.resize( nRow * nRow );
 
 
   //------------------------------------------------------------
@@ -121,7 +121,7 @@ void DiagCov::cov( valarray<double>& covOut ) const
   //------------------------------------------------------------
 
   // Create a matrix that has only zeroes.
-  covOut = 0.0;
+  covCurr = 0.0;
 
   // Set the diagonal elements,
   //
@@ -131,7 +131,7 @@ void DiagCov::cov( valarray<double>& covOut ) const
   int i;
   for ( i = 0; i < nPar; i++ )
   {
-    covCurr[i + i * nCovRow] = exp( 2.0 * parCurr[i] );
+    covCurr[i + i * nRow] = exp( 2.0 * parCurr[i] );
   }    
 
 
@@ -160,7 +160,7 @@ void DiagCov::cov_par( valarray<double>& cov_parOut ) const
   // Preliminaries.
   //------------------------------------------------------------
 
-  cov_parOut.resize( nCovRow * nCovRow * nPar );
+  cov_parOut.resize( nRow * nRow * nPar );
 
 
   //------------------------------------------------------------
@@ -184,8 +184,10 @@ void DiagCov::cov_par( valarray<double>& cov_parOut ) const
   // Evaluate the derivative of the covariance matrix.
   //------------------------------------------------------------
 
+  int nCov_parRow( nRow * nRow );
+
   // Create a matrix that has only zeroes.
-  cov_parOut = 0.0;
+  cov_parCurr = 0.0;
 
   // Set the nonzero elements of the derivative, i.e. the partial
   // derivatives of the diagonal elements of the covariance,
@@ -206,7 +208,7 @@ void DiagCov::cov_par( valarray<double>& cov_parOut ) const
   for ( i = 0; i < nPar; i++ )
   {
     // Set the row in the rvec version of the covariance.
-    row = i * nCovRow + i;
+    row = i * nRow + i;
 
     cov_parCurr[row + i * nCov_parRow] = 2.0 * exp( 2.0 * parCurr[i] );
   }    
@@ -241,7 +243,7 @@ void DiagCov::inv( valarray<double>& invOut ) const
   // Preliminaries.
   //------------------------------------------------------------
 
-  invOut.resize( nCovRow * nCovRow );
+  invOut.resize( nRow * nRow );
 
 
   //------------------------------------------------------------
@@ -266,7 +268,7 @@ void DiagCov::inv( valarray<double>& invOut ) const
   //------------------------------------------------------------
 
   // Create a matrix that has only zeroes.
-  invOut = 0.0;
+  invCurr = 0.0;
 
   // Set the diagonal elements,
   //
@@ -276,7 +278,7 @@ void DiagCov::inv( valarray<double>& invOut ) const
   int i;
   for ( i = 0; i < nPar; i++ )
   {
-    invCurr[i + i * nCovRow] = exp( -2.0 * parCurr[i] );
+    invCurr[i + i * nRow] = exp( -2.0 * parCurr[i] );
   }    
 
 
@@ -310,7 +312,7 @@ void DiagCov::inv_par( valarray<double>& inv_parOut ) const
   // Preliminaries.
   //------------------------------------------------------------
 
-  inv_parOut.resize( nCovRow * nCovRow * nPar );
+  inv_parOut.resize( nRow * nRow * nPar );
 
 
   //------------------------------------------------------------
@@ -334,8 +336,10 @@ void DiagCov::inv_par( valarray<double>& inv_parOut ) const
   // Evaluate the derivative of the inverse of the covariance matrix.
   //------------------------------------------------------------
 
+  int nInv_parRow( nRow * nRow );
+
   // Create a matrix that has only zeroes.
-  inv_parOut = 0.0;
+  inv_parCurr = 0.0;
 
   // Set the nonzero elements of the derivative, i.e. the partial
   // derivatives of the diagonal elements of the inverse of the 
@@ -357,9 +361,9 @@ void DiagCov::inv_par( valarray<double>& inv_parOut ) const
   for ( i = 0; i < nPar; i++ )
   {
     // Set the row in the rvec version of the inverse of the covariance.
-    row = i * nCovRow + i;
+    row = i * nRow + i;
 
-    inv_parCurr[row + i * nCov_parRow] = -2.0 * exp( -2.0 * parCurr[i] );
+    inv_parCurr[row + i * nInv_parRow] = -2.0 * exp( -2.0 * parCurr[i] );
   }    
 
 
@@ -406,7 +410,7 @@ void DiagCov::getParLimits(
   // value for the parameters, then evaluate it.
   if ( !isCovCurrOk )
   {
-    valarray<double> tempCov( nCovRow * nCovRow );
+    valarray<double> tempCov( nRow * nRow );
     cov( tempCov );
   }
 
@@ -422,7 +426,7 @@ void DiagCov::getParLimits(
   //     ---  cov        <=   cov        <=  100  cov        .
   //     100     (i,i)           (i,i)               (i,i) 
   //
-  // These limits for the covariance diagonal elements implies
+  // These limits for the covariance diagonal elements imply
   // these limits for its parameters,
   //
   //              -                -                            -                -
@@ -430,14 +434,14 @@ void DiagCov::getParLimits(
   //      1      |   1      (curr)  |                   1      |          (curr)  |
   //     --- log |  ---  cov        |  <=   par    <=  --- log |  100  cov        |  .
   //      2      |  100     (i,i)   |          i        2      |          (i,i)   |
-  //	         |  		    |                          |                  |
+  //             |                  |                          |                  |
   //              -                -                            -                -
   //
   int i;
   for ( i = 0; i < nPar; i++ )
   {
-    parLow[i] = 0.5 * log( covCurr[i + i * nCovRow] / 100.0 );
-    parUp[i]  = 0.5 * log( covCurr[i + i * nCovRow] * 100.0 );
+    parLow[i] = 0.5 * log( covCurr[i + i * nRow] / 100.0 );
+    parUp[i]  = 0.5 * log( covCurr[i + i * nRow] * 100.0 );
   }    
 
 }
@@ -461,13 +465,17 @@ void DiagCov::calcPar(
   // Preliminaries.
   //------------------------------------------------------------
 
-  parOut.resize( nPar );
+  // Get the number of rows in the covariance matrix.
+  int nCovInRow = static_cast<int>( sqrt( static_cast<double>( covIn.size() ) ) );
 
-  assert( covIn.size() == nCovRow * nCovRow );
+  // Set the number of parameters for this covariance matrix.
+  int nCovInPar = nCovInRow;
+
+  parOut.resize( nCovInPar );
 
 
   //------------------------------------------------------------
-  // Evaluate the covariance matrix.
+  // Set the covariance matrix parameters.
   //------------------------------------------------------------
 
   // Set the parameter elements,
@@ -477,9 +485,9 @@ void DiagCov::calcPar(
   //       i      2           (i, i)             
   //
   int i;
-  for ( i = 0; i < nPar; i++ )
+  for ( i = 0; i < nCovInPar; i++ )
   {
-    parOut[i] = 0.5 * log( covIn[i + i * nCovRow] );
+    parOut[i] = 0.5 * log( covIn[i + i * nCovInRow] );
   }    
 
 }
@@ -503,9 +511,13 @@ void DiagCov::calcCovMinRep(
   // Preliminaries.
   //------------------------------------------------------------
 
-  covMinRepOut.resize( nPar );
+  // Get the number of rows in the covariance matrix.
+  int nCovInRow = static_cast<int>( sqrt( static_cast<double>( covIn.size() ) ) );
 
-  assert( covIn.size() == nCovRow * nCovRow );
+  // Set the number of parameters for this covariance matrix.
+  int nCovInPar = nCovInRow;
+
+  covMinRepOut.resize( nCovInPar );
 
 
   //------------------------------------------------------------
@@ -514,9 +526,9 @@ void DiagCov::calcCovMinRep(
 
   // Extract the diagonal elements from the covariance matrix.
   int i;
-  for ( i = 0; i < nPar; i++ )
+  for ( i = 0; i < nCovInPar; i++ )
   {
-    covMinRepOut[i] = covIn[i + i * nCovRow];
+    covMinRepOut[i] = covIn[i + i * nCovInRow];
   }    
 
 }
@@ -541,9 +553,13 @@ void DiagCov::expandCovMinRep(
   // Preliminaries.
   //------------------------------------------------------------
 
-  covOut.resize( nCovRow * nCovRow );
+  // Get the number of parameters for this covariance matrix.
+  int nCovInPar = covMinRepIn.size();
 
-  assert( covMinRepIn.size() == nPar );
+  // Set the number of rows in the covariance matrix.
+  int nCovInRow = nCovInPar;
+
+  covOut.resize( nCovInRow * nCovInRow );
 
 
   //------------------------------------------------------------
@@ -555,9 +571,9 @@ void DiagCov::expandCovMinRep(
 
   // Set the diagonal elements from the covariance matrix.
   int i;
-  for ( i = 0; i < nPar; i++ )
+  for ( i = 0; i < nCovInPar; i++ )
   {
-    covOut[i + i * nCovRow] = covMinRepIn[i];
+    covOut[i + i * nCovInRow] = covMinRepIn[i];
   }    
 
 }
