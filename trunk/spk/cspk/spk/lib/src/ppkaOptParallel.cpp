@@ -2020,11 +2020,18 @@ static DoubleMatrix ltildetrancendiff::trancendiff(
             indOptInfo, dvecTempAlp, dvecBlow,dvecBup,dvecBstep,dmatTempBin_forAll,
             '\0','\0',&drowMinusLTilde_alpOut );
 
-        // Take difference
-        drowTempLTilde_alp = 
-            divByScalar( 
-                subtract(drowPlusLTilde_alpOut, drowMinusLTilde_alpOut), 
-                (2.0*pdStep[k]) );
+        // Take difference if the step size is not zero .
+        // If zero, the partial derivative is also zero.
+        if( pdStep[k] == 0.0 )
+        {
+           drowTempLTilde_alp.fill( 0.0 );
+        }
+        else
+        {
+           drowTempLTilde_alp = 
+              divByScalar( subtract(drowPlusLTilde_alpOut, drowMinusLTilde_alpOut), 
+                          (2.0*pdStep[k]) );
+        }
 
         // Store the row vector (drowTempLTilde_alp) in the final matrix
         replaceIth(dmatJ, k, drowTempLTilde_alp);
