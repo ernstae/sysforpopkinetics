@@ -26,7 +26,7 @@ sub simulate
     print ( "... An old $newdata was found... I must delete it...\n" );
     unlink( $newdata );
   }
-  my @command = ( "nmfe5.bat", $control, $log );
+  my @command = ( "/bin/csh", "./nmfe5", $control, $log );
   
   print( "\n\n\n" );
   system( @command ) or die "\nERROR!!! NONMEM simulation failed for some reason!!!\n\n";
@@ -52,7 +52,8 @@ sub estimate
     print ( "... An old $output was found... I must delete it...\n" );
     unlink( $output );
   }
-  my @command = ( "nmfe5.bat", $control, $output );
+  my @command = ( "/bin/csh", "./nmfe5", $control, $output );
+
 #  print( "> ", join( " ", @command ) );
 
   print( "\n\n\n" );
