@@ -38,13 +38,22 @@
 
 class indStatisticsTest : public CppUnit::TestFixture
 {
-    void statisticsExampleTest();
 public: 
-    static CppUnit::Test* suite();
+  // CppUnit framework functions.
+  static CppUnit::Test* suite();
+  void setUp();
+  void tearDown();
 
-    void setUp();
-    void tearDown();
-    void testIndWrapper();
+private:
+  // Test cases for this unit test.
+  void statisticsExampleTest();
+  void indMaskTest();
+  void modelBasedInterface_R_formulation_withD_falseTest();
+  void modelBasedInterface_S_formulation_withD_falseTest();
+  void modelBasedInterface_H_formulation_withD_falseTest();
+  void modelBasedInterface_R_formulation_withD_trueTest();
+  void modelBasedInterface_S_formulation_withD_trueTest();
+  void modelBasedInterface_H_formulation_withD_trueTest();
 };
 
 #endif
