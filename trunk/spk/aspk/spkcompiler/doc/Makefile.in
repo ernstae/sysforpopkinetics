@@ -7,12 +7,14 @@ SOURCE = ../libspkcompiler/client.h \
          ../driver/compiler.cpp \
          ../libspkcompiler/emit_driver.h \
          ../libspkcompiler/emit_IndData.h \
-         ../libspkcompiler/explang.cpp \
          ../libspkcompiler/ExpNodeCarrier.h \
          ../libspkcompiler/ExpTreeGenerator.h \
-         ../libspkcompiler/nonmem/lex_explang.c \
-         ../libspkcompiler/nonmem/NonmemTranslator.h \
          ../libspkcompiler/read_content.h \
+         ../libspkcompiler/explang.cpp \
+         ../libspkcompiler/lex_explang.c \
+         ../libspkcompiler/nonmem/explang.ypp \
+         ../libspkcompiler/nonmem/lex_explang.l \
+         ../libspkcompiler/nonmem/NonmemTranslator.h \
          ../libspkcompiler/nonmem/read_nonmem_data.h \
          ../libspkcompiler/nonmem/read_nonmem_driver.h \
          ../libspkcompiler/nonmem/read_nonmem_model.h \
@@ -22,5 +24,14 @@ SOURCE = ../libspkcompiler/client.h \
          ../libspkcompiler/Symbol.h \
          ../libspkcompiler/SymbolTable.h
 
-html : SpkCompiler.dox $(SOURCE)
+html : SpkCompiler.dox $(SOURCE) 
+	doxygen SpkCompiler.dox
+
+clean : 
+	rm -r html
+	rm -r latex
+
+all  : SpkCompiler.dox
+	rm -r html
+	rm -r latex
 	doxygen SpkCompiler.dox 
