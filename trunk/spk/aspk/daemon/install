@@ -1,6 +1,8 @@
 #!/bin/sh
 
-cp spkcompilerd /etc/rc.d/init.d
-cp compilerd.pl /usr/local/bin
+SERVICE_NAME=spkcmpd
+
+cp $SERVICE_NAME /etc/rc.d/init.d
+cp ${SERVICE_NAME}.pl /usr/local/bin
 cp spkcompiler /usr/local/bin
 

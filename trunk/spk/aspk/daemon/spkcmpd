@@ -9,7 +9,9 @@ HOST=localhost
 DBUSER=tester
 DBPASSWD=tester
 
-LOCKFILE_PATH=/tmp/lock_compilerd
+SERVICE_NAME=spkcmpd
+
+LOCKFILE_PATH=/tmp/lock_$SERVICE_NAME
 
 #restart()
 start() {

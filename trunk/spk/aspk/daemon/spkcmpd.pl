@@ -15,9 +15,11 @@ my $dbpasswd = shift;
 my $compiler_path = "/usr/local/bin/spkcompiler";
 my $dbh;
 my $database_open = 0;
-my $lockfile_path = "/tmp/lock_compilerd";
+my $service_name = "spkcmpd";
+my $lockfile_path = "/tmp/lock_$service_name";
 my $lockfile_exists = 0;
 my $row;
+my $row_array;
 my $tmp_dir = "/tmp";
 my $working_dir;
 
@@ -31,9 +33,7 @@ sub death {
     # close the connection to the database
     if ($database_open) {
 	&disconnect($dbh)
-	    or syslog("emerg", "can't disconnect from database=$database, host=$host");
     }
-    syslog($level, "disconnected successfully from database=$database, host=$host");
 
     # remove the lockfile
     if ($lockfile_exists) {
@@ -49,6 +49,7 @@ sub fork_compiler {
     use Errno qw(EAGAIN);
 
     my $job_id = shift;
+    my $recovering = shift;
     my $pid;
   FORK: {
       if ($pid = fork) {
@@ -58,7 +59,8 @@ sub fork_compiler {
       elsif (defined $pid) {
 	  # this is the child
 	  $working_dir = "$tmp_dir/spkcompiler-$job_id";
-	  if (!mkdir $working_dir, 0777) {
+
+	  if (!$recovering && !mkdir $working_dir, 0777) {
 	      syslog("emerg", "couldn't create working directory: $working_dir");
 	      die;
 	  }
@@ -83,7 +85,7 @@ sub fork_compiler {
 }
 sub start {
     # open the system log and record that we have started
-    openlog("compilerd, pid=$$", 'cons', 'daemon');
+    openlog("$service_name, pid=$$", 'cons', 'daemon');
     syslog('info', 'start');
 
     # create a lockfile and store our pid, to be used later by stop()
@@ -113,7 +115,7 @@ sub stop {
     }
     death('info', 'received the TERM signal (normal mode of termination)');
 }
-# designate stop as the handler for the TERM signal
+# designate stop subroutine to catch the Unix TERM signal
 $SIG{"TERM"} = \&stop;
 
 # become a daemon
@@ -122,8 +124,19 @@ Proc::Daemon::Init();
 # initialize
 start();
 
-# loop until interrupted by a signal
+# rerun any compiles that were interrupted when we last terminated
+$row_array = &Spkdb::get_cmp_jobs($dbh);
+syslog('info', "looking for interrupted compiler jobs");
+if (defined $row_array) {
+    foreach $row (@$row_array) {
+	&fork_compiler($row->{"job_id"}, 1);
+    }
+}
+else {
+    death("emerg", "error reading database: $Spkdb::errstr");
+}
 
+# loop until interrupted by a signal
 use POSIX ":sys_wait_h";
 my $pid_of_deceased_child;
 
@@ -132,7 +145,7 @@ while(1) {
     $row = &de_q2c($dbh);
     if (defined $row) {
 	if ($row) {
-	    &fork_compiler($row->{"job_id"});
+	    &fork_compiler($row->{"job_id"}, 0);
 	}
     }
     else {
