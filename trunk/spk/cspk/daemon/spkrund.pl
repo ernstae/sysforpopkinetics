@@ -320,9 +320,10 @@ sub fork_driver {
     }
     File::Path::rmtree($archive_name);
 
-    # Create checkpoint.xml if checkpoint field in job table is not NULL
+    # Create checkpoint.xml if checkpoint field in job table is not NULL and checkpoint.xml
+    # does not already exist
 
-    if (defined $checkpoint && length $checkpoint) {
+    if (defined $checkpoint && length $checkpoint && ! -e $filename_checkpoint) {
 	open(FH, ">$filename_checkpoint")
 	    or death('emerg', "could not create $filename_checkpoint file in $working_dir");
 	print FH $checkpoint;

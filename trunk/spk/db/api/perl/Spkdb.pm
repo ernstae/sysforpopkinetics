@@ -658,7 +658,7 @@ sub de_q2r() {
     
     $dbh->begin_work;
 
-    my $sql = "select job_id, cpp_source from job "
+    my $sql = "select job_id, cpp_source, checkpoint from job "
 	    .       "where state_code='q2r' "
             .       "order by event_time "
             .       "limit 1 "
@@ -760,7 +760,7 @@ not actually terminate the processing of a job.  Instead,
 it sets the state of the job to 'end', and stores the
 final report.
 
-    $r = &Spkdb::en_q2r($dbh, $job_id, $end, $report, $checkpoint);
+    $r = &Spkdb::end_job($dbh, $job_id, $end, $report, $checkpoint);
 
 $dbh is the handle to an open database connection.
 
