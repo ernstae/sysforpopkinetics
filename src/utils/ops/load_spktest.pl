@@ -112,6 +112,7 @@ print "Building database '$dbname', on host $dbhost, with user '$dbuser'\n";
 open FD, ">$tmp_name"
     or die "Can't open $tmp_name\n";
 print FD "use $dbname;\n";
+print FD "drop table class;\n";
 print FD "drop table dataset;\n";
 print FD "drop table end;\n";
 print FD "drop table history;\n";
