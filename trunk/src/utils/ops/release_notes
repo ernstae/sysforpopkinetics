@@ -20,6 +20,6 @@ rm $RELEASE_NOTES
 
 chmod 0666 $RELEASE_NOTES_DIR
 mv notes-*[0-9] $RELEASE_NOTES_DIR
-rm notes-*
+#rm notes-*
 
 
