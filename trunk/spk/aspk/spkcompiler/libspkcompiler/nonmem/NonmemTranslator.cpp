@@ -602,6 +602,9 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   const XMLCh * xml_is_estimation = pop_analysis->getAttribute( X_IS_ESTIMATION );
   myIsEstimate = ( XMLString::equals( xml_is_estimation, X_YES )? true : false );
 
+  myIndTraceLevel = 0;
+  myPopTraceLevel = 1;
+
   //================================================================================
   // Optional attributes
   //================================================================================
@@ -1043,6 +1046,8 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   const XMLCh * xml_is_estimation = ind_analysis->getAttribute( X_IS_ESTIMATION );
   assert( XMLString::stringLen( xml_is_estimation ) > 0 );
   myIsEstimate = ( XMLString::equals( xml_is_estimation, X_YES )? true : false );
+  myIndTraceLevel = 1;
+  myPopTraceLevel = 1;
 
   //================================================================================
   // Optional attributes
