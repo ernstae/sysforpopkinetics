@@ -1276,7 +1276,7 @@ void Optimizer::setupWarmStart( int n )
   stateInfo.x = new double[ n ];
   stateInfo.g = new double[ n ];
   stateInfo.h = new double[ n * n ];
-  if( !stateInfo.x || !stateInfo.state || !stateInfo.lambda || !stateInfo.h )
+  if( !stateInfo.x || !stateInfo.g || !stateInfo.h )
   {
         char errmsg[] = "setUpWarmStart() failed to allocate memory.";
         throw SpkException( SpkError::SPK_INSUFFICIENT_MEM_ERR, errmsg, __LINE__, __FILE__ );
