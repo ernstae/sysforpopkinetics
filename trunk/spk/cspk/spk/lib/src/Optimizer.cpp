@@ -81,6 +81,7 @@
 #include "Optimizer.h"
 #include "QuasiNewtonAnyBoxObj.h"
 #include "SpkException.h"
+#include "SpkValarray.h"
 
 // SPK optimizer header files.
 #include <spkopt/Memory.h>
@@ -101,6 +102,7 @@
 
 using std::string;;
 
+using SPK_VA::valarray;
 
 /*------------------------------------------------------------------------
  * Local variable declarations
@@ -1690,6 +1692,118 @@ $end
 
 /* 
 -------------------------------------------------------------
+   Get the current objective function parameter value
+-------------------------------------------------------------
+$begin getPar$$
+
+$spell
+  const 
+  getPar
+  Optimizer
+  par
+$$
+
+$section Get the current objective function parameter value$$
+
+$index Optimizer, current parameter, getPar$$
+
+$table
+$bold Prototype$$ $cend
+$syntax/void Optimizer::getPar( SPK_VA::valarray<double>& parOut ) const
+/$$
+$rend
+$tend
+
+$fend 20$$
+
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$pre
+$$
+$head Description$$
+This function gets the current objective function parameter value.
+
+$head Arguments$$
+$syntax/
+/parOut/
+/$$
+This array will be set equal to the value for the objective function 
+parameter at the end of the last successful iteration.
+If the optimizer failed during an iteration, then this array will be 
+set equal to the parameter value at the beginning of the iteration that
+failed.
+On output, it will have the same length as the objective function 
+parameter.
+
+$end
+*/
+
+void Optimizer::getPar( valarray<double>& parOut ) const
+{
+  //------------------------------------------------------------
+  // See if it is possible to get the current objective parameter.
+  //------------------------------------------------------------
+
+  // Check that there is stored state information to use to get the
+  // current objective function parameter.
+  if ( stateInfo.n == 0 )
+  {
+    throw SpkException( 
+      SpkError::SPK_USER_INPUT_ERR,
+      "There is no current objective function parameter value to get.",
+      __LINE__,
+      __FILE__ );
+  }
+
+
+  //------------------------------------------------------------
+  // Set the output value equal to the current objective parameter.
+  //------------------------------------------------------------
+
+  // The total number of objective function parameters is the number
+  // of free parameters plus the number of parameters that are
+  // constrained by both their lower and upper bounds.
+  parOut.resize( stateInfo.m );
+
+  int i;
+  int nObjParFree = 0;
+
+  // Calculate the objective function parameter value by converting
+  // the state information back to the original coordinates.
+  if ( stateInfo.x && stateInfo.low && stateInfo.up ) 
+  {
+    for ( i = 0; i < stateInfo.m; i++ )
+    {
+      if ( stateInfo.up[i] != stateInfo.low[i] )
+      {
+        parOut[i] = stateInfo.low[i] + 
+          ( stateInfo.up[i] - stateInfo.low[i] ) * stateInfo.x[nObjParFree];
+
+        nObjParFree++;
+      }
+      else
+      {
+        parOut[i] = stateInfo.low[i];
+      }
+    }
+  }
+  else
+  {
+    throw SpkException( 
+      SpkError::SPK_NOT_READY_WARM_START_ERR,
+      "The optimizer state information was not allocated properly.",
+      __LINE__,
+      __FILE__ );
+  }
+
+}
+
+
+/* 
+-------------------------------------------------------------
    Get the state information for warm start
 -------------------------------------------------------------
 $begin getStateInfo$$
@@ -2174,7 +2288,7 @@ void Optimizer::setStateInfo(
   {
     throw SpkException( 
       SpkError::SPK_USER_INPUT_ERR,
-      "The number of free optimizer parameters is larger than the total number of parameters.",
+      "The number of free objective parameters is larger than the total number of objective parameters.",
       __LINE__,
       __FILE__ );
   }
@@ -5031,8 +5145,6 @@ void Optimizer::getErrorInfo(
   // Get the parameter and gradient information.
   //------------------------------------------------------------
 
-  int i;
-
   bool isAnyElemConstrained = false;
 
   int colWidth1 = 9 - 2;
@@ -5048,6 +5160,9 @@ void Optimizer::getErrorInfo(
   message << "Parameter      Value       At Bound?     Gradient     Proj. Gradient"   << endl;
   message << "---------  --------------  ---------  --------------  --------------" << endl;
 
+  int i;
+  int nObjParFree = 0;
+
   for ( i = 0; i < stateInfo.m; i++ )
   {
     //------------------------------------------------------------
@@ -5057,16 +5172,17 @@ void Optimizer::getErrorInfo(
     // Calculate the distance between the original bounds.
     diff[i] = stateInfo.up[i] - stateInfo.low[i];
 
-    // Calculate the parameter in the original coordinates.
-    xOrig = stateInfo.low[i] + diff[i] * stateInfo.x[i];
-
-    // Calculate the gradient in the original coordinates.
+    // Calculate the parameter and gradient in the original coordinates.
     if ( diff[i] != 0.0 )
     {
-      gOrig = stateInfo.g[i] / diff[i];
+      xOrig = stateInfo.low[i] + diff[i] * stateInfo.x[nObjParFree];
+      gOrig = stateInfo.g[nObjParFree] / diff[i];
+
+      nObjParFree++;
     }
     else
     {
+      xOrig = stateInfo.low[i];
       gOrig = 0.0;
     }
 
