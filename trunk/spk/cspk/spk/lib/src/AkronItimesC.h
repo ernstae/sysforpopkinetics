@@ -22,6 +22,9 @@
 #ifndef AKRONITIMESC_H
 #define AKRONITIMESC_H
 
+#include "DoubleMatrix.h"
+#include "SpkValarray.h"
+
 const DoubleMatrix AkronItimesC(
                    const DoubleMatrix& A,
                    const DoubleMatrix& I,
