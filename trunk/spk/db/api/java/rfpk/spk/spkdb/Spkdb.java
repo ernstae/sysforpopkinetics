@@ -13,7 +13,7 @@ public abstract class Spkdb {
     private static Pattern userPattern;
     private static Pattern passPattern;
     /**
-     Returns a connection to a database.  This object must be passed as a parameter
+     Open a connection to a database.  This object must be passed as a parameter
      to other methods of this class.  A process may have several connections open
      at the same time.  When a connection is no longer used, it should be closed
      using the Spkdb.disconnect() method.
@@ -21,7 +21,7 @@ public abstract class Spkdb {
      @param hostName domain name of host on which database resides
      @param dbUser username of a valid user of the database
      @param dbPassword user's password
-     @return an object of a class that implements java.sql.Connection
+     @return an object of a class that implements the java.sql.Connection interface
      @see #disconnect
      @see java.sql.Connection
      */
@@ -44,6 +44,7 @@ public abstract class Spkdb {
     /**
        Close a database connection.
        @param conn open connection to a database
+       @return true
        @see #connect
      */
     public static boolean disconnect(Connection conn) throws SQLException {
@@ -80,6 +81,14 @@ public abstract class Spkdb {
 	}
 	return jobId;
     }
+    /**
+       Get the status of a given job.
+       @param conn open connection to the database
+       @param jobId key to the given job in the job table
+       @return Object of a class which implements the java.sql.ResultSet interface, 
+       containing a subset of a single row of the job table.  The columns in this
+       subset are state_code, event_time and end_code.
+     */
     public static ResultSet jobStatus(Connection conn, long jobId)
 	throws SQLException, SpkdbException
     {
@@ -90,6 +99,15 @@ public abstract class Spkdb {
 
 	return rs;
     }
+    /**
+       Get the status of a set of jobs of a given user.
+       @param conn open connection to the database 
+       @param userId key to the given user in user table
+       @param maxNum maximum number of jobs to provide status for
+       @return Object of a class which implements the java.ResultSet interface, containing
+       a sequence of subsets of rows of the job table.  Each subset contains the 
+       following columns: job_id, abstact, state_code, start_time, event_time and end_code.
+     */
     public static ResultSet userJobs(Connection conn, long userId, int maxNum)
 	throws SQLException, SpkdbException 
     {
@@ -102,6 +120,14 @@ public abstract class Spkdb {
 
 	return rs;
     }
+    /**
+       Record the end status of a job. 
+       @param conn open connection to the database
+       @param jobId key to the given job in the job table
+       @param endCode the type of end that this job reached
+       @param report final report 
+       @return true
+     */
     public static boolean endJob(Connection conn, long jobId, String endCode, String report)
 	throws SQLException, SpkdbException
     {
@@ -120,6 +146,12 @@ public abstract class Spkdb {
 	
 	return true;
     }
+    /**
+       Get the final report of a job.
+       @param conn open connection to the database
+       @param jobId key to the given job in the job table
+       @return final report
+     */
     public static String jobReport(Connection conn, long jobId)
 	throws SQLException, SpkdbException
     {
@@ -136,6 +168,15 @@ public abstract class Spkdb {
 	
 	return new String(byteReport);
     }
+    /**
+       Add a new scientific dataset to the database.
+       @param conn open connection to the database
+       @param userId key to a user in the user table
+       @param name name of this dataset (must be unique for the given user)
+       @param abstraction short description of the dataset
+       @param archive the entire data set in rcs-compatible format
+       @return unique number, which is the 
+     */
     public static long 
 	newDataset(Connection conn, long userId, String name, String abstraction, String archive)
 	throws SQLException, SpkdbException
@@ -324,10 +365,10 @@ public abstract class Spkdb {
 	 stmt.executeUpdate(sql);
 	 return stmt.getUpdateCount() == 1;
     }
-    public static ResultSet getUser(Connection conn, long userId)
+    public static ResultSet getUser(Connection conn, String username)
 	throws SQLException, SpkdbException
     {
-	String sql = "select * from user where user_id=" + String.valueOf(userId) + ";";
+	String sql = "select * from user where username='" + username +"';";
 	Statement stmt = conn.createStatement();
 	stmt.execute(sql);
 	ResultSet rs = stmt.getResultSet();
