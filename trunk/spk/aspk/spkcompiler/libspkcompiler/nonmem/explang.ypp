@@ -301,9 +301,23 @@ namespace{
 %type  <c_str> function_ref
 %type  <c_str> exit_stmt
 
-//==========================================
-// Terminals that have precedence
-//==========================================
+//====================================================
+// Terminals that have precedence and associativity
+// (compliant to
+//  ISO/IEC 1539-1:1997(E) 7.4 Preceden of operators)
+// 
+// Precedence: The order in which the following
+// operators appear is in the assending 
+// order (lowest to highest).
+//
+// Associativity: The assignment (=) and exponential
+// operators are right associative.  
+//     x = y = z   is same as x = (y = z)
+//     x ** y ** z is same as x ** (y ** z)
+// The binary arithmatic operators (*/+-) are left.
+//     a + b + c   is same as (a + b) + c
+// 
+//====================================================
 %right '='
 %nonassoc EQV_OP NEQV_OP
 %nonassoc OR_OP
