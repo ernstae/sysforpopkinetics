@@ -71,11 +71,6 @@ const char* NonmemTranslator::C_ANALYTIC                   ( "analytic" );
 const char* NonmemTranslator::C_GRID                       ( "grid" );
 const char* NonmemTranslator::C_MISER                      ( "miser" );
 const char* NonmemTranslator::C_PLAIN                      ( "plain" );
-//==============================================================================
-// REIVISIT SACHIKO
-// Eliminte C_MONTE!
-const char* NonmemTranslator::C_MONTE                      ( "monte" );
-//==============================================================================
 const char* NonmemTranslator::C_NUMBEREVAL                 ( "number_eval" );
 const char* NonmemTranslator::C_POP_SIZE                   ( "pop_size" );
 const char* NonmemTranslator::C_IS_ESTIMATION              ( "is_estimation" );
@@ -284,7 +279,6 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   X_GRID           = XMLString::transcode( C_GRID );
   X_PLAIN          = XMLString::transcode( C_PLAIN );
   X_MISER          = XMLString::transcode( C_MISER );
-  X_MONTE          = XMLString::transcode( C_MONTE );
 
   myPopEpsilon = pow( 10.0, -(mySigDigits+1.0) );
   myIndEpsilon = pow( 10.0, -(mySigDigits+1.0) );
@@ -353,11 +347,6 @@ NonmemTranslator::~NonmemTranslator()
   XMLString::release( &X_GRID );
   XMLString::release( &X_PLAIN );
   XMLString::release( &X_MISER );
-//===========================================================================
-// REVISIT SACHIKO
-// Eliminate the following!
-  XMLString::release( &X_MONTE );
-//===========================================================================
   XMLString::release( &X_NUMBEREVAL );
   XMLString::release( &X_POP_SIZE );
   XMLString::release( &X_IS_ESTIMATION );
@@ -706,12 +695,6 @@ void NonmemTranslator::parseMonte( DOMElement* monte_carlo )
 	  myIntegMethod = GRID;
        else if( XMLString::equals( x_temp, X_MISER ) )
           myIntegMethod = MISER;
-//==============================================================================
-// REVISIT SACHIKO
-// Eliminate these line!
-       else if( XMLString::equals( x_temp, X_MONTE ) )
-          myIntegMethod = MONTE;
-//==============================================================================
        else //if( XMLString::equals( x_temp, X_PLAIN ) )
           myIntegMethod = PLAIN;
     }
@@ -3578,12 +3561,6 @@ void NonmemTranslator::generateMonteParsNamespace() const
     oMontePars << "miser;" << endl;
   else if( myIntegMethod == ANALYTIC )
     oMontePars << "analytic;" << endl;
-//===========================================================================
-// REVISIT SACHIKO
-// Remove the following!
-  else if( myIntegMethod == MONTE )
-    oMontePars << "monte;" << endl;
-//===========================================================================
   else //if( myIntegMethod == PLAIN )
     oMontePars << "plain;" << endl;
 
