@@ -10,7 +10,7 @@
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
 
-#include "ExpNodeCarrier.h"
+#include <spkcompiler/ExpNodeCarrier.h>
 #include "ExpNodeCarrierTest.h"
 
 using namespace std;

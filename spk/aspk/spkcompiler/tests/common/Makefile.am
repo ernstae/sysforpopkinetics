@@ -44,9 +44,9 @@ test_common_INCLUDES = \
 	../nonmem/read_nonmem_datafile_gamma_wt_time_y.h \
 	FitPopulationTestModel.h
 
-AM_LDFLAGS = -lspk /usr/local/lib/libnagc.a -lpthread -lm -lxerces-c -lcppunit -lspkcompiler
+AM_LDFLAGS = -lspk @libdir@/libnagc.a -lpthread -lm -lxerces-c -lcppunit -lspkcompiler
 
 INCLUDES = \
 	-I@top_srcdir@/ \
-	-I@top_srcdir@/libspkcompiler/ \
-	-I@top_srcdir@/libspkcompiler/nonmem
+	-I@top_srcdir@/spkcompiler/ \
+	-I@top_srcdir@/spkcompiler/nonmem

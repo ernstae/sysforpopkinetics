@@ -16,9 +16,9 @@
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/framework/StdOutFormatTarget.hpp>
 #include <spk/printInMatrix.h>
-#include <nonmem/read_nonmem_model.h>
-#include <nonmem/NonmemTranslator.h>
-#include <explang.h>
+#include <spkcompiler/nonmem/read_nonmem_model.h>
+#include <spkcompiler/nonmem/NonmemTranslator.h>
+#include <spkcompiler/nonmem/explang.h>
 
 using namespace std;
 using namespace CppUnit;

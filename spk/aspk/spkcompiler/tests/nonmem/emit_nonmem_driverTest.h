@@ -9,8 +9,8 @@
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestSuite.h>
-#include <libspkcompiler/SpkParameters.h>
-#include <libspkcompiler/NonmemTranslator.h>
+#include <spkcompiler/SpkParameters.h>
+#include <spkcompiler/nonmem/NonmemTranslator.h>
 
 /**
  * A class that organizes a suite of tests for emit_nonmem_driver() function.

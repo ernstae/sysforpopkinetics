@@ -8,7 +8,7 @@
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestSuite.h>
 
-#include <libspkcompiler/ExpTreeGenerator.h>
+#include <spkcompiler/ExpTreeGenerator.h>
 
 class explangTest : public CppUnit::TestFixture {
 

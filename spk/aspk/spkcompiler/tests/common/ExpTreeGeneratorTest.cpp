@@ -8,7 +8,7 @@
 
 #include <xercesc/dom/DOM.hpp>
 
-#include "ExpTreeGenerator.h"
+#include <spkcompiler/ExpTreeGenerator.h>
 #include "ExpTreeGeneratorTest.h"
 
 using namespace std;

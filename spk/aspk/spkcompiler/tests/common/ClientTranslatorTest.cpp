@@ -5,11 +5,11 @@
 #include <cppunit/ui/text/TestRunner.h>
 
 
-#include "ClientTranslator.h"
+#include <spkcompiler/ClientTranslator.h>
 #include "ClientTranslatorTest.h"
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
-#include <libspkcompiler/SpkParameters.h>
+#include <spkcompiler/SpkParameters.h>
 #include <vector>
 #include <string>
 

@@ -12,7 +12,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "SymbolTable.h"
+#include "../SymbolTable.h"
 
 using namespace std;
 

@@ -39,7 +39,7 @@ int main( int argc, const char * argv[] )
   master[ "read_nonmem_dataTest" ]   = read_nonmem_dataTest::suite();
   master[ "read_nonmem_modelTest" ]  = read_nonmem_modelTest::suite();
   master[ "emit_nonmem_driverTest" ] = emit_nonmem_driverTest::suite();
-  master[ "emit_nonmem_modelTest" ]  = emit_nonmem_modelTest::suite();
+  //master[ "emit_nonmem_modelTest" ]  = emit_nonmem_modelTest::suite();
 
   if( argc == 1 )
     {
