@@ -50,6 +50,8 @@ int main( int argc, const char * argv[] )
   // test for NonmemTranslator: ability to handle fixed parameters (not fixed effects)
   master[ "ind_fixedParaTest" ] = ind_fixedParaTest::suite();
 
+  // test for NonmemTranslator: ability to handle fixed parameters (not fixed effects)
+  master[ "pop_fixedParaTest" ] = pop_fixedParaTest::suite();
   if( argc == 1 )
     {
       map<string, CppUnit::Test*>::const_iterator p = master.begin();
