@@ -324,6 +324,7 @@ libspk_release_la_SOURCES = \
 	residuals.cpp \
 	rvecInverse.cpp \
 	simulate.cpp \
+	statistics.cpp \
 	StatusList.cpp \
 	subtract.cpp \
 	symmetrize.cpp \
