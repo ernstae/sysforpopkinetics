@@ -19,6 +19,8 @@ import uw.rfpk.beans.UserInfo;
  * If the model is old but the version is new the servlet calls database API methods, getModel
  * and updateModel, to update the model archive.  The servlet does the same operations for the
  * dataset.  Then the servlet calls database API method, newJob, to add a job into the database.
+ * In the case of using method M. C. Likelihood, the servlet copies the fixed effect parameter
+ * part of the report of the parent job and pastes it to the source to produce a new source.
  * The servlet sends back two objects.  The first object is a String containing the error 
  * message if there is an error or an empty String if there is not any error.  The second object
  * is also a String that contains a information message to inform the client that the model and
@@ -88,7 +90,9 @@ public class SubmitJob extends HttpServlet
                 String datasetVersion = messageIn[15]; 
                 long datasetId = Long.parseLong(messageIn[16]);
                 String isNewDataset = messageIn[17];
-                String isNewDatasetVersion = messageIn[18];                
+                String isNewDatasetVersion = messageIn[18];
+                String jobMethodCode = messageIn[19];
+                long jobParent = Long.parseLong(messageIn[20]);
                  
                 // Connect to the database
                 ServletContext context = getServletContext();
@@ -102,6 +106,60 @@ public class SubmitJob extends HttpServlet
                 userRS.next();
                 long userId = userRS.getLong("user_id");  
  
+                // Handling M. C. Likelihood case
+                if(jobMethodCode.equals("ml"))
+                {
+                    // Get parent job's model and dataset
+                    isNewModel = "false";
+                    isNewModelVersion = "false";
+                    isNewDataset = "false";
+                    isNewDatasetVersion = "false";
+                    ResultSet parentRS = Spkdb.getJob(con, jobParent);
+                    parentRS.next();
+                    if(parentRS.getLong("user_id") == userId)
+                    {
+                        modelId = parentRS.getLong("model_id");
+                        modelVersion = parentRS.getString("model_version");
+                        datasetId = parentRS.getLong("dataset_id");
+                        datasetVersion = parentRS.getString("dataset_version");
+                    
+                        // Get parent job's report and source and combine them
+	                Blob blob = parentRS.getBlob("report");
+                        if(blob != null)
+                        {
+                            // Get report and source
+                            long length = blob.length();
+	                    String report = new String(blob.getBytes(1L, (int)length));
+  
+                            // Replace theta values of souce by those of report 
+                            int beginIndex = source.indexOf("<in>", source.indexOf("<theta ")) + 5;
+                            int endIndex = source.indexOf("</in>", beginIndex);
+                            String front = source.substring(0, beginIndex);
+                            String back = source.substring(endIndex);
+                            beginIndex = report.indexOf("<value>", report.indexOf("<theta_out "));
+                            endIndex = report.indexOf("</theta_out>", beginIndex);
+                            source = front + report.substring(beginIndex, endIndex) + "               " + back;
+                        
+                            // Replace omega and sigma of source by those of report
+                            beginIndex = source.indexOf("<omega ");
+                            endIndex = source.lastIndexOf("</sigma>");
+                            front = source.substring(0, beginIndex);
+                            back = source.substring(endIndex);
+                            report = report.replaceAll("omega_out", "omega");
+                            report = report.replaceAll("sigma_out", "sigma");
+                            beginIndex = report.indexOf("<omega ");
+                            endIndex = report.lastIndexOf("</sigma>");
+                            source = front + report.substring(beginIndex, endIndex) + "            " + back;                       
+                        }
+                        else
+                            // Write the outgoing messages
+                            messageOut = "The report of the parent job is not available.";                  
+                    }
+                    else
+                        // Write the outgoing messages
+                        messageOut = "Authorization error.";
+                }
+                
                 // Get model archive information
                 if(isNewModel.equals("true"))
                 {
@@ -183,17 +241,23 @@ public class SubmitJob extends HttpServlet
                 }            
                                  
                 // Add a job
-                Spkdb.newJob(con, 
-                             userId, 
-                             jobAbstract, 
-                             datasetId, 
-                             datasetVersion, 
-                             modelId, 
-                             modelVersion, 
-                             source);
-                messages += "A new job, " + jobAbstract +
-                            ", has been added to the database.\n";  
- 
+                if(messageOut.equals(""))
+                {
+                    Spkdb.newJob(con, 
+                                 userId, 
+                                 jobAbstract, 
+                                 datasetId, 
+                                 datasetVersion, 
+                                 modelId, 
+                                 modelVersion, 
+                                 source,
+                                 jobMethodCode,
+                                 jobParent
+                                 );
+                    messages += "A new job, " + jobAbstract +
+                                ", has been added to the database.\n";  
+                }
+                
                 // Disconnect to the database
                 Spkdb.disconnect(con);
             }
