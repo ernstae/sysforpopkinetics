@@ -9,7 +9,7 @@ use Getopt::Long;
 
 =head1 SYNOPSIS
 
-    load_spktest.pl --schema name1 --basedata name2 --userdata name3
+    load_spktest.pl --schema name1 --basedata name2 --userdata name3 --database name4
 
 =head1 ABSTRACT
     
@@ -45,6 +45,18 @@ use Getopt::Long;
     --basedata name2
     --userdata name3
 
+=head2 OPTIONAL DATABASE
+    
+    By default, the program builds the database spktest.  The --database option
+    allows another database to be built.
+
+=head2 OPTIONAL USER AND PASSWORD
+
+    The program has a default user and password for building spktest.  The
+    --user and --password options make it possible to use a different
+    user/password pair.  In particular, this may be necessary if the --database
+    option is used.
+
 =head2 DEPENDENCIES
 
     The program depends on a MySQL utility, mysql, to do the hard work.
@@ -52,7 +64,8 @@ use Getopt::Long;
 =cut
 
 my $usage = 
-    "usage: $0 --schema name1 --basedata name2 --userdata name3\n"
+    "usage: $0 --schema name1 --basedata name2 --userdata name3 --database name4\n"
+    . "\t--user name5 --password name6\n"
     . "where the optional arguments override the folowing defaults:\n"
     . "\tschema.sql\n"
     . "\tbasedata.sql\n"
@@ -71,7 +84,7 @@ my %file = ();
 	   userdata => 'userdata.sql',
 	  );
 my %opt = ();
-GetOptions (\%opt, 'schema=s', 'basedata=s', 'userdata=s');
+GetOptions (\%opt, 'schema=s', 'basedata=s', 'userdata=s', 'database=s', 'user=s', 'password=s');
 
 for my $f (keys %file) {
     if (defined $opt{$f}) {
@@ -83,6 +96,11 @@ for my $f (keys %file) {
     }
     -f $file{$f} or die "Oops! File '$file{$f}' does not exist.\n$usage";
 }
+$dbname = $opt{'database'} if (defined $opt{'database'});
+$dbuser = $opt{'user'}     if (defined $opt{'user'});
+$dbpass = $opt{'password'} if (defined $opt{'password'});
+
+print "Building database '$dbname', with user '$dbuser'\n";
 
 open FD, ">$tmp_name"
     or die "Can't open $tmp_name\n";
