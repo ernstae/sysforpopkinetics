@@ -9,6 +9,12 @@
    <articleinfo>
       <revhistory>
          <revision>
+            <revnumber>1.7</revnumber>
+            <date>August 3, 2004</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>Explanations for Makefile.SPK and Monte Carlo related topics</revremark>
+         </revision>
+         <revision>
             <revnumber>1.6</revnumber>
             <date>July 1, 2004</date>
             <authorinitials>sh</authorinitials>
@@ -47,17 +53,21 @@
       </revhistory>
       <abstract>
          <para>
-SPK Compiler, given a pair of SpkSourceML and SpkDataML documents, produces
-a number of C++ source code files in two stages.  The first set of files
-being generated defines the problem to solve and its constraints.
-The second set of files executes and process the information in different ways.  
-The last set assembles and report the results.
+SPK Compiler assembles information from a given pair of 
+<ulink url="../sourceML/sourceML.html">SpkSourceML</ulink> and 
+<ulink url="../dataML/dataML.html">SpkDataML</ulink> documents
+and translates it to C++ source code.  The source code is organized into several
+logical units and saved in files (.cpp and .h).  In this documentation,
+you will find the descriptions and specifications of 
+these logical units and their corresponding file names, and
+the pieces of information (publically) available from these units.
          </para>
          <para>
-In this documentation, you will find the specifications for those parameters
-and interfaces which are public to SPK application developers.
+For the terms, 
+<emphasis>theta</emphasis>, <emphasis>Omega</emphasis>, <emphasis>eta</emphasis>,
+<emphasis>Sigma</emphasis> and <emphasis>eps</emphasis>, refer to NONMEM manuals.
          </para>
-      </abstract>
+     </abstract>
    </articleinfo>
    <sect1>
       <title>Related Articles</title>
@@ -65,32 +75,474 @@ and interfaces which are public to SPK application developers.
          <itemizedlist>
             <listitem>
                <para>
-                  <ulink url="../modelCap/html/modelCap.html">
+                  <ulink url="../modelCap/modelCap.tex">
                   Modeling Capabilities Specification</ulink>
                </para>
             </listitem>
             <listitem>
                <para>
-                  <ulink url="http://muir.rfpk.washington.edu:800/SoftwareTeamArchive/Nonmem.doc">
-                  NONMEM Description for RFPK (.doc)
-                  </ulink>
+                  <ulink url="../sourceML/sourceML.html">SpkSourceML</ulink>
+               </para>
+            </listitem>
+            <listitem>
+               <para>
+                  <ulink url="../dataML/dataML.html">SpkDataML</ulink>
                </para>
             </listitem>
          </itemizedlist>
       </para>
    </sect1>
    <sect1>
+      <title><filename>NonmemPars.h</filename></title>
+      <para>
+      This header file exports a namespace, <literal>NonmemPars</literal>, containing
+      C++ translation of NONMEM control parameters. Most of the parameters declared within this
+      namespace are originated directly from the given SpkSourceML document.
+      Some extra information may be provided in the namespace as well.  
+      They are values SPK Compiler could statically derive from the given parameters.
+
+      Not all user-given control parameters are present in the namespace.
+      If you, an SPK application developer, finds a piece of information missing
+      from this namespace, please contact 
+      <ulink url="mailto:honda99@u.washington.edu">honda99@u.washington.edu</ulink>.
+      </para>
+      <variablelist>
+         <title>Namespace Entries</title>
+         <varlistentry>
+            <term><literal>const int nTheta</literal></term>
+            <listitem>
+               <para>
+               is the length of <emphasis>theta</emphasis> vector.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;double&gt; thetaUp</literal></term>
+            <listitem>
+               <para>
+               contains the upper boundary value for <emphasis>theta</emphasis>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;double&gt; thetaLow</literal></term>
+            <listitem>
+               <para>
+               contains the lower boundary value for <emphasis>theta</emphasis>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;double&gt; thetaIn</literal></term>
+            <listitem>
+               <para>
+               contains the initial estimate for <emphasis>theta</emphasis>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const int nEta</literal></term>
+            <listitem>
+               <para>
+               is the length of <emphasis>eta</emphasis> vector, 
+               which determines the dimension of <emphasis>Omega</emphasis>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;double&gt; etaIn</literal></term>
+            <listitem>
+               <para>
+               is the initial estimate for <emphasis>eta</emphasis>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const enum PopPredModel::covStruct omegaStruct</literal></term>
+            <listitem>
+               <para>
+               is present only if the <emphasis>population analysis</emphasis>
+               is requested in the given SpkSourceML document.
+               The value is either <varname>PopPredModel::DIAGONAL</varname> or 
+               <varname>PopPredModel::FULL</varname>.
+               <varname>DIAGONAL</varname> indicates that only the diagonal elements of 
+               <emphasis>Omega</emphasis> matrix
+               are subject to optimization.  <varname>FULL</varname> indicates that potentially all elements
+               are subject to optimization (but remember, <emphasis>Omega</emphasis> is symmetric).
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const enum IndPredModel::covStruct omegaStruct</literal></term>
+            <listitem>
+               <para>
+               is present only if the <emphasis>individual analysis</emphasis>
+               is requested in the given SpkSourceML document.
+               The value is always <varname>PopPredModel::DIAGONAL</varname> for this type of analysis. 
+               <varname>DIAGONAL</varname> indicates that only the diagonal elements of 
+               <emphasis>Omega</emphasis> matrix are subject to optimization.  
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const int omegaDim</literal></term>
+            <listitem>
+               <para>
+               is the dimension of <emphasis>Omega</emphasis> (symmetric) matrix.
+               ex. for a 3 by 3 matrix, the value here is 3.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const int omegaOrder</literal></term>
+            <listitem>
+               <para>
+               is the number of elements in <emphasis>Omega</emphasis> matrix that are subject to optimization
+               (ie. the order of <emphasis>Omega</emphasis>).
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;double&gt; omegaIn</literal></term>
+            <listitem>
+               <para>
+               is the initial estimates for the elements of <emphasis>Omega</emphasis>
+               that are subject to optimization.  Thus, the length of <varname>omegaIn</varname>
+               is <literal>omegaOrder</literal>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const int nEps</literal></term>
+            <listitem>
+               <para>
+               is the length of <emphasis>eps</emphasis> vector,
+               which determines the dimension of <emphasis>Sigma</emphasis>.
+               This field is present only if the <emphasis>population analysis</emphasis> is requested.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const enum PopPredModel::covStruct sigmaStruct</literal></term>
+            <listitem>
+               <para>
+               is present only if the <emphasis>population analysis</emphasis> is requested.
+               The value is either <varname>PopPredModel::DIAGONAL</varname>
+               or <varname>PopPredModel::FULL</varname>.
+               <varname>DIAGONAL</varname> indicates that only the diagonal elements of 
+               <emphasis>Sigma</emphasis> matrix
+               are subject to optimization.  <varname>FULL</varname> indicates that potentially all elements
+               are subject to optimization (but remember, <emphasis>Sigma</emphasis> is symmetric).
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const int sigmaDim</literal></term>
+            <listitem>
+               <para>
+               is the dimension of <emphasis>Sigma</emphasis> (symmetric) matrix.
+               ex. For a 3 by 3 matrix, the value here is 3.
+               This field is present only if the <emphasis>population analysis</emphasis> is requested.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const int sigmaOrder</literal></term>
+            <listitem>
+               <para>
+               is the number of elements in <emphasis>Sigma</emphasis> matrix that are subject to optimization
+               (ie. the order of <emphasis>Sigma</emphasis>).
+               This field is present only if the <emphasis>population analysis</emphasis> is requested.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;double&gt; sigmaIn</literal></term>
+            <listitem>
+               <para>
+               is the initial estimates for the elements of <emphasis>Sigma</emphasis>
+               that are subject to optimization.  Thus, the length of <varname>simgaIn</varname>
+               is <varname>sigmaOrder</varname>.
+               This field is present only if the <emphasis>population analysis</emphasis> is requested.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const int seed</literal></term>
+            <listitem>
+               <para>
+               specifies the seed for random number generation.
+               A value < 0 indicates no simulation to be done.
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
+   </sect1>
+   <sect1>
+      <title><filename>MontePars.h</filename></title>
+      <para>
+         This header file exports a namespace, <filename>MontePars</filename> containing
+         parameters that control Monte Carlo simulation.
+         This file is generated only if <emphasis>Monte Carlo simulation is requested</emphasis>
+         from the given SpkSourceML document.
+      </para>
+      <variablelist>
+         <varlistentry>
+            <term><literal>const enum { monte, analytic, grid } method</literal></term>
+            <listitem>
+               <para>specifies the method for approximating (or computing) the integral.
+               </para>
+               <para>  
+               NOTE: Do not assume the order of appearance of enum values
+               to be the same as the one appeared in this document!
+               <variablelist>
+                  <varlistentry>
+                     <term><literal>monte</literal></term>
+                     <listitem>
+                        <para>Monte-Carlo approximation for integral
+                        </para>
+                     </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                     <term><literal>analytic</literal></term>
+                     <listitem>
+                        <para>Closed form solution only valid for <emphasis>LinearModel</emphasis> 
+                        (consult <ulink url="mailto:brad@apl.washington.edu">Brad Bell</ulink> for details)
+                        </para>
+                     </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                     <term><literal>grid</literal></term>
+                     <listitem>
+                        <para>Approximation integral using evaluation on a uniform grid
+                        </para>
+                     </listitem>
+                  </varlistentry>
+               </variablelist>
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const int numberEval</literal></term>
+            <listitem>
+               <para>
+               specifies the number of function evalautions to use for each
+               individual in the population.
+               Actually it is the maximum number when <varname>method</varname> is
+               <literal>grid</literal>.  The value is ignored when <varname>method</varname>
+               is <literal>analytic</literal>.
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
+   </sect1>
+   <sect1>
+      <title><filename>IndData.h</filename></title>
+      <para>
+      This header file exports the definition of a template class, <classname>IndData</classname>.
+      The class is an abstraction of a set of data records for a single individual.
+      Each data record is a s set of <emphasis>at least</emphasis> two data items: DV
+      (Dependent Variable) and MDV (Missing Dependent Variable) 
+      --- consult NONMEM manuals for further explanation on these terms ---.
+      </para>
+      <para>
+      Those data items which are taken from an experiement shall be made available to the SPK applications as
+      read-only.  ID, MDV and DV belong to this category.  
+      On the other hand, there may be other values that cannot be determined until the PRED model is evaluated
+      at each sampling point.  The class provides (writable) placeholders for convenience 
+      for such values as well.
+      </para>
+      <para>
+      Here is an example.  3 measurements were taken from a patient. 
+      Her/his data set not only contains 3 data records corresponding to these 3 measurements but also
+      an additional record containing only her/his gender information.  The model
+      describing the behaviour of the drug is given by:
+         <programlisting>
+TmP1 = THETA(1) * 2.0
+F = TmP1 + ETA(1)
+         </programlisting>
+      The measurements from the observation unit are described as DVs.
+      The sampling points are in the TIME field.
+      Then, an <classname>IndData</classname> object would expose read-only vectors of length 
+      <varname>n</varname> named <varname>TIME</varname>, <varname>DV</varname> and <varname>MDV</varname>
+      and read-write vectors of the same length named <varname>TmP1</varname> and
+      <varname>F</varname>.  Plus, it will expose a read-write vector of 
+      <varname>4</varname> vectors of length <varname>1</varname> named 
+      <varname>THETA</varname> and <varname>ETA</varname>
+      (ie. "1" comes from the fact <emphasis>theta</emphasis> and <emphasis>eta</emphasis> 
+      vectors have only one element in this example).
+      </para>
+      <variablelist>
+         <title>Public Methods</title>
+         <varlistentry>
+            <term><literal>const std::valarray&lt;double&gt; getMeasurements() const</literal></term>
+            <listitem>
+               <para>
+               Returns a vector of only those DV
+               values of which corresponding MDV != 1.
+               Thus, the i-th element of the vector is not necessary the DV value 
+               from the i-th record.  For example, if there are 10 records among which 1st and 5th records have 
+               MDV = 1.  The 1st element of the vector is the DV 
+               value from the 2nd record in the original set
+               and the 5th element is from the 7th record as demonstrated below:
+               <programlisting>
+indexes to all records                           : { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }
+indexes to those records which have measurements : { 2, 3, 4, 6, 7, 8, 9, 10 }
+               </programlisting>
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
+      <variablelist>
+         <title>Public Properties</title>
+         <varlistentry>
+            <term><literal>const std::vector&lt;T&gt; <replaceable>xXx</replaceable></literal></term>
+            <listitem>
+               <para>
+               <replaceable>xXx</replaceable> is replaced by a user-given data label 
+               such as DV.  The name will be exactly the same as the corresponding 
+               data label specified in the given
+               SpkSourceML document or SpkDataML document, maintaining upper/lower cases.
+               It is a vector of length <varname>n</varname>, where <varname>n</varname>
+               is the number of data records for the individual.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>std::vector&lt;T&gt; <replaceable>yYy</replaceable></literal></term>
+            <listitem>
+               <para>
+               <replaceable>yYy</replaceable> is replaced by a PRED item such as <varname>TmP1</varname> 
+               in the earlier example.  The name will be exactly the same as the corresponding PRED item name,
+               maintaining upper/lower cases.
+               It is a vector of length <varname>n</varname>, where <varname>n</varname>
+               is the number of data records for the individual.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>std::vector&lt; std::vector&lt;T&gt; &gt; THETA</literal></term>
+            <listitem>
+               <para>
+               A read-write vector of <varname>n</varname> 
+               <varname>nTheta</varname>-dimensional vectors, 
+               where <varname>n</varname> is the number of data records for the indiviual and
+               <varname>nTheta</varname> is the size of <emphasis>theta</emphasis> vector.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>std::vector&lt; std::vector&lt;T&gt; &gt; ETA</literal></term>
+            <listitem>
+               <para>
+               A read-write vector of <varname>n</varname> 
+               <varname>nEta</varname>-dimensional vectors, 
+               where <varname>n</varname> is the number of data records for the indiviual and
+               <varname>nTheta</varname> is the size of <emphasis>eta</emphasis> vector.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>std::vector&lt; std::vector&lt;T&gt; &gt; EPS</literal></term>
+            <listitem>
+               <para>
+               A read-write vector that contains <varname>n</varname> 
+               <varname>nEps</varname>-dimensional vectors, 
+               where <varname>n</varname> is the number of data records for the indiviual and
+               <varname>nTheta</varname> is the size of <emphasis>eps</emphasis> vector.
+               <emphasis>This vector is present only if the population analysis is requested.</emphasis>
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
+   </sect1>
+   <sect1>
+      <title><filename>DataSet.h</filename></title>
+      <para>
+      This header file exports the definition of a template class, <classname>DataSet</classname>.
+      The class is an abstraction of data set for the entire population of size > 0.
+      It basically bundles all individuals' data sets
+      represented by <classname>IndData</classname> objects.  This class's default constructor is responsible
+      for filling/initializing the set.  Note that, it is the <emphasis>default</emphasis> constructor
+      that does the filling, which means all information are embedded (hard-coded) in the constructor 
+      body by SPK Compiler.
+      </para>
+      <variablelist>
+         <title>Public Methods</title>
+         <varlistentry>
+            <term>
+               <literal>
+               bool simulate( unsigned int seed, PopPredModel& model )
+               </literal>
+            </term>
+            <listitem>
+               <para>
+               Simulate a population (>1) data set and replaces the existing measurement values
+               (ie. the values in DV field of which corresponding MDV != 1).
+               with the new values for all individuals. Returns true if simulation was successful.
+               This method is only valid for population model (ie. <classname>PopPredModel</classname>).
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>
+               <literal>
+               bool simulate( unsigned int seed, IndPredModel& model )
+               </literal>
+            </term>
+            <listitem>
+               <para>
+               Simulate a single individual data set and replaces the existing measurement values
+               (ie. the values in DV field of which corresponding MDV != 1)
+               with the new values. Returns true if simulation was successful.
+               This method is only valid for individual model (ie. <classname>IndPredModel</classname>).
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>int getPopSize() const </literal></term>
+            <listitem>
+               <para>
+               Returns the number of individuals in the population.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const std::vector&lt;double&gt; getAllMeasurements() const</literal></term>
+            <listitem>
+               <para>
+               Returns a vector of measurements from the entire data set for the population.
+               The measurements values are taken from those data records of which corresponding MDV != 1.
+               If <function>DataSet::simulate()</function> has been executed in advance, the values returned
+               by this method are simulated data.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const std::vector&lt;int&gt; getN() const </literal></term>
+            <listitem>
+               <para>
+               Returns a vector of numbers of measurements.  The i-th element of the vector
+               indicates the number of measurements for the i-th individual, where 0 <= i < n and
+               n is the number of individuals in the population.
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
+   </sect1>
+   <sect1>
       <title><filename>Pred.h</filename></title>
       <para>
 <filename>Pred.h</filename> defines a template class, <classname>Pred</classname>,
 which is derived from an abstract class, <classname>PredBase</classname>.
-The only virtual member in the base class is a boolean valued function, 
-<function>eval</function>.
+<classname>Pred</classname> is basically a wrapper for $PRED model definition.
+The class provides a public interface that allows clients to request an evaluation
+of the model at a certain point.
       </para>
       <para>
-The definition of <literal>$PRED</literal>, which is written 
+The definition of $PRED, which is written 
 in NM-TRAN (ie. a subset of FORTRAN 77), is translated into C++ and 
-inserted into a generated (by the SPK Compiler) 
+inserted into a generated (by SPK Compiler) 
 subclass of an existing abstract class, <classname>PredBase</classname>.
 <classname>PredBase</classname>
 declares a pure virtual member function called <function>eval()</function>,
@@ -108,7 +560,7 @@ of the function implementation.
             <function>eval()</function>.  This function evaluates
             the C++ translation of user's $PRED model for the j-th component of
             the i-th individual's measurement data.  The class <classname>PredBase</classname>
-            is part of <literal>spkpred</literal> library and declared in 
+            is part of <varname>spkpred</varname> library and declared in 
             <filename>PredBase.h</filename>.
          </para>
          <programlisting>
@@ -133,222 +585,204 @@ PredBase{
 }
          </programlisting>
          <formalpara>
-            <title>Description</title>
+            <title>Requirements</title>
             <para>
-<classname>Pred</classname>::<function>eval(...)</function> 
-is called to evalute the PK value and
-the estimate for the measure at every sampling point with
-the current values of the population
-parameter and the individual parameter for the particular subject
-every time the optimizer comes up with a new set of values. 
-            </para>
-            </formalpara>
-            <formalpara>
-               <title>Requirements</title>
-               <para>
-                  <itemizedlist>
-                     <listitem>
-                        <para>
+               <itemizedlist>
+                  <listitem>
+                     <para>
 At the end of an iteration of population parameter optimization,
 a <emphasis>complete</emphasis> set of values assigned 
 to the all variables appeared 
-on the left hand side of assignment operators in the user's 
-portion of code ($PRED), evaluated at every sampling point for 
+on the left hand side of assignment statements in the user's 
+PRED model definition, evaluated at every sampling point for 
 each individual shall be kept and be available externally.
 This implies that the values from the previous iteration shall
 be available if the current iteration failed in the middle
 of computation.
-                        </para>
-                     </listitem>  
-                     <listitem>
-                        <para>
-The user's portion of code originally written in FORTRAN (which is
-case-insensitive) shall be able to use the upper or lower case letters
-interexchangingly.
-                        </para>
-                     </listitem>
-                     <listitem>
-                        <para>
-The user may define arbitrary varibles and use any NONMEM reserved words
-within their portion of code.
-                        </para>
-                     </listitem>
-                  </itemizedlist>
-               </para>
-            </formalpara>
-            <formalpara>
-               <title>Returned Value</title>
-               <para>
-<literal>true</literal> if the MDV for the the i-th individual's j-th data record were marked 0.  
-<literal>false</literal> if it were 1.  MDV is a flag (0/1) indicating
-as to whether the data record contains the DV (Dependent Variable, our 
-<literal>y</literal>).  This information comes from the user's 
-data set.  If the data record did not have this field, SPK Compiler
-assumes every record contains a DV data item, in which case, MDV=0.
-For v0.1, only the MDV data items of value 0 is supported.
-               </para>
-            </formalpara>
-            <variablelist>
-               <title>Arguments</title>
-               <varlistentry>
-                  <term>spk_thetaOffset</term>
-                  <listitem>
-	             <para>
-                    The index to the head of <emphasis>theta</emphasis> vector within spk_indepVar.
-                    </para>
-                  </listitem>
-               </varlistentry>
-               <varlistentry>
-                  <term>spk_thetaLen</term>
+                     </para>
+                  </listitem>  
                   <listitem>
                      <para>
-                    The length of <emphasis>theta</emphasis> vector.  The vector elements are assumed to be placed
-                    from <literal>spk_indepVar[spk_thetaOffset]</literal> 
-                    to <literal>spk_indepVar[spk_theetaOffset + spk_theetaLen]</literal>.
+The user's model definition which is in a psudo FORTRAN language
+shall retain the case-insensitive attribute when it is translated to C++.
                      </para>
                   </listitem>
-               </varlistentry>
-               <varlistentry>
-                  <term>spk_etaOffset</term>
                   <listitem>
                      <para>
-                    The index to the head of <emphasis>eta</emphasis> vector within spk_indepVar.
+A prefix <literal>spk_</literal> is reserved for use by SPK Compiler developers.
                      </para>
                   </listitem>
-               </varlistentry>
-               <varlistentry>
-                  <term>spk_etaLen</term>
-                  <listitem>
-                     <para>
-                     The length of <emphasis>eta</emphasis> vector.  The vector elements are assumed to be placed
-                     from <literal>spk_indepVar[spk_etaOffset]</literal>
-                     to <literal>spk_indepVar[spk_etaOffset + spk_etaLen]</literal>.
-                     </para>
-                  </listitem>
-               </varlistentry>
-               <varlistentry>
-                  <term>spk_epsOffset</term>
-                  <listitem>
-                     <para>
-                     The index to the head of EPS vector within spk_indepVar.
-                     </para>
-                  </listitem>
-               </varlistentry>
-               <varlistentry>
-                  <term>spk_epsLen</term>
-                  <listitem>
-                     <para>
-                     The length of EPS vector.
-                     The vector elements are assumed to be placed
-                     from <literal>spk_indepVar[spk_thetaOffset]</literal> 
-                     to <literal>spk_indepVar[spk_theetaOffset + spk_theetaLen]</literal>.
-                     </para>
-                  </listitem>
-               </varlistentry>
-               <varlistentry>
-                  <term>spk_fOffset</term>
-                  <listitem>
-                     <para>
-                     The index to the element in spk_depVar in which
-                     the prediction for the j-th measurement for the i-th individual, 
-                     <literal>F</literal>, shall be placed.
-                     </para>
-                  </listitem>
-               </varlistentry>
-               <varlistentry>
-                  <term>spk_fLen</term>
-                 <listitem>
-                     <para>
-                     The number of measurements for the i-th individual.
-                     </para>
-                  </listitem>
-               </varlistentry>
-               <varlistentry>
-                  <term>spk_yOffset</term>
-                  <listitem>
-                     <para>
-                     The index to the memory location within spk_depVar in which
-                     the error model value for the j-th measurement for the i-th individual,
-                     <literal>Y</literal>, shall be placed.
-                     </para>
-                  </listitem>
-               </varlistentry>
-               <varlistentry>
-                  <term>spk_yLen</term>
-                  <listitem>
-                     <para>
-                     The number of measurments for the i-th individual..
-                     </para>
-                  </listitem>
-               </varlistentry>
-               <varlistentry>
-                  <term>spk_i</term>
-                  <listitem>
-                     <para>
-                     Index to the i-th individual 
-                     within the population (0 indicates the first individual).
-                     </para>
-                  </listitem>
-               </varlistentry>
-               <varlistentry>
-                  <term>spk_j</term>
-                  <listitem>
-                     <para>
-                     Index to the j-th measurement of the i-th individual.
-                     </para>
-                  </listitem>
-               </varlistentry>
-               <varlistentry>
-                  <term>spk_indepVar</term>
-                  <listitem>
-                     <para>
-                     The vector containing independent variables: 
-                     <emphasis>theta</emphasis>, <emphasis>eta</emphasis> 
-                     and <emphasis>eps</emphasis>.
-                     </para>
-                  </listitem>
-               </varlistentry>
-               <varlistentry>
-                  <term>spk_depVar</term>
-                  <listitem>
-                     <para>
-                     (output) The <literal>spk_yOffset</literal>-th element will be 
-                     replaced by the predicted value for the i-th individual's j-th measurement.
-                     The <literal>spk_yOffset</literal>-th elements will be 
-                     are replaced by the error model value for the i-th individual's j-th measurement.
-                     </para>
-                  </listitem>
-               </varlistentry>
-            </variablelist>
-         </sect2>
-         <sect2>
-            <title>An instance of $PRED and <filename>Pred.h</filename></title>
-            <anchor id="pred"/>
-            <sect3>
-               <title>$PRED</title>
-               <programlisting>
-   ;THETA(1)=MEAN ABSORPTION RATE CONSTANT (1/HR)
-   ;THETA(2)=MEAN ELIMINATION RATE CONSTANT (1/HR)
-   ;THETA(3)=SLOPE OF CLEARANCE VS WEIGHT RELATIONSHIP (LITERS/HR/KG)
-   ;DOSE=WT-ADJUSTED DOSE (MG/KG)
-   ;DS=NON-WT-ADJUSTED DOSE (MG)
+               </itemizedlist>
+            </para>
+         </formalpara>
+         <formalpara>
+            <title>Returned Value</title>
+            <para>
+<literal>true</literal> if the MDV for the corresponding data record ---
+the i-th individual's j-th data record --- is 0.  <literal>false</literal> otherwise.
+            </para>
+         </formalpara>
+         <variablelist>
+            <title>Arguments</title>
+            <varlistentry>
+               <term><literal>const int spk_thetaOffset</literal></term>
+               <listitem>
+	          <para>
+                  is the index to the head of <emphasis>theta</emphasis> vector within <varname>spk_indepVar</varname>.
+                  </para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term><literal>const int spk_thetaLen</literal></term>
+               <listitem>
+                  <para>
+                  is the length of <emphasis>theta</emphasis> vector.  The vector elements are assumed to be placed
+                  from <varname>spk_indepVar[spk_thetaOffset]</varname> 
+                  to <varname>spk_indepVar[spk_theetaOffset + spk_thetaLen]</varname>.
+                  </para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term><literal>const int spk_etaOffset</literal></term>
+               <listitem>
+                  <para>
+                  is the index to the head of <emphasis>eta</emphasis> vector within <varname>spk_indepVar</varname>.
+                  </para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term><literal>const int spk_etaLen</literal></term>
+               <listitem>
+                  <para>
+                  is the length of <emphasis>eta</emphasis> vector.  The vector elements are assumed to be placed
+                  from <varname>spk_indepVar[spk_etaOffset]</varname>
+                  to <varname>spk_indepVar[spk_etaOffset + spk_etaLen]</varname>.
+                  </para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term><literal>const int spk_epsOffset</literal></term>
+               <listitem>
+                  <para>
+                  is the index to the head of <emphasis>eps</emphasis> vector within <varname>spk_indepVar</varname>.
+                  </para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term><literal>const int spk_epsLen</literal></term>
+               <listitem>
+                  <para>
+                  is the length of <emphasis>eps</emphasis> vector.
+                  The vector elements are assumed to be placed
+                  from <varname>spk_indepVar[spk_thetaOffset]</varname> 
+                  to <varname>spk_indepVar[spk_theetaOffset + spk_theetaLen]</varname>.
+                  </para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term><literal>const int spk_fOffset</literal></term>
+               <listitem>
+                  <para>
+                  is the index to the element in <varname>spk_depVar</varname> in which
+                  the prediction for the j-th data record for the i-th individual, 
+                  <emphasis>F</emphasis> (in NONMEM's term), shall be placed.
+                  </para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term><literal>const int spk_fLen</literal></term>
+               <listitem>
+                  <para>
+                  is the number of measurements for the i-th individual.
+                  </para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term><literal>const int spk_yOffset</literal></term>
+               <listitem>
+                  <para>
+                  is the index to the element in <varname>spk_depVar</varname> in which
+                  the error model value for the j-th data record for the i-th individual,
+                  <emphasis>Y</emphasis> (in NONMEM's term), shall be placed.
+                  </para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term><literal>const int spk_yLen</literal></term>
+               <listitem>
+                  <para>
+                  is the number of measurments for the i-th individual..
+                  </para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term><literal>const int spk_i</literal></term>
+               <listitem>
+                  <para>
+                  is the index to the i-th individual 
+                  within the population (0 indicates the first individual).
+                  </para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term><literal>const int spk_j</literal></term>
+               <listitem>
+                  <para>
+                  is the index to the j-th data record of the i-th individual.
+                  </para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term><literal>const std::vector&lt;T&gt; & spk_indepVar</literal></term>
+               <listitem>
+                  <para>
+                  is the vector containing independent variables: 
+                  <emphasis>theta</emphasis>, <emphasis>eta</emphasis> 
+                  and <emphasis>eps</emphasis>.
+                  </para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term><literal>std::vector&lt;T&gt; & spk_depVar</literal></term>
+               <listitem>
+                  <para>
+                  is an output in which the predicted value for the i-th individual's j-th data record
+                  will be placed at the <varname>spk_yOffset</varname>-th element.
+                  The <literal>spk_yOffset</literal>-th elements will be 
+                  are replaced by the error model value for the i-th individual's j-th data record.
+                  </para>
+               </listitem>
+            </varlistentry>
+         </variablelist>
+      </sect2>
+      <sect2>
+         <title>An instance of $PRED and <filename>Pred.h</filename></title>
+         <anchor id="pred"/>
+         <sect3>
+            <title>$PRED</title>
+            <programlisting>
+;THETA(1)=MEAN ABSORPTION RATE CONSTANT (1/HR)
+;THETA(2)=MEAN ELIMINATION RATE CONSTANT (1/HR)
+;THETA(3)=SLOPE OF CLEARANCE VS WEIGHT RELATIONSHIP (LITERS/HR/KG)
+;DOSE=WT-ADJUSTED DOSE (MG/KG)
+;DS=NON-WT-ADJUSTED DOSE (MG)
 
-   IF (DOSE.NE.0) THEN
-      DS=DOSE*WT
-      W=WT
-   ENDIF
-   KA=THETA(1) + ETA(1)
-   KE=THETA(2) + ETA(2)
-   CL=THETA(3) * WT + ETA(3)
-   D=EXP(-KE*TIME)-EXP(-KA*TIME)
-   E=CL*(KA-KE)
-   F=DS*KE*KA/E*D
-   Y=F+EPS(1)
-               </programlisting>
-           </sect3>
-           <sect3>
-              <title><filename>Pred.h</filename></title>
-              <programlisting>
+IF (DOSE.NE.0) THEN
+   DS=DOSE*WT
+   W=WT
+ENDIF
+KA=THETA(1) + ETA(1)
+KE=THETA(2) + ETA(2)
+CL=THETA(3) * WT + ETA(3)
+D=EXP(-KE*TIME)-EXP(-KA*TIME)
+E=CL*(KA-KE)
+F=DS*KE*KA/E*D
+Y=F+EPS(1)
+            </programlisting>
+         </sect3>
+         <sect3>
+            <title><filename>Pred.h</filename></title>
+            <programlisting>
 #ifndef PRED_H
 #define PRED_H
 
@@ -494,453 +928,204 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
       </sect2>
    </sect1>
    <sect1>
-      <title><filename>IndData.h</filename></title>
+      <title><filename>fitDriver.cpp</filename></title>
       <para>
-      <filename>IndData.h</filename> declares/defines a template class, <classname>IndData</classname>.
-      <classname>IndData</classname> holds a set of data records for an individual.
-      A data record is a s set of <emphasis>at least</emphasis> two data items: DV and MDV.
-      DV is an abbribiation for Dependent Variable (see NONMEM documentations for definition)
-      and MDV is for Missing Dependent Variable.  When the MDV value is 1 (ie. logical true),
-      the value in DV is said to be missing or to be ignored.  When it is 0 (ie. logical false),
-      the corresponding DV value is taken as a measurement against which estimate is made.
+      This is a driver for the following steps:
       </para>
-      <para>
-      All the data records are declared read-only within the class: ID, DV, MDV and the rest of the data items.
-      An <classname>IndData</classname> object, however, would have another set of items for each record.
-      These are meant to hold computed values for the left hand side of equations defined in the 
-      <emphasis>PRED</emphasis> model definition every time it is evaluated.  This set of placeholders
-      are, therefore, writable.  For example, if a data set had 3 records.  Each record is composed of
-      a sampling time (TIME), a measurement (DV) and a MDV flag value.  A corresponding model looks like:
-         <programlisting>
-TMP1 = THETA(1) * 2.0
-F = TMP1 + ETA(1)
-         </programlisting>
-      Then, an <classname>IndData</classname> object would have fields: TIME, DV and MDV as read-only and
-      TMP1 and F as well as THETA(1) and ETA(1) as writable.  These values are accessible from a member function,
-      <function>getValues()</function>.
-      </para>
-      <variablelist>
-         <title>Public Methods</title>
-         <varlistentry>
-            <term><literal>const std::string getID() const</literal></term>
-            <listitem>
-               <para>
-               Returns the ID for this individual.
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
-            <term><literal>const std::vector&lt;double&gt; getMeasurements() const</literal></term>
-            <listitem>
-               <para>
-               Returns a vector of only those DV values which corresponding MDV != 1.
-               Thus, the i-th element of the vector is not necessary the DV value from the i-th record.
-               For example, if there are 10 records among which 1st and 5th records have MDV=1.
-               The 1st element of the vector is the DV value from the 2nd record in the original set
-               and the 5th element is from the 7th record.
-               <programlisting>
-indexes to all records                           : { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }
-indexes to those records which have measurements : { 2, 3, 4, 6, 7, 8, 9, 10 }
-               </programlisting>
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
-            <term><literal>const std::vector&lt;double&gt; getValues( const std::string& label ) 
-                           const</literal></term>
-            <listitem>
-               <para>
-               Returns a vector of read-only values of <literal>label</literal> from the data set.
-               The i-th element of the vector is the value from the i-th record.
-               Case in <literal>label</literal> is ignored.  If <literal>label</literal> is
-               not found, an SpkCompilerException is thrown.
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
-            <term><literal>std::vector&lt;double&gt; getValues( const std::string& label ) </literal></term>
-            <listitem>
-               <para>
-               Returns a vector of writable values/placeholders for <literal>label</literal> from the data set.
-               The i-th element of the vector corresponds to the value from the i-th record.
-               Case in <literal>label</literal> is ignored.  If <literal>label</literal> is
-               not found, an SpkCompilerException is thrown.
-               </para>
-            </listitem>
-         </varlistentry>
-      </variablelist>
-   </sect1>
-   <sect1>
-      <title><filename>DataSet.h</filename></title>
-      <para>
-      <filename>DataSet.h</filename> declares/defines a template class, <classname>DataSet</classname>.
-      <classname>DataSet</classname> holds the entire data set for the population of size > 0.
-      </para>
-      <para>
-      The first individual's data set is indexed by 0.
-      </para>
-      <variablelist>
-         <title>Public Methods</title>
-         <varlistentry>
-            <term><literal>bool simulate( unsigned int seed, SpkModel& model )</literal></term>
-            <listitem>
-               <para>
-               Simulate a data set for the population and replaces the existing measurement values
-               with the new values for all individuals.
-               Returns true if simulation was successful.
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
-            <term><literal>int getPopSize() const </literal></term>
-            <listitem>
-               <para>
-               Returns the number of individuals in the population.
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
-            <term><literal>const std::vector&lt;double&gt; getAllMeasurements() const</literal></term>
-            <listitem>
-               <para>
-               Returns a vector of measurements from the entire data set for the population.
-               The measurements values are taken from those data records with MDV != 1.
-               If <literal>simulate</literal> has been executed in advance, the values returned
-               by this method are simulated data.
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
-            <term><literal>const std::vector&lt;int&gt; getN() const </literal></term>
-            <listitem>
-               <para>
-               Returns a vector of numbers of measurements.  The i-th element of the vector
-               indicates the number of measurements for the i-th individual.
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
-            <term><literal>const std::vector&lt;double&gt; getMeasurements( int i ) const </literal></term>
-            <listitem>
-               <para>
-               Returns the i-th individual's measurements.
-               If <literal>simulate</literal> has been executed in advance, the values returned
-               by this method are simulated data.  
-               If <literal>i</literal> is out of bound, an SpkCompilerException will be thrown.
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
-            <term><literal>const std::vector&lt;double&gt; getValues( const std::string& label, int i ) const </literal></term>
-            <listitem>
-               <para>
-               Returns a vector of <literal>label</literal> read-only values for the i-th individual. 
-               If <literal>i</literal> is out of bound, an SpkCompilerException will be thrown.
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
-            <term><literal>std::vector&lt;double&gt; getValues( const std::string& label, int i ) </literal></term>
-            <listitem>
-               <para>
-               Returns a writable vector of <literal>label</literal> values/placeholders 
-               for the i-th individual. 
-               If <literal>i</literal> is out of bound, an SpkCompilerException will be thrown.
-               </para>
-            </listitem>
-         </varlistentry>
-      </variablelist>
-   </sect1>
-   <sect1>
-      <title><filename>NonmemPars.h</filename></title>
-      <para>
-      <filename>NonmemPars.h</filename> exports a namespace, <literal>NonmemPars</literal>, containing
-      parameters given by the end-user and values that can be derived from these parameters
-      at SPK-compilation time.
-      </para>
-      <variablelist>
-         <title>Public Properties</title>
-         <varlistentry>
-            <term><literal>const int nTheta</literal></term>
-            <listitem>
-               <para>
-               is the length of <emphasis>theta</emphasis> vector.
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
-            <term><literal>const valarray&lt;double&gt; thetaUp</literal></term>
-            <listitem>
-               <para>
-               contains the upper boundary value for <emphasis>theta</emphasis>.
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
-            <term><literal>const valarray&lt;double&gt; thetaLow</literal></term>
-            <listitem>
-               <para>
-               contains the lower boundary value for <emphasis>theta</emphasis>.
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
-            <term><literal>const valarray&lt;double&gt; thetaIn</literal></term>
-            <listitem>
-               <para>
-               contains the initial estimate for <emphasis>theta</emphasis>.
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
-            <term><literal>const enum PopPredModel::covStruct omegaStruct</literal></term>
-            <listitem>
-               <para>
-               is present only if the user has requested the population analysis.
-               The value is either <literal>PopPredModel::DIAGONAL</literal> or 
-               <literal>PopPredModel::FULL</literal>.
-               <literal>DIAGONAL</literal> indicates that only the diagonal elements of 
-               <emphasis>Omega</emphasis> matrix
-               are subject to optimization.  <literal>FULL</literal> indicates that potentially all elements
-               are subject to optimization.
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
-            <term><literal>const enum IndPredModel::covStruct omegaStruct</literal></term>
-            <listitem>
-               <para>
-               is present only if the individual analysis is requested.
-               The value is always IndPredModel::DIAGONAL for such analysis. 
-               Only the diagonal elements of <emphasis>Omega</emphasis> matrix
-               are subject to optimization.
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
-            <term><literal>const int omegaOrdrer</literal></term>
-            <listitem>
-               <para>
-               is the number of elements in <emphasis>Omega</emphasis> matrix that are subject to optimization
-               (ie. the order of <emphasis>Omega</emphasis>).
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
-            <term><literal>const valarray&lt;double&gt; omegaIn</literal></term>
-            <listitem>
-               <para>
-               is the initial estimates for the elements of <emphasis>Omega</emphasis>
-               that are subject to optimization.  Thus, the length of <literal>omegaIn</literal>
-               is <literal>omegaOrder</literal>.
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
-            <term><literal>const int nEta</literal></term>
-            <listitem>
-               <para>
-               is the length of <emphasis>eta</emphasis> vector, 
-               which is the order of <emphasis>Omega</emphasis>.
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
-            <term><literal>const valarray&lt;double&gt; etaIn</literal></term>
-            <listitem>
-               <para>
-               is the initial estimate for <emphasis>eta</emphasis> vector.
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
-            <term><literal>const enum PopPredModel::covStruct sigmaStruct</literal></term>
-            <listitem>
-               <para>
-               is present only if the population analysis is requested.
-               The value is either <literal>PopPredModel::DIAGONAL</literal>
-               or <literal>PopPredModel::FULL</literal>.
-               <literal>DIAGONAL</literal> indicates that only the diagonal elements of 
-               <emphasis>Sigma</emphasis> matrix
-               are subject to optimization.  <literal>FULL</literal> indicates that potentially all elements
-               are subject to optimization.
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
-            <term><literal>const valarray&lt;double&gt; sigmaIn</literal></term>
-            <listitem>
-               <para>
-               is the initial estimates for the elements of <emphasis>Sigma</emphasis>
-               that are subject to optimization.  Thus, the length of <literal>simgaIn</literal>
-               is <literal>sigmaOrder</literal>.
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
-            <term><literal>const int nEps</literal></term>
-            <listitem>
-               <para>
-               is the length of <emphasis>eps</emphasis> vector,
-               which is the order of <emphasis>Sigma</emphasis>.
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
-            <term><literal>const int seed</literal></term>
-            <listitem>
-               <para>
-               specifies the seed for random number generation.
-               </para>
-            </listitem>
-         </varlistentry>
-      </variablelist>
-   </sect1>
-   <sect1>
-      <title><filename>MontePars.h</filename></title>
-      <para>
-         <filename>MontePars.h</filename> exports a namespace, <filename>MontePars</filename>.
-         The namespace contains control parameters for Monte Carlo simulation.
-         This file is generated only if Monte Carlo simulation is requested.
-      </para>
-      <variablelist>
-         <varlistentry>
-            <term><literal>const enum { analytic, grid, monte } method</literal></term>
-            <listitem>
-               <para>specifies the method for approximating (or computing) the integral.
-               <variablelist>
-                  <varlistentry>
-                     <term><literal>analitic</literal></term>
-                     <listitem>
-                        <para>Closed form solution only valid for <emphasis>LinearModel</emphasis> (consult Brad for details)
-                        </para>
-                     </listitem>
-                  </varlistentry>
-                  <varlistentry>
-                     <term><literal>grid</literal></term>
-                     <listitem>
-                        <para>Approximation integral using evaluation on a uniform grid
-                        </para>
-                     </listitem>
-                  </varlistentry>
-                  <varlistentry>
-                     <term><literal>monte</literal></term>
-                     <listitem>
-                        <para>Monte-Carlo approximation for integral
-                        </para>
-                     </listitem>
-                  </varlistentry>
-               </variablelist>
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
-            <term><literal>const int numberEval</literal></term>
-            <listitem>
-               <para>
-               specifies the number of function evalautions to use for each
-               individual in the population.
-               Actually it is the maximum number when <emphasis>method</emphasis> is
-               <literal>grid</literal> and it is not used when <varname>method</varname> is <literal>analytic</literal>.
-               </para>
-            </listitem>
-         </varlistentry>
-      </variablelist>
-   </sect1>
-   <sect1>
-      <title><filename>spkDriver.cpp</filename></title>
-      <para>
-      </para>
+      <orderedlist>
+         <listitem>
+            <para>Instanciate an SpkModel and a Pred.</para>
+         </listitem>
+         <listitem>
+            <para>Simulate a data set if requested.</para>
+         </listitem>
+         <listitem>
+            <para>Estimate parameters if requested.</para>
+         </listitem>
+         <listitem>
+            <para>Compute the reliability of final estimations if requested 
+            && the estimation step has completed successfully.</para>
+         </listitem>
+         <listitem>
+            <para>Prepare and save a <ulink url="../reportML/reportML.html">reportML</ulink>
+            document.
+            </para>
+         </listitem>
+      </orderedlist>
    </sect1>
    <sect1>
       <title><filename>monteDriver.cpp</filename></title>
       <para>
+      This is a driver for Monte Carlo simulation
+      
+      The the following steps:
       </para>
+      <orderedlist>
+         <listitem>
+            <para>Instanciate an SpkModel and a Pred.</para>
+         </listitem>
+         <listitem>
+            <para>Simulate a data set if requested.</para>
+         </listitem>
+         <listitem>
+            <para>Perform Monte Carlo simulation for computing or approximating the integral.
+            </para>
+         </listitem>
+         <listitem>
+            <para>Prepare and save a <ulink url="../reportML/reportML.html">reportML</ulink>
+            document.
+            </para>
+         </listitem>
+      </orderedlist>
    </sect1>
    <sect1>
       <title><filename>Makefile.SPK</filename></title>
       <para>
-      This Make file defines rules to build targets that perform
-      the population/individual parameter estimation (if requested)
-      and statistics computation (if requested).
+      The primary goals of this Make file is to define rules to build 
+      two versions of executables.  One is an executable hooked to the production
+      version of libraries and the other is to the test version of libraries.
+      An executable is either for the parameter optimization or for 
+      the Monte Carlo integration.
       </para>
-      <formalpara>
+      <variablelist>
          <title>Targets</title>
-         <para>
-            <variablelist>
-               <varlistentry>
-                  <term>proc <emphasis>(default)</emphasis></term>
-                  <listitem>
-                     <para>
-                     Compile all SPK-Compiler-generated C++ source code files,
-                     link to <emphasis>production</emphasis> libraries and build an
-                     SPK driver, <filename>spkDriver</filename>.
-                     </para>
-                  </listitem>
-               </varlistentry>
-               <varlistentry>
-                  <term>test</term>
-                  <listitem>
-                     <para>
-                     Compile all SPK-Compiler-generated C++ source code files,
-                     link to <emphasis>test</emphasis> libraries and build an
-                     SPK driver, <filename>spkDriver</filename>.
-                     </para>
-                  </listitem>
-               </varlistentry>
-               <varlistentry>
-                  <term>clean</term>
-                  <listitem>
-                     <para>
-                     Delete all artifacts generated by SPK Compiler except for Make files.
-                     </para>
-                  </listitem>
-               </varlistentry>
-            </variablelist>
-         </para>
-      </formalpara>
+         <varlistentry>
+            <term>proc <emphasis>(default)</emphasis></term>
+            <listitem>
+               <para>
+               Compile SPK-Compiler-generated C++ source code files,
+               link to <emphasis>production</emphasis> libraries 
+               (ie. libspk, libspkpred, and libopt)
+               and build a driver, named <filename>driver</filename>.
+               The <emphasis>production</emphasis> libraries are expected to be 
+               found in <filename>/usr/local/lib/spkprod/</filename>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>test</term>
+            <listitem>
+               <para>
+               Compile SPK-Compiler-generated C++ source code files,
+               link to <emphasis>test</emphasis> libraries 
+               (ie. libspk, libspkpred, and libopt)
+               and build a driver, named <filename>driver</filename>.
+               The <emphasis>production</emphasis> libraries are expected to be 
+               found in <filename>/usr/local/lib/spktest/</filename>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>clean</term>
+            <listitem>
+               <para>
+               Delete all artifacts generated by SPK Compiler except for itself, 
+               <filename>Makefile.SPK</filename>.
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
+      <variablelist> 
+         <title>Source Code Files</title>
+         <varlistentry>
+            <term>Common source</term>
+            <listitem>
+               <para>
+               The source code files commonly needed by the two processes: optimization and Monte Carlo.
+               The files are expected to be found in the current directory.
+               </para>
+               <para>
+                  <itemizedlist>
+                     <listitem>
+                        <para>NonmemPars.h</para>
+                     </listitem>
+                     <listitem>
+                        <para>IndData.h</para>
+                     </listitem>
+                     <listitem>
+                        <para>DataSet.h</para>
+                     </listitem>
+                     <listitem>
+                        <para>Pred.h</para>
+                     </listitem>
+                  </itemizedlist>
+               </para>                     
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>Optimization-specific source</term>
+            <listitem>
+               <para>
+               The source code file only needed by the optimization process.
+               The file is expected to be found in the current directory.
+               </para>
+               <para>
+                  <itemizedlist>
+                      <listitem>
+                         <para>fitDriver.cpp</para>
+                      </listitem>
+                  </itemizedlist>
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>Monte Carlo-specific source</term>
+            <listitem>
+               <para>
+               The source code files only needed by the Monte Carlo process.
+               </para>
+               <para>
+               The following header is expected be found in the current directory.
+               </para>
+               <para>
+                  <itemizedlist>
+                     <listitem>
+                        <para>MontePars.h</para>
+                     </listitem>
+                  </itemizedlist>
+               </para>
+               <para>
+               The following files are expected to be found in <filename>/usr/local/src/spktest/ml/</filename>.
+               </para>
+               <para>
+                  <itemizedlist>
+                     <listitem>
+                        <para>monteDriver.cpp</para>
+                     </listitem>
+                     <listitem>
+                        <para>AnalyticalIntegral.h</para>
+                     </listitem>
+                     <listitem>
+                        <para>AnalyticalIntegral.cpp</para>
+                     </listitem>
+                     <listitem>
+                        <para>GridIntegral.h</para>
+                     </listitem>
+                     <listitem>
+                        <para>GridIntegral.cpp</para>
+                     </listitem>
+                     <listitem>
+                        <para>GridIntegral.h</para>
+                     </listitem>
+                     <listitem>
+                        <para>MapBay.h</para>
+                     </listitem>
+                     <listitem>
+                        <para>MapBay.cpp</para>
+                     </listitem>
+                     <listitem>
+                        <para>MapBay.h</para>
+                     </listitem>
+                     <listitem>
+                        <para>MontePopObj.h</para>
+                     </listitem>
+                     <listitem>
+                        <para>MontePopObj.cpp</para>
+                     </listitem>
+                  </itemizedlist>                     
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
    </sect1>
-   <sect1>
-      <title><filename>Makefile.MC</filename></title>
-      <para>
-      This Make file defines rule to build targets that perform
-      the Monte Carlo simulation.
-      </para>
-      <formalpara>
-         <title>Targets</title>
-         <para>
-            <variablelist>
-               <varlistentry>
-                  <term>proc <emphasis>(default)</emphasis></term>
-                  <listitem>
-                     <para>
-                     Compile all SPK-Compiler-generated C++ source code files,
-                     link to <emphasis>production</emphasis> libraries and build an
-                     Monte Carlo simulator, <filename>monteDriver</filename>.
-                     </para>
-                  </listitem>
-               </varlistentry>
-               <varlistentry>
-                  <term>test</term>
-                  <listitem>
-                     <para>
-                     Compile all SPK-Compiler-generated C++ source code files,
-                     link to <emphasis>test</emphasis> libraries and build an
-                     Monte Carlo simulator, <filename>monteDriver</filename>.
-                     </para>
-                  </listitem>
-               </varlistentry>
-               <varlistentry>
-                  <term>clean</term>
-                  <listitem>
-                     <para>
-                     Delete all artifacts generated by SPK Compiler except for Make files.
-                     </para>
-                  </listitem>
-               </varlistentry>
-            </variablelist>
-         </para>
-      </formalpara>
-   </sect1>
-
 </article>
