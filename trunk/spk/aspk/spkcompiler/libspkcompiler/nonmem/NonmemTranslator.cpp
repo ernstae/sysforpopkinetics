@@ -97,7 +97,7 @@ namespace DefaultStr{
   const string DV    = "DV";
   const string MDV   = "MDV";
   const string ID    = "ID";
-  const string SIMDV = "SIMDIV";
+  const string SIMDV = "SIMDV";
   const string F     = "F";
   const string Y     = "Y";
 };
@@ -428,6 +428,13 @@ void NonmemTranslator::parseSource()
   for( int i=0; i<myPopSize; i++ )
     {
       myRecordNums[i] = id->initial[i].size();
+    }
+
+  if( myIsSimulate )
+    {
+      Symbol * p = table->insertLabel(DefaultStr::SIMDV, "", myRecordNums);
+      for( int i=0; i<myPopSize; i++ )
+	p->initial[i] = "0";
     }
 
   // Keep the user-typed Nonmem Keyword strings
@@ -1370,14 +1377,8 @@ void NonmemTranslator::parsePred( DOMElement * pred )
   gSpkExpOutput = fopen( fPredEqn_cpp, "w" );
   gSpkExpSymbolTable = table;
 
-  try{
-    nm_parse();
-  }
-  catch( ... )
-    {
-      fprintf( stderr, "Fortran to C++ translator, nm_parse(), threw an unknown expection." );
-      abort();
-    }
+  // If this detects any syntax error, throws an exception.
+  nm_parse();
 
   fclose( nm_in );
   fclose( gSpkExpOutput );
@@ -1505,7 +1506,15 @@ void NonmemTranslator::generateIndData( ) const
       if( type == Symbol::DATALABEL )
 	{
 	  bool isID = ( varName==pID->name? true : false );
-	  oIndData_h << "const std::vector<" << (isID? "char *" : "T") << ">";
+
+          //
+          // SIMDV, which is a place holder for simulated data,
+          // has to be writable.
+	  //
+	  bool isSIMDV = ( varName == DefaultStr::SIMDV? true : false );
+	  if( !isSIMDV )
+	    oIndData_h << "const ";
+          oIndData_h << "std::vector<" << (isID? "char *" : "T") << ">";
 	  oIndData_h << " " << varName << ";" << endl;
 	  if( varAlias != "" )
             {
@@ -2520,11 +2529,16 @@ void NonmemTranslator::generateIndDriver( ) const
        oDriver << "try" << endl;
        oDriver << "{" << endl;
        oDriver << "   simulate( model, nY, bIn, yOut, seed );" << endl;
-       if( myIsEstimate )
+       //       if( myIsEstimate )
 	 {
 	   oDriver << "   bIn = bOut;" << endl;
+	   oDriver << "   for( int j=0; j<nY; j++ )" << endl;
+	   oDriver << "   {" << endl;
+	   oDriver << "      set.data[0]->SIMDV[j] = yOut[j];" << endl;
+	   oDriver << "   }" << endl;
 	   oDriver << "   y   = yOut;" << endl;
 	 }
+
        oDriver << "   //FpErrorChecker::check( __LINE__, __FILE__ );" << endl;
        oDriver << "   haveCompleteData = true;" << endl;
        oDriver << "}" << endl;
@@ -3358,9 +3372,17 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << "try" << endl;
       oDriver << "{" << endl;
       oDriver << "   simulate( model, alpIn, N, bLow, bUp, yOut, bOut, seed );" << endl;
-      if( myIsEstimate )
+      //      if( myIsEstimate )
 	{
 	  oDriver << "   bIn = bOut;" << endl;
+	  oDriver << "   for( int i=0, cnt=0; i<nPop; i++ )" << endl;
+	  oDriver << "   {" << endl;
+	  oDriver << "      for( int j=0; j<N[i]; j++ )" << endl;
+	  oDriver << "      {" << endl;
+	  oDriver << "         set.data[i]->SIMDV[j] = yOut[cnt];" << endl;
+	  oDriver << "      }" << endl;
+	  oDriver << "      cnt+=N[i];" << endl;
+	  oDriver << "   }" << endl;
 	  oDriver << "   y   = yOut;" << endl;
 	}
       oDriver << "   //FpErrorChecker::check( __LINE__, __FILE__ );" << endl;
@@ -3645,29 +3667,29 @@ void NonmemTranslator::generatePopDriver() const
       // theta
       oDriver << "for( int i=0; i<nTheta; i++ )" << endl;
       oDriver << "{" << endl;
-      oDriver << "   oResults << \"<value>\" << alpOut[i] << \"</value>\" << endl;" << endl;
+      oDriver << "   oResults << \"<value>\" << thetaOut[i] << \"</value>\" << endl;" << endl;
       oDriver << "}" << endl;
       oDriver << "oResults << \"</theta_out>\" << endl;" << endl;
       // Omega 
       oDriver << "oResults << \"<omega_out dimension=\\\"\" << dimOmega << \"\\\" ";
       if( myOmegaStruct == Symbol::TRIANGLE )
-	oDriver << "struct=\\\"diagonal\\\">\" << endl;" << endl;
-      else
 	oDriver << "struct=\\\"block\\\">\" << endl;" << endl;
+      else
+	oDriver << "struct=\\\"diagonal\\\">\" << endl;" << endl;
       oDriver << "for( int i=nTheta; i<nTheta+nOmega; i++ )" << endl;
       oDriver << "{" << endl;
-      oDriver << "   oResults << \"<value>\" << alpOut[i] << \"</value>\" << endl;" << endl;
+      oDriver << "   oResults << \"<value>\" << omegaOut[i] << \"</value>\" << endl;" << endl;
       oDriver << "}" << endl;
       oDriver << "oResults << \"</omega_out>\" << endl;" << endl;
       // Sigma
       oDriver << "oResults << \"<sigma_out dimension=\\\"\" << dimSigma << \"\\\" ";
       if( mySigmaStruct == Symbol::TRIANGLE )
-	oDriver << "struct=\\\"diagonal\\\">\" << endl;" << endl;
-      else
 	oDriver << "struct=\\\"block\\\">\" << endl;" << endl;
+      else
+	oDriver << "struct=\\\"diagonal\\\">\" << endl;" << endl;
       oDriver << "for( int i=nTheta+nOmega; i<nTheta+nOmega+nSigma; i++ )" << endl;
       oDriver << "{" << endl;
-      oDriver << "   oResults << \"<value>\" << alpOut[i] << \"</value>\" << endl;" << endl;
+      oDriver << "   oResults << \"<value>\" << sigmaOut[i] << \"</value>\" << endl;" << endl;
       oDriver << "}" << endl;
       oDriver << "oResults << \"</sigma_out>\" << endl;" << endl;
       oDriver << "//" << endl;
