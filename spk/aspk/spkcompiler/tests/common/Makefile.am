@@ -13,6 +13,8 @@ test_common_SOURCES = \
 	ClientTranslatorTest.h \
 	ExpTreeGeneratorTest.cpp \
 	ExpTreeGeneratorTest.h \
+        ExpNodeCarrierTest.cpp \
+        ExpNodeCarrierTest.h \
 	SpkCompilerUtilTest.cpp \
 	SymbolTest.cpp \
 	SymbolTest.h \

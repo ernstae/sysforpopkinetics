@@ -10,6 +10,7 @@
 #include "read_contentTest.h"
 #include "emit_IndDataTest.h"
 #include "SpkMLToCppTest.h"
+#include "ExpNodeCarrierTest.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -23,6 +24,7 @@ int main( int argc, const char * argv[] )
   master[ "SymbolTest" ]           = SymbolTest::suite();
   master[ "SymbolTableTest" ]      = SymbolTableTest::suite();
   master[ "SpkCompilerUtilTest" ]  = SpkCompilerUtilTest::suite(); 
+  master[ "ExpNodeCarrierTest" ]   = ExpNodeCarrierTest::suite();
   master[ "ExpTreeGeneratorTest" ] = ExpTreeGeneratorTest::suite();
   master[ "read_contentTest" ]     = read_contentTest::suite();
   master[ "emit_IndDataTest" ]     = emit_IndDataTest::suite();
