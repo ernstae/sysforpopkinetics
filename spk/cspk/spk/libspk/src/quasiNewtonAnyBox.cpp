@@ -176,7 +176,6 @@ function $math%f_x(x)%$$ for a particular value of $math%x%$$.
 $pre
 
 $$
-Since 
 The class $code QuasiNewtonAnyBoxObj$$ is an abstract base class,
 and $italic objective$$ is an instance of a concrete subclass
 of $code QuasiNewtonAnyBoxObj$$ that is specialized for this objective
@@ -187,8 +186,9 @@ and initialized when $italic objective$$ is constructed.
 $pre
 
 $$
-Th $italic objective$$ is an instance of a concrete subclass
-It must have the following member functions:
+The concrete subclass that is the type for $italic objective$$ 
+must define the following pure virtual member functions of the 
+abstract base class $code QuasiNewtonAnyBoxObj$$.
 
 $subhead Objective Function$$
 The syntax
