@@ -10,7 +10,7 @@
     <revhistory>
       <revision>
 	<revnumber>1.0</revnumber>
-	<date>February 1, 2004</date>
+	<date>January 4, 2004</date>
 	<authorinitials>afw</authorinitials>
 	<revremark>Initial version.</revremark>
       </revision>
@@ -253,7 +253,7 @@ ln -s /opt/extra extra
 	    everything else.  Mark check boxes so that you will get
 	    all updates to both groups.  From that point on, the
 	    process will be mostly automatic, asking you only for
-	    acknowledgement, from time to time.
+	    acknowledgment, from time to time.
 	  </para>
 	</listitem>
       </orderedlist>
@@ -414,3 +414,16 @@ Priority: 75
     </para>
   </sect1>
 </article>
+
+<!--  LocalWords:  xml DOCTYPE DocBook uw whitechuck systemitem systemname afw
+ -->
+<!--  LocalWords:  articleinfo revhistory revnumber authorinitials revremark cd
+ -->
+<!--  LocalWords:  RedHat Redhat RHEL orderedlist listitem lR tmp scp su cvzf
+ -->
+<!--  LocalWords:  chown tgz lpr Cdrom mkdir lt ln RHN RFPK alanwesthagen cp mv
+ -->
+<!--  LocalWords:  linkend xvzf pre rsync rhn guimenu guimenuitem Howto ntp
+ -->
+<!--  LocalWords:  linespecific moreinfo guibutton conf ntpd username
+ -->
