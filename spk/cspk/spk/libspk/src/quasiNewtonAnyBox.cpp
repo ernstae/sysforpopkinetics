@@ -639,7 +639,7 @@ using namespace sqpanybox;
  *------------------------------------------------------------------------*/
 void sqpAnyBox( FVAL_PROTOTYPE fval,
                 const void* pFvalInfo, 
-                Optimizer& optimizer,
+                & optimizer,
                 const DoubleMatrix& dvecXLow,
                 const DoubleMatrix& dvecXUp,
                 const DoubleMatrix& dvecXIn, 
@@ -1173,20 +1173,51 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   nag_opt_nlp( n, nclin, ncnlin, a, tda, bl, bu, fvalScaled, confun, 
     y, &objf, gvalScaled, &options, &comm, &fail );
 
+  // [Remove]======================================
+  //
+  /*
+    CONSIDER:
+
+    make convergence properties of SPK (i.e. its specification) be that
+    of the optimizer object passed in
+
+    make the Optimizer functions virtual and correspond more closely with
+    standard optimizer terminology
+  */
+  //
+  // [Remove]======================================
 
 
+  // [Remove]======================================
+  //
+  /*
+    call the optimizer from spk with a large delta
 
+    if within tol, then done
 
+    if not within tol, then decrease delta and call optimizer again
 
+    repeat
 
-
-
+    CONSIDER: store final value for delta to use next time
+  */
+  //
+  // [Remove]======================================
 
   // The argument delta specifies the convergence criteria.
   // If the return value of QuasiNewton01Box is "ok",
   //the infinity norm of the projected gradient at 
   // x = xOut is less than or equal delta.
-  double delta = 1.0e-6;
+  double delta = 1.0;
+
+  int i = 0;
+  itrMax = 1;
+  while ( i < maxI; i++ )
+  {
+    // Decrease delta;
+  }
+
+
 
 
      msg = QuasiNewton01Box(
