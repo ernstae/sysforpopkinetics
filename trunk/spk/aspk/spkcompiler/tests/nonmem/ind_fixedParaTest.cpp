@@ -638,6 +638,12 @@ void ind_fixedParaTest::parse()
   NonmemTranslator xlator( source, data );
 
   //============================================
+  // Determine the type of analysis and 
+  // the number of subjects.
+  //============================================
+  xlator.detAnalysisType();
+
+  //============================================
   // Parse the dataML document
   //============================================
   try{

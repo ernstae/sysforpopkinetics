@@ -804,12 +804,19 @@ void ind_withIDTest::createSourceML()
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 void ind_withIDTest::parse()
 {
+
   //============================================
   // Instanciate a NonmemTranslator object, 
   // passing the pointers to the sourceML 
   // document tree and the dataML document tree.
   //============================================
   NonmemTranslator xlator( source, data );
+
+  //============================================
+  // Determine the type of analysis and 
+  // the number of subjects.
+  //============================================
+  xlator.detAnalysisType();
 
   //============================================
   // Parse the dataML document
