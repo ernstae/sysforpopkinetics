@@ -1013,9 +1013,6 @@ void quasiNewtonAnyBox(
     // the maximum number of iterations have been performed.
     while ( !isAcceptable && iterCurr <= nMaxIter )
     {
-      // Get the Cholesky factor of the current scaled Hessian.
-      calcCholFactor( nObjPar, hScaled, rScaled );
-
       // See if this function's convergence criterion has been met.
       if ( isWithinTol( 
         epsilon,
@@ -1023,6 +1020,7 @@ void quasiNewtonAnyBox(
         yLow,
         yUp,
         gScaled,
+	hScaled,
         rScaled,
 	deltaY,
 	gScaledProj,
@@ -1152,7 +1150,7 @@ void quasiNewtonAnyBox(
                                     // have been performed.
   {
     optimizer.setIsTooManyIter( true );
-    if( optimizer.getThrowExcepIfMaxIter() )
+    if ( optimizer.getThrowExcepIfMaxIter() )
     {
       errorCode = SpkError::SPK_TOO_MANY_ITER;
       message = "Maximum number of iterations performed without convergence.";
@@ -1197,7 +1195,7 @@ void quasiNewtonAnyBox(
     *pdFOut = fScaled;
   }
   
-  if( pdrowF_xOut )
+  if ( pdrowF_xOut )
   {
     double* pdF_xOutData = pdrowF_xOut->data();
 
@@ -1356,6 +1354,12 @@ void scaleGradElem(
  * n elements before this function is called.
  *
  *
+ * h
+ *
+ * The Hessian H(x) evaluated at xHat.  It must be allocated to hold
+ * n * n elements before this function is called.
+ *
+ *
  * r
  *
  * The lower triangular Cholesky factor R(x) of the  Hessian H(x) 
@@ -1407,6 +1411,7 @@ bool isWithinTol(
   const double*  xLow,
   const double*  xUp,
   const double*  g,
+  const double*  h,
   const double*  r,
   double*        deltaX,
   double*        gProj,
@@ -1429,6 +1434,11 @@ bool isWithinTol(
   // Calculate the Hessian, projected gradient, and diagonal reciprocals.
   //------------------------------------------------------------
 
+      // Get the Cholesky factor of the current scaled Hessian.
+      calcCholFactor( nObjPar, hScaled, rScaled );
+
+
+
   // Prepare a version of the Hessian matrix H = R * R^(T) with its 
   // super-diagonal elements replaced by the sub-diagonal elements
   // of its (lower triangular) Cholesky factor R.
@@ -1443,16 +1453,21 @@ bool isWithinTol(
       // triangular, i.e., its (j,k)th element is zero for k > j.
       for ( k = 0; k <= j; k++ )
       {
-        hWork[i + j * n] +=  pdRData[i + k * n] * pdRData[j + k * n];
+        hWork[i + j * n] +=  r[i + k * n] * r[j + k * n];
       }
     }
   
     // Copy the elements in this row of the super-diagonal of H.
     for ( j = i + 1; j < n; j++ )
     {
-      hWork[i + j * n] = pdRData[j + i * n];
+      hWork[i + j * n] = r[j + i * n];
     }
   }
+
+
+  //------------------------------------------------------------
+  // Calculate the Hessian, projected gradient, and diagonal reciprocals.
+  //------------------------------------------------------------
 
   // Modify the Hessian, and set the elements of gProj and p.
   for ( i = 0; i < n; i++ )
@@ -1461,9 +1476,10 @@ bool isWithinTol(
       // Compute the corresponding elements of H, gProj, and P.
       //----------------------------------------------------------
 
-      if( (pdXHatData[i] >  pdXLowData[i] && pdXHatData[i] < pdXUpData[i])
-          || (pdXHatData[i] == pdXLowData[i] && pdGData[i] < 0.0 )  
-          || (pdXHatData[i] == pdXUpData[i]  && pdGData[i] > 0.0 ) )
+    // Determine which elements are free, i.e., are not being held by their bounds.
+      if ( (xHat[i] >  xLow[i] && xHat[i] < xUp[i])
+          || (xHat[i] == xLow[i] && g[i] < 0.0 )  
+          || (xHat[i] == xUp[i]  && g[i] > 0.0 ) )
       {
             isElemFree[i] = true;
 
@@ -1472,11 +1488,11 @@ bool isWithinTol(
             //--------------------------------------------------------
 
             // Set the corresponding element of the projected gradient.
-            pdGProjData[i] = pdGData[i];
+            gProj[i] = g[i];
 
             // Set the reciprocal of the corresponding R diagonal.
-            assert( pdRData[i + i * n] != 0.0 );
-            rDiagRec[i] = 1.0 / pdRData[i + i * n];
+            assert( r[i + i * n] != 0.0 );
+            rDiagRec[i] = 1.0 / r[i + i * n];
       }
       else
       {
@@ -1516,7 +1532,7 @@ bool isWithinTol(
                 }
       
                 // Zero the corresponding element of the projected gradient.
-                pdGProjData[i] = 0.0;
+                gProj[i] = 0.0;
 
                 // Set the reciprocal of the corresponding R diagonal equal to one.
                 rDiagRec[i] = 1.0;
@@ -1607,7 +1623,7 @@ bool isWithinTol(
   // Parameter: b[n][tdb].
   // Input:the n by r right-hand side matrix B.  
   // Output: unspecified.
-  double* b = pdGProjData;
+  double* b = gProj;
 
   // Parameter: tdb.
   // Input:the last dimension of the array b as declared in the
