@@ -97,6 +97,23 @@ public abstract class Spkdb {
 	return jobId;
     }
     /**
+       Get the state transition history for a given job.
+       @param conn open connection to the database
+       @param jobId key to the given job in the job table
+       @return Object of type java.sql.Resultset, containing a sequence of rows of the
+       hhistory table, related to a given job.
+     */
+    public static ResultSet jobHistory(Connection conn, long jobId)
+	throws SQLException, SpkdbException
+    {
+	String sql = "select * from history where job_id=" + jobId + ";";
+	Statement stmt = conn.createStatement();
+	stmt.execute(sql);
+	ResultSet rs = stmt.getResultSet();
+
+	return rs;
+    }
+    /**
        Get a given job.
        @param conn open connection to the database
        @param jobId key to the given job in the job table

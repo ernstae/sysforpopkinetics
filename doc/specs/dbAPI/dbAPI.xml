@@ -797,6 +797,174 @@
 	</para>
       </sect3>
       <sect3>
+	<title id="job_history">job_history -- retrieve history for a given job</title>
+	<glosslist>
+	  <glossentry>
+	    <glossterm>Synopsis</glossterm>
+	    <glossdef>
+	      <para>
+		row-array = job_history handle job_id
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Description</glossterm>
+	    <glossdef>
+	      <para>
+		All rows of the history table that correspond to a given job_id are
+		returned.  Each row describes a state transition.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	</glosslist>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Values returned by job_history</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="1*"/>
+	      <colspec colname="c2" colwidth="1*"/>
+	      <colspec colname="c3" colwidth="5*"/>
+	      <thead>
+		<row>
+		  <entry>Condition</entry>
+		  <entry>Values</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>success</entry>
+		  <entry>row-array</entry>
+		  <entry>An array containing all history for the given job</entry>
+		</row>
+		<row>
+		  <entry>failure</entry>
+		  <entry>Null or undefined.</entry>
+		  <entry>
+		     Failure occurs if their is no history for the job_id.
+		    Additional error information depends on the individual
+		    language bindings.
+		  </entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Arguments to job_history</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="1*"/>
+	      <colspec colname="c2" colwidth="1*"/>
+	      <colspec colname="c3" colwidth="5*"/>
+	      <thead>
+		<row>
+		  <entry>Name of Argument</entry>
+		  <entry>Data Type</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>handle</entry>
+		  <entry>database handle</entry>
+		  <entry>Handle to an open database connection.</entry>
+		</row>
+		<row>
+		  <entry>job_id</entry>
+		  <entry>positive integer</entry>
+		  <entry>Key to a row in the job table.</entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+      </sect3>
+      <sect3>
+	<title id="get_job">get_job -- retrieve a row from the job table</title>
+	<glosslist>
+	  <glossentry>
+	    <glossterm>Synopsis</glossterm>
+	    <glossdef>
+	      <para>
+		row = get_job handle job_id
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Description</glossterm>
+	    <glossdef>
+	      <para>
+		This function retrieves the entire row from the job table that corresponds
+		to the given job_id.  
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	</glosslist>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Values returned by get_job</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="1*"/>
+	      <colspec colname="c2" colwidth="1*"/>
+	      <colspec colname="c3" colwidth="5*"/>
+	      <thead>
+		<row>
+		  <entry>Condition</entry>
+		  <entry>Values</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>success</entry>
+		  <entry>row</entry>
+		  <entry>An entire row of the job table.</entry>
+		</row>
+		<row>
+		  <entry>failure</entry>
+		  <entry>null or undefined</entry>
+		  <entry>
+		    The case where there is no row corresponding to the
+		    job id is distinguishable from a failure due to 
+		    database error.
+		  </entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Arguments to get_job</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="1*"/>
+	      <colspec colname="c2" colwidth="1*"/>
+	      <colspec colname="c3" colwidth="5*"/>
+	      <thead>
+		<row>
+		  <entry>Name of Argument</entry>
+		  <entry>Data Type</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>handle</entry>
+		  <entry>database handle</entry>
+		  <entry>Handle to an open database connection.</entry>
+		</row>
+		<row>
+		  <entry>job_id</entry>
+		  <entry>positive integer</entry>
+		  <entry>A valid key to the job table.</entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+      </sect3>
+      <sect3>
 	<title id="user_jobs">user_jobs -- get status for user's most recent jobs</title>
 	<glosslist>
 	  <glossentry>
@@ -854,7 +1022,7 @@
 	      <tbody>
 		<row>
 		  <entry>success</entry>
-		  <entry>array-row</entry>
+		  <entry>row-array</entry>
 		  <entry>In each row: job_id, abstract, state_code, start_time, event_time, end_code</entry>
 		</row>
 		<row>
@@ -1082,7 +1250,7 @@
 	      <tbody>
 		<row>
 		  <entry>success</entry>
-		  <entry>array-row</entry>
+		  <entry>row-array</entry>
 		  <entry>In each row: job_id, dataset_id, dataset_version, and xml_source</entry>
 		</row>
 		<row>
@@ -1421,7 +1589,7 @@
 	      <tbody>
 		<row>
 		  <entry>success</entry>
-		  <entry>array-row</entry>
+		  <entry>row-array</entry>
 		  <entry>In each row: job_id, cpp_source</entry>
 		</row>
 		<row>
@@ -2098,7 +2266,7 @@
 	      <tbody>
 		<row>
 		  <entry>success</entry>
-		  <entry>array-row</entry>
+		  <entry>row-array</entry>
 		  <entry>In each row: dataset_id, name, abstract.</entry>
 		</row>
 		<row>
@@ -2544,7 +2712,7 @@
 	      <tbody>
 		<row>
 		  <entry>success</entry>
-		  <entry>array-row</entry>
+		  <entry>row-array</entry>
 		  <entry>In each row: model_id, name, abstract.</entry>
 		</row>
 		<row>
@@ -3196,6 +3364,16 @@
 	      <row>
 		<entry><link linkend="new_job">new_job</link></entry>
 		<entry>x</entry>
+		<entry>x</entry>
+	      </row>
+	      <row>
+		<entry><link linkend="job_history">job_history</link></entry>
+		<entry></entry>
+		<entry>x</entry>
+	      </row>
+	      <row>
+		<entry><link linkend="get_job">get_job</link></entry>
+		<entry></entry>
 		<entry>x</entry>
 	      </row>
 	      <row>

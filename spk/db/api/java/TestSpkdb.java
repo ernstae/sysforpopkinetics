@@ -8,7 +8,7 @@ public class TestSpkdb {
 	String password = "codered";
 	String firstName = "Mike";
 	String surname = "Jordan";
-	final int maxTests = 40;
+	final int maxTests = 41;
 	String xmlSource = "<spksource>\n\tline1\n\tline2\n</spksource>";
 	boolean b = true;
 	boolean target = true;
@@ -547,6 +547,16 @@ public class TestSpkdb {
 			count++;
 		    }
 		    b = count == 5;
+		    break;
+		case 41:
+		    target = true;
+		    s = "jobHistory";
+		    rs = Spkdb.jobHistory(conn, 2);
+		    count = 0;
+		    while (rs.next()) {
+			count++;
+		    }
+		    b = count == 2;
 		    break;
 		default:
 		    break;
