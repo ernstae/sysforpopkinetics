@@ -48,6 +48,7 @@
 #include <spk/identity.h>
 #include <spk/inverse.h>
 #include <spk/multiply.h>
+#include <spk/replaceSubblock.h>
 #include <spk/SpkValarray.h>
 
 // CppAD header files.
@@ -2239,6 +2240,11 @@ void PopPredModelTest::OneExpF_ModelBasedExpY_Test()
     alphaCurrKnown[k + sigmaParOffsetInPopPar] = sigmaParKnown[k];
   }
 
+
+  //------------------------------------------------------------
+  // Prepare known values related to the individual parameter.
+  //------------------------------------------------------------
+
   // The individual parameter is the parameter that is optimized
   // over when performing individual level estimation,
   //
@@ -3009,6 +3015,11 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
     alphaCurrKnown[k + sigmaParOffsetInPopPar] = sigmaParKnown[k];
   }
 
+
+  //------------------------------------------------------------
+  // Prepare known values related to the individual parameter.
+  //------------------------------------------------------------
+
   // The individual parameter is the parameter that is optimized
   // over when performing individual level estimation,
   //
@@ -3568,7 +3579,7 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_FullSigma_Test()
   // Set the lower triangle elements for the current value for sigma.
   valarray<double> sigmaMinRep( nSigmaPar );
   sigmaMinRep[0] =  0.25;
-  sigmaMinRep[1] = -0.03;
+  sigmaMinRep[1] = -0.0003;
   sigmaMinRep[2] =  0.001;
 
 
@@ -3676,6 +3687,14 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_FullSigma_Test()
   // Get the step sizes for the individual parameters.
   model.getIndParStep( indParStep );
 
+  valarray<double> standardPar       ( nPopPar );
+  valarray<double> standardPar_popPar( nPopPar * nPopPar );
+
+  // Get the current value for the standard parameter and its
+  // derivative.
+  model.getStandardPar       ( standardPar );
+  model.getStandardPar_popPar( standardPar_popPar );
+
 
   //------------------------------------------------------------
   // Prepare known values related to the population parameter.
@@ -3757,6 +3776,94 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_FullSigma_Test()
   {
     alphaCurrKnown[k + sigmaParOffsetInPopPar] = sigmaParKnown[k];
   }
+
+  valarray<double> standardParKnown       ( nPopPar );
+  valarray<double> standardPar_popParKnown( nPopPar * nPopPar );
+
+  // Set the known value for the standard parameter.
+  //
+  //                      -                 -
+  //                     |     thetaCurr     |
+  //                     |                   |
+  //     standardPar  =  |  omegaMinRepCurr  |  .
+  //                     |                   |
+  //                     |  sigmaMinRepCurr  |
+  //                      -                 -
+  //
+  for ( k = 0; k < nTheta; k++ )
+  {
+    standardParKnown[k + thetaOffsetInPopPar] = thetaCurr[k];
+  }
+  for ( k = 0; k < nOmegaPar; k++ )
+  {
+    standardParKnown[k + omegaParOffsetInPopPar] = omegaMinRep[k];
+  }
+  for ( k = 0; k < nSigmaPar; k++ )
+  {
+    standardParKnown[k + sigmaParOffsetInPopPar] = sigmaMinRep[k];
+  }
+
+  valarray<double> omegaMinRep_omegaParKnown( nOmegaPar * nOmegaPar );
+  valarray<double> sigmaMinRep_sigmaParKnown( nSigmaPar * nSigmaPar );
+
+  // Get the known derivatives of the minimal representations of
+  // omega and sigma.
+  omega.calcCovMinRep_par(
+    omega_omegaParKnown,
+    nOmegaPar,
+    omegaMinRep_omegaParKnown );
+  sigma.calcCovMinRep_par(
+    sigma_sigmaParKnown,
+    nSigmaPar,
+    sigmaMinRep_sigmaParKnown );
+
+  // Create an nTheta by nTheta identity matrix.
+  valarray<double> identityNTheta( nTheta * nTheta );
+  identity( nTheta, identityNTheta );
+
+  // Set the known value for the derivative of the standard parameter,
+  //
+  //     d       standardPar
+  //      alpha
+  //
+  //             -                                                                                  -
+  //            |  I                      0                                                     0    |
+  //            |   nTheta                                                                           |
+  //            |                                                                                    |
+  //         =  |  0          d        omegaMinRep( omegaPar )                                  0    |  .
+  //            |              omegaPar                                                              |
+  //            |                                                                                    |
+  //            |  0                      0                       d        sigmaMinRep( sigmaPar )   |
+  //            |                                                  sigmaPar                          |
+  //             -                                                                                  -
+  //
+  standardPar_popParKnown = 0.0;
+  replaceSubblock(
+    standardPar_popParKnown,
+    nPopPar,
+    identityNTheta,
+    nTheta,
+    thetaOffsetInPopPar,
+    thetaOffsetInPopPar );
+  replaceSubblock(
+    standardPar_popParKnown,
+    nPopPar,
+    omegaMinRep_omegaParKnown,
+    nOmegaPar,
+    omegaParOffsetInPopPar,
+    omegaParOffsetInPopPar );
+  replaceSubblock(
+    standardPar_popParKnown,
+    nPopPar,
+    sigmaMinRep_sigmaParKnown,
+    nSigmaPar,
+    sigmaParOffsetInPopPar,
+    sigmaParOffsetInPopPar );
+
+
+  //------------------------------------------------------------
+  // Prepare known values related to the individual parameter.
+  //------------------------------------------------------------
 
   // The individual parameter is the parameter that is optimized
   // over when performing individual level estimation,
@@ -4220,6 +4327,18 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_FullSigma_Test()
     indParVarianceInv_popPar,
     indParVarianceInv_popParKnown,
     "indParVarianceInv_popPar",
+    tol );
+
+  compareToKnown( 
+    standardPar,
+    standardParKnown,
+    "standardPar",
+    tol );
+
+  compareToKnown( 
+    standardPar_popPar,
+    standardPar_popParKnown,
+    "standardPar_popPar",
     tol );
 }
 

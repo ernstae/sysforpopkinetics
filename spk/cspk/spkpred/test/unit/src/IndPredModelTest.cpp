@@ -47,6 +47,7 @@
 #include <spk/identity.h>
 #include <spk/inverse.h>
 #include <spk/multiply.h>
+#include <spk/replaceSubblock.h>
 #include <spk/SpkValarray.h>
 
 // CppAD header files.
@@ -910,7 +911,7 @@ void IndPredModelTest::OneExpF_ModelBasedExpY_Test()
     indParUpKnown [k + omegaParOffsetInIndPar] = omegaParUpKnown [k];
   }
   
-  // Since the step sizes may change as PopPredModel evolves, only 
+  // Since the step sizes may change as IndPredModel evolves, only 
   // check that they are positive.
   for ( k = 0; k < nIndPar; k++ )
   {
@@ -1133,6 +1134,14 @@ void IndPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
   // Get the step sizes for the individual parameters.
   model.getIndParStep( indParStep );
 
+  valarray<double> standardPar       ( nIndPar );
+  valarray<double> standardPar_indPar( nIndPar * nIndPar );
+
+  // Get the current value for the standard parameter and its
+  // derivative.
+  model.getStandardPar       ( standardPar );
+  model.getStandardPar_indPar( standardPar_indPar );
+
 
   //------------------------------------------------------------
   // Prepare known values related to the individual parameter.
@@ -1185,6 +1194,67 @@ void IndPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
   {
     bCurrKnown[k + omegaParOffsetInIndPar] = omegaParKnown[k];
   }
+
+  valarray<double> standardParKnown       ( nIndPar );
+  valarray<double> standardPar_indParKnown( nIndPar * nIndPar );
+
+  // Set the known value for the standard parameter.
+  //
+  //                      -                 -
+  //                     |     thetaCurr     |
+  //     standardPar  =  |                   |  .
+  //                     |  omegaMinRepCurr  |
+  //                      -                 -
+  //
+  for ( k = 0; k < nTheta; k++ )
+  {
+    standardParKnown[k + thetaOffsetInIndPar] = thetaCurr[k];
+  }
+  for ( k = 0; k < nOmegaPar; k++ )
+  {
+    standardParKnown[k + omegaParOffsetInIndPar] = omegaMinRep[k];
+  }
+
+  valarray<double> omegaMinRep_omegaParKnown( nOmegaPar * nOmegaPar );
+
+  // Get the known derivative of the minimal representation of
+  // omega.
+  omega.calcCovMinRep_par(
+    omega_omegaParKnown,
+    nOmegaPar,
+    omegaMinRep_omegaParKnown );
+
+  // Create an nTheta by nTheta identity matrix.
+  valarray<double> identityNTheta( nTheta * nTheta );
+  identity( nTheta, identityNTheta );
+
+  // Set the known value for the derivative of the standard parameter,
+  //
+  //     d   standardPar
+  //      b
+  //             -                                                 -
+  //            |    I                                         0    |
+  //            |     nTheta                                        |
+  //            |                                                   |
+  //         =  |    0          d        omegaMinRep( omegaPar )    |  ,
+  //            |                omegaPar                           |
+  //             -                                                 -
+  //
+  standardPar_indParKnown = 0.0;
+  replaceSubblock(
+    standardPar_indParKnown,
+    nIndPar,
+    identityNTheta,
+    nTheta,
+    thetaOffsetInIndPar,
+    thetaOffsetInIndPar );
+  replaceSubblock(
+    standardPar_indParKnown,
+    nIndPar,
+    omegaMinRep_omegaParKnown,
+    nOmegaPar,
+    omegaParOffsetInIndPar,
+    omegaParOffsetInIndPar );
 
 
   //------------------------------------------------------------
@@ -1378,7 +1448,7 @@ void IndPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
     indParUpKnown [k + omegaParOffsetInIndPar] = omegaParUpKnown [k];
   }
   
-  // Since the step sizes may change as PopPredModel evolves, only 
+  // Since the step sizes may change as IndPredModel evolves, only 
   // check that they are positive.
   for ( k = 0; k < nIndPar; k++ )
   {
@@ -1454,6 +1524,18 @@ void IndPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
     indParUp,
     indParUpKnown,
     "indParUp",
+    tol );
+
+  compareToKnown( 
+    standardPar,
+    standardParKnown,
+    "standardPar",
+    tol );
+
+  compareToKnown( 
+    standardPar_indPar,
+    standardPar_indParKnown,
+    "standardPar_indPar",
     tol );
 }
 
