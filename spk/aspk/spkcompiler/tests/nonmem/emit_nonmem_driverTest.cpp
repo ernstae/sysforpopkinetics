@@ -43,25 +43,25 @@ void emit_nonmem_driverTest::test()
 
   testPopSimOnly( "sim_driver", 
 		  "FitPopulationTestModel",
-                  "FitPopulationTestModel model( nPopPar, nIndPar, nMeasurementsAll );\n",
+                  "FitPopulationTestModel model( nPopPar, nIndPar, nMeasurements );\n",
 		  spkInfo,
 	          nonmemInfo
 		);
   testPopEstOnly( "est_driver", 
 		  "FitPopulationTestModel",
-                  "FitPopulationTestModel model( nPopPar, nIndPar, nMeasurementsAll );\n",
+                  "FitPopulationTestModel model( nPopPar, nIndPar, nMeasurements );\n",
 		  spkInfo,
 		  nonmemInfo );
 
   testPopSimEst( "simest_driver", 
 		  "FitPopulationTestModel",
-                  "FitPopulationTestModel model( nPopPar, nIndPar, nMeasurementsAll );\n",
+                  "FitPopulationTestModel model( nPopPar, nIndPar, nMeasurements );\n",
 		  spkInfo,
 		  nonmemInfo );
 
   testPopSimEstStat( "simeststat_driver", 
 		  "FitPopulationTestModel",
-                  "FitPopulationTestModel model( nPopPar, nIndPar, nMeasurementsAll );\n",
+                  "FitPopulationTestModel model( nPopPar, nIndPar, nMeasurements );\n",
 		  spkInfo,
 		  nonmemInfo );
 
@@ -386,8 +386,8 @@ void emit_nonmem_driverTest::prepInfo( struct SpkParameters & spkInfo,
 
   // Number of measurements per individual (same for all)
   valarray<int> N( 1, nInd );
-  spkInfo.nMeasurementsAll.resize( nInd );
-  spkInfo.nMeasurementsAll = N;
+  spkInfo.nMeasurements.resize( nInd );
+  spkInfo.nMeasurements = N;
 
   // Number of measurements in total
   const int nY = N.sum();
