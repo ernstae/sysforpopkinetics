@@ -218,7 +218,8 @@ static void spawn_individual(int iid) {
   arg[2] = spkjob_tid;
   arg[3] = mode;
   arg[4] = NULL;
-  sprintf(buf, "%s/arch/bin/%s/spk%s/spkind", SPK_SHARE, ARCH, mode);
+  //  sprintf(buf, "%s/arch/bin/%s/spk%s/spkind", SPK_SHARE, ARCH, mode);
+  sprintf(buf, "spkind");
   int rval = pvm_spawn(buf, arg, 0, NULL, 1, &tid);
   if (rval < 0) 
     die("could not spawn individual level due to system error");

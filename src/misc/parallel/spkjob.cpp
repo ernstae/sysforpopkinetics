@@ -1,4 +1,4 @@
- /*
+/*
   NAME
   spkjob -- drive the spk parallel protype
       
