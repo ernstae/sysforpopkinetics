@@ -24,13 +24,13 @@
     <a class=quick href="userjobs.jsp">My Jobs</a>
 </p>
 <p>
-    <a class=quick href="examplejobs.jsp?start=0&counter=0">Job Examples</a>
-</p>
-<p>
     <a class=quick href="usermodels.jsp?start=0&counter=0">My Models</a>
 </p>
 <p>
     <a class=quick href="userdatasets.jsp?start=0&counter=0">My Datasets</a>
+</p>
+<p>
+    <a class=quick href="examplejobs.jsp?start=0&counter=0">Job Examples</a>
 </p>
 <p>
     <a class=quick href="modellibrary.jsp?start=0&counter=0">Model Library</a>
