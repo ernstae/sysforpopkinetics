@@ -209,6 +209,7 @@ libspk_la_SOURCES = \
 	ppkaOpt.h \
 	printInMatrix.h \
 	quasiNewtonAnyBox.h \
+	QuasiNewtonAnyBoxObj.h \
 	randNormal.h \
 	replaceIth.h \
 	replaceJth.h \
@@ -430,6 +431,7 @@ libspk_release_la_SOURCES = \
 	ppkaOpt.h \
 	printInMatrix.h \
 	quasiNewtonAnyBox.h \
+	QuasiNewtonAnyBoxObj.h \
 	randNormal.h \
 	replaceIth.h \
 	replaceJth.h \
@@ -545,6 +547,7 @@ pkginclude_HEADERS = \
 	ppkaOpt.h \
 	printInMatrix.h \
 	quasiNewtonAnyBox.h \
+	QuasiNewtonAnyBoxObj.h \
 	randNormal.h \
 	replaceIth.h \
 	replaceJth.h \
