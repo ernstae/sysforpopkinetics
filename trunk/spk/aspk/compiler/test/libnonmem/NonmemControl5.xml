@@ -27,9 +27,9 @@
         </sigma>
         <omega span="3" struct="block">
                 <in>
-                        <value>2.44949</value>
+                        <value fixed>2.44949</value>
                         <value>0.00204124</value>
-                        <value>0.013994</value>
+                        <value fixed>0.013994</value>
                         <value>0.122474</value>
                         <value>0.410889</value>
                         <value>0.464941</value>
