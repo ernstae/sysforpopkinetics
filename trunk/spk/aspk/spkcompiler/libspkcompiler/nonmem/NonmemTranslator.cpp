@@ -725,9 +725,6 @@ void NonmemTranslator::generateMakefile() const
     }
   else
     {
-      oMakefile << "MONTE_DIR = /usr/local/src/spktest/ml" << endl;
-      oMakefile << endl;
-
       oMakefile << "MONTE_SRC = \\" << endl;
       oMakefile << "\tmonteDriver.cpp \\" << endl; 
       oMakefile << "\tAnalyticIntegral.cpp \\" << endl;
@@ -745,7 +742,8 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "\tMapMonte.h \\" << endl;
       oMakefile << endl;
 
-      oMakefile << "prod : driver $(MONTE_SRC) $(MONTE_INCLUDE) $(COMMON_INCLUDE)" << endl;
+      oMakefile << "prod : " << endl;
+      oMakefile << "\tcp /usr/local/src/$(PROD_DIR)/ml/* ." << endl;
       oMakefile << "\tg++ $(CPP_FLAGS) $(MONTE_SRC) -o monteDriver ";
       oMakefile << "-L/usr/local/lib/$(PROD_DIR) ";
       oMakefile << "-I/usr/local/include/$(PROD_DIR) ";
@@ -753,7 +751,8 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "$(LIBS)" << endl;
       oMakefile << endl;
       
-      oMakefile << "test : driver $(MONTE_SRC) $(MONTE_INCLUDE) $(COMMON_INCLUDE)" << endl;
+      oMakefile << "test : " << endl;
+      oMakefile << "\tcp /usr/local/src/$(TEST_DIR)/ml/* . " << endl;
       oMakefile << "\tg++ $(CPP_FLAGS) $(MONTE_SRC) -o monteDriver ";
       oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
       oMakefile << "-I/usr/local/include/$(TEST_DIR) ";
@@ -761,44 +760,6 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "$(LIBS)" << endl;
       oMakefile << endl;
   
-      oMakefile << "driver : " << endl;
-      oMakefile << "\tcp $(MONTE_DIR)/$@ ." << endl;
-      oMakefile << endl;
-
-      oMakefile << "monteDriver.cpp : " << endl;
-      oMakefile << "\tcp $(MONTE_DIR)/$@ ." << endl;
-      oMakefile << endl;
-
-      oMakefile << "AnalyticIntegral.cpp :" << endl;
-      oMakefile << "\tcp $(MONTE_DIR)/$@ ." << endl;
-      oMakefile << "AnalyticIntegral.h :" << endl;
-      oMakefile << "\tcp $(MONTE_DIR)/$@ ." << endl;
-      oMakefile << endl;
-
-      oMakefile << "GridIntegral.cpp :" << endl;
-      oMakefile << "\tcp $(MONTE_DIR)/$@ ." << endl;
-      oMakefile << "GridIntegral.h :" << endl;
-      oMakefile << "\tcp $(MONTE_DIR)/$@ ." << endl;
-      oMakefile << endl;
-
-      oMakefile << "MontePopObj.cpp :" << endl;
-      oMakefile << "\tcp $(MONTE_DIR)/$@ ." << endl;
-      oMakefile << "MontePopObj.h : " << endl;
-      oMakefile << "\tcp $(MONTE_DIR)/$@ ." << endl;
-      oMakefile << endl;
-
-      oMakefile << "MapBay.cpp :" << endl;
-      oMakefile << "\tcp $(MONTE_DIR)/$@ ." << endl;
-      oMakefile << "MapBay.h : " << endl;
-      oMakefile << "\tcp $(MONTE_DIR)/$@ ." << endl;
-      oMakefile << endl;
-
-      oMakefile << "MapMonte.cpp : " << endl;
-      oMakefile << "\tcp $(MONTE_DIR)/$@ ." << endl;
-      oMakefile << "MapMonte.h : " << endl;
-      oMakefile << "\tcp $(MONTE_DIR)/$@ ." << endl;
-      oMakefile << endl;
-
       oMakefile << "clean : " << endl;
       oMakefile << "\trm -f $(COMMON_INCLUDE) \\" << endl;
       oMakefile << "\t$(MONTE_SRC) \\" << endl;
@@ -808,7 +769,7 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "\tresult.xml \\" << endl;
       oMakefile << "\tpredEqn.cpp \\" << endl;
       oMakefile << "\tspk_error.tmp \\" << endl;
-      oMakefile << "*.o" << endl;
+      oMakefile << "\t*.o" << endl;
     }
   oMakefile.close();
 
