@@ -16,7 +16,7 @@
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
 #include <spk/printInMatrix.h>
-#include <read_nonmem_driver.h>
+#include <nonmem/read_nonmem_driver.h>
 
 using namespace std;
 using namespace CppUnit;

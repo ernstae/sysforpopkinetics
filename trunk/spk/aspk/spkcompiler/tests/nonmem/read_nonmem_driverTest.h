@@ -7,7 +7,7 @@
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestSuite.h>
-#include "nonmem/read_nonmem_driver.h"
+#include <nonmem/read_nonmem_driver.h>
 
 class read_nonmem_driverTest : public CppUnit::TestFixture {
 
