@@ -586,6 +586,22 @@ OR
     const DoubleMatrix* pdvecXUp;       // Unscaled upper bounds.
     const DoubleMatrix* pdvecXDiff;     // Difference between unscaled  
                                         // lower and upper bounds.
+
+    void setXLow( const DoubleMatrix* const pdvecXLowIn )
+    {
+      pdvecXLow = pdvecXLowIn;
+    }
+
+    void setXUp( const DoubleMatrix* const pdvecXUpIn )
+    {
+      pdvecXUp = pdvecXUpIn;
+    }
+
+    void setXDiff( const DoubleMatrix* const pdvecXDiffIn )
+    {
+      pdvecXDiff = pdvecXDiffIn;
+    }
+
     SpkException exceptionOb;
   };
 
@@ -707,6 +723,13 @@ void quasiNewtonAnyBox(
   // gScaled(y) = fScaled_y(y).
   DoubleMatrix drowGScaled( 1, nObjPars );
   double* pdGScaledData = drowGScaled.data();
+
+
+  //------------------------------------------------------------
+  // Prepare the objective function object.
+  //------------------------------------------------------------
+  
+  QuasiNewton01Obj objective( &dvecXLow, &dvecXUp, &dvecXDiff );
 
 
   //------------------------------------------------------------
@@ -1149,7 +1172,7 @@ void quasiNewtonAnyBox(
   size_t      quadMax;
   size_t            n;
   double        delta;
-  Fun          &obj;
+  Fun          &objective;
   // Input+Output Arguments
   size_t      &iterCurr;
   size_t     &quadCurr;
@@ -1170,8 +1193,72 @@ void quasiNewtonAnyBox(
   // warm start or if zero iterations have been requested.
   if ( !isAWarmRestart || nMaxIter == 0 )
   {
-    objEval( xCurr, fCurr, gCurr, ... );
+    objective.function( xCurr, fCurr, gCurr, ... );
   }
+
+
+     // construct function object
+
+     Fun obj(exponential, n, Q, b);
+
+
+
+     /*
+
+     Current iterate values
+
+     */
+
+     size_t        ItrCur = 0;
+
+     size_t       QuadCur = 0;
+
+     double          rCur = .5;
+
+     double          fCur;
+
+     /*
+
+     Output values
+
+     */
+
+     double         fOut;
+
+
+
+     // initial xCur
+
+     for(i = 0; i < n; i++)
+
+          xCur[i] = .5;
+
+
+
+     // fCur is objective function value at xCur
+
+     msg = obj.function(xCur, fCur); 
+
+     ok &= strcmp(msg, "ok") == 0;
+
+
+
+     // gCur is gradient at xCur
+
+     msg = obj.gradient(gCur); 
+
+     ok &= strcmp(msg, "ok") == 0;
+
+
+
+     // initialize the HCur as the identity matrix
+
+     for(i = 0; i < n; i++)
+
+          for(j = 0; j < n; j++)
+
+               HCur[i * n + j ] = static_cast<double>( i == j );
+
 
   if ( isAWarmRestart )
   {
@@ -1254,7 +1341,7 @@ void quasiNewtonAnyBox(
         quadMax,
         n,
         delta,
-        obj,
+        objective,
         iterCurr,
         quadCurr,
         rCurr,
@@ -1346,7 +1433,7 @@ void quasiNewtonAnyBox(
   if ( !ok )
   {
     SpkError err( errorCode, message.str(), __LINE__, __FILE__ );
-    throw info.exceptionOb.push( err );
+    throw objective.exceptionOb.push( err );
   }
 
 
