@@ -45,6 +45,9 @@
 $begin statistics$$
 
 $spell
+  deg
+  cv
+  ci
   Model model
   valarray
   Cov
@@ -179,7 +182,7 @@ $syntax/
 will point to an n dimensional vector containing the standard error for x if
 the pointer points to an n dimensional valarray.  
 If it points to NULL, the corresponding computation will be skipped entirely.
-If it points to a valarray sized other than n, the resulting bahavior is undetermined.
+If it points to a valarray sized other than n, the resulting behavior is undetermined.
 
 $syntax/
 
@@ -188,7 +191,7 @@ $syntax/
 will point to an n * n dimensional vector containing the correlation matrix 
 in the column major order if the pointer points to an n * n valarray.
 If it points to NULL, the corresponding computation will be skipped entirely.
-If it points to a valarray sized other than n * n, the resulting bahavior is undetermined.
+If it points to a valarray sized other than n * n, the resulting behavior is undetermined.
 
 
 $syntax/
@@ -198,7 +201,7 @@ $syntax/
 will point to an n dimensional vector containing the coefficient of variance if
 the pointer points to an n dimensional valarray.  If NULL is given, it will stay NULL.
 If it points to NULL, the corresponding computation will be skipped entirely.
-If it points to a valarray sized other than n, the resulting bahavior is undetermined.
+If it points to a valarray sized other than n, the resulting behavior is undetermined.
 
 $syntax/
 
@@ -207,7 +210,7 @@ $syntax/
 will point to an n * 2 dimensional vector containing the 95% confidence interval if
 the pointer points to an n * 2 dimensional valarray.  If NULL is given, it will stay NULL.
 If it points to NULL, the corresponding computation will be skipped entirely.
-If it points to a valarray sized other than n * 2, the resulting bahavior is undetermined.
+If it points to a valarray sized other than n * 2, the resulting behavior is undetermined.
 
 $end
 */
@@ -340,6 +343,9 @@ void statistics( const SPK_VA::valarray<double>& x,       // vector of which qua
 $begin statisticsInactiveElem$$
 
 $spell
+  ci
+  deg
+  cv
   Model model
   valarray
   Cov
@@ -469,7 +475,7 @@ the pointer points to an n dimensional valarray.  The elements of which
 corresponding $math%mask%$$ value is $math%false%$$ will be set to NAN.
 
 If it points to NULL, the corresponding computation will be skipped entirely.
-If it points to a valarray sized other than n, the resulting bahavior is undetermined.
+If it points to a valarray sized other than n, the resulting behavior is undetermined.
 
 $syntax/
 
@@ -481,7 +487,7 @@ The elements depend on those $math%x(i)%$$ of which corresponding $math%mask%$$
 is $math%false%$$ will be set to NAN.
 
 If it points to NULL, the corresponding computation will be skipped entirely.
-If it points to a valarray sized other than n * n, the resulting bahavior is undetermined.
+If it points to a valarray sized other than n * n, the resulting behavior is undetermined.
 
 
 $syntax/
@@ -493,7 +499,7 @@ the pointer points to an n dimensional valarray.  The elements of which
 corresponding $math%mask%$$ value is $math%false%$$ will be set to NAN.
 
 If it points to NULL, the corresponding computation will be skipped entirely.
-If it points to a valarray sized other than n, the resulting bahavior is undetermined.
+If it points to a valarray sized other than n, the resulting behavior is undetermined.
 
 $syntax/
 
@@ -504,7 +510,7 @@ the pointer points to an n * 2 dimensional valarray.
 The elements of which corresponding $math%mask%$$ value is $math%false%$$ will be set to NAN.
 
 If it points to NULL, the corresponding computation will be skipped entirely.
-If it points to a valarray sized other than n * 2, the resulting bahavior is undetermined.
+If it points to a valarray sized other than n * 2, the resulting behavior is undetermined.
 
 $end
 */

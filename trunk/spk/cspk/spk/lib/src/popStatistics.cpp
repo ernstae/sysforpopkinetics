@@ -865,7 +865,7 @@ $codep
 
 =======================
 objective = MODIFIED_LAPLACE
-popOjb = 21.8566
+popObj = 21.8566
 popPar =
 [ 1.95115 ]
 [ 3.63406 ]
@@ -1315,7 +1315,7 @@ at $math%alp%$$.  Otherwise, this function will not attempt to change the
 contents of the $code SPK_VA::valarray<double>$$ object pointed to by 
 $italic popParCorOut$$. 
 
-The $math%(i, j)%$$-th element of the corration matrix
+The $math%(i, j)%$$-th element of the correlation matrix
 will be replaced by NaN if $code mask[i]$$ or $code mask[j]$$ is $math%false%$$.
 
 $syntax/

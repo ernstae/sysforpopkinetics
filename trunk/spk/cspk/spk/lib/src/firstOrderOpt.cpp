@@ -46,7 +46,8 @@
 $begin FirstOrderOpt$$
 
 $spell
-	Model model
+        throwExcepIfMaxIter
+        struct
         Model model
 	cbc
 	cerr
@@ -599,7 +600,7 @@ $syntax/
 /$$
 If $italic pdrowLTilde_popOut$$ is not $code NULL$$, then the 
 $code DoubleMatrix$$ pointed to by $italic pdrowLTilde_popOut$$ 
-vmust be declared in the function that calls this function, and it 
+must be declared in the function that calls this function, and it 
 must be a row vector that is the same length as
 the fixed population parameter vector $math%pop%$$.
 If $italic pdrowLTilde_popOut$$ is not $code NULL$$, 

@@ -94,8 +94,8 @@ $begin residuals$$
 $section Calculating Residuals$$
 
 $spell
-Model
-model
+resize
+Model model
 const
 std
 namespace
@@ -251,7 +251,7 @@ protected:
     {
         _b = b;
     }
-    void doDataMean( valaaray<double>& fiOut ) const 
+    void doDataMean( valarray<double>& fiOut ) const 
     {
         //--------------------------------------------------------------
 	// Calculates

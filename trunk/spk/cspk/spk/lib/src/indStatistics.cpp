@@ -866,7 +866,7 @@ at $italic indPar$$.  Otherwise, this function will not attempt to change the
 contents of the $code SPK_VA::valarray<double>$$ object pointed to by 
 $italic indParCorOut$$.  
 
-The $math%(i, j)%$$-th element of the corration matrix
+The $math%(i, j)%$$-th element of the correlation matrix
 will be replaced by NaN if $code mask[i]$$ or $code mask[j]$$ is $math%false%$$.
 
 $syntax/

@@ -195,6 +195,10 @@ $begin randNormal$$
 $section Creates a vector of random values from a multivariate normal distribution$$
 
 $spell
+cstdlib
+srand
+spk
+valarray
 Cholesky
 cbc
 const

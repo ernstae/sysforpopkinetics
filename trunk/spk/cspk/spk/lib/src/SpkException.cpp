@@ -140,6 +140,7 @@ $spell
     enum
     instanciate
     filename
+    len
 $$
 
 $section SpkException Class$$

@@ -67,6 +67,8 @@ int           WarningsManager::nWarnings = 0;
 /*
 $begin WarningsManager_constructor$$
 $spell 
+  bool
+  const
 $$
 
 $section Construct a Shared List of Warning Messages$$
@@ -123,6 +125,8 @@ WarningsManager::WarningsManager()
 /*
 $begin WarningsManager_addWarning$$
 $spell
+  const
+  bool
 $$
 
 $section Add a New Warning to the List of Warnings$$
@@ -290,6 +294,7 @@ void WarningsManager::clearAllWarnings()
 /*
 $begin WarningsManager_anyWarnings$$
 $spell
+  bool
 $$
 
 $section Determine if there are Currently Any Warnings$$

@@ -109,6 +109,7 @@
 /*
   $begin SpkError$$
   $spell 
+  ecode
   Code code
   cpp
   const
@@ -479,11 +480,11 @@
   $rend
 
   SPK_SIMULATION_ERR $cend
-  indicates some error occured during data simulation.
+  indicates some error occurred during data simulation.
   $rend
 
   SPK_STATISTICS_ERR $cend
-  indicates some error occured during calculating statistics.
+  indicates some error occurred during calculating statistics.
 
   SPK_USER_INPUT_ERR      $cend
   This constant value is to be used to indicate an invalid parameter value given by the end user.
@@ -741,7 +742,7 @@ SpkError::SpkError(enum ErrorCode ecode, const char* mess, unsigned int line, co
   try{
     if( strlen(file) > maxFilenameLen() )
       {
-        cerr << "Unrecoverable error occured at " << __LINE__ << " in " << __FILE__ << endl;
+        cerr << "Unrecoverable error occurred at " << __LINE__ << " in " << __FILE__ << endl;
         cerr << "The length of a filename must be less than " << strlen(_filename) << endl;
         cerr << "System terminates..." << endl;
         abort();
@@ -764,7 +765,7 @@ SpkError::SpkError( const std::exception& e, const char* mess, unsigned int line
   try{
     if( strlen(mess) > maxMessageLen() )
       {
-        cerr << "Unrecoverable error occured at " << __LINE__ << " in " << __FILE__ << endl;
+        cerr << "Unrecoverable error occurred at " << __LINE__ << " in " << __FILE__ << endl;
         cerr << "The length of a message must be less than " << strlen(_message) << endl;
         cerr << "System terminates..." << endl;
         abort();
@@ -772,7 +773,7 @@ SpkError::SpkError( const std::exception& e, const char* mess, unsigned int line
       }
     if( strlen(file) > maxFilenameLen() )
       {
-        cerr << "Unrecoverable error occured at " << __LINE__ << " in " << __FILE__ << endl;
+        cerr << "Unrecoverable error occurred at " << __LINE__ << " in " << __FILE__ << endl;
         cerr << "The length of a filename must be less than " << strlen(_filename) << endl;
         cerr << "System terminates..." << endl;
         abort();
