@@ -340,7 +340,7 @@
       <para>
 	The choice of API also determines the operating system that must be used.  For SPK, this 
 	turns out to be of prime importance, because almost all 
-	(HPC) clusters run Unix or Unix-compatible operating systems rather than Windows.
+	HPC clusters run Unix or Unix-compatible operating systems rather than Windows.
 	SPK is developed to the open source GNU version of the Unix API. This is
 	the most portable of all APIs.  This choice enables SPK to run on
 	practically all clusters available. 
