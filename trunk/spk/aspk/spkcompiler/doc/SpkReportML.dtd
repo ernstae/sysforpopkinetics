@@ -12,6 +12,9 @@ This documentation specifies the information passed back from CSPK to MDA.
 
 <!ELEMENT spkreportML (error_message? | pop_analysis_result? | ind_analysis_result? | presentation_data?)>
 
+<!-- <spkreportML version="0.1"> The version number of the SpkReportML document.  For the initial version, it is "0.1".-->
+<!ATTLIST spkreportML version (0.1|0.2) #REQUIRED>
+
 <!-- ===================================== -->
 <!--                 MESSAGE               -->
 <!-- ===================================== -->
