@@ -59,10 +59,11 @@ For numbers, you can use the decimal format (ex. 0.1) or scientific notation (ex
 <!ELEMENT up (value)+>
 
 <!-- <data_labels> Sequence of data labels.  The <label>s are matched to the columns of data values from left to rigth, in the order of appearance.
+The filename attribute is used to label the entire data set.
 
 For example, given the &lt;data_labels&gt; definition,
 <html:pre><html:code>
-   &lt;data_labels&gt;
+   &lt;data_labels filename="xxx.dat"&gt;
       &lt;<label> name="ID"/&gt;
       &lt;<label> name="TIME"/&gt;
       &lt;<label> name="CP" synonym="DV"/&gt;
@@ -113,6 +114,10 @@ Either label or synonym may be one of the NONMEM reserved identifiers, among whi
 </html:/ul>
 -->
 <!ELEMENT data_labels (label)+>
+
+<!-- <data_labels filename="xxx"> The label (ie. filename) for the entire data set.
+-->
+<!ATTLIST data_labels filename CDATA #REQUIRED>
 
 <!-- <label> The name/label of the item. -->
 <!ELEMENT label EMPTY>
