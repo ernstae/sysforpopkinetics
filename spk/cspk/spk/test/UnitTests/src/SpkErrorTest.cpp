@@ -105,7 +105,6 @@ Test* SpkErrorTest::suite()
     suiteOfTests->addTest(new TestCaller<SpkErrorTest>(
                           "formatLongErrorTest", 
                           &SpkErrorTest::formatLongErrorTest));
-
     return suiteOfTests;
 }
 /*

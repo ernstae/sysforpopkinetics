@@ -29,20 +29,25 @@
 #include <map>
 #include <exception>
 #include <string>
+#include <xercesc/dom/DOM.hpp>
+#include <xercesc/parsers/XercesDOMParser.hpp>
 
 namespace SpkError_const{
-  const unsigned int ERRORCODE_FIELD_LEN = 4;
-  const unsigned int LINENUM_FIELD_LEN   = 6;
-  const unsigned int FILENAME_FIELD_LEN  = 128;
-  const unsigned int MESSAGE_FIELD_LEN   = 256;
+  const unsigned int ERRORCODE_FIELD_LEN   =   4;
+  const unsigned int LINENUM_FIELD_LEN     =   6;
+  const unsigned int FILENAME_FIELD_LEN    = 128;
+  const unsigned int MESSAGE_FIELD_LEN     = 256;
+  const unsigned int DESCRIPTION_FIELD_LEN = 128;
 
   const unsigned int ERROR_SIZE        
       = FILENAME_FIELD_LEN + 1
       + MESSAGE_FIELD_LEN + 1
       + ERRORCODE_FIELD_LEN + 1
       + LINENUM_FIELD_LEN + 1
-      //+ strlen("errorcode\n") + strlen("linenum\n") + strlen("filename\n") + strlen("message\n");
-      + 10 + 8 + 9 + 8;
+      + DESCRIPTION_FIELD_LEN + 1
+      //+ strlen("errorcode\n") + strlen("linenum\n") + strlen("filename\n") + strlen("message\n")
+      // + strlen("description\n");
+      + 10 + 8 + 9 + 8 + 13;
 
   const char ERRORCODE_FIELD_NAME[] = "errorcode";
   const char ERRORCODE_DESCRIPTION_FIELD_NAME[] = "description";
@@ -54,7 +59,7 @@ class SpkError
 {
 
 public:
-
+  xercesc::XercesDOMParser * parser;
   //
   // Each error code is preceded by SPK_ in order to avoid name conflict.
   // Somewhere in the vender supplied libraries predefine OVERFLOW.
@@ -135,6 +140,9 @@ public:
       // Errors during data simulation
       SPK_SIMULATION_ERR,
  
+      // XML DOM related errors
+      SPK_XMLDOM_ERR,
+
       // Unknown
       SPK_UNKNOWN_ERR
   };
@@ -159,10 +167,7 @@ private:
   // error message added by client
   char _message[SpkError_const::MESSAGE_FIELD_LEN+1];
 
-  // returns the maximum value allowed for error code
-  unsigned int SpkError::maxErrorcode() throw();
-
-
+  void initXmlParser();
 
 public:
 
@@ -177,6 +182,12 @@ public:
 
   // method that returns the max number of characters in a message
   static unsigned int maxMessageLen() throw();
+
+  // returns the maximum value allowed for an error code
+  static unsigned int maxErrorcode() throw();
+
+  // returns the maximum length of characters allowed for a description
+  static unsigned int maxDescriptionLen() throw();
 
   // default constructor
   SpkError() throw();
@@ -209,15 +220,13 @@ public:
   // returns the message
   const char* message() const throw();
 
-  // serialize
-  const std::string getXml( ) const;
-
-  friend std::string& operator<<(std::string& s, const SpkError& e);
-  friend std::ostream& operator<<(std::ostream& stream, const SpkError& e);
+  friend std::string&  operator<<( std::string& s, const SpkError& e );
+  friend std::ostream& operator<<( std::ostream& stream, const SpkError& e);
 
   // unserialize
-  friend std::string& operator>>(std::string& s, SpkError& e);
-  friend std::istream& operator>>(std::istream& stream, SpkError& e);
+  friend const std::string& operator>>( const std::string& s, SpkError& e );
+  friend std::istream& operator>>( std::istream& stream, SpkError& e );
+  friend const xercesc::DOMElement* operator>>( const xercesc::DOMElement* error, SpkError& e );
 
   // formats an error message the same way as the serialize function 
   friend void formatLongError(

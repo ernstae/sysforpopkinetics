@@ -30,6 +30,42 @@
  *
  *************************************************************************/
 /*************************************************************************
+ * <First Cut>
+ * 
+ *
+ * Modifications that encompuses Rules 2 and 3:
+ *
+ * Make the size of SpkException object variable.
+ * 
+ * An SpkException object is serialized in a form of XML. 
+ *
+ *************************************************************************/
+/*************************************************************************
+ * <The Second Cut!>
+ * 2nd Generation Design & Implementation Decisions - Overall
+ * 
+ * Modification to Rule 1:
+ * > This meant no dynamic memory allocation.
+ *
+ * This caused an SpkException object grows quite large.
+ * Mover over, when such an exception is attempted to
+ * be caught more than, say, a couple times during an execution,
+ * it quickly chewed up the exception-specific heap.
+ *
+ * One alternative we could think of was minimize the size
+ * of an SpkException object.  To accomplish that,
+ * we had to give up the strict "no throw" policy on
+ * serializing and unserializing functions.
+ * Our justification was since these functions are
+ * called by clients, which is outside of heap,
+ * to perform IO operations, it's impossible to be
+ * perfectly exception safe anyway.
+ *
+ * Modification to Rule 2:
+ * N/A.
+ *
+ *************************************************************************/
+/*************************************************************************
  * <The First Cut!>
  * 1st Generation Design & Implementation Decisions - Overall
  * 
@@ -67,31 +103,6 @@
  * unserialization, the exception class had to designed without
  * inheritance.  "Clients" in this sense include Spk internal developers
  * and the external end users who may also provide User-provided Models.
- *************************************************************************/
-/*************************************************************************
- * <The Second Cut!>
- * 2nd Generation Design & Implementation Decisions - Overall
- * 
- * Modification to Rule 1:
- * > This meant no dynamic memory allocation.
- *
- * This caused an SpkException object grows quite large.
- * Mover over, when such an exception is attempted to
- * be caught more than, say, a couple times during an execution,
- * it quickly chewed up the exception-specific heap.
- *
- * One alternative we could think of was minimize the size
- * of an SpkException object.  To accomplish that,
- * we had to give up the strict "no throw" policy on
- * serializing and unserializing functions.
- * Our justification was since these functions are
- * called by clients, which is outside of heap,
- * to perform IO operations, it's impossible to be
- * perfectly exception safe anyway.
- *
- * Modification to Rule 2:
- * N/A.
- *
  *************************************************************************/
 
 /*************************************************************************
@@ -270,52 +281,16 @@ $syntax/
 
 friend std::ostream& operator<<(std::ostream& stream, const SpkException& e);
 /$$
-Returns a NULL terminated string that represents 
-this $code SpkException$$ object in the format below:
-$syntax/
-
-    count\n
-    /number of errors/\n
-    /1st error/\r
-    /2nd error/\r
-    /.../\r
-    /n-th error/\r
-    \0
-
-/$$
-where the blue characters indicate exact string literals and
-the italic words are to be replaced by actual values.
-$italic number of errors$$ specifies the number of
-SpkError objects accumulated so far, $italic 1st error$$ the firstly 
-caught error object, $italic 2nd error$$ the secondly caught error and 
-so on, each separated by the special $code \r$$ character.
+Returns a serialized SpkException object is in the format of:
 $pre
-
-$$
-where each error object is expressed in the format 
-described in the $xref/SpkError//SpkError/$$ section.
-$syntax/
-
-const std::string getXml( ) const
-/$$
-Returns a string object containg the content of the object in the following XML format:
-$pre
-<error_list length=NUM_ERRORS>\n
-<error>\n
-   <code>ERROR_CODE</code>\n
-   <file_name>FILE_NAME</file_name>\n
-   <line_number>LINE_NUMBER</line_number>\n
-   <message>MESSAGE</message>\n
-</error>\n
+<error_list len=NUMERRORS>\n
+  ERROR
 </error_list>\n
 $$
-$table
-$bold NUM_ERROR$$   $cend the number of error messages. $rend
-$bold ERROR_CODE$$  $cend an SpkError::ErrorCode value associated with the error.$rend
-$bold FILE_NAME$$   $cend the name of the file in which the error is found. $rend
-$bold LINE_NUMBER$$ $cend the line number at which the error is found. $rend
-$bold MESSAGE$$     $cend an error message.$rend
-$tend
+  $table
+  $bold NUMERRORS$$  $cend The number of error messages (ie. SpkError objects).$rend
+  $bold ERROR$$      $cend A serialized SpkError object (see $xref/SpkError//SpkError/$$).  $rend
+  $tend
 
 $syntax/
 
@@ -417,6 +392,12 @@ $end
 #include <sstream>
 #include <cassert>
 
+#include <xercesc/util/XMLString.hpp>
+#include <xercesc/util/PlatformUtils.hpp>
+#include <xercesc/dom/DOM.hpp>
+#include <xercesc/parsers/XercesDOMParser.hpp>
+#include <xercesc/framework/MemBufInputSource.hpp>
+
 #include "SpkException.h"
 
 /*------------------------------------------------------------------------
@@ -424,6 +405,7 @@ $end
  *------------------------------------------------------------------------*/
 using namespace SpkException_const;
 using namespace std;
+using namespace xercesc;
 /*------------------------------------------------------------------------
  * Static global
  *------------------------------------------------------------------------*/
@@ -458,6 +440,7 @@ SpkException::SpkException() throw()
 : _cnt(0)
 {
     //constructFormat();
+  initXmlParser();
 }
 SpkException::SpkException( enum SpkError::ErrorCode code, const char* message, unsigned int line, const char* filename) throw()
 : _cnt(0)
@@ -469,6 +452,7 @@ SpkException::SpkException( enum SpkError::ErrorCode code, const char* message, 
       cerr << "System terminates..." << endl;
       abort();
     }
+    initXmlParser();
     SpkError e(code, message, line, filename);
     _error_list[_cnt] = e;
     ++_cnt;
@@ -484,6 +468,7 @@ SpkException::SpkException( const std::exception& stde, const char* message, uns
       cerr << "System terminates..." << endl;
       abort();
     }
+    initXmlParser();
     SpkError e(stde, message, line, filename);
     _error_list[_cnt] = e;
     ++_cnt;
@@ -498,6 +483,7 @@ SpkException::SpkException( const SpkError& e ) throw()
       cerr << "System terminates..." << endl;
       abort();
     }
+    initXmlParser();
     _error_list[_cnt] = e;
     ++_cnt;
 }
@@ -518,10 +504,44 @@ SpkException::SpkException( const SpkException& e ) throw()
         cerr << "System terminates..." << endl;
         abort();
     }
+    initXmlParser();
     _cnt = e._cnt;
 }
 SpkException::~SpkException() throw()
 {
+  delete parser;
+  XMLPlatformUtils::Terminate();
+}
+void SpkException::initXmlParser()
+{
+  //
+  // Initializes the XML DOM parser.
+  //
+  try{
+    XMLPlatformUtils::Initialize();
+  }
+  catch( const XMLException & toCatch )
+    {
+      const char * error_message = XMLString::transcode( toCatch.getMessage() );
+      throw SpkException( SpkError::SPK_XMLDOM_ERR,
+			  error_message,
+			  __LINE__, __FILE__ );
+    }
+  catch( ... )
+    {
+      char error_message[ SpkError::maxMessageLen() ];
+      sprintf( error_message, "Error during Xerces-c Initialization.\nException message: %s.\n" );
+      throw SpkException( SpkError::SPK_XMLDOM_ERR,
+			  error_message,
+			  __LINE__, __FILE__ );
+
+    }
+  parser = new xercesc::XercesDOMParser;
+  parser->setValidationScheme( XercesDOMParser::Val_Auto );
+  parser->setDoNamespaces( true );
+  parser->setDoSchema( true );
+  parser->setValidationSchemaFullChecking( true );
+  parser->setCreateEntityReferenceNodes( true );
 }
 const SpkException& SpkException::operator=(const SpkException& right) throw()
 {
@@ -570,7 +590,14 @@ SpkException& SpkException::push( enum SpkError::ErrorCode code, const char* mes
     SpkError e(code, message, line, filename);
     return push(e);
 }
-
+SpkException& SpkException::cat( const SpkException& e ) throw()
+{
+  int n = e.size();
+  for( int i=0; i<n; i++ )
+    this->push( e[i] );
+  
+  return *this;
+}
 const SpkError SpkException::pop() throw()
 {
     if( empty() )
@@ -650,46 +677,103 @@ std::ostream& operator<<(std::ostream& stream, const SpkException& e)
 {
     std::string buf;
 
-    stream << "count" << endl;
-    stream << e.size() << endl;
+//    stream << "<error_list len=\"" << e.size() << "\">" << endl;
+  //  stream << "<error_list>" << endl;
     for( int i=0; i<e.size(); i++)
     {
-        buf << e._error_list[i];
-        stream << buf << '\r' << endl << endl;
+      stream << e._error_list[i] << endl;
     }
-    stream.put('\0');
+  //  stream << "</error_list>" << endl;
+
     return stream;
 }
-const std::string SpkException::getXml() const
-{
-  std::ostringstream o;
-  o << "<error_list length=\"" << this->size() << "\">" << endl;
-  for( int i=0; i<this->size(); i++ )
-    {
-      o << _error_list[i].getXml();
-    }
-  o << "</error_list>" << endl;
-  return o.str();
-}
-std::string& operator>>(std::string& s, SpkException& e)
-{
-    std::istringstream stream(s);
-    stream >> e;
-    s = stream.str();
-    return s;
-}
-std::istream& operator>>(std::istream& stream, SpkException& e)
-{
-    char buf[256];
 
-    stream >> buf;
-    assert(strcmp(buf, "count")==0);
-    stream >> buf;
-    e._cnt = atoi(buf);
+std::istream& operator>>(std::istream& str, SpkException& e)
+{
+  char c;
+  ostringstream s;
+  while( ( c = str.get() ) != char_traits<char>::eof() )
+    s << c;
 
-    for( int i=0; i<e.size(); i++ )
+  s.str() >> e;
+  return str;
+}
+#include <xercesc/dom/DOMImplementation.hpp>
+#include <xercesc/dom/DOMImplementationLS.hpp>
+#include <xercesc/dom/DOMWriter.hpp>
+#include <xercesc/framework/StdOutFormatTarget.hpp>
+const string& operator>>( const string& str, SpkException& e)
+{
+  
+  const int m = str.size() + strlen("<error_list>\n</error_list>\n");
+  char s[ m + 1 ];
+  sprintf( s, "<error_list>\n%s</error_list>\n", str.c_str() );
+  MemBufInputSource* memBufIS = new MemBufInputSource( 
+						      reinterpret_cast<const XMLByte*>( s ),
+						      m,
+						      "serialized_exception",
+                                                      false ); 
+  try{
+    e.parser->parse( *memBufIS );
+  }
+  catch (const XMLException& e)
     {
-        stream >> e._error_list[i];
+      char message[ SpkError::maxMessageLen() ];
+      sprintf( message, "An error occurred during parsing\n   Message: %s\n",
+	       XMLString::transcode(e.getMessage()) );
+      throw SpkException( SpkError::SPK_XMLDOM_ERR, message, __LINE__, __FILE__ );
     }
-    return stream;
+  catch (const DOMException& e)
+    {
+      XMLCh xMessage[SpkError::maxMessageLen()];
+      
+      char cMessage[ SpkError::maxMessageLen() ];
+      sprintf( cMessage, 
+	       "DOM Error during parsing an SpkException.\nDOMException code is: %d\n",
+	       e.code );
+
+      if (DOMImplementation::loadDOMExceptionMsg(e.code, xMessage, SpkError::maxMessageLen()))
+	{
+	  strcat( cMessage, "Message is: " );
+	  strcat( cMessage, XMLString::transcode(xMessage) );
+	}
+      
+      throw SpkException( SpkError::SPK_XMLDOM_ERR, cMessage, __LINE__, __FILE__ );
+    }
+  catch (...)
+    {
+      throw SpkException( SpkError::SPK_XMLDOM_ERR, 
+			  "An error occurred during parsing\n ", 
+			  __LINE__, __FILE__ );
+    }
+
+  DOMDocument *doc = e.parser->getDocument();
+  assert( doc != NULL );
+/*
+  XMLCh tempStr[100];
+  XMLString::transcode( "LS", tempStr, 99 );
+  DOMImplementation *impl = DOMImplementationRegistry::getDOMImplementation(tempStr);
+  DOMWriter *theSerializer = ((DOMImplementationLS*)impl)->createDOMWriter();
+  XMLFormatTarget *myFormTarget = new StdOutFormatTarget();
+  theSerializer->writeNode(myFormTarget, *doc );
+  delete theSerializer;
+*/
+  DOMNodeList * error_lists = doc->getElementsByTagName( XMLString::transcode( "error_list" ) );
+  assert( error_lists->getLength() == 1 );
+  DOMElement * error_list = dynamic_cast<DOMElement*>( error_lists->item(0) );
+  assert( error_list != NULL );
+  
+  DOMNodeList * errors = error_list->getElementsByTagName( XMLString::transcode("error") );
+  int n = errors->getLength();
+  assert( n >= 0 );
+  for( int i=0; i<n; i++ )
+    {
+      SpkError obj;
+      DOMElement * error = dynamic_cast<DOMElement*>( errors->item(i) );
+      assert( error != NULL );
+      error >> obj;
+      e.push( obj );
+    }
+
+  return str;
 }

@@ -43,7 +43,7 @@
 //
 #include "SpkError.h"
 #include <string>
-
+#include <xercesc/parsers/XercesDOMParser.hpp>
 //
 // A namespace used within SpkException class members.
 //
@@ -66,8 +66,12 @@ class SpkException
     // counting the number of errors added to the list so far
     int _cnt;
 
+    xercesc::XercesDOMParser *parser;
+
 public:	
   static unsigned int maxErrors() throw();
+
+  void initXmlParser();
 
     // default constructor
     SpkException() throw();
@@ -89,7 +93,8 @@ public:
 
     // append an error object to the list
     SpkException& push( const SpkError& ) throw();
-    SpkException& push( enum SpkError::ErrorCode, const char* message, unsigned int, const char* filename) throw();
+    SpkException& push( enum SpkError::ErrorCode, const char* message, unsigned int, const char* filename ) throw();
+    SpkException& cat( const SpkException& e ) throw();
 
 
     // remove and return the most recent Error object
@@ -110,13 +115,12 @@ public:
     int  findFile( const char* filename ) const throw();
 
     // serialize
-    const std::string getXml( ) const;
     friend std::ostream& operator<<(std::ostream& stream, const SpkException& e);
     friend std::string& operator<<(std::string& s, const SpkException& e);
 
     // unserialize 
     friend std::istream& operator>>(std::istream& stream, SpkException& e);
-    friend std::string& operator>>(std::string& s, SpkException& e);
+    friend const std::string& operator>>(const std::string& s, SpkException& e);
 
 };
 

@@ -49,6 +49,7 @@ public:
     void copyConstructorTest();
     void assignmentTest();
     void pushTest();
+    void catTest();
     void popTest();
     void serializeTest();
     void iterationTest();

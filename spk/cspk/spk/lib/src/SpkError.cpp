@@ -29,6 +29,43 @@
  *************************************************************************/
 /*************************************************************************
  * <First Cut>
+ * 
+ *
+ * Modifications that encompuses Rules 2 and 3:
+ *
+ * Make the size of SpkError object variable.
+ * 
+ * An SpkError object is serialized in a form of XML. 
+ *
+ *************************************************************************/
+/*************************************************************************
+ * <The Second Cut!>
+ * 2nd Generation Design & Implementation Decisions - Overall
+ * 
+ * Modification to Rule 1:
+ * > This meant no dynamic memory allocation.
+ *
+ * This caused an SpkException object which holds a list of
+ * SpkError objects grows quite large.
+ * Mover over, when such an exception is attempted to
+ * be caught more than, say, a couple times during an execution,
+ * it quickly chewed up the exception-specific heap.
+ *
+ * One alternative we could think of was minimize the size
+ * of an SpkException object.  To accomplish that,
+ * we had to give up the strict "no throw" policy on
+ * serializing and unserializing functions.
+ * Our justification was since these functions are
+ * called by clients, which is outside of heap,
+ * to perform IO operations, it's impossible to be
+ * perfectly exception safe anyway.
+ *
+ * Modification to Rule 2:
+ * N/A.
+ *
+ *************************************************************************/
+/*************************************************************************
+ * <First Cut>
  * 1st Generation Design & Implementation Decisions - Overall
  * 
  * Rule 1:
@@ -63,32 +100,6 @@
  * be fixed sized.  For consistency, all other fields are alsow
  * fixed sized.
  * 
- *************************************************************************/
-/*************************************************************************
- * <The Second Cut!>
- * 2nd Generation Design & Implementation Decisions - Overall
- * 
- * Modification to Rule 1:
- * > This meant no dynamic memory allocation.
- *
- * This caused an SpkException object which holds a list of
- * SpkError objects grows quite large.
- * Mover over, when such an exception is attempted to
- * be caught more than, say, a couple times during an execution,
- * it quickly chewed up the exception-specific heap.
- *
- * One alternative we could think of was minimize the size
- * of an SpkException object.  To accomplish that,
- * we had to give up the strict "no throw" policy on
- * serializing and unserializing functions.
- * Our justification was since these functions are
- * called by clients, which is outside of heap,
- * to perform IO operations, it's impossible to be
- * perfectly exception safe anyway.
- *
- * Modification to Rule 2:
- * N/A.
- *
  *************************************************************************/
 
 /*------------------------------------------------------------------------
@@ -243,9 +254,12 @@
   Returns the error message.
   $syntax/
 
-  const std::string SpkError::getXml( ) const
+  friend std::istream& operator>>(std::istream& /stream/, SpkError& /e/)
   /$$
-  Returns a string object containg the content of the object in the following XML format:
+  Read information from $italic stream$$ and insert it into $italic e$$.
+  $italic stream$$ may contain more than one serialized SpkError objects.
+
+  A serialized SpkError object is in the format of:
   $pre
   <error>\n
      <code>ERROR_CODE</code>\n
@@ -260,42 +274,9 @@
   $bold LINE_NUMBER$$ $cend the line number at which the error is found. $rend
   $bold MESSAGE$$     $cend an error message.$rend
   $tend
-
   $syntax/
 
-  friend std::istream& operator>>(std::istream& /stream/, SpkError& /e/)
-  /$$
-  Read information from $italic stream$$ and insert it into $italic e$$.
-  $italic stream$$ may contain more than one serialized SpkError objects.
-  In such a case, each object must be separated by the special character,
-  $code \r$$.
-  $pre
-
-  $$
-  Each serialized SpkError object is in the format of:
-  $syntax/
-    
-  errorcode\n
-  /error code/\n
-  description\n
-  /short default description of the error code/\n\r
-  linenum\n
-  /line number/\n
-  filename\n
-  /file name/\n
-  message\n
-  /extra info/\0
-
-  /$$
-  where the blue characters indicate exact string literals and the italic strings
-  are replaced by actual values.  $italic error code$$ is 
-  an error code, $italic line number$$ a line number, $italic file name$$
-  the name of a file which may not contain white spaces, 
-  and $italic extra info$$ an arbitrary text string which may not contain 
-  the $code \r$$ escape character.
-  $syntax/
-
-  friend std::string& operator>>(std::string& /s/, SpkError& /e/)
+  friend const std::string& operator>>(const std::string& /s/, SpkError& /e/)
   /$$
   Behaves the same as $code std::istream& SpkError::operator>>(std::istream&, SpkError&)$$
   does, except this version takes a std::string object in place of std::istream.
@@ -523,6 +504,13 @@
   $cend
   $rend
 
+  SPK_XMLDOM_ERR         $cend
+  This constant value is to be used to indicate a syntax error in DOMDocument.
+  $rend
+  
+  $cend
+  $rend
+
   SPK_UNKNOWN_ERR         $cend
   This constant value is to be used to indicate an invalid parameter value given by the end user.
   $rend
@@ -613,6 +601,12 @@
 #include <cassert>
 #include <fstream>
 
+#include <xercesc/util/XMLString.hpp>
+#include <xercesc/util/PlatformUtils.hpp>
+#include <xercesc/dom/DOM.hpp>
+#include <xercesc/parsers/XercesDOMParser.hpp>
+#include <xercesc/framework/MemBufInputSource.hpp>
+
 #include "SpkError.h"
 
 /*------------------------------------------------------------------------
@@ -620,6 +614,7 @@
  *------------------------------------------------------------------------*/
 using namespace SpkError_const;
 using namespace std;
+using namespace xercesc;
 /*------------------------------------------------------------------------
  * Static functions
  *------------------------------------------------------------------------*/
@@ -694,12 +689,18 @@ unsigned int SpkError::maxMessageLen() throw()
   return MESSAGE_FIELD_LEN;
 }
 
+unsigned int SpkError::maxDescriptionLen() throw()
+{
+  return DESCRIPTION_FIELD_LEN;
+}
 /*------------------------------------------------------------------------
  * Constructors & destructor
  *------------------------------------------------------------------------*/
 SpkError::SpkError() throw()
   : _errorcode(), _linenum(0)
 {
+  initXmlParser();
+
   try{
     std::fill(_filename, _filename+FILENAME_FIELD_LEN+1, '\0');
     std::fill(_message, _message+MESSAGE_FIELD_LEN+1, '\0');
@@ -713,6 +714,8 @@ SpkError::SpkError() throw()
 SpkError::SpkError(enum ErrorCode ecode, const char* mess, unsigned int line, const char* file) throw() 
   : _errorcode(ecode), _linenum(line)
 {
+  initXmlParser();
+
   try{
     if( strlen(file) > maxFilenameLen() )
       {
@@ -734,6 +737,8 @@ SpkError::SpkError(enum ErrorCode ecode, const char* mess, unsigned int line, co
 SpkError::SpkError( const std::exception& e, const char* mess, unsigned int line, const char* file) throw()
   : _errorcode(SpkError::SPK_STD_ERR), _linenum(line)
 {
+  initXmlParser();
+
   try{
     if( strlen(mess) > maxMessageLen() )
       {
@@ -768,6 +773,8 @@ SpkError::SpkError( const std::exception& e, const char* mess, unsigned int line
 SpkError::SpkError( const SpkError& e ) throw()
   : _errorcode(e._errorcode), _linenum(e._linenum)
 {
+  initXmlParser();
+
   // This is doing deep copy
   try{
     strcpy(_filename, e._filename);
@@ -781,10 +788,45 @@ SpkError::SpkError( const SpkError& e ) throw()
 }
 SpkError::~SpkError() throw()
 {
+  delete parser;
+  XMLPlatformUtils::Terminate();
+
+}
+/*------------------------------------------------------------------------
+ * Private member functions
+ *------------------------------------------------------------------------*/
+void SpkError::initXmlParser()
+{
+  //
+  // Initializes the XML DOM parser.
+  //
+  try{
+    XMLPlatformUtils::Initialize();
+  }
+  catch( const XMLException & toCatch )
+    {
+      const char * error_message = XMLString::transcode( toCatch.getMessage() );
+      cerr << error_message << "... terminating from " << __LINE__ << ", " << __FILE__ << endl;
+      abort();
+    }
+  catch( ... )
+    {
+      char error_message[ SpkError::maxMessageLen() ];
+      sprintf( error_message, "Error during Xerces-c Initialization.\nException message: %s.\n" );
+      cerr << error_message << "... terminating from " << __LINE__ << ", " << __FILE__ << endl;
+      abort();
+    }
+  parser = new xercesc::XercesDOMParser;
+  parser->setValidationScheme( XercesDOMParser::Val_Auto );
+  parser->setDoNamespaces( true );
+  parser->setDoSchema( true );
+  parser->setValidationSchemaFullChecking( true );
+  parser->setCreateEntityReferenceNodes( true );
 }
 /*------------------------------------------------------------------------
  * Public member functions
  *------------------------------------------------------------------------*/
+
 const SpkError& SpkError::operator=(const SpkError& right) throw()
 {
   // This is doing deep copy
@@ -808,7 +850,7 @@ std::string& operator<<(std::string& s, const SpkError& e)
   s = stream.str();
   return s;
 }
-std::string& operator>>(std::string& s, SpkError& e)
+std::string& operator<<(std::string& s, SpkError& e)
 {
   std::istringstream stream(s);
   stream >> e;
@@ -816,85 +858,118 @@ std::string& operator>>(std::string& s, SpkError& e)
   return s;
 }
 
-std::ostream& operator<<(std::ostream& stream, const SpkError& e)
+std::ostream& operator<<(std::ostream& o, const SpkError& e)
 {
-  stream << ERRORCODE_FIELD_NAME << endl;
-  stream << e._errorcode << endl;
+  o << "<error code=\"" << e._errorcode << "\">" << endl;
+  o << "<description>"  << SpkError::describe( e._errorcode ) << "</description>" << endl;
+  o << "<file_name>"    << e._filename                        << "</file_name>"   << endl;
+  o << "<line_number>"  << e._linenum                         << "</line_number>" << endl;
+  o << "<message>"      << e._message                         << "</message>"     << endl;
+  o << "</error>"       << endl;
 
-  stream << ERRORCODE_DESCRIPTION_FIELD_NAME << endl;
-  stream << SpkError::describe( e._errorcode ) << endl << '\r';
-
-  stream << LINENUM_FIELD_NAME   << endl;
-  stream << e._linenum   << endl;
-    
-  stream << FILENAME_FIELD_NAME  << endl;
-  stream << e._filename  << endl;
-    
-  stream << MESSAGE_FIELD_NAME   << endl;
-  stream << e._message;
-  stream.put('\0');
-   
-  return stream;
+  return o;
 }
-const std::string SpkError::getXml( ) const
+std::istream& operator>>( std::istream& str, SpkError& e )
 {
-  std::ostringstream o;
-  o << "<error>" << endl;
-  o << "   <code>"        << SpkError::describe( _errorcode ) << "</code>" << endl;
-  o << "   <file_name>"   << _filename                        << "</file_name>" << endl;
-  o << "   <line_number>" << _linenum                         << "</line_number>" << endl;
-  o << "   <message>"     << _message                         << "</message>" << endl;
-  o << "</error>" << endl;
-  
-  return o.str();
+  char c;
+  ostringstream s;
+  while( ( c = str.get() ) != char_traits<char>::eof() )
+    s << c;
+
+  s.str() >> e;
+  return str;
 }
-std::istream& operator>>(std::istream& stream, SpkError& e)
+#include "SpkException.h"
+const std::string& operator>>( const std::string& str, SpkError& e )
 {
-  char buf[256];
+  MemBufInputSource* memBufIS = new MemBufInputSource( 
+						      (const XMLByte*)str.c_str(),
+						      strlen( str.c_str() ),
+						      "serialized_exception",
+						      false );
+  try{
+    e.parser->parse( *memBufIS );
+  }
+  catch (const XMLException& e)
+    {
+      char message[ SpkError::maxMessageLen() ];
+      sprintf( message, "An error occurred during parsing\n   Message: %s\n",
+	       XMLString::transcode(e.getMessage()) );
+      throw SpkException( SpkError::SPK_XMLDOM_ERR, message, __LINE__, __FILE__ );
+    }
+  catch (const DOMException& e)
+    {
+      XMLCh xMessage[SpkError::maxMessageLen()];
+      
+      char cMessage[ SpkError::maxMessageLen() ];
+      sprintf( cMessage, 
+	       "DOM Error during parsing an SpkException.\nDOMException code is: %d\n",
+	       e.code );
 
-  stream >> buf;
-  assert(strcmp(buf, ERRORCODE_FIELD_NAME)==0);
-  stream >> buf;
-  e._errorcode = static_cast<SpkError::ErrorCode>(atoi(buf));
+      if (DOMImplementation::loadDOMExceptionMsg(e.code, xMessage, SpkError::maxMessageLen()))
+	{
+	  strcat( cMessage, "Message is: " );
+	  strcat( cMessage, XMLString::transcode(xMessage) );
+	}
+      
+      throw SpkException( SpkError::SPK_XMLDOM_ERR, cMessage, __LINE__, __FILE__ );
+    }
+  catch (...)
+    {
+      throw SpkException( SpkError::SPK_XMLDOM_ERR, 
+			  "An error occurred during parsing\n ", 
+			  __LINE__, __FILE__ );
+    }
 
-  stream >> buf;
-  assert(strcmp(buf, ERRORCODE_DESCRIPTION_FIELD_NAME)==0);
-  stream.getline( buf, 256 ); // eat the trailing '\n'
-  stream.getline( buf, 256, '\r');
-  // don't do anything
+  DOMDocument *doc = e.parser->getDocument();
+  assert( doc != NULL );
 
-  stream >> buf;
-  assert(strcmp(buf,LINENUM_FIELD_NAME)==0);
-  stream >> buf;
-  e._linenum = atoi(buf);
+  DOMNodeList * errors = doc->getElementsByTagName( XMLString::transcode( "error" ) );
+  assert( errors->getLength() == 1 );
 
-  stream >> buf;
-  assert(strcmp(buf,FILENAME_FIELD_NAME)==0);
-  stream >> e._filename;
+  dynamic_cast<DOMElement*>( errors->item(0) ) >> e;
 
-  stream >> buf;
-  assert(strcmp(buf,MESSAGE_FIELD_NAME)==0);
-  //
-  // istream::getline(...) does not eat leading whitespaces, 
-  // while istream::opeartor>>(...) does eat and gets the first relevant text string.
-  // Since the serialized SpkError::_filename is terminated with a new line charactor, '\n',
-  // that new line charactor must be eaten first.  Otherwise,
-  // since getline() reads from whereever istream::seek() returns to 
-  // a new line charactor, the first attempt gets only empty (or just '\n') in the
-  // buffer.  So, the first getline among the two is to eat the '\n' and the 
-  // leading whitespaces.  The second getline is really getting a relevent text string.
-  //
-  // The second getline reads till a special charactor, '\r', appears.
-  // When the stream object contains more than one serialized SpkError objects,
-  // each object must be separated by '\r'.  Otherwise it reads till NULL appears.
-  //
-  stream.getline(buf, 256);
-  stream.getline(buf, 256, '\r');
-
-  strcpy(e._message, buf);
-  return stream;
+  return str;
 }
+const DOMElement* operator>>( const DOMElement* error, SpkError& e )
+{
+  SpkError::ErrorCode error_code;
+  unsigned int line_number;
+  unsigned int num_error_code;
+  char * filename;
+  char * message;
 
+  assert( error != NULL );
+  const XMLCh * x_error_code = error->getAttribute( XMLString::transcode( "code" ) );
+  assert( x_error_code != NULL );
+  XMLString::textToBin( x_error_code, num_error_code );
+  error_code = static_cast<SpkError::ErrorCode>( num_error_code );
+
+  DOMElement * file_name_tag = dynamic_cast<DOMElement*>( 
+	       error->getElementsByTagName( XMLString::transcode("file_name") )->item(0) );
+  assert( file_name_tag != NULL );
+  filename = XMLString::transcode( file_name_tag->getFirstChild()->getNodeValue() );
+  assert( strlen( filename ) > 0 );
+
+  DOMElement * line_number_tag = dynamic_cast<DOMElement*>( 
+	       error->getElementsByTagName( XMLString::transcode("line_number") )->item(0) );
+  assert( line_number_tag != NULL );
+  const XMLCh * x_line_number = line_number_tag->getFirstChild()->getNodeValue();
+  assert( x_line_number != NULL );
+  XMLString::textToBin( x_line_number, line_number );
+
+  DOMElement * message_tag = dynamic_cast<DOMElement*>( 
+	       error->getElementsByTagName( XMLString::transcode("message") )->item(0) );
+  assert( message_tag != NULL );
+  message = XMLString::transcode( message_tag->getFirstChild()->getNodeValue() );
+  assert( strlen( message ) > 0 );
+
+  e._errorcode = error_code;
+  strcpy( e._message,  message );
+  e._linenum   = line_number;
+  strcpy( e._filename, filename );
+  return error;
+}
 void formatLongError(
 		     enum SpkError::ErrorCode  ecode,
 		     const std::string&        mess,
@@ -902,24 +977,16 @@ void formatLongError(
 		     const char*               file,
 		     std::string&              formattedError )
 {
-  std::ostringstream stream;
+  std::ostringstream o;
 
-  stream << ERRORCODE_FIELD_NAME << endl;
-  stream << ecode << endl;
+  o << "<error code=\"" << ecode << "\">" << endl;
+  o << "<description>"  << SpkError::describe( ecode ) << "</description>" << endl;
+  o << "<file_name>"    << file                        << "</file_name>"   << endl;
+  o << "<line_number>"  << line                        << "</line_number>" << endl;
+  o << "<message>"      << mess                        << "</message>"     << endl;
+  o << "</error>"       << endl;
 
-  stream << ERRORCODE_DESCRIPTION_FIELD_NAME << endl;
-  stream << SpkError::describe( ecode ) << endl << '\r';
-
-  stream << LINENUM_FIELD_NAME   << endl;
-  stream << line  << endl;
-    
-  stream << FILENAME_FIELD_NAME  << endl;
-  stream << file  << endl;
-    
-  stream << MESSAGE_FIELD_NAME   << endl;
-  stream << mess  << endl;
-   
-  formattedError = stream.str();
+  formattedError = o.str();
 }
 
 enum SpkError::ErrorCode SpkError::code() const throw()
@@ -1023,7 +1090,9 @@ const SpkError::ErrorMap SpkError::fillErrorMap()
   tmpMap.insert( ErrorMap::value_type(SPK_PARALLEL_ERR,       "SPK_PARALLEL_ERR") );
   tmpMap.insert( ErrorMap::value_type(SPK_PARALLEL_END_SIGNAL,"SPK_PARALLEL_END_SIGNAL") );
 
-  tmpMap.insert( ErrorMap::value_type(SPK_INSUFFICIENT_MEM_ERR,"SPK_INSUFFICIENT_MEM_ERR") );
+  tmpMap.insert( ErrorMap::value_type(SPK_INSUFFICIENT_MEM_ERR,"SPK_INSUFFICIENT_MEM_ERR") ); // longest =: 25
+
+  tmpMap.insert( ErrorMap::value_type(SPK_XMLDOM_ERR,         "SPK_XMLDOM_ERR") );
 
   tmpMap.insert( ErrorMap::value_type(SPK_UNKNOWN_ERR,        "SPK_UNKNOWN_ERR") );
 

@@ -76,6 +76,9 @@ Test* SpkExceptionTest::suite()
                          "pushTest", 
                          &SpkExceptionTest::pushTest));
     suiteOfTests->addTest(new TestCaller<SpkExceptionTest>(
+                         "catTest", 
+                         &SpkExceptionTest::catTest));
+    suiteOfTests->addTest(new TestCaller<SpkExceptionTest>(
                          "popTest",
                          &SpkExceptionTest::popTest));
     suiteOfTests->addTest(new TestCaller<SpkExceptionTest>(
@@ -147,6 +150,34 @@ void SpkExceptionTest::pushTest()
         e.push(err);
     }
     CPPUNIT_ASSERT_MESSAGE( "e.full()==true", e.full() );
+}
+void SpkExceptionTest::catTest()
+{
+  int n = 4;
+  SpkError e1(SpkError::SPK_UNKNOWN_ERR, "1st error ", 1, __FILE__);
+  SpkError e2(SpkError::SPK_UNKNOWN_ERR, "2nd error ", 2, __FILE__);
+  SpkError e3(SpkError::SPK_UNKNOWN_ERR, "3rd error ", 3, __FILE__);
+  SpkError e4(SpkError::SPK_UNKNOWN_ERR, "4th error ", 4, __FILE__);
+  SpkException exception1;
+  exception1.push( e1 );
+  exception1.push( e2 );
+  SpkException exception2;
+  exception2.push( e3 );
+  exception2.push( e4 );
+  
+  try{
+    exception1.cat( exception2 );
+  }
+  catch(...)
+    {
+      CPPUNIT_ASSERT_MESSAGE( "push() threw!", false );
+    }
+
+  CPPUNIT_ASSERT_EQUAL( n, (int)exception1.size() );
+  for( int i=0; i<n; i++ )
+    {
+      CPPUNIT_ASSERT( exception1[i].linenum() == i+1 );
+    }
 }
 void SpkExceptionTest::popTest()
 {
