@@ -568,8 +568,16 @@ namespace // [Begin: unnamed namespace]
     //----------------------------------------------------------
 
   public:
+    //**********************************************************
+    // 
+    // Function: function
+    //
+    //
     // Evaluate the scaled version of the objective function, 
     // fScaled(y), at the current point y.
+    //
+    //**********************************************************
+
     const char* function( const double* yCurr, double& fScaledOut )
     {
       //--------------------------------------------------------
@@ -618,11 +626,32 @@ namespace // [Begin: unnamed namespace]
 
 
       //--------------------------------------------------------
+      // Finish up.
+      //--------------------------------------------------------
+
+      return "ok";
+    }
+
+    //**********************************************************
+    // 
+    // Function: gradient
+    //
+    //
+    // Evaluate the gradient of the scaled version of the objective
+    // function, gScaled(y), at the current point y.
+    //
+    //**********************************************************
+
+    const char* gradient( double* gOut );
+    {
+      //--------------------------------------------------------
       // Evaluate the gradient of the unscaled objective function.
       //--------------------------------------------------------
 
       try
       {
+        pObjective->gradient( pdRowfScaledOut );
+
 	SHOULD THE ARGUMENTS FOR THIS function BE C ARRAYS, VALARRAYS, OR DOUBLEMATRIX'S
 	SHOULD THE ARGUMENTS FOR THIS function BE C ARRAYS, VALARRAYS, OR DOUBLEMATRIX'S
 	SHOULD THE ARGUMENTS FOR THIS function BE C ARRAYS, VALARRAYS, OR DOUBLEMATRIX'S
@@ -683,13 +712,6 @@ namespace // [Begin: unnamed namespace]
       //--------------------------------------------------------
 
       return "ok";
-    }
-
-    // Evaluate the gradient of the scaled version of the objective
-    // function, gScaled(y), at the current point y.
-    const char* gradient( double* gOut );
-    {
-      return pObjective->gradient( gOut );
     }
 
   };
