@@ -3,7 +3,7 @@
   <!ENTITY uw "University of Washington">
   <!ENTITY dept "Department of Bioengineering">
 ]>
-<article><title>Job Life Cycle Model</title>
+<article><title>Job History Model</title>
  <articleinfo>
     <revhistory>
       <revision>
@@ -15,7 +15,7 @@
     </revhistory>
   <abstract>
       <para>
-	The life cycle of an SPK job is represented as a
+	The life history of an SPK job is represented as a
 	finite state automaton.
       </para>
   </abstract>
@@ -98,39 +98,13 @@
 	    <para>
 	      <glosslist>
 		<glossentry>
-		  <glossterm>submitted</glossterm>
+		  <glossterm>submitted by MDA</glossterm>
 		  <glossdef>
 		    <para>
 		      This event occurs when the user commands the MDA
-		      to submit the job.  At that time, the job enters
-		      the <emphasis>Submitting</emphasis> state.
-		    </para>
-		  </glossdef>
-		</glossentry>
-	      </glosslist>
-	    </para>
-	  </glossdef>
-	</glossentry>
-	<glossentry>
-	  <glossterm>Submitting</glossterm>
-	  <glossdef>
-	    <para>
-	      In this state, the job is in a sort of "limbo", which
-	      persists until it has been received by the ASPK.
-	      <glosslist>
-		<glossentry>
-		  <glossterm>received by ASPK</glossterm>
-		  <glossdef>
-		    <para>
-		      This event occurs when the job has been received
-		      by the ASPK.  It then makes the transition to the
-		      <emphasis>Queued to compile</emphasis> state.
-		    </para>
-		    <para>
-		      The transition produces <emphasis>output</emphasis>:
-		      a job number and a priority.
-		      The job number is unique for this
-		      Spk installation for all time.
+		      to submit the job.  At that time, the job makes
+		      the transition to
+		      the <emphasis>Queued to Compile</emphasis> state.
 		    </para>
 		  </glossdef>
 		</glossentry>
@@ -147,7 +121,7 @@
 	      it from model specifications to computer source code.
 	      <glosslist>
 		<glossentry>
-		  <glossterm>selected</glossterm>
+		  <glossterm>selected by ASPK compiler</glossterm>
 		  <glossdef>
 		    <para>
 		      occurs when compilation resources

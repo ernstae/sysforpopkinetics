@@ -1,7 +1,7 @@
-T = job-er
+T = milestones
 HTML_OPS = --nochunks
-STYLE = ../../../stylesheet
-WEB = whitechuck.rfpk.washington.edu:/var/www/html/soft/design/global/$T
+STYLE = ../../stylesheet
+WEB = whitechuck.rfpk.washington.edu:/var/www/html/soft/v0.1/schedule/$T
 PNG = $(wildcard *.png)
 
 all:	html pdf rtf
