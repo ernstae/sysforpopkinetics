@@ -246,7 +246,7 @@ $head Arguments$$
 $syntax/
 /V/
 /$$
-The $code valarray<double> $italic V$$ contains a symmetric and positive-definite
+The $code valarray<double>$$ $italic V$$ contains a symmetric and positive-definite
 matrix in the column major order.
 
 $syntax/

@@ -47,7 +47,7 @@ $begin placeRows$$
 $spell 
 $$
 
-$section Place The Rows of A in Specified Rows of B$
+$section Place The Rows of A in Specified Rows of B$$
 
 $index placeRows$$
 $index matrix, place the rows of A in B$$

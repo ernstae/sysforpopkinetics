@@ -49,7 +49,7 @@ $$
 $section Count Trues$$
 
 $index countTrues$$
-$cindex matrix, count trues$$
+$cindex Count Trues$$
 
 $table
 $bold Prototype:$$   $cend  

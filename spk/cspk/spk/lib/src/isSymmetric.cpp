@@ -61,19 +61,21 @@
 /*
 $begin isSymmetric$$
 $spell 
+  bool
+  const
   valarray
   spk
 $$
 
-$section Verify Symmetricity of a Matrix Up To Epsilon$$
+$section Verify Symmetry of a Matrix Up To Epsilon$$
 
 $index isSymmetric$$
-$cindex matrix, symmetric$$
+$cindex Verify Symmetry /of /a /Matrix /Up /To /Epsilon$$
 
 $table
 $bold Prototype:$$   $cend  
 $syntax/bool isSymmetric( const DoubleMatrix& /A/ )/$$ $rend
-$xyntax/bool isSymmetric( const SPK_VA::valarray<double>& /A/, int /n/ ) $rend
+$syntax/bool isSymmetric( const SPK_VA::valarray<double>& /A/, int /n/ )/$$ $rend
 
 $tend
 
@@ -98,8 +100,8 @@ $syntax/
 is a $math%n by n%$$ square matrix to be tested.
 
 $syntax/
-
 /n/
+/$$
 specifies the size of $italic A$$ when it is an object of $code valarray$$.
 $head Example$$
 If you compile, link, and run the following program:

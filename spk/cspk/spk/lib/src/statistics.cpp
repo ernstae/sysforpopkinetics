@@ -41,6 +41,87 @@
  * Function Specification
  *------------------------------------------------------------------------*/
 /*
+
+$begin statistics$$
+
+$spell
+  Model model
+  valarray
+  Cov
+  Obj
+  enum
+  Laplace
+  subvector
+  dmat
+  const
+  dvec
+  int
+  cout
+  endl
+  nr
+  nc
+  iostream
+  iomanip
+  namespace
+  std
+  ios
+  covariance
+  ind
+  cerr
+  Spk
+  inv
+  optimizer
+  fp
+  Optimizer optimizer
+  Fo
+  Dir
+  Yi
+  inx
+  aval
+  bval
+  resize
+  bool
+  Dinv
+  Rinv
+  var
+  sqrt
+  cbc
+  covariances
+  cor
+  cmath
+  statistics
+  confint
+  exp
+  Cramer-Rao
+$$
+
+$section Computing Statistics of Parameter Estimates$$
+
+$index statistics, coefficient of variation, confidence interval$$
+$index covariance, standard error, correlation matrix, parameters$$
+
+$table
+$bold Prototype:$$ $cend
+$syntax/void statistics( const SPK_VA::valarray<double>& /x/,
+		 const SPK_VA::valarray<double>& /xCov/,
+		 int                             /degFree/,
+		 SPK_VA::valarray<double>*       /seOut/,
+		 SPK_VA::valarray<double>*       /corOut/,
+		 SPK_VA::valarray<double>*       /cvOut/,
+		 SPK_VA::valarray<double>*       /ciOut/
+                 )
+/$$
+$tend
+
+$fend 25$$
+
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$pre
+$$
 $head Description$$
 This function computes the standard error vector, correlation
 matrix, coefficient of variation and confidence interval of x based on
@@ -127,6 +208,8 @@ will point to an n * 2 dimensional vector containing the 95% confidence interval
 the pointer points to an n * 2 dimensional valarray.  If NULL is given, it will stay NULL.
 If it points to NULL, the corresponding computation will be skipped entirely.
 If it points to a valarray sized other than n * 2, the resulting bahavior is undetermined.
+
+$end
 */
 
 #include <cmath>
@@ -245,7 +328,7 @@ void statistics( const SPK_VA::valarray<double>& x,       // vector of which qua
 }
 /*************************************************************************
  *
- * Function: statistics
+ * Function: statistics - allows inactive elements
  *
  *************************************************************************/
 
@@ -253,7 +336,61 @@ void statistics( const SPK_VA::valarray<double>& x,       // vector of which qua
  * Function Specification
  *------------------------------------------------------------------------*/
 /*
-$section Computing Statistics$$
+
+$begin statisticsInactiveElem$$
+
+$spell
+  Model model
+  valarray
+  Cov
+  Obj
+  enum
+  Laplace
+  subvector
+  dmat
+  const
+  dvec
+  int
+  cout
+  endl
+  nr
+  nc
+  iostream
+  iomanip
+  namespace
+  std
+  ios
+  covariance
+  ind
+  cerr
+  Spk
+  inv
+  optimizer
+  fp
+  Optimizer optimizer
+  Fo
+  Dir
+  Yi
+  inx
+  aval
+  bval
+  resize
+  bool
+  Dinv
+  Rinv
+  var
+  sqrt
+  cbc
+  covariances
+  cor
+  cmath
+  statistics
+  confint
+  exp
+  Cramer-Rao
+$$
+
+$section Computing Statistics of Parameter Estimates when Some Elements are not Active$$
 
 $index statistics$$
 $syntax/void statistics( const SPK_VA::valarray<bool>  & mask,
@@ -368,6 +505,8 @@ The elements of which corresponding $math%mask%$$ value is $math%false%$$ will b
 
 If it points to NULL, the corresponding computation will be skipped entirely.
 If it points to a valarray sized other than n * 2, the resulting bahavior is undetermined.
+
+$end
 */
 namespace
 {

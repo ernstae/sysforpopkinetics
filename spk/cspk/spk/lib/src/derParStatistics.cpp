@@ -41,7 +41,58 @@
  * Function Specification
  *------------------------------------------------------------------------*/
 /*
-$begin derparstatistics$$
+$begin derParStatistics$$
+
+$spell
+  Model model
+  valarray
+  Cov
+  Obj
+  enum
+  Laplace
+  subvector
+  dmat
+  const
+  dvec
+  int
+  cout
+  endl
+  nr
+  nc
+  iostream
+  iomanip
+  namespace
+  std
+  ios
+  covariance
+  ind
+  cerr
+  Spk
+  inv
+  optimizer
+  fp
+  Optimizer optimizer
+  Fo
+  Dir
+  Yi
+  inx
+  aval
+  bval
+  resize
+  bool
+  Dinv
+  Rinv
+  var
+  sqrt
+  cbc
+  covariances
+  cor
+  cmath
+  statistics
+  confint
+  exp
+  Cramer-Rao
+$$
 
 $section Computing Statistics of Derived Parameter Estimates$$
 
@@ -211,6 +262,8 @@ while the last n elements are the upper bounds.
 If it points to NULL, it will remain unchanged.
 If it points to a valarray sized other than n * 2, the resulting
 behavior is undetermined.
+
+$end
 */
 
 
@@ -358,7 +411,7 @@ void derParStatistics(
 }
 /*************************************************************************
  *
- * Function: derParStatistics
+ * Function: derParStatistics - allows inactive elements
  *
  *************************************************************************/
 
@@ -366,26 +419,78 @@ void derParStatistics(
  * Function Specification
  *------------------------------------------------------------------------*/
 /*
-$begin derparstatistics$$
+$begin derParStatisticsInactiveElem$$
 
-$section Computing Statistics of Derived Parameter Estimates$$
+$spell
+  Model model
+  valarray
+  Cov
+  Obj
+  enum
+  Laplace
+  subvector
+  dmat
+  const
+  dvec
+  int
+  cout
+  endl
+  nr
+  nc
+  iostream
+  iomanip
+  namespace
+  std
+  ios
+  covariance
+  ind
+  cerr
+  Spk
+  inv
+  optimizer
+  fp
+  Optimizer optimizer
+  Fo
+  Dir
+  Yi
+  inx
+  aval
+  bval
+  resize
+  bool
+  Dinv
+  Rinv
+  var
+  sqrt
+  cbc
+  covariances
+  cor
+  cmath
+  statistics
+  confint
+  exp
+  Cramer-Rao
+$$
+
+$section Computing Statistics of Derived Parameter Estimates when Some Elements are not Active$$
 
 $index derParStatistics$$
 $index derived parameter, covariance, standard error, correlation matrix$$
 
 $table
 $bold Prototype:$$ $cend
-$syntax/void derParStatistics(
-  const SPK_VA::valarray<double>& /xCov/,
-  const SPK_VA::valarray<double>& /z/,
-  const SPK_VA::valarray<double>& /z_x/,
-  int                             /nDegFreedom/,
-  SPK_VA::valarray<double>*       /zCovOut/,
-  SPK_VA::valarray<double>*       /zInvCovOut/,
-  SPK_VA::valarray<double>*       /zSEOut/,
-  SPK_VA::valarray<double>*       /zCorOut/,
-  SPK_VA::valarray<double>*       /zCVOut/,
-  SPK_VA::valarray<double>*       /zCIOut/ );
+$syntax/void derParStatistics( const SPK_VA::valarray<bool>   & /mask/,
+		       const SPK_VA::valarray<double> & /xCov/,
+		       const SPK_VA::valarray<double> & /z/,
+		       const SPK_VA::valarray<double> & /z_x/,
+		       int                              /nDegOfFreedom/,
+		       SPK_VA::valarray<double>       * /zCovOut/,
+                       SPK_VA::valarray<double>       * /zInvCovOut/,
+		       SPK_VA::valarray<double>       * /zSEOut/,
+		       SPK_VA::valarray<double>       * /zCorOut/,
+		       SPK_VA::valarray<double>       * /zCVOut/,
+		       SPK_VA::valarray<double>       * /zCIOut/
+                      )
 /$$
 $tend
 
@@ -518,7 +623,7 @@ If it points to NULL, it will remain unchanged.
 If it points to a valarray sized other than n, the resulting behavior
 is undetermined.
 
-The $math%i$$-th element of the standard error vector
+The $math%i%$$-th element of the standard error vector
 will be replaced by NaN if $code mask[i]$$ is $math%false%$$.
 
 $syntax/
@@ -532,7 +637,7 @@ If it points to NULL, it will remain unchanged.
 If it points to a valarray sized other than n * n, the resulting
 behavior is undetermined.
 
-The $math%(i, j)$$-th element of the corration matrix
+The $math%(i, j)%$$-th element of the corration matrix
 will be replaced by NaN if $code mask[i]$$ or $code mask[j]$$ is $math%false%$$.
 
 $syntax/
@@ -556,7 +661,7 @@ $math%
 where CV stands for the coefficient of variation, SE stands for the standard 
 error.
 
-The $math%i$$-th element of the coefficient vector
+The $math%i%$$-th element of the coefficient vector
 will be replaced by NaN if $code mask[i]$$ is $math%false%$$.
 
 $syntax/
@@ -573,7 +678,7 @@ If it points to NULL, it will remain unchanged.
 If it points to a valarray sized other than n * 2, the resulting
 behavior is undetermined.
 
-The $math%(i,1)$$ and $math%(i,2)%$$ elements of the confidence interval matrix
+The $math%(i,1)%$$ and $math%(i,2)%$$ elements of the confidence interval matrix
 will be replaced by NaN if $code mask[i]$$ is $math%false%$$.
 
 

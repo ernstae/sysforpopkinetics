@@ -341,7 +341,7 @@ $subhead optInfo.stateInfo$$
 This $code StateInfo$$ struct contains the optimization state information
 required to perform a warm start.
 Each of its elements is accessed using the Optimizer class member
-functions, $code getStateInfo()$$ and $$setStateInfo()$$.
+functions, $code getStateInfo()$$ and $code setStateInfo()$$.
 
 $syntax/
 

@@ -169,7 +169,7 @@
 
   /alp/
   /$$
-  The $code valarray<double> $italic alp$$ contains the 
+  The $code valarray<double>$$ $italic alp$$ contains the 
   $xref/glossary/Population Notation/fixed effects/$$ for the simulation.  The measurements
   and the random effects will be simulated from these fixed effects as described above. 
 
@@ -177,7 +177,7 @@
 
   /N/
   /$$
-  The $code valarray<int> $italic N$$ contains the number of measurements
+  The $code valarray<int>$$ $italic N$$ contains the number of measurements
   taken for each subject, i.e., N[i] is the number of measurements taken for
   the ith subject and indexing begins at 1 instead of zero.  
   The number of measurements must be positive.  $italic N$$ 
@@ -188,7 +188,7 @@
 
   /bLow/
   /$$
-  The $code valarray<double> $italic bLow$$ contains the lower bounds on the
+  The $code valarray<double>$$ $italic bLow$$ contains the lower bounds on the
   variation of the random effects for all subjects, i.e., bLow[i] is 
   the lower bound on the variation of the ith random effects.  Generally, $italic bLow$$
   is negative, as random effects have mean zero.  $italic bLow$$ is 
@@ -199,7 +199,7 @@
 
   /bUp/
   /$$
-  The $code valarray<double> $italic bUp$$ contains the upper bounds on the
+  The $code valarray<double>$$ $italic bUp$$ contains the upper bounds on the
   variation of the random effects for all subjects, i.e., bUp[i] is 
   the upper bound on the variation of the ith random effects.  Generally, $italic bUp$$
   is positive, as random effects have mean zero.  $italic bUp$$ is 
@@ -210,7 +210,7 @@
 
   /yOut/
   /$$
-  Simulated data for each subject is placed in the $code valarray<double> 
+  Simulated data for each subject is placed in the $code valarray<double>$$ 
   $italic yOut$$.  The input size of $italic yOut$$ must be sized to the total number of measurments 
   prior to the call.  $italic yOut$$ is a column vector; the first $italic N[0]$$
   elements correspond to the data for the 1st individual, the next $italic N[1]$$
@@ -233,7 +233,7 @@
   /seed/
   /$$
   The default value of $italic seed$$ is random.  The user can pass an 
-  $code integer if a different starting seed value for the random number 
+  $code integer$$ if a different starting seed value for the random number 
   generators is desired.
 
 

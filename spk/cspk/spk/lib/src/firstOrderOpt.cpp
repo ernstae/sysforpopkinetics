@@ -252,7 +252,7 @@ The following subsections specify how this function uses
 some of the elements of the Optimizer object that are accessed 
 directly using get functions.
 
-$subhead optInfo.epsilon$$
+$subhead popOptimizer.optInfo.epsilon$$
 This real number is used to specify the convergence criteria
 for the optimizer.
 It must be greater than $math%0.0%$$.
@@ -276,7 +276,7 @@ $$
 Note that if $italic nMaxIter$$ is set to zero, then $math%alpIn%$$ is 
 accepted as the estimate for $math%alpHat%$$.
 
-$subhead optInfo.nMaxIter$$
+$subhead popOptimizer.optInfo.nMaxIter$$
 This integer must be greater than or equal to zero.
 It specifies the maximum number of 
 iterations to attempt before giving up on convergence.
@@ -284,7 +284,7 @@ If it is equal to zero, then the initial
 value for $math%alp%$$ is accepted as the final value, and any requested output
 values are evaluated at that final value.
 
-$subhead optInfo.traceLevel$$
+$subhead popOptimizer.optInfo.traceLevel$$
 This integer scalar specifies the amount of tracing.
 Larger values of $italic traceLevel$$ entail more tracing, 
 with $math%4%$$ being the highest level of tracing.
@@ -310,20 +310,20 @@ $$
 For more details on the tracing see the description of the level 
 parameter for the optimizer $xref/QuasiNewton01Box//QuasiNewton01Box/$$.
 
-$subhead optInfo.nIterCompleted$$
+$subhead popOptimizer.optInfo.nIterCompleted$$
 This integer scalar holds the number of iteration that have been 
 completed in the optimizer.
 
-$subhead optInfo.isTooManyIter$$
+$subhead popOptimizer.optInfo.isTooManyIter$$
 This flag indicates whether the too-many-iteration failure has occurred.  
 
-$subhead optInfo.saveStateAtEndOfOpt$$
+$subhead popOptimizer.optInfo.saveStateAtEndOfOpt$$
 This flag indicates if the state information required for a warm start
 should be saved at the end of the optimization process.
 This state information will not be saved if the optimization process
 results in an exception being thrown by $code quasiNewtonAnyBox$$.
 
-$subhead optInfo.throwExcepIfMaxIter$$
+$subhead popOptimizer.optInfo.throwExcepIfMaxIter$$
 This flag indicates if the optimizer should throw an exception when
 the maximum number of iterations is exhausted.
 If this parameter is true, then when
@@ -333,18 +333,18 @@ Otherwise, the calling program will
 need to check the parameter isTooManyIter to see if the 
 maximum number of iterations was exhausted.
 
-$subhead optInfo.isWarmStartPossible$$
+$subhead popOptimizer.optInfo.isWarmStartPossible$$
 This flag indicates whether it is possible to perform a warm start 
 using the current optimizer state information.
 
-$subhead optInfo.isWarmStart$$
+$subhead popOptimizer.optInfo.isWarmStart$$
 This flag indicates whether the optimization should run a warm start.  
 
-$subhead optInfo.stateInfo$$
+$subhead popOptimizer.optInfo.stateInfo$$
 This $code StateInfo$$ struct contains the optimization state information
 required to perform a warm start.
 Each of its elements is accessed using the Optimizer class member
-functions, $code getStateInfo()$$ and $$setStateInfo()$$.
+functions, $code getStateInfo()$$ and $code setStateInfo()$$.
 
 $syntax/
 
@@ -427,7 +427,7 @@ The following subsections specify how this function uses
 some of the elements of the Optimizer object that are accessed 
 directly using get functions.
 
-$subhead optInfo.epsilon$$
+$subhead indOptimizer.optInfo.epsilon$$
 This real number is used to specify the convergence criteria
 for the optimizer.
 It must be greater than $math%0.0%$$.
@@ -453,7 +453,7 @@ Note that if $italic nMaxIter$$ is set to zero, then the $th i$$
 column of $math%bIn%$$ is accepted as the estimate for 
 $math%bHat_i%$$.
 
-$subhead optInfo.nMaxIter$$
+$subhead indOptimizer.optInfo.nMaxIter$$
 This integer must be greater than or equal to zero.
 It specifies the maximum number of 
 iterations to attempt before giving up on convergence.
@@ -461,7 +461,7 @@ If it is equal to zero, then the initial
 value for $math%b%$$ is accepted as the final value, and any requested output
 values are evaluated at that final value.
 
-$subhead optInfo.traceLevel$$
+$subhead indOptimizer.optInfo.traceLevel$$
 This integer scalar specifies the amount of tracing.
 Larger values of $italic traceLevel$$ entail more tracing, 
 with $math%4%$$ being the highest level of tracing.
@@ -487,26 +487,26 @@ $$
 For more details on the tracing see the description of the level 
 parameter for the optimizer $xref/QuasiNewton01Box//QuasiNewton01Box/$$.
 
-$subhead optInfo.nIterCompleted$$
+$subhead indOptimizer.optInfo.nIterCompleted$$
 This integer scalar holds the number of iteration that have been 
 completed in the optimizer.
 
-$subhead optInfo.isTooManyIter$$
+$subhead indOptimizer.optInfo.isTooManyIter$$
 This flag indicates whether the too-many-iteration failure has occurred.  
 
-$subhead optInfo.saveStateAtEndOfOpt$$
+$subhead indOptimizer.optInfo.saveStateAtEndOfOpt$$
 This flag is not used for the individual level optimization.
 
-$subhead optInfo.throwExcepIfMaxIter$$
+$subhead indOptimizer.optInfo.throwExcepIfMaxIter$$
 This flag is not used for the individual level optimization.
 
-$subhead optInfo.isWarmStartPossible$$
+$subhead indOptimizer.optInfo.isWarmStartPossible$$
 This flag is not used for the individual level optimization.
 
-$subhead optInfo.isWarmStart$$
+$subhead indOptimizer.optInfo.isWarmStart$$
 This flag is not used for the individual level optimization.
 
-$subhead optInfo.stateInfo$$
+$subhead indOptimizer.optInfo.stateInfo$$
 This $code StateInfo$$ struct is not used for the individual 
 level optimization.
 
