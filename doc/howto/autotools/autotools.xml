@@ -4,13 +4,13 @@
   <!ENTITY uw "University of Washington">
   <!ENTITY dept "Department of Bioengineering">
 ]>
-<article><title>GNU Autotools in Sesami-Seed Shell</title>
+<article><title>GNU Autotools in Sesame-Seed Shell</title>
   <articleinfo>
     <abstract>
       <para>
       </para>
       <para>
-	The information in this document is targeted primarily towards
+	The information in this document is targeted primarily toward
 	the RFPK Software Team and associates and is specific to the
 	computer systems and network installed in the RFPK Laboratory
 	of the &dept; of the &uw;.  RFPK is the Resource for
@@ -52,14 +52,14 @@
   <sect1>
     <title>Preliminary</title>
     <para>
-    The primary goal of this documentation is to summarize the relationships among the tools that
-    constitute to collectively discovering peculiarity of a machine on which the tools are run
-    and creating customized Makefile(s) that build projects for that machine.
+    The primary goal of this documentation is to summarize dependencies among the tools that
+    collectively discover peculiarity of a machine on which the tools are run
+    and create Makefile(s) that build projects for that machine.
     Such tools include 
        <ulink url="http://www.gnu.org/software/autoconf/manual/autoconf-2.57/autoconf.html">Autoconf</ulink>,
        <ulink url="http://www.gnu.org/software/automake/manual/automake.html">Automake</ulink> and
        <ulink url="http://www.gnu.org/software/libtool/manual.html">Libtool</ulink>,
-    witch further make use of Autoheader, libtoolize, aclocal and so on.
+    which further make use of Autoheader, libtoolize, aclocal and so on.
     Secondarily, this documentation lists key features of these auto-tools that would be
     relevant to projects of sizes RFPK most likely to face.
     </para>
@@ -67,7 +67,7 @@
     Most of the contents of this documentation comes from 
     <ulink url="http://sources.redhat.com/autobook/autobook/autobook.html">
     GNU Autoconf, Automake, and Libtool</ulink> by Gary Vaughn, Ben Ellison, Tom Traney and Ian Taylor,
-    which is published under <ulink url="http://www.opencontent.org/openpub/">Open Plublicaiton License</ulink>.
+    which is published under <ulink url="http://www.opencontent.org/openpub/">Open Publication License</ulink>.
     </para>
     <sect2>
        <title>Convention</title>
@@ -79,7 +79,7 @@
     </sect2>
   </sect1>
   <sect1 id="nutshell">
-    <title>Autotools in Sesami-Seed-Shell</title>
+    <title>Autotools in Sesame-Seed-Shell</title>
     <para>
     Autotools is a collection of tools, which is used to discover peculiarity of a machine on which
     it runs and creates customized Makefile(s) for that machine.  Autotools includes  
@@ -123,7 +123,7 @@
              <term><filename>Makefile.am</filename></term>
              <listitem>
                <para>
-               This is a psudo Makefile and is going to be the primary input file for Automake.
+               This is a pseudo Makefile and is going to be the primary input file for Automake.
                You need at least one <filename>Makefile.am</filename> per product
                but, if the product is organized in multiple directories, you need one per sub-project/directory.  
                For instance, if your product ships with a library and a set of documentations 
@@ -254,7 +254,7 @@
           <title><literal>AC_CONFIG_HEADER</literal></title>
           <para>
           When this macro presents, all the C preprocessor macros are defined in the
-          named file (ie. by convension, you usually name it <filename>config.h</filename>)
+          named file (ie. by convention, you usually name it <filename>config.h</filename>)
           as opposed to having them defined via <literal>-D</literal> options in
           DEFS <filename>Makefile</filename>.  If you're using Automake, however,
           use <literal>AM_CONFIG_HEADER</literal> instead.
@@ -270,7 +270,7 @@
              <varlistentry>
                 <term><literal>AC_PROG_C</literal></term>
                 <listitem>
-                   <para>This checks for C compiler to use and setst he shell variable <literal>CC</literal>
+                   <para>This checks for C compiler to use and set the shell variable <literal>CC</literal>
                    to the value.  If the GNU C compiler is being used, this sets the shell variable 
                    <literal>GCC</literal> to <literal>yes</literal>.  This macro sets the shell variable
                    <literal>CFLAGS</literal> if it has not already been set.  It also calls
@@ -534,7 +534,7 @@ nobase_dist_pkgdata_DATA = images/vortex.pgm
                 <term><literal>LIBRARIES</literal></term>
                 <listitem>
                    <para>
-                   Macros of this type list (ie. static) libraries to be built.
+                   Macros of this type list (SE. static) libraries to be built.
                    </para>
                 </listitem>
              </varlistentry>
