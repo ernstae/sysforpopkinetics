@@ -610,7 +610,7 @@ namespace // [Begin: unnamed namespace]
       {
         throw e.push(
           SpkError::SPK_OPT_ERR, 
-          "An SpkException was thrown during an attempt to evaluate the objective function.",
+          "An SpkException was thrown during the evaluation of the objective function.",
           __LINE__, 
           __FILE__ );
       }
@@ -618,7 +618,7 @@ namespace // [Begin: unnamed namespace]
       {
         throw SpkException(
           stde,
-          "An standard exception was thrown during an attempt to evaluate the objective function.",
+          "An standard exception was thrown during the evaluation of the objective function.",
           __LINE__, 
           __FILE__ );
       }  
@@ -626,7 +626,7 @@ namespace // [Begin: unnamed namespace]
       {
         throw SpkException(
           SpkError::SPK_UNKNOWN_ERR, 
-          "An unknown exception was thrown during an attempt to evaluate the objective function.",
+          "An unknown exception was thrown during the evaluation of the objective function.",
           __LINE__, 
           __FILE__ );
       }
@@ -1434,7 +1434,7 @@ v  //***************************************************************************
       {
         throw e.push(
           SpkError::SPK_OPT_ERR, 
-          "An SpkException was thrown during an attempt to optimize the objective function.",
+          "An SpkException was thrown during the optimization of the objective function.",
           __LINE__, 
           __FILE__ );
       }
@@ -1442,7 +1442,7 @@ v  //***************************************************************************
       {
         throw SpkException(
           stde,
-          "An standard exception was thrown during an attempt to optimize the objective function.",
+          "An standard exception was thrown during the optimization of the objective function.",
           __LINE__, 
           __FILE__ );
       }  
@@ -1450,7 +1450,7 @@ v  //***************************************************************************
       {
         throw SpkException(
           SpkError::SPK_UNKNOWN_ERR, 
-          "An unknown exception was thrown during an attempt to optimize the objective function.",
+          "An unknown exception was thrown during the optimization of the objective function.",
           __LINE__, 
           __FILE__ );
       }
@@ -1885,7 +1885,7 @@ void NAG_CALL fvalScaled(
       // Extract the exception object from pFvalInfo.
       pInfo->exceptionOb = SpkException(
           stde, 
-          "A standard exception was thrown during an attempt to evaluate the given objective function.",
+          "A standard exception was thrown during the evaluation of the given objective function.",
           __LINE__, 
           __FILE__ 
         );
@@ -1901,7 +1901,7 @@ void NAG_CALL fvalScaled(
       // Extract the exception object from pFvalInfo.
       pInfo->exceptionOb = SpkException(
           SpkError::SPK_UNKNOWN_ERR, 
-          "Unknown exception was thrown during an attempt to evaluate the given objective function.",
+          "Unknown exception was thrown during the evaluation of the given objective function.",
           __LINE__, 
           __FILE__ 
         );
