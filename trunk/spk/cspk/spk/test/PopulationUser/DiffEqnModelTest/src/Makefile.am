@@ -21,9 +21,10 @@ genericDriver_SOURCES = \
 	readNonmemTheophylline.h \
 	../config.h
 
-genericDriver_LDFLAGS = -lspk -lspkopt -latlas_lapack -lcblas -latlas -lpthread -lm
+genericDriver_LDFLAGS = -L/usr/local/lib/spktest -lspk -lspkopt -latlas_lapack -lcblas -latlas -lpthread -lm
 
-INCLUDES = -I@top_srcdir@/
+INCLUDES = -I@top_srcdir@/ \
+	   -I/usr/local/include/spktest
 
 pkginclude_HEADERS = \
 	convertStatisticsToNonmem.h \
