@@ -53,6 +53,7 @@
 #include <spk/SpkValarray.h>
 #include <spk/allZero.h>
 #include <spk/identity.h>
+#include <spk/WarningsManager.h>
 
 using namespace CppUnit;
 
@@ -79,6 +80,9 @@ Test* fitIndividualTest::suite()
     suiteOfTests->addTest(new TestCaller<fitIndividualTest>(
                          "fitIndividualZeroIterationsTest", 
                          &fitIndividualTest::fitIndividualZeroIterationsTest));
+    suiteOfTests->addTest(new TestCaller<fitIndividualTest>(
+                         "fitIndividualLimitsWarningsTest", 
+                         &fitIndividualTest::fitIndividualLimitsWarningsTest));
 
 
     return suiteOfTests;
@@ -307,6 +311,125 @@ private:
         identity( _b.size(), DOut );
     }
     UserModelFitIndividualZeroIterationsTest(){};
+};
+
+class UserModelFitIndividualLimitsWarningsTest : public SpkModel
+{
+    valarray<double> _b;
+    int _i;
+    const int _nY;
+    const int _nB;
+
+public:
+    UserModelFitIndividualLimitsWarningsTest(int nB, int nY)
+      : _nB(nB), _nY(nY), _b(nB)
+    {}; 
+    ~UserModelFitIndividualLimitsWarningsTest(){};
+private:
+    void doSelectIndividual(int inx)
+    {
+        _i = inx;
+    }
+    void doSetIndPar(const valarray<double>& bval)
+    {
+        _b = bval;
+    }
+    void doDataMean( valarray<double>& ret ) const
+    {
+      //
+      //            / 2 \ 
+      //     f(b) = |   |   .
+      //            \ 2 /
+      //
+      ret.resize(_nY);
+      ret[0] = 2.0;
+      ret[1] = 2.0;
+    }
+    bool doDataMean_indPar( valarray<double>& ret ) const
+    {
+      //
+      //              / 0   0   0 \ 
+      //     f_b(b) = |           |   .
+      //              \ 0   0   0 /
+      //
+      ret.resize(_nY * _nB);
+      for( int i=0; i<_nY*_nB; i++ )
+        ret[i] = 0.0;
+      return false;
+    }
+    void doDataVariance( valarray<double>& ret ) const
+    {
+      //
+      //            /  1     0  \ 
+      //     R(b) = |           |  .
+      //            \  0     1  / 
+      //
+      ret.resize(_nY * _nY);
+      ret[0] = 1.0;
+      ret[1] = 0.0;
+      ret[2] = 0.0;
+      ret[3] = 1.0;
+
+    }
+    bool doDataVariance_indPar( valarray<double>& ret ) const
+    {
+      //
+      //              /  0     0     0  \ 
+      //     R_b(b) = |  0     0     0  |  .
+      //              |  0     0     0  | 
+      //              \  0     0     0  / 
+      //
+      ret.resize(_nY * _nY * _nB);
+      for( int i=0; i<_nY*_nY*_nB; i++ )
+        ret[i] = 0.0;
+      return false;
+    }   
+    void doDataVarianceInv( valarray<double>& ret ) const
+    {
+      //
+      //               /  1     0  \ 
+      //     R(b)^-1 = |           |  .
+      //               \  0     1  / 
+      //
+      ret.resize(_nY * _nY);
+      ret[0] = 1.0;
+      ret[1] = 0.0;
+      ret[2] = 0.0;
+      ret[3] = 1.0;
+    }
+    bool doDataVarianceInv_indPar( valarray<double>& ret ) const
+    {
+      //
+      //                   /  0     0     0  \ 
+      //     R^(-1)_b(b) = |  0     0     0  |  .
+      //                   |  0     0     0  | 
+      //                   \  0     0     0  / 
+      //
+      ret.resize(_nY * _nY * _nB);
+      for( int i=0; i<_nY*_nY*_nB; i++ )
+        ret[i] = 0.0;
+      return false;
+    }
+    void doIndParVariance( valarray<double>& ret ) const
+    {
+      //
+      //              /  1     0     0  \ 
+      //     D(alp) = |  0     1     0  |  .
+      //              \  0     0     1  / 
+      //
+      ret.resize(_nB * _nB);
+      identity( _nB, ret );
+    }
+    void doIndParVarianceInv( valarray<double>& ret ) const
+    {
+      //
+      //      -1        /  1     0     0  \ 
+      //     D  (alp) = |  0     1     0  |  .
+      //                \  0     0     1  / 
+      //
+      ret.resize(_nB * _nB);
+      identity( _nB, ret );
+    }
 };
 
 
@@ -982,6 +1105,141 @@ static valarray<double> fitindividualzeroiterations::funF_b( const valarray<doub
 {
   valarray<double> dmatF_b( 0.0, 4 );
   return dmatF_b;
+}
+
+
+/*************************************************************************
+ *
+ * Function: fitIndividualLimitsWarningsTest
+ *
+ *
+ * This test checks to see if warnings are issued when individual
+ * parameters are constrained by their lower and/or upper bounds.
+ *
+ *************************************************************************/
+
+void fitIndividualTest::fitIndividualLimitsWarningsTest()
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  const int nY = 2;
+
+  const int nB = 3;
+
+  int k;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the user-provided model.
+  //------------------------------------------------------------
+
+  UserModelFitIndividualLimitsWarningsTest model(nB, nY);
+
+  //------------------------------------------------------------
+  // Quantities related to the data vector, y.
+  //------------------------------------------------------------
+
+  valarray<double> dvecY( 2.0, nY );
+
+
+  //------------------------------------------------------------
+  // Quantities related to the objective function parameter, b.
+  //------------------------------------------------------------
+
+  valarray<double> bLow ( nB );
+  valarray<double> bUp  ( nB );
+  valarray<double> bIn  ( nB );
+  valarray<double> bOut ( nB );
+  valarray<double> bStep( nB );
+
+  bStep = 0.001;
+
+  // Set the upper bounds.
+  bUp[ 0 ] = 0.1e10;
+  bUp[ 1 ] = 33.75;
+  bUp[ 2 ] = 7.2503e-235;
+
+  // Set the lower bounds.
+  for ( k = 0; k < nB - 1; k++ )
+  {
+    bLow[ k ] = - bUp[ k ];
+  }
+  for ( k = nB - 1; k < nB; k++ )
+  {
+    bLow[ k ] = bUp[ k ];
+  }
+
+  // Set the initial values equal to their bounds so that warnings
+  // will be generated.
+  bIn[ 0 ] = bUp [ 0 ];
+  bIn[ 1 ] = bLow[ 1 ];
+  bIn[ 2 ] = bUp [ 2 ];
+
+
+  //------------------------------------------------------------
+  // Quantities related to the objective function, MapObj(b).
+  //------------------------------------------------------------
+
+  double dMapObjOut;
+
+  valarray<double> drowMapObj_bOut  ( nB );
+  valarray<double> dmatMapObj_b_bOut( nB * nB );
+
+
+  //------------------------------------------------------------
+  // Remaining inputs to fitIndividual.
+  //------------------------------------------------------------
+
+  double epsilon  = 1.e-3; 
+  int nMaxIter    = 0; 
+  double fOut     = 0.0; 
+  int level       = 0;
+  void* pFvalInfo = 0;
+  bool withD      = true;
+  Optimizer optimizer( epsilon, nMaxIter, level );
+
+
+  //------------------------------------------------------------
+  // Optimize MapObj(b).
+  //------------------------------------------------------------
+
+  try{
+      fitIndividual( model,
+              dvecY,
+              optimizer,
+              bLow,
+              bUp,
+              bIn,
+              bStep,
+              &bOut,
+              &dMapObjOut,
+              &drowMapObj_bOut,
+              &dmatMapObj_b_bOut,
+              withD );
+  }
+  catch(...)
+  {
+      CPPUNIT_ASSERT_MESSAGE( "fitIndividual failed!", false );
+  }
+
+
+  //----------------------------------------------------------
+  // Finish up.
+  //----------------------------------------------------------
+
+  // Uncomment these statements to see the warnings.
+  /*
+  string warnings;
+  WarningsManager::getAllWarnings( warnings );
+  cout << "########################################" << endl;
+  cout << warnings;
+  cout << "########################################" << endl;
+  */
+
 }
 
 
