@@ -102,7 +102,7 @@ libspk_la_SOURCES = \
 	replaceIth.cpp \
 	replaceJth.cpp \
 	replaceSubblock.cpp \
-	residuals.cpp \
+	wres.cpp \
 	rvecInverse.cpp \
 	simulate.cpp \
 	statistics.cpp \
@@ -214,7 +214,7 @@ libspk_la_SOURCES = \
 	replaceIth.h \
 	replaceJth.h \
 	replaceSubblock.h \
-	residuals.h \
+	wres.h \
 	rvec.h \
 	rvecInverse.h \
 	simulate.h \
@@ -324,7 +324,7 @@ libspk_release_la_SOURCES = \
 	replaceIth.cpp \
 	replaceJth.cpp \
 	replaceSubblock.cpp \
-	residuals.cpp \
+	wres.cpp \
 	rvecInverse.cpp \
 	simulate.cpp \
 	statistics.cpp \
@@ -436,7 +436,7 @@ libspk_release_la_SOURCES = \
 	replaceIth.h \
 	replaceJth.h \
 	replaceSubblock.h \
-	residuals.h \
+	wres.h \
 	rvec.h \
 	rvecInverse.h \
 	Spk.h \
@@ -552,7 +552,7 @@ pkginclude_HEADERS = \
 	replaceIth.h \
 	replaceJth.h \
 	replaceSubblock.h \
-	residuals.h \
+	wres.h \
 	rvec.h \
 	rvecInverse.h \
 	simulate.h \
