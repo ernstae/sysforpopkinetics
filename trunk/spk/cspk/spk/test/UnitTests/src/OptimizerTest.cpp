@@ -439,7 +439,7 @@ void OptimizerTest::basicTest()
   double gSet[]             = { 1.0, 2.0 };
   double hSet[]             = { 1.0, 2.0, 3.0, 4.0 };
   int    mSet               = 3;
-  double lowSet[]           = { -10.0, -20.0, -30.0 };
+  double lowSet[]           = { -10.0, +20.0, -30.0 };
   double upSet[]            = { +10.0, +20.0, +30.0 };
   int    posSet[]           = { 0, 2 };
   int    acceptStepCountSet = 23;
@@ -539,6 +539,16 @@ void OptimizerTest::basicTest()
   double* gGet               = new double[ nGet ];
   double* hGet               = new double[ nGet * nGet ];
   int     acceptStepCountGet;
+
+  valarray<double> yGet( mSet );
+
+  // getPar
+  opt1.getPar( yGet );
+
+  int nObjParFree = 0;
+  CPPUNIT_ASSERT_EQUAL( yGet[ 0 ], lowSet[0] + ( upSet[0] - lowSet[0] ) * xSet[nObjParFree++] );
+  CPPUNIT_ASSERT_EQUAL( yGet[ 1 ], lowSet[1] );
+  CPPUNIT_ASSERT_EQUAL( yGet[ 2 ], lowSet[2] + ( upSet[2] - lowSet[2] ) * xSet[nObjParFree++] );
 
   // getStateInfo
   opt1.getStateInfo(
