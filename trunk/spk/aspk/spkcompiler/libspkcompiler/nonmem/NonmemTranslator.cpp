@@ -347,7 +347,7 @@ void NonmemTranslator::generateMakefile() const
     {
       oMake << "driver : driver.cpp Pred.h DataSet.h IndData.h" << endl;
       oMake << "\tg++ -g driver.cpp -o driver ";
-      oMake << "-lspk -lnagc -latlas_lapack -lcblas -latlas -lpthread -lm";
+      oMake << "-lspk -latlas_lapack -lcblas -latlas -lpthread -lm";
       oMake << endl;
     }
   else
