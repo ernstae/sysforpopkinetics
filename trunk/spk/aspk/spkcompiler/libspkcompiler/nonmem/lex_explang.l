@@ -138,8 +138,8 @@ tok_endif                   "ENDIF"
 \n                          { ++gSpkExpLines; return '\n'; }
 .                           { 
                               char buf[128];
-                              sprintf( buf, "Invalid charactor <%s> !", nm_text );
-                              nm_error( buf ); 
+                              sprintf( buf, "Invalid charactor '%s'.", nm_text );
+                              nm_error( (char*)strdup( buf ) ); 
                               // nm_terminate();  
                             }
 %%

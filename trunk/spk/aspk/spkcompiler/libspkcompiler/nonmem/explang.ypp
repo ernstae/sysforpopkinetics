@@ -122,8 +122,9 @@ extern "C"{
     int nm_error( char * err_message )
     { 
       ++gSpkExpErrors;
-      cerr <<  "!!! Error (" << gSpkExpErrors << ") at line " << gSpkExpLines << ": " << endl;
-      cerr << "\t" << err_message << " in the model definition." << endl;
+      fprintf( stderr, 
+               "!!! Error (%d) at line %d: \n\t%s.\n", 
+               gSpkExpErrors, gSpkExpLines, err_message );
     
       return -1;
     }
