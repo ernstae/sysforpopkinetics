@@ -154,7 +154,7 @@ while(1) {
     # check for the death of our compiler child processes
     $pid_of_deceased_child = waitpid(-1, &WNOHANG);
     if ($pid_of_deceased_child > 0) {
-	syslog("info", "process with pid=$pid_of_deceased_child terminated");
+	syslog("info", "process with pid=$pid_of_deceased_child terminated normally");
     }
     # sleep for a second
     sleep(1);

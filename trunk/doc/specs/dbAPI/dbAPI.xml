@@ -10,15 +10,21 @@
     <revhistory>
       <revision>
 	<revnumber>1.0</revnumber>
-	<date>12/12/2003</date>
+	<date>December 12, 2003</date>
 	<authorinitials>afw</authorinitials>
 	<revremark>Initial version.</revremark>
       </revision>
       <revision>
 	<revnumber>1.01</revnumber>
-	<date>12/26/2003</date>
+	<date>December 26, 2003</date>
 	<authorinitials>afw</authorinitials>
 	<revremark>Added 'Side Effects' and Transaction Processing Considerations'.</revremark>
+      </revision>
+      <revision>
+	<revnumber>1.02</revnumber>
+	<date>April 6, 2004</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Added two functions: get_cmp_jobs and get_run_jobs</revremark>
       </revision>
     </revhistory>
   <abstract>

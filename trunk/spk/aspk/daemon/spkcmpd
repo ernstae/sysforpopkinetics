@@ -15,7 +15,7 @@ LOCKFILE_PATH=/tmp/lock_$SERVICE_NAME
 
 #restart()
 start() {
-    /usr/local/bin/compilerd.pl $DATABASE $HOST $DBUSER $DBPASSWD
+    /usr/local/bin/${SERVICE_NAME}.pl $DATABASE $HOST $DBUSER $DBPASSWD
 }
 stop() {
     PID=`cat $LOCKFILE_PATH`
