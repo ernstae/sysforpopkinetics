@@ -100,6 +100,43 @@ descendents. It waits for all sub-processes (which are
 instances of the spkcompiler) to terminate.  It closes the database
 and the system log, then dies.
 
+NOTE: Life-Cycle of the Working Directory Name
+
+  1. A working directory must be created before each SPK compile is 
+     forked so that the process will start up in its own unique space.
+     There it will write its output.  To insure that the
+     name of the working directory is unique, a suffix of the form
+     "-job-jjjj" is appended to the name, where "jjjj" is the unique
+     job_id that was assigned by the database management system when
+     the job was created. 
+  2. Once the working directory has been created, the daemon writes
+     a file called "job_id" containing only the job_id number. This
+     will be useful later on to determine what job this directory
+     was created for.
+  3. When the process is forked into a parent process and a child
+     process, the Linux or Unix operating system assigns a process
+     identifier (pid) number to the child.  Process identifiers are
+     recycled, but only after a long time or when the system is 
+     rebooted.  The parent could find the working directories of its
+     children by maintaining a table relating pid to job_id. We take
+     a slightly different approach, which is simple and robust. As
+     soon as it is forked, the child changes the name of its working
+     directory to reflect its pid rather than its job_id.  The 
+     directory is renamed so that the name suffix is "-pid-pppp" where
+     "pppp" is the pid.
+  4. When a child process dies, the parent receives its pid as the 
+     value returned from the waitpid system call.  Using this, it
+     easily constructs the name of the working directory. After 
+     extracting results and placing them in the database, the 
+     working directory is normally removed, unless the constant 
+     $retain_working_directory has been initialized to be true, or
+     in case the run died due to an internal error. So that the
+     retained working directory can be easily identified by software
+     maintainers, the directory name is once again changed to 
+     have "-job-jjjj" as its suffix.  The parent gets the job_id by
+     reading the contents of the file named "job_id", which it created
+     shortly after it created the directory.
+
 =head1 RETURNS
 
 Nothing, because it has no parent (other than init) to which an exit
@@ -132,18 +169,21 @@ my $bugzilla_url = "http://192.168.2.3:8081/";
 my $service_root = "spkcmp";
 my $bugzilla_product = "SPK";
 my $submit_to_bugzilla = 1;
+my $retain_working_dir = 0;
 if ($mode =~ "test") {
     $submit_to_bugzilla = !$bugzilla_production_only;
     $service_root .= "test";
     $bugzilla_product = "SPKtest";
+    $retain_working_dir = 1;
 }
 
 my $service_name = "$service_root" . "d";
-my $prefix_working_dir = "$service_root" . "-";
+my $prefix_working_dir = $service_root;
 
 my $dbh;
 my $database_open = 0;
 my $filename_cerr_report = "compilation_error.xml";
+my $filename_job_id = "job_id";
 my $filename_serr = "software_error";
 my $lockfile_path = "/tmp/lock_$service_name";
 my $lockfile_exists = 0;
@@ -214,8 +254,11 @@ sub fork_compiler {
     #    removed when the child terminates.
 
     # Create a working directory
-    my $unique_name = "$prefix_working_dir$job_id";
+    my $unique_name = $prefix_working_dir . "-job-" . $job_id;
     my $working_dir = "$tmp_dir/$unique_name";
+    if (-d $working_dir) {
+	File::Path::rmtree($working_dir, 0, 0);
+    }
     mkdir($working_dir, 0777) 
 	or death("emerg", "couldn't create working directory: $working_dir");
 
@@ -278,7 +321,12 @@ sub fork_compiler {
 	  # When the child terminates, the parent will be provided with this pid,
 	  # and hence will be able to identify the working directory of the
 	  # child.  
-	  rename "$working_dir", "$tmp_dir/$prefix_working_dir$$"
+	  my $old_working_dir = $working_dir;
+	  $working_dir = "$tmp_dir/$prefix_working_dir" . "-pid-" . $$;
+	  if (-d $working_dir) {
+	      File::Path::rmtree($working_dir, 0, 0);
+	  }
+	  rename $old_working_dir, $working_dir
 	      or do {
 		  syslog("emerg", "couldn't rename working directory");
 		  die;
@@ -325,17 +373,27 @@ sub reaper {
     my $child_signal_number = $value & 0x7f;
     my $child_dumped_core   = $value & 0x80;
     my $job_id;
-    my $save_working_dir = 1;
+    my $remove_working_dir = 0;
 
     # Get the job_id from the file we wrote to the working directory
     # of this process
-    my $working_dir = "$prefix_working_dir$child_pid";
-    chdir "$tmp_dir/$working_dir";
-    open(FH, "job_id")
-	or death('emerg', "can't open $tmp_dir/$working_dir/job_id");
+    my $unique_name = $prefix_working_dir . "-pid-" . $child_pid;
+    my $working_dir = "$tmp_dir/$unique_name";
+    chdir $working_dir;
+    open(FH, $filename_job_id)
+	or death('emerg', "can't open $working_dir/job_id");
     read(FH, $job_id, -s FH);
     close(FH);
 
+    # Rename working directory to make evidence easier to find
+    my $old_working_dir = $working_dir;
+    $unique_name = $prefix_working_dir . "-job-" . $job_id;
+    $working_dir = "$tmp_dir/$unique_name";
+    if (-d $working_dir) {
+	File::Path::rmtree($working_dir, 0, 0);
+    }
+    rename $old_working_dir, $working_dir
+	or death('emerg', "couldn't rename working directory");
 
     # Normal termination
     if ($child_exit_value == 0 && $child_signal_number == 0) {
@@ -362,7 +420,10 @@ sub reaper {
 	    or death('emerg', "job_id=$job_id: errstr: $Spkdb::errstr");
 	syslog('info', "job_id=$job_id compiled and has moved to run queue");
 
-	$save_working_dir = 0;
+	#remove the (now redundant) tar file from the working directory
+	File::Path::rmtree("cpp_source.tar");
+
+	$remove_working_dir = 1;
     }
     # Error termination
     else {
@@ -399,7 +460,7 @@ sub reaper {
 	    close(FH);
 	    $err_msg .= "failed compilation do to source errors; ";
 	    $end_code = "cerr";
-	    $save_working_dir = 0;
+	    $remove_working_dir = 1;
 	}
 	# Did the compiler die because of a software fault?
 	elsif (-f $filename_serr){
@@ -441,14 +502,9 @@ sub reaper {
 	    }
 	}
     }
-    if ($save_working_dir) {
-	# Rename working directory to make evidence easier to find
-	rename "$tmp_dir/$working_dir", "$tmp_dir/$prefix_working_dir$job_id"
-	    or death('emerg', "couldn't rename working directory");
-    }
-    else {
-	# Remove the working directory
-	File::Path::rmtree("$tmp_dir/$working_dir");
+    # Remove working directory if not needed
+    if ($remove_working_dir && !$retain_working_dir) {
+	File::Path::rmtree($working_dir);
       }
 }
 sub start {

@@ -97,6 +97,48 @@ descendents. It waits for all sub-processes (which are
 instances of the runner) to terminate.  It closes the database
 and the system log, then dies.
 
+NOTE: Life-Cycle of the Working Directory Name
+
+  1. A working directory must be created before each run-time is 
+     forked so that the process will start up in its own unique space.
+     There it will find all of the files created for it by the SPK
+     compiler and there it will write its output.  To insure that the
+     name of the working directory is unique, a suffix of the form
+     "-job-jjjj" is appended to the name, where "jjjj" is the unique
+     job_id that was assigned by the database management system when
+     the job was created. 
+  2. Once the working directory has been created, the daemon uses the
+     tar application to expand the contents of the "cpp_source" field
+     of the row for this job in the job table of the database. In effect,
+     it recreates the working directory as it was on the server which
+     hosts the SPK compiler at the time that compiler finished its
+     work with the job. In addition to the source code and data needed
+     for the run, there is a file called "job_id" which only the job_id,
+     placed there for convenient future reference.
+  3. When the process is forked into a parent process and a child
+     process, the Linux or Unix operating system assigns a process
+     identifier (pid) number to the child.  Process identifiers are
+     recycled, but only after a long time or when the system is 
+     rebooted.  The parent could find the working directories of its
+     children by maintaining a table relating pid to job_id. We take
+     a slightly different approach, which is simple and robust. As
+     soon as it is forked, the child changes the name of its working
+     directory to reflect its pid rather than its job_id.  The 
+     directory is renamed so that the name suffix is "-pid-pppp" where
+     "pppp" is the pid.
+  4. When a child process dies, the parent receives its pid as the 
+     value returned from the waitpid system call.  Using this, it
+     easily constructs the name of the working directory. After 
+     extracting results and placing them in the database, the 
+     working directory is normally removed, unless the constant 
+     $retain_working_directory has been initialized to be true, or
+     in case the run died due to an internal error. So that the
+     retained working directory can be easily identified by software
+     maintainers, the directory name is once again changed to 
+     have "-job-jjjj" as its suffix.  The parent gets the job_id by
+     reading the contents of a file in the working directory, called
+     job_id, which was placed there by the SPK compiler daemon.
+
 =head1 RETURNS
 
 Nothing, because it has no parent (other than init) to which an exit
@@ -130,30 +172,37 @@ my $concurrent = 0;
 my $service_root = "spkrun";
 my $bugzilla_product = "SPK";
 my $submit_to_bugzilla = 1;
+my $retain_working_dir = 0;
 if ($mode =~ "test") {
     $submit_to_bugzilla = !$bugzilla_production_only;
     $service_root .= "test";
     $bugzilla_product = "SPKtest";
+    $retain_working_dir = 1;
 }
 
 my $service_name = "$service_root" . "d";
-my $prefix_working_dir = "$service_root" . "-";
+my $prefix_working_dir = $service_root;
 
 my $dbh;
 my $build_failure_exit_value = 101;
 my $database_open = 0;
-my $filename_makefile = "generatedMakefile";
+
 my $filename_data = "data.xml";
+my $filename_job_id = "job_id";
+my $filename_makefile = "generatedMakefile";
 my $filename_optimizer_trace = "optimizer_trace.txt";
 my $filename_results = "result.xml";
+my $filename_runner = "driver";
 my $filename_serr = "software_error";
 my $filename_source = "source.xml";
-my $filename_runner = "driver";
-my $lockfile_path = "/tmp/lock_$service_name";
-my $lockfile_exists = 0;
+
 my $pathname_bugzilla_submit = "/usr/local/bin/bugzilla-submit";
 my $pathname_make = "/usr/bin/make";
 my $pathname_tar = "/bin/tar";
+
+my $lockfile_path = "/tmp/lock_$service_name";
+
+my $lockfile_exists = 0;
 my $spk_version = "0.1";
 my $tmp_dir = "/tmp";
 
@@ -190,34 +239,13 @@ sub fork_runner {
     my $cpp_source = $jrow->{'cpp_source'};
     my $pid;
 
-    # NOTE: Working Directory Name
-    #
-    # The name of the run-time working directory can change over the
-    # life of the job:
-    # 1. A working directory must be created before the run-time is
-    #    forked as a child of this daemon, so that the run-time
-    #    will start up in a directory unique to itself in which it
-    #    will find its input files and into which it can write
-    #    its output.  So that the name is unique, the unique job_id
-    #    is suffixed to a prefix indicating that this is a compile.
-    # 2. After the fork, the pid of the child is known.  At that 
-    #    point, the name of the directory is changed so that the
-    #    suffix is the job_id.  This will be needed later when the
-    #    child dies, because at that point the parent (this daemon)
-    #    will be provided with the pid but will not know the job_id.
-    #    After going to the working directory, the parent will
-    #    discover the job_id by reading the contents of the "job_id"
-    #    file, written in step 1.
-    # 3. If a core dump was created when the child died, the 
-    #    name of the working directory is changed so that, once
-    #    again, the suffix is the job_id. This makes it easy for
-    #    software engineers to find the dump in order to analyze
-    #    it.  All other working directories are removed, when 
-    #    the run terminates.
 
     # Create a working directory
-    my $unique_name = "$prefix_working_dir$job_id";
+    my $unique_name = $prefix_working_dir . "-job-" . $job_id;
     my $working_dir = "$tmp_dir/$unique_name";
+    if (-d $working_dir) {
+	File::Path::rmtree($working_dir, 0, 0);
+    }
     mkdir($working_dir, 0700) 
 	or death("emerg", "couldn't create working directory: $working_dir");
 
@@ -236,8 +264,7 @@ sub fork_runner {
     unless (system(@args) == 0)  {
 	death("emerg", "couldn't expand $archive_name");
     }
-    File::Path::rmtree($archive_name, 0, 0);
-
+    File::Path::rmtree($archive_name);
 
     # Fork the process into parent and child
 
@@ -260,7 +287,12 @@ sub fork_runner {
 	  # When the child terminates, the parent will be provided with this pid,
 	  # and hence will be able to identify the working directory of the
 	  # child.
-	  rename $working_dir, "$tmp_dir/$prefix_working_dir$$"
+	  my $old_working_dir = $working_dir;
+	  $working_dir = "$tmp_dir/$prefix_working_dir" . "-pid-" . $$;
+	  if (-d $working_dir) {
+	      File::Path::rmtree($working_dir, 0, 0);
+	  }
+	  rename $old_working_dir, $working_dir
 	      or do {
 		  syslog('emerg', "can't rename working directory");
 		  die;
@@ -325,6 +357,7 @@ sub reaper {
     my $child_exit_value    = $value >> 8;
     my $child_signal_number = $value & 0x7f;
     my $child_dumped_core   = $value & 0x80;
+    my $remove_working_dir = 0;
     my $job_id;
     my $optimizer_trace;
     my $report;
@@ -334,17 +367,28 @@ sub reaper {
 
     # Get the job_id from the file spkcmpd.pl wrote to the working
     # directory of this process
-    my $working_dir = "$prefix_working_dir$child_pid";
-    chdir "$tmp_dir/$working_dir";
-    open(FH, "job_id")
-	or death('emerg', "can't open $tmp_dir/$working_dir/job_id");
+    my $unique_name = "$prefix_working_dir" . "-pid-" . $child_pid;
+    my $working_dir = "$tmp_dir/$unique_name";
+    chdir $working_dir;
+    open(FH, $filename_job_id)
+	or death('emerg', "can't open $working_dir/job_id");
     read(FH, $job_id, -s FH);
     close(FH);
+
+    # Rename working directory to make evidence easier to find
+    my $old_working_dir = $working_dir;
+    $unique_name = $prefix_working_dir . "-job-" . $job_id;
+    $working_dir = "$tmp_dir/$unique_name";
+    if (-d $working_dir) {
+	File::Path::rmtree($working_dir, 0, 0);
+    }
+    rename $old_working_dir, $working_dir
+	or death('emerg', "couldn't rename working directory");
 
     # Get optimizer trace 
     if (-f $filename_optimizer_trace) {
 	open(FH, $filename_optimizer_trace)
-	    or death('emerg', "can't open $tmp_dir/$working_dir/$filename_optimizer_trace");
+	    or death('emerg', "can't open $working_dir/$filename_optimizer_trace");
 	read(FH, $optimizer_trace, -s FH);
 	close(FH);
     }
@@ -355,15 +399,15 @@ sub reaper {
 
 	# Read the results file into the report variable
 	open(FH, $filename_results)
-	    or death('emerg', "can't open $tmp_dir/$working_dir/$filename_results");
+	    or death('emerg', "can't open $$working_dir/$filename_results");
 	read(FH, $report, -s FH);
 	close(FH);
 
 	# Place a message in the system log
 	syslog('info', "job_id=$job_id terminated normally");
 
-	# Remove the working directory
-#	File::Path::rmtree("$tmp_dir/$working_dir");
+	# We will remove the working directory
+	$remove_working_dir = 1;
     }
     # Error termination
     else {
@@ -396,7 +440,7 @@ sub reaper {
 	}
 	if (-f $filename_serr && -s $filename_serr > 0) {
 	    open(FH, $filename_serr)
-		or death('emerg', "can't open $tmp_dir/$working_dir/$filename_serr");
+		or death('emerg', "can't open $working_dir/$filename_serr");
 	    read(FH, $err_rpt, -s FH);
 	    close(FH);
 	    $end_code = "serr";
@@ -407,7 +451,7 @@ sub reaper {
 	    $err_msg = "run died unexpectedly; ";
 	}
 	if ($child_dumped_core) {
-	    $err_msg .= "core dump in $tmp_dir/$prefix_working_dir$job_id; ";
+	    $err_msg .= "core dump in $working_dir; ";
 	}
 
 	# Get email address of user
@@ -439,11 +483,13 @@ sub reaper {
 		syslog('emerg', "bugzilla-submit failed with exit_status=$exit_status");
 	    }
 	}
-
-	# Rename working directory to make evidence easier to find
-	rename "$tmp_dir/$working_dir", "$tmp_dir/$prefix_working_dir$job_id"
-	    or death('emerg', "couldn't rename working directory");
     }
+
+    # Remove working directory if not needed
+    if ($remove_working_dir && !$retain_working_dir) {
+	File::Path::rmtree($working_dir);
+    }
+    
     if (length($optimizer_trace) > 0) {
 	$report = insert_optimizer_trace($optimizer_trace, $report);
     }
