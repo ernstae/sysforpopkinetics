@@ -137,6 +137,65 @@
     </para>
   </sect1>
   <sect1>
+    <title>Installing Emacs in a Linux Environment</title>
+    <para>
+      Emacs is one of the usual components in a Linux system.
+      It is packaged with many optional modes already in place,
+      including the PSGML mode and the C programming mode.
+    </para>
+    <sect2>
+      <title>Install Emacs</title>
+      <para>
+	If your Linux computer was configured for software development,
+	you should already have GNU Emacs installed.  If not, you
+	can install the emacs packages from your Linux installation
+	cdrom.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Install the .emacs File</title>
+      <para>
+	When emacs starts, it reads a configuration file,
+	if one is available.  This file can provide a 
+	large amount of customization.  For instance,
+	it can provide a list of colors to be used for
+	syntax coloring; it can specify a default DTD;
+	it can specify many options.  Because it can be very
+	complex and usually contains lisp code, a detailed
+	description is outside the scope of this 
+	document.  Instead, the installation of a pre-made
+	configuration file will be described.
+      </para>
+      <orderedlist inheritnum="ignore" continuation="restarts">
+	<listitem>
+	  <para>
+	    Open up a shell window in the desktop.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Copy the file
+	    <filename moreinfo="none">
+	      /opt/download/dot.emacs
+	    </filename> from
+	    <systemitem moreinfo="none" class="systemname">
+	      whitechuck
+	    </systemitem>,
+	    then concatenate it to the 
+	    <filename moreinfo="none">.emacs</filename>
+	    file in your home directory. If there was no
+	    <filename moreinfo="none">.emacs</filename> to
+	    start with, this will create one.
+	    <screen format="linespecific">
+	      scp whitechuck:/opt/dot.emacs .
+	      cat dot.emacs >> .emacs
+	    </screen>
+	  </para>
+	</listitem>
+      </orderedlist>
+    </sect2>
+  </sect1>
+  <sect1>
     <title>Installing Emacs in a Cygwin Environment</title>
     <para>
       The process that follows assumes that the user had
