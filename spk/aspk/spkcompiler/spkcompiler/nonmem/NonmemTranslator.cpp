@@ -169,8 +169,8 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   DefaultStr.RES   = "RES";
   DefaultStr.WRES  = "WRES";
   DefaultStr.PRED  = "PRED";
-  DefaultStr.PARRES= "PARRES";
-  DefaultStr.PARWRES="PARWRES";
+  DefaultStr.ETARES= "ETARES";
+  DefaultStr.WETARES="WETARES";
   DefaultStr.DV    = "DV";
   DefaultStr.ORGDV = "ORGDV";
   DefaultStr.MDV   = "MDV";
@@ -186,8 +186,8 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   UserStr.RES   = DefaultStr.RES;
   UserStr.WRES  = DefaultStr.WRES;
   UserStr.PRED  = DefaultStr.PRED;
-  UserStr.PARRES= DefaultStr.PARRES;
-  UserStr.PARWRES=DefaultStr.PARWRES;
+  UserStr.ETARES= DefaultStr.ETARES;
+  UserStr.WETARES=DefaultStr.WETARES;
   UserStr.DV    = DefaultStr.DV;
   UserStr.ORGDV = DefaultStr.ORGDV;
   UserStr.MDV   = DefaultStr.MDV;
@@ -205,8 +205,8 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   KeyStr.SIGMA = SymbolTable::key( DefaultStr.SIGMA );
   KeyStr.RES   = SymbolTable::key( DefaultStr.RES );
   KeyStr.WRES  = SymbolTable::key( DefaultStr.WRES );
-  KeyStr.PARRES= SymbolTable::key( DefaultStr.PARRES );
-  KeyStr.PARWRES=SymbolTable::key( DefaultStr.PARWRES );
+  KeyStr.ETARES= SymbolTable::key( DefaultStr.ETARES );
+  KeyStr.WETARES=SymbolTable::key( DefaultStr.WETARES );
   KeyStr.PRED  = SymbolTable::key( DefaultStr.PRED );
   KeyStr.DV    = SymbolTable::key( DefaultStr.DV );
   KeyStr.ORGDV = SymbolTable::key( DefaultStr.ORGDV );
@@ -700,20 +700,20 @@ void NonmemTranslator::parseSource()
 
   if( ourTarget == POP )
     {
-      if( (p = table->findi( KeyStr.PARRES )) != Symbol::empty() )
-         UserStr.PARRES = p->name;
+      if( (p = table->findi( KeyStr.ETARES )) != Symbol::empty() )
+         UserStr.ETARES = p->name;
       else
         {
-           table->insertUserVar( DefaultStr.PARRES );
-           UserStr.PARRES = DefaultStr.PARRES;
+           table->insertUserVar( DefaultStr.ETARES );
+           UserStr.ETARES = DefaultStr.ETARES;
         }
   
-      if( (p = table->findi( KeyStr.PARWRES )) != Symbol::empty() )
-         UserStr.PARWRES = p->name;
+      if( (p = table->findi( KeyStr.WETARES )) != Symbol::empty() )
+         UserStr.WETARES = p->name;
       else
         {
-           table->insertUserVar( DefaultStr.PARWRES );
-           UserStr.PARWRES = DefaultStr.PARWRES;
+           table->insertUserVar( DefaultStr.WETARES );
+           UserStr.WETARES = DefaultStr.WETARES;
         }
     }
 
@@ -4232,7 +4232,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 	  // ignore.  these don't get used within PRED.
 	}
       else if( keyLabel == KeyStr.WRES   || keyLabel == KeyStr.RES 
-            || keyLabel == KeyStr.PARRES || keyLabel == KeyStr.PARWRES )
+            || keyLabel == KeyStr.ETARES || keyLabel == KeyStr.WETARES )
 	{
 	  // ignore.  These values are only computed outside at the final estimate.
 	}
@@ -4270,8 +4270,8 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
           || keyLabel == KeyStr.SIGMA 
           || keyLabel == KeyStr.WRES 
           || keyLabel == KeyStr.RES
-          || keyLabel == KeyStr.PARRES
-          || keyLabel == KeyStr.PARWRES )
+          || keyLabel == KeyStr.ETARES
+          || keyLabel == KeyStr.WETARES )
 	continue;
 
       if( find( labels->begin(), labels->end(), label ) == labels->end() )
@@ -5702,8 +5702,8 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "         copy( &temp[0], &temp[N[i]], set.data[i]->RES .begin() );" << endl;
   oDriver << "         temp = resWtdOut[ slice( k, N[i], 1 ) ];" << endl;
   oDriver << "         copy( &temp[0], &temp[N[i]], set.data[i]->WRES.begin() );" << endl;
-  oDriver << "         copy( &parResOut[nB*i], &parResOut[nB], set.data[i]->PARRES.begin() );" << endl;
-  oDriver << "         copy( &parResWtdOut[nB*i], &parResWtdOut[nB], set.data[i]->PARWRES.begin() );" << endl;
+  oDriver << "         copy( &parResOut[nB*i], &parResOut[nB], set.data[i]->ETARES.begin() );" << endl;
+  oDriver << "         copy( &parResWtdOut[nB*i], &parResWtdOut[nB], set.data[i]->WETARES.begin() );" << endl;
   oDriver << "      }" << endl;
   oDriver << "   }" << endl;
   oDriver << "}" << endl;
