@@ -77,12 +77,20 @@ class NonmemCompiler : public SpkCompiler{
 
   virtual const std::string getDriverFileName() const;
 
+  const std::valarray<bool>   getThetaFixed() const;
   const std::valarray<double> getThetaIn() const;
   const std::valarray<double> getThetaLow() const;
   const std::valarray<double> getThetaUp() const;
+
+  const std::valarray<bool>   getOmegaFixed() const;
   const std::valarray<double> getOmegaIn() const;
+
+  const std::valarray<bool>   getSigmaFixed() const;
   const std::valarray<double> getSigmaIn() const;
+
+  const std::valarray<bool>   getEtaFixed() const;
   const std::valarray<double> getEtaIn() const;
+
   const char* whichCannedModel() const;
 
  protected:
@@ -183,22 +191,26 @@ class NonmemCompiler : public SpkCompiler{
   /**
    * theta
    */
+  std::valarray<bool>   thetaFixed;
   std::valarray<double> thetaIn;
   std::valarray<double> thetaLow;
   std::valarray<double> thetaUp;
   /**
    * Omega
    */
+  std::valarray<bool>   omegaFixed;
   std::valarray<double> omegaIn;
 
   /**
    * Sigma
    */
+  std::valarray<bool>   sigmaFixed;
   std::valarray<double> sigmaIn;
 
   /**
    * eta
    */
+  std::valarray<bool>   etaFixed;
   std::valarray<double> etaIn;
 };
 

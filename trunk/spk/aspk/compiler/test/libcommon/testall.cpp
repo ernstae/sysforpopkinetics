@@ -14,6 +14,7 @@ using namespace CppUnit;
 int main( int argc, const char * argv[] )
 {
   CppUnit::TextUi::TestRunner runner;
+
   runner.addTest( SymbolTest::suite() );
   runner.addTest( SymbolTableTest::suite() );
   runner.addTest( SpkCompilerUtilTest::suite() );

@@ -19,21 +19,9 @@ using namespace xercesc;
 
 void ExpTreeGeneratorTest::setUp()
 {
-  // Initialize the XML4C2 system
-  try
-  {
-    XMLPlatformUtils::Initialize();
-  }
-  catch(const XMLException &toCatch)
-  {
-    char buf[256];
-    sprintf( buf, "Error during Xerces-c Initialization.\nException message: %s", C(toCatch.getMessage()) );
-    CPPUNIT_ASSERT_MESSAGE( buf, false );
-  }
 }
 void ExpTreeGeneratorTest::tearDown()
 {
-  XMLPlatformUtils::Terminate();
 }
 void ExpTreeGeneratorTest::testCreate()
 {

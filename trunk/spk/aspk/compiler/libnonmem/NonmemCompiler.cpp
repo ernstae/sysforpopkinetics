@@ -16,6 +16,15 @@ static const char* trim( const XMLCh* source )
   XMLString::trim( target );
   return C( target );
 }
+static const char* tolower( char* buf, const char* mixed )
+{
+  assert( strlen( buf ) >= strlen( mixed ) );
+  int len = strlen( mixed );
+  for( int i=0; i<len; i++ )
+    buf[i] = tolower( mixed[i] );
+  buf[len] = 0;
+  return buf;
+}
 ////////////////////////////////////////////////////////////////////////////////////
 // REVISIT: 06/03/03
 // This routine should be replaced by something more rigorous.
@@ -55,6 +64,7 @@ void NonmemCompiler::interpret()
   interpretDriver();
   interpretModel();
   interpretData();
+  //interpretOutput();
 }
 void NonmemCompiler::interpretContent()
 {
@@ -73,7 +83,7 @@ void NonmemCompiler::interpretContent()
   if( strcmp( c_spkml_ver, "1.0" ) != 0 )
   {
     char buf[128];
-    sprintf( buf, "SpkInML version mismatch!  Only \"1.0\" supported! You gave me %s.\n", c_spkml_ver );
+    sprintf( buf, "SpkInML version mismatch!  Only \"1.0\" supported!  The version you gave me says %s.\n", c_spkml_ver );
     exit( error( buf ) );
   }
   
@@ -84,7 +94,8 @@ void NonmemCompiler::interpretContent()
   if( strcmp( c_client, "nonmem" ) != 0 )
   {
     char buf[128];
-    sprintf( buf, "Anything besides \"nonmem\" does not make sense!  You gave me %s.\n", c_client );
+    sprintf( buf, "Anything besides \"nonmem\" does not make sense in this context!  \
+                  You gave me %s (case sensitive).\n", c_client );
     exit( error( buf ) );
   }
 
@@ -92,37 +103,13 @@ void NonmemCompiler::interpretContent()
   // analysis level
   //
   const char * c_analysis = trim( content_node->getAttribute( X("analysis") ) );
-  if( strcmp( c_analysis, "population" ) )
+  if( strcmp( c_analysis, "population" ) != 0 )
   {
     char buf[128];
-    sprintf( buf, "For NONMEM, only \"population\" or \"individual\" are supported (case sensitive)!  You gave me %s.\n",
+    sprintf( buf, "Currently only \"population\" is supported!  You gave me %s (case sensitive).\n",
 	     c_analysis );
     exit( error( buf ) );
   }
-}
-void NonmemCompiler::interpretData()
-{
-  //
-  // Get a pointer to the root of "data" subtree.  Since there's one and only one
-  // <data> specification per document, the 1st element of the list
-  // obtained by DOMDocument::getElementsByTagName() is undoubtedly
-  // the one that is of our interest.  If ever there's more
-  // than one such a section, the very first occurence of them
-  // will be processed and others will be untouched.
-  //
-  DOMDocument * doc = getDOMDoc();
-  assert( doc->getElementsByTagName( X("data") ) != NULL );
-  DOMNode * dataTree = doc->getElementsByTagName( X("data") )->item(0);
-  assert( dataTree != NULL );
-  
-  //
-  // Get a pointer to the symbol table where we collect information.
-  // Register the number of individuals, information derived from the number of
-  // <individual> tags in <data> subtree.
-  //
-  SymbolTable * table = getTable();
-
-  assert( table->spkSymbols->nIndividuals > 0 );
 }
 void NonmemCompiler::interpretDriver()
 {
@@ -163,17 +150,300 @@ void NonmemCompiler::interpretDriver()
       const char * nodeName = C( categoryNode->getNodeName() );
 
       //
-      // Visit <pop_opt>.
-      //
-      if( strcmp( nodeName, "pop_opt" ) == 0 )
+      // <theta length="xxx">
+      //        <in fixed=(yes|no)>
+      //            <value>xxx</value>
+      //            <value>xxx</value>
+      //            ...
+      //        </in>
+      //        <up>
+      //            <value>xxx</value>
+      //            <value>xxx</value>
+      //            ...
+      //        </up>
+      //        <low>
+      //            <value>xxx</value>
+      //            <value>xxx</value>
+      //            ...
+      //        </low>
+      // </theta>
+      // 
+      if( strcmp( nodeName, "theta" ) == 0 )
 	{
-	  // pop_size
-	  assert( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X("pop_size") ) != NULL );
-	  assert( XMLString::stringLen( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X("pop_size") ) ) > 0 );
-	  nIndividuals = atoi( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X("pop_size") ) ) );
-	  assert( nIndividuals > 0 );
-	  table->spkSymbols->nIndividuals = nIndividuals;
+	  //
+	  // <theta length CDATA #REQUIRED>
+	  //
+	  assert( XMLString::stringLen( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "length" ) ) ) > 0 );
+	  int len = atoi( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "length" ) ) ) );
+	  assert( len > 0 );
+	  
+	  DOMNode * inNode = walker->firstChild();
+	  assert( inNode != NULL );
 
+	  while( inNode != NULL )
+	    {
+	      if( strcmp( C( inNode->getNodeName() ), "in" ) == 0 )
+		{	  
+		  //
+		  // <in (value)+>
+		  // <value fixed (yes|no) #FIXED "no">
+		  //
+		  thetaIn.resize( len );
+		  thetaFixed.resize( len );
+
+		  DOMNode * valueNode = walker->firstChild();
+		  assert( valueNode != NULL );
+		  int cnt;
+		  for( cnt=0; cnt < len, valueNode != NULL; cnt++ )
+		    {
+		      bool isFixed 
+			= strcmp( C( dynamic_cast<DOMElement*>
+				     (valueNode)->getAttribute( X( "fixed" ) ) ), "yes" )==0? 
+				  true : false;
+		      double value 
+			= atof( trim( valueNode->getFirstChild()->getNodeValue() ) );
+		      
+		      thetaIn[cnt]    = value;
+		      thetaFixed[cnt] = isFixed;
+		      valueNode = walker->nextSibling();
+		    }	  
+		  assert( cnt == len );
+		  walker->parentNode();// back to <in>
+		}
+	      //
+	      // <low (value)+>
+	      // <value>
+	      //
+	      else if( strcmp( C( inNode->getNodeName() ), "low" ) == 0 )
+		{
+		  thetaLow.resize( len );
+		  DOMNode * valueNode = walker->firstChild();
+		  assert( valueNode != NULL );
+		  int cnt;
+		  for( cnt=0; cnt < len, valueNode != NULL; cnt++ )
+		    {
+		      double value 
+			= atof( trim( valueNode->getFirstChild()->getNodeValue() ) );
+		      
+		      thetaLow[cnt] = value;
+		      valueNode = walker->nextSibling();
+		    }	
+		  assert( cnt == len );
+		  walker->parentNode();// back to <low>
+		}
+	      //
+	      // <up (value)+>
+	      // <value>
+	      //
+	      else if( strcmp( C( inNode->getNodeName() ), "up" ) == 0 )
+		{
+		  thetaUp.resize( len );
+		  DOMNode * valueNode = walker->firstChild();
+		  assert( valueNode != NULL );
+		  int cnt;
+		  for( cnt=0; cnt < len, valueNode != NULL; cnt++ )
+		    {
+		      double value 
+			= atof( trim( valueNode->getFirstChild()->getNodeValue() ) );
+		      
+		      thetaUp[cnt] = value;
+		      valueNode = walker->nextSibling();
+		    }	
+		  assert( cnt == len );
+		  walker->parentNode();// back to <up>
+		}
+	      else
+		{
+		  char buf[128];
+		  sprintf( buf, "Unknown tag <%s>! Note that tag names are case sensitive.\n",
+			   nodeName );
+		  exit( error( buf ) );
+		}
+	      inNode = walker->nextSibling();
+	    }
+	  walker->parentNode(); // back to <theta>
+	}
+      //
+      // <omega span="xxx" struct(diagonal|block)>
+      //        <in fixed=(yes|no)>
+      //            <value>xxx</value>
+      //            <value>xxx</value>
+      //            ...
+      //        </in>
+      else if( strcmp( nodeName, "omega" ) == 0 )
+	{
+	  //
+	  // <omega span CDATA #REQUIRED>
+	  //
+	  assert( XMLString::stringLen( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "span" ) ) ) > 0 );
+	  int span = atoi( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "span" ) ) ) );
+	  assert( span > 0 );
+
+	  //
+	  // <omega struct (diagonal|block) #REQUIRED>
+	  //
+	  bool isDiag = ( strcmp( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "struct" ) ) ),
+			    "diagonal" ) == 0 );
+	  if( !isDiag )
+	    assert( strcmp( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "struct" ) ) ), 
+			    "block" ) == 0 );
+
+          int dimensions = (isDiag? span : span*(span+1)/2 );
+	  omegaIn.resize( dimensions );
+          omegaFixed.resize( dimensions );
+
+	  //
+	  // <in (value)+>
+	  // <value fixed (yes|no) #FIXED "no">
+	  //
+	  DOMNode * inNode = walker->firstChild();
+	  assert( inNode != NULL );
+	  assert( strcmp( C( inNode->getNodeName() ), "in" ) == 0 );
+	  
+	  DOMNode * valueNode = walker->firstChild();
+	  int cnt;
+	  for( cnt=0; cnt < dimensions, valueNode != NULL; cnt++ )
+	    {
+	      bool isFixed 
+		= strcmp( C( dynamic_cast<DOMElement*>
+			     (valueNode)->getAttribute( X( "fixed" ) ) ), "yes" )==0? 
+		true : false;
+	      double value 
+		= atof( trim( valueNode->getFirstChild()->getNodeValue() ) );
+	      
+	      omegaIn[cnt]    = value;
+              omegaFixed[cnt] = isFixed;
+	      valueNode = walker->nextSibling();
+	    }	
+	  assert( cnt == dimensions );
+ 	  walker->parentNode();// back to <in>
+	  walker->parentNode();// back to <omega>
+	}
+      //
+      // <sigma span="xxx" struct=(diagonal|block)>
+      //    <in fixed=(yes|no)>
+      //       <value>xxx</value>
+      //       <value>xxx</value>
+      //    </in>
+      // </sigma>
+      //
+      else if( strcmp( nodeName, "sigma" ) == 0 )
+	{
+	  //
+	  // <simga span CDATA #REQUIRED>
+	  //
+	  assert( XMLString::stringLen( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "span" ) ) ) > 0 );
+	  int span = atoi( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "span" ) ) ) );
+	  assert( span > 0 );
+
+	  //
+	  // <sigma struct (diagonal|block) #REQUIRED>
+	  //
+	  bool isDiag = ( strcmp( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "struct" ) ) ),
+			    "diagonal" ) == 0 );
+	  if( !isDiag )
+	    assert( strcmp( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "struct" ) ) ), 
+			    "block" ) == 0 );
+
+          int dimensions = (isDiag? span : span*(span+1)/2 );
+	  sigmaIn.resize( dimensions );
+          sigmaFixed.resize( dimensions );
+
+	  //
+	  // <in (value)+>
+	  // <value fixed (yes|no) #FIXED "no">
+	  //
+	  DOMNode * inNode = walker->firstChild();
+	  assert( inNode != NULL );
+	  assert( strcmp( C( inNode->getNodeName() ), "in" ) == 0 );
+	  
+	  DOMNode * valueNode = walker->firstChild();
+	  int cnt;
+	  for( cnt=0; cnt < dimensions, valueNode != NULL; cnt++ )
+	    {
+	      bool isFixed 
+		= strcmp( C( dynamic_cast<DOMElement*>
+			     (valueNode)->getAttribute( X( "fixed" ) ) ), "yes" )==0? 
+		true : false;
+	     double value 
+	       = atof( trim( valueNode->getFirstChild()->getNodeValue() ) );
+	      
+	      sigmaIn[cnt]    = value;
+              sigmaFixed[cnt] = isFixed;
+	      valueNode = walker->nextSibling();
+	    }	  
+	  assert( cnt == dimensions );
+ 	  walker->parentNode();// back to <in>
+	  walker->parentNode();// back to <sigma>
+	}
+      //
+      // Visit <eta>.
+      // Though the initial value for eta is always 0.0,
+      // we expect that value to be given in the document just
+      // to maintain simplicity in parsing.
+      //
+      // <eta length="xxx">
+      //    <in fixed=(yes|no)>
+      //       <value>xxx</value>
+      //       <vlaue>xxx</value>
+      //       ...
+      //    </in>
+      // </eta>
+      //
+      else if( strcmp( nodeName, "eta" ) == 0 )
+	{
+	  //
+	  // <eta length CDATA #REQUIRED>
+	  //
+	  assert( XMLString::stringLen( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "length" ) ) ) > 0 );
+	  int len = atoi( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "length" ) ) ) );
+	  assert( len > 0 );
+	  
+	  etaIn.resize( len );
+          etaFixed.resize( len );
+
+	  //
+	  // <in (value)+>
+	  // <value fixed (yes|no) #FIXED "no">...</value>
+	  //
+	  DOMNode * inNode = walker->firstChild();
+	  assert( inNode != NULL );
+	  assert( strcmp( C( inNode->getNodeName() ), "in" ) == 0 );
+	  
+	  DOMNode * valueNode = walker->firstChild();
+	  int cnt;
+	  for( cnt=0; cnt < len, valueNode != NULL; cnt++ )
+	    {
+	      bool isFixed 
+		= strcmp( C( dynamic_cast<DOMElement*>
+			     (valueNode)->getAttribute( X( "fixed" ) ) ), "yes" )==0? 
+		true : false;
+	      double value 
+		= atof( trim( valueNode->getFirstChild()->getNodeValue() ) );
+	      
+	      etaIn[cnt]    = value;
+              etaFixed[cnt] = isFixed; 
+	      valueNode = walker->nextSibling();
+	    }	  
+	  assert( cnt == len );
+ 	  walker->parentNode();// back to <in>
+	  walker->parentNode();// back to <eta>
+	}
+      //
+      // <pop_opt EMPTY>
+      // <pop_opt approximation (fo|foce|laplace) #REQUIRED>
+      // <pop_opt pop_size   CDATA    #REQUIRED>
+      // <pop_opt epsilon    CDATA    #REQUIRED>
+      // <pop_opt mitr       CDATA    #REQUIRED>
+      // <pop_opt trace      CDATA    #REQUIRED>
+      // <pop_opt restart    (yes|no) #REQUIRED>
+      // <pop_opt par_out    (yes|no) #REQUIRED>
+      // <pop_opt obj_out    (yes|no) #REQUIRED>
+      // <pop_opt deriv1_out (yes|no) #REQUIRED>
+      // <pop_opt deriv2_out (yes|no) #REQUIRED>
+      //
+      else if( strcmp( nodeName, "pop_opt" ) == 0 )
+	{
 	  // approximation (fo|foce|laplace)
 	  assert( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X("approximation") ) != NULL );
 	  assert( XMLString::stringLen( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X("approximation") ) ) > 0 );
@@ -191,6 +461,13 @@ void NonmemCompiler::interpretDriver()
 	      exit( error( buf ) );
 	    }
 	  
+	  // pop_size
+	  assert( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X("pop_size") ) != NULL );
+	  assert( XMLString::stringLen( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X("pop_size") ) ) > 0 );
+	  nIndividuals = atoi( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X("pop_size") ) ) );
+	  assert( nIndividuals > 0 );
+	  table->spkSymbols->nIndividuals = nIndividuals;
+
 	  // epsilon (>0.0)
 	  assert( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X("epsilon") ) != NULL );
 	  assert( XMLString::stringLen( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X("epsilon") ) ) > 0 );
@@ -292,6 +569,27 @@ void NonmemCompiler::interpretDriver()
 	  bool isParOut
 	    = ( strcmp( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X("par_out") ) ), "yes" ) == 0 );
 	  table->spkSymbols->isIndParOut = isParOut;
+
+	  // obj_out (yes|no)
+	  assert( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X("obj_out") ) != NULL );
+	  assert( XMLString::stringLen( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X("obj_out") ) ) > 0 );
+	  bool isIndObjOut 
+	    = ( strcmp( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X("obj_out") ) ), "yes" ) == 0 );
+	  table->spkSymbols->isIndObjOut = isIndObjOut;
+
+	  // deriv1_out (yes|no)
+	  assert( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X("deriv1_out") ) != NULL );
+	  assert( XMLString::stringLen( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X("deriv1_out") ) ) > 0 );
+	  bool isIndObj_indParOut
+	    = ( strcmp( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X("deriv1_out") ) ), "yes" ) == 0 );
+	  table->spkSymbols->isIndObj_indParOut = isIndObj_indParOut;
+
+	  // deriv2_out (yes|no) 
+	  assert( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X("deriv2_out") ) != NULL );
+	  assert( XMLString::stringLen( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X("deriv2_out") ) ) > 0 );
+	  bool isIndObj_indPar_indParOut 
+	    = ( strcmp( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X("deriv2_out") ) ), "yes" ) == 0 );
+	  table->spkSymbols->isIndObj_indPar_indParOut = isIndObj_indPar_indParOut;
 	}
       //
       // Visit <pop_stat>.
@@ -373,198 +671,7 @@ void NonmemCompiler::interpretDriver()
 	    = ( strcmp( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X("confidence") ) ), "yes" ) == 0 );
 	  table->spkSymbols->isIndConfidenceOut = isConfidenceOut;
 	}
-      //
-      // Visit <theta>.
-      //
-      else if( strcmp( nodeName, "theta" ) == 0 )
-	{
-	  // length
-	  assert( XMLString::stringLen( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "length" ) ) ) > 0 );
-	  int len = atoi( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "length" ) ) ) );
-	  assert( len > 0 );
-	  
-	  DOMNode * inNode = walker->firstChild();
-	  assert( inNode != NULL );
 
-	  while( inNode != NULL )
-	    {
-	      // theta->in 
-	      if( strcmp( C( inNode->getNodeName() ), "in" ) == 0 )
-		{	  
-		  thetaIn.resize( len );
-		  DOMNode * valueNode = walker->firstChild();
-		  assert( valueNode != NULL );
-		  int cnt;
-		  for( cnt=0; cnt < len, valueNode != NULL; cnt++ )
-		    {
-		      const char * value 
-			= trim( valueNode->getFirstChild()->getNodeValue() );
-		      
-		      thetaIn[cnt] = atof(value);
-		      valueNode = walker->nextSibling();
-		    }	  
-		  assert( cnt == len );
-		  walker->parentNode();// back to <in>
-		}
-	      // theta->low
-	      else if( strcmp( C( inNode->getNodeName() ), "low" ) == 0 )
-		{
-		  thetaLow.resize( len );
-		  DOMNode * valueNode = walker->firstChild();
-		  assert( valueNode != NULL );
-		  int cnt;
-		  for( cnt=0; cnt < len, valueNode != NULL; cnt++ )
-		    {
-		      const char * value 
-			= trim( valueNode->getFirstChild()->getNodeValue() );
-		      
-		      thetaLow[cnt] = atof(value);
-		      valueNode = walker->nextSibling();
-		    }	
-		  assert( cnt == len );
-		  walker->parentNode();// back to <low>
-		}
-	      // theta->up
-	      else if( strcmp( C( inNode->getNodeName() ), "up" ) == 0 )
-		{
-		  thetaUp.resize( len );
-		  DOMNode * valueNode = walker->firstChild();
-		  assert( valueNode != NULL );
-		  int cnt;
-		  for( cnt=0; cnt < len, valueNode != NULL; cnt++ )
-		    {
-		      const char * value 
-			= trim( valueNode->getFirstChild()->getNodeValue() );
-		      
-		      thetaUp[cnt] = atof(value);
-		      valueNode = walker->nextSibling();
-		    }	
-		  assert( cnt == len );
-		  walker->parentNode();// back to <up>
-		}
-	      else
-		{
-		  char buf[128];
-		  sprintf( buf, "Unknown tag <%s>! Note that tag names are case sensitive.\n",
-			   nodeName );
-		  exit( error( buf ) );
-		}
-	      inNode = walker->nextSibling();
-	    }
-	  walker->parentNode(); // back to <theta>
-	}
-      //
-      // Visit <omega>.
-      //
-      else if( strcmp( nodeName, "omega" ) == 0 )
-	{
-	  // span
-	  assert( XMLString::stringLen( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "span" ) ) ) > 0 );
-	  int span = atoi( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "span" ) ) ) );
-	  assert( span > 0 );
-
-	  // structure
-	  bool isDiag = ( strcmp( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "struct" ) ) ),
-			    "diagonal" ) == 0 );
-	  if( !isDiag )
-	    assert( strcmp( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "struct" ) ) ), 
-			    "block" ) == 0 );
-
-          int dimensions = (isDiag? span : span*(span+1)/2 );
-	  omegaIn.resize( dimensions );
-
-	  // omega->in
-	  DOMNode * inNode = walker->firstChild();
-	  assert( inNode != NULL );
-	  assert( strcmp( C( inNode->getNodeName() ), "in" ) == 0 );
-	  
-	  DOMNode * valueNode = walker->firstChild();
-	  int cnt;
-	  for( cnt=0; cnt < dimensions, valueNode != NULL; cnt++ )
-	    {
-	      const char * value 
-		= trim( valueNode->getFirstChild()->getNodeValue() );
-	      
-	      omegaIn[cnt] = atof(value);
-	      valueNode = walker->nextSibling();
-	    }	
-	  assert( cnt == dimensions );
- 	  walker->parentNode();// back to <in>
-	  walker->parentNode();// back to <omega>
-	}
-      //
-      // Visit <sigma>.
-      //
-      else if( strcmp( nodeName, "sigma" ) == 0 )
-	{
-	  // span
-	  assert( XMLString::stringLen( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "span" ) ) ) > 0 );
-	  int span = atoi( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "span" ) ) ) );
-	  assert( span > 0 );
-
-	  //
-	  bool isDiag = ( strcmp( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "struct" ) ) ),
-			    "diagonal" ) == 0 );
-	  if( !isDiag )
-	    assert( strcmp( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "struct" ) ) ), 
-			    "block" ) == 0 );
-
-          int dimensions = (isDiag? span : span*(span+1)/2 );
-	  sigmaIn.resize( dimensions );
-
-	  // sigma->in
-	  DOMNode * inNode = walker->firstChild();
-	  assert( inNode != NULL );
-	  assert( strcmp( C( inNode->getNodeName() ), "in" ) == 0 );
-	  
-	  DOMNode * valueNode = walker->firstChild();
-	  int cnt;
-	  for( cnt=0; cnt < dimensions, valueNode != NULL; cnt++ )
-	    {
-	      const char * value 
-		= trim( valueNode->getFirstChild()->getNodeValue() );
-	      
-	      sigmaIn[cnt] = atof(value);
-	      valueNode = walker->nextSibling();
-	    }	  
-	  assert( cnt == dimensions );
- 	  walker->parentNode();// back to <in>
-	  walker->parentNode();// back to <sigma>
-	}
-      //
-      // Visit <eta>.
-      // Though the initial value for eta is always 0.0,
-      // we expect that value to be given in the document just
-      // to maintain simplicity in parsing.
-      //
-      else if( strcmp( nodeName, "eta" ) == 0 )
-	{
-	  // length
-	  assert( XMLString::stringLen( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "length" ) ) ) > 0 );
-	  int len = atoi( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "length" ) ) ) );
-	  assert( len > 0 );
-	  
-	  etaIn.resize( len );
-
-	  // eta->in 
-	  DOMNode * inNode = walker->firstChild();
-	  assert( inNode != NULL );
-	  assert( strcmp( C( inNode->getNodeName() ), "in" ) == 0 );
-	  
-	  DOMNode * valueNode = walker->firstChild();
-	  int cnt;
-	  for( cnt=0; cnt < len, valueNode != NULL; cnt++ )
-	    {
-	      const char * value 
-		= trim( valueNode->getFirstChild()->getNodeValue() );
-	      
-	      etaIn[cnt] = atof(value);
-	      valueNode = walker->nextSibling();
-	    }	  
-	  assert( cnt == len );
- 	  walker->parentNode();// back to <in>
-	  walker->parentNode();// back to <eta>
-	}
       //
       // Unknown elements.
       //
@@ -578,6 +685,30 @@ void NonmemCompiler::interpretDriver()
       categoryNode = walker->nextSibling();
     }
     return;
+}
+void NonmemCompiler::interpretData()
+{
+  //
+  // Get a pointer to the root of "data" subtree.  Since there's one and only one
+  // <data> specification per document, the 1st element of the list
+  // obtained by DOMDocument::getElementsByTagName() is undoubtedly
+  // the one that is of our interest.  If ever there's more
+  // than one such a section, the very first occurence of them
+  // will be processed and others will be untouched.
+  //
+  DOMDocument * doc = getDOMDoc();
+  assert( doc->getElementsByTagName( X("data") ) != NULL );
+  DOMNode * dataTree = doc->getElementsByTagName( X("data") )->item(0);
+  assert( dataTree != NULL );
+  
+  //
+  // Get a pointer to the symbol table where we collect information.
+  // Register the number of individuals, information derived from the number of
+  // <individual> tags in <data> subtree.
+  //
+  SymbolTable * table = getTable();
+
+  assert( table->spkSymbols->nIndividuals > 0 );
 }
 void NonmemCompiler::interpretModel()
 {
@@ -672,6 +803,10 @@ const string NonmemCompiler::getDriverFileName() const
 {
   return driverFileName;
 }
+const valarray<bool> NonmemCompiler::getThetaFixed() const
+{
+  return thetaFixed;
+}
 const valarray<double> NonmemCompiler::getThetaIn() const
 {
   return thetaIn;
@@ -685,13 +820,25 @@ const valarray<double> NonmemCompiler::getThetaUp() const
   return thetaUp;
 }
 
+const valarray<bool> NonmemCompiler::getOmegaFixed() const
+{
+  return omegaFixed;
+}
 const valarray<double> NonmemCompiler::getOmegaIn() const
 {
   return omegaIn;
 }
+const valarray<bool> NonmemCompiler::getSigmaFixed() const
+{
+  return sigmaFixed;
+}
 const valarray<double> NonmemCompiler::getSigmaIn() const
 {
   return sigmaIn;
+}
+const valarray<bool> NonmemCompiler::getEtaFixed() const
+{
+  return etaFixed;
 }
 const valarray<double> NonmemCompiler::getEtaIn() const
 {
