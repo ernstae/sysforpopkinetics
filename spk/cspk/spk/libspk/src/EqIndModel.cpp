@@ -819,13 +819,14 @@ bool EqIndModel::doDataMean_indPar( valarray<double>& foF_B ) const
 //
 void EqIndModel::doDataVariance( valarray<double>& foROut ) const
 {
+  foROut.resize( _nY * _nY, 0.0 );
+
   if( isCachedRValid )
     {
       foROut = cachedR;
       return;
     }
   
-  foROut.resize( _nY * _nY, 0.0 );
   valarray<double> DOut( _nb * _nb );
   _pModel->indParVariance(DOut);
   assert( DOut.size() == _nb * _nb );
@@ -925,6 +926,8 @@ void EqIndModel::doDataVariance( valarray<double>& foROut ) const
 
 void EqIndModel::doDataVarianceInv( valarray<double>& foRInvOut ) const
 {
+    foRInvOut.resize( _nY * _nY, 0.0 );
+
 	if( isCachedRInvValid )
 	{
 	  foRInvOut.resize( cachedRInv.size() );
@@ -932,7 +935,6 @@ void EqIndModel::doDataVarianceInv( valarray<double>& foRInvOut ) const
 	  return;
 	}
 
-    foRInvOut.resize( _nY * _nY, 0.0 );
     valarray<double> DOut( _nb * _nb );
     _pModel->indParVariance(DOut);
     assert( DOut.size() == _nb * _nb );
