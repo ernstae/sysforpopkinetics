@@ -13,8 +13,8 @@ MOSTLYCLEANFILES = explang.cpp explang.output lex_explang.c
 
 libspkcompiler_la_SOURCES = \
         config.h \
-        factorial.h \
-        factorial.cpp \
+        series.h \
+        series.cpp \
 	lower.h \
 	lower.cpp \
 	upper.h \
@@ -32,7 +32,7 @@ nobase_pkginclude_HEADERS = \
 	$(NONMEM)/NonmemTranslator.h
 
 pkginclude_HEADERS = \
-        factorial.h \
+        series.h \
 	lower.h \
 	upper.h \
 	Symbol.h \
