@@ -922,13 +922,11 @@ void quasiNewtonAnyBox(
     }
     else
     {
-
-      THROW AN EXCEPTION
-      THROW AN EXCEPTION
-      THROW AN EXCEPTION
-      THROW AN EXCEPTION
-      THROW AN EXCEPTION
-
+      throw SpkException( 
+        SpkError::SPK_USER_INPUT_ERR,
+	"The sizes of the warm start values do not match the number of objective parameters.",
+	__LINE__,
+	__FILE__ );
     }
   }
   else
