@@ -40,35 +40,6 @@
  * Function Specification
  *------------------------------------------------------------------------*/
 
-// Review Goddard 6/15/00: Suggest $italic traceLevel$$ as a more informative 
-// name than level.
-//
-// Response Watrous 6/23/00: Revisit.
-
-
-// Goddard 6/15/00: In all of the matrix expressions above, the backslash
-// characters that are supposed to represent part of a big parenthesis are not
-// displayed by the browser, so the expressions come out garbled. Also,
-// each math block should be set off by spaces above and below it.
-//
-// Response Watrous 6/23/00: (1.) Fixed garbled big paranthesis, and
-// (2.) Revisit spaces above and below math block.
-
-
-// Review Goddard 6/15/00: After each instance of "derivative of (anything)", 
-// add "with respect to $math%b%$$".
-//
-// Response Watrous 6/23/00: Ignore, the derivative notation is defined in
-// the glossary.
-
-
-// Review Goddard 6/15/00: Inserter for bool is built in. Simplify
-// the following statement from the example, 
-//
-//      cout << "ok             = " << ( ok ? "True" : "False" ) << endl;
-//
-// Response Watrous 7/3/00: Apply from now on.
-
 /*
 
 $begin mapOpt$$
@@ -130,10 +101,10 @@ $spell
   cerr
   Spk
   inv
-  optimizer
+  optInfo
   fp
   Ri
-  Optimizer optimizer
+  Optimizer optInfo
   Fo
   pdvec
 $$
@@ -149,7 +120,7 @@ $bold Prototype:$$ $cend
 $syntax/void mapOpt(  
     SpkModel           & /model/,
     const DoubleMatrix & /dvecY/,
-    Optimizer          & /optimizer/,
+    Optimizer          & /optInfo/,
     const DoubleMatrix & /dvecBLow/,
     const DoubleMatrix & /dvecBUp/,
     const DoubleMatrix & /dvecBIn/,
@@ -250,7 +221,7 @@ $math%y%$$, which specifies the data.
 
 $syntax/
 
-/optimizer/
+/optInfo/
 /$$
 This $xref/Optimizer//Optimizer/$$ class object has three attributes.  
 These attributes are parameters of the optimizer used in the individual 
@@ -585,7 +556,7 @@ int main()
   int nMaxIter    = 40; 
   double fOut     = 0.0; 
   int level       = 0;
-  Optimizer optimizer(epsilon, nMaxIter, level);
+  Optimizer optInfo(epsilon, nMaxIter, level);
   void* pFvalInfo = 0;
   bool withD      = true;
   bool isFO       = false;
@@ -600,7 +571,7 @@ int main()
   try{
      mapOpt(model,
             dvecY,
-            optimizer,
+            optInfo,
             dvecBLow,
             dvecBUp,
             dvecBIn,
@@ -792,69 +763,148 @@ $end
 #include "mapOpt.h"
 #include "mapObj.h"
 #include "mapObjDiff.h"
-#include "sqpAnyBox.h"
+#include "quasiNewtonAnyBox.h"
 #include "SpkException.h"
 
-/*------------------------------------------------------------------------
- * Local function declarations
- *------------------------------------------------------------------------*/
-
-static void evalMapObj( const DoubleMatrix& dvecB, 
-                        double* pdMapObjOut, 
-                        DoubleMatrix* pdrowMapObj_bOut,
-                        const void* pInfo 
-                      );
-
 
 /*------------------------------------------------------------------------
- * Namespace declarations
+ * Local class declarations
  *------------------------------------------------------------------------*/
 
-namespace 
+namespace // [Begin: unnamed namespace]
 {
+  //**********************************************************************
   //
-  // Structure: MapObjInfo
+  // Class: MapOptObj
   //
-  struct MapObjInfo
+  //
+  // Evaluates the MAP Bayesian objective function and/or its gradient.
+  //
+  //**********************************************************************
+
+  class MapOptObj : public QuasiNewtonAnyBoxObj
   {
-    SpkModel* pModel;
-    Optimizer optimizer;
-    const DoubleMatrix* pdvecY;
-    const bool* pbWithD;
-    const bool* pbIsFo;
-    const DoubleMatrix* pdvecN;
+    //----------------------------------------------------------
+    // Constructors.
+    //----------------------------------------------------------
+
+  public:
+    MapOptObj( 
+      int                  nBIn,
+      SpkModel*            pModelIn,
+      const DoubleMatrix*  pdvecYIn,
+      const bool*          pbWithDIn,
+      const bool*          pbIsFoIn,
+      const DoubleMatrix*  pdvecNIn )
+      :
+      nB           ( nBIn ),
+      pModel       ( pModelIn ),
+      pdvecY       ( pdvecYIn ),
+      pbWithD      ( pbWithDIn ),
+      pbIsFo       ( pbIsFoIn ),
+      pdvecN       ( pdvecNIn )
+    {
+    }
+
+    //----------------------------------------------------------
+    // Data members.
+    //----------------------------------------------------------
+
+  private:
+    const int nB;
+
+    DoubleMatrix dvecBCurr;
+
+    // This information is required by mapObj.
+    SpkModel*            pModel;
+    const DoubleMatrix*  pdvecY;
+    const bool*          pbWithD;
+    const bool*          pbIsFo;
+    const DoubleMatrix*  pdvecN;
+
+
+    //----------------------------------------------------------
+    // Functions required by quasiNewtonAnyBox.
+    //----------------------------------------------------------
+
+  public:
+    //**********************************************************
+    // 
+    // Function: function
+    //
+    //
+    // Evaluates the MAP Bayesian objective function MapObj(b).
+    //
+    //**********************************************************
+
+    void function( const DoubleMatrix& dvecBIn, double* pdMapObjOut )
+    {
+      // Set the current value for b.
+      dvecBCurr = dvecBIn;
+      assert( dvecBIn.nr() == nB );
+      assert( dvecBIn.nc() == 1 );
+
+      // Evaluate the MAP Bayesian objective function.
+      double dMapObjCurr = 0.0;
+      DoubleMatrix* pdmatNull = 0;
+      mapObj( 
+        *pModel, 
+        *pdvecY, 
+        dvecBCurr, 
+        &dMapObjCurr,
+	pdmatNull,
+        *pbWithD,
+        *pbIsFo, 
+        pdvecN );
+
+      // Set the objective function value.
+      *pdMapObjOut = dMapObjCurr;
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: gradient
+    //
+    //
+    // Evaluate the gradient of the MAP Bayesian objective function MapObj_b(b).
+    //
+    //**********************************************************
+
+    virtual void gradient( DoubleMatrix* pdrowMapObj_bOut ) const
+    {
+      assert( pdrowMapObj_bOut->nr() == 1 );
+      assert( pdrowMapObj_bOut->nc() == nB );
+
+      // Evaluate the gradient of the MAP Bayesian objective function.
+      double* pdNull = 0;
+      DoubleMatrix drowMapObj_bCurr( 1, nB );
+      mapObj(
+        *pModel,
+        *pdvecY,
+        dvecBCurr,
+	pdNull,
+        &drowMapObj_bCurr,
+        *pbWithD,
+        *pbIsFo,
+        pdvecN );
+
+      // Set the gradient value.
+      *pdrowMapObj_bOut = drowMapObj_bCurr;
+    }
+
   };
-}
 
+} // [End: unnamed namespace]
 
-// Updated 2-5-01 Alyssa
-// fixed for const correctness
 
 /*------------------------------------------------------------------------
  * Function definition
  *------------------------------------------------------------------------*/
 
-//***************************************************************************
-// [Revisit - Next SPK Iteration - Individual Level Interface - Mitch]
-//
-// Consider removing the random effects variance, D, from the list of
-// arguments for mapOpt.  The pro's for this are that the model class
-// should be able to calculate D, which makes the argument redundant.
-// The con's for this are that users working at the individual level
-// may not define D in their model class and may want to be able to pass
-// it in as an argument. 
-//
-//
-// [ Revisited by Sachiko ]
-// Having considered, requiring user to provide a model for D when
-// user is only interested in the individual level analysis seems
-// wrong.  All D arguments appear in the upper routines (poplulation level)
-// have been eliminated.
-//
-//***************************************************************************
 void mapOpt(  SpkModel& model,
               const DoubleMatrix& dvecY,
-              Optimizer& optimizer,
+              Optimizer& optInfo,
               const DoubleMatrix& dvecBLow,
               const DoubleMatrix& dvecBUp,
               const DoubleMatrix& dvecBIn,
@@ -876,55 +926,31 @@ void mapOpt(  SpkModel& model,
 
   int nBRows = dvecBIn.nr();
 
-  double epsilon  = optimizer.getEpsilon();
-  int    nMaxIter = optimizer.getNMaxIter();
-  int    level    = optimizer.getLevel();
+  double epsilon  = optInfo.getEpsilon();
+  int    nMaxIter = optInfo.getNMaxIter();
+  int    level    = optInfo.getLevel();
 
 
   //------------------------------------------------------------
-  // Prepare the inputs for sqpAnyBox.
+  // Prepare the inputs for quasiNewtonAnyBox.
   //------------------------------------------------------------
 
-  // Set the information required by mapObj.
-  MapObjInfo mapObjInfo;
-  mapObjInfo.pModel     = &model;
-  mapObjInfo.pdvecY     = &dvecY;
-  mapObjInfo.pbWithD    = &withD;
-  mapObjInfo.pbIsFo     = &isFo;
-  mapObjInfo.pdvecN     = pdvecN;
+  // Construct the MAP Bayesian objective function.
+  MapOptObj mapOptObj(
+    nBRows,
+    &model,
+    &dvecY,
+    &withD,
+    &isFo,
+    pdvecN );
 
-  // Review Goddard 6/15/00: Am I missing something? I can't see any
-  // purpose at all for all of these "Temp" variables. Why not just
-  // pass the corresponding arguments from this function down into
-  // sqpAnyBox? Without the Temp's, this function is simple and obvious.
-  // With them it is complicated, opaque, and error prone.
-  //    OK, I see one potential use: IF the lower-level function makes
-  // no guarantees about the output value if ok=false, AND IF the
-  // calling function DOES guarantee that the output values remain unchanged
-  // in that case, then this complexity might sorta kinda almost make sense.
-  // But this function makes no such guarantee!
-  // And if it did make that guarantee, there are better ways to accomplish
-  // it -- although some redesign would be necessary. Herb Sutter
-  // discusses this issue at length (in the context of exception safety)
-  // in Exceptional C++.
-  //
-  // Response Watrous 7/3/00: Revisit.  The specifications for this 
-  // function state that the output value pointers, e.g., pdMapObjOut, 
-  // point to values, e.g., *pdMapObjOut, that will only change if the 
-  // return value for this function is true.  So, these temporary objects 
-  // are created here and then passed to sqpAnyBox, rather than directly 
-  // passing the output value pointers themselves.  I agree that there 
-  // are better ways to accomplish this such as using get functions, 
-  // e.g., getMapObj(), that would provide the user with the quantities 
-  // they want after the optimization has completed.
-  //
   // Instantiate a temporary column vector to hold the final b 
-  // value that will be returned by sqpAnyBox.
+  // value that will be returned by quasiNewtonAnyBox.
   DoubleMatrix dvecBOutTemp( nBRows, 1 );
 
   // If this function is going to return the objective function 
   // value, initialize the temporary value to hold it.  Otherwise, 
-  // set the temporary pointer to zero so that sqpAnyBox will not 
+  // set the temporary pointer to zero so that quasiNewtonAnyBox will not 
   // return it either.
   double dMapObjOutTemp;
   double* pdMapObjOutTemp = &dMapObjOutTemp;
@@ -974,18 +1000,19 @@ void mapOpt(  SpkModel& model,
 
   if ( nMaxIter > 0 )
   {
-      // If the number of iterations is not zero, then the objective 
-      // function must be optimized in order to determine bOut.
-    try{
-      sqpAnyBox( evalMapObj, 
-                &mapObjInfo, 
-                optimizer,
-                dvecBLow, 
-                dvecBUp, 
-                dvecBIn, 
-                &dvecBOutTemp, 
-                pdMapObjOutTemp, 
-                pdrowMapObj_bOutTemp );
+    // If the number of iterations is not zero, then the objective 
+    // function must be optimized in order to determine bOut.
+    try
+    {
+      quasiNewtonAnyBox(
+        mapOptObj,
+        optInfo, 
+        dvecBLow, 
+        dvecBUp, 
+        dvecBIn, 
+        &dvecBOutTemp, 
+        pdMapObjOutTemp, 
+        pdrowMapObj_bOutTemp );
     }
     catch( SpkException& e )
     {
@@ -1023,15 +1050,15 @@ void mapOpt(  SpkModel& model,
     // their values is going to be returned by this function.
     if ( pdMapObjOut || pdrowMapObj_bOut )
     {
-        mapObj( model, 
-              dvecY, 
-              dvecBOutTemp,
-              pdMapObjOutTemp,
-              pdrowMapObj_bOutTemp,
-              withD,
+      mapObj( 
+        model, 
+        dvecY, 
+        dvecBOutTemp,
+        pdMapObjOutTemp,
+        pdrowMapObj_bOutTemp,
+        withD,
         isFo,
         pdvecN );
-      
     }
   }
 
@@ -1042,56 +1069,57 @@ void mapOpt(  SpkModel& model,
 
   // Compute the second derivative of the  objective function 
   // at the final b value, if necessary.
-  if ( pdmatMapObj_b_bOut && !optimizer.getIsTooManyIter() )
+  if ( pdmatMapObj_b_bOut && !optInfo.getIsTooManyIter() )
   {
-      try{
-          DoubleMatrix* pdmatNull = 0;
-          mapObjDiff( model,
-                      dvecY,
-                      dvecBStep,
-                      dvecBOutTemp,
-                      pdmatNull,
-                      pdmatMapObj_b_bOutTemp,
-                      withD,
-                      isFo,
-                      pdvecN
-                      );
-      }
-      catch( SpkException& e )
-      {
-          //
-          // Revisit - Sachiko:
-          //
-          // This should dump all the parameter values to a file and 
-          // give the filename as an error message.
-          //
-          throw e.push(SpkError::SPK_DIFF_ERR, "An attempt to approximate the derivative of mapObj_b with respect to b failed.", __LINE__, __FILE__);
-      }
-      catch( const std::exception& e )
-      {
-          //
-          // Revisit - Sachiko:
-          //
-          // This should dump all the parameter values to a file and 
-          // give the filename as an error message.
-          //
-          const int max = SpkError::maxMessageLen();
-          char buf[max];
-          sprintf( buf, "%s\nAn attempt to approximate the derivative of mapObj_b with respect to b failed.",
-            e.what() );
-          throw SpkException( e, buf, __LINE__, __FILE__ );
-      }
-      catch( ... )
-      {
-          //
-          // Revisit - Sachiko:
-          //
-          // This should dump all the parameter values to a file and 
-          // give the filename as an error message.
-          //
-          throw SpkException(SpkError::SPK_DIFF_ERR, "Unknown exception was thrown during an attempt to \
-            approximate the derivative of mapObj_b with respect to b failed.", __LINE__, __FILE__);
-      }
+    try
+    {
+      DoubleMatrix* pdmatNull = 0;
+      mapObjDiff(
+        model,
+        dvecY,
+        dvecBStep,
+        dvecBOutTemp,
+        pdmatNull,
+        pdmatMapObj_b_bOutTemp,
+        withD,
+        isFo,
+        pdvecN );
+    }
+    catch( SpkException& e )
+    {
+      //
+      // Revisit - Sachiko:
+      //
+      // This should dump all the parameter values to a file and 
+      // give the filename as an error message.
+      //
+      throw e.push(SpkError::SPK_DIFF_ERR, "An attempt to approximate the derivative of mapObj_b with respect to b failed.", __LINE__, __FILE__);
+    }
+    catch( const std::exception& e )
+    {
+      //
+      // Revisit - Sachiko:
+      //
+      // This should dump all the parameter values to a file and 
+      // give the filename as an error message.
+      //
+      const int max = SpkError::maxMessageLen();
+      char buf[max];
+      sprintf( buf, "%s\nAn attempt to approximate the derivative of mapObj_b with respect to b failed.",
+      e.what() );
+      throw SpkException( e, buf, __LINE__, __FILE__ );
+    }
+    catch( ... )
+    {
+      //
+      // Revisit - Sachiko:
+      //
+      // This should dump all the parameter values to a file and 
+      // give the filename as an error message.
+      //
+      throw SpkException(SpkError::SPK_DIFF_ERR, "Unknown exception was thrown during an attempt to \
+      approximate the derivative of mapObj_b with respect to b failed.", __LINE__, __FILE__);
+    }
 
   }
 
@@ -1101,126 +1129,29 @@ void mapOpt(  SpkModel& model,
   //------------------------------------------------------------
 
   // Set the final b value, if necessary.
-  if ( pdvecBOut && !optimizer.getIsTooManyIter() )
+  if ( pdvecBOut && !optInfo.getIsTooManyIter() )
   {
-        *pdvecBOut = dvecBOutTemp;
+    *pdvecBOut = dvecBOutTemp;
   }
 
   // Set the final objective function value, if necessary.
-  if ( pdMapObjOut && !optimizer.getIsTooManyIter() ) 
+  if ( pdMapObjOut && !optInfo.getIsTooManyIter() ) 
   {
-        *pdMapObjOut = dMapObjOutTemp;
+    *pdMapObjOut = dMapObjOutTemp;
   }
 
   // Set the first derivative of the objective function at the 
   // final b value, if necessary.
-  if ( pdrowMapObj_bOut && !optimizer.getIsTooManyIter() ) 
+  if ( pdrowMapObj_bOut && !optInfo.getIsTooManyIter() ) 
   {
     *pdrowMapObj_bOut = drowMapObj_bOutTemp;
   }
 
   // Set the second derivative of the objective function at the 
   // final b value, if necessary.
-  if ( pdmatMapObj_b_bOut && !optimizer.getIsTooManyIter() ) 
+  if ( pdmatMapObj_b_bOut && !optInfo.getIsTooManyIter() ) 
   {
     *pdmatMapObj_b_bOut = dmatMapObj_b_bOutTemp;
   }
 }
-
-
-/*========================================================================
- *
- *
- * Local Function Definitions
- *
- *
- *========================================================================*/
-
-/*************************************************************************
- *
- * Function: evalMapObj
- *
- *
- * Description
- * -----------
- *
- * Calls mapObj in order to evaluate the map Bayesian objective function 
- * and/or its gradient.  If the evaluation fails, an exception object is 
- * passed through the argument by reference.  In this case, all non-const
- * arguments passed by reference will come back unchaged.
- * 
- *
- * Arguments
- * ---------
- *
- * dvecB
- * The column vector b where the objective function should be evaluated.
- *
- * pdMapObjOut
- * If the return value of evalMapObj is true, and if this pointer is not 
- * equal to zero, then on output the double value it points to will be 
- * equal to the map Bayesian objective function  evaluated at b. Note 
- * that the routine calling this function must allocate memory for the 
- * value pointed to by pdMapObjOut.
- *
- * pdrowMapObj_bOut
- * If the return value of evalMapObj is true, and if this pointer is not 
- * equal to zero, then on output the DoubleMatrix it points to will 
- * contain a row vector equal to the derivative of the map Bayesian 
- * objective function with respect to b. Note that the DoubleMatrix 
- * pointed to by pdrowMapObj_bOut must have the same number of elements
- * as dvecB and must be constructed by the routine calling this function.
- * 
- * pInfo
- * The structure pointed to by pInfo contains information required by 
- * mapObj in order to evaluate the objective function.
- *
- *************************************************************************/
-static void evalMapObj( const DoubleMatrix& dvecB, 
-                        double* pdMapObjOut, 
-                        DoubleMatrix* pdrowMapObj_bOut,
-                        const void* pInfo 
-                      )
-{
-  //------------------------------------------------------------
-  // Preliminaries.
-  //------------------------------------------------------------
-
-  // Create a pointer to the information required by mapObj.
-  MapObjInfo* pMapObjInfo = (MapObjInfo*) pInfo;
-
-  // If there are no output values to calculate, then the 
-  // evaluation is considered to have succeeded.
-
-  if ( !pdMapObjOut && !pdrowMapObj_bOut )
-  {
-    return;
-  }
-
-  //------------------------------------------------------------
-  // Validate the inputs (debug version only).
-  //------------------------------------------------------------
-
-  assert( dvecB.nc() == 1 );
-
-  if ( pdrowMapObj_bOut )
-  {
-    assert( dvecB.nr() == pdrowMapObj_bOut->nc() );
-  }
-
-
-  //------------------------------------------------------------
-  // Evaluate the map Bayesian objective function.
-  //------------------------------------------------------------
-
-  mapObj( *( pMapObjInfo->pModel ), 
-          *( pMapObjInfo->pdvecY ), 
-          dvecB, 
-          pdMapObjOut, 
-          pdrowMapObj_bOut, 
-          *( pMapObjInfo->pbWithD ),
-          *( pMapObjInfo->pbIsFo ), 
-          pMapObjInfo->pdvecN );
-}
-
 

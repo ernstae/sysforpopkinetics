@@ -74,6 +74,7 @@
 #include "src/PopVarsTest.h"
 #include "src/ppkaOptTest.h"
 #include "src/printInMatrixTest.h"
+#include "src/quasiNewtonAnyBoxTest.h"
 #include "src/randNormalTest.h"
 #include "src/replaceIthTest.h"
 #include "src/replaceJthTest.h"
@@ -85,7 +86,6 @@
 #include "src/SpkErrorTest.h"
 #include "src/SpkExceptionTest.h"
 #include "src/SpkModelErrorTest.h"
-#include "src/sqpAnyBoxTest.h"
 #include "src/subtractTest.h"
 #include "src/symmetrizeTest.h"
 #include "src/transposeDerivativeTest.h"
@@ -185,6 +185,7 @@ int main( int argc, const char * argv[] )
   master_list_of_tests[ "PopVarsTest" ]                      = PopVarsTest::suite();
   master_list_of_tests[ "ppkaOptTest" ]                      = ppkaOptTest::suite();
   master_list_of_tests[ "printInMatrixTest" ]                = printInMatrixTest::suite();
+  master_list_of_tests[ "quasiNewtonAnyBoxTest" ]            = quasiNewtonAnyBoxTest::suite();
   master_list_of_tests[ "randNormalTest" ]                   = randNormalTest::suite();
   master_list_of_tests[ "replaceIthTest" ]                   = replaceIthTest::suite();
   master_list_of_tests[ "replaceJthTest" ]                   = replaceJthTest::suite();
@@ -196,7 +197,6 @@ int main( int argc, const char * argv[] )
   master_list_of_tests[ "SpkErrorTest" ]                     = SpkErrorTest::suite();
   master_list_of_tests[ "SpkExceptionTest" ]                 = SpkExceptionTest::suite();
   master_list_of_tests[ "SpkModelErrorTest" ]                = SpkModelErrorTest::suite();
-  master_list_of_tests[ "sqpAnyBoxTest" ]                    = sqpAnyBoxTest::suite();
   master_list_of_tests[ "subtractTest" ]                     = subtractTest::suite();
   master_list_of_tests[ "symmetrizeTest" ]                   = symmetrizeTest::suite();
   master_list_of_tests[ "transposeDerivativeTest" ]          = transposeDerivativeTest::suite();

@@ -359,36 +359,46 @@ void fitIndividualTest::fitIndividualExampleTest()
   // Remaining inputs to fitIndividual.
   //------------------------------------------------------------
 
+  bool withD = true;
+
   Optimizer indOptimizer( 1.e-3, 5, 0 );
-  bool withD      = true;
+
+  // Set these to exercise the warm start capabilities of fitIndividual.
   indOptimizer.setupWarmStart( nB );
+  indOptimizer.setThrowExcepIfMaxIter( false );
+  indOptimizer.setSaveStateAtEndOfOpt( true );
+
 
   //------------------------------------------------------------
   // Optimize MapObj(b).
   //------------------------------------------------------------
 
-  try{
-	  while( true )
-	  {
-          fitIndividual( model,
-						 dvecY,
-						 indOptimizer,
-						 dvecBLow,
-						 dvecBUp,
-						 dvecBIn,
-						 dvecBStep,
-						 &dvecBOut,            
-						 &dMapObjOut,
-						 &drowMapObj_bOut,
-						 &dmatMapObj_b_bOut,
-						 withD );
-          if( !indOptimizer.getIsTooManyIter() )
-		      // Finished
-			  break;
+  try
+  {
+    while( true )
+    {
+      fitIndividual( model,
+                     dvecY,
+                     indOptimizer,
+                     dvecBLow,
+                     dvecBUp,
+                     dvecBIn,
+                     dvecBStep,
+                     &dvecBOut,            
+                     &dMapObjOut,
+                     &drowMapObj_bOut,
+                     &dmatMapObj_b_bOut,
+                     withD );
 
-		  // Turn on warm start.
-          indOptimizer.setIsWarmStart( true );
-	  }
+      // Exit this loop if the maximum number of iterations was
+      // not exceeded, i.e., if the optimization was successful.
+      if( !indOptimizer.getIsTooManyIter() )
+        break;
+
+      // Set this so that fitIndividual performs a warm start when it
+      // is called again.
+      indOptimizer.setIsWarmStart( true );
+    }
   }
   catch(...)
   {
@@ -419,7 +429,7 @@ void fitIndividualTest::fitIndividualExampleTest()
   doTheTest(  dMapObjOut, 
               dMapObjKnown, 
               indOptimizer.getEpsilon(), 
-			  dvecBLow,
+              dvecBLow,
               dvecBUp, 
               dvecBOut, 
               dvecBKnown, 
@@ -660,7 +670,7 @@ void fitIndividualTest::fitIndividualQuadraticTest()
                      dvecBLow,
                      dvecBUp,
                      dvecBIn,
-					 dvecBStep,
+                     dvecBStep,
                      &dvecBOut,            
                      &dMapObjOut,
                      &drowMapObj_bOut,
@@ -901,7 +911,7 @@ void fitIndividualTest::fitIndividualZeroIterationsTest()
                      dvecBLow,
                      dvecBUp,
                      dvecBIn,
-					 dvecBStep,
+                     dvecBStep,
                      &dvecBOut,            
                      &dMapObjOut,
                      &drowMapObj_bOut,
@@ -1067,15 +1077,15 @@ static valarray<double> fitindividualzeroiterations::funF_b( const valarray<doub
  *************************************************************************/
 
 void fitIndividualTest::doTheTest(
-								   double dMapObjOut,
-								   double dMapObjKnown,
-								   double epsilon,
-								   const valarray<double>& dvecBLow,
-								   const valarray<double>& dvecBUp,
-								   const valarray<double>& dvecBOut,
-								   const valarray<double>& dvecBKnown,
-								   const valarray<double>& dmatMapObj_b_bOut,
-								   const valarray<double>& dmatMapObj_b_bKnown
+                                   double dMapObjOut,
+                                   double dMapObjKnown,
+                                   double epsilon,
+                                   const valarray<double>& dvecBLow,
+                                   const valarray<double>& dvecBUp,
+                                   const valarray<double>& dvecBOut,
+                                   const valarray<double>& dvecBKnown,
+                                   const valarray<double>& dmatMapObj_b_bOut,
+                                   const valarray<double>& dmatMapObj_b_bKnown
                                  )
 {
   //------------------------------------------------------------

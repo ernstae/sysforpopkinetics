@@ -100,8 +100,8 @@ $spell
   Varbl
   Vi
   xmin
-  optimizer
-  Optimizer optimizer
+  optInfo
+  Optimizer optInfo
 $$
 
 $section Quasi-Newton Optimization with Derivatives and Box Constraints$$
@@ -114,7 +114,7 @@ $table
 $bold Prototype:$$   $cend  
 $syntax/void quasiNewtonAnyBox( 
   QuasiNewtonAnyBoxObj&  /objective/,
-  Optimizer&             /optimizer/,
+  Optimizer&             /optInfo/,
   const DoubleMatrix&    /dvecXLow/,
   const DoubleMatrix&    /dvecXUp/,
   const DoubleMatrix&    /dvecXIn/,
@@ -151,16 +151,19 @@ where
 $math%
     fScaled(y) = f(x) .
 %$$
-The elements of the vectors $math%x%$$ and $math%y%$$ are related 
+The elements of the vectors $math%x%$$ and $math%y%$$ for which 
+$math%xLow(i)%$$ and $math%xUp(i)%$$ are not equal are related 
 as follows: 
 $math%
-    y(i) = [ x(i) - xLow(i) ] / [ xUp(i) - xLow(i) ] .
+    y(j) = [ x(i) - xLow(i) ] / [ xUp(i) - xLow(i) ] ,
 %$$
-Note that if $math%xLow(i) = xUp(i)%$$, then $math%y(i)%$$ is 
-constrained to be $math%0%$$.
+where $math%j%$$ is the position of the element in $math%y%$$ 
+that corresponds to $math%x(i)%$$.
+Note that if $math%xLow(i) = xUp(i)%$$, then $math%x(i)%$$ is 
+not included in $math%y%$$.
 
 $head Return Value$$
-If the convergence criteria specified below for the $italic optimizer$$
+If the convergence criteria specified below by the $italic optInfo$$
 argument is satisfied, then the output value pointers are set to point
 to their respective results.
 If the convergence criteia is not satisfied, then an 
@@ -169,7 +172,7 @@ The state at which an exception is thrown is defined in
 $xref/glossary/Exception Handling Policy/Exception Handling Policy/$$.
 In the case of the maximum number of iterations being exhausted,
 an exception may or may not be thrown depending on the value for
-the $italic optimizer.throwExcepIfMaxIter$$ parameter.
+the $italic optInfo.throwExcepIfMaxIter$$ parameter.
 
 $head Arguments$$
 $syntax/
@@ -242,7 +245,7 @@ previous call to the objective function.
 
 $syntax/
 
-/optimizer/
+/optInfo/
 /$$
 This $xref/Optimizer//Optimizer/$$ object contains the information 
 that controls the optimization process.
@@ -251,21 +254,23 @@ $pre
 $$
 It has attributes for holding the optimization state information 
 that is required to perform a warm start, i.e., to start the
-optimization process using a previous set of optimizer state
+optimization process using a previous set of optimization state
 information.
-If restart is intended, then before this function is called 
+If a warm start is being performed, then before this function is called 
 the member function of the Optimizer object, setupWarmStart(), 
-must be called in order to set up the warm start information.
+must be called in order to set up the warm start information,
+and the upper and lower bounds for $math%x%$$ must be the same as
+they were during the earlier call to this function.
 $pre
 
 $$
 Most of the optimizer information is accessible via public get functions,
 e.g., the value epsilon is returned by the function getEpsilon.
 The following subsections specify how this function uses each
-of the elements of the Optimizer object that is accessed in
+of the elements of the Optimizer object that are accessed in
 this way.
 
-$subhead optimizer.epsilon$$
+$subhead optInfo.epsilon$$
 This real number is used to specify the convergence criteria
 for the optimizer.
 It must be greater than $math%0.0%$$.
@@ -275,30 +280,28 @@ $$
 A  value $math%xOut%$$ is accepted as an estimate for 
 $math%xHat%$$ if 
 $math%
-	abs( xOut - xHat ) \le epsilon ( xUp - xLow )  ,
+        abs( xOut - xHat ) \le epsilon ( xUp - xLow )  ,
 %$$
 where $math%abs%$$ is the element-by-element absolute value function
-and $math%xHat%$$ is the true minimizer of the objective function.
-Since $math%xHat%$$ is unknown, the optimization algorithm must 
-estimate the left hand side of this inequality.
+and $math%xHat%$$ is a local minimizer of the objective function.
+Since $math%xHat%$$ is unknown, this function estimates the left hand
+side of this inequality in a way that is a good approximation when 
+the Hessian of the objective function is positive definite.
 $pre
 
 $$
 Note that if $italic nMaxIter$$ is set to zero, then $math%xIn%$$ is 
 accepted as the estimate for $math%xHat%$$.
 
-$subhead optimizer.nMaxIter$$
+$subhead optInfo.nMaxIter$$
 This integer must be greater than or equal to zero.
 It specifies the maximum number of 
 iterations to attempt before giving up on convergence.
-If it is equal to zero, then the input
+If it is equal to zero, then the initial
 value for $math%x%$$ is accepted as the final value, and any requested output
 values are evaluated at that final value.
-In this case, a warm start will not be performed in order to ensure
-that the objective function and its gradient will be
-evaluated at the input value for $math%x%$$.
 
-$subhead optimizer.traceLevel$$
+$subhead optInfo.traceLevel$$
 This integer scalar specifies the amount of tracing.
 Larger values of $italic traceLevel$$ entail more tracing, 
 with $math%4%$$ being the highest level of tracing.
@@ -324,20 +327,20 @@ $$
 For more details on the tracing see the description of the level 
 parameter for the optimizer $xref/QuasiNewton01Box//QuasiNewton01Box/$$.
 
-$subhead optimizer.nIterCompleted$$
+$subhead optInfo.nIterCompleted$$
 This integer scalar holds the number of iteration that have been 
 completed in the optimizer.
 
-$subhead optimizer.isTooManyIter$$
+$subhead optInfo.isTooManyIter$$
 This flag indicates that if the too-many-iteration failure has occurred.  
 
-$subhead optimizer.saveStateAtEndOfOpt$$
+$subhead optInfo.saveStateAtEndOfOpt$$
 This flag indicates if the state information required for a warm start
 should be saved at the end of the optimization process.
 This state information will not be saved if the optimization process
 results in an exception being thrown by $code quasiNewtonAnyBox$$.
 
-$subhead optimizer.throwExcepIfMaxIter$$
+$subhead optInfo.throwExcepIfMaxIter$$
 This flag indicates if the optimizer should throw an exception when
 the maximum number of iterations is exhausted.
 If this parameter is true, then when
@@ -347,43 +350,52 @@ Otherwise, the calling program will
 need to check the parameter isTooManyIter to see if the 
 maximum number of iterations was exhausted.
 
-$subhead optimizer.isSubLevelOpt$$
+$subhead optInfo.isSubLevelOpt$$
 This flag indicates that if the optimizer is for a sub level optimization.  
 It is for SPK internal use only.
 
-$subhead optimizer.isWarmStart$$
+$subhead optInfo.isWarmStart$$
 This flag indicates that if the optimization should run a warm start.  
 
-$subhead optimizer.stateInfo$$
-This $code StateInfo$$ object contains the optimizer state information
+$subhead optInfo.stateInfo$$
+This $code StateInfo$$ object contains the optimization state information
 required to perform a warm start.
 Each of its elements is described separately below.
 
-$subhead optimizer.stateInfo.n$$
+$subhead optInfo.stateInfo.n$$
 The element $italic n$$ specifies the number of components
 in the element vector $italic x$$.
 
-$subhead optimizer.stateInfo.r$$
+$subhead optInfo.stateInfo.b$$
+The element $italic b$$ specifies the number of Bfgs updates
+that have been made to the Hessian approximation $italic h$$.
+This function assumes that once the number of Bfgs updates
+is equal to the number of objective function parameters $italic n$$,
+then the Hessian approximation is accurate enough to use.
+If the Hessian is known, rather than being an approximation,
+then $italic b$$ should be set equal to $italic n$$.
+
+$subhead optInfo.stateInfo.r$$
 The element $italic r$$ contains the current trust region radius
 (as an infinity norm bound on the step size).
 
-$subhead optimizer.stateInfo.f$$
+$subhead optInfo.stateInfo.f$$
 The element $italic f$$ contains the value for $math%f(x)%$$
 at the point $math%x%$$.
 
-$subhead optimizer.stateInfo.x$$
+$subhead optInfo.stateInfo.x$$
 The element $italic x$$ is a vector of length $italic n$$.
 It specifies the point at which the objective function, 
 its gradient, and its Hessian were evaluated.
 
-$subhead optimizer.stateInfo.g$$
+$subhead optInfo.stateInfo.g$$
 The vector $italic g$$ must have length $math%n%$$.
 It contains the gradient of $math%f(x)%$$
 at the point $math%x%$$.
 
-$subhead optimizer.stateInfo.h.$$
+$subhead optInfo.stateInfo.h.$$
 The vector $italic h$$ must have length $math%n^2%$$.
-It contains an approximation for the hessian of $math%f(x)%$$
+It contains an approximation for the Hessian of $math%f(x)%$$
 at the point $math%x%$$.
 
 $syntax/
@@ -411,6 +423,12 @@ $math%xIn%$$.  It specifies the initial estimate for the argument that
 solves the problem, and it has the same dimension as $italic dvecXLow$$.  
 The initial estimate satisfies the box constraints
 $math%xLow \le xIn \le xUp%$$.
+$pre
+
+$$
+Note that if a warm start is being performed, then the initial $math%x%$$
+estimate will come from the warm start optimizer state information,
+and this initial estimate will not be used.
 
 $syntax/
 
@@ -470,28 +488,27 @@ $end
 #include "isLessThanOrEqualTo.h"
 #include "allTrue.h"
 #include "SpkException.h"
+#include "cholesky.h"
 
 // SPK optimizer header files.
 #include <spkopt/QuasiNewton01Box.h>
+#include <spkopt/MaxAbs.h>
 
 // Standard library header files.
 #include <iostream>
-#include <fstream>
-#include <iomanip>
 #include <cassert>
 #include <cmath>
-#include <cfloat>
-#include <vector>
 
-// NAG header files.
-extern "C" {
-#include "nag.h"
-#include "nag_types.h"
-#include "nag_stdlib.h"
-#include "nagf04.h"
-}
 
-using SPK_VA::valarray;
+/*------------------------------------------------------------------------
+ * Local class declarations
+ *------------------------------------------------------------------------*/
+
+namespace // [Begin: unnamed namespace]
+{
+  class QuasiNewton01BoxObj;
+
+} // [End: unnamed namespace]
 
 
 /*------------------------------------------------------------------------
@@ -500,55 +517,54 @@ using SPK_VA::valarray;
 
 namespace // [Begin: unnamed namespace]
 {
+
   void unscaleElem(
-    int            n,
+    int            nX,
     const double*  y, 
     const double*  xLow, 
     const double*  xUp, 
     const double*  xDiff,
+    const int*     indexXFreeInY, 
     double*        x );
-  
+
   void scaleGradElem(
-    int            n,
+    int            nY,
     const double*  g, 
     const double*  xDiff,
+    const int*     indexYInX, 
     double*        gScaled );
-  
+
   void unscaleGradElem(
-    int            n,
+    int            nX,
     const double*  gScaled, 
     const double*  xDiff,
+    const int*     indexXFreeInY, 
     double*        g );
-  
-  void doubleArrayToValarray( const double* x, valarray<double>& xVA );
-  
-  void valarrayToDoubleArray_SquareMatrixTrans( 
-    const valarray<double>&  xVA,
-    double*                  x );
-  
-  bool isWithinTol(
-    double         tol,
+
+  void initHessApprox(
+    QuasiNewton01BoxObj&  objective01Box,
+    int                   n,
+    const double*         xCurr,
+    const double*         xLow,
+    const double*         xUp,
+    const double*         g,
+    size_t&               bfgsMade,
+    double*               h );
+
+  void calcScaledProjGrad(
     int            n,
-    const double*  xHat,
-    const double*  xLow,
-    const double*  xUp,
-    const double*  g,
-    const double*  h,
-    const double*  hChol,
-    double*        deltaX,
-    double*        gProj,
-    double*        hWork,
-    double*        hCholDiagRec,
-    bool*          isElemFree );
+    const double*  yCurr,
+    const double*  gScaled,
+    double*        gProjScaled );
 
-  bool isLowerTriangular( int n, const double* x );
-
+  bool isAllZero( int n, const double* x );
+  
 } // [End: unnamed namespace]
 
 
 
 /*------------------------------------------------------------------------
- * Local class declarations
+ * Local class definitions
  *------------------------------------------------------------------------*/
 
 namespace // [Begin: unnamed namespace]
@@ -569,21 +585,28 @@ namespace // [Begin: unnamed namespace]
 
   public:
     QuasiNewton01BoxObj(
-      QuasiNewtonAnyBoxObj*  pObjectiveIn,
+      QuasiNewtonAnyBoxObj*  pObjectiveAnyBoxIn,
       const DoubleMatrix*    pdvecXLowIn,
       const DoubleMatrix*    pdvecXUpIn,
-      const DoubleMatrix*    pdvecXDiffIn )
+      const DoubleMatrix*    pdvecXDiffIn,
+      int                    nYIn,
+      const int*             indexXFreeInYIn,
+      const int*             indexYInXIn )
       :
-      pObjective  ( pObjectiveIn ),
-      pdvecXLow   ( pdvecXLowIn ),
-      pdvecXUp    ( pdvecXUpIn ),
-      pdvecXDiff  ( pdvecXDiffIn ),
-      pdXLowData  ( pdvecXLow->data() ),
-      pdXUpData   ( pdvecXUp->data() ),
-      pdXDiffData ( pdvecXDiff->data() ),
-      nX          ( pdvecXDiff->nr() )
+      pObjectiveAnyBox  ( pObjectiveAnyBoxIn ),
+      pdvecXLow         ( pdvecXLowIn ),
+      pdvecXUp          ( pdvecXUpIn ),
+      pdvecXDiff        ( pdvecXDiffIn ),
+      pdXLowData        ( pdvecXLow->data() ),
+      pdXUpData         ( pdvecXUp->data() ),
+      pdXDiffData       ( pdvecXDiff->data() ),
+      nX                ( pdvecXDiff->nr() ),
+      nY                ( nYIn ),
+      indexXFreeInY     ( indexXFreeInYIn ),
+      indexYInX         ( indexYInXIn )
     {
-      dvecXCurr.resize( nX, 1 );
+      dvecXCurr  .resize( nX, 1 );
+      drowF_xCurr.resize( 1,  nX );
 
       pdXCurrData = dvecXCurr.data();
     }
@@ -598,7 +621,7 @@ namespace // [Begin: unnamed namespace]
     //----------------------------------------------------------
 
   private:
-    QuasiNewtonAnyBoxObj* const pObjective;
+    QuasiNewtonAnyBoxObj* const pObjectiveAnyBox;
 
     const DoubleMatrix* const pdvecXLow;      // Unscaled lower bounds.
     const DoubleMatrix* const pdvecXUp;       // Unscaled upper bounds.
@@ -608,13 +631,19 @@ namespace // [Begin: unnamed namespace]
     const double* pdXUpData;
     const double* pdXDiffData;
 
-    const int nX;                             // Number of elements.
+    const int nX;                             // Number of unscaled objective parameters.
+    const int nY;                             // Number of scaled objective parameters.
 
-    DoubleMatrix dvecXCurr;                   // Current parameter value.
-    DoubleMatrix drowF_xCurr;                 // Current gradient value.
+    DoubleMatrix dvecXCurr;                   // Current unscaled parameter value.
+    DoubleMatrix drowF_xCurr;                 // Current unscaled gradient value.
 
     double* pdXCurrData;
     double* pdF_xCurrData;
+
+    const int* indexXFreeInY;                 // Indices for free unscaled parameter
+                                              // elements in the scaled parameter.
+    const int* indexYInX;                     // Indices for scaled parameter elements
+                                              // in the unscaled parameter.
 
 
     //----------------------------------------------------------
@@ -639,7 +668,14 @@ namespace // [Begin: unnamed namespace]
       //--------------------------------------------------------
 
       // Transform the elements of the y vector back to their unscaled form. 
-      unscaleElem( nX, yCurr, pdXLowData, pdXUpData, pdXDiffData, pdXCurrData );
+      unscaleElem(
+        nX,
+	yCurr,
+	pdXLowData,
+	pdXUpData,
+	pdXDiffData,
+	indexXFreeInY,
+	pdXCurrData );
 
 
       //--------------------------------------------------------
@@ -650,7 +686,7 @@ namespace // [Begin: unnamed namespace]
       {
         // Note that the scaled and unscaled objective function 
         // values are the same.
-        pObjective->function( dvecXCurr, &fScaledOut );
+        pObjectiveAnyBox->function( dvecXCurr, &fScaledOut );
       }
       catch( SpkException& e )
       {
@@ -703,9 +739,9 @@ namespace // [Begin: unnamed namespace]
 
       try
       {
-        pObjective->gradient( &dRowF_xCurr );
+        pObjectiveAnyBox->gradient( &drowF_xCurr );
 
-        assert( drowF_xCurr->nc() == nX );
+        assert( drowF_xCurr.nc() == nX );
       }
       catch( SpkException& e )
       {
@@ -734,10 +770,10 @@ namespace // [Begin: unnamed namespace]
 
       // Reset this pointer since it could be changed during
       // the call to gradient.
-      pdrowF_xCurrData = drowF_xCurr.data();
+      pdF_xCurrData = drowF_xCurr.data();
 
       // Transform the elements of the gradient vector to their scaled form. 
-      scaleGradElem( nX, pdrowF_xCurrData, pdXDiffData, gScaledOut );
+      scaleGradElem( nY, pdF_xCurrData, pdXDiffData, indexYInX, gScaledOut );
 
 
       //--------------------------------------------------------
@@ -757,8 +793,8 @@ namespace // [Begin: unnamed namespace]
  *------------------------------------------------------------------------*/
 
 void quasiNewtonAnyBox( 
-  QuasiNewtonAnyBoxObj&  objective,
-  Optimizer&             optimizer,
+  QuasiNewtonAnyBoxObj&  objectiveAnyBox,
+  Optimizer&             optInfo,
   const DoubleMatrix&    dvecXLow,
   const DoubleMatrix&    dvecXUp,
   const DoubleMatrix&    dvecXIn,
@@ -773,16 +809,13 @@ void quasiNewtonAnyBox(
   using namespace std;
 
   int i;
+  int j;
 
-  double epsilon  = optimizer.getEpsilon();
-  int    nMaxIter = optimizer.getNMaxIter();
-  int    level    = optimizer.getLevel();
+  double epsilon           = optInfo.getEpsilon();
+  int    nMaxIterAnyBox    = optInfo.getNMaxIter();
+  int    level             = optInfo.getLevel();
+  bool   isWarmStartAnyBox = optInfo.getIsWarmStart();
 
-  // Don't allow a warm start if zero iterations are requested.
-  // This ensures that the objective function, its gradient, and
-  // its Hessian are all evaluated at xIn.
-  bool isWarmStart = optimizer.getIsWarmStart() && nMaxIter > 0;
-  
 
   //------------------------------------------------------------
   // Validate the inputs (debug mode).
@@ -819,94 +852,132 @@ void quasiNewtonAnyBox(
 
   double* pdXDiffData = dvecXDiff.data();
 
+  // Determine the number of parameters that are not constrained 
+  // by their bounds.
+  int nObjParFree = 0;
+  for ( i = 0; i < nObjPar; i++ )
+  {
+    if ( pdXUpData[i] != pdXLowData[i] )
+    {
+      nObjParFree++;
+    }
+  }
+
+  // If all of the elements of x are constrained by their bounds,
+  // there is no need to optimize the objective.
+  if ( nObjParFree == 0 )
+  {
+    nMaxIterAnyBox = 0;
+  }
+
 
   //------------------------------------------------------------
   // Allocate all of the memory at the same time.
   //------------------------------------------------------------
 
-  Memory<double> memoryDbl( 7 * nObjPar + 3 * nObjPar * nObjPar );
-  Memory<bool> memoryBool(  1 * nObjPar );
+  Memory<int> memoryInt( 1 * nObjPar + 1 * nObjParFree );
+
+  // These store the indices for the free x elements in Y and the
+  // indices for all of the y elements in x.
+  int* indexXFreeInY = memoryInt( nObjPar );
+  int* indexYInX     = memoryInt( nObjParFree );
+
+  Memory<double> memoryDbl( 6 * nObjParFree + 1 * ( nObjParFree * nObjParFree ) );
 
   // The various y vectors are scaled versions of their x counterparts.
-  double* yLow  = memoryDbl( nObjPar );
-  double* yUp   = memoryDbl( nObjPar );
-  double* yCurr = memoryDbl( nObjPar );
+  double* yLow  = memoryDbl( nObjParFree );
+  double* yUp   = memoryDbl( nObjParFree );
+  double* yCurr = memoryDbl( nObjParFree );
+
+  // This is the step to the solution of the second-order approximation
+  // for the objective function that is used by the optimizer.
+  double* sScaled = memoryDbl( nObjParFree );
 
   // These are the scaled gradient, gScaled(y) = fScaled_y(y),
-  // and scaled Hessian, hScaled(y) = fScaled_y_y(y).
-  double* gScaled = memoryDbl( nObjPar );
-  double* hScaled = memoryDbl( nObjPar * nObjPar );
-
-  // These variables are used by the function isWithinTol.  They
-  // are allocated here so that they don't have to be reallocated
-  // everytime that function is called.
-  double* deltaY         = memoryDbl( nObjPar );
-  double* gScaledProj    = memoryDbl( nObjPar );
-  double* hScaledWork    = memoryDbl( nObjPar * nObjPar );
-  double* hScaledChol        = memoryDbl( nObjPar * nObjPar );
-  double* hScaledCholDiagRec = memoryDbl( nObjPar );
-
-  // These variables are used by the function isWithinTol.
-  bool* isElemFree = memoryBool( nObjPar );
+  // the projected version of the scaled gradient, gScaledProj,
+  // and the scaled Hessian, hScaled(y) = fScaled_y_y(y).
+  double* gScaled     = memoryDbl( nObjParFree );
+  double* gScaledProj = memoryDbl( nObjParFree );
+  double* hScaled     = memoryDbl( nObjParFree * nObjParFree );
 
 
   //------------------------------------------------------------
   // Initializations for the scaled objective function.
   //------------------------------------------------------------
 
-  // Set the bounds and initial values for y.
+  // Determine which elements of x are not constrained by their
+  // bounds and will therefore be included in y.
+  j = 0;
   for ( i = 0; i < nObjPar; i++ )
   {
     pdXDiffData[i] = pdXUpData[i] - pdXLowData[i]; 
 
+    // Only include this x element if its bounds are not equal.
     if ( pdXDiffData[i] != 0.0 ) 
     {
-      // The x bounds are not equal, so constrain this element 
-      // to the interval [0,1].
-      yLow[i]  = 0.0;
-      yUp[i]   = 1.0;
-      yCurr[i] = ( pdXInData[i] - pdXLowData[i] ) / pdXDiffData[i];
+      // Constrain its corresponding y value to the interval [0,1].
+      yLow[j]  = 0.0;
+      yUp[j]   = 1.0;
+
+      indexXFreeInY[i] = j;
+      indexYInX[j]     = i;
+      j++;
     }
     else
     {
-      // The x bounds are equal, so constrain this element 
-      // to the point 0.
-      yLow[i]  = 0.0;
-      yUp[i]   = 0.0;
-      yCurr[i] = 0.0
+      // Set this to indicate this element is not free and is not 
+      // included in y.
+      indexXFreeInY[i] = -1;
     }
   }
 
+  // Instantiate the scaled objective function object.
+  QuasiNewton01BoxObj objective01Box( 
+    &objectiveAnyBox,
+    &dvecXLow,
+    &dvecXUp,
+    &dvecXDiff,
+    nObjParFree,
+    indexXFreeInY,
+    indexYInX );
+
 
   //------------------------------------------------------------
-  // Prepare the objective function object.
+  // Prepare the optimization state information for QuasiNewto01Box.
   //------------------------------------------------------------
 
-  QuasiNewton01BoxObj objective( &dvecXLow, &dvecXUp, &dvecXDiff );
+  StateInfo stateInfo;
 
-
-  //------------------------------------------------------------
-  // Prepare the optimizer state information.
-  //------------------------------------------------------------
-
+  size_t bfgsCurr = 0;
   double rScaled;
   double fScaled;
-  string message;
 
-  // Since the optimizer always does a warm start, i.e. it always
-  // makes use of the current values for y, the objective function,
-  // its gradient and its Hessian, set those values here.
-  if ( !isAWarmRestart )
+  const char* charMessage;
+
+  // Even if quasiNewtonAnyBox is not doing a warm start, QuasiNewton01Box
+  // always does a warm start itself.  This means that QuasiNewton01Box must
+  // always be provided with optimization state information when it is called.
+  if ( !isWarmStartAnyBox )
   {
-    // Evaluate the objective function and its gradient at the
-    // initial value for y.
+    //----------------------------------------------------------
+    // Prepare for a quasiNewtonAnyBox normal (non-warm) start.
+    //----------------------------------------------------------
+
+    // Set the initial y value using the input x value.
+    for ( i = 0; i < nObjParFree; i++ )
+    {
+      yCurr[i] = ( pdXInData[indexYInX[i]] - pdXLowData[indexYInX[i]] ) / 
+	pdXDiffData[indexYInX[i]];
+    }
+
+    // Get initial values for the objective and its gradient.
     try
     {
-      message.assign( objective.function( yCurr, fScaled ) );
-      assert( message == "ok" );
+      charMessage = objective01Box.function( yCurr, fScaled );
+      assert( strcmp( charMessage, "ok" ) == 0 );
 
-      message.assign( objective.gradient( gScaled ) );
-      assert( message == "ok" );
+      charMessage = objective01Box.gradient( gScaled );
+      assert( strcmp( charMessage, "ok" ) == 0 );
     }
     catch( SpkException& e )
     {
@@ -933,199 +1004,339 @@ void quasiNewtonAnyBox(
         __FILE__ );
     }
 
-    if ( nMaxIter > 0 )
+    // If more than zero iterations were requested, then prepare the rest
+    // of the optimization state information.
+    if ( nMaxIterAnyBox > 0 )
     {
-      // Set the number of quasi-Newton iterations high enough that 
-      // the optimizer can build up a reasonably accurate approximation
-      // for the Hessian the first time it is called, but not so high
-      // that it will perform too many iterations before this function's
-      // convergence criterion is checked.
-      nIterMax = nObjPar;
-
       // Set the initial value for the trust region radius
       // equal to one half of the radius of the box.
       rScaled = 0.5;
   
-      // Set the initial value for the positive definite approximation 
-      // for the Hessian equal to the identity matrix.
-      for ( i = 0; i < nObjPar; i++ )
+      // Calculate an initial value for the approximate Hessian.
+      try
       {
-	for ( j = 0; j < nObjPar; j++ )
-	{
-	  hScaled[i * nObjPar + j] = static_cast<double>( i == j );
-	}
+        initHessApprox(
+          objective01Box,
+          nObjParFree,
+          yCurr,
+          yLow,
+          yUp,
+          gScaled,
+          bfgsCurr,
+          hScaled );
+      }
+      catch( SpkException& e )
+      {
+        throw e.push(
+          SpkError::SPK_OPT_ERR, 
+          "An SpkException was thrown during the initialization of the Hessian approximation.",
+          __LINE__, 
+          __FILE__ );
+      }
+      catch( const std::exception& stde )
+      {
+        throw SpkException(
+          stde,
+        "An standard exception was thrown during the initialization of the Hessian approximation.",
+        __LINE__, 
+        __FILE__ );
+      }  
+      catch( ... )
+      {
+        throw SpkException(
+          SpkError::SPK_UNKNOWN_ERR, 
+          "An unknown exception was thrown during the initialization of the Hessian approximation.",
+          __LINE__, 
+          __FILE__ );
       }
     }
   }
   else
   {
-    // This function assumes that the Hessian provided during
-    // a warm start is sufficiently accurate that the optimizer
-    // does not need extra iterations in order to approximate
-    // the Hessian the first time it is called.
-    nIterMax = 1;
+    //----------------------------------------------------------
+    // Prepare for a quasiNewtonAnyBox warm start.
+    //----------------------------------------------------------
 
     // Retrieve the previous state information.
-    StateInfo stateInfo = optimizer.getStateInfo();
-    if ( stateInfo.n == nObjPar )
-    {
-      rScaled = stateInfo.r;
-      fScaled = stateInfo.f;
-      for ( i = 0; i < nObjPar; i++ )
-      {
-	yCurr[i]   = stateInfo.x[i];
-	gScaled[i] = stateInfo.g[i];
-      }
-      for ( i = 0; i < nObjPar * nObjPar; i++ )
-      {
-	hScaled[i] = stateInfo.h[i];
-      }
-    }
-    else
+    stateInfo = optInfo.getStateInfo();
+
+    // Check the number of parameters.
+    if ( stateInfo.n != nObjParFree )
     {
       throw SpkException( 
         SpkError::SPK_USER_INPUT_ERR,
-	"The sizes of the warm start values do not match the number of objective parameters.",
-	__LINE__,
-	__FILE__ );
+        "The input number of free parameters is not equal to the warm start number.",
+        __LINE__,
+        __FILE__ );
+    }
+
+    // Set the current values equal to the previous values.
+    bfgsCurr = stateInfo.b;
+    rScaled  = stateInfo.r;
+    fScaled  = stateInfo.f;
+    for ( i = 0; i < nObjParFree; i++ )
+    {
+      yCurr[i] = stateInfo.x[i];
+      gScaled[i] = stateInfo.g[i];
+    }
+    for ( i = 0; i < nObjParFree * nObjParFree; i++ )
+    {
+      hScaled[i] = stateInfo.h[i];
     }
   }
 
 
   //------------------------------------------------------------
-  // Set the parameters that control the optimization.
+  // Set the rest of the parameters that control the optimization.
   //------------------------------------------------------------
+
+  // Set the maximum number of quasi-Newton iterations that the optimizer
+  // will perform based on the accuracy of the Hessian approximation.
+  size_t nMaxIter01Box;
+  if ( bfgsCurr < nObjParFree )
+  {
+    // If the number of Bfgs updates that have been performed is 
+    // less than the number of objective function parameters,
+    // then set this equal to the minimum number of iterations
+    // required to build up an accurate Hessian approximation.  
+    nMaxIter01Box = nObjParFree - bfgsCurr;
+
+    // If the number of iterations is too large, reduce it.
+    if ( nMaxIter01Box > nMaxIterAnyBox )
+    {
+      nMaxIter01Box = nMaxIterAnyBox;
+    }
+  }
+  else
+  {
+    // The Hessian approximation is accurate enough so that the 
+    // optimizer only needs to perform a single iteration.
+    nMaxIter01Box = 1;
+  }
+
+  // Initialize the convergence flag.
+  bool isWithinTol;
+  if ( nMaxIterAnyBox > 0 )
+  {
+    // Set the value for the case of one or more iterations.
+    isWithinTol = false;
+  }
+  else
+  {
+    // If zero iterations have been requested, then accept the input
+    // value for x as the final value.
+    isWithinTol = true;
+  }
+
+  // The iteration counter tracks the number of quasi-Newton iterations 
+  // that have been performed by the optimizer.
+  size_t iterCurr = 1;
+  size_t iterBefore;
+  size_t iterMax;
 
   // Set the maximum number of interior point iterations so
   // that the optimizer can solve the quadratic subproblems
   // with sufficient accuracy.
-  nQuadMax = 20 * nObjPar;
+  size_t nQuadMax = 40;
+  size_t quadCurr = 0;
 
-  // If the return value of QuasiNewton01Box is "ok", then the
-  // infinity norm (element with the maximum absolute value) 
-  // of the projected gradient is less than or equal to delta.
-  // The scale is the value this norm will be divided.
+  // The optimizer's convergence criterion is based on the infinity
+  // norm (element with the maximum absolute value) of the scaled
+  // projected gradient.
   double delta;
-  double deltaScale = 10.0;
 
-  // Initialize the convergence flag and iteration counter.
-  bool isAcceptable;
-  int iterCurr;
-  if ( nMaxIter > 0 )
-  {
-    isAcceptable = false;
-    iterCurr = 1;
-  }
-  else
-  {
-    // If zero iterations have been requested, then the input value
-    // for x is accepted as the final value.
-    isAcceptable = true;
-    iterCurr = 0;
-  }
-
-  // Initialize the convergence flag and iteration counter.
-  bool isAcceptable = false;
-  int iterCurr = 1;
-  if ( nMaxIter == 0 )
-  {
-    // If zero iterations have been requested, then the input value
-    // for x is accepted as the final value.
-    isAcceptable = true;
-    iterCurr = 0;
-  }
-
-
-  //------------------------------------------------------------
-  // Set the remaining optimizer parameters.
-  //------------------------------------------------------------
+  // If this flag is true, then the current sScaled value solves the
+  // optimizer's quadratic subproblem.
+  bool isSScaledOk = false;
 
   // Send the output to standard cout.
-  std::ostream outputStream = std::cout;
+  std::ostream& outputStream = std::cout;
 
 
   //------------------------------------------------------------
   // Optimize the scaled objective function.
   //------------------------------------------------------------
 
-  valarray<double> hScaledVA( nObjPar * nObjPar );
-  valarray<double> hScaledCholVA( nObjPar * nObjPar );
-
+  // Attempt to satisfy this function's convergence criterion before
+  // the maximum number of iterations have been performed.
   try
   {
-    // Attempt to satisfy this function's convergence criterion before
-    // the maximum number of iterations have been performed.
-    while ( !isAcceptable && iterCurr <= nMaxIter )
+    while ( !isWithinTol && ( iterCurr <= nMaxIterAnyBox + 1 ) )
     {
-      // Get the Cholesky factor of the scaled Hessian in lower triangular 
-      // form and column-major order, and then put it in row-major order.
-      doubleArrayToValarray( hScaled, hScaledVA );
-      hScaledCholVA = cholesky( hScaledVA, nObjPar );
-      valarrayToDoubleArray_SquareMatrixTrans( hScaledCholVA, hScaledChol );
-
+      //--------------------------------------------------------
       // See if this function's convergence criterion has been met.
-      if ( isWithinTol( 
-	nObjPar,
-        epsilon,
-        yCurr,
-        yLow,
-        yUp,
-        gScaled,
-	hScaled,
-        hScaledChol,
-	deltaY,
-	gScaledProj,
-	hScaledWork,
-	hScaledCholDiagRec,
-	isElemFree ) )
+      //--------------------------------------------------------
+
+      // Calculate the current scaled projected gradient.
+      calcScaledProjGrad( nObjParFree, yCurr, gScaled, gScaledProj );
+
+      // Only check for convergence if the Hessian approximation is
+      // accurate enough to use.
+      if ( bfgsCurr >= nObjParFree )
       {
-        isAcceptable = true;
+        if ( isAllZero( nObjParFree, gScaled ) )
+        {
+          // If the scaled projected gradient is identically zero, then the
+          // current y value is a local minimizer of the objective.
+          isWithinTol = true;
+          break;
+        }
+        else
+        {
+          // Set delta so that the current y value will not satisfy the 
+          // optimizer's convergence criterion but not so small that it
+          // won't be able to solve the quadratic subproblems for y values
+          // close to the solution.
+          delta = MaxAbs( nObjParFree, gScaledProj ) / 10.0;
+
+          iterMax  = iterCurr;
+          quadCurr = 0;
+
+          // Call the optimizer with the maximum number of iterations 
+          // equal to the current number of iterations.  This will allow it
+          // to determine an accurate sScaled value without taking a step.
+          charMessage = QuasiNewton01Box(
+            outputStream,
+            level,
+            iterMax,
+            nQuadMax,
+            nObjParFree,
+            delta,
+            objective01Box,
+            isSScaledOk,
+            iterCurr,
+            quadCurr,
+            bfgsCurr,
+            rScaled,
+            fScaled,
+            yCurr,
+            sScaled,
+            gScaled,
+            hScaled );
+
+          // Check this function's convergence criterion, if necessary.
+          if ( isSScaledOk )
+          {
+            // The current y value satisfies this function's convergence 
+            // criterion if
+            //
+            //     | yCurr - yHat |  <=  epsilon  ,
+            //
+            // where yHat is a local minimizer of the objective function.
+            //
+            // Note that sScaled is the solution to the optimizer's quadratic
+            // subproblem and is the step the optimizer will take at the next
+            // iteration, if it takes one.  This function assumes that if
+            // sScaled is small enough, then the current y value is close to
+            // yHat and sScaled is an accurate estimate of the distance to
+            // the true local miminizer, i.e.,
+            //
+            //              ~
+            //     sScaled  =  yCurr - yHat  .
+            //
+            // This assumption makes use of the fact that the Hessian
+            // approximation is postive definite.
+            //
+            // To ensure that the final y value is within epsilon of the
+            // solution, this function requires that sScaled be smaller
+            // than epsilon.  The reason for this is that the quadratic
+            // subproblem uses a quadratic approximation for the objective, 
+            // which may not necessarily be accurate for the current y value.  
+	    if ( MaxAbs( nObjParFree, sScaled ) < epsilon / 5.0 )
+            {
+              // Check that none of the elements of sScaled are greater than or
+              // equal to the trust region radius, which would indicate that
+              // the quadratic approximation for the objective is not accurate
+              // at the current y value. 
+              if ( MaxAbs( nObjParFree, sScaled ) < rScaled )
+              {
+                // If sScaled is not too large, this is an acceptable value.
+                isWithinTol = true;
+                break;
+              }
+            }
+          }
+        }
+      }
+
+      
+      //--------------------------------------------------------
+      // Ask the optimizer to perform a limited number of iterations.
+      //--------------------------------------------------------
+
+      // Don't perform any more iterations if the maximum have
+      // already been performed.
+      if ( iterCurr >= nMaxIterAnyBox + 1 )
+      {
+        break;
+      }
+
+      // Set delta so that the optimizer will be able to perform at
+      // least one Quasi-Newton iteration and so that the quadratic
+      // subproblems will be solved with sufficient accuracy.
+      delta = MaxAbs( nObjParFree, gScaledProj ) / 10.0;
+
+      iterBefore = iterCurr;
+      iterMax    = iterCurr + nMaxIter01Box;
+      quadCurr   = 0;
+
+      // Optimize the scaled objective function.
+      charMessage = QuasiNewton01Box(
+        outputStream,
+        level,
+        iterMax,
+        nQuadMax,
+        nObjParFree,
+        delta,
+        objective01Box,
+        isSScaledOk,
+        iterCurr,
+        quadCurr,
+        bfgsCurr,
+        rScaled,
+        fScaled,
+        yCurr,
+        sScaled,
+        gScaled,
+        hScaled );
+
+      // This function assumes that delta is set small enough that the
+      // optimizer's convergence criterion will not be satisfied for the
+      // current y value and that the optimizer will therefore be able to
+      // perform at least one Quasi-Newton iteration.  If that is not the
+      // case, then throw an exception.
+      if ( iterCurr == iterBefore )
+      {
+        throw SpkException( 
+          SpkError::SPK_OPT_ERR,
+          "QuasiNewton01Box failed to perform at least one Quasi-Newton iteration.",
+          __LINE__,
+          __FILE__ );
+      }
+
+      // Set the number of iterations based on the accuracy of the 
+      // Hessian approximation.
+      if ( bfgsCurr < nObjParFree )
+      {
+        // If the number of Bfgs updates that have been performed is 
+        // less than the number of objective function parameters,
+        // then set this equal to the minimum number of iterations
+        // required to build up an accurate Hessian approximation.  
+        nMaxIter01Box = nObjParFree - bfgsCurr;
+
+        // If the number of iterations is too large, reduce it.
+        if ( iterCurr + nMaxIter01Box > nMaxIterAnyBox + 1 )
+        {
+          nMaxIter01Box = nMaxIterAnyBox - iterCurr + 1;
+        }
       }
       else
       {
-        // Set delta to be less than the maximum of the absolute values of
-        // the elements of the projected gradient so that the subproblems
-        // only be solved with accuracy sufficient for the current y value.
-        delta = maxAbsProjGrad( gScaled ) / deltaScale;
-
-        // Save the number of iterations that have been performed.
-        iterCurrPrev = iterCurr;
-
-        // Ask the optimizer to take perform a limited number of iterations.
-        message.assign( QuasiNewton01Box(
-          outputStream,
-          level,
-          nIterMax,
-          nQuadMax,
-          nObjPar,
-          delta,
-          objective,
-          iterCurr,
-          quadCurr,
-          rScaled,
-          fScaled,
-          yCurr,
-          gScaled,
-          hScaled ) );
-
-        // After the first call to the optimizer the approximation for the
-        // Hessian should be accurate enough that this can be reset.
-        nIterMax = 1;
-
-        // This function assumes that delta is set small enough that the
-        // optimizer's convergence criterion will not be satisfied for the
-        // current y value and that the optimizer will therefore be able to
-        // perform at least one Quasi-Newton itertion.  If that is not the
-        // case, then throw an exception.
-        if ( iterCurr == iterCurrPrev )
-        {
-          throw SpkException( 
-            SpkError::SPK_OPT_ERR,
-            "QuasiNewton01Box failed to perform at least one Quasi-Newton iteration.",
-            __LINE__,
-            __FILE__ );
-        }
+        // The Hessian approximation is accurate enough so that the 
+        // optimizer only needs to perform a single iteration.
+        nMaxIter01Box = 1;
       }
+
     }
   }
   catch( SpkException& e )
@@ -1155,29 +1366,47 @@ void quasiNewtonAnyBox(
 
 
   //------------------------------------------------------------
-  // Save state information for future warm starts, if necessary.
+  // Prepare for future quasiNewtonAnyBox warm starts.
   //------------------------------------------------------------
 
-  if ( optimizer.getSaveStateAtEndOfOpt() )
+  // Save the optimization state information, if necessary.
+  if ( optInfo.getSaveStateAtEndOfOpt() )
   {
-    if ( optimizer.stateInfo.n != nObjPar )
+    // Retrieve the previous state information.
+    stateInfo = optInfo.getStateInfo();
+
+    // Reinitialize the optimization state information if the
+    // previous sizes don't match the current sizes.
+    if ( stateInfo.n != nObjParFree )
     {
-      optimizer.deleteStateInfo();
-      optimizer.setupWarmStart( nObjPar );
+      optInfo.deleteStateInfo();
+      optInfo.setupWarmStart( nObjParFree );
+
+      // Get a new copy of this information since the previous 
+      // version had the wrong sizes.
+      stateInfo = optInfo.getStateInfo();
     }
 
-    stateInfo.n = nObjPar;
+    // Set the values at the end of the optimization.
+    stateInfo.n = nObjParFree;
+    stateInfo.b = bfgsCurr;
     stateInfo.r = rScaled;
     stateInfo.f = fScaled;
-    stateInfo.x = yCurr;
-    stateInfo.g = gScaled;
-    stateInfo.h = hScaled;
+    for ( i = 0; i < nObjParFree; i++ )
+    {
+      stateInfo.x[i] = yCurr[i];
+      stateInfo.g[i] = gScaled[i];
+    }
+    for ( i = 0; i < nObjParFree * nObjParFree; i++ )
+    {
+      stateInfo.h[i] = hScaled[i];
+    }
 
-    optimizer.setStateInfo( stateInfo );
+    optInfo.setStateInfo( stateInfo );
   }
   else
   {
-    optimizer.deleteStateInfo();
+    optInfo.deleteStateInfo();
   }
 
 
@@ -1187,24 +1416,26 @@ void quasiNewtonAnyBox(
 
   bool ok = false;
   SpkError::ErrorCode errorCode;
-  StateInfo stateInfo;
+  string stringMessage;
 
-  optimizer.setNIterCompleted( iterCurr );
+  // The number of iterations completed is one less than the
+  // current iteration number.
+  optInfo.setNIterCompleted( iterCurr - 1 );
 
-  if ( isAcceptable )               // This function's convergence
-                                    // criterion was satisfied.
+  if ( isWithinTol )                          // This function's convergence
+                                              // criterion was satisfied.
   {
-    optimizer.setIsTooManyIter( false );
+    optInfo.setIsTooManyIter( false );
     ok = true;
   }
-  else if ( iterCurr == nMaxIter )  // The maximum number of iterations 
-                                    // have been performed.
+  else if ( iterCurr == nMaxIterAnyBox + 1 )  // The maximum number of iterations 
+                                              // have been performed.
   {
-    optimizer.setIsTooManyIter( true );
-    if ( optimizer.getThrowExcepIfMaxIter() )
+    optInfo.setIsTooManyIter( true );
+    if ( optInfo.getThrowExcepIfMaxIter() )
     {
       errorCode = SpkError::SPK_TOO_MANY_ITER;
-      message = "Maximum number of iterations performed without convergence.";
+      stringMessage = "Maximum number of iterations performed without convergence.";
       ok = false;
     }
     else
@@ -1212,19 +1443,19 @@ void quasiNewtonAnyBox(
       ok = true;
     }
   }
-  else                              // This function's convergence
-                                    // criterion was not satisfied.
+  else                                        // This function's convergence
+                                              // criterion was not satisfied.
   {
-    optimizer.setIsTooManyIter( false );
+    optInfo.setIsTooManyIter( false );
     errorCode = SpkError::SPK_NOT_CONVERGED;
-    message = "Unable to satisfy convergence criterion for quasiNewtonAnyBox.";
+    stringMessage = "Unable to satisfy convergence criterion for quasiNewtonAnyBox.";
     ok = false;
   }
 
   // If something went wrong, throw an exception.
   if ( !ok )
   {
-    throw SpkException( errorCode, message.str(), __LINE__, __FILE__ );
+    throw SpkException( errorCode, stringMessage.c_str(), __LINE__, __FILE__ );
   }
 
 
@@ -1238,8 +1469,16 @@ void quasiNewtonAnyBox(
   {
     double* pdXOutData = pdvecXOut->data();
     assert( pdvecXOut->nr() == nObjPar );
+    assert( pdvecXOut->nc() == 1 );
 
-    unscaleElem( nObjPar, yCurr, pdXLowData, pdXUpData, pdXDiffData, pdXOutData );
+    unscaleElem(
+      nObjPar,
+      yCurr,
+      pdXLowData,
+      pdXUpData,
+      pdXDiffData,
+      indexXFreeInY,
+      pdXOutData );
   }
 
   // If the final value for the objective function should be
@@ -1254,9 +1493,17 @@ void quasiNewtonAnyBox(
   if ( pdrowF_xOut )
   {
     double* pdF_xOutData = pdrowF_xOut->data();
-    assert( pdF_xOutData->nr() == nObjPar );
+    assert( pdrowF_xOut->nr() == 1 );
+    assert( pdrowF_xOut->nc() == nObjPar );
 
-    unscaleGradElem( nObjPar, gScaled, pdXDiffData, pdF_xOutData );
+    unscaleGradElem(
+      nObjPar,
+      gScaled,
+      pdXDiffData,
+      indexXFreeInY,
+      pdF_xOutData );
+  }
+
 }
 
 
@@ -1272,96 +1519,225 @@ namespace // [Begin: unnamed namespace]
 {
 
 /*************************************************************************
+ *
  * Function: unscaleElem
  *
  *
- * Returns the unscaled value for y.
+ * Description
+ * -----------
+ *
+ * Calculates the unscaled x value that corresponds to y.
+ *
+ *
+ * Arguments
+ * ---------
+ *
+ * nX
+ *
+ * Number of elements in x.
+ *
+ *
+ * y
+ *
+ * The current value for y.  It must be of length nX or less.
+ *
+ *
+ * xLow
+ *
+ * The lower bound for x.  It must be of length nX.
+ *
+ *
+ * xUp
+ *
+ * The upper bound for x.  It must be of length nX.
+ *
+ *
+ * xDiff
+ *
+ * The difference between the upper and lower bound for x.  It must be of
+ * length nX.
+ *
+ *
+ * indexXFreeInY
+ *
+ *
+ * The indices for the free x elements in y.  It must be of length nX.
+ * The elements corresponding to constrained elements of x are not used.
+ *
+ *
+ * x
+ *
+ * On input, this must be allocated to hold nX elements.  On output, it
+ * will contain the x value that corresponds to y.
  *
  *************************************************************************/
 
 void unscaleElem(
-  int            n,
+  int            nX,
   const double*  y, 
   const double*  xLow, 
   const double*  xUp, 
   const double*  xDiff,
+  const int*     indexXFreeInY, 
   double*        x )
 {
   int i;
 
-  for ( i = 0; i < n; i++ )
+  for ( i = 0; i < nX; i++ )
   {
-    if ( y[i] != 1.0 )
+    if ( xDiff[i] != 0.0 )
     {
       // Transform the element of the y vector back to the unscaled 
-      // form. Note that for those elements of x for which the
-      // lower and upper bounds are the same, xDiff is zero, and
-      // the x values are equal to their lower bounds.
-      x[i] = xLow[i] + y[i] * xDiff[i];
+      // form.  If it is at the upper bound, calculate the unscaled 
+      // value in a way that avoids roundoff error.
+      if ( y[indexXFreeInY[i]] != 1.0 )
+      {
+        x[i] = xLow[i] + y[indexXFreeInY[i]] * xDiff[i];
+      }
+      else
+      {
+        x[i] = xUp[i];
+      }
     }
-    else
+    else 
     {
-      // If y is at the upper bound, calculate the unscaled value
-      // in a way that avoids roundoff error.
-      x[i] = xUp[i];
+      // This element is constrained by its lower and upper bounds.
+      x[i] = xLow[i];
     }
   }
+
 }
 
 
 /*************************************************************************
+ *
  * Function: scaleGradElem
  *
  *
- * Returns the scaled value for g, the gradient of the scaled 
- * objective function with respect to y.
+ * Description
+ * -----------
+ *
+ * Calculates the gradient of the scaled objective function with respect to y.
+ *
+ *
+ * Arguments
+ * ---------
+ *
+ * nY
+ *
+ * Number of elements in y.
+ *
+ *
+ * g
+ *
+ * The gradient g(x) evaluated at the current x value.  It must be of length nY
+ * or greater.
+ *
+ *
+ * xDiff
+ *
+ * The difference between the upper and lower bound for x.  It must be of
+ * the same length as g.
+ *
+ *
+ * indexYInX
+ *
+ *
+ * The indices for all of the y elements in x.  It must be of length nY.
+ *
+ *
+ * gScaled
+ *
+ * On input, this must be allocated to hold nY elements.  On output, it
+ * will contain the elements of the gradient of the scaled objective
+ * function with respect to y.
  *
  *************************************************************************/
 
 void scaleGradElem(
-  int            n,
+  int            nY,
   const double*  g, 
   const double*  xDiff,
+  const int*     indexYInX, 
   double*        gScaled )
 {
   int i;
 
-  for ( i = 0; i < n; i++ )
+  for ( i = 0; i < nY; i++ )
   {
-    gScaled[i] = xDiff[i] * g[i];
+    gScaled[i] = xDiff[indexYInX[i]] * g[indexYInX[i]];
   }
 }
 
 
 /*************************************************************************
+ *
  * Function: unscaleGradElem
  *
  *
- * Returns the unscaled value for g, the gradient of the unscaled 
- * objective function with respect to x.
+ * Calculates the gradient of the unscaled objective function with respect to x.
+ *
+ * Description
+ * -----------
+ *
+ * Calculates the gradient of the scaled objective function with respect to y.
+ *
+ *
+ * Arguments
+ * ---------
+ *
+ * nX
+ *
+ * Number of elements in x.
+ *
+ *
+ * gScaled
+ *
+ * The gradient of the scaled objective function with respect to y evaluated at
+ * the current y value.  It must be of length nX or less.
+ *
+ *
+ * xDiff
+ *
+ * The difference between the upper and lower bound for x.  It must be of
+ * length nX.
+ *
+ *
+ * indexXFreeInY
+ *
+ *
+ * The indices for the free x elements in y.  It must be of length nX.
+ * The elements corresponding to constrained elements of x are not used.
+ *
+ *
+ * g
+ *
+ * On input, this must be allocated to hold nX elements.  On output, it
+ * will contain the gradient of the unscaled objective function with respect 
+ * to x.
  *
  *************************************************************************/
 
 void unscaleGradElem(
-  int            n,
+  int            nX,
   const double*  gScaled, 
   const double*  xDiff,
+  const int*     indexXFreeInY, 
   double*        g )
 {
   int i;
 
-  for ( i = 0; i < n; i++ )
+  for ( i = 0; i < nX; i++ )
   {
     if ( xDiff[i] != 0.0 )
     {
-      g[i] = gScaled[i] / xDiff[i];
+      // Transform this element of the gradient back to the unscaled form.
+      g[i] = gScaled[indexXFreeInY[i]] / xDiff[i];
     }
     else
     {
-      // Since the scaled gradient for this element is always zero, and
-      // since the corresponding x and y values are fixed to their initial
-      // values, neither objective function depends on this element.
-      // Therefore set this unscaled gradient element equal to zero.
+      // Set this scaled gradient element equal to zero since its corresponding
+      // x element is constrained by its lower and upper bounds.
       g[i] = 0.0;
     }
   }
@@ -1369,96 +1745,24 @@ void unscaleGradElem(
 
 
 /*************************************************************************
- * Function: doubleArrayToValarray
  *
- *
- * Sets the elements in the valarray of doubles xVA equal to those in
- * the array of doubles x.  This function assumes that xVA and x have
- * the same number of elements.
- *
- *************************************************************************/
-
-void doubleArrayToValarray( const double* x, valarray<double>& xVA )
-{
-  int i;
-
-  for ( i = 0; i < xVA.size(); i++ )
-  {
-    xVA[i] = x[i];
-  }
-}
-
-
-/*************************************************************************
- * Function: valarrayToDoubleArray_SquareMatrixTrans
- *
- *
- * Assuming that the array of doubles x and the valarray of doubles xVA
- * both contain the elements from a square matrix with the same number
- * of elements, this function sets the elements in x equal to the matrix
- * transpose of those in xVA.
- *
- *************************************************************************/
-
-void valarrayToDoubleArray_SquareMatrixTrans( 
-  const valarray<double>&  xVA,
-  double*                  x )
-{
-  int i;
-  int j;
-
-  int n = sqrt( xVA.size() );
-  assert( n * n = xVA.size() );
-
-  for ( i = 0; i < n; i++ )
-  {
-    for ( j = 0; j < n; j++ )
-    {
-      x[i + j * n] = xVA[j + i * n];
-    }
-  }
-}
-
-
-/*************************************************************************
- * Function: isWithinTol
+ * Function: initHessApprox
  *
  *
  * Description
  * -----------
  *
- * Returns true if xHat is sufficiently close to xTrue, the true 
- * minimizer of the function f(x).
- *
- * Specifically, this function calculates deltaX, an approximation 
- * for the distance that xHat is from xTrue as the solution of 
- *
- *     H  deltaX  =  g  ,                              (1)
- *
- * where both the gradient of f(x),
- *
- *     g = f_x(xHat) 
- *
- * and the Hessian of f(x) 
- *
- *     H = f_x_x(xHat)
- *
- * are evaluated at xHat.  Note that equation (1) follows from the 
- * derivative of the Taylor expansion of f(x) about xTrue. 
- *
- * This function returns true if 
- *
- *     abs(deltaX)  <  tol  .
- *
- * Otherwise it returns false.
+ * Calculates an initial version of the approximation for the Hessian
+ * of the objective function that is well conditioned and that has been
+ * updated using the Bfgs method.
  *
  *
  * Arguments
  * ---------
  *
- * tol
+ * objective01Box
  *
- * The tolerance for how close xHat must be to xTrue.  It must be greater than 0.0.
+ * The objective function object is of type QuasiNewton01BoxObj.
  *
  *
  * n
@@ -1466,9 +1770,9 @@ void valarrayToDoubleArray_SquareMatrixTrans(
  * Number of elements in x.
  *
  *
- * xHat
+ * xCurr
  *
- * The estimate for the true minimizer xTrue.  It must be of length n.
+ * The current value for x.  It must be of length n.
  *
  *
  * xLow
@@ -1483,72 +1787,31 @@ void valarrayToDoubleArray_SquareMatrixTrans(
  *
  * g
  *
- * The gradient g(x) evaluated at xHat.  It must be of length n.
+ * The gradient g(x) evaluated at xCurr.  It must be of length n.
+ *
+ *
+ * bfgsMade
+ *
+ * On output, this will contain the number of Bfgs updates that have
+ * been made to the approximate Hessian.
  *
  *
  * h
  *
- * The Hessian H(x) evaluated at xHat.  It must be of length n * n, and
- * its elements must be in row-major order.
- *
- *
- * hChol
- *
- * The lower triangular Cholesky factor of the Hessian H(x) evaluated
- * at xHat.  Note that the existence of this Cholesky factor implies 
- * that H is symmetric and positive-definite.  It must be of length 
- * n * n, and its elements must be in row-major order.
- *
- *
- * deltaX
- *
- * On input, this must be allocated to hold n elements.  On output, it
- * contains an approximation for the distance that xHat is from xTrue.
- *
- *
- * gProj
- *
- * On input, this must be allocated to hold n elements.  On output, it
- * contains the projected gradient evaluated at xHat.
- *
- *
- * hWork
- *
  * On input, this must be allocated to hold n * n elements.  On output, 
- * it contains a modified version of the Hessian with its elements in
- * row-major order and with some of its elements replaced by some of the 
- * elements of its Cholesky factor.
- *
- *
- * hCholDiagRec
- *
- * On input, this must be allocated to hold n elements.  On output, it
- * contains the reciprocals of the diagonals of the Cholesky factor of
- * the Hessian H(x) evaluated at xHat.
- *
- *
- * isElemFree
- *
- * On input, this must be allocated to hold n elements.  On output, its
- * elements will be equal to true if the corresponding xHat element is
- * free and will be included in the tolerance calculation.
+ * it will contain the approximation for the Hessian.
  *
  *************************************************************************/
 
-bool isWithinTol(
-  double         tol,
-  int            n,
-  const double*  xHat,
-  const double*  xLow,
-  const double*  xUp,
-  const double*  g,
-  const double*  h,
-  const double*  hChol,
-  double*        deltaX,
-  double*        gProj,
-  double*        hWork,
-  double*        hCholDiagRec,
-  bool*          isElemFree )
+void initHessApprox(
+  QuasiNewton01BoxObj&  objective01Box,
+  int                   n,
+  const double*         xCurr,
+  const double*         xLow,
+  const double*         xUp,
+  const double*         g,
+  size_t&               bfgsMade,
+  double*               h )
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -1556,253 +1819,311 @@ bool isWithinTol(
 
   int i;
   int j;
-  int k;
-
-  assert( isLowerTriangular( hChol ) );
 
 
   //------------------------------------------------------------
-  // Prepare the modified version of the Hessian.
+  // Allocate all of the memory at the same time.
   //------------------------------------------------------------
 
-  // Create a version of the Hessian with its sub-diagonal elements
-  // replaced by the sub-diagonal elements of its Cholesky factor.
+  Memory<double*> memoryDblPtr( 4 * n );
+
+  double** xForward = memoryDblPtr( n );
+  double** xBack    = memoryDblPtr( n );
+  double** gForward = memoryDblPtr( n );
+  double** gBack    = memoryDblPtr( n );
+
+  Memory<double>  memoryDbl( 2 * n + 4 * ( n * n ) );
+
   for ( i = 0; i < n; i++ )
   {
-    // Copy the upper triangle elements from the Hessian.
-    for ( j = 0; j <= i ; j++ )
-    {
-      hWork[i * n + j] = h[i * n + j];
-    }
-  
-    // Copy the sub-diagonal elements from its Cholesky factor.
-    for ( j = i + 1; j < n; j++ )
-    {
-      hWork[i * n + j] = hChol[i * n + j];
-    }
+    xForward[i] = memoryDbl( n );
+    xBack[i]    = memoryDbl( n );
+    gForward[i] = memoryDbl( n );
+    gBack[i]    = memoryDbl( n );
   }
 
+  double* gTemp = memoryDbl( n );
+  double* hDiag = memoryDbl( n );
+
 
   //------------------------------------------------------------
-  // Calculate the projected gradient, modified Hessian, and reciprocals.
+  // Calculate approximations for the diagonals of the Hessian.
   //------------------------------------------------------------
 
-  // Set the elements of the projected gradient, finish preparing the
-  // modified Hessian, and calculate the reciprocals of the diagonals
-  // of the Cholesky factor of the Hessian.
+  double step = 0.001;
+  double stepBack;
+  double stepForward;
+  double fTemp;
+  double hDiagMin = 0.0;
+  double hDiagMax = 0.0;
+
+  const char* charMessage;
+
+  // Calculate finite difference approximations for the diagonals
+  // of the Hessian.
   for ( i = 0; i < n; i++ )
   {
-    // Determine which elements are free, i.e., are not being held by 
-    // their bounds.
-    if ( ( xHat[i] >  xLow[i] && xHat[i] < xUp[i] )
-      || ( xHat[i] == xLow[i] && g[i]    < 0.0 ) 
-      || ( xHat[i] == xUp[i]  && g[i]    > 0.0 ) )
+    if ( xLow[i] == xUp[i] )
     {
-      //--------------------------------------------------------
-      // This element is free:  its deltaX should be computed.
-      //--------------------------------------------------------
-
-      isElemFree[i] = true;
-
-      // Set the corresponding element of the projected gradient.
-      gProj[i] = g[i];
-
-      // Set the reciprocal of the corresponding R diagonal.
-      assert( hChol[i * n + i] != 0.0 );
-      hCholDiagRec[i] = 1.0 / hChol[i * n + i];
+      // If the upper and lower bounds are equal, temporarily set
+      // this diagonal equal to zero.  It will be reset below.
+      hDiag[i] = 0.0;
     }
     else
     {
       //--------------------------------------------------------
-      // This element is not free:  force its deltaX to be zero.
+      // Evaluate the gradient element at the smaller x value.
       //--------------------------------------------------------
 
-      isElemFree[i] = false;
-
-      // Zero the corresponding element of the projected gradient.
-      gProj[i] = 0.0;
-
-      // Set the correponding diagonal element of the modified Hessian
-      // equal to one.
-      hWork[i * n + i] = 1.0;
-
-      // Zero the rest of the elements in the corresponding row
-      // and column of the modified Hessian.
-      for ( j = 0; j < i; j++ )
+      if ( xCurr[i] - step < 0 )
       {
-        hWork[i * n + j] = 0.0;
-        hWork[j * n + i] = 0.0;
+        // If the backward step would go below the lower bound, do 
+        // forward differencing using the current gradient value.
+        for ( j = 0; j < n; j++ )
+        {
+          xBack[i][j] = xCurr[j];
+          gBack[i][j] = g[j];
+        }
+        stepBack = 0.0;
       }
-      for ( j = i + 1; j < n; j++ )
+      else
       {
-        hWork[i * n + j] = 0.0;
-        hWork[j * n + i] = 0.0;
+        // Set the x value one step back.
+        for ( j = 0; j < n; j++ )
+        {
+          xBack[i][j] = xCurr[j];
+        }
+        xBack[i][i] = xCurr[i] - step;
+        stepBack = step;
+
+        // Evaluate the objective function and the gradient.
+        charMessage = objective01Box.function( xBack[i], fTemp );
+        assert( strcmp( charMessage, "ok" ) == 0 );
+        charMessage = objective01Box.gradient( gTemp );
+        assert( strcmp( charMessage, "ok" ) == 0 );
+
+        // Save the gradient value.
+        for ( j = 0; j < n; j++ )
+        {
+          gBack[i][j] = gTemp[j];
+        }
       }
-  
-      // Set the reciprocal of the corresponding L diagonal equal to one.
-      hCholDiagRec[i] = 1.0;
+
+
+      //--------------------------------------------------------
+      // Evaluate the gradient element at the larger x value.
+      //--------------------------------------------------------
+
+      if ( xCurr[i] + step > 1 )
+      {
+        // If the forward step would go above the upper bound, do 
+        // backward differencing using the current gradient value.
+        for ( j = 0; j < n; j++ )
+        {
+          xForward[i][j] = xCurr[j];
+          gForward[i][j] = g[j];
+        }
+        stepForward = 0.0;
+      }
+      else
+      {
+        // Set the x value one step forward.
+        for ( j = 0; j < n; j++ )
+        {
+          xForward[i][j] = xCurr[j];
+        }
+        xForward[i][i] = xCurr[i] + step;
+        stepForward = step;
+
+        // Evaluate the objective function and the gradient.
+        charMessage = objective01Box.function( xForward[i], fTemp );
+        assert( strcmp( charMessage, "ok" ) == 0 );
+        charMessage = objective01Box.gradient( gTemp );
+        assert( strcmp( charMessage, "ok" ) == 0 );
+
+        // Save the gradient value.
+        for ( j = 0; j < n; j++ )
+        {
+          gForward[i][j] = gTemp[j];
+        }
+      }
+
+
+      //--------------------------------------------------------
+      // Calculate the approximation for this Hessian diagonal.
+      //--------------------------------------------------------
+
+      hDiag[i] =
+        ( gForward[i][i] - gBack[i][i] ) / 
+        ( stepForward + stepBack );
+
+      // Save the largest diagonal absolute value.
+      if ( fabs( hDiag[i] ) > hDiagMax )
+      {
+        hDiagMax = fabs( hDiag[i] );
+      }
     }
+  }
+
+  // Set the minimum diagonal element that will be allowed.
+  if ( hDiagMax > 0.0 )
+  {
+    // If at least one of the Hessian diagonals is greater than
+    // zero, then set the minimum value so that the condition
+    // number of the Hessian approximation won't be too large.
+    hDiagMin = 1.0e-5 * hDiagMax;
+  }
+  else
+  {
+    // If the Hessian diagonals are all less than or equal
+    // to zero, then set the minimum value so that the Hessian 
+    // approximation will just be the identity matrix.
+    hDiagMin = 1.0;
   }
 
 
   //------------------------------------------------------------
-  // Define the parameters for nag_real_cholesky_solve_mult_rhs.
+  // Precondition the approximate Hessian.
   //------------------------------------------------------------
 
-  //
-  // Review - Sachiko: suggestion
-  //
-  // This routine may be useful in general.  
-  // It's a verion of backDiv (solve Ax=B) taking advantage of positive definiteness.
-  //
-
-  // ***********************************************************
-  // * In general, nag_real_cholesky_solve_mult_rhs solves the
-  // * system of equations
-  // *
-  // *     A  X  =  B .
-  // *
-  // * For this particular problem
-  // *
-  // *     A  =  H ,
-  // *
-  // *     X  =  deltaX ,
-  // *
-  // * and
-  // *
-  // *     B  =  gProj .
-  // * 
-  // * Note that 
-  // *               T
-  // *     A  =  L  L  ,
-  // *
-  // * where
-  // *
-  // *     L  = hChol .
-  // *
-  // ***********************************************************
-
-  // Parameter: n.
-  // Input: n, the order of the matrix A. 
-  // Output: unspecified.
-  // Constraint: n >= 1. 
-  assert( n >= 1 );
-
-  // Parameter: nrhs.
-  // Input: r, the number of right-hand sides.
-  // Output: unspecified.
-  // Constraint: nrhs >= 1.
-  Integer nrhs = 1;
-  assert ( nrhs >= 1 );
-
-  // Parameter: a[n][tda].
-  // Input:the upper triangle of the n by n positive-definite
-  // symmetric matrix A, and the sub-diagonal elements of its
-  // Cholesky factor L, as returned by nag_real_cholesky
-  // (f03aec).
-  // Output: unspecified.
-  double* a = hWork;
-
-  // Parameter: tda.
-  // Input:the last dimension of the array a as declared in the
-  // function from which nag_real_cholesky_solve_mult_rhs is
-  // called.
-  // Output: unspecified.
-  // Constraint: tda >= n.
-  Integer tda = n;
-
-  // Parameter: p[n].
-  // Input:the reciprocals of the diagonal elements of L, as
-  // returned by nag_real_cholesky (f03aec).
-  // Output: unspecified.
-  double* p = hCholDiagRec;
-
-  // Parameter: b[n][tdb].
-  // Input:the n by r right-hand side matrix B.  
-  // Output: unspecified.
-  double* b = gProj;
-
-  // Parameter: tdb.
-  // Input:the last dimension of the array b as declared in the
-  // function from which nag_real_cholesky_solve_mult_rhs is
-  // called.
-  // Output: unspecified.
-  // Constraint: tdb >= nrhs.
-  Integer tdb = nrhs;
-
-  // Parameter: x[n][tdx].
-  // Input: unspecified.
-  // Output: the n by r solution matrix X.  
-  double* x = deltaX;
-
-  // Parameter: tdx.
-  // Input:the last dimension of the array x as declared in the
-  // function from which nag_real_cholesky_solve_mult_rhs is
-  // called.
-  // Output: unspecified.
-  // Constraint:  tdx >= nrhs.
-  Integer tdx = nrhs;
-
-
-  //------------------------------------------------------------
-  // Solve the system of equations to compute deltaX.
-  //------------------------------------------------------------
- 
-  // Revisit - Exceptions - Mitch: if an error occurs in this
-  // NAG routine, the program will be stopped using exit or abort. 
-  //
-  nag_real_cholesky_solve_mult_rhs(n, nrhs, a, tda, p, b, tdb, x, 
-    tdx, NAGERR_DEFAULT);
-    
-
-  //------------------------------------------------------------
-  // Finish up.
-  //------------------------------------------------------------
-
-  // Check to see if deltaX is within tolerance.
+  // Precondition the approximate Hessian by setting its diagonal
+  // elements in a way that keeps its condition number reasonable.
   for ( i = 0; i < n; i++ )
   {
-    // Only check the elements of xHat that were determined
-    // earlier to be necessary for this tolerance calculation.
-    if ( isElemFree[i] )
+    // Set the diagonal elements;
+    if ( hDiag[i] < hDiagMin )
     {
-      if ( fabs( deltaX[i] ) > tol )
+      h[i * n + i] = hDiagMin;
+    }
+    else
+    {
+      h[i * n + i] = hDiag[i];
+    }
+
+    // Set the off diagonal elements.
+    for ( j = 0; j < n; j++ )
+    {
+      if ( i != j )
       {
-        // Get out of the routine as soon as possible if
-	// one of the elements is not within tolerance.
-        return false;
+        h[i * n + j] = 0.0;
       }
     }
   }
 
-  return true;
+
+  //------------------------------------------------------------
+  // Perform Bfgs updates to the Hessian approximation.
+  //------------------------------------------------------------
+
+  bfgsMade = 0;
+  double epsilon = step * step;
+
+  // Perform Bfgs updates to the preconditioned Hessian approximation.
+  for ( i = 0; i < n; i++ )
+  {
+    // Only attempt to perform a Bfgs update if this element
+    // is not constrained by its lower and upper bounds.
+    if ( xLow[i] != xUp[i] )
+    {
+      charMessage = Bfgs(
+        n,
+        epsilon,
+        xBack[i],
+        gBack[i],
+        xForward[i],
+        gForward[i],
+        h );
+
+      // Increment the counter if the update was successful.
+      if ( strcmp( charMessage, "ok" ) == 0 )
+      {
+        bfgsMade++;
+      }
+    }
+  }
+
 }
 
 
 /*************************************************************************
- * Function: isLowerTriangular
+ *
+ * Function: calcScaledProjGrad
  *
  *
- * Returns true if the square matrix x, which has n rows and columns, 
- * is lower triangular, i.e., if all of its elements above the diagonal
- * are zero.  This function assumes that x has been allocated with the
- * proper number of elements.
+ * Description
+ * -----------
+ *
+ * Calculates the scaled projected gradient.
+ *
+ *
+ * Arguments
+ * ---------
+ *
+ * n
+ *
+ * Number of elements in y.
+ *
+ *
+ * yCurr
+ *
+ * The current value for y.  It must be of length n.
+ *
+ *
+ * gScaled
+ *
+ * The gradient gScaled(y) evaluated at yCurr.  It must be of length n.
+ *
+ *
+ * gProjScaled
+ *
+ * On input, this must be allocated to hold n elements.  On output, it
+ * will contain the scaled projected gradient evaluated at yCurr.
  *
  *************************************************************************/
 
-bool isLowerTriangular( int n, const double* x )
+void calcScaledProjGrad(
+  int            n,
+  const double*  yCurr,
+  const double*  gScaled,
+  double*        gProjScaled )
 {
   int i;
-  int j;
 
-  for ( i = 0; i < n - 1; i++ ) 
+  // Calculate the scaled projected gradient.
+  for ( i = 0; i < n; i++ )
   {
-    for ( j = i + 1; j < n; j++ )
+    if ( gScaled[i] >= 0.0 )
     {
-      if ( x[i + j * n] != 0.0 )
-      {
-          return false;
-      }
+      gProjScaled[i] = ( yCurr[i] - 0.0 ) * gScaled[i];
+    }
+    else
+    {
+      gProjScaled[i] = ( 1.0 - yCurr[i] ) * gScaled[i];
+    }
+  }
+
+}
+
+
+/*************************************************************************
+ *
+ * Function: isAllZero
+ *
+ *
+ * Returns true if all of the elements of x are zero.  Otherwise it 
+ * returns false.
+ *
+ *************************************************************************/
+
+bool isAllZero( int n, const double* x )
+{
+  int i;
+
+  for ( i = 0; i < n; i++ )
+  {
+    if ( x[i] )
+    {
+      return false;
     }
   }
 

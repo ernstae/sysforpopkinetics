@@ -53,6 +53,7 @@ struct StateInfo
   // Note: the state information maintained by this class 
   // is specific to the optimizer QuasiNewton01Box.
   int      n;
+  int      b;
   double   r;
   double   f;
   double*  x;   // Length n.
@@ -89,7 +90,6 @@ public:
   inline bool   getIsTooManyIter() const { return isTooManyIter; }
   inline bool   getSaveStateAtEndOfOpt() { return saveStateAtEndOfOpt; }
   inline bool   getThrowExcepIfMaxIter() { return throwExcepIfMaxIter; }
-  inline bool   getIsSubLevelOpt() const { return isSubLevelOpt; }
   inline bool   getIsWarmStart() const { return isWarmStart; }
   inline StateInfo  getStateInfo() const { return stateInfo; }
 
@@ -101,7 +101,6 @@ public:
   inline void setIsTooManyIter( bool b ) { isTooManyIter = b; }
   inline void setSaveStateAtEndOfOpt( bool s ) { saveStateAtEndOfOpt = s; }
   inline void setThrowExcepIfMaxIter( bool t ) { throwExcepIfMaxIter = t; }
-  void setIsSubLevelOpt( bool s );
   void setIsWarmStart( bool w );
   void setStateInfo( const StateInfo& s );
   void deleteStateInfo();
@@ -122,7 +121,6 @@ private:
   bool      isTooManyIter;
   bool      saveStateAtEndOfOpt;
   bool      throwExcepIfMaxIter;
-  bool      isSubLevelOpt;
   bool      isWarmStart;
 
   StateInfo stateInfo;

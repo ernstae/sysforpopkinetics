@@ -46,7 +46,7 @@ public:
 
 void quasiNewtonAnyBox( 
   QuasiNewtonAnyBoxObj&  objective,
-  Optimizer&             optimizer,
+  Optimizer&             optInfo,
   const DoubleMatrix&    dvecXLow,
   const DoubleMatrix&    dvecXUp,
   const DoubleMatrix&    dvecXIn,

@@ -1066,14 +1066,23 @@ void firstOrderOpt(
   //------------------------------------------------------------
   // Set indOptimizer as a sub-level optimizer. 
   //------------------------------------------------------------
-  indOptimizer.setIsSubLevelOpt( true );
+
+  bool oldIndSaveState  = indOptimizer.getSaveStateAtEndOfOpt();
+  bool oldIndThrowExcep = indOptimizer.getThrowExcepIfMaxIter();
+
+  // Set these flags so that an exception is thrown if the maximum number
+  // of iterations is exceeded when optimizing an individual and so that
+  // no individual level optimizer state information is saved.
+  indOptimizer.setSaveStateAtEndOfOpt( false );
+  indOptimizer.setThrowExcepIfMaxIter( true);
+
 
   //------------------------------------------------------------
   // Prepare the objects to hold the output values.
   //------------------------------------------------------------
 
   // Instantiate a temporary column vector to hold the final alp 
-  // value that will be returned by sqpAnyBox.
+  // value that will be returned by mapOpt.
   DoubleMatrix dvecAlpOutTemp;
   DoubleMatrix* pdvecAlpOutTemp = 0;
   if ( pdvecAlpOut )
@@ -1287,5 +1296,8 @@ void firstOrderOpt(
   {
     *pdmatLTilde_alp_alpOut = dmatLTilde_alp_alpOutTemp;
   }
-  indOptimizer.setIsSubLevelOpt( false );
+
+  // Reset these individual optimizer flags to their original values.
+  indOptimizer.setSaveStateAtEndOfOpt( oldIndSaveState );
+  indOptimizer.setThrowExcepIfMaxIter( oldIndThrowExcep );
 }

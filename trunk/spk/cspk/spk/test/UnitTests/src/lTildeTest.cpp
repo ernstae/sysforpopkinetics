@@ -415,13 +415,29 @@ void lTildeTest::cmpAllObjectives()
   //
   // Compare bOut
   //
+  double tolB;
+  double tolBMax = 0.0;
   for( j=0; j<nIndividuals; j++ )
   {
     for( i=0; i<nB; i++ )
     {
-      CPPUNIT_ASSERT_DOUBLES_EQUAL( bOutExpected.data()[i+j*nB], laplaceBOut.data()[i+j*nB], 1.0e-10 );
-      CPPUNIT_ASSERT_DOUBLES_EQUAL( bOutExpected.data()[i+j*nB], foceBOut.data()[i+j*nB], 1.0e-10 );
-      CPPUNIT_ASSERT_DOUBLES_EQUAL( bOutExpected.data()[i+j*nB], foBOut.data()[i+j*nB], 1.0e-10 );
+      // The optimizer called by lTilde will accept a value bOut as
+      // an estimate for bHat if 
+      //
+      //     abs( bOut - bHat )  <=  epsilon ( bUp - bLow )  ,
+      //
+      // where abs is the element-by-element absolute value function
+      // and bHat is a local minimizer of the objective function.
+      tolB = eps * fabs( bUp[i] - bLow[i] );
+
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( bOutExpected.data()[i+j*nB], laplaceBOut.data()[i+j*nB], tolB );
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( bOutExpected.data()[i+j*nB], foceBOut.data()[i+j*nB], tolB );
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( bOutExpected.data()[i+j*nB], foBOut.data()[i+j*nB], tolB );
+
+      if ( tolB > tolBMax )
+      {
+        tolBMax = tolB;
+      }
     }
   }
   //
@@ -435,9 +451,9 @@ void lTildeTest::cmpAllObjectives()
   //
   for( i=0; i<nAlp; i++ )
   {
-    CPPUNIT_ASSERT_DOUBLES_EQUAL( L_alpOutExpected.data()[i], laplaceL_alpOut.data()[i], 1.0e-10 );
-    CPPUNIT_ASSERT_DOUBLES_EQUAL( L_alpOutExpected.data()[i], foceL_alpOut.data()[i], 1.0e-10 );
-    CPPUNIT_ASSERT_DOUBLES_EQUAL( L_alpOutExpected.data()[i], foL_alpOut.data()[i], 1.0e-10 );
+    CPPUNIT_ASSERT_DOUBLES_EQUAL( L_alpOutExpected.data()[i], laplaceL_alpOut.data()[i], tolBMax );
+    CPPUNIT_ASSERT_DOUBLES_EQUAL( L_alpOutExpected.data()[i], foceL_alpOut.data()[i], tolBMax );
+    CPPUNIT_ASSERT_DOUBLES_EQUAL( L_alpOutExpected.data()[i], foL_alpOut.data()[i], tolBMax );
   }
 }
 void lTildeTest::setUp()
@@ -664,22 +680,14 @@ void lTildeTest::diagDTest(enum Objective whichObjective,
   {
       for(i = 0; i<nB; i++)
       {
+          // The optimizer called by lTilde will accept a value bOut as
+          // an estimate for bHat if 
           //
-          // The true derivative of f(x) can be expressed in a talor's series:
-          // f'(x) = 1 + x/2 + x^3/3 + ... for -1 < x < 1
+          //     abs( bOut - bHat )  <=  epsilon ( bUp - bLow )  ,
           //
-          // The central difference approximation of f(x) with h as step size is expanded:
-          // {f(x+h) - f(x-h)}/(2.0*h) = 1 + 2x + (6x^2y + 2y^3) + ... for -1 < x < 1
-          //
-          // So, the difference between the two is:
-          // f'(x) - {f(x+h) - f(x-h)}/(2.0*h) = (x/2 -2x) + (x^3/3 - 6x^2y + 2y^3)...
-          // 
-          //
-          CPPUNIT_ASSERT(bStep[i] <= 1.0  );
-          CPPUNIT_ASSERT(bStep[i] >= -1.0 );
-          double x = bIn[i+j*nB];
-          double h = bStep[i];
-          tolB[i] = fabs(2.0*(x/2.0 - 2.0*x) + (x*x*x/3.0 - 6.0*x*x*h + 2*h*h*h));
+          // where abs is the element-by-element absolute value function
+          // and bHat is a local minimizer of the objective function.
+          tolB[i] = eps * fabs( bUp[i] - bLow[i] );
       }
   }
   for( j=0; j< nIndividuals; j++ )

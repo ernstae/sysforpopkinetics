@@ -73,7 +73,7 @@ void mapOptTest::tearDown()
 
 Test* mapOptTest::suite()
 {
-	TestSuite *suiteOfTests = new TestSuite("mapOptTest");
+    TestSuite *suiteOfTests = new TestSuite("mapOptTest");
 
     suiteOfTests->addTest(new TestCaller<mapOptTest>(
                   "mapOptExampleTest", &mapOptTest::mapOptExampleTest));
@@ -635,15 +635,23 @@ void mapOptTest::mapOptExampleTest()
   void* pFvalInfo = 0;
   bool withD      = true;
   Optimizer optimizer( epsilon, nMaxIter, level ); 
+
+  // Set these to exercise the warm start capabilities of mapOpt.
   optimizer.setupWarmStart( nB );
+  optimizer.setThrowExcepIfMaxIter( false );
+  optimizer.setSaveStateAtEndOfOpt( true );
+
 
   //------------------------------------------------------------
   // Optimize MapObj(b).
   //------------------------------------------------------------
+
   model.setIndPar(dvecBIn.toValarray());
-  try{
-	while( true )
-	{
+
+  try
+  {
+    while( true )
+    {
       mapOpt( model,
               dvecY,
               optimizer,
@@ -656,18 +664,22 @@ void mapOptTest::mapOptExampleTest()
               &drowMapObj_bOut,
               &dmatMapObj_b_bOut,
               withD );
-      if( !optimizer.getIsTooManyIter() )
-		// Finished
-		break;
 
-	  // Turn on warm start.
+      // Exit this loop if the maximum number of iterations was
+      // not exceeded, i.e., if the optimization was successful.
+      if( !optimizer.getIsTooManyIter() )
+        break;
+
+      // Set this so that ppkaOpt performs a warm start when it
+      // is called again.
       optimizer.setIsWarmStart( true );
-	}
+    }
   }
   catch(...)
   {
       CPPUNIT_ASSERT(false);
   }
+
 
   //------------------------------------------------------------
   // Known values.

@@ -140,6 +140,8 @@ testall_SOURCES = \
 	ppkaOptTest.h \
 	printInMatrixTest.cpp \
 	printInMatrixTest.h \
+	quasiNewtonAnyBoxTest.cpp \
+	quasiNewtonAnyBoxTest.h \
 	randNormalTest.cpp \
 	randNormalTest.h \
 	replaceIthTest.cpp \
@@ -162,8 +164,6 @@ testall_SOURCES = \
 	SpkExceptionTest.h \
 	SpkModelErrorTest.cpp \
 	SpkModelErrorTest.h \
-	sqpAnyBoxTest.cpp \
-	sqpAnyBoxTest.h \
 	subtractTest.cpp \
 	subtractTest.h \
 	symmetrizeTest.cpp \
@@ -183,7 +183,7 @@ testall_SOURCES = \
 
 testall_CXXFLAGS = -I/usr/local/cppunit/include
 
-testall_LDFLAGS = -lspk /usr/local/lib/libnagc.a -lpthread -lm -lcppunit
+testall_LDFLAGS = -lspk -lspkopt /usr/local/lib/libnagc.a -lpthread -lm -lcppunit
 
 INCLUDES = -I@top_srcdir@/
 pkginclude_HEADERS = \
@@ -257,6 +257,7 @@ pkginclude_HEADERS = \
 	PopVarsTest.h \
 	ppkaOptTest.h \
 	printInMatrixTest.h \
+	quasiNewtonAnyBoxTest.h \
 	randNormalTest.h \
 	replaceIthTest.h \
 	replaceJthTest.h \
@@ -268,7 +269,6 @@ pkginclude_HEADERS = \
 	SpkErrorTest.h \
 	SpkExceptionTest.h \
 	SpkModelErrorTest.h \
-	sqpAnyBoxTest.h \
 	subtractTest.h \
 	symmetrizeTest.h \
 	transposeDerivativeTest.h \

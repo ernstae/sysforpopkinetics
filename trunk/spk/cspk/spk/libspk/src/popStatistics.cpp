@@ -150,19 +150,25 @@ $math%
 These formulations are given in NONMEM documentation.  In Spk notation,
 $math%
 
-     R = LTilde_alp_alp
+                                          T
+     R = ( LTilde_alp_alp + LTilde_alp_alp  ) / 2
 
                                T
      S = Sum{ [(LTilde_i )_alp] [(LTilde_i)_alp] }
           i                          
 %$$
-where $math%LTilde_alp_alp%$$ is the second order derivative of the 
-population objective with respect to population parameter alp and 
-$math%(LTilde_i)_alp%$$ is the first order derivative of individual i 
-objective with respect to population parameter alp.  The standard error 
-vector and the correlation matrix are calculated from the values of the 
-covariance matrix by their mathematical definitions, respectively. 
-The coefficient of variation is calculated as:
+where $math%LTilde_alp_alp%$$ is an approximation for the second order 
+derivatives of the population objective with respect to population 
+parameter alp and $math%(LTilde_i)_alp%$$ is the first order derivative 
+of individual i objective with respect to population parameter alp.  
+Note that R is defined in this way to insure that it is symmetric
+even for cases where the approximation $math%LTilde_alp_alp%$$ is not.
+$pre
+
+$$
+The standard error vector and the correlation matrix are calculated from
+the values of the covariance matrix by their mathematical definitions, 
+respectively. The coefficient of variation is calculated as:
 $math%
    
                CV = SE / b * 100 
