@@ -1283,6 +1283,13 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
         gCur,
         HCur );
 
+      // After the first call to the optimizer the approximation for the
+      // Hessian should be accurate enough that this can reset.
+      itrMax = 1;
+
+      // Add the number of iterations that were performed.
+      i += itrCur;
+
       // This function assumes that delta is set small enough that the
       // optimizer's convergence criterion will not be satisfied for the
       // current x value and that the optimizer will therefore be able to
@@ -1290,15 +1297,16 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
       // case, then throw an exception.
       if ( itrCurr == 0 )
       {
-	// throw an exception.
+	ok = false;
+	errorcode = SpkError::SPK_UNKNOWN_OPT_ERR;
+
+	const int max = SpkError::maxMessageLen();
+	char message[max];
+	sprintf( message, "%d%s%d\0", fail.code, fail.message, fail.errnum );
+	SpkError err(errorcode, message, __LINE__, __FILE__ );
+
+	throw info.exceptionOb.push(err);
       }
-
-      // After the first call to the optimizer the approximation for the
-      // Hessian should be accurate enough that this can reset.
-      itrMax = 1;
-
-      // Add the number of iterations that were performed.
-      i += itrCur;
     }
   }
 
