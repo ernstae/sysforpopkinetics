@@ -808,6 +808,7 @@
   (list (normalize "title")
 	(normalize "subtitle")
         (normalize "authorgroup")
+	(normalize "author")
         (normalize "copyright")
         (normalize "legalnotice")
         (normalize "abstract")
