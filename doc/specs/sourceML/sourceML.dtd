@@ -133,14 +133,14 @@ Either label or synonym may be one of the NONMEM reserved identifiers, among whi
 -->
 <!ATTLIST ind_analysis is_estimation (yes|no) #REQUIRED>
 
-<!-- <ind_analysis abort="yes"> "yes" is default.  REVISIT  Sachiko 05/26/04
+<!-- <ind_analysis abort="yes"> "no" is default.  REVISIT  Sachiko 05/26/04
 -->
 <!ATTLIST ind_analysis abort (yes|no) #IMPLIED>
 
 <!-- <ind_analysis mitr="n"> Maximum iterations attemped before the optimizer gives in. Required when "is_estimation" is set to "yes".  -->
 <!ATTLIST ind_analysis mitr CDATA #IMPLIED>
 
-<!-- <ind_analysis is_restart="yes"> Request to warm-start the optimization process; "yes" or "no", default to "yes".-->
+<!-- <ind_analysis is_restart="no"> Request to start from the last state of the parent job's optimization process; "yes" or "no", default to "no".-->
 <!ATTLIST ind_analysis is_restart (yes|no) #IMPLIED>
 
 <!-- <ind_analysis sig_digits="3"> The number of significant digits required in the final parameter estimate. The value must be a positive integer less than 9.  The default value is 3.-->
@@ -153,7 +153,7 @@ Either label or synonym may be one of the NONMEM reserved identifiers, among whi
 -->
 <!ATTLIST pop_analysis is_estimation (yes|no) #REQUIRED>
 
-<!-- <pop_analysis abort="yes"> "yes" is default.  REVISIT  Sachiko 05/26/04
+<!-- <pop_analysis abort="no"> "no" is default.  REVISIT  Sachiko 05/26/04
 -->
 <!ATTLIST pop_analysis abort (yes|no) #IMPLIED>
 
@@ -161,10 +161,9 @@ Either label or synonym may be one of the NONMEM reserved identifiers, among whi
 -->
 <!ATTLIST pop_analysis approximation (fo|foce|laplace) #REQUIRED>
 
-<!-- <pop_analysis interation="no"> "no" forces eta to be always set to zero during the computation of the variance of intraindividual random error (R(alp,b)).  "yes" makes the dependence on eta of the variance be preserved int he computation of the objective function.  When <pop_analysis approximation> is set to either "fo" or "laplace", the default is "no".  When it is set to "foce", the default is "yes".
+<!-- <pop_analysis interaction="no"> "no" forces eta to be always set to zero during the computation of the variance of intraindividual random error (R(alp,b)).  "yes" makes the dependence on eta of the variance be preserved int he computation of the objective function.  When <pop_analysis approximation> is set to either "fo" or "laplace", the default is "no".  When it is set to "foce", the default is "yes".
 -->
-<!ATTLIST pop_analysis interation (yes|no) #IMPLIED>
-
+<!ATTLIST pop_analysis interaction (yes|no) #IMPLIED>
 
 <!-- <pop_analysis sig_digits="3"> The number of significant digits required in the final parameter estimate. The value must be a positive integer less than 9.  The default value is 3.  The value is applied to both the population parameter estimate and the inviduals parameter estimates.-->
 <!ATTLIST pop_analysis sig_digits CDATA #IMPLIED>
@@ -173,9 +172,9 @@ Either label or synonym may be one of the NONMEM reserved identifiers, among whi
 <!ATTLIST pop_analysis pop_size      CDATA    #REQUIRED>
 
 <!-- <pop_analysis mitr="n"> Maximum number iterations attemped before the optimizer gives in. Required when "is_estimation" is set to "yes".  Required when "is_estimation" is set to "yes".-->
-<!ATTLIST ind_analysis mitr CDATA #IMPLIED>
+<!ATTLIST pop_analysis mitr CDATA #IMPLIED>
 
-<!-- <pop_analysis is_restart="yes"> Request to warm-start the optimization process; "yes" or "no", default to "yes".-->
+<!-- <pop_analysis is_restart="yes"> Request to start from the last state of the parent job's optimization process; "yes" or "no", default to "no".-->
 <!ATTLIST pop_analysis is_restart (yes|no) #IMPLIED>
 
 <!-- <pop_analysis is_eta_out="no"> Request to evaluate the eta at the final estimated population parameter values; "yes" or "no", default to "no". -->
