@@ -81,7 +81,7 @@ using SPK_VA::valarray;
  * Local variable declarations
  *------------------------------------------------------------------------*/
 
-namespace oneexpfpred_constants
+namespace oneexpfpred_indpredmodeltest
 {
   double timeStep = 0.25;
   double dose     = 320.0;
@@ -112,10 +112,6 @@ namespace // [Begin: unnamed namespace]
   // parameterization,
   //
   //    y  =  f * exp[ eta(0) ]  .
-  //
-  // Note that analytical results can be calculated for the SpkModel
-  // functions that correspond to these expressions and that this
-  // class does not use any data values.
   //
   //**********************************************************************
 
@@ -213,7 +209,7 @@ namespace // [Begin: unnamed namespace]
       // Preliminaries.
       //--------------------------------------------------------
 
-      using namespace oneexpfpred_constants;
+      using namespace oneexpfpred_indpredmodeltest;
 
       double time = timeStep * j;
 
@@ -306,10 +302,6 @@ namespace // [Begin: unnamed namespace]
   // with a theta dependent term,
   //
   //    y  =  f + eta(0) + theta(2) * eta(1)  .
-  //
-  // Note that analytical results can be calculated for the SpkModel
-  // functions that correspond to these expressions and that this
-  // class does not use any data values.
   //
   //**********************************************************************
 
@@ -407,7 +399,7 @@ namespace // [Begin: unnamed namespace]
       // Preliminaries.
       //--------------------------------------------------------
 
-      using namespace oneexpfpred_constants;
+      using namespace oneexpfpred_indpredmodeltest;
 
       double time = timeStep * j;
 
@@ -570,7 +562,7 @@ void IndPredModelTest::OneExpF_ModelBasedExpY_Test()
 
   using namespace std;
 
-  using namespace oneexpfpred_constants;
+  using namespace oneexpfpred_indpredmodeltest;
 
   int j;
   int k;
@@ -822,9 +814,9 @@ void IndPredModelTest::OneExpF_ModelBasedExpY_Test()
   {
     // Set the values for the diagonal elements of the data variance:
     //
-    //                                                     2
-    //     R      ( b  )  =  omega       [ f    ( theta ) ]   .
-    //      i(j,j)   i            (0,0)     i(j)
+    //                                                   2
+    //     R      ( b  )  =  omega       [ f    ( b  ) ]    .
+    //      i(j,j)   i            (0,0)     i(j)   i
     //
     dataVarianceKnown[j + j * nY_i] = omegaKnown[0 + 0 * nEta] *
       dataMean[j] * dataMean[j];
@@ -913,7 +905,6 @@ void IndPredModelTest::OneExpF_ModelBasedExpY_Test()
 
   valarray<double> indParLowKnown ( nIndPar );
   valarray<double> indParUpKnown  ( nIndPar );
-  valarray<double> indParStepKnown( nIndPar );
 
   // Set the known limits for the individual parameter.
   for ( k = 0; k < nTheta; k++ )
@@ -927,13 +918,13 @@ void IndPredModelTest::OneExpF_ModelBasedExpY_Test()
     indParUpKnown [k + omegaParOffsetInIndPar] = omegaParUpKnown [k];
   }
   
-  // Since the value for the step size may change as IndPredModel
-  // evolves, the only test that makes sense is to check that the
-  // the step sizes are positive.
+  // Since the step sizes may change as PopPredModel evolves, only 
+  // check that they are positive.
   for ( k = 0; k < nIndPar; k++ )
   {
-    indParStepKnown[k] = fabs( indParStep[k] );
-    assert( indParStep[k] != 0.0 );
+    CPPUNIT_ASSERT_MESSAGE( 
+      "The step size for an individual parameter element is invalid.",
+      indParStep[k] != 0.0 );
   }
 
 
@@ -1004,12 +995,6 @@ void IndPredModelTest::OneExpF_ModelBasedExpY_Test()
     indParUpKnown,
     "indParUp",
     tol );
-
-  compareToKnown( 
-    indParStep,
-    indParStepKnown,
-    "indParStep",
-    tol );
 }
 
 
@@ -1036,7 +1021,7 @@ void IndPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
 
   using namespace std;
 
-  using namespace oneexpfpred_constants;
+  using namespace oneexpfpred_indpredmodeltest;
 
   int j;
   int k;
@@ -1388,7 +1373,6 @@ void IndPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
 
   valarray<double> indParLowKnown ( nIndPar );
   valarray<double> indParUpKnown  ( nIndPar );
-  valarray<double> indParStepKnown( nIndPar );
 
   // Set the known limits for the individual parameter.
   for ( k = 0; k < nTheta; k++ )
@@ -1402,13 +1386,13 @@ void IndPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
     indParUpKnown [k + omegaParOffsetInIndPar] = omegaParUpKnown [k];
   }
   
-  // Since the value for the step size may change as IndPredModel
-  // evolves, the only test that makes sense is to check that the
-  // the step sizes are positive.
+  // Since the step sizes may change as PopPredModel evolves, only 
+  // check that they are positive.
   for ( k = 0; k < nIndPar; k++ )
   {
-    indParStepKnown[k] = fabs( indParStep[k] );
-    assert( indParStep[k] != 0.0 );
+    CPPUNIT_ASSERT_MESSAGE( 
+      "The step size for an individual parameter element is invalid.",
+      indParStep[k] != 0.0 );
   }
 
 
@@ -1479,12 +1463,6 @@ void IndPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
     indParUpKnown,
     "indParUp",
     tol );
-
-  compareToKnown( 
-    indParStep,
-    indParStepKnown,
-    "indParStep",
-    tol );
 }
 
 
@@ -1506,7 +1484,7 @@ void IndPredModelTest::isCachingProperlyTest()
 
   using namespace std;
 
-  using namespace oneexpfpred_constants;
+  using namespace oneexpfpred_indpredmodeltest;
 
   int j;
   int k;
