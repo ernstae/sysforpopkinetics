@@ -9,6 +9,14 @@
    <articleinfo>
       <revhistory>
          <revision>
+            <revnumber>1.14</revnumber>
+            <date>September 8, 2004</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>
+            Replaced DataSet::xmlOut() with DataSet::operator<<().
+            </revremark>
+         </revision>
+         <revision>
             <revnumber>1.13</revnumber>
             <date>September 8, 2004</date>
             <authorinitials>sh</authorinitials>
@@ -541,38 +549,6 @@ indexes to those records which have measurements : { 2, 3, 4, 6, 7, 8, 9, 10 }
       </variablelist>
       <variablelist>
          <title>Public Methods</title>
-<!--
-         <varlistentry>
-            <term>
-               <literal>
-               bool simulate( unsigned int seed, PopPredModel& model )
-               </literal>
-            </term>
-            <listitem>
-               <para>
-               Simulate a population (>1) data set and replaces the existing measurement values
-               (ie. the values in DV field of which corresponding MDV != 1).
-               with the new values for all individuals. Returns true if simulation was successful.
-               This method is only valid for population model (ie. <classname>PopPredModel</classname>).
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
-            <term>
-               <literal>
-               bool simulate( unsigned int seed, IndPredModel& model )
-               </literal>
-            </term>
-            <listitem>
-               <para>
-               Simulate a single individual data set and replaces the existing measurement values
-               (ie. the values in DV field of which corresponding MDV != 1)
-               with the new values. Returns true if simulation was successful.
-               This method is only valid for individual model (ie. <classname>IndPredModel</classname>).
-               </para>
-            </listitem>
-         </varlistentry>
--->
          <varlistentry>
             <term><literal>int getPopSize() const </literal></term>
             <listitem>
@@ -602,12 +578,14 @@ indexes to those records which have measurements : { 2, 3, 4, 6, 7, 8, 9, 10 }
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term><literal>std::ostream& xmlOut( std::ostream& o, const char* title ) const</literal></term>
+            <term>
+               <literal>friend std::ostream& operator<<( std::ostream&amp; o, const DataSet&lt;T&gt; A )</literal>
+            </term>
             <listitem>
                <para>
-               Write out the data set in the following format:
+               Extracts the data set into <literal>o</literal> in the following format:
 <programlisting>
-&lt;<replaceable>title</replaceable> columns="10" rows="12"&gt;
+&lt;presentation_data columns="10" rows="12"&gt;
    &lt;data_labels&gt;
       &lt;label name="ID"&gt;
       &lt;label name="TIME"&gt;
@@ -639,7 +617,7 @@ indexes to those records which have measurements : { 2, 3, 4, 6, 7, 8, 9, 10 }
       ...
    &lt;/row&gt;
 
-&lt;/<replaceable>title</replaceable>&gt;
+&lt;/<replaceable>presentation_data</replaceable>&gt;
 </programlisting>
                The order in which &lt;label&gt;s in &lt;data_labels&gt; appear is arbitrary.  
                However, the &lt;value&gt;s in a &lt;row&gt; are guaranteed to be listed
