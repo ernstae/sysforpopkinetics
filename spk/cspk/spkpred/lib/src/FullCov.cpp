@@ -750,7 +750,7 @@ void FullCov::calcPar(
  * covariance matrix.
  *
  * The minimal representation is the elements from the lower triangle
- * of the covariance matrix stored in row major order.
+ * of the covariance matrix stored in column major order.
  *
  *************************************************************************/
 
@@ -780,16 +780,14 @@ void FullCov::calcCovMinRep(
   int j;
 
   // Extract the elements from the lower triangle of the covariance
-  // matrix and put them in the array in row major order.
+  // matrix and put them in the array in column major order.
   int sumI = 0;
-  for ( i = 0; i < nCovInRow; i++ )
+  for ( j = 0; j < nCovInRow; j++ )
   {
-    sumI += i;
-
-    // Get the elements from this row including the diagonal.
-    for ( j = 0; j <= i; j++ )
+    // Get the elements from this column including the diagonal.
+    for ( i = j; i < nCovInRow; i++ )
     {
-      covMinRepOut[sumI + j] = covIn[i + j * nCovInRow];
+      covMinRepOut[sumI++] = covIn[i + j * nCovInRow];
     }    
   }    
 
@@ -805,7 +803,7 @@ void FullCov::calcCovMinRep(
  * representation for the covariance matrix.
  *
  * The minimal representation is the elements from the lower triangle
- * of the covariance matrix stored in row major order.
+ * of the covariance matrix stored in column major order.
  *
  *************************************************************************/
 
@@ -843,20 +841,17 @@ void FullCov::calcCovMinRep_par(
   int k;
 
   // Extract the derivatives of the elements from the lower triangle
-  // of the covariance matrix in row major order.
+  // of the covariance matrix in column major order.
   int sumI;
   for ( k = 0; k < nCovInPar; k++ )
   {
     sumI = 0;
-    for ( i = 0; i < nCovInRow; i++ )
+    for ( j = 0; j < nCovInRow; j++ )
     {
-      sumI += i;
-    
-      // Get the derivatives of the elements from this row
-      // including the diagonal.
-      for ( j = 0; j <= i; j++ )
+      // Get the elements from this column including the diagonal.
+      for ( i = j; i < nCovInRow; i++ )
       {
-        covMinRep_parOut[( sumI + j )          + k * nCovMinRep_parOutRow] = 
+        covMinRep_parOut[( sumI++ )            + k * nCovMinRep_parOutRow] = 
           cov_parIn     [( i + j * nCovInRow ) + k * nCov_parInRow];
       }    
     }    
@@ -875,7 +870,7 @@ void FullCov::calcCovMinRep_par(
  * contained in covMinRepIn.
  *
  * The minimal representation is the elements from the lower triangle
- * of the covariance matrix stored in row major order.
+ * of the covariance matrix stored in column major order.
  *
  *************************************************************************/
 
@@ -906,20 +901,18 @@ void FullCov::expandCovMinRep(
 
   // Set the elements of the covariance matrix.
   int sumI = 0;
-  for ( i = 0; i < nCovInRow; i++ )
+  for ( j = 0; j < nCovInRow; j++ )
   {
-    sumI += i;
-
-    // Set the elements from this row excluding the diagonal
-    // and set the corresponding elements above the diagonal.
-    for ( j = 0; j < i; j++ )
-    {
-      covOut[i + j * nCovInRow] = covMinRepIn[sumI + j];
-      covOut[j + i * nCovInRow] = covMinRepIn[sumI + j];
-    }    
-
     // Set the element that is on the diagonal.
-    covOut[i + i * nCovInRow] = covMinRepIn[sumI + i];
+    covOut[j + j * nCovInRow] = covMinRepIn[sumI++];
+
+    // Set the elements from this column below the diagonal
+    // and set the corresponding elements above the diagonal.
+    for ( i = j + 1; i < nCovInRow; i++ )
+    {
+      covOut[i + j * nCovInRow] = covMinRepIn[sumI];
+      covOut[j + i * nCovInRow] = covMinRepIn[sumI++];
+    }    
   }    
 
 }
