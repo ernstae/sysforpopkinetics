@@ -29,8 +29,11 @@ ClientTranslator & ClientTranslator::operator=( const ClientTranslator& )
 {
 }
 ClientTranslator::ClientTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
-  : source( sourceIn ), 
-    data( dataIn ),
+  : source       ( sourceIn ), 
+    data         ( dataIn ),
+    ourPopSize   ( 0 ),
+    ourApproximation( FO ),
+    ourTarget    ( POP ),
     X_SPKDATA    ( XMLString::transcode( "spkdata" ) ),
     X_VERSION    ( XMLString::transcode( "version" ) ),
     X_POINTONE   ( XMLString::transcode( "0.1" ) ),
@@ -72,6 +75,12 @@ SymbolTable* ClientTranslator::getSymbolTable()
 }
 void ClientTranslator::translate()
 {
+  //
+  // First of all, determine the number of individuals in the population.
+  // This routine sets the analysis type (population/individual) as well.
+  //
+  detAnalysisType();
+
   parseData();
   parseSource();
 }
