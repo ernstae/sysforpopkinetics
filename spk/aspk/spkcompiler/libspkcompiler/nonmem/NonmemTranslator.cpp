@@ -2,7 +2,6 @@
 
 #include "NonmemTranslator.h"
 #include "explang.h"
-#include "../lower.h"
 #include "../series.h"
 
 #include <xercesc/dom/DOMDocument.hpp>
