@@ -2159,6 +2159,327 @@ void popStatistics( const valarray<double>& y,
    *alpCovOut = alpCovTemp;
    return;
 }
+
+/*************************************************************************
+ *
+ * Function: popStatistics - core statistics computation
+ *
+ *************************************************************************/
+
+/*------------------------------------------------------------------------
+ * Function Specification
+ *------------------------------------------------------------------------*/
+/*
+
+$begin popStatistics$$
+
+$spell
+  Enumerator
+  valarray
+  Cov
+  Obj
+  enum
+  subvector
+  dmat
+  const
+  dvec
+  int
+  cout
+  endl
+  nr
+  nc
+  iostream
+  iomanip
+  namespace
+  std
+  ios
+  covariance
+  ind
+  cerr
+  Spk
+  inv
+  optimizer
+  fp
+  Optimizer optimizer
+  Fo
+  Dir
+  Yi
+  inx
+  aval
+  bval
+  resize
+  bool
+  Dinv
+  Rinv
+  var
+  sqrt
+  cbc
+  covariances
+  cor
+  cmath
+  statistics
+$$
+
+$section Computing statistics of population parameter estimates$$
+
+$index popStatistics$$
+$index covariance, standard error, correlation matrix, population parameters$$
+
+$table
+$bold Prototype:$$ $cend
+$syntax/void popStatistics(  
+                   const SPK_VA::valarray<double>& /mask/,
+                   const SPK_VA::valarray<double>& /measurementsAll/,
+                   const SPK_VA::valarray<double>& /popPar/,
+                   const SPK_VA::valarray<double>& /indObj_popPar/,
+                   const SPK_VA::valarray<double>& /popObj_popPar_popPar/,
+                   enum PopCovForm                 /formulation/,
+                   SPK_VA::valarray<double>*       /popParCovOut/, 
+                   SPK_VA::valarray<double>*       /popParSEOut/,                          
+                   SPK_VA::valarray<double>*       /popParCorOut/,
+                   SPK_VA::valarray<double>*       /popParCVOut/,                          
+                   SPK_VA::valarray<double>*       /popParCIOut/
+                 )
+/$$
+$tend
+
+$fend 25$$
+
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$pre
+$$
+$head Description$$
+This function computes covariance matrix, standard error vector, and correlation 
+matrix of estimated population parameters.
+Spk allows the user to choose the form for the covariance matrix of the 
+population parameter estimates to be one of the following three formulations:
+$math%         
+                       -1   -1
+    formulation "E":  R  S R
+                       -1
+    formulation "R":  R
+                       -1
+    formulation "S":  S
+
+%$$
+These formulations are given in NONMEM documentation.  In Spk notation,
+$math%
+
+                                          T
+     R = ( LTilde_alp_alp + LTilde_alp_alp  ) / 2
+
+                               T
+     S = Sum{ [(LTilde_i )_alp] [(LTilde_i)_alp] }
+          i                          
+%$$
+where $math%LTilde_alp_alp%$$ is an approximation for the second order 
+derivatives of the population objective with respect to population 
+parameter alp and $math%(LTilde_i)_alp%$$ is the first order derivative 
+of individual i objective with respect to population parameter alp.  
+Note that R is defined in this way to insure that it is symmetric
+even for cases where the approximation $math%LTilde_alp_alp%$$ is not.
+$pre
+
+$$
+The standard error vector and the correlation matrix are calculated from
+the values of the covariance matrix by their mathematical definitions, 
+respectively. The coefficient of variation is calculated as:
+$math%
+   
+               CV = SE / | b | * 100 
+
+%$$
+where CV stands for the coefficient of variation, SE stands for the standard 
+error and b stands for the value of the population parameter estimate.
+The confidence interval is calculated from the values of the standard error 
+of the population parameter estimate using its mathematical definition.
+$head Return Value$$
+Upon a successful completion, the function sets
+the given output value place holders to point to the result value.
+  
+$pre
+
+$$
+If an error is detected or failure occurs during the evaluation, a SpkException 
+object is thrown.  The state at which an exception is thrown is defined in
+$xref/glossary/Exception Handling Policy/Exception Handling Policy/$$.
+
+$head Arguments$$
+$syntax/
+/mask/
+/$$
+$code mask$$ is a vector of boolean values of length equal to the parameter
+vector, $code popPar$$.  $code mask[i]$$ tells as to whether $code popPar[i]$$
+is active or not.  If $math%mask[i]%$$ is $math%false%$$, the i-th element of
+the parameter vector are treated as if it does not exist and further 
+statistics computations are performed based upon the assumption.
+
+$syntax/
+
+/measurementsAll/
+/$$
+The $code SPK_VA::valarray<double>$$ $italic measurementsAll$$ contains the vector
+$math%y%$$, which specifies the data for all the individuals.
+The vector $math%y%$$ has
+$math%
+    N(1) + N(2) + ... + N(M)
+%$$
+elements where $math%N(i)%$ is the number of measurements for i-th individual
+and math%M%$$ is the total number of individuals in the population.
+The data vector corresponding to the first individual is
+$math%                                         
+    y_1 = [ y(1) , y(2) , ... , y(N(1)) ]
+%$$
+Elements $math%y(N(1) + 1)%$$ through $math%y(N(1) + N(2))%$$ 
+correspond to the second individual and so on.
+(Note that $math%y_1%$$ refers to the first subvector of $math%y%$$ while
+$math%y(1)%$$ refers to the first element of the valarray $math%y%$$.)
+
+$syntax/
+
+/popPar/
+/$$
+The $code SPK_VA::valarray<double>$$ $italic popPar$$ contains the vector 
+$math%alp%$$, which specifies the estimates of the population parameters.  
+The returned covariance matrix $italic popParCovOut$$ will be evaluated at 
+these values.  
+The $italic popPar$$ should be obtained by calling SPK function 
+$xref/fitPopulation//fitPopulation/$$.
+
+$syntax/
+
+/popObj_popPar_popPar/ 
+/$$
+The $code SPK_VA::valarray<double>$$ $italic popObj_popPar_popPar$$ contains 
+the matrix $math%LTilde_alp_alp%$$, in column major order, which specifies 
+an approximation for the second derivative of the population objective 
+function with respect to population parameter evaluated at $italic popPar$$.  
+Note that the size of $italic popObj_popPar_popPar$$ should be equal to the 
+square of the length of the population parameter vector $math%alp%$$.  
+The $italic popObj_popPar_popPar$$ should be obtained by calling SPK function 
+$xref/fitPopulation//fitPopulation/$$. 
+
+$syntax/
+
+/indObj_popPar/
+/$$
+The $code SPK_VA::valarray<double>$$ $italic indObj_popPar$$ contains
+the partial derivative of the individual level objective with
+respect to the population parameter evaluated at $italic popPar$$.
+
+$syntax/
+
+/formulation/
+/$$
+The $code int$$ $italic formulation$$ specifies which formulation of the 
+covariance of the population parameter estimates is selected.  See Description 
+section for details.  Only formulation "R" is available for FIRST_ORDER objective.
+
+$syntax/
+
+/popParCovOut/ 
+/$$
+If $italic popParCovOut$$ is not $code NULL$$, then the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic popParCovOut$$ 
+must be declared in the function that calls this function, and its size must 
+be equal to the square of the length of the population parameter vector 
+$math%alp%$$.  If $italic popParCovOut$$ is not $code NULL$$ and this function 
+completed successfully, then the $code SPK_VA::valarray<double>$$ object 
+pointed to by $italic popParCovOut$$ will contain the covariance matrix
+of the population parameter estimates, in column major order, that is evaluated 
+at $math%alp%$$.  Otherwise, this function will not attempt to change the 
+contents of the $code SPK_VA::valarray<double>$$ object pointed to by 
+$italic popParCovOut$$.  
+
+The $math%(i,j)%$$-the element of the covariance matrix
+will be replaced by NaN if $code mask[i]$$ or $code mask[j]$$ is $math%false%$$.
+
+$syntax/
+
+/popParSEOut/ 
+/$$
+If $italic popParSEOut$$ is not $code NULL$$, then the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic popParSEOut$$ 
+must be declared in the function that calls this function, and its size must 
+be equal to the length of the population parameter vector 
+$math%alp%$$.  If $italic popParSEOut$$ is not $code NULL$$ and this function 
+completed successfully, then the $code SPK_VA::valarray<double>$$ object 
+pointed to by $italic popParSEOut$$ will contain the standard error vector
+of the population parameter estimates, in column major order, that is evaluated 
+at $math%alp%$$.  Otherwise, this function will not attempt to change the 
+contents of the $code SPK_VA::valarray<double>$$ object pointed to by 
+$italic popParSEOut$$.  
+
+
+$syntax/
+
+/popParCorOut/ 
+/$$
+If $italic popParCorOut$$ is not $code NULL$$, then the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic popParCorOut$$ 
+must be declared in the function that calls this function, and its size must 
+be equal to the square of the length of the population parameter vector 
+$math%alp%$$.  If $italic popParCorOut$$ is not $code NULL$$ and this function 
+completed successfully, then the $code SPK_VA::valarray<double>$$ object 
+pointed to by $italic popParCorOut$$ will contain the correlation matrix 
+of the population parameter estimates, in column major order, that is evaluated 
+at $math%alp%$$.  Otherwise, this function will not attempt to change the 
+contents of the $code SPK_VA::valarray<double>$$ object pointed to by 
+$italic popParCorOut$$. 
+
+The $math%(i, j)$$-th element of the corration matrix
+will be replaced by NaN if $code mask[i]$$ or $code mask[j]$$ is $math%false%$$.
+
+$syntax/
+
+/popParCVOut/ 
+/$$
+If $italic popParCVOut$$ is not $code NULL$$, then the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic popParCVOut$$ 
+must be declared in the function that calls this function, and its size must 
+be equal to the length of the population parameter vector 
+$math%alp%$$.  If $italic popParCVOut$$ is not $code NULL$$ and this function 
+completed successfully, then the $code SPK_VA::valarray<double>$$ object 
+pointed to by $italic popParCVOut$$ will contain the standard error vector
+of the population parameter estimates, in column major order, that is evaluated 
+at $italic popPar$$.  Otherwise, this function will not attempt to change the 
+contents of the $code SPK_VA::valarray<double>$$ object pointed to by 
+$italic popParCVOut$$.  
+
+The $math%i$$-th element of the coefficient vector
+will be replaced by NaN if $code mask[i]$$ is $math%false%$$.
+
+$syntax/
+
+/popParCIOut/ 
+/$$
+If $italic popParCIOut$$ is not $code NULL$$, then the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic popParCIOut$$ 
+must be declared in the function that calls this function, and its size must 
+be equal to the two times of the length of the population parameter vector 
+$math%alp%$$.  If $italic popParCIOut$$ is not $code NULL$$ and this function 
+completed successfully, then the $code SPK_VA::valarray<double>$$ object pointed 
+to by $italic popParCIOut$$ will contain the 95% confidence interval values 
+of the population parameter estimates, in column major order, that is evaluated 
+at $italic popPar$$.  There are two columns in the object.  The first column 
+contains the lower limit, and the second column contains the upper limit of 
+the confidence interval of the population parameter estimates.  Otherwise, 
+this function will not attempt to change the contents of the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic popParCIOut$$.  
+Note that in the calculation of the confidence interval, if the degree of freedom 
+(total number of data - number of population parameters) is greater than 120, 
+it is treated as infinite.
+
+The $math%(i,1)$$ and $math%(i,2)%$$ elements of the confidence interval matrix
+will be replaced by NaN if $code mask[i]$$ is $math%false%$$.
+
+$end
+*/
+
 void popStatistics( const valarray<bool>           & mask,
 		    const SPK_VA::valarray<double> & y,
 		    const SPK_VA::valarray<double> & alp,
