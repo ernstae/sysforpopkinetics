@@ -1058,13 +1058,13 @@
            </nm_data>
          <nm_verbatim>
             <nm_presentation>
-               <table header="every">
+               <table header="every" process="estimation">
                   <column label="ID"/>
                   <column label="DOSE"/>
                   <column label="WT"/>
                   <column label="TIME"/>
                </table>
-               <scatterplot y0_line="show" unit_slope="yes">
+               <scatterplot process="estimation" y0_line="show" unit_slope="yes">
                   <y label="RES"/>
                   <y label="WRES"/>
                   <x label="TIME"/>
