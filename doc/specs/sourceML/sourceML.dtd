@@ -132,6 +132,10 @@ Either label or synonym may be one of the NONMEM reserved identifiers, among whi
 -->
 <!ATTLIST ind_analysis is_estimation (yes|no) #REQUIRED>
 
+<!-- <ind_analysis abort="yes"> "yes" is default.  REVISIT  Sachiko 05/26/04
+-->
+<!ATTLIST ind_analysis abort (yes|no) #IMPLIED>
+
 <!-- <ind_analysis mitr="n"> Maximum iterations attemped before the optimizer gives in. Required when "is_estimation" is set to "yes".  -->
 <!ATTLIST ind_analysis mitr CDATA #IMPLIED>
 
@@ -147,6 +151,10 @@ Either label or synonym may be one of the NONMEM reserved identifiers, among whi
 <!-- <pop_analysis is_estimation="yes"> "yes" for the parameter estimation to be performed. When set to "no", the parameter estimation will be skipped.
 -->
 <!ATTLIST pop_analysis is_estimation (yes|no) #REQUIRED>
+
+<!-- <pop_analysis abort="yes"> "yes" is default.  REVISIT  Sachiko 05/26/04
+-->
+<!ATTLIST pop_analysis abort (yes|no) #IMPLIED>
 
 <!-- <pop_analysis approximation="fo"> Approximation method: "fo" for First Order, "foce" for Modified Expected Hessian, "laplace" for Modified Laplace. 
 -->
