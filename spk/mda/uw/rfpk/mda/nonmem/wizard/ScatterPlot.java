@@ -1126,7 +1126,6 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
                 public void actionPerformed(ActionEvent e){ 
                     jDialog2.setTitle("Help for " + getStepTitle());
                     jDialog2.setSize(600, 500);
-                    jDialog2.setVisible(true);
                     jDialog2.show();
                 }
             };

@@ -10,6 +10,7 @@ import uw.rfpk.mda.nonmem.Utility;
 import org.netbeans.ui.wizard.*;
 import java.util.Properties;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -60,7 +61,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jMenuItem12 = new javax.swing.JMenuItem();
         jDialog1 = new javax.swing.JDialog();
         jScrollPane1 = new javax.swing.JScrollPane();
-        help = new javax.swing.JTextArea();
+        help = new javax.swing.JEditorPane();
         jTextPane1 = new javax.swing.JTextPane();
         jRadioButton1 = new javax.swing.JRadioButton();
         jRadioButton2 = new javax.swing.JRadioButton();
@@ -201,13 +202,15 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
         jTextPane1.setText("This wizard is guiding you in creation of a NONMEM control file(model).\nThen, the wizard converts the control file and the data file into a SPK \ninput file .  Select the following items and then click the \"Next\" button.");
+        jTextPane1.setFocusCycleRoot(false);
+        jTextPane1.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(0, 24, 0, 24);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 24, 0, 24);
         add(jTextPane1, gridBagConstraints);
 
         jRadioButton1.setText("Performing individual analysis");
@@ -222,9 +225,9 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(11, 20, 0, 6);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(11, 20, 0, 6);
         add(jRadioButton1, gridBagConstraints);
 
         jRadioButton2.setText("Performing population analysis");
@@ -239,8 +242,8 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 6;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(0, 20, 0, 6);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 20, 0, 6);
         add(jRadioButton2, gridBagConstraints);
 
         jRadioButton3.setText("Using user predefined PK model");
@@ -255,8 +258,8 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 7;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(0, 20, 0, 6);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 20, 0, 6);
         add(jRadioButton3, gridBagConstraints);
 
         jRadioButton4.setText("Using NONMEM PK model library");
@@ -271,8 +274,8 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 8;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(0, 20, 0, 6);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 20, 0, 6);
         add(jRadioButton4, gridBagConstraints);
 
         jRadioButton5.setText("Computing statistics of estimates");
@@ -286,13 +289,15 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 9;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(0, 20, 11, 6);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 20, 11, 6);
         add(jRadioButton5, gridBagConstraints);
 
         jTextPane2.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane2.setEditable(false);
         jTextPane2.setText("First, one of the check boxes on the top must be selected. Then, one of the first and the second radio buttons on the left as well as one of the third and the fourth radio buttons on the left must also be selected.");
+        jTextPane2.setFocusCycleRoot(false);
+        jTextPane2.setFocusable(false);
         jTextPane2.setMinimumSize(new java.awt.Dimension(160, 140));
         jTextPane2.setPreferredSize(new java.awt.Dimension(160, 140));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -300,8 +305,8 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridy = 5;
         gridBagConstraints.gridheight = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.insets = new java.awt.Insets(6, 6, 0, 24);
         gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(6, 6, 0, 24);
         add(jTextPane2, gridBagConstraints);
 
         jCheckBox1.setSelected(true);
@@ -332,8 +337,8 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(13, 9, 3, 23);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(13, 9, 3, 23);
         add(jCheckBox2, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -341,8 +346,8 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridy = 4;
         gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 21, 0, 24);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 21, 0, 24);
         add(jSeparator1, gridBagConstraints);
 
         jCheckBox3.setText("Table output");
@@ -385,8 +390,8 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 4;
-        gridBagConstraints.insets = new java.awt.Insets(0, 20, 0, 61);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 20, 0, 61);
         add(jCheckBox5, gridBagConstraints);
 
         jCheckBox6.setText("Scatter plot output");
@@ -401,8 +406,8 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.gridwidth = 4;
-        gridBagConstraints.insets = new java.awt.Insets(0, 20, 8, 61);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 20, 8, 61);
         add(jCheckBox6, gridBagConstraints);
 
         jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
@@ -422,7 +427,10 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         add(jSeparator3, gridBagConstraints);
 
         jTextPane3.setBackground(new java.awt.Color(204, 204, 204));
+        jTextPane3.setEditable(false);
         jTextPane3.setText("You may load back a model that was \ncreated by this wizard to make changes.");
+        jTextPane3.setFocusCycleRoot(false);
+        jTextPane3.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 11;
@@ -441,8 +449,8 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 11;
-        gridBagConstraints.insets = new java.awt.Insets(11, 8, 11, 24);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(11, 8, 11, 24);
         add(jButton1, gridBagConstraints);
 
     }//GEN-END:initComponents
@@ -601,7 +609,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
-    private javax.swing.JTextArea help;
+    private javax.swing.JEditorPane help;
     private javax.swing.JButton jButton1;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
@@ -708,8 +716,16 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
                 public void actionPerformed(ActionEvent e){ 
-                    help.setText((new Utility()).getHelpDocument("GettingStarted"));
-                    help.setCaretPosition(0);
+                    try
+                    {
+                        help.setPage(GettingStarted.class.getResource(
+                                     "/uw/rfpk/mda/nonmem/help/GettingStarted.html")); 
+                    }
+                    catch(IOException ioe)
+                    {    
+                        JOptionPane.showMessageDialog(null, "Error opening help file.",  
+                                                      "File Error", JOptionPane.ERROR_MESSAGE);            
+                    }
                     jDialog1.setTitle("Help for " + getStepTitle());
                     jDialog1.setSize(600, 500);
                     jDialog1.show();

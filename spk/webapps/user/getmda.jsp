@@ -107,11 +107,12 @@
 	</tr> 
 	<tr vAlign=top> <td colSpan=3><p>&nbsp;</p></td></tr> 
 	<tr>
-	  <td valign=top width=102 height="0" colspan="1" rowspan="1">
+	  <td valign=top width=150 height="0" colspan="1" rowspan="1">
             <%@ include file="quicklinks.shtml" %>  
 	  </td>
 	  <td colspan=1 vAlign=top width=10><img alt="trans gif" height=5 src="./images/white.gif" width=10/>
 	  <td colspan=1 vAlign=top>
+            <h3>Model Design Agent Download</h3>
             <p>
                Model Design Agent has various user interface types. <br>
                Please select one to download.  You should see a

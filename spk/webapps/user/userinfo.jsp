@@ -14,7 +14,7 @@
 
 <html>
   <head>
-    <title>All Users</title>
+    <title>User Account Information</title>
   </head>
   <body bgcolor="white">
     <table align=left border=0 width=602>
@@ -33,11 +33,11 @@
 	  </td>
 	  <td colspan=1 vAlign=top width=10><img alt="trans gif" height=5 src="./images/white.gif" width=10/>
 	  <td colspan=1 vAlign=top>
-	    <h3>User Information</h3>
+	    <h3>User Account Information</h3>
 	    <p> 
           <c:choose>
             <c:when test="${userList.rowCount == 0}">
-              No user information found ...
+              No user information was found ...
             </c:when>
             <c:otherwise>
               The following user information are found:

@@ -11,9 +11,13 @@ import org.netbeans.ui.wizard.*;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.DefaultListModel;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
+import javax.swing.text.BadLocationException;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Color;
 
 /**
  * This class defines a step to create the $THETA record
@@ -25,6 +29,7 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
     private JComponent panel = this; 
     private int nTheta = 0;
     private int index = -1;
+    private int highlight = 0;
     private boolean isFixed = false;
     private boolean isUBInf = false;
     private boolean isLBInf = false;
@@ -32,7 +37,11 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
     private MDAIterator iterator = null;
     private DefaultListModel model = null; 
     private JWizardPane wizardPane = null;
-
+    private DefaultHighlighter high1 = new DefaultHighlighter();
+    private DefaultHighlighter high2 = new DefaultHighlighter();
+    private DefaultHighlighter high3 = new DefaultHighlighter();    
+    private DefaultHighlighter.DefaultHighlightPainter highlight_painter =
+            new DefaultHighlighter.DefaultHighlightPainter(new Color(200,200,250));
 
     /** Creates new form Theta 
      * @param iter A MDAIterator object to initialize the field iterator     
@@ -82,24 +91,19 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
 
         setLayout(new java.awt.GridBagLayout());
 
+        setFocusable(false);
+        jTextField1.setFocusCycleRoot(true);
         jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextField1KeyPressed(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 jTextField1KeyTyped(evt);
             }
         });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipadx = 125;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(14, 0, 11, 10);
-        add(jTextField1, gridBagConstraints);
-
-        jTextField2.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                jTextField2KeyTyped(evt);
+        jTextField1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTextField1MouseClicked(evt);
             }
         });
 
@@ -107,8 +111,31 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.ipadx = 125;
         gridBagConstraints.insets = new java.awt.Insets(9, 0, 9, 10);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        add(jTextField1, gridBagConstraints);
+
+        jTextField2.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextField2KeyPressed(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTextField2KeyTyped(evt);
+            }
+        });
+        jTextField2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTextField2MouseClicked(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(14, 0, 11, 10);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         add(jTextField2, gridBagConstraints);
 
         addButton.setText("Add");
@@ -159,6 +186,7 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
         jTextPane1.setText("Enter initial estimates and/or bounds for the fixed effects means.  If \nFIXED is selected, only the initial estimate is required.");
+        jTextPane1.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
@@ -166,7 +194,9 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
         add(jTextPane1, gridBagConstraints);
 
         jTextPane2.setBackground(new java.awt.Color(204, 204, 204));
+        jTextPane2.setEditable(false);
         jTextPane2.setText("List of THETA\nvalues you \nhave entered.");
+        jTextPane2.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
@@ -247,17 +277,17 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
         jLabel1.setText("Lower Bound");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.insets = new java.awt.Insets(9, 12, 9, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(14, 12, 11, 12);
         add(jLabel1, gridBagConstraints);
 
         jLabel2.setText("Initial Estimate");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new java.awt.Insets(14, 12, 11, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(9, 12, 9, 12);
         add(jLabel2, gridBagConstraints);
 
         jLabel3.setText("Upper Bound");
@@ -269,8 +299,16 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
         add(jLabel3, gridBagConstraints);
 
         jTextField3.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextField3KeyPressed(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 jTextField3KeyTyped(evt);
+            }
+        });
+        jTextField3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTextField3MouseClicked(evt);
             }
         });
 
@@ -291,10 +329,10 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(8, 6, 6, 10);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(12, 6, 9, 10);
         add(jCheckBox1, gridBagConstraints);
 
         jCheckBox2.setText("FIXED");
@@ -306,9 +344,9 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new java.awt.Insets(12, 6, 9, 10);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(7, 6, 7, 10);
         add(jCheckBox2, gridBagConstraints);
 
         jCheckBox3.setText("INF");
@@ -328,8 +366,131 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
 
     }//GEN-END:initComponents
 
+    private void jTextField3KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField3KeyPressed
+        if(evt.getKeyCode() == 10)
+        {     
+            if(highlight == 3)
+            {
+                high3.removeAllHighlights();
+                highlight = 0;
+            }            
+            try
+            {
+                int length = jTextField2.getText().length();
+                if(length > 0)
+                {                
+                    jTextField2.setHighlighter(high2);
+                    high2.addHighlight(0, length, highlight_painter);
+                    jTextField2.requestFocusInWindow();
+                    highlight = 2;
+                }
+            }
+            catch(BadLocationException e) 
+            {
+                JOptionPane.showMessageDialog(null, e, "BadLocationException", JOptionPane.ERROR_MESSAGE);
+            }           
+        }
+    }//GEN-LAST:event_jTextField3KeyPressed
+
+    private void jTextField1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyPressed
+        if(evt.getKeyCode() == 10)
+        {
+            if(highlight == 1)
+            {
+                high1.removeAllHighlights();
+                highlight = 0;
+            }
+            try
+            {
+                int length = jTextField3.getText().length();
+                if(length > 0)
+                {                
+                    jTextField3.setHighlighter(high3);
+                    high3.addHighlight(0, length, highlight_painter);
+                    jTextField3.requestFocusInWindow();
+                    highlight = 3;
+                }
+            }
+            catch(BadLocationException e) 
+            {
+                JOptionPane.showMessageDialog(null, e, "BadLocationException", JOptionPane.ERROR_MESSAGE);
+            }           
+        }
+    }//GEN-LAST:event_jTextField1KeyPressed
+
+    private void jTextField2KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField2KeyPressed
+        if(evt.getKeyCode() == 10)
+        {
+            String text = jTextField2.getText().trim();
+            if(!Utility.isFloatNumber(text))
+            {
+                JOptionPane.showMessageDialog(null, 
+                                              "The Initial Estimate is not a floating " +
+                                              "point number.",   
+                                              "Input Error",    
+                                              JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            double value = Double.parseDouble(text);
+            jTextField1.setText(String.valueOf(value/10));
+            jTextField3.setText(String.valueOf(value*10));
+            
+            if(highlight == 2)
+            {
+                high2.removeAllHighlights();
+                highlight = 0;
+            }
+            try
+            {
+                int length = jTextField1.getText().length();
+                if(length > 0)
+                {
+                    jTextField1.setHighlighter(high1);
+                    high1.addHighlight(0, length, highlight_painter);
+                    jTextField1.requestFocusInWindow();
+                    highlight = 1;
+                }
+            }
+            catch(BadLocationException e) 
+            {
+                JOptionPane.showMessageDialog(null, e, "BadLocationException", JOptionPane.ERROR_MESSAGE);
+            }           
+        }
+    }//GEN-LAST:event_jTextField2KeyPressed
+
+    private void jTextField3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField3MouseClicked
+        if(highlight == 3)
+        {
+            high3.removeAllHighlights(); 
+            highlight = 0;
+        }
+    }//GEN-LAST:event_jTextField3MouseClicked
+
+    private void jTextField2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField2MouseClicked
+        if(highlight == 2)
+        {
+            high2.removeAllHighlights();        
+            highlight = 0;
+        }
+    }//GEN-LAST:event_jTextField2MouseClicked
+
+    private void jTextField1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField1MouseClicked
+        if(highlight == 1)
+        {
+            high1.removeAllHighlights();  
+            highlight = 0;
+        }
+    }//GEN-LAST:event_jTextField1MouseClicked
+
     private void jTextField2KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField2KeyTyped
         addButton.setEnabled(true);
+        if(highlight == 2)
+        {
+            jTextField2.setText("");
+            high2.removeAllHighlights();  
+            highlight = 0;            
+        }
     }//GEN-LAST:event_jTextField2KeyTyped
 
     private void jList1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jList1MouseClicked
@@ -342,11 +503,23 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
     private void jTextField3KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField3KeyTyped
         jCheckBox3.setSelected(false);
         isUBInf = false;
+        if(highlight == 3)
+        {
+            jTextField3.setText("");
+            high3.removeAllHighlights();  
+            highlight = 0;            
+        }
     }//GEN-LAST:event_jTextField3KeyTyped
 
     private void jTextField1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyTyped
         jCheckBox1.setSelected(false);
         isLBInf = false;
+        if(highlight == 1)
+        {
+            high1.removeAllHighlights();  
+            highlight = 0;           
+            jTextField1.setText("");
+        }
     }//GEN-LAST:event_jTextField1KeyTyped
 
     private void jCheckBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox3ActionPerformed
@@ -614,16 +787,31 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
                 isValid = false;
                 wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());                
             }
+            jTextField2.requestFocusInWindow();        
+            try
+            {
+                int length = jTextField2.getText().length();
+                if(length > 0) 
+                {
+                    jTextField2.setHighlighter(high2);
+                    high2.addHighlight(0, length, highlight_painter);
+                    highlight = 2;
+                }
+            }
+            catch(BadLocationException e) 
+            {
+                JOptionPane.showMessageDialog(null, e, "BadLocationException", JOptionPane.ERROR_MESSAGE);
+            }            
  	}
 
 	public void hidingStep(JWizardPane wizard){
-            jTextField1.setText("");
-            jTextField2.setText("");
-            jTextField3.setText("");  
-            jCheckBox1.setSelected(false);
-            jCheckBox2.setSelected(false);
-            jCheckBox3.setSelected(false);
-            if(nTheta == 0 || model.getSize() == 0)
+//            jTextField1.setText("");
+//            jTextField2.setText("");
+//            jTextField3.setText("");  
+//            jCheckBox1.setSelected(false);
+//            jCheckBox2.setSelected(false);
+//            jCheckBox3.setSelected(false);
+            if(nTheta == 0 || model.getSize() == 0 || model.getSize() != nTheta)
                 return;
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             String record = "";
@@ -666,7 +854,6 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
                 public void actionPerformed(ActionEvent e){ 
                     jDialog1.setTitle("Help for " + getStepTitle());
                     jDialog1.setSize(600, 500);
-                    jDialog1.setVisible(true);
                     jDialog1.show();
                 }
             };

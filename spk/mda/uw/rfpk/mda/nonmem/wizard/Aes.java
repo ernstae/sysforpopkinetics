@@ -166,6 +166,7 @@ public class Aes extends javax.swing.JPanel implements WizardStep {
             String value = ((MDAObject)wizard.getCustomizedObject()).getRecords().getProperty("Aes");
             if(!value.equals(""))
                 jTextArea1.setText(value.substring(6));
+            jTextArea1.requestFocusInWindow();
 	}
 
 	public void hidingStep(JWizardPane wizard){
@@ -188,7 +189,6 @@ public class Aes extends javax.swing.JPanel implements WizardStep {
                 public void actionPerformed(ActionEvent e){ 
                     jDialog1.setTitle("Help for " + getStepTitle());
                     jDialog1.setSize(600, 500);
-                    jDialog1.setVisible(true);
                     jDialog1.show();
                 }
             };

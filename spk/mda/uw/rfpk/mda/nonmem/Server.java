@@ -99,13 +99,14 @@ public class Server {
      *         The second index designates the fields. 
      *         null if failed.         
      */
-    public String[][] getUserJobs(int maxNum, long leftOff)
+    public String[][] getUserJobs(int maxNum, long leftOff, boolean isLibrary)
     {
         // Put secret and arguments in a String array
-        String[] messageOut = new String[3];
+        String[] messageOut = new String[4];
         messageOut[0] = secret;
         messageOut[1] = String.valueOf(maxNum);
         messageOut[2] = String.valueOf(leftOff);
+        messageOut[3] = String.valueOf(isLibrary);
         
         // Prepare for the return
         String jobList[][] = null;
@@ -207,13 +208,14 @@ public class Server {
      *         The second index designates the fields.  
      *         null if failed.        
      */    
-    public String[][] getUserDatasets(int maxNum, long leftOff)
+    public String[][] getUserDatasets(int maxNum, long leftOff, boolean isLibrary)
     {
         // Put secret and arguments in a String array
-        String[] messageOut = new String[3];
+        String[] messageOut = new String[4];
         messageOut[0] = secret;
         messageOut[1] = String.valueOf(maxNum);
         messageOut[2] = String.valueOf(leftOff);
+        messageOut[3] = String.valueOf(isLibrary);
         
         // Prepare for the return
         String datasetList[][] = null;

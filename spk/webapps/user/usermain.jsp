@@ -29,7 +29,7 @@
 	</tr> 
 	<tr vAlign=top> <td colSpan=3><p>&nbsp;</p></td></tr> 
 	<tr>
-	  <td valign=top width=102 height="0" colspan="1" rowspan="1">
+	  <td valign=top width=150 height="0" colspan="1" rowspan="1">
             <%@ include file="quicklinks.shtml" %>  
 	  </td>
 	  <td colspan=1 vAlign=top width=10><img alt="trans gif" height=5 src="./images/white.gif" width=10/>
@@ -43,7 +43,8 @@
               <c:when test="${validUser.userName == 'useradmin'}">
                 <a href="chpassword.jsp">Change my password</a><br>
                 <a href="userlist.jsp">View all user list</a><br>
-                <a href="enteruser.jsp">Manage user account</a><br>
+                <a href="enteruser.jsp?task=addnew">Add new user account</a><br>
+                <a href="enteruser.jsp?task=update">Update user account</a><br>
                 <a href="searchuser.jsp">Search in user database</a>
               </c:when>
               <c:otherwise>
@@ -52,7 +53,9 @@
                 <a href="userjobs.jsp">View my job status</a><br>
                 <a href="usermodels.jsp?start=0&counter=0">View my model archive</a><br>
                 <a href="userdatasets.jsp?start=0&counter=0">View my dataset archive</a><br>
+                <a href="examplejobs.jsp?start=0&count=0">View example jobs</a><br>
                 <a href="modellibrary.jsp?start=0&counter=0">View model library</a><br>
+                <a href="datasetlibrary.jsp?start=0&counter=0">View dataset library</a><br>
                 <a href="userinfo.jsp">View my account information</a>
               </c:otherwise> 
             </c:choose>       
