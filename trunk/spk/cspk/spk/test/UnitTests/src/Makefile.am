@@ -189,6 +189,8 @@ testall_SOURCES = \
 	UTranTimesSymKronSymTimesU_xTest.h \
 	UTranTimesSymKronSymTimesUTest.cpp \
 	UTranTimesSymKronSymTimesUTest.h \
+	WarningsManagerTest.cpp \
+	WarningsManagerTest.h \
 	../config.h
 
 pkginclude_HEADERS = \
@@ -281,4 +283,5 @@ pkginclude_HEADERS = \
 	transposeRowBlocksTest.h \
 	transposeTest.h \
 	UTranTimesSymKronSymTimesU_xTest.h \
-	UTranTimesSymKronSymTimesUTest.h
+	UTranTimesSymKronSymTimesUTest.h \
+	WarningsManagerTest.h

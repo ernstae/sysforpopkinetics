@@ -94,6 +94,7 @@
 #include "src/transposeTest.h"
 #include "src/UTranTimesSymKronSymTimesU_xTest.h"
 #include "src/UTranTimesSymKronSymTimesUTest.h"
+#include "src/WarningsManagerTest.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -206,6 +207,7 @@ int main( int argc, const char * argv[] )
   master_list_of_tests[ "transposeTest" ]                    = transposeTest::suite();
   master_list_of_tests[ "UTranTimesSymKronSymTimesU_xTest" ] = UTranTimesSymKronSymTimesU_xTest::suite();
   master_list_of_tests[ "UTranTimesSymKronSymTimesUTest" ]   = UTranTimesSymKronSymTimesUTest::suite();
+  master_list_of_tests[ "WarningsManagerTest" ]              = WarningsManagerTest::suite();
   
   //
   // This is the case where user didn't select specific unit tests.
