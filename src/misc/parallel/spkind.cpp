@@ -46,7 +46,7 @@
 #include <time.h>
 #include <cstring>
 #include <csignal>
-#include <spkjob.h>
+#include <spkpvm.h>
 
 static int my_tid = 0;
 static char *job_id = "?????";
@@ -89,8 +89,8 @@ static void spklog(const char* message) {
   int len = strlen(timestamp);
   if (len > 6)
     timestamp[len - 6] = '\0';
-  printf("[j%s](%s)spkind(%s): %s\n", job_id, timestamp, ind_id, message);
-  fflush(stdout);
+  printf("[j%s] (%s) 2 spkind(%s): %s\n", job_id, timestamp, ind_id, message);
+  //  fflush(stdout);
 }
 
 int main(int argc, char** argv) {
@@ -124,33 +124,16 @@ int main(int argc, char** argv) {
   sprintf(buf, "start: on host %s", un.nodename);
   spklog(buf);
 
-  // loop while waiting for messages
-  /*
-  while ((bufid = pvm_recv(parent_tid, -1)) >= 0) {
-    spklog("spkpop received a message");
-    int bytes, msgtag, junk, tid[1];
-    if (pvm_bufinfo(bufid, &bytes, &msgtag, tid) < 0)
-      die("pvm_bufinfo failed");
-    switch (msgtag) {
-    case SpkPvmKill:
-      if (*tid != parent_tid) {
-	sprintf(buf, "received SpkPvmKill from unexpected tid %0x", *tid);
-	spklog(buf);
-      } 
-      else {
-	die("killed by spkjob");
-      }
-      break;
-    default:
-      break;
-    }
-  }
-  */
+  // change working directory
+  sprintf(buf, "%s/spkjob-%s/%s", SPK_WORKING, job_id, ind_id);
+  if (chdir(buf) != 0)
+    die("could not change working directory");
+
+
   for (int i = 0; i < 10; i++) {
     sleep(1);
   }
   finish(0);
-  spklog("stop");
   return 0;
 }
 
