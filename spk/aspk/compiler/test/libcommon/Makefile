@@ -21,6 +21,7 @@ CORE_OBJS   = $(LIBCOMM)/SpkCompiler.o \
               $(LIBCOMM)/SymbolTable.o \
               $(LIBCOMM)/Symbol.o
 
+
 TEST_OBJS   = ExpTreeGeneratorTest.o SpkCompilerUtilTest.o SymbolTableTest.o SymbolTest.o
 
 CORE_H      = $(LIBCOMM)/SpkCompiler.h \

@@ -15,7 +15,7 @@
 using namespace std;
 using namespace CppUnit;
 
-int gSpkExpErrors = 0;
+int gSpkExpErrors;
 
 void SymbolTest::setUp()
 {

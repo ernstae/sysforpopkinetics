@@ -5,7 +5,7 @@
 
 #include "../libcommon/SpkCompilerUtil.h"
 #include "../libnonmem/NonmemCompiler.h"
-#include "../libnonmem/nmabb.tab.h"
+#include "../libnonmem/explang.tab.h"
 
 using namespace std;
 using namespace xercesc;
