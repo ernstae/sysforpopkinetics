@@ -67,6 +67,58 @@ of the fixed effects.
 The attribute $code elapsedtime$$ specifies
 the number of seconds it took to compute the results.
 
+$head theta_center$$
+$index theta_center$$
+The record named $code theta_center$$ contains
+the central value for the fixed effects vector, $math%theta%$$, around
+which all of the steps are taken.
+The attribute $code nrows$$ for the corresponding record
+is the number of fixed effects.
+
+$head theta_step$$
+$index theta_step$$
+The record named $code theta_step$$ contains
+the step size for each of the components of the fixed effects, $math%theta%$$.
+The attribute $code nrows$$ for the corresponding record
+is the number of fixed effects.
+
+$head omega_center$$
+$index omega_center$$
+The record named $code omega_center$$ contains
+the central value for the covariance of random effects, $math%Omega%$$, around
+which all of the steps are taken.
+The attribute $code nrows$$ for the corresponding record
+is the row dimension of the covariance.  Likewise,
+$code ncols$$ is the column dimension of the covariance,
+which is equal to the row dimension.
+
+$head omega_step$$
+$index theta_step$$
+The record named $code omega_step$$ contains
+the step size for each of the components of the covariance
+of random effects, $math%Omega%$$.
+The attribute $code nrows$$ for the corresponding record
+is the row dimension and $code ncols$$ is the column dimension.
+
+$head sigma_center$$
+$index sigma_center$$
+The record named $code sigma_center$$ contains
+the central value for the residual unknown variability 
+covariance matrix, $math%Sigma%$$,
+which all of the steps are taken.
+The attribute $code nrows$$ for the corresponding record
+is the row dimension of the covariance.  Likewise,
+$code ncols$$ is the column dimension of the covariance,
+which is equal to the row dimension.
+
+$head sigma_step$$
+$index sigma_step$$
+The record named $code sigma_step$$ contains
+the step size for each of the components of the covariance
+of random effects, $math%Sigma%$$.
+The attribute $code nrows$$ for the corresponding record
+is the row dimension and $code ncols$$ is the column dimension.
+
 $head alpha_center$$
 $index alpha_center$$
 The record named $code alpha_center$$ contains
@@ -120,6 +172,54 @@ $syntax%
 <error_list>
 </error_list>
 <pop_monte_result elapsedtime="%PCDATA%" method="%PCDATA%" number_eval="%PCDATA%" >
+	<column_major  name="theta_center" nrows="%PCDATA%" ncols="1">
+		<column>
+			<value>
+				%PCDATA%
+			</value>
+			%...%
+		</column>
+	</column_major>
+	<column_major  name="theta_step" nrows="%PCDATA%" ncols="1">
+		<column>
+			<value>
+				%PCDATA%
+			</value>
+			%...%
+		</column>
+	</column_major>
+	<column_major  name="omega_center" nrows="%PCDATA%" ncols="1">
+		<column>
+			<value>
+				%PCDATA%
+			</value>
+			%...%
+		</column>
+	</column_major>
+	<column_major  name="omega_step" nrows="%PCDATA%" ncols="1">
+		<column>
+			<value>
+				%PCDATA%
+			</value>
+			%...%
+		</column>
+	</column_major>
+	<column_major  name="sigma_center" nrows="%PCDATA%" ncols="1">
+		<column>
+			<value>
+				%PCDATA%
+			</value>
+			%...%
+		</column>
+	</column_major>
+	<column_major  name="sigma_step" nrows="%PCDATA%" ncols="1">
+		<column>
+			<value>
+				%PCDATA%
+			</value>
+			%...%
+		</column>
+	</column_major>
 	<column_major  name="alpha_center" nrows="%PCDATA%" ncols="1">
 		<column>
 			<value>
@@ -724,20 +824,20 @@ int main(int argc, const char *argv[])
 	cout << "\" >" << endl;
 
 	size_t indent = 4;
-	OutputColumnMajor(indent, thetaOut,   "theta_center", nTheta,   1);
-	OutputColumnMajor(indent, thetaStep,  "theta_step",   nTheta,   1);
-	OutputColumnMajor(indent, omegaOut,   "omega_center", omegaDim, omegaDim);
-	OutputColumnMajor(indent, omegaStep,  "omega_step",   omegaDim, omegaDim);
-	OutputColumnMajor(indent, sigmaOut,   "sigma_center", sigmaDim, sigmaDim);
-	OutputColumnMajor(indent, sigmaStep,  "sigma_step",   sigmaDim, sigmaDim);
+	OutputColumnMajor(indent, thetaOut,  "theta_center", nTheta,   1);
+	OutputColumnMajor(indent, thetaStep, "theta_step",   nTheta,   1);
+	OutputColumnMajor(indent, omegaOut,  "omega_center", omegaDim, omegaDim);
+	OutputColumnMajor(indent, omegaStep, "omega_step",   omegaDim, omegaDim);
+	OutputColumnMajor(indent, sigmaOut,  "sigma_center", sigmaDim, sigmaDim);
+	OutputColumnMajor(indent, sigmaStep, "sigma_step",   sigmaDim, sigmaDim);
 
 	size_t nrows = nAlp;
 	size_t ncols  = 1;
-        OutputRowMajor(indent, alpIn,     "alpha_center", nrows, 1 );
-        OutputRowMajor(indent, alpStep,   "alpha_step",   nrows, 1 );
+        OutputColumnMajor(indent, alpIn,     "alpha_center", nrows, 1 );
+        OutputColumnMajor(indent, alpStep,   "alpha_step",   nrows, 1 );
         ncols = 3; 
-	OutputRowMajor(indent, obj_value, "obj_value",    nrows, ncols);
-	OutputRowMajor(indent, obj_std,   "obj_std",      nrows, ncols);
+	OutputRowMajor(indent, obj_value,    "obj_value",    nrows, ncols);
+	OutputRowMajor(indent, obj_std,      "obj_std",      nrows, ncols);
 
 
 	// return from main program
