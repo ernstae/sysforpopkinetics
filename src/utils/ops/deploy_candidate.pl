@@ -1,5 +1,6 @@
 #!/usr/bin/perl -w
 
+push @INC, "/usr/local/bin";
 use strict;
 use English;
 use File::Path;
