@@ -2022,5 +2022,12 @@ static DoubleMatrix ltildetrancendiff::trancendiff(
         replaceIth(dmatJ, k, drowTempLTilde_alp);
     }
 
+    // Compute LTilde again at the original alp value to restore
+    // any model state variables to their original values.
+    lTilde( isMultiple, sharedDirectory, model, whichObjective, dvecY_forAll, dvecNumsOfDataforEachSubject,
+        indOptInfo,
+        dvecAlp, dvecBlow, dvecBup, dvecBstep, dmatBin_forAll,
+        0,0,&drowTempLTilde_alp );
+
     return dmatJ;
 }
