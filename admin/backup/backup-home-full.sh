@@ -26,7 +26,7 @@ ERROR_SCP=2
 
 cd /tmp
 
-if ! tar cf $OUTFILE $HOME > $MSGFILE 2>&1; then
+if ! tar czf $OUTFILE $HOME > $MSGFILE 2>&1; then
     echo "$0 error: tar failed" | mail -s "Backup Failed" $USER
     exit $ERROR_TAR
 fi

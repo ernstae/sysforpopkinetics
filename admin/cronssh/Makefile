@@ -11,5 +11,8 @@ get-agent-data:		get-agent-data.sh
 clean:
 	rm cronscp cronssh get-agent-data
 
+install:
+	cp cronscp cronssh get-agent-data ${HOME}/bin/shell
+
 % : $.sh
 	cp $> $@

@@ -18,6 +18,10 @@ rtf:	$T.rtf
 %.rtf : %.xml
 	docbook2rtf --dsl ../stylesheet/local.dsl#print $<
 
+install:
+	scp $T.html whitechuck:/var/www/html/soft/howto/html
+	scp $T.pdf  whitechuck:/var/www/html/soft/howto/pdf
+
 clean:
 	rm -f $T.pdf $T.rtf $T.html
 

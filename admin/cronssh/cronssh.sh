@@ -13,13 +13,16 @@
 # Because no password is needed, this script is convenient for use
 # in scripts run from cron.
 
-USER=$(whoami)
+USER=$(whoami)y
 DIR=agent-data
 PWDIR=$(pwd)
 
-cd $HOME/$DIR
+cd ~/$DIR
 
 eval `cat data`
+
+export SSH_AGENT_PID
+export SSH_AUTH_SOCK
 
 cd $PWDIR
 
