@@ -774,23 +774,12 @@ void quasiNewtonAnyBox(
   Memory<double> memoryDbl( 4 * nObjPar );
 
   // The various y vectors are scaled versions of their x counterparts.
-  double* pdYLowData = dvecYLow= memoryDbl( nObjPar );
-  double* pdYUpData  = dvecYUp = memoryDbl( nObjPar );
-  double* pdYData    = dvecY   = memoryDbl( nObjPar );
+  double* yLow  = memoryDbl( nObjPar );
+  double* yUp   = memoryDbl( nObjPar );
+  double* yCurr = memoryDbl( nObjPar );
 
-  // Instantiate a row vector to hold the scaled gradient, 
-  // gScaled(y) = fScaled_y(y).
-  double* pdGScaledData = drowGScaled= memoryDbl( nObjPar );
-
-  double  *xCur = dMemory(n);
-  double  *gCur = dMemory(n);
-  double  *gOut = dMemory(n);
-  double  *b    = dMemory(n);
-  double  *HCur = dMemory(n * n);
-  double  *Q    = dMemory(n * n);
-  double  *HOut = dMemory(n * n);
-  double  *A    = dMemory(m * n);
-
+  // This is the scaled gradient, gScaled(y) = fScaled_y(y).
+  double* gScaled = memoryDbl( nObjPar );
 
   // Check to see if the lower and upper bounds for each element of x are 
   // equal and then set the bounds and the initial value y accordingly.
@@ -807,15 +796,15 @@ void quasiNewtonAnyBox(
     {
       // The x bounds are not equal, so constrain this element 
       // to the interval [0,1].
-      //pdYLowData[i] = 0.0;
-      pdYUpData[i]  = 1.0;
+      //yLow[i] = 0.0;
+      yUp[i]  = 1.0;
       
-      //pdYData[i] = scaleElem( pdXInData[i], pdXLowData[i], pdXDiffData[i] );
+      //yCurr[i] = scaleElem( pdXInData[i], pdXLowData[i], pdXDiffData[i] );
     }
   }
 
   // This function sets 0.0 to the corresponding output element when diff[i] is 0.0.
-  scaleElem(nObjPar, pdXInData, pdXLowData, pdXDiffData, pdYData);
+  scaleElem(nObjPar, pdXInData, pdXLowData, pdXDiffData, yCurr);
 
 
   //------------------------------------------------------------
@@ -863,7 +852,7 @@ void quasiNewtonAnyBox(
 
         for( int j = 0; j < n; j++ )
         {
-            y[ j ] = stateInfo.x[ j ];
+            yCurr[ j ] = stateInfo.x[ j ];
         }
 
         options.state  = stateInfo.state;
@@ -1002,7 +991,7 @@ void quasiNewtonAnyBox(
       // See if this function's convergence criterion has been met.
       if ( isWithinTol( 
         epsilon,
-        dvecY,
+        dvecYCurr,
         dvecYLow,
         dvecYUp,
         drowGScaled,
@@ -1156,7 +1145,7 @@ void quasiNewtonAnyBox(
   // from the final y value.
   if ( pdvecXOut ) 
   {
-    unscaleElem( nObjPar, pdYData, pdXLowData, pdXUpData, pdXDiffData, pdXOutData );
+    unscaleElem( nObjPar, yCurr, pdXLowData, pdXUpData, pdXDiffData, pdXOutData );
   }
 
   // If the final value for the objective function should be
@@ -1385,8 +1374,6 @@ bool isWithinTol(
   DoubleMatrix drowGTemp( 1, n );
 
 
-  // Updated 2-5-01 Alyssa
-  // fixed for const correctness
   const double* pdXHatData   = dvecXHat  .data();
   const double* pdXLowData   = dvecXLow  .data();
   const double* pdXUpData    = dvecXUp   .data();
