@@ -1209,19 +1209,6 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   const double          delta = 1e-7;
 
 
-  // [Remove]======================================
-  //
-  /*
-    GOAL: MAKE THIS FUNCTION MEET THE OLD FUNCTIONS SPECIFICATION
-          SO THAT NO OTHER CODE OR TESTS NEED BE CHANGED.
-
-    CONSIDER: store final value for delta to use next time
-  */
-  //
-  // [Remove]======================================
-
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
   if ( !thisIsAWarmRestart )
   {
     // Evaluate the objective and its gradient.
@@ -1293,118 +1280,6 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
       // Add the number of iterations that were performed.
       i += itrCur;
     }
-  }
-
-
-
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-  if ( thisIsAWarmRestart )
-  {
-    // See if this functions convergence criterion has been met.
-    // If the final y value is actually within epsilon tolerance of 
-    // the true value yStar, then go on.  Note that NAG arrays use
-    // row-major order.
-    if ( isWithinTol( epsilon, dvecY, dvecYLow, dvecYUp, drowGScaled, 
-           getLowerTriangle( arrayToDoubleMatrix( options.h, n, n ) ) ) )
-    {
-      setOutputValues(  /* GET ARG'S FROM CODE AT END OF THIS FUNC */   )
-      return;
-    }
-  }
-  else
-  {
-    // Evaluate the objective and its gradient.
-
-    // Create an approximation for the Hessian.
-  }
-
-  // Set the number of quasi-Newton iterations high enough so 
-  // that the optimizer can build up a reasonable accurate 
-  // approximation for the Hessian, but not so high that it
-  // will spend too much time in the optimizer.
-  itrMax = 5;
-
-  // Set the maximum number of interior point iterations so
-  // that the optimizer can solve the quadratic subproblems
-  // with sufficient accuracy.
-  quadMax = 100;
-
-  // The argument delta specifies the convergence criteria.
-  // If the return value of QuasiNewton01Box is "ok",
-  //the infinity norm of the projected gradient at 
-  // x = xOut is less than or equal delta.
-  //
-  // Set delta to be the maximum of the absolute values of the
-  // elements (infinity norm) of the current gradient,
-  //
-  //            ~
-  //     delta  =  max { | G_i | }  .
-  //
-  // This ensures that the subproblems only be solved with accuracy
-  // sufficient for the current x value.
-  double deltaScaleMax = 0.1;
-  double deltaScaleDiv = 10.0;
-  double deltaScale = deltaScaleMax;
-  double delta = MaxAbs( gCur ) * deltaScale;
-
-  int i = 0;
-  while ( i < nMaxIter )
-  {
-    msg = QuasiNewton01Box(
-      os,
-      level,
-      ItrMax,
-      QuadMax,
-      n,
-      delta,
-      obj,
-      ItrCur,
-      QuadCur,
-      rCur,
-      fCur,
-      xCur,
-      gCur,
-      HCur );
-
-    // Add the number of iterations that were performed.
-    i += itrCur;
-
-    // See if this functions convergence criterion has been met.
-    // If the final y value is actually within epsilon tolerance of 
-    // the true value yStar, then go on.  Note that NAG arrays use
-    // row-major order.
-    if ( isWithinTol( epsilon, dvecY, dvecYLow, dvecYUp, drowGScaled, 
-             getLowerTriangle( arrayToDoubleMatrix( options.h, n, n ) ) ) )
-    {
-      setOutputValues(  /* GET ARG'S FROM CODE AT END OF THIS FUNC */   )
-      return;
-    }
-
-    // If QuasiNewton01Box's convergence criterion has been met,
-    // then the infinity norm of the current gradient is less than
-    // delta, and it needs to be decreased so that the optimizer
-    // can continue iterating toward the minimum to try to satisfy
-    // the conververgence criterion for this function.
-    if ( quasiNewtonOutput == ok )
-    {
-      deltaScale /= deltaScaleDiv;
-    }
-    else
-    {
-      deltaScale = deltaScaleMax;
-    }
-    
-    // Set delta to be the maximum of the absolute values of the
-    // elements (infinity norm) of the current gradient,
-    //
-    //            ~
-    //     delta  =  max { | G_i | }  .
-    //
-    // This ensures that the subproblems only be solved with accuracy
-    // sufficient for the current x value.
-    delta = MaxAbs( gCur ) * deltaScale;
   }
 
 
