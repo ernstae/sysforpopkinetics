@@ -3,9 +3,8 @@
 
 #include <map>
 #include "../libcommon/SpkCompiler.h"
-//#include "../libnonmem/explang.tab.h"
+#include "../libnonmem/explang.tab.h"
 
-/*
 extern "C"{
   int yylex(void);  
   int yyparse(void);
@@ -14,7 +13,7 @@ extern int yydebug;
 extern FILE *yyin;
   
 extern int gSpkExpLines;
-*/
+
 
 /**
  * A global counter to keep track of # of errors detected during a call to yyparse().
@@ -26,7 +25,27 @@ extern int gSpkExpLines;
  * \note The documentation for the yyparse specification found in @c nmabb.y 
  * is not visible because DOXYGEN does not support YACC.
  */
-//extern int gSpkExpErrors;
+extern int gSpkExpErrors;
+
+/**
+ * A global pointer to the symbol table.
+ *
+ * This table is used to bookkeep symbols found in the NONMEM-like control files.
+ * These symbols include both keywords (symbols predefined/reserved by the NMTRAN)
+ * and arbitary symbols defined by the end user.
+ */
+extern SymbolTable *gSpkExpSymbolTable;
+
+/**
+ * A global pointer to a DOM document (tree).
+ *
+ * The DOMDocument object pointed by this pointer is created within the util (ExpTreeGenerator) object.
+ * This is used to call tools like DOMDocument::createElement() to directly create DOM elements.
+ *
+ * \todo Perhaps this pointer should not be exposed or should be accessed always though the
+ * global pointer (util) to the ExpTreeGenerator object.
+ */
+extern DOMDocument *gSpkExpTree;
 
 /**
  * A global pointer to a ExpTreeGenerator object (providing a set of utilities re. DOM-based tree).
@@ -37,26 +56,8 @@ extern int gSpkExpLines;
  * tree and its components as well as other utilities to print out the tree contents
  * to a file or standard output and possibly more.
  */
-//extern ExpTreeGenerator *gSpkExpTreeGenerator;
-/**
- * A global pointer to a DOM document (tree).
- *
- * The DOMDocument object pointed by this pointer is created within the util (ExpTreeGenerator) object.
- * This is used to call tools like DOMDocument::createElement() to directly create DOM elements.
- *
- * \todo Perhaps this pointer should not be exposed or should be accessed always though the
- * global pointer (util) to the ExpTreeGenerator object.
- */
-//extern DOMDocument *gSpkExpTree;
+extern ExpTreeGenerator *gSpkExpTreeGenerator;
 
-/**
- * A global pointer to the symbol table.
- *
- * This table is used to bookkeep symbols found in the NONMEM-like control files.
- * These symbols include both keywords (symbols predefined/reserved by the NMTRAN)
- * and arbitary symbols defined by the end user.
- */
-//extern SymbolTable *gSpkExpSymbolTable;
 
 /**
  * Specialization of SpkCompiler for NONMEM.
@@ -184,7 +185,7 @@ class NonmemCompiler : public SpkCompiler{
   enum BaseModel { NONE, 
 		   ADVAN1, ADVAN2, ADVAN3, ADVAN4, ADVAN5, 
 		   ADVAN6, ADVAN7, ADVAN8, ADVAN9, ADVAN10, 
-		   ADVAN11, ADVAn12 };
+		   ADVAN11, ADVAN12 };
   enum BaseModel baseModel;
   enum BaseModel setCannedModel( const char* canned );
 
