@@ -19,7 +19,20 @@
 
 <article><title>CVS RFPK HOWTO</title>
  <articleinfo>
-  <author><firstname>Alan</firstname><surname>Westhagen</surname></author>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>December 27, 2002</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Initial version</revremark>
+      </revision>
+      <revision>
+	<revnumber>1.01</revnumber>
+	<date>January 17, 2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Added revision history section.</revremark>
+      </revision>
+    </revhistory>
   <abstract>
     <para>
 	CVS, a widely used tool for managing revisions to documents
