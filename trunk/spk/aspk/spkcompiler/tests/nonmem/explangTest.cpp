@@ -695,9 +695,80 @@ void explangTest::testIfThenStmt()
   remove( output );
 }
 
+void explangTest::testHAHN1_1()
+{
+  // Attention!!! nm_lex() converts any capitalized letter to lower case.
+
+  SymbolTable table;
+  char input[]        = "testHAHN1_1.in";
+  char output[]       = "testHAHN1_1.out";
+
+  FILE * pInput = fopen( input, "w" );
+  CPPUNIT_ASSERT( pInput != NULL );
+/*
+  fputs( "x=((x)**(x))\n", pInput ); // This passes
+  fputs( "x=EXP(((x)+(x)))\n", pInput );  // this passes 
+  fputs( "x=EXP(((x)-(x)))\n", pInput );  // this passes 
+  fputs( "x=EXP(((x)*(x)))\n", pInput );  // this passes 
+  fputs( "x=EXP(((x)/(x)))\n", pInput );  // this passes 
+*/
+  fputs( "x=EXP((x)**(x))\n", pInput );  // but this fails
+  fputs( "x=EXP((x+x)**x)\n", pInput );  // this passes 
+  table.insertUserVar( "b1" );
+  table.insertUserVar( "b2" );
+  table.insertUserVar( "b3" );
+  table.insertUserVar( "b4" );
+  table.insertUserVar( "b5" );
+  table.insertUserVar( "b6" );
+  table.insertUserVar( "b7" );
+  table.insertUserVar( "x" );
+  fputs ("x=(b1+b2*x+b3*x**2+b4*x**3) /(1+b5*x+b6*x**2+b7*x**3)\n", pInput );
+  fclose( pInput );
+  
+  table.insertUserVar( "THETA" );
+  table.insertUserVar( "TIME" );
+  table.insertUserVar( "ETA" );
+
+  pInput = fopen( input, "r" );
+  CPPUNIT_ASSERT( pInput != NULL );
+
+  nm_in = pInput;
+  CPPUNIT_ASSERT( nm_in != NULL );
+
+  gSpkExpErrors = 0;
+  gSpkExpLines  = 0;
+  gSpkExpSymbolTable = &table;
+  CPPUNIT_ASSERT( gSpkExpSymbolTable != NULL );
+  gSpkExpOutput = fopen( output, "w" );
+  nm_debug = 0;
+
+  nm_parse();
+
+  CPPUNIT_ASSERT( table.findi( "x" ) != Symbol::empty() );
+  fclose( pInput );
+  fclose( gSpkExpOutput );
+
+  CPPUNIT_ASSERT( gSpkExpErrors==0 );
+  if( gSpkExpErrors == 0 )
+  {
+    //expTreeUtil.printToStdout( gSpkExpTree );
+  }
+
+  //cout << endl;
+  //gSpkExpSymbolTable->dump();
+
+  remove( input );
+  remove( output );
+}
+
 CppUnit::Test * explangTest::suite()
 {
   CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite( "explangTest" );
+
+  suiteOfTests->addTest( 
+     new CppUnit::TestCaller<explangTest>(
+         "testHAHN1_1", 
+	 &explangTest::testHAHN1_1 ) );
 
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<explangTest>(
@@ -719,6 +790,7 @@ CppUnit::Test * explangTest::suite()
      new CppUnit::TestCaller<explangTest>(
          "testIfThenStmt",
 	 &explangTest::testIfThenStmt) );
+
   return suiteOfTests;
 }
 
