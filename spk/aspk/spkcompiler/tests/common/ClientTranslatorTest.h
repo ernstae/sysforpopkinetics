@@ -26,13 +26,15 @@ class ClientTranslatorTest : public CppUnit::TestFixture {
 
     void createDataWithID( const char* );
     void createDataNoID( const char* );
-    void createDataWithIDShaffuled( const char * );
+    void createDataIDShuffled( const char * );
 public:
     virtual void setUp();
     virtual void tearDown();
 
     void testDataWithID(); 
-    void testDataNoID();
+    void testDataShuffledID();
+    void testIndDataNoID();
+    void testPopDataNoID();
 
     static CppUnit::Test * suite();
 };
