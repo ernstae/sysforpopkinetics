@@ -55,14 +55,17 @@ public abstract class Spkdb {
 	return true;
     }
     /**
-       Submit a job.
+       Submit a job
        @param conn open connection to the database
+       @param userId key to a row in the user table
        @param abstraction short description of the job
        @param datasetId key to a row in the dataset table
        @param datasetVersion rcs version code for the dataset
        @param modelId key to a rew in the model table
        @param modelVersion rcs version code for the model
        @param xmlSource source code for the job
+       @param methodCode key to a row in the method table
+       @param parent the job_id of the job that is the parent; otherwise 0
        @return key to the new row in the job table
      */
     public static long newJob(Connection conn, 
@@ -151,7 +154,8 @@ public abstract class Spkdb {
     {
 	String
 	    sql = "select job_id, abstract, state_code, start_time, event_time, "
-	    + "end_code from job where user_id=" + userId;
+	    + "end_code, model_id, model_version, dataset_id, dataset_version "
+	    + "from job where user_id=" + userId;
 	if (leftOff != 0) {
 	    sql += " and job_id < " + leftOff;
 	}
