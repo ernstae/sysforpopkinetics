@@ -16,6 +16,8 @@ libspkcompiler_la_SOURCES = \
 	$(NONMEM)/lex_explang.l \
 	$(NONMEM)/NonmemTranslator.cpp \
 	$(NONMEM)/NonmemTranslator.h \
+	read_content.h \
+	read_content.cpp \
         ClientTranslator.h \
 	SpkParameters.h \
 	Symbol.cpp \
@@ -32,6 +34,7 @@ libspkcompiler_la_SOURCES = \
 pkginclude_HEADERS = \
         $(NONMEM)/NonmemTranslator.h \
 	explang.h \
+	read_content.h \
 	ClientTranslator.h \
 	SpkParameters.h \
 	Symbol.h \
