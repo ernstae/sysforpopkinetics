@@ -9,7 +9,15 @@
    <articleinfo>
       <revhistory>
          <revision>
-            <revnumber>2.0</revnumber>
+            <revnumber>1.11</revnumber>
+            <date>September 8, 2004</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>
+            Added a description for DataSet::DataSet().
+            </revremark>
+         </revision>
+         <revision>
+            <revnumber>1.10</revnumber>
             <date>September 7, 2004</date>
             <authorinitials>sh</authorinitials>
             <revremark>A &gt; was flipped around.
@@ -494,6 +502,21 @@ indexes to those records which have measurements : { 2, 3, 4, 6, 7, 8, 9, 10 }
       that does the filling, which means all information are embedded (hard-coded) in the constructor 
       body by SPK Compiler.
       </para>
+      <variablelist>
+         <title>Constructor</title>
+         <varlistentry>
+            <term>
+            DataSet&lt;class T&gt;::DataSet()
+            </term>
+            <listitem>
+               <para>
+               The type of the template parameter is somewhat restrictive at this point.
+               <varname>T</varname> has to be a concrete type of <literal>CppAD</literal> template
+               class.
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
       <variablelist>
          <title>Public Methods</title>
 <!--
