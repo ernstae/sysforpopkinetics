@@ -59,19 +59,22 @@ class NonmemTranslator : public ClientTranslator
  private:
 
   //
-  // Analyze the <pop_analysis> subtree and returns the size of population.
+  // Analyze the <pop_analysis> subtree and generate the source code
+  // for the driver.  It returns the size of population.
   //
   int  parsePopAnalysis ( xercesc::DOMElement* sourceML );
 
   //
-  // Analyze the <ind_analysis> subtree.
+  // Analyze the <ind_analysis> subtree and generate the source code
+  // for the driver.
   //
   void parseIndAnalysis ( xercesc::DOMElement* sourceML );
 
   //
-  // Analyzie the <pred> subtree.
+  // Analyzie the <pred> subtree and generate the source code
+  // for the Pred class.
   //
-  void parsePred( xercesc::DOMElement* sourceML, SymbolTable& table, char [] );
+  void parsePred( xercesc::DOMElement* sourceML, SymbolTable& table );
 
   // void parseTables( xercesc::DOMNodeList* tables, std::vector<int>&  );
 
@@ -100,6 +103,12 @@ class NonmemTranslator : public ClientTranslator
   //
   void generateDataSet( int pop_size, const SymbolTable& final_symbol_table ) const;
 
+
+  //
+  // Generate C++ source code for Pred class.
+  //
+  void generatePred( const SymbolTable& final_symbol_table, std::ifstream& iPredEqn ) const;
+
   // The header file name for IndData class.
   const char *fIndData_h;
 
@@ -112,6 +121,26 @@ class NonmemTranslator : public ClientTranslator
   // The definition file name for DataSet class.
   const char *fDataSet_cpp;
 
+  // The name of file that contains fortran (ie. NONMEM TRAN) version of
+  // the user defined $PRED.
+  const char *fPredEqn_fortran;
+
+  // The name of file that contains C++ version of the user defined $PRED 
+  // (equations only) model.
+  const char *fPredEqn_cpp;
+  
+  // The header file for Pred class.
+  const char *fPred_h;
+
+  // The definition file name for Pred class.
+  const char *fPred_cpp;
+
+  // The header file for Omega class.
+  const char *fOmega_h;
+
+  // The definition file for Omega class.
+  const char * fOmega_cpp;
+ 
   // The string for the file burner.
   const char *BURNER;
 
