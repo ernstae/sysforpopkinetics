@@ -1,0 +1,416 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd"[
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+  <!ENTITY whitechuck '<systemitem class="systemname">whitechuck</systemitem>'>
+]>
+<article><title>Operating System Version Migration</title>
+ <articleinfo>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>February 1, 2004</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+    </revhistory>
+  <abstract>
+      <para>
+	Instructions and advice for migrating from RedHat Linux
+	version 8.0 to RedHat Enterprise Linux Version 3 are given.
+      </para>
+  </abstract>
+ </articleinfo>
+  <sect1>
+    <title>Preparation</title>
+    <para>
+      In the future, it should be possible to migrate from one
+      version of Redhat Enterprise Linux (RHEL) to the next via
+      an update process, in which most files in your system
+      will remain intact. This is, unfortunately, not possible in the
+      migration from Redhat Linux to RHEL.  Your entire disk 
+      storage will be wiped clean.  It is, therefore, crucial that
+      you prepare carefully for the move.
+    </para>
+    <sect2>
+      <title>Verify the Backup of your Home Directory</title>
+      <para>
+	Each weekday night, your system should be copying your
+	home directory to &whitechuck;. You should verify that
+	this is working correctly.  Here is one way to do that:
+	<orderedlist>
+	  <listitem>
+	    <para>
+	      In a terminal window, go to the directory on
+	      &whitechuck; which contains your backup copies:
+	      <screen>
+ssh whitechuck
+cd backup
+	      </screen>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      If you run <command>ls -l</command>, you should see a
+	      list of directory names, each starting with the date
+	      on which the backup was taken. Go 
+	      <command>cd</command> to the most recent backup, and
+	      then take a directory listing:
+	      <screen>
+cd <emphasis>most-recent-backup</emphasis>
+ls -lR $USER > /tmp/backup_listing
+	      </screen>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Open a terminal window on your workstation, and
+	      make a similar directory listing there, retrieve the 
+	      listing made on &whitechuck;, and use <command>diff</command>
+	      to compare the two:
+	      <screen>
+cd ..
+ls -lR $USER > /tmp/current_listing
+cd /tmp
+scp whitechuck:/tmp/backup_listing .
+diff current_listing backup_listing
+	      </screen>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      If the backup is recent, the output from the 
+	      <command>diff</command> command should be short. Check 
+	      into any differences that come as a surprise.  At the
+	      end of this process, you must be confident that your
+	      backup is good.
+	    </para>
+	  </listitem>
+	</orderedlist>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Make a Copy of <filename>/etc</filename></title>
+      <para>
+	Most of the configuration files on your workstation reside in the
+	<filename>/etc</filename> directory.  If certain functions 
+	no longer work after the migration, it will be useful to be
+	able to consult previous versions of the configuration files.
+	From a terminal window, here is a convenient way to make
+	a copy:
+	<screen>
+su -
+cd /
+tar cvzf /tmp/etc.tgz etc
+chown $USER /tmp/etc.tgz
+exit
+scp /tmp/etc.tgz whitechuck:
+	</screen>
+	Upon completing the command sequence listed above,
+	a new tar ball named <filename>etc.tgz</filename> should 
+	appear in your home directory on &whitechuck;.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Plan the Migration of Non-RPM Packages</title>
+      <para>
+	The overwhelming majority of software packages on your workstation
+	were installed by the Redhat Package Manager (RPM).  When
+	you install RHEL, later versions of these packages will be
+	installed automatically.  You may, however, have several 
+	packages that were not installed by RPM.  These are most
+	likely located in <filename>/usr/local</filename>, although
+	they may be elsewhere.  Only you know what these packages
+	are.
+      </para>
+      <para>
+	There are two basic ways to handle the migration of
+	your non-RPM packages:
+	<orderedlist>
+	  <listitem>
+	    <para>
+	      Reinstall them from scratch.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Similar to the way that you placed a copy of 
+	      <filename>/etc</filename> on &whitechuck;
+	      place a copy of the tar ball for each package
+	      somewhere safe, so that you can copy it back 
+	      and expand it after the migration.  Note, however,
+	      that this might not work, because the package 
+	      might depend in some way on RedHat 8.0 that is 
+	      not compatible with RHEL.
+	    </para>
+	  </listitem>
+	</orderedlist>
+	Just to be on the safe side, it might be best to make a 
+	copy of any non-RPM package that you are really depending
+	on, even though your intention is to reinstall from scratch.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Print Out Key Network Configuration Files</title>
+      <para>
+	The RHEL installation script will ask certain questions
+	about your network configuration.  It will be useful
+	to have printout of key files to refer to.  From a 
+	shell window:
+	<screen>
+pr /etc/resolv.conf | lpr
+pr /etc/hosts | lpr
+pr /etc/sysconfig/network | lpr
+pr /etc/sysconfig/network-scripts/ifcfg-eth0 | lpr
+	</screen>
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Install RHEL from Cdrom</title>
+    <para>
+    </para>
+  </sect1>
+  <sect1 id="extra">
+    <title>Create Extra Directory</title>
+    <para>
+      The Software Team backup process places a copy of your
+      entire home directory on &whitechuck; after each working
+      day.  Sometimes you need storage for files which do not
+      require nightly backup. This is a convenient way to 
+      provide this storage in a way that is accessible with
+      ordinary user permissions.
+    </para>
+    <para>
+      In a shell window:
+      <screen>
+su -
+cd /opt
+mkdir extra
+chown <emphasis>&lt;your user name&gt;</emphasis> extra
+exit
+cd
+ln -s /opt/extra extra
+      </screen>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Register and Update</title>
+    <para>
+      Although you have just installed the new version of RHEL, there are
+      already updates available at the RedHat Network (RHN) site.  Before
+      downloading and installing these updates, you will need to register.
+    </para>
+    <para>
+      RFPK has purchased a set RHN Management Entitlements in 
+      sufficient number that there should be one for each workstation
+      running RHEL.  As a side effect of registering
+      your system according to the following instructions, one
+      of these entitlements will be automatically assigned to
+      your workstation.
+      <orderedlist>
+	<listitem>
+	  <para>
+	    <emphasis>Start the <command>up2date</command> applet</emphasis>
+	    by clicking on its icon in the bar of icons (known as the
+	    <emphasis>panel</emphasis>) at the bottom of your screen.  The
+	    <command>up2date</command> icon is a small ball, which will 
+	    probably be red with an exclamation mark in the middle of it,
+	    but could be green or blue, depending on the update status of
+	    your machine.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    <emphasis>Login</emphasis>.
+	    <orderedlist>
+	      <listitem>
+		<para>
+		  You will first be required to provide the root
+		  password for your machine.  Do this.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  Next you will be asked to either log in to RHN,
+		  or to create a new login.  Use the existing
+		  login <emphasis>alanwesthagen</emphasis>, because
+		  this is the login to which the entitlements have
+		  been attached.  The email address for the login
+		  is <emphasis>afw@u.washington.edu</emphasis>.
+		  You will also need a password.  Get the password
+		  from the manager of the Software Team.
+		</para>
+	      </listitem>
+	    </orderedlist>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Let <command>up2date</command> bring your system up-to-date.
+	    Updates are presented in two groups: kernel updates and 
+	    everything else.  Mark check boxes so that you will get
+	    all updates to both groups.  From that point on, the
+	    process will be mostly automatic, asking you only for
+	    acknowledgement, from time to time.
+	  </para>
+	</listitem>
+      </orderedlist>
+    </para>
+  </sect1>
+  <sect1 id='old_home'>
+    <title>Install Copies of Your Old Home and Old Etc</title>
+    <para>
+      In order to simplify the task of restoring the functions
+      that you enjoyed before the migration, you can copy the
+      most recent backup of your home directory, and the 
+      the copy you made of <filename>/etc</filename>
+      from &whitechuck; to your workstation.
+    </para>
+    <para>
+      The following assumes that you have set up directory which is
+      located outside of your home directory, but to which you have
+      write privilege and to which there is a symbolic link called
+      <filename>extra</filename> in your home directory.  For details,
+      see <link linkend="extra">Create Extra Directory</link>.
+      <screen>
+ssh whitechuck
+cd backup
+B=<emphasis>name of latest backup</emphasis>
+cp -R $B /tmp/last_backup
+cd /tmp
+tar cvzf last_backup.tgz last_backup
+exit
+cd ~/extra
+scp whitechuck:/tmp/last_backup.tgz .
+tar xvzf last_backup.tgz
+rm last_backup.tgz
+scp whitechuck:etc.tgz .
+tar xvzf etc.tgz
+rm etc.tgz
+cd
+ln -s /opt/extra/last_backup/$USER old_home
+ln -s /opt/extra/etc old_etc
+      </screen>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Restore Your Home Directory</title>
+    <para>
+      After completion of the previous 
+      <link linkend="old_home">section</link> that established
+      <filename>old_home</filename> as a symbolic link to a
+      copy of the most recent pre-migration backup of your home
+      directory, you are ready to restore most of the contents
+      of that directory.  To do this, we will use the
+      <command>rsync</command> command, which gives us a convenient
+      means of copying a directory tree while excluding a few
+      things we do not want copied.  In particular, we do not
+      want to overwrite the gnome and rhn settings that have just
+      been set up.
+    </para>
+    <para>
+      From a terminal window:
+      <screen>
+cd
+su
+rsync -a --exclude '.g*' --exclude '.rhn*' old_home/* old_home/.* .
+      </screen>
+    </para>
+    <para>
+      To complete this process, go to the 
+      <guimenu>Main</guimenu> menu and select
+      <guimenuitem>Log Out</guimenuitem>.  
+    </para>
+    <para>
+      Finally, log in again.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Restore Password-Free SSH Connections</title>
+    <para>
+      If you have previously followed the instructions in the
+      <emphasis>SSH Configuration Howto</emphasis> to enable
+      your workstation to create secure connections to remote
+      hosts without requiring a password except when your
+      desktop manager starts up, you will want to follow the
+      steps in this section.
+    </para>
+    <para>
+      Now configure the Gnome desktop manager.
+      <screen format="linespecific">
+	<guimenu moreinfo="none">Main</guimenu> => <guimenu moreinfo="none">Preferences</guimenu> => <guimenu moreinfo="none">More Preferences</guimenu> => <guimenuitem moreinfo="none">Sessions</guimenuitem> => right-click
+      </screen>
+      This will open the <interface moreinfo="none">Sessions</interface>
+      window.  Press the 
+      <guibutton moreinfo="none">Startup Programs</guibutton> button
+      followed by
+      the <guibutton moreinfo="none">Add</guibutton> button.  Then
+      set the following variables:
+      <screen format="linespecific">
+	Startup Command: /usr/bin/ssh-add
+	Priority: 70
+      </screen>
+      Close the window by pressing the
+      <guibutton moreinfo="none">OK</guibutton> button.
+    </para>
+    <para>
+      To complete this process, go to the 
+      <guimenu>Main</guimenu> menu and select
+      <guimenuitem>Log Out</guimenuitem>.  
+    </para>
+    <para>
+      Finally, log in again.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Restore Clock Synchronization</title>
+    <para>
+      If your workstation was previously configured to use the
+      network time protocol to automatically synchronize its
+      internal clock to those of time standards on the Internet,
+      you can easily restore this function by executing the
+      following commands from a shell window.
+    </para>
+    <para>
+      Note: <command>su</command> is not followed by the 
+      - option symbol.
+      <screen>
+su
+cd /etc
+mv ntp.conf ntp.conf.bak
+mv ntp/step-tickers ntp/step-tickers.bak
+cp /home/$USER/old_etc/ntp.conf .
+cp /home/$USER/old_etc/ntp/step-tickers ntp 
+/etc/rc.d/init.d/ntpd restart
+/sbin/chkconfig --level 2345 ntpd on
+      </screen>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Restore the Backup Function</title>
+    <para>
+      Perform the following menu sequence:
+	<screen format="linespecific">
+<guimenu moreinfo="none">Main</guimenu> => <guimenu moreinfo="none">Extras</guimenu> => <guimenu moreinfo="none">Preferences</guimenu> => <guimenuitem moreinfo="none">Sessions</guimenuitem> => left-click
+	</screen>
+	This will open the <interface moreinfo="none">Sessions</interface>
+	window.  Press the 
+	<guibutton moreinfo="none">Startup Programs</guibutton> button
+	followed by
+	the <guibutton moreinfo="none">Add</guibutton> button.  Then
+	set the following variables:
+	<screen format="linespecific">
+Startup Command: /home/<emphasis>username</emphasis>/bin/shell/get-agent-data
+Priority: 75
+	</screen>
+      where <emphasis>username</emphasis> is your username.
+      Close the window by pressing the
+      <guibutton moreinfo="none">OK</guibutton> button.
+    </para>
+    <para>
+
+    </para>
+  </sect1>
+</article>
