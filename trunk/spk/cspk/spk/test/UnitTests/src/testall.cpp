@@ -1,4 +1,6 @@
 #include <iostream>
+#include <string>
+#include <map>
 #include <cppunit/TextTestResult.h>
 #include <cppunit/ui/text/TestRunner.h>
 
@@ -94,98 +96,153 @@
 using namespace std;
 using namespace CppUnit;
 
+void usage()
+{
+  printf( "Usage: ./testall <LIST>\n" );
+  printf( "\n" );
+  printf( "<LIST> is optional.\n" );
+  printf( "If it is omitted, all of the known test suites will be executed.\n" );
+  printf( "Otherwise, it will be a space-separated list of CppUnit tests to be executed.\n" );
+  return;
+}
+
 int main( int argc, const char * argv[] )
 {
+  //  Turning on the floating point error detection mechanism
+  FpErrorChecker checkerON;
+
+  map<string, CppUnit::Test*> master_list_of_tests;
+  vector<CppUnit::Test*> tests_to_be_executed;
+  
+  master_list_of_tests[ "ABA_xTest" ]                        = ABA_xTest::suite();
+  master_list_of_tests[ "addTest" ]                          = addTest::suite();
+  master_list_of_tests[ "AkronBtimesCTest" ]                 = AkronBtimesCTest::suite();
+  master_list_of_tests[ "AkronItimesCTest" ]                 = AkronItimesCTest::suite();
+  master_list_of_tests[ "allTrueTest" ]                      = allTrueTest::suite();
+  master_list_of_tests[ "BlockAllocTest" ]                   = BlockAllocTest::suite();
+  master_list_of_tests[ "blockDiagonalDerivativeTest" ]      = blockDiagonalDerivativeTest::suite();
+  master_list_of_tests[ "calcMeanTest" ]                     = calcMeanTest::suite();
+  master_list_of_tests[ "centdiffModelTest" ]                = centdiffModelTest::suite();
+  master_list_of_tests[ "centdiffTest" ]                     = centdiffTest::suite();
+  master_list_of_tests[ "choleskyTest" ]                     = choleskyTest::suite();
+  master_list_of_tests[ "countTruesTest" ]                   = countTruesTest::suite();
+  master_list_of_tests[ "CovarianceTest" ]                   = CovarianceTest::suite();
+  master_list_of_tests[ "detTest" ]                          = detTest::suite();
+  master_list_of_tests[ "divByScalarTest" ]                  = divByScalarTest::suite();
+  master_list_of_tests[ "elementwiseAndTest" ]               = elementwiseAndTest::suite();
+  master_list_of_tests[ "elementwiseOrTest" ]                = elementwiseOrTest::suite();
+  master_list_of_tests[ "elsq_xBlockDiagTest" ]              = elsq_xBlockDiagTest::suite();
+  master_list_of_tests[ "elsq_xDiagTest" ]                   = elsq_xDiagTest::suite();
+  master_list_of_tests[ "elsq_xTest" ]                       = elsq_xTest::suite();
+  master_list_of_tests[ "elsqTest" ]                         = elsqTest::suite();
+  master_list_of_tests[ "EqIndModelTest" ]                   = EqIndModelTest::suite();
+  master_list_of_tests[ "estimateBTest" ]                    = estimateBTest::suite();
+  master_list_of_tests[ "expectedHessianTest" ]              = expectedHessianTest::suite();
+  master_list_of_tests[ "firstOrderOptTest" ]                = firstOrderOptTest::suite();
+  master_list_of_tests[ "fitIndividualErrorTest" ]           = fitIndividualErrorTest::suite();
+  master_list_of_tests[ "fitIndividualTest" ]                = fitIndividualTest::suite();
+  master_list_of_tests[ "FunctionTest" ]                     = FunctionTest::suite();
+  master_list_of_tests[ "getColTest" ]                       = getColTest::suite();
+  master_list_of_tests[ "getMulColsTest" ]                   = getMulColsTest::suite();
+  master_list_of_tests[ "getMulRowsTest" ]                   = getMulRowsTest::suite();
+  master_list_of_tests[ "getRowTest" ]                       = getRowTest::suite();
+  master_list_of_tests[ "getSubblockTest" ]                  = getSubblockTest::suite();
+  master_list_of_tests[ "identityTest" ]                     = identityTest::suite();
+  master_list_of_tests[ "IkronBtimesCTest" ]                 = IkronBtimesCTest::suite();
+  master_list_of_tests[ "IndInputDataPackageTest" ]          = IndInputDataPackageTest::suite();
+  master_list_of_tests[ "IndOutputDataPackageTest" ]         = IndOutputDataPackageTest::suite();
+  master_list_of_tests[ "IndResultsTest" ]                   = IndResultsTest::suite();
+  master_list_of_tests[ "indStatisticsTest" ]                = indStatisticsTest::suite();
+  master_list_of_tests[ "IndVarsTest" ]                      = IndVarsTest::suite();
+  master_list_of_tests[ "inverseTest" ]                      = inverseTest::suite();
+  master_list_of_tests[ "inxToMaxTest" ]                     = inxToMaxTest::suite();
+  master_list_of_tests[ "isDblEpsEqualTest" ]                = isDblEpsEqualTest::suite();
+  master_list_of_tests[ "isDmatEpsEqualTest" ]               = isDmatEpsEqualTest::suite();
+  master_list_of_tests[ "isGreaterThanOrEqualToTest" ]       = isGreaterThanOrEqualToTest::suite();
+  master_list_of_tests[ "isLessThanOrEqualToTest" ]          = isLessThanOrEqualToTest::suite();
+  master_list_of_tests[ "isSymmetricTest" ]                  = isSymmetricTest::suite();
+  master_list_of_tests[ "lambda2diffTest" ]                  = lambda2diffTest::suite();
+  master_list_of_tests[ "lambdaTest" ]                       = lambdaTest::suite();
+  master_list_of_tests[ "lTildeTest" ]                       = lTildeTest::suite();
+  master_list_of_tests[ "mapObjDiffTest" ]                   = mapObjDiffTest::suite();
+  master_list_of_tests[ "mapObjTest" ]                       = mapObjTest::suite();
+  master_list_of_tests[ "mapOptTest" ]                       = mapOptTest::suite();
+  master_list_of_tests[ "mapTildeTest" ]                     = mapTildeTest::suite();
+  master_list_of_tests[ "matabsTest" ]                       = matabsTest::suite();
+  master_list_of_tests[ "matmaxTest" ]                       = matmaxTest::suite();
+  master_list_of_tests[ "matminTest" ]                       = matminTest::suite();
+  master_list_of_tests[ "MatrixTest" ]                       = MatrixTest::suite();
+  master_list_of_tests[ "mulByScalarTest" ]                  = mulByScalarTest::suite();
+  master_list_of_tests[ "multiplyTest" ]                     = multiplyTest::suite();
+  master_list_of_tests[ "NaiveFoModelTest" ]                 = NaiveFoModelTest::suite();
+  master_list_of_tests[ "normTest" ]                         = normTest::suite();
+  master_list_of_tests[ "OptimizerTest" ]                    = OptimizerTest::suite();
+  master_list_of_tests[ "placeRowsTest" ]                    = placeRowsTest::suite();
+  master_list_of_tests[ "PopConstValsTest" ]                 = PopConstValsTest::suite();
+  master_list_of_tests[ "popStatisticsTest" ]                = popStatisticsTest::suite();
+  master_list_of_tests[ "PopVarsTest" ]                      = PopVarsTest::suite();
+  master_list_of_tests[ "ppkaOptTest" ]                      = ppkaOptTest::suite();
+  master_list_of_tests[ "printInMatrixTest" ]                = printInMatrixTest::suite();
+  master_list_of_tests[ "randNormalTest" ]                   = randNormalTest::suite();
+  master_list_of_tests[ "replaceIthTest" ]                   = replaceIthTest::suite();
+  master_list_of_tests[ "replaceJthTest" ]                   = replaceJthTest::suite();
+  master_list_of_tests[ "replaceSubblockTest" ]              = replaceSubblockTest::suite();
+  master_list_of_tests[ "residualsTest" ]                    = residualsTest::suite();
+  master_list_of_tests[ "rvecInverseTest" ]                  = rvecInverseTest::suite();
+  master_list_of_tests[ "rvecTest" ]                         = rvecTest::suite();
+  master_list_of_tests[ "simulateTest" ]                     = simulateTest::suite();
+  master_list_of_tests[ "SpkErrorTest" ]                     = SpkErrorTest::suite();
+  master_list_of_tests[ "SpkExceptionTest" ]                 = SpkExceptionTest::suite();
+  master_list_of_tests[ "SpkModelErrorTest" ]                = SpkModelErrorTest::suite();
+  master_list_of_tests[ "sqpAnyBoxTest" ]                    = sqpAnyBoxTest::suite();
+  master_list_of_tests[ "subtractTest" ]                     = subtractTest::suite();
+  master_list_of_tests[ "symmetrizeTest" ]                   = symmetrizeTest::suite();
+  master_list_of_tests[ "transposeDerivativeTest" ]          = transposeDerivativeTest::suite();
+  master_list_of_tests[ "transposeRowBlocksTest" ]           = transposeRowBlocksTest::suite();
+  master_list_of_tests[ "transposeTest" ]                    = transposeTest::suite();
+  master_list_of_tests[ "UTranTimesSymKronSymTimesU_xTest" ] = UTranTimesSymKronSymTimesU_xTest::suite();
+  master_list_of_tests[ "UTranTimesSymKronSymTimesUTest" ]   = UTranTimesSymKronSymTimesUTest::suite();
+  
+  //
+  // This is the case where user didn't select specific unit tests.
+  // That means, run them all in the single process mode.
+  //
+  if( argc == 1 )
+    {
+      // push all existing unit test classes into the list
+      tests_to_be_executed.resize( master_list_of_tests.size() );
+      map<string, CppUnit::Test*>::const_iterator p = master_list_of_tests.begin();
+      for( p; p != master_list_of_tests.end(); p++ )
+	tests_to_be_executed.push_back( p->second );
+    }
+  //
+  // This is the case where user either specified a list of unit tests to run
+  // or requested the parallel execution.
+  //
+  if( argc >= 2 )
+    {
+      if( strcmp( argv[1], "--help" ) == 0 || strcmp( argv[1], "?" ) == 0 )
+	{
+	  usage();
+	  return 0;
+	}
+      for( int i=1; i<argc; i++ )
+	{
+	  map<string, CppUnit::Test*>::const_iterator p = master_list_of_tests.find( argv[i] );
+	  if( p != master_list_of_tests.end() )
+	    tests_to_be_executed.push_back( p->second );
+	  else
+	    fprintf( stderr, "!!! %s is not found in the master list (typo?) !!!\n", argv[i] );
+	}
+    }
+
   CppUnit::TextUi::TestRunner runner;
 
-  runner.addTest( ABA_xTest::suite() );
-  runner.addTest( addTest::suite() );
-  runner.addTest( AkronBtimesCTest::suite() );
-  runner.addTest( AkronItimesCTest::suite() );
-  runner.addTest( allTrueTest::suite() );
-  runner.addTest( BlockAllocTest::suite() );
-  runner.addTest( blockDiagonalDerivativeTest::suite() );
-  runner.addTest( calcMeanTest::suite() );
-  runner.addTest( centdiffModelTest::suite() );
-  runner.addTest( centdiffTest::suite() );
-  runner.addTest( choleskyTest::suite() );
-  runner.addTest( countTruesTest::suite() );
-  runner.addTest( CovarianceTest::suite() );
-  runner.addTest( detTest::suite() );
-  runner.addTest( divByScalarTest::suite() );
-  runner.addTest( elementwiseAndTest::suite() );
-  runner.addTest( elementwiseOrTest::suite() );
-  runner.addTest( elsq_xBlockDiagTest::suite() );
-  runner.addTest( elsq_xDiagTest::suite() );
-  runner.addTest( elsq_xTest::suite() );
-  runner.addTest( elsqTest::suite() );
-  runner.addTest( EqIndModelTest::suite() );
-  runner.addTest( estimateBTest::suite() );
-  runner.addTest( expectedHessianTest::suite() );
-  runner.addTest( firstOrderOptTest::suite() );
-  runner.addTest( fitIndividualErrorTest::suite() );
-  runner.addTest( fitIndividualTest::suite() );
-  runner.addTest( FunctionTest::suite() );
-  runner.addTest( getColTest::suite() );
-  runner.addTest( getMulColsTest::suite() );
-  runner.addTest( getMulRowsTest::suite() );
-  runner.addTest( getRowTest::suite() );
-  runner.addTest( getSubblockTest::suite() );
-  runner.addTest( identityTest::suite() );
-  runner.addTest( IkronBtimesCTest::suite() );
-  runner.addTest( IndInputDataPackageTest::suite() );
-  runner.addTest( IndOutputDataPackageTest::suite() );
-  runner.addTest( IndResultsTest::suite() );
-  runner.addTest( indStatisticsTest::suite() );
-  runner.addTest( IndVarsTest::suite() );
-  runner.addTest( inverseTest::suite() );
-  runner.addTest( inxToMaxTest::suite() );
-  runner.addTest( isDblEpsEqualTest::suite() );
-  runner.addTest( isDmatEpsEqualTest::suite() );
-  runner.addTest( isGreaterThanOrEqualToTest::suite() );
-  runner.addTest( isLessThanOrEqualToTest::suite() );
-  runner.addTest( isSymmetricTest::suite() );
-  runner.addTest( lambda2diffTest::suite() );
-  runner.addTest( lambdaTest::suite() );
-  runner.addTest( lTildeTest::suite() );
-  runner.addTest( mapObjDiffTest::suite() );
-  runner.addTest( mapObjTest::suite() );
-  runner.addTest( mapOptTest::suite() );
-  runner.addTest( mapTildeTest::suite() );
-  runner.addTest( matabsTest::suite() );
-  runner.addTest( matmaxTest::suite() );
-  runner.addTest( matminTest::suite() );
-  runner.addTest( MatrixTest::suite() );
-  runner.addTest( mulByScalarTest::suite() );
-  runner.addTest( multiplyTest::suite() );
-  runner.addTest( NaiveFoModelTest::suite() );
-  runner.addTest( normTest::suite() );
-  runner.addTest( OptimizerTest::suite() );
-  runner.addTest( placeRowsTest::suite() );
-  runner.addTest( PopConstValsTest::suite() );
-  runner.addTest( popStatisticsTest::suite() );
-  runner.addTest( PopVarsTest::suite() );
-  runner.addTest( ppkaOptTest::suite() );
-  runner.addTest( printInMatrixTest::suite() );
-  runner.addTest( randNormalTest::suite() );
-  runner.addTest( replaceIthTest::suite() );
-  runner.addTest( replaceJthTest::suite() );
-  runner.addTest( replaceSubblockTest::suite() );
-  runner.addTest( residualsTest::suite() );
-  runner.addTest( rvecInverseTest::suite() );
-  runner.addTest( rvecTest::suite() );
-  runner.addTest( simulateTest::suite() );
-  runner.addTest( SpkErrorTest::suite() );
-  runner.addTest( SpkExceptionTest::suite() );
-  runner.addTest( SpkModelErrorTest::suite() );
-  runner.addTest( sqpAnyBoxTest::suite() );
-  runner.addTest( subtractTest::suite() );
-  runner.addTest( symmetrizeTest::suite() );
-  runner.addTest( transposeDerivativeTest::suite() );
-  runner.addTest( transposeRowBlocksTest::suite() );
-  runner.addTest( transposeTest::suite() );
-  runner.addTest( UTranTimesSymKronSymTimesU_xTest::suite() );
-  runner.addTest( UTranTimesSymKronSymTimesUTest::suite() );
+  int n = tests_to_be_executed.size();
+  for( int i=0; i<n; i++ )
+    {
+      runner.addTest( tests_to_be_executed[i] );
+    }
 
   runner.run();
 
