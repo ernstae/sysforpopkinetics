@@ -1,0 +1,27 @@
+#!/bin/bash
+
+if [ $UID -ne 0 ];
+then
+	echo "You must be root to run this script."
+	exit 1
+fi
+
+LIB=/usr/local/lib
+YRC=$LIB/site_perl/YRC
+
+find . -name '*.pm' -exec chmod +x {} \;
+
+mkdir $LIB/site_perl
+mkdir $YRC
+mkdir $YRC/PROJECT
+mkdir $YRC/PROJECT/REPORT
+mkdir $YRC/WWW
+
+cp *.pm $YRC
+cp PROJECT/*.pm		$YRC/PROJECT
+cp PROJECT/REPORT/*.pm	$YRC/PROJECT/REPORT
+cp WWW/*.pm 		$YRC/WWW
+
+exit 0
+
+
