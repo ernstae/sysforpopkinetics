@@ -40,7 +40,8 @@
 #include <spk/SpkValarray.h>
 #include <spk/pi.h>
 #include <spk/Objective.h>
-#include "nonmemEqvContainers.h"
+
+#include "src/nonmemEqvContainers.h"
 
 #ifdef __GNUC__
     #include <sstream>

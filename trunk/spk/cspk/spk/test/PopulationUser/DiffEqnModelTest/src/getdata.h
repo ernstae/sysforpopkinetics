@@ -34,8 +34,9 @@
 
 #include <assert.h>
 #include <fstream>
-#include "DiffEqnModelTest.h"
 #include <spk/SpkValarray.h>
+
+#include "src/DiffEqnModelTest.h"
 
 bool getdata(const char *const name, int &M, int &Nsum);
 bool getdata(const char *const name, int M, int Nsum, SPK_VA::valarray<int> &N,SPK_VA::valarray<double> &gamma,

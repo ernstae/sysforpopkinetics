@@ -202,7 +202,9 @@ file will being with a string "error" teminated by a new line caracter,
 \n, followed by error messages captured during the execution if
 there were any.
 */
+
 #pragma warning( disable : 4786 )
+
 #include <iostream>
 #include <string>
 #include <math.h>
@@ -210,6 +212,7 @@ there were any.
 #include <fstream>
 #include <cstring>
 #include <map>
+
 #include <spk/SpkValarray.h>
 #include <spk/cholesky.h>
 #include <spk/Objective.h>
@@ -217,14 +220,15 @@ there were any.
 #include <spk/transpose.h>
 #include <spk/printInMatrix.h>
 #include <spk/symmetrize.h>
-#include "readNonmemTheophylline.h"
-#include "DiffEqnModel.h"
 #include <spk/Optimizer.h>
 #include <spk/fitPopulation.h>
 #include <spk/pi.h>
 #include <spk/popStatistics.h>
-#include "convertStatisticsToNonmem.h"
-#include "nonmemEqvContainers.h"
+
+#include "src/readNonmemTheophylline.h"
+#include "src/DiffEqnModel.h"
+#include "src/convertStatisticsToNonmem.h"
+#include "src/nonmemEqvContainers.h"
 
 using SPK_VA::valarray;
 using namespace nonmemEqvContainers;
