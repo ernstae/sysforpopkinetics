@@ -22,7 +22,7 @@
     <job>288</job><!-- verified: Analytic based on #267 (Laplace) -->
     <job>104</job><!-- Non-linear, FOCE -->
     <job>215</job><!-- Non-linear, individual, generates a warning -->
-    <job>253</job><!-- pop opt (success), FO, non-linear, 3x3 full Omega, stat (fail) -->
+    <job>293</job><!-- Non-linear, FO, 3x3 full Omega -->
     <ignore>elapsedtime</ignore>
   </srun>
 </regression_test>
