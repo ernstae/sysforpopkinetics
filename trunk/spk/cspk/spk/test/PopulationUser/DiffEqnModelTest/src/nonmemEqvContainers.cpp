@@ -100,7 +100,7 @@ const string nonmemEqvContainers::Source::xml() const
   s << "\t" << "<spkVersion>" << version << "</spkVersion>" << endl;
   s << "\t" << "<driver>"     << driver  << "</driver>"     << endl;
 
-  s << CloseLB << tag << RB << ends;
+  s << CloseLB << tag << RB << endl;
   return s.str();
 }
 
@@ -155,7 +155,7 @@ const string nonmemEqvContainers::Status::xml() const
   s << "\t" << "\t" << "<succeeded>" << ( isStdErrorSucceeded? "true" : "false" ) << "</succeeded>" << endl;
   s << "\t" << "</standardErrorsStep>" << endl;
 
-  s << CloseLB << tag << RB << ends;
+  s << CloseLB << tag << RB << endl;
   return s.str();
 }
 
@@ -188,7 +188,7 @@ const string nonmemEqvContainers::Message::xml() const
     s << message << endl;
   else
     s << NO_VAL << endl;
-  s << CloseLB << tag << RB << ends;
+  s << CloseLB << tag << RB << endl;
   return s.str();
 }
 
@@ -202,7 +202,7 @@ nonmemEqvContainers::Message& nonmemEqvContainers::operator+=( nonmemEqvContaine
 
   if( left.message.length() > 0 )
     s << left.message << endl;
-  s << str << ends;
+  s << str << endl;
   left.message = s.str();
   return left;
 }
@@ -216,7 +216,7 @@ nonmemEqvContainers::Message& nonmemEqvContainers::operator+=( nonmemEqvContaine
 
   if( left.message.length() > 0 )
     s << endl;
-  s << e << ends;
+  s << e << endl;
   left.message += s.str();
   return left;
 }
@@ -242,7 +242,7 @@ const string nonmemEqvContainers::PopEpsilon::xml() const
   strstream s;
 #endif
 
-  s << OpenLB << tag << RB << epsilon << CloseLB << tag << RB << ends;
+  s << OpenLB << tag << RB << epsilon << CloseLB << tag << RB << endl;
   return s.str();
 }
 
@@ -307,7 +307,7 @@ const string nonmemEqvContainers::NonmemObjective::xml( bool isEstimateValid ) c
     s << NO_VAL;
   s << "</nonmemEquiv>" << endl;
   s << "\t" << "<relTol>"        << relTol  << "</relTol>"        << endl;
-  s << CloseLB << tag << RB << ends;
+  s << CloseLB << tag << RB << endl;
 
   return s.str();
 }
@@ -437,7 +437,7 @@ const string nonmemEqvContainers::Theta::xml( bool isEstimateValid, bool isStdEr
 
   s << "\t" << "<relTol>" << relTol << "</relTol>" << endl;
 
-  s << CloseLB << tag << RB << ends;
+  s << CloseLB << tag << RB << endl;
 
   return s.str();
 }
@@ -720,7 +720,7 @@ const string nonmemEqvContainers::Sigma::xml( bool isEstimateValid, bool isStdEr
 
   s << "\t" << "<relTol>" << relTol << "</relTol>" << endl;
 
-  s << CloseLB << tag << RB << ends;
+  s << CloseLB << tag << RB << endl;
   return s.str();
 }
 
@@ -997,7 +997,7 @@ const string nonmemEqvContainers::Omega::xml( bool isEstimateValid, bool isStdEr
 
   s << "\t" << "<relTol>" << relTol << "</relTol>" << endl;
 
-  s << CloseLB << tag << RB << ends;
+  s << CloseLB << tag << RB << endl;
 
   return s.str();
 }
@@ -1070,7 +1070,7 @@ const string nonmemEqvContainers::CovarianceOfEstimate::xml( bool isCovarianceVa
     s << "\t" << "</out>" << endl;
   }
 
-  s << CloseLB << tag << RB << ends;
+  s << CloseLB << tag << RB << endl;
   return s.str();
 }
 
@@ -1143,7 +1143,7 @@ const string nonmemEqvContainers::CorrelationOfEstimate::xml( bool isCorrelation
     s << "\t" << "</out>" << endl;
   }
 
-  s << CloseLB << tag << RB << ends;
+  s << CloseLB << tag << RB << endl;
   return s.str();
 }
 
@@ -1217,7 +1217,7 @@ const string nonmemEqvContainers::Eta::xml( bool isEstimateValid ) const
 
   s << "\t" << "<relTol>" << relTol << "</relTol>" << endl;
 
-  s << CloseLB << tag << RB << ends;
+  s << CloseLB << tag << RB << endl;
   return s.str();
 }
 
@@ -1269,6 +1269,6 @@ const string nonmemEqvContainers::Prediction::xml( bool isEstimateValid ) const
   }
   s << "\t" << "<relTol>" << relTol << "</relTol>" << endl;
 
-  s << CloseLB << tag << RB << ends;
+  s << CloseLB << tag << RB << endl;
   return s.str();
 }
