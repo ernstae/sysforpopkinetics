@@ -128,7 +128,7 @@ sub connect() {
     unless ($dbh) {
 	$errstr = "Cannot connect to database $dbname";
 	$err = $CANNOT_CONNECT;
-	return;
+	return undef;
     }
     return $dbh;
 }
@@ -151,7 +151,8 @@ sub disconnect() {
     $err = 0;
     $errstr = "";
 
-    return $dbh->disconnect();
+    $dbh->disconnect();
+    return undef;
 }
 
 =head2 new_job -- submit a new job
@@ -271,7 +272,7 @@ sub job_status() {
     unless ($sth) {
 	$err = $PREPARE_FAILED;
 	$errstr = "could not prepare statement: $sql";
-	return;
+	return undef;
     }
     unless ($sth->execute())
     {
@@ -279,9 +280,6 @@ sub job_status() {
 	$errstr = "could not execute state: $sql; error returned "
 	    . $sth->errstr;
     }
-#    unless ($sth->rows == 1) {
-	#return;
-    #}
     return $sth->fetchrow_hashref();
 }
 
@@ -326,14 +324,14 @@ sub user_jobs() {
     unless ($sth) {
 	$err = $PREPARE_FAILED;
 	$errstr = "could not prepare statement: $sql";
-	return;
+	return undef;
     }
     unless ($sth->execute())
     {
 	$err = $EXECUTE_FAILED;
 	$errstr = "could not execute state: $sql; error returned "
 	    . $sth->errstr;
-	return;
+	return undef;
     }
     my $array_row_ref = $sth->fetchall_arrayref({});
 
@@ -384,7 +382,7 @@ sub de_q2c() {
 	$err = $PREPARE_FAILED;
 	$errstr = "could not prepare statement: $sql";
 	$dbh->rollback;
-	return;
+	return undef;
     }
     unless ($sth->execute())
     {
@@ -392,12 +390,12 @@ sub de_q2c() {
 	$errstr = "could not execute $sql; error returned "
 	    . $sth->errstr;
 	$dbh->rollback;
-        return;
+        return undef;
     }
     my $row = $sth->fetchrow_hashref();
     unless ($row) {
 	$dbh->rollback;
-	return 0;;
+	return undef;
     }
     my $job_id = $row->{"job_id"};
     my $state_code = "cmp";
@@ -408,7 +406,7 @@ sub de_q2c() {
 	$err = $UPDATE_FAILED;
 	$errstr = "could not execute $sql; error returned ";
 	$dbh->rollback;
-	return;
+	return undef;
     }
     $dbh->commit;
     &add_to_history($dbh, $job_id, $state_code);
@@ -512,7 +510,7 @@ sub de_q2r() {
 	$err = $PREPARE_FAILED;
 	$errstr = "could not prepare statement: $sql";
 	$dbh->rollback;
-	return;
+	return undef;
     }
     unless ($sth->execute())
     {
@@ -520,12 +518,12 @@ sub de_q2r() {
 	$errstr = "could not execute $sql; error returned "
 	    . $sth->errstr;
 	$dbh->rollback;
-        return;
+        return undef;
     }
     my $row = $sth->fetchrow_hashref();
     unless ($row) {
 	$dbh->rollback;
-	return 0;
+	return undef;
     }
     my $job_id = $row->{"job_id"};
     my $event_time = time();
@@ -663,12 +661,12 @@ sub job_report() {
     unless ($rrow) {
 	$errstr = "retrieval of job report failed";
 	$err = $GET_FAILED;
-	return
+	return undef;
     }
     unless ($rrow->[0] =~ /^end$/) {
 	$errstr = "no report (job not at end)";
 	$err = $NOT_ENDED;
-	return;
+	return undef;
     }
     return $rrow->[1];
 }
@@ -693,7 +691,7 @@ $archive is a version archive, rcs format
 Returns
 
   success: the automatically generated value of the dataset_id
-  failure: undef
+  failure: 0
         $errstr contains an error message string
         $err == $Spkdb::DATASET_EXISTS     if user_id + name is not unique
              == $Spkdb::INSERT_FAILED    if the adding the new record failed
@@ -901,14 +899,14 @@ sub user_datasets() {
     unless ($sth) {
 	$err = $PREPARE_FAILED;
 	$errstr = "could not prepare statement: $sql";
-	return;
+	return undef;
     }
     unless ($sth->execute())
     {
 	$err = $EXECUTE_FAILED;
 	$errstr = "could not execute statement: $sql; error returned "
 	    . $sth->errstr;
-	return;
+	return undef;
     }
     my $array_row_ref = $sth->fetchall_arrayref({});
 
@@ -936,7 +934,7 @@ $archive is a version archive, rcs format
 Returns
 
   success: the automatically generated value of the model_id
-  failure: undef
+  failure: 0
         $errstr contains an error message string
         $err == $Spkdb::MODEL_EXISTS     if user_id + name is not unique
              == $Spkdb::INSERT_FAILED    if the adding the new record failed
@@ -1023,7 +1021,7 @@ sub get_model() {
     my $count = $sth->rows;
 
     if ($count == 0) {
-	return;
+	return undef;
     }
     unless ($count == 1) {
 	$err = $TOO_MANY;
@@ -1144,14 +1142,14 @@ sub user_models() {
     unless ($sth) {
 	$err = $PREPARE_FAILED;
 	$errstr = "could not prepare statement: $sql";
-	return;
+	return undef;
     }
     unless ($sth->execute())
     {
 	$err = $EXECUTE_FAILED;
 	$errstr = "could not execute statement: $sql; error returned "
 	    . $sth->errstr;
-	return;
+	return undef;
     }
     my $array_row_ref = $sth->fetchall_arrayref({});
 
@@ -1182,7 +1180,7 @@ for the user table.
 Returns
 
   success: the automatically generated value of the user_id
-  failure: undef
+  failure: 0
         $errstr contains an error message string
         $err == $Spkdb::COLUMN_REQUIRED if username or password not supplied
              == $Spkdb::USER_EXISTS     if the username is not unique
@@ -1207,7 +1205,7 @@ sub new_user() {
 	unless (defined $args{$column}) {
 	    $err = $COLUMN_REQUIRED;
 	    $errstr = "a required column ($column) is missing";
-	    return undef;
+	    return 0;
 	}
     }
 
@@ -1228,13 +1226,13 @@ sub new_user() {
     unless ($nrows) {
 	$err = $SQL_ERROR;
 	$errstr = "SQL error in '$sql'";
-	return undef;
+	return 0;
     }
     if ($nrows != 0) {
 	$err = $USER_EXISTS;
 	$errstr = "can't add user $args{username} because record "
 	    . "already exists";
-	return undef;
+	return 0;
     }
 
 #   Surround values with quotes and apply MD5 to password
