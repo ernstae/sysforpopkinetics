@@ -259,21 +259,23 @@ rm dot.emacs
 	super user:
 	<screen>
 cd
-scp 'whitechuck:/opt/download/xhtml1*.rpm' .
 scp whitechuck:/opt/download/xhtml1.soc .
 su 
-rpm -Uhv xhtml1*.rpm
-rm xhtml1*.rpm
 mv xhtml1.soc /usr/share/sgml/xhtml1/xhtml1-20020801/DTD
 	</screen>
       </para>
+    </sect2>
+    <sect2>
+      <title>SGML_CATALOG_FILES Environment Variable</title>
       <para>
-	You will also need to set an environment variable called
-	SGML_CATALOG_FILES.  So that the variable is set automatically,
-	add the following two lines to the
+	You will also need to set an environment variable so that 
+	<command>emacs</command> will be able to find the DTDs it needs to
+	parse docbook and xhtml.
+	So that the variable is set automatically,
+	add the following lines to the
 	<filename>.bash_profile</filename> in your home directory:
 	<screen>
-SGML_CATALOG_FILES=/usr/share/sgml/xhtml1/xhtml1-20020801/DTD/xhtml1.soc
+SGML_CATALOG_FILES=/etc/sgml/xml-docbook.cat:usr/share/sgml/xhtml1/xhtml1-20020801/DTD/xhtml1.soc
 export SGML_CATALOG_FILES
 	</screen>
       </para>
