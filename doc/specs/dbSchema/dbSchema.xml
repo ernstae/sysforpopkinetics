@@ -25,6 +25,12 @@
 	<authorinitials>afw</authorinitials>
 	<revremark>Added discussion of transaction processing.</revremark>
       </revision>
+      <revision>
+	<revnumber>1.03</revnumber>
+	<date>February 3, 2004</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Various modifications to schema.</revremark>
+      </revision>
     </revhistory>
   <abstract>
       <para>
@@ -276,7 +282,8 @@
       and <command>end</command> statements.
     </para>
     <para>
-      In the <link linkend="tables_and_fields">Tables and Fields</link> section,
+      In the <link linkend="tables_and_fields">Tables and F
+ields</link> section,
       transaction processing considerations will be discussed for each table.
     </para>
   </sect1>
@@ -288,15 +295,16 @@
       <screen>
 use spkdb;
 
--- MySQL dump 9.08
---
--- Host: localhost    Database: spktest
----------------------------------------------------------
--- Server version	4.0.14-standard-log
+CREATE TABLE dataset (
+  dataset_id int(10) unsigned NOT NULL auto_increment,
+  name varchar(20) NOT NULL,
+  abstract varchar(100) NOT NULL default '',
+  archive longblob,
+  user_id int(10) unsigned NOT NULL,
+  PRIMARY KEY  (dataset_id),
+  UNIQUE KEY user_id (user_id,name)
+) TYPE=InnoDB;
 
---
--- Table structure for table 'end'
---
 
 CREATE TABLE end (
   end_code char(4) NOT NULL default '',
@@ -304,77 +312,48 @@ CREATE TABLE end (
   PRIMARY KEY  (end_code)
 ) TYPE=MyISAM;
 
---
--- Dumping data for table 'end'
---
-
 INSERT INTO end VALUES ('cerr','Compiler Error');
 INSERT INTO end VALUES ('srun','Successful Run');
 
---
--- Table structure for table 'history'
---
 
 CREATE TABLE history (
   history_id int(10) unsigned NOT NULL auto_increment,
-  time timestamp(14) NOT NULL,
-  state_code char(3) default NULL,
-  job_id int(10) unsigned default NULL,
+  event_time int(10) unsigned NOT NULL,
+  state_code char(3) NOT NULL,
+  job_id int(10) unsigned NOT NULL,
   PRIMARY KEY  (history_id)
 ) TYPE=InnoDB;
 
---
--- Dumping data for table 'history'
---
-
-
---
--- Table structure for table 'job'
---
 
 CREATE TABLE job (
   job_id int(10) unsigned NOT NULL auto_increment,
-  user_id int(10) NOT NULL default '0',
-  model_id int(10) NOT NULL default '0',
-  version varchar(10) NOT NULL default '',
+  user_id int(10) unsigned NOT NULL,
+  abstract varchar(100) NOT NULL default '',
+  dataset_id int(10) unsigned NOT NULL,
+  dataset_version varchar(10) NOT NULL default '',
+  model_id int(10) unsigned NOT NULL,
+  model_version varchar(10) NOT NULL default '',
   xml_source longblob,
-  xml_data longblob,
-  state_code char(3) default NULL,
+  state_code char(3) NOT NULL,
   report longblob,
-  time timestamp(14) NOT NULL,
+  start_time int(10) unsigned NOT NULL,
+  event_time int(10) unsigned NOT NULL,
   cpp_source longblob,
   end_code varchar(4) default NULL,
   PRIMARY KEY  (job_id)
 ) TYPE=InnoDB;
 
---
--- Dumping data for table 'job'
---
-
-
---
--- Table structure for table 'model'
---
 
 CREATE TABLE model (
   model_id int(10) unsigned NOT NULL auto_increment,
-  time timestamp(14) NOT NULL,
-  name varchar(20) default NULL,
-  abstract varchar(30) default NULL,
+  name varchar(20) NOT NULL,
+  abstract varchar(100) NOT NULL default '',
   archive longblob,
-  user_id int(10) unsigned NOT NULL default '0',
+  user_id int(10) unsigned NOT NULL,
   PRIMARY KEY  (model_id),
   UNIQUE KEY user_id (user_id,name)
 ) TYPE=InnoDB;
 
---
--- Dumping data for table 'model'
---
-
-
---
--- Table structure for table 'state'
---
 
 CREATE TABLE state (
   state_code char(3) NOT NULL default '',
@@ -382,38 +361,108 @@ CREATE TABLE state (
   PRIMARY KEY  (state_code)
 ) TYPE=MyISAM;
 
---
--- Dumping data for table 'state'
---
-
 INSERT INTO state VALUES ('q2c','Queued to compile');
 INSERT INTO state VALUES ('cmp','Compiling');
 INSERT INTO state VALUES ('q2r','Queued to run');
 INSERT INTO state VALUES ('run','Running');
 INSERT INTO state VALUES ('end','End');
 
---
--- Table structure for table 'user'
---
 
 CREATE TABLE user (
   user_id int(10) unsigned NOT NULL auto_increment,
-  first_name varchar(30) default NULL,
-  surname varchar(40) default NULL,
-  password varchar(32) NOT NULL default '',
-  username varchar(20) NOT NULL default '',
+  first_name varchar(30) NOT NULL default '',
+  surname varchar(40) NOT NULL default '',
+  password varchar(32) NOT NULL,
+  username varchar(20) NOT NULL,
   PRIMARY KEY  (user_id),
   UNIQUE KEY username (username)
 ) TYPE=InnoDB;
-
---
--- Dumping data for table 'user'
---
       </screen>
     </para>
   </sect1>
   <sect1 id="tables_and_fields">
     <title>Tables and Fields</title>
+    <sect2>
+      <title>dataset</title>
+      <para>
+	Each row of the <emphasis>dataset</emphasis> table represents
+	the source code for a scientific dataset.  A text file, 
+	stored in the <emphasis>archive</emphasis> field, contains
+	the current and all previous versions of the dataset, in 
+	compressed RCS-compatible format.
+      </para>
+      <para>
+	<table frame='all'><title>dataset</title>
+	  <tgroup cols='3' align='left' colsep='1' rowsep='1'>
+	    <colspec colwidth="1*" colname='c1'/>
+	    <colspec colwidth="2*" colname='c2'/>
+	    <colspec colwidth="4*" colname='c3'/>
+	    <thead>
+	      <row>
+		<entry>Field</entry>
+		<entry>Type</entry>
+		<entry>Description</entry>
+	      </row>
+	    </thead>
+	    <tbody>
+	      <row>
+		<entry>dataset_id</entry>
+		<entry>int(10) unsigned</entry>
+		<entry>
+		  Primary key, supplied automatically when the row is created.
+		</entry>
+	      </row>
+	      <row>
+		<entry>name</entry>
+		<entry>varchar(20)</entry>
+		<entry>The name of the  dataset.</entry>
+	      </row>
+	      <row>
+		<entry>abstract</entry>
+		<entry>varchar(100)</entry>
+		<entry>A short description of the dataset.</entry>
+	      </row>
+	      <row>
+		<entry>archive</entry>
+		<entry>longblob</entry>
+		<entry>
+		  A text file containing the current and all previous
+		  versions, in compressed RCS-compatible format.
+		</entry>
+	      </row>
+	      <row>
+		<entry>user_id</entry>
+		<entry>int(10) unsigned</entry>
+		<entry>
+		  The user who owns this dataset. A foreign key to the
+		  user table.
+		</entry>
+	      </row>
+	    </tbody>
+	  </tgroup>
+	</table>
+      </para>
+      <bridgehead renderas="sect3">Transaction Processing Considerations</bridgehead>
+      <para>
+	The user, with the aid of the MDA, appends rows to this
+	table.  The key field, <emphasis>dataset_id</emphasis>,
+	is declared with the <command>auto_increment</command>
+	modifier and the table has <command>TYPE=InnoDB</command>,
+	hence MySQL insures that this field is unique.
+      </para>
+      <para>
+	The application requires each of a user's datasets to have a
+	different name. In order to avoid a potential concurrency
+	problem where two copies of the MDA attempt to add a 
+	dataset of the same name for the same user simultaneously,
+	this table must be created with a
+	<command>UNIQUE KEY user_id (user_id,name)</command>
+	modifier. With the
+	table thus defined, the responsibility for avoiding this
+	race condition is assumed by MySQL, and applications do
+	not have to be concerned with it.
+      </para>
+    </sect2>
     <sect2>
       <title>end</title>
       <para>
@@ -478,7 +527,7 @@ CREATE TABLE user (
 	    </thead>
 	    <tbody>
 	      <row>
-		<entry>id</entry>
+		<entry>history_id</entry>
 		<entry>int(10) unsigned</entry>
 		<entry>
 		  Primary key. A unique positive integer, supplied
@@ -486,11 +535,12 @@ CREATE TABLE user (
 		</entry>
 	      </row>
 	      <row>
-		<entry>time</entry>
-		<entry>timestamp(14)</entry>
+		<entry>event_time</entry>
+		<entry>int(10) unsigned</entry>
 		<entry>
-		  The time at which the row was added to the table, 
-		  supplied automatically, with resolution of one second.
+		  The time at which the row was added to the table.
+		  This value is the number of seconds since the year
+		  1970 began, at the  prime meridian.
 		</entry>
 	      </row>
 	      <row>
@@ -518,8 +568,7 @@ CREATE TABLE user (
 	Applications append rows to this table. Once in the table,
 	a row is never updated. The value of the key field,
 	<emphasis>history_id</emphasis>, is provided automatically
-	by MySQL, but is not used at present.  There are no
-	tranaction processing considerations.
+	by MySQL. There are no transaction processing considerations.
       </para>
     </sect2>
     <sect2>
@@ -560,6 +609,26 @@ CREATE TABLE user (
 		</entry>
 	      </row>
 	      <row>
+		<entry>abstract</entry>
+		<entry>varchar(100)</entry>
+		<entry>Short description of the job.</entry>
+	      </row>
+	      <row>
+		<entry>dataset_id</entry>
+		<entry>int(10)</entry>
+		<entry>
+		  The dataset, a version of which this job runs.
+		  A foreign key to the dataset table.
+		</entry>
+	      </row>
+	      <row>
+		<entry>dataset_version</entry>
+		<entry>varchar(10)</entry>
+		<entry>
+		  The rcs version code of the dataset being run.
+		</entry>
+	      </row>
+	      <row>
 		<entry>model_id</entry>
 		<entry>int(10)</entry>
 		<entry>
@@ -568,10 +637,10 @@ CREATE TABLE user (
 		</entry>
 	      </row>
 	      <row>
-		<entry>version</entry>
+		<entry>model_version</entry>
 		<entry>varchar(10)</entry>
 		<entry>
-		  The version code of the model being run.
+		  The rcs version code of the model being run.
 		</entry>
 	      </row>
 	      <row>
@@ -579,22 +648,11 @@ CREATE TABLE user (
 		<entry>longblob</entry>
 		<entry>
 		  An XML file containing source code for the model,
-		  constraints, paramerters and presentation directives
+		  constraints, parameters and presentation directives
 		  that is provided by the MDA when the row is
 		  created. This file is input to the Aspk Compiler,
 		  which translates it into the cpp_source field,
 		  for use by the Cspk.
-		</entry>
-	      </row>
-	      <row>
-		<entry>xml_data</entry>
-		<entry>longblob</entry>
-		<entry>
-		  The scientific data for this job, expressed as XML,
-		  that is provided by the MDA when the row is created.
-		  This file is input to the Aspk Compiler, which
-		  incorporates into the cpp_source field,
-		  which is its output.
 		</entry>
 	      </row>
 	      <row>
@@ -615,13 +673,23 @@ CREATE TABLE user (
 		</entry>
 	      </row>
 	      <row>
-		<entry>time</entry>
-		<entry>timestamp(14)</entry>
+		<entry>start_time</entry>
+		<entry>int(10 unsigned</entry>
 		<entry>
 		  The time, to a resolution of one second, at which the 
-		  job entered its current state.  This field is supplied
-		  automatically when the row is created and whenever
-		  it is updated.
+		  job was first submitted to Spk.  The value stored is 
+		  the number of seconds since the year 1970 began,
+		  at the prime meridian.
+		</entry>
+	      </row>
+	      <row>
+		<entry>event_time</entry>
+		<entry>int(10 unsigned</entry>
+		<entry>
+		  The time, to a resolution of one second, at which the 
+		  job entered its current state.  The value stored is 
+		  the number of seconds since the year 1970 began,
+		  at the prime meridian.
 		</entry>
 	      </row>
 	      <row>
@@ -678,7 +746,6 @@ CREATE TABLE user (
 	the same, as well.
       </para>
     </sect2>
-
     <sect2>
       <title>model</title>
       <para>
@@ -735,13 +802,6 @@ CREATE TABLE user (
 		  user table.
 		</entry>
 	      </row>
-	      <row>
-		<entry>time</entry>
-		<entry>timestamp(14)</entry>
-		<entry>
-		  The time, to the second, at which the model was last modified.
-		</entry>
-	      </row>
 	    </tbody>
 	  </tgroup>
 	</table>
@@ -751,7 +811,7 @@ CREATE TABLE user (
 	The user, with the aid of the MDA, appends rows to this
 	table.  The key field, <emphasis>model_id</emphasis>,
 	is declared with the <command>auto_increment</command>
-	modifier and the table has <command>TYPE=InnoDB</command>.
+	modifier and the table has <command>TYPE=InnoDB</command>,
 	hence MySQL insures that this field is unique.
       </para>
       <para>
@@ -770,7 +830,7 @@ CREATE TABLE user (
     <sect2>
       <title>state</title>
       <para>
-	The <emphasis>state</emphasis> tables provides short and
+	The <emphasis>state</emphasis> table provides short and
 	long names for the states that a job can be in.  Rows
 	must never be deleted from this table.
       </para>
@@ -813,7 +873,7 @@ CREATE TABLE user (
     <sect2>
       <title>user</title>
       <para>
-	The <emphasis>user</emphasis> tables contains information about
+	The <emphasis>user</emphasis> table contains information about
 	the user.  The MDA consults this table when a user logs in.
 	This table identifies jobs and models.  Rows must never be
 	deleted from this table.
@@ -881,7 +941,7 @@ CREATE TABLE user (
 	field must be unique within the table, there could be
 	a race condition with two users trying to change to the
 	same username. Problems are avoided by specifying
-	<command>UNIQUE KEY (username)</command> and with the
+	<command>UNIQUE KEY (username)</command> and 
 	<command>TYPE=InnoDB</command>.
       </para>
     </sect2>

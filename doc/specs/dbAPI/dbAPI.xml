@@ -346,9 +346,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Values returned by connect</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Condition</entry>
@@ -381,9 +381,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Arguments to connect</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Name of Argument</entry>
@@ -467,9 +467,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Values returned by disconnect</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Condition</entry>
@@ -500,9 +500,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Arguments to disconnect</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Name of Argument</entry>
@@ -528,7 +528,7 @@
 	    <glossterm>Synopsis</glossterm>
 	    <glossdef>
 	      <para>
-		job_id = new_job handle user_id model_id version xml_source xml_data
+		job_id = new_job handle user_id abstract dataset_id dataset_version model_id model_version xml_source
 	      </para>
 	    </glossdef>
 	  </glossentry>
@@ -551,7 +551,7 @@
 	    </glossdef>
 	    <glossdef>
 	      <para>
-		The time field is automatically set to the time of insertion.
+		The event_time field is set to the time of insertion.
 	      </para>
 	    </glossdef>
 	    <glossdef>
@@ -577,9 +577,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Values returned by new_job</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Condition</entry>
@@ -613,9 +613,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Arguments to new_job</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Name of Argument</entry>
@@ -625,7 +625,7 @@
 	      </thead>
 	      <tbody>
 		<row>
-		  <entry>handle_id</entry>
+		  <entry>handle</entry>
 		  <entry>database handle</entry>
 		  <entry>
 		    A handle to an open database connection.
@@ -639,6 +639,23 @@
 		  </entry>
 		</row>
 		<row>
+		  <entry>dataset_id</entry>
+		  <entry>positive integer</entry>
+		  <entry>
+		    Key to a row in the <emphasis>dataset</emphasis>
+		    table, which contains in its
+		    archive field an RCS-compatible archive comprising the
+		    current version and all previous versions of a dataset.
+		  </entry>
+		</row>
+		<row>
+		  <entry>dataset_version</entry>
+		  <entry>string</entry>
+		  <entry>
+		    RCS version of the dataset.
+		  </entry>
+		</row>
+		<row>
 		  <entry>model_id</entry>
 		  <entry>positive integer</entry>
 		  <entry>
@@ -649,7 +666,7 @@
 		  </entry>
 		</row>
 		<row>
-		  <entry>version</entry>
+		  <entry>model_version</entry>
 		  <entry>string</entry>
 		  <entry>
 		    RCS version of the model.
@@ -662,11 +679,6 @@
 		    An XML document containing source code for the model, 
 		    constraints, parameters and presentation directives.
 		  </entry>
-		</row>
-		<row>
-		  <entry>xml_data</entry>
-		  <entry>string</entry>
-		  <entry>An XML document containing scientific data.</entry>
 		</row>
 	      </tbody>
 	    </tgroup>
@@ -688,8 +700,9 @@
 	    <glossterm>Description</glossterm>
 	    <glossdef>
 	      <para>
-		The state_code and the time (resolution one second) of the 
-		most recent state transition, as well as the user_id are returned.
+		The state_code, the event_time of the 
+		most recent state transition, and the end_code (which may be null)
+		are returned.
 	      </para>
 	    </glossdef>
 	  </glossentry>
@@ -714,9 +727,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Values returned by job_status</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Condition</entry>
@@ -729,7 +742,8 @@
 		  <entry>success</entry>
 		  <entry>row </entry>
 		  <entry>
-		    state_code, time, user_id, end_code
+		    state_code, event_time, end_code (end_code will
+		    be null unless state_code = 'end')
 		  </entry>
 		</row>
 		<row>
@@ -748,9 +762,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Arguments to job_status</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Name of Argument</entry>
@@ -821,9 +835,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Values returned by user-jobs</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Condition</entry>
@@ -835,7 +849,7 @@
 		<row>
 		  <entry>success</entry>
 		  <entry>array-row</entry>
-		  <entry>In each row: job_id, time, state_code, end_code</entry>
+		  <entry>In each row: job_id, abstract, state_code, start_time, event_time, end_code</entry>
 		</row>
 		<row>
 		  <entry>failure</entry>
@@ -854,9 +868,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Arguments to user_jobs</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Name of Argument</entry>
@@ -922,7 +936,7 @@
 	    </glossdef>
 	    <glossdef>
 	      <para>
-		The time field is updated to the time of this state transition.		      
+		The event_time field is updated to the time of this state transition.		      
 	      </para>
 	    </glossdef>
 	    <glossdef>
@@ -950,9 +964,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Values returned by de_q2c</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Condition</entry>
@@ -964,7 +978,7 @@
 		<row>
 		  <entry>success</entry>
 		  <entry>row </entry>
-		  <entry>job_id, xml_source, xml_data</entry>
+		  <entry>job_id, dataset_id, xml_source</entry>
 		</row>
 		<row>
 		  <entry>failure</entry>
@@ -983,9 +997,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Arguments to de_q2c</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Name of Argument</entry>
@@ -1039,7 +1053,7 @@
 	    </glossdef>
 	    <glossdef>
 	      <para>
-		The time field is updated to the time of this state transition.
+		The event_time field is updated to the time of this state transition.
 	      </para>
 	    </glossdef>
 	    <glossdef>
@@ -1063,9 +1077,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Values returned by en_q2r</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Condition</entry>
@@ -1096,9 +1110,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Arguments to en_q2r</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Name of Argument</entry>
@@ -1161,7 +1175,7 @@
 	    </glossdef>
 	    <glossdef>
 	      <para>
-		The time field is updated to the time of this state transition.
+		The event_time field is updated to the time of this state transition.
 	      </para>
 	    </glossdef>
 	    <glossdef>
@@ -1189,9 +1203,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Values returned by de_q2r</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Condition</entry>
@@ -1223,9 +1237,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Arguments to de_q2r</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Name of Argument</entry>
@@ -1291,7 +1305,7 @@
 	    </glossdef>
 	    <glossdef>
 	      <para>
-		The time field is updated to the time of this state transition.
+		The event_time field is updated to the time of this state transition.
 	      </para>
 	    </glossdef>
 	  </glossentry>
@@ -1309,9 +1323,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Values returned by end_job</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Condition</entry>
@@ -1342,9 +1356,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Arguments to end_job</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Name of Argument</entry>
@@ -1422,9 +1436,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Values returned by job_report</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Condition</entry>
@@ -1455,9 +1469,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Arguments to job_report</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Name of Argument</entry>
@@ -1475,6 +1489,452 @@
 		  <entry>job_id</entry>
 		  <entry>positive integer</entry>
 		  <entry>Key to a row in the <emphasis>job</emphasis> table.</entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+      </sect3>
+      <sect3>
+	<title id="new_dataset">new_dataset -- add a dataset to the database</title>
+	<glosslist>
+	  <glossentry>
+	    <glossterm>Synopsis</glossterm>
+	    <glossdef>
+	      <para>
+		dataset_id = new_dataset handle user_id name abstract archive
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Description</glossterm>
+	    <glossdef>
+	      <para>
+		The <emphasis>dataset</emphasis> table contains the source code
+		for scientific datasets along with identification information.
+		The archive field is an RCS-compatible file which contains the
+		current and all previous versions of the XML text of the dataset.
+		This function is used to establish the initial version of a 
+		dataset in the database.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Side Effects</glossterm>
+	    <glossdef>
+	      <para>
+		The event_time field is set to the time of insertion.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Transaction Processing Considerations</glossterm>
+	    <glossdef>
+	      <para>
+		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB), that
+		the <emphasis>dataset_id</emphasis> field carries the auto_increment
+		and that the <emphasis>name</emphasis> field is unique for
+		the given <emphasis>user_id</emphasis> due to a 
+		<command>UNIQUE user_id (user_id, name)</command> modifier.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	</glosslist>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Values returned by new_dataset</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
+	      <thead>
+		<row>
+		  <entry>Condition</entry>
+		  <entry>Values</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>success</entry>
+		  <entry>positive integer</entry>
+		  <entry>Key to a row newly added to the <emphasis>dataset</emphasis> table.</entry>
+		</row>
+		<row>
+		  <entry>failure</entry>
+		  <entry>0</entry>
+		  <entry>
+		    Failure occurs if the or the user_id is invalid.
+		    Additional information about the nature of the failure is provided
+		    by individual language bindings.
+		  </entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Arguments to new_dataset</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
+	      <thead>
+		<row>
+		  <entry>Name of Argument</entry>
+		  <entry>Data Type</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>handle</entry>
+		  <entry>database handle</entry>
+		  <entry>Handle to an open database connection.</entry>
+		</row>
+		<row>
+		  <entry>user_id</entry>
+		  <entry>positive integer</entry>
+		  <entry>Key to a row in the <emphasis>user</emphasis> table.</entry>
+		</row>
+		<row>
+		  <entry>name</entry>
+		  <entry>string</entry>
+		  <entry>Name of the dataset.</entry>
+		</row>
+		<row>
+		  <entry>abstract</entry>
+		  <entry>string</entry>
+		  <entry>Succinct description of the dataset.</entry>
+		</row>
+		<row>
+		  <entry>archive</entry>
+		  <entry>string</entry>
+		  <entry>RCS-compatible source archive.</entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+      </sect3>
+      <sect3>
+	<title id="get_dataset">get_dataset -- retrieve a dataset</title>
+	<glosslist>
+	  <glossentry>
+	    <glossterm>Synopsis</glossterm>
+	    <glossdef>
+	      <para>
+		list = get_dataset handle dataset_id
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Description</glossterm>
+	    <glossdef>
+	      <para>
+		Given the key into the <emphasis>dataset</emphasis> table, the
+		corresponding row is returned.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Side Effects</glossterm>
+	    <glossdef>
+	      <para>
+		None.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Transaction Processing Considerations</glossterm>
+	    <glossdef>
+	      <para>
+		None.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	</glosslist>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Values returned by get_dataset</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
+	      <thead>
+		<row>
+		  <entry>Condition</entry>
+		  <entry>Values</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>success</entry>
+		  <entry>pair list</entry>
+		  <entry>
+		    List of all field names for the <emphasis>dataset</emphasis>
+		    table, along with associated values.
+		  </entry>
+		</row>
+		<row>
+		  <entry>failure</entry>
+		  <entry>null or undefined</entry>
+		  <entry>
+		    Failure occurs if the handle or the dataset_id is invalid.
+		    Information that can be used to distinguish a missing row
+		    from an error is provided by the individual language bindings.
+		  </entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Arguments to get_dataset</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
+	      <thead>
+		<row>
+		  <entry>Name of Argument</entry>
+		  <entry>Data Type</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>handle</entry>
+		  <entry>database handle</entry>
+		  <entry>Handle to an open database connection.</entry>
+		</row>
+		<row>
+		  <entry>dataset_id</entry>
+		  <entry>positive integer</entry>
+		  <entry>Key to a row in the <emphasis>dataset</emphasis> table.</entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+      </sect3>
+      <sect3>
+	<title id="update_dataset">
+	  update_dataset -- update a row in the <emphasis>dataset</emphasis> table
+	</title>
+	<glosslist>
+	  <glossentry>
+	    <glossterm>Synopsis</glossterm>
+	    <glossdef>
+	      <para>
+		update_dataset handle dataset_id list
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Description</glossterm>
+	    <glossdef>
+	      <para>
+		A set of fields in a row of the <emphasis>dataset</emphasis> table
+		are updated.  It is not necessary to update all rows.  The list
+		is a set of (name, value) pairs, which specifies the names of 
+		fields and the new values which are to be stored into them.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Side Effects</glossterm>
+	    <glossdef>
+	      <para>
+		The event_time field is set to the time of the update.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Transaction Processing Considerations</glossterm>
+	    <glossdef>
+	      <para>
+		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB)
+		and that the <emphasis>name</emphasis> field is unique for
+		the given <emphasis>user_id</emphasis> due to a 
+		<command>UNIQUE user_id (user_id, name)</command> modifier.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	</glosslist>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Values returned by update_dataset</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
+	      <thead>
+		<row>
+		  <entry>Condition</entry>
+		  <entry>Values</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>success</entry>
+		  <entry>true</entry>
+		  <entry></entry>
+		</row>
+		<row>
+		  <entry>failure</entry>
+		  <entry>false</entry>
+		  <entry>
+		    Failure occurs if the handle or the dataset_id is invalid.
+		    Individual language bindings provide additional information
+		    in case of error.
+		  </entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Arguments to update_user</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
+	      <thead>
+		<row>
+		  <entry>Name of Argument</entry>
+		  <entry>Data Type</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>handle</entry>
+		  <entry>database handle</entry>
+		  <entry>Handle to an open database connection.</entry>
+		</row>
+		<row>
+		  <entry>dataset_id</entry>
+		  <entry>positive integer</entry>
+		  <entry>Key to a row in the <emphasis>dataset</emphasis> table.</entry>
+		</row>
+		<row>
+		  <entry>list</entry>
+		  <entry>pair list</entry>
+		  <entry>
+		    The list consists of names of fields in the <emphasis>dataset</emphasis>
+		    table and the corresponding values that should replace current values.
+		  </entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+      </sect3>
+      <sect3>
+	<title id="user_datasets">user_datasets -- get a user's datasets</title>
+	<glosslist>
+	  <glossentry>
+	    <glossterm>Synopsis</glossterm>
+	    <glossdef>
+	      <para>
+		row-array = user_datasets handle user_id
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Description</glossterm>
+	    <glossdef>
+	      <para>
+		Returns an array of rows, each of which contains a description
+		of one of a given user's datasets. Rows are sorted in order of
+		dataset_id.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Side Effects</glossterm>
+	    <glossdef>
+	      <para>
+		None.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Transaction Processing Considerations</glossterm>
+	    <glossdef>
+	      <para>
+		None, assuming that the database supports consistent reads
+		(as does MySQL database, with type=InnoDB).
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	</glosslist>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Values returned by user_datasets</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
+	      <thead>
+		<row>
+		  <entry>Condition</entry>
+		  <entry>Values</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>success</entry>
+		  <entry>array-row</entry>
+		  <entry>In each row: dataset_id, name, abstract.</entry>
+		</row>
+		<row>
+		  <entry>failure</entry>
+		  <entry>null or undefined</entry>
+		  <entry>
+		    Failure occurs if the handle or user_id is invalid.
+		    Individual language bindings provide information sufficient
+		    to recognize the case where no datasets for this user exist and
+		    to identify faults.
+		  </entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Arguments to user_datasets</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
+	      <thead>
+		<row>
+		  <entry>Name of Argument</entry>
+		  <entry>Data Type</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>handle</entry>
+		  <entry>database handle</entry>
+		  <entry>Handle to an open database connection.</entry>
+		</row>
+		<row>
+		  <entry>user_id</entry>
+		  <entry>positive integer</entry>
+		  <entry>Key to a row in the <emphasis>user</emphasis> table.</entry>
 		</row>
 	      </tbody>
 	    </tgroup>
@@ -1509,7 +1969,7 @@
 	    <glossterm>Side Effects</glossterm>
 	    <glossdef>
 	      <para>
-		The time field is set to the time of insertion.
+		The event_time field is set to the time of insertion.
 	      </para>
 	    </glossdef>
 	  </glossentry>
@@ -1531,9 +1991,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Values returned by new_model</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Condition</entry>
@@ -1564,9 +2024,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Arguments to new_model</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Name of Argument</entry>
@@ -1646,9 +2106,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Values returned by get_model</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Condition</entry>
@@ -1682,9 +2142,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Arguments to get_model</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Name of Argument</entry>
@@ -1736,7 +2196,7 @@
 	    <glossterm>Side Effects</glossterm>
 	    <glossdef>
 	      <para>
-		The time field is set to the time of the update.
+		The event_time field is set to the time of the update.
 	      </para>
 	    </glossdef>
 	  </glossentry>
@@ -1757,9 +2217,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Values returned by update_model</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Condition</entry>
@@ -1790,9 +2250,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Arguments to update_user</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Name of Argument</entry>
@@ -1839,7 +2299,7 @@
 	    <glossterm>Description</glossterm>
 	    <glossdef>
 	      <para>
-		Returns an array of rows, each of which contains the a description
+		Returns an array of rows, each of which contains a description
 		of one of a given user's models. Rows are sorted in order of
 		model_id.
 	      </para>
@@ -1867,9 +2327,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Values returned by user_models</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Condition</entry>
@@ -1881,7 +2341,7 @@
 		<row>
 		  <entry>success</entry>
 		  <entry>array-row</entry>
-		  <entry>In each row: model_id, name, time, abstract.</entry>
+		  <entry>In each row: model_id, name, abstract.</entry>
 		</row>
 		<row>
 		  <entry>failure</entry>
@@ -1901,9 +2361,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Arguments to user_models</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Name of Argument</entry>
@@ -1970,9 +2430,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Values returned by new_user</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Condition</entry>
@@ -2004,9 +2464,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Arguments to new_user</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Name of Argument</entry>
@@ -2079,9 +2539,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Values returned by update_user</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Condition</entry>
@@ -2112,9 +2572,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Arguments to update_user</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Name of Argument</entry>
@@ -2191,9 +2651,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Values returned by get_user</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Condition</entry>
@@ -2228,9 +2688,9 @@
 	  <table frame="all" pgwide="1">
 	    <title>Arguments to get_user</title>
 	    <tgroup cols="3">
-	      <colspec colname="c1" colwidth="1*"/>
-	      <colspec colname="c2" colwidth="1*"/>
-	      <colspec colname="c3" colwidth="5*"/>
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
 	      <thead>
 		<row>
 		  <entry>Name of Argument</entry>

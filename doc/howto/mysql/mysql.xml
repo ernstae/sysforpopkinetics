@@ -10,13 +10,15 @@
     <revhistory>
       <revision>
 	<revnumber>1.0</revnumber>
-	<date>January 21, 2004</date>
+	<date>January 29, 2004</date>
 	<authorinitials>afw</authorinitials>
 	<revremark>Initial version.</revremark>
       </revision>
     </revhistory>
   <abstract>
       <para>
+	The installation, use, and management of the MySQL relational
+	database management system is discussed.
       </para>
   </abstract>
  </articleinfo>
@@ -129,6 +131,39 @@ quit;
 mysql -u root -p
 grant all on spktest.* to tester@localhost identified by 'tester';
 quit;
+	</screen>
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Installing the Spk Database Source</title>
+    <para>
+      The source for the Spk database API and administrative
+      scripts is located in
+      <filename>r2/src/apps/spk/db</filename> in the 
+      <command>cvs</command> tree. You can copy the
+      <filename>db</filename> subtree to another location,
+      if you want to.
+    </para>
+    <sect2>
+      <title>Installing and Testing the Perl API</title>
+      <para>
+	The following assumes that we start in the 
+	<filename>db</filename> directory discussed above.
+	The installation and testing sequences is as follows:
+	<screen>
+cd api/perl
+perl Makefile.PL
+make
+make test
+	</screen>
+      </para>
+      <para>
+	If all the tests run correctly, complete the installation
+	this way:
+	<screen>
+su
+make install
 	</screen>
       </para>
     </sect2>
