@@ -164,7 +164,7 @@ int main( int argc, const char* argv[] )
   if( !oError.good() )
     {
       cerr << "Failed to create a file, " << compilation_error_xml << "!!!" << endl;
-      return PERMISSION_ERR;
+      return ACCESS_ERR;
     }
 
   if (argc < 3)
@@ -230,7 +230,7 @@ int main( int argc, const char* argv[] )
 	myError.push( SpkCompilerError::ASPK_STD_ERR, error_message, __LINE__, __FILE__ );
 	oError << myError << endl;
 	oError.close();
-        return PERMISSION_ERR;
+        return ACCESS_ERR;
       }
     iSource.close();
     parser->parse( gSource );
@@ -285,7 +285,7 @@ int main( int argc, const char* argv[] )
        myError.push( SpkCompilerError::ASPK_STD_ERR, error_message, __LINE__, __FILE__ );
        oError << myError << endl;
        oError.close();
-       return PERMISSION_ERR;
+       return ACCESS_ERR;
     }
     parser->parse( gData );
     data = parser->getDocument();
