@@ -1,14 +1,18 @@
 SUBDIRS = nonmem
 lib_LTLIBRARIES = libspkcompiler.la
 
-pkgincludedir = @includedir@/spkcompiler
-NONMEM      = nonmem
-INCLUDES    = -I@top_srcdir@/ -I$(NONMEM)
+#pkgincludedir = @includedir@/spkcompiler
+NONMEM        = nonmem
+INST_BASE     = /usr/local
+INCLUDES      = -I@top_srcdir@/ -I$(NONMEM) -I$(INST_BASE)/include/spktest
 
-AM_LFLAGS   = -i
-AM_YFLAGS   = -d --verbose --debug
-CXXFLAGS    = -g
-AM_LDFLAGS  = ./nonmem/libnonmem.la
+libdir        = $(INST_BASE)/lib/spktest
+pkgincludedir = $(INST_BASE)/include/spktest/spkcompiler
+
+AM_LFLAGS     = -i
+AM_YFLAGS     = -d --verbose --debug
+CXXFLAGS      = -g
+AM_LDFLAGS    = ./nonmem/libnonmem.la
 MOSTLYCLEANFILES = explang.cpp explang.output lex_explang.c
 
 libspkcompiler_la_SOURCES = \

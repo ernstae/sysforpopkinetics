@@ -1,9 +1,20 @@
-bin_PROGRAMS = test_nonmem
-
-NONMEM = nonmem
+bin_PROGRAMS    = test_nonmem
+noinst_PROGRAMS = test_nonmem
+INST_BASE       = /usr/local
+NONMEM          = nonmem
 
 CXXFLAGS = -g
-MOSTLYCLEANFILES = Pred.h predEqn.cpp predEqn.fortran IndData.h DataSet.h testInd testPop test_nonmem testPopPred.cpp testPopPred testIndPred.cpp testIndPred driver.cpp driver result.xml generatedMakefile NonmemTranslatorIndTest.sourceML NonmemTranslatorPopTest.sourceML popDriver.cpp popDriver indDriver.cpp indDriver spk_error.tmp indDriverNoID testIndPredNoID
+MOSTLYCLEANFILES = Pred.h \
+                   predEqn.cpp \
+                   predEqn.fortran \
+                   IndData.h \
+                   DataSet.h \
+                   test_nonmem \
+                   driver.cpp \
+                   driver \
+                   result.xml \
+                   generatedMakefile \
+                   spk_error.tmp
 
 test_nonmem_SOURCES = \
 	../config.h \
@@ -13,6 +24,7 @@ test_nonmem_SOURCES = \
 	explangTest.cpp \
 	explangTest.h \
 	NonmemTranslatorIndTest.cpp \
+        NonmemTranslatorIndTest_onlysim.cpp \
 	NonmemTranslatorIndTest.h \
 	NonmemTranslatorPopTest.cpp \
 	NonmemTranslatorPopTest.h
@@ -23,9 +35,8 @@ test_nonmem_INCLUDES = \
 	NonmemTranslatorIndTest.h \
 	NonmemTranslatorPopTest.h
 
-AM_LDFLAGS = -lxerces-c -lcppunit -lspkcompiler 
+AM_LDFLAGS = -lxerces-c -lcppunit -L$(INST_BASE)/lib/spktest -lspkcompiler 
 
 INCLUDES = \
 	-I@top_srcdir@/ \
-	-I@top_srcdir@/spkcompiler/ \
-	-I@top_srcdir@/spkcompiler/nonmem
+        -I$(INST_BASE)/include/spktest

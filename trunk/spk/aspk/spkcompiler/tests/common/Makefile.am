@@ -1,7 +1,11 @@
-bin_PROGRAMS = test_common
-
+bin_PROGRAMS     = test_common
+noinst_PROGRAMS  = test_common
 COMMON = common
-MOSTLYCLEANFILES = IndData.h IndData.cpp convertDataTestInput.dat
+INST_BASE        = /usr/local
+
+MOSTLYCLEANFILES = IndData.h \
+                   IndData.cpp \
+                   convertDataTestInput.dat
 CXXFLAGS = -g
 
 test_common_SOURCES = \
@@ -30,9 +34,8 @@ test_common_INCLUDES = \
 	SymbolTableTest.h \
 	ClientTranslatorTest.h
 
-AM_LDFLAGS = -lxerces-c -lcppunit -lspkcompiler
+AM_LDFLAGS = -lxerces-c -lcppunit -L$(INST_BASE)/lib/spktest -lspkcompiler
 
 INCLUDES = \
 	-I@top_srcdir@/ \
-	-I@top_srcdir@/spkcompiler/ \
-	-I@top_srcdir@/spkcompiler/nonmem
+	-I$(INST_BASE)/include/spktest 
