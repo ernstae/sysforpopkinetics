@@ -278,32 +278,47 @@ The i-th &lt;<value>&gt; corresponds to the i-th element of the parameter vector
 
 <!-- <presentation_data> An augmented data set: a set of all values associated with or evaluated at each individual's sampling points.
         
-The set includes the complete set of data item values in the given data set, 
-the quantities computed and stored in the variables that appear on the left hand side 
-of the equations in the model definition, plus the following extra items:
+Three sets of data are returned under &lt;presentation_data&gt;:
+<html:ul>
+   <html:li>
+   the exact original data set 
+   or the original data with DV replaced by simulated data when simulation had been done.
+   </html:li>
+   <html:li>
+   the quantities computed and stored in the variables that appear on the left hand side 
+   of the equations in the model definition, 
+   </html:li>
+   <html:li>
+   the following extra items:
 
-   <html:ul>
-      <html:li>Missing Dependent Variable [MDV] if it were missing in the original data set</html:li>
-      <html:li>Prediction [PRED]</html:li>
-      <html:li>Residual [RES] where RES = DV - RRED</html:li>
-      <html:li>Weighted residual [WRES].  WRES = Cij*RES where Cij is the i-th individual's j-th 
-diagonal element of C such that W = C * C^T.  W = SPK's R(b) for the individual analysis. 
- W = g( R(alp,b), D(alp) ) for the population analysis for some function g().</html:li>
-      </html:li>
-      <html:li>Simulated data (ie. simulated dependent variable) if data simulation were requested [SIMDV].</html:ul>
-   </html:ul>
+      <html:dl>
+         <html:dt>MDV</html:dt>
+         <html:dd>Missing Dependent Variable if the data set did not have this data item in the first place.</html:dd>
+         <html:dt>PRED</html:dt>
+         <html:dd>Prediction</html:dd>
+         <html:dt>RES</html:dt>
+         <html:dd>Residual, where RES = DV - RRED</html:dd>
+         <html:dt>WRES</html:dt>
+         <html:dd>Weighted residual.  WRES = Cij*RES where Cij is the i-th individual's j-th 
+         diagonal element of C such that W = C * C^T.  W = SPK's R(b) for the individual analysis. 
+         W = g( R(alp,b), D(alp) ) for the population analysis for some function g().
+         </html:dd>
+         <html:dt>ORGDV</html:dt>
+         <html:dd>The original DV value when simulated data replaced DV.
+      </html:ul>
 
 with THETA set to:
 
-   <html:ul>
-      <html:li>
-      initial values if no parameter estimation is requested.
-      </html:li>
-      <html:li>
-      final values or values from the last successful & complete iteration if parameter estimation is requested.
-      </html:li>
-   </html:ul>
-
+      <html:ul>
+         <html:li>
+         initial values if no parameter estimation is requested.
+         </html:li>
+         <html:li>
+         final values or values from the last successful & complete iteration if parameter estimation is requested.
+         </html:li>
+      </html:ul>
+   </html:li>
+</html:ul>
 
 Conceptual Example:
 <html:pre>
