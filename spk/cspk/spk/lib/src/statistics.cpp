@@ -49,7 +49,7 @@ a given covariance matrix.
 The coefficient of variation is calculated as:
 $math%
    
-               CV = SE / x * 100 
+               CV = SE / | x | * 100 
 
 %$$
 where CV stands for the coefficient of variation, SE stands for the standard 
@@ -194,7 +194,7 @@ void statistics( const SPK_VA::valarray<double>& x,       // vector of which qua
   if( cvOut )
     {
       for( int i = 0; i < nX; i++ )
-	cvTemp[ i ] = seTemp[ i ] / x[ i ] * 100.; 
+	cvTemp[ i ] = seTemp[ i ] / fabs( x[ i ] ) * 100.; 
 
       *cvOut = cvTemp; 
     }

@@ -170,7 +170,7 @@ the values of the covariance matrix by their mathematical definitions,
 respectively. The coefficient of variation is calculated as:
 $math%
    
-               CV = SE / b * 100 
+               CV = SE / | b | * 100 
 
 %$$
 where CV stands for the coefficient of variation, SE stands for the standard 
