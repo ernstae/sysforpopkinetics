@@ -8,18 +8,17 @@
         <attr name="class_dependency_javax.swing.table.AbstractTableModel" stringvalue="UserJob.DisplayTableModel"/>
         <attr name="class_dependency_javax.swing.JFrame" stringvalue="UserJob"/>
     </fileobject>
-    <fileobject name="GetModel.java">
-        <attr name="class_dependency_javax.swing.table.AbstractTableModel" stringvalue="GetModel.DisplayTableModel"/>
-        <attr name="class_dependency_javax.swing.JFrame" stringvalue="GetModel"/>
-    </fileobject>
     <fileobject name="ModelLibrary.java">
         <attr name="class_dependency_javax.swing.table.AbstractTableModel" stringvalue="ModelLibrary.DisplayTableModel"/>
         <attr name="class_dependency_javax.swing.JFrame" stringvalue="ModelLibrary"/>
         <attr name="class_dependency_javax.swing.table.DefaultTableCellRenderer" stringvalue="ModelLibrary.CellRenderer"/>
     </fileobject>
+    <fileobject name="GetModel.java">
+        <attr name="class_dependency_javax.swing.table.AbstractTableModel" stringvalue="GetModel.DisplayTableModel"/>
+        <attr name="class_dependency_javax.swing.JFrame" stringvalue="GetModel"/>
+    </fileobject>
     <fileobject name="GetReport.java">
-        <attr name="class_dependency_javax.swing.table.AbstractTableModel" stringvalue="GetSource_1.DisplayTableModel"/>
-        <attr name="class_dependency_javax.swing.JFrame" stringvalue="GetSource_1"/>
+        <attr name="class_dependency_javax.swing.JFrame" stringvalue="GetReport"/>
     </fileobject>
     <fileobject name="GetSource.java">
         <attr name="class_dependency_javax.swing.table.AbstractTableModel" stringvalue="GetSource.DisplayTableModel"/>
