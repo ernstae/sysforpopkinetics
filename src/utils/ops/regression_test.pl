@@ -11,6 +11,7 @@ use Pod::Usage;
 
 use Spkdb ('connect', 'disconnect', 'job_status');
 
+my $cluster = "cspkserver";
 my $base_dir = "/usr/local/spk/ops/regression_test";
 my %file_to_compare = ( 'cerr' => 'compilation_error.xml',
 		        'srun' => 'result.xml');
@@ -112,7 +113,7 @@ while ($active_jobs) {
 	    $job_done{$job_id} = 1;
 	}
     }
-    sleep 5;
+    sleep 10;
 };
 &disconnect($dbh);
 
@@ -146,7 +147,7 @@ for ('cerr', 'srun') {
 	print "\nchecking differences for jobs with end_code 'srun'";
 	for my $job_id (@$job) {
 	    print "\n\tjob $job_id";
-	    @args = ("ssh", "cluster", "diff", "-bB");
+	    @args = ("ssh", $cluster, "diff", "-bB");
 	    for my $regexp (@$ignore) {
 		push @args, ("--ignore-matching-lines", "\"$regexp\"");
 	    }
