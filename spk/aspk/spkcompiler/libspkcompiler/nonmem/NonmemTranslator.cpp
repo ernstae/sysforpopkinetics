@@ -65,6 +65,12 @@ const char* NonmemTranslator::C_APPROXIMATION              ( "approximation" );
 const char* NonmemTranslator::C_FO                         ( "fo" );
 const char* NonmemTranslator::C_FOCE                       ( "foce" );
 const char* NonmemTranslator::C_LAPLACE                    ( "laplace" );
+const char* NonmemTranslator::C_MONTE_CARLO                ( "monte_carlo" );
+const char* NonmemTranslator::C_METHOD                     ( "method" );
+const char* NonmemTranslator::C_MONTE                      ( "monte" );
+const char* NonmemTranslator::C_NUMBEREVAL                 ( "number_eval" );
+const char* NonmemTranslator::C_ANALYTIC                   ( "analytic" );
+const char* NonmemTranslator::C_GRID                       ( "grid" );
 const char* NonmemTranslator::C_POP_SIZE                   ( "pop_size" );
 const char* NonmemTranslator::C_IS_ESTIMATION              ( "is_estimation" );
 const char* NonmemTranslator::C_IS_ETA_OUT                 ( "is_eta_out" );
@@ -119,6 +125,8 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     myIsOnlySimulation  ( false ),
     mySubproblemsN      ( 1 ),
     myApproximation     ( FO ),
+    myMonteMethod       ( MONTE ),
+    myMonteNumberEval   ( 1000 ),
     myPopSize           ( 1 ),
     myIsEtaOut          ( false ),
     myIsRestart         ( true ),
@@ -206,6 +214,7 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   X_POP_ANALYSIS   = XMLString::transcode( C_POP_ANALYSIS );
   X_IND_ANALYSIS   = XMLString::transcode( C_IND_ANALYSIS );
   X_CONSTRAINT     = XMLString::transcode( C_CONSTRAINT );
+  X_MONTE_CARLO    = XMLString::transcode( C_MONTE_CARLO );
   X_MODEL          = XMLString::transcode( C_MODEL );
   X_PRED           = XMLString::transcode( C_PRED );
   X_PRESENTATION   = XMLString::transcode( C_PRESENTATION );
@@ -238,6 +247,8 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   X_IS_COEF_OUT    = XMLString::transcode( C_IS_COEFFICIENT_OUT );
   X_IS_CONF_OUT    = XMLString::transcode( C_IS_CONFIDENCE_OUT );
   X_APPROXIMATION  = XMLString::transcode( C_APPROXIMATION );
+  X_METHOD         = XMLString::transcode( C_METHOD );
+  X_NUMBEREVAL     = XMLString::transcode( C_NUMBEREVAL );
   X_POP_SIZE       = XMLString::transcode( C_POP_SIZE  );
   X_IS_ESTIMATION  = XMLString::transcode( C_IS_ESTIMATION );
   X_IS_ETA_OUT     = XMLString::transcode( C_IS_ETA_OUT );
@@ -265,10 +276,27 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   X_FO             = XMLString::transcode( C_FO );
   X_FOCE           = XMLString::transcode( C_FOCE );
   X_LAPLACE        = XMLString::transcode( C_LAPLACE );
+  X_MONTE          = XMLString::transcode( C_MONTE );
+  X_ANALYTIC       = XMLString::transcode( C_ANALYTIC );
+  X_GRID           = XMLString::transcode( C_GRID );
 
   myPopEpsilon = pow( 10.0, -(mySigDigits+1.0) );
   myIndEpsilon = pow( 10.0, -(mySigDigits+1.0) );
 
+  // Clean up reminents from a previous run.
+  remove( fMakefile_SPK );
+  remove( fMakefile_MC );
+  remove( fIndData_h );
+  remove( fDataSet_h );
+  remove( fPredEqn_fortran );
+  remove( fPredEqn_cpp );
+  remove( fPred_h );
+  remove( fNonmemPars_h );
+  remove( fMontePars_h );
+  remove( fSpkDriver_cpp );
+  remove( fMonteDriver_cpp );
+  remove( fSpkRuntimeError_tmp );
+  remove( fResult_xml );
 }
 NonmemTranslator::NonmemTranslator()
 {
@@ -304,6 +332,7 @@ NonmemTranslator::~NonmemTranslator()
   XMLString::release( &X_CONSTRAINT );
   XMLString::release( &X_MODEL );
   XMLString::release( &X_PRED );
+  XMLString::release( &X_MONTE_CARLO );
   XMLString::release( &X_PRESENTATION );
   XMLString::release( &X_TABLE );
   XMLString::release( &X_SCATTERPLOT );
@@ -315,6 +344,10 @@ NonmemTranslator::~NonmemTranslator()
   XMLString::release( &X_FO );
   XMLString::release( &X_FOCE );
   XMLString::release( &X_LAPLACE );
+  XMLString::release( &X_ANALYTIC );
+  XMLString::release( &X_GRID );
+  XMLString::release( &X_MONTE );
+  XMLString::release( &X_NUMBEREVAL );
   XMLString::release( &X_POP_SIZE );
   XMLString::release( &X_IS_ESTIMATION );
   XMLString::release( &X_IS_ETA_OUT );
@@ -440,6 +473,39 @@ void NonmemTranslator::parseSource()
   parsePred( pred );
   isPredDone = true;
  
+  //------------------------------------------------------
+  // <monte_carlo>
+  //------------------------------------------------------
+  DOMNodeList * monte_carlos = nonmem->getElementsByTagName( X_MONTE_CARLO );
+  if( monte_carlos->getLength() > 0 )
+  {
+    myIsMonte = true;
+    DOMElement * monte_carlo = dynamic_cast<DOMElement*>( monte_carlos->item(0) );
+
+      if( monte_carlo->hasAttribute( X_METHOD ) )
+      {
+	const XMLCh* x_temp = monte_carlo->getAttribute( X_METHOD );
+	if( XMLString::equals( x_temp, X_ANALYTIC ) )
+	  myMonteMethod = ANALYTIC;
+	else if( XMLString::equals( x_temp, X_GRID ) )
+	  myMonteMethod = GRID;
+	else
+	  myMonteMethod = MONTE;
+      }
+      if( monte_carlo->hasAttribute( X_NUMBEREVAL) )
+	{
+	  const XMLCh* x_num = monte_carlo->getAttribute( X_NUMBEREVAL );
+	  if( ! XMLString::textToBin( x_num, myMonteNumberEval ) )
+	    {
+	      char mess[ SpkCompilerError::maxMessageLen() ];
+	      sprintf( mess, 
+		       "Invalid %s attribute value in <%s> tag: %s", C_NUMBEREVAL, C_MONTE_CARLO,
+		       XMLString::transcode(x_num) );
+	      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
+	      throw e;
+	    }
+	}
+  }
   //------------------------------------------------------
   //<presentation>
   //------------------------------------------------------ 
@@ -600,27 +666,54 @@ void NonmemTranslator::parseSource()
 }
 void NonmemTranslator::generateMakefile() const
 {
-  ofstream oMake( fMakefile_SPK );
-  if( !oMake.good() )
+  ofstream oSpkMake( fMakefile_SPK );
+  if( !oSpkMake.good() )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
      sprintf( mess, "Failed to create %s file.", fMakefile_SPK ); 
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
   }
-  oMake << "prod : spkDriver.cpp Pred.h DataSet.h IndData.h NonmemPars.h" << endl;
-  oMake << "\tg++ -g spkDriver.cpp -o spkDriver ";
-  oMake << "-L/usr/local/lib/spkprod -I/usr/local/include/spkprod -Wl,--rpath -Wl,/usr/local/lib/spkprod ";
-  oMake << "-lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm";
-  oMake << endl;
-  oMake << "test : spkDriver.cpp Pred.h DataSet.h IndData.h NonmemPars.h" << endl;
-  oMake << "\tg++ -g spkDriver.cpp -o spkDriver ";
-  oMake << "-L/usr/local/lib/spktest -I/usr/local/include/spktest -Wl,--rpath -Wl,/usr/local/lib/spktest ";
-  oMake << "-lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm";
-  oMake << endl;
-  oMake << "clean : " << endl;
-  oMake << "\trm -f software_error result.xml spkDriver predEqn.cpp IndData.h DataSet.h Pred.h spkDriver.cpp spk_error.tmp NonmemPars.h" << endl;
-  oMake.close();
+  oSpkMake << "prod : spkDriver.cpp Pred.h DataSet.h IndData.h NonmemPars.h" << endl;
+  oSpkMake << "\tg++ -g spkDriver.cpp -o spkDriver ";
+  oSpkMake << "-L/usr/local/lib/spkprod -I/usr/local/include/spkprod -Wl,--rpath -Wl,/usr/local/lib/spkprod ";
+  oSpkMake << "-lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm";
+  oSpkMake << endl;
+  oSpkMake << "test : spkDriver.cpp Pred.h DataSet.h IndData.h NonmemPars.h" << endl;
+  oSpkMake << "\tg++ -g spkDriver.cpp -o spkDriver ";
+  oSpkMake << "-L/usr/local/lib/spktest -I/usr/local/include/spktest -Wl,--rpath -Wl,/usr/local/lib/spktest ";
+  oSpkMake << "-lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm";
+  oSpkMake << endl;
+  oSpkMake << "clean : " << endl;
+  oSpkMake << "\trm -f software_error result.xml spkDriver predEqn.cpp IndData.h DataSet.h Pred.h spkDriver.cpp spk_error.tmp NonmemPars.h" << endl;
+  oSpkMake.close();
+
+  if( !myIsMonte )
+    {
+      return;
+    }
+  ofstream oMonteMake( fMakefile_MC );
+  if( !oMonteMake.good() )
+  {
+     char mess[ SpkCompilerError::maxMessageLen() ];
+     sprintf( mess, "Failed to create %s file.", fMakefile_SPK ); 
+     SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+     throw e;
+  }
+  oMonteMake << "prod : monteDriver.cpp Pred.h DataSet.h IndData.h NonmemPars.h MontePars.h" << endl;
+  oMonteMake << "\tg++ -g monteDriver.cpp -o monteDriver ";
+  oMonteMake << "-L/usr/local/lib/spkprod -I/usr/local/include/spkprod -Wl,--rpath -Wl,/usr/local/lib/spkprod ";
+  oMonteMake << "-lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm";
+  oMonteMake << endl;
+  oMonteMake << "test : monteDriver.cpp Pred.h DataSet.h IndData.h NonmemPars.h MontePars.h" << endl;
+  oMonteMake << "\tg++ -g monteDriver.cpp -o monteDriver ";
+  oMonteMake << "-L/usr/local/lib/spktest -I/usr/local/include/spktest -Wl,--rpath -Wl,/usr/local/lib/spktest ";
+  oMonteMake << "-lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm";
+  oMonteMake << endl;
+  oMonteMake << "clean : " << endl;
+  oMonteMake << "\trm -f software_error result.xml spkDriver predEqn.cpp IndData.h DataSet.h Pred.h monteDriver.cpp spk_error.tmp NonmemPars.h MontePars.h" << endl;
+  oMonteMake.close();
+
   return;
 }
 
@@ -2988,9 +3081,12 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 void NonmemTranslator::generateMonteParsNamespace() const
 {
   //==================================================================
-  // Generate the MontePars namespace.
+  // Generate the MontePars namespace if Monte is requested.
   //==================================================================
-
+  if( !myIsMonte )
+    {
+      return;
+    }
   ofstream oMontePars( fMontePars_h );
   if( !oMontePars.good() )
   {
@@ -3140,9 +3236,14 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << "   // The structure of OMEGA matrix." << endl;
   oNonmemPars << "   // \"FULL\" indicates that possibly all elements of the symmetric matrix may be non-zero." << endl;
   oNonmemPars << "   // \"DIAGONAL\" indicates that only the diagonal elements are non-zero and the rest are all zero." << endl;
+     
   oNonmemPars << "   const enum " << (myTarget==POP? "Pop":"Ind") << "PredModel::covStruct omegaStruct = ";
   oNonmemPars << (myTarget==POP? "Pop":"Ind") << "PredModel::";
   oNonmemPars << (myOmegaStruct == Symbol::TRIANGLE? "FULL" : "DIAGONAL" ) << ";" << endl;
+  oNonmemPars << endl;
+
+  oNonmemPars << "   // The dimension of OMEGA (square) matrix." << endl;
+  oNonmemPars << "   const int omegaDim = " << myOmegaDim << ";" << endl;
   oNonmemPars << endl;
 
   oNonmemPars << "   // The order of OMEGA matrix." << endl;
@@ -3192,7 +3293,18 @@ void NonmemTranslator::generateNonmemParsNamespace() const
     {
       oNonmemPars << "   const enum PopPredModel::covStruct sigmaStruct = ";
       oNonmemPars << "PopPredModel::" << (mySigmaStruct == Symbol::TRIANGLE? "FULL" : "DIAGONAL" ) << ";" << endl;
+
+      oNonmemPars << "   // The dimension of SIGMA (square) matrix." << endl;
+      oNonmemPars << "   const int sigmaDim = " << mySigmaDim << ";" << endl;
+      oNonmemPars << endl;
+
+      oNonmemPars << "   // The order of SIGMA matrix." << endl;
+      oNonmemPars << "   // If the matrix is full, the value is equal to the number of " << endl;
+      oNonmemPars << "   // elements in a half triangle (diagonal elements included)." << endl;
+      oNonmemPars << "   // If the matrix is diagonal, it is equal to the dimension of the symmetric matrix." << endl;
       oNonmemPars << "   const int sigmaOrder = " << mySigmaOrder << ";" << endl;
+      oNonmemPars << endl;
+
       oNonmemPars << "   double c_sigmaIn[ sigmaOrder ] = { ";
       for( int j=0; j<mySigmaOrder; j++ )
 	{
@@ -3240,8 +3352,8 @@ void NonmemTranslator::generateNonmemParsNamespace() const
     }
   else
     {
-      oNonmemPars << "// No simulation was requested." << endl;
-      oNonmemPars << "// const int seed;" << endl;      
+      oNonmemPars << "// No simulation is requested." << endl;
+      oNonmemPars << "const int seed = -1;" << endl;      
     }
   oNonmemPars << endl;
 
@@ -3295,7 +3407,6 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "#include \"IndData.h\"" << endl;
   oDriver << "#include \"DataSet.h\"" << endl;
   oDriver << "#include \"NonmemPars.h\"" << endl;
-  //  oDriver << "#include \"halfCvec.h\"" << endl;
   oDriver << endl;
   oDriver << "#include <spk/multiply.h>" << endl;
   oDriver << "#include <spk/cholesky.h>" << endl;
@@ -3392,9 +3503,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << endl;
   
   // Omega
-  oDriver << "const int dimOmega   = " << myOmegaDim      << "; // the dimension of square matrix Omega" << endl;
-  oDriver << "const int orderOmega = " << myOmegaOrder  << "; // the order of Omega" << endl;
-  oDriver << "valarray<double> omegaOut( orderOmega );" << endl;
+  oDriver << "valarray<double> omegaOut( NonmemPars::omegaOrder );" << endl;
   oDriver << endl;
   oDriver << "//" << endl;
   oDriver << "//////////////////////////////////////////////////////////////" << endl;
@@ -3409,7 +3518,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "                    NonmemPars::thetaUp, " << endl;
   oDriver << "                    NonmemPars::thetaIn, " << endl;
   oDriver << "                    NonmemPars::nEta, " << endl;
-  oDriver << "                    NonmemPars::omegaStruct, " << endl;
+  oDriver << "                    NonmemPars::omegaStruct," << endl;
   oDriver << "                    NonmemPars::omegaIn );" << endl;
   oDriver << "//" << endl;
   oDriver << "//////////////////////////////////////////////////////////////////////" << endl;
@@ -3753,12 +3862,12 @@ void NonmemTranslator::generateIndDriver( ) const
       oDriver << "}" << endl;
       oDriver << "oResults << \"</theta_out>\" << endl;" << endl;
       // omega 
-      oDriver << "oResults << \"<omega_out dimension=\\\"\" << dimOmega << \"\\\" ";
+      oDriver << "oResults << \"<omega_out dimension=\\\"\" << NonmemPars::omegaDim << \"\\\" ";
       if( myOmegaStruct == Symbol::TRIANGLE )
 	oDriver << "struct=\\\"diagonal\\\">\" << endl;" << endl;
       else
 	oDriver << "struct=\\\"block\\\">\" << endl;" << endl;
-      oDriver << "for( int i=0; i<orderOmega; i++ )" << endl;
+      oDriver << "for( int i=0; i<NonmemPars::omegaOrder; i++ )" << endl;
       oDriver << "{" << endl;
       oDriver << "   oResults << \"<value>\" << omegaOut[i] << \"</value>\" << endl;" << endl;
       oDriver << "}" << endl;
