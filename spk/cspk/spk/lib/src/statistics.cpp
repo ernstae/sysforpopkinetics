@@ -45,9 +45,6 @@
 $begin statistics$$
 
 $spell
-  deg
-  cv
-  ci
   Model model
   valarray
   Cov
@@ -96,6 +93,9 @@ $spell
   confint
   exp
   Cramer-Rao
+  ci
+  cv
+  deg
 $$
 
 $section Computing Statistics of Parameter Estimates$$
@@ -127,18 +127,41 @@ $pre
 $$
 $head Description$$
 This function computes the standard error vector, correlation
-matrix, coefficient of variation and confidence interval of x based on
-a given covariance matrix.
- 
-The coefficient of variation is calculated as:
+matrix, coefficient of variation vector, and confidence interval 
+vector of x based on a given covariance matrix.
+$pre
+
+$$
+The standard error vector is calculated by taking the square roots 
+of the diagonal elements of the covariance matrix.
+The correlation matrix is calculated by dividing each element of 
+the covariance matrix by the standard errors that correspond to its 
+row and column.
+The coefficients of variation are calculated as
 $math%
    
-               CV = SE / | x | * 100 
+    CV    =  SE    / | x    | * 100   ,
+     (i)       (i)      (i)
 
 %$$
-where CV stands for the coefficient of variation, SE stands for the standard 
-error.  The confidence interval is calculated from the values of the standard error 
-using its mathematical definition.
+where CV is the coefficient of variation and SE is the standard error.  
+The 95% confidence intervals are calculated as
+$math%
+   
+    ( x    -  t               * SE    ,  x    +  t               * SE    ) ,
+       (i)     0.025, degFree     (i)     (i)     0.025, degFree     (i)
+
+%$$
+where
+$math%
+   
+    t
+     0.025, degFree
+
+%$$
+is the critical value for the $math%t%$$ distribution with 
+$math%degFree%$$ number of degrees of freedom for which the 
+area under the $math%t%$$ curve is $math%1 - 0.025%$$.
 
 $head Return Value$$
 Upon a successful completion, the function sets
@@ -343,9 +366,6 @@ void statistics( const SPK_VA::valarray<double>& x,       // vector of which qua
 $begin statisticsInactiveElem$$
 
 $spell
-  ci
-  deg
-  cv
   Model model
   valarray
   Cov
@@ -394,6 +414,9 @@ $spell
   confint
   exp
   Cramer-Rao
+  ci
+  cv
+  deg
 $$
 
 $section Computing Statistics of Parameter Estimates when Some Elements are not Active$$
@@ -411,19 +434,42 @@ $syntax/void statistics( const SPK_VA::valarray<bool>  & mask,
 /$$
 $head Description$$
 This function computes the standard error vector, correlation
-matrix, coefficient of variation and confidence interval of $math%x'%$$ based on
-a given covariance matrix of $math%x%$$.  
+matrix, coefficient of variation vector, and confidence interval 
+vector of $math%x'%$$ based on a given covariance matrix of $math%x%$$.  
 $math%x'%$$ is a subset of $math%x%$$ such that { x' | x AND mask } ("AND" is logical AND).
- 
-The coefficient of variation is calculated as:
+$pre
+
+$$
+The standard error vector is calculated by taking the square roots 
+of the diagonal elements of the covariance matrix.
+The correlation matrix is calculated by dividing each element of 
+the covariance matrix by the standard errors that correspond to its 
+row and column.
+The coefficients of variation are calculated as
 $math%
    
-               CV = SE / | x | * 100 
+    CV    =  SE    / | x    | * 100   ,
+     (i)       (i)      (i)
 
 %$$
-where CV stands for the coefficient of variation, SE stands for the standard 
-error.  The confidence interval is calculated from the values of the standard error 
-using its mathematical definition.
+where CV is the coefficient of variation and SE is the standard error.  
+The 95% confidence intervals are calculated as
+$math%
+   
+    ( x    -  t               * SE    ,  x    +  t               * SE    ) ,
+       (i)     0.025, degFree     (i)     (i)     0.025, degFree     (i)
+
+%$$
+where
+$math%
+   
+    t
+     0.025, degFree
+
+%$$
+is the critical value for the $math%t%$$ distribution with 
+$math%degFree%$$ number of degrees of freedom for which the 
+area under the $math%t%$$ curve is $math%1 - 0.025%$$.
 
 $head Return Value$$
 Upon a successful completion, the function sets

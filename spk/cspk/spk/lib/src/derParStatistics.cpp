@@ -44,7 +44,6 @@
 $begin derParStatistics$$
 
 $spell
-  Deg
   Model model
   valarray
   Cov
@@ -93,6 +92,7 @@ $spell
   confint
   exp
   Cramer-Rao
+  deg
 $$
 
 $section Computing Statistics of Derived Parameter Estimates$$
@@ -145,8 +145,36 @@ $math%
                      -          -              -          - 
 
 %$$
-The remainder of the statistics for the derived parameter are
-calculated in the standard way using this covariance matrix.
+The standard error vector is calculated by taking the square roots 
+of the diagonal elements of this covariance matrix.
+The correlation matrix is calculated by dividing each element of 
+the covariance matrix by the standard errors that correspond to its 
+row and column.
+The coefficients of variation are calculated as
+$math%
+   
+    CV    =  SE    / | z(x)    | * 100   ,
+     (i)       (i)         (i)
+
+%$$
+where CV is the coefficient of variation and SE is the standard error.  
+The 95% confidence intervals are calculated as
+$math%
+   
+    ( z(x)    -  t               * SE    ,  z(x)    +  t               * SE    ) ,
+         (i)     0.025, degFree     (i)         (i)     0.025, degFree     (i)
+
+%$$
+where
+$math%
+   
+    t
+     0.025, degFree
+
+%$$
+is the critical value for the $math%t%$$ distribution with 
+$math%degFree%$$ number of degrees of freedom for which the 
+area under the $math%t%$$ curve is $math%1 - 0.025%$$.
 $pre
 
 $$
@@ -238,17 +266,6 @@ for z(x) if the pointer points to an n dimensional valarray.
 If it points to NULL, it will remain unchanged.
 If it points to a valarray sized other than n, the resulting behavior
 is undetermined.
-$pre
-
-$$
-The coefficient of variation is calculated as:
-$math%
-   
-               CV = SE / | z(x) | * 100  .
-
-%$$
-where CV stands for the coefficient of variation, SE stands for the standard 
-error.
 
 $syntax/
 
@@ -423,7 +440,6 @@ void derParStatistics(
 $begin derParStatisticsInactiveElem$$
 
 $spell
-  Deg
   Model model
   valarray
   Cov
@@ -472,6 +488,7 @@ $spell
   confint
   exp
   Cramer-Rao
+  deg
 $$
 
 $section Computing Statistics of Derived Parameter Estimates when Some Elements are not Active$$
@@ -526,8 +543,36 @@ $math%
                      -          -              -          - 
 
 %$$
-The remainder of the statistics for the derived parameter are
-calculated in the standard way using this covariance matrix.
+The standard error vector is calculated by taking the square roots 
+of the diagonal elements of this covariance matrix.
+The correlation matrix is calculated by dividing each element of 
+the covariance matrix by the standard errors that correspond to its 
+row and column.
+The coefficients of variation are calculated as
+$math%
+   
+    CV    =  SE    / | z(x)    | * 100   ,
+     (i)       (i)         (i)
+
+%$$
+where CV is the coefficient of variation and SE is the standard error.  
+The 95% confidence intervals are calculated as
+$math%
+   
+    ( z(x)    -  t               * SE    ,  z(x)    +  t               * SE    ) ,
+         (i)     0.025, degFree     (i)         (i)     0.025, degFree     (i)
+
+%$$
+where
+$math%
+   
+    t
+     0.025, degFree
+
+%$$
+is the critical value for the $math%t%$$ distribution with 
+$math%degFree%$$ number of degrees of freedom for which the 
+area under the $math%t%$$ curve is $math%1 - 0.025%$$.
 $pre
 
 $$
@@ -654,15 +699,6 @@ is undetermined.
 $pre
 
 $$
-The coefficient of variation is calculated as:
-$math%
-   
-               CV = SE / | z(x) | * 100  .
-
-%$$
-where CV stands for the coefficient of variation, SE stands for the standard 
-error.
-
 The $math%i%$$-th element of the coefficient vector
 will be replaced by NaN if $code mask[i]$$ is $math%false%$$.
 
