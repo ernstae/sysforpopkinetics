@@ -1,6 +1,7 @@
-<%@ page import="java.io.*" %>
-<%@ page import="java.security.*" %>
-<%@ page import="javax.crypto.*" %>
+<%@ page import="java.io.BufferedWriter" %>
+<%@ page import="java.io.FileWriter" %>
+<%@ page import="java.io.IOException" %>
+<%@ page import="java.security.SecureRandom" %>
 <jsp:useBean id="sessionObj" class="uw.rfpk.beans.SessionObject" scope="session" />
 <html>
 <head>
@@ -40,13 +41,6 @@ Welcome <b><%=user %></b><br><br>
             session.setAttribute("SECRET", secret);
             session.setAttribute("SessionObj", sessionObj);
 
-            // Generate the secret key for the session
-            KeyGenerator keygen = KeyGenerator.getInstance("Blowfish", "SunJCE");
-            SecureRandom random = new SecureRandom(b);
-            keygen.init(128, random);
-            SecretKey key = keygen.generateKey();
-            session.setAttribute("KEY", key);
-
             // Create the jnlp file with sessionId and secret
             String file = "/home/jiaji/jakarta-tomcat-4.1.24/webapps/spk/jnlp/"+secret+".jnlp";
             BufferedWriter o = new BufferedWriter(new FileWriter(file));
@@ -70,6 +64,7 @@ Welcome <b><%=user %></b><br><br>
               "<application-desc main-class=\"uw.rfpk.mda.nonmem.MDA\">\n"+
               "<argument>" + sessionId + "</argument>\n"+    
               "<argument>" + secret + "</argument>\n"+
+              "<argument>" + user + "</argument>\n"+  
               "</application-desc>\n"+
               "</jnlp>\n"
              );
@@ -77,9 +72,6 @@ Welcome <b><%=user %></b><br><br>
         }
         catch(IOException e)
         {
-        }
-        catch(GeneralSecurityException gse)
-        {	       
         }
     }
     String url = "https://rose.rfpk.washington.edu:8443/spk/jnlp/"+(String)session.getAttribute("SECRET")+".jnlp";
