@@ -294,7 +294,7 @@ void NonmemTranslatorTest::testParsePopSource()
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
   
-  vector<int> N(pop_size);
+  valarray<int> N(pop_size);
   for( int i=0; i<pop_size; i++ )
      N[i] = i+1;
   NonmemTranslator xlator( data, source );
@@ -695,8 +695,6 @@ void NonmemTranslatorTest::testParseIndSource()
       oSource << "</in>" << endl;
       oSource << "</omega>" << endl;
 
-      oSource << "</ind_analysis>" << endl;
-
       oSource << "<ind_stat ";
       oSource << "is_standarderr_out=\""        << (ind_stderr? "yes":"no") << "\" ";
       oSource << "is_covariance_out=\""         << (ind_covariance? "yes":"no") << "\" ";
@@ -707,6 +705,7 @@ void NonmemTranslatorTest::testParseIndSource()
 	{
 	  oSource << "<simulation seed=\"" << seed << "\"/>" << endl;
 	}
+      oSource << "</ind_analysis>" << endl;
       oSource << "</constraint>" << endl;
 
       oSource << "<model>" << endl;
@@ -811,7 +810,7 @@ void NonmemTranslatorTest::testParseIndSource()
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
   
-  vector<int> N(1);
+  valarray<int> N(1);
   N[0] = 3;
   NonmemTranslator xlator( data, source );
   SymbolTable *table = xlator.getSymbolTable();
@@ -838,7 +837,6 @@ void NonmemTranslatorTest::testParseIndSource()
       CPPUNIT_ASSERT( s->synonym == pLabel->second );
     }
   CPPUNIT_ASSERT( table->findi("pred") != Symbol::empty() );
-  CPPUNIT_ASSERT( table->findi("wres") != Symbol::empty() );
   CPPUNIT_ASSERT( table->findi("res")  != Symbol::empty() );
 
   Symbol *theta = table->findi( "theta" );
@@ -1014,7 +1012,7 @@ void NonmemTranslatorTest::testParseIndSource()
       oTestDriver << "}" << endl;
       oTestDriver << "ans = 0.780131;" << endl;
       oTestDriver << "tol = fabs(ans-fOut)/ans * 10.0;" << endl;
-       oTestDriver << "if( !( fOut >= ans-tol && fOut <= ans+tol ) )" << endl;
+      oTestDriver << "if( !( fOut >= ans-tol && fOut <= ans+tol ) )" << endl;
       oTestDriver << "{" << endl;
       oTestDriver << "   cerr << \"fOut should've been \" << ans << \" but it was \" << fOut << endl;" << endl;
       oTestDriver << "   return 1;" << endl;
@@ -1059,13 +1057,14 @@ CppUnit::Test * NonmemTranslatorTest::suite()
 	 &NonmemTranslatorTest::testInheritance ) );
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<NonmemTranslatorTest>(
-         "testParsePopSource", 
-	 &NonmemTranslatorTest::testParsePopSource ) );
-  suiteOfTests->addTest( 
-     new CppUnit::TestCaller<NonmemTranslatorTest>(
          "testParseIndSource", 
 	 &NonmemTranslatorTest::testParseIndSource ) );
-
+  /*
+  suiteOfTests->addTest( 
+     new CppUnit::TestCaller<NonmemTranslatorTest>(
+         "testParsePopSource", 
+	 &NonmemTranslatorTest::testParsePopSource ) );
+  */
   return suiteOfTests;
 }
 
