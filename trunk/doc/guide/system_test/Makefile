@@ -1,5 +1,5 @@
 include ../../webdir.mk
-T = SUBJECT
+T = system_test
 HTML_OPS = --nochunks
 STYLE = ../../stylesheet
 WEB = $(WEBDIR)/guide/$T
