@@ -21,31 +21,33 @@
 */
 /*************************************************************************
  *
- * File: quasiNewtonAnyBox.h
+ * File: QuasiNewtonAnyBoxObj.h
  *
  *
- * Minimizes an arbitrary smooth function subject to simple bounds on
- * the variables using a quasi-Newton method. 
+ * Abstract base class for the objective function for quasiNewtonAnyBox.
  *
  * Author: Mitch Watrous
  *
  *************************************************************************/
 
-#ifndef QUASINEWTONANYBOX_H
-#define QUASINEWTONANYBOX_H
+#ifndef QUASINEWTONANYBOXOBJ_H
+#define QUASINEWTONANYBOXOBJ_H
 
 #include "DoubleMatrix.h"
-#include "Optimizer.h"
-#include "QuasiNewtonAnyBoxObj.h"
 
-void quasiNewtonAnyBox( 
-  QuasiNewtonAnyBoxObj&  objective,
-  Optimizer&             optInfo,
-  const DoubleMatrix&    dvecXLow,
-  const DoubleMatrix&    dvecXUp,
-  const DoubleMatrix&    dvecXIn,
-  DoubleMatrix*          pdvecXOut,
-  double*                pdFOut,
-  DoubleMatrix*          pdrowF_xOut );
+class QuasiNewtonAnyBoxObj
+{
+public:
+  // There are no default versions for these functions.
+  virtual void function( const DoubleMatrix& dvecXIn, double* pdFOut ) = 0;
+  virtual void gradient( DoubleMatrix* pdrowF_xOut ) const = 0;
+
+  // If the concrete objective function derived from this base
+  // requires any information for a restart, then reimplement these
+  // functions to read/write that information from/to a file.
+  virtual void readRestartInfoFromFile() const {}
+  virtual void writeRestartInfoToFile() const {}
+};
+
 
 #endif
