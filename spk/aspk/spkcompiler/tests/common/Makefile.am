@@ -2,8 +2,8 @@ bin_PROGRAMS = test_common
 
 COMMON = common
 
-AM_CFLAGS   = -d
-AM_CPPFLAGS = -d
+AM_CFLAGS   = -g
+AM_CPPFLAGS = -g
 
 test_common_SOURCES = \
 	../config.h \
