@@ -1306,7 +1306,6 @@ void scaleGradElem(
  *
  *************************************************************************/
 
-void valarrayMatrixToDoubleArrayMatrixTrans( const valarray<double>& xVA, double* x )
 void doubleArrayToValarray( const double* x, valarray<double>& xVA )
 {
   int i;
@@ -1338,12 +1337,13 @@ sets the elements in x equal to the matrix transpose of those in xVA
  *
  *************************************************************************/
 
-void valarrayMatrixToDoubleArrayMatrixTrans( const valarray<double>& xVA, double* x )
+void valarrayToDoubleArray_SquareMatrixTrans( const valarray<double>& xVA, double* x )
 {
   int i;
   int j;
 
-  int n = xVA.size();
+  int n = sqrt( xVA.size() );
+  assert( n * n = xVA.size() );
 
   for ( i = 0; i < n; i++ )
   {
@@ -1427,12 +1427,12 @@ void valarrayMatrixToDoubleArrayMatrixTrans( const valarray<double>& xVA, double
  * its elements must be in row-major order.
  *
  *
- * l
+ * hChol
  *
- * The lower triangular Cholesky factor L(x) of the Hessian H(x) 
- * evaluated at xHat.  Note that the existence of L implies that H is
- * symmetric and positive-definite.  It must be of length n * n, and
- * its elements must be in row-major order.
+ * The lower triangular Cholesky factor of the Hessian H(x) evaluated
+ * at xHat.  Note that the existence of this Cholesky factor implies 
+ * that H is symmetric and positive-definite.  It must be of length 
+ * n * n, and its elements must be in row-major order.
  *
  *
  * deltaX
@@ -1455,11 +1455,11 @@ void valarrayMatrixToDoubleArrayMatrixTrans( const valarray<double>& xVA, double
  * elements of its Cholesky factor.
  *
  *
- * lDiagRec
+ * hCholDiagRec
  *
  * On input, this must be allocated to hold n elements.  On output, it
- * contains the reciprocals of the diagonals of L(x), the Cholesky factor of
- * the Hessian.
+ * contains the reciprocals of the diagonals of the Cholesky factor of
+ * the Hessian H(x) evaluated at xHat.
  *
  *
  * isElemFree
@@ -1478,11 +1478,11 @@ bool isWithinTol(
   const double*  xUp,
   const double*  g,
   const double*  h,
-  const double*  l,
+  const double*  hChol,
   double*        deltaX,
   double*        gProj,
   double*        hWork,
-  double*        lDiagRec,
+  double*        hCholDiagRec,
   bool*          isElemFree )
 {
   //------------------------------------------------------------
@@ -1493,7 +1493,7 @@ bool isWithinTol(
   int j;
   int k;
 
-  assert( isLowerTriangular( l ) );
+  assert( isLowerTriangular( hChol ) );
 
 
   //------------------------------------------------------------
@@ -1504,16 +1504,16 @@ bool isWithinTol(
   // replaced by the sub-diagonal elements of its Cholesky factor.
   for ( i = 0; i < n; i++ )
   {
-    // Copy the upper triangle elements from the upper triangle of H.
+    // Copy the upper triangle elements from the Hessian.
     for ( j = 0; j <= i ; j++ )
     {
       hWork[i * n + j] = h[i * n + j];
     }
   
-    // Copy the sub-diagonal elements from the sub-diagonal of L.
+    // Copy the sub-diagonal elements from its Cholesky factor.
     for ( j = i + 1; j < n; j++ )
     {
-      hWork[i * n + j] = l[i * n + j];
+      hWork[i * n + j] = hChol[i * n + j];
     }
   }
 
@@ -1543,8 +1543,8 @@ bool isWithinTol(
       gProj[i] = g[i];
 
       // Set the reciprocal of the corresponding R diagonal.
-      assert( l[i * n + i] != 0.0 );
-      lDiagRec[i] = 1.0 / l[i * n + i];
+      assert( hChol[i * n + i] != 0.0 );
+      hCholDiagRec[i] = 1.0 / hChol[i * n + i];
     }
     else
     {
@@ -1575,7 +1575,7 @@ bool isWithinTol(
       }
   
       // Set the reciprocal of the corresponding L diagonal equal to one.
-      lDiagRec[i] = 1.0;
+      hCholDiagRec[i] = 1.0;
     }
   }
 
@@ -1609,7 +1609,11 @@ bool isWithinTol(
   // * 
   // * Note that 
   // *               T
-  // *     A  =  L  L  .
+  // *     A  =  L  L  ,
+  // *
+  // * where
+  // *
+  // *     L  = hChol .
   // *
   // ***********************************************************
 
@@ -1646,7 +1650,7 @@ bool isWithinTol(
   // Input:the reciprocals of the diagonal elements of L, as
   // returned by nag_real_cholesky (f03aec).
   // Output: unspecified.
-  double* p = lDiagRec;
+  double* p = hCholDiagRec;
 
   // Parameter: b[n][tdb].
   // Input:the n by r right-hand side matrix B.  
