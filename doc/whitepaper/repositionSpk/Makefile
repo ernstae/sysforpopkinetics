@@ -1,6 +1,8 @@
-T = repositionSpk-rfpk-WHITEPAPER
+T = repositionSpk
 HTML_OPS = --nochunks
 STYLE = ../../stylesheet
+WEB = whitechuck:/var/www/html/soft/whitepaper/$T
+PNG = $(wildcard *.png)
 
 all:	html pdf rtf
 
@@ -20,8 +22,11 @@ rtf:	$T.rtf
 	docbook2rtf --dsl $(STYLE)/local.dsl#print $<
 
 install:
-	scp $T.html whitechuck:/var/www/html/soft/howto/html
-	scp $T.pdf  whitechuck:/var/www/html/soft/howto/pdf
+	scp $T.html $(WEB)
+	scp $T.pdf  $(WEB)
+	for i in $(PNG); do \
+	     scp $$i $(WEB); \
+	done
 
 clean:
 	rm -f $T.pdf $T.rtf $T.html
