@@ -3,7 +3,7 @@
 #include "NonmemTranslator.h"
 #include "explang.h"
 #include "../lower.h"
-#include "../factorial.h"
+#include "../series.h"
 
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOM.hpp>
@@ -601,7 +601,7 @@ int NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   else if( XMLString::equals( xml_omega_struct, X_BLOCK ) )
     {
       omega_structure = Symbol::TRIANGLE;
-      omegaElemNum = factorial( omegaDim );
+      omegaElemNum = series( 1, 1, omegaDim );
     }
   else
     assert( false );
@@ -663,7 +663,7 @@ int NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   else if( XMLString::equals( xml_sigma_struct, X_BLOCK ) )
     {
       sigma_structure = Symbol::TRIANGLE;
-      sigmaElemNum = factorial( sigmaDim );
+      sigmaElemNum = series( 1, 1, sigmaDim );
     }
   else
     assert( false );
@@ -969,7 +969,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   else if( XMLString::equals( xml_omega_struct, X_BLOCK ) )
     {
       omega_structure = Symbol::TRIANGLE;
-      omegaElemNum = factorial( omegaDim );
+      omegaElemNum = series( 1, 1, omegaDim );
     }
   else
     assert( false );

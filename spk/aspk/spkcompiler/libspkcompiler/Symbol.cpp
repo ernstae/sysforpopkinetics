@@ -1,16 +1,9 @@
 #include "Symbol.h"
+#include "series.h"
 #include <valarray>
 
 using namespace std;
 
-static int factorial( int n )
-{
-  assert( n >= 0 );
-  if( n == 0 )
-     return 0;
-  else
-     return n + factorial( n-1 );
-}
 static Symbol empty_ob;
 const Symbol* Symbol::empty()
 {
@@ -50,7 +43,7 @@ Symbol::Symbol( const string& nameIn,
 	 {
 	   if( structure == TRIANGLE )
 	     {
-	       len = factorial( dimension[i] );
+	       len = series( 1, 1, dimension[i] );
 	     }
 	   else if( structure == FULL )
 	     {
@@ -97,7 +90,7 @@ Symbol::Symbol( const Symbol& right )
 	 {
 	   if( structure == TRIANGLE )
 	     {
-	       len = factorial( dimension[i] );
+	       len = series( 1, 1, dimension[i] );
 	     }
 	   else if( structure == FULL )
 	     {
@@ -149,7 +142,7 @@ Symbol& Symbol::operator=( const Symbol& right )
 	 {
 	   if( structure == TRIANGLE )
 	     {
-	       len = factorial( dimension[i] );
+	       len = series( 1, 1, dimension[i] );
 	     }
 	   else if( structure == FULL )
 	     {
