@@ -310,6 +310,7 @@ INPUT                 += ../libspkcompiler/SpkMLToCpp.h
 INPUT                 += ../libspkcompiler/ClientTranslator.h
 INPUT                 += ../libspkcompiler/ExpNodeCarrier.h
 INPUT                 += ../libspkcompiler/ExpTreeGenerator.h
+INPUT                 += ../libspkcompiler/read_content.h
 INPUT                 += ../driver/compiler.cpp 
 INPUT                 += ../libspkcompiler/nonmem/NonmemTranslator.h
 #INPUT                += ../libspkcompiler/nonmem/lex.yy.c 
