@@ -8,6 +8,6 @@ AM_PROG_LEX(flex)
 AC_PROG_YACC(bison)
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
-AC_OUTPUT(Makefile spkcompiler/nonmem/Makefile spkcompiler/Makefile tests/Makefile tests/common/Makefile tests/nonmem/Makefile doc/Makefile)
+AC_OUTPUT(Makefile spkcompiler/nonmem/Makefile spkcompiler/Makefile tests/Makefile tests/common/Makefile tests/nonmem/Makefile doc/Makefile doc/common/Makefile doc/nonmem/Makefile)
 
 
