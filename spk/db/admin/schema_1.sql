@@ -61,6 +61,7 @@ CREATE TABLE history (
   event_time int(10) unsigned NOT NULL default '0',
   state_code char(3) NOT NULL default '',
   job_id int(10) unsigned NOT NULL default '0',
+  host varchar(100) NOT NULL default '',
   PRIMARY KEY  (history_id)
 ) TYPE=InnoDB;
 
