@@ -502,7 +502,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       xml_is_restart = pop_analysis->getAttribute( X_IS_RESTART );
       myIsRestart = ( XMLString::equals( xml_is_restart, X_YES )? true : false );
     }
-     
+
   //================================================================================
   // Required elements
   //================================================================================
@@ -561,7 +561,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
 	       XMLString::transcode( xml_theta_len ) );
       abort();
     }
-  Symbol * sym_theta = table->insertNMVector( "THETA", myThetaLen );
+  Symbol * sym_theta = table->insertNMVector( keyTHETA, myThetaLen );
   {
     //<in>
     DOMNodeList * theta_in_list = theta->getElementsByTagName( X_IN );
@@ -674,7 +674,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       myOmegaElemNum = series( 1, 1, myOmegaDim );
     }
 
-  Symbol * sym_omega = table->insertNMMatrix( "OMEGA", myOmegaStruct, myOmegaDim );
+  Symbol * sym_omega = table->insertNMMatrix( keyOMEGA, myOmegaStruct, myOmegaDim );
   {
     //<in>
     DOMNodeList * omega_in_list = omega->getElementsByTagName( X_IN );
@@ -737,7 +737,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       mySigmaElemNum = series( 1, 1, mySigmaDim );
     }
 
-  Symbol * sym_sigma = table->insertNMMatrix( "SIGMA", mySigmaStruct, mySigmaDim ); 
+  Symbol * sym_sigma = table->insertNMMatrix( keySIGMA, mySigmaStruct, mySigmaDim ); 
   {
     //<in>
     DOMNodeList * sigma_in_list = sigma->getElementsByTagName( X_IN );
@@ -781,7 +781,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   //-----------------------------------------------------------
   myEtaLen = myOmegaDim;
   char etaDefault[] = "0.0";
-  Symbol * sym_eta = table->insertNMVector( "ETA", myEtaLen );
+  Symbol * sym_eta = table->insertNMVector( keyETA, myEtaLen );
   sym_eta->initial[0] = etaDefault;
   sym_eta->fixed[0] = false;
 
@@ -791,7 +791,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   // the order of Sigma is the length of EPS vector.
   myEpsLen = mySigmaDim;
   char epsDefault[] = "0.0";
-  Symbol * sym_eps = table->insertNMVector( "EPS", myEpsLen );
+  Symbol * sym_eps = table->insertNMVector( keyEPS, myEpsLen );
   sym_eps->initial[0] = epsDefault;
   sym_eta->fixed[0] = false;
 
@@ -983,7 +983,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
 	       XMLString::transcode( xml_theta_len ) );
       abort();
     }
-  Symbol * sym_theta = table->insertNMVector( "THETA", myThetaLen );
+  Symbol * sym_theta = table->insertNMVector( keyTHETA, myThetaLen );
   {
     //<in>
     DOMNodeList * theta_in_list = theta->getElementsByTagName( X_IN );
@@ -1090,7 +1090,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   myOmegaStruct = Symbol::DIAGONAL;
   myOmegaElemNum = myOmegaDim;
 
-  Symbol * sym_omega = table->insertNMMatrix( "OMEGA", myOmegaStruct, myOmegaDim );
+  Symbol * sym_omega = table->insertNMMatrix( keyOMEGA, myOmegaStruct, myOmegaDim );
   {
     //<in>
     DOMNodeList * omega_in_list = omega->getElementsByTagName( X_IN );
@@ -1129,7 +1129,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   // Eta plays the same role as EPS as in the population analysis.
   // Variance of data?
   myEtaLen = myOmegaElemNum;
-  table->insertNMVector( "ETA", myEtaLen );
+  table->insertNMVector( keyETA, myEtaLen );
   
   //================================================================================
   // Optional elements
@@ -1781,6 +1781,14 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   oPred_h << "{" << endl;
   oPred_h << "   return pow( static_cast< CppAD::AD<double> >( x ), n );" << endl;
   oPred_h << "}" << endl;
+  oPred_h << "const CppAD::AD<double> pow( const CppAD::AD<double>& x, double n )" << endl;
+  oPred_h << "{" << endl;
+  oPred_h << "   return pow( x, CppAD::AD<double>( n ) );" << endl;
+  oPred_h << "}" << endl;
+  oPred_h << "const CppAD::AD<double> pow( double x, const CppAD::AD<double>& n )" << endl;
+  oPred_h << "{" << endl;
+  oPred_h << "   return pow( CppAD::AD<double>( x ), n );" << endl;
+  oPred_h << "}" << endl;
 
   oPred_h << endl;
   
@@ -2133,9 +2141,9 @@ void NonmemTranslator::generateIndDriver( ) const
   ofstream oDriver ( fDriver_cpp );
   assert( oDriver.good() );
 
-  const Symbol* pTheta = table->findi("theta");
-  const Symbol* pEta   = table->findi("eta");
-  const Symbol* pOmega = table->findi("omega");
+  const Symbol* pTheta = table->findi(keyTHETA);
+  const Symbol* pEta   = table->findi(keyETA);
+  const Symbol* pOmega = table->findi(keyOMEGA);
 
   oDriver << "#include <iostream>" << endl;
   oDriver << "#include <fstream>" << endl;
@@ -2220,17 +2228,17 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << endl;
   
   oDriver << "const bool isSimRequested = " << (myIsSimulate? "true":"false") << ";" << endl;
-  oDriver << "bool haveCompleteData = false;" << endl;
+  oDriver << "bool haveCompleteData = " << (myIsSimulate? "false":"true") << ";" << endl;
   if( myIsSimulate )
     oDriver << "const unsigned int seed = " << mySeed << ";" << endl;
   oDriver << endl;
 
   oDriver << "const bool isOptRequested = " << (myIsEstimate? "true":"false") << ";" << endl;
-  oDriver << "bool isOptSuccess  = false;" << endl;
+  oDriver << "bool isOptSuccess  = " << (myIsEstimate? "false":"true") << ";" << endl;
   oDriver << endl;
 
   oDriver << "const bool isStatRequested = " << (myIsStat? "true":"false") << ";" << endl;
-  oDriver << "bool isStatSuccess = false;" << endl;
+  oDriver << "bool isStatSuccess = " << (myIsStat? "false":"true") << ";" << endl;
   oDriver << endl;
 
   oDriver << "//////////////////////////////////////////////////////////////////////" << endl;
@@ -2840,10 +2848,10 @@ void NonmemTranslator::generatePopDriver() const
   ofstream oDriver ( fDriver_cpp );
   assert( oDriver.good() );
 
-  const Symbol* pTheta = table->findi("theta");
-  const Symbol* pOmega = table->findi("omega");
-  const Symbol* pSigma = table->findi("sigma");
-  const Symbol* pEta   = table->findi("eta");
+  const Symbol* pTheta = table->findi(keyTHETA);
+  const Symbol* pOmega = table->findi(keyOMEGA);
+  const Symbol* pSigma = table->findi(keySIGMA);
+  const Symbol* pEta   = table->findi(keyETA);
   
   oDriver << "#include <iostream>" << endl;
   oDriver << "#include <fstream>" << endl;
