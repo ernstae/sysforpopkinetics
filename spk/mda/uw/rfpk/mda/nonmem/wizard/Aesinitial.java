@@ -15,7 +15,7 @@ import java.awt.event.ActionEvent;
 
 /**
  * This class defines a step to create the $AESINITIAL record
- * @author  jiaji
+ * @author  jiaji Du
  */
 public class Aesinitial extends javax.swing.JPanel implements WizardStep {
     
@@ -88,11 +88,22 @@ public class Aesinitial extends javax.swing.JPanel implements WizardStep {
         jPanel1.add(jButton2, new java.awt.GridBagConstraints());
 
         jButton3.setText("Paste");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
         jPanel1.add(jButton3, new java.awt.GridBagConstraints());
 
         add(jPanel1, java.awt.BorderLayout.NORTH);
 
     }//GEN-END:initComponents
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        isValid = true;
+        wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jTextArea1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextArea1KeyTyped
         isValid = true;
@@ -145,10 +156,10 @@ public class Aesinitial extends javax.swing.JPanel implements WizardStep {
 	public void hidingStep(JWizardPane wizard){
             String record = jTextArea1.getText().trim();
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
-            if(!record.equals(""))
+            if(!record.equals("") && !Utility.checkTag(record, "AESINITIAL code"))
             {
                 object.getRecords().setProperty("Aesinitial", "$AESINITIAL \n" + record);
-                object.getControl().aesinitial = "\n" + record + "\n";
+                object.getSource().aesinitial = "\n" + record + "\n";
             }
 	}
 

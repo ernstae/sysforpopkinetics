@@ -15,7 +15,7 @@ import java.io.*;
 
 /**
  * This class defines static functions used by steps
- * @author  jiaji
+ * @author  jiaji Du
  */
 public class Utility {
     
@@ -53,10 +53,29 @@ public class Utility {
         int m = 0, n = 0;
         for(int i = 1; i < strs.length; i++)
         {   
-            int startingIndex = strs[i].indexOf("(");
-            int endingIndex = strs[i].indexOf(")");
-            if(startingIndex != -1 && endingIndex != -1)
-                m = Integer.parseInt(strs[i].substring(startingIndex + 1, endingIndex).trim());
+            String str = strs[i].trim();
+            int endIndex = str.length();
+            if(str.startsWith("("))
+            {
+                str = str.substring(1).trim();
+                if(str.indexOf(")") != -1)
+                    endIndex = str.indexOf(")");
+                else
+                    return 0;
+            }
+            else
+            {
+                for(int j = 0; j < str.length(); j++)
+                    if(!Character.isDigit(str.charAt(j)))
+                    {
+                        endIndex = j;
+                        break;
+                    }
+            }
+            if(endIndex > 0 && isPosIntNumber(str.substring(0, endIndex).trim()))
+                m = Integer.parseInt(str.substring(0, endIndex).trim());
+            else
+                return 0;
             if(m > n) n = m;
         }      
         return n;
@@ -178,7 +197,7 @@ public class Utility {
     }
     
     /** Determine if a character sting represents an integer number
-     * @param s A String object containing the the character string 
+     * @param s A String object containing the character string 
      * @return A boolean, true for the string is an integer number,
      * false for otherwise
      */    
@@ -201,8 +220,17 @@ public class Utility {
             return false;
         return true;
     }
-    
-    public static int parseData(String filename, Vector data)
+
+    /** Parse the data file and put the data in a Vector object
+     * @param filename A String object containing the data file name
+     * @param data A Vector in which each contained object is also a Vector that
+     * contains the data of one individual.  The individual data vector contains 
+     * String arrays.  The number of arrays is the number of the data records 
+     * for the individual.  Each array contains data items of number of columns
+     * @param isInd A boolean true for individual analysis, false for population analysis
+     * @return A int value that is the number of data columns in the data file
+     */        
+    public static int parseData(String filename, Vector data, boolean isInd)
     {
         Vector indData = new Vector();
         int nTokens = 0;
@@ -221,10 +249,14 @@ public class Utility {
             String[] firstLineTokens = new String[nTokens];
             for(int i = 0; i < nTokens; i++)
                 firstLineTokens[i] = lineToken.nextToken();
-
-            // The first token of the first line is the individual ID
-            String firstToken = firstLineTokens[0];
-          
+            
+            String firstToken = null;
+            if(!isInd)
+            {
+                // The first token of the first line is the individual ID
+                firstToken = firstLineTokens[0];
+            }
+            
             // Add the String[] containing the first line tokens in Vector indData     
             indData.add(firstLineTokens);
 
@@ -251,27 +283,35 @@ public class Utility {
                     for(int i = 0; i < nTokens; i++)
                         tokens[i] = lineToken.nextToken();
 
-                    // If the individual ID is the same as the previous line
-                    if(tokens[0].equals(firstToken))
+                    if(isInd)
                     {
                         // Add the line of tokens to the Vector indData
-                        indData.add(tokens);
-		    }
-                    // Otherwise
+                        indData.add(tokens);                         
+                    }
                     else
-		    {
-                        // Add the Vector indData to Vector data
-                        data.add(indData);
+                    {
+                        // If the individual ID is the same as the previous line
+                        if(tokens[0].equals(firstToken))
+                        {
+                            // Add the line of tokens to the Vector indData
+                            indData.add(tokens);
+		        }
+                        // Otherwise
+                        else
+		        {
+                            // Add the Vector indData to Vector data
+                            data.add(indData);
 
-                        // Create a new Vector indData for the new individual
-                        indData = new Vector();
+                            // Create a new Vector indData for the new individual
+                            indData = new Vector();
 
-                        // Add the line of tokens to the new indData
-                        indData.add(tokens);
+                            // Add the line of tokens to the new indData
+                            indData.add(tokens);
 
-                        // Update the first token that is the individual ID
-                        firstToken = tokens[0];           
-		    }                      
+                            // Update the first token that is the individual ID
+                            firstToken = tokens[0];           
+		        }     
+                    }
 		}
             }
             in.close();
@@ -284,7 +324,7 @@ public class Utility {
         }
 
         return nTokens;
-    }
+    }    
     
     /** Get a help document
      * @param name A String object containing the name of the help document
@@ -316,4 +356,77 @@ public class Utility {
         } 
         return buffer.toString();
     }     
+    
+    /** Determine if a character sting includes character '<' or '>'.
+     * @param text A String object containing the character string to be checked
+     * @param name A String object containing the character string as the name
+     * @return A boolean, true for the string includes the character,
+     * false for otherwise
+     */    
+    public static boolean checkTag(String text, String name)
+    {
+        if(text.indexOf("<") != -1)
+        {
+            JOptionPane.showMessageDialog(null, name + " may not include '<'",  
+                                          "Input Error",               
+                                          JOptionPane.ERROR_MESSAGE);
+            return true;
+        }                
+        else if(text.indexOf(">") != -1)
+        {
+            JOptionPane.showMessageDialog(null, name + " may not include '>'",  
+                                          "Input Error",               
+                                          JOptionPane.ERROR_MESSAGE);
+            return true;
+        }
+        return false;
+    }
+
+    /** Determine if a character sting is a name of a standard data item
+     * @param s A String object containing the the character string 
+     * @return A boolean, true for it is a name of a standard data item,
+     * false for otherwise
+     */      
+    public static boolean isStdItem(String item)
+    {
+        String[] stdItems = new String[] { "DV", "MDV", "EVID", "TIME", "DATE", 
+                                           "DATE1", "DATE2", "DATE3", "AMT", "RATE", "SS", 
+                                           "ADDL", "II", "ABS", "LAG", "UPPER", "LOWER", "L1", 
+                                           "L2", "CMT", "PCMT", "CALL", "CONT" }; 
+        for(int i = 0; i < stdItems.length; i++)
+            if(stdItems[i].equals(item))
+                return true;
+        return false;    
+    }
+    
+    /** This function format the XML file for better deadability
+     * @return A String object as the formated file content
+     * @param text
+     */    
+    public static String formatXML(String text)
+    {
+        StringBuffer buffer = new StringBuffer();
+        int length = text.length();
+        char pre = 'p';
+        String indent = "\n";
+        for(int i = 0; i < length; i++)
+	{
+            char c = text.charAt(i);
+	    if(c == '<' && pre == '>' )
+            {
+                if(text.charAt(i + 1) != '/')
+                    indent += "   ";
+                buffer.append(indent); 
+            }
+            if(c == '/')
+                if(pre == '<' || text.charAt(i + 1) == '>') 
+                    if(indent.length() >= 3)
+                        indent = indent.substring(0, indent.length() - 3);
+            buffer.append(c);  
+            if(c == '\n' && pre != '>' && text.charAt(i + 1) == '<')
+                buffer.append(indent.substring(1));
+            pre = c;
+	}
+        return buffer.toString();
+    }    
 }

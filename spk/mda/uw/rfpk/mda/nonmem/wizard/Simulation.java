@@ -15,7 +15,7 @@ import java.awt.event.ActionEvent;
 
 /**
  * This class defines a step to create the $SIMULATION record
- * @author  jiaji
+ * @author  jiaji Du
  */
 public class Simulation extends javax.swing.JPanel implements WizardStep {
     
@@ -194,7 +194,7 @@ public class Simulation extends javax.swing.JPanel implements WizardStep {
             String record = jTextArea1.getText();
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             object.getRecords().setProperty("Simulation", record);
-            object.getControl().simulation = record.substring(record.indexOf("(") + 1,
+            object.getSource().simulation = record.substring(record.indexOf("(") + 1,
                                                               record.indexOf(")"));
 	}
 

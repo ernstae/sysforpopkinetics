@@ -47,6 +47,7 @@ using namespace CppUnit;
 
 void AkronItimesCTest::setUp()
 {
+  /*
     _rows.push_back(0); _cols.push_back(0);
     _rows.push_back(0); _cols.push_back(1);
     _rows.push_back(1); _cols.push_back(0);
@@ -55,7 +56,7 @@ void AkronItimesCTest::setUp()
     _rows.push_back(3); _cols.push_back(1);
     _rows.push_back(3); _cols.push_back(3);
     _n = _rows.size();
-
+  */
 }
 void AkronItimesCTest::tearDown()
 {
@@ -67,7 +68,8 @@ Test* AkronItimesCTest::suite()
   TestSuite *suiteOfTests = new TestSuite("AkronItimesCTest");;
 
   // duplicate the following example for each test case, replacing the case name.
-  suiteOfTests->addTest(new TestCaller<AkronItimesCTest>(
+  
+    suiteOfTests->addTest(new TestCaller<AkronItimesCTest>(
 		       "testAkronItimesCVal", 
 		       &AkronItimesCTest::testAkronItimesCVal));
     suiteOfTests->addTest(new TestCaller<AkronItimesCTest>(

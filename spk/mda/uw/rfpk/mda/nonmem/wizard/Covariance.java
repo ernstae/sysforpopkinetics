@@ -14,7 +14,7 @@ import java.awt.event.ActionEvent;
 
 /**
  * This class defines a step to create the $COVARIANCE record
- * @author  jiaji
+ * @author  jiaji Du
  */
 public class Covariance extends javax.swing.JPanel implements WizardStep {
     
@@ -202,11 +202,11 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
             object.getRecords().setProperty("Covariance", record);
             // Find method
             if(record.equals("$COVARIANCE MATRIX=R"))
-                object.getControl().covariance = "r";
+                object.getSource().covariance = "r";
             else if(record.equals("$COVARIANCE MATRIX=S"))
-                object.getControl().covariance = "s";
+                object.getSource().covariance = "s";
             else
-                object.getControl().covariance = "rsr";
+                object.getSource().covariance = "rsr";
 	}
 
 	public boolean isValid(){

@@ -15,7 +15,7 @@ import java.awt.event.ActionEvent;
 
 /**
  * This class defines a step to create the $PK record
- * @author  jiaji
+ * @author  jiaji Du
  */
 public class PK extends javax.swing.JPanel implements WizardStep {
     
@@ -80,8 +80,8 @@ public class PK extends javax.swing.JPanel implements WizardStep {
         jTextPane1.setEditable(false);
         jTextPane1.setText("Enter your PK program for $PK.");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 57);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 57);
         jPanel1.add(jTextPane1, gridBagConstraints);
 
         jButton1.setText("Cut");
@@ -93,11 +93,22 @@ public class PK extends javax.swing.JPanel implements WizardStep {
         jPanel1.add(jButton2, new java.awt.GridBagConstraints());
 
         jButton3.setText("Paste");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
         jPanel1.add(jButton3, new java.awt.GridBagConstraints());
 
         add(jPanel1, java.awt.BorderLayout.NORTH);
 
     }//GEN-END:initComponents
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        isValid = true;
+        wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jTextArea1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextArea1KeyTyped
         isValid = true;
@@ -152,10 +163,10 @@ public class PK extends javax.swing.JPanel implements WizardStep {
 	public void hidingStep(JWizardPane wizard){
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             String record = jTextArea1.getText().trim(); 
-            if(!record.equals(""))
+            if(!record.equals("") && !Utility.checkTag(record, "PK code"))
             {
                 object.getRecords().setProperty("PK", "$PK \n" + record);
-                object.getControl().pk = "\n" + record + "\n";
+                object.getSource().pk = "\n" + record + "\n";
                 // Eliminate comments
                 record = Utility.eliminateComments(record); 
                 // Find number of THETAs

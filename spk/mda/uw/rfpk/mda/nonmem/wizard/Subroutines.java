@@ -14,7 +14,7 @@ import java.awt.event.ActionEvent;
 
 /**
  * This class defines a step to create the $SUBROUTINES record
- * @author  jiaji
+ * @author  jiaji Du
  */
 public class Subroutines extends javax.swing.JPanel implements WizardStep {
     
@@ -317,7 +317,7 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
             {
                 subroutines[2] = null;
             }
-            object.getControl().subroutines = subroutines;
+            object.getSource().subroutines = subroutines;
 	}
 
 	public boolean isValid(){

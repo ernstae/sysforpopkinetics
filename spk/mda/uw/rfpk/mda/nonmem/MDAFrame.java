@@ -2,21 +2,24 @@ package uw.rfpk.mda.nonmem;
 
 import javax.swing.*;
 import javax.swing.text.DefaultEditorKit;  
+import javax.print.*;
+import javax.print.attribute.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.Properties;
 import java.awt.print.*;
 import java.awt.font.*;
-import java.security.*;
-import javax.crypto.*;
+import java.text.DecimalFormat;
 import org.netbeans.ui.wizard.*;
-import uw.rfpk.mda.nonmem.wizard.*; 
+import uw.rfpk.mda.nonmem.wizard.*;
+import uw.rfpk.mda.nonmem.display.*;
 
 /**
  * This class creates a window that includes a menu bar and a text area.  The menu bar has two
  * menus, File menu and Operation menu.  The File menu includes Open, Close, Save, Save As,
- * Page Setup and Print menu items.  The Operation menu includes Transmit and Receive menu items.
+ * Page Setup and Print menu items.  The Operation menu includes Cretae Input File Transmit File 
+ * and Receive File menu items.
  * @author Jiaji Du
  * @version 1.0 
  */                                 
@@ -31,445 +34,1051 @@ public class MDAFrame extends JFrame
         if(args.length != 0)
       	{
             sessionId = args[0];                      // Set the session ID
-
-            // Generate the secret key of the session
-            try
-	    {
-                byte[] bytes = new byte[16];
-                for(int i = 0; i <16; i++)
-	        {
-                    bytes[i] = 0x0;
-                    int m = 0x80;
-                    for(int j = 0; j < 8; j++)
-		    {
-                        if(args[1].charAt(i * 8 + j) == '1')
-                            bytes[i] = (byte)(bytes[i] | m);
-                         m = m >> 1; 
-                    }
-                }
-
-                KeyGenerator keygen = KeyGenerator.getInstance("Blowfish", "SunJCE");
-                SecureRandom random = new SecureRandom(bytes);
-                keygen.init(128, random);
-                key = keygen.generateKey();
-            }
-            catch(GeneralSecurityException gse)
-	    {
-                System.err.println(gse);
-                JOptionPane.showMessageDialog(null, "Error generating key",  // Display generating key 
-                                                      "Security Error",      // error message
-                                                      JOptionPane.ERROR_MESSAGE);	        
-            }   
+            secret = args[1];                         // Set the secret code
         }
-        setTitle(title);                              // Set the window title
-        setJMenuBar(menuBar);                         // Add the menu bar to the window
-
-        JMenu fileMenu = new JMenu("File");           // Create File menu
-        JMenu editMenu = new JMenu("Edit");           // Cretae Edit menu
-        JMenu operationMenu = new JMenu("Operation"); // Create Operation menu
-
-        // Create action items for the file menu
-        openAction = new FileAction("Open", KeyStroke.getKeyStroke('O',Event.CTRL_MASK ));
-        closeAction = new FileAction("Close");
-        saveAction = new FileAction("Save", KeyStroke.getKeyStroke('S',Event.CTRL_MASK ));
-        saveAsAction = new FileAction("Save As...");
-        pageSetupAction = new FileAction("PageSetup");
-        printAction = new FileAction("Print", KeyStroke.getKeyStroke('P',Event.CTRL_MASK ));
-        exitAction = new FileAction("Exit", KeyStroke.getKeyStroke('E',Event.CTRL_MASK ));
-
-        // Create action items for the operation menu
-        createAction = new OperationAction("Create Input File", KeyStroke.getKeyStroke('C',Event.CTRL_MASK ));
-        transmitAction = new OperationAction("Transmit File", KeyStroke.getKeyStroke('T',Event.CTRL_MASK ));
-        receiveAction = new OperationAction("Receive File", KeyStroke.getKeyStroke('R',Event.CTRL_MASK ));
-
-        // Construct the file pull down menu
-        addMenuItem(fileMenu, openAction);
-        addMenuItem(fileMenu, closeAction);
-        fileMenu.addSeparator();
-        addMenuItem(fileMenu, saveAction);
-        addMenuItem(fileMenu, saveAsAction);
-        fileMenu.addSeparator();
-        addMenuItem(fileMenu, pageSetupAction);
-        addMenuItem(fileMenu, printAction);
-        fileMenu.addSeparator();
-        addMenuItem(fileMenu, exitAction);
-
-        menuBar.add(fileMenu);                        // Add the file menu
-        menuBar.add(editMenu);
-        menuBar.add(operationMenu);                   // Add the operation menu
-        enableEvents(AWTEvent.WINDOW_EVENT_MASK);     // Enable window events
-
-        // Add the test area
-        textArea.setFont(textFont);
-        JScrollPane scrollPane = new JScrollPane(textArea);
-        getContentPane().add(scrollPane);
 //        if(args.length != 0)
-//            textArea.setText(sessionId + "\n" + args[1]);
-
-        // Construct the operation pull down menu
-        addMenuItem(operationMenu, createAction);
-        addMenuItem(operationMenu, transmitAction);
-        addMenuItem(operationMenu, receiveAction);
-        
-        JMenuItem cut = new JMenuItem("Cut");
-        JMenuItem copy = new JMenuItem("Copy");
-        JMenuItem paste = new JMenuItem("Paste");        
-        cut.addActionListener(new DefaultEditorKit.CutAction());  
-        copy.addActionListener(new DefaultEditorKit.CopyAction());  
-        paste.addActionListener(new DefaultEditorKit.PasteAction()); 
-        cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, ActionEvent.ALT_MASK));
-        copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.ALT_MASK));
-        paste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.ALT_MASK));        
-        editMenu.add(cut);
-        editMenu.add(copy);
-        editMenu.add(paste);
-        
+//            textArea.setText(sessionId + "\n" + secret);
+        setTitle(title);                              // Set the window title
+        initComponents();
+        cutMenu.addActionListener(new DefaultEditorKit.CutAction());  
+        copyMenu.addActionListener(new DefaultEditorKit.CopyAction());  
+        pasteMenu.addActionListener(new DefaultEditorKit.PasteAction()); 
         if(sessionId == null)
 	{
-            transmitAction.setEnabled(false);
-            receiveAction.setEnabled(false);
+            transmitFileMenu.setEnabled(false);
+            receiveFileMenu.setEnabled(false);
         }
-    }
-
-    /**
-     * Handles window events.
-     * @param e the WindowEvent object to handle.
-     */
-    protected void processWindowEvent(WindowEvent e) 
-    {
-        if (e.getID() == WindowEvent.WINDOW_CLOSING)
-        {
-            dispose();                    // Release resources
-            System.exit(0);               // Exit the program
-        }
-        super.processWindowEvent(e);      // Pass on the event
     }
     
-    // Helper method to add menu items.
-    private JMenuItem addMenuItem(JMenu menu, Action action)
-    {
-        JMenuItem item = menu.add(action);           // Add the menu item
-      
-        KeyStroke keyStroke = (KeyStroke)action.getValue(action.ACCELERATOR_KEY);
-        if(keyStroke != null )
-	    item.setAccelerator(keyStroke);
-        return item;
-    }  
+    /** This method is called from within the constructor to
+     * initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is
+     * always regenerated by the Form Editor.
+     */
+    private void initComponents() {//GEN-BEGIN:initComponents
+        java.awt.GridBagConstraints gridBagConstraints;
 
-    // FileAction inner class
-    class FileAction extends AbstractAction
-    {
-        // Constructor with one argument.
-        FileAction(String name)
-        { 
-            super(name);
-        }
+        jDialog1 = new javax.swing.JDialog();
+        jRadioButton1 = new javax.swing.JRadioButton();
+        jRadioButton2 = new javax.swing.JRadioButton();
+        jRadioButton3 = new javax.swing.JRadioButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
+        jTextField2 = new javax.swing.JTextField();
+        jTextField3 = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        errorMessageDialog = new javax.swing.JDialog();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        textArea = new javax.swing.JTextArea();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        openMenu = new javax.swing.JMenuItem();
+        closeMenu = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JSeparator();
+        saveMenu = new javax.swing.JMenuItem();
+        savaAsMenu = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JSeparator();
+        printMenu = new javax.swing.JMenuItem();
+        jSeparator3 = new javax.swing.JSeparator();
+        exitMenu = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        cutMenu = new javax.swing.JMenuItem();
+        copyMenu = new javax.swing.JMenuItem();
+        pasteMenu = new javax.swing.JMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        createInputFileMenu = new javax.swing.JMenuItem();
+        transmitFileMenu = new javax.swing.JMenuItem();
+        receiveFileMenu = new javax.swing.JMenuItem();
+        processOutputFileMenu = new javax.swing.JMenuItem();
+        jMenu4 = new javax.swing.JMenu();
+        errorMenu = new javax.swing.JMenuItem();
+        objectiveMenu = new javax.swing.JMenuItem();
+        parameterMenu = new javax.swing.JMenu();
+        ThetaMenu = new javax.swing.JMenuItem();
+        OmegaMenu = new javax.swing.JMenuItem();
+        SigmaMenu = new javax.swing.JMenuItem();
+        statisticsMenu = new javax.swing.JMenu();
+        stdErrorMenu = new javax.swing.JMenu();
+        stdErrThetaMenu = new javax.swing.JMenuItem();
+        stdErrOmegaMenu = new javax.swing.JMenuItem();
+        stdErrSigmaMenu = new javax.swing.JMenuItem();
+        covarianceMenu = new javax.swing.JMenuItem();
+        correlationMenu = new javax.swing.JMenuItem();
+        invCovarianceMenu = new javax.swing.JMenuItem();
+        tableMenu = new javax.swing.JMenuItem();
+        plotMenu = new javax.swing.JMenuItem();
+        jMenu5 = new javax.swing.JMenu();
+        aboutMDAMenu = new javax.swing.JMenuItem();
+        instructionMenu = new javax.swing.JMenuItem();
 
-        // Constructor with two arguments.
-        FileAction(String name, KeyStroke keystroke)
-        {
-            this(name);
-            if(keystroke != null )
-                putValue(ACCELERATOR_KEY, keystroke);
-        }
- 
-        // Event handler for FileAction.
-        public void actionPerformed(ActionEvent e)
-        {
-            String name = (String)getValue(NAME);
+        jDialog1.getContentPane().setLayout(new java.awt.GridBagLayout());
 
-            if(name.equals(saveAsAction.getValue(NAME)))     // Handle Save As
-	    {
-                int result = files.showSaveDialog(null);
-                if(result == files.APPROVE_OPTION)
-		{
-                    file = files.getSelectedFile();
-                    saveOperation();
-                }
-	    }
-            else if(name.equals(saveAction.getValue(NAME)))  // Handle Save
-	    {
-		if(file != null)
-		{
-                    saveOperation();
-		}
-                else
-		{
-                    int result = files.showSaveDialog(null);
-                    if(result == files.APPROVE_OPTION)
-		    {
-                        file = files.getSelectedFile();
-                        saveOperation();
-                    }
-                }
-	    }
-            else if(name.equals(openAction.getValue(NAME)))  // Handle Open
-	    {
-                int result = files.showOpenDialog(null);
-                if(result == files.APPROVE_OPTION)
-		{
-                    file = files.getSelectedFile();
-                    try
-	            {
-                        BufferedReader in = new BufferedReader(new FileReader(file));
-                        StringBuffer buffer = new StringBuffer();
-                        boolean done = false;
-                        while(!done)
-                        {
-                            // Read a line
-                            String line = in.readLine();                            
-                            if(line == null) 
-                                done = true;
-                            else
-                                buffer.append(line).append("\n");
-		        }
-                        textArea.setText(buffer.toString());
-                        in.close();
-                    }
-                    catch(IOException ioe )
-		    {
-                        System.err.println(ioe);
-                        JOptionPane.showMessageDialog(null, "Error opening file",  // Display opening file 
-                                                      "File Error",                // error message
-                                                      JOptionPane.ERROR_MESSAGE);
-                    }
-		}
-	    }
-            else if(name.equals(closeAction.getValue(NAME)))  // Handle Close
-	    {
-                textArea.setText("");
-                file = null;
-	    }
-            else if(name.equals(pageSetupAction.getValue(NAME)))// Handle Page Setup
-	    {
-                Printable printer = new Printer();
-
-                // Get a PrinterJob object
-                PrinterJob printJob = PrinterJob.getPrinterJob();
-
-                // Get default PageFormat object
-                PageFormat pageFormat = printJob.defaultPage();
-
-                // Show page setup dialog
-                pageFormat = printJob.pageDialog(pageFormat);
-               
-                // Print using the user page format settings
-                printJob.setPrintable(printer, pageFormat);
-
-                try
-		{
-                    printJob.print();
-                }
-                catch(PrinterException pe)
-		{
-                    System.out.println(pe);
-                    JOptionPane.showMessageDialog(null, "Error printing",     // Display printing
-                                                  "Printer Error",            // error message
-                                                  JOptionPane.ERROR_MESSAGE);
-                }
-	    }
-            else if(name.equals(printAction.getValue(NAME)))  // Handle Print
-	    {
-                Printable printer = new Printer();
-			
-		// Get a PrinterJob object
-                PrinterJob printJob = PrinterJob.getPrinterJob();
-
-                // Display print dialog,if user return OK, setPrintable and print
-                if (printJob.printDialog()) 
-                {
-                    printJob.setPrintable(printer);
-                    try
-		    {
-                        printJob.print();
-                    }
-                    catch(PrinterException pe)
-		    {
-                        System.out.println(pe);
-                        JOptionPane.showMessageDialog(null, "Error printing",     // Display printing 
-                                                      "Printer Error",            // error message
-                                                      JOptionPane.ERROR_MESSAGE);
-                    }
-                }      
-	    }
-            else if(name.equals(exitAction.getValue(NAME)))  // Handle Exit
-	    {
-                dispose();
-	    }
-        }
-    }
-
-    // OperationAction inner class.
-    class OperationAction extends AbstractAction
-    {
-        // Constructor with one argument.
-        OperationAction(String name)
-        { 
-            super(name);
-        }
-
-        // Constructor with two arguments.
-        OperationAction(String name, KeyStroke keystroke)
-        {
-            this(name);
-            if(keystroke != null )
-                putValue(ACCELERATOR_KEY, keystroke);
-        }
-
-        // Event handler for OperationAction.
-        public void actionPerformed(ActionEvent e)
-        {
-            String name = (String)getValue(NAME);
-            if(name.equals(createAction.getValue(NAME)))  // Handle Create
-	    {
-                String[] names = {"Problem", "Data", "Input", "Pred", "Subroutines", "Aes", 
-                                  "Aesinitial", "Model", "PK", "Theta", "Omega", "Des", 
-                                  "Error", "Sigma", "Estimation", "Covariance", "TableEst", 
-                                  "ScatterPlotEst", "Simulation", "TableSim", "ScatterPlotSim"};   
-                MDAObject object = new MDAObject();
-                for(int i = 0; i < 21; i++)
-                    object.getRecords().setProperty(names[i], ""); 
-                
-                JWizardPane wp = new JWizardPane(new MDAIterator(), object); 
-                wp.getContentPanel().setBackground(new Color(240, 245, 255));   
-                wp.setContentImage((new javax.swing.ImageIcon(getClass().getResource("/uw/rfpk/mda/nonmem/wizard/nonmem-spk.gif"))).getImage()); 
-                wp.createDialog(null , "MDA - Control File Generation Wizard").show();
-             
-                if(wp.getCustomizedObject() == null)
-                    return;
-                object = (MDAObject)wp.getCustomizedObject();
-                Properties records = object.getRecords();
-                String control = "";
-                for(int i = 0; i < 21; i++)
-                {
-                    if(!records.getProperty(names[i]).equals("")) 
-                        control = control + records.getProperty(names[i]) + "\n"; 
-                } 
-                
-                if(JOptionPane.showConfirmDialog(null, 
-                                                 "Do you want to save the NONMEM control file?",   
-                                                 "Question Dialog",
-                                                 JOptionPane.YES_NO_OPTION,
-                                                 JOptionPane.QUESTION_MESSAGE) == 0)
-                {
-                    files.setDialogTitle("Save NONMEM Control File");
-                    files.setSelectedFile(new File("control.txt")); 
-                    int result = files.showSaveDialog(null);
-                    if(result == files.APPROVE_OPTION)
-		    {
-                        file = files.getSelectedFile();
-                        try
-                        {
-                            BufferedWriter out = new BufferedWriter(new FileWriter(file));
-                            out.write(control);
-                            out.close();
-                        }
-                        catch(IOException ioe )
-                        {
-                            System.err.println(ioe);
-                            JOptionPane.showMessageDialog(null, "Error saving file",  // Display saving file
-                                                          "File Error",               // error message
-                                                          JOptionPane.ERROR_MESSAGE);
-                        }
-                    }   
-                }
-                
-                if(JOptionPane.showConfirmDialog(null, 
-                                                 "Do you want to save the SPK input file?",   
-                                                 "Question Dialog",
-                                                 JOptionPane.YES_NO_OPTION,
-                                                 JOptionPane.QUESTION_MESSAGE) == 0)
-                {
-                    XMLWriter writer = new XMLWriter(object.getControl(), object.getData()); 
-                    writer.setGeneral();
-                    writer.setDriver();
-                    writer.setModel();
-                    writer.setData();
-                    writer.setPresentation(); 
-                    files.setDialogTitle("Save SPK Input File");
-                    files.setSelectedFile(new File("input.txt"));                    
-                    int result = files.showSaveDialog(null); 
-                    if(result == files.APPROVE_OPTION)
-		    {
-                        file = files.getSelectedFile();
-                        writer.save(file.getPath());
-                    }
-                    textArea.setText(writer.getDocument());
-                }
+        jDialog1.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        jDialog1.setTitle("Model Information Dialog");
+        jDialog1.setLocationRelativeTo(this);
+        jDialog1.setModal(true);
+        jRadioButton1.setSelected(true);
+        jRadioButton1.setText("New Model ( NONMEM Control File )");
+        buttonGroup1.add(jRadioButton1);
+        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton1ActionPerformed(evt);
             }
-            if(name.equals(transmitAction.getValue(NAME)))  // Handle Transmit
-	    {
-                String fileName = JOptionPane.showInputDialog("Enter file name to transmit"); // Get filename 
-                                                                                              // from the user
-                if(fileName == null)
-                    return;
-                else if(fileName.equals(""))
-		{
-                    JOptionPane.showMessageDialog(null, "The file needs a name.",  // Display file name 
-                                                  "File Name Error",               // error message
-                                                  JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                try
-		{
-                    Network network = new Network("http://rose.rfpk.washington.edu:8080/spk/servlet/uw.rfpk.servlets.ReceiveFile",
-                                                  sessionId, key);
+        });
 
-                    String[] messages = new String[2];
-                    messages[0] = fileName;
-                    messages[1] = textArea.getText();
-                    messages = network.talk(messages, 1);
-                 
-                    if(messages[0] != "")
-                        JOptionPane.showMessageDialog(null, messages[0],                // Display the message 
-                                                      "Message from the server",        
-                                                      JOptionPane.INFORMATION_MESSAGE); 
-                }
-                catch(Exception ex)
-	        {
-                    JOptionPane.showMessageDialog(null, "Error transmitting " + ex,  // Display transmitting 
-                                                  "Network Error",             // error message
-                                                  JOptionPane.ERROR_MESSAGE);
-                }
-	    }
-            else if(name.equals(receiveAction.getValue(NAME)))  // Handle Receive
-	    {
-                String fileName = JOptionPane.showInputDialog("Enter file name to receive");  // Get filename
-                                                                                              // from the user
-                if(fileName == null)
-                    return;
-                else if(fileName.equals(""))
-		{
-                    JOptionPane.showMessageDialog(null, "The file needs a name.",  // Display file name 
-                                                  "File Name Error",               // error message
-                                                  JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                try
-		{
-                    Network network = new Network("http://rose.rfpk.washington.edu:8080/spk/servlet/uw.rfpk.servlets.TransmitFile",
-                                                  sessionId, key); 
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 0, 12);
+        jDialog1.getContentPane().add(jRadioButton1, gridBagConstraints);
 
-                    String[] messages = new String[1];
-                    messages[0] = fileName;
-                    messages = network.talk(messages, 2);
-                    if(messages[0] != "")                                           // Disply the file content
-                        textArea.setText(messages[0]);                               
-                                                                                    
-                    if(messages[1] != "")
-                        JOptionPane.showMessageDialog(null, messages[1],            // display the message 
-                                                      "Message from the server",   
-                                                      JOptionPane.INFORMATION_MESSAGE);
-                }
-                catch(Exception ex)
-	        {
-                    JOptionPane.showMessageDialog(null, "Error receiving " + ex,    // Display receiving 
-                                                  "Network Error",            // error message
-                                                  JOptionPane.ERROR_MESSAGE);
-                }
-	    } 
+        jRadioButton2.setText("New Version of An Existing Model");
+        buttonGroup1.add(jRadioButton2);
+        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton2ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
+        jDialog1.getContentPane().add(jRadioButton2, gridBagConstraints);
+
+        jRadioButton3.setText("Existing Version of An Existing Model");
+        buttonGroup1.add(jRadioButton3);
+        jRadioButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton3ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 11, 12);
+        jDialog1.getContentPane().add(jRadioButton3, gridBagConstraints);
+
+        jLabel1.setText("Model Name ( <= 20 characters )");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
+        jDialog1.getContentPane().add(jLabel1, gridBagConstraints);
+
+        jLabel2.setText("Short Description ( <= 100 characters )");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
+        jDialog1.getContentPane().add(jLabel2, gridBagConstraints);
+
+        jLabel3.setText("Version Code ( <= 10 characters ) ");
+        jLabel3.setEnabled(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
+        jDialog1.getContentPane().add(jLabel3, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 6, 12);
+        jDialog1.getContentPane().add(jTextField1, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 6, 12);
+        jDialog1.getContentPane().add(jTextField2, gridBagConstraints);
+
+        jTextField3.setEnabled(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 3, 12);
+        jDialog1.getContentPane().add(jTextField3, gridBagConstraints);
+
+        jButton1.setText("OK");
+        jButton1.setMaximumSize(new java.awt.Dimension(75, 25));
+        jButton1.setMinimumSize(new java.awt.Dimension(75, 25));
+        jButton1.setPreferredSize(new java.awt.Dimension(75, 25));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.insets = new java.awt.Insets(12, 39, 12, 19);
+        jDialog1.getContentPane().add(jButton1, gridBagConstraints);
+
+        jButton2.setText("Cancel");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.insets = new java.awt.Insets(12, 31, 12, 31);
+        jDialog1.getContentPane().add(jButton2, gridBagConstraints);
+
+        errorMessageDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        errorMessageDialog.setTitle("Error Message");
+        jTextArea1.setEditable(false);
+        jTextArea1.setFont(new java.awt.Font("Courier 10 Pitch", 0, 12));
+        jScrollPane2.setViewportView(jTextArea1);
+
+        errorMessageDialog.getContentPane().add(jScrollPane2, java.awt.BorderLayout.CENTER);
+
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                exitForm(evt);
+            }
+        });
+
+        textArea.setFont(new java.awt.Font("Courier", 0, 12));
+        jScrollPane1.setViewportView(textArea);
+
+        getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        jMenu1.setText("File");
+        openMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        openMenu.setMnemonic('o');
+        openMenu.setText("Open");
+        openMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openMenuActionPerformed(evt);
+            }
+        });
+
+        jMenu1.add(openMenu);
+
+        closeMenu.setMnemonic('c');
+        closeMenu.setText("Close");
+        closeMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                closeMenuActionPerformed(evt);
+            }
+        });
+
+        jMenu1.add(closeMenu);
+
+        jMenu1.add(jSeparator1);
+
+        saveMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        saveMenu.setMnemonic('s');
+        saveMenu.setText("Save");
+        saveMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveMenuActionPerformed(evt);
+            }
+        });
+
+        jMenu1.add(saveMenu);
+
+        savaAsMenu.setMnemonic('a');
+        savaAsMenu.setText("Sava As");
+        savaAsMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                savaAsMenuActionPerformed(evt);
+            }
+        });
+
+        jMenu1.add(savaAsMenu);
+
+        jMenu1.add(jSeparator2);
+
+        printMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
+        printMenu.setMnemonic('r');
+        printMenu.setText("Print");
+        printMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printMenuActionPerformed(evt);
+            }
+        });
+
+        jMenu1.add(printMenu);
+
+        jMenu1.add(jSeparator3);
+
+        exitMenu.setMnemonic('e');
+        exitMenu.setText("Exit");
+        exitMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exitMenuActionPerformed(evt);
+            }
+        });
+
+        jMenu1.add(exitMenu);
+
+        jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("Edit");
+        cutMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
+        cutMenu.setMnemonic('c');
+        cutMenu.setText("Cut");
+        jMenu2.add(cutMenu);
+
+        copyMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
+        copyMenu.setMnemonic('o');
+        copyMenu.setText("Copy");
+        jMenu2.add(copyMenu);
+
+        pasteMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
+        pasteMenu.setMnemonic('p');
+        pasteMenu.setText("Paste");
+        jMenu2.add(pasteMenu);
+
+        jMenuBar1.add(jMenu2);
+
+        jMenu3.setText("Operation");
+        createInputFileMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+        createInputFileMenu.setMnemonic('c');
+        createInputFileMenu.setText("Create Input File");
+        createInputFileMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createInputFileMenuActionPerformed(evt);
+            }
+        });
+
+        jMenu3.add(createInputFileMenu);
+
+        transmitFileMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.CTRL_MASK));
+        transmitFileMenu.setMnemonic('t');
+        transmitFileMenu.setText("Transmit File");
+        transmitFileMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                transmitFileMenuActionPerformed(evt);
+            }
+        });
+
+        jMenu3.add(transmitFileMenu);
+
+        receiveFileMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
+        receiveFileMenu.setMnemonic('r');
+        receiveFileMenu.setText("Receive File");
+        receiveFileMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                receiveFileMenuActionPerformed(evt);
+            }
+        });
+
+        jMenu3.add(receiveFileMenu);
+
+        processOutputFileMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.CTRL_MASK));
+        processOutputFileMenu.setMnemonic('p');
+        processOutputFileMenu.setText("Process Output File");
+        processOutputFileMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                processOutputFileMenuActionPerformed(evt);
+            }
+        });
+
+        jMenu3.add(processOutputFileMenu);
+
+        jMenuBar1.add(jMenu3);
+
+        jMenu4.setText("Display");
+        errorMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.CTRL_MASK));
+        errorMenu.setMnemonic('e');
+        errorMenu.setText("Error Message");
+        errorMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                errorMenuActionPerformed(evt);
+            }
+        });
+
+        jMenu4.add(errorMenu);
+
+        objectiveMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_J, java.awt.event.InputEvent.CTRL_MASK));
+        objectiveMenu.setMnemonic('o');
+        objectiveMenu.setText("Objective");
+        objectiveMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                objectiveMenuActionPerformed(evt);
+            }
+        });
+
+        jMenu4.add(objectiveMenu);
+
+        parameterMenu.setMnemonic('p');
+        parameterMenu.setText("Parameters");
+        ThetaMenu.setText("THETA");
+        ThetaMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ThetaMenuActionPerformed(evt);
+            }
+        });
+
+        parameterMenu.add(ThetaMenu);
+
+        OmegaMenu.setText("OMEGA");
+        OmegaMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                OmegaMenuActionPerformed(evt);
+            }
+        });
+
+        parameterMenu.add(OmegaMenu);
+
+        SigmaMenu.setText("SIGMA");
+        SigmaMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SigmaMenuActionPerformed(evt);
+            }
+        });
+
+        parameterMenu.add(SigmaMenu);
+
+        jMenu4.add(parameterMenu);
+
+        statisticsMenu.setText("Statistics");
+        stdErrorMenu.setText("StdError");
+        stdErrThetaMenu.setText("THETA");
+        stdErrThetaMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                stdErrThetaMenuActionPerformed(evt);
+            }
+        });
+
+        stdErrorMenu.add(stdErrThetaMenu);
+
+        stdErrOmegaMenu.setText("OMEGA");
+        stdErrOmegaMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                stdErrOmegaMenuActionPerformed(evt);
+            }
+        });
+
+        stdErrorMenu.add(stdErrOmegaMenu);
+
+        stdErrSigmaMenu.setText("SIGMA");
+        stdErrSigmaMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                stdErrSigmaMenuActionPerformed(evt);
+            }
+        });
+
+        stdErrorMenu.add(stdErrSigmaMenu);
+
+        statisticsMenu.add(stdErrorMenu);
+
+        covarianceMenu.setText("Covariance");
+        covarianceMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                covarianceMenuActionPerformed(evt);
+            }
+        });
+
+        statisticsMenu.add(covarianceMenu);
+
+        correlationMenu.setText("Correlation");
+        correlationMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                correlationMenuActionPerformed(evt);
+            }
+        });
+
+        statisticsMenu.add(correlationMenu);
+
+        invCovarianceMenu.setText("Inv. Covariance");
+        invCovarianceMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                invCovarianceMenuActionPerformed(evt);
+            }
+        });
+
+        statisticsMenu.add(invCovarianceMenu);
+
+        jMenu4.add(statisticsMenu);
+
+        tableMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_B, java.awt.event.InputEvent.CTRL_MASK));
+        tableMenu.setMnemonic('t');
+        tableMenu.setText("Tables");
+        tableMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tableMenuActionPerformed(evt);
+            }
+        });
+
+        jMenu4.add(tableMenu);
+
+        plotMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
+        plotMenu.setMnemonic('l');
+        plotMenu.setText("Scatterplots");
+        jMenu4.add(plotMenu);
+
+        jMenuBar1.add(jMenu4);
+
+        jMenu5.setText("Help");
+        aboutMDAMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
+        aboutMDAMenu.setMnemonic('a');
+        aboutMDAMenu.setText("About MDA");
+        jMenu5.add(aboutMDAMenu);
+
+        instructionMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        instructionMenu.setMnemonic('i');
+        instructionMenu.setText("Instructions");
+        jMenu5.add(instructionMenu);
+
+        jMenuBar1.add(jMenu5);
+
+        setJMenuBar(jMenuBar1);
+
+        pack();
+    }//GEN-END:initComponents
+
+    private void tableMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tableMenuActionPerformed
+        if(output != null && output.table != null && output.dataAll != null && 
+          output.dataItems != null && output.dataLabelMap != null)
+            new TableShow(output.table, output.dataAll, output.dataItems, 
+                          output.dataLabelMap); 
+        else
+            JOptionPane.showMessageDialog(null, "The data is not available", 
+                                          "Report Error",               
+                                          JOptionPane.ERROR_MESSAGE);            
+    }//GEN-LAST:event_tableMenuActionPerformed
+
+    private void stdErrSigmaMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stdErrSigmaMenuActionPerformed
+        if(output != null && output.stdErrSigma != null)
+        {
+            int length = output.stdErrSigma.length;
+            String[] header = new String[length + 1];
+            for(int i = 0; i < length; i++)
+                header[i + 1] = output.stdErrSigma[i][0];     
+            new MatrixShow(output.stdErrSigma, header, "Standard Error of Estimate", 
+                           "SIGMA - Cov Matrix for Random Effects - ETAs"); 
         }
-    }
+        else
+            JOptionPane.showMessageDialog(null, "The standard error of SIGMA is not available", 
+                                          "Report Error",               
+                                          JOptionPane.ERROR_MESSAGE);
+    }//GEN-LAST:event_stdErrSigmaMenuActionPerformed
+
+    private void stdErrOmegaMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stdErrOmegaMenuActionPerformed
+        if(output != null && output.stdErrOmega != null)
+        {
+            int length = output.stdErrOmega.length;
+            String[] header = new String[length + 1];
+            for(int i = 0; i < length; i++)
+                header[i + 1] = output.stdErrOmega[i][0]; 
+            new MatrixShow(output.stdErrOmega, header, "Standard Error of Estimate", 
+                           "OMEGA - Cov Matrix for Random Effects - ETAs");  
+        }
+        else
+            JOptionPane.showMessageDialog(null, "The standard error of OMEGA is not available", 
+                                          "Report Error",               
+                                          JOptionPane.ERROR_MESSAGE);
+    }//GEN-LAST:event_stdErrOmegaMenuActionPerformed
+
+    private void stdErrThetaMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stdErrThetaMenuActionPerformed
+        if(output != null && output.stdErrTheta != null)
+        {
+            int length = output.stdErrTheta.length;
+            String[] header = new String[length];
+            for(int i = 0; i < length; i++)
+                header[i] = "TH " + (i + 1);        
+            new VectorShow(output.stdErrTheta, header, "Standard Error of Estimate", "THETA - Vector of Fixed Effects Parameters"); 
+        }
+        else
+            JOptionPane.showMessageDialog(null, "The standard error of THETA is not available", 
+                                          "Report Error",               
+                                          JOptionPane.ERROR_MESSAGE); 
+    }//GEN-LAST:event_stdErrThetaMenuActionPerformed
+
+    private void invCovarianceMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invCovarianceMenuActionPerformed
+        if(output != null && output.invCovariance != null)
+        {
+            int length = output.invCovariance.length;
+            String[] header = new String[length + 1];
+            for(int i = 0; i < length; i++)
+                header[i + 1] = output.invCovariance[i][0];           
+            new MatrixShow(output.invCovariance, header, "Inv. Covariance of Estimate", 
+                           "Inv.Covariance Matrix of Estimate");   
+        }
+        else
+            JOptionPane.showMessageDialog(null, "The INV. COVARIANCE is not available", 
+                                          "Report Error",               
+                                          JOptionPane.ERROR_MESSAGE);
+    }//GEN-LAST:event_invCovarianceMenuActionPerformed
+
+    private void correlationMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_correlationMenuActionPerformed
+        if(output != null && output.correlation != null)
+        {
+            int length = output.correlation.length;
+            String[] header = new String[length + 1];
+            for(int i = 0; i < length; i++)
+                header[i + 1] = output.correlation[i][0];            
+            new MatrixShow(output.correlation, header, "Correlation of Estimate", 
+                           "Correlation Matrix of Estimate");    
+        }
+        else
+            JOptionPane.showMessageDialog(null, "The CORRELATION is not available", 
+                                          "Report Error",               
+                                          JOptionPane.ERROR_MESSAGE);
+    }//GEN-LAST:event_correlationMenuActionPerformed
+
+    private void covarianceMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_covarianceMenuActionPerformed
+        if(output != null && output.covariance != null)
+        {
+            int length = output.covariance.length;
+            String[] header = new String[length + 1];
+            for(int i = 0; i < length; i++)
+                header[i + 1] = output.covariance[i][0];            
+            new MatrixShow(output.covariance, header, "Covariance of Estimate", 
+                           "Covariance Matrix of Estimate");    
+        }
+        else
+            JOptionPane.showMessageDialog(null, "The COVARIANCE is not available", 
+                                          "Report Error",               
+                                          JOptionPane.ERROR_MESSAGE); 
+    }//GEN-LAST:event_covarianceMenuActionPerformed
+
+    private void SigmaMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SigmaMenuActionPerformed
+        if(output != null && output.sigma != null)
+        {
+            int length = output.sigma.length;
+            String[] header = new String[length + 1];
+            for(int i = 0; i < length; i++)
+                header[i + 1] = output.sigma[i][0];            
+            new MatrixShow(output.sigma, header, "SIGMA Parameter Estimate", 
+                           "SIGMA - Cov Matrix for Random Effects - EPSILONs");
+        }
+        else
+            JOptionPane.showMessageDialog(null, "The SIGMA is not available", 
+                                          "Report Error",               
+                                          JOptionPane.ERROR_MESSAGE); 
+    }//GEN-LAST:event_SigmaMenuActionPerformed
+
+    private void OmegaMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OmegaMenuActionPerformed
+        if(output != null && output.omega != null)
+        {
+            int length = output.omega.length;
+            String[] header = new String[length + 1];
+            for(int i = 0; i < length; i++)
+                header[i + 1] = output.omega[i][0];            
+            new MatrixShow(output.omega, header, "OMEGA Parameter Estimate", 
+                           "OMEGA - Cov Matrix for Random Effects - ETAs"); 
+        }
+        else
+            JOptionPane.showMessageDialog(null, "The OMEGA is not available", 
+                                          "Report Error",               
+                                          JOptionPane.ERROR_MESSAGE);        
+    }//GEN-LAST:event_OmegaMenuActionPerformed
+
+    private void ThetaMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ThetaMenuActionPerformed
+        if(output != null && output.theta != null)
+        {
+            int length = output.theta.length;
+            String[] header = new String[length];
+            for(int i = 0; i < length; i++)
+                header[i] = "TH " + (i + 1);        
+            new VectorShow(output.theta, header, "THETA Parameter Estimate", "THETA - Vector of Fixed Effects Parameters"); 
+        }
+        else
+            JOptionPane.showMessageDialog(null, "The THETA is not available", 
+                                          "Report Error",               
+                                          JOptionPane.ERROR_MESSAGE);           
+    }//GEN-LAST:event_ThetaMenuActionPerformed
+
+    private void objectiveMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_objectiveMenuActionPerformed
+        if(output != null && output.objective != null)
+            JOptionPane.showMessageDialog(null, "objective = " + output.objective,   
+                                          "Objective Display",               
+                                          JOptionPane.PLAIN_MESSAGE);
+        else
+            JOptionPane.showMessageDialog(null, "The objective is not available", 
+                                          "Report Error",               
+                                          JOptionPane.ERROR_MESSAGE);            
+    }//GEN-LAST:event_objectiveMenuActionPerformed
+
+    private void errorMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_errorMenuActionPerformed
+        if(output != null && output.error != null)
+        {
+            jTextArea1.setText(output.error);
+            errorMessageDialog.setSize(600, 450);
+            errorMessageDialog.setVisible(true);
+            errorMessageDialog.show();
+        }
+        else
+             JOptionPane.showMessageDialog(null, "The error message is not available", 
+                                          "Error Message Error",               
+                                          JOptionPane.ERROR_MESSAGE);              
+    }//GEN-LAST:event_errorMenuActionPerformed
+
+    private void processOutputFileMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_processOutputFileMenuActionPerformed
+        output = new Output();
+        XMLReader reader = new XMLReader(textArea.getText(), output);
+        if(JOptionPane.showConfirmDialog(null, 
+                                         "Do you want to save the SPK report data file?",   
+                                         "Question Dialog",
+                                         JOptionPane.YES_NO_OPTION,
+                                         JOptionPane.QUESTION_MESSAGE) == 0)
+        {
+            files.setDialogTitle("Save SPK report data File");
+            files.setSelectedFile(new File("data.txt")); 
+            int result = files.showSaveDialog(null);
+            if(result == files.APPROVE_OPTION)
+	    {
+                file = files.getSelectedFile();
+                try
+                {
+                    BufferedWriter out = new BufferedWriter(new FileWriter(file));
+                    int nColumns = output.dataItems.size();
+                    int nRows = output.dataAll.length;
+                    for(int i = 0; i < nColumns; i++)
+                    {
+                        String label = (String)output.dataItems.get(i);
+                        out.write(label);
+                        out.write(getSpace(10 - label.length()));
+                    }
+                    out.write("\n");
+                    DecimalFormat f = new DecimalFormat("0.00E00");
+                    for(int j = 0; j < nRows; j++)
+                    {
+                        for(int i = 0; i < nColumns; i++)
+                        {
+                            String label = String.valueOf(f.format(Double.parseDouble(output.dataAll[j][i])));
+                            if(!label.startsWith("-"))
+                                label = " " + label;
+                            out.write(label);
+                            out.write(getSpace(10 - label.length()));
+                        }
+                        out.write("\n");
+                    }
+                    out.close();
+                }
+                catch(IOException ioe )
+                {
+                    System.err.println(ioe);
+                    JOptionPane.showMessageDialog(null, "Error saving file",  // Display saving file
+                                                  "File Error",               // error message
+                                                  JOptionPane.ERROR_MESSAGE);
+                }
+            }   
+        }        
+    }//GEN-LAST:event_processOutputFileMenuActionPerformed
+
+    private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
+        jLabel2.setEnabled(false);
+        jTextField2.setEnabled(false);
+        jLabel3.setEnabled(false);
+        jTextField3.setEnabled(false);         
+    }//GEN-LAST:event_jRadioButton2ActionPerformed
+
+    private void jRadioButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton3ActionPerformed
+        jLabel2.setEnabled(false);
+        jTextField2.setEnabled(false);
+        jLabel3.setEnabled(true);
+        jTextField3.setEnabled(true);       
+    }//GEN-LAST:event_jRadioButton3ActionPerformed
+
+    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
+        jLabel2.setEnabled(true);
+        jTextField2.setEnabled(true);
+        jLabel3.setEnabled(false);
+        jTextField3.setEnabled(false);
+    }//GEN-LAST:event_jRadioButton1ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // Collect model information        
+        modelInfo = new ModelInfo(); 
+        modelInfo.isNewModel = jRadioButton1.isSelected(); 
+        modelInfo.isNewVersion = jRadioButton2.isSelected();
+        modelInfo.name = jTextField1.getText();
+        if(modelInfo.isNewModel)
+            modelInfo.description = jTextField2.getText(); 
+        else
+            if(!modelInfo.isNewVersion)
+                modelInfo.version = jTextField3.getText(); 
+                     
+        // Close the dialog
+        jDialog1.dispose();
+        
+        // Write SPK input file in XML format
+        XMLWriter writer = new XMLWriter(modelInfo, control, object);    
+        files.setDialogTitle("Save SPK Input File");
+        files.setSelectedFile(new File("input.txt"));                    
+        int result = files.showSaveDialog(null); 
+        if(result == files.APPROVE_OPTION)
+	{
+            file = files.getSelectedFile();
+            writer.save(file.getPath());
+        }
+        textArea.setText(writer.getDocument());       
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        jDialog1.dispose();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void receiveFileMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_receiveFileMenuActionPerformed
+        String fileName = JOptionPane.showInputDialog("Enter file name to receive");  // Get filename
+                                                                                      // from the user
+        if(fileName == null)
+            return;
+        else if(fileName.equals(""))
+        {
+            JOptionPane.showMessageDialog(null, "The file needs a name.",  // Display file name 
+                                          "File Name Error",               // error message
+                                          JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try
+        {
+            Network network = new Network("https://rose.rfpk.washington.edu:8443/spk/servlet/uw.rfpk.servlets.TransmitFile",
+                                          sessionId);  
+
+            String[] messages = new String[2];
+            messages[0] = secret;
+            messages[1] = fileName;
+            messages = network.talk(messages, 2);
+            if(messages[0] != "")                                           // Disply the file content
+                textArea.setText(messages[0]);                               
+                                                                                    
+            if(messages[1] != "")
+                JOptionPane.showMessageDialog(null, messages[1],            // display the message 
+                                              "Message from the server",   
+                                              JOptionPane.INFORMATION_MESSAGE);
+        }
+        catch(Exception ex)
+	{
+            JOptionPane.showMessageDialog(null, "Error receiving " + ex,    // Display receiving 
+                                          "Network Error",                  // error message
+                                          JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_receiveFileMenuActionPerformed
+
+    private void transmitFileMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transmitFileMenuActionPerformed
+        String fileName = JOptionPane.showInputDialog("Enter file name to transmit"); // Get filename 
+                                                                                      // from the user
+        if(fileName == null)
+            return;
+        else if(fileName.equals(""))
+        {
+            JOptionPane.showMessageDialog(null, "The file needs a name.",  // Display file name 
+                                          "File Name Error",               // error message
+                                          JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try
+        {
+            Network network = new Network("https://rose.rfpk.washington.edu:8443/spk/servlet/uw.rfpk.servlets.ReceiveFile",
+                                          sessionId);
+
+            String[] messages = new String[3];
+            messages[0] = secret;
+            messages[1] = fileName;
+            messages[2] = textArea.getText();
+            messages = network.talk(messages, 1);
+                 
+            if(messages[0] != "")
+                JOptionPane.showMessageDialog(null, messages[0],                // Display the message 
+                                              "Message from the server",        
+                                              JOptionPane.INFORMATION_MESSAGE); 
+        }
+        catch(Exception ex)
+	{
+            JOptionPane.showMessageDialog(null, "Error transmitting " + ex,  // Display transmitting 
+                                          "Network Error",             // error message
+                                          JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_transmitFileMenuActionPerformed
+
+    private void createInputFileMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createInputFileMenuActionPerformed
+        String[] names = {"Problem", "Data", "Input", "Pred", "Subroutines", "Aes", 
+                          "Aesinitial", "Model", "PK", "Theta", "Omega", "Des", 
+                          "Error", "Sigma", "Simulation", "TableSim", "ScatterPlotSim",
+                          "Estimation", "Covariance", "TableEst", "ScatterPlotEst"};
+        MDAIterator iterator = new MDAIterator();                  
+        JWizardPane wp = new JWizardPane(iterator, object); 
+        wp.getContentPanel().setBackground(new Color(240, 245, 255));   
+        wp.setContentImage((new javax.swing.ImageIcon(getClass().getResource("/uw/rfpk/mda/nonmem/wizard/nonmem-spk.gif"))).getImage()); 
+        wp.createDialog(null , "Model Design agent Input File Generation Wizard").show();
+             
+        if(wp.getCustomizedObject() == null)
+            return;
+        object = (MDAObject)wp.getCustomizedObject();
+        Properties records = object.getRecords();
+        control = "";
+        for(int i = 0; i < 21; i++)
+        {
+            if(!records.getProperty(names[i]).equals("")) 
+                control = control + records.getProperty(names[i]) + "\n"; 
+        }
+        if(JOptionPane.showConfirmDialog(null, 
+                                         "Do you want to save the NONMEM control file?",   
+                                         "Question Dialog",
+                                         JOptionPane.YES_NO_OPTION,
+                                         JOptionPane.QUESTION_MESSAGE) == 0)
+        {
+            files.setDialogTitle("Save NONMEM Control File");
+            files.setSelectedFile(new File("control.txt")); 
+            int result = files.showSaveDialog(null);
+            if(result == files.APPROVE_OPTION)
+	    {
+                file = files.getSelectedFile();
+                try
+                {
+                    BufferedWriter out = new BufferedWriter(new FileWriter(file));
+                    out.write(control);
+                    out.close();
+                }
+                catch(IOException ioe )
+                {
+                    System.err.println(ioe);
+                    JOptionPane.showMessageDialog(null, "Error saving file",  // Display saving file
+                                                  "File Error",               // error message
+                                                  JOptionPane.ERROR_MESSAGE);
+                }
+            }   
+        }
+                
+        if(JOptionPane.showConfirmDialog(null, 
+                                         "Do you want to save the SPK input file?",   
+                                         "Question Dialog",
+                                         JOptionPane.YES_NO_OPTION,
+                                         JOptionPane.QUESTION_MESSAGE) == 0)
+        {
+            // Collect model information
+            modelInfo = null; 
+            jDialog1.setSize(300, 280);
+            jDialog1.setVisible(true);
+        }
+    }//GEN-LAST:event_createInputFileMenuActionPerformed
+
+    private void exitMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuActionPerformed
+        dispose();
+    }//GEN-LAST:event_exitMenuActionPerformed
+
+    private void printMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printMenuActionPerformed
+        Printer printable = new Printer(textArea.getText());
+			
+	// Get a PrinterJob object
+        PrinterJob printerJob = PrinterJob.getPrinterJob();
+
+        // Display print dialog,if user return OK, setPrintable and print
+        PrintRequestAttributeSet attributes = new HashPrintRequestAttributeSet(); 
+//        PageFormat pageFormat = printerJob.pageDialog(attributes);
+//        if(pageFormat != null)
+        if(printerJob.printDialog(attributes))
+        {
+            printerJob.setPrintable(printable);
+//            Book book = new Book();
+//            book.append(printable, pageFormat, printable.getPageCount());   
+//            printerJob.setPageable(book);
+            try
+	    {
+                printerJob.print(attributes);
+            }
+            catch(PrinterException pe)
+	    {
+                JOptionPane.showMessageDialog(null, "Error printing " + pe,  // Display printing 
+                                              "Printer Error",               // error message
+                                              JOptionPane.ERROR_MESSAGE);
+            }
+        }              
+    }//GEN-LAST:event_printMenuActionPerformed
+
+    private void savaAsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_savaAsMenuActionPerformed
+        int result = files.showSaveDialog(null);
+        if(result == files.APPROVE_OPTION)
+	{
+            file = files.getSelectedFile();
+            saveOperation();
+        }
+    }//GEN-LAST:event_savaAsMenuActionPerformed
+
+    private void saveMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuActionPerformed
+        if(file != null)
+	{
+            saveOperation();
+        }
+        else
+	{
+            int result = files.showSaveDialog(null);
+            if(result == files.APPROVE_OPTION)
+	    {
+                file = files.getSelectedFile();
+                saveOperation();
+            }
+        }
+    }//GEN-LAST:event_saveMenuActionPerformed
+
+    private void closeMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeMenuActionPerformed
+        textArea.setText("");
+        file = null;
+    }//GEN-LAST:event_closeMenuActionPerformed
+
+    private void openMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMenuActionPerformed
+        int result = files.showOpenDialog(null);
+        if(result == files.APPROVE_OPTION)
+	{
+            file = files.getSelectedFile();
+            try
+	    {
+                BufferedReader in = new BufferedReader(new FileReader(file));
+                StringBuffer buffer = new StringBuffer();
+                boolean done = false;
+                while(!done)
+                {
+                    // Read a line
+                    String line = in.readLine();                            
+                    if(line == null) 
+                        done = true;
+                    else
+                        buffer.append(line).append("\n");
+	        }
+                textArea.setText(buffer.toString());
+                in.close();
+            }
+            catch(IOException ioe )
+	    {
+                System.err.println(ioe);
+                JOptionPane.showMessageDialog(null, "Error opening file",  // Display opening file 
+                                              "File Error",                // error message
+                                              JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_openMenuActionPerformed
+    
+    /** Exit the Application */
+    private void exitForm(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_exitForm
+        System.exit(0);
+    }//GEN-LAST:event_exitForm
 
     // This method performs save file operation.
     private void saveOperation()
@@ -488,61 +1097,76 @@ public class MDAFrame extends JFrame
                                           JOptionPane.ERROR_MESSAGE);
         }
     }
- 
-    // This inner class implements Printable interface.
-    class Printer implements Printable
+    
+    // This function return spaces
+    private String getSpace(int n)
     {
-        // This method implements print() in Printable interface.
-        public int print(Graphics gc, PageFormat pageFormat, int pageIndex)
-        {
-            if (pageIndex != 0) return NO_SUCH_PAGE;
-            Graphics2D g2 = (Graphics2D)gc;
-            String text = textArea.getText();
-
-            // Get upper-left corner coordinates
-            int lineInsetX  = (int)pageFormat.getImageableX();
-            int lineInsetY  = (int)pageFormat.getImageableY();
-
-            // Set font for the text
-            g2.setFont(printFont);
-            FontRenderContext frc = g2.getFontRenderContext();
-
-            // Get LineMetrics object
-            LineMetrics lineMetrics = textFont.getLineMetrics(text,frc);
-
-            // Get text height, set color, set stroke
-            int textHeight = (int)lineMetrics.getHeight();
-            g2.setPaint(Color.black);
-	    g2.setStroke(new BasicStroke());
-                    
-            // Draw text content line by line
-            int j = 0;
-            for (int i = 0; i < text.length(); i++) 
-            {                        
-                if (text.charAt(i) == '\n') 
-                {
-                    lineInsetY += textHeight;
-                    g2.drawString(text.substring(j,i),lineInsetX,lineInsetY); 
-                    j = i + 1; 
-                }      
-            }                 
-
-            return PAGE_EXISTS;
-        }
+        String s = "";
+        for(int i = 0; i < n; i++)
+            s += " ";
+        return s;  
     }
 
-    // Window menu bar
-    private JMenuBar menuBar = new JMenuBar();      
-
-    // File menu items
-    private FileAction openAction, closeAction, saveAction, 
-                       saveAsAction, pageSetupAction, printAction, exitAction;
-
-    // Operation menu items
-    private OperationAction createAction, transmitAction, receiveAction;
-
-    // Text area
-    private JTextArea textArea = new JTextArea();
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem OmegaMenu;
+    private javax.swing.JMenuItem SigmaMenu;
+    private javax.swing.JMenuItem ThetaMenu;
+    private javax.swing.JMenuItem aboutMDAMenu;
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JMenuItem closeMenu;
+    private javax.swing.JMenuItem copyMenu;
+    private javax.swing.JMenuItem correlationMenu;
+    private javax.swing.JMenuItem covarianceMenu;
+    private javax.swing.JMenuItem createInputFileMenu;
+    private javax.swing.JMenuItem cutMenu;
+    private javax.swing.JMenuItem errorMenu;
+    private javax.swing.JDialog errorMessageDialog;
+    private javax.swing.JMenuItem exitMenu;
+    private javax.swing.JMenuItem instructionMenu;
+    private javax.swing.JMenuItem invCovarianceMenu;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JDialog jDialog1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenu jMenu4;
+    private javax.swing.JMenu jMenu5;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JRadioButton jRadioButton1;
+    private javax.swing.JRadioButton jRadioButton2;
+    private javax.swing.JRadioButton jRadioButton3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField jTextField3;
+    private javax.swing.JMenuItem objectiveMenu;
+    private javax.swing.JMenuItem openMenu;
+    private javax.swing.JMenu parameterMenu;
+    private javax.swing.JMenuItem pasteMenu;
+    private javax.swing.JMenuItem plotMenu;
+    private javax.swing.JMenuItem printMenu;
+    private javax.swing.JMenuItem processOutputFileMenu;
+    private javax.swing.JMenuItem receiveFileMenu;
+    private javax.swing.JMenuItem savaAsMenu;
+    private javax.swing.JMenuItem saveMenu;
+    private javax.swing.JMenu statisticsMenu;
+    private javax.swing.JMenuItem stdErrOmegaMenu;
+    private javax.swing.JMenuItem stdErrSigmaMenu;
+    private javax.swing.JMenuItem stdErrThetaMenu;
+    private javax.swing.JMenu stdErrorMenu;
+    private javax.swing.JMenuItem tableMenu;
+    private javax.swing.JTextArea textArea;
+    private javax.swing.JMenuItem transmitFileMenu;
+    // End of variables declaration//GEN-END:variables
 
     // File chooser
     private JFileChooser files = new JFileChooser();
@@ -550,17 +1174,21 @@ public class MDAFrame extends JFrame
     // Current file
     private File file = null;
 
-    // Text font
-    private Font textFont = new Font("Lucida Console",Font.PLAIN,14);
-
-    // Print font
-    private Font printFont = new Font("Lucida Console",Font.PLAIN,10);
-
     // Session ID
     private String sessionId = null;
 
-    // Secret key
-    private SecretKey key = null;
+    // Secret code
+    private String secret = null;
+    
+    // Model information
+    private ModelInfo modelInfo = null;
+    
+    // Nonmem Control file text 
+    private String control = null;
+    
+    // MDA object
+    private MDAObject object = new MDAObject();
+    
+    // Spk output
+    Output output = null;
 }
-
-

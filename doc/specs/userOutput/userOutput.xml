@@ -71,7 +71,7 @@ MDA saves the tables into text files, specified in the input file by the user, o
   <sect1>
     <title>Data format</title>
     <para>
-All presented data values except the minimum value of the objective function are expressed in scientific format with 3 significant digits, for instance: 1.23E01, -1.23E01, 1.23E-01, -1.23E-01.  The minimum value of the objective function is presented in the format in which it is returned from the computational server.
+All presented data values except minimum value of objective function are expressed in scientific format with 3 significant digits, for instance: 1.23E01, -1.23E01, 1.23E-01, -1.23E-01.  The minimum value of objective function is presented in the format in which it is returned from the computational server.  All data values in saved text files are expressed in scientific format with 5 significant digits, for instance: 1.2345E01, -1.2345E01, 1.2345E-01, -1.2345E-01.    
     </para> 
   </sect1>
 </article>

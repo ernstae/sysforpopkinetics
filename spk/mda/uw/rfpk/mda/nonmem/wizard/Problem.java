@@ -8,13 +8,14 @@ package uw.rfpk.mda.nonmem.wizard;
 
 import org.netbeans.ui.wizard.*;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 /**
  * This class defines a step to create the $PROBLEm record
- * @author  jiaji
+ * @author  jiaji Du
  */
 public class Problem extends javax.swing.JPanel implements WizardStep {
     
@@ -121,9 +122,11 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
         }
 	public void hidingStep(JWizardPane wizard){
             String record = jTextArea1.getText();
+            if(Utility.checkTag(record, "Problem title")) 
+                return;   
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             object.getRecords().setProperty("Problem", "$PROBLEM " + record);
-            object.getControl().problem = record;
+            object.getSource().problem = record;            
 	}
 
 	public boolean isValid(){

@@ -15,7 +15,7 @@ import java.awt.event.ActionEvent;
 
 /**
  * This class defines a step to create the $PRED record
- * @author  jiaji
+ * @author  jiaji Du
  */
 public class Pred extends javax.swing.JPanel implements WizardStep {
     
@@ -80,8 +80,8 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
         jTextPane1.setEditable(false);
         jTextPane1.setText("Enter abbreviated code for $PRED.");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 39);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 39);
         jPanel1.add(jTextPane1, gridBagConstraints);
 
         jButton2.setText("Copy");
@@ -92,6 +92,12 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
         jPanel1.add(jButton2, gridBagConstraints);
 
         jButton3.setText("Paste");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
@@ -107,6 +113,11 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
         add(jPanel1, java.awt.BorderLayout.NORTH);
 
     }//GEN-END:initComponents
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        isValid = true;
+        wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());       
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jTextArea1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextArea1KeyTyped
         isValid = true;
@@ -159,10 +170,10 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
 	public void hidingStep(JWizardPane wizard){
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             String record = jTextArea1.getText().trim();
-            if(!record.equals(""))
+            if(!record.equals("") && !Utility.checkTag(record, "PRED code"))
             {
                 object.getRecords().setProperty("Pred", "$PRED \n" + record);
-                object.getControl().pred = "\n" + record + "\n";
+                object.getSource().pred = "\n" + record + "\n";
                 // Eliminate comments
                 record = Utility.eliminateComments(record); 
                 // Find number of THETAs
