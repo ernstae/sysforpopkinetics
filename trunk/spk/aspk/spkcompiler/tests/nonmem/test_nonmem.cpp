@@ -4,6 +4,7 @@
 #include <cppunit/TextTestResult.h>
 #include <cppunit/ui/text/TestRunner.h>
 
+#include "lex_explangTest.h"
 #include "read_nonmem_driverTest.h"
 #include "read_nonmem_dataTest.h"
 #include "read_nonmem_modelTest.h"
@@ -18,6 +19,7 @@ int main( int argc, const char * argv[] )
   map<string, CppUnit::Test*> master;
   vector<CppUnit::Test*> subset;
 
+  master[ "lex_explangTest" ]        = lex_explangTest::suite();
   master[ "NonmemExpXlatorTest" ]    =  NonmemExpXlatorTest::suite();
   master[ "read_nonmem_driverTest" ] = read_nonmem_driverTest::suite();
   master[ "read_nonmem_dataTest" ]   = read_nonmem_dataTest::suite();

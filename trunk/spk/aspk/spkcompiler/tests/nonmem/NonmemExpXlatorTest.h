@@ -2,13 +2,13 @@
  * \file NonmemExpXlatorTest.h
  * \brief A test suite for Nonmem Expression Translator.
  */
-#ifndef TEST_NONMEM_EXPXLATOR_H
-#define TEST_NONMEM_EXPXLATOR_H
+#ifndef TEST_NONMEM_EXPXLATOR_TEST_H
+#define TEST_NONMEM_EXPXLATOR_TEST_H
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestSuite.h>
 
-#include "ExpTreeGenerator.h"
+#include <libspkcompiler/ExpTreeGenerator.h>
 
 class NonmemExpXlatorTest : public CppUnit::TestFixture {
 

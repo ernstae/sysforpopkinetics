@@ -9,6 +9,8 @@ test_nonmem_SOURCES = \
 	test_nonmem.cpp \
         FitPopulationTestModel.cpp \
         FitPopulationTestModel.h \
+	lex_explangTest.cpp \
+	lex_explangTest.h \
 	NonmemExpXlatorTest.cpp \
 	NonmemExpXlatorTest.h \
 	read_nonmem_driverTest.cpp \
@@ -22,6 +24,7 @@ test_nonmem_SOURCES = \
 
 test_nonmem_INCLUDES = \
 	FitPopulationTestModel.h \
+	lex_explangTest.h \
 	NonmemExpXlatorTest.h \
 	read_nonmem_driverTest.h \
 	read_nonmem_dataTest.h \
