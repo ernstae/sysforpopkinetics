@@ -437,7 +437,7 @@ $pre
 
 $$
 For more details on the tracing see the description of the level 
-parameter for the optimizer $xref/QuasiNewton01Box//QuasiNewton01Box/$$.
+parameter for the optimizer $code QuasiNewton01Box$$.
 
 $subhead popOptimizer.optInfo.nIterCompleted$$
 This integer scalar holds the number of iteration that have been 
@@ -636,7 +636,7 @@ $pre
 
 $$
 For more details on the tracing see the description of the level 
-parameter for the optimizer $xref/QuasiNewton01Box//QuasiNewton01Box/$$.
+parameter for the optimizer $code QuasiNewton01Box$$.
 
 $subhead indOptimizer.optInfo.nIterCompleted$$
 This integer scalar holds the number of iteration that have been 
