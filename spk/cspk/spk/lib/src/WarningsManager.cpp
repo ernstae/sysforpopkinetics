@@ -50,8 +50,8 @@ using std::string;
  * Static variable initializations
  *------------------------------------------------------------------------*/
 
-bool          WarningsManager::areThereAnyWarnings = false;
 ostringstream WarningsManager::allWarnings;
+int           WarningsManager::nWarnings = 0;
 
 
 /*************************************************************************
@@ -112,122 +112,6 @@ WarningsManager::WarningsManager()
 
 /*************************************************************************
  *
- * Function: anyWarnings
- *
- *************************************************************************/
-
-/*------------------------------------------------------------------------
- * Function Specification
- *------------------------------------------------------------------------*/
-
-/*
-$begin WarningsManager_anyWarnings$$
-$spell
-$$
-
-$section Determine if there are Currently Any Warnings$$
-
-$index anyWarnings$$
-$cindex \Determine \if \there \are \Currently \Any Warnings$$
-
-$table
-$bold Prototype:$$   $cend  
-$syntax/bool WarningsManager::anyWarnings()
-/$$
-$tend
-
-$fend 25$$
-
-$center
-$italic
-$include shortCopyright.txt$$
-$$
-$$
-$pre
-$$
-
-$head Description$$
-
-Returns true if there are currently any warnings in the list.
-Otherwise, returns false.
-
-$end
-*/
-
-
-/*------------------------------------------------------------------------
- * Function Definition
- *------------------------------------------------------------------------*/
-
-bool WarningsManager::anyWarnings()
-{
-  return areThereAnyWarnings;
-}
-
-
-/*************************************************************************
- *
- * Function: getAllWarnings
- *
- *************************************************************************/
-
-/*------------------------------------------------------------------------
- * Function Specification
- *------------------------------------------------------------------------*/
-
-/*
-$begin WarningsManager_getAllWarnings$$
-$spell
-$$
-
-$section Get the Current List of Warnings$$
-
-$index getAllWarnings$$
-$cindex \Get \the \Current \List \of Warnings$$
-
-$table
-$bold Prototype:$$   $cend  
-$syntax/void WarningsManager::getAllWarnings( string& /allWarningsOut/ )
-/$$
-$tend
-
-$fend 25$$
-
-$center
-$italic
-$include shortCopyright.txt$$
-$$
-$$
-$pre
-$$
-
-$head Description$$
-
-Gets all of the warnings messages that have been added to the list.
-
-$head Arguments$$
-$syntax/
-
-/allWarningsOut/ 
-/$$
-This string will be set equal to the list of all warnings.
-
-$end
-*/
-
-
-/*------------------------------------------------------------------------
- * Function Definition
- *------------------------------------------------------------------------*/
-
-void WarningsManager::getAllWarnings( string& allWarningsOut )
-{
-  allWarningsOut = allWarnings.str();
-}
-
-
-/*************************************************************************
- *
  * Function: addWarning
  *
  *************************************************************************/
@@ -248,8 +132,10 @@ $cindex \Add \a \New \Warning \to \the \List \of Warnings$$
 
 $table
 $bold Prototype:$$   $cend  
-$syntax/void WarningsManager::addWarning( string& /warningIn/ )
-/$$
+$syntax/void WarningsManager::addWarning(
+  const string& warningIn, 
+  unsigned int  lineNumberIn,
+  const char*   fileNameIn )/$$
 $tend
 
 $fend 25$$
@@ -273,6 +159,19 @@ $syntax/
 /$$
 This string is the warning message to add to the list of warnings.
 
+$syntax/
+
+/lineNumberIn/
+/$$
+This is the line number in the file where the warning message was
+generated.
+
+$syntax/
+
+/fileNameIn/
+/$$
+This is the file where the warning message was generated.
+
 $end
 */
 
@@ -281,7 +180,10 @@ $end
  * Function Definition
  *------------------------------------------------------------------------*/
 
-void WarningsManager::addWarning( string& warningIn )
+void WarningsManager::addWarning( 
+  const string& warningIn, 
+  unsigned int  lineNumberIn,
+  const char*   fileNameIn )
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -289,26 +191,33 @@ void WarningsManager::addWarning( string& warningIn )
 
   using namespace std;
 
-  const string line = "************************************************************";
-
 
   //------------------------------------------------------------
   // Add this warning to the list of warnings.
   //------------------------------------------------------------
 
-  if ( !areThereAnyWarnings )
-  {
-    allWarnings << line << endl;
-  }
-  allWarnings << "Warning:  " << warningIn << endl;
-  allWarnings << line << endl;
+  allWarnings << "<warning>" << endl;
+
+  allWarnings << "<message>"  << endl;
+  allWarnings << warningIn    << endl;
+  allWarnings << "</message>" << endl;
+
+  allWarnings << "<file_name>"  << endl;
+  allWarnings << fileNameIn     << endl;
+  allWarnings << "</file_name>" << endl;
+
+  allWarnings << "<line_number>"  << endl;
+  allWarnings << lineNumberIn     << endl;
+  allWarnings << "</line_number>" << endl;
+
+  allWarnings << "</warning>" << endl;
   
 
   //------------------------------------------------------------
   // Finish up.
   //------------------------------------------------------------
 
-  areThereAnyWarnings = true;
+  nWarnings++;
 }
 
 
@@ -362,7 +271,147 @@ $end
 
 void WarningsManager::clearAllWarnings()
 {
-  // Delete the list of warnings and reset the flag.
-  areThereAnyWarnings = false;
-  allWarnings.flush();
+  // Clear the list of warnings and reset the counter.
+  allWarnings.str( "" );
+  nWarnings = 0;
 }
+
+
+/*************************************************************************
+ *
+ * Function: anyWarnings
+ *
+ *************************************************************************/
+
+/*------------------------------------------------------------------------
+ * Function Specification
+ *------------------------------------------------------------------------*/
+
+/*
+$begin WarningsManager_anyWarnings$$
+$spell
+$$
+
+$section Determine if there are Currently Any Warnings$$
+
+$index anyWarnings$$
+$cindex \Determine \if \there \are \Currently \Any Warnings$$
+
+$table
+$bold Prototype:$$   $cend  
+$syntax/bool WarningsManager::anyWarnings()
+/$$
+$tend
+
+$fend 25$$
+
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$pre
+$$
+
+$head Description$$
+
+Returns true if there are currently any warnings in the list.
+Otherwise, returns false.
+
+$end
+*/
+
+
+/*------------------------------------------------------------------------
+ * Function Definition
+ *------------------------------------------------------------------------*/
+
+bool WarningsManager::anyWarnings()
+{
+  if ( nWarnings > 0 )
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
+
+/*************************************************************************
+ *
+ * Function: getAllWarnings
+ *
+ *************************************************************************/
+
+/*------------------------------------------------------------------------
+ * Function Specification
+ *------------------------------------------------------------------------*/
+
+/*
+$begin WarningsManager_getAllWarnings$$
+$spell
+$$
+
+$section Get the Current List of Warnings$$
+
+$index getAllWarnings$$
+$cindex \Get \the \Current \List \of Warnings$$
+
+$table
+$bold Prototype:$$   $cend  
+$syntax/void WarningsManager::getAllWarnings( string& /allWarningsOut/ )
+/$$
+$tend
+
+$fend 25$$
+
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$pre
+$$
+
+$head Description$$
+
+Gets an XML formatted string that contains all of the warnings
+messages that have been added to the list.
+
+$head Arguments$$
+$syntax/
+
+/allWarningsOut/ 
+/$$
+This string will be set equal to an XML formatted list of all
+of the warnings.
+
+$end
+*/
+
+
+/*------------------------------------------------------------------------
+ * Function Definition
+ *------------------------------------------------------------------------*/
+
+void WarningsManager::getAllWarnings( string& allWarningsOut )
+{
+  using namespace std;
+
+  // Create a temporary output string stream.
+  ostringstream allWarningsTemp;
+
+  // Enclose all of the warnings in a pair of XML elements.
+  allWarningsTemp << "<warning_list length=\"" << nWarnings << "\">" << endl;
+  if ( nWarnings > 0 )
+  {
+    allWarningsTemp << allWarnings.str();
+  }
+  allWarningsTemp << "</warning_list>" << endl;
+
+  // Set the output value.
+  allWarningsOut = allWarningsTemp.str();
+}
+

@@ -53,21 +53,24 @@ class WarningsManager
 
 
   //------------------------------------------------------------
-  // Const functions.
-  //------------------------------------------------------------
-
-  static bool anyWarnings();
-  static void getAllWarnings( std::string& allWarningsOut );
-
-
-  //------------------------------------------------------------
   // State changing functions.
   //------------------------------------------------------------
 
  public:
-  static void addWarning( std::string& warningIn );
+  static void addWarning( 
+    const std::string& warningIn, 
+    unsigned int       lineNumberIn,
+    const char*        fileNameIn );
 
   static void clearAllWarnings();
+
+
+  //------------------------------------------------------------
+  // Helper functions.
+  //------------------------------------------------------------
+
+  static bool anyWarnings();
+  static void getAllWarnings( std::string& allWarningsOut );
 
 
   //------------------------------------------------------------
@@ -78,8 +81,8 @@ private:
   // These are declared static so that there is only a single
   // version of each of them that is shared by all instances 
   // of WarningsManager objects.
-  static bool               areThereAnyWarnings;
   static std::ostringstream allWarnings;
+  static int                nWarnings;
 
 
   //------------------------------------------------------------
