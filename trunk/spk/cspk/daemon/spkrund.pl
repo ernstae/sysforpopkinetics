@@ -183,7 +183,7 @@ my $filename_job_id = "job_id";
 my $filename_makefile = "Makefile.SPK";
 my $filename_optimizer_trace = "optimizer_trace.txt";
 my $filename_results = "result.xml";
-my $filename_runner = "driver";
+my $filename_runner = "spkDriver";
 my $filename_serr = "software_error";
 my $filename_source = "source.xml";
 
