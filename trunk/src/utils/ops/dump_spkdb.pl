@@ -60,10 +60,11 @@ use strict;
 =cut
 
 my $mysqldump = "/usr/bin/mysqldump";
-my $user = "tester";
-my $pass = "tester";
-#my $db = "spkdb";
-my $db = "spktest";
+my $db = "spkdb";
+my $dbhost = "dbserver";
+my $dbuser = "reader";
+my $dbpass = "reader";
+
 
 my ($sec, $min, $hour, $mday, $mon, $year) = localtime;
 my $date = sprintf "%04d-%02d-%02d-%02d%02d-%02d", $year+1900, $mon+1, $mday, $hour, $min, $sec;
@@ -73,11 +74,11 @@ my $schema   = "$prefix-schema.sql";
 my $basedata = "$prefix-basedata.sql";
 my $userdata = "$prefix-userdata.sql";
 
-system("mysqldump -u$user -p$pass  -d $db > $schema") == 0
+system("mysqldump -h$dbhost -u$dbuser -p$dbpass  -d $db > $schema") == 0
     or die "Could not dump the schema\n";
-system("mysqldump -u$user -p$pass -tc $db --tables end method state > $basedata") == 0
+system("mysqldump -h$dbhost -u$dbuser -p$dbpass -tc $db --tables end method state > $basedata") == 0
     or die "Could not dump the basedata tables\n";
-system("mysqldump -u$user -p$pass -tc $db --tables dataset history job model user > $userdata") == 0
+system("mysqldump -h$dbhost -u$dbuser -p$dbpass -tc $db --tables dataset history job model user > $userdata") == 0
     or die "Could not dump the userdata tables\n";
 
 
