@@ -21,7 +21,7 @@
       </revision>
       <revision>
 	<revnumber>1.02</revnumber>
-	<date>Decemter 26, 2003</date>
+	<date>December 26, 2003</date>
 	<authorinitials>afw</authorinitials>
 	<revremark>Added discussion of transaction processing.</revremark>
       </revision>
@@ -282,8 +282,7 @@
       and <command>end</command> statements.
     </para>
     <para>
-      In the <link linkend="tables_and_fields">Tables and F
-ields</link> section,
+      In the <link linkend="tables_and_fields">Tables and Fields</link> section,
       transaction processing considerations will be discussed for each table.
     </para>
   </sect1>
@@ -293,18 +292,22 @@ ields</link> section,
       The following SQL statements will create an empty copy of 
       the Spkdb database.
       <screen>
-use spkdb;
+CREATE TABLE class (
+  class_code char(2) NOT NULL default '',
+  class_name char(20) default NULL,
+  parent_required tinyint(1) default '0',
+  PRIMARY KEY  (class_code)
+) TYPE=MyISAM;
 
 CREATE TABLE dataset (
   dataset_id int(10) unsigned NOT NULL auto_increment,
-  name varchar(20) NOT NULL,
+  name varchar(20) NOT NULL default '',
   abstract varchar(100) NOT NULL default '',
   archive longblob,
-  user_id int(10) unsigned NOT NULL,
+  user_id int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (dataset_id),
   UNIQUE KEY user_id (user_id,name)
 ) TYPE=InnoDB;
-
 
 CREATE TABLE end (
   end_code char(4) NOT NULL default '',
@@ -312,93 +315,160 @@ CREATE TABLE end (
   PRIMARY KEY  (end_code)
 ) TYPE=MyISAM;
 
-INSERT INTO end VALUES ('cerr','Compiler Error');
-INSERT INTO end VALUES ('srun','Successful Run');
-
-
 CREATE TABLE history (
   history_id int(10) unsigned NOT NULL auto_increment,
-  event_time int(10) unsigned NOT NULL,
-  state_code char(3) NOT NULL,
-  job_id int(10) unsigned NOT NULL,
+  event_time int(10) unsigned NOT NULL default '0',
+  state_code varchar(4) NOT NULL default '',
+  job_id int(10) unsigned NOT NULL default '0',
+  host varchar(100) NOT NULL default '',
   PRIMARY KEY  (history_id)
 ) TYPE=InnoDB;
 
-
 CREATE TABLE job (
   job_id int(10) unsigned NOT NULL auto_increment,
-  user_id int(10) unsigned NOT NULL,
+  user_id int(10) unsigned NOT NULL default '0',
   abstract varchar(100) NOT NULL default '',
-  dataset_id int(10) unsigned NOT NULL,
+  dataset_id int(10) unsigned NOT NULL default '0',
   dataset_version varchar(10) NOT NULL default '',
-  model_id int(10) unsigned NOT NULL,
+  model_id int(10) unsigned NOT NULL default '0',
   model_version varchar(10) NOT NULL default '',
   xml_source longblob,
-  state_code char(3) NOT NULL,
+  state_code varchar(4) NOT NULL default '',
   report longblob,
-  start_time int(10) unsigned NOT NULL,
-  event_time int(10) unsigned NOT NULL,
+  start_time int(10) unsigned NOT NULL default '0',
+  event_time int(10) unsigned NOT NULL default '0',
   cpp_source longblob,
-  end_code char(4) default NULL,
+  end_code varchar(4) default NULL,
   method_code char(2) default NULL,
-  parent int(10) unsigned default 0, 
+  parent int(10) unsigned default '0',
   PRIMARY KEY  (job_id)
 ) TYPE=InnoDB;
-
-
-CREATE TABLE model (
-  model_id int(10) unsigned NOT NULL auto_increment,
-  name varchar(20) NOT NULL,
-  abstract varchar(100) NOT NULL default '',
-  archive longblob,
-  user_id int(10) unsigned NOT NULL,
-  PRIMARY KEY  (model_id),
-  UNIQUE KEY user_id (user_id,name)
-) TYPE=InnoDB;
-
-
-CREATE TABLE state (
-  state_code char(3) NOT NULL default '',
-  state_name char(20) default NULL,
-  PRIMARY KEY  (state_code)
-) TYPE=MyISAM;
-
-INSERT INTO state VALUES ('q2c','Queued to compile');
-INSERT INTO state VALUES ('cmp','Compiling');
-INSERT INTO state VALUES ('q2r','Queued to run');
-INSERT INTO state VALUES ('run','Running');
-INSERT INTO state VALUES ('end','End');
 
 CREATE TABLE method (
   method_code char(2) NOT NULL default '',
   method_name char(20) default NULL,
+  class_code char(2) NOT NULL default '',
+  test_only tinyint(1) default '0',
   PRIMARY KEY  (method_code)
 ) TYPE=MyISAM;
 
-INSERT INTO method VALUES ('fo', 'First Order');
-INSERT INTO method VALUES ('eh', 'Expected Hessian');
-INSERT INTO method VALUES ('la', 'Laplacian');
-INSERT INTO method VALUES ('ml', 'Monte Carlo Likelihood');
-INSERT INTO method VALUES ('mc', 'Monte Carlo Markov Chain');
+CREATE TABLE model (
+  model_id int(10) unsigned NOT NULL auto_increment,
+  name varchar(20) NOT NULL default '',
+  abstract varchar(100) NOT NULL default '',
+  archive longblob,
+  user_id int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (model_id),
+  UNIQUE KEY user_id (user_id,name)
+) TYPE=InnoDB;
+
+CREATE TABLE state (
+  state_code char(4) NOT NULL default '',
+  state_name char(20) default NULL,
+  PRIMARY KEY  (state_code)
+) TYPE=MyISAM;
 
 CREATE TABLE user (
   user_id int(10) unsigned NOT NULL auto_increment,
   first_name varchar(30) NOT NULL default '',
   surname varchar(40) NOT NULL default '',
-  password varchar(32) NOT NULL,
-  username varchar(20) NOT NULL,
-  test BOOL default 0,
-  dev  BOOL default 0,
+  password varchar(32) NOT NULL default '',
+  username varchar(20) NOT NULL default '',
+  company varchar(30) NOT NULL default '',
+  country varchar(20) NOT NULL default '',
+  state varchar(20) NOT NULL default '',
+  email varchar(30) default NULL,
+  test tinyint(1) default '0',
+  dev tinyint(1) default '0',
   PRIMARY KEY  (user_id),
-  UNIQUE KEY username (username),
+  UNIQUE KEY username (username)
 ) TYPE=InnoDB;
 
 
       </screen>
     </para>
   </sect1>
+  <sect1>
+    <title>Static Data</title>
+    <para>
+      The following SQL statements will populate static data fields in the
+      database:
+      <screen>
+INSERT INTO class (class_code, class_name, parent_required) VALUES ('al','Approx. Likelihood',0);
+INSERT INTO class (class_code, class_name, parent_required) VALUES ('le','Likelihood Eval.',1);
+
+INSERT INTO end (end_code, end_name) VALUES ('cerr','Compiler Error');
+INSERT INTO end (end_code, end_name) VALUES ('herr','Hard Fault');
+INSERT INTO end (end_code, end_name) VALUES ('serr','Software Error');
+INSERT INTO end (end_code, end_name) VALUES ('srun','Successful Run');
+
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('fo','First Order','al',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('eh','Expected Hessian','al',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('la','Laplace Approx.','al',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('ml','M.C. Likelihood','le',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('mc','Markov Chain M.C.','al',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('gr','Grid','le',1);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('an','Analytical','le',0);
+
+INSERT INTO state (state_code, state_name) VALUES ('q2c','Queued to compile');
+INSERT INTO state (state_code, state_name) VALUES ('q2ml','Queued to M.L.');
+INSERT INTO state (state_code, state_name) VALUES ('cmp','Compiling');
+INSERT INTO state (state_code, state_name) VALUES ('q2r','Queued to run');
+INSERT INTO state (state_code, state_name) VALUES ('run','Running');
+INSERT INTO state (state_code, state_name) VALUES ('end','End');
+      </screen>
+    </para>
+  </sect1>
   <sect1 id="tables_and_fields">
     <title>Tables and Fields</title>
+    <sect2>
+      <title>class</title>
+      <para>
+	The <emphasis>class</emphasis> table categorizes methods into
+	classes.  No row is ever deleted from this table.
+      </para>
+      <para>
+	<table frame='all'><title>class</title>
+	  <tgroup cols='3' align='left' colsep='1' rowsep='1'>
+	    <colspec colwidth="1*" colname='c1'/>
+	    <colspec colwidth="2*" colname='c2'/>
+	    <colspec colwidth="4*" colname='c3'/>
+	    <thead>
+	      <row>
+		<entry>Field</entry>
+		<entry>Type</entry>
+		<entry>Description</entry>
+	      </row>
+	    </thead>
+	    <tbody>
+	      <row>
+		<entry>class_code</entry>
+		<entry>char(2)</entry>
+		<entry>Primary key.</entry>
+	      </row>
+	      <row>
+		<entry>class_name</entry>
+		<entry>char(20)</entry>
+		<entry>Expanded name.</entry>
+	      </row>
+	      <row>
+		<entry>parent_required</entry>
+		<entry>tinyint(1)</entry>
+		<entry>
+		  Whether or not methods in the class can only be used by jobs
+		  which have a parent link.
+		</entry>
+	      </row>
+	    </tbody>
+	  </tgroup>
+	</table>
+      </para>
+      <bridgehead renderas="sect3">Transaction Processing Considerations</bridgehead>
+      <para>
+	This table is not updated by applications. There are no 
+	transaction processing issues.
+      </para>
+    </sect2>
     <sect2>
       <title>dataset</title>
       <para>
@@ -562,7 +632,7 @@ CREATE TABLE user (
 	      </row>
 	      <row>
 		<entry>state_code</entry>
-		<entry>char(3)</entry>
+		<entry>varchar(4)</entry>
 		<entry>
 		  The state to which the given job transitioned at the
 		  given time.  A foreign key to the state table.
@@ -574,6 +644,14 @@ CREATE TABLE user (
 		<entry>
 		  The job that underwent a transition at the given 
 		  time. A foreign key to the job table.
+		</entry>
+	      </row>
+	      <row>
+		<entry>host</entry>
+		<entry>varchar(100)</entry>
+		<entry>
+		  The host name of the computer on which the job was running
+		  at the time the event occurred.
 		</entry>
 	      </row>
 	    </tbody>
@@ -674,7 +752,7 @@ CREATE TABLE user (
 	      </row>
 	      <row>
 		<entry>state_code</entry>
-		<entry>char(3)</entry>
+		<entry>varchar(4)</entry>
 		<entry>
 		  The current state of the job.  A foreign key 
 		  to the state table.
@@ -691,7 +769,7 @@ CREATE TABLE user (
 	      </row>
 	      <row>
 		<entry>start_time</entry>
-		<entry>int(10 unsigned</entry>
+		<entry>int(10) unsigned</entry>
 		<entry>
 		  The time, to a resolution of one second, at which the 
 		  job was first submitted to Spk.  The value stored is 
@@ -701,7 +779,7 @@ CREATE TABLE user (
 	      </row>
 	      <row>
 		<entry>event_time</entry>
-		<entry>int(10 unsigned</entry>
+		<entry>int(10) unsigned</entry>
 		<entry>
 		  The time, to a resolution of one second, at which the 
 		  job entered its current state.  The value stored is 
@@ -717,7 +795,16 @@ CREATE TABLE user (
 		  and scientific data, 
 		  which is output by the Aspk Compiler for the
 		  use of the Cspk when the job enters the 
-		  "Ready to Run" state.
+		  "Queued to Run" state.
+		</entry>
+	      </row>
+	      <row>
+		<entry>end_code</entry>
+		<entry>varchar(4)</entry>
+		<entry>
+		  When the job reaches the 'end' state, the end_code is set
+		  to indicate the type of completion that occurred.  A foreign
+		  key to the end table.
 		</entry>
 	      </row>
 	      <row>
@@ -733,7 +820,7 @@ CREATE TABLE user (
 		<entry>int(10)</entry>
 		<entry>
 		  The job_id of the parent job, if this job depends on
-		  a previous one. 
+		  a previous one. A foreign key to the job table.
 		</entry>
 	      </row>
 	    </tbody>
@@ -761,7 +848,7 @@ CREATE TABLE user (
 	a SQL <command>begin</command> statement or its programming
 	language equivalent, must be executed before the queue selection
 	code starts, and a <command>commit</command> command must
-	be executed afterwards.
+	be executed afterward.
       </para>
       <para>
 	Similarly, several Cspk process may attempt simultaneously
@@ -800,6 +887,15 @@ CREATE TABLE user (
 		<entry>method_name</entry>
 		<entry>char(20)</entry>
 		<entry>Expanded name.</entry>
+	      </row>
+	      <row>
+		<entry>test_only</entry>
+		<entry>tiny_int(1)</entry>
+		<entry>
+		  Whether or not this method can only be employed by a user
+		  qualified by a true value in the test column of
+		  his or her row in the user table.
+		</entry>
 	      </row>
 	    </tbody>
 	  </tgroup>
@@ -987,8 +1083,36 @@ CREATE TABLE user (
 		</entry>
 	      </row>
 	      <row>
+		<entry>company</entry>
+		<entry>varchar(30)</entry>
+		<entry>
+		  The name of the company the user works for.
+		</entry>
+	      </row>
+	      <row>
+		<entry>country</entry>
+		<entry>varchar(20)</entry>
+		<entry>
+		  The user's country.
+		</entry>
+	      </row>
+	      <row>
+		<entry>state</entry>
+		<entry>varchar(20)</entry>
+		<entry>
+		  The user's country or province.
+		</entry>
+	      </row>
+	      <row>
+		<entry>email</entry>
+		<entry>varchar(30)</entry>
+		<entry>
+		  The user's electronic mail address.
+		</entry>
+	      </row>
+	      <row>
 		<entry>test</entry>
-		<entry>bool</entry>
+		<entry>tinyint(1)</entry>
 		<entry>
 		  Whether or not the user is authorized to access features
 		  that are still under test.
@@ -996,7 +1120,7 @@ CREATE TABLE user (
 	      </row>
 	      <row>
 		<entry>dev</entry>
-		<entry>bool</entry>
+		<entry>tinyint(1)</entry>
 		<entry>
 		  Whether the user is one of the developers of this software.
 		</entry>
@@ -1032,9 +1156,11 @@ CREATE TABLE user (
  -->
 <!--  LocalWords:  authorinitials revremark spkdb SQL itemizedlist listitem url
  -->
-<!--  LocalWords:  ulink orderedlist MDA MDAs Aspk Cspk cpp MyISAM cerr srun
+<!--  LocalWords:  ulink orderedlist MDA MDAs Aspk Cspk cpp MyISAM cerr srun al
  -->
 <!--  LocalWords:  timestamp varchar longblob InnoDB cmp username tgroup colsep
  -->
-<!--  LocalWords:  rowsep colspec colwidth colname thead tbody
+<!--  LocalWords:  rowsep colspec colwidth colname thead tbody MySQL linkend le
+ -->
+<!--  LocalWords:  tinyint dev Eval herr serr fo mc renderas rcs
  -->

@@ -8,15 +8,21 @@
  <articleinfo>
     <revhistory>
       <revision>
-	<revnumber>1.0</revnumber>
+	<revnumber>1.00</revnumber>
 	<date>November 17, 2003</date>
 	<authorinitials>afw</authorinitials>
 	<revremark>Initial version.</revremark>
       </revision>
+      <revision>
+	<revnumber>1.01</revnumber>
+	<date>August 13, 2004</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Added additional entities.</revremark>
+      </revision>
     </revhistory>
   <abstract>
       <para>
-	An entity relationship model for the Spk relational database
+	An entity relationship model for the Spk database
 	is presented.
       </para>
   </abstract>
@@ -27,113 +33,177 @@
       In Spk, job status, job history, and user data
       are maintained in a relational
       database. The database is the sole means of communication
-      between the independent components of the system, which
-      are the MDA, Aspk compile, Aspk web server, and Cspk.
+      between the major components of the server side of the 
+      application: namely, the web server, the SPK compiler, and
+      the computational server.
       This document presents the ER model for this database.
     </para>
   </sect1>
   <sect1>
     <title>Entity Relationship Diagram</title>
     <para>
-      The following diagram represents the data entities and their
-      relationships:
+      The following diagram represents the SPK database in terms of
+      data entities and relationships.  In the following diagram, 
+      note the following:
       <itemizedlist>
 	<listitem>
 	  <para>
 	    Entities are represented by boxes that are divided
 	    into sections, vertically.  The name of the entity appears in the
-	    first box.  A list of the most important attributes 
-	    appear in the second box.
+	    upper section. A list of the most important attributes 
+	    appears in the lower section.
 	  </para>
 	</listitem>
 	<listitem>
 	  <para>
-	    Relationships between entities are represented by arrows:
+	    Relationships between entities are represented by connector
+	    lines.
 	    <itemizedlist>
 	      <listitem>
 		<para>
-		  The role of the relationship is indicated by text.  For
-		  example, a job <emphasis>has a</emphasis> version.
+		  Each relationship is modeled as a <emphasis>has-a</emphasis>
+		  relationship.  For example, a user <emphasis>has</emphasis>
+		  zero or more jobs.  A job <emphasis>has</emphasis> a state.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
-		  The sense of the role is indicated by the direction
-		  of the arrow.  In the example just cited, it is
-		  the job which has a version and not the version
-		  which has a job.
+		  An arrow-head at one end of a connector line points to the
+		  entity which <emphasis>has</emphasis>.  In the example of
+		  the line that connects user and job, the arrow-head points
+		  toward user, because it is the user who has jobs and not
+		  the other way around.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
-		  The multiplicity of the relationship is represented
-		  by numbers or ranges of numbers at the ends of the
-		  relationship arrow.  For example, the relationship
-		  between Job and History Segment is 1-to-many.  To
-		  be more specific, each job must have one or more
-		  history segments. 
+		  The <emphasis>multiplicity</emphasis> of the relationship
+		  is represented by the end of the connector opposite the 
+		  arrow-head.  For example, the "crow's-foot" symbol at the
+		  job end of the connector between user and job implies that
+		  the user may have multiple jobs.  The lack of a 
+		  crow's-foot in the connector between job and model implies
+		  that a job can have at most one model.
 		</para>
 	      </listitem>
 	    </itemizedlist>
 	  </para>
 	</listitem>
       </itemizedlist>
+    </para>
+    <para>
+      The SPK database is implemented as a relational database. The 
+      high level design is documented in the
+      <ulink url="../dbSchema/dbSchema.html">
+	Database Schema
+      </ulink>
+      specification. The entity-relationship model and the 
+      database schema are complementary and non-redundant. As implemented
+      in SPK, there is a one-to-one relationship between entities
+      and database tables as well as a one-to-one relationship between
+      entity attributes and table columns.  The connector lines in the
+      er-diagram clearly indicate the direction and multiplicity of
+      relationships.  This information is difficult or impossible to
+      infer from the schema alone.
+    </para>
+    <para>
       <figure>
 	<title>Entity Relationship Diagram</title>
-	<graphic scale="80" fileref="erModelDiagram.png"/>
+	<graphic scale="50" fileref="erModelDiagram.png"/>
       </figure>
       </para>
   </sect1>
   <sect1>
     <title>Entities</title>
     <para>
-      In this section, each entity will be described briefly.  It should
-      me noted that entities are more abstract than relational tables.
-      Consequently, there is not a one-to-one correspondence between
-      entities names and table names.  For example, User is an entity
-      in this model.  However, Spk has a User database, in which 
-      User is the principal table.  In the Job database, User is simply
-      implemented as a foreign key.
+      In this section, each entity will be described briefly.
     </para>
     <sect2>
       <title>Job</title>
       <para>
 	Job represents the principal unit of work for Spk.  A user
-	combines a version of a model with a data file to create
-	a job.
+	combines a model and a dataset to create
+	a job.  A user may have many jobs.  Some jobs contain a non-zero
+	parent link, which associates the job to another job that was
+	previously completed.
       </para>
     </sect2>
     <sect2>
       <title>History </title>
       <para>
-	Each row in the history table represents one of the states
+	Each instance of a history entity represents one of the states
 	assumed by a job.  The date and time of transition into that
-	state is recorded.
-	(See the Spk design document "Job History Model").
+	state is recorded.  For more information, see the
+	<ulink url="../jobHistory/jobHistory.html">
+	  JobHistory Model
+	</ulink>
+	specification.
       </para>
     </sect2>
     <sect2>
       <title>Model</title>
       <para>
-	A row in the model table represents a PK model created by
+	Each instance of the model entity represents a PK model created by
 	a user with the aid of the MDA. The XML source for the 
 	model is contained in the <emphasis>archive</emphasis>
-	field as an rcs-compatible version controlled archive.
+	attribute as an rcs-compatible version controlled archive.
       </para>
     </sect2>
     <sect2>
-      <title>Data</title>
+      <title>Dataset</title>
       <para>
-	A row in the data table contains a data set. Just as with
-	the model, the data set is stored in an rcs-compatible
-	archive field.
+	Each instance of the dataset entity represents a set of data created 
+	or imported by
+	a user with the aid of the MDA. The XML source for the 
+	dataset is contained in the <emphasis>archive</emphasis>
+	attribute as an rcs-compatible version controlled archive.
       </para>
     </sect2>
     <sect2>
       <title>User</title>
       <para>
 	User represents the user of Spk. A user may have many
-	jobs, many models and many data sets.
+	jobs, many models and many datasets.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Method</title>
+      <para>
+	Spk supports various computational methods. Each job uses 
+	one such method.  Certain methods are available only to
+	users who have "test" privileges.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Class</title>
+      <para>
+	Each method belongs to a method class.  Some methods can only
+	be applied to a job which has a non-zero parent attribute linking it to a
+	previously completed job.
+      </para>
+    </sect2>
+    <sect2>
+      <title>State</title>
+      <para>
+	At any given moment, a job is in exactly one state, which
+	must relate to an instance of the state entity.
+	Each instance of the state entity contains a state_code and
+	a longer state_name, which is English text.  In the future, there
+	may be versions of SPK that use languages other than English.
+	In that case, a name attribute will be added for
+	each additional language supported.
+      </para>
+    </sect2>
+    <sect2>
+      <title>End</title>
+      <para>
+        When a job reaches the 'end' state, its end attribute
+        is non-null and indicates the nature of its completion.
+	Each instance of the end entity contains an end-code and
+	a longer end_name, which is English text.  In the future, there
+	may be versions of SPK that use languages other than English.
+	In that case, a name attribute will be added for
+	each additional language supported.
       </para>
     </sect2>
   </sect1>
@@ -141,5 +211,7 @@
 
 <!--  LocalWords:  articleinfo revhistory revnumber authorinitials revremark er
  -->
-<!--  LocalWords:  Spk MDA ASPK CSPK itemizedlist listitem fileref png rcs
+<!--  LocalWords:  Spk MDA ASPK CSPK itemizedlist listitem fileref png rcs xml
+ -->
+<!--  LocalWords:  DOCTYPE DocBook uw ulink url erModelDiagram JobHistory
  -->
