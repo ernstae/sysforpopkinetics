@@ -34,10 +34,12 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
+#include <spk/identity.h>
 #include <spk/fitPopulation.h>
 #include <spk/SpkException.h>
 #include <spk/Objective.h>
 #include <spk/NaiveFoModel.h>
+#include <spk/WarningsManager.h>
 
 #include "fitPopulationTest.h"
 
@@ -58,7 +60,7 @@ Test* fitPopulationTest::suite()
   TestSuite *suiteOfTests = new TestSuite("fitPopulationTest");
 
     suiteOfTests->addTest(new TestCaller<fitPopulationTest>(
-	     "modifiedLaplaceTest", &fitPopulationTest::modifiedLaplaceTest));
+             "modifiedLaplaceTest", &fitPopulationTest::modifiedLaplaceTest));
     suiteOfTests->addTest(new TestCaller<fitPopulationTest>(
              "expectedHessianTest", &fitPopulationTest::expectedHessianTest));
     suiteOfTests->addTest(new TestCaller<fitPopulationTest>(
@@ -70,30 +72,38 @@ Test* fitPopulationTest::suite()
 void fitPopulationTest::modifiedLaplaceTest()
 {
     fitPopulationExampleTest(MODIFIED_LAPLACE);
-	//cout << "fitPopulationExampleTest(MODIFIED_LAPLACE)" << endl; 
+    //cout << "fitPopulationExampleTest(MODIFIED_LAPLACE)" << endl; 
     fitPopulationZeroIterationsTest(MODIFIED_LAPLACE);
     //cout << "fitPopulationZeroIterationsTest(MODIFIED_LAPLACE)" << endl; 
+    fitPopulationLimitsWarningsTest(MODIFIED_LAPLACE);
+    //cout << "fitPopulationLimitsWarningsTest(MODIFIED_LAPLACE)" << endl; 
 }
 void fitPopulationTest::expectedHessianTest()
 {
     fitPopulationExampleTest(EXPECTED_HESSIAN);
-	//cout << "fitPopulationExampleTest(EXPECTED_HESSIAN)" << endl;
+    //cout << "fitPopulationExampleTest(EXPECTED_HESSIAN)" << endl;
     fitPopulationZeroIterationsTest(EXPECTED_HESSIAN);
-	//cout << "fitPopulationZeroIterationsTest(EXPECTED_HESSIAN)" << endl;
+    //cout << "fitPopulationZeroIterationsTest(EXPECTED_HESSIAN)" << endl;
+    fitPopulationLimitsWarningsTest(EXPECTED_HESSIAN);
+    //cout << "fitPopulationLimitsWarningsTest(EXPECTED_HESSIAN)" << endl;
 }
 void fitPopulationTest::firstOrderTest()
 {
     fitPopulationExampleTest(FIRST_ORDER);
-	//cout << "fitPopulationExampleTest(FIRST_ORDER)" << endl;
-	fitPopulationZeroIterationsTest(FIRST_ORDER);
-	//cout << "fitPopulationZeroIterationsTest(FIRST_ORDER)" << endl;
+    //cout << "fitPopulationExampleTest(FIRST_ORDER)" << endl;
+    fitPopulationZeroIterationsTest(FIRST_ORDER);
+    //cout << "fitPopulationZeroIterationsTest(FIRST_ORDER)" << endl;
+    fitPopulationLimitsWarningsTest(FIRST_ORDER);
+    //cout << "fitPopulationLimitsWarningsTest(FIRST_ORDER)" << endl;
 }
 void fitPopulationTest::naiveFirstOrderTest()
 {
     fitPopulationExampleTest(NAIVE_FIRST_ORDER);
-	//cout << "fitPopulationExampleTest(NAIVE_FIRST_ORDER)" << endl;
-	fitPopulationZeroIterationsTest(NAIVE_FIRST_ORDER);
-	//cout << "fitPopulationZeroIterationsTest(NAIVE_FIRST_ORDER)" << endl;
+    //cout << "fitPopulationExampleTest(NAIVE_FIRST_ORDER)" << endl;
+    fitPopulationZeroIterationsTest(NAIVE_FIRST_ORDER);
+    //cout << "fitPopulationZeroIterationsTest(NAIVE_FIRST_ORDER)" << endl;
+    fitPopulationLimitsWarningsTest(NAIVE_FIRST_ORDER);
+    //cout << "fitPopulationLimitsWarningsTest(NAIVE_FIRST_ORDER)" << endl;
 }
 
 /*------------------------------------------------------------------------
@@ -1189,6 +1199,359 @@ void fitPopulationTest::fitPopulationZeroIterationsTest(enum Objective whichObje
 
   }
   
+}
+
+
+/*************************************************************************
+ *
+ * Function: fitPopulationLimitsWarningsTest
+ *
+ *
+ * This test checks to see if warnings are issued when population and
+ * individual parameters are constrained by their lower and/or upper
+ * bounds.
+ *
+ *************************************************************************/
+
+class UserModelPpkaLimitsWarningsTest : public SpkModel
+{
+    valarray<double> _a, _b;
+    int _i;
+    const int _nA;
+    const int _nB;
+    const int _nYi;
+public:
+    UserModelPpkaLimitsWarningsTest(int nA, int nB, int nYi)
+      : _nA(nA), _nB(nB), _nYi(nYi), _a(nA), _b(nB)
+    {}; 
+    ~UserModelPpkaLimitsWarningsTest(){};
+private:
+    void doSelectIndividual(int inx)
+    {
+        _i = inx;
+    }
+    void doSetPopPar(const valarray<double>& aval)
+    {
+      assert(aval.size() == _nA);
+        _a = aval;
+    }
+    void doSetIndPar(const  valarray<double>& bval)
+    {
+      assert(bval.size() == _nB);
+        _b = bval;
+    }
+    void doIndParVariance( valarray<double>& ret ) const
+    {
+        //
+        //     D(alp) = I  .
+        //
+        ret.resize(_nB * _nB);
+        identity( _nB, ret );
+    }
+    bool doIndParVariance_popPar( valarray<double>& ret ) const
+    {
+        //
+        //    D_alp(alp) = 0  .
+        //
+        ret.resize(_nB * _nB * _nA);
+        ret = 0.0;
+        return false;
+    }
+    void doDataMean( valarray<double>& ret ) const
+    {
+        //
+        //                 / b(2) \ 
+        //     f(alp, b) = |      |  .
+        //                 \ b(2) /
+        //
+        ret.resize(_nYi);
+        ret[0] = _b[1];
+        ret[1] = _b[1];
+    }
+    bool doDataMean_popPar( valarray<double>& ret ) const
+    {
+        //
+        //     f_alp(alp, b) = 0  .
+        //
+        ret.resize(_nYi * _nA);
+        ret = 0.0;
+        return false;
+    }
+    bool doDataMean_indPar( valarray<double>& ret ) const
+    {
+        //
+        //                   / 0   1   0   0   0 \ 
+        //     f_b(alp, b) = |                   |  .
+        //                   \ 0   1   0   0   0 /
+        //
+        ret.resize(_nYi * _nB);
+        ret = 0.0;
+        ret[2] = 1.0;
+        ret[3] = 1.0;
+        return true;
+    }
+    void doDataVariance( valarray<double>& ret ) const
+    {
+        //
+        //                 /  exp[b(1)]     0  \ 
+        //     R(alp, b) = |                   |  .
+        //                 \  0      exp[b(1)] / 
+        //
+        ret.resize(_nYi * _nYi);
+        ret[0] = exp( _b[0] );
+        ret[1] = 0.0;
+        ret[2] = 0.0;
+        ret[3] = exp( _b[0] );
+    }
+    bool doDataVariance_popPar( valarray<double>& ret ) const
+    {
+        //
+        //    R_alp(alp, b) = 0  .
+        //
+        ret.resize(_nYi * _nYi * _nA);
+        ret = 0.0;
+        return false;
+    }
+    bool doDataVariance_indPar( valarray<double>& ret ) const
+    {
+        //
+        //                   /  exp[b(1)]     0     0     0     0  \ 
+        //     R_b(alp, b) = |  0             0     0     0     0  |   .
+        //                   |  0             0     0     0     0  | 
+        //                   \  exp[b(1)]     0     0     0     0  / 
+        //
+        ret.resize(_nYi * _nYi * _nB);
+        ret = 0.0;
+        ret[0] = exp( _b[0] );
+        ret[3] = exp( _b[0] );
+        return true;
+    }   
+};
+
+
+void fitPopulationTest::fitPopulationLimitsWarningsTest(enum Objective whichObjective)
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  // Number of individuals.
+  const int nInd = 100;
+
+  // Number of measurements for each individual. 
+  const int nYPerInd = 2;
+
+  // Number of measurements.
+  const int nY = nInd * nYPerInd;
+
+  const int nAlp = 10;
+
+  const int nB = 5;
+
+  int i;
+  int k;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the user-provided model.
+  //------------------------------------------------------------
+
+  UserModelPpkaLimitsWarningsTest model( nAlp, nB, nYPerInd );
+
+
+  //------------------------------------------------------------
+  // Quantities related to the individuals in the population.
+  //------------------------------------------------------------
+
+  valarray<int> N( nYPerInd, nInd );
+
+
+  //------------------------------------------------------------
+  // Quantities related to the data vector, y.
+  //------------------------------------------------------------
+
+  // Measurement values, y.
+  valarray<double> Y( 2.0, nY );
+
+
+  //------------------------------------------------------------
+  // Quantities related to the fixed population parameter, alp.
+  //------------------------------------------------------------
+
+  valarray<double> alpLow ( nAlp );
+  valarray<double> alpUp  ( nAlp );
+  valarray<double> alpIn  ( nAlp );
+  valarray<double> alpOut ( nAlp );
+  valarray<double> alpStep( nAlp );
+
+  alpStep = 0.01;
+
+  // Set the upper bounds.
+  alpUp[ 0 ] = 10.0;
+  alpUp[ 1 ] = 10.0;
+  alpUp[ 2 ] = 10.0;
+  alpUp[ 3 ] = 8.944e-235;
+  alpUp[ 4 ] = 8.944e-235;
+  alpUp[ 5 ] = 8.944e-235;
+  alpUp[ 6 ] = 3.5e10;
+  alpUp[ 7 ] = 3.5e10;
+  alpUp[ 8 ] = 3.5e10;
+  alpUp[ 9 ] = 3.5e10;
+
+  // Set the lower bounds.
+  for ( k = 0; k < nAlp - 3; k++ )
+  {
+    alpLow[ k ] = - alpUp[ k ];
+  }
+  for ( k = nAlp - 3; k < nAlp; k++ )
+  {
+    alpLow[ k ] = alpUp[ k ];
+  }
+
+  // Set the initial values.
+  for ( k = 0; k < nAlp - 3; k++ )
+  {
+    alpIn[ k ] = 0.5 * alpUp[ k ];
+  }
+  for ( k = nAlp - 3; k < nAlp; k++ )
+  {
+    alpIn[ k ] = alpUp[ k ];
+  }
+
+  // Reset some of the initial values equal to their bounds
+  // so that warnings will be generated.
+  alpIn[ 0 ] = alpUp [ 0 ];
+  alpIn[ 5 ] = alpLow[ 5 ];
+  alpIn[ 9 ] = alpUp [ 9 ];
+
+  
+  //------------------------------------------------------------
+  // Quantities related to the random population parameters, b.
+  //------------------------------------------------------------
+
+  valarray<double> bLow ( nB );
+  valarray<double> bUp  ( nB );
+  valarray<double> bStep( nB );
+
+  valarray<double> bIn  ( nB * nInd );
+  valarray<double> bOut ( nB * nInd );
+
+  bStep = 0.001;
+
+  // Set the upper bounds.
+  bUp[ 0 ] = 4.0;
+  bUp[ 1 ] = 4.0;
+  bUp[ 2 ] = 1.0e-5;
+  bUp[ 3 ] = 4.395237;
+  bUp[ 4 ] = 35.982709204;
+
+  // Set the lower bounds.
+  for ( k = 0; k < nB; k++ )
+  {
+    bLow[ k ] = - bUp[ k ];
+  }
+
+  // Set the initial values.
+  for ( i = 0; i < nInd; i++ )
+  {
+    for ( k = 0; k < nB; k++ )
+    {
+      bIn[ k + i * nB ] = 0.5 * bUp [ k ];
+    }
+  }
+
+  // Reset some of the initial values equal to their bounds
+  // so that warnings will be generated.
+  i = 0;
+  bIn[ 0 + i * nB ] = bUp [ 0 ];
+  bIn[ 3 + i * nB ] = bLow[ 3 ];
+  bIn[ 4 + i * nB ] = bUp [ 4 ];
+  i = 8;
+  bIn[ 1 + i * nB ] = bUp [ 1 ];
+  i = 39;
+  bIn[ 4 + i * nB ] = bUp [ 4 ];
+  i = 82;
+  bIn[ 1 + i * nB ] = bUp [ 1 ];
+  bIn[ 2 + i * nB ] = bLow[ 2 ];
+  bIn[ 4 + i * nB ] = bUp [ 4 ];
+  i = 83;
+  bIn[ 2 + i * nB ] = bLow[ 2 ];
+  i = 99;
+  bIn[ 0 + i * nB ] = bUp [ 0 ];
+  bIn[ 3 + i * nB ] = bLow[ 3 ];
+  bIn[ 4 + i * nB ] = bUp [ 4 ];
+
+
+  //------------------------------------------------------------
+  // Quantities related to the population objective function.
+  //------------------------------------------------------------
+
+  double*           pdNull    = 0;
+  valarray<double>* pdmatNull = 0;
+
+
+  //------------------------------------------------------------
+  // Remaining inputs to fitPopulation.
+  //------------------------------------------------------------
+
+  // Set the number of iterations at the population and individual
+  // levels to be zero so that the final parameters will be equal to
+  // their initial values.
+  Optimizer indOptimizer( 1.0e-6, 0, 0 );
+  Optimizer popOptimizer( 1.0e-6, 0, 0 );
+
+  // Set the parallel controls object
+  DirBasedParallelControls parallelControls( false, 0, 0 );
+
+
+  //----------------------------------------------------------
+  // Optimize the population objective function.
+  //----------------------------------------------------------
+
+  try{
+    fitPopulation( 
+              model,
+              whichObjective,
+              N,
+              Y,
+              popOptimizer,
+              alpLow,
+              alpUp,
+              alpIn,
+              alpStep,
+              &alpOut,
+              indOptimizer,
+              bLow,
+              bUp,
+              bIn,
+              bStep,
+              &bOut,
+              pdNull,
+              pdmatNull,
+              pdmatNull,
+              parallelControls );
+    }
+    catch( ... )
+    {
+      CPPUNIT_ASSERT_MESSAGE( "fitPopulation failed!", false );
+    }
+
+
+  //----------------------------------------------------------
+  // Finish up.
+  //----------------------------------------------------------
+
+  // Uncomment these statements to see the warnings.
+  /*
+  string warnings;
+  WarningsManager::getAllWarnings( warnings );
+  cout << "########################################" << endl;
+  cout << warnings;
+  cout << "########################################" << endl;
+  */
+
 }
 
 
