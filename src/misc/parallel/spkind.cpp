@@ -1,23 +1,22 @@
 /*
   NAME
-  spkpop -- population level of SPK computation
+  spkind -- individual level of SPK computation
 
   SYNOPSIS
-  spkpop job_id individual_count
+  spkpop job_id individual_id
 
   DESCRIPTION
 
-  This program performs the SPK computation for the job given by its
-  "job_id" argument.  It can run on any node of a parallel virtual
-  machine (pvm).  It calls pvm_spawn to create an instance of the
-  spkind program for each individual in the population being
-  modeled. The number of such child tasks is given by the
-  individual_count argument.  The children can run on the same node or
-  on any other node of the pvm.
+  This program performs the SPK computation for a single individual.
+  It is started by the population level, spkpop, and runs the
+  individual optimization repeatedly, once for each iteration of the
+  population level.  It can run on any node of a parallel virtual
+  machine (pvm).
 
   As a unix process, this program is the child of the pvm daemon
-  running on its node.  As a pvm task, it is the child of spkjob,
-  which always runs on the head node of the pvm.
+  running on its node.  As a pvm task, it is the child of spkpop,
+  which may be running on the same node or on any other node of the
+  pvm.
 
   Pvm connects the standard output stream of this program to the spk
   log file, which resides on the master node.  The program should not
@@ -29,12 +28,12 @@
 
   The program runs in its own unique working directory, which is
   established by spkrund, the SPK runtime daemon, which is the unix
-  parent of spkjob.  It accesses the directory via the Network Files
-  System (NFS).
+  parent of spkjob. It acesses the working directory via the Network
+  File System (NFS).
 
   SEE ALSO
   spkjob
-  spkind
+  spkpop
   spkrund
   pvm
 */
@@ -51,16 +50,11 @@
 
 static int my_tid = 0;
 static char *job_id = "?????";
-static int ntasks = 0;
+static char *ind_id = "?????";
 static int parent_tid = 0;
-static sigset_t block_set;
 
 static void finish(int);
-static void signal_block(void);
 static void signal_handler(int);
-static void signal_initialize(void);
-static void signal_unblock(void);
-
 static void spklog(const char*);
 
 // call this function in case of fatal error
@@ -77,36 +71,12 @@ static void finish(int exit_value) {
   pvm_send(parent_tid, SpkPvmExitValue);
   spklog("stop");
 }
-// block termination signals
-static void signal_block() {
-  sigprocmask(SIG_BLOCK, &block_set, NULL);
-}
 // handle a termination signal
 static void signal_handler(int signum) {
-  spklog("terminated by spkjob");
+  spklog("terminated by spkpop");
   finish(1);
   exit(1);
 }
-// initialize signal handling
-static void signal_initialize() {
-  // set up the normal signal action
-  struct sigaction signal_action;
-  signal_action.sa_handler = signal_handler;
-  signal_action.sa_flags = 0;
-  sigaction(SIGINT,  &signal_action, NULL);
-  sigaction(SIGHUP,  &signal_action, NULL);
-  sigaction(SIGTERM, &signal_action, NULL);
-  // set up mask of signals to be blocked while executing critical sections
-  sigemptyset(&block_set);
-  sigaddset(&block_set, SIGINT);
-  sigaddset(&block_set, SIGHUP);
-  sigaddset(&block_set, SIGTERM);
-}
-// unblock termination signals
-static void signal_unblock() {
-  sigprocmask(SIG_UNBLOCK, &block_set, NULL);
-}
-
 /*
   Write a message to the SPK log.  It is assumed that spkjob, which is
   either the pvm parent or grandparent of this instance, set up the
@@ -119,14 +89,14 @@ static void spklog(const char* message) {
   int len = strlen(timestamp);
   if (len > 6)
     timestamp[len - 6] = '\0';
-  printf("[j%s](%s)spkpop: %s\n", job_id, timestamp, message);
+  printf("[j%s](%s)spkind(%s): %s\n", job_id, timestamp, ind_id, message);
   fflush(stdout);
 }
 
 int main(int argc, char** argv) {
   pvm_setopt(PvmRoute, PvmRouteDirect);
   int my_tid = pvm_mytid();          // attach to pvm
-  char *usage = "spkpop job_id individual_count";
+  char *usage = "spkind job_id individual_id";
   char buf[100];
   int bufid;
 
@@ -134,11 +104,17 @@ int main(int argc, char** argv) {
   if (argc != 3)
     die(usage);
   job_id = argv[1];
-  ntasks = atoi(argv[2]);
+  ind_id = argv[2];
   
   // set up signal handling for the signals that might be used
   // by human operators to terminate us
-  signal_initialize();
+  struct sigaction signal_action;
+  signal_action.sa_handler = signal_handler;
+  sigemptyset(&signal_action.sa_mask);
+  signal_action.sa_flags = 0;
+  sigaction(SIGINT,  &signal_action, NULL);
+  sigaction(SIGHUP,  &signal_action, NULL);
+  sigaction(SIGTERM, &signal_action, NULL);
 
   parent_tid = pvm_parent();
 
@@ -174,6 +150,7 @@ int main(int argc, char** argv) {
     sleep(1);
   }
   finish(0);
+  spklog("stop");
   return 0;
 }
 
