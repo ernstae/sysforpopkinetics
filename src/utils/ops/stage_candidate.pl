@@ -134,7 +134,7 @@ my $scp_command = "/usr/bin/scp";
 sub stage_directory {
     my $host = shift;
     my $path = shift;
-    my $source = "$host:$path/spktest";
+    my $source = $host eq "aspkserver" ? "$path/spktest" : "$host:$path/spktest";
     my $dest = "$host$path";
     my @args = ($scp_command, "-r", $source, $dest);
     print "@args", "\n";
