@@ -50,6 +50,7 @@ namespace{
   int               mySigmaElemNum  = 0;
   Symbol::Structure mySigmaStruct   = Symbol::TRIANGLE;
   int               myEtaLen        = 0;
+  int               myEpsLen        = 0;
     
   unsigned int      myPopMitr       = 100;
   unsigned int      myIndMitr       = 100;
@@ -90,6 +91,7 @@ extern "C"{
 
 NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   : ClientTranslator ( sourceIn, dataIn ),
+    fMakefile        ( "generatedMakefile" ),
     fIndData_h       ( "IndData.h" ),
     fDataSet_h       ( "DataSet.h" ),
     fPredEqn_fortran ( "predEqn.fortran" ),
@@ -329,8 +331,25 @@ void NonmemTranslator::parseSource()
     generatePopDriver();
   else
     generateIndDriver();
+  generateMakefile();
 }
-
+void NonmemTranslator::generateMakefile() const
+{
+  ofstream oMake( fMakefile );
+  if( oMake.good() )
+    {
+      oMake << "driver : driver.cpp Pred.h DataSet.h IndData.h" << endl;
+      oMake << "\tg++ -g driver.cpp -o driver ";
+      oMake << "-lspk -lnagc -latlas_lapack -lcblas -latlas -lpthread -lm";
+      oMake << endl;
+    }
+  else
+    {
+      assert( false );
+    }
+  oMake.close();
+  return;
+}
 void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
 {
   
@@ -533,11 +552,11 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
     // step values
     for( int i=0; i<myThetaLen; i++ )
     {
-      double tmp_dbl = fabs( atof( sym_theta->upper[0][i].c_str() ) - atof( sym_theta->lower[0][i].c_str() ) ) / 1000.0;
+      double tmp_dbl = fabs( atof( sym_theta->upper[0][i].c_str() ) 
+			     - atof( sym_theta->lower[0][i].c_str() ) ) / 1000.0;
       char tmp_char[256];
       sprintf( tmp_char, "%f", tmp_dbl );
       sym_theta->step[0][i] = string( tmp_char );
-      cout << "theta[0][" << i << "] = " << sym_theta->step[0][i] << endl;
     }
   }
 
@@ -626,6 +645,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
     }
   else
     assert( false );
+
   Symbol * sym_sigma = table.insertNMMatrix( "SIGMA", mySigmaStruct, mySigmaDim ); 
   {
     //<in>
@@ -672,6 +692,16 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   char etaDefault[] = "0.0";
   Symbol * sym_eta = table.insertNMVector( "ETA", myEtaLen );
   sym_eta->initial[0] = etaDefault;
+  sym_eta->fixed[0] = false;
+
+  //----------------------------------------------------------
+  // Sigma 
+  // Sigma is the covariance of EPS: thus, 
+  // the order of Sigma is the length of EPS vector.
+  myEpsLen = mySigmaDim;
+  char epsDefault[] = "0.0";
+  Symbol * sym_eps = table.insertNMVector( "EPS", myEpsLen );
+  sym_eps->initial[0] = epsDefault;
   sym_eta->fixed[0] = false;
 
   //================================================================================
@@ -1051,7 +1081,12 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
 	myIsCoefficient = (XMLString::equals( xml_coef, X_YES )? true : false );
       }
     }
-  myIsStat = myIsStderr || myIsCorrelation || myIsCov || myIsInvCov || myIsConfidence || myIsCoefficient;
+  myIsStat = myIsStderr 
+    || myIsCorrelation 
+    || myIsCov 
+    || myIsInvCov 
+    || myIsConfidence 
+    || myIsCoefficient;
 
   return;
 }
@@ -1078,6 +1113,7 @@ void NonmemTranslator::parsePred( DOMElement * pred )
   }
   catch( ... )
     {
+      cerr << "Fortran to C++ translation failed for some reason." << endl;
       assert( false );
     }
 
@@ -1091,9 +1127,15 @@ void NonmemTranslator::parsePred( DOMElement * pred )
 //=========================================================================================
 void NonmemTranslator::generateIndData( ) const
 {
-  // The constructor of IndData takes a data record as arguments.
-  // The constructor initializer associates Label vs. Synonym.
-  // The data items are all public.
+  //
+  // The only the "ID" data items have type of string
+  // All others have double precision type.
+  // When generating C++ source code, thus, the ID
+  // data items have to be recognized and treated
+  // differently.  We keep a pointer to the Symbol
+  // object that holds "ID" data items handy for
+  // frequent references.
+  //
   const Symbol * pID = table.findi( "id" );
 
   //
@@ -1106,7 +1148,7 @@ void NonmemTranslator::generateIndData( ) const
 
   // 
   // rawTable points to the actual std::map object that
-  // mapps the label strings and its associated data values.
+  // maps the label strings and its associated data values.
   //
   const map<const string, Symbol> * const rawTable = table.getTable();
   map<const string, Symbol>::const_iterator pRawTable;
@@ -1116,6 +1158,10 @@ void NonmemTranslator::generateIndData( ) const
   // For name binding reason, the declaration and the definition
   // are both stored in a single file: IndData.h
   //
+  // All, I mean all, variable names generated shall be 
+  // case-insensitive (ie. use SymbolTable::key(string) to
+  // to convert a label to the commonly used case.
+  //
   ofstream oIndData_h( fIndData_h );
   if( oIndData_h.good() )
     {
@@ -1123,7 +1169,7 @@ void NonmemTranslator::generateIndData( ) const
 
       oIndData_h << "#ifndef INDDATA_H" << endl;
       oIndData_h << "#define INDDATA_H" << endl;
-      oIndData_h << "#include <valarray>" << endl;
+      oIndData_h << "#include <vector>" << endl;
       oIndData_h << endl;
 
       //-----------------------------------------------
@@ -1133,12 +1179,26 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "class IndData{" << endl;
 
       //
-      // Public member declaration
+      // Public member declaration.
       //
+      //
+      // A constructor that takes the number of measurements
+      // for this particular set and the data item values
+      // (from the data file) are given as arguments.
+      // 
+      // IndData( int nIn,
+      //          const vector<char*> IDIn,
+      //          const vector<double> d1In,  // data item 1
+      //          const vector<double> d2In,  // data item 2
+      //          ...,
+      //        )
+      // : n(nIn), d1(d1In), d1_alias(d1In), d2(d2In), d2_alias(d2In)...
+      // {...}
+      // 
       oIndData_h << "public:" << endl;
 
       //
-      // The only legal constructor interface declaration.
+      // Constructor declaration.
       // The constructor takes a list of valarray objects as arguments.
       // The arguments are for the variables whose names
       // are defined as *the data labels* in the NONMEM term.
@@ -1152,16 +1212,18 @@ void NonmemTranslator::generateIndData( ) const
 	  
 	  //
 	  // If the label is of "ID", then, the data type is char*.
-	  // Otherwise, all others are double.
+	  // Otherwise, all others have double precision.
 	  //
-	  oIndData_h << '\t' << "const std::valarray<" << (isID? "char*":"T") << ">";
-          oIndData_h << " & " << *pLabel << "In";
+	  oIndData_h << '\t' << "const std::vector<" << (isID? "char*":"T") << ">";
+          oIndData_h << " & " << SymbolTable::key( *pLabel ) << "In";
 	}
       oIndData_h << ");" << endl;
       oIndData_h << endl;
 
       // 
-      // Declare the valarray variables, both *the data labels* and *the synonyms*.
+      // Declare the data item labels (from the data file) and their
+      // corresponding synonyms if they have.  They are all have double
+      // precision except for the ID data item which has char* type.
       //
       string synonym;
       pLabel = labels->begin();
@@ -1169,29 +1231,41 @@ void NonmemTranslator::generateIndData( ) const
 	{
 	  //
 	  // If the label string is of "ID", then the data type is char*.
-	  // Otherwise, double.
-	  //
+	  // Otherwise, double precision.
+	  // Use SymbolTable::key(string) to convert the data item label
+          // found in the symbol table to the common case: upper/lower.
+          //
           bool isID = ( *pLabel == pID->name );
-	  oIndData_h << "const std::valarray<" << (isID? "char*":"T") << ">";
-          oIndData_h << " " << *pLabel << ";" << endl;
+	  oIndData_h << "const std::vector<" << (isID? "char*":"T") << ">";
+          oIndData_h << " " << SymbolTable::key( *pLabel ) << ";" << endl;
 	  if( ( synonym = table.findi( *pLabel )->synonym ) != "" )
 	  {
-             oIndData_h << "const std::valarray<" << (isID? "char*":"T") << ">";
-             oIndData_h << " " << synonym << ";" << endl;
+             oIndData_h << "const std::vector<" << (isID? "char*":"T") << ">";
+             oIndData_h << " " << SymbolTable::key( synonym ) << ";" << endl;
           }
 	}
 
       //
-      // Declare the user defined variables that appear in the equations.
-      // These are all double-precision floating point numbers.
+      // Declare the user defined scalar variables that appear in the equations.
+      // In addition, declare their temporary storage counterpart.  The
+      // temporary storage is used to store the current values and
+      // moved to the permanent storage when an interation over population
+      // is completed successfully.  This is to ensure a complete set of
+      // computed values are available even when optimization fails
+      // in the middle.
+      // These are all have double-precision.
       //
       pRawTable = rawTable->begin();
       for( ; pRawTable != rawTable->end(); pRawTable++ )
 	{
-	    if( find( labels->begin(), labels->end(), pRawTable->second.name ) == labels->end() )
+	    if( find( labels->begin(), labels->end(), pRawTable->second.name ) 
+                == labels->end() )
 	    {
-	      oIndData_h << "std::valarray<T> " << pRawTable->second.name << ";" << endl;
-	      oIndData_h << "std::valarray<T> " << pRawTable->second.name << "_tmp;" << endl;
+              // Whenever generating C++ source code corrsponding to labels
+              // registered in the symbol table, use SymbolTable::key(string)
+              // to convert the labels to the commonly used case (lower/upper).
+	      oIndData_h << "std::vector<T> ";
+              oIndData_h << SymbolTable::key(pRawTable->second.name) << ";" << endl;
 	    }
 	}
 
@@ -1201,6 +1275,9 @@ void NonmemTranslator::generateIndData( ) const
       // 
       // Protected member declarations.
       //
+      // The default and the copy constructors are prohibited.
+      // The assignment is also prohibited.
+      //
       oIndData_h << "protected:" << endl;
       oIndData_h << "IndData();" << endl;
       oIndData_h << "IndData( const IndData& );" << endl;
@@ -1209,6 +1286,8 @@ void NonmemTranslator::generateIndData( ) const
 
       //
       // Private member declarations.
+      //
+      // const int n: #of measurements in this set (ie. individual).
       //
       oIndData_h << "private:" << endl;
       oIndData_h << "const int n; // #of measurements." << endl;
@@ -1236,8 +1315,8 @@ void NonmemTranslator::generateIndData( ) const
 	  // If the label string is of "ID", then the data type is char*.
 	  // Othewise, double.
 	  //
-	  oIndData_h << "const std::valarray<" << (isID? "char*":"T") << "> ";
-          oIndData_h << "& " << *pLabel << "In";
+	  oIndData_h << "const std::vector<" << (isID? "char*":"T") << "> ";
+          oIndData_h << "& " << SymbolTable::key( *pLabel ) << "In";
 	}
       oIndData_h << ")" << endl;
       oIndData_h << ": n( nIn )";
@@ -1252,8 +1331,10 @@ void NonmemTranslator::generateIndData( ) const
       pLabel = labels->begin();
       for( ; pLabel != labels->end(); pLabel++ )
 	{
+	  const string label_key = SymbolTable::key( *pLabel );
 	  oIndData_h << "," << endl;
-	  oIndData_h << *pLabel << "( " << *pLabel << "In" << " )";
+	  oIndData_h << label_key;
+	  oIndData_h << "( " << label_key << "In" << " )";
 
 	  //
 	  // If the label has a synonym, apply the same value to the synonym.
@@ -1261,7 +1342,8 @@ void NonmemTranslator::generateIndData( ) const
 	  if( ( synonym = table.findi( *pLabel )->synonym ) != "" )
 	    {
 	      oIndData_h << "," << endl;
-	      oIndData_h << synonym << "( " << *pLabel << "In" << " )";
+	      oIndData_h << SymbolTable::key( synonym );
+	      oIndData_h << "( " << label_key << "In" << " )";
 	    }
 	}
 
@@ -1282,22 +1364,15 @@ void NonmemTranslator::generateIndData( ) const
       pRawTable = rawTable->begin();
       for( ; pRawTable != rawTable->end(); pRawTable++ )
 	{
-	    if( find( labels->begin(), labels->end(), pRawTable->second.name ) == labels->end() )
+	    if( find( labels->begin(), labels->end(), pRawTable->second.name ) 
+                == labels->end() )
 	    {
 	      oIndData_h << "," << endl;
 
 	      //
-	      // The place holders for completely (throughout an iteration)
-	      // computed values.
+	      // The place holders for completed values.
 	      //
- 	      oIndData_h << pRawTable->second.name << "( nIn )";
-              oIndData_h << "," << endl;
-
-	      //
-	      // The place holders for currently (ie. in-process-iteration)
-	      // computed values.
-	      //
-	      oIndData_h << pRawTable->second.name << "_tmp( nIn )";
+ 	      oIndData_h << SymbolTable::key( pRawTable->second.name ) << "( nIn )";
 	    }
 	}
 
@@ -1373,15 +1448,29 @@ void NonmemTranslator::generateDataSet( ) const
       oDataSet_h << "class DataSet" << endl;
       oDataSet_h << "{" << endl;
       
-
+      //
+      // public member declarations
+      //
+      // The default constructor initializes the entire data set
+      // internally.
+      //
+      // vector<IndData<T>*> data: The entire data set.
+      // const int popSize:      : The number of individuals in the population.
       oDataSet_h << "public:" << endl;
       oDataSet_h << "DataSet();" << endl;
       oDataSet_h << "~DataSet();" << endl;
       oDataSet_h << endl;
 
       oDataSet_h << "std::vector<IndData<T>*> data;" << endl;
+      oDataSet_h << "const int popSize;" << endl;
       oDataSet_h << endl;
 
+      //
+      // protected member declarations
+      //
+      // The copy constructor and the assigment operator are 
+      // prohibited in use.
+      //
       oDataSet_h << "protected:" << endl;
       oDataSet_h << "DataSet( const DataSet& );" << endl;
       oDataSet_h << "DataSet& operator=( const DataSet& );" << endl;
@@ -1391,13 +1480,21 @@ void NonmemTranslator::generateDataSet( ) const
 
 
       //-----------------------------------------------
-      // Defintion
+      // Definition
       //-----------------------------------------------
+       
+      //
+      // The constructor
+      //
+      // Initialize the class member variables.
+      //
       oDataSet_h << "template <class T>" << endl;
       oDataSet_h << "DataSet<T>::DataSet()" << endl;
-      oDataSet_h << ": data(" << myPopSize << ")" << endl;
+      oDataSet_h << ": data(" << myPopSize << ")," << endl;
+      oDataSet_h << "  popSize( " << myPopSize << " )" << endl;
       oDataSet_h << "{" << endl;
-
+      
+      // Initialize the entire data set.
       for( int who=0; who < myPopSize; who++ )
 	{
           char c_who[256];
@@ -1426,8 +1523,8 @@ void NonmemTranslator::generateDataSet( ) const
 	    {
 	      const Symbol * s = table.findi( *pLabel );
               bool isID = (*pLabel == pID->name);
-              string carray_name   = s->name + "_" + c_who + "_c";
-              string valarray_name = s->name + "_" + c_who;
+              string carray_name   = SymbolTable::key( s->name ) + "_" + c_who + "_c";
+              string valarray_name = SymbolTable::key( s->name ) + "_" + c_who;
 
               oDataSet_h << (isID? "char*":"T") << " " << carray_name << "[] = { ";
 	      for( int j=0; j<nRecords; j++ )
@@ -1440,8 +1537,12 @@ void NonmemTranslator::generateDataSet( ) const
 		     oDataSet_h << s->initial[who][j];
 		}
 	      oDataSet_h << " };" << endl;
-	      oDataSet_h << "std::valarray<" << (isID? "char*":"T") << "> ";
-              oDataSet_h << valarray_name << "(" << carray_name << ", " << nRecords << ");" << endl;
+	      oDataSet_h << "std::vector<" << (isID? "char*":"T") << "> ";
+              oDataSet_h << valarray_name;
+	      // oDataSet_h << "(" << carray_name << ", " << nRecords << ");" << endl;
+	      oDataSet_h << "( " << nRecords << " );" << endl;
+              oDataSet_h << "copy( " << carray_name << ", " << carray_name << "+" << nRecords;
+              oDataSet_h << ", " << valarray_name << ".begin() );" << endl;
 	    }
 
 	  //
@@ -1458,8 +1559,8 @@ void NonmemTranslator::generateDataSet( ) const
 	      if( i>0 )
 		oDataSet_h << ", ";
 	      const Symbol * s = table.findi( *pLabel );
-              string valarray_name = s->name + "_" + c_who;
-              oDataSet_h << valarray_name;
+              string array_name = SymbolTable::key( s->name ) + "_" + c_who;
+              oDataSet_h << array_name;
 	    }
 	  
 	  oDataSet_h << " );" << endl;
@@ -1468,6 +1569,8 @@ void NonmemTranslator::generateDataSet( ) const
 
       oDataSet_h << "}" << endl;
 
+      // The destructor
+      // Free memory allocated for the entire data set.
       oDataSet_h << "template <class T>" << endl;
       oDataSet_h << "DataSet<T>::~DataSet()" << endl;
       oDataSet_h << "{" << endl;
@@ -1494,16 +1597,24 @@ void NonmemTranslator::generateDataSet( ) const
 }
 void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 {
+  // The vector, labels, contains the data (from the data file) item labels
+  // and the variable names defined within the user's pred block.
   const vector<string> * labels = table.getLabels();
   const int nLabels = labels->size();
   vector<string>::const_iterator pLabel;
 
+  // The map, rawTable, points to the actuall symbol table which
+  // contains all entries including the data (from the data file),
+  // the NONMEM required entries (such as THETA, EPS, etc.) and
+  // the user defined variable names.
   const map<const string, Symbol> * rawTable = table.getTable();
   map<const string, Symbol>::const_iterator pRawTable;
 
-  const string sTHETA = ( table.findi("theta")->name );
-  const string sETA   = ( table.findi("eta")->name );
-  const string sEPS   = ( table.findi("eps")->name );
+  const string sTHETA = SymbolTable::key( table.findi("theta")->name );
+  const string sETA   = SymbolTable::key( table.findi("eta")->name );
+  const string sEPS   = SymbolTable::key( table.findi("eps")->name );
+  const string sOMEGA = ( table.findi("omega")->name );
+  const string sSIGMA = ( table.findi("sigma")->name );
 
   //
   // Declare and define Pred template class.
@@ -1513,47 +1624,87 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   ofstream oPred_h( fPred_h );
   if( oPred_h.good() )
     {
-      // headers
+      // macros and header includes
       oPred_h << BURNER << endl;
       oPred_h << "#ifndef PRED_H" << endl;
       oPred_h << "#define PRED_H" << endl;
       oPred_h << endl;
 
+      oPred_h << "#include <vector>" << endl;
       oPred_h << "#include <string>" << endl;
  
       //----------------------------------------------
       // Declaration
       //----------------------------------------------
-      oPred_h << "template <class T>" << endl;
+      oPred_h << "template <class Value>" << endl;
       oPred_h << "class Pred" << endl;
       oPred_h << "{" << endl;
       
+      //
+      // public interfaces
+      //
       oPred_h << "public:" << endl;
-      oPred_h << "Pred( const DataSet<T>* dataIn );" << endl;
+
+      // The legal constructor.
+      // This constructor takes a pointer to the DataSet (the set of
+      // all individuals' data).
+      oPred_h << "Pred( const DataSet<Value>* dataIn );" << endl;
+
+      // The destructor.
       oPred_h << "~Pred();" << endl;
-      oPred_h << "bool eval( T theta[], " << endl;
-      oPred_h << "           int nTheta, " << endl;
-      oPred_h << "           T eta[], " << endl;
-      oPred_h << "           int nEta, " << endl;
-      oPred_h << "           T eps[], " << endl;
-      oPred_h << "           int nEps," << endl;
-      oPred_h << "           int spk_i, " << endl;
-      oPred_h << "           int spk_j, " << endl;
-      oPred_h << "           T & f, " << endl;
-      oPred_h << "           T & y );" << endl;
+
+      // eval(): evaluates PRED.
+      oPred_h << "bool eval( int spk_thetaOffset, int spk_thetaLen," << endl;
+      oPred_h << "           int spk_etaOffset,   int spk_etaLen," << endl;
+      oPred_h << "           int spk_epsOffset,   int spk_epsLen," << endl;
+      oPred_h << "           int spk_fOffset,     int spk_fLen," << endl;
+      oPred_h << "           int spk_yOffset,     int spk_yLen," << endl;
+      oPred_h << "           int spk_i," << endl;
+      oPred_h << "           int spk_j," << endl;
+      oPred_h << "           const std::vector<Value>& spk_indepVar," << endl;
+      oPred_h << "           std::vector<Value>& spk_depVar );" << endl;
+
+      // getComputedValues() returns a completed set of computed values.
+      oPred_h << "const DataSet<Value>& getComputedValues() const;" << endl;
       oPred_h << endl;
 
+      //
+      // Protected member declarations.
+      //
+      // Illegal constructors and member functions.
+      //
       oPred_h << "protected:" << endl;
       oPred_h << "Pred();" << endl;
       oPred_h << "Pred( const Pred& );" << endl;
       oPred_h << "Pred & operator=( const Pred& );" << endl;
 
+      // 
+      // Private member delarations
+      //
+      // const DataSet<T> *data: A pointer to the read-only data set.
+      // DataSet<T> temp:        The temporary storage for current values
+      // mutable int prev_i:     The previous index-to-individual value
+      // mutable int prev_j:     The previous index-to-data-record value
+      // mutable string id:      A place holder for the current ID value
+      // mutable T data_item1:   A place holder for a data item, data_item1
+      // mutable T data_item2:   A place holder fot a data item, data_item2
+      // ...
+      // mutable T user_var1:    A place holder for a user defined variable, user_var1
+      // mutable T user_var2:    A place holder for a user defined variable, user_var2
+      // ...
+      // mutable T NONMEM_var1:  A place holder for a NONMEM required variable
+      // mutable T NONMEM_var1:  A place holder for a NONMEM required variable
+      // ...
       oPred_h << "private:" << endl;
-      oPred_h << "const DataSet<T> *data;" << endl;
-      oPred_h << "mutable int prev_i;" << endl;
-      oPred_h << "mutable int prev_j;" << endl;
+      oPred_h << "const DataSet<Value> *data;" << endl;
+      //      oPred_h << "DataSet<Value> temp;" << endl;
+      //oPred_h << "mutable int prev_i;" << endl;
+      //oPred_h << "mutable int prev_j;" << endl;
+      oPred_h << "mutable bool isIterationCompleted;" << endl;
 
-      // The data items
+      // Taking care of the data items (from the data file).
+      // Only the "ID" data item values are of type string,
+      // otherwise all numeric, T.
       const Symbol * pID = table.findi( "id" );
       pLabel = labels->begin();
       for( int i=0; i<nLabels, pLabel != labels->end(); i++, pLabel++ )
@@ -1561,23 +1712,44 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
           bool isID = (*pLabel == pID->name);
 
 	  const Symbol* s = table.findi( *pLabel );
-	  oPred_h << "mutable " << ( isID? "std::string" : "T" );
+	  oPred_h << "mutable " << ( isID? "std::string" : "Value" );
           oPred_h << " " << SymbolTable::key( s->name ) << ";" << endl;
           if( !s->synonym.empty() )
 	    {
-	      oPred_h << "mutable " << ( isID? "std::string" : "T" );
+	      oPred_h << "mutable " << ( isID? "std::string" : "Value" );
 	      oPred_h << " " << SymbolTable::key( s->synonym ) << ";" << endl;
 	    }
 	}
-      // The user defined scalar variables
+
+      // Taking care of the user defined scalar variables.
+      // The entries in the symbol table include everything,
+      // the NONMEM required items such as THETA and EPS
+      // and the data item labels as well as the user defined
+      // scalar variable names.  The data item variables
+      // are taken care in the previous step, so now
+      // just pull out the user defined scalar variables.
+      // The NONMEM variables are given to
+      // Pred::eval() every time the iteration advances.
       for( pRawTable = rawTable->begin(); pRawTable != rawTable->end(); pRawTable++ )
 	{
-	  if( pRawTable->second.name != sTHETA && pRawTable->second.name != sETA 
-		  && pRawTable->second.name != sEPS )
+	  const string label     = pRawTable->second.name;
+	  const string label_key = SymbolTable::key( label );
+
+	  // Ignore if the label is of the NONMEM required variable names.
+	  // They have to be declared in the body of PRED() because
+	  // they (theta, eta, eps) have to be "const" double array.
+	  if( label_key != sTHETA 
+	      && label_key != sETA 
+	      && label_key != sEPS 
+	      && label_key != sSIGMA
+	      && label_key != sOMEGA )
 	    {
-	      if( find( labels->begin(), labels->end(), pRawTable->second.name ) == labels->end() )
+	      // Ignore if the label is of the data item's.
+	      if( find( labels->begin(), labels->end(), label ) 
+		  == labels->end() )
 		{
-		  oPred_h << "mutable T " << SymbolTable::key( pRawTable->second.name ) << ";" << endl;
+		  oPred_h << "mutable Value " << label_key;
+		  oPred_h << ";" << endl;
 		}
 	    }
 	}
@@ -1588,42 +1760,91 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       //----------------------------------------------
       // Definition
       //----------------------------------------------
-      oPred_h << "template <class T>" << endl;
-      oPred_h << "Pred<T>::Pred( const DataSet<T>* dataIn )" << endl;
-      oPred_h << ": data(dataIn)" << endl;
+      oPred_h << "template <class Value>" << endl;
+      oPred_h << "Pred<Value>::Pred( const DataSet<Value>* dataIn )" << endl;
+      oPred_h << ": data(dataIn)," << endl;
+      //oPred_h << "  prev_i(-1)," << endl;
+      //oPred_h << "  prev_j(-1)," << endl;
+      //oPred_h << "  nTheta(" << myThetaLen << ")," << endl;
+      //oPred_h << "  nEta(" << myEtaLen << ")," << endl;
+      //oPred_h << "  nEps(" << myEpsLen << ")," << endl;
+      oPred_h << "  isIterationCompleted( true )" << endl;
       oPred_h << "{" << endl;
       oPred_h << "}" << endl;
 
-      oPred_h << "template <class T>" << endl;
-      oPred_h << "Pred<T>::~Pred()" << endl;
+      oPred_h << "template <class Value>" << endl;
+      oPred_h << "Pred<Value>::~Pred()" << endl;
       oPred_h << "{" << endl;
       oPred_h << "}" << endl;
 
-      oPred_h << "template <class T>" << endl;
-      oPred_h << "bool Pred<T>::eval( T theta[], " << endl;
-      oPred_h << "           int nTheta, " << endl;
-      oPred_h << "           T eta[], " << endl;
-      oPred_h << "           int nEta, " << endl;
-      oPred_h << "           T eps[], " << endl;
-      oPred_h << "           int nEps," << endl;
-      oPred_h << "           int spk_i, " << endl;
-      oPred_h << "           int spk_j, " << endl;
-      oPred_h << "           T & f, " << endl;
-      oPred_h << "           T & y )" << endl;
+      oPred_h << "template <class Value>" << endl;
+      oPred_h << "bool Pred<Value>::eval( int spk_thetaOffset, int spk_thetaLen," << endl;
+      oPred_h << "                        int spk_etaOffset,   int spk_etaLen," << endl;
+      oPred_h << "                        int spk_epsOffset,   int spk_epsLen," << endl;
+      oPred_h << "                        int spk_fOffset,     int spk_fLen," << endl;
+      oPred_h << "                        int spk_yOffset,     int spk_yLen," << endl;
+      oPred_h << "                        int spk_i," << endl;
+      oPred_h << "                        int spk_j," << endl;
+      oPred_h << "                        const std::vector<Value>& spk_indepVar," << endl;
+      oPred_h << "                        std::vector<Value>& spk_depVar )" << endl;
       oPred_h << "{" << endl;
 
-      // Assign the current values (i,j) of data to appropriate scalar variables
+      oPred_h << "  assert( spk_thetaLen == " << myThetaLen << " );" << endl;
+      oPred_h << "  assert( spk_etaLen   == " << myEtaLen << " );" << endl;
+      oPred_h << "  assert( spk_epsLen   == " << myEpsLen << " );" << endl;
+      //oPred_h << "  assert( spk_fLen     == data->data[spk_i]->id.size() );" << endl;
+      //oPred_h << "  assert( spk_yLen     == data->data[spk_i]->id.size() );" << endl;
+      oPred_h << endl;
+
+      ///////////////////////////////////////////////////////////////////////////////////
+      // Assign the current data (i,j) to appropriate variables
+      // so that the user's (originally-fortran) code can easily
+      // access them.
+      // ex.  cp = data->data[spk_i]->cp
+      // ...given that the user's PRED code has a reference to something
+      // ...like "aaa = cp * 10.0".
+      //
       for( pLabel = labels->begin(); pLabel != labels->end(); pLabel++ )
       {
          const Symbol *s = table.findi( *pLabel );
          // label
-         oPred_h << SymbolTable::key( s->name ) << " = data->data[spk_i]->" << s->name << "[spk_j];" << endl;
+         oPred_h << SymbolTable::key( s->name );
+         oPred_h << " = data->data[spk_i]->";
+	 oPred_h << SymbolTable::key( s->name ) << "[spk_j];" << endl;
          // synonym
          if( !s->synonym.empty() )
          {
-            oPred_h << SymbolTable::key( s->synonym ) << " = data->data[spk_i]->" << s->synonym << "[spk_j];" << endl;
+            oPred_h << SymbolTable::key( s->synonym );
+	    oPred_h << " = data->data[spk_i]->";
+	    oPred_h << SymbolTable::key( s->synonym ) << "[spk_j];" << endl;
          }
       }
+      for( int i=0; i<myThetaLen; i++ )
+	{
+	  oPred_h << "typename std::vector<Value>::const_iterator theta" << i+1;
+	  oPred_h << " = spk_indepVar.begin() + spk_thetaOffset + " << i << ";" << endl;
+	}
+      for( int i=0; i<myEtaLen; i++ )
+	{
+	  oPred_h << "typename std::vector<Value>::const_iterator eta" << i+1;
+	  oPred_h << " = spk_indepVar.begin() + spk_etaOffset + " << i << ";" << endl;
+	}
+      for( int i=0; i<myEpsLen; i++ )
+	{
+	  oPred_h << "typename std::vector<Value>::const_iterator eps" << i+1;
+	  oPred_h << " = spk_indepVar.begin() + spk_epsOffset + " << i << ";" << endl;
+	}
+      oPred_h << "typename std::vector<Value>::const_iterator theta";
+      oPred_h << " = spk_indepVar.begin() + spk_thetaOffset;" << endl;
+      oPred_h << "typename std::vector<Value>::const_iterator eta";
+      oPred_h << " = spk_indepVar.begin() + spk_etaOffset;" << endl;
+      oPred_h << "typename std::vector<Value>::const_iterator eps";
+      oPred_h << " = spk_indepVar.begin() + spk_epsOffset;" << endl;
+
+
+      oPred_h << "Value f = 0.0;" << endl;
+      oPred_h << "Value y = 0.0;" << endl;
+      ///////////////////////////////////////////////////////////////////////////////////
       
       oPred_h << "//=========================================" << endl;
       oPred_h << "// Begin User Code                         " << endl;
@@ -1638,20 +1859,117 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       oPred_h << "// End User Code                           " << endl;
       oPred_h << "//=========================================" << endl;
       
+      /*
+      ///////////////////////////////////////////////////////////////////////////////////
+      // Saving/moving computed values to ensure a complete set of values
+      // is available even when a failure occurs.
+      //
+      oPred_h << "if( spk_i < prev_i )" << endl;
+      oPred_h << "{" << endl;
+      oPred_h << "  // This means, SPK advanced in iteration." << endl;
+      oPred_h << "  // Move temporary storage to permanent storage." << endl;
+      oPred_h << "  isIterationCompleted = true;" << endl;
+      oPred_h << "  for( int i=0; i<data->popSize; i++ )" << endl;
+      oPred_h << "  {" << endl;
+      // User defined variables temp(current) => permanent
+      // The user defined scalar variables
+      for( pRawTable = rawTable->begin(); pRawTable != rawTable->end(); pRawTable++ )
+	{
+	  const string label     = pRawTable->second.name;
+	  const string label_key = SymbolTable::key( label );
+	  if( find( labels->begin(), labels->end(), label ) == labels->end() )
+	    {
+	      oPred_h << "    data->data[ i ]->" << label_key;
+	      oPred_h << " = temp.data[ i ]->";
+	      oPred_h << label_key << ";" << endl;
+	    }
+	}      
+      oPred_h << "  }" << endl;
+      oPred_h << "}" << endl;
+      oPred_h << "else" << endl;
+      oPred_h << "{" << endl;
+      oPred_h << "  isIterationCompleted = false;" << endl;
+      oPred_h << "}" << endl;
+      oPred_h << endl;
+      */
+
+      // Store the current values in temporary storage
+      // : the user defined variable values and the NONMEM required variable values.
+      for( pRawTable = rawTable->begin(); pRawTable != rawTable->end(); pRawTable++ )
+	{
+	  // THETA, ETA, EPS are given Pred::eval() as vectors by the caller.
+	  // So, we have to treat these guys a bit different from the user variables
+	  // which are scalar values.
+          const string label     = pRawTable->second.name;
+          const string label_key = SymbolTable::key( label );
+	  /*
+	  if( label_key == sTHETA || label_key == sETA || label_key == sEPS
+	  || label_key == sOMEGA || label_key == sSIGMA )
+	    {
+	      oPred_h << "copy( " << label_key << ".begin(), " << label_key << ".begin() + ";
+	      if( label_key == sTHETA )
+		oPred_h << myThetaLen;
+	      else if( label_key == sETA )
+		oPred_h << myEtaLen;
+	      else //if( label_key == sEPS )
+		oPred_h << myEpsLen;
+	      oPred_h << ", data->data[ spk_i ]->" << label_key << ".begin() );" << endl;
+	    }
+	  else
+	  */
+	  if( label_key != sTHETA 
+	      && label_key != sETA 
+	      && label_key != sEPS
+	      && label_key != sOMEGA
+	      && label_key != sSIGMA )
+	    {
+	      if( find( labels->begin(), labels->end(), label ) 
+                  == labels->end() )
+		{
+		  oPred_h << "data->data[ spk_i ]->" << label_key;
+		  oPred_h << "[ spk_j ]";
+		  oPred_h << " = " << label_key << ";" << endl;
+		}
+	    }
+	}   
+      oPred_h << endl;
+      ///////////////////////////////////////////////////////////////////////////////////
+
+      // Set the output values
+      oPred_h << "spk_depVar[ spk_fOffset ] = f;" << endl;
+      oPred_h << "spk_depVar[ spk_yOffset ] = y;" << endl;
+
+      // Save the current i and j values for future reference
+      //oPred_h << "prev_i = spk_i;" << endl;
+      //oPred_h << "prev_j = spk_j;" << endl;
+
+      // Pred::eval() returns true if MDV(i,j) is 0, which means DV is NOT missing.
+      // In this iteration, it is assumed that MDV=true for all, so return true.
+      oPred_h << "return true;" << endl;
+
       oPred_h << "}" << endl;
 
-      oPred_h << "template <class T>" << endl;
-      oPred_h << "Pred<T>::Pred()" << endl;
+      oPred_h << "template <class Value>" << endl;
+      oPred_h << "const DataSet<Value>& Pred<Value>::getComputedValues() const" << endl;
+      oPred_h << "{" << endl;
+      oPred_h << "  if( isIterationCompleted )" << endl;
+      oPred_h << "    return data;" << endl;
+      //oPred_h << "  else" << endl;
+      //oPred_h << "    return temp;" << endl;
+      oPred_h << "}" << endl;
+
+      oPred_h << "template <class Value>" << endl;
+      oPred_h << "Pred<Value>::Pred()" << endl;
       oPred_h << "{" << endl;
       oPred_h << "}" << endl;
 
-      oPred_h << "template <class T>" << endl;
-      oPred_h << "Pred<T>::Pred( const Pred<T>& )" << endl;
+      oPred_h << "template <class Value>" << endl;
+      oPred_h << "Pred<Value>::Pred( const Pred<Value>& )" << endl;
       oPred_h << "{" << endl;
       oPred_h << "}" << endl;
 
-      oPred_h << "template <class T>" << endl;
-      oPred_h << "Pred<T> & Pred<T>::operator=( const Pred<T>& )" << endl;
+      oPred_h << "template <class Value>" << endl;
+      oPred_h << "Pred<Value> & Pred<Value>::operator=( const Pred<Value>& )" << endl;
       oPred_h << "{" << endl;
       oPred_h << "}" << endl;
 
@@ -1678,12 +1996,12 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "#include \"IndData.h\"" << endl;
   oDriver << "#include \"DataSet.h\"" << endl;
   oDriver << "#include \"Pred.h\"" << endl;
-  oDriver << "#include \"Omega.h\"" << endl;
+  //  oDriver << "#include \"Omega.h\"" << endl;
   oDriver << endl;
 
   oDriver << "#include <spk/SpkValarray.h>" << endl;
   oDriver << "#include <spk/SpkException.h>" << endl;
-  oDriver << "#include <spk/NonmemdModels.h>" << endl;
+  //  oDriver << "#include <spk/NonmemdModels.h>" << endl;
   if( myIsEstimate )
   {
      oDriver << "#include <spk/fitIndividual.h>" << endl;
@@ -1692,17 +2010,20 @@ void NonmemTranslator::generateIndDriver( ) const
   if( myIsEstimate && myIsStat )
      oDriver << "#include <spk/indStatistics.h>" << endl;
   if( myIsSimulate )
-     oDriver << "#include <spk/simulation.h>" << endl;
+     oDriver << "#include <spk/simulate.h>" << endl;
   oDriver << endl;
 
-  oDriver << "using SPK_VA;" << endl;
+  oDriver << "using SPK_VA::valarray;" << endl;
+  oDriver << "using namespace std;" <<endl;
+  oDriver << endl;
+
   oDriver << "int main( int argc, const char argv[] )" << endl;
   oDriver << "{" << endl;
 
   oDriver << "DataSet<double> set;" << endl;
   oDriver << "Pred<double> mPred(&set);" << endl;
-  oDriver << "Omega mOmega;" << endl;
-  oDriver << "NonmemPredBasedModel model( set, mPred, mOmega... );" << endl;
+  //  oDriver << "Omega mOmega;" << endl;
+  //  oDriver << "NonmemPredBasedModel model( set, mPred, mOmega... );" << endl;
 
   oDriver << "const int nB = " << myThetaLen << ";" << endl;
   oDriver << "const int nY = " << myRecordNums.sum() << ";" << endl;
@@ -1725,7 +2046,7 @@ void NonmemTranslator::generateIndDriver( ) const
     }
   else
     {
-      oDriver << "const valarray<double> bIn ( nB, c_bIn );" << endl;
+      oDriver << "const valarray<double> bIn ( c_bIn, nB );" << endl;
     }
   oDriver << endl;
   
@@ -1768,6 +2089,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "valarray<double> bOut( nB );" << endl;
 
   // do data simulation first to replace DV data in IndData objects
+  /*
   if( myIsSimulate )
     {
        oDriver << "valarray<double> y   ( nY );" << endl;
@@ -1793,6 +2115,7 @@ void NonmemTranslator::generateIndDriver( ) const
        oDriver << "}" << endl;
     }
   else
+  */
     {
       const Symbol* pDV = table.findi("dv");
       if( pDV == Symbol::empty() )
@@ -1812,7 +2135,7 @@ void NonmemTranslator::generateIndDriver( ) const
 	    }
 	}
       assert( pDV != Symbol::empty() );
-      oDriver << "double c_y[nY] = { ";
+      oDriver << "double c_y[] = { ";
 	  for( int j=0; j<myRecordNums[0]; j++ )
 	    {
 	      if( j > 0 )
@@ -1820,7 +2143,7 @@ void NonmemTranslator::generateIndDriver( ) const
 	      oDriver << atof( pDV->initial[0][j].c_str() );
 	    }
       oDriver << " };" << endl;
-      oDriver << "valarray<double> y( nY, c_y );" << endl; 
+      oDriver << "valarray<double> y( c_y, nY );" << endl; 
       oDriver << endl;
     }
   if( myIsEstimate )
@@ -1836,6 +2159,7 @@ void NonmemTranslator::generateIndDriver( ) const
        oDriver << endl;
        oDriver << "timeval optBegin, optEnd;" << endl;
        oDriver << "gettimeofday( &optBegin, NULL );" << endl;
+       /*
        oDriver << "try" << endl;
        oDriver << "{" << endl;
        oDriver << "   fitIndividual( model," << endl;
@@ -1861,6 +2185,7 @@ void NonmemTranslator::generateIndDriver( ) const
        oDriver << "   cerr << \"Unknown exception: failed in parameter estimation!!!\" << endl;" << endl;
        oDriver << "   return 1;" << endl;
        oDriver << "}" << endl;
+       */
        oDriver << "gettimeofday( &optEnd, NULL );" << endl;
        oDriver << "double optTimeSec = difftime( optEnd.tv_sec, optBegin.tv_sec );" << endl;
 
@@ -1883,6 +2208,7 @@ void NonmemTranslator::generateIndDriver( ) const
 
           // indStatistics
 	  oDriver << "gettimeofday( &statBegin, NULL );" << endl;
+	  /*
           oDriver << "try" << endl;
           oDriver << "{" << endl;
           oDriver << "   indStatistics( model, " << endl;
@@ -1921,6 +2247,7 @@ void NonmemTranslator::generateIndDriver( ) const
 	      oDriver << "   return 1;" << endl;
 	      oDriver << "}" << endl;
 	    }
+	  */
 	  oDriver << "gettimeofday( &statEnd, NULL );" << endl;
 	  oDriver << "double statTimeSec = difftime( statEnd.tv_sec, statBegin.tv_sec );" << endl;
        }
@@ -1958,6 +2285,7 @@ void NonmemTranslator::generateIndDriver( ) const
       // omega 
       oDriver << "oResults << \"</omega_out>\" << endl;" << endl;
       oDriver << "oResults << \"</ind_opt_result>\" << endl;" << endl;
+
       if( myIsStat )
 	{
 	  oDriver << "oResults << \"<ind_stat_result elapsedtime=\\\"\" << statTimeSec << \"\\\">\" << endl;" << endl;
@@ -2071,7 +2399,7 @@ void NonmemTranslator::generateIndDriver( ) const
 	}
       else
 	{
-	  oDriver << "set.data[0]->" << *pWhatGoesIn << "[i]";
+	  oDriver << "set.data[0]->" << SymbolTable::key( *pWhatGoesIn ) << "[i]";
 	}
       oDriver << " << \"</value>\" << endl;" << endl;
     }
@@ -2105,12 +2433,12 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "#include \"IndData.h\"" << endl;
   oDriver << "#include \"DataSet.h\"" << endl;
   oDriver << "#include \"Pred.h\"" << endl;
-  oDriver << "#include \"Omega.h\"" << endl;
+  //  oDriver << "#include \"Omega.h\"" << endl;
   oDriver << endl;
 
   oDriver << "#include <spk/SpkValarray.h>" << endl;
   oDriver << "#include <spk/SpkException.h>" << endl;
-  oDriver << "#include <spk/NonmemdModels.h>" << endl;
+  //  oDriver << "#include <spk/NonmemdModels.h>" << endl;
   if( myIsEstimate )
   {
      oDriver << "#include <spk/fitPopulation.h>" << endl;
@@ -2119,26 +2447,45 @@ void NonmemTranslator::generatePopDriver() const
   if( myIsEstimate && myIsStat )
      oDriver << "#include <spk/popStatistics.h>" << endl;
   if( myIsSimulate )
-     oDriver << "#include <spk/simulation.h>" << endl;
+     oDriver << "#include <spk/simulate.h>" << endl;
   oDriver << endl;
 
-  oDriver << "using SPK_VA;" << endl;
+  oDriver << "using SPK_VA::valarray;" << endl;
+  oDriver << "using namespace std;" << endl;
+  oDriver << endl;
   oDriver << "int main( int argc, const char argv[] )" << endl;
   oDriver << "{" << endl;
 
   oDriver << "DataSet<double> set;" << endl;
   oDriver << "Pred<double>    mPred(&set);" << endl;
-  oDriver << "Omega<double>   mOmega;" << endl;
-  oDriver << "NonmemPredBasedModel model( set, mPred, mOmega... );" << endl;
+  //  oDriver << "Omega<double>   mOmega;" << endl;
+  //  oDriver << "NonmemPredBasedModel model( set, mPred, mOmega... );" << endl;
 
-  oDriver << "const int nPop     = " << myPopSize            << "; // #of subjects" << endl;
-  oDriver << "const int nTheta   = " << myThetaLen           << "; // length of theta vector" << endl;
-  oDriver << "const int nOmega   = " << myOmegaElemNum       << "; // #of elements in Omega matrix" << endl;
-  oDriver << "const int dimOmega = " << myOmegaDim           << "; // dimension of Omeaga matrix" << endl;
-  oDriver << "const int nSigma   = " << mySigmaElemNum       << "; // #of elements in Sigma matrix" << endl;
-  oDriver << "const int dimSigma = " << mySigmaDim           << "; // dimension of Sigma matrix" << endl;
-  oDriver << "const int nAlp     = nTheta + nOmega + nSigma" << "; // length of alp vector" << endl;
-  oDriver << "const int nB       = " << myThetaLen           << "; // length of b vector" << endl;
+  oDriver << "const int nPop     = " << myPopSize;
+  oDriver << "; // #of subjects" << endl;
+  oDriver << "const int nTheta   = " << myThetaLen;
+  oDriver << "; // length of theta vector" << endl;
+  oDriver << "const int offsetTheta = 0;";
+  oDriver << "// the offset to theta within alp vector." << endl;
+
+  oDriver << "const int nOmega   = " << myOmegaElemNum;
+  oDriver << "; // #of elements in Omega matrix" << endl;
+  oDriver << "const int dimOmega = " << myOmegaDim;
+  oDriver << "; // dimension of Omeaga matrix" << endl;
+  oDriver << "const int offsetOmega = nTheta;";
+  oDriver << "// the offset to Omega within alp vector." << endl;
+
+  oDriver << "const int nSigma   = " << mySigmaElemNum;
+  oDriver << "; // #of elements in Sigma matrix" << endl;
+  oDriver << "const int dimSigma = " << mySigmaDim;
+  oDriver << "; // order of Sigma matrix" << endl;
+  oDriver << "const int offsetSigma = nTheta + nSigma;";
+  oDriver << "// the offset to Sigma within alp vector." << endl;
+
+  oDriver << "const int nAlp     = nTheta + nOmega + nSigma";
+  oDriver << "; // length of alp vector" << endl;
+  oDriver << "const int nB       = " << myThetaLen;
+  oDriver << "; // length of b vector" << endl;
   oDriver << "int c_N[nPop]      = { ";
   for( int i=0; i<myPopSize; i++ )
     {
@@ -2152,7 +2499,8 @@ void NonmemTranslator::generatePopDriver() const
 
   if( myIsSimulate )
     oDriver << "const unsigned int seed = " << mySeed << ";" << endl;
-  oDriver << "enum PopCovForm covForm = " << myCovForm << ";" << endl;
+  if( myIsStat )
+    oDriver << "enum PopCovForm covForm = " << myCovForm << ";" << endl;
 
   oDriver << endl;
 
@@ -2184,7 +2532,7 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << pSigma->initial[0][j];
     }
   oDriver << " };" << endl;
-  oDriver << "const valarray<double> alpIn ( nAlp, c_alpIn );" << endl;
+  oDriver << "const valarray<double> alpIn ( c_alpIn, nAlp );" << endl;
   oDriver << "double c_alpUp[nAlp] = { ";
   for( int j=0; j<myThetaLen; j++ )
     {
@@ -2195,15 +2543,29 @@ void NonmemTranslator::generatePopDriver() const
   for( int j=0; j<myOmegaElemNum; j++ )
     {
       oDriver << ", ";
-      oDriver << pOmega->upper[0][j];
+      //////////////////////////////////////////////
+      // REVISIT SACHIKO
+      // Omega boundaries must be computed.
+      //////////////////////////////////////////////
+      if( pOmega->upper[0][j] == "" )
+	oDriver << "0.0";
+      else
+	oDriver << pOmega->upper[0][j];
     }
   for( int j=0; j<mySigmaElemNum; j++ )
     {
       oDriver << ", ";
-      oDriver << pSigma->upper[0][j];
+      //////////////////////////////////////////////
+      // REVISIT SACHIKO
+      // Sigma boundaries must be computed.
+      //////////////////////////////////////////////
+      if( pSigma->upper[0][j] == "" )
+	oDriver << "0.0";
+      else
+	oDriver << pSigma->upper[0][j];
     }
   oDriver << " };" << endl;
-  oDriver << "const valarray<double> alpUp ( nAlp, c_alpUp );" << endl;
+  oDriver << "const valarray<double> alpUp ( c_alpUp, nAlp );" << endl;
   oDriver << "double c_alpLow[nAlp] = { ";
   for( int j=0; j<myThetaLen; j++ )
     {
@@ -2214,15 +2576,64 @@ void NonmemTranslator::generatePopDriver() const
   for( int j=0; j<myOmegaElemNum; j++ )
     {
       oDriver << ", ";
-      oDriver << atof( pOmega->lower[0][j].c_str() );
+      //////////////////////////////////////////////
+      // REVISIT SACHIKO
+      // Omega boundaries must be computed.
+      //////////////////////////////////////////////
+      if( pOmega->lower[0][j] == "" )
+	oDriver << "0.0";
+      else
+	oDriver << pOmega->lower[0][j];
     }
   for( int j=0; j<mySigmaElemNum; j++ )
     {
       oDriver << ", ";
-      oDriver << pSigma->lower[0][j];
+      //////////////////////////////////////////////
+      // REVISIT SACHIKO
+      // Sigma boundaries must be computed.
+      //////////////////////////////////////////////
+      if( pSigma->lower[0][j] == "" )
+	oDriver << "0.0";
+      else
+	oDriver << pSigma->lower[0][j];
     }
   oDriver << " };" << endl;
-  oDriver << "const valarray<double> alpLow( nAlp, c_alpLow );" << endl;
+  oDriver << "const valarray<double> alpLow( c_alpLow, nAlp );" << endl;
+
+  oDriver << "double c_alpStep[nAlp] = { ";
+  for( int j=0; j<myThetaLen; j++ )
+    {
+      if( j>0 )
+	oDriver << ", ";
+      oDriver << pTheta->step[0][j];
+    }
+  for( int j=0; j<myOmegaElemNum; j++ )
+    {
+      oDriver << ", ";
+      //////////////////////////////////////////////
+      // REVISIT SACHIKO
+      // Omega boundaries must be computed.
+      //////////////////////////////////////////////
+      if( pOmega->step[0][j] == "" )
+	oDriver << "0.0";
+      else
+	oDriver << pOmega->step[0][j];
+    }
+  for( int j=0; j<mySigmaElemNum; j++ )
+    {
+      oDriver << ", ";
+      //////////////////////////////////////////////
+      // REVISIT SACHIKO
+      // Sigma boundaries must be computed.
+      //////////////////////////////////////////////
+      if( pSigma->step[0][j] == "" )
+	oDriver << "0.0";
+      else
+	oDriver << pSigma->step[0][j];
+    }
+  oDriver << " };" << endl;
+  oDriver << "const valarray<double> alpStep( c_alpStep, nAlp );" << endl;
+  oDriver << "valarray<double> alpOut( nAlp );" << endl;
   //
   //=======================================================================
   const Symbol* pEta = table.findi("eta");
@@ -2237,7 +2648,7 @@ void NonmemTranslator::generatePopDriver() const
 	}
     }
   oDriver << " };" << endl;
-  oDriver << "const valarray<double> bIn ( nB, c_bIn );" << endl;
+  oDriver << "const valarray<double> bIn ( c_bIn, nB );" << endl;
   oDriver << endl;
   
   oDriver << "double c_bUp[nB] = { ";
@@ -2245,7 +2656,14 @@ void NonmemTranslator::generatePopDriver() const
   {
      if( j>0 )
         oDriver << ", ";
-     oDriver << pEta->upper[0][j];
+     //////////////////////////////////////
+     // REVISIT SACHIKO
+     // Eta bounaries must be computed.
+     //////////////////////////////////////
+     if( pEta->upper[0][j] == "" )
+       oDriver << "0.0";
+     else
+       oDriver << pEta->upper[0][j];
   }
   oDriver << " };" << endl;
   oDriver << "const valarray<double> bUp  ( c_bUp, nB );" << endl;
@@ -2256,7 +2674,14 @@ void NonmemTranslator::generatePopDriver() const
   {
      if( j>0 )
 	oDriver << ", ";
-     oDriver << pEta->lower[0][j];
+     //////////////////////////////////////
+     // REVISIT SACHIKO
+     // Eta bounaries must be computed.
+     //////////////////////////////////////
+     if( pEta->lower[0][j] == "" )
+       oDriver << "0.0";
+     else
+       oDriver << pEta->lower[0][j];
   }
   oDriver << " };" << endl;
   oDriver << "const valarray<double> bLow ( c_bLow, nB );" << endl;
@@ -2269,7 +2694,14 @@ void NonmemTranslator::generatePopDriver() const
 	{
 	  if( j>0 )
 	    oDriver << ", ";
-	  oDriver << pEta->step[0][j];
+	  //////////////////////////////////////
+	  // REVISIT SACHIKO
+	  // Eta bounaries must be computed.
+	  //////////////////////////////////////
+	  if( pEta->step[0][j] == "" )
+	    oDriver << "0.0";
+	  else
+	    oDriver << pEta->step[0][j];
 	}
       oDriver << " };" << endl;
       oDriver << "const valarray<double> bStep( c_bStep, nB );" << endl;
@@ -2279,6 +2711,7 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "valarray<double> bOut( nB * nPop );" << endl;
 
   // do data simulation first to replace DV data in IndData objects
+  /*
   if( myIsSimulate )
     {
        oDriver << "valarray<double> y   ( nY );" << endl;
@@ -2304,6 +2737,7 @@ void NonmemTranslator::generatePopDriver() const
        oDriver << "}" << endl;
     }
   else
+  */
     {
       const Symbol* pDV = table.findi("dv");
       if( pDV == Symbol::empty() )
@@ -2323,7 +2757,7 @@ void NonmemTranslator::generatePopDriver() const
 	    }
 	}
       assert( pDV != Symbol::empty() );
-      oDriver << "double c_y[nY] = { ";
+      oDriver << "double c_y[] = { ";
 	  for( int j=0; j<myRecordNums[0]; j++ )
 	    {
 	      if( j > 0 )
@@ -2331,7 +2765,7 @@ void NonmemTranslator::generatePopDriver() const
 	      oDriver << atof( pDV->initial[0][j].c_str() );
 	    }
       oDriver << " };" << endl;
-      oDriver << "valarray<double> y( nY, c_y );" << endl; 
+      oDriver << "valarray<double> y( c_y, nY );" << endl; 
       oDriver << endl;
     }
   if( myIsEstimate )
@@ -2352,6 +2786,7 @@ void NonmemTranslator::generatePopDriver() const
        oDriver << endl;
        oDriver << "timeval optBegin, optEnd;" << endl;
        oDriver << "gettimeofday( &optBegin, NULL );" << endl;
+       /*
        oDriver << "try" << endl;
        oDriver << "{" << endl;
        oDriver << "   fitPopulation( model," << endl;
@@ -2383,6 +2818,7 @@ void NonmemTranslator::generatePopDriver() const
        oDriver << "   cerr << \"Unknown exception: failed in parameter estimation!!!\" << endl;" << endl;
        oDriver << "   return 1;" << endl;
        oDriver << "}" << endl;
+       */
        oDriver << "gettimeofday( &optEnd, NULL );" << endl;
        oDriver << "double optTimeSec = difftime( optEnd.tv_sec, optBegin.tv_sec );" << endl;
 
@@ -2405,6 +2841,7 @@ void NonmemTranslator::generatePopDriver() const
 
           // indStatistics
 	  oDriver << "gettimeofday( &statBegin, NULL );" << endl;
+	  /*
           oDriver << "try" << endl;
           oDriver << "{" << endl;
           oDriver << "   popStatistics( model, " << endl;
@@ -2452,7 +2889,8 @@ void NonmemTranslator::generatePopDriver() const
 	      oDriver << "   return 1;" << endl;
 	      oDriver << "}" << endl;
 	    }
-	  oDriver << "gettimeofday( &statEnd, NULL );" << endl;
+	  */
+ 	  oDriver << "gettimeofday( &statEnd, NULL );" << endl;
 	  oDriver << "double statTimeSec = difftime( statEnd.tv_sec, statBegin.tv_sec );" << endl;
        }
     }
@@ -2615,7 +3053,7 @@ void NonmemTranslator::generatePopDriver() const
 	}
       else
 	{
-	  oDriver << "set.data[j]->" << *pWhatGoesIn << "[i]";
+	  oDriver << "set.data[j]->" << SymbolTable::key( *pWhatGoesIn ) << "[i]";
 	}
       oDriver << " << \"</value>\" << endl;" << endl;
     }

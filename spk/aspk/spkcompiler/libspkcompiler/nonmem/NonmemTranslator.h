@@ -48,6 +48,36 @@ class NonmemTranslator : public ClientTranslator
   /**
    * The implementation of ClientTranslator::parseSource() 
    * particular to NONMEM-user-based inputs.
+   *
+   * Upon the successful completion, the following files will be generated
+   * in the current working directory:
+   * 
+   * @htmlonly
+   *   <dl>
+   *     <dt>driver.cpp</dt>
+   *     <dd>A file that defines main().  It initializes the parameters and
+   *         executes fitPopulation()/fitIndividual(), simulate() if requested,
+   *         and popStatistics()/indStatistics() if requested.  Upon
+   *         the completion of these function executions, it generates
+   *         a result.xml that contains the computational results.
+   *     </dd>
+   *     <dt>DataSet.h</dt>
+   *     <dd>A template class, DataSet, is declared and defined in this file.
+   *         The object of this class represents the whole data set (from the data file).
+   *     </dd>
+   *     <dt>IndData.h</dt>
+   *     <dd>A template class, IndData, is declared and defined in this file.
+   *         The object of this class represents an individual's data set.
+   *     </dd>
+   *     <dt>Pred.h</dt>
+   *     <dd>A template class, Pred, is declared and defined in this file.
+   *         This class encapusulates the NONMEM PRED block.
+   *     </dd>
+   *     <dt>Makefile</dt>
+   *     <dd>A Makefile that builds an executable, driver, from the above files.
+   *     </dd>
+   *   </dl>
+   * @endhtmlonly
    */
   virtual void parseSource();
 
@@ -108,6 +138,16 @@ class NonmemTranslator : public ClientTranslator
   // Generate C++ source code for the driver for individual analysis.
   //
   void generateIndDriver( ) const;
+
+  //
+  // Generate a Makefile that builds an executable called, driver, 
+  // from all the generated files.
+  //
+  void generateMakefile() const;
+
+  // The filename for a Make that builds an executable, driver, from
+  // all the generated files.
+  const char *fMakefile;
 
   // The header file name for the IndData template class.
   const char *fIndData_h;
