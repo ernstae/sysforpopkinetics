@@ -826,7 +826,7 @@ void quasiNewtonAnyBox(
   QuasiNewton01BoxObj objective( &dvecXLow, &dvecXUp, &dvecXDiff );
 
 
-  //***************************************************************************
+??  //***************************************************************************
   // [Revisit - Next SPK Iteration - Improved Diagnostics - Mitch]
   //
   // Currently the tracing done for the NAG optimizer (called by quasiNewtonAnyBox) is
@@ -851,26 +851,6 @@ void quasiNewtonAnyBox(
   // derivative checking function.  I think that once we do that, then the
   // specifications for the level parameter will be much easier to write.
   //***************************************************************************
-
-
-  //------------------------------------------------------------
-  // Retrieve the previous state information if this is a warm start.
-  //------------------------------------------------------------
-
-  if ( isWarmStart )
-  {
-    options.start  = Nag_Warm;
-        StateInfo stateInfo = optimizer.getStateInfo();
-
-        for( int j = 0; j < n; j++ )
-        {
-            yCurr[ j ] = stateInfo.x[ j ];
-        }
-
-        options.state  = stateInfo.state;
-        options.lambda = stateInfo.lambda;
-        options.h      = stateInfo.h;
-  }
 
 
   //------------------------------------------------------------
@@ -948,6 +928,22 @@ void quasiNewtonAnyBox(
     // does not need extra iterations in order to approximate
     // the Hessian the first time it is called.
     nIterMax = 1;
+
+    // Retrieve the previous state information.
+    if ( isWarmStart )
+    {
+      options.start  = Nag_Warm;
+      StateInfo stateInfo = optimizer.getStateInfo();
+
+      for( int j = 0; j < n; j++ )
+      {
+	yCurr[ j ] = stateInfo.x[ j ];
+      }
+
+      options.state  = stateInfo.state;
+      options.lambda = stateInfo.lambda;
+      options.h      = stateInfo.h;
+    }
   }
   else
   {
