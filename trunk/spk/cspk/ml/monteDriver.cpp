@@ -47,17 +47,21 @@ $tref Model$$
 $head Output File$$
 $index output, file$$
 $index file, output$$
-If no message is written to standard error,
-one of the following two formats is written to standard output:
+If the program completes normally, regardless of whether computation
+was successful or unsuccessful, an instance of SpkReportML is
+written to standard output.  The most outer level record, <spkrecord>,
+contains the following records.
 
-$head error_message$$
-$index error_message$$
-This record contains an error message that explains
-why there is no $code pop_monte_result$$ record.
+$head error_list$$
+$index error_list$$
+This record contains a list of error messages acccumulated during 
+the execution of program.  If no error occured, this record is still
+present but as empty.
 
 $head pop_monte_result$$
 $index pop_monte_result$$
-This record contains the estimates for the 
+This record is present only when the estimation completed normally.
+When it is present, this record contains the estimates for the 
 negative log of the marginal likelihood as a function
 of the fixed effects.
 The attribute $code seconds$$ specifies
@@ -105,14 +109,16 @@ and in the same order as that record.
 $head Format$$
 $syntax%
 <spkreport>
-<error_message>
+<error_list>
 	%PCDATA%
-</error_message>
+</error_list>
 </spkreport>
 %$$
 or
 $syntax%
 <spkreport>
+<error_list>
+</error_list>
 <pop_monte_result seconds="%PCDATA%" method="%PCDATA%" numberEval="%PCDATA%" >
 	<column_major  name="alpha_center" nrows="%PCDATA%" ncols="1">
 		<column>
@@ -181,7 +187,7 @@ $end
 
 # define monteDriverDebug 0
 
-enum { ReturnSuccess = 0, ReturnFailure = 1 };
+enum { Successful=0, FileAccessError=2, EstimateFailure=3, UnknownFailure = 6 };
 
 
 // locally defined functions
@@ -448,12 +454,12 @@ int main(int argc, const char *argv[])
 		default:
 		cerr << "monteDriver: ";
 		cerr << "method is no analytic, grid, plain, or miser" << endl;
-		return ReturnFailure;
+		return UnknownFailure;
 	}
 	if( analytic && NonmemPars::nEta != 1 )
 	{	cerr << "monteDriver: ";
 		cerr << "method is analytic and nEta != 1" << endl;
-		return ReturnFailure;
+		return UnknownFailure;
 	}
 
 	size_t i;
@@ -461,7 +467,7 @@ int main(int argc, const char *argv[])
 	{	if( numberEval[i] <= 0 )
 		{	cerr << "monteDriver: ";
 			cerr << "numberEval is not greater than zero" << endl;
-			return ReturnFailure;
+			return UnknownFailure;
 		}
 	}
 
@@ -472,20 +478,20 @@ int main(int argc, const char *argv[])
 	const int nPop = set.getPopSize();
 	if( nPop <= 0 )
 	{	cerr << "monteDriver: DataSet.getPopSize() <= 0 " << endl;
-		return ReturnFailure;
+		return UnknownFailure;
 	}
 	valarray<int> N = set.getN();
 	for(i = 0; i < nPop; i++)
 	{	if( N[i] <= 0 )
 		{	cerr << "monteDriver: DataSet.getN() <= 0" << endl;
-			return ReturnFailure;
+			return UnknownFailure;
 		}
 	}
 	valarray<double> y = set.getAllMeasurements();
 	const int nY = N.sum();
 	if( nY != y.size() )
 	{	cerr << "monteDriver: y.size != N[0] + ... + N[M-1]" << endl;
-		return ReturnFailure;
+		return UnknownFailure;
 	}
 
 	// model constructor
@@ -598,17 +604,22 @@ int main(int argc, const char *argv[])
 		}
 	}
 	catch( const SpkException& e )
-	{	cout << "<error_message>" << endl;
+	{	cout << "<error_list>" << endl;
 		cout << e << endl;
-		cout << "</error_message>" << endl;
-		return ReturnSuccess;
+		cout << "</error_list>" << endl;
+	        cout << "</spkreport>" << endl; 
+		return EstimateFailure;
 	}
 	catch( ... )
-	{	cout << "<error_message>" << endl;
+	{	cout << "<error_list>" << endl;
 		cout << "Unknown exception occurred";
-		cout << "</error_message>" << endl;
-		return ReturnSuccess;
+		cout << "</error_list>" << endl;
+	        cout << "</spkreport>" << endl; 
+		return EstimateFailure;
 	}
+
+        // Estimates completed successfully.  Print out emtpy <error_list>.
+        cout << "<error_list/>" << endl;
 
 	timeval timeEnd;
 	gettimeofday( &timeEnd, NULL );
@@ -637,5 +648,5 @@ int main(int argc, const char *argv[])
         cout << "</pop_monte_result>" << endl;
 	cout << "</spkreport>" << endl; 
 
-	return ReturnSuccess;
+	return Successful;
 }
