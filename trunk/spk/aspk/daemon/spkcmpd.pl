@@ -364,15 +364,34 @@ sub fork_compiler {
       }
   }
 }
+sub insert_error {
+    my $caught_mess = shift;
+    my $xml_errors  = shift;
+    my $report      = shift;
+                                                                                
+    my $caught_err  = '<error>';
+    $caught_err    .= "\n<description>Exit status from the SPK Compiler</description>\n";
+    $caught_err    .= "<file_name>N/A</file_name>\n";
+    $caught_err    .= "<line_number>N/A</line_number>\n";
+    $caught_err    .= "<message>$caught_mess</message>\n";
+    $caught_err    .= "</error>\n";
+                                                                                
+    $report =~ s/<\/error_list>/$caught_err $xml_errors<\/error_list>\n/;
+    syslog('info', "$report !!!");
+    return $report;
+}
 sub format_error_report {
     my $content = shift;
     my $report = '<?xml version="1.0"?>';
-    $report .= "\n<spkreport>\n";
-    $report .= "  <error_message>\n";
-    $report .= "    $content\n";
-    $report .= "  </error_message>\n";
-    $report .= "</spkreport>\n";
+    $report   .= "\n<spkreport>\n";
+    $report   .= "<error_list>\n";
+    $report   .= "</error_list>\n";
+    $report   .= "</spkreport>\n";
+                                                                                
+    $report = insert_error($content, "", $report);
+    return $report;
 }
+
 sub reaper {
 
     my $child_pid = shift;
@@ -483,6 +502,7 @@ sub reaper {
 	
 	#format error report and place a message in the system log
 	$report = format_error_report("$err_msg $err_rpt");
+
 	&end_job($dbh, $job_id, $end_code, $report)
 	    or death('emerg', "job_id=$job_id: $Spkdb::errstr");
 	syslog('info', "job_id=$job_id $err_msg");
