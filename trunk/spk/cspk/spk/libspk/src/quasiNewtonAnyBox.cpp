@@ -1283,20 +1283,19 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
         gCur,
         HCur );
 
+      // This function assumes that delta is set small enough that the
+      // optimizer's convergence criterion will not be satisfied for the
+      // current x value and that the optimizer will therefore be able to
+      // perform at least one Quasi-Newton itertion.  If that is not the
+      // case, then throw an exception.
+      if ( itrCurr == 0 )
+      {
+	// throw an exception.
+      }
+
       // After the first call to the optimizer the approximation for the
       // Hessian should be accurate enough that this can reset.
       itrMax = 1;
-
-    QUES: SHOULD ANY ACTIONS BE TAKEN BASED ON THE OUTPUT VALUE FROM Q
-
-	    if ( msg == "ok" && itrCur == 0 )
-
-	      // If the optimizer is not able to perform any Quasi-Newton iterations,
-	      // 
-	      if ( itrCurr == 0 )
-		{
-		  // throw an exception.
-		}
 
       // Add the number of iterations that were performed.
       i += itrCur;
