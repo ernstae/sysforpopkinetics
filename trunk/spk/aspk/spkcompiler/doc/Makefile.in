@@ -5,7 +5,6 @@ SUFFIXES = .dox
 SOURCE = ../libspkcompiler/client.h \
          ../libspkcompiler/ClientTranslator.h \
          ../driver/compiler.cpp \
-         ../libspkcompiler/emit_driver.h \
          ../libspkcompiler/emit_IndData.h \
          ../libspkcompiler/ExpNodeCarrier.h \
          ../libspkcompiler/ExpTreeGenerator.h \
@@ -18,6 +17,7 @@ SOURCE = ../libspkcompiler/client.h \
          ../libspkcompiler/nonmem/read_nonmem_data.h \
          ../libspkcompiler/nonmem/read_nonmem_driver.h \
          ../libspkcompiler/nonmem/read_nonmem_model.h \
+         ../libspkcompiler/nonmem/emit_nonmem_driver.h \
          ../libspkcompiler/SpkCompilerUtil.h \
          ../libspkcompiler/SpkMLToCpp.h \
          ../libspkcompiler/SpkParameters.h \
