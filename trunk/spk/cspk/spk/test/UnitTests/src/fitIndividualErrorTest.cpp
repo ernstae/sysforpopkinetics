@@ -69,9 +69,6 @@ bool withD;
 
 } // [End: unnamed namespace]
 
-//
-// [Remove]===========================
-
 void fitIndividualErrorTest::setUp()
 {
     // initializations
