@@ -13,18 +13,22 @@
 # 2. The cronssh and cronscp scripts must be operational with respect
 #    to the given $RMTHOST.
 
+BACKDIR=backup
 BIN=$HOME/bin/shell
+MSGFILE=$OUTNAME.txt
 OUTNAME=$(date +%Y-%m-%d-%H%M).home.full
 OUTFILE=$OUTNAME.tgz
-MSGFILE=$OUTNAME.txt
-USER=$(whoami)
 RMTHOST=whitechuck
-BACKDIR=backup
+TMP=/tmp
+USER=$(whoami)
+
+
 
 ERROR_TAR=1
 ERROR_SCP=2
 
-cd /tmp
+cd $TMP
+rm *.home.full.*
 
 if ! tar czf $OUTFILE $HOME > $MSGFILE 2>&1; then
     echo "$0 error: tar failed" | mail -s "Backup Failed" $USER

@@ -20,7 +20,7 @@ PWDIR=$(pwd)
 cd $HOME/$DIR
 
 eval `cat data`
-y
+
 export SSH_AGENT_PID
 export SSH_AUTH_SOCK
 
