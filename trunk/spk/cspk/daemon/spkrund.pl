@@ -322,7 +322,7 @@ sub fork_runner {
 
 	  # Redirect Standard Error to a file
 	  open STDERR, ">$filename_serr";
-
+         
 	  # execute the spkrunner
 	  @args = ("./$filename_runner", $filename_source, $filename_data);
 	  my $e = exec(@args);
@@ -346,14 +346,31 @@ sub fork_runner {
       }
   }
 }
+sub insert_error {
+    my $caught_mess = shift;
+    my $xml_errors  = shift;
+    my $report      = shift;
+
+    my $caught_err  = '<error>';
+    $caught_err    .= "\n<description>Exit status from the driver</description>\n";
+    $caught_err    .= "<file_name>N/A</file_name>\n";
+    $caught_err    .= "<line_number>N/A</line_number>\n";
+    $caught_err    .= "<message>$caught_mess</message>\n";
+    $caught_err    .= "</error>\n";
+
+    $report =~ s/<\/error_list>/$caught_err $xml_errors<\/error_list>\n/;
+syslog('info', "$report !!!");
+    return $report;
+}
 sub format_error_report {
     my $content = shift;
     my $report = '<?xml version="1.0"?>';
     $report   .= "\n<spkreport>\n";
-    $report   .= "  <error_message>\n";
-    $report   .= "    $content\n";
-    $report   .= "  </error_message>\n";
+    $report   .= "<error_list>\n";
+    $report   .= "</error_list>\n";
     $report   .= "</spkreport>\n";
+
+    $report = insert_error($content, "", $report);
     return $report;
 }
 sub insert_optimizer_trace {
@@ -464,9 +481,23 @@ sub reaper {
 	# Get email address of user
 	my $email = &email_for_job($dbh, $job_id);
 
-	# Format error report and place a message in system log
-	$report = format_error_report("$err_msg $err_rpt");
-	syslog('info', "job_id=$job_id: $err_msg");
+        if( length($filename_results) > 0 ){
+           # Read the results file, if produced, into the report variable.
+           open(FH, $filename_results)
+              or death( 'emerg', "can't open $$working_dir/$filename_results");
+	   read(FH, $report, -s FH );
+           close(FH);
+ 
+           # Insert the return value and its description in the results file.
+	   $report = insert_error($err_msg, $err_rpt, $report);
+        }
+        else{
+           # Format error report.
+           $report = format_error_report("$err_msg $err_rpt");
+        }
+
+	# Place a message in system log
+        syslog('info', "job_id=$job_id: $err_msg");
 
 	# Submit runtime bugs to bugzilla
 	if ($submit_to_bugzilla && ($end_code == "serr" || $end_code == "herr")) {
@@ -499,6 +530,12 @@ sub reaper {
     if (length($optimizer_trace) > 0) {
 	$report = insert_optimizer_trace($optimizer_trace, $report);
     }
+
+    open(FH, ">$filename_results")
+       or death( 'emerg', "can't open $$working_dir/$filename_results");
+    print FH $report;
+    close(FH);
+
     &end_job($dbh, $job_id, $end_code, $report)
 	or death('emerg', "job_id=$job_id: $Spkdb::errstr");
 }
