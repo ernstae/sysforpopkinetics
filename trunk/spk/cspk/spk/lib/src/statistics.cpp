@@ -132,7 +132,6 @@ If it points to a valarray sized other than n * 2, the resulting bahavior is und
 #include <cmath>
 #include "statistics.h"
 #include "SpkException.h"
-
 using SPK_VA::valarray;
 using SPK_VA::slice;
 using namespace std;
@@ -243,4 +242,247 @@ void statistics( const SPK_VA::valarray<double>& x,       // vector of which qua
 	}
       *ciOut = ciTemp;
     }
+}
+/*************************************************************************
+ *
+ * Function: statistics
+ *
+ *************************************************************************/
+
+/*------------------------------------------------------------------------
+ * Function Specification
+ *------------------------------------------------------------------------*/
+/*
+$section Computing Statistics$$
+
+$index statistics$$
+$syntax/void statistics( const SPK_VA::valarray<bool>  & mask,
+		 const SPK_VA::valarray<double> & x,       
+		 const SPK_VA::valarray<double> & xCov,    
+		 int                              degFree, 
+		 SPK_VA::valarray<double>       * seOut,            
+		 SPK_VA::valarray<double>       * corOut,  
+		 SPK_VA::valarray<double>       * cvOut,   
+		 SPK_VA::valarray<double>       * ciOut
+                 )
+/$$
+$head Description$$
+This function computes the standard error vector, correlation
+matrix, coefficient of variation and confidence interval of $math%x'%$$ based on
+a given covariance matrix of $math%x%$$.  
+$math%x'%$$ is a subset of $math%x%$$ such that { x' | x AND mask } ("AND" is logical AND).
+ 
+The coefficient of variation is calculated as:
+$math%
+   
+               CV = SE / | x | * 100 
+
+%$$
+where CV stands for the coefficient of variation, SE stands for the standard 
+error.  The confidence interval is calculated from the values of the standard error 
+using its mathematical definition.
+
+$head Return Value$$
+Upon a successful completion, the function sets
+the given output value place holders to point to the result values.
+  
+$pre
+
+$$
+If an error is detected or failure occurs during the evaluation, a SpkException 
+object is thrown.  The state at which an exception is thrown is defined in
+$xref/glossary/Exception Handling Policy/Exception Handling Policy/$$.
+
+$head Arguments$$
+$syntax/
+/mask/
+/$$
+is a vector of boolean values (ie. true/false) of length equal to the length of 
+$math%x%$$.  A value $math%true%$$ in the i-th element of $math%mask%$$
+indicates that the i-th value of $math%x%$$ has contributed to the parameter optimization.
+
+$syntax/
+
+/x/
+/$$
+is an n dimensional parameter vector.
+
+$syntax/
+
+/xCov/
+/$$
+is a covariance matrix of $math%x%$$.
+
+$syntax/
+
+/degFree/
+/$$
+is the degree of freedom used to compute the confidence interval. 
+It is defined as degFree = m - n, where n is the length of parameter vector,
+in this case, x, and m is the number of fitted data points.
+The value must be greater than zero, although
+it will not be referenced at all if ciOut is set to NULL.
+
+$syntax/
+
+/seOut/
+/$$
+will point to an n dimensional vector containing the standard error for x if
+the pointer points to an n dimensional valarray.  The elements of which
+corresponding $math%mask%$$ value is $math%false%$$ will be set to NAN.
+
+If it points to NULL, the corresponding computation will be skipped entirely.
+If it points to a valarray sized other than n, the resulting bahavior is undetermined.
+
+$syntax/
+
+/corOut/
+/$$
+will point to an n * n dimensional vector containing the correlation matrix 
+in the column major order if the pointer points to an n * n valarray.
+The elements depend on those $math%x(i)%$$ of which corresponding $math%mask%$$
+is $math%false%$$ will be set to NAN.
+
+If it points to NULL, the corresponding computation will be skipped entirely.
+If it points to a valarray sized other than n * n, the resulting bahavior is undetermined.
+
+
+$syntax/
+
+/cvOut/
+/$$
+will point to an n dimensional vector containing the coefficient of variance if
+the pointer points to an n dimensional valarray.  The elements of which
+corresponding $math%mask%$$ value is $math%false%$$ will be set to NAN.
+
+If it points to NULL, the corresponding computation will be skipped entirely.
+If it points to a valarray sized other than n, the resulting bahavior is undetermined.
+
+$syntax/
+
+/ciOut/
+/$$
+will point to an n * 2 dimensional vector containing the 95% confidence interval if
+the pointer points to an n * 2 dimensional valarray. 
+The elements of which corresponding $math%mask%$$ value is $math%false%$$ will be set to NAN.
+
+If it points to NULL, the corresponding computation will be skipped entirely.
+If it points to a valarray sized other than n * 2, the resulting bahavior is undetermined.
+*/
+namespace
+{
+  //=========================================================
+  // Expand the vector x to y. Insert "val" in places where mask[i] is false.
+  //=========================================================
+
+  void placeVal( const valarray<bool>   & mask,
+		 const valarray<double> & x,
+		 valarray<double>       & y,
+		 double val = NAN )
+  {
+    assert( mask.size() == y.size() );
+    const int nX = x.size();
+    const int nY = y.size();
+    
+    for( int i=0, ii=0; i<nY; i++ )
+      {
+	if( mask[i] )
+	  {
+	    y[i] = x[ii];
+	    ii++;
+	  }
+	else
+	  y[i] = val;
+      }
+  }
+}
+void statistics( const SPK_VA::valarray<bool>  & mask,    // flags indicating elements are active or not
+		 const SPK_VA::valarray<double>& x,       // vector of which quality is to be analyzed
+		 const SPK_VA::valarray<double>& xCov,    // covariance of x
+		 int                             degFree, // degree of freedom
+		 SPK_VA::valarray<double>*       seOut,   // standard error           
+		 SPK_VA::valarray<double>*       corOut,  // correlation matrix
+		 SPK_VA::valarray<double>*       cvOut,   // coefficient of variance
+		 SPK_VA::valarray<double>*       ciOut    // confidence interval
+                 )
+{
+  const int nX = x.size();
+  assert( nX == mask.size() );
+  valarray<double> y = x[ mask ];
+  const int nY = y.size();
+  valarray<double> yCov( nY * nY );
+  valarray<double> ySE ( nY );
+  valarray<double> yCor( nY * nY );
+  valarray<double> yCV ( nY );
+  valarray<double> yCI ( nY * 2 );
+
+  for( int j=0, jj=0; j<nX; j++ )
+    {
+      if( mask[j] )
+	{
+	  for( int i=0, ii=0; i<nX; i++ )
+	    {
+	      if( mask[i] )
+		{
+		  yCov[ ii + jj * nY ] = xCov[ i + j * nX ]; 
+		  ii++;
+		}
+	    }
+	  jj++;
+	}
+
+    }
+  // 
+  statistics( y, yCov, degFree-(nX-nY), &ySE, &yCor, &yCV, &yCI );
+
+  valarray<bool> yCI_mask ( nX * 2 );
+  valarray<bool> ySE_mask ( nX );
+  valarray<bool> yCV_mask ( nX );
+  valarray<bool> yCor_mask( nX * nY );
+  double val = NAN;
+
+  for( int j=0; j<2; j++ )
+    {
+      for( int i=0; i<nX; i++ )
+	{
+	  yCI_mask[ i + j * nX ] = mask[i];
+	}
+    }
+
+  for( int j=0; j<nX; j++ )
+    {
+      if( mask[j] )
+	{
+	  for( int i=0; i<nX; i++ )
+	    {
+	      yCor_mask[ i + j * nX ] = mask[i];
+	    }
+       
+	  ySE_mask[ j ] = mask[j];
+	  yCV_mask[ j ] = mask[j];
+	}
+      else
+	{
+	  yCor_mask[ slice( j * nX, nX, 1 ) ] = false;
+	}
+    }
+  if( ciOut )
+    {
+      placeVal( yCI_mask, yCI, *ciOut, val );
+    }
+  if( corOut )
+    {
+      placeVal( yCor_mask, yCor, *corOut, val );
+    }
+  if( seOut )
+    {
+      placeVal( ySE_mask, ySE, *seOut, val );
+    }
+  if( cvOut )
+    {
+      placeVal( yCV_mask, yCV, *cvOut, val );
+    }
+
+
+  return;
 }

@@ -51,4 +51,16 @@ void indStatistics( const SPK_VA::valarray<double>& indPar,
                     SPK_VA::valarray<double>*       indParCIOut
                   );
 
+void indStatistics( const SPK_VA::valarray<bool>           & mask,
+		    const SPK_VA::valarray<double> & b,
+		    const SPK_VA::valarray<double> & f_b,
+		    const SPK_VA::valarray<double> & R_b,
+		    const SPK_VA::valarray<double> & RInv,
+		    SPK_VA::valarray<double>       * bCovOut,
+		    SPK_VA::valarray<double>       * bSEOut,                          
+		    SPK_VA::valarray<double>       * bCorOut,
+		    SPK_VA::valarray<double>       * bCVOut,
+		    SPK_VA::valarray<double>       * bCIOut
+		    );
+
 #endif

@@ -87,7 +87,6 @@
 #include "src/SpkErrorTest.h"
 #include "src/SpkExceptionTest.h"
 #include "src/SpkModelErrorTest.h"
-#include "src/statWrapperTest.h"
 #include "src/subtractTest.h"
 #include "src/symmetrizeTest.h"
 #include "src/transposeDerivativeTest.h"
@@ -201,7 +200,6 @@ int main( int argc, const char * argv[] )
   master_list_of_tests[ "SpkErrorTest" ]                     = SpkErrorTest::suite();
   master_list_of_tests[ "SpkExceptionTest" ]                 = SpkExceptionTest::suite();
   master_list_of_tests[ "SpkModelErrorTest" ]                = SpkModelErrorTest::suite();
-  master_list_of_tests[ "statWrapperTest" ]                      = statWrapperTest::suite();
   master_list_of_tests[ "subtractTest" ]                     = subtractTest::suite();
   master_list_of_tests[ "symmetrizeTest" ]                   = symmetrizeTest::suite();
   master_list_of_tests[ "transposeDerivativeTest" ]          = transposeDerivativeTest::suite();

@@ -66,12 +66,14 @@ void indStatisticsTest::tearDown()
 
 Test* indStatisticsTest::suite()
 {
-	TestSuite *suiteOfTests = new TestSuite( "indStatisticsTest" );
-
-    suiteOfTests->addTest(new TestCaller<indStatisticsTest>(
-                  "statisticsExampleTest", &indStatisticsTest::statisticsExampleTest));
-
-    return suiteOfTests;
+  TestSuite *suiteOfTests = new TestSuite( "indStatisticsTest" );
+  
+  suiteOfTests->addTest( new TestCaller<indStatisticsTest>(
+			 "statisticsExampleTest", &indStatisticsTest::statisticsExampleTest) );
+  suiteOfTests->addTest( new TestCaller<indStatisticsTest>(
+			 "testIndWrapper", &indStatisticsTest::testIndWrapper) );
+  
+  return suiteOfTests;
 }
 
 /*************************************************************************
@@ -328,8 +330,8 @@ void indStatisticsTest::statisticsExampleTest()
     // Test indParCVOut.
     //------------------------------------------------------------
 
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( indParCVOut[ 0 ], indParSEOut[ 0 ] / indParOut[ 0 ] * 100., eps );
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( indParCVOut[ 1 ], indParSEOut[ 1 ] / indParOut[ 1 ] * 100., eps );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( indParCVOut[ 0 ], fabs(indParSEOut[ 0 ] / indParOut[ 0 ]) * 100., eps );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( indParCVOut[ 1 ], fabs(indParSEOut[ 1 ] / indParOut[ 1 ]) * 100., eps );
 
     //------------------------------------------------------------
     // Test indParCorOut.
@@ -352,3 +354,201 @@ void indStatisticsTest::statisticsExampleTest()
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( indParCIOut[ 3 ], indParOut[ 1 ] + d1, eps );
 }
 
+/*------------------------------------------------------------------------
+ * Class Definition
+ *------------------------------------------------------------------------*/
+
+class IndWrapperTestUserModel : public SpkModel
+{
+  valarray<double> b;
+  const int nY;  // 4
+  const int nB;  // 3
+public:
+  IndWrapperTestUserModel(): nB(3), b(3), nY(4)
+  {}    
+  ~IndWrapperTestUserModel()
+  {}
+private:
+  void doSetIndPar( const valarray<double>& bval )
+  {
+    assert( bval.size() == nB );
+    b = bval;
+  }
+  void doDataMean( valarray<double>& fOut ) const
+  {
+    //
+    //            / b(2) \ 
+    //     f(b) = | b(2) |   
+    //            \ b(2) /
+    //
+    fOut.resize( nY, b[1] );
+  }
+  bool doDataMean_indPar( valarray<double>& f_bOut ) const
+  {
+    //
+    //              / 0   1   0 \ 
+    //     f_b(b) = | 0   1   0 |   
+    //              \ 0   1   0 /
+    //
+    f_bOut.resize( nY*nB, 0.0 );
+    f_bOut[ slice( nY, nY, 1 ) ] = 1.0;
+    return true;
+  }
+  void doDataVariance( valarray<double>& ROut ) const
+  {
+    //
+    //            /  exp[b(1)]     0         0      \ 
+    //     R(b) = |      0     exp[b(1)]     0      |   
+    //            \      0         0     exp[b(1)]  / 
+    //
+    ROut.resize( nY*nY, 0.0 );
+    ROut[ slice( 0, nY, nY + 1 ) ] = exp( b[0] );
+  }
+  bool doDataVariance_indPar( valarray<double>& R_bOut ) const
+  {
+    //
+    //              /  exp[b(1)]     0    0  \ 
+    //     R_b(b) = |  0             0    0  |   
+    //              |  0             0    0  | 
+    //              |  0             0    0  |
+    //              |  exp[b(1)]     0    0  | 
+    //              |  0             0    0  |   
+    //              |  0             0    0  | 
+    //		    |  0             0    0  |
+    //              \  exp[b(1)]     0    0  / 
+    //
+    R_bOut.resize( nY*nY*nB, 0.0 );
+    R_bOut[ slice( 0, nY, nY+1 ) ] = exp( b[0] );
+    return true;
+  }   
+};
+
+void indStatisticsTest::testIndWrapper()
+{
+  const int nB = 3;
+  const int nY = 4;
+
+  const int nFreedom = nY - nB;
+
+  double yIn[] = { 1.8, 2.0, 2.2, 2.4 };
+  valarray<double> y( yIn, nY );
+
+  // Fix the last element of b.
+  bool maskIn[] = { true, true, false };
+  valarray<bool> mask( maskIn, nB );
+
+  valarray<double> bLow ( -4.0, nB );
+  valarray<double> bUp  (  4.0, nB );
+  valarray<double> bIn  (  2.0, nB );
+  valarray<double> bOut (       nB );
+  valarray<double> bStep( .001, nB );
+
+  // Fix the 3rd (last) element of b.
+  bLow[2] = bIn[2];
+  bUp [2] = bIn[2];
+
+  IndWrapperTestUserModel model;
+  
+  double MapObjOut;
+  valarray<double> MapObj_bOut  ( nB );
+  valarray<double> MapObj_b_bOut( nB * nB );
+  Optimizer indOptimizer( 1.e-3, 40, 0 );
+
+  try{
+    fitIndividual( model,
+		   y,
+		   indOptimizer,
+		   bLow,
+		   bUp,
+		   bIn,
+		   bStep,
+		   &bOut,            
+		   &MapObjOut,
+		   &MapObj_bOut,
+		   &MapObj_b_bOut,
+		   false );
+  }
+  catch( const SpkException & e )
+    {
+      cerr << e << endl;
+      throw;
+    }
+
+  valarray<double> f_b( nY * nB );
+  valarray<double> R_b( nY * nY * nB );
+  valarray<double> RInv( nY * nY );
+
+  model.setIndPar( bOut );
+  model.dataMean_indPar( f_b );
+  model.dataVariance_indPar( R_b );
+  model.dataVarianceInv( RInv );
+
+  valarray<double> bCovOut( nB * nB );
+  valarray<double> bSEOut ( nB );
+  valarray<double> bCorOut( nB * nB );
+  valarray<double> bCVOut ( nB );
+  valarray<double> bCIOut ( nB * 2 );
+
+  indStatistics( mask, bOut, f_b, R_b, RInv, &bCovOut, &bSEOut, &bCorOut, &bCVOut, &bCIOut );
+
+  double eps = 0.000000001;
+
+  //------------------------------------------------------------
+  // Test bCovOut.
+  //------------------------------------------------------------
+
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( 2.0/4.0,                  bCovOut[ 0 ], eps );
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( 0,                        bCovOut[ 1 ], eps );
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( 0,                        bCovOut[ 2 ], eps );
+
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( 0,                        bCovOut[ 3 ], eps );
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.0/4.0*exp( bOut[ 0 ] ), bCovOut[ 4 ], eps );
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( 0,                        bCovOut[ 5 ], eps );
+
+  //------------------------------------------------------------
+  // Test bSEOut.
+  //------------------------------------------------------------
+
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( sqrt( bCovOut[ 0 ] ), bSEOut[ 0 ], eps );
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( sqrt( bCovOut[ 4 ] ), bSEOut[ 1 ], eps );
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0,                  bSEOut[ 2 ], eps );
+
+  //------------------------------------------------------------
+  // Test bCVOut.
+  //------------------------------------------------------------
+
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( fabs( bSEOut[ 0 ] / bOut[ 0 ] ) * 100., bCVOut[ 0 ], eps );
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( fabs( bSEOut[ 1 ] / bOut[ 1 ] ) * 100., bCVOut[ 1 ], eps );
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0,                                    bCVOut[ 2 ], eps );
+
+  //------------------------------------------------------------
+  // Test bCorOut.
+  //------------------------------------------------------------
+
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., bCorOut[ 0 ], eps );
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( 0., bCorOut[ 1 ], eps );
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( 0., bCorOut[ 2 ], eps );
+
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( 0., bCorOut[ 3 ], eps );
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., bCorOut[ 4 ], eps );
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( 0., bCorOut[ 5 ], eps );
+
+  //------------------------------------------------------------
+  // Test bCIOut.
+  //------------------------------------------------------------
+  // The degree of freedom for this particular problem is
+  // 2 because one of the element in b is fixed so that
+  // from indStatistics()'s point of view, there's only 3-1=2
+  // elements in b.  
+  // For degree of freedom = 2, the t-critical value for the 
+  // 95% confidence level is 4.303.
+  double d0 = 4.303 * bSEOut[ 0 ];
+  double d1 = 4.303 * bSEOut[ 1 ];
+
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( bOut[ 0 ] - d0, bCIOut[ 0 ], eps );
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( bOut[ 1 ] - d1, bCIOut[ 1 ], eps );
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0,            bCIOut[ 2 ], eps );
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( bOut[ 0 ] + d0, bCIOut[ 3 ], eps );
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( bOut[ 1 ] + d1, bCIOut[ 4 ], eps );
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0,            bCIOut[ 5 ], eps );
+}

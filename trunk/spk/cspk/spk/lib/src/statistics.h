@@ -41,4 +41,14 @@ void statistics( const SPK_VA::valarray<double>& x,       // vector of which qua
 		 SPK_VA::valarray<double>*       ciOut    // confidence interval
                   );
 
+void statistics( const SPK_VA::valarray<bool>  & mask,
+		 const SPK_VA::valarray<double>& x,       // vector of which quality is to be analyzed
+		 const SPK_VA::valarray<double>& xCov,    // covariance of x
+		 int                             degFree, // degree of freedom
+		 SPK_VA::valarray<double>*       seOut,   // standard error           
+		 SPK_VA::valarray<double>*       corOut,  // correlation matrix
+		 SPK_VA::valarray<double>*       cvOut,   // coefficient of variance
+		 SPK_VA::valarray<double>*       ciOut    // confidence interval
+                  );
+
 #endif

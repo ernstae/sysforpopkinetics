@@ -177,8 +177,6 @@ testall_SOURCES = \
 	SpkExceptionTest.h \
 	SpkModelErrorTest.cpp \
 	SpkModelErrorTest.h \
-	statWrapperTest.h \
-	statWrapperTest.cpp \
 	subtractTest.cpp \
 	subtractTest.h \
 	symmetrizeTest.cpp \
@@ -282,7 +280,6 @@ pkginclude_HEADERS = \
 	SpkErrorTest.h \
 	SpkExceptionTest.h \
 	SpkModelErrorTest.h \
-	statWrapperTest.h \
 	subtractTest.h \
 	symmetrizeTest.h \
 	transposeDerivativeTest.h \

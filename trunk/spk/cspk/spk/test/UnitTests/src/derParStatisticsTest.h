@@ -57,7 +57,7 @@ public:
 private:
   // Test cases for this unit test.
   void twoByTwoCovTest();
-
+  void testWrapper();
 };
 
 #endif
