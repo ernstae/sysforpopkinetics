@@ -1,7 +1,11 @@
 #!/bin/bash
 
 # Startup script for Tomcat
-
+#
+# chkconfig: 345 84 16
+# description: Tomcat jakarta JSP server
+#
+#
 #Necessary environment variables
 export JAVA_HOME="/usr/java/j2sdk1.4.2_03"
 export CATALINA_HOME="/usr/local/tomcat/jakarta-tomcat-5.0.18"
@@ -33,7 +37,8 @@ start() {
 
 stop() {
     echo -n $"Shutting down Tomcat: "
-    su tomcat -c $TOMCAT_STOP
+#    su tomcat -c $TOMCAT_STOP
+    $TOMCAT_STOP
     rm -f /var/lock/subsys/tomcatd
     echo
 }

@@ -5,7 +5,7 @@
   <!ENTITY dept "Department of Bioengineering">
 ]>
 <article><title>Web Server HOWTO</title>
- <articleinfo>
+  <articleinfo>
     <revhistory>
       <revision>
 	<revnumber>1.0</revnumber>
@@ -14,15 +14,24 @@
 	<revremark>Initial version.</revremark>
       </revision>
     </revhistory>
-  <abstract>
+    <abstract>
       <para>
 	Because Spk provides its services via the World Wide Web, an important
 	component of the overall system is the web server.  This document
 	describes the installation and configuration of web server software
 	to support Spk.
       </para>
-  </abstract>
- </articleinfo>
+      <para>
+	To complete the configuration for secure https connections, you will
+	need two authentication certificates.  If you do not have these
+	certificates, it might be a good idea to obtain them before proceeding
+	with the web server configuration.  See the
+	<ulink url="http://whitechuck.rfpk.washington.edu/soft/howto/rhel3/authentication/authentication.html">
+	  Authentication and Encryption HOWTO
+	</ulink> for details.
+      </para>
+    </abstract>
+  </articleinfo>
   <sect1>
     <title>Introduction</title>
     <para>
@@ -80,123 +89,520 @@ tar xvzf *
     </para>
   </sect1>
   <sect1>
-    <title>Configuring User Groups and Permissions</title>
+    <title>Defining Environment Variables</title>
     <para>
-      Several permissions issues must be dealt with:
-      <itemizedlist>
-	<listitem>
-	  <para>
-	    Tomcat should not run under the <emphasis>root</emphasis> user.
-	    Like all web servers, there is a risk that tomcat will at some point
-	    be compromised.  If this occurs, damage will be minimized if it 
-	    runs with ordinary user privileges.
-	  </para>
-	</listitem>
-	<listitem>
-	  <para>
-	    Certain select ordinary users should be allowed to make changes to 
-	    web pages. They should not have to know the root password to perform
-	    these duties. These users can be provided access to web pages and
-	    Java servlets by proper configuration of user groups and group
-	    privileges.
-	  </para>
-	</listitem>
-      </itemizedlist>
+      It is convenient to define an environment variable, CATALINA_HOME,
+      which contains the path to the directory in which tomcat is installed.
+      Edit your <filename>~/.bash_profile</filename> file, adding lines to
+      define CATALINA_HOME and to export it.
     </para>
     <para>
-      First we need to create the user under which tomcat will run, create two
-      groups for the users that will have access to web pages and servlets, and
-      add tomcat to both groups.
+      For example, suppose that the tarball expanded to
+      <filename>jakarta-tomcat-5.0.18</filename>. Then you would add these lines
+      to <filename>~/.bash_profile</filename>:
       <screen>
-su -
-useradd -r tomcat
-groupadd -r webtext
-groupadd -r webjava
-gpasswd -a tomcat webtext
-gpasswd -a tomcat webjava
+CATALINA_HOME=/usr/local/tomcat/jakarta-tomcat-5.0.18
+export CATALINA_HOME
       </screen>
+      After saving your modified <filename>~/.bash_profile</filename>,
+      restart your desktop by logging out and then logging back in again.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Creating Two Run-Time Instances</title>
+    <para>
+      In this section, we will set things up so that two independent 
+      instances of tomcat can run simultaneously.  Onc instance will
+      be for test and the other for production.
     </para>
     <para>
-      Now set permissions on individual directory sub-trees:
+      When changes are made to the web site
+      or to the MDA, the process used to migrate these changes to production is
+      as follows:
+      <orderedlist>
+	<listitem>
+	  <para>
+	    Copy the changes from the workstation(s) of software developers,
+	    content authors and content editors to the test to the file hierarchy
+	    associated with the test instance.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Test and proof read the changes.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Copy the changes to the file hierarchy associated with the production 
+	    instance.
+	  </para>
+	</listitem>
+      </orderedlist>
+    </para>
+    <para>
+      The following steps will create the file hierarchies for the two instances:
       <screen>
-cd /usr/local/tomcat/jakarta*
-chown -R tomcat.tomcat conf
-chown -R tomcat.tomcat logs
-chown -R tomcat.webjava server
-chown -R tomcat.webjava webapps
-chmod -R 2775 server
-chmod -R 2775 webapps
+su
+cd $CATALINA_HOME/..
+mkdir instance
+cd instance
+mkdir test
+mkdir prod
+cp -r $CATALINA_HOME/conf test
+cp -r $CATALINA_HOME/conf prod
+cd test
+mkdir logs temp webapps work
+cd ../prod
+mkdir logs temp webapps work
       </screen>
     </para>
   </sect1>
   <sect1>
-    <title>Running Tomcat Automatically</title>
+    <title>Configuring User Groups and Permissions</title>
+    <para>
+      It is most convenient for tomcat to be started automatically by the
+      <emphasis>init</emphasis> process when the system boots.  Because
+      the init process is owned by root, tomcat also runs as root,
+      through inheiritance.  When we tried to run tomcat under an ordinary
+      user name, we could not get it to stop and restart reliably. Running
+      tomcat as apache is run, using an ordinary user name for security reasons,
+      may not be worth the trouble.  Unlike apache, which is written in C,
+      tomcat is written in Java.  Java applications are not vulnerable to 
+      buffer overflows, which are the vulnerability underlying  most security
+      breaches in conventional web servers.
+    </para>
+    <para>
+      Although root is the tomcat process owner,
+      it is preferable for its files to belong to a user
+      or users other than root.  That way, users can be given the authority
+      to modify these files without having to know the root password.
+    </para>
+    <para>
+      First we create a user and a group. The user <emphasis>tomcat</emphasis>
+      will be the owner of the files, while the group <emphasis>webadmin</emphasis>
+      will have group access to them.
+      <screen>
+su
+/usr/sbin/useradd -r tomcat
+/usr/sbin/groupadd -r webadmin
+/usr/bin/gpasswd -a tomcat webadmin
+      </screen>
+    </para>
+    <para>
+      At this point, you should also add <emphasis>your user name</emphasis>
+      to the webadmin group:
+      <screen>
+/usr/bin/gpasswd -a <emphasis>your-user-name</emphasis> webadmin
+      </screen>
+    </para>
+    <para>
+      Now set permissions on the file hierarchies for the instances:
+      <screen>
+cd $CATALINA_HOME/../instance
+chown -R tomcat.webadmin *
+find . -type d -exec chmod 2775 {} \;
+find . -type f -exec chmod g+rw {} \;
+      </screen>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Configuring the Instances</title>
+    <para>
+      We need to make changes to <filename>server.xml</filename>, which is the principal
+      configuration file for tomcat.
+    </para>
+    <sect2>
+      <title>Changing the Shutdown Port for the Production Instance</title>
+      <para>
+	In the default configuration, tomcat receives shutdown requests on
+	port 8005.  We will leave 8005 as the shutdown value for the test
+	server, but change that of the production server to 8006, to avoid
+	a clash.
+      </para>
+      <para>
+	Before editing, <filename>$CATALINA_HOME/../instance/prod/conf/server.xml</filename>
+	will look like this:
+	<screen>
+&lt;Server port="8005" shutdown="SHUTDOWN" debug="0"&gt;
+	</screen>
+	Change the port, so that after editing the element will look like this:
+	<screen>
+&lt;Server port="8006" shutdown="SHUTDOWN" debug="0"&gt;
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Changing the HTTP Port and the Redirect Port for the Production Instance</title>
+      <para>
+	For the production server, only, we will change the port for receiving
+	http requests from 8080 to 80, and the port to which
+	https requests are redirected, from 8443 to 443.
+      </para>
+      <para>
+	Before editing, <filename>$CATALINA_HOME/../instance/prod/conf/server.xml</filename>
+	will look like this:
+	<screen>
+&lt;!-- Define a non-SSL Coyote HTTP/1.1 Connector on port 8080 --&gt;
+&lt;Connector port="8080"
+	  maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+	  enableLookups="false" redirectPort="8443" acceptCount="100"
+	  debug="0" connectionTimeout="20000" 
+	  disableUploadTimeout="true" /&gt;
+	</screen>
+	After editing it should look like this:
+	<screen>
+  &lt;!-- Define a non-SSL Coyote HTTP/1.1 Connector on port 80 --&gt;
+  &lt;Connector port="80"
+	  maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+	  enableLookups="false" redirectPort="443" acceptCount="100"
+	  debug="0" connectionTimeout="20000" 
+	  disableUploadTimeout="true" /&gt;
+	</screen>
+	Note that both the <emphasis>port</emphasis> and the 
+	<emphasis>redirectPort</emphasis> attributes must be changed.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Setting Up  HTTPS for the Test Instance</title>
+      <para>
+	In the default configuration, the https port is disabled, because the
+	xml element that defines it has been commented out.  We will restore
+	the https port by removing the xml comment brackets.  We will also 
+	tell tomcat where to find our authentication certificates and 
+	what password it needs to decrypt them.
+      </para>
+      <para>
+	Before editing, <filename>$CATALINA_HOME/../instance/test/conf/server.xml</filename>
+	will look like this:
+	<screen>
+&lt;!-- Define a SSL Coyote HTTP/1.1 Connector on port 8443 --&gt;
+&lt;!--
+&lt;Connector port="8443"
+	  maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+	  enableLookups="false" disableUploadTimeout="true"
+	  acceptCount="100" debug="0" scheme="https" secure="true"
+	  clientAuth="false" sslProtocol="TLS" /&gt;
+--&gt;
+	</screen>
+	AFter editing out the comment brackets, it will look like this:
+	<screen>
+&lt;!-- Define a SSL Coyote HTTP/1.1 Connector on port 8443 --&gt;
+&lt;Connector port="8443"
+	  maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+	  enableLookups="false" disableUploadTimeout="true"
+	  acceptCount="100" debug="0" scheme="https" secure="true"
+	  keystoreFile="/root/.keystore" keystorePass="Make@!This&*Good"
+	  clientAuth="false" sslProtocol="TLS" /&gt;
+	</screen>
+	Note that the password must be the one that you used when creating your
+	key pair (see the 
+	<ulink url="http://whitechuck.rfpk.washington.edu/soft/howto/rhel3/authentication/authentication.html">
+	  Authentication and Encryption Howto
+	</ulink>).
+      </para>
+    </sect2>
+    <sect2>
+      <title>Setting Up HTTPS for the Production Instance</title>
+      <para>
+	For the production server, only, we will change the port for processing
+	https requests from 8443 to 443, and add the attributes for
+	authentication:
+      </para>
+      <para>
+	Before editing, <filename>$CATALINA_HOME/../instance/prod/conf/server.xml</filename>
+	will look like this:
+	<screen>
+&lt;!-- Define a SSL Coyote HTTP/1.1 Connector on port 8443 --&gt;
+&lt;!--
+&lt;Connector port="8443"
+	  maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+	  enableLookups="false" disableUploadTimeout="true"
+	  acceptCount="100" debug="0" scheme="https" secure="true"
+	  clientAuth="false" sslProtocol="TLS" /&gt;
+--&gt;
+	</screen>
+	After editing, this is how it looks:
+	<screen>
+&lt;!-- Define a SSL Coyote HTTP/1.1 Connector on port 443 --&gt;
+&lt;Connector port="443"
+	  maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+	  enableLookups="false" disableUploadTimeout="true"
+	  acceptCount="100" debug="0" scheme="https" secure="true"
+	  keystoreFile="/root/.keystore" keystorePass="Make@!This&*Good"
+	  clientAuth="false" sslProtocol="TLS" /&gt;
+	</screen>
+	Note that the <emphasis>port</emphasis> attribute has been changed and that
+	the comment brackets around the element have been removed.  Note also
+	the addition of the <emphasis>keystoreFile</emphasis> and the
+	<emphasis>keystorePass</emphasis> attributes.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Disabling the Apache Connection for both Test and Production</title>
+      <para>
+	For both the production and the test servers, we will comment out the
+	element in <filename>server.xml</filename> which defines a connector
+	between tomcat and apache, because we are using tomcat as a complete
+	stand-alone server that does not depend on apache.
+      </para>
+      <para>
+	Edit both <filename>$CATALINA_HOME/../instance/test/conf/server.xml</filename>
+	and <filename>$CATALINA_HOME/../instance/prod/conf/server.xml</filename>.
+      </para>
+      <para>
+	Before editing, both files will look like this:
+	<screen>
+&lt;!-- Define a Coyote/JK2 AJP 1.3 Connector on port 8009 --&gt;
+&lt;Connector port="8009"
+	  enableLookups="false" redirectPort="8443" debug="0"
+	  protocol="AJP/1.3" /&gt;
+	</screen>
+	afterward, both files should look like this:
+	<screen>
+&lt;!-- Define a Coyote/JK2 AJP 1.3 Connector on port 8009 --&gt;
+&lt;!--
+&lt;Connector port="8009"
+	  enableLookups="false" redirectPort="8443" debug="0"
+	  protocol="AJP/1.3" /&gt;
+--&gt;
+	</screen>
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Setting the Production Instance of Tomcat to Run Automatically</title>
     <para>
       Tomcat should be run automatically from the <command>init</command> process
-      whenever the system boots, and be capable of being stopped or restarted from
+      whenever the system boots, and be capable of being stopped or restarted manually from
       the command line by the <emphasis>root</emphasis> user, just like other
       system services.
     </para>
     <para>
-      A shell script called <command>tomcatd</command> which can 
-      <command>start</command>, <command>stop</command>, <command>restart</command>
-      and provide <command>status</command> is in the Spk CVS repository.  The following
-      assumes that you have a working copy of the <filename>r2</filename> repository
-      available.  
+      We need to create a script called <command>tomcat</command> and place it in the
+      standard location for scripts that start and stop services.
     </para>
     <para>
-      Assume that the absolute path to your working copy of the <filename>r2</filename> repository
-      is the value of the environment variable R2:
       <screen>
 su
 cd /etc/rc.d/init.d
-cp $R2/admin/tomcatd/tomcatd .
-chmod +x tomcatd
-/sbin/chkconfig --add tomcatd
+emacs tomcat &
+      </screen>
+      Cut and past the following lines into the editing window and save.
+      <screen>
+#!/bin/bash
+#
+# Init file for production tomcat
+#
+# chkconfig: 2345 63 37
+# description: tomcat server for ports 80 and 443
+#
+CATALINA_HOME=/usr/local/tomcat/jakarta-tomcat-5.0.18
+CATALINA_BASE=$CATALINA_HOME/../instance/prod
+export CATALINA_HOME CATALINA_BASE
+
+exec $CATALINA_HOME/bin/catalina.sh $*
+      </screen>
+      Still as <emphasis>root</emphasis> and in the same directory, install your new 
+      shell script:
+      <screen>
+chmod +x tomcat
+/sbin/chkconfig --add tomcat
+     </screen>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Setting the Test Instance of Tomcat to Run Automatically</title>
+    <para>
+      We also need to create a script called <command>tomtest</command> and place it in the
+      standard location for scripts that start and stop services.
+    </para>
+    <para>
+      <screen>
+su
+cd /etc/rc.d/init.d
+emacs tomtest &
+      </screen>
+      Cut and past the following lines into the editing window and save.
+      <screen>
+#!/bin/bash
+#
+# Init file for production tomcat
+#
+# chkconfig: 2345 63 37
+# description: tomcat server for ports 8080 and 8443
+#
+CATALINA_HOME=/usr/local/tomcat/jakarta-tomcat-5.0.18
+CATALINA_BASE=$CATALINA_HOME/../instance/test
+export CATALINA_HOME CATALINA_BASE
+
+exec $CATALINA_HOME/bin/catalina.sh $*
+      </screen>
+      Still as <emphasis>root</emphasis> and in the same directory, install your new 
+      shell script:
+      <screen>
+chmod +x tomtest
+/sbin/chkconfig --add tomtest
       </screen>
     </para>
   </sect1>
   <sect1>
-    <title>Run Tomcat</title>
+    <title>Installing Authentication Certificates</title>
     <para>
-      Now you should be ready to run tomcat, and see if it is working.
+      If you have not obtained the certificates that tomcat will need for
+      https connections, get them by following the instructions in the
+      <ulink url="http://whitechuck.rfpk.washington.edu/soft/howto/rhel3/authentication/authentication.html">
+	Authentication and Encryption Howto
+      </ulink>.
+      If you obtained the certificates on a workstation rather than on the
+      web server, transfer a copy of the <filename>cert</filename> directory
+      from the ~root directory on the workstation to the ~root directory
+      on the server.  To install the the certificates, do the following:
+      <screen>
+su
+cd cert
+$JAVA_HOME/bin/keytool -import -alias root -keystore keystore -trustcacerts -file uw_root_cert.pem
+$JAVA_HOME/bin/keytool -import -alias tomcat -keystore keystore -trustcacerts -file spk_cert.pem
+      </screen>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Verifying the Configuration</title>
+    <para>
+      Tomcat provides a number of test and demonstrations which we will now 
+      copy in to the test and production instances.
+    </para>
+    <para>
+      As an <emphasis>ordinary</emphasis> user, member of the <emphasis>webadmin</emphasis>
+      group:
+      <screen>
+cd $CATALINA_HOME/../instance
+cp -r $CATALINA_HOME/webapps/* test/webapps
+cp -r $CATALINA_HOME/webapps/* prod/webapps
+      </screen>
+    </para>
+    <para>
+      Now you should be ready to start tomcat manually, and see if it is working.
     </para>
     <para>
       <screen>
 su
-/etc/rc.d/init.d/tomcatd start
+/etc/rc.d/init.d/tomcat  start
+/etc/rc.d/init.d/tomtest start
       </screen>
-      should get tomcat running. You can check that it is 
-      truly running in several ways.
-    </para>
-    <para>
-      <screen>
-/etc/rc.d/init.d/tomcatd status
-      </screen>
-      should report that tomcat is running.
+      should get both instances of tomcat running. You can check that 
+      that they are running by using the <command>ps</command> command:
     </para>
     <para>
       <screen>
 ps -ef | grep tomcat
       </screen>
-      should list one or more tomcat processes in the system run queue.
+      should list two tomcat processes in the system run queue.
     </para>
     <para>
-      When you direct your browser to the following URL:
-      <ulink url="http://localhost:8080">http://localhost:8080</ulink>,
-      you should see a tomcat welcome page appear.
+      There are four different ports which, when requested via your browser,
+      should return the tomcat welcome page.  The ports are 80 and 443, for the
+      production server; 8080 and 8443 for the test server.
+      URLs are provided for the two following cases:
+      <orderedlist numeration="lowerroman">
+	<listitem>
+	  <para>
+	    Your workstation is on the LAN, behind the firewall:
+	  </para>
+	  <para>
+	    <ulink url="http://192.168.2.2/">
+	      http://192.168.2.2/
+	    </ulink>
+	  </para>
+	  <para>
+	    <ulink url="https://192.168.2.2/">
+	      https://192.168.2.2/
+	    </ulink>
+	  </para>
+	  <para>
+	    <ulink url="http://192.168.2.2:8080/">
+	      http://192.168.2.2:8080/
+	    </ulink>
+	  </para>
+	  <para>
+	    <ulink url="https://192.168.2.2:8443/">
+	      https://192.168.2.2:8443/
+	    </ulink>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Your workstation is on the public internet, outside the firewall:
+	  </para>
+	  <para>
+	    <ulink url="http://spk.rfpk.washington.edu/">
+	      http://spk.rfpk.washington.edu/
+	    </ulink>
+	  </para>
+	  <para>
+	    <ulink url="https://spk.rfpk.washington.edu/">
+	      https://spk.rfpk.washington.edu/
+	    </ulink>
+	  </para>
+	  <para>
+	    <ulink url="http://spk.rfpk.washington.edu:8080/">
+	      http://spk.rfpk.washington.edu:8080/
+	    </ulink>
+	  </para>
+	  <para>
+	    <ulink url="https://spk.rfpk.washington.edu:8443/">
+	      https://spk.rfpk.washington.edu:8443/
+	    </ulink>
+	  </para>
+	</listitem>
+      </orderedlist>
     </para>
+  </sect1>
+  <sect1>
+    <title>Stopping and Starting</title>
     <para>
       Tomcat is a daemon. It will run until the <emphasis>root</emphasis>
-      user tells it to stop, or until the computer is rebooted.  To tell
-      tomcat to shutdown gracefully:
+      user tells it to stop, or until the computer is rebooted.
+    </para>
+    <para>
+      To tell the production tomcat to stop (as root):
       <screen>
-/etc/rc.d/init.d/tomcatd stop
+/etc/rc.d/init.d/tomcat stop
       </screen>
-      or to shutdown and the to start again:
+      Similarly, to tell the test tomcat to stop:
       <screen>
-/ect/rc.d/init.d/tomcatd restart
+/etc/rc.d/init.d/tomtest stop
       </screen>
+    </para>
+    <para>
+      <emphasis>Important!</emphasis>  After issuing one or the other
+      of the above commands, do not try to start that tomcat again, until
+      you are certain that it has terminated.  Use the command
+      <screen>
+ps -ef | grep tomcat
+      </screen>
+      to verify this.
     </para>
   </sect1>
 </article>
+
+<!--  LocalWords:  xml DOCTYPE DocBook uw HOWTO articleinfo revhistory Spk MDA
+ -->
+<!--  LocalWords:  revnumber authorinitials revremark http https servlets su mv
+ -->
+<!--  LocalWords:  servlet whitechuck scp mkdir jakarta cd xvzf orderedlist cp
+ -->
+<!--  LocalWords:  listitem conf webapps itemizedlist webadmin chown chmod rw
+ -->
+<!--  LocalWords:  lt SSL maxThreads minSpareThreads maxSpareThreads clientAuth
+ -->
+<!--  LocalWords:  enableLookups redirectPort acceptCount connectionTimeout TLS
+ -->
+<!--  LocalWords:  disableUploadTimeout  sslProtocol AFter url
+ -->
+<!--  LocalWords:  keystoreFile ulink Howto keystorePass JK AJP init chkconfig
+ -->
+<!--  LocalWords:  tomtest keystore trustcacerts pem spk ps ef lowerroman
+ -->
+<!--  LocalWords:  internet
+ -->
