@@ -22,6 +22,36 @@ using namespace std;
 using namespace CppUnit;
 using namespace xercesc;
 
+bool isNonmemKeyword( const string var )
+{
+  if( var =="id" |
+      var =="l1" |
+      var =="l2" |
+      var =="dv" |
+      var =="mdv" |
+      var =="time" |
+      var =="data" |
+      var =="dat1" |
+      var =="dat2" |
+      var =="dat3" |
+      var =="drop" |
+      var =="skip" |
+      var =="evid" |
+      var =="amt" |
+      var =="rate" |
+      var =="ss" |
+      var =="ii" |
+      var =="add1" |
+      var =="cmt" |
+      var =="pcmt" |
+      var =="call" |
+      var =="cont" )
+    {
+      return true;
+    }
+  else
+    return false;
+}
 void NonmemDataReaderTest::setUp()
 {  
   // This file contains only the <data> section of SpkInML.
@@ -99,37 +129,9 @@ void NonmemDataReaderTest::tearDown()
 }
 void NonmemDataReaderTest::testNoSkip()
 {
-  translate_data( dataTree );
-}
-/**
- * Process <data> section of SpkInML document and genreate the source code
- * for the following entities:
- *
- * - the definition of IndRecords class
- * - the initialization of IndRecords objects for all individuals
- * 
- * IndRecords class
- *   This class lists all observation records associated with an individual.
- *   It allows accessing a set of observation records (column) by both
- *   "label" and "alias" (if an alias is given).
- */
-std::vector<const char*> NonmemDataReaderTest::translate_data( xercesc::DOMDocument* dataTree )
-{
-  // LABEL data type:
-  // The reason for the key data type being "string"
-  // instead of "char*" is that, if I use "char*" type, 
-  // the memory address is rather used as a key, causing multiple entries
-  // getting registered in the map for the same string/name.
-  typedef string LABEL;
+  int nIndividuals = 12;
 
-  // ALIAS data type:
-  // The reason for the key data type being "string"
-  // instead of "char*" is to be consistent with LABEL data type.
-  typedef string ALIAS;
-
-  // MEASUREMENT data type:
-  // Let's just make them all expressed in double-precision.
-  typedef valarray<double> MEASUREMENT;
+  SymbolTable * symbolTable = new SymbolTable;
 
   //
   // This table maps labels and corresponding aliases.
@@ -152,13 +154,6 @@ std::vector<const char*> NonmemDataReaderTest::translate_data( xercesc::DOMDocum
   //
   map<LABEL, ALIAS> label_alias_mapping;
 
-  //
-  // Get the list of <individual> nodes.  Each <individual> node is the root
-  // of that individual's data subtree and determine the number of 
-  // sets (= #individuals) of data.
-  //
-  DOMNodeList * individualsList = dataTree->getElementsByTagName(X("individual"));
-  const int nIndividuals = static_cast<int>( (individualsList->getLength()) );
 
   //
   // This table is used to record the following map:
@@ -191,6 +186,43 @@ std::vector<const char*> NonmemDataReaderTest::translate_data( xercesc::DOMDocum
   // individual.
   //
   const char* order_id_pair[ nIndividuals +1 ];
+
+  read_data( dataTree, nIndividuals, symbolTable, label_alias_mapping, data_for, order_id_pair );
+
+  emit_data( nIndividuals, symbolTable, label_alias_mapping, data_for, order_id_pair );
+
+  symbolTable->dump();
+  delete symbolTable;
+}
+ 
+/**
+ * Process <data> section of SpkInML document to gather information
+ * needed to genreate the source code for the following entities:
+ *
+ * - the definition of IndRecords class
+ * - the initialization of IndRecords objects for all individuals
+ * 
+ * IndRecords class
+ *   This class lists all observation records associated with an individual.
+ *   It allows accessing a set of observation records (column) by both
+ *   "label" and "alias" (if an alias is given).
+ */
+void NonmemDataReaderTest::read_data( 
+	xercesc::DOMDocument* dataTree, 
+        int nIndividuals,
+	SymbolTable * table,
+	map<LABEL, ALIAS> label_alias_mapping,
+	map< LABEL, MEASUREMENT > data_for[],
+	const char* order_id_pair[]
+      )
+{
+  //
+  // Get the list of <individual> nodes.  Each <individual> node is the root
+  // of that individual's data subtree and determine the number of 
+  // sets (= #individuals) of data.
+  //
+  DOMNodeList * individualsList = dataTree->getElementsByTagName(X("individual"));
+  assert( static_cast<int>( (individualsList->getLength()) == nIndividuals ) );
   
   //=================================================================================
   //
@@ -295,12 +327,25 @@ std::vector<const char*> NonmemDataReaderTest::translate_data( xercesc::DOMDocum
 	    }
 	  else
 	    {
-	      const char * label = C( xml_label );
-	      const char * synonym = C( xml_synonym );
-	      if( XMLString::isAllWhiteSpace( xml_synonym ) )
-		label_alias_mapping[ label ] = "";
-	      else
-		label_alias_mapping[ label ] = string(  C( xml_synonym ) );
+	      const string label = string( C( xml_label ) );
+	      const string synonym = string( C( xml_synonym ) );
+
+	      bool isLabel_NonmemKeyword = isNonmemKeyword( label );	      
+	      //Symbol name1( label, Symbol::VECTOR, Symbol::DOUBLE, isLabel_NonmemKeyword );
+	      //name1.size( nMeasurements );
+	      //table->insert( name1 );
+	      if( synonym != "" )
+		{
+		  bool isAlias_NonmemKeyword = isNonmemKeyword( synonym );
+		  
+		  // When an alias is given, either the label or alias MUST be one of NONMEM keywords.
+		  assert( isLabel_NonmemKeyword || isAlias_NonmemKeyword );
+		  
+		  //Symbol name2( synonym, Symbol::VECTOR, Symbol::DOUBLE, isAlias_NonmemKeyword );
+		  //name2.size( nMeasurements );
+		  //table->insert( name2 );
+		}
+	      label_alias_mapping[ label ] = synonym;
 
 	      //
 	      // Now, go though the set (column) of measurement data.
@@ -348,7 +393,16 @@ std::vector<const char*> NonmemDataReaderTest::translate_data( xercesc::DOMDocum
       
       walker->parentNode();
     }
+}
 
+std::vector<string> NonmemDataReaderTest::emit_data( 		
+		 int nIndividuals,
+		 SymbolTable* table,
+		 const std::map<LABEL, ALIAS> label_alias_mapping,
+		 const std::map< LABEL, MEASUREMENT > data_for[],
+		 const char* const order_id_pair[]
+		 )
+{
   //=================================================================================
   //
   // Convert the gathered information into C++ source code.
@@ -464,9 +518,10 @@ std::vector<const char*> NonmemDataReaderTest::translate_data( xercesc::DOMDocum
   cout << "   delete data[i];\n";
   cout << "}\n";
 
-  vector<const char*> filenames;
+  vector<string> filenames;
   return filenames;
 }
+
 void NonmemDataReaderTest::testWithSkip()
 {
 }
