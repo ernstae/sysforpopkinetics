@@ -7,17 +7,20 @@ public class TestSpkdb {
 	String password = "codered";
 	String firstName = "Mike";
 	String surname = "Jordan";
-	final int maxTests = 22;
+	final int maxTests = 26;
 	String xmlSource = "<spksource></spksource>";
 
 	boolean b = true;
 	boolean target = true;
 	String s = "connection";
 	int i = 1;
-
+	long datasetId = 0;
+	long newDatasetId = 0;
+	long newerDatasetId = 0;
+	long newestDatasetId = 0;
 	long userId = 0;
 	long jobId = 0;
-	long datasetId = 0;
+
 	long newerJobId = 0;
 	long newestJobId = 0;
 	
@@ -192,7 +195,7 @@ public class TestSpkdb {
 		case 15:
 		    b = target = true;
 		    s = "userJobs, maxNum = 3";
-		    rs = Spkdb.userJobs(conn, userId, 3);
+ 		    rs = Spkdb.userJobs(conn, userId, 3);
 		    long jj = newestJobId;
 
 		    while (rs.next()) {
@@ -231,7 +234,7 @@ public class TestSpkdb {
 		    target = true;
 		    s = "newDataset";
 		    datasetId 
-			= Spkdb.newDataset(conn, userId, "dataset T", "T", "1 2 4 3");
+			= Spkdb.newDataset(conn, userId, "T1", "Dataset T1", "1 2 4 3");
 		    s += ": datasetId = " + datasetId;
 		    b = datasetId > 0;
 		    break;
@@ -239,7 +242,7 @@ public class TestSpkdb {
 		    target = false;
 		    s = "newDataset";
 		    datasetId 
-			= Spkdb.newDataset(conn, userId, "dataset T", "T", "1 2 4 3");
+			= Spkdb.newDataset(conn, userId, "T1", "Dataset: X", "1 5 4 3");
 		    s += ": datasetId = " + datasetId;
 		    b = datasetId > 0;
 		    break;
@@ -249,6 +252,57 @@ public class TestSpkdb {
 		    String dataset = Spkdb.getDataset(conn, datasetId);
 		    b = dataset.compareTo("1 2 4 3") == 0;
 		    break;
+		case 23:
+		    target = true;
+		    s = "updateDataset";
+		    {
+			String n[] = {"abstract"};
+			String v[] = {"dataset T1"   };
+			b = Spkdb.updateDataset(conn, datasetId, n, v);
+		    }
+		    break;
+		case 24:
+		    target = false;
+		    s = "updateDataset";
+		    {
+			String n[] = {"dataset_id", "abstract"};
+			String v[] = {"55", "dataset T2"   };
+			b = Spkdb.updateDataset(conn, datasetId, n, v);
+		    }
+		    break;
+		case 25:
+		    target = false;
+		    s = "updateDataset";
+		    {
+			String n[] = {"abstract", "dataset_id"};
+			String v[] = {"dataset T2", "66"   };
+			b = Spkdb.updateDataset(conn, datasetId, n, v);
+		    }
+		    break;
+		case 26:
+		    b = target = true;
+		    s = "userDatasets, maxNum = 3";
+		    newDatasetId
+			= Spkdb.newDataset(conn, userId, "T2", "Dataset T2", "1 4 4 3");
+		    newerDatasetId 
+			= Spkdb.newDataset(conn, userId, "T3", "Dataset T3", "6 2 4 3");
+		    newestDatasetId
+			= Spkdb.newDataset(conn, userId, "T4", "Dataset T4", "1 2 4 8");
+		    		    
+ 		    rs = Spkdb.userDatasets(conn, userId, 3);
+		    jj = newestDatasetId;
+
+		    while (rs.next()) {
+			long j;
+			if ((j = rs.getLong("dataset_id")) != jj--) {
+			    s += "; datasetId" + j + " is out of order";
+                            b = false;
+			    break;
+			}
+		    }
+		    s += "; " + (newestDatasetId - jj) + " were returned";
+		    break;
+
 		default:
 		    break;
 		}

@@ -167,6 +167,39 @@ public abstract class Spkdb {
 	
 	return new String(byteDataset);
     }       
+    public static boolean updateDataset(Connection conn, long datasetId, String name[], String value[])
+	throws SQLException, SpkdbException
+    {
+	 String nameList = name[0];
+	 String valueList = "'" + value[0] + "'";
+	 userPattern = Pattern.compile("^dataset_id$");
+	 if (userPattern.matcher(name[0]).find()) {
+	     throw new SpkdbException("invalid attempt to change dataset_id");
+	 }
+	 String sql = "update dataset set " + name[0] + "='" + value[0] + "'";
+	 for (int i = 1; i < name.length; i++) {
+	     if (userPattern.matcher(name[i]).find()) {
+		 throw new SpkdbException("invalid attempt to change dataset_id");
+	     }
+ 	     sql += ", " + name[i] + "='" + value[i] + "'";
+	 }
+	 sql += " where dataset_id=" + datasetId + ";";
+	 Statement stmt = conn.createStatement();
+	 stmt.executeUpdate(sql);
+	 return stmt.getUpdateCount() == 1;
+    }
+    public static ResultSet userDatasets(Connection conn, long userId, int maxNum)
+	throws SQLException, SpkdbException 
+    {
+	String sql = "select dataset_id, name, abstract "
+                     + "from dataset where user_id=" + userId 
+                     + " order by dataset_id desc limit " + maxNum + ";";
+	Statement stmt = conn.createStatement();
+        stmt.execute(sql);
+	ResultSet rs = stmt.getResultSet();
+
+	return rs;
+    }
 
     /**
        Inserts a new user in the database, returning a unique key.
@@ -222,7 +255,7 @@ public abstract class Spkdb {
 	     }
  	     sql += ", " + name[i] + "='" + value[i] + "'";
 	 }
-	 sql += " where user_id=" + String.valueOf(userId) + ";";
+	 sql += " where user_id=" + userId + ";";
 	 Statement stmt = conn.createStatement();
 	 stmt.executeUpdate(sql);
 	 return stmt.getUpdateCount() == 1;
