@@ -17,7 +17,7 @@
 #include <xercesc/framework/StdOutFormatTarget.hpp>
 #include <spk/printInMatrix.h>
 #include <spk/SpkValarray.h>
-#include <nonmem/read_nonmem_data.h>
+#include <spkcompiler/nonmem/read_nonmem_data.h>
 
 using SPK_VA::valarray;
 using namespace std;

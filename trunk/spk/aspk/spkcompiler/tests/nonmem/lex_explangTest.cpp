@@ -10,7 +10,7 @@
 #include <cppunit/TestSuite.h>
 #include <cppunit/TextTestResult.h>
 #include <cppunit/ui/text/TestRunner.h>
-#include <libspkcompiler/explang.h>
+#include <spkcompiler/nonmem/explang.h>
 
 using namespace std;
 using namespace CppUnit;

@@ -21,7 +21,6 @@ test_nonmem_SOURCES = \
 	read_nonmem_modelTest.h \
         emit_nonmem_driverTest.cpp \
 	emit_nonmem_driverTest.h \
-	emit_nonmem_modelTest.cpp \
 	emit_nonmem_modelTest.h
 
 test_nonmem_INCLUDES = \
@@ -31,12 +30,11 @@ test_nonmem_INCLUDES = \
 	read_nonmem_driverTest.h \
 	read_nonmem_dataTest.h \
 	read_nonmem_modelTest.h \
-        emit_nonmem_driverTest.h \
-	emit_nonmem_modelTest.h
+        emit_nonmem_driverTest.h 
 
 AM_LDFLAGS = -lspk /usr/local/lib/libnagc.a -lpthread -lm -lxerces-c -lcppunit -lspkcompiler
 
 INCLUDES = \
 	-I@top_srcdir@/ \
-	-I@top_srcdir@/libspkcompiler/ \
-	-I@top_srcdir@/libspkcompiler/nonmem
+	-I@top_srcdir@/spkcompiler/ \
+	-I@top_srcdir@/spkcompiler/nonmem

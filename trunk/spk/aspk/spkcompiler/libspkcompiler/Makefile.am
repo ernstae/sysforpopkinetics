@@ -1,32 +1,17 @@
+SUBDIRS = nonmem
 lib_LTLIBRARIES = libspkcompiler.la
 
+pkgincludedir = @includedir@/spkcompiler
 NONMEM      = nonmem
 INCLUDES    = -I@top_srcdir@/ -I$(NONMEM)/
 
 AM_LFLAGS   = -i
 AM_YFLAGS   = -d --verbose --debug
 CXXFLAGS    = -g
-
-MOSTLYCLEANFILES = explang.cpp explang.h explang.output lex_explang.c
+AM_LDFLAGS  = ./nonmem/libnonmem.a
 
 libspkcompiler_la_SOURCES = \
         config.h \
-	$(NONMEM)/nonmem.h \
-	$(NONMEM)/nonmem.cpp \
-	$(NONMEM)/explang.ypp \
-	$(NONMEM)/lex_explang.l \
-	$(NONMEM)/NonmemTranslator.cpp \
-	$(NONMEM)/NonmemTranslator.h \
-	$(NONMEM)/read_nonmem_driver.cpp \
-	$(NONMEM)/read_nonmem_driver.h \
-	$(NONMEM)/read_nonmem_data.cpp \
-	$(NONMEM)/read_nonmem_data.h \
-	$(NONMEM)/read_nonmem_model.cpp \
-	$(NONMEM)/read_nonmem_model.h \
-        $(NONMEM)/emit_nonmem_driver.cpp \
-        $(NONMEM)/emit_nonmem_driver.h \
-        $(NONMEM)/emit_nonmem_model.cpp \
-        $(NONMEM)/emit_nonmem_model.h \
 	read_content.h \
 	read_content.cpp \
         ClientTranslator.h \
@@ -44,7 +29,7 @@ libspkcompiler_la_SOURCES = \
         emit_IndData.cpp \
         emit_IndData.h
 
-pkginclude_HEADERS = \
+nobase_pkginclude_HEADERS = \
 	$(NONMEM)/nonmem.h \
         $(NONMEM)/NonmemTranslator.h \
 	$(NONMEM)/read_nonmem_driver.h \
@@ -52,7 +37,9 @@ pkginclude_HEADERS = \
 	$(NONMEM)/read_nonmem_model.h \
         $(NONMEM)/emit_nonmem_driver.h \
 	$(NONMEM)/emit_nonmem_model.h \
-	explang.h \
+	$(NONMEM)/explang.h
+
+pkginclude_HEADERS = \
 	read_content.h \
 	ClientTranslator.h \
 	SpkParameters.h \

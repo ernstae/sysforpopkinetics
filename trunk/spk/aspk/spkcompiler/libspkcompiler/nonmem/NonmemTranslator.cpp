@@ -65,6 +65,12 @@ void NonmemTranslator::translate( DOMDocument* tree )
 {
   assert( tree != NULL );
 
+  char driver_cpp[]             = "main.cpp";
+  char SpkModel_name[]          = "NonmemModel";
+  char modelObject_init_block[] = "NonmemModel model;";
+  char IndData_h[]              = "IndData.h";
+  char IndData_cpp[]            = "IndData.cpp";
+
   //
   // Read <content> section, which has these attributes like:
   // spkinml_ver, client, analysis.
@@ -77,9 +83,9 @@ void NonmemTranslator::translate( DOMDocument* tree )
   DOMElement * contentTree
     = dynamic_cast<DOMElement*>( tree->getElementsByTagName( X("content") )->item(0) );
   assert( contentTree != NULL );
-  pair<bool, bool> p = read_content( contentTree, spkinml_verOut, client_typeOut, analysis_typeOut );
+  pair<bool, bool> p = read_content( contentTree, spkinml_verOut, client_typeOut, ourSpk.analysis );
 
-  ourSpk.analysis = analysis_typeOut;
+  //ourSpk.analysis = analysis_typeOut;
   ourSpk.isEstimation = p.first;
   ourSpk.isSimulation = p.second;
 
@@ -94,9 +100,20 @@ void NonmemTranslator::translate( DOMDocument* tree )
   assert( tree->getElementsByTagName( X("driver") ) != NULL );
   DOMElement * driverNode = dynamic_cast<DOMElement*>( tree->getElementsByTagName( X("driver") )->item(0) );
   assert( driverNode != NULL );
-  
+
+  // Analyze "driver" portion.  
   int nIndividuals = read_nonmem_driver( driverNode, ourSpk, ourNonmem );
-  
+
+  // Emit "driver" code.
+  FILE * pDriver_cpp = fopen( driver_cpp, "w" );
+  emit_nonmem_driver( pDriver_cpp, 
+		      nIndividuals, 
+		      SpkModel_name, 
+		      modelObject_init_block,
+		      ourSpk, 
+		      ourNonmem );
+  fclose( pDriver_cpp );
+
   //
   // This table maps labels and corresponding aliases.
   // When no alias is defined for a label, the entry (alias) field shall contain
@@ -166,6 +183,7 @@ void NonmemTranslator::translate( DOMDocument* tree )
   table.insert( sigma );
   table.insert( eta );
 
+  // Analyze "data" portion.
   assert( tree->getElementsByTagName( X("data") ) != NULL );
   DOMElement * dataNode = dynamic_cast<DOMElement*>( 
     tree->getElementsByTagName( X("data") )->item(0) );
@@ -178,7 +196,20 @@ void NonmemTranslator::translate( DOMDocument* tree )
 		    data_for, 
 		    order_id_pair,
                     ourSpk );
+
+  // Emit "IndData" and "IndDataSet" class definitions.
+  FILE * pIndData_h   = fopen( IndData_h, "w" );
+  FILE * pIndData_cpp = fopen( IndData_cpp, "w" );
+  emit_IndData(   pIndData_h, 
+		  pIndData_cpp,
+		  label_alias_mapping, 
+		  data_for, 
+		  order_id_pair );
+  fclose( pIndData_h );
+  fclose( pIndData_cpp );
   
+
+  // Analyze "model" portion.
   assert( tree->getElementsByTagName( X("model") ) != NULL );
   DOMElement * modelNode = dynamic_cast<DOMElement*>( 
      tree->getElementsByTagName( X("model") )->item(0) );
@@ -189,65 +220,28 @@ void NonmemTranslator::translate( DOMDocument* tree )
   nonmemModel = model_type.first;
   nonmemTrans = model_type.second;
 
-  ourGeneratedFileNames = emit(nIndividuals, 
-			       &table, 
-			       label_alias_mapping, 
-			       data_for, 
-			       order_id_pair );
-
+  // Case: PRED
+  /*
+  if( nonmemModel == NONE && nonmemTrans == DEFAULT )
+    {
+      // Emit model portion of code.
+      FILE * pEvalPred_cpp = fopen( "evalPred.cpp", "w" );
+      emit_nonmem_model( pEvalPred_cpp,
+			 table,
+			 label_alais_mapping );
+    }
+  */
+  ourGeneratedFileNames.push_back( driver_cpp );
+  ourGeneratedFileNames.push_back( IndData_h );
+  ourGeneratedFileNames.push_back( IndData_cpp );
+  ourGeneratedFileNames.push_back( "nonmem_model.h" );
+  ourGeneratedFileNames.push_back( "pk.cpp" );
+  ourGeneratedFileNames.push_back( "error.cpp" );
+  ourGeneratedFileNames.push_back( "omega.cpp" );
+  ourGeneratedFileNames.push_back( "sigma.cpp" );
   return;
 }
 
-std::vector<std::string> NonmemTranslator::emit(
-		  int nIndividuals,
-                  const SymbolTable * table,
-                  const std::map<string, string> & label_alias_mapping,
-                  const std::vector< std::map<string, valarray<double>  > > & data_for,
-                  const std::string order_id_pair[]
-)
-{
-  char driver_cpp[]    = "main.cpp";
-  char SpkModel_name[] = "NonmemModel";
-  char modelObject_init_block[] = "NonmemModel model;";
-
-  FILE * pDriver_cpp = fopen( driver_cpp, "w" );
-  emit_nonmem_driver( pDriver_cpp, 
-		      nIndividuals, 
-		      SpkModel_name, 
-		      modelObject_init_block,
-		      ourSpk, 
-		      ourNonmem );
-  fclose( pDriver_cpp );
- 
-  char IndData_h[]    = "IndData.h";
-  FILE * pIndData_h   = fopen( IndData_h, "w" );
-  char IndData_cpp[]  = "IndData.cpp";
-  FILE * pIndData_cpp = fopen( IndData_cpp, "w" );
-  emit_IndData(   pIndData_h, 
-		  pIndData_cpp,
-		  label_alias_mapping, 
-		  data_for, 
-		  order_id_pair );
-  fclose( pIndData_h );
-  fclose( pIndData_cpp );
-  /*
-  FILE * pEvalPred_cpp = fopen( "evalPred.cpp", "w" );
-  emit_nonmem_model( pEvalPred_cpp,
-		     
-		     table,
-		     label_alais_mapping );
-  */
-  vector<string> filenames(8);
-  filenames.push_back( driver_cpp );
-  filenames.push_back( "IndData.h" );
-  filenames.push_back( "IndData.cpp" );
-  filenames.push_back( "nonmem_model.h" );
-  filenames.push_back( "pk.cpp" );
-  filenames.push_back( "error.cpp" );
-  filenames.push_back( "omega.cpp" );
-  filenames.push_back( "sigma.cpp" );
-  return filenames;
-}
 const struct SpkParameters * NonmemTranslator::getSpkParameters() const
 {
   return &ourSpk;

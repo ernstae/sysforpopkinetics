@@ -1,5 +1,5 @@
 #include <iostream>
-#include "SymbolTable.h"
+#include <spkcompiler/SymbolTable.h>
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestCaller.h>
@@ -7,9 +7,9 @@
 #include <cppunit/TextTestResult.h>
 #include <cppunit/ui/text/TestRunner.h>
 
-#include "SymbolTable.h"
+#include <spkcompiler/SymbolTable.h>
 #include "SymbolTableTest.h"
-#include "client.h"
+#include <spkcompiler/client.h>
 
 using namespace std;
 using namespace CppUnit;

@@ -11,7 +11,7 @@
 #include <cppunit/ui/text/TestRunner.h>
 
 
-#include "SpkMLToCpp.h"
+#include <spkcompiler/SpkMLToCpp.h>
 #include "SpkMLToCppTest.h"
 
 using namespace std;

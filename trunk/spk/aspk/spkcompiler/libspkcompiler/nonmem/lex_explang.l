@@ -9,9 +9,12 @@
  * @example lex_explangTest.cpp
  */
 #include <ctype.h>
+#include <string.h>
 #include "explang.h"
 
 #define YYSTYPE yystype
+
+extern void yyerror(char*);
 
 //
 // A global counter for keeping track of # of lines read so far.

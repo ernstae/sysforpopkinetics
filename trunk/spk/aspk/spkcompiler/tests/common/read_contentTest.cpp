@@ -11,9 +11,9 @@
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/framework/StdOutFormatTarget.hpp>
-#include "client.h"
-#include "SpkParameters.h"
-#include "read_content.h"
+#include <spkcompiler/client.h>
+#include <spkcompiler/SpkParameters.h>
+#include <spkcompiler/read_content.h>
 #include "read_contentTest.h"
 
 using namespace std;

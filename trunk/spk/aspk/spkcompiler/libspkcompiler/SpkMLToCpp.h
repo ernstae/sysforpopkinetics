@@ -10,7 +10,7 @@
 #include "client.h"
 #include "SymbolTable.h"
 //#include "ExpTreeGenerator.h"
-#include "explang.h"
+#include "nonmem/explang.h"
 
 /**
  * @file SpkMLToCpp.h

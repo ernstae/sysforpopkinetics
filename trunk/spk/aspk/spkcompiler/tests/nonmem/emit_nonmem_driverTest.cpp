@@ -10,12 +10,12 @@
 #include <cppunit/ui/text/TestRunner.h>
 
 
-#include "emit_nonmem_driver.h"
+#include <spkcompiler/nonmem/emit_nonmem_driver.h>
 #include "emit_nonmem_driverTest.h"
 #include "read_nonmem_datafile_gamma_wt_time_y.h"
 #include "../common/FitPopulationTestModel.h"
 
-#include <libspkcompiler/NonmemTranslator.h>
+#include <spkcompiler/nonmem/NonmemTranslator.h>
 #include <spk/Objective.h>
 #include <spk/SpkModel.h>
 #include <spk/popStatistics.h>

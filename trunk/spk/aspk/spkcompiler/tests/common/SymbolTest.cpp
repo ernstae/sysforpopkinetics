@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "SymbolTable.h"
+#include <spkcompiler/SymbolTable.h>
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestCaller.h>
@@ -9,7 +9,7 @@
 #include <cppunit/TextTestResult.h>
 #include <cppunit/ui/text/TestRunner.h>
 
-#include "Symbol.h"
+#include <spkcompiler/Symbol.h>
 #include "SymbolTest.h"
 
 using namespace std;

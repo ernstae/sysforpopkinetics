@@ -9,7 +9,7 @@
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/dom/DOM.hpp>
 
-#include "SpkCompilerUtil.h"
+#include <spkcompiler/SpkCompilerUtil.h>
 #include "SpkCompilerUtilTest.h"
 
 using namespace std;

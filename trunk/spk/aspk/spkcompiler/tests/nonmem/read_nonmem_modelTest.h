@@ -7,7 +7,7 @@
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestSuite.h>
-#include <nonmem/read_nonmem_model.h>
+#include <spkcompiler/nonmem/read_nonmem_model.h>
 #include <xercesc/dom/DOM.hpp>
 
 class read_nonmem_modelTest : public CppUnit::TestFixture {
