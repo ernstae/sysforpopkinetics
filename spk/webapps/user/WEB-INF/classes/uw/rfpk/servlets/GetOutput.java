@@ -130,7 +130,7 @@ public class GetOutput extends HttpServlet
                     String methodCode = jobRS.getString("method_code");
                     String method = "";
                     if(methodCode != null)
-                        method = conversion.getProperty(methodCode);
+                        method = conversion.getProperty(methodCode, "Not Available");
              
                     // Get Spk report and source
 	            Blob blobReport = jobRS.getBlob("report");

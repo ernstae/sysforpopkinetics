@@ -269,7 +269,7 @@ public class SubmitJob extends HttpServlet
                         datasetVersion = String.valueOf(arch.getRevisionVersion());
                     }
                 }            
-                                 
+
                 // Add a job
                 if(messageOut.equals(""))
                 {
@@ -281,13 +281,13 @@ public class SubmitJob extends HttpServlet
                                  modelId, 
                                  modelVersion, 
                                  source,
-                                 jobMethodCode,   
+                                 jobMethodCode,
                                  jobParent
                                  );
                     messages += "A new job, " + jobAbstract +
                                 ", has been added to the database.\n";  
                 }
-                
+
                 // Disconnect to the database
                 Spkdb.disconnect(con);
             }

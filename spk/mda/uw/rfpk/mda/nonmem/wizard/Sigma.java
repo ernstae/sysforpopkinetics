@@ -1091,6 +1091,11 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
                 for(int i = 0; i < size; i++)
                 {
                     String block = (String)model.get(i);
+                    int k = i;
+                    while(block.indexOf("SAME") != -1)
+                    {
+                        block = (String)model.get(--k);   
+                    }                    
                     block = block.replaceAll(" FIXED", "F");
                     String[] items = block.split(" ");
                     String struc = items[1].substring(0, items[1].indexOf("(")).toLowerCase();  

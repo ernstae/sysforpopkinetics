@@ -280,7 +280,7 @@ public class XMLReader {
             getErrorMessage((Element)error_messageList.item(0));
      
         // Get warning message 
-        NodeList warning_messageList = spkreport.getElementsByTagName("warning_message");
+        NodeList warning_messageList = spkreport.getElementsByTagName("warning_list");
         if(warning_messageList.getLength() > 0)
             getWarningMessage((Element)warning_messageList.item(0));         
         
@@ -300,6 +300,8 @@ public class XMLReader {
         if(pop_monte_resultList.getLength() > 0)
         {
             Element pop_monte_result = (Element)pop_monte_resultList.item(0);
+            output.computingTimes = new String[1];
+            output.computingTimes[0] = pop_monte_result.getAttribute("elapsedtime");
             NodeList pop_obj_estimateList = pop_monte_result.getElementsByTagName("pop_obj_estimate");
             if(pop_obj_estimateList.getLength() > 0)
             {

@@ -382,7 +382,7 @@ public class Utility {
                 // Read a line
                 String line = in.readLine();
     
-                if(line == null) 
+                if(line == null || line.trim().equals(""))                   
                 { 
                     done = true;
                     data.add(indData);
