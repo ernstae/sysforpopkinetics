@@ -130,35 +130,7 @@ my $dir_prefix = "spk-";
 
 my $logrotate_command = "/usr/sbin/logrotate";
 
-#my $mkdir_command = "/bin/mkdir";
-#my $scp_command = "/usr/bin/scp";
-#
-#sub stage_directory {
-#    my $host = shift;
-#    my $path = shift;
-#    my $source = "$host:$path/spktest";
-#    my $dest = "$host$path";
-#    my @args = ($scp_command, "-r", $source, $dest);
-#    print "@args", "\n";
-#    system(@args);
-#    my $exit_status = $? >> 8;
-#    if ($exit_status != 0) {
-#	die "'scp -r $source $dest' failed\n";
-#    }
-#   rename "$dest/spktest", "$dest/spkprod";
-#}
-#
-#sub make_directory {
-#    my $path = shift;
-#    my @args = ($mkdir_command, "-p", $path);
-#     system(@args);
-#    my $exit_status = $? >> 8;
-#    if ($exit_status != 0) {
-#	die "Could not make directory '$path'\n";
-#    }
-#}
-
-$EFFECTIVE_USER_ID == 0 
+y$EFFECTIVE_USER_ID == 0 
     or die "You must be root to run this program\n";
 
 -d $candidate_dir
@@ -209,16 +181,20 @@ my $new_dir = $dir_prefix . $date;
 &make_directory("$new_dir/cspkserver/usr/local/bin/spktest");
 &make_directory("$new_dir/cspkserver/usr/local/include/spktest");
 &make_directory("$new_dir/cspkserver/usr/local/lib/spktest");
+&make_directory("$new_dir/cspkserver/usr/local/src/spktest");
 &make_directory("$new_dir/aspkserver/usr/local/bin/spktest");
 &make_directory("$new_dir/aspkserver/usr/local/include/spktest");
 &make_directory("$new_dir/aspkserver/usr/local/lib/spktest");
+&make_directory("$new_dir/aspkserver/usr/local/src/spktest");
 
 chdir $new_dir;
 
 &stage_directory("aspkserver", "/usr/local/bin");
 &stage_directory("aspkserver", "/usr/local/include");
 &stage_directory("aspkserver", "/usr/local/lib");
+&stage_directory("aspkserver", "/usr/local/src");
 &stage_directory("cspkserver", "/usr/local/bin");
 &stage_directory("cspkserver", "/usr/local/include");
 &stage_directory("cspkserver", "/usr/local/lib");
+&stage_directory("cspkserver", "/usr/local/src");
 
