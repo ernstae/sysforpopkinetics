@@ -337,9 +337,8 @@ This flag indicates that if the too-many-iteration failure has occurred.
 $subhead optimizer.saveStateAtEndOfOpt$$
 This flag indicates if the state information required for a warm start
 should be saved at the end of the optimization process.
-If this value is $code true$$, then this state information will
-...
-even if an exception is thrown.
+This state information will not be saved if the optimization process
+results in an exception being thrown by $code quasiNewtonAnyBox$$.
 
 $subhead optimizer.throwExcepIfMaxIter$$
 This flag indicates if the optimizer should throw an exception when
