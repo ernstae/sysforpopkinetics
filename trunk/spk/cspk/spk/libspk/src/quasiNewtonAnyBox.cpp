@@ -1215,7 +1215,9 @@ void unscaleElem(
   const double* const  xDiff,
   double*              x )
 {
-  for ( int i = 0; i < n; i++ )
+  int i;
+
+  for ( i = 0; i < n; i++ )
   {
     if ( y[i] != 1.0 ) 
     {
@@ -1241,19 +1243,20 @@ void unscaleElem(
  *
  * Returns the scaled value for g.
  *
- * Note - Sachiko:
- * No possibility for "div by zero" error.
- *
  *************************************************************************/
 
 void scaleGradElem(
-  int n,
-  const double* const pg, 
-  const double* const pxDiff,
-  double* pScaledG )
+  int                  n,
+  const double* const  g, 
+  const double* const  xDiff,
+  double*              gScaled )
 {
-  for(int i=0; i<n; i++)
-      pScaledG[i] = pxDiff[i] * pg[i];
+  int i;
+
+  for ( i = 0; i < n; i++ )
+  {
+    gScaled[i] = xDiff[i] * g[i];
+  }
 }
 
 
