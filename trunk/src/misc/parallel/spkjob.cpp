@@ -244,7 +244,7 @@ int main(int argc, char** argv) {
   arg[1] = individual_count;
   arg[2] = mode;
   arg[3] = NULL;
-  sprintf(buf, "%s/arch/%s/bin/spk%s/spkpop", SPK_SHARE, ARCH, mode); 
+  sprintf(buf, "%s/arch/bin/%s/spk%s/spkpop", SPK_SHARE, ARCH, mode); 
   int rval = pvm_spawn(buf, arg, 0, NULL, 1, &pop_tid);
   if (rval < 0) 
     die("could not spawn population level due to system error");
