@@ -3181,7 +3181,7 @@ bool PopPredModel::doDataVarianceInv_indPar( valarray<double>& ret ) const
  * Sets ret equal to the current value for the variance of the 
  * individual parameter,
  *
- *     D ( alpha )  ,
+ *     D( alpha )  ,
  *
  * where
  *
@@ -3190,7 +3190,7 @@ bool PopPredModel::doDataVarianceInv_indPar( valarray<double>& ret ) const
  * Note that for the population level Pred model, the individual
  * parameter variance is equivalent to omega, i.e.,
  *
- *     D ( alpha )  =  omega( omegaPar )  .
+ *     D( alpha )  =  omega( omegaPar )  .
  *
  *************************************************************************/
 
@@ -3219,7 +3219,7 @@ void PopPredModel::doIndParVariance( valarray<double>& ret ) const
 
   // Set
   //
-  //     D ( alpha )  =  omega( omegaPar )  .
+  //     D( alpha )  =  omega( omegaPar )  .
   //
   // Note that the Cov object maintains the current version of this
   // quantity internally.
@@ -3244,11 +3244,11 @@ void PopPredModel::doIndParVariance( valarray<double>& ret ) const
  * respect to the population parameter of the variance of the 
  * individual parameter,
  *
- *                                            -              -
- *                                           |                |
- *     d       D ( alpha )  =  d       rvec  |   D ( alpha )  |  ,
- *      alpha                   alpha        |                |
- *                                            -              -
+ *                                           -             -
+ *                                          |               |
+ *     d       D( alpha )  =  d       rvec  |   D( alpha )  |  ,
+ *      alpha                  alpha        |               |
+ *                                           -             -
  * where
  *
  *     alpha  = current value for the population parameter.
@@ -3259,7 +3259,7 @@ void PopPredModel::doIndParVariance( valarray<double>& ret ) const
  * Note that for the population level Pred model, the individual
  * parameter variance is equivalent to omega, i.e.,
  *
- *     D ( alpha )  =  omega( omegaPar )  .
+ *     D( alpha )  =  omega( omegaPar )  .
  *
  *************************************************************************/
 
@@ -3328,16 +3328,16 @@ bool PopPredModel::doIndParVariance_popPar( valarray<double>& ret ) const
   // and since the individual parameter variance D( alpha ) does 
   // not depend on theta or sigmaPar, its derivative is
   //
-  //     d       D ( alpha )
+  //     d       D( alpha )
   //      alpha
   //
-  //             -                                                              -
-  //            |  0, 0, ... , 0,                                 0, 0, ... , 0  |
-  //            |                                                                |
-  //         =  |  0, 0, ... , 0,  d          omega ( omega  ) ,  0, 0, ... , 0  |  ,
-  //            |                   omegaPar                                     |  
-  //            |  0, 0, ... , 0,                                 0, 0, ... , 0  |
-  //             -                                                              -
+  //             -                                                               -
+  //            |  0, 0, ... , 0,                                  0, 0, ... , 0  |
+  //            |                                                                 |
+  //         =  |  0, 0, ... , 0,  d          omega( omegaPar ) ,  0, 0, ... , 0  |  ,
+  //            |                   omegaPar                                      |  
+  //            |  0, 0, ... , 0,                                  0, 0, ... , 0  |
+  //             -                                                               -
   //
   // where there are nTheta columns of zeroes before the derivatives
   // with respect to omegaPar and there are nSigmaPar columns of
@@ -3354,7 +3354,7 @@ bool PopPredModel::doIndParVariance_popPar( valarray<double>& ret ) const
 
   // Set the partial derivatives of the elements that depend on omegaPar:
   //
-  //     d          D ( alpha )  .
+  //     d          D( alpha )  .
   //      omegaPar
   //
   replaceSubblock( 
@@ -3397,7 +3397,7 @@ bool PopPredModel::doIndParVariance_popPar( valarray<double>& ret ) const
  * Note that for the population level Pred model, the individual
  * parameter variance is equivalent to omega, i.e.,
  *
- *     D ( alpha )  =  omega( omegaPar )  .
+ *     D( alpha )  =  omega( omegaPar )  .
  *
  *************************************************************************/
 
@@ -3467,7 +3467,7 @@ void PopPredModel::doIndParVarianceInv( valarray<double>& ret ) const
  * Note that for the population level Pred model, the individual
  * parameter variance is equivalent to omega, i.e.,
  *
- *     D ( alpha )  =  omega( omegaPar )  .
+ *     D( alpha )  =  omega( omegaPar )  .
  *
  *************************************************************************/
 
@@ -3698,7 +3698,7 @@ void PopPredModel::getIndParLimits(
 
   // Get the current value for variance of the individual parameter,
   //
-  //     D ( alpha )  =  omega( omegaPar )  .
+  //     D( alpha )  =  omega( omegaPar )  .
   //
   valarray<double> omegaTemp( nEta * nEta );
   pOmegaCurr->cov( omegaTemp );
@@ -3840,7 +3840,7 @@ int PopPredModel::getNIndPar() const
  * Function: getPopPar
  *
  *
- * Returns the current value for the population parameter.
+ * Gets the current value for the population parameter.
  *
  *************************************************************************/
 
@@ -3857,7 +3857,7 @@ void PopPredModel::getPopPar( valarray<double>& ret ) const
  * Function: getIndPar
  *
  *
- * Returns the current value for the individual parameter.
+ * Gets the current value for the individual parameter.
  *
  *************************************************************************/
 
@@ -3874,7 +3874,7 @@ void PopPredModel::getIndPar( valarray<double>& ret ) const
  * Function: getTheta
  *
  *
- * Returns the current value for theta.
+ * Gets the current value for theta.
  *
  *************************************************************************/
 
@@ -3891,7 +3891,7 @@ void PopPredModel::getTheta( valarray<double>& ret ) const
  * Function: getEta
  *
  *
- * Returns the current value for eta.
+ * Gets the current value for eta.
  *
  *************************************************************************/
 
@@ -3908,7 +3908,7 @@ void PopPredModel::getEta( valarray<double>& ret ) const
  * Function: getOmega
  *
  *
- * Returns the minimal representation for the current value for omega.
+ * Gets the minimal representation for the current value for omega.
  *
  *************************************************************************/
 
@@ -3930,7 +3930,7 @@ void PopPredModel::getOmega( valarray<double>& ret ) const
  * Function: getSigma
  *
  *
- * Returns the minimal representation for the current value for sigma.
+ * Gets the minimal representation for the current value for sigma.
  *
  *************************************************************************/
 
@@ -3938,7 +3938,230 @@ void PopPredModel::getSigma( valarray<double>& ret ) const
 {
   ret.resize( pSigmaCurr->getNPar() );
 
+  // Get the current value for sigma.
+  pSigmaCurr->cov( sigmaCurr );
+
+  // Return its minimal representation.
   pSigmaCurr->calcCovMinRep( sigmaCurr, ret );
+}
+
+
+/*************************************************************************
+ *
+ * Function: getStandardPar
+ *
+ *
+ * Gets the current values for theta, the minimal representation for
+ * omega, and the minimal representation for sigma combined into a
+ * single vector,
+ *
+ *                      -                 -
+ *                     |     thetaCurr     |
+ *                     |                   |
+ *     standardPar  =  |  omegaMinRepCurr  |  .
+ *                     |                   |
+ *                     |  sigmaMinRepCurr  |
+ *                      -                 -
+ *
+ *************************************************************************/
+
+void PopPredModel::getStandardPar( valarray<double>& ret ) const 
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  ret.resize( nPopPar );
+
+
+  //------------------------------------------------------------
+  // Prepare the covariance matrices.
+  //------------------------------------------------------------
+
+  // Get the current value for omega.
+  valarray<double> omegaTemp( nEta * nEta );
+  pOmegaCurr->cov( omegaTemp );
+
+  // Get omega's minimal representation.
+  valarray<double> omegaMinRepTemp( nOmegaPar );
+  pOmegaCurr->calcCovMinRep( omegaTemp, omegaMinRepTemp );
+
+  // Get the current value for sigma.
+  pSigmaCurr->cov( sigmaCurr );
+
+  // Get sigma's minimal representation.
+  valarray<double> sigmaMinRepTemp( nSigmaPar );
+  pSigmaCurr->calcCovMinRep( sigmaCurr, sigmaMinRepTemp );
+
+
+  //------------------------------------------------------------
+  // Set the vector of standard parameters.
+  //------------------------------------------------------------
+
+  int k;
+
+  // Set the elements that contain theta.
+  for ( k = 0; k < nTheta; k++ )
+  {
+    ret[k + thetaOffsetInPopPar] = thetaCurr[k];
+  }
+
+  // Set the elements that contain the minimal representation
+  // for omega.
+  for ( k = 0; k < nOmegaPar; k++ )
+  {
+    ret[k + omegaParOffsetInPopPar] = omegaMinRepTemp[k];
+  }
+
+  // Set the elements that contain the minimal representation
+  // for sigma.
+  for ( k = 0; k < nSigmaPar; k++ )
+  {
+    ret[k + sigmaParOffsetInPopPar] = sigmaMinRepTemp[k];
+  }
+
+}
+
+
+/*************************************************************************
+ *
+ * Function: getStandardPar_popPar
+ *
+ *
+ * Gets the current values for the derivative with respect to the
+ * population parameter of theta, the minimal representation for
+ * omega, and the minimal representation for sigma combined into a
+ * single vector,
+ *
+ *                                      -                 -
+ *                                     |     thetaCurr     |
+ *                                     |                   |
+ *     d       standardPar  =  d       |  omegaMinRepCurr  |  .
+ *      alpha                   alpha  |                   |
+ *                                     |  sigmaMinRepCurr  |
+ *                                      -                 -
+ *
+ *************************************************************************/
+
+void PopPredModel::getStandardPar_popPar( valarray<double>& ret ) const 
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  ret.resize( nPopPar * nPopPar );
+
+
+  //------------------------------------------------------------
+  // Prepare the derivatives of the covariance matrices.
+  //------------------------------------------------------------
+
+  // Get the current value for the derivative of omega.
+  valarray<double> omega_omegaParTemp( nEta * nEta * nOmegaPar );
+  pOmegaCurr->cov_par( omega_omegaParTemp );
+
+  // Get the derivative of omega's minimal representation.
+  valarray<double> omegaMinRep_omegaParTemp( nOmegaPar * nOmegaPar );
+  pOmegaCurr->calcCovMinRep_par( 
+    omega_omegaParTemp,
+    nOmegaPar,
+    omegaMinRep_omegaParTemp );
+
+  // Get the current value for the derivative of sigma.
+  pSigmaCurr->cov_par( sigma_sigmaParCurr );
+
+  // Get the derivative of sigma's minimal representation.
+  valarray<double> sigmaMinRep_sigmaParTemp( nSigmaPar * nSigmaPar );
+  pSigmaCurr->calcCovMinRep_par(
+    sigma_sigmaParCurr,
+    nSigmaPar,
+    sigmaMinRep_sigmaParTemp );
+
+
+  //------------------------------------------------------------
+  // Set the vector of standard parameters.
+  //------------------------------------------------------------
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //
+  // Note
+  // ----
+  //
+  // Since the population parameter is
+  //
+  //                -              -
+  //               |   thetaCurr    |
+  //               |                |
+  //     alpha  =  |  omegaParCurr  |  ,
+  //               |                |
+  //               |  sigmaParCurr  |
+  //                -              -
+  //
+  // the derivative of the vector of standard parameters is
+  //
+  //     d       standardPar
+  //      alpha
+  //
+  //             -                                                                                  -
+  //            |  I                      0                                                     0    |
+  //            |   nTheta                                                                           |
+  //            |                                                                                    |
+  //         =  |  0          d        omegaMinRep( omegaPar )                                  0    |  ,
+  //            |              omegaPar                                                              |
+  //            |                                                                                    |
+  //            |  0                      0                       d        sigmaMinRep( sigmaPar )   |
+  //            |                                                  sigmaPar                          |
+  //             -                                                                                  -
+  //
+  // where the identity matrix is nTheta by nTheta.
+  //
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  int j;
+  int k;
+  int row;
+  int col;
+
+  // Set all of the elements of the derivative of the standard
+  // parameters equal to zero.
+  ret = 0.0;
+
+  // Set the partial derivatives of the elements that depend on 
+  // theta.
+  for ( k = 0; k < nTheta; k++ )
+  {
+    row = k + thetaOffsetInPopPar;
+    col = k + thetaOffsetInPopPar;
+
+    ret[row + col * nPopPar] = 1.0;
+  }
+
+  // Set the partial derivatives of the elements that depend on 
+  // the minimal representation for omega.
+  for ( j = 0; j < nOmegaPar; j++ )
+  {
+    for ( k = 0; k < nOmegaPar; k++ )
+    {
+      row = j + omegaParOffsetInPopPar;
+      col = k + omegaParOffsetInPopPar;
+    
+      ret[row + col * nPopPar] = omegaMinRep_omegaParTemp[j + k * nOmegaPar];
+    }
+  }
+
+  // Set the partial derivatives of the elements that depend on 
+  // the minimal representation for sigma.
+  for ( j = 0; j < nSigmaPar; j++ )
+  {
+    for ( k = 0; k < nSigmaPar; k++ )
+    {
+      row = j + sigmaParOffsetInPopPar;
+      col = k + sigmaParOffsetInPopPar;
+    
+      ret[row + col * nPopPar] = sigmaMinRep_sigmaParTemp[j + k * nSigmaPar];
+    }
+  }
+
 }
 
 

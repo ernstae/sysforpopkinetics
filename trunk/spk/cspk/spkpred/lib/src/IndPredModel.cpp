@@ -2380,7 +2380,7 @@ int IndPredModel::getNIndPar() const
  * Function: getIndPar
  *
  *
- * Returns the current value for the individual parameter.
+ * Gets the current value for the individual parameter.
  *
  *************************************************************************/
 
@@ -2397,7 +2397,7 @@ void IndPredModel::getIndPar( valarray<double>& ret ) const
  * Function: getTheta
  *
  *
- * Returns the current value for theta.
+ * Gets the current value for theta.
  *
  *************************************************************************/
 
@@ -2414,7 +2414,7 @@ void IndPredModel::getTheta( valarray<double>& ret ) const
  * Function: getOmega
  *
  *
- * Returns the minimal representation for the current value for omega.
+ * Gets the minimal representation for the current value for omega.
  *
  *************************************************************************/
 
@@ -2422,7 +2422,179 @@ void IndPredModel::getOmega( valarray<double>& ret ) const
 {
   ret.resize( pOmegaCurr->getNPar() );
 
+  // Get the current value for omega.
+  pOmegaCurr->cov( omegaCurr );
+
+  // Return its minimal representation.
   pOmegaCurr->calcCovMinRep( omegaCurr, ret );
+}
+
+
+/*************************************************************************
+ *
+ * Function: getStandardPar
+ *
+ *
+ * Gets the current values for theta and the minimal representation
+ * for omega combined into a single vector,
+ *
+ *                      -                 -
+ *                     |     thetaCurr     |
+ *     standardPar  =  |                   |  .
+ *                     |  omegaMinRepCurr  |
+ *                      -                 -
+ *
+ *************************************************************************/
+
+void IndPredModel::getStandardPar( valarray<double>& ret ) const 
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  ret.resize( nIndPar );
+
+
+  //------------------------------------------------------------
+  // Prepare the covariance matrix.
+  //------------------------------------------------------------
+
+  // Get the current value for omega.
+  pOmegaCurr->cov( omegaCurr );
+
+  // Get omega's minimal representation.
+  valarray<double> omegaMinRepTemp( nOmegaPar );
+  pOmegaCurr->calcCovMinRep( omegaCurr, omegaMinRepTemp );
+
+
+  //------------------------------------------------------------
+  // Set the vector of standard parameters.
+  //------------------------------------------------------------
+
+  int k;
+
+  // Set the elements that contain theta.
+  for ( k = 0; k < nTheta; k++ )
+  {
+    ret[k + thetaOffsetInIndPar] = thetaCurr[k];
+  }
+
+  // Set the elements that contain the minimal representation
+  // for omega.
+  for ( k = 0; k < nOmegaPar; k++ )
+  {
+    ret[k + omegaParOffsetInIndPar] = omegaMinRepTemp[k];
+  }
+
+}
+
+
+/*************************************************************************
+ *
+ * Function: getStandardPar_indPar
+ *
+ *
+ * Gets the current values for the derivative with respect to the
+ * individual parameter of theta and the minimal representation for
+ * omega combined into a single vector,
+ *
+ *                              -                 -
+ *                             |     thetaCurr     |
+ *     d   standardPar  =  d   |                   |  .
+ *      b                   b  |  omegaMinRepCurr  |
+ *                              -                 -
+ *
+ *************************************************************************/
+
+void IndPredModel::getStandardPar_indPar( valarray<double>& ret ) const 
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  ret.resize( nIndPar * nIndPar );
+
+
+  //------------------------------------------------------------
+  // Prepare the derivative of the covariance matrix.
+  //------------------------------------------------------------
+
+  // Get the current value for the derivative of omega.
+  pOmegaCurr->cov_par( omega_omegaParCurr );
+
+  // Get the derivative of omega's minimal representation.
+  valarray<double> omegaMinRep_omegaParTemp( nOmegaPar * nOmegaPar );
+  pOmegaCurr->calcCovMinRep_par(
+    omega_omegaParCurr,
+    nOmegaPar,
+    omegaMinRep_omegaParTemp );
+
+
+  //------------------------------------------------------------
+  // Set the vector of standard parameters.
+  //------------------------------------------------------------
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //
+  // Note
+  // ----
+  //
+  // Since the individual parameter is
+  //
+  //             -              -
+  //            |   thetaCurr    |
+  //     b   =  |                |  ,
+  //      i     |  omegaParCurr  |
+  //             -              -
+  //
+  // the derivative of the vector of standard parameters is
+  //
+  //     d   standardPar
+  //      b
+  //             -                                                 -
+  //            |    I                                         0    |
+  //            |     nTheta                                        |
+  //            |                                                   |
+  //         =  |    0          d        omegaMinRep( omegaPar )    |  ,
+  //            |                omegaPar                           |
+  //             -                                                 -
+  //
+  // where the identity matrix is nTheta by nTheta.
+  //
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  int j;
+  int k;
+  int row;
+  int col;
+
+  // Set all of the elements of the derivative of the standard
+  // parameters equal to zero.
+  ret = 0.0;
+
+  // Set the partial derivatives of the elements that depend on 
+  // theta.
+  for ( k = 0; k < nTheta; k++ )
+  {
+    row = k + thetaOffsetInIndPar;
+    col = k + thetaOffsetInIndPar;
+
+    ret[row + col * nIndPar] = 1.0;
+  }
+
+  // Set the partial derivatives of the elements that depend on 
+  // the minimal representation for omega.
+  for ( j = 0; j < nOmegaPar; j++ )
+  {
+    for ( k = 0; k < nOmegaPar; k++ )
+    {
+      row = j + omegaParOffsetInIndPar;
+      col = k + omegaParOffsetInIndPar;
+    
+      ret[row + col * nIndPar] = omegaMinRep_omegaParTemp[j + k * nOmegaPar];
+    }
+  }
+
 }
 
 

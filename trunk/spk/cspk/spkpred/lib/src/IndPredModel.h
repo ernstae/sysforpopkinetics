@@ -258,6 +258,9 @@ public:
   void getTheta( SPK_VA::valarray<double>& ret ) const;
   void getOmega( SPK_VA::valarray<double>& ret ) const;
 
+  void getStandardPar       ( SPK_VA::valarray<double>& ret ) const;
+  void getStandardPar_indPar( SPK_VA::valarray<double>& ret ) const;
+
 
   //------------------------------------------------------------
   // Disallowed, implicitly generated member functions.
