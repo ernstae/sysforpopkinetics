@@ -80,7 +80,7 @@
       </itemizedlist>
       <figure>
 	<title>Entity Relationship Diagram</title>
-	<graphic fileref="erModelDiagram.png"/>
+	<graphic scale="80" fileref="erModelDiagram.png"/>
       </figure>
       </para>
   </sect1>
@@ -104,45 +104,36 @@
       </para>
     </sect2>
     <sect2>
-      <title>History Segment</title>
+      <title>History </title>
       <para>
-	A history segment represents a state which the job assumed and
-	the time that it entered that state.  (See the Spk design
-	document "Job History Model").
+	Each row in the history table represents one of the states
+	assumed by a job.  The date and time of transition into that
+	state is recorded.
+	(See the Spk design document "Job History Model").
       </para>
     </sect2>
     <sect2>
       <title>Model</title>
       <para>
-	Model represents the PK model created by the user with the
-	aid of the MDA.  A model is stored as a source control
-	archive file, in rcs format.
+	A row in the model table represents a PK model created by
+	a user with the aid of the MDA. The XML source for the 
+	model is contained in the <emphasis>archive</emphasis>
+	field as an rcs-compatible version controlled archive.
       </para>
     </sect2>
     <sect2>
-      <title>Report</title>
+      <title>Data</title>
       <para>
-	Every job creates a report before it is complete. The report
-	is not available until the job reaches its End state
-	(see the Spk design document "Job History Model").
+	A row in the data table contains a data set. Just as with
+	the model, the data set is stored in an rcs-compatible
+	archive field.
       </para>
     </sect2>
     <sect2>
       <title>User</title>
       <para>
-	User represents the user of Spk.  The user combines a version
-	of a model with a data file to create a job, using the MDA
-	to submit it for processing.
-      </para>
-    </sect2>
-    <sect2>
-      <title>Version</title>
-      <para>
-	A model has one or more versions.  A scientist creates the
-	initial version along with its source control archive.  Subsequent
-	versions are created when an author (either the original
-	author or another scientist) makes changes to the model and
-	adds those changes to the model's source control archive.
+	User represents the user of Spk. A user may have many
+	jobs, many models and many data sets.
       </para>
     </sect2>
   </sect1>

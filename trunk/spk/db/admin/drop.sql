@@ -1,3 +1,4 @@
+drop table dataset;
 drop table end;
 drop table history;
 drop table job;

@@ -856,105 +856,128 @@ the home page on &amp;whitechuck;, the file will be executed. If
       Software Team, one reliable way to include diagrams in
       documents is to create them with Dia, an Open 
       Source diagramming tool that bears some resemblance
-      to Visio.
-      Dia is available on your desktop through the menu
-      sequence
-      <guimenu>Main</guimenu> =>
-      <guimenu>Office</guimenu> =>
-      <guimenuitem>Diagrams</guimenuitem>.
-      You can also launch it from a shell window in your document
-      directory with the command <command>dia &amp;</command>.
+      to Visio. Although part of Gnu Office, Dia is not included
+      in the RedHat Enterprise Linux Distribution, hence it must
+      be installed separately.
     </para>
-    <para>
-      Dia is a mostly self-explanatory Gui application. A 
-      description of the interface is beyond the scope of this
-      document.  We do need to discuss the saving of files,
-      however.  
-      <itemizedlist>
-	<listitem>
-	  <para>
-	    <emphasis>
-	      Saving the diagram for addition to the CVS repository.
-	    </emphasis>
-	    <orderedlist>
-	      <listitem>
-		<para>
-		  Locate the mouse pointer anywhere within your diagram,
-		  then use the following mouse and menu
-		  sequence to save the diagram:
-		  <guimenu>right-click</guimenu> =>
-		  <guimenu>File</guimenu>
-		  <guimenuitem>Save As</guimenuitem>
-		</para>
-	      </listitem>
-	      <listitem>
-		<para>
-		  In the window that pops up, un-check the
-		  <guilabel>Compress diagram files</guilabel> check
-		  box.
-		</para>
-	      </listitem>
-	      <listitem>
-		<para>
-		  In the <guilabel>Selection</guilabel> box, type
-		  in a name for this figure, and then click
-		  <guibutton>OK</guibutton>.
-		</para>
-	      </listitem>
-	    </orderedlist>
-	    The file will be saved as XML.  Because XML is a
-	    text format, it can be readily maintained in CVS.
-	  </para>
-	</listitem>
-	<listitem>
-	  <para>
-	    <emphasis>Saving output for inclusion in your document.</emphasis>
-	    <orderedlist>
-	      <listitem>
-		<para>
-		  Locate the mouse pointer anywhere within your diagram,
-		  then use the following mouse and menu sequence to 
-		  produce output for inclusion in your document:
-		  <guimenu>right-click</guimenu> =>
-		  <guimenu>File</guimenu>
-		  <guimenuitem>Export</guimenuitem>
-		</para>
-	      </listitem>
-	      <listitem>
-		<para>
-		  In the <guilabel>Determine File Type</guilabel> selection
-		  list of the window that pops up, choose
-		  <guimenuitem>Portable Network Graphics (*.png)</guimenuitem>.
-		</para>
-	      </listitem>
-	      <listitem>
-		<para>
-		  In the <guilabel>Selection</guilabel> box, the file name
-		  should be the same one under which you saved the
-		  diagram.  If not, change it so that the two names match,
-		  then click <guibutton>OK</guibutton>.
-		</para>
-	      </listitem>
-	    </orderedlist>
-	  </para>
-	</listitem>
-      </itemizedlist>
-    </para>
-    <para>
-      A good way to add a diagram to your document is to use the
-      <emphasis>figure</emphasis> Docbook element.  Here is an
-      example:
-      <screen>
+    <sect2>
+      <title id="install_dia">Installing Dia</title>
+      <para>
+	An rpm file for Dia is in the <filename>/opt/download</filename>
+	directory on <emphasis>whitechuck</emphasis>. In a terminal
+	window, as an ordinary user:
+	<screen>
+scp 'whitechuck:/opt/download/dia*rpm' .
+su
+rpm -Uhv dia*rpm
+rm dia*rpm
+cd /usr/lib
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Using Dia</title>
+      <para>
+	Dia can be started with the 
+	<guimenu>Main</guimenu> =>
+	<guimenu>Graphics</guimenu> =>
+	<guimenuitem>Dia</guimenuitem>
+	menu sequence.
+	You can also launch it from a shell window in your document
+	directory with the command <command>dia &amp;</command>.
+      </para>
+      <para>
+	Dia is a mostly self-explanatory Gui application. A 
+	description of the interface is beyond the scope of this
+	document.  We do need to discuss the saving of files,
+	however.  
+	<itemizedlist>
+	  <listitem>
+	    <para>
+	      <emphasis>
+		Saving the diagram for addition to the CVS repository.
+	      </emphasis>
+	      <orderedlist>
+		<listitem>
+		  <para>
+		    Locate the mouse pointer anywhere within your diagram,
+		    then use the following mouse and menu
+		    sequence to save the diagram:
+		    <guimenu>right-click</guimenu> =>
+		    <guimenu>File</guimenu>
+		    <guimenuitem>Save As</guimenuitem>
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    In the window that pops up, un-check the
+		    <guilabel>Compress diagram files</guilabel> check
+		    box.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    In the <guilabel>Selection</guilabel> box, type
+		    in a name for this figure, and then click
+		    <guibutton>OK</guibutton>.
+		  </para>
+		</listitem>
+	      </orderedlist>
+	      The file will be saved as XML.  Because XML is a
+	      text format, it can be readily maintained in CVS.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      <emphasis>Saving output for inclusion in your document.</emphasis>
+	      <orderedlist>
+		<listitem>
+		  <para>
+		    Locate the mouse pointer anywhere within your diagram,
+		    then use the following mouse and menu sequence to 
+		    produce output for inclusion in your document:
+		    <guimenu>right-click</guimenu> =>
+		    <guimenu>File</guimenu>
+		    <guimenuitem>Export</guimenuitem>
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    In the <guilabel>Determine File Type</guilabel> selection
+		    list of the window that pops up, choose
+		    <guimenuitem>Portable Network Graphics (*.png)</guimenuitem>.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    In the <guilabel>Selection</guilabel> box, the file name
+		    should be the same one under which you saved the
+		    diagram.  If not, change it so that the two names match,
+		    then click <guibutton>OK</guibutton>.
+		  </para>
+		</listitem>
+	      </orderedlist>
+	    </para>
+	  </listitem>
+	</itemizedlist>
+      </para>
+      <para>
+	A good way to add a diagram to your document is to use the
+	<emphasis>figure</emphasis> Docbook element.  Here is an
+	example:
+	<screen>
 &lt;figure>
-  &lt;title>Three Tiered Architecture&lt;/title>
-  &lt;graphic scale="60" fileref="arch.png"/>
+&lt;title>Three Tiered Architecture&lt;/title>
+&lt;graphic scale="60" fileref="arch.png"/>
 &lt;/figure>
-      </screen>
-      The "scale" attribute requests the formatter to include the 
-      diagram at 60% of its original size.  With your diagrams,
-      you will need to experiment with this number, until things
-      look right.
-    </para>
+	</screen>
+	The "scale" attribute requests the formatter to include the 
+	diagram at 60% of its original size.  With your diagrams,
+	you will need to experiment with this number, until things
+	look right.
+      </para>
+
+    </sect2>
   </sect1>
   <sect1>
     <title>Publishing Your Document</title>

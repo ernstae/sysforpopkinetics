@@ -870,7 +870,7 @@ sub update_dataset() {
 Returns a reference to an array of rows.  Each row is a reference
 to a hash table, with the field name as key and field value as value.
 Within the array, datasets are sorted in order of name.  The fields
-returned are dataset_id, name, time and abstract.
+returned are dataset_id, name, and abstract.
 
     $array_row = $Spkdb::user_datasets($dbh, $user_id);
 
@@ -1113,7 +1113,7 @@ sub update_model() {
 Returns a reference to an array of rows.  Each row is a reference
 to a hash table, with the field name as key and field value as value.
 Within the array, models are sorted in order of name.  The fields
-returned are model_id, name, time and abstract.
+returned are model_id, name, and abstract.
 
     $array_row = $Spkdb::user_models($dbh, $user_id);
 

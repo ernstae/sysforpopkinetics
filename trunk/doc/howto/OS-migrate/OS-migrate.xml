@@ -781,6 +781,18 @@ whitechuck 2:30 AM, each morning that follows a work day.
       </ulink> howto.
     </para>
   </sect1>
+  <sect1>
+    <title>Install Dia</title>
+    <para>
+      Dia, the Gnu Office diagramming tool, is not included in the
+      RHEL distribution.  It can be easily installed, following the
+      instructions in the 
+      <ulink url="http://whitechuck.rfpk.washington.edu/soft/howto/rhel3/authoring/authoring.html">
+	<emphasis>Authoring RFPK Software Documents</emphasis>
+      </ulink>
+      howto, in the <emphasis>Installing Dia</emphasis> sub-section.
+    </para>
+  </sect1>
 </article>
 
 <!--  LocalWords:  xml DOCTYPE DocBook uw whitechuck systemitem systemname afw
