@@ -275,7 +275,7 @@ mv xhtml1.soc /usr/share/sgml/xhtml1/xhtml1-20020801/DTD
 	add the following lines to the
 	<filename>.bash_profile</filename> in your home directory:
 	<screen>
-SGML_CATALOG_FILES=/etc/sgml/xml-docbook.cat:usr/share/sgml/xhtml1/xhtml1-20020801/DTD/xhtml1.soc
+SGML_CATALOG_FILES=/etc/sgml/xml-docbook.cat:/usr/share/sgml/xhtml1/xhtml1-20020801/DTD/xhtml1.soc
 export SGML_CATALOG_FILES
 	</screen>
       </para>
