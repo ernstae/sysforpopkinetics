@@ -102,8 +102,7 @@ const char* NonmemTranslator::C_IS_CONFIDENCE_OUT          ( "is_confidence_out"
 
 NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   : ClientTranslator    ( sourceIn, dataIn ),
-    fMakefile_SPK       ( "Makefile.SPK" ),
-    fMakefile_MC        ( "Makefile.MC" ),
+    fMakefile           ( "Makefile.SPK" ),
     fIndData_h          ( "IndData.h" ),
     fDataSet_h          ( "DataSet.h" ),
     fPredEqn_fortran    ( "predEqn.fortran" ),
@@ -111,7 +110,7 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     fPred_h             ( "Pred.h" ),
     fNonmemPars_h       ( "NonmemPars.h" ),
     fMontePars_h        ( "MontePars.h" ),
-    fSpkDriver_cpp      ( "spkDriver.cpp" ),
+    fFitDriver_cpp      ( "fitDriver.cpp" ),
     fMonteDriver_cpp    ( "monteDriver.cpp" ),
     fSpkRuntimeError_tmp( "spk_error.tmp" ),
     fResult_xml         ( "result.xml" ),
@@ -284,8 +283,7 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   myIndEpsilon = pow( 10.0, -(mySigDigits+1.0) );
 
   // Clean up reminents from a previous run.
-  remove( fMakefile_SPK );
-  remove( fMakefile_MC );
+  remove( fMakefile );
   remove( fIndData_h );
   remove( fDataSet_h );
   remove( fPredEqn_fortran );
@@ -293,7 +291,7 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   remove( fPred_h );
   remove( fNonmemPars_h );
   remove( fMontePars_h );
-  remove( fSpkDriver_cpp );
+  remove( fFitDriver_cpp );
   remove( fMonteDriver_cpp );
   remove( fSpkRuntimeError_tmp );
   remove( fResult_xml );
@@ -664,78 +662,153 @@ void NonmemTranslator::parseSource()
     generateIndDriver();
   generateMakefile();
 }
+
+//=============================================================================
+//
+// SPK Optimization request and Monte Carlo integration request are
+// mutually exclusive.
+//
+//=============================================================================
 void NonmemTranslator::generateMakefile() const
 {
-  ofstream oSpkMake( fMakefile_SPK );
-  if( !oSpkMake.good() )
-  {
-     char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "Failed to create %s file.", fMakefile_SPK ); 
-     SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
-     throw e;
-  }
-  oSpkMake << "prod : spkDriver.cpp Pred.h DataSet.h IndData.h NonmemPars.h" << endl;
-  oSpkMake << "\tg++ -g spkDriver.cpp -o spkDriver ";
-  oSpkMake << "-L/usr/local/lib/spkprod -I/usr/local/include/spkprod -Wl,--rpath -Wl,/usr/local/lib/spkprod ";
-  oSpkMake << "-lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm" << endl;
-  oSpkMake << endl;
-  oSpkMake << "test : spkDriver.cpp Pred.h DataSet.h IndData.h NonmemPars.h" << endl;
-  oSpkMake << "\tg++ -g spkDriver.cpp -o spkDriver ";
-  oSpkMake << "-L/usr/local/lib/spktest -I/usr/local/include/spktest -Wl,--rpath -Wl,/usr/local/lib/spktest ";
-  oSpkMake << "-lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm" << endl;
-  oSpkMake << endl;
-  oSpkMake << "clean : " << endl;
-  oSpkMake << "\trm -f software_error result.xml spkDriver predEqn.cpp IndData.h DataSet.h Pred.h spkDriver.cpp spk_error.tmp NonmemPars.h" << endl;
-  oSpkMake.close();
+  ofstream oMakefile( fMakefile );
+  if( !oMakefile.good() )
+    {
+      char mess[ SpkCompilerError::maxMessageLen() ];
+      sprintf( mess, "Failed to create %s file.", fMakefile ); 
+      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+      throw e;
+    }
 
-  /*
+  oMakefile << "PROD_DIR  = spkprod" << endl;
+  oMakefile << "TEST_DIR  = spktest" << endl;
+  oMakefile << endl;                                   
+
+  oMakefile << "CPP_FLAGS = -g" << endl;
+  oMakefile << endl;                                        
+
+  oMakefile << "LIBS      = -lspk -lspkopt -lspkpred";
+  oMakefile << (myIsMonte? " -lgsl" : "" ) << " -latlas_lapack -lcblas -latlas -lpthread -lm" << endl;
+  oMakefile << endl;
+
+  oMakefile << "COMMON_INCLUDE = \\" << endl;
+  oMakefile << "\tPred.h \\" << endl;
+  oMakefile << "\tDataSet.h \\" << endl;
+  oMakefile << "\tIndData.h \\" << endl;
+  oMakefile << "\tNonmemPars.h \\" << endl;
+  oMakefile << endl;                                   
+
   if( !myIsMonte )
     {
-      return;
-    }
-  */
-  ofstream oMonteMake( fMakefile_MC );
-  if( !oMonteMake.good() )
-  {
-     char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "Failed to create %s file.", fMakefile_SPK ); 
-     SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
-     throw e;
-  }
-  oMonteMake << "prod : $(OBJ)" << endl;
-  oMonteMake << "\tg++ -g $(OBJ) -o monteDriver ";
-  oMonteMake << "-L/usr/local/lib/spkprod -I/usr/local/include/spkprod -Wl,--rpath -Wl,/usr/local/lib/spkprod ";
-  oMonteMake << "-lspk -lspkopt -lspkpred -lgsl -latlas_lapack -lcblas -latlas -lpthread -lm" << endl;
-  oMonteMake << endl;
-  oMonteMake << "test : $(OBJ)" << endl;
-  oMonteMake << "\tg++ -g $(OBJ) -o monteDriver ";
-  oMonteMake << "-L/usr/local/lib/spktest -I/usr/local/include/spktest -Wl,--rpath -Wl,/usr/local/lib/spktest ";
-  oMonteMake << "-lspk -lspkopt -lspkpred -lgsl -latlas_lapack -lcblas -latlas -lpthread -lm" << endl;
-  oMonteMake << endl;
-  oMonteMake << "HDR: AnalyticIntegral.h \\" << endl;
-  oMonteMake << "\tGridIntegral.h \\" << endl;
-  oMonteMake << "\tMontePopObj.h \\" << endl;
-  oMonteMake << "\tMapBay.h \\" << endl;
-  oMonteMake << "\tPred.h \\" << endl;
-  oMonteMake << "\tDataSet.h \\" << endl;
-  oMonteMake << "\tIndData.h \\" << endl;
-  oMonteMake << "\tNonmemPars.h \\" << endl;
-  oMonteMake << "\tMontePars.h" << endl;
-  oMonteMake << endl;
-  oMonteMake << "OBJ: monteDriver.o \\" << endl;
-  oMonteMake << "\tAnalyticIntegral.o \\" << endl;
-  oMonteMake << "\tGridIntegral.o \\" << endl;
-  oMonteMake << "\tMontePopObj.o \\" << endl;
-  oMonteMake << "\tMapBay.o \\" << endl;
-  oMonteMake << "\tMapMonte.o" << endl;
-  oMonteMake << endl;
-  oMonteMake << "%.o : %.cpp $(HDR)" << endl;
-  oMonteMake << "\tg++ $(CPPFLAGS) $< -o $@" << endl;
-  oMonteMake << endl;
+      oMakefile << "prod : fitDriver.cpp $(COMMON_INCLUDE)" << endl;
+      oMakefile << "\tg++ $(CPP_FLAGS) fitDriver.cpp -o driver ";
+      oMakefile << "-L/usr/local/lib/$(PROD_DIR) ";
+      oMakefile << "-I/usr/local/include/$(PROD_DIR) ";
+      oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(PROD_DIR) ";
+      oMakefile << "$(LIBS)" << endl;
+      oMakefile << endl;
+      
+      oMakefile << "test : fitDriver.cpp $(COMMON_INCLUDE)" << endl;
+      oMakefile << "\tg++ $(CPP_FLAGS) fitDriver.cpp -o driver ";
+      oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
+      oMakefile << "-I/usr/local/include/$(TEST_DIR) ";
+      oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(TEST_DIR) ";
+      oMakefile << "$(LIBS)" << endl;
+      oMakefile << endl;
 
-  oMonteMake << "clean : " << endl;
-  oMonteMake << "\trm -f $(OBJ) software_error result.xml spkDriver predEqn.cpp IndData.h DataSet.h Pred.h monteDriver.cpp spk_error.tmp NonmemPars.h MontePars.h" << endl;
-  oMonteMake.close();
+      oMakefile << "clean : " << endl;
+      oMakefile << "\trm -f $(COMMON_INCLUDE) \\" << endl;
+      oMakefile << "\tspkDriver.cpp \\" << endl;
+      oMakefile << "\tdriver \\" << endl;
+      oMakefile << "\tsoftware_error \\" << endl;
+      oMakefile << "\tresult.xml \\" << endl;
+      oMakefile << "\tpredEqn.cpp \\" << endl;
+      oMakefile << "\tspk_error.tmp \\" << endl;
+      oMakefile << "*.o" << endl;    }
+  else
+    {
+      oMakefile << "MONTE_DIR = /usr/local/src/spktest/ml" << endl;
+      oMakefile << endl;
+
+      oMakefile << "MONTE_SRC = \\" << endl;
+      oMakefile << "\tmonteDriver.cpp \\" << endl; 
+      oMakefile << "\tAnalyticIntegral.cpp \\" << endl;
+      oMakefile << "\tGridIntegral.cpp \\" << endl;
+      oMakefile << "\tMontePopObj.cpp \\" << endl;
+      oMakefile << "\tMapBay.cpp \\" << endl;
+      oMakefile << "\tMapMonte.cpp" << endl;
+      oMakefile << endl;
+
+      oMakefile << "MONTE_INCLUDE = \\" << endl;
+      oMakefile << "\tAnalyticIntegral.h \\" << endl;
+      oMakefile << "\tGridIntegral.h \\" << endl;
+      oMakefile << "\tMontePopObj.h \\" << endl;
+      oMakefile << "\tMapBay.h \\" << endl;
+      oMakefile << "\tMapMonte.h \\" << endl;
+      oMakefile << endl;
+
+      oMakefile << "prod : $(MONTE_SRC) $(MONTE_INCLUDE) $(COMMON_INCLUDE)" << endl;
+      oMakefile << "\tg++ $(CPP_FLAGS) $(MONTE_SRC) -o driver ";
+      oMakefile << "-L/usr/local/lib/$(PROD_DIR) ";
+      oMakefile << "-I/usr/local/include/$(PROD_DIR) ";
+      oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(PROD_DIR) ";
+      oMakefile << "$(LIBS)" << endl;
+      oMakefile << endl;
+      
+      oMakefile << "test : $(MONTE_SRC) $(MONTE_INCLUDE) $(COMMON_INCLUDE)" << endl;
+      oMakefile << "\tg++ $(CPP_FLAGS) $(MONTE_SRC) -o driver ";
+      oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
+      oMakefile << "-I/usr/local/include/$(TEST_DIR) ";
+      oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(TEST_DIR) ";
+      oMakefile << "$(LIBS)" << endl;
+      oMakefile << endl;
+  
+      oMakefile << "monteDriver.cpp : " << endl;
+      oMakefile << "\tcp $(MONTE_DIR)/$@ ." << endl;
+      oMakefile << endl;
+
+      oMakefile << "AnalyticIntegral.cpp :" << endl;
+      oMakefile << "\tcp $(MONTE_DIR)/$@ ." << endl;
+      oMakefile << "AnalyticIntegral.h :" << endl;
+      oMakefile << "\tcp $(MONTE_DIR)/$@ ." << endl;
+      oMakefile << endl;
+
+      oMakefile << "GridIntegral.cpp :" << endl;
+      oMakefile << "\tcp $(MONTE_DIR)/$@ ." << endl;
+      oMakefile << "GridIntegral.h :" << endl;
+      oMakefile << "\tcp $(MONTE_DIR)/$@ ." << endl;
+      oMakefile << endl;
+
+      oMakefile << "MontePopObj.cpp :" << endl;
+      oMakefile << "\tcp $(MONTE_DIR)/$@ ." << endl;
+      oMakefile << "MontePopObj.h : " << endl;
+      oMakefile << "\tcp $(MONTE_DIR)/$@ ." << endl;
+      oMakefile << endl;
+
+      oMakefile << "MapBay.cpp :" << endl;
+      oMakefile << "\tcp $(MONTE_DIR)/$@ ." << endl;
+      oMakefile << "MapBay.h : " << endl;
+      oMakefile << "\tcp $(MONTE_DIR)/$@ ." << endl;
+      oMakefile << endl;
+
+      oMakefile << "MapMonte.cpp : " << endl;
+      oMakefile << "\tcp $(MONTE_DIR)/$@ ." << endl;
+      oMakefile << "MapMonte.h : " << endl;
+      oMakefile << "\tcp $(MONTE_DIR)/$@ ." << endl;
+      oMakefile << endl;
+
+      oMakefile << "clean : " << endl;
+      oMakefile << "\trm -f $(COMMON_INCLUDE) \\" << endl;
+      oMakefile << "\t$(MONTE_SRC) \\" << endl;
+      oMakefile << "\t$(MONTE_INCLUDE) \\" << endl;
+      oMakefile << "\tdriver \\" << endl;
+      oMakefile << "\tsoftware_error \\" << endl;
+      oMakefile << "\tresult.xml \\" << endl;
+      oMakefile << "\tpredEqn.cpp \\" << endl;
+      oMakefile << "\tspk_error.tmp \\" << endl;
+      oMakefile << "*.o" << endl;
+    }
+  oMakefile.close();
 
   return;
 }
@@ -3174,6 +3247,20 @@ void NonmemTranslator::generateMonteParsNamespace() const
 
   oMontePars << "#ifndef MONTEPARS_H" << endl;
   oMontePars << "#define MONTEPARS_H" << endl;
+  oMontePars << endl;
+
+  oMontePars << "namespace MontePars{" << endl;
+  oMontePars << "   enum METHOD { monte, analytic, grid };" << endl;
+  oMontePars << "   const enum METHOD method = ";
+  if( myMonteMethod == GRID )
+    oMontePars << "grid;";
+  else if( myMonteMethod == ANALYTIC )
+    oMontePars << "analytic;" << endl;
+  else //( myMonteMethod == MONTE )
+    oMontePars << "monte;" << endl;
+
+  oMontePars << "   const int numberEval = " << myMonteNumberEval << ";" << endl;
+  oMontePars << "};" << endl;
 
   oMontePars << endl;
 
@@ -3439,11 +3526,11 @@ void NonmemTranslator::generateIndDriver( ) const
   // Generate the SPK driver
   assert( !(myIsOnlySimulation && myIsEstimate) );
   //==================================================================
-  ofstream oDriver ( fSpkDriver_cpp );
+  ofstream oDriver ( fFitDriver_cpp );
   if( !oDriver.good() )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "Failed to create %s file.", fSpkDriver_cpp );
+     sprintf( mess, "Failed to create %s file.", fFitDriver_cpp );
      SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
      throw e;
   }
@@ -4184,12 +4271,12 @@ void NonmemTranslator::generatePopDriver() const
   //==================================================================
   // Generate the driver
   //==================================================================
-  ofstream oDriver ( fSpkDriver_cpp );
+  ofstream oDriver ( fFitDriver_cpp );
   if( !oDriver.good() )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
       sprintf( mess, "Failed to create %s file.",
-	       fSpkDriver_cpp );
+	       fFitDriver_cpp );
       SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }

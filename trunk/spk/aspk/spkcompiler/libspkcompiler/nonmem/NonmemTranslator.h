@@ -204,30 +204,25 @@ class NonmemTranslator : public ClientTranslator
   //
   void generateMakefile() const;
 
-  // The filename for a Make that builds an SPK runtime from
-  // all the generated files.
-  const char *fMakefile_SPK;
-
-  // The filename for a Make that builds an Monte Carlo runtime from
-  // all the generated files.
-  const char *fMakefile_MC;
+  // The filename for a Make that builds a runtime.
+  const char * fMakefile;
 
   // The header file name for the IndData template class.
-  const char *fIndData_h;
+  const char * fIndData_h;
 
   // The header file name for the DataSet template class.
-  const char *fDataSet_h;
+  const char * fDataSet_h;
 
   // The name of file that contains fortran (ie. NONMEM TRAN) version of
   // the user defined $PRED.
-  const char *fPredEqn_fortran;
+  const char * fPredEqn_fortran;
 
   // The name of file that contains C++ version of the user defined $PRED 
   // (equations only) model.
-  const char *fPredEqn_cpp;
+  const char * fPredEqn_cpp;
   
   // The header file for the Pred template class.
-  const char *fPred_h;
+  const char * fPred_h;
 
   // The NonmemPars namespace definition.
   const char * fNonmemPars_h;
@@ -238,8 +233,8 @@ class NonmemTranslator : public ClientTranslator
   // The halfCvec template function definition.
   const char * fHalfCvec_h;
 
-  // The SPK driver definition.
-  const char * fSpkDriver_cpp;
+  // The SPK optimization driver definition.
+  const char * fFitDriver_cpp;
 
   // The Monte Carlo driver definition.
   const char * fMonteDriver_cpp;
