@@ -305,30 +305,18 @@ $$
 For more details on the tracing see the description of the level 
 parameter for the optimizer $xref/QuasiNewton01Box//QuasiNewton01Box/$$.
 
-$subhead 
-
-optimizer.nIterCompleted$$
-
+$subhead optimizer.nIterCompleted$$
 This integer scalar holds the number of iteration that have been 
 completed in the optimizer.
 
-$subhead 
-
-optimizer.isTooManyIter$$
-
+$subhead optimizer.isTooManyIter$$
 This flag indicates that if the too-many-iteration failure has occurred.  
 
-$subhead 
-
-optimizer.saveStateAtEndOfOpt$$
-
+$subhead optimizer.saveStateAtEndOfOpt$$
 This flag indicates if the state information required for a warm start
 should be saved at the end of the optimization process.
 
-$subhead 
-
-optimizer.throwExcepIfMaxIter$$
-
+$subhead optimizer.throwExcepIfMaxIter$$
 This flag indicates if the optimizer should throw an exception when
 the maximum number of iterations is exhausted.
 If this parameter is true, then when
@@ -338,68 +326,41 @@ Otherwise, the calling program will
 need to check the parameter isTooManyIter to see if the 
 maximum number of iterations was exhausted.
 
-$subhead 
-
-optimizer.isSubLevelOpt$$
-
+$subhead optimizer.isSubLevelOpt$$
 This flag indicates that if the optimizer is for a sub level optimization.  
 It is for SPK internal use only.
 
-$subhead 
-
-optimizer.isWarmStart$$
-
+$subhead optimizer.isWarmStart$$
 This flag indicates that if the optimization should run a warm start.  
 
-$subhead 
-
-optimizer.stateInfo$$
-
+$subhead optimizer.stateInfo$$
 This $code StateInfo$$ object contains the optimizer state information
 required to perform a warm start.
 Each of its elements is described separately below.
 
-$subhead 
-
-optimizer.stateInfo.n$$
-
+$subhead optimizer.stateInfo.n$$
 The element $italic n$$ specifies the number of components
 in the element vector $italic x$$.
 
-$subhead 
-
-optimizer.stateInfo.r$$
-
+$subhead optimizer.stateInfo.r$$
 The element $italic r$$ contains the current trust region radius
 (as an infinity norm bound on the step size).
 
-$subhead 
-
-optimizer.stateInfo.f$$
-
+$subhead optimizer.stateInfo.f$$
 The element $italic f$$ contains the value for $math%f(x)%$$
 at the point $math%x%$$.
 
-$subhead 
-
-optimizer.stateInfo.x$$
-
+$subhead optimizer.stateInfo.x$$
 The element $italic x$$ is a vector of length $italic n$$.
 It specifies the point at which the objective function, 
 its gradient, and its Hessian were evaluated.
 
-$subhead 
-
-optimizer.stateInfo.g$$
-
+$subhead optimizer.stateInfo.g$$
 The vector $italic g$$ must have length $math%n%$$.
 It contains the gradient of $math%f(x)%$$
 at the point $math%x%$$.
 
-$subhead 
-
-optimizer.stateInfo.h.$$
-
+$subhead optimizer.stateInfo.h.$$
 The vector $italic h$$ must have length $math%n^2%$$.
 It contains an approximation for the hessian of $math%f(x)%$$
 at the point $math%x%$$.
