@@ -199,6 +199,12 @@ If this element appears when the population analysis is chosen, a data set for n
 <!-- <simulation seed="12345"> Positive integer used as a seed to generate random numbers. -->
 <!ATTLIST simulation seed CDATA #REQUIRED>
 
+<!-- <simulation onlysimulation="no"> "yes" to request to perform only the data simulation step and does not evaluate the objective function.  This has two effects.  (1) PRED-defined data items in tables and scatterplots are computed using simulated eras and initial thetas.  (2) WRES values in tables nad scatterplots are 0.  The default is "no".  -->
+<!ATTLIST simulation onlysimulation (yes|no) #IMPLIED>
+
+<!-- <simulation subproblems="1">  Requests that the entire problem is to be repeated n times in succession (including all steps: simulation, estimation, statistics, table/scatterplot generation).  Each subproblem includes the simulation step, but the random sources are simply continued from subproblem to subproblem.  By default, n=1, there is only one subproblem. -->
+<!ATTLIST simulation subproblems CDATA #IMPLIED>
+
 <!-- <pop_stat> Request for the post statistial analysis on the final estimate for the population parameter. This process will be skipped unless the "is_estimation" of <pop_analysis> is set to "yes". -->
 <!ELEMENT pop_stat EMPTY>
 
