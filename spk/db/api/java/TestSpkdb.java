@@ -7,7 +7,7 @@ public class TestSpkdb {
 	String password = "codered";
 	String firstName = "Mike";
 	String surname = "Jordan";
-	final int maxTests = 8;
+	final int maxTests = 11;
 
 	boolean b = true;
 	boolean target = true;
@@ -33,7 +33,7 @@ public class TestSpkdb {
 		switch (i) {
 		case 2:
 		    target = false;
-		    s = "new user";
+		    s = "newUser";
 		    {
 			String n[] = {"username", "first_name", "surname"};
 			String v[] = { username,  firstName, surname };
@@ -43,7 +43,7 @@ public class TestSpkdb {
 		    break;
 		case 3:
 		    target = false;
-		    s = "new user";
+		    s = "newUser";
 		    {
 			String n[] = {"password", "first_name", "surname"};
 			String v[] = { password,  firstName, surname };
@@ -56,7 +56,7 @@ public class TestSpkdb {
 		    {
 			String n[] = {"username", "password", "first_name", "surname"};
 			String v[] = { username,  password, firstName, surname };
-			s = "new user";
+			s = "newUser";
 			userId = Spkdb.newUser(conn, n, v);		    
 			s += " is user number " + userId;
 			b = userId == 1;
@@ -64,7 +64,7 @@ public class TestSpkdb {
 		    break;
 		case 5:
 		    target = false;
-		    s = "new user";
+		    s = "newUser";
 		    {
 			String n[] = {"username", "password", "first_name", "surname"};
 			String v[] = { username,  password, firstName, surname };
@@ -74,7 +74,7 @@ public class TestSpkdb {
 		    break;
 		case 6:
 		    target = true;
-		    s = "update user";
+		    s = "updateUser";
 		    {
 			String n[] = {"first_name", "surname"};
 			String v[] = {"Gerry",       "Peyton" };
@@ -83,7 +83,7 @@ public class TestSpkdb {
 		    break;
 		case 7:
 		    target = false;
-		    s = "update user";
+		    s = "updateUser";
 		    {
 			String n[] = {"username", "first_name"};
 			String v[] = {"glove",    "Gary"      };
@@ -92,12 +92,53 @@ public class TestSpkdb {
 		    break;
 		case 8:
 		    target = false;
-		    s = "update user";
+		    s = "updateUser";
 		    {
 			String n[] = {"first_name", "username"};
 			String v[] = {"Gary",       "glove"   };
 			b = Spkdb.updateUser(conn, userId, n, v);
 		    }
+		    break;
+		case 9:
+		    target = true;
+		    s = "getUser";
+		    ResultSet rs = Spkdb.getUser(conn, userId);
+		    if (rs.next()) {
+			String name = rs.getString("first_name");
+			b = name.compareTo("Gerry") == 0;
+		    } 
+		    else {
+			s += ": no record for userId=" + userId;
+			b = false;
+		    } 
+		    break;
+		case 10:
+		    target = false;
+		    s = "newJob";
+		    long jobId = Spkdb.newJob(conn, 
+					      userId,
+					      "abstract",
+					      33,
+					      "1.01",
+					      44,
+					      "1.4.3",
+					      "nonexistantfile");
+		    b = jobId != 0;
+		    s += " is job number " + jobId;
+		    break;
+		case 11:
+		    target = true;
+		    s = "newJob";
+		    jobId = Spkdb.newJob(conn, 
+					      userId,
+					      "abstract",
+					      33,
+					      "1.01",
+					      44,
+					      "1.4.3",
+					      "xmlSource");
+		    b = jobId != 0;
+		    s += " is job number " + jobId;
 		    break;
 		}
 	    } catch (Exception e) {
