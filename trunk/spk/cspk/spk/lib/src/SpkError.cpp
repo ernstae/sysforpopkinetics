@@ -452,6 +452,13 @@ SPK_NOT_SYMMETRIC_ERR $cend
 indicates that the matrix is not symmetric.
 $rend
 
+SPK_SIMULATION_ERR $cend
+indicates some error occured during data simulation.
+$rend
+
+SPK_STATISTICS_ERR $cend
+indicates some error occured during calculating statistics.
+
 SPK_USER_INPUT_ERR      $cend
 This constant value is to be used to indicate an invalid parameter value given by the end user.
 $rend
@@ -865,6 +872,11 @@ const SpkError::ErrorMap SpkError::fillErrorMap()
       "SPK_LIN_NOT_FEASIBLE") );
     tmpMap.insert( ErrorMap::value_type(SPK_NONLIN_NOT_FEASIBLE , 
       "SPK_NONLIN_NOT_FEASIBLE") );
+
+    tmpMap.insert( ErrorMap::value_type(SPK_SIMULATION_ERR, 
+      "SPK_SIMULATION_ERR") );
+    tmpMap.insert( ErrorMap::value_type(SPK_STATISTICS_ERR, 
+      "SPK_STATISTICS_ERR") );
     tmpMap.insert( ErrorMap::value_type(SPK_OPT_ERR, 
       "SPK_OPT_ERR") );
     tmpMap.insert( ErrorMap::value_type(SPK_OPT_WARNING, 

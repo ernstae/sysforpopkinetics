@@ -603,21 +603,25 @@ void indStatistics( const valarray<double>&  indPar,
     
     try
       {
+	// RTerm = 0.5 * { R_b^t * (RInv kron RInv * R_b) }
         valarray<double> RTerm(nB*nB);
 	RTerm = 0.5 * multiply( transpose( dataVariance_indPar, nB ), nY * nY,
                                            AkronBtimesC( dataVarianceInv, nY, dataVarianceInv, nY, dataVariance_indPar, nB ), 
 					   nB );
 
+	// fTerm = f_b^t * ( RInv * f_b )
         // This term should be conceptually symmetric.
         valarray<double> fTerm(nB*nB);
 	fTerm = multiply( transpose( dataMean_indPar, nB ), nY,
 					   multiply( dataVarianceInv, nY, dataMean_indPar, nB ), 
 					   nB );
  
+	
         valarray<double> wholeTerm = RTerm + fTerm;
 	valarray<double> wholeTTerm = transpose( wholeTerm, nB );
         valarray<double> symmetric = 0.5 * ( wholeTerm + wholeTTerm );
        
+        bCov = ( RTerm + fTerm )^-1
 	// This inverse() function assumes the matrix to invert is symmetric positive definite.
         indParCov = inverse( symmetric, nB );
       }

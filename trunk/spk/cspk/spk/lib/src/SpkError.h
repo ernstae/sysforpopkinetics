@@ -129,6 +129,12 @@ public:
       // Insufficient memory error
       SPK_INSUFFICIENT_MEM_ERR,
 
+      // Errors during statistics computation
+      SPK_STATISTICS_ERR,
+
+      // Errors during data simulation
+      SPK_SIMULATION_ERR,
+ 
       // Unknown
       SPK_UNKNOWN_ERR
   };
