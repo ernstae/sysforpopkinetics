@@ -43,7 +43,7 @@
 #include "PredBase.h"
 
 // CppAD header files.
-#include <cppad/include/CppAD.h>
+#include <CppAD/CppAD.h>
 
 // SPK library header files.
 #include <spk/SpkModel.h>

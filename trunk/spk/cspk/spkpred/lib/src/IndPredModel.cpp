@@ -83,8 +83,8 @@ namespace // [Begin: unnamed namespace]
 #include <spk/SpkValarray.h>
 
 // CppAD header files.
-#include <cppad/include/CppAD.h>
-#include <cppad/include/Independent.h>
+#include <CppAD/CppAD.h>
+//#include <CppAD/include/Independent.h>
 
 // Standard library header files.
 #include <cassert>
@@ -669,7 +669,7 @@ void IndPredModel::evalAllPred() const
   // domain for the differentiable function object that will
   // be constructed after the expressions in the Pred block
   // have been evaluated.
-  CppAD::Independent( zCurr );
+  Independent( zCurr );
 
 
   //------------------------------------------------------------

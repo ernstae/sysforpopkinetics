@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 #include <spkpred/PredBase.h>
-#include <cppad/CppAD.h>
+#include <CppAD/CppAD.h>
 #include "DataSet.h"
 
 const CppAD::AD<double> pow( const CppAD::AD<double>& x, int n )
