@@ -1002,6 +1002,83 @@ $end
 
 /* 
 -------------------------------------------------------------
+   Set the save state at end of optimization flag
+-------------------------------------------------------------
+$begin setSaveStateAtEndOfOpt$$
+
+$spell
+  setSaveStateAtEndOfOpt bool Optimizer
+$$
+
+$section Set Save State at End of Optimization Flag$$
+
+$index Optimizer, state, setSaveStateAtEndOfOpt$$
+
+$table
+$bold Prototype$$ $cend
+$syntax/void Optimizer::setSaveStateAtEndOfOpt(bool /s/)/$$ $rend
+$tend
+
+$fend 20$$
+
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$pre
+$$
+$head Description$$
+$code setSaveStateAtEndOfOpt()$$ sets the value $italic saveStateAtEndOfOpt$$
+as a flag to indicate if the state information required for a warm start
+should be saved at the end of the optimization process.
+
+
+$head Example$$
+See $xref/Optimizer/Example/Example/$$
+$end
+*/
+
+/* 
+-------------------------------------------------------------
+   Set the thrown exception if maxIter is exhausted flag
+-------------------------------------------------------------
+$begin setThrowExcepIfMaxIter$$
+
+$spell
+  setThrowExcepIfMaxIter bool Optimizer
+$$
+
+$section Set Throw Exception if Maximum Iterations Exhausted Flag$$
+
+$index Optimizer, throwExceptionIfMaxIter, setThrowExcepIfMaxIter$$
+
+$table
+$bold Prototype$$ $cend
+$syntax/void Optimizer::setThrowExcepIfMaxIter(bool /t/)/$$ $rend
+$tend
+
+$fend 20$$
+
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$pre
+$$
+$head Description$$
+$code setThrowExcepIfMaxIter()$$ sets the value $italic throwExceptionIfMaxIter$$
+as a flag to indicate if the optimizer should throw an exception when
+the maximum number of iterations is exhausted.
+
+$head Example$$
+See $xref/Optimizer/Example/Example/$$
+$end
+*/
+
+/* 
+-------------------------------------------------------------
    Set the isSubLevelOpt flag
 -------------------------------------------------------------
 $begin setIsSubLevelOpt$$
