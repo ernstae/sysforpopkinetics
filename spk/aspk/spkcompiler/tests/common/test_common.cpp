@@ -10,6 +10,8 @@
 #include "SymbolTest.h"
 #include "SymbolTableTest.h"
 #include "ClientTranslatorTest.h"
+#include "SpkCompilerErrorTest.h"
+#include "SpkCompilerExceptionTest.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -19,13 +21,15 @@ int main( int argc, const char * argv[] )
   map<string, CppUnit::Test*> master;
   vector<CppUnit::Test*> subset;
 
-  master[ "clientTest" ]           = clientTest::suite();
-  master[ "lowerTest" ]            = lowerTest::suite();
-  master[ "upperTest" ]            = upperTest::suite();
-  master[ "seriesTest" ]           = seriesTest::suite();
-  master[ "SymbolTest" ]           = SymbolTest::suite();
-  master[ "SymbolTableTest" ]      = SymbolTableTest::suite();
-  master[ "ClientTranslatorTest" ] = ClientTranslatorTest::suite();
+  master[ "clientTest" ]               = clientTest::suite();
+  master[ "lowerTest" ]                = lowerTest::suite();
+  master[ "upperTest" ]                = upperTest::suite();
+  master[ "seriesTest" ]               = seriesTest::suite();
+  master[ "SymbolTest" ]               = SymbolTest::suite();
+  master[ "SymbolTableTest" ]          = SymbolTableTest::suite();
+  master[ "ClientTranslatorTest" ]     = ClientTranslatorTest::suite();
+  master[ "SpkCompilerErrorTest" ]     = SpkCompilerErrorTest::suite();
+  master[ "SpkCompilerExceptionTest" ] = SpkCompilerExceptionTest::suite();
 
   if( argc == 1 )
     {
