@@ -1204,6 +1204,13 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   const double          delta = 1e-7;
 
 
+  // Evaluate the objective and its gradient if this is not a
+  // warm start or if zero iterations have been requested.
+  if ( !isAWarmRestart || nMaxIter == 0 )
+  {
+    objEval( xCurr, fCurr, gCurr, ... );
+  }
+
   if ( isAWarmRestart )
   {
     // This function assumes that the Hessian provided during
@@ -1220,9 +1227,6 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
     // that it will perform too many iterations before this function's
     // convergence criterion is checked.
     iterMax = nObjPars;
-
-    // Evaluate the objective and its gradient.
-    objEval( xCurr, fCurr, gCurr, ... );
 
     // Create an approximation for the Hessian.
     hCurr = ... ;
@@ -1294,12 +1298,20 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
       {
 	SpkError err( 
           SpkError::SPK_OPT_ERR,
-	  "QuasiNewto01Box failed to perform at least one Quasi-Newton iteration.",
+	  "QuasiNewton01Box failed to perform at least one Quasi-Newton iteration.",
 	  __LINE__,
 	  __FILE__ );
 	throw exceptionOb.push( err );
       }
     }
+  }
+
+  // If zero iterations were requested, reset these quantities so that 
+  // the requested output values will be set.
+  if ( nMaxIter == 0 )
+  {
+    isWithinTol = true;
+    iterCurr = 0;
   }
 
 
@@ -1316,7 +1328,7 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
                                     // criterion was satisfied.
   {
     optimizer.setIsTooManyIter( false );
-    optimizer.setNIterCompleted( options.iter );
+    optimizer.setNIterCompleted( iterCurr );
     optimizer.deleteStateInfo();
     ok = true;
   }
@@ -1324,7 +1336,7 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
                                     // have been performed.
   {
     optimizer.setIsTooManyIter( true );
-    optimizer.setNIterCompleted( options.iter );
+    optimizer.setNIterCompleted( iterCurr );
 
     // Save state information for warm start
     if( !optimizer.getIsSubLevelOpt() && optimizer.getStateInfo().n )
