@@ -1,3 +1,9 @@
+-- MySQL dump 9.10
+--
+-- Host: localhost    Database: spktest
+-- ------------------------------------------------------
+-- Server version	4.0.17-standard
+
 --
 -- Table structure for table `dataset`
 --
@@ -13,6 +19,11 @@ CREATE TABLE dataset (
 ) TYPE=InnoDB;
 
 --
+-- Dumping data for table `dataset`
+--
+
+
+--
 -- Table structure for table `end`
 --
 
@@ -26,10 +37,10 @@ CREATE TABLE end (
 -- Dumping data for table `end`
 --
 
-INSERT INTO end VALUES ('cerr','Compiler Error');
-INSERT INTO end VALUES ('herr','Hard Fault');
-INSERT INTO end VALUES ('serr','Software Error');
-INSERT INTO end VALUES ('srun','Successful Run');
+INSERT INTO end (end_code, end_name) VALUES ('cerr','Compiler Error');
+INSERT INTO end (end_code, end_name) VALUES ('herr','Hard Fault');
+INSERT INTO end (end_code, end_name) VALUES ('serr','Software Error');
+INSERT INTO end (end_code, end_name) VALUES ('srun','Successful Run');
 
 --
 -- Table structure for table `history`
@@ -43,6 +54,11 @@ CREATE TABLE history (
   host varchar(100) NOT NULL default '',
   PRIMARY KEY  (history_id)
 ) TYPE=InnoDB;
+
+--
+-- Dumping data for table `history`
+--
+
 
 --
 -- Table structure for table `job`
@@ -67,6 +83,11 @@ CREATE TABLE job (
 ) TYPE=InnoDB;
 
 --
+-- Dumping data for table `job`
+--
+
+
+--
 -- Table structure for table `model`
 --
 
@@ -79,6 +100,11 @@ CREATE TABLE model (
   PRIMARY KEY  (model_id),
   UNIQUE KEY user_id (user_id,name)
 ) TYPE=InnoDB;
+
+--
+-- Dumping data for table `model`
+--
+
 
 --
 -- Table structure for table `state`
@@ -94,11 +120,11 @@ CREATE TABLE state (
 -- Dumping data for table `state`
 --
 
-INSERT INTO state VALUES ('q2c','Queued to compile');
-INSERT INTO state VALUES ('cmp','Compiling');
-INSERT INTO state VALUES ('q2r','Queued to run');
-INSERT INTO state VALUES ('run','Running');
-INSERT INTO state VALUES ('end','End');
+INSERT INTO state (state_code, state_name) VALUES ('q2c','Queued to compile');
+INSERT INTO state (state_code, state_name) VALUES ('cmp','Compiling');
+INSERT INTO state (state_code, state_name) VALUES ('q2r','Queued to run');
+INSERT INTO state (state_code, state_name) VALUES ('run','Running');
+INSERT INTO state (state_code, state_name) VALUES ('end','End');
 
 --
 -- Table structure for table `user`
@@ -113,3 +139,9 @@ CREATE TABLE user (
   PRIMARY KEY  (user_id),
   UNIQUE KEY username (username)
 ) TYPE=InnoDB;
+
+--
+-- Dumping data for table `user`
+--
+
+
