@@ -1245,8 +1245,8 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   double deltaScale = 10.0;
 
   bool isWithinTol = false;
-  int i = 0;
-  while ( !isWithinTol && i < nMaxIter )
+  int itrCurr = 0;
+  while ( !isWithinTol && itrCurr < nMaxIter )
   {
     // See if this function's convergence criterion has been met.
     if ( isWithinTol( 
@@ -1266,6 +1266,9 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
       // only be solved with accuracy sufficient for the current x value.
       delta = maxAbsProjGrad( gCur ) / deltaScale;
 
+      // Save the number of iterations that have been performed.
+      itrCurrPrev = itrCur;
+
       // Ask the optimizer to take perform a limited number of iterations.
       msg = QuasiNewton01Box(
         os,
@@ -1275,7 +1278,7 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
         n,
         delta,
         obj,
-        ItrCur,
+        itrCurr,
         QuadCur,
         rCur,
         fCur,
@@ -1287,15 +1290,12 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
       // Hessian should be accurate enough that this can reset.
       itrMax = 1;
 
-      // Add the number of iterations that were performed.
-      i += itrCur;
-
       // This function assumes that delta is set small enough that the
       // optimizer's convergence criterion will not be satisfied for the
       // current x value and that the optimizer will therefore be able to
       // perform at least one Quasi-Newton itertion.  If that is not the
       // case, then throw an exception.
-      if ( itrCurr == 0 )
+      if ( itrCurr == itrCurrPrev )
       {
 	ok = false;
 	errorcode = SpkError::SPK_UNKNOWN_OPT_ERR;
