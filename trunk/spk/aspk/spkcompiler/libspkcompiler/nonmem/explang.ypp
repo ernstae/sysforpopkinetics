@@ -8,35 +8,7 @@
 /**
  * @example NonmemExpXlatorTest.cpp
  */
-//
-// int yyparse( void )
-//
-// The source language allows only the following statements:
-// * assignment
-// * if conditional statement in the form of either if-assign or if-then-else
-//
-// The functions and operators it supports are:
-// * sqrt, log, log10, exp
-// * + (addition), - (subtraction), * (multiplication), / (division), ** (power)
-//
-// The primitive data types it supports are:
-// * real (eq. float)
-// * double real (eq. double)
-// * integer (eq. int) for indexing arrays
-// * logical (eq. bool)
-//
-// The types of data containers allowed are:
-// * scalar
-// * one dimensional array
-// * two dimensional array
-//
-// The methods to access array elements of a dimensional space are:
-// * by constant scalar indexing
-// * by providing constant start and end indeces
-// * by providing constant start and end indeces and a stride
-// (thus, for a vector, you have a(start:end:stride) and for a matrix, A(start:end:stride, start:end:stride).
-//
-//
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -76,26 +48,56 @@ SymbolTable * gSpkExpSymbolTable;
 
 extern "C"{
    /**
-    * The syntax analyzer.  The code for this function is generated from
-    * a YACC (BISON) specification file, explang.ypp.  
-    * This syntax analyzer calls yylex() over and over again to
-    * obtain tokens.  The input to our yyparse() is assumed to be
-    * stored in a file and pointed by a FILE handler.  yyparse() itself
-    * does not check the validity of the file handler, so you better off
-    * make sure the file is opened as readable.  Our yyparse() redirects
+    * This parser converts "algebraic expressions + control statements"
+    *  written in
+    * the NONMEM Abbriviated language to C++ language.
+    * The NONMEM version of yylex() is expected to tokenize the input
+    * and pass back to this routine.  The input expressions must be
+    * stored in an open readable file pointed by a FILE handler, @a yyin.
+    * The generated C++ source code is appended to an open writable
+    * file pointed by a FILE handler, gSpkExpOut.
     * output to a file pointed by yet another file handler, gSpkExpOutput.
-    * Again, you'd better off make sure the output file is opened as 
-    * writable by yyparse().
+    * The grobal counter, gSpkExpErrors, shall be incremented
+    * as yyparse() or yylex() encounters syntax errors.
+    * 
+    * @note The code for this function is generated from
+    * a YACC (BISON) specification file, explang.ypp.  
+    * 
+    * The source language allows only the following statements:
+    * - assignment
+    * - if conditional statement in the form of either if-assign or if-then-else
+    *
+    * The functions and operators it supports are:
+    * - sqrt, log, log10, exp
+    * - + (addition), - (subtraction), * (multiplication), / (division), ** (power)
+    *
+    * The primitive data types it supports are:
+    * - real (eq. float)
+    * - double real (eq. double)
+    * - integer (eq. int) for indexing arrays
+    * - logical (eq. bool)
+    *
+    * The types of data containers allowed are:
+    * - scalar
+    * - one dimensional array
+    * - two dimensional array (not supported as of 09/24/03)
+    *
+    * The methods to access array elements of a dimensional space are:
+    * - by constant scalar indexing
+    * - by providing constant start and end indeces (not supported as of 09/24/03)
+    * - by providing constant start and end indeces and a stride (not supported as of 09/24/03)
+    * (thus, for a vector, you have a(start:end:stride) and for a matrix, A(start:end:stride, start:end:stride).
+    *
     */
     int yyparse(void);
 
    /**
-    * The lexical analyzer.  The code for this function is generated from
-    * a LEX (FLEX) specification file, lex_explang.l.
+    * The lexical analyzer for NONMEM Abbriviated code.
     * The input string stream yylex() reads in is assumed to 
-    * be pointed by a FILE handler, yyin.  yylex() does not check
-    * the validity of the file handler, so you'd better off make sure
-    * the file is opened as readable.
+    * be pointed by a FILE handler, @a yyin.
+    *
+    * @note The code for this function is generated from
+    * a LEX (FLEX) specification file, lex_explang.l.
     */
     int yylex(void);
 
@@ -135,6 +137,11 @@ extern "C"{
     * Global pointer to a FILE handler to which output is redirected.
     */
     FILE * gSpkExpOutput;
+
+   /**
+    * The file hander pointing to the input file to read in.  It must be open & readable.
+    */
+    extern FILE * yyin;
 };
 
 namespace{

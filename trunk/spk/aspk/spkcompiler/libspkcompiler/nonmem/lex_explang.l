@@ -6,6 +6,10 @@
  * @ingroup nonmem
  */
 /**
+ * @var FILE * yyin
+ * The file hander pointing to the input file to read in.  It must be open & readable.
+ */
+/**
  * @example NonmemExpXlatorTest.cpp
  */
 #include <ctype.h>
@@ -24,6 +28,7 @@ extern int gSpkExpLines;
 // It is defined in the BISON parser specification file (explang.ypp).
 //
 extern int gSpkExpErrors;
+
 %}
 
 tok_letter                  [ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz]
