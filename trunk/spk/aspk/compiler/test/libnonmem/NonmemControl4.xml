@@ -45,17 +45,35 @@
                  pop_size="12" 
                  epsilon="0.001" 
                  mitr="450" 
-                 trace="4" 
+                 trace="1" 
                  restart="yes" 
+                 par_out="yes"
                  obj_out="yes" 
                  deriv1_out="yes" 
                  deriv2_out="yes"/>
 
-        <ind_opt epsilon="0.01" mitr="100" trace="0" restart="yes" indpar_out="yes"/>
+        <ind_opt epsilon="0.01" 
+                 mitr="100" 
+                 trace="0" 
+                 restart="no" 
+                 par_out="yes"
+                 obj_out="no" 
+                 deriv1_out="no" 
+                 deriv2_out="no"/>
 
-	<pop_stat stderror="yes" correlation="yes" cov="yes" coefficient="yes" confidence="yes"/>
 
-	<ind_stat stderror="yes" correlation="yes" cov="yes" coefficient="yes" confidence="yes"/>
+	<pop_stat formulation="yes"
+                  stderror="yes" 
+                  correlation="yes"
+                  covariance="yes"
+                  coefficient="yes" 
+                  confidence="yes"/>
+
+	<ind_stat stderror="yes" 
+                  correlation="yes" 
+                  covariance="yes"
+                  coefficient="yes"
+                  confidence="yes"/>
 </driver>
 
 <model>
