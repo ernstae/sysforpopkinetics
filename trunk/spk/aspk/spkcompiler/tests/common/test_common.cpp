@@ -3,6 +3,7 @@
 #include <cppunit/TextTestResult.h>
 #include <cppunit/ui/text/TestRunner.h>
 
+#include "choleskyTest.h"
 #include "clientTest.h"
 #include "lowerTest.h"
 #include "seriesTest.h"
@@ -19,6 +20,7 @@ int main( int argc, const char * argv[] )
   map<string, CppUnit::Test*> master;
   vector<CppUnit::Test*> subset;
 
+  master[ "choleskyTest" ]         = choleskyTest::suite();
   master[ "clientTest" ]           = clientTest::suite();
   master[ "lowerTest" ]            = lowerTest::suite();
   master[ "upperTest" ]            = upperTest::suite();
