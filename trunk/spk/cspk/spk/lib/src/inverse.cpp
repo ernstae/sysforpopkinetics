@@ -179,8 +179,9 @@ const DoubleMatrix inverse(const DoubleMatrix& dmatA)
            double at = At[i+j*n];
            if( !isDblEpsEqual( a, at, (fabs(a)>fabs(at)? fabs(a) : fabs(at) ) ) )
            {
-              sprintf( mess, "%d by %d matrix is not symmetric in elements: a(%d, %d)=%f != a(%d, %d)=%f.\n",
-                       n, n, i, j, A[i], j, i, At[i] );
+              sprintf( mess, 
+              "The difference between two reflecting elements is too large: a(%d, %d)=%f - a(%d, %d)=%f = %f.\n",
+              i, j, A[i], j, i, At[i], fabs(a-at) );
                                                                                                                          
               throw SpkException( SpkError::SPK_NOT_SYMMETRIC_ERR, mess, __LINE__, __FILE__ );
            }
@@ -293,22 +294,9 @@ const valarray<double> inverse( const valarray<double> &A, int n )
   if( !isSymmetric( A, n ) )
   {
      char mess[ SpkError::maxMessageLen() ];
-     valarray<double> At = transpose( A, n );
-     for( int j=0; j<n; j++ )
-     {
-        for( int i=j; i<n; i++ )
-        {
-           double a  = A[i+j*n];
-           double at = At[i+j*n];
-           if( !isDblEpsEqual( a, at, (fabs(a) > fabs(at)? fabs(a) : fabs(at) ) ) )
-           {
-              sprintf( mess, "%d by %d matrix is not symmetric in elements: a(%d, %d)=%f != a(%d, %d)=%f.\n", 
-                       n, n, i, j, A[i], j, i, At[i] );
-
-              throw SpkException( SpkError::SPK_NOT_SYMMETRIC_ERR, mess, __LINE__, __FILE__ );
-           }
-        }
-     }
+     sprintf( mess, 
+              "The matrix is not symmetric." );
+     throw SpkException( SpkError::SPK_NOT_SYMMETRIC_ERR, mess, __LINE__, __FILE__ );
   }
   int lda = n;
   valarray<double> AInv(A);
