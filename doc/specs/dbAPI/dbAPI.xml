@@ -1083,7 +1083,7 @@
 		<row>
 		  <entry>success</entry>
 		  <entry>array-row</entry>
-		  <entry>In each row: job_id, dataset_id and xml_source</entry>
+		  <entry>In each row: job_id, dataset_id, dataset_version, and xml_source</entry>
 		</row>
 		<row>
 		  <entry>failure</entry>
@@ -1422,7 +1422,7 @@
 		<row>
 		  <entry>success</entry>
 		  <entry>array-row</entry>
-		  <entry>In each row: job_id</entry>
+		  <entry>In each row: job_id, cpp_source</entry>
 		</row>
 		<row>
 		  <entry>failure</entry>
