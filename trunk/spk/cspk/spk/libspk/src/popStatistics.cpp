@@ -409,6 +409,7 @@ $codep
 #include "SpkModel.h"
 #include "lTilde.h"
 #include "inverse.h"
+#include "multiply.h"
 #include "popStatistics.h"
 #include "printInMatrix.h"
 #include "fitPopulation.h"
@@ -877,11 +878,52 @@ $end
 #include "transpose.h"
 #include "inverse.h"
 #include "lTilde.h"
+#include "multiply.h"
 #include "add.h"
 #include "SpkException.h"
+#include "statistics.h"
+#include "printInMatrix.h"
 
 using SPK_VA::valarray;
 using SPK_VA::slice;
+using namespace std;
+
+//                         T      
+//     S = Sum{ gi_x * gi_x }
+//          i                          
+//
+static const valarray<double> nmS( const valarray<double> & x, 
+				   const valarray<double> & g_x )
+{
+  int nX = x.size();
+  int nF = g_x.size() / nX;
+  assert( g_x.size() == nX * nF );
+  
+  valarray<double> S( 0.0, nX * nX );
+
+  valarray<double> gi_x( nX );
+  for( int i=0; i<nF; i++ )
+    {
+      gi_x = g_x[ slice( i * nX, nX, 1 ) ];
+      S += multiply( gi_x, 1, transpose( gi_x, 1 ), nX );
+    }
+  return S;
+}
+//
+// R = h_x_x
+// R^(-1) = (h_x_x)^(-1)
+//
+static const valarray<double> nmInvR( const valarray<double> & x, 
+				      const valarray<double> & h_x_x )
+{
+  int nX = x.size();
+  int nF = h_x_x.size() / nX / nX;
+  assert( h_x_x.size() == nX * nX * nF ); 
+  valarray<double> tmp( 0.0, nF * nX * nX );
+  return inverse( ( h_x_x + transpose( h_x_x, nX ) ) * 0.5, nX );
+}
+
+
 
 void popStatistics( SpkModel&                popModel,
                     enum Objective           objective,
@@ -902,6 +944,7 @@ void popStatistics( SpkModel&                popModel,
 {
     using std::endl;
     using std::ends;
+
   //----------------------------------------------------------------
     // Preliminaries.
     //----------------------------------------------------------------
@@ -1050,34 +1093,22 @@ message %d-the element, %f, is invalid.", i, indParAll[ i + j * nB ] );
     //----------------------------------------------------------------
     // Declare R inverse and S variables. 
     //----------------------------------------------------------------
-    valarray<double> Rinv( nAlp * nAlp );
-    valarray<double> valS( nAlp * nAlp );
-    DoubleMatrix dmatS( nAlp, nAlp );
-
+    valarray<double> indObj_popPar( nAlp * nInd );
+    valarray<double> popParCovTemp( nAlp * nAlp );
     //----------------------------------------------------------------
-    // Compute Rinv 
+    // Compute RInv 
     //----------------------------------------------------------------
-    if( formulation == RSR || formulation == R )
+    if( formulation == R )
     {
-        try
-        {
-            Rinv = inverse( ( popObj_popPar_popPar +
-                          transpose( popObj_popPar_popPar, nAlp ) ) * 0.5, nAlp );
-        }
-        catch(SpkException& e)
-        {
-            throw e.push( SpkError::SPK_NOT_INVERTABLE_ERR,
-                          "Failed to invert R matrix",
-                          __LINE__, __FILE__ );
-        }
+      popParCovTemp = nmInvR( popPar, popObj_popPar_popPar );
     }
-
     //----------------------------------------------------------------
-    // Compute S
+    // Compute S or RSR
     //----------------------------------------------------------------
-    if( formulation == RSR || formulation == S )
+    else //( formulation == RSR || formulation == S )
     {
-        DoubleMatrix dmatLTilde_alpOut( nAlp, nInd );
+
+        DoubleMatrix dmatLambdaLTilde_alpOut( nAlp, nInd );
 
         //------------------------------------------------------------
         // Convert valarray to DoubleMatrix 
@@ -1094,150 +1125,51 @@ message %d-the element, %f, is invalid.", i, indParAll[ i + j * nB ] );
         DoubleMatrix dmatBIn( indParAll, nInd );
         DoubleMatrix dvecBStep( indParStep );
 
-        Optimizer optimizer( 1.0e-6, 0, 0 );
+         //---------------------------------------------------------------------------
+        // Compute the derivative of individual level objectives with
+	// respect to the population parameter.
+	// 
+	//                    /                                                   \
+	//                    |          (1) |          (2) |      |          (n) | 
+	// LambdaLTilde_alp = | Labmda_alp   | Lambda_alp,  | ...  | Lambda_alp   |
+	//                    |              |              |      |              |
+	//                    \                                                   /
+	// where the superscript (i) indentifies the i-th individial and
+	// n is the total number of individuals.
+        //---------------------------------------------------------------------------
+        
+        // let lTilde routine simply calculate the objectives at the given alp and b.
+	Optimizer optimizer( 1.0e-6, 0, 0 );
+  
+	lTilde( popModel, 
+		objective, 
+		dvecY, 
+		dvecN,
+		optimizer,
+		dvecAlp,
+		dvecBLow,
+		dvecBUp,
+		dvecBStep,
+		dmatBIn,
+		0,
+		0, 
+		0, 
+		&dmatLambdaLTilde_alpOut );
 
-        //------------------------------------------------------------
-        // Compute dmatLTilde_alpOut
-        //------------------------------------------------------------
-        try
-        {
-            lTilde( popModel, 
-                    objective, 
-                    dvecY, 
-                    dvecN,
-                    optimizer,
-                    dvecAlp,
-                    dvecBLow,
-                    dvecBUp,
-                    dvecBStep,
-                    dmatBIn,
-                    0,
-                    0, 
-                    0, 
-                    &dmatLTilde_alpOut );
-        }
-        catch( ... )
-        { 
-            throw;
-        }    
-
-        //------------------------------------------------------------
-        // Compute S
-        //------------------------------------------------------------
-        dmatS.resize( nAlp, nAlp );
-        dmatS.fill( 0.0 );
-
-        for( int i = 0; i < nInd; i++ )
-        {
-            dmatS = add( getCol( dmatLTilde_alpOut, i ) * 
-                    transpose( getCol( dmatLTilde_alpOut, i ) ), dmatS );
-        }
-
-        valS = dmatS.toValarray();
+	indObj_popPar = dmatLambdaLTilde_alpOut.toValarray();
+	if( formulation == S )
+	  {
+	    popParCovTemp = inverse( nmS( popPar, indObj_popPar ), nAlp );
+	  }
+	else //( formulation == RSR )
+	  {
+	    valarray<double> RInv = nmInvR( popPar, popObj_popPar_popPar );
+	    popParCovTemp = multiply( multiply( RInv, nAlp, nmS( popPar, indObj_popPar ), nAlp ), nAlp, RInv, nAlp );
+	  }
     }
 
-    //----------------------------------------------------------------
-    // Calculate popPar Covariance 
-    //----------------------------------------------------------------
-    valarray<double> popParCov( nAlp * nAlp );
-    if( formulation == RSR )
-    {
-        DoubleMatrix dmatRinv( Rinv, nAlp );
-        popParCov = ( dmatRinv * dmatS * dmatRinv ).toValarray();
-    }
-    if( formulation == R )
-      {
-        popParCov = Rinv;
-      }
-    if( formulation == S )
-    {
-        try
-        {
-            popParCov = inverse( ( valS + transpose( valS, nAlp ) ) * 0.5, nAlp );
-        }
-        catch(SpkException& e)
-        {
-            throw e.push( SpkError::SPK_NOT_INVERTABLE_ERR,
-                          "Failed to invert S matrix",
-                          __LINE__, __FILE__ );
-        }
-    }
+    statistics( popPar, popParCovTemp, nF, popParSEOut, popParCorOut, popParCVOut, popParCIOut );
 
-    //----------------------------------------------------------------
-    // Calculate Standard Error of individual parameter estimates
-    //----------------------------------------------------------------
-    valarray<double> popParSE( nAlp );
-
-    if( popParSEOut || popParCVOut || popParCIOut )
-    {
-        valarray<double> temp = popParCov[ slice( 0, nAlp, nAlp + 1 ) ];
-        for( int i = 0; i < nAlp; i++ )
-            popParSE[ i ] = sqrt( temp[ i ] );
-    }
-
-    //----------------------------------------------------------------
-    // Prepare output for Covariance 
-    //----------------------------------------------------------------
-    if( popParCovOut )
-        *popParCovOut = popParCov;
-
-    //----------------------------------------------------------------
-    // Prepare output for Standard Error 
-    //----------------------------------------------------------------
-    if( popParSEOut )
-        *popParSEOut = popParSE;
-
-    //----------------------------------------------------------------
-    // Prepare output for Correlation 
-    //----------------------------------------------------------------
-    if( popParCorOut )
-    {
-        int m = nAlp + 1;
-        int n = nAlp * nAlp;
-        for( int i = 0; i < n; i++ )
-            ( *popParCorOut )[ i ] = popParCov[ i ] / 
-                                     sqrt( popParCov[ i % nAlp * m ] * 
-                                           popParCov[ i / nAlp * m ] );
-    }
-    
-    //----------------------------------------------------------------
-    // Prepare output for Coefficient of Variation 
-    //----------------------------------------------------------------
-    if( popParCVOut )
-    {
-        for( int i = 0; i < nAlp; i++ )
-            ( *popParCVOut )[ i ] = popParSE[ i ] / popPar[ i ] * 100.;  
-    }
-
-    //----------------------------------------------------------------
-    // Prepare output for Confidence Interval
-    //----------------------------------------------------------------
-    if( popParCIOut )
-    {
-        double t[] = { 12.706, 4.303, 3.182, 2.776, 2.571, 2.447, 
-			            2.365, 2.306, 2.262, 2.228, 2.201, 2.179, 
-						2.160, 2.145, 2.131, 2.120, 2.110, 2.101, 
-						2.093, 2.086, 2.080, 2.074, 2.069, 2.064, 
-						2.060, 2.056, 2.052, 2.048, 2.045, 2.042 };
-
-        double tn, distance;
-
-		if( nF <= 30 )
-			tn = t[ nF - 1 ];
-		if( nF > 30 && nF <= 40 )
-			tn = 2.042 - ( nF - 30 ) * 0.021 / 10.0;
-		if( nF > 40 && nF <= 60 )
-            tn = 2.021 - ( nF - 40 ) * 0.021 / 20.0;
-		if( nF > 60 && nF <= 120 )
-            tn = 2.000 - ( nF - 60 ) * 0.020 / 60.0;
-        if( nF > 120 )
-			tn = 1.960;
-
-		for( int i = 0; i < nAlp; i++ )
-		{
-			distance = popParSE[ i ] * tn;
-		    ( *popParCIOut )[ i ]        = popPar[ i ] - distance;
-			( *popParCIOut )[ i + nAlp ] = popPar[ i ] + distance;
-		}
-    }
+    if( popParCovOut != 0 )
+      *popParCovOut = popParCovTemp;
 }

@@ -459,6 +459,14 @@ int main()
         cerr << "fitIndividual failed" << endl;
     }
 
+    valarray<double> dataMean_indPar( nB );
+    valarray<double> dataVariance_indPar( nY * nY * nB );
+    valarray<double> dataVarianceInv( nY * nY );
+
+    model.dataMean_indPar( dataMean_indPar );
+    model.dataVariance_indPar( dataVariance_indPar );
+    model.dataVarianceInv( dataVarianceInv );
+
     //------------------------------------------------------------
     // Compute statistics of individual parameter estimates.
     //------------------------------------------------------------
@@ -471,8 +479,10 @@ int main()
 
     try
     {
-        indStatistics( model,
-                       indParOut,
+        indStatistics( indParOut,
+		       dataMean_indPar,
+		       dataVariance_indPar,
+		       dataVarianceInv,
                        &indParCovOut,
                        &indParSEOut,                          
                        &indParCorOut,
@@ -534,6 +544,7 @@ $end
 #include "transpose.h"
 #include "AkronBtimesC.h"
 #include "inverse.h"
+#include "statistics.h"
 
 using SPK_VA::valarray;
 using SPK_VA::slice;
@@ -590,98 +601,24 @@ void indStatistics( const valarray<double>&  indPar,
     // Calculate Covariance of individual parameter estimates 
     //----------------------------------------------------------------
     valarray<double> indParCov( nB * nB );
-
+    
     try
-	{
+      {
         indParCov = inverse( 0.5 * multiply( transpose( dataVariance_indPar, nB ), nY * nY,
-		                                     AkronBtimesC( dataVarianceInv, nY, dataVarianceInv, 
-										                   nY, dataVariance_indPar, nB ), nB )
-	                         + multiply( transpose( dataMean_indPar, nB ), nY,
-				                         multiply( dataVarianceInv, nY, dataMean_indPar, nB ), nB ), 
-	                         nB );
-	}
+					     AkronBtimesC( dataVarianceInv, nY, dataVarianceInv, 
+							   nY, dataVariance_indPar, nB ), nB )
+			     + multiply( transpose( dataMean_indPar, nB ), nY,
+					 multiply( dataVarianceInv, nY, dataMean_indPar, nB ), nB ), 
+			     nB );
+      }
     catch(SpkException& e)
-	{
+      {
         throw e.push( SpkError::SPK_NOT_INVERTABLE_ERR,
                       "Failed to invert information matrix",
                       __LINE__, __FILE__ );
-	}
-
-    //----------------------------------------------------------------
-    // Calculate Standard Error of individual parameter estimates
-    //----------------------------------------------------------------
-    valarray<double> indParSE( nB );
-
-    if( indParSEOut || indParCVOut || indParCIOut )
-    {
-        valarray<double> temp = indParCov[ slice( 0, nB, nB + 1 ) ];
-        for( int i = 0; i < nB; i++ )
-            indParSE[ i ] = sqrt( temp[ i ] );
-    }
-
-    //----------------------------------------------------------------
-    // Prepare output for Covariance 
-    //----------------------------------------------------------------
-    if( indParCovOut )
-        *indParCovOut = indParCov;
-
-    //----------------------------------------------------------------
-    // Prepare output for Standard Error 
-    //----------------------------------------------------------------
-    if( indParSEOut )
-        *indParSEOut = indParSE;
-
-    //----------------------------------------------------------------
-    // Prepare output for Correlation 
-    //----------------------------------------------------------------
-    if( indParCorOut )
-    {
-        int m = nB + 1;
-        int n = nB * nB;
-        for( int i = 0; i < n; i++ )
-            ( *indParCorOut )[ i ] = indParCov[ i ] / 
-                                     sqrt( indParCov[ i % nB * m ] * 
-                                           indParCov[ i / nB * m ] );
-    }
-
-    //----------------------------------------------------------------
-    // Prepare output for Coefficient of Variation 
-    //----------------------------------------------------------------
-    if( indParCVOut )
-    {
-        for( int i = 0; i < nB; i++ )
-            ( *indParCVOut )[ i ] = indParSE[ i ] / indPar[ i ] * 100.;  
-    }
-
-    //----------------------------------------------------------------
-    // Prepare output for Confidence Interval
-    //----------------------------------------------------------------
-    if( indParCIOut )
-    {
-        double t[] = { 12.706, 4.303, 3.182, 2.776, 2.571, 2.447, 
-			            2.365, 2.306, 2.262, 2.228, 2.201, 2.179, 
-						2.160, 2.145, 2.131, 2.120, 2.110, 2.101, 
-						2.093, 2.086, 2.080, 2.074, 2.069, 2.064, 
-						2.060, 2.056, 2.052, 2.048, 2.045, 2.042 };
-
-        double tn, distance;
-
-		if( nFree <= 30 )
-			tn = t[ nFree - 1 ];
-		if( nFree > 30 && nFree <= 40 )
-			tn = 2.042 - ( nFree - 30 ) * 0.021 / 10.0;
-		if( nFree > 40 && nFree <= 60 )
-            tn = 2.021 - ( nFree - 40 ) * 0.021 / 20.0;
-		if( nFree > 60 && nFree <= 120 )
-            tn = 2.000 - ( nFree - 60 ) * 0.020 / 60.0;
-        if( nFree > 120 )
-			tn = 1.960;
-
-		for( int i = 0; i < nB; i++ )
-		{
-			distance = indParSE[ i ] * tn;
-		    ( *indParCIOut )[ i ]      = indPar[ i ] - distance;
-			( *indParCIOut )[ i + nB ] = indPar[ i ] + distance;
-		}
-    }
+      }
+    
+    if( indParCovOut != 0 )
+      *indParCovOut = indParCov;
+    statistics( indPar, indParCov, nFree, indParSEOut, indParCorOut, indParCVOut, indParCIOut );
 }
