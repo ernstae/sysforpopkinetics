@@ -69,17 +69,30 @@ namespace{
   bool              myIsConfidence  = false;
   bool              myIsCoefficient = false;
 
-  const string keyTHETA = SymbolTable::key( "theta" );
-  const string keyETA   = SymbolTable::key( "eta" );
-  const string keyEPS   = SymbolTable::key( "eps" );
-  const string keyOMEGA = SymbolTable::key( "omega" );
-  const string keySIGMA = SymbolTable::key( "sigma" );
-  const string keyRES   = SymbolTable::key( "res" );
-  const string keyWRES  = SymbolTable::key( "wres" );
-  const string keyPRED  = SymbolTable::key( "pred" );
-  const string keyMDV   = SymbolTable::key( "mdv" );
-  const string keyID    = SymbolTable::key( "id" );
-  const string keySIMDV = SymbolTable::key( "simdv" );
+  const string strTHETA = "THETA";
+  const string strETA   = "ETA";
+  const string strEPS   = "EPS";
+  const string strOMEGA = "OMEGA";
+  const string strSIGMA = "SIGMA";
+  const string strRES   = "RES";
+  const string strWRES  = "WRES";
+  const string strPRED  = "PRED";
+  const string strDV    = "DV";
+  const string strMDV   = "MDV";
+  const string strID    = "ID";
+  const string strSIMDV = "SIMDIV";
+  const string keyTHETA = SymbolTable::key( strTHETA );
+  const string keyETA   = SymbolTable::key( strETA );
+  const string keyEPS   = SymbolTable::key( strEPS );
+  const string keyOMEGA = SymbolTable::key( strOMEGA );
+  const string keySIGMA = SymbolTable::key( strSIGMA );
+  const string keyRES   = SymbolTable::key( strRES );
+  const string keyWRES  = SymbolTable::key( strWRES );
+  const string keyPRED  = SymbolTable::key( strPRED );
+  const string keyDV    = SymbolTable::key( strDV );
+  const string keyMDV   = SymbolTable::key( strMDV );
+  const string keyID    = SymbolTable::key( strID );
+  const string keySIMDV = SymbolTable::key( strSIMDV );
   valarray<int> myRecordNums;
 };
 //========================================
@@ -401,14 +414,14 @@ void NonmemTranslator::parseSource()
   // * user defined variables in PRED definition --- PRED parsing should have been done by now
   // * PRED, RES, WRES
   if( table->findi( keyPRED ) == Symbol::empty() )
-    table->insertUserVar( keyPRED );
+    table->insertUserVar( strPRED );
   if( table->findi( keyRES )  == Symbol::empty() )
-    table->insertUserVar( keyRES );
+    table->insertUserVar( strRES );
   if( table->findi( keyWRES ) == Symbol::empty() )
-    table->insertUserVar( keyWRES );
+    table->insertUserVar( strWRES );
   if( table->findi( keyMDV ) == Symbol::empty() )
     {
-      Symbol * s = table->insertLabel( keyMDV, "", myRecordNums );
+      Symbol * s = table->insertLabel( strMDV, "", myRecordNums );
       for( int i=0; i<myPopSize; i++ )
 	s->initial[i] = "0";
       
@@ -581,7 +594,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
 	       XMLString::transcode( xml_theta_len ) );
       abort();
     }
-  Symbol * sym_theta = table->insertNMVector( keyTHETA, myThetaLen );
+  Symbol * sym_theta = table->insertNMVector( strTHETA, myThetaLen );
   {
     //<in>
     DOMNodeList * theta_in_list = theta->getElementsByTagName( X_IN );
@@ -694,7 +707,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       myOmegaElemNum = series( 1, 1, myOmegaDim );
     }
 
-  Symbol * sym_omega = table->insertNMMatrix( keyOMEGA, myOmegaStruct, myOmegaDim );
+  Symbol * sym_omega = table->insertNMMatrix( strOMEGA, myOmegaStruct, myOmegaDim );
   {
     //<in>
     DOMNodeList * omega_in_list = omega->getElementsByTagName( X_IN );
@@ -757,7 +770,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       mySigmaElemNum = series( 1, 1, mySigmaDim );
     }
 
-  Symbol * sym_sigma = table->insertNMMatrix( keySIGMA, mySigmaStruct, mySigmaDim ); 
+  Symbol * sym_sigma = table->insertNMMatrix( strSIGMA, mySigmaStruct, mySigmaDim ); 
   {
     //<in>
     DOMNodeList * sigma_in_list = sigma->getElementsByTagName( X_IN );
@@ -801,7 +814,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   //-----------------------------------------------------------
   myEtaLen = myOmegaDim;
   char etaDefault[] = "0.0";
-  Symbol * sym_eta = table->insertNMVector( keyETA, myEtaLen );
+  Symbol * sym_eta = table->insertNMVector( strETA, myEtaLen );
   sym_eta->initial[0] = etaDefault;
   sym_eta->fixed[0] = false;
 
@@ -811,7 +824,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   // the order of Sigma is the length of EPS vector.
   myEpsLen = mySigmaDim;
   char epsDefault[] = "0.0";
-  Symbol * sym_eps = table->insertNMVector( keyEPS, myEpsLen );
+  Symbol * sym_eps = table->insertNMVector( strEPS, myEpsLen );
   sym_eps->initial[0] = epsDefault;
   sym_eta->fixed[0] = false;
 
@@ -1022,7 +1035,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
 	       XMLString::transcode( xml_theta_len ) );
       abort();
     }
-  Symbol * sym_theta = table->insertNMVector( keyTHETA, myThetaLen );
+  Symbol * sym_theta = table->insertNMVector( strTHETA, myThetaLen );
   {
     //<in>
     DOMNodeList * theta_in_list = theta->getElementsByTagName( X_IN );
@@ -1129,7 +1142,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   myOmegaStruct = Symbol::DIAGONAL;
   myOmegaElemNum = myOmegaDim;
 
-  Symbol * sym_omega = table->insertNMMatrix( keyOMEGA, myOmegaStruct, myOmegaDim );
+  Symbol * sym_omega = table->insertNMMatrix( strOMEGA, myOmegaStruct, myOmegaDim );
   {
     //<in>
     DOMNodeList * omega_in_list = omega->getElementsByTagName( X_IN );
@@ -1168,7 +1181,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   // Eta plays the same role as EPS as in the population analysis.
   // Variance of data?
   myEtaLen = myOmegaElemNum;
-  table->insertNMVector( keyETA, myEtaLen );
+  table->insertNMVector( strETA, myEtaLen );
   
   //================================================================================
   // Optional elements
@@ -2441,7 +2454,7 @@ void NonmemTranslator::generateIndDriver( ) const
     }
   else
     {
-      const Symbol* pDV = table->findi("dv");
+      const Symbol* pDV = table->findi( keyDV );
       if( pDV == Symbol::empty() )
 	{
 	  // "DV" may be registered as a synonym.  
@@ -2451,7 +2464,7 @@ void NonmemTranslator::generateIndDriver( ) const
           map<const string,Symbol>::const_iterator itr = t->begin();
           for( ; itr != t->end(); itr++ )
 	    {
-	      if( lower( itr->second.synonym ) == "dv" )
+	      if( SymbolTable::key( itr->second.synonym ) == keyDV )
 		{
 		  pDV = &itr->second;
 		  break;
@@ -2665,7 +2678,7 @@ void NonmemTranslator::generateIndDriver( ) const
 
   oDriver << "if( !haveCompleteData )" << endl;
   oDriver << "{" << endl;
-  oDriver << "   oResults << \"</spkreportML>\" << endl;" << endl;
+  oDriver << "   oResults << \"</spkreport>\" << endl;" << endl;
   oDriver << "   oResults.close();" << endl;
   oDriver << "   return OTHER_FAILURE;" << endl;
   oDriver << "}" << endl;
@@ -2691,7 +2704,7 @@ void NonmemTranslator::generateIndDriver( ) const
       oDriver << "}" << endl;
       oDriver << "oResults << \"</theta_out>\" << endl;" << endl;
       // omega 
-      oDriver << "oResults << \"<omega_out dimension=\\\"\" << dimOmega << \"\\\"";
+      oDriver << "oResults << \"<omega_out dimension=\\\"\" << dimOmega << \"\\\" ";
       if( myOmegaStruct == Symbol::TRIANGLE )
 	oDriver << "struct=\\\"diagonal\\\">\" << endl;" << endl;
       else
@@ -2785,6 +2798,7 @@ void NonmemTranslator::generateIndDriver( ) const
   const map<const string, Symbol> * t = table->getTable();
   const Symbol * pID = table->findi(keyID);
   assert( pID != Symbol::empty() );
+  const int nItems = t->size();
 
   map<const string, Symbol>::const_iterator pEntry = t->begin();
   const vector<string>::const_iterator pLabelBegin = table->getLabels()->begin();
@@ -2793,7 +2807,8 @@ void NonmemTranslator::generateIndDriver( ) const
   vector<string>::const_iterator pWhatGoesIn;
   string keyWhatGoesIn;
 
-  oDriver << "oResults << \"<presentation_data>\" << endl;" << endl;
+  oDriver << "oResults << \"<presentation_data rows=\\\"\" << nY << \"\\\" \";" << endl;
+  oDriver << "oResults << \"columns=\\\"" << nItems + myThetaLen-1 + myEtaLen-1 << "\\\">\" << endl;" << endl;
   oDriver << "oResults << \"<data_labels>\" << endl;" << endl;
 
   // Put ID first in the sequence
@@ -2866,7 +2881,7 @@ void NonmemTranslator::generateIndDriver( ) const
       keyWhatGoesIn = SymbolTable::key( *pWhatGoesIn );
       if( keyWhatGoesIn == keySIMDV )
 	{
-	  oDriver << "   oResults << \"<value label=\\\"" << keyWhatGoesIn << "\\\"" << ">\" << ";
+	  oDriver << "   oResults << \"<value ref=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
 	  oDriver << "yOut[cnt]";
 	  oDriver << " << \"</value>\" << endl;" << endl;
 	}
@@ -2874,8 +2889,8 @@ void NonmemTranslator::generateIndDriver( ) const
 	{
 	  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
 	    {
-	      oDriver << "   oResults << \"<value label=\\\"";
-	      oDriver << keyWhatGoesIn << "(" << cntTheta << ")"<< "\\\"" << ">\" << ";
+	      oDriver << "   oResults << \"<value ref=\\\"";
+	      oDriver << *pWhatGoesIn << "(" << cntTheta+1 << ")"<< "\\\"" << ">\" << ";
 	      oDriver << "set.data[0]->" << keyWhatGoesIn << "[j][" << cntTheta << "]";
 	      oDriver << " << \"</value>\" << endl;" << endl;
 	    }
@@ -2884,8 +2899,8 @@ void NonmemTranslator::generateIndDriver( ) const
 	{
 	  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
 	    {
-	      oDriver << "   oResults << \"<value label=\\\"";
-	      oDriver << keyWhatGoesIn << "(" << cntEta << ")"<< "\\\"" << ">\" << ";
+	      oDriver << "   oResults << \"<value ref=\\\"";
+	      oDriver << *pWhatGoesIn << "(" << cntEta+1 << ")"<< "\\\"" << ">\" << ";
 	      oDriver << "set.data[0]->" << keyWhatGoesIn << "[j][" << cntEta << "]";
 	      oDriver << " << \"</value>\" << endl;" << endl;
 	    }
@@ -2896,7 +2911,7 @@ void NonmemTranslator::generateIndDriver( ) const
 	  // EPS is irrevalent in the individual analysis
 	  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
 	    {
-	      oDriver << "   oResults << \"<value label=\"" << keyWhatGoesIn << "\"" << ">\" << ";
+	      oDriver << "   oResults << \"<value ref=\"" << keyWhatGoesIn << "\"" << ">\" << ";
 	      oDriver << "set.data[0]->" << keyWhatGoesIn << "[j][" << cntEps << "]";
 	      oDriver << " << \"</value>\" << endl;" << endl;
 	    }
@@ -2910,7 +2925,7 @@ void NonmemTranslator::generateIndDriver( ) const
       */
       else
 	{
-	  oDriver << "   oResults << \"<value label=\\\"" << keyWhatGoesIn << "\\\"" << ">\" << ";
+	  oDriver << "   oResults << \"<value ref=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
           oDriver << "set.data[0]->" << keyWhatGoesIn << "[j]";
 	  oDriver << " << \"</value>\" << endl;" << endl;
 	}
@@ -3254,7 +3269,7 @@ void NonmemTranslator::generatePopDriver() const
     }
   else
     {
-      const Symbol* pDV = table->findi("dv");
+      const Symbol* pDV = table->findi( keyDV );
       if( pDV == Symbol::empty() )
 	{
 	  // "DV" may be registered as a synonym.  
@@ -3264,7 +3279,7 @@ void NonmemTranslator::generatePopDriver() const
           map<const string,Symbol>::const_iterator itr = t->begin();
           for( ; itr != t->end(); itr++ )
 	    {
-	      if( lower( itr->second.synonym ) == "dv" )
+	      if( SymbolTable::key( itr->second.synonym ) == keyDV )
 		{
 		  pDV = &itr->second;
 		  break;
@@ -3516,6 +3531,11 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << "}" << endl;
       oDriver << "oResults << \"</theta_out>\" << endl;" << endl;
       // Omega 
+      oDriver << "oResults << \"<omega_out dimension=\\\"\" << dimOmega << \"\\\" ";
+      if( myOmegaStruct == Symbol::TRIANGLE )
+	oDriver << "struct=\\\"diagonal\\\">\" << endl;" << endl;
+      else
+	oDriver << "struct=\\\"block\\\">\" << endl;" << endl;
       oDriver << "oResults << \"<omega_out>\" << endl;" << endl;
       oDriver << "for( int i=nTheta; i<nTheta+nOmega; i++ )" << endl;
       oDriver << "{" << endl;
@@ -3613,7 +3633,8 @@ void NonmemTranslator::generatePopDriver() const
   const map<const string, Symbol> * t = table->getTable();
   const Symbol * pID = table->findi(keyID);
   assert( pID != Symbol::empty() );
-  
+  const int nItems = t->size();
+
   map<const string, Symbol>::const_iterator pEntry = t->begin();
   const vector<string>::const_iterator pLabelBegin = table->getLabels()->begin();
   const vector<string>::const_iterator pLabelEnd   = table->getLabels()->end();
@@ -3621,8 +3642,9 @@ void NonmemTranslator::generatePopDriver() const
   vector<string>::const_iterator pWhatGoesIn;
   string keyWhatGoesIn;
 
-
-  oDriver << "oResults << \"<presentation_data>\" << endl;" << endl;
+  oDriver << "oResults << \"<presentation_data rows=\\\"\" << N.sum() << \"\\\" \";" << endl;
+  oDriver << "oResults << \"columns=\\\"" << nItems + myThetaLen-1 + myEtaLen-1 + myEpsLen-1 << "\\\">\" << endl;" << endl;
+  oDriver << "oResults << \"columns = \\\" \\\">\" << endl;" << endl;
   oDriver << "oResults << \"<data_labels>\" << endl;" << endl;
   
   // Put ID first in the sequence
@@ -3698,7 +3720,7 @@ void NonmemTranslator::generatePopDriver() const
       keyWhatGoesIn = SymbolTable::key( *pWhatGoesIn );
       if( keyWhatGoesIn == keySIMDV )
 	{
-	  oDriver << "   oResults << \"<value label=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
+	  oDriver << "   oResults << \"<value ref=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
 	  oDriver << "yOut[cnt]";
 	  oDriver << " << \"</value>\" << endl;" << endl;
 	}
@@ -3706,8 +3728,8 @@ void NonmemTranslator::generatePopDriver() const
 	{
 	  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
 	    {
-	      oDriver << "   oResults << \"<value label=\\\"";
-	      oDriver << *pWhatGoesIn << "(" << cntTheta << ")" << "\\\"" << ">\" << ";
+	      oDriver << "   oResults << \"<value ref=\\\"";
+	      oDriver << *pWhatGoesIn << "(" << cntTheta+1 << ")" << "\\\"" << ">\" << ";
 	      oDriver << "set.data[i]->" << keyWhatGoesIn << "[j][" << cntTheta << "]";
 	      oDriver << " << \"</value>\" << endl;" << endl;
 	    }
@@ -3716,8 +3738,8 @@ void NonmemTranslator::generatePopDriver() const
 	{
 	  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
 	    {
-	      oDriver << "   oResults << \"<value label=\\\"";
-	      oDriver << *pWhatGoesIn << "(" << cntEta << ")"<< "\\\"" << ">\" << ";
+	      oDriver << "   oResults << \"<value ref=\\\"";
+	      oDriver << *pWhatGoesIn << "(" << cntEta+1 << ")"<< "\\\"" << ">\" << ";
 	      oDriver << "set.data[i]->" << keyWhatGoesIn << "[j][" << cntEta << "]";
 	      oDriver << " << \"</value>\" << endl;" << endl;
 	    }
@@ -3726,8 +3748,8 @@ void NonmemTranslator::generatePopDriver() const
 	{
 	  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
 	    {
-	      oDriver << "   oResults << \"<value label=\\\"";
-	      oDriver << *pWhatGoesIn << "(" << cntEps << ")"<< "\\\"" << ">\" << ";
+	      oDriver << "   oResults << \"<value ref=\\\"";
+	      oDriver << *pWhatGoesIn << "(" << cntEps+1 << ")"<< "\\\"" << ">\" << ";
 	      oDriver << "set.data[i]->" << keyWhatGoesIn << "[j][" << cntEps << "]";
 	      oDriver << " << \"</value>\" << endl;" << endl;
 	    }
@@ -3738,7 +3760,7 @@ void NonmemTranslator::generatePopDriver() const
 	}
       else
 	{
-	  oDriver << "   oResults << \"<value label=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
+	  oDriver << "   oResults << \"<value ref=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
           oDriver << "set.data[i]->" << keyWhatGoesIn << "[j]";
 	  oDriver << " << \"</value>\" << endl;" << endl;
 	}
