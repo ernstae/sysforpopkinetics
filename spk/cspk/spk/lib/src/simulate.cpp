@@ -648,7 +648,9 @@ void simulate( SpkModel &model,
         simYi.resize( N[i] );
 
 	// Simulate the data set for i-th individual, given b.
-	simulate( model, N[i], bAllOut[ slice( k, nB, 1 ) ], simYi, seed );
+        // Call the version of simulate() which does not reset the seed value
+        // so that the data sets between individuals are kept independent.
+	simulate( model, N[i], bAllOut[ slice( k, nB, 1 ) ], simYi );
 
         // Place the data for i-th individual in the output array.
         yOut[ slice( j, N[i], 1 ) ] = simYi; 
@@ -689,15 +691,26 @@ void simulate( SpkModel &model,
  *	Return Value:	void
  *
  **************************************************************************/
-void simulate( SpkModel &indModel,
-	       int                    n,
+void simulate( SpkModel               &indModel,
+	       int                     n,
 	       const valarray<double> &b,
 	       valarray<double>       &yOut,
 	       int seed )
 {		
   // *** Random number seeding - Default value is random ***
   srand( seed );
-  
+
+  // *** generate a data set based upon the seed value.
+  simulate( indModel, n, b, yOut );
+  return;
+}
+
+// This version of simulate() assumes that a seed has been already set.
+void simulate( SpkModel               &indModel,
+               int                     n,
+               const valarray<double> &b,
+               valarray<double>       &yOut )
+{
   // *** Constants/Iterators ***
   int nB = b.size();    // Get the number of random effects
    
