@@ -37,8 +37,8 @@ import uw.rfpk.beans.UserInfo;
  * user_id, then comparing them.  If they are the same, the servlet calls database 
  * API method, getJob, to get SPK output data that includes source, report, start_time, 
  * event_time, model_name, model_version, model_abstract, dataset_name, dataset_version, 
- * dataset_abstract and job_abstract.  The servlet puts these data into a java.util.Properties 
- * object.  
+ * dataset_abstract, job_abstract, parent and method_code.  The servlet puts these data into 
+ * a java.util.Properties object.  
  * The servlet sends back two objects.  The first object is a String containing the error 
  * message if there 
  * is an error or an empty String if there is not any error.  The second object is the 
@@ -111,12 +111,6 @@ public class GetOutput extends HttpServlet
                  // Check if the job belongs to the user
                 if(jobRS.getLong("user_id") == userId)
                 {             
-                    // Set method_code - name conversion
-                    ResultSet methodRS = Spkdb.getMethodTable(con);
-                    Properties conversion = new Properties();                
-                    while(methodRS.next())
-                        conversion.setProperty(methodRS.getString(1), methodRS.getString(2));                    
-                    
                     // Get job information 
                     long modelId = jobRS.getLong("model_id");
                     long datasetId = jobRS.getLong("dataset_id"); 
@@ -128,10 +122,7 @@ public class GetOutput extends HttpServlet
                     String jobAbstract = jobRS.getString("abstract");
                     long parent = jobRS.getLong("parent");
                     String methodCode = jobRS.getString("method_code");
-                    String method = "";
-                    if(methodCode != null)
-                        method = conversion.getProperty(methodCode, "Not Available");
-             
+
                     // Get Spk report and source
 	            Blob blobReport = jobRS.getBlob("report");
                     if(blobReport != null)
@@ -170,7 +161,7 @@ public class GetOutput extends HttpServlet
                         spkOutput.setProperty("datasetAbstract", datasetAbstract);
                         spkOutput.setProperty("jobAbstract", jobAbstract);
                         spkOutput.setProperty("parent", String.valueOf(parent));
-                        spkOutput.setProperty("method", method);
+                        spkOutput.setProperty("methodCode", methodCode);
                     }
                     else
                         messageOut = "No job report was found for the job.";

@@ -56,7 +56,7 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
      * @param iter a MDAIterator object to initialize the field iterator.     
      */
     public Theta(MDAIterator iter) { 
-        iterator = iter; 
+        iterator = iter;
         initComponents();
     }
     
@@ -668,13 +668,13 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
     }//GEN-LAST:event_jCheckBox2ActionPerformed
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        // Remove the selected element 
+        // Remove the selected element
         model.removeElement(jList1.getSelectedValue());
         jList1.setSelectedIndex(--index);
 
         // Set add, change, delete and left buttons
         addButton.setEnabled(true);
-        isValid = false;
+        isValid = model.getSize() == nTheta;
         wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray()); 
         if(model.getSize() == 0 || index == -1)
         {
@@ -754,10 +754,12 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
         // Check if addable
         if(model.getSize() == nTheta)
         {
-            addButton.setEnabled(false); 
+            addButton.setEnabled(false);
+            String step = iterator.getIsPred() ? "Model Definition step ($PRED record)." : 
+                                                 "Model Parameters step ($PK record).";
             JOptionPane.showMessageDialog(null, 
-                                          "The number of THETAs is " + nTheta + 
-                                          " found in $PK or $PRED record.",   
+                                          "The number of fixed effects parameters (THETA) is " + nTheta + 
+                                          " found in " + step,   
                                           "Input Error.",    
                                           JOptionPane.ERROR_MESSAGE);
             return null;
@@ -1018,5 +1020,10 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
                 }
             };
 	}
+        
+        public String getHelpID() {
+            return "Prepare_Input_Fixed_Effects";
+        }
+        
     }
 }

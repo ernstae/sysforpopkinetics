@@ -20,7 +20,6 @@ package uw.rfpk.mda.nonmem;
 
 /** This class defines an object that contains the information of an archive.
  * @author  Jiaji Du
- * @version 1.0
  */
 public class ArchiveInfo {
     

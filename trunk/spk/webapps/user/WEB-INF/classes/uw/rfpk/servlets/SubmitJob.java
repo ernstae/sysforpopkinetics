@@ -29,16 +29,17 @@ import org.apache.commons.jrcs.diff.*;
 import uw.rfpk.beans.UserInfo;
 
 /** This servlet assemblies and then submits the job, the model and the dataset to the database.
- * The servlet receives a String array containing ninteen String objects from the client.
- * The first String object is the secret code to identify the client.  The other eighteen
+ * The servlet receives a String array containing twenty-one String objects from the client.
+ * The first String object is the secret code to identify the client.  The other twenty
  * Strings are source, dataset, model archive, job_abstract, model_abstract, model_log, 
  * model_name, model_version, model_id, is_new_model, is_new_model_version, dataset_abstract, 
- * dataset_log, dataset_name, dataset_version, dataset_id, is_new_dataset, is_new_dataset_version.
+ * dataset_log, dataset_name, dataset_version, dataset_id, is_new_dataset, is_new_dataset_version,
+ * job_method_code and job_parent.
  * If the model is new the servlet calls database API method, newModle, to get model_id.
  * If the model is old but the version is new the servlet calls database API methods, getModel
  * and updateModel, to update the model archive.  The servlet does the same operations for the
  * dataset.  Then the servlet calls database API method, newJob, to add a job into the database.
- * In the case of using method M. C. Likelihood, the servlet copies the fixed effect parameter
+ * In the likelihood evaluation only cases, the servlet copies the fixed effect parameter
  * part of the report of the parent job and pastes it to the source to produce a new source.
  * The servlet sends back two objects.  The first object is a String containing the error 
  * message if there is an error or an empty String if there is not any error.  The second object
@@ -97,7 +98,7 @@ public class SubmitJob extends HttpServlet
  	        String jobAbstract = messageIn[4];
                 String modelDescription = messageIn[5];
                 String modelLog = messageIn[6]; 
-                String modelName = messageIn[7]; 
+                String modelName = messageIn[7];
                 String modelVersion = messageIn[8]; 
                 long modelId = Long.parseLong(messageIn[9]);
                 String isNewModel = messageIn[10];
@@ -111,97 +112,31 @@ public class SubmitJob extends HttpServlet
                 String isNewDatasetVersion = messageIn[18];
                 String jobMethodCode = messageIn[19];
                 long jobParent = Long.parseLong(messageIn[20]);
-                 
+                
                 // Connect to the database
                 ServletContext context = getServletContext();
                 Connection con = Spkdb.connect(context.getInitParameter("database_name"),
                                                context.getInitParameter("database_host"),
                                                context.getInitParameter("database_username"),
                                                context.getInitParameter("database_password"));
-                 
+               
                 // Get user id
                 ResultSet userRS = Spkdb.getUser(con, username);
                 userRS.next();
                 long userId = userRS.getLong("user_id");  
- 
-                // Handling M. C. Likelihood case
-                if(jobMethodCode.equals("ml"))
-                {
-                    // Get parent job's model and dataset
-                    isNewModel = "false";
-                    isNewModelVersion = "false";
-                    isNewDataset = "false";
-                    isNewDatasetVersion = "false";
-                    ResultSet parentRS = Spkdb.getJob(con, jobParent);
-                    parentRS.next();
-                    if(parentRS.getLong("user_id") == userId)
-                    {
-                        modelId = parentRS.getLong("model_id");
-                        modelVersion = parentRS.getString("model_version");
-                        datasetId = parentRS.getLong("dataset_id");
-                        datasetVersion = parentRS.getString("dataset_version");
-                    
-                        // Get parent job's report and source and combine them
-	                Blob blob = parentRS.getBlob("report");
-                        if(blob != null)
-                        {
-                            // Get report and source
-                            long length = blob.length();
-	                    String report = new String(blob.getBytes(1L, (int)length));
-  
-                            // Replace theta values of souce by those of report 
-                            int beginIndex = source.indexOf("<in>", source.indexOf("<theta ")) + 5;
-                            int endIndex = source.indexOf("</in>", beginIndex);
-                            String front = source.substring(0, beginIndex);
-                            String back = source.substring(endIndex);
-                            beginIndex = report.indexOf("<value>", report.indexOf("<theta_out "));
-                            endIndex = report.indexOf("</theta_out>", beginIndex);
-                            source = front + report.substring(beginIndex, endIndex) + "               " + back;
-                        
-                            // Replace omega and sigma of source by those of report
-                            beginIndex = source.indexOf("<omega ");
-                            endIndex = source.lastIndexOf("</sigma>") + 8;
-                            front = source.substring(0, beginIndex);
-                            back = source.substring(endIndex);
-                            report = report.replaceAll("omega_out", "omega");
-                            report = report.replaceAll("sigma_out", "sigma");
-                            beginIndex = report.indexOf("<omega ");
-                            endIndex = report.lastIndexOf("</omega>") + 8;
-                            String[] blocks = report.substring(beginIndex, endIndex).split("<omega ");
-                            String omega = "";
-                            for(int i = 1; i < blocks.length; i++)
-                                omega += "<omega " + blocks[i].replaceFirst("<value>", "<in>\n<value>");
-                            omega = omega.replaceAll("</omega>", "</in>\n</omega>");
-                            beginIndex = report.indexOf("<sigma ");
-                            endIndex = report.lastIndexOf("</sigma>") + 8;
-                            blocks = report.substring(beginIndex, endIndex).split("<sigma ");
-                            String sigma = "";
-                            for(int i = 1; i < blocks.length; i++)
-                                sigma += "<sigma " + blocks[i].replaceFirst("<value>", "<in>\n<value>");
-                            sigma = sigma.replaceAll("</sigma>", "</in>\n</sigma>");                            
-                            source = front + omega + "\n" + sigma + "            " + back;                       
-                        }
-                        else
-                            // Write the outgoing messages
-                            messageOut = "The report of the parent job is not available.";                  
-                    }
-                    else
-                        // Write the outgoing messages
-                        messageOut = "Authorization error.";
-                }
-                
+
                 // Get model archive information
                 if(isNewModel.equals("true"))
                 {
-                    Archive arch = new Archive(modelArchive.split("\n"), ""); 
+                    Archive arch = new Archive(modelArchive.split("\n"), "");
                     Node node = arch.findNode(new Version("1.1"));
                     node.setAuthor(username);
                     node.setLog(modelLog);
                     which = "model";
-                    modelId = Spkdb.newModel(con, 
-                                             userId, 
-                                             modelName, 
-                                             modelDescription, 
+                    modelId = Spkdb.newModel(con,
+                                             userId,
+                                             modelName,
+                                             modelDescription,
                                              arch.toString("\n"));
                     messages += "A new model, " + modelName +
                                 ", has been added to the database.\n";
@@ -222,14 +157,14 @@ public class SubmitJob extends HttpServlet
                         arch.findNode(arch.getRevisionVersion()).setAuthor(username);
                         Spkdb.updateModel(con, 
                                           modelId, 
-                                          new String[]{"archive"}, 
-                                          new String[]{arch.toString("\n")}); 
+                                          new String[]{"archive"},
+                                          new String[]{arch.toString("\n")});
                         messages += "The model, " + modelName +
-                                    ", in the database has been updated.\n";                      
-                        modelVersion = String.valueOf(arch.getRevisionVersion());                       
+                                    ", in the database has been updated.\n";                   
+                        modelVersion = String.valueOf(arch.getRevisionVersion());
                     }
                 }
- 
+
                 // Get data archive information
                 if(isNewDataset.equals("true"))
                 {
@@ -328,13 +263,13 @@ public class SubmitJob extends HttpServlet
         } 
         catch(FileNotFoundException e)
         {
-            messageOut = e.getMessage();         
+            messageOut = e.getMessage();
         }                
         catch(ClassNotFoundException e)
         {
             messageOut = e.getMessage();
         }
-
+   
         // Write the data to our internal buffer
         out.writeObject(messageOut);  
         if(messageOut.equals(""))
@@ -354,6 +289,6 @@ public class SubmitJob extends HttpServlet
         
         // Wrap up
         servletOut.write(buf);
-        servletOut.close();        
+        servletOut.close();
     }
 }

@@ -31,6 +31,8 @@ public class Output {
     public Output() {
     }
 
+    /** The job identification number. */
+    public String jobId = null;    
     /** The job abstract. */
     public String jobAbstract = null;
      /** The job submission time. */
@@ -41,10 +43,8 @@ public class Output {
     public String[] computingTimes = null;
     /** The analysis type: population or individual. */
     public String analysis = null;
-    /** The method for the analysis. */
-    public String method = null;
-    /** The method for the monte carlo. */
-    public String mcMethod = null;    
+    /** The method code for the analysis. */
+    public String methodCode = null;
     /** The model name. */
     public String modelName = null;
     /** The model version. */
@@ -59,8 +59,8 @@ public class Output {
     public String dataAbstract = null;    
     /** The data lables map. */    
     public Properties dataLabelMap = null;
-    /** The error message. */
-    public String error = null;
+    /** The error message. (message, file_name, line_number)s */
+    public String[][] error = null;
     /** The warning messages. (message, file_name, line_number)s */
     public String[][] warning = null; 
     /** The optimization trace output. */

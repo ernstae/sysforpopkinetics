@@ -15,6 +15,14 @@ mkdir mdaJar
             cp /home/jiaji/MDA/uw/rfpk/mda/nonmem/wizard/*.class .
             cp /home/jiaji/MDA/uw/rfpk/mda/nonmem/wizard/*.gif .
           cd ..
+          mkdir display
+            cd display
+            cp /home/jiaji/MDA/uw/rfpk/mda/nonmem/display/*.class .
+          cd ..
+          mkdir help
+            cd help
+            cp /home/jiaji/MDA/uw/rfpk/mda/nonmem/help/* .
+          cd ..         
         cd ..
       cd ..
     cd ..
@@ -47,12 +55,9 @@ mkdir mdaJar
         cd ..
       cd ..
     cd ..
-    cp -r /home/jiaji/MDA/org/apache .
-    cp -r /home/jiaji/MDA/org/w3c .
   cd ..
   jar cf MDA.jar *
   jarsigner -keystore ../myKeys MDA.jar jdc
-  rm /home/jiaji/jakarta-tomcat-4.1.24/webapps/spk/MDA.jar
-  cp MDA.jar /home/jiaji/jakarta-tomcat-4.1.24/webapps/spk/MDA.jar
+  cp MDA.jar /home/jiaji/jakarta-tomcat-5.0.19/webapps/user/MDA.jar
 cd ..
 

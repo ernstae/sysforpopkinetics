@@ -363,7 +363,12 @@ public class Utility {
             nTokens = lineToken.countTokens();
             String[] firstLineTokens = new String[nTokens];
             for(int i = 0; i < nTokens; i++)
+            {
                 firstLineTokens[i] = lineToken.nextToken();
+                if(firstLineTokens[i].equals("."))
+                    firstLineTokens[i] = "0.0";
+                Double.valueOf(firstLineTokens[i]);
+            }
             
             String firstToken = null;
             if(!isInd)
@@ -396,7 +401,12 @@ public class Utility {
                         return -1;
                     
                     for(int i = 0; i < nTokens; i++)
+                    {
                         tokens[i] = lineToken.nextToken();
+                        if(tokens[i].equals("."))
+                            tokens[i] = "0.0";
+                        Double.valueOf(tokens[i]);
+                    }
 
                     if(isInd)
                     {
@@ -437,35 +447,17 @@ public class Utility {
                                           "File Error",    
                                           JOptionPane.ERROR_MESSAGE);
         }
+        catch(NumberFormatException e)
+        {
+            JOptionPane.showMessageDialog(null, "A number format error was found in the data file.",   
+                                          "Number Format Error",    
+                                          JOptionPane.ERROR_MESSAGE);
+            return -1;
+        }
 
         return nTokens;
     }    
     
-    /** Determine if a character sting includes character '<' or '>'.
-     * @param text a String object containing the character string to be checked.
-     * @param name a String object containing the character string as the name.
-     * @return a boolean, true for the string includes the character,
-     * false for otherwise.
-     */    
-    public static boolean checkTag(String text, String name)
-    {
-        if(text.indexOf("<") != -1)
-        {
-            JOptionPane.showMessageDialog(null, name + " may not include '<'",  
-                                          "Input Error",               
-                                          JOptionPane.ERROR_MESSAGE);
-            return true;
-        }                
-        else if(text.indexOf(">") != -1)
-        {
-            JOptionPane.showMessageDialog(null, name + " may not include '>'",  
-                                          "Input Error",               
-                                          JOptionPane.ERROR_MESSAGE);
-            return true;
-        }
-        return false;
-    }
-
     /** Determine if a character sting is a name of a standard data item.
      * @return a boolean, true for it is a name of a standard data item,
      * false for otherwise.

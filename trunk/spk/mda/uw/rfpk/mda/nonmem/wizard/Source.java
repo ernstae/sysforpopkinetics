@@ -30,8 +30,6 @@ public class Source {
     
     /** The analysis type: population or individual. */
     public String analysis = null;        
-    /** The flag for estimation using simulated data .*/
-    public boolean isUsingSimulatedData;
     /** The flag for continuing when maximum number of iterations is reached. */
     public boolean isRestart;    
     /** The problem heading. */
@@ -56,17 +54,17 @@ public class Source {
     public String error = null;
     /** The $DES program. */
     public String des = null;
-    /** The Theta values: (Low, In, Up)s. */
+    /** The Theta values: (Low, In, Up, fixed)s. */
     public String[][] theta = null;
-    /** The Omega values: (form, dim, elem1, elem2, ...)s. */
+    /** The Omega values: (form, dim, same, elem1, elem2, ...)s. */
     public String[][] omega = null;
-    /** The Sigma values: (form, dim, elem1, elem2, ...)s. */
+    /** The Sigma values: (form, dim, same, elem1, elem2, ...)s. */
     public String[][] sigma = null; 
     /** The options for Estimation: method, sigdigits, maxevals, print, noabort, ind_out, centering, interaction. */
     public String[] estimation = null; 
     /** The formulation for statistics. */
     public String covariance = null;
-    /** The options for Simulation: seed number, onlysimulation, subproblems */
+    /** The options for Simulation: seed number, subproblems */
     public String[] simulation = null;
     /** The specification of Table for Estimation: ((file, header), (list1), (appearance orders), (sorting orders))s. */
     public String[][][] tableEst = null;

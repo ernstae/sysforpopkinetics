@@ -67,7 +67,7 @@ public class UserJobs extends HttpServlet
         // Get the user name of the session
         UserInfo user = (UserInfo)req.getSession().getAttribute("validUser");
         String username = user.getUserName();  
-        
+
         // Prepare output message
         String messageOut = "";
         String[][] userJobs = null;

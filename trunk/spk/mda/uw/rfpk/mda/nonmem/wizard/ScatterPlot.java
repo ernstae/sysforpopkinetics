@@ -81,7 +81,6 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         java.awt.GridBagConstraints gridBagConstraints;
 
         jDialog1 = new javax.swing.JDialog();
-        jButton2 = new javax.swing.JButton();
         jTextPane3 = new javax.swing.JTextPane();
         jScrollPane2 = new javax.swing.JScrollPane();
         centerList = new javax.swing.JList();
@@ -102,6 +101,9 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         jScrollPane4 = new javax.swing.JScrollPane();
         rightList = new javax.swing.JList();
         jSeparator4 = new javax.swing.JSeparator();
+        jPanel1 = new javax.swing.JPanel();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
         buttonGroup1 = new javax.swing.ButtonGroup();
         jTextField1 = new javax.swing.JTextField();
         addButton = new javax.swing.JButton();
@@ -132,18 +134,11 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         jDialog1.setLocationRelativeTo(jButton1);
         jDialog1.setModal(true);
         jDialog1.setResizable(false);
-        jButton2.setText("OK");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+        jDialog1.addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                jDialog1WindowClosing(evt);
             }
         });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 7;
-        gridBagConstraints.insets = new java.awt.Insets(0, 39, 12, 4);
-        jDialog1.getContentPane().add(jButton2, gridBagConstraints);
 
         jTextPane3.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane3.setEditable(false);
@@ -272,7 +267,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 23, 0, 0);
+        gridBagConstraints.insets = new java.awt.Insets(0, 23, 0, 14);
         jDialog1.getContentPane().add(jRadioButton3, gridBagConstraints);
 
         jRadioButton4.setText("List 2");
@@ -287,6 +282,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.insets = new java.awt.Insets(0, 14, 0, 8);
         jDialog1.getContentPane().add(jRadioButton4, gridBagConstraints);
 
         jRadioButton5.setText("List 3");
@@ -300,6 +296,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 14);
         jDialog1.getContentPane().add(jRadioButton5, gridBagConstraints);
 
         jLabel4.setText("Select current  list");
@@ -339,6 +336,33 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 9, 12);
         jDialog1.getContentPane().add(jSeparator4, gridBagConstraints);
+
+        jButton2.setText("OK");
+        jButton2.setMaximumSize(new java.awt.Dimension(75, 25));
+        jButton2.setMinimumSize(new java.awt.Dimension(75, 25));
+        jButton2.setPreferredSize(new java.awt.Dimension(75, 25));
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jButton2);
+
+        jButton3.setText("Cancel");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jButton3);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridwidth = 5;
+        jDialog1.getContentPane().add(jPanel1, gridBagConstraints);
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -595,6 +619,21 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
 
     }//GEN-END:initComponents
 
+    private void jDialog1WindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_jDialog1WindowClosing
+        cleanLists(); 
+    }//GEN-LAST:event_jDialog1WindowClosing
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        cleanLists();
+        jDialog1.dispose();
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void cleanLists()
+    {
+        for(int i = 0; i < 3; i++)
+            listModels[i].removeAllElements();
+    }
+    
     private void jTextField1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField1FocusLost
         // Check FROM
         String from = jTextField1.getText().trim();
@@ -780,6 +819,13 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
     }//GEN-LAST:event_addItemButtonActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        if(listModels[0].size() == 0 || listModels[1].size() == 0)
+        {
+            JOptionPane.showMessageDialog(null, "No plot data was selected.",
+                                          "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;   
+        }
+        
         // Create a scatterplot 
         scatterPlot = ""; 
         for(int i = 0; i < listModels[0].getSize(); i++)
@@ -789,7 +835,8 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
             scatterPlot = scatterPlot + " " + (String)listModels[1].get(i);             
         if(listModels[2].getSize() > 0) scatterPlot = scatterPlot + " BY";
         for(int i = 0; i < listModels[2].getSize(); i++)
-            scatterPlot = scatterPlot + " " + (String)listModels[2].get(i);             
+            scatterPlot = scatterPlot + " " + (String)listModels[2].get(i);
+        cleanLists();
         addButton.setEnabled(true);
         jDialog1.setVisible(false);
         jDialog1.dispose();
@@ -798,6 +845,10 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         for(int i = 0; i < 3; i++)
             lists[i].setSelectedIndex(listModels[i].size() - 1);
+        jRadioButton3.doClick();
+        addItemButton.setEnabled(true);
+        changeItemButton.setEnabled(listModels[0].size() > 0);
+        deleteItemButton.setEnabled(listModels[0].size() > 0);
         jDialog1.setLocationRelativeTo(this);
         jDialog1.setSize(440,370);            
         jDialog1.setVisible(true);
@@ -816,7 +867,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
             wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray()); 
         }
         addButton.setEnabled(true);
-        if(model.getSize() == 0)
+        if(model.getSize() == 0 || index == -1)
         {
             changeButton.setEnabled(false);
             deleteButton.setEnabled(false);
@@ -872,7 +923,14 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
     }//GEN-LAST:event_downButtonActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-         // Check number of scatterplot against maximum limit
+        if(scatterPlot.equals(""))
+        {
+            JOptionPane.showMessageDialog(null, "No plot data was selected.",
+                                          "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // Check number of scatterplot against maximum limit
         int nFamily = listModels[0].getSize() * listModels[1].getSize();
         int dimSum = nFamily;
         for(int i = 0; i < dimList.size(); i++)
@@ -928,6 +986,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         // Add the scatterplot record       
         String element = "$SCATTERPLOT" + scatterPlot + " FROM " + from + 
                          " TO " + to + slopeLine + xLine + yLine;
+        scatterPlot = "";
         if(model.indexOf(element) != -1) return;
         model.add(++index, element);  
         dimList.add(index, new Integer(nFamily));
@@ -966,6 +1025,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JButton downButton;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JCheckBox jCheckBox3;
@@ -976,6 +1036,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JList jList1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JRadioButton jRadioButton4;
     private javax.swing.JRadioButton jRadioButton5;
@@ -1402,5 +1463,10 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
                 }
             };
 	}
+        
+        public String getHelpID() {
+            return "Prepare_Input_Plot_Output";
+        }
+        
     }
 }

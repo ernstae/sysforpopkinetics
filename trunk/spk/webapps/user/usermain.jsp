@@ -80,9 +80,12 @@ author: Jiaji Du
                 <a href="userinfo.jsp">View my account information</a><br>
                 <% String url = getServletContext().getInitParameter("bugzillaURL");
                    String bugzilla = "<a href=" + url + ">Go to SPK bug report page</a>"; %>
-                <%=bugzilla%>
+                <%=bugzilla%><br>
+                <c:if test="${validUser.developer == '1' && pageContext.request.serverPort==8443}">
+                  <a href="userlistdev.jsp">View all user list</a>                
+                </c:if>
               </c:otherwise> 
-            </c:choose>       
+            </c:choose>
             </p>
             <p>
                When you are done, please <a href="logout.jsp">log out</a>.

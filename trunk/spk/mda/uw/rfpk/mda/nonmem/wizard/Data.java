@@ -349,8 +349,6 @@ public class Data extends javax.swing.JPanel implements WizardStep {
                 return;
             String[] path = filePath.replace('\\', '/').split("/");            
             String fileName = path[path.length - 1]; 
-            if(Utility.checkTag(fileName, "File name"))
-                return;
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             String record = "$DATA " + fileName.replaceAll("\r", "");
             object.getRecords().setProperty("Data", record); 
@@ -373,5 +371,10 @@ public class Data extends javax.swing.JPanel implements WizardStep {
                 }
             };
 	}
+        
+        public String getHelpID() {
+            return "Prepare_Input_Data_File_Selection";
+        }
+        
     }
 }

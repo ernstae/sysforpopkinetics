@@ -95,7 +95,7 @@ public class Test{
 //            PK step = new PK(i);
 //            Pred step = new Pred(i);
 //            Problem step = new Problem(i);
-            Omega step = new Omega(i); 
+            Omega step = new Omega(i);
 //            Sigma step = new Sigma(i);
 //            ScatterPlot step = new ScatterPlot(i); 
 //            Simulation step = new Simulation(i);

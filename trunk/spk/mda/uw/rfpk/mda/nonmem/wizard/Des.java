@@ -186,7 +186,7 @@ public class Des extends javax.swing.JPanel implements WizardStep {
             }            
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             String desCode = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
-            if(!desCode.equals("") && !Utility.checkTag(desCode, "DES code"))
+            if(!desCode.equals(""))
             {
                 String record = "$DES " + "\n" + desCode;
                 object.getRecords().setProperty("Des", record);
@@ -210,5 +210,10 @@ public class Des extends javax.swing.JPanel implements WizardStep {
                 }
             };
 	}
+        
+        public String getHelpID() {
+            return "Des";
+        }
+        
     }
 }

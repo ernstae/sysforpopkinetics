@@ -358,19 +358,17 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         String element = null;
         if(jRadioButton1.isSelected())
         {
-            element = (String)jComboBox1.getSelectedItem(); 
+            element = (String)jComboBox1.getSelectedItem();
             String alias = jTextField1.getText().trim();
             if(!alias.equals(""))
             {
-                if(Utility.checkTag(alias, "Data item alias"))
-                    return;
                 element = element + "=" + alias;
             }
         }
         else if(jRadioButton2.isSelected())
         {
             String item = jTextField2.getText().trim();
-            if(item.equals("") || Utility.checkTag(item, "Data item name"))
+            if(item.equals(""))
                 return;
             if(exist(stdItems, item.toUpperCase()))
             {
@@ -400,7 +398,8 @@ public class Input extends javax.swing.JPanel implements WizardStep {
                                               JOptionPane.ERROR_MESSAGE);  
                 return;
             }
-        
+                
+        // Enter the element
         input[index] = element;
         
         // Repaint the table
@@ -658,5 +657,10 @@ public class Input extends javax.swing.JPanel implements WizardStep {
                 }
             };
 	}
+        
+        public String getHelpID() {
+            return "Prepare_Input_Data_Labels";
+        }
+        
     }
 }

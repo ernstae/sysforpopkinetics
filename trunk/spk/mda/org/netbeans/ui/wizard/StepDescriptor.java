@@ -83,7 +83,7 @@ public abstract class StepDescriptor {
      * @return ture if it is valid to proceed, false otherwisw.
      */
     public abstract boolean isValid();
-
+    
     /** Fired change for wizards update.
      */
     public void fireStateChanged(){
@@ -113,5 +113,13 @@ public abstract class StepDescriptor {
      */
     public ActionListener getHelpAction(){
 	return null;
+    }
+    
+    /** Help ID for this panel.
+     * If not null help ID is displayed.
+     * @return null.
+     */
+    public String getHelpID(){
+        return null;
     }
 }

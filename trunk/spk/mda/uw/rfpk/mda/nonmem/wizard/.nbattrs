@@ -29,6 +29,7 @@
         <attr name="class_dependency_org.netbeans.ui.wizard.WizardStep" stringvalue="Pred"/>
         <attr name="class_dependency_org.netbeans.ui.wizard.StepDescriptor" stringvalue="Pred.MyStepDescriptor"/>
         <attr name="class_dependency_javax.swing.JPanel" stringvalue="Pred"/>
+        <attr name="SourceSync" bytevalue="0"/>
     </fileobject>
     <fileobject name="Des.java">
         <attr name="class_dependency_org.netbeans.ui.wizard.WizardStep" stringvalue="Des"/>

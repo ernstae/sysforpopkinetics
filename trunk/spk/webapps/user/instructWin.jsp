@@ -49,7 +49,7 @@ author: Jiaji Du
               1.  To use the MDA, you need first to download and install the Java
                   Runtime Environment (JRE) from Sun Microsystems. Access the following
                   website:<br>
-                  <a href="http://java.sun.com/j2se/1.4.2/download.html">http://java.sun.com/j2se/1.4.2/download.html</a>.
+                  <a href="http://java.sun.com/j2se/1.4.2/download.html" target="_blank">http://java.sun.com/j2se/1.4.2/download.html</a>.
             </p><p>
               2.  Scroll down to "Download J2SE" and choose your operating system from
                   the "JRE" column.
@@ -73,7 +73,7 @@ author: Jiaji Du
                   Enter FileExtension as "jnlp"<br>
                   Enter MIME type as "Application/x-java-jnlp-file"<br>
                   Enter Handled by Application as<br>
-                  "C:\Program Files\Java\j2re1.4.2_04\javaws\javaws.exe for Windows.
+                  "C:\Program Files\Java\j2re1.4.2_05\javaws\javaws.exe for Windows.
             </p><p>
                   Note that the version number may be different in the future.
 	    </p>

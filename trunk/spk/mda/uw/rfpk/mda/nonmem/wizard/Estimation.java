@@ -557,6 +557,30 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
                     jTextArea1.setText("$ESTIMATION " + text.substring(11).trim());
                 }
             }
+            if(iterator.getIsInd())
+            {
+                jTextPane1.setText("");
+                jRadioButton1.setEnabled(false);
+                jRadioButton2.setEnabled(false);
+                jRadioButton3.setEnabled(false);
+                jCheckBox1.setEnabled(false);
+                jCheckBox2.setEnabled(false);
+                jCheckBox3.setEnabled(false);
+                jCheckBox4.setEnabled(false);
+                jSeparator1.setEnabled(false);
+            }
+            else
+            {
+                jTextPane1.setText("Select an estimation method and available option(s) on the right.");
+                jRadioButton1.setEnabled(true);
+                jRadioButton2.setEnabled(true);
+                jRadioButton3.setEnabled(true);
+                jCheckBox1.setEnabled(jRadioButton1.isSelected());
+                jCheckBox2.setEnabled(jRadioButton2.isSelected());
+                jCheckBox3.setEnabled(!jRadioButton1.isSelected());
+                jCheckBox4.setEnabled(true);
+                jSeparator1.setEnabled(true);
+            }               
             isValid = true;
             wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());            
      	}
@@ -640,5 +664,10 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
                 }
             };
 	}
+        
+        public String getHelpID() {
+            return "Prepare_Input_Method_Selection";
+        }
+        
     }
 }

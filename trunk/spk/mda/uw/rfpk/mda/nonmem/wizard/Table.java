@@ -71,7 +71,6 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         java.awt.GridBagConstraints gridBagConstraints;
 
         jDialog1 = new javax.swing.JDialog();
-        jButton2 = new javax.swing.JButton();
         jTextPane3 = new javax.swing.JTextPane();
         rightButton = new javax.swing.JButton();
         leftButton = new javax.swing.JButton();
@@ -87,6 +86,10 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         deleteItemButton = new javax.swing.JButton();
         changeItemButton = new javax.swing.JButton();
         jSeparator3 = new javax.swing.JSeparator();
+        jPanel1 = new javax.swing.JPanel();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jTextField1 = new javax.swing.JTextField();
         addButton = new javax.swing.JButton();
         upButton = new javax.swing.JButton();
@@ -114,18 +117,11 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         jDialog1.setLocationRelativeTo(jButton1);
         jDialog1.setModal(true);
         jDialog1.setResizable(false);
-        jButton2.setText("OK");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+        jDialog1.addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                jDialog1WindowClosing(evt);
             }
         });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 7;
-        gridBagConstraints.insets = new java.awt.Insets(0, 4, 12, 4);
-        jDialog1.getContentPane().add(jButton2, gridBagConstraints);
 
         jTextPane3.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane3.setText("Select items from the comboBox and add them to the left list.  Then select items from the left list into the right list.");
@@ -273,6 +269,33 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 12, 12);
         jDialog1.getContentPane().add(jSeparator3, gridBagConstraints);
 
+        jButton2.setText("OK");
+        jButton2.setMaximumSize(new java.awt.Dimension(75, 25));
+        jButton2.setMinimumSize(new java.awt.Dimension(75, 25));
+        jButton2.setPreferredSize(new java.awt.Dimension(75, 25));
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jButton2);
+
+        jButton3.setText("Cancel");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jButton3);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridwidth = 4;
+        jDialog1.getContentPane().add(jPanel1, gridBagConstraints);
+
         setLayout(new java.awt.GridBagLayout());
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -331,7 +354,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("Enter the output file name and select a header format.  The data items are\nlisted as columns and the order of the rows may be sorted.  If No Append\nis selected, data values, population prediction, residuals and weighted \nresiduals (i.e. DV, PRED, RES, WRES) will not be provided in the output.");
+        jTextPane1.setText("Enter the output file name and select a header format.  The data items are\nlisted as columns and the order of the rows may be sorted.  If No Append\nis selected, data values, population prediction, residuals and weighted \nresiduals (i.e. DV, PRED, RES, WRES) will not be automatically in the output.");
         jTextPane1.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 5;
@@ -458,12 +481,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         add(jButton1, gridBagConstraints);
 
         jRadioButton1.setText("No Header");
-        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton1ActionPerformed(evt);
-            }
-        });
-
+        buttonGroup1.add(jRadioButton1);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
@@ -471,12 +489,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         add(jRadioButton1, gridBagConstraints);
 
         jRadioButton2.setText("One Header");
-        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton2ActionPerformed(evt);
-            }
-        });
-
+        buttonGroup1.add(jRadioButton2);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
@@ -485,12 +498,6 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         add(jRadioButton2, gridBagConstraints);
 
         jRadioButton3.setText("No Append");
-        jRadioButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton3ActionPerformed(evt);
-            }
-        });
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -501,20 +508,21 @@ public class Table extends javax.swing.JPanel implements WizardStep {
 
     }//GEN-END:initComponents
 
-    private void jRadioButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton3ActionPerformed
-        // Add your handling code here:
-    }//GEN-LAST:event_jRadioButton3ActionPerformed
+    private void jDialog1WindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_jDialog1WindowClosing
+        cleanLists();
+    }//GEN-LAST:event_jDialog1WindowClosing
 
-    private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
-        if(jRadioButton2.isSelected())
-            jRadioButton1.setSelected(false);        
-    }//GEN-LAST:event_jRadioButton2ActionPerformed
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        cleanLists();
+        jDialog1.dispose();
+    }//GEN-LAST:event_jButton3ActionPerformed
 
-    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
-        if(jRadioButton1.isSelected())
-            jRadioButton2.setSelected(false);
-    }//GEN-LAST:event_jRadioButton1ActionPerformed
-
+    private void cleanLists()
+    {
+        leftModel.removeAllElements();
+        rightModel.removeAllElements();
+    }
+    
     private void leftListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_leftListMouseClicked
         changeItemButton.setEnabled(leftList.getSelectedIndex() >= 0);
         deleteItemButton.setEnabled(leftList.getSelectedIndex() >= 0); 
@@ -671,28 +679,34 @@ public class Table extends javax.swing.JPanel implements WizardStep {
     }//GEN-LAST:event_addItemButtonActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        table = "";
-        if(leftModel.getSize() > 0)
+        if(leftModel.getSize() == 0)
         {
-            for(int i = 0; i < leftModel.getSize(); i++)
-                table = table + " " + (String)leftModel.get(i);  
-            if(leftModel.getSize() < 9 && rightModel.getSize() > 0) 
-            {
-                table = table + " BY";
-                for(int i = 0; i < rightModel.getSize(); i++)
-                    table = table + " " + (String)rightModel.get(i); 
-            }
+            JOptionPane.showMessageDialog(null, "No output item was selected.",
+                                          "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;   
         }
+        table = "";
+        for(int i = 0; i < leftModel.getSize(); i++)
+            table = table + " " + (String)leftModel.get(i);  
+        if(leftModel.getSize() < 9 && rightModel.getSize() > 0) 
+        {
+            table = table + " BY";
+            for(int i = 0; i < rightModel.getSize(); i++)
+                table = table + " " + (String)rightModel.get(i); 
+        }
+        
         addButton.setEnabled(true);
         jComboBox1.setSelectedIndex(-1);
+        cleanLists();
         jDialog1.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         leftList.setSelectedIndex(leftModel.size() - 1);
         rightList.setSelectedIndex(rightModel.size() - 1);
-        changeItemButton.setEnabled(false);
-        deleteItemButton.setEnabled(false);
+        addItemButton.setEnabled(true);
+        changeItemButton.setEnabled(leftModel.size() > 0);
+        deleteItemButton.setEnabled(leftModel.size() > 0);
         leftButton.setEnabled(false); 
         jDialog1.setLocationRelativeTo(this); 
         jDialog1.setSize(420,350);            
@@ -708,7 +722,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
             wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray()); 
         }
         addButton.setEnabled(true);
-        if(model.getSize() == 0)
+        if(model.getSize() == 0 || index == -1)
         {
             changeButton.setEnabled(false);
             deleteButton.setEnabled(false);
@@ -731,10 +745,6 @@ public class Table extends javax.swing.JPanel implements WizardStep {
                                               JOptionPane.ERROR_MESSAGE);
 	         return;
             }
-            else if(Utility.checkTag(fileName, "File name"))
-            {
-	         return;
-            }                
             else
                 element = element + " FILE=" + fileName;
         }   
@@ -760,7 +770,14 @@ public class Table extends javax.swing.JPanel implements WizardStep {
     }//GEN-LAST:event_downButtonActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
+        if(table.equals(""))
+        {
+            JOptionPane.showMessageDialog(null, "No output item was selected.",
+                                          "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;   
+        }
         String element = "$TABLE" + table;
+        table = "";
         String fileName = jTextField1.getText().trim();
         if(fileName.length() > 0)
         {
@@ -771,10 +788,6 @@ public class Table extends javax.swing.JPanel implements WizardStep {
                                               JOptionPane.ERROR_MESSAGE);
 	         return;
             }
-            else if(Utility.checkTag(fileName, "File name"))
-            {
-	         return;
-            }                
             else
                 element = element + " FILE=" + fileName;
         }
@@ -814,6 +827,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JButton addItemButton;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton changeButton;
     private javax.swing.JButton changeItemButton;
     private javax.swing.JButton deleteButton;
@@ -821,12 +835,14 @@ public class Table extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JButton downButton;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JDialog jDialog1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JList jList1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JRadioButton jRadioButton3;
@@ -886,20 +902,15 @@ public class Table extends javax.swing.JPanel implements WizardStep {
                     item = tokens[1];
                 else
                     item = tokens[0];
-                
-                if(!item.equals("DV"))
-                {
-                    if(!iterator.getIsInd())
-                    {
-                        jComboBox1.addItem(item);
-                    }
-                    else
-                    {
-                        if(!item.equals("ID")) 
-                            jComboBox1.addItem(item);
-                    }
-                }
+                if(!iterator.getIsInd())
+                    jComboBox1.addItem(item);
+                else
+                    if(!item.equals("ID")) 
+                        jComboBox1.addItem(item);               
             }
+            jComboBox1.addItem("PRED");
+            jComboBox1.addItem("RES");
+            jComboBox1.addItem("WRES"); 
             if(!iterator.getIsInd() && which.equals("ESTIMATION") && iterator.getIsMethod1OrPosthoc())
                 for(int i = 0; i < iterator.getNEta(); i++)
                     jComboBox1.addItem("ETA(" + (i + 1) +")");
@@ -988,7 +999,6 @@ public class Table extends javax.swing.JPanel implements WizardStep {
             }
             
             jList1.setSelectedIndex(index);
-            isValid = true;
                         
             // Set delete button
             deleteButton.setEnabled(index >= 0);
@@ -1108,17 +1118,21 @@ public class Table extends javax.swing.JPanel implements WizardStep {
                 // Append DV, PRED, RES and WRES to the left list
                 if(element.indexOf(" NOAPPEND") == -1)
                 {
-                    int list1Length = 0;
-                    if(list1 != null)
-                        list1Length = list1.length;
-                        
-                    String[] tempList = new String[list1Length + 4];
+                    int list1Length = list1.length;
+                    Vector appendItems = new Vector();
+                    if(!hasElement(list1, "DV"))
+                        appendItems.add("DV");
+                    if(!hasElement(list1, "PRED"))
+                        appendItems.add("PRED");
+                    if(!hasElement(list1, "RES"))
+                        appendItems.add("RES");
+                    if(!hasElement(list1, "WRES"))
+                        appendItems.add("WRES");
+                    String[] tempList = new String[list1Length + appendItems.size()];
                     for(int j = 0; j < list1Length; j++)
                         tempList[j] = list1[j];
-                    tempList[list1Length] = "DV";
-                    tempList[list1Length + 1] = "PRED";
-                    tempList[list1Length + 2] = "RES";
-                    tempList[list1Length + 3] = "WRES";
+                    for(int j = 0; j < appendItems.size(); j++)
+                        tempList[list1Length + j] = (String)appendItems.get(j);
                     list1 = tempList;
                 } 
                 
@@ -1165,6 +1179,14 @@ public class Table extends javax.swing.JPanel implements WizardStep {
                 object.getSource().tableSim = tables;  
 	}
 
+        private boolean hasElement(String[] list, String element)
+        {
+            for(int i = 0; i < list.length; i++)
+                if(list[i].equals(element))
+                    return true;
+            return false;
+        }
+        
 	public boolean isValid(){
             return isValid;
 	}
@@ -1181,5 +1203,10 @@ public class Table extends javax.swing.JPanel implements WizardStep {
                 }
             };
 	}
+        
+        public String getHelpID() {
+            return "Prepare_Input_Table_Output";
+        }
+        
     }
 }

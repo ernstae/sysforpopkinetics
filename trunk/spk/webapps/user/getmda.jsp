@@ -50,22 +50,35 @@ author: Jiaji Du
     {
         try
         {
-            // Generate the secret bytes for creating the session key
+            // Generate random bytes for creating the session secret 
             SecureRandom seed = new SecureRandom();
             byte[] b = seed.generateSeed(16);
 
             // Convert the byte array to a String object
-            StringBuffer buf = new StringBuffer(); 
-            for(int i = 0; i < 16; i++)
+/*          StringBuffer buf = new StringBuffer(b.length * 8); // binary
+            for(int i = 0; i < b.length; i++)
 	    {
                 int m = 0x80;
                 for(int j = 0; j < 8; j++)
                 {
                     char c = '0';                   
                     if((b[i] & m) == m) c = '1';
-	 	    m = m >> 1;
+	 	    m = m >>> 1;
 		    buf.append(c);
 	        }
+            }
+*/
+            StringBuffer buf = new StringBuffer(b.length * 2); // hex
+            String[] c = {"0", "1", "2", "3", "4", "5", "6", "7",
+                          "8", "9", "A", "B", "C", "D", "E", "F"};
+            int m = 0;
+            for(int i = 0; i < b.length; i++)
+	    {
+                m = b[i] & 0xF0;
+                m = m >>> 4;
+                buf.append(c[m]);
+                m = b[i] & 0x0F;
+                buf.append(c[m]);
             }
             secret = buf.toString();
             session.setAttribute("SECRET", secret);
@@ -92,6 +105,8 @@ author: Jiaji Du
               "<jar href=\"MDA.jar\"/>\n"+
               "<jar href=\"xercesImpl.jar\"/>\n"+
               "<jar href=\"xmlParserAPIs.jar\"/>\n"+
+              "<jar href=\"jhall.jar\"/>\n"+
+              "<jar href=\"JavaHelp.jar\"/>\n"+
               "</resources>\n"+
               "<application-desc main-class=\"uw.rfpk.mda.nonmem.MDA\">\n"+
               "<argument>" + host + "</argument>\n"+    
@@ -103,6 +118,7 @@ author: Jiaji Du
               "</application-desc>\n"+
               "</jnlp>\n"
              );
+            o.flush();
             o.close();
             sessionObj.setSessionObject(file);
         }
@@ -110,8 +126,6 @@ author: Jiaji Du
         {
         }
     }
-    String url = "https://"+host+":"+port+"/user/jnlp/"+(String)session.getAttribute("SECRET")+".jnlp";
-    String download = "<a href=" + url + ">Model Design Agent - NONMEM type</a>";
 %>
 
 <html>
@@ -143,9 +157,17 @@ author: Jiaji Du
                window that says "Java Loading..." and then "Model Design Agent RFPK
                UW". The MDA will automatically check for the latest version. Answer
                "Yes" if you are asked another security question. Windows user can choose to have
-               the MDA on your desktop or not (it's up to you).<br><br>
-               <%=download%>
-               <br><br><br><br>
+               the MDA on your desktop or not (it's up to you).<br>
+
+            <form action="servlet/uw.rfpk.servlets.GetJnlp" method="post">
+              <input type="hidden" name="host" value=<%=host%>>
+              <input type="hidden" name="port" value=<%=port%>>
+              <input type="hidden" name="secret" value=<%=session.getAttribute("SECRET")%>>
+              <input type="hidden" name="jnlp_dir" value=<%=jnlp_dir%>>
+              Model Design Agent - NONMEM type<input type="Submit" value="Download">
+            </form>
+
+               <br><br>
             </p><p>
                Note:  FOR WINDOWS USERS: If the MDA fails to install:<br>
                Open Java Web Start<br>

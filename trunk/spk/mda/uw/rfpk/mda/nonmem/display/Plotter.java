@@ -316,7 +316,7 @@ public class Plotter extends JPanel
         int titleYWidth = gc.getFontMetrics().stringWidth(titleY);        
         gc2D.drawString(titleX, leftInset + (width - titleXWidth)/2, top + height + 40);      
         gc2D.rotate(Math.PI/2);
-        String[] titleYs = title.split(" ");
+        String[] titleYs = titleY.split(" ");
         int shift = 0;
         for(int i = 0; i < dataY.length; i++)
         {
@@ -486,7 +486,7 @@ public class Plotter extends JPanel
                 gc2D.drawLine(left,                top + i * spacingY, 
                               left + 6,            top + i * spacingY);
                 gc2D.drawLine(left + width - 6,    top + i * spacingY, 
-                              left + width,        top + i * spacingY);            
+                              left + width,        top + i * spacingY);  
             }
                 
 	    // draw titles
@@ -497,7 +497,7 @@ public class Plotter extends JPanel
             int titleYWidth = gc.getFontMetrics().stringWidth(titleY);
             gc2D.drawString(titleX, left + (width - titleXWidth)/2, top + height + 40);        
             gc2D.rotate(Math.PI/2);            
-            String[] titleYs = title.split(" ");
+            String[] titleYs = titleY.split(" ");
             int shift = 0;
             for(int i = 0; i < dataY.length; i++)
             {            

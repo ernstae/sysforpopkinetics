@@ -134,5 +134,10 @@ public class Continue extends javax.swing.JPanel implements WizardStep {
                 }
             };
 	}
+        
+        public String getHelpID() {
+            return "Prepare_Input_Confirmation";
+        }
+        
     }
 }

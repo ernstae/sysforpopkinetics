@@ -59,7 +59,7 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
         initComponents();
         jButton1.addActionListener(new DefaultEditorKit.CutAction());
         jButton2.addActionListener(new DefaultEditorKit.CopyAction()); 
-        jButton3.addActionListener(new DefaultEditorKit.PasteAction());        
+        jButton3.addActionListener(new DefaultEditorKit.PasteAction());
     }
     
     /** This method is called from within the constructor to
@@ -95,11 +95,10 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("Please type in code for your model.");
+        jTextPane1.setText("Please type in code for your model equations.");
         jTextPane1.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 39);
         jPanel1.add(jTextPane1, gridBagConstraints);
 
         jButton2.setText("Copy");
@@ -168,11 +167,11 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
 	}
        
   	public String getContentItem(){
-  	    return "Model Definition";
+  	    return "Model Equations";
   	}
 
 	public String getStepTitle(){
-	    return "Model Definition";
+	    return "Model Equations";
 	}
 
 	public void showingStep(JWizardPane wizard){
@@ -198,7 +197,7 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             String record = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
             String title = getStepTitle();
-            if(!record.equals("") && !Utility.checkTag(record, title))
+            if(!record.equals(""))
             {
 
                 object.getRecords().setProperty("Pred", "$PRED " + "\n" + record);
@@ -281,8 +280,8 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
 	    return isValid;
 	}
 
-	public ActionListener getHelpAction(){
-	    return new ActionListener(){
+	public ActionListener getHelpBroker(){
+            return new ActionListener(){
                 public void actionPerformed(ActionEvent e){ 
                     if(!iterator.getIsOnline()) 
                         new Help("Help for $PRED Record", 
@@ -293,5 +292,9 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
                 }
             };
 	}
+        
+        public String getHelpID() {
+            return "Prepare_Input_Model_Equations";
+        }
     }
 }
