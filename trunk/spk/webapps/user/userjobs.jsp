@@ -40,10 +40,13 @@ distribution.
     <%-- Set number of rows to process --%>
     <c:set var="noOfRows" value="${initParam.maxNum}" />
 
+    <%-- Get user id --%>
     <sql:query var="user">
       SELECT user_id FROM user WHERE username = ?
       <sql:param value="${validUser.userName}" />
     </sql:query>
+
+    <%-- Get user jobs --%>
     <c:set var="dbValues" value="${user.rows[0]}" />
     <sql:query var="userJobs" startRow="${param.start}" maxRows="${noOfRows}">
       SELECT * FROM job WHERE user_id = ? ORDER BY job_id desc

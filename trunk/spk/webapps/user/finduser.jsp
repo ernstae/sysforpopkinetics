@@ -16,6 +16,9 @@ Washington Free-Fork License as a public service.  A copy of the
 License can be found in the COPYING file in the root directory of this
 distribution.
 ---------------------------------------------------------------------->
+<!--
+author: Jiaji Du
+-->
 <?xml version="1.0"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "xhtml1-transitional.dtd">
 <%@ page contentType="text/html" %>
@@ -40,6 +43,7 @@ distribution.
     <%-- Set number of rows to process --%>
     <c:set var="noOfRows" value="${initParam.maxNum}" />
 
+    <%-- Find the user given partial information --%>
     <sql:query var="userList" startRow="${param.start}" maxRows="${noOfRows}">
       SELECT * FROM user WHERE user_id LIKE ? AND username LIKE ? AND first_name LIKE ? AND surname LIKE ?  
       AND company LIKE ? AND country LIKE ? AND state LIKE ? AND email LIKE ? ORDER BY surname

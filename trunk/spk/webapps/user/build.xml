@@ -20,7 +20,9 @@ distribution.
 author: Jiaji Du
 -->
 <!--
-  This is a build file for Ant 1.5 that precompiles all JSP pages.
+  This is a build file that precompiles all JSP pages and copy files to the
+  appropriate directory of the web server including web.xml, quicklinks.xhtml,
+  stylesheet.css, help files and image files.
   To run this program enter the following command in a terminal window.
 
   ant -Dtomcat.home=$CATALINA_HOME -Dwebapp.path=$CATALINA_HOME/webapps/user
@@ -41,8 +43,31 @@ author: Jiaji Du
     <delete file="${webapp.path}/WEB-INF/generated_web.xml" />
   </target>
 
-  <target name="jspc"> 
-    <tasskdef ef classname="org.apache.jasper.JspC" name="jasper2" > 
+  <target name="init">
+    <copy todir="${webapp.path}">
+      <fileset dir="src">
+        <include name="*.jsp"/>
+        <include name="*.shtml"/>
+        <include name="*.css"/
+      </fileset>
+    </copy>
+    <copy file="web.xml" todir="${webapp.path}/WEB-INF"/>
+    <mkdir dir="${webapp.path}/help"/>
+    <copy todir="${webapp.path}/help">
+      <fileset dir="help">
+        <include name="*.jsp"/>
+      </fileset>
+    </copy>
+    <mkdir dir="${webapp.path}/images"/>
+    <copy todir="${webapp.path}/images">
+      <fileset dir="images">
+        <include name="*.*"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="jspc" depends="init"> 
+    <taskdef classname="org.apache.jasper.JspC" name="jasper2" > 
       <classpath id="jspc.classpath"> 
         <pathelement location="${java.home}/../lib/tools.jar"/> 
         <fileset dir="${tomcat.home}/bin"> 

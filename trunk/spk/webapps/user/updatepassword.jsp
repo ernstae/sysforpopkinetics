@@ -16,6 +16,9 @@ Washington Free-Fork License as a public service.  A copy of the
 License can be found in the COPYING file in the root directory of this
 distribution.
 ---------------------------------------------------------------------->
+<!--
+author: Jiaji Du
+-->
 <?xml version="1.0"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "xhtml1-transitional.dtd">
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -29,20 +32,24 @@ distribution.
   </jsp:forward>
 </c:if>
 
+<%-- Make sure that the new password has entered twice. --%>
 <c:if test="${empty param.password1 || empty param.password2}">
   <c:redirect url="chpassword.jsp" >
     <c:param name="errorMsg" value="You must enter a new password and confirm it." />
   </c:redirect>
 </c:if>
 
+<%-- Make sure that the new password has been confirmed. --%>
 <c:if test="${param.password1 != param.password2}">
   <c:redirect url="chpassword.jsp" >
     <c:param name="errorMsg" value="The new password is not confirmed" />
   </c:redirect>
 </c:if>
 
+<%-- Create a bean for digesting password. --%>
 <c:set target="${digest}" property="password" value="${param.password1}" />
 
+<%-- Update pasword in the database --%>
 <sql:update>
   UPDATE user SET password=? WHERE username=?
   <sql:param value="${digest.password}" />

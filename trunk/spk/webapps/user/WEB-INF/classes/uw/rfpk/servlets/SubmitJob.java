@@ -160,14 +160,26 @@ public class SubmitJob extends HttpServlet
                         
                             // Replace omega and sigma of source by those of report
                             beginIndex = source.indexOf("<omega ");
-                            endIndex = source.lastIndexOf("</sigma>");
+                            endIndex = source.lastIndexOf("</sigma>") + 8;
                             front = source.substring(0, beginIndex);
                             back = source.substring(endIndex);
                             report = report.replaceAll("omega_out", "omega");
                             report = report.replaceAll("sigma_out", "sigma");
                             beginIndex = report.indexOf("<omega ");
-                            endIndex = report.lastIndexOf("</sigma>");
-                            source = front + report.substring(beginIndex, endIndex) + "            " + back;                       
+                            endIndex = report.lastIndexOf("</omega>") + 8;
+                            String[] blocks = report.substring(beginIndex, endIndex).split("<omega ");
+                            String omega = "";
+                            for(int i = 1; i < blocks.length; i++)
+                                omega += "<omega " + blocks[i].replaceFirst("<value>", "<in>\n<value>");
+                            omega = omega.replaceAll("</omega>", "</in>\n</omega>");
+                            beginIndex = report.indexOf("<sigma ");
+                            endIndex = report.lastIndexOf("</sigma>") + 8;
+                            blocks = report.substring(beginIndex, endIndex).split("<sigma ");
+                            String sigma = "";
+                            for(int i = 1; i < blocks.length; i++)
+                                sigma += "<sigma " + blocks[i].replaceFirst("<value>", "<in>\n<value>");
+                            sigma = sigma.replaceAll("</sigma>", "</in>\n</sigma>");                            
+                            source = front + omega + "\n" + sigma + "            " + back;                       
                         }
                         else
                             // Write the outgoing messages
@@ -269,7 +281,7 @@ public class SubmitJob extends HttpServlet
                                  modelId, 
                                  modelVersion, 
                                  source,
-                                 jobMethodCode,
+                                 jobMethodCode,   
                                  jobParent
                                  );
                     messages += "A new job, " + jobAbstract +

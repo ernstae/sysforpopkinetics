@@ -16,13 +16,16 @@ Washington Free-Fork License as a public service.  A copy of the
 License can be found in the COPYING file in the root directory of this
 distribution.
 ---------------------------------------------------------------------->
+<!--
+author: Jiaji Du
+-->
 <?xml version="1.0"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "xhtml1-transitional.dtd">
 <%@page contentType="text/html"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<%-- Verify that the user is logged in --%>
+<%-- Verify that the user has logged in --%>
 <c:if test="${validUser == null}">
   <jsp:forward page="index.jsp">
     <jsp:param name="origURL" value="${pageContext.request.requestURL}" />
