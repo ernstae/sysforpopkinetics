@@ -1338,6 +1338,14 @@ namespace // [Begin: unnamed namespace]
       // Evaluate the gradient of the population objective function.
       //----------------------------------------------------------
 
+      //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      // [Revisit - Unnecessary Individual Level Optimizations - Mitch]
+      // Should the number of individual level iterations be set equal
+      // to zero here since the only way the state variable alpha can
+      // change is through function(), which finds the optimizal set
+      // of b values for each alpha value when it calls lTilde itself?
+      //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
       // Use the best matrix of b values as the initial guess for b.
       DoubleMatrix dmatBCurr( nB, nInd );
       double* pdNull = 0;
