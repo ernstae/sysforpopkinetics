@@ -15,16 +15,16 @@
 using namespace std;
 using namespace CppUnit;
 extern "C"{
-  int yylex(void);  
-  int yyparse(void);
-  FILE * yyin;
-  void yyrestart( FILE* );
-  void yyerror( char * m );
+  int nm_lex(void);  
+  int nm_parse(void);
+  FILE * nm_in;
+  void nm_restart( FILE* );
+  void nm_error( char * m );
 };
 
 int gSpkExpLines  = 0;
 int gSpkExpErrors = 0;
-void yyerror( char * m )
+void nm_error( char * m )
 {
 }
 void lex_explangTest::setUp()
@@ -50,10 +50,10 @@ void lex_explangTest::testWhiteSpaces()
 
   gSpkExpLines  = 0;
   gSpkExpErrors = 0;
-  yyin = fopen( testInput, "r" );
-  yyrestart( yyin );
-  int TOKEN = yylex();
-  fclose( yyin );
+  nm_in = fopen( testInput, "r" );
+  nm_restart( nm_in );
+  int TOKEN = nm_lex();
+  fclose( nm_in );
   CPPUNIT_ASSERT( TOKEN == '\n' );
   CPPUNIT_ASSERT_EQUAL( 0, gSpkExpErrors );
   CPPUNIT_ASSERT_EQUAL( 1, gSpkExpLines );
@@ -71,11 +71,11 @@ void lex_explangTest::testComment()
   fprintf( input, "; This is a comment line.\n" );
 
   fclose( input );
-  yyin = fopen( testInput, "r" );
-  yyrestart( yyin );
-  int TOKEN = yylex();
+  nm_in = fopen( testInput, "r" );
+  nm_restart( nm_in );
+  int TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( COMMENT, TOKEN );
-  fclose( yyin );
+  fclose( nm_in );
   remove( testInput );
 }
 void lex_explangTest::testNamedConstant()
@@ -86,18 +86,18 @@ void lex_explangTest::testNamedConstant()
   FILE * input = fopen( testInput, "w" );
   CPPUNIT_ASSERT( input != NULL );
 
-  // A token NAME shall be returned and yylval.c_str shall contain
+  // A token NAME shall be returned and nm_lval.c_str shall contain
   // the constant in all lower case.
   fprintf( input, "Ab9DEf" );
 
   fclose( input );
-  yyin = fopen( testInput, "r" );
-  yyrestart( yyin );
-  int TOKEN = yylex();
-  CPPUNIT_ASSERT_MESSAGE( yylval.c_str, strcmp( yylval.c_str, "ab9def" ) == 0 );
+  nm_in = fopen( testInput, "r" );
+  nm_restart( nm_in );
+  int TOKEN = nm_lex();
+  CPPUNIT_ASSERT_MESSAGE( nm_lval.c_str, strcmp( nm_lval.c_str, "ab9def" ) == 0 );
   CPPUNIT_ASSERT_EQUAL( NAME, TOKEN );
 
-  fclose( yyin );
+  fclose( nm_in );
   remove( testInput );  
 }
 void lex_explangTest::testNameLength()
@@ -112,13 +112,13 @@ void lex_explangTest::testNameLength()
   fprintf( input, "Ab9DEfG" );
 
   fclose( input );
-  yyin = fopen( testInput, "r" );
-  yyrestart( yyin );
+  nm_in = fopen( testInput, "r" );
+  nm_restart( nm_in );
   gSpkExpErrors = 0;
-  int TOKEN = yylex();
+  int TOKEN = nm_lex();
   CPPUNIT_ASSERT( gSpkExpErrors > 0 );
 
-  fclose( yyin );
+  fclose( nm_in );
   remove( testInput );  
 }
 void lex_explangTest::testEngineeringNotation()
@@ -137,45 +137,45 @@ void lex_explangTest::testEngineeringNotation()
   fprintf( input, "1e1\n" );
   
   fclose( input );
-  yyin = fopen( testInput, "r" );
-  yyrestart( yyin );
-  int TOKEN = yylex();
+  nm_in = fopen( testInput, "r" );
+  nm_restart( nm_in );
+  int TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( ENG_NOTATION, TOKEN );
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
-  CPPUNIT_ASSERT_MESSAGE( yylval.c_str, strcmp( yylval.c_str, "1.0e1" ) == 0 );
+  CPPUNIT_ASSERT_MESSAGE( nm_lval.c_str, strcmp( nm_lval.c_str, "1.0e1" ) == 0 );
 
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( ENG_NOTATION, TOKEN );
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
-  CPPUNIT_ASSERT_MESSAGE( yylval.c_str, strcmp( yylval.c_str, "1.0e1" ) == 0 );
+  CPPUNIT_ASSERT_MESSAGE( nm_lval.c_str, strcmp( nm_lval.c_str, "1.0e1" ) == 0 );
 
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( ENG_NOTATION, TOKEN );
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
-  CPPUNIT_ASSERT_MESSAGE( yylval.c_str, strcmp( yylval.c_str, "1.e1" ) == 0 );
+  CPPUNIT_ASSERT_MESSAGE( nm_lval.c_str, strcmp( nm_lval.c_str, "1.e1" ) == 0 );
 
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( ENG_NOTATION, TOKEN );
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
-  CPPUNIT_ASSERT_MESSAGE( yylval.c_str, strcmp( yylval.c_str, "1.e1" ) == 0 );
+  CPPUNIT_ASSERT_MESSAGE( nm_lval.c_str, strcmp( nm_lval.c_str, "1.e1" ) == 0 );
 
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( ENG_NOTATION, TOKEN );
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
-  CPPUNIT_ASSERT_MESSAGE( yylval.c_str, strcmp( yylval.c_str, "1e1" ) == 0 );
+  CPPUNIT_ASSERT_MESSAGE( nm_lval.c_str, strcmp( nm_lval.c_str, "1e1" ) == 0 );
 
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( ENG_NOTATION, TOKEN );
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
-  CPPUNIT_ASSERT_MESSAGE( yylval.c_str, strcmp( yylval.c_str, "1e1" ) == 0 );
+  CPPUNIT_ASSERT_MESSAGE( nm_lval.c_str, strcmp( nm_lval.c_str, "1e1" ) == 0 );
 
-  fclose( yyin );
+  fclose( nm_in );
   remove( testInput );  
 }
 void lex_explangTest::testFloatingPoint()
@@ -189,27 +189,27 @@ void lex_explangTest::testFloatingPoint()
   fprintf( input, ".1\n" );
 
   fclose( input );
-  yyin = fopen( testInput, "r" );
-  yyrestart( yyin );
-  int TOKEN = yylex();
+  nm_in = fopen( testInput, "r" );
+  nm_restart( nm_in );
+  int TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( SIGNIFICAND, TOKEN );
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
-  CPPUNIT_ASSERT_MESSAGE( yylval.c_str, strcmp( yylval.c_str, "1.0" ) == 0 );
+  CPPUNIT_ASSERT_MESSAGE( nm_lval.c_str, strcmp( nm_lval.c_str, "1.0" ) == 0 );
     
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( SIGNIFICAND, TOKEN );
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
-  CPPUNIT_ASSERT_MESSAGE( yylval.c_str, strcmp( yylval.c_str, "1." ) == 0 );
+  CPPUNIT_ASSERT_MESSAGE( nm_lval.c_str, strcmp( nm_lval.c_str, "1." ) == 0 );
 
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( SIGNIFICAND, TOKEN );
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
-  CPPUNIT_ASSERT_MESSAGE( yylval.c_str, strcmp( yylval.c_str, ".1" ) == 0 );
+  CPPUNIT_ASSERT_MESSAGE( nm_lval.c_str, strcmp( nm_lval.c_str, ".1" ) == 0 );
 
-  fclose( yyin );
+  fclose( nm_in );
   remove( testInput );  
 }
 void lex_explangTest::testDigitString()
@@ -221,11 +221,11 @@ void lex_explangTest::testDigitString()
   fprintf( input, "12345" );
   fclose( input );
 
-  yyin = fopen( testInput, "r" );
-  yyrestart( yyin );
-  int TOKEN = yylex();
+  nm_in = fopen( testInput, "r" );
+  nm_restart( nm_in );
+  int TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( DIGIT_STRING, TOKEN );
-  fclose( yyin );
+  fclose( nm_in );
   remove( testInput );
 }
 void lex_explangTest::testExit()
@@ -237,11 +237,11 @@ void lex_explangTest::testExit()
   fprintf( input, "exit" );
   fclose( input );
 
-  yyin = fopen( testInput, "r" );
-  yyrestart( yyin );
-  int TOKEN = yylex();
+  nm_in = fopen( testInput, "r" );
+  nm_restart( nm_in );
+  int TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( EXIT, TOKEN );
-  fclose( yyin );
+  fclose( nm_in );
   remove( testInput );
  
 }
@@ -257,30 +257,30 @@ void lex_explangTest::testControl()
   fprintf( input, "endif\n" );
   fclose( input );
 
-  yyin = fopen( testInput, "r" );
-  yyrestart( yyin );
+  nm_in = fopen( testInput, "r" );
+  nm_restart( nm_in );
 
-  int TOKEN = yylex();
+  int TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( IF, TOKEN );
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
   
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( THEN, TOKEN );
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
 
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( ELSE, TOKEN );
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
 
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( ENDIF, TOKEN );
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
 
-  fclose( yyin );
+  fclose( nm_in );
   remove( testInput );
  
 }
@@ -296,20 +296,20 @@ void lex_explangTest::testBool()
   fprintf( input, ".FaLsE.\n" );
   fclose( input );
 
-  yyin = fopen( testInput, "r" );
-  yyrestart( yyin );
+  nm_in = fopen( testInput, "r" );
+  nm_restart( nm_in );
 
-  int TOKEN = yylex();
+  int TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( TRUE, TOKEN );
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
   
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( FALSE, TOKEN );
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
 
-  fclose( yyin );
+  fclose( nm_in );
   remove( testInput );
  
 }
@@ -323,19 +323,19 @@ void lex_explangTest::testBinaryFunc()
 
   fclose( input );
 
-  yyin = fopen( testInput, "r" );
-  yyrestart( yyin );
+  nm_in = fopen( testInput, "r" );
+  nm_restart( nm_in );
 
-  int TOKEN = yylex();
+  int TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( NAME, TOKEN );
   
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( POWER_OP, TOKEN );
 
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( NAME, TOKEN );
 
-  fclose( yyin );
+  fclose( nm_in );
   remove( testInput );
 }
 void lex_explangTest::testUnaryFunc()
@@ -354,30 +354,30 @@ void lex_explangTest::testUnaryFunc()
 
   fclose( input );
 
-  yyin = fopen( testInput, "r" );
-  yyrestart( yyin );
+  nm_in = fopen( testInput, "r" );
+  nm_restart( nm_in );
 
-  int TOKEN = yylex();
+  int TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( DEFINED_UNARY_FUNCTION, TOKEN );
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
   
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( DEFINED_UNARY_FUNCTION, TOKEN );
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
 
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( DEFINED_UNARY_FUNCTION, TOKEN );
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
 
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( DEFINED_UNARY_FUNCTION, TOKEN );
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
 
-  fclose( yyin );
+  fclose( nm_in );
   remove( testInput );
 }
 void lex_explangTest::testArray()
@@ -391,20 +391,20 @@ void lex_explangTest::testArray()
 
   fclose( input );
 
-  yyin = fopen( testInput, "r" );
-  yyrestart( yyin );
+  nm_in = fopen( testInput, "r" );
+  nm_restart( nm_in );
 
-  int TOKEN = yylex();
+  int TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( OPEN_ARRAY_ELEM_LIST, TOKEN );
-  /* x */ yylex(); 
-  CPPUNIT_ASSERT_EQUAL( static_cast<int>(','), yylex() );
-  /* Y */ yylex(); 
-  CPPUNIT_ASSERT_EQUAL( static_cast<int>(','), yylex() );
-  /* z */ yylex(); 
-  TOKEN = yylex();
+  /* x */ nm_lex(); 
+  CPPUNIT_ASSERT_EQUAL( static_cast<int>(','), nm_lex() );
+  /* Y */ nm_lex(); 
+  CPPUNIT_ASSERT_EQUAL( static_cast<int>(','), nm_lex() );
+  /* z */ nm_lex(); 
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( CLOSE_ARRAY_ELEM_LIST, TOKEN );
 
-  fclose( yyin );
+  fclose( nm_in );
   remove( testInput );
 
 }
@@ -465,72 +465,72 @@ void lex_explangTest::testLogical()
 
   fclose( input );
 
-  yyin = fopen( testInput, "r" );
-  yyrestart( yyin );
+  nm_in = fopen( testInput, "r" );
+  nm_restart( nm_in );
 
-  int TOKEN = yylex();
+  int TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( EQ_OP, TOKEN );
-  /* newline */ yylex();
-  TOKEN = yylex();
+  /* newline */ nm_lex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( EQ_OP, TOKEN );
-  /* newline */ yylex();
+  /* newline */ nm_lex();
 
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( NE_OP, TOKEN );
-  /* newline */ yylex();
-  TOKEN = yylex();
+  /* newline */ nm_lex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( NE_OP, TOKEN );
-  /* newline */ yylex();
+  /* newline */ nm_lex();
 
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( LT_OP, TOKEN );
-  /* newline */ yylex();
-  TOKEN = yylex();
+  /* newline */ nm_lex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( LT_OP, TOKEN );
-  /* newline */ yylex();
+  /* newline */ nm_lex();
 
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( LE_OP, TOKEN );
-  /* newline */ yylex();
-  TOKEN = yylex();
+  /* newline */ nm_lex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( LE_OP, TOKEN );
-  /* newline */ yylex();
+  /* newline */ nm_lex();
 
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( GT_OP, TOKEN );
-  /* newline */ yylex();
-  TOKEN = yylex();
+  /* newline */ nm_lex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( GT_OP, TOKEN );
-  /* newline */ yylex();
+  /* newline */ nm_lex();
 
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( GE_OP, TOKEN );
-  /* newline */ yylex();
-  TOKEN = yylex();
+  /* newline */ nm_lex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( GE_OP, TOKEN );
-  /* newline */ yylex();
+  /* newline */ nm_lex();
 
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( AND_OP, TOKEN );
-  /* newline */ yylex();
+  /* newline */ nm_lex();
 
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( OR_OP, TOKEN );
-  /* newline */ yylex();
+  /* newline */ nm_lex();
 
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( NOT_OP, TOKEN );
-  /* newline */ yylex();
+  /* newline */ nm_lex();
 
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( NEQV_OP, TOKEN );
-  /* newline */ yylex();
+  /* newline */ nm_lex();
 
-  TOKEN = yylex();
+  TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( EQV_OP, TOKEN );
-  /* newline */ yylex();
+  /* newline */ nm_lex();
 
-  fclose( yyin );
+  fclose( nm_in );
   remove( testInput );
 }
 

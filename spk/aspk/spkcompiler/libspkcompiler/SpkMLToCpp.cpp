@@ -1,6 +1,7 @@
 #include "SpkMLToCpp.h"
 #include "SpkCompilerUtil.h"
 #include "ClientTranslator.h"
+#include "nonmem.h"
 #include "nonmem/NonmemTranslator.h"
 
 #include <xercesc/util/PlatformUtils.hpp>

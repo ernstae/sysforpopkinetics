@@ -2,7 +2,7 @@
 /**
  * @file lex_explang.c
  * This file is generated from the FLEX lexical analyzer 
- * specification file, nonmem/lex_explang.l, which defines the yylex() for NONMEM.
+ * specification file, nonmem/lex_explang.l, which defines the nm_lex() for NONMEM.
  * @ingroup nonmem
  */
 /**
@@ -14,7 +14,8 @@
 
 #define YYSTYPE yystype
 
-extern void yyerror(char*);
+extern void nm_error(char*);
+extern union nm_lval;
 
 //
 // A global counter for keeping track of # of lines read so far.
@@ -29,6 +30,7 @@ extern int gSpkExpLines;
 extern int gSpkExpErrors;
 
 %}
+%option noyywrap
 
 tok_letter                  [ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz]
 tok_digit                   [0123456789]
@@ -85,15 +87,15 @@ tok_endif                   "ENDIF"
 
 %%
 [ \t]                       { /* white space; ignore */ }
-[;].*/\n                    { yylval.c_str = (char*)strdup(yytext+1);  ++gSpkExpLines; return COMMENT; }
+[;].*/\n                    { nm_lval.c_str = (char*)strdup(nm_text+1);  ++gSpkExpLines; return COMMENT; }
 {tok_engineering_notation}  { 
-                              yylval.c_str = (char*)strdup(yytext);
+                              nm_lval.c_str = (char*)strdup(nm_text);
                               int i;
-                              for( i=0; i<yyleng; i++ )
-                                 yylval.c_str[i] = tolower(yylval.c_str[i]);  
+                              for( i=0; i<nm_leng; i++ )
+                                 nm_lval.c_str[i] = tolower(nm_lval.c_str[i]);  
                               return ENG_NOTATION; 
                             }
-{tok_significand}           { yylval.c_str = (char*)strdup(yytext);  return SIGNIFICAND; }
+{tok_significand}           { nm_lval.c_str = (char*)strdup(nm_text);  return SIGNIFICAND; }
 {tok_exit}                  { return EXIT;; }
 {tok_if}                    { return IF; }
 {tok_else}                  { return ELSE; }
@@ -102,8 +104,8 @@ tok_endif                   "ENDIF"
 {tok_open_array_elem_list}  { return OPEN_ARRAY_ELEM_LIST; }
 {tok_close_array_elem_list} { return CLOSE_ARRAY_ELEM_LIST; }
 {tok_power_op}              { return POWER_OP; }
-{tok_digit_string}          { yylval.c_str = (char*)strdup(yytext);  return DIGIT_STRING; }
-{tok_defined_function}      { yylval.c_str = (char*)strdup(yytext);  return DEFINED_UNARY_FUNCTION; }
+{tok_digit_string}          { nm_lval.c_str = (char*)strdup(nm_text);  return DIGIT_STRING; }
+{tok_defined_function}      { nm_lval.c_str = (char*)strdup(nm_text);  return DEFINED_UNARY_FUNCTION; }
 {tok_true}                  { return TRUE; }
 {tok_false}                 { return FALSE; }
 {tok_eq_op}                 { return EQ_OP; }
@@ -117,28 +119,28 @@ tok_endif                   "ENDIF"
 {tok_not_op}                { return NOT_OP; }
 {tok_xor_op}                { return NEQV_OP; }
 {tok_not_xor_op}            { return EQV_OP; }
-{tok_named_constant}        { if( yyleng > 6 ) 
+{tok_named_constant}        { if( nm_leng > 6 ) 
                               {  
                                  gSpkExpErrors++;
                                  char mess[128];
                                  strcpy( mess, "The length of a variable name, " );
-                                 strcat( mess, yytext );
+                                 strcat( mess, nm_text );
                                  strcat( mess, ", exceeds 6!"  );
-                                 yyerror( (char*)strdup( mess ) );
-                                 //yyterminate(); 
+                                 nm_error( (char*)strdup( mess ) );
+                                 //nm_terminate(); 
                               }
-                              yylval.c_str = (char*)strdup(yytext); 
+                              nm_lval.c_str = (char*)strdup(nm_text); 
                               int i;
-                              for( i=0; i<yyleng; i++ )
-                                 yylval.c_str[i] = tolower( yylval.c_str[i] ); 
+                              for( i=0; i<nm_leng; i++ )
+                                 nm_lval.c_str[i] = tolower( nm_lval.c_str[i] ); 
                               return NAME; 
                             }
-{tok_special_character}     { yylval.ch = yytext[0];  return yytext[0]; }
+{tok_special_character}     { nm_lval.ch = nm_text[0];  return nm_text[0]; }
 <<EOF>>                     { return EOF_MARKER; }
 \n                          { ++gSpkExpLines; return '\n'; }
 .                           { 
                               gSpkExpErrors++;  
-                              yyerror( "Invalid charactor!" ); 
-                              // yyterminate();  
+                              nm_error( "Invalid charactor!" ); 
+                              // nm_terminate();  
                             }
 %%

@@ -123,14 +123,14 @@ void pred(   enum nonmem::TRANS,
   
   FILE * pPRED_in = fopen( pred_i_filename, "r" );
   assert( pPRED_in );
-  yyin = pPRED_in;  
-  //yydebug = 1;
+  nm_in = pPRED_in;  
+  //YYDEBUG = 1;
   gSpkExpErrors = 0;
   gSpkExpLines  = 0;
   gSpkExpSymbolTable = table;
-  yyrestart( yyin );
+  nm_restart( nm_in );
 
-  yyparse();
+  nm_parse();
 
   fclose( pPRED_in );
 
@@ -193,7 +193,7 @@ void advan2( enum nonmem::TRANS trans,
 
 	  FILE * pPK_handler = fopen( pk_filename, "r" );
 	  assert( pPK_handler );
-	  yyin = pPK_handler;
+	  nm_in = pPK_handler;
 
           FILE * pPK_output = fopen( "pk_output_filename", "w" );
 	  gSpkExpErrors = 0;
@@ -294,7 +294,7 @@ void advan2( enum nonmem::TRANS trans,
 	      exit(-1);
 	    }
 
-	  yyparse();
+	  nm_parse();
 
 	  fclose(pPK_handler);
           fclose(pPK_output);
