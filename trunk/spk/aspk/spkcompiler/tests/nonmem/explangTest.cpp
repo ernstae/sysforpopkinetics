@@ -80,7 +80,7 @@ void explangTest::testScalarAssignmentToScalar()
 
   nm_parse();
 
-  CPPUNIT_ASSERT( table.findi( "a" ) != table.end() );
+  CPPUNIT_ASSERT( table.findi( "a" ) != Symbol::empty() );
   fclose( pInput );
   fclose( gSpkExpOutput );
 
@@ -233,7 +233,7 @@ void explangTest::testVectorElementAssignmentToScalar()
 
   nm_parse();
 
-  CPPUNIT_ASSERT( table.findi( "a" ) != table.end() );
+  CPPUNIT_ASSERT( table.findi( "a" ) != Symbol::empty() );
   
   fclose( pInput );
   fclose( gSpkExpOutput );
@@ -311,8 +311,8 @@ void explangTest::testFunctions()
 
   nm_parse();
 
-  CPPUNIT_ASSERT( table.findi( "a" ) != table.end() );
-  CPPUNIT_ASSERT( table.findi( "b" ) != table.end() );
+  CPPUNIT_ASSERT( table.findi( "a" ) != Symbol::empty() );
+  CPPUNIT_ASSERT( table.findi( "b" ) != Symbol::empty() );
   
   fclose( pInput );
   fclose( gSpkExpOutput );
@@ -501,7 +501,7 @@ void explangTest::testIfStmt()
 
   nm_parse();
 
-  CPPUNIT_ASSERT( table.findi( "a" ) != table.end() );
+  CPPUNIT_ASSERT( table.findi( "a" ) != Symbol::empty() );
   
   fclose( pInput );
   fclose( gSpkExpOutput );
@@ -629,8 +629,8 @@ void explangTest::testIfThenStmt()
 
   nm_parse();
 
-  CPPUNIT_ASSERT( table.findi( "c" ) != table.end() );
-  CPPUNIT_ASSERT( table.findi( "a" ) != table.end() );
+  CPPUNIT_ASSERT( table.findi( "c" ) != Symbol::empty() );
+  CPPUNIT_ASSERT( table.findi( "a" ) != Symbol::empty() );
   fclose( pInput );
   fclose( gSpkExpOutput );
 
