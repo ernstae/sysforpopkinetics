@@ -285,8 +285,9 @@ void AkronBtimesCTest::testValarray()
 	      valarray<double> B( iBRows * iBCols );
 	      valarray<double> C( iCRows * iCCols );
 	      valarray<double> D( iDRows * iDCols );
-	      valarray<double> KronD( iARows * iBRows * iACols * iBCols );
-	      
+              valarray<double> AkronB( iARows * iBRows * iACols * iBCols );
+	      valarray<double> AkBC( iDRows * iDCols );
+
 	      int x;
 	      for( x=0; x<iARows*iACols; x++ )
 		A[x] = (double)rand() / 10000.0;
@@ -297,7 +298,8 @@ void AkronBtimesCTest::testValarray()
 	      for( x=0; x<iCRows*iCCols; x++ )
 		C[x] = (double)rand() / 10000.0;
 	      
-	      KronD = multiply( kron(A,iACols, B, iBCols), iACols * iBCols, C, iCCols);
+              AkronB = kron(A, iACols, B, iBCols);
+	      AkBC   = multiply( AkronB, iACols * iBCols, C, iCCols);
 	      //cout << "expected: " << DoubleMatrix( KronD, iDCols ) << endl;
 	      
 	      D     = AkronBtimesC( A, iACols, B, iBCols, C, iCCols );
@@ -305,7 +307,7 @@ void AkronBtimesCTest::testValarray()
 	      
 	      for( x = 0; x < iDRows * iDCols; x++)
 		  {
-		    double expected = KronD[x];
+		    double expected = AkBC[x];
 		    double actual   = D[x];
 		    CPPUNIT_ASSERT( fabs(actual-expected)/expected <= 0.001 );
 		  }
