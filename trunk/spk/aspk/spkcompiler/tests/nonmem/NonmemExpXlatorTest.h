@@ -19,6 +19,7 @@ public:
     virtual void setUp();
     virtual void tearDown();
 
+    void testSimplest();
     void testParse();
 };
 
