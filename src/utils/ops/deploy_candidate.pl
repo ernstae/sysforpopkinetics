@@ -137,7 +137,11 @@ foreach my $s ("aspkserver", "cspkserver") {
 
 exit 0 if (not $test);
 
-foreach my $d ("bin", "lib", "include") {
+# Sachiko 01/07/2005
+# Added "src" structure to be deployed as well.  "src" at this point
+# contains Brad's Monte Carlo source code files to be copied
+# into a job-working directory and built into a job-driver.
+foreach my $d ("bin", "lib", "include", "src") {
     rename "$tmp_dir/usr/local/$d/spkprod", "$tmp_dir/usr/local/$d/spktest";
 }
 
