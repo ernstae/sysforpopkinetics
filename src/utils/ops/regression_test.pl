@@ -18,7 +18,7 @@ my %file_to_compare = ( 'cerr' => 'compilation_error.xml',
 my $config_file = "regression_test.xml";
 
 my %opt = ();
-GetOptions (\%opt, 'help', 'man', 'dump-config', 'config-file=s') 
+GetOptions (\%opt, 'help', 'man', 'dump-config', 'ignore-candidate', 'config-file=s') 
     or pod2usage(-verbose => 0);
 pod2usage(-verbose => 1)  if (defined $opt{'help'});
 pod2usage(-verbose => 2)  if (defined $opt{'man'});
@@ -39,12 +39,14 @@ if (defined $opt{'dump-config'}) {
     exit 0;
 }
 $| = 1;
-print "executing 'deploy_candidate.pl --test' (this will take a while)";
 my $bit_bucket;
-$bit_bucket = `deploy_candidate.pl --test`;
-$? == 0
-    or die "could not execute 'deploy_candidate.pl --test'\n";
-print "\t\tOK\n";
+if (! defined $opt{'ignore-candidate'}) {
+    print "executing 'deploy_candidate.pl --test' (this will take a while)";
+    $bit_bucket = `deploy_candidate.pl --test`;
+    $? == 0
+	or die "could not execute 'deploy_candidate.pl --test'\n";
+    print "\t\tOK\n";
+}
 
 print "stopping the aspkserver test daemon";
 $bit_bucket = `/etc/rc.d/init.d/spkcmptestd stop`;
@@ -173,7 +175,7 @@ regression_test.pl -- test a candidate before deployment
 
 =head1 SYNOPSIS
 
-regression_test.pl [--help] [--man] [--dump-config] [--config-file=file]
+regression_test.pl [--help] [--man] [--dump-config] [--ignore-candidate] [--config-file=file]
 
 =head1 ABSTRACT
 
@@ -233,6 +235,13 @@ Print the manual page and exit.
 
 Dump out the data structure parsed from the xml configuration file 
 and exit.
+
+=item B<--ignore-candidate>
+
+Useful if this program is used for system testing rather than regression
+testing.  In regression testing, when used as part of the deployment 
+process, the most recent deployment candidate is copied into the test
+environment.  With this option, that copy does not occur.
 
 =item B<--config-file=file>
 
