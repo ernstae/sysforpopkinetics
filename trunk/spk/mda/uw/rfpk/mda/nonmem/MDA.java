@@ -23,7 +23,7 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import javax.net.ssl.*;
-import javax.swing.JOptionPane; 
+import javax.swing.JOptionPane;
 
 /**
  * This is the main class of the Model Design Agent application. 
@@ -41,7 +41,7 @@ public class MDA
     {
         if(args.length != 0)
         {
-            // Create lock file if there is none
+            // Create a lock file if there is none
             String path = System.getProperty("user.home") + System.getProperty("file.separator") +
                           "." + args[2] + "_lock";
 
@@ -53,26 +53,25 @@ public class MDA
                     lockFile.deleteOnExit();
                 else
                 {
-                    JOptionPane.showMessageDialog(null, "A MDA is already runing.", 
-                                                  "Staring MDA Error",                     
+                    JOptionPane.showMessageDialog(null, "A MDA is already runing in the session.",
+                                                  "Staring MDA Error",
                                                   JOptionPane.ERROR_MESSAGE);
                     System.exit(0);
                 }
             }
             catch(IOException ioe )
             {
-                JOptionPane.showMessageDialog(null, "Error creating lock file", 
-                                              "File Error",                     
+                JOptionPane.showMessageDialog(null, "Error creating lock file",
+                                              "File Error",
                                               JOptionPane.ERROR_MESSAGE);
             }
-        }   
-        theApp = new MDA();                       // Create the application object
-        theApp.init(args);                        // ...and initialize it
+        }
+        new MDA().init(args);
     }
 
     private void init(String[] args)
     {
-        window = new MDAFrame("Model Design Agent", args);
+        MDAFrame window = new MDAFrame("Model Design Agent", args);
         Toolkit theKit = window.getToolkit();           // Get the window toolkit
         Dimension wndSize = theKit.getScreenSize();     // Get screen size
 
@@ -81,8 +80,4 @@ public class MDA
                          3*wndSize.width/4, 3*wndSize.height/4);   // Size
         window.setVisible(true);                        // Display the window
     }
-
-    private static MDAFrame window;                     // The application window
-    private static MDA theApp;                          // The application object
 }
-

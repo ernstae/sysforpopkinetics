@@ -85,12 +85,16 @@ public class MDAIterator implements StepIterator{
     private boolean isOnline = false;
     private Server server = null;
     private Properties reload = null;
-    private MDAFrame frame = null;
     private boolean isReload = false;
     private boolean isDataXML = false;
-    private String dataXML = null;
+    private String[] dataXML = new String[2];
+    private String[] datasetName = new String[2];
     private JFileChooser files = null;
     private long jobId = 0;
+    private boolean isLast = false;
+
+    /** MDA Frame */
+    protected MDAFrame frame = null;
     
     /** Constructor to create a MDAIterator object.
      * @param the web server associated with the MDA.
@@ -189,9 +193,16 @@ public class MDAIterator implements StepIterator{
 
     /** Set data XML.
      * @param s a String containing the data XML.
+     * @param i the index of the data XML.
      */    
-    public void setDataXML(String s) { dataXML = s; }
-        
+    public void setDataXML(String s, int i) { dataXML[i] = s; }
+    
+    /** Set dataset name.
+     * @param s a String containing the dataset name.
+     * @param i the index of the data XML.
+     */    
+    public void setDatasetName(String s, int i) { datasetName[i] = s; }
+    
     /** Set which ADVAN subroutine is used.
      * @param i an int, the ADVAN number.
      */    
@@ -240,8 +251,13 @@ public class MDAIterator implements StepIterator{
      /** Get if $ESTIMATION is included in the analysis.
      * @return a boolean, true if $ESTIMATION is in analysis, false if otherwise.
      */    
-    public boolean getIsEstimation() { return isEstimation; };    
-       
+    public boolean getIsEstimation() { return isEstimation; };
+    
+     /** Get if $SIMULATION is included in the analysis.
+     * @return a boolean, true if $SIMULATION is in analysis, false if otherwise.
+     */    
+    public boolean getIsSimulation() { return isSimulation; };
+    
     /** Get if it is an individual analysis.
      * @return a boolean, true if individual analysis, false if otherwise.
      */    
@@ -323,14 +339,21 @@ public class MDAIterator implements StepIterator{
     public JFileChooser getFileChooser() { return files; } 
     
     /** Get SPK input data XML document.
+     * @param i the index of the data XML.
      * @return a String object containing SPK data XML document.
      */    
-    public String getDataXML() { return dataXML; }
+    public String getDataXML(int i) { return dataXML[i]; }
+     
+    /** Get SPK input dataset name.
+     * @param i the index of the data XML.
+     * @return a String object containing SPK dataset name.
+     */    
+    public String getDatasetName(int i) { return datasetName[i]; }
     
     /** Get reload control records.
      * @return a Properties object containing the reload control records.
      */    
-    public Properties getReload() { return reload; }      
+    public Properties getReload() { return reload; } 
     
     /** Get GettingStarted object reference.
      * @return a GettingStarted object reference.
@@ -426,13 +449,18 @@ public class MDAIterator implements StepIterator{
     public void lastStep(){
         current = actual;
         actual = steps.size() - 1;
+        isLast = current == actual - 1 && !isFirst? false:true;
     }
     
-    /** Determine is finish ids allowed.
+    /** Determine is finish is allowed.
      * @return a boolean, true for finish is allowed, false for otherwise.
      */    
     public boolean canFinish(){
-        return true;
+        boolean finish = true;
+        if(isLast) 
+            finish = false;
+        isLast = false;
+        return finish;
     }
     
     /** Determine if the next step exists.
@@ -466,22 +494,30 @@ public class MDAIterator implements StepIterator{
     public int reloadInput()
     {
         String text = null;
-        Object[] possibleValues = {"Text openned in the editor", "A file in the file system"};
-        if(((String)JOptionPane.showInputDialog(null, "Choose a way to load it:", "Input",
-                                                JOptionPane.INFORMATION_MESSAGE, null,
-                                                possibleValues, 
-                                                possibleValues[0])).equals("Text openned in the editor"))
+        Object[] possibleValues = {"Read the text in the editor.", "Open a file from the system."};
+        String way = (String)JOptionPane.showInputDialog(null, "Choose a way to load it:", "Input",
+                                                         JOptionPane.INFORMATION_MESSAGE, null,
+                                                         possibleValues, 
+                                                         possibleValues[0]);
+        if(way == null)
+            return -1;
+        if(way.equals((String)possibleValues[0]))
             text = frame.getEditorText();
-        else
+        if(way.equals((String)possibleValues[1]))
         {
-            text = frame.openOperation()[1];
+            String[] file = frame.openOperation();
+            if(file != null)
+                text = file[1];
+            else
+                return -1;
         }
+
         if(text.indexOf("<spksource>") != -1 && text.indexOf("<spkdata") != -1 && 
            text.indexOf("<spkmodel>") != -1)
         {
             int index1 = text.indexOf("<spkdata");
             int index2 = text.indexOf("<spkmodel");        
-            dataXML = text.substring(index1 - 22, index2 - 22);
+            dataXML[0] = text.substring(index1 - 22, index2 - 22);
             isDataXML = true;
             parseControl(XMLReader.getModelArchive(text.substring(index2 - 22)));           
         }

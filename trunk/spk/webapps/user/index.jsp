@@ -42,7 +42,7 @@ author: Jiaji Du
 	</tr> 
 	<tr vAlign=top> <td colSpan=3><p>&nbsp;</p></td></tr> 
 	<tr>
-	  <td valign=top width=150 height="0" colspan="1" rowspan="1">
+	  <td valign=top width=112 height="0" colspan="1" rowspan="1">
 <%@ include file="quicklinks.shtml" %>  
 	  </td>
 	  <td colspan=1 vAlign=top width=10><img alt="trans gif" height=5 src="./images/white.gif" width=10/>
@@ -53,13 +53,22 @@ author: Jiaji Du
               ${fn:escapeXml(param.errorMsg)}
             </font>
             </p>
-            <p>
-                To use SPK you need to have Java Runtime Environment (JRE) on your computer. 
+            <p><font size=3>
+                Please follow these instructions before you attempt to use SPK:<br>
+                 - You need to have Java Runtime Environment (JRE) on your computer. 
                 Instructions for downloading and installing JRE are provided 
                 <a href="instructWin.jsp">here</a> for Windows users 
-                and <a href="instructLin.jsp">here</a> for Linux users.  
-                If you would use R for SPK output display and post-processing analysis, you
+                and <a href="instructLin.jsp">here</a> for Linux users.<br>
+                 - If you would like to use R for SPK output display and post-processing analysis, you
                 may download and install R from <a href="http://www.r-project.org/">here</a>.
+                Please note that for this option to work you have to manually set the environment variable PATH
+                to the bin subdirectory of the
+                R installation directory.  For example, if you are using Windows and you have
+                installed R in C:\Program Files, you should set PATH to 
+                "C:\Program Files\R\rw2001\bin",
+                where 2001 represents the installed version (in this case 2.0.1) of R. This can be accomplished by
+                accessing the Control Panel, opening the System component, selecting the
+                Advanced tab and selecting "Environment Variables".
             </p>
 	    <p>
                 Please log into MySPK, the "members only" section of SPK. When you are done, please <a href="logout.jsp">log out</a>.
@@ -95,7 +104,7 @@ author: Jiaji Du
                 selected group of users.  If you think that you would be a good
                 candidate for membership, please contact 
                 <a href="mailto:vicini@u.washington.edu">Dr. Paolo Vicini</A>, 
-                the RFPK Principal Investigator.              
+                the RFPK Principal Investigator.  </font>            
 	  </td>
 	</tr>
       </tbody>

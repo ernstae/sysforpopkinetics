@@ -8,6 +8,7 @@
       <Properties>
         <Property name="lineWrap" type="boolean" value="true"/>
         <Property name="rows" type="int" value="2"/>
+        <Property name="wrapStyleWord" type="boolean" value="true"/>
       </Properties>
       <Events>
         <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextArea1KeyTyped"/>

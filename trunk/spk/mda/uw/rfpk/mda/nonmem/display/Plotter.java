@@ -19,8 +19,11 @@ distribution.
 package uw.rfpk.mda.nonmem.display;
 
 import uw.rfpk.mda.nonmem.Utility;
-import javax.swing.JPanel; 
+import javax.swing.JPanel;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Color;
@@ -30,10 +33,15 @@ import java.awt.Dimension;
 import java.awt.geom.*;
 import java.awt.Point;
 import java.awt.print.*;
+import java.awt.image.*;
 import java.text.DecimalFormat;
 import java.awt.event.MouseEvent;
 import javax.print.attribute.*;
 import java.awt.Polygon;
+import java.util.Vector;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 /** 
  * This class implements a XY plotter.
  * @author  Jiaji Du
@@ -54,70 +62,191 @@ public class Plotter extends JPanel
      * @param xLine the flag specifies if x = 0 line is required.
      * @param yLine the flag specifies if y = 0 line is required.
      * @param uLine the flag specifies if unit slope line is required.
-     * @param type the symbol types of the curves in an int array. Each element represents:  
+     * @param rLine the flag specifies if regression line is required.
+     * @param pLine the flag specifies if percentile line is required.
+     * @param hGrid the flag specifies if horizontal grid lines are required.
+     * @param vGrid the flag specifies if vertical grid lines are required.
+     * @param regression the name of the selected curve for regression.
+     * @param percentage the percentage of the percentiles for the regression.
+     * @param addedLineColor the colors of the added lines in a Color array. Each element represents:
+     *        "red", "yellow", "orange", "blue", "pink", "magenta", "cyan", "green", "gray", or "black".
+     * @param symbol the symbol types of the curves in an int array. Each element represents:
      *        "dot", "circle", "filled square", "square", "filled up triangle", "up triangle",
      *        "filled down triangle", "down triangle", "cross", "check mark", "thick solid line",
      *        "thin solid line" or "dashed line".
-     * @param color the colors of the curves in a Color array. Each element represents: 
-     *        "red", "yellow", "orange", "blue", "pink", "magenta", "cyan", "green", "gray", or "black".
-     * @param addedLineColor the colors of the added lines in a Color array. Each element represents: 
+     * @param color the colors of the curves in a Color array. Each element represents:
      *        "red", "yellow", "orange", "blue", "pink", "magenta", "cyan", "green", "gray", or "black".
      * @param legendLocation the location of the legend: "Inside", "Top", "Right", or null if
      *        not showing the legend.
-     * @param showHorizontalGrid true for horizontal grid lines are to be shown, false otherwise.
-     * @param showVerticalGrid true for vertical grid lines are to be shown, false otherwise.
-     * @param showTicksOnX true for ticks on X axis are to be shown, false otherwise. 
-     * @param showTicksOnY true for ticks on Y axis are to be shown, false otherwise.
+     * @param nHDivi number of horizontal divisions.
+     * @param nVDivi number of vertical divisions.
+     * @param markLengthX length of division marks on X axis.
+     * @param markLengthY length of division marks on Y axis.
+     * @param nTicksX number of ticks on X axis between adjacent vertical grid.
+     * @param nTicksY number of ticks on X axis between adjacent horizontal grid.
+     * @param tickLengthX length of ticks on X axis.
+     * @param tickLengthY length of ticks on Y axis.
      * @param maxX the upper bound of X.
      * @param minX the lower bound of X.
      * @param maxY the upper bound of Y.
      * @param minY the lower bound of Y.
+     * @param titleFont the title font.
+     * @param labelFont the label font.
+     * @param legendFont the legend font.
+     * @param numberFont the number font.
+     * @param topInset the additional top inset.
+     * @param bottomInset the additional bottom inset.
+     * @param leftInset the additional left inset.
+     * @param rightInset the additional right inset.
+     * @param isExpX the flag specifies if the X numerical lables use exponential expression.
+     * @param isExpY the flag specifies if the Y numerical lables use exponential expression.
+     * @param isLogX the flag specifies if X axis is in log scale.
+     * @param isLogY the flag specifies if X axis is in log scale.
+     * @param nDigitX number of digits right to the decimal point of the X numerical lable.
+     * @param nDigitY number of digits right to the decimal point of the Y numerical lable.
      */
-    public Plotter(double[][] dataX,
-                   double[][] dataY,
-                   String title,
-                   String labelX,
-                   String labelY,
-                   String[] name,
-                   int[] type,
-                   Color[] color,
-                   boolean xLine,
-                   boolean yLine,
-                   boolean uLine,
-                   Color[] addedLineColor,
-                   String legendLocation,
-                   boolean showHorizontalGrid,
-                   boolean showVerticalGrid,
-                   boolean showTicksOnX,
-                   boolean showTicksOnY,
-                   double maxX,
-                   double minX,
-                   double maxY,
-                   double minY)
+    public Plotter(double[][] dataX, double[][] dataY, String title, String labelX, String labelY, 
+                   String[] name, int[] symbol, Color[] color, boolean xLine, boolean yLine, 
+                   boolean uLine, boolean rLine, boolean pLine, boolean hGrid, boolean vGrid, 
+                   String regression, String percentage, Color[] addedLineColor, 
+                   String legendLocation, int nHDivi, int nVDivi, int markLengthX, int markLengthY, 
+                   int nTickX, int nTickY, int tickLengthX, int tickLengthY, 
+                   double maxX, double minX, double maxY, double minY, 
+                   Font titleFont, Font labelFont, Font legendFont, Font numberFont, 
+                   int topInset, int bottomInset, int leftInset, int rightInset, 
+                   boolean isExpX, boolean isExpY, boolean isLogX, boolean isLogY, 
+                   int nDigitX, int nDigitY, JFrame frame)
     {
+        this.frame = frame;
 	this.dataX = dataX;
         this.dataY = dataY;
         this.title = title;
         this.labelX = labelX;
         this.labelY = labelY;
-        this.name = name;
-        this.type = type;
+        nCurve = dataX.length;
+        if(xLine || yLine || uLine || rLine || pLine)
+        {    
+            int more = 0;
+            if(xLine) more++;
+            if(yLine) more++;
+            if(uLine) more++;
+            if(rLine) more++;
+            if(pLine) more++;
+            this.name = new String[nCurve + more];
+            this.symbol = new int[nCurve + more];
+            legendColor = new Color[nCurve + more];            
+            for(int i = 0; i < nCurve; i++)
+            {
+                this.name[i] = name[i];
+                this.symbol[i] = symbol[i];
+                legendColor[i] = color[i];
+            }
+            more = nCurve;
+            if(xLine)
+            {
+                this.name[more] = "X = 0";
+                this.symbol[more] = 11;
+                legendColor[more++] = addedLineColor[0];
+            }
+            if(yLine)
+            {
+                this.name[more] = "Y = 0";
+                this.symbol[more] = 11;
+                legendColor[more++] = addedLineColor[1];
+            }
+            if(uLine)
+            {
+                this.name[more] = "X = Y";
+                this.symbol[more] = 11;
+                legendColor[more++] = addedLineColor[2];
+            }
+            if(rLine)
+            {
+                this.name[more] = regression + " Regression";
+                this.symbol[more] = 10;
+                legendColor[more++] = addedLineColor[3];
+                int i = -1;
+                while(!regression.equals(name[++i]));
+                regressionParameters(dataX[i], dataY[i]);                
+            }
+            if(pLine)
+            {
+                this.name[more] = percentage + " Percentile";
+                this.symbol[more] = 12;
+                legendColor[more] = addedLineColor[4];
+            }            
+        }
+        else
+        {
+            this.name = name;
+            this.symbol = symbol;
+            legendColor = color;
+        }
         this.color = color;
         this.xLine = xLine;
         this.yLine = yLine;
         this.uLine = uLine;
+        this.rLine = rLine;
+        this.pLine = pLine;
+        this.hGrid = hGrid;
+        this.vGrid = vGrid;
+        this.isLogX = isLogX;
+        this.isLogY = isLogY;
+        this.regression = regression;
+        this.percentage = percentage;
         this.addedLineColor = addedLineColor;
         this.legendLocation = legendLocation;
-        this.showHorizontalGrid = showHorizontalGrid;
-        this.showVerticalGrid = showVerticalGrid;
-        this.showTicksOnX = showTicksOnX;
-        this.showTicksOnY = showTicksOnY;
+        this.nHDivi = nHDivi;
+        this.nVDivi = nVDivi;
+        this.markLengthX = markLengthX;
+        this.markLengthY = markLengthY;
+        this.nTickX = nTickX;
+        this.nTickY = nTickY;
+        this.tickLengthX = tickLengthX;
+        this.tickLengthY = tickLengthY;
         this.maxX = maxX;
-        this.minX = minX;        
+        this.minX = minX;
         this.maxY = maxY;
         this.minY = minY;
+        this.titleFont = titleFont;
+        this.labelFont = labelFont;
+        this.legendFont = legendFont;
+        this.numberFont = numberFont;
+        this.topInset += topInset;
+        this.bottomInset += bottomInset;
+        if(rLine) this.bottomInset += 20;
+        this.leftInset += leftInset;
+        this.rightInset += rightInset;        
         if(legendLocation != null)
             start = null;
+        dFormat = new DecimalFormat("0.000E00");
+        nFormat = new DecimalFormat("0.0000");
+        String form = "";
+        if(isExpX)
+        {
+            for(int i = 0; i < nDigitX; i++)
+                form += "0";
+            formatX = new DecimalFormat("0." + form + "E00");
+        }
+        else
+        {
+            for(int i = 0; i < nDigitX; i++)
+                form += "#";
+            formatX = new DecimalFormat("###." + form);            
+        }
+        form = "";
+        if(isExpY)
+        {
+            for(int i = 0; i < nDigitY; i++)
+                form += "0";
+            formatY = new DecimalFormat("0." + form + "E00");
+        }
+        else
+        {
+            for(int i = 0; i < nDigitY; i++)
+                form += "#";
+            formatY = new DecimalFormat("###." + form);            
+        }     
         initComponents();
     }
     
@@ -127,8 +256,23 @@ public class Plotter extends JPanel
      * always regenerated by the Form Editor.
      */
     private void initComponents() {//GEN-BEGIN:initComponents
+        java.awt.GridBagConstraints gridBagConstraints;
+
         jPopupMenu1 = new javax.swing.JPopupMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
+        jDialog1 = new javax.swing.JDialog();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jSlider1 = new javax.swing.JSlider();
+        jPanel1 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
+        jTextField2 = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
 
         jMenuItem1.setText("Print");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
@@ -138,6 +282,127 @@ public class Plotter extends JPanel
         });
 
         jPopupMenu1.add(jMenuItem1);
+
+        jMenuItem2.setText("Save");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+
+        jPopupMenu1.add(jMenuItem2);
+
+        jDialog1.getContentPane().setLayout(new java.awt.GridBagLayout());
+
+        jDialog1.setTitle("Print Settings");
+        jDialog1.setLocationRelativeTo(jPanel1);
+        jDialog1.setModal(true);
+        jLabel1.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel1.setText("Select scaling factor for printing.");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.insets = new java.awt.Insets(11, 12, 9, 11);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jDialog1.getContentPane().add(jLabel1, gridBagConstraints);
+
+        jLabel3.setText("Right");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.insets = new java.awt.Insets(0, 16, 0, 4);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        jDialog1.getContentPane().add(jLabel3, gridBagConstraints);
+
+        jSlider1.setPreferredSize(new java.awt.Dimension(180, 16));
+        jSlider1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jSlider1StateChanged(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.insets = new java.awt.Insets(4, 12, 8, 12);
+        jDialog1.getContentPane().add(jSlider1, gridBagConstraints);
+
+        jButton1.setText("Preview");
+        jButton1.setMaximumSize(new java.awt.Dimension(82, 25));
+        jButton1.setMinimumSize(new java.awt.Dimension(82, 25));
+        jButton1.setPreferredSize(new java.awt.Dimension(82, 25));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jButton1);
+
+        jButton2.setText("Cancel");
+        jButton2.setMaximumSize(new java.awt.Dimension(82, 25));
+        jButton2.setMinimumSize(new java.awt.Dimension(82, 25));
+        jButton2.setPreferredSize(new java.awt.Dimension(82, 25));
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jButton2);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
+        jDialog1.getContentPane().add(jPanel1, gridBagConstraints);
+
+        jLabel4.setText("1.0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jDialog1.getContentPane().add(jLabel4, gridBagConstraints);
+
+        jLabel5.setText("Down");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.insets = new java.awt.Insets(0, 13, 0, 4);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        jDialog1.getContentPane().add(jLabel5, gridBagConstraints);
+
+        jTextField1.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jTextField1.setText("0.0");
+        jTextField1.setPreferredSize(new java.awt.Dimension(40, 19));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jDialog1.getContentPane().add(jTextField1, gridBagConstraints);
+
+        jTextField2.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jTextField2.setText("0.0");
+        jTextField2.setPreferredSize(new java.awt.Dimension(40, 19));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 12);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jDialog1.getContentPane().add(jTextField2, gridBagConstraints);
+
+        jLabel2.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel2.setText("Enter offsets in inches.");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 6, 12);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jDialog1.getContentPane().add(jLabel2, gridBagConstraints);
 
         setLayout(new java.awt.BorderLayout());
 
@@ -156,6 +421,117 @@ public class Plotter extends JPanel
         });
 
     }//GEN-END:initComponents
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        // Create an image to save
+        // Create a buffered image in which to draw
+        BufferedImage bufferedImage = new BufferedImage(plotWidth, plotHeight, 
+                                                        BufferedImage.TYPE_INT_RGB);
+    
+        // Create a graphics contents on the buffered image
+        Graphics2D g2d = bufferedImage.createGraphics();
+        g2d.setColor(Color.white);
+        g2d.fillRect(0, 0, plotWidth, plotHeight);
+        g2d.setColor(Color.black);
+        PageFormat format = new PageFormat();
+        format.setOrientation(PageFormat.PORTRAIT);
+        Paper paper = new Paper();
+        paper.setImageableArea(0, 0, plotWidth, plotHeight);
+        format.setPaper(paper);
+        Printable printer = new Printer();
+        try
+        {
+            printer.print(g2d, format, 0);
+            File file = new File("/home/jiaji/newimage.bmp");
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Save Image File");
+            fileChooser.removeChoosableFileFilter(fileChooser.getFileFilter());
+            fileChooser.addChoosableFileFilter(new MyFilter("jpg"));
+            fileChooser.addChoosableFileFilter(new MyFilter("png"));
+            int result = fileChooser.showSaveDialog(null);
+            if(result == fileChooser.APPROVE_OPTION)
+	    {
+                FileFilter filter = fileChooser.getFileFilter();
+                file = fileChooser.getSelectedFile();
+                String pathname = file.getPath();
+                String type = filter.getDescription();
+                if(pathname.indexOf(".") == -1)
+                    pathname += "." + type;
+                else
+                    pathname = pathname.substring(0, pathname.indexOf(".")) + "." + type;
+                ImageIO.write(bufferedImage, type, new File(pathname));
+            }
+        }
+        catch(PrinterException e)
+        {
+            JOptionPane.showMessageDialog(null, e, "Printing Error", JOptionPane.ERROR_MESSAGE);
+        }
+        catch (IOException e) 
+        {
+            JOptionPane.showMessageDialog(null, e, "File Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private class MyFilter extends FileFilter 
+    {
+        public MyFilter(String type)
+        {
+            this.type = type;    
+        }
+        
+        public boolean accept(File file) 
+        {
+            String filename = file.getName();
+            return filename.endsWith(type);
+        }
+        public String getDescription() {
+            return type;
+        }
+        
+        String type;
+    }
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        jDialog1.hide();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        try
+        {
+            scale = Double.parseDouble(jLabel4.getText());
+            xOff = (int)(Double.parseDouble(jTextField1.getText()) * 72);
+            yOff = (int)(Double.parseDouble(jTextField2.getText()) * 72);
+        }
+        catch(NumberFormatException e)
+        {
+            JOptionPane.showMessageDialog(null, e, "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        PrintPreview preview = new PrintPreview(frame, new Printer(), pageFormat);
+        preview.show();
+        if(!preview.isCancelled)
+        {
+            // Close print setting dialog.
+            jDialog1.dispose();
+            
+            // Set what to print.
+            printerJob.setPrintable(new Printer());            
+            try
+	    {
+                printerJob.print(attributes);
+            }
+            catch(PrinterException pe)
+	    {
+                JOptionPane.showMessageDialog(null, "Error printing " + pe,  // Display printing 
+                                              "Printer Error",               // error message
+                                              JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jSlider1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider1StateChanged
+        jLabel4.setText(String.valueOf(((double)(jSlider1.getValue() + 50)) / 100));
+    }//GEN-LAST:event_jSlider1StateChanged
 
     private void formMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseDragged
         if(legendLocation != null && (evt.getModifiers() & evt.BUTTON1_MASK) != 0 && start != null)
@@ -184,24 +560,16 @@ public class Plotter extends JPanel
     }//GEN-LAST:event_formMouseReleased
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-	// Get a PrinterJob object
-        PrinterJob printerJob = PrinterJob.getPrinterJob();
-        // Set what to print
-        printerJob.setPrintable(new Printer());
+        // Get a PrinterJob object and a PageFormat object.
+        printerJob = PrinterJob.getPrinterJob();
+        attributes = new HashPrintRequestAttributeSet();         
+        pageFormat = printerJob.pageDialog(attributes);
 
-        PrintRequestAttributeSet attributes = new HashPrintRequestAttributeSet();   
-        if(printerJob.printDialog(attributes))
-        { 
-            try
-	    {
-                printerJob.print(attributes);
-            }
-            catch(PrinterException pe)
-	    {
-                JOptionPane.showMessageDialog(null, "Error printing " + pe,  // Display printing 
-                                              "Printer Error",               // error message
-                                              JOptionPane.ERROR_MESSAGE);
-            }
+        // Show print setting dialog if pageFormat != null.
+        if(pageFormat != null)
+        {
+            jDialog1.setSize(227, 205);
+            jDialog1.show();
         }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
@@ -229,19 +597,21 @@ public class Plotter extends JPanel
         
         gc2D = ((Graphics2D)gc);
         gc2D.setPaintMode();
-        
+   
 	// Determine size of our display
         Dimension d = getSize();
         int width = 0;
         int height = 0;
         int top = 0;
+        int nX = (nTickX + 1) * nHDivi;
+        int nY = (nTickY + 1) * nVDivi; 
         
         // Determine size and location of legend
         double legendWidth = 0;
         double legendHeight = 0;
         if(legendLocation != null)
         {
-            gc2D.setFont(lf);
+            gc2D.setFont(legendFont);
             int nameWidth = gc.getFontMetrics().stringWidth(name[0]);
             for(int i = 0; i < name.length; i++)
             {
@@ -250,13 +620,13 @@ public class Plotter extends JPanel
             }
             legendWidth = nameWidth + 54;
             legendHeight = 8 + name.length * 12;
-
+            
             if(legendLocation.equals("Inside"))
             {
                 width = d.width - rightInset - leftInset;
                 height = d.height - bottomInset - topInset;
-                width = width / 25 * 25;
-                height = height / 25 * 25;
+                width = width / nX * nX;
+                height = height / nY * nY;
                 top = d.height - bottomInset - height;
                 legendX = leftInset + 5;
                 legendY = top + 5;
@@ -266,8 +636,8 @@ public class Plotter extends JPanel
             {
                 width = d.width - rightInset - leftInset;            
                 height = d.height - bottomInset - topInset - (int)legendHeight - 5;
-                width = width / 25 * 25;
-                height = height / 25 * 25;
+                width = width / nX * nX;
+                height = height / nY * nY;
                 top = d.height - bottomInset - height;
                 legendX = leftInset + width / 2 - legendWidth / 2;
                 legendY = top - legendHeight - 5;
@@ -277,8 +647,8 @@ public class Plotter extends JPanel
             {
                 width = d.width - rightInset - leftInset - (int)legendWidth + 5;
                 height = d.height - bottomInset - topInset;
-                width = width / 25 * 25;
-                height = height / 25 * 25;
+                width = width / nX * nX;
+                height = height / nY * nY;
                 top = d.height - bottomInset - height;
                 legendX = leftInset + width + 5;
                 legendY = top + height / 2 - legendHeight / 2;
@@ -288,10 +658,12 @@ public class Plotter extends JPanel
         {
             width = d.width - rightInset - leftInset;
             height = d.height - bottomInset - topInset;
-            width = width / 25 * 25;
-            height = height / 25 * 25;
+            width = width / nX * nX;
+            height = height / nY * nY;
             top = d.height - bottomInset - height;
         }
+        plotWidth = d.width; 
+        plotHeight = d.height;
         
 	// Draw axes
 	gc2D.drawRect(leftInset, top, width, height); 
@@ -315,46 +687,69 @@ public class Plotter extends JPanel
         double spanX = maxX - minX;        
         double spanY = maxY - minY;
         
-        // Draw grid
-        gc2D.setColor(Color.gray);
-        gc2D.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, 
-                                       BasicStroke.JOIN_BEVEL, 0, 
-                                       new float[]{5.0f, 2.0f}, 0));  
-        
-        if(showVerticalGrid)                               
-            for(int i = 1; i < 5; i++)
-                gc2D.drawLine(leftInset + i * width/5, top, 
-                              leftInset + i * width/5, top + height);
-        if(showHorizontalGrid)                               
-            for(int i = 1; i < 5; i++)                                       
-                gc2D.drawLine(leftInset,               top + i * height/5, 
-                              leftInset + width,       top + i * height/5);             
-
-        // Draw ticks
-        gc2D.setColor(Color.black); 
-        gc2D.setStroke(new BasicStroke());
-        int spacingX = width/25;
-        int spacingY = height/25;
-        int tickSize = 4;
-        for(int i = 1; i < 26; i++)
+        // Draw grid lines
+        if((hGrid && nVDivi != 1) || (vGrid && nHDivi != 1));
         {
-            if(i % 5 == 0)
-                tickSize = 6;
-            else
-                tickSize = 4;
-            if(!showTicksOnX && tickSize == 4)
-                continue;
-            gc2D.drawLine(leftInset + i * spacingX,     top, 
-                          leftInset + i * spacingX,     top + tickSize);
-            gc2D.drawLine(leftInset + i * spacingX,     top + height - tickSize, 
-                          leftInset + i * spacingX,     top + height);
-           
-            if(!showTicksOnY && tickSize == 4)
-                continue;
-            gc2D.drawLine(leftInset,                    top + i * spacingY, 
-                          leftInset + tickSize,         top + i * spacingY);
-            gc2D.drawLine(leftInset + width - tickSize, top + i * spacingY, 
-                          leftInset + width,            top + i * spacingY);
+            gc2D.setColor(Color.gray);
+            gc2D.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, 
+                                           BasicStroke.JOIN_BEVEL, 0, 
+                                           new float[]{5.0f, 2.0f}, 0));  
+        
+            if(hGrid)
+                for(int i = 1; i < nHDivi; i++)
+                    gc2D.drawLine(leftInset + i * width/nHDivi, top, 
+                                  leftInset + i * width/nHDivi, top + height);
+            if(vGrid)
+                for(int i = 1; i < nVDivi; i++)                                       
+                    gc2D.drawLine(leftInset,               top + i * height/nVDivi, 
+                                  leftInset + width,       top + i * height/nVDivi);
+                                           
+            gc2D.setColor(Color.black);                              
+            gc2D.setStroke(new BasicStroke());                                           
+        }
+
+        // Draw divisions
+        if(nHDivi != 1 && markLengthX != 0)
+            for(int i = 1; i < nHDivi; i++)
+            {
+                gc2D.drawLine(leftInset + i * width/nHDivi, top, 
+                              leftInset + i * width/nHDivi, top + markLengthX);
+                gc2D.drawLine(leftInset + i * width/nHDivi, top + height - markLengthX, 
+                              leftInset + i * width/nHDivi, top + height);                
+            }
+        if(nVDivi != 1 && markLengthY != 0)
+            for(int i = 1; i < nVDivi; i++)
+            {
+                gc2D.drawLine(leftInset,                       top + i * height/nVDivi,
+                              leftInset + markLengthY,         top + i * height/nVDivi);
+                gc2D.drawLine(leftInset + width - markLengthY, top + i * height/nVDivi,
+                              leftInset + width,               top + i * height/nVDivi);
+            }
+                
+        // Draw ticks
+        if(nTickX != 0 && tickLengthX != 0)
+        {
+            int spacingX = width/(nTickX + 1)/nHDivi;
+            for(int i = 1; i < (nTickX + 1)*nHDivi; i++)
+            {
+                if(i % nHDivi == 0) continue;
+                gc2D.drawLine(leftInset + i * spacingX,     top, 
+                              leftInset + i * spacingX,     top + tickLengthX);
+                gc2D.drawLine(leftInset + i * spacingX,     top + height - tickLengthX, 
+                              leftInset + i * spacingX,     top + height);
+            }
+        }
+        if(nTickY != 0 && tickLengthY != 0)
+        {
+            int spacingY = height/(nTickY + 1)/nVDivi;
+            for(int i = 1; i < (nTickY + 1)*nVDivi; i++)
+            {
+                if(i % nVDivi == 0) continue;                
+                gc2D.drawLine(leftInset,                       top + i * spacingY, 
+                              leftInset + tickLengthY,         top + i * spacingY);
+                gc2D.drawLine(leftInset + width - tickLengthY, top + i * spacingY, 
+                              leftInset + width,               top + i * spacingY);
+            }
         }
         
         // Draw x = 0 line, y = 0 line, slope = 1 line
@@ -392,11 +787,30 @@ public class Plotter extends JPanel
                           top + height - (int)((point2 - minY) * height / spanY));
         }
                 	         
-	// Draw the data curve
-        newX = new int[dataX.length][];
-        newY = new int[dataY.length][];
-
-        for(int i = 0; i < dataX.length; i++)
+	// Draw the data curves
+        if(isLogX)
+        {   
+            double log10 = Math.log(10);
+            for(int i = 0; i < nCurve; i++)
+                for(int j = 0; j < dataX[i].length; j++)
+                    dataX[i][j] = Math.log(dataX[i][j]) / log10;
+            minX = Math.log(minX) / log10;
+            maxX = Math.log(maxX) / log10;
+            isLogX = false;
+        }
+        if(isLogY)
+        {    
+            double log10 = Math.log(10);
+            for(int i = 0; i < nCurve; i++)
+                for(int j = 0; j < dataY[i].length; j++)
+                    dataY[i][j] = Math.log(dataY[i][j]) / log10;
+            minY = Math.log(minY) / log10;
+            maxY = Math.log(maxY) / log10;
+            isLogY = false;
+        }
+        newX = new int[nCurve][];
+        newY = new int[nCurve][];        
+        for(int i = 0; i < nCurve; i++)
         {
             newX[i] = new int[dataX[i].length];
             newY[i] = new int[dataY[i].length];
@@ -406,33 +820,38 @@ public class Plotter extends JPanel
 	        newX[i][j] = (int)(leftInset + (dataX[i][j] - minX)/spanX * width); 
                 newY[i][j] = (int)(height + top - (dataY[i][j] - minY)/spanY * height);
             }
-            drawCurve(gc2D, type[i], i);
+            drawCurve(gc2D, symbol[i], i);
         }
 	
-	// Draw labels
-        gc2D.setFont(pf);
+	// Draw numbers
+        gc2D.setFont(numberFont);
         gc2D.setColor(Color.black);
-        DecimalFormat f = new DecimalFormat("0.00E00");
-        for(int i = 0; i < 6; i++)
-        { 
-            String value = Utility.formatData(6, f.format(minX + spanX*i/5));
-            gc2D.drawString(value, 
-                            leftInset + width*i/5 - gc.getFontMetrics().stringWidth(value)/2, 
-                            top + height + 18); 
-            value = Utility.formatData(6, f.format(maxY - spanY*i/5));
-            gc2D.drawString(value, 
+        for(int i = 0; i <= nHDivi; i++)
+        {
+            String value = formatX.format(minX + spanX*i/nHDivi);
+            gc2D.drawString(value,
+                            leftInset + width*i/nHDivi - gc.getFontMetrics().stringWidth(value)/2, 
+                            top + height + 18);
+        }
+        for(int i = 0; i <= nVDivi; i++)
+        {
+            String value = formatY.format(maxY - spanY*i/nVDivi);
+            gc2D.drawString(value,
                             leftInset - gc.getFontMetrics().stringWidth(value) - 2, 
-                            top + height*i/5 + 5);            
+                            top + height*i/nVDivi + 5);
         }
 
 	// Draw titles
         gc2D.setColor(Color.black);
-        gc2D.setFont(tf);
+        gc2D.setFont(titleFont);
         int titleWidth = gc.getFontMetrics().stringWidth(title);
-        if(legendLocation.equals("Top"))
+        if(legendLocation != null && legendLocation.equals("Top"))
             gc2D.drawString(title, leftInset + (width - titleWidth)/2, top - (int)legendHeight - 10);
         else
             gc2D.drawString(title, leftInset + (width - titleWidth)/2, top - 10);
+
+        // Draw labels
+        gc2D.setFont(labelFont);
         int labelXWidth = gc.getFontMetrics().stringWidth(labelX);
         int labelYWidth = gc.getFontMetrics().stringWidth(labelY);        
         gc2D.drawString(labelX, leftInset + (width - labelXWidth)/2, top + height + 40);      
@@ -440,6 +859,55 @@ public class Plotter extends JPanel
         gc2D.drawString(labelY, top + (height - labelYWidth)/2, -16);
         gc2D.rotate(Math.PI/-2);
        
+        // Draw regression line
+        if(rLine)
+        {
+            gc2D.setColor(addedLineColor[3]);
+            double[][] xy = lineEnds(intersect, slope);
+            gc2D.setStroke(new BasicStroke(2.0f));
+            gc2D.drawLine(leftInset + (int)((xy[0][0] - minX) * width / spanX), 
+                          top + height - (int)((xy[0][1] - minY) * height / spanY), 
+                          leftInset + (int)((xy[1][0] - minX) * width / spanX), 
+                          top + height - (int)((xy[1][1] - minY) * height / spanY));
+            if(pLine)
+            {
+                gc2D.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, 
+                                               BasicStroke.JOIN_BEVEL, 0, 
+                                               new float[]{5.0f, 2.0f}, 0));               
+                gc2D.setColor(addedLineColor[4]);
+                double band = 0;
+                if(percentage.equals("99%")) band = stdDeviation * 2.576;
+                if(percentage.equals("95%")) band = stdDeviation * 1.960;
+                if(percentage.equals("90%")) band = stdDeviation * 1.645;
+                if(percentage.equals("80%")) band = stdDeviation * 1.282;
+                if(percentage.equals("50%")) band = stdDeviation * 0.675;                
+                xy = lineEnds(intersect + band, slope);
+                gc2D.drawLine(leftInset + (int)((xy[0][0] - minX) * width / spanX), 
+                              top + height - (int)((xy[0][1] - minY) * height / spanY), 
+                              leftInset + (int)((xy[1][0] - minX) * width / spanX), 
+                              top + height - (int)((xy[1][1] - minY) * height / spanY));
+                xy = lineEnds(intersect - band, slope);
+                gc2D.drawLine(leftInset + (int)((xy[0][0] - minX) * width / spanX), 
+                              top + height - (int)((xy[0][1] - minY) * height / spanY), 
+                              leftInset + (int)((xy[1][0] - minX) * width / spanX), 
+                              top + height - (int)((xy[1][1] - minY) * height / spanY));                 
+            }
+            gc2D.setStroke(new BasicStroke());
+            
+            gc2D.setColor(fg);
+            gc2D.setFont(numberFont);
+            String secondTerm = "";
+            String regressionLine = "Regression Line Y = (" + dFormat.format(intersect) + ") + (" +
+                                    dFormat.format(slope) + ") X,   Sample Size = " + nRegressionData;
+            int labelWidth = gc.getFontMetrics().stringWidth(regressionLine);
+            int start = (d.width - labelWidth) / 2;
+            int bottom = top + height + bottomInset;
+            gc2D.drawString(regressionLine, start, bottom - 20);
+            regressionLine = "Standard Deviation = " + dFormat.format(stdDeviation) +
+                             ",   Correlation Coefficient = " + nFormat.format(corrCoefficient); 
+            gc2D.drawString(regressionLine, start, bottom - 10);            
+        }
+        
         // Draw legend
         if(legendLocation != null)
         {
@@ -459,10 +927,10 @@ public class Plotter extends JPanel
         {
             int x = (int)legendArea.getMinX() + 26;
             int y = (int)legendArea.getMinY() + 12;
-            gc2D.setColor(color[i]);
-            drawSymbol(gc2D, type[i],  x, y + 12 * i);
+            gc2D.setColor(legendColor[i]);
+            drawSymbol(gc2D, symbol[i],  x, y + 12 * i);
             gc2D.setColor(fg);
-            gc2D.setFont(lf);
+            gc2D.setFont(legendFont);
             gc2D.drawString(name[i], x + 25, y + 4 + 12 * i);
         }
     }
@@ -475,7 +943,7 @@ public class Plotter extends JPanel
     {
         String toolTip = null;
         Point mousePoint = e.getPoint();
-        for(int i = 0; i < dataX.length; i++)
+        for(int i = 0; i < nCurve; i++)
         {	
             for(int j = 0; j < dataX[i].length; j++)
             {
@@ -495,6 +963,7 @@ public class Plotter extends JPanel
             if(pageIndex != 0)
                 return NO_SUCH_PAGE; 
             Graphics2D gc2D = ((Graphics2D)gc);
+            gc2D.scale(scale, scale);
             
             // Get printing area dimensions
             Dimension d  = new Dimension((int)pageFormat.getImageableWidth(),
@@ -503,6 +972,8 @@ public class Plotter extends JPanel
             int height = 0;
             int top = 0;
             int left = 0;
+            int nX = (nTickX + 1) * nHDivi;
+            int nY = (nTickY + 1) * nVDivi;
             
             // Determine size and location of legend
             double legendWidth = 0;
@@ -511,18 +982,15 @@ public class Plotter extends JPanel
             double legendYp = 0;
             
             // Get upper-left corner coordinates
-            int lineInsetX  = (int)pageFormat.getImageableX();
-            int lineInsetY  = (int)pageFormat.getImageableY();
-                        
-            // Adjust size to fit the printing area
-            if((double)d.width / (double)d.height <= 1.2)
-                d.height = (int)(d.width / 1.2);
-            else
-                d.width = (int)(d.height * 1.2);
+            int lineInsetX  = (int)(pageFormat.getImageableX() / scale) + xOff;
+            int lineInsetY  = (int)(pageFormat.getImageableY() / scale) + yOff;
 
+            d.width = plotWidth;
+            d.height = plotHeight;
+            
             if(legendLocation != null)
             {
-                gc2D.setFont(lf);
+                gc2D.setFont(legendFont);
                 int nameWidth = gc.getFontMetrics().stringWidth(name[0]);
                 for(int i = 0; i < name.length; i++)
                 {
@@ -536,8 +1004,8 @@ public class Plotter extends JPanel
                 {
                     width = d.width - rightInset - leftInset;
                     height = d.height - bottomInset - topInset;
-                    width = width / 25 * 25;
-                    height = height / 25 * 25;
+                    width = width / nX * nX;
+                    height = height / nY * nY;
                     top = d.height - bottomInset - height + lineInsetY;
                     left = leftInset + lineInsetX;
                     legendXp = left + 5;
@@ -548,8 +1016,8 @@ public class Plotter extends JPanel
                 {
                     width = d.width - rightInset - leftInset;            
                     height = d.height - bottomInset - topInset - (int)legendHeight - 5;
-                    width = width / 25 * 25;
-                    height = height / 25 * 25;
+                    width = width / nX * nX;
+                    height = height / nY * nY;
                     top = d.height - bottomInset - height + lineInsetY;
                     left = leftInset + lineInsetX;
                     legendXp = left + width / 2 - legendWidth / 2;
@@ -560,8 +1028,8 @@ public class Plotter extends JPanel
                 {
                     width = d.width - rightInset - leftInset - (int)legendWidth + 5;
                     height = d.height - bottomInset - topInset;
-                    width = width / 25 * 25;
-                    height = height / 25 * 25;
+                    width = width / nX * nX;
+                    height = height / nY * nY;
                     top = d.height - bottomInset - height + lineInsetY;
                     left = leftInset + lineInsetX;
                     legendXp = left + width + 5;
@@ -572,8 +1040,8 @@ public class Plotter extends JPanel
             {
                 width = d.width - rightInset - leftInset;
                 height = d.height - bottomInset - topInset;
-                width = width / 25 * 25;
-                height = height / 25 * 25;
+                width = width / nX * nX;
+                height = height / nY * nY;
                 top = d.height - bottomInset - height + lineInsetY;
                 left = leftInset + lineInsetX;
             }
@@ -581,53 +1049,12 @@ public class Plotter extends JPanel
             // Draw axes
 	    gc2D.drawRect(left, top, width, height); 
             
-            // Draw grid
-            gc2D.setColor(Color.gray);
-            gc2D.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, 
-                                           BasicStroke.JOIN_BEVEL, 0, 
-                                           new float[]{5.0f, 2.0f}, 0));
-                                           
-            if(showVerticalGrid)                                                              
-                for(int i = 1; i < 5; i++)
-                    gc2D.drawLine(left + i * width/5, top, 
-                                  left + i * width/5, top + height);
-            if(showHorizontalGrid)                               
-                for(int i = 1; i < 5; i++)                               
-                    gc2D.drawLine(left,               top + i * height/5, 
-                                  left + width,       top + i * height/5);             
 
-            // Draw ticks
-            gc2D.setColor(Color.black);                               
-            gc2D.setStroke(new BasicStroke());
-            int spacingX = width/25;
-            int spacingY = height/25;
-            int tickSize = 4;
-            for(int i = 1; i < 26; i++)
-            {
-                if(i % 5 == 0)
-                    tickSize = 6;
-                else
-                    tickSize = 4;
-                if(!showTicksOnX && tickSize == 4)
-                    continue;
-                gc2D.drawLine(left + i * spacingX,     top, 
-                              left + i * spacingX,     top + tickSize);
-                gc2D.drawLine(left + i * spacingX,     top + height - tickSize, 
-                              left + i * spacingX,     top + height);
-              
-                if(!showTicksOnY && tickSize == 4)
-                    continue;        
-                gc2D.drawLine(left,                    top + i * spacingY, 
-                              left + tickSize,         top + i * spacingY);
-                gc2D.drawLine(left + width - tickSize, top + i * spacingY, 
-                              left + width,            top + i * spacingY);
-            }
             
             // Draw x = 0 line, y = 0 line, slope = 1 line
             double spanX = maxX - minX;        
             double spanY = maxY - minY;
             
-            gc2D.setColor(Color.green);
             if(xLine && minX < 0 && maxX > 0)
             {
                 gc2D.setColor(addedLineColor[0]);
@@ -662,8 +1089,73 @@ public class Plotter extends JPanel
                               top + height - (int)((point2 - minY) * height / spanY));
             }
             
-            // Draw the data curve
-            for(int i = 0; i < dataX.length; i++)
+            // Draw grid lines
+            if((hGrid && nVDivi != 1) || (vGrid && nHDivi != 1));
+            {
+                gc2D.setColor(Color.gray);
+                gc2D.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, 
+                                               BasicStroke.JOIN_BEVEL, 0, 
+                                               new float[]{5.0f, 2.0f}, 0));  
+        
+                if(hGrid)
+                    for(int i = 1; i < nHDivi; i++)
+                        gc2D.drawLine(left + i * width/nHDivi, top, 
+                                      left + i * width/nHDivi, top + height);
+                if(vGrid)
+                    for(int i = 1; i < nVDivi; i++)                                       
+                        gc2D.drawLine(left,               top + i * height/nVDivi, 
+                                      left + width,       top + i * height/nVDivi);
+                                           
+                gc2D.setColor(Color.black);                              
+                gc2D.setStroke(new BasicStroke());                                           
+            }
+
+            // Draw divisions
+            if(nHDivi != 1 && markLengthX != 0)
+                for(int i = 1; i < nHDivi; i++)
+                {
+                    gc2D.drawLine(left + i * width/nHDivi, top, 
+                                  left + i * width/nHDivi, top + markLengthX);
+                    gc2D.drawLine(left + i * width/nHDivi, top + height - markLengthX, 
+                                  left + i * width/nHDivi, top + height);                
+                }
+            if(nVDivi != 1 && markLengthY != 0)
+                for(int i = 1; i < nVDivi; i++)
+                {
+                    gc2D.drawLine(left,                       top + i * height/nVDivi,
+                                  left + markLengthY,         top + i * height/nVDivi);
+                    gc2D.drawLine(left + width - markLengthY, top + i * height/nVDivi,
+                                  left + width,               top + i * height/nVDivi);
+                }
+                
+            // Draw ticks
+            if(nTickX != 0 && tickLengthX != 0)
+            {
+                int spacingX = width/(nTickX + 1)/nHDivi;
+                for(int i = 1; i < (nTickX + 1)*nHDivi; i++)
+                {
+                    if(i % nHDivi == 0) continue;
+                    gc2D.drawLine(left + i * spacingX,     top, 
+                                  left + i * spacingX,     top + tickLengthX);
+                    gc2D.drawLine(left + i * spacingX,     top + height - tickLengthX, 
+                                  left + i * spacingX,     top + height);
+                }
+            }
+            if(nTickY != 0 && tickLengthY != 0)
+            {
+                int spacingY = height/(nTickY + 1)/nVDivi;
+                for(int i = 1; i < (nTickY + 1)*nVDivi; i++)
+                {
+                if(i % nVDivi == 0) continue;
+                    gc2D.drawLine(left,                       top + i * spacingY,
+                                  left + tickLengthY,         top + i * spacingY);
+                    gc2D.drawLine(left + width - tickLengthY, top + i * spacingY,
+                                  left + width,               top + i * spacingY);
+                }
+            }
+                        
+            // Draw the data curves
+            for(int i = 0; i < nCurve; i++)
             {
                 gc2D.setColor(color[i]);
                 for(int j = 0; j < dataX[i].length; j++)
@@ -671,38 +1163,92 @@ public class Plotter extends JPanel
 	            newX[i][j] = (int)(left + (dataX[i][j] - minX)/spanX * width); 
                     newY[i][j] = (int)(height + top - (dataY[i][j] - minY)/spanY * height);
                 }
-                drawCurve(gc2D, type[i], i);
+                drawCurve(gc2D, symbol[i], i);
             }
             
-            // Draw labels
-            gc2D.setFont(pf);
+            // Draw numbers
+            gc2D.setFont(numberFont);
             gc2D.setColor(Color.black);
-            DecimalFormat f = new DecimalFormat("0.00E00");
-            for(int i = 0; i < 6; i++)
+            for(int i = 0; i <= nHDivi; i++)
             {
-                String value = Utility.formatData(6, f.format(minX + spanX*i/5));
+                String value = formatX.format(minX + spanX*i/nHDivi);
                 gc2D.drawString(value, 
-                                left + width*i/5 - gc.getFontMetrics().stringWidth(value)/2, 
-                                top + height + 18); 
-                value = Utility.formatData(6, f.format(maxY - spanY*i/5));
+                                left + width*i/nHDivi - gc.getFontMetrics().stringWidth(value)/2, 
+                                top + height + 18);
+            }
+            for(int i = 0; i <= nVDivi; i++)
+            {            
+                String value = formatY.format(maxY - spanY*i/nVDivi);
                 gc2D.drawString(value, 
                                 left - gc.getFontMetrics().stringWidth(value) - 2, 
-                                top + height*i/5 + 5);            
+                                top + height*i/nVDivi + 5);            
             }
 
 	    // Draw titles
-            gc2D.setFont(tf);
+            gc2D.setFont(titleFont);
             int titleWidth = gc.getFontMetrics().stringWidth(title);
-            if(legendLocation.equals("Top"))
+            if(legendLocation != null && legendLocation.equals("Top"))
                 gc2D.drawString(title, left + (width - titleWidth)/2, top - (int)legendHeight - 10);
             else
                 gc2D.drawString(title, left + (width - titleWidth)/2, top - 10);
+            
+            // Draw labels
+            gc2D.setFont(labelFont);
             int labelXWidth = gc.getFontMetrics().stringWidth(labelX);
             int labelYWidth = gc.getFontMetrics().stringWidth(labelY);
             gc2D.drawString(labelX, left + (width - labelXWidth)/2, top + height + 40);        
             gc2D.rotate(Math.PI/2);            
             gc2D.drawString(labelY, top + (height - labelYWidth)/2, -16 - lineInsetX);
             gc2D.rotate(Math.PI/-2);
+         
+            // Draw regression line
+            if(rLine)
+            {
+                gc2D.setColor(addedLineColor[3]);
+                double[][] xy = lineEnds(intersect, slope);
+                gc2D.setStroke(new BasicStroke(2.0f));
+                gc2D.drawLine(left + (int)((xy[0][0] - minX) * width / spanX), 
+                              top + height - (int)((xy[0][1] - minY) * height / spanY), 
+                              left + (int)((xy[1][0] - minX) * width / spanX), 
+                              top + height - (int)((xy[1][1] - minY) * height / spanY));
+                if(pLine)
+                {
+                    gc2D.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, 
+                                                   BasicStroke.JOIN_BEVEL, 0, 
+                                                   new float[]{5.0f, 2.0f}, 0));               
+                    gc2D.setColor(addedLineColor[4]);
+                    double band = 0;
+                    if(percentage.equals("99%")) band = stdDeviation * 2.576;
+                    if(percentage.equals("95%")) band = stdDeviation * 1.960;
+                    if(percentage.equals("90%")) band = stdDeviation * 1.645;
+                    if(percentage.equals("80%")) band = stdDeviation * 1.282;
+                    if(percentage.equals("50%")) band = stdDeviation * 0.675;                
+                    xy = lineEnds(intersect + band, slope);
+                    gc2D.drawLine(left + (int)((xy[0][0] - minX) * width / spanX), 
+                                  top + height - (int)((xy[0][1] - minY) * height / spanY), 
+                                  left + (int)((xy[1][0] - minX) * width / spanX), 
+                                  top + height - (int)((xy[1][1] - minY) * height / spanY));
+                    xy = lineEnds(intersect - band, slope);
+                    gc2D.drawLine(left + (int)((xy[0][0] - minX) * width / spanX), 
+                                  top + height - (int)((xy[0][1] - minY) * height / spanY), 
+                                  left + (int)((xy[1][0] - minX) * width / spanX), 
+                                  top + height - (int)((xy[1][1] - minY) * height / spanY));                 
+                }
+                gc2D.setStroke(new BasicStroke());
+            
+                gc2D.setColor(fg);
+                gc2D.setFont(numberFont);
+                String secondTerm = "";
+                String regressionLine = "Regression Line Y = (" + dFormat.format(intersect) + ") + (" +
+                                        dFormat.format(slope) + ") X,   Sample Size = " + nRegressionData;
+                int labelWidth = gc.getFontMetrics().stringWidth(regressionLine);
+                int start = (d.width - labelWidth) / 2 + lineInsetX;
+                int bottom = top + height + bottomInset;
+                gc2D.drawString(regressionLine, start, bottom - 20);
+                regressionLine = "Standard Deviation = " + dFormat.format(stdDeviation) +
+                                 ",   Correlation Coefficient = " + nFormat.format(corrCoefficient);                
+                gc2D.drawString(regressionLine, start, bottom - 10);                
+            }
             
             // Draw legend
             if(legendLocation != null)
@@ -920,66 +1466,158 @@ public class Plotter extends JPanel
                 max += 1;
                 min -= 1;
         }
-        int p = 0;
-        if(Math.abs(max) > Math.abs(min))
-        {
-            p = (int)(Math.log(max)/Math.log(10)) - 1;
-            if(Math.abs(max) < 1)
-                p -= 1;
-        }
-        else
-        {
-            p = (int)(Math.log(min)/Math.log(10)) - 1;
-            if(Math.abs(min) < 1)
-                p -= 1;            
-        }
-         
-        max = (double)((int)(max / Math.pow(10, p)) + 1) * Math.pow(10, p); 
-        min = (double)((int)(min / Math.pow(10, p)) - 1) * Math.pow(10, p);
+
+        min = min - (max - min) / 20;
+        max = max + (max - min) / 20;
         
         double[] range = {min, max};
         return range;
     }
+
+    // Calculate regression parameters: intersect, slope, stdDeviation, corrCoefficient.
+    private void regressionParameters(double[] x, double[] y)
+    {   
+        nRegressionData = x.length;
         
+        // Calculate x mean, y mean, x square sum, y square sum and xy sum.
+        double xMean = x[0];
+        double yMean = y[0];
+        double x2Sum = x[0] * x[0];
+        double y2Sum = y[0] * y[0];
+        double xySum = x[0] * y[0];
+        for(int i = 1; i < nRegressionData; i++)
+        {
+            xMean += x[i];
+            yMean += y[i];
+            x2Sum += x[i] * x[i];
+            y2Sum += y[i] * y[i];
+            xySum += x[i] * y[i];
+        }
+        xMean /= nRegressionData;
+        yMean /= nRegressionData;
+        
+        // Calculate parameters
+        double numerator = 0;
+        double denominator = 0;
+        for(int i = 0; i < nRegressionData; i++)
+        {
+            double difference = x[i] - xMean;
+            numerator += y[i] * difference;
+            denominator += difference * difference;
+        }
+        slope = numerator / denominator;
+        intersect = yMean - slope * xMean;
+        stdDeviation = Math.sqrt((y2Sum - intersect * nRegressionData * yMean - slope * xySum)
+                       / (nRegressionData - 2));
+        corrCoefficient = (xySum - nRegressionData * xMean * yMean) 
+                          / Math.sqrt(x2Sum - nRegressionData * xMean * xMean) 
+                          / Math.sqrt(y2Sum - nRegressionData * yMean * yMean);
+    }
+    
+    // Calculate x, y values of line ends.
+    private double[][] lineEnds(double intersect, double slope)
+    {
+        double[][] xy = new double[2][2];
+        double yAtMinX = intersect + slope * minX;
+        double yAtMaxX = intersect + slope * maxX;
+        double xAtMaxY = (maxY - intersect) / slope;
+        double xAtMinY = (minY - intersect) / slope;
+        if(yAtMinX >= minY && yAtMinX <= maxY && yAtMaxX >= minY && yAtMaxX <= maxY)
+        {
+            xy[0][0] = minX;
+            xy[0][1] = yAtMinX;
+            xy[1][0] = maxX;
+            xy[1][1] = yAtMaxX;
+        }
+        else if(yAtMinX >= minY && yAtMinX <= maxY)
+        {
+            xy[0][0] = minX;
+            xy[0][1] = yAtMinX;
+            if(slope > 0)
+            {
+                xy[1][0] = xAtMaxY;
+                xy[1][1] = maxY;
+            }
+            else
+            {
+                xy[1][0] = xAtMinY;
+                xy[1][1] = minY;
+            }
+        }
+        else if(yAtMaxX >= minY && yAtMaxX <= maxY)
+        {
+            xy[1][0] = maxX;
+            xy[1][1] = yAtMaxX;
+            if(slope > 0)
+            {
+                xy[0][0] = xAtMinY;
+                xy[0][1] = minY;
+            }
+            else
+            {
+                xy[0][0] = xAtMaxY;
+                xy[0][1] = maxY;
+            }
+        }
+        return xy;
+    }
+
     //-----------------------------------------------------------------------	
-    private double[][] dataX;
-    private double[][] dataY;
-    private double maxX;
-    private double maxY;
-    private double minX;
-    private double minY;
-    private int[][] newX;
-    private int[][] newY;    
-    private String title; 
-    private String labelX;
-    private String labelY;
+    private double[][] dataX, dataY;
+    private double maxX, maxY, minX, minY;
+    private int[][] newX, newY;    
+    private String title, labelX, labelY, regression, percentage;
     private String[] name;
-    private int[] type;
-    private Color[] color;
-    private boolean xLine, yLine, uLine;
-    private Color[] addedLineColor;
+    private int[] symbol;
+    private Color[] color, legendColor, addedLineColor;
+    private boolean xLine, yLine, uLine, rLine, pLine, hGrid, vGrid, isLogX, isLogY;
     private Rectangle2D.Double legendArea = null;
     private final static Color bg = Color.white;
     private final static Color fg = Color.black;
-    private final static int leftInset = 100;
-    private final static int rightInset = 20;
-    private final static int topInset = 30;
-    private final static int bottomInset = 60;
+    private int topInset = 30;
+    private int bottomInset = 60;
+    private int leftInset = 90;
+    private int rightInset = 25;
     private String legendLocation = null;
-    private boolean showHorizontalGrid;
-    private boolean showVerticalGrid;
-    private boolean showTicksOnX;
-    private boolean showTicksOnY;
-    private final static Font lf = new Font("SansSerif", Font.BOLD, 12);
-    private final static Font tf = new Font("SansSerif", Font.BOLD, 14);
-    private final static Font pf = new Font("SansSerif", Font.BOLD, 10);
+    private int nHDivi = 5;
+    private int nVDivi = 5;
+    private int markLengthX = 6;
+    private int markLengthY = 6;    
+    private int nTickX = 4;
+    private int nTickY = 4;
+    private int tickLengthX = 4;
+    private int tickLengthY = 4;
+    private double scale = 1.0;
+    private int xOff = 0;
+    private int yOff = 0;    
+    private Font titleFont, labelFont, legendFont, numberFont;
     private Graphics2D gc2D = null;
     private Point2D start, last;
-    private double legendX, legendY;
- 
+    private double legendX, legendY, intersect, slope, stdDeviation, corrCoefficient;
+    private int nRegressionData;
+    private int plotWidth, plotHeight, nCurve;
+    private DecimalFormat dFormat, nFormat, formatX, formatY;
+    private JFrame frame;
+    private PrinterJob printerJob;
+    private PageFormat pageFormat;
+    private PrintRequestAttributeSet attributes;
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JDialog jDialog1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPopupMenu jPopupMenu1;
+    private javax.swing.JSlider jSlider1;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
     
 }

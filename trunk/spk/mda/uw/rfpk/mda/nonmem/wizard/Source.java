@@ -29,9 +29,7 @@ public class Source {
     }
     
     /** The analysis type: population or individual. */
-    public String analysis = null;        
-    /** The flag for continuing when maximum number of iterations is reached. */
-    public boolean isRestart;    
+    public String analysis = null;            
     /** The problem heading. */
     public String problem = null;         
     /** The data file path and name. */

@@ -134,7 +134,7 @@ public class UserJobs extends HttpServlet
                 {                  
                     String[] job = new String[6];   
                     job[0] = String.valueOf(userJobsRS.getLong("job_id"));
-                    job[1] = formater.format(new Date(userJobsRS.getLong("start_time") * 1000));
+                    job[1] = formater.format(new Date(userJobsRS.getLong("start_time") * 1000));                   
                     job[2] = state.getProperty(userJobsRS.getString("state_code"));
                     if(job[2].equals("End"))
                     {                   
@@ -142,15 +142,15 @@ public class UserJobs extends HttpServlet
                         if(endCode != null)
                             job[2] = end.getProperty(endCode); 
                         else
-                        job[2] = "";                        
-                    }
+                            job[2] = "";                        
+                    }                    
                     ResultSet modelRS = Spkdb.getModel(con, userJobsRS.getLong("model_id"));
                     modelRS.next();
                     job[3] = modelRS.getString("name") + "." + userJobsRS.getString("model_version").substring(2);
                     ResultSet datasetRS = Spkdb.getDataset(con, userJobsRS.getLong("dataset_id"));
                     datasetRS.next();
                     job[4] = datasetRS.getString("name") + "." + userJobsRS.getString("dataset_version").substring(2);
-                    job[5] = userJobsRS.getString("abstract");
+                    job[5] = userJobsRS.getString("abstract");                    
                     jobList.add(job);
                 }
                 int nJob = jobList.size();
@@ -195,7 +195,7 @@ public class UserJobs extends HttpServlet
         
         // Get the buffer that is holding our response
         byte[] buf = byteOut.toByteArray();
-        
+   
         // Notify the client how much data is being sent
         resp.setContentLength(buf.length);
         

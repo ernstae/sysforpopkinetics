@@ -302,7 +302,7 @@ public class Utility {
             
             String firstItem = null;
             if(!isInd)
-                firstItem = firstRowItems[0];       
+                firstItem = firstRowItems[0]; 
             
             for(int i = 2; i < rowList.getLength(); i++)
             {
@@ -777,6 +777,58 @@ public class Utility {
         return cov.replaceAll("F", " FIXED");
     }
     
+    /** Convert column majar element list to row major element list of a lower triangle matrix.
+     * @param colList the element list in column major order.
+     * @return rowList the element list in row major order.
+     */
+    public static String[] convertColToRowMajorOrder(String[] colList)
+    {
+        int n = ((int)Math.sqrt(1 + 8 * colList.length) - 1) / 2;
+        String[] rowList = new String[colList.length];        
+        int k = 0;
+        for(int i = 0; i < n; i++)
+            for(int j = 0; j <= i; j++)
+                rowList[k++] = colList[n * j + i - j * (j + 1) / 2];        
+        return rowList;
+    }
+    
     private static int nOmega = 0;
     private static int nSigma = 0;
+    
+    /** Test column major to row major converting function.
+     * @param args argument not used.
+     */    
+    public static void main(String[] args)
+    {
+        String[] colList = {"11", "21", "22"};
+        String list = colList[0];
+        for(int i = 1; i < colList.length; i++)
+            list += " " + colList[i];
+        System.out.println(list);        
+        String[] rowList = convertColToRowMajorOrder(colList);
+        list = rowList[0];
+        for(int i = 1; i < rowList.length; i++)
+            list += " " + rowList[i];
+        System.out.println(list);        
+        colList = new String[]{"11", "21", "31", "22", "32", "33"};
+        list = colList[0];
+        for(int i = 1; i < colList.length; i++)
+            list += " " + colList[i];
+        System.out.println(list);        
+        rowList = convertColToRowMajorOrder(colList);
+        list = rowList[0];
+        for(int i = 1; i < rowList.length; i++)
+            list += " " + rowList[i];
+        System.out.println(list);
+        colList = new String[]{"11", "21", "31", "41", "22", "32", "42", "33", "43", "44"};
+        list = colList[0];
+        for(int i = 1; i < colList.length; i++)
+            list += " " + colList[i];
+        System.out.println(list);        
+        rowList = convertColToRowMajorOrder(colList);
+        list = rowList[0];
+        for(int i = 1; i < rowList.length; i++)
+            list += " " + rowList[i];
+        System.out.println(list);        
+    }
 }

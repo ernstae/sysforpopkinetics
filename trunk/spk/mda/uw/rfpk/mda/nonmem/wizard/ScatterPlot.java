@@ -104,6 +104,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         jPanel1 = new javax.swing.JPanel();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jTextArea1 = new javax.swing.JTextArea();
         buttonGroup1 = new javax.swing.ButtonGroup();
         jTextField1 = new javax.swing.JTextField();
         addButton = new javax.swing.JButton();
@@ -199,7 +200,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(12, 12, 13, 12);
+        gridBagConstraints.insets = new java.awt.Insets(8, 12, 9, 12);
         jDialog1.getContentPane().add(jComboBox1, gridBagConstraints);
 
         addItemButton.setText("Add");
@@ -214,7 +215,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(14, 14, 14, 2);
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 2);
         jDialog1.getContentPane().add(addItemButton, gridBagConstraints);
 
         deleteItemButton.setText("Delete");
@@ -228,7 +229,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.insets = new java.awt.Insets(14, 0, 14, 12);
+        gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 12);
         jDialog1.getContentPane().add(deleteItemButton, gridBagConstraints);
 
         changeItemButton.setText("Change");
@@ -243,7 +244,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.insets = new java.awt.Insets(14, 0, 14, 1);
+        gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 1);
         jDialog1.getContentPane().add(changeItemButton, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -363,6 +364,15 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridy = 7;
         gridBagConstraints.gridwidth = 5;
         jDialog1.getContentPane().add(jPanel1, gridBagConstraints);
+
+        jTextArea1.setText("Note: SPK provides more output items than NONMEM does.\nETARES    - Residual for random effect parameters (ETA).*\nWETARES - Weighted residual for random effect parameters.*\nORGDV    - Original data values (DV) when simulated data exists.\n* For population estimation analysis only.");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridwidth = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
+        jDialog1.getContentPane().add(jTextArea1, gridBagConstraints);
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -852,7 +862,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         changeItemButton.setEnabled(listModels[0].size() > 0);
         deleteItemButton.setEnabled(listModels[0].size() > 0);
         jDialog1.setLocationRelativeTo(this);
-        jDialog1.setSize(440,370);            
+        jDialog1.setSize(440,455);            
         jDialog1.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -1051,6 +1061,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextPane jTextPane1;
@@ -1132,9 +1143,16 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
             boolean isMetod1 = iterator.getIsMethod1OrPosthoc();
             
             if(!iterator.getIsInd() && which.equals("ESTIMATION") && iterator.getIsMethod1OrPosthoc())
+            {
                 for(int i = 0; i < iterator.getNEta(); i++)
                     jComboBox1.addItem("ETA(" + (i + 1) +")");
-
+                for(int i = 0; i < iterator.getNEta(); i++)
+                    jComboBox1.addItem("ETARES(" + (i + 1) +")");
+                for(int i = 0; i < iterator.getNEta(); i++)
+                    jComboBox1.addItem("WETARES(" + (i + 1) +")");
+            }
+            if(iterator.getIsSimulation())
+                jComboBox1.addItem("ORGDV");
             String record = null;
             if(!iterator.getIsPred())
                 record = object.getRecords().getProperty("PK");

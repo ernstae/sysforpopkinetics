@@ -306,21 +306,64 @@ public class XMLReader
             Element pop_monte_result = (Element)pop_monte_resultList.item(0);
             output.computingTimes = new String[1];
             output.computingTimes[0] = pop_monte_result.getAttribute("elapsedtime");
-            NodeList pop_obj_estimateList = pop_monte_result.getElementsByTagName("pop_obj_estimate");
-            if(pop_obj_estimateList.getLength() > 0)
+            output.nEvaluation = pop_monte_result.getAttribute("number_eval");
+            NodeList column_majorList = pop_monte_result.getElementsByTagName("column_major");
+            if(column_majorList.getLength() > 0)
             {
-                Element objective = (Element)pop_obj_estimateList.item(0);
-                NodeList valueList = objective.getElementsByTagName("value");
-                if(valueList.getLength() > 0)
-                    output.objective = ((Element)valueList.item(0)).getFirstChild().getNodeValue().trim();          
+                output.alpha = new String[2][];
+                for(int j = 0; j < 2; j++)
+                {
+                    Element alpha = (Element)column_majorList.item(j);
+                    NodeList valueList = alpha.getElementsByTagName("value");
+                    if(valueList.getLength() > 0)
+                    {
+                        output.alpha[j] = new String[valueList.getLength()];
+                        for(int i = 0; i < valueList.getLength(); i++)
+                        {
+                            if(alpha.getAttribute("name").equals("alpha_center"))
+                                output.alpha[0][i] = ((Element)valueList.item(i)).getFirstChild().getNodeValue().trim();
+                            if(alpha.getAttribute("name").equals("alpha_step"))
+                                output.alpha[1][i] = ((Element)valueList.item(i)).getFirstChild().getNodeValue().trim();
+                        }
+                    }
+                }
             }
-            NodeList obj_stderrorList = pop_monte_result.getElementsByTagName("pop_obj_stderr");
-            if(obj_stderrorList.getLength() > 0)
+            NodeList row_majorList = pop_monte_result.getElementsByTagName("row_major");
+            if(row_majorList.getLength() > 0)
             {
-                Element stdErr = (Element)obj_stderrorList.item(0);
-                NodeList valueList = stdErr.getElementsByTagName("value");
-                if(valueList.getLength() > 0)
-                    output.objStdErr = ((Element)valueList.item(0)).getFirstChild().getNodeValue().trim();             
+                for(int j = 0; j < 2; j++)
+                {
+                    Element obj = (Element)row_majorList.item(j);
+                    NodeList rowList = obj.getElementsByTagName("row");
+                    int r = rowList.getLength();
+                    if(rowList.getLength() > 0)
+                    {
+                        if(obj.getAttribute("name").equals("obj_value"))
+                        {
+                            output.likelihood = new String[rowList.getLength()][3];
+                            for(int k = 0; k < rowList.getLength(); k++)
+                            {
+                                Element row = (Element)rowList.item(k);
+                                NodeList valueList = row.getElementsByTagName("value");
+                                if(valueList.getLength() > 0)
+                                    for(int i = 0; i < valueList.getLength(); i++)
+                                        output.likelihood[k][i] = ((Element)valueList.item(i)).getFirstChild().getNodeValue().trim();
+                            }
+                        }
+                        if(obj.getAttribute("name").equals("obj_std"))
+                        {
+                            output.likelihood_std = new String[rowList.getLength()][3];
+                            for(int k = 0; k < rowList.getLength(); k++)
+                            {
+                                Element row = (Element)rowList.item(k);                                
+                                NodeList valueList = row.getElementsByTagName("value");
+                                if(valueList.getLength() > 0)
+                                    for(int i = 0; i < valueList.getLength(); i++)
+                                        output.likelihood_std[k][i] = ((Element)valueList.item(i)).getFirstChild().getNodeValue().trim();
+                            }
+                        }                        
+                    }
+                }
             }
         }        
         

@@ -41,6 +41,8 @@ public class Output {
     public String completionTime = null;    
     /** The computing times (estimation, statistics). */
     public String[] computingTimes = null;
+    /** The number of evaluations. */
+    public String nEvaluation = null;
     /** The analysis type: population or individual. */
     public String analysis = null;
     /** The method code for the analysis. */
@@ -67,8 +69,12 @@ public class Output {
     public String trace = null;    
     /** The objective value. */
     public String objective = null;
-    /** The standard error of objective. */
-    public String objStdErr = null;    
+    /** The alpha_center. (alpha_center)s, (alpha_step)s */
+    public String[][] alpha = null;
+    /** The likelihood. (left, center, right)s */
+    public String[][] likelihood = null;    
+    /** The likelihood standard error. left, center, right)s */
+    public String[][] likelihood_std = null;    
     /** The THETA vector. */
     public String[] theta = null;
     /** The OMEGA matrix. */

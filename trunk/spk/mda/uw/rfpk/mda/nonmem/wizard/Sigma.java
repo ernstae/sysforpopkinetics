@@ -238,24 +238,23 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("Enter the initial estimates and constraints for the elements of one or\nserveral blocks of the residual unknown variability covariance matrix.\nYou may either enter data for a new  block or constrain the block to \nbe equal to the preceding block.");
+        jTextPane1.setText("Enter the initial estimates and constraints for the elements of one or\nserveral blocks of the residual unknown variability covariance matrix.\nYou may either enter data for a new  block or constrain the block to \nbe equal to the preceding block.  However, in current development\nstage SPK compiler supports only single-block covariance matrix.");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(0, 16, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 16, 12, 12);
         add(jTextPane1, gridBagConstraints);
 
         jTextPane2.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane2.setText("List of the  \nblocks\nyou have \nentered in\nNONMEM\nsyntax");
-        jTextPane2.setPreferredSize(new java.awt.Dimension(60, 66));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(11, 16, 30, 0);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         add(jTextPane2, gridBagConstraints);
 
         changeButton.setText("Change");
@@ -291,7 +290,7 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = 6;
+        gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         add(jSeparator1, gridBagConstraints);
@@ -323,8 +322,8 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipady = 88;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(16, 0, 12, 16);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         add(jScrollPane1, gridBagConstraints);
 
         jLabel1.setText("Dimension");
@@ -421,6 +420,8 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
     private void jTable1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTable1KeyPressed
         if(evt.getKeyCode() == 10)
             jButton2.setEnabled(true);
+        else
+            jButton2.setEnabled(false);
     }//GEN-LAST:event_jTable1KeyPressed
 
     private void jRadioButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton4ActionPerformed
@@ -558,6 +559,15 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
                                           JOptionPane.ERROR_MESSAGE);                         
                     return;
                 }
+                if(Double.parseDouble(value) <= 0)
+                {
+                    JOptionPane.showMessageDialog(null, 
+                                          "The element [" + (i + 1) + "," + (i + 1) + 
+                                          "] is not a positive number.",
+                                          "Input Error",    
+                                          JOptionPane.ERROR_MESSAGE);                       
+                    return;
+                }                
                 if(value.length() > 8) 
                 {
                     JOptionPane.showMessageDialog(null, 
@@ -591,6 +601,15 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
                                           JOptionPane.ERROR_MESSAGE);                          
                         return; 
                     }
+                    if(j == i + 1 && Double.parseDouble(value) <= 0)
+                    {
+                        JOptionPane.showMessageDialog(null, 
+                                          "The element [" + j + "," + j + 
+                                          "] is not a positive number.",
+                                          "Input Error",    
+                                          JOptionPane.ERROR_MESSAGE);                       
+                        return;
+                    }                    
                     if(value.length() > 8) 
                     {
                         JOptionPane.showMessageDialog(null, 
@@ -771,6 +790,7 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
         jScrollPane2.setRowHeader(jv);
         
         // Display the dialog
+        jButton2.setEnabled(false);
         jDialog1.setLocationRelativeTo(this);
         jDialog1.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed

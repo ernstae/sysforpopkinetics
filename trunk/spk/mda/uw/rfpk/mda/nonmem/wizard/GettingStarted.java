@@ -91,6 +91,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jButton1 = new javax.swing.JButton();
         jSeparator4 = new javax.swing.JSeparator();
         jSeparator5 = new javax.swing.JSeparator();
+        jLabel1 = new javax.swing.JLabel();
 
         jPopupMenu1.setBackground(new java.awt.Color(255, 255, 255));
         jPopupMenu1.setAutoscrolls(true);
@@ -240,9 +241,9 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(6, 20, 0, 6);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(6, 20, 0, 6);
         add(jRadioButton1, gridBagConstraints);
 
         jRadioButton2.setText("Performing population analysis");
@@ -296,7 +297,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jRadioButton5.setText("Computing statistics of estimates");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 11;
+        gridBagConstraints.gridy = 12;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.insets = new java.awt.Insets(0, 20, 11, 6);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
@@ -312,7 +313,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 5;
-        gridBagConstraints.gridheight = 7;
+        gridBagConstraints.gridheight = 8;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 24);
         gridBagConstraints.weightx = 1.0;
@@ -330,8 +331,8 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(9, 36, 4, 24);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(9, 36, 4, 24);
         add(jCheckBox1, gridBagConstraints);
 
         jCheckBox2.setText("Data Simulation");
@@ -346,8 +347,8 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(9, 9, 3, 23);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(9, 9, 3, 23);
         add(jCheckBox2, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -399,13 +400,13 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 5;
-        gridBagConstraints.gridheight = 7;
+        gridBagConstraints.gridheight = 8;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         add(jSeparator2, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 12;
+        gridBagConstraints.gridy = 13;
         gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(0, 20, 0, 24);
@@ -418,7 +419,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jTextPane3.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 13;
+        gridBagConstraints.gridy = 14;
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(8, 20, 12, 12);
@@ -433,7 +434,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 13;
+        gridBagConstraints.gridy = 14;
         gridBagConstraints.insets = new java.awt.Insets(7, 8, 11, 24);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         add(jButton1, gridBagConstraints);
@@ -448,11 +449,21 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 10;
+        gridBagConstraints.gridy = 11;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(0, 21, 0, 0);
         add(jSeparator5, gridBagConstraints);
+
+        jLabel1.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel1.setText("(This library is now in construction.)");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 10;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.insets = new java.awt.Insets(0, 42, 0, 0);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        add(jLabel1, gridBagConstraints);
 
     }//GEN-END:initComponents
 
@@ -634,6 +645,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JCheckBox jCheckBox4;
     private javax.swing.JCheckBox jCheckBox5;
     private javax.swing.JCheckBox jCheckBox6;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem10;
     private javax.swing.JMenuItem jMenuItem11;
@@ -677,11 +689,11 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
 	}
        
   	public String getContentItem(){
-  	    return "Getting Started";
+  	    return "Analysis Selection";
   	}
 
 	public String getStepTitle(){
-	    return "Getting Started";
+	    return "Analysis Selection";
 	}
 
 	public void showingStep(JWizardPane wizard){

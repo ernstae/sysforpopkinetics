@@ -91,8 +91,7 @@ public class SubmitJob extends HttpServlet
             String[] messageIn = (String[])in.readObject();            
             String secret = messageIn[0];
             if(secret.equals((String)req.getSession().getAttribute("SECRET")))             
-            {
-                
+            {                
  	        String source = messageIn[1];
  	        String dataset = messageIn[2];
  	        String modelArchive = messageIn[3];
@@ -113,6 +112,7 @@ public class SubmitJob extends HttpServlet
                 String isNewDatasetVersion = messageIn[18];
                 String jobMethodCode = messageIn[19];
                 long jobParent = Long.parseLong(messageIn[20]);
+                String isWarmStart = messageIn[21];
                 
                 // Connect to the database
                 ServletContext context = getServletContext();
@@ -159,8 +159,8 @@ public class SubmitJob extends HttpServlet
                          
                         Spkdb.updateModel(con, 
                                           modelId, 
-                                          new String[]{"archive"},
-                                          new String[]{arch.toString("\n")});
+                                          new String[]{"archive", "abstract"},
+                                          new String[]{arch.toString("\n"), modelDescription});
                                            
                         messages += "The model, " + modelName +
                                     ", in the database has been updated.\n";                   
@@ -200,8 +200,8 @@ public class SubmitJob extends HttpServlet
                         arch.findNode(arch.getRevisionVersion()).setAuthor(username);                       
                         Spkdb.updateDataset(con, 
                                             datasetId, 
-                                            new String[]{"archive"}, 
-                                            new String[]{arch.toString("\n")});  
+                                            new String[]{"archive", "abstract"}, 
+                                            new String[]{arch.toString("\n"), datasetDescription});  
                         messages += "The dataset, " + datasetName +
                                     ", in the database has been updated.\n";                      
                         datasetVersion = String.valueOf(arch.getRevisionVersion());
@@ -215,13 +215,13 @@ public class SubmitJob extends HttpServlet
                                  userId, 
                                  jobAbstract, 
                                  datasetId, 
-                                 datasetVersion, 
+                                 datasetVersion,
                                  modelId, 
                                  modelVersion, 
                                  source,
                                  jobMethodCode,
-                                 jobParent
-                                 );
+                                 jobParent,                                 
+                                 isWarmStart.equals("true"));
                     messages += "A new job, " + jobAbstract +
                                 ", has been added to the database.\n";  
                 }

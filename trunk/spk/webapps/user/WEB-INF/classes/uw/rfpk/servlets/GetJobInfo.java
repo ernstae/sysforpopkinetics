@@ -112,8 +112,13 @@ public class GetJobInfo extends HttpServlet
                 if(jobRS.getLong("user_id") == userId)
                 {            
                     // Get job information
+                    String jobAbstract = jobRS.getString("abstract"); 
                     long parent = jobRS.getLong("parent");
                     String methodCode = jobRS.getString("method_code");
+                    String endCode = "";
+                    String stateCode = jobRS.getString("state_code");
+                    if(stateCode.equals("end"))
+                        endCode = jobRS.getString("end_code");
                     long modelId = jobRS.getLong("model_id");
                     long datasetId = jobRS.getLong("dataset_id"); 
                     String modelVersion = jobRS.getString("model_version");
@@ -131,6 +136,7 @@ public class GetJobInfo extends HttpServlet
                     Spkdb.disconnect(con);
              
                     // Put returning objects into the Properties
+                    jobInfo.setProperty("jobAbstract", jobAbstract);
                     jobInfo.setProperty("modelId", String.valueOf(modelId));
                     jobInfo.setProperty("modelName", modelName);
                     jobInfo.setProperty("modelAbstract", modelAbstract);
@@ -141,6 +147,7 @@ public class GetJobInfo extends HttpServlet
                     jobInfo.setProperty("datasetVersion", datasetVersion.substring(2));
                     jobInfo.setProperty("parent", String.valueOf(parent));
                     jobInfo.setProperty("methodCode", methodCode);
+                    jobInfo.setProperty("endCode", endCode);
                 }
                 else
                 {

@@ -184,7 +184,7 @@
           <Color blue="cc" green="cc" red="cc" type="rgb"/>
         </Property>
         <Property name="editable" type="boolean" value="false"/>
-        <Property name="text" type="java.lang.String" value="Enter the initial estimates and constraints for the elements of one or&#xa;more blocks of the random effect covariance matrix.  You may either &#xa;enter data for a new  block or constrain the block to be equal to the &#xa;preceding block."/>
+        <Property name="text" type="java.lang.String" value="Enter the initial estimates and constraints for the elements of one or&#xa;more blocks of the random effect covariance matrix.  You may either &#xa;enter data for a new  block or constrain the block to be equal to the &#xa;preceding block.  However, in current development stage SPK compiler&#xa;supports only single-block covariance matrix."/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
