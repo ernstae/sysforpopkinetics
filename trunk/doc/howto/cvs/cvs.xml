@@ -47,6 +47,12 @@
 	<authorinitials>afw</authorinitials>
 	<revremark>Added section on server administration.</revremark>
       </revision>
+      <revision>
+	<revnumber>1.05</revnumber>
+	<date>July 30, 2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Use update -P in preference to update</revremark>
+      </revision>
     </revhistory>
   <abstract>
     <para>
@@ -370,6 +376,7 @@
 	repository with the following command:
 	<screen format="linespecific">
 	  cvs checkout r1
+	  cvs update -P
 	</screen>
       </para>
       <para>
@@ -378,6 +385,7 @@
 	command:
 	<screen format="linespecific">
 	  cvs checkout muscle
+	  cvs update -P
 	</screen>
       </para>
       <para>
@@ -389,6 +397,15 @@
 	a directory named
 	<filename moreinfo="none" class="directory">muscle</filename>
 	would appear.
+      </para>
+      <para>
+	The <command>update -P</command> is not absolutely necessary,
+	but is recommended.  The <command>-P</command> argument stands
+	for <emphasis>prune</emphasis>.  The effect is to prune empty
+	directories from your working copy of the source tree. Empty 
+	directories are retained forever in the repository because
+	they contain history even though all source code files have 
+	been removed.
       </para>
       <para>
 	Your working copy is a directory tree.  The root of that
@@ -421,7 +438,7 @@
 	subdirectories.  It will not update files in parent 
 	directories.  Thus positioned, simply issue the command:
 	<screen format="linespecific">
-	  cvs update
+	  cvs update -P
 	</screen>
       </para>
       <para>
