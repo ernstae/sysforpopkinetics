@@ -280,6 +280,7 @@ void indStatisticsTest::statisticsExampleTest()
                        &indParCVOut,
 	               &indParCIOut );
 
+    /*
     cout << "indParOut = " << endl;
     printInMatrix( indParOut, 1 );
     cout << "indParCovOut = " << endl;
@@ -293,7 +294,7 @@ void indStatisticsTest::statisticsExampleTest()
     cout << "indParCIOut = " << endl;
     printInMatrix( indParCIOut, 2 );
     cout << "-----------------------" << endl;
-
+    */
     }
     catch( const SpkException& e )
       {
