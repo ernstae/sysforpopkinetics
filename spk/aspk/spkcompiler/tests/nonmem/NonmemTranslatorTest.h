@@ -23,6 +23,7 @@ public:
 
     void testInheritance();
     void testParsePopSource();
+    void testParseIndNoID();
     void testParseIndSource();
 };
 
