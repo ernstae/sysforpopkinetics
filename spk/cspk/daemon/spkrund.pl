@@ -120,6 +120,9 @@ my $host     = shift;
 my $dbuser   = shift;
 my $dbpasswd = shift;
 
+my $max_concurrent = 1;
+my $concurrent = 0;
+
 my $dbh;
 my $build_failure_exit_value = 101;
 my $database_open = 0;
@@ -231,6 +234,7 @@ sub fork_runner {
   FORK: {
       if ($pid = fork) {
 	  # This is the parent
+	  $concurrent++;
 	  syslog("info", "forked process with pid=$pid for job_id=$job_id");
       }
       elsif (defined $pid) {
@@ -314,10 +318,12 @@ sub reaper {
 	my $child_signal_number = $? & 0x7f;
 	my $child_dumped_core   = $? & 0x80;
 	my $job_id;
-	my $optimizer_trace = undef;
+	my $optimizer_trace;
 	my $report;
 	my $status_msg = "";
 	my $end_code;
+
+	$concurrent--;
 
 	# Get the job_id from the file spkcmpd.pl wrote to the working
 	# directory of this process
@@ -401,7 +407,7 @@ sub reaper {
 	    rename "$tmp_dir/$working_dir", "$tmp_dir/$prefix_working_dir$job_id"
 		or death('emerg', "couldn't rename working directory");
 	}
-	if (define $optimizer_trace) {
+	if (length($optimizer_trace) > 0) {
 	    $report = insert_optimizer_trace($optimizer_trace, $report);
 	}
 	&end_job($dbh, $job_id, $end_code, $report)
@@ -498,14 +504,17 @@ my $job_id;
 
 while(1) {
     # if there is a job queued-to-run, fork the runner
-    $row = &de_q2r($dbh);
-    if (defined $row) {
-	if ($row) {
-	    &fork_runner($row);
+    if ($concurrent < $max_concurrent) {
+	syslog('info', "concurrent=$concurrent");
+	$row = &de_q2r($dbh);
+	if (defined $row) {
+	    if ($row) {
+		&fork_runner($row);
+	    }
 	}
-    }
-    else {
-	death("emerg", "error reading database: $Spkdb::errstr");
+	else {
+	    death("emerg", "error reading database: $Spkdb::errstr");
+	}
     }
     # sleep for a second
     sleep(1); # DO NOT REMOVE THIS LINE
