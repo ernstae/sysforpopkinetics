@@ -201,19 +201,36 @@ class NonmemTranslator : public ClientTranslator
 		     ADVAN6,  ADVAN7,  ADVAN8,  ADVAN9,  ADVAN10, 
 		     ADVAN11, ADVAN12 
                    };
-  const char * const STR_NONE;
-  const char * const STR_ADVAN1;
-  const char * const STR_ADVAN2;
-  const char * const STR_ADVAN3;
-  const char * const STR_ADVAN4;
-  const char * const STR_ADVAN5;
-  const char * const STR_ADVAN6;
-  const char * const STR_ADVAN7;
-  const char * const STR_ADVAN8;
-  const char * const STR_ADVAN9;
-  const char * const STR_ADVAN10;
-  const char * const STR_ADVAN11;
-  const char * const STR_ADVAN12;
+  static enum NonmemModel toNonmemModelEnum( const char* );
+  static const char* const toNonmemModelString( enum NonmemModel e );
+
+  static const char * const STR_NONE;
+  static const char * const STR_ADVAN1;
+  static const char * const STR_ADVAN2;
+  static const char * const STR_ADVAN3;
+  static const char * const STR_ADVAN4;
+  static const char * const STR_ADVAN5;
+  static const char * const STR_ADVAN6;
+  static const char * const STR_ADVAN7;
+  static const char * const STR_ADVAN8;
+  static const char * const STR_ADVAN9;
+  static const char * const STR_ADVAN10;
+  static const char * const STR_ADVAN11;
+  static const char * const STR_ADVAN12;
+
+  enum NonmemParameterization { DEFAULT,
+                     TRANS1, TRANS2, TRANS3, TRANS4, TRANS5 };
+  static enum NonmemParameterization toNonmemParameterizationEnum( 
+                              const char* );
+  static const char* const toNonmemParameterizationString( 
+			      enum NonmemParameterization e );
+
+  static const char * const STR_DEFAULT;
+  static const char * const STR_TRANS1;
+  static const char * const STR_TRANS2;
+  static const char * const STR_TRANS3;
+  static const char * const STR_TRANS4;
+  static const char * const STR_TRANS5;
 
   // LABEL data type:
   // The reason for the key data type being "string"
@@ -255,8 +272,7 @@ class NonmemTranslator : public ClientTranslator
  private:
 
   enum NonmemModel nonmemModel;
-  enum NonmemModel toEnum( const char* ) const;
-  const char* const toString( enum NonmemModel e ) const;
+  enum NonmemParameterization nonmemParameterization;
 
   ExpTreeGenerator expTreeUtils;
 

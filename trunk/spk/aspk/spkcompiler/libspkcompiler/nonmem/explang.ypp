@@ -608,13 +608,19 @@ assignment_stmt :
   const XMLCh* name = dynamic_cast<DOMElement*>(lhs->getFirstChild())->getAttribute( X(STR_NAME) );
   const char* name_cstr = C( name );
 
-  if( ( s = gSpkExpSymbolTable->find( name_cstr ) ) != NULL ) // This is where the variable has been registed in the symbol table.
+  if( ( s = gSpkExpSymbolTable->find( name_cstr ) ) != NULL ) 
+  // This is where the variable has been registed in the symbol table.
     {	 
       // Default to lhs = (what SymbolTable entry says)
       lhs_datatype  = s->dataType();
       lhs_structure = s->objectType();
       lhs_rows = s->dim().first;
       lhs_cols = s->dim().second;
+
+      if( s->isKeyword() ) 
+	{
+	   break;
+	}
 
       if( s->dataType() == Symbol::UNKNOWN )
 	{
@@ -633,6 +639,13 @@ assignment_stmt :
 	    {
 	      lhs_datatype = rhs_datatype;
 	    }
+	}
+      else
+	{
+	  char buf[DEFAULT_BUFF_SIZE];
+	  sprintf( buf, "Unknown data type <%s>.\n", Symbol::toString(s->dataType()).c_str() );
+	  yyerror( buf );
+	  return -1;
 	}
 	  
       if( s->objectType() == Symbol::UNKNOWN )
@@ -664,7 +677,7 @@ assignment_stmt :
 	 }
      }
 
-   else // This is where the varible is discovered new.
+   else // This is where the varible is discovered for the first time.
      {
 	s = gSpkExpSymbolTable->insert( name_cstr );
 	lhs_datatype  = rhs_datatype;
@@ -675,7 +688,9 @@ assignment_stmt :
 
 
    assert( s != NULL );
-   // Don't update the symbol table entry if this assignment statement appears in a conditional block!
+   //
+   // Don't update the symbol table entry if this assignment statement appears 
+   // in a conditional block!
    //   if( !inConditional )
      {
        s->dataType  ( lhs_datatype );

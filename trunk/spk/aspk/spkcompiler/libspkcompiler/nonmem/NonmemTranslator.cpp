@@ -3,6 +3,7 @@
 #include "read_content.h"
 #include "nonmem/read_nonmem_driver.h"
 #include "nonmem/read_nonmem_data.h"
+#include "read_nonmem_model.h"
 
 #include <xercesc/dom/DOM.hpp>
 
@@ -78,32 +79,39 @@ static int error( const char * message, int line, const char* file )
 //  NonmemTranslator class
 //
 ////////////////////////////////////////////////////////////////////////////////
+const char * const NonmemTranslator::STR_NONE    = "none";
+const char * const NonmemTranslator::STR_ADVAN1  = "advan1";
+const char * const NonmemTranslator::STR_ADVAN2  = "advan2";
+const char * const NonmemTranslator::STR_ADVAN3  = "advan3";
+const char * const NonmemTranslator::STR_ADVAN4  = "advan4";
+const char * const NonmemTranslator::STR_ADVAN5  = "advan5";
+const char * const NonmemTranslator::STR_ADVAN6  = "advan6";
+const char * const NonmemTranslator::STR_ADVAN7  = "advan7";
+const char * const NonmemTranslator::STR_ADVAN8  = "advan8";
+const char * const NonmemTranslator::STR_ADVAN9  = "advan9";
+const char * const NonmemTranslator::STR_ADVAN10 = "advan10";
+const char * const NonmemTranslator::STR_ADVAN11 = "advan11";
+const char * const NonmemTranslator::STR_ADVAN12 = "advan12";
+const char * const NonmemTranslator::STR_DEFAULT = "default";
+const char * const NonmemTranslator::STR_TRANS1  = "trans1";
+const char * const NonmemTranslator::STR_TRANS2  = "trans2";
+const char * const NonmemTranslator::STR_TRANS3  = "trans3";
+const char * const NonmemTranslator::STR_TRANS4  = "trans4";
+const char * const NonmemTranslator::STR_TRANS5  = "trans5";
 
 NonmemTranslator::NonmemTranslator( )
-  : nonmemModel( NONE ),
-    STR_NONE   ( "none" ),
-    STR_ADVAN1 ( "advan1" ),
-    STR_ADVAN2 ( "advan2" ),
-    STR_ADVAN3 ( "advan3" ),
-    STR_ADVAN4 ( "advan4" ),
-    STR_ADVAN5 ( "advan5" ),
-    STR_ADVAN6 ( "advan6" ),
-    STR_ADVAN7 ( "advan7" ),
-    STR_ADVAN8 ( "advan8" ),
-    STR_ADVAN9 ( "advan9" ),
-    STR_ADVAN10( "advan10" ),
-    STR_ADVAN11( "advan11" ),
-    STR_ADVAN12( "advan12" )
+  : nonmemModel( NONE ), nonmemParameterization( DEFAULT )
 {
-  gSpkExpSymbolTable = new SymbolTable;
+  //  gSpkExpSymbolTable = new SymbolTable;
   gSpkExpTree        = expTreeUtils.createTree( "unit" );
 }
 NonmemTranslator::~NonmemTranslator( )
 {
   //delete symbol_checker;
-  delete gSpkExpSymbolTable;
+  //  delete gSpkExpSymbolTable;
 }
-enum NonmemTranslator::NonmemModel NonmemTranslator::toEnum( const char* str ) const
+enum NonmemTranslator::NonmemModel
+NonmemTranslator::toNonmemModelEnum( const char* str )
 {
   if( strcmp( str, STR_NONE ) == 0 )
     return NONE;
@@ -132,7 +140,26 @@ enum NonmemTranslator::NonmemModel NonmemTranslator::toEnum( const char* str ) c
   if( strcmp( str, STR_ADVAN12 ) == 0 )
     return ADVAN12;
 }
-const char* const NonmemTranslator::toString( enum NonmemTranslator::NonmemModel e ) const
+enum NonmemTranslator::NonmemParameterization
+NonmemTranslator::toNonmemParameterizationEnum( const char* str )
+{
+  if( strcmp( str, STR_DEFAULT) == 0 )
+    return DEFAULT;
+  if( strcmp( str, STR_TRANS1 ) == 0 )
+    return TRANS1;
+  if( strcmp( str, STR_TRANS2 ) == 0 )
+    return TRANS2;
+  if( strcmp( str, STR_TRANS3 ) == 0 )
+    return TRANS3;
+  if( strcmp( str, STR_TRANS4 ) == 0 )
+    return TRANS4;
+  if( strcmp( str, STR_TRANS5 ) == 0 )
+    return TRANS5;
+}
+
+const char* const 
+NonmemTranslator::toNonmemModelString( 
+   enum NonmemTranslator::NonmemModel e )
 {
   if( e == NONE )
     return STR_NONE;
@@ -161,6 +188,25 @@ const char* const NonmemTranslator::toString( enum NonmemTranslator::NonmemModel
   if( e == ADVAN12 )
     return STR_ADVAN12;
 }
+
+const char* const 
+NonmemTranslator::toNonmemParameterizationString( 
+   enum NonmemTranslator::NonmemParameterization e )
+{
+  if( e == DEFAULT )
+    return STR_DEFAULT;
+  if( e == TRANS1 )
+    return STR_TRANS1;
+  if( e == TRANS2 )
+    return STR_TRANS2;
+  if( e == TRANS3 )
+    return STR_TRANS3;
+  if( e == TRANS4 )
+    return STR_TRANS4;
+  if( e == TRANS5 )
+    return STR_TRANS5;
+}
+
 void NonmemTranslator::translate( DOMDocument* tree )
 {
   assert( tree != NULL );
@@ -264,11 +310,20 @@ void NonmemTranslator::translate( DOMDocument* tree )
   assert( dataNode != NULL );
 
   read_nonmem_data( dataNode, nIndividuals, label_alias_mapping, data_for, order_id_pair );
-  /*
-  readModel( tree, nIndividuals, gSpkExpSymbolTable );
 
-  emitData( nIndividuals, gSpkExpSymbolTable, label_alias_mapping, data_for, order_id_pair );
-  */
+  assert( tree->getElementsByTagName( X("model") ) != NULL );
+  DOMElement * modelNode = dynamic_cast<DOMElement*>( tree->getElementsByTagName( X("model") )->item(0) );
+  assert( modelNode != NULL );
+
+  SymbolTable table;
+  gSpkExpSymbolTable = &table;
+  pair<enum NonmemModel, enum NonmemParameterization> model_type 
+    = read_nonmem_model( modelNode, nIndividuals, gSpkExpSymbolTable );
+  nonmemModel = model_type.first;
+  nonmemParameterization = model_type.second;
+
+  //emitData( nIndividuals, gSpkExpSymbolTable, label_alias_mapping, data_for, order_id_pair );
+  
   return;
 }
 
@@ -299,7 +354,8 @@ std::vector<string> NonmemTranslator::emitData(
   cout << "class " << str_IndRecords << "{\n";
   cout << "public:\n";
   cout << "\t" << str_IndRecords << "(\n";
-  map<NonmemTranslator::LABEL, NonmemTranslator::ALIAS>::const_iterator names = label_alias_mapping.begin();
+  map<NonmemTranslator::LABEL, NonmemTranslator::ALIAS>::const_iterator names
+    = label_alias_mapping.begin();
   while( names != label_alias_mapping.end() )
     {
       if( names != label_alias_mapping.begin() )
@@ -402,95 +458,6 @@ std::vector<string> NonmemTranslator::emitData(
 
   vector<string> filenames;
   return filenames;
-}
-
-
-void NonmemTranslator::readModel( DOMDocument* tree, int nIndividuals, SymbolTable* table )
-{
-  //
-  // Get a pointer to the root of "model" subtree.  Since there's one and only one
-  // <data> specification per document, the 1st element of the list
-  // obtained by DOMDocument::getElementsByTagName() is undoubtedly
-  // the one that is of our interest.  If ever there's more
-  // than one such a section, the very first occurence of them
-  // will be processed and others will be untouched.
-  //
-  assert( tree->getElementsByTagName( X("model") ) != NULL );
-  DOMNode * modelTree = tree->getElementsByTagName( X("model") )->item(0);
-  assert( modelTree != NULL );
-  
-  DOMTreeWalker * walker 
-    = tree->createTreeWalker( modelTree, DOMNodeFilter::SHOW_ELEMENT, NULL, false );
-  
-  // 
-  // Determine if a canned model is requested.
-  //
-  const XMLCh* xml_cannedModel = dynamic_cast<DOMElement*>(modelTree)
-                               ->getAttribute( X("base") );
-
-  bool isCannedModelUsed = !( XMLString::isAllWhiteSpace( xml_cannedModel ) );
-  enum NonmemModel cannedModel = NONE;
-  if( !isCannedModelUsed )
-    {
-      //
-      // If no canned model is used, <pred> has to follow.
-      //
-      DOMNode * pred = walker->firstChild();
-      assert( XMLString::equals( pred->getNodeName(), X("pred") ) );
-    }
-  else
-    {
-      cannedModel = toEnum( C(xml_cannedModel) );
-      //
-      // When a canned model is used, either (comp_model, diffeqn) or (comp_model?, (pk, error), diffeqn?)
-      // combination must follow.
-      //
-      bool isPkGiven        = false;
-      bool isErrorGiven     = false;
-      bool isCompModelGiven = false;
-      bool isDiffEqnGiven   = false;
-      DOMNode * model = walker->firstChild();
-
-      while( model != NULL )
-	{
-	  const char * name = C( model->getNodeName() );
-	  if( strcmp( name, "pk" ) == 0 )
-	    {
-	      isPkGiven = true;
-              
-	      FILE * fo = fopen( "pk", "w" );	      
-	      const char * mixed = C( trim( model->getFirstChild()->getNodeValue() ) );
-              const int  len = strlen( mixed );
-	      char buf[ strlen( mixed ) + 1 ];
-
-	      fprintf( fo, "%s\n", mixed );
-	      fclose( fo );
-	      yyin = fopen( "pk", "r" );
-              yydebug = 0;
-	      yyparse();
-	      //	      gSpkExpTreeGenerator->printToStdout();
-	    }
-	  else if( strcmp( name, "error" ) == 0 )
-	    {
-	      isErrorGiven = true;
-	    }
-	  else if( strcmp( name, "comp_model" ) == 0 )
-	    {
-	      isCompModelGiven = true;
-	    }
-	  else if( strcmp( name, "diffeqn" ) == 0 )
-	    {
-	      isDiffEqnGiven = true;
-	    }
-	  else
-	    {
-	      char buf[128];
-	      sprintf( buf, "Unknown model <%s>.\n", name );
-	      exit( error( buf, __LINE__, __FILE__ ) );
-	    }
-	  model = walker->nextSibling();
-	}
-    }
 }
 
 void NonmemTranslator::emitDriver()
