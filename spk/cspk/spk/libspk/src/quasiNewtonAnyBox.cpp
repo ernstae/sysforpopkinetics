@@ -795,6 +795,11 @@ void quasiNewtonAnyBox(
   double* gScaled = memoryDbl( nObjPar );
   double* hScaled = memoryDbl( nObjPar * nObjPar );
 
+  // These are the scaled gradient, gScaled(y) = fScaled_y(y),
+  // and scaled Hessian, hScaled(y) = fScaled_y_y(y).
+  double* gScaledProj = memoryDbl( nObjPar );
+  double* hScaled = memoryDbl( nObjPar * nObjPar );
+
   // Set the bounds and initial values for y.
   for ( i = 0; i < nObjPar; i++ )
   {
@@ -1002,7 +1007,8 @@ void quasiNewtonAnyBox(
         yLow,
         yUp,
         gScaled,
-        hScaled ) )
+        hScaled,
+	gScaledProj ) )
       {
         isAcceptable = true;
       }
@@ -1327,37 +1333,43 @@ void scaleGradElem(
  * Hessian H(x) evaluated at xHat.  Note that the existence of R 
  * implies that H is symmetric and positive-definite.  
  *
+ *
+ * gProj
+ *
+ * On output, this contains the projected gradient evaluated at xHat.
+ *
  *************************************************************************/
 
 #include "multiply.h"
 
-bool isWithinTol( 
-  double         tol, 
-  const double*  xHat, 
-  const double*  xLow, 
-  const double*  xUp, 
+bool isWithinTol(
+  double         tol,
+  int            n,
+  const double*  xHat,
+  const double*  xLow,
+  const double*  xUp,
   const double*  g,
-  const double*  r )
+  const double*  r,
+  double*        gProj )
 {
   //------------------------------------------------------------
   // Preliminaries.
   //------------------------------------------------------------
 
-  int i, j, k;
-
-  int n = xHat.nr();
+  int i;
+  int j
+  int k;
 
   assert( isLowerTriangular( r ) );
 
   DoubleMatrix dvecDeltaX( n, 1 );
-  DoubleMatrix gTemp( 1, n );
 
   // This is not necessary.  Sachiko
-  //gTemp.fill(0.0);
+  //gProj.fill(0.0);
 
 
   //------------------------------------------------------------
-  // Calculate the Hessian, temporary gradient, and diagonal reciprocals.
+  // Calculate the Hessian, projected gradient, and diagonal reciprocals.
   //------------------------------------------------------------
 
   // Prepare a version of the Hessian matrix H = R * R^(T) with its 
@@ -1397,11 +1409,11 @@ bool isWithinTol(
   // at the end of this function.
   std::vector<bool> isElemIncluded( n );
 
-  // Modify the Hessian, and set the elements of gTemp and p.
+  // Modify the Hessian, and set the elements of gProj and p.
   for ( i = 0; i < n; i++ )
   {
       //----------------------------------------------------------
-      // Compute the corresponding elements of H, gTemp, and P.
+      // Compute the corresponding elements of H, gProj, and P.
       //----------------------------------------------------------
       if( (pdXHatData[i] >  pdXLowData[i] && pdXHatData[i] < pdXUpData[i])
           || (pdXHatData[i] == pdXLowData[i] && pdGData[i] < 0.0 )  
@@ -1413,8 +1425,8 @@ bool isWithinTol(
             // This element will be included:  its deltaX should be computed.
             //--------------------------------------------------------
 
-            // Set the corresponding element of the temporary gradient.
-            pdGTempData[i] = pdGData[i];
+            // Set the corresponding element of the projected gradient.
+            pdGProjData[i] = pdGData[i];
 
             // Set the reciprocal of the corresponding R diagonal.
             assert( pdRData[i + i * n] != 0.0 );
@@ -1435,7 +1447,7 @@ bool isWithinTol(
             // 
             //      pdHData[i + i * n] = 1.0;
             //
-            // if H, gTemp and P were initialized to zero or one outside of the outer loop.
+            // if H, gProj and P were initialized to zero or one outside of the outer loop.
             // 
 
                 // Zero the elements from the corresponding row and column of 
@@ -1457,8 +1469,8 @@ bool isWithinTol(
                   pdHData[j + i * n] = 0.0;
                 }
       
-                // Zero the corresponding element of the temporary gradient.
-                pdgTempData[i] = 0.0;
+                // Zero the corresponding element of the projected gradient.
+                pdGProjData[i] = 0.0;
 
                 // Set the reciprocal of the corresponding R diagonal equal to one.
                 pdPData[i] = 1.0;
@@ -1491,7 +1503,7 @@ bool isWithinTol(
   // *
   // * and
   // *
-  // *     B  =  gTemp .
+  // *     B  =  gProj .
   // * 
   // * Note that 
   // *               T
@@ -1549,7 +1561,7 @@ bool isWithinTol(
   // Parameter: b[n][tdb].
   // Input:the n by r right-hand side matrix B.  
   // Output: unspecified.
-  double* b = pdGTempData;
+  double* b = pdGProjData;
 
   // Parameter: tdb.
   // Input:the last dimension of the array b as declared in the
