@@ -23,7 +23,7 @@ void read_nonmem_data(
       )
 {
   assert( dataNode != NULL );
-  spkOut.nMeasurementsAll.resize( nIndividuals );
+  spkOut.nMeasurements.resize( nIndividuals );
   std::vector<double> y_temp;
 
   //
@@ -195,7 +195,7 @@ void read_nonmem_data(
               
               if( label == "dv" || synonym == "dv" )
 		{
-		  spkOut.nMeasurementsAll[order] = nMeasurements;
+		  spkOut.nMeasurements[order] = nMeasurements;
                   for( int j=0; j<nMeasurements; j++ )
 		    y_temp.push_back( values[j] );
 		}      
