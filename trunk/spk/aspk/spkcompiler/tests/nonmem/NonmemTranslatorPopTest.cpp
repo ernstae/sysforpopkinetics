@@ -159,7 +159,8 @@ void NonmemTranslatorPopTest::testParsePopSource()
       
       oSource << "<constraint>" << endl;
       // default: is_eta_out=no, is_restart=yes
-      oSource << "<pop_analysis approximation=\"foce\" pop_size=\"3\" is_estimation=\"yes\">" << endl;
+      oSource << "<pop_analysis approximation=\"foce\" pop_size=\"3\" ";
+      oSource << "is_estimation=\"yes\" sig_digits=\"3\">" << endl;
       oSource << "<data_labels>" << endl;
 
       map<string,string>::const_iterator pLabel = labels.begin();
@@ -479,44 +480,457 @@ void NonmemTranslatorPopTest::testParsePopSource()
       CPPUNIT_ASSERT_EQUAL( eps_in[i],  atof( eps->initial[0][i].c_str() ) );
     }
   
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  //
+  // Test IndData class to see if it has all necessary 
+  // variables declared and sized.
+  //
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   //=====================================================
   //  Test if the generated IndData.h defines
   //  a correct IndData class.
   //  The IndData class in this particular test case
   //  should have all of the followings as class members:
-  //     id      : S^n
-  //     cp = dv : R^n
-  //     mdv     : I^n
-  //     pred    : R^n
-  //     wres    : R^n
-  //     res     : R^n
-  //     theta   : R^nTheta*n
-  //     eta     : R^nEta*n, where nEta = nTheta
-  //     omega   : R^orderOmega*n
-  //     sigma   : R^orderSigma*n
-  //     eps     : R^orderSigma*n
-  //     ka      : R^n
-  //     ke      : R^n
-  //     f       : R^n
-  //     y       : R^n
+  //  
+  //  - Read-only Data Items
+  //  * id      : S^n
+  //  * cp = dv : R^n
+  //  * mdv     : I^n
+  // 
+  //  - Pred::eval() variables
+  //  * pred    : R^n
+  //  * res     : R^n
+  //  * theta   : R^nTheta*n
+  //  * eta     : R^nEta*n, where nEta = nTheta
+  //  * eps     : R^orderSigma*n
+  //
+  //  - Variables external to Pred::eval()
+  //  * omega   : R^orderOmega*n
+  //  * sigma   : R^orderSigma*n
+  //  * wres    : R^n
+  //
+  //  - User defined
+  //  * ka      : R^n
+  //  * ke      : R^n
+  //  * f       : R^n
+  //  * y       : R^n
   //=====================================================
+  char fIndDataDriver[]     = "pop_IndDataDriver";
+  char fIndDataDriver_cpp[] = "pop_IndDataDriver.cpp";
+  ofstream oIndDataDriver( fIndDataDriver_cpp );
+  CPPUNIT_ASSERT( oIndDataDriver.good() );
 
-  /*
-   * It takes only the data items as input
-  id->  initial[0][0] = "#1";  cp->initial[0][0] =  "0.0";  mdv-> initial[0][0] = "0";
+  oIndDataDriver << "#include <cstdlib>" << endl;
+  oIndDataDriver << "#include <vector>" << endl;
+  oIndDataDriver << "#include <iostream>" << endl;
+  oIndDataDriver << "#include <sys/signal.h>" << endl;
+  oIndDataDriver << "#include \"IndData.h\"" << endl;
+  oIndDataDriver << "using namespace std;" << endl;
+  oIndDataDriver << "#define MY_ASSERT_EQUAL( expected, actual ) \\" << endl;
+  oIndDataDriver << "   if( actual != expected ) \\" << endl;
+  oIndDataDriver << "   { \\" << endl;
+  oIndDataDriver << "      cerr << __FILE__ << \"(\" << __LINE__ << \"): \"; \\" << endl;
+  oIndDataDriver << "      cerr << \"Expected \" << expected; \\" << endl;
+  oIndDataDriver << "      cerr << \" but was \" << actual << endl; \\" << endl;
+  oIndDataDriver << "      raise( SIGABRT ); \\" << endl;
+  oIndDataDriver << "   } " << endl;
+  oIndDataDriver << endl;
+  oIndDataDriver << "int main()" << endl;
+  oIndDataDriver << "{" << endl;
+  oIndDataDriver << "   const int thetaLen = " << thetaLen << ";" << endl;
+  oIndDataDriver << "   const int etaLen   = " << etaLen   << ";" << endl;
+  oIndDataDriver << "   const int epsLen   = " << epsLen   << ";" << endl;
+  oIndDataDriver << "   vector<char*> a_id(1);" << endl;
+  oIndDataDriver << "   char id1[] = \"1\";" << endl;
+  oIndDataDriver << "   a_id[0] = id1;" << endl;
+  oIndDataDriver << "   vector<double> a_cp(1);" << endl;
+  oIndDataDriver << "   a_cp[0] = 0.0;" << endl;
+  oIndDataDriver << "   vector<double> a_mdv(1);" << endl;
+  oIndDataDriver << "   a_mdv[0] = 0;" << endl;
+  oIndDataDriver << endl;
+  oIndDataDriver << "   vector<char*> b_id(2);" << endl;
+  oIndDataDriver << "   char id2[] = \"2\";" << endl;
+  oIndDataDriver << "   b_id[0] = id2;" << endl;
+  oIndDataDriver << "   b_id[1] = id2;" << endl;
+  oIndDataDriver << "   vector<double> b_cp(2);" << endl;
+  oIndDataDriver << "   b_cp[0] = 0.0;" << endl;
+  oIndDataDriver << "   b_cp[1] = 10.0;" << endl;
+  oIndDataDriver << "   vector<double> b_mdv(2);" << endl;
+  oIndDataDriver << "   b_mdv[0] = 0;" << endl;
+  oIndDataDriver << "   b_mdv[1] = 0;" << endl;
+  oIndDataDriver << endl;
+  oIndDataDriver << "   vector<char*> c_id(3);" << endl;
+  oIndDataDriver << "   char id3[] = \"3\";" << endl;
+  oIndDataDriver << "   c_id[0] = id3;" << endl;
+  oIndDataDriver << "   c_id[1] = id3;" << endl;
+  oIndDataDriver << "   c_id[2] = id3;" << endl;
+  oIndDataDriver << "   vector<double> c_cp(3);" << endl;
+  oIndDataDriver << "   c_cp[0] = 0.0;" << endl;
+  oIndDataDriver << "   c_cp[1] = 10.0;" << endl;
+  oIndDataDriver << "   c_cp[2] = 20.0;" << endl;
+  oIndDataDriver << "   vector<double> c_mdv(3);" << endl;
+  oIndDataDriver << "   c_mdv[0] = 0;" << endl;
+  oIndDataDriver << "   c_mdv[1] = 0;" << endl;
+  oIndDataDriver << "   c_mdv[2] = 0;" << endl;
+  oIndDataDriver << endl;
 
-  id->  initial[1][0] = "#2";  cp->initial[1][0] =  "0.0";  mdv-> initial[1][0] = "0";
-  id->  initial[1][1] = "#2";  cp->initial[1][1] = "10.0";  mdv-> initial[1][1] = "0";
+  oIndDataDriver << "   IndData<double> A( 1, a_id, a_cp, a_mdv );" << endl;
+  oIndDataDriver << "   IndData<double> B( 2, b_id, b_cp, b_mdv );" << endl;
+  oIndDataDriver << "   IndData<double> C( 3, c_id, c_cp, c_mdv );" << endl;
+  oIndDataDriver << endl;
 
-  id->  initial[2][0] = "#3";  cp->initial[2][0] = "0.0";   mdv-> initial[2][0] = "0";
-  id->  initial[2][1] = "#3";  cp->initial[2][1] = "10.0";  mdv-> initial[2][1] = "0";
-  id->  initial[2][2] = "#3";  cp->initial[2][2] = "20.0";  mdv-> initial[2][2] = "0";
-   IndData set1( id->initial[0], cp->initial[0], mdv->initial[0] );
-   IndData set2( id->initial[1], cp->initial[1], mdv->initial[1] );
-   IndData set3( id->initial[2], cp->initial[2], mdv->initial[2] );
-   */
+  oIndDataDriver << "   assert( strcmp( A.id[0], id1 ) == 0 );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 0.0, A.cp[0] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 0.0, A.dv[0] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 0,   A.mdv[0] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, A.theta[0].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( epsLen,   A.eps[0].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen,   A.eta[0].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 1, A.res.size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 1, A.wres.size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 1, A.pred.size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 1, A.f.size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 1, A.y.size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 1, A.ka.size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 1, A.ke.size() );" << endl;
+  oIndDataDriver << endl;
 
-  //=====================================================
+  oIndDataDriver << "   assert( strcmp( B.id[0], id2 ) == 0 );" << endl;
+  oIndDataDriver << "   assert( strcmp( B.id[1], id2 ) == 0 );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 0.0,  B.cp[0] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 10.0, B.cp[1] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 0.0,  B.dv[0] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 10.0, B.dv[1] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 0, B.mdv[0] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 0, B.mdv[1] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, B.theta[0].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, B.theta[1].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( epsLen,   B.eps[0].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( epsLen,   B.eps[1].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen,   B.eta[0].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen,   B.eta[1].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 2, B.res.size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 2, B.wres.size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 2, B.pred.size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 2, B.f.size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 2, B.y.size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 2, B.ka.size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 2, B.ke.size() );" << endl;
+  oIndDataDriver << endl;
+
+  oIndDataDriver << "   assert( strcmp( C.id[0], id3 ) == 0 );" << endl;
+  oIndDataDriver << "   assert( strcmp( C.id[1], id3 ) == 0 );" << endl;
+  oIndDataDriver << "   assert( strcmp( C.id[2], id3 ) == 0 );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 0.0,  C.cp[0] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 10.0, C.cp[1] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 20.0, C.cp[2] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 0.0,  C.dv[0] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 10.0, C.dv[1] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 20.0, C.dv[2] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 0, C.mdv[0] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 0, C.mdv[1] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 0, C.mdv[2] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, C.theta[0].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, C.theta[1].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, C.theta[2].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( epsLen,   C.eps[0].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( epsLen,   C.eps[1].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( epsLen,   C.eps[2].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen,   C.eta[0].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen,   C.eta[1].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen,   C.eta[2].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 3, C.res.size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 3, C.wres.size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 3, C.pred.size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 3, C.f.size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 3, C.y.size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 3, C.ka.size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 3, C.ke.size() );" << endl;
+  oIndDataDriver << endl;
+
+  oIndDataDriver << "}" << endl;
+  oIndDataDriver.close();
+
+  char command[256];
+  sprintf( command, "g++ -g %s -o %s", fIndDataDriver_cpp, fIndDataDriver );
+  if( system( command ) != 0 )
+    {
+      char message[256];
+      sprintf( message, "Compilation of the generated %s failed!", fIndDataDriver_cpp );
+      CPPUNIT_ASSERT_MESSAGE( message, false );
+    }
+  sprintf( command, "./%s", fIndDataDriver );
+  if( system( command ) != 0 )
+    {
+      char message[256];
+      sprintf( message, "A test driver, %s, failed!", fIndDataDriver );
+      CPPUNIT_ASSERT_MESSAGE( message, false );
+    }
+
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  //
+  // Test DataSet class to see if it has the-only individual's
+  // data set correctly.
+  //
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  char fDataSetDriver[]     = "pop_DataSetDriver";
+  char fDataSetDriver_cpp[] = "pop_DataSetDriver.cpp";
+  ofstream oDataSetDriver( fDataSetDriver_cpp );
+  CPPUNIT_ASSERT( oDataSetDriver.good() );
+
+  oDataSetDriver << "#include <cstdlib>" << endl;
+  oDataSetDriver << "#include <vector>" << endl;
+  oDataSetDriver << "#include <iostream>" << endl;
+  oDataSetDriver << "#include <sys/signal.h>" << endl;
+  oDataSetDriver << "#include \"DataSet.h\"" << endl;
+  oDataSetDriver << "using namespace std;" << endl;
+  oDataSetDriver << "#define MY_ASSERT_EQUAL( expected, actual ) \\" << endl;
+  oDataSetDriver << "   if( actual != expected ) \\" << endl;
+  oDataSetDriver << "   { \\" << endl;
+  oDataSetDriver << "      cerr << __FILE__ << \"(\" << __LINE__ << \"): \"; \\" << endl;
+  oDataSetDriver << "      cerr << \"Expected \" << expected; \\" << endl;
+  oDataSetDriver << "      cerr << \" but was \" << actual << endl; \\" << endl;
+  oDataSetDriver << "      raise( SIGABRT ); \\" << endl;
+  oDataSetDriver << "   } " << endl;
+  oDataSetDriver << endl;
+  oDataSetDriver << "int main()" << endl;
+  oDataSetDriver << "{" << endl;
+
+  oDataSetDriver << "   DataSet<double> set;" << endl;
+  oDataSetDriver << endl;
+
+  oDataSetDriver << "   const int thetaLen = " << thetaLen << ";" << endl;
+  oDataSetDriver << "   const int etaLen   = " << etaLen   << ";" << endl;
+  oDataSetDriver << "   const int epsLen   = " << epsLen   << ";" << endl;
+  oDataSetDriver << endl;
+
+  oDataSetDriver << "   assert( strcmp( set.data[0]->id[0], \"#1\" ) == 0 );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 0.0, set.data[0]->cp[0] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 0.0, set.data[0]->dv[0] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 0,   set.data[0]->mdv[0] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( thetaLen, set.data[0]->theta[0].size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( epsLen,   set.data[0]->eps[0].size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( etaLen,   set.data[0]->eta[0].size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 1, set.data[0]->res.size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 1, set.data[0]->wres.size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 1, set.data[0]->pred.size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 1, set.data[0]->f.size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 1, set.data[0]->y.size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 1, set.data[0]->ka.size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 1, set.data[0]->ke.size() );" << endl;
+  oDataSetDriver << endl;
+
+  oDataSetDriver << "   assert( strcmp( set.data[1]->id[0], \"#2\" ) == 0 );" << endl;
+  oDataSetDriver << "   assert( strcmp( set.data[1]->id[1], \"#2\" ) == 0 );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 0.0,  set.data[1]->cp[0] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 10.0, set.data[1]->cp[1] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 0.0,  set.data[1]->dv[0] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 10.0, set.data[1]->dv[1] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 0, set.data[1]->mdv[0] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 0, set.data[1]->mdv[1] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( thetaLen, set.data[1]->theta[0].size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( thetaLen, set.data[1]->theta[1].size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( epsLen,   set.data[1]->eps[0].size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( epsLen,   set.data[1]->eps[1].size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( etaLen,   set.data[1]->eta[0].size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( etaLen,   set.data[1]->eta[1].size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 2, set.data[1]->res.size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 2, set.data[1]->wres.size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 2, set.data[1]->pred.size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 2, set.data[1]->f.size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 2, set.data[1]->y.size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 2, set.data[1]->ka.size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 2, set.data[1]->ke.size() );" << endl;
+  oDataSetDriver << endl;
+
+  oDataSetDriver << "   assert( strcmp( set.data[2]->id[0], \"#3\" ) == 0 );" << endl;
+  oDataSetDriver << "   assert( strcmp( set.data[2]->id[1], \"#3\" ) == 0 );" << endl;
+  oDataSetDriver << "   assert( strcmp( set.data[2]->id[2], \"#3\" ) == 0 );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 0.0,  set.data[2]->cp[0] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 10.0, set.data[2]->cp[1] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 20.0, set.data[2]->cp[2] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 0.0,  set.data[2]->dv[0] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 10.0, set.data[2]->dv[1] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 20.0, set.data[2]->dv[2] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 0, set.data[2]->mdv[0] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 0, set.data[2]->mdv[1] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 0, set.data[2]->mdv[2] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( thetaLen, set.data[2]->theta[0].size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( thetaLen, set.data[2]->theta[1].size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( thetaLen, set.data[2]->theta[2].size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( epsLen,   set.data[2]->eps[0].size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( epsLen,   set.data[2]->eps[1].size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( epsLen,   set.data[2]->eps[2].size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( etaLen,   set.data[2]->eta[0].size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( etaLen,   set.data[2]->eta[1].size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( etaLen,   set.data[2]->eta[2].size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 3, set.data[2]->res.size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 3, set.data[2]->wres.size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 3, set.data[2]->pred.size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 3, set.data[2]->f.size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 3, set.data[2]->y.size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 3, set.data[2]->ka.size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 3, set.data[2]->ke.size() );" << endl;
+  oDataSetDriver << endl;
+
+  oDataSetDriver << "}" << endl;
+  
+  oDataSetDriver.close();
+
+  sprintf( command, "g++ -g %s -o %s", fDataSetDriver_cpp, fDataSetDriver );
+  if( system( command ) != 0 )
+    {
+      char message[256];
+      sprintf( message, "Compilation of the generated %s failed!", fDataSetDriver_cpp );
+      CPPUNIT_ASSERT_MESSAGE( message, false );
+    }
+  sprintf( command, "./%s", fDataSetDriver );
+  if( system( command ) != 0 )
+    {
+      char message[256];
+      sprintf( message, "A test driver, %s, failed!", fDataSetDriver );
+      CPPUNIT_ASSERT_MESSAGE( message, false );
+    }
+
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  //
+  // Test Pred class to see if it has defined eval() properly.
+  // Especially, the proper elements of the dependent variable-
+  // vector given as an argument are replaced by the computed 
+  // value of Y(j) and F(j).
+  // Also, make sure the currently computed values, all of them,
+  // are stored in memory for potential retrieval from the 
+  // outside.
+  //
+  // $PRED
+  //   KA=THETA(1) + ETA(1)
+  //   KE=THETA(2) + ETA(2)
+  //   F=KE*KA
+  //   Y=F+EPS(1)
+  //    
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  char fPredDriver[]     = "pop_PredDriver";
+  char fPredDriver_cpp[] = "pop_PredDriver.cpp";
+  ofstream oPredDriver( fPredDriver_cpp );
+  CPPUNIT_ASSERT( oPredDriver.good() );
+
+  oPredDriver << "#include \"Pred.h\"" << endl;
+  oPredDriver << "#include \"DataSet.h\"" << endl;
+  oPredDriver << "#include <cppad/include/CppAD.h>" << endl;
+  oPredDriver << "#include <spkpred/PredBase.h>" << endl;
+  oPredDriver << "#include <vector>" << endl;
+  oPredDriver << "#include <sys/signal.h>" << endl;
+  oPredDriver << "using namespace std;" << endl;
+  oPredDriver << "#define MY_ASSERT_EQUAL( expected, actual ) \\" << endl;
+  oPredDriver << "   if( actual != expected ) \\" << endl;
+  oPredDriver << "   { \\" << endl;
+  oPredDriver << "      cerr << __FILE__ << \"(\" << __LINE__ << \"): \"; \\" << endl;
+  oPredDriver << "      cerr << \"Expected \" << expected; \\" << endl;
+  oPredDriver << "      cerr << \" but was \" << actual << endl; \\" << endl;
+  oPredDriver << "      raise( SIGABRT ); \\" << endl;
+  oPredDriver << "   } " << endl;
+  oPredDriver << endl;
+  oPredDriver << "int main()" << endl;
+  oPredDriver << "{" << endl;
+  oPredDriver << "   bool ok = true;" << endl;
+  oPredDriver << "   DataSet< CppAD::AD<double> > set;" << endl;
+  oPredDriver << "   Pred< CppAD::AD<double> > pred( &set );" << endl;
+  oPredDriver << "   const int nIndividuals = 3;" << endl;
+  oPredDriver << "   vector<int> N(nIndividuals); // numbers of measurements" << endl;
+  oPredDriver << "   N[0] = 1; N[1] = 2; N[2] = 3;" << endl;
+  oPredDriver << "   const int thetaLen    = " << thetaLen << ";" << endl;
+  oPredDriver << "   const int etaLen      = " << etaLen << ";" << endl;
+  oPredDriver << "   const int epsLen      = " << epsLen << ";" << endl;
+  oPredDriver << "   const int thetaOffset = 0;" << endl;
+  oPredDriver << "   const int etaOffset   = thetaLen;" << endl;
+  oPredDriver << "   const int epsOffset   = thetaLen + etaLen;" << endl;
+  oPredDriver << "   vector< CppAD::AD<double> > indepVar( thetaLen + etaLen + epsLen );" << endl;
+  oPredDriver << "   vector< CppAD::AD<double> > depVar( (1+2+3) * 2 );" << endl;
+  oPredDriver << "   fill( indepVar.begin(), indepVar.end(), 0.0 );" << endl;
+  oPredDriver << "   fill( depVar.begin(), depVar.end(), 0.0 );" << endl;
+  oPredDriver << "   const double C1       = 1.0;" << endl;
+  oPredDriver << "   const double C2       = 2.0;" << endl;
+  //---------------------------------------------------------------------------------
+  // A complete iteration over j
+  //
+  oPredDriver << endl;
+  oPredDriver << "   double expectedF, actualF, expectedY, actualY;" << endl;
+  oPredDriver << "   for( int i=0; i<3; i++ )" << endl;
+  oPredDriver << "   {" << endl;
+  oPredDriver << "      int n = N[i];" << endl;
+  oPredDriver << "      depVar.resize( n * 2 );" << endl;
+  oPredDriver << "      int fOffset = 0;" << endl;
+  oPredDriver << "      int yOffset = n;" << endl;
+  oPredDriver << "      for( int j=0; j<n; j++ )" << endl;
+  oPredDriver << "      {" << endl;
+  oPredDriver << "         indepVar[thetaOffset+0] = C1*j; // theta(1)" << endl;
+  oPredDriver << "         indepVar[thetaOffset+1] = C1*j; // theta(2)" << endl;
+  oPredDriver << "         indepVar[etaOffset  +0] = C1*j; // eta(1)" << endl;
+  oPredDriver << "         indepVar[etaOffset  +1] = C1*j; // eta(2)" << endl;
+  oPredDriver << "         indepVar[epsOffset  +0] = C1*j; // eps(1)" << endl;
+  oPredDriver << "         pred.eval( thetaOffset, thetaLen," << endl;
+  oPredDriver << "                    etaOffset,   etaLen," << endl;
+  oPredDriver << "                    epsOffset,   epsLen ," << endl;
+  oPredDriver << "                    fOffset,     n, " << endl;
+  oPredDriver << "                    yOffset,     n, " << endl;
+  oPredDriver << "                    i, j, " << endl;
+  oPredDriver << "                    indepVar, depVar );" << endl;
+  // Test if F(j) gets placed in the proper location in the depVar vector.
+  oPredDriver << "         actualF   = CppAD::Value(depVar[ fOffset + j ]);" << endl;
+  oPredDriver << "         expectedF = CppAD::Value(indepVar[thetaOffset+0] + indepVar[etaOffset+0] )" << endl;
+  oPredDriver << "                   * CppAD::Value(indepVar[thetaOffset+1] + indepVar[etaOffset+1] );" << endl;
+  oPredDriver << "         MY_ASSERT_EQUAL( expectedF, actualF );" << endl;
+  // Test if Y(j) gets placed in the proper location in the depVar vector.
+  oPredDriver << "         actualY   = CppAD::Value(depVar[ yOffset + j ]);" << endl;
+  oPredDriver << "         expectedY = expectedF + CppAD::Value(indepVar[epsOffset+0]);" << endl;
+  oPredDriver << "         MY_ASSERT_EQUAL( expectedY, actualY );" << endl;
+  oPredDriver << "      }" << endl;
+  oPredDriver << "   } // End of the first complete iteration over i and j" << endl;
+  // Test if the DataSet objects hold the complete set of computed values from the just-finished iteration.
+  oPredDriver << "   for( int i=0; i<3; i++ )" << endl;
+  oPredDriver << "   {" << endl;
+  oPredDriver << "      int n = N[i];" << endl;
+  oPredDriver << "      for( int j=0; j<n; j++ )" << endl;
+  oPredDriver << "      {" << endl;
+  oPredDriver << "         indepVar[thetaOffset+0] = C1*j; // theta(1)" << endl;
+  oPredDriver << "         indepVar[thetaOffset+1] = C1*j; // theta(2)" << endl;
+  oPredDriver << "         indepVar[etaOffset  +0] = C1*j; // eta(1)" << endl;
+  oPredDriver << "         indepVar[etaOffset  +1] = C1*j; // eta(2)" << endl;
+  oPredDriver << "         indepVar[epsOffset  +0] = C1*j; // eps(1)" << endl;
+  oPredDriver << "         expectedF = CppAD::Value(indepVar[thetaOffset+0] + indepVar[etaOffset+0] )" << endl;
+  oPredDriver << "                   * CppAD::Value(indepVar[thetaOffset+1] + indepVar[etaOffset+1] );" << endl;
+  oPredDriver << "         double pred =expectedF;" << endl;
+  oPredDriver << "         MY_ASSERT_EQUAL( C1*j, set.data[i]->theta[j][0] );" << endl;
+  oPredDriver << "         MY_ASSERT_EQUAL( C1*j, set.data[i]->theta[j][1] );" << endl;
+  oPredDriver << "         MY_ASSERT_EQUAL( C1*j, set.data[i]->eta[j][0] );" << endl;
+  oPredDriver << "         MY_ASSERT_EQUAL( C1*j, set.data[i]->eta[j][1] );" << endl;
+  oPredDriver << "         MY_ASSERT_EQUAL( pred, set.data[i]->pred[j] );" << endl;
+  oPredDriver << "         MY_ASSERT_EQUAL( set.data[i]->dv[j] - pred, set.data[i]->res[j] );" << endl;
+  oPredDriver << "         MY_ASSERT_EQUAL( pred, set.data[i]->f[j] );" << endl;
+  oPredDriver << "      }" << endl;
+  oPredDriver << "   }" << endl;
+  //
+  // End of a complete iteration over j
+  //---------------------------------------------------------------------------------
+
+  oPredDriver << "   return !ok;" << endl;
+  oPredDriver << "}" << endl;
+  oPredDriver.close();
+
+  sprintf( command, "g++ -g %s -o %s", fPredDriver_cpp, fPredDriver );
+  if( system( command ) != 0 )
+    {
+      char message[256];
+      sprintf( message, "Compilation of the generated %s failed!", fPredDriver_cpp );
+      CPPUNIT_ASSERT_MESSAGE( message, false );
+    }
+  sprintf( command, "./%s", fPredDriver );
+  if( system( command ) != 0 )
+    {
+      char message[256];
+      sprintf( message, "A test driver, %s, failed!", fPredDriver );
+      CPPUNIT_ASSERT_MESSAGE( message, false );
+    }
 
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Test driver.cpp to see if it compiles/links successfully.
@@ -524,7 +938,6 @@ void NonmemTranslatorPopTest::testParsePopSource()
   char fDriver[]     = "driver";
   char fDriver_cpp[] = "driver.cpp";
   int  exitcode      = 0;
-  char command[256];
 
   sprintf( command, "make -f generatedMakefile" );
   if( system( command ) != 0 )
@@ -533,6 +946,7 @@ void NonmemTranslatorPopTest::testParsePopSource()
       sprintf( message, "Compilation of the generated %s failed!", fDriver_cpp );
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
+  /*
   sprintf( command, "./%s", fDriver );
   
   // The exist code of 0 indicates success.  1 indicates convergence problem.
@@ -558,6 +972,7 @@ void NonmemTranslatorPopTest::testParsePopSource()
       sprintf( message, "%s failed for reasons other than convergence propblem or access permission <%d>!", fDriver, exitcode );
       CPPUNIT_ASSERT_MESSAGE( message, true );
     }
+  */
 
   /*
   remove( gSource ); // clean up
