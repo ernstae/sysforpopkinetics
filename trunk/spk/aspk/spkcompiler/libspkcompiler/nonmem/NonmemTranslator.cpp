@@ -915,6 +915,7 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "\tGridIntegral.cpp \\" << endl;
       oMakefile << "\tMontePopObj.cpp \\" << endl;
       oMakefile << "\tMapBay.cpp \\" << endl;
+      oMakefile << "\tGsl2SpkError.cpp \\" << endl;
       oMakefile << "\tMapMonte.cpp" << endl;
       oMakefile << endl;
 
@@ -924,6 +925,7 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "\tMontePopObj.h \\" << endl;
       oMakefile << "\tMapBay.h \\" << endl;
       oMakefile << "\tMapMonte.h \\" << endl;
+      oMakefile << "\tGsl2SpkError.h" << endl;
       oMakefile << endl;
 
       oMakefile << "prod : " << endl;
