@@ -174,6 +174,11 @@ int main(int argc, const char *argv[])
 		cerr << "method is no analytic, grid, plain, or miser" << endl;
 		return ReturnFailure;
 	}
+	if( analytic && NonmemPars::nEta != 1 )
+	{	cerr << "monteDriver: ";
+		cerr << "method is analytic and nEta != 1" << endl;
+		return ReturnFailure;
+	}
 
 	size_t i;
 	for(i = 0; i < numberEval.size(); i++)
