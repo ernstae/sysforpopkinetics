@@ -39,10 +39,13 @@ import javax.swing.JOptionPane;
  * 
  * @author  Jiaji Du
  */
-public class XMLReader 
+public class XMLReader
 {
-     /** Creates a new instance of XMLReader.
-     * @param text a Sting object containing two xml documents: spkreport and spksource.
+    /** Creates a new instance of XMLReader */
+    public XMLReader(){}
+    
+    /** Creates a new instance of XMLReader to parse SPKOutput.
+     * @param text a Sting object containing three xml documents: spkjob, spkreport and spksource.
      * @param output an Output object to hold output information.
      */
     public XMLReader(String text, Output output) 
@@ -259,7 +262,7 @@ public class XMLReader
             scatterplotI[2] = new String[xList.getLength()];
             for(int j = 0; j < xList.getLength(); j++)
                 scatterplotI[2][j] = ((Element)xList.item(j)).getAttribute("label");
-            NodeList byList = scatterplot.getElementsByTagName("by");
+            NodeList byList = scatterplot.getElementsByTagName("split");
             if(byList.getLength() > 0)
             {
                 scatterplotI[3] = new String[byList.getLength()];
@@ -1079,7 +1082,7 @@ public class XMLReader
         catch(IOException e)
         {
             return null;
-        }        
+        }
         Element presentation_data = docDataAll.getDocumentElement();
         int nDataItem = dataLabels.length;
         int nColumns = Integer.parseInt(presentation_data.getAttribute("columns"));
@@ -1121,6 +1124,31 @@ public class XMLReader
             }
         }
         return dataAll;
+    }
+    
+    public boolean getParameters(String parameter_out, Output output)
+    {
+        this.output = output;
+        Document docParameterAll;
+        try
+        {
+            DOMParser parser = new DOMParser();
+            parser.parse(new InputSource(new ByteArrayInputStream(parameter_out.getBytes()))); 
+            docParameterAll = parser.getDocument();
+        }
+        catch(SAXException e)
+        {
+            return false;
+        }
+        catch(IOException e)
+        {
+            return false;
+        }
+        Element parameters = docParameterAll.getDocumentElement();
+        getTheta(parameters);
+        getOmega(parameters);
+        getSigma(parameters);
+        return true;
     }
     
     // Job document, report document and source document

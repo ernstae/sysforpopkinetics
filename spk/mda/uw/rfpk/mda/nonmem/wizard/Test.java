@@ -55,7 +55,7 @@ public class Test{
         window.setVisible(true);
 
         GregorianCalendar calendar = new GregorianCalendar();
-        calendar.setTimeInMillis(Long.parseLong("1075929317964"));       
+        calendar.setTimeInMillis(Long.parseLong("1075929317964"));
         System.out.println("day = " + calendar.get(Calendar.DAY_OF_MONTH));
         System.out.println("month = " + calendar.get(Calendar.MONTH));
         System.out.println("year = " + calendar.get(Calendar.YEAR));        
@@ -71,7 +71,7 @@ public class Test{
     }
     private class Iterator extends MDAIterator{
         public Iterator(){
-            super("",  "", false, null, false, false);
+            super(null, false, null, false, false, new javax.swing.JFileChooser(), 0);
             super.setAdvan(9);
             super.setNDataCol(5);
             super.setNTheta(3);

@@ -21,6 +21,7 @@ package uw.rfpk.mda.nonmem.display;
 import uw.rfpk.mda.nonmem.Utility;
 import java.awt.Component;
 import java.awt.geom.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Comparator;
@@ -43,7 +44,7 @@ public class PlotShow extends JFrame {
      * @param type format of presentation: "dots", "line" or "both".
      */
     public PlotShow(String[][][] plotAll, double[][] dataAll, ArrayList labelAll,
-                    Properties dataLabelMap, String type)
+                    Properties dataLabelMap, int type)
     {
         this.plotAll = plotAll;
         this.dataLabelMap = dataLabelMap;
@@ -87,9 +88,6 @@ public class PlotShow extends JFrame {
             ArrayList alias = new ArrayList();
             for(int j = 0; j < l3; j++)
             {
-                // If the plot is for simulation, replace the alias of DV in the plot to SIMDV
-//                if(plotI[0][5].equals("simulation") && plotI[3][j].equals(dataLabelMap.getProperty("DV")))
-//                    plotI[3][j] = "SIMDV";                
                 int index = aliasAll.indexOf(plotI[3][j]); 
                 for(int k = 0; k < length; k++)
                     data[k][j] = dataAll[k + from][index];
@@ -97,9 +95,6 @@ public class PlotShow extends JFrame {
             }            
             for(int j = 0; j < l1; j++)
             {
-                // If the plot is for simulation, replace the alias of DV in the plot to SIMDV
-//                if(plotI[0][5].equals("simulation") && plotI[1][j].equals(dataLabelMap.getProperty("DV")))
-//                    plotI[1][j] = "SIMDV";                 
                 int index = aliasAll.indexOf(plotI[1][j]); 
                 for(int k = 0; k < length; k++)
                     data[k][j + l3] = dataAll[k + from][index];
@@ -107,9 +102,6 @@ public class PlotShow extends JFrame {
             }
             for(int j = 0; j < l2; j++)
             {
-                // If the plot is for simulation, replace the alias of DV in the plot to SIMDV
-//                if(plotI[0][5].equals("simulation") && plotI[2][j].equals(dataLabelMap.getProperty("DV")))
-//                    plotI[2][j] = "SIMDV"; 
                 int index = aliasAll.indexOf(plotI[2][j]); 
                 for(int k = 0; k < length; k++)
                     data[k][j + l1 + l3] = dataAll[k + from][index];
@@ -153,6 +145,7 @@ public class PlotShow extends JFrame {
                         }                        
                     }
                 }
+                portion.index2 = dataAll.length;
             }
             splitList.add(split);
             dataList[i] = data;
@@ -285,15 +278,29 @@ public class PlotShow extends JFrame {
             }
 
             // Display the plot
-            Plotter plotter = new Plotter(dataX, dataY, title, tokens[4], tokens[2], type,
-                                          plot[0][2].equals("show"), 
-                                          plot[0][3].equals("show"), 
-                                          plot[0][4].equals("show"));
+            Plotter plotter = new Plotter(dataX,
+                                          dataY,
+                                          title,
+                                          tokens[4],
+                                          tokens[2],
+                                          new String[]{tokens[2]},
+                                          new int[]{type},
+                                          new Color[]{Color.red},
+                                          plot[0][2].equals("show"),
+                                          plot[0][3].equals("show"),
+                                          plot[0][4].equals("show"),
+                                          new Color[]{Color.green, Color.green, Color.green},
+                                          null,
+                                          true, 
+                                          true, 
+                                          true,
+                                          true, 
+                                          0, 0, 0, 0);                                          
             plotter.setToolTipText("");
             JFrame frame = new JFrame();
             frame.getContentPane().add(plotter);
-            frame.setLocation(50 * j, 50 * j);
-            frame.setSize(500,400);
+            frame.setLocation(50 * j, 40 * j);
+            frame.setSize(500, 400);
             frame.setTitle("Model Design Agent Scaterplot Display");	
             frame.setVisible(true);
         }
@@ -352,5 +359,5 @@ public class PlotShow extends JFrame {
     private ArrayList aliasList = new ArrayList();  
     private ArrayList splitList = new ArrayList();
     private Properties dataLabelMap = null;
-    private String type = null;
+    private int type = 0;
 }

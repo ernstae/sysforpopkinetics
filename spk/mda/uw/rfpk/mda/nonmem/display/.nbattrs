@@ -9,6 +9,9 @@
         <attr name="class_dependency_java.awt.print.Printable" stringvalue="Plotter.Printer"/>
         <attr name="class_dependency_javax.swing.JPanel" stringvalue="Plotter"/>
     </fileobject>
+    <fileobject name="LikelihoodShow.java">
+        <attr name="class_dependency_javax.swing.JDialog" stringvalue="LikelihoodShow"/>
+    </fileobject>
     <fileobject name="TableShow.java">
         <attr name="class_dependency_java.util.Comparator" stringvalue="TableShow.CompareRows"/>
         <attr name="class_dependency_javax.swing.JFrame" stringvalue="TableShow"/>

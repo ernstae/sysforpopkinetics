@@ -46,6 +46,7 @@
                 <Column editable="false" title="Title 4" type="java.lang.Object"/>
               </Table>
             </Property>
+            <Property name="name" type="java.lang.String" value=""/>
             <Property name="rowHeight" type="int" value="20"/>
             <Property name="rowSelectionAllowed" type="boolean" value="false"/>
           </Properties>

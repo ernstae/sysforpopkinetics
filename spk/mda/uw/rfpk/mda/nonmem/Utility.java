@@ -18,6 +18,7 @@ distribution.
 **********************************************************************/
 package uw.rfpk.mda.nonmem;
 
+import uw.rfpk.mda.nonmem.display.Output;
 import javax.swing.JButton;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
@@ -675,4 +676,107 @@ public class Utility {
         }
         return mismatches;
     }
+    
+    /** Generate a dataset by replacing DV by simulated data from parent job's report.
+     * @param report the report XML as a String object.
+     * @param source the source XML as a String object.
+     * @param data the dataset XML as a String object
+     * @return the new dataset as a String object.
+     */
+    public static String replaceDataDVbySimDV(String report, String source, String data)
+    {
+        String presentation_data = "<?xml version=\"1.0\"?>\n" + 
+                                   report.substring(report.indexOf("<presentation_data "), 
+                                                    report.lastIndexOf("</presentation_data>") + 20);
+        String[] dataLabels = XMLReader.getDataLabels(source);
+        String[][] dataset = XMLReader.getData(presentation_data, dataLabels);
+        String description = data.substring(data.indexOf("<description>") + 13, 
+                                            data.indexOf("</description>")).trim();
+        return XMLWriter.setData(dataset, dataLabels, description) + "\n";     
+    }
+    
+    /** Modefy the model by replacing the initial conditions by the estimates in 
+     * parent job's report.
+     * @param model the model XML as a String object.
+     * @param report the report XML as a String object.
+     * @return the modefied model XML as a String object.
+     */
+    public static String replaceModelParameters(String model, String report)
+    {
+        String parameter_out = "<?xml version=\"1.0\"?>\n<parameter_out>\n" +
+                               report.substring(report.indexOf("<theta_out "), 
+                                                report.lastIndexOf("</theta_out>") + 12) + "\n" +
+                               report.substring(report.indexOf("<omega_out "), 
+                                                report.lastIndexOf("</omega_out>") + 12) + "\n" +
+                               report.substring(report.indexOf("<sigma_out "), 
+                                                report.lastIndexOf("</sigma_out>") + 12) +
+                               "\n</parameter_out>";
+        
+        Output output = new Output();
+        if(new XMLReader().getParameters(parameter_out, output))
+        {
+            StringTokenizer records = new StringTokenizer(model, "$");
+            int nTokens = records.countTokens();
+            model = "";
+            nOmega = 0;
+            nSigma = 0;
+            for(int i = 0; i < nTokens; i++)
+            {
+                String value = records.nextToken();
+                if(value.startsWith("THETA"))
+                    value = "THETA" + initTheta(value.substring(5).trim(), output.theta) + "\n";
+                if(value.startsWith("OMEGA"))
+                    value = "OMEGA " + initCov(value.substring(5).trim(), output.omega[nOmega++]) + "\n";
+                if(value.startsWith("SIGMA"))
+                    value = "SIGMA " + initCov(value.substring(5).trim(), output.sigma[nSigma++]) + "\n";                
+                model += "$" + value;
+            }
+        }
+        else
+        {
+            return null;
+        }
+        return model;
+    }
+    
+    private static String initTheta(String original, String[] replacement)
+    {
+        String thetas = "";
+        String[] theta = original.split("\n");
+        for(int i = 0; i < theta.length; i++)
+        {
+            if(theta[i].endsWith("FIXED)"))
+                theta[i] = "\n(" + replacement + " FIXED)";
+            else
+                theta[i] = "\n" + theta[i].split(",")[0] + "," + replacement[i] + "," + theta[i].split(",")[2];
+            thetas += theta[i];
+        }
+        return thetas;
+    }
+    
+    private static String initCov(String original, String[][] replacement)
+    {
+        String cov = " " + original;
+        if(original.indexOf("SAME") == -1)
+        {
+            int dimension = replacement.length;
+            if(original.startsWith("BLOCK"))
+            {
+                cov = "BLOCK(" + dimension + ") ";
+                for(int i = 0; i < dimension; i++)
+                    for(int j = 1; j < i + 2; j++)
+                        cov += " " + replacement[i][j];
+            }
+            else
+            {
+                cov = "DIAGONAL(" + dimension + ") ";
+                for(int i = 0; i < dimension; i++)
+                    cov += " " + replacement[i][i + 1];
+            }
+        }
+        return cov.replaceAll("F", " FIXED");
+    }
+    
+    private static int nOmega = 0;
+    private static int nSigma = 0;
 }

@@ -18,7 +18,7 @@ distribution.
 **********************************************************************/
 package uw.rfpk.mda.nonmem.display;
 
-import uw.rfpk.mda.nonmem.Utility; 
+import uw.rfpk.mda.nonmem.Utility;
 import javax.swing.table.*;
 import javax.swing.JTable;
 import java.text.DecimalFormat;
@@ -164,6 +164,7 @@ public class MatrixShow extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        jTable1.setName("");
         jTable1.setRowHeight(20);
         jTable1.setRowSelectionAllowed(false);
         jScrollPane1.setViewportView(jTable1);

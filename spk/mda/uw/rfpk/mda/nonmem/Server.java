@@ -43,6 +43,16 @@ public class Server {
         this.secret = args[3];
     }
     
+    /** Get server host name.
+     * @return server host name as a String object.
+     */
+    public String getHost(){return serverHost;}
+    
+    /** Get server port number.
+     * @return server port number as a String object.
+     */    
+    public String getPort(){return serverPort;}
+    
     /** Submit a SPK job to the database server.
      * @param source Spk source XML document.
      * @param dataset Spk data XML document.

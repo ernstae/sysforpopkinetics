@@ -46,8 +46,8 @@ public class Error extends javax.swing.JPanel implements WizardStep {
         iterator = iter;
         initComponents();
         jButton1.addActionListener(new DefaultEditorKit.CutAction());
-        jButton2.addActionListener(new DefaultEditorKit.CopyAction()); 
-        jButton3.addActionListener(new DefaultEditorKit.PasteAction());        
+        jButton2.addActionListener(new DefaultEditorKit.CopyAction());
+        jButton3.addActionListener(new DefaultEditorKit.PasteAction());
     }
     
     /** This method is called from within the constructor to
