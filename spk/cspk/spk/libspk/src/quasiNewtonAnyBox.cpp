@@ -872,27 +872,8 @@ void quasiNewtonAnyBox(
   // Prepare the optimizer state information.
   //------------------------------------------------------------
 
-  std::ostream    os = std::cout;
-  size_t        level;
-  size_t       nIterMax;
-  size_t      nQuadMax;
-  size_t            n;
-  double        delta;
-  Fun          &objective;
-  // Input+Output Arguments
-  size_t      &iterCurr;
-  size_t     &quadCurr;
-  double        &rScaled;
-  double        &fScaled;
-  double        *yCurr; // length n 
-  double        *gScaled; // length n 
-  const double  *hScaled; // length n * n 
-
-  const char *msg;
-  const size_t              n = 5;
-  const size_t        nQuadMax = 20 * n;
-  const bool      exponential = true;
-  const double          delta = 1e-7;
+  double rScaled;
+  double fScaled;
 
   // Since the optimizer always does a warm start, i.e. it
   // always makes use of the current values for the objective,
@@ -1011,6 +992,22 @@ void quasiNewtonAnyBox(
 
 
   //------------------------------------------------------------
+  // Set the remaining optimizer parameters.
+  //------------------------------------------------------------
+
+  // Send the output to standard cout.
+  std::ostream outputStream = std::cout;
+
+  strstring msg;  WILL THIS WORK WHERE A char* IS EXPECTED?
+  strstring msg;  WILL THIS WORK WHERE A char* IS EXPECTED?
+  strstring msg;  WILL THIS WORK WHERE A char* IS EXPECTED?
+  strstring msg;  WILL THIS WORK WHERE A char* IS EXPECTED?
+  strstring msg;  WILL THIS WORK WHERE A char* IS EXPECTED?
+  strstring msg;  WILL THIS WORK WHERE A char* IS EXPECTED?
+  const char *msg;
+
+
+  //------------------------------------------------------------
   // Optimize the scaled objective function.
   //------------------------------------------------------------
 
@@ -1043,7 +1040,7 @@ void quasiNewtonAnyBox(
 
         // Ask the optimizer to take perform a limited number of iterations.
         msg = QuasiNewton01Box(
-          os,
+          outputStream,
           level,
           nIterMax,
           nQuadMax,
