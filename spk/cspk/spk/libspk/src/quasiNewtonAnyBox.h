@@ -37,23 +37,21 @@
 #include "DoubleMatrix.h"
 #include "Optimizer.h"
 
-namespace quasiNewtonAnyBox{
-  typedef void (* FVAL_PROTOTYPE) ( 
-    const DoubleMatrix&  dvecX,
-    double*              pdFOut,
-    DoubleMatrix*        pdrowGOut,
-    const void*          pFvalInfo );
+class QuasiNewtonAnyBoxObj
+{
+public:
+  virtual const char *function( double* xIn, double& fOut ) = 0;
+  virtual const char *gradient( double* gOut ) = 0;
 };
 
 void quasiNewtonAnyBox( 
-  quasiNewtonAnyBox::FVAL_PROTOTYPE  fval,
-  const void*                        pFvalInfo,
-  Optimizer&                         optimizer,
-  const DoubleMatrix&                dvecXLow,
-  const DoubleMatrix&                dvecXUp,
-  const DoubleMatrix&                dvecXIn,
-  DoubleMatrix*                      pdvecXOut,
-  double*                            pdFOut,
-  DoubleMatrix*                      pF_xOut );
+  QuasiNewtonAnyBoxObj&  objective,
+  Optimizer&             optimizer,
+  const DoubleMatrix&    dvecXLow,
+  const DoubleMatrix&    dvecXUp,
+  const DoubleMatrix&    dvecXIn,
+  DoubleMatrix*          pdvecXOut,
+  double*                pdFOut,
+  DoubleMatrix*          pF_xOut );
 
 #endif
