@@ -9,7 +9,7 @@ use Getopt::Long;
 
 =head1 SYNOPSIS
 
-    load_spktest.pl --schema name1 --basedata name2 --userdata name3 --database name4 --user name5 --password --name6
+    load_spktest.pl --schema name1 --basedata name2 --userdata name3 --database name4 --host name5 --user name6 --password --name7
 
 =head1 ABSTRACT
     
@@ -50,6 +50,11 @@ use Getopt::Long;
     By default, the program builds the database spktest.  The --database option
     allows another database to be built.
 
+=head2 OPTIONAL HOST NAME
+
+    By default, the program assumes that the database is on localhost.  The --host
+    option allows another host to be designated.
+
 =head2 OPTIONAL USER AND PASSWORD
 
     The program has a default user and password for building spktest.  The
@@ -76,6 +81,7 @@ my $mysqldump = "/usr/bin/mysqldump";
 my $dbuser = "tester";
 my $dbpass = "tester";
 my $dbname = "spktest";
+my $dbhost = "localhost";
 
 my %file = ();
 %file = (
@@ -84,7 +90,7 @@ my %file = ();
 	   userdata => 'userdata.sql',
 	  );
 my %opt = ();
-GetOptions (\%opt, 'schema=s', 'basedata=s', 'userdata=s', 'database=s', 'user=s', 'password=s');
+GetOptions (\%opt, 'schema=s', 'basedata=s', 'userdata=s', 'host=s', 'database=s', 'user=s', 'password=s');
 
 for my $f (keys %file) {
     if (defined $opt{$f}) {
@@ -97,10 +103,11 @@ for my $f (keys %file) {
     -f $file{$f} or die "Oops! File '$file{$f}' does not exist.\n$usage";
 }
 $dbname = $opt{'database'} if (defined $opt{'database'});
+$dbhost = $opt{'host'}     if (defined $opt{'host'});
 $dbuser = $opt{'user'}     if (defined $opt{'user'});
 $dbpass = $opt{'password'} if (defined $opt{'password'});
 
-print "Building database '$dbname', with user '$dbuser'\n";
+print "Building database '$dbname', on host $dbhost, with user '$dbuser'\n";
 
 open FD, ">$tmp_name"
     or die "Can't open $tmp_name\n";
@@ -115,11 +122,11 @@ print FD "drop table state;\n";
 print FD "drop table user;\n";
 close FD;
 
-system "cat $tmp_name                 | mysql --force -p$dbpass -u$dbuser > /dev/null 2>&1";
+system "cat $tmp_name                 | mysql --force -h$dbhost -p$dbpass -u$dbuser > /dev/null 2>&1";
 system "echo 'use $dbname;' > $tmp_name";
-system "cat $tmp_name $file{schema}   | mysql --force -p$dbpass -u$dbuser";
-system "cat $tmp_name $file{basedata} | mysql --force -p$dbpass -u$dbuser";
-system "cat $tmp_name $file{userdata} | mysql --force -p$dbpass -u$dbuser";
+system "cat $tmp_name $file{schema}   | mysql --force -h$dbhost -p$dbpass -u$dbuser";
+system "cat $tmp_name $file{basedata} | mysql --force -h$dbhost -p$dbpass -u$dbuser";
+system "cat $tmp_name $file{userdata} | mysql --force -h$dbhost -p$dbpass -u$dbuser";
 
 system "rm $tmp_name";
 

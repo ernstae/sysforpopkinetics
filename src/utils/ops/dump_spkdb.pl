@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
 use strict;
+use Getopt::Long;
 
 =head1 NAME
     
@@ -8,7 +9,7 @@ use strict;
 
 =head1 SYNOPSIS
 
-    dump_spkdb.pl
+    dump_spkdb.pl [ --[no]prefix ]
 
 =head1 ABSTRACT
 
@@ -42,11 +43,14 @@ use strict;
 
 =head2 OUTPUT FILE NAMES
 
-    The output files have names with the following pattern:
+    By default, or if the --prefix argument is present, the output files have a prefix
+    added to their names, which includes the name of the database, the date and time:
 
     spkdb-yyyy-mm-dd-hhmm-ss-schema.sql
     spkdb-yyyy-mm-dd-hhmm-ss-basedata.sql
     spkdb-yyyy-mm-dd-hhmm-ss-userdata.sql
+
+    To omit the prefix, use the --noprefix argument.
 
 =head2 DEPENDENCIES
 
@@ -60,6 +64,7 @@ use strict;
 =cut
 
 my $mysqldump = "/usr/bin/mysqldump";
+
 my $db = "spkdb";
 my $dbhost = "dbserver";
 my $dbuser = "reader";
@@ -69,16 +74,22 @@ my $dbpass = "reader";
 my ($sec, $min, $hour, $mday, $mon, $year) = localtime;
 my $date = sprintf "%04d-%02d-%02d-%02d%02d-%02d", $year+1900, $mon+1, $mday, $hour, $min, $sec;
 
-my $prefix = "$db-$date";
-my $schema   = "$prefix-schema.sql";
-my $basedata = "$prefix-basedata.sql";
-my $userdata = "$prefix-userdata.sql";
+my %opt = ();
+GetOptions (\%opt, 'prefix!');
+my $prefixed_file_names = 1;
+$prefixed_file_names = $opt{'prefix'} if (defined $opt{'prefix'});
 
-system("mysqldump -h$dbhost -u$dbuser -p$dbpass  -d $db > $schema") == 0
+my $prefix = $prefixed_file_names ? "$db-$date-" : "";
+my $schema   = "${prefix}schema.sql";
+my $basedata = "${prefix}basedata.sql";
+my $userdata = "${prefix}userdata.sql";
+
+
+system("$mysqldump -h$dbhost -u$dbuser -p$dbpass  -d $db > $schema") == 0
     or die "Could not dump the schema\n";
-system("mysqldump -h$dbhost -u$dbuser -p$dbpass -tc $db --tables end method state > $basedata") == 0
+system("$mysqldump -h$dbhost -u$dbuser -p$dbpass -tc $db --tables end method state > $basedata") == 0
     or die "Could not dump the basedata tables\n";
-system("mysqldump -h$dbhost -u$dbuser -p$dbpass -tc $db --tables dataset history job model user > $userdata") == 0
+system("$mysqldump -h$dbhost -u$dbuser -p$dbpass -tc $db --tables dataset history job model user > $userdata") == 0
     or die "Could not dump the userdata tables\n";
 
 
