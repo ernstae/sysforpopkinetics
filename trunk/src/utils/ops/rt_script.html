@@ -38,7 +38,15 @@
 <p>
 This shell script runs regression_test.pl against the production
 regression test configuration file.
+</p>
 <p>
+Like regression_test.pl,
+<strong>regression_test</strong> must be run on the 
+<strong>aspkserver</strong>, and must be run with 
+<strong>root</strong> privilege in root's environment.  To insure 
+that this happens, log into aspkserver as an ordinary user, 
+then use <strong>su -</strong> (the minus sign is crucial) to
+gain root privilege.
 </p>
 <hr />
 <h1><a name="options_and_arguments">OPTIONS AND ARGUMENTS</a></h1>
