@@ -90,8 +90,8 @@ namespace // [Begin: unnamed namespace]
 //
 // [Remove]=========================================
 // CppAD header files.
-#include <../cppad/CppAD.h>
-#include <../cppad/include/Independent.h>
+#include <cppad/include/CppAD.h>
+#include <cppad/include/Independent.h>
 
 // Standard library header files.
 #include <cassert>

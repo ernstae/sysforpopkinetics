@@ -51,7 +51,7 @@
 //
 // [Remove]=========================================
 // CppAD header files.
-#include <../cppad/CppAD.h>
+#include <cppad/include/CppAD.h>
 
 // SPK library header files.
 #include <spk/SpkModel.h>
