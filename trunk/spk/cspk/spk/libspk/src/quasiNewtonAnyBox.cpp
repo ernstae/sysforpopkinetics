@@ -1238,12 +1238,23 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   // If the return value of QuasiNewton01Box is "ok",
   //the infinity norm of the projected gradient at 
   // x = xOut is less than or equal delta.
-  double delta = 0.0;
+  double delta;
 
   int i = 0;
   itrMax = 1;
   while ( i < nMaxIter; i++ )
   {
+    // Set delta to be the infinity norm (largest absolute value element)
+    // of the current value for the gradient,
+    //
+    //            ~
+    //     delta  =  | G |
+    //                    inf
+    //
+    // This ensures that the subproblems only be solved with accuracy
+    // sufficient for the current x value.
+    delta = 
+
      msg = QuasiNewton01Box(
           os,
           level,
