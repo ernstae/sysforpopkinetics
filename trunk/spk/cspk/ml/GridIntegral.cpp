@@ -113,7 +113,7 @@ double GridIntegral(
 	const std::valarray<double>           &L   ,
 	const std::valarray<double>           &U   )
 {
-	double sum = 0.;
+	double sumF = 0.;
 	double *X  = new double[m];
 	size_t *I  = new size_t[m];
 
@@ -126,6 +126,7 @@ double GridIntegral(
 		volume *= (U[i] - L[i]);
 		Ntot   *= N[i];
 	}
+	double *F = new double[Ntot];
 
 
 	bool    more = true;
@@ -138,7 +139,8 @@ double GridIntegral(
 			X[i] = L[i] + (I[i] + .5) * (U[i] - L[i]) / N[i];
 
 		// add function value at this grid point
-		sum += Feval(X, m, p);
+		F[count] = Feval(X, m, p);
+		sumF    += F[count];
 		count++;
 
 		// next grid point index
@@ -146,8 +148,9 @@ double GridIntegral(
 	}
 	assert( count == Ntot );
 
+	delete [] F;
 	delete [] X;
 	delete [] I;
 
-	return volume * sum / double(count);
+	return volume * sumF / double(count);
 }
