@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "/usr/share/sgml/docbook/xml-dtd-4.2-1.0-14/docbookx.dtd" [
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+]>
+<article><title>XML Representation of Model and Control Parameters</title>
+ <articleinfo>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>December 9, 2003</date>
+	<authorinitials>sh</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+    </revhistory>
+  <abstract>
+      <para>
+In this page are links to multiple specifications for the XML that defines the model and the parameters to control the model and the 
+computational engine's behaviors.
+Each version of the XML has a unique set of grammer and syntax that is designed to look familar to a specific (group of) client(s).
+
+      </para>
+  </abstract>
+ </articleinfo>
+  <sect1>
+    <title>
+       <ulink url="nonmem/SpkSourceML_html/elt-spksourceML.html">NONMEM (ie. NM-TRAN)</ulink>
+    </title>
+    <para><ulink url="nonmem/SpkSourceML_nonmem.xml"><citetitle>Example: CONTROL4 + THEO</citetitle></ulink> (view it as "source" if your browser tries to be cleaver but not)</para>
+  </sect1>
+  <sect1>
+    <title>SAAM-II</title>
+      <!-- programlisting>
+        <inlinegraphic entityref="spkoutml_nonmem"></inlinegraphic>
+      </programlisting -->
+      <para>
+      </para>
+  </sect1>
+  <sect1>
+    <title>Generic</title>
+      <!-- programlisting>
+        <inlinegraphic entityref="spkoutml_nonmem"></inlinegraphic>
+      </programlisting -->
+      <para>
+      </para>
+  </sect1>
+</article>
