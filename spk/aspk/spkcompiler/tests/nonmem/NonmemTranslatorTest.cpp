@@ -47,6 +47,7 @@ void NonmemTranslatorTest::testInheritance()
 }
 void NonmemTranslatorTest::testParsePopSource()
 {
+  const int pop_size = 3;
   const int nLabels = 3;
   map<string, string> labels;
   labels["ID"]   = "";
@@ -296,10 +297,9 @@ void NonmemTranslatorTest::testParsePopSource()
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
   
-  vector<int> N(3);
-  N[0] = 1;
-  N[1] = 2;
-  N[2] = 3;
+  vector<int> N(pop_size);
+  for( int i=0; i<pop_size; i++ )
+     N[i] = i+1;
   NonmemTranslator xlator( data, source );
   SymbolTable *table = xlator.getSymbolTable();
   Symbol * id   = table->insertLabel( "ID",   "", N );
@@ -331,6 +331,10 @@ void NonmemTranslatorTest::testParsePopSource()
   remove( gSource );
 
   //cout << *table << endl;
+
+  //=====================================================
+  // Test the contents of the symbol table.
+  //=====================================================
   map<string,string>::const_iterator pLabel = labels.begin();
   for( int i=0; i<nLabels, pLabel!=labels.end(); i++, pLabel++ )
     {
@@ -398,6 +402,91 @@ void NonmemTranslatorTest::testParsePopSource()
       CPPUNIT_ASSERT_EQUAL( eta_in[i],  atof( eta->initial[0][i].c_str() ) );
     }
 
+  //=====================================================
+  // Test the generated C++ source code files
+  // IndData.h, IndData.cpp, DataSet.h, DataSet.cpp
+  //=====================================================
+  // The order in which the variables appear in
+  // the IndData constructor must be consistent with
+  // with the order in which the variables are actually
+  // passed in the construction of these objects
+  // done in the DataSet constructor.
+  char fTestDriver[] = "testDriver.cpp";
+  ofstream oTestDriver( fTestDriver );
+  if( oTestDriver.good() )
+  {
+     oTestDriver << "#include <iostream>" << endl;
+     oTestDriver << "#include \"IndData.h\"" << endl;
+     oTestDriver << "#include \"DataSet.h\"" << endl;
+     oTestDriver << "using namespace std;" << endl;
+     oTestDriver << "int main()" << endl;
+     oTestDriver << "{" << endl;
+     oTestDriver << "DataSet set;" << endl;
+
+     for( int i=0; i<pop_size; i++ )
+     {
+        for( int j=0; j<N[i]; j++ )
+        {
+           oTestDriver << "if( set.dataset[" << i << "]->ID[";
+           oTestDriver << j << "] != string(\"";
+           oTestDriver << id->initial[i][j] << "\") )" << endl;
+           oTestDriver << "{" << endl;
+           oTestDriver << "   cerr << \"set[" << i << "]->ID[";
+           oTestDriver << j << "] != \\\"";
+           oTestDriver << id->initial[i][j] << "\\\"\" << endl; " << endl;
+           oTestDriver << "   cerr << \"was \" << set.dataset[";
+           oTestDriver << i << "]->ID[" << j << "] << \".\" << endl;" << endl;
+           oTestDriver << "return 1;" << endl;
+           oTestDriver << "}" << endl;
+
+           oTestDriver << "if( set.dataset[" << i << "]->TIME[" << j << "] != ";
+           oTestDriver << time->initial[i][j] << " )" << endl;
+           oTestDriver << "{" << endl;
+           oTestDriver << "   cerr << \"set[" << i << "]->TIME[" << j << "] != \\\"";
+           oTestDriver << time->initial[i][j] << "\\\"\" << endl; " << endl;
+           oTestDriver << "   cerr << \"was \" << set.dataset[";
+           oTestDriver << i << "]->TIME[" << j << "] << \".\" << endl;" << endl;
+           oTestDriver << "return 1;" << endl;
+           oTestDriver << "}" << endl;
+        
+           oTestDriver << "if( set.dataset[" << i << "]->CP[" << j << "] != ";
+           oTestDriver << cp->initial[i][j] << " )" << endl;
+           oTestDriver << "{" << endl;
+           oTestDriver << "   cerr << \"set[" << i << "]->CP[" << j << "] != \\\"";
+           oTestDriver << cp->initial[i][j] << "\\\"\" << endl; " << endl;
+           oTestDriver << "   cerr << \"was \" << set.dataset[";
+           oTestDriver << i << "]->CP[" << j << "] << \".\" << endl;" << endl;
+           oTestDriver << "return 1;" << endl;
+           oTestDriver << "}" << endl;
+           
+           oTestDriver << "if( set.dataset[" << i << "]->DV[" << j << "] != ";
+           oTestDriver << cp->initial[i][j] << " )" << endl;
+           oTestDriver << "{" << endl;
+           oTestDriver << "   cerr << \"set[" << i << "]->DV[" << j << "] != \\\"";
+           oTestDriver << cp->initial[i][j] << "\\\"\" << endl; " << endl;
+           oTestDriver << "   cerr << \"was \" << set.dataset[";
+           oTestDriver << i << "]->DV[" << j << "] << \".\" << endl;" << endl;
+           oTestDriver << "return 1;" << endl;
+           oTestDriver << "}" << endl;
+        }
+     }
+     oTestDriver << "return 0;" << endl;
+     oTestDriver << "}" << endl;
+  }
+  else
+  {
+     char buf[256];
+     sprintf( buf, "Failed to open %s as writable.", fTestDriver );
+     CPPUNIT_ASSERT_MESSAGE( buf, false );
+  }
+  if( system( "g++ DataSet.cpp IndData.cpp testDriver.cpp -g -I./ -o test" ) != 0 )
+  {
+     CPPUNIT_ASSERT_MESSAGE( "Failed to compile/link.", false );
+  }
+  if( system( "./test" ) != 0 )
+  {
+     CPPUNIT_ASSERT_MESSAGE( "\"test\" failed.", false );
+  }
   XMLPlatformUtils::Terminate();
 }
 void NonmemTranslatorTest::testParseIndSource()
