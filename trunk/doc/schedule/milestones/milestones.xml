@@ -146,22 +146,22 @@
 	      <entry></entry>
 	    </row>
 	    <row>
-	      <entry><link linkend="comp_out">Aspk Compiler Output Spec</link></entry>
+	      <entry><link linkend="comp_out">Aspk Compiler Output (C++)</link></entry>
 	      <entry>Sachiko Honda</entry>
 	      <entry>12/08/2003</entry>
-	      <entry></entry>
+	      <entry>12/17/2003</entry>
 	    </row>
 	    <row>
-	      <entry><link linkend="api_spec">Database API Spec</link></entry>
+	      <entry><link linkend="api_spec">Database API</link></entry>
 	      <entry>Alan Westhagen</entry>
 	      <entry>12/12/2003</entry>
 	      <entry>12/02/2003</entry>
 	    </row>
 	    <row>
-	      <entry><link linkend="perl_binding">Perl Binding for API</link></entry>
+	      <entry><link linkend="perl_binding">Database API, Perl Binding</link></entry>
 	      <entry>Alan Westhagen</entry>
 	      <entry>12/18/2003</entry>
-	      <entry></entry>
+	      <entry>12/24/2003</entry>
 	    </row>
 	    <row>
 	      <entry><link linkend="build">Cspk Object Build Spec</link></entry>
@@ -176,7 +176,7 @@
 	      <entry></entry>
 	    </row>
 	    <row>
-	      <entry><link linkend="c_binding">C Binding for API</link></entry>
+	      <entry><link linkend="c_binding">Database API, C Binding</link></entry>
 	      <entry>Alan Westhagen</entry>
 	      <entry>01/09/2004</entry>
 	      <entry></entry>
@@ -194,7 +194,7 @@
 	      <entry></entry>
 	    </row>
 	    <row>
-	      <entry><link linkend="java_binding">Java Binding for API</link></entry>
+	      <entry><link linkend="java_binding">Database API, Java Binding</link></entry>
 	      <entry>Alan Westhagen</entry>
 	      <entry>02/09/2004</entry>
 	      <entry></entry>
@@ -269,6 +269,146 @@
     <para>
       In this section, the individual milestones are described.
     </para>
+    <sect2 id="open">
+      <title>All Open Source</title>
+      <para>
+	All of the proprietary code in the Spk library is replaced with
+	open source code.
+      </para>
+    </sect2>
+    <sect2 id="comp_out">
+      <title>Aspk Compiler Output (C++)</title>
+      <para>
+	The Aspk compiler transforms model specifications submitted 
+	by the MDA into C++ source code and places this code in
+	the run queue, for subsequent retrieval by the Cspk for
+	building and execution.
+      </para>
+      <para>
+	This document is now available for viewing
+	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/sourceCpp/sourceCpp.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
+      </para>
+    </sect2>
+    <sect2 id="comp_ind">
+      <title>Aspk Compiler Output for Individual Analysis</title>
+      <para>
+	The Aspk compiler takes jobs from the compiler queue of the database,
+	compiles them, and places in the database the archive of files
+	needed by computational servers to perform population analysis.
+	The compiler outputs the files required by computational servers
+	to perform individual analysis.
+      </para>
+    </sect2>
+    <sect2 id="comp_pop">
+      <title>Aspk Compiler Output for Population Analysis</title>
+      <para>
+	The Aspk compiler takes jobs from the compiler queue of the database,
+	compiles them, and places in the database the archive of files
+	needed by computational servers to perform population analysis.
+	The compiler outputs the files required by computational servers
+	to perform population analysis.
+      </para>
+    </sect2>
+    <sect2 id="run">
+      <title>Cspk Builds and Runs Jobs</title>
+      <para>
+	The Cspk removes source files from the run queue that were place 
+	there by the Aspk compiler.  It builds the source into executable
+	objects and then runs them.
+      </para>
+    </sect2>
+    <sect2 id="report">
+      <title>Cspk Generates Report</title>
+      <para>
+	Cspk generates the user's output report, and stores it in the
+	database for eventual retrieval by the MDA.
+      </para>
+    </sect2>
+    <sect2 id="build_imp">
+      <title>Cspk Object Build</title>
+      <para>
+	This milestone builds object code, ready for execution, from source
+	code received from the Aspk compiler.
+      </para>
+    </sect2>
+    <sect2 id="build">
+      <title>Cspk Object Build Environment Specification</title>
+      <para>
+	Models are compiled into object code and linked to the Spk
+	library and other model invariant libraries in the Cspk.
+	This model describes the way this process is organized,
+	in terms of memory layout and execution.
+      </para>
+    </sect2>
+    <sect2 id="api_spec">
+      <title>Database API</title>
+      <para>
+	The application programming interface (API) defines a set of 
+	functions that can be used by software processes to interact
+	with the database.  This specification is language independent.
+      </para>
+      <para>
+	This document is now complete and can be viewed
+	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/dbAPI/dbAPI.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
+      </para>
+    </sect2>
+    <sect2 id="c_binding">
+      <title>Database API, C Binding</title>
+      <para>	
+	The C binding is an implementation of the API for use by
+	processes programmed in the C language.
+      </para>
+    </sect2>
+    <sect2 id="java_binding">
+      <title>Database API, Java Binding</title>
+      <para>
+	The Java binding is an implementation of the API for use by
+	processes programmed in the Java language.
+      </para>
+    </sect2>
+    <sect2 id="perl_binding">
+      <title>Database API, Perl Binding</title>
+      <para>
+	The Perl binding is an implementation of the API for use by
+	processes programmed in the Perl language.
+      </para>
+      <para>
+	This document is now complete and can be viewed
+	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/dbAPIperl/Spkdb.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
+      </para>
+    </sect2>
+    <sect2 id="er_model">
+      <title>Database Entity-Relationship Model</title>
+      <para>
+	Spk is implemented as a set of independent processes, which
+	communicate with each other by means of a relation database.
+	The entity-relationship model is the high-level design document
+	for this database.
+      </para>
+      <para>
+	This document is now available for viewing
+	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/erModel/erModel.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
+      </para>
+    </sect2>
+    <sect2 id="sql_schema">
+      <title>Database Schema</title>
+      <para>
+	The schema is a sequence of statements in the Data Definition
+	Language (DDL) which is a subset of the Structured Query Language
+	(SQL).  The schema can be executed by the MySQL relational database
+	management system to create a working database that implements
+	the entity-relationship model.
+      </para>
+      <para>
+	This document is now available for viewing
+	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/dbSchema/dbSchema.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
+      </para>
+    </sect2>
     <sect2 id="job_history">
       <title>Job History Model</title>
       <para>
@@ -288,6 +428,13 @@
 	Return to <link linkend="milestone_table">table</link>.
       </para>
     </sect2>
+    <sect2 id="submit">
+      <title>MDA Submits Jobs</title>
+      <para>
+	The MDA submits jobs, by using the Java API to place XML versions
+	of a model and data into the Aspk compiler input queue.
+      </para>
+    </sect2>
     <sect2 id="model_cap">
       <title>Model Capabilities Specification</title>
       <para>
@@ -300,6 +447,64 @@
 	This document is now complete and can be viewed
 	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/modelCap/html/modelCap.html">here</ulink>.
 	Return to <link linkend="milestone_table">table</link>.
+      </para>
+    </sect2>
+    <sect2 id="net_security">
+      <title>Network Security Implementation</title>
+      <para>
+	This milestone is the implementation of the Network Security
+	Specification.
+      </para>
+    </sect2>
+    <sect2 id="net_spec">
+      <title>Network Security Specification</title>
+      <para>
+	This specification lays out the requirements for network 
+	security and describes a practical solution which meets
+	the requirements.
+      </para>
+    </sect2>
+
+    <sect2 id="optimizer">
+      <title>Replacement of the NAG Optimizer</title>
+      <para>
+	The Spk function library contains a proprietary optimizer from an 
+	organization called NAG.  Since version 0.1 will be licensed as
+	open source, it is necessary to replace the NAG optimizer with
+	one developed by the RFPK Mathematics Team. This milestone consists
+	of integrating the new optimizer with the Spk library and testing
+	it on against the Spk test suites.
+      </para>
+    </sect2>
+    <sect2 id="out_imp">
+      <title>User Output Options Implemented</title>
+      <para>
+	User output options are implemented in the MDA.
+      </para>
+    </sect2>
+    <sect2 id="out_opt">
+      <title>User Output Options Specification</title>
+      <para>
+	The output that comes back to the MDA from the computational 
+	server is XML.  This specification describes what the 
+	MDA will do in terms of transforming this data into input for
+	other analysis tools as well as doing a simple presentation
+	of data on the user's screen.
+      </para>
+    </sect2>
+    <sect2 id="web_spec">
+      <title>Web Site Functional Specification</title>
+      <para>
+	The functional specification describes the web site from the 
+	point of view of the services and usability.  It does not
+	specify visual design.
+      </para>
+    </sect2>
+    <sect2 id="web_site">
+      <title>Web Site Implementation</title>
+      <para>
+	This milestone is the implementation of a web site which conforms
+	to the Web Site Functional Specification.
       </para>
     </sect2>
     <sect2 id="xml_data">
@@ -331,20 +536,6 @@
 	Return to <link linkend="milestone_table">table</link>.
       </para>
     </sect2>
-    <sect2 id="er_model">
-      <title>Database Entity-Relationship Model</title>
-      <para>
-	Spk is implemented as a set of independent processes, which
-	communicate with each other by means of a relation database.
-	The entity-relationship model is the high-level design document
-	for this database.
-      </para>
-      <para>
-	This document is now available for viewing
-	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/erModel/erModel.html">here</ulink>.
-	Return to <link linkend="milestone_table">table</link>.
-      </para>
-    </sect2>
     <sect2 id="results">
       <title>XML Representation of Spk Results and Other Reports</title>
       <para>
@@ -357,186 +548,6 @@
 	This document is now available for viewing
 	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/reportML/reportML.html">here</ulink>.
 	Return to <link linkend="milestone_table">table</link>.
-      </para>
-    </sect2>
-    <sect2 id="sql_schema">
-      <title>Database Schema</title>
-      <para>
-	The schema is a sequence of statements in the Data Definition
-	Language (DDL) which is a subset of the Structured Query Language
-	(SQL).  The schema can be executed by the MySQL relational database
-	management system to create a working database that implements
-	the entity-relationship model.
-      </para>
-      <para>
-	This document is now available for viewing
-	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/dbSchema/dbSchema.html">here</ulink>.
-	Return to <link linkend="milestone_table">table</link>.
-      </para>
-    </sect2>
-    <sect2 id="optimizer">
-      <title>Replacement of the NAG Optimizer</title>
-      <para>
-	The Spk function library contains a proprietary optimizer from an 
-	organization called NAG.  Since version 0.1 will be licensed as
-	open source, it is necessary to replace the NAG optimizer with
-	one developed by the RFPK Mathematics Team. This milestone consists
-	of integrating the new optimizer with the Spk library and testing
-	it on against the Spk test suites.
-      </para>
-    </sect2>
-    <sect2 id="comp_out">
-      <title>Aspk Compiler Output Specification</title>
-      <para>
-	The Aspk compiler transforms model specifications submitted 
-	by the MDA into C++ source code and places this code in
-	the run queue, for subsequent retrieval by the Cspk for
-	building and execution.
-      </para>
-    </sect2>
-    <sect2 id="api_spec">
-      <title>Database API Specification</title>
-      <para>
-	The application programming interface (API) defines a set of 
-	functions that can be used by software processes to interact
-	with the database.  This specification is language independent.
-      </para>
-      <para>
-	This document is now complete and can be viewed
-	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/dbAPI/dbAPI.html">here</ulink>.
-	Return to <link linkend="milestone_table">table</link>.
-      </para>
-    </sect2>
-    <sect2 id="build">
-      <title>Cspk Object Build Environment Specification</title>
-      <para>
-	Models are compiled into object code and linked to the Spk
-	library and other model invariant libraries in the Cspk.
-	This model describes the way this process is organized,
-	in terms of memory layout and execution.
-      </para>
-    </sect2>
-    <sect2 id="perl_binding">
-      <title>Perl Binding for Database API</title>
-      <para>
-	The Perl binding is an implementation of the API for use by
-	processes programmed in the Perl language.
-      </para>
-    </sect2>
-    <sect2 id="out_opt">
-      <title>User Output Options Specification</title>
-      <para>
-	The output that comes back to the MDA from the computational 
-	server is XML.  This specification describes what the 
-	MDA will do in terms of transforming this data into input for
-	other analysis tools as well as doing a simple presentation
-	of data on the user's screen.
-      </para>
-    </sect2>
-    <sect2 id="c_binding">
-      <title>C Binding for Database API</title>
-      <para>	
-	The C binding is an implementation of the API for use by
-	processes programmed in the C language.
-      </para>
-    </sect2>
-    <sect2 id="comp_pop">
-      <title>Aspk Compiler Output for Population Analysis</title>
-      <para>
-	The Aspk compiler takes jobs from the compiler queue of the database,
-	compiles them, and places in the database the archive of files
-	needed by computational servers to perform population analysis.
-	The compiler outputs the files required by computational servers
-	to perform population analysis.
-      </para>
-    </sect2>
-    <sect2 id="out_imp">
-      <title>User Output Options Implemented</title>
-      <para>
-	User output options are implemented in the MDA.
-      </para>
-    </sect2>
-    <sect2 id="build_imp">
-      <title>Cspk Object Build</title>
-      <para>
-	This milestone builds object code, ready for execution, from source
-	code received from the Aspk compiler.
-      </para>
-    </sect2>
-    <sect2 id="java_binding">
-      <title>Java Binding for Database API</title>
-      <para>
-	The Java binding is an implementation of the API for use by
-	processes programmed in the Java language.
-      </para>
-    </sect2>
-    <sect2 id="comp_ind">
-      <title>Aspk Compiler Output for Individual Analysis</title>
-      <para>
-	The Aspk compiler takes jobs from the compiler queue of the database,
-	compiles them, and places in the database the archive of files
-	needed by computational servers to perform population analysis.
-	The compiler outputs the files required by computational servers
-	to perform individual analysis.
-      </para>
-    </sect2>
-    <sect2 id="net_spec">
-      <title>Network Security Specification</title>
-      <para>
-	This specification lays out the requirements for network 
-	security and describes a practical solution which meets
-	the requirements.
-      </para>
-    </sect2>
-    <sect2 id="submit">
-      <title>MDA Submits Jobs</title>
-      <para>
-	The MDA submits jobs, by using the Java API to place XML versions
-	of a model and data into the Aspk compiler input queue.
-      </para>
-    </sect2>
-    <sect2 id="run">
-      <title>Cspk Builds and Runs Jobs</title>
-      <para>
-	The Cspk removes source files from the run queue that were place 
-	there by the Aspk compiler.  It builds the source into executable
-	objects and then runs them.
-      </para>
-    </sect2>
-    <sect2 id="report">
-      <title>Cspk Generates Report</title>
-      <para>
-	Cspk generates the user's output report, and stores it in the
-	database for eventual retrieval by the MDA.
-      </para>
-    </sect2>
-    <sect2 id="web_spec">
-      <title>Web Site Functional Specification</title>
-      <para>
-	The functional specification describes the web site from the 
-	point of view of the services and usability.  It does not
-	specify visual design.
-      </para>
-    </sect2>
-    <sect2 id="open">
-      <title>All Open Source</title>
-      <para>
-	All of the proprietary code in the Spk library is replaced with
-	open source code.
-      </para>
-    </sect2>
-    <sect2 id="net_security">
-      <title>Network Security Implementation</title>
-      <para>
-	This milestone is the implementation of the Network Security
-	Specification.
-      </para>
-    </sect2>
-    <sect2 id="web_site">
-      <title>Web Site Implementation</title>
-      <para>
-	This milestone is the implementation of a web site which conforms
-	to the Web Site Functional Specification.
       </para>
     </sect2>
   </sect1>
