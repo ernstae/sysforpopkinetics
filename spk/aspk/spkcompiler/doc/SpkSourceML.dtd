@@ -19,6 +19,20 @@ Currently, the only supported client is NONMEM (ie. NM-TRAN).
 -->
 <!ELEMENT spksourceML (nonmem)>
 
+<!-- <spksourceML login="xxx"> The user's login name. -->
+<!ATTLIST spksourceML login CDATA #REQUIRED>
+
+<!-- <spksourceML lname="Honda"> The user's last (family) name. -->
+<!ATTLIST spksourceML lname CDATA #REQUIRED>
+
+<!-- <spksourceML fname="Sachiko"> The user's first (given) name.  This is optional.-->
+<!ATTLIST spksourceML fname CDATA #IMPLIED>
+
+<!-- <spksourceML organization="RFPK"> The name of the organization the user belongs to.  This is optional. -->
+<!ATTLIST spksourceML organization CDATA #IMPLIED>
+
+<!-- <spksourceML timestamp="000000000"> The date/time of submission of the job request.  The value is the number of seconds elapsed since 00:00:00 on January 1, 1970, Coordinated Universal Time (UTC).  You can get this value from ctime() in C for example. -->
+<!ATTLIST spksourceML timestamp CDATA #REQUIRED>
 <!-- ================================================================================ -->
 <!--                                                                                  -->
 <!--                                   NONMEM                                         -->
