@@ -252,8 +252,9 @@ $syntax/
 /$$
 This $xref/Optimizer//Optimizer/$$ object contains the information 
 that controls the optimization process.
+Each of its elements is described separately below.
 
-$subhead epsilon$$
+$subhead optimizer.epsilon$$
 This real number is used to specify the convergence criteria
 for the optimizer.
 It must be greater than $math%0.0%$$.
@@ -262,43 +263,46 @@ It must be greater than $math%0.0%$$.
   // *     abs( xOut - xStar )  <=  epsilon (xUp - xLow) .                *
   // *                                                                    *
 
-$subhead 
-
-/nMaxIter/
-/$$
+$subhead optimizer.nMaxIter$$
 This integer must be greater than or equal to zero.
 It specifies the maximum number of 
 iterations to attempt before giving up on convergence.
-If $italic nMaxIter$$ is zero, then the top-level search
-function ($mref%fitIndividual%fitPopulation%$$) will simply
-compute the objective function without performing a search.
+If it is equal to zero, then the input
+value for $math%x%$$ is accepted as the final value, and any requested output
+values are evaluated at that final value.
+In this case, a warm start will not be performed in order to ensure
+that the objective function and its gradient will be
+evaluated at the input value for $math%x%$$.
+
+$subhead optimizer.traceLevel$$
+This integer scalar specifies the amount of tracing.
+Larger values of $italic traceLevel$$ entail more tracing, 
+with $math%4%$$ being the highest level of tracing.
+If $math%level \ge 1%$$, trace values are directed to standard output 
+(stdout).  
 $pre
 
 $$
-traceLevel
-
-This integer scalar specifies the amount of tracing.
 Tracing is done using a scaled version of the
 objective function.  For this scaled version the elements of
 the parameter vector are constrained to the interval $math%[0, 1]%$$. 
-If $math%level \ge 1%$$, trace values are directed to standard output 
-(stdout).  
-Larger values of $italic traceLevel$$ entail more tracing, 
-with $math%4%$$ being the highest level of tracing.
-For details on the tracing see the description of the level 
+$pre
+
+$$
+If $italic traceLevel$$ is equal to $math%4%$$, then the tracing 
+will include the gradient of the objective and a finite difference 
+approximation for that gradient.
+These two gradients can be compared as a check on the consistency 
+of the objective function and its gradient.
+$pre
+
+$$
+For more details on the tracing see the description of the level 
 parameter for the optimizer QuasiNewton01Box.
-$pre
 
-$$
-If the number of iterations parameter is equal to zero, then the input
-value for x is accepted as the final value, and any requested output
-values are evaluated at that final value.
-In this case, a warm start will not be performed in order to ensure
-that the objective function, its gradient, and its Hessian will all be
-evaluated at the input value for x.
-$pre
+$subhead optimizer.nMaxIter$$
 
-$$
+$subhead optimizer.nMaxIter$$
 If the throwxEcepIfMaxIter parameter is true, then when
 the maximum number of iterations is exhausted, an exception will
 be thrown and the output values for this function will not be set.
@@ -308,99 +312,99 @@ maximum number of iterations was exhausted.
 
 $subhead 
 
-/nIterCompleted/
-/$$
+optimizer.nIterCompleted$$
+
 This integer scalar holds the number of iteration that have been 
 completed in the optimizer.  The initial value of $code  0$$ is set 
 at the construction time.
 
 $subhead 
 
-/isTooManyIter/
-/$$
+optimizer.isTooManyIter$$
+
 This flag indicates that if the too-many-iteration failure has occurred.  
 It is set to $code false$$ at the construction time.
 
 $subhead 
 
-/saveStateAtEndOfOpt/
-/$$
+optimizer.saveStateAtEndOfOpt$$
+
 This flag indicates if the state information required for a warm start
 should be saved at the end of the optimization process.
 It is set to $code false$$ at the construction time.
 
 $subhead 
 
-/throwExcepIfMaxIter/
-/$$
+optimizer.throwExcepIfMaxIter$$
+
 This flag indicates if the optimizer should throw an exception when
 the maximum number of iterations is exhausted.
 It is set to $code true$$ at the construction time.
 
 $subhead 
 
-/isSubLevelOpt/
-/$$
+optimizer.isSubLevelOpt$$
+
 This flag indicates that if the optimizer is for a sub level optimization.  
 It is set to $code false$$ at the construction time.  It is for SPK internal
 use only.
 
 $subhead 
 
-/isWarmStart/
-/$$
+optimizer.isWarmStart$$
+
 This flag indicates that if the optimization should run a warm start.  
 It is set to $code false$$ at the construction time.
 
 $subhead 
 
-/stateInfo/
-/$$
+optimizer.stateInfo$$
+
 This $code StateInfo$$ object contains the optimizer state information
 required to perform a warm start.
 Each of its elements is described separately below.
 
 $subhead 
 
-/stateInfo.n/
-/$$
+optimizer.stateInfo.n$$
+
 The element $italic n$$ specifies the number of components
 in the element vector $italic x$$.
 
 $subhead 
 
-/stateInfo.r/
-/$$
+optimizer.stateInfo.r$$
+
 The element $italic r$$ contains the current trust region radius
 (as an infinity norm bound on the step size).
 
 $subhead 
 
-/stateInfo.f/
-/$$
+optimizer.stateInfo.f$$
+
 The element $italic f$$ contains the value for $math%f(x)%$$
 at the point $math%x%$$.
 
 $subhead 
 
-/stateInfo.x/
-/$$
+optimizer.stateInfo.x$$
+
 The element $italic x$$ is a vector of length $italic n$$.
 It specifies the point at which the objective function, 
 its gradient, and its Hessian were evaluated.
 
 $subhead 
 
-/stateInfo.g/
-/$$
+optimizer.stateInfo.g$$
+
 The vector $italic g$$ must have length $math%n%$$.
 It contains the gradient of $math%f(x)%$$
 at the point $math%x%$$.
 
 $subhead 
 
-/stateInfo.h/
-/$$
+optimizer.stateInfo.h.$$
+
 The vector $italic h$$ must have length $math%n^2%$$.
 It contains an approximation for the hessian of $math%f(x)%$$
 at the point $math%x%$$.
