@@ -767,15 +767,6 @@ void quasiNewtonAnyBox(
   const double* pdXUpData  = dvecXUp.data();
   const double* pdXInData  = dvecXIn.data();
 
-  // If the final x value should be returned, do some initializations.
-  double* pdXOutData;
-  if ( pdvecXOut )
-  {
-    int nXOutRows = pdvecXOut->nr();
-    pdXOutData    = pdvecXOut->data();
-    assert( nXOutRows == nObjPar );
-  }
-
   DoubleMatrix dvecXDiff( nObjPar, 1 );
 
   double* pdXDiffData = dvecXDiff.data();
@@ -1197,7 +1188,16 @@ void quasiNewtonAnyBox(
   // from the final y value.
   if ( pdvecXOut ) 
   {
-    unscaleElem( nObjPar, yCurr, pdXLowData, pdXUpData, pdXDiffData, pdXOutData );
+    double* pdXOutData = pdvecXOut->data();
+    assert( pdvecXOut->nr() == nObjPar );
+
+    unscaleElem( 
+      nObjPar,
+      yCurr,
+      pdXLowData,
+      pdXUpData,
+      pdXDiffData,
+      pdXOutData );
   }
 
   // If the final value for the objective function should be
@@ -1211,13 +1211,13 @@ void quasiNewtonAnyBox(
   {
     double* pdF_xOutData = pdrowF_xOut->data();
 
-SHOULD gScaled BE UNSCALED BEFORE ITS COPIED TO f_x?
-SHOULD gScaled BE UNSCALED BEFORE ITS COPIED TO f_x?
-SHOULD gScaled BE UNSCALED BEFORE ITS COPIED TO f_x?
-SHOULD gScaled BE UNSCALED BEFORE ITS COPIED TO f_x?
-SHOULD gScaled BE UNSCALED BEFORE ITS COPIED TO f_x?
-SHOULD gScaled BE UNSCALED BEFORE ITS COPIED TO f_x?
-SHOULD gScaled BE UNSCALED BEFORE ITS COPIED TO f_x?
+    unscaleGradElem( nObjPar, yCurr, pdXLowData, pdXUpData, pdXDiffData, pdXOutData );
+
+void unscaleGradElem(
+  int            n,
+  const double*  gScaled, 
+  const double*  xDiff,
+  double*        g )
 
     std::copy( gScaled, gScaled + nObjPar, pdF_xOutData );
   }
