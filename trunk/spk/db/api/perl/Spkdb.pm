@@ -413,6 +413,58 @@ sub de_q2c() {
     return $row;
 }
 
+
+=head2 get_cmp_jobs -- get all jobs currently being compiled
+
+Returns a reference to an array of rows.  Each row is a reference
+to a hash table, with the field name as key and field value as value.
+Within the array, jobs are sorted in order of job_id, hence the first
+job submitted appears first. Each row contains only one field:
+job_id.
+
+    $array_row = $Spkdb::get_cmp_jobs($dbh);
+
+Returns
+
+  success:
+    reference to an array of references to hash tables, each 
+    representing a subset of a row in the job table; 
+    false if there are no jobs with state_code 'cmp'
+
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed
+
+=cut
+
+sub get_cmp_jobs() {
+    
+    my $dbh = shift;
+    $err = 0;
+    $errstr = "";
+
+    my $sql = "select job_id "
+	. "from job where state_code='cmp' "
+	. "order by job_id;";
+    my $sth = $dbh->prepare($sql);
+    unless ($sth) {
+	$err = $PREPARE_FAILED;
+	$errstr = "could not prepare statement: $sql";
+	return undef;
+    }
+    unless ($sth->execute())
+    {
+	$err = $EXECUTE_FAILED;
+	$errstr = "could not execute state: $sql; error returned "
+	    . $sth->errstr;
+	return undef;
+    }
+    my $array_row_ref = $sth->fetchall_arrayref({});
+
+    return $array_row_ref;
+}
+
 =head2 en_q2r -- add a compiled job to the run queue
 
 Add a compiled job to the queue of jobs that are ready to run.
@@ -540,6 +592,58 @@ sub de_q2r() {
     &add_to_history($dbh, $job_id, $state_code);
     return $row;
 }
+
+=head2 get_run_jobs -- get all jobs with state_code 'run'
+
+Returns a reference to an array of rows.  Each row is a reference
+to a hash table, with the field name as key and field value as value.
+Within the array, jobs are sorted in order of job_id, hence the first
+job submitted appears first. Each row contains only one field:
+job_id.
+
+    $array_row = $Spkdb::get_run_jobs($dbh);
+
+Returns
+
+  success:
+    reference to an array of references to hash tables, each 
+    representing a subset of a row in the job table; 
+    false if there are no jobs with state_code 'run'
+
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed
+
+=cut
+
+sub get_run_jobs() {
+    
+    my $dbh = shift;
+    $err = 0;
+    $errstr = "";
+
+    my $sql = "select job_id "
+	. "from job where state_code='run' "
+	. "order by job_id;";
+    my $sth = $dbh->prepare($sql);
+    unless ($sth) {
+	$err = $PREPARE_FAILED;
+	$errstr = "could not prepare statement: $sql";
+	return undef;
+    }
+    unless ($sth->execute())
+    {
+	$err = $EXECUTE_FAILED;
+	$errstr = "could not execute state: $sql; error returned "
+	    . $sth->errstr;
+	return undef;
+    }
+    my $array_row_ref = $sth->fetchall_arrayref({});
+
+    return $array_row_ref;
+}
+
 
 =head2 end_job -- end a job, whether successful or not
 

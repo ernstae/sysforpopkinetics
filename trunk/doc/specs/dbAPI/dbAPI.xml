@@ -1046,7 +1046,7 @@
 	    <glossterm>Side Effects</glossterm>
 	    <glossdef>
 	      <para>
-		A state transition record is added to the <emphasis>history</emphasis> table.
+		None.
 	      </para>
 	    </glossdef>
 	  </glossentry>
@@ -1385,7 +1385,7 @@
 	    <glossterm>Side Effects</glossterm>
 	    <glossdef>
 	      <para>
-		A state transition record is added to the <emphasis>history</emphasis> table.
+		None.
 	      </para>
 	    </glossdef>
 	  </glossentry>
