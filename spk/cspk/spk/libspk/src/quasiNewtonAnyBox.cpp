@@ -166,7 +166,7 @@ $head Return Value$$
 If the convergence criteria specified below by the $italic optInfo$$
 argument is satisfied, then the output value pointers are set to point
 to their respective results.
-If the convergence criteia is not satisfied, then an 
+If the convergence criteria is not satisfied, then an 
 $xref/SpkException//exception/$$ will be thrown.  
 The state at which an exception is thrown is defined in
 $xref/glossary/Exception Handling Policy/Exception Handling Policy/$$.
@@ -1125,6 +1125,13 @@ void quasiNewtonAnyBox(
   // Optimize the scaled objective function.
   //------------------------------------------------------------
 
+  if ( level > 0 && nMaxIterAnyBox > 0 )
+  {
+    outputStream << endl;
+    outputStream << "Begin search for optimal parameter values." << endl;
+    outputStream << endl;
+  }
+
   // Attempt to satisfy this function's convergence criterion before
   // the maximum number of iterations have been performed.
   try
@@ -1377,15 +1384,35 @@ void quasiNewtonAnyBox(
   // current iteration number.
   optInfo.setNIterCompleted( iterCurr - 1 );
 
-  if ( isWithinTol )                          // This function's convergence
-                                              // criterion was satisfied.
+  if ( isWithinTol )
   {
+    //----------------------------------------------------------
+    // This function's convergence criterion was satisfied.
+    //----------------------------------------------------------
+
+    if ( level > 0 && nMaxIterAnyBox > 0 )
+    {
+      outputStream << endl;
+      outputStream << "Optimal parameter values found." << endl;
+      outputStream << endl;
+    }
+
     optInfo.setIsTooManyIter( false );
     ok = true;
   }
-  else if ( iterCurr == nMaxIterAnyBox + 1 )  // The maximum number of iterations 
-                                              // have been performed.
+  else if ( iterCurr == nMaxIterAnyBox + 1 )
   {
+    //----------------------------------------------------------
+    // The maximum number of iterations have been performed.
+    //----------------------------------------------------------
+
+    if ( level > 0 && nMaxIterAnyBox > 0 )
+    {
+      outputStream << endl;
+      outputStream << "Maximum number of iterations exceeded." << endl;
+      outputStream << endl;
+    }
+
     optInfo.setIsTooManyIter( true );
     if ( optInfo.getThrowExcepIfMaxIter() )
     {
@@ -1398,12 +1425,22 @@ void quasiNewtonAnyBox(
       ok = true;
     }
   }
-  else                                        // This function's convergence
-                                              // criterion was not satisfied.
+  else
   {
+    //----------------------------------------------------------
+    // This function's convergence criterion was not satisfied.
+    //----------------------------------------------------------
+
+    if ( level > 0 && nMaxIterAnyBox > 0 )
+    {
+      outputStream << endl;
+      outputStream << "Unable to find optimal parameter values." << endl;
+      outputStream << endl;
+    }
+
     optInfo.setIsTooManyIter( false );
     errorCode = SpkError::SPK_NOT_CONVERGED;
-    stringMessage = "Unable to satisfy convergence criterion for quasiNewtonAnyBox.";
+    stringMessage = "Unable to find optimal parameter values in quasiNewtonAnyBox.";
     ok = false;
   }
 
