@@ -5,8 +5,8 @@
 <driver>
 	<theta length="3">
 		<in>
-			<value>0.3</value>
-			<value>0.08</value>
+			<value fixed="yes">0.3</value>
+			<value fixed="no">0.08</value>
 			<value>0.04</value>
                 </in>
                 <low>

@@ -90,6 +90,12 @@ void NonmemCompilerTest::testInterpret()
 			  0, spkRequired->indTrace );
   CPPUNIT_ASSERT_MESSAGE( "(ind) indParOut should be requested!",
 			  spkRequired->isIndParOut);
+  CPPUNIT_ASSERT_MESSAGE( "(ind) indObjOut should be requeseted!", 
+			  spkRequired->isIndObjOut );
+  CPPUNIT_ASSERT_MESSAGE( "(pop) indObj_indParOut should be requeseted!", 
+			  spkRequired->isIndObj_indParOut );
+  CPPUNIT_ASSERT_MESSAGE( "(pop) indObj_indPar_indParOut should be declined!", 
+			  !spkRequired->isIndObj_indPar_indParOut );
   CPPUNIT_ASSERT_MESSAGE( "(ind) warm start is supposed to be requested!",
 			  spkRequired->isIndWarmStart );
 
@@ -124,6 +130,13 @@ void NonmemCompilerTest::testInterpret()
   for( int i=0; i<omegaElemNum; i++ )
     CPPUNIT_ASSERT_EQUAL_MESSAGE( "Omega", omega[i], omegaActual[i] );
 
+  valarray<bool> omegaFixed( false, omegaElemNum );
+  valarray<bool> omegaFixedActual = compiler->getOmegaFixed();
+  omegaFixed[0] = true;
+  omegaFixed[3] = true;
+  for( int i=0; i<omegaElemNum; i++ )
+    CPPUNIT_ASSERT_EQUAL_MESSAGE( "Omega fixed", omegaFixed[i], omegaFixedActual[i] );
+
   int sigmaElemNum = 1*(1+1)/2;
   valarray<double> sigma( 0.3, sigmaElemNum );
   valarray<double> sigmaActual = compiler->getSigmaIn();
@@ -140,6 +153,12 @@ void NonmemCompilerTest::testInterpret()
   for( int i=0; i<etaElemNum; i++ )
     CPPUNIT_ASSERT_EQUAL_MESSAGE( "eta", eta[i], etaActual[i] );
 
+  valarray<bool> etaFixed( false, etaElemNum );
+  valarray<bool> etaFixedActual = compiler->getEtaFixed();
+  etaFixed[1] = true;
+
+  for( int i=0; i<etaElemNum; i++ )
+    CPPUNIT_ASSERT_EQUAL_MESSAGE( "eta fixed", etaFixed[i], etaFixedActual[i] );
 
   int thetaElemNum = 3;
   valarray<double> thetaIn( 0.1, thetaElemNum );
@@ -150,6 +169,13 @@ void NonmemCompilerTest::testInterpret()
   for( int i=0; i<thetaElemNum; i++ )
     CPPUNIT_ASSERT_EQUAL_MESSAGE( "thetaIn", thetaIn[i], thetaInActual[i] );
   
+  valarray<bool> thetaFixed(false, thetaElemNum);
+  thetaFixed[0] = true;
+
+  valarray<bool> thetaFixedActual = compiler->getThetaFixed();
+  for( int i=0; i<thetaElemNum; i++ )
+    CPPUNIT_ASSERT_EQUAL_MESSAGE( "thetaFixed", thetaFixed[i], thetaFixedActual[i] );
+
   valarray<double> thetaLow( -0.1, thetaElemNum );
   valarray<double> thetaLowActual = compiler->getThetaLow();
   CPPUNIT_ASSERT_EQUAL_MESSAGE( "thetaLow: #of elements", 

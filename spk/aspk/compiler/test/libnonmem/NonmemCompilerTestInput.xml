@@ -5,8 +5,8 @@
 <driver>
 	<theta length="3">
 		<in>
-			<value>0.1</value>
-			<value>0.1</value>
+			<value fixed="yes">0.1</value>
+			<value fixed="no">0.1</value>
 			<value>0.1</value>
                 </in>
                 <low>
@@ -27,18 +27,18 @@
         </sigma>
         <omega span="3" struct="block">
                 <in>
+                        <value fixed="yes">0.1</value>
+                        <value fixed="no">0.1</value>
                         <value>0.1</value>
-                        <value>0.1</value>
-                        <value>0.1</value>
-                        <value>0.1</value>
+                        <value fixed="yes">0.1</value>
                         <value>0.1</value>
                         <value>0.1</value>
 		</in>
 	</omega>
 	<eta length="3">
 		<in>
-			<value>0.0</value>
-			<value>0.0</value>
+			<value fixed="no">0.0</value>
+			<value fixed="yes">0.0</value>
 			<value>0.0</value>
 		</in>
 	</eta>
@@ -51,9 +51,16 @@
                  par_out="yes"
                  obj_out="yes"
                  deriv1_out="yes"
-                 deriv2_out="no"></pop_opt>
+                 deriv2_out="no"/>
         
-        <ind_opt epsilon="0.01" mitr="100" trace="0" restart="yes" par_out="yes"/>
+        <ind_opt epsilon="0.01"
+                 mitr="100" 
+                 trace="0" 
+                 restart="yes" 
+                 par_out="yes"
+                 obj_out="yes"
+                 deriv1_out="yes"
+                 deriv2_out="no"/>
 
 	<pop_stat stderror="yes" correlation="yes" cov="yes" coefficient="yes" confidence="yes"/>
 

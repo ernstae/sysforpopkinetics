@@ -40,6 +40,7 @@ struct FitParameters{
   int                   indTrace;
   bool                  isIndWarmStart;
   bool                  isIndParOut;
+  bool                  isIndObjOut, isIndObj_indParOut, isIndObj_indPar_indParOut;  
 
   bool                  isPopStderrorOut;
   bool                  isPopCorrelationOut;
