@@ -1309,7 +1309,7 @@ void Optimizer::setStateInfo( const StateInfo& s )
       for( int i = 0; i < stateInfo.n; i++ )
     {
             stateInfo.x[ i ] = s.x[ i ];
-            stateInfo.state [ i ] = s.x     [ i ];
+            stateInfo.state [ i ] = s.state[ i ];
         stateInfo.lambda[ i ] = s.lambda[ i ];
     }
       for( int i = 0; i < stateInfo.n * stateInfo.n; i++ )
