@@ -1,0 +1,127 @@
+<!-- <> <html:h2>SpkReportML : MDA -&gt; ASPK Information Package</html:h2>
+<html:p>
+This documentation specifies the information passed back from CSPK to MDA.
+</html:p>
+-->
+
+<!-- ================================================================================ -->
+<!--                                  REPORT                                          -->
+<!-- ================================================================================ -->
+<!-- <report> For CSPK, this contains everything needed for returning the requested values back to the user.  For MDA, it is for presenting them before the user.
+-->
+
+<!ELEMENT report (error_message? | simulated_data? | pop_analysis_result? | ind_analysis_result?)>
+
+<!-- ===================================== -->
+<!--                 MESSAGE               -->
+<!-- ===================================== -->
+<!-- <error_message> Error messages generated from ASPK and/or CSPK. -->
+<!ELEMENT error_message (#PCDATA)>
+
+<!-- ===================================== -->
+<!--                 REPORTS               -->
+<!-- ===================================== -->
+<!-- <pop_analysis_result> Population analysis results. -->
+<!ELEMENT pop_analysis_result ( pop_opt_result? | pop_stat_result? )>
+
+<!-- <pop_opt_result> Final values from the population parameter estimation.-->
+<!ELEMENT pop_opt_result (pop_obj_out | theta_out | omega_out | sigma_out)>
+
+<!-- <ind_analysis_result> Individual analysis results. -->
+<!ELEMENT ind_analysis_result ( ind_opt_result? | ind_stat_result? )>
+
+<!-- <ind_opt_result> Final values from the individual parameter estimation.-->
+<!ELEMENT ind_opt_result (ind_obj_out | theta_out | omega_out)>
+
+<!-- <theta_out> Final value for the theta. -->
+<!ELEMENT theta_out (value)+>
+
+<!-- <omega_out> Final value for the Omega. -->
+<!ELEMENT omega_out (value)+>
+
+<!-- <sigma_out> Final value for the Sigma. -->
+<!ELEMENT sigma_out (value)+>
+
+<!-- <pop_obj_out> Final objective value for the population parameter. -->
+<!ELEMENT pop_obj_out (value)+>
+
+<!-- <ind_obj_out> Final objective value for the individual parameter. -->
+<!ELEMENT ind_obj_out (value)+>
+
+<!-- <pop_stat_result> Statistical analysis results on the final estimate for the population parameter. -->
+<!ELEMENT pop_stat_result (stat_labels | pop_stderror_out? | pop_covariance_out? | pop_inverse_covariance_out? | pop_correlation_out? )>
+
+<!-- <stat_labels> Sequence of <label>s that identify the components of the statistics value. -->
+<!ELEMENT stat_labels (label)*>
+
+<!-- <pop_stderror_out> Standard error for the final estimate for population parameter. -->
+<!ELEMENT pop_stderror_out (value)*>
+
+<!-- <pop_covariance_out> Covariance matrix of the final estimate for population parameter. -->
+<!ELEMENT pop_covariance_out (value)*>
+
+<!-- <pop_inverse_covariance_out> Inverse of the covariance matrix of the final estimate for population parameter. -->
+<!ELEMENT pop_inverse_covariance_out (value)*>
+
+<!-- <pop_correlation_out> Correlation matrix of the final estimate for population parameter. -->
+<!ELEMENT pop_correlation_out (value)*>
+
+<!-- <ind_stat_result> Statistical analysis results on the final estimate for the individual parameter. -->
+<!ELEMENT ind_stat_result (stat_labels | ind_stderror_out? | ind_covariance_out? | ind_inverse_covariance_out? | ind_correlation_out? )>
+
+<!-- <ind_stderror_out> Standard error for the final estimate(s) for individual parameter(s). -->
+<!ELEMENT ind_stderror_out (value)*>
+
+<!-- <ind_covariance_out> Covariance matrix of the final estimate(s) for individual parameter(s). -->
+<!ELEMENT ind_covariance_out (value)*>
+
+<!-- <ind_inverse_covariance_out> Inverse of the covariance matrix of the final estimate(s) for individual parameter(s). -->
+<!ELEMENT ind_inverse_covariance_out (value)*>
+
+<!-- <ind_correlation_out> Correlation matrix of the final estimate(s) for individual parameter(s). -->
+<!ELEMENT ind_correlation_out (value)*>
+
+<!-- <simulated_data> The simulated data (DV in NONMEM, y in SPK) if simulation has been performed. 
+
+The sequence of <individual_data>s shall match the data sequence appeared in the original data set.
+-->
+<!ELEMENT simulated_data (individual)+>
+
+<!-- <individual> The data (DV in NONMEM, y in SPK) for the individual indentified by the number in which this tag appeared under <simulated_data> or the value of ID attribute. -->
+<!ELEMENT individual (value)*>
+
+<!-- <individual id=""> The identifier of the individual to which the following data belongs.-->
+<!ATTLIST individual id CDATA #IMPLIED>
+
+<!-- ================================================================================ -->
+<!--                                                                                  -->
+<!--                                 end of REPORT                                    -->
+<!--                                                                                  -->
+<!-- ================================================================================ -->
+
+
+<!-- ================================================================================ -->
+<!--                                                                                  -->
+<!--                                 GENERAL/COMMON                                   -->
+<!--                                                                                  -->
+<!-- ================================================================================ -->
+
+<!-- <value> A value of arbitrary type: floating point number, integer, string or text.  
+
+For numbers, you can use the decimal format (ex. 0.1) or scientific notation (ex. 1E-1).  The leading zeros before the decimal point or the trailing zeros after the decimal point may be omitted (ex. ".1", "1.") as long as there is one significant digit on either side (ex. "." by itself is illegal).
+-->
+<!ELEMENT value (#PCDATA)>
+
+<!-- <value fixed="no"> "yes" ensures the value to be retained during the optimization, default to "no". For processes other than optimization, this setting is ignored.-->
+<!ATTLIST value fixed (yes|no) #IMPLIED>
+
+<!-- <label> The name/label of the i-th item, where i is the order in which this label appears under <data_labels>.
+-->
+<!ELEMENT label EMPTY>
+
+<!-- <label name=""> A string begining with an alphabet followed by any combination of alphabets, numbers, _ (underscore) that serves as the label.  Case-sensitive.  -->
+<!ATTLIST label name CDATA #REQUIRED>
+
+<!-- <label synonym=""> [optional] Similar to "name" but this serves as an alias/synonym that references the same entity as "name" does, default to "" (none).
+-->
+<!ATTLIST label synonym CDATA #IMPLIED>

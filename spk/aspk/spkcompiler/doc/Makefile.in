@@ -26,19 +26,24 @@ SOURCE = ../libspkcompiler/client.h \
          ../libspkcompiler/Symbol.h \
          ../libspkcompiler/SymbolTable.h 
 
-html : compiler_html spkml_html
+html : compiler_html spksourceml_html spkreportml_html
 
 compiler_html : SpkCompiler.dox $(SOURCE) 
 	doxygen SpkCompiler.dox
 
-spkml_html : SpkML.dtd
+spksourceml_html : SpkSourceML.dtd
 	javac -classpath ./tools/dtddoc/java/dtdparser119.jar:./tools/dtddoc/java/jakarta-oro-2.0.6.jar ./tools/dtddoc/java/DTDDoc.java
-	java -classpath ./tools/dtddoc/java/dtdparser119.jar:./tools/dtddoc/java/jakarta-oro-2.0.6.jar:.:./tools/dtddoc/java DTDDoc SpkML.dtd SpkML_html
+	java -classpath ./tools/dtddoc/java/dtdparser119.jar:./tools/dtddoc/java/jakarta-oro-2.0.6.jar:.:./tools/dtddoc/java DTDDoc SpkSourceML.dtd SpkSourceML_html
 
+spkreportml_html : SpkReportML.dtd
+	javac -classpath ./tools/dtddoc/java/dtdparser119.jar:./tools/dtddoc/java/jakarta-oro-2.0.6.jar ./tools/dtddoc/java/DTDDoc.java
+	java -classpath ./tools/dtddoc/java/dtdparser119.jar:./tools/dtddoc/java/jakarta-oro-2.0.6.jar:.:./tools/dtddoc/java DTDDoc SpkReportML.dtd SpkReportML_html
 clean : 
 	rm -r html
 	rm -r latex
 	rm -r SpkML_html
+	rm -r SpkSourceML_html
+	rm -r SpkReportML_html
 
 all  : SpkCompiler.dox
 	rm -r html
@@ -46,5 +51,5 @@ all  : SpkCompiler.dox
 	rm -r SpkML_html
 	doxygen SpkCompiler.dox
 	javac -classpath ./tools/dtddoc/java/dtdparser119.jar:./tools/dtddoc/java/jakarta-oro-2.0.6.jar ./tools/dtddoc/java/DTDDoc.java
-	java -classpath ./tools/dtddoc/java/dtdparser119.jar:./tools/dtddoc/java/jakarta-oro-2.0.6.jar:.:./tools/dtddoc/java DTDDoc SpkML.dtd SpkML_html
-
+	java -classpath ./tools/dtddoc/java/dtdparser119.jar:./tools/dtddoc/java/jakarta-oro-2.0.6.jar:.:./tools/dtddoc/java DTDDoc SpkSourceML.dtd SpkSourceML_html
+	java -classpath ./tools/dtddoc/java/dtdparser119.jar:./tools/dtddoc/java/jakarta-oro-2.0.6.jar:.:./tools/dtddoc/java DTDDoc SpkReportML.dtd SpkReportML_html
