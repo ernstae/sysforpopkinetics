@@ -1,84 +1,90 @@
 bin_PROGRAMS = testall
 testall_SOURCES = \
-	testall.cpp \
-	MatrixTest.cpp \
-	BlockAllocTest.cpp \
+	ABA_xTest.cpp \
 	addTest.cpp \
-	subtractTest.cpp \
-	multiplyTest.cpp \
-	divByScalarTest.cpp \
-	mulByScalarTest.cpp \
+	AkronBtimesCTest.cpp \
+	AkronItimesCTest.cpp \
 	allTrueTest.cpp \
-	elementwiseAndTest.cpp \
-        elementwiseOrTest.cpp \
-	identityTest.cpp \
+	BlockAllocTest.cpp \
+	blockDiagonalDerivativeTest.cpp \
+	centdiffModelTest.cpp \
+	centdiffTest.cpp \
+	choleskyTest.cpp \
 	countTruesTest.cpp \
+	CovarianceTest.cpp \
+	detTest.cpp \
+	divByScalarTest.cpp \
+	elementwiseAndTest.cpp \
+	elementwiseOrTest.cpp \
+	elsq_xBlockDiagTest.cpp \
+	elsq_xDiagTest.cpp \
+	elsq_xTest.cpp \
+	elsqTest.cpp \
+	EqIndModelTest.cpp \
+	estimateBTest.cpp \
+	expectedHessianTest.cpp \
+	firstOrderOptTest.cpp \
+	fitIndividualErrorTest.cpp \
+	fitIndividualTest.cpp \
+	FunctionTest.cpp \
+	getColTest.cpp \
+	getMulColsTest.cpp \
+	getMulRowsTest.cpp \
+	getRowTest.cpp \
+	getSubblockTest.cpp \
+	identityTest.cpp \
+	IkronBtimesCTest.cpp \
+	IndInputDataPackageTest.cpp \
+	IndOutputDataPackageTest.cpp \
+	IndResultsTest.cpp \
+	indStatisticsTest.cpp \
+	IndVarsTest.cpp \
+	inverseTest.cpp \
+	inxToMaxTest.cpp \
 	isDblEpsEqualTest.cpp \
+	isDmatEpsEqualTest.cpp \
 	isGreaterThanOrEqualToTest.cpp \
 	isLessThanOrEqualToTest.cpp \
 	isSymmetricTest.cpp \
+	lambda2diffTest.cpp \
+	lambdaTest.cpp \
+	lTildeTest.cpp \
+	mapObjDiffTest.cpp \
+	mapObjTest.cpp \
+	mapOptTest.cpp \
+	mapTildeTest.cpp \
 	matabsTest.cpp \
 	matmaxTest.cpp \
 	matminTest.cpp \
-	getColTest.cpp \
-	getMulColsTest.cpp \
-	detTest.cpp \
-	backDivTest.cpp \
-	inverseTest.cpp \
-	transposeTest.cpp \
-	symmetrizeTest.cpp \
-	rvecTest.cpp \
-	rvecInverseTest.cpp \
+	MatrixTest.cpp \
+	mulByScalarTest.cpp \
+	multiplyTest.cpp \
+	NaiveFoModelTest.cpp \
+	normTest.cpp \
+	OptimizerTest.cpp \
+	placeRowsTest.cpp \
+	PopConstValsTest.cpp \
+	popStatisticsTest.cpp \
+	PopVarsTest.cpp \
+	ppkaOptTest.cpp \
+	printInMatrixTest.cpp \
 	replaceIthTest.cpp \
 	replaceJthTest.cpp \
 	replaceSubblockTest.cpp \
-	transposeRowBlocksTest.cpp \
-	transposeDerivativeTest.cpp \
+	rvecInverseTest.cpp \
+	rvecTest.cpp \
 	SpkErrorTest.cpp \
 	SpkExceptionTest.cpp \
 	SpkModelErrorTest.cpp \
-	placeRowsTest.cpp \
-	printInMatrixTest.cpp \
-	AkronBtimesCTest.cpp \
-	AkronItimesCTest.cpp \
-	IkronBtimesCTest.cpp \
-	elsqTest.cpp \
-	elsq_xTest.cpp \
-	centdiffTest.cpp \
-	elsq_xDiagTest.cpp \
-	elsq_xBlockDiagTest.cpp \
-	choleskyTest.cpp \
-	CovarianceTest.cpp \
-	ABA_xTest.cpp \
-	blockDiagonalDerivativeTest.cpp \
-	centdiffModelTest.cpp \
-	IndResultsTest.cpp \
-	OptimizerTest.cpp \
-	UTranTimesSymKronSymTimesUTest.cpp \
-	UTranTimesSymKronSymTimesU_xTest.cpp \
-	FunctionTest.cpp \
-	FullDataCovarianceTest.cpp \
-	FullIndParCovarianceTest.cpp \
 	sqpAnyBoxTest.cpp \
-	mapObjTest.cpp \
-	mapObjDiffTest.cpp \
-	mapOptTest.cpp \
-	mapTildeTest.cpp \
-	lambdaTest.cpp \
-	lambda2diffTest.cpp \
-	NaiveFoModelTest.cpp \
-	expectedHessianTest.cpp \
-	fitIndividualTest.cpp \
-	indStatisticsTest.cpp \
-	fitIndividualErrorTest.cpp \
-	estimateBTest.cpp \
-	lTildeTest.cpp \
-	EqIndModelTest.cpp \
-	ppkaOptTest.cpp \
-	firstOrderOptTest.cpp \
-	fitPopulationTest.cpp \
-	fitPopulationErrorTest.cpp \
-	popStatisticsTest.cpp \
+	subtractTest.cpp \
+	symmetrizeTest.cpp \
+	testall.cpp \
+	transposeDerivativeTest.cpp \
+	transposeRowBlocksTest.cpp \
+	transposeTest.cpp \
+	UTranTimesSymKronSymTimesU_xTest.cpp \
+	UTranTimesSymKronSymTimesUTest.cpp \
 	../config.h
 
 testall_CXXFLAGS = -I/usr/local/cppunit/include
