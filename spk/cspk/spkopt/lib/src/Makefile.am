@@ -26,7 +26,6 @@ libspkopt_la_SOURCES = \
 	NearEqual.cpp \
 	Next.cpp \
 	QuadBox.cpp \
-	QuadTrust.cpp \
 	QuasiNewton01Box.cpp \
 	Residual.cpp \
         ADDefine.h \
@@ -43,7 +42,6 @@ libspkopt_la_SOURCES = \
         min.h \
 	Next.h \
 	QuadBox.h \
-	QuadTrust.h \
 	QuasiNewton01Box.h \
 	Residual.h \
         vector.h
@@ -56,7 +54,6 @@ libspkopt_release_la_SOURCES = \
 	NearEqual.cpp \
 	Next.cpp \
 	QuadBox.cpp \
-	QuadTrust.cpp \
 	QuasiNewton01Box.cpp \
 	Residual.cpp \
         ADDefine.h \
@@ -73,7 +70,6 @@ libspkopt_release_la_SOURCES = \
         min.h \
 	Next.h \
 	QuadBox.h \
-	QuadTrust.h \
 	QuasiNewton01Box.h \
 	Residual.h \
         vector.h
@@ -93,7 +89,6 @@ pkginclude_HEADERS = \
         min.h \
 	Next.h \
 	QuadBox.h \
-	QuadTrust.h \
 	QuasiNewton01Box.h \
 	Residual.h \
         vector.h
