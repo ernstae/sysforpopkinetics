@@ -34,6 +34,8 @@ and run them and inserts results into the database.
 
 =head1 DESCRIPTION
 
+=head2 ARGUMENTS
+
 The program expects the following arguments:
 
     $database
@@ -45,6 +47,8 @@ The program expects the following arguments:
         job table
     $dbpasswd
         The password associated with the username
+
+=head2 OPERATION
 
 The first think that spkcmp.pl does after starting up is to call
 Proc::Daemon::Init to make it into a daemon, by shedding its 
@@ -78,7 +82,7 @@ the daemon last shut down.  All such jobs are rerun.
 At this point, the program enters an endless loop from which it will
 escape only upon receipt of a signal. It queries the
 database to discover whether or not a job has been added to the run
-queue.  If so, a copy of runner is started as an independent
+queue.  If so, a copy of job driver is started as an independent
 sub-process, working in its own directory on input provided by the
 job. The daemon then checks to see if any child processes have 
 terminated. If so, it moves them to "end" status and stores the
@@ -93,9 +97,8 @@ been designated to catch this signal.
 To avoid a loop, 'stop' sets the signal mask to ignore any
 subsequent TERM signals. It then sends the TERM signal to every process
 in its process group, which consists of the daemon itself and all of its
-descendents. It waits for all sub-processes (which are 
-instances of the runner) to terminate.  It closes the database
-and the system log, then dies.
+descendents. It waits for all sub-processes (which are job drivers)
+to terminate.  It closes the database and the system log, then dies.
 
 NOTE: Life-Cycle of the Working Directory Name
 
@@ -113,8 +116,8 @@ NOTE: Life-Cycle of the Working Directory Name
      it recreates the working directory as it was on the server which
      hosts the SPK compiler at the time that compiler finished its
      work with the job. In addition to the source code and data needed
-     for the run, there is a file called "job_id" which only the job_id,
-     placed there for convenient future reference.
+     for the run, there is a file called "job_id" which contains only
+     the job_id, placed there for convenient future reference.
   3. When the process is forked into a parent process and a child
      process, the Linux or Unix operating system assigns a process
      identifier (pid) number to the child.  Process identifiers are
@@ -138,6 +141,48 @@ NOTE: Life-Cycle of the Working Directory Name
      have "-job-jjjj" as its suffix.  The parent gets the job_id by
      reading the contents of a file in the working directory, called
      job_id, which was placed there by the SPK compiler daemon.
+
+=head2 END_CODE AND ERROR REPORTING
+
+Because the deamon is the parent of all jobs, it is informed as soon
+as a job driver terminates.  The operating system provides the daemon
+with three very useful numbers describing the deceased driver: the
+process identifier (pid), the exit status and, in the case where the
+driver is terminated with a kill signal, the signal number.
+
+The end-code will be set to "srun", which indicates a successful run,
+only if the exit status and the signal number are both zero and if,
+in addition, no file called "software error" is found in the working 
+driver's working directory.  
+
+If the signal number is SIGTERM, which indicates that the job was 
+terminated by an operator, a software error of some sort is assumed and
+end_code is set to "serr".  It may be that the only error is that the
+optimization failed to converge in a reasonable period of time.  Only
+subsequent analysis will determine what the problem was.
+
+If the signal number is SIGABRT, this indicates that the software
+itself discovered some internal inconsistency and terminated by raising
+an "assertion".  In this case, end_code is also set to "serr".
+
+If the job terminated with any signal other than SIGTERM or SIGABRT, 
+a hardware error is assumed, and the end_code is set to "herr". Of 
+course, many hardware errors are really caused by software, such as
+when the software attempts to divide a number by zero or when it 
+attempts a reference via an invalid pointer.
+
+If the signal number is zero, indicating that the job did not terminate
+as the result of a signal, but the exit status is not zero, end_code
+is set to "serr".
+
+If the daemon finds a file called "software error", end_code is 
+always set to "serr" and it is assumed that an assertion was raised.
+In this case, the SIGABRT signal was probably also reported.
+
+The daemon analyzes the various cases described above, and generates
+an error messages which is written to the report which goes into the
+database and is made available to the end user as well as to the system
+log, where it is available to developers and system adminstrators.
 
 =head1 RETURNS
 
@@ -185,7 +230,7 @@ my $filename_job_id = "job_id";
 my $filename_makefile = "Makefile.SPK";
 my $filename_optimizer_trace = "optimizer_trace.txt";
 my $filename_results = "result.xml";
-my $filename_runner = "driver";
+my $filename_driver = "driver";
 my $filename_serr = "software_error";
 my $filename_source = "source.xml";
 
@@ -229,17 +274,13 @@ sub death {
 	&disconnect($dbh)
     }
 
-    # remove the lockfile
-    if ($lockfile_exists) {
-	unlink($lockfile_path);
-    }
-    # log final message, then close the system log
-    syslog("info", "stop");
-    closelog();
+    # remove the lockfile if ($lockfile_exists) {
+    unlink($lockfile_path); } # log final message, then close the
+    system log syslog("info", "stop"); closelog();
 
     die;
 }
-sub fork_runner {
+sub fork_driver {
     use Errno qw(EAGAIN);
 
     my $jrow = shift;
@@ -305,7 +346,7 @@ sub fork_runner {
 		  syslog('emerg', "can't rename working directory");
 		  die;
 	      };
-	  # Compile and link the runner
+	  # Compile and link the driver
           if ($mode =~ "test"){
 	     @args = ($pathname_make, "-f", $filename_makefile, "test");
           }
@@ -323,13 +364,13 @@ sub fork_runner {
 	  # Redirect Standard Error to a file
 	  open STDERR, ">$filename_serr";
          
-	  # execute the spkrunner
-	  @args = ("./$filename_runner", $filename_source, $filename_data);
+	  # execute the job driver
+	  @args = ("./$filename_driver", $filename_source, $filename_data);
 	  my $e = exec(@args);
 
 	  # this statement will never be reached, unless the exec failed
 	  if (!$e) {
-	      syslog("emerg", "couldn't exec $filename_runner for $job_id");
+	      syslog("emerg", "couldn't exec $filename_driver for $job_id");
 	      die;
 	  }
       }
@@ -449,7 +490,7 @@ sub reaper {
     }
     elsif($child_exit_value == 5) {
         $end_code = "serr";
-        $err_msg .= "data simulation faild; ";
+        $err_msg .= "data simulation failed; ";
     }
     elsif($child_exit_value >  5) {
         $end_code = "serr";
@@ -479,7 +520,7 @@ sub reaper {
 	close(FH);
 
 	$end_code = "serr";
-	$err_msg .= "software bug caught as exception; ";
+	$err_msg .= "software bug caught as assertion; ";
     }
     # Remove the empty STDERR captured file
     else {
@@ -636,7 +677,7 @@ if (defined $job_array) {
 	my $history_row = $history_array->[@$history_array - 1];
 	print "host = $history_row->{'host'}\n";
 	if ($history_row->{'host'} eq hostname) {
-	    &fork_runner($job_row);
+	    &fork_driver($job_row);
 	}
     }
 }
@@ -650,12 +691,12 @@ my $child_pid;
 syslog('info', "processing new computational runs");
 
 while(1) {
-    # if there is a job queued-to-run, fork the runner
+    # if there is a job queued-to-run, fork the driver
     if ($concurrent < $max_concurrent) {
 	my $job_row = &de_q2r($dbh);
 	if (defined $job_row) {
 	    if ($job_row) {
-		&fork_runner($job_row);
+		&fork_driver($job_row);
 	    }
 	}
 	else {
