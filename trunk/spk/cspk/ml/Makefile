@@ -38,7 +38,7 @@ OBJECT = \
 	gcc $(CPPFLAGS) $< -o $@
 
 monteDriver : $(OBJECT)
-	g++ -g $(OBJECT) -o monteDriver -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -lspk -lspkopt -lspkpred -lgsl -latlas_lapack -lcblas -latlas -lpthread -lm
+	g++ -g $(OBJECT) -o monteDriver -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -lspk -lspkopt -lspkpred -lgsl -latlas_lapack -lcblas -latlas -lpthread -lm -lxerces-c
 
 install : driver \
 	  AnalyticIntegral.h \
