@@ -485,6 +485,8 @@ extern "C" {
 #include "allTrue.h"
 #include "SpkException.h"
 
+using SPK_VA::valarray;
+
 
 /*------------------------------------------------------------------------
  * Local function declarations
@@ -519,10 +521,10 @@ namespace // [Begin: unnamed namespace]
 
   public:
     QuasiNewton01BoxObj(
-      QuasiNewtonAnyBoxObj* const  pObjectiveIn;
-      const DoubleMatrix* const    pdvecXLowIn,
-      const DoubleMatrix* const    pdvecXUpIn,
-      const DoubleMatrix* const    pdvecXDiffIn )
+      QuasiNewtonAnyBoxObj*  pObjectiveIn;
+      const DoubleMatrix*    pdvecXLowIn,
+      const DoubleMatrix*    pdvecXUpIn,
+      const DoubleMatrix*    pdvecXDiffIn )
       :
       pObjective  ( pObjectiveIn ),
       pdvecXLow   ( pdvecXLowIn ),
@@ -582,7 +584,7 @@ namespace // [Begin: unnamed namespace]
     //
     //**********************************************************
 
-    const char* function( const double* const yCurr, double& fScaledOut )
+    const char* function( const double* yCurr, double& fScaledOut )
     {
       //--------------------------------------------------------
       // Prepare the parameters for the unscaled objective function.
@@ -1017,8 +1019,8 @@ void quasiNewtonAnyBox(
     while ( !isAcceptable && iterCurr <= nMaxIter )
     {
       // Get the Cholesky factor of the scaled Hessian.  Since this factor
-      // is lower triangular and in column-major order, it is equivalent to
-      //  a factor that is upper triangular and in row-major order.
+      // is lower triangular and in column-major order, it is equivalent 
+      // to a factor that is upper triangular and in row-major order.
       doubleArrayToValarray( hScaled, hScaledVA );
       rScaledVA = cholesky( hScaledVA, nObjPar );
       valarrayToDoubleArray( rScaledVA, rScaled );
@@ -1243,12 +1245,12 @@ namespace // [Begin: unnamed namespace]
  *************************************************************************/
 
 void unscaleElem(
-  int                  n,
-  const double* const  y, 
-  const double* const  xLow, 
-  const double* const  xUp, 
-  const double* const  xDiff,
-  double*              x )
+  int            n,
+  const double*  y, 
+  const double*  xLow, 
+  const double*  xUp, 
+  const double*  xDiff,
+  double*        x )
 {
   int i;
 
@@ -1282,8 +1284,8 @@ void unscaleElem(
 
 void scaleGradElem(
   int                  n,
-  const double* const  g, 
-  const double* const  xDiff,
+  const double*  g, 
+  const double*  xDiff,
   double*              gScaled )
 {
   int i;
@@ -1291,6 +1293,48 @@ void scaleGradElem(
   for ( i = 0; i < n; i++ )
   {
     gScaled[i] = xDiff[i] * g[i];
+  }
+}
+
+
+/*************************************************************************
+ * Function: doubleArrayToValarray
+ *
+ *
+ * Returns the scaled value for g.
+ *
+ *************************************************************************/
+
+      doubleArrayToValarray( hScaled, hScaledVA );
+void doubleArrayToValarray( double*  g, 
+  const double*  xDiff,
+  double*              gScaled )
+{
+  int i;
+
+  for ( i = 0; i < n; i++ )
+  {
+    gScaled[i] = xDiff[i] * g[i];
+  }
+}
+
+
+/*************************************************************************
+ * Function: valarrayToDoubleArray
+ *
+ *
+ * Sets the elements in the array of doubles x equal to those in the 
+ * valarray of doubles xVA.
+ *
+ *************************************************************************/
+
+void valarrayToDoubleArray( const valarray<double>&  xVA, double* x )
+{
+  int i;
+
+  for ( i = 0; i < xVA.size(); i++ )
+  {
+    x[i] = xVA[i];
   }
 }
 
