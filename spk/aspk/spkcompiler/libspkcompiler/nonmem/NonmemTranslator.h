@@ -250,6 +250,7 @@ class NonmemTranslator : public ClientTranslator
   XMLCh* X_COVARIANCE_FORM;
   XMLCh* X_MITR;
   XMLCh* X_IND_STAT;
+  XMLCh* X_SIG_DIGITS;
   //========================================
 
 };
