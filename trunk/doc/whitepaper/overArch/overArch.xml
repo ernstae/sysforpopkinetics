@@ -4,13 +4,13 @@
   <!ENTITY uw "University of Washington">
   <!ENTITY dept "Department of Bioengineering">
 ]>
-<article><title>overArch</title>
+<article><title>An Architectural Overview of SPK</title>
  <articleinfo>
     <revhistory>
       <revision>
 	<revnumber>1.0</revnumber>
 	<date>July 4, 1776</date>
-	<authorinitials>???</authorinitials>
+	<authorinitials>afw</authorinitials>
 	<revremark>Initial version.</revremark>
       </revision>
     </revhistory>
@@ -19,6 +19,254 @@
       </para>
   </abstract>
  </articleinfo>
+  <sect1>
+    <title>Introduction</title>
+    <para>
+      The System for Population Kinetics (SPK) is software being developed
+      by the RFPK Laboratory, in the Bioengineering Department of the 
+      University of Washington, under a grant from the National Institutes
+      of Health (NIH) of the U.S. Department of Health and Human Services.
+    </para>
+    <sect2>
+      <title>The Problem to be Solved</title>
+      <para>
+	To better understand and to predict the operation of biological
+	systems, researchers design mathematical models which they 
+	believe will closely conform to the observational data.  The
+	equations that comprise these models contain parameters whose
+	values must be determined by "fitting" the equations to real-world
+	data.  In the biomedical field of population kinetics (PK), models
+	of a type known as <emphasis>non-parametric mixed-effect</emphasis>,
+	are popular.  This technique, when properly applied,
+	can provide models which
+	accurately project the behavior of an entire population from
+	a small number of observations collected from a small sample 
+	of individuals from the population.  This makes the 
+	methodolgy very attactive in medicine and pharmaceutical 
+	development, because collecting data from living subjects is a
+	difficult, time-consuming and, inevitably, expensive procedure.
+      </para>
+    </sect2>
+    <sect2>
+      <title>The Computational Challenge</title>
+      <para>
+	From a computational stand-point, the process of developing
+	non-parametric mixed-effects models presents some interesting challenges.
+	<itemizedlist>
+	  <listitem>
+	    <para>
+	      Computing the parameters is highly machine intensive. In 
+	      the process of developing a model, it may be necessary
+	      to perform the computation many times.  On a 
+	      very fast workstation, each recalculation of the
+	      model can take a week.  If a workstation is used,
+	      only one such calculation can be performed at a time.
+	      Clearly, it would be desirable to offload the 
+	      calculation to a specialized computational engine.
+	      Going even further, it would be highly desirable
+	      to distribute the calculation over a cluster of
+	      processors, for parallel computation.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Although a high performance cluster is the ideal 
+	      platform for model computation, it is unacceptable,
+	      by itself, as a platform for model design and
+	      results analysis.  Model design is a creative 
+	      process, and the user needs appropriate tools to 
+	      enhance this process.  The preferred platform
+	      to support these tools is the same one the user
+	      employs for other creative work, such as 
+	      writing papers, preparing presentations, 
+	      communicating with colleagues, etc.  In nearly
+	      every case, this platform will be a personal computer
+	      workstation or laptop running the user's preferred
+	      operating system, whether Windows, Mac,or Linux.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Internet connectivity is as just important to the creative
+	      designer of PK models as is the workstation or laptop
+	      of his or her choice.  While a model's parameters are 
+	      being computed, the user will be working on other models
+	      or other unrelated work, but will need to monitor
+	      the progress of PK jobs in progress, as they are processed
+	      to completion.  The user should be able, for example,
+	      to submit a job
+	      for computation at his or her office, obtain results and
+	      submit a modified model at an airport enroute to a 
+	      conference, and receive the completed work upon arrival
+	      at the destination.
+	    </para>
+	  </listitem>
+	</itemizedlist>
+      </para>
+    </sect2>
+    <sect2>
+      <title>SPK is a Web Service</title>
+      <para>
+	SPK is a service delivered to researchers via the world wide
+	web, which enables them to develop PK models quickly and
+	efficiently. The service is offered to a designated set of 
+	users by an SPK service provider.  At the present time, the
+	only SPK service provider is RPFK itself.  In the future,
+	there will, in all probability, be additional service providers
+	located at both academic and commercial research laboratories.
+      </para>
+      <para>
+	Although SPK can run on a single machine, its real power can
+	only be realized when a high performance computational cluster
+	is involved. Computer resources cost money, hence the SPK
+	service will not be free. We believe that competition between
+	service providers will, however, insure that pricing will 
+	be fair.  In part to encourage the establishment of as many
+	SPK installations as possible, SPK will be distributed 
+	free-of-charge under and open source license.
+      </para>
+    </sect2>
+    <sect2>
+      <title>The User Perspective</title>
+      <para>
+	The user's access to SPK is provided by two graphical user interface
+	(GUI) programs.  One of these programs is the user's favorite
+	web browser.  The other is a component of SPK called the Model
+	Design Agent (MDA).
+	The MDA is written in the Java language, so that
+	it works under nearly any operating system, including 
+	Windows, Linux, Mac or Unix.  The first time the user 
+	accesses an SPK installation with her browser,
+	she is lead through the downloading and installation 
+	of the MDA and, if required,
+	the Java runtime environment.  This only takes a few 
+	minutes.  At the beginning of subsequent sessions, she
+	does not need to download any software, unless updated 
+	versions are available, in which case, the download and 
+	update occur automatically.
+      </para>
+      <para>
+	The following is an abbreviated list of functions that a 
+	user can perform with the assistance of the MDA:
+	<itemizedlist>
+	  <listitem>
+	    <para>
+	      Specify a new model and save it in a central database
+	      maintained by the service provider.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Update an existing model to create a new version.
+	      The new version does not destroy its predecessor.
+	      Instead, all versions are preserved by means of a 
+	      revision control system.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Import or create a dataset and save it in the central
+	      database.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Update a dataset, creating a new version.  Datasets
+	      are also maintained by the revision control system.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Combine a model, dataset or dataset simulation parameters.
+	      initial estimates of model parameters
+	      and some additional information to create a job and
+	      submit it for transformation into an executable program and
+	      subsequent execution on the computational engine.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Check the status of all jobs that the user has submitted.
+	      A job can be
+	      <itemizedlist>
+		<listitem>
+		  <para>
+		    In a queue, waiting to be transformed into a C++
+		    program by the SPK compiler.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    Being processed by the SPK compiler.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    In queue, waiting to be transformed from C++ into
+		    executable binary code and the run on the computational
+		    engine.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    Being processed by the computational engine.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    At end.  Report available.
+		  </para>
+		</listitem>
+	      </itemizedlist>
+	    </para>
+	  </listitem>
+	</itemizedlist>
+      </para>
+      <para>
+	Here are some of the 
+      </para>
+    </sect2>
+    <sect2>
+      <title>The Service Provider Perspective</title>
+      <para>
+      </para>
+    </sect2>
+    <sect2>
+      <title>The Software Developer Perspective</title>
+      <para>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Current Status and Future Directions</title>
+      <para>
+      </para>
+    </sect2>
+    <sect2>
+      <title></title>
+      <para>
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title></title>
+    <para>
+    </para>
+  </sect1>
+  <sect1>
+    <title></title>
+    <para>
+    </para>
+  </sect1>
+  <sect1>
+    <title></title>
+    <para>
+    </para>
+  </sect1>
+  <sect1>
+    <title></title>
+    <para>
+    </para>
+  </sect1>
   <sect1>
     <title></title>
     <para>
