@@ -28,10 +28,25 @@ namespace nonmem{
 	       ADVAN11, ADVAN12 };
   enum TRANS { DEFAULT,
 	       TRANS1, TRANS2, TRANS3, TRANS4, TRANS5 };
-  enum nonmem::MODEL toEnumMODEL ( const char* );
-  const char* const toStringMODEL( enum nonmem::MODEL e );
-  enum nonmem::TRANS toEnumTRANS ( const char* );
-  const char* const toStringTRANS( enum nonmem::TRANS e );
+
+  enum PK_PARA{Pn,
+               K, KA, K12, K21, K23, K32, KM,
+	       CL, Q, 
+	       V, VSS, V1, V2, V3, VM,
+               AOB, ALPHA, BETA, 
+	       Sn, SC, S0, S1, S2, S3, S4,
+               Fn, F0, FO, F1, F2, F3, 
+	       Rn, R1, R2, R3,
+	       Dn, D1, D2, D3,
+	       ALAGn, ALAG1, ALAG2, ALAG3,
+	       XSCALE };
+
+  enum MODEL toEnumMODEL ( const char* );
+  const char* const toStringMODEL( enum MODEL e );
+  enum TRANS toEnumTRANS ( const char* );
+  const char* const toStringTRANS( enum TRANS e );
+  enum PK_PARA toEnumPK_PARA( const char* );
+  const char* const toStringPK_PARA( enum PK_PARA e );
 
   const char * const STR_NONE    = "none";
   const char * const STR_ADVAN1  = "advan1";
@@ -54,7 +69,53 @@ namespace nonmem{
   const char * const STR_TRANS4  = "trans4";
   const char * const STR_TRANS5  = "trans5";
 
-  bool nonmem::isKeyword( const std::string &var );
+  const char * const STR_PK_Pn   = "p";
+  const char * const STR_PK_K    = "k";
+  const char * const STR_PK_KA   = "ka";
+  const char * const STR_PK_K12  = "k12";
+  const char * const STR_PK_K21  = "k21";
+  const char * const STR_PK_K23  = "k23";
+  const char * const STR_PK_K32  = "k32";
+  const char * const STR_PK_KM   = "km";
+  const char * const STR_PK_CL   = "cl";
+  const char * const STR_PK_Q    = "q";
+  const char * const STR_PK_V    = "v";
+  const char * const STR_PK_VSS  = "vss";
+  const char * const STR_PK_V1   = "v1";
+  const char * const STR_PK_V2   = "v2";
+  const char * const STR_PK_V3   = "v3";
+  const char * const STR_PK_VM   = "vm";
+  const char * const STR_PK_AOB  = "aob";
+  const char * const STR_PK_ALPHA= "alpha";
+  const char * const STR_PK_BETA = "beta";
+  const char * const STR_PK_SC   = "sc";
+  const char * const STR_PK_Sn   = "s";
+  const char * const STR_PK_S0   = "s0";
+  const char * const STR_PK_S1   = "s1";
+  const char * const STR_PK_S2   = "s2";
+  const char * const STR_PK_S3   = "s3";
+  const char * const STR_PK_S4   = "s4";
+  const char * const STR_PK_Fn   = "f";
+  const char * const STR_PK_F0   = "f0";  // f-zero
+  const char * const STR_PK_FO   = "fo";  // f-oh
+  const char * const STR_PK_F1   = "f1";
+  const char * const STR_PK_F2   = "f2";
+  const char * const STR_PK_F3   = "f3";
+  const char * const STR_PK_Rn   = "r";
+  const char * const STR_PK_R1   = "r1";
+  const char * const STR_PK_R2   = "r2";
+  const char * const STR_PK_R3   = "r3";
+  const char * const STR_PK_Dn   = "d";
+  const char * const STR_PK_D1   = "d1";
+  const char * const STR_PK_D2   = "d2";
+  const char * const STR_PK_D3   = "d3";
+  const char * const STR_PK_ALAGn= "alag";
+  const char * const STR_PK_ALAG1= "alag1";
+  const char * const STR_PK_ALAG2= "alag2";
+  const char * const STR_PK_ALAG3= "alag3";
+  const char * const STR_PK_XSCALE="xscale";
+
+  bool isNonmemLabel( const std::string &var );
 
   // LABEL data type:
   // The reason for the key data type being "string"

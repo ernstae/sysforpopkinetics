@@ -1,12 +1,11 @@
-/**
- * @file explang.y
- * @brief This is a syntax analyzer specification file (BISON) for NMTRAN->C++.
-*/
 %{
+/**
+ * @file explang.cpp
+ * This file is generated from the YACC (BISON) syntax analyzer 
+ * specification file, nonmem/explang.ypp, which defines the yyparse() for NONMEM.
+ */
 //
 // int yyparse( void )
-//
-//  Tree-generator for NONMEM abbriviated code
 //
 // The source language allows only the following statements:
 // * assignment
@@ -42,12 +41,18 @@
 using namespace std;
 
 /**
- * Global counter for errors that encountered during parsing.
+ * Global counter for errors encountered during parsing.
+ * This counter is initialized to zero at compilation time only
+ * and it is the caller's responsibility to re-initialize the value
+ * when necessarily.  In other words, yyparse() does not reset the value.
  */
 int gSpkExpErrors = 0;
 
 /**
  * Global counter for lines that have been read so far during parsing.
+ * This counter is initialized to zero at compilation time only
+ * and it is the caller's responsibility to re-initialize the value
+ * when necessarily.  In other words, yyparse() does not reset the value.
  */
 int gSpkExpLines  = 0;
 
@@ -60,108 +65,156 @@ int gSpkExpLines  = 0;
  *
  * @note If the pointer is found to be pointing to NULL at
  * the very beginning of parsing, yyparse() will call
- * yyerror() and probably terminate the program execution completely.
+ * yyerror() which in turn forces yyparse() to return immediately with
+ * a non-zero value.
  */
 SymbolTable * gSpkExpSymbolTable;
 
 extern "C"{
-  int yyparse(void);
-  int yylex(void);  
-  int yywrap()
-  {
-    return 1;
-  }
-  int yyerror( char * s )
-  { 
-    ++gSpkExpErrors;
-    cerr <<  "!!! Error (" << gSpkExpErrors << ") at line " << gSpkExpLines << ": " << endl;
-    cerr << "\t" << s << endl;
-    
-    return -1;
-  int YYACCEPT;
-  int YYABORT;
-  }
+   /**
+    * The syntax analyzer.  The code for this function is generated from
+    * a YACC (BISON) specification file, explang.ypp.  
+    * This syntax analyzer calls yylex() over and over again to
+    * obtain tokens.  The input to our yyparse() is assumed to be
+    * stored in a file and pointed by a FILE handler.  yyparse() itself
+    * does not check the validity of the file handler, so you better off
+    * make sure the file is opened as readable.  Our yyparse() redirects
+    * output to a file pointed by yet another file handler, gSpkExpOutput.
+    * Again, you'd better off make sure the output file is opened as 
+    * writable by yyparse().
+    */
+    int yyparse(void);
 
-/**
- * Global pointer to a FILE handler to which output is redirected.
- */
-FILE * gSpkExpOutput;
+   /**
+    * The lexical analyzer.  The code for this function is generated from
+    * a LEX (FLEX) specification file, lex_explang.l.
+    * The input string stream yylex() reads in is assumed to 
+    * be pointed by a FILE handler, yyin.  yylex() does not check
+    * the validity of the file handler, so you'd better off make sure
+    * the file is opened as readable.
+    */
+    int yylex(void);
+
+    int yywrap()
+    {
+      return 1;
+    }
+   /**
+    * The error handler used by yyparse() when it finds an error.  
+    * Currently, it is only to display an error message and
+    * and return from yyparse() with a value -1.
+    *
+    * @todo This error handler forces yyparse() to immediately return.
+    * It probably want to do more than that.
+    *
+    */
+    int yyerror( char * err_message )
+    { 
+      ++gSpkExpErrors;
+      cerr <<  "!!! Error (" << gSpkExpErrors << ") at line " << gSpkExpLines << ": " << endl;
+      cerr << "\t" << err_message << endl;
+    
+      return -1;
+    }
+
+   /**
+    * A signal that forces yyparse() to immediately return normally.
+    */
+    int YYACCEPT;
+
+   /**
+    * A signal that forces yyparse() to immediately return abnormaly.
+    */
+    int YYABORT;
+
+   /**
+    * Global pointer to a FILE handler to which output is redirected.
+    */
+    FILE * gSpkExpOutput;
 };
 
-  static const char * const STR_TYPE     = "type";
-  static const char * const STR_VALUE    = "value";
-  static const char * const STR_NAME     = "name";
-  static const char * const STR_OPERATOR = "operator";
-  static const char * const STR_OPERAND  = "operand";
-  static const char * const STR_SIGN     = "sign";
-  static const char * const STR_ROWS     = "rows";
-  static const char * const STR_COLS     = "cols";
-  static const char * const STR_LHS      = "lhs";
-  static const char * const STR_RHS      = "rhs";
-  static const char * const STR_BINARY   = "binary";
-  static const char * const STR_UNARY    = "unary";
-  static const char * const STR_FUNCTION = "function";
-  static const char * const STR_ARGC     = "argc";
-  static const char * const STR_STRUCTURE= "structure";
-  static const char * const STR_INDEX    = "index";
-  static const char * const STR_START    = "start";
-  static const char * const STR_END      = "end";
-  static const char * const STR_STRIDE   = "stride";
-  static const char * const STR_CONSTANT = "constant";
-  static const char * const STR_TRUE     = "true";
-  static const char * const STR_FALSE    = "false";
-  static const char * const STR_COMMENT  = "comment";
-  static const char * const STR_EXIT     = "exit";
+namespace{
+   const char * const STR_TYPE     = "type";
+   const char * const STR_VALUE    = "value";
+   const char * const STR_NAME     = "name";
+   const char * const STR_OPERATOR = "operator";
+   const char * const STR_OPERAND  = "operand";
+   const char * const STR_SIGN     = "sign";
+   const char * const STR_ROWS     = "rows";
+   const char * const STR_COLS     = "cols";
+   const char * const STR_LHS      = "lhs";
+   const char * const STR_RHS      = "rhs";
+   const char * const STR_BINARY   = "binary";
+   const char * const STR_UNARY    = "unary";
+   const char * const STR_FUNCTION = "function";
+   const char * const STR_ARGC     = "argc";
+   const char * const STR_STRUCTURE= "structure";
+   const char * const STR_INDEX    = "index";
+   const char * const STR_START    = "start";
+   const char * const STR_END      = "end";
+   const char * const STR_STRIDE   = "stride";
+   const char * const STR_CONSTANT = "constant";
+   const char * const STR_TRUE     = "true";
+   const char * const STR_FALSE    = "false";
+   const char * const STR_COMMENT  = "comment";
+   const char * const STR_EXIT     = "exit";
 
-  static const char * const STR_ASSIGN   = "assign";
-  static const char * const STR_ARRAY_ELEMENT_LIST = "array_element_list";
-  static const char * const STR_VARIABLE = "variable";
-  static const char * const STR_PRIORITIZED = "prioritized";
-  static const char * const STR_IF       = "if";
-  static const char * const STR_ELSE     = "else";
-  static const char * const STR_THEN     = "then";
-  static const char * const STR_CONDITION= "condition";
-  static const char * const STR_BLOCK    = "block";
+   const char * const STR_ASSIGN   = "assign";
+   const char * const STR_ARRAY_ELEMENT_LIST = "array_element_list";
+   const char * const STR_VARIABLE = "variable";
+   const char * const STR_PRIORITIZED = "prioritized";
+   const char * const STR_IF       = "if";
+   const char * const STR_ELSE     = "else";
+   const char * const STR_THEN     = "then";
+   const char * const STR_CONDITION= "condition";
+   const char * const STR_BLOCK    = "block";
 
-  static const char * const STR_SQRT     = "sqrt";
-  static const char * const STR_EXP      = "exp";
-  static const char * const STR_LOG      = "log";
-  static const char * const STR_LOG10    = "log10";
-  static const char * const STR_ADD      = "add";
-  static const char * const STR_SUBTRACT = "subtract";
-  static const char * const STR_MULTIPLY = "multiply";
-  static const char * const STR_DIVIDE   = "divide";
-  static const char * const STR_POWER    = "power";
-  static const char * const STR_MINUS    = "minus";
-  static const char * const STR_PLUS     = "plus";
+   const char * const STR_SQRT     = "sqrt";
+   const char * const STR_EXP      = "exp";
+   const char * const STR_LOG      = "log";
+   const char * const STR_LOG10    = "log10";
+   const char * const STR_ADD      = "add";
+   const char * const STR_SUBTRACT = "subtract";
+   const char * const STR_MULTIPLY = "multiply";
+   const char * const STR_DIVIDE   = "divide";
+   const char * const STR_POWER    = "power";
+   const char * const STR_MINUS    = "minus";
+   const char * const STR_PLUS     = "plus";
 
-  static const char * const STR_EQ       = "eq";
-  static const char * const STR_NE       = "ne";
-  static const char * const STR_LT       = "lt";  
-  static const char * const STR_LE       = "le";
-  static const char * const STR_GT       = "gt";
-  static const char * const STR_GE       = "ge";
-  static const char * const STR_NXOR     = "nxor";
-  static const char * const STR_XOR      = "xor";
-  static const char * const STR_OR       = "or";
-  static const char * const STR_AND      = "and";
-  static const char * const STR_NEGATE   = "negate";
+   const char * const STR_EQ       = "eq";
+   const char * const STR_NE       = "ne";
+   const char * const STR_LT       = "lt";  
+   const char * const STR_LE       = "le";
+   const char * const STR_GT       = "gt";
+   const char * const STR_GE       = "ge";
+   const char * const STR_NXOR     = "nxor";
+   const char * const STR_XOR      = "xor";
+   const char * const STR_OR       = "or";
+   const char * const STR_AND      = "and";
+   const char * const STR_NEGATE   = "negate";
 
-  static const char * const STR_SEMICOLON= ";";
-  static const char * const STR_NEWLINE  = "\n";
-  static const char * const STR_TAB      = "\t";
-  static bool inRHS = false;
-
+   const char * const STR_SEMICOLON= ";";
+   const char * const STR_NEWLINE  = "\n";
+   const char * const STR_TAB      = "\t";
+   bool inRHS = false;
+};
 %}
 
 %union{
+  /**
+   * A type of those tokens which return a character.
+   */
   char   ch;
+
+  /**
+   * A type of those tokens which return a character string.
+   */
   char*  c_str;
 }
 
-//
-// Char* type tokens / non-terminals
-//
+//==========================================
+// Char* type terminals
+//==========================================
 %token <c_str>  NAME 
 %token <c_str>  OPEN_ARRAY_ELEM_LIST
 %token <c_str>  CLOSE_ARRAY_ELEM_LIST
@@ -172,9 +225,9 @@ FILE * gSpkExpOutput;
 %token <c_str>  SIGNIFICAND
 %token <c_str>  COMMENT
 
-//
-// char type tokens / non-terminals
-//
+//==========================================
+// char type terminals
+//==========================================
 %token <ch>   EQ_OP
 %token <ch>   NE_OP
 %token <ch>   LT_OP
@@ -194,6 +247,9 @@ FILE * gSpkExpOutput;
 %token <ch>   TRUE FALSE
 %token <ch>   EOF_MARKER
 
+//==========================================
+// char* type non-terminals
+//==========================================
 %type  <c_str> input
 %type  <c_str> statement
 %type  <c_str> if_stmt_or_block
@@ -229,6 +285,9 @@ FILE * gSpkExpOutput;
 %type  <c_str> function_ref
 %type  <c_str> exit_stmt
 
+//==========================================
+// Terminals that have precedence
+//==========================================
 %right '='
 %nonassoc EQV_OP NEQV_OP
 %nonassoc OR_OP
@@ -240,6 +299,9 @@ FILE * gSpkExpOutput;
 %left '*' '/'
 %right POWER_OP
 
+//==========================================
+// The start non-terminal
+//==========================================
 %start input
 
 %%
@@ -248,9 +310,13 @@ FILE * gSpkExpOutput;
 // input
 //
 // This is the fundamental unit that this parser accepts.
-// An input is the root of the entire tree and
-// can have any number of *line*s (each of which is an assignment statement)
+// An input becomes the root of the parse tree and
+// can be composed of any number of *line*s (each of which is an assignment statement)
 // or if_stmt_or_block (which is either an if-stmt or if-construct).
+//
+// Only at this level, a line or an if_stmt_or_block is printed out to the
+// file pointed by gSpkExpOutput with a newline character at the end of 
+// the statement/block.
 //
 //==================================================================================*/
 input: 

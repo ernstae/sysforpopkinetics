@@ -6,7 +6,7 @@
 #include "nonmem/read_nonmem_data.h"
 #include "nonmem/read_nonmem_model.h"
 #include "emit_IndData.h"
-#include "emit_driver.h"
+#include "emit_nonmem_driver.h"
 #include <xercesc/dom/DOM.hpp>
 
 #include <iostream>
@@ -21,12 +21,12 @@ using namespace std;
 ////////////////////////////////////////////////////////////////////////////////////
 
 //=======================================================
-// isKeyword( const string var )
+// isNonmemLabel( const string var )
 //
 // Return true if "var" is one of the NONMEM reserved
 // words.
 //=======================================================
- bool nonmem::isKeyword( const string &var )
+ bool nonmem::isNonmemLabel( const string &var )
 {
   if( var =="id" |
       var =="l1" |
@@ -152,6 +152,193 @@ nonmem::toStringTRANS(
   if( e == nonmem::TRANS5 )
     return nonmem::STR_TRANS5;
 }
+enum nonmem::PK_PARA nonmem::toEnumPK_PARA( const char* s )
+{
+  if( strcmp( s, STR_PK_Pn ) == 0 )
+    return nonmem::Pn;
+  if( strcmp( s, STR_PK_K ) == 0 )
+    return nonmem::K;
+  if( strcmp( s, STR_PK_KA ) == 0 )
+    return nonmem::KA;
+  if( strcmp( s, STR_PK_K12 ) == 0 )
+    return nonmem::K12;
+  if( strcmp( s, STR_PK_K21 ) == 0 )
+    return nonmem::K21;
+  if( strcmp( s, STR_PK_K23 ) == 0 )
+    return nonmem::K23;
+  if( strcmp( s, STR_PK_K32 ) == 0 )
+    return nonmem::K32;
+  if( strcmp( s, STR_PK_KM ) == 0 )
+    return nonmem::KM;
+  if( strcmp( s, STR_PK_CL ) == 0 )
+    return nonmem::CL;
+  if( strcmp( s, STR_PK_Q ) == 0 )
+    return nonmem::Q;
+  if( strcmp( s, STR_PK_V ) == 0 )
+    return nonmem::V;
+  if( strcmp( s, STR_PK_VSS ) == 0 )
+    return nonmem::VSS;
+  if( strcmp( s, STR_PK_V1 ) == 0 )
+    return nonmem::V1;
+  if( strcmp( s, STR_PK_V2 ) == 0 )
+    return nonmem::V2;
+  if( strcmp( s, STR_PK_V3 ) == 0 )
+    return nonmem::V3;
+  if( strcmp( s, STR_PK_VM ) == 0 )
+    return nonmem::VM;
+  if( strcmp( s, STR_PK_AOB ) == 0 )
+    return nonmem::AOB;
+  if( strcmp( s, STR_PK_ALPHA ) == 0 )
+    return nonmem::ALPHA;
+  if( strcmp( s, STR_PK_BETA ) == 0 )
+    return nonmem::BETA;
+  if( strcmp( s, STR_PK_Sn ) == 0 )
+    return nonmem::Sn;
+  if( strcmp( s, STR_PK_SC ) == 0 )
+    return nonmem::SC;
+  if( strcmp( s, STR_PK_S0 ) == 0 )
+    return nonmem::S0;
+  if( strcmp( s, STR_PK_S1 ) == 0 )
+    return nonmem::S1;
+  if( strcmp( s, STR_PK_S2 ) == 0 )
+    return nonmem::S2;
+  if( strcmp( s, STR_PK_S3 ) == 0 )
+    return nonmem::S3;
+  if( strcmp( s, STR_PK_S4 ) == 0 )
+    return nonmem:: S4;
+  if( strcmp( s, STR_PK_Fn ) == 0 )
+    return nonmem::Fn;
+  if( strcmp( s, STR_PK_F0 ) == 0 )
+    return nonmem::F0; // f-zero
+  if( strcmp( s, STR_PK_FO ) == 0 )
+    return nonmem::FO; // f-oh
+  if( strcmp( s, STR_PK_F1 ) == 0 )
+    return nonmem::F1;
+  if( strcmp( s, STR_PK_F2 ) == 0 )
+    return nonmem::F2;
+  if( strcmp( s, STR_PK_F3 ) == 0 )
+    return nonmem::F3;
+  if( strcmp( s, STR_PK_Rn ) == 0 )
+    return nonmem::Rn;
+  if( strcmp( s, STR_PK_R1 ) == 0 )
+    return nonmem::R1;
+  if( strcmp( s, STR_PK_R2 ) == 0 )
+    return nonmem::R2;
+  if( strcmp( s, STR_PK_R3 ) == 0 )
+    return nonmem::R3;
+  if( strcmp( s, STR_PK_Dn ) == 0 )
+    return nonmem::Dn;
+  if( strcmp( s, STR_PK_D1 ) == 0 )
+    return nonmem::D1;
+  if( strcmp( s, STR_PK_D2 ) == 0 )
+    return nonmem::D2;
+  if( strcmp( s, STR_PK_D3 ) == 0 )
+    return nonmem::D3;
+  if( strcmp( s, STR_PK_ALAGn ) == 0 )
+    return nonmem::ALAGn;
+  if( strcmp( s, STR_PK_ALAG1 ) == 0 )
+    return nonmem::ALAG1;
+  if( strcmp( s, STR_PK_ALAG2 ) == 0 )
+    return nonmem::ALAG2;
+  if( strcmp( s, STR_PK_ALAG3 ) == 0 )
+    return nonmem::ALAG3;
+  if( strcmp( s, STR_PK_XSCALE ) == 0 )
+    return nonmem::XSCALE;
+}
+const char* const nonmem::toStringPK_PARA( enum nonmem::PK_PARA e )
+{
+  if( e == nonmem::Pn )
+    return STR_PK_Pn;
+  if( e == nonmem::K )
+    return STR_PK_K;
+  if( e == nonmem::KA )
+    return STR_PK_KA;
+  if( e == nonmem::K12 )
+    return STR_PK_K12;
+  if( e == nonmem::K21 )
+    return STR_PK_K21;
+  if( e == nonmem::K23 )
+    return STR_PK_K23;
+  if( e == nonmem::K32 )
+    return STR_PK_K32;
+  if( e == nonmem::KM )
+    return STR_PK_KM;
+  if( e == nonmem::CL )
+    return STR_PK_CL;
+  if( e == nonmem::Q )
+    return STR_PK_Q;
+  if( e == nonmem::V )
+    return STR_PK_V;
+  if( e == nonmem::VSS )
+    return STR_PK_VSS;
+  if( e == nonmem::V1 )
+    return STR_PK_V1;
+  if( e == nonmem::V2 )
+    return STR_PK_V2;
+  if( e == nonmem::V3 )
+    return STR_PK_V3;
+  if( e == nonmem::VM )
+    return STR_PK_VM;
+  if( e == nonmem::AOB )
+    return STR_PK_AOB;
+  if( e == nonmem::ALPHA )
+    return STR_PK_ALPHA;
+  if( e == nonmem::BETA )
+    return STR_PK_BETA;
+  if( e == nonmem::Sn )
+    return STR_PK_Sn;
+  if( e == nonmem::SC )
+    return STR_PK_SC;
+  if( e == nonmem::S0 )
+    return STR_PK_S0;
+  if( e == nonmem::S1 )
+    return STR_PK_S1;
+  if( e == nonmem::S2 )
+    return STR_PK_S2;
+  if( e == nonmem::S3 )
+    return STR_PK_S3;
+  if( e == nonmem::S4 )
+    return STR_PK_S4;
+  if( e == nonmem::Fn )
+    return STR_PK_Fn;
+  if( e == nonmem::F0 ) 
+    return STR_PK_F0;
+  if( e == nonmem::FO )
+    return STR_PK_FO;
+  if( e == nonmem::F1 )
+    return STR_PK_F1;
+  if( e == nonmem::F2 )
+    return STR_PK_F2;
+  if( e == nonmem:: F3 )
+    return STR_PK_F3;
+  if( e == nonmem::Rn )
+    return STR_PK_Rn;
+  if( e == nonmem::R1 )
+    return STR_PK_R1;
+  if( e == nonmem::R2 )
+    return STR_PK_R2;
+  if( e == nonmem::R3 )
+    return STR_PK_R3;
+  if( e == nonmem::Dn )
+    return STR_PK_Dn;
+  if( e == nonmem::D1 )
+    return STR_PK_D1;
+  if( e == nonmem::D2 )
+    return STR_PK_D2;
+  if( e == nonmem::D3 )
+    return STR_PK_D3;
+  if( e == nonmem::ALAGn )
+    return STR_PK_ALAGn;
+  if( e == nonmem::ALAG1 )
+    return STR_PK_ALAG2;
+  if( e == nonmem::ALAG2 )
+    return STR_PK_ALAG2;
+  if( e == nonmem::ALAG3 )
+    return STR_PK_ALAG3;
+  if( e == nonmem::XSCALE )
+    return STR_PK_XSCALE;
+}
+
 //=======================================================
 // error( const char * message )
 //
@@ -338,10 +525,16 @@ std::vector<std::string> NonmemTranslator::emit(
 )
 {
   char driver_cpp[]    = "main.cpp";
-  char SpkModel_name[] = "SpkModel";
+  char SpkModel_name[] = "NonmemModel";
+  char modelObject_init_block[] = "NonmemModel model;";
 
   FILE * pDriver_cpp = fopen( driver_cpp, "w" );
-  emit_driver( pDriver_cpp, nIndividuals, SpkModel_name, ourSpk );
+  emit_nonmem_driver( pDriver_cpp, 
+		      nIndividuals, 
+		      SpkModel_name, 
+		      modelObject_init_block,
+		      ourSpk, 
+		      ourNonmem );
   fclose( pDriver_cpp );
  
   char IndData_h[] = "IndData.h";

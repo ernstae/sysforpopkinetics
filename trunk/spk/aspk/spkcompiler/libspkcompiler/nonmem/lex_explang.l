@@ -1,10 +1,8 @@
 %{
 /**
- * @file explang.l
- *
- * @brief This is a specification file (FLEX) that
- * generates a C lexical analizer that recognizes NONMEM subset of 
- * FORTRAN language. 
+ * @file lex_explang.c
+ * This file is generated from the FLEX lexical analyzer 
+ * specification file, nonmem/lex_explang.l, which defines the yylex() for NONMEM.
  */
 
 #include <ctype.h>
@@ -12,16 +10,16 @@
 
 #define YYSTYPE yystype
 
-/**
- * A global counter for keeping track of # of lines read so far.
- * It is defined in the BISON parser specification file (explang.y).
- */
+//
+// A global counter for keeping track of # of lines read so far.
+// It is defined in the BISON parser specification file (explang.ypp).
+//
 extern int gSpkExpLines;
 
-/**
- * A global counter for counting errors.
- * It is defined in the BISON parser specification file (explang.y).
- */
+//
+// A global counter for counting errors.
+// It is defined in the BISON parser specification file (explang.ypp).
+//
 extern int gSpkExpErrors;
 %}
 
