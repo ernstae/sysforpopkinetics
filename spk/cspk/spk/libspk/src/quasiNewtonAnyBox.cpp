@@ -1058,7 +1058,7 @@ void quasiNewtonAnyBox(
         iterCurrPrev = iterCurr;
 
         // Ask the optimizer to take perform a limited number of iterations.
-        message = QuasiNewton01Box(
+        message.assign( QuasiNewton01Box(
           outputStream,
           level,
           nIterMax,
@@ -1072,7 +1072,7 @@ void quasiNewtonAnyBox(
           fScaled,
           yCurr,
           gScaled,
-          hScaled );
+          hScaled ) );
 
         // After the first call to the optimizer the approximation for the
         // Hessian should be accurate enough that this can be reset.
@@ -1154,7 +1154,6 @@ void quasiNewtonAnyBox(
   bool ok = false;
   SpkError::ErrorCode errorCode;
   StateInfo stateInfo;
-  std::strstream message;
 
   optimizer.setNIterCompleted( iterCurr );
 
@@ -1171,7 +1170,7 @@ void quasiNewtonAnyBox(
     if( optimizer.getThrowExcepIfMaxIter() )
     {
       errorCode = SpkError::SPK_TOO_MANY_ITER;
-      message << "Maximum number of iterations performed without convergence.";
+      message = "Maximum number of iterations performed without convergence.";
       ok = false;
     }
     else
@@ -1184,7 +1183,7 @@ void quasiNewtonAnyBox(
   {
     optimizer.setIsTooManyIter( false );
     errorCode = SpkError::SPK_NOT_CONVERGED;
-    message << "Unable to satisfy convergence criterion for quasiNewtonAnyBox.";
+    message = "Unable to satisfy convergence criterion for quasiNewtonAnyBox.";
     ok = false;
   }
 
