@@ -4,7 +4,7 @@
   <!ENTITY uw "University of Washington">
   <!ENTITY dept "Department of Bioengineering">
 ]>
-<article><title>Autotools</title>
+<article><title>GNU Autotools in Sesami-Nut Shell</title>
   <articleinfo>
     <abstract>
       <para>
@@ -23,6 +23,12 @@
       </para>
     </abstract>
     <revhistory>
+      <revision>
+	<revnumber>1.1</revnumber>
+	<date>February 8, 2005</date>
+	<authorinitials>sh</authorinitials>
+	<revremark>Changed the title</revremark>
+      </revision>
       <revision>
 	<revnumber>1.0</revnumber>
 	<date>February 1, 2005</date>
