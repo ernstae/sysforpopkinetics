@@ -106,14 +106,14 @@
 #include <sys/types.h>
 #include <sys/utsname.h>
 #include <unistd.h>
+#include <csignal>
+
 #include <time.h>
 #include <string>
 #include <cstdio>
 #include <cstring>
 #include <map>
 #include <spkpvm.h>
-
-#include <csignal>
 
 // note: ARCH is defined in the Makefile
 
@@ -169,9 +169,8 @@ static void signal_initialize() {
   struct sigaction signal_action;
   signal_action.sa_handler = signal_handler;
   signal_action.sa_flags = 0;
-  sigaction(SIGINT,  &signal_action, NULL);
-  sigaction(SIGHUP,  &signal_action, NULL);
-  sigaction(SIGTERM, &signal_action, NULL);
+  for (int i; i < spkpvm_siglist_length; i++)
+    sigaction(spkpvm_siglist[i],  &signal_action, NULL);
 }
 // format a message for the spk log
 static void spklog(const char *message) {
