@@ -383,13 +383,35 @@ Either label or synonym may be one of the NONMEM reserved identifiers, among whi
 -->
 <!ATTLIST nm_model tolerance CDATA #IMPLIED>
 
-<!-- <pred> Equivalent of $PRED block that serves as the total of PK, ERROR and SUBROUTINES records. "F" (or "f"), the mean value, and "Y" (or "y"), the random variable, must appeared on the left hand side of assignments. -->
+<!-- <pred> Equivalent of $PRED block that serves as the total of PK, ERROR and SUBROUTINES records. 
+<html:p>
+The same requirements and rules imposed on $PRED are applied to this element. 
+</html:p>
+<html:p>
+NOTE: This element contains a set of equations written in the NONMEM abbriviated code, which is a subset of FORTRAN 77.  Cases are ignored; that is, "tIMe" and "TiMe" are treated as the same. 
+</html:p>
+-->
 <!ELEMENT pred (#PCDATA)>
 
-<!-- <pk> Equivalent of $PK block. Required when an ADVAN model is used.-->
+<!-- <pk> Equivalent of $PK block. Required when an ADVAN model is used.
+<html:p>
+The same requirements and rules imposed on PK are applied to this element.
+</html:p>
+<html:p>
+NOTE: This element contains a set of equations written in the NONMEM abbriviated code, which is a subset of FORTRAN 77.  Cases are ignored; that is, "tIMe" and "TiMe" are treated as the same. 
+</html:p>
+-->
 <!ELEMENT pk (#PCDATA)>
 
-<!-- <error> Equivalent of $ERROR block.  Required when an ADVAN model is used.-->
+<!-- <error> Equivalent of $ERROR block.  Required when an ADVAN model is used.
+
+<html:p>
+The same requirements and rules imposed on ERROR are applied to this element.
+</html:p>
+<html:p>
+This element contains a set of equations written in the NONMEM abbriviated code, which is a subset of FORTRAN 77.  Cases are ignored; that is, "tIMe" and "TiMe" are treated as the same.  
+</html:p>
+-->
 <!ELEMENT error (#PCDATA)>
 
 <!-- <comp_model> Definition of a compartmental model.  Required when a general model (ADVAN5-9) is used.
@@ -444,7 +466,12 @@ The order in which the <compartment>s appear is interpreted as the compartment n
 <!-- <link k=""> Flow rate constant of the compartment -->
 <!ATTLIST link k CDATA #REQUIRED>
 
-<!-- <diffeqn> System of differential equations, equivalent to $DES record in NONMEM. Required with ADVAN6, 8, 9. -->
+<!-- <diffeqn> System of differential equations, equivalent to $DES record in NONMEM. Required with ADVAN6, 8, 9. 
+
+The same requirements and rules imposed on $DES are applied to this element.
+
+NOTE: This element contains a set of equations written in the NONMEM abbriviated code, which is a subset of FORTRAN 77.  Cases are ignored; that is, "tIMe" and "TiMe" are treated as the same.  
+-->
 <!ELEMENT diffeqn (#PCDATA)>
 
 <!-- ===================================== -->
