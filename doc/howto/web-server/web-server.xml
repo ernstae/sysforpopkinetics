@@ -1,0 +1,159 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"[
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+]>
+<article><title>Web Server HOWTO</title>
+ <articleinfo>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>February 26, 2004</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+    </revhistory>
+  <abstract>
+      <para>
+	Because Spk provides its services via the World Wide Web, an important
+	component of the overall system is the web server.  This document
+	describes the installation and configuration of web server software
+	to support Spk.
+      </para>
+  </abstract>
+ </articleinfo>
+  <sect1>
+    <title>Introduction</title>
+    <para>
+      The client component of Spk, called the Model Design Agent (MDA), is
+      written in the Java language.  It communicates with the rest of the
+      system via the Internet, using the <emphasis>http</emphasis>
+      and <emphasis>https</emphasis> protocols.  On the
+      server side of this communication is a web server, which is software
+      that supports World Wide Web functionality and runs continuously in a server machine.
+      The fact that the MDA is a Java application makes it very desirable
+      that the components that communicate with the MDA from the server side
+      be also written in Java. Server-side Java components such as those
+      in Spk are known as <emphasis>Java servlets</emphasis>.  
+    </para>
+    <para>
+      In order to run servlets within a web server, software known as
+      a <emphasis>servlet container</emphasis> is required.  Tomcat, a
+      free product of the Catalina project, which in turn is part of the
+      Jakarta project sponsored by Apache, the leading developer of web
+      server software, serves this purpose for Spk.  Tomcat can be added
+      to an Apache web server, in which case it provides only the 
+      servlet container function, or it can be installed as a complete
+      stand-alone web server and servlet container.  For the purposes of Spk,
+      the latter is the simplest solution.
+    </para>
+    <para>
+      The rest of this document describes the installation and configuration
+      of tomcat as the web-server and servlet container for Spk.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Installing Tomcat</title>
+    <para>
+      In a terminal window, as an ordinary user, download the tomcat tarball from whitechuck,
+      then <command>su</command> to become <emphasis>root</emphasis>:
+      <screen>
+scp 'whitechuck:/opt/download/jakarta-tomcat*.tar.gz' .
+su
+      </screen>
+    </para>
+    <para>
+      If you do not already have a directory called <filename>/usr/local/tomcat</filename>,
+      create one:
+      <screen>
+mkdir /usr/local/tomcat
+      </screen>
+    </para>
+    <para>
+      Move the tarball to <filename>/usr/local/tomcat</filename>, and expand it:
+      <screen>
+mv jakarta-tomcat*.tar.gz /usr/local/tomcat
+cd /usr/local/tomcat
+tar xvzf *
+      </screen>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Configuring User Groups and Permissions</title>
+    <para>
+      Several permissions issues must be dealt with:
+      <itemizedlist>
+	<listitem>
+	  <para>
+	    Tomcat should not run under the <emphasis>root</emphasis> user.
+	    Like all web servers, there is a risk that tomcat will at some point
+	    be compromised.  If this occurs, damage will be minimized if it 
+	    runs with ordinary user privileges.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Certain select ordinary users should be allowed to make changes to 
+	    web pages. They should not have to know the root password to perform
+	    these duties. These users can be provided access to web pages and
+	    Java servlets by proper configuration of user groups and group
+	    privileges.
+	  </para>
+	</listitem>
+      </itemizedlist>
+    </para>
+    <para>
+      First we need to create the user under which tomcat will run, create two
+      groups for the users that will have access to web pages and servlets, and
+      add tomcat to both groups.
+      <screen>
+su -
+useradd -r tomcat
+groupadd -r webtext
+groupadd -r webjava
+gpasswd -a tomcat webtext
+gpasswd -a tomcat webjava
+      </screen>
+    </para>
+    <para>
+      Now set permissions on individual directory sub-trees:
+      <screen>
+cd /usr/local/tomcat/jakarta*
+chown -R tomcat.tomcat conf
+chown -R tomcat.tomcat logs
+chown -R tomcat.webjava server
+chown -R tomcat.webjava webapps
+chmod -R 2775 server
+chmod -R 2775 webapps
+      </screen>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Running Tomcat Automatically</title>
+    <para>
+      Tomcat should be run automatically from the <command>init</command> process
+      whenever the system boots, and be capable of being stopped or restarted from
+      the command line by the <emphasis>root</emphasis> user, just like other
+      system services.
+    </para>
+    <para>
+      A shell script called <command>tomcatd</command> which can 
+      <command>start</command>, <command>stop</command>, <command>restart</command>
+      and provide <command>status</command> is in the Spk CVS repository.  The following
+      assumes that you have a working copy of the <filename>r2</filename> repository
+      available.  
+    </para>
+    <para>
+      Assume that the path to your working copy of the <filename>r2</filename> repository
+      is the value of the environment variable R2:
+      <screen>
+su
+cd /etc/rc.d/init.d
+cp $R2/admin/tomcatd/tomcatd .
+chmod +x tomcatd
+/sbin/chkconfig --add tomcatd
+      </screen>
+    </para>
+  </sect1>
+</article>
