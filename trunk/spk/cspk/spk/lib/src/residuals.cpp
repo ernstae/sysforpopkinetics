@@ -178,7 +178,7 @@ $syntax/
 
 /m/
 /$$
-The $italic m specifies the number of subjects/individuals
+The $italic m$$ specifies the number of subjects/individuals
 in the population.
 
 $syntax/

@@ -77,7 +77,7 @@ are epsilon equivalent,otherwise returns false. Specifically,
 $code isDblEpsEqual$$ returns true if
 $math%
 
-  |a - b| \le scale * \DBL_\EPS_\EQUAL_\MULT * \DBL_\EPSILON .
+  |a - b| \le scale * ( \DBL_\EPS_\EQUAL_\MULT * \DBL_\EPSILON ) .
 
 %$$
 
@@ -134,7 +134,7 @@ $end
 
 inline bool isDblEpsEqual(double a, double b, double scale)
 {
-    if ( fabs(a - b) <= scale * DBL_EPS_EQUAL_MULT * DBL_EPSILON )
+    if ( fabs(a - b) <= scale * ( DBL_EPS_EQUAL_MULT * DBL_EPSILON ) )
        return true;
     else 
        return false;

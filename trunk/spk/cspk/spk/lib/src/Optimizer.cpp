@@ -149,8 +149,21 @@ namespace // [Begin: unnamed namespace]
 -------------------------------------------------------------
 $begin OptimizerConstructor$$
 
-$spell const int optimizer NMaxIter initializes Bayesian stdout mapObj
- sub Vi Varbl$$
+$spell
+  Curr
+  Func
+  Obj
+  Bfgs
+  bool
+  const
+  Excep
+  int
+  Iter
+  NMaxIter
+  optimizer
+  pos
+  std
+$$
 
 $section Basic Constructor$$
 
@@ -413,7 +426,21 @@ Optimizer::Optimizer(
 -------------------------------------------------------------
 $begin OptimizerDefaultConstructor$$
 
-$spell optimizer$$
+$spell
+  Curr
+  Func
+  Obj
+  Bfgs
+  bool
+  const
+  Excep
+  int
+  Iter
+  NMaxIter
+  optimizer
+  pos
+  std
+$$
 
 $section Default Constructor$$
 
@@ -521,10 +548,20 @@ Optimizer::Optimizer()
 -------------------------------------------------------------
 $begin OptimizerCopyConstructor $$
 
-$spell 
-  Optimizer 
-  Iter
+$spell
+  Curr
+  Func
+  Obj
+  Bfgs
+  bool
   const
+  Excep
+  int
+  Iter
+  NMaxIter
+  optimizer
+  pos
+  std
 $$
 
 $section Copy Constructor$$
@@ -618,7 +655,10 @@ Optimizer::Optimizer( const Optimizer& original )
 -------------------------------------------------------------
 $begin OptimizerAssignmentOperator$$
 
-$spell 
+$spell
+  Curr
+  Func
+  Obj
   Optimizer 
   const
 $$
@@ -1025,6 +1065,7 @@ $begin getSaveStateAtEndOfOpt$$
 
 $spell
   getSaveStateAtEndOfOpt bool Optimizer
+  const
 $$
 
 $section Get Save State at End of Optimization Flag$$
@@ -1062,6 +1103,7 @@ $begin getThrowExcepIfMaxIter$$
 
 $spell
   getThrowExcepIfMaxIter bool Optimizer
+  const
 $$
 
 $section Get Throw Exception if Maximum Iterations Exhausted Flag$$
@@ -1574,6 +1616,8 @@ $end
 $begin setDidOptFinishOk$$
 
 $spell
+  Bfgs
+  pos
   setDidOptFinishOk bool Optimizer
     const
 $$
@@ -1611,6 +1655,8 @@ $end
 $begin setIsBeginOfIterStateInfo$$
 
 $spell
+  Bfgs
+  pos
   setIsBeginOfIterStateInfo bool Optimizer
     const
 $$
@@ -1649,6 +1695,8 @@ $end
 $begin getStateInfo$$
 
 $spell
+  Bfgs
+  pos
   getStateInfo stateInfo Optimizer
     const 
 $$
@@ -1959,6 +2007,8 @@ void Optimizer::getStateInfo(
 $begin setStateInfo$$
 
 $spell
+  Bfgs
+  pos
   setStateInfo Optimizer
     Integer const
 $$
@@ -2247,13 +2297,15 @@ void Optimizer::setStateInfo(
 $begin initStateInfo$$
 
 $spell
+  Bfgs
+  pos
   initStateInfo stateInfo Optimizer
 $$
 
 $section Allocates Memory for the State Information$$
 
 $index Optimizer, state information, initStateInfo$$
-$$cindex Allocates Memory /for /the State Information$$
+$cindex Allocates Memory /for /the State Information$$
 
 $table
 $bold Prototype$$ $cend
@@ -2361,13 +2413,15 @@ void Optimizer::initStateInfo( int nIn, int mIn )
 $begin freeStateInfo$$
 
 $spell
+  Bfgs
+  pos
   freeStateInfo stateInfo Optimizer
 $$
 
 $section Free Memory Allocated for the State Information$$
 
 $index Optimizer, state information, freeStateInfo$$
-$$cindex Free Memory /Allocated /for /the State Information$$
+$cindex Free Memory /Allocated /for /the State Information$$
 
 $table
 $bold Prototype$$ $cend
@@ -2453,6 +2507,8 @@ void Optimizer::freeStateInfo()
 $begin setObjFunc$$
 
 $spell
+  Bfgs
+  pos
   setObjFunc int Optimizer
     const
 $$
@@ -2477,7 +2533,7 @@ $$
 $pre
 $$
 $head Description$$
-$code setObjFunc()$$ sets the value $italic pObjFuncIn as the pointer
+$code setObjFunc()$$ sets the value $italic pObjFuncIn$$ as the pointer
 to the objective function that is going to be optimized.
 
 $end
@@ -2500,6 +2556,8 @@ void Optimizer::setObjFunc( QuasiNewtonAnyBoxObj* pObjFuncIn )
 $begin readRestartInfoFromFile$$
 
 $spell
+  Bfgs
+  pos
   readRestartInfoFromFile bool Optimizer
     const 
 $$
@@ -2879,6 +2937,8 @@ void Optimizer::readRestartInfoFromFile()
 $begin writeRestartInfoToFile$$
 
 $spell
+  Bfgs
+  pos
   writeRestartInfoToFile bool Optimizer
     const 
 $$
@@ -3099,6 +3159,16 @@ void Optimizer::writeRestartInfoToFile()
 $begin getAttributeValue$$
 
 $spell
+  bool
+  Ch
+  istream
+  ostream
+  Spk
+  std
+  str
+  subelement
+  Bfgs
+  pos
   getAttributeValue Optimizer
     const 
 $$
@@ -3247,9 +3317,19 @@ template void Optimizer::getAttributeValue<int>(
 -------------------------------------------------------------
    Get a single value from a subelement of the current element (XMLCh tag version)
 -------------------------------------------------------------
-$begin getValue$$
+$begin getValueXMLChTag$$
 
 $spell
+  bool
+  Ch
+  istream
+  ostream
+  Spk
+  std
+  str
+  subelement
+  Bfgs
+  pos
   getValue Optimizer
     const 
 $$
@@ -3471,9 +3551,19 @@ template void Optimizer::getValue<int>(
 -------------------------------------------------------------
    Get an array of values from a subelement of the current element (XMLCh tag version)
 -------------------------------------------------------------
-$begin getArray$$
+$begin getArrayXMLChTag$$
 
 $spell
+  bool
+  Ch
+  istream
+  ostream
+  Spk
+  std
+  str
+  subelement
+  Bfgs
+  pos
   getArray Optimizer
     const 
 $$
@@ -3737,9 +3827,19 @@ template void Optimizer::getArray<int>(
 -------------------------------------------------------------
    Get a single value from a subelement of the current element (char tag version)
 -------------------------------------------------------------
-$begin getValue$$
+$begin getValueCharTag$$
 
 $spell
+  bool
+  Ch
+  istream
+  ostream
+  Spk
+  std
+  str
+  subelement
+  Bfgs
+  pos
   getValue Optimizer
     const 
 $$
@@ -3867,9 +3967,19 @@ template void Optimizer::getValue<int>(
 -------------------------------------------------------------
    Get an array of values from a subelement of the current element (char tag version)
 -------------------------------------------------------------
-$begin getArray$$
+$begin getArrayCharTag$$
 
 $spell
+  bool
+  Ch
+  istream
+  ostream
+  Spk
+  std
+  str
+  subelement
+  Bfgs
+  pos
   getArray Optimizer
     const 
 $$
@@ -4014,6 +4124,16 @@ template void Optimizer::getArray<double>(
 $begin writeXMLVersion$$
 
 $spell
+  bool
+  Ch
+  istream
+  ostream
+  Spk
+  std
+  str
+  subelement
+  Bfgs
+  pos
 
 writeXMLVersion Optimizer
 $$
@@ -4059,6 +4179,16 @@ void Optimizer::writeXMLVersion()
 $begin writeAttribute$$
 
 $spell
+  bool
+  Ch
+  istream
+  ostream
+  Spk
+  std
+  str
+  subelement
+  Bfgs
+  pos
   writeAttribute Optimizer
     const 
 $$
@@ -4165,6 +4295,16 @@ template void Optimizer::writeAttribute<int>(
 $begin writeValue$$
 
 $spell
+  bool
+  Ch
+  istream
+  ostream
+  Spk
+  std
+  str
+  subelement
+  Bfgs
+  pos
   writeValue Optimizer
     const 
 $$
@@ -4294,6 +4434,16 @@ template void Optimizer::writeValue<int>(
 $begin writeArray$$
 
 $spell
+  bool
+  Ch
+  istream
+  ostream
+  Spk
+  std
+  str
+  subelement
+  Bfgs
+  pos
   writeArray Optimizer
     const 
 $$
@@ -4453,6 +4603,16 @@ template void Optimizer::writeArray<int>(
 $begin writeStartTag$$
 
 $spell
+  bool
+  Ch
+  istream
+  ostream
+  Spk
+  std
+  str
+  subelement
+  Bfgs
+  pos
   writeStartTag Optimizer
     const 
 $$
@@ -4539,6 +4699,16 @@ void Optimizer::writeStartTag(
 $begin writeStartTagFinalBracket$$
 
 $spell
+  bool
+  Ch
+  istream
+  ostream
+  Spk
+  std
+  str
+  subelement
+  Bfgs
+  pos
   writeStartTagFinalBracket Optimizer
     const 
 $$
@@ -4597,6 +4767,16 @@ void Optimizer::writeStartTagFinalBracket( bool newLineAfter )
 $begin writeEndTag$$
 
 $spell
+  bool
+  Ch
+  istream
+  ostream
+  Spk
+  std
+  str
+  subelement
+  Bfgs
+  pos
   writeEndTag Optimizer
     const 
 $$
@@ -4670,6 +4850,16 @@ void Optimizer::writeEndTag(
 $begin isThereErrorInfo$$
 
 $spell
+  bool
+  Ch
+  istream
+  ostream
+  Spk
+  std
+  str
+  subelement
+  Bfgs
+  pos
   isThereErrorInfo bool Optimizer
     const 
 $$
@@ -4716,6 +4906,16 @@ bool Optimizer::isThereErrorInfo() const
 $begin getErrorInfo$$
 
 $spell
+  bool
+  Ch
+  istream
+  ostream
+  Spk
+  std
+  str
+  subelement
+  Bfgs
+  pos
   getErrorInfo errorInfo Optimizer
     const 
 $$
@@ -5004,6 +5204,8 @@ void Optimizer::getErrorInfo(
 $begin OptimizerInserter$$
 
 $spell
+  Bfgs
+  pos
   inserter ostream os cout const ob
     Iter Optimizer
 $$
@@ -5071,6 +5273,8 @@ std::ostream& operator<<(std::ostream& stream, const Optimizer& right)
 $begin OperatorExtractor$$
 
 $spell
+  Bfgs
+  pos
   cout ob istream ostream
     Spk Optimizer
 $$

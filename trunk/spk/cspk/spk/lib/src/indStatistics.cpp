@@ -33,7 +33,7 @@
 
 /*************************************************************************
  *
- * Function: indStatistics
+ * Function: indStatistics - core statistics computation
  *
  *************************************************************************/
 
@@ -95,7 +95,7 @@ $spell
   Cramer-Rao
 $$
 
-$section Computing statistics of individual parameter estimates$$
+$section Computing Statistics of Individual Parameter Estimates$$
 
 $index indStatistics, coefficient of variation, confidence interval$$
 $index covariance, standard error, correlation matrix, individual parameters$$
@@ -177,22 +177,22 @@ $syntax/
 
 /dataMean_indPar/
 /$$
-The $code SPK_VA::valarray<double>$$ $italic dataMean_indPar$ is the mean
+The $code SPK_VA::valarray<double>$$ $italic dataMean_indPar$$ is the mean
 of data evaluated at $italic indPar$$.
 
 $syntax/
 
 /dataVariance_indPar/
 /$$
-The $code SPK_VA::valarray<double>$$ $italic dataVariance_indPar$ is 
+The $code SPK_VA::valarray<double>$$ $italic dataVariance_indPar$$ is 
 the value of the derivative of the variance of data with respect to the
 individual parameter, evaluated at $italic indPar$$.
 
-syntax/
+$syntax/
 
 /dataVarianceInv/
 /$$
-The $code SPK_VA::valarray<double>$$ $italic dataVarianceInv$ is 
+The $code SPK_VA::valarray<double>$$ $italic dataVarianceInv$$ is 
 the value of the inverse of the variance of data evaluated at $italic indPar$$.
 
 $syntax/
@@ -640,7 +640,7 @@ void indStatistics( const valarray<double>&  indPar,
 
 /*************************************************************************
  *
- * Function: indStatistics
+ * Function: indStatistics - allows inactive elements
  *
  *************************************************************************/
 
@@ -649,7 +649,7 @@ void indStatistics( const valarray<double>&  indPar,
  *------------------------------------------------------------------------*/
 /*
 
-$begin indStatistics$$
+$begin indStatisticsInactiveElem$$
 
 $spell
   Model model
@@ -702,7 +702,7 @@ $spell
   Cramer-Rao
 $$
 
-$section Computing statistics of individual parameter estimates$$
+$section Computing Statistics of Individual Parameter Estimates when Some Elements are not Active$$
 
 $index indStatistics, coefficient of variation, confidence interval$$
 $index covariance, standard error, correlation matrix, individual parameters$$
@@ -794,22 +794,22 @@ $syntax/
 
 /dataMean_indPar/
 /$$
-The $code SPK_VA::valarray<double>$$ $italic dataMean_indPar$ is the mean
+The $code SPK_VA::valarray<double>$$ $italic dataMean_indPar$$ is the mean
 of data evaluated at $italic indPar$$.
 
 $syntax/
 
 /dataVariance_indPar/
 /$$
-The $code SPK_VA::valarray<double>$$ $italic dataVariance_indPar$ is 
+The $code SPK_VA::valarray<double>$$ $italic dataVariance_indPar$$ is 
 the value of the derivative of the variance of data with respect to the
 individual parameter, evaluated at $italic indPar$$.
 
-syntax/
+$syntax/
 
 /dataVarianceInv/
 /$$
-The $code SPK_VA::valarray<double>$$ $italic dataVarianceInv$ is 
+The $code SPK_VA::valarray<double>$$ $italic dataVarianceInv$$is 
 the value of the inverse of the variance of data evaluated at $italic indPar$$.
 
 $syntax/
@@ -847,7 +847,7 @@ at $italic indPar$$.  Otherwise, this function will not attempt to change the
 contents of the $code SPK_VA::valarray<double>$$ object pointed to by 
 $italic indParSEOut$$.  
 
-The $math%i$$-th element of the standard error vector
+The $math%i%$$-th element of the standard error vector
 will be replaced by NaN if $code mask[i]$$ is $math%false%$$.
 
 $syntax/
@@ -866,7 +866,7 @@ at $italic indPar$$.  Otherwise, this function will not attempt to change the
 contents of the $code SPK_VA::valarray<double>$$ object pointed to by 
 $italic indParCorOut$$.  
 
-The $math%(i, j)$$-th element of the corration matrix
+The $math%(i, j)%$$-th element of the corration matrix
 will be replaced by NaN if $code mask[i]$$ or $code mask[j]$$ is $math%false%$$.
 
 $syntax/
@@ -885,7 +885,7 @@ at $italic indPar$$.  Otherwise, this function will not attempt to change the
 contents of the $code SPK_VA::valarray<double>$$ object pointed to by 
 $italic indParCVOut$$.  
 
-The $math%i$$-th element of the coefficient vector
+The $math%i%$$-th element of the coefficient vector
 will be replaced by NaN if $code mask[i]$$ is $math%false%$$.
 
 $syntax/
@@ -908,7 +908,7 @@ $code SPK_VA::valarray<double>$$ object pointed to by $italic indParCIOut$$.
 Note that in the calculation of the confidence interval, if the degree of freedom 
 (number of data - number of parameters) is greater than 120 it is treated as infinite.
 
-The $math%(i,1)$$ and $math%(i,2)%$$ elements of the confidence interval matrix
+The $math%(i,1)%$$ and $math%(i,2)%$$ elements of the confidence interval matrix
 will be replaced by NaN if $code mask[i]$$ is $math%false%$$.
 
 $end

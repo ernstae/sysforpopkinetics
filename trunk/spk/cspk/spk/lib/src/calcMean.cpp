@@ -136,6 +136,7 @@ where Q and M > 0.
 
 $syntax/
 /Q/
+/$$
 $italic Q$$ is the number of rows in the matrix $italic V$$.
 
 
