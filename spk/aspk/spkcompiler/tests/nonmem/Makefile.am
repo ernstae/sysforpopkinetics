@@ -1,5 +1,5 @@
-bin_PROGRAMS    = test_nonmem
-noinst_PROGRAMS = test_nonmem
+bin_PROGRAMS    = testall
+noinst_PROGRAMS = testall
 INST_BASE       = /usr/local
 NONMEM          = nonmem
 
@@ -21,7 +21,7 @@ MOSTLYCLEANFILES = Pred.h \
                    spk_error.tmp \
                    sotware_error 
 
-test_nonmem_SOURCES = \
+testall_SOURCES = \
 	../config.h \
 	test_nonmem.cpp \
 	lex_explangTest.cpp \
@@ -45,7 +45,7 @@ test_nonmem_SOURCES = \
 	pop_fixedParaTest.cpp \
 	pop_fixedParaTest.h
 
-test_nonmem_INCLUDES = \
+testall_INCLUDES = \
 	lex_explangTest.h \
 	explangTest.h \
 	ind_fixedParaTest.h \
