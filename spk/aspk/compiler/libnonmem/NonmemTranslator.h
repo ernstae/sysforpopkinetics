@@ -1,6 +1,10 @@
 #ifndef NONMEM_TRANSLATOR_H
 #define NONMEM_TRANSLATOR_H
 
+/**
+ * @file NonmemTranslator.h
+ * Delares NonmemTranslator class and DataColumn, DataRecords classes.
+ */
 #include <vector>
 #include <valarray>
 #include <xercesc/dom/DOM.hpp>
