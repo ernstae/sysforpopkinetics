@@ -1292,7 +1292,7 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
       if ( iterCurr == iterCurrPrev )
       {
 	SpkError err( 
-          SpkError::SPK_UNKNOWN_OPT_ERR,
+          SpkError::SPK_OPT_ERR,
 	  "QuasiNewto01Box failed to perform at least one Quasi-Newton iteration.",
 	  __LINE__,
 	  __FILE__ );
@@ -1358,21 +1358,21 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
     // then throw an exception.
     ok = false;
     errorcode = SpkError::SPK_UNKNOWN_OPT_ERR;
+    message << "QuasiNewto01Box failed to perform at least one Quasi-Newton iteration.";
   }
 
-  if( !ok )
+  if ( !ok )
   {
-    const int max = SpkError::maxMessageLen();
-    char message[max];
-    sprintf( message, "%d%s%d\0", fail.code, fail.message, fail.errnum );
-    SpkError err(errorcode, message, __LINE__, __FILE__ );
+    SpkError err( errorcode, message, __LINE__, __FILE__ );
 
-    throw info.exceptionOb.push(err);
+    throw info.exceptionOb.push( err );
   }
+
 
   //------------------------------------------------------------
   // If the optimization succeeded, set the values to be returned.
   //------------------------------------------------------------
+
   // If the final x value should be returned, then compute it
   // from the final y value.
   if ( pdvecXOut ) 
