@@ -89,9 +89,7 @@ static void compute(int iid) {
     char *p = 0;
     strcpy(p, "x");
   }
-  srand(1023);
-  for (int i = 0; i < 10 * iid; i++)
-    rand();
+  srand(time(NULL));
   sleep(5 + (int)(10.0*rand()/(RAND_MAX+1.0)));
 }
 
