@@ -6,9 +6,11 @@
 
 #include "lex_explangTest.h"
 #include "explangTest.h"
+#include "NonmemTranslatorTest.h"
 
 using namespace std;
 using namespace CppUnit;
+
 int main( int argc, const char * argv[] )
 {
   map<string, CppUnit::Test*> master;
@@ -16,6 +18,7 @@ int main( int argc, const char * argv[] )
 
   master[ "lex_explangTest" ]        = lex_explangTest::suite();
   master[ "explangTest" ]            = explangTest::suite();
+  master[ "NonmemTranslatorTest" ]   = NonmemTranslatorTest::suite();
 
   if( argc == 1 )
     {

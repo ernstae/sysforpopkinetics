@@ -27,18 +27,21 @@ This documentation specifies the information passed back from CSPK to MDA.
 <!-- <pop_opt_result> Final values from the population parameter estimation.-->
 <!ELEMENT pop_opt_result (pop_obj_out | theta_out | omega_out | sigma_out)>
 
-<!-- <pop_opt_result time_estimation="500"> The number of seconds it took to complete the parameter estimation. -->
-<!ATTLIST pop_opt_result time_estimation CDATA #REQUIRED>
+<!-- <pop_opt_result elapsedtime="500"> The number of seconds it took to complete the parameter estimation. -->
+<!ATTLIST pop_opt_result elapsedtime CDATA #REQUIRED>
 
 <!-- <ind_analysis_result> Individual analysis results. -->
 <!ELEMENT ind_analysis_result ( ind_opt_result? | ind_stat_result? )>
 
-<!-- <ind_analysis_result time_estimation="500"> The number of seconds it took to complete the parameter estimation. -->
-<!ATTLIST ind_analysis_result time_estimation CDATA #REQUIRED>
+<!-- <ind_analysis_result elapsedtime="500"> The number of seconds it took to complete the parameter estimation. -->
+<!ATTLIST ind_analysis_result elapsedtime CDATA #REQUIRED>
 
 <!-- <ind_opt_result> Final values from the individual parameter estimation.-->
 <!ELEMENT ind_opt_result (ind_obj_out | theta_out | omega_out)>
 
+<!-- <ind_opt_result elapsedtime="500"> The number of seconds it took to complete the parameter estimation. -->
+
+<!ATTLIST ind_opt_result elapsedtime CDATA #REQUIRED>
 <!-- <theta_out> Final value for the theta. -->
 <!ELEMENT theta_out (value)+>
 
@@ -92,8 +95,8 @@ the following is returned:
 -->
 <!ELEMENT pop_stat_result ( pop_stderror_out? | pop_covariance_out? | pop_inverse_covariance_out? | pop_correlation_out?  | pop_coefficient_out? | pop_confidence_out? )>
 
-<!-- <pop_stat_result time_stat="120"> The number of seconds it took to complete computing the requested statistics values. -->
-<!ATTLIST pop_stat_result time_stat CDATA #IMPLIED>
+<!-- <pop_stat_result elapsedtime="120"> The number of seconds it took to complete computing the requested statistics values. -->
+<!ATTLIST pop_stat_result elapsedtime CDATA #REQUIRED>
 
 <!-- <pop_stderror_out> Standard error for the final estimate of population parameter.
  The i-th &lt;<value>&gt; corresponds to the i-th element of the parameter vector.
@@ -172,8 +175,8 @@ the following is returned:
 -->
 <!ELEMENT ind_stat_result (ind_stderror_out? | ind_covariance_out? | ind_inverse_covariance_out? | ind_correlation_out? | ind_coefficient_out? | ind_confidence_out?)>
 
-<!-- <ind_stat_result time_stat="60"> The number of seconds it took to complete computing the requested statistics values.-->
-<!ATTLIST ind_stat_result time_stat CDATA #IMPLIED>
+<!-- <ind_stat_result elapsedtime="60"> The number of seconds it took to complete computing the requested statistics values.-->
+<!ATTLIST ind_stat_result elapsedtime CDATA #REQUIRED>
 
 <!-- <ind_stderror_out> Standard error for the final estimate(s) of individual parameter(s).
  The i-th &lt;<value>&gt; corresponds to the i-th element of the parameter vector.

@@ -10,11 +10,14 @@ test_nonmem_SOURCES = \
 	lex_explangTest.cpp \
 	lex_explangTest.h \
 	explangTest.cpp \
-	explangTest.h
+	explangTest.h \
+	NonmemTranslatorTest.cpp \
+	NonmemTranslatorTest.h
 
 test_nonmem_INCLUDES = \
 	lex_explangTest.h \
-	explangTest.h
+	explangTest.h \
+	NonmemTranslatorTest.h
 
 AM_LDFLAGS = -lxerces-c -lcppunit -lspkcompiler
 
