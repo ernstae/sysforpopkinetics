@@ -279,9 +279,9 @@ protected:
 // Headers that are not necessary for fitPopulation() but
 // needed for the user to do the population analysis.
 // 
-#include "node.h"
-#include "PARALLEL_FILE_CONSTS.h"
-#include "File.h"
-#include "System.h"
+#include <spk/node.h>
+#include <spk/PARALLEL_FILE_CONSTS.h>
+#include <spk/File.h>
+#include <spk/System.h>
 
 #endif
