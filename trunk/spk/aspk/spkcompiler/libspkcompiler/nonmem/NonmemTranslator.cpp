@@ -73,6 +73,11 @@ namespace{
   const string keyEPS   = SymbolTable::key( "eps" );
   const string keyOMEGA = SymbolTable::key( "omega" );
   const string keySIGMA = SymbolTable::key( "sigma" );
+  const string keyRES   = SymbolTable::key( "res" );
+  const string keyWRES  = SymbolTable::key( "wres" );
+  const string keyPRED  = SymbolTable::key( "pred" );
+  const string keyMDV   = SymbolTable::key( "mdv" );
+  const string keyID    = SymbolTable::key( "id" );
 
   valarray<int> myRecordNums;
 };
@@ -379,7 +384,7 @@ void NonmemTranslator::parseSource()
   DOMElement * presentation = dynamic_cast<DOMElement*>( presentations->item(0) );
 
   myRecordNums.resize( myPopSize );
-  Symbol * id = table->findi( "ID" );
+  Symbol * id = table->findi( keyID );
   assert( id != NULL || id != Symbol::empty() );
   for( int i=0; i<myPopSize; i++ )
     {
@@ -391,15 +396,15 @@ void NonmemTranslator::parseSource()
   // * data labels  --- parseData() should have been done by now
   // * user defined variables in PRED definition --- PRED parsing should have been done by now
   // * PRED, RES, WRES
-  if( table->findi( "PRED" ) == Symbol::empty() )
-    table->insertUserVar( "PRED" );
-  if( table->findi( "RES" )  == Symbol::empty() )
-    table->insertUserVar( "RES" );
-  if( table->findi( "WRES" ) == Symbol::empty() )
-    table->insertUserVar( "WRES" );
-  if( table->findi( "MDV" ) == Symbol::empty() )
+  if( table->findi( keyPRED ) == Symbol::empty() )
+    table->insertUserVar( keyPRED );
+  if( table->findi( keyRES )  == Symbol::empty() )
+    table->insertUserVar( keyRES );
+  if( table->findi( keyWRES ) == Symbol::empty() )
+    table->insertUserVar( keyWRES );
+  if( table->findi( keyMDV ) == Symbol::empty() )
     {
-      Symbol * s = table->insertLabel( "MDV", "", myRecordNums );
+      Symbol * s = table->insertLabel( keyMDV, "", myRecordNums );
       for( int i=0; i<myPopSize; i++ )
 	s->initial[i] = "0";
       
@@ -1066,7 +1071,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   // OMEGA
   DOMNodeList * omega_list = ind_analysis->getElementsByTagName( X_OMEGA );
   int nOmegaSpecs = omega_list->getLength();
-  assert( nOmegaSpecs == 1 );// v0.1 supports only one (full) Omega specification
+  assert( nOmegaSpecs == 1 );// v0.1 supports only one Omega specification
   DOMElement * omega = dynamic_cast<DOMElement*>( omega_list->item(0) );
   const XMLCh* xml_omega_dim = omega->getAttribute( X_DIMENSION );
   assert( XMLString::stringLen( xml_omega_dim ) > 0 );
@@ -1076,19 +1081,14 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
 	       XMLString::transcode(xml_omega_dim) );
       abort();
     }
+
+  // In Individual analysis, Omega is diagonal only.
   const XMLCh* xml_omega_struct = omega->getAttribute( X_STRUCT );
+  assert( XMLString::equals( xml_omega_struct, X_DIAGONAL ) );
+
   assert( XMLString::stringLen( xml_omega_struct ) > 0 );
-  assert( XMLString::equals( xml_omega_struct, X_DIAGONAL ) || XMLString::equals( xml_omega_struct, X_BLOCK ) );
-  if( XMLString::equals( xml_omega_struct, X_DIAGONAL ) )
-    {
-      myOmegaStruct = Symbol::DIAGONAL;
-      myOmegaElemNum = myOmegaDim;
-    }
-  else //( XMLString::equals( xml_omega_struct, X_BLOCK ) )
-    {
-      myOmegaStruct = Symbol::TRIANGLE;
-      myOmegaElemNum = series( 1, 1, myOmegaDim );
-    }
+  myOmegaStruct = Symbol::DIAGONAL;
+  myOmegaElemNum = myOmegaDim;
 
   Symbol * sym_omega = table->insertNMMatrix( "OMEGA", myOmegaStruct, myOmegaDim );
   {
@@ -1376,11 +1376,13 @@ void NonmemTranslator::generateIndData( ) const
       else if( type == Symbol::NONMEMDEF )
 	{
 	  if( keyVarName == keyTHETA 
-	      || keyVarName == keyOMEGA 
 	      || keyVarName == keyETA 
-	      || keyVarName == keyEPS
-              || keyVarName == keySIGMA )
+	      || keyVarName == keyEPS )
 	    oIndData_h << "std::vector< std::vector<T> > " << keyVarName << ";" << endl;
+	  if( keyVarName == keyOMEGA 
+              || keyVarName == keySIGMA )
+	    {}
+
 	}
       else // type == Symbol::USERDEF
 	{
@@ -1484,21 +1486,14 @@ void NonmemTranslator::generateIndData( ) const
   for( ; pRawTable != rawTable->end(); pRawTable++ )
     {
       const string key = SymbolTable::key( pRawTable->second.name );
+      if( key == keyOMEGA || key == keySIGMA )
+	{
+	  continue;
+	}
+
       //
       // The place holders for completed values.
       //
-      /*
-      if( key == keyTHETA )
-	oIndData_h << "," << endl << key << "( " << myThetaLen << " )";
-      else if( key == keyOMEGA )
-	oIndData_h << "," << endl << key << "( " << myOmegaElemNum << " )";
-      else if( key == keySIGMA )
-	oIndData_h << "," << endl << key << "( " << mySigmaElemNum << " )";
-      else if( key == keyETA )
-	oIndData_h << "," << endl << key << "( " << myEtaLen << " )";
-      else if( key == keyEPS )
-	oIndData_h << "," << endl << key << "( " << myEpsLen << " )";
-      */
       if( find( labels->begin(), labels->end(), pRawTable->second.name ) 
 	  == labels->end() )
 	oIndData_h << "," << endl << key << "( nIn )";
@@ -1512,10 +1507,12 @@ void NonmemTranslator::generateIndData( ) const
     oIndData_h << "      " << keyETA   << "[i].resize( " << myEtaLen << " );" << endl;
   if( myEpsLen > 0 )
     oIndData_h << "      " << keyEPS   << "[i].resize( " << myEpsLen << " );" << endl;
+  /*
   if( myOmegaElemNum > 0 )
     oIndData_h << "      " << keyOMEGA << "[i].resize( " << myOmegaElemNum << " );" << endl;
   if( mySigmaElemNum > 0 )
     oIndData_h << "      " << keySIGMA << "[i].resize( " << mySigmaElemNum << " );" << endl;
+  */
   oIndData_h << "   }" << endl;
   oIndData_h << "}" << endl;
 
@@ -2026,14 +2023,10 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   oPred_h << "//=========================================" << endl;
       
   ///////////////////////////////////////////////////////////////////////////////////
-  // Compute RES, WRES and PRED
-  //
-  oPred_h << "pred = f;" << endl;
-  oPred_h << "res = perm->data[spk_i]->dv[spk_j] - pred;" << endl;
-
-  ///////////////////////////////////////////////////////////////////////////////////
   // Store the current values in temporary storage
   // : the user defined variable values and the NONMEM required variable values.
+  oPred_h << "pred = f;" << endl;
+  oPred_h << "res  = perm->data[spk_i]->dv[spk_j] - f;" << endl;
   for( pRawTable = rawTable->begin(); pRawTable != rawTable->end(); pRawTable++ )
     {
       // THETA, ETA, EPS are given Pred::eval() as vectors by the caller.
@@ -2051,6 +2044,10 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       else if( label_key == keyOMEGA || label_key == keySIGMA )
 	{
 	  // ignore.  these don't get used within PRED.
+	}
+      else if( label_key == keyWRES )
+	{
+	  // ignore.  This value is only computed outside at the final estimate.
 	}
       else
 	{
@@ -2081,6 +2078,9 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
     {
       const string label     = pRawTable->second.name;
       const string label_key = SymbolTable::key( label );
+      if( label_key == keyOMEGA || label_key == keySIGMA )
+	continue;
+
       if( find( labels->begin(), labels->end(), label ) == labels->end() )
 	{
 	  oPred_h << "    perm->data[ i ]->" << label_key;
@@ -2144,6 +2144,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "#include <iostream>" << endl;
   oDriver << "#include <fstream>" << endl;
   oDriver << "#include <sys/time.h>" << endl;
+  oDriver << "#include <vector>" << endl;
   oDriver << endl;
 
   oDriver << "#include <spk/SpkValarray.h>" << endl;
@@ -2161,6 +2162,8 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "#include \"IndData.h\"" << endl;
   oDriver << "#include \"DataSet.h\"" << endl;
   oDriver << endl;
+  oDriver << "#include <spk/multiply.h>" << endl;
+  oDriver << "#include <spk/cholesky.h>" << endl;
 
   oDriver << "///////////////////////////////////////////////////////////////////////////////////" << endl;
   oDriver << "//   NONMEM PRED SPECIFIC" << endl;
@@ -2176,6 +2179,24 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << endl;
 
   oDriver << "enum RETURN_CODE { SUCCESS=0, CONVERGENCE_FAILURE=1, FILE_ACCESS_FAILURE=2, OTHER_FAILURE };" << endl;
+  oDriver << endl;
+
+ 
+  oDriver << "const vector<CppAD::AD<double> > wres( int n," << endl;
+  oDriver << "                                       const valarray<double> & Ri," << endl;
+  oDriver << "                                       const vector  < CppAD::AD<double> > & residual )" << endl;
+  oDriver << "{" << endl;
+  oDriver << "   assert( Ri.size() == n * n );" << endl;
+  oDriver << "   assert( residual.size() == n );" << endl;
+  oDriver << "   valarray<double> r( n );" << endl;
+  oDriver << "   for( int i=0; i<n; i++ ) r[i] = CppAD::Value( residual[i] );" << endl;
+  oDriver << "   valarray<double> C( 0.0, n * n );" << endl;
+  oDriver << "   C = cholesky( Ri, n );" << endl;
+  oDriver << "   valarray<double> w = multiply( C, n, r, 1 );" << endl;
+  oDriver << "   vector< CppAD::AD<double> > Cr(n);" << endl;
+  oDriver << "   for( int i=0; i<n; i++ ) Cr[i] = w[i];" << endl;
+  oDriver << "   return Cr;" << endl;
+  oDriver << "}" << endl;
   oDriver << endl;
 
   oDriver << "int main( int argc, const char argv[] )" << endl;
@@ -2449,10 +2470,16 @@ void NonmemTranslator::generateIndDriver( ) const
       oDriver << endl;
       oDriver << "  //////////////////////////////////////////////////////////////////////" << endl;
       oDriver << "  //   NONMEM Specific" << endl;
-      oDriver << "  if( isOptSuccess )" << endl;
+      oDriver << "  if( isOptSuccess || !isOptSuccess )" << endl;
       oDriver << "  {" << endl;
+      oDriver << "     valarray<double> ROut( nY * nY );" << endl;
       oDriver << "     model.getTheta( thetaOut );" << endl;
       oDriver << "     model.getOmega( omegaOut );" << endl;
+      oDriver << "     model.setIndPar( bOut );" << endl;
+      oDriver << "     model.dataVariance( ROut );" << endl;
+      oDriver << "     for( int j=0; j<nY; j++ )" << endl;
+      oDriver << "        set.data[0]->res[j]  = y[j] - set.data[0]->pred[j];" << endl;
+      oDriver << "     set.data[0]->wres = wres( nY, ROut, set.data[0]->res ); " << endl;
       oDriver << "  }" << endl;
       oDriver << "  //" << endl;
       oDriver << "  //////////////////////////////////////////////////////////////////////" << endl;    
