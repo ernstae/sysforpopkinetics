@@ -200,9 +200,14 @@ void ClientTranslator::parseData()
 		{
 		  const XMLCh* xml_label = values->item(k)->getFirstChild()->getNodeValue();
 		  assert( xml_label != NULL );
-                  char * delme = XMLString::transcode( xml_label );
+		  // At this point xml_label may contain white spaces.
+		  // Get rid of them!
+		  XMLCh* xml_label_noWS = XMLString::replicate( xml_label );
+		  XMLString::removeWS( xml_label_noWS );
+                  char * delme = XMLString::transcode( xml_label_noWS );
 		  tmp_labels[k] = string( delme );
                   delete delme;
+		  XMLString::release( &xml_label_noWS );
 		  continue;
 		}
 
@@ -236,11 +241,14 @@ void ClientTranslator::parseData()
 	      assert( delme_s == tmp_types[k] );
 	      
 	      const XMLCh* xml_value = values->item(k)->getFirstChild()->getNodeValue();
+	      XMLCh* xml_value_noWS = XMLString::replicate( xml_value );
+	      XMLString::removeWS( xml_value_noWS );
 	      if( k == 0 )
               {
 		if( !isIDMissing )
 		{
-		  id = XMLString::transcode( xml_value );
+		  
+		  id = XMLString::transcode( xml_value_noWS );
 		  if( find( tmp_ids.begin(), tmp_ids.end(), id ) == tmp_ids.end() )
 		    {
 		      tmp_ids.push_back( id );
@@ -257,12 +265,13 @@ void ClientTranslator::parseData()
               // If a data value is ".", that means 0.0.
               //
 	      char * c_value = 
-                 ( XMLString::stringLen( xml_value )>0? XMLString::transcode( xml_value ) : NULL );
+                 ( XMLString::stringLen( xml_value )>0? XMLString::transcode( xml_value_noWS ) : NULL );
               if( strcmp( c_value, "." ) == 0 )
                  tmp_values[id][tmp_labels[k]].push_back( "0.0" );
               else
 	         tmp_values[id][tmp_labels[k]].push_back( string(c_value) );
 	      delete c_value;
+	      XMLString::release( &xml_value_noWS );		  
 	    }
 	  delete id;
 	}
