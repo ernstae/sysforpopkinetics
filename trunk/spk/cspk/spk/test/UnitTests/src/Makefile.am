@@ -1,4 +1,12 @@
 bin_PROGRAMS = testall
+
+INST_BASE = /usr/local
+
+libdir = $(INST_BASE)/lib/spktest
+
+AM_CPPFLAGS = -I$(INST_BASE)/include/spktest -I/$(INST_BASE)/cppunit/include
+AM_LDFLAGS  = -lspk -lspkopt -llapack -latlas_lapack -lcblas -latlas -lpthread -lm -lcppunit
+
 testall_SOURCES = \
 	ABA_xTest.cpp \
 	ABA_xTest.h \
@@ -181,11 +189,6 @@ testall_SOURCES = \
 	UTranTimesSymKronSymTimesUTest.h \
 	../config.h
 
-testall_CXXFLAGS = -I/usr/local/cppunit/include
-
-testall_LDFLAGS = -lspk -lspkopt -llapack -latlas_lapack -lcblas -latlas -lpthread -lm -lcppunit
-
-INCLUDES = -I@top_srcdir@/
 pkginclude_HEADERS = \
 	ABA_xTest.h \
 	addTest.h \
