@@ -5,21 +5,26 @@
 /**
  * @file client.h
  * 
- * Defines a namespace, "client"
+ * In this file, a namespace, client, is defined, which 
+ * declares constant values used to identify the clients of Spk Compiler
+ * and some helper functions associated with these constant values.
  */
 /**
- * A namespace, client, is defined in this namespace.  
+ * The namespace, "client", declares an enumulator, type, that should be
+ * used to identify the clients of Spk Compiler and helper functions to
+ * convert back and force the enumulator values and the string representation
+ * of the enum values.
  *
- * This namespace isolates an enumulator identifying kinds of languages
- * in which source code files to Spk Compiler are written.
  */
 namespace client{
 
   /**
-   * An enumulator listing languages in which the source code files to Spk Compiler is written.
+   * An enumulator listing the clients of Spk Compiler.
    *
-   * @todo Currently NONMEM is the only client registered.  Should add values as Spk Compiler
-   * support more client languages (so far, known potentials are SAAM-II, MatLab).
+   * @todo Currently NONMEM is the only client registered.  
+   * Should add values as Spk Compiler
+   * support more client languages 
+   * (so far, known potentials are SAAM-II, MatLab).
    */
    enum type{ NONMEM /**< identifies NONMEM users*/, NOT_SUPPORTED };
 
@@ -48,7 +53,8 @@ namespace client{
    /**
     * Convert a character string to a type enumulator.
     *
-    * @param t is a character string which should match one of the STR_xxx strings defined in this namespace.
+    * @param t is a character string which should match 
+    * one of the STR_xxx strings defined in this namespace.
     * @return a corresponding type enum.
     */
    inline enum type toEnum( const char * t ){
