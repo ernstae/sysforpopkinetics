@@ -542,14 +542,9 @@ namespace // [Begin: unnamed namespace]
     double*        g );
 
   void initHessApprox(
-    QuasiNewton01BoxObj&  objective01Box,
-    int                   n,
-    const double*         xCurr,
-    const double*         xLow,
-    const double*         xUp,
-    const double*         g,
-    size_t&               bfgsMade,
-    double*               h );
+    int            n,
+    const double*  gCurr,
+    double*        h );
 
   void calcScaledProjGrad(
     int            n,
@@ -895,7 +890,8 @@ void quasiNewtonAnyBox(
 
   // These are the scaled gradient, gScaled(y) = fScaled_y(y),
   // the projected version of the scaled gradient, gScaledProj,
-  // and the scaled Hessian, hScaled(y) = fScaled_y_y(y).
+  // and the approximation for the scaled Hessian, 
+  // hScaled(y) = fScaled_y_y(y).
   double* gScaled     = memoryDbl( nObjParFree );
   double* gScaledProj = memoryDbl( nObjParFree );
   double* hScaled     = memoryDbl( nObjParFree * nObjParFree );
@@ -1013,42 +1009,7 @@ void quasiNewtonAnyBox(
       rScaled = 0.5;
   
       // Calculate an initial value for the approximate Hessian.
-      try
-      {
-        initHessApprox(
-          objective01Box,
-          nObjParFree,
-          yCurr,
-          yLow,
-          yUp,
-          gScaled,
-          bfgsCurr,
-          hScaled );
-      }
-      catch( SpkException& e )
-      {
-        throw e.push(
-          SpkError::SPK_OPT_ERR, 
-          "An SpkException was thrown during the initialization of the Hessian approximation.",
-          __LINE__, 
-          __FILE__ );
-      }
-      catch( const std::exception& stde )
-      {
-        throw SpkException(
-          stde,
-        "An standard exception was thrown during the initialization of the Hessian approximation.",
-        __LINE__, 
-        __FILE__ );
-      }  
-      catch( ... )
-      {
-        throw SpkException(
-          SpkError::SPK_UNKNOWN_ERR, 
-          "An unknown exception was thrown during the initialization of the Hessian approximation.",
-          __LINE__, 
-          __FILE__ );
-      }
+      initHessApprox( nObjParFree, gScaled, hScaled );
     }
   }
   else
@@ -1090,30 +1051,6 @@ void quasiNewtonAnyBox(
   // Set the rest of the parameters that control the optimization.
   //------------------------------------------------------------
 
-  // Set the maximum number of quasi-Newton iterations that the optimizer
-  // will perform based on the accuracy of the Hessian approximation.
-  size_t nMaxIter01Box;
-  if ( bfgsCurr < nObjParFree )
-  {
-    // If the number of Bfgs updates that have been performed is 
-    // less than the number of objective function parameters,
-    // then set this equal to the minimum number of iterations
-    // required to build up an accurate Hessian approximation.  
-    nMaxIter01Box = nObjParFree - bfgsCurr;
-
-    // If the number of iterations is too large, reduce it.
-    if ( nMaxIter01Box > nMaxIterAnyBox )
-    {
-      nMaxIter01Box = nMaxIterAnyBox;
-    }
-  }
-  else
-  {
-    // The Hessian approximation is accurate enough so that the 
-    // optimizer only needs to perform a single iteration.
-    nMaxIter01Box = 1;
-  }
-
   // Initialize the convergence flag.
   bool isWithinTol;
   if ( nMaxIterAnyBox > 0 )
@@ -1137,7 +1074,7 @@ void quasiNewtonAnyBox(
   // Set the maximum number of interior point iterations so
   // that the optimizer can solve the quadratic subproblems
   // with sufficient accuracy.
-  size_t nQuadMax = 40;
+  size_t nQuadMax = 100;
   size_t quadCurr = 0;
 
   // The optimizer's convergence criterion is based on the infinity
@@ -1148,6 +1085,9 @@ void quasiNewtonAnyBox(
   // If this flag is true, then the current sScaled value solves the
   // optimizer's quadratic subproblem.
   bool isSScaledOk = false;
+
+  // This counter tracks the number of acceptable sScaled values.
+  int nSScaledAccept = 0;
 
   // Send the output to standard cout.
   std::ostream& outputStream = std::cout;
@@ -1170,98 +1110,112 @@ void quasiNewtonAnyBox(
       // Calculate the current scaled projected gradient.
       calcScaledProjGrad( nObjParFree, yCurr, gScaled, gScaledProj );
 
-      // Only check for convergence if the Hessian approximation is
-      // accurate enough to use.
-      if ( bfgsCurr >= nObjParFree )
+      // Set delta so that the optimizer will be able to perform at
+      // least one Quasi-Newton iteration and so that the quadratic
+      // subproblems will be solved with sufficient accuracy.
+      delta = MaxAbs( nObjParFree, gScaledProj ) / 100.0;
+
+      // The current sScaled is no longer valid because it depends
+      // on the value for delta.
+      isSScaledOk = false;
+
+      // If the scaled projected gradient is close to zero relative
+      // to the Hessian and the smallest double value, then the
+      // current y value is a local minimizer of the objective.
+      if ( MaxAbs( nObjParFree, gScaledProj ) < 
+        MaxAbs( nObjParFree * nObjParFree, hScaled ) * 1000.0 * DBL_EPSILON )
       {
-        if ( isAllZero( nObjParFree, gScaled ) )
+        // If the scaled projected gradient is small enough, then
+        // accept the current y value.
+        isWithinTol = true;
+        break;
+      }
+      else
+      {
+        // Set the maximum number of iterations equal to the current
+        // number of iterations.  This will allow the optimizer to
+        // determine an accurate sScaled value without taking a step.
+        iterMax  = iterCurr;
+        quadCurr = 0;
+
+        // Try to get the current sScaled value.
+        charMessage = QuasiNewton01Box(
+          outputStream,
+          level,
+          iterMax,
+          nQuadMax,
+          nObjParFree,
+          delta,
+          objective01Box,
+          isSScaledOk,
+          iterCurr,
+          quadCurr,
+          bfgsCurr,
+          rScaled,
+          fScaled,
+          yCurr,
+          sScaled,
+          gScaled,
+          hScaled );
+
+        // Check this function's convergence criterion, if necessary.
+        if ( isSScaledOk )
         {
-          // If the scaled projected gradient is identically zero, then the
-          // current y value is a local minimizer of the objective.
-          isWithinTol = true;
-          break;
-        }
-        else
-        {
-          // Set delta so that the current y value will not satisfy the 
-          // optimizer's convergence criterion but not so small that it
-          // won't be able to solve the quadratic subproblems for y values
-          // close to the solution.
-          delta = MaxAbs( nObjParFree, gScaledProj ) / 10.0;
-
-          iterMax  = iterCurr;
-          quadCurr = 0;
-
-          // Call the optimizer with the maximum number of iterations 
-          // equal to the current number of iterations.  This will allow it
-          // to determine an accurate sScaled value without taking a step.
-          charMessage = QuasiNewton01Box(
-            outputStream,
-            level,
-            iterMax,
-            nQuadMax,
-            nObjParFree,
-            delta,
-            objective01Box,
-            isSScaledOk,
-            iterCurr,
-            quadCurr,
-            bfgsCurr,
-            rScaled,
-            fScaled,
-            yCurr,
-            sScaled,
-            gScaled,
-            hScaled );
-
-          // Check this function's convergence criterion, if necessary.
-          if ( isSScaledOk )
+          // The current y value satisfies this function's convergence 
+          // criterion if
+          //
+          //     | yCurr - yHat |  <=  epsilon  ,
+          //
+          // where yHat is a local minimizer of the objective function.
+          //
+          // Note that sScaled is the solution to the optimizer's quadratic
+          // subproblem and is the step the optimizer will take at the next
+          // iteration, if it takes one.  This function assumes that if
+          // sScaled is small enough, then the current y value is close to
+          // yHat and sScaled is an accurate estimate of the distance to
+          // the true local miminizer, i.e.,
+          //
+          //              ~
+          //     sScaled  =  yCurr - yHat  .
+          //
+          // This assumption makes use of the fact that the Hessian
+          // approximation is postive definite.
+          //
+          // To ensure that the final y value is within epsilon of the
+          // solution, this function requires that sScaled be smaller
+          // than epsilon.  The reason for this is that the quadratic
+          // subproblem uses a quadratic approximation for the objective, 
+          // which may not necessarily be accurate for the current y value.  
+          //
+          if ( MaxAbs( nObjParFree, sScaled ) < epsilon / 5.0 )
           {
-            // The current y value satisfies this function's convergence 
-            // criterion if
-            //
-            //     | yCurr - yHat |  <=  epsilon  ,
-            //
-            // where yHat is a local minimizer of the objective function.
-            //
-            // Note that sScaled is the solution to the optimizer's quadratic
-            // subproblem and is the step the optimizer will take at the next
-            // iteration, if it takes one.  This function assumes that if
-            // sScaled is small enough, then the current y value is close to
-            // yHat and sScaled is an accurate estimate of the distance to
-            // the true local miminizer, i.e.,
-            //
-            //              ~
-            //     sScaled  =  yCurr - yHat  .
-            //
-            // This assumption makes use of the fact that the Hessian
-            // approximation is postive definite.
-            //
-            // To ensure that the final y value is within epsilon of the
-            // solution, this function requires that sScaled be smaller
-            // than epsilon.  The reason for this is that the quadratic
-            // subproblem uses a quadratic approximation for the objective, 
-            // which may not necessarily be accurate for the current y value.  
-            if ( MaxAbs( nObjParFree, sScaled ) < epsilon / 5.0 )
-            {
-              // Check that none of the elements of sScaled are greater than or
-              // equal to the trust region radius, which would indicate that
-              // the quadratic approximation for the objective is not accurate
-              // at the current y value. 
-              if ( MaxAbs( nObjParFree, sScaled ) < rScaled )
-              {
-                // If sScaled is not too large, this is an acceptable value.
-                isWithinTol = true;
-                break;
-              }
-            }
+            // If sScaled is not too large, increment the counter.
+            nSScaledAccept++;
+          }
+          else
+          {
+            // If sScaled is too large, zero the counter.
+            nSScaledAccept = 0;
+          }
+
+          // This function requires that nObjParFree + 1 consecutive acceptable
+          // sScaled values must be calculated.  The reason for this is to
+          // build up an accurate Hessian approximation so that the current
+          // sScaled value, which is assumed to be the distance to the
+          // solution, is accurate.
+          if ( nSScaledAccept >= nObjParFree + 1 )
+          {
+            // If enough consecutive acceptable sScaled values have been
+            // calculated, then accept the current y value.
+            isWithinTol = true;
+            break;
           }
         }
       }
 
       
       //--------------------------------------------------------
-      // Ask the optimizer to perform a limited number of iterations.
+      // Ask the optimizer to perform a Quasi-Newton iteration.
       //--------------------------------------------------------
 
       // Don't perform any more iterations if the maximum have
@@ -1271,13 +1225,9 @@ void quasiNewtonAnyBox(
         break;
       }
 
-      // Set delta so that the optimizer will be able to perform at
-      // least one Quasi-Newton iteration and so that the quadratic
-      // subproblems will be solved with sufficient accuracy.
-      delta = MaxAbs( nObjParFree, gScaledProj ) / 10.0;
-
+      // Only perform a single Quasi-Newton iteration.
       iterBefore = iterCurr;
-      iterMax    = iterCurr + nMaxIter01Box;
+      iterMax    = iterCurr + 1;
       quadCurr   = 0;
 
       // Optimize the scaled objective function.
@@ -1312,29 +1262,6 @@ void quasiNewtonAnyBox(
           "QuasiNewton01Box failed to perform at least one Quasi-Newton iteration.",
           __LINE__,
           __FILE__ );
-      }
-
-      // Set the number of iterations based on the accuracy of the 
-      // Hessian approximation.
-      if ( bfgsCurr < nObjParFree )
-      {
-        // If the number of Bfgs updates that have been performed is 
-        // less than the number of objective function parameters,
-        // then set this equal to the minimum number of iterations
-        // required to build up an accurate Hessian approximation.  
-        nMaxIter01Box = nObjParFree - bfgsCurr;
-
-        // If the number of iterations is too large, reduce it.
-        if ( iterCurr + nMaxIter01Box > nMaxIterAnyBox + 1 )
-        {
-          nMaxIter01Box = nMaxIterAnyBox - iterCurr + 1;
-        }
-      }
-      else
-      {
-        // The Hessian approximation is accurate enough so that the 
-        // optimizer only needs to perform a single iteration.
-        nMaxIter01Box = 1;
       }
 
     }
@@ -1752,48 +1679,21 @@ void unscaleGradElem(
  * Description
  * -----------
  *
- * Calculates an initial version of the approximation for the Hessian
- * of the objective function that is well conditioned and that has been
- * updated using the Bfgs method.
+ * Calculates an initial version of the approximation for the Hessian of
+ * the objective function that is positive definite and well conditioned.
  *
  *
  * Arguments
  * ---------
- *
- * objective01Box
- *
- * The objective function object is of type QuasiNewton01BoxObj.
- *
  *
  * n
  *
  * Number of elements in x.
  *
  *
- * xCurr
- *
- * The current value for x.  It must be of length n.
- *
- *
- * xLow
- *
- * The lower bound for x.  It must be of length n.
- *
- *
- * xUp
- *
- * The upper bound for x.  It must be of length n.
- *
- *
- * g
+ * gCurr
  *
  * The gradient g(x) evaluated at xCurr.  It must be of length n.
- *
- *
- * bfgsMade
- *
- * On output, this will contain the number of Bfgs updates that have
- * been made to the approximate Hessian.
  *
  *
  * h
@@ -1804,14 +1704,9 @@ void unscaleGradElem(
  *************************************************************************/
 
 void initHessApprox(
-  QuasiNewton01BoxObj&  objective01Box,
-  int                   n,
-  const double*         xCurr,
-  const double*         xLow,
-  const double*         xUp,
-  const double*         g,
-  size_t&               bfgsMade,
-  double*               h )
+  int            n,
+  const double*  gCurr,
+  double*        h )
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -1822,148 +1717,28 @@ void initHessApprox(
 
 
   //------------------------------------------------------------
-  // Allocate all of the memory at the same time.
+  // Set the diagonal elements of the Hessian approximation.
   //------------------------------------------------------------
 
-  Memory<double*> memoryDblPtr( 4 * n );
-
-  double** xForward = memoryDblPtr( n );
-  double** xBack    = memoryDblPtr( n );
-  double** gForward = memoryDblPtr( n );
-  double** gBack    = memoryDblPtr( n );
-
-  Memory<double>  memoryDbl( 2 * n + 4 * ( n * n ) );
-
-  for ( i = 0; i < n; i++ )
-  {
-    xForward[i] = memoryDbl( n );
-    xBack[i]    = memoryDbl( n );
-    gForward[i] = memoryDbl( n );
-    gBack[i]    = memoryDbl( n );
-  }
-
-  double* gTemp = memoryDbl( n );
-  double* hDiag = memoryDbl( n );
-
-
-  //------------------------------------------------------------
-  // Calculate approximations for the diagonals of the Hessian.
-  //------------------------------------------------------------
-
-  double step = 0.001;
-  double stepBack;
-  double stepForward;
-  double fTemp;
   double hDiagMin = 0.0;
   double hDiagMax = 0.0;
 
-  const char* charMessage;
-
-  // Calculate finite difference approximations for the diagonals
-  // of the Hessian.
+  // Calculate approximations for the diagonals of the Hessian.
   for ( i = 0; i < n; i++ )
   {
-    if ( xLow[i] == xUp[i] )
+    h[i * n + i] = 100.0 * fabs( gCurr[i] );
+
+    // Save the largest diagonal absolute value.
+    if ( fabs( h[i * n + i] ) > hDiagMax )
     {
-      // If the upper and lower bounds are equal, temporarily set
-      // this diagonal equal to zero.  It will be reset below.
-      hDiag[i] = 0.0;
-    }
-    else
-    {
-      //--------------------------------------------------------
-      // Evaluate the gradient element at the smaller x value.
-      //--------------------------------------------------------
-
-      if ( xCurr[i] - step < 0 )
-      {
-        // If the backward step would go below the lower bound, do 
-        // forward differencing using the current gradient value.
-        for ( j = 0; j < n; j++ )
-        {
-          xBack[i][j] = xCurr[j];
-          gBack[i][j] = g[j];
-        }
-        stepBack = 0.0;
-      }
-      else
-      {
-        // Set the x value one step back.
-        for ( j = 0; j < n; j++ )
-        {
-          xBack[i][j] = xCurr[j];
-        }
-        xBack[i][i] = xCurr[i] - step;
-        stepBack = step;
-
-        // Evaluate the objective function and the gradient.
-        charMessage = objective01Box.function( xBack[i], fTemp );
-        assert( strcmp( charMessage, "ok" ) == 0 );
-        charMessage = objective01Box.gradient( gTemp );
-        assert( strcmp( charMessage, "ok" ) == 0 );
-
-        // Save the gradient value.
-        for ( j = 0; j < n; j++ )
-        {
-          gBack[i][j] = gTemp[j];
-        }
-      }
-
-
-      //--------------------------------------------------------
-      // Evaluate the gradient element at the larger x value.
-      //--------------------------------------------------------
-
-      if ( xCurr[i] + step > 1 )
-      {
-        // If the forward step would go above the upper bound, do 
-        // backward differencing using the current gradient value.
-        for ( j = 0; j < n; j++ )
-        {
-          xForward[i][j] = xCurr[j];
-          gForward[i][j] = g[j];
-        }
-        stepForward = 0.0;
-      }
-      else
-      {
-        // Set the x value one step forward.
-        for ( j = 0; j < n; j++ )
-        {
-          xForward[i][j] = xCurr[j];
-        }
-        xForward[i][i] = xCurr[i] + step;
-        stepForward = step;
-
-        // Evaluate the objective function and the gradient.
-        charMessage = objective01Box.function( xForward[i], fTemp );
-        assert( strcmp( charMessage, "ok" ) == 0 );
-        charMessage = objective01Box.gradient( gTemp );
-        assert( strcmp( charMessage, "ok" ) == 0 );
-
-        // Save the gradient value.
-        for ( j = 0; j < n; j++ )
-        {
-          gForward[i][j] = gTemp[j];
-        }
-      }
-
-
-      //--------------------------------------------------------
-      // Calculate the approximation for this Hessian diagonal.
-      //--------------------------------------------------------
-
-      hDiag[i] =
-        ( gForward[i][i] - gBack[i][i] ) / 
-        ( stepForward + stepBack );
-
-      // Save the largest diagonal absolute value.
-      if ( fabs( hDiag[i] ) > hDiagMax )
-      {
-        hDiagMax = fabs( hDiag[i] );
-      }
+      hDiagMax = fabs( h[i * n + i] );
     }
   }
+
+
+  //------------------------------------------------------------
+  // Precondition the approximate Hessian.
+  //------------------------------------------------------------
 
   // Set the minimum diagonal element that will be allowed.
   if ( hDiagMax > 0.0 )
@@ -1981,23 +1756,14 @@ void initHessApprox(
     hDiagMin = 1.0;
   }
 
-
-  //------------------------------------------------------------
-  // Precondition the approximate Hessian.
-  //------------------------------------------------------------
-
   // Precondition the approximate Hessian by setting its diagonal
   // elements in a way that keeps its condition number reasonable.
   for ( i = 0; i < n; i++ )
   {
-    // Set the diagonal elements;
-    if ( hDiag[i] < hDiagMin )
+    // Reset diagonal elements that are too small;
+    if ( h[i * n + i] < hDiagMin )
     {
       h[i * n + i] = hDiagMin;
-    }
-    else
-    {
-      h[i * n + i] = hDiag[i];
     }
 
     // Set the off diagonal elements.
@@ -2006,38 +1772,6 @@ void initHessApprox(
       if ( i != j )
       {
         h[i * n + j] = 0.0;
-      }
-    }
-  }
-
-
-  //------------------------------------------------------------
-  // Perform Bfgs updates to the Hessian approximation.
-  //------------------------------------------------------------
-
-  bfgsMade = 0;
-  double epsilon = step * step;
-
-  // Perform Bfgs updates to the preconditioned Hessian approximation.
-  for ( i = 0; i < n; i++ )
-  {
-    // Only attempt to perform a Bfgs update if this element
-    // is not constrained by its lower and upper bounds.
-    if ( xLow[i] != xUp[i] )
-    {
-      charMessage = Bfgs(
-        n,
-        epsilon,
-        xBack[i],
-        gBack[i],
-        xForward[i],
-        gForward[i],
-        h );
-
-      // Increment the counter if the update was successful.
-      if ( strcmp( charMessage, "ok" ) == 0 )
-      {
-        bfgsMade++;
       }
     }
   }
