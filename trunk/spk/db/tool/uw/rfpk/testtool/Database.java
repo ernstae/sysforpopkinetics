@@ -287,7 +287,7 @@ public class Database {
         int nJob = jobList.size();
         if(nJob == 0)
             return null;
-        String[][] userJobs = new String[nJob][4];        
+        String[][] userJobs = new String[nJob][];        
         for(int i = 0; i < nJob; i++)
             userJobs[i] = (String[])jobList.get(i);
 
@@ -427,11 +427,12 @@ public class Database {
                 archive = new Archive("", new ByteArrayInputStream(modelArchive.getBytes()));
                     
                 // Fill in the list 
-                String[] model = new String[4];
+                String[] model = new String[5];
                 model[0] = String.valueOf(modelId); 
                 model[1] = userModelsRS.getString("name");
-                model[2] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
-                model[3] = userModelsRS.getString("abstract");
+                model[2] = String.valueOf(archive.getRevisionVersion().last());
+                model[3] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
+                model[4] = userModelsRS.getString("abstract");
                 modelList.add(model);
             }
             
@@ -463,7 +464,7 @@ public class Database {
         int nModel = modelList.size();
         if(nModel == 0)
             return null;
-        String[][] userModels = new String[nModel][3];
+        String[][] userModels = new String[nModel][];
         
         for(int i = 0; i < nModel; i++)
             userModels[i] = (String[])modelList.get(i);
@@ -607,11 +608,12 @@ public class Database {
                 archive = new Archive("", new ByteArrayInputStream(datasetArchive.getBytes()));
                     
                 // Fill in the list
-                String[] dataset = new String[4];                
+                String[] dataset = new String[5];                
                 dataset[0] = String.valueOf(userDatasetsRS.getLong("dataset_id"));
                 dataset[1] = userDatasetsRS.getString("name");
-                dataset[2] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
-                dataset[3] = userDatasetsRS.getString("abstract");
+                dataset[2] = String.valueOf(archive.getRevisionVersion().last());                
+                dataset[3] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
+                dataset[4] = userDatasetsRS.getString("abstract");
                 datasetList.add(dataset);
             } 
             
@@ -642,7 +644,7 @@ public class Database {
         int nDataset = datasetList.size();
         if(nDataset == 0)
             return null;
-        String[][] userDatasets = new String[nDataset][3];        
+        String[][] userDatasets = new String[nDataset][];        
         for(int i = 0; i < nDataset; i++)
             userDatasets[i] = (String[])datasetList.get(i);
 

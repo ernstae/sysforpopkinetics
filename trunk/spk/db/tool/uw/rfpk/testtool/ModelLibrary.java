@@ -55,6 +55,15 @@ public class ModelLibrary extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jTextField3 = new javax.swing.JTextField();
         jButton3 = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        jTextField4 = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        jTextField5 = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jTextField6 = new javax.swing.JTextField();
 
         reportDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         reportDialog.setTitle("");
@@ -113,7 +122,7 @@ public class ModelLibrary extends javax.swing.JFrame {
         reportDialog.getContentPane().add(jScrollPane3, java.awt.BorderLayout.CENTER);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Adding Library Model");
+        setTitle("Model Library Manager");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 exitForm(evt);
@@ -182,6 +191,35 @@ public class ModelLibrary extends javax.swing.JFrame {
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.NORTH);
 
+        jLabel2.setText("Database Host");
+        jPanel1.add(jLabel2);
+
+        jTextField1.setText("rose.rfpk.washington.edu");
+        jPanel1.add(jTextField1);
+
+        jLabel3.setText("Name");
+        jPanel1.add(jLabel3);
+
+        jTextField4.setText("spktest");
+        jTextField4.setPreferredSize(new java.awt.Dimension(80, 19));
+        jPanel1.add(jTextField4);
+
+        jLabel5.setText("Username");
+        jPanel1.add(jLabel5);
+
+        jTextField5.setText("tester");
+        jTextField5.setPreferredSize(new java.awt.Dimension(80, 19));
+        jPanel1.add(jTextField5);
+
+        jLabel6.setText("Password");
+        jPanel1.add(jLabel6);
+
+        jTextField6.setText("tester");
+        jTextField6.setPreferredSize(new java.awt.Dimension(80, 19));
+        jPanel1.add(jTextField6);
+
+        getContentPane().add(jPanel1, java.awt.BorderLayout.SOUTH);
+
         pack();
     }//GEN-END:initComponents
 
@@ -210,6 +248,8 @@ public class ModelLibrary extends javax.swing.JFrame {
             return; 
         modelId = Long.parseLong(((String[][])lists.get(indexList))[index][0]); 
         versionLog = JOptionPane.showInputDialog("Enter log for the new version (<=100 characters)");
+        if(versionLog == null)
+            versionLog = "";
         reportDialog.dispose();        
     }//GEN-LAST:event_jTable1MouseClicked
 
@@ -244,13 +284,19 @@ public class ModelLibrary extends javax.swing.JFrame {
         }
         try
         {
-            Connection con = Spkdb.connect(database, hostname, username, password);
+            Connection con = Spkdb.connect(jTextField4.getText(), 
+                                           jTextField1.getText(), 
+                                           jTextField5.getText(), 
+                                           jTextField6.getText());
+            
             String author = JOptionPane.showInputDialog(null, "Enter author's name.");
+            if(author == null || author.equals(""))          
+                author = "unknown";
             if(modelStatus.equals("new"))
             {
                 Archive arch = new Archive(model.split("\n"), ""); 
                 arch.findNode(new Version("1.1")).setAuthor(author); 
-                ResultSet userRS = Spkdb.getUser(con, "library");
+                ResultSet userRS = Spkdb.getUser(con, "librarian");
                 userRS.next();
                 long userId = userRS.getLong("user_id"); 
                 Spkdb.newModel(con, 
@@ -334,14 +380,14 @@ public class ModelLibrary extends javax.swing.JFrame {
     // Display a list of library models
     private void showArchiveList(int indexList)
     {
-        String[] header = new String[]{"Model Name", "Last Revised Time", "Description"};
+        String[] header = new String[]{"Model Name", "No. of Versions", "Last Revised Time", "Description"};
         String title = "Model List";
         String[][] archiveList = null;
 
         if(indexList < lists.size())
         {
             archiveList = (String[][])lists.get(indexList);
-            if(archiveList.length < maxNum)
+            if(archiveList.length <= maxNum)
                 nextButton.setEnabled(false);
         }
         else
@@ -353,13 +399,16 @@ public class ModelLibrary extends javax.swing.JFrame {
             Vector modelList = new Vector();
             try
             {
-                Connection con = Spkdb.connect(database, hostname, username, password);  
-                ResultSet userRS = Spkdb.getUser(con, "library");
+                Connection con = Spkdb.connect(jTextField4.getText(), 
+                                               jTextField1.getText(), 
+                                               jTextField5.getText(), 
+                                               jTextField6.getText());  
+                ResultSet userRS = Spkdb.getUser(con, "librarian");
                 userRS.next();
                 long userId = userRS.getLong("user_id"); 
                 ResultSet userModelsRS = Spkdb.userModels(con, 
                                                           userId, 
-                                                          maxNum, 
+                                                          maxNum + 1, 
                                                           leftOff);
                 // Fill in the List
                 SimpleDateFormat formater = new SimpleDateFormat("EEE, MMM, d yyyy 'at' HH:mm:ss z");
@@ -375,11 +424,12 @@ public class ModelLibrary extends javax.swing.JFrame {
                     Archive archive = new Archive("", new ByteArrayInputStream(modelArchive.getBytes()));
                     
                     // Fill in the list 
-                    String[] model = new String[4];
+                    String[] model = new String[5];
                     model[0] = String.valueOf(modelId); 
                     model[1] = userModelsRS.getString("name");
-                    model[2] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
-                    model[3] = userModelsRS.getString("abstract");
+                    model[2] = String.valueOf(archive.getRevisionVersion().last());
+                    model[3] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
+                    model[4] = userModelsRS.getString("abstract");
                     modelList.add(model);
                 }
                 
@@ -390,7 +440,7 @@ public class ModelLibrary extends javax.swing.JFrame {
                 int nModel = modelList.size(); 
                 if(nModel > 0)
                 {
-                    archiveList = new String[nModel][4]; 
+                    archiveList = new String[nModel][5]; 
                     for(int i = 0; i < nModel; i++)
                         archiveList[i] = (String[])modelList.get(i);
                 }
@@ -412,20 +462,15 @@ public class ModelLibrary extends javax.swing.JFrame {
                 return;
             }
             
-            if(archiveList.length > 0)
-            {
-                // Add the list to the collection
-                lists.add(archiveList);
-                if(archiveList.length < maxNum)
-                    // Turn off the next button
-                    nextButton.setEnabled(false); 
-                else
-                    // Turn on the next button
-                    nextButton.setEnabled(true);                    
-            }
-            else
+            // Add the list to the collection
+            lists.add(archiveList);
+            if(archiveList.length <= maxNum)
                 // Turn off the next button
                 nextButton.setEnabled(false); 
+            else
+                // Turn on the next button
+                nextButton.setEnabled(true);            
+
             if(indexList == 0)
                 previousButton.setEnabled(false);
         }
@@ -437,8 +482,12 @@ public class ModelLibrary extends javax.swing.JFrame {
         DisplayTableModel reportModel = new DisplayTableModel(archiveList, header, 1);  
         jTable1.setModel(reportModel); 
         TableColumnModel columnModel = jTable1.getColumnModel();
+        columnModel.getColumn(1).setCellRenderer(new CellRenderer());        
         columnModel.getColumn(header.length - 1).setPreferredWidth(500);
-        reportDialog.setSize(800, 16 * archiveList.length + 90);  
+        int length = archiveList.length;
+        if(length > maxNum)
+            length--;
+        reportDialog.setSize(800, 16 * length + 90);  
         reportDialog.setTitle(title);
         reportDialog.show();
     } 
@@ -464,10 +513,15 @@ public class ModelLibrary extends javax.swing.JFrame {
         {
             return header.length; 
         }
-        public int getRowCount() {
-            return data.length;
+        public int getRowCount()
+        {
+            int length = data.length;
+            if(length > maxNum)
+                length--;
+            return length;
         }
-        public Object getValueAt(int r, int c) {
+        public Object getValueAt(int r, int c)
+        {
             return data[r][c + start];
         }
 
@@ -479,6 +533,17 @@ public class ModelLibrary extends javax.swing.JFrame {
         
         // Starting column
         int start = 0;
+    }
+
+    private class CellRenderer extends DefaultTableCellRenderer 
+    {
+        public java.awt.Component getTableCellRendererComponent(JTable table,
+            Object value,boolean isSelected, boolean hasFocus, int row,int col) 
+        {
+            super.getTableCellRendererComponent(table,value,isSelected,hasFocus,row,col);
+            setHorizontalAlignment(SwingConstants.CENTER);
+            return this;
+	}
     }
     
     /** Exit the Application */
@@ -499,7 +564,12 @@ public class ModelLibrary extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JRadioButton jRadioButton1;
@@ -508,8 +578,12 @@ public class ModelLibrary extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField jTextField4;
+    private javax.swing.JTextField jTextField5;
+    private javax.swing.JTextField jTextField6;
     private javax.swing.JButton nextButton;
     private javax.swing.JButton previousButton;
     private javax.swing.JDialog reportDialog;
@@ -532,16 +606,4 @@ public class ModelLibrary extends javax.swing.JFrame {
     
     // Maximum number of items
     private static final int maxNum = 25; 
-
-    // Database name
-    private static final String database = "spktest";
-    
-    // Database host
-    private static final String hostname = "rose.rfpk.washington.edu";
-    
-    // Database username
-    private static final String username = "tester";
-    
-    // Database password
-    private static final String password = "tester"; 
 }

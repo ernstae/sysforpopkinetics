@@ -10,7 +10,7 @@ import rfpk.spk.spkdb.*;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * This is a user account management tool.
  * @author  jiaji
  */
 public class UserAccount extends javax.swing.JFrame {
@@ -298,7 +298,7 @@ public class UserAccount extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_exitForm
     
-    /**
+    /** The main method that creates the application object and displays it.
      * @param args the command line arguments
      */
     public static void main(String args[]) {
