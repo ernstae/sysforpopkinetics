@@ -42,6 +42,7 @@ class ppkaOptTest : public CppUnit::TestFixture
 {
     void ppkaOptExampleTest(enum Objective whichObjective);
     void ppkaOptZeroIterationsTest(enum Objective whichObjective);
+    void ppkaOptFixedAlpTest(enum Objective whichObjective);
     void doTheTest( bool ok,
                        double dLTildeOut,
                        double dLTildeKnown,
