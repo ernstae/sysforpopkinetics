@@ -458,23 +458,23 @@ namespace // [Begin: unnamed namespace]
 {
   void scaleElem(
     int n,
-    const double* px, 
-    const double* pxLow, 
-    const double* pxDiff,
+    const double* const px, 
+    const double* const pxLow, 
+    const double* const pxDiff,
     double* py );
 
   void unscaleElem(
     int n,
-    const double* py, 
-    const double* pxLow, 
-    const double* pxUp, 
-    const double* pxDiff,
+    const double* const py, 
+    const double* const pxLow, 
+    const double* const pxUp, 
+    const double* const pxDiff,
     double* px );
 
   void scaleGradElem(
     int n,
-    const double* pg, 
-    const double* pxDiff,
+    const double* const pg, 
+    const double* const pxDiff,
     double* pScaledG );
 
   bool isWithinTol(
@@ -486,7 +486,7 @@ namespace // [Begin: unnamed namespace]
     const DoubleMatrix& dmatR );
 
   DoubleMatrix arrayToDoubleMatrix(
-    const double* pdAIn, 
+    const double* const pdAIn, 
     int nRows, 
     int nCols );
 
@@ -1198,9 +1198,9 @@ namespace // [Begin: unnamed namespace]
 
 void scaleElem(
   int n,
-  const double* px, 
-  const double* pxLow, 
-  const double* pxDiff,
+  const double* const px, 
+  const double* const pxLow, 
+  const double* const pxDiff,
   double* py )
 {
     for(int i=0; i<n; i++)
@@ -1225,10 +1225,10 @@ void scaleElem(
 
 void unscaleElem(
   int n,
-  const double* py, 
-  const double* pxLow, 
-  const double* pxUp, 
-  const double* pxDiff,
+  const double* const py, 
+  const double* const pxLow, 
+  const double* const pxUp, 
+  const double* const pxDiff,
   double* px )
 {
     for(int i=0; i<n; i++)
@@ -1262,8 +1262,8 @@ void unscaleElem(
 
 void scaleGradElem(
   int n,
-  const double* pg, 
-  const double* pxDiff,
+  const double* const pg, 
+  const double* const pxDiff,
   double* pScaledG )
 {
     for(int i=0; i<n; i++)
@@ -1938,7 +1938,7 @@ bool isWithinTol(
  *************************************************************************/
 
 DoubleMatrix arrayToDoubleMatrix( 
-  const double* pdAIn, 
+  const double* const pdAIn, 
   int nRows, 
   int nCols )
 {
