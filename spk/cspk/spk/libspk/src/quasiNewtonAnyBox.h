@@ -40,8 +40,8 @@
 class QuasiNewtonAnyBoxObj
 {
 public:
-  virtual const char* function( const double* xIn, double& fOut ) = 0;
-  virtual const char* gradient( double* gOut ) = 0;
+  virtual void function( const DoubleMatrix& dvecXIn, double* pdFOut ) = 0;
+  virtual void gradient( DoubleMatrix* pdrowF_xOut ) const = 0;
 };
 
 void quasiNewtonAnyBox( 
@@ -52,6 +52,6 @@ void quasiNewtonAnyBox(
   const DoubleMatrix&    dvecXIn,
   DoubleMatrix*          pdvecXOut,
   double*                pdFOut,
-  DoubleMatrix*          pF_xOut );
+  DoubleMatrix*          pdrowF_xOut );
 
 #endif
