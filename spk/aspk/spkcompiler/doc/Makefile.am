@@ -2,11 +2,11 @@ SUFFIXES = .dox
 .html.dox : 
 	doxygen $<
 
-dist_pkgdata_DATA = core.cfg \
+dist_pkgdata_DATA = common.cfg \
                     nonmem.cfg \
                     spkcompiler.cfg \
                     nonmem_menu.html \
-                    core_menu.html \
+                    common_menu.html \
                     menu.html
 
 CORE_SRC   = ../spkcompiler/client.h \
@@ -26,30 +26,30 @@ NONMEM_SRC = ../spkcompiler/nonmem/explang.cpp \
 
 DRIVER_SRC = ../spkcompiler/main.cpp
 
-html : nonmem_html core_html compiler_html 
+html : nonmem_html common_html compiler_html 
 
 nonmem_html: nonmem.cfg $(NONMEM_SRC)
 	doxygen nonmem.cfg
 
-core_html: core.cfg $(CORE_SRC)
-	doxygen core.cfg
+common_html: common.cfg $(CORE_SRC)
+	doxygen common.cfg
 
-compiler_html : $(DRIVER_SRC) nonmem_html core_html 
+compiler_html : $(DRIVER_SRC) nonmem_html common_html 
 	doxygen spkcompiler.cfg
 
 clean : 
 	rm -rf html
 	rm -rf latex
 	rm -rf man
-	rm -rf core/html
+	rm -rf common/html
 	rm -rf nonmem/html
 
 all  : 
 	rm -rf html
 	rm -rf latex
 	rm -rf man
-	rm -rf core/html
+	rm -rf common/html
 	rm -rf nonmem/html
 	doxygen nonmem.cfg
-	doxygen core.cfg
+	doxygen common.cfg
 	doxygen spkcompiler.cfg
