@@ -1239,8 +1239,8 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   double deltaScale = 10.0;
 
   bool isWithinTol = false;
-  int iterCurr = 0;
-  while ( !isWithinTol && iterCurr < nMaxIter )
+  int iterCurr = 1;
+  while ( !isWithinTol && iterCurr <= nMaxIter )
   {
     // See if this function's convergence criterion has been met.
     if ( isWithinTol( 
@@ -1296,7 +1296,6 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
 	  "QuasiNewto01Box failed to perform at least one Quasi-Newton iteration.",
 	  __LINE__,
 	  __FILE__ );
-
 	throw exceptionOb.push( err );
       }
     }
@@ -1308,33 +1307,24 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   //------------------------------------------------------------
 
   bool ok;
-  SpkError::ErrorCode errorcode;
+  SpkError::ErrorCode errorCode;
   StateInfo stateInfo;
 
-  if ( isWithinTol )               // This function's convergence
-                                   // criterion was satisfied.
+  if ( isWithinTol )                // This function's convergence
+                                    // criterion was satisfied.
   {
     optimizer.setIsTooManyIter( false );
     optimizer.setNIterCompleted( options.iter );
     optimizer.deleteStateInfo();
     ok = true;
   }
-  else if ( i < nMaxIter )         // This function's convergence
-                                   // criterion was not satisfied.
-  {
-    ok = false;
-    errorcode = SpkError::SPK_NOT_CONVERGED;
-  }
-  else if ( i == nMaxIter )       // The maximum number of iterations 
-                                  // have been performed.
+  else if ( iterCurr == nMaxIter )  // The maximum number of iterations 
+                                    // have been performed.
   {
     optimizer.setIsTooManyIter( true );
     optimizer.setNIterCompleted( options.iter );
 
-    //------------------------------------------------------------
     // Save state information for warm start
-    //------------------------------------------------------------
-
     if( !optimizer.getIsSubLevelOpt() && optimizer.getStateInfo().n )
     {
       stateInfo.n      = n;
@@ -1349,22 +1339,21 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
     else
     {
       ok = false;
-      errorcode = SpkError::SPK_TOO_MANY_ITER;
+      errorCode = SpkError::SPK_TOO_MANY_ITER;
+      message << 
     }
   }
-  else
+  else                              // This function's convergence
+                                    // criterion was not satisfied.
   {
-    // If any other errors or warnings are returned by the optimizer,
-    // then throw an exception.
     ok = false;
-    errorcode = SpkError::SPK_UNKNOWN_OPT_ERR;
-    message << "QuasiNewto01Box failed to perform at least one Quasi-Newton iteration.";
+    errorCode = SpkError::SPK_NOT_CONVERGED;
+    message << "";
   }
 
   if ( !ok )
   {
-    SpkError err( errorcode, message, __LINE__, __FILE__ );
-
+    SpkError err( errorCode, message, __LINE__, __FILE__ );
     throw info.exceptionOb.push( err );
   }
 
