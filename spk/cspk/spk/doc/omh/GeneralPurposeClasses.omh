@@ -1,0 +1,10 @@
+$begin GeneralPurposeClasses$$
+
+$section General Purpose Classes and Functions$$
+
+$childtable/
+        Exceptions.omh/
+        File.cpp/
+        System.cpp/
+        Function.h/$$
+$end

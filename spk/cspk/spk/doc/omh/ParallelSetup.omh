@@ -1,0 +1,29 @@
+$begin ParallelSetup$$
+
+$spell
+   spk exe sachiko ok dir ie ind
+$$
+
+$section Setup for Parallel Computation$$
+
+$index Parallel, Setup SPK for Parallel Mode$$
+$index Parallel, Setup Shared Disk Space$$
+
+$head Setup$$
+To run SPK in the parallel mode (for Shared Disk Space version), you first decide which directory
+you use as Shared Disk Space in which Master and Node communicate to each other.  The directory
+must resides somewhere in the network where it can be $bold shared$$ by all Participants.
+Also, the directory must be set so that all Participants can read and write files from/in.
+
+$subhead Configure "Shared Disk Space"$$
+Shared Disk Space is a directory where Master and Node read, write and delete files 
+in order to communicate.  The directory, therefore, must be read/write-able by
+any Participant.  You should dedicate a directory for this: Master or Node may
+delete or overwrite existing files.  You may map the directory to a network-mapped drive
+for convenience.
+
+$subhead Build SPK Driver for an Arbitrary Model and a Script$$
+Consult: $tref Building Spk Driver for Parallel Computation$$
+ 
+
+$end

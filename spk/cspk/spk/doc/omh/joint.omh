@@ -1,0 +1,10 @@
+$begin joint$$
+
+$section Joint Likelihood Of Data The Random Parameters$$
+
+$childtable/
+	lambda.cpp/
+	lambdaDiff.cpp/
+	lambda2diff.cpp/
+	FoModel.oms/$$
+$end
