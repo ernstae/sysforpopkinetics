@@ -1,0 +1,12 @@
+#!/bin/sh
+
+P=/usr/local
+
+if [ ! -d $P/bin/spkprod ];
+then
+	mkdir $P/bin/spkprod;
+fi
+
+cp $P/bin/spktest/* $P/bin/spkprod
+cp $P/include/spktest/* $P/include/spkprod
+cp $P/lib/spktest/* $P/lib/spkprod
