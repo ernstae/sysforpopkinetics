@@ -76,6 +76,18 @@ using namespace xercesc;
 
 namespace{ 
 
+  const char compilation_error_xml[] = "compilation_error.xml";
+
+  /**
+   * @enum EXIT_CODE
+   *
+   * Exit codes.
+   */
+  enum EXIT_CODE { SUCCESS=0,       /**< The compilation completed successfully. */
+                   XML_PARSE_ERR=1, /**< Syntax errors detected in either/both SpkSourceML or SpkDataML documents. */
+		   ACCESS_ERR=2,    /**< File/directory access denied. */
+		   OTHER_ERR        /**< Unclassified error. */
+                 };
   /**
    * client::type getClientName( xercesc::DOMDocument* source )
    *
@@ -98,6 +110,32 @@ namespace{
     return client::NOT_SUPPORTED;
   }
 
+  /**
+   * Generate a legal SpkReportML document containing error messages.
+   */
+  void genCompilationErrorML( const SpkCompilerException& e )
+  {
+     ofstream o( compilation_error_xml );
+     if( !o.good() )
+     {
+       cerr << "Failed to create " << compilation_error_xml << "." << endl;
+       cerr << "Abnormal termination..." << endl;
+       abort();
+     }
+/*
+     o << "<?xml version=\"1.0\"?>" << endl;
+     o << "<spkreport>" << endl;
+     o << "<error_message>" << endl;
+
+     o << e << endl;
+     o << "</error_message>" << endl;
+     o << "</spkreport>" << endl;
+*/
+     o.flush();
+     o << e << endl;
+     o.close();
+     return;
+  }
   /**
    * Displays the usage.
    *
@@ -126,16 +164,6 @@ namespace{
   }
 };
 
-/**
- * @enum EXIT_CODE
- *
- * Exit codes.
- */
-enum EXIT_CODE { SUCCESS=0,       /**< The compilation completed successfully. */
-		 XML_PARSE_ERR=1, /**< Syntax errors detected in either/both SpkSourceML or SpkDataML documents. */
-		 ACCESS_ERR=2,    /**< File/directory access denied. */
-		 OTHER_ERR        /**< Unclassified error. */
-               };
 
 /**
  * This main() function is the SPK Compiler.  
@@ -157,26 +185,15 @@ enum EXIT_CODE { SUCCESS=0,       /**< The compilation completed successfully. *
  */
 int main( int argc, const char* argv[] )
 {
-  SpkCompilerException myError;
-  char compilation_error_xml[] = "compilation_error.xml";
-  char error_message[ SpkCompilerError::maxMessageLen() ];
-  ofstream oError( compilation_error_xml );
-  if( !oError.good() )
-    {
-      cerr << "Failed to create a file, " << compilation_error_xml << "!!!" << endl;
-      return ACCESS_ERR;
-    }
-
   if (argc < 3)
   {
-    char error_message[2048];
+    char error_message[ SpkCompilerError::maxMessageLen() ];
     usage( error_message );
-
-    cerr << "ERROR! Missing argument(s)!" << endl;
     cerr << error_message << endl;
-    myError.push( SpkCompilerError::ASPK_PROGRAMMER_ERR, "Missing command line arguments: spkcompiler SOURCE DATA", __LINE__, __FILE__ );
-    oError << myError << endl;
-    oError.close();
+    SpkCompilerException e( SpkCompilerError::ASPK_PROGRAMMER_ERR, 
+                               "Missing command line arguments: spkcompiler SOURCE DATA", 
+                               __LINE__, __FILE__ );
+    genCompilationErrorML( e );
     
     return OTHER_ERR;
   }  
@@ -189,11 +206,13 @@ int main( int argc, const char* argv[] )
     }
   catch( const XMLException & toCatch )
     {
+      char error_message[ SpkCompilerError::maxMessageLen() ];
       sprintf( error_message, "Error during Xerces-c Initialization.\nException message: %s.\n",
-               XMLString::transcode( toCatch.getMessage() ) );
-      myError.push( SpkCompilerError::ASPK_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
-      oError << myError << endl;
-      oError.close();
+      XMLString::transcode( toCatch.getMessage() ) );
+      SpkCompilerException e( SpkCompilerError::ASPK_XMLDOM_ERR, 
+                                 error_message, 
+                                 __LINE__, __FILE__ );
+      genCompilationErrorML( e );
       return OTHER_ERR;
     }
 
@@ -226,10 +245,12 @@ int main( int argc, const char* argv[] )
     if( !iSource.good() )
       {
         XMLPlatformUtils::Terminate();
+        char error_message[ SpkCompilerError::maxMessageLen() ];
         sprintf( error_message, "Failed to open %s!\n", gSource );
-	myError.push( SpkCompilerError::ASPK_STD_ERR, error_message, __LINE__, __FILE__ );
-	oError << myError << endl;
-	oError.close();
+	SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, 
+                                   error_message, 
+                                   __LINE__, __FILE__ );
+        genCompilationErrorML( e );
         return ACCESS_ERR;
       }
     iSource.close();
@@ -239,16 +260,18 @@ int main( int argc, const char* argv[] )
   catch( const XMLException& e )
   {
     XMLPlatformUtils::Terminate();
+    char error_message[ SpkCompilerError::maxMessageLen() ];
     sprintf( error_message, "An error occurred during parsing\n   Message: %s\n", 
 	     XMLString::transcode(e.getMessage() ) );
-    myError.push( SpkCompilerError::ASPK_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
-    oError << myError << endl;
-    oError.close();
+    SpkCompilerException e( SpkCompilerError::ASPK_XMLDOM_ERR, 
+                               error_message, 
+                               __LINE__, __FILE__ );
+    genCompilationErrorML( e );
     return XML_PARSE_ERR;
   }
   catch( const DOMException& e )
   {
-      const unsigned int maxChars = 2047;
+      const unsigned int maxChars = SpkCompilerError::maxMessageLen()-20;
       XMLCh errText[maxChars + 1];
       fprintf( stderr, "DOM Error during parsing \"%s\".\nDOMException code is: %d\n",
                gSource, e.code );
@@ -256,20 +279,25 @@ int main( int argc, const char* argv[] )
       if (DOMImplementation::loadDOMExceptionMsg(e.code, errText, maxChars))
       {
         XMLPlatformUtils::Terminate();
-	
+        char error_message[ SpkCompilerError::maxMessageLen() ];	
         sprintf( error_message, "Message is: %s.\n", 
 		 XMLString::transcode(errText) );
-	myError.push( SpkCompilerError::ASPK_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
-	oError << myError << endl;
-	oError.close();
+	SpkCompilerException e( SpkCompilerError::ASPK_XMLDOM_ERR, 
+                                   error_message, 
+                                   __LINE__, __FILE__ );
+        genCompilationErrorML( e );
         return XML_PARSE_ERR;
       }
   }
   catch( ... )
   {
     XMLPlatformUtils::Terminate();
+    char error_message[ SpkCompilerError::maxMessageLen() ];
     sprintf( error_message, "An unknown error occurred during parsing.\n %d, %s\n" );
-    myError.push( SpkCompilerError::ASPK_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
+    SpkCompilerException e( SpkCompilerError::ASPK_XMLDOM_ERR, 
+                               error_message, 
+                               __LINE__, __FILE__ );
+    genCompilationErrorML( e );
     return XML_PARSE_ERR;
   }
 
@@ -281,10 +309,12 @@ int main( int argc, const char* argv[] )
     if( !iData.good() )
     {
        XMLPlatformUtils::Terminate();
+       char error_message[ SpkCompilerError::maxMessageLen() ];
        sprintf( error_message, "Failed to open %s!\n", gData );
-       myError.push( SpkCompilerError::ASPK_STD_ERR, error_message, __LINE__, __FILE__ );
-       oError << myError << endl;
-       oError.close();
+       SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, 
+                                  error_message, 
+                                  __LINE__, __FILE__ );
+       genCompilationErrorML( e );
        return ACCESS_ERR;
     }
     parser->parse( gData );
@@ -293,37 +323,52 @@ int main( int argc, const char* argv[] )
   catch( const XMLException& e )
   {
     XMLPlatformUtils::Terminate();
+    char error_message[ SpkCompilerError::maxMessageLen() ];
     sprintf( error_message, "An error occurred during parsing\n   Message: %s\n", 
 	     XMLString::transcode(e.getMessage() ) );
-    myError.push( SpkCompilerError::ASPK_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
-    oError << myError << endl;
-    oError.close();
+    SpkCompilerException e( SpkCompilerError::ASPK_XMLDOM_ERR, 
+                               error_message, 
+                               __LINE__, __FILE__ );
+    genCompilationErrorML( e );
     return XML_PARSE_ERR;
   }
   catch( const DOMException& e )
   {
       const unsigned int maxChars = 2047;
       XMLCh errText[maxChars + 1];
-      fprintf( stderr, "DOM Error during parsing \"%s\".\nDOMException code is: %d\n",
-               gData, e.code );
+      char error_message[ SpkCompilerError::maxMessageLen() ];
       
       if (DOMImplementation::loadDOMExceptionMsg(e.code, errText, maxChars))
       {
         XMLPlatformUtils::Terminate();
-        sprintf( error_message, "Message is: %s.\n", XMLString::transcode(errText) );
-	myError.push( SpkCompilerError::ASPK_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
-	oError << myError << endl;
-	oError.close();
-        return XML_PARSE_ERR;
+        sprintf( error_message, 
+                 "DOM Error during parsing \"%s\".\nDOMException code is: %d\n \
+                  Message is: %s.\n", XMLString::transcode(errText),
+                 gData, e.code );
+	SpkCompilerException e( SpkCompilerError::ASPK_XMLDOM_ERR, 
+                                   error_message, 
+                                   __LINE__, __FILE__ );
+        genCompilationErrorML( e );
       }
+      else
+      {
+        sprintf( error_message, 
+                 "DOM Error during parsing \"%s\".\nDOMException code is: %d\n",
+                 gData, e.code );
+	SpkCompilerException e( SpkCompilerError::ASPK_XMLDOM_ERR, 
+                                   error_message, 
+                                   __LINE__, __FILE__ );
+      }
+      return XML_PARSE_ERR;
   }
   catch( ... )
   {
     XMLPlatformUtils::Terminate();
-    fprintf( stderr, "An unknown error occurred during parsing %s.\n", gData );
-    myError.push( SpkCompilerError::ASPK_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
-    oError << myError << endl;
-    oError.close();
+    char error_message[ SpkCompilerError::maxMessageLen() ];
+    sprintf( error_message, "An unknown error occurred during parsing %s.\n", gData );
+    SpkCompilerException e( SpkCompilerError::ASPK_XMLDOM_ERR, 
+                            error_message, __LINE__, __FILE__ );
+    genCompilationErrorML( e ); 
     return XML_PARSE_ERR;
   }
                                                                                 
@@ -331,10 +376,13 @@ int main( int argc, const char* argv[] )
   if( cl == client::NOT_SUPPORTED )
     {
       XMLPlatformUtils::Terminate();
-      fprintf( stderr, "Not a supported client!" );
-      myError.push( SpkCompilerError::ASPK_SOURCEML_ERR, error_message, __LINE__, __FILE__ );
-      oError << myError << endl;
-      oError.close();
+      char error_message[ SpkCompilerError::maxMessageLen() ];
+      sprintf( error_message, "Not a supported client!" );
+      cerr << error_message << endl;
+      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, 
+                                 error_message, 
+                                 __LINE__, __FILE__ );
+      genCompilationErrorML( e );
       return OTHER_ERR;
     }
 
@@ -351,23 +399,22 @@ int main( int argc, const char* argv[] )
   catch( const SpkCompilerException& e )
   {
     XMLPlatformUtils::Terminate();
-    oError << e << endl;
-    oError.close();
+    genCompilationErrorML( e );
     return XML_PARSE_ERR;
   }
   catch( ... )
   {
     XMLPlatformUtils::Terminate();
+    char error_message[ SpkCompilerError::maxMessageLen() ];
     sprintf( error_message, "An unknown error occurred during compilation.\n %d, %s\n" );
-    myError.push( SpkCompilerError::ASPK_SOURCEML_ERR, error_message, __LINE__, __FILE__ );
-    oError << myError << endl;
-    oError.close();
+    SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, 
+                               error_message, __LINE__, __FILE__ );
+    genCompilationErrorML( e );
     return XML_PARSE_ERR;
   }
 
   delete xlator;
 
   cout << "Completed succssfully." << endl;
-  remove( compilation_error_xml );
   return SUCCESS;
 }
