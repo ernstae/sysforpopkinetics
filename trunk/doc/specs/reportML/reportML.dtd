@@ -88,7 +88,34 @@ alter the normal execution flow.-->
 <!-- <theta_out length="0"> The length of the theta vector. -->
 <!ATTLIST theta_out length CDATA #REQUIRED>
 
-<!-- <omega_out> Final value for the Omega. -->
+<!-- <omega_out> A minimal representation of the final value of Omega (symmetric positive definite) matrix. For full (ie. "block") matrix, <omega_out> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <omega_out> lists only the diagonal elements from the upper left corner. 
+
+Given a 3 by 3 matrix, A:
+<html:pre>
+/                   \
+|  a11   a12   a13  |
+|  a21   a22   a23  |
+|  a31   a32   a33  |
+\                   / 
+</html:pre>
+
+If A were <html:font color='red'>full</html:font> (ie. block) symmetric, <omega_out> specifies as follows:
+<html:pre>
+    &lt;omega_out&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+       &lt;value&gt;a21&lt;/value&gt;&lt;value&gt;a22&lt;/value&gt;
+       &lt;value&gt;a31&lt;/value&gt;&lt;value&gt;a32&lt;/value&gt;&lt;value&gt;a33&lt;/value&gt;
+    &lt;/omega_out&gt;
+</html:pre>
+If A were <html:font color='red'>diagonal</html:font>, <omega_out> specifies as follows:
+<html:pre>
+    &lt;omega_out&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+                         &lt;value&gt;a22&lt;/value&gt;
+                                           &lt;value&gt;a33&lt;/value&gt;
+    &lt;/omega_out&gt;
+</html:pre>
+-->
 <!ELEMENT omega_out (value)+>
 
 <!-- <omega_out struct="block"> The structure of the Omega matrix: "block" or "diagonal". -->
@@ -97,7 +124,35 @@ alter the normal execution flow.-->
 <!-- <omega_out dimension=""> The dimension of the Omega matrix. -->
 <!ATTLIST omega_out dimension CDATA #REQUIRED>
 
-<!-- <sigma_out> Final value for the Sigma. -->
+<!-- <sigma_out> 
+A minimal representation of NONMEM Omega matrix. For full (ie. "block") matrix, <sigma_out> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <sigma_out> lists only the diagonal elements from the upper left corner.
+
+Given a 3 by 3 matrix, A:
+<html:pre>
+/                   \
+|  a11   a12   a13  |
+|  a21   a22   a23  |
+|  a31   a32   a33  |
+\                   / 
+</html:pre>
+
+If A were <html:font color='red'>full</html:font> (ie. block) symmetric, <sigma_out> specifies as follows:
+<html:pre>
+    &lt;sigma_out&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+       &lt;value&gt;a21&lt;/value&gt;&lt;value&gt;a22&lt;/value&gt;
+       &lt;value&gt;a31&lt;/value&gt;&lt;value&gt;a32&lt;/value&gt;&lt;value&gt;a33&lt;/value&gt;
+    &lt;/sigma_out&gt;
+</html:pre>
+If A were <html:font color='red'>diagonal</html:font>, <sigma_out> specifies as follows:
+<html:pre>
+    &lt;sigma_out&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+                         &lt;value&gt;a22&lt;/value&gt;
+                                           &lt;value&gt;a33&lt;/value&gt;
+    &lt;/sigma_out&gt;
+</html:pre>
+-->
 <!ELEMENT sigma_out (value)+>
 
 <!-- <sigma_out struct="block"> The structure of the Sigma matrix: "block" or "diagonal". -->
