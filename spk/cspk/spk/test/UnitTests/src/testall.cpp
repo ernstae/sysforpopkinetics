@@ -11,7 +11,6 @@
 #include "src/blockDiagonalDerivativeTest.h"
 #include "src/centdiffModelTest.h"
 #include "src/centdiffTest.h"
-#include "src/centdiffTest.h"
 #include "src/choleskyTest.h"
 #include "src/countTruesTest.h"
 #include "src/CovarianceTest.h"
@@ -104,7 +103,6 @@ int main( int argc, const char * argv[] )
   runner.addTest( blockDiagonalDerivativeTest::suite() );
   runner.addTest( centdiffModelTest::suite() );
   runner.addTest( centdiffTest::suite() );
-  runner.addTest( centdiffTest::suite() );
   runner.addTest( choleskyTest::suite() );
   runner.addTest( countTruesTest::suite() );
   runner.addTest( CovarianceTest::suite() );
@@ -126,19 +124,19 @@ int main( int argc, const char * argv[] )
   runner.addTest( getColTest::suite() );
   runner.addTest( getMulColsTest::suite() );
   runner.addTest( getMulRowsTest::suite() );
-  //  runner.addTest( getRowTest::suite() );
-  //  runner.addTest( getSubblockTest::suite() );
+  runner.addTest( getRowTest::suite() );
+  runner.addTest( getSubblockTest::suite() );
   runner.addTest( identityTest::suite() );
   runner.addTest( IkronBtimesCTest::suite() );
-  //  runner.addTest( IndInputDataPackageTest::suite() );
-  //  runner.addTest( IndOutputDataPackageTest::suite() );
+  runner.addTest( IndInputDataPackageTest::suite() );
+  runner.addTest( IndOutputDataPackageTest::suite() );
   runner.addTest( IndResultsTest::suite() );
   runner.addTest( indStatisticsTest::suite() );
-  //  runner.addTest( IndVarsTest::suite() );
+  runner.addTest( IndVarsTest::suite() );
   runner.addTest( inverseTest::suite() );
-  //  runner.addTest( inxToMaxTest::suite() );
+  runner.addTest( inxToMaxTest::suite() );
   runner.addTest( isDblEpsEqualTest::suite() );
-  //  runner.addTest( isDmatEpsEqualTest::suite() );
+  runner.addTest( isDmatEpsEqualTest::suite() );
   runner.addTest( isGreaterThanOrEqualToTest::suite() );
   runner.addTest( isLessThanOrEqualToTest::suite() );
   runner.addTest( isSymmetricTest::suite() );
@@ -156,12 +154,12 @@ int main( int argc, const char * argv[] )
   runner.addTest( mulByScalarTest::suite() );
   runner.addTest( multiplyTest::suite() );
   runner.addTest( NaiveFoModelTest::suite() );
-  //  runner.addTest( normTest::suite() );
+  runner.addTest( normTest::suite() );
   runner.addTest( OptimizerTest::suite() );
   runner.addTest( placeRowsTest::suite() );
-  //  runner.addTest( PopConstValsTest::suite() );
+  runner.addTest( PopConstValsTest::suite() );
   runner.addTest( popStatisticsTest::suite() );
-  //  runner.addTest( PopVarsTest::suite() );
+  runner.addTest( PopVarsTest::suite() );
   runner.addTest( ppkaOptTest::suite() );
   runner.addTest( printInMatrixTest::suite() );
   runner.addTest( replaceIthTest::suite() );
