@@ -2,23 +2,27 @@
 /**
  * @file nmabb.l
  *
- * @brief This is a lexical analyizer specification file (FLEX) for NMTRAN->C++.
+ * @brief This is a specification file (FLEX) that
+ * generates a C lexical analizer that recognizes NONMEM subset of 
+ * FORTRAN language. 
  */
 
 #include <ctype.h>
 #include "nmabb.tab.h"
+
 #define YYSTYPE yystype
 
 /**
  * A global counter for keeping track of # of lines read so far.
+ * It is defined in the BISON parser specification file (nmabb.y).
  */
-int gSpkExpLines = 0;
+extern int gSpkExpLines;
 
 /**
- * A global counter for counting errors.  It is defined in the driver (whatever it is).
+ * A global counter for counting errors.
+ * It is defined in the BISON parser specification file (nmabb.y).
  */
 extern int gSpkExpErrors;
-
 %}
 
 tok_letter                  [ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz]

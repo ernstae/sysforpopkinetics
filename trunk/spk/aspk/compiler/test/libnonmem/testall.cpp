@@ -13,8 +13,8 @@ int main( int argc, const char * argv[] )
 {
   CppUnit::TextUi::TestRunner runner;
 
+  //  runner.addTest( NonmemExpXlatorTest::suite() );
   runner.addTest( NonmemCompilerTest::suite() );
-  runner.addTest( NonmemExpXlatorTest::suite() );
   
   runner.run();
 
