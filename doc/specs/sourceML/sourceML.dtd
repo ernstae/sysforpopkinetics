@@ -27,7 +27,7 @@ Currently, the only supported client is NONMEM (ie. NM-TRAN).
 
 <!-- <nonmem> Composite of information expressed in the language familiar to NONMEM (ie. NM-TRAN) users. 
 --> 
-<!ELEMENT nonmem (constraint |model |presentation |monte_carlo) >
+<!ELEMENT nonmem (constraint |model |presentation |monte_carlo?) >
 
 <!-- <nonmem version="0.1"> The version number of <nonmem> source XML document.  For the initial version, it is "0.1". -->
 <!ATTLIST nonmem version (0.1|0.2) #REQUIRED>
@@ -507,16 +507,16 @@ There can be as many as 10 <table>s and 20 <scatterplot>s.
 <!-- ===================================== -->
 <!--              Monte Carlo              -->
 <!-- ===================================== -->
-<!-- <monte_carlo> Request for the monte carlo integration with respect to random effects.-->
+<!-- <monte_carlo> If this element is present, the Monte Carlo estimate for the integral and an estimate of the standard deviation of it will be computed by default.  -->
 <!ELEMENT monte_carlo EMPTY>
 
-<!-- <monte_carlo is_analytic="yes"> Request to output the analytic integral and the Monte-Carlo estimate for the integral corresponding to the LinearModel for this case; i.e., it is only correct for the linear model.
+<!-- <monte_carlo is_analytic="no"> "yes" requests to output the analytic integral and the Monte-Carlo estimate for the integral corresponding to the LinearModel for this case; i.e., it is only correct for the linear model.  The default value is "no".
 
 -->
-<!ATTLIST monte_carlo is_analytic (yes|no) #REQUIRED>
+<!ATTLIST monte_carlo is_analytic (yes|no) #IMPLIED>
 
-<!-- <monte_carlo is_grid="yes"> Request to output the approximate integral corresponding to evaluation on a uniform grid of points and the estimate of the standard deviation of the Monte-Carlo estimate for the integral.-->
-<!ATTLIST monte_carlo is_grid (yes|no) #REQUIRED>
+<!-- <monte_carlo is_grid="no"> "yes" requests to output the approximate integral corresponding to evaluation on a uniform grid of points and the estimate of the standard deviation of the Monte-Carlo estimate for the integral.  The default value is "no".-->
+<!ATTLIST monte_carlo is_grid (yes|no) #IMPLIED>
 
 
 <!-- ================================================================================ -->
