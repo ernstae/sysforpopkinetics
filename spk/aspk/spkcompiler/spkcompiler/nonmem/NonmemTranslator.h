@@ -278,6 +278,8 @@ class NonmemTranslator : public ClientTranslator
   XMLCh* X_COV_R;               static const char* C_COV_R;
   XMLCh* X_COV_RSR;             static const char* C_COV_RSR;
   XMLCh* X_COV_S;               static const char* C_COV_S;
+  XMLCh* X_COV_H;               static const char* C_COV_H;
+  XMLCh* X_COV_HSH;             static const char* C_COV_HSH;
   XMLCh* X_IS_ERR_OUT;          static const char* C_IS_STDERROR_OUT;
   XMLCh* X_IS_CORR_OUT;         static const char* C_IS_CORRELATION_OUT;
   XMLCh* X_IS_COV_OUT;          static const char* C_IS_COVARIANCE_OUT;
