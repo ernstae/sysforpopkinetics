@@ -160,12 +160,16 @@ Note that if $math%xLow(i) = xUp(i)%$$, then $math%y(i)%$$ is
 constrained to be $math%0%$$.
 
 $head Return Value$$
-The given pointers are set to pointing to the results, if the algorithm converged 
-successfully.  If failed, a $xref/SpkException//exception/$$ will be
-thrown.  The state at which an exception is thrown is defined in
+If the convergence criteria specified below for the $italic optimizer$$
+argument is satisfied, then the output value pointers are set to point
+to their respective results.
+If the convergence criteia is not satisfied, then an 
+$xref/SpkException//exception/$$ will be thrown.  
+The state at which an exception is thrown is defined in
 $xref/glossary/Exception Handling Policy/Exception Handling Policy/$$.
-In the case of too-many-iterations, the final estimate of the solution is still 
-normally returned.  
+In the case of the maximum number of iterations being exhausted,
+an exception may or may not be thrown depending on the value for
+the $italic optimizer.throwExcepIfMaxIter$$ parameter.
 
 $head Arguments$$
 $syntax/
