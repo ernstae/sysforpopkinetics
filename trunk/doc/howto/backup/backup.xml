@@ -12,6 +12,12 @@
 	<authorinitials>afw</authorinitials>
 	<revremark>Initial version.</revremark>
       </revision>
+      <revision>
+	<revnumber>1.01</revnumber>
+	<date>January 2, 2004</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Relative to RHEL Version 3</revremark>
+      </revision>
     </revhistory>
   <abstract>
     <para>

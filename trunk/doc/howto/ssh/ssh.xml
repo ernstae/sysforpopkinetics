@@ -22,6 +22,12 @@
 	<authorinitials>afw</authorinitials>
 	<revremark>Now using the complete domain name of whitechuck.</revremark>
       </revision>
+      <revision>
+	<revnumber>1.3</revnumber>
+	<date>December 30, 2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Revised to be relative to RHEL version 3.</revremark>
+      </revision>
     </revhistory>
     <abstract>
       <para>
@@ -277,24 +283,24 @@
 	or not the <filename moreinfo="none">.ssh</filename> directory
 	exists in your home directory:
 	<screen format="linespecific">
-	  cd
-	  ls -al
+cd
+ls -al
 	</screen>
 	If there is no .ssh directory, create it as follows, and set
 	the permission mode bits:
 	<screen format="linespecific">
-	  mkdir .ssh
-	  chmod 755 .ssh
+mkdir .ssh
+chmod 755 .ssh
 	</screen>
       </para>
       <para>
 	Next, you need to generate your two keys, using
 	the <command moreinfo="none">ssh-keygen</command> command:
 	<screen format="linespecific">
-	  ssh-keygen -t dsa
+ssh-keygen -t rsa
 	</screen>
-	The <emphasis>-t dsa</emphasis> option specifies
-	that you prefer to use the dsa encryption algorithm (rsa is the other
+	The <emphasis>-t rsa</emphasis> option specifies
+	that you prefer to use the rsa encryption algorithm (dsa is the other
 	possibility).
       </para>
       <para>
@@ -332,9 +338,9 @@
 	<filename moreinfo="none">.ssh</filename> directory
 	after running <command moreinfo="none">ssh-keygen</command>,
 	you will find that two files have been added:
-	<filename moreinfo="none">id_dsa</filename>, which is your 
+	<filename moreinfo="none">id_rsa</filename>, which is your 
 	<emphasis>encrypted</emphasis> private key 
-	and <filename moreinfo="none">id_dsa.pub</filename>,
+	and <filename moreinfo="none">id_rsa.pub</filename>,
 	which is your public key.
       </para>
     </sect2>
@@ -349,7 +355,7 @@
 	example, we assume that the remote machine is named
 	<emphasis>whitechuck.rfpk.washington.edu</emphasis>:
 	<screen format="linespecific">
-	  scp ~/.ssh/id_dsa.pub whitechuck.rfpk.washington.edu:
+scp ~/.ssh/id_rsa.pub whitechuck.rfpk.washington.edu:
 	</screen>
 	You will be asked to supply your username and
 	password for the remote host, because
@@ -363,8 +369,8 @@
 	home directory on that machine. If not, create the directory
 	and set the permission mode bits:
 	<screen format="linespecific">
-	  mkdir .ssh
-	  chmod 755 .ssh
+mkdir .ssh
+chmod 755 .ssh
 	</screen>
       </para>
       <para>
@@ -376,8 +382,8 @@
 	(<command moreinfo="none">ssh</command> is very fussy about
 	mode bits):
 	<screen format="linespecific">
-	  cat id_dsa.pub >> .ssh/authorized_keys
-	  chmod 644 .ssh/authorized_keys
+cat id_rsa.pub >> .ssh/authorized_keys
+chmod 644 .ssh/authorized_keys
 	</screen>
       </para>
     </sect2>
@@ -390,7 +396,7 @@
 	starts up, in order to ask you for your pass phrase.
 	Here is the menu sequence:
 	<screen format="linespecific">
-	  <guimenu moreinfo="none">Main</guimenu> => <guimenu moreinfo="none">Extras</guimenu> => <guimenu moreinfo="none">Preferences</guimenu> => <guimenuitem moreinfo="none">Sessions</guimenuitem> => left-click
+<guimenu moreinfo="none">Main</guimenu> => <guimenu moreinfo="none">Preferences</guimenu> => <guimenu moreinfo="none">More Preferences</guimenu> => <guimenuitem moreinfo="none">Sessions</guimenuitem> => left-click
 	</screen>
 	This will open the <interface moreinfo="none">Sessions</interface>
 	window.  Press the 
@@ -399,8 +405,8 @@
 	the <guibutton moreinfo="none">Add</guibutton> button.  Then
 	set the following variables:
 	<screen format="linespecific">
-	  Startup Command: /usr/bin/ssh-add
-	  Priority: 70
+Startup Command: /usr/bin/ssh-add
+Priority: 70
 	</screen>
 	Close the window by pressing the
 	<guibutton moreinfo="none">OK</guibutton> button.
@@ -418,7 +424,7 @@
 	Open up a shell window on your workstation and connect to
 	the remote machine with <command moreinfo="none">ssh</command>:
 	<screen format="linespecific">
-	  ssh whitechuck.rfpk.washington.edu
+ssh whitechuck.rfpk.washington.edu
 	</screen>
 	If everything has been correctly configured, the connection
 	should go through without you having to supply a pass phrase
@@ -450,7 +456,7 @@
 	  <listitem>
 	    <para>
 	      Does a copy of the file
-	      <filename moreinfo="none">~/.ssh/id_dsa.pub</filename>
+	      <filename moreinfo="none">~/.ssh/id_rsa.pub</filename>
 	      in your workstation appear at the end of the file
 	      <filename moreinfo="none">~/.ssh/authorized_keys</filename>
 	      on the remote machine?

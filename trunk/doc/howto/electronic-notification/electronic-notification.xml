@@ -12,6 +12,12 @@
 	<authorinitials>afw</authorinitials>
 	<revremark>Initial version.</revremark>
       </revision>
+      <revision>
+	<revnumber>1.01</revnumber>
+	<date>December 31, 2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Relative to RHEL 3.</revremark>
+      </revision>
     </revhistory>
   <abstract>
     <para>
@@ -27,8 +33,8 @@
 	their programs or scripts send email to interested parties
 	in case something extraordinary occurs.  This document
 	explains how to set up electronic notification email
-	for a RedHat 8.0
-	Linux system and provides some examples of how to use it.
+	for a RedHat Enterprise Linux, Version 3, system,
+	and provides some examples of how to use it.
     </para>
   </abstract>
  </articleinfo>
@@ -92,108 +98,105 @@ fi
       one of these macros.
     </para>
     <sect2>
-      <title>Sendmail Configuration Change</title>
+      <title>Sendmail Configuration Changes</title>
       <para>
-	First we need to install the files that will let us change the
+	We need to install the files that will let us change the
 	<command moreinfo="none">sendmail</command> configuration.
-	We will download the package and use the
-	<command moreinfo="none">rpm</command> command to install it.
-	As an ordinary user, download the package from 
-	<systemitem moreinfo="none" class="systemname">whitechuck</systemitem>:
-	<screen format="linespecific">
-cd /tmp
-scp 'whitechuck:/opt/download/sendmail-cf*' .
-	</screen>
-	Then become the 
-	<systemitem moreinfo="none" class="username">root</systemitem>
-	user, provide the password when asked, and run the
-	<command moreinfo="none">rpm</command> command:
-	<screen format="linespecific">
-su -
-cd /tmp
-rpm -Uhv sendmail-cf*
-	</screen>
-      </para>
-      <para>
-	For the remainder of this configuration process, we will 
-	continue to need
-	<systemitem moreinfo="none" class="username">root</systemitem>
-	root privilege.
-      </para>
-      <para>
-	The principal
-	<command moreinfo="none">sendmail</command> configuration file
-	is called <filename moreinfo="none">sendmail.cf</filename>.  The
-	corresponding macro file is 
-	<filename moreinfo="none">sendmail.mc</filename>. We will make one
-	small change to <filename moreinfo="none">sendmail.mc</filename>
-	and then use the <command moreinfo="none">m4</command> macro
-	processor to create a new
-	<filename moreinfo="none">sendmail.cf</filename>.
-      </para>
-      <para>
-	Before changing <filename moreinfo="none">sendmail.mc</filename>,
-	we should make a backup copy.  Rather than simply copying it
-	to some file with a slightly different name, we will place
-	it in a local RCS
-	archive:
-	<screen format="linespecific">
+	<orderedlist>
+	  <listitem>
+	    <para>
+	      Download the <emphasis>sendmail_cf</emphasis> package.
+	    </para>
+	    <para>
+	      At the site
+	      <ulink url="https://rhn.redhat.com">rhn.redhat.com</ulink>,
+	      you will be presented with a pop-up dialog box that requests
+	      that you sign in.  The username is
+	      <emphasis>alanwesthagen</emphasis>.  If you do not know the
+	      password, get it from the manager of the Software Team.
+	    </para>
+	    <para>
+	      Once you have signed in, click on the 
+	      <guimenuitem>Software</guimenuitem> tab in the line of tabs
+	      to the right of the RedHat logo at the top of the page.
+	    </para>
+	    <para>
+	      On the next page, click on the link to your version of RHEL:
+	      <guimenuitem>RedHat Enterprise Linux WS (V.3 for X86)</guimenuitem>.
+	    </para>
+	    <para>
+	      Click the <guimenuitem>packages</guimenuitem> link.
+	    </para>
+	    <para>
+	      In the <guimenuitem>Filter by Name</guimenuitem> field,
+	      type <emphasis>sendmail</emphasis>, then click 
+	      <guimenuitem>Go</guimenuitem>.
+	    </para>
+	    <para>
+	      Finally, click the check box beside
+	      <guimenuitem>sendmail_cf-...</guimenuitem>
+	      and proceed to download the package.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Install the package.
+	    </para>
+	    <para>
+	      Become the 
+	      <systemitem moreinfo="none" class="username">root</systemitem>
+	      user, provide the password when asked, and run the
+	      <command moreinfo="none">rpm</command> command:
+	      <screen format="linespecific">
+cd
+tar xvf rhn-packages.tar
+su
+cd rhn-packages 
+rpm -Uhv *
+	      </screen>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Edit the macro file, <filename>sendmail.mc</filename>
+	      process it with M4.
+	    </para>
+	    <para>
+	      In a shell window, as root, make a backup copy of 
+	      <filename>sendmail.mc</filename>:
+	      <screen>
 cd /etc/mail
-ci -l sendmail.mc
-	</screen>
-	Next we will use our favorite text editor to change one line
-	in <filename moreinfo="none">sendmail.mc</filename>.
-      </para>
-      <para>
-	Replace the line
-	<screen format="linespecific">
+cp sendmail.mc sendmail.mc.bak
+	      </screen>
+	      Next edit <filename>sendmail.mc</filename>, using your 
+	      favorite editor.  Replace the line
+	      <screen>
 dnl define(`SMART_HOST',`smtp.your.provider')
-	</screen>
-	with the line
-	<screen>
+	      </screen>
+	      with the line
+	      <screen>
 dnl define(`SMART_HOST',`smtp.washington.edu')
-	</screen>
-	If we then run the command
-	<screen format="linespecific">
-rcsdiff sendmail.mc
-	</screen>
-	we should see, as confirmation, the output
-	<screen format="linespecific">
-RCS file: sendmail.mc,v
-retrieving revision 1.1
-diff -r1.1 sendmail.mc
-17c17
-< dnl define(`SMART_HOST',`smtp.your.provider')
----
-> dnl define(`SMART_HOST',`smtp.washington.edu')
-	</screen>
-      </para>
-      <para>
-	To complete the change to the configuration,
-	we run <command moreinfo="none">m4</command> to generate
-	a new <filename moreinfo="none">sendmail.cf</filename>:
-	<screen format="linespecific">
+	      </screen>
+	      and then run <command>m4</command> to process the macros:
+	      <screen>
 m4 sendmail.mc > sendmail.cf
-	</screen>
-      </para>
-    </sect2>
-    <sect2>
-      <title>Restarting the Sendmail Daemon</title>
-      <para>
-	The <command moreinfo="none">sendmail</command> daemon
-	must be restarted (or started, if not currently running) in
-	order to utilize the new configuration):
-	<screen format="linespecific">
+	      </screen>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Restart sendmail and insure that it starts automatically
+	      each time the system boots.
+	    </para>
+	    <para>
+	      In a shell window, as root:
+	      <screen>
 /etc/rc.d/init.d/sendmail restart
-	</screen>
-      </para>
-      <para>	
-	At this point it, we will also insure that 
-	<command moreinfo="none">sendmail</command> is started
-	automatically, each time the system reboots:
-	<screen format="linespecific">
-chkconfig --level 2345 sendmail on
-	</screen>
+/sbin/chkconfig --level 2345 sendmail on
+	      </screen>
+	    </para>
+	  </listitem>
+	</orderedlist>
       </para>
     </sect2>
     <sect2>
@@ -247,13 +250,10 @@ ALL: 127.0.0.1
     <sect2>
       <title>Testing the Results</title>
       <para>
-	Now we should be able to test the results.  Both as the
-	<systemitem moreinfo="none" class="username">root</systemitem>
-	user and as an ordinary user try sending messages using the
-	following patterns:
+	You can test the results by sending yourself or anyone else an email
+	message from the command line.  For example:
 	<screen format="linespecific">
-echo "a message" | mail -s "a subject line" user
-echo "a message" | mail -s "a subject line" user@host
+echo "a message" | mail -s "a subject line" afw@u.washington.edu
 	</screen>
       </para>
     </sect2>
@@ -297,12 +297,14 @@ echo "a message" | mail -s "a subject line" user@host
     </para>
     <para>
       Here is a script to use tar to backup the home directory of a user called
-      <systemitem moreinfo="none" class="username">alan</systemitem>:
-      <screen format="linespecific">
+      <systemitem moreinfo="none" class="username">alan</systemitem> who wants
+      to be notified of success or failure at his emails address
+      <emphasis>afw@u.washington.edu</emphasis>:
+      <screen format="linespecific"> 
 if tar cf home.tgz /home/alan > /dev/null > 2>&1 ; then
-    echo "Tar was successful" -s | mail -s "Tar succeeded" alan
+    echo "Tar was successful" -s | mail -s "Tar succeeded" afw@u.washington.edu
 else
-    echo "Tar had problems"   -s | mail -s "Tar failed"    alan
+    echo "Tar had problems"   -s | mail -s "Tar failed"    afw@u.washington.edu
 fi
       </screen>
     </para>
@@ -315,31 +317,6 @@ fi
       <screen format="linespecific">
 15 3 * * 7 /home/alan/bin/shell/backup
       </screen>
-    </para>
-  </sect1>
-  <sect1>
-    <title>Setting Up Pine to Read Your Notifications</title>
-    <para>
-      You can use the Unix <command moreinfo="none">mail</command>
-      command to read your local notifications (those which were
-      sent to your username rather than your Internet email address).
-      You may find it more convenient, however to use
-      <command moreinfo="none">pine</command>.
-    </para>
-    <para>
-      To configure <command moreinfo="none">pine</command>, start
-      it up from a shell window as an ordinary user. Then follow
-      this menu sequence:
-      <screen format="linespecific">
-S                             (setup)
-C                             (config)
-inbox-path
-Enter                         (press the enter key)
-/var/spool/mail/<emphasis>username</emphasis>
-E                             (exit setup)
-Yes                           (commit changes)
-      </screen>
-      where <emphasis>username</emphasis> is your own username.
     </para>
   </sect1>
 </article>

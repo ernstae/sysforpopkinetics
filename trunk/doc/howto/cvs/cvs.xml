@@ -53,6 +53,12 @@
 	<authorinitials>afw</authorinitials>
 	<revremark>Use update -P in preference to update</revremark>
       </revision>
+      <revision>
+	<revnumber>1.06</revnumber>
+	<date>January 2, 2004</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Relative RHEL Version 3.</revremark>
+      </revision>
     </revhistory>
   <abstract>
     <para>
