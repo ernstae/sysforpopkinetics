@@ -1,4 +1,5 @@
 #include "NonmemTranslator.h"
+#include "SpkCompilerUtil.h"
 
 #include <xercesc/dom/DOM.hpp>
 
@@ -7,11 +8,9 @@
 using namespace xercesc;
 using namespace std;
 
-static const char* trim( const XMLCh* source )
+static const char* trimToChar( const XMLCh* source )
 {
-  XMLCh* target = XMLString::replicate( source );
-  XMLString::trim( target );
-  return C( target );
+  return C( trim(source) );
 }
 static const char* tolower( char* buf, const char* mixed )
 {
@@ -125,7 +124,7 @@ void NonmemTranslator::interpretContent()
   //
   // Verify SpkInML version specification
   //
-  const char* c_spkml_ver = trim( content_node->getAttribute( X("spkinml_ver") ) );
+  const char* c_spkml_ver = trimToChar( content_node->getAttribute( X("spkinml_ver") ) );
   if( strcmp( c_spkml_ver, "1.0" ) != 0 )
   {
     char buf[128];
@@ -136,7 +135,7 @@ void NonmemTranslator::interpretContent()
   //
   // Verify client specification
   //
-  const char * c_client = trim( content_node->getAttribute( X("client") ) );
+  const char * c_client = trimToChar( content_node->getAttribute( X("client") ) );
   if( strcmp( c_client, "nonmem" ) != 0 )
   {
     char buf[128];
@@ -148,7 +147,7 @@ void NonmemTranslator::interpretContent()
   //
   // analysis level
   //
-  const char * c_analysis = trim( content_node->getAttribute( X("analysis") ) );
+  const char * c_analysis = trimToChar( content_node->getAttribute( X("analysis") ) );
   if( strcmp( c_analysis, "population" ) != 0 )
   {
     char buf[128];
@@ -252,7 +251,7 @@ void NonmemTranslator::interpretDriver()
 				     (valueNode)->getAttribute( X( "fixed" ) ) ), "yes" )==0? 
 				  true : false;
 		      double value 
-			= atof( trim( valueNode->getFirstChild()->getNodeValue() ) );
+			= atof( trimToChar( valueNode->getFirstChild()->getNodeValue() ) );
 		      
 		      nonmem.thetaIn[cnt]    = value;
 		      nonmem.thetaFixed[cnt] = isFixed;
@@ -274,7 +273,7 @@ void NonmemTranslator::interpretDriver()
 		  for( cnt=0; cnt < len, valueNode != NULL; cnt++ )
 		    {
 		      double value 
-			= atof( trim( valueNode->getFirstChild()->getNodeValue() ) );
+			= atof( trimToChar( valueNode->getFirstChild()->getNodeValue() ) );
 		      
 		      nonmem.thetaLow[cnt] = value;
 		      valueNode = walker->nextSibling();
@@ -295,7 +294,7 @@ void NonmemTranslator::interpretDriver()
 		  for( cnt=0; cnt < len, valueNode != NULL; cnt++ )
 		    {
 		      double value 
-			= atof( trim( valueNode->getFirstChild()->getNodeValue() ) );
+			= atof( trimToChar( valueNode->getFirstChild()->getNodeValue() ) );
 		      
 		      nonmem.thetaUp[cnt] = value;
 		      valueNode = walker->nextSibling();
@@ -363,7 +362,7 @@ void NonmemTranslator::interpretDriver()
 			     (valueNode)->getAttribute( X( "fixed" ) ) ), "yes" )==0? 
 		true : false;
 	      double value 
-		= atof( trim( valueNode->getFirstChild()->getNodeValue() ) );
+		= atof( trimToChar( valueNode->getFirstChild()->getNodeValue() ) );
 	      
 	      nonmem.omegaIn[cnt]    = value;
               nonmem.omegaFixed[cnt] = isFixed;
@@ -424,7 +423,7 @@ void NonmemTranslator::interpretDriver()
 			     (valueNode)->getAttribute( X( "fixed" ) ) ), "yes" )==0? 
 		true : false;
 	     double value 
-	       = atof( trim( valueNode->getFirstChild()->getNodeValue() ) );
+	       = atof( trimToChar( valueNode->getFirstChild()->getNodeValue() ) );
 	      
 	      nonmem.sigmaIn[cnt]    = value;
               nonmem.sigmaFixed[cnt] = isFixed;
@@ -480,7 +479,7 @@ void NonmemTranslator::interpretDriver()
 			     (valueNode)->getAttribute( X( "fixed" ) ) ), "yes" )==0? 
 		true : false;
 	      double value 
-		= atof( trim( valueNode->getFirstChild()->getNodeValue() ) );
+		= atof( trimToChar( valueNode->getFirstChild()->getNodeValue() ) );
 	      
 	      nonmem.etaIn[cnt]    = value;
               nonmem.etaFixed[cnt] = isFixed; 
@@ -831,7 +830,7 @@ void NonmemTranslator::interpretData()
       assert( XMLString::equals( individual->getNodeName(), X("individual") ) );
       ++ind_cnt;
 
-      int length = atoi( trim( individual->getAttribute( X("length") ) ) );
+      int length = atoi( trimToChar( individual->getAttribute( X("length") ) ) );
 
       int order;
       const XMLCh* xml_order = individual->getAttribute( X("order") );
@@ -1007,7 +1006,7 @@ void NonmemTranslator::interpretModel()
 	      isPkGiven = true;
               
 	      FILE * fo = fopen( "pk", "w" );	      
-	      const char * mixed = trim( model->getFirstChild()->getNodeValue() );
+	      const char * mixed = trimToChar( model->getFirstChild()->getNodeValue() );
               const int  len = strlen( mixed );
 	      char buf[ strlen( mixed ) + 1 ];
 
