@@ -28,15 +28,42 @@ ClientTranslator & ClientTranslator::operator=( const ClientTranslator& )
 {
 }
 ClientTranslator::ClientTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
-  : source( sourceIn ), data( dataIn )
+  : source( sourceIn ), 
+    data( dataIn ),
+    X_SPKDATA    ( XMLString::transcode( "spkdata" ) ),
+    X_VERSION    ( XMLString::transcode( "version" ) ),
+    X_TABLE      ( XMLString::transcode( "table" ) ),
+    X_COLUMNS    ( XMLString::transcode( "columns" ) ),
+    X_ROWS       ( XMLString::transcode( "rows" ) ),
+    X_DESCRIPTION( XMLString::transcode( "description" ) ),
+    X_ROW        ( XMLString::transcode( "row" ) ),
+    X_POSITION   ( XMLString::transcode( "position" ) ),
+    X_VALUE      ( XMLString::transcode( "value" ) ),
+    X_TYPE       ( XMLString::transcode( "type" ) ),
+    X_NUMERIC    ( XMLString::transcode( "numeric" ) )
 {
 }
 ClientTranslator::~ClientTranslator()
 {
+  XMLString::release( &X_SPKDATA );
+  XMLString::release( &X_VERSION );
+  XMLString::release( &X_TABLE );
+  XMLString::release( &X_COLUMNS );
+  XMLString::release( &X_ROWS );
+  XMLString::release( &X_DESCRIPTION );
+  XMLString::release( &X_ROW );
+  XMLString::release( &X_POSITION );
+  XMLString::release( &X_VALUE );
+  XMLString::release( &X_TYPE );
+  XMLString::release( &X_NUMERIC );
 }
 const SymbolTable* ClientTranslator::getSymbolTable() const
 {
-  return &stable;
+  return &table;
+}
+SymbolTable* ClientTranslator::getSymbolTable()
+{
+  return &table;
 }
 //***************************************************************************************
 //
@@ -59,31 +86,34 @@ const SymbolTable* ClientTranslator::getSymbolTable() const
 void ClientTranslator::parseData()
 {
   //
-  // The precondition: The symbol table has no entry yet for data labels.
+  // Precondition: The symbol table has no entry yet for data labels.
   //
-  assert( stable.getLabels().size() == 0 );
+  assert( table.getLabels().size() == 0 );
 
   DOMElement * spkdata = data->getDocumentElement();
-  assert( XMLString::equals( spkdata->getNodeName(), XMLString::transcode("spkdata") ) );
-  const XMLCh* version = spkdata->getAttribute( XMLString::transcode("version") );
-  assert( XMLString::equals( version, XMLString::transcode("0.1") ) );
+  assert( XMLString::equals( spkdata->getNodeName(), X_SPKDATA ) );
+  const XMLCh* version = spkdata->getAttribute( X_VERSION );
+
+  XMLCh* pointOne = XMLString::transcode( "0.1" );
+  assert( XMLString::equals( version, pointOne ) );
+  XMLString::release( &pointOne );
 
   //
   // Process through n number of <table>s, where n >= 0.
   // NOTE: For v0.1, n == 1.
   //
-  DOMNodeList * tables = spkdata->getElementsByTagName( XMLString::transcode("table") );
-  int nTables = tables->getLength();
-  assert( nTables == 1 );
+  DOMNodeList * dataTables = spkdata->getElementsByTagName( X_TABLE );
+  int nDataTables = dataTables->getLength();
+  assert( nDataTables == 1 );
 
-  for( int i=0, nIDs=0; i<nTables; i++ )
+  for( int i=0, nIDs=0; i<nDataTables; i++ )
     {
-      DOMElement * table = dynamic_cast<DOMElement*>( tables->item(i) );
+      DOMElement * dataTable = dynamic_cast<DOMElement*>( dataTables->item(i) );
       unsigned int nVals;
-      XMLString::textToBin( table->getAttribute( XMLString::transcode("columns") ),
+      XMLString::textToBin( dataTable->getAttribute( X_COLUMNS ),
 			    nVals );
       unsigned int nRows;
-      XMLString::textToBin( table->getAttribute( XMLString::transcode("rows") ),
+      XMLString::textToBin( dataTable->getAttribute( X_ROWS ),
 			    nRows );
       map< string, map<string, vector<string> > > tmp_values;
       vector<string> tmp_ids;
@@ -91,26 +121,36 @@ void ClientTranslator::parseData()
       string tmp_types [ nVals ];
       vector<int>    tmp_nDataRecords;
 
-      DOMNodeList * description = table->getElementsByTagName( XMLString::transcode("description") );
+      /*
+      DOMNodeList * description = dataTable->getElementsByTagName( X_DESCRIPTION );
       assert( description == NULL || description->getLength() == 1 );
       const XMLCh* xml_descript = dynamic_cast<DOMText*>(description->item(0)->getFirstChild())->getNodeValue();
-      string descript = (xml_descript!=NULL? XMLString::transcode( xml_descript ) : "" );
+      char * descript = (XMLString::stringLen( xml_descript ) > 0 ? XMLString::transcode( xml_descript ) : NULL );
+      */
       
-      DOMNodeList * rows = table->getElementsByTagName( XMLString::transcode("row") );
+      DOMNodeList * rows = dataTable->getElementsByTagName( X_ROW );
       assert( rows->getLength() == nRows );
       for( int j=0; j<nRows; j++ )
 	{
-	  string id;
 	  DOMElement  * row    = dynamic_cast<DOMElement*>( rows->item(j) );
-	  const XMLCh* xml_position = row->getAttribute( XMLString::transcode("position") );
+	  const XMLCh* xml_position = row->getAttribute( X_POSITION );
 	  assert( xml_position != NULL );
 	  unsigned int pos;
 	  if( !XMLString::textToBin( xml_position, pos ) )
 	    assert( false ); // pos = j
-	  DOMNodeList * values = row->getElementsByTagName( XMLString::transcode("value") );
+	  DOMNodeList * values = row->getElementsByTagName( X_VALUE );
 	  assert( values->getLength() == nVals );
+
+	  //
+	  // At the first iteration, k=0, the value of *id is set and it is used for the
+	  // rest of iterations.
+	  //
+	  char * id = NULL;
 	  for( int k=0; k<nVals; k++ )
 	    {
+	      //
+	      // The values in the first row (ie. position=1) are data labels.
+	      //
 	      if( pos==1 )
 		{
 		  const XMLCh* xml_label = values->item(k)->getFirstChild()->getNodeValue();
@@ -118,16 +158,32 @@ void ClientTranslator::parseData()
 		  tmp_labels[k] = XMLString::transcode( xml_label );
 		  continue;
 		}
+
+	      const XMLCh* xml_type;
+	      if( dynamic_cast<DOMElement*>( values->item(k) )->hasAttribute( X_TYPE ) )
+		{
+		  xml_type = dynamic_cast<DOMElement*>( values->item(k) )->getAttribute( X_TYPE );
+		}
+	      else
+		{
+		  xml_type = X_NUMERIC;
+		}
+	      //
+	      // The value types in the second row (ie. position=2) are used as reference
+	      // against which the value types in the subsequent rows will be compared.
+	      //
 	      if( pos==2 )
 		{
-		  const XMLCh* xml_type = 
-		    dynamic_cast<DOMElement*>( 
-					      values->item(k) )->getAttribute( XMLString::transcode("type") );
-		  tmp_types[k] = ( xml_type==NULL? "numeric" : XMLString::transcode(xml_type) );
-		}
-	      const XMLCh* xml_type = dynamic_cast<DOMElement*>( 
-								values->item(k) )->getAttribute( XMLString::transcode("type") );
+		  char * tmp = XMLString::transcode(xml_type);
+		  tmp_types[k] = string( tmp );
+		  delete tmp;
+		}	      
+
+	      //
+	      // For the subsequent rows (>2), the value types should match the entries in tmp_types[].
+	      //
 	      assert( XMLString::transcode( xml_type ) == tmp_types[k] );
+	      
 	      const XMLCh* xml_value = values->item(k)->getFirstChild()->getNodeValue();
               if( k == 0 )
 	      {
@@ -139,8 +195,11 @@ void ClientTranslator::parseData()
 		    ++nIDs;
 		  }
 	      }
-	      tmp_values[id][tmp_labels[k]].push_back (xml_value==NULL? "" : XMLString::transcode(xml_value) );
+	      char * c_value = ( XMLString::stringLen( xml_value )>0? XMLString::transcode( xml_value ) : NULL );
+	      tmp_values[id][tmp_labels[k]].push_back( string(c_value) );
+	      delete c_value;
 	    }
+	  delete id;
 	}
      
       assert( nIDs == tmp_ids.size() );
@@ -160,7 +219,7 @@ void ClientTranslator::parseData()
       //
       for( int k=0; k<nVals; k++ )
 	{
-	  stable.insertLabel( tmp_labels[k], "", tmp_nDataRecords );
+	  table.insertLabel( tmp_labels[k], "", tmp_nDataRecords );
 
 	}
 
@@ -175,7 +234,7 @@ void ClientTranslator::parseData()
 	{
 	  for( int k=0; k<nVals; k++ )
 	    {
-	      Symbol *s = stable.findi( tmp_labels[k] );
+	      Symbol *s = table.findi( tmp_labels[k] );
 	      vector<string>::const_iterator itr = (tmp_values[*id][tmp_labels[k]]).begin();
 	      for( int l=0; itr != tmp_values[*id][tmp_labels[k]].end(); l++, itr++ )
 		{
