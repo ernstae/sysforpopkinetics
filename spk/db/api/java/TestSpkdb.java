@@ -7,7 +7,7 @@ public class TestSpkdb {
 	String password = "codered";
 	String firstName = "Mike";
 	String surname = "Jordan";
-	final int maxTests = 17;
+	final int maxTests = 20;
 	String xmlSource = "<spksource></spksource>";
 
 	boolean b = true;
@@ -214,12 +214,27 @@ public class TestSpkdb {
 		    s = "endJob";
 		    b = Spkdb.endJob(conn, newerJobId, "xxxx", "job report");
 		    break;
+		case 18:
+		    target = true;
+		    s = "jobReport";
+		    String report = Spkdb.jobReport(conn, newerJobId);
+		    b = report.compareTo("job report") == 0;
+		    break;
+		case 19:
+		    target = false;
+		    s = "jobReport";
+		    report = Spkdb.jobReport(conn, newestJobId);
+		    b = report.compareTo("job report") == 0;
+		    break;
+		default:
+		    break;
 		}
 	    } catch (Exception e) {
 		s += " >> " + e;
 		b = false;
 	    }
-	    ok(b == target, i, s);
+	    if (i <= maxTests)
+		ok(b == target, i, s);
 	}
 	try {
 	    b = Spkdb.disconnect(conn);
