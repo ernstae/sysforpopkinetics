@@ -1628,7 +1628,7 @@ bool IndPredModel::doDataMean_indPar( valarray<double>& ret ) const
     //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    // Set the partial derivatives that depend on theta:
+    // Set the partial derivatives of the elements that depend on theta:
     //
     //      (k)
     //     d       f    ( b  )  .
@@ -2010,7 +2010,7 @@ bool IndPredModel::doDataVariance_indPar( valarray<double>& ret ) const
       hCol_theta,
       nTheta );
 
-    // Set the partial derivatives that depend on theta:
+    // Set the partial derivatives of the elements that depend on theta:
     //
     //                                -                               -
     //      (k)                      |         T                       |
@@ -2040,7 +2040,7 @@ bool IndPredModel::doDataVariance_indPar( valarray<double>& ret ) const
       omega_omegaParCurr,
       nOmegaPar );
 
-    // Set the partial derivatives that depend on omegaPar:
+    // Set the partial derivatives of the elements that depend on omegaPar:
     //
     //                                   -                                        -
     //      (k)                         |        T            T                    |
