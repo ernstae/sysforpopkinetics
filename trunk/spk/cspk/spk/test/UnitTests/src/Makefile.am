@@ -163,8 +163,8 @@ testall_SOURCES = \
 	replaceJthTest.h \
 	replaceSubblockTest.cpp \
 	replaceSubblockTest.h \
-	residualsTest.cpp \
-	residualsTest.h \
+	wresTest.cpp \
+	wresTest.h \
 	rvecInverseTest.cpp \
 	rvecInverseTest.h \
 	rvecTest.cpp \
@@ -273,7 +273,7 @@ pkginclude_HEADERS = \
 	replaceIthTest.h \
 	replaceJthTest.h \
 	replaceSubblockTest.h \
-	residualsTest.h \
+	wresTest.h \
 	rvecInverseTest.h \
 	rvecTest.h \
 	simulateTest.h \

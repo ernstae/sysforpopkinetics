@@ -80,7 +80,7 @@
 #include "src/replaceIthTest.h"
 #include "src/replaceJthTest.h"
 #include "src/replaceSubblockTest.h"
-#include "src/residualsTest.h"
+#include "src/wresTest.h"
 #include "src/rvecInverseTest.h"
 #include "src/rvecTest.h"
 #include "src/simulateTest.h"
@@ -193,7 +193,7 @@ int main( int argc, const char * argv[] )
   master_list_of_tests[ "replaceIthTest" ]                   = replaceIthTest::suite();
   master_list_of_tests[ "replaceJthTest" ]                   = replaceJthTest::suite();
   master_list_of_tests[ "replaceSubblockTest" ]              = replaceSubblockTest::suite();
-  master_list_of_tests[ "residualsTest" ]                    = residualsTest::suite();
+  master_list_of_tests[ "wresTest" ]                         = wresTest::suite();
   master_list_of_tests[ "rvecInverseTest" ]                  = rvecInverseTest::suite();
   master_list_of_tests[ "rvecTest" ]                         = rvecTest::suite();
   master_list_of_tests[ "simulateTest" ]                     = simulateTest::suite();
