@@ -103,7 +103,7 @@ NonmemTranslator::NonmemTranslator( )
   : nonmemModel( NONE ), nonmemParameterization( DEFAULT )
 {
   //  gSpkExpSymbolTable = new SymbolTable;
-  gSpkExpTree        = expTreeUtils.createTree( "unit" );
+  //  gSpkExpTree        = expTreeUtils.createTree( "unit" );
 }
 NonmemTranslator::~NonmemTranslator( )
 {
@@ -305,17 +305,24 @@ void NonmemTranslator::translate( DOMDocument* tree )
   //
   string order_id_pair[ nIndividuals +1 ];
 
+
+  SymbolTable table;
+
   assert( tree->getElementsByTagName( X("data") ) != NULL );
   DOMElement * dataNode = dynamic_cast<DOMElement*>( tree->getElementsByTagName( X("data") )->item(0) );
   assert( dataNode != NULL );
 
-  read_nonmem_data( dataNode, nIndividuals, label_alias_mapping, data_for, order_id_pair );
-
+  read_nonmem_data( dataNode, nIndividuals, table, label_alias_mapping, data_for, order_id_pair );
+  
   assert( tree->getElementsByTagName( X("model") ) != NULL );
   DOMElement * modelNode = dynamic_cast<DOMElement*>( tree->getElementsByTagName( X("model") )->item(0) );
   assert( modelNode != NULL );
 
-  SymbolTable table;
+
+  
+
+
+
   gSpkExpSymbolTable = &table;
   pair<enum NonmemModel, enum NonmemParameterization> model_type 
     = read_nonmem_model( modelNode, nIndividuals, gSpkExpSymbolTable );

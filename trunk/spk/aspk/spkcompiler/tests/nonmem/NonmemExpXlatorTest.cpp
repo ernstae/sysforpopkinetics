@@ -1,5 +1,7 @@
 #include <iostream>
 #include <valarray>
+#include <fstream>
+#include <string>
 
 #include "NonmemExpXlatorTest.h"
 
@@ -27,7 +29,7 @@ extern "C"{
 extern int                gSpkExpLines;
 extern int                gSpkExpErrors;
 extern SymbolTable      * gSpkExpSymbolTable;
-extern DOMDocument      * gSpkExpTree;
+extern FILE             * gSpkExpOutput;
 extern FILE             * yyin;
 extern int                yydebug;
 
@@ -38,34 +40,48 @@ void NonmemExpXlatorTest::setUp()
 void NonmemExpXlatorTest::tearDown()
 {
 }
-void NonmemExpXlatorTest::testSimplest()
+void NonmemExpXlatorTest::testScalarAssignmentToScalar()
 {
-  yydebug = 0;
+  char input[]        = "testScalarAssignmentToScalar.in";
+  char output[]       = "testScalarAssignmentToScalar.out";
 
-  char errmess[128];
+  FILE * pInput = fopen( input, "w" );
+  CPPUNIT_ASSERT( pInput != NULL );
+  fputs( "A = 1\n",       pInput );
+  fputs( "A = 1.0\n",     pInput );
+  fputs( "A = 1.E01\n",   pInput );
+  fputs( "A = 1.0E01\n",  pInput );
+  fputs( "A = 1.0E1\n",   pInput );
+  fputs( "A = +1\n",      pInput );
+  fputs( "A = +1.0\n",    pInput );
+  fputs( "A = -1.E01\n",  pInput );
+  fputs( "A = -1.0E01\n", pInput );
+  fputs( "A = -1.0E1\n",  pInput );
+  fputs( "A = (1)\n",     pInput );
+  fputs( "A = +(1)\n",    pInput );
+  fputs( "A = -(1)\n",    pInput );
 
-  // Populate the symbol table with pre-defined symbols.
-  //
-  char input[] = "simplest.in";
-  file = fopen( input, "r" );
+  fclose( pInput );
 
-  
-  sprintf( errmess, "Failed to open %s!", input );
-  CPPUNIT_ASSERT_MESSAGE( errmess, file != NULL );
-  yyin = file;
+  pInput = fopen( input, "r" );
+  CPPUNIT_ASSERT( pInput != NULL );
+
+  yyin = pInput;
   CPPUNIT_ASSERT( yyin != NULL );
 
   gSpkExpErrors = 0;
   gSpkExpLines  = 0;
-  gSpkExpTree = expTreeUtil.createTree("unit");
   gSpkExpSymbolTable = new SymbolTable;
   CPPUNIT_ASSERT( gSpkExpSymbolTable != NULL );
+  gSpkExpOutput = fopen( output, "w" );
+  yydebug = 0;
 
   yyparse();
 
-  fclose( file );
-  sprintf( errmess, "Syntax error found (%d)!", gSpkExpErrors );
-  CPPUNIT_ASSERT_MESSAGE( errmess, gSpkExpErrors==0 );
+  fclose( pInput );
+  fclose( gSpkExpOutput );
+
+  CPPUNIT_ASSERT( gSpkExpErrors==0 );
   if( gSpkExpErrors == 0 )
   {
     //expTreeUtil.printToStdout( gSpkExpTree );
@@ -73,88 +89,149 @@ void NonmemExpXlatorTest::testSimplest()
 
   //cout << endl;
   //gSpkExpSymbolTable->dump();
+
+  string buf;
+  ifstream pOutput( output );
+  CPPUNIT_ASSERT( pOutput.good() );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1;" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1.0;" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1.E01;" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1.0E01;" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1.0E1;" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "+1;" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "+1.0;" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "-1.E01;" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "-1.0E01;" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "-1.0E1;" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "+(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
+  
+  pOutput >> buf;  
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "-(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
+
+  pOutput.close();
+  remove( input );
+  remove( output );
   delete gSpkExpSymbolTable;
 }
-void NonmemExpXlatorTest::testParse()
+void NonmemExpXlatorTest::testVectorElementAssignmentToScalar()
 {
-  yydebug = 0;
+  char input[]        = "testVectorElementAssignmentToScalar.in";
+  char output[]       = "testVectorElementAssignmentToScalar.out";
+  char statementIn[]  = "A(1) = 1\n";
 
-  char errmess[128];
+  FILE * pInput = fopen( input, "w" );
+  CPPUNIT_ASSERT( pInput != NULL );
+  fputs( statementIn, pInput );
+  fclose( pInput );
 
-  // Populate the symbol table with pre-defined symbols.
-  //
-  char input[] = "nmtran1.in";
-  file = fopen( input, "r" );
+  pInput = fopen( input, "r" );
+  CPPUNIT_ASSERT( pInput != NULL );
 
-  sprintf( errmess, "Failed to open %s!\n", input );
-  CPPUNIT_ASSERT_MESSAGE( errmess, input != NULL );
-  yyin = file;
+  yyin = pInput;
   CPPUNIT_ASSERT( yyin != NULL );
 
   gSpkExpErrors = 0;
   gSpkExpLines  = 0;
-  gSpkExpTree = expTreeUtil.createTree("unit");
   gSpkExpSymbolTable = new SymbolTable;
-  
-  //
-  // NONMEM core keywords
-  //
-  Symbol theta( "THETA", Symbol::VECTOR, Symbol::DOUBLE, true );
-  theta.size( 3 );
-  gSpkExpSymbolTable->insert( theta );
-
-  Symbol sigma( "SIGMA", Symbol::MATRIX, Symbol::DOUBLE, true );
-  sigma.dim( 2, 2 );
-  gSpkExpSymbolTable->insert( sigma );
-
-  Symbol omega( "OMEGA", Symbol::MATRIX, Symbol::DOUBLE, true );
-  omega.dim( 3, 3 );
-  gSpkExpSymbolTable->insert( omega );
-
-  Symbol eta( "ETA", Symbol::VECTOR, Symbol::DOUBLE, true );
-  eta.size( 5 );
-  gSpkExpSymbolTable->insert( eta );
-
-  //
-  // ADVAN, TRANS parameters
-  //
-  Symbol ka( "KA", Symbol::SCALAR, Symbol::DOUBLE, true );
-  Symbol ke( "KE", Symbol::SCALAR, Symbol::DOUBLE, true );
-  Symbol cl( "CL", Symbol::SCALAR, Symbol::DOUBLE, true );
-  Symbol f ( "F",  Symbol::SCALAR, Symbol::DOUBLE, true );
-  gSpkExpSymbolTable->insert( ka );
-  gSpkExpSymbolTable->insert( ke );
-  gSpkExpSymbolTable->insert( cl );
-  gSpkExpSymbolTable->insert( f );
-
-  // 
-  // As if these are from data file.
-  //
-  const int nMeasurements = 3;
-  Symbol dose( "DOSE", Symbol::VECTOR, Symbol::DOUBLE, true );
-  dose.size( nMeasurements );
-  gSpkExpSymbolTable->insert( dose );
-
-  Symbol wt( "WT", Symbol::VECTOR, Symbol::DOUBLE, true );
-  wt.size( nMeasurements );
-  gSpkExpSymbolTable->insert( wt );
-
-  Symbol time( "TIME", Symbol::VECTOR, Symbol::DOUBLE, true );
-  time.size( nMeasurements );
-  gSpkExpSymbolTable->insert( time );
-
-  Symbol ds( "DS", Symbol::VECTOR, Symbol::DOUBLE, true );
-  ds.size( nMeasurements );
-  gSpkExpSymbolTable->insert( ds );
-
-
-  gSpkExpSymbolTable->insert( ds );
+  CPPUNIT_ASSERT( gSpkExpSymbolTable != NULL );
+  gSpkExpOutput = fopen( output, "w" );
+  yydebug = 0;
 
   yyparse();
 
-  fclose( file );
-  sprintf( errmess, "Syntax error found (%d)!", gSpkExpErrors );
-  CPPUNIT_ASSERT_MESSAGE( errmess, gSpkExpErrors==0 );
+  fclose( pInput );
+  fclose( gSpkExpOutput );
+
+  CPPUNIT_ASSERT( gSpkExpErrors==0 );
   if( gSpkExpErrors == 0 )
   {
     //expTreeUtil.printToStdout( gSpkExpTree );
@@ -163,20 +240,463 @@ void NonmemExpXlatorTest::testParse()
   //cout << endl;
   //gSpkExpSymbolTable->dump();
 
+  string buf;
+  ifstream pOutput( output );
+  CPPUNIT_ASSERT( pOutput.good() );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A[" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "-" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "]" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1;" );
+
+  pOutput.close();
+  remove( input );
+  remove( output );
+  delete gSpkExpSymbolTable;
 }
+void NonmemExpXlatorTest::testFunctions()
+{
+  char input[]        = "testFunctions.in";
+  char output[]       = "testFunctions.out";
+
+  FILE * pInput = fopen( input, "w" );
+  CPPUNIT_ASSERT( pInput != NULL );
+  fputs( "A = EXP(X)\n", pInput );
+  fputs( "A(1) = EXP(X)\n", pInput );
+  fputs( "A = LOG(1)\n", pInput );
+  fputs( "A = LOG10(100)\n", pInput );
+  fputs( "A = SQRT(4.0)\n", pInput );
+  fputs( "A = B( X**Y )\n", pInput );
+  fputs( "A = EXP(X) * SQRT(Y)\n", pInput );
+  fputs( "A = 1.0 * ( EXP(X) + Y )\n", pInput ); 
+  
+  fclose( pInput );
+
+  pInput = fopen( input, "r" );
+  CPPUNIT_ASSERT( pInput != NULL );
+
+  yyin = pInput;
+  CPPUNIT_ASSERT( yyin != NULL );
+
+  gSpkExpErrors = 0;
+  gSpkExpLines  = 0;
+  gSpkExpSymbolTable = new SymbolTable;
+  CPPUNIT_ASSERT( gSpkExpSymbolTable != NULL );
+  gSpkExpOutput = fopen( output, "w" );
+  yydebug = 0;
+
+  yyparse();
+
+  fclose( pInput );
+  fclose( gSpkExpOutput );
+
+  CPPUNIT_ASSERT( gSpkExpErrors==0 );
+  if( gSpkExpErrors == 0 )
+  {
+    //expTreeUtil.printToStdout( gSpkExpTree );
+  }
+
+  //cout << endl;
+  //gSpkExpSymbolTable->dump();
+
+  string buf;
+  ifstream pOutput( output );
+  CPPUNIT_ASSERT( pOutput.good() );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "exp(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A[" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "-" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "]" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "exp(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "log(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "log10(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "100" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "sqrt(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "4.0" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "B[" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "pow(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X," );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "Y" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "-" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "];" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "exp(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "*" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "sqrt(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "Y" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1.0" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "*" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "exp(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "+" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "Y" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
+
+  pOutput.close();
+  remove( input );
+  remove( output );
+  delete gSpkExpSymbolTable;
+}
+
+void NonmemExpXlatorTest::testIfStmt()
+{
+  char input[]        = "testIfStmt.in";
+  char output[]       = "testIfStmt.out";
+
+  FILE * pInput = fopen( input, "w" );
+  CPPUNIT_ASSERT( pInput != NULL );
+  fputs( "IF( X.NE.Y ) A = B(1)\n", pInput );
+  fputs( "IF( X.NE.Y ) A = B(1) ;comment\n", pInput );
+  fclose( pInput );
+
+  pInput = fopen( input, "r" );
+  CPPUNIT_ASSERT( pInput != NULL );
+
+  yyin = pInput;
+  CPPUNIT_ASSERT( yyin != NULL );
+
+  gSpkExpErrors = 0;
+  gSpkExpLines  = 0;
+  gSpkExpSymbolTable = new SymbolTable;
+  CPPUNIT_ASSERT( gSpkExpSymbolTable != NULL );
+  gSpkExpOutput = fopen( output, "w" );
+  yydebug = 0;
+
+  yyparse();
+
+  fclose( pInput );
+  fclose( gSpkExpOutput );
+
+  CPPUNIT_ASSERT( gSpkExpErrors==0 );
+  if( gSpkExpErrors == 0 )
+  {
+    //expTreeUtil.printToStdout( gSpkExpTree );
+  }
+
+  //cout << endl;
+  //gSpkExpSymbolTable->dump();
+
+  string buf;
+  ifstream pOutput( output );
+  CPPUNIT_ASSERT( pOutput.good() );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "if(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "!=" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "Y" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "{" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "B[" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "-" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "];" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "}" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "if(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "!=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "Y" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "{" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "B[" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "-" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "];" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "}" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "//" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "comment" );
+
+  pOutput.close();
+  remove( input );
+  remove( output );
+  delete gSpkExpSymbolTable;
+}
+void NonmemExpXlatorTest::testIfThenStmt()
+{
+  char input[]        = "testIfThenStmt.in";
+  char output[]       = "testIfTenStmt.out";
+
+  FILE * pInput = fopen( input, "w" );
+  CPPUNIT_ASSERT( pInput != NULL );
+  fputs( "IF( X.NE.Y ) THEN\n", pInput );
+  fputs( "A = B(1)\n", pInput );
+  fputs( "C = D   ;comment\n", pInput );
+  fputs( "ENDIF\n", pInput );
+  fclose( pInput );
+
+  pInput = fopen( input, "r" );
+  CPPUNIT_ASSERT( pInput != NULL );
+
+  yyin = pInput;
+  CPPUNIT_ASSERT( yyin != NULL );
+
+  gSpkExpErrors = 0;
+  gSpkExpLines  = 0;
+  gSpkExpSymbolTable = new SymbolTable;
+  CPPUNIT_ASSERT( gSpkExpSymbolTable != NULL );
+  gSpkExpOutput = fopen( output, "w" );
+  yydebug = 0;
+
+  yyparse();
+
+  fclose( pInput );
+  fclose( gSpkExpOutput );
+
+  CPPUNIT_ASSERT( gSpkExpErrors==0 );
+  if( gSpkExpErrors == 0 )
+  {
+    //expTreeUtil.printToStdout( gSpkExpTree );
+  }
+
+  //cout << endl;
+  //gSpkExpSymbolTable->dump();
+
+  string buf;
+  ifstream pOutput( output );
+  CPPUNIT_ASSERT( pOutput.good() );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "if(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "!=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "Y" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "{" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "B[" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "-" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "];" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "C" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "D;" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "//" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "comment" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "}" );
+
+  pOutput.close();
+  remove( input );
+  remove( output );
+  delete gSpkExpSymbolTable;
+}
+
 CppUnit::Test * NonmemExpXlatorTest::suite()
 {
   CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite( "NonmemExpXlatorTest" );
+
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<NonmemExpXlatorTest>(
-         "testSimplest", 
-	 &NonmemExpXlatorTest::testSimplest ) );
- 
+         "testScalarAssignmentToScalar", 
+	 &NonmemExpXlatorTest::testScalarAssignmentToScalar ) );
+
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<NonmemExpXlatorTest>(
-         "testParse",
-	 &NonmemExpXlatorTest::testParse ) );
- 
-   return suiteOfTests;
+         "testVectorElementAssignmentToScalar", 
+	 &NonmemExpXlatorTest::testVectorElementAssignmentToScalar ) );
+
+  suiteOfTests->addTest( 
+     new CppUnit::TestCaller<NonmemExpXlatorTest>(
+         "testFunctions",
+	 &NonmemExpXlatorTest::testFunctions ) );
+
+  suiteOfTests->addTest( 
+     new CppUnit::TestCaller<NonmemExpXlatorTest>(
+         "testIfStmt",
+	 &NonmemExpXlatorTest::testIfStmt) );
+
+  suiteOfTests->addTest( 
+     new CppUnit::TestCaller<NonmemExpXlatorTest>(
+         "testIfThenStmt",
+	 &NonmemExpXlatorTest::testIfThenStmt) );
+  
+     return suiteOfTests;
 }
 

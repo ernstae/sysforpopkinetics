@@ -19,8 +19,11 @@ public:
     virtual void setUp();
     virtual void tearDown();
 
-    void testSimplest();
-    void testParse();
+    void testScalarAssignmentToScalar();
+    void testVectorElementAssignmentToScalar();
+    void testFunctions();
+    void testIfStmt();
+    void testIfThenStmt();
 };
 
 #endif

@@ -126,7 +126,13 @@ extern SymbolTable *gSpkExpSymbolTable;
  * @note This pointer is acutally declared in a file that defines yyparse()
  * for each client type.
  */
-extern xercesc::DOMDocument *gSpkExpTree;
+//extern xercesc::DOMDocument *gSpkExpTree;
+
+/**
+ * Global pointer to a FILE handler pointing to an open writable
+ * file to which the results of yyparse() is redirected.
+ */
+extern FILE * gSpkExpOutput;
 
 /**
  * This is the top level class in the SPK Compiler package
