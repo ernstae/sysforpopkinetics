@@ -40,7 +40,6 @@
 #include "SpkExceptionTest.h"
 
 using namespace std;
-using namespace SpkException_const;
 using namespace CppUnit;
 
 void SpkExceptionTest::setUp()

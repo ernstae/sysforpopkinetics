@@ -32,33 +32,24 @@
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
-namespace SpkError_const{
-  const unsigned int ERRORCODE_FIELD_LEN   =   4;
-  const unsigned int LINENUM_FIELD_LEN     =   6;
-  const unsigned int FILENAME_FIELD_LEN    = 128;
-  const unsigned int MESSAGE_FIELD_LEN     = 256;
-  const unsigned int DESCRIPTION_FIELD_LEN = 128;
-
-  const unsigned int ERROR_SIZE        
-      = FILENAME_FIELD_LEN + 1
-      + MESSAGE_FIELD_LEN + 1
-      + ERRORCODE_FIELD_LEN + 1
-      + LINENUM_FIELD_LEN + 1
-      + DESCRIPTION_FIELD_LEN + 1
-      //+ strlen("errorcode\n") + strlen("linenum\n") + strlen("filename\n") + strlen("message\n")
-      // + strlen("description\n");
-      + 10 + 8 + 9 + 8 + 13;
-
-  const char ERRORCODE_FIELD_NAME[] = "errorcode";
-  const char ERRORCODE_DESCRIPTION_FIELD_NAME[] = "description";
-  const char FILENAME_FIELD_NAME[]  = "filename";
-  const char LINENUM_FIELD_NAME[]   = "linenum";
-  const char MESSAGE_FIELD_NAME[]   = "message";
-}
 class SpkError
 {
 
 public:
+  static const unsigned int ERRORCODE_FIELD_LEN;
+  static const unsigned int ERRORCODE_DESCRIPTION_FIELD_LEN;
+  static const unsigned int LINENUM_FIELD_LEN;
+  static const unsigned int FILENAME_FIELD_LEN;
+  static const unsigned int MESSAGE_FIELD_LEN;
+  static const unsigned int DESCRIPTION_FIELD_LEN;
+  static const unsigned int ERROR_SIZE;
+
+  static const char ERRORCODE_FIELD_NAME[];
+  static const char ERRORCODE_DESCRIPTION_FIELD_NAME[];
+  static const char FILENAME_FIELD_NAME[];
+  static const char LINENUM_FIELD_NAME[];
+  static const char MESSAGE_FIELD_NAME[];
+
   xercesc::XercesDOMParser * parser;
   //
   // Each error code is preceded by SPK_ in order to avoid name conflict.
@@ -162,10 +153,10 @@ private:
   unsigned int _linenum;
 
   // filename in which the error was detected
-  char _filename[SpkError_const::FILENAME_FIELD_LEN+1];
+  char _filename[128+1]; //[FILENAME_FIELD_LEN+1];
 
   // error message added by client
-  char _message[SpkError_const::MESSAGE_FIELD_LEN+1];
+  char _message[256+1]; //[MESSAGE_FIELD_LEN+1];
 
   void initXmlParser();
 
@@ -230,7 +221,7 @@ public:
 
   // formats an error message the same way as the serialize function 
   friend void formatLongError(
-      enum SpkError::ErrorCode  ecode,
+      enum ErrorCode  ecode,
       const std::string&        mess,
       unsigned int              line,
       const char*               file,

@@ -403,7 +403,6 @@ $end
 /*------------------------------------------------------------------------
  * Namespaces used
  *------------------------------------------------------------------------*/
-using namespace SpkException_const;
 using namespace std;
 using namespace xercesc;
 /*------------------------------------------------------------------------
@@ -427,6 +426,14 @@ static const char *const substr(const char * begin, const char * end, char * buf
     }
     return buf;
 }
+/*------------------------------------------------------------------------
+ * Static member variables
+ *------------------------------------------------------------------------*/
+const int SpkException::MAX_ERRORS        = 16;
+const int SpkException::MAX_ERRORS_DIGITS =  2;
+const int SpkException::EXCEPTION_SIZE    = MAX_ERRORS_DIGITS 
+                                          + /*strlen("count\n")*/ 6 
+                                          + ( MAX_ERRORS * SpkError::ERROR_SIZE );
 
 /*------------------------------------------------------------------------
  * Class definition

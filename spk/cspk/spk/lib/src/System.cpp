@@ -326,7 +326,6 @@ $end
  * Namespaces
  *------------------------------------------------------------------------*/
 using namespace std;
-using namespace SpkException_const;
 /*------------------------------------------------------------------------
  * Local functions
  *------------------------------------------------------------------------*/
@@ -587,6 +586,25 @@ bool System::exist(const char* fullname)
     return true;
   else
     return false;
+#elif __unix__
+#include <unistd.h>
+
+  // access  checks  whether  the process would be allowed to read, write or
+  // test for existence of the file (or other file system object) whose name
+  // is  pathname.   If  pathname is a symbolic link permissions of the file
+  // referred to by this symbolic link are tested.
+  //                                                                            
+  // mode is a mask consisting of one or more of R_OK, W_OK, X_OK and  F_OK.
+  //                                                                            
+  // R_OK,  W_OK  and  X_OK request checking whether the file exists and has
+  // read, write and execute permissions, respectively.  F_OK just  requests
+  // checking for the existence of the file.
+
+  if( access(fullname, F_OK) == 0 )
+    return true;
+  else
+    return false;
+
 #else
     cerr << "Unsupported OS" << ", " << __LINE__ << " " << __FILE__ << endl;
     abort();

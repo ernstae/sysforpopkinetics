@@ -612,7 +612,6 @@
 /*------------------------------------------------------------------------
  * Namespaces used
  *------------------------------------------------------------------------*/
-using namespace SpkError_const;
 using namespace std;
 using namespace xercesc;
 /*------------------------------------------------------------------------
@@ -634,6 +633,29 @@ static const char *const substr(const char * begin, const char * end, char * buf
     }
   return buf;
 }
+/*------------------------------------------------------------------------
+ * Static member variables
+ *------------------------------------------------------------------------*/
+const unsigned int SpkError::ERRORCODE_FIELD_LEN   =   4;
+const unsigned int SpkError::ERRORCODE_DESCRIPTION_FIELD_LEN = 128; 
+const unsigned int SpkError::LINENUM_FIELD_LEN     =   6;
+const unsigned int SpkError::FILENAME_FIELD_LEN    = 128;
+const unsigned int SpkError::MESSAGE_FIELD_LEN     = 256;
+const unsigned int SpkError::ERROR_SIZE        
+      = SpkError::FILENAME_FIELD_LEN + 1
+      + SpkError::ERRORCODE_DESCRIPTION_FIELD_LEN + 1
+      + SpkError::MESSAGE_FIELD_LEN + 1
+      + SpkError::ERRORCODE_FIELD_LEN + 1
+      + SpkError::LINENUM_FIELD_LEN + 1
+      //+ strlen("errorcode\n") + strlen("description\n") + strlen("linenum\n") + strlen("filename\n") + strlen("message\n");
+      + 10 + 12 + 8 + 9 + 8;
+
+const char SpkError::ERRORCODE_FIELD_NAME[]             = "errorcode";
+const char SpkError::ERRORCODE_DESCRIPTION_FIELD_NAME[] = "description";
+const char SpkError::FILENAME_FIELD_NAME[]              = "filename";
+const char SpkError::LINENUM_FIELD_NAME[]               = "linenum";
+const char SpkError::MESSAGE_FIELD_NAME[]               = "message";
+
 /*------------------------------------------------------------------------
  * Static member functions
  *------------------------------------------------------------------------*/
@@ -691,7 +713,7 @@ unsigned int SpkError::maxMessageLen() throw()
 
 unsigned int SpkError::maxDescriptionLen() throw()
 {
-  return DESCRIPTION_FIELD_LEN;
+  return ERRORCODE_DESCRIPTION_FIELD_LEN;
 }
 /*------------------------------------------------------------------------
  * Constructors & destructor
@@ -860,11 +882,23 @@ std::string& operator<<(std::string& s, SpkError& e)
 
 std::ostream& operator<<(std::ostream& o, const SpkError& e)
 {
+    string m = e._message;
+    for( int i = m.find( '<', 0 ); i != string::npos; i = m.find( '<', i ) )
+      {
+	m.erase( i, 1 );
+	m.insert( i, "&lt;" );
+      }
+    for( int i = m.find( '>', 0 ); i != string::npos; i = m.find( '>', i ) )
+      {
+	m.erase( i, 1 );
+	m.insert( i, "&gt;" );
+      }
+
   o << "<error code=\"" << e._errorcode << "\">" << endl;
   o << "<description>"  << SpkError::describe( e._errorcode ) << "</description>" << endl;
   o << "<file_name>"    << e._filename                        << "</file_name>"   << endl;
   o << "<line_number>"  << e._linenum                         << "</line_number>" << endl;
-  o << "<message>"      << e._message                         << "</message>"     << endl;
+  o << "<message>"      << m                                  << "</message>"     << endl;
   o << "</error>"       << endl;
 
   return o;
