@@ -448,7 +448,7 @@ public class MDAFrame extends JFrame
                 try
 		{
                     Network network = new Network("http://rose.rfpk.washington.edu:8080/spk/servlet/uw.rfpk.servlets.TransmitFile",
-                                                  sessionId, key);
+                                                  sessionId, key); 
 
                     String[] messages = new String[1];
                     messages[0] = fileName;
@@ -463,7 +463,7 @@ public class MDAFrame extends JFrame
                 }
                 catch(Exception ex)
 	        {
-                    JOptionPane.showMessageDialog(null, "Error receiving",    // Display receiving 
+                    JOptionPane.showMessageDialog(null, "Error receiving " + ex,    // Display receiving 
                                                   "Network Error",            // error message
                                                   JOptionPane.ERROR_MESSAGE);
                 }
