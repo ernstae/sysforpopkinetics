@@ -621,7 +621,7 @@ void indStatistics( const valarray<double>&  indPar,
 	valarray<double> wholeTTerm = transpose( wholeTerm, nB );
         valarray<double> symmetric = 0.5 * ( wholeTerm + wholeTTerm );
        
-        bCov = ( RTerm + fTerm )^-1
+        // bCov = ( RTerm + fTerm )^-1
 	// This inverse() function assumes the matrix to invert is symmetric positive definite.
         indParCov = inverse( symmetric, nB );
       }
