@@ -261,8 +261,7 @@ class NonmemTranslator : public ClientTranslator
   virtual const void * getClientParameters() const;
   virtual const struct SpkParameters * getSpkParameters() const;
   virtual void translate ( xercesc::DOMDocument * tree );
-  virtual const char * getDriverFilename() const;
-  virtual const std::vector< const char * > getModelFilenameList() const;
+  virtual const std::vector< std::string > getFilenameList() const;
   
  protected:
 
@@ -281,9 +280,7 @@ class NonmemTranslator : public ClientTranslator
 
   std::vector<NonmemDataRecords> data_for_all_subjects;
 
-  void readModel(   xercesc::DOMDocument* tree, 
-		    int nIndividuals,
-		    SymbolTable * table);
+  std::vector<std::string> ourGeneratedFileNames;
 
   std::vector<std::string> emit( 		
 		    int nIndividuals,

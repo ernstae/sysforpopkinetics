@@ -334,7 +334,8 @@ void NonmemTranslator::translate( DOMDocument* tree )
   nonmemModel = model_type.first;
   nonmemParameterization = model_type.second;
 
-  emit( nIndividuals, gSpkExpSymbolTable, label_alias_mapping, data_for, order_id_pair );
+  ourGeneratedFileNames = emit( nIndividuals, gSpkExpSymbolTable, label_alias_mapping, data_for, order_id_pair );
+
   return;
 }
 
@@ -383,7 +384,15 @@ std::vector<std::string> NonmemTranslator::emit(
 
   fclose( pIndData_cpp );
   
-  vector<string> filenames(3);
+  vector<string> filenames(8);
+  filenames.push_back( driver_cpp );
+  filenames.push_back( "IndData.h" );
+  filenames.push_back( "IndData.cpp" );
+  filenames.push_back( "nonmem_model.h" );
+  filenames.push_back( "pk.cpp" );
+  filenames.push_back( "error.cpp" );
+  filenames.push_back( "omega.cpp" );
+  filenames.push_back( "sigma_cpp" );
   return filenames;
 }
 const struct SpkParameters * NonmemTranslator::getSpkParameters() const
@@ -394,13 +403,8 @@ const void * NonmemTranslator::getClientParameters() const
 {
   return static_cast<const void*>( &ourNonmem );
 }
-const char * NonmemTranslator::getDriverFilename() const
+const vector<string> NonmemTranslator::getFilenameList() const
 {
-  return NULL;
-}
-const std::vector< const char * > NonmemTranslator::getModelFilenameList() const
-{
-  std::vector<const char*> empty;
-  return empty;
+  return ourGeneratedFileNames;
 }
 
