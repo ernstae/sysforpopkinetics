@@ -1,3 +1,3 @@
 AUTOMAKE_OPTIONS = gnu
-SUBDIRS = libspkcompiler tests doc
+SUBDIRS = libspkcompiler tests driver doc
 pkginclude_HEADERS = config.h

@@ -1,5 +1,5 @@
 AC_INIT(libspkcompiler, 0.1, honda99@u.washington.edu)
-AC_CONFIG_SRCDIR(driver/compiler.cpp)
+AC_CONFIG_SRCDIR(driver/spkcompiler.cpp)
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
 AC_PROG_CC

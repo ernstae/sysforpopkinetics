@@ -17,7 +17,7 @@ NONMEM_SRC = ../libspkcompiler/nonmem/explang.cpp \
 	     ../libspkcompiler/nonmem/lex_explang.l \
              ../libspkcompiler/nonmem/nonmem.h
 
-DRIVER_SRC = ../driver/compiler.cpp
+DRIVER_SRC = ../driver/spkcompiler.cpp
 
 html : nonmem_html core_html compiler_html 
 
