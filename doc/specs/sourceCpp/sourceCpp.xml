@@ -9,14 +9,26 @@
    <articleinfo>
       <revhistory>
          <revision>
+            <revnumber>2.0</revnumber>
+            <date>September 7, 2004</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>A &gt; was flipped around.
+            </revremark>
+         </revision>
+         <revision>
+            <revnumber>1.9</revnumber>
+            <date>September 7, 2004</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>DataSet::getN(), DataSet::getAllMeasurements(), DataSet::getPopSize(), DataSet()::xmlOut()
+            </revremark>
+         </revision>
+         <revision>
             <revnumber>1.8</revnumber>
             <date>September 2, 2004</date>
             <authorinitials>sh</authorinitials>
             <revremark>Corrected the description for DataSet::getAllMeasurements().
             </revremark>
          </revision>
-      </revhistory>
-      <revhistory>
          <revision>
             <revnumber>1.7</revnumber>
             <date>August 3, 2004</date>
@@ -539,7 +551,7 @@ indexes to those records which have measurements : { 2, 3, 4, 6, 7, 8, 9, 10 }
                <para>
                Returns a vector of numbers of measurements.  The i-th element of the vector
                indicates the number of measurements for the i-th individual, 
-               where 0 &gt;= i &lt; n and
+               where 0 &lt;= i &lt; n and
                n is the number of individuals in the population.
                </para>
             </listitem>
