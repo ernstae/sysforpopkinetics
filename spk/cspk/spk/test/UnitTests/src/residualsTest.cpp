@@ -21,7 +21,7 @@
 */
 /*************************************************************************
  *
- * File: transposeTest.cpp
+ * File: residualsTest.cpp
  *
  *
  * Test cases for residuals()
