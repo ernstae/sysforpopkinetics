@@ -1638,63 +1638,6 @@ bool isWithinTol(
 
 
 /*************************************************************************
- * Function: arrayToDoubleMatrix
- *
- *
- * Copies the elements of an array of double values to a DoubleMatrix
- * object.  This function assumes that the elements of the array are
- * stored in column-major order.
- *
- *************************************************************************/
-
-DoubleMatrix arrayToDoubleMatrix( 
-  const double* const pdAIn, 
-  int nRows, 
-  int nCols )
-{
-  DoubleMatrix dmatAOut( nRows, nCols );
-
-  double* pdAOut = dmatAOut.data();
-  
-  std::copy( pdAIn, pdAIn+( nRows * nCols ), pdAOut );
-  
-  return dmatAOut; 
-}
-
-
-/*************************************************************************
- * Function: getLowerTriangle
- *
- *
- * Returns a matrix B that contains a copy of the square matrix A 
- * with all of its elements above the diagonal set equal to zero.
- *
- *************************************************************************/
-
-DoubleMatrix getLowerTriangle( const DoubleMatrix& dmatA ) 
-{
-  DoubleMatrix dmatB( dmatA );
-
-  double* pdBData = dmatB.data();
-
-  int n = dmatA.nr();
-
-  // Zero the elements of B that are above the diagonal.
-  int i, j;
-  for ( i = 0; i < n - 1; i++ ) 
-  {
-    for ( j = i + 1; j < n; j++ )
-    {
-      pdBData[i + j*n] = 0.0;
-    }
-  }
-
-  return dmatB;
-}
-
-
-
-/*************************************************************************
  * Function: isLowerTriangular
  *
  *
