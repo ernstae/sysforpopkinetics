@@ -31,26 +31,6 @@
  *
  *************************************************************************/
 
-/*------------------------------------------------------------------------
- * Local function declarations
- *------------------------------------------------------------------------*/
-
-// [Remove]=========================================
-//
-#include <string>
-namespace // [Begin: unnamed namespace]
-{
-  using std::string;
-
-  // MAKE THIS A SEPARATE FUNCTION.
-  string intToOrderString( int i );
-  
-} // [End: unnamed namespace]
-
-//
-// [Remove]=========================================
-
-
 /*************************************************************************
  *
  * Class: IndPredModel
@@ -77,6 +57,7 @@ namespace // [Begin: unnamed namespace]
 // SPK library header files.
 #include <spk/AkronBtimesC.h>
 #include <spk/allZero.h>
+#include <spk/intToOrdinalString.h>
 #include <spk/multiply.h>
 #include <spk/SpkException.h>
 #include <spk/SpkModel.h>
@@ -182,21 +163,48 @@ IndPredModel::IndPredModel(
      __FILE__ );
   }
 
-  // Get the number of parameters required by the structure of
-  // this covariance matrix.
-  nOmegaPar = pOmegaCurr->getNPar();
-
-  // Save the omega value maintained by this class.
-  omegaCurr.resize( nEta * nEta );
-  pOmegaCurr->expandCovMinRep( omegaMinRepIn, omegaCurr );
-  assert( omegaMinRepIn.size() == nOmegaPar );
-
-  // Set the omega value maintained by the covariance class.
-  pOmegaCurr->setCov( omegaCurr );
-
-  // Save the initial value for the omega parameters.
-  omegaParCurr.resize( nOmegaPar);
-  pOmegaCurr->calcPar( omegaCurr, omegaParCurr );
+  try
+  {
+    // Get the number of parameters required by the structure of
+    // this covariance matrix.
+    nOmegaPar = pOmegaCurr->getNPar();
+    
+    // Save the omega value maintained by this class.
+    omegaCurr.resize( nEta * nEta );
+    pOmegaCurr->expandCovMinRep( omegaMinRepIn, omegaCurr );
+    assert( omegaMinRepIn.size() == nOmegaPar );
+    
+    // Set the omega value maintained by the covariance class.
+    pOmegaCurr->setCov( omegaCurr );
+    
+    // Save the initial value for the omega parameters.
+    omegaParCurr.resize( nOmegaPar);
+    pOmegaCurr->calcPar( omegaCurr, omegaParCurr );
+  }
+  catch( SpkException& e )
+  {
+    throw e.push(
+      SpkError::SPK_UNKNOWN_ERR, 
+      "The initialization of the Omega covariance matrix failed.",
+      __LINE__, 
+      __FILE__ );
+  }
+  catch( const std::exception& stde )
+  {
+    throw SpkException(
+      stde,
+      "An standard exception was thrown during the initialization of the Omega covariance matrix.",
+      __LINE__, 
+      __FILE__ );
+  }  
+  catch( ... )
+  {
+    throw SpkException(
+      SpkError::SPK_UNKNOWN_ERR, 
+      "An unknown exception was thrown during the initialization of the Omega covariance matrix.",
+      __LINE__, 
+      __FILE__ );
+  }
 
 
   //------------------------------------------------------------
@@ -693,7 +701,7 @@ void IndPredModel::evalAllPred() const
     //----------------------------------------------------------
 
     taskMessage = "during the evaluation of the " +
-      intToOrderString( j + 1 ) + 
+      intToOrdinalString( j, ZERO_IS_FIRST_INT ) +
       " predicted value for the individual's data.";
 
     // Evaluate the Pred block expressions for this event.
@@ -721,7 +729,7 @@ void IndPredModel::evalAllPred() const
       // This error code should be replaced with one that is accurate.
       throw e.push(
         SpkError::SPK_MODEL_DATA_MEAN_ERR,
-        ( "An SpkException was thrown" + taskMessage ).c_str(),
+        ( "An error occurred " + taskMessage ).c_str(),
         __LINE__,
         __FILE__ );
     }
@@ -1432,7 +1440,8 @@ void IndPredModel::doDataMean( valarray<double>& ret ) const
     dataMeanCurr[j] = Value( wCurr[j + fOffsetInW] );
 
     taskMessage = "during the evaluation of the mean of the " +
-      intToOrderString( j + 1 ) + " value for the individual's data.";
+      intToOrdinalString( j, ZERO_IS_FIRST_INT ) +
+      " value for the individual's data.";
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // [Revisit - Infinite Macro Does Not Seem to Work - Mitch]
@@ -2597,45 +2606,3 @@ void IndPredModel::getStandardPar_indPar( valarray<double>& ret ) const
 
 }
 
-
-/*=========================================================================
- *
- *
- * Local Function Definitions
- *
- *
- =========================================================================*/
-
-namespace // [Begin: unnamed namespace]
-{
-
-/*************************************************************************
- *
- * Function: intToOrderString
- *
- *
- * Returns a string that corresponds to the order of the integer i.
- *
- *************************************************************************/
-
-string intToOrderString( int i )
-{
-  std::ostringstream order;
-
-  switch( i )
-  {
-  case 1:
-    order << "1st";
-  case 2:
-    order << "2nd";
-  case 3:
-    order << "3rd";
-  default:
-    order << i << "th";
-  }
-
-    return order.str();
-}
-
-
-} // [End: unnamed namespace]
