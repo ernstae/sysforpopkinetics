@@ -303,8 +303,8 @@ If this element appears when the population analysis is chosen, a data set for n
 <!-- <ind_stat>  Request for the post statistial analysis on the final estimate(s) for individual parameter(s).  This process will be skipped unless the "is_estimation" of <ind_analysis> is set to "yes".  -->
 <!ELEMENT ind_stat EMPTY>
 
-<!-- <ind_stat covariance_form="rsr"> Form of covariance matrix; "r" for R^-1, "rsr" for R^-1*S*R^-1, "s" for S^-1. -->
-<!ATTLIST ind_stat covariance_form    (rsr|r|s)  #REQUIRED>
+<!-- <ind_stat covariance_form="rsr"> Form of covariance matrix; "r" for R^-1, "rsr" for R^-1*S*R^-1, "s" for S^-1, "h" for H^-1 and "hsh" for H^-1*S*H^-1. -->
+<!ATTLIST ind_stat covariance_form    (rsr|r|s|hsh|h)  #REQUIRED>
 
 <!-- <ind_stat is_stderror_out="yes"> "yes" to request to return the standard error of the final estimate(s) for individual parameter(s), default to "yes".  -->
 <!ATTLIST ind_stat is_stderror_out    (yes|no) #IMPLIED>
