@@ -27,6 +27,15 @@ INSERT INTO end (end_code, end_name) VALUES ('srun','Successful Run');
 -- Dumping data for table `job`
 --
 
+--
+-- Dumping data for table `method`
+--
+
+INSERT INTO method (method_code, method_name) VALUES ('fo', 'First Order');
+INSERT INTO method (method_code, method_name) VALUES ('eh', 'Expected Hessian');
+INSERT INTO method (method_code, method_name) VALUES ('la', 'Laplacian');
+INSERT INTO method (method_code, method_name) VALUES ('ml', 'Monte Carlo Likelihood');
+INSERT INTO method (method_code, method_name) VALUES ('mc', 'Monte Carlo Markov Chain');
 
 --
 -- Dumping data for table `model`

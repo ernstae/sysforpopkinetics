@@ -60,8 +60,20 @@ CREATE TABLE job (
   event_time int(10) unsigned NOT NULL default '0',
   cpp_source longblob,
   end_code varchar(4) default NULL,
+  method_code char(2) default NULL,
+  parent int(20) unsigned default 0,
   PRIMARY KEY  (job_id)
 ) TYPE=InnoDB;
+
+--
+-- Table structure for table `method`
+--
+
+CREATE TABLE method (
+  method_code char(2) NOT NULL default '',
+  method_name char(20) default NULL,
+  PRIMARY KEY  (method_code)
+) TYPE=MyISAM;
 
 --
 -- Table structure for table `model`
@@ -101,6 +113,8 @@ CREATE TABLE user (
   country varchar(20) NOT NULL default '',
   state varchar(20) NOT NULL default '',
   email varchar(30) default NULL,
+  test bool default 0,
+  dev  bool default 0,
   PRIMARY KEY  (user_id),
   UNIQUE KEY username (username)
 ) TYPE=InnoDB;
