@@ -1065,9 +1065,9 @@
                   <column label="TIME"/>
                </table>
                <scatterplot y0_line="show" unit_slope="yes">
-                  <x label="RES"/>
-                  <x label="WRES"/>
-                  <y label="TIME"/>
+                  <y label="RES"/>
+                  <y label="WRES"/>
+                  <x label="TIME"/>
                   <by label="ID"/>
                </scatterplot>
             </nm_presentation>
