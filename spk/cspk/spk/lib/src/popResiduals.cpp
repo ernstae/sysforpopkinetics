@@ -80,7 +80,8 @@ $syntax/void popResiduals( SpkModel&                        /model/,
                    const SPK_VA::valarray<double>&  /indParAll/,
                    SPK_VA::valarray<double>*        /pPopPredOut/,
                    SPK_VA::valarray<double>*        /pPopResOut/,
-                   SPK_VA::valarray<double>*        /pPopResWtdOut/ )
+                   SPK_VA::valarray<double>*        /pPopResWtdOut/,
+                   SPK_VA::valarray<double>*        /pPopIndParWtdOut/ )
 /$$
 $tend
 
@@ -101,6 +102,9 @@ an additional approximation for the covariance of an individual's data
 $math%VTilde_i%$$ as the weight.
 The derivations for these approximations can be found in Sections (6.2) 
 and (6.3) of Davidian and Giltinan (1998).
+Also, calculates weighted individual parameters for all of the individuals
+using the covariance of the individual parameters $math%D%$$ as the
+weight.
 $pre
 
 $$
@@ -145,10 +149,19 @@ individual parameters are set equal to zero in the approximation
 for the covariance, i.e., $math%b_i = 0%$$.
 For the modified Laplace and modified Expected Hessian objective
 functions, the individual parameters are set equal to the values
-in the input argument $italic indParAll$$, 
+in the input argument $italic indParAll$$.
 $pre
 
 $$
+The weighted individual parameters $math%bWtd_i%$$ for the $th i$$ 
+individual are calculated as follows:
+$math%
+
+               -1/2
+    bWtd   =  D      *  b   .
+        i                i
+
+%$$
 (The above equations use
 $xref/glossary/Population Notation/population notation/$$.)
 
@@ -282,6 +295,24 @@ Otherwise, this function will not attempt to change the
 contents of the $code SPK_VA::valarray<double>$$ object 
 pointed to by $italic pPopResWtdOut$$. 
 
+$syntax/
+
+/pPopIndParWtdOut/ 
+/$$
+
+If $italic pPopIndParWtdOut$$ is not $code NULL$$, then the $code
+SPK_VA::valarray<double>$$ object pointed to by $italic
+pPopIndParWtdOut$$ must be declared in the function that calls this
+function, and its size must be equal to $math%nB%$$ times the number
+of individuals in the population $math%M%$$.
+If $italic pPopIndParWtdOut$$ is not $code NULL$$ and this function 
+completed successfully, then the $code SPK_VA::valarray<double>$$ object 
+pointed to by $italic pPopIndParWtdOut$$ will contain the vectors of weighted
+individual parameters for all of the individuals $math%bWtd_i%$$.
+Otherwise, this function will not attempt to change the 
+contents of the $code SPK_VA::valarray<double>$$ object 
+pointed to by $italic pPopIndParWtdOut$$. 
+
 $end
 */
 
@@ -318,7 +349,8 @@ void popResiduals( SpkModel&                model,
                    const valarray<double>&  indParAll,
                    valarray<double>*        pPopPredOut,
                    valarray<double>*        pPopResOut,
-                   valarray<double>*        pPopResWtdOut )
+                   valarray<double>*        pPopResWtdOut,
+                   valarray<double>*        pPopIndParWtdOut )
 {
   //----------------------------------------------------------------
   // Preliminaries.
@@ -327,7 +359,7 @@ void popResiduals( SpkModel&                model,
   using namespace std;
 
   // Return if there are no output values to calculate.
-  if ( pPopPredOut == 0 && pPopResOut == 0 && pPopResWtdOut == 0 )
+  if ( pPopPredOut == 0 && pPopResOut == 0 && pPopResWtdOut == 0 && pPopIndParWtdOut == 0 )
   {
     return;
   }
@@ -401,6 +433,18 @@ void popResiduals( SpkModel&                model,
     }
   }
 
+  if ( pPopIndParWtdOut )
+  {
+    if ( nB * nInd != pPopIndParWtdOut->size() )
+    {
+      throw SpkException(
+        SpkError::SPK_USER_INPUT_ERR, 
+        "The vector of weighted individual parameters has the wrong size.",
+        __LINE__,
+        __FILE__ );
+    }
+  }
+
 
   //----------------------------------------------------------------
   // Prepare the output values.
@@ -448,12 +492,35 @@ void popResiduals( SpkModel&                model,
     pPopResWtdTemp = 0;
   }
 
+  // It is not necessary to calculate the individual parameter
+  // residuals, i.e., their difference from zero.
+  valarray<double>* pIndParRes_i = 0;
+
+  // If this function is going to return the weighted individual
+  // parameters, initialize the temporary arrays to hold them.
+  // Otherwise, set the temporary pointers to zero so that they will
+  // not be calculated.
+  valarray<double> popIndParWtdTemp;
+  valarray<double>* pPopIndParWtdTemp = &popIndParWtdTemp;
+  valarray<double> indParWtd_i;
+  valarray<double>* pIndParWtd_i = &indParWtd_i;
+  if ( pPopIndParWtdOut )
+  {
+    popIndParWtdTemp.resize( nB * nInd );
+    indParWtd_i     .resize( nB );
+  }
+  else
+  {
+    pPopIndParWtdTemp = 0;
+    pIndParWtd_i      = 0;
+  }
+
 
   //----------------------------------------------------------------
   // Calculate the residuals for all of the individuals.
   //----------------------------------------------------------------
 
-  // Set the current population paramter.
+  // Set the current population parameter.
   model.setPopPar( popPar );
 
   // For the first order objectives, the individual parameters 
@@ -464,12 +531,24 @@ void popResiduals( SpkModel&                model,
     b_i = 0.0;
   }
 
+  // If necessary, evaluate
+  //
+  //     D(alp)  .
+  //
+  valarray<double> D( nB * nB );
+  if ( pPopResWtdOut || pPopIndParWtdOut )
+  {
+    model.indParVariance( D );
+  }
+
+  valarray<double> zeroes( nB );
+  zeroes = 0.0;
+
   valarray<double> y_i;
   valarray<double> f_i;
   valarray<double> f_i_b;
   valarray<double> f_i_bTranspose;
   valarray<double> R_i;
-  valarray<double> D;
   valarray<double> VTilde_i;
   valarray<double> pred_i;
   valarray<double> res_i;
@@ -529,15 +608,6 @@ void popResiduals( SpkModel&                model,
     //      i       i
     //
     model.dataVariance( R_i );
-
-    // If necessary, evaluate
-    //
-    //     D(alp)  .
-    //
-    if ( notAllZeroF_i_b )
-    {
-      model.indParVariance( D );
-    }
 
 
     //------------------------------------------------------------
@@ -609,7 +679,7 @@ void popResiduals( SpkModel&                model,
 
 
     //------------------------------------------------------------
-    // Calculate the residuals and/or weighted residuals.
+    // Calculate their residuals and/or weighted residuals.
     //------------------------------------------------------------
 
     y_i     .resize( nY_i );
@@ -641,6 +711,21 @@ void popResiduals( SpkModel&                model,
     }
 
     nY_iTotal += nY_i;
+
+
+    //------------------------------------------------------------
+    // Calculate their weighted individual parameter.
+    //------------------------------------------------------------
+
+    // Set this individual's weighted individual parameter, if necessary.
+    if ( pPopIndParWtdOut )
+    {
+      // Calculate this individual's weighted individual parameters.
+      wres( zeroes, b_i, D, pIndParRes_i, &indParWtd_i );
+
+      popIndParWtdTemp[ slice( i * nB, nB, 1 ) ] = indParWtd_i;
+    }
+
   }
 
 
@@ -664,6 +749,12 @@ void popResiduals( SpkModel&                model,
   if ( pPopResWtdOut )
   {
     *pPopResWtdOut = popResWtdTemp;
+  }
+
+  // Set the weighted individual parameters for all of the individuals, if necessary.
+  if ( pPopIndParWtdOut )
+  {
+    *pPopIndParWtdOut = popIndParWtdTemp;
   }
 
 }
