@@ -150,6 +150,9 @@ extern "C"{
 #include "DoubleMatrix.h"
 #include "isSymmetric.h"
 #include "symmetrize.h"
+#include "SpkException.h"
+#include "isDblEpsEqual.h"
+#include "transpose.h"
 
 using SPK_VA::valarray;
 
@@ -161,9 +164,30 @@ const DoubleMatrix inverse(const DoubleMatrix& dmatA)
 {
   int n = dmatA.nr();
   assert( dmatA.nc() == n );
-  assert( isSymmetric( dmatA ) );
-  int lda = n;
   const double* A = dmatA.data();
+  if( !isSymmetric( dmatA ) )
+  {
+     char mess[ SpkError::maxMessageLen() ];
+     DoubleMatrix dmatAt = transpose( dmatA );
+     double * At = dmatAt.data();
+
+     for( int j=0; j<n; j++ )
+     {
+        for( int i=j; i<n; i++ )
+        {
+           double a  = A[i+j*n];
+           double at = At[i+j*n];
+           if( !isDblEpsEqual( a, at, (fabs(a)>fabs(at)? fabs(a) : fabs(at) ) ) )
+           {
+              sprintf( mess, "%d by %d matrix is not symmetric in elements: a(%d, %d)=%f != a(%d, %d)=%f.\n",
+                       n, n, i, j, A[i], j, i, At[i] );
+                                                                                                                         
+              throw SpkException( SpkError::SPK_NOT_SYMMETRIC_ERR, mess, __LINE__, __FILE__ );
+           }
+        }
+     }
+  }
+  int lda = n;
   DoubleMatrix AInv(dmatA);
   double *a = AInv.data();
 
@@ -196,8 +220,21 @@ const DoubleMatrix inverse(const DoubleMatrix& dmatA)
   //                 of A since the values are stored
   //                 contigurously in the memory.
   //
-  clapack_dpotrf( CblasColMajor, CblasLower, n, a, lda );
-  
+  int cholStatus = clapack_dpotrf( CblasColMajor, CblasLower, n, a, lda );
+  if( cholStatus < 0 )
+  {
+     // illegal value detected in the source matrix, A.
+     char mess[ SpkError::maxMessageLen() ];
+     sprintf( mess, "Cholesky factorization failed: Illegal value detected at %d-th element of the source matrix.\n", -cholStatus );
+     throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
+  }
+  if( cholStatus > 0 )
+  {
+     // i-th value is a source of failure
+     char mess[ SpkError::maxMessageLen() ];
+     sprintf( mess, "Cholesky factorization failed: %d-th value is a source of problem.\n", cholStatus );
+     throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
+  }
   // 
   // Inverse based on Cholesky : A <= A^-1
   // 
@@ -227,7 +264,21 @@ const DoubleMatrix inverse(const DoubleMatrix& dmatA)
   //                 of A since the values are stored
   //                 contigurously in the memory.
   //
-  clapack_dpotri( CblasColMajor, CblasLower, n, a, lda );
+  int invStatus = clapack_dpotri( CblasColMajor, CblasLower, n, a, lda );
+  if( invStatus < 0 )
+  {
+     // i-th element of the source matrix has an illegal value.
+     char mess[ SpkError::maxMessageLen() ];
+     sprintf( mess, "Inversion based upon Choleksy factorization failed:\nIllegal value detected at %d-th element of the source matrix.\n", -cholStatus );
+     throw SpkException( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
+  }
+  if( cholStatus > 0 )
+  {
+     // i-th value is a source of failure
+     char mess[ SpkError::maxMessageLen() ];
+     sprintf( mess, "Inversion based on Cholesky factorization failed: %d-th value is a source of problem.\n", cholStatus );
+     throw SpkException( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
+  }
 
   symmetrize( AInv, AInv );
   return AInv;
@@ -239,16 +290,63 @@ const DoubleMatrix inverse(const DoubleMatrix& dmatA)
 const valarray<double> inverse( const valarray<double> &A, int n )
 {
   assert( A.size() == n*n );
-  assert( isSymmetric( A, n ) );
+  if( !isSymmetric( A, n ) )
+  {
+     char mess[ SpkError::maxMessageLen() ];
+     valarray<double> At = transpose( A, n );
+     for( int j=0; j<n; j++ )
+     {
+        for( int i=j; i<n; i++ )
+        {
+           double a  = A[i+j*n];
+           double at = At[i+j*n];
+           if( !isDblEpsEqual( a, at, (fabs(a) > fabs(at)? fabs(a) : fabs(at) ) ) )
+           {
+              sprintf( mess, "%d by %d matrix is not symmetric in elements: a(%d, %d)=%f != a(%d, %d)=%f.\n", 
+                       n, n, i, j, A[i], j, i, At[i] );
+
+              throw SpkException( SpkError::SPK_NOT_SYMMETRIC_ERR, mess, __LINE__, __FILE__ );
+           }
+        }
+     }
+  }
   int lda = n;
   valarray<double> AInv(A);
 
   // Cholesky-factorize
-  clapack_dpotrf( CblasColMajor, CblasLower, n, &AInv[0], lda );
-  
-  // Compute the inverse using the cholesky factor.
-  clapack_dpotri( CblasColMajor, CblasLower, n, &AInv[0], lda );
+  int cholStatus = clapack_dpotrf( CblasColMajor, CblasLower, n, &AInv[0], lda );
+  if( cholStatus < 0 )
+  {
+     // illegal value detected in the source matrix, A.
+     char mess[ SpkError::maxMessageLen() ];
+     sprintf( mess, "Cholesky factorization failed: Illegal value detected at %d-th element of the source matrix.\n", -cholStatus );
+     throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
+  }
+  if( cholStatus > 0 )
+  {
+     // i-th value is a source of failure
+     char mess[ SpkError::maxMessageLen() ];
+     sprintf( mess, "Cholesky factorization failed: %d-th value is a source of problem.\n", cholStatus );
+     throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
+  }
 
+  // Compute the inverse using the cholesky factor.
+  int invStatus = clapack_dpotri( CblasColMajor, CblasLower, n, &AInv[0], lda );
+  if( invStatus < 0 )
+  {
+     // i-th element of the source matrix has an illegal value.
+     char mess[ SpkError::maxMessageLen() ];
+     sprintf( mess, "Inversion based upon Choleksy factorization failed:\nIllegal value detected at %d-th element of the source matrix.\n", -cholStatus );
+     throw SpkException( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
+  }
+  if( cholStatus > 0 )
+  {
+     // i-th value is a source of failure
+     char mess[ SpkError::maxMessageLen() ];
+     sprintf( mess, "Inversion based on Cholesky factorization failed: %d-th value is a source of problem.\n", cholStatus );
+     throw SpkException( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
+  }
+  // 
   symmetrize( AInv, n, AInv );
   return AInv;
 }
