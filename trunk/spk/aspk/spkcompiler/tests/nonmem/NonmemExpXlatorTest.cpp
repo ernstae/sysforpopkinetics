@@ -42,6 +42,7 @@ void NonmemExpXlatorTest::tearDown()
 }
 void NonmemExpXlatorTest::testScalarAssignmentToScalar()
 {
+  SymbolTable table;
   char input[]        = "testScalarAssignmentToScalar.in";
   char output[]       = "testScalarAssignmentToScalar.out";
 
@@ -71,13 +72,14 @@ void NonmemExpXlatorTest::testScalarAssignmentToScalar()
 
   gSpkExpErrors = 0;
   gSpkExpLines  = 0;
-  gSpkExpSymbolTable = new SymbolTable;
+  gSpkExpSymbolTable = &table;
   CPPUNIT_ASSERT( gSpkExpSymbolTable != NULL );
   gSpkExpOutput = fopen( output, "w" );
   yydebug = 0;
 
   yyparse();
 
+  CPPUNIT_ASSERT( table.find( "A" ));
   fclose( pInput );
   fclose( gSpkExpOutput );
 
@@ -198,12 +200,14 @@ void NonmemExpXlatorTest::testScalarAssignmentToScalar()
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
 
   pOutput.close();
+
   remove( input );
   remove( output );
-  delete gSpkExpSymbolTable;
 }
 void NonmemExpXlatorTest::testVectorElementAssignmentToScalar()
 {
+  SymbolTable table;
+  
   char input[]        = "testVectorElementAssignmentToScalar.in";
   char output[]       = "testVectorElementAssignmentToScalar.out";
   char statementIn[]  = "A(1) = 1\n";
@@ -221,13 +225,15 @@ void NonmemExpXlatorTest::testVectorElementAssignmentToScalar()
 
   gSpkExpErrors = 0;
   gSpkExpLines  = 0;
-  gSpkExpSymbolTable = new SymbolTable;
+  gSpkExpSymbolTable = &table;
   CPPUNIT_ASSERT( gSpkExpSymbolTable != NULL );
   gSpkExpOutput = fopen( output, "w" );
   yydebug = 0;
 
   yyparse();
 
+  CPPUNIT_ASSERT( table.find( "A" ));
+  
   fclose( pInput );
   fclose( gSpkExpOutput );
 
@@ -266,17 +272,17 @@ void NonmemExpXlatorTest::testVectorElementAssignmentToScalar()
   pOutput.close();
   remove( input );
   remove( output );
-  delete gSpkExpSymbolTable;
 }
 void NonmemExpXlatorTest::testFunctions()
 {
+  SymbolTable table;
   char input[]        = "testFunctions.in";
   char output[]       = "testFunctions.out";
 
   FILE * pInput = fopen( input, "w" );
   CPPUNIT_ASSERT( pInput != NULL );
   fputs( "A = EXP(X)\n", pInput );
-  fputs( "A(1) = EXP(X)\n", pInput );
+  fputs( "B(1) = EXP(X)\n", pInput );
   fputs( "A = LOG(1)\n", pInput );
   fputs( "A = LOG10(100)\n", pInput );
   fputs( "A = SQRT(4.0)\n", pInput );
@@ -286,6 +292,11 @@ void NonmemExpXlatorTest::testFunctions()
   
   fclose( pInput );
 
+  Symbol XX( "X", Symbol::SCALAR, Symbol::DOUBLE, true );
+  Symbol YY( "Y", Symbol::SCALAR, Symbol::DOUBLE, true );
+  table.insert( XX );
+  table.insert( YY );
+  
   pInput = fopen( input, "r" );
   CPPUNIT_ASSERT( pInput != NULL );
 
@@ -294,13 +305,16 @@ void NonmemExpXlatorTest::testFunctions()
 
   gSpkExpErrors = 0;
   gSpkExpLines  = 0;
-  gSpkExpSymbolTable = new SymbolTable;
+  gSpkExpSymbolTable = &table;
   CPPUNIT_ASSERT( gSpkExpSymbolTable != NULL );
   gSpkExpOutput = fopen( output, "w" );
   yydebug = 0;
 
   yyparse();
 
+  CPPUNIT_ASSERT( table.find( "A" ));
+  CPPUNIT_ASSERT( table.find( "B" ));
+  
   fclose( pInput );
   fclose( gSpkExpOutput );
 
@@ -329,7 +343,7 @@ void NonmemExpXlatorTest::testFunctions()
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A[" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "B[" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "(" );
   pOutput >> buf;
@@ -454,11 +468,12 @@ void NonmemExpXlatorTest::testFunctions()
   pOutput.close();
   remove( input );
   remove( output );
-  delete gSpkExpSymbolTable;
 }
 
 void NonmemExpXlatorTest::testIfStmt()
 {
+  SymbolTable table;
+  
   char input[]        = "testIfStmt.in";
   char output[]       = "testIfStmt.out";
 
@@ -468,6 +483,13 @@ void NonmemExpXlatorTest::testIfStmt()
   fputs( "IF( X.NE.Y ) A = B(1) ;comment\n", pInput );
   fclose( pInput );
 
+  Symbol XX( "X", Symbol::SCALAR, Symbol::DOUBLE, true );
+  Symbol YY( "Y", Symbol::SCALAR, Symbol::DOUBLE, true );
+  Symbol BB( "B", Symbol::VECTOR, Symbol::DOUBLE, true );
+  table.insert( XX );
+  table.insert( YY );
+  table.insert( BB );
+  
   pInput = fopen( input, "r" );
   CPPUNIT_ASSERT( pInput != NULL );
 
@@ -476,13 +498,15 @@ void NonmemExpXlatorTest::testIfStmt()
 
   gSpkExpErrors = 0;
   gSpkExpLines  = 0;
-  gSpkExpSymbolTable = new SymbolTable;
+  gSpkExpSymbolTable = &table;
   CPPUNIT_ASSERT( gSpkExpSymbolTable != NULL );
   gSpkExpOutput = fopen( output, "w" );
   yydebug = 0;
 
   yyparse();
 
+  CPPUNIT_ASSERT( table.find( "A" ) );
+  
   fclose( pInput );
   fclose( gSpkExpOutput );
 
@@ -573,10 +597,11 @@ void NonmemExpXlatorTest::testIfStmt()
   pOutput.close();
   remove( input );
   remove( output );
-  delete gSpkExpSymbolTable;
 }
 void NonmemExpXlatorTest::testIfThenStmt()
 {
+  SymbolTable table;
+  
   char input[]        = "testIfThenStmt.in";
   char output[]       = "testIfTenStmt.out";
 
@@ -588,6 +613,16 @@ void NonmemExpXlatorTest::testIfThenStmt()
   fputs( "ENDIF\n", pInput );
   fclose( pInput );
 
+  Symbol XX( "X", Symbol::SCALAR, Symbol::DOUBLE, true );
+  Symbol YY( "Y", Symbol::SCALAR, Symbol::DOUBLE, true );
+  Symbol BB( "B", Symbol::VECTOR, Symbol::DOUBLE, true );
+  Symbol DD( "D", Symbol::SCALAR, Symbol::DOUBLE, true );
+
+  table.insert( XX );
+  table.insert( YY );
+  table.insert( BB );
+  table.insert( DD );
+
   pInput = fopen( input, "r" );
   CPPUNIT_ASSERT( pInput != NULL );
 
@@ -596,13 +631,15 @@ void NonmemExpXlatorTest::testIfThenStmt()
 
   gSpkExpErrors = 0;
   gSpkExpLines  = 0;
-  gSpkExpSymbolTable = new SymbolTable;
+  gSpkExpSymbolTable = &table;
   CPPUNIT_ASSERT( gSpkExpSymbolTable != NULL );
   gSpkExpOutput = fopen( output, "w" );
   yydebug = 0;
 
   yyparse();
 
+  CPPUNIT_ASSERT( table.find( "C" ) );
+  CPPUNIT_ASSERT( table.find( "A" ) );
   fclose( pInput );
   fclose( gSpkExpOutput );
 
@@ -665,7 +702,6 @@ void NonmemExpXlatorTest::testIfThenStmt()
   pOutput.close();
   remove( input );
   remove( output );
-  delete gSpkExpSymbolTable;
 }
 
 CppUnit::Test * NonmemExpXlatorTest::suite()

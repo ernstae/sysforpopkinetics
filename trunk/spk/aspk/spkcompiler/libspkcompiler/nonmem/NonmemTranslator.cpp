@@ -314,14 +314,10 @@ void NonmemTranslator::translate( DOMDocument* tree )
 
   read_nonmem_data( dataNode, nIndividuals, table, label_alias_mapping, data_for, order_id_pair );
   
+  table.dump();
   assert( tree->getElementsByTagName( X("model") ) != NULL );
   DOMElement * modelNode = dynamic_cast<DOMElement*>( tree->getElementsByTagName( X("model") )->item(0) );
   assert( modelNode != NULL );
-
-
-  
-
-
 
   gSpkExpSymbolTable = &table;
   pair<enum NonmemModel, enum NonmemParameterization> model_type 
