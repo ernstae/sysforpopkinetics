@@ -4,7 +4,7 @@ use strict;
 use Cwd;
 use Spkdb (
     'connect', 'disconnect', 'new_job', 'get_job', 'job_status', 
-    'de_q2c', 
+    'de_q2c', 'job_history',
     'en_q2r', 'de_q2r', 'end_job', 'job_report',
     'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
     'new_model', 'get_model', 'update_model', 'user_models',
@@ -112,7 +112,8 @@ my $spkdb_dbh = &connect($spkdbname, $dbhost, $dbuser, $dbpass)
     or die("Could not connect to database $spkdbname\n");
 
 # Add all ancestors to the list of jobs that the user provided
-my @job_list = add_ancestors_to_list(@ARGV);
+# Get a list of ancestors of the jobs in the argument list
+my @ancestor_list = get_ancestors(@ARGV);
 
 # Use dump_spkdb.pl to dump spkdb. We will keep schema.sql and basedata.sql,
 # but provide an empty userdata.sql.  The rest of the program is designed to
@@ -148,8 +149,8 @@ my $spktmp_dbh = &connect($spktmpname, "localhost", $dbuser, $dbpass)
 my $history_sth = $spkdb_dbh->prepare("select * from history where job_id=? and state_code='q2c';")
     or death("prepare of 'select * from history' failed");
 
-# Loop through the list of job_id numbers provided by user, plus their ancestors
-for my $job_id (@job_list) {
+# Loop through the list of job_id numbers in the argument list
+for my $job_id (@ARGV) {
 
     # For the given job, get its "submit" history record and insert it in spktmp
     $history_sth->execute($job_id)
@@ -203,7 +204,59 @@ for my $job_id (@job_list) {
     $job_sth->execute($xml_source)
 	or death("execute of '$sql' failed");
 }
-$history_sth->finish;  # free a statement handle, no longer needed
+$history_sth->finish; 
+
+# Loop through the list of ancestors of the jobs in the argument list
+
+for my $job_id (@ancestor_list) {
+
+    # copy history records to spktmp
+
+    my $row_array = &job_history($spkdb_dbh, $job_id);
+    my $row;
+    foreach $row (@$row_array) {
+	my $sql = "insert into history ("
+	    . (join ",", keys %$row)
+	    . ") values ('"
+	    . (join "','", values %$row)
+	    ."');";
+	$spktmp_dbh->do($sql)
+	    or death("couldn't do '$sql'");
+    }
+    # Use Spkdb.pm to get the job row
+    $row = &get_job($spkdb_dbh, $job_id)
+	or death("No job with job_id: $job_id\ exists\n");
+
+    # Add the model_id, datasest_id and user_id to their respective sets
+    $model_list{$row->{'model_id'}}     = 0;
+    $dataset_list{$row->{'dataset_id'}} = 0;
+    $user_list{$row->{'user_id'}}     = 0;
+
+    # Copy the blob fields
+    my $xml_source = $row->{'xml_source'};
+    my $cpp_source = $row->{'cpp_source'};
+    my $report     = $row->{'report'};
+
+    # Delete from the row hash the blob fields
+    delete $row->{'xml_source'};
+    delete $row->{'cpp_source'};
+    delete $row->{'report'};
+
+    # Prepare the sql for inserting the job into spktmp.  Note the ? for the blob fields,
+    # which will allow us to insert the fields with out messing with quotes.
+    my $sql = "insert into job (xml_source,cpp_source,report,"
+	. (join ",", keys %$row)
+	. ") values (?,?,?,'"
+	. (join "','", values %$row)
+	. "');";
+    my $job_sth = $spktmp_dbh->prepare($sql)
+	or death("prepare of '$sql' failed");
+    
+    # Insert the modified job row into spktmp
+    $job_sth->execute($xml_source, $cpp_source, $report)
+	or death("execute of '$sql' failed");
+}
+
 
 # Extract the models and datasets used by our jobs, and copy them to spktmp
 # Note that extract_model_or_dataset may add user_id numbers to the set of users
@@ -282,31 +335,33 @@ sub extract_model_or_dataset(@) {
 }
 # Follow parent links until all ancestors have been added to the
 # set of job_id numbers
-sub add_ancestors_to_list {
+sub get_ancestors {
     my @argv = @_;
-    my %job_list;
+    my %job_hash;
+    my @ancestor_list;
     my $job_id;
     for $job_id (@argv) {
-	$job_list{$job_id} = 0;
+	$job_hash{$job_id} = 0;
     }
     my $row;
     my $repeat = 0;
     do {
 	$repeat = 0;
-	foreach $job_id (keys %job_list) {
-	    if ($job_list{$job_id} == 0) {
+	foreach $job_id (keys %job_hash) {
+	    if ($job_hash{$job_id} == 0) {
 		$row = &get_job($spkdb_dbh, $job_id)
 		    or death("No job with job_id: $job_id\ exists\n");
-		$job_list{$job_id} = 1;
+		$job_hash{$job_id} = 1;
 		my $parent = $row->{"parent"};
-		if ($parent && ! exists $job_list{$parent}) {
-		    $job_list{$parent} = 0;
+		if ($parent && ! exists $job_hash{$parent}) {
+		    $job_hash{$parent} = 0;
+		    push @ancestor_list, $parent;
 		    $repeat = 1;
 		}
 	    }
 	}
     } while $repeat;
-    return keys %job_list;
+    return @ancestor_list;
 }
 # In case of error, die with dignity
 sub death  {
