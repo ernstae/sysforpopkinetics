@@ -138,4 +138,3 @@ INSERT INTO state (state_code, state_name) VALUES ('end','End');
 INSERT INTO user (user_id, first_name, surname, password, username, company, country, state, email, test, dev) VALUES (1,'','','b433ce675b32a824e24d762ca0fa1ba9','useradmin','','','','',0,0);
 INSERT INTO user (user_id, first_name, surname, password, username, company, country, state, email, test, dev) VALUES (2,'','','35fa1bcb6fbfa7aa343aa7f253507176','librarian','','','','',0,0);
 INSERT INTO user (user_id, first_name, surname, password, username, company, country, state, email, test, dev) VALUES (3,'Paolo','Vicini','22af645d1859cb5ca6da0c484f1f37ea','vicini','','','','',0,0);
-
