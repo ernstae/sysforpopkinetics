@@ -5,6 +5,7 @@
 #include <valarray>
 #include <string>
 #include <spk/Objective.h>
+#include <spk/popStatistics.h>
 #include "Symbol.h"
 #include "client.h"
 
@@ -41,6 +42,7 @@ struct SpkParameters{
   bool                  isIndParOut;
   bool                  isIndObjOut, isIndObj_indParOut, isIndObj_indPar_indParOut;  
 
+  enum PopCovForm       popCovarianceForm;
   bool                  isPopStderrorOut;
   bool                  isPopCorrelationOut;
   bool                  isPopCovarianceOut;
@@ -53,7 +55,7 @@ struct SpkParameters{
   bool                  isIndCoefficientOut;
   bool                  isIndConfidenceOut;
   
-  std::map< std::string, std::valarray<double> > aliases;
+  //  std::map< std::string, std::valarray<double> > aliases;
 };
 
 #endif

@@ -281,7 +281,6 @@ class NonmemTranslator : public ClientTranslator
 
   std::vector<NonmemDataRecords> data_for_all_subjects;
 
-  void initSymbolTable( SymbolTable& );
   void readModel(   xercesc::DOMDocument* tree, 
 		    int nIndividuals,
 		    SymbolTable * table);

@@ -104,9 +104,31 @@ int read_nonmem_driver(
 		   driverElementName, __LINE__, __FILE__ );
 	  exit( -1 );
 	}
-
+     
       driverElement = dynamic_cast<DOMElement*>( walker->nextSibling() );
     }
+    // map alpha = { theta, omega, sigma } in the order
+    int nTheta = nonmemOut.thetaIn.size();
+    int nOmega = nonmemOut.omegaIn.size();
+    int nSigma = nonmemOut.sigmaIn.size();
+    int nAlp = nTheta + nOmega + nSigma;
+    spkOut.popParIn .resize( nAlp );
+    spkOut.popParUp .resize( nAlp );
+    spkOut.popParLow.resize( nAlp );
+    spkOut.popParIn [ slice( 0, nTheta, 1 ) ] = nonmemOut.thetaIn [ slice( 0, nTheta, 1 ) ];
+    spkOut.popParUp [ slice( 0, nTheta, 1 ) ] = nonmemOut.thetaUp [ slice( 0, nTheta, 1 ) ];
+    spkOut.popParLow[ slice( 0, nTheta, 1 ) ] = nonmemOut.thetaLow[ slice( 0, nTheta, 1 ) ];
+    
+    // map b = eta
+    int nEta   = nonmemOut.etaIn.size(); 
+    int nB     = nEta;
+    spkOut.indParIn .resize( nB );
+    spkOut.indParUp .resize( nB );
+    spkOut.indParLow.resize( nB );
+    spkOut.indParIn [ slice( 0, nEta, 1 ) ] = nonmemOut.etaIn [ slice( 0, nEta, 1 ) ];
+    spkOut.indParUp [ slice( 0, nEta, 1 ) ] = nonmemOut.etaIn [ slice( 0, nEta, 1 ) ];
+    spkOut.indParLow[ slice( 0, nEta, 1 ) ] = nonmemOut.etaIn [ slice( 0, nEta, 1 ) ];
+    
     return nIndividuals;
 }
 
