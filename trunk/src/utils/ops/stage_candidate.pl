@@ -1,5 +1,6 @@
 #!/usr/bin/perl -w
 
+push @INC, "/usr/local/bin";
 use strict;
 use English;
 use File::Path;
@@ -130,7 +131,7 @@ my $dir_prefix = "spk-";
 
 my $logrotate_command = "/usr/sbin/logrotate";
 
-y$EFFECTIVE_USER_ID == 0 
+$EFFECTIVE_USER_ID == 0 
     or die "You must be root to run this program\n";
 
 -d $candidate_dir
