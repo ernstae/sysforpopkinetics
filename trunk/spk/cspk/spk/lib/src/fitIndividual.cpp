@@ -751,12 +751,36 @@ $end
 /*------------------------------------------------------------------------
  * Include file
  *------------------------------------------------------------------------*/
+
+#include <iomanip>
+#include <iostream>
+#include <sstream>
 #include "SpkValarray.h"
 #include "fitIndividual.h"
 #include "mapOpt.h"
 #include "FpErrorChecker.h"
+#include "WarningsManager.h"
 
 using SPK_VA::valarray;
+
+
+/*------------------------------------------------------------------------
+ * Local function declarations
+ *------------------------------------------------------------------------*/
+
+namespace // [Begin: unnamed namespace]
+{
+  void checkIndPar(
+    const DoubleMatrix& dvecBLow,
+    const DoubleMatrix& dvecBUp,
+    const DoubleMatrix& dvecBOut );
+
+} // [End: unnamed namespace]
+
+
+/*------------------------------------------------------------------------
+ * Function definition
+ *------------------------------------------------------------------------*/
 
 void fitIndividual( 
                     SpkModel&               indModel,
@@ -941,6 +965,9 @@ void fitIndividual(
             withD
           );
 
+    // Check for parameters that are constrained.
+    checkIndPar( dvecBLow, dvecBUp, dvecBOut );
+
     // Convert results to valarray
     if( indParOut )
         (*pdvecBOut).toValarray( (*indParOut) );
@@ -949,3 +976,119 @@ void fitIndividual(
     if( indObj_indPar_indParOut )
         (*pdmatMapObj_b_bOut).toValarray( (*indObj_indPar_indParOut) );
 }
+
+
+/*========================================================================
+ *
+ *
+ * Local Function Definitions
+ *
+ *
+ *========================================================================*/
+
+namespace // [Begin: unnamed namespace]
+{
+
+/*************************************************************************
+ *
+ * Function: checkIndPar
+ *
+ *
+ * Checks the vector of output individual parameters to see if any of
+ * its elements is constrained by its corresponding lower and/or
+ * upper limit.
+ *
+ *************************************************************************/
+
+void checkIndPar(
+  const DoubleMatrix& dvecBLow,
+  const DoubleMatrix& dvecBUp,
+  const DoubleMatrix& dvecBOut )
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  const double* pdBLowData = dvecBLow.data();
+  const double* pdBUpData  = dvecBUp .data();
+  const double* pdBOutData = dvecBOut.data();
+
+  int nB   = dvecBOut.nr();
+
+
+  //------------------------------------------------------------
+  // Check the parameters to see if any are constrained.
+  //------------------------------------------------------------
+
+  // Prepare a warning message that will only be issued if there
+  // are constrained parameters.
+  ostringstream warning;
+
+  int k;
+
+  int colWidth1 = 9 - 2;
+  int colWidth2 = 13 + 2;
+  int colWidth3 = 9;
+  string colSpacer = "  ";
+
+  warning << "The following individual parameters are at their bounds." << endl;
+  warning << endl;
+  warning << "Parameter       Value         Bound"   << endl;
+  warning << "---------  ---------------  ---------" << endl;
+
+  // Check the final individual parameter value to see if it 
+  // is constrained by its lower or upper bound;
+  bool isAnyBAtLimit = false;
+  for ( k = 0; k < nB; k++ )
+  {
+    if ( pdBOutData[k] == pdBLowData[k] || 
+         pdBOutData[k] == pdBUpData[k] )
+    {
+      isAnyBAtLimit = true;
+
+      // Column 1.
+      warning << setw( colWidth1 ) << k + 1 << colSpacer;
+
+      // Column 2.
+      warning << setw( colWidth2 ) << scientific 
+            << setprecision( 2 ) << pdBOutData[k] << colSpacer;
+
+      // Column 3.
+      warning << setw( colWidth3 );
+      if ( pdBOutData[k] == pdBLowData[k] && 
+           pdBOutData[k] == pdBUpData[k] )
+      {
+        warning << "Both ";
+      }
+      else if ( pdBOutData[k] == pdBLowData[k] )
+      {
+        warning << "Lower";
+      }
+      else
+      {
+        warning << "Upper";
+      }
+
+      warning << endl;
+    }
+  }
+
+
+  //------------------------------------------------------------
+  // Issue a warning message if necessary.
+  //------------------------------------------------------------
+
+  // Only issue the warning message if at least one of the
+  // values is constrained.
+  if ( isAnyBAtLimit )
+  {
+    string warningStr = warning.str();
+    WarningsManager::addWarning( warningStr, __LINE__, __FILE__);
+  }
+}
+
+
+} // [End: unnamed namespace]
+
