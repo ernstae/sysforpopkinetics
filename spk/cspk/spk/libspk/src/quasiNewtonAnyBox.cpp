@@ -21,22 +21,19 @@
 */
 /*************************************************************************
  *
- * File: sqpAnyBox.cpp
+ * File: quasiNewtonAnyBox.cpp
  *
  *
- * Minimizes an arbitrary smooth function subject to  simple bounds on
- * the variables using a sequential quadratic programming (SQP) method. 
+ * Minimizes an arbitrary smooth function subject to simple bounds on
+ * the variables using a quasi-Newton method. 
  *
  * Author: Mitch Watrous
- * Follow-up: Sachiko Honda for speed up
- *
- * Reviewed by: Sachiko Honda 11/15/2001
  *
  *************************************************************************/
 
 /*************************************************************************
  *
- * Function: sqpAnyBox
+ * Function: quasiNewtonAnyBox
  *
  *************************************************************************/
 
@@ -45,7 +42,7 @@
  *------------------------------------------------------------------------*/
 
 /*
-$begin sqpanybox$$
+$begin quasinewtonanybox$$
 $spell 
   bool
   cmath
@@ -93,8 +90,8 @@ $spell
   setiosflags
   setprecision
   Spk
-  sqp
-  Sqp
+  quasiNewton
+  QuasiNewton
   std
   stdout
   th
@@ -109,13 +106,13 @@ $$
 
 $section Sequential Quadratic Programming Optimization with Derivatives and Box Constraints$$
 
-$index sqpAnyBox$$
+$index quasiNewtonAnyBox$$
 $cindex sequential quadratic programming optimization 
   \with derivatives \and box constraints$$
 
 $table
 $bold Prototype:$$   $cend  
-$syntax/void sqpAnyBox(  
+$syntax/void quasiNewtonAnyBox(  
     void (* /fval/)( const DoubleMatrix&, double*, DoubleMatrix*, const void* )
     const void* /pFvalInfo/, 
     Optimizer& /optimizer/,
@@ -138,7 +135,7 @@ $$
 $pre
 $$
 $head Description$$
-Uses a sequential quadratic programming (SQP) method to solve the problem
+Uses a sequential quadratic programming (QUASINEWTON) method to solve the problem
 $math%
     \minimize f(x) \with \respect \to x
     \subject \to xLow \le x \le xUp  .
@@ -198,7 +195,7 @@ have the same number of elements as $italic dvecX$$ and must be constructed
 by the user.
 All of the elements of the derivative must be calculated by $italic fval$$.
 The pointer $italic pFvalInfo$$ is passed to the $italic fval$$ when it 
-is called by $code sqpAnyBox$$.
+is called by $code quasiNewtonAnyBox$$.
 It allows arbitrary information to be passed to $italic fval$$.
 
 $syntax/
@@ -206,7 +203,7 @@ $syntax/
 /pFvalInfo/
 /$$
 This pointer is passed to the function $italic fval$$ when it is called
-by $code sqpAnyBox$$.
+by $code quasiNewtonAnyBox$$.
 It allows arbitrary information to be passed to $italic fval$$.
 
 $syntax/
@@ -239,7 +236,7 @@ $syntax/
 
 /pdvecXOut/
 /$$
-If the return value for $code sqpAnyBox$$ is true, and 
+If the return value for $code quasiNewtonAnyBox$$ is true, and 
 if $italic pdvecXOut$$ is not equal to zero, then on output the 
 $code DoubleMatrix$$ pointed to by $italic pdvecXOut$$ will contain 
 the column vector $math%xOut%$$.  It is the final approximation for 
@@ -264,7 +261,7 @@ $syntax/
 
 /pdFOut/
 /$$
-If the return value for $code sqpAnyBox$$ is true, i.e., the algorithm
+If the return value for $code quasiNewtonAnyBox$$ is true, i.e., the algorithm
 converged successfully, and 
 if $italic pdFOut$$ is not equal to null, then on output the $code 
 double$$ value pointed to by $italic pdFOut$$ will be equal to the 
@@ -276,7 +273,7 @@ $syntax/
 
 /pF_xOut/
 /$$
-If the return value for $code sqpAnyBox$$ is true, i.e., the algorithm
+If the return value for $code quasiNewtonAnyBox$$ is true, i.e., the algorithm
 converged successfully, and 
 if $italic pF_xOut$$ is not equal to null, then on output the matrix
 value pointed to by $italic pF_xOut$$ will be equal to the 
@@ -312,7 +309,7 @@ $codep
 #include <iomanip>
 #include <cmath>
 #include "DoubleMatrix.h"
-#include "sqpAnyBox.h"
+#include "quasiNewtonAnyBox.h"
 #include "Optimizer.h"
 
 
@@ -396,7 +393,7 @@ void main()
 
   void* pFvalInfo = 0;
 
-  ok = sqpAnyBox( fourParamQuadratic, pFvalInfo, optimizer, 
+  ok = quasiNewtonAnyBox( fourParamQuadratic, pFvalInfo, optimizer, 
     dvecXLow, dvecXUp, dvecXIn, &dvecXOut, &fOut, &f_xOut );
 
   cout << setiosflags(ios::scientific) << setprecision(15);
@@ -429,56 +426,6 @@ $$
 $end
 */
 
-
-/*------------------------------------------------------------------------
- *
- * Implementation Notes 1
- * -----------------------
- *
- * In order to estimate a minimum value for the objective function, 
- * fval, sqpAnyBox calls the function nag_opt_nlp (e04ucc), which 
- * minimizes an arbitrary smooth function subject to constraints 
- * using a sequential quadratic programming (SQP) method.  The 
- * constraints allowed by nag_opt_nlp may include simple bounds on 
- * the variables, general linear constraints, and smooth nonlinear 
- * constraints.
- *
- * Although nag_opt_nlp supports both general linear constraints  
- * and smooth nonlinear constraints, they are not currently utilized  
- * by sqpAnyBox.  
- *
- * The function nag_opt_nlp is distributed by the Numerical Algorithm 
- * Group (NAG).
- *
- * Note: NAG routines expect arrays to be stored in row-major order.
- *
- *------------------------------------------------------------------------*/
-/*------------------------------------------------------------------------
- *
- * Implementation Notes 2
- * -----------------------
- *
- * sqpAnyBox (nag_opt_nlp, in particular) may be (and indeed) called 
- * recursively.  This means, to avoid unexpected result and behavior,
- * never use global (static) variables.  It also ensures thread-able
- * in the future.
- *
- *------------------------------------------------------------------------*/
-
-// 
-// Review - Sachiko: suggestion
-//
-// The name "fval" for the objective function is somewhat misleading.
-// It seems to suggest a tagible value, instead of a function.
-// "objf" or "evalf" may clarify?
-//
-// 
-// Review - Sachiko: suggestion
-//
-// This file contains so much information.  It's almost too much for a 
-// single file.  Consider pulling out some static functions such as
-// nag_real_cholesky_solve_mult_rhs which appears useful in general.
-//
 /*------------------------------------------------------------------------
  * Include files
  *------------------------------------------------------------------------*/
@@ -496,11 +443,10 @@ extern "C" {
 #include "nag.h"
 #include "nag_types.h"
 #include "nag_stdlib.h"
-#include "nage04.h"
 #include "nagf04.h"
 }
 #include "transpose.h"
-#include "sqpAnyBox.h"
+#include "quasiNewtonAnyBox.h"
 #include "DoubleMatrix.h"
 #include "SpkException.h"
 
@@ -560,16 +506,29 @@ static void NAG_CALL confun( Integer, Integer,
 /*------------------------------------------------------------------------
  * Namespace declarations
  *------------------------------------------------------------------------*/
+
+
+
+TO DO: TAKE OUT OLD FVAL STUFF
+TO DO: TAKE OUT OLD FVAL STUFF
+TO DO: TAKE OUT OLD FVAL STUFF
+TO DO: TAKE OUT OLD FVAL STUFF
+TO DO: TAKE OUT OLD FVAL STUFF
+TO DO: TAKE OUT OLD FVAL STUFF
+TO DO: TAKE OUT OLD FVAL STUFF
+TO DO: TAKE OUT OLD FVAL STUFF
+TO DO: TAKE OUT OLD FVAL STUFF
+
 //
 // Review - Sachiko: Intentional?  but confusing.
 //
-// The same namespace is defined in sqpAnyBox.h too.  One in the header
+// The same namespace is defined in quasiNewtonAnyBox.h too.  One in the header
 // defines only FVAL_PROTOTYPE.  The definition here must be appending
 // more information but it's a bit confusing.  Since FVAL_PROTOTYPE
 // is not needed to be defined in the header, perhaps just move that
 // portion to here and compress them.
 // 
-namespace sqpanybox 
+namespace quasinewtonanybox 
 {
   //
   // Structure: FvalScaledInfo
@@ -610,46 +569,25 @@ namespace sqpanybox
     ~NagOptWrapper() { e04xzc( &options, "all", NAGERR_DEFAULT ); }
   };
 
-  //
-  // Review - Sachiko: Obsolete
-  //
-  // Thanks for the thoughtfulness here, Mitch!  This can go away
-  // completely because we have defined our exception structure.
-  //
-
-  // Class: SqpAnyBoxException
-  //
-  //
-  // This class is an empty exception class that is thrown when an
-  // error occurs in sqpAnyBox which requires the program to terminate.
-  //
-  // [Revisit - Exceptions - Mitch] More information should be added to this 
-  // exception so that it can possibly be handled when it is caught.
-  //
-  class SqpAnyBoxException 
-  {
-  public:
-    SqpAnyBoxException() {}
-    ~SqpAnyBoxException() {}
-  };
-
 }
 
-using namespace sqpanybox;
+using namespace quasinewtonanybox;
 
 
 /*------------------------------------------------------------------------
  * Function definition
  *------------------------------------------------------------------------*/
-void sqpAnyBox( FVAL_PROTOTYPE fval,
-                const void* pFvalInfo, 
-                & optimizer,
-                const DoubleMatrix& dvecXLow,
-                const DoubleMatrix& dvecXUp,
-                const DoubleMatrix& dvecXIn, 
-                DoubleMatrix* pdvecXOut, 
-                double* pdFOut, 
-                DoubleMatrix* pF_xOut )
+
+void quasiNewtonAnyBox( 
+  quasiNewtonAnyBox::FVAL_PROTOTYPE  fval,
+  const void*                        pFvalInfo,
+  Optimizer&                         optimizer,
+  const DoubleMatrix&                dvecXLow,
+  const DoubleMatrix&                dvecXUp,
+  const DoubleMatrix&                dvecXIn,
+  DoubleMatrix*                      pdvecXOut,
+  double*                            pdFOut,
+  DoubleMatrix*                      pF_xOut )
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -781,7 +719,7 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   //***************************************************************************
   // [Revisit - Next SPK Iteration - Improved Diagnostics - Mitch]
   //
-  // Currently the tracing done for the NAG optimizer (called by sqpAnyBox) is
+  // Currently the tracing done for the NAG optimizer (called by quasiNewtonAnyBox) is
   // pretty crude.  What's there right now is basically a cobbled together
   // version of the tracing done in the O-Matrix version of SPK and the built
   // in tracing for the NAG optimizer.  The result is that the specifications
@@ -793,13 +731,13 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   // they are back in the original space that the user understands.
   // 
   // The NAG optimizer also provides the user-defined print function with
-  // derivative checking information.  Another thing we could do in sqpAnyBox
+  // derivative checking information.  Another thing we could do in quasiNewtonAnyBox
   // is to analyze the derivative information from the NAG optimizer and
   // provide diagnostics to the user that lets them know which component(s) of
   // the user's derivative are in error.
   // 
   // Therefore, for the next iteration, we could improve the diagnostics for
-  // sqpAnyBox by defining our own tracing function and also our own
+  // quasiNewtonAnyBox by defining our own tracing function and also our own
   // derivative checking function.  I think that once we do that, then the
   // specifications for the level parameter will be much easier to write.
   //***************************************************************************
@@ -927,7 +865,7 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   //     alpha ||p||  <=  epsilon  (1 + ||y||),
   //
   // The above convergence criteria used by nag_opt_nlp is equivalent 
-  // to the following convergence criteria used by sqpAnyBox:
+  // to the following convergence criteria used by quasiNewtonAnyBox:
   //
   //     abs( xOut - xStar )  <=  epsilon (xUp - xLow) .
   //
@@ -995,7 +933,7 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   //
   // [Revisit - Optimizer Parameters - Mitch] This nag_opt_nlp 
   // parameter is currently hard-coded.  It should be an argument
-  // to sqpAnyBox that the calling routine can change.
+  // to quasiNewtonAnyBox that the calling routine can change.
   //
   options.step_limit = .05;
   assert(   options.step_limit > 0.0 );
@@ -1016,7 +954,7 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   //
   // [Revisit - Optimizer Parameters - Mitch] This nag_opt_nlp 
   // parameter is currently hard-coded.  It should be an argument
-  // to sqpAnyBox that the calling routine can change.
+  // to quasiNewtonAnyBox that the calling routine can change.
   //
   options.crash_tol = 1.0e-4;
 
@@ -1268,12 +1206,12 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   {
     // See if this function's convergence criterion has been met.
     if ( isWithinTol( 
-        epsilon,
-        dvecY,
-        dvecYLow,
-        dvecYUp,
-        drowGScaled,
-        getLowerTriangle( arrayToDoubleMatrix( options.h, n, n ) ) ) )
+      epsilon,
+      dvecY,
+      dvecYLow,
+      dvecYUp,
+      drowGScaled,
+      getLowerTriangle( arrayToDoubleMatrix( options.h, n, n ) ) ) )
     {
       isWithinTol = true;
     }
@@ -1513,7 +1451,7 @@ static void scaleGradElem(   int n,
  *
  * Note:  in the NAG documentation the objective function for nag_opt_nlp
  * (e04ucc) has the more generic name objfun, i.e., this function is an 
- * implementation of objfun specific to sqpAnyBox.
+ * implementation of objfun specific to quasiNewtonAnyBox.
  *
  *
  * Description
@@ -2263,29 +2201,3 @@ static bool isLowerTriangular( const DoubleMatrix& dmatA )
 }
 
 
-/*************************************************************************
- * Function: confun
- *
- *
- * Calculates the vector c(y) of nonlinear constraint functions and 
- * (optionally) its Jacobian (=(partial c/partial y) for a specified 
- * n element vector y. 
- *
- *************************************************************************/
-
-static void NAG_CALL confun( Integer n, 
-                             Integer ncnlin, 
-                             Integer *needc,  
-                             double *y, 
-                             double *conf, 
-                             double *conjac, 
-                             Nag_Comm *comm )
-{
-
-
-  // Since sqpAnyBox does not currently make use of the general 
-  // linear and smooth nonlinear constraints that are supported  
-  // by nag_opt_nlp, this function is not defined in this file.
-
-
-}
