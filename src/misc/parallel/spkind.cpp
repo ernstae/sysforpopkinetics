@@ -3,15 +3,14 @@
   spkind -- individual level of SPK computation
 
   SYNOPSIS
-  spkpop job_id individual_id
+  spkind job_id individual_id spkjob_tid
 
   DESCRIPTION
 
   This program performs the SPK computation for a single individual.
   It is started by the population level, spkpop, and runs the
-  individual optimization repeatedly, once for each iteration of the
-  population level.  It can run on any node of a parallel virtual
-  machine (pvm).
+  individual optimization. It can run on any node of a parallel
+  virtual machine (pvm).
 
   As a unix process, this program is the child of the pvm daemon
   running on its node.  As a pvm task, it is the child of spkpop,
@@ -31,6 +30,27 @@
   parent of spkjob. It acesses the working directory via the Network
   File System (NFS).
 
+  ARGUMENTS
+
+  job_id
+
+      The job_id of the job for which this is a part.  This is the
+      string which identifies the job in the spkdb database, and also
+      in the spk runtime log.
+
+  individual_id
+
+      If a job models a population of n individuals, they can be
+      numbered 0,1,2,...n-1.  The individual_id is a number that set
+      and serves to distinguish this instance of spkind from other
+      instances associated with the same job.
+
+  spkjob_tid
+
+      This is the tid of the instance of spkjob which is working on
+      the given job and is, with respect to the parallel virtual
+      machine (PVM) the grandparent of this task.
+ 
   SEE ALSO
   spkjob
   spkpop
@@ -52,6 +72,7 @@ static int my_tid = 0;
 static char *job_id = "?????";
 static char *ind_id = "?????";
 static int parent_tid = 0;
+static int spkjob_tid = 0;
 
 static void finish(int);
 static void signal_handler(int);
@@ -60,61 +81,59 @@ static void spklog(const char*);
 // call this function in case of fatal error
 static void die(char* message) {
   spklog(message);
-  finish(1);
+  finish(SpkPvmDied);
   exit(1);
 }
 // call this function to clean up before ending
 static void finish(int exit_value) {
-  char buf[100];
   pvm_initsend(PvmDataDefault);
   pvm_pkint(&exit_value, 1, 1);
   pvm_send(parent_tid, SpkPvmExitValue);
   spklog("stop");
+  pvm_exit();
 }
-// handle a termination signal
+// handle a signal
 static void signal_handler(int signum) {
-  spklog("terminated by spkpop");
-  finish(1);
-  exit(1);
+  spklog("caught a termination signal");
+  finish(signum);
+  exit(signum);
 }
-/*
-  Write a message to the SPK log.  It is assumed that spkjob, which is
-  either the pvm parent or grandparent of this instance, set up the
-  connection of our standard output to the log file, which resides on
-  the head node, by invoking pvm_catchout.
-*/
+// Send a log message to spkjob
 static void spklog(const char* message) {
-  time_t t = time(NULL);
-  char* timestamp = ctime(&t);
-  int len = strlen(timestamp);
-  if (len > 6)
-    timestamp[len - 6] = '\0';
-  printf("[j%s] (%s) 2 spkind(%s): %s\n", job_id, timestamp, ind_id, message);
-  //  fflush(stdout);
+  char buf[100];
+  sprintf(buf, "j%s\tt%0x\tspkind(%s):\t%s", job_id, my_tid, ind_id, message);
+  pvm_initsend(PvmDataDefault);
+  pvm_pkstr(buf);
+  pvm_send(spkjob_tid, SpkPvmLogMessage);
 }
 
 int main(int argc, char** argv) {
-  pvm_setopt(PvmRoute, PvmRouteDirect);
-  int my_tid = pvm_mytid();          // attach to pvm
+  pvm_setopt(PvmRoute, PvmDontRoute);
+  my_tid = pvm_mytid();          // attach to pvm
   char *usage = "spkind job_id individual_id";
   char buf[100];
   int bufid;
 
   // process arguments  
-  if (argc != 3)
+  if (argc != 4)
     die(usage);
-  job_id = argv[1];
-  ind_id = argv[2];
+  job_id     = argv[1];
+  ind_id     = argv[2];
+  spkjob_tid = atoi(argv[3]);
+
+  int iid = atoi(ind_id);
   
-  // set up signal handling for the signals that might be used
-  // by human operators to terminate us
+  // set up signal handling
   struct sigaction signal_action;
+  sigset_t block_mask;
+  sigemptyset(&block_mask);
+  for (int i = 0; i < NSIG; i++)
+    sigaddset(&block_mask, i);
   signal_action.sa_handler = signal_handler;
-  sigemptyset(&signal_action.sa_mask);
   signal_action.sa_flags = 0;
-  sigaction(SIGINT,  &signal_action, NULL);
-  sigaction(SIGHUP,  &signal_action, NULL);
-  sigaction(SIGTERM, &signal_action, NULL);
+  signal_action.sa_mask = block_mask;
+  for (int i = 0; i < NSIG; i++)
+    sigaction(i,  &signal_action, NULL);
 
   parent_tid = pvm_parent();
 
@@ -129,10 +148,18 @@ int main(int argc, char** argv) {
   if (chdir(buf) != 0)
     die("could not change working directory");
 
-
-  for (int i = 0; i < 10; i++) {
-    sleep(1);
+  if (strcmp(ind_id, "1") == 0) {
+    spklog("going to cause a segmentation fault");
+    sleep(17);
+    char *x;
+    strcpy(x, "hello");
   }
+  srand(1023);
+  for (int i = 0; i < 10 * iid; i++)
+    rand();
+  sleep(1 + (int)(20.0*rand()/(RAND_MAX+1.0)));
+
+  sleep(10);
   finish(0);
   return 0;
 }

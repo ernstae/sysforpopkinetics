@@ -6,6 +6,7 @@
 #include <pvm3.h>
 
 // function prototypes
+extern char *spkpvm_timestamp(void);
 extern const char *spkpvm_spawn_error(int);
 
 // paths
@@ -15,8 +16,13 @@ extern const char *spkpvm_spawn_error(int);
 
 
 // message tags
-#define SpkPvmExitValue 500
-#define SpkPvmKill      501
+#define SpkPvmExitValue    500
+#define SpkPvmLogMessage   501
+
+// special exit values
+#define SpkPvmUnreported   -1
+#define SpkPvmDied         -2
+#define SpkPvmChildError   -3
 
 // architectures
 static char *i686 = "i686";
