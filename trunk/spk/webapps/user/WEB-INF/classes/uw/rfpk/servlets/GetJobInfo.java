@@ -124,7 +124,7 @@ public class GetJobInfo extends HttpServlet
                     String methodCode = jobRS.getString("method_code");
                     String method = "";
                     if(methodCode != null)
-                        method = conversion.getProperty(methodCode);                    
+                        method = conversion.getProperty(methodCode, "Not Available");                    
                     long modelId = jobRS.getLong("model_id");
                     long datasetId = jobRS.getLong("dataset_id"); 
                     String modelVersion = jobRS.getString("model_version");
@@ -135,7 +135,7 @@ public class GetJobInfo extends HttpServlet
                     ResultSet datasetRS = Spkdb.getDataset(con, datasetId);
                     datasetRS.next();
                     String datasetName = datasetRS.getString("name");          
-               
+                
                     // Disconnect to the database
                     Spkdb.disconnect(con);
              

@@ -41,19 +41,17 @@ import java.text.SimpleDateFormat;
 //import java.text.NumberFormat;
 
 /**
- * This class creates a window that includes a menu bar and a text area.  The menu bar has two
- * menus, File menu and Operation menu.  The File menu includes Open, Close, Save, Save As,
- * Page Setup and Print menu items.  The Operation menu includes Cretae Input File Transmit File 
- * and Receive File menu items.
+ * This class creates a window for the model design agent.,  There are eleven buttons, 
+ * a menu bar and a text area in the window.
  * @author Jiaji Du
- * @version 1.0 
  */                                 
 public class MDAFrame extends JFrame
 {
     /** This is a constructor creating the applications main window.
-     * @param args a String array containing the server host name, the server
-     * port number, the session ID and the secret code.
      * @param title a String as the title of the window.
+     * @param args a String array containing the server host name, the server
+     * port number, the session ID, the secret code, 1/0 tester or non-tester, 
+     * 1/0 developer/non-developer.
      */
     public MDAFrame(String title, String[] args)
     {
@@ -616,7 +614,7 @@ public class MDAFrame extends JFrame
         jPanel5.add(jRadioButton9, gridBagConstraints);
 
         jLabel22.setFont(new java.awt.Font("Default", 0, 12));
-        jLabel22.setText("Number of individual objective evaluations");
+        jLabel22.setText("number of individual objective evaluations");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 7;
@@ -648,6 +646,10 @@ public class MDAFrame extends JFrame
 
         errorMessageDialog.getContentPane().add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
+        warningMessageDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        warningMessageDialog.setTitle("Warning Message");
+        warningMessageDialog.setLocationRelativeTo(this);
+        jTextArea5.setEditable(false);
         jScrollPane7.setViewportView(jTextArea5);
 
         warningMessageDialog.getContentPane().add(jScrollPane7, java.awt.BorderLayout.CENTER);
@@ -1645,8 +1647,8 @@ public class MDAFrame extends JFrame
             for(int i = 0; i < output.warning.length; i++)
             {
                 warning += "<Warning Message " + (i + 1) + ">\n" + output.warning[i][0] + "\n";
-//                if(isDeveloper)
-                    warning += "The message was issued from file: " + output.warning[i][1] + 
+                if(isDeveloper)
+                    warning += "This message was issued from file: " + output.warning[i][1] + 
                                " at line: " + output.warning[i][2] + "\n";
                 warning += "\n";
             }
@@ -1655,9 +1657,9 @@ public class MDAFrame extends JFrame
             warningMessageDialog.show();
         }
         else
-             JOptionPane.showMessageDialog(null, "The warning message is not available", 
-                                          "Warning Message Error",               
-                                          JOptionPane.ERROR_MESSAGE);        
+            JOptionPane.showMessageDialog(null, "The warning message is not available",
+                                          "Warning Message Error",
+                                          JOptionPane.ERROR_MESSAGE);
     }//GEN-LAST:event_warningMenuActionPerformed
 
     private void useRMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useRMenuActionPerformed
@@ -2667,17 +2669,25 @@ public class MDAFrame extends JFrame
         }       
         
         // Galculate computing time
-        String computingTime = NA;
-        if(output.computingTimes != null)
+        String computingTime = null;
+        if(output.computingTimes != null && output.computingTimes.length > 0)
         {
-            double estimationTime = 0;
-            double statisticsTime = 0;
-            if(output.computingTimes[0] != null)
-                estimationTime = Double.parseDouble(output.computingTimes[0]);
-            if(output.computingTimes[1] != null)
-                statisticsTime = Double.parseDouble(output.computingTimes[1]);
-            computingTime = String.valueOf(estimationTime + statisticsTime) + " s";
+            double elapsedTime = 0;
+            for(int i = 0; i < output.computingTimes.length; i++)
+            {
+                if(output.computingTimes[i] != null && !output.computingTimes[i].equals(""))
+                    elapsedTime += Double.parseDouble(output.computingTimes[i]);
+                else
+                {
+                    computingTime = NA;
+                    break;
+                }
+            }
+            if(!computingTime.equals(NA))
+                computingTime = String.valueOf(elapsedTime) + " s";
         }
+        else
+            computingTime = NA;
 
         String jobAbstract = output.jobAbstract != null ? output.jobAbstract : NA;
         String submissionTime = output.submissionTime != null ? formatTime(output.submissionTime) : NA;
@@ -2690,10 +2700,24 @@ public class MDAFrame extends JFrame
         String dataName = output.dataName != null ? output.dataName : NA;
         String dataVersion = output.dataVersion != null ? output.dataVersion : NA;
         String dataAbstract = output.dataAbstract != null ? output.dataAbstract : NA;
-        String errorMessage = output.error != null ? "\n" + output.error : NA;        
+        String errorMessage = output.error != null ? "\n" + output.error : NA;
         String objective = output.objective != null ? output.objective : NA;
         String integrationMethod = output.mcMethod != null ? output.mcMethod : NA;
         String objStdErr = output.objStdErr != null ? output.objStdErr : NA;
+        String warningMessage = "";
+        if(output.warning != null)
+        {
+            warningMessage = "\n";
+            for(int i = 0; i < output.warning.length; i++)
+            {
+                warningMessage += "<Warning Message " + (i + 1) + ">\n" + output.warning[i][0] + "\n";
+                if(isDeveloper)
+                    warningMessage += "This message was issued from file: " + output.warning[i][1] + 
+                                      " at line: " + output.warning[i][2] + "\n";
+            }
+        }
+        else
+            warningMessage = NA;
         
         // Write summary
         String summary = "Summary Report" + "\n\n\n" +
@@ -2709,7 +2733,8 @@ public class MDAFrame extends JFrame
                          "Dataset Name: " + dataName + "\n\n" +
                          "Dataset Version: " + dataVersion + "\n\n" +
                          "Dataset Description: " + dataAbstract + "\n\n" +                      
-                         "Error Message: " + errorMessage + "\n\n" +
+                         "Error Messages: " + errorMessage + "\n\n" +
+                         "Warning Messages: " + warningMessage + "\n" +
                          "Minimum Value of Objective Function: " + objective + "\n\n" +
                          "Numerical Integration Method: " + integrationMethod + "\n\n" +
                          "Standard Error of the Objective Function Value: " + objStdErr + "\n\n" +
@@ -3236,7 +3261,7 @@ public class MDAFrame extends JFrame
         }
         
         // Get job method code
-        String jobMethodCode = null;
+        String jobMethodCode = "no";
         if(jTextField14.getText().equals("First Order")) jobMethodCode = "fo";
         if(jTextField14.getText().equals("Expected Hessian")) jobMethodCode = "eh";
         if(jTextField14.getText().equals("Laplace Approximation")) jobMethodCode = "la";
@@ -3264,7 +3289,7 @@ public class MDAFrame extends JFrame
                 if(isDeveloper)
                     options = new Object[]{"Monte Carlo", "Grid", "Analytic"};
                 Object selectedValue = JOptionPane.showInputDialog(null, "Please select an integration method.", 
-                                                                   "Input for M.C.", 
+                                                                   "Input for Likelihood Evaluation.", 
                                                                    JOptionPane.INFORMATION_MESSAGE, null,
                                                                    options, options[0]);
                 String integrationMethod = "monte";
@@ -3692,7 +3717,6 @@ public class MDAFrame extends JFrame
     // Display a list of jobs or models or versions that belongs to the user
     private void showArchiveList(boolean isRepeatCall)
     {
-        timer.start();
         String[] header = null;
         String title = "";
         String[][] archiveList = null;
@@ -3700,6 +3724,7 @@ public class MDAFrame extends JFrame
         {            
             case 'j':
             {
+                timer.start();
                 title = "Job List"; 
                 header = new String[]{"Submission Time", "Status Code", "Model.Version", "Dataset.Version", "Job Description"};
                 break;
@@ -4071,7 +4096,7 @@ public class MDAFrame extends JFrame
     protected long jobId = 0; 
     
     // Method for estimation in SPK input file
-    private String method = null;
+    private String method = "Not Available";
 
     /** The Server name. */
     protected String serverName = null;

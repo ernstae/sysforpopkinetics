@@ -84,7 +84,6 @@ public class XMLWriter
                 analysis.setAttribute("approximation", source.estimation[0]);
                 if(source.estimation[0].equals("fo"))
                     analysis.setAttribute("is_eta_out", source.estimation[5]);
-                analysis.setAttribute("pop_size", String.valueOf(data.size()));
                 analysis.setAttribute("interaction", source.estimation[7]);
             }
             analysis.setAttribute("abort", source.estimation[4]);
@@ -93,6 +92,8 @@ public class XMLWriter
         {
             analysis.setAttribute("is_estimation", "no");
         }
+        if(source.analysis.equals("population"))
+            analysis.setAttribute("pop_size", String.valueOf(data.size()));
         constraint.appendChild(analysis); 
         setDescription(analysis);
         setInput(analysis);

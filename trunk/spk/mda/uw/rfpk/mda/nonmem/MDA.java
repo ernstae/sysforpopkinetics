@@ -27,14 +27,14 @@ import javax.swing.JOptionPane;
 /**
  * This is the main class of the Model Design Agent application. 
  * @author  Jiaji Du
- * @version 1.0
  */
 public class MDA
 {
     /**
      * The main method that creates the application object and initialize it.
      * @param args a String array containing the server host name, the server
-     * port number, session ID and secret code.
+     * port number, session ID, secret code, 1/0 indicating tester/non-tester, 
+     * 1/0 indicating developer/non-developer.
      */
     public static void main(String[] args)
     {
