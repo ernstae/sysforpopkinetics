@@ -2294,6 +2294,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "#include <vector>" << endl;
   oIndData_h << "#include <map>" << endl;
   oIndData_h << "#include <spk/SpkValarray.h>" << endl;
+  oIndData_h << "#include <spk/cholesky.h>" << endl;
+  oIndData_h << "#include <spk/multiply.h>" << endl;
   oIndData_h << "#include <CppAD/CppAD.h>" << endl;
   oIndData_h << endl;
   
@@ -2395,6 +2397,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << endl;
   oIndData_h << "~IndData();" << endl;
   oIndData_h << "const SPK_VA::valarray<double> getMeasurements() const;" << endl;
+  oIndData_h << "void compResiduals();" << endl;
+  oIndData_h << "void compWeightedResiduals( const SPK_VA::valarray<double>& R );" << endl;
   oIndData_h << endl;
 
   // 
@@ -2407,7 +2411,7 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "IndData( const IndData& );" << endl;
   oIndData_h << "IndData& operator=( const IndData& );" << endl;
   oIndData_h << endl;
-  oIndData_h << "int nY; // #of measurements." << endl;
+  oIndData_h << "int nY; // #of measurements (DVs where MDV=0)." << endl;
   oIndData_h << "SPK_VA::valarray<double> measurements;" << endl;
 
   //
@@ -2416,7 +2420,7 @@ void NonmemTranslator::generateIndData( ) const
   // const int n: #of measurements in this set (ie. individual).
   //
   oIndData_h << "private:" << endl;
-  oIndData_h << "const int n; // #of measurements." << endl;
+  oIndData_h << "const int n; // the number of data records." << endl;
   oIndData_h << "void assignToDbl( double&, const CppAD::AD<double>& ) const;" << endl;
   oIndData_h << "void assignToDbl( double&, double ) const;" << endl;
   oIndData_h << "};" << endl;
@@ -2568,16 +2572,39 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "   left = right;" << endl;
   oIndData_h << "   return;" << endl;
   oIndData_h << "}" << endl;
-/*
+  oIndData_h << endl;
+
   oIndData_h << "template <class ValueType>" << endl;
-  oIndData_h << "bool IndData<ValueType>::logical_true( const CppAD::AD<double>& val ) const" << endl;
+  oIndData_h << "void IndData<ValueType>::compResiduals()" << endl;
   oIndData_h << "{" << endl;
-  oIndData_h << "   if( CppAD::Value(val) == 1.0 )" << endl;
-  oIndData_h << "      return true;" << endl;
-  oIndData_h << "   else" << endl;
-  oIndData_h << "      return false;" << endl;
+  oIndData_h << "   for( int i=0; i<n; i++ )" << endl;
+  oIndData_h << "   {" << endl;
+  oIndData_h << "      " << UserStr.RES << "[i] =" << UserStr.DV << "[i] - " << UserStr.PRED << "[i];" << endl;
+  oIndData_h << "   }" << endl;
   oIndData_h << "}" << endl;
-*/
+  oIndData_h << endl;
+
+  oIndData_h << "// It is unfortunately that this function is dependent on CppAD. " << endl;
+  oIndData_h << "// The type of template argument must have CppAD::Value() operator." << endl;
+  oIndData_h << "template <class ValueType>" << endl;
+  oIndData_h << "void IndData<ValueType>::compWeightedResiduals( const SPK_VA::valarray<double>& Ri )" << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "   using SPK_VA::valarray;" << endl;
+  oIndData_h << "   using std::vector;" << endl;
+  oIndData_h << "   assert( Ri.size() == n * n );" << endl;
+  oIndData_h << "   compResiduals();" << endl;
+  oIndData_h << "   valarray<double> r( n );" << endl;
+  oIndData_h << "   for( int i=0; i<n; i++ )" << endl;
+  oIndData_h << "      r[i] = CppAD::Value( " << UserStr.RES << "[i] );" << endl;
+  oIndData_h << "   valarray<double> C( 0.0, n * n );" << endl;
+  oIndData_h << "   C = cholesky( Ri, n );" << endl;
+  oIndData_h << "   valarray<double> w = multiply( C, n, r, 1 );" << endl;
+  oIndData_h << "   vector< CppAD::AD<double> > Cr(n);" << endl;
+  oIndData_h << "   for( int i=0; i<n; i++ )" << endl;
+  oIndData_h << "      " << UserStr.WRES << "[i] = w[i];" << endl;
+  oIndData_h << "   return;" << endl;
+
+  oIndData_h << "}" << endl;
 
   oIndData_h << "#endif" << endl;
 
@@ -2653,8 +2680,8 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "std::vector<IndData<ValueType>*> data;" << endl;
   oDataSet_h << "const int popSize;" << endl;
   oDataSet_h << "const SPK_VA::valarray<double> getAllMeasurements() const;" << endl;
-  oDataSet_h << "void compRES();" << endl;
-  oDataSet_h << "void compWRES( const SPK_VA::valarray<double>& R );" << endl;
+  oDataSet_h << "void compAllResiduals();" << endl;
+  oDataSet_h << "void compAllWeightedResiduals( std::vector< SPK_VA::valarray<double> >& R );" << endl;
   oDataSet_h << endl;
  
   //
@@ -2800,35 +2827,26 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << endl;
 
   oDataSet_h << "template <class ValueType>" << endl;
-  oDataSet_h << "void DataSet<ValueType>::compRES()" << endl;
+  oDataSet_h << "void DataSet<ValueType>::compAllResiduals()" << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   const int n = data.size();" << endl;
   oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
   oDataSet_h << "   {" << endl;
-  oDataSet_h << "      data[0]->" << UserStr.RES << "[i] = y[i] - data[0]->" << UserStr.PRED << "[i];" << endl;
+  oDataSet_h << "      data[i]->compResiduals();" << endl;
   oDataSet_h << "   }" << endl;
   oDataSet_h << "}" << endl;
+  oDataSet_h << endl;
 
   oDataSet_h << "template <class ValueType>" << endl;
-  oDataSet_h << "void DataSet<ValueType>::compWRES( const SPK_VA::valarray<double>& R )" << endl;
+  oDataSet_h << "void DataSet<ValueType>::compAllWeightedResiduals( std::vector< SPK_VA::valarray<double> >& R )" << endl;
   oDataSet_h << "{" << endl;
-  oDataSet_h << "   using SPK_VA::valarray;" << endl;
-  oDataSet_h << "   using std::vector;" << endl;
   oDataSet_h << "   const int n = data.size();" << endl;
-  oDataSet_h << "   assert( R.size() == n * n );" << endl;
-  oDataSet_h << "   compRES();" << endl;
-  oDataSet_h << "   valarray<double> r( n );" << endl;
   oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
-  oDataSet_h << "      r[i] = CppAD::Value( data[0]->" << UserStr.RES << "[i] );" << endl;
-  oDataSet_h << "   valarray<double> C( 0.0, n * n );" << endl;
-  oDataSet_h << "   C = cholesky( Ri, n );" << endl;
-  oDataSet_h << "   valarray<double> w = multiply( C, n, r, 1 );" << endl;
-  oDataSet_h << "   vector< CppAD::AD<double> > Cr(n);" << endl;
-  oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
-  oDataSet_h << "      data[0]->" << UserStr.WRES << "[i] = w[i];" << endl;
-  oDataSet_h << "   return;" << endl;
-
+  oDataSet_h << "   {" << endl;
+  oDataSet_h << "      data[i]->compWeightedResiduals( R[i] );" << endl;
+  oDataSet_h << "   }" << endl;
   oDataSet_h << "}" << endl;
+  oDataSet_h << endl;
 
   oDataSet_h << "#endif" << endl;
   oDataSet_h.close();
@@ -3593,6 +3611,7 @@ void NonmemTranslator::generateIndDriver( ) const
 
   oDriver << "#include <spk/SpkValarray.h>" << endl;
   oDriver << "#include <spk/SpkException.h>" << endl;
+  oDriver << "#include <spk/WarningsManager.h>" << endl;
   oDriver << "#include <CppAD/CppAD.h>" << endl;
   if( myIsEstimate )
   {
@@ -3631,6 +3650,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << endl;
 
   oDriver << "namespace{" << endl;
+  oDriver << "// Compute the residuals for i-th individual." << endl;
   oDriver << "const vector<CppAD::AD<double> > wres( int n," << endl;
   oDriver << "                                       const valarray<double> & Ri," << endl;
   oDriver << "                                       const vector  < CppAD::AD<double> > & residual )" << endl;
@@ -3955,12 +3975,13 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "valarray<double> ROut( nY, nY );" << endl;
   oDriver << "model.setIndPar( bOut );" << endl;
   oDriver << "model.dataVariance( ROut );" << endl;
-
   oDriver << "for( int j=0; j<nY; j++ )" << endl;
   oDriver << "{" << endl;
   oDriver << "   set.data[0]->" << UserStr.RES << "[j] = y[j] - set.data[0]->" << UserStr.PRED << "[j];" << endl;
   oDriver << "}" << endl;
   oDriver << "set.data[0]->" << UserStr.WRES << " = wres( nY, ROut, set.data[0]->" << UserStr.RES << " ); " << endl;
+  
+  //oDriver << "set.compWeightedResiduals( ROut );" << endl;
   oDriver << endl;
 
   oDriver << "ofstream oResults( \"" << fResult_xml << "\" );" << endl;
@@ -4310,6 +4331,7 @@ void NonmemTranslator::generatePopDriver() const
 
   oDriver << "#include <spk/SpkValarray.h>" << endl;
   oDriver << "#include <spk/SpkException.h>" << endl;
+  oDriver << "#include <spk/WarningsManager.h>" << endl;
   oDriver << "#include <CppAD/CppAD.h>" << endl;
 
   if( myIsEstimate )
