@@ -8,6 +8,13 @@
  <articleinfo>
     <revhistory>
       <revision>
+        <revnumber>1.2</revnumber>
+        <date>April 20, 2004</date>
+        <authorinitials>sh</authorinitials>
+        <revremark>Linux_P4 -> $ARCH
+        </revremark>
+      </revision>
+      <revision>
         <revnumber>1.1</revnumber>
         <date>March 26, 2004</date>
         <authorinitials>sh</authorinitials>
@@ -218,7 +225,7 @@ make install arch=$ARCH
           <para>
           Install the package (ie. libraries and headers).
             <screen>
-mv lib/Linux_P4/liblapack.a lib/$ARCH/libatlas_lapack.a
+mv lib/$ARCH/liblapack.a lib/$ARCH/libatlas_lapack.a
 su
  
 mkdir /usr/local/lib/atlas
@@ -253,10 +260,10 @@ export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
           changes to a base Make input file so that the subsequent
           tests will be attempted to use libraries in the installed directory
           rather than the ones in /tmp/ATLAS/.
-          Open <filename>ATLAS/Make.Linux_P4</filename> with an editor 
-          and edit the lines where <literal>ATLASlib</literal>,
+          Open <filename>Make.$ARCH</filename> with an editor 
+          and edit the lines, where <literal>ATLASlib</literal>,
           <literal>CBLASlib</literal> and <literal>LAPACKlib</literal>
-          variables are set to the followings:
+          variables are set, to the following new values:
             <screen>
 ATLASlib  = -latlas
 CBLASlib  = -lcblas
