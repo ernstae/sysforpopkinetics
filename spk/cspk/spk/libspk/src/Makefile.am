@@ -20,6 +20,7 @@ libspk_la_SOURCES = \
 	BlockAlloc.cpp \
 	blockDiagonalDerivative.cpp \
 	broadCastEndOfSpk.cpp \
+	calcMean.cpp \
 	centdiff.cpp \
 	Channel.cpp \
 	cholesky.cpp \
@@ -120,6 +121,7 @@ libspk_la_SOURCES = \
 	BlockAlloc.h \
 	blockDiagonalDerivative.h \
 	broadCastEndOfSpk.h \
+	calcMean.h \
 	centdiff.h \
 	Channel.h \
 	cholesky.h \
@@ -231,6 +233,7 @@ libspk_release_la_SOURCES = \
 	BlockAlloc.cpp \
 	blockDiagonalDerivative.cpp \
 	broadCastEndOfSpk.cpp \
+	calcMean.cpp \
 	centdiff.cpp \
 	Channel.cpp \
 	cholesky.cpp \
@@ -331,6 +334,7 @@ libspk_release_la_SOURCES = \
 	BlockAlloc.h \
 	blockDiagonalDerivative.h \
 	broadCastEndOfSpk.h \
+	calcMean.h \
 	centdiff.h \
 	Channel.h \
 	cholesky.h \
@@ -443,6 +447,7 @@ pkginclude_HEADERS = \
 	BlockAlloc.h \
 	blockDiagonalDerivative.h \
 	broadCastEndOfSpk.h \
+	calcMean.h \
 	centdiff.h \
 	Channel.h \
 	cholesky.h \
