@@ -205,7 +205,7 @@ sub fork_runner {
     #    again, the suffix is the job_id. This makes it easy for
     #    software engineers to find the dump in order to analyze
     #    it.  All other working directories are removed, when 
-    #    the compiler terminates.
+    #    the run terminates.
 
     # Create a working directory
     my $unique_name = "$prefix_working_dir$job_id";
@@ -235,12 +235,14 @@ sub fork_runner {
 
   FORK: {
       if ($pid = fork) {
-	  # This is the parent
+	  # This is the parent (fork returned a nonzero value)
 	  $concurrent++;
 	  syslog("info", "forked process with pid=$pid for job_id=$job_id");
       }
       elsif (defined $pid) {
-	  # This is the child.  NOTE: do not call death() in this block.
+	  # This is the child (fork returned zero).
+	  # NOTE: do not call death() in this block.
+	  #
 	  # Open the system log for the child, so that messages are properly
 	  # identified as coming from the child.
 	  closelog();
@@ -279,11 +281,14 @@ sub fork_runner {
 	  }
       }
       elsif ($! == EAGAIN) {
-	  # EAGAIN indicates a fork error which may be recoverable
+	  # Error (fork returned an undefined value).
+	  # If the Unix errno is EAGAIN, the fork may work next time if we
+	  # retry it.
 	  sleep(5);
 	  redo FORK;
       }
       else {
+	  # Unrecoverable error.  Something is seriously wrong.
 	  death("emerg", "fork of run-time driver failed");
       }
   }

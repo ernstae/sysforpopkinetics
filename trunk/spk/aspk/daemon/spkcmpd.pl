@@ -201,8 +201,8 @@ sub fork_compiler {
     #    name of the working directory is changed so that, once
     #    again, the suffix is the job_id. This makes it easy for
     #    software engineers to find the dump in order to analyze
-    #    it.  All other working directories are removed, when 
-    #    the compiler terminates.
+    #    it.  If there is no core dump, the working directory is
+    #    removed when the child terminates.
 
     # Create a working directory
     my $unique_name = "$prefix_working_dir$job_id";
@@ -226,7 +226,7 @@ sub fork_compiler {
     close(FH);
 
     # Write the archive field of the dataset row corresponding to
-    # the dataset_id from the job row to a filed called data.xml,v
+    # the dataset_id from the job row to a file called data.xml,v
     # (Note, this is the filename format expected by rcs)
     $drow = &get_dataset($dbh, $dataset_id)
 	or death('emerg', "could not read dataset $dataset_id from database");
@@ -252,20 +252,23 @@ sub fork_compiler {
     # Fork into parent and child
   FORK: {
       if ($pid = fork) {
-	  # This is the parent
+	  # This is the parent (fork returned a nonzero value)
 	  syslog("info", "forked process with pid=$pid for job_id=$job_id");
       }
       elsif (defined $pid) {
-	  # This is the child.  NOTE: do not call death() in this block.
+	  # This is the child. (fork returned zero)
+	  # NOTE: do not call death() in this block.
+	  #
 	  # Open the system log for the child, so that messages are properly
 	  # identified as coming from the child.
+	  # Note that $$ is the process-id of the child.
 	  closelog();
 	  openlog("$service_name-child, pid=$$", 'cons', 'daemon');
 
 	  # Change the name of the working directory to reflect the child pid.
 	  # When the child terminates, the parent will be provided with this pid,
 	  # and hence will be able to identify the working directory of the
-	  # child.
+	  # child.  
 	  rename "$working_dir", "$tmp_dir/$prefix_working_dir$$"
 	      or do {
 		  syslog("emerg", "couldn't rename working directory");
@@ -285,11 +288,14 @@ sub fork_compiler {
 	  };
       }
       elsif ($! == EAGAIN) {
-	  # EAGAIN indicates a fork error which may be recoverable
+	  # Error (fork returned an undefined value).
+	  # If the Unix errno is EAGAIN, the fork may work next time if
+	  # we retry it.
 	  sleep(5);
 	  redo FORK;
       }
       else {
+	  # Unrecoverable error.  Something is seriously wrong.
 	  death("emerg", "fork of compiler failed");
       }
   }
@@ -312,7 +318,7 @@ sub reaper {
     my $job_id;
     my $save_working_dir = 1;
 
-    # Get the job_id from the file we wrote to working directory
+    # Get the job_id from the file we wrote to the working directory
     # of this process
     my $working_dir = "$prefix_working_dir$child_pid";
     chdir "$tmp_dir/$working_dir";
@@ -332,7 +338,6 @@ sub reaper {
 	if ($exit_status != 0) {
 	    death('emerg', "tar failed creating file $working_dir.tar;"
 		  . " exit_status=$exit_status");
-
 	}
 	# Read the tar file into memory
 	my $buf;
@@ -340,7 +345,6 @@ sub reaper {
 	    or death('emerg', "failed to open cpp_source.tar");
 	read(FH, $buf, -s FH)
 	    or death('emerg', "failed to read cpp_source.tar");
-
 	close(FH);
 
 	# Place the job in the run queue, storing the contents of the
@@ -356,28 +360,35 @@ sub reaper {
 	my $err_msg = "";
 	my $err_rpt = "";
 	my $report = "";
-	my $status_msg = "";
-	my $end_code = "serr";
+	my $end_code = "unkown";
 
-	# Prepare part of an error message
 	if ($child_exit_value != 0) {
-	    $status_msg .= "exit value = $child_exit_value; ";
+	    $end_code = "serr";
+	    $err_msg .= "exit value = $child_exit_value; ";
 	}
-	if ($child_signal_number == SIGSEGV) {
-	    $status_msg .= "segmentation fault; ";
+	if ($child_signal_number == SIGABRT) {
+	    $end_code = "serr";
+	    $err_msg .= "compiler bug asserted; ";
+	}
+	elsif ($child_signal_number == SIGTERM) {
+	    $end_code = "serr";
+	    $err_msg .= "killed by operator; ";
+	}
+	elsif ($child_signal_number == SIGSEGV) {
+	    $end_code = "herr";
+	    $err_msg .= "segmentation fault; ";
 	}
 	elsif($child_signal_number != 0) {
-	    $status_msg .= "received signal number $child_signal_number";
+	    $end_code = "herr";
+	    $err_msg .= "killed with signal $child_signal_number; ";
 	}
-	if ($child_dumped_core) {
-	    $status_msg .= "core dump in $tmp_dir/$prefix_working_dir$job_id";
-	}
+
 	# Did the compiler find errors in the user's source?
 	if (-f $filename_cerr_report && -s $filename_cerr_report != 0) {
 	    open(FH, $filename_cerr_report);
 	    read(FH, $err_rpt, -s FH);
 	    close(FH);
-	    $err_msg = "failed compilation do to source errors";
+	    $err_msg .= "failed compilation do to source errors; ";
 	    $end_code = "cerr";
 	    $save_working_dir = 0;
 	}
@@ -386,26 +397,15 @@ sub reaper {
 	    open(FH, $filename_serr);
 	    read(FH, $err_rpt, -s FH);
 	    close(FH);
-	    $err_msg = "failed due to an SPK compiler bug";
+	    $end_code = "serr";
+	    $err_msg .= "compiler bug caught as exception; ";
 	} 
-	# Did the compiler die because it was aborted by an operator
-	# suspecting a bug?
-	elsif ($child_signal_number == SIGABRT
-	       || $child_signal_number == SIGTERM) {
-	    $err_msg = "killed by operator suspecting an SPK bug";
-	    $err_rpt = $status_msg;
-	}
-	else {
-	    $err_msg = "SPK compiler died unexpectedly";
-	    $err_rpt = $status_msg;
-	}
-	$report = format_error_report("$err_msg: $err_rpt");
+	$report = format_error_report("$err_msg $err_rpt");
 	&end_job($dbh, $job_id, $end_code, $report)
 	    or death('emerg', "job_id=$job_id: $Spkdb::errstr");
 	syslog('info',
-	       "job_id=$job_id failed compilation due to source errors");
+	       "job_id=$job_id $err_msg");
     }
-    $save_working_dir = 1;
     if ($save_working_dir) {
 	# Rename working directory to make evidence easier to find
 	rename "$tmp_dir/$working_dir", "$tmp_dir/$prefix_working_dir$job_id"
@@ -501,6 +501,8 @@ else {
 use POSIX ":sys_wait_h";
 
 my $child_pid;
+
+syslog('info', "compiling jobs from the queue");
 
 while(1) {
     # If there is a job queued-to-compile, fork the compiler
