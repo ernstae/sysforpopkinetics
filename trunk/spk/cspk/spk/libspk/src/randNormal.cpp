@@ -161,7 +161,7 @@ $index Cholesky testing random number normal distribution multivariate$$
 
 $table
 $bold Prototype:$$ $cend 
-$syntax/ DoubleMatrix randNormal( const DoubleMatrix &/V/, Integer /seed/)/$$
+$syntax/ valarray<double> randNormal( const valarray<double> &/V/, int n, Integer /seed/)/$$
 $tend
 
 $fend 15$$
@@ -198,8 +198,19 @@ $head Arguments$$
 $syntax/
 /V/
 /$$
-The $code DoubleMatrix$$ $italic V$$ must be symmetric and positive-definite.
+The $code valarray<double> $italic V$$ contains a symmetric and positive-definite
+matrix in the column major order.
 
+$syntax/
+/n/
+/$$
+$italic n$$ is the order of $italic V$$.
+
+$syntax/
+/seed/
+/$$
+The $code Integer$$ (defined in nag.h) $italic seed$$ will be used as a seed to
+generate random numbers.
 
 $head Example$$
 
@@ -207,6 +218,8 @@ If you compile, link, and run the following program,
 $codep
 	
 	#include <iostream>
+	#include <spk/SpkValarray.h>
+	#include <nag.h>
 	#include "randNormal.h"
 
 	void main()
@@ -219,39 +232,35 @@ $codep
 		// Required for NAG routines
 		g05cbc(seed);					
 
-		DoubleMatrix V(2,2), randNorm;
-
-		double *pV = V.data();
+		valarray<double> V( 2 * 2 ), randNorm( 2 );
 
 		// Setting V to a symmetric, positive definite matrix:
 		//    [ 2  1 ]
 		//    [ 1  3 ]
 
-		pV[0] = 2;
-		pV[1] = 1;
-		pV[2] = 1;
-		pV[3] = 3;
+		V[0] = 2;
+		V[1] = 1;
+		V[2] = 1;
+		V[3] = 3;
 
-		randNorm = randNormal(V);
+		randNorm = randNormal(V, 2, seed);
 
 		// Cholesky factor is equal to:
-		//    [1.41421  0]
-		//	  [	0.707107  1.58114]
+		//    [ 1.41421   0       ]
+		//    [	0.707107  1.58114 ]
 
 		// Random vector with seed value = 1:
-		//    [ -0.25993]
-		//    [ -0.728662]
+		//    [ -0.25993  ]
+		//    [ -0.728662 ]
 
 		cout << "Product of Cholesky and random vector: " << endl;
-		randNorm.print();
+	        cout << randNorm << endl;
     }
 
 $$
-
-the matrix 
+ 
 $math%
-    [ -0.367596 ]
-    [ -1.335914 ]
+Product of Cheolesky and random vector:  { -0.367596, -1.335914 }
 
 %$$
 will be printed.
