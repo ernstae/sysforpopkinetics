@@ -141,8 +141,8 @@ public class TestSpkdb {
 		    break;
 		case 11:
 		    target = true;
-		    s = "jobStatus";
-		    rs = Spkdb.jobStatus(conn, jobId);
+		    s = "getJob";
+		    rs = Spkdb.getJob(conn, jobId);
 		    if (rs.next()) {
 			String name = rs.getString("state_code");
 			b = name.compareTo("q2c") == 0;
@@ -234,20 +234,69 @@ public class TestSpkdb {
 		    break;
 		case 18:
 		    target = true;
-		    s = "jobSource";
-		    String source = Spkdb.jobSource(conn, newerJobId);
+		    s = "getJob: test xml_source";
+		    String source = new String();
+		    rs = Spkdb.getJob(conn, newerJobId);
+		    if (rs.next()) {
+			Blob sourceBlob = rs.getBlob("xml_source");
+			java.io.InputStream in = sourceBlob.getBinaryStream();
+			int c;
+			while ((c = in.read()) != -1) {
+			    source += (char)c;
+			}
+		    } 
+		    else {
+			s += ": no record for userId = " + userId;
+			b = false;
+		    } 
 		    b = source.compareTo(xmlSource) == 0;
 		    break;
 		case 19:
 		    target = true;
-		    s = "jobReport";
-		    String report = Spkdb.jobReport(conn, newerJobId);
+		    s = "getJob: test report";
+		    String report = new String();
+		    rs = Spkdb.getJob(conn, newerJobId);
+		    if (rs.next()) {
+			Blob reportBlob = rs.getBlob("report");
+			if (reportBlob == null) {
+			    s += ": no report available";
+			    b = false;
+			    break;
+			}
+			java.io.InputStream in = reportBlob.getBinaryStream();
+			int c;
+			while ((c = in.read()) != -1) {
+			    report += (char)c;
+			}
+		    } 
+		    else {
+			s += ": no record for userId = " + userId;
+			b = false;
+		    } 
 		    b = report.compareTo("job report") == 0;
 		    break;
 		case 20:
 		    target = false;
-		    s = "jobReport";
-		    report = Spkdb.jobReport(conn, newestJobId);
+		    s = "getJob";
+		    rs = Spkdb.getJob(conn, newestJobId);
+		    report = new String();
+		    if (rs.next()) {
+			Blob reportBlob = rs.getBlob("report");
+			if (reportBlob == null) {
+			    s += ": no report available";
+			    b = false;
+			    break;
+			}
+			java.io.InputStream in = reportBlob.getBinaryStream();
+			int c;
+			while ((c = in.read()) != -1) {
+			    report += (char)c;
+			}
+		    } 
+		    else {
+			s += ": no record for userId = " + userId;
+			b = false;
+		    } 
 		    b = report.compareTo("job report") == 0;
 		    break;
 		case 21:
@@ -261,16 +310,29 @@ public class TestSpkdb {
 		case 22:
 		    target = false;
 		    s = "newDataset";
-		    datasetId 
+		    newDatasetId 
 			= Spkdb.newDataset(conn, userId, "T1", "Dataset: X", "1 5 4 3");
-		    s += ": datasetId = " + datasetId;
-		    b = datasetId > 0;
+		    s += ": datasetId = " + newDatasetId;
+		    b = newDatasetId > 0;
 		    break;
 		case 23:
-		    target = false;
+		    target = true;
 		    s = "getDataset";
-		    String dataset = Spkdb.getDataset(conn, datasetId);
-		    b = dataset.compareTo("1 2 4 3") == 0;
+		    rs = Spkdb.getDataset(conn, datasetId);
+		    String archive = new String();
+		    if (rs.next()) {
+			Blob archiveBlob = rs.getBlob("archive");
+			java.io.InputStream in = archiveBlob.getBinaryStream();
+			int c;
+			while ((c = in.read()) != -1) {
+			    archive += (char)c;
+			}
+		    } 
+		    else {
+			s += ": no record for datsetId = " + datasetId;
+			b = false;
+		    } 
+		    b = archive.compareTo("1 2 4 3") == 0;
 		    break;
 		case 24:
 		    target = true;
@@ -328,7 +390,6 @@ public class TestSpkdb {
 		    b = target = true;
 		    s = "userDatasets, maxNum = 3";
  		    rs = Spkdb.userDatasets(conn, userId, 3, datasetId);
-
 		    count = 0;
 		    while (rs.next()) {
 			long j;
@@ -359,10 +420,23 @@ public class TestSpkdb {
 		    b = modelId > 0;
 		    break;
 		case 31:
-		    target = false;
+		    target = true;
 		    s = "getModel";
-		    String model = Spkdb.getModel(conn, modelId);
-		    b = model.compareTo("1 2 4 3") == 0;
+		    rs = Spkdb.getModel(conn, modelId);
+		    archive = new String();
+		    if (rs.next()) {
+			Blob archiveBlob = rs.getBlob("archive");
+			java.io.InputStream in = archiveBlob.getBinaryStream();
+			int c;
+			while ((c = in.read()) != -1) {
+			    archive += (char)c;
+			}
+		    } 
+		    else {
+			s += ": no record for model_id = " + modelId;
+			b = false;
+		    } 
+		    b = archive.compareTo("1 2 4 3") == 0;
 		    break;
 		case 32:
 		    target = true;
