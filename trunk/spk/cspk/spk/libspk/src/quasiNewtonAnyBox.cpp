@@ -1175,22 +1175,57 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
 
   // [Remove]======================================
   //
-  /*
-    CONSIDER:
-
-    make convergence properties of SPK (i.e. its specification) be that
-    of the optimizer object passed in
-
-    make the Optimizer functions virtual and correspond more closely with
-    standard optimizer terminology
-  */
+  // CONSIDER:  make convergence properties of SPK (i.e. its specification) be that
+  // of the optimizer object passed in
+  //
+  // CONSIDER: store final value for delta to use next time
   //
   // [Remove]======================================
 
+  std::ostream    &os;
+  size_t        level;
+  size_t       ItrMax;
+  size_t      QuadMax;
+  size_t            n;
+  double        delta;
+  Fun          &obj;
+  // Input+Output Arguments
+  size_t      &ItrCur;
+  size_t     &QuadCur;
+  double        &rCur;
+  double        &fCur;
+  double        *xCur; // length n 
+  double        *gCur; // length n 
+  const double  *HCur; // length n * n 
+
+
+
+    const char *msg;
+     std::ostream            &os = std::cout;
+     const size_t          level = 0;
+     const size_t         ItrMax = 50;
+     const size_t              m = 5;
+     const size_t              n = 5;
+     const size_t        QuadMax = 20 * n;
+     const bool      exponential = true;
+     const double          delta = 1e-7;
+
+  // The argument delta specifies the convergence criteria.
+  // If the return value of QuasiNewton01Box is "ok",
+  //the infinity norm of the projected gradient at 
+  // x = xOut is less than or equal delta.
+  double delta = 1.0;
+
 
   // [Remove]======================================
   //
   /*
+    GOAL: MAKE THIS FUNCTION MEET THE OLD FUNCTIONS SPECIFICATION
+          SO THAT NO OTHER CODE OR TESTS NEED BE CHANGED.
+    
+
+    ALGORITHM:
+
     call the optimizer from spk with a large delta
 
     if within tol, then done
@@ -1204,11 +1239,7 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   //
   // [Remove]======================================
 
-  // The argument delta specifies the convergence criteria.
-  // If the return value of QuasiNewton01Box is "ok",
-  //the infinity norm of the projected gradient at 
-  // x = xOut is less than or equal delta.
-  double delta = 1.0;
+
 
   int i = 0;
   itrMax = 1;
