@@ -70,6 +70,7 @@
 #include "src/PopVarsTest.h"
 #include "src/ppkaOptTest.h"
 #include "src/printInMatrixTest.h"
+#include "src/randNormalTest.h"
 #include "src/replaceIthTest.h"
 #include "src/replaceJthTest.h"
 #include "src/replaceSubblockTest.h"
@@ -162,6 +163,7 @@ int main( int argc, const char * argv[] )
   runner.addTest( PopVarsTest::suite() );
   runner.addTest( ppkaOptTest::suite() );
   runner.addTest( printInMatrixTest::suite() );
+  runner.addTest( randNormalTest::suite() );
   runner.addTest( replaceIthTest::suite() );
   runner.addTest( replaceJthTest::suite() );
   runner.addTest( replaceSubblockTest::suite() );

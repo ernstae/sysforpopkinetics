@@ -1,90 +1,176 @@
 bin_PROGRAMS = testall
 testall_SOURCES = \
 	ABA_xTest.cpp \
+	ABA_xTest.h \
 	addTest.cpp \
+	addTest.h \
 	AkronBtimesCTest.cpp \
+	AkronBtimesCTest.h \
 	AkronItimesCTest.cpp \
+	AkronItimesCTest.h \
 	allTrueTest.cpp \
+	allTrueTest.h \
 	BlockAllocTest.cpp \
+	BlockAllocTest.h \
 	blockDiagonalDerivativeTest.cpp \
+	blockDiagonalDerivativeTest.h \
 	centdiffModelTest.cpp \
+	centdiffModelTest.h \
 	centdiffTest.cpp \
+	centdiffTest.h \
 	choleskyTest.cpp \
+	choleskyTest.h \
 	countTruesTest.cpp \
+	countTruesTest.h \
 	CovarianceTest.cpp \
+	CovarianceTest.h \
 	detTest.cpp \
+	detTest.h \
 	divByScalarTest.cpp \
+	divByScalarTest.h \
 	elementwiseAndTest.cpp \
+	elementwiseAndTest.h \
 	elementwiseOrTest.cpp \
+	elementwiseOrTest.h \
 	elsq_xBlockDiagTest.cpp \
+	elsq_xBlockDiagTest.h \
 	elsq_xDiagTest.cpp \
+	elsq_xDiagTest.h \
 	elsq_xTest.cpp \
+	elsq_xTest.h \
 	elsqTest.cpp \
+	elsqTest.h \
 	EqIndModelTest.cpp \
+	EqIndModelTest.h \
 	estimateBTest.cpp \
+	estimateBTest.h \
 	expectedHessianTest.cpp \
+	expectedHessianTest.h \
 	firstOrderOptTest.cpp \
+	firstOrderOptTest.h \
 	fitIndividualErrorTest.cpp \
+	fitIndividualErrorTest.h \
 	fitIndividualTest.cpp \
+	fitIndividualTest.h \
 	FunctionTest.cpp \
+	FunctionTest.h \
 	getColTest.cpp \
+	getColTest.h \
 	getMulColsTest.cpp \
+	getMulColsTest.h \
 	getMulRowsTest.cpp \
+	getMulRowsTest.h \
 	getRowTest.cpp \
+	getRowTest.h \
 	getSubblockTest.cpp \
+	getSubblockTest.h \
 	identityTest.cpp \
+	identifyTest.h \
 	IkronBtimesCTest.cpp \
+	IkronBtimesCTest.h \
 	IndInputDataPackageTest.cpp \
+	IndInputDataPackageTest.h \
 	IndOutputDataPackageTest.cpp \
+	IndOutputDataPackageTest.h \
 	IndResultsTest.cpp \
+	IndResultsTest.h \
 	indStatisticsTest.cpp \
+	indStatisticsTest.h \
 	IndVarsTest.cpp \
+	IndVarsTest.h \
 	inverseTest.cpp \
+	inverseTest.h \
 	inxToMaxTest.cpp \
+	inxToMaxTest.h \
 	isDblEpsEqualTest.cpp \
+	isDblEpsEqualTest.h \
 	isDmatEpsEqualTest.cpp \
+	isDmatEpsEqualTest.h \
 	isGreaterThanOrEqualToTest.cpp \
+	isGreaterThanOrEqualToTest.h \
 	isLessThanOrEqualToTest.cpp \
+	isLessThanOrEqualToTest.h \
 	isSymmetricTest.cpp \
+	isSymmetricTest.h \
 	lambda2diffTest.cpp \
+	lambda2diffTest.h \
 	lambdaTest.cpp \
+	lambdaTest.h \
 	lTildeTest.cpp \
+	lTildeTest.h \
 	mapObjDiffTest.cpp \
+	mapObjDiffTest.h \
 	mapObjTest.cpp \
+	mapObjTest.h \
 	mapOptTest.cpp \
+	mapOptTest.h \
 	mapTildeTest.cpp \
+	mapTildeTest.h \
 	matabsTest.cpp \
+	mapabsTest.h \
 	matmaxTest.cpp \
+	matmaxTest.h \
 	matminTest.cpp \
+	matminTest.h \
 	MatrixTest.cpp \
+	MatrixTest.h \
 	mulByScalarTest.cpp \
+	mulByScalarTest.h \
 	multiplyTest.cpp \
+	multiplyTest.h \
 	NaiveFoModelTest.cpp \
+	NaiveFoModelTest.h \
 	normTest.cpp \
+	normTest.h \
 	OptimizerTest.cpp \
+	OptimizerTest.h \
 	placeRowsTest.cpp \
+	placeRowsTest.h \
 	PopConstValsTest.cpp \
+	PopConstValsTest.h \
 	popStatisticsTest.cpp \
+	popStatisticsTest.h \
 	PopVarsTest.cpp \
+	PopVarsTest.h \
 	ppkaOptTest.cpp \
+	ppkaOptTest.h \
 	printInMatrixTest.cpp \
+	printInMatrixTest.h \
+	randNormalTest.cpp \
+	randNormalTest.h \
 	replaceIthTest.cpp \
+	replaceIthTest.h \
 	replaceJthTest.cpp \
+	replaceJthTest.h \
 	replaceSubblockTest.cpp \
+	replaceSubblockTest.h \
 	rvecInverseTest.cpp \
+	rvecInverseTest.h \
 	rvecTest.cpp \
+	rvecTest.h \
 	SpkErrorTest.cpp \
+	SpkErrorTest.h \
 	SpkExceptionTest.cpp \
+	SpkExceptionTest.h \
 	SpkModelErrorTest.cpp \
+	SpkModelErrorTest.h \
 	sqpAnyBoxTest.cpp \
+	sqpAnyBoxTest.h \
 	subtractTest.cpp \
+	subtractTest.h \
 	symmetrizeTest.cpp \
+	SymmetrizeTest.h \
 	testall.cpp \
 	transposeDerivativeTest.cpp \
+	transposeDerivativeTest.h \
 	transposeRowBlocksTest.cpp \
+	transposeRowBlocksTest.h \
 	transposeTest.cpp \
+	transposeTest.h \
 	UTranTimesSymKronSymTimesU_xTest.cpp \
+	UTranTimesSymKronSymTimesU_xTest.h \
 	UTranTimesSymKronSymTimesUTest.cpp \
+	UTranTimesSymKronSymTimesUTest.h \
 	../config.h
 
 testall_CXXFLAGS = -I/usr/local/cppunit/include
