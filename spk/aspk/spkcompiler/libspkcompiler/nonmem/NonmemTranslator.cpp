@@ -2182,6 +2182,9 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "#ifndef INDDATA_H" << endl;
   oIndData_h << "#define INDDATA_H" << endl;
   oIndData_h << "#include <vector>" << endl;
+  oIndData_h << "#include <map>" << endl;
+  oIndData_h << "#include <spk/SpkValarray.h>" << endl;
+  oIndData_h << "#include <cppad/include/CppAD.h>" << endl;
   oIndData_h << endl;
   
   //-----------------------------------------------
@@ -2244,6 +2247,8 @@ void NonmemTranslator::generateIndData( ) const
       const string keyVarName      = SymbolTable::key( varName );
       const string keyVarAlias     = SymbolTable::key( varAlias );
       enum Symbol::SymbolType type = pRawTable->second.symbol_type;
+
+      // The data labels are constant.
       if( type == Symbol::DATALABEL )
 	{
 	  bool isID = ( varName==pID->name? true : false );
@@ -2256,6 +2261,7 @@ void NonmemTranslator::generateIndData( ) const
 	      oIndData_h << " " << varAlias << ";" << endl;
             }
 	}
+      // The NONMEM pred variables are writable.
       else if( type == Symbol::NONMEMDEF )
 	{
 	  if( keyVarName == KeyStr.THETA 
@@ -2267,26 +2273,32 @@ void NonmemTranslator::generateIndData( ) const
 	    {}
 
 	}
-      else // type == Symbol::USERDEF
+      else // All others, ie. the user (pred) defined variables, are writable.
 	{
 	  oIndData_h << "std::vector<T> " << varName << ";" << endl;
 	}
     }
-  string synonym;
+
+  //
+  // Member functions (public).
+  //
   oIndData_h << endl;
   oIndData_h << "~IndData();" << endl;
+  oIndData_h << "const SPK_VA::valarray<double> getMeasurements() const;" << endl;
+  oIndData_h << endl;
 
   // 
   // Protected member declarations.
   //
-  // The default and the copy constructors are prohibited.
-  // The assignment is also prohibited.
+  // const int n: #of measurements in this set (ie. individual).
   //
   oIndData_h << "protected:" << endl;
   oIndData_h << "IndData();" << endl;
   oIndData_h << "IndData( const IndData& );" << endl;
   oIndData_h << "IndData& operator=( const IndData& );" << endl;
   oIndData_h << endl;
+  oIndData_h << "int nY; // #of measurements." << endl;
+  oIndData_h << "SPK_VA::valarray<double> measurements;" << endl;
 
   //
   // Private member declarations.
@@ -2295,7 +2307,8 @@ void NonmemTranslator::generateIndData( ) const
   //
   oIndData_h << "private:" << endl;
   oIndData_h << "const int n; // #of measurements." << endl;
-
+  oIndData_h << "void assignToDbl( double&, const CppAD::AD<double>& ) const;" << endl;
+  oIndData_h << "void assignToDbl( double&, double ) const;" << endl;
   oIndData_h << "};" << endl;
 
 
@@ -2307,6 +2320,7 @@ void NonmemTranslator::generateIndData( ) const
   // valarray objects as arguments.
   // The order must be consistant with the declaration.
   //
+  string synonym;
   oIndData_h << "template <class T>" << endl;
   oIndData_h << "IndData<T>::IndData( int nIn";
   pLabel = labels->begin();
@@ -2323,8 +2337,8 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "& " << *pLabel << "In";
     }
   oIndData_h << ")" << endl;
-  oIndData_h << ": n( nIn )";
-
+  oIndData_h << ": n( nIn ), " << endl;
+  oIndData_h << "  nY( 0 ) " << endl;
 
   //
   // The constructor initialization.
@@ -2376,14 +2390,25 @@ void NonmemTranslator::generateIndData( ) const
 	}
 
       //
-      // The place holders for completed values.
+      // Initialize sizes of place holders for computed values.
       //
       if( find( labels->begin(), labels->end(), pRawTable->second.name ) 
 	  == labels->end() )
 	oIndData_h << "," << endl << label << "( nIn )";
     }
+  oIndData_h << endl;
+
   oIndData_h << "{" << endl;
-  oIndData_h << "   for( int i=0; i<nIn; i++ )" << endl;
+  //oIndData_h << "   nY = std::count_if( " << UserStr.MDV << ".begin(), ";
+  //oIndData_h << UserStr.MDV << ".end(), logical_true<T>() );" << endl;
+  oIndData_h << "   for( int i=0; i<n; i++ )" << endl;
+  oIndData_h << "   {" << endl;
+  oIndData_h << "      if( " << UserStr.MDV << "[i] != 1 )" << endl;
+  oIndData_h << "          ++nY;" << endl;
+  oIndData_h << "   }" << endl;
+  oIndData_h << endl;
+  oIndData_h << "   measurements.resize( nY ); " << endl;
+  oIndData_h << "   for( int i=0, j=0; i<n; i++ )" << endl;
   oIndData_h << "   {" << endl;
   if( myThetaLen > 0 )
     oIndData_h << "      " << UserStr.THETA << "[i].resize( " << myThetaLen << " );" << endl;
@@ -2391,6 +2416,13 @@ void NonmemTranslator::generateIndData( ) const
     oIndData_h << "      " << UserStr.ETA   << "[i].resize( " << myEtaLen << " );" << endl;
   if( myEpsLen > 0 )
     oIndData_h << "      " << UserStr.EPS   << "[i].resize( " << myEpsLen << " );" << endl;
+
+  oIndData_h << "        if( " << UserStr.MDV << "[i] != 1 )" << endl;
+  oIndData_h << "        {" << endl;
+  oIndData_h << "           assignToDbl( measurements[j], " << UserStr.DV << "[i] );" << endl;
+  oIndData_h << "           j++;" << endl;
+  oIndData_h << "        }" << endl;
+
   oIndData_h << "   }" << endl;
   oIndData_h << "}" << endl;
 
@@ -2406,6 +2438,36 @@ void NonmemTranslator::generateIndData( ) const
 
   oIndData_h << "template <class T>" << endl;
   oIndData_h << "IndData<T>& IndData<T>::operator=( const IndData<T>& ){}" << endl;
+
+  oIndData_h << "template <class T>" << endl;
+  oIndData_h << "const SPK_VA::valarray<double> IndData<T>::getMeasurements() const" << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "   return measurements;" << endl;
+  oIndData_h << "}" << endl;
+
+  oIndData_h << "template <class T>" << endl;
+  oIndData_h << "void IndData<T>::assignToDbl( double & d, const CppAD::AD<double>& ad ) const" << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "   d = CppAD::Value( ad );" << endl;
+  oIndData_h << "   return;" << endl;
+  oIndData_h << "}" << endl;
+
+  oIndData_h << "template <class T>" << endl;
+  oIndData_h << "void IndData<T>::assignToDbl( double & left, double right  ) const" << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "   left = right;" << endl;
+  oIndData_h << "   return;" << endl;
+  oIndData_h << "}" << endl;
+/*
+  oIndData_h << "template <class T>" << endl;
+  oIndData_h << "bool IndData<T>::logical_true( const CppAD::AD<double>& val ) const" << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "   if( CppAD::Value(val) == 1.0 )" << endl;
+  oIndData_h << "      return true;" << endl;
+  oIndData_h << "   else" << endl;
+  oIndData_h << "      return false;" << endl;
+  oIndData_h << "}" << endl;
+*/
 
   oIndData_h << "#endif" << endl;
 
@@ -2480,16 +2542,9 @@ void NonmemTranslator::generateDataSet( ) const
 
   oDataSet_h << "std::vector<IndData<T>*> data;" << endl;
   oDataSet_h << "const int popSize;" << endl;
-  
-  //========================================================================================================================
-  // REVISIT SACHIKO: 05/09/04
-  // SPK's y cannot be initialized at my compilation time.  The values have to be initialized with the simulated data set
-  // if the user requested a data simulation.
-  //========================================================================================================================  
-  //oDataSet_h << "int getMeasurements( SPK_VA::valarray<double>& spk_yOut, SPK_VA::valarray<int>& spk_NOut );" << endl;
-  
+  oDataSet_h << "const SPK_VA::valarray<double> getAllMeasurements() const;" << endl;
   oDataSet_h << endl;
-
+ 
   //
   // protected member declarations
   //
@@ -2500,11 +2555,10 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "DataSet( const DataSet& );" << endl;
   oDataSet_h << "DataSet& operator=( const DataSet& );" << endl;
   oDataSet_h << endl;
+
   oDataSet_h << "private:" << endl;
-  /*
-  oDataSet_h << "SPK_VA::valarray<double> spk_y; // a long vector containg all measurements" << endl;
-  oDataSet_h << "SPK_VA::valarray<int>    spk_N; // a vector containing the # of measurements for each individual." << endl;
-  */
+  oDataSet_h << "SPK_VA::valarray<double> measurements; // a long vector containg all measurements" << endl;
+  oDataSet_h << "SPK_VA::valarray<int> N; // a vector containing the # of measurements for each individual." << endl;
 
   oDataSet_h << "};" << endl;
 
@@ -2520,38 +2574,10 @@ void NonmemTranslator::generateDataSet( ) const
   //
   oDataSet_h << "template <class T>" << endl;
   oDataSet_h << "DataSet<T>::DataSet()" << endl;
-  oDataSet_h << ": data( " << myPopSize << " )," << endl;
-  oDataSet_h << "  popSize( " << myPopSize << " )" << endl;
+  oDataSet_h << ": popSize( " << myPopSize << " )," << endl;
+  oDataSet_h << "  data( " << myPopSize << " )," << endl;
+  oDataSet_h << "  N( " << myPopSize << " )" << endl;
   oDataSet_h << "{" << endl;
-
-  /*
-  oDataSet_h << "int c_N[] = { ";
-  for( int i=0; i<myPopSize; i++ )
-    {
-      if( i > 0 )
-	oDataSet_h << ", ";
-      oDataSet_h << myRecordNums[i];
-    }
-  oDataSet_h << " };" << endl; 
-  oDataSet_h << "spk_N = SPK_VA::valarray<int>( c_N, " << myPopSize << " );" << endl;
-
-
-  oDataSet_h << "spk_y.resize( " << myPopSize << " );" << endl;
-  const Symbol* pDV = table->findi( KeyStr.DV );
-  oDataSet_h << "double c_y[] = { ";
-  for( int i=0; i<myPopSize; i++ )
-    {
-      for( int j=0; j<myRecordNums[i]; j++ )
-	{
-	  if( !(i==0&&j==0) )
-	    oDataSet_h << ", ";
-	  oDataSet_h << pDV->initial[i][j];
-	}
-    }
-  oDataSet_h << " };" << endl;
-  oDataSet_h << "SPK_VA::valarray<double> yIn( c_y, " << myRecordNums.sum() << " );" << endl;
-  oDataSet_h << "spk_y = yIn;" << endl;
-  */
 
   // Initialize the entire data set.
   for( int who=0, sofar=0, nRecords=0; who < myPopSize; who++, sofar+=nRecords )
@@ -2572,6 +2598,8 @@ void NonmemTranslator::generateDataSet( ) const
       oDataSet_h << "// Subject <" << id << "> " << endl;
       oDataSet_h << "// # of sampling points = " << nRecords << endl;
       oDataSet_h << "//------------------------------------" << endl;
+      oDataSet_h << "   N[" << who << "] = " << nRecords << ";" << endl;
+
       //
       // Initialize C arrays with data values.
       // The C arrays are passed to the valarray's constructor.
@@ -2624,6 +2652,15 @@ void NonmemTranslator::generateDataSet( ) const
       oDataSet_h << endl; 
     }
 
+  oDataSet_h << "   int nY = N.sum();" << endl;
+  oDataSet_h << "   measurements.resize( nY ); " << endl;
+  oDataSet_h << "   for( int i=0, m=0; i<popSize; i++ )" << endl;
+  oDataSet_h << "   {" << endl;
+  oDataSet_h << "      int nYi = data[i]->getMeasurements().size();" << endl;
+  oDataSet_h << "      measurements[ SPK_VA::slice( m, nYi, 1 ) ] = data[i]->getMeasurements();" << endl;
+  oDataSet_h << "      m+=nYi;" << endl;
+  oDataSet_h << "   }" << endl;
+
   oDataSet_h << "}" << endl;
 
   // The destructor
@@ -2643,6 +2680,12 @@ void NonmemTranslator::generateDataSet( ) const
 
   oDataSet_h << "template <class T>" << endl;
   oDataSet_h << "DataSet<T>& DataSet<T>::operator=( const DataSet<T>& ){}" << endl;
+  oDataSet_h << "template <class T>" << endl;
+  oDataSet_h << "const SPK_VA::valarray<double> DataSet<T>::getAllMeasurements() const" << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   return measurements;" << endl;
+  oDataSet_h << "}" << endl;
+  oDataSet_h << endl;
 
   oDataSet_h << "#endif" << endl;
   oDataSet_h.close();
@@ -3264,7 +3307,7 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << endl;
 
   oNonmemPars << "   // The dimension of OMEGA (square) matrix." << endl;
-  oNonmemPars << "   const int omegaDim = " << myOmegaDim << ";" << endl;
+  oNonmemPars << "   const int omegaDim = nEta;" << endl;
   oNonmemPars << endl;
 
   oNonmemPars << "   // The order of OMEGA matrix." << endl;
@@ -3314,6 +3357,10 @@ void NonmemTranslator::generateNonmemParsNamespace() const
       oNonmemPars << "   // \"DIAGONAL\" indicates that only the diagonal elements are non-zero and the rest are all zero." << endl;
       oNonmemPars << "   const enum PopPredModel::covStruct sigmaStruct = ";
       oNonmemPars << "PopPredModel::" << (mySigmaStruct == Symbol::TRIANGLE? "FULL" : "DIAGONAL" ) << ";" << endl;
+
+      oNonmemPars << "   // The dimension of SIGMA (square) matrix." << endl;
+      oNonmemPars << "   const int sigmaDim = nEps;" << endl;
+      oNonmemPars << endl;
 
       oNonmemPars << "   // The order of SIGMA matrix." << endl;
       oNonmemPars << "   // If the matrix is full, the value is equal to the number of " << endl;
