@@ -205,6 +205,6 @@ ok($flag, "user_models");
 ok($row_array->[1]->{'name'} =~ /^Model-T$/, "user_models, sorting");
 
 
-ok(&disconnect($dbh), "disconnect");			 
+ok(!defined &disconnect($dbh), "disconnect");			 
 
 exit 0;
