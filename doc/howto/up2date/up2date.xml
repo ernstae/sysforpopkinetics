@@ -132,7 +132,7 @@ rpm -qa | grep kernel-[0-9]
 	    enter the following command lines:
 	    <screen>
 su
-mkbootdisk 2.4.20-13.8 
+/sbin/mkbootdisk 2.4.20-13.8 
 	    </screen>
 	  </para>
 	  <para>
