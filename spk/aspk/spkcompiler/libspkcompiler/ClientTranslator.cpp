@@ -33,6 +33,7 @@ ClientTranslator::ClientTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     data( dataIn ),
     X_SPKDATA    ( XMLString::transcode( "spkdata" ) ),
     X_VERSION    ( XMLString::transcode( "version" ) ),
+    X_POINTONE   ( XMLString::transcode( "0.1" ) ),
     X_TABLE      ( XMLString::transcode( "table" ) ),
     X_COLUMNS    ( XMLString::transcode( "columns" ) ),
     X_ROWS       ( XMLString::transcode( "rows" ) ),
@@ -48,6 +49,7 @@ ClientTranslator::~ClientTranslator()
 {
   XMLString::release( &X_SPKDATA );
   XMLString::release( &X_VERSION );
+  XMLString::release( &X_POINTONE );
   XMLString::release( &X_TABLE );
   XMLString::release( &X_COLUMNS );
   XMLString::release( &X_ROWS );
@@ -95,9 +97,7 @@ void ClientTranslator::parseData()
   assert( XMLString::equals( spkdata->getNodeName(), X_SPKDATA ) );
   const XMLCh* version = spkdata->getAttribute( X_VERSION );
 
-  XMLCh* pointOne = XMLString::transcode( "0.1" );
-  assert( XMLString::equals( version, pointOne ) );
-  XMLString::release( &pointOne );
+  assert( XMLString::equals( version, X_POINTONE ) );
 
   //
   // Process through n number of <table>s, where n >= 0.
@@ -157,7 +157,9 @@ void ClientTranslator::parseData()
 		{
 		  const XMLCh* xml_label = values->item(k)->getFirstChild()->getNodeValue();
 		  assert( xml_label != NULL );
-		  tmp_labels[k] = XMLString::transcode( xml_label );
+                  char * delme = XMLString::transcode( xml_label );
+		  tmp_labels[k] = string( delme );
+                  delete delme;
 		  continue;
 		}
 
@@ -176,15 +178,19 @@ void ClientTranslator::parseData()
 	      //
 	      if( pos==2 )
 		{
-		  char * tmp = XMLString::transcode(xml_type);
-		  tmp_types[k] = string( tmp );
-		  delete tmp;
+		  char * delme_c = XMLString::transcode(xml_type);
+		  string delme_s( delme_c );
+		  delete delme_c;
+		  tmp_types[k] = delme_s;
 		}	      
 
 	      //
 	      // For the subsequent rows (>2), the value types should match the entries in tmp_types[].
 	      //
-	      assert( XMLString::transcode( xml_type ) == tmp_types[k] );
+	      char * delme_c = XMLString::transcode( xml_type );
+              string delme_s( delme_c );
+	      delete delme_c;
+	      assert( delme_s == tmp_types[k] );
 	      
 	      const XMLCh* xml_value = values->item(k)->getFirstChild()->getNodeValue();
               if( k == 0 )
