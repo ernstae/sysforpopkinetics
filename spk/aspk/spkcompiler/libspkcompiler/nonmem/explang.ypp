@@ -13,6 +13,7 @@
 #include <fstream>
 #include <string>
 #include "../SymbolTable.h"
+#include "../SpkCompilerException.h"
 
 using namespace std;
 
@@ -33,6 +34,14 @@ int gSpkExpErrors = 0;
  * when necessarily.  In other words, nm_parse() does not reset the value.
  */
 int gSpkExpLines  = 0;
+
+/**
+ * @var char* gSpkExpErrorMessages = 0
+ * Global placeholder for syntax error messages.
+ * The user of nm_parse() is responsible for allocating and deallocating
+ * memory.
+ */
+char * gSpkExpErrorMessages = 0;
 
 /**
  * @var SymbolTable * gSpkExpSymbolTable
@@ -106,6 +115,16 @@ extern "C"{
     */
     int nm_lex(void);
 
+   /**
+    * A signal that forces nm_parse() to immediately return abnormaly.
+    */
+    int NM_ABORT;
+
+   /**
+    * A signal that forces nm_parse() to immediately return normally.
+    */
+    int NM_ACCEPT;
+
     int nm_wrap()
     {
       return 1;
@@ -122,22 +141,27 @@ extern "C"{
     int nm_error( char * err_message )
     { 
       ++gSpkExpErrors;
-      fprintf( stderr, 
+      assert( gSpkExpErrorMessages != 0 );
+      char m[ SpkCompilerError::maxMessageLen() ];
+      sprintf( m, 
                "!!! Error (%d) at line %d: \n\t%s.\n", 
                gSpkExpErrors, gSpkExpLines, err_message );
-    
+      if( strlen( gSpkExpErrorMessages ) > 0 )
+         strcat( gSpkExpErrorMessages, m );
+      else
+         strcpy( gSpkExpErrorMessages, m );
+   
       return -1;
     }
-
    /**
-    * A signal that forces nm_parse() to immediately return normally.
+    * The handler used to terminate the parser. 
     */
-    int NM_ACCEPT;
+   void nm_terminate( )
+   {
+      fprintf( stderr, "The Expression Parser was terminated abnormally.\n" );
+      return;
+   }
 
-   /**
-    * A signal that forces nm_parse() to immediately return abnormaly.
-    */
-    int NM_ABORT;
 
    /**
     * Global pointer to a FILE handler to which output is redirected.

@@ -19,6 +19,7 @@ using namespace xercesc;
 // yyparse() and yylex() (or equivalent).
 //----------------------------------------
 extern int           gSpkExpErrors;
+extern char*         gSpkExpErrorMessages;
 extern int           gSpkExpLines;
 extern SymbolTable * gSpkExpSymbolTable;
 extern FILE *        gSpkExpOutput;
@@ -28,6 +29,7 @@ extern int           NM_ABORT;
 
 extern "C"{
      int nm_parse(void);
+     int nm_error( const char* );
 };
 //========================================
 
@@ -2250,9 +2252,21 @@ void NonmemTranslator::parsePred( DOMElement * pred )
   nm_in = fopen( fPredEqn_fortran, "r" );
   gSpkExpOutput = fopen( fPredEqn_cpp, "w" );
   gSpkExpSymbolTable = table;
+  gSpkExpErrors = 0;
+  gSpkExpErrorMessages = new char[ SpkCompilerError::maxMessageLen()-50 ];
+  strcpy( gSpkExpErrorMessages, "" );
 
-  // If this detects any syntax error, throws an exception.
   nm_parse();
+
+  if( gSpkExpErrors > 0 )
+  {
+     char m[ SpkCompilerError::maxMessageLen() ];
+     sprintf( m, "Syntax error(s) found in PRED definition.\n%s\n", 
+              gSpkExpErrorMessages );
+     SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, 
+                             m, __LINE__, __FILE__ );
+     throw e;
+  }
 
   fclose( nm_in );
   fclose( gSpkExpOutput );
