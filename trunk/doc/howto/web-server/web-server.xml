@@ -145,7 +145,7 @@ chmod -R 2775 webapps
       available.  
     </para>
     <para>
-      Assume that the path to your working copy of the <filename>r2</filename> repository
+      Assume that the absolute path to your working copy of the <filename>r2</filename> repository
       is the value of the environment variable R2:
       <screen>
 su
@@ -153,6 +153,49 @@ cd /etc/rc.d/init.d
 cp $R2/admin/tomcatd/tomcatd .
 chmod +x tomcatd
 /sbin/chkconfig --add tomcatd
+      </screen>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Run Tomcat</title>
+    <para>
+      Now you should be ready to run tomcat, and see if it is working.
+    </para>
+    <para>
+      <screen>
+su
+/etc/rc.d/init.d/tomcatd start
+      </screen>
+      should get tomcat running. You can check that it is 
+      truly running in several ways.
+    </para>
+    <para>
+      <screen>
+/etc/rc.d/init.d/tomcatd status
+      </screen>
+      should report that tomcat is running.
+    </para>
+    <para>
+      <screen>
+ps -ef | grep tomcat
+      </screen>
+      should list one or more tomcat processes in the system run queue.
+    </para>
+    <para>
+      When you direct your browser to the following URL:
+      <ulink url="http://localhost:8080">http://localhost:8080</ulink>,
+      you should see a tomcat welcome page appear.
+    </para>
+    <para>
+      Tomcat is a daemon. It will run until the <emphasis>root</emphasis>
+      user tells it to stop, or until the computer is rebooted.  To tell
+      tomcat to shutdown gracefully:
+      <screen>
+/etc/rc.d/init.d/tomcatd stop
+      </screen>
+      or to shutdown and the to start again:
+      <screen>
+/ect/rc.d/init.d/tomcatd restart
       </screen>
     </para>
   </sect1>
