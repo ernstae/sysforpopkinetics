@@ -9,6 +9,15 @@
    <articleinfo>
       <revhistory>
          <revision>
+            <revnumber>1.19</revnumber>
+            <date>March 1, 2005</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>
+            Specifying that whenever a checkpoing is found in the working directory
+            of fitDriver, the optimization process begins from whereever it's left off.
+            </revremark>
+         </revision>
+         <revision>
             <revnumber>1.18</revnumber>
             <date>January 26, 2005</date>
             <authorinitials>sh</authorinitials>
@@ -1074,6 +1083,19 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
       computation.
       </para>
       <variablelist>
+         <title>Input File</title>
+            <varlistentry>
+               <term><filename>checkpoint.xml</filename></term>
+               <listitem>
+                  <para>
+                  Whenever this file is found in the working directory of fitDriver,
+                  the optimization process will being from the state that is saved
+                  in the file. 
+                  </para>
+               </listitem>
+            </varlistentry>
+      </variablelist>
+      <variablelist>
          <title>Return value</title>
          <varlistentry>
             <term>0</term>
@@ -1130,8 +1152,9 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
                <term><filename>checkpoint.xml</filename></term>
                <listitem>
                   <para>
-                  The optimizer's state information from the last iteration is saved in this file.
-                  This file is generated always.
+                  The optimizer's state information from the last successful iteration 
+                  is saved in this file.  This file is always generated as long as
+                  fitDriver executes an iteration of optimization.
                   </para>
                </listitem>
             </varlistentry>
