@@ -1457,77 +1457,76 @@ bool isWithinTol(
 
 
   //------------------------------------------------------------
-  // Calculate the projected gradient and finish the modified Hessian.
+  // Calculate the projected gradient, modified Hessian, and reciprocals
   //------------------------------------------------------------
 
-  // Modify the Hessian, and set the elements of gProj and p.
+  // Set the elements of the projected gradient, finish preparing the
+  // modified Hessian, and calculate the reciprocals of the diagonals
+  // of the Cholesky factor of the Hessian.
   for ( i = 0; i < n; i++ )
   {
-      //----------------------------------------------------------
-      // Compute the corresponding elements of H, gProj, and P.
-      //----------------------------------------------------------
+    // Determine which elements are free, i.e., are not being held by 
+    // their bounds.
+    if ( ( xHat[i] >  xLow[i] && xHat[i] < xUp[i] )
+      || ( xHat[i] == xLow[i] && g[i] < 0.0 ) 
+      || ( xHat[i] == xUp[i]  && g[i] > 0.0 ) )
+    {
+      //--------------------------------------------------------
+      // This element is free:  its deltaX should be computed.
+      //--------------------------------------------------------
 
-    // Determine which elements are free, i.e., are not being held by their bounds.
-      if ( (xHat[i] >  xLow[i] && xHat[i] < xUp[i])
-          || (xHat[i] == xLow[i] && g[i] < 0.0 )  
-          || (xHat[i] == xUp[i]  && g[i] > 0.0 ) )
-      {
-            isElemFree[i] = true;
+      isElemFree[i] = true;
 
-            //--------------------------------------------------------
-            // This element will be included:  its deltaX should be computed.
-            //--------------------------------------------------------
+      // Set the corresponding element of the projected gradient.
+      gProj[i] = g[i];
 
-            // Set the corresponding element of the projected gradient.
-            gProj[i] = g[i];
+      // Set the reciprocal of the corresponding R diagonal.
+      assert( r[i + i * n] != 0.0 );
+      rDiagRec[i] = 1.0 / r[i + i * n];
+    }
+    else
+    {
+      //--------------------------------------------------------
+      // This element is not free:  force its deltaX to be zero.
+      //--------------------------------------------------------
 
-            // Set the reciprocal of the corresponding R diagonal.
-            assert( r[i + i * n] != 0.0 );
-            rDiagRec[i] = 1.0 / r[i + i * n];
-      }
-      else
-      {
-            isElemFree[i] = false;
+      isElemFree[i] = false;
 
-            //--------------------------------------------------------
-            // This element won't be included:  force its deltaX to be zero.
-            //--------------------------------------------------------
+      // 
+      // Review - Sachiko: suggestion for readability.
+      //
+      // The following indented block can be reduced to a single statement:
+      // 
+      //    hWork[i + i * n] = 1.0;
+      //
+      // if H, gProj and P were initialized to zero or one outside of the outer loop.
+      // 
 
-            // 
-            // Review - Sachiko: suggestion for readability.
-            //
-            // The following indented block can be reduced to a single statement:
-            // 
-            //      hWork[i + i * n] = 1.0;
-            //
-            // if H, gProj and P were initialized to zero or one outside of the outer loop.
-            // 
+        // Zero the elements from the corresponding row and column of 
+        // H that come before the diagonal element.
+        for ( j = 0; j < i; j++ )
+        {
+          hWork[i + j * n] = 0.0;
+          hWork[j + i * n] = 0.0;
+        }
+    
+        // Set the correponding diagonal element of H equal to one.
+        hWork[i + i * n] = 1.0;
+    
+        // Zero the elements from the corresponding row and column of 
+        // H that come after the diagonal element.
+        for ( j = i + 1; j < n; j++ )
+        {
+          hWork[i + j * n] = 0.0;
+          hWork[j + i * n] = 0.0;
+        }
+    
+        // Zero the corresponding element of the projected gradient.
+        gProj[i] = 0.0;
 
-                // Zero the elements from the corresponding row and column of 
-                // H that come before the diagonal element.
-                for ( j = 0; j < i; j++ )
-                {
-                  hWork[i + j * n] = 0.0;
-                  hWork[j + i * n] = 0.0;
-                }
-      
-                // Set the correponding diagonal element of H equal to one.
-                hWork[i + i * n] = 1.0;
-      
-                // Zero the elements from the corresponding row and column of 
-                // H that come after the diagonal element.
-                for ( j = i + 1; j < n; j++ )
-                {
-                  hWork[i + j * n] = 0.0;
-                  hWork[j + i * n] = 0.0;
-                }
-      
-                // Zero the corresponding element of the projected gradient.
-                gProj[i] = 0.0;
-
-                // Set the reciprocal of the corresponding R diagonal equal to one.
-                rDiagRec[i] = 1.0;
-      }
+        // Set the reciprocal of the corresponding R diagonal equal to one.
+        rDiagRec[i] = 1.0;
+    }
   }
 
 
