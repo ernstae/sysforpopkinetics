@@ -118,11 +118,13 @@ double GridIntegral(
 	size_t *I  = new size_t[m];
 
 	// initial grid point and volume of rectangle
+	size_t Ntot   = 1;
 	double volume = 1;
 	size_t i;
 	for(i = 0; i < m; i++)
 	{	I[i] = 0;
 		volume *= (U[i] - L[i]);
+		Ntot   *= N[i];
 	}
 
 
@@ -141,6 +143,7 @@ double GridIntegral(
 		// next grid point index
 		more = Increment(m, N, I);
 	}
+	assert( count == Ntot );
 
 	delete [] X;
 	delete [] I;
