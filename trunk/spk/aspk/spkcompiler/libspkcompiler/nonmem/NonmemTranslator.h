@@ -31,6 +31,7 @@ class NonmemTranslator : public ClientTranslator
   enum APPROX     { FO, FOCE, LAPLACE };
   enum TARGET     { IND, POP };
   enum MODEL_SPEC { PRED };
+  enum MONTE_METHOD { ANALYTIC, GRID, MONTE };
 
   struct NonmemKeyword{
     std::string THETA;
@@ -287,6 +288,7 @@ class NonmemTranslator : public ClientTranslator
   XMLCh* X_CONSTRAINT;          static const char* C_CONSTRAINT;
   XMLCh* X_MODEL;               static const char* C_MODEL;
   XMLCh* X_PRED;                static const char* C_PRED;
+  XMLCh* X_MONTE_CARLO;         static const char* C_MONTE_CARLO;
   XMLCh* X_PRESENTATION;        static const char* C_PRESENTATION;
   XMLCh* X_TABLE;               static const char* C_TABLE;
   XMLCh* X_SCATTERPLOT;         static const char* C_SCATTERPLOT;
@@ -298,6 +300,11 @@ class NonmemTranslator : public ClientTranslator
   XMLCh* X_FO;                  static const char* C_FO;
   XMLCh* X_FOCE;                static const char* C_FOCE;
   XMLCh* X_LAPLACE;             static const char* C_LAPLACE;
+  XMLCh* X_METHOD;              static const char* C_METHOD;
+  XMLCh* X_MONTE;               static const char* C_MONTE;
+  XMLCh* X_ANALYTIC;            static const char* C_ANALYTIC;
+  XMLCh* X_GRID;                static const char* C_GRID;
+  XMLCh* X_NUMBEREVAL;          static const char* C_NUMBEREVAL;
   XMLCh* X_POP_SIZE;            static const char* C_POP_SIZE;
   XMLCh* X_IS_ESTIMATION;       static const char* C_IS_ESTIMATION;
   XMLCh* X_IS_ETA_OUT;          static const char* C_IS_ETA_OUT;
@@ -329,12 +336,14 @@ class NonmemTranslator : public ClientTranslator
   //
   enum TARGET       myTarget;  
   enum MODEL_SPEC   myModelSpec;
+  enum MONTE_METHOD myMonteMethod;
 
   char             *myDescription;
   bool              myIsEstimate;
   bool              myIsSimulate;
   bool              myIsStat; 
   bool              myIsOnlySimulation;
+  bool              myIsMonte;
 
   unsigned int      mySubproblemsN; 
   APPROX            myApproximation;
@@ -351,7 +360,7 @@ class NonmemTranslator : public ClientTranslator
   Symbol::Structure mySigmaStruct;
   int               myEtaLen;
   int               myEpsLen;
-
+  unsigned int      myMonteNumberEval;
   unsigned int      mySigDigits;
   unsigned int      myPopMitr;
   unsigned int      myIndMitr;
