@@ -505,19 +505,18 @@ There can be as many as 10 <table>s and 20 <scatterplot>s.
 <!--              Monte Carlo              -->
 <!-- ===================================== -->
 <!-- <monte_carlo> If this element is present, an approximation for the integral and an estimate of its standard deviation will be computed.-->
-<!ELEMENT monte_carlo (number_eval)+>
+<!ELEMENT monte_carlo (number_eval)>
 
 <!-- <monte_carlo method="plain"> Specifies an integration method.  Four values are available: "plain", "analytic", "grid" and "miser".  "plain" (default) requests an approximation based on uniform sampling.  "analytic" is only valid for LinearModel (consult Brad) and requests to output the analytic integral.  "grid" requests a numerical approximation using a uniform grid.  For "miser" requests to use the miser algorithm for approximating the integral described in Section 7.8 of Numerical Recipes (2nd Ed.).  For any of these method, an estimate of the standard deviation will be computed as well.
 -->
 <!ATTLIST monte_carlo method (plain|grid|miser|analytic) #IMPLIED>
 
-<!-- <monte_carlo nevals="1"> The number specifies the number of function evaluations to use for each individual in the population data set.  This attribute is required for "plain", "grid" and "miser" methods.  For "analytic", the value is always 1; hence, if a value is given, it will be ignored.
+<!-- <number_eval> Specifies the numbers of function evaluations to use for each individual in the population data set.
 
-To be specific, the number of evaluations is the product of the elements
-of the vector <number_eval>.  If "method" is equal to "grid", "nevals" is equal to the number of random effects (per individual).  The i-th element of <number_eval> is the number of uniformly space grid points in the i-th random effect.  If "method" is not equal to "grid", "nevals" is equal to one; whence, the first occurence of <number_eval> is the number of function evaluations to use for each individual. -->
-<!ATTLIST monte_carlo nevals CDATA #IMPLIED>
+To be specific, the number of evaluations is the product of the values in <value>s under <number_eval>.  If "method" is equal to "grid", the number of occurences of <value> under <number_eval> is equal to the number of random effects (per individual).  The i-th <value> is the number of uniformly space grid points in the i-th random effect.  If "method" is not equal to "grid", the number of occurences of <value> is equal to one; whence, the first occurence of <value> is the number of function evaluations to use for each individual.
 
-<!-- <number_eval> The number (&gt;0) of function evalutions to use for each individual in the population.  The default value is 1000.  -->
+The default value for each <value> is 1000 for "plain" and "miser".  10 for "grid".  
+-->
 <!ELEMENT number_eval (value)+ >
 
 <!-- ================================================================================ -->
