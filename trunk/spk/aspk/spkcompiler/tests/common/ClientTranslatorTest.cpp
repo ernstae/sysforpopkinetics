@@ -150,7 +150,10 @@ void ClientTranslatorTest::setUp()
 
 void ClientTranslatorTest::tearDown()
 {
+  remove( gData );
   delete [] gData;
+  XMLPlatformUtils::Terminate();
+
 }
 
 void ClientTranslatorTest::testParseData()
