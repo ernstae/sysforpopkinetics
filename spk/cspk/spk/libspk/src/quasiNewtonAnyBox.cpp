@@ -810,34 +810,6 @@ void quasiNewtonAnyBox(
   QuasiNewton01BoxObj objective( &dvecXLow, &dvecXUp, &dvecXDiff );
 
 
-  //------------------------------------------------------------
-  // Define the options parameter for the function nag_opt_nlp.
-  //------------------------------------------------------------
-  
-  // Parameter: options
-  // Input: a structure whose members are optional parameters 
-  // for nag_opt_nlp. 
-  // Output: some elements of the options structure will supply
-  // details of the results of the optimization. 
-
-  // 
-  // Review - Sachiko: Error
-  //
-  // Simply "NagOptWrapper nagOptWrapper;" would do what you expect.
-  // Currently there are two objects created in the following statement.
-  //
-  NagOptWrapper nagOptWrapper = NagOptWrapper();
-  Nag_E04_Opt& options = nagOptWrapper.options;
-
-  // Parameter: options.print_level
-  // Parameter: options.minor_print_level
-  // Parameter: options.list
-  // Input: the level of results printed at each major iteration;  
-  // the level of results printed at each minor iteration, i.e.,  
-  // the iterations of the QP subproblem; and a boolean flag 
-  // indicating if the parameter settings will be printed.
-  //
-  //
   //***************************************************************************
   // [Revisit - Next SPK Iteration - Improved Diagnostics - Mitch]
   //
@@ -862,345 +834,7 @@ void quasiNewtonAnyBox(
   // quasiNewtonAnyBox by defining our own tracing function and also our own
   // derivative checking function.  I think that once we do that, then the
   // specifications for the level parameter will be much easier to write.
-v  //***************************************************************************
-  //
-  //
-  switch ( level ) 
-  {
-  case 1:
-    options.print_level       = Nag_Soln_Iter;
-    options.minor_print_level = Nag_NoPrint;
-    options.list              = FALSE;
-    break;
-  case 2:
-    options.print_level       = Nag_Soln_Iter_Long;
-    options.minor_print_level = Nag_NoPrint;
-    options.list              = FALSE;
-    break;
-  case 3:
-    options.print_level       = Nag_Soln_Iter_Long;
-    options.minor_print_level = Nag_Soln_Iter;
-    options.list              = FALSE;
-    break;
-  case 4:
-    options.print_level       = Nag_Soln_Iter_Long;
-    options.minor_print_level = Nag_Soln_Iter_Long;
-    options.list              = TRUE;
-    break;
-  default:
-    options.print_level       = Nag_NoPrint;
-    options.minor_print_level = Nag_NoPrint;
-    options.list              = FALSE;
-  }
-
-  //
-  // Review - Sachiko: suggestion for efficiency
-  // 
-  // Compress the following indented block into the above switch statement block.
-  // Though the effect will be neglegible, get a habit in minimizing 
-  // if-then-else or switch statements in order to reduce run-time overhead
-  // 
-      // Parameter: options.obj_deriv
-      // Input: indicates whether all the derivatives of the objective
-      // function are provided in function fvalScaled. 
-      options.obj_deriv = TRUE;
-
-      // Parameter: options.verify_grad
-      // Input: specifies the level of derivative checking to be
-      // performed by nag_opt_nlp on the gradient elements computed
-      // by the user supplied functions fvalScaled and confun.
-      // Parameter: options.print_deriv
-      // Input: controls whether the results of any derivative
-      // checking are printed out.
-      switch ( level )
-      {
-      case 4:
-        options.verify_grad = Nag_CheckObj;     // Component check of the objective gradient.
-        options.print_deriv = Nag_D_Full;       // Print full details of gradient check. 
-        break;
-      default:
-        options.verify_grad = Nag_NoCheck;      // Don't check the objective gradient.
-        options.print_deriv = Nag_D_NoPrint;    // Don't print checked gradients.
-      }
-  
-  // Parameter: options.f_diff_int
-  // Input: defines an interval used to estimate derivatives by
-  // finite differences.
-  // Constraint: DBL_EPSILON <= options.f_diff_int < 1.0, where DBL_EPSILON
-  // is machine precision.
-  // Note: see the note for the parameter optim_tol.
-  options.f_diff_int = epsilon;  
-  assert( options.f_diff_int >= DBL_EPSILON && options.f_diff_int < 1.0 );
-
-  // Parameter: options.c_diff_int
-  // Input: if the algorithm switches to central differences
-  // because the forward-difference approximation is not
-  // sufficiently accurate the value of c_diff_int is used as the
-  // difference interval for every element of x. 
-  // Constraint: DBL_EPSILON <= options.c_diff_int < 1.0.
-  options.c_diff_int = options.f_diff_int;
-  assert( options.c_diff_int >= DBL_EPSILON && options.c_diff_int < 1.0 );
-
-  // Parameter: options.max_iter 
-  // Input: maximum number of major iterations allowed before termination.
-  // Constraint: options.max_iter >= 0.  
-  options.max_iter = nMaxIter;
-  assert( options.max_iter >= 0 );
-
-  // Parameter: options.minor_max_iter
-  // Input: the maximum number of iterations for finding a
-  // feasible point with respect to the bounds and linear
-  // constraints (if any). The value also specifies the maximum
-  // number of minor iterations for the optimality phase of each
-  // QP subproblem.
-  //
-  // Review - Sachiko: question
-  //
-  // Where did "50" come from?  Just a curiosity.
-  //
-  options.minor_max_iter = 50 * ( nMaxIter != 0 );
-  assert( options.minor_max_iter >= 0 );
-
-  // Parameter: options.optim_tol
-  // Input: specifies the accuracy to which the user wishes the
-  // final iterate to approximate a solution of the problem.
-  // Constraint: options.f_prec <= options.optim_tol < 1.0.
-  // Note:  nag_opt_nlp will terminate successfully if the iterative
-  // sequence of y-values is judged to have converged and the
-  // final point satisfies the first-order Kuhn-Tucker conditions.
-  // nag_opt_nlp considers the sequence of iterates to have 
-  // converged at y if
-  //                                 1/2
-  //     alpha ||p||  <=  (optim_tol)     (1 + ||y||),
-  //
-  // where p is the search direction and alpha the step length from 
-  // equation (3), which appears in section 9.1 of the specification 
-  // for nag_opt_nlp that is contained in the NAG C Library Manual.
-  //
-  // If the tolerance for nag_opt_nlp is set to be
-  //
-  //                         2
-  //     optim_tol  = epsilon  ,
-  //
-  // then nag_opt_nlp will converge when
-  //
-  //     alpha ||p||  <=  epsilon  (1 + ||y||),
-  //
-  // The above convergence criteria used by nag_opt_nlp is equivalent 
-  // to the following convergence criteria used by quasiNewtonAnyBox:
-  //
-  //     abs( xOut - xStar )  <=  epsilon (xUp - xLow) .
-  //
-  // where abs is the element-by-element absolute value function.
-  //
-  // **********************************************************************
-  // * The equivalence of the two convergence criteria will now be shown. *
-  // *                                                                    *
-  // * It is assumed that the distance between the final y value, yOut,   *
-  // * and the true minimizer of the scaled objective function, yStar,    *
-  // * is less than the step taken during the last iteration, alpha * p.  *
-  // * That is,                                                           *
-  // *                                                                    *
-  // *     ||yOut - yStar||  <=  alpha ||p|| .                            *
-  // *                                                                    *
-  // * Since the final step satisfied the nag_opt_nlp convergence         *
-  // * criteria,                                                          *
-  // *                                                                    *
-  // *    alpha ||p||  <=  epsilon  (1 + ||y||),                          *
-  // *                                                                    *
-  // * and since the y values are constrained to [0, 1], it follows that  *
-  // *                                                                    *
-  // *     ||yOut - yStar||  <=  n  epsilon ,                             *
-  // *                                                                    *
-  // * where n is the number of objective function parameters.  Thus,     * 
-  // * follows that                                                       *
-  // *                                                                    *
-  // *     ||yOut - yStar||  <=  epsilon .                                *
-  // *                                                                    *
-  // * The above equation implies that every element of the vector        * 
-  // * (yOut - yStar) must be less than or equal to epsilon, which means  *
-  // *                                                                    *
-  // *   abs( yOut - yStar )  <=  epsilon .                               *
-  // *                                                                    *
-  // * Since the i-th elements of x and y are related as follows,         *
-  // *                                                                    *
-  // *     y(i) = [ x(i) - xLow(i) ] / [ xUp(i) - xLow(i) ] ,             *
-  // *                                                                    *
-  // * we have the final result,                                          *
-  // *                                                                    *
-  // *     abs( xOut - xStar )  <=  epsilon (xUp - xLow) .                *
-  // *                                                                    *
-  // * Therefore, the two convergence criteria are equivalent.            *
-  // **********************************************************************
-  //
-  options.optim_tol = epsilon * epsilon;  
-  assert( options.optim_tol >= options.f_prec && options.optim_tol < 1.0 ); 
-  
-  // Brad: 12/31/00 ===============================
-
-  // Parameter: f_prec
-  // Input: Specifies the accuracy with which the objective function
-  // is calculated. Because calculation of the objective often involes
-  // solution of differential equations, set this for as inaccurate as possible.
-  options.f_prec =  options.optim_tol;
-
-
-  // Brad: 12/28/00 ===============================
-
-  // Parameter: step_limit
-  // Input: Specifies the maximum change in the arguments at the first
-  // step in a line search. If xnext is the first point of a line search
-  // that starts at xstart, |xnext - xstart| <= step_limit * (1 + |xstart|).
-  // For our case, |xstart| is bounded by 1.
-  //
-  // [Revisit - Optimizer Parameters - Mitch] This nag_opt_nlp 
-  // parameter is currently hard-coded.  It should be an argument
-  // to quasiNewtonAnyBox that the calling routine can change.
-  //
-  options.step_limit = .05;
-  assert(   options.step_limit > 0.0 );
-
-
-  // ==============================================
-
-  // Parameter: crash_tol
-  // Input: crash_tol is used during a `cold start' when
-  // nag_opt_nlp selects an initial working set (options.start =
-  // Nag_Cold).  The initial working set will include (if
-  // possible) bounds or general inequality constraints that lie
-  // within crash_tol of their bounds.  In particular, a
-  // constraint of the form (a(j)**T)x >= l will be included in
-  // the initial working set if |(a(j)**T)x-l| <= crash_tol *
-  // (1+|l|).
-  // Constraint: 0.0 <= options.crash_tol <= 1.0.
-  //
-  // [Revisit - Optimizer Parameters - Mitch] This nag_opt_nlp 
-  // parameter is currently hard-coded.  It should be an argument
-  // to quasiNewtonAnyBox that the calling routine can change.
-  //
-  options.crash_tol = 1.0e-4;
-
-  // Parameter: hessian
-  // Input: controls the contents of the optional parameter h on
-  // return from nag_opt_nlp.  
-  // Note: h need not be set if the default option of start =
-  // Nag_Cold is used as n*n values of memory will be
-  // automatically allocated by nag_opt_nlp.
-  // If hessian = TRUE, then h contains the upper triangular 
-  // Cholesky factor R of H, the approximate (untransformed) Hessian 
-  // of the Lagrangian, with the variables in the natural order.
-  options.hessian = true;
-
-
-  //------------------------------------------------------------
-  // Define the other parameters for the function nag_opt_nlp.
-  //------------------------------------------------------------
-  
-  // Parameter: n
-  // Input: n, the number of variables.
-  // Output: unspecified.
-  // Constraint: n > 0.
-  Integer n = nObjPars;
-  assert( n > 0 );
-
-  // Parameter: nclin
-  // Input: n(L), the number of general linear constraints.
-  // Output: unspecified.
-  // Constraint: nclin >= 0.
-  Integer nclin = 0;
-  assert( nclin >= 0 );
-
-  // Parameter: ncnlin
-  // Input: n(N), the number of nonlinear constraints.
-  // Output: unspecified.
-  // Constraint: ncnlin >= 0.
-  Integer ncnlin = 0;
-  assert( ncnlin >= 0);
-
-  // Parameter: a[nclin][tda]
-  // Input: the ith row of a must contain the coefficients of the
-  // ith general linear constraint (the ith row of the matrix
-  // A(L) in (1)), for i = 1,2,...,n(L).
-  // Output: unspecified.
-  // Note: If nclin = 0 then the array a is not referenced.
-  double* a = 0;
-
-  // Parameter: tda
-  // Input: the second dimension of the array a as declared in
-  // the function from which nag_opt_nlp is called.
-  // Output: unspecified.
-  // Constraint: tda >= n if nclin > 0.
-  Integer tda = 0;
-  assert( tda >= n || nclin == 0 );
-
-  // Parameter: bl[n+nclin+ncnlin]
-  // Parameter: bu[n+nclin+ncnlin]
-  // Input: bl must contain the lower bounds and bu the upper
-  // bounds, for all the constraints in the following order. The
-  // first n elements of each array must contain the bounds on
-  // the variables, the next n(L) elements the bounds for the
-  // general linear constraints (if any), and the next n(N)
-  // elements the bounds for the nonlinear constraints (if any).
-  // Constraint: bl[j] <= bu[j], for j = 0,1,...,n+nclin+ncnlin-1,
-  // Constraint: |beta| < inf_bound when bl[j] = bu[j] = beta.
-  double* bl = pdYLowData;
-  double* bu = pdYUpData;
-
-  //======================[Begin: debug only code]======================
-  #ifdef _DEBUG
-  //
-  // Validate the lower and upper bounds.
-  //
-  for ( i = 0; i < n+nclin+ncnlin; i++ ) {
-    assert( bl[i] <= bu[i] );
-    if ( bl[i] == bu[i] )
-      
-      // This will satisfy the constraint because the default 
-      // value for inf_bound is 10^20. 
-      assert( bl[i] <= 1.0 );
-  }
-  //
-  #endif
-  //======================[End:   debug only code]======================
-
-  // Parameter: y[n]
-  // Input: an initial estimate of the scaled solution.
-  // Output: the final estimate of the scaled solution.
-  double* y = pdYData;
-
-  // Parameter: objf
-  // Input: unspecified.
-  // Output: the value of the scaled objective function at the final iterate.
-  double objf;
-
-  // Parameter: gvalScaled[n]
-  // Input: unspecified.
-  // Output: the gradient of the scaled objective function at the final
-  // iterate (or its finite difference approximation).
-  double* gvalScaled = pdGScaledData;
-
-  // Parameter: comm
-  // Input/Output: structure containing pointers for communication 
-  // to the user-supplied functions objfun (fvalScaled) and 
-  // confun, and the optional user-defined printing function.
-  Nag_Comm comm;
-  FvalScaledInfo info;
-  info.fval       = fval;
-  info.pFvalInfo  = pFvalInfo;
-  info.pdvecXLow  = &dvecXLow;
-  info.pdvecXUp   = &dvecXUp;
-  info.pdvecXDiff = &dvecXDiff;
-
-  comm.p = (Pointer) &info;
-
-  // Parameter: fail
-  // Input/Output:  see the discussion of the NAG error parameter in
-  // "Essential Introduction to the NAG C Library".
-  // Note:  the macro INIT_FAIL initializes the fail structure so that
-  // NAG error messages are not printed when an error is found and so 
-  // that control is returned here after an error.
-  static NagError fail;
-  INIT_FAIL(fail);
+  //***************************************************************************
 
 
   //------------------------------------------------------------
@@ -1226,23 +860,6 @@ v  //***************************************************************************
   //------------------------------------------------------------
   // Prepare to optimize the scaled objective function.
   //------------------------------------------------------------
-
-  //
-  // Revisit - Exception - Sachiko:
-  //
-  // Extract the exception information from comm structure and
-  // throw it if there was.
-  //
-
-  nag_opt_nlp( n, nclin, ncnlin, a, tda, bl, bu, fvalScaled, confun, 
-    y, &objf, gvalScaled, &options, &comm, &fail );
-
-  // [Remove]======================================
-  //
-  // CONSIDER:  make convergence properties of SPK (i.e. its specification) be that
-  // of the optimizer object passed in
-  //
-  // [Remove]======================================
 
   std::ostream    os = std::cout;
   size_t        level;
@@ -1276,65 +893,35 @@ v  //***************************************************************************
 
 
      // construct function object
-
      Fun obj(exponential, n, Q, b);
 
-
-
      /*
-
      Current iterate values
-
      */
-
      size_t        ItrCur = 0;
-
      size_t       QuadCur = 0;
-
      double          rCur = .5;
-
      double          fCur;
-
      /*
-
      Output values
-
      */
-
      double         fOut;
 
-
-
      // initial xCur
-
      for(i = 0; i < n; i++)
-
           xCur[i] = .5;
 
-
-
      // fCur is objective function value at xCur
-
      msg = obj.function(xCur, fCur); 
-
      ok &= strcmp(msg, "ok") == 0;
-
-
 
      // gCur is gradient at xCur
-
      msg = obj.gradient(gCur); 
-
      ok &= strcmp(msg, "ok") == 0;
 
-
-
      // initialize the HCur as the identity matrix
-
      for(i = 0; i < n; i++)
-
           for(j = 0; j < n; j++)
-
                HCur[i * n + j ] = static_cast<double>( i == j );
 
 
