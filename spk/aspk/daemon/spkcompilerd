@@ -1,12 +1,19 @@
 #!/bin/sh
+#
+# chkconfig: 2345 91 9
+# description: Starts and stops the SPK compiler deaemon
+#
 
-#chkconfig 2345 91 9
+DATABASE=spktest
+HOST=localhost
+DBUSER=tester
+DBPASSWD=tester
 
 LOCKFILE_PATH=/tmp/lock_compilerd
 
 #restart()
 start() {
-    /usr/local/bin/compilerd
+    /usr/local/bin/compilerd.pl $DATABASE $HOST $DBUSER $DBPASSWD
 }
 stop() {
     PID=`cat $LOCKFILE_PATH`
