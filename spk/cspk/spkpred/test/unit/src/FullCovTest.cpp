@@ -190,6 +190,9 @@ void FullCovTest::oneByOneCovTest()
   valarray<double> omegaAtParUp     ( nRow * nRow );
   valarray<double> omegaDiagAtParUp ( nRow );
 
+  valarray<double> omegaMinRep    ( nPar );
+  valarray<double> omegaMinRep_par( nPar * nPar );
+
   valarray<double> omegaCovTimesInv( nRow * nRow );
 
   // Calculate the covariance matrix, its derivative, its inverse,
@@ -210,11 +213,13 @@ void FullCovTest::oneByOneCovTest()
   omega.cov( omegaAtParUp );
 
   // Get the covariance matrix diagonals at the limits.
-  for ( i = 0; i < nRow; i++ )
-  {
-    omegaDiagAtParLow[i] = omegaAtParLow[i + i * nRow];
-    omegaDiagAtParUp [i] = omegaAtParUp [i + i * nRow];
-  }    
+  omegaDiagAtParLow[0] = omegaAtParLow[0];
+  omegaDiagAtParUp [0] = omegaAtParUp [0];
+
+  // Calculate the minimal representation for the covariance matrix
+  // and its derivative.
+  omega.calcCovMinRep    ( omegaCov,           omegaMinRep );
+  omega.calcCovMinRep_par( omegaCov_par, nPar, omegaMinRep_par );
 
   // Multiply the covariance matrix and its inverse.
   omegaCovTimesInv = multiply( omegaCov, nRow, omegaInv, nRow );
@@ -231,6 +236,9 @@ void FullCovTest::oneByOneCovTest()
 
   valarray<double> omegaDiagAtParLowKnown( nRow );
   valarray<double> omegaDiagAtParUpKnown ( nRow );
+
+  valarray<double> omegaMinRepKnown    ( nPar );
+  valarray<double> omegaMinRep_parKnown( nPar * nPar );
 
   valarray<double> omegaCovTimesInvKnown( nRow * nRow );
 
@@ -253,6 +261,11 @@ void FullCovTest::oneByOneCovTest()
   //
   omegaDiagAtParLowKnown[0] = omegaCovKnown[0] / 100.0;
   omegaDiagAtParUpKnown[0]  = omegaCovKnown[0] * 100.0;
+
+  // Set the known value for the minimal representation for the
+  // covariance matrix and its derivative.
+  omegaMinRepKnown[0]     = omegaCovKnown[0];
+  omegaMinRep_parKnown[0] = omegaCov_parKnown[0];
 
   // The covariance matrix multiplied by its inverse should be
   // equal to the identity matrix.
@@ -302,6 +315,18 @@ void FullCovTest::oneByOneCovTest()
     tol );
 
   compareToKnown( 
+    omegaMinRep,
+    omegaMinRepKnown,
+    "omegaMinRep",
+    tol );
+
+  compareToKnown( 
+    omegaMinRep_par,
+    omegaMinRep_parKnown,
+    "omegaMinRep_par",
+    tol );
+
+  compareToKnown( 
     omegaCovTimesInv,
     omegaCovTimesInvKnown,
     "omegaCov times omegaInv",
@@ -330,6 +355,7 @@ void FullCovTest::twoByTwoCovTest()
 
   int i;
   int j;
+  int k;
 
 
   //------------------------------------------------------------
@@ -375,6 +401,9 @@ void FullCovTest::twoByTwoCovTest()
   valarray<double> omegaAtParUp     ( nRow * nRow );
   valarray<double> omegaDiagAtParUp ( nRow );
 
+  valarray<double> omegaMinRep    ( nPar );
+  valarray<double> omegaMinRep_par( nPar * nPar );
+
   valarray<double> omegaCovTimesInv( nRow * nRow );
 
   // Calculate the covariance matrix, its derivative, its inverse,
@@ -401,6 +430,11 @@ void FullCovTest::twoByTwoCovTest()
     omegaDiagAtParUp [i] = omegaAtParUp [i + i * nRow];
   }    
 
+  // Calculate the minimal representation for the covariance matrix
+  // and its derivative.
+  omega.calcCovMinRep    ( omegaCov,           omegaMinRep );
+  omega.calcCovMinRep_par( omegaCov_par, nPar, omegaMinRep_par );
+
   // Multiply the covariance matrix and its inverse.
   omegaCovTimesInv = multiply( omegaCov, nRow, omegaInv, nRow );
 
@@ -421,6 +455,9 @@ void FullCovTest::twoByTwoCovTest()
 
   valarray<double> omegaDiagAtParLowKnown( nRow );
   valarray<double> omegaDiagAtParUpKnown ( nRow );
+
+  valarray<double> omegaMinRepKnown    ( nPar );
+  valarray<double> omegaMinRep_parKnown( nPar * nPar );
 
   valarray<double> omegaCovTimesInvKnown( nRow * nRow );
 
@@ -578,6 +615,28 @@ void FullCovTest::twoByTwoCovTest()
       omegaCovKnown[i + i * nRow];
   }    
 
+  // Set the known value for the minimal representation for the
+  // covariance matrix and its derivative.
+  int nCovMinRep_parRow = nPar;
+  int sumI = 0;
+  for ( i = 0; i < nRow; i++ )
+  {
+    sumI += i;
+
+    // Set the elements from this row including the diagonal.
+    for ( j = 0; j <= i; j++ )
+    {
+      omegaMinRepKnown[sumI + j] = omegaCovKnown[i + j * nRow];
+    
+      // Set the derivatives for this element.
+      for ( k = 0; k < nPar; k++ )
+      {
+        omegaMinRep_parKnown[( sumI + j     ) + k * nCovMinRep_parRow] = 
+          omegaCov_parKnown [( i * nRow + j ) + k * nCov_parRow];
+      }
+    }
+  }
+
   // The covariance matrix multiplied by its inverse should be
   // equal to the identity matrix.
   identity( nRow, omegaCovTimesInvKnown );
@@ -632,6 +691,18 @@ void FullCovTest::twoByTwoCovTest()
     tol );
 
   compareToKnown( 
+    omegaMinRep,
+    omegaMinRepKnown,
+    "omegaMinRep",
+    tol );
+
+  compareToKnown( 
+    omegaMinRep_par,
+    omegaMinRep_parKnown,
+    "omegaMinRep_par",
+    tol );
+
+  compareToKnown( 
     omegaCovTimesInv,
     omegaCovTimesInvKnown,
     "omegaCov times omegaInv",
@@ -659,6 +730,7 @@ void FullCovTest::threeByThreeCovTest()
 
   int i;
   int j;
+  int k;
 
 
   //------------------------------------------------------------
@@ -707,6 +779,9 @@ void FullCovTest::threeByThreeCovTest()
   valarray<double> omegaAtParUp     ( nRow * nRow );
   valarray<double> omegaDiagAtParUp ( nRow );
 
+  valarray<double> omegaMinRep    ( nPar );
+  valarray<double> omegaMinRep_par( nPar * nPar );
+
   valarray<double> omegaCovTimesInv( nRow * nRow );
 
   // Calculate the covariance matrix, its derivative, its inverse,
@@ -733,6 +808,11 @@ void FullCovTest::threeByThreeCovTest()
     omegaDiagAtParUp [i] = omegaAtParUp [i + i * nRow];
   }    
 
+  // Calculate the minimal representation for the covariance matrix
+  // and its derivative.
+  omega.calcCovMinRep    ( omegaCov,           omegaMinRep );
+  omega.calcCovMinRep_par( omegaCov_par, nPar, omegaMinRep_par );
+
   // Multiply the covariance matrix and its inverse.
   omegaCovTimesInv = multiply( omegaCov, nRow, omegaInv, nRow );
 
@@ -753,6 +833,9 @@ void FullCovTest::threeByThreeCovTest()
 
   valarray<double> omegaDiagAtParLowKnown( nRow );
   valarray<double> omegaDiagAtParUpKnown ( nRow );
+
+  valarray<double> omegaMinRepKnown    ( nPar );
+  valarray<double> omegaMinRep_parKnown( nPar * nPar );
 
   valarray<double> omegaCovTimesInvKnown( nRow * nRow );
 
@@ -889,6 +972,28 @@ void FullCovTest::threeByThreeCovTest()
       omegaCovKnown[i + i * nRow];
   }    
 
+  // Set the known value for the minimal representation for the
+  // covariance matrix and its derivative.
+  int nCovMinRep_parRow = nPar;
+  int sumI = 0;
+  for ( i = 0; i < nRow; i++ )
+  {
+    sumI += i;
+
+    // Set the elements from this row including the diagonal.
+    for ( j = 0; j <= i; j++ )
+    {
+      omegaMinRepKnown[sumI + j] = omegaCovKnown[i + j * nRow];
+    
+      // Set the derivatives for this element.
+      for ( k = 0; k < nPar; k++ )
+      {
+        omegaMinRep_parKnown[( sumI + j     ) + k * nCovMinRep_parRow] = 
+          omegaCov_parKnown [( i * nRow + j ) + k * nCov_parRow];
+      }
+    }
+  }
+
   // The covariance matrix multiplied by its inverse should be
   // equal to the identity matrix.
   identity( nRow, omegaCovTimesInvKnown );
@@ -938,6 +1043,18 @@ void FullCovTest::threeByThreeCovTest()
     omegaDiagAtParUp,
     omegaDiagAtParUpKnown,
     "omega diagonals at parUp",
+    tol );
+
+  compareToKnown( 
+    omegaMinRep,
+    omegaMinRepKnown,
+    "omegaMinRep",
+    tol );
+
+  compareToKnown( 
+    omegaMinRep_par,
+    omegaMinRep_parKnown,
+    "omegaMinRep_par",
     tol );
 
   compareToKnown( 
