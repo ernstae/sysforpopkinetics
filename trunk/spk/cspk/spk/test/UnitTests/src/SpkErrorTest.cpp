@@ -214,23 +214,22 @@ void SpkErrorTest::assignmentTest()
 }
 void SpkErrorTest::maxLinenumTest()
 {
-    using namespace SpkError_const;
     unsigned int i, multiplier, max=0;
 
-    for(i=1, multiplier=1; i<= SpkError_const::LINENUM_FIELD_LEN; i++, multiplier*=10)
+    for(i=1, multiplier=1; i<= SpkError::LINENUM_FIELD_LEN; i++, multiplier*=10)
         max += 9*multiplier;
 
     CPPUNIT_ASSERT_MESSAGE( "Max # of allowed lines", SpkError::maxLinenum() == max );
 }
 void SpkErrorTest::maxFilenameLenTest()
 {
-    CPPUNIT_ASSERT_MESSAGE( "SpkError_const::FILENAME_FIELD_LEN == SpkError::maxFilenameLen()",
-                             SpkError_const::FILENAME_FIELD_LEN == SpkError::maxFilenameLen() );
+    CPPUNIT_ASSERT_MESSAGE( "SpkError::FILENAME_FIELD_LEN == SpkError::maxFilenameLen()",
+                             SpkError::FILENAME_FIELD_LEN == SpkError::maxFilenameLen() );
 }
 void SpkErrorTest::maxMessageLenTest()
 {
-    CPPUNIT_ASSERT_MESSAGE( "SpkError_const::MESSAGE_FIELD_LEN == SpkError::maxMessageLen()",
-                             SpkError_const::MESSAGE_FIELD_LEN == SpkError::maxMessageLen() );
+    CPPUNIT_ASSERT_MESSAGE( "SpkError::MESSAGE_FIELD_LEN == SpkError::maxMessageLen()",
+                             SpkError::MESSAGE_FIELD_LEN == SpkError::maxMessageLen() );
 }
 
 void SpkErrorTest::codeTest()
@@ -296,25 +295,23 @@ void SpkErrorTest::formatTest()
 
 void SpkErrorTest::serializeTest()
 {
-    using namespace SpkError_const;
-    
     int i;
     unsigned int multiplier = 1;
     unsigned int errorcode = SpkError::SPK_UNKNOWN_ERR;
-    for( i=1; i<ERRORCODE_FIELD_LEN; i++ )
+    for( i=1; i<SpkError::ERRORCODE_FIELD_LEN; i++ )
     {
         multiplier *= 10;
         errorcode += 9*multiplier;
     }
 
     unsigned int linenum = 9;
-    for( i=1, multiplier=1; i<LINENUM_FIELD_LEN; i++ )
+    for( i=1, multiplier=1; i<SpkError::LINENUM_FIELD_LEN; i++ )
     {
         multiplier *= 10;
         linenum += 9*multiplier;
     }
     char filename[]        = "X:\\abc\\myfile.cpp";
-    char message[]         = "This is the first line of a test message.\nSecond line.\n";
+    char message[]         = "This is the <first> line of a test message.\nSecond line.\n";
 
     SpkError e1(static_cast<SpkError::ErrorCode>(errorcode), message, linenum, filename);
 
@@ -349,8 +346,6 @@ void SpkErrorTest::serializeTest()
 
 void SpkErrorTest::formatLongErrorTest()
 {
-    using namespace SpkError_const;
-    
     // Create an error message that is too long to be stored
     // in an SpkError object.
     ostringstream message;

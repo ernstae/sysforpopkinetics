@@ -44,34 +44,21 @@
 #include "SpkError.h"
 #include <string>
 #include <xercesc/parsers/XercesDOMParser.hpp>
-//
-// A namespace used within SpkException class members.
-//
-namespace SpkException_const
-{
-    using namespace SpkError_const;
-    const int MAX_ERRORS        = 16;
-    const int MAX_ERRORS_DIGITS =  2;
-    const int EXCEPTION_SIZE    = MAX_ERRORS_DIGITS + /*strlen("count\n")*/ 6 + ( MAX_ERRORS * ERROR_SIZE );
-}
 
 //
 // SpkException class declaration
 //
 class SpkException
 {
-    // a fixed length list of Error objects
-    SpkError _error_list[SpkException_const::MAX_ERRORS];
-
-    // counting the number of errors added to the list so far
-    int _cnt;
-
-    xercesc::XercesDOMParser *parser;
-
 public:	
-  static unsigned int maxErrors() throw();
+    static unsigned int maxErrors() throw();
 
-  void initXmlParser();
+    static const int MAX_ERRORS;
+    static const int MAX_ERRORS_DIGITS;
+    static const int EXCEPTION_SIZE;
+
+    // initializes xerces DOM parser
+    void initXmlParser();
 
     // default constructor
     SpkException() throw();
@@ -79,8 +66,14 @@ public:
 
     // the constructor that takes an error object to be added to the head of the list
     SpkException( const SpkError& ) throw();
-    SpkException( enum SpkError::ErrorCode, const char* message, unsigned int line, const char* filename) throw();
-    SpkException( const std::exception&, const char* message, unsigned int line, const char* filename) throw();
+    SpkException( enum SpkError::ErrorCode, 
+		  const char* message, 
+		  unsigned int line, 
+		  const char* filename) throw();
+    SpkException( const std::exception&, 
+		  const char* message,
+		  unsigned int line, 
+		  const char* filename) throw();
 
     // copy constructor which performs deep copy
     SpkException( const SpkException& ) throw();
@@ -93,7 +86,10 @@ public:
 
     // append an error object to the list
     SpkException& push( const SpkError& ) throw();
-    SpkException& push( enum SpkError::ErrorCode, const char* message, unsigned int, const char* filename ) throw();
+    SpkException& push( enum SpkError::ErrorCode, 
+			const char* message, 
+			unsigned int, 
+			const char* filename ) throw();
     SpkException& cat( const SpkException& e ) throw();
 
 
@@ -122,6 +118,14 @@ public:
     friend std::istream& operator>>(std::istream& stream, SpkException& e);
     friend const std::string& operator>>(const std::string& s, SpkException& e);
 
+ private:
+    // a fixed length list of Error objects
+    SpkError _error_list[16]; // MAX_ERRORS=16
+
+    // counting the number of errors added to the list so far
+    int _cnt;
+
+    xercesc::XercesDOMParser *parser;
 };
 
 //
