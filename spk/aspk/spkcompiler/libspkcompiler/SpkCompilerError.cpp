@@ -13,7 +13,6 @@
 /*------------------------------------------------------------------------
  * Namespaces used
  *------------------------------------------------------------------------*/
-//using namespace SpkCompilerError_const;
 using namespace std;
 /*------------------------------------------------------------------------
  * Static functions
@@ -251,6 +250,17 @@ std::ostream& operator<<(std::ostream& stream, const SpkCompilerError& e)
    
     stream.flush();
     return stream;
+}
+const std::string SpkCompilerError::getXml() const
+{
+    ostringstream o;
+    o << "<error>"          << endl;
+    o << "   <code>"        << this->describe(myErrorCode) << "</code>"        << endl;
+    o << "   <file_name>"   << myFileName  << "</file_name>"   << endl;
+    o << "   <line_number>" << myLineNum   << "</line_number>" << endl;
+    o << "   <message>"     << myMessage   << "</message>"     << endl;
+    o << "</error>"         << endl;
+    return o.str();
 }
 
 enum SpkCompilerError::ErrorCode SpkCompilerError::code() const throw()

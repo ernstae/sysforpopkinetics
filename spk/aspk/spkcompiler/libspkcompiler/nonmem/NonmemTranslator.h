@@ -242,10 +242,10 @@ class NonmemTranslator : public ClientTranslator
   // The Monte Carlo driver definition.
   const char * fMonteDriver_cpp;
 
-  // A temporary file for storing runtime error messages.  The
+  // A temporary file for storing (long) runtime error messages.  The
   // compiler use only the name of the file, which will be inserted
   // into the generated driver.cpp.
-  const char * fSpkRuntimeError_tmp;
+  const char * fSpkRuntimeLongError_tmp;
 
   // The result XML
   const char * fResult_xml;
