@@ -1,0 +1,238 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"[
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+]>
+<article><title>PVM Administration at RFPK</title>
+ <articleinfo>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>November 19, 2004</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+    </revhistory>
+  <abstract>
+      <para>
+	The administration of the Parallel Virtual Machine (PVM) in the
+	RFPK lab is covered.
+      </para>
+  </abstract>
+ </articleinfo>
+  <sect1>
+    <title>Introduction</title>
+    <para>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Configuring an Additional Host</title>
+    <para>
+      In this section, the configuration of a host so that it will be
+      available for participation in the virtual machine is covered.
+    </para>
+    <sect2>
+      <title>Software</title>
+      <para>
+	It is likely that the PVM software is already installed on the new
+	host.  PVM is included in the "Engineering and Scientific" packages
+	option of the RedHat Enterprise Linux installation.
+      </para>
+      <para>
+	To determine whether or not PVM is present as a RedHat package, 
+	enter the following at the command prompt:
+	<screen>
+rpm -qa | grep pvm	  
+	</screen>
+	The output should be something like 
+	<emphasis>pvm-3.4.4-22</emphasis>.  If the output is empty, you
+	will need to install the package.  You can do this via the
+	<guimenuitem>Add/Remove Applications</guimenuitem> item of the
+	<guimenu>System Settings</guimenu> menu of the Gnome desktop.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Users and Privileges</title>
+      <para>
+	PVM does not require root privilege to run.  All that is required is
+	that the username under which the daemon <emphasis>pvmd3</emphasis>
+	is run on the master node be present on all the other nodes. 
+	This is also the username under which the computational server (cspk) and
+	its distributed processes must run. 
+      </para>
+      <para>
+	SPK uses the Network File System (NFS) for some of the communication
+	between distributed processes.  For these processes to be able to
+	share files without having to give access privileges to all users,
+	two approaches could be taken:
+	<orderedlist>
+	  <listitem>
+	    <para>
+	      Owner privilege could be used.  This would require 
+	      a username with the same uid on all hosts.  In point of fact, the RedHat
+	      pvm package establishes the username
+	      <emphasis>pvm</emphasis> on each system, and always assigns
+	      24 as the uid.  If we could be insured that all nodes were
+	      always running the same version of the operating system, 
+	      using the <emphasis>pvm</emphasis> username would
+	      enable owner privilege to work.  We should not, however,
+	      restrict the operating system so severely and, in addition,
+	      we may want to use several different usernames for testing
+	      purposees.
+	    </para>
+	    <para>
+	      Using owner privilege would thus require that each of
+	      the usernames available for the running of CSPK have the
+	      same uid on all machines.  To accomplish this we could:
+	      <orderedlist>
+		<listitem>
+		  <para>
+		    Manually synchronize the password tables.  This would be
+		    tedious and error prone.  
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    Employ the Network Information System (NIS) to 
+		    share the password table between all nodes.  We reject
+		    this on the basis of security.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    Establish an LDAP server, which could do the same thing
+		    as NIS, but more securely.  We reject this because
+		    of the large effort involved.
+		  </para>
+		</listitem>
+	      </orderedlist>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Group privilege is a better solution, at least for RFPK.
+	      This requires the following:
+	      <orderedlist>
+		<listitem>
+		  <para>
+		    Install a new group on all nodes, always using the
+		    same gid.  At RFPK, the groupname that has been chosen
+		    is <emphasis>cspk</emphasis>, and the gid is 440.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    On each node, add to the cspk group each of the usernames 
+		    that would potentially run the application.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    On the file server, recursively set group ownership
+		    to <emphasis>cspk</emphasis> in the file tree that is
+		    shared between distributed processes.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    On the file server, turn on the <emphasis>setgid</emphasis>
+		    bit in each directory in the file tree that is shared
+		    among the distributed processes.  This measure insures that
+		    any new directories or files created within this tree will
+		    have <emphasis>cspk</emphasis> as the group owner.
+		  </para>
+		</listitem>
+	      </orderedlist>
+	    </para>
+	  </listitem>
+	</orderedlist>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Adding Users</title>
+      <para>
+	Add each user that would potentially run the distributed cspk to the
+	password table:
+	<screen>
+su -
+useradd watrous
+useradd honda
+useradd jiaji
+useradd alan
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Adding the Group</title>
+      <para>
+	Add the cspk group to the group table:
+	<screen>
+groupadd -g 440 cspk
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Adding Users to the Group</title>
+      <para>
+	Add to the group each of the potential users:
+	<screen>
+gpasswd -a jiaji cspk
+gpasswd -a honda cspk
+gpasswd -a alan cspk
+gpasswd -a watrous cspk
+	</screen>
+      </para>
+      <para>
+	To verify your handiwork:
+	<screen>
+grep cspk /etc/group
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Configure NFS</title>
+      <para>
+	The new host does not have to be an NFS server.  It merely needs
+	to be configured to mount a directory tree that resides on the
+	remote file server.
+      </para>
+      <sect3>
+	<title>Identify fileserver</title>
+	<para>
+	  First we should establish <emphasis>fileserver</emphasis>
+	  as an alias for the
+	  IP address of the host on which the directory tree resides.
+	  As root, edit the file <filename>/etc/hosts</filename>
+	  to append <emphasis>fileserver</emphasis> to the line for
+	  192.168.1.2.  For example, the line might look like this
+	  after you are through:
+	  <screen>
+192.168.1.2  whitechuck aspkserver backupserver cvsserver dbserver timeserver fileserver
+	  </screen>
+	</para>
+      </sect3>
+      <sect3>
+	<title>Create a Directory for Mounting the Remote File System</title>
+	<para>
+	  The remote file system will be mounted on a directory in the
+	  host.  Create this directory as follows:
+	  <screen>
+su -
+mkdir -p /usr/local/spk/share
+	  </screen>
+	</para>
+      </sect3>
+      <sect3>
+	<title>Add Mount Information to <filename>/etc/fstab</filename></title>
+	<para>
+	  As root, add the following line to <filename>/etc/fstab</filename>, using
+	  your favorite editor:
+	  <screen>
+fileserver:/usr/local/spk/share /usr/local/spk/share nfs rsize=8194,wsize=8192,timeo=14,intr
+	  </screen>
+	</para>
+      </sect3>
+    </sect2>
+  </sect1>
+</article>
