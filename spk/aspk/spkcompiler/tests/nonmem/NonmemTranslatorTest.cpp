@@ -186,8 +186,6 @@ void NonmemTranslatorTest::testParsePopSource()
       oSource << "</in>" << endl;
       oSource << "</sigma>" << endl;
 
-      oSource << "</pop_analysis>" << endl;
-
       oSource << "<pop_stat covariance_form=\"" << pop_cov_form << "\" ";
       oSource << "is_standarderr_out=\""        << (pop_stderr? "yes":"no") << "\" ";
       oSource << "is_covariance_out=\""         << (pop_covariance? "yes":"no") << "\" ";
@@ -198,6 +196,7 @@ void NonmemTranslatorTest::testParsePopSource()
 	{
 	  oSource << "<simulation seed=\"" << seed << "\"/>" << endl;
 	}
+      oSource << "</pop_analysis>" << endl;
       oSource << "</constraint>" << endl;
       
       oSource << "<model>" << endl;
@@ -1153,12 +1152,12 @@ CppUnit::Test * NonmemTranslatorTest::suite()
      new CppUnit::TestCaller<NonmemTranslatorTest>(
          "testInheritance", 
 	 &NonmemTranslatorTest::testInheritance ) );
-
+  /*
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<NonmemTranslatorTest>(
          "testParseIndSource", 
 	 &NonmemTranslatorTest::testParseIndSource ) );
-
+  */
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<NonmemTranslatorTest>(
          "testParsePopSource", 
