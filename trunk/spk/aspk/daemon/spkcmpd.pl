@@ -124,18 +124,25 @@ my $database = shift;
 my $host     = shift;
 my $dbuser   = shift;
 my $dbpasswd = shift;
+my $mode     = shift;
+
+my $service_root = "spkcmp";
+
+if ($mode =~ "test") {
+    $service_root .= "test";
+}
+my $service_name = "$service_root" . "d";
+my $prefix_working_dir = "$service_root" . "-";
 
 my $dbh;
 my $database_open = 0;
 my $filename_cerr_report = "compilation_error.xml";
 my $filename_serr = "software_error";
-my $service_name = "spkcmpd";
 my $lockfile_path = "/tmp/lock_$service_name";
 my $lockfile_exists = 0;
 my $pathname_co  = "/usr/bin/co";   # rcs checkout utility
 my $pathname_compiler = "/usr/local/bin/spkcompiler";
 my $pathname_tar = "/bin/tar";
-my $prefix_working_dir = "spkcmp-";
 my $tmp_dir = "/tmp";
 
 sub death {
