@@ -9,9 +9,9 @@
 #include "../SymbolTable.h"
 
 #include <iostream>
+#include <vector>
 
 #include <xercesc/dom/DOMDocument.hpp>
-
 
 /**
  * NonmemTranslator is an implementation of ClientTranslator abstract class.
@@ -31,8 +31,11 @@ class NonmemTranslator : public ClientTranslator
   enum APPROX     { FO, FOCE, LAPLACE };
   enum TARGET     { IND, POP };
   enum MODEL_SPEC { PRED };
-  enum MONTE_METHOD { ANALYTIC, GRID, MONTE };
-
+//==============================================================
+// REVISIT SACHIKO
+// Remove MONTE from the following enumulator
+  enum INTEG_METHOD { ANALYTIC, GRID, PLAIN, MISER, MONTE };
+//==============================================================
   struct NonmemKeyword{
     std::string THETA;
     std::string ETA;
@@ -296,9 +299,13 @@ class NonmemTranslator : public ClientTranslator
   XMLCh* X_FOCE;                static const char* C_FOCE;
   XMLCh* X_LAPLACE;             static const char* C_LAPLACE;
   XMLCh* X_METHOD;              static const char* C_METHOD;
-  XMLCh* X_MONTE;               static const char* C_MONTE;
   XMLCh* X_ANALYTIC;            static const char* C_ANALYTIC;
   XMLCh* X_GRID;                static const char* C_GRID;
+  XMLCh* X_MISER;               static const char* C_MISER;
+  XMLCh* X_PLAIN;               static const char* C_PLAIN;
+//====================================================================
+  XMLCh* X_MONTE;               static const char* C_MONTE;
+//====================================================================
   XMLCh* X_NUMBEREVAL;          static const char* C_NUMBEREVAL;
   XMLCh* X_POP_SIZE;            static const char* C_POP_SIZE;
   XMLCh* X_IS_ESTIMATION;       static const char* C_IS_ESTIMATION;
@@ -319,7 +326,6 @@ class NonmemTranslator : public ClientTranslator
   XMLCh* X_MITR;                static const char* C_MITR;
   XMLCh* X_IND_STAT;            static const char* C_IND_STAT;
   XMLCh* X_SIG_DIGITS;          static const char* C_SIG_DIGITS;
-  XMLCh* X_ONLYSIMULATION;      static const char* C_ONLYSIMULATION;
   XMLCh* X_SUBPROBLEMS;         static const char* C_SUBPROBLEMS;
   //========================================
 
@@ -331,13 +337,12 @@ class NonmemTranslator : public ClientTranslator
   //
   enum TARGET       myTarget;  
   enum MODEL_SPEC   myModelSpec;
-  enum MONTE_METHOD myMonteMethod;
+  enum INTEG_METHOD myIntegMethod;
 
   char             *myDescription;
   bool              myIsEstimate;
   bool              myIsSimulate;
   bool              myIsStat; 
-  bool              myIsOnlySimulation;
   bool              myIsMonte;
 
   unsigned int      mySubproblemsN; 
@@ -355,7 +360,8 @@ class NonmemTranslator : public ClientTranslator
   Symbol::Structure mySigmaStruct;
   int               myEtaLen;
   int               myEpsLen;
-  unsigned int      myMonteNumberEval;
+  std::vector<unsigned int> myIntegNumberEvals;
+  unsigned int      myIntegNEvals;
   unsigned int      mySigDigits;
   unsigned int      myPopMitr;
   unsigned int      myIndMitr;
