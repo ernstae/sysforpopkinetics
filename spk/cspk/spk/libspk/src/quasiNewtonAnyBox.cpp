@@ -1709,25 +1709,23 @@ bool isWithinTol(
  * Function: isLowerTriangular
  *
  *
- * Returns true if the square matrix A is lower triangular, i.e., if
- * all of its elements above the diagonal are zero.
+ * Returns true if the square matrix x, which has n rows and columns, 
+ * is lower triangular, i.e., if all of its elements above the diagonal
+ * are zero.  This function assumes that x has been allocated with the
+ * proper number of elements.
  *
  *************************************************************************/
 
-bool isLowerTriangular( const DoubleMatrix& dmatA )
+bool isLowerTriangular( int n, const double* x )
 {
-  int n = dmatA.nr();
+  int i;
+  int j;
 
-  assert( dmatA.nc() == n );   // A must be square.
-
-  const double* pdAData = dmatA.data();
-
-  int i, j;
   for ( i = 0; i < n - 1; i++ ) 
   {
     for ( j = i + 1; j < n; j++ )
     {
-      if ( pdAData[i + j*n] != 0.0 )
+      if ( x[i + j * n] != 0.0 )
       {
           return false;
       }
