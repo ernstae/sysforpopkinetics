@@ -522,7 +522,7 @@ namespace // [Begin: unnamed namespace]
     }
 
   private:
-    // This is not defined so that it won't be used.
+    // This is private and not defined so that it can't be used.
     QuasiNewton01BoxObj();
 
 
