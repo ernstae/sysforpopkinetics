@@ -214,7 +214,7 @@
       In this section the individual API functions will be described.
       Although they are referred to as <emphasis>functions</emphasis> here,
       they are implemented as <emphasis>subroutines</emphasis> in the Perl
-      language, as <emphasis>member functions</emphasis> in the C++
+      language
       and as <emphasis>class methods</emphasis> in Java. The descriptions
       below define those properties that are independent of language binding.
     </para>
@@ -223,7 +223,7 @@
       <para>
 	Data types are language dependent.  Because we
 	are dealing with data fields that are defined in SQL, rather than
-	Perl, C++ or Java, the reader should always consult the 
+	Perl or Java, the reader should always consult the 
 	<ulink url="../dbSchema/dbSchema.html">
 	  Database Schema
 	</ulink>
@@ -986,7 +986,7 @@
 		  <entry>
 		    Information that can be used to differentiate between
 		    an empty queue and an error condition such as an invalid
-		    handle is provide by the individual language bindings.
+		    handle is provided by the individual language bindings.
 		  </entry>
 		</row>
 	      </tbody>
@@ -1000,6 +1000,105 @@
 	      <colspec colname="c1" colwidth="3*"/>
 	      <colspec colname="c2" colwidth="2*"/>
 	      <colspec colname="c3" colwidth="7*"/>
+	      <thead>
+		<row>
+		  <entry>Name of Argument</entry>
+		  <entry>Data Type</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>handle</entry>
+		  <entry>database handle</entry>
+		  <entry>Handle to an open database connection.</entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+      </sect3>
+      <sect3>
+	<title id="get_cmp_jobs">get_cmp_jobs -- get all jobs currently being compiled</title>
+	<glosslist>
+	  <glossentry>
+	    <glossterm>Synopsis</glossterm>
+	    <glossdef>
+	      <para>
+		row-array = get_cmp_jobs handle
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Description</glossterm>
+	    <glossdef>
+	      <para>
+		An array of rows containing all jobs with state_code = 'cmp' is returned.
+		The rows contain the fields job_id, dataset_id and xml_source.  This 
+		function would typically be called by the compiler deamon upon starting
+		up, in order to discover any jobs which were being compiled when the
+		the compiler sub-system was shut down, so that those jobs could be compiled
+		again.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Side Effects</glossterm>
+	    <glossdef>
+	      <para>
+		A state transition record is added to the <emphasis>history</emphasis> table.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Transaction Processing Considerations</glossterm>
+	    <glossdef>
+	      <para>
+		None.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	</glosslist>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Values returned by get_cmp_jobs</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="1*"/>
+	      <colspec colname="c2" colwidth="1*"/>
+	      <colspec colname="c3" colwidth="5*"/>
+	      <thead>
+		<row>
+		  <entry>Condition</entry>
+		  <entry>Values</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>success</entry>
+		  <entry>array-row</entry>
+		  <entry>In each row: job_id, dataset_id and xml_source</entry>
+		</row>
+		<row>
+		  <entry>failure</entry>
+		  <entry>null or undefined</entry>
+		  <entry>
+		    Information that can be used to differentiate between a select
+		    that returns the empty set and a database error condition is 
+		    provided by the individual language bindings.
+		  </entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Arguments to get_cmp_jobs</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="1*"/>
+	      <colspec colname="c2" colwidth="1*"/>
+	      <colspec colname="c3" colwidth="5*"/>
 	      <thead>
 		<row>
 		  <entry>Name of Argument</entry>
@@ -1240,6 +1339,105 @@
 	      <colspec colname="c1" colwidth="3*"/>
 	      <colspec colname="c2" colwidth="2*"/>
 	      <colspec colname="c3" colwidth="7*"/>
+	      <thead>
+		<row>
+		  <entry>Name of Argument</entry>
+		  <entry>Data Type</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>handle</entry>
+		  <entry>database handle</entry>
+		  <entry>Handle to an open database connection.</entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+      </sect3>
+      <sect3>
+	<title id="get_run_jobs">get_run_jobs -- get all jobs currently being running</title>
+	<glosslist>
+	  <glossentry>
+	    <glossterm>Synopsis</glossterm>
+	    <glossdef>
+	      <para>
+		row-array = get_run_jobs handle
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Description</glossterm>
+	    <glossdef>
+	      <para>
+		An array of rows containing all jobs with state_code = 'run' is returned.
+		Each row contains  only the field: job_id.  This 
+		function would typically be called by the runtime deamon upon starting
+		up, in order to discover any jobs which were being run when the
+		the computational sub-system was shut down, so that those jobs could be 
+		restarted.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Side Effects</glossterm>
+	    <glossdef>
+	      <para>
+		A state transition record is added to the <emphasis>history</emphasis> table.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Transaction Processing Considerations</glossterm>
+	    <glossdef>
+	      <para>
+		None.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	</glosslist>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Values returned by get_run_jobs</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="1*"/>
+	      <colspec colname="c2" colwidth="1*"/>
+	      <colspec colname="c3" colwidth="5*"/>
+	      <thead>
+		<row>
+		  <entry>Condition</entry>
+		  <entry>Values</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>success</entry>
+		  <entry>array-row</entry>
+		  <entry>In each row: job_id</entry>
+		</row>
+		<row>
+		  <entry>failure</entry>
+		  <entry>undefined</entry>
+		  <entry>
+		    Information that can be used to differentiate between a select
+		    that returns the empty set and a database error condition is 
+		    provided by the individual language bindings.
+		  </entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Arguments to get_run_jobs</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="1*"/>
+	      <colspec colname="c2" colwidth="1*"/>
+	      <colspec colname="c3" colwidth="5*"/>
 	      <thead>
 		<row>
 		  <entry>Name of Argument</entry>
@@ -2805,16 +3003,14 @@
 	language bindings.
 	<table frame="all" pgwide="0">
 	  <title>Functions by Language</title>
-	  <tgroup cols="4">
+	  <tgroup cols="3">
 	    <colspec colwidth="5*"/>
-	    <colspec colwidth="1*" align="center"/>
 	    <colspec colwidth="1*" align="center"/>
 	    <colspec colwidth="1*" align="center"/>
 	    <thead>
 	      <row>
 		<entry>Function</entry>
 		<entry>Perl</entry>
-		<entry>C++</entry>
 		<entry>Java</entry>
 	      </row>
 	    </thead>
@@ -2823,41 +3019,39 @@
 		<entry><link linkend="connect">connect</link></entry>
 		<entry>x</entry>
 		<entry>x</entry>
-		<entry>x</entry>
 	      </row>
 	      <row>
 		<entry><link linkend="disconnect">disconnect</link></entry>
-		<entry>x</entry>
 		<entry>x</entry>
 		<entry>x</entry>
 	      </row>
 	      <row>
 		<entry><link linkend="new_job">new_job</link></entry>
 		<entry>x</entry>
-		<entry></entry>
 		<entry>x</entry>
 	      </row>
 	      <row>
 		<entry><link linkend="job_status">job_status</link></entry>
 		<entry>x</entry>
-		<entry></entry>
 		<entry>x</entry>
 	      </row>
 	      <row>
 		<entry><link linkend="user_jobs">user_jobs</link></entry>
 		<entry>x</entry>
-		<entry></entry>
 		<entry>x</entry>
 	      </row>
 	      <row>
 		<entry><link linkend="de_q2c">de_q2c</link></entry>
 		<entry>x</entry>
+		<entry></entry>
+	      </row>
+	      <row>
+		<entry><link linkend="get_cmp_jobs">get_cmp_jobs</link></entry>
 		<entry>x</entry>
 		<entry></entry>
 	      </row>
 	      <row>
 		<entry><link linkend="en_q2r">en_q2r</link></entry>
-		<entry>x</entry>
 		<entry>x</entry>
 		<entry></entry>
 	      </row>
@@ -2865,91 +3059,81 @@
 		<entry><link linkend="de_q2r">de_q2r</link></entry>
 		<entry>x</entry>
 		<entry></entry>
+	      </row>
+	      <row>
+		<entry><link linkend="get_run_jobs">get_run_jobs</link></entry>
+		<entry>x</entry>
 		<entry></entry>
 	      </row>
 	      <row>
 		<entry><link linkend="end_job">end_job</link></entry>
 		<entry>x</entry>
 		<entry>x</entry>
-		<entry>x</entry>
 	      </row>
 	      <row>
 		<entry><link linkend="job_report">job_report</link></entry>
 		<entry>x</entry>
-		<entry></entry>
 		<entry>x</entry>
 	      </row>
 	      <row>
 		<entry><link linkend="new_dataset">new_dataset</link></entry>
 		<entry>x</entry>
-		<entry></entry>
 		<entry>x</entry>
 	      </row>
 	      <row>
 		<entry><link linkend="get_dataset">get_dataset</link></entry>
 		<entry>x</entry>
 		<entry>x</entry>
-		<entry>x</entry>
 	      </row>
 	      <row>
 		<entry><link linkend="update_dataset">update_dataset</link></entry>
 		<entry>x</entry>
-		<entry></entry>
 		<entry>x</entry>
 	      </row>
 	      <row>
 		<entry><link linkend="user_datasets">user_datasets</link></entry>
 		<entry>x</entry>
-		<entry></entry>
 		<entry>x</entry>
 	      </row>
 	      <row>
 		<entry><link linkend="new_model">new_model</link></entry>
 		<entry>x</entry>
-		<entry></entry>
 		<entry>x</entry>
 	      </row>
 	      <row>
 		<entry><link linkend="get_model">get_model</link></entry>
 		<entry>x</entry>
-		<entry></entry>
 		<entry>x</entry>
 	      </row>
 	      <row>
 		<entry><link linkend="update_model">update_model</link></entry>
 		<entry>x</entry>
-		<entry></entry>
 		<entry>x</entry>
 	      </row>
 	      <row>
 		<entry><link linkend="user_models">user_models</link></entry>
 		<entry>x</entry>
-		<entry></entry>
 		<entry>x</entry>
 	      </row>
 	      <row>
 		<entry><link linkend="new_user">new_user</link></entry>
 		<entry>x</entry>
-		<entry></entry>
 		<entry>x</entry>
 	      </row>
 	      <row>
 		<entry><link linkend="update_user">update_user</link></entry>
 		<entry>x</entry>
-		<entry></entry>
 		<entry>x</entry>
 	      </row>
 	      <row>
 		<entry><link linkend="get_user">get_user</link></entry>
 		<entry>x</entry>
-		<entry></entry>
 		<entry>x</entry>
 	      </row>
 <!--
 	      <row>
 		<entry><link linkend="blah">blah</link></entry>
 		<entry>x</entry>
-		<entry></entry>
 		<entry>x</entry>
 	      </row>
 -->
