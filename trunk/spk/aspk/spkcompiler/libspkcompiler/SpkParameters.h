@@ -55,4 +55,5 @@ struct SpkParameters{
   
   std::map< std::string, std::valarray<double> > aliases;
 };
+
 #endif

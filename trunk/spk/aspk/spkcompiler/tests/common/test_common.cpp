@@ -6,10 +6,10 @@
 #include "SymbolTableTest.h"
 #include "SpkCompilerUtilTest.h"
 #include "ExpTreeGeneratorTest.h"
+#include "read_contentTest.h"
 
 using namespace std;
 using namespace CppUnit;
-
 
 int main( int argc, const char * argv[] )
 {
@@ -19,7 +19,7 @@ int main( int argc, const char * argv[] )
   runner.addTest( SymbolTableTest::suite() );
   runner.addTest( SpkCompilerUtilTest::suite() );
   runner.addTest( ExpTreeGeneratorTest::suite() );
-  
+  runner.addTest( read_contentTest::suite() );  
   runner.run();
 
   return 0;
