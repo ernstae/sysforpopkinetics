@@ -60,8 +60,10 @@ Test* popStatisticsTest::suite()
   TestSuite *suiteOfTests = new TestSuite("popStatisticsTest");
 
   suiteOfTests->addTest(new TestCaller<popStatisticsTest>("modifiedLaplaceTest", &popStatisticsTest::modifiedLaplaceTest));
+
   suiteOfTests->addTest(new TestCaller<popStatisticsTest>("expectedHessianTest",
 							  &popStatisticsTest::expectedHessianTest));
+
   suiteOfTests->addTest(new TestCaller<popStatisticsTest>("firstOrderTest",      
 							  &popStatisticsTest::firstOrderTest));
   suiteOfTests->addTest(new TestCaller<popStatisticsTest>("naiveFirstOrderTest", 
@@ -101,7 +103,7 @@ void popStatisticsTest::naiveFirstOrderTest()
 #include <spk/randNormal.h>
 #include <iomanip>
 #include <cmath>
-
+#include <spk/printInMatrix.h>
 
 /*------------------------------------------------------------------------
  * Namespace Declarations
@@ -264,7 +266,7 @@ private:
   }   
 
 };
-
+#include <spk/multiply.h>
 void popStatisticsTest::statisticsExampleTest(enum Objective whichObjective)
 {
   //------------------------------------------------------------
@@ -510,8 +512,8 @@ void popStatisticsTest::statisticsExampleTest(enum Objective whichObjective)
 					lTilde_alp_alpOut[ 2 ] * popParCovOut[ 3 ], 0.0, eps );
 	  CPPUNIT_ASSERT_DOUBLES_EQUAL( lTilde_alp_alpOut[ 1 ] * popParCovOut[ 2 ] +
 					lTilde_alp_alpOut[ 3 ] * popParCovOut[ 3 ], 1.0, eps );
+
 	}
-      
       //------------------------------------------------------------
       // Compute S.
       //------------------------------------------------------------
@@ -578,13 +580,17 @@ void popStatisticsTest::statisticsExampleTest(enum Objective whichObjective)
 
 	  valarray<double> s( 0.0, nAlp * nAlp );
 	  double* pdmatLTilde_alpOut = dmatLTilde_alpOut.data();
-	  for( int i = 0; i < nInd * 2; i += 2 )
-	    {
-	      s[ 0 ] += pdmatLTilde_alpOut[ i ]     * pdmatLTilde_alpOut[ i ];
-	      s[ 1 ] += pdmatLTilde_alpOut[ i ]     * pdmatLTilde_alpOut[ i + 1 ];
-	      s[ 2 ] += pdmatLTilde_alpOut[ i + 1 ] * pdmatLTilde_alpOut[ i ];
-	      s[ 3 ] += pdmatLTilde_alpOut[ i + 1 ] * pdmatLTilde_alpOut[ i + 1 ];
-	    }
+          for( int j=0; j<nInd; j++ )
+          {
+             for( int i=0; i<nAlp; i++ )
+             {
+                for( int k=0; k<nAlp; k++ )
+                {
+                   s[ k+i*nAlp ] += pdmatLTilde_alpOut[ i+j*nAlp ] * pdmatLTilde_alpOut[ k + j*nAlp ];
+                }
+             }
+          }
+
 	  //------------------------------------------------------------
 	  // Test popParCovOut formulation S.
 	  //------------------------------------------------------------
@@ -1006,7 +1012,6 @@ void popStatisticsTest::coreStatTest(enum Objective whichObjective)
 					( -s[ 1 ] * lTilde_alp_alpOut[ 2 ] + 
 					  s[ 3 ] * lTilde_alp_alpOut[ 0 ] ) / detR, eps );
 	}
-	  
       //------------------------------------------------------------
       // Test popParSeOut.
       //------------------------------------------------------------
