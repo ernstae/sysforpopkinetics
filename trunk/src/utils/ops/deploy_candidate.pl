@@ -96,7 +96,7 @@ foreach my $d ("aspkserver", "cspkserver") {
     my $sdir = "$candidate_dir/$name/$d";
     -d $sdir or die "Candidate subtree\n$sdir\nappears not to exist.\n";
     $sdir .= "/usr/local";
-    my $ddir = "$d:/usr/local";
+    my $ddir = $d eq "aspkserver" ? "/usr/local" : "$d:/usr/local";
 
     foreach my $f (<$sdir/*>) {
 	my @args = ($scp_command, "-r", "$f", $ddir);
