@@ -603,12 +603,26 @@ void indStatistics( const valarray<double>&  indPar,
     
     try
       {
+	/*
         indParCov = inverse( 0.5 * multiply( transpose( dataVariance_indPar, nB ), nY * nY,
-					     AkronBtimesC( dataVarianceInv, nY, dataVarianceInv, 
-							   nY, dataVariance_indPar, nB ), nB )
-			     + multiply( transpose( dataMean_indPar, nB ), nY,
-					 multiply( dataVarianceInv, nY, dataMean_indPar, nB ), nB ), 
-			     nB );
+                                             AkronBtimesC( dataVarianceInv, nY, dataVarianceInv,
+                                                           nY, dataVariance_indPar, nB ), nB )
+                             + multiply( transpose( dataMean_indPar, nB ), nY,
+                                         multiply( dataVarianceInv, nY, dataMean_indPar, nB ), nB ),
+                             nB );
+	*/
+
+        valarray<double> RTerm(nB*nB);
+	RTerm = multiply( transpose( dataVariance_indPar, nB ), nY * nY,
+                                           AkronBtimesC( dataVarianceInv, nY, dataVarianceInv, nY, dataVariance_indPar, nB ), 
+					   nB );
+
+        valarray<double> fTerm(nB*nB);
+	fTerm = multiply( transpose( dataMean_indPar, nB ), nY,
+					   multiply( dataVarianceInv, nY, dataMean_indPar, nB ), 
+					   nB );
+ 
+        indParCov = inverse( 0.5 * RTerm + fTerm, nB );
       }
     catch(SpkException& e)
       {
