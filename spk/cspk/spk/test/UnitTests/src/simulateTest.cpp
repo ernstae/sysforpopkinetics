@@ -254,9 +254,9 @@ Test* simulateTest::suite()
   suiteOfTests->addTest(new TestCaller<simulateTest>("simulate",  &simulateTest::test_with_simplemodel));
   suiteOfTests->addTest(new TestCaller<simulateTest>("simulate",  &simulateTest::test_with_complexmodel));
   
-  
   return suiteOfTests;
 }
+
 void simulateTest::test_with_simplemodel()
 {
   using namespace std;
@@ -539,7 +539,7 @@ $end
 valarray<double> sampleCovariance(const valarray<double> &V, int nCols)
 {
   assert (nCols > 1); // covariance requires nCols >= 2
-  
+
   int i, j, k, n;     // iterators
   int nRows = V.size() / nCols; // number of random effects
   

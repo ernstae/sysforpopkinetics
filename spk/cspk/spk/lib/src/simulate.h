@@ -25,7 +25,7 @@
 #include "SpkModel.h"
 #include "SpkValarray.h"
 
-bool simulate( SpkModel &model,		
+void simulate( SpkModel &popModel,		
 	       const SPK_VA::valarray<double> &alp,
 	       const SPK_VA::valarray<int>    &N,
 	       const SPK_VA::valarray<double> &bLow,
@@ -34,4 +34,9 @@ bool simulate( SpkModel &model,
 	       SPK_VA::valarray<double>       &bAllOut,
 	       int seed );
 
+void simulate( SpkModel &indModel,
+	       int                    n,
+	       const SPK_VA::valarray<double> &b,
+	       SPK_VA::valarray<double>       &yOut,
+	       int seed );
 #endif
