@@ -1644,8 +1644,20 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       oPred_h << "#include <vector>" << endl;
       oPred_h << "#include <string>" << endl;
       oPred_h << "#include <spkpred/PredBase.h>" << endl;
+      oPred_h << "#include <../cppad/CppAD.h>" << endl;
       oPred_h << "#include \"DataSet.h\"" << endl;
- 
+      oPred_h << endl;
+
+      oPred_h << "const CppAD::AD<double> pow( const CppAD::AD<double>& x, double y )" << endl;
+      oPred_h << "{" << endl;
+      oPred_h << "   return pow( CppAD::Value(x), y );" << endl;
+      oPred_h << "}" << endl;
+      oPred_h << "const CppAD::AD<double> pow( double x, const CppAD::AD<double>& y )" << endl;
+      oPred_h << "{" << endl;
+      oPred_h << "   return pow( x, CppAD::Value(y) );" << endl;
+      oPred_h << "}" << endl;
+      oPred_h << endl;
+      
       //----------------------------------------------
       // Declaration
       //----------------------------------------------
