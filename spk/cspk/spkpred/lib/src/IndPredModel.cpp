@@ -257,10 +257,6 @@ IndPredModel::IndPredModel(
   // Initialize quantities related to the individual.
   //------------------------------------------------------------
 
-  // For individual level Pred models, there is only a single
-  // individual.
-  nInd = 1;
-
   // Set the current individual to a number different than zero
   // so that selectIndividual() won't use the cached values.
   iCurr = 1;
@@ -360,7 +356,6 @@ void IndPredModel::doSelectIndividual( int iIn )
 
   // Set the individual's index .
   iCurr = iIn;
-  assert( 0 <= iIn && iIn < nInd );
 
   // Set the number of events for this individual.  Note that
   // for now all events are assumed to be observation events.

@@ -95,7 +95,6 @@ IndPredModel::IndPredModel(
   //------------------------------------------------------------
 
 protected:
-  int nInd;                                    // Number of individuals.
   int nIndPar;                                 // Number of individual parameters.
 
   const int nTheta;                            // Number of theta parameters.
