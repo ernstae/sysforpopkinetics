@@ -152,6 +152,11 @@ Either label or synonym may be one of the NONMEM reserved identifiers, among whi
 -->
 <!ATTLIST pop_analysis approximation (fo|foce|laplace) #REQUIRED>
 
+<!-- <pop_analysis interation="no"> "no" forces eta to be always set to zero during the computation of the variance of intraindividual random error (R(alp,b)).  "yes" makes the dependence on eta of the variance be preserved int he computation of the objective function.  When <pop_analysis approximation> is set to either "fo" or "laplace", the default is "no".  When it is set to "foce", the default is "yes".
+-->
+<!ATTLIST pop_analysis interation (yes|no) #IMPLIED>
+
+
 <!-- <pop_analysis sig_digits="3"> The number of significant digits required in the final parameter estimate. The value must be a positive integer less than 9.  The default value is 3.  The value is applied to both the population parameter estimate and the inviduals parameter estimates.-->
 <!ATTLIST pop_analysis sig_digits CDATA #IMPLIED>
 
