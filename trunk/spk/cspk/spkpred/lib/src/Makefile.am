@@ -17,7 +17,8 @@ libspkpred_la_SOURCES = \
 	isEqual.cpp \
 	Cov.h \
 	DiagCov.h \
-	isEqual.h
+	isEqual.h \
+	PredBase.h
 
 libspkpred_release_la_SOURCES = \
 	Cov.cpp \
