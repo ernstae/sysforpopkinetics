@@ -3271,7 +3271,7 @@ void NonmemTranslator::generatePopDriver() const
           oDriver << "                     N," << endl;
           oDriver << "                     y," << endl;
 	  oDriver << "                     alpOut, " << endl;
-          oDriver << "                     alpObj_alpOut, " << endl;
+          oDriver << "                     alpObj_alp_alpOut, " << endl;
           oDriver << "                     bOut," << endl;
           oDriver << "                     bLow," << endl;
           oDriver << "                     bUp," << endl;
