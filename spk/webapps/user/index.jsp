@@ -1,6 +1,7 @@
-<?xml version="1.0"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "xhtml1-transitional.dtd">
 <%@page contentType="text/html"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <html>
 <head>
    <title>SPK Login Page</title>
@@ -21,23 +22,42 @@
 	<tr vAlign=top> <td colSpan=3><p>&nbsp;</p></td></tr> 
 	<tr>
 	  <td valign=top width=102 height="0" colspan="1" rowspan="1">
-<%@ include file="quicklinks_1.shtml" %>  
+<%@ include file="quicklinks.shtml" %>  
 	  </td>
 	  <td colspan=1 vAlign=top width=10><img alt="trans gif" height=5 src="./images/white.gif" width=10/>
 	  <td colspan=1 vAlign=top>
 	    <h3>Welcome.  Please Log In</h1>
+            <p>
+            <font color="red">
+              ${fn:escapeXml(param.errorMsg)}
+            </font>
+            </p>
+            <p>
+                To use SPK you need to have Java Runtime Environment (JRE) on your computer. 
+                Instructions for downloading and installing JRE are provided 
+                <a href="instructWin.jsp">here</a> for Windows users 
+                and <a href="instructLin.jsp">here</a> for Linux users.
+            </p>
 	    <p>
-                Please log into MySPK, the "members only" section of
-                SPK.
+                Please log into MySPK, the "members only" section of SPK.
             </p>
 
-            <form action='checkuser.jsp' method=POST>                      
-                <P>
-                User Name:
-                <input name='userName' type='text' size='15'/>
-                Password:
-                <input name='password' type='text' size='15'/>
-                </P>
+            <form action="checkuser.jsp" method="post">
+              <input type="hidden" name="OrigURL" value="${fn:escapeXml(param.origURL)}">                  
+              <table border="0" cellspacing = "5">
+                <tr>
+                  <th align="right">User Name:</th>
+                  <th align="left"><input type="text" name="userName" ></td>
+                </tr>
+                <tr>
+                  <th align="right">Password:</th>
+                  <th align="left"><input type="password" name="password" ></td>
+                </tr>
+                <tr>
+                  <th align="right"><input type="submit" value="Log In"></th>
+                  <th align="left"><input type="reset"></td>
+                </tr>
+              </table>
             </form>
 
             <h4>About Membership</H2>
