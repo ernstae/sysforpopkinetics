@@ -452,6 +452,30 @@ public abstract class Spkdb {
 	ResultSet rs = stmt.getResultSet();
 	return rs;
     }
+    /**
+       Get the entire end table
+       @param conn open connection to the database
+       @return Object of a class which implements the java.sql.ResultSet interface,
+       containing a row for each row of the table.
+     */
+    public static ResultSet getEndTable(Connection conn)
+	throws SQLException, SpkdbException
+    {
+	String sql = "select * from end;";
+	Statement stmt = conn.createStatement();
+	stmt.execute(sql);
+	ResultSet rs = stmt.getResultSet();
+	return rs;
+    }
+    public static ResultSet getStateTable(Connection conn)
+	throws SQLException, SpkdbException
+    {
+	String sql = "select * from state;";
+	Statement stmt = conn.createStatement();
+	stmt.execute(sql);
+	ResultSet rs = stmt.getResultSet();
+	return rs;
+    }
     public static String md5sum(String password) {
 	String pd = "";
 	try {
