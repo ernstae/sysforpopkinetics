@@ -1,2 +1,2 @@
 install:
-	scp index.html whitechuck:/var/www/html/soft/v0.1/specs/index.html
+	scp index.html Honda@whitechuck:/var/www/html/soft/v0.1/specs/index.html
