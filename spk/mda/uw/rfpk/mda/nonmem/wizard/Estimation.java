@@ -521,9 +521,9 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
                     // Initialize method
                     if(text.indexOf("METHOD") == -1 || text.indexOf("METHOD=0") != -1) 
                         jRadioButton1.doClick();
-                    if(text.indexOf("METHOD=1") != -1 && text.indexOf("METHOD=1 LAPLACAN") == -1)
+                    if(text.indexOf("METHOD=1") != -1 && text.indexOf("METHOD=1 LAPLACIAN") == -1)
                         jRadioButton2.doClick();
-                    if(text.indexOf("METHOD=1 LAPLACAN") != -1)
+                    if(text.indexOf("METHOD=1 LAPLACIAN") != -1)
                         jRadioButton3.doClick();
                     // Initialize sigdigits
                     int ind= text.indexOf("SIGDIGITS");
@@ -601,9 +601,9 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
             // Find method
             if(record.indexOf("METHOD") == -1 || record.indexOf("METHOD=0") != -1) 
                 estimation[0] = "fo";
-            if(record.indexOf("METHOD=1") != -1 && record.indexOf("METHOD=1 LAPLACAN") == -1)
+            if(record.indexOf("METHOD=1") != -1 && record.indexOf("METHOD=1 LAPLACIAN") == -1)
                 estimation[0] = "foce";
-            if(record.indexOf("METHOD=1 LAPLACAN") != -1)
+            if(record.indexOf("METHOD=1 LAPLACIAN") != -1)
                 estimation[0] = "laplace";
             // Find sigdigits
             int ind= record.indexOf("SIGDIGITS");

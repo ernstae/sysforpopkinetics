@@ -65,7 +65,7 @@ public class SubmitJob extends HttpServlet
         // Get the user name of the session
         UserInfo user = (UserInfo)req.getSession().getAttribute("validUser");
         String username = user.getUserName();
-        
+       
         // Prepare output message
         String messageOut = "";
         String messages = "";
@@ -75,23 +75,24 @@ public class SubmitJob extends HttpServlet
         
         // Set the content type we are sending
         resp.setContentType("application/octet-stream");
-        
+      
         // Data will always be written to a byte array buffer so
         // that we can tell the server the length of the data
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-        
+       
         // Create the output stream to be used to write the data
         // to our buffer
         ObjectOutputStream out = new ObjectOutputStream(byteOut);
-        
+      
         String which = null;
         try
         {
             // Read the data from the client 
-            String[] messageIn = (String[])in.readObject();
+            String[] messageIn = (String[])in.readObject();            
             String secret = messageIn[0];
             if(secret.equals((String)req.getSession().getAttribute("SECRET")))             
-            {                        
+            {
+                
  	        String source = messageIn[1];
  	        String dataset = messageIn[2];
  	        String modelArchive = messageIn[3];
@@ -127,7 +128,7 @@ public class SubmitJob extends HttpServlet
 
                 // Get model archive information
                 if(isNewModel.equals("true"))
-                {
+                {                   
                     Archive arch = new Archive(modelArchive.split("\n"), "");
                     Node node = arch.findNode(new Version("1.1"));
                     node.setAuthor(username);
@@ -145,20 +146,22 @@ public class SubmitJob extends HttpServlet
                 else
                 {        
                     if(isNewModelVersion.equals("true"))   
-                    {               
+                    {                         
                         ResultSet modelRS = Spkdb.getModel(con, 
-                                                           modelId);
-                        modelRS.next();
-                        Blob blobArchive = modelRS.getBlob("archive");
-                        long length = blobArchive.length();
+                                                           modelId);                         
+                        modelRS.next();                         
+                        Blob blobArchive = modelRS.getBlob("archive");                        
+                        long length = blobArchive.length();                         
                         String strAr = new String(blobArchive.getBytes(1L, (int)length));                        
-                        Archive arch = new Archive("", new ByteArrayInputStream(strAr.getBytes()));
-                        arch.addRevision(modelArchive.split("\n"), modelLog);
+                        Archive arch = new Archive("", new ByteArrayInputStream(strAr.getBytes()));                       
+                        arch.addRevision(modelArchive.split("\n"), modelLog);                        
                         arch.findNode(arch.getRevisionVersion()).setAuthor(username);
+                         
                         Spkdb.updateModel(con, 
                                           modelId, 
                                           new String[]{"archive"},
                                           new String[]{arch.toString("\n")});
+                                           
                         messages += "The model, " + modelName +
                                     ", in the database has been updated.\n";                   
                         modelVersion = String.valueOf(arch.getRevisionVersion());
@@ -274,7 +277,7 @@ public class SubmitJob extends HttpServlet
         out.writeObject(messageOut);  
         if(messageOut.equals(""))
             out.writeObject(messages);        
-         
+      
         // Flush the contents of the output stream to the byte array
         out.flush();
         
@@ -283,7 +286,7 @@ public class SubmitJob extends HttpServlet
         
         // Notify the client how much data is being sent
         resp.setContentLength(buf.length);
-        
+       
         // Send the buffer to the client
         ServletOutputStream servletOut = resp.getOutputStream();
         

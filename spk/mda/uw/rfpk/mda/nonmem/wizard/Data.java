@@ -254,7 +254,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        JFileChooser files = new JFileChooser();
+        JFileChooser files = iterator.getFileChooser();
         int result = files.showOpenDialog(null); 
         if(result == files.APPROVE_OPTION)
 	{

@@ -120,18 +120,24 @@ public class GetJobInfo extends HttpServlet
                     String datasetVersion = jobRS.getString("dataset_version");
                     ResultSet modelRS = Spkdb.getModel(con, modelId); 
                     modelRS.next();
-                    String modelName = modelRS.getString("name"); 
+                    String modelName = modelRS.getString("name");
+                    String modelAbstract = modelRS.getString("abstract");
                     ResultSet datasetRS = Spkdb.getDataset(con, datasetId);
                     datasetRS.next();
-                    String datasetName = datasetRS.getString("name");          
+                    String datasetName = datasetRS.getString("name");
+                    String datasetAbstract = datasetRS.getString("abstract");
                 
                     // Disconnect to the database
                     Spkdb.disconnect(con);
              
                     // Put returning objects into the Properties
+                    jobInfo.setProperty("modelId", String.valueOf(modelId));
                     jobInfo.setProperty("modelName", modelName);
+                    jobInfo.setProperty("modelAbstract", modelAbstract);
                     jobInfo.setProperty("modelVersion", modelVersion.substring(2));
+                    jobInfo.setProperty("datasetId", String.valueOf(datasetId));                    
                     jobInfo.setProperty("datasetName", datasetName);
+                    jobInfo.setProperty("datasetAbstract", datasetAbstract);
                     jobInfo.setProperty("datasetVersion", datasetVersion.substring(2));
                     jobInfo.setProperty("parent", String.valueOf(parent));
                     jobInfo.setProperty("methodCode", methodCode);

@@ -464,7 +464,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
             return nDataCol;
         }
         public int getRowCount() {
-            return ((Vector)data.get(0)).size();
+            return ((Vector)data.get(0)).size() + 1;
         }
         public Object getValueAt(int r, int c) {
             Object value = null;

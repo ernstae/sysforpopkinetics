@@ -24,6 +24,7 @@ import org.netbeans.ui.wizard.*;
 import java.util.Vector;
 import java.util.Properties;
 import javax.swing.JOptionPane;
+import javax.swing.JFileChooser;
 import java.util.StringTokenizer;
 
 /**
@@ -86,6 +87,7 @@ public class MDAIterator implements StepIterator{
     private boolean isReload = false;
     private boolean isDataXML = false;
     private String dataXML = null;
+    private JFileChooser files = null;
 
     /** Constructor to create a MDAIterator object.
      * @param serverName name of the web server associated with the MDA.
@@ -96,7 +98,7 @@ public class MDAIterator implements StepIterator{
      * @param isDeveloper true if the user is a SPK developer, false otherwise.
      */  
     public MDAIterator(String serverName, String serverPort, boolean isOnline, MDAFrame frame,
-                       boolean isTester, boolean isDeveloper)
+                       boolean isTester, boolean isDeveloper, JFileChooser files)
     {
         beginningSteps.add(gettingStarted);
         beginningSteps.add(new Problem(this)); 
@@ -110,6 +112,7 @@ public class MDAIterator implements StepIterator{
         this.frame = frame;
         this.isTester = isTester;
         this.isDeveloper = isDeveloper;
+        this.files = files;
     }
 
     /** Set if the back button was clicked.
@@ -311,6 +314,11 @@ public class MDAIterator implements StepIterator{
      * @return true if the user is a SPK developer, false otherwise.
      */    
     public boolean getIsDeveloper() { return isDeveloper; }
+    
+    /** Get the JFileChooser.
+     * @return the JFileChooser.
+     */    
+    public JFileChooser getFileChooser() { return files; } 
     
     /** Get SPK input data XML document.
      * @return a String object containing SPK data XML document.

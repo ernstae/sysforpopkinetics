@@ -89,7 +89,6 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         jPanel1 = new javax.swing.JPanel();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        buttonGroup1 = new javax.swing.ButtonGroup();
         jTextField1 = new javax.swing.JTextField();
         addButton = new javax.swing.JButton();
         upButton = new javax.swing.JButton();
@@ -481,7 +480,12 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         add(jButton1, gridBagConstraints);
 
         jRadioButton1.setText("No Header");
-        buttonGroup1.add(jRadioButton1);
+        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton1ActionPerformed(evt);
+            }
+        });
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
@@ -489,7 +493,12 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         add(jRadioButton1, gridBagConstraints);
 
         jRadioButton2.setText("One Header");
-        buttonGroup1.add(jRadioButton2);
+        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton2ActionPerformed(evt);
+            }
+        });
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
@@ -507,6 +516,14 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         add(jRadioButton3, gridBagConstraints);
 
     }//GEN-END:initComponents
+
+    private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
+        if(jRadioButton2.isSelected()) jRadioButton1.setSelected(false);
+    }//GEN-LAST:event_jRadioButton2ActionPerformed
+
+    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
+        if(jRadioButton1.isSelected()) jRadioButton2.setSelected(false);
+    }//GEN-LAST:event_jRadioButton1ActionPerformed
 
     private void jDialog1WindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_jDialog1WindowClosing
         cleanLists();
@@ -551,23 +568,21 @@ public class Table extends javax.swing.JPanel implements WizardStep {
                 ind = element.indexOf(" ONEHEADER");
                 if(ind == -1)
                 {
-                    jRadioButton2.setSelected(false);
                     ind = element.indexOf(" NOAPPEND");
                     if(ind == -1)
                     {
-                        jRadioButton3.setSelected(false);
                         ind = element.length() - 1;
                     }
-                    else
-                        jRadioButton3.setSelected(true);
                 }
-                else
-                    jRadioButton2.setSelected(true);
             }
-            else
-                jRadioButton1.setSelected(true);
-        }
 
+        }
+        
+        // Initialize the radio buttons
+        jRadioButton1.setSelected(element.indexOf(" NOHEADER") != -1);
+        jRadioButton2.setSelected(element.indexOf(" ONEHEADER") != -1);
+        jRadioButton3.setSelected(element.indexOf(" NOAPPEND") != -1);
+        
         // Find list1 and list2
         String lists = element.substring(0, ind);
         String[] list1 = null;
@@ -594,6 +609,8 @@ public class Table extends javax.swing.JPanel implements WizardStep {
                     leftModel.addElement(list1[i]);
             }
         }
+        
+        table = lists.substring(6);
         
         changeItemButton.setEnabled(true);
         deleteItemButton.setEnabled(true);         
@@ -827,7 +844,6 @@ public class Table extends javax.swing.JPanel implements WizardStep {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JButton addItemButton;
-    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton changeButton;
     private javax.swing.JButton changeItemButton;
     private javax.swing.JButton deleteButton;
