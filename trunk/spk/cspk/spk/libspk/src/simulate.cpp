@@ -140,14 +140,6 @@ bool simulate( SpkModel &model,
       fi.resize( N[i] );
       Ri.resize( N[i] * N[i] );
       ei.resize( N[i] );
-      /*
-      for (j = 0; j < nB; j++,	k++)	     // each column of bi = ith column of bAllOut
-	{
-	  bi[j] = bAllOut[k];				
-	}
-      
-      model.setIndPar(bi);
-      */
       model.setIndPar( bAllOut[ slice( k, nB, 1 ) ] );
       model.dataMean(fi);
       model.dataVariance(Ri);
@@ -180,7 +172,7 @@ $section Simulation of Measurements and Random Effects for a given Model$$
 
 $spell
 	Model model
-    valarray
+        valarray
 	bool
 	Spk
 	Modelwith
@@ -218,13 +210,13 @@ $table
 $bold Prototype:$$ $cend 
 $syntax/bool simulate(
 		SPK_Model &/model/, 
-		const DoubleMatrix &/alp/, 
-		const DoubleMatrix &/N/,		
-		const DoubleMatrix &/bLow/,
-		const DoubleMatrix &/bUp/,
-		DoubleMatrix &/yOut/,
-		DoubleMatrix &/bAllOut/
-		Integer /seed/)/$$
+		const valarray<double> &/alp/, 
+		const valarray<int>    &/N/,		
+		const valarray<double> &/bLow/,
+		const valarray<double> &/bUp/,
+		valarray<double>       &/yOut/,
+		valarray<double>       &/bAllOut/
+		int                    /seed/)/$$
 $tend
 
 $fend 35$$
@@ -239,8 +231,8 @@ $$
 $head Description$$
 
 Generates a set of measurements and a set of random effects for the user 
-based on $italic model$$ -- a user model which is derived from SPK_Model -- 
-given a vector of fixed effects $italic alp$$ and a matrix of measurements 
+based on $italic model$$ -- a user model which is derived from SpkModel -- 
+given a vector of fixed effects $italic alp$$ and a set of measurements 
 taken for each subject, $italic N$$. 
 
 $pre
@@ -298,13 +290,14 @@ $head Arguments$$
 $syntax/
 /model/
 /$$
-A user implementation of the $code SPK_Model$$ class.
+A user implementation of the $code SpkModel$$ class that is dependent on
+all $italic alp$$, $italic b$$ and $italic i$$.
 
 $syntax/
 
 /alp/
 /$$
-The $code DoubleMatrix$$ $italic alp$$ contains the 
+The $code valarray<double> $italic alp$$ contains the 
 $xref/glossary/Population Notation/fixed effects/$$ for the simulation.  The measurements
 and the random effects will be simulated from these fixed effects as described above. 
 
@@ -312,7 +305,7 @@ $syntax/
 
 /N/
 /$$
-The $code DoubleMatrix$$ $italic N$$ contains the number of measurements
+The $code valarray<int> $italic N$$ contains the number of measurements
 taken for each subject, i.e., N[i] is the number of measurements taken for
 the ith subject and indexing begins at 1 instead of zero.  
 The number of measurements must be positive.  $italic N$$ 
@@ -323,7 +316,7 @@ $syntax/
 
 /bLow/
 /$$
-The $code DoubleMatrix$$ $italic bLow$$ contains the lower bounds on the
+The $code valarray<double> $italic bLow$$ contains the lower bounds on the
 variation of the random effects for all subjects, i.e., bLow[i] is 
 the lower bound on the variation of the ith random effects.  Generally, $italic bLow$$
 is negative, as random effects have mean zero.  $italic bLow$$ is 
@@ -334,7 +327,7 @@ $syntax/
 
 /bUp/
 /$$
-The $code DoubleMatrix$$ $italic bUp$$ contains the upper bounds on the
+The $code valarray<double> $italic bUp$$ contains the upper bounds on the
 variation of the random effects for all subjects, i.e., bUp[i] is 
 the upper bound on the variation of the ith random effects.  Generally, $italic bUp$$
 is positive, as random effects have mean zero.  $italic bUp$$ is 
@@ -345,8 +338,9 @@ $syntax/
 
 /yOut/
 /$$
-Simulated data for each subject is placed in the $code DoubleMatrix$$ 
-$italic yOut$$.  $italic yOut$$ is a column vector; the first $italic N[0]$$
+Simulated data for each subject is placed in the $code valarray<double> 
+$italic yOut$$.  The input size of $italic yOut$$ must be sized to the total number of measurments 
+prior to the call.  $italic yOut$$ is a column vector; the first $italic N[0]$$
 elements correspond to the data for the 1st individual, the next $italic N[1]$$
 elements correspond to the data for the 2nd individual, etc.
 
@@ -354,9 +348,9 @@ $syntax/
 
 /bAllOut/
 /$$
-The random effects for all of the subjects is placed in the$code DoubleMatrix$$ 
-$italic bAllOut$$.  The input size of $italic bAllOut$$ can be anything; it will
-be redimensioned as a $italic Q$$ by $italic M$$ matrix.  Any data that was present in 
+The random effects for all of the subjects is placed in the$code valarray<double>$$ 
+$italic bAllOut$$.  The input size of $italic bAllOut$$ must be sized to
+the resulting size, which is $italic Q$$ by $italic M$$. Any data that was present in 
 $italic bAllOut$$ will be overwritten.  The ith column of $italic bAllOut$$ corresponds 
 to the random effects for the ith individual.  If any of the random effects 
 are above the upper bound or below the lower bound, they will be set at 
@@ -367,7 +361,7 @@ $syntax/
 /seed/
 /$$
 The default value of $italic seed$$ is random.  The user can pass an 
-$code Integer$$ if a different starting seed value for the random number 
+$code integer if a different starting seed value for the random number 
 generators is desired.
 
 
@@ -380,41 +374,18 @@ $codep
 // yOut and bAllOut.
 	
 #include <iostream>
-#include "identity.h"
+#include <spk/SpkValarray.h>
+#include <spk/identity.h>
 
-#include "simulate.h"
-#include "randNormal.h"
-#include "sampleCovariance.h"
-#include "allZero.h"
+#include <spk/simulate.h>
+#include <spk/randNormal.h>
+#include <spk/allZero.h>
 
 using std::string;
 
-namespace ppkaoptexample
-{
-	static DoubleMatrix funF    ( const DoubleMatrix &dvecAlp, 
-								  const DoubleMatrix &dvecB );
-	static DoubleMatrix funF_alp( const DoubleMatrix &dvecF,   
-								  const DoubleMatrix &dvecAlp, 
-								  const DoubleMatrix &dvecB );
-	static DoubleMatrix funF_b  ( const DoubleMatrix &dvecF, 
-								  const DoubleMatrix &dvecAlp,   
-								  const DoubleMatrix &dvecB );
-	static DoubleMatrix funR    ( const DoubleMatrix &dvecAlp, 
-								  const DoubleMatrix &dvecB );
-	static DoubleMatrix funR_alp( const DoubleMatrix &dmatR,   
-							      const DoubleMatrix &dvecAlp, 
-								  const DoubleMatrix &dvecB );
-	static DoubleMatrix funR_b  ( const DoubleMatrix &dmatR, 
-								  const DoubleMatrix &dvecAlp,   
-								  const DoubleMatrix &dvecB );
-	static DoubleMatrix funD    ( const DoubleMatrix &dvecAlp );
-	static DoubleMatrix funD_alp( const DoubleMatrix &dmatD,   
-								  const DoubleMatrix &dvecAlp );
-}
-
 class PopModel : public SpkModel
 {
-    DoubleMatrix _a, _b;
+    valarray<double> _a, _b;
     int _i;
     const int nAlp, nB, nY;
 
@@ -430,62 +401,124 @@ protected:
     }
     void doSetPopPar(const valarray<double>& alp)
     {
-        _a = DoubleMatrix( alp, 1 );
+      _a = alp;
     }
     void doSetIndPar(const valarray<double>& b)
     {
-        _b = DoubleMatrix( b, 1 );
+      _b = b;
     }
-    void doDataMean( valarray<double> & ret ) const 
+    void doDataMean( valarray<double> & fiOut ) const 
     {
-        using namespace ppkaoptexample;
-        ret = funF(_a, _b).toValarray();
+       //--------------------------------------------------------------
+       //
+       // Calculates
+       //
+       //                 /                 \ 
+       //     f(alp, b) = |  alp(1) + b(1)  |  .
+       //                 \                 / 
+       //
+       //--------------------------------------------------------------
+       fiOut = _a[0] + _b[0];
     }
-    bool doDataMean_popPar( valarray<double> & ret ) const 
+    bool doDataMean_popPar( valarray<double> & fi_alpOut ) const 
     {
-        using namespace ppkaoptexample;
-        
-        doDataMean(ret);
-        ret = funF_alp( DoubleMatrix( ret, 1 ), _a, _b).toValarray();
-        return !allZero(ret);
+       //--------------------------------------------------------------
+       //
+       // Calculates
+       //
+       //                     /           \ 
+       //     f_alp(alp, b) = |  1     0  |  .
+       //                     \           / 
+       //
+       //--------------------------------------------------------------
+       fi_alpOut[0] = 1.0;
+       fi_alpOut[1] = 0.0;
+       return true;
     }
-    bool doDataMean_indPar( valarray<double> & ret ) const
+    bool doDataMean_indPar( valarray<double> & fi_bOut ) const
     {
-        using namespace ppkaoptexample;
-        doDataMean(ret);
-        ret = funF_b( DoubleMatrix( ret, 1 ), _a, _b).toValarray();
-        return !allZero(ret);
+       //--------------------------------------------------------------
+       //
+       // Calculates
+       //
+       //                   /     \ 
+       //     f_b(alp, b) = |  1  |  .
+       //                   \     / 
+       //
+       //--------------------------------------------------------------
+       fi_bOut = 1.0;
+       return true;
     }
-    void doDataVariance( valarray<double> & ret ) const
+    void doDataVariance( valarray<double> & RiOut ) const
     {
-        using namespace ppkaoptexample;
-        ret = funR(_a, _b).toValarray();
+       //--------------------------------------------------------------
+       //
+       // Calculates
+       //
+       //                 /     \ 
+       //     R(alp, b) = |  1  |  .
+       //                 \     / 
+       //
+       //--------------------------------------------------------------
+       RiOut = 1.0;
+       return true;
     }
-    bool doDataVariance_popPar( valarray<double> & ret ) const
+    bool doDataVariance_popPar( valarray<double> & Ri_alpOut ) const
     {
-        using namespace ppkaoptexample;
-        doDataVariance(ret);
-        ret = funR_alp( DoubleMatrix( ret, nY ), _a, _b).toValarray();
-        return !allZero(ret);
+       //--------------------------------------------------------------
+       //
+       // Calculates
+       //
+       //                     /           \ 
+       //     R_alp(alp, b) = |  0     0  |  .
+       //                     \           / 
+       //
+       //--------------------------------------------------------------
+       Ri_alpOut = 0.0;
+       return false;
     }
-    bool doDataVariance_indPar( valarray<double> & ret ) const
+    bool doDataVariance_indPar( valarray<double> & Ri_bOut ) const
     {
-        using namespace ppkaoptexample;
-        doDataVariance(ret);
-        ret = funR_b( DoubleMatrix( ret, nB ), _a, _b).toValarray();
-        return !allZero(ret);
+       //--------------------------------------------------------------
+       //
+       // Calculates
+       //
+       //                   /     \ 
+       //     R_b(alp, b) = |  0  |  .
+       //                   \     / 
+       //
+       //--------------------------------------------------------------
+       Ri_bOut = 0.0;
+       return false;
     }
-    void doIndParVariance( valarray<double> & ret ) const
+    void doIndParVariance( valarray<double> & DOut ) const
     {
-        using namespace ppkaoptexample;
-        ret = funD(_a).toValarray();
+       //--------------------------------------------------------------
+       //
+       // Calculates
+       //
+       //              /          \ 
+       //     D(alp) = |  alp(2)  |  .
+       //              \          / 
+       //
+       //--------------------------------------------------------------
+       DOut = _a[1];
+       return (_a[1]!=0? true : false );
     }
-    bool doIndParVariance_popPar( valarray<double> & ret ) const
+    bool doIndParVariance_popPar( valarray<double> & D_alpOut ) const
     {
-        using namespace ppkaoptexample;
-        doIndParVariance(ret);
-        ret = funD_alp( DoubleMatrix( ret, nB ), _a).toValarray();
-        return !allZero(ret);
+       //--------------------------------------------------------------
+       //
+       // Calculates
+       //
+       //                  /           \ 
+       //     D_alp(alp) = |  0     1  |  .
+       //                  \           / 
+       //
+       //--------------------------------------------------------------
+       D_alpOut[0] = 0.0;
+       D_alpOut[1] = 1.0;
+       return true;
     }
 };
 
@@ -497,315 +530,106 @@ protected:
 
 void main()
 {
-	//------------------------------------------------------------
-	// Preliminaries.
-	//------------------------------------------------------------
-
-	using namespace std;
-
-	//------------------------------------------------------------
-	// Quantities that define the problem.
-	//------------------------------------------------------------
-
-	// Mean and variance of the true transfer rate, betaTrue.
-	double meanBetaTrue = 1.0;
-	double varBetaTrue  = 5.0;
-
-	// Number of individuals.
-	int nInd = 10;
-
-
-	//------------------------------------------------------------
-	// Quantities related to the data vector, y.
-	//------------------------------------------------------------
-
-	// Number of measurements.
-	int nY = nInd;
-
-	// Measurement values, y.
-	DoubleMatrix dvecY( nY, 1 );
-	double* pdYData = dvecY.data();
-
-	// Number of measurements for each individual. 
-	DoubleMatrix dvecN( nInd, 1 );
-	dvecN.fill( (double) 1 );
-
-	// Mean, variance, and standard deviation of eTrue and bTrue.
-	double meanETrue = 0.0;
-	double varETrue  = 1.0;
-	double sdETrue   = sqrt( varETrue );
-	double meanBTrue = 0.0;
-	double varBTrue  = varBetaTrue;
-	double sdBTrue   = sqrt( varBTrue );
-
-	DoubleMatrix dmatBTrue(1, nInd);
-
-	//------------------------------------------------------------
-	// Quantities related to the fixed population parameter, alp.
-	//------------------------------------------------------------
-
-	int nAlp = 2;
-
-	DoubleMatrix dvecAlpTrue( nAlp, 1 );
-
-	double* pdAlpTrueData = dvecAlpTrue.data();
-
-	// Set the values associated with alp(1).
-	pdAlpTrueData[ 0 ] = meanBetaTrue;
-
-	// Set the values associated with alp(2).
-	pdAlpTrueData[ 1 ] = varBetaTrue;
-
-	//------------------------------------------------------------
-	// Quantities related to the random population parameters, b.
-	//------------------------------------------------------------
-
-	int nB = 1;
-
-	DoubleMatrix dvecBLow ( nB, 1 );
-	DoubleMatrix dvecBUp  ( nB, 1 );
-
-	dvecBLow .fill( -1.5e+1 );
-	dvecBUp  .fill( +1.0e+1 );
-
-	//------------------------------------------------------------
-	// Quantities related to the user-provided model.
-	//------------------------------------------------------------
-
-	PopModel model( nAlp, nB, nY/nInd );
-
-	//------------------------------------------------------------
-	// Simulate measurements for each individual.
-	//------------------------------------------------------------
-	simulate(model, dvecAlpTrue, dvecN, dvecBLow, dvecBUp, dvecY, dmatBTrue, 1);
-
-	//------------------------------------------------------------
-	// Print the results.
-	//------------------------------------------------------------
-
-	cout << "yOut:" << endl;
-	dvecY.print();
-	cout << endl;
-
-	cout << "bAllOut:" << endl;
-	dmatBTrue.print();
-	cout << endl;
-
-	//
-	// The mean of the random effects in this example converges to 0.
-	//
-	cout << "mean of bAllOut:" << endl;
-	Matrix mean = calcMean(dmatBTrue);
-	mean.print();
-	cout << endl;
-
-	//
-	// The covariance of the random effects in this example converges to D(alp).
-	//
-	cout << "covariance of bAllOut:" << endl;
-	Matrix Cov = sampleCovariance(dmatBTrue);
-	Cov.print();
-	cout << endl;
-
-}
-
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
   
+  using namespace std;
+  
+  //------------------------------------------------------------
+  // Quantities that define the problem.
+  //------------------------------------------------------------
+  
+  // Mean and variance of the true transfer rate, betaTrue.
+  double meanBetaTrue = 1.0;
+  double varBetaTrue  = 5.0;
+  
+  // Number of individuals.
+  int nInd = 10;
+  
+  
+  //------------------------------------------------------------
+  // Quantities related to the data vector, y.
+  //------------------------------------------------------------
+  
+  // Number of measurements.
+  int nY = nInd * 1;
+  
+  // Size of alp vector
+  int nAlp = 2;
 
-//--------------------------------------------------------------
-//
-// Function: funF
-//
-//
-// Calculates
-//
-//                 /                 \ 
-//     f(alp, b) = |  alp(1) + b(1)  |  .
-//                 \                 / 
-//
-//--------------------------------------------------------------
+  // size of b vector
+  int nB = 1;
+  
+  // Measurement values, y.
+  valarray<double> y( nY );
+  
+  // Number of measurements for each individual. 
+  valarray<int> N( 1, nInd );
+  
+  // Mean, variance, and standard deviation of eTrue and bTrue.
+  double meanETrue = 0.0;
+  double varETrue  = 1.0;
+  double sdETrue   = sqrt( varETrue );
+  double meanBTrue = 0.0;
+  double varBTrue  = varBetaTrue;
+  double sdBTrue   = sqrt( varBTrue );
+  
+  valarray<double> bTrue(nInd);
+  
+  //------------------------------------------------------------
+  // Quantities related to the fixed population parameter, alp.
+  //------------------------------------------------------------
+  
+  valarray<double> alpTrue( nAlp );
+  
+  // Set the values associated with alp(1).
+  alpTrue[ 0 ] = meanBetaTrue;
+  
+  // Set the values associated with alp(2).
+  alpTrue[ 1 ] = varBetaTrue;
+  
+  //------------------------------------------------------------
+  // Quantities related to the random population parameters, b.
+  //------------------------------------------------------------
+  
+  valarray<double> bLow ( -1.5e+1, nB );
+  valarray<double> bUp  ( +1.5e+1, nB );
+    
+  //------------------------------------------------------------
+  // Quantities related to the user-provided model.
+  //------------------------------------------------------------
+  
+  PopModel model( nAlp, nB, nY/nInd );
+  
+  //------------------------------------------------------------
+  // Simulate measurements for each individual.
+  //------------------------------------------------------------
+  simulate(model, alpTrue, N, bLow, bUp, y, bTrue, 1);
+  
+  //------------------------------------------------------------
+  // Print the results.
+  //------------------------------------------------------------
+  
+  cout << "yOut:" << y << endl;
+  cout << endl;
+  
+  cout << "bAllOut:" << bTrue << endl;
+  cout << endl;
+  
+  //
+  // The mean of the random effects in this example converges to 0.
+  //
+  valarray<double> mean = calcMean(bTrue, nB);
+  cout << "mean of bAllOut:" << mean << endl;
+  
+  //
+  // The covariance of the random effects in this example converges to D(alp).
+  //
+  Matrix Cov = sampleCovariance(bTrue, nInd);
+  cout << "covariance of bAllOut:" << Cov <<  endl;
+  cout << endl;
 
-static DoubleMatrix ppkaoptexample::funF( const DoubleMatrix &dvecAlp, 
-                                          const DoubleMatrix &dvecB )
-{
-	DoubleMatrix dvecF( 1, 1 );
-
-	const double* pdAlpData = dvecAlp.data();
-	const double* pdBData   = dvecB  .data();
-
-	dvecF.fill( pdAlpData[ 0 ] + pdBData[ 0 ] );
-
-	return dvecF;
-}
-
-
-//--------------------------------------------------------------
-//
-// Function: funF_alp
-//
-//
-// Calculates
-//
-//                     /           \ 
-//     f_alp(alp, b) = |  1     0  |  .
-//                     \           / 
-//
-//--------------------------------------------------------------
-
-static DoubleMatrix ppkaoptexample::funF_alp( const DoubleMatrix &dvecF, 
-                                              const DoubleMatrix &dvecAlp, 
-                                              const DoubleMatrix &dvecB )
-{
-	DoubleMatrix drowF_alp( 1, 2 );
-
-	double* pdF_alpData = drowF_alp.data();
-
-	pdF_alpData[ 0 ] = 1.0;
-	pdF_alpData[ 1 ] = 0.0;
-
-	return drowF_alp;
-}
-
-
-//--------------------------------------------------------------
-//
-// Function: funF_b
-//
-//
-// Calculates
-//
-//                   /     \ 
-//     f_b(alp, b) = |  1  |  .
-//                   \     / 
-//
-//--------------------------------------------------------------
-
-static DoubleMatrix ppkaoptexample::funF_b( const DoubleMatrix &dvecF, 
-                                            const DoubleMatrix &dvecAlp, 
-                                            const DoubleMatrix &dvecB )
-{
-	return identity( 1 );
-}
-
-
-//--------------------------------------------------------------
-//
-// Function: funR
-//
-//
-// Calculates
-//
-//                 /     \ 
-//     R(alp, b) = |  1  |  .
-//                 \     / 
-//
-//--------------------------------------------------------------
-
-static DoubleMatrix ppkaoptexample::funR( const DoubleMatrix &dvecAlp, 
-                                          const DoubleMatrix &dvecB )
-{
-	return identity( 1 );
-}
-
-
-//--------------------------------------------------------------
-//
-// Function: funR_alp
-//
-//
-// Calculates
-//
-//                     /           \ 
-//     R_alp(alp, b) = |  0     0  |  .
-//                     \           / 
-//
-//--------------------------------------------------------------
-
-static DoubleMatrix ppkaoptexample::funR_alp( const DoubleMatrix &dmatR,   
-                                              const DoubleMatrix &dvecAlp, 
-                                              const DoubleMatrix &dvecB )
-{
-	DoubleMatrix dmatR_alp( 1, 2 );
-
-	dmatR_alp.fill(0.0);
-
-	return dmatR_alp;
-}
-
-
-//--------------------------------------------------------------
-//
-// Function: funR_b
-//
-//
-// Calculates
-//
-//                   /     \ 
-//     R_b(alp, b) = |  0  |  .
-//                   \     / 
-//
-//--------------------------------------------------------------
-
-static DoubleMatrix ppkaoptexample::funR_b( const DoubleMatrix &dmatR, 
-                                            const DoubleMatrix &dvecAlp,   
-                                            const DoubleMatrix &dvecB )
-{
-	DoubleMatrix dmatR_b( 1, 1 );
-
-	dmatR_b.fill(0.0);
-
-	return dmatR_b;
-}
-
-
-//--------------------------------------------------------------
-//
-// Function: funD
-//
-//
-// Calculates
-//
-//              /          \ 
-//     D(alp) = |  alp(2)  |  .
-//              \          / 
-//
-//--------------------------------------------------------------
-
-static DoubleMatrix ppkaoptexample::funD( const DoubleMatrix &dvecAlp )
-{
-	DoubleMatrix dmatD( 1, 1 );
-
-	const double* pdAlpData = dvecAlp.data();
-
-	dmatD.fill( pdAlpData[ 1 ] );
-
-	return dmatD;
-}
-
-
-//--------------------------------------------------------------
-//
-// Function: funD_alp
-//
-//
-// Calculates
-//
-//                  /           \ 
-//     D_alp(alp) = |  0     1  |  .
-//                  \           / 
-//
-//--------------------------------------------------------------
-
-static DoubleMatrix ppkaoptexample::funD_alp( const DoubleMatrix &dmatD,
-                                              const DoubleMatrix &dvecAlp )
-{
-	DoubleMatrix dmatD_alp( 1, 2 );
-
-	double* pdD_alpData = dmatD_alp.data();
-
-	pdD_alpData[ 0 ] = 0.0;
-	pdD_alpData[ 1 ] = 1.0;
-
-	return dmatD_alp;
 }
 
 $$
