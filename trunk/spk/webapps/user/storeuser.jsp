@@ -5,7 +5,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <%-- Verify that the user is logged in --%>
-<c:if test="${validUser == null}">
+<c:if test="${validUser == null || validUser.userName != 'useradmin'}">
   <jsp:forward page="index.jsp">
     <jsp:param name="origURL" value="${pageContext.request.requestURL}" />
     <jsp:param name="errorMsg" value="Please log in first." />
@@ -13,18 +13,9 @@
 </c:if>
 
 <c:set target="${digest}" property="password" value="${param.password}" />
-<%-- 
-  See if the user is already defined. If not, insert the
-  info, else update it.
---%>
-<sql:query var="userDbInfo">
-  SELECT * FROM user 
-    WHERE username = ?
-  <sql:param value="${param.userName}" />
-</sql:query>
 
 <c:choose>
-  <c:when test="${userDbInfo.rowCount == 0}">
+  <c:when test="${param.task == 'addnew'}">
     <sql:update>
       INSERT INTO user 
         (username, password, first_name, surname)

@@ -14,7 +14,7 @@
 
 <html>
   <head>
-    <title>User Dataset List</title>
+    <title>Library Dataset List</title>
   </head>
   <body bgcolor="white">
 
@@ -34,17 +34,16 @@
 	  </td>
 	  <td colspan=1 vAlign=top width=10><img alt="trans gif" height=5 src="./images/white.gif" width=10/>
 	  <td colspan=1 vAlign=top>
-	    <h3>User Dataset List</h3>
+	    <h3>Library Dataset List</h3>
 	    <p> 
-              <jsp:useBean id="validUser"scope="session" class="uw.rfpk.beans.UserInfo" />
-              <jsp:useBean id="datasets" scope="request" class="uw.rfpk.beans.DatasetList" />
+              <jsp:useBean id="library" scope="request" class="uw.rfpk.beans.DatasetList" />
               <% int maxNum = Integer.parseInt(getServletContext().getInitParameter("maxNum")); 
-                 datasets.setUsername(validUser.getUserName());
-                 datasets.setDbHost(getServletContext().getInitParameter("database_host"));
-                 datasets.setDbName(getServletContext().getInitParameter("database_name"));
-                 datasets.setDbUser(getServletContext().getInitParameter("database_username"));
-                 datasets.setDbPass(getServletContext().getInitParameter("database_password"));
-                 Vector datasetList = datasets.getDatasetList(maxNum + 1, Long.parseLong(request.getParameter("start")));
+                 library.setUsername("librarian");
+                 library.setDbHost(getServletContext().getInitParameter("database_host"));
+                 library.setDbName(getServletContext().getInitParameter("database_name"));
+                 library.setDbUser(getServletContext().getInitParameter("database_username"));
+                 library.setDbPass(getServletContext().getInitParameter("database_password"));
+                 Vector datasetList = library.getDatasetList(maxNum + 1, Long.parseLong(request.getParameter("start")));
                  Vector startList = null;
                  int counter = Integer.parseInt(request.getParameter("counter"));
                  int size = datasetList.size();
@@ -70,7 +69,7 @@
                              session.setAttribute("START", startList); 
                          }
                      } %>
-                     The following user datasets are found:
+                     The following library datasets are found:
                  <p>
                  <table border="1">
                  <th>Dataset Name</th>

@@ -128,7 +128,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JTextArea" name="help">
+            <Component class="javax.swing.JEditorPane" name="help">
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
               </Properties>
@@ -151,6 +151,8 @@
         </Property>
         <Property name="editable" type="boolean" value="false"/>
         <Property name="text" type="java.lang.String" value="This wizard is guiding you in creation of a NONMEM control file(model).&#xa;Then, the wizard converts the control file and the data file into a SPK &#xa;input file .  Select the following items and then click the &quot;Next&quot; button."/>
+        <Property name="focusCycleRoot" type="boolean" value="false"/>
+        <Property name="focusable" type="boolean" value="false"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -242,6 +244,8 @@
         </Property>
         <Property name="editable" type="boolean" value="false"/>
         <Property name="text" type="java.lang.String" value="First, one of the check boxes on the top must be selected. Then, one of the first and the second radio buttons on the left as well as one of the third and the fourth radio buttons on the left must also be selected."/>
+        <Property name="focusCycleRoot" type="boolean" value="false"/>
+        <Property name="focusable" type="boolean" value="false"/>
         <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[160, 140]"/>
         </Property>
@@ -365,7 +369,10 @@
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="cc" green="cc" red="cc" type="rgb"/>
         </Property>
+        <Property name="editable" type="boolean" value="false"/>
         <Property name="text" type="java.lang.String" value="You may load back a model that was &#xa;created by this wizard to make changes."/>
+        <Property name="focusCycleRoot" type="boolean" value="false"/>
+        <Property name="focusable" type="boolean" value="false"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">

@@ -29,14 +29,14 @@
 	</tr> 
 	<tr vAlign=top> <td colSpan=3><p>&nbsp;</p></td></tr> 
 	<tr>
-	  <td vAlign=top width=102 height="0" colspan="1" rowspan="1">
+	  <td vAlign=top width=150 height="0" colspan="1" rowspan="1">
           <%@ include file="quicklinks.shtml" %>  
 	  </td>
 	  <td colspan=1 vAlign=top width=10><img alt="trans gif" height=5 src="./images/white.gif" width=10/>
 	  <td colspan=1 vAlign=top>
 	    <h3>Library Model List</h3>
 	    <p> 
-              <jsp:useBean id="library" scope="session" class="uw.rfpk.beans.ModelList" />
+              <jsp:useBean id="library" scope="request" class="uw.rfpk.beans.ModelList" />
               <% int maxNum = Integer.parseInt(getServletContext().getInitParameter("maxNum")); 
                  library.setUsername("librarian");
                  library.setDbHost(getServletContext().getInitParameter("database_host"));
@@ -120,6 +120,7 @@
               <% }} %>
 	    </p>
 	    <p> 
+               You may click the model name to see the version list of the model.
                When you are done, please <a href="logout.jsp">log out</a>.
 	    </p>
 	  </td>

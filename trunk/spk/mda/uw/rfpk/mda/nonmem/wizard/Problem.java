@@ -29,7 +29,6 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
     /** Creates new form PROBLEM */
     public Problem() {
         initComponents();
-        jTextArea1.requestFocus(); 
     }
     
     /** This method is called from within the constructor to
@@ -73,6 +72,7 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setText("Enter the title of the problem into the following text area.  \nThe text becomes the heading of the NONMEM printout.\nOnly the first 72 characters of the text are used. ");
+        jTextPane1.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -121,6 +121,7 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
 
 	public void showingStep(JWizardPane wizard){
             wizardPane = wizard; 
+            jTextArea1.requestFocusInWindow();
         }
 	public void hidingStep(JWizardPane wizard){
             String record = jTextArea1.getText();
@@ -140,7 +141,6 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
                 public void actionPerformed(ActionEvent e){ 
                     jDialog1.setTitle("Help for " + getStepTitle());
                     jDialog1.setSize(600, 500);
-                    jDialog1.setVisible(true);
                     jDialog1.show();
                 }
             };

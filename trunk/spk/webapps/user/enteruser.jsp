@@ -5,7 +5,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%-- Verify that the user is logged in --%>
-<c:if test="${validUser == null}">
+<c:if test="${validUser == null || validUser.userName != 'useradmin'}">
   <jsp:forward page="index.jsp">
     <jsp:param name="origURL" value="${pageContext.request.requestURL}" />
     <jsp:param name="errorMsg" value="Please log in first." />
@@ -14,7 +14,7 @@
 
 <html>
   <head>
-    <title>User Information</title>
+    <title>User Account</title>
     <link href=stylesheet.css type="text/css" rel=stylesheet>
   </head>
   <body>
@@ -29,18 +29,25 @@
 	</tr> 
 	<tr vAlign=top> <td colSpan=3><p>&nbsp;</p></td></tr> 
 	<tr>
-	  <td valign=top width=102 height="0" colspan="1" rowspan="1">
+	  <td valign=top width=150 height="0" colspan="1" rowspan="1">
             <%@ include file="quicklinks.shtml" %>  
 	  </td>
 	  <td colspan=1 vAlign=top width=10><img alt="trans gif" height=5 src="./images/white.gif" width=10/>
 	  <td colspan=1 vAlign=top>
-	    <h3>User Information</h3>
-            <p>
-               Please enter information about a user below:  If the user's account already exists in the 
-               database recognized by the User Name, the user's account will be updated, otherwise, a new 
-               user account will be added to the database, using the information entered below.
-            </p>
-            <form action="validate.jsp" method="post">
+            <c:choose>
+              <c:when test="${param.task == 'addnew'}">
+	        <h3>Adding New User Account</h3>
+                <p>
+                Please enter information about the new user below and click the submit button to add the new user account.
+                <form action="validate.jsp?task=addnew" method="post">
+              </c:when>
+              <c:otherwise>
+	        <h3>Updating User Account</h3>
+                <p>
+                Please enter information about an existing user below and click the submit button to update the user account.
+                <form action="validate.jsp?task=update" method="post">
+              </c:otherwise>
+            </c:choose>
               <table>
                 <tr>
                   <td>User Name:</td>
@@ -71,8 +78,7 @@
                   <td><font color="red">${fn:escapeXml(lastNameError)}</font></td>
                 </tr>
                 <tr>
-                  <th align="right"><input type="submit" value="Submit"></th>
-                  <th align="left"><input type="Reset"></td>
+                  <th align="left"><input type="submit" value="Submit"></th>
                 </tr>
               </table>
             </form>                   

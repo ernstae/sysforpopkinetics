@@ -66,7 +66,9 @@ public class MDAFrame extends JFrame
             GetReportButton.setEnabled(false);
             ModelArchiveButton.setEnabled(false);
             DataArchiveButton.setEnabled(false);
+            JobExamplesButton.setEnabled(false);
             ModelLibraryButton.setEnabled(false);
+            DatasetLibraryButton.setEnabled(false);
             CompareFilesButton.setEnabled(false); 
             jLabel16.setText("Status: Off Line");
         } 
@@ -129,6 +131,7 @@ public class MDAFrame extends JFrame
         modelLButton = new javax.swing.JButton();
         dataLButton = new javax.swing.JButton();
         modelLibLButton = new javax.swing.JButton();
+        dataLibLButton = new javax.swing.JButton();
         localLButton = new javax.swing.JButton();
         jInternalFrame2 = new javax.swing.JInternalFrame();
         jScrollPane5 = new javax.swing.JScrollPane();
@@ -143,6 +146,7 @@ public class MDAFrame extends JFrame
         modelRButton = new javax.swing.JButton();
         dataRButton = new javax.swing.JButton();
         modelLibRButton = new javax.swing.JButton();
+        dataLibRButton = new javax.swing.JButton();
         localRButton = new javax.swing.JButton();
         jInternalFrame3 = new javax.swing.JInternalFrame();
         jScrollPane6 = new javax.swing.JScrollPane();
@@ -162,7 +166,7 @@ public class MDAFrame extends JFrame
         jLabel8 = new javax.swing.JLabel();
         helpDialog = new javax.swing.JDialog();
         jScrollPane7 = new javax.swing.JScrollPane();
-        help = new javax.swing.JTextArea();
+        help = new javax.swing.JEditorPane();
         jPanel1 = new javax.swing.JPanel();
         jTextPane1 = new javax.swing.JTextPane();
         jTextPane2 = new javax.swing.JTextPane();
@@ -171,9 +175,11 @@ public class MDAFrame extends JFrame
         SubmitJobButton = new javax.swing.JButton();
         GetReportButton = new javax.swing.JButton();
         ReadOutputButton = new javax.swing.JButton();
+        JobExamplesButton = new javax.swing.JButton();
         ModelArchiveButton = new javax.swing.JButton();
         DataArchiveButton = new javax.swing.JButton();
         ModelLibraryButton = new javax.swing.JButton();
+        DatasetLibraryButton = new javax.swing.JButton();
         CompareFilesButton = new javax.swing.JButton();
         HelpButton = new javax.swing.JButton();
         jInternalFrame1 = new javax.swing.JInternalFrame();
@@ -596,7 +602,7 @@ public class MDAFrame extends JFrame
 
         jPanel9.add(modelLButton);
 
-        dataLButton.setText("My Datasets");
+        dataLButton.setText("My Data");
         dataLButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 dataLButtonActionPerformed(evt);
@@ -605,7 +611,7 @@ public class MDAFrame extends JFrame
 
         jPanel9.add(dataLButton);
 
-        modelLibLButton.setText("Model Library");
+        modelLibLButton.setText("Model Lib");
         modelLibLButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 modelLibLButtonActionPerformed(evt);
@@ -614,7 +620,16 @@ public class MDAFrame extends JFrame
 
         jPanel9.add(modelLibLButton);
 
-        localLButton.setText("Local Files");
+        dataLibLButton.setText("Data Lib");
+        dataLibLButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dataLibLButtonActionPerformed(evt);
+            }
+        });
+
+        jPanel9.add(dataLibLButton);
+
+        localLButton.setText("Files");
         localLButton.setMaximumSize(new java.awt.Dimension(200, 25));
         localLButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -681,6 +696,7 @@ public class MDAFrame extends JFrame
 
         jPanel7.setMinimumSize(new java.awt.Dimension(500, 557));
         modelRButton.setText("My Models");
+        modelRButton.setActionCommand("My Model");
         modelRButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 modelRButtonActionPerformed(evt);
@@ -689,7 +705,7 @@ public class MDAFrame extends JFrame
 
         jPanel10.add(modelRButton);
 
-        dataRButton.setText("My Datasets");
+        dataRButton.setText("My Data");
         dataRButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 dataRButtonActionPerformed(evt);
@@ -698,7 +714,7 @@ public class MDAFrame extends JFrame
 
         jPanel10.add(dataRButton);
 
-        modelLibRButton.setText("Model Library");
+        modelLibRButton.setText("Model Lib");
         modelLibRButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 modelLibRButtonActionPerformed(evt);
@@ -707,7 +723,16 @@ public class MDAFrame extends JFrame
 
         jPanel10.add(modelLibRButton);
 
-        localRButton.setText("Local Files");
+        dataLibRButton.setText("Data Lib");
+        dataLibRButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dataLibRButtonActionPerformed(evt);
+            }
+        });
+
+        jPanel10.add(dataLibRButton);
+
+        localRButton.setText("Files");
         localRButton.setMaximumSize(new java.awt.Dimension(200, 10));
         localRButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -835,7 +860,6 @@ public class MDAFrame extends JFrame
         helpDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         helpDialog.setTitle("Model Design Agent Help");
         help.setEditable(false);
-        help.setFont(new java.awt.Font("Monospaced", 0, 12));
         jScrollPane7.setViewportView(help);
 
         helpDialog.getContentPane().add(jScrollPane7, java.awt.BorderLayout.CENTER);
@@ -861,8 +885,8 @@ public class MDAFrame extends JFrame
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(12, 12, 0, 12);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         jPanel1.add(jTextPane1, gridBagConstraints);
 
         jTextPane2.setBackground(new java.awt.Color(0, 204, 204));
@@ -875,8 +899,8 @@ public class MDAFrame extends JFrame
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         jPanel1.add(jTextPane2, gridBagConstraints);
 
         jTextPane3.setBackground(new java.awt.Color(0, 204, 204));
@@ -889,8 +913,8 @@ public class MDAFrame extends JFrame
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         jPanel1.add(jTextPane3, gridBagConstraints);
 
         WriteInputButton.setText("Prepare Input");
@@ -907,8 +931,8 @@ public class MDAFrame extends JFrame
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(16, 12, 6, 12);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         jPanel1.add(WriteInputButton, gridBagConstraints);
 
         SubmitJobButton.setText("Submit Job");
@@ -925,8 +949,8 @@ public class MDAFrame extends JFrame
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(6, 12, 6, 12);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         jPanel1.add(SubmitJobButton, gridBagConstraints);
 
         GetReportButton.setText("Get Output");
@@ -943,8 +967,8 @@ public class MDAFrame extends JFrame
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(7, 13, 7, 13);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         jPanel1.add(GetReportButton, gridBagConstraints);
 
         ReadOutputButton.setText("Process Output");
@@ -961,9 +985,27 @@ public class MDAFrame extends JFrame
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(6, 12, 6, 12);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         jPanel1.add(ReadOutputButton, gridBagConstraints);
+
+        JobExamplesButton.setText("Job Examples");
+        JobExamplesButton.setBorder(new javax.swing.border.BevelBorder(javax.swing.border.BevelBorder.RAISED));
+        JobExamplesButton.setMaximumSize(new java.awt.Dimension(110, 25));
+        JobExamplesButton.setMinimumSize(new java.awt.Dimension(110, 25));
+        JobExamplesButton.setPreferredSize(new java.awt.Dimension(110, 25));
+        JobExamplesButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JobExamplesButtonActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 6, 12);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        jPanel1.add(JobExamplesButton, gridBagConstraints);
 
         ModelArchiveButton.setText("My Models");
         ModelArchiveButton.setBorder(new javax.swing.border.BevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -979,8 +1021,8 @@ public class MDAFrame extends JFrame
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 6;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(6, 12, 6, 12);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         jPanel1.add(ModelArchiveButton, gridBagConstraints);
 
         DataArchiveButton.setText("My Datasets");
@@ -997,8 +1039,8 @@ public class MDAFrame extends JFrame
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 7;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(6, 12, 6, 12);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         jPanel1.add(DataArchiveButton, gridBagConstraints);
 
         ModelLibraryButton.setText("Model Library");
@@ -1014,10 +1056,28 @@ public class MDAFrame extends JFrame
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 8;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.gridy = 9;
         gridBagConstraints.insets = new java.awt.Insets(6, 12, 6, 12);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         jPanel1.add(ModelLibraryButton, gridBagConstraints);
+
+        DatasetLibraryButton.setText("Dataset Library");
+        DatasetLibraryButton.setBorder(new javax.swing.border.BevelBorder(javax.swing.border.BevelBorder.RAISED));
+        DatasetLibraryButton.setMaximumSize(new java.awt.Dimension(110, 25));
+        DatasetLibraryButton.setMinimumSize(new java.awt.Dimension(110, 25));
+        DatasetLibraryButton.setPreferredSize(new java.awt.Dimension(110, 25));
+        DatasetLibraryButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DatasetLibraryButtonActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 10;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 6, 12);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        jPanel1.add(DatasetLibraryButton, gridBagConstraints);
 
         CompareFilesButton.setText("Compare Files");
         CompareFilesButton.setBorder(new javax.swing.border.BevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -1032,9 +1092,9 @@ public class MDAFrame extends JFrame
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 9;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.gridy = 11;
         gridBagConstraints.insets = new java.awt.Insets(6, 12, 6, 12);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         jPanel1.add(CompareFilesButton, gridBagConstraints);
 
         HelpButton.setText("Help");
@@ -1050,9 +1110,9 @@ public class MDAFrame extends JFrame
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 10;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.gridy = 12;
         gridBagConstraints.insets = new java.awt.Insets(6, 12, 0, 12);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         jPanel1.add(HelpButton, gridBagConstraints);
 
         jInternalFrame1.setMinimumSize(new java.awt.Dimension(603, 460));
@@ -1321,11 +1381,11 @@ public class MDAFrame extends JFrame
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.gridheight = 10;
+        gridBagConstraints.gridheight = 12;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(4, 0, 12, 12);
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(4, 0, 12, 12);
         jPanel1.add(jInternalFrame1, gridBagConstraints);
 
         jLabel16.setBackground(new java.awt.Color(0, 204, 204));
@@ -1333,9 +1393,9 @@ public class MDAFrame extends JFrame
         jLabel16.setText("Status:  On Line");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 11;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        gridBagConstraints.gridy = 13;
         gridBagConstraints.insets = new java.awt.Insets(12, 16, 16, 12);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         jPanel1.add(jLabel16, gridBagConstraints);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
@@ -1343,10 +1403,45 @@ public class MDAFrame extends JFrame
         pack();
     }//GEN-END:initComponents
 
+    private void dataLibRButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dataLibRButtonActionPerformed
+        isDiff = true;
+        isLeft = false;
+        isLibrary = true;
+        dataArchive();
+    }//GEN-LAST:event_dataLibRButtonActionPerformed
+
+    private void dataLibLButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dataLibLButtonActionPerformed
+        isDiff = true;
+        isLeft = true;
+        isLibrary = true;
+        dataArchive();
+    }//GEN-LAST:event_dataLibLButtonActionPerformed
+
+    private void JobExamplesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JobExamplesButtonActionPerformed
+        listType = "job";
+        isLibrary = true;
+        indexList = 0;
+        lists = new Vector();
+        showArchiveList(0);        
+    }//GEN-LAST:event_JobExamplesButtonActionPerformed
+
+    private void DatasetLibraryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DatasetLibraryButtonActionPerformed
+        isDiff = false;
+        isLibrary = true;
+        dataArchive();        
+    }//GEN-LAST:event_DatasetLibraryButtonActionPerformed
+
     private void HelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HelpButtonActionPerformed
-        help.setText((new Utility()).getHelpDocument("MDAHelp"));
-        help.setCaretPosition(0);
-        helpDialog.setSize(620, 500);
+        try
+        {
+            help.setPage(MDAFrame.class.getResource("/uw/rfpk/mda/nonmem/help/MDAHelp.html")); 
+        }
+        catch(IOException e)
+        {
+            JOptionPane.showMessageDialog(null, "Error opening help file.",  
+                                          "File Error", JOptionPane.ERROR_MESSAGE);            
+        }
+        helpDialog.setSize(700, 500);
         helpDialog.show();
     }//GEN-LAST:event_HelpButtonActionPerformed
 
@@ -1798,6 +1893,7 @@ public class MDAFrame extends JFrame
         jTextField2.setText("");
         jTextField3.setText("");       
         listType = "model";
+        isLibrary = false;
         showVersions = true;
         indexList = 0;
         lists = new Vector();
@@ -1811,6 +1907,7 @@ public class MDAFrame extends JFrame
         jTextField2.setText("");
         jTextField3.setText("");
         listType = "model";
+        isLibrary = false;
         showVersions = false;
         indexList = 0;
         lists = new Vector();        
@@ -1933,6 +2030,7 @@ public class MDAFrame extends JFrame
 
     private void DataArchiveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DataArchiveButtonActionPerformed
         isDiff = false;
+        isLibrary = false; 
         dataArchive();
     }//GEN-LAST:event_DataArchiveButtonActionPerformed
 
@@ -1977,6 +2075,7 @@ public class MDAFrame extends JFrame
         jTextField5.setText("");
         jTextField6.setText("");        
         listType = "data";
+        isLibrary = false;
         showVersions = true;
         indexList = 0;
         lists = new Vector();
@@ -1990,6 +2089,7 @@ public class MDAFrame extends JFrame
         jTextField5.setText("");
         jTextField6.setText("");        
         listType = "data";
+        isLibrary = false;
         showVersions = false;
         indexList = 0;
         lists = new Vector();        
@@ -2169,9 +2269,9 @@ public class MDAFrame extends JFrame
                          "Model Name: " + output.modelName + "\n\n" +
                          "Model Version: " + output.modelVersion + "\n\n" +
                          "Model Description: " + output.modelAbstract + "\n\n" +
-                         "Data Name: " + output.dataName + "\n\n" +
-                         "Data Version: " + output.dataVersion + "\n\n" +
-                         "Data Description: " + output.dataAbstract + "\n\n" +                      
+                         "Dataset Name: " + output.dataName + "\n\n" +
+                         "Dataset Version: " + output.dataVersion + "\n\n" +
+                         "Dataset Description: " + output.dataAbstract + "\n\n" +                      
                          "Error Message: \n" + output.error + "\n\n" +
                          "Minimum Value of Objective Function: " + output.objective + "\n\n" +
                          "Parameter Estimation Result:\n" +
@@ -2195,8 +2295,9 @@ public class MDAFrame extends JFrame
 
     private void GetReportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GetReportButtonActionPerformed
         listType = "job";
+        isLibrary = false;
         indexList = 0;
-        lists = new Vector();        
+        lists = new Vector();
         showArchiveList(0);
     }//GEN-LAST:event_GetReportButtonActionPerformed
 
@@ -3013,7 +3114,7 @@ public class MDAFrame extends JFrame
             {            
                 case 'j':
                 {
-                    archiveList = server.getUserJobs(maxNum + 1, leftOff);
+                    archiveList = server.getUserJobs(maxNum + 1, leftOff, isLibrary); 
                     break;
                 }
                 case 'm':
@@ -3023,7 +3124,7 @@ public class MDAFrame extends JFrame
                 }
                 case 'd':
                 {
-                    archiveList = server.getUserDatasets(maxNum + 1, leftOff);
+                    archiveList = server.getUserDatasets(maxNum + 1, leftOff, isLibrary); 
                     break;
                 }
                 default: return;             
@@ -3141,8 +3242,10 @@ public class MDAFrame extends JFrame
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton CompareFilesButton;
     private javax.swing.JButton DataArchiveButton;
+    private javax.swing.JButton DatasetLibraryButton;
     private javax.swing.JButton GetReportButton;
     private javax.swing.JButton HelpButton;
+    private javax.swing.JButton JobExamplesButton;
     private javax.swing.JButton ModelArchiveButton;
     private javax.swing.JButton ModelLibraryButton;
     private javax.swing.JMenuItem OmegaMenu;
@@ -3162,6 +3265,8 @@ public class MDAFrame extends JFrame
     private javax.swing.JMenuItem covarianceMenu;
     private javax.swing.JMenuItem cutMenu;
     private javax.swing.JButton dataLButton;
+    private javax.swing.JButton dataLibLButton;
+    private javax.swing.JButton dataLibRButton;
     private javax.swing.JButton dataRButton;
     private javax.swing.JDialog diffDialog;
     private javax.swing.JDialog diffHelpDialog;
@@ -3169,7 +3274,7 @@ public class MDAFrame extends JFrame
     private javax.swing.JDialog errorMessageDialog;
     private javax.swing.JMenuItem exitMenu;
     private javax.swing.JMenuItem findMenu;
-    private javax.swing.JTextArea help;
+    private javax.swing.JEditorPane help;
     private javax.swing.JButton helpButton;
     private javax.swing.JDialog helpDialog;
     private javax.swing.JMenuItem invCovarianceMenu;
@@ -3345,5 +3450,5 @@ public class MDAFrame extends JFrame
     private String archiveName = null;
     
     // Maximum number of items
-    private static final int maxNum = 4;
+    private static final int maxNum = 12;
 }

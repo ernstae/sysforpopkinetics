@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE attributes PUBLIC "-//NetBeans//DTD DefaultAttributes 1.0//EN" "http://www.netbeans.org/dtds/attributes-1_0.dtd">
 <attributes version="1.0">
-    <fileobject name="UserInfo.java">
-        <attr name="class_dependency_java.io.Serializable" stringvalue="UserInfo"/>
+    <fileobject name="UserJobs.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="UserJobs"/>
     </fileobject>
-    <fileobject name="ModelList.java">
-        <attr name="class_dependency_java.io.Serializable" stringvalue="ModelList"/>
+    <fileobject name="UserDatasets.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="UserDatasets"/>
     </fileobject>
-    <fileobject name="VersionList.java">
-        <attr name="class_dependency_java.io.Serializable" stringvalue="VersionList"/>
+    <fileobject name="SubmitJob.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="SubmitJob"/>
     </fileobject>
-    <fileobject name="Conversion.java">
-        <attr name="class_dependency_java.io.Serializable" stringvalue="Conversion"/>
+    <fileobject name="UserModels.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="UserModels"/>
     </fileobject>
-    <fileobject name="DatasetList.java">
-        <attr name="class_dependency_java.io.Serializable" stringvalue="DatasetList"/>
+    <fileobject name="DiffFiles.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="DiffFiles"/>
     </fileobject>
-    <fileobject name="DigestPassword.java">
-        <attr name="class_dependency_java.io.Serializable" stringvalue="DigestPassword"/>
+    <fileobject name="GetArchive.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="GetArchive"/>
     </fileobject>
-    <fileobject name="SessionObject.java">
-        <attr name="class_dependency_javax.servlet.http.HttpSessionBindingListener" stringvalue="SessionObject"/>
+    <fileobject name="GetVersions.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="GetVersions"/>
     </fileobject>
 </attributes>

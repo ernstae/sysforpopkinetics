@@ -159,6 +159,7 @@ public class PK extends javax.swing.JPanel implements WizardStep {
                 jTextArea1.setText(Utility.defaultPK(iterator.getAdvan(), iterator.getTrans()));
             else
                 jTextArea1.setText(value.substring(5));
+            jTextArea1.requestFocusInWindow();
 	}
 
 	public void hidingStep(JWizardPane wizard){
@@ -187,7 +188,6 @@ public class PK extends javax.swing.JPanel implements WizardStep {
                 public void actionPerformed(ActionEvent e){ 
                     jDialog1.setTitle("Help for " + getStepTitle());
                     jDialog1.setSize(600, 500);
-                    jDialog1.setVisible(true);
                     jDialog1.show();
                 }
             };

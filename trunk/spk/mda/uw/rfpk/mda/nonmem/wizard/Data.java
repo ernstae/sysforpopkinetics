@@ -207,6 +207,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
             jLabel2.setText(" "); 
             isValid = false;
             wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
+            jTextArea1.requestFocusInWindow(); 
 	}
 
 	public void hidingStep(JWizardPane wizard){
@@ -231,7 +232,6 @@ public class Data extends javax.swing.JPanel implements WizardStep {
                 public void actionPerformed(ActionEvent e){ 
                     jDialog1.setTitle("Help for " + getStepTitle());
                     jDialog1.setSize(600, 500);
-                    jDialog1.setVisible(true);
                     jDialog1.show();
                 }
             };

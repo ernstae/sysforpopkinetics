@@ -326,40 +326,6 @@ public class Utility {
         return nTokens;
     }    
     
-    /** Get a help document
-     * @param name A String object containing the name of the help document
-     * @return A String object containing the text of the help document
-     */    
-    public String getHelpDocument(String name)
-    {            
-        StringBuffer buffer = new StringBuffer();
-        try
-        {
-            InputStream in = getClass().getResourceAsStream(
-                             "/uw/rfpk/mda/nonmem/help/" + name); 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            boolean done = false;
-            while(!done)
-            {
-                // Read a line
-                String line = reader.readLine();                            
-                if(line == null) 
-                    done = true;
-                else
-                    buffer.append(line).append("\n");
-            }	    
-            reader.close();
-            in.close();
-        }
-        catch(IOException ioe )
-	{
-            JOptionPane.showMessageDialog(null, "Error openning help document.",   
-                                          "File Error",    
-                                          JOptionPane.ERROR_MESSAGE);            
-        } 
-        return buffer.toString();
-    }     
-    
     /** Determine if a character sting includes character '<' or '>'.
      * @param text A String object containing the character string to be checked
      * @param name A String object containing the character string as the name
