@@ -180,7 +180,7 @@ my $database_open = 0;
 
 my $filename_data = "data.xml";
 my $filename_job_id = "job_id";
-my $filename_makefile = "generatedMakefile";
+my $filename_makefile = "Makefile.SPK";
 my $filename_optimizer_trace = "optimizer_trace.txt";
 my $filename_results = "result.xml";
 my $filename_runner = "driver";
