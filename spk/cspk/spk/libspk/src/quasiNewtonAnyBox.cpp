@@ -783,15 +783,17 @@ void quasiNewtonAnyBox(
   // Initializations for the scaled objective function.
   //------------------------------------------------------------
 
-  Memory<double> memoryDbl( 4 * nObjPar );
+  Memory<double> memoryDbl( 3 * nObjPar + nObjPar + nObjPar * nObjPar );
 
   // The various y vectors are scaled versions of their x counterparts.
   double* yLow  = memoryDbl( nObjPar );
   double* yUp   = memoryDbl( nObjPar );
   double* yCurr = memoryDbl( nObjPar );
 
-  // This is the scaled gradient, gScaled(y) = fScaled_y(y).
+  // These are the scaled gradient, gScaled(y) = fScaled_y(y),
+  // and scaled Hessian, hScaled(y) = fScaled_y_y(y).
   double* gScaled = memoryDbl( nObjPar );
+  double* hScaled = memoryDbl( nObjPar * nObjPar );
 
   // Check to see if the lower and upper bounds for each element of x are 
   // equal and then set the bounds and the initial value y accordingly.
@@ -1106,11 +1108,12 @@ void quasiNewtonAnyBox(
     if( !optimizer.getIsSubLevelOpt() && optimizer.getStateInfo().n )
     {
       // Save state information for warm start.
-      stateInfo.n      = n;
-?      stateInfo.x      = y;
-      stateInfo.state  = options.state;
-      stateInfo.lambda = options.lambda;
-      stateInfo.h      = options.h;
+      stateInfo.n = nObjPar;
+      stateInfo.r = rCurr;
+      stateInfo.f = fCurr;
+      stateInfo.x = yCurr;
+      stateInfo.g = gCurr;
+      stateInfo.h = hCurr;
       optimizer.setStateInfo( stateInfo );
 
       ok = true;
