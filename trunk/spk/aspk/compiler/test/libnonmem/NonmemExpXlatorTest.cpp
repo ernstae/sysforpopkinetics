@@ -13,7 +13,7 @@
 #include <xercesc/util/PlatformUtils.hpp>
 
 #include "../../libcommon/SymbolTable.h"
-#include "../../libcommon/ParseTree.h"
+#include "../../libcommon/ExpTreeGenerator.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -27,9 +27,9 @@ using namespace xercesc;
   
 extern int gSpkExpLines;
 extern int gSpkExpErrors;
-extern ParseTree * gSpkExpUtil;
+extern ExpTreeGenerator * gSpkExpTreeGenerator;
 extern SymbolTable * gSpkExpSymbolTable;
-extern DOMDocument * gSpkExpDOMDocument;
+extern DOMDocument * gSpkExpTree;
 
 void NonmemExpXlatorTest::setUp()
 {
@@ -53,12 +53,10 @@ void NonmemExpXlatorTest::testParse()
   yyin = file;
   assert( yyin != NULL );
 
-  //  gSpkExpDOMDocument = util->handler();
-
   gSpkExpErrors = 0;
   gSpkExpLines  = 0;
-  gSpkExpUtil   = new ParseTree;
-  gSpkExpDOMDocument = gSpkExpUtil->handler();
+  gSpkExpTreeGenerator = new ExpTreeGenerator;
+  gSpkExpTree = gSpkExpTreeGenerator->getRoot();
   gSpkExpSymbolTable = new SymbolTable( client::NONMEM );
 
   yyparse();
@@ -66,7 +64,7 @@ void NonmemExpXlatorTest::testParse()
   fclose( file );
   if( gSpkExpErrors == 0 )
   {
-    gSpkExpUtil->printToStdout( );
+    gSpkExpTreeGenerator->printToStdout( );
   }
   else
     {    
@@ -81,7 +79,7 @@ void NonmemExpXlatorTest::testParse()
   cout << "Encountered " << gSpkExpErrors << " errors." << endl;
   
   delete gSpkExpSymbolTable;
-  delete gSpkExpUtil;
+  delete gSpkExpTreeGenerator;
   XMLPlatformUtils::Terminate();
 
 }

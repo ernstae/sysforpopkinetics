@@ -26,7 +26,7 @@ CORE_OBJS  = $(LIBNONMEM)/NonmemCompiler.o \
              $(LIBNONMEM)/nmabb.tab.o \
              $(LIBNONMEM)/lex.yy.o \
              $(LIBCOMM)/SpkCompiler.o \
-	     $(LIBCOMM)/ParseTree.o \
+	     $(LIBCOMM)/ExpTreeGenerator.o \
              $(LIBCOMM)/SpkCompilerUtil.o \
              $(LIBCOMM)/SymbolTable.o \
              $(LIBCOMM)/Symbol.o
@@ -34,7 +34,7 @@ CORE_OBJS  = $(LIBNONMEM)/NonmemCompiler.o \
 CORE_HS    = $(LIBNONMEM)/NonmemCompiler.h \
              $(LIBNONMEM)/nmabb.tab.h \
              $(LIBCOMM)/SpkCompiler.h \
-             $(LIBCOMM)/ParseTree.h \
+             $(LIBCOMM)/ExpTreeGenerator.h \
              $(LIBCOMM)/SpkCompilerUtil.h \
              $(LIBCOMM)/SymbolTable.h \
              $(LIBCOMM)/Symbol.h \
@@ -44,7 +44,7 @@ CORE_CPPS  = $(LIBNONMEM)/NonmemCompiler.cpp \
              $(LIBNONMEM)/nmabb.tab.cpp \
              $(LIBNONMEM)/lex.yy.c \
              $(LIBCOMM)/SpkCompiler.cpp \
-             $(LIBCOMM)/ParseTree.cpp \
+             $(LIBCOMM)/ExpTreeGenerator.cpp \
              $(LIBCOMM)/SpkCompilerUtil.cpp \
              $(LIBCOMM)/SymbolTable.cpp \
              $(LIBCOMM)/Symbol.cpp
