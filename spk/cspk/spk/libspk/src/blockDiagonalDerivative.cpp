@@ -301,7 +301,7 @@ const DoubleMatrix blockDiagonalDerivative( const std::vector<DoubleMatrix>& dma
 {
   using namespace std;
 
-	int i, j, k = 0., l = 0., m = 0., n, cols = dmatB[ 0 ].nc(), rows,
+	int i, j, k = 0, l = 0, m = 0, n, cols = dmatB[ 0 ].nc(), rows,
         nBlock = dmatB.size();
 
 	for( i = 0; i < nBlock; i++ )
