@@ -1,7 +1,11 @@
 #
 omhelp_dir=~/OMhelp
 export omhelp_dir
-rm Doc/* 
+if [ -d 'Doc' ] 
+then 
+	rm -r Doc 
+fi
+mkdir Doc
 cd Doc
-omhelp ../QuasiNewton01Box.h -xml 
-omhelp ../QuasiNewton01Box.h -xml -printable 
+$omhelp_dir/omhelp ../QuasiNewton01Box.h -xml 
+$omhelp_dir/omhelp ../QuasiNewton01Box.h -xml -printable 
