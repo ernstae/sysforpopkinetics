@@ -528,9 +528,10 @@ namespace // [Begin: unnamed namespace]
       pObjective  ( pObjectiveIn ),
       pdvecXLow   ( pdvecXLowIn ),
       pdvecXUp    ( pdvecXUpIn ),
-      pdvecXDiff  ( pdvecXDiffIn )
+      pdvecXDiff  ( pdvecXDiffIn ),
+      nX          ( pdvecXDiff->nr() )
     {
-      dvecXCurr.resize( pdvecXDiff->nr(), 1 );
+      dvecXCurr.resize( nX, 1 );
 
       pdXLowData  = pdvecXLow.data();
       pdXUpData   = pdvecXUp.data();
@@ -554,6 +555,8 @@ namespace // [Begin: unnamed namespace]
     const DoubleMatrix* const pdvecXUp;       // Unscaled upper bounds.
     const DoubleMatrix* const pdvecXDiff;     // Difference between unscaled  
                                               // lower and upper bounds.
+
+    const int nX;                             // Number of elements.
 
     DoubleMatrix dvecXCurr;                   // Current parameter value.
     DoubleMatrix drowF_xCurr;                 // Current gradient value.
@@ -653,16 +656,6 @@ namespace // [Begin: unnamed namespace]
       try
       {
         pObjective->gradient( &dRowF_xOut );
-
-	// Reset this pointer since it could be changed during
-	// the call to gradient.
-        pdF_xCurrData = drowF_xCurr.data();
-
-
-  virtual void gradient( DoubleMatrix* pdrowF_xOut ) const = 0;
-
-        message_FINISH_ME =  pObjective->gradient( gOut );
-        message_FINISH_ME =  pObjective->gradient( dvecGOut );
       }
       catch( SpkException& e )
       {
@@ -688,6 +681,11 @@ namespace // [Begin: unnamed namespace]
           __LINE__, 
           __FILE__ );
       }
+
+
+	// Reset this pointer since it could be changed during
+	// the call to gradient.
+        pdF_xCurrData = drowF_xCurr.data();
 
 
         assert( pdrowGOut != 0 );
