@@ -90,13 +90,13 @@ public class UserJobs extends HttpServlet
                 // Get user jobs
                 ResultSet userJobsRS = Spkdb.userJobs(con, userId, maxNum, leftOff);  
                                 
-                // Set state_code conversion
+                // Set state_code - name conversion
                 ResultSet stateRS = Spkdb.getStateTable(con);
                 Properties state = new Properties();                
                 while(stateRS.next())
                     state.setProperty(stateRS.getString(1), stateRS.getString(2));
 
-                // Set end_code conversion
+                // Set end_code - name conversion
                 ResultSet endRS = Spkdb.getEndTable(con);                
                 Properties end = new Properties();
                 while(endRS.next())

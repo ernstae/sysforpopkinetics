@@ -92,8 +92,19 @@ public class GetJobInfo extends HttpServlet
 
                  // Check if the job belongs to the user
                 if(jobRS.getLong("user_id") == userId)
-                {               
-                    // Get job information 
+                {            
+                    // Set method_code - name conversion
+                    ResultSet methodRS = Spkdb.getMethodTable(con);
+                    Properties conversion = new Properties();                
+                    while(methodRS.next())
+                        conversion.setProperty(methodRS.getString(1), methodRS.getString(2));                    
+                    
+                    // Get job information
+                    long parent = jobRS.getLong("parent");
+                    String methodCode = jobRS.getString("method_code");
+                    String method = "";
+                    if(methodCode != null)
+                        method = conversion.getProperty(methodCode);                    
                     long modelId = jobRS.getLong("model_id");
                     long datasetId = jobRS.getLong("dataset_id"); 
                     String modelVersion = jobRS.getString("model_version");
@@ -113,6 +124,8 @@ public class GetJobInfo extends HttpServlet
                     jobInfo.setProperty("modelVersion", modelVersion.substring(2));
                     jobInfo.setProperty("datasetName", datasetName);
                     jobInfo.setProperty("datasetVersion", datasetVersion.substring(2));
+                    jobInfo.setProperty("parent", String.valueOf(parent));
+                    jobInfo.setProperty("method", method);                    
                 }
                 else
                 {

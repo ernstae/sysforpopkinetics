@@ -92,7 +92,13 @@ public class GetOutput extends HttpServlet
 
                  // Check if the job belongs to the user
                 if(jobRS.getLong("user_id") == userId)
-                {               
+                {             
+                    // Set method_code - name conversion
+                    ResultSet methodRS = Spkdb.getMethodTable(con);
+                    Properties conversion = new Properties();                
+                    while(methodRS.next())
+                        conversion.setProperty(methodRS.getString(1), methodRS.getString(2));                    
+                    
                     // Get job information 
                     long modelId = jobRS.getLong("model_id");
                     long datasetId = jobRS.getLong("dataset_id"); 
@@ -101,7 +107,12 @@ public class GetOutput extends HttpServlet
                     String endCode = jobRS.getString("end_code");
                     String modelVersion = jobRS.getString("model_version");
                     String datasetVersion = jobRS.getString("dataset_version");
-                    String jobAbstract = jobRS.getString("abstract"); 
+                    String jobAbstract = jobRS.getString("abstract");
+                    long parent = jobRS.getLong("parent");
+                    String methodCode = jobRS.getString("method_code");
+                    String method = "";
+                    if(methodCode != null)
+                        method = conversion.getProperty(methodCode);
              
                     // Get Spk report and source
 	            Blob blobReport = jobRS.getBlob("report");
@@ -140,6 +151,8 @@ public class GetOutput extends HttpServlet
                         spkOutput.setProperty("datasetVersion", datasetVersion.substring(2));
                         spkOutput.setProperty("datasetAbstract", datasetAbstract);
                         spkOutput.setProperty("jobAbstract", jobAbstract);
+                        spkOutput.setProperty("parent", String.valueOf(parent));
+                        spkOutput.setProperty("method", method);
                     }
                     else
                         messageOut = "No job report was found for the job.";
