@@ -1321,19 +1321,10 @@ void doubleArrayToValarray( const double* x, valarray<double>& xVA )
  * Function: valarrayToDoubleArray_SquareMatrixTrans
  *
  *
- * Sets the elements in the array of doubles x equal to those in the 
- * valarray of doubles xVA.  This function assumes that x and xVA have
- * the same number of elements and that they contain the elements from a 
- * square matrix.
-
- * Sets the elements in the array of doubles x equal to the matrix transpose of those in the 
- * valarray of doubles xVA assuming that x and xVA both contain the elements from a 
- * square matrix.
-
  * Assuming that the array of doubles x and the valarray of doubles xVA
- both contain the elements from a square matrix with the same number of elements, this function 
-sets the elements in x equal to the matrix transpose of those in xVA
-
+ * both contain the elements from a square matrix with the same number
+ * of elements, this function sets the elements in x equal to the matrix
+ * transpose of those in xVA.
  *
  *************************************************************************/
 
