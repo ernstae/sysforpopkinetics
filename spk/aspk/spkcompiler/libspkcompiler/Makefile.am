@@ -13,6 +13,8 @@ MOSTLYCLEANFILES = explang.cpp explang.output lex_explang.c
 
 libspkcompiler_la_SOURCES = \
         config.h \
+	cholesky.h \
+	cholesky.cpp \
         series.h \
         series.cpp \
 	lower.h \
@@ -32,6 +34,7 @@ nobase_pkginclude_HEADERS = \
 	$(NONMEM)/NonmemTranslator.h
 
 pkginclude_HEADERS = \
+	cholesky.h \
         series.h \
 	lower.h \
 	upper.h \
