@@ -346,7 +346,6 @@ $end
 #include "subtract.h"
 #include "mulByScalar.h"
 
-
 DoubleMatrix elsq_xBlockDiag(const DoubleMatrix &dvecR,    // m size vector, z - h
                              const DoubleMatrix &dmatQInv, // m by m symmetric, positive definite
                              const DoubleMatrix &dmatH_x,  // m by n matrix
@@ -393,7 +392,7 @@ DoubleMatrix elsq_xBlockDiag(const DoubleMatrix &dvecR,    // m size vector, z -
 		int start = 0;
 		for( ind = 0; ind < nInd; ind++ )
 		{
-			int Ni = pN[ ind ];
+			int Ni = static_cast<int>(pN[ ind ]);
 			int kk = k * nY * nY;
 			for( j = 0; j < Ni; j++ )
 			{
@@ -414,7 +413,7 @@ DoubleMatrix elsq_xBlockDiag(const DoubleMatrix &dvecR,    // m size vector, z -
     int begin = 0;
     for( ind = 0; ind < nInd; ind++ )
 	{
-		int Ni = pN[ ind ];
+		int Ni = static_cast<int>(pN[ ind ]);
         for( j = start; j < start + Ni; j++ )
 		{
 			int jj = ( j - start ) * nY + begin;
@@ -439,7 +438,7 @@ DoubleMatrix elsq_xBlockDiag(const DoubleMatrix &dvecR,    // m size vector, z -
 		int start = 0;
 		for( ind = 0; ind < nInd; ind++ )
 		{
-			int Ni = pN[ ind ];
+			int Ni = static_cast<int>(pN[ ind ]);
 			int kk = k * nY * nY;
 			for( j = start; j < start + Ni; j++ )
 			{
