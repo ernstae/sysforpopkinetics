@@ -25,7 +25,7 @@
  *
  *
  * Minimizes an arbitrary smooth function subject to simple bounds on
- * the variables using a quasi Newton method. 
+ * the variables using a quasi-Newton method. 
  *
  * Author: Mitch Watrous
  *
