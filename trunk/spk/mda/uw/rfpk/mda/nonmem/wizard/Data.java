@@ -18,7 +18,7 @@ import java.awt.event.ActionEvent;
 
 /**
  * This class defines a step to create the $DATA record
- * @author  jiaji
+ * @author  jiaji Du
  */
 public class Data extends javax.swing.JPanel implements WizardStep {
     
@@ -139,7 +139,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         String path = jTextArea1.getText().trim();
         Vector data = new Vector(); 
-        int nDataCol = Utility.parseData(path, data);
+        int nDataCol = Utility.parseData(path, data, iterator.getIsInd());   
         if(nDataCol == -1)
         {
             JOptionPane.showMessageDialog(null, "Error in data file.",   
@@ -200,7 +200,10 @@ public class Data extends javax.swing.JPanel implements WizardStep {
 	}
 
 	public void showingStep(JWizardPane wizard){
-            wizardPane = wizard;   
+            wizardPane = wizard;  
+            jLabel2.setText(" "); 
+            isValid = false;
+            wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
 	}
 
 	public void hidingStep(JWizardPane wizard){
@@ -208,9 +211,12 @@ public class Data extends javax.swing.JPanel implements WizardStep {
             if(record == "")
                 return;
             String[] path = record.replace('\\', '/').split("/");            
+            String fileName = path[path.length - 1]; 
+            if(Utility.checkTag(fileName, "File name"))
+                return;
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
-            object.getRecords().setProperty("Data", "$DATA " + path[path.length - 1]); 
-            object.getControl().data = record; 
+            object.getRecords().setProperty("Data", "$DATA " + fileName); 
+            object.getSource().data = fileName; 
 	}
 
 	public boolean isValid(){

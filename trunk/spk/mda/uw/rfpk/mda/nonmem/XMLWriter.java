@@ -1,6 +1,8 @@
 package uw.rfpk.mda.nonmem;
 
-import uw.rfpk.mda.nonmem.wizard.Control;
+import uw.rfpk.mda.nonmem.wizard.Source;
+import uw.rfpk.mda.nonmem.wizard.MDAObject;
+import uw.rfpk.mda.nonmem.wizard.Utility;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Attr;
@@ -18,550 +20,508 @@ import javax.swing.JOptionPane;
 public class XMLWriter
 {
     /** Constructor to initialize control and data, and create a root document
-     * @param control Control class instance
-     * @param data A Vector that contains the parsed NONMEM input data
+     * @param modelInfo A ModelInfo object containing information for the model
+     * @param control A String object containing the text of the NONMEM control file
+     * @param object A MDAObject object containing control and data information
      */    
-    public XMLWriter(Control control, Vector data)
+    public XMLWriter(ModelInfo modelInfo, String control, MDAObject object)
     {
-        this.control = control;                      
-        this.data = data; 
-        doc = new DocumentImpl(); 
-        Element root = doc.createElement("spkinml");  
-        doc.appendChild(root);                      
+        this.source = object.getSource();
+        this.data = object.getData();
+        this.modelInfo = modelInfo;
+        this.control = control;
+        setSource(); 
+        setData();
+        setControl();
     }
 
     /** This function creates Content section of the SPK input file */    
-    public void setGeneral()
+    private void setSource()
     {
-        Element root = doc.getDocumentElement();
-        Element content = doc.createElement("content");
-        content.setAttribute("spkinml_ver", "1.0");
-        content.setAttribute("client", "nonmem");
-        if(control.estimation != null)
-            content.setAttribute("estimation", "yes"); 
+        docSource = new DocumentImpl(); 
+        Element spksource = docSource.createElement("spksource");  
+        docSource.appendChild(spksource);  
+        Element nonmem = docSource.createElement("nonmem");  
+        spksource.appendChild(nonmem);
+        Element constraint = docSource.createElement("constraint");
+        nonmem.appendChild(constraint);
+        Element analysis = null;
+        if(source.analysis.equals("population"))
+            analysis = docSource.createElement("pop_analysis"); 
         else
-            content.setAttribute("estimation", "no");
-        if(control.simulation != null)
-            content.setAttribute("simulation", "yes"); 
-        else
-            content.setAttribute("simulation", "no");
-        content.setAttribute("analysis", control.analysis);         
-        content.appendChild(doc.createTextNode(control.problem)); 
-        root.appendChild(content);
-    }
-   
-    /** This function creates Driver section of the SPK input file */ 
-    public void setDriver()
-    {
-        Element root = doc.getDocumentElement();
-        Element driver = doc.createElement("driver");
-        root.appendChild(driver);
-
-        // Generate theta
-        if(control.theta != null)
+            analysis = docSource.createElement("ind_analysis"); 
+        if(source.estimation != null)
         {
-            Element theta = doc.createElement("theta");
-            int size = control.theta.length; 
+            analysis.setAttribute("is_estimation", "yes");
+            analysis.setAttribute("is_restart", source.estimation[4]);            
+            if(source.analysis.equals("population"))
+            {
+                analysis.setAttribute("approximation", source.estimation[0]);
+                if(source.estimation[0].equals("fo"))
+                    analysis.setAttribute("is_eta_out", source.estimation[5]);
+                analysis.setAttribute("pop_size", String.valueOf(data.size()));
+            }
+        }
+        else
+        {
+            analysis.setAttribute("is_estimation", "no");
+        }
+        constraint.appendChild(analysis); 
+        setDescription(analysis);
+        setInput(analysis);
+        setTheta(analysis);
+        setOmega(analysis);
+        if(source.analysis.equals("population"))
+        {
+            setSigma(analysis);
+            setPop_stat(analysis);
+        }
+        else
+        {
+            setInd_stat(analysis);
+        }
+        setSimulation(analysis); 
+        setModel(nonmem);   
+        setPresentation(nonmem); 
+    } 
+    
+    // Generate description
+    private void setDescription(Element parent)
+    {
+        Element description = docSource.createElement("description");
+        parent.appendChild(description);
+        description.appendChild(docSource.createTextNode(source.problem));
+    }
+
+    // Generate data_labels
+    private void setInput(Element parent)
+    {
+        Element data_labels = docSource.createElement("data_labels");
+        parent.appendChild(data_labels);
+        if(source.input != null)
+        {
+            for(int i = 0; i < source.input.length; i++)
+            {
+                Element label = docSource.createElement("label");
+                data_labels.appendChild(label);
+                String[] names = source.input[i].split("=");
+                String name = names[0];
+                label.setAttribute("name", name);
+                if(names.length == 2 && Utility.isStdItem(names[0])) 
+                    label.setAttribute("synonym", names[1]);
+            }
+        }
+    }
+    
+    // Generate theta
+    private void setTheta(Element parent)
+    {
+        if(source.theta != null)
+        {
+            Element theta = docSource.createElement("theta");
+            int size = source.theta.length; 
             String length = String.valueOf(size);
             theta.setAttribute("length", length );
-            Element in = doc.createElement("in");
+            
+            Element low = docSource.createElement("low");
+            for(int i = 0; i < size; i++)
+	    {
+                Element value = docSource.createElement("value");
+                value.setAttribute("fixed", source.theta[i][3]);
+                value.appendChild(docSource.createTextNode(source.theta[i][0]));
+                low.appendChild(value);
+	    }
+            theta.appendChild(low);            
+            
+            Element in = docSource.createElement("in");
             for(int i = 0; i < size; i++)
 	    {            
-                Element value = doc.createElement("value");
-                value.setAttribute("fixed", control.theta[i][3]);
-                value.appendChild(doc.createTextNode(control.theta[i][1]));
+                Element value = docSource.createElement("value");
+                value.setAttribute("fixed", source.theta[i][3]);
+                value.appendChild(docSource.createTextNode(source.theta[i][1]));
                 in.appendChild(value);
 	    }
             theta.appendChild(in);
-            Element low = doc.createElement("low");
+
+            Element up = docSource.createElement("up");
             for(int i = 0; i < size; i++)
 	    {
-                Element value = doc.createElement("value");
-                value.setAttribute("fixed", control.theta[i][3]);
-                value.appendChild(doc.createTextNode(control.theta[i][0]));
-                low.appendChild(value);
-	    }
-            theta.appendChild(low);
-            Element up = doc.createElement("up");
-            for(int i = 0; i < size; i++)
-	    {
-                Element value = doc.createElement("value");
-                value.setAttribute("fixed", control.theta[i][3]);
-                value.appendChild(doc.createTextNode(control.theta[i][2]));
+                Element value = docSource.createElement("value");
+                value.setAttribute("fixed", source.theta[i][3]);
+                value.appendChild(docSource.createTextNode(source.theta[i][2]));
                 up.appendChild(value);
 	    }
             theta.appendChild(up);
-            driver.appendChild(theta);
+            parent.appendChild(theta);
         }
-	
-        // Generate sigma
-        if(control.sigma != null)
+    }
+    
+    // Generate sigma
+    private void setSigma(Element parent)
+    {
+        if(source.sigma != null)
         {
-            for(int i = 0; i < control.sigma.length; i++)
+            for(int i = 0; i < source.sigma.length; i++)
 	    {
-                Element sigma = doc.createElement("sigma");    
-                sigma.setAttribute("struct", control.sigma[i][0]);
-                sigma.setAttribute("span", control.sigma[i][1]);
-                if(control.sigma[i][2].equals("SAME"))
+                Element sigma = docSource.createElement("sigma");    
+                sigma.setAttribute("struct", source.sigma[i][0]);
+                sigma.setAttribute("dimension", source.sigma[i][1]);
+                if(source.sigma[i][2].equals("SAME"))
                     sigma.setAttribute("same_as_previous", "yes");
                 else
                     sigma.setAttribute("same_as_previous", "no");
-                Element in = doc.createElement("in");
+                Element in = docSource.createElement("in");
                 sigma.appendChild(in);
-                int nData = control.sigma[i].length;
+                int nData = source.sigma[i].length;
                 for(int j = 2; j < nData; j++)
 	        {   
-                    Element value = doc.createElement("value");
-                    if(control.sigma[i][j].endsWith("F"))
-		    {
+                    Element value = docSource.createElement("value");
+                    if(source.sigma[i][j].endsWith("F"))
+	            {
                         value.setAttribute("fixed", "yes");
-                        value.appendChild(doc.createTextNode(control.sigma[i][j].substring(
-                                          0, control.sigma[i][j].length() - 1)));
+                        value.appendChild(docSource.createTextNode(source.sigma[i][j].substring(
+                                          0, source.sigma[i][j].length() - 1)));
 		    }
                     else
 	            {
                         value.setAttribute("fixed", "no");
-                        value.appendChild(doc.createTextNode(control.sigma[i][j]));
+                        value.appendChild(docSource.createTextNode(source.sigma[i][j]));
 		    }
                     in.appendChild(value);
                 }
-                driver.appendChild(sigma);
+                parent.appendChild(sigma);
             } 
         }
-
-        // Generate omega
-        if(control.omega != null)
+    }
+    
+    // Generate omega
+    private void setOmega(Element parent)
+    {
+        if(source.omega != null)
         {
-            for(int i = 0; i < control.omega.length; i++)
+            for(int i = 0; i < source.omega.length; i++)
 	    {
-                Element omega = doc.createElement("omega");     
-                omega.setAttribute("struct", control.omega[i][0]);
-                omega.setAttribute("span", control.omega[i][1]);
-                if(control.omega[i][2].equals("SAME"))
+                Element omega = docSource.createElement("omega");     
+                omega.setAttribute("struct", source.omega[i][0]);
+                omega.setAttribute("dimension", source.omega[i][1]);
+                if(source.omega[i][2].equals("SAME"))
                     omega.setAttribute("same_as_previous", "yes");
                 else
                     omega.setAttribute("same_as_previous", "no");
-                Element in = doc.createElement("in");
+                Element in = docSource.createElement("in");
                 omega.appendChild(in);
-                int nData = control.omega[i].length;
+                int nData = source.omega[i].length;
                 for(int j = 2; j < nData; j++)
 	        {   
-                    Element value = doc.createElement("value");
-                    if(control.omega[i][j].endsWith("F"))
-		    {
+                    Element value = docSource.createElement("value");
+                    if(source.omega[i][j].endsWith("F"))
+	            {
                         value.setAttribute("fixed", "yes"); 
-                        value.appendChild(doc.createTextNode(control.omega[i][j].substring(
-                                          0, control.omega[i][j].length() - 1)));
+                        value.appendChild(docSource.createTextNode(source.omega[i][j].substring(
+                                          0, source.omega[i][j].length() - 1)));
 		    }
                     else
 	            {
                         value.setAttribute("fixed", "no");
-                        value.appendChild(doc.createTextNode(control.omega[i][j]));
+                        value.appendChild(docSource.createTextNode(source.omega[i][j]));
 		    }
                     in.appendChild(value);
                 }
-                driver.appendChild(omega);
+                parent.appendChild(omega);
             }
-        }
-
-        // Generate eta
-        if(control.omega != null)
-        {
-            Element eta = doc.createElement("eta");
-            int nOmega = control.omega.length;
-            int size = 0;
-            for(int i = 0; i < nOmega; i++)
-            {
-                if(!control.omega[i][2].equals("SAME"))
-                    size += Integer.parseInt(control.omega[i][1]);
-            }
-            eta.setAttribute("length", String.valueOf(size * nOmega));
-            Element in = doc.createElement("in");
-            for(int i = 0; i < size; i++)
-	    {
-                Element value = doc.createElement("value");
-                value.appendChild(doc.createTextNode("0.0"));
-                in.appendChild(value);            
-	    }
-            eta.appendChild(in);  
-            driver.appendChild(eta);  
-        }
-
-        // Generate pop_opt
-        if(control.analysis.equals("population") && control.estimation != null)
-        {
-            Element pop_opt = doc.createElement("pop_opt");
-            pop_opt.setAttribute("approximation", control.estimation[0]);
-            pop_opt.setAttribute("pop_size", String.valueOf(data.size()));
-            pop_opt.setAttribute("epsilon", control.estimation[1]);
-            pop_opt.setAttribute("mitr", control.estimation[2]);
-            pop_opt.setAttribute("trace", control.estimation[3]);
-            pop_opt.setAttribute("restart", control.estimation[4]);
-            pop_opt.setAttribute("par_out", "yes");
-            pop_opt.setAttribute("obj_out", "yes");
-            pop_opt.setAttribute("derive1_out", "yes");
-            pop_opt.setAttribute("derive2_out", "yes");
-            driver.appendChild(pop_opt); 
-        }
-
-        // Generate pop_sim
-        if(control.analysis.equals("population") && control.simulation != null)
-        {
-            Element pop_sim = doc.createElement("pop_sim");
-            pop_sim.setAttribute("seed", control.simulation);
-            driver.appendChild(pop_sim);
-        }
-        
-        // Generate ind_opt
-        if(control.analysis.equals("individual") && control.estimation != null)
-        {        
-            Element ind_opt = doc.createElement("ind_opt");
-            ind_opt.setAttribute("epsilon", "");
-            ind_opt.setAttribute("mitr", "");
-            ind_opt.setAttribute("trace", "");
-            ind_opt.setAttribute("restart", "");
-            ind_opt.setAttribute("par_out", control.estimation[5]);
-            ind_opt.setAttribute("obj_out", control.estimation[5]);
-            ind_opt.setAttribute("derive1_out", control.estimation[5]);
-            ind_opt.setAttribute("derive2_out", control.estimation[5]);
-            driver.appendChild(ind_opt); 
-        }
-
-        // Generate ind_sim
-        if(control.analysis.equals("individual") && control.simulation != null)
-        {
-            Element ind_sim = doc.createElement("ind_sim");
-            ind_sim.setAttribute("seed", control.simulation);
-            driver.appendChild(ind_sim);
-        }
-        
-        // Generate pop_stat
-        if(control.analysis.equals("population") && control.covariance != null)
-	{
-            Element pop_stat = doc.createElement("pop_stat");
-            pop_stat.setAttribute("formulation", control.covariance);
-            pop_stat.setAttribute("covariance", "yes");
-            pop_stat.setAttribute("stderror", "yes");
-            pop_stat.setAttribute("correlation", "yes");
-            pop_stat.setAttribute("coefficient", "yes");
-            pop_stat.setAttribute("confidence", "yes");
-            driver.appendChild(pop_stat);        
-	}
-
-        // Generate ind_stat
-        if(control.analysis.equals("individual") && control.covariance != null)
-	{        
-            Element ind_stat = doc.createElement("ind_stat");
-            ind_stat.setAttribute("covariance", "covariance");
-            ind_stat.setAttribute("stderror", "stderror");
-            ind_stat.setAttribute("correlation", "correlation");
-            ind_stat.setAttribute("coefficient", "coefficient");
-            ind_stat.setAttribute("confidence", "confidence");
-            driver.appendChild(ind_stat); 
         }
     }
 
-    /** This function creates Model section of the SPK input file */ 
-    public void setModel()
+    // Generate pop_stat
+    private void setPop_stat(Element parent)
     {
-        Element root = doc.getDocumentElement();
-        Element model = doc.createElement("model");
-        if(control.subroutines != null)
-        {
-            model.setAttribute("base", control.subroutines[0]);
-            if(control.subroutines[1] != null)
-                model.setAttribute("tolerance", control.subroutines[1]);
-            if(control.subroutines[2] != null)
-                model.setAttribute("trans", control.subroutines[2]);
+        if(source.analysis.equals("population") && source.covariance != null)
+	{
+            Element pop_stat = docSource.createElement("pop_stat");
+            pop_stat.setAttribute("covariance_form", source.covariance);
+            parent.appendChild(pop_stat);        
+	}
+    }
+
+    // Generate ind_stat
+    private void setInd_stat(Element parent)
+    {
+        if(source.analysis.equals("individual") && source.covariance != null)
+	{        
+            Element ind_stat = docSource.createElement("ind_stat");
+            parent.appendChild(ind_stat); 
         }
-        if(control.model != null)
+    }    
+    
+    // Generate simulation
+    private void setSimulation(Element parent)
+    {
+        if(source.simulation != null)
         {
-            Element comp_model = doc.createElement("comp_model");
-            comp_model.setAttribute("nequilibrium", control.model[0][1]);
-            comp_model.setAttribute("nparameters", control.model[0][2]);
-            for(int i = 1; i < control.model.length; i++)
+            Element simulation = docSource.createElement("simulation");
+            simulation.setAttribute("seed", source.simulation);
+            parent.appendChild(simulation);
+        }
+    }
+    
+    // This function creates Model section of the SPK input file
+    private void setModel(Element parent)
+    {
+        Element model = docSource.createElement("model");
+        if(source.subroutines != null)
+        {
+            model.setAttribute("advan", source.subroutines[0]);
+            if(source.subroutines[1] != null)
+                model.setAttribute("tolerance", source.subroutines[1]);
+            if(source.subroutines[2] != null)
+                model.setAttribute("trans", source.subroutines[2]);
+        }
+        if(source.model != null)
+        {
+            Element comp_model = docSource.createElement("comp_model");
+            comp_model.setAttribute("ncompartments", source.model[0][0]);
+            comp_model.setAttribute("nequilibrium", source.model[0][1]);
+            if(source.model[0][2] != null)
+                comp_model.setAttribute("nparameters", source.model[0][2]);
+            for(int i = 1; i < source.model.length; i++)
             {
-                Element compartment = doc.createElement("compartment");
-                compartment.setAttribute("name", control.model[i][0]);
-                compartment.setAttribute("initial_off", control.model[i][1]);
-                compartment.setAttribute("no_off", control.model[i][2]);                
-                compartment.setAttribute("no_dose", control.model[i][3]);
-                compartment.setAttribute("equilibrium", control.model[i][4]);
-                compartment.setAttribute("exclude", control.model[i][5]);
-                compartment.setAttribute("def_observation", control.model[i][6]);
-                compartment.setAttribute("def_dose", control.model[i][7]);
+                Element compartment = docSource.createElement("compartment");
+                compartment.setAttribute("name", source.model[i][0]);
+                compartment.setAttribute("initial_off", source.model[i][1]);
+                compartment.setAttribute("no_off", source.model[i][2]);                
+                compartment.setAttribute("no_dose", source.model[i][3]);
+                compartment.setAttribute("equilibrium", source.model[i][4]);
+                compartment.setAttribute("exclude", source.model[i][5]);
+                compartment.setAttribute("def_observation", source.model[i][6]);
+                compartment.setAttribute("def_dose", source.model[i][7]);
                 comp_model.appendChild(compartment);
             }
             model.appendChild(comp_model);
         }
         // Generate diffeqn
-        if(control.des != null)
+        if(source.des != null)
         {
-            Element diffeqn = doc.createElement("diffeqn"); 
-            diffeqn.appendChild(doc.createTextNode(control.des));
+            Element diffeqn = docSource.createElement("diffeqn"); 
+            diffeqn.appendChild(docSource.createTextNode(source.des));
             model.appendChild(diffeqn);
         }
         // Generate pk
-        if(control.pk != null)
+        if(source.pk != null)
         {            
-            Element pk = doc.createElement("pk");
-            pk.appendChild(doc.createTextNode(control.pk));
+            Element pk = docSource.createElement("pk");
+            pk.appendChild(docSource.createTextNode(source.pk));
             model.appendChild(pk); 
         }
         // Generate error
-        if(control.error != null)
+        if(source.error != null)
         { 
-            Element error = doc.createElement("error");
-            error.appendChild(doc.createTextNode(control.error));
+            Element error = docSource.createElement("error");
+            error.appendChild(docSource.createTextNode(source.error));
             model.appendChild(error);
         }
         // Generate pred
-        if(control.pred != null)
+        if(source.pred != null)
         {            
-            Element pred = doc.createElement("pred");
-            pred.appendChild(doc.createTextNode(control.pred));
+            Element pred = docSource.createElement("pred");
+            pred.appendChild(docSource.createTextNode(source.pred));
             model.appendChild(pred); 
         }
-        root.appendChild(model); 
+        parent.appendChild(model); 
     }
 
-    /** This function creates Data section of the SPK input file */     
-    public void setData()
-    { 
-        if(data == null || data.size() == 0 || control.input == null || 
-           control.input.length == 0) 
-            return;  
-        Element root = doc.getDocumentElement();
-        Element dataElement = doc.createElement("data");
-        root.appendChild(dataElement);
-        String[] stdItems = new String[] { "DV", "MDV", "EVID", "TIME", "DATE", 
-                                           "DATE1", "DATE2", "DATE3", "AMT", 
-                                           "RATE", "SS", "ADDL", "II", "ABS", 
-                                           "LAG", "UPPER", "LOWER", "L1", "L2", 
-                                           "CMT", "PCMT", "CALL", "CONT" };
-                                           
-        // Generate individuals
-        int nColumns = control.input.length;                                    
-        double[] mean = new double[nColumns];
-        for(int i = 0; i < nColumns; i++)
-            mean[i] = 0.0;  
-        for(int i = 0; i < data.size(); i++)
-	{
-            int size = ((Vector)data.get(i)).size();
-            Element individual = doc.createElement("individual");
-            individual.setAttribute("order", String.valueOf(i));
-            individual.setAttribute("id", ((String[])((Vector)data.get(i)).get(0))[0]);
-            individual.setAttribute("length", String.valueOf(size));
-            dataElement.appendChild(individual);
-            Vector indValue = (Vector)data.get(i);
-             
-            for(int j = 1; j < nColumns; j++)
-	    {                
-                Element item = doc.createElement("item");
-                String dataItem = control.input[j]; 
-                String[] items = dataItem.split("=");
-                for(int k = 0; k < items.length; k++)
-                    items[k] = items[k].trim();
-                if(items[0].equals("DROP") || items[0].equals("SKIP"))
-                    continue;
-                if(items.length == 2 && (items[1].equals("DROP") || items[1].equals("SKIP")))
-                    continue;
-                item.setAttribute("label", items[0]);
-                if(items.length == 2) 
-                {
-                    if(exist(stdItems, items[0]))
-                    {
-		        item.setAttribute("synonym", items[1]);
-                    }
-                    else
-                    {
-                        if(items[1].equals("CENTERED"))
-                        {
-                            if(mean[j] == 0.0)
-                            {
-                                String[] numbers = new String[data.size()];
-                                for(int k = 0; k < data.size(); k++)
-		                {
-                                    numbers[k] = ((String[])((Vector)data.get(k)).get(0))[j];  
-                                    mean[j] += Double.parseDouble(numbers[k]);
-                                }
-                                mean[j] /= data.size();
-                            }
-                            double number = Double.parseDouble(((String[])indValue.get(0))[j]); 
-                            ((String[])indValue.get(0))[j] = String.valueOf(number - mean[j]);
-                        }
-                        if(items[1].equals("CAT"))
-                        {
-                        
-                        }
-                    }
-                }
-		individual.appendChild(item); 
-                for(int k = 0; k < size; k++)
-		{
-                    Element value = doc.createElement("value");
-                    item.appendChild(value);
-                    String dataValue = ((String[])indValue.get(k))[j];
-                    value.appendChild(doc.createTextNode(dataValue));
-		}
+    // This function generates output section of the SPK input file  
+    private void setPresentation(Element parent)
+    {
+        if(source.tableEst != null || source.splotEst != null ||
+           source.tableSim != null || source.splotSim != null)
+        {
+            Element nm_presentation = docSource.createElement("nm_presentation");
+            parent.appendChild(nm_presentation); 
+            if(source.tableEst != null)
+                setTable(nm_presentation, true);
+            if(source.tableSim != null)
+                setTable(nm_presentation, false);
+            if(source.splotEst != null)
+                setScatterplot(nm_presentation, true);
+            if(source.splotSim != null)
+                setScatterplot(nm_presentation, false);
+	}
+    }
+            
+    // Generate table
+    private void setTable(Element parent, boolean isEstimation)
+    {
+        String[][][] controlTable = null;
+        if(isEstimation)
+            controlTable = source.tableEst;
+        else
+            controlTable = source.tableSim;
+        if(controlTable != null)
+        {
+            for(int i = 0; i < controlTable.length; i++)
+            {
+                String[][] tableI = controlTable[i];
+                Element table = docSource.createElement("table");
+                if(isEstimation)
+                    table.setAttribute("process", "estimation");
+                else
+                    table.setAttribute("process", "simulation");
+                if(tableI[0][0] != null)
+                    table.setAttribute("save_as", tableI[0][0]);
+                table.setAttribute("header", tableI[0][1]); 
+                parent.appendChild(table);
+
+                for(int j = 0; j < tableI[1].length; j++)
+	        {
+                    Element column = docSource.createElement("column");
+                    column.setAttribute("label", tableI[1][j]);
+                    column.setAttribute("appearance_order", tableI[2][j]); 
+                    column.setAttribute("sort_order", tableI[3][j]);   
+                    table.appendChild(column);
+	        }
 	    }
         }
     }
-
-    /** This function creates Output section of the SPK input file */     
-    public void setPresentation()
+    
+    // Generate scatterplot
+    private void setScatterplot(Element parent, boolean isEstimation)
     {
-        if(control.tableEst != null || control.splotEst != null ||
-           control.tableSim != null || control.splotSim != null)
-        {
-            Element root = doc.getDocumentElement();
-            Element presentation = doc.createElement("presentation");
-            root.appendChild(presentation); 
-	
-            // Generate table for estimation
-            if(control.tableEst != null)
+        String[][][] controlSplot = null;
+        if(isEstimation)
+            controlSplot = source.splotEst;
+        else
+            controlSplot = source.splotSim;        
+        if(controlSplot != null)
+	{
+            for(int i = 0; i < controlSplot.length; i++)
 	    {
-                for(int i = 0; i < control.tableEst.length; i++)
-	        {
-                    String[][] tableI = control.tableEst[i];
-                    Element table = doc.createElement("table");
-                    if(tableI[0][0] != null)
-                        table.setAttribute("save_as", tableI[0][0]);
-                    table.setAttribute("header", tableI[0][1]); 
-                    presentation.appendChild(table);
+                String[][] scatter = controlSplot[i];
+                Element scatterplot = docSource.createElement("scatterplot");
+                if(isEstimation)
+                    scatterplot.setAttribute("process", "estimation");
+                else
+                    scatterplot.setAttribute("process", "simulation");
+                if(scatter[0][2] != null)
+                    scatterplot.setAttribute("unit_slope", scatter[0][2]);
+                if(scatter[0][3] != null)
+                    scatterplot.setAttribute("x0_line", scatter[0][3]);
+                if(scatter[0][4] != null)
+                    scatterplot.setAttribute("y0_line", scatter[0][4]);
+                if(scatter[0][0] != null)                    
+                    scatterplot.setAttribute("begin", scatter[0][0]);
+                if(scatter[0][1] != null)                    
+                    scatterplot.setAttribute("end", scatter[0][1]);
+                parent.appendChild(scatterplot);
 
-                    for(int j = 0; j < tableI[1].length; j++)
-	            {
-                        Element column = doc.createElement("column");
-                        column.setAttribute("label", tableI[1][j]);
-                        column.setAttribute("appearance_order", tableI[2][j]);                        
-                        column.setAttribute("sort_order", tableI[3][j]);   
-                        table.appendChild(column);
-	            }
+                int xlength = scatter[1].length;
+                for(int j = 0; j < xlength; j++)
+	        {
+                    Element x = docSource.createElement("x");
+                    x.setAttribute("label", scatter[1][j]);
+                    scatterplot.appendChild(x);
+		}
+
+                int ylength = scatter[2].length;
+                for(int j = 0; j < ylength; j++)
+	        {
+                    Element y = docSource.createElement("y");
+                    y.setAttribute("label", scatter[2][j]);
+                    scatterplot.appendChild(y);
 	        }
-	    }
-	
-            // Generate scatterplot for estimation
-            if(control.splotEst != null)
-	    {
-                for(int i = 0; i < control.splotEst.length; i++)
-	        {
-                    String[][] scatter = control.splotEst[i];
-                    Element scatterplot = doc.createElement("scatterplot");
-                    if(scatter[0][2] != null)
-                        scatterplot.setAttribute("unit_slope", scatter[0][2]);
-                    if(scatter[0][3] != null)
-                        scatterplot.setAttribute("x0_line", scatter[0][3]);
-                    if(scatter[0][4] != null)
-                        scatterplot.setAttribute("y0_line", scatter[0][4]);
-                    if(scatter[0][0] != null)                    
-                        scatterplot.setAttribute("begin", scatter[0][0]);
-                    if(scatter[0][1] != null)                    
-                        scatterplot.setAttribute("end", scatter[0][1]);
-                    presentation.appendChild(scatterplot);
-
-                    int xlength = scatter[1].length;
-                    for(int j = 0; j < xlength; j++)
-	            {
-                        Element x = doc.createElement("x");
-                        x.setAttribute("label", scatter[1][j]);
-                        scatterplot.appendChild(x);
-		    }
-
-                    int ylength = scatter[2].length;
-                    for(int j = 0; j < ylength; j++)
-	            {
-                        Element y = doc.createElement("y");
-                        y.setAttribute("label", scatter[2][j]);
-                        scatterplot.appendChild(y);
-	            }
      
-                    if(scatter.length == 4)
-		    {
-                        int splitlength = scatter[3].length;
-                        for(int j = 0; j < splitlength; j++)
-	                {
-                            Element split = doc.createElement("split");
-                            split.setAttribute("label", scatter[3][j]);
-                            scatterplot.appendChild(split);
-			}
-		    }
-	        }
-	    }
-            
-            // Generate table for simulation
-            if(control.tableSim != null)
-	    {
-                for(int i = 0; i < control.tableSim.length; i++)
-	        {
-                    String[][] tableI = control.tableEst[i];
-                    Element table = doc.createElement("table");
-                    if(tableI[0][0] != null)
-                        table.setAttribute("save_as", tableI[0][0]);
-                    table.setAttribute("header", tableI[0][1]); 
-                    presentation.appendChild(table);
-
-                    for(int j = 0; j < tableI[1].length; j++)
+                if(scatter.length == 4 && scatter[3] != null)
+		{
+                    int splitlength = scatter[3].length;
+                    for(int j = 0; j < splitlength; j++)
 	            {
-                        Element column = doc.createElement("column");
-                        column.setAttribute("label", tableI[1][j]);
-                        column.setAttribute("appearance_order", tableI[2][j]);                        
-                        column.setAttribute("sort_order", tableI[3][j]);   
-                        table.appendChild(column);
-	            }
-	        }
-	    }
-	
-            // Generate scatterplot for simulation
-            if(control.splotSim != null)
-	    {
-                for(int i = 0; i < control.splotSim.length; i++)
-	        {
-                    String[][] scatter = control.splotSim[i];
-                    Element scatterplot = doc.createElement("scatterplot");
-                    if(scatter[0][2] != null)
-                        scatterplot.setAttribute("unit_slope", scatter[0][2]);
-                    if(scatter[0][3] != null)
-                        scatterplot.setAttribute("x0_line", scatter[0][3]);
-                    if(scatter[0][4] != null)
-                        scatterplot.setAttribute("y0_line", scatter[0][4]);
-                    if(scatter[0][0] != null)                    
-                        scatterplot.setAttribute("begin", scatter[0][0]);
-                    if(scatter[0][1] != null)                    
-                        scatterplot.setAttribute("end", scatter[0][1]);
-                    presentation.appendChild(scatterplot);
-
-                    int xlength = scatter[1].length;
-                    for(int j = 0; j < xlength; j++)
-	            {
-                        Element x = doc.createElement("x");
-                        x.setAttribute("label", scatter[1][j]);
-                        scatterplot.appendChild(x);
-		    }
-
-                    int ylength = scatter[2].length;
-                    for(int j = 0; j < ylength; j++)
-	            {
-                        Element y = doc.createElement("y");
-                        y.setAttribute("label", scatter[2][j]);
-                        scatterplot.appendChild(y);
-	            }
-     
-                    if(scatter.length == 4)
-		    {
-                        int splitlength = scatter[3].length;
-                        for(int j = 0; j < splitlength; j++)
-	                {
-                            Element split = doc.createElement("split");
-                            split.setAttribute("label", scatter[3][j]);
-                            scatterplot.appendChild(split);
-			}
+                        Element split = docSource.createElement("split");
+                        split.setAttribute("label", scatter[3][j]);
+                        scatterplot.appendChild(split);
 		    }
 	        }
 	    }                        
 	}
     }
 
+    // This function creates Data section of the SPK input file    
+    private void setData()
+    { 
+        if(data == null || data.size() == 0 || source.input == null || 
+           source.input.length == 0) 
+            return;  
+        int nInd = data.size();
+        int nRows = 1;
+        for(int i =0; i < nInd; i++)
+            nRows += ((Vector)data.get(i)).size(); 
+        int nColumns = source.input.length;   
+        docData = new DocumentImpl(); 
+        Element spkdata = docData.createElement("spkdata");  
+        docData.appendChild(spkdata);         
+        Element table = docData.createElement("table");
+        table.setAttribute("columns", String.valueOf(nColumns));
+        table.setAttribute("rows", String.valueOf(nRows));        
+        spkdata.appendChild(table);
+        
+        Element description = docData.createElement("description");
+        description.appendChild(docData.createTextNode(source.data));
+        table.appendChild(description);
+
+        Element row = docData.createElement("row");
+        row.setAttribute("position", "1");
+        table.appendChild(row); 
+        for(int k = 0; k < nColumns; k++)
+        {
+            Element value = docData.createElement("value");
+            value.setAttribute("type", "string");                    
+            value.appendChild(docData.createTextNode(source.input[k].split("=")[0]));
+            row.appendChild(value);                    
+        }          
+        
+        int position = 2;
+        for(int i = 0; i < data.size(); i++)
+	{
+            int size = ((Vector)data.get(i)).size();
+            Vector indValue = (Vector)data.get(i);                
+            for(int j = 0; j < size; j++)
+	    {                
+                row = docData.createElement("row");
+                row.setAttribute("position", String.valueOf(j + position));
+		table.appendChild(row); 
+                for(int k = 0; k < nColumns; k++)
+		{
+                    Element value = docData.createElement("value");
+                    if(k == 0 && source.input[k].split("=")[0].equals("ID"))
+                        value.setAttribute("type", "string");                    
+                    String dataValue = ((String[])indValue.get(j))[k];
+                    value.appendChild(docData.createTextNode(dataValue));                    
+                    row.appendChild(value);                    
+		}
+	    }
+            position += size;
+        }
+    }
+    
+    // This function generates model archive section of the SPK inut file 
+    private void setControl()
+    {
+        docControl = new DocumentImpl(); 
+        Element model_archive = docControl.createElement("model_archive");  
+        docControl.appendChild(model_archive);          
+        Element information = docControl.createElement("information");
+        information.setAttribute("name", modelInfo.name);
+        if(modelInfo.isNewModel)
+            information.setAttribute("abstract", modelInfo.description);
+        else
+            if(!modelInfo.isNewVersion)
+                information.setAttribute("version", modelInfo.version);
+     
+        model_archive.appendChild(information);
+        
+        Element nm_control = docControl.createElement("nm_control");
+        model_archive.appendChild(nm_control); 
+        nm_control.appendChild(docControl.createTextNode("\n" + control));         
+    }    
+    
     /** This function saves the XML document as a text file in XML format
      * @param file A String object as the filename of the file to be saved
      */    
@@ -570,7 +530,9 @@ public class XMLWriter
         try
 	{
             PrintWriter writer = new PrintWriter(new FileWriter(file));
-            writer.println(formatXML(((DocumentImpl)doc).saveXML(doc)));
+            writer.println(Utility.formatXML(((DocumentImpl)docSource).saveXML(docSource)) + "\n" +
+                           Utility.formatXML(((DocumentImpl)docData).saveXML(docData)) + "\n" +
+                           Utility.formatXML(((DocumentImpl)docControl).saveXML(docControl))); 
             writer.close();
         }
         catch(Exception e)
@@ -586,7 +548,9 @@ public class XMLWriter
       */    
     public String getDocument()
     {
-        return formatXML(((DocumentImpl)doc).saveXML(doc));
+        return Utility.formatXML(((DocumentImpl)docSource).saveXML(docSource)) + "\n" +
+               Utility.formatXML(((DocumentImpl)docData).saveXML(docData)) + "\n" +
+               Utility.formatXML(((DocumentImpl)docControl).saveXML(docControl));      
     }
     
     private boolean exist(String[] strings, String string)
@@ -596,35 +560,19 @@ public class XMLWriter
                 return true;
         return false;
     }
+
+    // XML documents
+    private Document docSource, docData, docControl;
+
+    // Source object
+    private Source source;
     
-    /** This function format the XML file for better deadability
-     * @return A String object as the formated file content
-     * @param text
-     */    
-    private String formatXML(String text)
-    {
-        StringBuffer buffer = new StringBuffer();
-        int length = text.length();
-        boolean isValue = true;
-        for(int i = 0; i < length; i++)
-	{
-            char c = text.charAt(i);
-	    if(c == '<' && !isValue)
-                buffer.append("\n");  
-            if(c != '>' && c != '<')
-                isValue = true;
-            else isValue = false;
-            buffer.append(c);        
-	}
-        return buffer.toString();
-    }
-
-    // Parsed control 
-    private Control control = null;
-
-    // Parsed data
-    private Vector data = null;
-
-    // XML document
-    private Document doc = null;
+    // Data vector
+    private Vector data;
+    
+    // Model information
+    private ModelInfo modelInfo;
+    
+    // Control file text
+    private String control;
 }

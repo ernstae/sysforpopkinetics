@@ -11,7 +11,7 @@ import java.util.Vector;
 
 /**
  *
- * @author  jiaji
+ * @author  jiaji Du
  */
 public class MDAObject {
     
@@ -23,7 +23,7 @@ public class MDAObject {
     public Properties getRecords() { return records; }  
     
     /** Get Parsed control for SPK input file */
-    public Control getControl() { return control; }
+    public Source getSource() { return source; }
     
     /** Get Parsed data for SPK input file */
     public Vector getData() { return data; }
@@ -35,7 +35,7 @@ public class MDAObject {
     private Properties records = new Properties();
     
     // Parsed control for SPK input file
-    private Control control = new Control(); 
+    private Source source = new Source(); 
     
     // Parsed data for SPK input file
     private Vector data = null;

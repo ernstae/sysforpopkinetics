@@ -12,7 +12,7 @@ import java.util.Properties;
 
 /**
  * This class defines a iterator for the wizard
- * @author  jiaji
+ * @author  jiaji Du
  */
 public class MDAIterator implements StepIterator{   
     private Vector steps = new Vector(); 
@@ -27,6 +27,7 @@ public class MDAIterator implements StepIterator{
     private boolean isEstPlot = false;
     private boolean isSimTable = false;
     private boolean isSimPlot = false;
+    private boolean isMethod1OrPosthoc = false;
     private int advan = 0;
     private int nDataCol = 0;
     private int nTheta = 0;
@@ -34,7 +35,7 @@ public class MDAIterator implements StepIterator{
     private int nEps = 0;
     private String trans = null;
     private Vector beginningSteps = new Vector();
-    private Continue cont = new Continue(); 
+    private Continue cont = new Continue(this); 
     private Pred pred = new Pred(this); 
     private Subroutines subroutines = new Subroutines(this);  
     private Model model = new Model(this); 
@@ -47,13 +48,13 @@ public class MDAIterator implements StepIterator{
     private Omega omega = new Omega(this); 
     private Sigma sigma = new Sigma(this); 
     private Covariance covariance = new Covariance();
-    private Estimation estimation = new Estimation();
+    private Estimation estimation = new Estimation(this);
     private Simulation simulation = new Simulation();
     private Table tableEst = new Table(this); 
     private ScatterPlot scatterPlotEst = new ScatterPlot(this); 
     private Table tableSim = new Table(this); 
     private ScatterPlot scatterPlotSim = new ScatterPlot(this); 
-    private Confirmation confirmation = new Confirmation();
+    private Confirmation confirmation = new Confirmation(this);
     private int current = -1;
     private boolean isBack = false;
     
@@ -114,7 +115,12 @@ public class MDAIterator implements StepIterator{
      * @param b A boolean, true for requiring scatterplot output, false for otherwise
      */    
     public void setIsSimPlot(boolean b) { isSimPlot = b; } 
-    
+
+     /** Set if the estimation method = 1 or posthoc is specified
+     * @param b A boolean, true for estimation method = 1 or posthoc is specified, false for otherwise
+     */    
+    public void setIsMethod1OrPosthoc(boolean b) { isMethod1OrPosthoc = b; }    
+
     /** Set which ADVAN subroutine is used
      * @param i An int, the ADVAN number
      */    
@@ -154,7 +160,12 @@ public class MDAIterator implements StepIterator{
      * @return A boolean, true if using user defined model, false if otherwise
      */    
     public boolean getIsPred() { return isPred; };    
-        
+ 
+    /** Get if estimation method = 1 or posthoc is specified
+     * @return A boolean, true if estimation method = 1 or posthoc is specified, false if otherwise
+     */    
+    public boolean getIsMethod1OrPosthoc() { return isMethod1OrPosthoc; };        
+
     /** Get the ADVAN number
      * @return An int, the ADVAN number
      */    
@@ -218,40 +229,37 @@ public class MDAIterator implements StepIterator{
         steps.add(omega);
         if(!isInd)
             steps.add(sigma);
-        if(isEstimation)
-            steps.add(estimation);
-        if(isCov)
-            steps.add(covariance);
-        if(isEstTable)
-        {
-            if(isSimTable)
-                tableEst.isBoth(true);
-            tableEst.setWhich("$ESTIMATION");
-            steps.add(tableEst);            
-        }
-        if(isEstPlot)
-        {
-            if(isSimPlot)
-                scatterPlotEst.isBoth(true);
-            scatterPlotEst.setWhich("$ESTIMATION");
-            steps.add(scatterPlotEst); 
-        }
+
         if(isSimulation)
+        {
             steps.add(simulation);
-        if(isSimTable)
+            if(isSimTable)
+            {
+                tableSim.setWhich("$SIMULATION");
+                steps.add(tableSim);
+            }
+            if(isSimPlot)
+            {
+                scatterPlotSim.setWhich("$SIMULATION");
+                steps.add(scatterPlotSim);
+            }
+        }
+        if(isEstimation)
         {
+            steps.add(estimation);
+            if(isCov)
+                steps.add(covariance);
             if(isEstTable)
-                tableSim.isBoth(true);
-            tableSim.setWhich("$SIMULATION");
-            steps.add(tableSim);
-        }
-        if(isSimPlot)
-        {
+            {
+                tableEst.setWhich("$ESTIMATION");
+                steps.add(tableEst);            
+            }
             if(isEstPlot)
-                scatterPlotSim.isBoth(true);
-            scatterPlotSim.setWhich("$SIMULATION");
-            steps.add(scatterPlotSim);
-        }
+            {
+                scatterPlotEst.setWhich("$ESTIMATION");
+                steps.add(scatterPlotEst); 
+            }            
+        }        
         steps.add(confirmation);                        
     }
 

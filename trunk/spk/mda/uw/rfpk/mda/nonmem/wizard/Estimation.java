@@ -15,12 +15,13 @@ import java.awt.event.ActionEvent;
 
 /**
  * This class defines a step to create the $ESTIMATION record
- * @author  jiaji
+ * @author  jiaji Du
  */
 public class Estimation extends javax.swing.JPanel implements WizardStep {
     
     private StepDescriptor sd = new MyStepDescriptor(); 
     private JComponent panel = this;
+    private MDAIterator iterator = null;
     private boolean isValid = false;
     private JWizardPane wizardPane = null;
     private String method = "METHOD=0 ";
@@ -30,8 +31,9 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
     private String noabort = "";
 
     /** Creates new form Estimation */
-    public Estimation() {
+    public Estimation(MDAIterator iter) {
         initComponents();
+        iterator = iter;
     }
     
     /** This method is called from within the constructor to
@@ -484,6 +486,8 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
 	}
 
 	public void hidingStep(JWizardPane wizard){
+            if(method.equals("METHOD=1 ") || posthoc.equals("POSTHOC "))
+                iterator.setIsMethod1OrPosthoc(true);
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             String record = jTextArea1.getText().trim();
             object.getRecords().setProperty("Estimation", record); 
@@ -536,7 +540,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
             else
                 estimation[5] = "no";
             
-            object.getControl().estimation = estimation;
+            object.getSource().estimation = estimation;
 	}
 
 	public boolean isValid(){

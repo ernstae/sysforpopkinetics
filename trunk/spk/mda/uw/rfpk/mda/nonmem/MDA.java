@@ -15,7 +15,7 @@ public class MDA
 {
     /**
      * The main method that creates the application object and initialize it.
-     * @param args It is not used in this program
+     * @param args A String array containing session ID, secret code and user name 
      */
     public static void main(String[] args)
     {
@@ -57,7 +57,7 @@ public class MDA
     }
 
     /** This method initialize the application
-     * @param args A String array containing the session ID and secret number
+     * @param args A String array containing session ID, secret code and user name
      */
     public void init(String[] args)
     {
@@ -68,21 +68,7 @@ public class MDA
         // Set the position to screen center & size to 2/3 screen size
         window.setBounds(wndSize.width/6, wndSize.height/6,        // Position
                          2*wndSize.width/3, 2*wndSize.height/3);   // Size 
-        window.addWindowListener(new WindowHandler());  // Add window listener
         window.setVisible(true);                        // Display the window
-    }
-
-    /**
-     * Handler class for window events
-     */
-    class WindowHandler extends WindowAdapter
-    {
-        // Handler for window closing event
-        public void windowClosing(WindowEvent e)
-        {
-            window.dispose();                           // Release the window resources
-            System.exit(0);                             // End the application
-        }
     }
 
     private static MDAFrame window;                     // The application window

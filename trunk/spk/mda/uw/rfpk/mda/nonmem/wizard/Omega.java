@@ -25,7 +25,7 @@ import java.awt.event.KeyEvent;
 
 /**
  * This class defines a step to create the $OMEGA record
- * @author  jiaji
+ * @author  jiaji Du
  */
 public class Omega extends javax.swing.JPanel implements WizardStep {
     
@@ -959,7 +959,7 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                     for(int j = 2; j < items.length; j++)
                         omega[i][j] = items[j];
                 }
-                object.getControl().omega = omega;
+                object.getSource().omega = omega;
             }
 	}
 

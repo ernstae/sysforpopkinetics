@@ -114,7 +114,7 @@ int main( int argc, const char * argv[] )
 
   map<string, CppUnit::Test*> master_list_of_tests;
   vector<CppUnit::Test*> tests_to_be_executed;
-  
+
   master_list_of_tests[ "ABA_xTest" ]                        = ABA_xTest::suite();
   master_list_of_tests[ "addTest" ]                          = addTest::suite();
   master_list_of_tests[ "AkronBtimesCTest" ]                 = AkronBtimesCTest::suite();

@@ -15,16 +15,18 @@ import java.awt.event.ActionEvent;
 
 /**
  * This class defines a step to create the Continue
- * @author  jiaji
+ * @author  jiaji Du
  */
 
 public class Continue extends javax.swing.JPanel implements WizardStep {
     
     private StepDescriptor sd = new MyStepDescriptor(); 
     private JComponent panel = this;
+    private MDAIterator iterator = null;
 
     /** Creates new form Continue */
-    public Continue() { 
+    public Continue(MDAIterator iter) { 
+        iterator = iter;
         initComponents();
     }
     
@@ -96,10 +98,10 @@ public class Continue extends javax.swing.JPanel implements WizardStep {
 	public void showingStep(JWizardPane wizard){
             Properties records = ((MDAObject)wizard.getCustomizedObject()).getRecords();
 	    String control = "";
-            String[] names = {"Problem", "Data", "Input", "Pred", "Subroutines", "Aes", 
+            String[] names = {"Problem", "Data", "Input", "Pred", "Subroutines", "Aes",    
                               "Aesinitial", "Model", "PK", "Theta", "Omega", "Des", 
-                              "Error", "Sigma", "Estimation", "Covariance", "TableEst", 
-                              "ScatterPlotEst", "Simulation", "TableSim", "ScatterPlotSim"};  
+                              "Error", "Sigma", "Simulation", "TableSim", "ScatterPlotSim",
+                              "Estimation", "Covariance", "TableEst", "ScatterPlotEst"};              
             for(int i = 0; i < 21; i++)
             {
                 if(!records.getProperty(names[i]).equals("")) 

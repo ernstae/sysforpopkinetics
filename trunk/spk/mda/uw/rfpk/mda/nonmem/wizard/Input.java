@@ -19,7 +19,7 @@ import java.awt.event.ActionEvent;
 
 /**
  * This class defines a step to create the $INPUT record
- * @author  jiaji Du
+ * @author  jiaji Du 
  */
 public class Input extends javax.swing.JPanel implements WizardStep {
     
@@ -66,13 +66,14 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         jRadioButton1 = new javax.swing.JRadioButton();
         jRadioButton2 = new javax.swing.JRadioButton();
         jSeparator1 = new javax.swing.JSeparator();
-        jSeparator2 = new javax.swing.JSeparator();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         jRadioButton3 = new javax.swing.JRadioButton();
         jCheckBox1 = new javax.swing.JCheckBox();
         jCheckBox2 = new javax.swing.JCheckBox();
+        jButton1 = new javax.swing.JButton();
+        jSeparator2 = new javax.swing.JSeparator();
 
         jDialog1.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         help.setEditable(false);
@@ -83,7 +84,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         setLayout(new java.awt.GridBagLayout());
 
         jComboBox1.setBackground(new java.awt.Color(255, 255, 255));
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "DV", "MDV", "EVID", "TIME", "DATE", "DATE1", "DATE2", "DATE3", "AMT", "RATE", "SS", "ADDL", "II", "ABS", "LAG", "UPPER", "LOWER", "L1", "L2", "CMT", "PCMT", "CALL", "CONT" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "ID", "DV", "MDV", "EVID", "TIME", "DATE", "DATE1", "DATE2", "DATE3", "AMT", "RATE", "SS", "ADDL", "II", "ABS", "LAG", "UPPER", "LOWER", "L1", "L2", "CMT", "PCMT", "CALL", "CONT" }));
         jComboBox1.setMinimumSize(new java.awt.Dimension(0, 20));
         jComboBox1.setPreferredSize(new java.awt.Dimension(81, 24));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
@@ -97,18 +98,18 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 84;
+        gridBagConstraints.insets = new java.awt.Insets(14, 12, 8, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(14, 12, 8, 10);
         add(jComboBox1, gridBagConstraints);
 
         jTextField1.setText(" ");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 53;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(17, 11, 10, 12);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         add(jTextField1, gridBagConstraints);
 
         jTextField2.setText(" ");
@@ -117,8 +118,8 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(8, 12, 14, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(8, 12, 14, 11);
         add(jTextField2, gridBagConstraints);
 
         addButton.setText("Enter");
@@ -129,7 +130,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         });
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(2, 14, 10, 12);
@@ -139,7 +140,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         jTextPane1.setEditable(false);
         jTextPane1.setText("Enter the name of the data items in the same order as the data columns\nlocated in the data file.  A data item may be standard or non-standard.\nThe stansdard data item may have alias.  The first data item is  \"ID\" if it \nexists in the data file.   \"Time\" and \"DV\" data items are always required.");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 12, 12);
         add(jTextPane1, gridBagConstraints);
@@ -178,17 +179,9 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jSeparator1, gridBagConstraints);
-
-        jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 74, 0, 1);
-        add(jSeparator2, gridBagConstraints);
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -213,19 +206,19 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
-        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.ipady = 88;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(16, 12, 12, 12);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         add(jScrollPane1, gridBagConstraints);
 
         jLabel1.setText("Alias");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new java.awt.Insets(17, 58, 10, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(17, 46, 10, 0);
         add(jLabel1, gridBagConstraints);
 
         jRadioButton3.setText("Drop or skip this data column");
@@ -241,8 +234,8 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridy = 3;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 13, 7);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 13, 12);
         add(jRadioButton3, gridBagConstraints);
 
         jCheckBox1.setText("Centered");
@@ -254,9 +247,9 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         });
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.insets = new java.awt.Insets(6, 0, 12, 0);
+        gridBagConstraints.insets = new java.awt.Insets(6, 10, 12, 0);
         add(jCheckBox1, gridBagConstraints);
 
         jCheckBox2.setText("Categorical");
@@ -268,12 +261,51 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         });
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.insets = new java.awt.Insets(6, 10, 12, 12);
         add(jCheckBox2, gridBagConstraints);
 
+        jButton1.setText("Remove");
+        jButton1.setEnabled(false);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.insets = new java.awt.Insets(2, 10, 10, 0);
+        add(jButton1, gridBagConstraints);
+
+        jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        add(jSeparator2, gridBagConstraints);
+
     }//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if(!iterator.getIsInd() && index == 0)
+            return;
+        input[index] = "";
+        
+        // Repaint the table
+        jTable1.repaint();  
+        
+        // If input is empty, gray out the Remove button
+        int j = 0;
+        if(!iterator.getIsInd())
+            j = 1;
+        for(int i = j; i < input.length; i++)
+            if(!input[i].equals(""))
+                return;
+        jButton1.setEnabled(false); 
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
         jCheckBox1.setSelected(false);
@@ -326,16 +358,19 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         if(jRadioButton1.isSelected())
         {
             element = (String)jComboBox1.getSelectedItem(); 
-            if(!jTextField1.getText().trim().equals(""))
-                element = element + "=" + jTextField1.getText().trim();
+            String alias = jTextField1.getText().trim();
+            if(!alias.equals(""))
+            {
+                if(Utility.checkTag(alias, "Data item alias"))
+                    return;
+                element = element + "=" + alias;
+            }
         }
         else if(jRadioButton2.isSelected())
         {
             String item = jTextField2.getText().trim();
-            if(item.equals(""))
-            {
+            if(item.equals("") || Utility.checkTag(item, "Data item name"))
                 return;
-            }
             if(exist(stdItems, item.toUpperCase()))
             {
                 JOptionPane.showMessageDialog(null, 
@@ -414,6 +449,9 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         jCheckBox1.setSelected(false);
         jCheckBox2.setSelected(false);
         
+        // Enable the Remove button
+        jButton1.setEnabled(true); 
+        
         // Repaint the table
         jTable1.repaint();
     }//GEN-LAST:event_addButtonActionPerformed
@@ -473,6 +511,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JButton addButton;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JTextArea help;
+    private javax.swing.JButton jButton1;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JComboBox jComboBox1;
@@ -516,30 +555,25 @@ public class Input extends javax.swing.JPanel implements WizardStep {
 	public void showingStep(JWizardPane wizard){
             wizardPane = wizard;
             data = ((MDAObject)wizard.getCustomizedObject()).getData();
-            if(input == null || (input != null && nDataCol != iterator.getNDataCol()))
+            if(input == null)
             {
                 nDataCol = iterator.getNDataCol(); 
                 input = new String[nDataCol];
-                initialize();
+            }  
+            for(int i = 0; i < nDataCol; i++)
+                input[i] = "";
+            index = 0;
+            jComboBox1.removeItem("ID");
+            if(!iterator.getIsInd())
+            {
+                input[0] = "ID";
+                index = 1;
             }
             else
             {
-                if(!exist(input, ""))
-                {
-                    if(iterator.getIsPred())
-                    {
-                        if(!exist(input, "DV")) 
-                            initialize();
-                    }
-                    else
-                    {
-                        if(!(exist(input, "DV") && exist(input, "TIME"))) 
-                            initialize();
-                    }                
-                }                
+                jComboBox1.insertItemAt("ID", 1);
             }
 
-            
             // Create a column model for the main table.  
             TableColumnModel cm = new DefaultTableColumnModel() {
                 public void addColumn(TableColumn tc) {
@@ -564,18 +598,6 @@ public class Input extends javax.swing.JPanel implements WizardStep {
             for(int i = 0; i < nDataCol; i++)
                 cm.getColumn(i).setCellRenderer(cellRenderer);
 	}
-
-        private void initialize()
-        {
-                for(int i = 0; i < nDataCol; i++)
-                    input[i] = "";
-                index = 0;
-                if(!iterator.getIsInd())
-                {
-                    input[0] = "ID";
-                    index = 1;
-                }
-        }
         
 	public void hidingStep(JWizardPane wizard){
             if(nDataCol == 0)
@@ -586,7 +608,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
                 record = record + input[i] + " ";
             record = record + input[nDataCol - 1]; 
             object.getRecords().setProperty("Input", "$INPUT " + record);
-            object.getControl().input = input;
+            object.getSource().input = input;
 	}
 
 	public boolean isValid(){

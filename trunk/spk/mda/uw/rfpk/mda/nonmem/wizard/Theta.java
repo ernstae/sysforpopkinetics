@@ -16,7 +16,7 @@ import java.awt.event.ActionEvent;
 
 /**
  * This class defines a step to create the $THETA record
- * @author  jiaji
+ * @author  jiaji Du
  */
 public class Theta extends javax.swing.JPanel implements WizardStep {
     
@@ -648,7 +648,7 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
                         theta[i][3] = "no";
                     }
                 }
-                object.getControl().theta = theta;
+                object.getSource().theta = theta;
             }
 	}
 

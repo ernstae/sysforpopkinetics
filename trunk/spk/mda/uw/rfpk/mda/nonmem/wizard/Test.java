@@ -9,10 +9,11 @@ package uw.rfpk.mda.nonmem.wizard;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Properties;
+import java.util.Calendar;
 
 /**
  *
- * @author  jiaji
+ * @author  jiaji Du
  */
 public class Test{ 
     /** Creates a new instance of Test */
@@ -37,6 +38,13 @@ public class Test{
 
         window.addWindowListener(new WindowHandler());  // Add window listener
         window.setVisible(true);
+        Calendar calendar = Calendar.getInstance();
+        System.out.println("day = " + String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
+        System.out.println("month = " + String.valueOf(calendar.get(Calendar.MONTH)));
+        System.out.println("year = " + String.valueOf(calendar.get(Calendar.YEAR)));        
+        System.out.println("hour = " + String.valueOf(calendar.get(Calendar.HOUR)));
+        System.out.println("minute = " + String.valueOf(calendar.get(Calendar.MINUTE)));
+        System.out.println("second = " + String.valueOf(calendar.get(Calendar.SECOND)));        
     }
     class Iterator extends MDAIterator{
         public Iterator(){
@@ -56,11 +64,11 @@ public class Test{
 //            Error step = new Error(i);
 //            GettingStarted step = new GettingStarted(i);
 //            Estimation step = new Estimation();
-            Input step = new Input(i);
+//            Input step = new Input(i);
 //            Model step = new Model(i);
 //            PK step = new PK(i);
 //            Pred step = new Pred(i);
-//            Omega step = new Omega(i); 
+            Omega step = new Omega(i); 
 //            Sigma step = new Sigma(i);
 //            ScatterPlot step = new ScatterPlot(i); 
 //            Simulation step = new Simulation();
@@ -73,9 +81,10 @@ public class Test{
             records.setProperty("Aes",  "");
             records.setProperty("Error",  "");
             records.setProperty("Des",  "");            
-            records.setProperty("Input", "$INPUT ID DOSE=AMT TIME CP=DV WT"); 
+            records.setProperty("Input", "$INPUT ID AMT=DOSE TIME DV=CP WT"); 
             records.setProperty("PK", "$PK \nK\nV=\nS1=1\nS2=1\nF1=1\nF0=1\nALAG1=0"); 
             records.setProperty("Pred", "");
+            String[] input = object.getRecords().getProperty("Input").split(" ");
             step.getStepDescription().showingStep(new org.netbeans.ui.wizard.JWizardPane(i, object));
             getContentPane().add(step); 
         }

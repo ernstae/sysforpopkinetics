@@ -15,7 +15,7 @@ import java.awt.event.ActionEvent;
 
 /**
  * This class defines a step to create the $AES record
- * @author  jiaji
+ * @author  jiaji Du
  */
 public class Aes extends javax.swing.JPanel implements WizardStep {
     
@@ -89,6 +89,12 @@ public class Aes extends javax.swing.JPanel implements WizardStep {
         jPanel1.add(jButton2, gridBagConstraints);
 
         jButton3.setText("Paste");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
@@ -100,13 +106,18 @@ public class Aes extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 48);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 48);
         jPanel1.add(jTextPane1, gridBagConstraints);
 
         add(jPanel1, java.awt.BorderLayout.NORTH);
 
     }//GEN-END:initComponents
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        isValid = true;
+        wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jTextArea1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextArea1KeyTyped
         isValid = true;
@@ -159,10 +170,10 @@ public class Aes extends javax.swing.JPanel implements WizardStep {
 	public void hidingStep(JWizardPane wizard){
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             String record = jTextArea1.getText().trim();
-            if(!record.equals(""))
+            if(!record.equals("") && !Utility.checkTag(record, "AES code"))
             {
                 object.getRecords().setProperty("Aes", "$AES \n" + record);
-                object.getControl().aes = "\n" + record + "\n";
+                object.getSource().aes = "\n" + record + "\n";
             }
 	}
 

@@ -243,7 +243,7 @@ $head Description$$
      $end
      ===============================================================================
      */
-
+#include <iostream>
      # include <stdlib.h>
      # include <assert.h>
      # include <stdio.h>
@@ -416,7 +416,7 @@ $head Description$$
      int BlockCapacity(void *ptr)
      {    unsigned char *ch;
           Info        *info;
-
+	  std::cout << "NumberInUse = " << NumberInUse << std::endl;
           if( ptr == NULL )
                return NumberInUse;
 

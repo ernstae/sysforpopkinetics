@@ -25,7 +25,7 @@ import java.awt.event.KeyEvent;
 
 /**
  * This class defines a step to create the $SIGMA record
- * @author  jiaji
+ * @author  jiaji Du
  */
 public class Sigma extends javax.swing.JPanel implements WizardStep {
     
@@ -958,7 +958,7 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
                     for(int j = 2; j < items.length; j++)
                         sigma[i][j] = items[j];
                 }
-                object.getControl().sigma = sigma;
+                object.getSource().sigma = sigma;
             }
 	}
 
