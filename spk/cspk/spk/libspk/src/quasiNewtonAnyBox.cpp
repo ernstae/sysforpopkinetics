@@ -447,7 +447,7 @@ If the return value for $code quasiNewtonAnyBox$$ is true, i.e., the algorithm
 converged successfully, and 
 if $italic pdrowF_xOut$$ is not equal to null, then on output the matrix
 value pointed to by $italic pdrowF_xOut$$ will be equal to the 
-value of the gradient of objective function $math%f(x)%$$ with respect
+value of the gradient of the objective function $math%f(x)%$$ with respect
 to the variable at the final iteration.
 Note that the user must allocate memory for the value pointed 
 to by $italic pdrowF_xOut$$.
@@ -1184,7 +1184,7 @@ void quasiNewtonAnyBox(
   // If the optimization didn't cause an exception, set the return values.
   //------------------------------------------------------------
 
-  // If the final x value should be returned, then compute it
+  // If the final value for x should be returned, then compute it
   // from the final y value.
   if ( pdvecXOut ) 
   {
@@ -1207,20 +1207,14 @@ void quasiNewtonAnyBox(
     *pdFOut = fScaled;
   }
   
+  // If the final value for the unscaled gradient should be returned,
+  // then compute it from the final scaled value.
   if ( pdrowF_xOut )
   {
     double* pdF_xOutData = pdrowF_xOut->data();
+    assert( pdF_xOutData->nr() == nObjPar );
 
-    unscaleGradElem( nObjPar, yCurr, pdXLowData, pdXUpData, pdXDiffData, pdXOutData );
-
-void unscaleGradElem(
-  int            n,
-  const double*  gScaled, 
-  const double*  xDiff,
-  double*        g )
-
-    std::copy( gScaled, gScaled + nObjPar, pdF_xOutData );
-  }
+    unscaleGradElem( nObjPar, gScaled, pdXDiffData, pdF_xOutData );
 }
 
 
