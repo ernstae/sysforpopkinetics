@@ -77,6 +77,7 @@ namespace // [Begin: unnamed namespace]
 #include <spk/AkronBtimesC.h>
 #include <spk/allZero.h>
 #include <spk/multiply.h>
+#include <spk/replaceSubblock.h>
 #include <spk/SpkException.h>
 #include <spk/SpkModel.h>
 #include <spk/SpkValarray.h>
@@ -147,43 +148,47 @@ PopPredModel::PopPredModel(
     covStruct                sigmaStructIn,
     const valarray<double>&  sigmaMinRepIn )
   :
-  nTheta                            ( nThetaIn ),
-  nEta                              ( nEtaIn ),
-  nEps                              ( nEpsIn ),
-  nZ                                ( nThetaIn + nEtaIn + nEpsIn ),
-  thetaOffsetInZ                    ( 0 ),
-  etaOffsetInZ                      ( nThetaIn ),
-  epsOffsetInZ                      ( nThetaIn + nEtaIn ),
-  fOffsetInW                        ( 0 ),
-  pOmegaCurr                        ( 0 ),
-  pSigmaCurr                        ( 0 ),
-  pPredADFunCurr                    ( 0 ),
-  predEvaluator                     ( predEvaluatorIn ),
-  zCurr                             ( nZ ),
-  isDataMeanCurrOk                  ( false ),
-  isDataMean_popParCurrOk           ( false ),
-  isDataMean_indParCurrOk           ( false ),
-  isDataVarianceCurrOk              ( false ),
-  isDataVariance_popParCurrOk       ( false ),
-  isDataVariance_indParCurrOk       ( false ),
-  isDataVarianceInvCurrOk           ( false ),
-  isDataVarianceInv_popParCurrOk    ( false ),
-  isDataVarianceInv_indParCurrOk    ( false ),
-  isPredADFunCurrOk                 ( false ),
-  isPredFirstDerivCurrOk            ( false ),
-  isPredSecondDerivCurrOk           ( false ),
-  usedCachedDataMean                ( false ),
-  usedCachedDataMean_popPar         ( false ),
-  usedCachedDataMean_indPar         ( false ),
-  usedCachedDataVariance            ( false ),
-  usedCachedDataVariance_popPar     ( false ),
-  usedCachedDataVariance_indPar     ( false ),
-  usedCachedDataVarianceInv         ( false ),
-  usedCachedDataVarianceInv_popPar  ( false ),
-  usedCachedDataVarianceInv_indPar  ( false ),
-  usedCachedPredADFun               ( false ),
-  usedCachedPredFirstDeriv          ( false ),
-  usedCachedPredSecondDeriv         ( false )
+  nTheta                              ( nThetaIn ),
+  nEta                                ( nEtaIn ),
+  nEps                                ( nEpsIn ),
+  nZ                                  ( nThetaIn + nEtaIn + nEpsIn ),
+  thetaOffsetInZ                      ( 0 ),
+  etaOffsetInZ                        ( nThetaIn ),
+  epsOffsetInZ                        ( nThetaIn + nEtaIn ),
+  fOffsetInW                          ( 0 ),
+  pOmegaCurr                          ( 0 ),
+  pSigmaCurr                          ( 0 ),
+  pPredADFunCurr                      ( 0 ),
+  predEvaluator                       ( predEvaluatorIn ),
+  zCurr                               ( nZ ),
+  isDataMeanCurrOk                    ( false ),
+  isDataMean_popParCurrOk             ( false ),
+  isDataMean_indParCurrOk             ( false ),
+  isDataVarianceCurrOk                ( false ),
+  isDataVariance_popParCurrOk         ( false ),
+  isDataVariance_indParCurrOk         ( false ),
+  isDataVarianceInvCurrOk             ( false ),
+  isDataVarianceInv_popParCurrOk      ( false ),
+  isDataVarianceInv_indParCurrOk      ( false ),
+  isIndParVariance_popParCurrOk       ( false ),
+  isIndParVarianceInv_popParCurrOk    ( false ),
+  isPredADFunCurrOk                   ( false ),
+  isPredFirstDerivCurrOk              ( false ),
+  isPredSecondDerivCurrOk             ( false ),
+  usedCachedDataMean                  ( false ),
+  usedCachedDataMean_popPar           ( false ),
+  usedCachedDataMean_indPar           ( false ),
+  usedCachedDataVariance              ( false ),
+  usedCachedDataVariance_popPar       ( false ),
+  usedCachedDataVariance_indPar       ( false ),
+  usedCachedDataVarianceInv           ( false ),
+  usedCachedDataVarianceInv_popPar    ( false ),
+  usedCachedDataVarianceInv_indPar    ( false ),
+  usedCachedIndParVariance_popPar     ( false ),
+  usedCachedIndParVarianceInv_popPar  ( false ),
+  usedCachedPredADFun                 ( false ),
+  usedCachedPredFirstDeriv            ( false ),
+  usedCachedPredSecondDeriv           ( false )
 {
   //------------------------------------------------------------
   // Initialize quantities related to the omega covariance matrix.
@@ -235,17 +240,18 @@ PopPredModel::PopPredModel(
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   }
 
-  // Save the omega value maintained by this class.
-  omegaCurr.resize( nEta * nEta );
-  pOmegaCurr->expandCovMinRep( omegaMinRepIn, omegaCurr );
+  // Create a temporary version of omega that corresponds to the
+  // minimal representation passed to this constructor.
+  valarray<double> omegaTemp( nEta * nEta );
+  pOmegaCurr->expandCovMinRep( omegaMinRepIn, omegaTemp );
   assert( omegaMinRepIn.size() == nOmegaPar );
 
   // Set the omega value maintained by the covariance class.
-  pOmegaCurr->setCov( omegaCurr );
+  pOmegaCurr->setCov( omegaTemp );
 
   // Save the initial value for the omega parameters.
   omegaParCurr.resize( nOmegaPar);
-  pOmegaCurr->calcPar( omegaCurr, omegaParCurr );
+  pOmegaCurr->calcPar( omegaTemp, omegaParCurr );
 
 
   //------------------------------------------------------------
@@ -298,7 +304,8 @@ PopPredModel::PopPredModel(
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   }
 
-  // Save the sigma value maintained by this class.
+  // Save the sigma value maintained by this class that corresponds
+  // to the minimal representation passed to this constructor.
   sigmaCurr.resize( nEps * nEps );
   pSigmaCurr->expandCovMinRep( sigmaMinRepIn, sigmaCurr );
   assert( sigmaMinRepIn.size() == nSigmaPar );
@@ -654,18 +661,20 @@ void PopPredModel::doSetIndPar( const valarray<double>& bIn )
 
 void PopPredModel::invalidateCache() const
 {
-  isDataMeanCurrOk               = false;
-  isDataMean_popParCurrOk        = false;
-  isDataMean_indParCurrOk        = false;
-  isDataVarianceCurrOk           = false;
-  isDataVariance_popParCurrOk    = false;
-  isDataVariance_indParCurrOk    = false;
-  isDataVarianceInvCurrOk        = false;
-  isDataVarianceInv_popParCurrOk = false;
-  isDataVarianceInv_indParCurrOk = false;
-  isPredADFunCurrOk              = false;
-  isPredFirstDerivCurrOk         = false;
-  isPredSecondDerivCurrOk        = false;
+  isDataMeanCurrOk                 = false;
+  isDataMean_popParCurrOk          = false;
+  isDataMean_indParCurrOk          = false;
+  isDataVarianceCurrOk             = false;
+  isDataVariance_popParCurrOk      = false;
+  isDataVariance_indParCurrOk      = false;
+  isDataVarianceInvCurrOk          = false;
+  isDataVarianceInv_popParCurrOk   = false;
+  isDataVarianceInv_indParCurrOk   = false;
+  isIndParVariance_popParCurrOk    = false;
+  isIndParVarianceInv_popParCurrOk = false;
+  isPredADFunCurrOk                = false;
+  isPredFirstDerivCurrOk           = false;
+  isPredSecondDerivCurrOk          = false;
 }
 
 
@@ -779,6 +788,54 @@ bool PopPredModel::getUsedCachedDataVarianceInv_indPar() const
 
 /*************************************************************************
  *
+ * Function: getUsedCachedIndParVariance
+ *
+ *************************************************************************/
+
+bool PopPredModel::getUsedCachedIndParVariance() const
+{
+  return usedCachedIndParVariance;
+}
+
+
+/*************************************************************************
+ *
+ * Function: getUsedCachedIndParVariance_popPar
+ *
+ *************************************************************************/
+
+bool PopPredModel::getUsedCachedIndParVariance_popPar() const
+{
+  return usedCachedIndParVariance_popPar;
+}
+
+
+/*************************************************************************
+ *
+ * Function: getUsedCachedIndParVarianceInv
+ *
+ *************************************************************************/
+
+bool PopPredModel::getUsedCachedIndParVarianceInv() const
+{
+  return usedCachedIndParVarianceInv;
+}
+
+
+/*************************************************************************
+ *
+ * Function: getUsedCachedIndParVarianceInv_popPar
+ *
+ *************************************************************************/
+
+bool PopPredModel::getUsedCachedIndParVarianceInv_popPar() const
+{
+  return usedCachedIndParVarianceInv_popPar;
+}
+
+
+/*************************************************************************
+ *
  * Function: getUsedCachedPredADFun
  *
  *************************************************************************/
@@ -834,6 +891,30 @@ bool PopPredModel::getUsedCachedOmega() const
 bool PopPredModel::getUsedCachedOmega_omegaPar() const
 {
   return pOmegaCurr->getUsedCachedCov_par();
+}
+
+
+/*************************************************************************
+ *
+ * Function: getUsedCachedOmegaInv
+ *
+ *************************************************************************/
+
+bool PopPredModel::getUsedCachedOmegaInv() const
+{
+  return pOmegaCurr->getUsedCachedInv();
+}
+
+
+/*************************************************************************
+ *
+ * Function: getUsedCachedOmegaInv_omegaPar
+ *
+ *************************************************************************/
+
+bool PopPredModel::getUsedCachedOmegaInv_omegaPar() const
+{
+  return pOmegaCurr->getUsedCachedInv_par();
 }
 
 
@@ -1975,9 +2056,9 @@ bool PopPredModel::doDataMean_popPar( valarray<double>& ret ) const
   // Calculate the value.
   //------------------------------------------------------------
 
-  int col;
   int j;
   int k;
+  int q;
 
   // Set all of the elements of the derivative of the data 
   // mean equal to zero.
@@ -1986,7 +2067,7 @@ bool PopPredModel::doDataMean_popPar( valarray<double>& ret ) const
   // Set the values for the partial derivatives of the elements
   // of the data mean:
   //
-  //      (k)
+  //      (q)
   //     d       f    ( alpha, b  )  .
   //      alpha   i(j)          i
   //
@@ -2023,7 +2104,7 @@ bool PopPredModel::doDataMean_popPar( valarray<double>& ret ) const
     //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    // Set the partial derivatives that depend on theta:
+    // Set the partial derivatives of the elements that depend on theta:
     //
     //      (k)                      
     //     d       f    ( alpha, b  )  .
@@ -2031,9 +2112,9 @@ bool PopPredModel::doDataMean_popPar( valarray<double>& ret ) const
     //
     for ( k = 0; k < nTheta; k++ )
     {
-      col = k + thetaOffsetInPopPar;
+      q = k + thetaOffsetInPopPar;
 
-      dataMean_popParCurr[j + col * nRow] = f_thetaCurr[j + col * nRow];
+      dataMean_popParCurr[j + q * nRow] = f_thetaCurr[j + q * nRow];
     }
 
   }
@@ -2412,11 +2493,11 @@ bool PopPredModel::doDataVariance_popPar( valarray<double>& ret ) const
   int h_thetaRow;
   int h_thetaCol;
   int row;
-  int col;
   int j;
   int k;
   int m;
   int n;
+  int q;
 
   // Set all of the elements of the derivative of the data 
   // variance equal to zero.
@@ -2425,7 +2506,7 @@ bool PopPredModel::doDataVariance_popPar( valarray<double>& ret ) const
   // Set the values for the partial derivatives of the diagonal
   // elements of the data variance:
   //
-  //      (k)
+  //      (q)
   //     d       R      ( alpha, b  )  .
   //      alpha   i(j,j)          i
   //
@@ -2521,7 +2602,7 @@ bool PopPredModel::doDataVariance_popPar( valarray<double>& ret ) const
       hCol_theta,
       nTheta );
 
-    // Set the partial derivatives that depend on theta:
+    // Set the partial derivatives of the elements that depend on theta:
     //
     //                                       -                               -
     //      (k)                             |         T                       |
@@ -2531,9 +2612,9 @@ bool PopPredModel::doDataVariance_popPar( valarray<double>& ret ) const
     //
     for ( k = 0; k < nTheta; k++ )
     {
-      col = k + thetaOffsetInPopPar;
+      q = k + thetaOffsetInPopPar;
 
-      dataVariance_popParCurr[row + col * nRow] =
+      dataVariance_popParCurr[row + q * nRow] =
         2.0 * dataVarianceDiag_theta[k];
     }
 
@@ -2551,7 +2632,7 @@ bool PopPredModel::doDataVariance_popPar( valarray<double>& ret ) const
       sigma_sigmaParCurr,
       nSigmaPar );
 
-    // Set the partial derivatives that depend on sigmaPar:
+    // Set the partial derivatives of the elements that depend on sigmaPar:
     //
     //                                          -                                        -
     //      (k)                                |        T            T                    |
@@ -2562,9 +2643,9 @@ bool PopPredModel::doDataVariance_popPar( valarray<double>& ret ) const
     // where kron represents the Kronecker product operator.
     for ( k = 0; k < nSigmaPar; k++ )
     {
-      col = k + sigmaParOffsetInPopPar;
+      q = k + sigmaParOffsetInPopPar;
 
-      dataVariance_popParCurr[row + col * nRow] =
+      dataVariance_popParCurr[row + q * nRow] =
         dataVarianceDiag_sigmaPar[k];
     }
 
@@ -2676,7 +2757,6 @@ bool PopPredModel::doDataVariance_indPar( valarray<double>& ret ) const
   int h_etaRow;
   int h_etaCol;
   int row;
-  int col;
   int j;
   int k;
   int m;
@@ -2772,7 +2852,7 @@ bool PopPredModel::doDataVariance_indPar( valarray<double>& ret ) const
       hCol_eta,
       nEta );
 
-    // Set the partial derivatives that depend on eta:
+    // Set the partial derivatives of the elements that depend on eta:
     //
     //                                     -                             -
     //      (k)                           |         T                     |
@@ -2782,11 +2862,10 @@ bool PopPredModel::doDataVariance_indPar( valarray<double>& ret ) const
     //
     for ( k = 0; k < nIndPar; k++ )
     {
-      col = k;
-
-      dataVariance_indParCurr[row + col * nRow] =
+      dataVariance_indParCurr[row + k * nRow] =
         2.0 * dataVarianceDiag_eta[k];
     }
+    assert( nIndPar == nEta );
 
   }
 
@@ -3151,46 +3230,422 @@ bool PopPredModel::doDataVarianceInv_indPar( valarray<double>& ret ) const
 }
 
 
-// [Remove]=========================================
-//
+/*************************************************************************
+ *
+ * Function: doIndParVariance
+ *
+ *
+ * Sets ret equal to the current value for the variance of the 
+ * individual parameter,
+ *
+ *     D ( alpha )  ,
+ *
+ * where
+ *
+ *     alpha  = current value for the population parameter.
+ *
+ * Note that for the population level Pred model, the individual
+ * parameter variance is equivalent to omega, i.e.,
+ *
+ *     D ( alpha )  =  omega( omegaPar )  .
+ *
+ *************************************************************************/
+
 void PopPredModel::doIndParVariance( valarray<double>& ret ) const 
 {
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
   int nRow = nIndPar;
   int nCol = nIndPar;
+
+
+  //------------------------------------------------------------
+  // Prepare to calculate the value.
+  //------------------------------------------------------------
+
   ret.resize( nRow * nCol );
-  ret = 1.0;
-  return;
+
+
+  //------------------------------------------------------------
+  // Calculate the value.
+  //------------------------------------------------------------
+
+  // Set
+  //
+  //     D ( alpha )  =  omega( omegaPar )  .
+  //
+  // Note that the Cov object maintains the current version of this
+  // quantity internally.
+  pOmegaCurr->cov( ret );
+
+
+  //------------------------------------------------------------
+  // Finish up.
+  //------------------------------------------------------------
+
+  // Set the flag to indicate if the cached value was used.
+  usedCachedIndParVariance = pOmegaCurr->getUsedCachedCov();
 }
+
+
+/*************************************************************************
+ *
+ * Function: doIndParVariance_popPar
+ *
+ *
+ * Sets ret equal to the current value for the derivative with 
+ * respect to the population parameter of the variance of the 
+ * individual parameter,
+ *
+ *                                            -              -
+ *                                           |                |
+ *     d       D ( alpha )  =  d       rvec  |   D ( alpha )  |  ,
+ *      alpha                   alpha        |                |
+ *                                            -              -
+ * where
+ *
+ *     alpha  = current value for the population parameter.
+ *
+ * This function returns a value of true if this derivative has 
+ * at least one nonzero element.
+ *
+ * Note that for the population level Pred model, the individual
+ * parameter variance is equivalent to omega, i.e.,
+ *
+ *     D ( alpha )  =  omega( omegaPar )  .
+ *
+ *************************************************************************/
 
 bool PopPredModel::doIndParVariance_popPar( valarray<double>& ret ) const 
 {
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
   int nRow = nIndPar * nIndPar;
   int nCol = nPopPar;
+
+
+  //------------------------------------------------------------
+  // Use the cached value if possible.
+  //------------------------------------------------------------
+
   ret.resize( nRow * nCol );
-  ret = 0.0;
-  return false;
+
+  if ( isIndParVariance_popParCurrOk )
+  {
+    ret = indParVariance_popParCurr;
+    usedCachedIndParVariance_popPar = true;
+
+    // Return a value of true if this derivative has at least one
+    // nonzero element.
+    return !allZero( indParVariance_popParCurr );
+  }
+  else
+  {
+    usedCachedIndParVariance_popPar = false;
+  }
+
+  indParVariance_popParCurr.resize( nRow * nCol );
+
+
+  //------------------------------------------------------------
+  // Prepare to calculate the value.
+  //------------------------------------------------------------
+
+  // Save the current value for the derivative of omega.
+  pOmegaCurr->cov_par( omega_omegaParCurr );
+
+
+  //------------------------------------------------------------
+  // Calculate the value.
+  //------------------------------------------------------------
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //
+  // Note
+  // ----
+  //
+  // Since the population parameter is
+  //
+  //                -              -
+  //               |   thetaCurr    |
+  //               |                |
+  //     alpha  =  |  omegaParCurr  |  ,
+  //               |                |
+  //               |  sigmaParCurr  |
+  //                -              -
+  //
+  // and since the individual parameter variance D( alpha ) does 
+  // not depend on theta or sigmaPar, its derivative is
+  //
+  //     d       D ( alpha )
+  //      alpha
+  //
+  //             -                                                              -
+  //            |  0, 0, ... , 0,                                 0, 0, ... , 0  |
+  //            |                                                                |
+  //         =  |  0, 0, ... , 0,  d          omega ( omega  ) ,  0, 0, ... , 0  |  ,
+  //            |                   omegaPar                                     |  
+  //            |  0, 0, ... , 0,                                 0, 0, ... , 0  |
+  //             -                                                              -
+  //
+  // where there are nTheta columns of zeroes before the derivatives
+  // with respect to omegaPar and there are nSigmaPar columns of
+  // zeroes after.
+  //
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  int omegaParDepBlockStartRow = 0;
+  int omegaParDepBlockStartCol = nTheta;
+
+  // Set all of the elements of the derivative of the individual
+  // parameter variance equal to zero.
+  indParVariance_popParCurr = 0.0;
+
+  // Set the partial derivatives of the elements that depend on omegaPar:
+  //
+  //     d          D ( alpha )  .
+  //      omegaPar
+  //
+  replaceSubblock( 
+    indParVariance_popParCurr,
+    nPopPar,
+    omega_omegaParCurr,
+    nOmegaPar,
+    omegaParDepBlockStartRow,
+    omegaParDepBlockStartCol );
+
+
+  //------------------------------------------------------------
+  // Finish up.
+  //------------------------------------------------------------
+
+  isIndParVariance_popParCurrOk = true;
+  ret = indParVariance_popParCurr;
+
+  // Return a value of true if this derivative has at least one
+  // nonzero element.
+  return !allZero( indParVariance_popParCurr );
 }
+
+
+/*************************************************************************
+ *
+ * Function: doIndParVarianceInv
+ *
+ *
+ * Sets ret equal to the current value for the inverse of the variance
+ * of the individual parameter,
+ *
+ *      -1
+ *     D  ( alpha )  ,
+ *
+ * where
+ *
+ *     alpha  = current value for the population parameter.
+ *
+ * Note that for the population level Pred model, the individual
+ * parameter variance is equivalent to omega, i.e.,
+ *
+ *     D ( alpha )  =  omega( omegaPar )  .
+ *
+ *************************************************************************/
 
 void PopPredModel::doIndParVarianceInv( valarray<double>& ret ) const 
 {
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
   int nRow = nIndPar;
   int nCol = nIndPar;
+
+
+  //------------------------------------------------------------
+  // Prepare to calculate the value.
+  //------------------------------------------------------------
+
   ret.resize( nRow * nCol );
-  ret = 1.0;
-  return;
+
+
+  //------------------------------------------------------------
+  // Calculate the value.
+  //------------------------------------------------------------
+
+  // Set
+  //
+  //      -1                   -1
+  //     D  ( alpha )  =  omega  ( omegaPar )  .
+  //
+  // Note that the Cov object maintains the current version of this
+  // quantity internally.
+  pOmegaCurr->inv( ret );
+
+
+  //------------------------------------------------------------
+  // Finish up.
+  //------------------------------------------------------------
+
+  // Set the flag to indicate if the cached value was used.
+  usedCachedIndParVarianceInv = pOmegaCurr->getUsedCachedInv();
 }
+
+
+/*************************************************************************
+ *
+ * Function: doIndParVarianceInv_popPar
+ *
+ *
+ * Sets ret equal to the current value for the derivative with respect
+ * to the population parameter of the inverse of the variance of the 
+ * individual parameter,
+ *
+ *                                             -               -
+ *              -1                            |    -1           |
+ *     d       D  ( alpha )  =  d       rvec  |   D  ( alpha )  |  ,
+ *      alpha                    alpha        |                 |
+ *                                             -               -
+ * where
+ *
+ *     alpha  = current value for the population parameter.
+ *
+ * This function returns a value of true if this derivative has 
+ * at least one nonzero element.
+ *
+ * Note that for the population level Pred model, the individual
+ * parameter variance is equivalent to omega, i.e.,
+ *
+ *     D ( alpha )  =  omega( omegaPar )  .
+ *
+ *************************************************************************/
 
 bool PopPredModel::doIndParVarianceInv_popPar( valarray<double>& ret ) const 
 {
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
   int nRow = nIndPar * nIndPar;
   int nCol = nPopPar;
-  ret.resize( nRow * nCol );
-  ret = 0.0;
-  return false;
-}
 
-//
-// [Remove]=========================================
+
+  //------------------------------------------------------------
+  // Use the cached value if possible.
+  //------------------------------------------------------------
+
+  ret.resize( nRow * nCol );
+
+  if ( isIndParVarianceInv_popParCurrOk )
+  {
+    ret = indParVarianceInv_popParCurr;
+    usedCachedIndParVarianceInv_popPar = true;
+
+    // Return a value of true if this derivative has at least one
+    // nonzero element.
+    return !allZero( indParVarianceInv_popParCurr );
+  }
+  else
+  {
+    usedCachedIndParVarianceInv_popPar = false;
+  }
+
+  indParVarianceInv_popParCurr.resize( nRow * nCol );
+
+
+  //------------------------------------------------------------
+  // Prepare to calculate the value.
+  //------------------------------------------------------------
+
+  // Save the current value for the derivative of the invese 
+  // of omega.
+  pOmegaCurr->inv_par( omegaInv_omegaParCurr );
+
+
+  //------------------------------------------------------------
+  // Calculate the value.
+  //------------------------------------------------------------
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //
+  // Note
+  // ----
+  //
+  // Since the population parameter is
+  //
+  //                -              -
+  //               |   thetaCurr    |
+  //               |                |
+  //     alpha  =  |  omegaParCurr  |  ,
+  //               |                |
+  //               |  sigmaParCurr  |
+  //                -              -
+  //
+  // and since the individual parameter variance D( alpha ) does
+  // not depend on theta or sigmaPar, the derivative of its inverse
+  // is
+  //
+  //              -1
+  //     d       D  ( alpha )
+  //      alpha
+  //
+  //             -                                                               -
+  //            |  0, 0, ... , 0,                                  0, 0, ... , 0  |
+  //            |                                  -1                             |
+  //         =  |  0, 0, ... , 0,  d          omega  ( omega  ) ,  0, 0, ... , 0  |  ,
+  //            |                   omegaPar                                      |  
+  //            |  0, 0, ... , 0,                                  0, 0, ... , 0  |
+  //             -                                                               -
+  //
+  // where there are nTheta columns of zeroes before the derivatives
+  // with respect to omegaPar and there are nSigmaPar columns of
+  // zeroes after.
+  //
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  int omegaParDepBlockStartRow = 0;
+  int omegaParDepBlockStartCol = nTheta;
+
+  // Set all of the elements of the derivative of the inverse of 
+  // the individual parameter variance equal to zero.
+  indParVarianceInv_popParCurr = 0.0;
+
+  // Set the  partial derivatives of the elements that depend on omegaPar:
+  //
+  //                  -1
+  //     d          D   ( alpha )  .
+  //      omegaPar
+  //
+  replaceSubblock( 
+    indParVarianceInv_popParCurr,
+    nPopPar,
+    omegaInv_omegaParCurr,
+    nOmegaPar,
+    omegaParDepBlockStartRow,
+    omegaParDepBlockStartCol );
+
+
+  //------------------------------------------------------------
+  // Finish up.
+  //------------------------------------------------------------
+
+  isIndParVarianceInv_popParCurrOk = true;
+  ret = indParVarianceInv_popParCurr;
+
+  // Return a value of true if this derivative has at least one
+  // nonzero element.
+  return !allZero( indParVarianceInv_popParCurr );
+}
 
 
 /*************************************************************************
@@ -3510,7 +3965,12 @@ void PopPredModel::getOmega( valarray<double>& ret ) const
 {
   ret.resize( pOmegaCurr->getNPar() );
 
-  pOmegaCurr->calcCovMinRep( omegaCurr, ret );
+  // Get the current value for omega.
+  valarray<double> omegaTemp( nEta * nEta );
+  pOmegaCurr->cov( omegaTemp );
+
+  // Return its minimal representation.
+  pOmegaCurr->calcCovMinRep( omegaTemp, ret );
 }
 
 
