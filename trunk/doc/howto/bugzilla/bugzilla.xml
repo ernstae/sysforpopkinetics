@@ -175,7 +175,7 @@ AllowOverride None                          ==>  AllowOverride All
     </para>
     </sect2>
     <sect2>
-      <title>Hide <filename>ssl.conf</filename></title>
+      <title>Empty <filename>ssl.conf</filename></title>
       <para>
 	The default configuration files that are part of the RedHat
 	httpd package set up a secure connection on port 443 
@@ -184,15 +184,16 @@ AllowOverride None                          ==>  AllowOverride All
 	web server, which already uses port 443.  The directives are not in
 	<filename>/etc/httpd/conf/httpd.conf</filename>, but rather in
 	<filename>/etc/httpd/conf.d/ssl.conf</filename>.  Since we do not need
-	anything in <filename>ssl.conf</filename>, we can simply keep it from 
-	being used by changing its name.
+	anything in <filename>ssl.conf</filename>, we will make a backup copy,
+	then empty the file of contents.
       </para>
       <para>
 	On <emphasis>webserver</emphasis>, enter the following commands:
 	<screen>
 cd /etc/httpd/conf.d
 su
-mv ssl.conf ssl.conf.hide.
+cp ssl.conf ssl.conf.bak
+> ssl.conf
 	</screen>
       </para>
     </sect2>

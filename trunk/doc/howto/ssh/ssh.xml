@@ -278,7 +278,7 @@
     </para>
   </sect1>
   <sect1>
-    <title>Configuring Password-Free Remote Connection</title>
+    <title>Configuring Password-Free Remote Connection for a Workstation</title>
     <para>
       This section describes the process for setting up the 
       Gnome desktop for password-free connection to remote machines.
@@ -474,6 +474,36 @@ ssh whitechuck.rfpk.washington.edu
 	    </para>
 	  </listitem>
 	</itemizedlist>
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Configuring Password-Free Remote Connection for a Server</title>
+    <para>
+      The previous section describes setting up the capability to 
+      initiate password-free connections from a workstation.  If you 
+      connect to a server via ssh and then wish to initiate
+      connections from that location, the workstation configuration
+      will not work, because you are not using the gnome interface
+      of the server.  An alternate system called <emphasis>keychain</emphasis>
+      must be used.  The process of configuring the server is exactly
+      the same as for a workstation, except that the step titled
+      <emphasis>Configure Gnome</emphasis> is replaced with the following
+      step titled <emphasis>Configure Keychain</emphasis>.
+    </para>
+    <sect2>
+      <title>Configure Keychain</title>
+      <para>
+	Download the keychain rpm from 
+	<ulink url="http://www.gentoo.org/proj/en/keychain.xml">
+	  http://www.gentoo.org/proj/en/keychain.xml
+	</ulink> and install it.  Then add the following lines to
+	the <filename>.bash_profile</filename> file in your 
+	home directory on the server.
+	<screen>
+keychain ~/.ssh/id_dsa
+. ~/.keychain/${HOSTNAME}-sh
+	</screen>
       </para>
     </sect2>
   </sect1>

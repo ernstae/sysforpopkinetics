@@ -8,7 +8,7 @@ java:
 	javadoc -d docs rfpk.spk.spkdb
 
 test:
-	load_spktest.pl 
+	load_spktest.pl --schema ../schema.sql --basedata ../basedata.sql --userdata ../userdata.sql
 	java TestSpkdb $(HOST)
 
 installdocs:

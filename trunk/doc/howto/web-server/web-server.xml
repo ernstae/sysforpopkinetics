@@ -758,12 +758,12 @@ su
     </para>
     <para>
       <ulink url="https://192.168.2.2/info/">
-	https://spk.rfpk.washington.edu/info/
+	https://192.168.2.2/info/
       </ulink>
     </para>
     <para>
       <ulink url="https://192.168.2.2:8443/info/">
-	https://spk.rfpk.washington.edu:8443/info/
+	https://192.168.2.2:8443/info/
       </ulink>
     </para>
     <para>

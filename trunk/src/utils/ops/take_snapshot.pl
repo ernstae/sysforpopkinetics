@@ -125,16 +125,16 @@ close FL;
 
 # Use load_spktest.pl to build the spktmp database, from schema.sql and basedata.sql,
 # but with no rows from the job, history, model, dataset or user tables
-my $cmd = "$load_spktest --host $dbhost --database $spktmpname --user $dbuser --password $dbpass";
+my $cmd = "$load_spktest --database $spktmpname --user $dbuser --password $dbpass";
 system($cmd) == 0
     or death("'$cmd' failed\n");
 
 # Create a lockfile and store our pid, so only one copy of this program can run
 sysopen(FH, $lockfile_path, O_RDWR | O_CREAT)
-    or death("emerg", "could not create lockfile");
+    or death("could not create lockfile");
 my @info = stat(FH);
 $info[7] == 0 
-    or death("emerg", "$lockfile_path already exists");
+    or death("$lockfile_path already exists");
 print FH $$;
 close(FH);
 $lockfile_exists = 1;
@@ -233,7 +233,7 @@ for my $user_id (keys %user_list) {
 $sth_in->finish;  # free as statement handle, no longer needed
 
 # Call on mysqldump to extract userdata.sql from spktmp
-system("$mysqldump -h$dbhost -u$dbuser -p$dbpass -tc $spktmpname --tables "
+system("$mysqldump -u$dbuser -p$dbpass -tc $spktmpname --tables "
        . "dataset history job model user > userdata.sql") == 0
     or death("mysqldump failed");
 

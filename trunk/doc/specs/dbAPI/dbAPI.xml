@@ -26,6 +26,12 @@
 	<authorinitials>afw</authorinitials>
 	<revremark>Added two functions: get_cmp_jobs and get_run_jobs</revremark>
       </revision>
+      <revision>
+	<revnumber></revnumber>
+	<date>June 16, 2004</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Added two arguments to new_job; added get_method_table function.</revremark>
+      </revision>
     </revhistory>
   <abstract>
       <para>
@@ -534,7 +540,7 @@
 	    <glossterm>Synopsis</glossterm>
 	    <glossdef>
 	      <para>
-		job_id = new_job handle user_id abstract dataset_id dataset_version model_id model_version xml_source
+		job_id = new_job handle user_id abstract dataset_id dataset_version model_id model_version xml_source method_code parent
 	      </para>
 	    </glossdef>
 	  </glossentry>
@@ -684,6 +690,21 @@
 		  <entry>
 		    An XML document containing source code for the model, 
 		    constraints, parameters and presentation directives.
+		  </entry>
+		</row>
+		<row>
+		  <entry>method_code</entry>
+		  <entry>string</entry>
+		  <entry>
+		    The method that is to be used for the computation.
+		  </entry>
+		</row>
+		<row>
+		  <entry>parent</entry>
+		  <entry>non-negative integer</entry>
+		  <entry>
+		    The job_id of the job which is the parent of this one.  If the
+		    job has no parent, this value should be zero.
 		  </entry>
 		</row>
 	      </tbody>
@@ -3168,6 +3189,87 @@
 	</para>
       </sect3>
       <sect3>
+	<title id="get_method_table">get_method_table - - return the entire method table</title>
+	<glosslist>
+	  <glossentry>
+	    <glossterm>Synopsis</glossterm>
+	    <glossdef>
+	      <para>
+		row-array = get_method_table handle
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Description</glossterm>
+	    <glossdef>
+	      <para>
+		The method table maps method codes into their English language equivalents.
+		The table is not very large, hence it is most efficient for the
+		function to return the entire table.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	</glosslist>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Values returned by get_method_table</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="1*"/>
+	      <colspec colname="c2" colwidth="1*"/>
+	      <colspec colname="c3" colwidth="5*"/>
+	      <thead>
+		<row>
+		  <entry>Condition</entry>
+		  <entry>Values</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>success</entry>
+		  <entry>row-array</entry>
+		  <entry>method_code, method_name</entry>
+		</row>
+		<row>
+		  <entry>failure</entry>
+		  <entry>null or undefined</entry>
+		  <entry>
+		    The database "select" that this function performs should never
+		    come up empty, hence the only basis for failure would be a 
+		    database error, in which case the result would be null or undefined,
+		    depending on the language binding.
+		  </entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Arguments to get_method_table</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="1*"/>
+	      <colspec colname="c2" colwidth="1*"/>
+	      <colspec colname="c3" colwidth="5*"/>
+	      <thead>
+		<row>
+		  <entry>Name of Argument</entry>
+		  <entry>Data Type</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>handle</entry>
+		  <entry>database handle</entry>
+		  <entry>Handle to an open database connection.</entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+      </sect3>
+      <sect3>
 	<title id="get_state_table">get_state_table - - return the entire state table</title>
 	<glosslist>
 	  <glossentry>
@@ -3478,6 +3580,11 @@
 	      </row>
 	      <row>
 		<entry><link linkend="get_end_table">get_end_table</link></entry>
+		<entry></entry>
+		<entry>x</entry>
+	      </row>
+	      <row>
+		<entry><link linkend="get_end_table">get_method_table</link></entry>
 		<entry></entry>
 		<entry>x</entry>
 	      </row>
