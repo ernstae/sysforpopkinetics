@@ -1083,7 +1083,7 @@ void quasiNewtonAnyBox(
           hScaled );
 
         // After the first call to the optimizer the approximation for the
-        // Hessian should be accurate enough that this can reset.
+        // Hessian should be accurate enough that this can be reset.
         nIterMax = 1;
 
         // This function assumes that delta is set small enough that the
