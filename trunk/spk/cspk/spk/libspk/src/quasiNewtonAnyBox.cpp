@@ -494,6 +494,48 @@ using SPK_VA::valarray;
 
 namespace // [Begin: unnamed namespace]
 {
+  void unscaleElem(
+    int            n,
+    const double*  y, 
+    const double*  xLow, 
+    const double*  xUp, 
+    const double*  xDiff,
+    double*        x );
+  
+  void scaleGradElem(
+    int            n,
+    const double*  g, 
+    const double*  xDiff,
+    double*        gScaled );
+  
+  void unscaleGradElem(
+    int            n,
+    const double*  gScaled, 
+    const double*  xDiff,
+    double*        g );
+  
+  void doubleArrayToValarray( const double* x, valarray<double>& xVA );
+  
+  void valarrayToDoubleArray_SquareMatrixTrans( 
+    const valarray<double>&  xVA,
+    double*                  x );
+  
+  bool isWithinTol(
+    double         tol,
+    int            n,
+    const double*  xHat,
+    const double*  xLow,
+    const double*  xUp,
+    const double*  g,
+    const double*  h,
+    const double*  hChol,
+    double*        deltaX,
+    double*        gProj,
+    double*        hWork,
+    double*        hCholDiagRec,
+    bool*          isElemFree );
+
+  bool isLowerTriangular( int n, const double* x );
 
 } // [End: unnamed namespace]
 
@@ -1352,7 +1394,9 @@ void doubleArrayToValarray( const double* x, valarray<double>& xVA )
  *
  *************************************************************************/
 
-void valarrayToDoubleArray_SquareMatrixTrans( const valarray<double>& xVA, double* x )
+void valarrayToDoubleArray_SquareMatrixTrans( 
+  const valarray<double>&  xVA,
+  double*                  x )
 {
   int i;
   int j;
