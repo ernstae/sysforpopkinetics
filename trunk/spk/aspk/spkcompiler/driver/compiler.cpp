@@ -69,21 +69,28 @@ static client::type getClientName( xercesc::DOMDocument* source )
  *   <dt>-print</dt><dd>request for displaying the progress in the standard output.</dd>
  * </dl>
  */
-static void usage()
+static void usage( char* o )
 {
-  cout << "Usage: spkcompiler SOURCE DATA [-print]" << endl;
-  cout << endl;
-  cout << "   SOURCE    --- file path to an SpkSourceML document" << endl;
-  cout << "   DATA      --- file path to an SpkDataML document" << endl;
-  cout << "   -print    --- request for displaying the progress in the standard output " << endl;
+  strcpy( o, "\n\n" );
+  strcat( o, "Usage: spkcompiler SOURCE DATA\n" );
+  strcat( o, "\n" );
+  strcat( o, "   SOURCE    --- file path to an SpkSourceML document\n" );
+  strcat( o ,"   DATA      --- file path to an SpkDataML document\n" );
+  strcat( o, "\n" );
+  strcat( o, "<Exit Code>\n" );
+  strcat( o, "   0: The compilation completed successfully.\n" );
+  strcat( o, "      A makefile, \"generatedMakefile\", along with the source\n" );
+  strcat( o, "      code files are generated in the current directory.\n" );
+  strcat( o, "   1: Syntax errors are found in either/both SOURCE or/and DATA.\n" );
+  strcat( o, "      compilation_error.xml will be generated in the current directory.\n" );
+  strcat( o, "   2: File/directory access permission error.\n" );
+  strcat( o, "   x: Any other error is reported with an unspecified exit code greater than 2.\n" );
+  strcat( o, "      compilation_error.xml will generated in the current directory.\n" );
 
-  cout << "When the compilation completes successfully, it returns 0." << endl;
-  cout << "Otherwise, it returns non-zero and generates compilation_error.xml ";
-  cout << "in the working directory." << endl;
   return;
 }
 
-enum RETURN_CODE { SUCCESS=0, FAILURE };
+enum RETURN_CODE { SUCCESS=0, XML_PARSE_ERR=1, PERMISSION_ERR=2, OTHER_ERR };
 
 /**
  * <code>spkcompiler</code> compiles C++ source code from 
@@ -114,18 +121,21 @@ int main( int argc, char * argv[] )
   if( !oError.good() )
     {
       cerr << "Failed to create a file, " << compilation_error_xml << "!!!" << endl;
-      return FAILURE;
+      return PERMISSION_ERR;
     }
 
   if (argc < 3)
   {
-    usage();
-    sprintf( error_message, "Usage: spkcompiler SOURCE DATA [-print]" );
-    myError.push( SpkCompilerError::ASPK_PROGRAMMER_ERR, error_message, __LINE__, __FILE__ );
+    char error_message[2048];
+    usage( error_message );
+
+    cerr << "ERROR! Missing argument(s)!" << endl;
+    cerr << error_message << endl;
+    myError.push( SpkCompilerError::ASPK_PROGRAMMER_ERR, "Missing command line arguments: spkcompiler SOURCE DATA", __LINE__, __FILE__ );
     oError << myError << endl;
     oError.close();
     
-    return FAILURE;
+    return OTHER_ERR;
   }  
   const char * gSource = argv[1];
   const char * gData   = argv[2];
@@ -146,7 +156,7 @@ int main( int argc, char * argv[] )
       myError.push( SpkCompilerError::ASPK_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
       oError << myError << endl;
       oError.close();
-      return FAILURE;
+      return OTHER_ERR;
     }
 
   //
@@ -182,7 +192,7 @@ int main( int argc, char * argv[] )
 	myError.push( SpkCompilerError::ASPK_STD_ERR, error_message, __LINE__, __FILE__ );
 	oError << myError << endl;
 	oError.close();
-        return FAILURE;
+        return PERMISSION_ERR;
       }
     iSource.close();
     parser->parse( gSource );
@@ -196,7 +206,7 @@ int main( int argc, char * argv[] )
     myError.push( SpkCompilerError::ASPK_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
     oError << myError << endl;
     oError.close();
-    return FAILURE;
+    return XML_PARSE_ERR;
   }
   catch( const DOMException& e )
   {
@@ -214,7 +224,7 @@ int main( int argc, char * argv[] )
 	myError.push( SpkCompilerError::ASPK_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
 	oError << myError << endl;
 	oError.close();
-        return FAILURE;
+        return XML_PARSE_ERR;
       }
   }
   catch( ... )
@@ -222,7 +232,7 @@ int main( int argc, char * argv[] )
     XMLPlatformUtils::Terminate();
     sprintf( error_message, "An unknown error occurred during parsing.\n %d, %s\n" );
     myError.push( SpkCompilerError::ASPK_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
-    return FAILURE;
+    return XML_PARSE_ERR;
   }
 
   //
@@ -237,7 +247,7 @@ int main( int argc, char * argv[] )
        myError.push( SpkCompilerError::ASPK_STD_ERR, error_message, __LINE__, __FILE__ );
        oError << myError << endl;
        oError.close();
-       return FAILURE;
+       return PERMISSION_ERR;
     }
     parser->parse( gData );
     data = parser->getDocument();
@@ -250,7 +260,7 @@ int main( int argc, char * argv[] )
     myError.push( SpkCompilerError::ASPK_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
     oError << myError << endl;
     oError.close();
-    return FAILURE;
+    return XML_PARSE_ERR;
   }
   catch( const DOMException& e )
   {
@@ -266,7 +276,7 @@ int main( int argc, char * argv[] )
 	myError.push( SpkCompilerError::ASPK_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
 	oError << myError << endl;
 	oError.close();
-        return FAILURE;
+        return XML_PARSE_ERR;
       }
   }
   catch( ... )
@@ -276,11 +286,19 @@ int main( int argc, char * argv[] )
     myError.push( SpkCompilerError::ASPK_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
     oError << myError << endl;
     oError.close();
-    return FAILURE;
+    return XML_PARSE_ERR;
   }
                                                                                 
   client::type cl = getClientName( source );
-  cout << "client = " << (cl==client::NONMEM? "nonmem" : "not supported") << endl;
+  if( cl != client::NOT_SUPPORTED )
+    {
+      XMLPlatformUtils::Terminate();
+      fprintf( stderr, "Not a supported client!" );
+      myError.push( SpkCompilerError::ASPK_SOURCEML_ERR, error_message, __LINE__, __FILE__ );
+      oError << myError << endl;
+      oError.close();
+      return OTHER_ERR;
+    }
 
   // Call/construct an appropriate translator.
 
