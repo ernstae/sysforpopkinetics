@@ -350,6 +350,7 @@ int main( int argc, const char* argv[] )
   }
   catch( const SpkCompilerException& e )
   {
+    XMLPlatformUtils::Terminate();
     oError << e << endl;
     oError.close();
     return XML_PARSE_ERR;
@@ -358,7 +359,9 @@ int main( int argc, const char* argv[] )
   {
     XMLPlatformUtils::Terminate();
     sprintf( error_message, "An unknown error occurred during compilation.\n %d, %s\n" );
-    myError.push( SpkCompilerError::ASPK_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
+    myError.push( SpkCompilerError::ASPK_SOURCEML_ERR, error_message, __LINE__, __FILE__ );
+    oError << myError << endl;
+    oError.close();
     return XML_PARSE_ERR;
   }
 
