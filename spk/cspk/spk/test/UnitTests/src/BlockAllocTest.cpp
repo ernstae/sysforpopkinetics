@@ -144,7 +144,7 @@ void BlockAllocTest::testInsufficientMemory()
 }
 void BlockAllocTest::testBlockMemoryAlloc()
 {     
-    bool ok;
+    bool ok = true;
 
     // get initial number of blocks in use
     int NumberInUser = BlockFree(NULL);
