@@ -31,7 +31,7 @@ our @ISA = qw(Exporter);
 our @EXPORT_OK = (
     'connect', 'disconnect', 'new_job', 'get_job', 'job_status', 'user_jobs', 
     'de_q2c', 'get_cmp_jobs', 'get_run_jobs',
-    'en_q2r', 'de_q2r', 'end_job', 'job_report', 'job_history',
+    'en_q2r', 'de_q2r', 'de_q2ml', 'end_job', 'job_report', 'job_history',
     'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
     'new_model', 'get_model', 'update_model', 'user_models',
     'new_user', 'update_user', 'get_user', 'email_for_job'
@@ -653,13 +653,19 @@ Returns
 
 sub de_q2r() {
     my $dbh = shift;
+    return de_q2run($dbh, 'q2r');
+}
+
+sub de_q2run() {
+    my $dbh = shift;
+    my $state_code = shift;
     $err = 0;
     $errstr = "";
     
     $dbh->begin_work;
 
     my $sql = "select job_id, cpp_source from job "
-	    .       "where state_code='q2r' "
+	    .       "where state_code='$state_code' "
             .       "order by event_time "
             .       "limit 1 "
             .       "for update; ";
