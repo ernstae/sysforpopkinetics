@@ -60,6 +60,9 @@ $spell
   pred
   res
   resWtd
+  Davidian
+  Giltinan
+  Raton
 $$
 
 $section Calculating Predicted Values, Residuals, and Weighted Residuals for All of the Individuals in the Population$$
@@ -92,14 +95,16 @@ $pre
 $$
 $head Description$$
 
-Calculates predicted values, residuals, and/or weighted residuals for
-all of the individuals in the population using an approximation for
-the covariance of an individual's data $math%VTilde_i%$$ as the
-weight.
+Calculates approximations for the predicted values, residuals, and/or
+weighted residuals for all of the individuals in the population using
+an additional approximation for the covariance of an individual's data
+$math%VTilde_i%$$ as the weight.
+The derivations for these approximations can be found in Sections (6.2) 
+and (6.3) of Davidian and Giltinan (1998).
 $pre
 
 $$
-The predicted values $math%pred_i%$$, residuals $math%res_i%$$, 
+The approximate predicted values $math%pred_i%$$, residuals $math%res_i%$$, 
 and weighted residuals $math%resWtd_i%$$ for the $th i$$ 
 individual are calculated as follows:
 $math%
@@ -146,6 +151,10 @@ $pre
 $$
 (The above equations use
 $xref/glossary/Population Notation/population notation/$$.)
+
+$head Reference$$
+Davidian M. and Giltinan D. M. (1998) $italic Nonlinear Models for 
+Repeated Measurement Data$$, Chapman & Hall/CRC, Boca Raton, Florida.
 
 $head Arguments$$
 $syntax/
@@ -549,6 +558,12 @@ void popResiduals( SpkModel&                model,
     //     E  [ f (alp, b ) ]  ~  f (alp, b )  -  d  f (alp, b )  b   .
     //      b    i       i         i       i       b  i       i    i
     //
+    // This approximation is based on Eq. (6.19) and the discussion on
+    // pp. 164-6 from Davidian M. and Giltinan D. M. (1998) "Nonlinear
+    // Models for Repeated Measurement Data", Chapman & Hall/CRC, Boca
+    // Raton, Florida.  When b_i equals zero as in the first order 
+    // objective, this approximation is equivalent to Eq. (6.4) and is
+    // based on the discussion on pp. 152-4 from the same book.
     temp1 = multiply( f_i_b, nB, b_i, 1 );
     pred_i = f_i - temp1;
 
@@ -569,6 +584,8 @@ void popResiduals( SpkModel&                model,
     //        +  d  f (alp, b )  D(alp)  d  f (alp, b )   .
     //            b  i       i            b  i       i
     //
+    // This approximation is also based on Eq. (6.19) from 
+    // Davidian and Giltinan (1998).
     if ( notAllZeroF_i_b )
     {
       assert( f_i_b.size() == nY_i * nB );
