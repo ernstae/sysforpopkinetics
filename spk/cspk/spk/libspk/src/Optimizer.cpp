@@ -35,6 +35,46 @@
  *
  *************************************************************************/
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// [Revisit - Optimizer Class Should be Renamed - Mitch]
+//
+// Since this class only contains optimizer control parameters,
+// it is not actually an optimizer itself.  Its name should be
+// changed to something that is more accurate.  For example,
+//
+//     OptimizerController     OptController     OptControl
+//     OptimizerManager        OptManager        OptMan
+//     OptimizerInformation    OptInformation    OptInfo
+//
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// [Revisit - Optimizer Class Should be Generalized
+//
+// This class should be generalized so that it is reusable and 
+// doesn't have to be modified everytime the optimizer is changed
+// and/or a new optimizer is added to SPK.
+//
+// This coulde be done by making this be an abstract base class with
+// its concrete subclasses providing the optimizer specific parts or
+// by making it be a templated class that takes the optimizer specific
+// parts as argument(s).  An abstract base class might be the better
+// solution since each optimizer will have its own convergence criteria.
+//
+// Either way, the goals would be to remove information from this 
+// class that is specific to a particular optimizer and to allow the
+// user of this class to provide that information plus anything else
+// required by their optimizer.
+//
+/// The information this class contains that is currently optimizer
+// specific is the state information used for warm starts. An example
+// functionality of an optimizer that is optimizer specific is the
+// way it determines if it has converged using the elements of this
+// class.
+//
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
 /*************************************************************************
  *
  * Class: Optimizer
