@@ -52,8 +52,8 @@
 using namespace xercesc;
 using namespace std;
 
-int gSpkExpErrors;
-extern int gSpkExpLines;
+int        gSpkExpErrors;
+extern int gSpkExpLines; // this is defined in nmabb.l (lex spec)
 
 extern "C"{
   int yyparse(void);
@@ -71,12 +71,9 @@ extern "C"{
     return -1;
   }
 };
-DOMDocument * gSpkExpDOMDocument;
 ParseTree   * gSpkExpUtil;
+DOMDocument * gSpkExpDOMDocument;
 SymbolTable * gSpkExpSymbolTable;
-
-  //  #define X(c) gSpkExpUtil->createXmlString( c )
-  //  #define C(x) gSpkExpUtil->createCString( x )
 
   static const char * const STR_TYPE     = "type";
   static const char * const STR_VALUE    = "value";
@@ -245,16 +242,18 @@ input:
 // A unit can be empty.
 //
 /* empty */ {
+  cout << "Hey!!!!" << endl;
   struct NodeCarrier * carrier = gSpkExpUtil->createNodeCarrier();
+  cout << "Created a carrier" << endl;
   carrier->node = gSpkExpDOMDocument->getDocumentElement();
   $$ = carrier;
+  cout << "done" << endl;
 }
 | 
 //
 // A unit can contain lines.
 //
 input line {
-
   struct NodeCarrier * carrier;
 
   if( $1 == NULL )
