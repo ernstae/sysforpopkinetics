@@ -9,7 +9,7 @@
     <revhistory>
       <revision>
 	<revnumber>1.0</revnumber>
-	<date>July 4, 1776</date>
+	<date>February 24, 2004</date>
 	<authorinitials>afw</authorinitials>
 	<revremark>Initial version.</revremark>
       </revision>
@@ -117,80 +117,250 @@
       browsers.
     </para>
     <para>
-      The UW Computing and Communications Department has a
-      <ulink url="https://certs.cac.washington.edu/">web site</ulink>
-      that partially automates the process of obtaining a certificate.
-      To use it, you must have a MyNetId weblogin.  You must
-      also be listed in the DNS record as one of the system 
-      administrators for the server for which you are obtaining
-      a certificate. If you are not sure whether or not you are
-      in the system administrator list, start the process anyway,
-      because checking the DNS record and adding you if necessary
-      is one of the steps that will follow.
+      The following sections will describe the process for obtaining
+      a certificate from the University of Washington CA. The first
+      step will be to generate a public/private key pair. Once
+      you have these keys, you will generate a properly formatted
+      Certificate Signing Request which will be needed by the
+      CA.  You will then be ready to use the semi-automated 
+      process on a UW Computing and Communications for placing
+      a request to have a certificate generated.  Finally you
+      will, if all goes well, retrieve the certificate.
+    </para>
+    <sect2>
+      <title>Generate a Public and a Private Key</title>
+      <para>
+	The first step is to produce a randomly generated
+	public/private encryption key pair.  The keys are placed
+	in a binary file which, in this process, we will call
+	<filename>~root/.keystore</filename>, which is the default
+	for tomcat.
+	<screen>
+	  su -
+	  $JAVA_HOME/bin/keytool -genkey -alias tomcat -keyalg RSA -keystore .keystore
+	</screen>
+      </para>
+      <para>
+	You will be asked to provide a password.  Make it a good one,
+	because this password will provide access to the key pair that
+	you are about to generate.
+      </para>
+      <para>
+	The <command>keytool</command> program will ask you a number of
+	questions. It is most imporant that you provide a good password
+	when requested, because this will protect secrecy of your
+	public/private key pair.  Be certain, as well, to provide the
+	full domain name of the server, rather than your own first
+	and last name.
+      </para>
+      <para>
+	Here is the list of questions and suggested responses.
+	The questions are in 
+	<emphasis>italics</emphasis> and the responses in normal text.
+	In response to the last question, simply press <keycap>Enter</keycap>.
+	<screen>
+	  <emphasis>Enter keystore password:</emphasis> Make@!This&*Good
+
+	  <emphasis>What is your first and last name?
+	    [Unknown]:</emphasis> spk.rfpk.washington.edu
+
+	  <emphasis>What is the name of your organizational unit?
+	    [Unknown]:</emphasis> RFPK
+
+	  <emphasis>What is the name of your organization?
+	    [Unknown]:</emphasis> University of Washington
+
+	  <emphasis>What is the name of your City or Locality?
+	    [Unknown]:</emphasis> Seattle
+
+	  <emphasis>What is the name of your State or Province?
+	    [Unknown]:</emphasis> WA
+
+	  <emphasis>What is the two-letter country code for this unit?
+	    [Unknown]:</emphasis> US
+
+	  <emphasis>Is CN=spk.rfpk.washington.edu, OU=University of Washington, O=RFPK, L=Seattle, ST=WA, C=US correct?
+	    [no]:</emphasis> yes
+
+	  <emphasis>Enter key password for &lt;tomcat&gt;
+	    (RETURN if same as keystore password): </emphasis>
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Generate a Certificate Signing Request</title>
+      <para>
+	Now that you have your keys, you can generate a CSR.
+	<screen>
+$JAVA_HOME/bin/keytool -certreq -keyalg RSA -alias tomcat -file certreq.csr -keystore .keystore
+	</screen>
+      </para>
+      <para>
+	The resulting text file, <filename>certreq.csr</filename>, will look 
+	something like this:
+	<screen>
+-----BEGIN NEW CERTIFICATE REQUEST-----
+MIIBwTCCASoCAQAwgYAxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJXQTEQMA4GA1UEBxMHU2VhdHRs
+ZTEhMB8GA1UEChMYVW5pdmVyc2l0eSBvZiBXYXNoaW5ndG9uMQ0wCwYDVQQLEwRSRlBLMSAwHgYD
+VQQDExdzcGsucmZway53YXNoaW5ndG9uLmVkdTCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEA
+vwQZDAkPEmB4H3QKM3mVC6CsgD9a2jBB4DXT5olQ1/t0nCwZFzqkGNhwEZ8/gIRsjDRYgoaF+ZsD
+nHfcdWDh4owS8vWTMgrDDGQDimxs8SA00aUSbGPQnzuCD9Mbjp9xpdVYtAxFU9MFRbgV1q/Atmye
+i3DafG51UevT787g9QsCAwEAAaAAMA0GCSqGSIb3DQEBBAUAA4GBAElfNnSOBfI1F80XvlYu+V5f
+8hTYDbKk+2rU+avZNAIHpqWezypbw/Ozi1xUwA5BNzSjzNPV/xM7BnrzcLlAuoEhVE4CJuvnJDoZ
+uYfnasj1GFTNiIoKhBIyNV5GIYpB12FoQdq+erBugJU7LrEI1AGI0iBRykXzRJyLaFW9Kg7l
+-----END NEW CERTIFICATE REQUEST-----
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Request a Signed Certificate</title>
+      <para>
+	Now go to the University of Washington
+	<ulink url="https://certs.cac.washington.edu/">web site</ulink>
+	that partially automates the process of obtaining a certificate.
+	To use it, you must have a MyNetId weblogin.  You must
+	also be listed in the DNS record as one of the system 
+	administrators for the server for which you are obtaining
+	a certificate. If you are not sure whether or not you are
+	in the system administrator list, start the process anyway,
+	because checking the DNS record and adding you, if necessary,
+	is one of the steps that will follow.
+      </para>
+      <para>
+	After providing information about the purpose of the certificate,
+	you will be asked to paste a your CSR
+	into a field in a form on the screen.
+	In a terminal window, simply type
+	<screen>
+cat certreq.csr
+	</screen>
+	to display your CSR, use your left mouse button to high-light
+	the text from the first - sign to the last, then cut and paste
+	the high-lighted text into the browser window.  Finish the
+	procedure at the web site, and then wait until your request
+	is processed.  If everything works correctly, you should 
+	receive email notification that your signed certificate is
+	ready in just a few minutes.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Retrieve your Certificate</title>
+      <para>
+	When you receive email notification that your certificate is
+	ready, return to the University of Washington CA 
+	<ulink url="https://certs.cac.washington.edu/">web site</ulink>,
+	select the <guimenuitem>View requests</guimenuitem> menu item,
+	log in with your MyNetId weblogin if required, and click on
+	the sequence number associated with your request. At the next
+	page, click on <guimenuitem>Retrieve this certificate</guimenuitem>,
+	and you should see something like this:
+	<screen>
+-----BEGIN CERTIFICATE-----
+MIIECjCCA3OgAwIBAgICCTEwDQYJKoZIhvcNAQEFBQAwgZQxCzAJBgNVBAYTAlVT
+MQswCQYDVQQIEwJXQTEhMB8GA1UEChMYVW5pdmVyc2l0eSBvZiBXYXNoaW5ndG9u
+MRQwEgYDVQQLEwtVVyBTZXJ2aWNlczEXMBUGA1UEAxMOVVcgU2VydmljZXMgQ0Ex
+JjAkBgkqhkiG9w0BCQEWF2hlbHBAY2FjLndhc2hpbmd0b24uZWR1MB4XDTA0MDIy
+NDAxMDAwMVoXDTA1MDIyMzAxMDAwMVowgYAxCzAJBgNVBAYTAlVTMQswCQYDVQQI
+EwJXQTEQMA4GA1UEBxMHU2VhdHRsZTEhMB8GA1UEChMYVW5pdmVyc2l0eSBvZiBX
+YXNoaW5ndG9uMQ0wCwYDVQQLEwRSRlBLMSAwHgYDVQQDExdzcGsucmZway53YXNo
+aW5ndG9uLmVkdTCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAvwQZDAkPEmB4
+H3QKM3mVC6CsgD9a2jBB4DXT5olQ1/t0nCwZFzqkGNhwEZ8/gIRsjDRYgoaF+ZsD
+nHfcdWDh4owS8vWTMgrDDGQDimxs8SA00aUSbGPQnzuCD9Mbjp9xpdVYtAxFU9MF
+RbgV1q/Atmyei3DafG51UevT787g9QsCAwEAAaOCAXswggF3MAwGA1UdEwEB/wQC
+MAAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMBMB0GA1UdDgQWBBSzGZJE
+ZcvFllISikcriPH5VUmAZzAiBgNVHREEGzAZghdzcGsucmZway53YXNoaW5ndG9u
+LmVkdTCBwQYDVR0jBIG5MIG2gBRV18EzxvqT+Cc9yyBL9VqOWJd9dKGBmqSBlzCB
+lDELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAldBMSEwHwYDVQQKExhVbml2ZXJzaXR5
+IG9mIFdhc2hpbmd0b24xFDASBgNVBAsTC1VXIFNlcnZpY2VzMRcwFQYDVQQDEw5V
+VyBTZXJ2aWNlcyBDQTEmMCQGCSqGSIb3DQEJARYXaGVscEBjYWMud2FzaGluZ3Rv
+bi5lZHWCAQAwQQYDVR0fBDowODA2oDSgMoYwaHR0cDovL2NlcnRzLmNhYy53YXNo
+aW5ndG9uLmVkdS9VV1NlcnZpY2VzQ0EuY3JsMA0GCSqGSIb3DQEBBQUAA4GBAGQ2
+gRhPiy4v0WOsfo6mWxDXqjCFrZ4cZbFbJpL6p+0FLvQ5S0JQTF49L6A8VveeBG2g
+8gR9KAVqk0BuL18Too+VA10R0c2g+n1Uu7kXbYlX1Cq/Qyx4Np3NoryQ77yNr4VA
+sX4Tk2V0XThXv02MsLPqkFiD0Mx2xilDA5pxOke1
+-----END CERTIFICATE-----
+	</screen>
+      </para>
+      <para>
+	In a terminal window, go to the the root user's home
+	directory and start your favorite editor:
+	<screen>
+su -
+emacs spk_cert.pem
+	</screen>
+	to create a file to store your certificate, and cut
+	and paste the certificate from the browser window into the
+	editor window, starting from the first - sign to the last.
+	Save the file.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Importing Certificates into Tomcat</title>
+    <para>
+      You will need to install two certificates in tomcat:
+      <orderedlist>
+	<listitem>
+	  <para>
+	    The root certificate of the University of Washington
+	    from which our new server certificate derives its
+	    authority.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    The new server certificate.
+	  </para>
+	</listitem>
+      </orderedlist>
     </para>
     <para>
-      After providing information about the use of the certificate,
-      you will be asked to paste a Certificate Signing Request (CSR)
-      into a field in a form on the screen.
-      The following process for generating a CSR 
-      assumes that you have a recent Java SDK installed and that
-      the environment variable JAVA_HOME points to the directory where
-      the installation is located. It also assumes that we wil be
-      using the tomcat web server.
-    </para>
-    <para>
-      The first step is to produce a randomly generated
-      public/private encryption key pair.  They keys are placed
-      in a binary file which, in this process, we will call
-      <filename>keystore</filename>.
+      First, create a file containing the text of the UW root
+      certificate, similar to the one that you created for the
+      server certificate.  In a terminal window, in the root
+      user's home directory, start your favorite editor:
       <screen>
-$JAVA_HOME/bin/keytool -genkey -alias tomcat -keyalg RSA -keystore keystore
+su -
+emacs uw_root_cert.pem
       </screen>
-    </para>
-    <para>
-      You will be asked to provide a password.  Make it a good one,
-      because this password will provide access to the key pair that
-      you are about to generate.
-    </para>
-    <para>
-      The <command>keytool</command> program will ask you a number of
-      questions. It is most imporant that you provide a good password
-      when requested, because this will protect secrecy of your
-      public/private key pair.  Be certain, as well, to provide the
-      full domain name of the server, rather than your own first
-      and last name.
-    </para>
-    <para>
-      Here is the list of questions and suggested responses.
-      The questions are in 
-      <emphasis>italics</emphasis> and the responses in normal text.
-      In response to the last question, simply press <keycap>Enter</keycap>.
+      to create the file to contain the certificate, then cut
+      and paste the following, which is the text of the 
+      UW root certificate,
       <screen>
-<emphasis>Enter keystore password:</emphasis> Make@!This&*Good
+-----BEGIN CERTIFICATE-----
+MIIEBzCCA3CgAwIBAgIBADANBgkqhkiG9w0BAQQFADCBlDELMAkGA1UEBhMCVVMx
+CzAJBgNVBAgTAldBMSEwHwYDVQQKExhVbml2ZXJzaXR5IG9mIFdhc2hpbmd0b24x
+FDASBgNVBAsTC1VXIFNlcnZpY2VzMRcwFQYDVQQDEw5VVyBTZXJ2aWNlcyBDQTEm
+MCQGCSqGSIb3DQEJARYXaGVscEBjYWMud2FzaGluZ3Rvbi5lZHUwHhcNMDMwMjI1
+MTgyNTA5WhcNMzAwOTAzMTgyNTA5WjCBlDELMAkGA1UEBhMCVVMxCzAJBgNVBAgT
+AldBMSEwHwYDVQQKExhVbml2ZXJzaXR5IG9mIFdhc2hpbmd0b24xFDASBgNVBAsT
+C1VXIFNlcnZpY2VzMRcwFQYDVQQDEw5VVyBTZXJ2aWNlcyBDQTEmMCQGCSqGSIb3
+DQEJARYXaGVscEBjYWMud2FzaGluZ3Rvbi5lZHUwgZ8wDQYJKoZIhvcNAQEBBQAD
+gY0AMIGJAoGBALwCo6h4T44m+7ve+BrnEqflqBISFaZTXyJTjIVQ39ZWhE0B3Laf
+bbZYju0imlQLG+MEVAtNDdiYICcBcKsapr2dxOi31Nv0moCkOj7iQueMVU4E1Tgh
+YIR2I8hqixFCQIP/CMtSDail/POzFzzdVxI1pv2wRc5cL6zNwV25gbn3AgMBAAGj
+ggFlMIIBYTAdBgNVHQ4EFgQUVdfBM8b6k/gnPcsgS/VajliXfXQwgcEGA1UdIwSB
+uTCBtoAUVdfBM8b6k/gnPcsgS/VajliXfXShgZqkgZcwgZQxCzAJBgNVBAYTAlVT
+MQswCQYDVQQIEwJXQTEhMB8GA1UEChMYVW5pdmVyc2l0eSBvZiBXYXNoaW5ndG9u
+MRQwEgYDVQQLEwtVVyBTZXJ2aWNlczEXMBUGA1UEAxMOVVcgU2VydmljZXMgQ0Ex
+JjAkBgkqhkiG9w0BCQEWF2hlbHBAY2FjLndhc2hpbmd0b24uZWR1ggEAMAwGA1Ud
+EwQFMAMBAf8wKwYDVR0RBCQwIoYgaHR0cDovL2NlcnRzLmNhYy53YXNoaW5ndG9u
+LmVkdS8wQQYDVR0fBDowODA2oDSgMoYwaHR0cDovL2NlcnRzLmNhYy53YXNoaW5n
+dG9uLmVkdS9VV1NlcnZpY2VzQ0EuY3JsMA0GCSqGSIb3DQEBBAUAA4GBAIn0PNmI
+JjT9bM5d++BtQ5UpccUBI9XVh1sCX/NdxPDZ0pPCw7HOOwILumpulT9hGZm9Rd+W
+4GnNDAMV40wes8REptvOZObBBrjaaphDe1D/MwnrQythmoNKc33bFg9RotHrIfT4
+EskaIXSx0PywbyfIR1wWxMpr8gbCjAEUHNF/
+-----END CERTIFICATE-----
+      </screen>
+      into the file and save it.
+    </para>
+    <para>
+      The following two commands import the two certificates and
+      add them to the keystore file <filename>.keystore</filename>:
+      <screen>
+$JAVA_HOME/bin/keytool -import -alias root -keystore .keystore -trustcacerts -file uw_root_cert.pem
+$JAVA_HOME/bin/keytool -import -alias tomcat -keystore .keystore -trustcacerts -file spk_cert.pem
 
-<emphasis>What is your first and last name?
-[Unknown]:</emphasis> spk.rfpk.washington.edu
-
-<emphasis>What is the name of your organizational unit?
-[Unknown]:</emphasis> RFPK
-
-<emphasis>What is the name of your organization?
-[Unknown]:</emphasis> University of Washington
-
-<emphasis>What is the name of your City or Locality?
-[Unknown]:</emphasis> Seattle
-
-<emphasis>What is the name of your State or Province?
-[Unknown]:</emphasis> WA
-
-<emphasis>What is the two-letter country code for this unit?
-[Unknown]:</emphasis> US
-
-<emphasis>Is CN=spk.rfpk.washington.edu, OU=University of Washington, O=RFPK, L=Seattle, ST=WA, C=US correct?
-[no]:</emphasis> yes
-
-<emphasis>Enter key password for &lt;tomcat&gt;
-    (RETURN if same as keystore password): </emphasis>
       </screen>
     </para>
   </sect1>
