@@ -23,11 +23,15 @@ class ClientTranslatorTest : public CppUnit::TestFixture {
     xercesc::DOMDocument* source;
     xercesc::DOMDocument* data;
     std::ifstream iData;
+
+    void createDataWithID( const char* );
+    void createDataNoID( const char* );
 public:
     virtual void setUp();
     virtual void tearDown();
 
-    void testParseData(); 
+    void testDataWithID(); 
+    void testDataNoID();
 
     static CppUnit::Test * suite();
 };

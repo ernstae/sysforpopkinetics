@@ -35,11 +35,9 @@ public:
   virtual void parseSource(){}
 };
 
-void ClientTranslatorTest::setUp()
+void ClientTranslatorTest::createDataWithID( const char *dataFile )
 {
-   gData   = new char[256];
-   strcpy( gData, "convertDataTestInput.dat" );
-   ofstream oData( gData );
+   ofstream oData( dataFile );
    if( oData.good() )
      {
        oData << "<spkdata version=\"0.1\">\n" << endl;
@@ -88,6 +86,54 @@ void ClientTranslatorTest::setUp()
      {
        CPPUNIT_ASSERT_MESSAGE( "Faild to open a new file for writing a data set!", false );
      }
+}
+void ClientTranslatorTest::createDataNoID( const char* dataFile )
+{
+   ofstream oData( dataFile );
+   if( oData.good() )
+     {
+       oData << "<spkdata version=\"0.1\">\n" << endl;
+       oData << "<table columns=\"2\" rows=\"4\">\n" << endl;
+       oData << "<description>ClientTranslator Test Data Set</description>\n" << endl;
+       oData << "<row position=\"1\">\n" << endl;
+       oData << "<value type=\"string\">TIME</value>\n" << endl;
+       oData << "<value type=\"string\">DV</value>\n" << endl;
+       oData << "</row>" << endl;
+       oData << "<row position=\"2\">" << endl;
+       oData << "<value type=\"numeric\">0.0</value>\n" << endl;
+       oData << "<value type=\"numeric\">0.0</value>\n" << endl;
+       oData << "</row>" << endl;
+       oData << "<row position=\"3\">" << endl;
+       oData << "<value type=\"numeric\">0.1</value>\n" << endl;
+       oData << "<value type=\"numeric\">0.1</value>\n" << endl;
+       oData << "</row>" << endl;
+       oData << "<row position=\"4\">" << endl;
+       oData << "<value type=\"numeric\">0.2</value>\n" << endl;
+       oData << "<value type=\"numeric\">0.2</value>\n" << endl;
+       oData << "</row>" << endl;
+       oData << "</table>" << endl;
+       oData << "</spkdata>" << endl;
+       oData.close();
+     }
+   else
+     {
+       CPPUNIT_ASSERT_MESSAGE( "Faild to open a new file for writing a data set!", false );
+     }
+}
+void ClientTranslatorTest::setUp()
+{
+}
+
+void ClientTranslatorTest::tearDown()
+{
+}
+
+void ClientTranslatorTest::testDataWithID()
+{
+   gData   = new char[256];
+   strcpy( gData, "withID.dat" );
+   createDataWithID( gData );
+
    try
    {
       XMLPlatformUtils::Initialize();
@@ -146,18 +192,8 @@ void ClientTranslatorTest::setUp()
        sprintf( buf, "An unknown error occurred during parsing.\n" );
        CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
-}
 
-void ClientTranslatorTest::tearDown()
-{
-  remove( gData );
-  delete [] gData;
-  XMLPlatformUtils::Terminate();
 
-}
-
-void ClientTranslatorTest::testParseData()
-{
    ClientTranslatorSubclass xlator( source, data );
    xlator.parseData();
    const SymbolTable * table = xlator.getSymbolTable();
@@ -188,14 +224,111 @@ void ClientTranslatorTest::testParseData()
    CPPUNIT_ASSERT( pId->initial[2][0]   == "Noriko" );
    CPPUNIT_ASSERT( pTime->initial[2][0] == "20.0" );
    CPPUNIT_ASSERT( pDv->initial[2][0]   == "20.0" );
+  remove( gData );
+  delete [] gData;
+  XMLPlatformUtils::Terminate();
 }
+void ClientTranslatorTest::testDataNoID()
+{
+   gData   = new char[256];
+   strcpy( gData, "noID.dat" );
+   createDataNoID( gData );
 
+   try
+   {
+      XMLPlatformUtils::Initialize();
+   }
+   catch( const XMLException& toCatch )
+   {
+      char buf[maxChars + 1];
+      sprintf( buf, "Error during Xerces-c initialization.\nException message: %s.\n", 
+               XMLString::transcode( toCatch.getMessage() ) );
+      CPPUNIT_ASSERT_MESSAGE( buf, false );
+   }
+
+   xercesc::XercesDOMParser *parser = new xercesc::XercesDOMParser;
+   parser->setValidationScheme( XercesDOMParser::Val_Auto );
+   parser->setDoNamespaces( true );
+   parser->setDoSchema( true );
+   parser->setValidationSchemaFullChecking( true );
+   parser->setCreateEntityReferenceNodes( true );
+
+    try{
+       ifstream iData( gData );
+       if( !iData.good() )
+       {
+          XMLPlatformUtils::Terminate();
+          char buf[maxChars + 1];
+          sprintf( buf, "Failed to open %s!\n", gData );
+          CPPUNIT_ASSERT_MESSAGE( buf, false );
+       }
+       parser->parse( gData );
+       data = parser->getDocument();
+    }
+    catch( const XMLException& e )
+    {
+       XMLPlatformUtils::Terminate();
+       char buf[maxChars + 1];
+       sprintf( buf, "An error occurred during parsing\n   Message: %s\n",
+                XMLString::transcode(e.getMessage() ) );
+       CPPUNIT_ASSERT_MESSAGE( buf, false );
+    }
+    catch( const DOMException& e )
+    {
+       XMLCh errText[maxChars + 1]; 
+       if (DOMImplementation::loadDOMExceptionMsg(e.code, errText, maxChars))
+       {
+          XMLPlatformUtils::Terminate();
+          char buf[maxChars + 1];
+          sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
+                   gData, e.code, XMLString::transcode(errText) );
+          CPPUNIT_ASSERT_MESSAGE( buf, false );
+       }
+    }
+    catch( ... )
+    {
+       XMLPlatformUtils::Terminate();
+       char buf[maxChars + 1];
+       sprintf( buf, "An unknown error occurred during parsing.\n" );
+       CPPUNIT_ASSERT_MESSAGE( buf, false );
+    }
+
+
+   ClientTranslatorSubclass xlator( source, data );
+   xlator.parseData();
+   const SymbolTable * table = xlator.getSymbolTable();
+   //   cout << *table << endl;
+
+   const Symbol *pId, *pTime, *pDv;
+   CPPUNIT_ASSERT( (pId   = table->findi( "id" ) )   != Symbol::empty() );
+   CPPUNIT_ASSERT( (pTime = table->findi( "time" ) ) != Symbol::empty() );
+   CPPUNIT_ASSERT( (pDv   = table->findi( "dv" ) )   != Symbol::empty() );
+
+   CPPUNIT_ASSERT( pId->initial[0][0]   == "1" );
+   CPPUNIT_ASSERT( pId->initial[0][1]   == "1" );
+   CPPUNIT_ASSERT( pId->initial[0][2]   == "1" );
+   CPPUNIT_ASSERT( pTime->initial[0][0] == "0.0" );
+   CPPUNIT_ASSERT( pTime->initial[0][1] == "0.1" );
+   CPPUNIT_ASSERT( pTime->initial[0][2] == "0.2" );
+   CPPUNIT_ASSERT( pDv->initial[0][0]   == "0.0" );
+   CPPUNIT_ASSERT( pDv->initial[0][1]   == "0.1" );
+   CPPUNIT_ASSERT( pDv->initial[0][2]   == "0.2" );
+
+  remove( gData );
+  delete [] gData;
+  XMLPlatformUtils::Terminate();
+}
 CppUnit::Test * ClientTranslatorTest::suite()
 {
   CppUnit::TestSuite *suiteOfTests 
-    = new CppUnit::TestSuite( "testParseData" );
+    = new CppUnit::TestSuite( "ClientTranslatorTest" );
+
+
   suiteOfTests->addTest( new CppUnit::TestCaller<ClientTranslatorTest>
-			 ("test", &ClientTranslatorTest::testParseData ) );
+			 ("testDataWithID", &ClientTranslatorTest::testDataWithID ) );
+
+  suiteOfTests->addTest( new CppUnit::TestCaller<ClientTranslatorTest>
+			 ("testDataNoID", &ClientTranslatorTest::testDataNoID ) );
 
  return suiteOfTests;
 }
