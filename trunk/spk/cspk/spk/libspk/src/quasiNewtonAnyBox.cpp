@@ -482,6 +482,7 @@ $end
 
 #include <iostream>
 #include <fstream>
+#include <strstream>
 #include <iomanip>
 #include <cassert>
 #include <cmath>
@@ -1306,9 +1307,10 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   // Determine if the optimization was successful.
   //------------------------------------------------------------
 
-  bool ok;
+  bool ok = false;
   SpkError::ErrorCode errorCode;
   StateInfo stateInfo;
+  std::strstream message;
 
   if ( isWithinTol )                // This function's convergence
                                     // criterion was satisfied.
@@ -1340,7 +1342,7 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
     {
       ok = false;
       errorCode = SpkError::SPK_TOO_MANY_ITER;
-      message << 
+      message << "Maximum number of iterations performed without convergence.";
     }
   }
   else                              // This function's convergence
@@ -1348,12 +1350,12 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   {
     ok = false;
     errorCode = SpkError::SPK_NOT_CONVERGED;
-    message << "";
+    message << "Unable to satisfy convergence criterion for quasiNewtonAnyBox.";
   }
 
   if ( !ok )
   {
-    SpkError err( errorCode, message, __LINE__, __FILE__ );
+    SpkError err( errorCode, message.str(), __LINE__, __FILE__ );
     throw info.exceptionOb.push( err );
   }
 
