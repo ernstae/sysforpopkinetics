@@ -7,6 +7,11 @@ CXXFLAGS = -g
 test_common_SOURCES = \
 	../config.h \
 	test_common.cpp \
+	lowerTest.cpp \
+        lowerTest.h \
+        upperTest.cpp \
+        upperTest.h \
+	factorialTest.cpp \
 	clientTest.cpp \
         clientTest.h \
 	SymbolTest.cpp \
@@ -18,6 +23,9 @@ test_common_SOURCES = \
 
 test_common_INCLUDES = \
 	clientTest.h \
+        lowerTest.h \
+        upperTest.h \
+        factorialTest.h \
 	SymbolTest.h \
 	SymbolTableTest.h \
 	ClientTranslatorTest.h
