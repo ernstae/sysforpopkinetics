@@ -40,7 +40,12 @@
 	<revnumber>1.5</revnumber>
 	<date>Auguest 26, 2003</date>
 	<authorinitials>sh</authorinitials>
-	<revremark>Updated the license keys valid through Aug. 2004.</revremark>
+	<revremark>Updated the license keys valid through Aug. 2004.</revremark>      </revision>
+      <revision>
+	<revnumber>1.6</revnumber>
+	<date>September 19, 20033</date>
+	<authorinitials>sh</authorinitials>
+	<revremark>Fixed html syntax errors in the example C++ code.</revremark>
       </revision>
 
    </revhistory>
@@ -167,7 +172,7 @@ int main()
   //     |  3  4  |
   //     \        /
   //
-  valarra&lt;double&gt; A(4);
+  valarray&lt;double&gt; A(4);
   for( int i=0; i<4; i++ )
     A[i] = i+1;
 
@@ -235,14 +240,14 @@ const valarray&lt;double&gt; multiply( const valarray&lt;double&gt;& A, int nCol
 
   assert( nColsA == nRowsB );
 
-  valarray&lt;double&gt; AA = A;
-  valarray&lt;double&gt; BB = B;
-  valarray&lt;double&gt; C( nRowsA * nColsB );
+  double pA[ A.size() ];
+  for( int i=0; i&lt;A.size(); i++ )
+     pA[i] = A[i];
+  double pB[ B.size() ];
+  for( int i=0; i&lt;B.size(); i++ )
+     pB[i] = B[i];
+  double pC[ nRowsA * nColsB ];
   
-  const double *pA = &&;AA[0];
-  const double *pB = &&;BB[0];
-  double* pC = &&;C[0];
-
   NagDgemm('n', 'n', nRowsA, nColsB, nColsA, 1.0, pA, pB, 0.0, pC);
   return C;
 };
