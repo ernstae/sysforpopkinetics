@@ -387,10 +387,16 @@ $end
 
 static DoubleMatrix Im(__FILE__);
 static DoubleMatrix Cij_x(__FILE__);
-static DoubleMatrix term01(__FILE__), term02(__FILE__);
-static DoubleMatrix term1(__FILE__),term2(__FILE__),term3(__FILE__),term4(__FILE__);
-static DoubleMatrix term12(__FILE__), term34(__FILE__);
-static DoubleMatrix rvecAiTran(__FILE__), rvecAjTran(__FILE__);
+static DoubleMatrix term01(__FILE__);
+static DoubleMatrix term02(__FILE__);
+static DoubleMatrix term1(__FILE__);
+static DoubleMatrix term2(__FILE__);
+static DoubleMatrix term3(__FILE__);
+static DoubleMatrix term4(__FILE__);
+static DoubleMatrix term12(__FILE__);
+static DoubleMatrix term34(__FILE__);
+static DoubleMatrix rvecAiTran(__FILE__);
+static DoubleMatrix rvecAjTran(__FILE__);
 
 void UTranTimesSymKronSymTimesU_x(
                    const DoubleMatrix& V,     // m by m symmetric
