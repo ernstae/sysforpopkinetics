@@ -186,6 +186,17 @@ for z(x) if the pointer points to an n dimensional valarray.
 If it points to NULL, it will remain unchanged.
 If it points to a valarray sized other than n, the resulting behavior
 is undetermined.
+$pre
+
+$$
+The coefficient of variation is calculated as:
+$math%
+   
+               CV = SE / | z(x) | * 100  .
+
+%$$
+where CV stands for the coefficient of variation, SE stands for the standard 
+error.
 
 $syntax/
 
