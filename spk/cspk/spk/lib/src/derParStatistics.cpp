@@ -141,7 +141,7 @@ $syntax/
 /nDegFreedom/
 /$$
 is the number of degrees of freedom that is used to compute the
-confidence intervals.  It should be set equal to n - m, where m is the
+confidence intervals.  It should be set equal to m - n, where m is the
 number of fitted data points.  The value must be greater than zero,
 although it will not be referenced at all if zCIOut is set to NULL.
 
