@@ -463,6 +463,18 @@ $end
  * Include files
  *------------------------------------------------------------------------*/
 
+// SPK library header files.
+#include "transpose.h"
+#include "quasiNewtonAnyBox.h"
+#include "DoubleMatrix.h"
+#include "isLessThanOrEqualTo.h"
+#include "allTrue.h"
+#include "SpkException.h"
+
+// SPK optimizer header files.
+#include <spkopt/QuasiNewton01Box.h>
+
+// Standard library header files.
 #include <iostream>
 #include <fstream>
 #include <strstream>
@@ -471,19 +483,14 @@ $end
 #include <cmath>
 #include <cfloat>
 #include <vector>
-//#include <direct.h>
+
+// NAG header files.
 extern "C" {
 #include "nag.h"
 #include "nag_types.h"
 #include "nag_stdlib.h"
 #include "nagf04.h"
 }
-#include "transpose.h"
-#include "quasiNewtonAnyBox.h"
-#include "DoubleMatrix.h"
-#include "isLessThanOrEqualTo.h"
-#include "allTrue.h"
-#include "SpkException.h"
 
 using SPK_VA::valarray;
 
