@@ -157,7 +157,7 @@ $end
 # include <fstream>
 # include <valarray>
 # include <spkpred/PopPredModel.h>
-# include <CppAD/CppAD.h>
+# include <cppad/CppAD.h>
 # include <sys/time.h>
 # include <spk/SpkException.h>
 # include <cstdlib>

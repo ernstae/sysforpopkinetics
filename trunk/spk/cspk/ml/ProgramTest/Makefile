@@ -4,7 +4,8 @@
 #
 CPPFLAGS = \
 	-g \
-	-c 
+	-c \
+	-I/usr/local/include/spktest/
 
 INCLUDE = \
 	../AnalyticIntegral.h \
@@ -34,7 +35,7 @@ OBJECT = \
 	gcc $(CPPFLAGS) $< -o $@
 
 monteDriver : $(OBJECT)
-	g++ -g $(OBJECT) -o monteDriver -lspk -lspkopt -lspkpred -lgsl -latlas_lapack -lcblas -latlas -lpthread -lm
+	g++ -g $(OBJECT) -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -o monteDriver -lspk -lspkopt -lspkpred -lgsl -latlas_lapack -lcblas -latlas -lpthread -lm
 
 # Rule for local copy of monteDriver.cpp
 monteDriver.cpp: ../monteDriver.cpp

@@ -103,7 +103,7 @@ $end
 
 # include <valarray>
 # include <cmath>
-# include <CppAD/CppAD.h>
+# include <cppad/CppAD.h>
 # include <spk/SpkModel.h>
 
 # include "MapBay.h"

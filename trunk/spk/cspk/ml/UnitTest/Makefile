@@ -1,7 +1,8 @@
 #
 CPPFLAGS = \
 	-g \
-	-c 
+	-c \
+	-I/usr/local/include/spktest/ 
 
 INCLUDES = \
 	../GridIntegral.h \
@@ -33,4 +34,4 @@ OBJECTS = \
 	gcc $(CPPFLAGS) $< -o $@
 
 RunTest: $(OBJECTS) $(INCLUDES)
-	g++ $(OBJECTS)  -lspk -lspkopt -lgsl -latlas_lapack -lcblas -latlas -o RunTest
+	g++ $(OBJECTS) -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -lspk -lspkopt -lgsl -latlas_lapack -lcblas -latlas -o RunTest
