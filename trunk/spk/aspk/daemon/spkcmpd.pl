@@ -111,8 +111,9 @@ to the system log.
 use strict;
 
 use Fcntl qw(:DEFAULT :flock);
+use File::Path;
 use Proc::Daemon;
-use Spkdb('connect', 'disconnect', 'de_q2c', 'en_q2r');
+use Spkdb('connect', 'disconnect', 'de_q2c', 'en_q2r', 'get_cmp_jobs', 'get_dataset');
 use Sys::Syslog('openlog', 'syslog', 'closelog');
 
 my $database = shift;
@@ -127,9 +128,12 @@ my $database_open = 0;
 my $service_name = "spkcmpd";
 my $lockfile_path = "/tmp/lock_$service_name";
 my $lockfile_exists = 0;
+my $pathname_co  = "/usr/bin/co";   # rcs checkout utility
+my $pathname_tar = "/bin/tar";
 my $row;
 my $row_array;
 my $tmp_dir = "/tmp";
+my $working_dir_prefix = "spkjob-";
 my $working_dir;
 
 sub death {
@@ -156,9 +160,11 @@ sub death {
 }
 sub fork_compiler {
     use Errno qw(EAGAIN);
+    my $jrow = shift;
+    my $drow;
+    my $dataset_id = $jrow->{"dataset_id"};
+    my $job_id     = $jrow->{"job_id"};
 
-    my $job_id = shift;
-    my $recovering = shift;
     my $pid;
   FORK: {
       if ($pid = fork) {
@@ -166,15 +172,50 @@ sub fork_compiler {
 	  syslog("info", "forked process with pid=$pid for job_id=$job_id");
       }
       elsif (defined $pid) {
-	  # this is the child
-	  $working_dir = "$tmp_dir/spkcompiler-$job_id";
+	  # this is the child; create a working directory for the compiler
+	  $working_dir = "$tmp_dir/$working_dir_prefix$$";
 
-	  if (!$recovering && !mkdir $working_dir, 0777) {
+	  if (!mkdir $working_dir, 0777) {
 	      syslog("emerg", "couldn't create working directory: $working_dir");
 	      die;
 	  }
 	  chdir $working_dir;
-	  my $e = exec $compiler_path "spk-compiler", ($job_id);
+
+	  # write our job_id to a file called "job_id" in the working directory
+	  open(FH, ">job_id")
+	      or death('emerg', "could not create the job_id file in $working_dir");
+	  print FH "$job_id";
+	  close(FH);
+
+	  # write xml_source field to a file called source.xml
+	  open(FH, ">source.xml")
+	      or death('emerg', "could not create the source.xml file in $working_dir");
+	  print FH $jrow->{"xml_source"};
+	  close(FH);
+
+	  # write dataset archive corresponding to dataset_id to a file called data.xml,v
+	  $drow = &get_dataset($dbh, $dataset_id)
+	      or death('emerg', "could not read dataset $dataset_id from database");
+	  open(FH, ">data.xml,v")
+	      or death('emerg', "could not create the data.xml,v file in $working_dir");
+	  print FH $drow->{"archive"};
+	  close(FH);
+
+	  # execute co, the rcs check-out command, to extract the version from the archive
+	  my @args = ($pathname_co, "-u$jrow->{'dataset_version'}", "data.xml");
+	  system(@args);
+	  my $exit_status = $? >> 8;
+	  if ($exit_status != 0) {
+	      death('emerg', "$pathname_co failed for job $job_id; exit_status=$exit_status");
+	  }
+
+	  # remove the archive (leaving the version in file data.xml)
+	  File::Path::rmtree("data.xml,v", 0, 0);
+
+	  # execute the spk compiler
+	  my $e = exec $compiler_path "spkcompiler", ("source.xml, data.xml");
+
+	  # this statement will never be reached, unless the exec failed
 	  if (!$e) {
 	      syslog("emerg", "couldn't exec $compiler_path");
 	      die;
@@ -189,8 +230,6 @@ sub fork_compiler {
 	  death("emerg", "fork of compiler failed");
       }
   }
-
-    
 }
 sub start {
     # open the system log and record that we have started
@@ -214,17 +253,20 @@ sub start {
     $database_open = 1;
 }
 sub stop {
-    # We have received the TERM signal.  So have our children. 
-    # Wait as them terminate, and clean up after them.
+    # We have received the TERM signal. 
     
+    # become insensitive to the TERM signal we are about to send
     local $SIG{'TERM'} = 'IGNORE';
+
+    # send the TERM signal to every member of our process group
     kill('TERM', -$$);
 
+    # wait for all of our children to die
     my $child_pid;
-
     while (($child_pid = wait()) != -1) {
 	syslog('info', "process $child_pid received the TERM signal");
     }
+    # now we can die
     death('info', 'received the TERM signal (normal mode of termination)');
 }
 
@@ -234,17 +276,18 @@ Proc::Daemon::Init();
 # initialize
 start();
 
+# create a new process group, with this process as leader
 setpgrp(0, 0);
 
-# designate stop subroutine to catch the Unix TERM signal
+# designate the stop subroutine (above) to catch the Unix TERM signal
 $SIG{"TERM"} = \&stop;
 
 # rerun any compiles that were interrupted when we last terminated
-$row_array = &Spkdb::get_cmp_jobs($dbh);
+$row_array = &get_cmp_jobs($dbh);
 syslog('info', "looking for interrupted compiler jobs");
 if (defined $row_array) {
     foreach $row (@$row_array) {
-	&fork_compiler($row->{"job_id"}, 1);
+	&fork_compiler($row);
     }
 }
 else {
@@ -254,21 +297,52 @@ else {
 # loop until interrupted by a signal
 use POSIX ":sys_wait_h";
 my $pid_of_deceased_child;
+my @args;
+my $job_id;
 
 while(1) {
     # if there is a job queued-to-compile, fork the compiler
     $row = &de_q2c($dbh);
     if (defined $row) {
 	if ($row) {
-	    &fork_compiler($row->{"job_id"}, 0);
+	    &fork_compiler($row);
 	}
     }
     else {
 	death("emerg", "error reading database: $Spkdb::errstr");
     }
-    # check for the death of our compiler child processes
+    # process any children that have terminated
     while (($pid_of_deceased_child = waitpid(-1, &WNOHANG)) > 0) {
 	syslog("info", "process with pid=$pid_of_deceased_child terminated normally");
+
+	# get the job_id from the file we wrote to working directory of this process
+	$working_dir = "$working_dir_prefix$pid_of_deceased_child";
+	open(FH, "$tmp_dir/$working_dir/job_id")
+	    or death('emerg', "can't open $tmp_dir/$working_dir");
+	read(FH, $job_id, -s FH);
+
+	# make a compressed tar file from the working directory
+	chdir $tmp_dir;
+	@args = ($pathname_tar, 'cvzf', "$working_dir.tgz", $working_dir);
+	system(@args);
+	my $exit_status = $? >> 8;
+	if ($exit_status != 0) {
+	    death('emerg', "$pathname_tar failed creating file $working_dir.tgz; exit_status=$exit_status");
+	}
+	# remove the working directory
+	File::Path::rmtree($working_dir, 0, 0);
+
+	# read the tar file into memory
+	open(FH, "$working_dir.tgz")
+	    or death('emerg', "failed to open $working_dir.tgz");
+	read(FH, my $buf, -s FH)
+	    or death('emerg', "failed to read $working_dir.tgz");
+	close(FH);
+
+	# place the job in the run queue, storing the contents of the compressed
+	# tar file in the cpp_source field of the job table entry
+	&en_q2r($dbh, $job_id, $buf)
+	    or death('emerg', "can't move job $job_id to the run queue; $Spkdb::errstr");
     }
     # sleep for a second
     sleep(1);

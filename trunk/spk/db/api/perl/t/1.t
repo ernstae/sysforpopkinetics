@@ -2,7 +2,7 @@
 
 use strict;
 
-use Test::Simple tests => 45;  # number of ok() tests
+use Test::Simple tests => 49;  # number of ok() tests
 
 use Spkdb (
     'connect', 'disconnect', 'new_job', 'job_status', 
@@ -154,15 +154,27 @@ ok($report && $report =~ /^end report$/, "end_report");
 ok(! &job_report($dbh, $job_id) && $Spkdb::err == $Spkdb::NOT_ENDED,
    "end_report for a job not at end");
 
-ok(! &get_dataset($dbh, $user_id, "Dataset-T") && $Spkdb::err == 0,
+ok(! &get_dataset($dbh, 55) && $Spkdb::err == 0,
    "get_dataset when none exists");
 
 ok(&new_dataset($dbh, $user_id, "Dataset-T", "Good dataset", "dataset T text"),
    "new_dataset");
 ok(! &new_dataset($dbh, $user_id, "Dataset-T", 'Good dataset', 'dataset T text'),
    "new_dataset duplicate add");
+ok(&new_dataset($dbh, $user_id, "Dataset-R", "Fine dataset", "dataset R text"),
+   "newer_dataset");
 
-$row = &get_dataset($dbh, $user_id, "Dataset-T");
+$row_array = &Spkdb::user_datasets($dbh, $user_id);
+my $d_id = 2;
+$flag = 1;
+foreach $row (@$row_array) {
+    if ($row->{"dataset_id"} != $d_id--) {
+	$flag = 0;
+    }
+}
+ok($flag, "user_datasets");
+
+$row = &get_dataset($dbh, 2);
 ok($row, "get_dataset");
 
 ok(&update_dataset($dbh,
@@ -179,27 +191,32 @@ my $dataset_id = &new_dataset($dbh,
 
 ok($dataset_id, "another new_dataset");
 
-$row_array = &Spkdb::user_datasets($dbh,  $user_id);
-$flag = 1;
-foreach $row (@$row_array) {
-    if ($row->{"dataset_id"} != $dataset_id--) {
-	$flag = 0;
-	last;
-    }
-}
 ok($flag, "user_datasets");
 
 ok($row_array->[1]->{'name'} =~ /^Dataset-T$/, "user_datasets, sorting");
 
-ok(! &get_model($dbh, $user_id, "Model-T") && $Spkdb::err == 0,
+
+ok(! &get_model($dbh, 55) && $Spkdb::err == 0,
    "get_model when none exists");
 
 ok(&new_model($dbh, $user_id, "Model-T", "Good model", "model T text"),
    "new_model");
 ok(! &new_model($dbh, $user_id, "Model-T", 'Good model', 'model T text'),
    "new_model duplicate add");
+ok(&new_model($dbh, $user_id, "Model-R", "Fine model", "model R text"),
+   "newer_model");
 
-$row = &get_model($dbh, $user_id, "Model-T");
+$row_array = &Spkdb::user_models($dbh, $user_id);
+my $d_id = 2;
+$flag = 1;
+foreach $row (@$row_array) {
+    if ($row->{"model_id"} != $d_id--) {
+	$flag = 0;
+    }
+}
+ok($flag, "user_models");
+
+$row = &get_model($dbh, 2);
 ok($row, "get_model");
 
 ok(&update_model($dbh,
@@ -216,17 +233,10 @@ my $model_id = &new_model($dbh,
 
 ok($model_id, "another new_model");
 
-$row_array = &Spkdb::user_models($dbh,  $user_id);
-$flag = 1;
-foreach $row (@$row_array) {
-    if ($row->{"model_id"} != $model_id--) {
-	$flag = 0;
-	last;
-    }
-}
 ok($flag, "user_models");
 
 ok($row_array->[1]->{'name'} =~ /^Model-T$/, "user_models, sorting");
+
 
 
 ok(!defined &disconnect($dbh), "disconnect");			 
