@@ -749,7 +749,7 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "\tMapMonte.h \\" << endl;
       oMakefile << endl;
 
-      oMakefile << "prod : $(MONTE_SRC) $(MONTE_INCLUDE) $(COMMON_INCLUDE)" << endl;
+      oMakefile << "prod : driver $(MONTE_SRC) $(MONTE_INCLUDE) $(COMMON_INCLUDE)" << endl;
       oMakefile << "\tg++ $(CPP_FLAGS) $(MONTE_SRC) -o monteDriver ";
       oMakefile << "-L/usr/local/lib/$(PROD_DIR) ";
       oMakefile << "-I/usr/local/include/$(PROD_DIR) ";
@@ -757,7 +757,7 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "$(LIBS)" << endl;
       oMakefile << endl;
       
-      oMakefile << "test : $(MONTE_SRC) $(MONTE_INCLUDE) $(COMMON_INCLUDE)" << endl;
+      oMakefile << "test : driver $(MONTE_SRC) $(MONTE_INCLUDE) $(COMMON_INCLUDE)" << endl;
       oMakefile << "\tg++ $(CPP_FLAGS) $(MONTE_SRC) -o monteDriver ";
       oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
       oMakefile << "-I/usr/local/include/$(TEST_DIR) ";
