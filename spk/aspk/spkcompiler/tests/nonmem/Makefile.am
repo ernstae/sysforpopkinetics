@@ -23,16 +23,21 @@ test_nonmem_SOURCES = \
 	lex_explangTest.h \
 	explangTest.cpp \
 	explangTest.h \
-	NonmemTranslatorIndTest.cpp \
-        NonmemTranslatorIndTest_onlysim.cpp \
-	NonmemTranslatorIndTest.h \
+	ind_withID_NonmemTranslatorTest.cpp \
+	ind_withID_NonmemTranslatorTest.h \
+        ind_noID_NonmemTranslatorTest.cpp \
+	ind_noID_NonmemTranslatorTest.h \
+        ind_onlysim_NonmemTranslatorTest.cpp \
+	ind_onlysim_NonmemTranslatorTest.h \
 	NonmemTranslatorPopTest.cpp \
 	NonmemTranslatorPopTest.h
 
 test_nonmem_INCLUDES = \
 	lex_explangTest.h \
 	explangTest.h \
-	NonmemTranslatorIndTest.h \
+	ind_withID_NonmemTranslatorTest.h \
+	ind_noID_NonmemTranslatorTest.h \
+	ind_onlysim_NonmemTranslatorTest.h \
 	NonmemTranslatorPopTest.h
 
 AM_LDFLAGS = -lxerces-c -lcppunit -L$(INST_BASE)/lib/spktest -lspkcompiler 
