@@ -29,7 +29,7 @@ use Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = (
     'connect', 'disconnect', 'new_job', 'job_status', 'user_jobs', 
-    'de_q2c', 'en_q2c', 'get_cmp_jobs', 'get_run_jobs',
+    'de_q2c', 'get_cmp_jobs', 'get_run_jobs',
     'en_q2r', 'de_q2r', 'end_job', 'job_report',
     'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
     'new_model', 'get_model', 'update_model', 'user_models',
@@ -494,7 +494,6 @@ Returns
 sub en_q2r() {
     my $dbh = shift;
     my $job_id = shift;
-#    my $r_cpp_source = \$_[0];
     my $cpp_source = shift;
     $err = 0;
     $errstr = "";
@@ -514,8 +513,6 @@ sub en_q2r() {
 	$err = $PREPARE_FAILED;
 	return 0;
     }
-
-#    unless ($sth->execute($$r_cpp_source)) {
     unless ($sth->execute($cpp_source)) {
 	$errstr = "en_q2r failed to update the job table";
 	$err = $UPDATE_FAILED;
@@ -684,7 +681,7 @@ sub end_job() {
     my $dbh = shift;
     my $job_id = shift;
     my $end_code = shift;
-    my $r_report = \$_[0];
+    my $report = shift;
     $err = 0;
     $errstr = "";
 
@@ -719,7 +716,7 @@ sub end_job() {
 	$err = $PREPARE_FAILED;
 	return 0;
     }
-    unless ($sth->execute($$r_report)) {
+    unless ($sth->execute($report)) {
 	$errstr = "en_q2r failed to update the job table";
 	$err = $UPDATE_FAILED;
 	return 0;

@@ -12,7 +12,8 @@ DBPASSWD=tester
 SERVICE_NAME=spkcmpd
 LOCKFILE_PATH=/tmp/lock_$SERVICE_NAME
 
-#restart()
+ulimit -c 10000000  # this enables a core dump if the compiler crashes
+
 start() {
     /usr/local/bin/${SERVICE_NAME}.pl $DATABASE $HOST $DBUSER $DBPASSWD
     echo "started"

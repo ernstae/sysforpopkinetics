@@ -6,7 +6,7 @@ use Test::Simple tests => 49;  # number of ok() tests
 
 use Spkdb (
     'connect', 'disconnect', 'new_job', 'job_status', 
-    'de_q2c', 'en_q2c',
+    'de_q2c', 
     'en_q2r', 'de_q2r', 'end_job', 'job_report',
     'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
     'new_model', 'get_model', 'update_model', 'user_models',
@@ -149,10 +149,10 @@ ok(&end_job($dbh, $job_id, "abcd", "end report") == 0,
    "end_job, with invalid end code");
 
 my $report = &job_report($dbh, $job_id + 1);
-ok($report && $report =~ /^end report$/, "end_report");
+ok($report && $report =~ /^end report$/, "job_report");
 
 ok(! &job_report($dbh, $job_id) && $Spkdb::err == $Spkdb::NOT_ENDED,
-   "end_report for a job not at end");
+   "job_report for a job not at end");
 
 ok(! &get_dataset($dbh, 55) && $Spkdb::err == 0,
    "get_dataset when none exists");
