@@ -421,11 +421,11 @@
 	</listitem>
 	<listitem>
 	  <para>
-	    <emphasis>Build security into every stage</emphasis>. Employ 
+	    <emphasis>Build security into every stage</emphasis>. SPK employs 
 	    public key authentication and the
 	    secure socket layer (SSL) security for connections across the
-	    public INTERNET; password security and session security for the
-	    MDA; firewall security for the server network.
+	    public Internet, password security and session security for the
+	    MDA, and firewall security for the server network.
 	  </para>
 	</listitem>
 	<listitem>
