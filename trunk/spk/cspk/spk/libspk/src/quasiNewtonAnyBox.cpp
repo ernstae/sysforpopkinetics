@@ -1486,7 +1486,7 @@ bool isWithinTol(
   //------------------------------------------------------------
 
   // Create a version of the Hessian with its sub-diagonal elements
-  //  replaced by the sub-diagonal elements of its Cholesky factor.
+  // replaced by the sub-diagonal elements of its Cholesky factor.
   for ( i = 0; i < n; i++ )
   {
     // Copy the upper triangle elements from the upper triangle of H.
