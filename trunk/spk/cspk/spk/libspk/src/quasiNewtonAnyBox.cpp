@@ -1191,13 +1191,7 @@ void quasiNewtonAnyBox(
     double* pdXOutData = pdvecXOut->data();
     assert( pdvecXOut->nr() == nObjPar );
 
-    unscaleElem( 
-      nObjPar,
-      yCurr,
-      pdXLowData,
-      pdXUpData,
-      pdXDiffData,
-      pdXOutData );
+    unscaleElem( nObjPar, yCurr, pdXLowData, pdXUpData, pdXDiffData, pdXOutData );
   }
 
   // If the final value for the objective function should be
