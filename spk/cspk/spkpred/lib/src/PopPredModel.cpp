@@ -3709,10 +3709,10 @@ void PopPredModel::getIndParLimits(
   // Set the limits.
   for ( k = 0; k < nEta; k++ )
   {
-    // Calculate the standard devation for this element.
+    // Calculate the standard deviation for this element.
     stdDev = std::sqrt( omegaTemp[k + k * nEta] );
 
-    // Set the limits to be a multiple of the standard devatiation.
+    // Set the limits to be a multiple of the standard deviation.
     indParLow[k] = -3.0 * stdDev;
     indParUp [k] = +3.0 * stdDev;
   }
