@@ -9,6 +9,15 @@
    <articleinfo>
       <revhistory>
          <revision>
+            <revnumber>1.8</revnumber>
+            <date>September 2, 2004</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>Corrected the description for DataSet::getAllMeasurements().
+            </revremark>
+         </revision>
+      </revhistory>
+      <revhistory>
+         <revision>
             <revnumber>1.7</revnumber>
             <date>August 3, 2004</date>
             <authorinitials>sh</authorinitials>
@@ -288,7 +297,7 @@ For the terms,
       </para>
       <variablelist>
          <varlistentry>
-            <term><literal>const enum { monte, analytic, grid } method</literal></term>
+            <term><literal>const enum { plain, grid, misser, analytic } method</literal></term>
             <listitem>
                <para>specifies the method for approximating (or computing) the integral.
                </para>
@@ -297,7 +306,7 @@ For the terms,
                to be the same as the one appeared in this document!
                <variablelist>
                   <varlistentry>
-                     <term><literal>monte</literal></term>
+                     <term><literal>plain</literal></term>
                      <listitem>
                         <para>Monte-Carlo approximation for integral
                         </para>
@@ -316,6 +325,12 @@ For the terms,
                      <listitem>
                         <para>Approximation integral using evaluation on a uniform grid
                         </para>
+                     </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                     <term><literal>miser</literal></term>
+                     <listitem>
+                        <para>Approximation integral using Miser algorithm</para>
                      </listitem>
                   </varlistentry>
                </variablelist>
@@ -469,6 +484,7 @@ indexes to those records which have measurements : { 2, 3, 4, 6, 7, 8, 9, 10 }
       </para>
       <variablelist>
          <title>Public Methods</title>
+<!--
          <varlistentry>
             <term>
                <literal>
@@ -499,6 +515,7 @@ indexes to those records which have measurements : { 2, 3, 4, 6, 7, 8, 9, 10 }
                </para>
             </listitem>
          </varlistentry>
+-->
          <varlistentry>
             <term><literal>int getPopSize() const </literal></term>
             <listitem>
@@ -512,9 +529,7 @@ indexes to those records which have measurements : { 2, 3, 4, 6, 7, 8, 9, 10 }
             <listitem>
                <para>
                Returns a vector of measurements from the entire data set for the population.
-               The measurements values are taken from those data records of which corresponding MDV != 1.
-               If <function>DataSet::simulate()</function> has been executed in advance, the values returned
-               by this method are simulated data.
+               Every element of this vector can be subject to data fitting.
                </para>
             </listitem>
          </varlistentry>
@@ -523,7 +538,8 @@ indexes to those records which have measurements : { 2, 3, 4, 6, 7, 8, 9, 10 }
             <listitem>
                <para>
                Returns a vector of numbers of measurements.  The i-th element of the vector
-               indicates the number of measurements for the i-th individual, where 0 <= i < n and
+               indicates the number of measurements for the i-th individual, 
+               where 0 &gt;= i &lt; n and
                n is the number of individuals in the population.
                </para>
             </listitem>
