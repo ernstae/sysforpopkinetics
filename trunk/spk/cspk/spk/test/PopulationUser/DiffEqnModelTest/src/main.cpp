@@ -71,6 +71,7 @@
 #include <spk/pi.h>
 #include "readNonmemTheophylline.h"
 #include <spk/printInMatrix.h>
+#include <spk/System.h>
 
 using SPK_VA::valarray;
 

@@ -45,9 +45,10 @@
 #include <queue>
 #include <vector>
 #include <cassert>
-#include <process.h>
 #include <algorithm>
 #include <set>
+
+//#include <process.h>
 
 #include "Channel.h"
 #include "IndDataPackage.h"
@@ -363,9 +364,8 @@ MasterEndChannel::MasterEndChannel(const File& sharedDiskSpace)
 {
     _id = System::pid();
     char buf[MAX_NODES];
-    _strID  = itoa(_id, buf, 10);
-    _strID += "_";
-    _strID += itoa(_counter, buf, 10);
+    sprintf( buf, "%s_%d", _id, _counter );
+    _strID = buf;
 
     _tempfile.setPath(sharedDiskSpace.getPath());
     _tempfile.setName(System::machine()+"_master"+_strID+"."+"tmp");
@@ -536,7 +536,7 @@ const PackageHandle MasterEndChannel::post(const IndInputDataPackage& inpack, bo
     strIndex.fill('0');
     strIndex.flags(ios::right);
     strIndex << index;
-    strIndex.put(NULL);
+    strIndex.put('\0');
 
     //File intermediate(_workdir.getPath(), SPK_INDOUTPUT+strIndex.str()+"_"+_tempfile.getName()+"."+"tmp");
     File outfile(_workdir.getPath(), SPK_INDINPUT+strIndex.str()+"."+SPK_MASTER_SUFFIX);
@@ -600,10 +600,12 @@ bool MasterEndChannel::hasReached( const PackageHandle& handler ) const
 #include <windows.h>
 #include <io.h>
 #include <sys/locking.h>
-
+#endif
 bool MasterEndChannel::write(const std::string& filename, const std::string& message)
 {
   bool ok = false;
+
+#ifdef _WIN32
     File pathname(_workdir.getPath(), filename);
     FILE *file;
     while( (file = fopen(pathname.getFullname().c_str(), "w")) == NULL )
@@ -615,10 +617,10 @@ bool MasterEndChannel::write(const std::string& filename, const std::string& mes
       ok = true;
     _locking(_fileno(file), _LK_UNLCK, message.size());
     fclose(file);
+#endif
     
   return ok;
 }
-#endif
 
 /*************************************************************************
  *
@@ -818,7 +820,8 @@ NodeEndChannel::NodeEndChannel(const File& sharedDiskSpace)
 {
     _id = System::pid();
     char buf[MAX_NODES];
-    _strID = itoa(_id, buf, 10);
+    sprintf( buf, "%d", _id );
+    _strID = buf;
 
     _tempfile.setPath(sharedDiskSpace.getPath());
     _tempfile.setName(System::machine()+"_node"+_strID+".tmp");
@@ -843,6 +846,7 @@ NodeEndChannel::~NodeEndChannel()
 };
 
 void  NodeEndChannel::open(){}
+
 void  NodeEndChannel::close()
 {
     //

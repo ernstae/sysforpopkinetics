@@ -47,7 +47,7 @@ public:
     static unsigned sleep( unsigned seconds );
     static int   pid();
     //    static int   beginthread( void( __cdecl * start_address )( void * ), unsigned stack_size, void * arglist );
-    static void  endthread();
+    //static void  endthread();
     static int   spawnAsyncProcess( const std::string& executable_name, char* argv[] );
     static int   spawnSyncProcess(  const std::string& executable_name, char* argv[] );
     static int   exec(const std::string& cmd);
