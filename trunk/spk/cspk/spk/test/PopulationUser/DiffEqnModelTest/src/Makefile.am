@@ -1,6 +1,6 @@
 bin_PROGRAMS = DiffEqnModelTest
 DiffEqnModelTest_SOURCES = \
-    genericDriver.cpp \
+    main.cpp \
     convertStatisticsToNonmem.cpp \
     DiffEqnModelD.cpp \
     DiffEqnModelF_Analytic.cpp \
@@ -19,4 +19,4 @@ DiffEqnModelTest_SOURCES = \
     nonmemEqvContainers.h \
     ode4rk.h \
     readNonmemTheophylline.h
-DiffEqnModelTest_LDFLAGS = -static -lspk -lnagc -lpthread -lm
+DiffEqnModelTest_LDFLAGS = -lspk /usr/local/lib/libnagc.a -lpthread -lm
