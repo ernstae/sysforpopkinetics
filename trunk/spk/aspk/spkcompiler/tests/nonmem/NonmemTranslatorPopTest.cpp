@@ -771,7 +771,7 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
   oIndDataDriver.close();
 
   char command[256];
-  sprintf( command, "g++ -g %s -o %s", fIndDataDriver_cpp, fIndDataDriver );
+  sprintf( command, "g++ -g %s -o %s  -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -I/usr/local/include/spktest", fIndDataDriver_cpp, fIndDataDriver );
   if( system( command ) != 0 )
     {
       char message[256];
@@ -855,7 +855,7 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
   
   oDataSetDriver.close();
 
-  sprintf( command, "g++ -g %s -o %s", fDataSetDriver_cpp, fDataSetDriver );
+  sprintf( command, "g++ -g %s -o %s  -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -I/usr/local/include/spktest", fDataSetDriver_cpp, fDataSetDriver );
   if( system( command ) != 0 )
     {
       char message[256];
@@ -1002,7 +1002,7 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
   oPredDriver << "}" << endl;
   oPredDriver.close();
 
-  sprintf( command, "g++ -g %s -o %s", fPredDriver_cpp, fPredDriver );
+  sprintf( command, "g++ -g %s -o %s  -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -I/usr/local/include/spktest", fPredDriver_cpp, fPredDriver );
   if( system( command ) != 0 )
     {
       char message[256];
@@ -1024,7 +1024,7 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   int  exitcode      = 0;
 
-  sprintf( command, "make -f generatedMakefile" );
+  sprintf( command, "make -f generatedMakefile test" );
   if( system( command ) != 0 )
     {
       char message[256];
