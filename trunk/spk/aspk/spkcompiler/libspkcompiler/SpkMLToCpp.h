@@ -3,13 +3,13 @@
 
 #include <vector>
 
-#include <xercesc/dom/DOM.hpp>
+//#include <xercesc/dom/DOM.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include "SpkParameters.h"
 #include "ClientTranslator.h"
 #include "client.h"
 #include "SymbolTable.h"
-#include "ExpTreeGenerator.h"
+//#include "ExpTreeGenerator.h"
 #include "explang.h"
 
 /**
@@ -18,7 +18,10 @@
  * This header declares the SpkMLToCpp (SpkML->C++ compiler) class and
  * extern-s the global variables that serve as the communication
  * channel between the SpkML->C++ compiler and 
- * the expression language parser (and lexical analyizer).
+ * the expression language parser (and lexical analyizer)
+ * which is internally used by the compiler to translate only
+ * the algebraic expression portions found in the input
+ * XML document.
  */
 extern "C"{
   /**
@@ -123,8 +126,8 @@ extern SymbolTable *gSpkExpSymbolTable;
  * and only inserts new nodes below the
  * root node pointed by the pointer set prior to the call.
  *
- * @note This pointer is acutally declared in a file that defines yyparse()
- * for each client type.
+ * @note This pointer is acutally declared in a file that defines 
+ * a yyparse() for a target client type.
  */
 //extern xercesc::DOMDocument *gSpkExpTree;
 
@@ -152,19 +155,25 @@ class SpkMLToCpp
 {
  public:
   /**
-   * The only legal constructor which takes a character
-   * array containing the name of input SpkML xml document.
+   * Initializes DOM and generates a DOM parse tree
+   * from the SpkInML document.  The protected class member,
+   * tree, will point to the parse tree upon the
+   * sucessful completion of parsing process.
    *
-   * During the initialization process, it converts the
-   * document to a DOM parse tree and discover the client
-   * from the econtents.
+   * @arg SpkInML is a file path to the SpkML xml document
+   * to be translated into C++ code.  The grammer for
+   * an SpkML document is defined per client.
+   * 
    */
-  SpkMLToCpp( const char* inputSpkpMLIn );
+  SpkMLToCpp( const char* SpkInML );
   ~SpkMLToCpp();
 
   /**
-   * Translates the input SpkML document (which may have been
-   * converted to a DOM parse tree) to C++ code files.
+   * Translates the information stored in the DOM
+   * parse tree pointed by a protected class member, tree, 
+   * generated from the SpkInML document
+   * to C++ source code and store the results into
+   * files.
    * 
    * During the process, it gathers information 
    * from the input, which may or may not be expressed
@@ -179,10 +188,11 @@ class SpkMLToCpp
    * Upon the successful completion, a number of C++ source
    * code files will be generated.  One of them is a driver
    * that executes fitPopulation() or fitIndividual(),
-   * depending on the cleint's request.  The rest, as together,
-   * define a subclass of SpkModel class.
+   * depending on the client's request.  The rest, as together,
+   * defines the whole body or a part of a subclass of SpkModel 
+   * class and a class that holds individiduals' data, IndData.
    * The names of these generatd files can be obtained
-   * through getDriverDefFileName() and getModelDefFileNames().
+   * through getFilenameList().
    * 
    * If errors are detected during the translation process,
    * an SpkException object will be thrown.
@@ -195,8 +205,9 @@ class SpkMLToCpp
   /**
    * Obtain the vector containg pointers to character arrays,
    * each containing a file name.  These files, as together,
-   * defines a subclass of SpkModel class, a measurement
-   * data structure, and a driver.
+   * defines the entire body or a part of a subclass of SpkModel class,
+   * IndData class which holds individiduals' measurements and
+   * the driver.
    *
    * @return a vector containing filenames, together define
    * a subclass of SpkModel class, a data structure which
@@ -234,7 +245,7 @@ class SpkMLToCpp
   void                        terminateDOM      () const;
 
   /**
-   * Discover the client, which is specified in the input SpkML document.
+   * Discover the client whose key information is barried in the input SpkML document.
    *
    * Upon the successful completion, who, shall
    * be set to an enum value corresponding to the discovered client.
@@ -242,7 +253,8 @@ class SpkMLToCpp
   enum client::type           discoverClient    ( const xercesc::DOMDocument* tree ) const;
 
   /**
-   * Build a DOM parse tree from the input SpkML xml document.
+   * Build a DOM parse tree from the input SpkML xml document for further
+   * analysis.
    * 
    * Upon the succesfful completion, tree points to a legal DOM parse tree generated
    * from parseing the input SpkML xml document.
