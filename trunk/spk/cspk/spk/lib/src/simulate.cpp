@@ -52,226 +52,6 @@
  *	Step #4:  Concatenate simY in yOut
  *
  *************************************************************************/
-#pragma warning( disable : 4786 )
-#include <vector>
-#include <ctime>
-#include "SpkValarray.h"
-#include "SpkModel.h"
-#include "simulate.h"
-#include "randNormal.h"
-
-using namespace std;
-using SPK_VA::valarray;
-using SPK_VA::slice;
-
-void simulate( SpkModel &model,
-	       const valarray<double> &alp,
-	       const valarray<int>    &N,
-	       const valarray<double> &bLow,
-	       const valarray<double> &bUp,
-	       valarray<double>       &yOut,
-	       valarray<double>       &bAllOut,
-	       int seed )
-{		
-  // *** Random number seeding - Default value is random ***
-  srand( seed );
-  
-  // *** Constants/Iterators ***
-  int i, j, k;	      // Iterators
-  int nIndividuals = N.size();     // Get the number of subjects
-  int nB           = bLow.size();  // Get the number of random effects
-  int yOut_length  = N.sum();
-   
-  // *** Initial Conditions ***
-  assert( bUp.size() == nB );
-  assert( nIndividuals > 0 );
-  assert( nB >= 0 );
-
-  // *** Fixing sizes of output matrices ***						
-  bAllOut.resize(nB * nIndividuals);  // Set bAllOut to be the correct size
-	
-  //--------------------------------------------------------------------------
-  // Step #1:  *** Fill bAllOut ***
-  //--------------------------------------------------------------------------
-  model.setPopPar(alp);
-
-  valarray<double> D( nB * nB );
-  try{
-    model.indParVariance(D);// D matrix from model
-  }
-  catch( SpkException& e )
-    {
-      e.push( SpkError::SPK_UNKNOWN_ERR, "Evaluation of D(alp) failed during data simulation.\n",
-	      __LINE__, __FILE__ );
-      throw e;
-    }
-  catch( ... )
-    {
-      throw SpkError( SpkError::SPK_UNKNOWN_ERR, "Evaluation of D(alp) failed during data simulation.\n",
-		      __LINE__, __FILE__ );
-    }
-
-  valarray<double> D_norm( nB );
-
-  for (i = 0, k = 0; i < nIndividuals; i++)  // do this nIndividuals times
-    {
-     
-      try{
-	D_norm = randNormal(D, nB);                // call randomizer for each time
-      }
-      catch( SpkException& e )
-	{
-	  char buf[ SpkError::maxMessageLen() ];
-	  sprintf( buf, "Failed to simulate the %d-th individual's random effects.\n", i );
-	  e.push( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
-	  throw e;
-	}
-      catch( ... )
-	{
-	  char buf[ SpkError::maxMessageLen() ];
-	  sprintf( buf, "Failed to simulate the %d-th individual's random effects.\n", i );
-	  throw SpkError( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
-	}
-           
-      for (j = 0; j < nB; j++, k++)          // copy entries from latest call to randomizer
-	{
-	  assert(bUp[j] > bLow[j]);
-	  
-	  if (D_norm[j] >= bUp[j])           // value of randNormal[j] is too high
-	    bAllOut[k] = bUp[j];
-	  else if (D_norm[j] <= bLow[j])     // value of randNormal[j] is too low
-	    bAllOut[k] = bLow[j];
-	  else
-	    bAllOut[k] = D_norm[j];										
-	}
-    }
-  
-  //--------------------------------------------------------------------------
-  // Step #2:  *** Create simY - an unconcatenated version of yOut ***
-  //--------------------------------------------------------------------------
-  
-  vector< valarray<double> > simY( nIndividuals );  // simY is a vector of nIndividuals matrices
-  
-  //--------------------------------------------------------------------------
-  // Step #3:  *** Fill simY ***
-  //--------------------------------------------------------------------------
-  
-  valarray<double> bi( 0.0, nB );            // same dimension as bLow and bUp
-  valarray<double> Ri, fi, ei;               // Create matrices needed to fill simY
-  
-  for (i = 0, k = 0; i < nIndividuals; i++)  // individuals start at 1, go to nIndividuals
-    {					     // k indexes the entire bAllOut matrix
-      try{
-	model.selectIndividual(i);	     // selectIndividual sets i as it is
-	fi.resize( N[i] );
-	Ri.resize( N[i] * N[i] );
-	ei.resize( N[i] );
-	simY[i].resize( N[i] );
-
-	// Simulate the data set for i-th individual, given b.
-	simulate( model, N[i], bAllOut[ slice( k, nB, 1 ) ], simY[i], seed );
-      }
-      catch( SpkException& e )
-	{
-	  char buf[ SpkError::maxMessageLen() ];
-	  sprintf( buf, "Failed to simulate measurements for the %d-th individual.\n", i );
-	  e.push( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
-	  throw e;
-	}
-      catch( ... )
-	{
-	  char buf[ SpkError::maxMessageLen() ];
-	  sprintf( buf, "Failed to simulate measurements for the %d-th individual.\n", i );
-	  throw SpkError( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
-	} 
-    }
-  
-  //--------------------------------------------------------------------------
-  // Step #4:  *** Concatenate simY in yOut  *** 
-  //--------------------------------------------------------------------------
-  
-  for (i = 0, k = 0; i < nIndividuals; i++)    // loop through nIndividuals matrices
-    {
-      for (j = 0; (double)j < N[i]; j++, k++)  // loop through # of measurements
-	{
-	  yOut[k] = simY[i][j];                // copies the values one by one
-	}
-    }
-  
-  return;
-}
-/*************************************************************************
- *
- *   Function:		simulate
- *
- *   Description:	Simulates measurements for a model 
- *			given the random effects for the subject.				
- *
- *   Author:		Viet Nguyen
- *   Updated by:        Sachiko Honda
- *
- *   Parameters:	SPK_Model &model
- *                      int n
- *			const valarray<double> &b
- *			valarray<double> &yOut
- *			Integer seed
- *
- *	Return Value:	void
- *
- **************************************************************************/
-void simulate( SpkModel &indModel,
-	       int                    n,
-	       const valarray<double> &b,
-	       valarray<double>       &yOut,
-	       int seed )
-{		
-  // *** Random number seeding - Default value is random ***
-  srand( seed );
-  
-  // *** Constants/Iterators ***
-  int nB = b.size();    // Get the number of random effects
-   
-  // *** Initial Conditions ***
-  assert( nB >= 0 );
-  
-  //--------------------------------------------------------------------------
-  // Step #2:  *** Size yOut  ***
-  //--------------------------------------------------------------------------
-  
-  yOut.resize( n );
-  
-  //--------------------------------------------------------------------------
-  // Step #3:  *** Fill yOut ***
-  //--------------------------------------------------------------------------
-  
-  valarray<double> R( n*n ), f(n), e(n);  // Create matrices needed to fill yOut
-  
-  try{
-    indModel.setIndPar( b );
-    indModel.dataMean(f);
-    indModel.dataVariance(R);
-    e = randNormal( R, n );
-    
-    yOut = f + e;	            // simY = y = f + e
-  }
-  catch( SpkException& e )
-    {
-      char buf[ SpkError::maxMessageLen() ];
-      sprintf( buf, "Failed to simulate measurements.\n" );
-      e.push( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
-      throw e;
-    }
-  catch( ... )
-    {
-      char buf[ SpkError::maxMessageLen() ];
-      sprintf( buf, "Failed to simulate measurements.\n" );
-      throw SpkError( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
-    } 
-  
- 
-  return;
-}
-
 /*
   $begin simulate$$
 
@@ -764,3 +544,222 @@ void simulate( SpkModel &indModel,
   $end
 
 */
+#pragma warning( disable : 4786 )
+#include <vector>
+#include <ctime>
+#include "SpkValarray.h"
+#include "SpkModel.h"
+#include "simulate.h"
+#include "randNormal.h"
+
+using namespace std;
+using SPK_VA::valarray;
+using SPK_VA::slice;
+
+void simulate( SpkModel &model,
+	       const valarray<double> &alp,
+	       const valarray<int>    &N,
+	       const valarray<double> &bLow,
+	       const valarray<double> &bUp,
+	       valarray<double>       &yOut,
+	       valarray<double>       &bAllOut,
+	       int seed )
+{		
+  // *** Random number seeding - Default value is random ***
+  srand( seed );
+  
+  // *** Constants/Iterators ***
+  int i, j, k;	      // Iterators
+  int nIndividuals = N.size();     // Get the number of subjects
+  int nB           = bLow.size();  // Get the number of random effects
+  int yOut_length  = N.sum();
+   
+  // *** Initial Conditions ***
+  assert( bUp.size() == nB );
+  assert( nIndividuals > 0 );
+  assert( nB >= 0 );
+
+  // *** Fixing sizes of output matrices ***						
+  bAllOut.resize(nB * nIndividuals);  // Set bAllOut to be the correct size
+	
+  //--------------------------------------------------------------------------
+  // Step #1:  *** Fill bAllOut ***
+  //--------------------------------------------------------------------------
+  model.setPopPar(alp);
+
+  valarray<double> D( nB * nB );
+  try{
+    model.indParVariance(D);// D matrix from model
+  }
+  catch( SpkException& e )
+    {
+      e.push( SpkError::SPK_UNKNOWN_ERR, "Evaluation of D(alp) failed during data simulation.\n",
+	      __LINE__, __FILE__ );
+      throw e;
+    }
+  catch( ... )
+    {
+      throw SpkError( SpkError::SPK_UNKNOWN_ERR, "Evaluation of D(alp) failed during data simulation.\n",
+		      __LINE__, __FILE__ );
+    }
+
+  valarray<double> D_norm( nB );
+
+  for (i = 0, k = 0; i < nIndividuals; i++)  // do this nIndividuals times
+    {
+     
+      try{
+	D_norm = randNormal(D, nB);                // call randomizer for each time
+      }
+      catch( SpkException& e )
+	{
+	  char buf[ SpkError::maxMessageLen() ];
+	  sprintf( buf, "Failed to simulate the %d-th individual's random effects.\n", i );
+	  e.push( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
+	  throw e;
+	}
+      catch( ... )
+	{
+	  char buf[ SpkError::maxMessageLen() ];
+	  sprintf( buf, "Failed to simulate the %d-th individual's random effects.\n", i );
+	  throw SpkError( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
+	}
+           
+      for (j = 0; j < nB; j++, k++)          // copy entries from latest call to randomizer
+	{
+	  assert(bUp[j] > bLow[j]);
+	  
+	  if (D_norm[j] >= bUp[j])           // value of randNormal[j] is too high
+	    bAllOut[k] = bUp[j];
+	  else if (D_norm[j] <= bLow[j])     // value of randNormal[j] is too low
+	    bAllOut[k] = bLow[j];
+	  else
+	    bAllOut[k] = D_norm[j];										
+	}
+    }
+  
+  //--------------------------------------------------------------------------
+  // Step #2:  *** Create simY - an unconcatenated version of yOut ***
+  //--------------------------------------------------------------------------
+  
+  vector< valarray<double> > simY( nIndividuals );  // simY is a vector of nIndividuals matrices
+  
+  //--------------------------------------------------------------------------
+  // Step #3:  *** Fill simY ***
+  //--------------------------------------------------------------------------
+  
+  valarray<double> bi( 0.0, nB );            // same dimension as bLow and bUp
+  valarray<double> Ri, fi, ei;               // Create matrices needed to fill simY
+  
+  for (i = 0, k = 0; i < nIndividuals; i++)  // individuals start at 1, go to nIndividuals
+    {					     // k indexes the entire bAllOut matrix
+      try{
+	model.selectIndividual(i);	     // selectIndividual sets i as it is
+	fi.resize( N[i] );
+	Ri.resize( N[i] * N[i] );
+	ei.resize( N[i] );
+	simY[i].resize( N[i] );
+
+	// Simulate the data set for i-th individual, given b.
+	simulate( model, N[i], bAllOut[ slice( k, nB, 1 ) ], simY[i], seed );
+      }
+      catch( SpkException& e )
+	{
+	  char buf[ SpkError::maxMessageLen() ];
+	  sprintf( buf, "Failed to simulate measurements for the %d-th individual.\n", i );
+	  e.push( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
+	  throw e;
+	}
+      catch( ... )
+	{
+	  char buf[ SpkError::maxMessageLen() ];
+	  sprintf( buf, "Failed to simulate measurements for the %d-th individual.\n", i );
+	  throw SpkError( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
+	} 
+    }
+  
+  //--------------------------------------------------------------------------
+  // Step #4:  *** Concatenate simY in yOut  *** 
+  //--------------------------------------------------------------------------
+  
+  for (i = 0, k = 0; i < nIndividuals; i++)    // loop through nIndividuals matrices
+    {
+      for (j = 0; (double)j < N[i]; j++, k++)  // loop through # of measurements
+	{
+	  yOut[k] = simY[i][j];                // copies the values one by one
+	}
+    }
+  
+  return;
+}
+/*************************************************************************
+ *
+ *   Function:		simulate
+ *
+ *   Description:	Simulates measurements for a model 
+ *			given the random effects for the subject.				
+ *
+ *   Author:		Viet Nguyen
+ *   Updated by:        Sachiko Honda
+ *
+ *   Parameters:	SPK_Model &model
+ *                      int n
+ *			const valarray<double> &b
+ *			valarray<double> &yOut
+ *			Integer seed
+ *
+ *	Return Value:	void
+ *
+ **************************************************************************/
+void simulate( SpkModel &indModel,
+	       int                    n,
+	       const valarray<double> &b,
+	       valarray<double>       &yOut,
+	       int seed )
+{		
+  // *** Random number seeding - Default value is random ***
+  srand( seed );
+  
+  // *** Constants/Iterators ***
+  int nB = b.size();    // Get the number of random effects
+   
+  // *** Initial Conditions ***
+  assert( nB >= 0 );
+  
+  //--------------------------------------------------------------------------
+  // Step #2:  *** Size yOut  ***
+  //--------------------------------------------------------------------------
+  
+  yOut.resize( n );
+  
+  //--------------------------------------------------------------------------
+  // Step #3:  *** Fill yOut ***
+  //--------------------------------------------------------------------------
+  
+  valarray<double> R( n*n ), f(n), e(n);  // Create matrices needed to fill yOut
+  
+  try{
+    indModel.setIndPar( b );
+    indModel.dataMean(f);
+    indModel.dataVariance(R);
+    e = randNormal( R, n );
+    
+    yOut = f + e;	            // simY = y = f + e
+  }
+  catch( SpkException& e )
+    {
+      char buf[ SpkError::maxMessageLen() ];
+      sprintf( buf, "Failed to simulate measurements.\n" );
+      e.push( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
+      throw e;
+    }
+  catch( ... )
+    {
+      char buf[ SpkError::maxMessageLen() ];
+      sprintf( buf, "Failed to simulate measurements.\n" );
+      throw SpkError( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
+    } 
+  
+ 
+  return;
+}
