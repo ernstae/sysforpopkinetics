@@ -247,6 +247,9 @@ class NonmemTranslator : public ClientTranslator
   // into the generated driver.cpp.
   const char * fSpkRuntimeLongError_tmp;
 
+  // The checkpoint file.
+  const char * fCheckpoint_xml;
+
   // The result XML
   const char * fResult_xml;
 
@@ -341,6 +344,8 @@ class NonmemTranslator : public ClientTranslator
   bool              myIsSimulate;
   bool              myIsStat; 
   bool              myIsMonte;
+  bool              myIndWriteCheckpoint;
+  bool              myPopWriteCheckpoint;
 
   unsigned int      mySubproblemsN;   
   bool              myIsEtaOut;
