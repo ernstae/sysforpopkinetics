@@ -52,8 +52,8 @@
 using namespace xercesc;
 using namespace std;
 
-int        gSpkExpErrors;
-extern int gSpkExpLines; // this is defined in nmabb.l (lex spec)
+ int gSpkExpErrors = 0;
+ int gSpkExpLines  = 0;
 
 extern "C"{
   int yyparse(void);
@@ -242,12 +242,9 @@ input:
 // A unit can be empty.
 //
 /* empty */ {
-  cout << "Hey!!!!" << endl;
   struct NodeCarrier * carrier = gSpkExpUtil->createNodeCarrier();
-  cout << "Created a carrier" << endl;
   carrier->node = gSpkExpDOMDocument->getDocumentElement();
   $$ = carrier;
-  cout << "done" << endl;
 }
 | 
 //
