@@ -742,14 +742,12 @@ void simulate( SpkModel &indModel,
   try{
     indModel.setIndPar( b );
     indModel.dataMean(f);
-    indModel.dataVariance(R);
+    indModel.dataVariance(R);  
     e = randNormal( R, n );
   
     //---------------------------------------------------
     // REVISIT - Sachiko - 07/16/2004
-    // <Mike Dodds's Suggestion>
-    // Give e, the randomness, back to the user so that
-    // they can double-check it.
+    // Bound the values of e.
     //---------------------------------------------------
     yOut = f + e;	            // simY = y = f + e
   }
