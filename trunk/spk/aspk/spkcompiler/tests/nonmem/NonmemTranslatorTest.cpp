@@ -1458,6 +1458,528 @@ void NonmemTranslatorTest::testParseIndSource()
      CPPUNIT_ASSERT_MESSAGE( "The generated/built \"indDriver\" failed to run successfully.", false );
   }
 }
+void NonmemTranslatorTest::testParseIndNoID()
+{
+  const int nLabels = 5;
+  map<string, string> labels;
+  labels["TIME"] = "";
+  labels["CP"]   = "DV";
+  labels["DOSE"] = "";
+  labels["WT"]   = "";
+
+  const int thetaLen = 3;
+  vector<double> theta_in (thetaLen);
+  vector<double> theta_up (thetaLen);
+  vector<double> theta_low(thetaLen);
+  vector<bool>   theta_fix(thetaLen);
+  for( int i=0; i<thetaLen; i++ )
+    {
+      theta_in[i]  =  i+1;
+      theta_up[i]  = +10.0 * theta_in[i];
+      theta_low[i] = -10.0 * theta_in[i];
+      theta_fix[i] = ( i%2==0? true : false );
+    }
+
+  const int etaLen = 0;
+  const int epsLen = 0;
+
+  const int omegaDim = 2;
+  const Symbol::Structure omegaStruct = Symbol::DIAGONAL;
+  int omegaElemNum = ( omegaStruct == Symbol::DIAGONAL? omegaDim : series(1,1,omegaDim) );
+  vector<double> omega_in (omegaElemNum);
+  vector<bool>   omega_fix(omegaElemNum);
+  for( int i=0; i<omegaElemNum; i++ )
+    {
+      omega_in[i]  = i+1;
+      omega_fix[i] = ( i%2==0? true : false );
+    }
+
+  bool ind_stderr         = true;
+  bool ind_coefficent     = true;
+  bool ind_confidence     = true;
+  bool ind_covariance     = true;
+  bool ind_inv_covariance = false;
+  bool ind_correlation    = true;
+
+  bool isSimulate = false;
+  const int seed = 1;
+
+  const char gSource[] = "NonmemTranslatorIndNoIDTest.sourceML";
+  ofstream oSource( gSource );
+  if( oSource.good() )
+    {
+      oSource << "<spksourceML>" << endl;
+      oSource << "<nonmem>" << endl;
+      
+      oSource << "<constraint>" << endl;
+      // default: is_eta_out=no, is_restart=yes
+      oSource << "<ind_analysis approximation=\"foce\" mitr=\"100\" is_estimation=\"yes\">" << endl;
+      oSource << "<data_labels filename=\"xxx.dat\">" << endl;
+
+      map<string,string>::const_iterator pLabel = labels.begin();
+      for( int i=0; i<nLabels, pLabel!=labels.end(); i++, pLabel++ )
+	{
+	  oSource << "<label name=";
+          oSource << "\"" << pLabel->first << "\"";
+          if( pLabel->second != "" )
+	    oSource << " synonym=\"" << pLabel->second << "\"";
+          oSource << "/>" << endl;
+	}
+
+      oSource << "</data_labels>" << endl;
+      oSource << "<theta length=\"3\">" << endl;
+      oSource << "<in>" << endl;
+      for( int i=0; i<thetaLen; i++ )
+	{
+	  oSource << "<value";
+          if( theta_fix[i] )
+	    oSource << " fixed=\"yes\"";
+	  oSource << ">" << theta_in[i] << "</value>" << endl;
+	}
+      oSource << "</in>" << endl;
+      oSource << "<low>" << endl;
+      for( int i=0; i<thetaLen; i++ )
+	oSource << "<value>" << theta_low[i] << "</value>" << endl;
+      oSource << "</low>" << endl;
+      oSource << "<up>" << endl;
+      for( int i=0; i<thetaLen; i++ )
+	oSource << "<value>" << theta_up[i] << "</value>" << endl;
+      oSource << "</up>" << endl;
+      oSource << "</theta>" << endl;
+
+      oSource << "<omega struct=\"";
+      oSource << (omegaStruct==Symbol::DIAGONAL? "diagonal" : "block");
+      oSource << "\" dimension=\"";
+      oSource << omegaDim << "\">" << endl;
+      oSource << "<in>" << endl;
+
+      for( int i=0; i<omegaElemNum; i++ )
+	{
+	  oSource << "<value";
+          if( omega_fix[i] )
+	    oSource << " fixed=\"yes\"";
+	  oSource << ">" << omega_in[i] << "</value>" << endl;
+	}
+      oSource << "</in>" << endl;
+      oSource << "</omega>" << endl;
+
+      oSource << "<ind_stat ";
+      oSource << "is_standarderr_out=\""        << (ind_stderr? "yes":"no") << "\" ";
+      oSource << "is_covariance_out=\""         << (ind_covariance? "yes":"no") << "\" ";
+      oSource << "is_inverse_covariance_out=\"" << (ind_inv_covariance? "yes":"no") << "\" ";
+      oSource << "is_correlation_out=\""        << (ind_correlation? "yes":"no") << "\"/>" << endl;
+
+      if( isSimulate )
+	{
+	  oSource << "<simulation seed=\"" << seed << "\"/>" << endl;
+	}
+      oSource << "</ind_analysis>" << endl;
+      oSource << "</constraint>" << endl;
+
+      oSource << "<model>" << endl;
+      oSource << "<pred>" << endl;
+      oSource << ";THETA(1)=MEAN ABSORPTION RATE CONSTANT (1/HR)" << endl;
+      oSource << ";THETA(2)=MEAN ELIMINATION RATE CONSTANT (1/HR)" << endl;
+      oSource << ";THETA(3)=SLOPE OF CLEARANCE VS WEIGHT RELATIONSHIP (LITERS/HR/kg)" << endl;
+      oSource << ";DOSE=WT-ADJUSTED DOSE (mg/kg)" << endl;
+      oSource << ";DS=NON-WT-ADJUSTED DOSE (mg)" << endl;
+      oSource << "   IF (DOSE.NE.0) THEN" << endl;
+      oSource << "      DS=DOSE*WT" << endl;
+      oSource << "      W=WT" << endl;
+      oSource << "   ENDIF" << endl;
+      oSource << "   KA=THETA(1)" << endl;
+      oSource << "   KE=THETA(2)" << endl;
+      oSource << "   CL=THETA(3) * W" << endl;
+      oSource << "   D=EXP(-KE*TIME)-EXP(-KA*TIME)" << endl;
+      oSource << "   E=CL*(KA-KE)" << endl;
+      oSource << "   F=DS*KE*KA/E*D" << endl;
+      oSource << "</pred>" << endl;
+      oSource << "</model>" << endl;
+      
+      oSource << "<presentation>" << endl;
+      oSource << "<table header=\"one\" save_as=\"xxx\">" << endl;
+      oSource << "<column label=\"TIME\" appearance_order=\"1\" sort_order=\"1\"/>" << endl;
+      oSource << "<column label=\"THETA(1)\" appearance_order=\"2\"/>" << endl;
+      oSource << "<column label=\"THETA(3)\" appearance_order=\"4\"/>" << endl;
+      oSource << "<column label=\"THETA(2)\" appearance_order=\"3\"/>" << endl;
+      oSource << "</table>" << endl;
+      oSource << "<table header=\"every\">" << endl;
+      oSource << "<column label=\"TIME\" appearance_order=\"1\" sort_order=\"1\"/>" << endl;
+      oSource << "<column label=\"DV\" appearance_order=\"2\"/>" << endl;
+      oSource << "</table>" << endl;
+      oSource << "<scatterplot>" << endl;
+      oSource << "<x label=\"TIME\"/>" << endl;
+      oSource << "<y label=\"PRED\"/>" << endl;
+      oSource << "</scatterplot>" << endl;
+      oSource << "</presentation>" << endl;
+      
+      oSource << "</nonmem>" << endl;
+      oSource << "</spksourceML>" << endl;
+    }
+  oSource.close();
+  
+  try
+    {
+      XMLPlatformUtils::Initialize();
+    }
+  catch( const XMLException& toCatch )
+    {
+      char buf[maxChars + 1];
+      sprintf( buf, "Error during Xerces-c initialization.\nException message: %s.\n", 
+               XMLString::transcode( toCatch.getMessage() ) );
+      CPPUNIT_ASSERT_MESSAGE( buf, false );
+    }
+  
+  xercesc::XercesDOMParser *parser = new xercesc::XercesDOMParser;
+  parser->setValidationScheme( XercesDOMParser::Val_Auto );
+  parser->setDoNamespaces( true );
+  parser->setDoSchema( true );
+  parser->setValidationSchemaFullChecking( true );
+  parser->setCreateEntityReferenceNodes( true );
+  
+  try{
+    ifstream iSource( gSource );
+    if( !iSource.good() )
+      {
+	XMLPlatformUtils::Terminate();
+	char buf[maxChars + 1];
+	sprintf( buf, "Failed to open %s!\n", gSource );
+	CPPUNIT_ASSERT_MESSAGE( buf, false );
+      }
+    parser->parse( gSource );
+    data = parser->getDocument();
+  }
+  catch( const XMLException& e )
+    {
+      XMLPlatformUtils::Terminate();
+      char buf[maxChars + 1];
+      sprintf( buf, "An error occurred during parsing\n   Message: %s\n",
+	       XMLString::transcode(e.getMessage() ) );
+      CPPUNIT_ASSERT_MESSAGE( buf, false );
+    }
+  catch( const DOMException& e )
+    {
+      XMLCh errText[maxChars + 1]; 
+      if (DOMImplementation::loadDOMExceptionMsg(e.code, errText, maxChars))
+	{
+          XMLPlatformUtils::Terminate();
+          char buf[maxChars + 1];
+          sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
+                   gSource, e.code, XMLString::transcode(errText) );
+          CPPUNIT_ASSERT_MESSAGE( buf, false );
+	}
+    }
+  catch( ... )
+    {
+      XMLPlatformUtils::Terminate();
+      char buf[maxChars + 1];
+      sprintf( buf, "An unknown error occurred during parsing.\n" );
+      CPPUNIT_ASSERT_MESSAGE( buf, false );
+    }
+  
+  valarray<int> N(1);
+  N[0] = 3;
+  NonmemTranslator xlator( data, source );
+  SymbolTable *table = xlator.getSymbolTable();
+
+  // When the ID field is missing, ClientTranslator, the superclass of NonmemTranslator, 
+  // should have inserted it into the symbol table.
+  Symbol * id   = table->insertLabel( "ID",   "", N );
+
+  Symbol * time = table->insertLabel( "TIME", "", N );
+  Symbol * cp   = table->insertLabel( "CP",   "DV", N );
+  Symbol * wt   = table->insertLabel( "WT", "", N );
+  Symbol * dose = table->insertLabel( "DOSE", "", N );
+
+  id->initial[0][0] = "1"; time->initial[0][0] = "0.0"; cp->initial[0][0] = "0.0";  wt->initial[0][0] = "30.0"; dose->initial[0][0] = "10.0";
+  id->initial[0][1] = "1"; time->initial[0][1] = "1.0"; cp->initial[0][1] = "10.0"; wt->initial[0][1] = "0.0";  dose->initial[0][1] = "0.0";
+  id->initial[0][2] = "1"; time->initial[0][2] = "2.0"; cp->initial[0][2] = "20.0"; wt->initial[0][2] = "0.0";  dose->initial[0][2] = "0.0";
+
+  xlator.parseSource();
+
+  if( system( "g++ driver.cpp -g -lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm -o driver" ) != 0 )
+    {
+      CPPUNIT_ASSERT_MESSAGE( "Compilation of the generated driver.cpp failed!", false );
+    }
+
+  remove( gSource );
+  
+  //cout << *table << endl;
+  map<string,string>::const_iterator pLabel = labels.begin();
+  for( int i=0; i<nLabels, pLabel!=labels.end(); i++, pLabel++ )
+    {
+      Symbol * s = table->findi( pLabel->first );
+      CPPUNIT_ASSERT( s != Symbol::empty() );
+      CPPUNIT_ASSERT( s->name == pLabel->first );
+      CPPUNIT_ASSERT( s->synonym == pLabel->second );
+    }
+  CPPUNIT_ASSERT( table->findi("pred") != Symbol::empty() );
+  CPPUNIT_ASSERT( table->findi("res")  != Symbol::empty() );
+
+  Symbol *theta = table->findi( "theta" );
+  CPPUNIT_ASSERT( theta != Symbol::empty() );
+  CPPUNIT_ASSERT_EQUAL( thetaLen, theta->dimension[0] );
+  CPPUNIT_ASSERT_EQUAL( thetaLen, static_cast<int>( theta->initial[0].size() ) );
+  CPPUNIT_ASSERT_EQUAL( thetaLen, static_cast<int>( theta->upper[0].size() ) );
+  CPPUNIT_ASSERT_EQUAL( thetaLen, static_cast<int>( theta->lower[0].size() ) );
+  CPPUNIT_ASSERT_EQUAL( thetaLen, static_cast<int>( theta->fixed[0].size() ) );
+
+  for( int i=0; i<thetaLen; i++ )
+    {
+      CPPUNIT_ASSERT( theta_fix[i] == theta->fixed[0][i] );
+      CPPUNIT_ASSERT_EQUAL( theta_in[i],  atof( theta->initial[0][i].c_str() ) );
+      CPPUNIT_ASSERT_EQUAL( theta_low[i], atof( theta->lower[0][i].c_str() ) );
+      CPPUNIT_ASSERT_EQUAL( theta_up[i],  atof( theta->upper[0][i].c_str() ) );
+    }
+  
+  Symbol *omega = table->findi( "omega" );
+  CPPUNIT_ASSERT( omega != Symbol::empty() );
+  CPPUNIT_ASSERT( omega->structure == omegaStruct );
+  CPPUNIT_ASSERT_EQUAL( omegaDim, omega->dimension[0] );
+  CPPUNIT_ASSERT_EQUAL( omegaElemNum, static_cast<int>( omega->fixed[0].size() ) );
+  CPPUNIT_ASSERT_EQUAL( omegaElemNum, static_cast<int>( omega->initial[0].size() ) );
+  CPPUNIT_ASSERT_EQUAL( omegaElemNum, static_cast<int>( omega->upper[0].size() ) );
+  CPPUNIT_ASSERT_EQUAL( omegaElemNum, static_cast<int>( omega->lower[0].size() ) );
+
+  for( int i=0; i<omegaElemNum; i++ )
+    {
+
+      CPPUNIT_ASSERT( omega_fix[i] == omega->fixed[0][i] );
+      CPPUNIT_ASSERT_EQUAL( omega_in[i],  atof( omega->initial[0][i].c_str() ) );
+    }
+  //=====================================================
+  // Test the generated C++ source code files
+  // IndData.h, IndData.cpp, DataSet.h, DataSet.cpp
+  //=====================================================
+  // The order in which the variables appear in
+  // the IndData constructor must be consistent with
+  // with the order in which the variables are actually
+  // passed in the construction of these objects
+  // done in the DataSet constructor.
+  char fTestPred[] = "testIndPredNoID.cpp";
+  ofstream oTestPred( fTestPred );
+  const int pop_size = 1;
+  if( oTestPred.good() )
+    {
+      oTestPred << "#include <iostream>" << endl;
+      oTestPred << "#include <vector>" << endl;
+      oTestPred << "#include <../cppad/CppAD.h>" << endl;
+      oTestPred << "#include \"IndData.h\"" << endl;
+      oTestPred << "#include \"DataSet.h\"" << endl;
+      oTestPred << "#include \"Pred.h\"" << endl;
+      oTestPred << "using namespace std;" << endl;
+      oTestPred << "int main()" << endl;
+      oTestPred << "{" << endl;
+      oTestPred << "DataSet< CppAD::AD<double> > set;" << endl;
+      
+      for( int i=0; i<pop_size; i++ )
+	{
+	  for( int j=0; j<N[i]; j++ )
+	    { 
+	      oTestPred << "if( strcmp( set.data[" << i << "]->id[" << j << "], \"";
+	      oTestPred << id->initial[i][j].c_str() << "\" ) != 0 )" << endl;
+	      oTestPred << "{" << endl;
+	      oTestPred << "   cerr << \"set.data[" << i << "]->id[" << j << "] was not \\\"";
+	      oTestPred << id->initial[i][j] << "\\\".\";" << endl;
+	      oTestPred << "   cerr << \" Instead it was \\\"\" << set.data[";
+	      oTestPred << i << "]->id[" << j << "] << \"\\\".\" << endl;" << endl;
+	      oTestPred << "return 1;" << endl;
+	      oTestPred << "}" << endl;
+
+	      oTestPred << "if( set.data[" << i << "]->time[" << j << "] != ";
+	      oTestPred << time->initial[i][j] << " )" << endl;
+	      oTestPred << "{" << endl;
+	      oTestPred << "   cerr << \"set.data[" << i << "]->time[" << j << "] != \\\"";
+	      oTestPred << time->initial[i][j] << "\\\"\" << endl; " << endl;
+	      oTestPred << "   cerr << \"was \" << set.data[";
+	      oTestPred << i << "]->time[" << j << "] << \".\" << endl;" << endl;
+	      oTestPred << "return 1;" << endl;
+	      oTestPred << "}" << endl;
+	      
+	      oTestPred << "if( set.data[" << i << "]->cp[" << j << "] != ";
+	      oTestPred << cp->initial[i][j] << " )" << endl;
+	      oTestPred << "{" << endl;
+	      oTestPred << "   cerr << \"set.data[" << i << "]->cp[" << j << "] != \\\"";
+	      oTestPred << cp->initial[i][j] << "\\\"\" << endl; " << endl;
+	      oTestPred << "   cerr << \"was \" << set.data[";
+	      oTestPred << i << "]->cp[" << j << "] << \".\" << endl;" << endl;
+	      oTestPred << "return 1;" << endl;
+	      oTestPred << "}" << endl;
+	      
+	      oTestPred << "if( set.data[" << i << "]->dv[" << j << "] != ";
+	      oTestPred << cp->initial[i][j] << " )" << endl;
+	      oTestPred << "{" << endl;
+	      oTestPred << "   cerr << \"set.data[" << i << "]->dv[" << j << "] != \\\"";
+	      oTestPred << cp->initial[i][j] << "\\\"\" << endl; " << endl;
+	      oTestPred << "   cerr << \"was \" << set.data[";
+	      oTestPred << i << "]->dv[" << j << "] << \".\" << endl;" << endl;
+	      oTestPred << "return 1;" << endl;
+	      oTestPred << "}" << endl;
+	      oTestPred << endl;
+	    }
+	}
+      oTestPred << "double thetaIn[] = {";
+      for( int i=0; i<thetaLen; i++ )
+	{
+	  if( i>0 )
+	    oTestPred << ", ";
+	  oTestPred << i+1;
+	}
+      oTestPred << "};" << endl;
+      oTestPred << "double *epsIn = 0;" << endl;
+      oTestPred << "double *etaIn = 0;" << endl;
+      oTestPred << endl;
+
+      oTestPred << "int thetaLen = " << thetaLen << ";" << endl;
+      oTestPred << "int etaLen   = " << etaLen   << ";" << endl;
+      oTestPred << "int epsLen   = " << epsLen   << ";" << endl;
+      oTestPred << "int index_theta = 0;" << endl;
+      oTestPred << "int index_eta   = index_theta + thetaLen;" << endl;
+      oTestPred << "int index_eps   = index_eta + etaLen;" << endl;
+      oTestPred << "vector< CppAD::AD<double> > indepVar( thetaLen + etaLen + epsLen );" << endl;
+      oTestPred << "copy( thetaIn, thetaIn + thetaLen , indepVar.begin() + index_theta );" << endl;
+      oTestPred << "copy( etaIn, etaIn + etaLen, indepVar.begin() + index_eta );" << endl;
+      oTestPred << "copy( epsIn, epsIn + epsLen, indepVar.begin() + index_eps );" << endl;
+      oTestPred << endl;
+
+      oTestPred << "int fLen = " << N[0] << ";" << endl;
+      oTestPred << "int yLen = " << N[0] << ";" << endl;
+      oTestPred << "int index_f = 0;" << endl;
+      oTestPred << "int index_y = 1;" << endl;
+      oTestPred << "vector< CppAD::AD<double> > depVar( fLen + yLen );" << endl;
+      oTestPred << "double yOut = 0.0;" << endl;
+      oTestPred << "double fOut = 0.0;" << endl;
+      oTestPred << endl;
+      oTestPred << "double tol  = 0.0;" << endl;
+      oTestPred << "double ans  = 0.0;" << endl;
+      oTestPred << endl;
+      
+      oTestPred << "Pred< CppAD::AD<double> > pred(&set);" << endl;
+      oTestPred << "bool ok = pred.eval( index_theta, thetaLen," << endl;
+      oTestPred << "                     index_eta,   etaLen," << endl;
+      oTestPred << "                     index_eps,   epsLen," << endl;
+      oTestPred << "                     index_f,     fLen," << endl;
+      oTestPred << "                     index_y,     yLen," << endl;
+      oTestPred << "                     0, 0, " << endl;
+      oTestPred << "                     indepVar," << endl;
+      oTestPred << "                     depVar ); " << endl;
+      oTestPred << "fOut = CppAD::Value(depVar[index_f]);" << endl;
+      oTestPred << "yOut = CppAD::Value(depVar[index_y]);" << endl;
+      oTestPred << "if( !ok )" << endl;
+      oTestPred << "{" << endl;
+      oTestPred << "   std::cerr << \"pred.eval() returned false, which is wrong.\" << endl;" << endl;
+      oTestPred << "   return 1;" << endl;
+      oTestPred << "}" << endl;
+      oTestPred << "if( fOut != -0.0 )" << endl;
+      oTestPred << "{" << endl;
+      oTestPred << "   cerr << \"fOut should've been -0.0 but it was \" << fOut << endl;" << endl;
+      oTestPred << "   return 1;" << endl;
+      oTestPred << "}" <<endl;
+      oTestPred << "if( yOut !=0.0 )" << endl;
+      oTestPred << "{" << endl;
+      oTestPred << "   cerr << \"yOut should've been 0.0 but it was \" << yOut << endl;" << endl;
+      oTestPred << "   return 1;" << endl;
+      oTestPred << "}" <<endl;
+      
+      oTestPred << "ok = pred.eval( index_theta, thetaLen," << endl;
+      oTestPred << "                index_eta,   etaLen," << endl;
+      oTestPred << "                index_eps,   epsLen," << endl;
+      oTestPred << "                index_f,     fLen," << endl;
+      oTestPred << "                index_y,     yLen," << endl;
+      oTestPred << "                0, 1, " << endl;
+      oTestPred << "                indepVar," << endl;
+      oTestPred << "                depVar ); " << endl;
+      oTestPred << "fOut = CppAD::Value(depVar[index_f]);" << endl;
+      oTestPred << "yOut = CppAD::Value(depVar[index_y]);" << endl;
+      oTestPred << "if( !ok )" << endl;
+      oTestPred << "{" << endl;
+      oTestPred << "   std::cerr << \"pred.eval() returned false, which is wrong.\" << endl;" << endl;
+      oTestPred << "   return 1;" << endl;
+      oTestPred << "}" << endl;
+      oTestPred << "ans = 1.55029;" << endl;
+      oTestPred << "tol = fabs(ans-fOut)/ans * 10.0;" << endl;
+      oTestPred << "if( !( fOut >= ans-tol && fOut <= ans+tol ) )" << endl;
+      oTestPred << "{" << endl;
+      oTestPred << "   cerr << \"fOut should've been \" << ans << \" but it was \" << fOut << endl;" << endl;
+      oTestPred << "   return 1;" << endl;
+      oTestPred << "}" <<endl;
+      oTestPred << "ans = 2.55029;" << endl;
+      oTestPred << "tol = fabs(ans-yOut)/ans * 10.0;" << endl;
+      oTestPred << "if( !( yOut >= ans-tol && yOut <= ans+tol ) )" << endl;
+      oTestPred << "{" << endl;
+      oTestPred << "   cerr << \"yOut should've been \" << ans << \" but it was \" << yOut << endl;" << endl;
+      oTestPred << "   return 1;" << endl;
+      oTestPred << "}" <<endl;
+      
+      oTestPred << "fOut = 0.0;" << endl;
+      oTestPred << "yOut = 0.0;" << endl;
+      oTestPred << "ok = pred.eval( index_theta, thetaLen," << endl;
+      oTestPred << "                index_eta,   etaLen," << endl;
+      oTestPred << "                index_eps,   epsLen," << endl;
+      oTestPred << "                index_f,     fLen," << endl;
+      oTestPred << "                index_y,     yLen," << endl;
+      oTestPred << "                0, 2, " << endl;
+      oTestPred << "                indepVar," << endl;
+      oTestPred << "                depVar ); " << endl;
+      oTestPred << "fOut = CppAD::Value(depVar[index_f]);" << endl;
+      oTestPred << "yOut = CppAD::Value(depVar[index_y]);" << endl;
+      oTestPred << "if( !ok )" << endl;
+      oTestPred << "{" << endl;
+      oTestPred << "   std::cerr << \"pred.eval() returned false, which is wrong.\" << endl;" << endl;
+      oTestPred << "   return 1;" << endl;
+      oTestPred << "}" << endl;
+      oTestPred << "ans = 0.780131;" << endl;
+      oTestPred << "tol = fabs(ans-fOut)/ans * 10.0;" << endl;
+      oTestPred << "if( !( fOut >= ans-tol && fOut <= ans+tol ) )" << endl;
+      oTestPred << "{" << endl;
+      oTestPred << "   cerr << \"fOut should've been \" << ans << \" but it was \" << fOut << endl;" << endl;
+      oTestPred << "   return 1;" << endl;
+      oTestPred << "}" <<endl;
+      oTestPred << "ans = 1.78013;" << endl;
+      oTestPred << "tol = fabs(ans-yOut)/ans * 10.0;" << endl;
+      oTestPred << "if( !( yOut >= ans-tol && yOut <= ans+tol ) )" << endl;
+      oTestPred << "{" << endl;
+      oTestPred << "   cerr << \"yOut should've been \" << ans << \" but it was \" << yOut << endl;" << endl;
+      oTestPred << "   return 1;" << endl;
+      oTestPred << "}" <<endl;
+      
+      oTestPred << "return 0;" << endl;
+      oTestPred << "}" << endl;
+    }
+  else
+    {
+      char buf[256];
+      sprintf( buf, "Failed to open %s as writable.", fTestPred );
+      CPPUNIT_ASSERT_MESSAGE( buf, false );
+    }
+
+
+  if( system( "g++ testIndPredNoID.cpp -g -I./ -o testIndPredNoID" ) != 0 )
+  {
+     CPPUNIT_ASSERT_MESSAGE( "Failed to compile/link the generated \"testIndPredNoID.cpp\".", false );
+  }
+  if( system( "./testIndPredNoID" ) != 0 )
+  {
+     CPPUNIT_ASSERT_MESSAGE( "The generated/built \"testIndPredNoID\" failed to complete normally.", false );
+  }
+
+  XMLPlatformUtils::Terminate();
+  //remove( fTestDriver );
+  remove( gSource );
+
+  rename( "driver.cpp", "indDriverNoID.cpp" );
+
+  if( system( "g++ indDriverNoID.cpp -g -lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm -o indDriverNoID" ) != 0 )
+  {
+     CPPUNIT_ASSERT_MESSAGE( "Failed to compile/link the generated \"indDriverNoID.cpp\".", false );
+  }
+  if( system( "./indDriverNoID" ) != 0 )
+  {
+     CPPUNIT_ASSERT_MESSAGE( "The generated/built \"indDriverNoID\" failed to complete normally.", false );
+  }
+
+}
+
 CppUnit::Test * NonmemTranslatorTest::suite()
 {
   CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite( "NonmemTranslatorTest" );
@@ -1466,11 +1988,16 @@ CppUnit::Test * NonmemTranslatorTest::suite()
      new CppUnit::TestCaller<NonmemTranslatorTest>(
          "testInheritance", 
 	 &NonmemTranslatorTest::testInheritance ) );
-
+  /*
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<NonmemTranslatorTest>(
          "testParseIndSource", 
 	 &NonmemTranslatorTest::testParseIndSource ) );
+  */
+  suiteOfTests->addTest( 
+     new CppUnit::TestCaller<NonmemTranslatorTest>(
+         "testParseIndNoID", 
+	 &NonmemTranslatorTest::testParseIndNoID ) );
   /*
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<NonmemTranslatorTest>(
