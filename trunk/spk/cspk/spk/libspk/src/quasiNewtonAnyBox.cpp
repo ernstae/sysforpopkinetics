@@ -1303,14 +1303,6 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   }
 
 
-    // Throw an exception if this functions convergence criterion
-    // was never met.
-
-    // TO DO: FINISH THIS
-    // ...
-
-
-
   //------------------------------------------------------------
   // Determine if the optimization was successful.
   //------------------------------------------------------------
@@ -1318,6 +1310,59 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   bool ok;
   SpkError::ErrorCode errorcode;
   StateInfo stateInfo;
+
+  if ( isWithinTol )               // This function's convergence
+                                   // criterion was satisfied.
+  {
+    optimizer.setIsTooManyIter( false );
+    optimizer.setNIterCompleted( options.iter );
+    optimizer.deleteStateInfo();
+    ok = true;
+  }
+  else if ( i < nMaxIter )         // This function's convergence
+                                   // criterion was not satisfied.
+  {
+    ok = false;
+    errorcode = SpkError::SPK_NOT_CONVERGED;
+  }
+  else if ( i == nMaxIter )       // The maximum number of iterations 
+                                  // have been performed.
+  {
+    optimizer.setIsTooManyIter( true );
+    optimizer.setNIterCompleted( options.iter );
+
+    //------------------------------------------------------------
+    // Save state information for warm start
+    //------------------------------------------------------------
+
+    if( !optimizer.getIsSubLevelOpt() && optimizer.getStateInfo().n )
+    {
+      stateInfo.n      = n;
+      stateInfo.x      = y;
+      stateInfo.state  = options.state;
+      stateInfo.lambda = options.lambda;
+      stateInfo.h      = options.h;
+      optimizer.setStateInfo( stateInfo );
+
+      ok = true;
+    }
+    else
+    {
+      ok = false;
+      errorcode = SpkError::SPK_TOO_MANY_ITER;
+    }
+  }
+  else
+  {
+    // If any other errors or warnings are returned by the optimizer,
+    // then throw an exception.
+    ok = false;
+    errorcode = SpkError::SPK_UNKNOWN_OPT_ERR;
+  }
+
+
+
+
 
   switch ( fail.code ) 
   {
