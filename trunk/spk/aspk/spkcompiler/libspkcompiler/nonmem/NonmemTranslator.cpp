@@ -347,7 +347,7 @@ void NonmemTranslator::generateMakefile() const
     {
       oMake << "driver : driver.cpp Pred.h DataSet.h IndData.h" << endl;
       oMake << "\tg++ -g driver.cpp -o driver ";
-      oMake << "-lspk -latlas_lapack -lcblas -latlas -lpthread -lm";
+      oMake << "-lspk -lspkopt -latlas_lapack -lcblas -latlas -lpthread -lm";
       oMake << endl;
     }
   else
@@ -1223,50 +1223,31 @@ void NonmemTranslator::generateIndData( ) const
       // corresponding synonyms if they have.  They are all have double
       // precision except for the ID data item which has char* type.
       //
+      for( pRawTable=rawTable->begin(); pRawTable != rawTable->end(); pRawTable++ )
+      {
+         const string varName         = pRawTable->second.name;
+         const string varAlias        = pRawTable->second.synonym;
+         const string keyVarName      = SymbolTable::key( varName );
+         const string keyVarAlias     = SymbolTable::key( varAlias );
+         enum Symbol::SymbolType type = pRawTable->second.symbol_type;
+         if( type == Symbol::DATALABEL )
+         {
+            bool isID = ( varName==pID->name? true : false );
+            oIndData_h << "const std::vector<" << (isID? "char *" : "T") << ">";
+            oIndData_h << " " << keyVarName << ";" << endl;
+            if( varAlias != "" )
+            {
+               isID = ( varAlias == pID->name? true : false );
+               oIndData_h << "const std::vector<" << (isID? "char" : "T") << ">";
+               oIndData_h << " " << keyVarAlias << ";" << endl;
+            }
+         }
+         else //if( type == Symbol::USERDEF || type == Symbol::NONMEMDEF )
+         {
+            oIndData_h << "std::vector<T> " << keyVarName << ";" << endl;
+         }
+      }
       string synonym;
-      pLabel = labels->begin();
-      for( ; pLabel != labels->end(); pLabel++ )
-	{
-	  //
-	  // If the label string is of "ID", then the data type is char*.
-	  // Otherwise, double precision.
-	  // Use SymbolTable::key(string) to convert the data item label
-          // found in the symbol table to the common case: upper/lower.
-          //
-          bool isID = ( *pLabel == pID->name );
-	  oIndData_h << "const std::vector<" << (isID? "char*":"T") << ">";
-          oIndData_h << " " << SymbolTable::key( *pLabel ) << ";" << endl;
-	  if( ( synonym = table->findi( *pLabel )->synonym ) != "" )
-	  {
-             oIndData_h << "const std::vector<" << (isID? "char*":"T") << ">";
-             oIndData_h << " " << SymbolTable::key( synonym ) << ";" << endl;
-          }
-	}
-
-      //
-      // Declare the user defined scalar variables that appear in the equations.
-      // In addition, declare their temporary storage counterpart.  The
-      // temporary storage is used to store the current values and
-      // moved to the permanent storage when an interation over population
-      // is completed successfully.  This is to ensure a complete set of
-      // computed values are available even when optimization fails
-      // in the middle.
-      // These are all have double-precision.
-      //
-      pRawTable = rawTable->begin();
-      for( ; pRawTable != rawTable->end(); pRawTable++ )
-	{
-	    if( find( labels->begin(), labels->end(), pRawTable->second.name ) 
-                == labels->end() )
-	    {
-              // Whenever generating C++ source code corrsponding to labels
-              // registered in the symbol table, use SymbolTable::key(string)
-              // to convert the labels to the commonly used case (lower/upper).
-	      oIndData_h << "std::vector<T> ";
-              oIndData_h << SymbolTable::key(pRawTable->second.name) << ";" << endl;
-	    }
-	}
-
       oIndData_h << endl;
       oIndData_h << "~IndData();" << endl;
 
@@ -2004,7 +1985,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "///////////////////////////////////////////////////////////////////////////////////" << endl;
   oDriver << "//   NONMEM PRED SPECIFIC" << endl;
   oDriver << "#include \"Pred.h\"" << endl;
-  oDriver << "#include \"IndPredModel.h\"" << endl;
+  oDriver << "#include <spkpred/IndPredModel.h>" << endl;
   oDriver << "//" << endl;
   oDriver << "///////////////////////////////////////////////////////////////////////////////////" << endl;
   oDriver << endl;
@@ -2609,7 +2590,7 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "///////////////////////////////////////////////////////////////////" << endl;
   oDriver << "//   NONMEM PRED specific" << endl;
   oDriver << "#include \"Pred.h\"" << endl;
-  oDriver << "#include \"PopPredModel.h\"" << endl;
+  oDriver << "#include <spkpred/PopPredModel.h>" << endl;
   oDriver << "//" << endl;
   oDriver << "///////////////////////////////////////////////////////////////////" << endl;
   oDriver << endl;
