@@ -28,12 +28,13 @@
  * population parameter estimates.
  *
  * Author: Jiaji Du
+ * Updated by Sachiko Honda - isolated core computation portion
  *
  *************************************************************************/
 
 /*************************************************************************
  *
- * Function: popStatistics
+ * Function: popStatistics - version that takes SpkModel
  *
  *************************************************************************/
 
@@ -1126,46 +1127,14 @@ message %d-the element, %f, is invalid.", i, indParAll[ i + j * nB ] );
         }
     }
     //===============[End: Data validation]===============
-
+    
     //----------------------------------------------------------------
-    // Declare R inverse and S variables. 
+    // Compute the partial derivative of the individual level 
+    // objective with respect to the population parameter.
     //----------------------------------------------------------------
     valarray<double> indObj_popPar( nAlp * nInd );
-    valarray<double> popParCovTemp( nAlp * nAlp );
-    //----------------------------------------------------------------
-    // Compute RInv 
-    //----------------------------------------------------------------
-    if( formulation == R )
+    if( formulation == RSR || formulation == S )
     {
-      try{
-        // This local routine nmInvR does symmetrize the 2nd drivative before
-	// attempting to invert it.  So, if this attempt fails, it means
-	// the symmetric matrix is not positive definite.
-	popParCovTemp = nmInvR( popPar, popObj_popPar_popPar );
-      }
-      catch( SpkException& e )
-	{
-	  char mess[ SpkError::maxMessageLen() ];
-	  sprintf( mess, "Failed to invert R as in NONMEM Statistics.  R is symmetric but not positive definite.\n" );
-	  cerr << "NONMEM R: " << endl;
-          printInMatrix( popObj_popPar_popPar, nAlp  );
-	  e.push( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
-	  throw e;  
-	}
-      catch( ... )
-	{
-	  char mess[ SpkError::maxMessageLen() ];
-	  sprintf( mess, "Failed to invert R as in NONMEM Statistics. R is symmetric but not positive definite.\n" );
-	  SpkException e( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
-	  throw e;  
-	}
-    }
-    //----------------------------------------------------------------
-    // Compute S or RSR
-    //----------------------------------------------------------------
-    else //( formulation == RSR || formulation == S )
-    {
-
         DoubleMatrix dmatLambdaLTilde_alpOut( nAlp, nInd );
 
         //------------------------------------------------------------
@@ -1256,73 +1225,913 @@ message %d-the element, %f, is invalid.", i, indParAll[ i + j * nB ] );
         }
 
         indObj_popPar = dmatLambdaLTilde_alpOut.toValarray();
-	if( formulation == S )
-	  {
-	    try{
-	       popParCovTemp = inverse( nmS( popPar, indObj_popPar ), nAlp );
-            }
-            catch( SpkException& e )
-            {
-               char mess[ SpkError::maxMessageLen() ];
-               sprintf( mess, "Failed to invert S as in NONMEM Statistics.\n" );
-               e.push( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
-               throw e;  
-            }
-            catch( ... )
-            {
-               char mess[ SpkError::maxMessageLen() ];
-               sprintf( mess, "Failed to invert S as in NONMEM Statistics.\n" );
-               SpkException e( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
-               throw e;  
-            }
-	  }
-	else //( formulation == RSR )
-	  {
-            try{
-	       valarray<double> RInv = nmInvR( popPar, popObj_popPar_popPar );
-	       popParCovTemp = multiply( multiply( RInv, nAlp, nmS( popPar, indObj_popPar ), nAlp ), nAlp, RInv, nAlp );
-            }
-            catch( SpkException& e )
-            {
-               char mess[ SpkError::maxMessageLen() ];
-               sprintf( mess, "Failed to invert (R * S^-1 * R) as in NONMEM Statistics.\n" );
-               e.push( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
-               throw e;  
-            }
-            catch( ... )
-            {
-               char mess[ SpkError::maxMessageLen() ];
-               sprintf( mess, "Failed to invert (R * S^-1 * R) as in NONMEM Statistics.\n" );
-               SpkException e( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
-               throw e;  
-            }
-	  }
     }
 
-    try{
-      statistics( popPar, 
-		  popParCovTemp, 
-		  nF, 
-		  popParSEOut, 
-		  popParCorOut, 
-		  popParCVOut, 
-		  popParCIOut );
-    }
-    catch( SpkException& e )
-      {
-	char mess[ SpkError::maxMessageLen() ];
-	sprintf( mess, "Failed to compute some/all of the Statistics values.\n" );
-	e.push( SpkError::SPK_STATISTICS_ERR, mess, __LINE__, __FILE__ );
-	throw e;  
-      }
-    catch( ... )
-      {
-	char mess[ SpkError::maxMessageLen() ];
-	sprintf( mess, "Failed to compute some/all of the statistics values.\n" );
-	SpkException e( SpkError::SPK_UNKNOWN_ERR, mess, __LINE__, __FILE__ );
-	throw e;  
-      }
+   popStatistics( measurementsAll,
+                  popPar,
+                  indObj_popPar,
+                  popObj_popPar_popPar,
+                  formulation,
+                  popParCovOut,
+                  popParSEOut,
+                  popParCorOut,
+                  popParCVOut,
+                  popParCIOut );
+   return;
+}
 
-    if( popParCovOut != 0 )
-      *popParCovOut = popParCovTemp;
+/*************************************************************************
+ *
+ * Function: popStatistics - core statistics computation
+ *
+ *************************************************************************/
+
+/*------------------------------------------------------------------------
+ * Function Specification
+ *------------------------------------------------------------------------*/
+/*
+
+$begin popStatistics$$
+
+$spell
+  Enumerator
+  valarray
+  Cov
+  Obj
+  enum
+  subvector
+  dmat
+  const
+  dvec
+  int
+  cout
+  endl
+  nr
+  nc
+  iostream
+  iomanip
+  namespace
+  std
+  ios
+  covariance
+  ind
+  cerr
+  Spk
+  inv
+  optimizer
+  fp
+  Optimizer optimizer
+  Fo
+  Dir
+  Yi
+  inx
+  aval
+  bval
+  resize
+  bool
+  Dinv
+  Rinv
+  var
+  sqrt
+  cbc
+  covariances
+  cor
+  cmath
+  statistics
+$$
+
+$section Computing statistics of population parameter estimates$$
+
+$index popStatistics$$
+$index covariance, standard error, correlation matrix, population parameters$$
+
+$table
+$bold Enumerator:$$ $cend
+$syntax/enum PopCovForm { E, R, S }/$$ $rend
+$bold Prototype:$$ $cend
+$syntax/void popStatistics(  
+                   const SPK_VA::valarray<double>& /measurementsAll/,
+                   const SPK_VA::valarray<double>& /popPar/,
+                   const SPK_VA::valarray<double>& /indObj_popPar/,
+                   const SPK_VA::valarray<double>& /popObj_popPar_popPar/,
+                   enum PopCovForm                 /formulation/,
+                   SPK_VA::valarray<double>*       /popParCovOut/, 
+                   SPK_VA::valarray<double>*       /popParSEOut/,                          
+                   SPK_VA::valarray<double>*       /popParCorOut/,
+                   SPK_VA::valarray<double>*       /popParCVOut/,                          
+                   SPK_VA::valarray<double>*       /popParCIOut/
+                 )
+/$$
+$tend
+
+$fend 25$$
+
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$pre
+$$
+$head Description$$
+This function computes covariance matrix, standard error vector, and correlation 
+matrix of estimated population parameters.
+Spk allows the user to choose the form for the covariance matrix of the 
+population parameter estimates to be one of the following three formulations:
+$math%         
+                       -1   -1
+    formulation "E":  R  S R
+                       -1
+    formulation "R":  R
+                       -1
+    formulation "S":  S
+
+%$$
+These formulations are given in NONMEM documentation.  In Spk notation,
+$math%
+
+                                          T
+     R = ( LTilde_alp_alp + LTilde_alp_alp  ) / 2
+
+                               T
+     S = Sum{ [(LTilde_i )_alp] [(LTilde_i)_alp] }
+          i                          
+%$$
+where $math%LTilde_alp_alp%$$ is an approximation for the second order 
+derivatives of the population objective with respect to population 
+parameter alp and $math%(LTilde_i)_alp%$$ is the first order derivative 
+of individual i objective with respect to population parameter alp.  
+Note that R is defined in this way to insure that it is symmetric
+even for cases where the approximation $math%LTilde_alp_alp%$$ is not.
+$pre
+
+$$
+The standard error vector and the correlation matrix are calculated from
+the values of the covariance matrix by their mathematical definitions, 
+respectively. The coefficient of variation is calculated as:
+$math%
+   
+               CV = SE / | b | * 100 
+
+%$$
+where CV stands for the coefficient of variation, SE stands for the standard 
+error and b stands for the value of the population parameter estimate.
+The confidence interval is calculated from the values of the standard error 
+of the population parameter estimate using its mathematical definition.
+$head Return Value$$
+Upon a successful completion, the function sets
+the given output value place holders to point to the result value.
+  
+$pre
+
+$$
+If an error is detected or failure occurs during the evaluation, a SpkException 
+object is thrown.  The state at which an exception is thrown is defined in
+$xref/glossary/Exception Handling Policy/Exception Handling Policy/$$.
+
+$head Arguments$$
+$syntax/
+/measurementsAll/
+/$$
+The $code SPK_VA::valarray<double>$$ $italic measurementsAll$$ contains the vector
+$math%y%$$, which specifies the data for all the individuals.
+The vector $math%y%$$ has
+$math%
+    N(1) + N(2) + ... + N(M)
+%$$
+elements where $math%N(i)%$ is the number of measurements for i-th individual
+and math%M%$$ is the total number of individuals in the population.
+The data vector corresponding to the first individual is
+$math%                                         
+    y_1 = [ y(1) , y(2) , ... , y(N(1)) ]
+%$$
+Elements $math%y(N(1) + 1)%$$ through $math%y(N(1) + N(2))%$$ 
+correspond to the second individual and so on.
+(Note that $math%y_1%$$ refers to the first subvector of $math%y%$$ while
+$math%y(1)%$$ refers to the first element of the valarray $math%y%$$.)
+
+$syntax/
+
+/popPar/
+/$$
+The $code SPK_VA::valarray<double>$$ $italic popPar$$ contains the vector 
+$math%alp%$$, which specifies the estimates of the population parameters.  
+The returned covariance matrix $italic popParCovOut$$ will be evaluated at 
+these values.  
+The $italic popPar$$ should be obtained by calling SPK function 
+$xref/fitPopulation//fitPopulation/$$.
+
+$syntax/
+
+/popObj_popPar_popPar/ 
+/$$
+The $code SPK_VA::valarray<double>$$ $italic popObj_popPar_popPar$$ contains 
+the matrix $math%LTilde_alp_alp%$$, in column major order, which specifies 
+an approximation for the second derivative of the population objective 
+function with respect to population parameter evaluated at $italic popPar$$.  
+Note that the size of $italic popObj_popPar_popPar$$ should be equal to the 
+square of the length of the population parameter vector $math%alp%$$.  
+The $italic popObj_popPar_popPar$$ should be obtained by calling SPK function 
+$xref/fitPopulation//fitPopulation/$$. 
+
+$syntax/
+
+/indObj_popPar/
+/$$
+The $code SPK_VA::valarray<double>$$ $italic indObj_popPar$$ contains
+the partial derivative of the individual level objective with
+respect to the population parameter evaluated at $italic popPar$$.
+
+$syntax/
+
+/formulation/
+/$$
+The $code int$$ $italic formulation$$ specifies which formulation of the 
+covariance of the population parameter estimates is selected.  See Description 
+section for details.  Only formulation "R" is available for FIRST_ORDER objective.
+
+$syntax/
+
+/popParCovOut/ 
+/$$
+If $italic popParCovOut$$ is not $code NULL$$, then the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic popParCovOut$$ 
+must be declared in the function that calls this function, and its size must 
+be equal to the square of the length of the population parameter vector 
+$math%alp%$$.  If $italic popParCovOut$$ is not $code NULL$$ and this function 
+completed successfully, then the $code SPK_VA::valarray<double>$$ object 
+pointed to by $italic popParCovOut$$ will contain the covariance matrix
+of the population parameter estimates, in column major order, that is evaluated 
+at $math%alp%$$.  Otherwise, this function will not attempt to change the 
+contents of the $code SPK_VA::valarray<double>$$ object pointed to by 
+$italic popParCovOut$$.  
+
+$syntax/
+
+/popParSEOut/ 
+/$$
+If $italic popParSEOut$$ is not $code NULL$$, then the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic popParSEOut$$ 
+must be declared in the function that calls this function, and its size must 
+be equal to the length of the population parameter vector 
+$math%alp%$$.  If $italic popParSEOut$$ is not $code NULL$$ and this function 
+completed successfully, then the $code SPK_VA::valarray<double>$$ object 
+pointed to by $italic popParSEOut$$ will contain the standard error vector
+of the population parameter estimates, in column major order, that is evaluated 
+at $math%alp%$$.  Otherwise, this function will not attempt to change the 
+contents of the $code SPK_VA::valarray<double>$$ object pointed to by 
+$italic popParSEOut$$.  
+
+$syntax/
+
+/popParCovOut/ 
+/$$
+If $italic popParCorOut$$ is not $code NULL$$, then the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic popParCorOut$$ 
+must be declared in the function that calls this function, and its size must 
+be equal to the square of the length of the population parameter vector 
+$math%alp%$$.  If $italic popParCorOut$$ is not $code NULL$$ and this function 
+completed successfully, then the $code SPK_VA::valarray<double>$$ object 
+pointed to by $italic popParCorOut$$ will contain the correlation matrix 
+of the population parameter estimates, in column major order, that is evaluated 
+at $math%alp%$$.  Otherwise, this function will not attempt to change the 
+contents of the $code SPK_VA::valarray<double>$$ object pointed to by 
+$italic popParCorOut$$. 
+
+$syntax/
+
+/popParCVOut/ 
+/$$
+If $italic popParCVOut$$ is not $code NULL$$, then the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic popParCVOut$$ 
+must be declared in the function that calls this function, and its size must 
+be equal to the length of the population parameter vector 
+$math%alp%$$.  If $italic popParCVOut$$ is not $code NULL$$ and this function 
+completed successfully, then the $code SPK_VA::valarray<double>$$ object 
+pointed to by $italic popParCVOut$$ will contain the standard error vector
+of the population parameter estimates, in column major order, that is evaluated 
+at $italic popPar$$.  Otherwise, this function will not attempt to change the 
+contents of the $code SPK_VA::valarray<double>$$ object pointed to by 
+$italic popParCVOut$$.  
+
+$syntax/
+
+/popParCIOut/ 
+/$$
+If $italic popParCIOut$$ is not $code NULL$$, then the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic popParCIOut$$ 
+must be declared in the function that calls this function, and its size must 
+be equal to the two times of the length of the population parameter vector 
+$math%alp%$$.  If $italic popParCIOut$$ is not $code NULL$$ and this function 
+completed successfully, then the $code SPK_VA::valarray<double>$$ object pointed 
+to by $italic popParCIOut$$ will contain the 95% confidence interval values 
+of the population parameter estimates, in column major order, that is evaluated 
+at $italic popPar$$.  There are two columns in the object.  The first column 
+contains the lower limit, and the second column contains the upper limit of 
+the confidence interval of the population parameter estimates.  Otherwise, 
+this function will not attempt to change the contents of the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic popParCIOut$$.  
+Note that in the calculation of the confidence interval, if the degree of freedom 
+(total number of data - number of population parameters) is greater than 120, 
+it is treated as infinite.
+
+$head Example$$
+The following demonstrates running popStatistics().
+
+$codep
+
+#include <iostream>
+#include <cmath>
+#include "randNormal.h"
+#include "SpkModel.h"
+#include "lTilde.h"
+#include "inverse.h"
+#include "multiply.h"
+#include "popStatistics.h"
+#include "printInMatrix.h"
+#include "fitPopulation.h"
+#include "SpkValarray.h"
+
+using namespace std;
+
+class UserModelPopStatisticsExampleTest : public SpkModel
+{
+    valarray<double> _a, _b;
+    const int _nA;
+    const int _nB;
+    const int _nYi;
+    int _i;
+public:
+    UserModelPopStatisticsExampleTest(int nA, int nB, int nYi)
+    :_nA(nA), _nB(nB), _nYi(nYi)
+    {};    
+    ~UserModelPopStatisticsExampleTest(){};
+private:
+    void doSelectIndividual(int inx)
+    {
+        _i = inx;
+    }
+    void doSetPopPar(const valarray<double>& aval)
+    {
+        _a = aval;
+    }
+    void doSetIndPar(const valarray<double>& bval)
+    {
+        _b = bval;
+    }
+    void doIndParVariance( valarray<double>& ret ) const
+    {
+        //
+        // D = [ alp[1] ]
+        //
+        ret.resize(_nYi);
+        ret[0] = _a[1];
+    }
+    bool doIndParVariance_popPar( valarray<double>& ret ) const
+    {
+        //
+        // D_alp = [ 0  1 ]
+        //
+        ret.resize(_nYi * _nA);
+        ret[0] = 0.0;
+        ret[1] = 1.0;
+        return true;
+    }
+    void doIndParVarianceInv( valarray<double>& ret ) const
+    {
+        //
+        // Dinv = [ 1.0 / alp[1] ]
+        //
+        assert(_a[1] != 0.0);
+        ret.resize(_nB * _nB);
+        ret[0] = ( 1.0 / _a[1] );
+    }
+    bool doIndParVarianceInv_popPar( valarray<double>& ret ) const
+    {
+        //
+        // Dinv_alp = [ 0    -alp[1]^(-2) ]
+        //
+        ret.resize(_nB * _nA);
+        ret[0] = 0.0;
+        ret[1] = -1.0 / (_a[1]*_a[1]);
+        return true;
+    }
+    void doDataMean( valarray<double>& ret ) const
+    {
+        //
+        // f = [ alp[0]+b[0] ]
+        //
+        ret.resize(_nYi);
+        ret[0] = ( _a[0] + _b[0] );
+    }
+    bool doDataMean_popPar( valarray<double>& ret ) const
+    {
+        //
+        // f_alp = [ 1   0 ]
+        //
+        ret.resize(_nYi * _nA);
+        ret[0] = 1.0;
+        ret[1] = 0.0;
+        return true;
+    }
+    bool doDataMean_indPar( valarray<double>& ret ) const
+    {
+        //
+        // f_b = [ 1 ]
+        //
+        ret.resize(_nYi * _nB);
+        ret[0] = 1.0;
+        return true;
+    }
+    void doDataVariance( valarray<double>& ret ) const
+    {
+        //
+        // R = [ 1 ]
+        //
+        ret.resize(_nB*_nB);
+        ret[0] = 1.0;
+    }
+    bool doDataVariance_popPar( valarray<double>& ret ) const
+    {
+        //
+        // R_alp = [ 0   0 ]
+        //
+        ret.resize(_nB * _nA);
+        ret[0] = 0.0;
+        ret[1] = 0.0;
+        return false;
+    }
+    bool doDataVariance_indPar( valarray<double>& ret ) const
+    {
+        //
+        // R_b = [ 0 ]
+        //
+        ret.resize(_nB *_nB);
+        ret[0] = 0.0;
+        return false;
+    }
+    void doDataVarianceInv( valarray<double>& ret ) const
+    {
+        //
+        // Rinv = [ 1 ]
+        //
+        ret.resize(_nB * _nB);
+        ret[0] = 1.0;
+    }
+    bool doDataVarianceInv_popPar( valarray<double>& ret ) const
+    {
+        //
+        // Rinv_alp = [ 0  0 ]
+        //
+        ret.resize(_nB * _nA);
+        ret[0] = 0.0;
+        ret[1] = 0.0;
+        return false;
+    }
+    bool doDataVarianceInv_indPar( valarray<double>& ret ) const
+    {
+        //
+        // Rinv_b = [ 0 ]
+        //
+        ret.resize(_nB * _nB * _nB);
+        ret[0] = 0.0;
+        return false;
+    }   
+
+};
+
+int main()
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  int i;
+
+  //preTestPrinting( "Specification Example" );
+
+  // Objective
+  enum Objective whichObjective = MODIFIED_LAPLACE;
+
+  // Number of individuals.
+  const int nInd = 10;
+
+  // Number of measurements per individual (same for all)
+  const int nYi = 1;
+
+  // Number of measurements in total
+  const int nY = nInd * nYi;
+
+  const int nPopPar = 2;
+
+  const int nIndPar = 1;
+
+  //------------------------------------------------------------
+  // Quantities related to the user-provided model.
+  //------------------------------------------------------------
+
+  UserModelPopStatisticsExampleTest model( nPopPar, nIndPar, nYi );
+
+
+  //------------------------------------------------------------
+  // Quantities that define the problem.
+  //------------------------------------------------------------
+
+  // Mean and variance of the true transfer rate, betaTrue.
+  double meanBetaTrue = 1.0;
+  double varBetaTrue  = 5.0;
+
+  //------------------------------------------------------------
+  // Quantities related to the data vector, y.
+  //------------------------------------------------------------
+
+  // Measurement values, y.
+  valarray<double> Y( nY );
+
+  // Number of measurements for each individual. 
+  valarray<int> N( 1., nInd );
+
+  // These will hold the generated values for the true measurement 
+  // noise, eTrue, and the true random population parameters, bTrue.
+  double eTrue;
+  double bTrue;
+
+  // Mean, variance, and standard deviation of eTrue and bTrue.
+  double meanETrue = 0.0;
+  double varETrue  = 1.0;
+  double sdETrue   = sqrt( varETrue );
+  double meanBTrue = 0.0;
+  double varBTrue  = varBetaTrue;
+  double sdBTrue   = sqrt( varBTrue );
+
+  // Compute the measurements for each individual.
+  Integer seed = 0;
+  g05cbc(seed);
+  for ( i = 0; i < nInd; i++ )
+  {
+    eTrue = randomNormal( meanETrue, sdETrue );
+    bTrue = randomNormal( meanBTrue, sdBTrue );
+
+    Y[ i ] = meanBetaTrue + bTrue + eTrue;
+  }
+
+  //------------------------------------------------------------
+  // Quantities related to the fixed population parameter, popPar.
+  //------------------------------------------------------------
+
+  valarray<double> popPar    ( nPopPar );
+  valarray<double> popParLow ( nPopPar );
+  valarray<double> popParUp  ( nPopPar );
+  valarray<double> popParIn  ( nPopPar );
+  valarray<double> popParOut ( nPopPar );
+  valarray<double> popParStep( nPopPar );
+
+  // Set the values associated with popPar(1).
+  popParTrue[ 0 ] = meanBetaTrue;
+  popParLow [ 0 ] = -10.0;
+  popParUp  [ 0 ] = 10.0;
+  popParIn  [ 0 ] = -1.0;
+  popParStep[ 0 ] = 1.0e-2;
+
+  // Set the values associated with popPar(2).
+  popParTrue[ 1 ] = varBetaTrue;
+  popParLow [ 1 ] = 1.0e-3;
+  popParUp  [ 1 ] = 100.0;
+  popParIn  [ 1 ] = 0.5;
+  popParStep[ 1 ] = 1.0e-2;
+  
+
+  //------------------------------------------------------------
+  // Quantities related to the random population parameters, indPar.
+  //------------------------------------------------------------
+
+  valarray<double> indParLow ( -1.5e+1, nIndPar );
+  valarray<double> indParUp  ( +1.0e+1, nIndPar );
+  valarray<double> indParStep(  1.0e-2, nIndPar );
+
+  valarray<double> indParIn ( 1., nIndPar * nInd );
+  valarray<double> indParOut(     nIndPar * nInd );
+
+
+  //------------------------------------------------------------
+  // Quantities related to the population objective function.
+  //------------------------------------------------------------
+
+  double popObjOut;
+
+  valarray<double> popObj_popParOut    ( nPopPar );
+  valarray<double> popObj_popPar_popParOut( nPopPar * nPopPar );
+
+
+  //------------------------------------------------------------
+  // Remaining inputs to fitPopulation.
+  //------------------------------------------------------------
+
+  // Set the values associated with the individual objective function.
+  Optimizer indOptimizer( 1.0e-6, 40, 0 );
+
+  // Set the values associated with the population objective function.
+  Optimizer popOptimizer( 1.0e-6, 40, 0 );
+
+  //------------------------------------------------------------
+  // Optimize the population objective function.
+  //------------------------------------------------------------
+
+  bool ok;
+  try{
+      fitPopulation(
+                     model,
+                     whichObjective,
+                     N,
+                     Y,
+                     popOptimizer,
+                     popParLow,
+                     popParUp,
+                     popParIn,
+                     popParStep,
+                     &popParOut,
+                     indOptimizer,
+                     indParLow,
+                     indParUp,
+                     indParIn,            
+                     indParStep,
+                     &indParOut,
+                     &popObjOut,
+                     &popObj_popParOut,
+                     &popObj_popPar_popParOut 
+                   );
+      ok = true;
+  }
+  catch(...)
+  {
+    cerr << "fitPopulation failed" << endl;
+    return -1;
+  }
+
+  cout << "=======================" << endl;
+  cout << "objective = MODIFIED_LAPLACE" << endl;
+  cout << "Population objective = " << popObjOut << endl;
+  cout << "popPar = " << endl;
+  printInMatrix( popParOut, 1 );
+  cout << "popObj_popPar_popParOut = " << endl;
+  printInMatrix( popObj_popPar_popParOut, nAlp );
+  cout << "-----------------------" << endl;
+
+
+  //------------------------------------------------------------
+  // Obtain the partial derivative of the individual level
+  // objective with respect to the population parameter.
+  //------------------------------------------------------------
+  valarray<double> indObj_popParOut( nPopPar );
+  try{
+       lTilde( model,
+               whichObjective,
+               N,
+               Y,
+               indOptimizer,
+               popParOut,
+               indParLow,
+               indParUp,
+               indParStep,
+               indParOut,
+               0,
+               0,
+               0,
+              &indObj_popParOut );
+  }
+  catch( ... )
+    {
+      cerr << "lTilde failed" << endl;
+      return -1;
+    }
+
+  //------------------------------------------------------------
+  // Compute statistics of population parameter estimates.
+  //------------------------------------------------------------
+  valarray<double> popParCovOut( nPopPar* nPopPar );
+  valarray<double> popParSEOut ( nPopPar );
+  valarray<double> popParCorOut( nPopPar * nPopPar );
+  valarray<double> popParCVOut ( nPopPar );
+  valarray<double> popParCIOut ( nPopPar * 2 );
+
+  try
+  {
+  for( int form = 1; form < 4; form++ )
+  {
+      popStatistics(
+                     Y,
+                     popParOut,
+                     indObj_popPar,
+                     popObj_alp_alp,
+                     enum PopCovForm(form),
+                     &popParCovOut,
+                     &popParSEOut,
+                     &popParCorOut,
+                     &popParCVOut,
+                     &popParCIOut
+                   );
+
+    cout << "formulation = " << form << endl;
+    cout << "popParCovOut = " << endl;
+    printInMatrix( popParCovOut, nAlp );
+    cout << "popParSEOut = " << endl;
+    printInMatrix( popParSEOut, 1 );
+    cout << "popParCorOut = " << endl;
+    printInMatrix( popParCorOut, nAlp );
+    cout << "popParCVOut = " << endl;
+    printInMatrix( popParCVOut, 1 );
+    cout << "popParCIOut = " << endl;
+    printInMatrix( popParCIOut, 2 );
+      cout << "-----------------------" << endl;
+    }
+  }
+  catch(...)
+  {
+  cerr << "popStatistics failed" << endl;
+    return 0;
+  }
+  return 0;
+}
+$$
+The program will display the following when it is run:
+$codep
+
+=======================
+objective = MODIFIED_LAPLACE
+popOjb = 21.8566
+popPar =
+[ 1.95115 ]
+[ 3.63406 ]
+popObj_popPar_popParOut =
+[ 2.15793 -5.54357e-009 ]
+[ -5.58165e-009 0.232837 ]
+-----------------------
+formulation = 1
+popParCovOut =
+[ 0.463406 -0.116585 ]
+[ -0.116585 2.38831 ]
+popParSEOut =
+[ 0.68074 ]
+[ 1.54541 ]
+popParCorOut =
+[ 1 -0.11082 ]
+[ -0.11082 1 ]
+popParCVOut =
+[ 34.8891 ]
+[ 42.5258 ]
+popParCIOut =
+[ 0.381368 3.52094 ]
+[ 0.0703381 7.19779 ]
+-----------------------
+formulation = 2
+popParCovOut =
+[ 0.463406 1.1071e-008 ]
+[ 1.1071e-008 4.29485 ]
+popParSEOut =
+[ 0.68074 ]
+[ 2.0724 ]
+popParCorOut =
+[ 1 7.84753e-009 ]
+[ 7.84753e-009 1 ]
+popParCVOut =
+[ 34.8891 ]
+[ 57.0271 ]
+popParCIOut =
+[ 0.381368 3.52094 ]
+[ -1.1449 8.41302 ]
+-----------------------
+formulation = 3
+popParCovOut =
+[ 0.469168 0.21226 ]
+[ 0.21226 7.81939 ]
+popParSEOut =
+[ 0.684959 ]
+[ 2.79632 ]
+popParCorOut =
+[ 1 0.11082 ]
+[ 0.11082 1 ]
+popParCVOut =
+[ 35.1053 ]
+[ 76.9474 ]
+popParCIOut =
+[ 0.371639 3.53067 ]
+[ -2.81424 10.0824 ]
+-----------------------
+
+$$
+
+$end
+*/
+void popStatistics( const valarray<double>& y,
+                    const valarray<double>& alp,
+                    const valarray<double>& indObj_alp,
+                    const valarray<double>& popObj_alp_alp,
+                    const PopCovForm      & formulation,
+                    valarray<double>      * alpCovOut,
+                    valarray<double>      * alpSEOut,
+                    valarray<double>      * alpCorOut,
+                    valarray<double>      * alpCVOut,
+                    valarray<double>      * alpCIOut )
+{
+   const int nAlp = alp.size();
+   const int nFree = y.size() - nAlp;
+
+   valarray<double> alpCovTemp( nAlp * nAlp );
+   if( formulation == R )
+   {
+      try{
+        // This local routine nmInvR does symmetrize the 2nd drivative before
+	// attempting to invert it.  So, if this attempt fails, it means
+	// the symmetric matrix is not positive definite.
+	alpCovTemp = nmInvR( alp, popObj_alp_alp );
+      }
+      catch( SpkException& e )
+      {
+         char mess[ SpkError::maxMessageLen() ];
+	 sprintf( mess, "Failed to invert R as in NONMEM Statistics.  R is symmetric but not positive definite.\n" );
+	 cerr << "NONMEM R: " << endl;
+         printInMatrix( popObj_alp_alp, nAlp  );
+	 e.push( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
+	 throw e;  
+      }
+      catch( ... )
+      {
+         char mess[ SpkError::maxMessageLen() ];
+	 sprintf( mess, "Failed to invert R as in NONMEM Statistics. R is symmetric but not positive definite.\n" );
+	 SpkException e( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
+	 throw e;  
+      }
+   }
+   else if( formulation == S )
+   {
+      try
+      {
+         alpCovTemp = inverse( nmS( alp, indObj_alp ), nAlp );
+      }
+      catch( SpkException& e )
+      {
+         char mess[ SpkError::maxMessageLen() ];
+         sprintf( mess, "Failed to invert S as in NONMEM Statistics.\n" );
+         e.push( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
+         throw e;  
+      }
+      catch( ... )
+      {
+         char mess[ SpkError::maxMessageLen() ];
+         sprintf( mess, "Failed to invert S as in NONMEM Statistics.\n" );
+         SpkException e( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
+         throw e;  
+         }
+      }
+   else //( formulation == RSR )
+   {
+      try
+      {
+         valarray<double> RInv = nmInvR( alp, popObj_alp_alp );
+	 alpCovTemp = multiply( multiply( RInv, nAlp, nmS( alp, indObj_alp ), nAlp ), nAlp, 
+                                          RInv, nAlp );
+      }
+      catch( SpkException& e )
+      {
+         char mess[ SpkError::maxMessageLen() ];
+         sprintf( mess, "Failed to invert (R * S^-1 * R) as in NONMEM Statistics.\n" );
+         e.push( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
+         throw e;  
+      }
+      catch( ... )
+      {
+         char mess[ SpkError::maxMessageLen() ];
+         sprintf( mess, "Failed to invert (R * S^-1 * R) as in NONMEM Statistics.\n" );
+         SpkException e( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
+         throw e;  
+      }
+   }
+   try
+   {
+      statistics( alp, 
+                  alpCovTemp, 
+                  nFree, 
+                  alpSEOut, 
+		  alpCorOut, 
+		  alpCVOut, 
+		  alpCIOut );
+   }
+   catch( SpkException& e )
+   {
+      char mess[ SpkError::maxMessageLen() ];
+      sprintf( mess, "Failed to compute some/all of the Statistics values.\n" );
+      e.push( SpkError::SPK_STATISTICS_ERR, mess, __LINE__, __FILE__ );
+      throw e;  
+   }
+   catch( ... )
+   {
+      char mess[ SpkError::maxMessageLen() ];
+      sprintf( mess, "Failed to compute some/all of the statistics values.\n" );
+      SpkException e( SpkError::SPK_UNKNOWN_ERR, mess, __LINE__, __FILE__ );
+      throw e;  
+   }
+
+
+   *alpCovOut = alpCovTemp;
+   return;
 }
