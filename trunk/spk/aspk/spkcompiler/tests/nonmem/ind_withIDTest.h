@@ -1,7 +1,7 @@
 /**
  * \file ind_withIDTest.h
  * \brief Tests the NonmemTranslator's ability to handle
- * data sets containing no ID.
+ * data sets containing the ID values.
  */
 #ifndef IND_WITHID_TEST_H
 #define IND_WITHID_TEST_H

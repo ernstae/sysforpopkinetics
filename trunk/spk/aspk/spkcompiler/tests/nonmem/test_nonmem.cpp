@@ -7,6 +7,7 @@
 #include "lex_explangTest.h"
 #include "explangTest.h"
 #include "ind_withIDTest.h"
+#include "ind_withoutIDTest.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -17,13 +18,16 @@ int main( int argc, const char * argv[] )
   vector<CppUnit::Test*> subset;
 
   // test for lexical analyzer
-  master[ "lex_explangTest" ] = lex_explangTest::suite();
+  master[ "lex_explangTest" ]   = lex_explangTest::suite();
 
   // test for syntax analyzer
-  master[ "explangTest" ]     = explangTest::suite();
+  master[ "explangTest" ]       = explangTest::suite();
 
   // test for NonmemTranslator: ability to handle a data set with ID
-  master[ "ind_withIDTest" ]  = ind_withIDTest::suite();
+  master[ "ind_withIDTest" ]    = ind_withIDTest::suite();
+
+  // test for NonmemTranslator: ability to handle a data set with ID
+  master[ "ind_withoutIDTest" ] = ind_withoutIDTest::suite();
 
   // test for NonmemTranslator: ability to handle a data set missing ID
 
