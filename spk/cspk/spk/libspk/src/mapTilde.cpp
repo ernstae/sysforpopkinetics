@@ -937,7 +937,7 @@ void mapTilde(
 
         // determine the maximum allowable step size
         dNewtonDirectionCurStep = 1.0;
-        iCurMin  = 0.0;
+        iCurMin  = 0;
         pdNewtonDirection = dvecPosNewtonDir.data();
         for( i=0; i<dvecPosNewtonDir.nr(); i++ )
         {
