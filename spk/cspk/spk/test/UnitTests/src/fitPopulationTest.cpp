@@ -84,6 +84,13 @@ void fitPopulationTest::expectedHessianTest()
     fitPopulationLimitsWarningsTest(EXPECTED_HESSIAN);
     fitPopulationIndOptErrorTest(EXPECTED_HESSIAN);
     fitPopulationPopOptErrorTest(EXPECTED_HESSIAN);
+
+    // Only perform this test for the Expected Hessian objective
+    // because it is not necessary to run in for both this objective
+    // and for the Laplace objective, which is slower.  Also, the
+    // first order objective restart capabilities are tested in
+    // firstOrderOptTest.
+    fitPopulationRestartTest(EXPECTED_HESSIAN);
 }
 void fitPopulationTest::firstOrderTest()
 {
@@ -2127,6 +2134,408 @@ void fitPopulationTest::fitPopulationPopOptErrorTest(enum Objective whichObjecti
   cout << "########################################" << endl;
   */
 
+}
+
+
+/*************************************************************************
+ *
+ * Function: fitPopulationRestartTest
+ *
+ *
+ * This test re-uses the example problem from the fitPopulation
+ * specification to check that the restart file machinery works for
+ * the population level objective function, lTilde.
+ *
+ *************************************************************************/
+
+void fitPopulationTest::fitPopulationRestartTest(enum Objective whichObjective)
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  int i, k;
+
+  // Number of individuals.
+  const int nInd = 10;
+
+  // Number of measurements per individual (same for all)
+  const int nYi = 1;
+
+  // Number of measurements in total
+  const int nY = nInd * nYi;
+
+  const int nAlp = 2;
+
+  const int nB = 1;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the user-provided model.
+  //------------------------------------------------------------
+
+  UserModelFitPopulationExampleTest model( nAlp, nB, nYi );
+
+
+  //------------------------------------------------------------
+  // Quantities that define the problem.
+  //------------------------------------------------------------
+
+  // Mean and variance of the true transfer rate, betaTrue.
+  double meanBetaTrue = 1.0;
+  double varBetaTrue  = 5.0;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the data vector, y.
+  //------------------------------------------------------------
+
+  // Measurement values, y.
+  valarray<double> Y( nY );
+
+  // Number of measurements for each individual. 
+  valarray<int> N( 1, nInd );
+
+  // These will hold the generated values for the true measurement 
+  // noise, eTrue, and the true random population parameters, bTrue.
+  double eTrue;
+  double bTrue;
+
+  // Mean, variance, and standard deviation of eTrue and bTrue.
+  double meanETrue = 0.0;
+  double varETrue  = 1.0;
+  double sdETrue   = sqrt( varETrue );
+  double meanBTrue = 0.0;
+  double varBTrue  = varBetaTrue;
+  double sdBTrue   = sqrt( varBTrue );
+
+  // Compute the measurements for each individual.
+  int seed = 2;
+  srand(seed);
+
+  valarray<double> sdECov(nY*nY);
+  sdECov[ slice( 0, nY, nY+1 ) ] = sdETrue;
+
+  valarray<double> sdBCov(nY*nY);
+  sdBCov[ slice( 0, nY, nY+1 ) ] = sdBTrue;
+
+  Y = meanBTrue + randNormal( sdBCov, nY ) + randNormal( sdECov, nY );
+
+
+  //------------------------------------------------------------
+  // Quantities related to the fixed population parameter, alp.
+  //------------------------------------------------------------
+
+  valarray<double> alpTrue( nAlp );
+  valarray<double> alpLow ( nAlp );
+  valarray<double> alpUp  ( nAlp );
+  valarray<double> dvecAlpIn  ( nAlp );
+  valarray<double> alpOut ( nAlp );
+  valarray<double> dvecAlpStep( nAlp );
+
+  // Set the values associated with alp(1).
+  alpTrue[ 0 ] = meanBetaTrue;
+  alpLow [ 0 ] = -10.0;
+  alpUp  [ 0 ] = 10.0;
+  dvecAlpIn  [ 0 ] = -1.0;
+  dvecAlpStep[ 0 ] = 1.0e-2;
+
+  // Set the values associated with alp(2).
+  alpTrue[ 1 ] = varBetaTrue;
+  alpLow [ 1 ] = 1.0e-3;
+  alpUp  [ 1 ] = 100.0;
+  dvecAlpIn  [ 1 ] = 0.5;
+  dvecAlpStep[ 1 ] = 1.0e-2;
+  
+
+  //------------------------------------------------------------
+  // Quantities related to the random population parameters, b.
+  //------------------------------------------------------------
+
+  valarray<double> bLow ( -1.5e+1, nB );
+  valarray<double> bUp  ( +1.0e+1, nB );
+  valarray<double> dvecBStep(  1.0e-2, nB );
+
+  valarray<double> dmatBIn ( 1., nB * nInd );
+  valarray<double> bOut(     nB * nInd );
+
+
+  //------------------------------------------------------------
+  // Quantities related to the population objective function.
+  //------------------------------------------------------------
+
+  double dLTildeOut;
+
+  valarray<double> lTilde_alpOut    ( nAlp );
+  valarray<double> lTilde_alp_alpOut( nAlp * nAlp );
+
+
+  //------------------------------------------------------------
+  // Prepare the first population level optimizer controller.
+  //------------------------------------------------------------
+
+  // This file will hold the restart information.
+  const string restartFile = "firstOrderTest_restart_info.xml";
+
+  // Set these flags so that the restart information will not be read
+  // from the restart file, but it will be saved to the file.
+  bool readRestartInfo  = false;
+  bool writeRestartInfo = true;
+
+  // Set the optimizer control information so that the optimizer will
+  // not converge the first time it is called.
+  double epsilon = 1.e-6;
+  int nMaxIter   = 5; 
+  int level      = 0;
+
+  // Instantiate the first population level optimizer controller.
+  Optimizer firstPopOptimizer(
+    epsilon,
+    nMaxIter,
+    level, 
+    restartFile,
+    readRestartInfo,
+    writeRestartInfo ); 
+
+  // Set these flags so that no exception will be thrown and so that
+  // the state information required for a warm start will be saved.
+  firstPopOptimizer.setThrowExcepIfMaxIter( false );
+  firstPopOptimizer.setSaveStateAtEndOfOpt( true );
+
+
+  //------------------------------------------------------------
+  // Remaining inputs to fitPopulation.
+  //------------------------------------------------------------
+
+  // Prepare the individual level optimizer controller.
+  Optimizer indOptimizer( 1.0e-6, 40, 0 );
+
+  // Set the parallel controls object
+  DirBasedParallelControls parallelControls( false, 0, 0 );
+
+
+  //------------------------------------------------------------
+  // Call fitPopulation for the first time.
+  //------------------------------------------------------------
+
+  try
+  {
+    fitPopulation( model,
+                   whichObjective,
+                   N,
+                   Y,
+                   firstPopOptimizer,
+                   alpLow,
+                   alpUp,
+                   dvecAlpIn,
+                   dvecAlpStep,
+                   &alpOut,
+                   indOptimizer,
+                   bLow,
+                   bUp,
+                   dmatBIn,            
+                   dvecBStep,
+                   &bOut,
+                   &dLTildeOut,
+                   &lTilde_alpOut,
+                   &lTilde_alp_alpOut, 
+                   parallelControls );
+  }
+  catch(...)
+  {
+    CPPUNIT_ASSERT(false);
+  }
+
+
+  //------------------------------------------------------------
+  // Prepare the second population level optimizer controller.
+  //------------------------------------------------------------
+
+  // Increase the number of iterations so that the optimizer will be
+  // able to converge successfully.
+  nMaxIter = 50; 
+
+  // Set these flags so that the restart information will be retrieved
+  // from the restart file, and so it will be saved to the file.
+  readRestartInfo  = true;
+  writeRestartInfo = true;
+
+  // Instantiate the second population level optimizer controller.
+  Optimizer secondPopOptimizer(
+    epsilon,
+    nMaxIter,
+    level,
+    restartFile,
+    readRestartInfo,
+    writeRestartInfo ); 
+
+  // Set these flags so that a warm start will be performed using the
+  // state information from the restart file and so that the state
+  // information required for a warm start will be saved.
+  secondPopOptimizer.setIsWarmStart( true );
+  secondPopOptimizer.setSaveStateAtEndOfOpt( true );
+
+
+  //------------------------------------------------------------
+  // Call fitPopulation for the second time.
+  //------------------------------------------------------------
+
+  try
+  {
+    fitPopulation( model,
+                   whichObjective,
+                   N,
+                   Y,
+                   secondPopOptimizer,
+                   alpLow,
+                   alpUp,
+                   dvecAlpIn,
+                   dvecAlpStep,
+                   &alpOut,
+                   indOptimizer,
+                   bLow,
+                   bUp,
+                   dmatBIn,            
+                   dvecBStep,
+                   &bOut,
+                   &dLTildeOut,
+                   &lTilde_alpOut,
+                   &lTilde_alp_alpOut, 
+                   parallelControls );
+  }
+  catch(...)
+  {
+    CPPUNIT_ASSERT(false);
+  }
+
+  bool ok = true;
+
+
+  //------------------------------------------------------------
+  // Known values.
+  //------------------------------------------------------------
+
+  //************************************************************
+  // Note: equations for the known (analytic) values computed 
+  // here are derived in "An Introduction to Mixed Effects
+  // Modeling and Marginal Likelihood Estimation with a 
+  // Pharmacokinetic Example", B. M. Bell, Applied Physics
+  // Laboratory, University of Washington, May 25, 2000.
+  //************************************************************
+
+  CPPUNIT_ASSERT_EQUAL( nInd, nY );
+  CPPUNIT_ASSERT( nY != 1 );
+
+  // Compute the mean of the data, yBar.
+  double yBar = 0.0;
+  for ( i = 0; i < nInd; i++ )
+  {
+    yBar += Y[ i ];
+  }
+  yBar /= nInd;
+
+  // Compute the sample variance, sSquared.
+  double sSquared = 0.0;
+  for ( i = 0; i < nInd; i++ )
+  {
+    sSquared += pow( ( Y[ i ] - yBar ), 2 );
+  }
+  sSquared /= ( nInd - 1 );
+
+  // The value for alpHat(1) and alpHat(2) are contained in
+  // section 9 of the above reference.
+  valarray<double> alpHat( nAlp );
+
+  alpHat[ 0 ] = yBar;
+  alpHat[ 1 ] = sSquared * (nInd - 1) / nInd - 1.0;
+
+  // Compute bHat_i(alpHat) using equation (14) of the above reference.      
+  valarray<double> bHat( nB * nInd );
+
+  for ( i = 0; i < nInd; i++ )
+  {
+    for ( k = 0; k < nB; k++ )
+    {
+      bHat[ k + i * nB ] = ( Y[ i ] - alpHat[ 0 ] ) 
+        / ( 1.0 + 1.0 / alpHat[ 1 ] );
+    }
+  }
+
+  // Compute ( 1 + alpOut(2) ).
+  double onePlusAlp2 = 1.0 + alpOut[ 1 ];
+
+  // Compute the sums involving ( y_i - alpOut(1) ).
+  double yMinAlp1;
+  double sumYMinAlp1    = 0.0;
+  double sumYMinAlp1Sqd = 0.0;
+  for ( i = 0; i < nInd; i++ )
+  {
+    yMinAlp1        = Y[ i ] - alpOut[ 0 ];
+    sumYMinAlp1    += yMinAlp1;
+    sumYMinAlp1Sqd += pow( yMinAlp1, 2 );
+  }
+
+  // Compute the known value for LTilde(alp) = -log[p(y|alp)]
+  // using equation (17) of the above reference.
+  double dLTildeKnown = sumYMinAlp1Sqd / ( 2.0 * ( onePlusAlp2 ) ) 
+    + nInd / 2.0 * log( 2.0 * PI * ( onePlusAlp2 ) );
+
+  // The value for LTilde_alp_alp(alp) was determined by taking the  
+  // derivative of equation (17) of the above reference, i.e.,
+  //
+  //                          partial
+  //     LTilde_alp(alp) = ------------- [- log[p(y|alp)] ] .
+  //                        partial alp
+  //
+  valarray<double> lTilde_alpKnown( nAlp );
+
+  lTilde_alpKnown[ 0 ] = - sumYMinAlp1 / onePlusAlp2;
+  lTilde_alpKnown[ 1 ] = 0.5 / onePlusAlp2 
+                                * ( - sumYMinAlp1Sqd / onePlusAlp2 + nInd );
+
+  // The value for LTilde_alp_alp(alp) was determined by taking the second 
+  // derivative of equation (17) of the above reference, i.e.,
+  //
+  //                             partial       partial   
+  //     LTilde_alp_alp(alp) = ------------- ------------- [- log[p(y|alp)] ] .
+  //                            partial alp   partial alp
+  //
+  valarray<double> lTilde_alp_alpKnown( nAlp * nAlp );
+
+  lTilde_alp_alpKnown[ 0 ] = nInd / ( onePlusAlp2 );
+  lTilde_alp_alpKnown[ 1 ] = pow( onePlusAlp2, -2 ) * sumYMinAlp1;
+  lTilde_alp_alpKnown[ 2 ] = lTilde_alp_alpKnown[ 1 ];
+  lTilde_alp_alpKnown[ 3 ] = 0.5 * pow( onePlusAlp2, -2 ) 
+                                    * (2.0 / onePlusAlp2 * sumYMinAlp1Sqd 
+                                    - nInd );
+
+  valarray<double> epsilonForTest( 2 );
+  epsilonForTest[ 0 ] = indOptimizer      .getEpsilon();
+  epsilonForTest[ 1 ] = secondPopOptimizer.getEpsilon();
+
+  //------------------------------------------------------------
+  // Do the test.
+  //------------------------------------------------------------
+
+  doTheTest(  ok,
+              dLTildeOut,
+              dLTildeKnown,
+              epsilonForTest,
+              alpLow,
+              alpUp,
+              alpOut,
+              alpHat,
+              bLow,
+              bUp,
+              bOut,
+              bHat,
+              lTilde_alpOut,
+              lTilde_alpKnown,
+              lTilde_alp_alpOut,
+              lTilde_alp_alpKnown );
+  
 }
 
 

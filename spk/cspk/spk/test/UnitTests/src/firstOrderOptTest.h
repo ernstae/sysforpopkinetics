@@ -40,6 +40,7 @@
 class firstOrderOptTest : public CppUnit::TestFixture
 {
     void firstOrderOptExampleTest();
+    void firstOrderOptRestartTest();
     void firstOrderOptZeroIterationsTest();
     void doTheTest( bool ok,
                        double dLTildeOut,
