@@ -1,0 +1,71 @@
+An expression block is expressed in terms of a list of expression trees:
+
+               +-----------+          +-----------+                    +-----------+
+    block ---> |     =     |--------->|     =     |------- ..... ----->|     =     |
+               +-----------+          +-----------+                    +-----------+
+                |         |            |         |                      |         |
+               \|/       \|/          \|/       \|/                    \|/       \|/
+            +-------+ +-------+    +-------+ +-------+              +-------+ +-------+
+            |   A   | |   +   |    |   B   | |   *   |              |   C   | |  fun  |
+            +-------+ +-------+    +-------+ +-------+              +-------+ +-------+
+                          |                      |                                |
+                         \|/                    \|/                              \|/
+                     +------+   +------+    +------+   +------+               +------+   +------+   +------+
+                     |  x1  |-->|  y1  |    |  x2  |-->|  y2  |               |  a1  |-->|  a2  |-->|  a3  |
+                     +------+   +------+    +------+   +------+               +------+   +------+   +------+
+
+
+<Data types>
+
+scalar:
+name
+type [int|double|bool]
+dimensions = 1 by 1
+index = 1
+(value)
+
+vector:
+name
+element type [int|double|bool]
+dimensions = n by 1
+index = (1:n)
+(values)
+
+sub-vector:
+name
+element type [int|double|bool]
+dimensions = n by 1
+index = (i:n)
+(values)
+
+vector element
+name
+element type [int|double|bool]
+dimensions = n by 1
+index = (i:i)
+(value)
+
+matrix:
+name
+element type [int|double|bool]
+dimensions = m by n
+indeces = (1:m, 1:n)
+(values)
+
+sub-matrix
+name
+element type [int|double|bool]
+dimensions = m by n
+indeces = (i:m, j:n)
+(values)
+
+matrix element
+name
+element type [int|double|bool]
+dimensions = m by n
+indeces = (i,j)
+
+function
+name
+return type
+paremeters (a list of variables)
