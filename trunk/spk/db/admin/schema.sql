@@ -100,7 +100,7 @@ CREATE TABLE user (
   company varchar(30) NOT NULL default '',
   country varchar(20) NOT NULL default '',
   state varchar(20) NOT NULL default '',
-  email varchar(30) NOT NULL default '',
+  email varchar(30) default NULL,
   PRIMARY KEY  (user_id),
   UNIQUE KEY username (username)
 ) TYPE=InnoDB;
