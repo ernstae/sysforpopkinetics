@@ -115,11 +115,23 @@ if ($exit_status != 0) {
 }
 # create a notes file to be edited by the developer
 my $notes = "$candidate_dir/notes-$version";
+my $template = "$candidate_dir/notes_template.txt";
+my $dashes = "----------------------------------";
+
 open FH, "> $notes" or die "Could not create $notes\n";
+open TH, $template  or die "Could not open $template\n";
+print FH "$dashes\n";
+print FH    "RELEASE NOTES FOR VERSION $version\n";
+print FH  "$dashes\n";
+while (<TH>) {
+    print FH;
+}
+close TH;
 close FH;
 chmod 0666, $notes;
-print "\nPlease provide release notes for this candidate by editing the file\n";
-print "$notes\n\n";
+print "\nPlease provide release notes for this candidate.\n";
+print "\nAs an ordinary user, edit the file\n";
+print "\n\t$notes\n\n";
 
 __END__
 
