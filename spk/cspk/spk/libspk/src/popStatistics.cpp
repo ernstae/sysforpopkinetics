@@ -870,7 +870,6 @@ $end
 */
 
 #include <iostream>
-#include <strstream>
 #include <cmath>
 #include "popStatistics.h"
 #include "getCol.h"
@@ -923,14 +922,16 @@ void popStatistics( SpkModel&                popModel,
     // Degree of freedom
     const int nF = nY - nAlp;
 	
-    if( !nF )
+    if( popParCIOut && !nF )
 	{
-        std::strstream message;
-        message << "The degree of freedom must be positive." << ends;
+	  char message[ SpkError::maxMessageLen() ];
+          sprintf( message, 
+		   "The degree of freedom (#of measurements<%d> - #of fixed effects<%d>) must be positive.\n",
+		   nY, nAlp );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR, 
-                message.str(),
+                message,
                 __LINE__, __FILE__
         );
 	}
@@ -938,63 +939,64 @@ void popStatistics( SpkModel&                popModel,
     //===============[Begin: Vector lengths validation]===============
     if( nY != nMeasurementsAll.sum() )
     {
-        std::strstream message;
-        message << "The sum of the values contained in nMeasurementsAll vector ";
-        message << "must match the length of measurementsAll vector.  ";
-        message << nMeasurementsAll.sum() << " does not match " << nY << ". " << ends;
+      char message[ SpkError::maxMessageLen() ];
+      sprintf( message, "The sum <%d> of the values contained in nMeasurementsAll vector must match the size <%d> of measurementsAll vector.\n",
+	       nMeasurementsAll.sum(), nY );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR, 
-                message.str(),
+                message,
                 __LINE__, __FILE__
         );
     }
     if( indParLow.size() != nB )
     {
-        std::strstream message;
-        message << "The length of indParLow vector must match the length of the indParStep vector." << ends;
+      char message[ SpkError::maxMessageLen() ];
+      sprintf( message, "The length <%d> of indParLow vector must match the size <%d> of indPar vector.",
+	       indParLow.size(), nB );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR, 
-                message.str(),
+                message,
                 __LINE__, __FILE__
         );
     }
     if( indParUp.size() != nB )
     {
-        std::strstream message;
-        message << "The length of indParUp vector must match the length of the indParStep vector." << ends;
+      char message[ SpkError::maxMessageLen() ];
+      sprintf( message, "The length <%d> of indParUp vector must match the size <%d> of indPar vector.",
+	       indParUp.size(), nB );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR, 
-                message.str(),
+                message,
                 __LINE__, __FILE__
         );
     }
     if( indParAll.size() != nB * nInd )
     {
-        std::strstream message;
-        message << "The length of indParAll vector must match the product of ";
-        message << "the length of the indParStep vector and the number of individuals." << ends;
+      char message[ SpkError::maxMessageLen() ];
+      strcpy( message, "The length of indParAll vector must match the product of " );
+      strcat( message, "the length of the indParStep vector and the number of individuals." );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR, 
-                message.str(),
+                message,
                 __LINE__, __FILE__
         );
     }
     // This is a column vector.
     if ( popObj_popPar_popPar.size() != nAlp * nAlp )
     {
-        std::strstream message;
-        message << "Tilde_alp_alp vector that contains the second derivative of objective function ";
-        message << "must have n times n length, ";
-        message << "where n is the size of population parameter.  ";
-        message << popObj_popPar_popPar.size() << " is invalid." << ends;
+      char message[ SpkError::maxMessageLen() ];
+      sprintf( message,
+	       "Tilde_alp_alp vector that contains the second derivative of objective function \
+must have n times n length, where n is the size of population parameter <%d>.  ", 
+	       popObj_popPar_popPar.size() );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR,  
-                message.str(),
+                message,
                 __LINE__, __FILE__
         );
     }  
@@ -1010,13 +1012,13 @@ void popStatistics( SpkModel&                popModel,
     {
         if( nMeasurementsAll[i] < 0 )
         {
-            std::strstream message;
-            message << "The number of measurements must be greater than zero.  ";
-            message << i << "-th element, " << nMeasurementsAll[i] << ", is invalid." << ends;
-
+	  char message[ SpkError::maxMessageLen() ];
+          sprintf( message, 
+		   "The number of measurements must be greater than zero.  %d -th element, %d, is invalid.", 
+		   i, nMeasurementsAll[i] );
             throw SpkException(
                     SpkError::SPK_USER_INPUT_ERR,  
-                    message.str(),
+                    message,
                     __LINE__, __FILE__
             );
         }
@@ -1029,15 +1031,15 @@ void popStatistics( SpkModel&                popModel,
         {
             if( indParAll[ i + j * nB ] <= indParLow[i] || indParAll[ i + j * nB ] >= indParUp[i] )
             {
-                std::strstream message;
-                message << "The initial value for the individual parameter must ";
-                message << "be less than or equal to the upper bound value and ";
-                message << "greater than or equal to the lower boundary value.  ";
-                message << i << "-th element, " << indParAll[ i + j * nB ] << ", is invalid." << ends;
+	      char message[ SpkError::maxMessageLen() ];
+              sprintf( message, "The initial value for the individual parameter must \
+be less than or equal to the upper bound value and \
+greater than or equal to the lower boundary value.  \
+message %d-the element, %f, is invalid.", i, indParAll[ i + j * nB ] );
 
                 throw SpkException(
                         SpkError::SPK_USER_INPUT_ERR,  
-                        message.str(),
+                        message,
                         __LINE__, __FILE__
                 );
             }
