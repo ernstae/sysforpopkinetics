@@ -1,4 +1,4 @@
-su#!/bin/bash
+#!/bin/bash
 #
 # Init file for production tomcat
 #

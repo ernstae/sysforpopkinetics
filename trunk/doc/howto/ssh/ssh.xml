@@ -29,6 +29,12 @@
 	<authorinitials>afw</authorinitials>
 	<revremark>Revised to be relative to RHEL version 3.</revremark>
       </revision>
+      <revision>
+	<revnumber>1.4</revnumber>
+	<date>March 22, 2004</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Returned to use of dsa encryption.</revremark>
+      </revision>
     </revhistory>
     <abstract>
       <para>
@@ -298,10 +304,10 @@ chmod 755 .ssh
 	Next, you need to generate your two keys, using
 	the <command moreinfo="none">ssh-keygen</command> command:
 	<screen format="linespecific">
-ssh-keygen -t rsa
+ssh-keygen -t dsa
 	</screen>
-	The <emphasis>-t rsa</emphasis> option specifies
-	that you prefer to use the rsa encryption algorithm (dsa is the other
+	The <emphasis>-t dsa</emphasis> option specifies
+	that you prefer to use the dsa encryption algorithm (rsa is the other
 	possibility).
       </para>
       <para>
@@ -339,9 +345,9 @@ ssh-keygen -t rsa
 	<filename moreinfo="none">.ssh</filename> directory
 	after running <command moreinfo="none">ssh-keygen</command>,
 	you will find that two files have been added:
-	<filename moreinfo="none">id_rsa</filename>, which is your 
+	<filename moreinfo="none">id_dsa</filename>, which is your 
 	<emphasis>encrypted</emphasis> private key 
-	and <filename moreinfo="none">id_rsa.pub</filename>,
+	and <filename moreinfo="none">id_dsa.pub</filename>,
 	which is your public key.
       </para>
     </sect2>
@@ -356,7 +362,7 @@ ssh-keygen -t rsa
 	example, we assume that the remote machine is named
 	<emphasis>whitechuck.rfpk.washington.edu</emphasis>:
 	<screen format="linespecific">
-scp ~/.ssh/id_rsa.pub whitechuck.rfpk.washington.edu:
+scp ~/.ssh/id_dsa.pub whitechuck.rfpk.washington.edu:
 	</screen>
 	You will be asked to supply your username and
 	password for the remote host, because
@@ -383,7 +389,7 @@ chmod 755 .ssh
 	(<command moreinfo="none">ssh</command> is very fussy about
 	mode bits):
 	<screen format="linespecific">
-cat id_rsa.pub >> .ssh/authorized_keys
+cat id_dsa.pub >> .ssh/authorized_keys
 chmod 644 .ssh/authorized_keys
 	</screen>
       </para>
@@ -457,7 +463,7 @@ ssh whitechuck.rfpk.washington.edu
 	  <listitem>
 	    <para>
 	      Does a copy of the file
-	      <filename moreinfo="none">~/.ssh/id_rsa.pub</filename>
+	      <filename moreinfo="none">~/.ssh/id_dsa.pub</filename>
 	      in your workstation appear at the end of the file
 	      <filename moreinfo="none">~/.ssh/authorized_keys</filename>
 	      on the remote machine?
