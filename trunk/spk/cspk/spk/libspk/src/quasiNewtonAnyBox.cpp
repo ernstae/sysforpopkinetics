@@ -1269,75 +1269,74 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   // that the optimizer can build up a reasonable accurate 
   // approximation for the Hessian, but not so high that it
   // will spend too much time in the optimizer.
-  itrMax   = 5;
+  itrMax = 5;
 
   // Set the maximum number of interior point iterations so
   // that the optimizer can solve the quadratic subproblems
   // with sufficient accuracy.
-  quadMax  = 100;
+  quadMax = 100;
 
   deltaScale = 0.1;
 
   int i = 0;
   while ( i < nMaxIter )
   {
-     msg = QuasiNewton01Box(
-          os,
-          level,
-          ItrMax,
-          QuadMax,
-          n,
-          delta,
-          obj,
-          ItrCur,
-          QuadCur,
-          rCur,
-          fCur,
-          xCur,
-          gCur,
-          HCur );
+    msg = QuasiNewton01Box(
+      os,
+      level,
+      ItrMax,
+      QuadMax,
+      n,
+      delta,
+      obj,
+      ItrCur,
+      QuadCur,
+      rCur,
+      fCur,
+      xCur,
+      gCur,
+      HCur );
 
-     is the first iter zero or one
-     i += itrCur;
+    // Add the number of iterations that were performed.
+    i += itrCur;
 
     // See if this functions convergence criterion has been met.
-      // If the final y value is actally within epsilon tolerance of 
-      // the true value yStar, then go on.  Note that NAG arrays use
-      // row-major order.
-      if ( isWithinTol( epsilon, dvecY, dvecYLow, dvecYUp, drowGScaled, 
-               getLowerTriangle( arrayToDoubleMatrix( options.h, n, n ) ) ) )
-      {
-        // Set the output values.
-        return;
-      }
+    // If the final y value is actally within epsilon tolerance of 
+    // the true value yStar, then go on.  Note that NAG arrays use
+    // row-major order.
+    if ( isWithinTol( epsilon, dvecY, dvecYLow, dvecYUp, drowGScaled, 
+             getLowerTriangle( arrayToDoubleMatrix( options.h, n, n ) ) ) )
+    {
+      // Set the output values.
+      return;
+    }
 
-        // If QuasiNewton01Box's convergence criterion has been met,
-        // then the infinity norm of the current gradient is less than
-        // delta,
-so delta needs to be reset so that the optimizer can continue iterating toward the minimum and thus
+    // If QuasiNewton01Box's convergence criterion has been met,
+    // then the infinity norm of the current gradient is less than
+    // delta, and it needs to be decreased so that the optimizer
+    // can continue iterating toward the minimum to try to satisfy
+    // the conververgence criterion for this function.
 
-but if w the convergence criterion for this function has
 
-          // Set delta to be the maximum of the absolute values of the
-          // elements (infinity norm) of the current gradient,
-          //
-          //            ~
-          //     delta  =  max { | G_i | }  .
-          //
-          // This ensures that the subproblems only be solved with accuracy
-          // sufficient for the current x value.
-          deltaCurr = MaxAbs( gCur );
+    // Set delta to be the maximum of the absolute values of the
+    // elements (infinity norm) of the current gradient,
+    //
+    //            ~
+    //     delta  =  max { | G_i | }  .
+    //
+    // This ensures that the subproblems only be solved with accuracy
+    // sufficient for the current x value.
+    deltaCurr = MaxAbs( gCur );
 
-        if ( quasiNewtonOutput == ok )
-        {
-          deltaCurr *= deltaScale;
-        }
+    if ( quasiNewtonOutput == ok )
+    {
+      deltaCurr *= deltaScale;
+    }
 
-          if ( deltaCurr < delta )
-          {
-            delta = deltaCurr;
-          }
-      }
+    if ( deltaCurr < delta )
+    {
+      delta = deltaCurr;
+    }
   }
 
 
