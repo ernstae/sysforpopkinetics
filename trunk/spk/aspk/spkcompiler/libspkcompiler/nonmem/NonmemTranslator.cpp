@@ -450,7 +450,8 @@ void NonmemTranslator::parseSource()
     {
       // illegal
       char mess[ SpkCompilerError::maxMessageLen()];
-      sprintf( mess, "\"%s\" must have a child, either \"%s\" or \"%s\".", C_CONSTRAINT, C_POP_ANALYSIS, C_IND_ANALYSIS );
+      sprintf( mess, "\"%s\" must have a child, either \"%s\" or \"%s\".", 
+               C_CONSTRAINT, C_POP_ANALYSIS, C_IND_ANALYSIS );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -487,9 +488,29 @@ void NonmemTranslator::parseSource()
   // <monte_carlo>
   //------------------------------------------------------
   DOMNodeList * monte_carlos = nonmem->getElementsByTagName( X_MONTE_CARLO );
+  DOMElement * monte_carlo;
   if( monte_carlos->getLength() > 0 )
   {
     myIsMonte = true;
+
+
+    //
+    // REVISIT - Sachiko - 09/09/2004
+    // estimation and MC are mutually exclusive.  Currently (as of 9/9/04)
+    // MDA allows both to be true, so for now set myIsEstimate=false.
+    //
+    if( myIsEstimate )
+      myIsEstimate = false;
+    //
+    // if( myIsEstimate )
+    // {
+    //    char mess[ SpkCompilerError::maxMessageLen() ];
+    //    sprintf( mess, "The parameter estimation and the post-interation requests are mutually exclusive." );
+    //    SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR,
+    //        mess, __LINE__, __FILE__ );
+    //    throw e;
+    // }
+
     if( myTarget != POP )
     {
        char mess[ SpkCompilerError::maxMessageLen() ];
@@ -498,83 +519,10 @@ void NonmemTranslator::parseSource()
            mess, __LINE__, __FILE__ );
        throw e;
     }
-    DOMElement * monte_carlo = dynamic_cast<DOMElement*>( monte_carlos->item(0) );
-
-    if( monte_carlo->hasAttribute( X_METHOD ) )
-    {
-       const XMLCh* x_temp = monte_carlo->getAttribute( X_METHOD );
-       if( XMLString::equals( x_temp, X_ANALYTIC ) )
-	  myIntegMethod = ANALYTIC;
-       else if( XMLString::equals( x_temp, X_GRID ) )
-	  myIntegMethod = GRID;
-       else if( XMLString::equals( x_temp, X_MISER ) )
-          myIntegMethod = MISER;
-//==============================================================================
-// REVISIT SACHIKO
-// Eliminate these line!
-       else if( XMLString::equals( x_temp, X_MONTE ) )
-          myIntegMethod = MONTE;
-//==============================================================================
-       else //if( XMLString::equals( x_temp, X_PLAIN ) )
-          myIntegMethod = PLAIN;
-    }
-    else
-    {
-       char mess[ SpkCompilerError::maxMessageLen() ];
-       sprintf( mess, "\"monte_carlo\" requires \"%s\" attribute!", C_METHOD );
-       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess,
-                               __LINE__, __FILE__ );
-       throw e;
-    }
-    DOMNodeList * number_evals = monte_carlo->getElementsByTagName( X_NUMBEREVAL );
-    if( number_evals->getLength() < 1 )
-    {
-       char mess[ SpkCompilerError::maxMessageLen() ];
-       sprintf( mess, "\"%s\" tag is missing!", C_NUMBEREVAL );
-       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR,
-                               mess, __LINE__, __FILE__ );
-       throw e;
-    }
-    DOMElement  * number_eval  = dynamic_cast<DOMElement*>( number_evals->item(0) );
-    DOMNodeList * value_list = number_eval->getElementsByTagName( X_VALUE );
-    myIntegNEvals = value_list->getLength();
-    if( myIntegNEvals < 1 )
-    {
-       char mess[ SpkCompilerError::maxMessageLen() ];
-       sprintf( mess, "The number of occurences of \"%s\" tag must be greater than zero!",
-                C_VALUE );
-       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR,
-                               mess, __LINE__, __FILE__ );
-       throw e;
-    }
-    if( myIntegMethod == GRID )
-    {
-        if( myIntegNEvals != myEtaLen )
-        {
-           char mess[ SpkCompilerError::maxMessageLen() ];
-           sprintf( mess, "The number of occurences of \"%s\" tag must be equal to the length of ETA (%d) for grid and miser approximation!", 
-                    C_VALUE, myEtaLen );
-           SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR,
-                                    mess, __LINE__, __FILE__ );
-           throw e;
-        }
-    }
-    else // plain, miser, analytic
-    {
-       // For these methods, ignore what the user says.
-       // They take only one and the first occurence of <number_eval>.
-       myIntegNEvals = 1;
-    }
-    myIntegNumberEvals.resize( myIntegNEvals );
-    for( int i=0; i<myIntegNEvals; i++ )
-    {
-       DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(i) );
-       const XMLCh * x_value = value->getFirstChild()->getNodeValue();
-       unsigned int temp_value = 0;
-       XMLString::textToBin( x_value, temp_value );
-       myIntegNumberEvals[i] = temp_value;
-    }
+    monte_carlo = dynamic_cast<DOMElement*>( monte_carlos->item(0) );
+    parseMonte( monte_carlo );
   }
+
   //------------------------------------------------------
   //<presentation>
   //------------------------------------------------------ 
@@ -726,7 +674,9 @@ void NonmemTranslator::parseSource()
   generateIndData();
   generatePred( fPredEqn_cpp );
   generateNonmemParsNamespace();
-  generateMonteParsNamespace();
+  if( myIsMonte )
+     generateMonteParsNamespace();
+  
   if( myIsEstimate || myIsSimulate )
     {
       if( myTarget == POP )
@@ -736,11 +686,94 @@ void NonmemTranslator::parseSource()
     }
   generateMakefile();
 }
+//=============================================================================
+//
+// parse <monte_carlo>
+//
+//
+//=============================================================================
+void NonmemTranslator::parseMonte( DOMElement* monte_carlo )
+{
+    if( monte_carlo->hasAttribute( X_METHOD ) )
+    {
+       const XMLCh* x_temp = monte_carlo->getAttribute( X_METHOD );
+       if( XMLString::equals( x_temp, X_ANALYTIC ) )
+	  myIntegMethod = ANALYTIC;
+       else if( XMLString::equals( x_temp, X_GRID ) )
+	  myIntegMethod = GRID;
+       else if( XMLString::equals( x_temp, X_MISER ) )
+          myIntegMethod = MISER;
+//==============================================================================
+// REVISIT SACHIKO
+// Eliminate these line!
+       else if( XMLString::equals( x_temp, X_MONTE ) )
+          myIntegMethod = MONTE;
+//==============================================================================
+       else //if( XMLString::equals( x_temp, X_PLAIN ) )
+          myIntegMethod = PLAIN;
+    }
+    else
+    {
+       char mess[ SpkCompilerError::maxMessageLen() ];
+       sprintf( mess, "\"monte_carlo\" requires \"%s\" attribute!", C_METHOD );
+       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess,
+                               __LINE__, __FILE__ );
+       throw e;
+    }
+    DOMNodeList * number_evals = monte_carlo->getElementsByTagName( X_NUMBEREVAL );
+    if( number_evals->getLength() < 1 )
+    {
+       char mess[ SpkCompilerError::maxMessageLen() ];
+       sprintf( mess, "\"%s\" tag is missing!", C_NUMBEREVAL );
+       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR,
+                               mess, __LINE__, __FILE__ );
+       throw e;
+    }
+    DOMElement  * number_eval  = dynamic_cast<DOMElement*>( number_evals->item(0) );
+    DOMNodeList * value_list = number_eval->getElementsByTagName( X_VALUE );
+    myIntegNEvals = value_list->getLength();
+    if( myIntegNEvals < 1 )
+    {
+       char mess[ SpkCompilerError::maxMessageLen() ];
+       sprintf( mess, "The number of occurences of \"%s\" tag must be greater than zero!",
+                C_VALUE );
+       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR,
+                               mess, __LINE__, __FILE__ );
+       throw e;
+    }
+    if( myIntegMethod == GRID )
+    {
+        if( myIntegNEvals != myEtaLen )
+        {
+           char mess[ SpkCompilerError::maxMessageLen() ];
+           sprintf( mess, "The number of occurences of \"%s\" tag must be equal to the length of ETA (%d) for grid and miser approximation!", 
+                    C_VALUE, myEtaLen );
+           SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR,
+                                    mess, __LINE__, __FILE__ );
+           throw e;
+        }
+    }
+    else // plain, miser, analytic
+    {
+       // For these methods, ignore what the user says.
+       // They take only one and the first occurence of <number_eval>.
+       myIntegNEvals = 1;
+    }
+    myIntegNumberEvals.resize( myIntegNEvals );
+    for( int i=0; i<myIntegNEvals; i++ )
+    {
+       DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(i) );
+       const XMLCh * x_value = value->getFirstChild()->getNodeValue();
+       unsigned int temp_value = 0;
+       XMLString::textToBin( x_value, temp_value );
+       myIntegNumberEvals[i] = temp_value;
+    }
+}
 
 //=============================================================================
 //
-// SPK Optimization request and Monte Carlo integration request are
-// mutually exclusive.
+// Create a Makefile for either an SPK Optimization request or
+// a Monte Carlo integration request.
 //
 //=============================================================================
 void NonmemTranslator::generateMakefile() const
@@ -2589,7 +2622,6 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "}" << endl;
   oIndData_h << endl;
 
-  oIndData_h << "#include <spk/printInMatrix.h>" << endl;
   oIndData_h << "// It is unfortunately that this function is dependent on CppAD. " << endl;
   oIndData_h << "// The type of template argument must have CppAD::Value() operator." << endl;
   oIndData_h << "template <class ValueType>" << endl;
@@ -2600,17 +2632,12 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "   assert( Ri.size() == n * n );" << endl;
   oIndData_h << "   compResiduals();" << endl;
   oIndData_h << "   valarray<double> r( n );" << endl;
-  oIndData_h << "   cout << \"{ \";" << endl;
   oIndData_h << "   for( int i=0; i<n; i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      r[i] = CppAD::Value( " << UserStr.RES << "[i] );" << endl;
   oIndData_h << "      if( i>0 )" << endl;
   oIndData_h << "         cout << \", \";" << endl;
-  oIndData_h << "      cout << r[i];" << endl;
   oIndData_h << "   }" << endl;
-  oIndData_h << "   cout << \" }\" << endl;" << endl;
-  oIndData_h << "   cout << \"R = \" << endl;" << endl;
-  oIndData_h << "   printInMatrix( Ri, n );" << endl;
 
   oIndData_h << "   valarray<double> C( 0.0, n * n );" << endl;
   oIndData_h << "   C = cholesky( Ri, n );" << endl;
