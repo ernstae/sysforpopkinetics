@@ -200,6 +200,70 @@ public abstract class Spkdb {
 
 	return rs;
     }
+    public static long 
+	newModel(Connection conn, long userId, String name, String abstraction, String archive)
+	throws SQLException, SpkdbException
+    {
+	long modelId = 0;
+	String sql
+	    = "insert into model "
+	    + "(user_id, name, abstract, archive) "
+	    + "values (" + userId + ",'" + name + "','" + abstraction + "',?);";
+	PreparedStatement pstmt = conn.prepareStatement(sql);
+	pstmt.setBinaryStream(1, new ByteArrayInputStream(archive.getBytes()), archive.length());
+	pstmt.executeUpdate();
+	ResultSet rs = pstmt.getGeneratedKeys();
+	if (rs.next()) {
+	    modelId = rs.getLong(1);
+	}
+	return modelId;
+    }       
+    public static String getModel(Connection conn, long modelId)
+	throws SQLException, SpkdbException
+    {
+	String sql = "select archive from model where model_id=" + modelId + ";";
+	Statement stmt = conn.createStatement();
+	ResultSet rs = stmt.executeQuery(sql);
+	rs.next();
+	Blob blobModel = rs.getBlob("model");
+	long len = blobModel.length();
+	byte[] byteModel = blobModel.getBytes(1L, (int)len);
+	
+	return new String(byteModel);
+    }       
+    public static boolean updateModel(Connection conn, long modelId, String name[], String value[])
+	throws SQLException, SpkdbException
+    {
+	 String nameList = name[0];
+	 String valueList = "'" + value[0] + "'";
+	 userPattern = Pattern.compile("^model_id$");
+	 if (userPattern.matcher(name[0]).find()) {
+	     throw new SpkdbException("invalid attempt to change model_id");
+	 }
+	 String sql = "update model set " + name[0] + "='" + value[0] + "'";
+	 for (int i = 1; i < name.length; i++) {
+	     if (userPattern.matcher(name[i]).find()) {
+		 throw new SpkdbException("invalid attempt to change model_id");
+	     }
+ 	     sql += ", " + name[i] + "='" + value[i] + "'";
+	 }
+	 sql += " where model_id=" + modelId + ";";
+	 Statement stmt = conn.createStatement();
+	 stmt.executeUpdate(sql);
+	 return stmt.getUpdateCount() == 1;
+    }
+    public static ResultSet userModels(Connection conn, long userId, int maxNum)
+	throws SQLException, SpkdbException 
+    {
+	String sql = "select model_id, name, abstract "
+                     + "from model where user_id=" + userId 
+                     + " order by model_id desc limit " + maxNum + ";";
+	Statement stmt = conn.createStatement();
+        stmt.execute(sql);
+	ResultSet rs = stmt.getResultSet();
+
+	return rs;
+    }
 
     /**
        Inserts a new user in the database, returning a unique key.

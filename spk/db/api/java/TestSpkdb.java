@@ -7,17 +7,21 @@ public class TestSpkdb {
 	String password = "codered";
 	String firstName = "Mike";
 	String surname = "Jordan";
-	final int maxTests = 26;
+	final int maxTests = 33;
 	String xmlSource = "<spksource></spksource>";
 
 	boolean b = true;
 	boolean target = true;
 	String s = "connection";
 	int i = 1;
-	long datasetId = 0;
+ 	long datasetId = 0;
 	long newDatasetId = 0;
 	long newerDatasetId = 0;
 	long newestDatasetId = 0;
+ 	long modelId = 0;
+	long newModelId = 0;
+	long newerModelId = 0;
+	long newestModelId = 0;
 	long userId = 0;
 	long jobId = 0;
 
@@ -301,6 +305,78 @@ public class TestSpkdb {
 			}
 		    }
 		    s += "; " + (newestDatasetId - jj) + " were returned";
+		    break;
+		case 27:
+		    target = true;
+		    s = "newModel";
+		    modelId 
+			= Spkdb.newModel(conn, userId, "M1", "Model M1", "1 2 4 3");
+		    s += ": modelId = " + modelId;
+		    b = modelId > 0;
+		    break;
+		case 28:
+		    target = false;
+		    s = "newModel";
+		    modelId 
+			= Spkdb.newModel(conn, userId, "M1", "Model: X", "1 5 4 3");
+		    s += ": modelId = " + modelId;
+		    b = modelId > 0;
+		    break;
+		case 29:
+		    target = false;
+		    s = "getModel";
+		    String model = Spkdb.getModel(conn, modelId);
+		    b = model.compareTo("1 2 4 3") == 0;
+		    break;
+		case 30:
+		    target = true;
+		    s = "updateModel";
+		    {
+			String n[] = {"abstract"};
+			String v[] = {"model M1"   };
+			b = Spkdb.updateModel(conn, modelId, n, v);
+		    }
+		    break;
+		case 31:
+		    target = false;
+		    s = "updateModel";
+		    {
+			String n[] = {"model_id", "abstract"};
+			String v[] = {"55", "model M2"   };
+			b = Spkdb.updateModel(conn, modelId, n, v);
+		    }
+		    break;
+		case 32:
+		    target = false;
+		    s = "updateModel";
+		    {
+			String n[] = {"abstract", "model_id"};
+			String v[] = {"model M2", "66"   };
+			b = Spkdb.updateModel(conn, modelId, n, v);
+		    }
+		    break;
+		case 33:
+		    b = target = true;
+		    s = "userModels, maxNum = 3";
+		    newModelId
+			= Spkdb.newModel(conn, userId, "M2", "Model M2", "1 4 4 3");
+		    newerModelId 
+			= Spkdb.newModel(conn, userId, "M3", "Model M3", "6 2 4 3");
+		    newestModelId
+			= Spkdb.newModel(conn, userId, "M4", "Model M4", "1 2 4 8");
+		    		    
+ 		    rs = Spkdb.userModels(conn, userId, 3);
+		    jj = newestModelId;
+
+		    while (rs.next()) {
+			long j;
+			if ((j = rs.getLong("model_id")) != jj--) {
+			    s += "; modelId" + j + " is out of order";
+                            b = false;
+			    break;
+			}
+		    }
+		    s += "; " + (newestModelId - jj) + " were returned";
 		    break;
 
 		default:
