@@ -209,9 +209,11 @@ public abstract class Spkdb {
 	String sql
 	    = "insert into dataset "
 	    + "(user_id, name, abstract, archive) "
-	    + "values (" + userId + ",'" + name + "','" + abstraction + "',?);";
+	    + "values (" + userId + ", ?, ?, ?);";
 	PreparedStatement pstmt = conn.prepareStatement(sql);
-	pstmt.setBinaryStream(1, new ByteArrayInputStream(archive.getBytes()), archive.length());
+        pstmt.setString(1, name);
+        pstmt.setString(2, abstraction);
+	pstmt.setBinaryStream(3, new ByteArrayInputStream(archive.getBytes()), archive.length());
 	pstmt.executeUpdate();
 	ResultSet rs = pstmt.getGeneratedKeys();
 	if (rs.next()) {
@@ -307,9 +309,11 @@ public abstract class Spkdb {
 	String sql
 	    = "insert into model "
 	    + "(user_id, name, abstract, archive) "
-	    + "values (" + userId + ",'" + name + "','" + abstraction + "',?);";
+	    + "values (" + userId + ", ?, ?, ?);";
 	PreparedStatement pstmt = conn.prepareStatement(sql);
-	pstmt.setBinaryStream(1, new ByteArrayInputStream(archive.getBytes()), archive.length());
+        pstmt.setString(1, name);
+        pstmt.setString(2, abstraction);
+	pstmt.setBinaryStream(3, new ByteArrayInputStream(archive.getBytes()), archive.length());
 	pstmt.executeUpdate();
 	ResultSet rs = pstmt.getGeneratedKeys();
 	if (rs.next()) {
