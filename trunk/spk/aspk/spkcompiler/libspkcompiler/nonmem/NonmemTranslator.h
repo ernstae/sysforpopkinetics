@@ -236,15 +236,13 @@ class NonmemTranslator : public ClientTranslator
   // The result XML
   const char * fResult_xml;
 
-  // The string for the file burner.
-  const char *BURNER;
-
   // Pointer to the central symbol tabel held in the super class
   SymbolTable * table;
 
   //=========================================================
   // constant strings used as <tag> names and values
   //---------------------------------------------------------
+  XMLCh* X_DESCRIPTION;         static const char* C_DESCRIPTION;
   XMLCh* X_YES;                 static const char* C_YES;             
   XMLCh* X_NO;                  static const char* C_NO;
   XMLCh* X_FIXED;               static const char* C_FIXED;
@@ -317,6 +315,7 @@ class NonmemTranslator : public ClientTranslator
   enum TARGET       myTarget;  
   enum MODEL_SPEC   myModelSpec;
 
+  char             *myDescription;
   bool              myIsEstimate;
   bool              myIsSimulate;
   bool              myIsStat; 
