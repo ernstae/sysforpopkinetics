@@ -107,7 +107,16 @@ using SPK_VA::valarray;
  * Function: IndPredModel
  *
  *
- * Constructor.
+ * Constructor for individual level Pred models.
+ *
+ * After this constructor has completed, the current individual parameter
+ * will be equal to
+ *
+ *             -                -
+ *            |   thetaCurrIn    |
+ *     b   =  |                  |  .
+ *      i     |  omegaParCurrIn  |
+ *             -                -
  *
  *************************************************************************/
 
@@ -190,22 +199,6 @@ IndPredModel::IndPredModel(
 
 
   //------------------------------------------------------------
-  // Initialize quantities related to the individual parameter.
-  //------------------------------------------------------------
-
-  // The individual parameter is composed of the parameters that are
-  // optimized over when performing individual level estimation,
-  //
-  //             -              -
-  //            |   thetaCurr    |
-  //     b   =  |                |  .
-  //      i     |  omegaParCurr  |
-  //             -              -
-  //
-  nIndPar = nTheta + nOmegaPar;
-
-
-  //------------------------------------------------------------
   // Initialize quantities related to the Pred block parameters.
   //------------------------------------------------------------
 
@@ -239,6 +232,38 @@ IndPredModel::IndPredModel(
 
   // Set the current individual.
   doSelectIndividual( 0 );
+
+
+  //------------------------------------------------------------
+  // Initialize quantities related to the individual parameter.
+  //------------------------------------------------------------
+
+  // The individual parameter is composed of the parameters that are
+  // optimized over when performing individual level estimation,
+  //
+  //             -              -
+  //            |   thetaCurr    |
+  //     b   =  |                |  .
+  //      i     |  omegaParCurr  |
+  //             -              -
+  //
+  nIndPar = nTheta + nOmegaPar;
+  bCurr.resize( nIndPar );
+
+  int k;
+
+  // Set the elements that correspond to theta.
+  for ( k = 0; k < nTheta; k++ )
+  {
+    bCurr[k + thetaOffsetInIndPar] = thetaCurr[k];
+  }
+
+  // Set the parameters for the omega covariance matrix.
+  for ( k = 0; k < nOmegaPar; k++ )
+  {
+    bCurr[k + omegaParOffsetInIndPar] = omegaParCurr[k];
+  }
+
 }
 
 
@@ -2171,6 +2196,23 @@ void IndPredModel::getIndParStep( valarray<double>&  indParStep ) const
 int IndPredModel::getNIndPar() const
 {
   return nIndPar;
+}
+
+
+/*************************************************************************
+ *
+ * Function: doDataMean
+ *
+ *
+ * Returns the current value for the individual parameter.
+ *
+ *************************************************************************/
+
+void IndPredModel::getIndPar( valarray<double>& ret ) const 
+{
+  ret.resize( nIndPar );
+
+  ret = bCurr;
 }
 
 
