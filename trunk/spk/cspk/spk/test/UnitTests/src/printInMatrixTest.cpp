@@ -45,7 +45,7 @@ void printInMatrixTest::emptyCase()
 {
   using std::cout;
   using std::endl;
-  cout << "This test displays outputs to standard output.  Bare with me." << endl;
+  cout << "This test displays outputs to standard output.  Bear with me." << endl;
   valarray<double> d(0);
 
   //
@@ -81,7 +81,7 @@ void printInMatrixTest::legalNonEmptyCase()
   using std::cout;
   using std::endl;
 
-  cout << "This test displays outputs to standard output.  Bare with me." << endl;
+  cout << "This test displays outputs to standard output.  Bear with me." << endl;
   double data[] = { 1, 2, 3, 4, 5, 6, 7, 8 };
   valarray<double> d( data, 8 );
   printInMatrix( d, 1 );
