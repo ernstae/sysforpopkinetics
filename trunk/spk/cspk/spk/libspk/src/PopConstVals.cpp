@@ -251,15 +251,16 @@ $end
 
 using namespace std;
 
+static Optimizer defaultOpt;
+
 PopConstVals::PopConstVals()
-: _size(-1), _optimizer(), _objective(-1), _indLow(0,0), _indUp(0,0), _indStep(0,0)
+: _size(-1), _optimizer(defaultOpt), _objective(-1), _indLow(0,0), _indUp(0,0), _indStep(0,0)
 {
 }
 PopConstVals::PopConstVals(int n, Optimizer& opt, int obj,
     const DoubleMatrix& low, const DoubleMatrix& up, const DoubleMatrix& step)
-: _size(n), _optimizer( opt), _objective(obj), _indLow(low), _indUp(up), _indStep(step)
+: _size(n), _optimizer(opt), _objective(obj), _indLow(low), _indUp(up), _indStep(step)
 {
-    
 }
 PopConstVals::PopConstVals(const PopConstVals& right)
 : _size(right._size), _optimizer(right._optimizer), _objective(right._objective),

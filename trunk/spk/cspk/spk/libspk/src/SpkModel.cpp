@@ -1859,7 +1859,7 @@ $end
 void SpkModel::doDataVarianceInv( valarray<double> & ret ) const
 {
   dataVariance(ret);
-  _nY = sqrt( ret.size() );
+  _nY = static_cast<int>( sqrt( static_cast<double>( ret.size() ) ) );
   assert( ret.size() == _nY * _nY );
   ret = inverse(ret, _nY);
 }
@@ -2021,7 +2021,7 @@ bool SpkModel::doDataVarianceInv_indPar( valarray<double>& ret ) const
 {
     valarray<double> RiInv;
     dataVarianceInv(RiInv);
-    _nY = sqrt( RiInv.size() );
+    _nY = static_cast<int>( sqrt( static_cast<double>( RiInv.size() ) ) );
     assert( RiInv.size() == _nY * _nY );
     DoubleMatrix dmatRiInv( RiInv, _nY );
 
@@ -2192,7 +2192,7 @@ bool SpkModel::doDataVarianceInv_popPar( valarray<double>& ret ) const
 {
     valarray<double> RiInv;
     dataVarianceInv(RiInv);
-    _nY = sqrt( RiInv.size() );
+    _nY = static_cast<int>( sqrt( static_cast<double>( RiInv.size() ) ) );
     assert( RiInv.size() == _nY * _nY );
 
     DoubleMatrix dmatRiInv( RiInv, _nY );

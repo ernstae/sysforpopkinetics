@@ -577,7 +577,7 @@ using namespace std;
 static const char *const substr(const char * begin, const char * end, char * buf, int bufsize) throw()
 {
     try{
-        std::fill(buf, buf+bufsize, NULL);
+        std::fill(buf, buf+bufsize, '\0');
         std::copy(begin, end, buf);
     }
     catch(...)
@@ -649,8 +649,8 @@ SpkError::SpkError() throw()
 : _errorcode(), _linenum(0)
 {
     try{
-        std::fill(_filename, _filename+FILENAME_FIELD_LEN+1, NULL);
-        std::fill(_message, _message+MESSAGE_FIELD_LEN+1, NULL);
+        std::fill(_filename, _filename+FILENAME_FIELD_LEN+1, '\0');
+        std::fill(_message, _message+MESSAGE_FIELD_LEN+1, '\0');
     }
     catch(...)
     {
@@ -780,7 +780,7 @@ std::ostream& operator<<(std::ostream& stream, const SpkError& e)
     
     stream << MESSAGE_FIELD_NAME   << endl;
     stream << e._message;
-    stream.put(NULL);
+    stream.put('\0');
    
     return stream;
 }

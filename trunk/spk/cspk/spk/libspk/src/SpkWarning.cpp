@@ -204,7 +204,6 @@ $end
 
 #include <iostream>
 #include <fstream>
-#include <strstream>
 #include <string>
 #include "SpkWarning.h"
 #include "SpkException.h"
@@ -270,7 +269,7 @@ void SpkWarning::print(void)
     {
       if( fgets(buf, 127, file) != NULL )
         cout << buf;
-      std::fill(buf, buf+128, NULL);
+      std::fill(buf, buf+128, '\0');
     }
 
     fclose(file);
@@ -283,12 +282,12 @@ char * SpkWarning::stream(char * const str, int size)
   if( file != NULL )
   {
     char * buf = new char[size+1];
-    std::fill(buf, buf+size, NULL);
+    std::fill(buf, buf+size, '\0');
     for( int i=0; i<size-1, i<size_in_bytes, feof(file)==0; i++ )
     {
       buf[i] = (char)fgetc(file);
     }
-    buf[size] = NULL;
+    buf[size] = '\0';
     strcpy(str, buf);
     delete [] buf;
   }

@@ -163,7 +163,6 @@ $end
 #include <iostream>
 #include <string>
 #include <ctime>
-#include <strstream>
 #include <cassert>
 #include "StatusList.h"
 #include "IndDataPackage.h"
@@ -188,10 +187,10 @@ StatusList::StatusList(int num_individuals)
 {
     if( num_individuals <= 0 )
     {
-      strstream stream;
-      stream << "The value must be greater than 0 (received " << num_individuals << ", instead)." << endl;
-      stream.put(NULL);
-      throw SpkException( SpkError::SPK_USER_INPUT_ERR, stream.str(), __LINE__, __FILE__);
+      const int max = SpkError::maxMessageLen();
+      char message[max];
+      sprintf( message, "The value must be greater than 0 (received %d, instead).\0", num_individuals);
+      throw SpkException( SpkError::SPK_USER_INPUT_ERR, message, __LINE__, __FILE__);
     }
     records.resize(nP);
 }
@@ -500,7 +499,7 @@ bool StatusList::StatusRecord::ellapstedMoreThan(int timeout_sec) const
 int StatusList::StatusRecord::howLongInProcess() const
 {
     if( completedTime == 0 && checkedOutTime > 0 )
-        return difftime(time(0), checkedOutTime);
+        return static_cast<int>( difftime(time(0), checkedOutTime) );
     else
         return -1;
 }
