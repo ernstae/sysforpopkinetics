@@ -74,6 +74,7 @@ libspk_la_SOURCES = \
 	IndVars.cpp \
 	inverse.cpp \
 	inxToMax.cpp \
+	intToOrdinalString.cpp \
 	isDmatEpsEqual.cpp \
 	isEndOfSpk.cpp \
 	isGreaterThanOrEqualTo.cpp \
@@ -182,6 +183,7 @@ libspk_la_SOURCES = \
 	IndVars.h \
 	inverse.h \
 	inxToMax.h \
+	intToOrdinalString.h \
 	isDblEpsEqual.h \
 	isDmatEpsEqual.h \
 	isEndOfSpk.h \
@@ -303,6 +305,7 @@ pkginclude_HEADERS = \
 	IndVars.h \
 	inverse.h \
 	inxToMax.h \
+	intToOrdinalString.h \
 	isDblEpsEqual.h \
 	isDmatEpsEqual.h \
 	isEndOfSpk.h \
