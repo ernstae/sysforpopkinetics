@@ -325,7 +325,8 @@ void indResidualsTest::threeDataValuesTest()
   valarray<double> indResOut   ( nY );
   valarray<double> indResWtdOut( nY );
 
-  valarray<double> indParWtdOut( nB );
+  valarray<double> indParResOut   ( nB );
+  valarray<double> indParResWtdOut( nB );
 
 
   //------------------------------------------------------------
@@ -341,7 +342,8 @@ void indResidualsTest::threeDataValuesTest()
       &indPredOut,
       &indResOut,
       &indResWtdOut,
-      &indParWtdOut );
+      &indParResOut,
+      &indParResWtdOut );
   }
   catch( const SpkException& e )
   {
@@ -364,8 +366,10 @@ void indResidualsTest::threeDataValuesTest()
   printInMatrix( indResOut, 1 );
   cout << "indResWtdOut = " << endl;
   printInMatrix( indResWtdOut, 1 );
-  cout << "indParWtdOut = " << endl;
-  printInMatrix( indParWtdOut, 1 );
+  cout << "indParResOut = " << endl;
+  printInMatrix( indParResOut, 1 );
+  cout << "indParResWtdOut = " << endl;
+  printInMatrix( indParResWtdOut, 1 );
   cout << "-----------------------" << endl;
   */
   // [Remove]==============================================
@@ -400,8 +404,8 @@ void indResidualsTest::threeDataValuesTest()
       
   // The weighted residuals are calculated as follows:
   //
-  //                       -1/2
-  //     indParWtd  =  R(b)      *  indPar   .
+  //                    -1/2
+  //     resWtd  =  R(b)      *  res   .
   //
   // The known values that appear here were calculated using the
   // Octave code that appears at the end of this function.
@@ -409,20 +413,29 @@ void indResidualsTest::threeDataValuesTest()
   CPPUNIT_ASSERT( isDblEpsEqual( -0.00383603671083290, indResWtdOut[1], fabs( indResWtdOut[1] ) ) );
   CPPUNIT_ASSERT( isDblEpsEqual(  0.00575405506624931, indResWtdOut[2], fabs( indResWtdOut[2] ) ) );
       
-  // The weighted individual parameters are calculated as follows:
+  // The individual parameter residuals are calculated as follows:
+  //
+  //     bWtd  =  - b  .
+  //
+  CPPUNIT_ASSERT( isDblEpsEqual( - b[0], indParResOut[0], fabs( indParResOut[0] ) ) );
+  CPPUNIT_ASSERT( isDblEpsEqual( - b[1], indParResOut[1], fabs( indParResOut[1] ) ) );
+  CPPUNIT_ASSERT( isDblEpsEqual( - b[2], indParResOut[2], fabs( indParResOut[2] ) ) );
+  CPPUNIT_ASSERT( isDblEpsEqual( - b[3], indParResOut[3], fabs( indParResOut[3] ) ) );
+      
+  // The weighted individual parameter residuals are calculated as follows:
   //
   //                      -1/2
-  //     bWtd  =  D(alpha)      *  b   .
+  //     bWtd  =  D(alpha)      *  ( - b )  .
   //
   // The known values that appear here were calculated using the
   // Octave code that appears at the end of this function.
   // 
   // Note that the scales have been increased slightly for these
   // comparisons.
-  CPPUNIT_ASSERT( isDblEpsEqual( -0.87351003662302229, indParWtdOut[0],  10.0 * fabs( indParWtdOut[0] ) ) );
-  CPPUNIT_ASSERT( isDblEpsEqual( -0.17854871318119675, indParWtdOut[1],  10.0 * fabs( indParWtdOut[1] ) ) );
-  CPPUNIT_ASSERT( isDblEpsEqual( -0.05911120680695928, indParWtdOut[2],  10.0 * fabs( indParWtdOut[2] ) ) );
-  CPPUNIT_ASSERT( isDblEpsEqual( -0.00178338758982985, indParWtdOut[3], 100.0 * fabs( indParWtdOut[3] ) ) );
+  CPPUNIT_ASSERT( isDblEpsEqual( -0.87351003662302229, indParResWtdOut[0],  10.0 * fabs( indParResWtdOut[0] ) ) );
+  CPPUNIT_ASSERT( isDblEpsEqual( -0.17854871318119675, indParResWtdOut[1],  10.0 * fabs( indParResWtdOut[1] ) ) );
+  CPPUNIT_ASSERT( isDblEpsEqual( -0.05911120680695928, indParResWtdOut[2],  10.0 * fabs( indParResWtdOut[2] ) ) );
+  CPPUNIT_ASSERT( isDblEpsEqual( -0.00178338758982985, indParResWtdOut[3], 100.0 * fabs( indParResWtdOut[3] ) ) );
       
   // The known values were calculated using the following Octave code.
   //
@@ -465,7 +478,7 @@ void indResidualsTest::threeDataValuesTest()
   //     
   //     #--------------------------------------------------------------------
   //     #
-  //     # Calculate the weighted individual parameters.
+  //     # Calculate the weighted individual parameter residuals.
   //     #
   //     #--------------------------------------------------------------------
   //     

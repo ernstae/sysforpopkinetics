@@ -24,8 +24,7 @@
  * File: popResiduals.h
  *
  *
- * Calculates residuals and/or weighted residuals for all of the
- * individuals in the population.
+ * Calculates residuals for all of the individuals in the population.
  *
  * Author: Mitch Watrous
  *
@@ -47,6 +46,7 @@ void popResiduals( SpkModel&                        model,
                    SPK_VA::valarray<double>*        pPopPredOut,
                    SPK_VA::valarray<double>*        pPopResOut,
                    SPK_VA::valarray<double>*        pPopResWtdOut,
-                   SPK_VA::valarray<double>*        pPopIndParWtdOut );
+                   SPK_VA::valarray<double>*        pPopIndParResOut,
+                   SPK_VA::valarray<double>*        pPopIndParResWtdOut );
 
 #endif

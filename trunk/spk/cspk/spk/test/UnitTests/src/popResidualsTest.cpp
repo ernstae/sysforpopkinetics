@@ -377,7 +377,8 @@ void popResidualsTest::threeDataValuesPerIndTest( enum Objective whichObjective 
   valarray<double> popResOut   ( nY );
   valarray<double> popResWtdOut( nY );
 
-  valarray<double> popIndParWtdOut( nB * nInd );
+  valarray<double> popIndParResOut   ( nB * nInd );
+  valarray<double> popIndParResWtdOut( nB * nInd );
 
 
   //------------------------------------------------------------
@@ -396,7 +397,8 @@ void popResidualsTest::threeDataValuesPerIndTest( enum Objective whichObjective 
       &popPredOut,
       &popResOut,
       &popResWtdOut,
-      &popIndParWtdOut );
+      &popIndParResOut,
+      &popIndParResWtdOut );
   }
   catch( const SpkException& e )
   {
@@ -420,8 +422,10 @@ void popResidualsTest::threeDataValuesPerIndTest( enum Objective whichObjective 
   printInMatrix( popResOut, 1 );
   cout << "popResWtdOut = " << endl;
   printInMatrix( popResWtdOut, 1 );
-  cout << "popIndParWtdOut = " << endl;
-  printInMatrix( popIndParWtdOut, 1 );
+  cout << "popIndParResOut = " << endl;
+  printInMatrix( popIndParResOut, 1 );
+  cout << "popIndParResWtdOut = " << endl;
+  printInMatrix( popIndParResWtdOut, 1 );
   cout << "-----------------------" << endl;
   */
   // [Remove]==============================================
@@ -529,11 +533,10 @@ void popResidualsTest::threeDataValuesPerIndTest( enum Objective whichObjective 
     }
   }
       
-  // The weighted individual parameters are calculated as follows:
+  // The individual parameter residuals are calculated as follows:
   //
-  //                       -1/2
-  //     bWtd   =  D(alpha)      *  b   .
-  //         i                       i
+  //     bRes   =  - b   .
+  //         i        i
   //
   for ( i = 0; i < nInd; i++ )
   {
@@ -542,13 +545,49 @@ void popResidualsTest::threeDataValuesPerIndTest( enum Objective whichObjective 
       // For the first order objectives the individual parameters 
       // are all set equal to zero, i.e.,
       //
-      //     bWtd   =  0  .
-      //         i
+      //     bRes      =  0  .
+      //         i(j)
       //
-      CPPUNIT_ASSERT( isDblEpsEqual( 0.0, popIndParWtdOut[0], fabs( popIndParWtdOut[0] ) ) );
-      CPPUNIT_ASSERT( isDblEpsEqual( 0.0, popIndParWtdOut[1], fabs( popIndParWtdOut[1] ) ) );
-      CPPUNIT_ASSERT( isDblEpsEqual( 0.0, popIndParWtdOut[2], fabs( popIndParWtdOut[2] ) ) );
-      CPPUNIT_ASSERT( isDblEpsEqual( 0.0, popIndParWtdOut[3], fabs( popIndParWtdOut[3] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.0, popIndParResOut[0], fabs( popIndParResOut[0] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.0, popIndParResOut[1], fabs( popIndParResOut[1] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.0, popIndParResOut[2], fabs( popIndParResOut[2] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.0, popIndParResOut[3], fabs( popIndParResOut[3] ) ) );
+    }
+    else
+    {
+      // For the Laplace and Expected Hessian objectives the
+      // individual parameters are not set equal to zero, i.e.,
+      //
+      //     bRes      =  - 1  .
+      //         i(j)
+      //
+      CPPUNIT_ASSERT( isDblEpsEqual( -1, popIndParResOut[0], fabs( popIndParResOut[0] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( -1, popIndParResOut[1], fabs( popIndParResOut[1] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( -1, popIndParResOut[2], fabs( popIndParResOut[2] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( -1, popIndParResOut[3], fabs( popIndParResOut[3] ) ) );
+    }
+  }
+      
+  // The weighted individual parameter residualss are calculated as follows:
+  //
+  //                          -1/2
+  //     bResWtd   =  D(alpha)      *  ( - b  )   .
+  //            i                           i
+  //
+  for ( i = 0; i < nInd; i++ )
+  {
+    if ( whichObjective == FIRST_ORDER || whichObjective == NAIVE_FIRST_ORDER  )
+    {
+      // For the first order objectives the individual parameters 
+      // are all set equal to zero, i.e.,
+      //
+      //     bResWtd      =  0  .
+      //            i(j)
+      //
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.0, popIndParResWtdOut[0], fabs( popIndParResWtdOut[0] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.0, popIndParResWtdOut[1], fabs( popIndParResWtdOut[1] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.0, popIndParResWtdOut[2], fabs( popIndParResWtdOut[2] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.0, popIndParResWtdOut[3], fabs( popIndParResWtdOut[3] ) ) );
     }
     else
     {
@@ -560,10 +599,10 @@ void popResidualsTest::threeDataValuesPerIndTest( enum Objective whichObjective 
       // 
       // Note that the scales have been increased slightly for these
       // comparisons.
-      CPPUNIT_ASSERT( isDblEpsEqual( -0.87351003662302229, popIndParWtdOut[0],  10.0 * fabs( popIndParWtdOut[0] ) ) );
-      CPPUNIT_ASSERT( isDblEpsEqual( -0.17854871318119675, popIndParWtdOut[1],  10.0 * fabs( popIndParWtdOut[1] ) ) );
-      CPPUNIT_ASSERT( isDblEpsEqual( -0.05911120680695928, popIndParWtdOut[2],  10.0 * fabs( popIndParWtdOut[2] ) ) );
-      CPPUNIT_ASSERT( isDblEpsEqual( -0.00178338758982985, popIndParWtdOut[3], 100.0 * fabs( popIndParWtdOut[3] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( -0.87351003662302229, popIndParResWtdOut[0],  10.0 * fabs( popIndParResWtdOut[0] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( -0.17854871318119675, popIndParResWtdOut[1],  10.0 * fabs( popIndParResWtdOut[1] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( -0.05911120680695928, popIndParResWtdOut[2],  10.0 * fabs( popIndParResWtdOut[2] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( -0.00178338758982985, popIndParResWtdOut[3], 100.0 * fabs( popIndParResWtdOut[3] ) ) );
     }
   }
       

@@ -24,7 +24,7 @@
  * File: indResiduals.h
  *
  *
- * Calculates residuals and/or weighted residuals for an individual.
+ * Calculates residuals for an individual.
  *
  * Author: Mitch Watrous
  *
@@ -43,6 +43,7 @@ void indResiduals( SpkModel&                        model,
                    SPK_VA::valarray<double>*        pIndPredOut,
                    SPK_VA::valarray<double>*        pIndResOut,
                    SPK_VA::valarray<double>*        pIndResWtdOut,
-                   SPK_VA::valarray<double>*        pIndParWtdOut );
+                   SPK_VA::valarray<double>*        pIndParResOut,
+                   SPK_VA::valarray<double>*        pIndParResWtdOut );
 
 #endif
