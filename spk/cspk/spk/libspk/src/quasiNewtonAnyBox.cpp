@@ -1412,7 +1412,7 @@ void valarrayToDoubleArray( const valarray<double>& xVA, double* x )
  *
  * r
  *
- * The upper triangular Cholesky factor R(x) of the  Hessian H(x) 
+ * The lower triangular Cholesky factor R(x) of the  Hessian H(x) 
  * evaluated at xHat.  Note that the existence of R implies that H is
  * symmetric and positive-definite.  It must be of length n * n, and
  * its elements must be in row-major order.
@@ -1485,31 +1485,26 @@ bool isWithinTol(
   // Prepare the modified version of the Hessian.
   //------------------------------------------------------------
 
-  // Input:the upper triangle of the n by n positive-definite
-  // symmetric matrix A, and the sub-diagonal elements of its
-  // Cholesky factor L, as returned by nag_real_cholesky
-
-  // Create an initial version of the Hessian with its sub-diagonal 
-  // elements replaced by the super-diagonal elements of its Cholesky
-  // factor, which is itself upper triangular.
+  // Create a version of the Hessian with its sub-diagonal elements
+  //  replaced by the sub-diagonal elements of its Cholesky factor.
   for ( i = 0; i < n; i++ )
   {
-    // Get the sub-diagonal elements from the lower triangle of H.
+    // Copy the upper triangle elements from the upper triangle of H.
     for ( j = 0; j <= i ; j++ )
     {
       hWork[i * n + j] = h[i * n + j];
     }
   
-    // Get the super-diagonal elements from the upper triangle of R.
+    // Copy the sub-diagonal elements from the sub-diagonal of R.
     for ( j = i + 1; j < n; j++ )
     {
-      hWork[i * n + j] = r[j + i * n];
+      hWork[i * n + j] = r[i * n + j];
     }
   }
 
 
   //------------------------------------------------------------
-  // Calculate the projected gradient, modified Hessian, and reciprocals
+  // Calculate the projected gradient, modified Hessian, and reciprocals.
   //------------------------------------------------------------
 
   // Set the elements of the projected gradient, finish preparing the
