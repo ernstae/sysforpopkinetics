@@ -1273,11 +1273,11 @@ void scaleGradElem(
  * Specifically, this function calculates deltaX, an approximation 
  * for the distance that xHat is from xTrue as the solution of 
  *
- *     H  deltaX  =  G  ,                              (1)
+ *     H  deltaX  =  g  ,                              (1)
  *
  * where both the gradient of f(x),
  *
- *     G = f_x(xHat) 
+ *     g = f_x(xHat) 
  *
  * and the Hessian of f(x) 
  *
@@ -1316,12 +1316,12 @@ void scaleGradElem(
  * Contains the upper bound for x.
  *
  *
- * drowG
+ * g
  *
- * Contains the gradient G(x) evaluated at xHat.
+ * Contains the gradient g(x) evaluated at xHat.
  *
  *
- * dmatR
+ * r
  *
  * Contains the lower triangular Cholesky factor R(x) of the 
  * Hessian H(x) evaluated at xHat.  Note that the existence of R 
@@ -1336,8 +1336,8 @@ bool isWithinTol(
   const double*  xHat, 
   const double*  xLow, 
   const double*  xUp, 
-  const double*  drowG,
-  const double*  dmatR )
+  const double*  g,
+  const double*  r )
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -1347,13 +1347,13 @@ bool isWithinTol(
 
   int n = xHat.nr();
 
-  assert( isLowerTriangular( dmatR ) );
+  assert( isLowerTriangular( r ) );
 
   DoubleMatrix dvecDeltaX( n, 1 );
-  DoubleMatrix drowGTemp( 1, n );
+  DoubleMatrix gTemp( 1, n );
 
   // This is not necessary.  Sachiko
-  //drowGTemp.fill(0.0);
+  //gTemp.fill(0.0);
 
 
   //------------------------------------------------------------
@@ -1397,11 +1397,11 @@ bool isWithinTol(
   // at the end of this function.
   std::vector<bool> isElemIncluded( n );
 
-  // Modify the Hessian, and set the elements of GTemp and p.
+  // Modify the Hessian, and set the elements of gTemp and p.
   for ( i = 0; i < n; i++ )
   {
       //----------------------------------------------------------
-      // Compute the corresponding elements of H, GTemp, and P.
+      // Compute the corresponding elements of H, gTemp, and P.
       //----------------------------------------------------------
       if( (pdXHatData[i] >  pdXLowData[i] && pdXHatData[i] < pdXUpData[i])
           || (pdXHatData[i] == pdXLowData[i] && pdGData[i] < 0.0 )  
@@ -1435,7 +1435,7 @@ bool isWithinTol(
             // 
             //      pdHData[i + i * n] = 1.0;
             //
-            // if H, GTemp and P were initialized to zero or one outside of the outer loop.
+            // if H, gTemp and P were initialized to zero or one outside of the outer loop.
             // 
 
                 // Zero the elements from the corresponding row and column of 
@@ -1458,7 +1458,7 @@ bool isWithinTol(
                 }
       
                 // Zero the corresponding element of the temporary gradient.
-                pdGTempData[i] = 0.0;
+                pdgTempData[i] = 0.0;
 
                 // Set the reciprocal of the corresponding R diagonal equal to one.
                 pdPData[i] = 1.0;
@@ -1491,7 +1491,7 @@ bool isWithinTol(
   // *
   // * and
   // *
-  // *     B  =  GTemp .
+  // *     B  =  gTemp .
   // * 
   // * Note that 
   // *               T
@@ -1528,7 +1528,7 @@ bool isWithinTol(
   // Note: NAG functions expect the elements of a[n][tda] to be 
   // in row-major order while the elements of the DoubleMatrix 
   // dmatH are stored in column-major order.  This is the reason  
-  // the sub-diagonal elements of dmatR were copied to the 
+  // the sub-diagonal elements of r were copied to the 
   // super-diagonal elements of dmatH.
   double* a = pdHData;
 
