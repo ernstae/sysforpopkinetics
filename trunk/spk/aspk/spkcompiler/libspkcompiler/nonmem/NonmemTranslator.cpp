@@ -1,5 +1,6 @@
 #include "NonmemTranslator.h"
 #include "SpkCompilerUtil.h"
+#include "read_content.h"
 
 #include <xercesc/dom/DOM.hpp>
 
@@ -184,14 +185,17 @@ const char* const NonmemTranslator::toString( enum NonmemTranslator::NonmemModel
   if( e == ADVAN12 )
     return STR_ADVAN12;
 }
-std::vector<std::string> NonmemTranslator::translate( DOMDocument* tree )
+void NonmemTranslator::translate( DOMDocument* tree )
 {
-  if( !readContent( tree, ourSpk ) )
+  string spkinml_verOut;
+  enum client::type client_typeOut;
+  enum SpkParameters::Analysis analysis_typeOut;
+  if( !readContent( tree, spkinml_verOut, client_typeOut, analysis_typeOut ) )
     {
       char buf[] = "Rough content checking failed!";
       exit( error(buf, __LINE__, __FILE__) );
     }
-
+  ourSpk.analysis = analysis_typeOut;
   int nIndividuals = readDriver( tree, ourSpk, ourNonmem );
 
   //
@@ -254,16 +258,21 @@ std::vector<std::string> NonmemTranslator::translate( DOMDocument* tree )
 
   emitData( nIndividuals, gSpkExpSymbolTable, label_alias_mapping, data_for, order_id_pair );
 
-  vector<string> files;
-  return files;
+  return;
 }
 
 void NonmemTranslator::initSymbolTable( SymbolTable& )
 {
 }
 
-bool NonmemTranslator::readContent( DOMDocument* tree, SpkParameters& spkOut )
+bool NonmemTranslator::readContent( 
+     DOMDocument* tree, 
+     string & spkml_verOut, 
+     enum client::type clientOut, 
+     enum SpkParameters::Analysis analysisOut )
 {
+  return read_content( tree, spkml_verOut, clientOut, analysisOut );
+  /*
   //
   // Get the version of SpkInML this document is supposed to comply with.
   //
@@ -313,6 +322,7 @@ bool NonmemTranslator::readContent( DOMDocument* tree, SpkParameters& spkOut )
     spkOut.analysis = SpkParameters::POPULATION;
 
   return true;
+  */
 }
 
 //=====================================================================================
