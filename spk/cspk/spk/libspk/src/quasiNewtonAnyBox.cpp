@@ -1315,39 +1315,50 @@ void scaleGradElem(
  *
  * tol
  *
- * Tolerance that deltaX must be less than.  tol must be greater than 0.0.
+ * The tolerance for how close x must be to xHat.  It must be greater than 0.0.
+ *
+ *
+ * n
+ *
+ * Number of elements in x.
  *
  *
  * xHat
  *
- * Contains the estimate for the true minimizer xTrue.
+ * The estimate for the true minimizer xTrue.  It must be allocated to hold
+ * n elements before this function is called.
  *
  *
  * xLow
  *
- * Contains the lower bound for x.
+ * The lower bound for x.  It must be allocated to hold n elements before
+ * this function is called.
  *
  *
  * xUp
  *
- * Contains the upper bound for x.
+ * The upper bound for x.  It must be allocated to hold n elements before
+ * this function is called.
  *
  *
  * g
  *
- * Contains the gradient g(x) evaluated at xHat.
+ * The gradient g(x) evaluated at xHat.  It must be allocated to hold
+ * n elements before this function is called.
  *
  *
  * r
  *
- * Contains the lower triangular Cholesky factor R(x) of the 
- * Hessian H(x) evaluated at xHat.  Note that the existence of R 
- * implies that H is symmetric and positive-definite.  
+ * The lower triangular Cholesky factor R(x) of the  Hessian H(x) 
+ * evaluated at xHat.  Note that the existence of R implies that H is
+ * symmetric and positive-definite.  It must be allocated to hold
+ * n * n elements before this function is called.
  *
  *
  * gProj
  *
- * On output, this contains the projected gradient evaluated at xHat.
+ * On input, this must be allocated to hold n elements.  On output, it
+ * contains the projected gradient evaluated at xHat.
  *
  *************************************************************************/
 
