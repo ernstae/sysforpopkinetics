@@ -42,6 +42,12 @@
 	<authorinitials>afw</authorinitials>
 	<revremark>Added section on the cervisia GUI.</revremark>
       </revision>
+      <revision>
+	<revnumber>1.04</revnumber>
+	<date>April 16, 2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Added section on server administration.</revremark>
+      </revision>
     </revhistory>
   <abstract>
     <para>
@@ -879,7 +885,7 @@
 	would if you were using the command-line interface.  You will 
 	find a full description of this process in the section titled
 	<emphasis>Environment Variables for Repository Access</emphasis>,
-	<link linkend="env"> above</link>,      </para>
+ 	<link linkend="env"> above</link>,      </para>
     </sect2>
     <sect2>
       <title>Setting Up Your Sandbox</title>
@@ -956,6 +962,173 @@
 	works and of its output. Nearly all documentation 
 	about CVS describes the behavior
 	of the command-line interface.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Some Server Administration</title>
+    <para>
+      Most of the administration of a CVS repository can be
+      carried out by ordinary users from their remote systems.
+      This section is reserved for tasks that are best 
+      performed by someone who has root access to the server.
+    </para>
+    <sect2>
+      <title>Creating A New Repository</title>
+      <para>	
+	To create a repository, you need root privilege on
+	the server. 
+      </para>
+      <para>
+	<orderedlist inheritnum="ignore" continuation="restarts">
+	  <listitem>
+	    <para>
+	      Log in to the server and get root privilege by 
+	      using the <command moreinfo="none">su</command> command.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Using the <command moreinfo="none">cd</command> command,
+	      go to the directory that will be the root directory
+	      of your repository.  If the directory does not exist,
+	      create it at this time and then go to it.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Initialize the repository:
+	      <screen format="linespecific">
+		cvs -d $(pwd) init
+	      </screen>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      If you have not done so, create a group of users of
+	      this repository. In this example, lets assume that
+	      the group name is <emphasis>dvl</emphasis>.
+	      <screen format="linespecific">
+		/usr/sbin/groupadd -r dvl
+	      </screen>
+	      All of the users of this group must be ordinary
+	      users of the server.  Suppose that the users are
+	      tom, dick and harry.  Add them to the group as follows
+	      <screen format="linespecific">
+		/usr/bin/gpasswd -a tom dvl
+		/usr/bin/gpasswd -a dick dvl
+		/usr/bin/gpasswd -a harry dvl
+	      </screen>
+	      The repository directory and all subdirectories must
+	      have the given group (<emphasis>dvl</emphasis> in this
+	      example) as its group.  In addition, the group must have
+	      read and write privileges in the directory, and the
+	      <emphasis>setgid bit</emphasis> must be set so that 
+	      any directories or files created in the directory
+	      will have <emphasis>dvl</emphasis> for group:
+	      Assume that we are still positioned in the directory:
+	      <screen format="linespecific">
+		chgrp -R dvl .
+		chmod 2775 .
+	      </screen>
+	      If there are any directories under this directory,
+	      go through the hierarchy recursively and repeat the
+	      above <command moreinfo="none">chmod</command>
+	      command line on them. <emphasis>Do not</emphasis>
+	      use the recursive <emphasis>-R</emphasis> option,
+	      because you do not want to turn on the 
+	      <emphasis>setgid bit</emphasis> for ordinary files.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Finally, mark the repository as a <emphasis>module</emphasis>,
+	      so that it can be easily accessed by the CVS 
+	      <emphasis>checkout</emphasis> command.  This step does
+	      not require root privilege and does not have to be
+	      performed while logged in to the server.  It is explained
+	      in the next section.
+	    </para>
+	  </listitem>
+	</orderedlist>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Defining Modules</title>
+      <para>
+	A <emphasis>module</emphasis> in CVS is a type of alias for
+	a path within a repository.  The repository itself should
+	be defined as a module, so that it can be retrieved by name
+	with the CVS <command moreinfo="none">checkout</command>
+	command.  Within the repository hierarchy, it is often
+	convenient to define subdirectories which are themselves
+	the root directories of projects as modules.
+      </para>
+      <para>
+	You will perform the following steps as an ordinary user on
+	a client machine.  For this to work, however, you must also
+	be installed as a user on the server and must be a member
+	of the repository's group on that machine. Your environment
+	variables must be set up as described
+	<link linkend="env"> above</link>.
+      </para>
+      <para>
+	<orderedlist inheritnum="ignore" continuation="restarts">
+	  <listitem>
+	    <para>
+	      Checkout a copy of the CVSROOT directory from the
+	      root node of the repository, and then go to it:
+	      <screen format="linespecific">
+		cvs checkout CVSROOT/modules
+		cd CVSROOT
+	      </screen>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Using your favorite editor, edit the 
+	      <filename moreinfo="none">modules</filename>
+	      file in this directory. Suppose that the
+	      repository is named 
+	      <emphasis>myrepos</emphasis>.  You would insert
+	      the following line in the file:
+	      <screen format="linespecific">
+		myrepos .
+	      </screen>
+	    </para>
+	    <para>
+	      To designate the subdirectory, for example
+	      <filename moreinfo="none">
+		src/c/project-1
+	      </filename>,
+	      you would insert the line
+	      <screen format="linespecific">
+		project-1 src/c/project-1
+	      </screen>
+	    </para>
+	    <para>
+	      Since the module names are aliases, the module name does
+	      not have to be the same as the directory name. In the
+	      above example, we could have named the module
+	      <emphasis>integrator</emphasis> as follows:
+	      <screen format="linespecific">
+		integrator src/c/project-1
+	      </screen>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      After saving the modules file and leaving your editor,
+	      commit the changes and release the your copy of the
+	      CVSROOT directory:
+	      <screen format="linespecific">
+		cvs commit modules
+		cd ..
+		cvs release -d CVSROOT
+	      </screen>
+	    </para>
+	  </listitem>
+	</orderedlist>
       </para>
     </sect2>
   </sect1>
