@@ -1,5 +1,6 @@
 #include "SpkMLToCpp.h"
 #include "SpkCompilerUtil.h"
+#include "ClientTranslator.h"
 #include "nonmem/NonmemTranslator.h"
 
 #include <xercesc/util/PlatformUtils.hpp>
@@ -42,7 +43,7 @@ void SpkMLToCpp::translate()
   client_translator->translate( tree );
 }
 
-const struct FitParameters * SpkMLToCpp::getSpkParameters() const
+const struct SpkParameters * SpkMLToCpp::getSpkParameters() const
 {
   return client_translator->getSpkParameters();
 }
