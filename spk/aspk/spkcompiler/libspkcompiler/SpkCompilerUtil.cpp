@@ -4,6 +4,13 @@
 using namespace std;
 using namespace xercesc;
 
+XMLCh* trim( const XMLCh* source )
+{
+  XMLCh* target = XMLString::replicate( source );
+  XMLString::trim( target );
+  return target;
+}
+
 SpkCompilerUtil::SpkCompilerUtil()
 {
 }

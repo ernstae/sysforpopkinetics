@@ -13,13 +13,6 @@
 using namespace std;
 using namespace xercesc;
 
-static const char* trim( const XMLCh* source )
-{
-  XMLCh* target = XMLString::replicate( source );
-  XMLString::trim( target );
-  return C( target );
-}
-
 SpkMLToCpp::SpkMLToCpp( const char* inputSpkMLIn )
   : inputSpkML( inputSpkMLIn ), who( client::NOT_SUPPORTED ), tree( NULL ), client_translator( NULL )
 {
@@ -33,7 +26,6 @@ SpkMLToCpp::SpkMLToCpp( const char* inputSpkMLIn )
 SpkMLToCpp::~SpkMLToCpp()
 {
   delete parser;
-  //tree->release();
   delete client_translator;
   terminateDOM();
 }
@@ -153,7 +145,7 @@ enum client::type SpkMLToCpp::discoverClient( const xercesc::DOMDocument* tree )
   DOMElement * content_node = dynamic_cast<DOMElement*>(tree->getElementsByTagName( X("content") )->item(0));
   assert( content_node != NULL );
 
-  const char * c_client = trim( content_node->getAttribute( X("client") ) );
+  const char * c_client = C( trim( content_node->getAttribute( X("client") ) ) );
   if( strcmp( c_client, "nonmem" ) != 0 )
   {
     char buf[128];
