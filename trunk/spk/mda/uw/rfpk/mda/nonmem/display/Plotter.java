@@ -6,6 +6,7 @@
 
 package uw.rfpk.mda.nonmem.display;
 
+import uw.rfpk.mda.nonmem.Utility;
 import javax.swing.JPanel; 
 import javax.swing.JOptionPane;
 import java.awt.Graphics;
@@ -27,10 +28,10 @@ import javax.print.attribute.*;
  */
 public class Plotter extends JPanel
 {
-    /**
-     * Create a new Plotter JPanel and save information about
+    /** Create a new Plotter JPanel and save information about
      * the data values and the labeling.
-     * @param data an array of Point2D objects.
+     * @param dataX a double[][] containing X data values for a number(dataX.length) of curves
+     * @param dataY a double[][] containing Y data values for a number(dataY.length) of curves
      * @param title the title of the data plot
      * @param titleX the title of the x axis.
      * @param titleY the title of the y axis.
@@ -38,9 +39,11 @@ public class Plotter extends JPanel
      * @param yLine the flag specifies if y = 0 line is required.
      * @param uLine the flag specifies if unit slope line is required.
      */
-    public Plotter(Point2D[][] data, String title, String titleX, String titleY, boolean xLine, boolean yLine, boolean uLine) 
+    public Plotter(double[][] dataX, double[][] dataY, String title, String titleX, String titleY, 
+                   boolean xLine, boolean yLine, boolean uLine) 
     {
-	setPoints(data);
+	this.dataX = dataX;
+        this.dataY = dataY;
         this.title = title;
         this.titleX = titleX;
         this.titleY = titleY;
@@ -104,26 +107,6 @@ public class Plotter extends JPanel
         if (evt.isPopupTrigger()) 
             jPopupMenu1.show(evt.getComponent(), evt.getX(), evt.getY()); 
     }//GEN-LAST:event_formMousePressed
-    
-    /**
-     * Store the data values and calculate the range that each
-     * axis covers.  The x-axis goes from 0 to the maximum x-value.
-     * The y-axis goes from -maxY to +maxY.
-     * @param data an array of Point2D objects.
-     */
-    private void setPoints(Point2D[][] data) 
-    { 
-        dataX = new double[data.length][data[0].length];
-        dataY = new double[data.length][data[0].length];
-        for(int i = 0; i < data.length; i++)
-        {
-            for(int j = 0; j < data[i].length; j++)
-            {
-                dataX[i][j] = data[i][j].getX();
-                dataY[i][j] = data[i][j].getY();
-            }
-        }
-    }
 
     /**
      * Repaint the JPanel with all the desired information.  The plot
@@ -169,6 +152,18 @@ public class Plotter extends JPanel
             }
         }
 
+        if(maxX == minX)
+        {
+            maxX += 1;
+            minX -= 1;
+        }
+        
+        if(maxY == minY)
+        {
+            maxY += 1;
+            minY -= 1;
+        }
+        
         int p = 0;
         
         if(Math.abs(maxX) > Math.abs(minX))
@@ -204,7 +199,7 @@ public class Plotter extends JPanel
                 gc2D.draw(circle);
                 gc2D.fill(circle);
             }
-            gc2D.drawPolyline(newX[i], newY[i], dataX[i].length);
+//            gc2D.drawPolyline(newX[i], newY[i], dataX[i].length);
         }
 	
 	// draw labels
@@ -212,12 +207,12 @@ public class Plotter extends JPanel
         gc2D.setColor(Color.black);
         DecimalFormat f = new DecimalFormat("0.00E00");
         for(int i = 0; i < 6; i++)
-        {
-            String value = String.valueOf(f.format(minX + spanX*i/5));
+        { 
+            String value = Utility.formatData(6, f.format(minX + spanX*i/5));
             gc2D.drawString(value, 
                             leftInset + width*i/5 - gc.getFontMetrics().stringWidth(value)/2, 
                             top + height + 18); 
-            value = String.valueOf(f.format(maxY - spanY*i/5));
+            value = Utility.formatData(6, f.format(maxY - spanY*i/5));
             gc2D.drawString(value, 
                             leftInset - gc.getFontMetrics().stringWidth(value) - 2, 
                             top + height*i/5 + 5);            
@@ -292,7 +287,7 @@ public class Plotter extends JPanel
         int titleYWidth = gc.getFontMetrics().stringWidth(titleY);        
         gc2D.drawString(titleX, leftInset + (width - titleXWidth)/2, top + height + 40);      
         gc2D.rotate(Math.PI/2); 
-	gc2D.drawString(titleY, top + (height - titleYWidth)/2, -20);	
+	gc2D.drawString(titleY, top + (height - titleYWidth)/2, -16);	
     }
 
     /** This method specifies the tooltip to display.
@@ -367,11 +362,11 @@ public class Plotter extends JPanel
             DecimalFormat f = new DecimalFormat("0.00E00");
             for(int i = 0; i < 6; i++)
             {
-                String value = String.valueOf(f.format(minX + spanX*i/5));
+                String value = Utility.formatData(6, f.format(minX + spanX*i/5));
                 gc2D.drawString(value, 
                                 left + width*i/5 - gc.getFontMetrics().stringWidth(value)/2, 
                                 top + height + 18); 
-                value = String.valueOf(f.format(maxY - spanY*i/5));
+                value = Utility.formatData(6, f.format(maxY - spanY*i/5));
                 gc2D.drawString(value, 
                                 left - gc.getFontMetrics().stringWidth(value) - 2, 
                                 top + height*i/5 + 5);            
@@ -441,8 +436,8 @@ public class Plotter extends JPanel
             int titleYWidth = gc.getFontMetrics().stringWidth(titleY);        
             gc2D.drawString(titleX, left + (width - titleXWidth)/2, top + height + 40);        
             gc2D.rotate(Math.PI/2); 
-	    gc2D.drawString(titleY, top + (height - titleYWidth)/2, -20 - lineInsetX);
-        
+	    gc2D.drawString(titleY, top + (height - titleYWidth)/2, -16 - lineInsetX);
+            
             return PAGE_EXISTS; 
         } 
         

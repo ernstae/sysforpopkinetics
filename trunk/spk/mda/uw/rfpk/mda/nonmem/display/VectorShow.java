@@ -6,33 +6,37 @@
 
 package uw.rfpk.mda.nonmem.display;
 
+import uw.rfpk.mda.nonmem.Utility;
 import javax.swing.table.*;
 import java.text.DecimalFormat;
 
-/**
+/** This class's instance display a vector show on the screen
  *
  * @author  jiaji Du
  */
 public class VectorShow extends javax.swing.JFrame {
     
-    /** Creates new form VectorShow */
-    public VectorShow(String[] vector, String[] header, String title, String text) {
+    /** Creates new form VectorShow
+     * @param vector a String[] object containing the vector of data values
+     * @param header a String[] object containing the headers
+     * @param title a String object containing the title of the window
+     * @param text a String[] object containing the text to display in the window
+     * @param width the width of the window
+     */
+    public VectorShow(String[] vector, String[] header, String title, String text,
+                      int width) 
+    {
         initComponents();
         setTitle(title);
-        int dimension = vector.length;
-        int width;
-        if(dimension < 4)
-            width = 300;
-        else
-            width = 500;
         setSize(width, 150);
         jTextPane1.setText(text);
         jScrollPane1.setPreferredSize(new java.awt.Dimension(width - 40, 50));
          
         // Format the data
+        int dimension = vector.length;
         DecimalFormat f = new DecimalFormat("0.00E00");
         for(int i = 0; i < dimension; i++)
-            vector[i] = String.valueOf(f.format(Double.parseDouble(vector[i])));        
+            vector[i] = Utility.formatData(6, f.format(Double.parseDouble(vector[i])));         
         String[][] data = new String[1][dimension];
         data[0] = vector;
         
@@ -67,7 +71,6 @@ public class VectorShow extends javax.swing.JFrame {
 
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         jScrollPane1.setFont(new java.awt.Font("Dialog", 0, 14));
-        jScrollPane1.setPreferredSize(null);
         jTable1.setFont(new java.awt.Font("Dialog", 0, 14));
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {

@@ -6,6 +6,7 @@
 
 package uw.rfpk.mda.nonmem.wizard;
 
+import uw.rfpk.mda.nonmem.Utility;
 import org.netbeans.ui.wizard.*;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
@@ -28,6 +29,7 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
     /** Creates new form PROBLEM */
     public Problem() {
         initComponents();
+        jTextArea1.requestFocus(); 
     }
     
     /** This method is called from within the constructor to

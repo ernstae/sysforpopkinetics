@@ -9,7 +9,8 @@ package uw.rfpk.mda.nonmem.wizard;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Properties;
-import java.util.Calendar;
+import java.util.*;
+import java.text.SimpleDateFormat;
 
 /**
  *
@@ -38,13 +39,21 @@ public class Test{
 
         window.addWindowListener(new WindowHandler());  // Add window listener
         window.setVisible(true);
-        Calendar calendar = Calendar.getInstance();
-        System.out.println("day = " + String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
-        System.out.println("month = " + String.valueOf(calendar.get(Calendar.MONTH)));
-        System.out.println("year = " + String.valueOf(calendar.get(Calendar.YEAR)));        
-        System.out.println("hour = " + String.valueOf(calendar.get(Calendar.HOUR)));
-        System.out.println("minute = " + String.valueOf(calendar.get(Calendar.MINUTE)));
-        System.out.println("second = " + String.valueOf(calendar.get(Calendar.SECOND)));        
+
+        GregorianCalendar calendar = new GregorianCalendar();
+        calendar.setTimeInMillis(Long.parseLong("1075929317964"));       
+        System.out.println("day = " + calendar.get(Calendar.DAY_OF_MONTH));
+        System.out.println("month = " + calendar.get(Calendar.MONTH));
+        System.out.println("year = " + calendar.get(Calendar.YEAR));        
+        System.out.println("hour = " + calendar.get(Calendar.HOUR_OF_DAY));
+        System.out.println("minute = " + calendar.get(Calendar.MINUTE));
+        System.out.println("second = " + calendar.get(Calendar.SECOND)); 
+        System.out.println("time = " + calendar.getTime().getTime());
+/*        
+        Date date = new Date(Long.parseLong("1075029317964"));
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, MMM, d yyyy 'at' HH:mm:ss z");
+        System.out.println("date = " + formatter.format(date));
+*/
     }
     class Iterator extends MDAIterator{
         public Iterator(){
@@ -60,6 +69,7 @@ public class Test{
             Iterator i = new Iterator();
 //            Aesinitial step = new Aesinitial();
 //            Aes step = new Aes();
+//            Data step = new Data(i);
 //            Des step = new Des();
 //            Error step = new Error(i);
 //            GettingStarted step = new GettingStarted(i);
@@ -68,12 +78,12 @@ public class Test{
 //            Model step = new Model(i);
 //            PK step = new PK(i);
 //            Pred step = new Pred(i);
-            Omega step = new Omega(i); 
+//            Omega step = new Omega(i); 
 //            Sigma step = new Sigma(i);
 //            ScatterPlot step = new ScatterPlot(i); 
 //            Simulation step = new Simulation();
 //            Subroutines step = new Subroutines(i);
-//            Table step = new Table(i);
+            Table step = new Table(i);
 //            Theta step = new Theta(i);
             MDAObject object = new MDAObject();
             Properties records = object.getRecords();

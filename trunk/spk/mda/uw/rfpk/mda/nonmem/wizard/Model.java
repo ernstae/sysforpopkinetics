@@ -6,6 +6,7 @@
 
 package uw.rfpk.mda.nonmem.wizard;
 
+import uw.rfpk.mda.nonmem.Utility;
 import org.netbeans.ui.wizard.*;
 import javax.swing.JComponent;
 import javax.swing.DefaultListModel;
@@ -191,7 +192,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(10, 12, 20, 12);
+        gridBagConstraints.insets = new java.awt.Insets(10, 12, 17, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         add(jTextField3, gridBagConstraints);
 
@@ -206,8 +207,8 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(12, 16, 7, 16);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 16, 7, 16);
         add(addButton, gridBagConstraints);
 
         upButton.setText("Up");
@@ -221,8 +222,8 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(16, 16, 7, 16);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(16, 16, 7, 16);
         add(upButton, gridBagConstraints);
 
         downButton.setText("Down");
@@ -236,13 +237,13 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 16, 56, 16);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 16, 56, 16);
         add(downButton, gridBagConstraints);
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("Enter total number of compartments other than the output compartment, \nnumber of equilibrium compartments, number of basic PK parameters.  \nThen enter the definition of each compartments: its name and attributes.");
+        jTextPane1.setText("Enter total number of compartments other than the output compartment, \nnumber of equilibrium compartments, number of basic PK parameters.  \nThen enter the definition of each compartments: its name and attributes.\n(These items are all optional in order to create a compartment.)");
         jTextPane1.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jTextPane1.setMinimumSize(new java.awt.Dimension(500, 60));
         jTextPane1.setPreferredSize(new java.awt.Dimension(400, 60));
@@ -261,8 +262,8 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridy = 5;
         gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(11, 12, 44, 11);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(11, 12, 44, 11);
         add(jTextPane2, gridBagConstraints);
 
         changeButton.setText("Change");
@@ -276,8 +277,8 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(6, 16, 6, 16);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(6, 16, 6, 16);
         add(changeButton, gridBagConstraints);
 
         deleteButton.setText("Delete");
@@ -291,7 +292,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(7, 16, 17, 16);
+        gridBagConstraints.insets = new java.awt.Insets(7, 16, 14, 16);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         add(deleteButton, gridBagConstraints);
 
@@ -317,9 +318,6 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         jList1 = new javax.swing.JList(model);
         jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jList1.setFixedCellHeight(15);
-        jList1.setMaximumSize(new java.awt.Dimension(180, 90));
-        jList1.setMinimumSize(new java.awt.Dimension(180, 90));
-        jList1.setPreferredSize(new java.awt.Dimension(180, 90));
         jList1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jList1MouseClicked(evt);
@@ -334,31 +332,31 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(16, 0, 12, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(16, 0, 12, 12);
         add(jScrollPane1, gridBagConstraints);
 
         jLabel1.setText("NCOMPARTMENTS");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.insets = new java.awt.Insets(13, 12, 12, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(13, 12, 12, 0);
         add(jLabel1, gridBagConstraints);
 
         jLabel2.setText("NEQUILIBRIUM");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.insets = new java.awt.Insets(9, 12, 9, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(9, 12, 9, 0);
         add(jLabel2, gridBagConstraints);
 
         jLabel3.setText("NPARAMETERS");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.insets = new java.awt.Insets(9, 12, 21, 0);
+        gridBagConstraints.insets = new java.awt.Insets(9, 12, 18, 2);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         add(jLabel3, gridBagConstraints);
 
@@ -372,7 +370,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.insets = new java.awt.Insets(7, 12, 17, 12);
+        gridBagConstraints.insets = new java.awt.Insets(7, 12, 14, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         add(jButton1, gridBagConstraints);
 
@@ -388,8 +386,8 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 50;
-        gridBagConstraints.insets = new java.awt.Insets(9, 12, 9, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(9, 12, 9, 12);
         add(jTextField1, gridBagConstraints);
 
         jTextField2.setPreferredSize(new java.awt.Dimension(4, 25));
@@ -403,8 +401,8 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         add(jTextField2, gridBagConstraints);
 
         jTextField4.setMaximumSize(new java.awt.Dimension(80, 25));
@@ -415,16 +413,16 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 30;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         add(jTextField4, gridBagConstraints);
 
         jLabel4.setText("Name:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.insets = new java.awt.Insets(11, 12, 5, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(11, 12, 5, 12);
         add(jLabel4, gridBagConstraints);
 
         jSeparator3.setOrientation(javax.swing.SwingConstants.VERTICAL);

@@ -15,7 +15,7 @@ public class MDA
 {
     /**
      * The main method that creates the application object and initialize it.
-     * @param args A String array containing session ID, secret code and user name 
+     * @param args A String array containing session ID and secret code. 
      */
     public static void main(String[] args)
     {
@@ -24,6 +24,7 @@ public class MDA
             // Determine OS and temporary directory
             String operatingSystem = System.getProperty("os.name");
             String tempDirectory = System.getProperty("java.io.tmpdir");
+            
             // Get path for lock file
             String path = null;
             if(operatingSystem.equals("Linux") || operatingSystem.equals("Unix"))
@@ -32,10 +33,12 @@ public class MDA
                 path = tempDirectory + args[0] + ".lock"; 
             else
                 path = args[0] + ".lock";
+            
             // Create lock file if there is none
+            File lockFile = null;
             try
             {
-                File lockFile = new File(path);
+                lockFile = new File(path);
                 if(lockFile.createNewFile())
                 {
                     lockFile.deleteOnExit();
@@ -51,6 +54,10 @@ public class MDA
                                               "File Error",                     
                                               JOptionPane.ERROR_MESSAGE);
             }
+            finally
+            {
+                lockFile.delete();
+            }
         }   
         theApp = new MDA();                       // Create the application object
         theApp.init(args);                        // ...and initialize it
@@ -65,9 +72,9 @@ public class MDA
         Toolkit theKit = window.getToolkit();           // Get the window toolkit
         Dimension wndSize = theKit.getScreenSize();     // Get screen size
 
-        // Set the position to screen center & size to 2/3 screen size
-        window.setBounds(wndSize.width/6, wndSize.height/6,        // Position
-                         2*wndSize.width/3, 2*wndSize.height/3);   // Size 
+        // Set the position to screen center & size to 3/4 screen size
+        window.setBounds(wndSize.width/8, wndSize.height/8,        // Position
+                         3*wndSize.width/4, 3*wndSize.height/4);   // Size 
         window.setVisible(true);                        // Display the window
     }
 

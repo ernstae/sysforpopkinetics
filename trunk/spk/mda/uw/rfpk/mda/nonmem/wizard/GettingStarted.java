@@ -6,6 +6,7 @@
 
 package uw.rfpk.mda.nonmem.wizard;
 
+import uw.rfpk.mda.nonmem.Utility;
 import org.netbeans.ui.wizard.*;
 import java.util.Properties;
 import javax.swing.JComponent;
@@ -186,6 +187,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jPopupMenu1.add(jMenuItem12);
 
         jDialog1.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        help.setEditable(false);
         jScrollPane1.setViewportView(help);
 
         jDialog1.getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -646,9 +648,9 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
 	    return new ActionListener(){
                 public void actionPerformed(ActionEvent e){ 
                     help.setText((new Utility()).getHelpDocument("GettingStarted"));
+                    help.setCaretPosition(0);
                     jDialog1.setTitle("Help for " + getStepTitle());
                     jDialog1.setSize(600, 500);
-                    jDialog1.setVisible(true);
                     jDialog1.show();
                 }
             };

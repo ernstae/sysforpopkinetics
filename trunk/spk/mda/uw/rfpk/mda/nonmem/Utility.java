@@ -316,9 +316,9 @@ public class Utility {
             }
             in.close();
 	}
-        catch(IOException ioe )
+        catch(IOException e)
         {
-            JOptionPane.showMessageDialog(null, "Error openning data file.",   
+            JOptionPane.showMessageDialog(null, e,   
                                           "File Error",    
                                           JOptionPane.ERROR_MESSAGE);
         }
@@ -336,7 +336,7 @@ public class Utility {
         try
         {
             InputStream in = getClass().getResourceAsStream(
-                             "/uw/rfpk/mda/nonmem/wizard/" + name + ".help"); 
+                             "/uw/rfpk/mda/nonmem/help/" + name); 
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             boolean done = false;
             while(!done)

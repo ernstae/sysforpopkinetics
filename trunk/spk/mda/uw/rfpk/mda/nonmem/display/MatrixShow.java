@@ -6,6 +6,7 @@
 
 package uw.rfpk.mda.nonmem.display;
 
+import uw.rfpk.mda.nonmem.Utility; 
 import javax.swing.table.*;
 import javax.swing.JTable;
 import java.text.DecimalFormat;
@@ -13,44 +14,38 @@ import java.awt.*;
 import javax.swing.JViewport;
 import javax.swing.SwingConstants;
 
-/**
+/** This class's instance display a matrix show on the screen
  *
  * @author  jiaji Du
  */
 public class MatrixShow extends javax.swing.JFrame {
     
-    /** Creates new form MatrixShow */
-    public MatrixShow(String[][] data, String[] header, String title, String text) {
+    /** Creates new form MatrixShow
+     * @param data a String[][] object containing the matrix of data values
+     * @param header a String[] object containing the headers
+     * @param title a String object containing the title of the window     
+     * @param text a String[] object containing the text to display in the window
+     * @param width the width of the window
+     * @param height the height of the window
+     */
+    public MatrixShow(String[][] data, String[] header, String title, String text,
+                      int width, int height)
+    {
         initComponents();
         setTitle(title);
-        int dimension = data.length;
-        int width, height;
-        if(dimension < 4)
-        {
-            width = 400;
-            height = 200;
-        }
-        else
-        {
-            width = 600;
-            height = 300;
-        }
         setSize(width, height);
         jTextPane1.setText(text);
         jScrollPane1.setPreferredSize(new java.awt.Dimension(width - 40, height - 100));
         
         // Format the data
+        int dimension = data.length;
         DecimalFormat f = new DecimalFormat("0.00E00");
         for(int i = 0; i < dimension; i++)
             for(int j = 1; j < data[i].length; j++)
-            {
-                data[i][j] = String.valueOf(f.format(Double.parseDouble(data[i][j])));
-                if(!data[i][j].startsWith("-"))
-                    data[i][j] = " " + data[i][j]; 
-            }
+                data[i][j] = Utility.formatData(6, f.format(Double.parseDouble(data[i][j])));
 
         // Set table model
-        DefaultTableModel tableModel = new DefaultTableModel(data, header);
+        DisplayTableModel tableModel = new DisplayTableModel(data, header);
         jTable1.setModel(tableModel);
         jTable1.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
         show();    
@@ -123,7 +118,6 @@ public class MatrixShow extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(jTextPane1);
-        setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 exitForm(evt);
@@ -149,6 +143,7 @@ public class MatrixShow extends javax.swing.JFrame {
             }
         });
         jTable1.setRowHeight(20);
+        jTable1.setRowSelectionAllowed(false);
         jScrollPane1.setViewportView(jTable1);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -173,6 +168,43 @@ public class MatrixShow extends javax.swing.JFrame {
 //        System.exit(0);
     }//GEN-LAST:event_exitForm
 
+    class DisplayTableModel extends AbstractTableModel 
+    {
+        public DisplayTableModel(String[][] data, String[] header)
+        {
+            this.data = data;
+            this.header = header;
+        }
+        
+        public String getColumnName(int c) 
+        {
+            return header[c];
+        }
+        public Class getColumnClass(int c) 
+        {
+            return "".getClass();
+        }
+        public int getColumnCount() 
+        {
+            return header.length; 
+        }
+        public int getRowCount() {
+            return data.length;
+        }
+        public Object getValueAt(int r, int c) {
+            String value = "";
+            if(c < data[r].length)
+                value = data[r][c];
+            return value;
+        }
+
+        // Table data array
+        String[][] data = null;
+        
+        // Table header array
+        String[] header = null;
+    }
+    
     class HeaderCellRenderer extends DefaultTableCellRenderer 
     {
         public Component getTableCellRendererComponent(JTable table,

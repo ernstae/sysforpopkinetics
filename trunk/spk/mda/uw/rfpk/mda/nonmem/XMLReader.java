@@ -6,7 +6,7 @@
 
 package uw.rfpk.mda.nonmem;
 
-import uw.rfpk.mda.nonmem.wizard.Utility;
+import uw.rfpk.mda.nonmem.Utility;
 import uw.rfpk.mda.nonmem.display.Output;
 import org.apache.xerces.parsers.DOMParser;
 import org.apache.xerces.dom.DocumentImpl;
@@ -20,27 +20,35 @@ import org.xml.sax.InputSource;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.io.*;
+import java.text.DecimalFormat;
 import javax.swing.JOptionPane;
 
-/**
- * This class defines an object that reads two XML documents: Spk source file and Spk report file.
+/** This class defines an object that reads two XML documents: Spk source file and Spk report file.
+ * 
  * @author  jiaji Du
  */
 public class XMLReader {
     
-    /** Creates a new instance of XMLReader */
+    /** Creates a new instance of XMLReader.
+     * @param text A Sting object containing two xml documents: spkreport and spksource.
+     * @param output An Output object to hold output information.
+     */
     public XMLReader(String text, Output output) 
     {
         this.output = output;
         
         // Get the XML documents as String objects
-        int index = text.indexOf("<spksource>");
-        String report = text.substring(0, index - 22);
-        String source = text.substring(index - 22);  
+        int index1 = text.indexOf("<spkreport");
+        int index2 = text.indexOf("<spksource");        
+        String job = text.substring(0, index1 - 22);
+        String report = text.substring(index1 - 22, index2 - 22);
+        String source = text.substring(index2 - 22);  
         try
         {
             // Parse the XML documents
             DOMParser parser = new DOMParser(); 
+            parser.parse(new InputSource(new ByteArrayInputStream(job.getBytes()))); 
+            docJob = parser.getDocument();            
             parser.parse(new InputSource(new ByteArrayInputStream(report.getBytes()))); 
             docReport = parser.getDocument(); 
             parser.parse(new InputSource(new ByteArrayInputStream(source.getBytes()))); 
@@ -55,6 +63,9 @@ public class XMLReader {
             System.out.println(ioe);
         }
         
+        // Get job
+        getJob();
+        
         // Get source
         getSource();
         
@@ -62,12 +73,38 @@ public class XMLReader {
         getReport();
     }
     
+    // Get job
+    private void getJob()
+    {
+        //Get root element of spksource        
+        Element spkjob = docJob.getDocumentElement();
+        output.submissionTime = spkjob.getAttribute("submission_time");
+        output.completionTime = spkjob.getAttribute("completion_time"); 
+        output.jobAbstract = spkjob.getAttribute("abstract"); 
+        NodeList modelList = spkjob.getElementsByTagName("model");
+        if(modelList.getLength() > 0)
+        {
+            Element model = (Element)modelList.item(0); 
+            output.modelName = model.getAttribute("name");
+            output.modelVersion = model.getAttribute("version");
+            output.modelAbstract = model.getAttribute("abstract");
+        }
+        NodeList dataList = spkjob.getElementsByTagName("data");
+        if(dataList.getLength() > 0)
+        {
+            Element data = (Element)dataList.item(0); 
+            output.dataName = data.getAttribute("name");
+            output.dataVersion = data.getAttribute("version");
+            output.dataAbstract = data.getAttribute("abstract");
+        }
+    }
+    
     // Get source
     private void getSource()
     {
         //Get root element of spksource
         Element spksource = docSource.getDocumentElement();
-        
+
         // Get nonmem
         NodeList nonmemList = spksource.getElementsByTagName("nonmem"); 
         Element nonmem = null;
@@ -99,17 +136,11 @@ public class XMLReader {
                 analysis = (Element)ind_analysisList.item(0);
             else
                 return;
-            NodeList descriptionList = analysis.getElementsByTagName("description");
-            if(descriptionList.getLength() > 0)
-            {
-                Element description = (Element)descriptionList.item(0);
-                output.title = description.getFirstChild().getNodeValue();
-            }
-            
+
             NodeList dataLabelList = analysis.getElementsByTagName("data_labels");
             if(dataLabelList.getLength() > 0)
             {
-                Element dataLabels = (Element)dataLabelList.item(0); 
+                Element dataLabels = (Element)dataLabelList.item(0);
                 NodeList labelList = dataLabels.getElementsByTagName("label");
                 if(labelList.getLength() > 0)
                     output.dataLabelMap = new Properties();  
@@ -185,13 +216,17 @@ public class XMLReader {
         {
             String[][] scatterplotI = output.scatterplot[i];
             Element scatterplot = (Element)scatterplotList.item(i);
-            scatterplotI[0] = new String[4];
+            scatterplotI[0] = new String[6];
             scatterplotI[0][0] = scatterplot.getAttribute("from");
+            if(scatterplotI[0][0].equals(""))
+                scatterplotI[0][0] = "1";
             scatterplotI[0][1] = scatterplot.getAttribute("to");
-            scatterplotI[0][2] = scatterplot.getAttribute("unit_slope");
-            scatterplotI[0][3] = scatterplot.getAttribute("x0_line");
-            scatterplotI[0][0] = scatterplot.getAttribute("y0_line");
-            scatterplotI[0][0] = scatterplot.getAttribute("process");
+            if(scatterplotI[0][1].equals(""))
+                scatterplotI[0][1] = "900";
+            scatterplotI[0][2] = scatterplot.getAttribute("x0_line");
+            scatterplotI[0][3] = scatterplot.getAttribute("y0_line");
+            scatterplotI[0][4] = scatterplot.getAttribute("unit_slope");
+            scatterplotI[0][5] = scatterplot.getAttribute("process");
             NodeList yList = scatterplot.getElementsByTagName("y");
             scatterplotI[1] = new String[yList.getLength()];
             for(int j = 0; j < yList.getLength(); j++)
@@ -201,9 +236,12 @@ public class XMLReader {
             for(int j = 0; j < xList.getLength(); j++)
                 scatterplotI[2][j] = ((Element)xList.item(j)).getAttribute("label");
             NodeList byList = scatterplot.getElementsByTagName("by");
-            scatterplotI[3] = new String[byList.getLength()];
-            for(int j = 0; j < byList.getLength(); j++)
-                scatterplotI[3][j] = ((Element)byList.item(j)).getAttribute("label");            
+            if(byList.getLength() > 0)
+            {
+                scatterplotI[3] = new String[byList.getLength()];
+                for(int j = 0; j < byList.getLength(); j++)
+                scatterplotI[3][j] = ((Element)byList.item(j)).getAttribute("label"); 
+            }
         }
     }
     
@@ -260,10 +298,14 @@ public class XMLReader {
     private void getPopEstimationResult(Element pop_analysis_result)  
     {
         // Get pop_out_result
+        output.computingTimes = new String[2];
         NodeList pop_opt_resultList = pop_analysis_result.getElementsByTagName("pop_opt_result");
         if(pop_opt_resultList.getLength() > 0)
         {
             Element pop_opt_result = (Element)pop_opt_resultList.item(0);
+            
+            // Get elapsed time
+            output.computingTimes[0] = pop_opt_result.getAttribute("elapsedtime");
  
             // Get objective
             NodeList objectiveList = pop_opt_result.getElementsByTagName("pop_obj_out");
@@ -290,6 +332,9 @@ public class XMLReader {
         if(ind_opt_resultList.getLength() > 0)
         {
             Element ind_opt_result = (Element)ind_opt_resultList.item(0);
+            
+            // Get computing time
+            output.computingTimes[0] = ind_opt_result.getAttribute("elapsedtime");            
  
             // Get objective
             NodeList objectiveList = ind_opt_result.getElementsByTagName("ind_obj_out");
@@ -347,7 +392,7 @@ public class XMLReader {
                     {
                         if(struct.equals("diagonal"))
                         {
-                            if(i == j)
+                            if(i == j - 1)
                                 output.omega[i][j] = valueList.item(k++).getFirstChild().getNodeValue();
                             else
                                 output.omega[i][j] = "0";
@@ -387,7 +432,7 @@ public class XMLReader {
                     {
                         if(struct.equals("diagonal"))
                         {
-                            if(i == j)
+                            if(i == j - 1)
                                 output.sigma[i][j] = valueList.item(k++).getFirstChild().getNodeValue();
                             else
                                 output.sigma[i][j] = "0";
@@ -407,6 +452,9 @@ public class XMLReader {
     // Get statistics result
     private void getStatisticsResult(Element stat_result)
     {
+        // Get elapsed time
+        output.computingTimes[1] = stat_result.getAttribute("elapsedtime");        
+        
         // Get statistics labels
         getStatisticsLabels(stat_result);
         
@@ -421,6 +469,12 @@ public class XMLReader {
         
         // Get inverse covariance
         getInvCovariance(stat_result);
+        
+        // Get coefficient of variation
+        getCoefVariation(stat_result);
+        
+        // Get confidence interval
+        getConfInterval(stat_result);
      }
     
     // Get statistics labels
@@ -446,10 +500,10 @@ public class XMLReader {
     // Get standard error
     private void getStdError(Element stat_result)
     {
-        String stderr = "pop_stderr_out";
+        String stdErr = "pop_stderr_out";
         if(stat_result.getNodeName().equals("ind_stat_result"))
-            stderr = "ind_stderr_out";
-        NodeList stderr_outList = stat_result.getElementsByTagName(stderr);
+            stdErr = "ind_stderr_out";
+        NodeList stderr_outList = stat_result.getElementsByTagName(stdErr);
         if(stderr_outList.getLength() > 0)
         {
             Element stderr_out = (Element)stderr_outList.item(0);
@@ -573,6 +627,56 @@ public class XMLReader {
         }
     }
     
+    // Get coefficent of variation
+    private void getCoefVariation(Element stat_result)
+    {    
+        String coefVar = "pop_coefficient_out";
+        if(stat_result.getNodeName().equals("ind_stat_result"))
+            coefVar = "ind_coefficient_out";   
+        NodeList coefVar_outList = stat_result.getElementsByTagName(coefVar);
+        if(coefVar_outList.getLength() > 0)
+        {
+            Element coefVar_out = (Element)coefVar_outList.item(0);
+            NodeList valueList = coefVar_out.getElementsByTagName("value"); 
+            int length = valueList.getLength();
+            if(length > 0 && length == output.statLabels.length)
+            {
+                output.coefVariation = new String[length];             
+                for(int i = 0; i < length; i++)
+                {
+                    Element value = (Element)valueList.item(i);
+                    output.coefVariation[i] = value.getFirstChild().getNodeValue();
+                }
+            }
+        }        
+    }
+    
+    // Get confident interval
+    private void getConfInterval(Element stat_result)
+    {    
+        String ConfInterval = "pop_confidence_out";
+        if(stat_result.getNodeName().equals("ind_stat_result"))
+            ConfInterval = "ind_confidence_out"; 
+        NodeList ConfInterval_outList = stat_result.getElementsByTagName(ConfInterval);
+        if(ConfInterval_outList.getLength() > 0)
+        {
+            Element ConfInterval_out = (Element)ConfInterval_outList.item(0);
+            NodeList valueList = ConfInterval_out.getElementsByTagName("value");
+            int length = valueList.getLength()/2;
+            if(length > 0 && length == output.statLabels.length)
+            {
+                output.confInterval = new String[2][length];                
+                for(int i = 0; i < length; i++)
+                {
+                    Element value1 = (Element)valueList.item(i);
+                    Element value2 = (Element)valueList.item(i + length);
+                    output.confInterval[0][i] = value1.getFirstChild().getNodeValue();
+                    output.confInterval[1][i] = value2.getFirstChild().getNodeValue();
+                }
+            }
+        }        
+    }
+    
     // Get presentation data
     private void getPresentationData(Element presentation_data)
     {
@@ -593,7 +697,7 @@ public class XMLReader {
                 output.dataItems.add(i, valueList.item(i).getFirstChild().getNodeValue());
         
             // Get all output data
-            output.dataAll = new String[nRows - 1][nColumns]; 
+            output.dataAll = new double[nRows - 1][nColumns]; 
             for(int i = 1; i < nRows; i++)
             {
                 Element dataRow = (Element)rowList.item(i);
@@ -601,13 +705,118 @@ public class XMLReader {
                 if(valueList.getLength() != nColumns)
                     return;
                 for(int j = 0; j < nColumns; j++)
-                    output.dataAll[i - 1][j] = valueList.item(j).getFirstChild().getNodeValue();
+                    output.dataAll[i - 1][j] = Double.parseDouble(valueList.item(j).getFirstChild().getNodeValue());
             }
         }
     }
+   
+    /** Convert the data XML back to the original.
+     * @param dataXML Data XMl as a String object.
+     * @return A String object containing the original data.
+     */
+    public static String parseDataXML(String dataXML)
+    {
+        String data = "";
+        Document docData = null;
+        Element row, value;
+        try
+        {
+            // Parse the XML documents
+            DOMParser parser = new DOMParser(); 
+            parser.parse(new InputSource(new ByteArrayInputStream(dataXML.getBytes()))); 
+            docData = parser.getDocument();            
+        }
+        catch(SAXException se)
+        {
+            System.out.println(se);
+        }
+        catch(IOException ioe)
+        {
+            System.out.println(ioe);
+        }    
+        
+        //Get root element of spksource
+        Element spkdata = docData.getDocumentElement();  
+        
+        // Get nonmem
+        NodeList rowList = spkdata.getElementsByTagName("row"); 
+        if(rowList.getLength() > 1)
+        {
+            for(int i = 1; i < rowList.getLength(); i++)
+            {
+                row = (Element)rowList.item(i);
+                NodeList valueList = row.getElementsByTagName("value");                
+                if(valueList.getLength() > 0)
+                {
+                    for(int j = 0; j < valueList.getLength(); j++)
+                    {
+                        value = (Element)valueList.item(j);
+                        if(value.getAttribute("type").equals("string"))
+                            data += formatString(value.getFirstChild().getNodeValue());
+                        else
+                            data += formatNumeric(value.getFirstChild().getNodeValue());
+                    }
+                } 
+                data += "\n";
+            }
+        }        
+        return data;
+    }
+
+    // Format the data of type string
+    private static String formatString(String number)
+    {
+        String string = "";
+        for(int i = 0; i < 10 - number.length(); i++)
+            string +=" ";
+        return string + number;
+    }
+    
+    // Format the data of type numeric 
+    private static String formatNumeric(String number)
+    {
+        if(number.equals("."))
+            number += "0";
+        DecimalFormat f = new DecimalFormat("0.0000E00");
+        return Utility.formatData(8, f.format(Double.parseDouble(number)));  
+    }
+    
+    /** Get model archive text from model XML document.  The first '\n' is removed.
+     * @param model A String object containing the model XML document.
+     * @return A String object containing the model archive text.
+     */ 
+    public static String getModelArchive(String model)
+    {
+        String modelArchive = null;
+        try
+        {
+            // Parse archive XML document
+            DOMParser parser = new DOMParser();                
+            parser.parse(new InputSource(new ByteArrayInputStream(model.getBytes())));                  
+            Document docModel = parser.getDocument();              
+            Element spkmodel = docModel.getDocumentElement();
+            modelArchive = spkmodel.getFirstChild().getNodeValue();
+            if(!modelArchive.equals(""))
+                modelArchive = modelArchive.substring(1);
+        }
+        catch(IOException e)
+        {
+            JOptionPane.showMessageDialog(null, e,  
+                                          "IO exception",
+                                          JOptionPane.ERROR_MESSAGE);             
+        }        
+        catch(SAXException e)
+        {
+            JOptionPane.showMessageDialog(null, e,  
+                                          "SAX exception",
+                                          JOptionPane.ERROR_MESSAGE);             
+        }         
+     
+        return modelArchive;
+    }
     
     // Report document and source document
-    private Document docReport, docSource;
+    private Document docJob, docReport, docSource;
     
     // Output object
     private Output output;

@@ -6,7 +6,6 @@
     <Property name="locationRelativeTo" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
       <ComponentRef name="jTextPane1"/>
     </Property>
-    <Property name="resizable" type="boolean" value="false"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -48,6 +47,7 @@
               </Table>
             </Property>
             <Property name="rowHeight" type="int" value="20"/>
+            <Property name="rowSelectionAllowed" type="boolean" value="false"/>
           </Properties>
         </Component>
       </SubComponents>
