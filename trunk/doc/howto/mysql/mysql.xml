@@ -49,7 +49,7 @@
       RPFK and RedHat Enterprise Linux version 3 (RHEL).
     </para>
     <sect2>
-      <title>Installing the Software</title>
+      <title>Installing the Database Software</title>
       <para>
 	The preferred way to install software in an RHEL system is with 
 	packages assembled for installation using the <command>rpm</command>
@@ -64,12 +64,12 @@
 	In a terminal window:
 	<screen>
 cd /tmp
-scp whitechuck:/opt/download/mysql.tar .
-tar xvf mysql.tar
+scp whitechuck:/opt/download/mysql-db.tar .
+tar xvf mysql-db.tar
 su
-cd mysql
+cd mysql-db
 rpm -Uhv *
-rm -rf mysql.tar mysql
+rm -rf mysql-db.tar mysql-db
 	</screen>
       </para>
       <para>
@@ -127,10 +127,106 @@ quit;
       <para>
 	For testing of software, we need a user with access
 	rights to the <emphasis>spktest</emphasis> database.
+	In the following, <emphasis>host</emphasis> is the 
+	full domain name of the machine on which the database
+	is located; example: <emphasis>rose.rfpk.washington.edu</emphasis>
 	<screen>
 mysql -u root -p
 grant all on spktest.* to tester@localhost identified by 'tester';
+grant all on spktest.* to tester@localhost.localdomain identified by 'tester';
+grant all on spktest.* to tester@<emphasis>host</emphasis> identified by 'tester';
 quit;
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title id="perl-access">Installing the Perl Access Modules</title>
+      <para>
+	To access any relational database from perl, the perl-DBI
+	module must be installed.  For access to
+	a MySQL database, the perl-DBD-MySQL module must be added.  The
+	following procedure will install both of these modules on your machine.
+	<screen>
+cd /tmp
+scp whitechuck:/opt/download/mysql-perl.tar .
+tar xvf mysql-perl.tar
+su
+cd mysql-perl
+rpm -Uhv *
+exit
+cd /tmp
+rm -rf mysql-perl.tar mysql-perl
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title id="java">Installing Java</title>
+      <para>
+	If you want to use java to access the database and you do not already
+	have the Java Software Development Kit (SDK) installed on your machine,
+	follow these instructions.
+	<screen>
+cd /tmp
+scp whitechuck:/opt/download/java.tar .
+tar xvf java.tar
+cd java
+chmod +x *bin
+./*bin
+	</screen>
+	At this point you will need to scroll down through a license 
+	agreement and respond that <command>yes</command>, you
+	accept it.
+	<screen>
+su
+rpm -Uhv *.rpm
+mv *.zip /usr/java
+cd /usr/java
+unzip *doc.zip
+rm *doc.zip
+exit
+cd /tmp
+rm -rf java java.tar
+	</screen>
+      </para>
+      <para>
+	Before you can use java, you will need to set up the 
+	<command>JAVA_HOME</command> environment variable.  
+	Add the following lines to your <filename>~/.bash_profile</filename>
+	file:
+	<screen>
+JAVA_HOME=/usr/java/j2sdk1.4.2_03
+export JAVA_HOME
+	</screen>
+	The above assumes that the SDK that you installed was
+	<filename>j2sdk1.4.2_03</filename>. If it is different, this
+	document needs to be updated, but you can simple adjust the 
+	name to what is installed.
+      </para>
+      <para>
+	Finally, log out of the desk top and log back in again.  This will 
+	insure that all processes descendent from your desktop will have 
+	<command>JAVA_HOME</command> set properly.
+      </para>
+    </sect2>
+    <sect2>
+      <title id="java-access">Installing the Java Access Classes</title>
+      <para>
+	To use java to access a MySQL database, you must have the
+	mysql-connector-java jar installed on your machine.  The 
+	following instructions will accomplish this.
+	<screen>
+cd /tmp
+scp whitechuck:/opt/download/mysql-java.tar .
+tar xvf mysql-java.tar
+cd mysql-java
+tar xvzf *
+rm *.gz
+cd mysql*
+su
+cp *.jar $JAVA_HOME/jre/lib/ext
+exit
+cd /tmp
+rm -rf mysql-java.tar mysql-java
 	</screen>
       </para>
     </sect2>
@@ -148,9 +244,16 @@ quit;
     <sect2>
       <title>Installing and Testing the Perl API</title>
       <para>
-	The following assumes that we start in the 
-	<filename>db</filename> directory discussed above.
-	The installation and testing sequences is as follows:
+	You will need to have the perl modules for access MySQL
+	installed on your machine. If you have not done so, follow the
+	instructions in the section
+	"<link linkend="perl-access">Installing the Perl Access Modules</link>."
+      </para>
+      <para>
+	Start in the 
+	<filename>r2/src/apps/spk/db</filename> directory
+	in a cvs workspace, or a copy of the subtree starting
+	at <filename>db</filename>:
 	<screen>
 cd api/perl
 perl Makefile.PL
@@ -165,6 +268,32 @@ make test
 su
 make install
 	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Installing and Testing the Java API</title>
+      <para>
+	You will need to have Java and the MySQL access classes
+	installed on your machine. If you have not done so, follow the
+	instructions in the sections
+	"<link linkend="java">Installing Java</link>", and
+	"<link linkend="java-access">Installing the Java Access Classes</link>."
+      </para>
+      <para>
+	Start in the 
+	<filename>r2/src/apps/spk/db</filename> directory
+	in a cvs workspace, or a copy of the subtree starting
+	at <filename>db</filename>:
+	<screen>
+cd api/java
+make
+make docs
+make test
+	</screen>
+      </para>
+      <para>
+	The commands listed above will compile the rfpk.spk.spkdb package, 
+	generate html documentation (using javadoc) and run the test suite.
       </para>
     </sect2>
   </sect1>
