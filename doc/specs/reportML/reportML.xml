@@ -8,6 +8,12 @@
  <articleinfo>
     <revhistory>
       <revision>
+	<revnumber>1.1</revnumber>
+	<date>April 10, 2004</date>
+	<authorinitials>sh</authorinitials>
+	<revremark>Updated the links to external documents which had been moved.</revremark>
+      </revision>
+      <revision>
 	<revnumber>1.0</revnumber>
 	<date>December 9, 2003</date>
 	<authorinitials>sh</authorinitials>
@@ -24,9 +30,9 @@ Each version of the XML has a unique set of grammer and syntax that is designed 
  </articleinfo>
   <sect1>
     <title>
-       <ulink url="nonmem/SpkReportML_html/elt-spkreportML.html">NONMEM (ie. NM-TRAN)</ulink>
+       <ulink url="nonmem/html/elt-spkreportML.html">NONMEM (ie. NM-TRAN)</ulink>
     </title>
-    <para><ulink url="nonmem/SpkReportML_nonmem.xml"><citetitle>Example: CONTROL4 + THEO</citetitle></ulink> (view it as "source" if your browser tries to be cleaver but not)</para>
+    <para><ulink url="nonmem/reportML_nonmem.xml"><citetitle>Example: CONTROL4 + THEO</citetitle></ulink> (view it as "source" if your browser tries to be cleaver but not)</para>
   </sect1>
   <sect1>
     <title>SAAM-II</title>
