@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
-                  "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd"[
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"[
   <!ENTITY uw "University of Washington">
   <!ENTITY dept "Department of Bioengineering">
   <!ENTITY whitechuck '<systemitem class="systemname">whitechuck</systemitem>'>
@@ -33,6 +32,13 @@
       storage will be wiped clean.  It is, therefore, crucial that
       you prepare carefully for the move.
     </para>
+    <sect2>
+      <title>Get a Hard Copy of this Document</title>
+      <para>
+	If you have not already done so, print out a copy of this document
+	from its <filename>.pdf</filename> file.
+      </para>
+    </sect2>
     <sect2>
       <title>Verify the Backup of your Home Directory</title>
       <para>
@@ -166,10 +172,188 @@ pr /etc/sysconfig/network-scripts/ifcfg-eth0 | lpr
 	</screen>
       </para>
     </sect2>
+    <sect2>
+      <title>Commit your CVS Changes</title>
+      <para>
+	Be sure to commit any changes that you have made to 
+	your CVS work space.
+      </para>
+    </sect2>
   </sect1>
   <sect1>
     <title>Install RHEL from Cdrom</title>
     <para>
+      There are five RHEL3 installation cdroms.  Of these, you will 
+      probably only need the first three.  Important steps in the
+      installation process are listed below.  Not all interactions
+      with the installation GUI are covered, because many items
+      are either obvious or you have simply to agree with something
+      that the software has already figured out.  When in doubt,
+      accept the value that the software suggests.
+    </para>
+    <para>
+      <orderedlist>
+	<listitem>
+	  <para>
+	    Automatic Partitioning.  Your machine contains two hard 
+	    drives. We <emphasis>do not</emphasis> want to remove
+	    anything on the drive that you are currently using
+	    for linux.  Instead, RHEL will be installed on the drive
+	    that currently contains Windows.  Be certain that you 
+	    select the Windows drive for RHEL installation.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Network Configuration. In the 
+	    <guimenu>hostname</guimenu>
+	    section of this screen, select the
+	    <guibutton>manually</guibutton> radio button,
+	    then type in your complete Internet host name.  It will
+	    be a name of the form
+	    <filename>name.rfpk.washington.edu</filename>.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Firewall. We definitely want the firewall to be enabled.
+	    Check only the <guimenuitem>SSH</guimenuitem> box
+	    in the list of services to allow through the firewall.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Time Zone.  Check the 
+	    <guimenuitem>System Clock Uses UTC</guimenuitem> box, and
+	    a Pacific Timezone city, such as 
+	    <guimenuitem>America/Los_Angeles</guimenuitem>.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Root Password. You can use the same root password that you
+	    are using now. 
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Package Installation Defaults. Check the 
+	    <guimenuitem>Customize ...</guimenuitem> box.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Package Group Selection.
+	  </para>
+	  <para>
+	    <emphasis>In addition to the boxes already check-marked by default</emphasis>
+	    select the following package groups:
+	    <itemizedlist>
+	      <listitem>
+		<para>
+		  Engineering and Scientific.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  Authoring and Publishing.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  Web Server.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  MySQL Database.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  Legacy Software Development.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  System Tools.
+		</para>
+	      </listitem>
+	    </itemizedlist>
+	  </para>
+	</listitem>
+      </orderedlist>
+    </para>
+    <para>
+      If all goes well, you should reach the end of the installation
+      process.  Press the <guibutton>Exit</guibutton> button, and
+      the machine will boot up on RHEL3. 
+    </para>
+    <para>
+      Once you have booted, a post-configuration GUI starts 
+      automatically.  Here are some additional steps:
+      <orderedlist>
+	<listitem>
+	  <para>
+	    Date and Time.  Check the
+	    <guimenuitem>Enable Network Time Protocol</guimenuitem>
+	    box and select either of the servers listed in the
+	    <guimenuitem>Server</guimenuitem> box.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    User account.  Enter the same username and password that
+	    you were using for your ordinary user login before the
+	    migration.  <emphasis>You do not need to do
+	    a network login.</emphasis>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Register with RedHat Network. When you get to
+	    <guimenu>Step 2: Login</guimenu>, check the 
+	    <guimenuitem>Use Existing Account</guimenuitem>
+	    radio button and supply this information:
+	    <screen>
+Username:        alanwesthagen
+Password:        (get this from the Software Team manager)
+Email address:   afw@u.washington.edu
+	    </screen>
+	  </para>
+	  <para>
+	    This should link you up to use one of a set of
+	    RHN Management Entitlements that RFPK has purchased.
+	    The <command>up2date</command> wizard will start
+	    automatically.  Allow it to install any updates
+	    to RHEL Version 3 that have been created since the
+	    cdroms were made, including updates to the kernel.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    At this point, the installation is complete.  Reboot
+	    your system, to ensure that any updates will go
+	    into effect.
+	  </para>
+	</listitem>
+      </orderedlist>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Start Mozilla to Access this Document</title>
+    <para>
+      Start Mozilla.  A RedHat registration page will appear.  
+      Ignore it, and type the following URL into the field
+      at the top of the page:
+      <screen>
+whitechuck.rfpk.washington.edu/soft/index.html
+      </screen>
+      This should bring up the Software Team web page, from 
+      which you can bring up a copy of this document..  In the
+      steps that follow, having a copy on the screen will facilite
+      entering commands into shell windows, because you can
+      cut and paste.
     </para>
   </sect1>
   <sect1 id="extra">
@@ -185,78 +369,14 @@ pr /etc/sysconfig/network-scripts/ifcfg-eth0 | lpr
     <para>
       In a shell window:
       <screen>
-su -
+su
 cd /opt
 mkdir extra
-chown <emphasis>&lt;your user name&gt;</emphasis> extra
+chown $USER extra
 exit
 cd
 ln -s /opt/extra extra
       </screen>
-    </para>
-  </sect1>
-  <sect1>
-    <title>Register and Update</title>
-    <para>
-      Although you have just installed the new version of RHEL, there are
-      already updates available at the RedHat Network (RHN) site.  Before
-      downloading and installing these updates, you will need to register.
-    </para>
-    <para>
-      RFPK has purchased a set RHN Management Entitlements in 
-      sufficient number that there should be one for each workstation
-      running RHEL.  As a side effect of registering
-      your system according to the following instructions, one
-      of these entitlements will be automatically assigned to
-      your workstation.
-      <orderedlist>
-	<listitem>
-	  <para>
-	    <emphasis>Start the <command>up2date</command> applet</emphasis>
-	    by clicking on its icon in the bar of icons (known as the
-	    <emphasis>panel</emphasis>) at the bottom of your screen.  The
-	    <command>up2date</command> icon is a small ball, which will 
-	    probably be red with an exclamation mark in the middle of it,
-	    but could be green or blue, depending on the update status of
-	    your machine.
-	  </para>
-	</listitem>
-	<listitem>
-	  <para>
-	    <emphasis>Login</emphasis>.
-	    <orderedlist>
-	      <listitem>
-		<para>
-		  You will first be required to provide the root
-		  password for your machine.  Do this.
-		</para>
-	      </listitem>
-	      <listitem>
-		<para>
-		  Next you will be asked to either log in to RHN,
-		  or to create a new login.  Use the existing
-		  login <emphasis>alanwesthagen</emphasis>, because
-		  this is the login to which the entitlements have
-		  been attached.  The email address for the login
-		  is <emphasis>afw@u.washington.edu</emphasis>.
-		  You will also need a password.  Get the password
-		  from the manager of the Software Team.
-		</para>
-	      </listitem>
-	    </orderedlist>
-	  </para>
-	</listitem>
-	<listitem>
-	  <para>
-	    Let <command>up2date</command> bring your system up-to-date.
-	    Updates are presented in two groups: kernel updates and 
-	    everything else.  Mark check boxes so that you will get
-	    all updates to both groups.  From that point on, the
-	    process will be mostly automatic, asking you only for
-	    acknowledgment, from time to time.
-	  </para>
-	</listitem>
-      </orderedlist>
     </para>
   </sect1>
   <sect1 id='old_home'>
@@ -328,6 +448,27 @@ rsync -a --exclude '.g*' --exclude '.rhn*' old_home/* old_home/.* .
     </para>
   </sect1>
   <sect1>
+    <title>Restore Static IP</title>
+    <para>
+      After the migration, RHEL communicated with a DHCP server in
+      the UW network to get information to set up Internet access.
+      This works fine, but at this point your machine is not
+      accessible by name from the outside, because the IP that
+      DHCP assigns can change every time you restart your network
+      interface.  For the time being, at least, the Softwar Team
+      workstations are accessible by host name from the Internet,
+      because they have had static IP addresses assigned.  
+      Do the following to restore your static IP address.
+      <screen>
+su 
+cd /etc/sysconfig/network-scripts
+cp ifcfg-eth0 ifcfg-eth0.bak
+cp /home/$USER/old_etc/sysconfig/network-scripts/ifcfg-eth0 .
+/etc/rc.d/init.d/network restart
+      </screen>
+    </para>
+  </sect1>
+  <sect1>
     <title>Restore Password-Free SSH Connections</title>
     <para>
       If you have previously followed the instructions in the
@@ -364,6 +505,7 @@ rsync -a --exclude '.g*' --exclude '.rhn*' old_home/* old_home/.* .
       Finally, log in again.
     </para>
   </sect1>
+
   <sect1>
     <title>Restore Clock Synchronization</title>
     <para>
