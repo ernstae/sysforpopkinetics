@@ -80,6 +80,7 @@ void explangTest::testScalarAssignmentToScalar()
 
   nm_parse();
 
+  CPPUNIT_ASSERT_EQUAL( 13, gSpkExpLines );
   CPPUNIT_ASSERT( table.findi( "A" ) != Symbol::empty() );
   fclose( pInput );
   fclose( gSpkExpOutput );
@@ -211,7 +212,7 @@ void explangTest::testVectorElementAssignmentToScalar()
   
   char input[]        = "testVectorElementAssignmentToScalar.in";
   char output[]       = "testVectorElementAssignmentToScalar.out";
-  char statementIn[]  = "A(1) = 1\n";
+  char statementIn[]  = "A(1) = 1\n\n";
 
   FILE * pInput = fopen( input, "w" );
   CPPUNIT_ASSERT( pInput != NULL );
@@ -233,6 +234,7 @@ void explangTest::testVectorElementAssignmentToScalar()
 
   nm_parse();
 
+  CPPUNIT_ASSERT_EQUAL( 2, gSpkExpLines );
   CPPUNIT_ASSERT( table.findi( "A" ) != Symbol::empty() );
   
   fclose( pInput );
@@ -311,6 +313,7 @@ void explangTest::testFunctions()
 
   nm_parse();
 
+  CPPUNIT_ASSERT_EQUAL( 8, gSpkExpLines );
   CPPUNIT_ASSERT( table.findi( "A" ) != Symbol::empty() );
   CPPUNIT_ASSERT( table.findi( "B" ) != Symbol::empty() );
   
@@ -501,6 +504,7 @@ void explangTest::testIfStmt()
 
   nm_parse();
 
+  CPPUNIT_ASSERT_EQUAL( 2, gSpkExpLines );
   CPPUNIT_ASSERT( table.findi( "A" ) != Symbol::empty() );
   
   fclose( pInput );
@@ -603,9 +607,10 @@ void explangTest::testIfThenStmt()
 
   FILE * pInput = fopen( input, "w" );
   CPPUNIT_ASSERT( pInput != NULL );
+  fputs( "\t;comment1\n", pInput );
   fputs( "IF( X.NE.Y ) THEN\n", pInput );
   fputs( "A = B(1)\n", pInput );
-  fputs( "C = D   ;comment\n", pInput );
+  fputs( "C = D   ;comment2\n", pInput );
   fputs( "ENDIF\n", pInput );
   fclose( pInput );
 
@@ -629,6 +634,7 @@ void explangTest::testIfThenStmt()
 
   nm_parse();
 
+  CPPUNIT_ASSERT_EQUAL( 5, gSpkExpLines );
   CPPUNIT_ASSERT( table.findi( "C" ) != Symbol::empty() );
   CPPUNIT_ASSERT( table.findi( "A" ) != Symbol::empty() );
   fclose( pInput );
@@ -647,6 +653,10 @@ void explangTest::testIfThenStmt()
   ifstream pOutput( output );
   CPPUNIT_ASSERT( pOutput.good() );
 
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "//" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "comment1" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "if(" );
   pOutput >> buf;
@@ -686,7 +696,7 @@ void explangTest::testIfThenStmt()
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "//" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "comment" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "comment2" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "}" );
 
@@ -744,6 +754,7 @@ void explangTest::testHAHN1_1()
 
   nm_parse();
 
+  CPPUNIT_ASSERT_EQUAL( 3, gSpkExpLines );
   CPPUNIT_ASSERT( table.findi( "x" ) != Symbol::empty() );
   fclose( pInput );
   fclose( gSpkExpOutput );
@@ -769,7 +780,6 @@ CppUnit::Test * explangTest::suite()
      new CppUnit::TestCaller<explangTest>(
          "testHAHN1_1", 
 	 &explangTest::testHAHN1_1 ) );
-
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<explangTest>(
          "testScalarAssignmentToScalar", 

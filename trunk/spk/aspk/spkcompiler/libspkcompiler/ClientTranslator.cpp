@@ -14,6 +14,19 @@
 
 using namespace std;
 using namespace xercesc;
+const char* ClientTranslator::C_SPKDATA    ( "spkdata" );
+const char* ClientTranslator::C_VERSION    ( "version" );
+const char* ClientTranslator::C_POINTONE   ( "0.1" );
+const char* ClientTranslator::C_TABLE      ( "table" );
+const char* ClientTranslator::C_COLUMNS    ( "columns" );
+const char* ClientTranslator::C_ROWS       ( "rows" );
+const char* ClientTranslator::C_DESCRIPTION( "description" );
+const char* ClientTranslator::C_ROW        ( "row" );
+const char* ClientTranslator::C_POSITION   ( "position" );
+const char* ClientTranslator::C_VALUE      ( "value" );
+const char* ClientTranslator::C_TYPE       ( "type" );
+const char* ClientTranslator::C_NUMERIC    ( "numeric" );
+const char* ClientTranslator::C_ID         ( "ID" );
 
 class TestTranslator : public ClientTranslator
 {
@@ -34,21 +47,21 @@ ClientTranslator::ClientTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     data         ( dataIn ),
     ourPopSize   ( 0 ),
     ourApproximation( FO ),
-    ourTarget    ( POP ),
-    X_SPKDATA    ( XMLString::transcode( "spkdata" ) ),
-    X_VERSION    ( XMLString::transcode( "version" ) ),
-    X_POINTONE   ( XMLString::transcode( "0.1" ) ),
-    X_TABLE      ( XMLString::transcode( "table" ) ),
-    X_COLUMNS    ( XMLString::transcode( "columns" ) ),
-    X_ROWS       ( XMLString::transcode( "rows" ) ),
-    X_DESCRIPTION( XMLString::transcode( "description" ) ),
-    X_ROW        ( XMLString::transcode( "row" ) ),
-    X_POSITION   ( XMLString::transcode( "position" ) ),
-    X_VALUE      ( XMLString::transcode( "value" ) ),
-    X_TYPE       ( XMLString::transcode( "type" ) ),
-    X_NUMERIC    ( XMLString::transcode( "numeric" ) ),
-    X_ID         ( XMLString::transcode( "ID" ) )
+    ourTarget    ( POP )
 {
+    X_SPKDATA    = XMLString::transcode( C_SPKDATA );
+    X_VERSION    = XMLString::transcode( C_VERSION );
+    X_POINTONE   = XMLString::transcode( C_POINTONE );
+    X_TABLE      = XMLString::transcode( C_TABLE );
+    X_COLUMNS    = XMLString::transcode( C_COLUMNS );
+    X_ROWS       = XMLString::transcode( C_ROWS );
+    X_DESCRIPTION= XMLString::transcode( C_DESCRIPTION );
+    X_ROW        = XMLString::transcode( C_ROW );
+    X_POSITION   = XMLString::transcode( C_POSITION );
+    X_VALUE      = XMLString::transcode( C_VALUE );
+    X_TYPE       = XMLString::transcode( C_TYPE );
+    X_NUMERIC    = XMLString::transcode( C_NUMERIC );
+    X_ID         = XMLString::transcode( C_ID );
 }
 ClientTranslator::~ClientTranslator()
 {
@@ -213,6 +226,13 @@ int ClientTranslator::insertID()
   
   unsigned int nItems = 0;
   char c_nItemsPlus1[ 56 ];
+
+  if( !dataset->hasAttribute( X_COLUMNS ) )
+    {
+      char m[ SpkCompilerError::maxMessageLen() ];
+      sprintf( m, "Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_COLUMNS );
+      throw SpkCompilerException( SpkCompilerError::ASPK_DATAML_ERR, m, __LINE__, __FILE__ );
+    }
   XMLString::textToBin( dataset->getAttribute( X_COLUMNS ),
 			    nItems );
   sprintf( c_nItemsPlus1, "%d", nItems + 1 );
@@ -252,20 +272,32 @@ void ClientTranslator::parseData()
   // Process through n number of <table>s, where n >= 0.
   // NOTE: For v0.1, n == 1.
   //
-  DOMNodeList * dataSets = spkdata->getElementsByTagName( X_TABLE );
-  int nDataSets = dataSets->getLength();
+  DOMNodeList * datasets = spkdata->getElementsByTagName( X_TABLE );
+  int nDataSets = datasets->getLength();
   assert( nDataSets <= 1 );
 
   int nSubjects = 0;
   for( int i=0; i<nDataSets; i++ )
     {
-      DOMElement * dataSet = dynamic_cast<DOMElement*>( dataSets->item(i) );
+      DOMElement * dataset = dynamic_cast<DOMElement*>( datasets->item(i) );
       unsigned int nFields;
-      XMLString::textToBin( dataSet->getAttribute( X_COLUMNS ),
-			    nFields );
+      if( !dataset->hasAttribute( X_COLUMNS ) )
+	{
+	  char m[ SpkCompilerError::maxMessageLen() ];
+	  sprintf( m, "Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_COLUMNS );
+	  throw SpkCompilerException( SpkCompilerError::ASPK_DATAML_ERR, m, __LINE__, __FILE__ );
+	}     
+      XMLString::textToBin( dataset->getAttribute( X_COLUMNS ), nFields );
+
       unsigned int nRecords;
-      XMLString::textToBin( dataSet->getAttribute( X_ROWS ),
-			    nRecords );
+      if( !dataset->hasAttribute( X_ROWS ) )
+	{
+	  char m[ SpkCompilerError::maxMessageLen() ];
+	  sprintf( m, "Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_ROWS );
+	  throw SpkCompilerException( SpkCompilerError::ASPK_DATAML_ERR, m, __LINE__, __FILE__ );
+	} 
+      XMLString::textToBin( dataset->getAttribute( X_ROWS ), nRecords );
+
       if( nRecords == 0 )
       {
          // empty data set, skip to the next data set.
@@ -284,7 +316,7 @@ void ClientTranslator::parseData()
       valarray<int>  nDataRecords;
 
       unsigned int pos;      
-      DOMNodeList * rows = dataSet->getElementsByTagName( X_ROW );
+      DOMNodeList * rows = dataset->getElementsByTagName( X_ROW );
       assert( rows->getLength() == nRecords );
       for( int j=0; j<nRecords; j++ )
 	{
@@ -454,20 +486,20 @@ void ClientTranslator::parseData()
   // Process through n number of <table>s, where n >= 0.
   // NOTE: For v0.1, n == 1.
   //
-  DOMNodeList * dataSets = spkdata->getElementsByTagName( X_TABLE );
-  int nDataSets = dataSets->getLength();
+  DOMNodeList * datasets = spkdata->getElementsByTagName( X_TABLE );
+  int nDataSets = datasets->getLength();
   assert( nDataSets <= 1 );
 
   int nSubjects = 0;
   for( int i=0; i<nDataSets; i++ )
     {
       bool isIDMissing = false;
-      DOMElement * dataSet = dynamic_cast<DOMElement*>( dataSets->item(i) );
+      DOMElement * dataset = dynamic_cast<DOMElement*>( datasets->item(i) );
       unsigned int nFields;
-      XMLString::textToBin( dataSet->getAttribute( X_COLUMNS ),
+      XMLString::textToBin( dataset->getAttribute( X_COLUMNS ),
 			    nFields );
       unsigned int nRecords;
-      XMLString::textToBin( dataSet->getAttribute( X_ROWS ),
+      XMLString::textToBin( dataset->getAttribute( X_ROWS ),
 			    nRecords );
       if( nRecords == 0 )
       {
@@ -487,7 +519,7 @@ void ClientTranslator::parseData()
       // Look for the first (ie. position=1) record and see if
       // it has "ID" as a string value as the first entry.
       //
-      const DOMNodeList * records = dataSet->getElementsByTagName( X_ROW );
+      const DOMNodeList * records = dataset->getElementsByTagName( X_ROW );
       unsigned int pos;
       const DOMNodeList * values;
       for( int j=0; j<records->getLength(); j++ )
@@ -510,7 +542,7 @@ void ClientTranslator::parseData()
 	  }
       }
             
-      DOMNodeList * rows = dataSet->getElementsByTagName( X_ROW );
+      DOMNodeList * rows = dataset->getElementsByTagName( X_ROW );
       assert( rows->getLength() == nRecords );
       for( int j=0; j<nRecords; j++ )
 	{
