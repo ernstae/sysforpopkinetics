@@ -9,8 +9,8 @@
     <abstract>
       <para>
 	The acquisition and installation of fonts sufficient to enable 
-	browsers based on the Gecko Display Engine is described.
-	Mozilla and Firefox are Gecko-based.
+	browsers based on the Gecko Display Engine to handle MathML
+	is described.  Mozilla and Firefox are Gecko-based.
       </para>
       <para>
 	The information in this document is targeted primarily toward
@@ -77,9 +77,8 @@
   <sect1>
     <title>Install the Truetype Fonts</title>
     <para>
-      We will be installing two sets of TrueType fonts. One set is a
-      set of fonts developed for TeX, and the other comes from 
-      Mathematica.
+      We will be installing two sets of TrueType fonts. One set
+      was developed for TeX, and the other for Mathematica.
     </para>
     <para>
       <orderedlist>
@@ -188,7 +187,7 @@ cd symfontconfig
   <sect1>
     <title>Try It Out</title>
     <para>
-      You can evaluate your browsers newly acquired facility with
+      You can evaluate your browser's newly acquired facility with
       MathML by accessing the  
       <ulink url="http://www.w3.org/Math/testsuite/testsuite/Presentation/GeneralLayout/msqrt-mroot/mrootSfonts3.xml">
 	W3C MathML TestSuite
@@ -196,9 +195,9 @@ cd symfontconfig
       When you first click this link, a pop-up window titled
       "Missing MathML Fonts" may appear. The pop-up contains a 
       link to a page at Mozilla.org. If you follow the link, 
-      you will find a recommendation that linux users need
+      you will find a recommendation that linux users need to add
       exactly the same fonts that you have just installed. 
-      Just ignore this warning.
+      You can ignore this warning.
     </para>
   </sect1>
   <sect1>
