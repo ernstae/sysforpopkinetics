@@ -72,8 +72,15 @@ alter the normal execution flow.-->
 <!-- <pop_monte_result> The estimate for the integral.  -->
 <!ELEMENT pop_monte_result ( row_major | column_major )* >
 
-<!-- <pop_monte_result elapsedtime="500"> The number of seconds it took to complete both <pop_obj_estimate> and <pop_obj_stderror>.-->
+<!-- <pop_monte_result elapsedtime="500"> The number of seconds it took to complete both estimation and statistics computation.-->
 <!ATTLIST pop_monte_result elapsedtime CDATA #REQUIRED>
+
+<!-- <pop_monte_result method="plain"> The estimation method.  Legal values are "plain", "miser", "grid" and "analytic".
+-->
+<!ATTLIST pop_monte_result method CDATA #REQUIRED>
+
+<!-- <pop_monte_result number_eval="1000"> The user's original request for the number of evaluations.  -->
+<!ATTLIST pop_monte_result number_eval CDATA #REQUIRED>
 
 <!-- <theta_out> Final value for the theta. -->
 <!ELEMENT theta_out (value)+>
