@@ -49,7 +49,7 @@
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// [Revisit - Optimizer Class Should be Generalized
+// [Revisit - Optimizer Class Should be Generalized - Mitch]
 //
 // This class should be generalized so that it is reusable and 
 // doesn't have to be modified everytime the optimizer is changed
