@@ -327,7 +327,7 @@ $end
 #include <spk/matmax.h>
 
 // POP3CM include files.
-#include "gval.h"
+#include "src/gval.h"
 
 
 /*------------------------------------------------------------------------

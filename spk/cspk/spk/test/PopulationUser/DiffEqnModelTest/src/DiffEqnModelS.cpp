@@ -21,7 +21,8 @@
 */
 // This source code is stored in the file DiffEqnModelS.cpp
 # include <spk/SpkValarray.h>
-# include "DiffEqnModel.h"
+
+# include "src/DiffEqnModel.h"
 
 using SPK_VA::valarray;
 

@@ -23,9 +23,10 @@
 #pragma warning( disable : 4786 )
 
 # include <spk/SpkValarray.h>
-# include "DiffEqnModel.h"
 # include <spk/allZero.h>
 # include <spk/inverse.h>
+
+# include "src/DiffEqnModel.h"
 
 using namespace std;
 
