@@ -1,0 +1,564 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"[
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+]>
+<article><title>SPK Compiler Design Specification</title>
+ <articleinfo>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>August 11, 2003</date>
+	<authorinitials>sh</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+    </revhistory>
+  <abstract>
+      <para>
+      </para>
+  </abstract>
+ </articleinfo>
+  <sect1>
+    <title>Expression Language</title>
+    <para>
+    </para>
+    <sect2>
+       <title>Conventions</title>
+       <para>
+       The term "Expression" is used to cover both mathematical expressions 
+       and assignment/substitution statements.
+       </para>
+    </sect2>
+    <sect2>
+       <title>Core Language Requrements</title>
+       <para>
+       This section states the minimum set of requirements to a language 
+       that interfaces to the client-server model SPK system.
+       </para>
+       <sect3>
+          <title>General</title>
+          <para>
+          Regardless of whether we invent a new language or borrow a 
+          subset of existing language, the language of choice must 
+          support the followings:
+             <itemizedlist>
+                <listitem>
+                   <para>
+                   The language allows users to express mathematical 
+                   expressions in the most natural way to ordinary users.
+                   That is, it will be written in the infix notation*.
+                   </para>
+                   <note>
+                      <title>*</title>
+                      <para>
+                      An expression in the infix notation looks like:
+                         <programlisting>
+		         a + b + c
+                         </programlisting>
+                      Whereas post-fix notation in the above expression appears like:
+                         <programlisting>
+                         a b + c +
+                         </programlisting>
+		      </para>
+                   </note>
+                </listitem>
+                <listitem>
+                   <para>
+                   The language allows users to assign values to variables.  
+                   Values may be scalars, vectors, matrices or these resulted 
+                   from evaluation of mathematical expressions.
+                   </para>
+                </listitem>
+	        <listitem>
+                   <para>
+                   User can define arbitrary variables and reference them 
+                   within their scopes with no effort.
+                   </para>
+                </listitem>
+                <listitem>
+                   <para>
+                   The language provides mechanism for users to reference 
+                   entities outside of their scope (<emphasis>TBD: Name scope issue</emphasis>). 
+                   </para>
+                </listitem>
+                <listitem>
+                   <para>
+                   The language is capable of deriving data-types (ex. integer, string) 
+                   of values from their usage and thus users do not have to explicitly 
+                   declare their data-types.
+                   </para>
+                </listitem>
+                <listitem>
+                   <para>
+                   Assignment to different data types is allowed.  
+                   When this occurs, the compiler converts the one which has lower 
+                   (more restricted) value to the other type which is more inclusive.
+                   </para>
+                </listitem>
+                <listitem>
+                   <para>
+                   The precedence of algebraic operators must in the most conventional way.  
+                   That is, multiplication and division are performed before addition 
+                   or subtraction unless they are enclosed by parenthesis.
+                   </para>
+                </listitem>
+                <listitem>
+                   <para>
+                   Algebraic expressions are evaluated from left to right.
+                   </para>
+                </listitem>
+                <listitem>
+                   <para>
+                   There must be a way to group and identify a block of Expressions 
+                   so that the block can be referenced later as an entity.
+                   </para>
+                </listitem>
+             </itemizedlist>
+          </para>
+       </sect3>
+       <sect3>
+          <title>Data Types</title>
+          <variablelist>
+             <varlistentry>
+                <term>natual number</term>
+                <listitem>
+	           <para>ex. -3, -2, -1, 0, 1, 2, 3, ...</para>
+                </listitem>
+             </varlistentry>
+             <varlistentry>
+                <term>floating point</term>
+                <listitem>       
+	           <para>ex. -0.00001, -10E-5, 0.00001, 10E-5</para>
+                </listitem>
+             </varlistentry>
+             <varlistentry>
+                <term>vector</term>
+                <listitem>       
+	           <para>of types: integral and floating point.  ex.
+                      <programlisting>
+  { 0, 1, 2, 3 }
+  { 0.1, 0.2 }
+                      </programlisting>
+                   </para>
+                </listitem>
+             </varlistentry>
+             <varlistentry>
+                <term>matrix</term>
+                <listitem>       
+	           <para>of types: integral and floatings point. ex.
+                      <programlisting>
+   /         \        /                 \
+   | 0  1  2 |        | 0.1  -0.1  1E-5 |
+   | 3  4  5 |        | 0.2  -0.2  2E-5 |
+   \         /        | 0.3  -0.3  3E-5 |
+                      \                 /
+                      </programlisting>
+                   </para>
+                </listitem>
+             </varlistentry>
+             <varlistentry>
+                <term>boolean</term>
+                <listitem>
+                   <para>
+                    Binary values in which one indicates yes/true and the other indicates no/false.       
+                   </para>
+	           <note>
+                      <para>
+                      The use of this data type will be severely limited until 
+                      the language supports more complex statements in addition to 
+                      Expressions.
+                      </para>
+                   </note>
+                </listitem>
+             </varlistentry>
+          </variablelist>
+       </sect3>
+       <sect3>
+          <title>Operators</title>
+          <itemizedlist>
+             <listitem>
+                <para>addition</para>
+             </listitem>
+             <listitem>
+                <para>subtraction</para>
+             </listitem>
+             <listitem>
+                <para>element-wise matrix multiplication</para>
+             </listitem>
+             <listitem>
+                <para>element-wise matrix division</para>
+             </listitem>
+             <listitem>
+                <para>assignment</para>
+             </listitem>
+          </itemizedlist>
+       </sect3>
+       <sect3>
+          <title>Mathematical Functions</title>
+          <note><para>The list given here is just a start. 
+                It may or may not grow substantially in the future.
+                </para>
+          </note>
+          <itemizedlist>
+             <listitem>
+                <para>exponential</para>
+             </listitem>
+             <listitem>
+                <para>natual log</para>
+             </listitem>
+             <listitem>
+                <para>summation</para>
+             </listitem>
+             <listitem>
+                <para>matrix back division (ie. solving Ax=C for x)</para>
+             </listitem>
+             <listitem>
+                <para>matrix transpose</para>
+             </listitem>
+             <listitem>
+                <para>matrix inverse</para>
+             </listitem>
+             <listitem>
+                <para>matrix determinant</para>
+             </listitem>
+          </itemizedlist>
+       </sect3>
+    </sect2>
+    <sect2>
+       <title>Language Extension for SPK</title>
+       <note>
+          <para>
+          Without loss of generality, only the population analysis is being 
+          discussed in this chapter.
+          </para>
+       </note>
+       <sect3>
+          <title>Reserved Identifiers</title>
+          <para>
+          Certain identifiers (symbols associated with entities) will be reserved 
+          by the language for SPK specific usage.  
+          These identifiers may include, for example, a vector variable name that 
+          identifies the initial values for the population parameters or a keyword 
+          that has a fixed meaning associate with it.  These for-SPK reserved 
+          identifiers shall be in a form that clearly distinguishes themselves 
+          from user-defined symbols.  This, in turn, means users are discouraged 
+          to define an identifier in the form that conflicts the rule.
+          </para>
+       </sect3>
+       <sect3>
+          <title>Controlling SPK Mode of Operation</title>
+          <para>
+          The pieces of information are needed to control the basic mode of SPK operation.
+          The language provides reserved identifiers for identifying each item keywords 
+          to indicate a choice.
+          </para>
+          <itemizedlist>
+             <listitem>
+                <para>
+                population analysis or individual analysis?
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                compute statistics for final estimates for the 
+                population parameters?
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                compute statistics for final estimates for the 
+                individual parameters?
+                </para>
+             </listitem>
+          </itemizedlist>
+       </sect3>
+       <sect3>
+          <title>Population Model</title>
+          <para>
+          A model will be defined by users as a set of Expressions.  
+          The language provides reserved identifiers for identifying each model.  
+          Within a model, users can refer to arbitrary values and variables defined else where.
+          </para>
+          <itemizedlist>
+             <listitem>
+                <para>
+                <literal>fi(alp, b)</literal> for each individual, 
+                where <literal>fi = fj</literal> or <literal>fi != fj</literal>
+                </para>
+             </listitem>
+             <listitem>
+                <para>derivative of <literal>fi(alp, b)</literal> with respect 
+                to alp, where <literal>fi_alp = fj_alp</literal> or 
+                <literal>fi_alp != fi_alp</literal>
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                derivative of <literal>fi(alp, b)</literal>
+                 with respect to b, where <literal>fi_b = fj_b</literal>
+                 or <literal>fi_b != fi_b</literal>
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                <literal>Ri(alp, b)</literal>, where <literal>Ri = Rj</literal> 
+                or <literal>Ri != Rj</literal> 
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                derivative of <literal>R(alp, b)</literal> with respect to alp, 
+                where <literal>Ri_alp = Rj_alp</literal> or <literal>Ri_alp != Ri_alp</literal>
+                </para>
+             </listitem>
+             <listitem>
+                <para>derivative of <literal>R(alp, b)</literal> with respect to b, 
+                where <literal>Ri_b = Rj_b</literal> or <literal>Ri_b != Ri_b</literal>
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                D(alp
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                derivative of <literal>D(alp)</literal> with respect to alp
+                </para>
+             </listitem>
+          </itemizedlist>
+       </sect3>
+       <sect3>
+          <title>Population Parameters</title>
+          <para>
+          SPK requires certain parameter values to be given by users.
+          The language provides reserved identifiers for identifying each 
+          parameter set.  Within a parameter set, users can refer to 
+          arbitrary and variables defined else where.
+          </para>
+          <itemizedlist>
+             <listitem>
+                <para>
+                The number of measurements for each individual (vector)
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                The measurements for every individual 
+                (a set of variable-length vectors)
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                The initial estimates for alp (vector)
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                The lower boundary values for alp (vector)
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                The upper boundary values for alp (vector)
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                The step values used for differentiation with 
+                respect to alp (vector)
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                The initial values for each individual's b
+                (a set of fixed-length vectors)
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                The lower boundary values for b (vector)
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                The upper boundary values for b (vector)
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                The step values used for differentiation with respect to b
+                (vector)
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                The method for approximating objective (keyword)
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                The epsilon value used as convergence 
+                criteria in population level optimization (floating point)
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                The epsilon value used as convergence criteria in ind optimization
+                (floating point)
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                The trace level from population level optimizer (natual number)
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                The trace level from individual level optimizer (natural number)
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                The max number of iterations for population level optimization
+                (natrual number)
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                The max number of iterations for individual level optimization
+                (natual number)
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                Request to restart population optimization when exceeds max iterations
+                (boolean)
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                Request to restart individual optimization when exceeds max iterations
+                (boolean)
+                </para>
+             </listitem>
+          </itemizedlist>
+       </sect3>
+       <sect3>
+          <title>Population Data</title>
+          <para>
+          The SPK data set contains a table of data associated with subjects.
+          The table must comply with the NONMEM data records format and may or 
+          may not reside in the same SPK control file. 
+          </para>
+          <sect4>
+             <title>Core Data Format</title>
+             <para>
+             In short, the data records table is organized in the following fashion 
+             (see NONMEM Users Guide Part I, ¡ÈB.1. Data Records¡É, 
+             p6-7 for complete specification):
+             </para>
+             <itemizedlist>
+                <listitem>
+	           <para>
+                   Each row in the table is regarded as a record.
+                   </para>
+                </listitem>
+                <listitem>
+                   <para>
+                   All records have the same number of fields.
+                   </para>
+                </listitem>
+                <listitem>
+                   <para>
+                   A record consists of at least two fields: 
+                   the ID for identifying an individual and the dependent 
+                   variable data item (measurement) associated with the individual.
+                   </para>
+                </listitem>
+                <listitem>
+                   <para>
+                   All records associated with an individual must be grouped 
+                   together in a single contiguous block.  
+                   Two records with the same ID that appear in different blocks 
+                   are considered to belong to different individuals.
+                   </para>
+                </listitem>
+                <listitem>
+                   <para>
+                   IDs may be in any form (integer, double, string¡Ä) 
+                   and thus may not have to be in increasing, decreasing or contiguous order.
+                   </para>
+                </listitem>
+             </itemizedlist>
+          </sect4>
+          <sect4>
+             <title>SPK Specifics</title>
+             <itemizedlist>
+                <listitem>
+                   <para>
+                   Any item in the data set shall be allowed to be referenced 
+                   as an element of a vector identified by its associated (column) 
+                   label and its record ID.
+                   </para>
+                </listitem>
+                <listitem>
+                   <para>
+                   The language provides a mechanism to associate a label to
+                   a column of data items. 
+                   </para>
+                </listitem>
+                <listitem>
+                   <para>
+                   The label associated with subject IDs and the label associated 
+                   with dependent variable data item will be reserved identifiers.
+                   </para>
+                </listitem>
+             </itemizedlist>
+          </sect4>
+       </sect3>
+    </sect2>
+    <sect2>
+       <title>Syntax Definition</title>
+       <sect3>
+          <title>Syntax-directed Translation Definition</title>
+          <para>
+          Source-Target mapping is roughly described as follows:
+          <itemizedlist>
+             <listitem>
+                <para>
+                All values (including ones originated from data set) 
+                referenced from user-defined SPK parameters (2.4) are 
+                translated as constant values in a dynamically-created driver.
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                Those values among (a) which are also referenced within 
+                user-defined SPK models (2.3) are passed into the instance of 
+                SpkModel class through its constructor.
+                </para>
+             </listitem>
+             <listitem>
+                <para>
+                Thus, all values (including ones originated from data set) 
+                referenced from user-defined SPK models (2.3) are
+                translated as member variables of the instance of SpkModel class.
+                </para>
+             </listitem>
+          </itemizedlist>    
+          Details follow:
+          </para>
+       </sect3>
+    </sect2>
+    <sect2>
+       <title>Symbol Table</title>
+       <para></para>
+    </sect2>
+    <sect2>
+       <title>Error Recovery/Report</title>
+       <para></para>
+    </sect2>
+  </sect1>
+</article>
