@@ -1,0 +1,4 @@
+#!/bin/bash
+CONFIG_FILE=/usr/local/spk/ops/regression_test/config/regression_test.xml
+
+/usr/bin/perl /usr/local/bin/regression_test.pl --config-file=$CONFIG_FILE
