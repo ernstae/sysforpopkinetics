@@ -116,7 +116,7 @@ use File::Path;
 use POSIX qw(:signal_h);
 use Proc::Daemon;
 use Spkdb('connect', 'disconnect', 'de_q2c', 'en_q2r', 'end_job',
-	  'get_cmp_jobs', 'get_dataset');
+	  'get_cmp_jobs', 'get_dataset', 'email_for_job');
 use Sys::Syslog('openlog', 'syslog', 'closelog');
 
 
@@ -126,11 +126,18 @@ my $dbuser   = shift;
 my $dbpasswd = shift;
 my $mode     = shift;
 
-my $service_root = "spkcmp";
+my $bugzilla_production_only = 1;
+my $bugzilla_url = "http://192.168.2.3:8081/";
 
+my $service_root = "spkcmp";
+my $bugzilla_product = "SPK";
+my $submit_to_bugzilla = 1;
 if ($mode =~ "test") {
+    $submit_to_bugzilla = !$bugzilla_production_only;
     $service_root .= "test";
+    $bugzilla_product = "SPKtest";
 }
+
 my $service_name = "$service_root" . "d";
 my $prefix_working_dir = "$service_root" . "-";
 
@@ -140,9 +147,11 @@ my $filename_cerr_report = "compilation_error.xml";
 my $filename_serr = "software_error";
 my $lockfile_path = "/tmp/lock_$service_name";
 my $lockfile_exists = 0;
+my $pathname_bugzilla_submit = "/usr/local/bin/bugzilla-submit";
 my $pathname_co  = "/usr/bin/co";   # rcs checkout utility
 my $pathname_compiler = "/usr/local/bin/spkcompiler";
 my $pathname_tar = "/bin/tar";
+my $spk_version = "0.1";
 my $tmp_dir = "/tmp";
 
 sub death {
@@ -400,11 +409,37 @@ sub reaper {
 	    $end_code = "serr";
 	    $err_msg .= "compiler bug caught as exception; ";
 	} 
+	# Get email address of user
+	my $email = &email_for_job($dbh, $job_id);
+	
 	$report = format_error_report("$err_msg $err_rpt");
 	&end_job($dbh, $job_id, $end_code, $report)
 	    or death('emerg', "job_id=$job_id: $Spkdb::errstr");
 	syslog('info',
 	       "job_id=$job_id $err_msg");
+	syslog('info', "submit_to_bugzilla = $submit_to_bugzilla");
+	# Submit compiler bugs to bugzilla
+	if ($submit_to_bugzilla && ($end_code == "serr" || $end_code == "herr")) {
+	    my $summary = $end_code == "serr" ? "soft" : "hard";
+	    my @args = ($pathname_bugzilla_submit);
+	    push @args, "--product",     $bugzilla_product;
+	    push @args, "--version",     $spk_version;
+	    push @args, "--component",   "ASPK";
+	    push @args, "--priority",    "P4";
+	    push @args, "--severity",    "critical";
+	    push @args, "--summary",     "'job_id=$job_id, compiler $summary error'";
+	    if (defined $email) {
+		push @args, "--cc", $email;
+	    }
+	    push @args, "--description", $err_msg;
+	    push @args, "--no-stdin";
+	    push @args, "$bugzilla_url";
+	    system(@args);
+	    my $exit_status = $? >> 8;
+	    if ($exit_status != 0) {
+		syslog('emerg', "bugzilla-submit failed with exit_status=$exit_status");
+	    }
+	}
     }
     if ($save_working_dir) {
 	# Rename working directory to make evidence easier to find
@@ -470,6 +505,7 @@ start();
 
 # Add directories of shared libraries to the load path
 $ENV{LD_LIBRARY_PATH} = "/usr/lib:/usr/local/lib";
+$ENV{HOME} = "/root";
 
 # Create a new process group, with this process as leader.  This will
 # allow us to send the TERM signal to all of our children with a single
