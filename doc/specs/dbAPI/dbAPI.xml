@@ -38,7 +38,7 @@
       major independent components communicate with one another
       and because it is the basis for implementation of a 
       central feature of the design, known as the
-      <ulink url="http://whitechuck.rfpk.washington.edu/soft/&spkVersion;/specs/jobHistory/jobHistory.html">
+      <ulink url="../jobHistory/jobHistory.html">
 	Job History Model
       </ulink>.
     </para>
@@ -95,21 +95,21 @@
       <itemizedlist>
 	<listitem>
 	  <para>
-	    <ulink url="http://whitechuck.rfpk.washington.edu/soft/&spkVersion;/specs/jobHistory/jobHistory.html">
+	    <ulink url="../jobHistory/jobHistory.html">
 	      Job History Model
 	    </ulink>
 	  </para>
 	</listitem>
 	<listitem>
 	  <para>
-	    <ulink url="http://whitechuck.rfpk.washington.edu/soft/&spkVersion;/specs/erModel/erModel.html">
+	    <ulink url="../erModel/erModel.html">
 	      Database Entity-Relationship Model
 	    </ulink>
 	  </para>
 	</listitem>
 	<listitem>
 	  <para>
-	    <ulink url="http://whitechuck.rfpk.washington.edu/soft/&spkVersion;/specs/dbSchema/dbSchema.html">
+	    <ulink url="../dbSchema/dbSchema.html">
 	      Database Schema
 	    </ulink>
 	  </para>
@@ -224,7 +224,7 @@
 	Data types are language dependent.  Because we
 	are dealing with data fields that are defined in SQL, rather than
 	Perl, C++ or Java, the reader should always consult the 
-	<ulink url="http://whitechuck.rfpk.washington.edu/soft/&spkVersion;/specs/dbSchema/dbSchema.html">
+	<ulink url="../dbSchema/dbSchema.html">
 	  Database Schema
 	</ulink>
 	to understand the true specification of a data item.

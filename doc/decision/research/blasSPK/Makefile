@@ -1,7 +1,8 @@
+include ../../../webdir.mk
 T = blasSPK
 HTML_OPS = --nochunks
 STYLE = ../../../stylesheet
-WEB = whitechuck.rfpk.washington.edu:/var/www/html/soft/decision/research/$T
+WEB = $(WEBDIR)/decision/research/$T
 PNG = $(wildcard *.png)
 
 all:	html pdf rtf

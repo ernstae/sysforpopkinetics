@@ -406,7 +406,7 @@ EskaIXSx0PywbyfIR1wWxMpr8gbCjAEUHNF/
     <title>Preparing for Tomcat Configuration</title>
     <para>
       The 
-      <ulink url="http://whitechuck.rfpk.washington.edu/soft/howto/rhel3/web-server/web-server.html">
+      <ulink url="../web-server/web-server.html">
 	Web Server HOWTO
       </ulink> 
       describes the configuration of the tomcat web server for

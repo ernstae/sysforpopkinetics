@@ -776,7 +776,7 @@ whitechuck 2:30 AM, each morning that follows a work day.
       reader provided with RHEL, you will need to reinstall 
       <command>acroread.</command>  This is easily accomplished by
       following the steps in the
-      <ulink url="http://whitechuck.rfpk.washington.edu/soft/howto/rhel3/acroread/acroread.html">
+      <ulink url="../acroread/acroread.html">
 	Acrobat Reader Installation
       </ulink> howto.
     </para>
@@ -787,7 +787,7 @@ whitechuck 2:30 AM, each morning that follows a work day.
       Dia, the Gnu Office diagramming tool, is not included in the
       RHEL distribution.  It can be easily installed, following the
       instructions in the 
-      <ulink url="http://whitechuck.rfpk.washington.edu/soft/howto/rhel3/authoring/authoring.html">
+      <ulink url="../authoring/authoring.html">
 	<emphasis>Authoring RFPK Software Documents</emphasis>
       </ulink>
       howto, in the <emphasis>Installing Dia</emphasis> sub-section.

@@ -281,7 +281,7 @@
       </para>
       <para>
 	This document is now available for viewing
-	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/sourceCpp/sourceCpp.html">here</ulink>.
+	<ulink url="../../specs/sourceCpp/sourceCpp.html">here</ulink>.
 	Return to <link linkend="milestone_table">table</link>.
       </para>
     </sect2>
@@ -345,7 +345,7 @@
       </para>
       <para>
 	This document is now complete and can be viewed
-	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/dbAPI/dbAPI.html">here</ulink>.
+	<ulink url="../../specs/dbAPI/dbAPI.html">here</ulink>.
 	Return to <link linkend="milestone_table">table</link>.
       </para>
     </sect2>
@@ -357,7 +357,7 @@
       </para>
       <para>
 	This milestone is now complete. Documentation can be viewed 
-	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/dbAPIjava/index.html">here</ulink>.
+	<ulink url="../../specs/dbAPIjava/index.html">here</ulink>.
 	Return to <link linkend="milestone_table">table</link>.
       </para>
     </sect2>
@@ -369,7 +369,7 @@
       </para>
       <para>
 	This milestone document is now complete. Documentation can be viewed
-	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/dbAPIperl/Spkdb.html">here</ulink>.
+	<ulink url="../..//specs/dbAPIperl/Spkdb.html">here</ulink>.
 	Return to <link linkend="milestone_table">table</link>.
       </para>
     </sect2>
@@ -383,7 +383,7 @@
       </para>
       <para>
 	This document is now available for viewing
-	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/erModel/erModel.html">here</ulink>.
+	<ulink url="../..//specs/erModel/erModel.html">here</ulink>.
 	Return to <link linkend="milestone_table">table</link>.
       </para>
     </sect2>
@@ -398,7 +398,7 @@
       </para>
       <para>
 	This document is now available for viewing
-	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/dbSchema/dbSchema.html">here</ulink>.
+	<ulink url="../../specs/dbSchema/dbSchema.html">here</ulink>.
 	Return to <link linkend="milestone_table">table</link>.
       </para>
     </sect2>
@@ -417,7 +417,7 @@
       </para>
       <para>
 	This document is now complete and can be viewed
-	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/jobHistory/jobHistory.html">here</ulink>.
+	<ulink url="../..//specs/jobHistory/jobHistory.html">here</ulink>.
 	Return to <link linkend="milestone_table">table</link>.
       </para>
     </sect2>
@@ -438,7 +438,7 @@
       </para>
       <para>
 	This document is now complete and can be viewed
-	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/modelCap/html/modelCap.html">here</ulink>.
+	<ulink url="../../specs/modelCap/html/modelCap.html">here</ulink>.
 	Return to <link linkend="milestone_table">table</link>.
       </para>
     </sect2>
@@ -486,7 +486,7 @@
       </para>
       <para>
 	This document is now complete and can be viewed
-	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/userOutput/userOutput.html">here</ulink>.
+	<ulink url="../../specs/userOutput/userOutput.html">here</ulink>.
 	Return to <link linkend="milestone_table">table</link>.
       </para>
     </sect2>
@@ -514,7 +514,7 @@
       </para>
       <para>
 	This document is available for viewing
-	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/dataML/dataML.html">here</ulink>.
+	<ulink url="../../specs/dataML/dataML.html">here</ulink>.
 	Return to <link linkend="milestone_table">table</link>.
       </para>
     </sect2>
@@ -530,7 +530,7 @@
       </para>
       <para>
 	This document is available for viewing
-	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/sourceML/sourceML.html">here</ulink>.
+	<ulink url="../../specs/sourceML/sourceML.html">here</ulink>.
 	Return to <link linkend="milestone_table">table</link>.
       </para>
     </sect2>
@@ -544,7 +544,7 @@
       </para>
       <para>
 	This document is now available for viewing
-	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/reportML/reportML.html">here</ulink>.
+	<ulink url="../../specs/reportML/reportML.html">here</ulink>.
 	Return to <link linkend="milestone_table">table</link>.
       </para>
     </sect2>

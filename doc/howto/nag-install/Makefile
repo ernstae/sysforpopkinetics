@@ -1,7 +1,8 @@
+include ../../webdir.mk
 T = nag-install
 HTML_OPS = --nochunks
 STYLE = ../../stylesheet
-WEB = whitechuck:/var/www/html/soft/howto/$T
+WEB = $(WEBDIR)/howto/rhel3/$T
 PNG = $(wildcard *.png)
 
 all:	html pdf rtf

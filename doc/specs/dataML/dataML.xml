@@ -137,7 +137,7 @@ even though the actual syntax may not match any of them.
   <sect1>
      <title>Example</title>
      <para>
-        <ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/dataML/SpkDataML.xml"><citetitle>Example</citetitle></ulink>
+        <ulink url="../dataML/SpkDataML.xml"><citetitle>Example</citetitle></ulink>
      </para>
   </sect1>
 </article>

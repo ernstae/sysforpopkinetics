@@ -1,7 +1,8 @@
+include ../../webdir.mk
 T = up2date
 HTML_OPS = --nochunks
 STYLE = ../../stylesheet
-WEB = whitechuck.rfpk.washington.edu:/var/www/html/soft/howto/$T
+WEB = $(WEBDIR)/howto/rhel3/$T
 PNG = $(wildcard *.png)
 
 all:	html pdf rtf

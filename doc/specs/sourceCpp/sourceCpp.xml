@@ -21,11 +21,11 @@ ASPK Compiler produces and that,
 as a whole, is built to an executable that ultimately makes 
 the SPK Library produce what the end-user asks for.  The source code is,
 therefore, the C++ translation of 
-<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/sourceML/sourceML.html">
+<ulink url="../sourceML/sourceML.html">
 SpkSourceML</ulink> and 
-<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/dataML/dataML.html">
+<ulink url="../dataML/dataML.html">
 SpkDataML</ulink> given by MDA, as well as it is to produce an instance of
-<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/reportML/reportML.html">
+<ulink url="../reportML/reportML.html">
 SpkReportML</ulink>.  
 The generated C++ source code is packaged as an archive and put into the CSPK job queue.
       </para>
@@ -37,7 +37,7 @@ The generated C++ source code is packaged as an archive and put into the CSPK jo
        <itemizedlist>
           <listitem>
              <para>
-                <ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/modelCap/html/modelCap.html">
+                <ulink url="../modelCap/html/modelCap.html">
                 Modeling Capabilities Specification</ulink>
              </para>
           </listitem>
@@ -115,7 +115,7 @@ the NONMEM models to fit into the SPK's framework, software-wise.
            <emphasis>
 The complete discussion of mathematical transformation is beyond the scope of
 this document.  One of the text you can find more information about this is
-<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/modelCap/html/modelCap.html">
+<ulink url="../modelCap/html/modelCap.html">
 Modeling Capabilities Specification</ulink>: Appendix B.
            </emphasis>
         </para>
@@ -958,7 +958,7 @@ Obtaining the PRED values.
            </listitem>
            <listitem>
               <para>
-Composing a <ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/reportML/reportML.html">SpkReportML</ulink> document for reporting the errors (if occured),
+Composing a <ulink url="../reportML/reportML.html">SpkReportML</ulink> document for reporting the errors (if occured),
 the population/individual analysis results, the PRED values and statistics values.
               </para>
            </listitem>
