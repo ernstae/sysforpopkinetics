@@ -1,0 +1,13 @@
+#!/bin/sh
+
+source ../../../doc/webdir.sh
+
+DOC1=stage_candidate
+DOC2=deploy_candidate
+
+pod2html ${DOC1}.pl > ${DOC1}.html
+pod2html ${DOC2}.pl > ${DOC2}.html
+
+scp ${DOC1}.html $WEBHOST:$WEBDIR/ops/utils/${DOC1}.html
+scp ${DOC2}.html $WEBHOST:$WEBDIR/ops/utils/${DOC2}.html
+
