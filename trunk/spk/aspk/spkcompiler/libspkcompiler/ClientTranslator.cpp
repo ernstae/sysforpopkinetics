@@ -284,14 +284,9 @@ void ClientTranslator::parseData()
       if( isIDMissing )
 	{
 	  nDataRecords[0] = nRecords;
-	  table.insertLabel( "ID", "",nDataRecords );
-	  tmp_labels.insert( tmp_labels.begin(), "ID");
+	  tmp_labels.insert( tmp_labels.begin(), "ID" );
 	  tmp_values["1"]["ID"].resize( nDataRecords[0] );
 	  fill( tmp_values["1"]["ID"].begin(), tmp_values["1"]["ID"].end(), "1" );
-	  for( int k=0; k<nFields; k++ )
-	    {
-	      table.insertLabel( tmp_labels[k], "", nDataRecords );
-	    }
 	}
 
       //
@@ -310,7 +305,7 @@ void ClientTranslator::parseData()
       // in the table specification.  ie. tmp_ids[0] contains the first individual's ID.
       //
       int who=0;
-     for( vector<string>::const_iterator id = tmp_ids.begin(); id != tmp_ids.end(); id++, who++ )
+      for( vector<string>::const_iterator id = tmp_ids.begin(); id != tmp_ids.end(); id++, who++ )
 	{
 	  for( int k=0; k<nLabels; k++ )
 	    {
