@@ -141,10 +141,10 @@ maximum value, greater than zero and less than or equal one,
 such that the following conditions hold:
 $latex \[
 \begin{array}{rclc}
-\min( x + \beta \Delta x - l )  & \geq & \min( x - l ) / 1000 \\
-\min( u - x - \beta \Delta x )  & \geq & \min( u - x ) / 1000 \\
-\min( a + \beta \Delta a )      & \geq & \min( a ) / 1000     \\
-\min( b + \beta \Delta b )      & \geq & \min( b ) / 1000
+x_i + \beta \Delta x_i - l_i  & \geq & ( x_i - l_i ) / 1000 \\
+u_i - x_i - \beta \Delta x_i  & \geq & ( u_i - x_i ) / 1000 \\
+a_i + \beta \Delta a_i        & \geq & a_i / 1000     \\
+b_i + \beta \Delta b_i        & \geq & b_i / 1000
 \end{array}
 \] $$
 The output values are defined by
@@ -156,7 +156,14 @@ bOut & = &  b + \lambda \Delta b
 \end{array}
 \] $$
 where $latex lambda = \beta / 2^i$$ and $latex i$$ is the smallest
-non-negative integer such that the descent criteria below holds:
+non-negative integer such that the descent criteria below holds.
+$pre
+
+$$
+If $italic msg$$ is "ok",
+$latex xOut = x$$, $latex aOut = a$$ and $latex bOut = b$$,
+then an more accurate answer cannot be obtained 
+(due to numerical round off error).
 
 $head Descent Criteria$$
 We define the function $latex f : \R_+ \rightarrow \R_+$$ by:
@@ -267,7 +274,6 @@ bool NextTest(std::string &msg)
 	double  bOut[1];
 	double  ftmp[3];
 	size_t       i;
-	double epsilon;
 
 	// derivative of R, right hand side, and solution
 	// use CppADvector because LuSolve expects it
@@ -345,19 +351,19 @@ static bool NearZero(
 	size_t n, 
 	const double *l, 
 	const double *u, 
-	const double *sx, 
-	const double *sa, 
-	const double *sb
+	const double *x, 
+	const double *a, 
+	const double *b
 )
 {	size_t i;
 	double dmax = 0.;
 	for(i = 0; i < n; i++)
 	{
-		dmax = max( dmax, fabs( sx[i] / (u[i] - l[i]) ) );
-		dmax = max( dmax, fabs( sa[i] / (u[i] - l[i]) ) );
-		dmax = max( dmax, fabs( sb[i] / (u[i] - l[i]) ) );
+		dmax = max( dmax, fabs( x[i] / (u[i] - l[i]) ) );
+		dmax = max( dmax, fabs( a[i] / (u[i] - l[i]) ) / DBL_EPSILON );
+		dmax = max( dmax, fabs( b[i] / (u[i] - l[i]) ) / DBL_EPSILON );
 	}
-	return dmax <= 100. * DBL_EPSILON;
+	return dmax <= 1e+2 * DBL_EPSILON;
 }
 
 
@@ -391,7 +397,8 @@ const char * Next(
 	mOut = Delta(n, alpha, Q, r, l, u, x, a, b, dx, da, db);
 	
 	// check for zero step case
-	if( NearZero(n, l, u, dx, da, db) )
+	bool nearZero = NearZero(n, l, u, dx, da, db);
+	if( nearZero )
 	{	for(i = 0; i < n; i++)
 		{	dx[i] = 0.;
 			da[i] = 0.;
@@ -438,10 +445,20 @@ const char * Next(
 		}
 		fs = Residual(n, Q, r, l, u, xOut, aOut, bOut, ftmp);
 
-		if( NearZero(n, l, u, xOut, aOut, bOut) )
+		bool small = fabs(fs - f0) <= 
+			1e1 * DBL_EPSILON * (fabs(f0) + fabs(fs));
+		assert( (! nearZero) || small );
+		if( small )
+		{	nearZero = true;
+			for(i = 0; i < n; i++)
+			{	xOut[i] = x[i];
+				aOut[i] = a[i];
+				bOut[i] = b[i];
+			}
 			ok = true;
+		}
 		else if( alpha == 1 )
-		{	ok = fs <= f0;
+		{	ok = fs < f0;
 			if( ! ok )
 			{	for(i = 0; i < n; i++)
 				{	xOut[i] = x[i];
@@ -466,7 +483,6 @@ const char * Next(
 
 	double Qnorm = MaxAbs(n * n, Q);
 	double rnorm = MaxAbs(n, r);
-	double small = 100. * DBL_EPSILON;
 	for(i = 0; i < n; i++)
 	{
 		double x_small  = 1e+2 * DBL_EPSILON * (u[i] - l[i]);

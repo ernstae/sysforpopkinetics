@@ -44,21 +44,24 @@ bool Test_04_02_18(std::string &Msg)
 	double a[]     = { 2e-14 };
 	double b[]     = { 2e-14 };
 
+	double eps = epsilon;
 	Msg = QuadBox(
 		std::cout, 
 		kMax, 
 		level, 
 		n, 
-		epsilon, 
 		Q, 
 		r, 
 		l, 
 		u, 
 		k, 
+		eps, 
 		x, 
 		a, 
 		b 
 	);
+	if( epsilon != eps )
+		Msg = " :QuadBox could not obtain desired accuracy";
 	if( Msg == "ok" )
 	{	std::ostringstream buf;
 		buf << " :QuadBox Iteration Count = " << k;

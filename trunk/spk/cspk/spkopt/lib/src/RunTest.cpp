@@ -31,7 +31,7 @@ extern bool DeltaTest(std::string &msg);
 extern bool NextTest(std::string &msg);
 extern bool MaxAbsTest(std::string &msg);
 extern bool QuadBoxTest(std::string &msg);
-extern bool QuadTrustTest(std::string &msg);
+extern bool QuadFixedTest(std::string &msg);
 extern bool BfgsTest(std::string &msg);
 extern bool QuasiNewton01Box(std::string &msg);
 extern bool Degenerate(std::string &msg);
@@ -63,7 +63,7 @@ int main(void)
 	ok &= RunTest(NextTest,          "Next             ");
 	ok &= RunTest(MaxAbsTest,        "MaxAbs           ");
 	ok &= RunTest(QuadBoxTest,       "QuadBox          ");
-	ok &= RunTest(QuadTrustTest,     "QuadTrust        ");
+	ok &= RunTest(QuadFixedTest,     "QuadFixed        ");
 	ok &= RunTest(BfgsTest,          "Bfgs             ");
 	ok &= RunTest(QuasiNewton01Box,  "QuasiNewton01Box ");
 	ok &= RunTest(Degenerate,        "Degenerate       ");

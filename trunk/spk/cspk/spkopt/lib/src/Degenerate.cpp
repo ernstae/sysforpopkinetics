@@ -18,10 +18,22 @@ License can be found in the COPYING file in the root directory of this
 distribution.
 -----------------------------------------------------------------------
 Author: Brad Bell (brad@apl.washington.edu)
-Version: 03-12-23
 
 */
 // BEGIN PROGRAM
+/*
+Mitches Problem: fourParamQuadratic_isWithinTolTest
+
+Brad                       Mitch
+(n-1) * (2 * x[i-1] - 1)   X[i]
+0 <= x[i-1] <= 1           (1-n) <= X[i] <= (n-1)
+f(x)                       F(X)
+
+F(X) = sum_i=1^n .5 * i^2 * [ X[i-1] + i * (-1)^i ]^2
+f(x) = sum_i=1^n .5 * i^2 * [ (n-1) * (2 * x[i] - 1) + i * (-1)^i ]^2
+     = sum_i=1^n .5 * i^2 * [ 2 * (n-1) * x[i-1] - (n-1) + i * (-1)^i ]^2
+*/
+
 
 # include "QuasiNewton01Box.h"
 # include "Memory.h"
@@ -46,21 +58,26 @@ public:
 	{	delete [] x; 
 		delete [] g; 
 	}
-	// evaluate the function
-	// g[i] = 0 <=> diff = 0 
-	//          <=> 2 * x[i]  = 1 - (-1)^(i+1) * (i+1) / (n-1)
-	//
-	// Hence minimizer of f w.r.t. x in R is
-	// x[i]   =  (n + i) / (2 * n - 2)       if i even
-	// x[i]   =  (n - i - 2) / (2 * n - 2)   if i odd
+	/*
+	evaluate the function
+	g[i-1] = i^2 * [ 2 * (n-1) * x[i-1] - (n-1) + i * (-1)^i ] * 2 * (n-1)
+	g[i-1] = 0 <=> 2 * (n-1) * x[i-1] - (n-1) + i * (-1)^i = 0
+                   <=> x[i-1] = .5 * [ 1. - (-1)^i * i /(n-1) ] 
+                              = .5  - (-1)^i * i /(2 * n - 2) 
+                              = [ n - 1  - (-1)^i * i ] /(2 * n - 2) 
+
+	Hence minimizer of f w.r.t. x in R is
+	// x[i-1]  =  (n + i - 1) / (2 * n - 2)  if i odd
+	// x[i-1]  =  (n - i - 1) / (2 * n - 2)  if i even
 	// 
 	// Note that for minimizing f w.r.t x in [0,1]:
 	// the constraint corresponding to x[n-2] is degererate,
 	// the constraint corresponding to x[n-1] is active and not degenerate,
 	// none of the other constraints are active.
 	//
-	// Also note that the Hessian of f is diagonal with element (i,i)
-	// equal to [ (i+1) * (n-1) * 2 ]^2
+	// Also note that the Hessian H of f is diagonal with element 
+	// H[i-1, i-1] = i^2 * [ 2 * (n-1) ]^2
+	*/
 	const char * function(const double *x_, double &f_ )
 	{	size_t i;
 		double sign;
@@ -72,13 +89,13 @@ public:
 
 		f_ =   0.;
 		sign = 1.;
-		for(i = 0; i < n; i++)
-		{	// (-1)^(i+1)
+		for(i = 1; i <= n; i++)
+		{	// (-1)^i
 			sign  *= -1.;
-			diff   = 2. * (n-1) * x[i] -  (n-1) + sign * (i+1) ;
+			diff   = 2. * (n-1) * x[i-1] -  (n-1) + i * sign;
 			diff_x = 2. * (n-1) ;
-			f_    += .5 * (i+1) * (i+1) * diff * diff;
-			g[i]   = (i+1) * (i+1) * diff * diff_x;
+			f_    += .5 * i * i * diff * diff;
+			g[i-1] = i * i * diff * diff_x;
 		}
 		++fcount;
 		return (const char *)("ok");
@@ -121,7 +138,7 @@ bool Degenerate(std::string &Msg)
 	const size_t         ItrMax = 20;
 	const size_t              n = 3;
 	const size_t        QuadMax = 20 * ItrMax;
-	const double          delta = 1e-10;
+	const double          delta = 1e-8;
 	//
 	Memory<double> dMemory(4 * n +  n * n );
 	double  *xCur = dMemory(n);
