@@ -33,7 +33,7 @@ OBJECT = \
 	MapMonte.o
 
 monteDriver : monteDriver.cpp $(OBJECT) $(INCLUDE)
-	g++ -g $(OBJECT) -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -o monteDriver -lspk -lspkopt -lspkpred -lgsl -latlas_lapack -lcblas -latlas -lpthread -lm
+	g++ -g $(OBJECT) -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -o monteDriver -lspk -lxerces-c -lspkopt -lspkpred -lgsl -latlas_lapack -lcblas -latlas -lpthread -lm
 
 # Rule for compiling C++ soruce files
 #%.o : %.cpp $(INCLUDE) 
