@@ -857,7 +857,7 @@ void NonmemTranslator::interpretData()
 
 	  const char * synonym = C( item->getAttribute( X("synonym") ) );
 
-	  nonmem.data[order].records[item_cnt-1].values.resize( length );
+	  nonmem.data[order].records[item_cnt-1].measurement.resize( length );
 	  nonmem.data[order].records[item_cnt-1].label = const_cast<char*>(label);
           nonmem.data[order].records[item_cnt-1].synonym = const_cast<char*>(synonym);
 
@@ -937,9 +937,9 @@ void NonmemTranslator::interpretData()
 	      DOMNode * actual = valueNode->getFirstChild();
 	      double value = atof( actual != NULL ? C( actual->getNodeValue() ) : "0.0" );
 
-	      nonmem.data[order].records[item_cnt-1].values[value_cnt-1] = value;
+	      nonmem.data[order].records[item_cnt-1].measurement[value_cnt-1] = value;
 	      /*
-      	      cout << "value = " << data[order].columns[item_cnt-1].values[value_cnt-1] << endl;
+      	      cout << "value = " << data[order].columns[item_cnt-1].measurement[value_cnt-1] << endl;
 	      */	      
 	      valueNode = dynamic_cast< DOMElement* >( walker->nextSibling() );
 	    }

@@ -9,10 +9,11 @@
 /**
  * @file ExpTreeGenerator.h
  *
- * Declares ExpTreeGenerator class
+ * Declares ExpTreeGenerator class.
  */
 /**
-
+ * ExpTreeGenerator offers a way to create an expression (DOM-based)
+ * parse tree and other tools to construct/populate the tree.
  */
 class ExpTreeGenerator {
 
