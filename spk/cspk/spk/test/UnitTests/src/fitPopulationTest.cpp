@@ -180,7 +180,7 @@ private:
         //
         // D = [ alp[1] ]
         //
-        ret.resize(_nYi);
+        ret.resize(_nB);
         ret[0] = _a[1];
     }
     bool doIndParVariance_popPar( valarray<double>& ret ) const
@@ -188,7 +188,7 @@ private:
         //
         // D_alp = [ 0  1 ]
         //
-        ret.resize(_nYi * _nA);
+        ret.resize(_nB * _nB * _nA);
         ret[0] = 0.0;
         ret[1] = 1.0;
         return true;
@@ -207,7 +207,7 @@ private:
         //
         // Dinv_alp = [ 0    -alp[1]^(-2) ]
         //
-        ret.resize(_nB * _nA);
+        ret.resize(_nB * _nB * _nA);
         ret[0] = 0.0;
         ret[1] = -1.0 / (_a[1]*_a[1]);
         return true;
@@ -244,7 +244,7 @@ private:
         //
         // R = [ 1 ]
         //
-        ret.resize(_nB*_nB);
+        ret.resize(_nYi*_nYi);
         ret[0] = 1.0;
     }
     bool doDataVariance_popPar( valarray<double>& ret ) const
@@ -252,7 +252,7 @@ private:
         //
         // R_alp = [ 0   0 ]
         //
-        ret.resize(_nB * _nA);
+        ret.resize(_nYi * _nYi * _nA);
         ret[0] = 0.0;
         ret[1] = 0.0;
         return false;
@@ -262,7 +262,7 @@ private:
         //
         // R_b = [ 0 ]
         //
-        ret.resize(_nB *_nB);
+        ret.resize(_nYi *_nYi * _nB);
         ret[0] = 0.0;
         return false;
     }
@@ -271,7 +271,7 @@ private:
         //
         // Rinv = [ 1 ]
         //
-        ret.resize(_nB * _nB);
+        ret.resize(_nYi * _nYi );
         ret[0] = 1.0;
     }
     bool doDataVarianceInv_popPar( valarray<double>& ret ) const
@@ -279,7 +279,7 @@ private:
         //
         // Rinv_alp = [ 0  0 ]
         //
-        ret.resize(_nB * _nA);
+        ret.resize(_nYi * _nYi * _nA);
         ret[0] = 0.0;
         ret[1] = 0.0;
         return false;
@@ -289,7 +289,7 @@ private:
         //
         // Rinv_b = [ 0 ]
         //
-        ret.resize(_nB * _nB * _nB);
+        ret.resize(_nYi * _nYi * _nB);
         ret[0] = 0.0;
         return false;
     }   
