@@ -4,7 +4,7 @@
  * This is the ASPK Compliler that compiles C++ source code from
  * a pair of SpkSourceML and SpkDataML documents.
  *
- * Usage: <code>compiler <em>SOURCE</em> <em>DATA</em> [-print]</code>
+ * Usage: <code>spkcompiler <em>SOURCE</em> <em>DATA</em> [-print]</code>
  * @htmlonly
  * <dl>
  *   <dt><em>SOURCE</em></dt><dd>file path to an SpkSourceML document</dd>
@@ -61,7 +61,7 @@ static client::type getClientName( xercesc::DOMDocument* source )
 }
 
 /**
- * Usage: <code>compiler <em>SOURCE</em> <em>DATA</em> [-print]</code>
+ * Usage: <code>spkcompiler <em>SOURCE</em> <em>DATA</em> [-print]</code>
  *
  * <dl>
  *   <dt><em>SOURCE</em></dt><dd>file path to an SpkSourceML document</dd>
@@ -71,7 +71,7 @@ static client::type getClientName( xercesc::DOMDocument* source )
  */
 static void usage()
 {
-  cout << "Usage: compiler SOURCE DATA [-print]" << endl;
+  cout << "Usage: spkcompiler SOURCE DATA [-print]" << endl;
   cout << endl;
   cout << "   SOURCE    --- file path to an SpkSourceML document" << endl;
   cout << "   DATA      --- file path to an SpkDataML document" << endl;
@@ -79,43 +79,10 @@ static void usage()
   return;
 }
 
-class SpkCompilerErrorXML{
-
-public:
-  SpkCompilerErrorXML()
-  {}
-
-  int push( enum SpkCompilerError::ErrorCode code, const char* message, int line, const char* file )
-  {
-    SpkCompilerError e ( code, message, line, file );
-    myException.push( e );
-
-    return myException.size();
-  }
-  int push( const SpkCompilerError& e )
-  {
-    myException.push( e );
-    return myException.size();
-  }
-
-  friend ostream& operator<<( ostream& o, const SpkCompilerErrorXML& obj )
-  {
-    o << "<spkresultML>" << endl;
-    o << "<error_message>" << endl;
-    o << obj.myException << endl;
-    o << "</error_message>" << endl;
-    o << "</spkresultML>" << endl;
-    return o;
-  }
-
-private:
-  SpkCompilerException myException;  
-};
-
 enum RETURN_CODE { SUCCESS=0, FAILURE };
 
 /**
- * <code>compiler</code> compiles C++ source code from 
+ * <code>spkcompiler</code> compiles C++ source code from 
  * a pair of an SpkSourceML and an SpkDataML documents.
  * <em>When 0 is returned</em>, there will be a set of following files in the current directory:
  * <dl>
@@ -149,8 +116,8 @@ int main( int argc, char * argv[] )
   if (argc < 3)
   {
     usage();
-    sprintf( error_message, "Usage: compiler SOURCE DATA [-print]" );
-    myError.push( SpkCompilerError::SPK_COMPILER_USER_INPUT_ERR, error_message, __LINE__, __FILE__ );
+    sprintf( error_message, "Usage: spkcompiler SOURCE DATA [-print]" );
+    myError.push( SpkCompilerError::ASPK_PROGRAMMER_ERR, error_message, __LINE__, __FILE__ );
     oError << myError << endl;
     oError.close();
     
@@ -172,7 +139,7 @@ int main( int argc, char * argv[] )
     {
       sprintf( error_message, "Error during Xerces-c Initialization.\nException message: %s.\n",
                XMLString::transcode( toCatch.getMessage() ) );
-      myError.push( SpkCompilerError::SPK_COMPILER_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
+      myError.push( SpkCompilerError::ASPK_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
       oError << myError << endl;
       oError.close();
       return FAILURE;
@@ -208,7 +175,7 @@ int main( int argc, char * argv[] )
       {
         XMLPlatformUtils::Terminate();
         sprintf( error_message, "Failed to open %s!\n", gSource );
-	myError.push( SpkCompilerError::SPK_COMPILER_STD_ERR, error_message, __LINE__, __FILE__ );
+	myError.push( SpkCompilerError::ASPK_STD_ERR, error_message, __LINE__, __FILE__ );
 	oError << myError << endl;
 	oError.close();
         return FAILURE;
@@ -222,7 +189,7 @@ int main( int argc, char * argv[] )
     XMLPlatformUtils::Terminate();
     sprintf( error_message, "An error occurred during parsing\n   Message: %s\n", 
 	     XMLString::transcode(e.getMessage() ) );
-    myError.push( SpkCompilerError::SPK_COMPILER_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
+    myError.push( SpkCompilerError::ASPK_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
     oError << myError << endl;
     oError.close();
     return FAILURE;
@@ -240,7 +207,7 @@ int main( int argc, char * argv[] )
 	
         sprintf( error_message, "Message is: %s.\n", 
 		 XMLString::transcode(errText) );
-	myError.push( SpkCompilerError::SPK_COMPILER_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
+	myError.push( SpkCompilerError::ASPK_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
 	oError << myError << endl;
 	oError.close();
         return FAILURE;
@@ -250,7 +217,7 @@ int main( int argc, char * argv[] )
   {
     XMLPlatformUtils::Terminate();
     sprintf( error_message, "An unknown error occurred during parsing.\n %d, %s\n" );
-    myError.push( SpkCompilerError::SPK_COMPILER_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
+    myError.push( SpkCompilerError::ASPK_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
     return FAILURE;
   }
 
@@ -263,7 +230,7 @@ int main( int argc, char * argv[] )
     {
        XMLPlatformUtils::Terminate();
        sprintf( error_message, "Failed to open %s!\n", gData );
-       myError.push( SpkCompilerError::SPK_COMPILER_STD_ERR, error_message, __LINE__, __FILE__ );
+       myError.push( SpkCompilerError::ASPK_STD_ERR, error_message, __LINE__, __FILE__ );
        oError << myError << endl;
        oError.close();
        return FAILURE;
@@ -276,7 +243,7 @@ int main( int argc, char * argv[] )
     XMLPlatformUtils::Terminate();
     sprintf( error_message, "An error occurred during parsing\n   Message: %s\n", 
 	     XMLString::transcode(e.getMessage() ) );
-    myError.push( SpkCompilerError::SPK_COMPILER_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
+    myError.push( SpkCompilerError::ASPK_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
     oError << myError << endl;
     oError.close();
     return FAILURE;
@@ -292,7 +259,7 @@ int main( int argc, char * argv[] )
       {
         XMLPlatformUtils::Terminate();
         sprintf( error_message, "Message is: %s.\n", XMLString::transcode(errText) );
-	myError.push( SpkCompilerError::SPK_COMPILER_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
+	myError.push( SpkCompilerError::ASPK_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
 	oError << myError << endl;
 	oError.close();
         return FAILURE;
@@ -302,7 +269,7 @@ int main( int argc, char * argv[] )
   {
     XMLPlatformUtils::Terminate();
     fprintf( stderr, "An unknown error occurred during parsing %s.\n", gData );
-    myError.push( SpkCompilerError::SPK_COMPILER_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
+    myError.push( SpkCompilerError::ASPK_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
     oError << myError << endl;
     oError.close();
     return FAILURE;
