@@ -67,10 +67,16 @@ const char* NonmemTranslator::C_FOCE                       ( "foce" );
 const char* NonmemTranslator::C_LAPLACE                    ( "laplace" );
 const char* NonmemTranslator::C_MONTE_CARLO                ( "monte_carlo" );
 const char* NonmemTranslator::C_METHOD                     ( "method" );
-const char* NonmemTranslator::C_MONTE                      ( "monte" );
-const char* NonmemTranslator::C_NUMBEREVAL                 ( "number_eval" );
 const char* NonmemTranslator::C_ANALYTIC                   ( "analytic" );
 const char* NonmemTranslator::C_GRID                       ( "grid" );
+const char* NonmemTranslator::C_MISER                      ( "miser" );
+const char* NonmemTranslator::C_PLAIN                      ( "plain" );
+//==============================================================================
+// REIVISIT SACHIKO
+// Eliminte C_MONTE!
+const char* NonmemTranslator::C_MONTE                      ( "monte" );
+//==============================================================================
+const char* NonmemTranslator::C_NUMBEREVAL                 ( "number_eval" );
 const char* NonmemTranslator::C_POP_SIZE                   ( "pop_size" );
 const char* NonmemTranslator::C_IS_ESTIMATION              ( "is_estimation" );
 const char* NonmemTranslator::C_IS_ETA_OUT                 ( "is_eta_out" );
@@ -123,8 +129,9 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     myIsStat            ( false ),
     mySubproblemsN      ( 1 ),
     myApproximation     ( FO ),
-    myMonteMethod       ( MONTE ),
-    myMonteNumberEval   ( 1000 ),
+    myIntegMethod       ( PLAIN ),
+    myIntegNumberEvals  ( 1 ), // this is a vector
+    myIntegNEvals       ( 1 ),
     myPopSize           ( 1 ),
     myIsEtaOut          ( false ),
     myIsRestart         ( true ),
@@ -273,9 +280,11 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   X_FO             = XMLString::transcode( C_FO );
   X_FOCE           = XMLString::transcode( C_FOCE );
   X_LAPLACE        = XMLString::transcode( C_LAPLACE );
-  X_MONTE          = XMLString::transcode( C_MONTE );
   X_ANALYTIC       = XMLString::transcode( C_ANALYTIC );
   X_GRID           = XMLString::transcode( C_GRID );
+  X_PLAIN          = XMLString::transcode( C_PLAIN );
+  X_MISER          = XMLString::transcode( C_MISER );
+  X_MONTE          = XMLString::transcode( C_MONTE );
 
   myPopEpsilon = pow( 10.0, -(mySigDigits+1.0) );
   myIndEpsilon = pow( 10.0, -(mySigDigits+1.0) );
@@ -342,7 +351,13 @@ NonmemTranslator::~NonmemTranslator()
   XMLString::release( &X_LAPLACE );
   XMLString::release( &X_ANALYTIC );
   XMLString::release( &X_GRID );
+  XMLString::release( &X_PLAIN );
+  XMLString::release( &X_MISER );
+//===========================================================================
+// REVISIT SACHIKO
+// Eliminate the following!
   XMLString::release( &X_MONTE );
+//===========================================================================
   XMLString::release( &X_NUMBEREVAL );
   XMLString::release( &X_POP_SIZE );
   XMLString::release( &X_IS_ESTIMATION );
@@ -475,31 +490,90 @@ void NonmemTranslator::parseSource()
   if( monte_carlos->getLength() > 0 )
   {
     myIsMonte = true;
+    if( myTarget != POP )
+    {
+       char mess[ SpkCompilerError::maxMessageLen() ];
+       sprintf( mess, "Integral methods are only valid for the population analysis results.");
+       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR,
+           mess, __LINE__, __FILE__ );
+       throw e;
+    }
     DOMElement * monte_carlo = dynamic_cast<DOMElement*>( monte_carlos->item(0) );
 
-      if( monte_carlo->hasAttribute( X_METHOD ) )
-      {
-	const XMLCh* x_temp = monte_carlo->getAttribute( X_METHOD );
-	if( XMLString::equals( x_temp, X_ANALYTIC ) )
-	  myMonteMethod = ANALYTIC;
-	else if( XMLString::equals( x_temp, X_GRID ) )
-	  myMonteMethod = GRID;
-	else
-	  myMonteMethod = MONTE;
-      }
-      if( monte_carlo->hasAttribute( X_NUMBEREVAL) )
-	{
-	  const XMLCh* x_num = monte_carlo->getAttribute( X_NUMBEREVAL );
-	  if( ! XMLString::textToBin( x_num, myMonteNumberEval ) )
-	    {
-	      char mess[ SpkCompilerError::maxMessageLen() ];
-	      sprintf( mess, 
-		       "Invalid %s attribute value in \"%s\" tag: %s", C_NUMBEREVAL, C_MONTE_CARLO,
-		       XMLString::transcode(x_num) );
-	      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
-	      throw e;
-	    }
-	}
+    if( monte_carlo->hasAttribute( X_METHOD ) )
+    {
+       const XMLCh* x_temp = monte_carlo->getAttribute( X_METHOD );
+       if( XMLString::equals( x_temp, X_ANALYTIC ) )
+	  myIntegMethod = ANALYTIC;
+       else if( XMLString::equals( x_temp, X_GRID ) )
+	  myIntegMethod = GRID;
+       else if( XMLString::equals( x_temp, X_MISER ) )
+          myIntegMethod = MISER;
+//==============================================================================
+// REVISIT SACHIKO
+// Eliminate these line!
+       else if( XMLString::equals( x_temp, X_MONTE ) )
+          myIntegMethod = MONTE;
+//==============================================================================
+       else //if( XMLString::equals( x_temp, X_PLAIN ) )
+          myIntegMethod = PLAIN;
+    }
+    else
+    {
+       char mess[ SpkCompilerError::maxMessageLen() ];
+       sprintf( mess, "\"monte_carlo\" requires \"%s\" attribute!", C_METHOD );
+       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess,
+                               __LINE__, __FILE__ );
+       throw e;
+    }
+    DOMNodeList * number_evals = monte_carlo->getElementsByTagName( X_NUMBEREVAL );
+    if( number_evals->getLength() < 1 )
+    {
+       char mess[ SpkCompilerError::maxMessageLen() ];
+       sprintf( mess, "\"%s\" tag is missing!", C_NUMBEREVAL );
+       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR,
+                               mess, __LINE__, __FILE__ );
+       throw e;
+    }
+    DOMElement  * number_eval  = dynamic_cast<DOMElement*>( number_evals->item(0) );
+    DOMNodeList * value_list = number_eval->getElementsByTagName( X_VALUE );
+    myIntegNEvals = value_list->getLength();
+    if( myIntegNEvals < 1 )
+    {
+       char mess[ SpkCompilerError::maxMessageLen() ];
+       sprintf( mess, "The number of occurences of \"%s\" tag must be greater than zero!",
+                C_VALUE );
+       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR,
+                               mess, __LINE__, __FILE__ );
+       throw e;
+    }
+    if( myIntegMethod == GRID )
+    {
+        if( myIntegNEvals != myEtaLen )
+        {
+           char mess[ SpkCompilerError::maxMessageLen() ];
+           sprintf( mess, "The number of occurences of \"%s\" tag must be equal to the length of ETA (%d) for grid and miser approximation!", 
+                    C_VALUE, myEtaLen );
+           SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR,
+                                    mess, __LINE__, __FILE__ );
+           throw e;
+        }
+    }
+    else // plain, miser, analytic
+    {
+       // For these methods, ignore what the user says.
+       // They take only one and the first occurence of <number_eval>.
+       myIntegNEvals = 1;
+    }
+    myIntegNumberEvals.resize( myIntegNEvals );
+    for( int i=0; i<myIntegNEvals; i++ )
+    {
+       DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(i) );
+       const XMLCh * x_value = value->getFirstChild()->getNodeValue();
+       unsigned int temp_value = 0;
+       XMLString::textToBin( x_value, temp_value );
+       myIntegNumberEvals[i] = temp_value;
+    }
   }
   //------------------------------------------------------
   //<presentation>
@@ -743,6 +817,7 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << endl;
 
       oMakefile << "prod : " << endl;
+      oMakefile << "\tmake -f Makefile.SPK monte_clean" << endl;
       oMakefile << "\tcp /usr/local/src/$(PROD_DIR)/ml/* ." << endl;
       oMakefile << "\tg++ $(CPP_FLAGS) $(MONTE_SRC) -o monteDriver ";
       oMakefile << "-L/usr/local/lib/$(PROD_DIR) ";
@@ -752,6 +827,7 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << endl;
       
       oMakefile << "test : " << endl;
+      oMakefile << "\tmake -f Makefile.SPK monte_clean" << endl;
       oMakefile << "\tcp /usr/local/src/$(TEST_DIR)/ml/* . " << endl;
       oMakefile << "\tg++ $(CPP_FLAGS) $(MONTE_SRC) -o monteDriver ";
       oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
@@ -760,6 +836,10 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "$(LIBS)" << endl;
       oMakefile << endl;
   
+      oMakefile << "monte_clean : " << endl;
+      oMakefile << "\trm -f $(MONTE_SRC) $(MONTE_INCLUDE)" << endl;
+      oMakefile << endl;
+
       oMakefile << "clean : " << endl;
       oMakefile << "\trm -f $(COMMON_INCLUDE) \\" << endl;
       oMakefile << "\t$(MONTE_SRC) \\" << endl;
@@ -3205,7 +3285,8 @@ void NonmemTranslator::generateMonteParsNamespace() const
   oMontePars << "// " << endl;
   oMontePars << "// The namespace MontePars exports the values needed by monteDriver.cpp." << endl;
   oMontePars << "// " << endl;
-  oMontePars << "// The user requested the " << (myTarget==POP? "population":"individual") << " analysis." << endl;
+  oMontePars << "// The user requested the " << (myTarget==POP? "population":"individual");
+  oMontePars << " analysis." << endl;
   oMontePars << "// " << endl;
   oMontePars << "//==============================================================================" << endl;
 
@@ -3213,17 +3294,37 @@ void NonmemTranslator::generateMonteParsNamespace() const
   oMontePars << "#define MONTEPARS_H" << endl;
   oMontePars << endl;
 
-  oMontePars << "namespace MontePars{" << endl;
-  oMontePars << "   enum METHOD { monte, analytic, grid };" << endl;
-  oMontePars << "   const enum METHOD method = ";
-  if( myMonteMethod == GRID )
-    oMontePars << "grid;";
-  else if( myMonteMethod == ANALYTIC )
-    oMontePars << "analytic;" << endl;
-  else //( myMonteMethod == MONTE )
-    oMontePars << "monte;" << endl;
+  oMontePars << "#include <spk/SpkValarray.h>" << endl;
+  oMontePars << endl;
 
-  oMontePars << "   const int numberEval = " << myMonteNumberEval << ";" << endl;
+  oMontePars << "namespace MontePars{" << endl;
+  oMontePars << "   enum METHOD { analytic, grid, plain, miser, monte };" << endl;
+  oMontePars << "   const enum METHOD method = ";
+  if( myIntegMethod == GRID )
+    oMontePars << "grid;" << endl;
+  else if( myIntegMethod == MISER )
+    oMontePars << "miser;" << endl;
+  else if( myIntegMethod == ANALYTIC )
+    oMontePars << "analytic;" << endl;
+//===========================================================================
+// REVISIT SACHIKO
+// Remove the following!
+  else if( myIntegMethod == MONTE )
+    oMontePars << "monte;" << endl;
+//===========================================================================
+  else //if( myIntegMethod == PLAIN )
+    oMontePars << "plain;" << endl;
+
+  oMontePars << "   const int nEval = " << myIntegNEvals << ";" << endl;
+  oMontePars << "   const int c_numberEval[ nEval ] = { ";
+  for( int i=0; i<myIntegNEvals; i++ )
+  {
+     if( i > 0 )
+        oMontePars << ", ";
+     oMontePars << myIntegNumberEvals[i];
+  }
+  oMontePars << " };" << endl;
+  oMontePars << "   const SPK_VA::valarray<int> numberEval( c_numberEval, nEval );" << endl;
   oMontePars << "};" << endl;
 
   oMontePars << endl;
