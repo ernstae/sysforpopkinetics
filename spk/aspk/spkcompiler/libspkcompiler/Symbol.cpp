@@ -252,6 +252,7 @@ std::ostream& operator<<( std::ostream& o, const Symbol& s )
   if( s.symbol_type == Symbol::DATALABEL )
     {
       o << "data label" << endl;
+      o << "Alias (if any) : " << s.synonym << endl;
       int n = s.initial.size();
       o << "#Data Subsets  : " << n << endl;
       for( int i=0; i<n; i++ )
