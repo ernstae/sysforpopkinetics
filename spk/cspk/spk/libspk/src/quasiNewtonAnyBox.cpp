@@ -906,22 +906,19 @@ void quasiNewtonAnyBox(
 
     // Retrieve the previous state information.
     StateInfo stateInfo = optimizer.getStateInfo();
-
     if ( stateInfo.n == nObjPar )
     {
       rScaled = stateInfo.r;
-	fScaled = stateInfo.f;
-
-
-          REPLACE THESE WITH LOOPS OVER ALL ELEMENTS
-          REPLACE THESE WITH LOOPS OVER ALL ELEMENTS
-          REPLACE THESE WITH LOOPS OVER ALL ELEMENTS
-          REPLACE THESE WITH LOOPS OVER ALL ELEMENTS
-          REPLACE THESE WITH LOOPS OVER ALL ELEMENTS
-
-	yCurr   = stateInfo.x;
-	gScaled = stateInfo.g;
-	hScaled = stateInfo.h;
+      fScaled = stateInfo.f;
+      for ( i = 0; i < nObjPar; i++ )
+      {
+	yCurr[i]   = stateInfo.x[i];
+	gScaled[i] = stateInfo.g[i];
+      }
+      for ( i = 0; i < nObjPar * nObjPar; i++ )
+      {
+	hScaled[i] = stateInfo.h[i];
+      }
     }
     else
     {
