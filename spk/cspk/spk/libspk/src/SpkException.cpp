@@ -411,7 +411,7 @@ using namespace std;
 static const char *const substr(const char * begin, const char * end, char * buf, int bufsize) throw()
 {
     try{
-        std::fill(buf, buf+bufsize, NULL);
+        std::fill(buf, buf+bufsize, '\0');
         std::copy(begin, end, buf);
     }
     catch(...)
@@ -635,7 +635,7 @@ std::ostream& operator<<(std::ostream& stream, const SpkException& e)
         buf << e._error_list[i];
         stream << buf << '\r' << endl << endl;
     }
-    stream.put(NULL);
+    stream.put('\0');
     return stream;
 }
 

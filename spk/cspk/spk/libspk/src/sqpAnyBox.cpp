@@ -487,7 +487,6 @@ $end
 #include <cmath>
 #include <cfloat>
 #include <vector>
-#include <strstream>
 //#include <direct.h>
 extern "C" {
 #include "nag.h"
@@ -1294,13 +1293,10 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
 
   if( !ok )
   {
-      std::strstream stream;
-      stream << fail.code << endl;
-      stream << fail.message << endl;
-      stream << fail.errnum << endl;
-
-      stream.put(NULL);
-      SpkError err(errorcode, stream.str(), __LINE__, __FILE__ );
+      const int max = SpkError::maxMessageLen();
+      char message[max];
+      sprintf( message, "%d%s%d\0", fail.code, fail.message, fail.errnum );
+      SpkError err(errorcode, message, __LINE__, __FILE__ );
 
       throw info.exceptionOb.push(err);
   }
