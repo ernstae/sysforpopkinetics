@@ -287,7 +287,20 @@ $syntax/
 /$$
 This $xref/Optimizer//Optimizer/$$ object contains the information 
 that controls the optimization process.
-Most of this information is accessible via public get functions,
+$pre
+
+$$
+It has attributes for holding the optimization state information 
+that is required to perform a warm start, i.e., to start the
+optimization process using a previous set of optimizer state
+information.
+If restart is intended, then before this function is called 
+the member function of the Optimizer object, setupWarmStart(), 
+must be called in order to set up the warm start information.
+$pre
+
+$$
+Most of the optimizer information is accessible via public get functions,
 e.g., the value epsilon is returned by the function getEpsilon.
 The following subsections specify how this function uses each
 of the elements of the Optimizer object that is accessed in
@@ -297,6 +310,19 @@ $subhead optimizer.epsilon$$
 This real number is used to specify the convergence criteria
 for the optimizer.
 It must be greater than $math%0.0%$$.
+A population parameter value $math%alpOut%$$ is accepted as an 
+estimate for $math%alpHat%$$ if 
+$math%
+	abs(alpOut - alpHat) \le epsilon (alpUp - alpLow)
+%$$
+where $math%abs%$$ is the element-by-element absolute value function
+and $math%alpHat%$$ is the true minimizer of 
+the parametric population objective function.
+Since $math%alpHat%$$ is unknown, the optimization algorithm must 
+estimate the left hand side of this inequality.
+Note that if another attribute that specifies
+$math%nMaxIter%$$ is set to zero, then $math%alpIn%$$ is 
+accepted as the estimate for $math%alpHat%$$.
 
   // *                                                                    *
   // *     abs( xOut - xStar )  <=  epsilon (xUp - xLow) .                *
