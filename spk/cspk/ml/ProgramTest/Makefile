@@ -18,6 +18,7 @@ INCLUDE = \
 	MontePopObj.h \
 	MapBay.h \
 	MapMonte.h \
+	Gsl2SpkError.h \
 	Pred.h \
 	DataSet.h \
 	IndData.h \
@@ -30,6 +31,7 @@ OBJECT = \
 	GridIntegral.o \
 	MontePopObj.o \
 	MapBay.o \
+	Gsl2SpkError.o \
 	MapMonte.o
 
 All : monteDriver
