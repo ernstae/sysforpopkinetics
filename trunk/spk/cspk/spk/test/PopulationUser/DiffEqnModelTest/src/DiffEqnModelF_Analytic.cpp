@@ -35,7 +35,6 @@
 #pragma warning (disable: 4786)
 
 #include <cmath>
-#include <strstream>
 #include <limits>
 #include <spk/SpkValarray.h>
 #include "DiffEqnModel.h"
@@ -63,6 +62,7 @@ using SPK_VA::valarray;
 void DiffEqnModel::doDataMean( valarray<double>& fiOut ) const 
 {
   using namespace std;
+  fiOut.resize(_Ni);
 
   if(isCachedFiValid)
   {
@@ -141,11 +141,15 @@ void DiffEqnModel::doDataMean( valarray<double>& fiOut ) const
   {
     if( cachedFi[i] == numeric_limits<double>::infinity() )
     {
-      strstream message;
-      message << "Inidiviudal index (0-): " << _who << endl;
-      message << "Vector fi() index (0-): " << i << endl;
-      message << "The value, " << cachedFi[i] << ", is not a valid number!" <<ends;
-      throw SpkException( SpkError::SPK_FP_INVALID_ERR, message.str(), __LINE__, __FILE__ );
+      const int len = SpkError::maxMessageLen();
+      char message [ len ];
+      sprintf(  message,
+                "Inidiviudal index (0-): %d\n \
+                Vector fi() index (0-): %d\n \
+                The value, %f, is not a valid number!\n",
+                _who, i, cachedFi[i] );
+
+      throw SpkException( SpkError::SPK_FP_INVALID_ERR, message, __LINE__, __FILE__ );
     }
   }
 

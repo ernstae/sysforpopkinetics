@@ -60,6 +60,7 @@ void DiffEqnModel::doSetPopPar( const valarray<double>& alp )
         // If the fixed population parameter vector has changed,
         // then any cached values are no longer valid.
         invalidateCachedValues();
+	_alp.resize( alp.size() );
         _alp = alp; 
     }
 }
@@ -70,6 +71,7 @@ void DiffEqnModel::doSetIndPar( const valarray<double>& b )
         // If the random population parameter vector has changed,
         // then any cached values are no longer valid.
         invalidateCachedValues();
+	_b.resize( b.size() );
         _b = b; 
     }
 }

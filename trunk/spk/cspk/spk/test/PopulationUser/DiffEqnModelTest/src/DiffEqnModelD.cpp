@@ -39,111 +39,122 @@ const valarray<double> DiffEqnModel::Dval( int Q, const valarray<double> &alp, c
     int m = 4;
     valarray<double> C(0.0, Q*Q); 
 
-	if(omega == BLOCK)
-    {
-		for( int j = 0, i = m; j < Q; j++, i += j )
-		{
+    if(omega == BLOCK)
+      {
+	for( int j = 0, i = m; j < Q; j++, i += j )
+	  {
             C[ slice(j, j + 1, Q) ] =  alp[ slice(i, j + 1, 1) ];
-		}
+	  }
         C = multiply(C, Q, transpose(C, Q), Q);
-	}
-
-	if(omega == DIAGONAL)
-	{
+      }
+    
+    if(omega == DIAGONAL)
+      {
         for( int j = 0; j < Q; j++ )
-		{
-		    C[ j + j * Q ] = alp[ m++ ];
-		}
-	}
-	return C;
+	  {
+	    C[ j + j * Q ] = alp[ m++ ];
+	  }
+      }
+    return C;
 }
 
 void DiffEqnModel::doIndParVariance( valarray<double> & DOut ) const
 {   
+    DOut.resize( _b.size() * _b.size() );
+
     if(isCachedDValid)
     {
-        DOut = cachedD;
-        return;
+      DOut = cachedD;
+      return;
     }
+    cachedD.resize( _b.size() * _b.size() );
     cachedD = Dval(_Q, _alp, _omega);
     isCachedDValid = true;
+
     DOut = cachedD;
 }
 bool DiffEqnModel::doIndParVariance_popPar( valarray<double>& D_alpOut ) const
 {
+    D_alpOut.resize( _b.size() * _b.size() * _alp.size() );
+    
     if ( isCachedDaValid )
     {
       D_alpOut = cachedDa;
       return !allZero(D_alpOut);
     }
         
-	valarray<double> C(0.0, _Q * _Q);
-	valarray<double> C_a(0.0, _Q * _Q * _P);
-
-	if(_omega == BLOCK)
-    {
+    valarray<double> C(0.0, _Q * _Q);
+    valarray<double> C_a(0.0, _Q * _Q * _P);
+    cachedDa.resize( _b.size() * _b.size() * _alp.size() );
+ 
+    if(_omega == BLOCK)
+      {
         int Cindex[]  = {0, 3, 4, 6, 7, 8};
         valarray<double> I(0.0, _Q * _Q);
         int j, m;
         I[ slice(0, _Q, _Q+1) ] = 1.0;
         for( j=0, m=4; j<_Q; j++, m+=j )
-		{
+	  {
             C[ slice(j, j+1, _Q) ] =  _alp[ slice(m, j+1, 1) ];
-		}
+	  }
         for( j=0, m=4; j < _Q; j++ )
-		{    
+	  {    
             for(int k = 0; k <= j; k++, m++)
-			{   
+	      {   
                 C_a[ Cindex[m-4] + m * _Q * _Q] = 1.;
-			}
-		}
+	      }
+	  }
         if ( !isCachedDValid )
-		{
+	  {
+	    cachedD.resize( _b.size() * _b.size() );
             cachedD = multiply(C, _Q, transpose(C, _Q), _Q);
-		}
+	  }
         valarray<double> Ct_a = transposeDerivative(C_a, _Q, _Q, _P);;
         cachedDa = AkronItimesC(C, _Q, I, _Q, Ct_a, _P) +IkronBtimesC(I,_Q, C, _Q, C_a, _P);
-	}
-
-	if(_omega == DIAGONAL)
-	{
-	    int m = 4;
-	    C_a[36] = 1.0;
-	    C_a[49] = 1.0;
-	    C_a[62] = 1.0;
-	    if ( !isCachedDValid )
-		{
-	        for(int j = 0; j < _Q; j++)
-		        C[j * (_Q + 1)] = _alp[m++];
-	        cachedD = C;
-		}
-		cachedDa = C_a;
-	}
-
-	isCachedDValid = true;
+      }
+    
+    if(_omega == DIAGONAL)
+      {
+	int m = 4;
+	C_a[36] = 1.0;
+	C_a[49] = 1.0;
+	C_a[62] = 1.0;
+	if ( !isCachedDValid )
+	  {
+	    for(int j = 0; j < _Q; j++)
+	      C[j * (_Q + 1)] = _alp[m++];
+	    cachedD = C;
+	  }
+	cachedDa = C_a;
+      }
+    
+    isCachedDValid = true;
     isCachedDaValid = true;
     D_alpOut = cachedDa;
     return !allZero(D_alpOut);
 }
 void DiffEqnModel::doIndParVarianceInv( valarray<double>& DInvOut ) const
 {
-    if( isCachedDInvValid )
+  DInvOut.resize( _b.size() * _b.size() );
+  if( isCachedDInvValid )
     {
-        DInvOut = cachedDInv;
-        return;
+      DInvOut = cachedDInv;
+      return;
     }
+  
+  valarray<double> DOut( _b.size() * _b.size() );
+  doIndParVariance(DOut); 
 
-    valarray<double> DOut;
-    doIndParVariance(DOut); 
-    try{
-      cachedDInv = inverse(DOut, _Q);
-    }
-    catch(...)
+  cachedDInv.resize( _b.size() * _b.size() );
+  try{
+    cachedDInv = inverse(DOut, _Q);
+  }
+  catch(...)
     {
       std::cerr << "Failed to invert a matrix in doIndParVarianceInv()" << std:: endl;
       assert(false);
       
     }
-    isCachedDInvValid = true;
-    DInvOut = cachedDInv;
+  isCachedDInvValid = true;
+  DInvOut = cachedDInv;
 }
