@@ -670,12 +670,12 @@ namespace // [Begin: unnamed namespace]
       // Transform the elements of the y vector back to their unscaled form. 
       unscaleElem(
         nX,
-	yCurr,
-	pdXLowData,
-	pdXUpData,
-	pdXDiffData,
-	indexXFreeInY,
-	pdXCurrData );
+        yCurr,
+        pdXLowData,
+        pdXUpData,
+        pdXDiffData,
+        indexXFreeInY,
+        pdXCurrData );
 
 
       //--------------------------------------------------------
@@ -967,7 +967,7 @@ void quasiNewtonAnyBox(
     for ( i = 0; i < nObjParFree; i++ )
     {
       yCurr[i] = ( pdXInData[indexYInX[i]] - pdXLowData[indexYInX[i]] ) / 
-	pdXDiffData[indexYInX[i]];
+        pdXDiffData[indexYInX[i]];
     }
 
     // Get initial values for the objective and its gradient.
@@ -1242,7 +1242,7 @@ void quasiNewtonAnyBox(
             // than epsilon.  The reason for this is that the quadratic
             // subproblem uses a quadratic approximation for the objective, 
             // which may not necessarily be accurate for the current y value.  
-	    if ( MaxAbs( nObjParFree, sScaled ) < epsilon / 5.0 )
+            if ( MaxAbs( nObjParFree, sScaled ) < epsilon / 5.0 )
             {
               // Check that none of the elements of sScaled are greater than or
               // equal to the trust region radius, which would indicate that
