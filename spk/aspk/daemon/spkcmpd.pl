@@ -366,7 +366,8 @@ sub fork_compiler {
 }
 sub format_error_report {
     my $content = shift;
-    my $report = "<spkreport>\n";
+    my $report = '<?xml version="1.0"?>\n';
+    $report .= "<spkreport>\n";
     $report .= "  <error_message>\n";
     $report .= "    $content\n";
     $report .= "  </error_message>\n";
