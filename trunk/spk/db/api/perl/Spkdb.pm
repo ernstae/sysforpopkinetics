@@ -31,7 +31,7 @@ our @ISA = qw(Exporter);
 our @EXPORT_OK = (
     'connect', 'disconnect', 'new_job', 'get_job', 'job_status', 'user_jobs', 
     'de_q2c', 'get_cmp_jobs', 'get_run_jobs',
-    'en_q2r', 'de_q2r', 'end_job', 'job_report', 'job_history',
+    'en_q2r', 'de_q2r', 'end_job', 'job_report', 'job_checkpoint', 'job_history',
     'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
     'new_model', 'get_model', 'update_model', 'user_models',
     'new_user', 'update_user', 'get_user', 'email_for_job'
@@ -760,7 +760,7 @@ not actually terminate the processing of a job.  Instead,
 it sets the state of the job to 'end', and stores the
 final report.
 
-    $r = &Spkdb::en_q2r($dbh, $job_id, $end, $report);
+    $r = &Spkdb::en_q2r($dbh, $job_id, $end, $report, $checkpoint);
 
 $dbh is the handle to an open database connection.
 
@@ -768,7 +768,9 @@ $job_id is a unique job table identifier.
 
 $end_code is a valid end_code, defined in the end table.
 
-$report is a string contain the report.
+$report is a string containing the report.
+
+$checkpoint is a string containing the checkpoint file
 
 Returns
 
@@ -785,6 +787,7 @@ sub end_job() {
     my $job_id = shift;
     my $end_code = shift;
     my $report = shift;
+    my $checkpoint = shift;
     my $event_time = time();
     $err = 0;
     $errstr = "";
@@ -812,7 +815,8 @@ sub end_job() {
 	      .  "set state_code='$state_code', "
               .      "end_code='$end_code', "
 	      .      "event_time=$event_time, "
-              .      "report=? "
+              .      "report=?, "
+	      .      "checkpoint=? "
               .  "where job_id=$job_id;";
 
     $sth = $dbh->prepare($sql);
@@ -821,7 +825,7 @@ sub end_job() {
 	$err = $PREPARE_FAILED;
 	return 0;
     }
-    unless ($sth->execute($report)) {
+    unless ($sth->execute($report, $checkpoint)) {
 	$errstr = "end_job failed to update the job table";
 	$err = $UPDATE_FAILED;
 	return 0;
@@ -829,7 +833,6 @@ sub end_job() {
     &add_to_history($dbh, $job_id, $state_code);
     return 1;
 } 
-
 =head2 job_report -- retrieve final report for a job
 
 Retrieve the report string for a job in the 'end' state.
@@ -879,6 +882,61 @@ sub job_report() {
     }
     unless ($rrow->[0] =~ /^end$/) {
 	$errstr = "no report (job not at end)";
+	$err = $NOT_ENDED;
+	return undef;
+    }
+    return $rrow->[1];
+}
+
+=head2 job_checkpoint -- retrieve final checkpoint for a job
+
+Retrieve the checkpoint string for a job in the 'end' state.
+
+    $checkpoint = &Spkdb::job_checkpoint($dbh, $job_id);
+
+$dbh is the handle to an open database connection.
+
+$job_id is the unique numeric identifier of a job;
+
+Returns
+
+    success: a string containing the checkpoint
+    failure: undef
+        $Spkdb::errstr contains an error message string
+        $Spkdb::err == $Spkdb::NOT_ENDED if job not in 'end' state
+                    == $Spkdb::PREPARE_FAILED if prepare function failed
+                    == $Spkdb::EXECUTE_FAILED if execute function failed
+                    == $Spkdb::GET_FAILED if retieval failed
+
+=cut
+
+sub job_checkpoint() {
+    my $dbh = shift;
+    my $job_id = shift;
+    $err = 0;
+    $errstr = "";
+
+    my $sql = "select state_code, checkpoint from job where job_id=$job_id;";
+    my $sth = $dbh->prepare($sql);
+    unless ($sth) {
+	$err = $PREPARE_FAILED;
+	$errstr = "could not prepare statement: $sql";
+	return undef;
+    }
+    unless ($sth->execute())
+    {
+	$err = $EXECUTE_FAILED;
+	$errstr = "could not execute state: $sql; error returned "
+	    . $sth->errstr;
+    }
+    my $rrow = $sth->fetchrow_arrayref;
+    unless ($rrow) {
+	$errstr = "retrieval of job checkpoint failed";
+	$err = $GET_FAILED;
+	return undef;
+    }
+    unless ($rrow->[0] =~ /^end$/) {
+	$errstr = "no checkpoint (job not at end)";
 	$err = $NOT_ENDED;
 	return undef;
     }
