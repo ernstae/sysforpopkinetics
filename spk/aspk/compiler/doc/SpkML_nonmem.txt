@@ -201,8 +201,8 @@
      necessary to define the physiological and
      the statistical models.
 ----------------------------------------------------->
-<!ELEMENT model (( (comp_model, (pk, error, diffeqn?)?) 
-                | (pk, error) 
+<!ELEMENT model ( (comp_model, diffeqn)
+                | (comp_model?, (pk, error), diffeqn?) 
                 | (pred) )>
 
 <!--
