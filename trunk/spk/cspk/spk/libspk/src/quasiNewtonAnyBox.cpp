@@ -1307,13 +1307,13 @@ void scaleGradElem(
  *
  *************************************************************************/
 
-void doubleArrayToValarray( const double* x, valarray<double>&  xVA )
+void doubleArrayToValarray( const double* x, valarray<double>& xVA )
 {
   int i;
 
   for ( i = 0; i < xVA.size(); i++ )
   {
-    x[i] = xVA[i];
+    xVA[i] = x[i];
   }
 }
 
@@ -1328,7 +1328,7 @@ void doubleArrayToValarray( const double* x, valarray<double>&  xVA )
  *
  *************************************************************************/
 
-void valarrayToDoubleArray( const valarray<double>&  xVA, double* x )
+void valarrayToDoubleArray( const valarray<double>& xVA, double* x )
 {
   int i;
 
