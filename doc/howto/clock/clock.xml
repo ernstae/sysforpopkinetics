@@ -1,3 +1,4 @@
+
 <?xml version="1.0"?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
                   "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"[
@@ -152,9 +153,11 @@
     </para>
   </sect1>
   <sect1>
-    <title>Configuring RFPK Software Development Workstations</title>
+    <title>Configuring RFPK Software Development Clients</title>
     <para>
-      In this section, we will edit several configuration files. To do this, 
+      This section covers the configuration of RFPK software development
+      workstations and the cspk server.
+      We must edit several configuration files. To do this, 
       you will need root privilege.
       <screen format="linespecific">
 su -
@@ -230,6 +233,21 @@ echo time.nist.gov >> step-tickers
     </para>
   </sect1>
   <sect1>
+    <title>Extra Configuration for Webserver</title>
+    <para>
+      <emphasis>Webserver</emphasis> is on the orange LAN. The rest of the
+      RFPK workstations and servers are either on the green LAN or on the
+      public internet. The firewall greatly restricts network traffic between
+      the green and orange LANs. The NTP setup for <emphasis>webserver</emphasis>
+      is the same as for the rest of the clients with the exception
+      that additional configuration must be done to the firewall.
+      It is necessary to use the firewall administration interface to 
+      create a pinhole between the IP address of <emphasis>webserver</emphasis>
+      and the IP address of <emphasis>timeserver</emphasis> on port 123 for
+      the TCP protocol, and another one on the same port for the UDP protocol.
+    </para>
+  </sect1>
+  <sect1>
     <title id="timeserver">Configuring the RFPK Timeserver</title>
     <para>
       The RFPK time server
@@ -273,55 +291,6 @@ restrict 192.168.0.0 mask 255.255.0.0 notrust nomodify notrap
       to accommodate RFPK machines with IP addresses that fall
       into other address ranges.
     </para>
-  </sect1>
-  <sect1>
-    <title>Configuring Time Service for the Cluster</title>
-    <para>
-      Two different network topologies are used on the cluster.
-      In one topology, cspk1 is a frontend or gateway
-      node and other nodes are compute nodes.  In the other
-      configuration, each node is an individual host on the
-      green LAN.
-    </para>
-    <sect2>
-      <title>Daemon Setup for the Cluster</title>
-      <para>
-	Because of a deficiency in the ethernet interfaces in
-	our Linux Labs cluster (all nodes have the same MAC address)
-	the normal configuration for starting up a network daemon
-	when the system boots does not work.  Instead, the 
-	command, <command>/etc/rc.d/init.d/ntpd start</command>,
-	must be appended to the end of the file
-	<filename>/etc/rc.d/rc.local</filename>.
-      </para>
-    </sect2>
-    <sect2>
-      <title>Configuration Files for the Frontend Topology</title>
-      <para>
-	For the topology that has its own frontend, the 
-	the frontend should be set up as timeserver, as 
-	described <link linkend="timeserver">above</link>.
-	The line that defines the range of client IP addresses
-	should look like this:
-	<screen>
-restrict 192.168.3.0 mask 255.255.0.0 notrust nomodify notrap
-	</screen>
-	In each of the computation nodes that use the
-	frontend as a gateway, the
-	<filename>/etc/hosts</filename> file should contain
-	a definition for timeserver like this:
-	<screen>
-192.168.3.1     timeserver frontend
-	</screen>
-      </para>
-    </sect2>
-    <sect2>
-      <title>Configuration Files for Topology without Frontend</title>
-      <para>
-	In this case, the nodes have the same ntp configuration as
-	have workstations.
-      </para>
-    </sect2>
   </sect1>
 </article>
 
