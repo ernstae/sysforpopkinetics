@@ -80,6 +80,8 @@ namespace{
   const string strMDV   = "MDV";
   const string strID    = "ID";
   const string strSIMDV = "SIMDIV";
+  const string strF     = "F";
+  const string strY     = "Y";
   const string keyTHETA = SymbolTable::key( strTHETA );
   const string keyETA   = SymbolTable::key( strETA );
   const string keyEPS   = SymbolTable::key( strEPS );
@@ -92,6 +94,8 @@ namespace{
   const string keyMDV   = SymbolTable::key( strMDV );
   const string keyID    = SymbolTable::key( strID );
   const string keySIMDV = SymbolTable::key( strSIMDV );
+  const string keyF     = SymbolTable::key( strF );
+  const string keyY     = SymbolTable::key( strY );
   valarray<int> myRecordNums;
 };
 //========================================
