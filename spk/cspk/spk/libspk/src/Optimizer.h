@@ -51,10 +51,11 @@
 struct StateInfo
 {
   int      n;
-  double*  x;
-  Integer* state;
-  double*  lambda;
-  double*  h;
+  double   r;
+  double   f;
+  double*  x;   // Length n.
+  double*  g;   // Length n.
+  double*  h;   // Length n * n.
 };
 
 // Class Optimizer
