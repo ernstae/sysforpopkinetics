@@ -1,8 +1,8 @@
-bin_PROGRAMS = compiler
+bin_PROGRAMS = spkcompiler
 
 CXXFLAGS = -g -dD
 
-compiler_SOURCES = \
+spkcompiler_SOURCES = \
 	../config.h \
 	compiler.cpp
 
