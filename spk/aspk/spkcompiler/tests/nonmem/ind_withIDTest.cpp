@@ -1086,8 +1086,8 @@ void ind_withIDTest::testDataSetClass()
   o << MY_ASSERT_EQUAL << endl;
   o << "int main()" << endl;
   o << "{" << endl;
-  o << "   const int n = " << nRecords << ";" << endl;
   o << "   DataSet<double> set;" << endl;
+  o << "   const int n = set.getN()[0];" << endl;
 
   // { ID, DV=CP, TIME, MDV }
   for( int i=0; i<nRecords; i++ )
@@ -1181,7 +1181,7 @@ void ind_withIDTest::testPredClass()
   o << "   DataSet< CppAD::AD<double> > set;" << endl;
   o << "   Pred< CppAD::AD<double> > pred( &set );" << endl;
   o << "   const int who         = 0;" << endl;
-  o << "   const int n           = " << nRecords << "; // #of measurements" << endl;
+  o << "   const int n           = set.getN()[0]; // #of measurements" << endl;
   o << "   const int thetaLen    = " << thetaLen << ";" << endl;
   o << "   const int etaLen      = " << etaLen << ";" << endl;
   o << "   const int epsLen      = " << epsLen << ";" << endl;
@@ -1607,7 +1607,7 @@ void ind_withIDTest::testReportML()
   DOMNodeList *presentation_data = report->getElementsByTagName( X_PRESENTATION_DATA );
   CPPUNIT_ASSERT( presentation_data->getLength() == 1 );
 
-  //okToClean = true;
+  okToClean = true;
 }
 
 CppUnit::Test * ind_withIDTest::suite()

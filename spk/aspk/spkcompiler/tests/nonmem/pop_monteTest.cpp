@@ -1058,7 +1058,7 @@ void pop_monteTest::testReportML()
   DOMElement *ind_stat_result = dynamic_cast<DOMElement*>( pop_monte_result->item( 0 ) );
   CPPUNIT_ASSERT( ind_stat_result != NULL );
 
-  //  okToClean = true;
+  okToClean = true;
 }
 
 CppUnit::Test * pop_monteTest::suite()

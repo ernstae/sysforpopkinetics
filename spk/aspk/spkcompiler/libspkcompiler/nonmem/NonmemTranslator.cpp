@@ -727,10 +727,13 @@ void NonmemTranslator::parseSource()
   generatePred( fPredEqn_cpp );
   generateNonmemParsNamespace();
   generateMonteParsNamespace();
-  if( myTarget == POP )
-    generatePopDriver();
-  else
-    generateIndDriver();
+  if( !myIsMonte )
+    {
+      if( myTarget == POP )
+	generatePopDriver();
+      else 
+	generateIndDriver();
+    }
   generateMakefile();
 }
 
@@ -2692,6 +2695,8 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "std::vector<IndData<ValueType>*> data;" << endl;
   oDataSet_h << "const int popSize;" << endl;
   oDataSet_h << "const SPK_VA::valarray<double> getAllMeasurements() const;" << endl;
+  oDataSet_h << "int getPopSize() const;" << endl;
+  oDataSet_h << "const SPK_VA::valarray<int> getN() const;" << endl;
   oDataSet_h << "void compAllResiduals();" << endl;
   oDataSet_h << "void compAllWeightedResiduals( std::vector< SPK_VA::valarray<double> >& R );" << endl;
   oDataSet_h << endl;
@@ -2835,6 +2840,20 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "const SPK_VA::valarray<double> DataSet<ValueType>::getAllMeasurements() const" << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   return measurements;" << endl;
+  oDataSet_h << "}" << endl;
+  oDataSet_h << endl;
+
+  oDataSet_h << "template <class ValueType>" << endl;
+  oDataSet_h << "int DataSet<ValueType>::getPopSize() const" << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   return popSize;" << endl;
+  oDataSet_h << "}" << endl;
+  oDataSet_h << endl;
+
+  oDataSet_h << "template <class ValueType>" << endl;
+  oDataSet_h << "const SPK_VA::valarray<int> DataSet<ValueType>::getN() const" << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   return N;" << endl;
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
 
@@ -4362,9 +4381,6 @@ void NonmemTranslator::generatePopDriver() const
 
   oDriver << endl;
 
-  oDriver << "const int nPop = " << myPopSize << ";" << endl;
-  oDriver << "DataSet< CppAD::AD<double> > set;" << endl;
-  oDriver << endl;
 
   oDriver << "const bool isSimRequested  = " << (myIsSimulate? "true":"false") << ";" << endl;
   oDriver << "bool haveCompleteData      = false;" << endl;
@@ -4387,6 +4403,12 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "bool isStatSuccess         = " << (myIsStat? "false":"true") << ";" << endl;
   if( myIsStat )
     oDriver << "enum PopCovForm covForm  = " << myCovForm << ";" << endl;
+  oDriver << endl;
+
+  oDriver << "DataSet< CppAD::AD<double> > set;" << endl;
+  oDriver << "const int nPop = set.getPopSize();" << endl;
+  oDriver << "const valarray<int> N = set.getN();" << endl;
+  oDriver << "const int nY = N.sum();" << endl; // total number of measurments" << endl;
   oDriver << endl;
 
   oDriver << "///////////////////////////////////////////////////////////////////" << endl;
@@ -4486,18 +4508,6 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << "Optimizer    indOpt( indEps, indMitr, indTrace );" << endl;
       oDriver << endl;
     }
-
-  oDriver << "int c_N[nPop] = { ";
-  for( int i=0; i<myPopSize; i++ )
-    {
-      if( i>0 )
-	oDriver << ", ";
-      oDriver << myRecordNums[i];
-    }
-  oDriver << " };" << endl;
-  oDriver << "const valarray<int> N( c_N, nPop );" << endl; 
-  oDriver << "const int nY = N.sum();" << endl; // total number of measurments" << endl;
-  oDriver << endl;
 
   // do data simulation first to replace DV data in IndData objects
   oDriver << "/*******************************************************************/" << endl;
