@@ -141,8 +141,8 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     mySigDigits         ( 3 ),
     myPopMitr           ( 100 ),
     myIndMitr           ( 100 ),
-    myPopEpsilon        ( pow( 10.0, -(mySigDigits+1.0) ) ),  // I'm not sure if pow() is really available at this stage.
-    myIndEpsilon        ( pow( 10.0, -(mySigDigits+1.0) ) ),  // I'm not sure if pow() is really available at this stage.
+    myPopEpsilon        ( pow( 10.0, -(mySigDigits+1.0) ) ),
+    myIndEpsilon        ( pow( 10.0, -(mySigDigits+1.0) ) ),
     myPopTraceLevel     ( 1 ),
     myIndTraceLevel     ( 1 ),
     mySeed              ( 0 ),
@@ -724,7 +724,8 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "\tresult.xml \\" << endl;
       oMakefile << "\tpredEqn.cpp \\" << endl;
       oMakefile << "\tspk_error.tmp \\" << endl;
-      oMakefile << "*.o" << endl;    }
+      oMakefile << "*.o" << endl;    
+    }
   else
     {
       oMakefile << "MONTE_DIR = /usr/local/src/spktest/ml" << endl;
@@ -748,7 +749,7 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << endl;
 
       oMakefile << "prod : $(MONTE_SRC) $(MONTE_INCLUDE) $(COMMON_INCLUDE)" << endl;
-      oMakefile << "\tg++ $(CPP_FLAGS) $(MONTE_SRC) -o driver ";
+      oMakefile << "\tg++ $(CPP_FLAGS) $(MONTE_SRC) -o monteDriver ";
       oMakefile << "-L/usr/local/lib/$(PROD_DIR) ";
       oMakefile << "-I/usr/local/include/$(PROD_DIR) ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(PROD_DIR) ";
@@ -756,13 +757,17 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << endl;
       
       oMakefile << "test : $(MONTE_SRC) $(MONTE_INCLUDE) $(COMMON_INCLUDE)" << endl;
-      oMakefile << "\tg++ $(CPP_FLAGS) $(MONTE_SRC) -o driver ";
+      oMakefile << "\tg++ $(CPP_FLAGS) $(MONTE_SRC) -o monteDriver ";
       oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
       oMakefile << "-I/usr/local/include/$(TEST_DIR) ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(TEST_DIR) ";
       oMakefile << "$(LIBS)" << endl;
       oMakefile << endl;
   
+      oMakefile << "driver : " << endl;
+      oMakefile << "\tcp $(MONTE_DIR)/$@ ." << endl;
+      oMakefile << endl;
+
       oMakefile << "monteDriver.cpp : " << endl;
       oMakefile << "\tcp $(MONTE_DIR)/$@ ." << endl;
       oMakefile << endl;
@@ -2280,7 +2285,7 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "#include <vector>" << endl;
   oIndData_h << "#include <map>" << endl;
   oIndData_h << "#include <spk/SpkValarray.h>" << endl;
-  oIndData_h << "#include <cppad/include/CppAD.h>" << endl;
+  oIndData_h << "#include <CppAD/CppAD.h>" << endl;
   oIndData_h << endl;
   
   //-----------------------------------------------
@@ -2639,6 +2644,8 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "std::vector<IndData<T>*> data;" << endl;
   oDataSet_h << "const int popSize;" << endl;
   oDataSet_h << "const SPK_VA::valarray<double> getAllMeasurements() const;" << endl;
+  oDataSet_h << "void compRES();" << endl;
+  oDataSet_h << "void compWRES( const SPK_VA::valarray<double>& R );" << endl;
   oDataSet_h << endl;
  
   //
@@ -2783,6 +2790,61 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
 
+  oDataSet_h << "template <class T>" << endl;
+  oDataSet_h << "void DataSet<T>::compRES()" << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   const int n = data.size();" << endl;
+  oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
+  oDataSet_h << "   {" << endl;
+  oDataSet_h << "      data[0]->" << UserStr.RES << "[i] = y[i] - data[0]->" << UserStr.PRED << "[i];" << endl;
+  oDataSet_h << "   }" << endl;
+  oDataSet_h << "}" << endl;
+
+  oDataSet_h << "template <class T>" << endl;
+  oDataSet_h << "void DataSet<T>::compWRES( const SPK_VA::valarray<double>& R )" << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   using SPK_VA::valarray;" << endl;
+  oDataSet_h << "   using std::vector;" << endl;
+  oDataSet_h << "   const int n = data.size();" << endl;
+  oDataSet_h << "   assert( R.size() == n * n );" << endl;
+  oDataSet_h << "   compRES();" << endl;
+  oDataSet_h << "   valarray<double> r( n );" << endl;
+  oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
+  oDataSet_h << "      r[i] = CppAD::Value( data[0]->" << UserStr.RES << "[i] );" << endl;
+  oDataSet_h << "   valarray<double> C( 0.0, n * n );" << endl;
+  oDataSet_h << "   C = cholesky( Ri, n );" << endl;
+  oDataSet_h << "   valarray<double> w = multiply( C, n, r, 1 );" << endl;
+  oDataSet_h << "   vector< CppAD::AD<double> > Cr(n);" << endl;
+  oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
+  oDataSet_h << "      data[0]->" << UserStr.WRES << "[i] = w[i];" << endl;
+  oDataSet_h << "   return;" << endl;
+
+  oDataSet_h << "}" << endl;
+  /*
+  oDriver << "for( int j=0; j<nY; j++ )" << endl;
+  oDriver << "{" << endl;
+  oDriver << "   set.data[0]->" << UserStr.RES << "[j] = y[j] - set.data[0]->" << UserStr.PRED << "[j];" << endl;
+  oDriver << "}" << endl;
+  oDriver << "set.data[0]->" << UserStr.WRES << " = wres( nY, ROut, set.data[0]->" << UserStr.RES << " ); " << endl;
+  oDriver << endl;
+  oDriver << "const vector<CppAD::AD<double> > wres( int n," << endl;
+  oDriver << "                                       const valarray<double> & Ri," << endl;
+  oDriver << "                                       const vector  < CppAD::AD<double> > & residual )" << endl;
+  oDriver << "{" << endl;
+  oDriver << "   assert( Ri.size() == n * n );" << endl;
+  oDriver << "   assert( residual.size() == n );" << endl;
+  oDriver << "   valarray<double> r( n );" << endl;
+  oDriver << "   for( int i=0; i<n; i++ ) r[i] = CppAD::Value( residual[i] );" << endl;
+  oDriver << "   valarray<double> C( 0.0, n * n );" << endl;
+  oDriver << "   C = cholesky( Ri, n );" << endl;
+  oDriver << "   valarray<double> w = multiply( C, n, r, 1 );" << endl;
+  oDriver << "   vector< CppAD::AD<double> > Cr(n);" << endl;
+  oDriver << "   for( int i=0; i<n; i++ ) Cr[i] = w[i];" << endl;
+  oDriver << "   return Cr;" << endl;
+  oDriver << "}" << endl;
+
+  */
+
   oDataSet_h << "#endif" << endl;
   oDataSet_h.close();
 }
@@ -2825,7 +2887,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   oPred_h << "#include <vector>" << endl;
   oPred_h << "#include <string>" << endl;
   oPred_h << "#include <spkpred/PredBase.h>" << endl;
-  oPred_h << "#include <cppad/include/CppAD.h>" << endl;
+  oPred_h << "#include <CppAD/CppAD.h>" << endl;
   oPred_h << "#include \"DataSet.h\"" << endl;
   oPred_h << endl;
   
@@ -3289,8 +3351,7 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << "// " << myDescription << endl;
   oNonmemPars << "// " << endl;
   oNonmemPars << "// The namespace NonmemPars exports the values " << endl;
-  oNonmemPars << "// given by the user or determined by SPK Compiler based ." << endl;
-  oNonmemPars << "// upon them." << endl;
+  oNonmemPars << "// given by the user or values drived from the user-given values." << endl;
   oNonmemPars << "// " << endl;
   oNonmemPars << "// The user requested the " << (myTarget==POP? "population":"individual") << " analysis." << endl;
   oNonmemPars << "// This means that this namespace would contain materials related to " << endl;
@@ -3941,6 +4002,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "valarray<double> ROut( nY, nY );" << endl;
   oDriver << "model.setIndPar( bOut );" << endl;
   oDriver << "model.dataVariance( ROut );" << endl;
+
   oDriver << "for( int j=0; j<nY; j++ )" << endl;
   oDriver << "{" << endl;
   oDriver << "   set.data[0]->" << UserStr.RES << "[j] = y[j] - set.data[0]->" << UserStr.PRED << "[j];" << endl;
