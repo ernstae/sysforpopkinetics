@@ -128,18 +128,22 @@ $end
 
 # include "MapBay.h"
 # include "MapMonte.h"
+# include "MontePars.h"
 
 #include <stdlib.h>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_monte.h>
 #include <gsl/gsl_monte_plain.h>
+#include <gsl/gsl_monte_miser.h>
 
-# define MapMonteDebug 0
+# define MapMonteDebug false
 
 namespace {
 	// begin empty namespace
 	extern "C" double ExpNegMapBay(double *x, size_t dim, void *params)
 	{	return exp( - MapBay(x, dim, params) ); }
+
+	size_t MapMonteCallCount = 0;
 }
 
 void MapMonte(
@@ -154,7 +158,9 @@ void MapMonte(
 	//
 	double                      &integralEstimate,
 	double                      &estimateStd     ) 
-{
+{	// increment call counter
+	MapMonteCallCount++;
+
 	// number of random effects
 	assert( L.size() ==  U.size() );
 	size_t numberRandomEffects = L.size();
@@ -188,18 +194,21 @@ void MapMonte(
 		Upper[j] = U[j];
 	}
 
-# if MapMonteDebug
-	double mapBay = MapBay(Mid, numberRandomEffects, Null);
-	std::cout << "MapMonte: individual = " << individual;
-	std::cout << ", MapBay(.5*(U + L)) = " << mapBay;
-	std::cout << ", y_i = ";
-	for(j = 0; j < yi.size(); j++)
-	{	std::cout << yi[j];
-		if( j + 1 < yi.size() )
-			std::cout << ", ";
-	} 
-	std::cout << std::endl;
-# endif
+	void *Null = 0;
+
+	if( MapMonteCallCount == 1 && MapMonteDebug )
+	{
+		double mapBay = MapBay(Mid, numberRandomEffects, Null);
+		std::cout << "MapMonte: individual = " << individual;
+		std::cout << ", MapBay(.5*(U + L)) = " << mapBay;
+		std::cout << ", y_i = ";
+		for(j = 0; j < yi.size(); j++)
+		{	std::cout << yi[j];
+			if( j + 1 < yi.size() )
+				std::cout << ", ";
+		} 
+		std::cout << std::endl;
+	}
 
 	// type of Gsl random number generator
 	const gsl_rng_type *rngType = gsl_rng_default;
@@ -212,28 +221,62 @@ void MapMonte(
  	gsl_rng_set (rngRange, seed);
 
 	// function information
-	void *Null = 0;
 	gsl_monte_function Integrand = 
 		{ &ExpNegMapBay, numberRandomEffects, Null };
 
 	// default random set up
 	gsl_rng_env_setup();
 
-	// very simple monte carlo integration
-	gsl_monte_plain_state *state = 
-		gsl_monte_plain_alloc (numberRandomEffects);
+	if( MontePars::method == MontePars::plain )
+	{	// very simple monte carlo integration
+		gsl_monte_plain_state *state = 
+			gsl_monte_plain_alloc (numberRandomEffects);
+		gsl_monte_plain_integrate(
+			&Integrand                    , 
+			Lower                         , 
+			Upper                         , 
+			numberRandomEffects           , 
+			numberEval                    , 
+			rngRange                      , 
+			state                         , 
+			&integralEstimate             , 
+			&estimateStd
+		);
+		gsl_monte_plain_free(state);
+	}
+	else if ( MontePars::method == MontePars::miser )
+	{	// The miser MonteCarlo integrator (see Numerical Recipies)
+		gsl_monte_miser_state *state = 
+			gsl_monte_miser_alloc (numberRandomEffects);
 
-	gsl_monte_plain_integrate(
-		&Integrand                    , 
-		Lower                         , 
-		Upper                         , 
-		numberRandomEffects           , 
-		numberEval                    , 
-		rngRange                      , 
-		state                         , 
-		&integralEstimate             , 
-		&estimateStd
-	);
+		state->min_calls = 10;
+		state->min_calls_per_bisection = 3 * state->min_calls;
+		if( MapMonteCallCount == 1 && MapMonteDebug ) 
+		{	std::cout 
+			<< "estimate_frac = " << state->estimate_frac 
+			<< ", min_calls = " << state->min_calls 
+			<< ", min_calls_per_bisection = "
+			<< state->min_calls_per_bisection
+			<< ", alpha = " << state->alpha 
+			<< ", dither = " << state->dither
+			<< std::endl; 
+
+		}
+		gsl_monte_miser_integrate(
+			&Integrand                    , 
+			Lower                         , 
+			Upper                         , 
+			numberRandomEffects           , 
+			numberEval                    , 
+			rngRange                      , 
+			state                         , 
+			&integralEstimate             , 
+			&estimateStd
+		);
+		gsl_monte_miser_free(state);
+	}
+	else	assert(0);	// should not happen
+
 	delete [] Lower;
 	delete [] Mid;
 	delete [] Upper;
