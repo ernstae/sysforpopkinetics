@@ -23,13 +23,12 @@
 #include <sys/utsname.h>
 #include <unistd.h>
 #include <time.h>
-#include <spkjob.h>
 #include <csignal>
 #include <string>
 #include <cstdio>
 #include <cstring>
 #include <map>
-#include <pvm3.h>
+#include <spkpvm.h>
 
 static int my_tid;
 static int pop_tid[10];
@@ -66,8 +65,8 @@ static void spklog(const char *message) {
   int len = strlen(timestamp);
   if (len > 6)
     timestamp[len - 6] = '\0';
-  fprintf(logfile, "[t%0x][j%s](%s)spkjob: %s\n", my_tid, job_id, timestamp, message);
-  fflush(logfile);
+  fprintf(logfile, "[t%0x] [j%s] (%s) 0 spkjob: %s\n", my_tid, job_id, timestamp, message);
+  //  fflush(logfile);
 }
 // block termination signals
 static void signal_block() {
@@ -155,33 +154,15 @@ int main(int argc, char** argv) {
   int rval = pvm_spawn(buf, arg, 0, NULL, 1, pop_tid);
   if (rval < 0) 
     die("could not spawn population level due to system error");
-  char *err_string = "unknown";
   if (rval == 0) {
-    switch (*pop_tid) {
-    case PvmBadParam:
-      err_string = "bad parameter";
-      break;
-    case PvmNoHost:
-      err_string = "host not not in virtual machine";
-      break;
-    case PvmNoFile:
-      err_string = "code file can't be found";
-      break;
-    case PvmNoMem:
-      err_string = "malloc failed";
-      break;
-    case PvmSysErr:
-      err_string = "pvmd not responding";
-      break;
-    case PvmOutOfRes:
-      err_string = "out of resources";
-      break;
-    default:
-      break;
-    }
+    const char *err_string = spkpvm_spawn_error(*pop_tid);
     sprintf(buf, "could not spawn population level: %s", err_string);
     die(buf);
   }
+  // change working directory
+  sprintf(buf, "%s/spkjob-%s", SPK_WORKING, job_id);
+  if (chdir(buf) != 0)
+    die("could not change working directory");
 
   // establish pvm notifications
   if (pvm_notify(PvmTaskExit, PvmTaskExit, 1, pop_tid) < 0)
@@ -221,6 +202,8 @@ int main(int argc, char** argv) {
     signal_unblock();
     if (bufid < 0)
       die("pvm_nrecv returned an error");
+    if (!pop_done)
+      sleep(1);
   }
   // finish up
   finish();

@@ -41,20 +41,27 @@
 
 #include <unistd.h>
 #include <sys/utsname.h>
-#include <pvm3.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <cstdlib>
 #include <cstdio>
 #include <time.h>
 #include <cstring>
 #include <csignal>
-#include <spkjob.h>
+#include <spkpvm.h>
 
 static int my_tid = 0;
 static char *job_id = "?????";
 static int ntasks = 0;
 static int parent_tid = 0;
 static sigset_t block_set;
+static int *ind_tid;
+static int *host_tid;
+static bool *done;
+static int *exit_val;
+static int my_exit_value = 0;
 
+static int tid2iid(int);
 static void finish(int);
 static void signal_block(void);
 static void signal_handler(int);
@@ -77,6 +84,13 @@ static void finish(int exit_value) {
   pvm_send(parent_tid, SpkPvmExitValue);
   spklog("stop");
 }
+static int tid2iid(int tid) {
+  for (int iid = 0; iid < ntasks; iid++) {
+    if (ind_tid[iid] == tid)
+      return iid;
+  }
+  return -1;
+}
 // block termination signals
 static void signal_block() {
   sigprocmask(SIG_BLOCK, &block_set, NULL);
@@ -84,8 +98,9 @@ static void signal_block() {
 // handle a termination signal
 static void signal_handler(int signum) {
   spklog("terminated by spkjob");
-  finish(1);
-  exit(1);
+  for (int iid = 0; iid < ntasks; iid++)
+    pvm_kill(ind_tid[iid]);
+  my_exit_value = 1;
 }
 // initialize signal handling
 static void signal_initialize() {
@@ -119,23 +134,25 @@ static void spklog(const char* message) {
   int len = strlen(timestamp);
   if (len > 6)
     timestamp[len - 6] = '\0';
-  printf("[j%s](%s)spkpop: %s\n", job_id, timestamp, message);
-  fflush(stdout);
+  printf("[j%s] (%s) 1 spkpop: %s\n", job_id, timestamp, message);
+  //  fflush(stdout);
 }
 
 int main(int argc, char** argv) {
   pvm_setopt(PvmRoute, PvmRouteDirect);
   int my_tid = pvm_mytid();          // attach to pvm
-  char *usage = "spkpop job_id individual_count";
+  char *usage = "usage: spkpop job_id individual_count";
   char buf[100];
   int bufid;
+  int ndone = 0;
 
   // process arguments  
   if (argc != 3)
     die(usage);
   job_id = argv[1];
   ntasks = atoi(argv[2]);
-  
+
+
   // set up signal handling for the signals that might be used
   // by human operators to terminate us
   signal_initialize();
@@ -148,32 +165,111 @@ int main(int argc, char** argv) {
   sprintf(buf, "start: on host %s", un.nodename);
   spklog(buf);
 
-  // loop while waiting for messages
-  /*
-  while ((bufid = pvm_recv(parent_tid, -1)) >= 0) {
-    spklog("spkpop received a message");
-    int bytes, msgtag, junk, tid[1];
-    if (pvm_bufinfo(bufid, &bytes, &msgtag, tid) < 0)
-      die("pvm_bufinfo failed");
-    switch (msgtag) {
-    case SpkPvmKill:
-      if (*tid != parent_tid) {
-	sprintf(buf, "received SpkPvmKill from unexpected tid %0x", *tid);
-	spklog(buf);
-      } 
-      else {
-	die("killed by spkjob");
-      }
-      break;
-    default:
-      break;
+  if (! (1 <= ntasks && ntasks <= SPK_MAX_INDIVIDUALS)) {
+    sprintf(buf, "individual_count = %d > %d individuals (program  limit) -- %s",
+	    ntasks, SPK_MAX_INDIVIDUALS, usage);
+    die(buf);
+  }
+
+  // change working directory
+  sprintf(buf, "%s/spkjob-%s", SPK_WORKING, job_id);
+  if (chdir(buf) != 0)
+    die("could not change working directory");
+
+  // create working directories for individuals
+  for (int iid = 0; iid < ntasks; iid++) {
+    sprintf(buf, "%d", iid);
+    if (mkdir(buf, 02775) != 0) {
+      sprintf(buf, "couldn't make the %d=th individual working directory", iid);
+      die(buf);
     }
   }
-  */
-  for (int i = 0; i < 10; i++) {
-    sleep(1);
+
+  ind_tid  = new int[ntasks];
+  host_tid = new int[ntasks];
+  exit_val = new int[ntasks];
+  done     = new bool[ntasks];
+
+  // spawn the individuals
+  for (int iid =  0; iid < ntasks; iid++) {
+    int tid;
+    char* arg[3]; 
+    char ind_id[6];
+    sprintf(ind_id, "%d", iid);
+    arg[0] = job_id;
+    arg[1] = ind_id;
+    arg[2] = NULL;
+    sprintf(buf, "%s/arch/%s/bin/spkind", SPK_SHARE, ARCH);
+    int rval = pvm_spawn(buf, arg, 0, NULL, 1, &tid);
+    if (rval < 0) 
+      die("could not spawn population level due to system error");
+    if (rval == 0) {
+      const char *err_string = spkpvm_spawn_error(tid);
+      sprintf(buf, "could not spawn population level: %s", err_string);
+      die(buf);
+    }
+    ind_tid[iid]  = tid;
+    host_tid[iid] = pvm_tidtohost(tid);
+    exit_val[iid] = 0;
+    done[iid] = false;
   }
-  finish(0);
-  return 0;
+  // establish pvm notifications
+  if (pvm_notify(PvmTaskExit, PvmTaskExit, ntasks, ind_tid) < 0)
+    die("pvm_notify failed for PvmTaskExit of the population task");
+  if (pvm_notify(PvmHostDelete, PvmTaskExit, ntasks, ind_tid) < 0)
+    die("pvm_notify failed for PvmHostDelete of the host for the population task");
+
+  // loop until the population level is done
+  ndone = 0;
+  int iid;
+  int exit_value = -1;
+  while (ndone < ntasks) {
+    signal_block();
+    while (ndone < ntasks && ((bufid = pvm_nrecv(-1, -1)) > 0)) {
+      int bytes, msgtag, junk, tid[1];
+      if (pvm_bufinfo(bufid, &bytes, &msgtag, tid) < 0)
+	die("pvm_bufinfo failed");
+      switch (msgtag) {
+      case PvmTaskExit:
+	if (pvm_upkint(tid, 1, 1) < 0)
+	  die("pvm_upkint returned an error at PvmTaskExit");
+	if ((iid = tid2iid(*tid)) < 0) {
+	  sprintf(buf, "received SpkTaskExit from unexpected tid %0x", *tid);
+	  spklog(buf);
+	  break;
+	}
+	done[iid] = true;
+	ndone++;
+	break;
+      case PvmHostDelete:
+	spklog("PvmHostDelete");
+	break;
+      case SpkPvmExitValue:
+	if ((iid = tid2iid(*tid)) < 0) {
+	  sprintf(buf, "received SpkPvmExitValue from unexpected tid %0x", *tid);
+	  spklog(buf);
+	  break;
+	}
+	if (pvm_upkint(&exit_value, 1, 1) < 0)
+	  die("pvm_upkint returned an error at SpkPvmExitValue");
+	exit_val[iid] = exit_value;
+	break;
+      default:
+	spklog("unknown message tag");
+	break;
+      }
+    }
+    signal_unblock();
+    if (bufid < 0)
+      die("pvm_nrecv returned an error");
+    if (ndone < ntasks)
+      sleep(1);
+  }
+  for (int iid =  0; iid < ntasks && my_exit_value == 0; iid++) 
+    if (exit_val[iid] != 0) 
+      my_exit_value = 1;
+
+  finish(my_exit_value);
+  return my_exit_value;
 }
 
