@@ -3687,8 +3687,8 @@ void NonmemTranslator::generateIndDriver( ) const
           oDriver << "                        " << ( myIsCov || myIsInvCov? "&stdParCovOut"        : "NULL" ) << "," << endl;
           oDriver << "                        " << ( myIsStderr?            "&stdParSEOut"         : "NULL" ) << "," << endl;
           oDriver << "                        " << ( myIsCorrelation?       "&stdParCorrelationOut": "NULL" ) << "," << endl;
-          oDriver << "                        " << ( myIsConfidence?        "&stdParConfidenceOut" : "NULL" ) << "," << endl;
-          oDriver << "                        " << ( myIsInvCov?            "&stdParInvCovOut"     : "NULL" ) << endl;
+          oDriver << "                        " << ( myIsCoefficient?       "&stdParCoefficientOut": "NULL" ) << "," << endl;
+          oDriver << "                        " << ( myIsConfidence?        "&stdParConfidenceOut" : "NULL" ) << endl;
           oDriver << "                      );" << endl;
 	  oDriver << "      stdParInvCovOut = inverse( stdParCovOut, nB );" << endl;
 	  oDriver << "      //FpErrorChecker::check( __LINE__, __FILE__ );" << endl;
@@ -3815,9 +3815,12 @@ void NonmemTranslator::generateIndDriver( ) const
 	  if( myIsCov )
 	    {
 	      oDriver << "oResults << \"<ind_covariance_out struct=\\\"block\\\" dimension=\\\"\" << nB << \"\\\">\" << endl;" << endl;
-	      oDriver << "for( int i=0; i<covElemNum; i++ )" << endl;
+	      oDriver << "for( int i=0; i<nB; i++ )" << endl;
 	      oDriver << "{" << endl;
-	      oDriver << "oResults << \"   <value>\" << stdParCovOut[i] << \"</value>\" << endl;" << endl;
+              oDriver << "   for( int j=0; j<=i; j++ )" << endl;
+              oDriver << "   {" << endl;
+	      oDriver << "      oResults << \"   <value>\" << stdParCovOut[i+j*nB] << \"</value>\" << endl;" << endl;
+              oDriver << "   }" << endl;
 	      oDriver << "}" << endl;
 
 	      oDriver << "oResults << \"</ind_covariance_out>\" << endl;" << endl;
@@ -3825,9 +3828,12 @@ void NonmemTranslator::generateIndDriver( ) const
 	  if( myIsInvCov )
 	    {
 	      oDriver << "oResults << \"<ind_inverse_covariance_out struct=\\\"block\\\" dimension=\\\"\" << nB << \"\\\">\" << endl;" << endl;
-	      oDriver << "for( int i=0; i<covElemNum; i++ )" << endl;
+	      oDriver << "for( int i=0; i<nB; i++ )" << endl;
 	      oDriver << "{" << endl;
-	      oDriver << "oResults << \"   <value>\" << stdParInvCovOut[i] << \"</value>\" << endl;" << endl;
+              oDriver << "   for( int j=0; j<=i; j++ )" << endl;
+              oDriver << "   {" << endl;
+	      oDriver << "      oResults << \"   <value>\" << stdParInvCovOut[i+j*nB] << \"</value>\" << endl;" << endl;
+              oDriver << "   }" << endl;
 	      oDriver << "}" << endl;
 
 	      oDriver << "oResults << \"</ind_inverse_covariance_out>\" << endl;" << endl;
@@ -3845,9 +3851,12 @@ void NonmemTranslator::generateIndDriver( ) const
 	  if( myIsCorrelation )
 	    {
 	      oDriver << "oResults << \"<ind_correlation_out struct=\\\"block\\\" dimension=\\\"\" << nB << \"\\\">\" << endl;" << endl;
-	      oDriver << "for( int i=0; i<covElemNum; i++ )" << endl;
+	      oDriver << "for( int i=0; i<nB; i++ )" << endl;
 	      oDriver << "{" << endl;
-	      oDriver << "oResults << \"   <value>\" << stdParCorrelationOut[i] << \"</value>\" << endl;" << endl;
+              oDriver << "   for( int j=0; j<=i; j++ )" << endl;
+              oDriver << "   {" << endl;
+	      oDriver << "      oResults << \"   <value>\" << stdParCorrelationOut[i+j*nB] << \"</value>\" << endl;" << endl;
+              oDriver << "   }" << endl;
 	      oDriver << "}" << endl;
 
 	      oDriver << "oResults << \"</ind_correlation_out>\" << endl;" << endl;
@@ -4539,8 +4548,8 @@ void NonmemTranslator::generatePopDriver() const
           oDriver << "                        " << ( myIsCov || myIsInvCov? "&stdParCovOut"        : "NULL" ) << "," << endl;
           oDriver << "                        " << ( myIsStderr?            "&stdParSEOut"         : "NULL" ) << "," << endl;
           oDriver << "                        " << ( myIsCorrelation?       "&stdParCorrelationOut": "NULL" ) << "," << endl;
-          oDriver << "                        " << ( myIsConfidence?        "&stdParConfidenceOut" : "NULL" ) << "," << endl;
-          oDriver << "                        " << ( myIsInvCov?            "&stdParInvCovOut"     : "NULL" ) << endl;
+          oDriver << "                        " << ( myIsCoefficient?       "&stdParCoefficientOut": "NULL" ) << "," << endl;
+          oDriver << "                        " << ( myIsConfidence?        "&stdParConfidenceOut" : "NULL" ) << endl;
           oDriver << "                      );" << endl;
 	  oDriver << "      isStatSuccess = true;" << endl;
 	  oDriver << "   }" << endl;
@@ -4704,9 +4713,12 @@ void NonmemTranslator::generatePopDriver() const
 	  if( myIsCov )
 	    {
 	      oDriver << "oResults << \"<pop_covariance_out struct=\\\"block\\\" dimension=\\\"\" << nAlp << \"\\\">\" << endl;" << endl;
-	      oDriver << "for( int i=0; i<covElemNum; i++ )" << endl;
+	      oDriver << "for( int i=0; i<nAlp; i++ )" << endl;
 	      oDriver << "{" << endl;
-	      oDriver << "oResults << \"   <value>\" << stdParCovOut[i] << \"</value>\" << endl;" << endl;
+              oDriver << "   for( int j=0; j<=i; j++ )" << endl;
+              oDriver << "   {" << endl;
+	      oDriver << "      oResults << \"   <value>\" << stdParCovOut[i+j*nAlp] << \"</value>\" << endl;" << endl;
+              oDriver << "   }" << endl;
 	      oDriver << "}" << endl;
 	      
 	      oDriver << "oResults << \"</pop_covariance_out>\" << endl;" << endl;
@@ -4714,9 +4726,12 @@ void NonmemTranslator::generatePopDriver() const
 	  if( myIsInvCov )
 	    {
 	      oDriver << "oResults << \"<pop_inverse_covariance_out struct=\\\"block\\\" dimension=\\\"\" << nAlp << \"\\\">\" << endl;" << endl;
-	      oDriver << "for( int i=0; i<covElemNum; i++ )" << endl;
+	      oDriver << "for( int i=0; i<nAlp; i++ )" << endl;
 	      oDriver << "{" << endl;
-	      oDriver << "oResults << \"   <value>\" << stdParInvCovOut[i] << \"</value>\" << endl;" << endl;
+              oDriver << "   for( int j=0; j<=i; j++ )" << endl;
+              oDriver << "   {" << endl;
+	      oDriver << "      oResults << \"   <value>\" << stdParInvCovOut[i+j*nAlp] << \"</value>\" << endl;" << endl;
+              oDriver << "   }" << endl;
 	      oDriver << "}" << endl;
 	      
 	      oDriver << "oResults << \"</pop_inverse_covariance_out>\" << endl;" << endl;
@@ -4734,9 +4749,12 @@ void NonmemTranslator::generatePopDriver() const
 	  if( myIsCorrelation )
 	    {
 	      oDriver << "oResults << \"<pop_correlation_out struct=\\\"block\\\" dimension=\\\"\" << nAlp << \"\\\">\" << endl;" << endl;
-	      oDriver << "for( int i=0; i<covElemNum; i++ )" << endl;
+	      oDriver << "for( int i=0; i<nAlp; i++ )" << endl;
 	      oDriver << "{" << endl;
-	      oDriver << "oResults << \"   <value>\" << stdParCorrelationOut[i] << \"</value>\" << endl;" << endl;
+              oDriver << "   for( int j=0; j<=i; j++ )" << endl;
+              oDriver << "   {" << endl;
+	      oDriver << "      oResults << \"   <value>\" << stdParCorrelationOut[i+j*nAlp] << \"</value>\" << endl;" << endl;
+              oDriver << "   }" << endl;
 	      oDriver << "}" << endl;
 	      
 	      oDriver << "oResults << \"</pop_correlation_out>\" << endl;" << endl;
