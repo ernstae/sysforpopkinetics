@@ -1,0 +1,8 @@
+#!/bin/sh
+
+SERVICE_NAME=spkcmpd
+WORKING_DIR_PREFIX="spkjob-"
+
+rm -rf /tmp/${WORKING_DIR_PREFIX}*
+rm -f /tmp/lock_$SERVICE_NAME
+
