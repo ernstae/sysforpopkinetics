@@ -169,6 +169,8 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   DefaultStr.RES   = "RES";
   DefaultStr.WRES  = "WRES";
   DefaultStr.PRED  = "PRED";
+  DefaultStr.PARRES= "PARRES";
+  DefaultStr.PARWRES="PARWRES";
   DefaultStr.DV    = "DV";
   DefaultStr.ORGDV = "ORGDV";
   DefaultStr.MDV   = "MDV";
@@ -184,6 +186,8 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   UserStr.RES   = DefaultStr.RES;
   UserStr.WRES  = DefaultStr.WRES;
   UserStr.PRED  = DefaultStr.PRED;
+  UserStr.PARRES= DefaultStr.PARRES;
+  UserStr.PARWRES=DefaultStr.PARWRES;
   UserStr.DV    = DefaultStr.DV;
   UserStr.ORGDV = DefaultStr.ORGDV;
   UserStr.MDV   = DefaultStr.MDV;
@@ -201,6 +205,8 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   KeyStr.SIGMA = SymbolTable::key( DefaultStr.SIGMA );
   KeyStr.RES   = SymbolTable::key( DefaultStr.RES );
   KeyStr.WRES  = SymbolTable::key( DefaultStr.WRES );
+  KeyStr.PARRES= SymbolTable::key( DefaultStr.PARRES );
+  KeyStr.PARWRES=SymbolTable::key( DefaultStr.PARWRES );
   KeyStr.PRED  = SymbolTable::key( DefaultStr.PRED );
   KeyStr.DV    = SymbolTable::key( DefaultStr.DV );
   KeyStr.ORGDV = SymbolTable::key( DefaultStr.ORGDV );
@@ -692,6 +698,25 @@ void NonmemTranslator::parseSource()
       UserStr.WRES = DefaultStr.WRES;
     }
 
+  if( ourTarget == POP )
+    {
+      if( (p = table->findi( KeyStr.PARRES )) != Symbol::empty() )
+         UserStr.PARRES = p->name;
+      else
+        {
+           table->insertUserVar( DefaultStr.PARRES );
+           UserStr.PARRES = DefaultStr.PARRES;
+        }
+  
+      if( (p = table->findi( KeyStr.PARWRES )) != Symbol::empty() )
+         UserStr.PARWRES = p->name;
+      else
+        {
+           table->insertUserVar( DefaultStr.PARWRES );
+           UserStr.PARWRES = DefaultStr.PARWRES;
+        }
+    }
+
   if( (p = table->findi( KeyStr.MDV )) != Symbol::empty() )
     UserStr.MDV = p->name;
   else
@@ -1038,7 +1063,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   // Optional attributes
   //---------------------------------------------------------------------------------------
   // * is_eta_out = {yes, "no"}
-  // * is_restart = {"yes", no}
+  // * is_restart = {yes, "no"}
   myIsEtaOut = false;
   const XMLCh * xml_is_eta_out;
   if( pop_analysis->hasAttribute( X_IS_ETA_OUT ) )
@@ -2060,7 +2085,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   // Optional attributes
   //---------------------------------------------------------------------------------------
   // * mitr   --- required when is_estimation == "yes"
-  // * is_restart = {"yes", no}
+  // * is_restart = {yes, "no"}
   // * sig_digits = 3
   myIndMitr   = 0;
   mySigDigits = 3;
@@ -2855,7 +2880,6 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "#include <spk/SpkValarray.h>" << endl;
   oIndData_h << "#include <spk/cholesky.h>" << endl;
   oIndData_h << "#include <spk/multiply.h>" << endl;
-  oIndData_h << "#include <spk/wres.h>" << endl;
   oIndData_h << "#include <CppAD/CppAD.h>" << endl;
   oIndData_h << endl;
   
@@ -3005,8 +3029,6 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "~IndData();" << endl;
   oIndData_h << "const SPK_VA::valarray<double> getMeasurements() const;" << endl;
   oIndData_h << "void replaceMeasurements( const SPK_VA::valarray<double>& yyi );" << endl;
-  oIndData_h << "void compResiduals();" << endl;
-  oIndData_h << "void compWeightedResiduals( const SPK_VA::valarray<double>& Ri );" << endl;
   oIndData_h << endl;
 
   //----------------------------------------
@@ -3241,82 +3263,6 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "}" << endl;
   oIndData_h << endl;
 
-  // --------------
-  // compResidual()
-  // --------------
-  // Compute r = DV - PRED
-  //
-  oIndData_h << "// Compute residuals." <<endl;
-  oIndData_h << "template <class spk_ValueType>" << endl;
-  oIndData_h << "void IndData<spk_ValueType>::compResiduals()" << endl;
-  oIndData_h << "{" << endl;
-  oIndData_h << "   for( int i=0; i<n; i++ )" << endl;
-  oIndData_h << "   {" << endl;
-  oIndData_h << "      " << UserStr.RES << "[i] =" << UserStr.DV << "[i] - " << UserStr.PRED << "[i];" << endl;
-  oIndData_h << "   }" << endl;
-  oIndData_h << "}" << endl;
-  oIndData_h << endl;
-
-  // -----------------------
-  // compWeightedResiduals()
-  // -----------------------
-  // r = DV-PRED
-  // WRES = C * r, where C is such that R = C * C^t
-  //
-  oIndData_h << "// Compute weighted residual such that:" << endl;
-  oIndData_h << "// r = DV-PRED" << endl;
-  oIndData_h << "// WRES = C * r, where C is an matrix such that Ri * C * C^t." <<endl;
-  oIndData_h << "//" << endl;
-  oIndData_h << "// The type of template argument must have Value() operator " << endl;
-  oIndData_h << "// that returns a corresponding double-precision value." << endl;
-  oIndData_h << "// It is (unfortunately) essentially requiring that the argument is of CppAD. " << endl;
-  oIndData_h << "template <class spk_ValueType>" << endl;
-  /*
-  oIndData_h << "void IndData<spk_ValueType>::compWeightedResiduals( const SPK_VA::valarray<double>& Ri )" << endl;
-  oIndData_h << "{" << endl;
-  oIndData_h << "   using SPK_VA::valarray;" << endl;
-  oIndData_h << "   using std::vector;" << endl;
-  oIndData_h << "   assert( Ri.size() == n * n );" << endl;
-  oIndData_h << "   compResiduals();" << endl;
-  oIndData_h << "   valarray<double> r( n );" << endl;
-  oIndData_h << "   for( int i=0; i<n; i++ )" << endl;
-  oIndData_h << "   {" << endl;
-  oIndData_h << "      r[i] = CppAD::Value( " << UserStr.RES << "[i] );" << endl;
-  oIndData_h << "   }" << endl;
-  oIndData_h << "   valarray<double> C( 0.0, n * n );" << endl;
-  oIndData_h << "   C = cholesky( Ri, n );" << endl;
-  oIndData_h << "   valarray<double> w = multiply( C, n, r, 1 );" << endl;
-  oIndData_h << "   vector< CppAD::AD<double> > Cr(n);" << endl;
-  oIndData_h << "   for( int i=0; i<n; i++ )" << endl;
-  oIndData_h << "      " << UserStr.WRES << "[i] = w[i];" << endl;
-  oIndData_h << "   return;" << endl;
-  oIndData_h << "}" << endl;
-  oIndData_h << endl; 
-  */
-  oIndData_h << "void IndData<spk_ValueType>::compWeightedResiduals( const SPK_VA::valarray<double>& Ri )" << endl;
-  oIndData_h << "{" << endl;
-  oIndData_h << "   using SPK_VA::valarray;" << endl;
-  oIndData_h << "   assert( Ri.size() == n * n );" << endl;
-  oIndData_h << "   valarray<double> y(n);     // DV" << endl;
-  oIndData_h << "   valarray<double> yHat(n);  // PRED" << endl;
-  oIndData_h << "   valarray<double> r(n);" << endl;
-  oIndData_h << "   valarray<double> wr(n);" << endl;
-  oIndData_h << "   for( int i=0; i<n; i++ )" << endl;
-  oIndData_h << "   {" << endl;
-  oIndData_h << "      y[i]    = CppAD::Value( " << UserStr.DV   << "[i] );" << endl;
-  oIndData_h << "      yHat[i] = CppAD::Value( " << UserStr.PRED << "[i] );" << endl;
-  oIndData_h << "   }" << endl;
-  oIndData_h << "   wres( y, yHat, Ri, r, wr );" << endl;
-  oIndData_h << "   for( int i=0; i<n; i++ )" << endl;
-  oIndData_h << "   {" << endl;
-  oIndData_h << "      " << UserStr.RES  << "[i] = r[i];"  << endl;
-  oIndData_h << "      " << UserStr.WRES << "[i] = wr[i];" << endl;
-  oIndData_h << "   }" << endl;
-  oIndData_h << "   return;" << endl;
-  oIndData_h << "}" << endl;
-  
-
-
   oIndData_h << "#endif" << endl;
 
   oIndData_h.close();
@@ -3477,8 +3423,6 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "   int getPopSize() const;" << endl;
   oDataSet_h << "   const SPK_VA::valarray<int> getN() const;" << endl;
   oDataSet_h << "   void replaceAllMeasurements( const SPK_VA::valarray<double> & yy );" << endl;
-  oDataSet_h << "   void compAllResiduals();" << endl;
-  oDataSet_h << "   void compAllWeightedResiduals( std::vector< SPK_VA::valarray<double> >& R );" << endl;
   oDataSet_h << "   friend std::ostream& operator<< <spk_ValueType>( std::ostream& o, const DataSet<spk_ValueType>& A );" << endl;
   oDataSet_h << endl;
  
@@ -3704,40 +3648,6 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "      data[i]->replaceMeasurements( yy[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
   oDataSet_h << "   }" << endl;
   oDataSet_h << "   measurements = yy;" << endl;
-  oDataSet_h << "}" << endl;
-  oDataSet_h << endl;
-
-  // ------------------
-  // compAllResiduals()
-  // ------------------
-  // Compute the residuals for all individuals.
-  //
-  oDataSet_h << "// Compute the residuals for all individuals." << endl;
-  oDataSet_h << "template <class spk_ValueType>" << endl;
-  oDataSet_h << "void DataSet<spk_ValueType>::compAllResiduals()" << endl;
-  oDataSet_h << "{" << endl;
-  oDataSet_h << "   const int n = data.size();" << endl;
-  oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
-  oDataSet_h << "   {" << endl;
-  oDataSet_h << "      data[i]->compResiduals();" << endl;
-  oDataSet_h << "   }" << endl;
-  oDataSet_h << "}" << endl;
-  oDataSet_h << endl;
-
-  // --------------------------
-  // compAllWeightedResiduals()
-  // --------------------------
-  // Compute the weighted residuals for all individuals.
-  //
-  oDataSet_h << "// Compute the weighted residuals for all individuals." << endl;
-  oDataSet_h << "template <class spk_ValueType>" << endl;
-  oDataSet_h << "void DataSet<spk_ValueType>::compAllWeightedResiduals( std::vector< SPK_VA::valarray<double> >& R )" << endl;
-  oDataSet_h << "{" << endl;
-  oDataSet_h << "   const int nPop = data.size();" << endl;
-  oDataSet_h << "   for( int i=0; i<nPop; i++ )" << endl;
-  oDataSet_h << "   {" << endl;
-  oDataSet_h << "      data[i]->compWeightedResiduals( R[i] );" << endl;
-  oDataSet_h << "   }" << endl;
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
 
@@ -4321,7 +4231,8 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 	{
 	  // ignore.  these don't get used within PRED.
 	}
-      else if( keyLabel == KeyStr.WRES || keyLabel == KeyStr.RES )
+      else if( keyLabel == KeyStr.WRES   || keyLabel == KeyStr.RES 
+            || keyLabel == KeyStr.PARRES || keyLabel == KeyStr.PARWRES )
 	{
 	  // ignore.  These values are only computed outside at the final estimate.
 	}
@@ -4355,7 +4266,12 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
     {
       const string label     = pT->second.name;
       const string keyLabel = SymbolTable::key( label );
-      if( keyLabel == KeyStr.OMEGA || keyLabel == KeyStr.SIGMA || keyLabel == KeyStr.WRES || keyLabel == KeyStr.RES )
+      if( keyLabel == KeyStr.OMEGA 
+          || keyLabel == KeyStr.SIGMA 
+          || keyLabel == KeyStr.WRES 
+          || keyLabel == KeyStr.RES
+          || keyLabel == KeyStr.PARRES
+          || keyLabel == KeyStr.PARWRES )
 	continue;
 
       if( find( labels->begin(), labels->end(), label ) == labels->end() )
@@ -4765,6 +4681,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "#include <spk/derParStatistics.h>" << endl;
   oDriver << "#include <spk/multiply.h>"         << endl;
   oDriver << "#include <spk/cholesky.h>"         << endl;
+  oDriver << "#include <spk/indResiduals.h>"     << endl;
   oDriver << endl;
 
   oDriver << "// Helper" << endl;
@@ -4926,6 +4843,11 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "valarray<double> RInvOut( nY * nY );"     << endl;
   oDriver << endl;
 
+  oDriver << "valarray<double> predOut     ( nY );"      << endl;
+  oDriver << "valarray<double> resOut      ( nY );"      << endl;
+  oDriver << "valarray<double> resWtdOut   ( nY );"    << endl;
+  oDriver << endl;
+
   oDriver << "ofstream oResults;" << endl;
   oDriver << "string warningsOut;" << endl;
   oDriver << endl;
@@ -5061,16 +4983,17 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << endl;
   oDriver << "  //////////////////////////////////////////////////////////////////////" << endl;
   oDriver << "  //   NONMEM Specific" << endl;
-  oDriver << "  if( isOptRequested && isOptSuccess )" << endl;
+  oDriver << "  if( isOptRequested && isOptSuccess )"    << endl;
   oDriver << "  {" << endl;
-  oDriver << "     valarray<double> ROut( nY * nY );" << endl;
-  oDriver << "     model.setIndPar( bOut );" << endl;
-  oDriver << "     model.dataVariance( ROut );" << endl;
-  oDriver << "     vector< valarray<double> > R( 1 );" << endl;
-  oDriver << "     R[0].resize( nY * nY );" << endl;
-  oDriver << "     R[0] = ROut;" << endl;
-  oDriver << "     set.compAllWeightedResiduals( R );" << endl;
-      
+  oDriver << "     indResiduals( model, y, bOut, "       << endl;
+  oDriver << "                   &predOut, "             << endl;
+  oDriver << "                   &resOut, "              << endl;
+  oDriver << "                   &resWtdOut, "           << endl;
+  oDriver << "                   NULL, "           << endl;
+  oDriver << "                   NULL );"       << endl;
+  oDriver << "     copy( &predOut     [0], &predOut     [nY], set.data[0]->PRED   .begin() );"      << endl;
+  oDriver << "     copy( &resOut      [0], &resOut      [nY], set.data[0]->RES    .begin() );"       << endl;
+  oDriver << "     copy( &resWtdOut   [0], &resWtdOut   [nY], set.data[0]->WRES   .begin() );"    << endl;
   oDriver << "  }" << endl;
   oDriver << "  //" << endl;
   oDriver << "  //////////////////////////////////////////////////////////////////////" << endl;    
@@ -5400,6 +5323,7 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "#include <spk/NaiveFoModel.h>"     << endl;
   oDriver << "#include <spk/multiply.h>"   << endl;
   oDriver << "#include <spk/cholesky.h>"   << endl;
+  oDriver << "#include <spk/popResiduals.h>" << endl;
   oDriver << endl;
 
   oDriver << "// For data simulation" << endl;
@@ -5593,6 +5517,13 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "valarray<double> stdParInvCovOut     ( nAlp * nAlp );"        << endl;
   oDriver << endl;
 
+  oDriver << "valarray<double> predOut     ( nY );"      << endl;
+  oDriver << "valarray<double> resOut      ( nY );"      << endl;
+  oDriver << "valarray<double> resWtdOut   ( nY );"    << endl;
+  oDriver << "valarray<double> parResOut   ( nB*nPop );"    << endl;
+  oDriver << "valarray<double> parResWtdOut( nB*nPop );" << endl;
+  oDriver << endl;
+
   oDriver << "ofstream oResults;" << endl;
   oDriver << "string warningsOut;" << endl;
   oDriver << endl;
@@ -5756,18 +5687,24 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "   //   NONMEM Specific" << endl;
   oDriver << "   if( isOptRequested && isOptSuccess )" << endl;
   oDriver << "   {" << endl;
-  oDriver << "      model.setPopPar( alpOut );" << endl;
-  oDriver << "      vector< valarray<double> > R( nPop );" << endl;
-  oDriver << "      for( int i=0; i<nPop; i++ )" << endl;
+  oDriver << "     popResiduals( model, objective, N, y, alpOut, bOut," << endl;
+  oDriver << "                   &predOut, "       << endl;
+  oDriver << "                   &resOut, "        << endl;
+  oDriver << "                   &resWtdOut, "     << endl;
+  oDriver << "                   &parResOut, "     << endl;
+  oDriver << "                   &parResWtdOut );" << endl;
+  oDriver << "      for( int i=0, k=0; i<nPop; k+=N[i++] )" << endl;
   oDriver << "      {" << endl;
-  oDriver << "         valarray<double> RiOut( N[i] * N[i] );" << endl;
-  oDriver << "         model.selectIndividual(i);" << endl;
-  oDriver << "         model.setIndPar( bOut[ slice( i*nB, nB, 1 ) ] );" << endl;
-  oDriver << "         model.dataVariance( RiOut );" << endl;
-  oDriver << "         R[i].resize( N[i] * N[i] );" << endl;
-  oDriver << "         R[i] = RiOut;" << endl;
+  oDriver << "         valarray<double> temp( N[i] );" << endl;
+  oDriver << "         temp = predOut[ slice( k, N[i], 1 ) ];" << endl;
+  oDriver << "         copy( &temp[0], &temp[N[i]], set.data[i]->PRED.begin() );" << endl;
+  oDriver << "         temp = resOut[ slice( k, N[i], 1 ) ];" << endl;
+  oDriver << "         copy( &temp[0], &temp[N[i]], set.data[i]->RES .begin() );" << endl;
+  oDriver << "         temp = resWtdOut[ slice( k, N[i], 1 ) ];" << endl;
+  oDriver << "         copy( &temp[0], &temp[N[i]], set.data[i]->WRES.begin() );" << endl;
+  oDriver << "         copy( &parResOut[nB*i], &parResOut[nB], set.data[i]->PARRES.begin() );" << endl;
+  oDriver << "         copy( &parResWtdOut[nB*i], &parResWtdOut[nB], set.data[i]->PARWRES.begin() );" << endl;
   oDriver << "      }" << endl;
-  oDriver << "      set.compAllWeightedResiduals( R );" << endl;
   oDriver << "   }" << endl;
   oDriver << "}" << endl;
   oDriver << "   //" << endl;
