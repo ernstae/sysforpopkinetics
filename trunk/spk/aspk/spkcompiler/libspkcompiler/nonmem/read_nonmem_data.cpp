@@ -1,4 +1,5 @@
 #include "read_nonmem_data.h"
+#include "../SpkCompilerUtil.h"
 #include "../SymbolTable.h"
 #include "../SpkParameters.h"
 #include <spk/SpkValarray.h>

@@ -40,7 +40,7 @@
  * @return void
  *
  * @param dataNode Pointer to an DOMElement object that
- * is the root of <data> subtree in the parsed SpkInML document.
+ * is the root of <data> subtree in the SpkInML document tree.
  * The subtree is expected to obey the DTD grammer specification.
  *
  * @param nIndividuals The number of subjects in the population or
