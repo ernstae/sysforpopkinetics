@@ -140,7 +140,7 @@ namespace{
   //
   // Covariance form:          R
   // Standard error out?:      yes
-  // Coefficent of variation?  yes
+  // Coefficient of variation? yes
   // Confidence interval?      yes
   // Covariance?               yes
   // Inverse of covariance     no
@@ -464,14 +464,16 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
   oSource << "</in>" << endl;
   oSource << "</sigma>" << endl;
 
-  oSource << "<pop_stat covariance_form=\"" << pop_cov_form << "\" ";
-  oSource << "is_stderror_out=\""           << (pop_stderr?         "yes":"no") << "\" ";
-  oSource << "is_covariance_out=\""         << (pop_covariance?     "yes":"no") << "\" ";
-  oSource << "is_inverse_covariance_out=\"" << (pop_inv_covariance? "yes":"no") << "\" ";
-  oSource << "is_confidence_out=\""         << (pop_confidence?     "yes":"no") << "\" ";
-  oSource << "is_coefficient_out=\""        << (pop_coefficient?    "yes":"no") << "\" ";
-  oSource << "is_correlation_out=\""        << (pop_correlation?    "yes":"no") << "\"/>" << endl;
-
+  if( pop_stderr || pop_covariance || pop_inv_covariance || pop_confidence || pop_coefficient || pop_correlation )
+    {
+      oSource << "<pop_stat covariance_form=\"" << pop_cov_form << "\" ";
+      oSource << "is_stderror_out=\""           << (pop_stderr?         "yes":"no") << "\" ";
+      oSource << "is_covariance_out=\""         << (pop_covariance?     "yes":"no") << "\" ";
+      oSource << "is_inverse_covariance_out=\"" << (pop_inv_covariance? "yes":"no") << "\" ";
+      oSource << "is_confidence_out=\""         << (pop_confidence?     "yes":"no") << "\" ";
+      oSource << "is_coefficient_out=\""        << (pop_coefficient?    "yes":"no") << "\" ";
+      oSource << "is_correlation_out=\""        << (pop_correlation?    "yes":"no") << "\"/>" << endl;
+    }
   if( isSimulate )
     {
       oSource << "<simulation seed=\"" << seed << "\"/>" << endl;
@@ -780,6 +782,8 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
   oIndDataDriver.close();
 
   char command[256];
+  sprintf( command, "\necho --- %s ---\n", fIndDataDriver );
+  system( command );
   sprintf( command, "g++ -g %s -o %s  -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -I/usr/local/include/spktest", fIndDataDriver_cpp, fIndDataDriver );
   if( system( command ) != 0 )
     {
@@ -864,6 +868,8 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
   
   oDataSetDriver.close();
 
+  sprintf( command, "\necho --- %s ---\n", fDataSetDriver );
+  system( command );
   sprintf( command, "g++ -g %s -o %s  -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -I/usr/local/include/spktest", fDataSetDriver_cpp, fDataSetDriver );
   if( system( command ) != 0 )
     {
@@ -1011,6 +1017,8 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
   oPredDriver << "}" << endl;
   oPredDriver.close();
 
+  sprintf( command, "\necho --- %s ---\n", fPredDriver );
+  system( command );
   sprintf( command, "g++ -g %s -o %s  -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -I/usr/local/include/spktest", fPredDriver_cpp, fPredDriver );
   if( system( command ) != 0 )
     {
