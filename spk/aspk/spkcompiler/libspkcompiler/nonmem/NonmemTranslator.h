@@ -21,6 +21,58 @@
 #include "../client.h"
 #include "../ExpTreeGenerator.h"
 
+namespace nonmem{
+  enum MODEL { NONE,   
+               ADVAN1,  ADVAN2,  ADVAN3,  ADVAN4,  ADVAN5, 
+	       ADVAN6,  ADVAN7,  ADVAN8,  ADVAN9,  ADVAN10, 
+	       ADVAN11, ADVAN12 };
+  enum TRANS { DEFAULT,
+	       TRANS1, TRANS2, TRANS3, TRANS4, TRANS5 };
+  enum nonmem::MODEL toEnumMODEL ( const char* );
+  const char* const toStringMODEL( enum nonmem::MODEL e );
+  enum nonmem::TRANS toEnumTRANS ( const char* );
+  const char* const toStringTRANS( enum nonmem::TRANS e );
+
+  const char * const STR_NONE    = "none";
+  const char * const STR_ADVAN1  = "advan1";
+  const char * const STR_ADVAN2  = "advan2";
+  const char * const STR_ADVAN3  = "advan3";
+  const char * const STR_ADVAN4  = "advan4";
+  const char * const STR_ADVAN5  = "advan5";
+  const char * const STR_ADVAN6  = "advan6";
+  const char * const STR_ADVAN7  = "advan7";
+  const char * const STR_ADVAN8  = "advan8";
+  const char * const STR_ADVAN9  = "advan9";
+  const char * const STR_ADVAN10 = "advan10";
+  const char * const STR_ADVAN11 = "advan11";
+  const char * const STR_ADVAN12 = "advan12";
+
+  const char * const STR_DEFAULT = "default";
+  const char * const STR_TRANS1  = "trans1";
+  const char * const STR_TRANS2  = "trans2";
+  const char * const STR_TRANS3  = "trans3";
+  const char * const STR_TRANS4  = "trans4";
+  const char * const STR_TRANS5  = "trans5";
+
+  bool nonmem::isKeyword( const std::string &var );
+
+  // LABEL data type:
+  // The reason for the key data type being "string"
+  // instead of "char*" is that, if I use "char*" type, 
+  // the memory address is rather used as a key, causing multiple entries
+  // getting registered in the map for the same string/name.
+  typedef std::string LABEL;
+
+  // ALIAS data type:
+  // The reason for the key data type being "string"
+  // instead of "char*" is to be consistent with LABEL data type.
+  typedef std::string ALIAS;
+
+  // MEASUREMENT data type:
+  // Let's just make them all expressed in double-precision.
+  typedef std::valarray<double> MEASUREMENT;
+
+};
 
 /**
  * @struct NonmemParameters
@@ -124,57 +176,6 @@ struct NonmemParameters
 class NonmemTranslator : public ClientTranslator
 {
  public:
-  enum NonmemModel { NONE,   
-                     ADVAN1,  ADVAN2,  ADVAN3,  ADVAN4,  ADVAN5, 
-		     ADVAN6,  ADVAN7,  ADVAN8,  ADVAN9,  ADVAN10, 
-		     ADVAN11, ADVAN12 
-                   };
-  static enum NonmemModel toNonmemModelEnum( const char* );
-  static const char* const toNonmemModelString( enum NonmemModel e );
-
-  static const char * const STR_NONE;
-  static const char * const STR_ADVAN1;
-  static const char * const STR_ADVAN2;
-  static const char * const STR_ADVAN3;
-  static const char * const STR_ADVAN4;
-  static const char * const STR_ADVAN5;
-  static const char * const STR_ADVAN6;
-  static const char * const STR_ADVAN7;
-  static const char * const STR_ADVAN8;
-  static const char * const STR_ADVAN9;
-  static const char * const STR_ADVAN10;
-  static const char * const STR_ADVAN11;
-  static const char * const STR_ADVAN12;
-
-  enum NonmemParameterization { DEFAULT,
-                     TRANS1, TRANS2, TRANS3, TRANS4, TRANS5 };
-  static enum NonmemParameterization toNonmemParameterizationEnum( 
-                              const char* );
-  static const char* const toNonmemParameterizationString( 
-			      enum NonmemParameterization e );
-
-  static const char * const STR_DEFAULT;
-  static const char * const STR_TRANS1;
-  static const char * const STR_TRANS2;
-  static const char * const STR_TRANS3;
-  static const char * const STR_TRANS4;
-  static const char * const STR_TRANS5;
-
-  // LABEL data type:
-  // The reason for the key data type being "string"
-  // instead of "char*" is that, if I use "char*" type, 
-  // the memory address is rather used as a key, causing multiple entries
-  // getting registered in the map for the same string/name.
-  typedef std::string LABEL;
-
-  // ALIAS data type:
-  // The reason for the key data type being "string"
-  // instead of "char*" is to be consistent with LABEL data type.
-  typedef std::string ALIAS;
-
-  // MEASUREMENT data type:
-  // Let's just make them all expressed in double-precision.
-  typedef std::valarray<double> MEASUREMENT;
 
   NonmemTranslator();
   ~NonmemTranslator();
@@ -198,12 +199,12 @@ class NonmemTranslator : public ClientTranslator
 
  private:
 
-  enum NonmemModel nonmemModel;
-  enum NonmemParameterization nonmemParameterization;
+  enum nonmem::MODEL nonmemModel;
+  enum nonmem::TRANS nonmemTrans;
 
-  ExpTreeGenerator expTreeUtils;
+  //ExpTreeGenerator expTreeUtils;
 
-  struct SpkParameters ourSpk;
+  struct SpkParameters    ourSpk;
   struct NonmemParameters ourNonmem;
 
   std::vector<std::string> ourGeneratedFileNames;
@@ -211,8 +212,8 @@ class NonmemTranslator : public ClientTranslator
   std::vector<std::string> emit( 		
 		    int nIndividuals,
 		    const SymbolTable* table,
-		    const std::map<LABEL, ALIAS> & label_alias_mapping,
-		    const std::map<LABEL, MEASUREMENT> data_for[],
+		    const std::map<nonmem::LABEL, nonmem::ALIAS> & label_alias_mapping,
+		    const std::map<nonmem::LABEL, nonmem::MEASUREMENT> data_for[],
 		    const std::string order_id_pair[]
 		 );
 };

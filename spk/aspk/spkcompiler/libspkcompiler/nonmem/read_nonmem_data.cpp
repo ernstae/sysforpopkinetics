@@ -16,8 +16,8 @@ void read_nonmem_data(
 	xercesc::DOMElement* dataNode, 
         int nIndividuals,
 	SymbolTable & table,
-	map<NonmemTranslator::LABEL, NonmemTranslator::ALIAS> &label_alias_mappingOut,
-	map<NonmemTranslator::LABEL, NonmemTranslator::MEASUREMENT> data_forOut[],
+	map<nonmem::LABEL, nonmem::ALIAS> &label_alias_mappingOut,
+	map<nonmem::LABEL, nonmem::MEASUREMENT> data_forOut[],
 	string order_id_pairOut[],
         struct SpkParameters & spkOut 
       )
@@ -186,7 +186,7 @@ void read_nonmem_data(
 	      // Register the label-values pair in the data_forOut map.
 	      //
 	      data_forOut[order].insert( 
-		   pair<NonmemTranslator::LABEL, NonmemTranslator::MEASUREMENT >
+		   pair<nonmem::LABEL, nonmem::MEASUREMENT >
 		   (label, values) );
 
 	      Symbol Label( label, Symbol::VECTOR, Symbol::DOUBLE, true );
