@@ -36,9 +36,15 @@ static const char *const substr(const char * begin,
     }
     return buf;
 }
+/*------------------------------------------------------------------------
+ * Static member variables
+ *------------------------------------------------------------------------*/
 const int SpkCompilerException::MAX_ERRORS        = 16;
 const int SpkCompilerException::MAX_ERRORS_DIGITS =  2;
-const int SpkCompilerException::EXCEPTION_SIZE    = SpkCompilerException::MAX_ERRORS_DIGITS + /*strlen("count\n")*/ 6 + ( SpkCompilerException::MAX_ERRORS * SpkCompilerError::ERROR_SIZE );
+const int SpkCompilerException::EXCEPTION_SIZE    = SpkCompilerException::MAX_ERRORS_DIGITS 
+                                                  + /*strlen("count\n")*/ 6 
+                                                  + ( SpkCompilerException::MAX_ERRORS * SpkCompilerError::ERROR_SIZE );
+
 /*------------------------------------------------------------------------
  * Class definition
  *------------------------------------------------------------------------*/
