@@ -241,14 +241,12 @@ The i-th &lt;<value>&gt; corresponds to the i-th element of the parameter vector
 -->
 <!ELEMENT ind_coefficient_out (value)*>
 
-<!-- <ind_coefficient_out length="0"> The lenght of the vector containing the coefficient of variation, which is equal to the length of the parameter vector.
+<!-- <ind_coefficient_out length="0"> The length of the vector containing the coefficient of variation, which is equal to the length of the parameter vector.
 -->
 <!ATTLIST ind_coefficient_out length CDATA #REQUIRED>
 
 
-<!-- <presentation_data> The values that 
-appear on the left hand side of the equations in the model definition
-and the following extra items, both evaluated at each sampling point:
+<!-- <presentation_data> The data item values in the given data set, the values that appear on the left hand side of the equations in the model definition and the following extra items, both evaluated at each sampling point:
 
    <html:ul>
       <html:li>Observation record identifier (ID)</html:li>
@@ -335,4 +333,7 @@ For numbers, you can use the decimal format (ex. 0.1) or scientific notation (ex
 
 <!-- <value type="numeric">The type of the value: "numeric" or "string", default to "numeric". -->
 <!ATTLIST value type (numeric|string) #IMPLIED>
+
+<!-- <value ref="xxx">The string associated with the value.  The label here is only to provide you a visual guide though the list of <value>s.  The label values in <data_labels> superceed the values here.-->
+<!ATTLIST value ref CDATA #IMPLIED>
 
