@@ -1048,16 +1048,15 @@ void popStatistics( SpkModel&                popModel,
     //----------------------------------------------------------------
     // Declare R inverse and S variables. 
     //----------------------------------------------------------------
-    valarray<double> Rinv;
-    valarray<double> valS;
-    DoubleMatrix dmatS;
+    valarray<double> Rinv( nAlp * nAlp );
+    valarray<double> valS( nAlp * nAlp );
+    DoubleMatrix dmatS( nAlp, nAlp );
 
     //----------------------------------------------------------------
     // Compute Rinv 
     //----------------------------------------------------------------
     if( formulation == RSR || formulation == R )
     {
-        Rinv.resize( nAlp * nAlp );
         try
         {
             Rinv = inverse( ( popObj_popPar_popPar +
@@ -1138,14 +1137,16 @@ void popStatistics( SpkModel&                popModel,
     //----------------------------------------------------------------
     // Calculate popPar Covariance 
     //----------------------------------------------------------------
-    valarray<double> popParCov;
+    valarray<double> popParCov( nAlp * nAlp );
     if( formulation == RSR )
     {
         DoubleMatrix dmatRinv( Rinv, nAlp );
         popParCov = ( dmatRinv * dmatS * dmatRinv ).toValarray();
     }
     if( formulation == R )
+      {
         popParCov = Rinv;
+      }
     if( formulation == S )
     {
         try

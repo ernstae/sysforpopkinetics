@@ -546,7 +546,7 @@ double lambda( SpkModel &model,
     model.setIndPar(b);
 
     // Calculate f(alp,b).
-    valarray<double> fab;
+    valarray<double> fab(nY);
     model.dataMean(fab);
     assert(fab.size() == nY);
 
@@ -1074,21 +1074,21 @@ const DoubleMatrix lambda_alp(SpkModel &model,
     assert( dmatFab_alp.nc() == nA );
 
     // f(alp,b)
-    valarray<double> fab;
+    valarray<double> fab( nY );
     model.dataMean( fab );
     DoubleMatrix dvecFab( fab, 1 );
     assert( dvecFab.nr() == nY );
     assert( dvecFab.nc() == 1 );
 
     // Calculate R_alp(alp,b) before R(alp,b) to allow caching.
-    valarray<double> Rab_alp;
+    valarray<double> Rab_alp( nY * nY * nA );
     model.dataVariance_popPar( Rab_alp );
     DoubleMatrix dmatRab_alp( Rab_alp, nA );
     assert( dmatRab_alp.nr() == nY*nY );
     assert( dmatRab_alp.nc() == nA );
 
     // R(alp,b)
-    valarray<double> Rab;
+    valarray<double> Rab( nY * nY );
     model.dataVariance( Rab );
     DoubleMatrix dmatRab( Rab, nY );
     assert( dmatRab.nr() == nY );
@@ -1096,7 +1096,7 @@ const DoubleMatrix lambda_alp(SpkModel &model,
 
     // invR(alp,b)
     assert( hasPosDet( dmatRab ) ); 
-    valarray<double> RabInv;
+    valarray<double> RabInv( nY * nY );
     model.dataVarianceInv( RabInv );
     DoubleMatrix dmatRabInv( RabInv, nY );
     assert( dmatRabInv.nr() == nY );
@@ -1107,21 +1107,21 @@ const DoubleMatrix lambda_alp(SpkModel &model,
     if( withD )
     {
         // Calculate D_alp(alp) before D(alp) to allow caching.
-        valarray<double> Da_alp;
+        valarray<double> Da_alp( nB * nB * nA );
         model.indParVariance_popPar( Da_alp );
         DoubleMatrix dmatDa_alp( Da_alp, nA );
         assert( dmatDa_alp.nr() == nB*nB );
         assert( dmatDa_alp.nc() == nA );
 
         // D(alp)
-        valarray<double> Da;
+        valarray<double> Da( nB * nB );
         model.indParVariance( Da );
         DoubleMatrix dmatDa( Da, nB );
         assert( dmatDa.nr() == nB );
         assert( dmatDa.nc() == nB );
         assert( hasPosDet(dmatDa) );
         
-        valarray<double> DaInv;
+        valarray<double> DaInv( nB * nB );
         model.indParVarianceInv( DaInv );
         DoubleMatrix dmatDaInv( DaInv, nB );
         assert( dmatDaInv.nr() == nB );

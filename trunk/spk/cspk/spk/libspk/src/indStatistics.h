@@ -40,9 +40,10 @@
 #include "SpkValarray.h"
 #include "SpkModel.h"
 
-void indStatistics( 
-                    SpkModel&                       indModel,
-                    const SPK_VA::valarray<double>& indPar,
+void indStatistics( const SPK_VA::valarray<double>& indPar,
+                    const SPK_VA::valarray<double>& dataMean_indPar,
+                    const SPK_VA::valarray<double>& dataVariance_indPar,
+                    const SPK_VA::valarray<double>& dataVarianceInv,
                     SPK_VA::valarray<double>*       indParCovOut,
                     SPK_VA::valarray<double>*       indParSEOut,                          
                     SPK_VA::valarray<double>*       indParCorOut,

@@ -998,7 +998,6 @@ $end
 
 #include <cassert>
 #include <iostream>
-#include <strstream>
 #include <cerrno>
 
 #include "EqIndModel.h"

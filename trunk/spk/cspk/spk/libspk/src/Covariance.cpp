@@ -498,7 +498,7 @@ void Covariance::setCovPopPar( const valarray<double>& popParNew )
       setCacheStatusInvalid();
     }
   }
-
+  covPopPar.resize( popParNew.size() );
   covPopPar = popParNew;
 }
 
@@ -587,6 +587,7 @@ void Covariance::setCovIndPar( const valarray<double>& indParNew )
     }
   }
 
+  covIndPar.resize( indParNew.size() );
   covIndPar = indParNew;
 }
 

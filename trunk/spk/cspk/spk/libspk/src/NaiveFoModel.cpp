@@ -289,6 +289,7 @@ $end
 #include "allZero.h"
 #include "inverse.h"
 #include "AkronBtimesC.h"
+#include "multiply.h"
 
 using SPK_VA::valarray;
 /*------------------------------------------------------------------------
@@ -312,48 +313,56 @@ void NaiveFoModel::doSelectIndividual( int inx )
 }
 void NaiveFoModel::doSetPopPar( const valarray<double>& popPar )
 {
+  _alp.resize( popPar.size() );
   _alp = popPar;
   _nA = popPar.size();
   _pmodel->setPopPar( popPar );
 }
 void NaiveFoModel::doSetIndPar( const valarray<double>& indPar )
 {
+  _b.resize( indPar.size() );
   _b = indPar;
 }
 void NaiveFoModel::doDataMean( valarray<double> & foFiOut ) const
 {
   using namespace std;
-  valarray<double> fi0Out, fi_b0Out;
   _pmodel->setIndPar( _bZero );
   
   //
   // Evaluate f(alp.0);
   //
+  valarray<double> fi0Out;
   _pmodel->dataMean( fi0Out );
+  int nY = fi0Out.size();
+  assert( nY > 0 );
 
   //
   //          ~
   // Evaluate f_b(alp,0)
   //
+  valarray<double> fi_b0Out( nY * _nB );
   NaiveFoModelFunction fi( _pmodel );
   fi_b0Out = centdiff< binder1st<NaiveFoModelFunction> >( bind1st( fi, _alp ), 1, _bZero, _bStep );
 
   //                    ~
   // Compute f(alp,0) + f_b(alp,0) * b
   //
-  foFiOut = fi0Out + (DoubleMatrix(fi_b0Out, _nB) * DoubleMatrix( _b, 1 )).toValarray();
+  foFiOut.resize( nY );
+  valarray<double> temp = multiply( fi_b0Out, _nB, _b, 1 );
+  foFiOut = fi0Out + temp;
 }
 bool NaiveFoModel::doDataMean_popPar( valarray<double> & foFi_aOut ) const
 {
   using namespace std;
   valarray<double> fi_aOut;
-  valarray<double> fi_trueA_approxBOut;
-  DoubleMatrix DM_fi_approxB_trueAOut;
 
   _pmodel->setIndPar( _bZero );
   _pmodel->dataMean_popPar( fi_aOut );
 
   int nYi = fi_aOut.size() / _nA;
+  valarray<double> fi_trueA_approxBOut( nYi * _nA * _nB );
+  DoubleMatrix DM_fi_approxB_trueAOut( nYi * _nA, _nB );
+
   //
   // First, compute the approximation for the derivative of the true derivative fi_alp(alp,b) wrt. b 
   //
@@ -370,6 +379,7 @@ bool NaiveFoModel::doDataMean_popPar( valarray<double> & foFi_aOut ) const
   //                                          ~
   // Computer f_alp(alp,0) + I kron b * f_b_alp(alp,0)
   // 
+  foFi_aOut.resize( nYi * _nA );
   foFi_aOut = fi_aOut 
     + IkronBtimesC( identity( nYi ), DoubleMatrix( _b, _nB ), DM_fi_approxB_trueAOut ).toValarray();
 

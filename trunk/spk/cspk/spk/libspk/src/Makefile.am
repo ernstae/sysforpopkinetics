@@ -33,7 +33,6 @@ libspk_la_SOURCES = \
 	firstOrderOpt.cpp \
 	fitIndividual.cpp \
 	fitPopulation.cpp \
-	FoModel.cpp \
 	FpErrorChecker.cpp \
 	FullCovariance.cpp \
 	FullDataCovariance.cpp \
@@ -133,7 +132,6 @@ libspk_la_SOURCES = \
 	firstOrderOpt.h \
 	fitIndividual.h \
 	fitPopulation.h \
-	FoModel.h \
 	FpErrorChecker.h \
 	FullCovariance.h \
 	FullDataCovariance.h \
@@ -244,7 +242,6 @@ pkginclude_HEADERS = \
 	firstOrderOpt.h \
 	fitIndividual.h \
 	fitPopulation.h \
-	FoModel.h \
 	FpErrorChecker.h \
 	FullCovariance.h \
 	FullDataCovariance.h \

@@ -470,9 +470,9 @@ void mapObj(  SpkModel &model,
     const valarray<double> y = dvecY.toValarray();
     const valarray<double> b = dvecB.toValarray();
 
-    valarray<double> f, f_b;
-    valarray<double> R, R_b;
-    valarray<double> residual;
+    valarray<double> f(nY), f_b(nY*nB);
+    valarray<double> R(nY*nY), R_b(nY*nY*nB);
+    valarray<double> residual(nY);
 
     //
     // Revisit - Exception - Sachiko
