@@ -51,6 +51,7 @@ public class GetModel extends javax.swing.JFrame {
         jTextField3 = new javax.swing.JTextField();
         jButton3 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
@@ -138,9 +139,9 @@ public class GetModel extends javax.swing.JFrame {
         jTextField3.setPreferredSize(new java.awt.Dimension(100, 19));
         jPanel2.add(jTextField3);
 
-        jButton3.setText("Get Model Archive");
+        jButton3.setText("Get Archive");
         jButton3.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButton3.setPreferredSize(new java.awt.Dimension(140, 19));
+        jButton3.setPreferredSize(new java.awt.Dimension(100, 19));
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
@@ -159,6 +160,17 @@ public class GetModel extends javax.swing.JFrame {
         });
 
         jPanel2.add(jButton2);
+
+        jButton5.setText("To Library");
+        jButton5.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButton5.setPreferredSize(new java.awt.Dimension(97, 19));
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
+        jPanel2.add(jButton5);
 
         jButton1.setText("Save File");
         jButton1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -216,6 +228,19 @@ public class GetModel extends javax.swing.JFrame {
         pack();
     }//GEN-END:initComponents
 
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        if(jTextField3.getText().equals(""))
+        {
+            JOptionPane.showMessageDialog(null, "User Name is required.", "Input Error",
+                                          JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        action = "send";
+        indexList = 0;
+        lists = new Vector();
+        showArchiveList(0);        
+    }//GEN-LAST:event_jButton5ActionPerformed
+
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         jTextArea1.setText("");
     }//GEN-LAST:event_jButton4ActionPerformed
@@ -268,7 +293,8 @@ public class GetModel extends javax.swing.JFrame {
         int index = jTable1.getSelectedRow();
         if(index == -1)
             return; 
-        long modelId = Long.parseLong(((String[][])lists.get(indexList))[index][0]);       
+        long modelId = Long.parseLong(((String[][])lists.get(indexList))[index][0]); 
+        String name = ((String[][])lists.get(indexList))[index][1];
         reportDialog.dispose(); 
         try
         {
@@ -282,7 +308,7 @@ public class GetModel extends javax.swing.JFrame {
             {
                 ResultSet modelRS = Spkdb.getModel(con, modelId);
             
-                // Get Spk source and display it
+                // Get model and display it
                 modelRS.next();
                 Blob blobArchive = modelRS.getBlob("archive");
                 long length = blobArchive.length(); 
@@ -295,6 +321,33 @@ public class GetModel extends javax.swing.JFrame {
                              "' where model_id='" + modelId + "'";
                 Statement stmt = con.createStatement();
 	        stmt.executeUpdate(sql);
+                JOptionPane.showMessageDialog(null, 
+                                              "Model '" + name + "' archive was updated.",  
+                                              "Information",
+                                              JOptionPane.INFORMATION_MESSAGE);                
+            }
+            if(action.equals("send"))
+            {
+                // Get librarian user id
+                ResultSet userRS = Spkdb.getUser(con, "librarian");
+                userRS.next();
+                long userId = userRS.getLong("user_id");
+                
+                // get model and send it to library
+                ResultSet modelRS = Spkdb.getModel(con, modelId);
+                modelRS.next();
+                Blob blobArchive = modelRS.getBlob("archive");
+                long length = blobArchive.length(); 
+                modelId = Spkdb.newModel(con, 
+                                         userId,
+                                         name,
+                                         modelRS.getString("abstract"),
+                                         new String(blobArchive.getBytes(1L, (int)length)));
+                if(modelId != 0)
+                    JOptionPane.showMessageDialog(null, 
+                                                  "Model '" + name + "' was added to model library.", 
+                                                  "Information",
+                                                  JOptionPane.INFORMATION_MESSAGE);                    
             }
             
             // Disconnect to the database
@@ -463,6 +516,7 @@ public class GetModel extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

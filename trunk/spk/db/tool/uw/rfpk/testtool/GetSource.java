@@ -295,6 +295,10 @@ public class GetSource extends javax.swing.JFrame {
                              "' where job_id='" + jobId + "'";
                 Statement stmt = con.createStatement();
 	        stmt.executeUpdate(sql);
+                JOptionPane.showMessageDialog(null, 
+                                              "Source in job 'id = " + jobId + "' was updated.",  
+                                              "Information",
+                                              JOptionPane.INFORMATION_MESSAGE);                
             }
             
             // Disconnect to the database
@@ -495,5 +499,5 @@ public class GetSource extends javax.swing.JFrame {
     private String action = null;
     
     // Maximum number of items
-    private static final int maxNum = 12; 
+    private static final int maxNum = 12;
 }
