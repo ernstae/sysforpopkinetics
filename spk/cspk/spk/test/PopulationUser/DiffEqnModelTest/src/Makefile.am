@@ -1,6 +1,6 @@
 bin_PROGRAMS = DiffEqnModelTest
 DiffEqnModelTest_SOURCES = \
-    genericDriver.cpp \
+    DiffEqnModelTest.cpp \
     convertStatisticsToNonmem.cpp \
     DiffEqnModelD.cpp \
     DiffEqnModelF_Analytic.cpp \
