@@ -168,50 +168,63 @@ normally returned.
 
 $head Arguments$$
 $syntax/
+objective
 /$$
-This function object is used to evaluate the objective function, 
-$math%f(x)%$$, and the gradient of the objective function, 
-$math%g(x)%$$, for a particular value of $math%x%$$.
-Note that the gradient of the objective function may also sometimes
-be denoted as $math%f_x(x)%$$.
+This $code QuasiNewtonAnyBoxObj$$ function object is used to evaluate the 
+objective function $math%f(x)%$$ and the gradient of the objective 
+function $math%f_x(x)%$$ for a particular value of $math%x%$$.
+$pre
 
-Any data that is special to this functions definition can be stored as private data in the class
-and initialized when $italic obj$$ object is constructed.
+$$
+Since 
+The class $code QuasiNewtonAnyBoxObj$$ is an abstract base class,
+and $italic objective$$ is an instance of a concrete subclass
+of $code QuasiNewtonAnyBoxObj$$ that is specialized for this objective
+function.
+Any values that are required to evaluate the objective function
+and its gradient can be stored as private data in the class
+and initialized when $italic objective$$ is constructed.
+$pre
+
+$$
+Th $italic objective$$ is an instance of a concrete subclass
 It must have the following member functions:
 
 $subhead Objective Function$$
 The syntax
 $syntax%
-	const char *obj.function(const double *%x%, double *%f%)
+    virtual void function( const DoubleMatrix& dvecXIn, double* pdFOut ) = 0;
+	const char *objective.function(const double *%x%, double *%f%)
 %$$
 evaluates the objective.
-If the return value of $italic obj$$ is "ok",
+If the return value of $italic objective$$ is "ok",
 this sets the scalar $italic f$$
 equal to the objective function at $italic x$$
 where $italic x$$ is a vector of length $italic n$$ and
 $latex 0 \leq x \leq 1$$.
 If the return value of 
-$syntax%%obj%.function%$$ 
+$syntax%%objective%.function%$$ 
 is not "ok",
 $code QuasiNewton01Box$$ will abort its operation and return with its return value
 equal to the value returned by 
-$syntax%%obj%.function%$$.
+$syntax%%objective%.function%$$.
 
 $subhead Gradient$$
 The objective function is alway evaluated at the same $italic x$$ value directly before
 evaluating the gradient of the objective function.
 The syntax
 $syntax%
-	const char *obj.gradient(double *%g%)
+    virtual void gradient( DoubleMatrix* pdrowF_xOut ) const = 0;
+	const char *objective.gradient(double *%g%)
 %$$
 evaluates the gradient using the value of $italic x$$ in the previous 
-call to $syntax%%obj%.function%$$.
+call to $syntax%%objective%.function%$$.
 If the return value of 
-$syntax%%obj%.gradient%$$ 
+$syntax%%objective%.gradient%$$ 
 is not "ok",
 $code QuasiNewton01Box$$ will abort its operation and return with its return value
 equal to the value returned by 
-$syntax%%obj%.gradient%$$ .
+$syntax%%objective%.gradient%$$ .
 
 $syntax/
 
