@@ -1018,12 +1018,11 @@ void quasiNewtonAnyBox(
     // the maximum number of iterations have been performed.
     while ( !isAcceptable && iterCurr <= nMaxIter )
     {
-      // Get the Cholesky factor of the scaled Hessian.  Since this factor
-      // is lower triangular and in column-major order, it is equivalent 
-      // to a factor that is upper triangular and in row-major order.
+      // Get the Cholesky factor of the scaled Hessian in lower triangular 
+      // form and column-major order, and then put it in row-major order.
       doubleArrayToValarray( hScaled, hScaledVA );
       rScaledVA = cholesky( hScaledVA, nObjPar );
-      valarrayToDoubleArray( rScaledVA, rScaled );
+      valarrayToDoubleArrayTrans( nObjPar, rScaledVA, rScaled );
 
       // See if this function's convergence criterion has been met.
       if ( isWithinTol( 
@@ -1486,40 +1485,25 @@ bool isWithinTol(
   // Prepare the modified version of the Hessian.
   //------------------------------------------------------------
 
-  // Create an initiaal version of the Hessian with its super-diagonal 
-  // elements replaced by the sub-diagonal elements of its Cholesky
-  // factor, which is itself lower triangular.
+  // Input:the upper triangle of the n by n positive-definite
+  // symmetric matrix A, and the sub-diagonal elements of its
+  // Cholesky factor L, as returned by nag_real_cholesky
+
+  // Create an initial version of the Hessian with its sub-diagonal 
+  // elements replaced by the super-diagonal elements of its Cholesky
+  // factor, which is itself upper triangular.
   for ( i = 0; i < n; i++ )
   {
-    // Copy the sub-diagonal elements from the lower triangle of H.
+    // Get the sub-diagonal elements from the lower triangle of H.
     for ( j = 0; j <= i ; j++ )
     {
-
-h is in row major order
-h is in row major order
-h is in row major order
-h is in row major order
-h is in row major order
-h is in row major order
-h is in row major order
-
-      hWork[i + j * n] = h[i + j * n];
+      hWork[i * n + j] = h[i * n + j];
     }
   
-    // Copy the super-diagonal elements from the lower triangle of R.
+    // Get the super-diagonal elements from the upper triangle of R.
     for ( j = i + 1; j < n; j++ )
     {
-
-r (the Cholesky factor of h) is in column major order
-r (the Cholesky factor of h) is in column major order
-r (the Cholesky factor of h) is in column major order
-r (the Cholesky factor of h) is in column major order
-r (the Cholesky factor of h) is in column major order
-r (the Cholesky factor of h) is in column major order
-r (the Cholesky factor of h) is in column major order
-r (the Cholesky factor of h) is in column major order
-
-      hWork[i + j * n] = r[j + i * n];
+      hWork[i * n + j] = r[j + i * n];
     }
   }
 
@@ -1571,12 +1555,12 @@ r (the Cholesky factor of h) is in column major order
       // and column of the modified Hessian.
       for ( j = 0; j < i; j++ )
       {
-        hWork[i + j * n] = 0.0;
+        hWork[i * n + j] = 0.0;
         hWork[j + i * n] = 0.0;
       }
       for ( j = i + 1; j < n; j++ )
       {
-        hWork[i + j * n] = 0.0;
+        hWork[i * n + j] = 0.0;
         hWork[j + i * n] = 0.0;
       }
   
