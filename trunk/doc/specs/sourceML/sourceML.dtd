@@ -268,7 +268,37 @@ If this element appears when the population analysis is chosen, a data set for n
 <!--                MODEL                  -->
 <!-- ===================================== -->
 
-<!-- <model> Definition of NONMEM mixed effect model. -->
+<!-- <model> Definition of NONMEM mixed effect model. 
+<html:ul>
+   <html:li>All variables and values are treated as double-precision scalars.
+   </html:li>
+   <html:li>Array specification is not supported. 
+   </html:li>
+   <html:li>Cases are ignored.
+   </html:li>
+   <html:li>The following math functions are supported:
+      <html:ul>
+         <html:li>ABS</html:li>
+         <html:li>ACOS</html:li>
+         <html:li>ASIN</html:li>
+         <html:li>ATAN</html:li>
+         <html:li>ATAN2</html:li>
+         <html:li>COS</html:li>
+         <html:li>COSH</html:li>
+         <html:li>LOG</html:li>
+         <html:li>LOG10</html:li>
+         <html:li>MAX</html:li>
+         <html:li>MIN</html:li>
+         <html:li>MOD</html:li>
+         <html:li>SIN</html:li>
+         <html:li>SINH</html:li>
+         <html:li>SQRT</html:li>
+         <html:li>TAN</html:li>
+         <html:li>TANH</html:li>
+      </html:ul>
+   </html:li>
+</html:ul>
+-->
 <!ELEMENT model ( description? | (pred | (comp_model? | pk | error | diffeqn?) ) ) >
 
 <!-- <model advan=""> ADVAN model chosen from {advan1, advan2, advan3, advan4, advan5, advan6, advan7, advan8, advan9, advan10, advan11, advan12}.  If this attribute is omitted, <pred> must be defined.  If, on the other hand, this attribute is set to a valid value yet <pred> is defined, this setting is ignored.
@@ -285,12 +315,6 @@ If this element appears when the population analysis is chosen, a data set for n
 <!ATTLIST model tolerance CDATA #IMPLIED>
 
 <!-- <pred> Equivalent of $PRED block that serves as the total of PK, ERROR and SUBROUTINES records. 
-<html:p>
-The same requirements and rules imposed on $PRED are applied to this element. 
-</html:p>
-<html:p>
-NOTE: This element contains a set of equations written in the NONMEM abbriviated code, which is a subset of FORTRAN 77.  Cases are ignored; that is, "tIMe" and "TiMe" are treated as the same. 
-</html:p>
 -->
 <!ELEMENT pred (#PCDATA)>
 
