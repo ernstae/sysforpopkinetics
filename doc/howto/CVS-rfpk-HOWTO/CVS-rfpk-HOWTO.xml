@@ -308,7 +308,7 @@
       <systemitem moreinfo="none" class="resource">r1</systemitem>
       repository with the following command:
       <screen format="linespecific">
-	cvs checkout r1
+cvs checkout r1
       </screen>
     </para>
     <para>
@@ -316,7 +316,7 @@
       <emphasis>muscle</emphasis> module, you would use this
       command:
       <screen format="linespecific">
-	cvs checkout muscle
+cvs checkout muscle
       </screen>
      </para>
     <para>
@@ -360,7 +360,7 @@
       subdirectories.  It will not update files in parent 
       directories.  Thus positioned, simply issue the command:
       <screen format="linespecific">
-	cvs update
+cvs update
       </screen>
     </para>
     <para>
@@ -403,12 +403,12 @@
       and, recursively, any of the subdirectories, using the
       command:
       <screen format="linespecific">
-	cvs commit
+cvs commit
       </screen>
       If you only want to commit changes to specific files, then
       list them explicitely in the command:
       <screen format="linespecific">
-	cvs commit <emphasis>file1 file2 ... filen</emphasis>
+cvs commit <emphasis>file1 file2 ... filen</emphasis>
       </screen>
     </para>
     <para>
@@ -416,7 +416,7 @@
       by using the <option>-m</option> option to provide 
       a revision message:
       <screen format="linespecific">
-	cvs commit -m "Fix for bug 13.224."
+cvs commit -m "Fix for bug 13.224."
       </screen>
       Revision messages go into a log which becomes part of the
       revision history in the repository.
@@ -449,11 +449,11 @@
       to commit a file called <emphasis>Makefile</emphasis>, and
       the CVS &commit; command has returned the following output:
       <screen>
-	cvs commit: Examining .
-	jones@whitechuck.rfpk.washington.edu's password:
-	cvs server: Up-to-date check failed for `Makefile'
-	cvs [server aborted]: correct above errors first!
-	cvs commit: saving log message in /tmp/cvs610c74f4.1
+cvs commit: Examining .
+jones@whitechuck.rfpk.washington.edu's password:
+cvs server: Up-to-date check failed for `Makefile'
+cvs [server aborted]: correct above errors first!
+cvs commit: saving log message in /tmp/cvs610c74f4.1
       </screen>
     </para>
     <para>
@@ -472,7 +472,7 @@
 	    <filename moreinfo="none">Makefile</filename>	    
 	    .
 	    <screen format="linespecific">
-	      cvs update Makefile
+cvs update Makefile
 	    </screen>
 	  </para>
 	</listitem>
@@ -493,7 +493,7 @@
 	    &update; command, execute the &commit; command
 	    again:
 	    <screen format="linespecific">
-	      cvs commit Makefile
+cvs commit Makefile
 	    </screen>
 	    This time, &commit; should accept your changes,
 	    and record a new revision.
@@ -543,7 +543,7 @@
       and, recursively, all subdirectoriers and their
       counterparts in the repository:
       <screen format="linespecific">
-	cvs diff
+cvs diff
       </screen>
     </para>
     <para>
@@ -552,21 +552,21 @@
       <command moreinfo="none">more</command> or 
       <command moreinfo="none">less</command>:
       <screen format="linespecific">
-	cvs diff | more
+cvs diff | more
       </screen>
     </para>
     <para>
       Another way to handle voluminous output is to store
       it as a file:
       <screen format="linespecific">
-	cvs diff > <emphasis>file</emphasis>
+cvs diff > <emphasis>file</emphasis>
       </screen>
     </para>
     <para>
       Yet another option is to send the output to a printing
       agent such as <command moreinfo="none">lpr</command>:
       <screen format="linespecific">
-	cvs diff | lpr
+cvs diff | lpr
       </screen>
     </para>
     <para>
@@ -574,7 +574,7 @@
       working copy and their counterparts in the repository,
       you enumerate the files in the command:
       <screen format="linespecific">
-	cvs diff <emphasis>file1 file1 ... filen</emphasis>
+cvs diff <emphasis>file1 file1 ... filen</emphasis>
       </screen>
     </para>
     <para>
@@ -583,14 +583,14 @@
       use the <option>-r</option> option letter to introduce the tag
       associated with the version:
       <screen format="linespecific">
-	cvs diff -r <emphasis>tag</emphasis>
+cvs diff -r <emphasis>tag</emphasis>
       </screen>
     </para>
     <para>
       To see the differences between two versions, you can
       specify two <option>-r</option> options:
       <screen format="linespecific">
-	cvs diff -r <emphasis>tag1</emphasis> -r <emphasis>tag2</emphasis>
+cvs diff -r <emphasis>tag1</emphasis> -r <emphasis>tag2</emphasis>
       </screen>
     </para>
     <para>
@@ -613,6 +613,103 @@
       a necessity, if you want to store the differences to 
       a file for later use with a patch program, such as the
       Unix <command moreinfo="none">patch</command> command.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Adding Files and Directories</title>
+    <para>
+      Suppose that we would like to add to the repository a 
+      document similar to the tutorial that you are reading.
+      Suppose further, that within our working copy there
+      is a directory named 
+      <filename moreinfo="none" class="directory">howto</filename>
+      which contains a directory for each document of this
+      type, and that this latter directory contains the individual
+      documents.  For example, the file and directory structure
+      for this tutorial is as follows, as a directory containing
+      two files:
+      <screen format="linespecific">
+howto/CVS-rfpk-HOWTO
+howto/CVS-rfpk-HOWTO/CVS-rfpk-HOWTO.xml
+howto/CVS-rfpk-HOWTO/Makefile
+      </screen>
+    </para>
+    <para>
+      Now suppose that the document that we wish to add will
+      be a tutorial about installing SPK.  In this example
+      the text of the document will be a file called
+      <filename moreinfo="none">SPK-rfpk-HOWTO.xml</filename>.
+      There will also be a description file for the 
+      <command moreinfo="none">make</command> utility which
+      will be named 
+      <filename moreinfo="none">Makefile</filename>.  In order
+      to keep all files associated with this document together,
+      we will place these two files in a directory that
+      we will name
+      <filename moreinfo="none" class="directory">
+	SPK-rfpk-HOWTO
+      </filename>.
+    </para>
+    <para>
+      To create this new document, we proceed as follows:
+      <orderedlist inheritnum="ignore" continuation="restarts">
+	<listitem>
+	  <para>
+	    Create a directory and the two files using the normal
+	    tools installed on our system.  For example, under
+	    Unix/Linux, or in a Cygwin environment installed
+	    under Windows, we could do the following:
+	    <orderedlist inheritnum="ignore" continuation="restarts">
+	      <listitem>
+		<para>
+		  Within our working copy, make the 
+		  <filename moreinfo="none" class="directory">
+		    howto
+		  </filename> 
+		  directory be the current directory by using the
+		  <option>cd</option> command.  This is the 
+		  directory in which we will create our new 
+		  document.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  Create the new directory in our working copy,
+		  and then have CVS add it to the repository:
+		  <screen format="linespecific">
+mkdir SPK-rfpk-HOWTO
+cvs add SPK-rfpk-HOWTO
+		  </screen>
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  Next we make the new document directory current
+		  <screen format="linespecific">
+cd SPK-rfpk-HOWTO
+		  </screen>
+		  and use our favorite text editor to create the
+		  initial versions of the files 
+		  <filename moreinfo="none">SPK-rfpk-HOWTO.xml</filename>
+		  and
+		  <filename moreinfo="none">Makefile</filename>.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  Finally, we have CVS add the new files to the
+		  repository structure and then we commit our
+		  initial versions:
+		  <screen format="linespecific">
+cvs add SPK-rfpk-HOWTO.xml Makefile
+cvs commit
+		  </screen>
+		</para>
+	      </listitem>
+	    </orderedlist>
+	  </para>
+	</listitem>
+      </orderedlist>
     </para>
   </sect1>
 </article>
