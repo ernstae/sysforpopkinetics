@@ -13,7 +13,7 @@
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
 
-#include "SymbolTable.h"
+#include "../../libcommon/SymbolTable.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -163,92 +163,6 @@ void NonmemCompilerTest::testInterpret()
   for( int i=0; i<thetaElemNum; i++ )
     CPPUNIT_ASSERT_EQUAL_MESSAGE( "thetaUp", thetaUp[i], thetaUpActual[i] );
 
-  /*
-
-		    
-  // <poppar> section
-  const int nPopPar = 10;
-  valarray<double> popParIn = spkRequired->popParIn;
-  CPPUNIT_ASSERT_EQUAL_MESSAGE( "The size of popParIn vector should be 10!",
-				nPopPar, (int)popParIn.size() );
-  for( int i=0; i<nPopPar; i++ )
-    CPPUNIT_ASSERT_EQUAL( i/10.0, popParIn[i] );
-
-  valarray<double> popParLow = spkRequired->popParLow;
-  CPPUNIT_ASSERT_EQUAL_MESSAGE( "The size of popParLow vector should be 10!",
-				nPopPar, (int)popParLow.size() );
-  for( int i=0; i<nPopPar; i++ )
-    CPPUNIT_ASSERT_EQUAL( -0.1, popParLow[i] );
-
-  valarray<double> popParUp = spkRequired->popParUp;
-  CPPUNIT_ASSERT_EQUAL_MESSAGE( "The size of popParUp vector should be 10!",
-				nPopPar, (int)popParUp.size() );
-  for( int i=0; i<nPopPar; i++ )
-    CPPUNIT_ASSERT_EQUAL( 1.0, popParUp[i] );
-
-  valarray<double> popParStep = spkRequired->popParStep;
-  CPPUNIT_ASSERT_EQUAL_MESSAGE( "The size of popParStep vector should be 10!",
-				nPopPar, (int)popParStep.size() );
-  for( int i=0; i<nPopPar; i++ )
-    CPPUNIT_ASSERT_EQUAL( 0.01, popParStep[i] );
-
-  // <indpar> section
-  const int nIndPar = 3;
-  valarray<double> indParIn = spkRequired->indParIn;
-  CPPUNIT_ASSERT_EQUAL_MESSAGE( "The size of indParIn vector should be 3 * 12 = 36!",
-				nIndPar * nIndividuals, (int)indParIn.size() );
-  for( int j=0; j<nIndividuals; j++ )
-    {
-      for( int i=0; i<nIndPar; i++ )
-	CPPUNIT_ASSERT_EQUAL( (double)i, indParIn[i] );
-    }
-
-  valarray<double> indParLow = spkRequired->indParLow;
-  CPPUNIT_ASSERT_EQUAL_MESSAGE( "The size of indParLow vector should be 3!",
-				nIndPar, (int)indParLow.size() );
-  for( int i=0; i<nIndPar; i++ )
-    CPPUNIT_ASSERT_EQUAL( -5.0, indParLow[i] );
-
-  valarray<double> indParUp = spkRequired->indParUp;
-  CPPUNIT_ASSERT_EQUAL_MESSAGE( "The size of indParUp vector should be 3!",
-				nIndPar, (int)indParUp.size() );
-  for( int i=0; i<nIndPar; i++ )
-    CPPUNIT_ASSERT_EQUAL( 5.0, indParUp[i] );
-
-  valarray<double> indParStep = spkRequired->indParStep;
-  CPPUNIT_ASSERT_EQUAL_MESSAGE( "The size of indParStep vector should be 3!",
-				nIndPar, (int)indParStep.size() );
-  for( int i=0; i<nIndPar; i++ )
-    CPPUNIT_ASSERT_EQUAL( 0.01, indParStep[i] );
-
-  // measurements
-  const int nMeasurements = 2;
-  CPPUNIT_ASSERT_EQUAL_MESSAGE( "The measurements vector is supposed to have a length of 12!", 
-			  nIndividuals, (int)spkRequired->nMeasurementsAll.size() );
-
-  for( int i=0; i<nIndividuals; i++ )
-  {
-    CPPUNIT_ASSERT_EQUAL_MESSAGE( "#of data per individuals should be 2!",
-				  2, spkRequired->nMeasurementsAll[i] );
-  }
-  
-  CPPUNIT_ASSERT_EQUAL_MESSAGE( "The sum of all #measurements should be 24!",
-				nIndividuals * nMeasurements, spkRequired->nMeasurementsAll.sum() );
-
-  CPPUNIT_ASSERT_EQUAL_MESSAGE( "The measurements vector is supposed to have a length of 12 * 2 = 24!", 
-			  nMeasurements * nIndividuals, (int)spkRequired->measurementsAll.size() );
-  
-  for( int j=0; j<nIndividuals; j++ )
-    {
-      for( int i=0; i<nMeasurements; i++ )
-	{
-	  char buf[128];
-	  sprintf( buf, "The %d-th data value for %d-th individual is wrong!", i, j );
-	  CPPUNIT_ASSERT_EQUAL_MESSAGE( buf,
-				      (double)(j+1.0) + i/10.0, spkRequired->measurementsAll[j*nMeasurements+i]);
-	}
-    }			 
-*/
 }
 void NonmemCompilerTest::testEmit()
 {
