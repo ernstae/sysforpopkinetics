@@ -357,6 +357,10 @@
 	functions that can be used by software processes to interact
 	with the database.  This specification is language independent.
       </para>
+      <para>
+	This document is now complete and can be viewed
+	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/dbAPI/dbAPI.html">here</ulink>.
+      </para>
     </sect2>
     <sect2 id="build">
       <title>Cspk Object Build Environment Specification</title>
