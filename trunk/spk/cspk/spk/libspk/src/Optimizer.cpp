@@ -1364,6 +1364,8 @@ Optimizer::Optimizer()
             saveStateAtEndOfOpt( false ), throwExcepIfMaxIter( true ),
             isSubLevelOpt( false ), isWarmStart( false )
 {
+  // Note: the state information maintained by this class 
+  // is specific to the optimizer QuasiNewton01Box.
   stateInfo.n = 0;
   stateInfo.r = 0;
   stateInfo.f = 0;
@@ -1379,6 +1381,8 @@ Optimizer::Optimizer( double Epsilon, int NMaxIter, int Level )
             saveStateAtEndOfOpt( false ), throwExcepIfMaxIter( true ),
             isSubLevelOpt( false ), isWarmStart( false )
 {
+  // Note: the state information maintained by this class 
+  // is specific to the optimizer QuasiNewton01Box.
   stateInfo.n = 0;
   stateInfo.r = 0;
   stateInfo.f = 0;
@@ -1452,6 +1456,8 @@ void setIsSubLevelOpt( bool s );
 // Set turning on/off warm start flag 
 void Optimizer::setIsWarmStart( bool w ) 
 { 
+  // Note: the state information maintained by this class 
+  // is specific to the optimizer QuasiNewton01Box.
   if( w )
   {
     if( stateInfo.x && stateInfo.g && stateInfo.h ) 
@@ -1473,6 +1479,8 @@ void Optimizer::setIsWarmStart( bool w )
 // Set state info
 void Optimizer::setStateInfo( const StateInfo& s )
 {
+  // Note: the state information maintained by this class 
+  // is specific to the optimizer QuasiNewton01Box.
     if( stateInfo.n != s.n )
   {
         char errmsg[] = "The number of variables is incorrect. Check calling setupWarmStart().";
@@ -1502,6 +1510,8 @@ void Optimizer::setStateInfo( const StateInfo& s )
 // Delete state info
 void Optimizer::deleteStateInfo()
 {
+  // Note: the state information maintained by this class 
+  // is specific to the optimizer QuasiNewton01Box.
   stateInfo.n = 0;
   if( stateInfo.x ) 
   {
