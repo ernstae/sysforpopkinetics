@@ -23,7 +23,7 @@
                         <sec>00</sec>
                      </time>
                   </submission>
-                  <description>CONTROL 6 + THEOPHYLLINE example</description>
+                  <description>CONTROL 4 + THEOPHYLLINE example</description>
                   <data_labels>
                       <label name="ID"/>
                       <label name="DOSE" synonym="AMT"/>
