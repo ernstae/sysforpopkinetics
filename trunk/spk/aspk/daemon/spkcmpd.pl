@@ -166,21 +166,17 @@ my $mode     = shift;
 my $bugzilla_production_only = 1;
 my $bugzilla_url = "http://192.168.2.3:8081/";
 
-my 
 my $service_root = "spkcmp";
 my $bugzilla_product = "SPK";
 my $submit_to_bugzilla = 1;
 my $retain_working_dir = 0;
-
-my $service_name = "$service_root" . "d";
-my $prefix_working_dir = $service_root;
 
 my $dbh;
 my $database_open = 0;
 my $filename_cerr_report = "compilation_error.xml";
 my $filename_job_id = "job_id";
 my $filename_serr = "software_error";
-my $lockfile_path = "/tmp/lock_$service_name";
+
 my $lockfile_exists = 0;
 my $pathname_bugzilla_submit = "/usr/local/bin/bugzilla-submit";
 my $pathname_co  = "/usr/bin/co";   # rcs checkout utility
@@ -188,7 +184,6 @@ my $pathname_compiler = "/usr/local/bin/spkprod/spkcompiler";
 my $pathname_tar = "/bin/tar";
 my $spk_version = "0.1";
 my $tmp_dir = "/tmp";
-
 my $spk_library_path = "/usr/local/lib/spkprod";
 my $cpath = "/usr/local/include/spkprod";
 
@@ -201,6 +196,10 @@ if ($mode =~ "test") {
     $spk_library_path = "/usr/local/lib/spktest";
     $cpath = "/usr/local/include/spktest";
 }
+
+my $service_name = "$service_root" . "d";
+my $prefix_working_dir = $service_root;
+my $lockfile_path = "/tmp/lock_$service_name";
 
 sub death {
     # Call this subroutine only from parent, never from child
@@ -569,7 +568,7 @@ start();
 
 # Add directories of shared libraries to the load path
 $ENV{LD_LIBRARY_PATH} = "/usr/lib:" . $spk_library_path;
-$ENV(CPATH) = $cpath;
+$ENV{CPATH} = $cpath;
 $ENV{HOME} = "/root";
 
 # Create a new process group, with this process as leader.  This will
