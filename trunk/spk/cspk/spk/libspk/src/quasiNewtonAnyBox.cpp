@@ -599,8 +599,8 @@ namespace // [Begin: unnamed namespace]
 
       try
       {
-	// Note that the scaled and unscaled objective function 
-	// values are the same.
+        // Note that the scaled and unscaled objective function 
+        // values are the same.
         pObjective->function( dvecXCurr, &fScaledOut );
       }
       catch( SpkException& e )
@@ -656,7 +656,7 @@ namespace // [Begin: unnamed namespace]
       {
         pObjective->gradient( &dRowF_xCurr );
 
-	assert( drowF_xCurr->nc() == nX );
+        assert( drowF_xCurr->nc() == nX );
       }
       catch( SpkException& e )
       {
@@ -1001,25 +1001,25 @@ void quasiNewtonAnyBox(
       // See if this function's convergence criterion has been met.
       if ( isWithinTol( 
         epsilon,
-	dvecY,
-	dvecYLow,
-	dvecYUp,
-	drowGScaled,
-	getLowerTriangle( arrayToDoubleMatrix( options.h, n, n ) ) ) )
+        dvecY,
+        dvecYLow,
+        dvecYUp,
+        drowGScaled,
+        getLowerTriangle( arrayToDoubleMatrix( options.h, n, n ) ) ) )
       {
-	isWithinTol = true;
+        isWithinTol = true;
       }
       else
       {
-	// Set delta to be less than the maximum of the absolute values of
-	// the elements of the projected gradient so that the subproblems
-	// only be solved with accuracy sufficient for the current x value.
-	delta = maxAbsProjGrad( gCurr ) / deltaScale;
+        // Set delta to be less than the maximum of the absolute values of
+        // the elements of the projected gradient so that the subproblems
+        // only be solved with accuracy sufficient for the current x value.
+        delta = maxAbsProjGrad( gCurr ) / deltaScale;
 
-	// Save the number of iterations that have been performed.
-	iterCurrPrev = iterCurr;
+        // Save the number of iterations that have been performed.
+        iterCurrPrev = iterCurr;
 
-	// Ask the optimizer to take perform a limited number of iterations.
+        // Ask the optimizer to take perform a limited number of iterations.
         msg = QuasiNewton01Box(
           os,
           level,
@@ -1040,19 +1040,19 @@ void quasiNewtonAnyBox(
         // Hessian should be accurate enough that this can reset.
         nIterMax = 1;
 
-	// This function assumes that delta is set small enough that the
-	// optimizer's convergence criterion will not be satisfied for the
-	// current x value and that the optimizer will therefore be able to
-	// perform at least one Quasi-Newton itertion.  If that is not the
-	// case, then throw an exception.
-	if ( iterCurr == iterCurrPrev )
+        // This function assumes that delta is set small enough that the
+        // optimizer's convergence criterion will not be satisfied for the
+        // current x value and that the optimizer will therefore be able to
+        // perform at least one Quasi-Newton itertion.  If that is not the
+        // case, then throw an exception.
+        if ( iterCurr == iterCurrPrev )
         {
-	  throw SpkException( 
+          throw SpkException( 
             SpkError::SPK_OPT_ERR,
-	    "QuasiNewton01Box failed to perform at least one Quasi-Newton iteration.",
-	    __LINE__,
-	    __FILE__ );
-	}
+            "QuasiNewton01Box failed to perform at least one Quasi-Newton iteration.",
+            __LINE__,
+            __FILE__ );
+        }
       }
     }
   }
@@ -1162,13 +1162,13 @@ void quasiNewtonAnyBox(
   // returned, then set it equal to the value from nag_opt_nlp.
   if ( pdFOut )
   {
-?    *pdFOut = objf;
+    *pdFOut = fCurr;
   }
   
   if( pdrowF_xOut )
   {
-      double* pdrowF_x = pdrowF_xOut->data();
-?      std::copy(gvalScaled, gvalScaled+nObjPars, pdrowF_x);
+    double* pdF_xOutData = pdrowF_xOut->data();
+    std::copy( gCurr, gCurr + nObjPars, pdF_xOutData );
   }
 }
 
