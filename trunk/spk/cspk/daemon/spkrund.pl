@@ -173,12 +173,6 @@ my $service_root = "spkrun";
 my $bugzilla_product = "SPK";
 my $submit_to_bugzilla = 1;
 my $retain_working_dir = 0;
-if ($mode =~ "test") {
-    $submit_to_bugzilla = !$bugzilla_production_only;
-    $service_root .= "test";
-    $bugzilla_product = "SPKtest";
-    $retain_working_dir = 1;
-}
 
 my $service_name = "$service_root" . "d";
 my $prefix_working_dir = $service_root;
@@ -195,6 +189,19 @@ my $filename_results = "result.xml";
 my $filename_runner = "driver";
 my $filename_serr = "software_error";
 my $filename_source = "source.xml";
+
+my $spk_library_path = "/usr/local/lib/spkprod";
+my $cpath = "/usr/local/include/spkprod";
+
+
+if ($mode =~ "test") {
+    $submit_to_bugzilla = !$bugzilla_production_only;
+    $service_root .= "test";
+    $bugzilla_product = "SPKtest";
+    $retain_working_dir = 1;
+    $spk_library_path = "/usr/local/lib/spktest";
+    $cpath = "/usr/local/include/spktest";
+}
 
 my $pathname_bugzilla_submit = "/usr/local/bin/bugzilla-submit";
 my $pathname_make = "/usr/bin/make";
@@ -544,7 +551,8 @@ Proc::Daemon::Init();
 start();
 
 # Add directories of shared libraries to the load path
-$ENV{LD_LIBRARY_PATH} = "/usr/lib:/usr/local/lib";
+$ENV{LD_LIBRARY_PATH} = "/usr/lib:" . $spk_library_path;
+$ENV(CPATH) = $cpath;
 
 # Create a new process group, with this process as leader.  This will
 # allow us to send the TERM signal to all of our children with a single
