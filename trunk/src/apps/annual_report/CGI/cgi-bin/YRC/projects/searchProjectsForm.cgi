@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
 use strict;
+use CGI::Carp "fatalsToBrowser";
 use CGI qw(:standard);
 
 use lib "/usr/local/lib/site_perl";
@@ -14,7 +15,7 @@ my($TITLE) = 'Search Projects';
 my($USER);
 
 # FORCE IT TO BE SECURE
-YRC::WWW::SESSION->enforceSecure($query);
+# YRC::WWW::SESSION->enforceSecure($query);
 
 # OUR ENTIRE AUTHENTICATION CODE
 unless($USER = YRC::WWW::SESSION->getUserObject(YRC::WWW::SESSION->getSessionID($query))) {
@@ -59,12 +60,15 @@ found in the keywords, description, PI name or abstract.  Use asterisk (*) as a 
  <NOBR><INPUT TYPE="checkbox" NAME="Tech" VALUE="Tech">Technology Development</NOBR>
 
  <P><U>Groups:</U><BR>
- <NOBR><INPUT TYPE="checkbox" NAME="group" VALUE="Yates">Yates</NOBR>
- <NOBR><INPUT TYPE="checkbox" NAME="group" VALUE="Aebersold">Aebersold</NOBR>
- <NOBR><INPUT TYPE="checkbox" NAME="group" VALUE="Microscopy">Microscopy</NOBR>
- <NOBR><INPUT TYPE="checkbox" NAME="group" VALUE="TwoHybrid">Two Hybrid</NOBR>
- <NOBR><INPUT TYPE="checkbox" NAME="group" VALUE="Informatics">Informatics</NOBR>
- <NOBR><INPUT TYPE="checkbox" NAME="group" VALUE="PSP">Protein Structure Prediction</NOBR>
+ <NOBR><INPUT TYPE="checkbox" NAME="group" VALUE="IntMetab">IntMetab</NOBR>
+ <NOBR><INPUT TYPE="checkbox" NAME="group" VALUE="LipidMetab">LipidMetab</NOBR>
+ <NOBR><INPUT TYPE="checkbox" NAME="group" VALUE="PKPD">PKPD</NOBR>
+ <NOBR><INPUT TYPE="checkbox" NAME="group" VALUE="EnvTox">EnvTox</NOBR>
+ <NOBR><INPUT TYPE="checkbox" NAME="group" VALUE="CBNet">CBNet</NOBR>
+ <NOBR><INPUT TYPE="checkbox" NAME="group" VALUE="PMImageD">PMImageD</NOBR>
+ <NOBR><INPUT TYPE="checkbox" NAME="group" VALUE="SysMod">SysMod</NOBR>
+ <NOBR><INPUT TYPE="checkbox" NAME="group" VALUE="StatMod">StatMod</NOBR>
+ <NOBR><INPUT TYPE="checkbox" NAME="group" VALUE="SoftDev">SoftDev</NOBR>
 
 
 <P><INPUT TYPE="SUBMIT" VALUE="Search Projects">

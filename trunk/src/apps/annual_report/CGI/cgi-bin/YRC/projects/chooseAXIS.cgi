@@ -18,7 +18,7 @@ my(@DISP_ARR) = ( );	## HOLDS OUR DATA IN THE COLUMNS FOR DISPLAYING
 my($COLS) = 3;		## HOW MANY COLUMNS TO SHOW
 
 # FORCE IT TO BE SECURE
-YRC::WWW::SESSION->enforceSecure($query);
+#YRC::WWW::SESSION->enforceSecure($query);
 
 # OUR ENTIRE AUTHENTICATION CODE
 unless($USER = YRC::WWW::SESSION->getUserObject(YRC::WWW::SESSION->getSessionID($query))) {
