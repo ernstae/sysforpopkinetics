@@ -6,10 +6,6 @@
  * @ingroup nonmem
  */
 /**
- * @var FILE * yyin
- * The file hander pointing to the input file to read in.  It must be open & readable.
- */
-/**
  * @example NonmemExpXlatorTest.cpp
  */
 #include <ctype.h>
