@@ -68,6 +68,11 @@ SymbolTable* ClientTranslator::getSymbolTable()
 {
   return &table;
 }
+void ClientTranslator::translate()
+{
+  parseData();
+  parseSource();
+}
 //***************************************************************************************
 //
 // <!ELEMENT spkdata (table)*>

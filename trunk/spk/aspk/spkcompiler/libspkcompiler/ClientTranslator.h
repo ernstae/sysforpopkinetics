@@ -31,6 +31,11 @@ class ClientTranslator{
   virtual ~ClientTranslator();
 
   /**
+   * Parse both SpkDataML and SpkSourceML documents and generate C++ source code files.
+   */
+  void translate();
+
+  /**
    * Parse the DOMDocument tree that represents
    * the SpkDataML document and register the foundings into the symbol table.
    *
@@ -61,6 +66,8 @@ class ClientTranslator{
    *
    */
   virtual void parseSource() = 0;
+
+public:
 
   /**
    * Return a pointer to the (read-only) symbol table.
