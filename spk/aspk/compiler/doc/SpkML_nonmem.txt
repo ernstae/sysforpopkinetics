@@ -7,7 +7,7 @@
 
 ---------------------------------------------------------------------------------->
 
-<!ELEMENT spkinml (content, driver, model, data)>
+<!ELEMENT spkinml (content, driver, model, data, output*)>
 
 <!----------------------------------------------------
     <content> specifies a short description or
@@ -46,7 +46,8 @@
      <driver> contains information necessary to
      define a SPK driver.
 ---------------------------------------------------->
-<!ELEMENT driver (theta, sigma, omega+, eta, pop_opt, ind_opt, pop_stat, ind_stat)>
+<!ELEMENT driver (theta, sigma, omega+, eta, 
+	  pop_opt, ind_opt, pop_stat, ind_stat)>
 
 <!--
      <theta> section contains the initial estimate (in),
@@ -331,15 +332,103 @@
      specifies a string used as the label in the output.
      This could be a user-defined or one of the NONMEM reserved
      words:
-     (id|l1|l2|dv|mdv|time|data|dat1|dat2|dat3|drop|skip|evid|amt|rate|ss|ii|addl|cmt|pcmt|call|cont)
+     (id|l1|l2|dv|mdv|time|data|dat1|dat2|dat3|drop
+     |skip|evid|amt|rate|ss|ii|addl|cmt|pcmt|call|cont)
 -->
-<!ATTLIST item label(id|l1|l2|dv|mdv|time|data|dat1|dat2|dat3|drop|skip|evid|amt|rate|ss|ii|addl|cmt|pcmt|call|cont|CDATA) #REQUIRED>
+<!ATTLIST item label(id|l1|l2|dv|mdv|time|data|dat1|dat2|dat3
+	  |drop|skip|evid|amt|rate|ss|ii|addl|cmt|pcmt|call
+	  |cont|CDATA) #REQUIRED>
 
 
 <!--
      <item> may take "synonym" attribute which
      specifies an alias/synonym for the value in "label" attribute.
      The value of "synonym" must be one of the NONMEM reserved words:
-     (id|l1|l2|dv|mdv|time|data|dat1|dat2|dat3|drop|skip|evid|amt|rate|ss|ii|addl|cmt|pcmt|call|cont)
+     (id|l1|l2|dv|mdv|time|data|dat1|dat2|dat3|drop|skip|evid|amt
+     |rate|ss|ii|addl|cmt|pcmt|call|cont)
 -->
-<!ATTLIST item synonym (id|l1|l2|dv|mdv|time|data|dat1|dat2|dat3|drop|skip|evid|amt|rate|ss|ii|addl|cmt|pcmt|call|cont) #IMPLIED>
+<!ATTLIST item synonym (id|l1|l2|dv|mdv|time|data|dat1|dat2|dat3
+	  |drop|skip|evid|amt|rate|ss|ii|addl|cmt|pcmt|call|cont) #IMPLIED>
+
+<!---------------------------------------------------
+     <output> section contains the information 
+     related to the format used to present
+     the results.
+----------------------------------------------------->
+<!ELEMENT output (table+, scatterplot+)>
+
+<!--
+     There can be as many as 10 <table>s per problem.
+-->
+<!ELEMENT table (column)+30>
+
+<!-- 
+     If "save_as" is given, the results are
+     saved in the file.
+     When not given, display only.
+-->
+<!ATTLIST table save_as CDATA #IMPLIED>
+<!--
+     If "header" is "show", the header appears
+     on the first row of the table.
+-->
+<!ATTLIST table header (show|hide) #REQUIRED>
+
+<!--
+     <column> specifies the attributes of a column of data.
+-->
+<!ELEMENT column EMPTY>
+
+<!--
+     A "label" must match one of the names used to label
+     the data set, one from {ETA1, ETA2, ... ETA9, ETAA}
+     or the left hand side entities found in a <pred>
+     abbriviated code.
+-->
+<!ATTLIST column label CDATA #REQUIRED> 
+
+<!--
+     "appearance_order" is a number (>=1)
+     indicating the order in which the column should appear
+     in the output, when it is present.  If omitted,
+     the order in which the <column> blocks appear
+     is taken as the order.
+-->
+<!ATTLIST column appearance_order CDATA #IMPLIED>
+
+<!--
+     "sort_order" is the priority by which
+     this column data is sorted.  If omitted,
+     no sorting is applied.
+-->
+<!ATTLIST column sort_order CDATA #IMPLIED>
+
+<!--
+     There may be as many as 30 <scatterplot>s per problem.
+-->
+<!ELEMENT scatterplot (x+, y+)>
+
+<!--
+     A <x> block chooses a set of data plotted on 
+     the abscissa axis.  When "split" is "yes",
+     a plot per variable value is generated.
+-->
+<!ELEMENT x EMPTY>
+<!ATTLIST x label CDATA #REQUIRED>
+<!ATTLIST x split (yes|no) #REQUIRED>
+
+<!--
+     A <y> block chooses a set of data plotted 
+     on the ordinate axis.  When "split" is "yes",
+     a plot per variable value is generated.
+-->
+<!ELEMENT y EMPTY>
+<!ATTLIST y label CDATA #REQUIRED>
+<!ATTLIST y split (yes|no) #REQUIRED>
+
+<!ATTLIST scatterplot unit_slope (show|hide) #REQUIRED "hide">
+
+<!ATTLIST scatterplot x0_line (show|hide) #REQUIRED "hide">
+
+<!ATTLIST scatterplot begin #FIXED "1">
+<!ATTLIST scatterplot end   #FIXED "900">
