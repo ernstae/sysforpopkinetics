@@ -103,7 +103,6 @@ namespace{
   //============================================
   const int  mitr       = 100;
   const bool isEstimate = true;
-  const char approx[]   = "fo";
 
   //============================================
   // Setting up the array filled with data 
@@ -599,7 +598,7 @@ void ind_withID_NonmemTranslatorTest::createSourceML()
   oSource << "<constraint>" << endl;
 
   // default: is_eta_out=no, is_restart=yes
-  oSource << "<ind_analysis approximation=\"" << approx << "\" ";
+  oSource << "<ind_analysis ";
   oSource << "mitr=\"" << mitr << "\" ";
   oSource << "is_estimation=\"" << (isEstimate? "yes" : "no") << "\">" << endl;
 
