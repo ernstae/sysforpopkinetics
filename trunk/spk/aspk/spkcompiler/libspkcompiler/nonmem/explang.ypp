@@ -73,7 +73,7 @@ extern "C"{
     * - if conditional statement in the form of either if-assign or if-then-else
     *
     * The functions and operators it supports are:
-    * - sqrt, log, log10, exp
+    * - abs, acos, asin,atan, atan2, cos, cosh, exp, log, log10, max, min, mod, sin sinh, sqrt, tan tanh
     * - + (addition), - (subtraction), * (multiplication), / (division), ** (power)
     *
     * The primitive data types it supports are:
@@ -185,10 +185,24 @@ namespace{
    const char * const STR_CONDITION= "condition";
    const char * const STR_BLOCK    = "block";
 
-   const char * const STR_SQRT     = "sqrt";
+   const char * const STR_ABS      = "abs";
+   const char * const STR_ACOS     = "acos";
+   const char * const STR_ASIN     = "asin";
+   const char * const STR_ATAN     = "atan";
+   const char * const STR_ATAN2    = "atan2";
+   const char * const STR_COS      = "cos";
+   const char * const STR_COSH     = "cosh";
    const char * const STR_EXP      = "exp";
    const char * const STR_LOG      = "log";
    const char * const STR_LOG10    = "log10";
+   const char * const STR_MAX      = "max";
+   const char * const STR_MIN      = "min";
+   const char * const STR_MOD      = "mod";
+   const char * const STR_SIN      = "sin";
+   const char * const STR_SINH     = "sinh";
+   const char * const STR_SQRT     = "sqrt";
+   const char * const STR_TAN      = "tan";
+   const char * const STR_TANH     = "tanh";
    const char * const STR_ADD      = "add";
    const char * const STR_SUBTRACT = "subtract";
    const char * const STR_MULTIPLY = "multiply";
@@ -1063,6 +1077,10 @@ array_element_list ',' expr {
 //
 // A function_ref is a reference to an existing function.
 // NONMEM abbriviated code supports only sqrt, exp, log and log10.
+// However, SPK Compiler will support more:
+//   abs, acos, asin, atan, atan2, cos, cosh, exp, log, log10, max, min
+//   mod, sin sinh, sqrt, tan tanh
+// At this point, atan is the one extra function being supported.
 // It retrurns a tree topped with label "function".
 //
 //==================================================================================
@@ -1087,6 +1105,8 @@ DEFINED_UNARY_FUNCTION '(' arithmatic_expr ')' {
        sprintf( buf, "exp( %s )",   $3 );
    else if( strcmp( lowercase, STR_SQRT ) == 0 )
        sprintf( buf, "sqrt( %s )",  $3 );
+   else if( strcmp( lowercase, STR_ATAN ) == 0 )
+       sprintf( buf, "atan( %s )",  $3 );
    else
    {
       char err[128];
