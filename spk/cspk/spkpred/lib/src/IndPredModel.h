@@ -263,6 +263,8 @@ protected:
 public:
   int getNIndPar() const;
 
+  void getIndPar( SPK_VA::valarray<double>& ret ) const; 
+
 
   //------------------------------------------------------------
   // Disallowed, implicitly generated member functions.
