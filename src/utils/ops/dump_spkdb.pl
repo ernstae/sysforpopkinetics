@@ -77,7 +77,7 @@ system("mysqldump -u$user -p$pass  -d $db > $schema") == 0
     or die "Could not dump the schema\n";
 system("mysqldump -u$user -p$pass -tc $db --tables end method state > $basedata") == 0
     or die "Could not dump the basedata tables\n";
-system("mysqldump -u$user -p$pass  -d $db --tables dataset history job model user > $userdata") == 0
+system("mysqldump -u$user -p$pass -tc $db --tables dataset history job model user > $userdata") == 0
     or die "Could not dump the userdata tables\n";
 
 
