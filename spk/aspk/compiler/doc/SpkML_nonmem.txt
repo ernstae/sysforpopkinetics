@@ -3,7 +3,7 @@
       Specification: SpkInML for NONMEM
 
       This document specifies the SpkInML format specialized
-      for NONMEM client.
+      for NONMEM client when "population level analysis" is requested.
 
 ---------------------------------------------------------------------------------->
 
@@ -40,7 +40,7 @@
      specific SpkML, this value is fixed to
      "population".
 -->
-<!ATTLIST content analysis (population|individual) #FIXED "population">
+<!ATTLIST content analysis (population|individual) #REQUIRED>
 
 <!---------------------------------------------------
      <driver> contains information necessary to
@@ -115,7 +115,7 @@
      <value> contains a double-precision number.
 -->
 <!ELEMENT value ($PCDATA)>
-<!ATTLIST value fixed (yes|no) #REQUIRED>
+<!ATTLIST value fixed (yes|no) "no">
 
 <!--
      <in> contains a set of initial estimates.
@@ -163,6 +163,9 @@
 <!ATTLIST ind_opt trace CDATA #REQUIRED>
 <!ATTLIST ind_opt restart (yes|no) #REQUIRED>
 <!ATTLIST ind_opt par_out (yes|no) #REQUIRED>
+<!ATTLIST ind_opt obj_out (yes|no) #IMPLIED>
+<!ATTLIST ind_opt deriv1_out (yes|no) #IMPLIED>
+<!ATTLIST ind_opt deriv2_out (yes|no) #IMPLIED>
 
 <!--
       <pop_stat> is an empty element in which
@@ -172,9 +175,10 @@
 -->
 <!ELEMENT pop_stat EMPTY>
 
+<!ATTLIST pop_stat formulation (rsr|r|s) #REQUIRED>
 <!ATTLIST pop_stat stderror (yes|no) #REQUIRED>
 <!ATTLIST pop_stat correlation (yes|no) #REQUIRED>
-<!ATTLIST pop_stat cov (yes|no) #REQUIRED>
+<!ATTLIST pop_stat covariance (yes|no) #REQUIRED>
 <!ATTLIST pop_stat coefficient (yes|no) #REQUIRED>
 <!ATTLIST pop_stat confidence (yes|no) #REQUIRED>
 
