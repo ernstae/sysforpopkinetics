@@ -2,41 +2,49 @@ SUFFIXES = .dox
 .html.dox : 
 	doxygen $<
 
-API_SRC = ../libspkcompiler/client.h \
-          ../libspkcompiler/nonmem/nonmem.h \
-          ../libspkcompiler/Symbol.h \
-          ../libspkcompiler/SymbolTable.h \
-	  ../libspkcompiler/ClientTranslator.h \
-	  ../libspkcompiler/upper.cpp \
-	  ../libspkcompiler/upper.h \
-	  ../libspkcompiler/lower.cpp \
-	  ../libspkcompiler/lower.h
+CORE_SRC   = ../libspkcompiler/client.h \
+             ../libspkcompiler/Symbol.h \
+             ../libspkcompiler/SymbolTable.h \
+             ../libspkcompiler/ClientTranslator.h \
+             ../libspkcompiler/SpkCompilerError.h \
+             ../libspkcompiler/SpkCompilerException.h \
+             ../libspkcompiler/upper.h \
+             ../libspkcompiler/lower.h
 
-NMTRAN_SRC = ../libspkcompiler/nonmem/explang.cpp \
+NONMEM_SRC = ../libspkcompiler/nonmem/explang.cpp \
 	     ../libspkcompiler/nonmem/lex_explang.c \
 	     ../libspkcompiler/nonmem/explang.ypp \
-	     ../libspkcompiler/nonmem/lex_explang.l
+	     ../libspkcompiler/nonmem/lex_explang.l \
+             ../libspkcompiler/nonmem/nonmem.h
 
-html : nmtran_to_cpp_html compiler_html 
+DRIVER_SRC = ../driver/compiler.cpp
 
-nmtran_to_cpp_html: nmtran.cfg $(NMTRAN_SRC)
-	doxygen nmtran.cfg
+html : nonmem_html core_html compiler_html 
 
-compiler_html : nmtran_to_cpp_html api.cfg $(API_SRC) 
-	doxygen api.cfg
+nonmem_html: nonmem.cfg $(NONMEM_SRC)
+	doxygen nonmem.cfg
+
+core_html: core.cfg $(CORE_SRC)
+	doxygen core.cfg
+
+compiler_html : $(DRIVER_SRC) nonmem_html core_html 
+	doxygen spkcompiler.cfg
 
 clean : 
 	rm -rf html
 	rm -rf latex
 	rm -rf man
-	rm -rf api
-	rm -rf nonmem_to_cpp 
+	rm -rf core/html
+	rm -rf nonmem/html
+	rm spkcompiler.tag
 
-all  : api.cfg nmtran.cfg
+all  : 
 	rm -rf html
 	rm -rf latex
 	rm -rf man
-	rm -rf api
-	rm -rf nonmem_to_cpp
-	doxygen nmtran.cfg
-	doxygen api.cfg
+	rm -rf core/html
+	rm -rf nonmem/html
+	rm spkcompiler.tag
+	doxygen nonmem.cfg
+	doxygen core.cfg
+	doxygen spkcompiler.cfg
