@@ -1214,34 +1214,42 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   /*
     GOAL: MAKE THIS FUNCTION MEET THE OLD FUNCTIONS SPECIFICATION
           SO THAT NO OTHER CODE OR TESTS NEED BE CHANGED.
-    
-
-    ALGORITHM:
-
-    call the optimizer from spk with a large delta
-
-    if within tol, then done
-
-    if not within tol, then decrease delta and call optimizer again
-
-    repeat
 
     CONSIDER: store final value for delta to use next time
   */
   //
   // [Remove]======================================
 
-
-  // See if this functions convergence criterion has been met.
-  // If the final y value is actally within epsilon tolerance of 
-  // the true value yStar, then go on.  Note that NAG arrays use
-  // row-major order.
-  if ( isWithinTol( epsilon, dvecY, dvecYLow, dvecYUp, drowGScaled, 
-           getLowerTriangle( arrayToDoubleMatrix( options.h, n, n ) ) ) )
+  if ( thisIsAWarmRestart )
   {
-    // Set the output values.
-    return;
+    // See if this functions convergence criterion has been met.
+    // If the final y value is actally within epsilon tolerance of 
+    // the true value yStar, then go on.  Note that NAG arrays use
+    // row-major order.
+    if ( isWithinTol( epsilon, dvecY, dvecYLow, dvecYUp, drowGScaled, 
+           getLowerTriangle( arrayToDoubleMatrix( options.h, n, n ) ) ) )
+    {
+      // Set the output values.
+      return;
+    }
   }
+  else
+  {
+    // Evaluate the objective and its gradient.
+
+    // Create an approximation for the Hessian.
+  }
+
+  // Set the number of quasi-Newton iterations high enough so 
+  // that the optimizer can build up a reasonable accurate 
+  // approximation for the Hessian, but not so high that it
+  // will spend too much time in the optimizer.
+  itrMax = 5;
+
+  // Set the maximum number of interior point iterations so
+  // that the optimizer can solve the quadratic subproblems
+  // with sufficient accuracy.
+  quadMax = 100;
 
   // The argument delta specifies the convergence criteria.
   // If the return value of QuasiNewton01Box is "ok",
@@ -1256,6 +1264,7 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   //
   // This ensures that the subproblems only be solved with accuracy
   // sufficient for the current x value.
+  double deltaScale;
   double delta = MaxAbs( gCur );
 
   // If the gradient is already zero, then there is no need to 
@@ -1264,19 +1273,6 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   {
     return;
   }
-
-  // Set the number of quasi-Newton iterations high enough so 
-  // that the optimizer can build up a reasonable accurate 
-  // approximation for the Hessian, but not so high that it
-  // will spend too much time in the optimizer.
-  itrMax = 5;
-
-  // Set the maximum number of interior point iterations so
-  // that the optimizer can solve the quadratic subproblems
-  // with sufficient accuracy.
-  quadMax = 100;
-
-  double deltaScale;
 
   int i = 0;
   while ( i < nMaxIter )
