@@ -2659,8 +2659,6 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "   for( int i=0; i<n; i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      r[i] = CppAD::Value( " << UserStr.RES << "[i] );" << endl;
-  oIndData_h << "      if( i>0 )" << endl;
-  oIndData_h << "         cout << \", \";" << endl;
   oIndData_h << "   }" << endl;
 
   oIndData_h << "   valarray<double> C( 0.0, n * n );" << endl;
