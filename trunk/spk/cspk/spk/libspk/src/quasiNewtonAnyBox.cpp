@@ -745,13 +745,6 @@ void quasiNewtonAnyBox(
   // its Hessian are all evaluated at xIn.
   bool isWarmStart = optimizer.getIsWarmStart() && nMaxIter > 0;
   
-  strstring message;  WILL THIS WORK WHERE A char* IS EXPECTED?
-  strstring message;  WILL THIS WORK WHERE A char* IS EXPECTED?
-  strstring message;  WILL THIS WORK WHERE A char* IS EXPECTED?
-  strstring message;  WILL THIS WORK WHERE A char* IS EXPECTED?
-  strstring message;  WILL THIS WORK WHERE A char* IS EXPECTED?
-  const char *message;
-
 
   //------------------------------------------------------------
   // Validate the inputs (debug mode).
@@ -881,6 +874,7 @@ void quasiNewtonAnyBox(
 
   double rScaled;
   double fScaled;
+  string message;
 
   // Since the optimizer always does a warm start, i.e. it always
   // makes use of the current values for y, the objective function,
@@ -891,12 +885,10 @@ void quasiNewtonAnyBox(
     // initial value for y.
     try
     {
-      message = objective.function( yCurr, fScaled );
-      assert( strcmp( message, "ok" ) == 0 );
+      message.assign( objective.function( yCurr, fScaled ) );
       assert( message == "ok" );
 
-      message = objective.gradient( gCurr ); 
-      assert( strcmp( message, "ok" ) == 0 );
+      message.assign( objective.gradient( gScaled ) );
       assert( message == "ok" );
     }
     catch( SpkException& e )
