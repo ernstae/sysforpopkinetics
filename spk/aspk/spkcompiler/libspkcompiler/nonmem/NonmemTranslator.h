@@ -269,12 +269,6 @@ class NonmemTranslator : public ClientTranslator
   void readModel(   xercesc::DOMDocument* tree, 
 		    int nIndividuals,
 		    SymbolTable * table);
-  void readData (   xercesc::DOMDocument* tree, 
-		    int nIndividuals,
-		    SymbolTable * table,
-		    std::map<LABEL, ALIAS> & label_alias_mappingOut,
-		    std::map<LABEL, MEASUREMENT> data_forOut[],
-		    std::string order_id_pairOut[]);
 
   void emitDriver();
   void emitModel();

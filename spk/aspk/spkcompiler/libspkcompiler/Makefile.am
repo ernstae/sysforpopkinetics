@@ -18,6 +18,8 @@ libspkcompiler_la_SOURCES = \
 	$(NONMEM)/NonmemTranslator.h \
 	$(NONMEM)/read_nonmem_driver.cpp \
 	$(NONMEM)/read_nonmem_driver.h \
+	$(NONMEM)/read_nonmem_data.cpp \
+	$(NONMEM)/read_nonmem_data.h \
 	read_content.h \
 	read_content.cpp \
         ClientTranslator.h \
@@ -36,6 +38,7 @@ libspkcompiler_la_SOURCES = \
 pkginclude_HEADERS = \
         $(NONMEM)/NonmemTranslator.h \
 	$(NONMEM)/read_nonmem_driver.h \
+	$(NONMEM)/read_nonmem_data.h \
 	explang.h \
 	read_content.h \
 	ClientTranslator.h \
