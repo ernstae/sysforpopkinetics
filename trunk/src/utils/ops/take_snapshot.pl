@@ -22,26 +22,29 @@ use Fcntl qw(:DEFAULT :flock);
 
 =head1 DESCRIPTION
 
-    Given a list of job_id numbers, this program extracts the corresponding
-    rows from the job table of the production database, spkdb, and all related 
-    rows from the job, history, user, model and dataset tables, as if the
-    selected jobs had been submitted but had not yet been compiled.  The output
-    consists of the three files expected by the load_spktest.pl utility; namely
-    schema.sql, basedata.sql, and userdata.sql.
+    Given a list of job_id numbers, this program extracts from the
+    production database, spkdb, the corresponding rows of the job
+    table, along with all related rows from the job, history, user,
+    model and dataset tables, as if the selected jobs had been
+    submitted but had not yet been compiled.  The output consists of
+    three files suitable as input to the load_spktest.pl utility;
+    namely the files schema.sql, basedata.sql, and userdata.sql.  In
+    conjunction with the load_spktest.pl program, take_snapshot.pl can
+    be used to populate the spktest database with a specific set of
+    jobs prior to testing.
 
-    In conjunction with load_spktest,pl, this program can be used to build 
-    spktest with a specific set of jobs, prior to testing.  Here is a simple
-    shell script that demonstrates the principle.  It extracts jobs 5, 11, and
-    15 from spkdb and uses them and related rows to reinitialize and load spktest:
+    Here is a simple shell script that demonstrates the principle.  It
+    extracts jobs 5, 11, and 15 from spkdb and uses them and related
+    rows to reinitialize and load spktest:
 
     #!/bin/bash
-    cd /tmp
     take_snapshot.pl 5 11 15
     load_spktest.pl
 
-    The program is normally run on dbserver, although it can be run on any system
-    that has an spktmp database and a properly defined user named extractor.  (See
-    the discussion of this, below, in the section titled BUGS).
+    The program is normally run on dbserver, although it can be run on
+    any system that has an spktmp database and a properly defined
+    database user, named extractor.  (See the discussion of this,
+    below, in the section titled BUGS).
 
 =head1 DEPENDENCIES
 
@@ -57,25 +60,28 @@ use Fcntl qw(:DEFAULT :flock);
 
 =head1 BUGS
 
-    The output files, schema.sql, basedata.sql, and userdata.sql are created
-    in the current directory.  If files with those same names already exist,
-    they will be overwritten.
+    The output files, schema.sql, basedata.sql, and userdata.sql, are
+    created in the current directory.  If files with those same names
+    already exist, they will be overwritten.
 
-    The utility makes use of a temporary database called spktmp, which is 
-    assumed to be located on the local system.  The utility can be run on any
-    system which has a local spktmp database.  In particular, it can be run on
-    dbserver, where such a database is known to exist.  To make it run on another
-    machine, an spktmp database must be created, along with a user called
-    "extractor@localhost identified by 'extractor'". with table drop and create
-    privileges.
+    The utility makes use of a temporary database called spktmp, which
+    is assumed to be located on the local system.  The utility can be
+    run on any system which has a local spktmp database.  In
+    particular, it can be run on dbserver, where such a database is
+    known to exist.  To make it run on another machine, an spktmp
+    database must be created, along with a user called
+    "extractor@localhost identified by 'extractor'", with table drop
+    and create privileges.
 
-    Because the utility drops all tables in spktmp, then recreates them, only one
-    copy of the program can run at a time.  A lock file is used to enforce this
-    discipline.  If the lock file already exists, the program will refuse to run.
-    If no lock file can be found, the program will create one.  When the program
-    terminates, whether successfully or with errors, it removes the lock file.
-    If, however, the program is killed, the lock file will not be removed, and
-    the utility will refuse to run until the lock file is removed manually.
+    Because the utility drops all tables in spktmp, then recreates
+    them, only one copy of the program can run at a time.  A lock file
+    is used to enforce this discipline.  If the lock file already
+    exists, the program will refuse to run.  If no lock file can be
+    found, the program will create one.  When the program terminates,
+    whether successfully or with errors, it removes the lock file.
+    If, however, the program is killed, the lock file will not be
+    removed, and the utility will refuse to run until the lock file is
+    removed manually.
 
 =head1 FILES
 

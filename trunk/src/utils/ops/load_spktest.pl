@@ -9,12 +9,15 @@ use Getopt::Long;
 
 =head1 SYNOPSIS
 
-    load_spktest.pl --schema name1 --basedata name2 --userdata name3 --database name4 --host name5 --user name6 --password --name7
+    load_spktest.pl [--schema name1] [--basedata name2] [--userdata name3] \
+                    [ --database name4] \
+                    [--host name5] \
+                    [ --user name6[ [--password --name7]
 
-=head1 ABSTRACT
-    
-    From a symbolic dump made previously from the production database, this program
-    creates a test database. 
+=head1 ABSTRACT 
+
+    From a symbolic dump made previously from the production database,
+    this program creates a test database.
 
 =head1 DESCRIPTION
 
@@ -37,34 +40,35 @@ use Getopt::Long;
 
 =head2 OPTIONAL FILE NAMES
 
-    If present on the command line, the following options override the default
-    file names.  The user can provide no optional arguments, or one, two or
-    three of the following, in any order:
+    If present on the command line, the following options override the
+    default file names.  The user can provide no optional arguments,
+    or one, two or three of the following, in any order:
 
     --schema name1
     --basedata name2
     --userdata name3
 
-=head2 OPTIONAL DATABASE
-    
-    By default, the program builds the database spktest.  The --database option
-    allows another database to be built.
+=head2 OPTIONAL DATABASE 
+
+    By default, the program builds the database spktest.  The
+    --database option allows another database to be built.
 
 =head2 OPTIONAL HOST NAME
 
-    By default, the program assumes that the database is on localhost.  The --host
-    option allows another host to be designated.
+    By default, the program assumes that the database is on localhost.
+    The --host option allows another host to be designated.
 
 =head2 OPTIONAL USER AND PASSWORD
 
-    The program has a default user and password for building spktest.  The
-    --user and --password options make it possible to use a different
-    user/password pair.  In particular, this may be necessary if the --database
-    option is used.
+    The program has a default user and password for building spktest.
+    The --user and --password options make it possible to use a
+    different user/password pair.  In particular, this may be
+    necessary if the --database option is used.
 
 =head2 DEPENDENCIES
 
-    The program depends on a MySQL utility, mysql, to do the hard work.
+    The program depends on a MySQL utility, mysql, to do the hard
+    work.
 
 =cut
 
