@@ -570,7 +570,7 @@ namespace // [Begin: unnamed namespace]
   public:
     // Evaluate the scaled version of the objective function, 
     // fScaled(y), at the current point y.
-    const char* function( const double* yIn, double& fScaledOut )
+    const char* function( const double* yCurr, double& fScaledOut )
     {
       //--------------------------------------------------------
       // Prepare the parameters for the unscaled objective function.
@@ -578,7 +578,7 @@ namespace // [Begin: unnamed namespace]
 
       // Transform the elements of the y vector back to their 
       // unscaled form. 
-      unscaleElem( n, y, pdXLowData, pdXUpData, pdXDiffData, pdXCurrData );
+      unscaleElem( n, yCurr, pdXLowData, pdXUpData, pdXDiffData, pdXCurrData );
 
 
       //--------------------------------------------------------
@@ -871,7 +871,7 @@ void quasiNewtonAnyBox(
 
   std::ostream    os = std::cout;
   size_t        level;
-  size_t       iterMax;
+  size_t       nIterMax;
   size_t      quadMax;
   size_t            n;
   double        delta;
@@ -939,7 +939,7 @@ void quasiNewtonAnyBox(
     // a warm start is sufficiently accurate that the optimizer
     // does not need extra iterations in order to approximate
     // the Hessian the first time it is called.
-    iterMax = 1;
+    nIterMax = 1;
   }
   else
   {
@@ -948,7 +948,7 @@ void quasiNewtonAnyBox(
     // for the Hessian the first time it is called, but not so high
     // that it will perform too many iterations before this function's
     // convergence criterion is checked.
-    iterMax = nObjPars;
+    nIterMax = nObjPars;
 
     // Create an approximation for the Hessian.
     hCurr = ... ;
@@ -1017,7 +1017,7 @@ void quasiNewtonAnyBox(
         msg = QuasiNewton01Box(
           os,
           level,
-          iterMax,
+          nIterMax,
           quadMax,
           n,
           delta,
@@ -1032,7 +1032,7 @@ void quasiNewtonAnyBox(
 
         // After the first call to the optimizer the approximation for the
         // Hessian should be accurate enough that this can reset.
-        iterMax = 1;
+        nIterMax = 1;
 
 	// This function assumes that delta is set small enough that the
 	// optimizer's convergence criterion will not be satisfied for the
