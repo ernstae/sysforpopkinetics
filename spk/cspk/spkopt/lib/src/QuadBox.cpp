@@ -61,16 +61,16 @@ const char * QuadBox(
 	size_t        %kMax%,
 	size_t        %level%,
 	size_t        %n%,
-	double        %epsilon%,
 	const double *%Q%, // length n * n
 	const double *%r%, // length n 
 	const double *%l%, // ...
 	const double *%u%, // ...
 	// Input and Output Arguments
-	size_t       &%k%,
-	double       *%x%, // length n
-	double       *%a%, // ...
-	double       *%b%  // ...
+	size_t       &%k%      ,
+	double        %epsilon%,
+	double       *%x%      , // length n
+	double       *%a%      , // ...
+	double       *%b%        // ...
 )%$$
 $tend
 
@@ -97,7 +97,6 @@ such a failure should not have any side effects.
 $head Input Arguments$$
 We define 
 $latex n \in \Z_+$$,
-$latex \varepsilon \in \R_+$$,
 $latex Q \in \R^{n \times n}$$,
 $latex r \in \R^n$$,
 $latex l \in \R^n$$,
@@ -151,11 +150,25 @@ the output is written to.
 
 
 $head Input and Output Arguments$$
+
+$subhead k$$
 The input value of $italic k$$ specifies the number
 of previous iterations that have been made
 ($italic kMax$$ is a bound on previous plus current iterations.)
 The output value of $italic k$$ is the total number of
 iterations (previous plus current).
+
+$subhead epsilon$$
+The input value of $italic epsilon$$ is the requested
+convergence criteria.
+Under normal circumstances, this value is not changed; i.e.,
+the input value is equal to its output value.
+If it is changed, $italic msg$$ is "ok" but
+the requested convergence can never
+be met and the best that can be done is the output
+value of $italic epsilon$$.
+
+$subhead x,a,b$$
 The input and output values 
 $latex x \in \R^n$$, 
 $latex a \in \R^n$$, and
@@ -194,6 +207,7 @@ $codep */
 # include <string>
 # include <sstream>
 # include <math.h>
+# include <float.h>
 
 static bool Ok(const char * msg)
 {	return strcmp(msg, "ok") == 0;
@@ -276,7 +290,10 @@ bool QuadBoxTest(std::string &Msg)
 	// iteration counter
 	size_t k = 0;
 
-	Msg = QuadBox(cout, kMax, level, n, epsilon, Q, r, l, u, k, x, a, b );
+	double eps = epsilon;
+	Msg = QuadBox(cout, kMax, level, n, Q, r, l, u, k, eps, x, a, b );
+	if( epsilon != eps )
+		Msg = " :QuadBox could not obtain desired accuracy";
 	if( Msg == "ok" )
 	{	std::ostringstream buf;
 		buf << " :QuadBox Iteration Count = " << k;
@@ -313,26 +330,23 @@ const char * QuadBox(
 	size_t        kMax,
 	size_t        level,
 	size_t        n,
-	double        epsilon,
 	const double *Q, // length n * n
 	const double *r, // length n 
 	const double *l, // ...
 	const double *u, // ...
 	// Input and Output Arguments
-	size_t       &k,
-	double       *x, // length n
-	double       *a, // ...
-	double       *b  // ...
-)
-{	using namespace std;
+	size_t       &k      ,
+	double       &epsilon,
+	double       *x      , // length n
+	double       *a      , // ...
+	double       *b      )  // ...
+{
+	using namespace std;
 
-	size_t i;
-	size_t j;
-	double sum;
+	size_t i, j;
 
-	double alpha;
-	double fk;
-	double f;
+	double alpha, alphak;
+	double f,     fk;
 
 	if( n == 0 )
 		return (const char *)("ok");
@@ -346,22 +360,27 @@ const char * QuadBox(
 	double *Fk   = dMemory(3 * n);
 	double *F    = dMemory(3 * n);
 
-	// initialize the current iterate
-	for(i = 0; i < n; i++)
-	{	// current iterate
-		xk[i] = x[i];
-		ak[i] = a[i];
-		bk[i] = b[i];
+	if( level >= 1 )
+	{	os << "QuadBox:" << endl;
+		for(i = 0; i < n; i++)
+			os << "i = " << i 
+			   << ", r = " << r[i]
+			   << ", x = " << x[i]
+			   << ", l = " << l[i]
+			   << ", u = " << u[i]
+			   << endl;
+	}
 
-		// check limits
-		assert( l[i] < x[i] );
+	// check initial limits
+	for(i = 0; i < n; i++)
+	{	assert( l[i] < x[i] );
 		assert( x[i] < u[i] );
 		assert( 0.   < a[i] );
 		assert( 0.   < b[i] );
 	}
 	
 	// initial Residual in complementarity condition
-	fk    = Residual(n, Q, r, l, u, xk, ak, bk, Fk);
+	f    = Residual(n, Q, r, l, u, x, a, b, F);
 
 	// initial alpha
 	alpha = .005;
@@ -369,25 +388,28 @@ const char * QuadBox(
 	// iterate until convergence, maximum number of iterations, or an error
 	double lambda  = 1.;
 	const char * msg = "ok";
-	while( MaxAbs(3 * n,  Fk) > epsilon && k < kMax && Ok(msg) )
+	while( MaxAbs(3 * n,  F) > epsilon && k < kMax && Ok(msg) )
 	{
 		// tracing
 		if( level >= 1 )
 		{	os << "k = " << k;
 			os << ", alpha  = " << alpha;
 			os << ", lambda  = " << lambda;
-			os << ", fk = " << fk;
-			os << ", Max(Ca) = " << MaxAbs(n, Fk);
-			os << ", Max(Cb) = " << MaxAbs(n, Fk + n);
-			os << ", Max(Lx) = " << MaxAbs(n, Fk + 2 * n);
+			os << ", f = " << f;
+			os << ", Max(Ca) = " << MaxAbs(n, F);
+			os << ", Max(Cb) = " << MaxAbs(n, F + n);
+			os << ", Max(Lx) = " << MaxAbs(n, F + 2 * n);
 			os << endl;
 		}
 		if( level >= 2 )
 		{	for(i = 0; i < n; i++)
 				os << "i = " << i 
-				   << ", x = " << xk[i]
-				   << ", a = " << ak[i]
-				   << ", b = " << bk[i]
+				   << ", x = " << x[i]
+				   << ", a = " << a[i]
+				   << ", b = " << b[i]
+				   << ", Ca = " << F[i]
+				   << ", Cb = " << F[i + n]
+				   << ", Lx = " << F[i + 2 * n]
 				   << endl;
 		}
 
@@ -395,58 +417,81 @@ const char * QuadBox(
 		++k;
 
 		// is the next step a corrector step
-		bool corrector = (k % 2 == 0);
+		bool corrector = (k % 3 == 0);
 
-		// place new iterate in x, a, b 
+		// place new candidate in xk, ak, bk 
 		if( corrector )
-			msg = Next(n, 1., Q, r, l, u, xk, ak, bk, 
-				x, a, b, lambda);
-		else	msg = Next(n, alpha, Q, r, l, u, xk, ak, bk, 
-				x, a, b, lambda);
-		if(  Ok(msg) && (! corrector) )
+			alphak = 1.;
+		else	alphak = alpha;
+		msg = Next(
+			n, alphak, Q, r, l, u, x, a, b, xk, ak, bk, lambda);
+
+		// check limits and set same flag
+		bool same = true;
+		for(i = 0; i < n; i++)
+		{	assert( l[i]  < xk[i] );
+			assert( xk[i] < u[i] );
+			assert( 0.    < ak[i] );
+			assert( 0.    < bk[i] );
+			same &= (x[i]==xk[i] && a[i]==ak[i] && b[i]==bk[i]); 
+		}
+		if( same && (! corrector) )
+		{	msg = "Quadbox: cannot achieve requested accuracy";
+			if( level >= 1 )
+				os << msg << std::endl;
+			msg     = "ok";
+			epsilon = MaxAbs(3 * n , F);
+			return (const char *) msg;
+		}
+		// next Residual relative to central path
+		if( same )
 		{
-			// next Residual relative to central path
-			f     = Residual(n, Q, r, l, u, x, a, b, F);
-			if( f > fk )
-			{	msg = "QuadBox: residual to central path increased";
-				if( level >= 1 )
-				{	os << msg << std::endl 
-					   << "lambda = " << lambda
-					   << ", fk = " << fk 
-					   << ", f - fk = " << f - fk << std::endl;
-				}
-			}
-			alpha =  f / fk;
+			fk = f;
+			for(i = 0; i < 3*n; i++)
+				Fk[i] = F[i];
+		}
+		else	fk = Residual(n, Q, r, l, u, xk, ak, bk, Fk);
+
+		// did we get descent in the residual
+		bool descent = (1. - 10. * DBL_EPSILON) * f >= fk;
+
+		// update alpha
+		if( Ok(msg) && (! corrector) )
+		{	alpha =  f / fk;
 			alpha =  alpha * alpha;
 			if( alpha >= .05 )
 				alpha = .05;
 			if( alpha < .005 )
 				alpha = .005;
 		}
-		if( Ok(msg) )
-		{	for(i = 0; i < n; i++)
-			{	xk[i] = x[i];
-				ak[i] = a[i];
-				bk[i] = b[i];
-
-				// check limits
-				assert( l[i] < x[i] );
-				assert( x[i] < u[i] );
-				assert( 0.   < a[i] );
-				assert( 0.   < b[i] );
+		if(  Ok(msg) && (! corrector) && ( ! descent) )
+		{	msg = "QuadBox: central path residual not decreasing";
+			if( level >= 1 )
+			{	os << msg << std::endl 
+				   << "lambda = "   << lambda
+				   << ", f = "      << f 
+				   << ", fk = "     << fk 
+				   << ", fk - f = " << fk - f 
+				   << std::endl;
 			}
+			msg     = "ok";
+			epsilon = MaxAbs(3 * n , F);
+			return (const char *) msg;
 		}
-
-		// total residual at current iterate
-		fk    = Residual(n, Q, r, l, u, xk, ak, bk, Fk);
+		if( Ok(msg) && descent )
+		{	for(i = 0; i < n; i++)
+			{	x[i]         = xk[i];
+				a[i]         = ak[i];
+				b[i]         = bk[i];
+				F[i]         = Fk[i];
+				F[i + n]     = Fk[i + n];
+				F[i + 2 * n] = Fk[i + 2 * n];
+			}
+			f = fk;
+		}
 	}
-	for(i = 0; i < n; i++)
-	{	x[i] = xk[i];
-		a[i] = ak[i];
-		b[i] = bk[i];
-	}
-	if( Ok(msg) && MaxAbs(3 * n,  Fk) > epsilon )
-		msg = "QuadBox: no convergence with maximum  number of iterations";
+	if( Ok(msg) && MaxAbs(3 * n,  F) > epsilon )
+		msg = "QuadBox: no convergence with maximum iterations";
 
 	return msg;
 }

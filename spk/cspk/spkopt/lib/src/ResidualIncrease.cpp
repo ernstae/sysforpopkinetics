@@ -44,9 +44,11 @@ bool ResidualIncrease(std::string &Msg)
 	double b[] = {
 	1.8177292143437356e-06, 1.8177292143437356e-06, 1.8177292143437356e-06
 	};
+	double eps = epsilon;
 	Msg = QuadBox(
-		std::cout, kMax, level, n, epsilon, Q, r, l, u, k, x, a, b 
-	);
+		std::cout, kMax, level, n, Q, r, l, u, k, eps, x, a, b);
+	if( eps != epsilon )
+		Msg = " :QuadBox could not obtain desired accuracy";
 	if( Msg == "ok" )
 	{	std::ostringstream buf;
 		buf << " :QuadBox Iteration Count = " << k;

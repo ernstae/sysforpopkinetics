@@ -32,16 +32,16 @@ extern const char * QuadBox(
 	size_t        kMax,
 	size_t        level,
 	size_t        n,
-	double        epsilon,
 	const double *Q, // length n * n
 	const double *r, // length n 
 	const double *l, // ...
 	const double *u, // ...
 	// Output Arguments
-	size_t       &k,
-	double       *x, // length n
-	double       *a, // ...
-	double       *b  // ...
+	size_t       &k      ,
+	double       &epsilon,
+	double       *x      , // length n
+	double       *a      , // ...
+	double       *b        // ...
 );
 
 # endif

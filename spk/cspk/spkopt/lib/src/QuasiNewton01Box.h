@@ -519,7 +519,6 @@ $contents%
 	Delta.cpp%
 	Next.cpp%
 	QuadBox.cpp%
-	QuadTrust.cpp%
 	Bfgs.cpp%
 	CppADUtil.h%
 	glossary.omh
@@ -542,7 +541,7 @@ $end
 # include "CppADUtil.h"
 
 namespace {
-	void ScaledProjectGradient(
+	void ScaleProjectGradient(
 		size_t n, 
 		const double *x, 
 		const double *g, 
@@ -625,16 +624,19 @@ namespace {
 			QuadMax, 
 			QuadLevel, 
 			n, 
-			deltaScaled, 
 			HCur, 
 			gCur, 
 			sLow, 
 			sUp, 
 			QuadCur, 
+			deltaScaled, 
 			sCur, 
 			aTmp, 
 			bTmp 
 		); 
+		// check for case where cannot achieve accuracy
+		if( deltaScaled > max( rCur * delta, 1e-3 * gProjNorm) ) msg = 
+			"QuasiNewton01Box: cannot achieve requested accuracy";
 		return msg;
 	}
 }
@@ -777,7 +779,7 @@ const char * QuasiNewton01Box(
 	while( true )
 	{	
 		// the scaled projected gradient 
-		ScaledProjectGradient(n, xCur, gCur, gProj);
+		ScaleProjectGradient(n, xCur, gCur, gProj);
 		double gNormProj = MaxAbs(n, gProj);
 
 		// solve for the next step
