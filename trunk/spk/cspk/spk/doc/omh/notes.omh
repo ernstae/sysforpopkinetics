@@ -1,0 +1,68 @@
+$comment
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+$$
+$begin Notes$$
+
+$spell
+	inv
+	Hessian
+	Marlow
+	oms
+$$
+
+$section Important Notes$$
+
+$head Active Constraints$$
+All the optimization routines return the derivative of the objective
+so that the calling program can determine which constraints are active.
+In the prototype, this information is currently not available when you
+are solving problems at the population level. 
+On the other hand, sometimes analytic solutions will not agree
+with the results of the prototype because the constraints are active
+for some of the random effects.
+
+$head Huge Matrices$$
+The matrices $code R2inv$$ and its derivatives in the file $code ExpectedHessian.oms$$
+should never be formed. I just used them because I was lazy and in a hurry. You
+should do much better than this when you implement the calculations.
+
+$head Matrix Inversion$$
+Given an invertible matrix $math%A%$$, there are numerical methods that
+solve equations of the form $math%A * X = B%$$ for the matrix $math%X%$$
+where $math%B%$$ is a matrix with the same number of rows as $math%A%$$.
+It is often faster and numerically better to do this than to compute
+the inverse of $math%A%$$ and then multiply it times $math%B%$$.
+In addition, if $math%A%$$ has special structure like being positive definite,
+there is usually a routine specially made for solving the corresponding equations.
+
+$head References$$
+Table 6.1 and 6.4 of Mathematics for Operations Research by W.H. Marlow.
+
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+
