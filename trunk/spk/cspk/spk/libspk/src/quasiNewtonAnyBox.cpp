@@ -1385,9 +1385,9 @@ void scaleGradElem(
  *
  * hWork
  *
- * On input, this must be allocated to hold n * n elements.  On output, it
- * contains a version of the Hessian with some of its elements replaced by
- * some of the elements of its Cholesky factor.
+ * On input, this must be allocated to hold n * n elements.  On output, 
+ * it contains a modified version of the Hessian with some of its elements 
+ * replaced by some of the elements of its Cholesky factor.
  *
  *
  * rDiagRec
@@ -1434,28 +1434,21 @@ bool isWithinTol(
 
 
   //------------------------------------------------------------
-  // Calculate the Hessian, projected gradient, and diagonal reciprocals.
+  // Prepare the modified version of the Hessian.
   //------------------------------------------------------------
 
-  // Prepare a version of the Hessian matrix H = R * R^(T) with its 
-  // super-diagonal elements replaced by the sub-diagonal elements
-  // of its (lower triangular) Cholesky factor R.
+  // Prepare a version of the Hessian with its super-diagonal 
+  // elements replaced by the sub-diagonal elements of its 
+  // Cholesky factor, which is itself lower triangular.
   for ( i = 0; i < n; i++ )
   {
-    // Compute the elements in this row of the lower triangle of H.
+    // Copy the sub-diagonal elements from the lower triangle of H.
     for ( j = 0; j <= i ; j++ )
     {
-      hWork[i + j * n] = 0.0;
-
-      // This loop does not include k > j since j <= i and R is lower
-      // triangular, i.e., its (j,k)th element is zero for k > j.
-      for ( k = 0; k <= j; k++ )
-      {
-        hWork[i + j * n] +=  r[i + k * n] * r[j + k * n];
-      }
+      hWork[i + j * n] = h[i + j * n];
     }
   
-    // Copy the elements in this row of the super-diagonal of H.
+    // Copy the super-diagonal elements from the lower triangle of R.
     for ( j = i + 1; j < n; j++ )
     {
       hWork[i + j * n] = r[j + i * n];
