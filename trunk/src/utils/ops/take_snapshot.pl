@@ -102,7 +102,7 @@ my $dump_spkdb = "/usr/local/bin/dump_spkdb.pl";
 my $load_spktest = "/usr/local/bin/load_spktest.pl";
 my $mysqldump = "/usr/bin/mysqldump";
 
-# Three hash tables store sets of table keys
+# Three hash tables represent sets of table keys
 my %model_list;
 my %dataset_list;
 my %user_list;
@@ -115,11 +115,12 @@ my $spkdb_dbh = &connect($spkdbname, $dbhost, $dbuser, $dbpass)
 my @job_list = add_ancestors_to_list(@ARGV);
 
 # Use dump_spkdb.pl to dump spkdb. We will keep schema.sql and basedata.sql,
-# but clear the contents of userdata.sql.  The rest of the program rebuilds
-# userdata.sql with just the jobs selected by the user.
-system("$dump_spkdb --noprefix") == 0 
+# but provide an empty userdata.sql.  The rest of the program is designed to
+# build a userdata.sql file for just the jobs selected by the users, their
+# ancestor jobs, and related rows of the history, model, dataset and user tables.
+system("$dump_spkdb --noprefix --nouserdata") == 0 
     or death("$dump_spkdb failed");
-open FL, "> userdata.sql";  # truncate userdata.sql file
+open FL, "> userdata.sql";  
 close FL;
 
 # Use load_spktest.pl to build the spktmp database, from schema.sql and basedata.sql,
