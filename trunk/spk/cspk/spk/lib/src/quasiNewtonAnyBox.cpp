@@ -716,16 +716,6 @@ namespace // [Begin: unnamed namespace]
           __FILE__ );
       }
 
-      // Make sure that the objective function value is not infinite.
-      if ( fabs( fScaledOut ) == numeric_limits<double>::infinity() )
-      {
-        throw SpkException(
-          SpkError::SPK_OPT_ERR, 
-          "An infinite value was generated for the objective function.",
-          __LINE__,
-          __FILE__ );
-      }
-
       // Make sure that the objective function value is not a Nan.
       if ( fScaledOut != fScaledOut )
       {
