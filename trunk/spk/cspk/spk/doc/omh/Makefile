@@ -30,7 +30,7 @@
 # -----------------------------------------------------------------
 
 all:
-	rm -r -f htm
-	mkdir htm
-	cp Makefile.HTM htm/Makefile
-	make -C htm
+	rm -r -f ../htm
+	mkdir ../htm
+	cp Makefile.HTM ../htm/Makefile
+	make -C ../htm
