@@ -57,69 +57,63 @@ class NonmemTranslator : public ClientTranslator
   NonmemTranslator& operator=( const NonmemTranslator& );
   
  private:
-
   //
   // Analyze the <pop_analysis> subtree and generate the source code
-  // for the driver.  It returns the size of population.
+  // for the driver.
   //
-  int  parsePopAnalysis ( xercesc::DOMElement* sourceML );
+  // @param pPopAnalysis A pointer to the <popAnalysis> node.
+  //
+   void parsePopAnalysis ( xercesc::DOMElement* pPopAnalysis );
 
   //
   // Analyze the <ind_analysis> subtree and generate the source code
   // for the driver.
   //
-  void parseIndAnalysis ( xercesc::DOMElement* sourceML );
+  // @param pIndAnalysis A pointer to the <indAnalysis> node.
+  //
+  void parseIndAnalysis ( xercesc::DOMElement* pIndAnalysis );
 
   //
   // Analyzie the <pred> subtree and generate the source code
   // for the Pred class.
   //
-  void parsePred( xercesc::DOMElement* sourceML, SymbolTable& table );
-
-  // void parseTables( xercesc::DOMNodeList* tables, std::vector<int>&  );
-
-  // void parseScatterplots( xercesc::DOMNodeList*, std::vector<int>& );
+  // @param pPred A pointer to the <pred> node.
+  //
+  void parsePred( xercesc::DOMElement* pPred );
 
   //
   // Generate C++ source code for declaring and defining IndData class which
   // is a C++ representation of a single patient records.
   //
-  // @param final_symbol_table The (const) reference to the symbol table which
-  // shall contain all entries extracted from SpkSourceML and SpkDataML
-  // documents.
-  //
-  void generateIndData( const SymbolTable& final_symbol_table ) const;
+  void generateIndData( ) const;
 
   //
   // Generate C++ source code for declaring and defining DataSet class which
   // is a C++ representation of the set of patient records.
   //
-  // @param pop_size The number of different IDs in the data set, 
-  // which is interpreted as the size of the population.
-  //
-  // @param final_symbol_table The (const) reference to the symbol table which
-  // shall contain all entries extracted from SpkSourceML and SpkDataML
-  // documents.
-  //
-  void generateDataSet( int pop_size, const SymbolTable& final_symbol_table ) const;
+  void generateDataSet( ) const;
 
 
   //
   // Generate C++ source code for Pred class.
   //
-  void generatePred( const SymbolTable& final_symbol_table, std::ifstream& iPredEqn ) const;
+  void generatePred( const char* predDefFilename ) const;
 
-  // The header file name for IndData class.
+  //
+  // Generate C++ source code for the driver for population analysis.
+  //
+  void generatePopDriver( ) const;
+
+  //
+  // Generate C++ source code for the driver for individual analysis.
+  //
+  void generateIndDriver( ) const;
+
+  // The header file name for the IndData template class.
   const char *fIndData_h;
 
-  // The definition file name for IndData class.
-  const char *fIndData_cpp;
-
-  // The header file name for DataSet class.
+  // The header file name for the DataSet template class.
   const char *fDataSet_h;
-
-  // The definition file name for DataSet class.
-  const char *fDataSet_cpp;
 
   // The name of file that contains fortran (ie. NONMEM TRAN) version of
   // the user defined $PRED.
@@ -129,11 +123,8 @@ class NonmemTranslator : public ClientTranslator
   // (equations only) model.
   const char *fPredEqn_cpp;
   
-  // The header file for Pred class.
+  // The header file for the Pred template class.
   const char *fPred_h;
-
-  // The definition file name for Pred class.
-  const char *fPred_cpp;
 
   // The header file for Omega class.
   const char *fOmega_h;
@@ -141,6 +132,9 @@ class NonmemTranslator : public ClientTranslator
   // The definition file for Omega class.
   const char * fOmega_cpp;
  
+  // The driver definition.
+  const char * fDriver_cpp;
+
   // The string for the file burner.
   const char *BURNER;
 
@@ -202,6 +196,7 @@ class NonmemTranslator : public ClientTranslator
   XMLCh* X_MITR;
   XMLCh* X_IND_STAT;
   //========================================
+
 };
 
 #endif

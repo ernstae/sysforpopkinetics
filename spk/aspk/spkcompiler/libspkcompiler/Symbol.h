@@ -80,7 +80,7 @@ public:
            enum SymbolType stIn,
            enum ObjectType otIn,
            enum Structure msIn,
-           const std::vector<int>& dimIn );
+           const std::valarray<int>& dimIn );
 
   /**
    * The copy constructor. 
@@ -180,9 +180,10 @@ public:
    */
    static Symbol createLabel( const std::string& label, 
                               const std::string& alias,
-                              const std::vector<int>& lengths );
+                              const std::valarray<int>& lengths );
 
 public:
+
    /**
     * The name/symbol/identifier that refers to the object.
     */
@@ -218,7 +219,7 @@ public:
     * For matrices, the first element of <em>dimension</em> is set to the dimension.  
     * Note that the matrices are all assumed to be square.
     */
-   std::vector< int > dimension;
+   std::valarray< int > dimension;
 
    /**
     * The typical or initial values for the data object(s) refered by the symbol.
@@ -253,6 +254,16 @@ public:
     * For other data objects, this vector remains empty.
     */   
    std::vector< std::valarray<std::string> > lower;
+
+   /**
+    * The step size for the data object refered by the symbol.
+    *
+    * It makes sense to use this field only if the symbol is associated with a
+    * NONMEM vector or matrix.  The vector is sized to the same value as of 
+    * the first element of <em>dimension</em> vector for NONMEM vectors or matrices.
+    * For other data objects, this vector remains empty.
+    */   
+   std::vector< std::valarray<std::string> > step;
 
    /**
     * The boolean values indicating as to whether the corresponding NONMEM vector
