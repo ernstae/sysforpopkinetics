@@ -359,7 +359,7 @@ sub insert_error {
     $caught_err    .= "</error>\n";
 
     $report =~ s/<\/error_list>/$caught_err $xml_errors<\/error_list>\n/;
-syslog('info', "$report !!!");
+    syslog('info', "$report !!!");
     return $report;
 }
 sub format_error_report {
@@ -522,6 +522,11 @@ sub reaper {
 	    }
 	}
     }
+    # Replace/write results in report file
+    open(FH, ">$filename_results")
+       or death( 'emerg', "can't open $$working_dir/$filename_results");
+    print FH $report;
+    close(FH);
 
     # Remove working directory if not needed
     if ($remove_working_dir && !$retain_working_dir) {
@@ -530,11 +535,6 @@ sub reaper {
     if (length($optimizer_trace) > 0) {
 	$report = insert_optimizer_trace($optimizer_trace, $report);
     }
-
-    open(FH, ">$filename_results")
-       or death( 'emerg', "can't open $$working_dir/$filename_results");
-    print FH $report;
-    close(FH);
 
     &end_job($dbh, $job_id, $end_code, $report)
 	or death('emerg', "job_id=$job_id: $Spkdb::errstr");
