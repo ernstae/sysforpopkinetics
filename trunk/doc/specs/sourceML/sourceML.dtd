@@ -138,6 +138,9 @@ Either label or synonym may be one of the NONMEM reserved identifiers, among whi
 <!-- <ind_analysis is_restart="yes"> Request to warm-start the optimization process; "yes" or "no", default to "yes".-->
 <!ATTLIST ind_analysis is_restart (yes|no) #IMPLIED>
 
+<!-- <ind_analysis sig_digits="3"> The number of significant digits required in the final parameter estimate. The value must be a positive integer less than 9.  The default value is 3.-->
+<!ATTLIST ind_analysis sig_digits CDATA #IMPLIED>
+
 <!-- <pop_analysis> Request for the population level analysis. The <model> definition is assumed to be for a population.-->
 <!ELEMENT pop_analysis ( description? | data_labels | theta | omega+ | sigma+ | pop_stat? | simulation?)>
 
@@ -148,6 +151,9 @@ Either label or synonym may be one of the NONMEM reserved identifiers, among whi
 <!-- <pop_analysis approximation="fo"> Approximation method: "fo" for First Order, "foce" for Modified Expected Hessian, "laplace" for Modified Laplace. 
 -->
 <!ATTLIST pop_analysis approximation (fo|foce|laplace) #REQUIRED>
+
+<!-- <pop_analysis sig_digits="3"> The number of significant digits required in the final parameter estimate. The value must be a positive integer less than 9.  The default value is 3.  The value is applied to both the population parameter estimate and the inviduals parameter estimates.-->
+<!ATTLIST pop_analysis sig_digits CDATA #IMPLIED>
 
 <!-- <pop_analysis pop_size="10"> Number of individuals in the population, must be a poitive integer.-->
 <!ATTLIST pop_analysis pop_size      CDATA    #REQUIRED>
