@@ -61,11 +61,13 @@
       <para>
 	In a terminal window:
 	<screen>
-scp whitechuck:/opt/download/mysql.tar
+cd /tmp
+scp whitechuck:/opt/download/mysql.tar .
 tar xvf mysql.tar
 su
 cd mysql
 rpm -Uhv *
+rm -rf mysql.tar mysql
 	</screen>
       </para>
       <para>
@@ -97,6 +99,36 @@ rpm -Uhv *
 su 
 /usr/bin/mysqladmin -u root password <emphasis>secret-code</emphasis>
 /usr/bin/mysqladmin -u root -h $HOSTNAME password <emphasis>secret-code</emphasis>
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Creating the Databases</title>
+      <para>
+	In this step we will create two database,
+	<emphasis>spkdb</emphasis> and <emphasis>spktest</emphasis>.	
+	These databases will have exactly the same structure.
+	For now, we will create them empty:
+      </para>
+      <para>
+	<screen>
+mysql -uroot -p
+use mysql;
+create database spkdb;
+create database spktest;
+quit;
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Adding the Test User</title>
+      <para>
+	For testing of software, we need a user with access
+	rights to the <emphasis>spktest</emphasis> database.
+	<screen>
+mysql -u root -p
+grant all on spktest.* to tester@localhost identified by 'tester';
+quit;
 	</screen>
       </para>
     </sect2>
