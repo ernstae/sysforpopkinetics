@@ -453,58 +453,47 @@ extern "C" {
  * Local function declarations
  *------------------------------------------------------------------------*/
 
-// This function sets 0.0 to the corresponding output element when diff[i] is 0.0.
-static void scaleElem(   int n,
-                         const double* px, 
-                         const double* pxLow, 
-                         const double* pxDiff,
-                         double* py);
+namespace // [Begin: unnamed namespace]
+{
+  void scaleElem(
+    int n,
+    const double* px, 
+    const double* pxLow, 
+    const double* pxDiff,
+    double* py );
 
-static void unscaleElem(   int n,
-                           const double* py, 
-                           const double* pxLow, 
-                           const double* pxUp, 
-                           const double* pxDiff,
-                           double* px);
+  void unscaleElem(
+    int n,
+    const double* py, 
+    const double* pxLow, 
+    const double* pxUp, 
+    const double* pxDiff,
+    double* px );
 
+  void scaleGradElem(
+    int n,
+    const double* pg, 
+    const double* pxDiff,
+    double* pScaledG );
 
-static void scaleGradElem(   int n,
-                             const double* pg, 
-                             const double* pxDiff,
-                             double* pScaledG);
+  bool isWithinTol(
+    double tol, 
+    const DoubleMatrix& dvecXHat, 
+    const DoubleMatrix& dvecXLow, 
+    const DoubleMatrix& dvecXUp, 
+    const DoubleMatrix& drowG,
+    const DoubleMatrix& dmatR );
 
-static void NAG_CALL fvalScaled( Integer n, 
-                                 double *y, 
-                                 double *objf,
-                                 double *gvalScaled, 
-                                 Nag_Comm *comm );
+  DoubleMatrix arrayToDoubleMatrix(
+    const double* pdAIn, 
+    int nRows, 
+    int nCols );
 
-static bool isWithinTol( double tol, 
-                         const DoubleMatrix& dvecXHat, 
-                         const DoubleMatrix& dvecXLow, 
-                         const DoubleMatrix& dvecXUp, 
-                         const DoubleMatrix& drowG,
-                         const DoubleMatrix& dmatR );
+  DoubleMatrix getLowerTriangle( const DoubleMatrix& dmatA );
 
-static DoubleMatrix arrayToDoubleMatrix( const double* pdAIn, 
-                                         int nRows, 
-                                         int nCols );
+  bool isLowerTriangular( const DoubleMatrix& dmatA );
 
-static DoubleMatrix getLowerTriangle( const DoubleMatrix& dmatA );
-
-static bool isLowerTriangular( const DoubleMatrix& dmatA );
-
-static void NAG_CALL confun( Integer, Integer, 
-                             Integer *, 
-                             double *, 
-                             double *, 
-                             double *, 
-                             Nag_Comm *);
-
-
-/*------------------------------------------------------------------------
- * Namespace declarations
- *------------------------------------------------------------------------*/
+} // [End: unnamed namespace]
 
 
 
@@ -1362,6 +1351,9 @@ void quasiNewtonAnyBox(
  *
  =========================================================================*/
 
+namespace // [Begin: unnamed namespace]
+{
+
 /*************************************************************************
  * Function: scaleElem
  *
@@ -1373,11 +1365,13 @@ void quasiNewtonAnyBox(
  * No possibility for "div by zero" error.
  *
  *************************************************************************/
-static void scaleElem(   int n,
-                         const double* px, 
-                         const double* pxLow, 
-                         const double* pxDiff,
-                         double* py)
+
+void scaleElem(
+  int n,
+  const double* px, 
+  const double* pxLow, 
+  const double* pxDiff,
+  double* py )
 {
     for(int i=0; i<n; i++)
     {
@@ -1399,12 +1393,13 @@ static void scaleElem(   int n,
  *
  *************************************************************************/
 
-static void unscaleElem(   int n,
-                           const double* py, 
-                           const double* pxLow, 
-                           const double* pxUp, 
-                           const double* pxDiff,
-                           double* px)
+void unscaleElem(
+  int n,
+  const double* py, 
+  const double* pxLow, 
+  const double* pxUp, 
+  const double* pxDiff,
+  double* px )
 {
     for(int i=0; i<n; i++)
     {
@@ -1435,10 +1430,11 @@ static void unscaleElem(   int n,
  *
  *************************************************************************/
 
-static void scaleGradElem(   int n,
-                             const double* pg, 
-                             const double* pxDiff,
-                             double* pScaledG)
+void scaleGradElem(
+  int n,
+  const double* pg, 
+  const double* pxDiff,
+  double* pScaledG )
 {
     for(int i=0; i<n; i++)
         pScaledG[i] = pxDiff[i] * pg[i];
@@ -1543,11 +1539,12 @@ static void scaleGradElem(   int n,
 // This rotuine is called by the C nag optimizer.  Don't ever attempt
 // to throw an exception!  It will be never caught.
 //
-static void NAG_CALL fvalScaled( Integer n, 
-                                 double *y, 
-                                 double *objf,
-                                 double *gvalScaled, 
-                                 Nag_Comm *comm )
+void NAG_CALL fvalScaled( 
+  Integer n, 
+  double *y, 
+  double *objf,
+  double *gvalScaled, 
+  Nag_Comm *comm )
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -1795,14 +1792,16 @@ static void NAG_CALL fvalScaled( Integer n,
  * implies that H is symmetric and positive-definite.  
  *
  *************************************************************************/
+
 #include "multiply.h"
-static bool isWithinTol( double tol, 
-                         const DoubleMatrix& dvecXHat, 
-                         const DoubleMatrix& dvecXLow, 
-                         const DoubleMatrix& dvecXUp, 
-                         const DoubleMatrix& drowG,
-                         const DoubleMatrix& dmatR
-                       )
+
+bool isWithinTol( 
+  double tol, 
+  const DoubleMatrix& dvecXHat, 
+  const DoubleMatrix& dvecXLow, 
+  const DoubleMatrix& dvecXUp, 
+  const DoubleMatrix& drowG,
+  const DoubleMatrix& dmatR )
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -2108,9 +2107,10 @@ static bool isWithinTol( double tol,
  *
  *************************************************************************/
 
-static DoubleMatrix arrayToDoubleMatrix( const double* pdAIn, 
-                                         int nRows, 
-                                         int nCols )
+DoubleMatrix arrayToDoubleMatrix( 
+  const double* pdAIn, 
+  int nRows, 
+  int nCols )
 {
   DoubleMatrix dmatAOut( nRows, nCols );
 
@@ -2131,7 +2131,7 @@ static DoubleMatrix arrayToDoubleMatrix( const double* pdAIn,
  *
  *************************************************************************/
 
-static DoubleMatrix getLowerTriangle( const DoubleMatrix& dmatA ) 
+DoubleMatrix getLowerTriangle( const DoubleMatrix& dmatA ) 
 {
   DoubleMatrix dmatB( dmatA );
 
@@ -2166,7 +2166,7 @@ static DoubleMatrix getLowerTriangle( const DoubleMatrix& dmatA )
  *
  *************************************************************************/
 
-static bool isLowerTriangular( const DoubleMatrix& dmatA )
+bool isLowerTriangular( const DoubleMatrix& dmatA )
 {
   int n = dmatA.nr();
 
@@ -2200,3 +2200,4 @@ static bool isLowerTriangular( const DoubleMatrix& dmatA )
 }
 
 
+} // [End: unnamed namespace]
