@@ -144,21 +144,24 @@ void NonmemCompilerTest::testInterpret()
   int thetaElemNum = 3;
   valarray<double> thetaIn( 0.1, thetaElemNum );
   valarray<double> thetaInActual = compiler->getThetaIn();
-  CPPUNIT_ASSERT_EQUAL_MESSAGE( "thetaIn: #of elements", thetaElemNum, static_cast<int>(thetaInActual.size()) );
+  CPPUNIT_ASSERT_EQUAL_MESSAGE( "thetaIn: #of elements", 
+				thetaElemNum, static_cast<int>(thetaInActual.size()) );
 
   for( int i=0; i<thetaElemNum; i++ )
     CPPUNIT_ASSERT_EQUAL_MESSAGE( "thetaIn", thetaIn[i], thetaInActual[i] );
   
   valarray<double> thetaLow( -0.1, thetaElemNum );
   valarray<double> thetaLowActual = compiler->getThetaLow();
-  CPPUNIT_ASSERT_EQUAL_MESSAGE( "thetaLow: #of elements", thetaElemNum, static_cast<int>(thetaLowActual.size()) );
+  CPPUNIT_ASSERT_EQUAL_MESSAGE( "thetaLow: #of elements", 
+				thetaElemNum, static_cast<int>(thetaLowActual.size()) );
 
   for( int i=0; i<thetaElemNum; i++ )
     CPPUNIT_ASSERT_EQUAL_MESSAGE( "thetaIn", thetaLow[i], thetaLowActual[i] );
 
   valarray<double> thetaUp( 1.0, thetaElemNum );
   valarray<double> thetaUpActual = compiler->getThetaUp();
-  CPPUNIT_ASSERT_EQUAL_MESSAGE( "thetaUp: #of elements", thetaElemNum, static_cast<int>(thetaUpActual.size()) );
+  CPPUNIT_ASSERT_EQUAL_MESSAGE( "thetaUp: #of elements", 
+				thetaElemNum, static_cast<int>(thetaUpActual.size()) );
 
   for( int i=0; i<thetaElemNum; i++ )
     CPPUNIT_ASSERT_EQUAL_MESSAGE( "thetaUp", thetaUp[i], thetaUpActual[i] );
