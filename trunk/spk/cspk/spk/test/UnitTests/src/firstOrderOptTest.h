@@ -45,7 +45,7 @@ class firstOrderOptTest : public CppUnit::TestFixture
                        double dLTildeOut,
                        double dLTildeKnown,
                        const double espB,
-	                   const double espAlp,
+                       const double espAlp,
                        const DoubleMatrix& dvecAlpLow,
                        const DoubleMatrix& dvecAlpUp,
                        const DoubleMatrix& dvecAlpOut,
@@ -56,6 +56,8 @@ class firstOrderOptTest : public CppUnit::TestFixture
                        const DoubleMatrix& dmatBHat,
                        const DoubleMatrix& drowLTilde_alpOut,
                        const DoubleMatrix& drowLTilde_alpKnown,
+                       const DoubleMatrix& dmatLambdaTilde_alpOut,
+                       const DoubleMatrix& dmatLambdaTilde_alpKnown,
                        const DoubleMatrix& dmatLTilde_alp_alpOut,
                        const DoubleMatrix& dmatLTilde_alp_alpKnown );
 public: 
