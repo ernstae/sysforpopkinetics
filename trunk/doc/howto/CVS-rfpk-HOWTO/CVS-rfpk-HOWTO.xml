@@ -32,6 +32,12 @@
 	<authorinitials>afw</authorinitials>
 	<revremark>Added revision history section.</revremark>
       </revision>
+      <revision>
+	<revnumber>1.02</revnumber>
+	<date>February 21, 2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Copies of the CVS books are now on muir.</revremark>
+      </revision>
     </revhistory>
   <abstract>
     <para>
@@ -67,13 +73,13 @@
     CVS is available to anyone in RFPK who has a need to manage 
     revisions to their text documents.  This paper contains 
     information specific to the RFPK installation of CVS.  Complete
-    information is available in two manuals which are available for        
-    download over the Internet.  These are 
-    <ulink url="http://www.cvshome.org/docs/manual/">
+    information is available in two manuals, copies of which are
+    stored on the RFPK internal website.  These are
+    <ulink url="http://muir.rfpk.washington.edu:800/SoftwareBooks/cederqvist-1.11.2.html/cvs.html">
     <emphasis>Version Management with CVS</emphasis>
     </ulink>, 
     by Per Cederqvist and
-    <ulink url="http://cvsbook.red-bean.com/">
+    <ulink url="http://muir.rfpk.washington.edu:800/SoftwareBooks/cvsbook.html">
     <emphasis>The CVS Book</emphasis>,
     </ulink> <emphasis>Open Source Development with CVS,</emphasis>
     by Karl Fogel.

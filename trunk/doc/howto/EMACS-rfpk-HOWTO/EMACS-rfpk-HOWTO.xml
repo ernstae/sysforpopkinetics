@@ -182,7 +182,7 @@
 	<listitem>
 	  <para>
 	    A file window will appear.  Select the directory
-	    into which you want the tarball to be downloaded,
+	    into which you want the file to be downloaded,
 	    and click on the <guibutton moreinfo="none">Save</guibutton>
 	    button.
 	  </para>
@@ -198,9 +198,9 @@
 	<listitem>
 	  <para>
 	    <anchor id="fullbin"/>
-	    Decompress and expand the tarball by issuing the command
+	    Decompress and expand the file by issuing the command
 	    <screen format="linespecific">
-	      tar xvzf &emacsVersion;-fullbin-i386.tar.gz
+	      tar xzf &emacsVersion;-fullbin-i386.tar.gz
 	    </screen>
 	  </para>
 	</listitem>
@@ -232,13 +232,13 @@
 	    <screen format="linespecific">
 	      emacs &amp;
 	    </screen>
-	    An emacs window should open up, and run independent
+	    An emacs window should open up, and run independently
 	    of the Cygwin window.
 	  </para>
 	</listitem>
 	<listitem>
 	  <para>
-	    When you are convinced that everything is working fine,
+	    When you are convinced that everything is working,
 	    you can clean up by removing the download file,
 	    <filename moreinfo="none">
 	      &emacsVersion;-fullbin-i386.tar.gz
@@ -246,6 +246,129 @@
 	  </para>
 	</listitem>
       </orderedlist>
+    </sect2>
+    <sect2>
+      <title>Install the PSGML Enhancement</title>
+      <para>
+	Psgml provides the SGML/XML major mode.
+	Once installed, whenever you open a 
+	file which has the 
+	<filename moreinfo="none">.xml</filename>
+	filename suffix, Emacs will be transformed into
+	a specialized XML editor. 
+      </para>
+      <para>
+	Emacs will understand the syntax of a 
+	<emphasis>well-formed</emphasis> XML
+	document.  Essentially this means that 
+	elements are delimited by a start-tag
+	and an end-tag; that elements cannot
+	overlap; and that there is a single
+	top-level element, which is the document
+	itself.  Emacs will color tags and
+	provide automatic indentation in order to
+	emphasize this structure and to make it
+	obvious if structure rules are
+	violated.
+      </para>
+      <para>
+	If in addition to the document being 
+	well-formed, the preamble of the document contains
+	a reference to a file called a
+	<emphasis>Document Type Definition</emphasis>
+	(DTD), Emacs will read that file, whether
+	it resides on the local machine or somewhere
+	on the Internet, and use the information to
+	provide additional syntax enforcement as well
+	as labor-saving features. 
+      </para>
+      <para>
+	One of the things
+	that a DTD (such as the Docbook DTD) does 
+	is specify all of the elements that are allowed,
+	what tag pairs delimit each element,
+	and which elements can be contained in which
+	other elements.  Based on the position of the
+	cursor within the document, the 
+	<guimenu moreinfo="none">Markup</guimenu> menu
+	provides a list of elements allowed at that
+	point.  When you click on one of the elements
+	named in the pull-down list, a pair of tags
+	is generated automatically.  For speed, you
+	can also get tag generation via 
+	auto-completion, after typing a key-stroke
+	combination and the first few letters of an
+	element name.
+      </para>
+      <para>
+	To obtain and install Psgml:
+	<orderedlist inheritnum="ignore" continuation="restarts">
+	  <listitem>
+	    <para>
+	      Go to the
+	      <ulink url="http://sourceforge.net/projects/psgml/">
+		PSGML Project
+	      </ulink> page
+	      at SourceForge, and follow the link to the
+	      download page for the latest release.  There you
+	      can download the source file for the latest version,
+	      in compressed tar 
+	      (<filename moreinfo="none">.tar.gz</filename>) format
+	      into a temporary directory.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      In a Cygwin shell window, use 
+	      <command moreinfo="none">cd</command> to go to the
+	      temporary directory.  Use
+	      <command moreinfo="none">tar</command>
+	      to expand the file.
+	      Suppose that the file is named
+	      <filename moreinfo="none">
+		psgml-1.2.5.tar.gz
+	      </filename>; then the command would be
+	      <screen format="linespecific">
+		tar xzf psgml-1.2.5.tar.gz
+	      </screen>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Use the <command moreinfo="none">configure</command>
+	      shell script to create a tailored 
+	      <filename moreinfo="none">Makefile</filename>:
+	      <screen format="linespecific">
+		cd psgml-1.2.5
+		./configure
+	      </screen>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Use <command moreinfo="none">make</command> to 
+	      have Emacs byte-compile the lisp programs:
+	      <screen format="linespecific">
+		make
+	      </screen>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Use <command moreinfo="none">make</command> to
+	      create the directory
+	      <filename moreinfo="none">
+		/usr/local/share/emacs/site-lisp
+	      </filename>
+	      if it does not already exist, and to copy
+	      necessary files to it:
+	      <screen format="linespecific">
+		make install
+	      </screen>
+	    </para>
+	  </listitem>
+	</orderedlist>
+      </para>
     </sect2>
     <sect2>
       <title>Install the Cygwin Mount Enhancement</title>
@@ -257,16 +380,6 @@
 	lisp code which you can copy from the RFPK server
 	called <emphasis>muir</emphasis>.
 	<orderedlist>
-	  <listitem>
-	    <para>
-	      Create a directory to hold this and other Emacs
-	      enhancements.  Open a Cygwin shell window and
-	      input the following command:
-	      <screen format="linespecific">
-		mkdir -p /usr/local/share/emacs/site-lisp
-	      </screen>
-	    </para>
-	  </listitem>
 	  <listitem>
 	    <para>
 	      Using two <guiicon moreinfo="none">My Computer</guiicon>
@@ -334,94 +447,8 @@
 	</orderedlist>
       </para>
     </sect2>
-  </sect1>
-  <sect1>
-    <title>Configuring Emacs for XML</title>
-    <para>
-      XML is just text, hence Emacs can edit XML without
-      any special configuration.  The functionality of Emacs for
-      editing XML can be greatly enhanced, however, by
-      the following two measures:
-      <orderedlist inheritnum="ignore" continuation="restarts">
-	<listitem>
-	  <para>
-	    Installation of SGML/XML mode.
-	  </para>
-	</listitem>
-	<listitem>
-	  <para>
-	    Installation of a 
-	    <filename moreinfo="none">.emacs</filename> file.
-	  </para>
-	</listitem>
-      </orderedlist>
-    </para>
     <sect2>
-      <title>Installation of SGML/XML Mode</title>
-      <para>
-	The SGML/XML mode (also known also as PSGML) is an
-	Emacs extension specifically tailored to XML.
-	Once installed, whenever you open a 
-	file which has the 
-	<filename moreinfo="none">.xml</filename>
-	filename suffix, Emacs will be transformed into
-	a specialized XML editor.  If you installed the
-	full binary version of Emacs, as described
-	<link linkend="fullbin">above</link>, you should
-	already have the SGML/XML mode.
-	<orderedlist inheritnum="ignore" continuation="restarts">
-	  <listitem>
-	    <para>
-	      Emacs will understand the syntax of a 
-	      <emphasis>well-formed</emphasis> XML
-	      document.  Essentially this means that 
-	      elements are delimited by a start-tag
-
-	      and an end-tag, that elements cannot
-	      overlap, and that there is a single
-	      top-level element, which is the document
-	      itself.  Emacs will color tags and
-	      provide automatic indentation in order to
-	      emphasize this structure and to make it
-	      obvious when the structure rules are
-	      violated.
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      If in addition to the document being 
-	      well-formed, the preamble of the document contains
-	      a reference to a file called a
-	      <emphasis>Document Type Definition</emphasis>
-	      (DTD), Emacs will read that file, whether
-	      it resides on the local machine or somewhere
-	      on the Internet, and use the information to
-	      provide additional syntax enforcement as well
-	      as labor-saving features. 
-	    </para>
-	    <para>
-	      One of the things
-	      that a DTD (such as the Docbook DTD) does 
-	      is specify all of the elements that are allowed,
-	      what tag pairs delimit each element,
-	      and which elements can be contained in which
-	      other elements.  Based on the position of the
-	      cursor within the document, the 
-	      <guimenu moreinfo="none">Markup</guimenu> menu
-	      provides a list of elements allowed at that
-	      point.  When you click on one of the elements
-	      named in the pull-down list, a pair of tags
-	      is generated automatically.  For speed, you
-	      can also get tag generation via 
-	      auto-completion, after typing a key-stroke
-	      combination and the first few letters of an
-	      element name.
-	    </para>
-	  </listitem>
-	</orderedlist>
-      </para>
-    </sect2>
-    <sect2><title>Installation of a .emacs File</title>
+      <title>Install the .emacs File</title>
       <para>
 	When emacs starts, it reads a configuration file,
 	if one is available.  This file can provide a 
@@ -494,30 +521,31 @@
 	to <filename moreinfo="none">.emacs</filename> .
       </para>
     </sect2>
+    <sect2>
+      <title>Configure Emacs for C or C++</title>
+      <para>
+	When Emacs opens a file whose name ends in one of the
+	usual C or C++ suffixes (.c, .h, .cpp, .cc, etc.), 
+	the CC mode is loaded.  This mode can provide 
+	syntax coloring, indentation and parentheses matching,
+	as well as interfacing with <command moreinfo="none">make</command>
+	and with <command moreinfo="none">gdb</command>, the
+	GNU debugger.  The user does not have to do much to
+	configure this behavior.  There are some options, however,
+	that can be specified in the <guimenu moreinfo="none">Options</guimenu>
+	menu. 
+      </para>
+      <para>
+	If you change options, the 
+	<guimenu moreinfo="none">Options</guimenu> menu will allow
+	you to save them.  The new values are automatically
+	appended to your <filename moreinfo="none">.emacs</filename>
+	file so that they will be applied the next time you start
+	Emacs.
+      </para>
+    </sect2>
   </sect1>
-  <sect1>
-    <title>Configuring Emacs for C or C++</title>
-    <para>
-      When Emacs opens a file whose name ends in one of the
-      usual C or C++ suffixes (.c, .h, .cpp, .cc, etc.), 
-      the CC mode is loaded.  This mode can provide 
-      syntax coloring, indentation and parentheses matching,
-      as well as interfacing with <command moreinfo="none">make</command>
-      and with <command moreinfo="none">gdb</command>, the
-      GNU debugger.  The user does not have to do much to
-      configure this behavior.  There are some options, however,
-      that can be specified in the <guimenu moreinfo="none">Options</guimenu>
-      menu. 
-    </para>
-    <para>
-      If you change options, the 
-      <guimenu moreinfo="none">Options</guimenu> menu will allow
-      you to save them.  The new values are automatically
-      appended to your <filename moreinfo="none">.emacs</filename>
-      file so that they will be applied the next time you start
-      Emacs.
-    </para>
-  </sect1>
+
   <sect1>
     <title>Learning Emacs</title>
     <para>
