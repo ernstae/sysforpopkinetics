@@ -92,7 +92,6 @@ class ClientTranslator
   virtual void emit     ( xercesc::DOMDocument * tree ) = 0;
   virtual const char * getDriverFilename() const = 0;
   virtual const std::vector< const char * > getModelFilenameList() const = 0;
-  virtual enum client::type getClient() const = 0;
 };
 
 /**
@@ -108,23 +107,10 @@ class SpkMLToCpp
   ~SpkMLToCpp();
 
   void translate();
-
-  const SpkMLToCpp * getInstance() const;
-  enum client::type getClient() const;
-  const char * getInputFilename () const;
-  const char * getDriverFilename() const;
-  const std::vector< const char * > getModelFilenameList() const;
-
-  virtual const struct FitParameters * getSpkParameters() const;
-  virtual const void * getClientParameters() const;
+  const struct FitParameters * getSpkParameters() const;
+  const void * getClientParameters() const;
 
  protected:
-
-  virtual void assemble ( xercesc::DOMDocument * tree );
-  virtual void emit     ( xercesc::DOMDocument * tree );
-
-  void setDriverFilename( const char * filename );
-  void addModelFilename ( const char * filename );
 
   SpkMLToCpp();
   SpkMLToCpp( const SpkMLToCpp& right );
@@ -135,17 +121,14 @@ class SpkMLToCpp
   void                        terminateDOM      () const;
   enum client::type           discoverClient    ( const xercesc::DOMDocument* tree ) const;
   xercesc::DOMDocument      * buildTreeFromSpkML( const char * inputSpkMLIn );
-  SpkMLToCpp                * createChild  ( enum client::type ) const;
   ClientTranslator          * createTranslator  ( enum client::type ) const;
 
   const char                * inputSpkML;
 
   enum client::type           who;
-  SpkMLToCpp                * client_translator;
+  ClientTranslator          * client_translator;
   xercesc::XercesDOMParser  * parser;
   xercesc::DOMDocument      * tree;
-  std::vector<const char *>   model_files;
-  char                      * driver_file;
 };
 
 #endif

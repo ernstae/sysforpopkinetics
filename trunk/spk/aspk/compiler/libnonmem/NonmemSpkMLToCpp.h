@@ -61,7 +61,7 @@ struct NonmemParameters
   std::valarray<bool>   etaFixed;
   std::valarray<double> etaIn;
 };
-
+/*
 class NonmemSpkMLToCpp : public SpkMLToCpp
 {
  public:
@@ -110,7 +110,7 @@ class NonmemSpkMLToCpp : public SpkMLToCpp
   void emitDriver();
   void emitModel();
 };
-
+*/
 class NonmemTranslator : public ClientTranslator
 {
  public:
@@ -123,7 +123,6 @@ class NonmemTranslator : public ClientTranslator
   virtual void emit     ( xercesc::DOMDocument * tree );
   virtual const char * getDriverFilename() const;
   virtual const std::vector< const char * > getModelFilenameList() const;
-  virtual enum client::type getClient() const;
   
  protected:
 
