@@ -8,7 +8,7 @@ public class TestSpkdb {
 	String password = "codered";
 	String firstName = "Mike";
 	String surname = "Jordan";
-	final int maxTests = 36;
+	final int maxTests = 38;
 	String xmlSource = "<spksource>\n\tline1\n\tline2\n</spksource>";
 	boolean b = true;
 	boolean target = true;
@@ -114,18 +114,36 @@ public class TestSpkdb {
 		    break;
 		case 9:
 		    target = true;
+		    s = "updateUser";
+		    {
+			String n[] = {"first_name", "password"};
+			String v[] = {"Alex",       "codeblue"   };
+			b = Spkdb.updateUser(conn, userId, n, v);
+		    }
+		    break;
+		case 10:
+		    target = true;
+		    s = "updateUser";
+		    {
+			String n[] = {"password",  "first_name"};
+			String v[] = {"codegreen", "Gary"   };
+			b = Spkdb.updateUser(conn, userId, n, v);
+		    }
+		    break;
+		case 11:
+		    target = true;
 		    s = "getUser";
 		    ResultSet rs = Spkdb.getUser(conn, username);
 		    if (rs.next()) {
 			String name = rs.getString("first_name");
-			b = name.compareTo("Gerry") == 0;
+			b = name.compareTo("Gary") == 0;
 		    } 
 		    else {
 			s += ": no record for userId=" + userId;
 			b = false;
 		    } 
 		    break;
-		case 10:
+		case 12:
 		    target = true;
 		    s = "newJob";
 		    jobId = Spkdb.newJob(conn, 
@@ -139,7 +157,7 @@ public class TestSpkdb {
 		    b = jobId != 0;
 		    s += ": job number " + jobId;
 		    break;
-		case 11:
+		case 13:
 		    target = true;
 		    s = "getJob";
 		    rs = Spkdb.getJob(conn, jobId);
@@ -152,7 +170,7 @@ public class TestSpkdb {
 			b = false;
 		    } 
 		    break;
-		case 12:
+		case 14:
 		    Thread.sleep(1000);
 		    target = true;
 		    s = "newJob";
@@ -169,7 +187,7 @@ public class TestSpkdb {
 		    s += ": job number " + newerJobId;
 
 		    break;
-		case 13:
+		case 15:
 		    Thread.sleep(1000);
 		    target = true;
 		    s = "newJob";
@@ -184,7 +202,7 @@ public class TestSpkdb {
 		    b = newestJobId != 0;
 		    s += ": job number " + newestJobId;
 		    break;
-		case 14:
+		case 16:
 		    target = true;
 		    s = "userJobs, maxNum = 1\n";
 		    rs = Spkdb.userJobs(conn, userId, 1, 0);
@@ -203,7 +221,7 @@ public class TestSpkdb {
 		    } 
 		    
 		    break;
-		case 15:
+		case 17:
 		    b = target = true;
 		    s = "userJobs, maxNum = 3";
  		    rs = Spkdb.userJobs(conn, userId, 3, newestJobId);
@@ -222,17 +240,17 @@ public class TestSpkdb {
 		    }
 		    s += "; " + count + " were returned";
 		    break;
-		case 16:
+		case 18:
 		    b = target = true;
 		    s = "endJob";
 		    b = Spkdb.endJob(conn, newerJobId, "srun", "job report");
 		    break;
-		case 17:
+		case 19:
 		    b = target = false;
 		    s = "endJob";
 		    b = Spkdb.endJob(conn, newerJobId, "xxxx", "job report");
 		    break;
-		case 18:
+		case 20:
 		    target = true;
 		    s = "getJob: test xml_source";
 		    String source = new String();
@@ -251,7 +269,7 @@ public class TestSpkdb {
 		    } 
 		    b = source.compareTo(xmlSource) == 0;
 		    break;
-		case 19:
+		case 21:
 		    target = true;
 		    s = "getJob: test report";
 		    String report = new String();
@@ -275,7 +293,7 @@ public class TestSpkdb {
 		    } 
 		    b = report.compareTo("job report") == 0;
 		    break;
-		case 20:
+		case 22:
 		    target = false;
 		    s = "getJob";
 		    rs = Spkdb.getJob(conn, newestJobId);
@@ -299,7 +317,7 @@ public class TestSpkdb {
 		    } 
 		    b = report.compareTo("job report") == 0;
 		    break;
-		case 21:
+		case 23:
 		    target = true;
 		    s = "newDataset";
 		    datasetId 
@@ -307,7 +325,7 @@ public class TestSpkdb {
 		    s += ": datasetId = " + datasetId;
 		    b = datasetId > 0;
 		    break;
-		case 22:
+		case 24:
 		    target = false;
 		    s = "newDataset";
 		    newDatasetId 
@@ -315,7 +333,7 @@ public class TestSpkdb {
 		    s += ": datasetId = " + newDatasetId;
 		    b = newDatasetId > 0;
 		    break;
-		case 23:
+		case 25:
 		    target = true;
 		    s = "getDataset";
 		    rs = Spkdb.getDataset(conn, datasetId);
@@ -334,7 +352,7 @@ public class TestSpkdb {
 		    } 
 		    b = archive.compareTo("1 2 4 3") == 0;
 		    break;
-		case 24:
+		case 26:
 		    target = true;
 		    s = "updateDataset";
 		    {
@@ -343,7 +361,7 @@ public class TestSpkdb {
 			b = Spkdb.updateDataset(conn, datasetId, n, v);
 		    }
 		    break;
-		case 25:
+		case 27:
 		    target = false;
 		    s = "updateDataset";
 		    {
@@ -352,7 +370,7 @@ public class TestSpkdb {
 			b = Spkdb.updateDataset(conn, datasetId, n, v);
 		    }
 		    break;
-		case 26:
+		case 28:
 		    target = false;
 		    s = "updateDataset";
 		    {
@@ -361,7 +379,7 @@ public class TestSpkdb {
 			b = Spkdb.updateDataset(conn, datasetId, n, v);
 		    }
 		    break;
-		case 27:
+		case 29:
 		    b = target = true;
 		    s = "userDatasets, maxNum = 3";
 		    newDatasetId
@@ -386,7 +404,7 @@ public class TestSpkdb {
 		    }
 		    s += "; " + count + " were returned";
 		    break;
-		case 28:
+		case 30:
 		    b = target = true;
 		    s = "userDatasets, maxNum = 3";
  		    rs = Spkdb.userDatasets(conn, userId, 3, datasetId);
@@ -403,7 +421,7 @@ public class TestSpkdb {
 		    }
 		    s += "; " + count + " were returned";
 		    break;
-		case 29:
+		case 31:
 		    target = true;
 		    s = "newModel";
 		    modelId 
@@ -411,7 +429,7 @@ public class TestSpkdb {
 		    s += ": modelId = " + modelId;
 		    b = modelId > 0;
 		    break;
-		case 30:
+		case 32:
 		    target = false;
 		    s = "newModel";
 		    modelId 
@@ -419,7 +437,7 @@ public class TestSpkdb {
 		    s += ": modelId = " + modelId;
 		    b = modelId > 0;
 		    break;
-		case 31:
+		case 33:
 		    target = true;
 		    s = "getModel";
 		    rs = Spkdb.getModel(conn, modelId);
@@ -438,7 +456,7 @@ public class TestSpkdb {
 		    } 
 		    b = archive.compareTo("1 2 4 3") == 0;
 		    break;
-		case 32:
+		case 34:
 		    target = true;
 		    s = "updateModel";
 		    {
@@ -447,7 +465,7 @@ public class TestSpkdb {
 			b = Spkdb.updateModel(conn, modelId, n, v);
 		    }
 		    break;
-		case 33:
+		case 35:
 		    target = false;
 		    s = "updateModel";
 		    {
@@ -456,7 +474,7 @@ public class TestSpkdb {
 			b = Spkdb.updateModel(conn, modelId, n, v);
 		    }
 		    break;
-		case 34:
+		case 36:
 		    target = false;
 		    s = "updateModel";
 		    {
@@ -465,7 +483,7 @@ public class TestSpkdb {
 			b = Spkdb.updateModel(conn, modelId, n, v);
 		    }
 		    break;
-		case 35:
+		case 37:
 		    b = target = true;
 		    s = "userModels, maxNum = 3";
 		    newModelId
@@ -490,7 +508,7 @@ public class TestSpkdb {
 		    }
 		    s += "; " + count + " were returned";
 		    break;
-		case 36:
+		case 38:
 		    b = target = true;
 		    s = "userModels, maxNum = 3";
  		    rs = Spkdb.userModels(conn, userId, 3, modelId);
@@ -524,10 +542,15 @@ public class TestSpkdb {
 	    b = false;
 	}
 	ok(b, i, "disconnect");
+
+	System.out.println(okTests + " tests were ok out of a possible " + (maxTests + 1));
     }
     private static void ok(boolean b, int i, String m) {
 	String s = b ? "ok:\t" : "not ok:\t";
 	s += i + " - " + m;
 	System.out.println(s);
+	if (b)
+	    okTests++;
     }
+    static int okTests = 0;
 }
