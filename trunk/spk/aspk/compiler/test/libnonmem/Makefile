@@ -16,13 +16,13 @@ LIBNONMEM  = ../../libnonmem
 XERCESLIB  = xerces-c
 CPPUNITLIB = cppunit
 
-TEST_OBJS  = NonmemCompilerTest.o NonmemExpXlatorTest.o
+TEST_OBJS  = NonmemTranslatorTest.o NonmemExpXlatorTest.o
 
-TEST_HS    = NonmemCompilerTest.h NonmemExpXlatorTest.h
+TEST_HS    = NonmemTranslatorTest.h NonmemExpXlatorTest.h
 
-TEST_CPPS  = NonmemCompilerTest.cpp NonmemExpXlatorTest.cpp
+TEST_CPPS  = NonmemTranslatorTest.cpp NonmemExpXlatorTest.cpp
 
-CORE_OBJS  = $(LIBNONMEM)/NonmemSpkMLToCpp.o \
+CORE_OBJS  = $(LIBNONMEM)/NonmemTranslator.o \
              $(LIBNONMEM)/explang.tab.o \
              $(LIBNONMEM)/lex.yy.o \
              $(LIBCOMM)/SpkMLToCpp.o \
@@ -31,7 +31,7 @@ CORE_OBJS  = $(LIBNONMEM)/NonmemSpkMLToCpp.o \
              $(LIBCOMM)/SymbolTable.o \
              $(LIBCOMM)/Symbol.o
 
-CORE_HS    = $(LIBNONMEM)/NonmemSpkMLToCpp.h \
+CORE_HS    = $(LIBNONMEM)/NonmemTranslator.h \
              $(LIBNONMEM)/explang.tab.h \
              $(LIBCOMM)/SpkMLToCpp.h \
              $(LIBCOMM)/ExpTreeGenerator.h \
@@ -40,7 +40,7 @@ CORE_HS    = $(LIBNONMEM)/NonmemSpkMLToCpp.h \
              $(LIBCOMM)/Symbol.h \
              $(LIBCOMM)/client.h
 
-CORE_CPPS  = $(LIBNONMEM)/NonmemSpkMLToCpp.cpp \
+CORE_CPPS  = $(LIBNONMEM)/NonmemTranslator.cpp \
              $(LIBNONMEM)/explang.tab.cpp \
              $(LIBNONMEM)/lex.yy.c \
              $(LIBCOMM)/SpkMLToCpp.cpp \
@@ -52,8 +52,8 @@ CORE_CPPS  = $(LIBNONMEM)/NonmemSpkMLToCpp.cpp \
 testall : testall.cpp $(CORE_OBJS) $(TEST_OBJS)
 	$(LINK.cc) -I$(LIBCOMM) -I$(LIBNONMEM) testall.cpp $(TEST_OBJS) $(CORE_OBJS) -l$(XERCESLIB) -l$(CPPUNITLIB) -o $@
 
-NonmemCompilerTest.o : NonmemCompilerTest.cpp NonmemCompilerTest.h $(CORE_HS) $(CORE_CPPS)
-	$(COMPILE.cc) -I$(LIBCOMM)/ -I$(LIBNONMEM)/ NonmemCompilerTest.cpp
+NonmemTranslatorTest.o : NonmemTranslatorTest.cpp NonmemTranslatorTest.h $(CORE_HS) $(CORE_CPPS)
+	$(COMPILE.cc) -I$(LIBCOMM)/ -I$(LIBNONMEM)/ NonmemTranslatorTest.cpp
 
 NonmemExpXlatorTest.o : NonmemExpXlatorTest.cpp $(CORE_HS) $(CORE_CPPS) $(LIBNONMEM)/explang.l $(LIBNONMEM)/explang.y
 	$(COMPILE.cc) -I$(LIBCOMM) -I$(LIBNONMEM)/ NonmemExpXlatorTest.cpp

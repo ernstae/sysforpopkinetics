@@ -39,8 +39,7 @@ SpkMLToCpp::~SpkMLToCpp()
 
 void SpkMLToCpp::translate()
 {
-  client_translator->assemble( tree );
-  client_translator->emit( tree );
+  client_translator->translate( tree );
 }
 
 const struct FitParameters * SpkMLToCpp::getSpkParameters() const
