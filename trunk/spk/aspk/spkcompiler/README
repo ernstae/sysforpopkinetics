@@ -1,4 +1,9 @@
-The Directory Structure
+1. The Directory Structure
+2. How to Build/Install SPK Compiler Libraries
+3. How to Build/Install SPK Compiler Driver
+4. How to Build the Tests
+
+<The Directory Structure>
 
    spkcompiler
    ===========
@@ -53,4 +58,76 @@ The Directory Structure
               | Makefile.in
               | (TBD)
 
+<How To Build and Install SPK Compiler>
+
+1. Assuming you're currently in "spkcompiler" directory.
+   Run a shell script that generates the configure script.
+
+   > ./autogen.sh
+
+2. Run the generated configure script:
+
+   > ./configure
+
+3. If everything goes well, Makefiles should have been created by now.
+   First, run make in "libspkcompiler" directory to build the compiler library.
+
+   > cd libspkcompiler
+   > make
+
+4. To install the libraries, you may first have to become super-user:
+
+   > su
+
+   Then, type the following:
+
+   > make install
+   > exit
+
+   This will install the SPK Compiler libraries into /usr/local/lib/.
+
+<How To Build/Install SPK Compiler Driver>
+
+1. Move directory to "spkcompiler/driver".
+
+2. Build the driver:
+
+   > make
+
+3. Install the driver:
+
+   > make install
+
+   This will install the driver, "spkcompiler", into /usr/local/bin.
+
+
+<How To Build/Run the Tests>
+
+The unit tests require CppUnit.  If you do not have CppUnit installed on your machine, this is the time to do so.  You can find it at www.sourceforge.net and the installation procedure is posted in RFPK Software Group's internal website.
+
+1. Move directory to "spkcompiler/tests".
+
+2. First, build tests for the common elements in the SPK Compiler library.
+
+   > cd common
+   > make
+
+3. You may now run the tests for the common elements:
+
+   > ./test_common
+
+   If everything goes well, this should produce only "..." and a message indicating a successful run at the end.
+
+4. Build tests for the NONMEM specific elements in the SPK Compiler library.
+
+   > cd ../nonmem
+   > make
+
+5. Run the tests for NONMEM:
+ 
+   > ./test_nonmem
+
+   Likewise, this should only produce "..." and a successful message at the end.
+
+DONE.
 
