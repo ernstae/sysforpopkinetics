@@ -76,6 +76,10 @@ static void usage()
   cout << "   SOURCE    --- file path to an SpkSourceML document" << endl;
   cout << "   DATA      --- file path to an SpkDataML document" << endl;
   cout << "   -print    --- request for displaying the progress in the standard output " << endl;
+
+  cout << "When the compilation completes successfully, it returns 0." << endl;
+  cout << "Otherwise, it returns non-zero and generates compilation_error.xml ";
+  cout << "in the working directory." << endl;
   return;
 }
 
@@ -288,5 +292,6 @@ int main( int argc, char * argv[] )
   xlator->translate();
   delete xlator;
 
+  remove( compilation_error_xml );
   return SUCCESS;
 }
