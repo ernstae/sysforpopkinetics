@@ -1,0 +1,943 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "/usr/share/sgml/docbook/xml-dtd-4.2-1.0-14/docbookx.dtd" [
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+ <!ENTITY riso '<systemitem class="systemname">riso.rfpk.washington.edu</systemitem>'>
+ <!ENTITY master '<systemitem class="systemname">master</systemitem>'>
+ <!ENTITY node0 '<systemitem class="systemname">node0</systemitem>'>
+ <!ENTITY node1 '<systemitem class="systemname">node1</systemitem>'>
+ <!ENTITY node2 '<systemitem class="systemname">node2</systemitem>'>
+ <!ENTITY node3 '<systemitem class="systemname">node3</systemitem>'>
+ <!ENTITY whitechuck '<systemitem class="systemname">whitechuck</systemitem>'>
+]>
+<article><title>Cluster Administration</title>
+  <articleinfo>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>August 7, 2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+    </revhistory>
+    <abstract>
+      <para>
+	Processes and files for administering the RFPK computational
+	cluster are presented.
+      </para>
+    </abstract>
+  </articleinfo>
+  <sect1>
+    <title>Introduction</title>
+    <para>
+      Among RFPK's resources is a computational cluster which was
+      purchased from Linux Labs at the end of the year 2001.  With
+      the OpenMosix enhancement to the Linux operating system, the
+      cluster behaves towards software very much as would a 
+      distributed memory multiprocessor system, except that 
+      interprocess communication is accomplished via Ethernet
+      rather than memory
+      and, therefore, is many orders of magnitude slower.  
+    </para>
+    <para>
+      The cluster consists of five individual computers, interconnected
+      by Ethernet.  The fact that each node is an individual machine
+      increases the burden of system administration.  This document
+      describes the configuration both of hardware and software so that
+      it can be restored in case it is destroyed or degraded.
+      It also provides some processes for operating the cluster.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Hardware</title>
+    <sect2>
+      <title>Node Description</title>
+      <para>
+	Each node of the cluster contains a Matsonic
+	MS7308E mainboard, with a single 1GHz Pentium III processor,
+	Ethernet, video, keyboard, mouse and IDE disk interfaces.
+      </para>
+      <para>
+	One of the nodes has a label on the front of its case that
+	identifies it as &master;.  This node differs from the others
+	in several ways:
+	<itemizedlist>
+	  <listitem>
+	    <para>
+	      There is a combination drive, which contains both a floppy
+	      drive and a CDROM drive.  The other nodes have DVD drives
+	      capable of reading CDROMs, but no floppy.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      There are three PCI sockets, rather than the two which
+	      are found on the other boards.  In the socket not found
+	      on the other boards, there is a second Ethernet interface.  This
+	      interface is used to communicate with the other nodes,
+	      while the interface on the mainboard is used to communicate
+	      with the Internet.  
+	    </para>
+	    <para>
+	      Because it can communicate with the Internet and because,
+	      with the OpenMosix software currently in use, no node is
+	      dominant over the others, <emphasis>gateway</emphasis>
+	      would be a better name than <emphasis>master</emphasis>.
+	      Nevertheless, we will continue to refer to this node 
+	      as &master;, in order to avoid confusion.
+	    </para>
+	  </listitem>
+	</itemizedlist>
+      </para>
+      <para>
+	The other nodes are named &node0;,...,&node3;.  They are all the
+	same, with the exception of &node1, in which a defective
+	Ethernet interface on the mainboard has been replaced with an 
+	Ethernet card with a bracket customized so that it will
+	fit into one of the IDE sockets.  These 
+	nodes have DVD drives, capable of reading CDROMs.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Node Interconnection</title>
+      <para>
+	The five nodes are interconnected through an
+	Ethernet hub, using category-5 Ethernet patch cables
+	rated for at least 200 Mhz.
+	The hub has exactly five cables connected to it,
+	one for each node. For ease of management,
+	connect &master; to socket-1, &node0; to socket-2,
+	etc.
+      </para>
+      <para>
+	The cable to &master; and the cable to &node1; are
+	connected to sockets on the back of their respective 
+	cases which are located to the far left when viewed from the front.
+	The other nodes are connected to sockets that are
+	two thirds of the way to the right,
+	as viewed from the front.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Network Connection</title>
+      <para>
+	The cluster is connected to the network via &master;.
+	The cable to the network hub (not the hub described
+	in the previous section) connects to the mainboard
+	Ethernet interface, which is on the back of the case,
+	two thirds of the way to the right, as viewed from
+	the front.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Keyboard, Video and Mouse</title>
+      <para>
+	On each node, the video connector is near the center of
+	the back of the case.  The keyboard and mouse connectors
+	are just to the right of the mainboard Ethernet socket,
+	as viewed from the front.
+      </para>
+    </sect2>
+    <sect2>
+      <title>BIOS</title>
+      <para>
+	The BIOS settings are the same for all nodes.  One of the
+	quirks of these systems is that it can be difficult
+	to get to the BIOS configuration screens. At the beginning
+	of the boot sequence, the BIOS will instruct you to
+	press <keycap>DEL</keycap> if you want to enter BIOS
+	configuration.  Often you will be taken directly to the
+	Grub boot screen even though you have pressed <keycap>DEL</keycap>.
+	If this happens, press 
+	<keycap>CTRL-ALT-DEL</keycap> to reboot, then continue
+	to press <keycap>DEL</keycap> several times a second.  This 
+	usually gets the attention of the BIOS.
+      </para>
+      <para>
+	Small configuration changes need to be made at each of the
+	following BIOS menu categories on all nodes:
+	<itemizedlist>
+	  <listitem>
+	    <para>
+	      Standard CMOS Setup
+	    </para>
+	    <para>
+	      Use the <emphasis>Auto</emphasis> discovery 
+	      capability to set the IDE devices correctly.
+	    </para>
+	    <para>
+	      For <emphasis>Floppy Drive A</emphasis>,
+	      select the value: <emphasis>Not Installed</emphasis>.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Advanced Setup
+	    </para>
+	    <para>
+	      For <emphasis>1st Boot Device</emphasis>,
+	      select the value: <emphasis>CDROM</emphasis>.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Power Management Setup
+	    </para>
+	    <para>
+	      For <emphasis>Power Management/APM</emphasis>,
+	      select the value: <emphasis>Disabled</emphasis>.
+	    </para>
+	  </listitem>
+	</itemizedlist>
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Software</title>
+    <sect2>
+      <title>Linux Installation</title>
+      <sect3>
+	<title>Initial Installation</title>
+	<para>
+	  Using CDROMs install on each node
+	  the same version of RedHat Linux that
+	  is currently installed on the Software Team workstations.
+	  Select the <emphasis>workstation</emphasis>
+	  configuration, rather than desk-top or server.
+	</para>
+	<para>
+	  You will need to connect a keyboard, video monitor and 
+	  mouse to each node in turn, as you install the software.
+	</para>
+	<para>
+	  The interactive installation wizard will ask you to
+	  specify several options:
+	  <itemizedlist>
+	    <listitem>
+	      <para>
+		Time Zone
+	      </para>
+	      <para>
+		Select the time zone of Los Angeles, USA
+	      </para>
+	      <para>
+		Check the <emphasis>System Time Uses UTC</emphasis> box.
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		Network Configuration
+	      </para>
+	      <para>
+		Skip this for now.
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		Package Selection
+	      </para>
+	      <para>
+		Just take the standard set of packages.
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		Security
+	      </para>
+	      <para>
+		On &master;, select the highest level of security,
+		but customize the firewall to allow 
+		<command>ssh</command>.
+	      </para>
+	      <para>
+		On the other nodes, select <emphasis>No Firewall</emphasis>.
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		Boot Options
+	      </para>
+	      <para>
+		Boot the Grub boot loader from the boot segment
+		of the hda disk volume.
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		Boot Diskette
+	      </para>
+	      <para>
+		Write a boot diskette for &master;.  The other
+		nodes do not have diskette drives, so it is not
+		possible for them to write boot diskettes.
+	      </para>
+	    </listitem>
+	  </itemizedlist>
+	</para>
+      </sect3>
+      <sect3>
+	<title>Boot Configuration</title>
+	<para>
+	  On each node, edit
+	  <filename>/etc/inittab</filename> so that the
+	  specification for initial run level after boot looks like
+	  this:
+	  <screen>
+	    id:3:initdefault:
+	  </screen>
+	</para>
+      </sect3>
+      <sect3>
+	<title>Network Configuration</title>
+	<para>
+	  Everything in this section must be performed by the root
+	  user.
+	</para>
+	<sect4>
+	  <title><filename>/etc/hosts</filename></title>
+	  <para>
+	    On all nodes, the file looks like this (where &riso; is
+	    the domain name and host name of &master;):
+	    <screen>
+	      # Do not remove the following line, or various programs
+	      # that require network functionality will fail.
+	      127.0.0.1               localhost.localdomain localhost
+	      192.168.1.1             master riso.rfpk.washington.edu
+	      192.168.1.2             node0
+	      192.168.1.3             node1
+	      192.168.1.4             node2
+	      192.168.1.5             node3
+	    </screen>
+	  </para>
+	</sect4>
+	<sect4>
+	  <title>/etc/resolv.conf</title>
+	  <para>
+	    On &master;:
+	    <screen>
+	      search rfpk.washington.edu u.washington.edu
+	      nameserver 128.95.19.1
+	      nameserver 128.95.120.1
+	    </screen>
+	  </para>
+	  <para>
+	    On the other nodes:
+	    <screen>
+	      # The cluster nodes do not need to resolv domain names
+	    </screen>
+	  </para>
+	</sect4>
+	<sect4>
+	  <title>/etc/sysconfig/network</title>
+	  <para>
+	    On &master;:
+	    <screen>
+	      NETWORKING=yes
+	      HOSTNAME=riso.rfpk.washington.edu
+	    </screen>
+	  </para>
+	  <para>
+	    On the other nodes, set the HOSTNAME variable
+	    appropriately, and the GATEWAY variable to be
+	    the IP address of &master;.  For example, the
+	    file should look as follows on &node0;:
+	    <screen>
+	      NETWORKING=yes
+	      HOSTNAME=node0
+	      GATEWAY=192.168.1.1
+	    </screen>
+	  </para>
+	</sect4>
+	<sect4>
+	  <title>/etc/sysconfig/network-scripts/ifcfg-eth0</title>
+	  <para>
+	    On &master;:
+	    <screen>
+	      DEVICE=eth0
+	      BOOTPROTO=none
+	      ONBOOT=yes
+	      IPADDR=128.95.35.150
+	      NETMASK=255.255.255.0
+	      GATEWAY=128.95.35.100
+	      NETWORK=128.95.35.0
+	      BROADCAST=128.95.35.255
+	    </screen>
+	  </para>
+	  <para>
+	    On &node0;:
+	    <screen>
+	      DEVICE=eth0
+	      BOOTPROTO=static
+	      BROADCAST=192.168.1.255
+	      IPADDR=192.168.1.2
+	      NETMASK=255.255.255.0
+	      NETWORK=192.168.1.0
+	      ONBOOT=yes
+	    </screen>
+	  </para>
+	  <para>
+	    On &node1;:
+	    <screen>
+	      DEVICE=eth0
+	      BOOTPROTO=dhcp
+	      ONBOOT=no
+	    </screen>
+	  </para>
+	  <para>
+	    On &node2;:
+	    <screen>
+	      DEVICE=eth0
+	      BOOTPROTO=static
+	      BROADCAST=192.168.1.255
+	      IPADDR=192.168.1.4
+	      NETMASK=255.255.255.0
+	      NETWORK=192.168.1.0
+	      ONBOOT=yes
+	    </screen>
+	  </para>
+	  <para>
+	    On &node3;:
+	    <screen>
+	      DEVICE=eth0
+	      BOOTPROTO=static
+	      BROADCAST=192.168.1.255
+	      IPADDR=192.168.1.5
+	      NETMASK=255.255.255.0
+	      NETWORK=192.168.1.0
+	      ONBOOT=yes
+	    </screen>
+	  </para>
+	</sect4>
+	<sect4>
+	  <title>/etc/sysconfig/network-scripts/ifcfg-eth1</title>
+	  <para>
+	    On &master;:
+	    <screen>
+	      DEVICE=eth1
+	      BOOTPROTO=static
+	      ONBOOT=yes
+	      IPADDR=192.168.1.1
+	      NETMASK=255.255.255.0
+	      NETWORK=192.168.1.0
+	      BROADCAST=192.168.1.255
+	    </screen>
+	  </para>
+	  <para>
+	    On &node1;:
+	    <screen>
+	      DEVICE=eth1
+	      BOOTPROTO=static
+	      ONBOOT=yes
+	      TYPE=Ethernet
+	      NETWORK=192.168.1.0
+	      BROADCAST=192.168.1.255
+	      IPADDR=192.168.1.3
+	      NETMASK=255.255.255.0
+	    </screen>
+	  </para>
+	  <para>
+	    On the other nodes, this file does not exist.
+	  </para>
+	  <para>
+	    After making the file changes, reboot all of the nodes
+	    so that the changes can take effect.
+	  </para>
+	</sect4>
+      </sect3>
+      <sect3>
+	<title>Firewall Security</title>
+	<para>
+	  The network security strategy for the cluster consists of
+	  having high security on the Internet interface to &master;
+	  coupled with no Internet visibility for the other nodes.  
+	  In RedHat Linux, the <command>lokkit</command> tool is used
+	  to generate the necessary <emphasis>iptables</emphasis>
+	  filtering rules.  The following specifications should
+	  be provided to <command>lokkit</command>:
+	  <itemizedlist>
+	    <listitem>
+	      <para>Security Level: High</para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		Customize
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		Trusted devices: eth1
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		Allow incoming: SSH
+	      </para>
+	    </listitem>
+	  </itemizedlist>
+	</para>
+	<para>
+	  In RedHat 8.0, unfortunately, 
+	  the <command>lokkit</command> gui,
+	  normally started with the main menu sequence:
+	  <screen>
+<guimenu>Main</guimenu> => <guimenu>System Settings</guimenu> => <guimenuitem>Security Level</guimenuitem>
+	  </screen>
+	  does not present <command>eth1</command> in the list of 
+	  trusted devices.  Use the terminal version, instead,
+	  by executing <command>/usr/sbin/lokkit</command> as root.
+	</para>
+      </sect3>
+      <sect3>
+	<title>Time Server Configuration</title>
+	<para>
+	  It is important that the system clocks of the nodes be closely
+	  synchronized, since the nodes are supposed to work together as a 
+	  single computer system.  The following implements the 
+	  recommendations of the RFPK 
+	  <emphasis>Clock Synchronization</emphasis> Howto.
+	</para>
+	<sect4>
+	  <title>/etc/ntp.conf</title>
+	  <para>
+	    On all nodes, edit the line at the beginning of the file
+	    that reads
+	    <screen>
+	      restrict default ignore
+	    </screen>
+	    to read
+	    <screen>
+	      restrict default nomodify
+	    </screen>
+	  </para>
+	  <para>
+	    After the line that reads
+	    <screen>
+	      # server mytrustedtimeserverip
+	    </screen>
+	    on &master; insert the lines
+	    <screen>
+	      restrict whitechuck.rfpk.washington.edu nomodify notrap noquery
+	      restrict time.nist.gov nomodify notrap noquery
+	      restrict tick.uh.edu nomodify notrap noquery
+	      restrict tick.usno.navy.mil nomodify notrap noquery
+	      server whitechuck.rfpk.washington.edu
+	      server time.nist.gov
+	      server tick.uh.edu
+	      server tick.usno.navy.mil
+	    </screen>
+	    and on the other nodes insert the lines:
+	    <screen>
+	      restrict 192.168.1.1 mask 255.255.255.255 nomodify notrap noquery
+	      server 192.168.1.1
+	    </screen>
+	  </para>
+	  <para>
+	    All nodes should include the lines:
+	    <screen>
+	      server 127.127.1.0
+	      fudge   127.127.1.0 stratum 10 
+	    </screen>
+	    after the comment titled "GENERAL CONFIGURATION".
+	  </para>
+	</sect4>
+	<sect4>
+	  <title>/etc/ntp/step-tickers</title>
+	  <para>
+	    On &master;, this file should read:
+	    <screen>
+	      whitechuck.rfpk.washington.edu
+	      time.nist.gov
+	    </screen>
+	    On the other nodes, it should read:
+	    <screen>
+	      192.168.1.1
+	    </screen>
+	  </para>
+	</sect4>
+	<sect4>
+	  <title>Enable the Network Time Service</title>
+	  <para>
+	    On all nodes, 
+	    configure <command>ntpd</command> to be started automatically
+	    whenever the system boots:
+	    <screen>
+	      /sbin/chkconfig --level 345 ntpd on
+	    </screen>
+	  </para>
+	</sect4>
+      </sect3>
+      <sect3>
+	<title>SSH Configuration</title>
+	<para>
+	  To simplify administration of multiple nodes, set up 
+	  <command>ssh</command> so that the root user on &master;
+	  can access any of the nodes via 
+	  <command>ssh</command> and <command>scp</command>, without
+	  providing the root password.  
+	</para>
+	<sect4>
+	  <title>Generate and Install Public Keys</title>
+	  <para>
+	    Follow the RPFK <emphasis>SSH Configuration</emphasis> Howto
+	    to set up public key authentication for root on &master; just
+	    as you would for your ordinary login on your workstation, 
+	    except that root's public key should be installed on each
+	    of the other nodes rather than on &whitechuck;.  
+	  </para>
+	</sect4>
+	<sect4>
+	  <title>Setup Gnome and SSH</title>
+	  <para>
+	    As the root user, start Gnome on &master;.  Follow the 
+	    instuctions in the <emphasis>SSH Configuration</emphasis>
+	    Howto in the section titled <emphasis>Configure Gnome</emphasis>.
+	  </para>
+	</sect4>
+	<sect4>
+	  <title>Install Keychain</title>
+	  <para>
+	    Much of the time you will be administering the cluster not
+	    from the console on &master; but remotely via 
+	    <command>ssh</command> from your own workstation.  An 
+	    additional package, known as <emphasis>keychain</emphasis>,
+	    makes this convenient.  It sets up authentication properly,
+	    even when you come in through a terminal, or a terminal
+	    emulation, such as <command>ssh</command>.
+	  </para>
+	  <para>
+	    Download the keychain rpm from 
+	    <ulink url="http://www.gentoo.org/proj/en/keychain.xml">
+	      gentoo
+	    </ulink> and install it.  Then add the following lines to
+	    <filename>/root/.bash_profile</filename> on &master;:
+	    <screen>
+keychain ~/.ssh/id_dsa
+. ~/.keychain/${HOSTNAME}-sh
+	    </screen>
+	  </para>
+	</sect4>
+      </sect3>
+    </sect2>
+    <sect2>
+      <title>Open Mosix Installation</title>
+      <sect3>
+	<title>Install the Open Mosix RPMs on all Nodes</title>
+	<para>
+	  Download the latest stable openmosix-kernel rpm 
+	  and the latest openmosix-tools rpm from
+	  <ulink url="http://openmosix.sourceforge.net/">SourceForge</ulink>
+	  and install them first on &master;. 
+	</para>
+	<para>
+	  Connect the keyboard, video monitor and mouse to &master;, and
+	  boot the machine.  When the Grub boot screen appears, 
+	  OpenMosix should be in the list of kernels, although it will
+	  not be the default kernel.  Select it, and continue the
+	  boot process. 
+	</para>
+	<para>
+	  If the newly installed OpenMosix kernel on &master; seems
+	  to be working alright, install both rpm files on all of the other
+	  nodes.
+	</para>
+      </sect3>
+      <sect3>
+	<title>Update the Grub Configuration</title>
+	<para>
+	  The configuration of the grub boot loader must be changed
+	  to boot the new OpenMosix kernel by default.  On each
+	  node, in <filename>/etc/grub.conf</filename> you should
+	  see a list of kernels that are installed on the system.
+	  If the new kernel is the first in the list, 
+	  edit the first line after the initial comment to read
+	  <screen>
+	    default=0
+	  </screen>
+	</para>
+      </sect3>
+      <sect3>
+	<title>Install OpenMosix View on Master</title>
+	<para>
+	  Down load the <filename>openmosixview</filename> rpm appropriate
+	  for your version of RedHat Linux from the OpenMosixView.com
+	  <ulink url="http://www.openmosixview.com/download.html">
+	    download page
+	  </ulink>, and install it.
+	</para>
+	<para>
+	  You may need the <filename>glut</filename> rpm as well.
+	  You can get that from the RedHat rhn site.
+	</para>
+      </sect3>
+      <sect3>
+	<title>Install OpenMosix Stress Test on Master</title>
+	<para>
+	  Download the
+	  <ulink url="http://www.openmosixview.com/omtest/">
+	    omtest
+	  </ulink> rpm and install it. 
+	</para>
+	<para>
+	  You will probably also need a
+	  <filename>tk</filename> rpm and an
+	  <filename>expect</filename> rpm, both of which can be 
+	  obtained from the RedHat rhn site.
+	</para>
+      </sect3>
+      <sect3>
+	<title>Mapping the Nodes</title>
+	<para>
+	  The auto-discovery process does not work properly on
+	  this cluster.  In his OpenMosix Howto, Kris Buytaert
+	  says that this sometimes happens with PCI Ethernet
+	  adapters and describes a work-around that involves
+	  placing the Ethernet interfaces in promiscuous mode.
+	  This is a bad idea from the point of view of security.
+	  On a small cluster such as RFPK's, it is better to use
+	  static mapping.
+	</para>
+	<para>
+	  On all nodes, 
+	  <filename>/etc/openmosix.map</filename> should be the
+	  same.  On &master;, append the following line to that
+	  file
+	  <screen>
+	    1     192.168.1.1     5
+	  </screen>
+	  then copy the file to the other nodes.
+	</para>
+      </sect3>
+      <sect3>
+	<title>Configuring oMFS</title>
+	<para>
+	  OpenMosix has its own distributed file system, called oMFS.
+	  This option is compiled into the rpm kernel.  The 
+	  Direct File System Access (DFSA) is also compiled in.
+	</para>
+	<para>
+	  In order to activate oMFS, make the following changes to
+	  <emphasis>all nodes:</emphasis>
+	  <itemizedlist>
+	    <listitem>
+	      <para>
+		Create a directory on which to mount the file system:
+		<screen>
+		  mkdir /mfs
+		</screen>
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		Add the following line to 
+		<filename>/etc/fstab</filename> on &master;
+		<screen>
+mfs_mnt                 /mfs                    mfs     dfsa=1          0 0
+		</screen>
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		Copy <filename>/etc/fstab</filename> to each of the
+		other nodes.
+	      </para>
+	    </listitem>
+	  </itemizedlist>
+	</para>
+      </sect3>
+      <sect3>
+	<title>Configuring openMosixCollector</title>
+	<para>
+	  The <filename>openmosix-tools</filename> rpm installs a 
+	  real-time performance data collection daemon.  Its 
+	  service management script is 
+	  <filename>/etc/rc.d/init.d/openmosixcollector</filename>. Before
+	  it can be automatically stopped and started, the following lines
+	  must be added to the script, at the beginning:
+	  <screen>
+# chkconfig: 2345 96 4
+# description: openMosixCollector records real-time performance
+#              data for openMosix
+	  </screen>
+	</para>
+	<para>
+	  After editing the script, have <command>chkconfig</command>
+	  complete the complex task of setting up links in the 
+	  subdirectories of <filename>/etc/rc.d</filename>:
+	  <screen>
+cd /etc/rc.d/init.d
+chkconfig --add openmosixcollector
+	  </screen>
+	</para>
+      </sect3>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Operations</title>
+    <sect2>
+      <title>Powering the Cluster Up</title>
+      <para>
+	<orderedlist>
+	  <listitem>
+	    <para>
+	      Toggle the power switch on each of the nodes.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      After &master; comes up (this takes less than
+	      two minutes), as the root user open a terminal
+	      window.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Check that the clocks are all synchronized by entering
+	      the <command>ntpcheck</command> command.  If the 
+	      clocks are not in sync, use the 
+	      <command>resync</command> command to attempt to synchronize
+	      them.  If the cluster has been down for awhile, this
+	      may not work immediately.  You may have to wait 
+	      for several minutes after the reboot of &master; before
+	      <command>resync</command> will work.  Alternate 
+	      the running of <command>resync</command> and
+	      <command>ntpcheck</command> until you are sure that
+	      the clocks are all in step with each other.
+	    </para>
+	  </listitem>
+	</orderedlist>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Utility Shell Scripts</title>
+      <para>
+	There are some useful shell scripts in the
+	<filename>/root/bin</filename> directory on &master;:
+	<itemizedlist>
+	  <listitem>
+	    <para>
+	      <command>datecheck:</command> runs the 
+	      <command>date</command> command on each of the nodes
+	      and outputs the results.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      <command>ntpcheck</command>: runs the 
+	      <command>ntpq -p</command> command on each of the nodes
+	      and outputs the results.  This provides feedback on the
+	      degree to which the clocks are synchronized.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      <command>powerdown</command>:
+	      powers the cluster down.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      <command>reboot</command>: reinitializes all the nodes
+	      in the cluster.  After the systems come back up (this
+	      takes about two minutes), run 
+	      <command>ntpcheck</command> to determine whether or not
+	      the clocks are still in sync.  If not,
+	      alternate running <command>resync</command> and
+	      <command>ntpcheck</command> until you see that they
+	      are in step.  Sometimes it takes a couple of minutes
+	      after the reboot of &master; before synchronization
+	      succeeds.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      <command>resync</command>: restarts the network time
+	      protocol daemons on all the nodes except &master;, in order to 
+	      resynchronize the clocks.
+	    </para>
+	  </listitem>
+	</itemizedlist>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Backup</title>
+      <para>
+	At present, only the <filename>/etc</filename> directory on each
+	node and the <filename>/root</filename> directory on &master;
+	are backed up.  Initiation of backup is manual, and should be
+	done every time changes are made to the configuration files and
+	administrative scripts in these directories.
+      </para>
+      <para>
+	The backup procedure is the following:
+	<orderedlist>
+	  <listitem>
+	    <para>
+	      As root on &master,
+	      run the <command>backup</command> script that resides
+	      in <filename>/root/bin</filename>.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      In the <filename>/tmp</filename> directory, 
+	      the script will create a directory called
+	      <filename>yyyy-mm-dd-tttt.config</filename>, where
+	      <emphasis>yyyy-mm-dd-tttt</emphasis> represents the current
+	      date and time.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      The script will then use <command>tar</command> to create
+	      an archive for the <filename>/etc</filename> directory
+	      of each node and <filename>/root</filename> on &master;.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Next, the script will create a compressed tar file of 
+	      the directory.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Finally, the script will use <command>scp</command> to
+	      transfer the compressed archive to the
+	      <filename>/home/cluster/backup</filename> directory on
+	      whitechuck.  During this process, you will be asked
+	      for the password for cluster on whitechuck.
+	    </para>
+	  </listitem>
+	</orderedlist>
+      </para>
+    </sect2>
+  </sect1>
+</article>
+<!--  LocalWords:  xml DOCTYPE DocBook uw riso systemitem systemname whitechuck
+ -->
+<!--  LocalWords:  articleinfo revhistory revnumber authorinitials revremark tk
+ -->
+<!--  LocalWords:  RFPK RFPK's OpenMosix towards Matsonic mainboard GHz IDE PCI
+ -->
+<!--  LocalWords:  itemizedlist listitem CDROM CDROMs Ethernet Mhz keycap CTRL
+ -->
+<!--  LocalWords:  glosslist glossentry glossterm glossdef APM RedHat UTC hda
+ -->
+<!--  LocalWords:  Mosix localhost localdomain nameserver resolv HOSTNAME eth
+ -->
+<!--  LocalWords:  BOOTPROTO ONBOOT IPADDR NETMASK dhcp Howto nomodify notrap
+ -->
+<!--  LocalWords:  mytrustedtimeserverip noquery ntpd scp RPFK instuctions eval
+ -->
+<!--  LocalWords:  lokkit iptables gui guimenu guimenuitem Keychain keychain cd
+ -->
+<!--  LocalWords:  ulink url gentoo RPMs openmosix SourceForge openmosixview IP
+ -->
+<!--  LocalWords:  OpenMosixView rhn omtest Buytaert oMFS DFSA mkdir mfs mnt
+ -->
+<!--  LocalWords:  dfsa openMosixCollector chkconfig openMosix orderedlist ntpq
+ -->
+<!--  LocalWords:  openmosixcollector ntpcheck resync datecheck powerdown tmp
+ -->
+<!--  LocalWords:  yyyy tttt config
+ -->
