@@ -3,13 +3,16 @@
     <job>56</job>
   </cerr>
   <srun>
-    <job>15</job><!-- pop opt, FO, non-linear, stat -->
-    <job>46</job><!-- pop opt, FO, non-linear, stat -->
-    <job>88</job><!-- monte carlo, linear -->
-    <job>89</job><!-- miser, linear -->
-    <job>90</job><!-- grid, linear -->
-    <job>104</job><!-- pop opt, FOCE, nonlinear -->
-    <job>215</job><!-- ind opt, generates a warning -->
+    <job>15</job> <!-- pop opt, FO, non-linear, stat -->
+    <job>46</job> <!-- pop opt, FO, non-linear, stat -->
+    <job>88</job> <!-- Linear, FOCE, monte carlo -->
+    <job>89</job> <!-- Linear, FOCE, miser -->
+    <job>90</job> <!-- Linear, FOCE, grid -->
+    <job>104</job><!-- Non-linear, FOCE -->
+    <job>215</job><!-- Non-linear, individual, generates a warning -->
+    <job>237</job><!-- Verified! Linear, pop, FO,      theta(1), Omega(1x1), stat -->
+    <job>238</job><!-- Verified! Linear, pop, FOCE,    theta(1), Omega(1x1), stat -->
+    <job>240</job><!-- Verified! Linear, pop, Laplace, theta(1), Omega(1x1), stat -->
     <ignore>elapsedtime</ignore>
   </srun>
 </regression_test>
