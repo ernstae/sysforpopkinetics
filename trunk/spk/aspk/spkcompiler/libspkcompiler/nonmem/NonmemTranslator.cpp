@@ -551,10 +551,11 @@ void NonmemTranslator::generateMakefile() const
   assert( oMake.good() );
   oMake << "driver : driver.cpp Pred.h DataSet.h IndData.h" << endl;
   oMake << "\tg++ -g driver.cpp -o driver ";
+  oMake << "-L/usr/local/lib/spktest -I/usr/local/include/spktest ";
   oMake << "-lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm";
   oMake << endl;
   oMake << "clean : " << endl;
-  oMake << "\trm software_error.xml result.xml driver predEqn.cpp IndData.h DataSet.h Pred.h driver.cpp spk_error.tmp" << endl;
+  oMake << "\trm -f software_error result.xml driver predEqn.cpp IndData.h DataSet.h Pred.h driver.cpp spk_error.tmp" << endl;
   oMake.close();
   return;
 }
@@ -574,7 +575,9 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   assert( pop_analysis->hasAttribute( X_APPROXIMATION ) );
   const XMLCh * xml_approx = pop_analysis->getAttribute( X_APPROXIMATION );
 
-  assert( XMLString::equals( xml_approx, X_FO ) || XMLString::equals( xml_approx, X_FOCE ) || XMLString::equals( xml_approx, X_LAPLACE ) );
+  assert( XMLString::equals( xml_approx, X_FO ) 
+	  || XMLString::equals( xml_approx, X_FOCE ) 
+	  || XMLString::equals( xml_approx, X_LAPLACE ) );
   if( XMLString::equals( xml_approx, X_FO ) )
     myApproximation = FO;
   else if( XMLString::equals( xml_approx, X_FOCE ) )
