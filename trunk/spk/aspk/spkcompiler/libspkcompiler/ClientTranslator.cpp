@@ -42,7 +42,8 @@ ClientTranslator::ClientTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     X_POSITION   ( XMLString::transcode( "position" ) ),
     X_VALUE      ( XMLString::transcode( "value" ) ),
     X_TYPE       ( XMLString::transcode( "type" ) ),
-    X_NUMERIC    ( XMLString::transcode( "numeric" ) )
+    X_NUMERIC    ( XMLString::transcode( "numeric" ) ),
+    X_ID         ( XMLString::transcode( "ID" ) )
 {
 }
 ClientTranslator::~ClientTranslator()
@@ -59,6 +60,7 @@ ClientTranslator::~ClientTranslator()
   XMLString::release( &X_VALUE );
   XMLString::release( &X_TYPE );
   XMLString::release( &X_NUMERIC );
+  XMLString::release( &X_ID );
 }
 const SymbolTable* ClientTranslator::getSymbolTable() const
 {
@@ -108,36 +110,72 @@ void ClientTranslator::parseData()
   // Process through n number of <table>s, where n >= 0.
   // NOTE: For v0.1, n == 1.
   //
-  DOMNodeList * dataTables = spkdata->getElementsByTagName( X_TABLE );
-  int nDataTables = dataTables->getLength();
-  assert( nDataTables == 1 );
+  DOMNodeList * dataSets = spkdata->getElementsByTagName( X_TABLE );
+  int nDataSets = dataSets->getLength();
+  assert( nDataSets <= 1 );
 
-  int nIDs = 0;
-  for( int i=0; i<nDataTables; i++ )
+  int nSubjects = 0;
+  for( int i=0; i<nDataSets; i++ )
     {
-      DOMElement * dataTable = dynamic_cast<DOMElement*>( dataTables->item(i) );
-      unsigned int nVals;
-      XMLString::textToBin( dataTable->getAttribute( X_COLUMNS ),
-			    nVals );
-      unsigned int nRows;
-      XMLString::textToBin( dataTable->getAttribute( X_ROWS ),
-			    nRows );
+      bool isIDMissing = false;
+      DOMElement * dataSet = dynamic_cast<DOMElement*>( dataSets->item(i) );
+      unsigned int nFields;
+      XMLString::textToBin( dataSet->getAttribute( X_COLUMNS ),
+			    nFields );
+      unsigned int nRecords;
+      XMLString::textToBin( dataSet->getAttribute( X_ROWS ),
+			    nRecords );
+      if( nRecords == 0 )
+      {
+         // empty data set, skip to the next data set.
+         continue;
+      }
+
       map< string, map<string, vector<string> > > tmp_values;
       vector<string> tmp_ids;
-      string tmp_labels[ nVals ];
-      string tmp_types [ nVals ];
+      vector<string> tmp_labels(nFields);
+      vector<string> tmp_types (nFields);
       valarray<int>  nDataRecords;
 
+      // REVISIT RETRUN SACHIKO
+      // PRE-PROCESS
+      //
+      // Look for the first (ie. position=1) record and see if
+      // it has "ID" as a string value as the first entry.
+      //
+      const DOMNodeList * records = dataSet->getElementsByTagName( X_ROW );
+      unsigned int pos;
+      const DOMNodeList * values;
+      for( int j=0; j<records->getLength(); j++ )
+      {
+	const XMLCh* x_position = dynamic_cast<DOMElement*>(records->item(j))->getAttribute( X_POSITION );
+	XMLString::textToBin( x_position, pos );
+        if( pos == 1 )
+	  {
+	    values = dynamic_cast<DOMElement*>(records->item(j))->getElementsByTagName( X_VALUE );
+            if( values->getLength() > 0 )
+	    {
+	      const XMLCh* x_value = values->item(0)->getFirstChild()->getNodeValue();
+	      if( XMLString::compareIString( x_value, X_ID ) != 0 )
+	      {
+		isIDMissing = true;
+		tmp_ids.push_back( "1" );
+		nSubjects = 1;
+              }
+	    }
+	  }
+      }
+      
       /*
-      DOMNodeList * description = dataTable->getElementsByTagName( X_DESCRIPTION );
+      DOMNodeList * description = dataSet->getElementsByTagName( X_DESCRIPTION );
       assert( description == NULL || description->getLength() == 1 );
       const XMLCh* xml_descript = dynamic_cast<DOMText*>(description->item(0)->getFirstChild())->getNodeValue();
       char * descript = (XMLString::stringLen( xml_descript ) > 0 ? XMLString::transcode( xml_descript ) : NULL );
       */
       
-      DOMNodeList * rows = dataTable->getElementsByTagName( X_ROW );
-      assert( rows->getLength() == nRows );
-      for( int j=0; j<nRows; j++ )
+      DOMNodeList * rows = dataSet->getElementsByTagName( X_ROW );
+      assert( rows->getLength() == nRecords );
+      for( int j=0; j<nRecords; j++ )
 	{
 	  DOMElement  * row    = dynamic_cast<DOMElement*>( rows->item(j) );
 	  const XMLCh* xml_position = row->getAttribute( X_POSITION );
@@ -146,14 +184,14 @@ void ClientTranslator::parseData()
 	  if( !XMLString::textToBin( xml_position, pos ) )
 	    assert( false ); // pos = j
 	  DOMNodeList * values = row->getElementsByTagName( X_VALUE );
-	  assert( values->getLength() == nVals );
+	  assert( values->getLength() == nFields );
 
 	  //
 	  // At the first iteration, k=0, the value of *id is set and it is used for the
 	  // rest of iterations.
 	  //
 	  char * id = NULL;
-	  for( int k=0; k<nVals; k++ )
+	  for( int k=0; k<nFields; k++ )
 	    {
 	      //
 	      // The values in the first row (ie. position=1) are data labels.
@@ -200,12 +238,20 @@ void ClientTranslator::parseData()
 	      const XMLCh* xml_value = values->item(k)->getFirstChild()->getNodeValue();
               if( k == 0 )
 	      {
-		// This is the ID.
-		id = XMLString::transcode( xml_value );
-		if( find( tmp_ids.begin(), tmp_ids.end(), id ) == tmp_ids.end() )
+		// This must be the ID field if it ever exists.
+                // Store the ID value if it is new and increment the # subjects.
+		if( !isIDMissing )
 		  {
-		    tmp_ids.push_back( id );
-		    ++nIDs;
+		    id = XMLString::transcode( xml_value );
+		    if( find( tmp_ids.begin(), tmp_ids.end(), id ) == tmp_ids.end() )
+		      {
+			tmp_ids.push_back( id );
+			++nSubjects;
+		      }
+		  }
+		else
+		  {
+		    id = "ID";
 		  }
 	      }
               //
@@ -222,25 +268,40 @@ void ClientTranslator::parseData()
 	  delete id;
 	}
      
-      assert( nIDs == tmp_ids.size() );
-      nDataRecords.resize( nIDs );
+      assert( nSubjects == tmp_ids.size() );
+      nDataRecords.resize( nSubjects );
+
+
       //
       // Figure out the number of data records for each individual
       // and save them in a temporary array.
       //
-      vector<string>::const_iterator id = tmp_ids.begin();
-      for( int k=0; id != tmp_ids.end(), k<nIDs; k++, id++ )
+      if( isIDMissing )
 	{
-	  nDataRecords[k] = tmp_values[*id][tmp_labels[0]].size();
+	  nDataRecords[0] = nRecords;
+	  table.insertLabel( "ID", "",nDataRecords );
+	  for( int k=0; k<nFields; k++ )
+	    {
+	      table.insertLabel( tmp_labels[k], "", nDataRecords );
+	      
+	    }
 	}
-
-      //
-      // Register the data labels without any attributes yet.
-      //
-      for( int k=0; k<nVals; k++ )
+      else
 	{
-	  table.insertLabel( tmp_labels[k], "", nDataRecords );
+	  vector<string>::const_iterator id = tmp_ids.begin();
+	  for( int k=0; id != tmp_ids.end(), k<nSubjects; k++, id++ )
+	    {
+	      nDataRecords[k] = tmp_values[*id][tmp_labels[0]].size();
+	    }
 
+	  //
+	  // Register the data labels without any attributes yet.
+	  //
+	  for( int k=0; k<nFields; k++ )
+	    {
+	      table.insertLabel( tmp_labels[k], "", nDataRecords );
+	      
+	    }
 	}
 
       //
@@ -250,9 +311,9 @@ void ClientTranslator::parseData()
       // in the table specification.  ie. tmp_ids[0] contains the first individual's ID.
       //
       int who=0;
-      for( id = tmp_ids.begin(); id != tmp_ids.end(); id++, who++ )
+      for( vector<string>::const_iterator id = tmp_ids.begin(); id != tmp_ids.end(); id++, who++ )
 	{
-	  for( int k=0; k<nVals; k++ )
+	  for( int k=0; k<nFields; k++ )
 	    {
 	      Symbol *s = table.findi( tmp_labels[k] );
 	      vector<string>::const_iterator itr = (tmp_values[*id][tmp_labels[k]]).begin();
