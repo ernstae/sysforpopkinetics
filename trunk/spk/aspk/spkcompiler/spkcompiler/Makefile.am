@@ -1,8 +1,9 @@
 SUBDIRS          = nonmem .
 bin_PROGRAMS     = spkcompiler
+bindir           = /usr/local/bin/spktest
 noinst_LIBRARIES = libcommon.a
 AM_CXXFLAGS      = -I./nonmem
-AM_LDFLAGS       = ./libcommon.a nonmem/libnonmem.a -lxerces-c
+AM_LDFLAGS       = -lxerces-c ./libcommon.a nonmem/libnonmem.a
 
 MOSTLYCLEANFILES = libcommon.a 
 
