@@ -34,30 +34,68 @@ extern int                yydebug;
 
 void NonmemExpXlatorTest::setUp()
 {
-  yydebug = 0;
-
-  // Populate the symbol table with pre-defined symbols.
-  //
-  file = fopen( "exp.in", "r" );
-  if( !file )
-    {
-      fprintf( stderr, "Failed to open %s!\n", "exp.in" );
-      CPPUNIT_ASSERT_MESSAGE( "???", false );
-    }
-  yyin = file;
-  assert( yyin != NULL );
-
-  gSpkExpErrors = 0;
-  gSpkExpLines  = 0;
-  gSpkExpTree = expTreeUtil.createTree("unit");
-  gSpkExpSymbolTable = new SymbolTable;
 }
 void NonmemExpXlatorTest::tearDown()
 {
   delete gSpkExpSymbolTable;
 }
+void NonmemExpXlatorTest::testSimplest()
+{
+  yydebug = 0;
+
+  char errmess[128];
+
+  // Populate the symbol table with pre-defined symbols.
+  //
+  char input[] = "simplest.in";
+  file = fopen( input, "r" );
+
+  
+  sprintf( errmess, "Failed to open %s!", input );
+  CPPUNIT_ASSERT_MESSAGE( errmess, file != NULL );
+  yyin = file;
+  CPPUNIT_ASSERT( yyin != NULL );
+
+  gSpkExpErrors = 0;
+  gSpkExpLines  = 0;
+  gSpkExpTree = expTreeUtil.createTree("unit");
+  gSpkExpSymbolTable = new SymbolTable;
+  CPPUNIT_ASSERT( gSpkExpSymbolTable != NULL );
+
+  yyparse();
+
+  fclose( file );
+  sprintf( errmess, "Syntax error found (%d)!", gSpkExpErrors );
+  CPPUNIT_ASSERT_MESSAGE( errmess, gSpkExpErrors==0 );
+  if( gSpkExpErrors == 0 )
+  {
+    //expTreeUtil.printToStdout( gSpkExpTree );
+  }
+
+  //cout << endl;
+  //gSpkExpSymbolTable->dump();
+}
 void NonmemExpXlatorTest::testParse()
 {
+  yydebug = 0;
+
+  char errmess[128];
+
+  // Populate the symbol table with pre-defined symbols.
+  //
+  char input[] = "exp.in";
+  file = fopen( input, "r" );
+
+  sprintf( errmess, "Failed to open %s!\n", input );
+  CPPUNIT_ASSERT_MESSAGE( errmess, input != NULL );
+  yyin = file;
+  CPPUNIT_ASSERT( yyin != NULL );
+
+  gSpkExpErrors = 0;
+  gSpkExpLines  = 0;
+  gSpkExpTree = expTreeUtil.createTree("unit");
+  gSpkExpSymbolTable = new SymbolTable;
+  
   //
   // NONMEM keywords
   //
@@ -100,29 +138,28 @@ void NonmemExpXlatorTest::testParse()
   yyparse();
 
   fclose( file );
+  sprintf( errmess, "Syntax error found (%d)!", gSpkExpErrors );
+  CPPUNIT_ASSERT_MESSAGE( errmess, gSpkExpErrors==0 );
   if( gSpkExpErrors == 0 )
   {
-    expTreeUtil.printToStdout( gSpkExpTree );
+    //expTreeUtil.printToStdout( gSpkExpTree );
   }
-  else
-    {    
-      cerr << "!!! Compilation failed (" << gSpkExpErrors << ") !!! " << endl;
-    }
 
-  cout << endl;
-    gSpkExpSymbolTable->dump();
-
-  cout << endl;
-  cout << "Read " << gSpkExpLines << " lines of code from " << "exp.in" << endl;
-  cout << "Encountered " << gSpkExpErrors << " errors." << endl;
-  
+  //cout << endl;
+  //gSpkExpSymbolTable->dump();
 
 }
 CppUnit::Test * NonmemExpXlatorTest::suite()
 {
   CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite( "NonmemExpXlatorTest" );
-  suiteOfTests->addTest( new CppUnit::TestCaller<NonmemExpXlatorTest>("testParse",
-						    &NonmemExpXlatorTest::testParse ) );
+  suiteOfTests->addTest( 
+     new CppUnit::TestCaller<NonmemExpXlatorTest>(
+         "testSimplest", 
+	 &NonmemExpXlatorTest::testSimplest ) );
+  suiteOfTests->addTest( 
+     new CppUnit::TestCaller<NonmemExpXlatorTest>(
+         "testParse",
+	 &NonmemExpXlatorTest::testParse ) );
 
    return suiteOfTests;
 }
