@@ -82,7 +82,14 @@ distribution.
               <th>Developer</th>
               <c:forEach items="${userList.rows}" var="row">
               <tr>
-                <td><a href=getuser.jsp?userName=${fn:escapeXml(row.username)}&password=${fn:escapeXml(row.password)}>${fn:escapeXml(row.user_id)}</a></td>
+              <c:choose>
+                <c:when test="${param.goal == 'enter'}">
+                  <td><a href=getuser.jsp?userName=${fn:escapeXml(row.username)}&password=${fn:escapeXml(row.password)}>${fn:escapeXml(row.user_id)}</a></td>
+                </c:when>
+                <c:otherwise>
+                  <td><a href=updateuser.jsp?userId=${fn:escapeXml(row.user_id)}>${fn:escapeXml(row.user_id)}</a></td>
+                </c:otherwise>
+              </c:choose>
                 <td>${fn:escapeXml(row.username)}</td>
                 <td>${fn:escapeXml(row.first_name)}</td>
                 <td>${fn:escapeXml(row.surname)}</td>

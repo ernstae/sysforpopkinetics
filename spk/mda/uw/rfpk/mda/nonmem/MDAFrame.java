@@ -19,6 +19,7 @@ distribution.
 package uw.rfpk.mda.nonmem;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import javax.swing.text.*;  
 import javax.print.*;
 import javax.print.attribute.*;
@@ -111,7 +112,17 @@ public class MDAFrame extends JFrame
             DatasetLibraryButton.setEnabled(false);
             CompareFilesButton.setEnabled(false); 
             jLabel16.setText("Status: Off Line");
-        } 
+        }
+    
+        ActionListener taskPerformer = new ActionListener() {
+            public void actionPerformed(ActionEvent evt) 
+            {
+                timer.stop();
+                showArchiveList(true);
+            }
+        };
+        timer = new Timer(30000, taskPerformer);
+        timer.setRepeats(false);
     }
     
     /** This method is called from within the constructor to
@@ -573,7 +584,7 @@ public class MDAFrame extends JFrame
         jPanel5.add(jRadioButton7, gridBagConstraints);
 
         jRadioButton8.setFont(new java.awt.Font("Default", 0, 12));
-        jRadioButton8.setText("Use Monte Carlo on Max. Likelihood   ");
+        jRadioButton8.setText("Numerical Integration on Likelihood ");
         buttonGroup3.add(jRadioButton8);
         jRadioButton8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -660,6 +671,11 @@ public class MDAFrame extends JFrame
         objectiveDialog.getContentPane().add(jTextArea2, java.awt.BorderLayout.CENTER);
 
         reportDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        reportDialog.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent we) {
+                timer.stop();
+            }
+        });
         reportDialog.setTitle("");
         reportDialog.setBackground(java.awt.Color.white);
         reportDialog.setModal(true);
@@ -2054,7 +2070,7 @@ public class MDAFrame extends JFrame
         isLibrary = true;
         indexList = 0;
         lists = new Vector();
-        showArchiveList(0);        
+        showArchiveList(false);        
     }//GEN-LAST:event_JobExamplesButtonActionPerformed
 
     private void DatasetLibraryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DatasetLibraryButtonActionPerformed
@@ -2524,7 +2540,7 @@ public class MDAFrame extends JFrame
         showVersions = true;
         indexList = 0;
         lists = new Vector();
-        showArchiveList(0);        
+        showArchiveList(false);        
     }//GEN-LAST:event_jRadioButton3ActionPerformed
 
     private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
@@ -2538,7 +2554,7 @@ public class MDAFrame extends JFrame
         showVersions = false;
         indexList = 0;
         lists = new Vector();        
-        showArchiveList(0);
+        showArchiveList(false);
     }//GEN-LAST:event_jRadioButton2ActionPerformed
 
     private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
@@ -2550,13 +2566,15 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_jRadioButton1ActionPerformed
 
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
-        showArchiveList(++indexList);
+        ++indexList;
+        showArchiveList(false);
         if(indexList != 0)
             previousButton.setEnabled(true);
     }//GEN-LAST:event_nextButtonActionPerformed
 
     private void previousButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_previousButtonActionPerformed
-        showArchiveList(--indexList); 
+        --indexList;
+        showArchiveList(false); 
         if(indexList == 0)
             previousButton.setEnabled(false);
         nextButton.setEnabled(true);
@@ -2699,7 +2717,7 @@ public class MDAFrame extends JFrame
         getArchive = true;
         indexList = 0;
         lists = new Vector(); 
-        showArchiveList(0);        
+        showArchiveList(false);        
     }
     
     private void ModelArchiveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ModelArchiveButtonActionPerformed
@@ -2715,7 +2733,7 @@ public class MDAFrame extends JFrame
         getArchive = true;
         indexList = 0; 
         lists = new Vector();
-        showArchiveList(0);
+        showArchiveList(false);
     }
     
     private void jRadioButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton4ActionPerformed
@@ -2737,7 +2755,7 @@ public class MDAFrame extends JFrame
         showVersions = true;
         indexList = 0;
         lists = new Vector();
-        showArchiveList(0);        
+        showArchiveList(false);        
     }//GEN-LAST:event_jRadioButton6ActionPerformed
 
     private void jRadioButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton5ActionPerformed
@@ -2751,7 +2769,7 @@ public class MDAFrame extends JFrame
         showVersions = false;
         indexList = 0;
         lists = new Vector();        
-        showArchiveList(0);
+        showArchiveList(false);
     }//GEN-LAST:event_jRadioButton5ActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
@@ -2762,6 +2780,7 @@ public class MDAFrame extends JFrame
         if(listType.equals("job"))
         {
             new JobInfo(this, id, isLibrary, false);
+            timer.stop();
             reportDialog.dispose();        
             return;
         }
@@ -2928,7 +2947,7 @@ public class MDAFrame extends JFrame
                         {                        
                             par = output.sigma[l][i][j] != null ? 
                                   Utility.formatData(6, f.format(Double.parseDouble(output.sigma[l][i][j]))) : NA;
-                            ser = output.stdErrSigma[l] != null && output.stdErrSigma[l][i][j] != null ? 
+                            ser = output.stdErrSigma != null && output.stdErrSigma[l][i][j] != null ? 
                                   Utility.formatData(6, f.format(Double.parseDouble(output.stdErrSigma[l][i][j]))) : NA;   
                             rse = output.coefVariation != null && output.coefVariation[k] != null ? 
                                   Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
@@ -2953,7 +2972,7 @@ public class MDAFrame extends JFrame
                     {
                         par = output.sigma[l][i][i + 1] != null ?
                               Utility.formatData(6, f.format(Double.parseDouble(output.sigma[l][i][i + 1]))) : NA;
-                        ser = output.stdErrSigma[l] != null && output.stdErrSigma[l][i][i + 1] != null ? 
+                        ser = output.stdErrSigma != null && output.stdErrSigma[l][i][i + 1] != null ? 
                               Utility.formatData(6, f.format(Double.parseDouble(output.stdErrSigma[l][i][i + 1]))) : NA;
                         rse = output.coefVariation != null && output.coefVariation[k] != null ? 
                               Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
@@ -3049,7 +3068,7 @@ public class MDAFrame extends JFrame
         isLibrary = false;
         indexList = 0;
         lists = new Vector();
-        showArchiveList(0);
+        showArchiveList(false);
     }//GEN-LAST:event_GetReportButtonActionPerformed
 
     private void SubmitJobButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SubmitJobButtonActionPerformed
@@ -3342,12 +3361,15 @@ public class MDAFrame extends JFrame
         {
             String objective = "Minimum Value of the Objective Function:\n" + output.objective + "\n";
             String objStdErr = "";
+            String mcMethod = "";
             if(output.method.equals("M.C. Likelihood") && output.objStdErr != null)
-                objStdErr = "\nStandard Error of the Objective Function Value:\n" + output.objStdErr + "\n";
-            String method = "\nEstimation Method Used in the Analysis:\n" + output.method;
-            jTextArea2.setText(objective + objStdErr + method);
-            objectiveDialog.setSize(300, 150);
-            objectiveDialog.setVisible(true);
+            {
+                mcMethod = "\nThe integration method is '" + output.mcMethod + "'.";
+                objStdErr = "\nStandard Deviation of the Objective Function Value:\n" + output.objStdErr + "\n";
+            }
+            String method = "\nEstimation Method Used in the Analysis:\n" + output.method + "\n";
+            jTextArea2.setText(objective + objStdErr + method + mcMethod);
+            objectiveDialog.setSize(300, 200);
             objectiveDialog.show();
         }
         else
@@ -3560,8 +3582,23 @@ public class MDAFrame extends JFrame
                 return;
             }
             else
+            {
+                Object[] options = {"Monte Carlo", "Grid"};
+                if(isDeveloper)
+                    options = new Object[]{"Monte Carlo", "Grid", "Analytic"};
+                Object selectedValue = JOptionPane.showInputDialog(null, "Please select an integration method.", 
+                                                                   "Input for M.C.", 
+                                                                   JOptionPane.INFORMATION_MESSAGE, null,
+                                                                   options, options[0]);
+                String integrationMethod = "monte";
+                if(((String)selectedValue).equals("Grid"))
+                    integrationMethod = "grid";
+                else if(((String)selectedValue).equals("Analytic"))
+                    integrationMethod = "analytic";
                 source = source.replaceFirst("</nonmem>", "   <monte carlo number_eval=\"" + 
-                                             jTextField15.getText().trim() + "\"/>\n   </nonmem>");
+                                             jTextField15.getText().trim() + "\" method=\"" + 
+                                             integrationMethod + "\" />\n   </nonmem>");
+            }
         }
         
         // Get job parent
@@ -3976,8 +4013,9 @@ public class MDAFrame extends JFrame
     }
     
     // Display a list of jobs or models or versions that belongs to the user
-    private void showArchiveList(int indexList)
+    private void showArchiveList(boolean isRepeatCall)
     {
+        timer.start();
         String[] header = null;
         String title = "";
         String[][] archiveList = null;
@@ -3986,7 +4024,7 @@ public class MDAFrame extends JFrame
             case 'j':
             {
                 title = "Job List"; 
-                header = new String[]{"Submission Time", "State Code", "End Code", "Description"};
+                header = new String[]{"Submission Time", "Status Code", "Model.Version", "Dataset.Version", "Job Description"};
                 break;
             }
             case 'm':
@@ -4004,7 +4042,7 @@ public class MDAFrame extends JFrame
             default: return;
         }
         
-        if(indexList < lists.size())
+        if(!isRepeatCall && indexList < lists.size())
         {
             archiveList = (String[][])lists.get(indexList);
             if(archiveList.length <= maxNum)
@@ -4020,7 +4058,7 @@ public class MDAFrame extends JFrame
             {            
                 case 'j':
                 {
-                    archiveList = server.getUserJobs(maxNum + 1, leftOff, isLibrary); 
+                    archiveList = server.getUserJobs(maxNum + 1, leftOff, isLibrary);
                     break;
                 }
                 case 'm':
@@ -4040,12 +4078,17 @@ public class MDAFrame extends JFrame
             {
                 JOptionPane.showMessageDialog(null, "No " + listType + " was returned from the server.",
                                                   "Server Information",
-                                                  JOptionPane.INFORMATION_MESSAGE);               
+                                                  JOptionPane.INFORMATION_MESSAGE);
+                if(listType.equals("job"))
+                    timer.stop();
                 return;
             }
 
-            // Add the list to the collection
-            lists.add(archiveList);
+            // Add the list to the collection or use the list to update the collection
+            if(!isRepeatCall)
+                lists.add(archiveList);
+            else
+                lists.set(indexList, archiveList);
             if(archiveList.length <= maxNum)
                 // Turn off the next button
                 nextButton.setEnabled(false); 
@@ -4060,17 +4103,20 @@ public class MDAFrame extends JFrame
         // Put the list in a table and then show the dialog containing the table
         if(archiveList.length < 0)
             return;
-
+        
         DisplayTableModel reportModel = new DisplayTableModel(archiveList, header, 1);  
-        jTable1.setModel(reportModel); 
+        jTable1.setModel(reportModel);
         TableColumnModel columnModel = jTable1.getColumnModel();
         columnModel.getColumn(0).setPreferredWidth(200);
+        columnModel.getColumn(1).setPreferredWidth(120);
+        columnModel.getColumn(2).setPreferredWidth(150);
+        columnModel.getColumn(3).setPreferredWidth(150);        
         columnModel.getColumn(1).setCellRenderer(new CellRenderer());
-        columnModel.getColumn(header.length - 1).setPreferredWidth(400);
+        columnModel.getColumn(header.length - 1).setPreferredWidth(350);
         int length = archiveList.length;
         if(length > maxNum)
             length--;        
-        reportDialog.setSize(800, 16 * length + 90);  
+        reportDialog.setSize(1000, 16 * length + 90);  
         reportDialog.setTitle(title);
         reportDialog.show();
     }
@@ -4450,4 +4496,7 @@ public class MDAFrame extends JFrame
     
     // Maximum number of items
     private static final int maxNum = 12;
+    
+    // Timer for refreshing report dialog
+    private Timer timer = null;
 }

@@ -43,44 +43,71 @@ distribution.
   <c:when test="${param.task == 'addnew'}">
     <sql:update>
       INSERT INTO user 
-        (username, password, first_name, surname, company, country, state, email, test, dev)
-        VALUES(?, ?, ?, ?)
+        (username, password, first_name, surname, company, state, country, email, test, dev)
+        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       <sql:param value="${param.userName}" />
       <sql:param value="${digest.password}" />
       <sql:param value="${param.firstName}" />
       <sql:param value="${param.lastName}" />
       <sql:param value="${param.company}" />
-      <sql:param value="${param.country}" />
       <sql:param value="${param.state}" />
+      <sql:param value="${param.country}" />
       <sql:param value="${param.email}" />
       <sql:param value="${test}" />
       <sql:param value="${dev}" />
     </sql:update>
   </c:when>
   <c:otherwise>
-    <sql:update>
-      UPDATE user
-        SET password = ?, 
-            first_name = ?, 
-            surname = ?,
-            company = ?,
-            country = ?,
-            state = ?,
-            email = ?,
-            test = ?,
-            dev = ? 
-        WHERE username = ?
-      <sql:param value="${digest.password}" />
-      <sql:param value="${param.firstName}" />
-      <sql:param value="${param.lastName}" />
-      <sql:param value="${param.company}" />
-      <sql:param value="${param.country}" />
-      <sql:param value="${param.state}" />
-      <sql:param value="${param.email}" />
-      <sql:param value="${test}" />
-      <sql:param value="${dev}" />
-      <sql:param value="${param.userName}" />
-    </sql:update>
+    <c:choose>
+      <c:when test="${empty param.password}">
+        <sql:update>
+          UPDATE user
+            SET first_name = ?, 
+                surname = ?,
+                company = ?,
+                state = ?,
+                country = ?,
+                email = ?,
+                test = ?,
+                dev = ? 
+            WHERE username = ?
+          <sql:param value="${param.firstName}" />
+          <sql:param value="${param.lastName}" />
+          <sql:param value="${param.company}" />
+          <sql:param value="${param.state}" />
+          <sql:param value="${param.country}" />
+          <sql:param value="${param.email}" />
+          <sql:param value="${test}" />
+          <sql:param value="${dev}" />
+          <sql:param value="${param.userName}" />
+        </sql:update>
+      </c:when>
+      <c:otherwise>
+        <sql:update>
+          UPDATE user
+            SET password = ?,
+                first_name = ?, 
+                surname = ?,
+                company = ?,
+                state = ?,
+                country = ?,
+                email = ?,
+                test = ?,
+                dev = ? 
+            WHERE username = ?
+          <sql:param value="${digest.password}" />
+          <sql:param value="${param.firstName}" />
+          <sql:param value="${param.lastName}" />
+          <sql:param value="${param.company}" />
+          <sql:param value="${param.state}" />
+          <sql:param value="${param.country}" />
+          <sql:param value="${param.email}" />
+          <sql:param value="${test}" />
+          <sql:param value="${dev}" />
+          <sql:param value="${param.userName}" />
+        </sql:update>
+      </c:otherwise>
+    </c:choose>
   </c:otherwise>
 </c:choose>
 

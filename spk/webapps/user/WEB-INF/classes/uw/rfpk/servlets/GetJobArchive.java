@@ -31,7 +31,8 @@ import org.apache.commons.jrcs.util.ToString;
 import org.apache.commons.jrcs.diff.*;
 import uw.rfpk.beans.UserInfo;
 
-/** This servlet receives a String array containing four String objects from the client.
+/** This servlet sends back either the model or the dataset that is used by the job.
+ * The servlet receives a String array containing four String objects from the client.
  * The first String object is the secret code to identify the client.  The second String 
  * is the job_id.  The third String is either "model" or "data".  The fourth String object 
  * is a flag that specified if this call is from a library patron.  The servlet first checks 
@@ -39,7 +40,7 @@ import uw.rfpk.beans.UserInfo;
  * and using database API method, getJob, to get user_id, then comparing them.  If they
  * are the same, the servlet calls database API method, getJob, to get either model_id, 
  * model_version, or dataset_id, dataset_version according to the third String. Then,
- * the model_id is paased in the database API method getModel to get model archive  and 
+ * the model_id is passed in the database API method getModel to get model archive  and 
  * model name, or the dataset_id is passed in the database API method getDataset to get 
  * dataset archive and dataset name.  The servlet calls JRCS API methods, getRevision and 
  * arrayToString, to get the archive text of the version that has been returned from the 

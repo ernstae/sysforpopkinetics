@@ -61,7 +61,7 @@ distribution.
             <p>
               Please use a combination of upper, lower case letters and numbers as the password.
             </p>
-            <form action="updateuser.jsp" method="post">
+            <form action="updatepassword.jsp" method="post">
               <input type="hidden" name="OrigURL" value="${fn:escapeXml(param.origURL)}">                  
               <table border="0" cellspacing = "5">
                 <tr>

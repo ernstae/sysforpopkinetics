@@ -60,11 +60,10 @@ distribution.
             <c:choose>
               <c:when test="${validUser.userName == 'useradmin'}">
                 <a href="chpassword.jsp">Change my password</a><br>
-                <a href="userlist.jsp">View all user list</a><br>
-                <a href="enteruser.jsp?task=addnew">Add new user account</a><br>
-                <a href="enteruser.jsp?task=update">Update user account</a><br>
+                <a href="userlist.jsp?goal=enter">View all user list</a><br>
+                <a href="enteruser.jsp?">Add new user account</a><br>
+                <a href="userlist.jsp?goal=update">Update user account</a><br>
                 <a href="searchuser.jsp">Search in user database</a><br>
-<%--            <a href="tolibrary.jsp">Change ownership to librarian</a> --%>
               </c:when>
               <c:otherwise>
                 <a href="chpassword.jsp">Change my password</a><br>

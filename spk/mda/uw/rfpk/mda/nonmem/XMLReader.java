@@ -295,9 +295,30 @@ public class XMLReader {
         if(pop_monte_resultList.getLength() > 0)
         {
             Element pop_monte_result = (Element)pop_monte_resultList.item(0);
-            NodeList pop_obj_list = pop_monte_result.getElementsByTagName("pop_obj_estimate");
-            if(pop_obj_list.getLength() > 0)
-                output.objective = ((Element)pop_obj_list.item(0)).getFirstChild().getNodeValue();
+            NodeList pop_obj_estimateList = pop_monte_result.getElementsByTagName("pop_obj_estimate");
+            if(pop_obj_estimateList.getLength() > 0)
+            {
+                output.mcMethod = "Monte Carlo";
+                output.objective = ((Element)pop_obj_estimateList.item(0)).getFirstChild().getNodeValue();
+            }
+            else
+            {
+                NodeList pop_obj_analyticList = pop_monte_result.getElementsByTagName("pop_obj_analytic");
+                if(pop_obj_analyticList.getLength() > 0)
+                {
+                    output.mcMethod = "Analytic";
+                    output.objective = ((Element)pop_obj_analyticList.item(0)).getFirstChild().getNodeValue();
+                }
+                else
+                {
+                    NodeList pop_obj_gridList = pop_monte_result.getElementsByTagName("pop_obj_grid");
+                    if(pop_obj_gridList.getLength() > 0)
+                    {
+                        output.mcMethod = "Grid";
+                        output.objective = ((Element)pop_obj_gridList.item(0)).getFirstChild().getNodeValue();
+                    }                   
+                }
+            }
             NodeList obj_stderror_list = pop_monte_result.getElementsByTagName("pop_obj_stderror");
             if(obj_stderror_list.getLength() > 0)
                 output.objStdErr = ((Element)obj_stderror_list.item(0)).getFirstChild().getNodeValue();

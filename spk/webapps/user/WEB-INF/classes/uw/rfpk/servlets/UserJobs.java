@@ -29,13 +29,22 @@ import java.util.Properties;
 import java.text.SimpleDateFormat;
 import uw.rfpk.beans.UserInfo;
 
-/** This servlet receives a String array containing four String objects from the client.
+/** This servlet sends back information about a list of jobs belonging to the user.
+ * The servlet receives a String array containing four String objects from the client.
  * The first String object is the secret code to identify the client.  The second String  
  * object is the maximum number of jobs to provide status for.  The third String object is
  * the least job_id previously returned.  The fourth String object is a flag that specified 
  * if this call is from a library patron.  The servlet calls database API method, userJobs,
- * to get job status that includes id, start_time, state_code, end-cod and abstract
- * of the jobs.  The servlet puts these data into a String[][] object.
+ * to get job status that includes id, start_time, state_code, end-code, model_id, 
+ * model_version, dataset_id, dataset_version and abstract of the jobs.  The servlet uses 
+ * the model_id to get model_name using database API method getModel and uses the dataset_id
+ * to get dataset_name using database API method getDataset.  The servlet converts the 
+ * state_code and the end_code into the corresponding names and uses the names to form a 
+ * status_code for each job.  If the state_code is not "End", the status_code is the name of
+ * the state_code, otherwise the status_code is the name of the end_code.  The servlet forms
+ * model_info string by "model_name.model_version" and forms dataset_info string by 
+ " dataset_name.dataset_version.  The servletThe servlet puts the job_id, start_time(formated), 
+ * status_code, model_info, dataset_info and arbstract of the jobs into a String[][] object.
  * The servlet sends back two objects.  The first object is a String containing the error 
  * message if there is an error or an empty String if there is not any error.  The second 
  * object is the returning data String[][] object.
@@ -120,19 +129,28 @@ public class UserJobs extends HttpServlet
                     end.setProperty(endRS.getString(1), endRS.getString(2));
 
                 // Fill in the List
-                SimpleDateFormat formater = new SimpleDateFormat("EEE, MMM, d yyyy 'at' HH:mm:ss z");
+                SimpleDateFormat formater = new SimpleDateFormat("EEE yyyy-MM-dd HH:mm:ss z");
                 while(userJobsRS.next())
                 {                  
-                    String[] job = new String[5];   
+                    String[] job = new String[6];   
                     job[0] = String.valueOf(userJobsRS.getLong("job_id"));
-                    job[1] = formater.format(new Date(userJobsRS.getLong("start_time") * 1000));  
+                    job[1] = formater.format(new Date(userJobsRS.getLong("start_time") * 1000));
                     job[2] = state.getProperty(userJobsRS.getString("state_code"));
-                    String endCode = userJobsRS.getString("end_code");
-                    if(endCode != null)
-                        job[3] = end.getProperty(endCode); 
-                    else
-                        job[3] = "";
-                    job[4] = userJobsRS.getString("abstract");
+                    if(job[2].equals("End"))
+                    {                   
+                        String endCode = userJobsRS.getString("end_code");
+                        if(endCode != null)
+                            job[2] = end.getProperty(endCode); 
+                        else
+                        job[2] = "";                        
+                    }
+                    ResultSet modelRS = Spkdb.getModel(con, userJobsRS.getLong("model_id"));
+                    modelRS.next();
+                    job[3] = modelRS.getString("name") + "." + userJobsRS.getString("model_version").substring(2);
+                    ResultSet datasetRS = Spkdb.getDataset(con, userJobsRS.getLong("dataset_id"));
+                    datasetRS.next();
+                    job[4] = datasetRS.getString("name") + "." + userJobsRS.getString("dataset_version").substring(2);
+                    job[5] = userJobsRS.getString("abstract");
                     jobList.add(job);
                 }
                 int nJob = jobList.size();

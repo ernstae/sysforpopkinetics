@@ -26,7 +26,9 @@ import org.apache.commons.jrcs.rcs.*;
 import org.apache.commons.jrcs.util.ToString;
 import org.apache.commons.jrcs.diff.*;
 
-/** This servlet receives a String array containing two String objects from the client.
+/** This servlet sends back the version's text of model or dataset that was selected by 
+ * the user from version list by the immediately previous call to the servlet GetVersions.
+ * The servlet receives a String array containing two String objects from the client.
  * The first String object is the secret code to identify the client.  The second String  
  * object is the version number.  The servlet retrieves the archive from the session object
  * and then calls JRCS API methods, getRevision and arrayToString, to get the archive text.

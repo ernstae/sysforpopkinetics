@@ -61,7 +61,7 @@ distribution.
     </c:choose>
   </c:otherwise>
 </c:choose>
-<c:if test="${empty param.password}">
+<c:if test="${param.task == 'addnew' && empty param.password}">
   <c:set var="passwordError" scope="request"
     value="Password missing" />
   <c:set var="isValid" value="false" />
@@ -76,7 +76,26 @@ distribution.
     value="Last Name missing" />
   <c:set var="isValid" value="false" />
 </c:if>
-
+<c:if test="${empty param.company}">
+  <c:set var="companyNameError" scope="request"
+    value="Company name missing" />
+  <c:set var="isValid" value="false" />
+</c:if>
+<c:if test="${empty param.state}">
+  <c:set var="stateNameError" scope="request"
+    value="State name missing" />
+  <c:set var="isValid" value="false" />
+</c:if>
+<c:if test="${empty param.country}">
+  <c:set var="countryNameError" scope="request"
+    value="Country Name missing" />
+  <c:set var="isValid" value="false" />
+</c:if>
+<c:if test="${empty param.email}">
+  <c:set var="emailAddressError" scope="request"
+    value="Email address missing" />
+  <c:set var="isValid" value="false" />
+</c:if>
 <c:choose>
   <c:when test="${isValid}">
     <jsp:forward page="storeuser.jsp" />
@@ -87,7 +106,7 @@ distribution.
         <jsp:forward page="enteruser.jsp?task=addnew" />
       </c:when>
       <c:otherwise>
-        <jsp:forward page="enteruser.jsp?task=update" />
+        <jsp:forward page="updateuser.jsp?userId=0" />
       </c:otherwise>
     </c:choose>
   </c:otherwise>

@@ -31,7 +31,8 @@ import org.apache.commons.jrcs.util.ToString;
 import org.apache.commons.jrcs.diff.*;
 import uw.rfpk.beans.UserInfo;
 
-/** This servlet receives a String array containing three String objects from the client.
+/** This servlet seads back the three components: source, data, model of SPK input file. 
+ * The servlet receives a String array containing three String objects from the client.
  * The first String object is the secret code to identify the client.  The second String 
  * is the job_id.  The third String object is a flag that specified if this call is from 
  * a library patron.  The servlet first checks if the job_id belongs to the user using 

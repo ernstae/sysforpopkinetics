@@ -61,39 +61,30 @@ distribution.
               The following user information are found:
             <p>
             <table border="1">
-              <th>User ID</th>
-              <th>Username</th>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Company</th>
-              <th>Country</th>
-              <th>State</th>
-              <th>Email</th>
-              <th>Tester</th>
-              <th>Developer</th>
-              <tr>
-                <td>${fn:escapeXml(validUser.userId)}</td>
-                <td>${fn:escapeXml(validUser.userName)}</td>
-                <td>${fn:escapeXml(validUser.firstName)}</td>
-                <td>${fn:escapeXml(validUser.lastName)}</td>
-                <td>${fn:escapeXml(validUser.company)}</td>
-                <td>${fn:escapeXml(validUser.country)}</td>
-                <td>${fn:escapeXml(validUser.state)}</td>
-                <td>${fn:escapeXml(validUser.email)}</td>
+              <tr><td>User ID</td><td>${fn:escapeXml(validUser.userId)}</td></tr>
+              <tr><td>Username</td><td>${fn:escapeXml(validUser.userName)}</td></tr>
+              <tr><td>First Name</td><td>${fn:escapeXml(validUser.firstName)}</td></tr>
+              <tr><td>Last Name</td><td>${fn:escapeXml(validUser.lastName)}</td></tr>
+              <tr><td>Company</td><td>${fn:escapeXml(validUser.company)}</td></tr>
+              <tr><td>State</td><td>${fn:escapeXml(validUser.state)}</td></tr>
+              <tr><td>Country</td><td>${fn:escapeXml(validUser.country)}</td></tr>
+              <tr><td>Email<td>${fn:escapeXml(validUser.email)}</td></tr>
+              <tr><td>Tester?</td>
                 <c:choose>
                   <c:when test="${validUser.tester == '1'}">
-                    <td>Yes</td>
+                    <td>Yes</td></tr>
                   </c:when>
                   <c:otherwise>
-                    <td>No</td>
+                    <td>No</td></tr>
                   </c:otherwise>
                 </c:choose>
+              <tr><td>Developer?</td>
                 <c:choose>
                   <c:when test="${validUser.developer == '1'}">
-                    <td>Yes</td>
+                    <td>Yes</td></tr>
                   </c:when>
                   <c:otherwise>
-                    <td>No</td>
+                    <td>No</td></tr>
                   </c:otherwise>
                 </c:choose>
               </tr>
