@@ -69,6 +69,7 @@ namespace // [Begin: unnamed namespace]
 
 // SPK Pred library header files.
 #include "DiagCov.h"
+#include "FullCov.h"
 #include "PopPredModel.h"
 #include "isEqual.h"
 #include "PredBase.h"
@@ -193,45 +194,22 @@ PopPredModel::PopPredModel(
   {
     pOmegaCurr = new DiagCov( nEta );
   }
+  else if ( omegaStructIn == FULL )
+  {
+    pOmegaCurr = new FullCov( nEta );
+  }
   else
   {
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // [Revisit - Implement Full Covariance Matrices - Mitch]
-    // Currently, full covariance matrices are not supported.
-    /*
-    pOmegaCurr = new FullCov( nEta );
-    */
     throw SpkException(
-      SpkError::SPK_USER_INPUT_ERR, 
-      "Full covariance matrices are not currently supported.",
-      __LINE__, 
-      __FILE__ );
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     SpkError::SPK_USER_INPUT_ERR, 
+     "Unknown covariance matrix type requested for Omega.",
+     __LINE__, 
+     __FILE__ );
   }
 
   // Get the number of parameters required by the structure of
   // this covariance matrix.
   nOmegaPar = pOmegaCurr->getNPar();
-
-  if ( omegaStructIn == DIAGONAL )
-  {
-    pOmegaCurr = new DiagCov( nEta );
-  }
-  else
-  {
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // [Revisit - Implement Full Covariance Matrices - Mitch]
-    // Currently, full covariance matrices are not supported.
-    /*
-    pOmegaCurr = new FullCov( nEta );
-    */
-    throw SpkException(
-      SpkError::SPK_USER_INPUT_ERR, 
-      "Full covariance matrices are not currently supported.",
-      __LINE__, 
-      __FILE__ );
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  }
 
   // Create a temporary version of omega that corresponds to the
   // minimal representation passed to this constructor.
@@ -257,45 +235,22 @@ PopPredModel::PopPredModel(
   {
     pSigmaCurr = new DiagCov( nEps );
   }
+  else if ( sigmaStructIn == FULL )
+  {
+    pSigmaCurr = new FullCov( nEps );
+  }
   else
   {
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // [Revisit - Implement Full Covariance Matrices - Mitch]
-    // Currently, full covariance matrices are not supported.
-    /*
-    pSigmaCurr = new FullCov( nEps );
-    */
     throw SpkException(
-      SpkError::SPK_USER_INPUT_ERR, 
-      "Full covariance matrices are not currently supported.",
-      __LINE__, 
-      __FILE__ );
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     SpkError::SPK_USER_INPUT_ERR, 
+     "Unknown covariance matrix type requested for Sigma.",
+     __LINE__, 
+     __FILE__ );
   }
 
   // Get the number of parameters required by the structure of
   // this covariance matrix.
   nSigmaPar = pSigmaCurr->getNPar();
-
-  if ( sigmaStructIn == DIAGONAL )
-  {
-    pSigmaCurr = new DiagCov( nEps );
-  }
-  else
-  {
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // [Revisit - Implement Full Covariance Matrices - Mitch]
-    // Currently, full covariance matrices are not supported.
-    /*
-    pSigmaCurr = new FullCov( nEps );
-    */
-    throw SpkException(
-      SpkError::SPK_USER_INPUT_ERR, 
-      "Full covariance matrices are not currently supported.",
-      __LINE__, 
-      __FILE__ );
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  }
 
   // Save the sigma value maintained by this class that corresponds
   // to the minimal representation passed to this constructor.

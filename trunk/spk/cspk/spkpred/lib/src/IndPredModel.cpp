@@ -69,6 +69,7 @@ namespace // [Begin: unnamed namespace]
 
 // SPK Pred library header files.
 #include "DiagCov.h"
+#include "FullCov.h"
 #include "IndPredModel.h"
 #include "isEqual.h"
 #include "PredBase.h"
@@ -168,45 +169,22 @@ IndPredModel::IndPredModel(
   {
     pOmegaCurr = new DiagCov( nEta );
   }
+  else if ( omegaStructIn == FULL )
+  {
+    pOmegaCurr = new FullCov( nEta );
+  }
   else
   {
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // [Revisit - Implement Full Covariance Matrices - Mitch]
-    // Currently, full covariance matrices are not supported.
-    /*
-    pOmegaCurr = new FullCov( nEta );
-    */
     throw SpkException(
-      SpkError::SPK_USER_INPUT_ERR, 
-      "Full covariance matrices are not currently supported.",
-      __LINE__, 
-      __FILE__ );
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     SpkError::SPK_USER_INPUT_ERR, 
+     "Unknown covariance matrix type requested for Omega.",
+     __LINE__, 
+     __FILE__ );
   }
 
   // Get the number of parameters required by the structure of
   // this covariance matrix.
   nOmegaPar = pOmegaCurr->getNPar();
-
-  if ( omegaStructIn == DIAGONAL )
-  {
-    pOmegaCurr = new DiagCov( nEta );
-  }
-  else
-  {
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // [Revisit - Implement Full Covariance Matrices - Mitch]
-    // Currently, full covariance matrices are not supported.
-    /*
-    pOmegaCurr = new FullCov( nEta );
-    */
-    throw SpkException(
-      SpkError::SPK_USER_INPUT_ERR, 
-      "Full covariance matrices are not currently supported.",
-      __LINE__, 
-      __FILE__ );
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  }
 
   // Save the omega value maintained by this class.
   omegaCurr.resize( nEta * nEta );
