@@ -13,6 +13,14 @@
 	<revremark>Initial version.</revremark>
       </revision>
     </revhistory>
+    <revhistory>
+      <revision>
+	<revnumber>1.01</revnumber>
+	<date>December 5, 2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>The "Model and Data" spec was split into two specs.</revremark>
+      </revision>
+    </revhistory>
   <abstract>
       <para>
 	This document describes a set of milestones which will
@@ -71,7 +79,7 @@
       made.
     </para>
   </sect1>
-  <sect1>
+  <sect1 id='milestone_table'>
     <title>Milestone Table</title>
     <para>
       <table frame='all'><title>Spk Version 0.1 Milestones</title>
@@ -102,7 +110,7 @@
 	      <entry>10/22/2003</entry>
 	    </row>
 	    <row>
-	      <entry><link linkend="xml_input">XML Model and Data</link></entry>
+	      <entry><link linkend="xml_source">XML Models and Parameters</link></entry>
 	      <entry>Sachiko Honda</entry>
 	      <entry>11/04/2003</entry>
 	      <entry>11/04/2003</entry>
@@ -117,13 +125,19 @@
 	      <entry><link linkend="results">XML Results</link></entry>
 	      <entry>Sachiko Honda</entry>
 	      <entry>11/20/2003</entry>
-	      <entry></entry>
+	      <entry>12/05/2003</entry>
 	    </row>
 	    <row>
-	      <entry><link linkend="sql_schema">Database SQL Schema</link></entry>
+	      <entry><link linkend="sql_schema">Database Schema</link></entry>
 	      <entry>Alan Westhagen</entry>
 	      <entry>11/21/2003</entry>
 	      <entry>11/19/2003</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="xml_data">XML Data</link></entry>
+	      <entry>Sachiko Honda</entry>
+	      <entry>12/05/2003</entry>
+	      <entry>12/05/2003</entry>
 	    </row>
 	    <row>
 	      <entry><link linkend="optimizer">Optimizer Replacement</link></entry>
@@ -271,6 +285,7 @@
       <para>
 	This document is now complete and can be viewed
 	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/jobHistory/jobHistory.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
       </para>
     </sect2>
     <sect2 id="model_cap">
@@ -284,18 +299,36 @@
       <para>
 	This document is now complete and can be viewed
 	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/modelCap/html/modelCap.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
       </para>
     </sect2>
-    <sect2 id="xml_input">
-      <title>XML Representations of Models and Data</title>
+    <sect2 id="xml_data">
+      <title>XML Representations of Data Set</title>
       <para>
-	A job contains a model and data.  These two objects are 
-	expressed in their own Extensible Markup Language (XML)
-	syntax, as defined in this specification.
+	A data set is submitted as part of a job.  This data is structured
+	as XML and is stored in the <emphasis>xml_data</emphasis> field of
+	the <emphasis>job</emphasis> table of the database. 
       </para>
       <para>
 	This document is available for viewing
-	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/modelXML/modelXML.html">here</ulink>.
+	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/dataML/dataML.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
+      </para>
+    </sect2>
+    <sect2 id="xml_source">
+      <title>XML Representations of Models and Control Parameters</title>
+      <para>
+	A job contains specifications from which the ASpk Compiler creates
+	a C++ program.  The MDA submits these specifications in the form 
+	of an XML representation of a model and associated control 
+	parameters.  This XML file is stored in the 
+	<emphasis>xml_source</emphasis> field of the <emphasis>job</emphasis>
+	table of the database.
+      </para>
+      <para>
+	This document is available for viewing
+	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/sourceML/sourceML.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
       </para>
     </sect2>
     <sect2 id="er_model">
@@ -309,17 +342,25 @@
       <para>
 	This document is now available for viewing
 	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/erModel/erModel.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
       </para>
     </sect2>
     <sect2 id="results">
-      <title>XML Results</title>
+      <title>XML Representation of Spk Results and Other Reports</title>
       <para>
-	The results are formatted as an XML file, according to this 
-	specification.
+	When an Spk job runs to completion, whether successfully or
+	not, a report is formatted as XML and is stored in the 
+	<emphasis>report</emphasis> field of the <emphasis>job</emphasis>
+	table of the database.
+      </para>
+      <para>
+	This document is now available for viewing
+	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/reportML/reportML.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
       </para>
     </sect2>
     <sect2 id="sql_schema">
-      <title>Database SQL Schema</title>
+      <title>Database Schema</title>
       <para>
 	The schema is a sequence of statements in the Data Definition
 	Language (DDL) which is a subset of the Structured Query Language
@@ -330,6 +371,7 @@
       <para>
 	This document is now available for viewing
 	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/dbSchema/dbSchema.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
       </para>
     </sect2>
     <sect2 id="optimizer">
@@ -362,6 +404,7 @@
       <para>
 	This document is now complete and can be viewed
 	<ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/dbAPI/dbAPI.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
       </para>
     </sect2>
     <sect2 id="build">
