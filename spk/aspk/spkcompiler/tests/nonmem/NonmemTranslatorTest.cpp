@@ -48,11 +48,13 @@ void NonmemTranslatorTest::testInheritance()
 void NonmemTranslatorTest::testParsePopSource()
 {
   const int pop_size = 3;
-  const int nLabels = 3;
+  const int nLabels = 5;
   map<string, string> labels;
   labels["ID"]   = "";
   labels["TIME"] = "";
   labels["CP"]   = "DV";
+  labels["WT"]   = "";
+  labels["DOSE"] = "";
 
   const int thetaLen = 3;
   valarray<double> theta_in (thetaLen);
@@ -211,7 +213,7 @@ void NonmemTranslatorTest::testParsePopSource()
       oSource << "   CL=THETA(3) * WT + ETA(3)" << endl;
       oSource << "   D=EXP(-KE*TIME)-EXP(-KA*TIME)" << endl;
       oSource << "   E=CL*(KA-KE)" << endl;
-      oSource << "   F=DS*KE*KA/E*D" << endl;
+      oSource << "   F=DV*KE*KA/E*D" << endl;
       oSource << "   Y=F+EPS(1)" << endl;
       oSource << "</pred>" << endl;
       oSource << "</model>" << endl;
@@ -305,27 +307,23 @@ void NonmemTranslatorTest::testParsePopSource()
   Symbol * id   = table->insertLabel( "ID",   "", N );
   Symbol * time = table->insertLabel( "TIME", "", N );
   Symbol * cp   = table->insertLabel( "CP",   "DV", N );
-
+  Symbol * wt   = table->insertLabel( "WT", "", N );
+  Symbol * dose = table->insertLabel( "DOSE", "", N );
+ 
   id->  initial[0][0] = "#1";
-  time->initial[0][0] = "0.0";
-  cp->  initial[0][0] = "0.0";
+  time->initial[0][0] = "0.0";  cp->initial[0][0] = "0.0";   wt->initial[0][0] = "10.0";  dose->initial[0][0] = "10.0";
 
-  id->  initial[1][0] = "#2";
+  id->  initial[1][0] = "#2"; 
+  time->initial[1][0] = "0.0";  cp->initial[1][0] = "0.0";   wt->initial[1][0] = "20.0";  dose->initial[1][0] = "10.0";
   id->  initial[1][1] = "#2";
-  time->initial[1][0] = "0.0";
-  time->initial[1][1] = "1.0";
-  cp->  initial[1][0] = "0.0";
-  cp->  initial[1][1] = "10.0";
+  time->initial[1][1] = "1.0";  cp->initial[1][1] = "10.0";  wt->initial[1][1] = "0.0";   dose->initial[1][1] = "0.0";
 
   id->  initial[2][0] = "#3";
-  id->  initial[2][1] = "#3";
+  time->initial[2][0] = "0.0";  cp->initial[2][0] = "0.0";   wt->initial[2][0] = "30.0";  dose->initial[2][0] = "10.0";
+  id->  initial[2][1] = "#3";   
+  time->initial[2][1] = "1.0";  cp->initial[2][1] = "10.0";  wt->initial[2][1] = "0.0";   dose->initial[2][1] = "0.0";
   id->  initial[2][2] = "#3";
-  time->initial[2][0] = "0.0";
-  time->initial[2][1] = "1.0";
-  time->initial[2][2] = "2.0";
-  cp->  initial[2][0] = "0.0";
-  cp->  initial[2][1] = "10.0";
-  cp->  initial[2][2] = "20.0";
+  time->initial[2][2] = "2.0";  cp->initial[2][2] = "20.0";  wt->initial[2][2] = "0.0";   dose->initial[2][2] = "0.0";
 
   xlator.parseSource();
   remove( gSource );
@@ -411,65 +409,170 @@ void NonmemTranslatorTest::testParsePopSource()
   // with the order in which the variables are actually
   // passed in the construction of these objects
   // done in the DataSet constructor.
-  char fTestDriver[] = "testDriver.cpp";
+  char fTestDriver[] = "testPopDriver.cpp";
   ofstream oTestDriver( fTestDriver );
   if( oTestDriver.good() )
   {
      oTestDriver << "#include <iostream>" << endl;
      oTestDriver << "#include \"IndData.h\"" << endl;
      oTestDriver << "#include \"DataSet.h\"" << endl;
+     oTestDriver << "#include \"Pred.h\"" << endl;
      oTestDriver << "using namespace std;" << endl;
      oTestDriver << "int main()" << endl;
      oTestDriver << "{" << endl;
-     oTestDriver << "DataSet set;" << endl;
+     oTestDriver << "DataSet<double> set;" << endl;
 
      for( int i=0; i<pop_size; i++ )
      {
         for( int j=0; j<N[i]; j++ )
         {
-           oTestDriver << "if( set.dataset[" << i << "]->ID[";
+           oTestDriver << "if( set.data[" << i << "]->ID[";
            oTestDriver << j << "] != string(\"";
            oTestDriver << id->initial[i][j] << "\") )" << endl;
            oTestDriver << "{" << endl;
            oTestDriver << "   cerr << \"set[" << i << "]->ID[";
            oTestDriver << j << "] != \\\"";
            oTestDriver << id->initial[i][j] << "\\\"\" << endl; " << endl;
-           oTestDriver << "   cerr << \"was \" << set.dataset[";
+              oTestDriver << "   cerr << \"was \" << set.data[";
            oTestDriver << i << "]->ID[" << j << "] << \".\" << endl;" << endl;
            oTestDriver << "return 1;" << endl;
            oTestDriver << "}" << endl;
 
-           oTestDriver << "if( set.dataset[" << i << "]->TIME[" << j << "] != ";
+           oTestDriver << "if( set.data[" << i << "]->TIME[" << j << "] != ";
            oTestDriver << time->initial[i][j] << " )" << endl;
            oTestDriver << "{" << endl;
            oTestDriver << "   cerr << \"set[" << i << "]->TIME[" << j << "] != \\\"";
            oTestDriver << time->initial[i][j] << "\\\"\" << endl; " << endl;
-           oTestDriver << "   cerr << \"was \" << set.dataset[";
+           oTestDriver << "   cerr << \"was \" << set.data[";
            oTestDriver << i << "]->TIME[" << j << "] << \".\" << endl;" << endl;
            oTestDriver << "return 1;" << endl;
            oTestDriver << "}" << endl;
         
-           oTestDriver << "if( set.dataset[" << i << "]->CP[" << j << "] != ";
+           oTestDriver << "if( set.data[" << i << "]->CP[" << j << "] != ";
            oTestDriver << cp->initial[i][j] << " )" << endl;
            oTestDriver << "{" << endl;
            oTestDriver << "   cerr << \"set[" << i << "]->CP[" << j << "] != \\\"";
            oTestDriver << cp->initial[i][j] << "\\\"\" << endl; " << endl;
-           oTestDriver << "   cerr << \"was \" << set.dataset[";
+           oTestDriver << "   cerr << \"was \" << set.data[";
            oTestDriver << i << "]->CP[" << j << "] << \".\" << endl;" << endl;
            oTestDriver << "return 1;" << endl;
            oTestDriver << "}" << endl;
            
-           oTestDriver << "if( set.dataset[" << i << "]->DV[" << j << "] != ";
+           oTestDriver << "if( set.data[" << i << "]->DV[" << j << "] != ";
            oTestDriver << cp->initial[i][j] << " )" << endl;
            oTestDriver << "{" << endl;
            oTestDriver << "   cerr << \"set[" << i << "]->DV[" << j << "] != \\\"";
            oTestDriver << cp->initial[i][j] << "\\\"\" << endl; " << endl;
-           oTestDriver << "   cerr << \"was \" << set.dataset[";
+           oTestDriver << "   cerr << \"was \" << set.data[";
            oTestDriver << i << "]->DV[" << j << "] << \".\" << endl;" << endl;
            oTestDriver << "return 1;" << endl;
            oTestDriver << "}" << endl;
+	   oTestDriver << endl;
         }
      }
+     oTestDriver << "double thetaIn[] = {";
+     for( int i=0; i<thetaLen; i++ )
+     {
+        if( i>0 )
+           oTestDriver << ", ";
+        oTestDriver << i+1;
+     }
+     oTestDriver << "};" << endl;
+     oTestDriver << "double etaIn[] = {";
+     for( int i=0; i<etaLen; i++ )
+     {
+        if( i>0 )
+           oTestDriver << ", ";
+        oTestDriver << i+1;
+     }
+     oTestDriver << "};" << endl;
+     oTestDriver << "double epsIn[] = {";
+     for( int i=0; i<etaLen; i++ )
+     {
+        if( i>0 )
+           oTestDriver << ", ";
+        oTestDriver << i+1;
+     }
+     oTestDriver << "};" << endl;
+     oTestDriver << "double yOut = 0.0;" << endl;
+     oTestDriver << "double fOut = 0.0;" << endl;
+     oTestDriver << endl;
+     oTestDriver << "double tol  = 0.0;" << endl;
+     oTestDriver << "double ans  = 0.0;" << endl;
+     oTestDriver << endl;
+
+     oTestDriver << "Pred<double> pred(&set);" << endl;
+     oTestDriver << "bool ok = pred.eval( thetaIn, " << thetaLen << ", " << endl;
+     oTestDriver << "           etaIn,   " << etaLen   << ", " << endl;
+     oTestDriver << "           epsIn,   " << etaLen   << ", " << endl;
+     oTestDriver << "           2, 0, " << endl;
+     oTestDriver << "           fOut, yOut ); " << endl;
+     oTestDriver << "if( !ok )" << endl;
+     oTestDriver << "{" << endl;
+     oTestDriver << "   std::cerr << \"pred.eval() returned false, which is wrong.\" << endl;" << endl;
+     oTestDriver << "   return 1;" << endl;
+     oTestDriver << "}" << endl;
+     oTestDriver << "if( fOut != -0.0 )" << endl;
+     oTestDriver << "{" << endl;
+     oTestDriver << "   cerr << \"fOut should've been -0.0 but it was \" << fOut << endl;" << endl;
+     oTestDriver << "   return 1;" << endl;
+     oTestDriver << "}" <<endl;
+     oTestDriver << "if( yOut != 1.0 )" << endl;
+     oTestDriver << "{" << endl;
+     oTestDriver << "   cerr << \"yOut should've been 1.0 but it was \" << yOut << endl;" << endl;
+     oTestDriver << "   return 1;" << endl;
+     oTestDriver << "}" <<endl;
+
+     oTestDriver << "ok = pred.eval( thetaIn, " << thetaLen << ", " << endl;
+     oTestDriver << "           etaIn,   " << etaLen   << ", " << endl;
+     oTestDriver << "           epsIn,   " << etaLen   << ", " << endl;
+     oTestDriver << "           2, 1, " << endl;
+     oTestDriver << "           fOut, yOut ); " << endl;
+     oTestDriver << "if( !ok )" << endl;
+     oTestDriver << "{" << endl;
+     oTestDriver << "   std::cerr << \"pred.eval() returned false, which is wrong.\" << endl;" << endl;
+     oTestDriver << "   return 1;" << endl;
+     oTestDriver << "}" << endl;
+     oTestDriver << "ans = 0.50331;" << endl;
+     oTestDriver << "tol = fabs(ans-fOut)/ans * 10.0;" << endl;
+     oTestDriver << "if( !( fOut >= ans-tol && fOut <= ans+tol ) )" << endl;
+     oTestDriver << "{" << endl;
+     oTestDriver << "   cerr << \"fOut should've been \" << ans << \" but it was \" << fOut << endl;" << endl;
+     oTestDriver << "   return 1;" << endl;
+     oTestDriver << "}" <<endl;
+     oTestDriver << "ans = 1.05033;" << endl;
+     oTestDriver << "tol = fabs(ans-yOut)/ans * 10.0;" << endl;
+     oTestDriver << "if( !( yOut >= ans-tol && yOut <= ans+tol ) )" << endl;
+     oTestDriver << "{" << endl;
+     oTestDriver << "   cerr << \"yOut should've been \" << ans << \" but it was \" << yOut << endl;" << endl;
+     oTestDriver << "   return 1;" << endl;
+     oTestDriver << "}" <<endl;
+
+     oTestDriver << "ok = pred.eval( thetaIn, " << thetaLen << ", " << endl;
+     oTestDriver << "           etaIn,   " << etaLen   << ", " << endl;
+     oTestDriver << "           epsIn,   " << etaLen   << ", " << endl;
+     oTestDriver << "           2, 2, " << endl;
+     oTestDriver << "           fOut, yOut ); " << endl;
+     oTestDriver << "if( !ok )" << endl;
+     oTestDriver << "{" << endl;
+     oTestDriver << "   std::cerr << \"pred.eval() returned false, which is wrong.\" << endl;" << endl;
+     oTestDriver << "   return 1;" << endl;
+     oTestDriver << "}" << endl;
+     oTestDriver << "ans = 0.0154668;" << endl;
+     oTestDriver << "tol = fabs(ans-fOut)/ans * 10.0;" << endl;
+     oTestDriver << "if( !( fOut >= ans-tol && fOut <= ans+tol ) )" << endl;
+     oTestDriver << "{" << endl;
+     oTestDriver << "   cerr << \"fOut should've been \" << ans << \" but it was \" << fOut << endl;" << endl;
+     oTestDriver << "   return 1;" << endl;
+     oTestDriver << "}" <<endl;
+     oTestDriver << "ans = 1.01547;" << endl;
+     oTestDriver << "tol = fabs(ans-yOut)/ans * 10.0;" << endl;
+     oTestDriver << "if( !( yOut >= ans-tol && yOut <= ans+tol ) )" << endl;
+     oTestDriver << "{" << endl;
+     oTestDriver << "   cerr << \"yOut should've been \" << ans << \" but it was \" << yOut << endl;" << endl;
+     oTestDriver << "   return 1;" << endl;
+     oTestDriver << "}" <<endl;
+
      oTestDriver << "return 0;" << endl;
      oTestDriver << "}" << endl;
   }
@@ -479,23 +582,25 @@ void NonmemTranslatorTest::testParsePopSource()
      sprintf( buf, "Failed to open %s as writable.", fTestDriver );
      CPPUNIT_ASSERT_MESSAGE( buf, false );
   }
-  if( system( "g++ DataSet.cpp IndData.cpp testDriver.cpp -g -I./ -o test" ) != 0 )
+  if( system( "g++ testPopDriver.cpp -g -I./ -o testPop" ) != 0 )
   {
-     CPPUNIT_ASSERT_MESSAGE( "Failed to compile/link.", false );
+     CPPUNIT_ASSERT_MESSAGE( "Failed to compile/link the generated \"testPopDriver.cpp\".", false );
   }
-  if( system( "./test" ) != 0 )
+  if( system( "./testPop" ) != 0 )
   {
-     CPPUNIT_ASSERT_MESSAGE( "\"test\" failed.", false );
+     CPPUNIT_ASSERT_MESSAGE( "The generated/built \"testPop\" failed to run successfully.", false );
   }
   XMLPlatformUtils::Terminate();
 }
 void NonmemTranslatorTest::testParseIndSource()
 {
-  const int nLabels = 3;
+  const int nLabels = 5;
   map<string, string> labels;
   labels["ID"]   = "";
   labels["TIME"] = "";
   labels["CP"]   = "DV";
+  labels["DOSE"] = "";
+  labels["WT"]   = "";
 
   const int thetaLen = 3;
   valarray<double> theta_in (thetaLen);
@@ -509,6 +614,8 @@ void NonmemTranslatorTest::testParseIndSource()
       theta_low[i] = -10.0 * theta_in[i];
       theta_fix[i] = ( i%2==0? true : false );
     }
+
+  const int etaLen = 1;
 
   const int omegaDim = 2;
   const Symbol::Structure omegaStruct = Symbol::TRIANGLE;
@@ -620,7 +727,7 @@ void NonmemTranslatorTest::testParseIndSource()
       oSource << "   CL=THETA(3) * WT" << endl;
       oSource << "   D=EXP(-KE*TIME)-EXP(-KA*TIME)" << endl;
       oSource << "   E=CL*(KA-KE)" << endl;
-      oSource << "   F=DS*KE*KA/E*D" << endl;
+      oSource << "   F=DV*KE*KA/E*D" << endl;
       oSource << "   Y=F+EPS(1)" << endl;
       oSource << "</pred>" << endl;
       oSource << "</model>" << endl;
@@ -706,36 +813,18 @@ void NonmemTranslatorTest::testParseIndSource()
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
   
-  vector<int> N(3);
-  N[0] = 1;
-  N[1] = 2;
-  N[2] = 3;
+  vector<int> N(1);
+  N[0] = 3;
   NonmemTranslator xlator( data, source );
   SymbolTable *table = xlator.getSymbolTable();
   Symbol * id   = table->insertLabel( "ID",   "", N );
   Symbol * time = table->insertLabel( "TIME", "", N );
   Symbol * cp   = table->insertLabel( "CP",   "DV", N );
-
-  id->  initial[0][0] = "#1";
-  time->initial[0][0] = "0.0";
-  cp->  initial[0][0] = "0.0";
-
-  id->  initial[1][0] = "#2";
-  id->  initial[1][1] = "#2";
-  time->initial[1][0] = "0.0";
-  time->initial[1][1] = "1.0";
-  cp->  initial[1][0] = "0.0";
-  cp->  initial[1][1] = "10.0";
-
-  id->  initial[2][0] = "#3";
-  id->  initial[2][1] = "#3";
-  id->  initial[2][2] = "#3";
-  time->initial[2][0] = "0.0";
-  time->initial[2][1] = "1.0";
-  time->initial[2][2] = "2.0";
-  cp->  initial[2][0] = "0.0";
-  cp->  initial[2][1] = "10.0";
-  cp->  initial[2][2] = "20.0";
+  Symbol * wt   = table->insertLabel( "WT", "", N );
+  Symbol * dose = table->insertLabel( "DOSE", "", N );
+  time->initial[0][0] = "0.0";  cp->initial[0][0] = "0.0";   wt->initial[0][0] = "30.0";  dose->initial[0][0] = "10.0";
+  time->initial[0][1] = "1.0";  cp->initial[0][1] = "10.0";  wt->initial[0][1] = "0.0";   dose->initial[0][1] = "0.0";
+  time->initial[0][2] = "2.0";  cp->initial[0][2] = "20.0";  wt->initial[0][2] = "0.0";   dose->initial[0][2] = "0.0";
 
   xlator.parseSource();
 
@@ -784,7 +873,179 @@ void NonmemTranslatorTest::testParseIndSource()
 
       CPPUNIT_ASSERT( omega_fix[i] == omega->fixed[0][i] );
       CPPUNIT_ASSERT_EQUAL( omega_in[i],  atof( omega->initial[0][i].c_str() ) );
-   }
+    }
+  //=====================================================
+  // Test the generated C++ source code files
+  // IndData.h, IndData.cpp, DataSet.h, DataSet.cpp
+  //=====================================================
+  // The order in which the variables appear in
+  // the IndData constructor must be consistent with
+  // with the order in which the variables are actually
+  // passed in the construction of these objects
+  // done in the DataSet constructor.
+  char fTestDriver[] = "testIndDriver.cpp";
+  ofstream oTestDriver( fTestDriver );
+  const int pop_size = 1;
+  if( oTestDriver.good() )
+    {
+      oTestDriver << "#include <iostream>" << endl;
+      oTestDriver << "#include \"IndData.h\"" << endl;
+      oTestDriver << "#include \"DataSet.h\"" << endl;
+      oTestDriver << "#include \"Pred.h\"" << endl;
+      oTestDriver << "using namespace std;" << endl;
+      oTestDriver << "int main()" << endl;
+      oTestDriver << "{" << endl;
+      oTestDriver << "DataSet<double> set;" << endl;
+      
+      for( int i=0; i<pop_size; i++ )
+	{
+	  for( int j=0; j<N[i]; j++ )
+	    { 
+	      oTestDriver << "if( set.data[" << i << "]->TIME[" << j << "] != ";
+	      oTestDriver << time->initial[i][j] << " )" << endl;
+	      oTestDriver << "{" << endl;
+	      oTestDriver << "   cerr << \"set[" << i << "]->TIME[" << j << "] != \\\"";
+	      oTestDriver << time->initial[i][j] << "\\\"\" << endl; " << endl;
+	      oTestDriver << "   cerr << \"was \" << set.data[";
+	      oTestDriver << i << "]->TIME[" << j << "] << \".\" << endl;" << endl;
+	      oTestDriver << "return 1;" << endl;
+	      oTestDriver << "}" << endl;
+	      
+	      oTestDriver << "if( set.data[" << i << "]->CP[" << j << "] != ";
+	      oTestDriver << cp->initial[i][j] << " )" << endl;
+	      oTestDriver << "{" << endl;
+	      oTestDriver << "   cerr << \"set[" << i << "]->CP[" << j << "] != \\\"";
+	      oTestDriver << cp->initial[i][j] << "\\\"\" << endl; " << endl;
+	      oTestDriver << "   cerr << \"was \" << set.data[";
+	      oTestDriver << i << "]->CP[" << j << "] << \".\" << endl;" << endl;
+	      oTestDriver << "return 1;" << endl;
+	      oTestDriver << "}" << endl;
+	      
+	      oTestDriver << "if( set.data[" << i << "]->DV[" << j << "] != ";
+	      oTestDriver << cp->initial[i][j] << " )" << endl;
+	      oTestDriver << "{" << endl;
+	      oTestDriver << "   cerr << \"set[" << i << "]->DV[" << j << "] != \\\"";
+	      oTestDriver << cp->initial[i][j] << "\\\"\" << endl; " << endl;
+	      oTestDriver << "   cerr << \"was \" << set.data[";
+	      oTestDriver << i << "]->DV[" << j << "] << \".\" << endl;" << endl;
+	      oTestDriver << "return 1;" << endl;
+	      oTestDriver << "}" << endl;
+	      oTestDriver << endl;
+	    }
+	}
+      oTestDriver << "double thetaIn[] = {";
+      for( int i=0; i<thetaLen; i++ )
+	{
+	  if( i>0 )
+	    oTestDriver << ", ";
+	  oTestDriver << i+1;
+	}
+      oTestDriver << "};" << endl;
+      oTestDriver << "double epsIn[] = {";
+      for( int i=0; i<etaLen; i++ )
+	{
+	  if( i>0 )
+	    oTestDriver << ", ";
+	  oTestDriver << i+1;
+	}
+      oTestDriver << "};" << endl;
+
+      oTestDriver << "double yOut = 0.0;" << endl;
+      oTestDriver << "double fOut = 0.0;" << endl;
+      oTestDriver << endl;
+      oTestDriver << "double tol  = 0.0;" << endl;
+      oTestDriver << "double ans  = 0.0;" << endl;
+      oTestDriver << endl;
+      
+      oTestDriver << "Pred<double> pred(&set);" << endl;
+      oTestDriver << "bool ok = pred.eval( thetaIn, " << thetaLen << ", " << endl;
+      oTestDriver << "           0,   " << 0   << ", " << endl;
+      oTestDriver << "           epsIn,   " << etaLen   << ", " << endl;
+      oTestDriver << "           0, 0, " << endl;
+      oTestDriver << "           fOut, yOut ); " << endl;
+      oTestDriver << "if( !ok )" << endl;
+      oTestDriver << "{" << endl;
+      oTestDriver << "   std::cerr << \"pred.eval() returned false, which is wrong.\" << endl;" << endl;
+      oTestDriver << "   return 1;" << endl;
+      oTestDriver << "}" << endl;
+      oTestDriver << "if( fOut != -0.0 )" << endl;
+      oTestDriver << "{" << endl;
+      oTestDriver << "   cerr << \"fOut should've been -0.0 but it was \" << fOut << endl;" << endl;
+      oTestDriver << "   return 1;" << endl;
+      oTestDriver << "}" <<endl;
+      oTestDriver << "if( yOut != 1.0 )" << endl;
+      oTestDriver << "{" << endl;
+      oTestDriver << "   cerr << \"yOut should've been 1.0 but it was \" << yOut << endl;" << endl;
+      oTestDriver << "   return 1;" << endl;
+      oTestDriver << "}" <<endl;
+      
+      oTestDriver << "ok = pred.eval( thetaIn, " << thetaLen << ", " << endl;
+      oTestDriver << "           0,   " << 0   << ", " << endl;
+      oTestDriver << "           epsIn,   " << etaLen   << ", " << endl;
+      oTestDriver << "           0, 1, " << endl;
+      oTestDriver << "           fOut, yOut ); " << endl;
+      oTestDriver << "if( !ok )" << endl;
+      oTestDriver << "{" << endl;
+      oTestDriver << "   std::cerr << \"pred.eval() returned false, which is wrong.\" << endl;" << endl;
+      oTestDriver << "   return 1;" << endl;
+      oTestDriver << "}" << endl;
+      oTestDriver << "ans = 1.55029;" << endl;
+      oTestDriver << "tol = fabs(ans-fOut)/ans * 10.0;" << endl;
+      oTestDriver << "if( !( fOut >= ans-tol && fOut <= ans+tol ) )" << endl;
+      oTestDriver << "{" << endl;
+      oTestDriver << "   cerr << \"fOut should've been \" << ans << \" but it was \" << fOut << endl;" << endl;
+      oTestDriver << "   return 1;" << endl;
+      oTestDriver << "}" <<endl;
+      oTestDriver << "ans = 2.55029;" << endl;
+      oTestDriver << "tol = fabs(ans-yOut)/ans * 10.0;" << endl;
+      oTestDriver << "if( !( yOut >= ans-tol && yOut <= ans+tol ) )" << endl;
+      oTestDriver << "{" << endl;
+      oTestDriver << "   cerr << \"yOut should've been \" << ans << \" but it was \" << yOut << endl;" << endl;
+      oTestDriver << "   return 1;" << endl;
+      oTestDriver << "}" <<endl;
+      
+      oTestDriver << "ok = pred.eval( thetaIn, " << thetaLen << ", " << endl;
+      oTestDriver << "           0,   " << 0   << ", " << endl;
+      oTestDriver << "           epsIn,   " << etaLen   << ", " << endl;
+      oTestDriver << "           0, 2, " << endl;
+      oTestDriver << "           fOut, yOut ); " << endl;
+      oTestDriver << "if( !ok )" << endl;
+      oTestDriver << "{" << endl;
+      oTestDriver << "   std::cerr << \"pred.eval() returned false, which is wrong.\" << endl;" << endl;
+      oTestDriver << "   return 1;" << endl;
+      oTestDriver << "}" << endl;
+      oTestDriver << "ans = 1.56026;" << endl;
+      oTestDriver << "tol = fabs(ans-fOut)/ans * 10.0;" << endl;
+      oTestDriver << "if( !( fOut >= ans-tol || fOut <= ans+tol ) )" << endl;
+      oTestDriver << "{" << endl;
+      oTestDriver << "   cerr << \"fOut should've been \" << ans << \" but it was \" << fOut << endl;" << endl;
+      oTestDriver << "   return 1;" << endl;
+      oTestDriver << "}" <<endl;
+      oTestDriver << "ans = 2.56026;" << endl;
+      oTestDriver << "tol = fabs(ans-yOut)/ans * 10.0;" << endl;
+      oTestDriver << "if( !( yOut >= ans-tol && yOut <= ans+tol ) )" << endl;
+      oTestDriver << "{" << endl;
+      oTestDriver << "   cerr << \"yOut should've been \" << ans << \" but it was \" << yOut << endl;" << endl;
+      oTestDriver << "   return 1;" << endl;
+      oTestDriver << "}" <<endl;
+      
+      oTestDriver << "return 0;" << endl;
+      oTestDriver << "}" << endl;
+    }
+  else
+    {
+      char buf[256];
+      sprintf( buf, "Failed to open %s as writable.", fTestDriver );
+      CPPUNIT_ASSERT_MESSAGE( buf, false );
+    }
+  if( system( "g++ testIndDriver.cpp -g -I./ -o testInd" ) != 0 )
+  {
+     CPPUNIT_ASSERT_MESSAGE( "Failed to compile/link the generated \"testIndDriver.cpp\".", false );
+  }
+  if( system( "./testInd" ) != 0 )
+  {
+     CPPUNIT_ASSERT_MESSAGE( "The generated/built \"testInd\" failed to run successfully.", false );
+  }
 
   XMLPlatformUtils::Terminate();
 }
@@ -800,12 +1061,11 @@ CppUnit::Test * NonmemTranslatorTest::suite()
      new CppUnit::TestCaller<NonmemTranslatorTest>(
          "testParsePopSource", 
 	 &NonmemTranslatorTest::testParsePopSource ) );
-  /*
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<NonmemTranslatorTest>(
          "testParseIndSource", 
 	 &NonmemTranslatorTest::testParseIndSource ) );
-  */
+
   return suiteOfTests;
 }
 
