@@ -7,7 +7,7 @@ public class TestSpkdb {
 	String password = "codered";
 	String firstName = "Mike";
 	String surname = "Jordan";
-	final int maxTests = 11;
+	final int maxTests = 14;
 
 	boolean b = true;
 	boolean target = true;
@@ -15,6 +15,9 @@ public class TestSpkdb {
 	int i = 1;
 
 	long userId = 0;
+	long jobId = 0;
+	long newerJobId = 0;
+	long newestJobId = 0;
 	
 	Connection conn;
 
@@ -115,7 +118,7 @@ public class TestSpkdb {
 		case 10:
 		    target = false;
 		    s = "newJob";
-		    long jobId = Spkdb.newJob(conn, 
+		    jobId = Spkdb.newJob(conn, 
 					      userId,
 					      "abstract",
 					      33,
@@ -124,21 +127,64 @@ public class TestSpkdb {
 					      "1.4.3",
 					      "nonexistantfile");
 		    b = jobId != 0;
-		    s += " is job number " + jobId;
+		    s += ": job number " + jobId;
 		    break;
 		case 11:
 		    target = true;
 		    s = "newJob";
 		    jobId = Spkdb.newJob(conn, 
 					      userId,
-					      "abstract",
+					      "Abstract: Job 1",
 					      33,
 					      "1.01",
 					      44,
 					      "1.4.3",
 					      "xmlSource");
 		    b = jobId != 0;
-		    s += " is job number " + jobId;
+		    s += ": job number " + jobId;
+		    break;
+		case 12:
+		    target = true;
+		    s = "jobStatus";
+		    rs = Spkdb.jobStatus(conn, jobId);
+		    if (rs.next()) {
+			String name = rs.getString("state_code");
+			b = name.compareTo("q2c") == 0;
+		    } 
+		    else {
+			s += ": no record for jobId=" + jobId;
+			b = false;
+		    } 
+		    break;
+		case 13:
+		    Thread.sleep(1000);
+		    target = true;
+		    s = "newJob";
+		    newerJobId = Spkdb.newJob(conn, 
+					      userId,
+					      "Abstract: job 2",
+					      33,
+					      "1.01",
+					      44,
+					      "1.4.3",
+					      "xmlSource");
+		    b = newerJobId != 0;
+		    s += ": job number " + newerJobId;
+		    break;
+		case 14:
+		    Thread.sleep(1000);
+		    target = true;
+		    s = "newJob";
+		    newestJobId = Spkdb.newJob(conn, 
+					      userId,
+					       "Abstract: job 3",
+					      33,
+					      "1.01",
+					      44,
+					      "1.4.3",
+					      "xmlSource");
+		    b = newestJobId != 0;
+		    s += ": job number " + newestJobId;
 		    break;
 		}
 	    } catch (Exception e) {
