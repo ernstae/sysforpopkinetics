@@ -11,6 +11,11 @@ The library requires ATLAS LAPACK and CBLAS.  The instructions to find
 or install these libraries can be found in RFPK Software Group's internal
 website.
 
+It also requires Xerces-C for the XML parser being used by the compiler library
+components.  Get the source distribution of xerces-c-2.5 from
+http://xml.apache.org/xerces-c/install.html and build/install according to the
+instructions given in http://xml.apache.org/xerces-c/build-misc.html#RPMLinux.
+
 The test suites require CppUnit.  Likewise, the instructions can be found
 in the group's website.
 
