@@ -1,5 +1,12 @@
 bin_PROGRAMS = testall
 
+INST_BASE = /usr/local
+
+libdir = $(INST_BASE)/lib/spktest
+
+AM_CPPFLAGS = -I$(INST_BASE)/include/spktest -I/$(INST_BASE)/cppunit/include
+AM_LDFLAGS  = -L$(INST_BASE)/lib/spktest -lspkpred -lspk -lspkopt -llapack -latlas_lapack -lcblas -latlas -lpthread -lm -lcppunit
+
 testall_SOURCES = \
 	compareToKnown.cpp \
 	DiagCovTest.cpp \
@@ -14,11 +21,6 @@ testall_SOURCES = \
 	PopPredModelTest.h \
 	../config.h
 
-testall_CXXFLAGS = -I/usr/local/cppunit/include
-
-testall_LDFLAGS = -lspkpred -lspk -lspkopt -llapack -latlas_lapack -lcblas -latlas -lpthread -lm -lcppunit
-
-INCLUDES = -I@top_srcdir@/
 pkginclude_HEADERS = \
 	compareToKnown.h \
 	DiagCovTest.h \
