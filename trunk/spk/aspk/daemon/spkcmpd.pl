@@ -366,11 +366,11 @@ sub fork_compiler {
 }
 sub format_error_report {
     my $content = shift;
-    my $report = "<spkreportML>\n";
+    my $report = "<spkreport>\n";
     $report .= "  <error_message>\n";
     $report .= "    $content\n";
     $report .= "  </error_message>\n";
-    $report .= "</spkreportML>\n";
+    $report .= "</spkreport>\n";
 }
 sub reaper {
 
