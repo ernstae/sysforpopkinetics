@@ -657,7 +657,7 @@ namespace // [Begin: unnamed namespace]
     //
     //**********************************************************
 
-    const char* gradient( double* gScaledOut );
+    const char* gradient( double* gScaledOut )
     {
       //--------------------------------------------------------
       // Evaluate the gradient of the unscaled objective function.
@@ -673,7 +673,7 @@ namespace // [Begin: unnamed namespace]
       {
         throw e.push(
           SpkError::SPK_OPT_ERR, 
-          "An SpkException was thrown during the evaluation of the gradient of the function.",
+          "An SpkException was thrown during the evaluation of the gradient of the objective.",
           __LINE__, 
           __FILE__ );
       }
@@ -681,7 +681,7 @@ namespace // [Begin: unnamed namespace]
       {
         throw SpkException(
           stde,
-          "An standard exception was thrown during the evaluation of the gradient of the function.",
+          "An standard exception was thrown during the evaluation of the gradient of the objective.",
           __LINE__, 
           __FILE__ );
       }  
@@ -689,7 +689,7 @@ namespace // [Begin: unnamed namespace]
       {
         throw SpkException(
           SpkError::SPK_UNKNOWN_ERR, 
-          "An unknown exception was thrown during the evaluation of the gradient of the function.",
+          "An unknown exception was thrown during the evaluation of the gradient of the objective.",
           __LINE__, 
           __FILE__ );
       }
@@ -745,6 +745,13 @@ void quasiNewtonAnyBox(
   // its Hessian are all evaluated at xIn.
   bool isWarmStart = optimizer.getIsWarmStart() && nMaxIter > 0;
   
+  strstring message;  WILL THIS WORK WHERE A char* IS EXPECTED?
+  strstring message;  WILL THIS WORK WHERE A char* IS EXPECTED?
+  strstring message;  WILL THIS WORK WHERE A char* IS EXPECTED?
+  strstring message;  WILL THIS WORK WHERE A char* IS EXPECTED?
+  strstring message;  WILL THIS WORK WHERE A char* IS EXPECTED?
+  const char *message;
+
 
   //------------------------------------------------------------
   // Validate the inputs (debug mode).
@@ -834,13 +841,6 @@ void quasiNewtonAnyBox(
   scaleElem(nObjPar, pdXInData, pdXLowData, pdXDiffData, yCurr);
 
 
-  //------------------------------------------------------------
-  // Prepare the objective function object.
-  //------------------------------------------------------------
-  
-  QuasiNewton01BoxObj objective( &dvecXLow, &dvecXUp, &dvecXDiff );
-
-
 ??  //***************************************************************************
   // [Revisit - Next SPK Iteration - Improved Diagnostics - Mitch]
   //
@@ -869,25 +869,60 @@ void quasiNewtonAnyBox(
 
 
   //------------------------------------------------------------
+  // Prepare the objective function object.
+  //------------------------------------------------------------
+
+  QuasiNewton01BoxObj objective( &dvecXLow, &dvecXUp, &dvecXDiff );
+
+
+  //------------------------------------------------------------
   // Prepare the optimizer state information.
   //------------------------------------------------------------
 
   double rScaled;
   double fScaled;
 
-  // Since the optimizer always does a warm start, i.e. it
-  // always makes use of the current values for the objective,
-  // its gradient, Hessian, etc., set those values here.
+  // Since the optimizer always does a warm start, i.e. it always
+  // makes use of the current values for y, the objective function,
+  // its gradient and its Hessian, set those values here.
   if ( !isAWarmRestart )
   {
-    // Evaluate the objective function and its gradient at the initial value for y.
-    // gCur is gradient at yCur
-    // fCur is objective function value at yCur
-    objective.function( yCurr, fScaled, gScaled, ... );
-    msg = obj.function(yCur, fCur); 
-    ok &= strcmp(msg, "ok") == 0;
-    msg = obj.gradient(gCur); 
-    ok &= strcmp(msg, "ok") == 0;
+    // Evaluate the objective function and its gradient at the
+    // initial value for y.
+    try
+    {
+      message = objective.function( yCurr, fScaled );
+      assert( strcmp( message, "ok" ) == 0 );
+      assert( message == "ok" );
+
+      message = objective.gradient( gCurr ); 
+      assert( strcmp( message, "ok" ) == 0 );
+      assert( message == "ok" );
+    }
+    catch( SpkException& e )
+    {
+      throw e.push(
+        SpkError::SPK_OPT_ERR, 
+        "An SpkException was thrown during the initial evaluation of the objective and gradient.",
+        __LINE__, 
+        __FILE__ );
+    }
+    catch( const std::exception& stde )
+    {
+      throw SpkException(
+        stde,
+        "An standard exception was thrown during the initial evaluation of the objective and gradient.",
+        __LINE__, 
+        __FILE__ );
+    }  
+    catch( ... )
+    {
+      throw SpkException(
+        SpkError::SPK_UNKNOWN_ERR, 
+        "An unknown exception was thrown during the initial evaluation of the objective and gradient.",
+        __LINE__, 
+        __FILE__ );
+    }
 
     if ( nMaxIter > 0 )
     {
@@ -970,7 +1005,7 @@ void quasiNewtonAnyBox(
   // of the projected gradient is less than or equal to delta.
   // The scale is the value this norm will be divided by to get
   // a delta value for which the current y value will still not be the soluton.
- that the  will not be converged for.
+ that the will not be converged for.
   double delta;
   double deltaScale = 10.0;
 
@@ -997,14 +1032,6 @@ void quasiNewtonAnyBox(
 
   // Send the output to standard cout.
   std::ostream outputStream = std::cout;
-
-  strstring msg;  WILL THIS WORK WHERE A char* IS EXPECTED?
-  strstring msg;  WILL THIS WORK WHERE A char* IS EXPECTED?
-  strstring msg;  WILL THIS WORK WHERE A char* IS EXPECTED?
-  strstring msg;  WILL THIS WORK WHERE A char* IS EXPECTED?
-  strstring msg;  WILL THIS WORK WHERE A char* IS EXPECTED?
-  strstring msg;  WILL THIS WORK WHERE A char* IS EXPECTED?
-  const char *msg;
 
 
   //------------------------------------------------------------
@@ -1039,12 +1066,12 @@ void quasiNewtonAnyBox(
         iterCurrPrev = iterCurr;
 
         // Ask the optimizer to take perform a limited number of iterations.
-        msg = QuasiNewton01Box(
+        message = QuasiNewton01Box(
           outputStream,
           level,
           nIterMax,
           nQuadMax,
-          n,
+          nObjPar,
           delta,
           objective,
           iterCurr,
