@@ -477,7 +477,7 @@ void NonmemTranslatorIndTest::testParseIndSource()
   ofstream oIndDataDriver( fIndDataDriver_cpp );
   CPPUNIT_ASSERT( oIndDataDriver.good() );
 
-  oIndDataDriver << "#include <string>" << endl;
+  oIndDataDriver << "#include <vector>" << endl;
   oIndDataDriver << "#include \"IndData.h\"" << endl;
   oIndDataDriver << "using namespace std;" << endl;
   oIndDataDriver << "int main()" << endl;
