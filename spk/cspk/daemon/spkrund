@@ -8,6 +8,7 @@ DATABASE=spkdb
 DBHOST=dbserver
 DBUSER=daemon
 DBPASSWD=daemon
+BIN=/usr/local/bin/spkprod
 MODE=prod
 
 SERVICE_NAME=spkrund
@@ -16,7 +17,7 @@ LOCKFILE_PATH=/tmp/lock_$SERVICE_NAME
 ulimit -c 10000000  # this enables a core dump if the compiler crashes
 
 start() {
-    /usr/local/bin/${SERVICE_NAME}.pl $DATABASE $DBHOST $DBUSER $DBPASSWD $MODE
+    $BIN/${SERVICE_NAME}.pl $DATABASE $DBHOST $DBUSER $DBPASSWD $MODE
     echo "started"
 }
 stop() {
