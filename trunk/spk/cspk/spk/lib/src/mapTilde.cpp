@@ -889,8 +889,7 @@ void mapTilde(
                 // if g[i] is NOT active.  Otherwise, keep it zero.
                 //
                 placeRows(dvecPosNewtonDirTemp, dvecPosNewtonDir, notActive);
-            }
-            
+            }       
             //
             // Look for more active directions: in opposite directions.
             // 
@@ -919,22 +918,30 @@ void mapTilde(
             // If g[i] was not active but (curBLower[i] != 0 || curBUp[i] != 0),
             // then, g[i] is said to be active.
             //
-            add( dvecCurBlower, dvecCurBupper, dvecCurBboth );
-            rowIndex      = inxToMax(dvecCurBboth);
-            change        = pdCurBboth[rowIndex] > 0;
+	    int indexMax = -1;
+            double amountMax = 0.;
+            int i;
+            double * pdCurBlower = dvecCurBlower.data();
+            double * pdCurBupper = dvecCurBupper.data();
+
+            // Need this assignment for unknown reason
+            pdActive = active.data(); 
+            for(i = 0; i <nB; i++)
+            {     if( (pdActive[i]!=dTRUE) && (pdCurBlower[i]>amountMax) )
+                  {      indexMax = i;
+                         amountMax = pdCurBlower[i];
+                  }
+                  if( (pdActive[i]!=dTRUE) && (pdCurBupper[i]>amountMax) )
+                  {      indexMax = i;
+                         amountMax = pdCurBupper[i];
+                  }
+            }
+            change = indexMax >= 0;
             if( change )
             {
-                if( pdActive[rowIndex] > 0 )
-                {
-                    throw SpkException(SpkError::SPK_UNKNOWN_ERR,
-                            "Failed to solve the first order necessary condition for a solution to the map baysian objective function",
-                            __LINE__,
-                            __FILE__);
-                }
-                pdActive[rowIndex] = dTRUE;
+		pdActive[indexMax] = dTRUE;
             }
         }
-
         // determine the maximum allowable step size
         dNewtonDirectionCurStep = 1.0;
         iCurMin  = 0;
@@ -1012,6 +1019,8 @@ void mapTilde(
                 normSofar = addScalarOnTail( normSofar, norm(g) );
             }
         }
+        // Trace...
+	//cout << "Maptilde Objective = " << normSofar << endl;
         if( converged || (iMaxitr == 0) )
         {
             dvecBout               = dvecCurB;
