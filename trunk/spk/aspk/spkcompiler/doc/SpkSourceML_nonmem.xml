@@ -84,10 +84,10 @@
           </model>
        <presentation>
           <table header="every" process="estimation">
-             <column label="ID"/>
-             <column label="DOSE"/>
-             <column label="WT"/>
-             <column label="TIME"/>
+             <column label="ID" appearance_order="1"/>
+             <column label="DOSE" appearance_order="2"/>
+             <column label="WT" appearance_order="3"/>
+             <column label="TIME" appearance_order="4"/>
           </table>
           <scatterplot process="estimation" y0_line="show" unit_slope="yes">
              <y label="RES"/>

@@ -157,8 +157,8 @@ Either label or synonym may be one of the NONMEM reserved identifiers, among whi
 <!-- <pop_analysis is_restart="yes"> Request to warm-start the optimization process; "yes" or "no", default to "yes".-->
 <!ATTLIST pop_analysis is_restart (yes|no) #IMPLIED>
 
-<!-- <pop_analysis is_sigma_out="yes"> Request to return the final value for sigma matrix; "yes" or "no", default to "yes".-->
-<!ATTLIST pop_analysis is_sigma_out (yes|no) #IMPLIED>
+<!-- <pop_analysis is_eta_out="no"> Request to evaluate the eta at the final estimated population parameter values; "yes" or "no", default to "no". -->
+<!ATTLIST pop_analysis is_eta_out (yes|no) #IMPLIED>
 
 <!-- <theta> The NONMEM theta vector.-->
 <!ELEMENT theta (in | low | up)>
@@ -292,10 +292,14 @@ The order in which the <compartment>s appear is interpreted as the compartment n
 -->
 <!ELEMENT comp_model (compartment+ | link*) >
 
-<!-- <comp_model ncompartments="n"> Total number of compartments other than the output compartment.-->
-<!ATTLIST comp_model ncompartments CDATA #REQUIRED>
-<!ATTLIST comp_model nequilibrium  CDATA #REQUIRED><!-- <comp_model nequilibrium="0"> The number of equilibrium compartments. -->
-<!ATTLIST comp_model nparameters   CDATA #REQUIRED><!-- <comp_model nparameters="n"> The number of basic PK parameters. -->
+<!-- <comp_model ncompartments="n"> Total number of compartments other than the output compartment.  The default is the number of <compartment>s. -->
+<!ATTLIST comp_model ncompartments CDATA #IMPLIED>
+
+<!-- <comp_model nequilibrium="0"> The number of equilibrium compartments, default to 0.  -->
+<!ATTLIST comp_model nequilibrium  CDATA #IMPLIED>
+
+<!-- <comp_model nparameters="n"> The number of basic PK parameters. The default is the number of bsic PK parameters defined in the <pk> block.-->
+<!ATTLIST comp_model nparameters   CDATA #IMPLIED>
 
 <!-- <compartment> Definition of a compartment.-->
 <!ELEMENT compartment EMPTY>
@@ -359,7 +363,7 @@ There can be as many as 10 <table>s and 20 <scatterplot>s.
 -->
 <!ELEMENT presentation (table+ | scatterplot+)>
 
-<!-- <table> Information to request to produce a table. The table columns are placed in the order of which the <column> appears. There are as many as 8 tables.-->
+<!-- <table> Information to request to produce a table. The table columns are placed in the order of which the <column> appears. There are as many as 10 tables.-->
 <!ELEMENT table (description? | column+)>
 
 <!-- <table save_as=""> The file name in which the table is saved, default to empty which requests display only.-->
@@ -383,6 +387,9 @@ There can be as many as 10 <table>s and 20 <scatterplot>s.
 <!-- <column sort_order=""> The priority by which this column data is sorted.  If omitted, no sorting is applied.
 -->
 <!ATTLIST column sort_order CDATA #IMPLIED>
+
+<!-- <column appearance_order=""> The order in which the column appears in the table (from left to right). -->
+<!ATTLIST column appearance_order CDATA #REQUIRED>
 
 <!-- <scatterplot> Information to request to produce a scatterplot. At most 2 <by>s are allowed.-->
 <!ELEMENT scatterplot (description? | x+ | y+ | by*)>
