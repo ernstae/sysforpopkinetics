@@ -1,15 +1,18 @@
 lib_LTLIBRARIES = libspkpred.la libspkpred_release.la
 
+INST_BASE = /usr/local
+
+libdir        = $(INST_BASE)/lib/spktest
+pkgincludedir = $(INST_BASE)/include/spktest/spkpred
+
+AM_CPPFLAGS = -I$(INST_BASE)/include/spktest
+
 CXXFLAGS   =
 CXXCOMPILE =
 CFLAGS     =
 
-libspkpred_la_CXXFLAGS           = -g
-libspkpred_la_CXXCOMPILE         = -g
-libspkpred_release_la_CXXFLAGS   = -O3
-libspkpred_release_la_CXXCOMPILE = -O3
-
-pkgincludedir = @includedir@/spkpred
+libspkpred_la_CXXFLAGS         = -g
+libspkpred_release_la_CXXFLAGS = -O3
 
 libspkpred_la_SOURCES = \
 	Cov.cpp \
@@ -41,7 +44,6 @@ libspkpred_release_la_SOURCES = \
 	PopPredModel.h \
 	PredBase.h
 
-INCLUDES = -I@top_srcdir@/
 pkginclude_HEADERS = \
 	Cov.h \
 	DiagCov.h \
