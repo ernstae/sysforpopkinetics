@@ -896,6 +896,11 @@ void quasiNewtonAnyBox(
   const bool      exponential = true;
   const double          delta = 1e-7;
 
+ CONSIDER: MOVE THIS STUFF INTO IF BLOCK BELOW
+ CONSIDER: MOVE THIS STUFF INTO IF BLOCK BELOW
+ CONSIDER: MOVE THIS STUFF INTO IF BLOCK BELOW
+ CONSIDER: MOVE THIS STUFF INTO IF BLOCK BELOW
+ CONSIDER: MOVE THIS STUFF INTO IF BLOCK BELOW
 
   // Evaluate the objective and its gradient if this is not a
   // warm start or if zero iterations have been requested.
@@ -944,8 +949,25 @@ void quasiNewtonAnyBox(
     }
   }
   else if ( nMaxIter == 0 )
+  {
+       SHOULD THIS HAVE A SEPARATE BLOCK HERE?
+       SHOULD THIS HAVE A SEPARATE BLOCK HERE?
+       SHOULD THIS HAVE A SEPARATE BLOCK HERE?
+       SHOULD THIS HAVE A SEPARATE BLOCK HERE?
+       SHOULD THIS HAVE A SEPARATE BLOCK HERE?
+  }
   else
   {
+    // Evaluate the objective and its gradient if this is not a
+    // warm start or if zero iterations have been requested.
+    if ( nMaxIter == 0 )
+    {
+      CONSIDER: DO SPECIAL ZERO ITERATION STUFF HERE?
+      CONSIDER: DO SPECIAL ZERO ITERATION STUFF HERE?
+      CONSIDER: DO SPECIAL ZERO ITERATION STUFF HERE?
+      CONSIDER: DO SPECIAL ZERO ITERATION STUFF HERE?
+    }
+
     // Set the number of quasi-Newton iterations high enough that 
     // the optimizer can build up a reasonably accurate approximation
     // for the Hessian the first time it is called, but not so high
