@@ -804,8 +804,8 @@ void quasiNewtonAnyBox(
   double* deltaY         = memoryDbl( nObjPar );
   double* gScaledProj    = memoryDbl( nObjPar );
   double* hScaledWork    = memoryDbl( nObjPar * nObjPar );
-  double* lScaled        = memoryDbl( nObjPar * nObjPar );
-  double* lScaledDiagRec = memoryDbl( nObjPar );
+  double* hScaledChol        = memoryDbl( nObjPar * nObjPar );
+  double* hScaledCholDiagRec = memoryDbl( nObjPar );
 
   // These variables are used by the function isWithinTol.
   bool* isElemFree = memoryBool( nObjPar );
@@ -1010,7 +1010,7 @@ void quasiNewtonAnyBox(
   //------------------------------------------------------------
 
   valarray<double> hScaledVA( nObjPar * nObjPar );
-  valarray<double> lScaledVA( nObjPar * nObjPar );
+  valarray<double> hScaledCholVA( nObjPar * nObjPar );
 
   try
   {
@@ -1021,8 +1021,8 @@ void quasiNewtonAnyBox(
       // Get the Cholesky factor of the scaled Hessian in lower triangular 
       // form and column-major order, and then put it in row-major order.
       doubleArrayToValarray( hScaled, hScaledVA );
-      lScaledVA = cholesky( hScaledVA, nObjPar );
-      valarrayToDoubleArrayTrans( nObjPar, lScaledVA, lScaled );
+      hScaledCholVA = cholesky( hScaledVA, nObjPar );
+      valarrayToDoubleArray_SquareMatrixTrans( hScaledCholVA, hScaledChol );
 
       // See if this function's convergence criterion has been met.
       if ( isWithinTol( 
@@ -1033,11 +1033,11 @@ void quasiNewtonAnyBox(
         yUp,
         gScaled,
 	hScaled,
-        lScaled,
+        hScaledChol,
 	deltaY,
 	gScaledProj,
 	hScaledWork,
-	lScaledDiagRec,
+	hScaledCholDiagRec,
 	isElemFree ) )
       {
         isAcceptable = true;
@@ -1306,6 +1306,7 @@ void scaleGradElem(
  *
  *************************************************************************/
 
+void valarrayMatrixToDoubleArrayMatrixTrans( const valarray<double>& xVA, double* x )
 void doubleArrayToValarray( const double* x, valarray<double>& xVA )
 {
   int i;
@@ -1318,22 +1319,38 @@ void doubleArrayToValarray( const double* x, valarray<double>& xVA )
 
 
 /*************************************************************************
- * Function: valarrayToDoubleArray
+ * Function: valarrayToDoubleArray_SquareMatrixTrans
  *
  *
  * Sets the elements in the array of doubles x equal to those in the 
  * valarray of doubles xVA.  This function assumes that x and xVA have
- * the same number of elements.
+ * the same number of elements and that they contain the elements from a 
+ * square matrix.
+
+ * Sets the elements in the array of doubles x equal to the matrix transpose of those in the 
+ * valarray of doubles xVA assuming that x and xVA both contain the elements from a 
+ * square matrix.
+
+ * Assuming that the array of doubles x and the valarray of doubles xVA
+ both contain the elements from a square matrix with the same number of elements, this function 
+sets the elements in x equal to the matrix transpose of those in xVA
+
  *
  *************************************************************************/
 
-void valarrayToDoubleArray( const valarray<double>& xVA, double* x )
+void valarrayMatrixToDoubleArrayMatrixTrans( const valarray<double>& xVA, double* x )
 {
   int i;
+  int j;
 
-  for ( i = 0; i < xVA.size(); i++ )
+  int n = xVA.size();
+
+  for ( i = 0; i < n; i++ )
   {
-    x[i] = xVA[i];
+    for ( j = 0; j < n; j++ )
+    {
+      x[i + j * n] = xVA[j + i * n];
+    }
   }
 }
 
