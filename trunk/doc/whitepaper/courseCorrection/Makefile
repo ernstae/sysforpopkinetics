@@ -1,7 +1,7 @@
 T = courseCorrection
 HTML_OPS = --nochunks
 STYLE = ../../stylesheet
-WEB = whitechuck:/var/www/html/soft/whitepaper/$T
+WEB = whitechuck.rfpk.washington.edu:/var/www/html/soft/whitepaper/$T
 PNG = $(wildcard *.png)
 
 all:	html pdf rtf

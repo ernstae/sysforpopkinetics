@@ -25,7 +25,7 @@ fi
 
 SUBJECT=$1
 WEBDIR=/var/www/html/soft/decision/research/$SUBJECT
-WEBHOST=whitechuck
+WEBHOST=whitechuck.rfpk.washington.edu
 
 mkdir $SUBJECT
 cp template/Makefile $SUBJECT/makefile
