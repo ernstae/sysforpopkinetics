@@ -35,7 +35,7 @@ namespace MontePars {
    // the product of the elements of numberEval.
    // If method != grid, numberEval[0] is the total number of functions 
    // evaluations.
-   const int c_numberEval[nEval] = { 1000 };
+   const int c_numberEval[nEval] = { 60 };
    const std::valarray<int> numberEval(c_numberEval, nEval);
 };
 

@@ -1,4 +1,4 @@
-// BRAD_LINEAR_MODEL
+// Linear Model: Estimation
 #ifndef PRED_H
 #define PRED_H
 
@@ -8,100 +8,73 @@
 #include <CppAD/CppAD.h>
 #include "DataSet.h"
 
-const CppAD::AD<double> pow( const CppAD::AD<double>& x, int n )
-{
-   CppAD::AD<double> y = 1.0;
-   if( n > 0 )
-   {
-      for( int i=0; i<n; i++ )
-      {
-         y *= x;
-      }
-   }
-   else if( n < 0 )
-   {
-      for( int i=n; i<0; i++ )
-      {
-         y /= x;
-      }
-   }
-   return y;
-}
-const CppAD::AD<double> pow( int x, const CppAD::AD<double>& n )
-{
-   return pow( static_cast< CppAD::AD<double> >( x ), n );
-}
-const CppAD::AD<double> pow( const CppAD::AD<double>& x, double n )
-{
-   return pow( x, CppAD::AD<double>( n ) );
-}
-const CppAD::AD<double> pow( double x, const CppAD::AD<double>& n )
-{
-   return pow( CppAD::AD<double>( x ), n );
-}
-
-template <class ValueType>
-class Pred : public PredBase<ValueType>
+template <class spk_ValueType>
+class Pred : public PredBase<spk_ValueType>
 {
 public:
-Pred( const DataSet<ValueType>* dataIn );
-~Pred();
-int getNObservs( int ) const;
-bool eval( int spk_thetaOffset, int spk_thetaLen,
-           int spk_etaOffset,   int spk_etaLen,
-           int spk_epsOffset,   int spk_epsLen,
-           int spk_fOffset,     int spk_fLen,
-           int spk_yOffset,     int spk_yLen,
-           int spk_i,
-           int spk_j,
-           const std::vector<ValueType>& spk_indepVar,
-           std::vector<ValueType>& spk_depVar );
+   Pred( const DataSet<spk_ValueType>* dataIn );
+   ~Pred();
+   int getNObservs( int ) const;
+   bool eval( int spk_thetaOffset, int spk_thetaLen,
+              int spk_etaOffset,   int spk_etaLen,
+              int spk_epsOffset,   int spk_epsLen,
+              int spk_fOffset,     int spk_fLen,
+              int spk_yOffset,     int spk_yLen,
+              int spk_i,
+              int spk_j,
+              const std::vector<spk_ValueType>& spk_indepVar,
+              std::vector<spk_ValueType>& spk_depVar );
 
 protected:
-Pred();
-Pred( const Pred& );
-Pred & operator=( const Pred& );
+   Pred();
+   Pred( const Pred& );
+   Pred & operator=( const Pred& );
 private:
-const int nIndividuals;
-const DataSet<ValueType> *perm;
-DataSet<ValueType> temp;
-mutable bool isIterationCompleted;
+   const int nIndividuals;
+   const DataSet<spk_ValueType> *perm;
+   DataSet<spk_ValueType> temp;
+   mutable bool isIterationCompleted;
+
 mutable std::string ID;
-mutable ValueType TIME;
-mutable ValueType DV;
-mutable ValueType MDV;
-mutable ValueType F;
-mutable ValueType PRED;
-mutable ValueType RES;
-mutable ValueType WRES;
-mutable ValueType Y;
+mutable spk_ValueType TIME;
+mutable spk_ValueType DV;
+mutable spk_ValueType MDV;
+mutable spk_ValueType F;
+mutable spk_ValueType PRED;
+mutable spk_ValueType RES;
+mutable spk_ValueType WRES;
+mutable spk_ValueType Y;
 };
-template <class ValueType>
-Pred<ValueType>::Pred( const DataSet<ValueType>* dataIn )
+
+template <class spk_ValueType>
+Pred<spk_ValueType>::Pred( const DataSet<spk_ValueType>* dataIn )
 : perm( dataIn ),
-  nIndividuals( 2 ),
+  nIndividuals( 10 ),
   isIterationCompleted( true )
 {
 }
-template <class ValueType>
-Pred<ValueType>::~Pred()
+
+template <class spk_ValueType>
+Pred<spk_ValueType>::~Pred()
 {
 }
-template <class ValueType>
-int Pred<ValueType>::getNObservs( int spk_i ) const
+
+template <class spk_ValueType>
+int Pred<spk_ValueType>::getNObservs( int spk_i ) const
 {
   return perm->data[spk_i]->ID.size();
 }
-template <class ValueType>
-bool Pred<ValueType>::eval( int spk_thetaOffset, int spk_thetaLen,
+
+template <class spk_ValueType>
+bool Pred<spk_ValueType>::eval( int spk_thetaOffset, int spk_thetaLen,
                         int spk_etaOffset,   int spk_etaLen,
                         int spk_epsOffset,   int spk_epsLen,
                         int spk_fOffset,     int spk_fLen,
                         int spk_yOffset,     int spk_yLen,
                         int spk_i,
                         int spk_j,
-                        const std::vector<ValueType>& spk_indepVar,
-                        std::vector<ValueType>& spk_depVar )
+                        const std::vector<spk_ValueType>& spk_indepVar,
+                        std::vector<spk_ValueType>& spk_depVar )
 {
   assert( spk_thetaLen == 1 );
   assert( spk_etaLen   == 1 );
@@ -111,26 +84,19 @@ ID = perm->data[spk_i]->ID[spk_j];
 TIME = perm->data[spk_i]->TIME[spk_j];
 DV = perm->data[spk_i]->DV[spk_j];
 MDV = perm->data[spk_i]->MDV[spk_j];
-typename std::vector<ValueType>::const_iterator THETA1 = spk_indepVar.begin() + spk_thetaOffset + 0;
-typename std::vector<ValueType>::const_iterator ETA1 = spk_indepVar.begin() + spk_etaOffset + 0;
-typename std::vector<ValueType>::const_iterator EPS1 = spk_indepVar.begin() + spk_epsOffset + 0;
-typename std::vector<ValueType>::const_iterator THETA = spk_indepVar.begin() + spk_thetaOffset;
-typename std::vector<ValueType>::const_iterator ETA = spk_indepVar.begin() + spk_etaOffset;
-typename std::vector<ValueType>::const_iterator EPS = spk_indepVar.begin() + spk_epsOffset;
-ValueType F = 0.0;
-ValueType Y = 0.0;
+typename std::vector<spk_ValueType>::const_iterator THETA1 = spk_indepVar.begin() + spk_thetaOffset + 0;
+typename std::vector<spk_ValueType>::const_iterator ETA1 = spk_indepVar.begin() + spk_etaOffset + 0;
+typename std::vector<spk_ValueType>::const_iterator EPS1 = spk_indepVar.begin() + spk_epsOffset + 0;
+typename std::vector<spk_ValueType>::const_iterator THETA = spk_indepVar.begin() + spk_thetaOffset;
+typename std::vector<spk_ValueType>::const_iterator ETA = spk_indepVar.begin() + spk_etaOffset;
+typename std::vector<spk_ValueType>::const_iterator EPS = spk_indepVar.begin() + spk_epsOffset;
+spk_ValueType F = 0.0;
+spk_ValueType Y = 0.0;
 //=========================================
 // Begin User Code                         
 //-----------------------------------------
 
-//  FIXED EFFECT THETA(1)  IS THE SLOPE OF THE LINE
-//  RANDOM EFFECT ETA(1) IS THE INTERCEPT OF THE LINE
-//  MEASUREMENT ERROR IS EPS(1)
-// 
-//  MODEL FOR THE MEAN GIVEN THE RANDOM EFFECTS
-F = THETA[ ( 1 ) - 1 ] * TIME + ETA[ ( 1 ) - 1 ];
-// 
-//  MODEL FOR THE DATA FIVEN THE MEASUREMENT ERROR
+F = ( THETA[ ( 1 ) - 1 ] + ETA[ ( 1 ) - 1 ] ) * TIME;
 Y = F + EPS[ ( 1 ) - 1 ];
 //-----------------------------------------
 // End User Code                           
@@ -143,7 +109,7 @@ temp.data[ spk_i ]->PRED[ spk_j ] = PRED;
 copy( THETA, THETA+spk_thetaLen, temp.data[ spk_i ]->THETA[ spk_j ].begin() ); 
 temp.data[ spk_i ]->Y[ spk_j ] = Y;
 
-if( spk_i == 2-1 && spk_j == perm->data[spk_i]->ID.size()-1 )
+if( spk_i == 10-1 && spk_j == perm->data[spk_i]->ID.size()-1 )
 {
   // This means, SPK advanced in iteration.
   // Move temporary storage to permanent storage.
@@ -169,16 +135,16 @@ if( perm->data[ spk_i ]->MDV[ spk_j ] == 0 )
    return true;
 else return false;
 }
-template <class ValueType>
-Pred<ValueType>::Pred()
+template <class spk_ValueType>
+Pred<spk_ValueType>::Pred()
 {
 }
-template <class ValueType>
-Pred<ValueType>::Pred( const Pred<ValueType>& )
+template <class spk_ValueType>
+Pred<spk_ValueType>::Pred( const Pred<spk_ValueType>& )
 {
 }
-template <class ValueType>
-Pred<ValueType> & Pred<ValueType>::operator=( const Pred<ValueType>& )
+template <class spk_ValueType>
+Pred<spk_ValueType> & Pred<spk_ValueType>::operator=( const Pred<spk_ValueType>& )
 {
 }
 #endif

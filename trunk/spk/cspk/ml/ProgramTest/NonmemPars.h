@@ -1,6 +1,6 @@
 //=============================================================
 // 
-// BRAD_LINEAR_MODEL
+// Linear Model: Estimation
 // 
 // The namespace NonmemPars exports the values 
 // given by the user or values drived from the user-given values.
@@ -27,17 +27,22 @@ using namespace std;
 
    // A C-arrary containing the upper boundary values for THETA.
    // This array is used to initializes a valarray object that follows.
-   double c_thetaUp[nTheta] = { 2   };
+   double c_thetaUp[nTheta] = { +10   };
    const valarray<double> thetaUp ( c_thetaUp,  1 );
 
    // A C-arrary containing the lower boundary values for THETA.
    // This array is used to initializes a valarray object that follows.
-   double c_thetaLow[nTheta] = { 0   };
+   double c_thetaLow[nTheta] = { -10   };
    const valarray<double> thetaLow( c_thetaLow, 1 );
    // A C-arrary containing the initial estimates for THETA.
    // This array is used to initializes a valarray object that follows.
-   double c_thetaIn[nTheta] = { 0.999976 };
+   double c_thetaIn[nTheta] = { 1.15339 };
 
+   // A C-arrary containing the fixation flags for THETA.
+   // This array is used to initializes a valarray object that follows.
+   bool c_thetaFixed[nTheta] = { 0 };
+
+   const valarray<bool> thetaFixed( c_thetaFixed, 1 );
    // A valarray object containing the initial values for THETA.
    const valarray<double> thetaIn ( c_thetaIn, nTheta );
 
@@ -71,7 +76,7 @@ using namespace std;
 
    // A C-arrary containing the initial estimates for OMEGA.
    // This array is used to initializes a valarray object that follows.
-   double c_omegaIn[ omegaOrder ] = { 0.01 };
+   double c_omegaIn[ omegaOrder ] = { 1.96734 };
    const valarray<double> omegaIn( c_omegaIn, omegaOrder );
 
    //-------------------------------------------
@@ -98,7 +103,7 @@ using namespace std;
    const int sigmaOrder = sigmaDim;
    // A C-arrary containing the initial estimates for SIGMA.
    // This array is used to initializes a valarray object that follows.
-   double c_sigmaIn[ sigmaOrder ] = { 0.01 };
+   double c_sigmaIn[ sigmaOrder ] = { 0.00876342 };
    const valarray<double> sigmaIn( c_sigmaIn, sigmaOrder );
 
    //-------------------------------------------

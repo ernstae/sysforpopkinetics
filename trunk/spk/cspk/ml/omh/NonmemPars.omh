@@ -125,12 +125,12 @@ Omega matrix.
 
 $head Eps$$
 
-$subhead nEps, l$$
+$subhead nEps, s$$
 The variable
 $codep
 	const int nEps
 $$
-specifies $latex l$$
+specifies $latex s$$
 the number of components in the measurement error covariance.
 
 $subhead sigmaStruct$$
@@ -150,21 +150,21 @@ $codep
 	const valarray<double> sigmaIn;
 $$
 specifies the value of the measurement error covariance matrix 
-$latex \Sigma \in \R^{l \times l}$$.
+$latex \Sigma \in \R^{s \times s}$$.
 If the covariance is diagonal, this is a vector
-with size equal to $code nEta$$ and its components are
+with size equal to $latex s$$ and its components are
 $latex \Sigma_{1,1}$$,  
 ... ,
-$latex \Sigma_{l,l}$$ in that order.
+$latex \Sigma_{s,s}$$ in that order.
 If the random effects covariance is full, this is a vector with
-size equal to $code l * (l + 1) / 2$$ and 
+size equal to $latex s * (s + 1) / 2$$ and 
 its components are
 $latex \Sigma_{1,1}$$,  
 $latex \Sigma_{2,1}$$,  
 $latex \Sigma_{2,2}$$,  
 $latex \Sigma_{3,1}$$,  
 ... ,
-$latex \Sigma_{l,l}$$ in that order.
+$latex \Sigma_{s,s}$$ in that order.
 
 $subhead sigmaOrder$$
 The variable

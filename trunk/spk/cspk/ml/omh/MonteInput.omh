@@ -5,7 +5,8 @@ $section Input that Controls the Monte Driver Program$$
 $contents%
 	omh/MontePars.omh%
 	omh/NonmemPars.omh%
-	omh/DataSet.omh
+	omh/DataSet.omh%
+	omh/Alpha.omh
 %$$
 
 $end
