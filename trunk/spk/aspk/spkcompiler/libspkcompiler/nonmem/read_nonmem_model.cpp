@@ -145,10 +145,11 @@ void advan2( enum NonmemTranslator::NonmemParameterization trans,
 	  assert( pPK_handler );
 	  yyin = pPK_handler;
 
+          FILE * pPK_output = fopen( "pk_output_filename", "w" );
 	  gSpkExpErrors = 0;
 	  gSpkExpLines  = 0;
           gSpkExpSymbolTable = table;
-
+          gSpkExpOutput = pPK_output;
 	  if( trans == NonmemTranslator::TRANS1 )
 	    {
 	      //
@@ -245,6 +246,7 @@ void advan2( enum NonmemTranslator::NonmemParameterization trans,
 	  yyparse();
 
 	  fclose(pPK_handler);
+          fclose(pPK_output);
 	     
           /*   
 	  try{
