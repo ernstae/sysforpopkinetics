@@ -213,6 +213,7 @@ behavior is undetermined.
 #include "SpkException.h"
 #include "SpkValarray.h"
 #include "statistics.h"
+#include "symmetrize.h"
 #include "transpose.h"
 
 using SPK_VA::valarray;
@@ -298,6 +299,7 @@ void derParStatistics(
   //----------------------------------------------------------------
 
   valarray<double> zCovTemp    ( nZ * nZ );
+  valarray<double> zCovNonSymm ( nZ * nZ );
   valarray<double> z_xTimesXCov( nZ * nZ );
   valarray<double> z_xTrans    ( nZ * nZ * nZ );
  
@@ -311,7 +313,11 @@ void derParStatistics(
   //                     -          -              -          - 
   //
   z_xTimesXCov = multiply( z_x,          nZ, xCov,     nZ );
-  zCovTemp     = multiply( z_xTimesXCov, nZ, z_xTrans, nZ );
+  zCovNonSymm  = multiply( z_xTimesXCov, nZ, z_xTrans, nZ );
+
+  // Force the covariance matrix to be symmetric to eliminate any
+  // nonsymmetries that may have been introduced by roundoff.
+  symmetrize( zCovNonSymm, nZ, zCovTemp );
 
 
   //----------------------------------------------------------------
