@@ -90,7 +90,7 @@ false $rend
 $syntax//isWarmStart//$$ $cend
 false $rend
 $tend
-and setting all the component pointers of $code StateInfo$$ to $code NULL$$.
+and setting all the element pointers of $code StateInfo$$ to $code NULL$$.
 The meanings of these parameters are explained under
 $tref OptimizerConstructor$$.
 Note that these default values do not constitute a recommendation.
@@ -215,44 +215,52 @@ $syntax/
 /$$
 This $code StateInfo$$ object contains the information required by 
 the restart(later warm start) run.  
-The $italic StateInfo$$ object has the following components.
+The $italic StateInfo$$ object has the following elements.
 
 $syntax/
+
 /n/
 /$$
-This int value is the number of variables in the optimization.
+The element $italic n$$ specifies the number of components
+in the element vector $italic x$$.
 
 $syntax/
+
+/r/
+/$$
+The element $italic r$$ contains the current trust region radius
+(as an infinity norm bound on the step size).
+
+$syntax/
+
+/f/
+/$$
+The element $italic f$$ contains the value for $math%f(x)%$$
+at the point $math%x%$$.
+
+$syntax/
+
 /x/
 /$$
-This pointer points to an array of double values.  
-These double values are the final estimate of the solution.
+The element $italic x$$ is a vector of length $italic n$$.
+It specifies the point at which the objective function, 
+its gradient, and its Hessian were evaluated.
 
 $syntax/
-/state/
+
+/g/
 /$$
-This pointer points to an array of Integer values.  Integer is a data type 
-defined in $code nag_opt_nlp$$ from the 
-$href@http://www.nag.com@Numerical Algorithms Group (NAG)@$$ library.  
-The $code state$$ is an optional parameter defined in the
-$href@http://www.nag.com@Numerical Algorithms Group (NAG)@$$ Library 
-for the optimizer function $code nag_opt_nlp$$ used in SPK.
+The vector $italic g$$ must have length $math%n%$$.
+It contains the gradient of $math%f(x)%$$
+at the point $math%x%$$.
 
 $syntax/
-/lambda/
-/$$
-This pointer points to an array of double values.  The $code lambda$$ is an optional 
-parameter defined in the 
-$href@http://www.nag.com@Numerical Algorithms Group (NAG)@$$ Library 
-for the optimizer function $code nag_opt_nlp$$ used in SPK.
 
-$syntax/
 /h/
 /$$
-This pointer points to an array of double values.  The $code h$$ is an optional parameter 
-defined in the 
-$href@http://www.nag.com@Numerical Algorithms Group (NAG)@$$ Library 
-for the optimizer function $code nag_opt_nlp$$ used in SPK.
+The vector $italic h$$ must have length $math%n^2%$$.
+It contains an approximation for the hessian of $math%f(x)%$$
+at the point $math%x%$$.
 
 $head Example$$
 See $xref/Optimizer/Example/Example/$$
