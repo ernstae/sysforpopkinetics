@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.regex.*;
 import rfpk.spk.spkdb.*;
 import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 /**
 defines a set of static methods which provide a java API 
 for the Spk Database.  This class should never be instantiated.
@@ -12,6 +14,7 @@ for the Spk Database.  This class should never be instantiated.
 public abstract class Spkdb {
     private static Pattern pattern1;
     private static Pattern pattern2;
+    private static Pattern pattern3;
     /**
      Open a connection to a database. The object returned  must be passed as a parameter
      to other methods of the Spkdb class.  A process may have several connections open
@@ -377,11 +380,15 @@ public abstract class Spkdb {
 	String valueList = "'" + value[0] + "'";
 	for (int i = 1; i < name.length; i++) {
 	    nameList += (", " + name[i]);
-	    valueList += (", '" + value[i] + "'");
+	    if (pattern2.matcher(name[i]).find()) {
+		passFound = true;
+		valueList += (", MD5('" + value[i] + "')");
+	    }
+	    else 
+		valueList += (", '" + value[i] + "'");
 	}
 	for (int i = 0; i < name.length; i++) {
 	   userFound = userFound || pattern1.matcher(name[i]).find();
-	   passFound = passFound || pattern2.matcher(name[i]).find();
 	}
 	if (!userFound || !passFound) {
 	    throw new SpkdbException("username and/or password missing in name list");
@@ -409,16 +416,22 @@ public abstract class Spkdb {
 	 String nameList = name[0];
 	 String valueList = "'" + value[0] + "'";
 	 pattern1 = Pattern.compile("^username$");
-	 pattern2   = Pattern.compile("^user_id$");
+	 pattern2 = Pattern.compile("^user_id$");
+	 pattern3 = Pattern.compile("^password$");
 	 if (pattern1.matcher(name[0]).find() || pattern2.matcher(name[0]).find()) {
 	     throw new SpkdbException("invalid attempt to change username or user_id");
 	 }
-	 String sql = "update user set " + name[0] + "='" + value[0] + "'";
-	 for (int i = 1; i < name.length; i++) {
+	 String sql = "update user set ";
+	 for (int i = 0; i < name.length; i++) {
 	     if (pattern1.matcher(name[i]).find() || pattern2.matcher(name[0]).find()) {
 		 throw new SpkdbException("invalid attempt to change username or user_id");
 	     }
- 	     sql += ", " + name[i] + "='" + value[i] + "'";
+	     if (i == 0)
+		 sql += ", ";
+	     if (pattern3.matcher(name[i]).find()) 
+		 sql += name[i] + "=MD5('" + value[i] + ")'";
+	     else
+		 sql += ", " + name[i] + "='" + value[i] + "'";
 	 }
 	 sql += " where user_id=" + userId + ";";
 	 Statement stmt = conn.createStatement();
@@ -441,4 +454,24 @@ public abstract class Spkdb {
 	ResultSet rs = stmt.getResultSet();
 	return rs;
     }
+    public static String md5sum(String password) {
+	String pd = "";
+	try {
+	    MessageDigest algorithm = MessageDigest.getInstance("MD5");
+	    algorithm.reset();
+	    algorithm.update(password.getBytes());
+	    byte[] hash = algorithm.digest();
+
+	    for (int i = 0; i < hash.length; i++) {
+		int v = hash[i] & 0xFF;
+		if (v < 16)
+		    pd += "0";
+		pd += Integer.toString(v, 16).toLowerCase();
+	    }
+	}
+	catch(NoSuchAlgorithmException e) {
+	}
+	return pd;
+    }
 }
+

@@ -126,11 +126,15 @@ quit;
       <para>
 	For testing of software, we need a user with access
 	rights to the <emphasis>spktest</emphasis> database.
+	Assume that <emphasis>hostname</emphasis> is the 
+	full DNS hostname of the computer. For example, 
+	<emphasis>hostname </emphasis> might be
+	<emphasis>rose.rfpk.washington.edu</emphasis>
 	<screen>
 mysql -u root -p
 grant all on spktest.* to tester@localhost identified by 'tester';
 grant all on spktest.* to tester@localhost.localdomain identified by 'tester';
-grant all on spktest.* to tester@"%" identified by 'tester';
+grant all on spktest.* to tester@<emphasis>hostname</emphasis> identified by 'tester';
 quit;
 	</screen>
       </para>
