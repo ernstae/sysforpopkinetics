@@ -69,8 +69,7 @@ $syntax/void indResiduals( SpkModel&                        /model/,
                    SPK_VA::valarray<double>*        /pIndPredOut/,
                    SPK_VA::valarray<double>*        /pIndResOut/,
                    SPK_VA::valarray<double>*        /pIndResWtdOut/,
-                   SPK_VA::valarray<double>*        /pIndParWtdOut/,
-                   bool                             /withD/ )
+                   SPK_VA::valarray<double>*        /pIndParWtdOut/ )
 /$$
 $tend
 
@@ -136,6 +135,10 @@ $syntax/
 This function expects $italic model$$ to be a function of $math%b%$$.
 Refer to $xref/glossary/Model Functions Depend on only b/Model Functions Depend on only b/$$
 for details.
+If weighted individual parameters are going to be calculated,
+then the function $tref SpkModel_indParVariance$$ must be defined 
+for this model in order to calculate the covariance of the 
+individual parameters $math%D%$$.
 
 $syntax/
 
@@ -227,19 +230,9 @@ pointed to by $italic pIndParWtdOut$$.
 $pre
 
 $$
-These weighted individual parameters may only be calculated if the
-input argument $italic withD$$ is equal to $math%true%$$.
-
-$syntax/
-
-/withD/
-/$$
-If this flag is set to $math%true%$$, then the objective function that
-was used to calculate $italic indPar$$ was the Map Bayesian objective,
-i.e., the terms involving the matrix $math%D%$$ have been included in
-$math%MapObj(b)%$$.
-In this case, the weighted individual parameter $math%bWtd%$$ can be 
-calculated.
+These weighted individual parameters may only be calculated if 
+the function $tref SpkModel_indParVariance$$ is defined for the 
+input argument $italic model$$.
 
 $end
 */
@@ -271,8 +264,7 @@ void indResiduals( SpkModel&                model,
                    valarray<double>*        pIndPredOut,
                    valarray<double>*        pIndResOut,
                    valarray<double>*        pIndResWtdOut,
-                   valarray<double>*        pIndParWtdOut,
-                   bool                     withD )
+                   valarray<double>*        pIndParWtdOut )
 {
   //----------------------------------------------------------------
   // Preliminaries.
@@ -342,15 +334,6 @@ void indResiduals( SpkModel&                model,
     }
   }
 
-  if ( pIndParWtdOut && !withD )
-  {
-    throw SpkException(
-      SpkError::SPK_USER_INPUT_ERR, 
-      "The vector of weighted individual parameters can only be calculated for the Map Bayesian objective.",
-      __LINE__,
-      __FILE__ );
-  }
-
 
   //----------------------------------------------------------------
   // Prepare the output values.
@@ -384,7 +367,7 @@ void indResiduals( SpkModel&                model,
     pIndResWtdTemp = 0;
   }
 
-  // It is not necessary to calculate the individual paramter
+  // It is not necessary to calculate the individual parameter
   // residuals, i.e., their difference from zero.
   valarray<double>* pIndParResTemp = 0;
 
@@ -407,7 +390,7 @@ void indResiduals( SpkModel&                model,
   // Prepare the model.
   //----------------------------------------------------------------
 
-  // Set the current individual paramter.
+  // Set the current individual parameter.
   model.setIndPar( indPar );
 
 
@@ -444,14 +427,16 @@ void indResiduals( SpkModel&                model,
 
   if ( pIndParWtdOut )
   {
-    valarray<double> zeroes( nB );
-    valarray<double> D     ( nB * nB );
+    valarray<double> D( nB * nB );
 
     // Evaluate
     //
     //     D(alpha)  .
     //
     model.indParVariance( D );
+
+    valarray<double> zeroes( nB );
+    zeroes = 0.0;
 
     // Calculate the weighted individual parameters.
     wres( zeroes, indPar, D, pIndParResTemp, pIndParWtdTemp );

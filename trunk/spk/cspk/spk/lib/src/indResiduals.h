@@ -43,7 +43,6 @@ void indResiduals( SpkModel&                        model,
                    SPK_VA::valarray<double>*        pIndPredOut,
                    SPK_VA::valarray<double>*        pIndResOut,
                    SPK_VA::valarray<double>*        pIndResWtdOut,
-                   SPK_VA::valarray<double>*        pIndParWtdOut,
-                   bool                             withD );
+                   SPK_VA::valarray<double>*        pIndParWtdOut );
 
 #endif
