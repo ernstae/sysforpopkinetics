@@ -78,10 +78,9 @@
                             is_correlation_out="no"/>
                </pop_analysis>
             </nm_constraint>
-         </nm_request>
-         <nm_model>
-            <description>Two compartmental model</description>
-            <pred>
+            <nm_model>
+               <description>Two compartmental model</description>
+               <pred>
 ;THETA(1)=MEAN ABSORPTION RATE CONSTANT (1/HR)
 ;THETA(2)=MEAN ELIMINATION RATE CONSTANT (1/HR)
 ;THETA(3)=SLOPE OF CLEARANCE VS WEIGHT RELATIONSHIP (LITERS/HR/kg)
@@ -98,9 +97,9 @@
    E=CL*(KA-KE)
    F=DS*KE*KA/E*D
    Y=F+EPS(1)
-            </pred>
-         </nm_model>
-         <nm_data>
+               </pred>
+            </nm_model>
+            <nm_data>
             <description>Theophylline</description>
             <individual length="11">
                <record>
@@ -1051,21 +1050,22 @@
                </record>
               </individual>
            </nm_data>
-         <nm_verbatim>
-            <nm_presentation>
-               <table header="every" process="estimation">
+           <nm_presentation>
+              <table header="every" process="estimation">
                   <column label="ID"/>
                   <column label="DOSE"/>
                   <column label="WT"/>
                   <column label="TIME"/>
-               </table>
-               <scatterplot process="estimation" y0_line="show" unit_slope="yes">
+              </table>
+              <scatterplot process="estimation" y0_line="show" unit_slope="yes">
                   <y label="RES"/>
                   <y label="WRES"/>
                   <x label="TIME"/>
                   <by label="ID"/>
                </scatterplot>
             </nm_presentation>
+         </nm_request>
+         <nm_verbatim>
             <nm_control>
 $PROB  THEOPHYLLINE   POPULATION DATA
 $INPUT      ID DOSE TIME CP=DV WT

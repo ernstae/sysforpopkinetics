@@ -21,6 +21,15 @@
             </sigma_out>
          </pop_opt_result>
          <pop_stat_result>
+            <stat_labels>
+               <label name="THETA(1)"/>
+               <label name="THETA(2)"/>
+               <label name="THETA(3)"/>
+               <label name="OMEGA(1,1)"/>
+               <label name="OMEGA(2,1)"/><label name="OMEGA(2,2)"/>
+               <label name="OMEGA(3,1)"/><label name="OMEGA(3,2)"/><label name="OMEGA(3,3)"/>
+               <label name="SIGMA(1,1)"/>
+            </stat_labels>
             <pop_stderr_out>
                <value>7.08E01</value>
                <value>7.26E03</value>
@@ -42,6 +51,18 @@
                <value>6.10E-03</value><value>-3.73E-04</value><value>-1.65E-04</value><value>-8.64E-02</value><value>5.76E-04</value><value>5.11E-02</value><value>8.51E-06</value><value>7.05E-04</value><value>4.48E-02</value>
                <value>-1.27E-02</value><value>2.00E-04</value><value>6.06E-05</value><value>-1.36E-01</value><value>6.69E-04</value><value>1.75E-02</value><value>7.53E-06</value><value>9.47E-05</value><value>9.47E-05</value><value>-1.51E-03</value><value>1.11E-02</value>
             </pop_covariance_out>
+            <pop_inverse_covariance_out>
+               <value>7.39e+02</value>
+               <value>-2.95e+-4</value><value>2.40e+06</value>
+               <value>4.12e+04</value><value>-3.55e+06</value><value>5.45e+06</value>
+               <value>-6.84e+01</value><value>2.37e+03</value><value>-3.18e+03</value><value>6.74e00</value>
+               <value>-3.60e+04</value><value>1.26e+06</value><value>3.13e+03</value><value>2.05e+06</value>
+               <value>3.46e+02</value><value>-1.18e+04</value><value>1.57e+04</value><value>-2.05e+04</value><value>2.22e+02</value>
+               <value>5.49e+06</value><value>-1.74e+08</value><value>2.26e+08</value><value>-4.95e+05</value><value>-3.10e+08</value><value>4.93e+10</value>
+               <value>-2.26e+05</value><value>6.37e+06</value><value>-7.89e+06</value><value>2.06</value><value>1.30e+07</value><value>-1.31e+05</value><value>-2.10e+09</value><value>9.16e+07</value>
+               <value>2.27e+03</value><value>-5.56e+04</value><value>6.64e+04</value><value>-2.07e+02</value><value>-1.35e+05</value><value>1.35e+05</value><value>2.21e+07</value><value>-9.72e+05</value><value>1.05e+04</value>
+               <value>4.48e+02</value><value>-2.99e+04</value><value>4.66e+04</value><value>-3.10e+01</value><value>-2.59e+04</value><value>2.51e+02</value><value>3.47e+06</value><value>-1.42e+05</value><value>1.45e+03</value><value>7.30e+02</value>
+            </pop_inverse_covariance_out>
             <pop_correlation_out>
                <value>1.00e00</value>
                <value>2.26E-01</value><value>1.00E+00</value>
@@ -56,2287 +77,1857 @@
             </pop_correlation_out>
          </pop_stat_result>
          <presentation_data>
-            <data_column label="ID">
-               <value>1</value>
-               <value>1</value>
-               <value>1</value>
-               <value>1</value>
-               <value>1</value>
-               <value>1</value>
-               <value>1</value>
-               <value>1</value>
-               <value>1</value>
-               <value>1</value>
-               <value>1</value>
-               
-               <value>2</value>
-               <value>2</value>
-               <value>2</value>
-               <value>2</value>
-               <value>2</value>
-               <value>2</value>
-               <value>2</value>
-               <value>2</value>
-               <value>2</value>
-               <value>2</value>
-               <value>2</value>
-               
-               <value>3</value>
-               <value>3</value>
-               <value>3</value>
-               <value>3</value>
-               <value>3</value>
-               <value>3</value>
-               <value>3</value>
-               <value>3</value>
-               <value>3</value>
-               <value>3</value>
-               <value>3</value>
-               
-               <value>4</value>
-               <value>4</value>
-               <value>4</value>
-               <value>4</value>
-               <value>4</value>
-               <value>4</value>
-               <value>4</value>
-               <value>4</value>
-               <value>4</value>
-               <value>4</value>
-               <value>4</value>
-               
-               <value>5</value>
-               <value>5</value>
-               <value>5</value>
-               <value>5</value>
-               <value>5</value>
-               <value>5</value>
-               <value>5</value>
-               <value>5</value>
-               <value>5</value>
-               <value>5</value>
-               <value>5</value>
-
-               <value>6</value>
-               <value>6</value>
-               <value>6</value>
-               <value>6</value>
-               <value>6</value>
-               <value>6</value>
-               <value>6</value>
-               <value>6</value>
-               <value>6</value>
-               <value>6</value>
-               <value>6</value>
-
-               <value>7</value>
-               <value>7</value>
-               <value>7</value>
-               <value>7</value>
-               <value>7</value>
-               <value>7</value>
-               <value>7</value>
-               <value>7</value>
-               <value>7</value>
-               <value>7</value>
-               <value>7</value>
-
-               <value>8</value>
-               <value>8</value>
-               <value>8</value>
-               <value>8</value>
-               <value>8</value>
-               <value>8</value>
-               <value>8</value>
-               <value>8</value>
-               <value>8</value>
-               <value>8</value>
-               <value>8</value>
-
-               <value>9</value>
-               <value>9</value>
-               <value>9</value>
-               <value>9</value>
-               <value>9</value>
-               <value>9</value>
-               <value>9</value>
-               <value>9</value>
-               <value>9</value>
-               <value>9</value>
-               <value>9</value>
-
-               <value>10</value>
-               <value>10</value>
-               <value>10</value>
-               <value>10</value>
-               <value>10</value>
-               <value>10</value>
-               <value>10</value>
-               <value>10</value>
-               <value>10</value>
-               <value>10</value>
-               <value>10</value>
-
-               <value>11</value>
-               <value>11</value>
-               <value>11</value>
-               <value>11</value>
-               <value>11</value>
-               <value>11</value>
-               <value>11</value>
-               <value>11</value>
-               <value>11</value>
-               <value>11</value>
-               <value>11</value>
-
-               <value>12</value>
-               <value>12</value>
-               <value>12</value>
-               <value>12</value>
-               <value>12</value>
-               <value>12</value>
-               <value>12</value>
-               <value>12</value>
-               <value>12</value>
-               <value>12</value>
-               <value>12</value>
-            </data_column>
-            <data_column label="DOSE">
-               <value>4.02</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-
-               <value>4.40</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-
-               <value>4.53</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-
-               <value>4.40</value> 
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-
-               <value>5.86</value> 
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-
-               <value>4.00</value> 
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-
-               <value>4.95</value> 
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-
-               <value>4.53</value> 
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-
-               <value>3.10</value> 
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-
-               <value>5.50</value> 
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-
-               <value>4.92</value> 
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-
-               <value>5.30</value> 
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-            </data_column>
-            <data_column label="WT">
-               <value>79.6</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-
-               <value>72.4</value> 
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-
-               <value>70.5</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-
-               <value>72.7</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-
-               <value>54.6</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-
-               <value>80.0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-
-               <value>64.6</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-
-               <value>70.5</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-
-               <value>86.4</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-
-               <value>58.2</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-
-               <value>65.0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-
-               <value>60.5</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-               <value>0</value>
-            </data_column>
-            <data_column label="TIME">
-               <value>0.0</value>
-               <value>0.25</value>
-               <value>0.57</value>
-               <value>1.12</value>
-               <value>2.02</value>
-               <value>3.82</value>
-               <value>5.10</value>
-               <value>7.03</value>
-               <value>9.05</value>
-               <value>1.21</value>
-               <value>2.44</value>
-
-               <value>0.0</value>
-               <value>0.27</value>
-               <value>0.52</value>
-               <value>1.00</value>
-               <value>1.92</value>
-               <value>3.50</value>
-               <value>5.02</value>
-               <value>7.03</value>
-               <value>9.00</value>
-               <value>12.0</value>
-               <value>24.3</value>
-
-               <value>0.0</value>
-               <value>0.27</value>
-               <value>0.58</value>
-               <value>1.02</value>
-               <value>2.02</value>
-               <value>3.62</value>
-               <value>5.08</value>
-               <value>7.07</value>
-               <value>9.00</value>
-               <value>12.1</value>
-               <value>24.2</value>
-
-               <value>0.00</value>
-               <value>0.35</value>
-               <value>0.60</value>
-               <value>1.07</value>
-               <value>2.13</value>
-               <value>3.50</value>
-               <value>5.02</value>
-               <value>7.02</value>
-               <value>9.02</value>
-               <value>12.0</value>
-               <value>24.6</value>
-
-               <value>0.00</value>
-               <value>0.30</value>
-               <value>0.52</value>
-               <value>1.00</value>
-               <value>2.02</value>
-               <value>3.50</value>
-               <value>5.02</value>
-               <value>7.02</value>
-               <value>9.10</value>
-               <value>12.0</value>
-               <value>24.4</value>
-
-               <value>0.00</value>
-               <value>0.27</value>
-               <value>0.58</value>
-               <value>1.15</value>
-               <value>2.03</value>
-               <value>3.57</value>
-               <value>5.00</value>
-               <value>7.00</value>
-               <value>9.22</value>
-               <value>12.1</value>
-               <value>23.9</value>
-  
-               <value>0.00</value>
-               <value>0.25</value>
-               <value>0.50</value>
-               <value>1.02</value>
-               <value>2.02</value>
-               <value>3.48</value>
-               <value>5.00</value>
-               <value>6.98</value>
-               <value>9.00</value>
-               <value>12.1</value>
-               <value>24.2</value>
-
-               <value>0.00</value>
-               <value>0.25</value>
-               <value>0.52</value>
-               <value>0.98</value>
-               <value>2.02</value>
-               <value>3.53</value>
-               <value>5.05</value>
-               <value>7.15</value>
-               <value>9.07</value>
-               <value>12.1</value>
-               <value>24.1</value>
-
-               <value>0.00</value>
-               <value>0.30</value>
-               <value>0.63</value>
-               <value>1.05</value>
-               <value>2.02</value>
-               <value>3.53</value>
-               <value>5.02</value>
-               <value>7.17</value>
-               <value>8.80</value>
-               <value>11.6</value>
-               <value>24.4</value>
-
-               <value>0.00</value>
-               <value>0.37</value>
-               <value>0.77</value>
-               <value>1.02</value>
-               <value>2.05</value>
-               <value>3.55</value>
-               <value>5.05</value>
-               <value>7.08</value>
-               <value>9.38</value>
-               <value>12.1</value>
-               <value>23.7</value>
-
-               <value>0.00</value>
-               <value>0.25</value>
-               <value>0.50</value>
-               <value>0.98</value>
-               <value>1.98</value>
-               <value>3.60</value>
-               <value>5.02</value>
-               <value>7.03</value>
-               <value>9.03</value>
-               <value>12.1</value>
-               <value>24.1</value>
-
-               <value>0.00</value>
-               <value>0.25</value>
-               <value>0.50</value>
-               <value>1.00</value>
-               <value>2.00</value>
-               <value>3.52</value>
-               <value>5.07</value>
-               <value>7.07</value>
-               <value>9.03</value>
-               <value>12.1</value>
-               <value>24.1</value>
-            </data_column>
-            <data_column label="CP" synonym="DV">
-               <value>0.74</value>
-               <value>2.84</value>
-               <value>6.57</value>
-               <value>10.5</value>
-               <value>9.66</value>
-               <value>8.58</value>
-               <value>8.36</value>
-               <value>7.47</value>
-               <value>6.89</value>
-               <value>5.94</value>
-               <value>3.28</value>
-
-               <value>0.00</value>
-               <value>1.72</value>
-               <value>7.91</value>
-               <value>8.31</value>
-               <value>8.33</value>
-               <value>6.85</value>
-               <value>6.08</value>
-               <value>5.40</value>
-               <value>4.55</value>
-               <value>3.01</value>
-               <value>0.90</value>
-
-               <value>0.00</value>
-               <value>4.40</value>
-               <value>6.90</value>
-               <value>8.20</value>
-               <value>7.80</value>
-               <value>7.50</value>
-               <value>6.20</value>
-               <value>5.30</value>
-               <value>4.90</value>
-               <value>3.70</value>
-               <value>1.05</value>
-
-               <value>0.00</value>
-               <value>1.89</value>
-               <value>4.60</value>
-               <value>8.60</value>
-               <value>8.38</value>
-               <value>7.54</value>
-               <value>6.88</value>
-               <value>5.78</value>
-               <value>5.33</value>
-               <value>4.19</value>
-               <value>1.15</value>
-
-               <value>0.00</value>
-               <value>2.02</value>
-               <value>5.63</value>
-               <value>11.4</value>
-               <value>9.33</value>
-               <value>8.74</value>
-               <value>7.56</value>
-               <value>7.09</value>
-               <value>5.90</value>
-               <value>4.37</value>
-               <value>1.57</value>
-
-               <value>0.00</value>
-               <value>1.29</value>
-               <value>3.08</value>
-               <value>6.44</value>
-               <value>6.32</value>
-               <value>5.53</value>
-               <value>4.94</value>
-               <value>4.02</value>
-               <value>3.46</value>
-               <value>2.78</value>
-               <value>0.92</value>
-
-               <value>0.15</value>
-               <value>0.85</value>
-               <value>2.35</value>
-               <value>5.02</value>
-               <value>6.58</value>
-               <value>7.09</value>
-               <value>6.66</value>
-               <value>5.25</value>
-               <value>4.39</value>
-               <value>3.53</value>
-               <value>1.15</value>
-
-               <value>0.00</value>
-               <value>3.05</value>
-               <value>3.05</value>
-               <value>7.31</value>
-               <value>7.56</value>
-               <value>6.59</value>
-               <value>5.88</value>
-               <value>4.73</value>
-               <value>4.57</value>
-               <value>3.00</value>
-               <value>1.25</value>
-
-               <value>0.00</value>
-               <value>7.37</value>
-               <value>9.03</value>
-               <value>7.14</value>
-               <value>6.33</value>
-               <value>5.66</value>
-               <value>5.67</value>
-               <value>4.24</value>
-               <value>4.11</value>
-               <value>3.16</value>
-               <value>1.12</value>
-
-               <value>0.24</value>
-               <value>2.89</value>
-               <value>5.22</value>
-               <value>6.41</value>
-               <value>7.83</value>
-               <value>10.2</value>
-               <value>9.18</value>
-               <value>8.02</value>
-               <value>7.14</value>
-               <value>5.68</value>
-               <value>2.42</value>
-
-               <value>0.00</value>
-               <value>4.86</value>
-               <value>7.24</value>
-               <value>8.00</value>
-               <value>6.81</value>
-               <value>5.87</value>
-               <value>5.22</value>
-               <value>4.45</value>
-               <value>3.62</value>
-               <value>2.69</value>
-               <value>0.86</value>
-
-               <value>0.00</value>
-               <value>1.25</value>
-               <value>3.96</value>
-               <value>7.82</value>
-               <value>9.72</value>
-               <value>9.75</value>
-               <value>8.57</value>
-               <value>6.59</value>
-               <value>6.11</value>
-               <value>4.57</value>
-               <value>1.17</value>
-            </data_column>
-            <data_column label="PRED">
-               <value>0.00</value>
-               <value>4.28</value>
-               <value>6.68</value>
-               <value>7.76</value>
-               <value>7.57</value>
-               <value>6.60</value>
-               <value>5.98</value>
-               <value>5.14</value>
-               <value>4.39</value>
-               <value>3.45</value>
-               <value>1.33</value>
-
-               <value>0.00</value>
-               <value>4.93</value>
-               <value>7.05</value>
-               <value>8.40</value>
-               <value>8.34</value>
-               <value>7.41</value>
-               <value>6.58</value>
-               <value>5.63</value>
-               <value>4.82</value>
-               <value>3.82</value>
-               <value>1.46</value>
-
-               <value>0.00</value>
-               <value>5.08</value>
-               <value>7.58</value>
-               <value>8.67</value>
-               <value>8.53</value>
-               <value>7.56</value>
-               <value>6.74</value>
-               <value>5.77</value>
-               <value>4.97</value>
-               <value>3.88</value>
-               <value>1.52</value>
-
-               <value>0.00</value>
-               <value>5.79</value>
-               <value>7.45</value>
-               <value>8.46</value>
-               <value>8.22</value>
-               <value>7.41</value>
-               <value>6.58</value>
-               <value>5.63</value>
-               <value>4.82</value>
-               <value>3.82</value>
-               <value>1.42</value>
-
-               <value>0.00</value>
-               <value>7.03</value>
-               <value>9.39</value>
-               <value>11.2</value>
-               <value>11.1</value>
-               <value>9.87</value>
-               <value>8.77</value>
-               <value>7.50</value>
-               <value>6.37</value>
-               <value>5.08</value>
-               <value>1.94</value>
-
-               <value>0.00</value>
-               <value>4.48</value>
-               <value>6.69</value>
-               <value>7.73</value>
-               <value>7.53</value>
-               <value>6.70</value>
-               <value>5.99</value>
-               <value>5.13</value>
-               <value>4.31</value>
-               <value>3.44</value>
-               <value>1.37</value>
-
-               <value>0.00</value>
-               <value>5.27</value>
-               <value>7.80</value>
-               <value>9.47</value>
-               <value>9.32</value>
-               <value>8.35</value>
-               <value>7.42</value>
-               <value>6.35</value>
-               <value>5.43</value>
-               <value>4.28</value>
-               <value>1.65</value>
-
-               <value>0.00</value>
-               <value>4.82</value>
-               <value>7.26</value>
-               <value>8.63</value>
-               <value>8.53</value>
-               <value>7.61</value>
-               <value>6.76</value>
-               <value>5.74</value>
-               <value>4.94</value>
-               <value>3.90</value>
-               <value>1.52</value>
-
-               <value>0.00</value>
-               <value>3.72</value>
-               <value>5.34</value>
-               <value>5.95</value>
-               <value>5.84</value>
-               <value>5.21</value>
-               <value>4.64</value>
-               <value>3.92</value>
-               <value>3.45</value>
-               <value>2.77</value>
-               <value>1.02</value>
-
-               <value>0.00</value>
-               <value>7.47</value>
-               <value>10.0</value>
-               <value>10.5</value>
-               <value>10.3</value>
-               <value>9.23</value>
-               <value>8.21</value>
-               <value>7.00</value>
-               <value>5.85</value>
-               <value>4.73</value>
-               <value>1.91</value>
-
-               <value>0.00</value>
-               <value>5.24</value>
-               <value>7.75</value>
-               <value>9.37</value>
-               <value>9.29</value>
-               <value>8.22</value>
-               <value>7.36</value>
-               <value>6.29</value>
-               <value>5.38</value>
-               <value>4.23</value>
-               <value>1.66</value>
-
-               <value>0.00</value>
-               <value>5.64</value>
-               <value>8.35</value>
-               <value>10.1</value>
-               <value>9.99</value>
-               <value>8.91</value>
-               <value>7.90</value>
-               <value>6.75</value>
-               <value>5.80</value>
-               <value>4.58</value>
-               <value>1.78</value>
-            </data_column>
-            <data_column label="RES">
-               <value>0.74</value>
-               <value>-1.44</value>
-               <value>-0.112</value>
-               <value>2.74</value>
-               <value>2.09</value>
-               <value>1.98</value>
-               <value>2.38</value>
-               <value>2.33</value>
-               <value>2.50</value>
-               <value>2.49</value>
-               <value>1.95</value>
-
-               <value>0.00</value>
-               <value>-3.21</value>
-               <value>0.858</value>
-               <value>-0.0924</value>
-               <value>-0.00819</value>
-               <value>-0.561</value>
-               <value>-0.502</value>
-               <value>-0.225</value>
-               <value>-0.273</value>
-               <value>-0.805</value>
-               <value>-0.059</value>
-
-               <value>0.00</value>
-               <value>-0.678</value>
-               <value>-0.679</value>
-               <value>-0.470</value>
-               <value>-0.729</value>
-               <value>-0.0591</value>
-               <value>-0.545</value>
-               <value>-0.473</value>
-               <value>-0.0654</value>
-               <value>-0.182</value>
-               <value>-0.468</value>
-
-               <value>0.00</value>
-               <value>-3.90</value>
-               <value>-2.85</value>
-               <value>0.139</value>
-               <value>0.157</value>
-               <value>0.129</value>
-               <value>0.298</value>
-               <value>0.150</value>
-               <value>0.515</value>
-               <value>0.369</value>
-               <value>-0.270</value>
-
-               <value>0.00</value>
-               <value>-5.01</value>
-               <value>-3.76</value>
-               <value>0.21</value>
-               <value>-1.70</value>
-               <value>-1.13</value>
-               <value>-1.21</value>
-               <value>-0.408</value>
-               <value>-0.473</value>
-               <value>-0.711</value>
-               <value>-0.366</value>
-
-               <value>0.00</value>
-               <value>-3.19</value>
-               <value>-3.61</value>
-               <value>-1.29</value>
-               <value>-1.21</value>
-               <value>-1.17</value>
-               <value>-1.05</value>
-               <value>-1.11</value>
-               <value>-0.850</value>
-               <value>-0.661</value>
-               <value>-0.454</value>
-
-               <value>0.150</value>
-               <value>-4.42</value>
-               <value>-5.45</value>
-               <value>-4.45</value>
-               <value>-2.74</value>
-               <value>-1.26</value>
-               <value>-7.56</value>
-               <value>-1.10</value>
-               <value>-1.04</value>
-               <value>-0.745</value>
-               <value>-0.502</value>
-
-               <value>0.00</value>
-               <value>-1.77</value>
-               <value>-4.21</value>
-               <value>-1.32</value>
-               <value>-0.969</value>
-               <value>-1.02</value>
-               <value>-0.880</value>
-               <value>-1.01</value>
-               <value>-0.368</value>
-               <value>-0.897</value>
-               <value>-0.274</value>
-
-               <value>0.00</value>
-               <value>3.65</value>
-               <value>3.69</value>
-               <value>1.19</value>
-               <value>0.493</value>
-               <value>0.451</value>
-               <value>1.03</value>
-               <value>0.320</value>
-               <value>0.659</value>
-               <value>0.387</value>
-               <value>0.102</value>
-
-               <value>0.240</value>
-               <value>-4.58</value>
-               <value>-4.81</value>
-               <value>-4.12</value>
-               <value>-2.50</value>
-               <value>0.982</value>
-               <value>0.972</value>
-               <value>1.02</value>
-               <value>1.29</value>
-               <value>0.948</value>
-               <value>0.508</value>
-
-               <value>0.00</value>
-               <value>-0.378</value>
-               <value>-0.515</value>
-               <value>-1.37</value>
-               <value>-2.48</value>
-               <value>-2.35</value>
-               <value>-2.14</value>
-               <value>-1.84</value>
-               <value>-1.76</value>
-               <value>-1.54</value>
-               <value>-0.80</value>
-
-               <value>0.00</value>
-               <value>-4.39</value>
-               <value>-4.39</value>
-               <value>-2.30</value>
-               <value>-0.272</value>
-               <value>0.837</value>
-               <value>0.673</value>
-               <value>-0.165</value>
-               <value>0.314</value>
-               <value>-0.00765</value>
-               <value>-0.609</value>
-            </data_column>
-            <data_column label="WRES">
-               <value>1.19</value>
-               <value>-1.35</value>
-               <value>-0.259</value>
-               <value>2.50</value>
-               <value>0.450</value>
-               <value>0.0926</value>
-               <value>0.770</value>
-               <value>0.763</value>
-               <value>1.16</value>
-               <value>1.37</value>
-               <value>1.56</value>
-
-               <value>0.00</value>
-               <value>-3.63</value>
-               <value>2.85</value>
-               <value>0.628</value>
-               <value>0.206</value>
-               <value>-0.663</value>
-               <value>-0.475</value>
-               <value>0.0594</value>
-               <value>0.0390</value>
-               <value>-0.776</value>
-               <value>-0.481</value>
-
-               <value>0.00</value>
-               <value>-0.180</value>
-               <value>-0.0843</value>
-               <value>0.0595</value>
-               <value>-0.592</value>
-               <value>0.427</value>
-               <value>-0.378</value>
-               <value>-0.298</value>
-               <value>0.324</value>
-               <value>0.0822</value>
-               <value>-0.546</value>
-
-               <value>0.00</value>
-               <value>-1.62</value>
-               <value>-0.743</value>
-               <value>1.81</value>
-               <value>-0.00468</value>
-               <value>-0.239</value>
-               <value>0.0498</value>
-               <value>-0.156</value>
-               <value>0.462</value>
-               <value>0.273</value>
-               <value>0.600</value>
-
-               <value>0.00</value>
-               <value>-2.46</value>
-               <value>-0.544</value>
-               <value>3.70</value>
-               <value>-1.42</value>
-               <value>-0.775</value>
-               <value>-0.922</value>
-               <value>0.324</value>
-               <value>0.170</value>
-               <value>-0.293</value>
-               <value>-0.0880</value>
-
-               <value>0.00</value>
-               <value>-0.643</value>
-               <value>-1.27</value>
-               <value>0.657</value>
-               <value>-0.360</value>
-               <value>-0.573</value>
-               <value>-0.453</value>
-               <value>-0.630</value>
-               <value>-0.319</value>
-               <value>-0.142</value>
-               <value>-0.224</value>
- 
-               <value>0.241</value>
-               <value>-0.0709</value>
-               <value>-0.995</value>
-               <value>-1.76</value>
-               <value>-1.38</value>
-               <value>0.380</value>
-               <value>0.896</value>
-               <value>0.0175</value>
-               <value>-0.151</value>
-               <value>-0.0246</value>
-               <value>-0.383</value>
-
-               <value>0.00</value>
-               <value>0.959</value>
-               <value>-2.64</value>
-               <value>0.780</value>
-               <value>-0.0420</value>
-               <value>-0.382</value>
-               <value>-0.239</value>
-               <value>-0.550</value>
-               <value>0.384</value>
-               <value>-0.601</value>
-               <value>-0.003</value>
-
-               <value>0.00</value>
-               <value>1.13</value>
-               <value>1.68</value>
-               <value>-0.690</value>
-               <value>-0.179</value>
-               <value>0.0464</value>
-               <value>1.04</value>
-               <value>-0.0321</value>
-               <value>0.561</value>
-               <value>0.200</value>
-               <value>-0.0278</value>
-
-               <value>0.386</value>
-               <value>0.646</value>
-               <value>-1.69</value>
-               <value>-2.22</value>
-               <value>-2.79</value>
-               <value>1.95</value>
-               <value>1.51</value>
-               <value>1.16</value>
-               <value>1.26</value>
-               <value>0.484</value>
-               <value>-0.275</value>
-
-               <value>0.00</value>
-               <value>-0.232</value>
-               <value>0.330</value>
-               <value>0.0889</value>
-               <value>-1.02</value>
-               <value>-0.857</value>
-               <value>-0.638</value>
-               <value>-0.343</value>
-               <value>-0.405</value>
-               <value>-0.337</value>
-               <value>-0.102</value>
-
-               <value>0.00</value>
-               <value>-0.745</value>
-               <value>-0.782</value>
-               <value>-0.635</value>
-               <value>-0.179</value>
-               <value>1.20</value>
-               <value>0.919</value>
-               <value>-0.432</value>
-               <value>0.337</value>
-               <value>-0.174</value>
-               <value>-1.09</value>
-            </data_column>
-            <data_column label="DS">
-               <!-- 11 values shall follow -->
-            </data_column>
-            <data_column label="W">
-               <!-- 11 values shall follow -->
-            </data_column>
-            <data_column label="KA">
-               <!-- 11 values shall follow -->
-            </data_column>
-            <data_column label="KE">
-               <!-- 11 values shall follow -->
-            </data_column>
-            <data_column label="CL">
-               <!-- 11 values shall follow -->
-            </data_column>
-            <data_column label="D">
-               <!-- 11 values shall follow -->
-            </data_column>
-            <data_column label="E">
-               <!-- 11 values shall follow -->
-            </data_column>
-            <data_column label="F">
-               <!-- 11 values shall follow -->
-            </data_column>
-            <data_column label="Y">
-               <!-- 11 values shall follow -->
-            </data_column>
+            <individual length="11">
+               <record>
+                  <item name="ID"   value="1"/>
+                  <item name="TIME" value="0.0"/>
+                  <item name="PRED" synonym="Y" value="0.0"/>
+                  <item name="RES"  value="0.74"/>
+                  <item name="WRES" value="1.19"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="1"/>
+                  <item name="TIME" value="0.25"/>
+                  <item name="PRED" synonym="Y" value="4.28"/>
+                  <item name="RES"  value="-1.44"/>
+                  <item name="WRES" value="-1.35"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="1"/>
+                  <item name="TIME" value="0.57"/>
+                  <item name="PRED" synonym="Y" value="6.68"/>
+                  <item name="RES"  value="-0.112"/>
+                  <item name="WRES" value="-0.259"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="1"/>
+                  <item name="TIME" value="1.12"/>
+                  <item name="PRED" synonym="Y" value="7.76"/>
+                  <item name="RES"  value="2.74"/>
+                  <item name="WRES" value="2.50"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="1"/>
+                  <item name="TIME" value="2.02"/>
+                  <item name="PRED" synonym="Y" value="7.57"/>
+                  <item name="RES"  value="2.09"/>
+                  <item name="WRES" value="0.45"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="1"/>
+                  <item name="TIME" value="3.82"/>
+                  <item name="PRED" synonym="Y" value="6.60"/>
+                  <item name="RES"  value="1.98"/>
+                  <item name="WRES" value="0.0926"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="1"/>
+                  <item name="TIME" value="5.10"/>
+                  <item name="PRED" synonym="Y" value="5.98"/>
+                  <item name="RES"  value="2.38"/>
+                  <item name="WRES" value="0.77"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="1"/>
+                  <item name="TIME" value="7.03"/>
+                  <item name="PRED" synonym="Y" value="5.14"/>
+                  <item name="RES"  value="2.33"/>
+                  <item name="WRES" value="0.763"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="1"/>
+                  <item name="TIME" value="9.05"/>
+                  <item name="PRED" synonym="Y" value="4.39"/>
+                  <item name="RES"  value="2.50"/>
+                  <item name="WRES" value="1.16"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="1"/>
+                  <item name="TIME" value="0.121"/>
+                  <item name="PRED" synonym="Y" value="3.45"/>
+                  <item name="RES"  value="2.49"/>
+                  <item name="WRES" value="1.37"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="1"/>
+                  <item name="TIME" value="24.4"/>
+                  <item name="PRED" synonym="Y" value="1.33"/>
+                  <item name="RES"  value="1.95"/>
+                  <item name="WRES" value="1.56"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="2"/>
+                  <item name="TIME" value="0.0"/>
+                  <item name="PRED" synonym="Y" value="0.0"/>
+                  <item name="RES"  value="0.0"/>
+                  <item name="WRES" value="0.0"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="2"/>
+                  <item name="TIME" value="0.27"/>
+                  <item name="PRED" synonym="Y" value="4.93"/>
+                  <item name="RES"  value="-3.21"/>
+                  <item name="WRES" value="-3.63"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="2"/>
+                  <item name="TIME" value="0.52"/>
+                  <item name="PRED" synonym="Y" value="7.05"/>
+                  <item name="RES"  value="0.858"/>
+                  <item name="WRES" value="2.85"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="2"/>
+                  <item name="TIME" value="1.0"/>
+                  <item name="PRED" synonym="Y" value="8.40"/>
+                  <item name="RES"  value="-0.0924"/>
+                  <item name="WRES" value="0.628"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="2"/>
+                  <item name="TIME" value="1.92"/>
+                  <item name="PRED" synonym="Y" value="8.34"/>
+                  <item name="RES"  value="-0.00819"/>
+                  <item name="WRES" value="0.206"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="2"/>
+                  <item name="TIME" value="3.50"/>
+                  <item name="PRED" synonym="Y" value="7.41"/>
+                  <item name="RES"  value="-0.561"/>
+                  <item name="WRES" value="-0.663"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="2"/>
+                  <item name="TIME" value="5.02"/>
+                  <item name="PRED" synonym="Y" value="6.58"/>
+                  <item name="RES"  value="-0.502"/>
+                  <item name="WRES" value="-0.475"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="2"/>
+                  <item name="TIME" value="7.03"/>
+                  <item name="PRED" synonym="Y" value="5.63"/>
+                  <item name="RES"  value="-0.225"/>
+                  <item name="WRES" value="0.0594"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="2"/>
+                  <item name="TIME" value="9.0"/>
+                  <item name="PRED" synonym="Y" value="4.82"/>
+                  <item name="RES"  value="-0.273"/>
+                  <item name="WRES" value="0.039"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="2"/>
+                  <item name="TIME" value="12.0"/>
+                  <item name="PRED" synonym="Y" value="3.82"/>
+                  <item name="RES"  value="-0.805"/>
+                  <item name="WRES" value="-0.776"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="2"/>
+                  <item name="TIME" value="24.3"/>
+                  <item name="PRED" synonym="Y" value="1.46"/>
+                  <item name="RES"  value="-0.559"/>
+                  <item name="WRES" value="-0.481"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="3"/>
+                  <item name="TIME" value="0.0"/>
+                  <item name="PRED" synonym="Y" value="0.0"/>
+                  <item name="RES"  value="0.0"/>
+                  <item name="WRES" value="0.0"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="3"/>
+                  <item name="TIME" value="0.27"/>
+                  <item name="PRED" synonym="Y" value="5.08"/>
+                  <item name="RES"  value="-0.678"/>
+                  <item name="WRES" value="-0.180"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="3"/>
+                  <item name="TIME" value="0.58"/>
+                  <item name="PRED" synonym="Y" value="7.58"/>
+                  <item name="RES"  value="-0.679"/>
+                  <item name="WRES" value="-0.0843"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="3"/>
+                  <item name="TIME" value="1.02"/>
+                  <item name="PRED" synonym="Y" value="8.67"/>
+                  <item name="RES"  value="-0.47"/>
+                  <item name="WRES" value="0.0595"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="3"/>
+                  <item name="TIME" value="2.02"/>
+                  <item name="PRED" synonym="Y" value="8.53"/>
+                  <item name="RES"  value="-0.729"/>
+                  <item name="WRES" value="-0.592"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="3"/>
+                  <item name="TIME" value="3.62"/>
+                  <item name="PRED" synonym="Y" value="7.56"/>
+                  <item name="RES"  value="-0.0591"/>
+                  <item name="WRES" value="0.427"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="3"/>
+                  <item name="TIME" value="5.08"/>
+                  <item name="PRED" synonym="Y" value="6.74"/>
+                  <item name="RES"  value="-0.545"/>
+                  <item name="WRES" value="-0.378"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="3"/>
+                  <item name="TIME" value="7.07"/>
+                  <item name="PRED" synonym="Y" value="5.77"/>
+                  <item name="RES"  value="-0.473"/>
+                  <item name="WRES" value="-0.298"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="3"/>
+                  <item name="TIME" value="9.0"/>
+                  <item name="PRED" synonym="Y" value="4.97"/>
+                  <item name="RES"  value="-0.0654"/>
+                  <item name="WRES" value="0.324"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="3"/>
+                  <item name="TIME" value="12.1"/>
+                  <item name="PRED" synonym="Y" value="3.88"/>
+                  <item name="RES"  value="-0.182"/>
+                  <item name="WRES" value="0.0822"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="3"/>
+                  <item name="TIME" value="24.2"/>
+                  <item name="PRED" synonym="Y" value="1.52"/>
+                  <item name="RES"  value="-0.468"/>
+                  <item name="WRES" value="-0.546"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="4"/>
+                  <item name="TIME" value="0.0"/>
+                  <item name="PRED" synonym="Y" value="0.0"/>
+                  <item name="RES"  value="0.0"/>
+                  <item name="WRES" value="0.0"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="4"/>
+                  <item name="TIME" value="0.035"/>
+                  <item name="PRED" synonym="Y" value="5.79"/>
+                  <item name="RES"  value="-3.90"/>
+                  <item name="WRES" value="-1.62"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="4"/>
+                  <item name="TIME" value="0.6"/>
+                  <item name="PRED" synonym="Y" value="7.45"/>
+                  <item name="RES"  value="-2.85"/>
+                  <item name="WRES" value="-0.743"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="4"/>
+                  <item name="TIME" value="1.07"/>
+                  <item name="PRED" synonym="Y" value="8.46"/>
+                  <item name="RES"  value="0.139"/>
+                  <item name="WRES" value="1.81"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="4"/>
+                  <item name="TIME" value="2.13"/>
+                  <item name="PRED" synonym="Y" value="8.22"/>
+                  <item name="RES"  value="1.57"/>
+                  <item name="WRES" value="-0.00468"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="4"/>
+                  <item name="TIME" value="3.50"/>
+                  <item name="PRED" synonym="Y" value="7.41"/>
+                  <item name="RES"  value="0.129"/>
+                  <item name="WRES" value="-0.239"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="4"/>
+                  <item name="TIME" value="5.02"/>
+                  <item name="PRED" synonym="Y" value="6.58"/>
+                  <item name="RES"  value="0.298"/>
+                  <item name="WRES" value="0.0498"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="4"/>
+                  <item name="TIME" value="7.02"/>
+                  <item name="PRED" synonym="Y" value="5.63"/>
+                  <item name="RES"  value="0.15"/>
+                  <item name="WRES" value="-0.156"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="4"/>
+                  <item name="TIME" value="9.02"/>
+                  <item name="PRED" synonym="Y" value="4.82"/>
+                  <item name="RES"  value="0.515"/>
+                  <item name="WRES" value="0.462"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="4"/>
+                  <item name="TIME" value="12.0"/>
+                  <item name="PRED" synonym="Y" value="3.82"/>
+                  <item name="RES"  value="0.369"/>
+                  <item name="WRES" value="0.273"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="4"/>
+                  <item name="TIME" value="24.6"/>
+                  <item name="PRED" synonym="Y" value="1.42"/>
+                  <item name="RES"  value="-0.27"/>
+                  <item name="WRES" value="-0.60"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="5"/>
+                  <item name="TIME" value="0.0"/>
+                  <item name="PRED" synonym="Y" value="0.0"/>
+                  <item name="RES"  value="0.0"/>
+                  <item name="WRES" value="0.0"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="5"/>
+                  <item name="TIME" value="0.3"/>
+                  <item name="PRED" synonym="Y" value="7.03"/>
+                  <item name="RES"  value="-5.01"/>
+                  <item name="WRES" value="-2.46"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="5"/>
+                  <item name="TIME" value="0.52"/>
+                  <item name="PRED" synonym="Y" value="9.39"/>
+                  <item name="RES"  value="-3.76"/>
+                  <item name="WRES" value="-0.544"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="5"/>
+                  <item name="TIME" value="1.0"/>
+                  <item name="PRED" synonym="Y" value="11.2"/>
+                  <item name="RES"  value="0.21"/>
+                  <item name="WRES" value="3.70"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="5"/>
+                  <item name="TIME" value="2.02"/>
+                  <item name="PRED" synonym="Y" value="11.0"/>
+                  <item name="RES"  value="-1.70"/>
+                  <item name="WRES" value="-1.42"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="5"/>
+                  <item name="TIME" value="3.50"/>
+                  <item name="PRED" synonym="Y" value="9.87"/>
+                  <item name="RES"  value="-1.13"/>
+                  <item name="WRES" value="-0.775"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="5"/>
+                  <item name="TIME" value="5.02"/>
+                  <item name="PRED" synonym="Y" value="8.77"/>
+                  <item name="RES"  value="-1.21"/>
+                  <item name="WRES" value="-0.922"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="5"/>
+                  <item name="TIME" value="7.02"/>
+                  <item name="PRED" synonym="Y" value="7.50"/>
+                  <item name="RES"  value="-0.408"/>
+                  <item name="WRES" value="0.324"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="5"/>
+                  <item name="TIME" value="9.10"/>
+                  <item name="PRED" synonym="Y" value="6.37"/>
+                  <item name="RES"  value="-0.473"/>
+                  <item name="WRES" value="0.170"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="5"/>
+                  <item name="TIME" value="12.0"/>
+                  <item name="PRED" synonym="Y" value="5.08"/>
+                  <item name="RES"  value="-0.711"/>
+                  <item name="WRES" value="-0.293"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="5"/>
+                  <item name="TIME" value="24.4"/>
+                  <item name="PRED" synonym="Y" value="1.94"/>
+                  <item name="RES"  value="-0.366"/>
+                  <item name="WRES" value="-0.088"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="6"/>
+                  <item name="TIME" value="0.0"/>
+                  <item name="PRED" synonym="Y" value="0.0"/>
+                  <item name="RES"  value="0.0"/>
+                  <item name="WRES" value="0.0"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="6"/>
+                  <item name="TIME" value="0.27"/>
+                  <item name="PRED" synonym="Y" value="4.48"/>
+                  <item name="RES"  value="-3.19"/>
+                  <item name="WRES" value="-0.643"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="6"/>
+                  <item name="TIME" value="0.58"/>
+                  <item name="PRED" synonym="Y" value="6.69"/>
+                  <item name="RES"  value="-3.61"/>
+                  <item name="WRES" value="-1.27"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="6"/>
+                  <item name="TIME" value="1.15"/>
+                  <item name="PRED" synonym="Y" value="7.73"/>
+                  <item name="RES"  value="-1.29"/>
+                  <item name="WRES" value="0.657"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="6"/>
+                  <item name="TIME" value="2.03"/>
+                  <item name="PRED" synonym="Y" value="7.53"/>
+                  <item name="RES"  value="-1.21"/>
+                  <item name="WRES" value="-0.36"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="6"/>
+                  <item name="TIME" value="3.57"/>
+                  <item name="PRED" synonym="Y" value="6.70"/>
+                  <item name="RES"  value="-1.17"/>
+                  <item name="WRES" value="-5.73"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="6"/>
+                  <item name="TIME" value="5.00"/>
+                  <item name="PRED" synonym="Y" value="5.99"/>
+                  <item name="RES"  value="-1.05"/>
+                  <item name="WRES" value="-0.453"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="6"/>
+                  <item name="TIME" value="7.0"/>
+                  <item name="PRED" synonym="Y" value="5.13"/>
+                  <item name="RES"  value="-1.11"/>
+                  <item name="WRES" value="-0.63"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="6"/>
+                  <item name="TIME" value="9.22"/>
+                  <item name="PRED" synonym="Y" value="4.31"/>
+                  <item name="RES"  value="-0.85"/>
+                  <item name="WRES" value="-0.319"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="6"/>
+                  <item name="TIME" value="12.1"/>
+                  <item name="PRED" synonym="Y" value="3.44"/>
+                  <item name="RES"  value="-0.661"/>
+                  <item name="WRES" value="-0.142"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="6"/>
+                  <item name="TIME" value="23.9"/>
+                  <item name="PRED" synonym="Y" value="1.37"/>
+                  <item name="RES"  value="-0.454"/>
+                  <item name="WRES" value="-0.224"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="7"/>
+                  <item name="TIME" value="0.0"/>
+                  <item name="PRED" synonym="Y" value="0.0"/>
+                  <item name="RES"  value="0.150"/>
+                  <item name="WRES" value="0.241"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="7"/>
+                  <item name="TIME" value="0.25"/>
+                  <item name="PRED" synonym="Y" value="5.27"/>
+                  <item name="RES"  value="-4.42"/>
+                  <item name="WRES" value="-0.0709"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="7"/>
+                  <item name="TIME" value="0.50"/>
+                  <item name="PRED" synonym="Y" value="7.80"/>
+                  <item name="RES"  value="-5.45"/>
+                  <item name="WRES" value="-0.995"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="7"/>
+                  <item name="TIME" value="1.02"/>
+                  <item name="PRED" synonym="Y" value="9.47"/>
+                  <item name="RES"  value="-4.45"/>
+                  <item name="WRES" value="-1.76"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="7"/>
+                  <item name="TIME" value="2.02"/>
+                  <item name="PRED" synonym="Y" value="9.32"/>
+                  <item name="RES"  value="-2.74"/>
+                  <item name="WRES" value="-1.38"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="7"/>
+                  <item name="TIME" value="3.48"/>
+                  <item name="PRED" synonym="Y" value="8.35"/>
+                  <item name="RES"  value="-1.26"/>
+                  <item name="WRES" value="0.38"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="7"/>
+                  <item name="TIME" value="5.0"/>
+                  <item name="PRED" synonym="Y" value="7.42"/>
+                  <item name="RES"  value="-0.756"/>
+                  <item name="WRES" value="0.896"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="7"/>
+                  <item name="TIME" value="6.98"/>
+                  <item name="PRED" synonym="Y" value="6.35"/>
+                  <item name="RES"  value="-1.10"/>
+                  <item name="WRES" value="0.0175"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="7"/>
+                  <item name="TIME" value="9.0"/>
+                  <item name="PRED" synonym="Y" value="5.43"/>
+                  <item name="RES"  value="-1.04"/>
+                  <item name="WRES" value="-0.151"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="7"/>
+                  <item name="TIME" value="12.1"/>
+                  <item name="PRED" synonym="Y" value="4.28"/>
+                  <item name="RES"  value="-0.745"/>
+                  <item name="WRES" value="-0.0246"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="7"/>
+                  <item name="TIME" value="24.2"/>
+                  <item name="PRED" synonym="Y" value="1.65"/>
+                  <item name="RES"  value="-0.502"/>
+                  <item name="WRES" value="-0.383"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="8"/>
+                  <item name="TIME" value="0.0"/>
+                  <item name="PRED" synonym="Y" value="0.0"/>
+                  <item name="RES"  value="0.0"/>
+                  <item name="WRES" value="0.0"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="8"/>
+                  <item name="TIME" value="0.25"/>
+                  <item name="PRED" synonym="Y" value="4.82"/>
+                  <item name="RES"  value="-1.77"/>
+                  <item name="WRES" value="0.959"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="8"/>
+                  <item name="TIME" value="0.52"/>
+                  <item name="PRED" synonym="Y" value="7.26"/>
+                  <item name="RES"  value="-4.21"/>
+                  <item name="WRES" value="-2.64"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="8"/>
+                  <item name="TIME" value="0.98"/>
+                  <item name="PRED" synonym="Y" value="8.63"/>
+                  <item name="RES"  value="-1.32"/>
+                  <item name="WRES" value="0.78"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="8"/>
+                  <item name="TIME" value="2.02"/>
+                  <item name="PRED" synonym="Y" value="8.53"/>
+                  <item name="RES"  value="-0.969"/>
+                  <item name="WRES" value="-0.042"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="8"/>
+                  <item name="TIME" value="3.53"/>
+                  <item name="PRED" synonym="Y" value="7.61"/>
+                  <item name="RES"  value="-1.02"/>
+                  <item name="WRES" value="-0.382"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="8"/>
+                  <item name="TIME" value="5.05"/>
+                  <item name="PRED" synonym="Y" value="6.76"/>
+                  <item name="RES"  value="-0.880"/>
+                  <item name="WRES" value="-0.239"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="8"/>
+                  <item name="TIME" value="7.15"/>
+                  <item name="PRED" synonym="Y" value="5.74"/>
+                  <item name="RES"  value="-1.01"/>
+                  <item name="WRES" value="-0.550"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="8"/>
+                  <item name="TIME" value="9.07"/>
+                  <item name="PRED" synonym="Y" value="4.94"/>
+                  <item name="RES"  value="-0.368"/>
+                  <item name="WRES" value="0.384"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="8"/>
+                  <item name="TIME" value="12.1"/>
+                  <item name="PRED" synonym="Y" value="3.90"/>
+                  <item name="RES"  value="-0.897"/>
+                  <item name="WRES" value="-0.601"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="8"/>
+                  <item name="TIME" value="24.1"/>
+                  <item name="PRED" synonym="Y" value="1.52"/>
+                  <item name="RES"  value="-0.274"/>
+                  <item name="WRES" value="-0.003"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="9"/>
+                  <item name="TIME" value="0.0"/>
+                  <item name="PRED" synonym="Y" value="0.0"/>
+                  <item name="RES"  value="0.0"/>
+                  <item name="WRES" value="0.0"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="9"/>
+                  <item name="TIME" value="0.3"/>
+                  <item name="PRED" synonym="Y" value="3.72"/>
+                  <item name="RES"  value="3.65"/>
+                  <item name="WRES" value="1.13"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="9"/>
+                  <item name="TIME" value="0.63"/>
+                  <item name="PRED" synonym="Y" value="5.34"/>
+                  <item name="RES"  value="3.69"/>
+                  <item name="WRES" value="1.68"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="9"/>
+                  <item name="TIME" value="1.05"/>
+                  <item name="PRED" synonym="Y" value="5.95"/>
+                  <item name="RES"  value="1.19"/>
+                  <item name="WRES" value="-0.69"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="9"/>
+                  <item name="TIME" value="2.02"/>
+                  <item name="PRED" synonym="Y" value="5.84"/>
+                  <item name="RES"  value="0.493"/>
+                  <item name="WRES" value="-0.179"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="9"/>
+                  <item name="TIME" value="3.53"/>
+                  <item name="PRED" synonym="Y" value="5.21"/>
+                  <item name="RES"  value="0.451"/>
+                  <item name="WRES" value="0.0464"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="9"/>
+                  <item name="TIME" value="5.02"/>
+                  <item name="PRED" synonym="Y" value="4.64"/>
+                  <item name="RES"  value="1.03"/>
+                  <item name="WRES" value="1.04"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="9"/>
+                  <item name="TIME" value="7.17"/>
+                  <item name="PRED" synonym="Y" value="3.92"/>
+                  <item name="RES"  value="0.32"/>
+                  <item name="WRES" value="-0.0321"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="9"/>
+                  <item name="TIME" value="8.80"/>
+                  <item name="PRED" synonym="Y" value="3.45"/>
+                  <item name="RES"  value="0.659"/>
+                  <item name="WRES" value="0.561"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="9"/>
+                  <item name="TIME" value="11.6"/>
+                  <item name="PRED" synonym="Y" value="2.77"/>
+                  <item name="RES"  value="0.387"/>
+                  <item name="WRES" value="0.20"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="9"/>
+                  <item name="TIME" value="24.4"/>
+                  <item name="PRED" synonym="Y" value="1.02"/>
+                  <item name="RES"  value="0.102"/>
+                  <item name="WRES" value="-0.0278"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="10"/>
+                  <item name="TIME" value="0.0"/>
+                  <item name="PRED" synonym="Y" value="0.0"/>
+                  <item name="RES"  value="0.24"/>
+                  <item name="WRES" value="0.386"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="10"/>
+                  <item name="TIME" value="0.37"/>
+                  <item name="PRED" synonym="Y" value="7.47"/>
+                  <item name="RES"  value="-4.58"/>
+                  <item name="WRES" value="0.646"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="10"/>
+                  <item name="TIME" value="0.77"/>
+                  <item name="PRED" synonym="Y" value="10.0"/>
+                  <item name="RES"  value="-4.81"/>
+                  <item name="WRES" value="-1.69"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="10"/>
+                  <item name="TIME" value="1.02"/>
+                  <item name="PRED" synonym="Y" value="10.5"/>
+                  <item name="RES"  value="-4.12"/>
+                  <item name="WRES" value="-2.22"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="10"/>
+                  <item name="TIME" value="2.05"/>
+                  <item name="PRED" synonym="Y" value="10.3"/>
+                  <item name="RES"  value="-2.50"/>
+                  <item name="WRES" value="-2.79"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="10"/>
+                  <item name="TIME" value="3.55"/>
+                  <item name="PRED" synonym="Y" value="9.23"/>
+                  <item name="RES"  value="0.982"/>
+                  <item name="WRES" value="1.95"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="10"/>
+                  <item name="TIME" value="5.05"/>
+                  <item name="PRED" synonym="Y" value="8.21"/>
+                  <item name="RES"  value="0.972"/>
+                  <item name="WRES" value="1.51"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="10"/>
+                  <item name="TIME" value="7.08"/>
+                  <item name="PRED" synonym="Y" value="7.00"/>
+                  <item name="RES"  value="1.02"/>
+                  <item name="WRES" value="1.16"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="10"/>
+                  <item name="TIME" value="9.38"/>
+                  <item name="PRED" synonym="Y" value="5.85"/>
+                  <item name="RES"  value="1.29"/>
+                  <item name="WRES" value="1.26"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="10"/>
+                  <item name="TIME" value="12.1"/>
+                  <item name="PRED" synonym="Y" value="4.73"/>
+                  <item name="RES"  value="0.948"/>
+                  <item name="WRES" value="0.484"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="10"/>
+                  <item name="TIME" value="23.7"/>
+                  <item name="PRED" synonym="Y" value="1.91"/>
+                  <item name="RES"  value="0.508"/>
+                  <item name="WRES" value="-0.275"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="11"/>
+                  <item name="TIME" value="0.0"/>
+                  <item name="PRED" synonym="Y" value="0.0"/>
+                  <item name="RES"  value="0.0"/>
+                  <item name="WRES" value="0.0"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="11"/>
+                  <item name="TIME" value="0.25"/>
+                  <item name="PRED" synonym="Y" value="5.24"/>
+                  <item name="RES"  value="-0.378"/>
+                  <item name="WRES" value="-0.232"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="11"/>
+                  <item name="TIME" value="0.50"/>
+                  <item name="PRED" synonym="Y" value="7.75"/>
+                  <item name="RES"  value="-0.515"/>
+                  <item name="WRES" value="-3.30"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="11"/>
+                  <item name="TIME" value="0.98"/>
+                  <item name="PRED" synonym="Y" value="9.37"/>
+                  <item name="RES"  value="-1.37"/>
+                  <item name="WRES" value="0.0889"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="11"/>
+                  <item name="TIME" value="1.98"/>
+                  <item name="PRED" synonym="Y" value="9.29"/>
+                  <item name="RES"  value="-2.48"/>
+                  <item name="WRES" value="-1.02"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="11"/>
+                  <item name="TIME" value="3.60"/>
+                  <item name="PRED" synonym="Y" value="8.22"/>
+                  <item name="RES"  value="-2.35"/>
+                  <item name="WRES" value="-0.857"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="11"/>
+                  <item name="TIME" value="5.02"/>
+                  <item name="PRED" synonym="Y" value="7.36"/>
+                  <item name="RES"  value="-2.14"/>
+                  <item name="WRES" value="-0.638"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="11"/>
+                  <item name="TIME" value="7.03"/>
+                  <item name="PRED" synonym="Y" value="6.29"/>
+                  <item name="RES"  value="-1.84"/>
+                  <item name="WRES" value="-0.343"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="11"/>
+                  <item name="TIME" value="9.03"/>
+                  <item name="PRED" synonym="Y" value="5.38"/>
+                  <item name="RES"  value="-1.76"/>
+                  <item name="WRES" value="-0.405"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="11"/>
+                  <item name="TIME" value="12.1"/>
+                  <item name="PRED" synonym="Y" value="4.23"/>
+                  <item name="RES"  value="-1.54"/>
+                  <item name="WRES" value="-0.337"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="11"/>
+                  <item name="TIME" value="24.1"/>
+                  <item name="PRED" synonym="Y" value="1.66"/>
+                  <item name="RES"  value="-0.80"/>
+                  <item name="WRES" value="-0.102"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="12"/>
+                  <item name="TIME" value="0.0"/>
+                  <item name="PRED" synonym="Y" value="0.0"/>
+                  <item name="RES"  value="0.0"/>
+                  <item name="WRES" value="0.0"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="12"/>
+                  <item name="TIME" value="0.25"/>
+                  <item name="PRED" synonym="Y" value="5.64"/>
+                  <item name="RES"  value="-4.39"/>
+                  <item name="WRES" value="-0.745"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="12"/>
+                  <item name="TIME" value="0.50"/>
+                  <item name="PRED" synonym="Y" value="8.35"/>
+                  <item name="RES"  value="-4.39"/>
+                  <item name="WRES" value="-0.782"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="12"/>
+                  <item name="TIME" value="1.0"/>
+                  <item name="PRED" synonym="Y" value="10.1"/>
+                  <item name="RES"  value="-2.30"/>
+                  <item name="WRES" value="-0.635"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="12"/>
+                  <item name="TIME" value="2.0"/>
+                  <item name="PRED" synonym="Y" value="9.99"/>
+                  <item name="RES"  value="-0.272"/>
+                  <item name="WRES" value="-0.179"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="12"/>
+                  <item name="TIME" value="3.52"/>
+                  <item name="PRED" synonym="Y" value="8.91"/>
+                  <item name="RES"  value="0.837"/>
+                  <item name="WRES" value="1.20"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="12"/>
+                  <item name="TIME" value="5.07"/>
+                  <item name="PRED" synonym="Y" value="7.90"/>
+                  <item name="RES"  value="0.673"/>
+                  <item name="WRES" value="0.919"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="12"/>
+                  <item name="TIME" value="7.07"/>
+                  <item name="PRED" synonym="Y" value="6.75"/>
+                  <item name="RES"  value="-0.165"/>
+                  <item name="WRES" value="-0.432"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="12"/>
+                  <item name="TIME" value="9.03"/>
+                  <item name="PRED" synonym="Y" value="5.80"/>
+                  <item name="RES"  value="0.314"/>
+                  <item name="WRES" value="0.337"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="12"/>
+                  <item name="TIME" value="12.1"/>
+                  <item name="PRED" synonym="Y" value="4.58"/>
+                  <item name="RES"  value="-0.00765"/>
+                  <item name="WRES" value="-0.174"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+               <record>
+                  <item name="ID"   value="12"/>
+                  <item name="TIME" value="24.1"/>
+                  <item name="PRED" synonym="Y" value="1.78"/>
+                  <item name="RES"  value="-0.609"/>
+                  <item name="WRES" value="-1.09"/>
+                  <item name="DS"/>
+                  <item name="W"/>
+                  <item name="KA"/>
+                  <item name="KE"/>
+                  <item name="CL"/>
+                  <item name="D"/>
+                  <item name="E"/>
+               </record>
+            </individual>
          </presentation_data>
       </nm_result>
-      <nm_input>
-         <nm_request>
-            <nm_constraint>
-               <pop_analysis is_estimation="yes"
-                             approximation="fo"
-                             pop_size="12">
-                  <submission>
-                     <owner>
-                        <login>honda</login>
-                        <description>RFPK Software engineer</description>
-                     </owner>
-                     <date>
-                        <mm>10</mm>
-                        <dd>27</dd>
-                        <yyyy>2003</yyyy>
-                     </date>
-                     <time>
-                        <hr>15</hr>
-                        <min>30</min>
-                        <sec>00</sec>
-                     </time>
-                  </submission>
-                  <description>CONTROL 4 + THEOPHYLLINE example</description>
-                  <data_labels>
-                      <label name="ID"/>
-                      <label name="DOSE" synonym="AMT"/>
-                      <label name="TIME"/>
-                      <label name="CL" synonym="DV"/>
-                      <label name="WT"/>
-                  </data_labels>
-                  <theta length="3">
-                      <low>
-                         <double value="0.1"/>
-                         <double value=".008"/>
-                         <double value=".004"/>
-                      </low>
-                      <in>
-                         <double value="3."/>
-                         <double value=".08"/>
-                         <double value="0.04"/>
-                      </in>
-                      <up>
-                         <double value="5"/>
-                         <double value=".5"/>
-                         <double value="0.9"/>
-                      </up>
-                  </theta>
-                  <omega struct="block" dimension="3">
-                      <in>
-                         <double value="6"/>
-                         <double value="0.005"/>
-                         <double value="0.0002"/>
-                         <double value=".3"/>
-                         <double value=".006"/>
-                         <double value=".4"/>
-                      </in>
-                  </omega>
-                  <sigma struct="diagonal" dimension="1">
-                      <in>
-                         <double value=".4"/>
-                      </in>   
-                  </sigma>
-                  <eta length="3">
-                      <in>
-                         <double value="0.0"/>
-                         <double value="0.0"/>
-                         <double value="0.0"/>
-                      </in>
-                  </eta>
-                  <pop_stat is_stderror_out="yes"
-                            is_covariance_out="yes"
-                            is_correlation_out="yes"
-                            is_confidence_out="yes"
-                            covariance_form="r"
-                            is_coefficient="yes"/>
-                  <ind_stat is_stderror_out="no"
-                            is_covariance_out="yes"
-                            is_correlation_out="no"
-                            is_confidence_out="no"
-                            is_coefficient_out="no"/>
-               </pop_analysis>
-            </nm_constraint>
-         </nm_request>
-         <nm_model>
-            <description>Two compartmental model</description>
-            <pred>
-;THETA(1)=MEAN ABSORPTION RATE CONSTANT (1/HR)
-;THETA(2)=MEAN ELIMINATION RATE CONSTANT (1/HR)
-;THETA(3)=SLOPE OF CLEARANCE VS WEIGHT RELATIONSHIP (LITERS/HR/kg)
-;DOSE=WT-ADJUSTED DOSE (mg/kg)
-;DS=NON-WT-ADJUSTED DOSE (mg)
-   IF (DOSE.NE.0) THEN
-      DS=DOSE*WT
-      W=WT
-   ENDIF
-   KA=THETA(1) + ETA(1)
-   KE=THETA(2) + ETA(2)
-   CL=THETA(3) * WT + ETA(3)
-   D=EXP(-KE*TIME)-EXP(-KA*TIME)
-   E=CL*(KA-KE)
-   F=DS*KE*KA/E*D
-   Y=F+EPS(1)
-            </pred>
-         </nm_model>
-         <nm_data>
-            <description>Theophylline</description>
-            <individual length="11">
-               <record>
-                  <item value="1"/>
-                  <item value="4.02"/>
-                  <item value="0."/>
-                  <item value=".74"/>
-                  <item value="79.6"/>
-               </record>
-               <record>
-                  <item value="1"/>
-                  <item value="0.0"/>
-                  <item value="0.25"/>
-                  <item value="2.84"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="1"/>
-                  <item value="0.0"/>
-                  <item value="0.57"/>
-                  <item value="6.57"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="1"/>
-                  <item value="0.0"/>
-                  <item value="1.12"/>
-                  <item value="10.5"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="1"/>
-                  <item value="0.0"/>
-                  <item value="2.02"/>
-                  <item value="9.66"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="1"/>
-                  <item value="0.0"/>
-                  <item value="3.82"/>
-                  <item value="8.58"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="1"/>
-                  <item value="0.0"/>
-                  <item value="5.1"/>
-                  <item value="8.36"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="1"/>
-                  <item value="0.0"/>
-                  <item value="7.03"/>
-                  <item value="7.47"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="1"/>
-                  <item value="0.0"/>
-                  <item value="9.05"/>
-                  <item value="6.89"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="1"/>
-                  <item value="0.0"/>
-                  <item value="12.12"/>
-                  <item value="5.94"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="1"/>
-                  <item value="0.0"/>
-                  <item value="24.37"/>
-                  <item value="3.28"/>
-                  <item value="0.0"/>
-               </record>
-            </individual>
-            <individual length="11">
-               <record>
-                  <item value="2"/>
-                  <item value="4.4"/>
-                  <item value="0."/>
-                  <item value="0."/>
-                  <item value="72.4"/>
-               </record>
-               <record>
-                  <item value="2"/>
-                  <item value="0.0"/>
-                  <item value=".27"/>
-                  <item value="1.72"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="2"/>
-                  <item value="0.0"/>
-                  <item value=".52"/>
-                  <item value="7.91"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="2"/>
-                  <item value="0.0"/>
-                  <item value="1."/>
-                  <item value="8.31"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="2"/>
-                  <item value="0.0"/>
-                  <item value="1.92"/>
-                  <item value="8.33"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="2"/>
-                  <item value="0.0"/>
-                  <item value="3.5"/>
-                  <item value="6.85"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="2"/>
-                  <item value="0.0"/>
-                  <item value="5.02"/>
-                  <item value="6.08"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="2"/>
-                  <item value="0.0"/>
-                  <item value="7.03"/>      
-                  <item value="5.4"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="2"/>       
-                  <item value="0.0"/>
-                  <item value="9."/>        
-                  <item value="4.55"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="2"/>       
-                  <item value="0.0"/>       
-                  <item value="12."/>        
-                  <item value="3.01"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="2"/>       
-                  <item value="0.0"/>       
-                  <item value="24.3"/>        
-                  <item value=".90"/>       
-                  <item value="0.0"/>
-               </record>
-            </individual>
-            <individual>
-               <record>
-                  <item value="3"/>      
-                  <item value="4.53"/>      
-                  <item value="0."/>        
-                  <item value="0."/>       
-                  <item value="70.5"/>
-               </record>
-               <record>
-                  <item value="3"/>
-                  <item value="0.0"/>
-                  <item value=".27"/>
-                  <item value="4.4"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="3"/>
-                  <item value="0.0"/>
-                  <item value=".58"/>
-                  <item value="6.9"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="3"/>
-                  <item value="0.0"/>
-                  <item value="1.02"/>
-                  <item value="8.2"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="3"/>
-                  <item value="0.0"/>
-                  <item value="2.02"/>
-                  <item value="7.8"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="3"/>
-                  <item value="0.0"/>
-                  <item value="3.62"/>
-                  <item value="7.5"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="3"/>
-                  <item value="0.0"/>
-                  <item value="5.08"/>
-                  <item value="6.2"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="3"/>
-                  <item value="0.0"/>
-                  <item value="7.07"/>
-                  <item value="5.3"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="3"/>
-                  <item value="0.0"/>
-                  <item value="9."/>
-                  <item value="4.9"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="3"/>
-                  <item value="0.0"/>
-                  <item value="12.15"/>
-                  <item value="3.7"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="3"/>
-                  <item value="0.0"/>
-                  <item value="24.17"/>
-                  <item value="1.05"/>
-                  <item value="0.0"/>
-               </record>
-            </individual>
-            <individual>
-               <record>
-                  <item value="4"/>
-                  <item value="4.4"/>
-                  <item value="0."/>
-                  <item value="0."/>    
-                  <item value="72.7"/>
-               </record>
-               <record>         
-                  <item value="4"/> 
-                  <item value="0.0"/>        
-                  <item value=".35"/>   
-                  <item value="1.89"/>     
-                  <item value="0.0"/>
-               </record>
-               <record>         
-                  <item value="4"/>
-                  <item value="0.0"/>        
-                  <item value=".6"/>   
-                  <item value="4.6"/>      
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="4"/>  
-                  <item value="0.0"/>
-                  <item value="1.07"/>    
-                  <item value="8.6"/>    
-                  <item value="0.0"/>
-               </record>
-               <record>       
-                  <item value="4"/>
-                  <item value="0.0"/>       
-                  <item value="2.13"/>    
-                  <item value="8.38"/>    
-                  <item value="0.0"/>
-               </record>
-               <record>         
-                  <item value="4"/>
-                  <item value="0.0"/> 
-                  <item value="3.5"/>
-                  <item value="7.54"/>     
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="4"/>
-                  <item value="0.0"/>
-                  <item value="5.02"/>
-                  <item value="6.88"/>    
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="4"/>
-                  <item value="0.0"/>       
-                  <item value="7.02"/>
-                  <item value="5.78"/>    
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="4"/>
-                  <item value="0.0"/>
-                  <item value="9.02"/>
-                  <item value="5.33"/>    
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="4"/>
-                  <item value="0.0"/>
-                  <item value="11.98"/>
-                  <item value="4.19"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="4"/>
-                  <item value="0.0"/>      
-                  <item value="24.65"/>     
-                  <item value="1.15"/>   
-                  <item value="0.0"/>
-               </record>
-            </individual>
-            <individual>
-               <record>
-                  <item value="5"/>
-                  <item value="5.86"/>
-                  <item value="0."/>
-                  <item value="0."/>
-                  <item value="54.6"/>
-               </record>
-               <record>
-                  <item value="5"/>
-                  <item value="0.0"/>        
-                  <item value=".3"/>   
-                  <item value="2.02"/>      
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="5"/>
-                  <item value="0.0"/>
-                  <item value=".52"/>
-                  <item value="5.63"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="5"/>
-                  <item value="0.0"/>
-                  <item value="1."/>
-                  <item value="11.4"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="5"/>
-                  <item value="0.0"/>
-                  <item value="2.02"/>
-                  <item value="9.33"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="5"/>
-                  <item value="0.0"/>
-                  <item value="3.5"/>
-                  <item value="8.74"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="5"/>
-                  <item value="0.0"/>       
-                  <item value="5.02"/>    
-                  <item value="7.56"/>    
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="5"/>
-                  <item value="0.0"/>
-                  <item value="7.02"/>
-                  <item value="7.09"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="5"/>
-                  <item value="0.0"/>
-                  <item value="9.1"/>
-                  <item value="5.9"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="5"/>
-                  <item value="0.0"/>
-                  <item value="12."/>
-                  <item value="4.37"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="5"/>
-                  <item value="0.0"/>
-                  <item value="24.35"/>
-                  <item value="1.57"/>
-                  <item value="0.0"/>
-               </record>
-            </individual>
-            <individual>
-               <record>
-                  <item value="6"/>
-                  <item value="4."/>
-                  <item value="0."/>
-                  <item value="0."/>      
-                  <item value="80."/>
-               </record>
-               <record>
-                  <item value="6"/>
-                  <item value="0.0"/>
-                  <item value=".27"/>
-                  <item value="1.29"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="6"/>
-                  <item value="0.0"/>   
-                  <item value=".58"/>
-                  <item value="3.08"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="6"/>
-                  <item value="0.0"/>
-                  <item value="1.15"/>
-                  <item value="6.44"/>    
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="6"/>
-                  <item value="0.0"/>
-                  <item value="2.03"/>
-                  <item value="6.32"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="6"/>
-                  <item value="0.0"/>
-                  <item value="3.57"/>
-                  <item value="5.53"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="6"/>
-                  <item value="0.0"/> 
-                  <item value="5."/>    
-                  <item value="4.94"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="6"/>
-                  <item value="0.0"/>
-                  <item value="7."/>
-                  <item value="4.02"/>
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="6"/>       
-                  <item value="0.0"/>        
-                  <item value="9.22"/>      
-                  <item value="3.46"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="6"/>      
-                  <item value="0.0"/>   
-                  <item value="12.1"/>       
-                  <item value="2.78"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="6"/>       
-                  <item value="0.0"/>       
-                  <item value="23.85"/>       
-                  <item value=".92"/>       
-                  <item value="0.0"/>
-               </record>
-            </individual>
-            <individual>
-               <record>
-                  <item value="7"/>      
-                  <item value="4.95"/>      
-                  <item value="0."/>        
-                  <item value=".15"/>      
-                  <item value="64.6"/>
-               </record>
-               <record>
-                  <item value="7"/>       
-                  <item value="0.0"/>         
-                  <item value=".25"/>       
-                  <item value=".85"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="7"/>       
-                  <item value="0.0"/>         
-                  <item value=".5"/>       
-                  <item value="2.35"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="7"/>       
-                  <item value="0.0"/>        
-                  <item value="1.02"/>      
-                  <item value="5.02"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="7"/>       
-                  <item value="0.0"/>        
-                  <item value="2.02"/>      
-                  <item value="6.58"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="7"/>       
-                  <item value="0.0"/>        
-                  <item value="3.48"/>      
-                  <item value="7.09"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="7"/>       
-                  <item value="0.0"/>        
-                  <item value="5."/>        
-                  <item value="6.66"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="7"/>       
-                  <item value="0.0"/>        
-                  <item value="6.98"/>      
-                  <item value="5.25"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="7"/>       
-                  <item value="0.0"/>        
-                  <item value="9."/>        
-                  <item value="4.39"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="7"/>       
-                  <item value="0.0"/>       
-                  <item value="12.05"/>      
-                  <item value="3.53"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="7"/>       
-                  <item value="0.0"/>       
-                  <item value="24.22"/>      
-                  <item value="1.15"/>       
-                  <item value="0.0"/>
-               </record>
-            </individual>
-            <individual>
-               <record>
-                  <item value="8"/>      
-                  <item value="4.53"/>      
-                  <item value="0."/>        
-                  <item value="0."/>       
-                  <item value="70.5"/>
-               </record>
-               <record>
-                  <item value="8"/>       
-                  <item value="0.0"/>         
-                  <item value=".25"/>      
-                  <item value="3.05"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="8"/>       
-                  <item value="0.0"/>        
-                  <item value="0.52"/>      
-                  <item value="3.05"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="8"/>       
-                  <item value="0.0"/>         
-                  <item value=".98"/>      
-                  <item value="7.31"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="8"/>       
-                  <item value="0.0"/>        
-                  <item value="2.02"/>      
-                  <item value="7.56"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="8"/>       
-                  <item value="0.0"/>        
-                  <item value="3.53"/>      
-                  <item value="6.59"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="8"/>       
-                  <item value="0.0"/>        
-                  <item value="5.05"/>      
-                  <item value="5.88"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="8"/>       
-                  <item value="0.0"/>        
-                  <item value="7.15"/>      
-                  <item value="4.73"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="8"/>       
-                  <item value="0.0"/>        
-                  <item value="9.07"/>      
-                  <item value="4.57"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="8"/>       
-                  <item value="0.0"/>       
-                  <item value="12.1"/>       
-                  <item value="3."/>         
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="8"/>       
-                  <item value="0.0"/>       
-                  <item value="24.12"/>      
-                  <item value="1.25"/>       
-                  <item value="0.0"/>
-               </record>
-            </individual>
-            <individual>
-               <record>
-                  <item value="9"/>     
-                  <item value="3.1"/>        
-                  <item value=".0"/>        
-                  <item value=".0"/>      
-                  <item value="86.4"/>
-               </record>
-               <record>
-                  <item value="9"/>       
-                  <item value="0.0"/>         
-                  <item value=".3"/>       
-                  <item value="7.37"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="9"/>       
-                  <item value="0.0"/>         
-                  <item value=".63"/>      
-                  <item value="9.03"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="9"/>       
-                  <item value="0.0"/>        
-                  <item value="1.05"/>      
-                  <item value="7.14"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="9"/>       
-                  <item value="0.0"/>        
-                  <item value="2.02"/>      
-                  <item value="6.33"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="9"/>       
-                  <item value="0.0"/>        
-                  <item value="3.53"/>      
-                  <item value="5.66"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="9"/>      
-                  <item value="0.0"/>        
-                  <item value="5.02"/>      
-                  <item value="5.67"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="9"/>       
-                  <item value="0.0"/>        
-                  <item value="7.17"/>      
-                  <item value="4.24"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="9"/>       
-                  <item value="0.0"/>        
-                  <item value="8.8"/>       
-                  <item value="4.11"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="9"/>       
-                  <item value="0.0"/>       
-                  <item value="11.6"/>       
-                  <item value="3.16"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="9"/>       
-                  <item value="0.0"/>       
-                  <item value="24.43"/>      
-                  <item value="1.12"/>       
-                  <item value="0.0"/>
-               </record>
-            </individual>
-            <individual>
-               <record>
-                  <item value="10"/>      
-                  <item value="5.5"/>       
-                  <item value="0."/>         
-                  <item value=".24"/>     
-                  <item value="58.2"/>
-               </record>
-               <record>
-                  <item value="10"/>       
-                  <item value="0.0"/>         
-                  <item value=".37"/>      
-                  <item value="2.89"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="10"/>       
-                  <item value="0.0"/>         
-                  <item value=".77"/>      
-                  <item value="5.22"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="10"/>       
-                  <item value="0.0"/>       
-                  <item value="1.02"/>       
-                  <item value="6.41"/>    
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="10"/>      
-                  <item value="0.0"/>        
-                  <item value="2.05"/>      
-                  <item value="7.83"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="10"/>       
-                  <item value="0.0"/>        
-                  <item value="3.55"/>     
-                  <item value="10.21"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="10"/>       
-                  <item value="0.0"/>        
-                  <item value="5.05"/>      
-                  <item value="9.18"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="10"/>       
-                  <item value="0.0"/>        
-                  <item value="7.08"/>      
-                  <item value="8.02"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="10"/>       
-                  <item value="0.0"/>        
-                  <item value="9.38"/>      
-                  <item value="7.14"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="10"/>       
-                  <item value="0.0"/>       
-                  <item value="12.1"/>       
-                  <item value="5.68"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="10"/>       
-                  <item value="0.0"/>       
-                  <item value="23.7"/>       
-                  <item value="2.42"/>       
-                  <item value="0.0"/>
-               </record>
-            </individual>
-            <individual>
-               <record>
-                  <item value="11"/>      
-                  <item value="4.92"/>      
-                  <item value="0."/>        
-                  <item value="0."/>       
-                  <item value="65."/>
-               </record>
-               <record>
-                  <item value="11"/>       
-                  <item value="0.0"/>         
-                  <item value=".25"/>      
-                  <item value="4.86"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="11"/>       
-                  <item value="0.0"/>         
-                  <item value=".5"/>       
-                  <item value="7.24"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="11"/>        
-                  <item value="0.0"/>         
-                  <item value=".98"/>      
-                  <item value="8."/>         
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="11"/>       
-                  <item value="0.0"/>        
-                  <item value="1.98"/>      
-                  <item value="6.81"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="11"/>       
-                  <item value="0.0"/>        
-                  <item value="3.6"/>       
-                  <item value="5.87"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="11"/>       
-                  <item value="0.0"/>        
-                  <item value="5.02"/>      
-                  <item value="5.22"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="11"/>       
-                  <item value="0.0"/>        
-                  <item value="7.03"/>      
-                  <item value="4.45"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="11"/>       
-                  <item value="0.0"/>        
-                  <item value="9.03"/>      
-                  <item value="3.62"/>        
-                  <item value="0.0"/> 
-               </record>
-               <record>
-                  <item value="11"/>      
-                  <item value="0.0"/>      
-                  <item value="12.12"/>      
-                  <item value="2.69"/>     
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="11"/>      
-                  <item value="0.0"/>     
-                  <item value="24.08"/>       
-                  <item value=".86"/>       
-                  <item value="0.0"/>
-               </record>
-            </individual>
-            <individual>
-               <record>
-                  <item value="12"/>      
-                  <item value="5.3"/>       
-                  <item value="0."/>        
-                  <item value="0."/>       
-                  <item value="60.5"/>
-               </record>
-               <record>
-                  <item value="12"/>       
-                  <item value="0.0"/>         
-                  <item value=".25"/>      
-                  <item value="1.25"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="12"/>       
-                  <item value="0.0"/>         
-                  <item value=".5"/>       
-                  <item value="3.96"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="12"/>       
-                  <item value="0.0"/>        
-                  <item value="1."/>        
-                  <item value="7.82"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="12"/>       
-                  <item value="0.0"/>        
-                  <item value="2."/>        
-                  <item value="9.72"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="12"/>       
-                  <item value="0.0"/>        
-                  <item value="3.52"/>      
-                  <item value="9.75"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="12"/>       
-                  <item value="0.0"/>        
-                  <item value="5.07"/>      
-                  <item value="8.57"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="12"/>       
-                  <item value="0.0"/>        
-                  <item value="7.07"/>      
-                  <item value="6.59"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="12"/>       
-                  <item value="0.0"/>        
-                  <item value="9.03"/>      
-                  <item value="6.11"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="12"/>       
-                  <item value="0.0"/>       
-                  <item value="12.05"/>      
-                  <item value="4.57"/>       
-                  <item value="0.0"/>
-               </record>
-               <record>
-                  <item value="12"/>       
-                  <item value="0.0"/>       
-                  <item value="24.15"/>     
-                  <item value="1.17"/>       
-                  <item value="0.0"/>
-               </record>
-              </individual>
-           </nm_data>
-         <nm_verbatim>
-            <nm_presentation>
-               <table header="every" process="estimation">
-                  <column label="ID"/>
-                  <column label="DOSE"/>
-                  <column label="WT"/>
-                  <column label="TIME"/>
-               </table>
-               <scatterplot process="estimation" y0_line="show" unit_slope="yes">
-                  <y label="RES"/>
-                  <y label="WRES"/>
-                  <x label="TIME"/>
-                  <by label="ID"/>
-               </scatterplot>
-            </nm_presentation>
-            <nm_control>
-$PROB  THEOPHYLLINE   POPULATION DATA
-$INPUT      ID DOSE TIME CP=DV WT
-$DATA       THEO
-
-$PRED
-;THETA(1)=MEAN ABSORPTION RATE CONSTANT (1/HR)
-;THETA(2)=MEAN ELIMINATION RATE CONSTANT (1/HR)
-;THETA(3)=SLOPE OF CLEARANCE VS WEIGHT RELATIONSHIP (LITERS/HR/KG)
-;DOSE=WT-ADJUSTED DOSE (MG/KG)
-;DS=NON-WT-ADJUSTED DOSE (MG)
-   IF (DOSE.NE.0) THEN
-      DS=DOSE*WT
-      W=WT
-   ENDIF
-   KA=THETA(1)+ETA(1)
-   KE=THETA(2)+ETA(2)
-   CL=THETA(3)*W+ETA(3)
-   D=EXP(-KE*TIME)-EXP(-KA*TIME)
-   E=CL*(KA-KE)
-   F=DS*KE*KA/E*D
-   Y=F+EPS(1)
-
-$THETA  (.1,3,5) (.008,.08,.5) (.004,.04,.9)
-$OMEGA BLOCK(3)  6 .005 .0002 .3 .006 .4
-$SIGMA  .4
-
-$EST     MAXEVAL=450  PRINT=5
-$COV
-$TABLE          ID DOSE WT TIME
-$SCAT           (RES WRES) VS TIME BY ID
-            </nm_control>
-         </nm_verbatim>
-      </nm_input>
    </nonmem>
 </spkml>
