@@ -877,12 +877,12 @@ $end
 #include <iostream>
 #include <cmath>
 #include "popStatistics.h"
-#include "NaiveFoModel.h"
 #include "getCol.h"
 #include "replaceJth.h"
 #include "transpose.h"
 #include "inverse.h"
 #include "lTilde.h"
+#include "firstOrderOpt.h"
 #include "multiply.h"
 #include "add.h"
 #include "SpkException.h"
@@ -1177,7 +1177,7 @@ message %d-the element, %f, is invalid.", i, indParAll[ i + j * nB ] );
             pN[ i ] = nMeasurementsAll[i];
 
         DoubleMatrix dvecY( measurementsAll );
-        DoubleMatrix dvecAlp( popPar );
+        DoubleMatrix dvecAlpIn( popPar );
         DoubleMatrix dvecBLow( indParLow );
         DoubleMatrix dvecBUp( indParUp );
         DoubleMatrix dmatBIn( indParAll, nInd );
@@ -1197,22 +1197,23 @@ message %d-the element, %f, is invalid.", i, indParAll[ i + j * nB ] );
         // n is the total number of individuals.
         //---------------------------------------------------------------------------
         
-        // Set the number of iterations for the individual level
-        // optimizer equal to zero so that the derivatives are
-        // evaluated at the given alp and b.
-        Optimizer optimizer( 1.0e-6, 0, 0 );
+        // Set the number of iterations for the population and
+        // individual level optimizers equal to zero so that the
+        // values for alp and b do not change.
+        Optimizer popOptimizer( 1.0e-6, 0, 0 );
+        Optimizer indOptimizer( 1.0e-6, 0, 0 );
   
         // Calculate the derivatives.
         if( objective != FIRST_ORDER )
         {
-            // If the first order objective is not being used,
-            // then use the model that was passed in.
+            // If the first order objective is not being used, then
+            // calculate the derivatives in the normal way.
             lTilde( popModel, 
                     objective, 
                     dvecY, 
                     dvecN,
-                    optimizer,
-                    dvecAlp,
+                    indOptimizer,
+                    dvecAlpIn,
                     dvecBLow,
                     dvecBUp,
                     dvecBStep,
@@ -1225,26 +1226,33 @@ message %d-the element, %f, is invalid.", i, indParAll[ i + j * nB ] );
         else
         {
             // If the first order objective is being used, then
-            // instantiate a naive first order model because the more
-            // efficient one is not compatible with lTilde and does
-            // not return the derivatives that are needed here.
-            NaiveFoModel   naiveFoPopModel( &popModel, indParStep );
-            enum Objective naiveFoObjective = NAIVE_FIRST_ORDER;
+            // construct some tempory values that won't be used
+            // because the number of population iterations is zero.
+            DoubleMatrix dvecAlpLow( dvecAlpIn );
+            DoubleMatrix dvecAlpUp ( dvecAlpIn );
+            DoubleMatrix dvecAlpStep( nAlp );
+	    dvecAlpStep.fill( 1.0e-3 );
 
-            lTilde( naiveFoPopModel, 
-                    naiveFoObjective, 
-                    dvecY, 
-                    dvecN,
-                    optimizer,
-                    dvecAlp,
-                    dvecBLow,
-                    dvecBUp,
-                    dvecBStep,
-                    dmatBIn,
-                    0,
-                    0, 
-                    0, 
-                    &dmatLambdaLTilde_alpOut );
+            // Calculate the derivatives in a more efficient way.
+            firstOrderOpt( popModel, 
+                           dvecN,
+                           dvecY, 
+                           popOptimizer,
+                           dvecAlpLow,
+                           dvecAlpUp,
+                           dvecAlpIn,
+                           0,
+                           dvecAlpStep,
+                           indOptimizer,
+                           dvecBLow,
+                           dvecBUp,
+                           dmatBIn,
+                           0,
+                           dvecBStep,
+                           0, 
+                           0, 
+                           0, 
+                           &dmatLambdaLTilde_alpOut );
         }
 
         indObj_popPar = dmatLambdaLTilde_alpOut.toValarray();
