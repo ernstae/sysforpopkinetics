@@ -1,0 +1,152 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "/usr/share/sgml/docbook/xml-dtd-4.2-1.0-14/docbookx.dtd" [
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+]>
+<article><title>Job Entity Relationship Model</title>
+ <articleinfo>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>August 6, 2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+    </revhistory>
+  <abstract>
+      <para>
+	An entity relationship model for Spk jobs is presented.
+      </para>
+  </abstract>
+ </articleinfo>
+  <sect1>
+    <title>Introduction</title>
+    <para>
+      In Spk, job status and history are maintained in a relational
+      database.  This database is available for query by the
+      MDA, and is available for update by the ASPK and CSPK. 
+      Entity relationship (ER) modeling is a fundamental technique of
+      relational database design.  This document presents the ER
+      model for the Spk Job database.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Entity Relationship Diagram</title>
+    <para>
+      The following diagram represents the data entities and their
+      relationships:
+      <itemizedlist>
+	<listitem>
+	  <para>
+	    Entities are represented by boxes that are divided
+	    into sections, vertically.  The name of the entity appears in the
+	    first box.  A list of the most important attributes 
+	    appear in the second box.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Relationships between entities are represented by arrows:
+	    <itemizedlist>
+	      <listitem>
+		<para>
+		  The role of the relationship is indicated by text.  For
+		  example, a job <emphasis>has a</emphasis> version.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  The sense of the role is indicated by the direction
+		  of the arrow.  In the example just cited, it is
+		  the job which has a version and not the version
+		  which has a job.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  The multiplicity of the relationship is represented
+		  by numbers or ranges of numbers at the ends of the
+		  relationship arrow.  For example, the relationship
+		  between Job and History Segment is 1-to-many.  To
+		  be more specific, each job must have one or more
+		  history segments. 
+		</para>
+	      </listitem>
+	    </itemizedlist>
+	  </para>
+	</listitem>
+      </itemizedlist>
+      <figure>
+	<title>Entity Relationship Diagram</title>
+	<graphic fileref="job-er.png"/>
+      </figure>
+      </para>
+  </sect1>
+  <sect1>
+    <title>Entities</title>
+    <para>
+      In this section, each entity will be described briefly.  It should
+      me noted that entities are more abstract than relational tables.
+      Consequently, there is not a one-to-one correspondence between
+      entities names and table names.  For example, User is an entity
+      in this model.  However, Spk has a User database, in which 
+      User is the principal table.  In the Job database, User is simply
+      implemented as a foreign key.
+    </para>
+    <sect2>
+      <title>Job</title>
+      <para>
+	Job represents the principal unit of work for Spk.  A user
+	combines a version of a model with a data file to create
+	a job.
+      </para>
+    </sect2>
+    <sect2>
+      <title>History Segment</title>
+      <para>
+	A history segment contains a state which the job assumed and
+	the time that it entered that state.  (See the Spk design
+	document "Job History Model").
+      </para>
+    </sect2>
+    <sect2>
+      <title>Model</title>
+      <para>
+	Model represents the PK model created by the user with the
+	aid of the MDA.  A model is stored as a source control
+	archive file, in rcs format.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Report</title>
+      <para>
+	Every job creates a report before it is complete. The report
+	is not available until the job reaches its End state
+	(see the Spk design document "Job History Model").
+      </para>
+    </sect2>
+    <sect2>
+      <title>User</title>
+      <para>
+	User represents the user of Spk.  The user combines a version
+	of a model with a data file to create a job, using the MDA
+	to submit it for processing.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Version</title>
+      <para>
+	A model has one or more versions.  A scientist creates the
+	initial version along with its source control archive.  Subsequent
+	versions are created when an author (either the original
+	author or another scientist) makes changes to the model and
+	adds those changes to the model's source control archive.
+      </para>
+    </sect2>
+  </sect1>
+</article>
+
+<!--  LocalWords:  articleinfo revhistory revnumber authorinitials revremark er
+ -->
+<!--  LocalWords:  Spk MDA ASPK CSPK itemizedlist listitem fileref png rcs
+ -->
