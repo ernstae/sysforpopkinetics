@@ -7,19 +7,17 @@
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestSuite.h>
-#include "NonmemCompiler.h"
+#include "NonmemSpkMLToCpp.h"
 
 class NonmemCompilerTest : public CppUnit::TestFixture {
 
-  NonmemCompiler * compiler;
+  NonmemSpkMLToCpp * compiler;
 public:
     static CppUnit::Test * suite();
     virtual void setUp();
     virtual void tearDown();
 
-    void testParse();
-    void testInterpret();
-    void testEmit();
+    void testTranslate();
 };
 
 #endif

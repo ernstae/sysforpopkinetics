@@ -12,24 +12,25 @@
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
 
-#include "../../libcommon/SymbolTable.h"
-#include "../../libcommon/ExpTreeGenerator.h"
+#include "SymbolTable.h"
+#include "ExpTreeGenerator.h"
+#include "explang.tab.h"
 
 using namespace std;
 using namespace CppUnit;
 using namespace xercesc;
 
-  extern "C"{
-    int yyparse(void);
-  };
-  extern int yydebug;
-  extern FILE *yyin;
-  
-extern int gSpkExpLines;
-extern int gSpkExpErrors;
-extern ExpTreeGenerator * gSpkExpTreeGenerator;
-extern SymbolTable * gSpkExpSymbolTable;
-extern DOMDocument * gSpkExpTree;
+extern "C"{
+  int yylex(void);  
+  int yyparse(void);
+};
+extern int                gSpkExpLines;
+extern int                gSpkExpErrors;
+extern SymbolTable      * gSpkExpSymbolTable;
+extern DOMDocument      * gSpkExpTree;
+extern FILE             * yyin;
+extern int                yydebug;
+
 
 void NonmemExpXlatorTest::setUp()
 {
@@ -48,26 +49,52 @@ void NonmemExpXlatorTest::setUp()
 
   gSpkExpErrors = 0;
   gSpkExpLines  = 0;
-  gSpkExpTreeGenerator = new ExpTreeGenerator;
-  gSpkExpTree = gSpkExpTreeGenerator->getRoot();
-  gSpkExpSymbolTable = new SymbolTable( client::NONMEM );
+  gSpkExpTree = expTreeUtil.createTree("unit");
+  gSpkExpSymbolTable = new SymbolTable;
 }
 void NonmemExpXlatorTest::tearDown()
 {
   delete gSpkExpSymbolTable;
-  delete gSpkExpTreeGenerator;
 }
 void NonmemExpXlatorTest::testParse()
 {
+  //
+  // NONMEM keywords
+  //
+  Symbol theta( "THETA", Symbol::VECTOR, Symbol::DOUBLE, true );
+  theta.size( 3 );
+  gSpkExpSymbolTable->insert( theta );
+
+  Symbol sigma( "SIGMA", Symbol::MATRIX, Symbol::DOUBLE, true );
+  sigma.dim( 2, 2 );
+  gSpkExpSymbolTable->insert( sigma );
+
+  Symbol omega( "OMEGA", Symbol::MATRIX, Symbol::DOUBLE, true );
+  omega.dim( 3, 3 );
+  gSpkExpSymbolTable->insert( omega );
+
+  Symbol eta( "ETA", Symbol::VECTOR, Symbol::DOUBLE, true );
+  eta.size( 5 );
+  gSpkExpSymbolTable->insert( eta );
+
+  // 
+  // As if these are from data file.
+  //
+  const int nMeasurements = 3;
   Symbol dose( "DOSE", Symbol::VECTOR, Symbol::DOUBLE, false );
+  dose.size( nMeasurements );
   gSpkExpSymbolTable->insert( dose );
-  Symbol w( "W", Symbol::VECTOR, Symbol::DOUBLE, false );
-  gSpkExpSymbolTable->insert( w );
+
   Symbol wt( "WT", Symbol::VECTOR, Symbol::DOUBLE, false );
+  wt.size( nMeasurements );
   gSpkExpSymbolTable->insert( wt );
+
   Symbol time( "TIME", Symbol::VECTOR, Symbol::DOUBLE, false );
+  time.size( nMeasurements );
   gSpkExpSymbolTable->insert( time );
+
   Symbol ds( "DS", Symbol::VECTOR, Symbol::DOUBLE, false );
+  ds.size( nMeasurements );
   gSpkExpSymbolTable->insert( ds );
 
   yyparse();
@@ -75,7 +102,7 @@ void NonmemExpXlatorTest::testParse()
   fclose( file );
   if( gSpkExpErrors == 0 )
   {
-    //  gSpkExpTreeGenerator->printToStdout( );
+    expTreeUtil.printToStdout( gSpkExpTree );
   }
   else
     {    
