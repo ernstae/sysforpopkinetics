@@ -395,7 +395,7 @@ sub de_q2c() {
     my $row = $sth->fetchrow_hashref();
     unless ($row) {
 	$dbh->rollback;
-	return undef;
+	return 0;
     }
     my $job_id = $row->{"job_id"};
     my $state_code = "cmp";
@@ -575,7 +575,7 @@ sub de_q2r() {
     my $row = $sth->fetchrow_hashref();
     unless ($row) {
 	$dbh->rollback;
-	return undef;
+	return 0;
     }
     my $job_id = $row->{"job_id"};
     my $event_time = time();
