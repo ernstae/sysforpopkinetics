@@ -557,11 +557,187 @@ namespace // [Begin: unnamed namespace]
     //----------------------------------------------------------
 
   public:
+    // Evaluate the scaled version of the objective function, 
+    // fScaled(y), at the current point y.
     const char* function( const double* xIn, double& fOut )
     {
-      return pObjective->function( xIn, fOut );
+      message_FINISH_ME;
+
+
+      //--------------------------------------------------------
+      // Prepare the parameters for the unscaled objective function.
+      //--------------------------------------------------------
+
+      // Transform the elements of the y vector back to their 
+      // unscaled form. 
+      DoubleMatrix dvecX(n, 1);
+      double* pdXData = dvecX.data();
+      unscaleElem( n, y, pdXLowData, pdXUpData, pdXDiffData, pdXData );
+
+      // Check to see if the scaled objective function, fScaled(y), needs 
+      // to be returned by this function.  If not, set the pointer to zero
+      // so fval will not evaluate the unscaled objective function, f(x).
+      double  dFOut  = 0.0;
+      double* pdFOut = 0;
+  
+      if ( comm->flag == 0 || comm->flag == 2 ) 
+      {
+        pdFOut = &dFOut;
+      }
+  
+      // Check to see if the gradient of the scaled objective function, 
+      // gScaled(y), needs to be returned by this function.  If not, set 
+      // the pointer to zero so that fval will not evaluate the unscaled 
+      // gradient, g(x).s
+      DoubleMatrix drowGOut( 1, n );
+      DoubleMatrix* pdrowGOut = 0;
+
+      if ( comm->flag == 2 )
+      {
+        pdrowGOut = &drowGOut;
+      }
+
+
+      //--------------------------------------------------------
+      // Evaluate the unscaled objective function.
+      //--------------------------------------------------------
+
+      //
+      // Sachiko
+      // 
+      // the objective function now returns nothing.  Instead
+      // throw an exception.
+      // Catch it and pass it back through a placeholder permitted
+      // in the arbitrary information package.
+      //
+
+      try
+      {
+	fval( dvecX, pdFOut, pdrowGOut, pInfo->pFvalInfo );
+
+        message_FINISH_ME =  pObjective->function( xIn, fOut );
+      }
+      catch( SpkException& e )
+      {
+	throw AN_EXCEPTION_THAT_TELLS_WHAT_ERROR_AND_WHERE_ETC
+  catch( SpkException& e )
+  {
+    throw e.push(
+        SpkError::SPK_MODEL_SET_INDEX_ERR, 
+        "Data Covariance's selectCovIndividual() threw an SpkException",
+        __LINE__, 
+        __FILE__
+      );
+  }
+  catch(const std::exception& stde)
+  {
+    SpkException e(stde, "Data Covariance's setIndex() threw std::exception.", __LINE__, __FILE__);
+    throw e.push(
+        SpkError::SPK_MODEL_SET_INDEX_ERR, 
+        "User-implemented selectCovIndividual() threw an std::exception",
+        __LINE__, 
+        __FILE__ 
+        );
+  }  
+  catch(...)
+  {
+    throw SpkException(
+        SpkError::SPK_MODEL_SET_INDEX_ERR, 
+        "Data Covariance's selectCovIndividual() threw an unknown exception",
+        __LINE__, 
+        __FILE__
+      );
+  }
+
+
+	// If there was a problem, set the flag to terminate nag_opt_nlp.
+	//
+	comm->flag = -1; 
+
+	// Extract the exception object from pFvalInfo.
+	pInfo->exceptionOb = e;
+	return;
+      }
+      catch( const std::exception& stde )
+      {
+	// If there was a problem, set the flag to terminate nag_opt_nlp.
+	//
+	comm->flag = -1; 
+
+	// Extract the exception object from pFvalInfo.
+	pInfo->exceptionOb = SpkException(
+          stde, 
+          "A standard exception was thrown during an attempt to evaluate the given objective function.",
+          __LINE__, 
+          __FILE__ 
+        );
+	return;
+      }
+
+      catch(...)
+      {
+	// If there was a problem, set the flag to terminate nag_opt_nlp.
+	//
+	comm->flag = -1; 
+
+	// Extract the exception object from pFvalInfo.
+	pInfo->exceptionOb = SpkException(
+          SpkError::SPK_UNKNOWN_ERR, 
+          "Unknown exception was thrown during an attempt to evaluate the given objective function.",
+          __LINE__, 
+          __FILE__ 
+	  );
+	return;
+      }
+
+
+  //--------------------------------------------------------
+  // Set the scaled objective function and/or its gradient.
+  //--------------------------------------------------------
+
+  //
+  // Review - Sachiko: redundant
+  //
+  // comm-flag is validated eariler.  It's only either 0 or 2 at this point.
+  // Assert, as a pre-condition, instead of if statement which has some 
+  // run time overhead.
+  //
+      // If this function should return the value for the scaled 
+      // objective function, then set it.
+      if (comm->flag == 0 || comm->flag == 2)
+      {
+        assert( pdFOut != 0 );
+        *objf = *pdFOut;
+      }
+
+  // If this function should return the value for the gradient 
+  // of the scaled objective function, then set it.
+      if (comm->flag == 2)
+      {
+        assert( pdrowGOut != 0 );
+        double* pdGOutData = pdrowGOut->data();
+        int nGCols = pdrowGOut->nc();
+        assert( n == nGCols );
+    
+        scaleGradElem( n, pdGOutData, pdXDiffData, gvalScaled);
+      }
+
+  // If the fval function returns false, set the flag to -2.
+  // This is to terminate nag_opt_nlp and to escape from throwing SpkException.
+
+
+
+      //--------------------------------------------------------
+      // Finish up.
+      //--------------------------------------------------------
+
+      return okString // Note: an acception could be thrown 
+                      //       when things go awry.
+      return notOkString;
     }
 
+    // Evaluate the gradient of the scaled version of the objective
+    // function, gScaled(y), at the current point y.
     const char* gradient( double* gOut );
     {
       return pObjective->gradient( gOut );
@@ -745,7 +921,7 @@ void quasiNewtonAnyBox(
   // quasiNewtonAnyBox by defining our own tracing function and also our own
   // derivative checking function.  I think that once we do that, then the
   // specifications for the level parameter will be much easier to write.
-  //***************************************************************************
+v  //***************************************************************************
   //
   //
   switch ( level ) 
@@ -1093,16 +1269,16 @@ void quasiNewtonAnyBox(
   if ( optimizer.getIsWarmStart() )
   {
     options.start  = Nag_Warm;
-	StateInfo stateInfo = optimizer.getStateInfo();
+        StateInfo stateInfo = optimizer.getStateInfo();
 
-	for( int j = 0; j < n; j++ )
-	{
-	    y[ j ] = stateInfo.x[ j ];
-	}
+        for( int j = 0; j < n; j++ )
+        {
+            y[ j ] = stateInfo.x[ j ];
+        }
 
-	options.state  = stateInfo.state;
-	options.lambda = stateInfo.lambda;
-	options.h      = stateInfo.h;
+        options.state  = stateInfo.state;
+        options.lambda = stateInfo.lambda;
+        options.h      = stateInfo.h;
   }
 
 
@@ -1322,12 +1498,11 @@ void quasiNewtonAnyBox(
       // case, then throw an exception.
       if ( iterCurr == iterCurrPrev )
       {
-	SpkError err( 
+	throw SpkException( 
           SpkError::SPK_OPT_ERR,
-	  "QuasiNewton01Box failed to perform at least one Quasi-Newton iteration.",
-	  __LINE__,
-	  __FILE__ );
-	throw exceptionOb.push( err );
+          "QuasiNewton01Box failed to perform at least one Quasi-Newton iteration.",
+          __LINE__,
+          __FILE__ );
       }
     }
   }
@@ -1391,10 +1566,10 @@ void quasiNewtonAnyBox(
     ok = false;
   }
 
+  // If something went wrong, throw an exception.
   if ( !ok )
   {
-    SpkError err( errorCode, message.str(), __LINE__, __FILE__ );
-    throw objective.exceptionOb.push( err );
+    throw SpkException( errorCode, message.str(), __LINE__, __FILE__ );
   }
 
 
@@ -1721,7 +1896,7 @@ void NAG_CALL fvalScaled(
   //
 
   try{
-	  fval( dvecX, pdFOut, pdrowGOut, pInfo->pFvalInfo );
+          fval( dvecX, pdFOut, pdrowGOut, pInfo->pFvalInfo );
   }
   catch( SpkException& e )
   {
