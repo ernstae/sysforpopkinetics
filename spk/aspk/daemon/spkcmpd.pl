@@ -119,6 +119,7 @@ use Spkdb('connect', 'disconnect', 'de_q2c', 'en_q2r', 'end_job',
 	  'get_cmp_jobs', 'get_dataset');
 use Sys::Syslog('openlog', 'syslog', 'closelog');
 
+
 my $database = shift;
 my $host     = shift;
 my $dbuser   = shift;
@@ -397,6 +398,7 @@ sub reaper {
 	syslog('info',
 	       "job_id=$job_id failed compilation due to source errors");
     }
+    $save_working_dir = 1;
     if ($save_working_dir) {
 	# Rename working directory to make evidence easier to find
 	rename "$tmp_dir/$working_dir", "$tmp_dir/$prefix_working_dir$job_id"
@@ -410,7 +412,9 @@ sub reaper {
 sub start {
     # Open the system log and record that we have started
     openlog("$service_name, pid=$$", 'cons', 'daemon');
-    syslog('info', 'start');
+
+    # Record our start-up in the system log
+    syslog('info', "start of $service_name");
 
     # Create a lockfile and store our pid, so only one copy of parent can run
     sysopen(FH, $lockfile_path, O_RDWR | O_CREAT)
