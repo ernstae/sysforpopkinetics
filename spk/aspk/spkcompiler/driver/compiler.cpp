@@ -1,6 +1,9 @@
 /** 
- * SpkCompiler translates a SpkMLIn document to C++ source code files.
- *
+ @file compiler.cpp
+ * --- UNDER CONSTRUCTION!!! ---
+ * This is supposed to be the SPK Compliler driver that
+ * makes an input SpkML document translated to C++ source
+ * code and builds an executable for the target machine.
  */
 #include <iostream>
 #include "../libnonmem/NonmemCompiler.h"

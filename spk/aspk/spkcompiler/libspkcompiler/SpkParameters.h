@@ -8,6 +8,16 @@
 #include "Symbol.h"
 #include "client.h"
 
+/**
+ * @file SpkParameters.h
+ * Declares SpkParameters data structure.
+ *
+ */
+/**
+ * @struct SpkParameters
+ * This data structure aggregates the information necessarily to have
+ * SPK estimate the population parameters, expressed in the SPK terms. 
+ */
 struct SpkParameters{
   enum Objective        objective;
   int                   nIndividuals;

@@ -5,7 +5,10 @@
 
 #include <xercesc/dom/DOM.hpp>
 #include "SpkParameters.h"
-
+/**
+ * @file ClientTranslator.h
+ * Declares ClientTranslator class.
+ */
 /**
  * ClientTranslator class defines the interfaces
  * to be implemented by sublasses specific to clients (ex. NONMEM, SAAM2...).
@@ -46,12 +49,22 @@ class ClientTranslator
   virtual void translate ( xercesc::DOMDocument * tree ) = 0;
 
   /**
+   * Obtain a pointer to an SpkParameters data structure object used
+   * to record values expressed in such a way that SPK can understand.
+   *
    * @return a SpkParameters data structured object that may or may
    * not have valid values associated with its declared variables.
    */
   virtual const struct SpkParameters * getSpkParameters() const = 0;
 
   /**
+   * Obtain a pointer to an object used to record values
+   * expressed i the client specific language/terms.
+   *
+   * For this reason, the data type of the returned value is void*.
+   * The caller has to know which specific data type to cast into
+   * in order to access the elements.
+   * 
    * @return an arbitrary object that may or may not contain 
    * a set of information gathered during the translation process
    * and specific to the client.
@@ -59,14 +72,19 @@ class ClientTranslator
   virtual const void * getClientParameters() const = 0;
 
   /**
+   * Obtain a pointer to a character array holding the name of the
+   * generated SPK driver file.
+   * 
    * @return a character array containing a path followed by the
    * filename associated with the C++ source code file definining
    * a SPK driver.
    */
   virtual const char * getDriverFilename() const = 0;
 
-  /*
-   *
+  /**
+   * Obtain a list of character arrays holding the names of the
+   * generated files that, together, define a subclass of SpkModel.
+   * 
    * @return a vector of character arrays contaings paths followed by
    * the filenames associated with the C++ source code files defining
    * a SpkModel subclass.
