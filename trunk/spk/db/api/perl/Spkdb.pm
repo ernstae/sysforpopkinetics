@@ -420,8 +420,12 @@ sub de_q2c() {
 Returns a reference to an array of rows.  Each row is a reference
 to a hash table, with the field name as key and field value as value.
 Within the array, jobs are sorted in order of job_id, hence the first
-job submitted appears first. Each row contains only one field:
-job_id.
+job submitted appears first. Each row contains
+        job_id
+        dataset_id
+        dataset_version
+        xml_source
+
 
     $array_row = $Spkdb::get_cmp_jobs($dbh);
 
@@ -445,7 +449,7 @@ sub get_cmp_jobs() {
     $err = 0;
     $errstr = "";
 
-    my $sql = "select job_id "
+    my $sql = "select job_id, dataset_id, dataset_version, xml_source "
 	. "from job where state_code='cmp' "
 	. "order by job_id;";
     my $sth = $dbh->prepare($sql);
@@ -490,7 +494,8 @@ Returns
 sub en_q2r() {
     my $dbh = shift;
     my $job_id = shift;
-    my $r_cpp_source = \$_[0];
+#    my $r_cpp_source = \$_[0];
+    my $cpp_source = shift;
     $err = 0;
     $errstr = "";
 
@@ -510,7 +515,8 @@ sub en_q2r() {
 	return 0;
     }
 
-    unless ($sth->execute($$r_cpp_source)) {
+#    unless ($sth->execute($$r_cpp_source)) {
+    unless ($sth->execute($cpp_source)) {
 	$errstr = "en_q2r failed to update the job table";
 	$err = $UPDATE_FAILED;
 	return 0;
@@ -599,8 +605,9 @@ sub de_q2r() {
 Returns a reference to an array of rows.  Each row is a reference
 to a hash table, with the field name as key and field value as value.
 Within the array, jobs are sorted in order of job_id, hence the first
-job submitted appears first. Each row contains only one field:
-job_id.
+job submitted appears first. Each row contains 
+    job_id
+    cpp_source
 
     $array_row = $Spkdb::get_run_jobs($dbh);
 
@@ -624,7 +631,7 @@ sub get_run_jobs() {
     $err = 0;
     $errstr = "";
 
-    my $sql = "select job_id "
+    my $sql = "select job_id, cpp_source "
 	. "from job where state_code='run' "
 	. "order by job_id;";
     my $sth = $dbh->prepare($sql);
