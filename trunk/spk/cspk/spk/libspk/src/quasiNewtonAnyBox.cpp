@@ -255,6 +255,12 @@ These attributes are parameters of the optimizer used in the optimization.
 If the number of iterations parameter is equal to zero, then the input
 value for x is accepted as the final value, and any requested output
 values are evaluated at that final value.
+If the throwExcepIfMaxIter parameter is true, then when
+the maximum number of iterations is exhausted, an exception will
+be thrown and the output values for this function will not be set.
+Otherwise, the calling program will
+need to check the parameter isTooManyIter to see if the 
+maximum number of iterations was exhausted, 
 
 $syntax/
 
