@@ -7,10 +7,10 @@ This documentation specifies the information passed back from CSPK to MDA.
 <!-- ================================================================================ -->
 <!--                                  REPORT                                          -->
 <!-- ================================================================================ -->
-<!-- <report> For CSPK, this contains everything needed for returning the requested values back to the user.  For MDA, it is for presenting them before the user.
+<!-- <spkreportML> For CSPK, this contains everything needed for returning the requested values back to the user.  For MDA, it is for presenting them before the user.
 -->
 
-<!ELEMENT report (error_message? | simulated_data? | pop_analysis_result? | ind_analysis_result?)>
+<!ELEMENT spkreportML (error_message? | simulated_data? | pop_analysis_result? | ind_analysis_result?)>
 
 <!-- ===================================== -->
 <!--                 MESSAGE               -->
