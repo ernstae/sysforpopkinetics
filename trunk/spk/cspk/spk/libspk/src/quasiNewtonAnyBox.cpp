@@ -1210,12 +1210,6 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
      const bool      exponential = true;
      const double          delta = 1e-7;
 
-  // The argument delta specifies the convergence criteria.
-  // If the return value of QuasiNewton01Box is "ok",
-  //the infinity norm of the projected gradient at 
-  // x = xOut is less than or equal delta.
-  double delta = 1.0;
-
 
   // [Remove]======================================
   //
@@ -1240,13 +1234,17 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   // [Remove]======================================
 
 
+  // The argument delta specifies the convergence criteria.
+  // If the return value of QuasiNewton01Box is "ok",
+  //the infinity norm of the projected gradient at 
+  // x = xOut is less than or equal delta.
+  double delta = 0.0;
 
   int i = 0;
   itrMax = 1;
   while ( i < nMaxIter; i++ )
   {
      msg = QuasiNewton01Box(
-          // Input Arguments
           os,
           level,
           ItrMax,
@@ -1254,15 +1252,17 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
           n,
           delta,
           obj,
-          // Input+Output Arguments
           ItrCur,
           QuadCur,
           rCur,
           fCur,
           xCur,
           gCur,
-          HCur 
-     );
+          HCur );
+
+    // See if QuasiNewton01Box's convergence criterion has been met.
+    if ( ... )
+    {
 
     // See if this functions convergence criterion has been met.
       // If the final y value is actally within epsilon tolerance of 
@@ -1276,18 +1276,14 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
       }
       else
       {
+      // Decrease delta;
+      delta = delta / 10.0;
+
         ok = false;
         errorcode = SpkError::SPK_NOT_CONVERGED;
         break;
     
       }
-
-    // See if QuasiNewton01Box's convergence criterion has been met.
-    if ( ... )
-    {
-      // Decrease delta;
-      delta = delta / 10.0;
-    }
 
   }
 
