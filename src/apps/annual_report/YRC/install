@@ -11,11 +11,11 @@ YRC=$LIB/site_perl/YRC
 
 find . -name '*.pm' -exec chmod +x {} \;
 
-mkdir $LIB/site_perl
-mkdir $YRC
-mkdir $YRC/PROJECT
-mkdir $YRC/PROJECT/REPORT
-mkdir $YRC/WWW
+mkdir -p $LIB/site_perl
+mkdir -p $YRC
+mkdir -p $YRC/PROJECT
+mkdir -p $YRC/PROJECT/REPORT
+mkdir -p $YRC/WWW
 
 cp *.pm $YRC
 cp PROJECT/*.pm		$YRC/PROJECT
