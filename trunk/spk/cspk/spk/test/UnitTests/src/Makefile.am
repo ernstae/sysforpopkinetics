@@ -5,7 +5,7 @@ INST_BASE = /usr/local
 libdir = $(INST_BASE)/lib/spktest
 
 AM_CPPFLAGS = -I$(INST_BASE)/include/spktest -I/$(INST_BASE)/cppunit/include
-AM_LDFLAGS  = -L$(INST_BASE)/lib/spktest -lspk_release -lspkopt -llapack -latlas_lapack -lcblas -latlas -lpthread -lm -lcppunit
+AM_LDFLAGS  = -L$(INST_BASE)/lib/spktest -lspk -lspkopt -llapack -latlas_lapack -lcblas -latlas -lpthread -lm -lcppunit
 
 CXXFLAGS   = -g
 CFLAGS     = -g
@@ -177,6 +177,8 @@ testall_SOURCES = \
 	SpkExceptionTest.h \
 	SpkModelErrorTest.cpp \
 	SpkModelErrorTest.h \
+	statWrapperTest.h \
+	statWrapperTest.cpp \
 	subtractTest.cpp \
 	subtractTest.h \
 	symmetrizeTest.cpp \
@@ -280,6 +282,7 @@ pkginclude_HEADERS = \
 	SpkErrorTest.h \
 	SpkExceptionTest.h \
 	SpkModelErrorTest.h \
+	statWrapperTest.h \
 	subtractTest.h \
 	symmetrizeTest.h \
 	transposeDerivativeTest.h \
