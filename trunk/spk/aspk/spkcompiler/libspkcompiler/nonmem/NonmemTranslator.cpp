@@ -2528,7 +2528,7 @@ void NonmemTranslator::generateIndDriver( ) const
       oDriver << "     oRuntimeError << message << endl;" << endl;
       oDriver << "     cerr << message << endl;" << endl;
       oDriver << "     isOptSuccess = false;" << endl;
-      oDriver << "     FpErrorChecker::clear();" << endl;
+      oDriver << "     //FpErrorChecker::clear();" << endl;
       oDriver << "  }" << endl;
       oDriver << "  gettimeofday( &optEnd, NULL );" << endl;
       oDriver << "  optTimeSec = difftime( optEnd.tv_sec, optBegin.tv_sec );" << endl;
@@ -2646,6 +2646,7 @@ void NonmemTranslator::generateIndDriver( ) const
        }
     }
   oDriver << endl;
+  oDriver << "oRuntimeError.close();" << endl;
 
   oDriver << "/*******************************************************************/" << endl;
   oDriver << "/*                                                                 */" << endl;
@@ -2663,17 +2664,20 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "oResults << \"<spkreport>\" << endl;" << endl;
   oDriver << endl;
 
-  oDriver << "char buf[ SpkError::maxMessageLen() ];" << endl;
-  oDriver << "ifstream iRuntimeError( \"" << fSpkRuntimeError_tmp << "\" );" << endl;
-  oDriver << "oResults << \"<error_message>\" << endl;" << endl;
-  oDriver << "while( iRuntimeError.good() )" << endl;
+  // Error messages, if any
+  oDriver << "if( !(haveCompleteData && isOptSuccess && isStatSuccess) )" << endl;
   oDriver << "{" << endl;
-  oDriver << "   iRuntimeError.getline(buf, SpkError::maxMessageLen() );" << endl;
-  oDriver << "   oResults << buf << endl;" << endl;   // Write to the SpkReportML document.
+  oDriver << "   char buf[ SpkError::maxMessageLen() ];" << endl;
+  oDriver << "   ifstream iRuntimeError( \"" << fSpkRuntimeError_tmp << "\" );" << endl;
+  oDriver << "   oResults << \"<error_message>\" << endl;" << endl;
+  oDriver << "   while( iRuntimeError.getline(buf, SpkError::maxMessageLen()) )" << endl;
+  oDriver << "   {" << endl;
+  oDriver << "      oResults << buf << endl;" << endl;   // Write to the SpkReportML document.
+  oDriver << "   }" << endl;
+  oDriver << "   oResults << \"</error_message>\" << endl;" << endl;
+  oDriver << "   iRuntimeError.close();" << endl;
   oDriver << "}" << endl;
-  oDriver << "oResults << \"</error_message>\" << endl;" << endl;
-  oDriver << "iRuntimeError.close();" << endl;
-
+  oDriver << "remove( \"" << fSpkRuntimeError_tmp << "\" );" << endl;
   oDriver << endl;
 
   oDriver << "if( !haveCompleteData )" << endl;
@@ -2799,6 +2803,10 @@ void NonmemTranslator::generateIndDriver( ) const
   const Symbol * pID = table->findi(keyID);
   assert( pID != Symbol::empty() );
   const int nItems = t->size();
+  int nColumns = nItems + myThetaLen-1 + myEtaLen-1 
+    - (table->findi(keyOMEGA) == Symbol::empty()? 0 : 1 )
+    - (table->findi(keySIGMA) == Symbol::empty()? 0 : 1 )
+    - (table->findi(keyEPS)   == Symbol::empty()? 0 : 1 );
 
   map<const string, Symbol>::const_iterator pEntry = t->begin();
   const vector<string>::const_iterator pLabelBegin = table->getLabels()->begin();
@@ -2808,7 +2816,7 @@ void NonmemTranslator::generateIndDriver( ) const
   string keyWhatGoesIn;
 
   oDriver << "oResults << \"<presentation_data rows=\\\"\" << nY << \"\\\" \";" << endl;
-  oDriver << "oResults << \"columns=\\\"" << nItems + myThetaLen-1 + myEtaLen-1 << "\\\">\" << endl;" << endl;
+  oDriver << "oResults << \"columns=\\\"" << nColumns << "\\\">\" << endl;" << endl;
   oDriver << "oResults << \"<data_labels>\" << endl;" << endl;
 
   // Put ID first in the sequence
@@ -2819,7 +2827,9 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "///////////////////////////////////////////////////////////////////" << endl;
   oDriver << "//  Data Set Specific" << endl;
   // ...aaand, following ID is, all the left hand side quantities in the model definition.
-  for( pEntry = t->begin(); pEntry!=t->end(); pEntry++ )
+  // cntColumns is initialized to 1 because the ID column is already printed out.
+  int cntColumns = 1;
+  for( cntColumns = 1, pEntry = t->begin(); pEntry!=t->end(); pEntry++ )
     {
       if( pEntry->first != keyID 
 	  /* && ( find( pLabelBegin, pLabelEnd, pEntry->second.name )==pLabelEnd ) */ )
@@ -2835,7 +2845,8 @@ void NonmemTranslator::generateIndDriver( ) const
 		    {
 		      oDriver << "oResults << \"<label name=\\\"";
 		      oDriver << pEntry->second.name << "(" << cntTheta+1 << ")";
-		      oDriver << "\\\"/>\" << endl;" << endl;		      
+		      oDriver << "\\\"/>\" << endl;" << endl;	
+		      cntColumns++;
 		    }
 		}
 	      else if( pEntry->first == keyETA )
@@ -2845,6 +2856,7 @@ void NonmemTranslator::generateIndDriver( ) const
 		      oDriver << "oResults << \"<label name=\\\"";
 		      oDriver << pEntry->second.name << "(" << cntEta+1 << ")";
 		      oDriver << "\\\"/>\" << endl;" << endl;		      
+		      cntColumns++;
 		    }
 		}
 	      /*
@@ -2863,10 +2875,12 @@ void NonmemTranslator::generateIndDriver( ) const
 		  oDriver << "oResults << \"<label name=\\\"";
 		  oDriver << pEntry->second.name;
 		  oDriver << "\\\"/>\" << endl;" << endl;
+		  cntColumns++;
 		}
 	    }
 	}
     }
+  assert( cntColumns == nColumns );
   oDriver << "//" << endl;
   oDriver << "///////////////////////////////////////////////////////////////////" << endl;
   oDriver << "oResults << \"</data_labels>\" << endl;" << endl;
@@ -2876,7 +2890,8 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "   ///////////////////////////////////////////////////////////////////" << endl;
   oDriver << "   //" << endl;
   oDriver << "   oResults << \"<row position=\\\"\" << cnt << \"\\\">\" << endl;" << endl;
-  for( pWhatGoesIn = whatGoesIn.begin(); pWhatGoesIn!=whatGoesIn.end(); pWhatGoesIn++ )
+
+  for( cntColumns=0, pWhatGoesIn = whatGoesIn.begin(); pWhatGoesIn!=whatGoesIn.end(); pWhatGoesIn++ )
     {
       keyWhatGoesIn = SymbolTable::key( *pWhatGoesIn );
       if( keyWhatGoesIn == keySIMDV )
@@ -2884,6 +2899,7 @@ void NonmemTranslator::generateIndDriver( ) const
 	  oDriver << "   oResults << \"<value ref=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
 	  oDriver << "yOut[cnt]";
 	  oDriver << " << \"</value>\" << endl;" << endl;
+	  cntColumns++;
 	}
       else if( keyWhatGoesIn == keyTHETA )
 	{
@@ -2893,6 +2909,7 @@ void NonmemTranslator::generateIndDriver( ) const
 	      oDriver << *pWhatGoesIn << "(" << cntTheta+1 << ")"<< "\\\"" << ">\" << ";
 	      oDriver << "set.data[0]->" << keyWhatGoesIn << "[j][" << cntTheta << "]";
 	      oDriver << " << \"</value>\" << endl;" << endl;
+	      cntColumns++;
 	    }
 	}
       else if( keyWhatGoesIn == keyETA )
@@ -2903,6 +2920,7 @@ void NonmemTranslator::generateIndDriver( ) const
 	      oDriver << *pWhatGoesIn << "(" << cntEta+1 << ")"<< "\\\"" << ">\" << ";
 	      oDriver << "set.data[0]->" << keyWhatGoesIn << "[j][" << cntEta << "]";
 	      oDriver << " << \"</value>\" << endl;" << endl;
+	      cntColumns++;
 	    }
 	}
       /*
@@ -2928,8 +2946,10 @@ void NonmemTranslator::generateIndDriver( ) const
 	  oDriver << "   oResults << \"<value ref=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
           oDriver << "set.data[0]->" << keyWhatGoesIn << "[j]";
 	  oDriver << " << \"</value>\" << endl;" << endl;
+	  cntColumns++;
 	}
     }
+  assert( cntColumns == nColumns );
   oDriver << "   oResults << \"</row>\" << endl;" << endl;
   oDriver << "   //" << endl;
   oDriver << "   ///////////////////////////////////////////////////////////////////" << endl;
@@ -2943,8 +2963,6 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "oResults << \"</spkreport>\" << endl;" << endl;
 
   oDriver << "oResults.close();" << endl;
-  oDriver << "if( haveCompleteData && isOptSuccess && isStatSuccess )" << endl;
-  oDriver << "   remove( \"" << fSpkRuntimeError_tmp << "\" );" << endl;
   oDriver << "if( !haveCompleteData || !isStatSuccess )" << endl;
   oDriver << "   return OTHER_FAILURE;" << endl;
   oDriver << "if( !isOptSuccess )" << endl;
@@ -3471,6 +3489,7 @@ void NonmemTranslator::generatePopDriver() const
 	  oDriver << "}" << endl;
        }
     }
+  oDriver << "oRuntimeError.close();" << endl;
   oDriver << endl;
 
   oDriver << "/*******************************************************************/" << endl;
@@ -3489,18 +3508,19 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "oResults << \"<spkreport>\" << endl;" << endl;
   oDriver << endl;
 
-  // Error messages, if any
-  oDriver << "oRuntimeError.close();" << endl;
-  oDriver << "char buf[ SpkError::maxMessageLen() ];" << endl;
-  oDriver << "ifstream iRuntimeError( \"" << fSpkRuntimeError_tmp << "\" );" << endl;
-  oDriver << "oResults << \"<error_message>\" << endl;" << endl;
-  oDriver << "while( iRuntimeError.good() )" << endl;
+  oDriver << "if( !(haveCompleteData && isOptSuccess && isStatSuccess) )" << endl;
   oDriver << "{" << endl;
-  oDriver << "   iRuntimeError.getline(buf, SpkError::maxMessageLen() );" << endl;
-  oDriver << "   oResults << buf << endl;" << endl;
+  oDriver << "   char buf[ SpkError::maxMessageLen() ];" << endl;
+  oDriver << "   ifstream iRuntimeError( \"" << fSpkRuntimeError_tmp << "\" );" << endl;
+  oDriver << "   oResults << \"<error_message>\" << endl;" << endl;
+  oDriver << "   while( iRuntimeError.getline(buf, SpkError::maxMessageLen()) )" << endl;
+  oDriver << "   {" << endl;
+  oDriver << "      oResults << buf << endl;" << endl;   // Write to the SpkReportML document.
+  oDriver << "   }" << endl;
+  oDriver << "   oResults << \"</error_message>\" << endl;" << endl;
+  oDriver << "   iRuntimeError.close();" << endl;
   oDriver << "}" << endl;
-  oDriver << "oResults << \"</error_message>\" << endl;" << endl;
-  oDriver << "iRuntimeError.close();" << endl;
+  oDriver << "remove( \"" << fSpkRuntimeError_tmp << "\" );" << endl;
   oDriver << endl;
 
   oDriver << "if( !haveCompleteData )" << endl;
@@ -3523,7 +3543,7 @@ void NonmemTranslator::generatePopDriver() const
 
       oDriver << "///////////////////////////////////////////////////////////////////" << endl;
       oDriver << "//   NONMEM Specific" << endl;
-      oDriver << "oResults << \"<theta_out>\" << endl;" << endl;
+      oDriver << "oResults << \"<theta_out length=\\\"\" << nTheta << \"\\\">\" << endl;" << endl;
       // theta
       oDriver << "for( int i=0; i<nTheta; i++ )" << endl;
       oDriver << "{" << endl;
@@ -3536,14 +3556,17 @@ void NonmemTranslator::generatePopDriver() const
 	oDriver << "struct=\\\"diagonal\\\">\" << endl;" << endl;
       else
 	oDriver << "struct=\\\"block\\\">\" << endl;" << endl;
-      oDriver << "oResults << \"<omega_out>\" << endl;" << endl;
       oDriver << "for( int i=nTheta; i<nTheta+nOmega; i++ )" << endl;
       oDriver << "{" << endl;
       oDriver << "   oResults << \"<value>\" << alpOut[i] << \"</value>\" << endl;" << endl;
       oDriver << "}" << endl;
       oDriver << "oResults << \"</omega_out>\" << endl;" << endl;
       // Sigma
-      oDriver << "oResults << \"<sigma_out>\" << endl;" << endl;
+      oDriver << "oResults << \"<sigma_out dimension=\\\"\" << dimSigma << \"\\\" ";
+      if( mySigmaStruct == Symbol::TRIANGLE )
+	oDriver << "struct=\\\"diagonal\\\">\" << endl;" << endl;
+      else
+	oDriver << "struct=\\\"block\\\">\" << endl;" << endl;
       oDriver << "for( int i=nTheta+nOmega; i<nTheta+nOmega+nSigma; i++ )" << endl;
       oDriver << "{" << endl;
       oDriver << "   oResults << \"<value>\" << alpOut[i] << \"</value>\" << endl;" << endl;
@@ -3634,6 +3657,9 @@ void NonmemTranslator::generatePopDriver() const
   const Symbol * pID = table->findi(keyID);
   assert( pID != Symbol::empty() );
   const int nItems = t->size();
+  int nColumns = nItems + myThetaLen-1 + myEtaLen-1 + myEpsLen-1
+    - (table->findi(keyOMEGA) == Symbol::empty()? 0 : 1 )
+    - (table->findi(keySIGMA) == Symbol::empty()? 0 : 1 );
 
   map<const string, Symbol>::const_iterator pEntry = t->begin();
   const vector<string>::const_iterator pLabelBegin = table->getLabels()->begin();
@@ -3643,8 +3669,7 @@ void NonmemTranslator::generatePopDriver() const
   string keyWhatGoesIn;
 
   oDriver << "oResults << \"<presentation_data rows=\\\"\" << N.sum() << \"\\\" \";" << endl;
-  oDriver << "oResults << \"columns=\\\"" << nItems + myThetaLen-1 + myEtaLen-1 + myEpsLen-1 << "\\\">\" << endl;" << endl;
-  oDriver << "oResults << \"columns = \\\" \\\">\" << endl;" << endl;
+  oDriver << "oResults << \"columns=\\\"" << nColumns << "\\\">\" << endl;" << endl;
   oDriver << "oResults << \"<data_labels>\" << endl;" << endl;
   
   // Put ID first in the sequence
@@ -3655,7 +3680,9 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "//   DATA SET Specific" << endl;
 
   // ...aaand, following ID is, all the left hand side quantities in the model definition.
-  for( pEntry = t->begin(); pEntry!=t->end(); pEntry++ )
+  // cntColumns is initialized to 1 because the ID column is already printed out.
+  int cntColumns = 1;
+  for( cntColumns=1,  pEntry = t->begin(); pEntry!=t->end(); pEntry++ )
     {
       if( pEntry->first != keyID 
 	  /*&& ( find( pLabelBegin, pLabelEnd, pEntry->second.name )==pLabelEnd )*/ )
@@ -3673,6 +3700,7 @@ void NonmemTranslator::generatePopDriver() const
 		      oDriver << "oResults << \"<label name=\\\"";
 		      oDriver << pEntry->second.name << "(" << cntTheta+1 << ")";
 		      oDriver << "\\\"/>\" << endl;" << endl;		      
+		      cntColumns++;
 		    }
 		}
 	      else if( pEntry->first == keyETA )
@@ -3682,6 +3710,7 @@ void NonmemTranslator::generatePopDriver() const
 		      oDriver << "oResults << \"<label name=\\\"";
 		      oDriver << pEntry->second.name << "(" << cntEta+1 << ")";
 		      oDriver << "\\\"/>\" << endl;" << endl;		      
+		      cntColumns++;
 		    }
 		}
 	      else if( pEntry->first == keyEPS )
@@ -3691,6 +3720,7 @@ void NonmemTranslator::generatePopDriver() const
 		      oDriver << "oResults << \"<label name=\\\"";
 		      oDriver << pEntry->second.name << "(" << cntEps+1 << ")";
 		      oDriver << "\\\"/>\" << endl;" << endl;		      
+		      cntColumns++;
 		    }
 		}
 	      else
@@ -3698,31 +3728,34 @@ void NonmemTranslator::generatePopDriver() const
 		  oDriver << "oResults << \"<label name=\\\"";
 		  oDriver << pEntry->second.name;
 		  oDriver << "\\\"/>\" << endl;" << endl;
+		  cntColumns++;
 		}
 	    }
 	}
     }
+  assert( cntColumns == nColumns );
   oDriver << "//"  << endl;
   oDriver << "///////////////////////////////////////////////////////////////////" << endl;
   oDriver << "oResults << \"</data_labels>\" << endl;" << endl;
   oDriver << endl;
   
-  oDriver << "for( int i=0, cnt=1; i<nPop; i++ )" << endl;
+  oDriver << "for( int i=0, position=1; i<nPop; i++ )" << endl;
   oDriver << "{" << endl;
-  oDriver << "   for( int j=0; j<N[i]; j++, cnt++ )" << endl;
+  oDriver << "   for( int j=0; j<N[i]; j++, position++ )" << endl;
   oDriver << "   {" << endl;
-  oDriver << "      oResults << \"<row position=\\\"\" << cnt << \"\\\">\" << endl;" << endl;
+  oDriver << "      oResults << \"<row position=\\\"\" << position << \"\\\">\" << endl;" << endl;
   oDriver << "      ///////////////////////////////////////////////////////////////////" << endl;
   oDriver << "      //   DATA SET Specific" << endl;
 
-  for( pWhatGoesIn = whatGoesIn.begin(); pWhatGoesIn!=whatGoesIn.end(); pWhatGoesIn++ )
+  for( cntColumns=0, pWhatGoesIn = whatGoesIn.begin(); pWhatGoesIn!=whatGoesIn.end(); pWhatGoesIn++ )
     {
       keyWhatGoesIn = SymbolTable::key( *pWhatGoesIn );
       if( keyWhatGoesIn == keySIMDV )
 	{
 	  oDriver << "   oResults << \"<value ref=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
-	  oDriver << "yOut[cnt]";
+	  oDriver << "yOut[position]";
 	  oDriver << " << \"</value>\" << endl;" << endl;
+	  cntColumns++;
 	}
       else if( keyWhatGoesIn == keyTHETA )
 	{
@@ -3732,6 +3765,7 @@ void NonmemTranslator::generatePopDriver() const
 	      oDriver << *pWhatGoesIn << "(" << cntTheta+1 << ")" << "\\\"" << ">\" << ";
 	      oDriver << "set.data[i]->" << keyWhatGoesIn << "[j][" << cntTheta << "]";
 	      oDriver << " << \"</value>\" << endl;" << endl;
+	      cntColumns++;
 	    }
 	}
       else if( keyWhatGoesIn == keyETA )
@@ -3742,6 +3776,7 @@ void NonmemTranslator::generatePopDriver() const
 	      oDriver << *pWhatGoesIn << "(" << cntEta+1 << ")"<< "\\\"" << ">\" << ";
 	      oDriver << "set.data[i]->" << keyWhatGoesIn << "[j][" << cntEta << "]";
 	      oDriver << " << \"</value>\" << endl;" << endl;
+	      cntColumns++;
 	    }
 	}
       else if( keyWhatGoesIn == keyEPS )
@@ -3752,6 +3787,7 @@ void NonmemTranslator::generatePopDriver() const
 	      oDriver << *pWhatGoesIn << "(" << cntEps+1 << ")"<< "\\\"" << ">\" << ";
 	      oDriver << "set.data[i]->" << keyWhatGoesIn << "[j][" << cntEps << "]";
 	      oDriver << " << \"</value>\" << endl;" << endl;
+	      cntColumns++;
 	    }
 	}
       else if( keyWhatGoesIn == keyOMEGA || keyWhatGoesIn == keySIGMA )
@@ -3763,8 +3799,10 @@ void NonmemTranslator::generatePopDriver() const
 	  oDriver << "   oResults << \"<value ref=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
           oDriver << "set.data[i]->" << keyWhatGoesIn << "[j]";
 	  oDriver << " << \"</value>\" << endl;" << endl;
+	  cntColumns++;
 	}
     }
+  assert( cntColumns == nColumns );
   oDriver << "      //" << endl;
   oDriver << "      ///////////////////////////////////////////////////////////////////" << endl;
   oDriver << "      oResults << \"</row>\" << endl;" << endl;
