@@ -11,8 +11,8 @@
   <!ENTITY merge "<command>merge</command>">
   <!ENTITY ssh "<command>ssh</command>">
   <!ENTITY update "<command>update</command>">
-  <!ENTITY gts "&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;">  
-  <!ENTITY lts "&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;">
+  <!ENTITY gts "&gt;&gt;&gt;&gt;&gt;&gt;&gt;">  
+  <!ENTITY lts "&lt;&lt;&lt;&lt;&lt;&lt;&lt;">
 ]>
 <article><title>CVS RFPK HOWTO</title>
  <articleinfo>
@@ -345,7 +345,7 @@
       its contents.</emphasis>
     </para>
   </sect1>
-  <sect1>
+  <sect1 id="update-sect">
     <title>Getting Updates</title>
     <para>
       As you work on your modifications, your collaborators may have
@@ -455,6 +455,52 @@
 	cvs [server aborted]: correct above errors first!
 	cvs commit: saving log message in /tmp/cvs610c74f4.1
       </screen>
+    </para>
+    <para>
+      In the above example, &commit; is reports that a 
+      failure in the <emphasis>up-to-date check</emphasis>,
+      for a particular file, which simply means that 
+      a copy of this file has been committed since your
+      working copy was last checked out or updated.  To 
+      correct this error, proceed as follows:
+      <orderedlist inheritnum="ignore" continuation="restarts">
+	<listitem>
+	  <para>
+	    Update your working copy of the file.  You could use
+	    the following command to update the particular file
+	    in question, which in this example is called 
+	    <filename moreinfo="none">Makefile</filename>	    
+	    .
+	    <screen format="linespecific">
+	      cvs update Makefile
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Edit the file, using your favorite text editor.  
+	    Differences between your working copy and the 
+	    repository will be identified with &gts; and
+	    &lts; strings, as explained above, in the
+	    <link linkend="update-sect">section</link>
+	    that describes the &update; command.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Once you have removed any conflicts, as well
+	    as the markers that were inserted by the 
+	    &update; command, execute the &commit; command
+	    again:
+	    <screen format="linespecific">
+	      cvs commit Makefile
+	    </screen>
+	    This time, &commit; should accept your changes,
+	    and record a new revision.
+	  </para>
+	</listitem>
+      </orderedlist>
+      
     </para>
   </sect1>
   <sect1>
