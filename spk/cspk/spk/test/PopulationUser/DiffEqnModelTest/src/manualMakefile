@@ -30,7 +30,7 @@ DiffEqnModelTest_OBJECTS = main.o \
 	nonmemEqvContainers.o \
 	readNonmemTheophylline.o
 
-CPPFLAGS = -g -Wno-deprecated
+CPPFLAGS = -g
 LDFLAGS = -static -lspk -lnagc -lpthread -lm
 
 DiffEqnModelTest : $(DiffEqnModelTest_SOURCES) $(DiffEqnModelTest_OBJECTS)
