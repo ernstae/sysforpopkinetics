@@ -24,6 +24,7 @@ rtf:	$T.rtf
 
 install: $(HTML)
 	scp $T.html $(WEB)
+	scp SpkML_nonmemIn.xml $(WEB)
 	for i in $(HTML); do \
 	     scp $$i $(WEB); \
 	done
