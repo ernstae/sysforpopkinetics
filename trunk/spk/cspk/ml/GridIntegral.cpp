@@ -13,7 +13,7 @@ $table
 $bold Syntax$$
 $cnext
 $syntax%double GridIntegral(
-	double (*%F%)(double *%X%, size_t %m%, void *p) ,
+	double (*%Feval%)(double *%X%, size_t %m%, void *p) ,
 	size_t                        %m%   ,
 	void                         *%p%   ,
 	const std::valarray<size_t>  *%N%   ,
@@ -30,10 +30,10 @@ $latex \[
 	\int_L^U f(x) \D x
 \]$$
 
-$head F$$
+$head Feval$$
 The syntax
 $syntax%
-	F(%X%, %d%, %p%)
+	Feval(%X%, %d%, %p%)
 %$$
 returns the value of the function $latex f$$ at the point
 specified by $italic X$$ where $italic X$$ is a vector
@@ -42,7 +42,7 @@ the same value as in the call to $code GridIntegral$$.
 
 $head d$$
 The argument $italic m$$ to both $code GridIntegral$$ and
-to $italic F$$ is the dimension of the space we are integrating
+to $italic Feval$$ is the dimension of the space we are integrating
 with respect to.
 
 $head N$$
@@ -106,7 +106,7 @@ namespace {
 }
 
 double GridIntegral(
-	double (*F)(double *X, size_t m, void *p)  ,
+	double (*Feval)(double *X, size_t m, void *p)  ,
 	size_t                                 m   ,
 	void                                  *p   ,
 	const std::valarray<size_t>           &N   ,
@@ -137,7 +137,7 @@ double GridIntegral(
 			X[i] = L[i] + (I[i] + .5) * (U[i] - L[i]) / N[i];
 
 		// add function value at this grid point
-		sum += F(X, m, p);
+		sum += Feval(X, m, p);
 		count++;
 
 		// next grid point index
