@@ -283,7 +283,7 @@ void ClientTranslator::parseData()
       //
       if( isIDMissing )
 	{
-	  nDataRecords[0] = nRecords;
+	  nDataRecords[0] = nRecords - 1; // The first row is for labels, so don't count that row.
 	  tmp_labels.insert( tmp_labels.begin(), "ID" );
 	  tmp_values["1"]["ID"].resize( nDataRecords[0] );
 	  fill( tmp_values["1"]["ID"].begin(), tmp_values["1"]["ID"].end(), "1" );
