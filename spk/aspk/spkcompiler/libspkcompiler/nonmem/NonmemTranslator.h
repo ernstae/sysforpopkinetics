@@ -16,10 +16,9 @@
 /**
  * NonmemTranslator is an implementation of ClientTranslator abstract class.
  *
- * This class implements, in particular, the "parseSource()" virtual
- * member function.  The function analyzes the SpkSourceML parse tree
- * and generete the source code files for IndData class, DataSet class,
- * the driver and Pred class.
+ * This class encapsulates functionarities necessary to parse, analysize
+ * and translate a pair of an SpkSourceML and an SpkDataML documents
+ * written from the view point of NONMEM users.
  */
 class NonmemTranslator : public ClientTranslator
 {
@@ -140,29 +139,33 @@ class NonmemTranslator : public ClientTranslator
   
  private:
   //
-  // Analyze the <pop_analysis> subtree and generate the source code
-  // for the driver.
+  // Analyze the <pop_analysis> subtree.
   //
   // @param pPopAnalysis A pointer to the <popAnalysis> node.
   //
    void parsePopAnalysis ( xercesc::DOMElement* pPopAnalysis );
 
   //
-  // Analyze the <ind_analysis> subtree and generate the source code
-  // for the driver.
+  // Analyze the <ind_analysis> subtree.
   //
   // @param pIndAnalysis A pointer to the <indAnalysis> node.
   //
   void parseIndAnalysis ( xercesc::DOMElement* pIndAnalysis );
 
   //
-  // Analyzie the <pred> subtree and generate the source code
-  // for the Pred class.
+  // Analyzie the <pred> subtree.
   //
   // @param pPred A pointer to the <pred> node.
   //
   void parsePred( xercesc::DOMElement* pPred );
 
+  //
+  // Analyze the <monte_carlo> subtree.
+  //
+  // @param pMonte A point to the <monte_carlo> node.
+  //
+  void parseMonte( xercesc::DOMElement* pMonte );
+  
   //
   // Generate C++ source code for declaring and defining IndData class which
   // is a C++ representation of a single patient records.
