@@ -99,7 +99,6 @@ if( actual != expected ) \\\n \
   const char *strDV    = "DV";
   const char *strCP    = "CP";
   const char *strMDV   = "MDV";
-  const char *strSIMDV = "SIMDV";
   const char *label[]  = { strID, strDV, strTIME, strMDV };
   map<const char*, const char*> label_alias;
   int nLabels          = 4;
@@ -894,17 +893,20 @@ void ind_simNoEstTest::testDataSetClass()
   o << "{" << endl;
   o << "   DataSet<double> set;" << endl;
   o << "   const int n = set.getN()[0];" << endl;
+  o << "   const valarray<double> y = set.getAllMeasurements();" << endl;
+  o << "   valarray<double> yy = y;";
+  o << "   yy *= 2.0;" << endl;
+  o << "set.replaceAllMeasurements( yy );" << endl;
 
   // { ID, DV=CP, TIME, MDV }
   for( int i=0; i<nRecords; i++ )
     {
       o << "   assert( strcmp( set.data[0]->" << strID << "[" << i << "], \"" << record[i][0] << "\" ) == 0 );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", set.data[0]->" << strCP   << "[" << i << "] );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", set.data[0]->" << strDV   << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL(  yy[" << i << "], set.data[0]->" << strCP   << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL(  yy[" << i << "], set.data[0]->" << strDV   << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", set.data[0]->" << strORGDV << "[" << i << "] );" << endl;
       o << "   MY_ASSERT_EQUAL(  " << record[i][2] << ", set.data[0]->" << strTIME << "[" << i << "] );" << endl;
       o << "   MY_ASSERT_EQUAL(  " << record[i][3] << ", set.data[0]->" << strMDV  << "[" << i << "] );" << endl;
-      o << "   set.data[0]->" << strSIMDV << "[" << i << "] = " << simdv[i] << ";" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << simdv[i] << ", set.data[0]->" << strSIMDV  << "[" << i << "] );" << endl;
     }
 
   o << "for( int j=0; j<n; j++ )" << endl;
@@ -922,12 +924,11 @@ void ind_simNoEstTest::testDataSetClass()
   o << "MY_ASSERT_EQUAL( n, set.data[0]->" << strY    << ".size() );" << endl;
   o << endl;
 
-  o << "const valarray<double> y = set.getAllMeasurements();" << endl;
   o << "for( int j=0, k=0; j<n; j++ )" << endl;
   o << "{" << endl;
   o << "   if( set.data[0]->" << strMDV << "[j] != 1 )" << endl;
   o << "   {" << endl;
-  o << "      MY_ASSERT_EQUAL( set.data[0]->" << strDV << "[j], y[k] );" << endl;
+  o << "      MY_ASSERT_EQUAL( set.data[0]->" << strDV << "[j], yy[k] );" << endl;
   o << "      k++;" << endl;
   o << "   }" << endl;
   o << "}" << endl;
