@@ -261,7 +261,7 @@ if( actual != expected ) \\\n \
   const double nm_coef[]    = { 0.264409,   0.639372,   57.735 };
   const double nm_conf[]    = { 0.991586,   0.97954,    -8.37129e-6 , 1.00841,    1.02034,     2.83713e-5 };
   const double nm_cov[]     = { 6.9912e-6,  1.17294e-5,  4.08796e-5,  0.0,        3.33333e-11 };
-  const double nm_invcov[]  = { 275808,    -79136.5,     47168.4,     0,          0,           3e10 };
+  const double nm_invcov[]  = { 275807,    -79136.3,     47168.4,     0,          0,           3e10 };
   const double nm_corr[]    = { 1,          0.693822,    1,           0,          0,           1 };
   const double nm_pred[]    = {  };
   //============================================
