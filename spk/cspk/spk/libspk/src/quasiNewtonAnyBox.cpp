@@ -1492,40 +1492,28 @@ bool isWithinTol(
 
       isElemFree[i] = false;
 
-      // 
-      // Review - Sachiko: suggestion for readability.
-      //
-      // The following indented block can be reduced to a single statement:
-      // 
-      //    hWork[i + i * n] = 1.0;
-      //
-      // if H, gProj and P were initialized to zero or one outside of the outer loop.
-      // 
+      // Zero the corresponding element of the projected gradient.
+      gProj[i] = 0.0;
 
-        // Zero the elements from the corresponding row and column of 
-        // H that come before the diagonal element.
-        for ( j = 0; j < i; j++ )
-        {
-          hWork[i + j * n] = 0.0;
-          hWork[j + i * n] = 0.0;
-        }
-    
-        // Set the correponding diagonal element of H equal to one.
-        hWork[i + i * n] = 1.0;
-    
-        // Zero the elements from the corresponding row and column of 
-        // H that come after the diagonal element.
-        for ( j = i + 1; j < n; j++ )
-        {
-          hWork[i + j * n] = 0.0;
-          hWork[j + i * n] = 0.0;
-        }
-    
-        // Zero the corresponding element of the projected gradient.
-        gProj[i] = 0.0;
+      // Set the correponding diagonal element of the modified Hessian
+      // equal to one.
+      hWork[i + i * n] = 1.0;
 
-        // Set the reciprocal of the corresponding R diagonal equal to one.
-        rDiagRec[i] = 1.0;
+      // Zero the rest of the elements in the corresponding row
+      // and column of the modified Hessian.
+      for ( j = 0; j < i; j++ )
+      {
+        hWork[i + j * n] = 0.0;
+        hWork[j + i * n] = 0.0;
+      }
+      for ( j = i + 1; j < n; j++ )
+      {
+        hWork[i + j * n] = 0.0;
+        hWork[j + i * n] = 0.0;
+      }
+  
+      // Set the reciprocal of the corresponding R diagonal equal to one.
+      rDiagRec[i] = 1.0;
     }
   }
 
