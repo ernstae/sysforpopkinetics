@@ -24,58 +24,22 @@ $index integrate, monte carlo$$
 $table
 $bold Syntax$$
 $cnext
-$syntax%monteDriver %method% %numberEval%
-%$$
+$syntax%monteDriver  > %outputFile%$$
 $tend
 
 $fend 20$$
 
-$head Method$$
-The command line argument $italic method$$
-specifies the method that will be used for the integration.
-The possible values for this argument are
+$children%
+	omh/MonteInput.omh%
+	omh/Model.omh%
+	omh/Subroutine.omh
+%$$
 
-$table
-$bold Method$$   $cnext $bold Description$$ $rnext
-$code analytic$$ $cnext 
-	Closed form solution only valid for $xref/LinearModel/$$  $rnext
-$code grid$$     $cnext
-	Approximation integral using evaluation on a uniform grid $rnext
-$code monte$$    $cnext
-	Monte-Carlo approximation for integral
-$tend
+$head Input$$
+$tref MonteInput$$ 
 
-$head Number Evaluations$$
-The command line argument $italic numberEval$$
-specifies the number of evaluations of the 
-$xref/MapBay//Map Bayesian objective/$$ 
-that will be used for each individual.
-Each evaluation will correspond to a different
-value for the random effects; i.e., $latex b$$
-in the functions $latex f_i (b , \alpha )$$ and 
-$latex R_i (b, \alpha )$$.
-The value of $italic i$$ will be the
-same for $italic numberEval$$ evaluations. 
-Then it will changed to correspond to the next value.
-The value of $italic \alpha$$ will be the same
-for all the evaluations.
-$pre
-
-$$
-If $italic method$$ is equal to $code analytic$$,
-this argument has no effect.
-$pre
-
-$$
-If $italic method$$ is equal to $code grid$$,
-and the dimension of the random effects space is $latex n$$,
-the actual number of evaluations used is $latex k^n$$ where
-$latex k$$ is the largest integer such that
-$latex k^n \leq numberEval$$.
-
-$head Return Value$$
-If the program succeeds, its return value is zero,
-otherwise its return value is one.
+$head Model$$
+$tref Model$$
 
 $head Output File$$
 $index output, file$$
@@ -136,20 +100,8 @@ of the Monte-Carlo estimate for the integral.
 $subhead pop_obj_seconds$$
 is the number of seconds required to compute the result.
 
-$contents%
-	omh/MonteSpkModel.omh%
-	omh/NonmemPars.omh%
-        omh/MontePars.omh%
-	omh/DataSet.omh%
-	omh/PopPredModel.omh%
-	MontePopObj.cpp%
-	MapMonte.cpp%
-	MapBay.cpp%
-	UnitTest/LinearModel.h%
-	AnalyticIntegral.cpp%
-	GridIntegral.cpp%
-	UnitTest/NearEqual.cpp
-%$$
+$head Subroutine$$
+$tref Subroutine$$
 
 $end
 */
