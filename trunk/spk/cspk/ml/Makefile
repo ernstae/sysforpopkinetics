@@ -16,6 +16,7 @@ INCLUDE = \
 	MontePopObj.h \
 	MapBay.h \
 	MapMonte.h \
+        Gsl2SpkError.h \
 	Pred.h \
 	DataSet.h \
 	IndData.h \
