@@ -1,0 +1,5 @@
+ka=theta(1)+eta(1)
+k=theta(2)+eta(2)
+                    cl=theta(3)+wt*eta(3)
+sc=cl/k/wt
+
