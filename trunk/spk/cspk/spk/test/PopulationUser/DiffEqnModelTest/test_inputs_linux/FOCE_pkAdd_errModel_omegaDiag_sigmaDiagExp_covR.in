@@ -22,7 +22,7 @@
 	<nonmem_param><anon>exponential</anon></nonmem_param>
 	<nonmem_param><anon>exponential</anon></nonmem_param>
 	<nonmem_param><anon>exponential</anon></nonmem_param>
-	<in><anon>0.1</anon></in>
+	<in><anon>0.5</anon></in>
 	<in><anon>0.0002</anon></in>
 	<in><anon>0.4</anon></in>
 	<relTol>0.01</relTol>
