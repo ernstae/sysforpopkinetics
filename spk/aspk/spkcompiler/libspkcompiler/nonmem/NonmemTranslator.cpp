@@ -3692,6 +3692,19 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << " };" << endl;
   oNonmemPars << endl;
 
+  oNonmemPars << "   // A C-arrary containing the fixation flags for THETA." << endl;
+  oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
+  oNonmemPars << "   bool c_thetaFixed[nTheta] = { ";
+  for( int j=0; j<myThetaLen; j++ )
+    {
+      if( j>0 )
+      oNonmemPars << ", ";
+      oNonmemPars << pTheta->fixed[0][j];
+    }
+  oNonmemPars << " };" << endl;
+  oNonmemPars << endl;
+
+  oNonmemPars << "   const valarray<bool> thetaFixed( c_thetaFixed, " << myThetaLen << " );" << endl;
   if( myTarget == POP && myIsSimulate )
     {
       oNonmemPars << "   // A valarray object that *will* contain the initial values for THETA." << endl;
