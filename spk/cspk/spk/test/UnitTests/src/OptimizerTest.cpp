@@ -73,8 +73,6 @@ void OptimizerTest::case1()
   CPPUNIT_ASSERT_EQUAL( opt1.getNIterCompleted(), 0 );
   // getIsTooManyIter
   CPPUNIT_ASSERT( !opt1.getIsTooManyIter() );
-  // getIsSubLevelOpt
-  CPPUNIT_ASSERT( !opt1.getIsSubLevelOpt() );
   // getIsWarmStart
   CPPUNIT_ASSERT( !opt1.getIsWarmStart() );
   // setEpsilon
@@ -92,9 +90,6 @@ void OptimizerTest::case1()
   // setIsTooManyIter
   opt1.setIsTooManyIter( true );
   CPPUNIT_ASSERT( opt1.getIsTooManyIter() );
-  // setIsSubLevelOpt
-  opt1.setIsSubLevelOpt( true );
-  CPPUNIT_ASSERT( opt1.getIsSubLevelOpt() );
   
   // copy constructor
   Optimizer opt2(opt1);
@@ -110,8 +105,6 @@ void OptimizerTest::case1()
   CPPUNIT_ASSERT( opt2.getIsTooManyIter() );
   // getIsTooManyIter
   CPPUNIT_ASSERT( opt1.getIsTooManyIter() );
-  // getIsSubLevelOpt
-  CPPUNIT_ASSERT_EQUAL( opt1.getIsSubLevelOpt(), true );
   // getIsWarmStart
   CPPUNIT_ASSERT_EQUAL( opt1.getIsWarmStart(), false );
   
@@ -128,8 +121,6 @@ void OptimizerTest::case1()
   CPPUNIT_ASSERT_EQUAL( opt3.getNIterCompleted(), 20 );
   // getIsTooManyIter
   CPPUNIT_ASSERT( opt3.getIsTooManyIter() );
-  // getIsSubLevelOpt
-  CPPUNIT_ASSERT( opt3.getIsSubLevelOpt() );
   // getIsWarmStart
   CPPUNIT_ASSERT( !opt3.getIsWarmStart() );
   
@@ -149,6 +140,7 @@ void OptimizerTest::case1()
   
   // setStateInfo
   int     n   = 2;
+  int     b   = 9;
   double  r   = 5.2;
   double  f   = 7.5;
   double  x[] = { 1.0, 2.0 };
@@ -156,6 +148,7 @@ void OptimizerTest::case1()
   double  h[] = { 1.0, 2.0, 3.0, 4.0 };
   StateInfo s1;
   s1.n = n;
+  s1.b = b;
   s1.r = r;
   s1.f = f;
   s1.x = x;
@@ -167,6 +160,7 @@ void OptimizerTest::case1()
   StateInfo s2;
   s2 = opt1.getStateInfo();
   CPPUNIT_ASSERT_EQUAL( s2.n, 2 );
+  CPPUNIT_ASSERT_EQUAL( s2.b, 9 );
   CPPUNIT_ASSERT_EQUAL( s2.r, 5.2 );
   CPPUNIT_ASSERT_EQUAL( s2.f, 7.5 );
   CPPUNIT_ASSERT_EQUAL( s2.x[ 0 ], 1.0 );

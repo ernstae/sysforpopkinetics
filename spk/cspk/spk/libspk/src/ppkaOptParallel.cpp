@@ -69,7 +69,6 @@ $spell
   nagg  
   namespace  
   Obj  
-  ok  
   pd  
   pdmat  
   pdrow  
@@ -100,7 +99,7 @@ $spell
   Spk
   cerr
   covariance
-  optimizer
+  optInfo
   pathname
   fp
   spawn
@@ -111,8 +110,8 @@ $spell
   Objective objective
   Fo
   optimizer
-  popOptimizer
-  indOptimizer
+  popOptInfo
+  indOptInfo
   Sachiko
 $$
 
@@ -130,13 +129,13 @@ $syntax/void ppkaOpt(
               enum Objective          /objective/,
               const DoubleMatrix&     /dvecN/,
               const DoubleMatrix&     /dvecY/,
-              Optimizer&              /popOptimizer/,
+              Optimizer&              /popOptInfo/,
               const DoubleMatrix&     /dvecPopLow/,
               const DoubleMatrix&     /dvecPopUp/,
               const DoubleMatrix&     /dvecPopIn/,
               DoubleMatrix*           /pdvecPopOut/,
               const DoubleMatrix&     /dvecPopStep/,
-              Optimizer&              /indOptimizer/,
+              Optimizer&              /indOptInfo/,
               const DoubleMatrix&     /dvecIndLow/,
               const DoubleMatrix&     /dvecIndUp/,
               const DoubleMatrix&     /dmatIndIn/,
@@ -294,7 +293,7 @@ $math%y(1)%$$ refers to the first element of the vector $math%y%$$.)
 
 $syntax/
 
-/popOptimizer/
+/popOptInfo/
 /$$
 This $xref/Optimizer//Optimizer/$$ class object has three attributes.  
 These attributes are parameters of the optimizer used in the population 
@@ -371,7 +370,7 @@ the fixed population parameter vector $math%pop%$$.
 
 $syntax/
 
-/indOptimizer/
+/indOptInfo/
 /$$
 This $xref/Optimizer//Optimizer/$$ class object has three attributes.  
 These attributes are parameters of the optimizer used in the individual 
@@ -780,8 +779,8 @@ void main()
 
   enum Objective objective = MODIFIED_LAPLACE;
 
-  Optimizer popOptimizer( 1.0e-6, 40, 0 );
-  Optimizer indOptimizer( 1.0e-6, 40, 0 );
+  Optimizer popOptInfo( 1.0e-6, 40, 0 );
+  Optimizer indOptInfo( 1.0e-6, 40, 0 );
 
 
   //------------------------------------------------------------
@@ -803,13 +802,13 @@ void main()
               objective,
               dvecN,
               dvecY,
-              popOptimizer,
+              popOptInfo,
               alpLow,
               alpUp,
               alpIn,
               &alpOut,
               alpStep,
-              indOptimizer,
+              indOptInfo,
               bLow,
               bUp,
               dmatBIn,
@@ -1058,8 +1057,6 @@ $$
 then it will display the following when it is run:
 $codep
 
-ok = True
-
 alpOut =
 [1.95115]
 [3.63406]
@@ -1098,7 +1095,6 @@ $end
 
 #include <cmath>
 #include <cassert>
-#include <strstream>
 #include <cerrno>
 #include <string>
 #include <vector>
@@ -1106,7 +1102,7 @@ $end
 #include "firstOrderOpt.h"
 #include "ppkaOpt.h"
 #include "lTilde.h"
-#include "sqpAnyBox.h"
+#include "quasiNewtonAnyBox.h"
 #include "matabs.h"
 #include "isDmatEpsEqual.h"
 #include "File.h"
@@ -1117,63 +1113,267 @@ $end
 #include "FpErrorChecker.h"
 #include "namespace_population_analysis.h"
 
-/*------------------------------------------------------------------------
- * Local function declarations
- *------------------------------------------------------------------------*/
-
-static void evalLTilde( const DoubleMatrix& dvecAlp, 
-                        double* pdLTildeOut, 
-                        DoubleMatrix* pdrowLTilde_alpOut,
-                        const void* pInfo );
-
 
 /*------------------------------------------------------------------------
- * Namespace declarations
+ * Local class declarations
  *------------------------------------------------------------------------*/
 
-namespace 
+namespace // [Begin: unnamed namespace]
 {
+  //**********************************************************************
   //
-  // Class: LTildeInfo
+  // Class: PpkaOptObj
   //
   //
-  // Objects of this class are repositories for information required 
-  // by the function lTilde.
+  // Evaluates the population objective function and/or its gradient.
   //
-  class LTildeInfo
-  {
-  public:
+  //**********************************************************************
 
-    LTildeInfo( const DoubleMatrix& dmatAlp, const DoubleMatrix& dmatB )
+  class PpkaOptObj : public QuasiNewtonAnyBoxObj
+  {
+    //----------------------------------------------------------
+    // Constructors.
+    //----------------------------------------------------------
+
+  public:
+    PpkaOptObj( 
+      bool                 isLTildeBestSetIn,
+      const DoubleMatrix&  dvecAlpBestIn,
+      const DoubleMatrix&  dmatBBestIn,
+      const File*          pSharedDirectoryIn,
+      SpkModel*            pModelIn,
+      enum  Objective      objectiveIn,
+      const DoubleMatrix*  pdvecNIn,
+      const DoubleMatrix*  pdvecYIn,
+      const DoubleMatrix*  pdvecBLowIn,
+      const DoubleMatrix*  pdvecBUpIn,
+      const DoubleMatrix*  pdvecBStepIn,
+      Optimizer*           pIndOptInfoIn,
+      bool                 isMultiProcessedIn )
+      :
+      nInd              ( dmatBBestIn.nc() ),
+      nAlp              ( dvecAlpBestIn.nr() ),
+      nB                ( dmatBBestIn.nr() ),
+      isLTildeBestSet   ( isLTildeBestSetIn ),  
+      dvecAlpBest       ( dvecAlpBestIn ),      
+      dmatBBest         ( dmatBBestIn ),        
+      pSharedDirectory  ( pSharedDirectoryIn ), 
+      pModel            ( pModelIn ),           
+      objective         ( objectiveIn ),        
+      pdvecN            ( pdvecNIn ),           
+      pdvecY            ( pdvecYIn ),           
+      pdvecBLow         ( pdvecBLowIn ),        
+      pdvecBUp          ( pdvecBUpIn ),         
+      pdvecBStep        ( pdvecBStepIn ),       
+      pIndOptInfo       ( pIndOptInfoIn ),      
+      isMultiProcessed  ( isMultiProcessedIn ) 
     {
-      dvecAlpBest = DoubleMatrix( dmatAlp );
-      dmatBBest   = DoubleMatrix( dmatB   );
     }
 
-    // These point to ppkaOptParallel inputs.
-    const File*              pSharedDirectory;
-    SpkModel*                pModel;
-    enum  Objective          objective;
-    const DoubleMatrix*      pdvecN;
-    const DoubleMatrix*      pdvecY;
-    const DoubleMatrix*      pdvecBLow;
-    const DoubleMatrix*      pdvecBUp;
-    const DoubleMatrix*      pdvecBStep;
-    
+
+    //----------------------------------------------------------
+    // Data members.
+    //----------------------------------------------------------
+
+  private:
+    const int nInd;
+    const int nAlp;
+    const int nB;
+
+    DoubleMatrix dvecAlpCurr;
+
     // These hold the best value for the population objective 
     // function that has been computed by lTilde() so far, along
     // with the corresponding set of b values.
-    double        dLTildeBest;
-    bool          isLTildeBestSet;
-    DoubleMatrix  dvecAlpBest;
-    DoubleMatrix  dmatBBest;
+    double            dLTildeBest;
+    bool              isLTildeBestSet;
+    DoubleMatrix      dvecAlpBest;
+    DoubleMatrix      dmatBBest;
 
-    bool          ok;
-    Optimizer     optimizer;
-    bool          isMultiProcessed;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // [Revisit - Caching Individual Optimization State Information - Mitch]
+    // Note that optimizer QuasiNewton01Box, which is currently being
+    // used by SPK, asks the objective function object to evaluate its
+    // function value and then, in a separate call, asks it to evaluate
+    // its gradient.  If this class stored the optimizer state information
+    // for all of the individuals in the population, e.g.
+    //
+    //     vector<StateInfo> indOptStateInfoBest;
+    //
+    // then when the gradient of the population objective function is
+    // evaluated at the same alpha value as the function was evaluate,
+    // then the individual level optimization problems would not take
+    // any time since they have all of the optimization information
+    // for each of the individuals.  Subsequent individual level
+    // optimizations would probably be faster, too, since they would
+    // have good approximations for the Hessians of the individual level
+    // objectives.
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // These point to ppkaOptParallel inputs.
+    const File*          pSharedDirectory;
+    SpkModel*            pModel;
+    enum  Objective      objective;
+    const DoubleMatrix*  pdvecN;
+    const DoubleMatrix*  pdvecY;
+    const DoubleMatrix*  pdvecBLow;
+    const DoubleMatrix*  pdvecBUp;
+    const DoubleMatrix*  pdvecBStep;
+    
+    Optimizer*  pIndOptInfo;
+    bool        isMultiProcessed;
+
+
+    //----------------------------------------------------------
+    // Public helper functions.
+    //----------------------------------------------------------
+
+  public:
+    DoubleMatrix getAlpBest() const
+    {
+      return dvecAlpBest;
+    }
+
+    DoubleMatrix getBBest() const
+    {
+      return dmatBBest;
+    }
+
+
+    //----------------------------------------------------------
+    // Functions required by quasiNewtonAnyBox.
+    //----------------------------------------------------------
+
+  public:
+    //**********************************************************
+    // 
+    // Function: function
+    //
+    //
+    // Evaluates the population objective function LTilde(alp).
+    //
+    //**********************************************************
+
+    void function( const DoubleMatrix& dvecAlpIn, double* pdLTildeOut )
+    {
+      //----------------------------------------------------------
+      // Preliminaries.
+      //----------------------------------------------------------
+
+      // Set the current value for alp.
+      dvecAlpCurr = dvecAlpIn;
+      assert( dvecAlpIn.nr() == nAlp );
+      assert( dvecAlpIn.nc() == 1 );
+
+    
+      //----------------------------------------------------------
+      // Evaluate the population objective function.
+      //----------------------------------------------------------
+
+      // Use the best matrix of b values as the initial guess for b.
+      DoubleMatrix dmatBCurr( nB, nInd );
+      double dLTildeCurr = 0.0;
+      DoubleMatrix* pdmatNull = 0;
+      lTilde(
+        isMultiProcessed,
+	*pSharedDirectory,
+	*pModel,
+	objective,
+	*pdvecY,
+	*pdvecN,
+	*pIndOptInfo,
+	dvecAlpCurr,
+	*pdvecBLow,
+	*pdvecBUp,
+	*pdvecBStep,
+	dmatBBest,
+	&dmatBCurr,
+	&dLTildeCurr,
+	pdmatNull );
+    
+      
+      //----------------------------------------------------------
+      // Finish up.
+      //----------------------------------------------------------
+    
+      // Save the best matrix of b values that has been determined so far. 
+      if ( !isLTildeBestSet )
+      {
+        dLTildeBest     = dLTildeCurr;
+        isLTildeBestSet = true;
+        dvecAlpBest     = dvecAlpCurr;
+        dmatBBest       = dmatBCurr;
+      }
+      else if ( dLTildeCurr < dLTildeBest )
+      {
+        dLTildeBest     = dLTildeCurr;
+        dvecAlpBest     = dvecAlpCurr;
+        dmatBBest       = dmatBCurr;
+      }
+    
+      // Set the objective function value.
+      *pdLTildeOut = dLTildeCurr;
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: gradient
+    //
+    //
+    // Evaluate the gradient of the population objective function 
+    // LTilde_alp(alp).
+    //
+    //**********************************************************
+
+    virtual void gradient( DoubleMatrix* pdrowLTilde_alpOut ) const
+    {
+      //----------------------------------------------------------
+      // Preliminaries.
+      //----------------------------------------------------------
+
+      assert( pdrowLTilde_alpOut->nr() == 1 );
+      assert( pdrowLTilde_alpOut->nc() == nAlp );
+
+    
+      //----------------------------------------------------------
+      // Evaluate the gradient of the population objective function.
+      //----------------------------------------------------------
+
+      // Use the best matrix of b values as the initial guess for b.
+      DoubleMatrix dmatBCurr( nB, nInd );
+      double* pdNull = 0;
+      double dLTildeCurr = 0.0;
+      DoubleMatrix drowLTilde_alpCurr( 1, nAlp );
+      lTilde(
+        isMultiProcessed,
+	*pSharedDirectory,
+	*pModel,
+	objective,
+	*pdvecY,
+	*pdvecN,
+	*pIndOptInfo,
+	dvecAlpCurr,
+	*pdvecBLow,
+	*pdvecBUp,
+	*pdvecBStep,
+	dmatBBest,
+	&dmatBCurr,
+        pdNull,
+        &drowLTilde_alpCurr );
+    
+      
+      //----------------------------------------------------------
+      // Finish up.
+      //----------------------------------------------------------
+    
+      // Set the gradient value.
+      *pdrowLTilde_alpOut = drowLTilde_alpCurr;
+    }
+
   };
 
-}
+} // [End: unnamed namespace]
 
 
 /*------------------------------------------------------------------------
@@ -1196,8 +1396,8 @@ namespace ltildetrancendiff{
                   enum Objective     whichObjective,
                   const DoubleMatrix &dvecY_forAll,
                   const DoubleMatrix &dvecNumsOfDataforEachSubject,
-                  Optimizer&         optimizer,
-				  const DoubleMatrix &dvecAlp,
+                  Optimizer&         optInfo,
+                  const DoubleMatrix &dvecAlp,
                   const DoubleMatrix &dvecBlow,
                   const DoubleMatrix &dvecBup,
                   const DoubleMatrix &dvecBstep,
@@ -1215,7 +1415,7 @@ namespace ltildetrancendiff{
           enum  Objective    whichObjective,
           const DoubleMatrix &dvecY_forAll,
           const DoubleMatrix &dvecNumsOfDataforEachSubject,
-          Optimizer&         optimizer,
+          Optimizer&         optInfo,
           const DoubleMatrix &dvecAlp,
           const DoubleMatrix &dvecAlpStep,
           const DoubleMatrix &dvecBlow,
@@ -1239,13 +1439,13 @@ void ppkaOpt(
               enum  Objective         objective,
               const DoubleMatrix&     dvecN,
               const DoubleMatrix&     dvecY,
-              Optimizer&              popOptimizer,
+              Optimizer&              popOptInfo,
               const DoubleMatrix&     dvecAlpLow,
               const DoubleMatrix&     dvecAlpUp,
               const DoubleMatrix&     dvecAlpIn,
               DoubleMatrix*           pdvecAlpOut,
               const DoubleMatrix&     dvecAlpStep,
-			  Optimizer&              indOptimizer,
+              Optimizer&              indOptInfo,
               const DoubleMatrix&     dvecBLow,
               const DoubleMatrix&     dvecBUp,
               const DoubleMatrix&     dmatBIn,
@@ -1283,9 +1483,17 @@ void ppkaOpt(
   int nB   = dmatBIn  .nr();
 
   //------------------------------------------------------------
-  // Set indOptimizer as a sub-level optimizer. 
+  // Set indOptInfo as a sub-level optimizer. 
   //------------------------------------------------------------
-  indOptimizer.setIsSubLevelOpt( true );
+
+  bool oldIndSaveState  = indOptInfo.getSaveStateAtEndOfOpt();
+  bool oldIndThrowExcep = indOptInfo.getThrowExcepIfMaxIter();
+
+  // Set these flags so that an exception is thrown if the maximum number
+  // of iterations is exceeded when optimizing an individual and so that
+  // no individual level optimizer state information is saved.
+  indOptInfo.setSaveStateAtEndOfOpt( false );
+  indOptInfo.setThrowExcepIfMaxIter( true);
 
   //------------------------------------------------------------
   // Convert the c string specifying the communication
@@ -1305,7 +1513,7 @@ void ppkaOpt(
   //------------------------------------------------------------
 
   // Instantiate a temporary column vector to hold the final alp 
-  // value that will be returned by sqpAnyBox.
+  // value that will be returned by quasiNewtonAnyBox.
   DoubleMatrix dvecAlpOutTemp( nAlp, 1 );
 
   // Instantiate a temporary matrix to hold the optimal b values
@@ -1314,7 +1522,7 @@ void ppkaOpt(
 
   // If this function is going to return the population objective  
   // function value, initialize the temporary value to hold it.  
-  // Otherwise, set the temporary pointer to zero so that sqpAnyBox 
+  // Otherwise, set the temporary pointer to zero so that quasiNewtonAnyBox 
   // will not return it either.
   double dLTildeOutTemp;
   double* pdLTildeOutTemp = &dLTildeOutTemp;
@@ -1359,51 +1567,51 @@ void ppkaOpt(
   {
     pdmatLTilde_alp_alpOutTemp = 0;
   }
+
   //------------------------------------------------------------
-  // Prepare the information required by lTilde.
+  // Prepare the population objective function.
   //------------------------------------------------------------
 
-  // Set the initial guesses for the best values for alp and the
-  // matrix of individual b values.
-  LTildeInfo indLevelInfo( dvecAlpIn, dmatBIn );
+  bool isLTildeBestSet = false;
 
-  // Set the pointers to the ppkaOptParallel inputs.
-  indLevelInfo.pSharedDirectory = &sharedDirectory;
-  indLevelInfo.pModel           = &model;
-  indLevelInfo.objective        = objective;
-  indLevelInfo.pdvecN           = &dvecN;
-  indLevelInfo.pdvecY           = &dvecY; 
-  indLevelInfo.pdvecBLow        = &dvecBLow;
-  indLevelInfo.pdvecBUp         = &dvecBUp;
-  indLevelInfo.pdvecBStep       = &dvecBStep;
-
-  // Set the remaining information.
-  indLevelInfo.isLTildeBestSet  = false;
-  indLevelInfo.ok               = true;
-  indLevelInfo.optimizer        = indOptimizer;
-  indLevelInfo.isMultiProcessed = isMultiple;
+  // Construct the objective function, providing it with initial guesses
+  // for the best values for alp and for the best matrix of individual b
+  // values, with pointers to the ppkaOptParallel inputs, and with
+  // miscellaneous other information.
+  PpkaOptObj ppkaOptObj( isLTildeBestSet,
+			 dvecAlpIn,
+			 dmatBIn,
+			 &sharedDirectory,
+			 &model,
+			 objective,
+			 &dvecN,
+			 &dvecY, 
+			 &dvecBLow,
+			 &dvecBUp,
+			 &dvecBStep,
+			 &indOptInfo,
+			 isMultiple );
 
 
   //------------------------------------------------------------
   // Handle nonzero iterations for the population objective function.
   //------------------------------------------------------------
 
-  if ( popOptimizer.getNMaxIter() > 0 )
+  if ( popOptInfo.getNMaxIter() > 0 )
   {
       // If the number of iterations is not zero, then the population
       // objective function must be optimized in order to determine alpOut.
       // Note that the best matrix of b values for each individual that 
       // has been found so far is cached in indLevelInfo.
       try{
-          sqpAnyBox(  evalLTilde, 
-                      &indLevelInfo, 
-                      popOptimizer, 
-                      dvecAlpLow, 
-                      dvecAlpUp, 
-                      dvecAlpIn, 
-                      &dvecAlpOutTemp, 
-                      pdLTildeOutTemp,
-                      pdrowLTilde_alpOutTemp ); 
+          quasiNewtonAnyBox( ppkaOptObj,
+			     popOptInfo, 
+			     dvecAlpLow, 
+			     dvecAlpUp, 
+			     dvecAlpIn, 
+			     &dvecAlpOutTemp, 
+			     pdLTildeOutTemp,
+			     pdrowLTilde_alpOutTemp ); 
       }
       catch( SpkException& e )
       {
@@ -1435,69 +1643,54 @@ void ppkaOpt(
       // as the one in alpOutTemp, then the matrix of b values for 
       // each individual must be recalculated.
       bool recalcBBest = !isDmatEpsEqual( dvecAlpOutTemp, 
-                                          indLevelInfo.dvecAlpBest, 
+                                          ppkaOptObj.getAlpBest(),
                                           matabs( dvecAlpOutTemp ) );
     
       // If the matrix of b values for each 
       // individual needs to be recalculated, then compute them both 
       // with a single call to lTilde.
-      if ( recalcBBest && !popOptimizer.getIsTooManyIter() )
+      if ( recalcBBest && !popOptInfo.getIsTooManyIter() )
       {
-        double* pdNull = 0;
+          double* pdNull = 0;
       
           // [Revisit - Caching Previous Values - Mitch]:  the following call  
           // to lTilde() uses values for alp and bIn that are the optimal values
           // found during the optimization over alp, which was carried out
-          // by sqpAnyBox().  Thus, it asks lTilde() to evaluate the population
+          // by quasiNewtonAnyBox().  Thus, it asks lTilde() to evaluate the population
           // objective at alp values which were just determined to be the
           // solution.  This will make for unneccesary recalculations of
           // the population and individual objective functions.  If lTilde() 
           // and mapTilde() somehow cached the values they calculated for 
           // previous values of the parameters, then it would prevent this
           // extra work.
-          try{
-              lTilde( isMultiple,
-                      sharedDirectory,
-                      model,
-                      objective,
-                      dvecY,
-                      dvecN,
-                      indOptimizer,
-                      dvecAlpOutTemp,
-                      dvecBLow,
-                      dvecBUp,
-                      dvecBStep,
-                      indLevelInfo.dmatBBest,
-                      &dmatBOutTemp,
-                      pdNull,
-                      0 );
-              indLevelInfo.ok = true;
-          }
-          catch( ... )
-          { 
-            //
-            // Revisit - Sachiko:
-            //
-            // This should dump all the parameter values to a file and 
-            // give the filename as an error message.
-            //
-//            if(isMultiple)
-//              broadCastEndOfSpk(sharedDirectory);
-            throw;
-          }      
+          lTilde( isMultiple,
+                  sharedDirectory,
+                  model,
+                  objective,
+                  dvecY,
+                  dvecN,
+                  indOptInfo,
+                  dvecAlpOutTemp,
+                  dvecBLow,
+                  dvecBUp,
+                  dvecBStep,
+                  ppkaOptObj.getBBest(),
+                  &dmatBOutTemp,
+                  pdNull,
+                  0 );
       }
       else
       {
         // Copy the b values that were computed during the call to 
-        // sqpAnyBox into the temporary matrix.
-        dmatBOutTemp = indLevelInfo.dmatBBest;
+        // quasiNewtonAnyBox into the temporary matrix.
+        dmatBOutTemp = ppkaOptObj.getBBest();
       }
     }
   //------------------------------------------------------------
   // Handle zero iterations for the population objective function.
   //------------------------------------------------------------
 
-  if ( popOptimizer.getNMaxIter() == 0 )
+  if ( popOptInfo.getNMaxIter() == 0 )
   {
     // If the number of iterations is zero, then alpIn is the
     // desired value for alpOut.
@@ -1505,36 +1698,21 @@ void ppkaOpt(
     
     // The individual objective functions must still be computed
     // in order to evaluate lTilde(alpOut).
-    try{
-        lTilde( isMultiple,
-              sharedDirectory,
-              model,
-              objective,
-              dvecY,
-              dvecN,
-              indOptimizer,
-              dvecAlpOutTemp,
-              dvecBLow,
-              dvecBUp,
-              dvecBStep,
-              dmatBIn,
-              &dmatBOutTemp,
-              pdLTildeOutTemp,
-              pdrowLTilde_alpOutTemp );
-        indLevelInfo.ok = true;
-    }
-    catch( ... )
-    { 
-        //
-        // Revisit - Sachiko:
-        //
-        // This should dump all the parameter values to a file and 
-        // give the filename as an error message.
-        //
-//        if(isMultiple)
-//          broadCastEndOfSpk(sharedDirectory);
-        throw;
-    }    
+    lTilde( isMultiple,
+          sharedDirectory,
+          model,
+          objective,
+          dvecY,
+          dvecN,
+          indOptInfo,
+          dvecAlpOutTemp,
+          dvecBLow,
+          dvecBUp,
+          dvecBStep,
+          dmatBIn,
+          &dmatBOutTemp,
+          pdLTildeOutTemp,
+          pdrowLTilde_alpOutTemp );
   }
   
   //------------------------------------------------------------
@@ -1543,7 +1721,7 @@ void ppkaOpt(
 
   // Compute the second derivative of the population objective 
   // function at the final alp value, if necessary.
-  if ( pdmatLTilde_alp_alpOut && !popOptimizer.getIsTooManyIter() )
+  if ( pdmatLTilde_alp_alpOut && !popOptInfo.getIsTooManyIter() )
   {
     // [Revisit - trancendiff for LTilde_alp_alp - Mitch:  The version
     // of trancendiff that is currently located in this file and that 
@@ -1568,7 +1746,7 @@ void ppkaOpt(
                                               objective,
                                               dvecY,
                                               dvecN,
-                                              indOptimizer,
+                                              indOptInfo,
                                               dvecAlpOutTemp,
                                               dvecAlpStep,
                                               dvecBLow,
@@ -1633,33 +1811,33 @@ void ppkaOpt(
   //------------------------------------------------------------
 
   // Set the final alp value, if necessary.
-  if ( pdvecAlpOut && !popOptimizer.getIsTooManyIter() )
+  if ( pdvecAlpOut && !popOptInfo.getIsTooManyIter() )
   {
         *pdvecAlpOut = dvecAlpOutTemp;
   }
 
   // Set the matrix of final b values, if necessary.
-  if ( pdmatBOut && !popOptimizer.getIsTooManyIter() )
+  if ( pdmatBOut && !popOptInfo.getIsTooManyIter() )
   {
     *pdmatBOut = dmatBOutTemp;
   }
 
   // Set the final population objective function value, if necessary.
-  if ( pdLTildeOut && !popOptimizer.getIsTooManyIter() )
+  if ( pdLTildeOut && !popOptInfo.getIsTooManyIter() )
   {
         *pdLTildeOut = dLTildeOutTemp;
   }
 
   // Set the first derivative of the population objective 
   // function at the final alp value, if necessary.
-  if ( pdrowLTilde_alpOut && !popOptimizer.getIsTooManyIter() )
+  if ( pdrowLTilde_alpOut && !popOptInfo.getIsTooManyIter() )
   {
     *pdrowLTilde_alpOut = drowLTilde_alpOutTemp;
   }
     
   // Set the second derivative of the population objective 
   // function at the final alp value, if necessary.
-  if ( pdmatLTilde_alp_alpOut && !popOptimizer.getIsTooManyIter() )
+  if ( pdmatLTilde_alp_alpOut && !popOptInfo.getIsTooManyIter() )
   {
     *pdmatLTilde_alp_alpOut = dmatLTilde_alp_alpOutTemp;
   }
@@ -1671,7 +1849,11 @@ void ppkaOpt(
       broadCastEndOfSpk(sharedDirectory);
   }
 */
-  indOptimizer.setIsSubLevelOpt( false );
+
+  // Reset these individual optimizer flags to their original values.
+  indOptInfo.setSaveStateAtEndOfOpt( oldIndSaveState );
+  indOptInfo.setThrowExcepIfMaxIter( oldIndThrowExcep );
+
   return;
 }
 
@@ -1683,144 +1865,6 @@ void ppkaOpt(
  *
  *
  *========================================================================*/
-
-/*************************************************************************
- *
- * Function: evalLTilde
- *
- *
- * Description
- * -----------
- *
- * Calls lTilde in order to evaluate the population objective function 
- * and/or its gradient.  
- * 
- *
- * Return value
- * ------------
- * This function returns true except in the case of too-many-iterations
- * occurred during the optimization.  In this case, it returs false.
- *
- * 
- * Arguments
- * ---------
- *
- * dvecAlp
- * The column vector alp where the population objective function should 
- * be evaluated.
- *
- * pdLTildeOut
- * If the return value of evalLTilde is true, and if this pointer is not 
- * equal to zero, then on output the double value it points to will be 
- * equal to the population objective function  evaluated at alp. Note 
- * that the routine calling this function must allocate memory for the 
- * value pointed to by pdLTildeOut.
- *
- * pdrowLTilde_alpOut
- * If the return value of evalLTilde is true, and if this pointer is not 
- * equal to zero, then on output the DoubleMatrix it points to will 
- * contain a row vector equal to the derivative of the population 
- * objective function with respect to alp. Note that the DoubleMatrix 
- * pointed to by pdrowLTilde_alpOut must have the same number of elements
- * as dvecAlp and must be constructed by the routine calling this function.
- * 
- * pInfo
- * The structure pointed to by pInfo contains information required by 
- * lTilde in order to evaluate the population objective function.
- *
- *************************************************************************/
-
-static void evalLTilde( const DoubleMatrix& dvecAlp, 
-                        double* pdLTildeOut, 
-                        DoubleMatrix* pdrowLTilde_alpOut,
-                        const void* pInfo )
-{
-  //------------------------------------------------------------
-  // Preliminaries.
-  //------------------------------------------------------------
-
-  // Create a pointer to the information required by lTilde.
-  LTildeInfo* pLTildeInfo = (LTildeInfo*) pInfo;
-
-  // If there are no output values to calculate, then the 
-  // evaluation is considered to have succeeded.
-  if ( !pdLTildeOut && !pdrowLTilde_alpOut )
-  {
-    return;
-  }
-
-  // If something went wrong with lTilde since the last time 
-  // it was called, then don't go on.
-  if ( !pLTildeInfo->ok )
-  {
-      throw SpkException(
-            SpkError::SPK_UNKNOWN_ERR, "The previous call to lTilde had failed.", __LINE__, __FILE__);
-  }
-
-  // This matrix will hold the set of b values returned by lTilde.
-  DoubleMatrix dmatBOut( pLTildeInfo->dmatBBest.nr(), 
-                         pLTildeInfo->dmatBBest.nc() );
-  
-
-  //------------------------------------------------------------
-  // Validate the inputs (debug version only).
-  //------------------------------------------------------------
-
-  assert( dvecAlp.nc() == 1 );
-
-  if ( pdrowLTilde_alpOut )
-  {
-    assert( pdrowLTilde_alpOut->nr() == 1            );
-    assert( pdrowLTilde_alpOut->nc() == dvecAlp.nr() );
-  }
-
-
-  //------------------------------------------------------------
-  // Evaluate the population objective function.
-  //------------------------------------------------------------
-
-  // Note that the best matrix of b values for each individual that has
-  // been calculated so far is used as the initial guess for bOut.
-
-  lTilde( pLTildeInfo->isMultiProcessed,
-            *( pLTildeInfo->pSharedDirectory ),
-            *( pLTildeInfo->pModel ),
-            pLTildeInfo->objective,
-            *( pLTildeInfo->pdvecY ),
-            *( pLTildeInfo->pdvecN ),
-            pLTildeInfo->optimizer,
-            dvecAlp,
-            *( pLTildeInfo->pdvecBLow ),
-            *( pLTildeInfo->pdvecBUp ),
-            *( pLTildeInfo->pdvecBStep ),
-            pLTildeInfo->dmatBBest,
-            &dmatBOut,
-            pdLTildeOut,
-            pdrowLTilde_alpOut );
-
-  
-  //------------------------------------------------------------
-  // Save the best matrix of b values that has been computed so far. 
-  //------------------------------------------------------------
-
-  if ( !pLTildeInfo->isLTildeBestSet )
-  {
-    pLTildeInfo->dLTildeBest     = *pdLTildeOut;
-    pLTildeInfo->isLTildeBestSet = true;
-    pLTildeInfo->dvecAlpBest     = dvecAlp;
-    pLTildeInfo->dmatBBest       = dmatBOut;
-  }
-  else if ( *pdLTildeOut < pLTildeInfo->dLTildeBest )
-  {
-    pLTildeInfo->dLTildeBest     = *pdLTildeOut;
-    pLTildeInfo->dvecAlpBest     = dvecAlp;
-    pLTildeInfo->dmatBBest       = dmatBOut;
-  }
-
-  pLTildeInfo->ok = true;
-
-}
-
 
 /*************************************************************************
  *
@@ -1854,7 +1898,7 @@ static DoubleMatrix ltildetrancendiff::trancendiff(
         enum Objective     whichObjective,
         const DoubleMatrix &dvecY_forAll,
         const DoubleMatrix &dvecNumsOfDataforEachSubject,
-        Optimizer&         indOptimizer,
+        Optimizer&         indOptInfo,
         const DoubleMatrix &dvecAlp,
         const DoubleMatrix &dvecAlpStep,
         const DoubleMatrix &dvecBlow,
@@ -1914,7 +1958,7 @@ static DoubleMatrix ltildetrancendiff::trancendiff(
     // This call may throw an exception but let it propagate.
     //
     lTilde( isMultiple, sharedDirectory, model, whichObjective, dvecY_forAll, dvecNumsOfDataforEachSubject,
-        indOptimizer,
+        indOptInfo,
         dvecAlp, dvecBlow, dvecBup, dvecBstep, dmatBin_forAll,
         0,0,&drowTempLTilde_alp );
 
@@ -1949,7 +1993,7 @@ static DoubleMatrix ltildetrancendiff::trancendiff(
         // This call may throw an exception but let it propagate.
         //
         lTilde( isMultiple, sharedDirectory, model, whichObjective, dvecY_forAll, dvecNumsOfDataforEachSubject,
-            indOptimizer, dvecTempAlp, dvecBlow,dvecBup,dvecBstep,dmatTempBin_forAll,
+            indOptInfo, dvecTempAlp, dvecBlow,dvecBup,dvecBstep,dmatTempBin_forAll,
             '\0','\0',&drowPlusLTilde_alpOut );
 
         // Compute (variable - step )
@@ -1967,7 +2011,7 @@ static DoubleMatrix ltildetrancendiff::trancendiff(
         // This call may throw an exception but let it propagate.
         //
         lTilde( isMultiple, sharedDirectory, model, whichObjective, dvecY_forAll, dvecNumsOfDataforEachSubject,
-            indOptimizer, dvecTempAlp, dvecBlow,dvecBup,dvecBstep,dmatTempBin_forAll,
+            indOptInfo, dvecTempAlp, dvecBlow,dvecBup,dvecBstep,dmatTempBin_forAll,
             '\0','\0',&drowMinusLTilde_alpOut );
 
         // Take difference

@@ -433,47 +433,54 @@ void fitPopulationTest::fitPopulationExampleTest(enum Objective whichObjective)
   // Set the parallel controls object
   DirBasedParallelControls parallelControls( false, 0, 0 );
 
-  // Set up warm start
+  // Set these to exercise the warm start capabilities of fitPopulation.
   popOptimizer.setupWarmStart( nAlp );
+  popOptimizer.setThrowExcepIfMaxIter( false );
+  popOptimizer.setSaveStateAtEndOfOpt( true );
+
 
   //------------------------------------------------------------
   // Optimize the population objective function.
   //------------------------------------------------------------
 
   bool ok;
-  try{
-	  while( true )
-	  {
-          fitPopulation(
-					     model,
-					     whichObjective,
-					     N,
-					     Y,
-					     popOptimizer,
-					     alpLow,
-					     alpUp,
-					     dvecAlpIn,
-					     dvecAlpStep,
-					     &alpOut,
-					     indOptimizer,
-					     bLow,
-					     bUp,
-					     dmatBIn,            
-					     dvecBStep,
-					     &bOut,
-					     &dLTildeOut,
-					     &lTilde_alpOut,
-					     &lTilde_alp_alpOut, 
-					     parallelControls 
-			           );
-		  if( !popOptimizer.getIsTooManyIter() )
-		      // Finished
-			  break;
 
-		  // Turn on warm start.
-          popOptimizer.setIsWarmStart( true );
-	  }
-       ok = true;
+  try
+  {
+    while( true )
+    {
+      fitPopulation(
+                    model,
+                    whichObjective,
+                    N,
+                    Y,
+                    popOptimizer,
+                    alpLow,
+                    alpUp,
+                    dvecAlpIn,
+                    dvecAlpStep,
+                    &alpOut,
+                    indOptimizer,
+                    bLow,
+                    bUp,
+                    dmatBIn,            
+                    dvecBStep,
+                    &bOut,
+                    &dLTildeOut,
+                    &lTilde_alpOut,
+                    &lTilde_alp_alpOut, 
+                    parallelControls );
+
+      // Exit this loop if the maximum number of iterations was
+      // not exceeded, i.e., if the optimization was successful.
+      if( !popOptimizer.getIsTooManyIter() )
+        break;
+
+      // Set this so that fitPopulation performs a warm start when it
+      // is called again.
+      popOptimizer.setIsWarmStart( true );
+    }
+    ok = true;
   }
   catch(...)
   {
@@ -576,10 +583,10 @@ void fitPopulationTest::fitPopulationExampleTest(enum Objective whichObjective)
   lTilde_alp_alpKnown[ 3 ] = 0.5 * pow( onePlusAlp2, -2 ) 
                                     * (2.0 / onePlusAlp2 * sumYMinAlp1Sqd 
                                     - nInd );
-
   valarray<double> epsilon( 2 );
   epsilon[ 0 ] = indOptimizer.getEpsilon();
   epsilon[ 1 ] = popOptimizer.getEpsilon();
+
 
   //------------------------------------------------------------
   // Do the test.
@@ -949,7 +956,7 @@ void fitPopulationTest::fitPopulationZeroIterationsTest(enum Objective whichObje
       //preTestPrinting( "Zero Population Level Iterations" );
 
       indOptimizer.setNMaxIter( 40 );
-	  popOptimizer.setNMaxIter(  0 );
+      popOptimizer.setNMaxIter(  0 );
 
       // Since the number of iterations for the population level is
       // zero, alpOut and alpHat should both be equal to alpIn.
@@ -974,8 +981,8 @@ void fitPopulationTest::fitPopulationZeroIterationsTest(enum Objective whichObje
 
       //preTestPrinting( "Zero Individual Level Iterations" );
 
-	  indOptimizer.setNMaxIter(  0 );
-	  popOptimizer.setNMaxIter( 40 );
+      indOptimizer.setNMaxIter(  0 );
+      popOptimizer.setNMaxIter( 40 );
 
       // Since f(alp, b), R(alp, b), and D(alp) are defined below
       // such that they are all independent of alp, the optimizer
@@ -998,7 +1005,7 @@ void fitPopulationTest::fitPopulationZeroIterationsTest(enum Objective whichObje
       //preTestPrinting( "Zero Iterations at Both Levels" );
 
       indOptimizer.setNMaxIter( 0 );
-	  popOptimizer.setNMaxIter( 0 );
+      popOptimizer.setNMaxIter( 0 );
 
       // Since the number of iterations for the population level is
       // zero, alpOut and alpHat should both be equal to alpIn.
@@ -1017,29 +1024,30 @@ void fitPopulationTest::fitPopulationZeroIterationsTest(enum Objective whichObje
     //----------------------------------------------------------
 
     bool okFitPopulation;
-    try{
+    try
+    {
         fitPopulation( 
-					  model,
-					  whichObjective,
-					  N,
-					  Y,
-					  popOptimizer,
-					  alpLow,
-					  alpUp,
-					  dvecAlpIn,
-					  dvecAlpStep,
-					  &alpOut,
-					  indOptimizer,
-					  bLow,
-					  bUp,
-					  dmatBIn,            
-					  dvecBStep,
-					  &bOut,
-					  &dLTildeOut,
-					  &lTilde_alpOut,
-					  &lTilde_alp_alpOut, 
-					  parallelControls 
-			        );
+                      model,
+                      whichObjective,
+                      N,
+                      Y,
+                      popOptimizer,
+                      alpLow,
+                      alpUp,
+                      dvecAlpIn,
+                      dvecAlpStep,
+                      &alpOut,
+                      indOptimizer,
+                      bLow,
+                      bUp,
+                      dmatBIn,            
+                      dvecBStep,
+                      &bOut,
+                      &dLTildeOut,
+                      &lTilde_alpOut,
+                      &lTilde_alp_alpOut, 
+                      parallelControls 
+                    );
         okFitPopulation = true;
     }
     catch(...)
@@ -1075,7 +1083,7 @@ void fitPopulationTest::fitPopulationZeroIterationsTest(enum Objective whichObje
     DoubleMatrix dvecBLow( bLow );
     DoubleMatrix dvecBUp( bUp );
     DoubleMatrix dvecBStep( dvecBStep );
-	DoubleMatrix dmatBIn( dmatBIn, nInd );
+    DoubleMatrix dmatBIn( dmatBIn, nInd );
     DoubleMatrix* pNull = 0;
     DoubleMatrix drowLTilde_alpKnown( lTilde_alpKnown, nAlp );
 
@@ -1112,9 +1120,9 @@ void fitPopulationTest::fitPopulationZeroIterationsTest(enum Objective whichObje
                    &drowLTilde_alpKnown);
 */
         std::valarray<int> N( nInd );
-	    for( int k = 0; k < nInd; k++ )
-		    N[ k ] = (int)dvecN.data()[ k ];
-	    EqIndModel FoModel( &model, N, dvecBStep.toValarray(), nAlp );
+        for( int k = 0; k < nInd; k++ )
+            N[ k ] = (int)dvecN.data()[ k ];
+        EqIndModel FoModel( &model, N, dvecBStep.toValarray(), nAlp );
 
         mapObj( FoModel, 
                 dvecY,
@@ -1163,7 +1171,7 @@ void fitPopulationTest::fitPopulationZeroIterationsTest(enum Objective whichObje
 
     drowLTilde_alpKnown.toValarray( lTilde_alpKnown );
    
-	valarray<double> epsilon( 2 );
+    valarray<double> epsilon( 2 );
     epsilon[ 0 ] = indOptimizer.getEpsilon();
     epsilon[ 1 ] = popOptimizer.getEpsilon();
 
@@ -1200,21 +1208,21 @@ void fitPopulationTest::fitPopulationZeroIterationsTest(enum Objective whichObje
  *************************************************************************/
 
 void fitPopulationTest::doTheTest( bool ok,
-								   double dLTildeOut,
-								   double dLTildeKnown,
-								   const valarray<double>& epsilon,
-								   const valarray<double>& alpLow,
-								   const valarray<double>& alpUp,
-								   const valarray<double>& alpOut,
-								   const valarray<double>& alpHat,
-								   const valarray<double>& bLow,
-								   const valarray<double>& bUp,
-								   const valarray<double>& bOut,
-								   const valarray<double>& bHat,
-								   const valarray<double>& lTilde_alpOut,
-								   const valarray<double>& lTilde_alpKnown,
-								   const valarray<double>& lTilde_alp_alpOut,
-								   const valarray<double>& lTilde_alp_alpKnown )
+                                   double dLTildeOut,
+                                   double dLTildeKnown,
+                                   const valarray<double>& epsilon,
+                                   const valarray<double>& alpLow,
+                                   const valarray<double>& alpUp,
+                                   const valarray<double>& alpOut,
+                                   const valarray<double>& alpHat,
+                                   const valarray<double>& bLow,
+                                   const valarray<double>& bUp,
+                                   const valarray<double>& bOut,
+                                   const valarray<double>& bHat,
+                                   const valarray<double>& lTilde_alpOut,
+                                   const valarray<double>& lTilde_alpKnown,
+                                   const valarray<double>& lTilde_alp_alpOut,
+                                   const valarray<double>& lTilde_alp_alpKnown )
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -1239,7 +1247,7 @@ void fitPopulationTest::doTheTest( bool ok,
   //------------------------------------------------------------
 
   DoubleMatrix AOut, AHat, BOut, BHat, LTilde_alpOut, 
-	           LTilde_alpKnown, LTilde_alp_alpOut, LTilde_alp_alpKnown;  
+               LTilde_alpKnown, LTilde_alp_alpOut, LTilde_alp_alpKnown;  
   //cout << endl;
 
   //cout << "ok = " << ( ok ? "True" : "False" ) << endl;

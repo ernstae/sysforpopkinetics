@@ -271,24 +271,15 @@ void fitIndividualErrorTest::tooManyIterationError()
         //
         bIn = bIn * 1.2;
         pModel->setIndPar( bIn );
-		optimizer.setupWarmStart( nB );
-		//
-		// [ Revisit --- Jiaji, 10/25/2002 ]
-		// If Optimizer::setupWarmStart() is called, Too-Many-Iter is not treated 
-		// as an error.  The state info for the later warm start will be stored in
-		// the Optimizer object and returned by fitIndividual(). 
-		//
+
+	// Set the optimizer flag so that it won't throw an exception
+	// when the maximum number of iterations is exceeded.
+        optimizer.setThrowExcepIfMaxIter( false );
+
         fitIndividual(*pModel, y, optimizer, bLow, bUp, bIn, bStep, &bOut, &mapObjOut, &mapObj_bOut, &mapObj_b_bOut, withD);
     }
     catch( SpkException& e )
     {
-      // 
-      // [ Revisit --- Sachiko, 10/10/2002 ]
-      // "Too many iteration#" should not be treated as an error.
-      // As of this date, sqpAnyBox() seems to throw TOO_MANY_ITERATION_ERR only
-      // when it is release version by accident.
-      // Jiaji is working on it.
-      //
       using std::cerr;
       using std::endl;
 
@@ -561,7 +552,7 @@ void fitIndividualErrorTest::setAllValid()
     //------------------------------------------------------------
 
     epsilon  = 1.e-3; 
-    maxItr   = 40; 
+    maxItr   = 0; 
     level    = 0;
     withD    = false;
 

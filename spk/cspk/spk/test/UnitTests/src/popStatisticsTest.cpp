@@ -483,6 +483,30 @@ void popStatisticsTest::statisticsExampleTest(enum Objective whichObjective)
 */
 	  double eps = 1e-9;
 
+  //------------------------------------------------------------
+  // Symmetrize the matrix of second derivatives.
+  //------------------------------------------------------------
+
+  // Because the function popStatistics symmetrizes the matrix of
+  // second derivatives of the population objective function that 
+  // is passed in to it, this test must do the same.
+  valarray<double> lTilde_alp_alpSymm( nAlp * nAlp );
+
+  // Calculate the value for the symmetrized off diagonal elements
+  // by taking their average.
+  double lTilde_alp_alpOffDiag = 
+    ( lTilde_alp_alpOut[ 1 ] + lTilde_alp_alpOut[ 2 ] ) / 2.0;
+
+   // Set the elements of the symmetrized matrix.
+  lTilde_alp_alpSymm[ 0 ] = lTilde_alp_alpOut[0];
+  lTilde_alp_alpSymm[ 1 ] = lTilde_alp_alpOffDiag;
+  lTilde_alp_alpSymm[ 2 ] = lTilde_alp_alpOffDiag;
+  lTilde_alp_alpSymm[ 3 ] = lTilde_alp_alpOut[3];
+
+  // Replace this with its symmetrized version.
+  lTilde_alp_alpOut = lTilde_alp_alpSymm;
+
+
       //------------------------------------------------------------
       // Test popParCovOut formulation 2.
       //------------------------------------------------------------
