@@ -77,12 +77,11 @@ void isDblEpsEqualTest::case1()
 
     // Addition of this value should not change the epsilon  
     // equality of two double precision numbers.
-    c = 0.5 * scale * DBL_EPS_EQUAL_MULT * DBL_EPSILON; 
+    c = 0.5 * scale * ( DBL_EPS_EQUAL_MULT * DBL_EPSILON ); 
 
     CPPUNIT_ASSERT_MESSAGE( "isDblEpsEqual should return true",  isDblEpsEqual(a, b, scale) );
     CPPUNIT_ASSERT_MESSAGE( "isDblEpsEqual should return true",  isDblEpsEqual(a, b + c, scale) );
     CPPUNIT_ASSERT_MESSAGE( "isDblEpsEqual should return false", !isDblEpsEqual(a, b + 3.0*c, scale) );
-
   }
 
   return;
