@@ -55,7 +55,8 @@ void firstOrderOpt( SpkModel&               model,
                     const DoubleMatrix&     dvecBStep,
                     double*                 pdLTildeOut,
                     DoubleMatrix*           pdrowLTilde_alpOut,
-                    DoubleMatrix*           pdmatLTilde_alp_alpOut 
+                    DoubleMatrix*           pdmatLTilde_alp_alpOut,
+                    DoubleMatrix*           pdmatLambdaTilde_alpOut
                   );
 
 #endif
