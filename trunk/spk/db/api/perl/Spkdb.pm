@@ -34,7 +34,7 @@ our @EXPORT_OK = (
     'en_q2r', 'de_q2r', 'end_job', 'job_report',
     'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
     'new_model', 'get_model', 'update_model', 'user_models',
-    'new_user', 'update_user', 'get_user'
+    'new_user', 'update_user', 'get_user', 'email_for_job'
     );
 
 our $VERSION = '0.01';
@@ -1432,7 +1432,7 @@ sub update_user() {
     return 1;
 }
 
-=head2 get_user -- retrieve a user record
+=head2 get_user -- retrieve a user record by username
 
 Retrieve the row corresponding to a username.
 
@@ -1476,6 +1476,54 @@ sub get_user() {
     }
     return $sth->fetchrow_hashref();
 }
+
+=head2 email_for_job -- get email address for a job
+
+Given a job_id, retrieve the email address of the user.
+
+    $email = &Spkdb::email_for_job($dbh, $job_id);
+
+$dbh is the handle to an open database connection
+
+$job_id is the key to a row in the job table
+
+Returns
+
+  success: string containing an email address
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed
+
+=cut
+
+sub email_for_job() {
+    my $dbh = shift;
+    my $job_id = shift;
+    $err = 0;
+    $errstr = "";
+
+    my $sql = "select email from job,user where job_id=$job_id and job.user_id=user.user_id;";
+
+    my $sth = $dbh->prepare($sql);
+    unless ($sth) {
+	$err = $PREPARE_FAILED;
+	$errstr = "could not prepare statement: $sql";
+	return undef;
+    }
+    unless ($sth->execute())
+    {
+	$err = $EXECUTE_FAILED;
+	$errstr = "could not execute state: $sql; error returned "
+	    . $sth->errstr;
+    }
+    unless ($sth->rows == 1) {
+	return undef;
+    }
+    my $row = $sth->fetchrow_hashref();
+    return $row->{"email"};
+}
+
 
 
 # local subroutines
