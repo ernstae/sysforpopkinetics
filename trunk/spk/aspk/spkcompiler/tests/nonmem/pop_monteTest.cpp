@@ -82,10 +82,15 @@ if( actual != expected ) \\\n \
 
   //============================================
   // Monte Carlo integration controls
+  //
+  // Warning: "analytic" method, which is
+  // intened for internal testing use only,
+  // accepts nEta=nB=1.  Since the 
   //============================================
   const bool isMonte = true;
-  const char monteMethod[] = "monte";
-  const int  monteNumEvals = 1000;
+  const char monteMethod[] = "grid";
+  int  monteNEvals = 0;
+  vector<int>  monteNumberEvals(1);
 
   //============================================
   // Optimizer controls
@@ -342,35 +347,6 @@ void pop_monteTest::setUp()
   record[7]   = record7;
   record[8]   = record8;
   record[9]   = record9;
-  /*
-  record[10]  = record10;
-  record[11]  = record11;
-  record[12]  = record12;
-  record[13]  = record13;
-  record[14]  = record14;
-  record[15]  = record15;
-  record[16]  = record16;
-  record[17]  = record17;
-  record[18]  = record18;
-  record[19]  = record19;
-  record[20]  = record20;
-  record[21]  = record21;
-  record[22]  = record22;
-  record[23]  = record23;
-  record[24]  = record24;
-  record[25]  = record25;
-  record[26]  = record26;
-  record[27]  = record27;
-  record[28]  = record28;
-  record[29]  = record29;
-  record[30]  = record30;
-  record[31]  = record31;
-  record[32]  = record32;
-  record[33]  = record33;
-  record[34]  = record34;
-  record[35]  = record35;
-  //  record[36]  = record36;
-  */
 
   X_POP_ANALYSIS_RESULT        = XMLString::transcode( "pop_analysis_result" );
   X_POP_MONTE_RESULT           = XMLString::transcode( "pop_monte_result" );
@@ -383,6 +359,24 @@ void pop_monteTest::setUp()
   X_POP_CONFIDENCE_OUT         = XMLString::transcode( "ind_confidence_out" );
   X_VALUE                      = XMLString::transcode( "value" );
   X_ERROR_MESSAGES             = XMLString::transcode( "error_messages" );
+
+  int defaultEvals = 0;
+  if( strcmp( monteMethod, "grid" ) == 0 )
+  {
+     monteNEvals = etaLen;
+  }
+  else
+  {
+     monteNEvals = 1;
+     
+     if( strcmp( monteMethod, "plain" ) == 0 
+         || strcmp( monteMethod, "miser" ) == 0 ) 
+         defaultEvals = 1000;
+     else //if( strcmp( monteMethod, "analytic" ) == 0 )
+         defaultEvals = 1;
+  }
+  monteNumberEvals.resize( monteNEvals );
+  fill( monteNumberEvals.begin(), monteNumberEvals.end(), defaultEvals);   
 
   createDataML();
   createSourceML();
@@ -532,7 +526,12 @@ void pop_monteTest::createSourceML()
 
   if( isMonte )
   {
-     oSource << "<monte_carlo method=\"" << monteMethod << "\" number_eval=\"" << monteNumEvals << "\"/>" << endl;
+     oSource << "<monte_carlo method=\"" << monteMethod << "\">";
+     oSource << "   <number_eval>" << endl;
+     for( int i=0; i<monteNEvals; i++ )
+        oSource << "      <value>" << monteNumberEvals[i] << "</value>" << endl;
+     oSource << "   </number_eval>" << endl;
+     oSource << "</monte_carlo>" << endl;
   }
   oSource << "<constraint>" << endl;
 
@@ -858,8 +857,8 @@ void pop_monteTest::testMontePars_h()
   o << endl;
   o << "int main()" << endl;
   o << "{" << endl;
-  o << "   MY_ASSERT_EQUAL( MontePars::monte, MontePars::method );" << endl;
-  o << "   MY_ASSERT_EQUAL( 1000, MontePars::numberEval );" << endl;
+  o << "   MY_ASSERT_EQUAL( MontePars::" << monteMethod << ", MontePars::method );" << endl;
+  o << "   MY_ASSERT_EQUAL( " << monteNEvals << ", MontePars::nEval );" << endl;
   o << "}" << endl;
   o.close();
 
