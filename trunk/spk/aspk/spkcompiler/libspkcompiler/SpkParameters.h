@@ -23,6 +23,9 @@ struct SpkParameters{
   enum Analysis { POPULATION, INDIVIDUAL };
 
   enum Analysis         analysis;
+  bool                  isEstimation;
+  bool                  isSimulation;
+  int                   seed;
   enum Objective        objective;
   int                   nIndividuals;
   std::valarray<int>    nMeasurementsAll;
