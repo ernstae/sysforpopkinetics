@@ -1,14 +1,13 @@
 /*
   NAME
-  spkind -- individual level of SPK computation
+  spkind -- individual level of spk parallel prototype
 
   SYNOPSIS
   spkind job_id individual_id spkjob_tid mode
 
   DESCRIPTION
-
-  This program performs the SPK computation for a single individual.
-  It is started by the population level, spkpop, and runs the
+  This program is a prototype for the individual level of the parallel
+  spk.  It is started by the population level, spkpop, and runs the
   individual optimization. It can run on any node of a parallel
   virtual machine (pvm).
 
@@ -17,51 +16,43 @@
   which may be running on the same node or on any other node of the
   pvm.
 
-  Pvm connects the standard output stream of this program to the spk
-  log file, which resides on the master node.  The program should not
-  write directly to either standard output or standard input, Instead,
-  all log messages should be posted using the "spklog" function, which
-  prepends identification information to the message, then writes it
-  to standard output. (Note that the logging system does not rely on
-  NFS.)
-
   The program runs in its own unique working directory, which is
-  established by spkrund, the SPK runtime daemon, which is the unix
-  parent of spkjob. It acesses the working directory via the Network
-  File System (NFS).
+  a subdirectory of the working directory for the job.  
+
+  RUNNING
+  This program should only be run by spkpop in a parallel vitual 
+  machine (pvm).
 
   ARGUMENTS
-
   job_id
-
       The job_id of the job for which this is a part.  This is the
       string which identifies the job in the spkdb database, and also
       in the spk runtime log.
-
   individual_id
-
       If a job models a population of n individuals, they can be
       numbered 0,1,2,...n-1.  The individual_id is a number that set
       and serves to distinguish this instance of spkind from other
       instances associated with the same job.
-
   spkjob_tid
-
       This is the tid of the instance of spkjob which is working on
       the given job and is, with respect to the parallel virtual
       machine (PVM) the grandparent of this task.
-
   mode
-
       mode is either "test" or "prod" depending on whether the job is 
       running in the test environment or the production environment
 
+  DESIGN CONSTRAINTS AND GOALS
+  See the similar documentation for spkjob.
+
+  FILES
+  See the similar documentation for spkjob
  
   SEE ALSO
   spkjob
   spkpop
   spkrund
   pvm
+
 */
 
 #include <unistd.h>
@@ -71,8 +62,9 @@
 #include <cstdio>
 #include <time.h>
 #include <cstring>
-#include <csignal>
 #include <spkpvm.h>
+
+#include <csignal>
 
 static int my_tid = 0;
 static char *job_id = "?????";
@@ -81,8 +73,10 @@ static int parent_tid = 0;
 static int spkjob_tid = 0;
 
 static void finish(int);
-static void signal_handler(int);
 static void spklog(const char*);
+
+static void signal_handler(int);
+static void signal_initialize(void);
 
 // perform the computation
 static void compute(int iid) {
@@ -124,7 +118,20 @@ static void signal_handler(int signum) {
   finish(signum);
   exit(signum);
 }
-// Send a log message to spkjob
+// initialize signal handling
+static void signal_initialize() {
+  struct sigaction signal_action;
+  sigset_t block_mask;
+  sigemptyset(&block_mask);
+  for (int i = 0; i < NSIG; i++)
+    sigaddset(&block_mask, i);
+  signal_action.sa_handler = signal_handler;
+  signal_action.sa_flags = 0;
+  signal_action.sa_mask = block_mask;
+  for (int i = 0; i < NSIG; i++)
+    sigaction(i,  &signal_action, NULL);
+}
+// send a log message to spkjob
 static void spklog(const char* message) {
   char buf[100];
   sprintf(buf, "j%s\tt%0x\tspkind(%s):\t%s", job_id, my_tid, ind_id, message);
@@ -140,7 +147,7 @@ int main(int argc, char** argv) {
   char buf[100];
   int bufid;
 
-  // process arguments  
+  // Process arguments.
   if (argc != 5)
     die(usage);
   job_id     = argv[1];
@@ -150,32 +157,26 @@ int main(int argc, char** argv) {
 
   int iid = atoi(ind_id);
   
-  // set up signal handling
-  struct sigaction signal_action;
-  sigset_t block_mask;
-  sigemptyset(&block_mask);
-  for (int i = 0; i < NSIG; i++)
-    sigaddset(&block_mask, i);
-  signal_action.sa_handler = signal_handler;
-  signal_action.sa_flags = 0;
-  signal_action.sa_mask = block_mask;
-  for (int i = 0; i < NSIG; i++)
-    sigaction(i,  &signal_action, NULL);
+  // Set up signal handling.
+  signal_initialize();
 
   parent_tid = pvm_parent();
 
-  // write our host name to the log
+  // Write my host name to the log.
   struct utsname un;
   uname(&un);
   sprintf(buf, "start: on host %s", un.nodename);
   spklog(buf);
 
-  // change working directory
+  // Change working directory.
   sprintf(buf, "%s/working/spk%s/spkjob-%s/%s", SPK_SHARE, mode, job_id, ind_id);
   if (chdir(buf) != 0)
     die("could not change working directory");
 
+  // Perform the compution.
   compute(iid);
+
+  // Exit.
   finish(0);
   return 0;
 }

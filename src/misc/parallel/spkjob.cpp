@@ -1,43 +1,125 @@
-/*
+ /*
   NAME
-  spkjob -- perform the computation for an SPK job
+  spkjob -- drive the spk parallel protype
       
   SYNOPSIS
   spkjob job_id individual-count mode
 
-  DESCRIPTION 
-  This program should run on the head node of the cluster.  It has
-  reponsibility for initialization, for spawning the population level
-  of the computation, and for cleanup.  It writes messages directly to
-  the spk log file, which is on the same node. It assists dependent
-  nodes to write to the same log, by receiving their messages and
-  copying them to the log.
+  DESCRIPTION
+  This program is the root process in the SPK parallel prototype.
+  It runs on a parallel virtual machine (pvm), which is a set of linux
+  computers clustered together by the pvm software.  It has
+  responsibility for a single SPK job, including the initialization,
+  logging messages, spawning the population level and cleanup. It
+  always runs on the head node of the pvm.  It writes messages
+  directly to the unified SPK log file, which is located on the same
+  node. It assists descendant tasks, running on the same or different
+  nodes, to write to the SPK log, by receiving their messages and
+  copying them to that log.
 
-  job_id is a whole number which is the key in the database identifying
-  the job that is being worked on
+  RUNNING
+  In the production environment, the program that will be developed
+  from this prototype, will be executed as the (unix) child process of
+  the runtime daemon.  As a prototype, it can be run from the command
+  line.  To assist in running the prototype from the command line,
+  there is a script named newjob.sh in the same cvs directory as the
+  rest of the source code.
+
+  ACCESS PRIVILEGE
+  Spkjob is designed to be run by an ordinary user rather than
+  root. If root privilege were used to run spkjob on the head node,
+  root privilege would also be required on all of the other nodes.
+  This would be undesirable from a security point of view.  Instead,
+  the ordinary user must be a member of the cspk group, which must
+  exist on all nodes and have the same GID on all nodes.
+
+  ARGUMENTS
+  job_id is a whole number which is the key to the job table of the
+  spkdb database, identifying the job to be run.  The prototype does
+  not access the database, however, so this can be any number.  Each
+  time that the prototype is run, spkjob creates a new working
+  directory called "spkjob-nnn", where nnn is the job_id.  If that
+  directory already exists, spkjob takes an error exit.  You should,
+  therefore, either use a different job_id every time you run the
+  prototype, or else remove the working directory each time.
 
   individual-count is the number of individuals being modeled.
 
   mode is either "test" or "prod" depending on whether the job is 
   running in the test environment or the production environment
 
-*/
+  DESIGN CONSTRAINTS AND GOALS
+  1. Any cluster management system can be used, as long as pvm
+     is supported.
+  2. Fault tolerance is required. The prototype must automatically
+     handle the addition and deletion of nodes; it must terminate
+     cleanly when any of the tasks is killed by the pvm console
+     operator.
+  3. Gnu C++ libraries are assumed.
+  4. A distributed file system is required. NFS is satisfactory 
+     in this regard.
+
+  FILES
+  The directory /usr/local/spk/share must be mounted on each node of
+  the pvm. There are a number of distributed file systems that can be
+  used for this, including the ancient but ubiquitous NFS, which is
+  known not to handle write concurrency very well but is adequate for
+  SPK, because it has been designed so that write concurrency is not
+  required.
+
+  /usr/local/spk/share/working/spkprod
+    working directories for jobs run in the production environment
+  /usr/local/spk/share/working/spktest
+    working directories for jobs run in the test environment
+  /usr/local/spk/share/log/spkprod/messages
+    log file for the production environment
+  /usr/local/spk/share/log/spktest/messages
+    log file for the test environment
+  /usr/local/spk/share/arch/i686/bin/spkprod
+    production executables and libraries for i686 processor architecture
+  /usr/local/spk/share/arch/i686/bin/spktest
+    test executables and libraries for i686 processor architecture
+  /usr/local/spk/share/arch/x86_64/bin/spkprod
+    production executables and libraries for x86_64 processor architecture
+  /usr/local/spk/share/arch/x86_64/bin/spktest
+    test executables and libraries for x86_64 processor architecture
+  ...
+
+  BUGS 
+  The code in this program assumes that when an event occurs, pvm
+  sends event notice messages in the order notification requests were
+  originally registered by calls to pvm_notify().  In particular, when
+  the host on which spkpop is running is deleted, the PvmHostDelete
+  message arrives before the PvmTaskExit message.  This behavior
+  appears to be an undocumented implementation artifact.  If it
+  changes in some future version of pvm, the message processing logic
+  of this program will break.
+
+  SEE ALSO
+  spkjob
+  spkind
+  spkrund
+  pvm
+
+ */
 
 #include <sys/types.h>
 #include <sys/utsname.h>
 #include <unistd.h>
 #include <time.h>
-#include <csignal>
 #include <string>
 #include <cstdio>
 #include <cstring>
 #include <map>
 #include <spkpvm.h>
 
-// note: ARCH is defined on the command line of the make file
+#include <csignal>
+
+// note: ARCH is defined in the Makefile
 
 static int my_tid;
-static int pop_tid;
+static int pop_tid = 0;
+static int old_pop_tid;
 static int pop_host;
 static int pop_exit_value = SpkPvmUnreported;
 static FILE *logfile;
@@ -47,12 +129,11 @@ static sigset_t block_set;
 static volatile bool terminating = false;
 
 static void finish(int);
-static void signal_block(void);
-static void signal_handler(int);
-static void signal_initialize(void);
-static void signal_unblock(void);
 static void spklog(const char*);
 static void writelog(const char*);
+
+static void signal_handler(int);
+static void signal_initialize(void);
 
 // call this function in case of fatal error
 static void die(char* message) {
@@ -66,10 +147,6 @@ static void finish(int exit_value) {
   sprintf(buf, "stop; exit value = %d", exit_value);
   spklog(buf);
   fclose(logfile);
-}
-// block termination signals
-static void signal_block() {
-  sigprocmask(SIG_BLOCK, &block_set, NULL);
 }
 // handle a termination signal
 static void signal_handler(int signum) {
@@ -94,15 +171,6 @@ static void signal_initialize() {
   sigaction(SIGINT,  &signal_action, NULL);
   sigaction(SIGHUP,  &signal_action, NULL);
   sigaction(SIGTERM, &signal_action, NULL);
-  // set up mask of signals to be blocked while executing critical sections
-  sigemptyset(&block_set);
-  sigaddset(&block_set, SIGINT);
-  sigaddset(&block_set, SIGHUP);
-  sigaddset(&block_set, SIGTERM);
-}
-// unblock termination signals
-static void signal_unblock() {
-  sigprocmask(SIG_UNBLOCK, &block_set, NULL);
 }
 // format a message for the spk log
 static void spklog(const char *message) {
@@ -143,9 +211,11 @@ int main(int argc, char** argv) {
   // Enroll in pvm
   if ((my_tid = pvm_mytid()) < 0) {
     die("pvm_mytid failed");
-  }
-  // Disallow direct routing of messages between tasks;
-  // otherwise messages will arrive out of sequence. 
+  }  
+  // Disallow direct routing of messages between tasks; otherwise
+  // messages would be able to arrive out of sequence, which would
+  // greatly complicate the logic of this program as well as the 
+  // time-stamping of the log.
   pvm_setopt(PvmRoute, PvmDontRoute);
 
   // Open the log file
@@ -154,21 +224,19 @@ int main(int argc, char** argv) {
     logfile = stdout;
     die("could not open spk log file");
   }
-  // Attach the standard output of (yet-to-be-spawned) descendent
-  // tasks to the log file.
-  //(void)pvm_catchout(logfile);
-
-  // Write our host name and pid to the log
+  // Write the name of my host and my pid to the log
   struct utsname un;
   uname(&un);
   sprintf(buf, "start pid %d on host %s", my_pid, un.nodename);
   spklog(buf);
 
-  // Set up signal handling for the signals that might be used
-  // by human operators to terminate us.
+  // Set up signal handling, so that I can trap signals that might
+  // otherwise cause me to terminate without cleaning up.
   signal_initialize();
 
- pop_start:
+ pop_start:  // label for restarting in the case that the host on
+             // which spkpop was running was deleted from the pvm
+  old_pop_tid = pop_tid;
 
   // Spawn the population level
   char* arg[4]; 
@@ -186,69 +254,81 @@ int main(int argc, char** argv) {
     die(buf);
   }
   if ((pop_host = pvm_tidtohost(pop_tid)) < 0)
-    die("can't get host for spkpop");
+    die("can't determine which host spkpop started on");
 
   // Change working directory
   sprintf(buf, "%s/working/spk%s/spkjob-%s", SPK_SHARE, mode, job_id);
   if (chdir(buf) != 0)
     die("could not change working directory");
 
-  // Establish pvm notifications
-  if (pvm_notify(PvmTaskExit, PvmTaskExit, 1, &pop_tid) < 0)
-    die("pvm_notify failed for PvmTaskExit of the population task");
+  // Register to have pvm notify me if my host is deleted and when
+  // spkpop exits.
+  // WARNING! Do not change the order of these notifications.
   if (pvm_notify(PvmHostDelete, PvmHostDelete, 1, &pop_host) < 0)
     die("pvm_notify failed for PvmHostDelete of the host for the population task");
+  if (pvm_notify(PvmTaskExit, PvmTaskExit, 1, &pop_tid) < 0)
+    die("pvm_notify failed for PvmTaskExit of the population task");
 
-  // Loop until the population level is done
-
+  // MESSAGE PROCESSING LOOP.  I read messages from pmv and from
+  // spkpop until spkpop sends me its exit value.  Note that the
+  // blocking form of the pvm message input function, pvm_recv(), is
+  // used.
   while (pop_exit_value == SpkPvmUnreported && ((bufid = pvm_recv(-1, -1)) > 0)) {
-    int bytes, msgtag, junk, tid;
-    if (pvm_bufinfo(bufid, &bytes, &msgtag, &tid) < 0)
+    int bytes, msgtag, junk, tid, source;
+    if (pvm_bufinfo(bufid, &bytes, &msgtag, &source) < 0)
       die("pvm_bufinfo failed");
     if (bufid < 0)
       die("pvm_recv returned an error");
     switch (msgtag) {
-    case SpkPvmExitValue:
+    case SpkPvmExitValue:   
+      // PROCESS EXIT VALUE MESSAGE FROM SPKPOP
+      tid = source;
       if (tid != pop_tid) {
 	sprintf(buf, "received SpkPvmExitValue from unexpected tid %0x", tid);
-	spklog(buf);
+	die(buf);            
       }
+      // Unpack the exit value from the message.
       if (pvm_upkint(&pop_exit_value, 1, 1) < 0)
 	die("pvm_upkint returned an error at SpkPvmExitValue");
       sprintf(buf, "received exit value = %d from spkpop", pop_exit_value);
       spklog(buf);
       break;
-    case PvmTaskExit:
-      int source;
+    case PvmTaskExit:  
+      // PROCESS TASK EXIT NOTIFICATION FROM PVM
+      // Unpack the tid from the message.
       if (pvm_upkint(&tid, 1, 1) < 0)
 	die("pvm_upkint returned an error at PvmTaskExit");
+      // Test for the case where spkpop has just been respawned to
+      // recover from a host deletion and this is the task exit for
+      // the previous instance.
+      if (tid == old_pop_tid) {
+	spklog("received PvmTaskExit for superceded spkpop");
+	break;
+      }
+      // Test that the notification is really for spkpop
+      if (tid != pop_tid) {
+	sprintf(buf, "received PvmTaskExit from unexpected tid %0x", tid);
+	die(buf);            
+      }
+      // Yes, it is my spkpop that exited.
       spklog("received PvmTaskExit for spkpop");
+
+      // I should have already received its exit value. If not, die.
       if (pop_exit_value == SpkPvmUnreported) {
-	sleep(10);  // give PvmHostDelete time to arrive if such a message is en route
-	while ((bufid = pvm_nrecv(-1, -1)) != 0) {
-	  if (bufid == -1)
-	    die("pvm_nrecv failed");
-	  if (pvm_bufinfo(bufid, &bytes, &msgtag, &source) < 0)
-	    die("pvm_bufinfo failed");
-	  if (msgtag == PvmHostDelete) {
-	    if (pvm_upkint(&tid, 1, 1) < 0)
-	      die("pvm_upkint failed to unpack tid from PvmTaskExit message");
-	    sprintf(buf, "received PvmHostDelete, source=%0x, tid=%0x", source, tid);
-	    spklog(buf);
-	    spklog("respawned spkpop");
-	    goto pop_start;
-	  }
-	}
 	sprintf(buf, "spkpop died without returning a value");
 	spklog(buf);
-	pop_exit_value = SpkPvmDied;
+	die(buf);
       }
       break;
-    case PvmHostDelete:
+    case PvmHostDelete:  
+      // The host on which spkpop was running has been deleted. I can 
+      // spawn spkpop again and let pvm run it on a different host.
       spklog("PvmHostDelete received; restarting spkpop");
+      spklog("respawned spkpop");
       goto pop_start;
       break;
-    case SpkPvmLogMessage:
+    case SpkPvmLogMessage:            
+      // Received a message from one of my decendents.  Log it.
       if (pvm_upkstr(buf) < 0)
 	die("pvm_upkstr return an error at SpkPvmLogMessage");
       writelog(buf);
