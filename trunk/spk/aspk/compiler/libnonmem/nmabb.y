@@ -52,8 +52,39 @@
 using namespace xercesc;
 using namespace std;
 
- int gSpkExpErrors = 0;
- int gSpkExpLines  = 0;
+/**
+ * Global counter for errors that encountered during parsing.
+ */
+int gSpkExpErrors = 0;
+
+/**
+ * Global counter for lines that have been read so far during parsing.
+ */
+int gSpkExpLines  = 0;
+
+/**
+ * Global pointer to a PaserTree utility object.
+ *
+ * This pointer has to be initialized to point to a valid object
+ * in the caller (of yyparse()) space.
+ */
+ParseTree   * gSpkExpUtil;
+
+/**
+ * Global pointer to a DOMDocument object.
+ *
+ * This pointer has to be initialized to point to a valid object
+ * in the caller (of yyparse()) space.
+ */
+DOMDocument * gSpkExpDOMDocument;
+
+/**
+ * Global pointer to a SymbolTable object.
+ *
+ * This pointer has to be initialized to point to a valid object
+ * in the caller (of yyparse()) space.
+ */
+SymbolTable * gSpkExpSymbolTable;
 
 extern "C"{
   int yyparse(void);
@@ -71,9 +102,6 @@ extern "C"{
     return -1;
   }
 };
-ParseTree   * gSpkExpUtil;
-DOMDocument * gSpkExpDOMDocument;
-SymbolTable * gSpkExpSymbolTable;
 
   static const char * const STR_TYPE     = "type";
   static const char * const STR_VALUE    = "value";
