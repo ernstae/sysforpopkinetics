@@ -31,7 +31,7 @@ our @ISA = qw(Exporter);
 our @EXPORT_OK = (
     'connect', 'disconnect', 'new_job', 'get_job', 'job_status', 'user_jobs', 
     'de_q2c', 'get_cmp_jobs', 'get_run_jobs',
-    'en_q2r', 'de_q2r', 'de_q2ml', 'end_job', 'job_report', 'job_history',
+    'en_q2r', 'de_q2r', 'end_job', 'job_report',
     'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
     'new_model', 'get_model', 'update_model', 'user_models',
     'new_user', 'update_user', 'get_user', 'email_for_job'
@@ -228,55 +228,6 @@ sub new_job() {
     &add_to_history($dbh, $job_id, $state_code);
 
     return $job_id;
-}
-
-=head2 job_history -- get event history for this job
-
-Returns a reference to an array of rows from the history table.  Each
-row is a reference to a hash table, with the field name as key and field
-value as value.  Within the array, rows are sorted in order of occurence.
-Each row contains all fields of the history table.
-
-    $array_row = $Spkdb::job_history($dbh, $job_id);
-
-Returns
-
-  success:
-    reference to an array of references to hash tables, each 
-    representing a row in the history table
-
-  failure: undef
-    $Spkdb::errstr contains an error message string
-    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
-                == $Spkdb::EXECUTE_FAILED if execute function failed
-
-=cut
-
-sub job_history() {
-    
-    my $dbh = shift;
-    my $job_id = shift;
-    $err = 0;
-    $errstr = "";
-
-    my $sql = "select * from history where job_id=$job_id order by history_id;";
-
-    my $sth = $dbh->prepare($sql);
-    unless ($sth) {
-	$err = $PREPARE_FAILED;
-	$errstr = "could not prepare statement: $sql";
-	return undef;
-    }
-    unless ($sth->execute())
-    {
-	$err = $EXECUTE_FAILED;
-	$errstr = "could not execute statement: $sql; error returned "
-	    . $sth->errstr;
-	return undef;
-    }
-    my $array_row_ref = $sth->fetchall_arrayref({});
-
-    return $array_row_ref;
 }
 
 =head2 get_job -- retrieve a job for a user
@@ -653,19 +604,13 @@ Returns
 
 sub de_q2r() {
     my $dbh = shift;
-    return de_q2run($dbh, 'q2r');
-}
-
-sub de_q2run() {
-    my $dbh = shift;
-    my $state_code = shift;
     $err = 0;
     $errstr = "";
     
     $dbh->begin_work;
 
     my $sql = "select job_id, cpp_source from job "
-	    .       "where state_code='$state_code' "
+	    .       "where state_code='q2r' "
             .       "order by event_time "
             .       "limit 1 "
             .       "for update; ";
