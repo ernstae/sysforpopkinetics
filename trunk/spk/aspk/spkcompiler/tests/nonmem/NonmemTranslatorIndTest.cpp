@@ -202,11 +202,30 @@ void NonmemTranslatorIndTest::testParseIndSource()
   // Setting up the array filled with data 
   // labels for internal (test) use.
   //============================================
+  const string strID   = "ID";
+  const string strTIME = "TIME";
+  const string strCP   = "CP";
+  const string strDV   = "DV";
   map<string, string> labels;
-  labels["ID"]   = "";
-  labels["TIME"] = "";
-  labels["CP"]   = "DV";
+  labels[ strID ]   = "";
+  labels[ strTIME ] = "";
+  labels[ strCP ]   = "DV";
   int nLabels    = labels.size();
+
+  //============================================
+  // Define NONMEM keywords
+  //============================================
+  const string strTHETA = "THETA";
+  const string strOMEGA = "OMEGA";
+  const string strSIGMA = "SIGMA";
+  const string strETA   = "ETA";
+  const string strEPS   = "EPS";
+  const string strPRED  = "PRED";
+  const string strRES   = "RES";
+  const string strWRES  = "WRES";
+  const string strMDV   = "MDV";
+  const string strF     = "F";
+  const string strY     = "Y";
 
   //============================================
   // The user is requested to feed in
@@ -284,9 +303,9 @@ void NonmemTranslatorIndTest::testParseIndSource()
   oSource << "is_estimation=\"" << (isEstimate? "yes" : "no") << "\">" << endl;
 
   oSource << "<data_labels>" << endl;
-  oSource << "<label name=\"ID\"/>" << endl;
-  oSource << "<label name=\"TIME\"/>" << endl;
-  oSource << "<label name=\"CP\" synonym=\"DV\"/>" << endl;
+  oSource << "<label name=\"" << strID << "\"/>" << endl;
+  oSource << "<label name=\"" << strTIME << "\"/>" << endl;
+  oSource << "<label name=\"" << strCP << "\" synonym=\"" << strDV << "\"/>" << endl;
   oSource << "</data_labels>" << endl;
 
   oSource << "<theta length=\"" << thetaLen << "\">" << endl;
@@ -340,24 +359,24 @@ void NonmemTranslatorIndTest::testParseIndSource()
 
   oSource << "<model>" << endl;
   oSource << "<pred>" << endl;
-  oSource << "   F= THETA(1) + ETA(1)*TIME" << endl;
+  oSource << "   " << strF << " = " << strTHETA << "(1) + " << strETA << "(1) * " << strTIME << endl;
   oSource << "</pred>" << endl;
   oSource << "</model>" << endl;
       
   oSource << "<presentation>" << endl;
   oSource << "<table header=\"one\" save_as=\"xxx\">" << endl;
-  oSource << "<column label=\"TIME\" appearance_order=\"1\" sort_order=\"1\"/>" << endl;
-  oSource << "<column label=\"THETA(1)\" appearance_order=\"2\"/>" << endl;
-  oSource << "<column label=\"THETA(3)\" appearance_order=\"4\"/>" << endl;
-  oSource << "<column label=\"THETA(2)\" appearance_order=\"3\"/>" << endl;
+  oSource << "<column label=\"" << strTIME << "\" appearance_order=\"1\" sort_order=\"1\"/>" << endl;
+  oSource << "<column label=\"" << strTHETA << "(1)\" appearance_order=\"2\"/>" << endl;
+  oSource << "<column label=\"" << strTHETA << "(3)\" appearance_order=\"4\"/>" << endl;
+  oSource << "<column label=\"" << strTHETA << "(2)\" appearance_order=\"3\"/>" << endl;
   oSource << "</table>" << endl;
   oSource << "<table header=\"every\">" << endl;
-  oSource << "<column label=\"TIME\" appearance_order=\"1\" sort_order=\"1\"/>" << endl;
-  oSource << "<column label=\"DV\" appearance_order=\"2\"/>" << endl;
+  oSource << "<column label=\"" << strTIME << "\" appearance_order=\"1\" sort_order=\"1\"/>" << endl;
+  oSource << "<column label=\"" << strDV << "\" appearance_order=\"2\"/>" << endl;
   oSource << "</table>" << endl;
   oSource << "<scatterplot>" << endl;
-  oSource << "<x label=\"TIME\"/>" << endl;
-  oSource << "<y label=\"PRED\"/>" << endl;
+  oSource << "<x label=\"" << strTIME << "\"/>" << endl;
+  oSource << "<y label=\"" << strPRED << "\"/>" << endl;
   oSource << "</scatterplot>" << endl;
   oSource << "</presentation>" << endl;
       
@@ -427,11 +446,11 @@ void NonmemTranslatorIndTest::testParseIndSource()
   xlator.parseData();
   SymbolTable *table = xlator.getSymbolTable();
 
-  Symbol * id   = table->findi( "ID" );
+  Symbol * id   = table->findi( strID );
   CPPUNIT_ASSERT( id != Symbol::empty() );
-  Symbol * time = table->findi( "TIME" );
+  Symbol * time = table->findi( strTIME );
   CPPUNIT_ASSERT( time != Symbol::empty() );
-  Symbol * dv   = table->findi( "DV" );
+  Symbol * dv   = table->findi( strDV );
   CPPUNIT_ASSERT( dv != Symbol::empty() );
 
   //============================================
@@ -439,9 +458,9 @@ void NonmemTranslatorIndTest::testParseIndSource()
   //============================================
   xlator.parseSource();
 
-  Symbol * mdv   = table->findi( "MDV" );
+  Symbol * mdv   = table->findi( strMDV );
   CPPUNIT_ASSERT( mdv != Symbol::empty() );
-  Symbol * cp   = table->findi( "CP" );
+  Symbol * cp   = table->findi( strCP );
   CPPUNIT_ASSERT( cp != Symbol::empty() );
 
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -516,39 +535,39 @@ void NonmemTranslatorIndTest::testParseIndSource()
 
   oIndDataDriver << "   IndData<double> A( n, a_id, a_time, a_cp, a_mdv );" << endl;
 
-  oIndDataDriver << "   assert( strcmp( A." << SymbolTable::key("id") << "[0], id1 ) == 0 );" << endl;
-  oIndDataDriver << "   assert( strcmp( A." << SymbolTable::key("id") << "[1], id1 ) == 0 );" << endl;
-  oIndDataDriver << "   assert( strcmp( A." << SymbolTable::key("id") << "[2], id1 ) == 0 );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  0.0, A." << SymbolTable::key("time") << "[0] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  1.0, A." << SymbolTable::key("time") << "[1] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  2.0, A." << SymbolTable::key("time") << "[2] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  0.0, A." << SymbolTable::key("cp") << "[0] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 10.0, A." << SymbolTable::key("cp") << "[1] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 20.0, A." << SymbolTable::key("cp") << "[2] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  0.0, A." << SymbolTable::key("dv") << "[0] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 10.0, A." << SymbolTable::key("dv") << "[1] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 20.0, A." << SymbolTable::key("dv") << "[2] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  0,   A." << SymbolTable::key("mdv") << "[0] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  0,   A." << SymbolTable::key("mdv") << "[1] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  0,   A." << SymbolTable::key("mdv") << "[2] );" << endl;
+  oIndDataDriver << "   assert( strcmp( A." << strID << "[0], id1 ) == 0 );" << endl;
+  oIndDataDriver << "   assert( strcmp( A." << strID << "[1], id1 ) == 0 );" << endl;
+  oIndDataDriver << "   assert( strcmp( A." << strID << "[2], id1 ) == 0 );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL(  0.0, A." << strTIME << "[0] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL(  1.0, A." << strTIME << "[1] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL(  2.0, A." << strTIME << "[2] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL(  0.0, A." << strCP << "[0] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 10.0, A." << strCP << "[1] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 20.0, A." << strCP << "[2] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL(  0.0, A." << strDV << "[0] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 10.0, A." << strDV << "[1] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 20.0, A." << strDV << "[2] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL(  0,   A." << strMDV << "[0] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL(  0,   A." << strMDV << "[1] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL(  0,   A." << strMDV << "[2] );" << endl;
   
   // There have to be placeholders for the current values of theta/eta for
   // each call to Pred::eval().
-  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, A." << SymbolTable::key("theta") << "[0].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, A." << SymbolTable::key("theta") << "[1].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, A." << SymbolTable::key("theta") << "[2].size() );" << endl;
-  //  oIndDataDriver << "   MY_ASSERT_EQUAL( omegaOrder, A." << SymbolTable::key("omega") << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen, A." << SymbolTable::key("eta") << "[0].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen, A." << SymbolTable::key("eta") << "[1].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen, A." << SymbolTable::key("eta") << "[2].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, A." << strTHETA << "[0].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, A." << strTHETA << "[1].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, A." << strTHETA << "[2].size() );" << endl;
+  //  oIndDataDriver << "   MY_ASSERT_EQUAL( omegaOrder, A." << strOMEGA << ".size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen, A." << strETA << "[0].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen, A." << strETA << "[1].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen, A." << strETA << "[2].size() );" << endl;
 
   // The current values of RES/WRES/PRED should be always kept in memory
   // for displaying tables/scatterplots.
-  oIndDataDriver << "   MY_ASSERT_EQUAL( n, A." << SymbolTable::key("res") << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( n, A." << SymbolTable::key("wres") << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( n, A." << SymbolTable::key("pred") << ".size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( n, A." << strRES << ".size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( n, A." << strWRES << ".size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( n, A." << strPRED << ".size() );" << endl;
 
-  oIndDataDriver << "   MY_ASSERT_EQUAL( n, A." << SymbolTable::key("f") << ".size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( n, A." << strF << ".size() );" << endl;
   oIndDataDriver << "}" << endl;
   oIndDataDriver.close();
 
@@ -597,36 +616,36 @@ void NonmemTranslatorIndTest::testParseIndSource()
   oDataSetDriver << "{" << endl;
   oDataSetDriver << "   const int n = 3;" << endl;
   oDataSetDriver << "   DataSet<double> set;" << endl;
-  oDataSetDriver << "   assert( strcmp( set.data[0]->" << SymbolTable::key("id") << "[0], \"1\" ) == 0 );" << endl;
-  oDataSetDriver << "   assert( strcmp( set.data[0]->" << SymbolTable::key("id") << "[1], \"1\" ) == 0 );" << endl;
-  oDataSetDriver << "   assert( strcmp( set.data[0]->" << SymbolTable::key("id") << "[2], \"1\" ) == 0 );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << SymbolTable::key("time") << "[0] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  1.0, set.data[0]->" << SymbolTable::key("time") << "[1] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  2.0, set.data[0]->" << SymbolTable::key("time") << "[2] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << SymbolTable::key("cp") << "[0] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 10.0, set.data[0]->" << SymbolTable::key("cp") << "[1] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 20.0, set.data[0]->" << SymbolTable::key("cp") << "[2] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << SymbolTable::key("dv") << "[0] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 10.0, set.data[0]->" << SymbolTable::key("dv") << "[1] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 20.0, set.data[0]->" << SymbolTable::key("dv") << "[2] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << SymbolTable::key("mdv") << "[0] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << SymbolTable::key("mdv") << "[1] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << SymbolTable::key("mdv") << "[2] );" << endl;
+  oDataSetDriver << "   assert( strcmp( set.data[0]->" << strID << "[0], \"1\" ) == 0 );" << endl;
+  oDataSetDriver << "   assert( strcmp( set.data[0]->" << strID << "[1], \"1\" ) == 0 );" << endl;
+  oDataSetDriver << "   assert( strcmp( set.data[0]->" << strID << "[2], \"1\" ) == 0 );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << strTIME << "[0] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL(  1.0, set.data[0]->" << strTIME << "[1] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL(  2.0, set.data[0]->" << strTIME << "[2] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << strCP << "[0] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 10.0, set.data[0]->" << strCP << "[1] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 20.0, set.data[0]->" << strCP << "[2] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << strDV << "[0] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 10.0, set.data[0]->" << strDV << "[1] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 20.0, set.data[0]->" << strDV << "[2] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << strMDV << "[0] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << strMDV << "[1] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << strMDV << "[2] );" << endl;
 
   oDataSetDriver << "for( int j=0; j<n; j++ )" << endl;
   oDataSetDriver << "{" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( " << thetaLen << ", set.data[0]->" << SymbolTable::key("theta") << "[j].size() );" << endl;
-  //  oDataSetDriver << "   MY_ASSERT_EQUAL( " << omegaOrder << ", set.data[0]->" << SymbolTable::key("omega") << "[j].size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( " << etaLen << ", set.data[0]->" << SymbolTable::key("eta") << "[j].size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( " << thetaLen << ", set.data[0]->" << strTHETA << "[j].size() );" << endl;
+  //  oDataSetDriver << "   MY_ASSERT_EQUAL( " << omegaOrder << ", set.data[0]->" << strOMEGaO << "[j].size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( " << etaLen << ", set.data[0]->" << strETA << "[j].size() );" << endl;
   oDataSetDriver << "}" << endl;
 
   // The current values of RES/WRES/PRED should be always kept in memory
   // for displaying tables/scatterplots.
-  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << SymbolTable::key("res") << ".size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << SymbolTable::key("wres") << ".size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << SymbolTable::key("pred") << ".size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strRES << ".size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strWRES << ".size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strPRED << ".size() );" << endl;
 
-  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << SymbolTable::key("f") << ".size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strF << ".size() );" << endl;
   oDataSetDriver << "}" << endl;
   
   oDataSetDriver.close();
@@ -718,7 +737,7 @@ void NonmemTranslatorIndTest::testParseIndSource()
   // Test if F(j) gets placed in the proper location in the depVar vector.
   oPredDriver << "      double actualF   = CppAD::Value(depVar[ fOffset + j ]);" << endl;
   oPredDriver << "      double expectedF = CppAD::Value(indepVar[thetaOffset+0] " << endl;
-  oPredDriver << "                       + indepVar[etaOffset+0]*set.data[who]->time[j] );" << endl;
+  oPredDriver << "                       + indepVar[etaOffset+0]*set.data[who]->" << strTIME << "[j] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedF, actualF );" << endl;
   // Test if Y(j) gets placed in the proper location in the depVar vector.
   oPredDriver << "      double actualY   = CppAD::Value(depVar[ yOffset + j ]);" << endl;
@@ -728,12 +747,12 @@ void NonmemTranslatorIndTest::testParseIndSource()
   // Test if the DataSet objects hold the complete set of computed values from the just-finished iteration.
   oPredDriver << "   for( int j=0; j<n; j++ )" << endl;
   oPredDriver << "   {" << endl;
-  oPredDriver << "      double expectedPred = (C1*j) + (C1*j) * CppAD::Value(set.data[who]->" << SymbolTable::key("time") << "[j]);" << endl;
-  oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << SymbolTable::key("theta") << "[j][0] );" << endl;
-  oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << SymbolTable::key("eta") << "[j][0] );" << endl;
-  oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << SymbolTable::key("pred") << "[j] );" << endl;
-  oPredDriver << "      MY_ASSERT_EQUAL( set.data[who]->" << SymbolTable::key("dv") << "[j] - expectedPred, set.data[who]->" << SymbolTable::key("res") << "[j] );" << endl;
-  oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << SymbolTable::key("f") << "[j] );" << endl;
+  oPredDriver << "      double expectedPred = (C1*j) + (C1*j) * CppAD::Value(set.data[who]->" << strTIME << "[j]);" << endl;
+  oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][0] );" << endl;
+  oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA << "[j][0] );" << endl;
+  oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << strPRED << "[j] );" << endl;
+  oPredDriver << "      MY_ASSERT_EQUAL( set.data[who]->" << strDV << "[j] - expectedPred, set.data[who]->" << strRES << "[j] );" << endl;
+  oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << strF << "[j] );" << endl;
   oPredDriver << "   }" << endl;
   //
   // End of a complete iteration over j
@@ -757,7 +776,7 @@ void NonmemTranslatorIndTest::testParseIndSource()
   // Test if F(j) gets placed in the proper location in the depVar vector.
   oPredDriver << "      double actualF   = CppAD::Value(depVar[ fOffset + j ]);" << endl;
   oPredDriver << "      double expectedF = CppAD::Value(indepVar[thetaOffset+0] " << endl;
-  oPredDriver << "                       + indepVar[etaOffset+0]*set.data[who]->time[j] );" << endl;
+  oPredDriver << "                       + indepVar[etaOffset+0]*set.data[who]->" << strTIME << "[j] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedF, actualF );" << endl;
   // Test if Y(j) gets placed in the proper location in the depVar vector.
   oPredDriver << "      double actualY   = CppAD::Value(depVar[ yOffset + j ]);" << endl;
@@ -767,12 +786,12 @@ void NonmemTranslatorIndTest::testParseIndSource()
   // Test if the DataSet objects hold the complete set of computed values from the most recent complete iteration.
   oPredDriver << "   for( int j=0; j<n; j++ )" << endl;
   oPredDriver << "   {" << endl;
-  oPredDriver << "      double expectedPred = (C1*j) + (C1*j) * CppAD::Value(set.data[who]->" << SymbolTable::key("time") << "[j]);" << endl;
-  oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << SymbolTable::key("theta") << "[j][0] );" << endl;
-  oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << SymbolTable::key("eta") << "[j][0] );" << endl;
-  oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << SymbolTable::key("pred") << "[j] );" << endl;
-  oPredDriver << "      MY_ASSERT_EQUAL( set.data[who]->" << SymbolTable::key("dv") << "[j] - expectedPred, set.data[who]->" << SymbolTable::key("res") << "[j] );" << endl;
-  oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << SymbolTable::key("f") << "[j] );" << endl;
+  oPredDriver << "      double expectedPred = (C1*j) + (C1*j) * CppAD::Value(set.data[who]->" << strTIME << "[j]);" << endl;
+  oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][0] );" << endl;
+  oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA << "[j][0] );" << endl;
+  oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << strPRED << "[j] );" << endl;
+  oPredDriver << "      MY_ASSERT_EQUAL( set.data[who]->" << strDV << "[j] - expectedPred, set.data[who]->" << strRES << "[j] );" << endl;
+  oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << strF << "[j] );" << endl;
   oPredDriver << "   }" << endl;
   //
   //  End of an incomplete iteration over j
@@ -1010,11 +1029,30 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   // Setting up the array filled with data 
   // labels for internal (test) use.
   //============================================
+  const string strID   = "ID";
+  const string strTIME = "TIME";
+  const string strCP   = "CP";
+  const string strDV   = "DV";
   map<string, string> labels;
-  labels["ID"]   = "";
-  labels["TIME"] = "";
-  labels["CP"]   = "DV";
-  int nLabels    = labels.size();
+  labels[strID]   = "";
+  labels[strTIME] = "";
+  labels[strCP]   = strDV;
+  int nLabels     = labels.size();
+
+  //============================================
+  // Define NONMEM keywords
+  //============================================
+  const string strTHETA = "THETA";
+  const string strOMEGA = "OMEGA";
+  const string strSIGMA = "SIGMA";
+  const string strETA   = "ETA";
+  const string strEPS   = "EPS";
+  const string strPRED  = "PRED";
+  const string strRES   = "RES";
+  const string strWRES  = "WRES";
+  const string strMDV   = "MDV";
+  const string strF     = "F";
+  const string strY     = "Y";
 
   //============================================
   // The user is requested to feed in
@@ -1321,41 +1359,41 @@ void NonmemTranslatorIndTest::testParseIndNoID()
 
   oIndDataDriver << "   IndData<double> A( n, a_id, a_time, a_cp, a_mdv );" << endl;
 
-  oIndDataDriver << "   assert( strcmp( A." << SymbolTable::key("id") << "[0], id1 ) == 0 );" << endl;
-  oIndDataDriver << "   assert( strcmp( A." << SymbolTable::key("id") << "[1], id1 ) == 0 );" << endl;
-  oIndDataDriver << "   assert( strcmp( A." << SymbolTable::key("id") << "[2], id1 ) == 0 );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  0.0, A." << SymbolTable::key("time") << "[0] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  1.0, A." << SymbolTable::key("time") << "[1] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  2.0, A." << SymbolTable::key("time") << "[2] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  0.0, A." << SymbolTable::key("cp") << "[0] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 10.0, A." << SymbolTable::key("cp") << "[1] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 20.0, A." << SymbolTable::key("cp") << "[2] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  0.0, A." << SymbolTable::key("dv") << "[0] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 10.0, A." << SymbolTable::key("dv") << "[1] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 20.0, A." << SymbolTable::key("dv") << "[2] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  0,   A." << SymbolTable::key("mdv") << "[0] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  0,   A." << SymbolTable::key("mdv") << "[1] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL(  0,   A." << SymbolTable::key("mdv") << "[2] );" << endl;
+  oIndDataDriver << "   assert( strcmp( A." << strID << "[0], id1 ) == 0 );" << endl;
+  oIndDataDriver << "   assert( strcmp( A." << strID << "[1], id1 ) == 0 );" << endl;
+  oIndDataDriver << "   assert( strcmp( A." << strID << "[2], id1 ) == 0 );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL(  0.0, A." << strTIME << "[0] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL(  1.0, A." << strTIME << "[1] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL(  2.0, A." << strTIME << "[2] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL(  0.0, A." << strCP << "[0] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 10.0, A." << strCP << "[1] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 20.0, A." << strCP << "[2] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL(  0.0, A." << strDV << "[0] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 10.0, A." << strDV << "[1] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( 20.0, A." << strDV << "[2] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL(  0,   A." << strMDV << "[0] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL(  0,   A." << strMDV << "[1] );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL(  0,   A." << strMDV << "[2] );" << endl;
   
   // There have to be placeholders for the current values of theta/eta for
   // each call to Pred::eval().
   oIndDataDriver << "   const int thetaLen   = " << thetaLen << ";" << endl;
   oIndDataDriver << "   const int etaLen     = " << etaLen << ";" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, A." << SymbolTable::key("theta") << "[0].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, A." << SymbolTable::key("theta") << "[1].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, A." << SymbolTable::key("theta") << "[2].size() );" << endl;
-  //  oIndDataDriver << "   MY_ASSERT_EQUAL( omegaOrder,  A." << SymbolTable::key("omega") << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen, A." << SymbolTable::key("eta") << "[0].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen, A." << SymbolTable::key("eta") << "[1].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen, A." << SymbolTable::key("eta") << "[2].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, A." << strTHETA << "[0].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, A." << strTHETA << "[1].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, A." << strTHETA << "[2].size() );" << endl;
+  //  oIndDataDriver << "   MY_ASSERT_EQUAL( omegaOrder,  A." << strOMEGA << ".size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen, A." << strETA << "[0].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen, A." << strETA << "[1].size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen, A." << strETA << "[2].size() );" << endl;
 
   // The current values of RES/WRES/PRED should be always kept in memory
   // for displaying tables/scatterplots.
-  oIndDataDriver << "   MY_ASSERT_EQUAL( n, A." << SymbolTable::key("res") << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( n, A." << SymbolTable::key("wres") << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( n, A." << SymbolTable::key("pred") << ".size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( n, A." << strRES << ".size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( n, A." << strWRES << ".size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( n, A." << strPRED << ".size() );" << endl;
 
-  oIndDataDriver << "   MY_ASSERT_EQUAL( n, A." << SymbolTable::key("f") << ".size() );" << endl;
+  oIndDataDriver << "   MY_ASSERT_EQUAL( n, A." << strF << ".size() );" << endl;
   oIndDataDriver << "}" << endl;
   oIndDataDriver.close();
 
@@ -1405,36 +1443,36 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   oDataSetDriver << "   const int thetaLen = " << thetaLen << ";" << endl;
   oDataSetDriver << "   const int etaLen   = " << etaLen << ";" << endl;
   oDataSetDriver << "   DataSet<double> set;" << endl;
-  oDataSetDriver << "   assert( strcmp( set.data[0]->" << SymbolTable::key("id") << "[0], \"1\" ) == 0 );" << endl;
-  oDataSetDriver << "   assert( strcmp( set.data[0]->" << SymbolTable::key("id") << "[1], \"1\" ) == 0 );" << endl;
-  oDataSetDriver << "   assert( strcmp( set.data[0]->" << SymbolTable::key("id") << "[2], \"1\" ) == 0 );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << SymbolTable::key("time") << "[0] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  1.0, set.data[0]->" << SymbolTable::key("time") << "[1] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  2.0, set.data[0]->" << SymbolTable::key("time") << "[2] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << SymbolTable::key("cp") << "[0] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 10.0, set.data[0]->" << SymbolTable::key("cp") << "[1] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 20.0, set.data[0]->" << SymbolTable::key("cp") << "[2] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << SymbolTable::key("dv") << "[0] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 10.0, set.data[0]->" << SymbolTable::key("dv") << "[1] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 20.0, set.data[0]->" << SymbolTable::key("dv") << "[2] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  0,   set.data[0]->" << SymbolTable::key("mdv") << "[0] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  0,   set.data[0]->" << SymbolTable::key("mdv") << "[1] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL(  0,   set.data[0]->" << SymbolTable::key("mdv") << "[2] );" << endl;
+  oDataSetDriver << "   assert( strcmp( set.data[0]->" << strID << "[0], \"1\" ) == 0 );" << endl;
+  oDataSetDriver << "   assert( strcmp( set.data[0]->" << strID << "[1], \"1\" ) == 0 );" << endl;
+  oDataSetDriver << "   assert( strcmp( set.data[0]->" << strID << "[2], \"1\" ) == 0 );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << strTIME << "[0] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL(  1.0, set.data[0]->" << strTIME << "[1] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL(  2.0, set.data[0]->" << strTIME << "[2] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << strCP << "[0] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 10.0, set.data[0]->" << strCP << "[1] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 20.0, set.data[0]->" << strCP << "[2] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL(  0.0, set.data[0]->" << strDV << "[0] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 10.0, set.data[0]->" << strDV << "[1] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( 20.0, set.data[0]->" << strDV << "[2] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL(  0,   set.data[0]->" << strMDV << "[0] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL(  0,   set.data[0]->" << strMDV << "[1] );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL(  0,   set.data[0]->" << strMDV << "[2] );" << endl;
 
   oDataSetDriver << "for( int j=0; j<n; j++ )" << endl;
   oDataSetDriver << "{" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( thetaLen, set.data[0]->" << SymbolTable::key("theta") << "[j].size() );" << endl;
-  //  oDataSetDriver << "   MY_ASSERT_EQUAL( omegaOrder, set.data[0]->" << SymbolTable::key("omega") << "[j].size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( etaLen, set.data[0]->" << SymbolTable::key("eta") << "[j].size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( thetaLen, set.data[0]->" << strTHETA << "[j].size() );" << endl;
+  //  oDataSetDriver << "   MY_ASSERT_EQUAL( omegaOrder, set.data[0]->" << strOMEGA << "[j].size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( etaLen, set.data[0]->" << strETA << "[j].size() );" << endl;
   oDataSetDriver << "}" << endl;
 
   // The current values of RES/WRES/PRED should be always kept in memory
   // for displaying tables/scatterplots.
-  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << SymbolTable::key("res") << ".size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << SymbolTable::key("wres") << ".size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << SymbolTable::key("pred") << ".size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strRES << ".size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strWRES << ".size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strPRED << ".size() );" << endl;
 
-  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << SymbolTable::key("f") << ".size() );" << endl;
+  oDataSetDriver << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strF << ".size() );" << endl;
   oDataSetDriver << "}" << endl;
   
   oDataSetDriver.close();
@@ -1524,7 +1562,8 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   // Test if F(j) gets placed in the proper location in the depVar vector.
   oPredDriver << "      double actualF   = CppAD::Value(depVar[ fOffset + j ]);" << endl;
   oPredDriver << "      double expectedF = CppAD::Value(indepVar[thetaOffset+0] " << endl;
-  oPredDriver << "                       + indepVar[etaOffset+0]*set.data[who]->time[j] );" << endl;
+  oPredDriver << "                       + indepVar[etaOffset+0]*set.data[who]->";
+  oPredDriver << strTIME << "[j] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedF, actualF );" << endl;
   // Test if Y(j) gets placed in the proper location in the depVar vector.
   oPredDriver << "      double actualY   = CppAD::Value(depVar[ yOffset + j ]);" << endl;
@@ -1534,12 +1573,12 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   // Test if the DataSet objects hold the complete set of computed values from the just-finished iteration.
   oPredDriver << "   for( int j=0; j<n; j++ )" << endl;
   oPredDriver << "   {" << endl;
-  oPredDriver << "      double expectedPred = (C1*j) + (C1*j) * CppAD::Value(set.data[who]->" << SymbolTable::key("time") << "[j]);" << endl;
-  oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << SymbolTable::key("theta") << "[j][0] );" << endl;
-  oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << SymbolTable::key("eta") << "[j][0] );" << endl;
-  oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << SymbolTable::key("pred") << "[j] );" << endl;
-  oPredDriver << "      MY_ASSERT_EQUAL( set.data[who]->" << SymbolTable::key("dv") << "[j] - expectedPred, set.data[who]->" << SymbolTable::key("res") << "[j] );" << endl;
-  oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << SymbolTable::key("f") << "[j] );" << endl;
+  oPredDriver << "      double expectedPred = (C1*j) + (C1*j) * CppAD::Value(set.data[who]->" << strTIME << "[j]);" << endl;
+  oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][0] );" << endl;
+  oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA << "[j][0] );" << endl;
+  oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << strPRED << "[j] );" << endl;
+  oPredDriver << "      MY_ASSERT_EQUAL( set.data[who]->" << strDV << "[j] - expectedPred, set.data[who]->" << strRES << "[j] );" << endl;
+  oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << strF << "[j] );" << endl;
   oPredDriver << "   }" << endl;
   //
   // End of a complete iteration over j
@@ -1563,7 +1602,8 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   // Test if F(j) gets placed in the proper location in the depVar vector.
   oPredDriver << "      double actualF   = CppAD::Value(depVar[ fOffset + j ]);" << endl;
   oPredDriver << "      double expectedF = CppAD::Value(indepVar[thetaOffset+0] " << endl;
-  oPredDriver << "                       + indepVar[etaOffset+0]*set.data[who]->time[j] );" << endl;
+  oPredDriver << "                       + indepVar[etaOffset+0]*set.data[who]->";
+  oPredDriver << strTIME << "[j] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedF, actualF );" << endl;
   // Test if Y(j) gets placed in the proper location in the depVar vector.
   oPredDriver << "      double actualY   = CppAD::Value(depVar[ yOffset + j ]);" << endl;
@@ -1573,12 +1613,12 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   // Test if the DataSet objects hold the complete set of computed values from the most recent complete iteration.
   oPredDriver << "   for( int j=0; j<n; j++ )" << endl;
   oPredDriver << "   {" << endl;
-  oPredDriver << "      double expectedPred = (C1*j) + (C1*j) * CppAD::Value(set.data[who]->" << SymbolTable::key("time") << "[j]);" << endl;
-  oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << SymbolTable::key("theta") << "[j][0] );" << endl;
-  oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << SymbolTable::key("eta") << "[j][0] );" << endl;
-  oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << SymbolTable::key("pred") << "[j] );" << endl;
-  oPredDriver << "      MY_ASSERT_EQUAL( set.data[who]->" << SymbolTable::key("dv") << "[j] - expectedPred, set.data[who]->" << SymbolTable::key("res") << "[j] );" << endl;
-  oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << SymbolTable::key("f") << "[j] );" << endl;
+  oPredDriver << "      double expectedPred = (C1*j) + (C1*j) * CppAD::Value(set.data[who]->" << strTIME << "[j]);" << endl;
+  oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][0] );" << endl;
+  oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA << "[j][0] );" << endl;
+  oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << strPRED << "[j] );" << endl;
+  oPredDriver << "      MY_ASSERT_EQUAL( set.data[who]->" << strDV << "[j] - expectedPred, set.data[who]->" << strRES << "[j] );" << endl;
+  oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << strF << "[j] );" << endl;
   oPredDriver << "   }" << endl;
   //
   //  End of an incomplete iteration over j
@@ -1670,12 +1710,10 @@ CppUnit::Test * NonmemTranslatorIndTest::suite()
      new CppUnit::TestCaller<NonmemTranslatorIndTest>(
          "testParseIndSource", 
 	 &NonmemTranslatorIndTest::testParseIndSource ) );
-
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<NonmemTranslatorIndTest>(
          "testParseIndNoID", 
 	 &NonmemTranslatorIndTest::testParseIndNoID ) );
-  
   return suiteOfTests;
 }
 
