@@ -88,12 +88,13 @@ public abstract class Spkdb {
 	String sql = "insert into job (state_code, user_id, abstract, dataset_id, "
                                     + "dataset_version, model_id, model_version, "
                                     + "xml_source, method_code, parent, start_time, event_time)"
-                           + " values ('" + stateCode + "'," + userId + ",'" + abstraction + "'," + datasetId
+                           + " values ('" + stateCode + "'," + userId + ", ?," + datasetId
                                    + ",'" + datasetVersion + "'," + modelId + ",'" + modelVersion
                                    + "', ?,'" + methodCode + "'," + parent + "," 
 	                           + startTime + "," + eventTime + ");";
 	PreparedStatement pstmt = conn.prepareStatement(sql);
-	pstmt.setBinaryStream(1, new ByteArrayInputStream(xmlSource.getBytes()), xmlSource.length());
+	pstmt.setString(1, abstraction);
+	pstmt.setBinaryStream(2, new ByteArrayInputStream(xmlSource.getBytes()), xmlSource.length());
 	pstmt.executeUpdate();
 	ResultSet rs = pstmt.getGeneratedKeys();
 	if (rs.next()) {
