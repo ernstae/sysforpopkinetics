@@ -17,7 +17,6 @@ CPPUNITLIB = cppunit
 
 CORE_OBJS   = $(LIBCOMM)/SpkCompiler.o \
 	      $(LIBCOMM)/ExpTreeGenerator.o \
-              $(LIBCOMM)/ExpNodeCarrier.o \
               $(LIBCOMM)/SpkCompilerUtil.o \
               $(LIBCOMM)/SymbolTable.o \
               $(LIBCOMM)/Symbol.o
