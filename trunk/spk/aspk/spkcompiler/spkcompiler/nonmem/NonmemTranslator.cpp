@@ -129,7 +129,7 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     myIntegNEvals       ( 1 ),
     myIsEtaOut          ( false ),
     myIsRestart         ( false ),
-    myIndWriteCheckpoint( false ),
+    myIndWriteCheckpoint( true ),
     myPopWriteCheckpoint( true ),
     myThetaLen          ( 0 ),
     myOmegaDim          ( 0 ),
@@ -4988,6 +4988,8 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "const string indCheckpointFile  = \"" << fCheckpoint_xml << "\";"  << endl;
   oDriver << "bool         indWriteCheckpoint = "   << (myIndWriteCheckpoint? "true" : "false") << ";" << endl;
   oDriver << "ifstream     iCheckpoint( indCheckpointFile.c_str() );"  << endl;
+  oDriver << "// Error if the user asked to continue but no checkpoint.xml is found " << endl;
+  oDriver << "// in the current directory." << endl;
   oDriver << "if( isRestartRequested && !iCheckpoint.good() )" << endl;
   oDriver << "{" << endl;
   oDriver << "   char m[ SpkError::maxMessageLen()];" << endl;
@@ -4996,7 +4998,9 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "   errors.push( e );" << endl;
   oDriver << "   ret = FILE_ACCESS_FAILURE;" << endl;
   oDriver << "}" << endl;
-  oDriver << "bool         indReadCheckpoint  =  isRestartRequested && iCheckpoint.good();"   << endl;
+  oDriver << "// Flag to read the checkpoint file if that exists even " << endl;
+  oDriver << "// if the user didn't ask a continuation." << endl;
+  oDriver << "bool         indReadCheckpoint  = iCheckpoint.good();"   << endl;
   oDriver << "iCheckpoint.close();"                                    << endl;
   oDriver << "Optimizer    indOpt( indEps, "                           << endl;
   oDriver << "                     indMitr, "                          << endl;
@@ -5667,6 +5671,8 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "const   string popCheckpointFile  = \"" << fCheckpoint_xml << "\";" << endl;
   oDriver << "bool           popWriteCheckpoint = "   << (myPopWriteCheckpoint? "true":"false") << ";" << endl;
   oDriver << "ifstream       iCheckpoint( popCheckpointFile.c_str() );"  << endl;
+  oDriver << "// Error if the user asked to continue but no checkpoint.xml is found " << endl;
+  oDriver << "// in the current directory." << endl;
   oDriver << "if( isRestartRequested && !iCheckpoint.good() )" << endl;
   oDriver << "{" << endl;
   oDriver << "   char m[ SpkError::maxMessageLen()];" << endl;
@@ -5675,7 +5681,9 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "   errors.push( e );" << endl;
   oDriver << "   ret = FILE_ACCESS_FAILURE;" << endl;
   oDriver << "}" << endl;
-  oDriver << "bool           popReadCheckpoint  =  isRestartRequested && iCheckpoint.good();"   << endl;
+  oDriver << "// Flag to read the checkpoint file if that exists even " << endl;
+  oDriver << "// if the user didn't ask a continuation." << endl;
+  oDriver << "bool           popReadCheckpoint  = iCheckpoint.good();"   << endl;
   oDriver << "iCheckpoint.close();"                                    << endl;
   oDriver << "Optimizer      popOpt( popEps, "                           << endl;
   oDriver << "                       popMitr, "                          << endl;
