@@ -90,6 +90,36 @@ public abstract class Spkdb {
 
 	return rs;
     }
+    public static ResultSet userJobs(Connection conn, long userId, int maxNum)
+	throws SQLException, SpkdbException 
+    {
+	String sql = "select job_id, abstract, state_code, start_time, event_time, end_code "
+                     + "from job where user_id=" + userId 
+                     + " order by job_id desc limit " + maxNum + ";";
+	Statement stmt = conn.createStatement();
+        stmt.execute(sql);
+	ResultSet rs = stmt.getResultSet();
+
+	return rs;
+    }
+    public static boolean endJob(Connection conn, long jobId, String endCode, String report)
+	throws SQLException, SpkdbException
+    {
+	String sql = "select * from end where end_code='" + endCode + "';";
+	PreparedStatement pstmt = conn.prepareStatement(sql);
+	pstmt.execute();
+	ResultSet rs = pstmt.getResultSet();
+	if (!rs.next()) {
+	    throw new SpkdbException("endCode = " + endCode + " is invalid");
+	}
+	sql = "update job set state_code='end', end_code='" + endCode + "', report=?"
+	    + " where job_id =" + jobId + ";";
+	pstmt = conn.prepareStatement(sql);
+	pstmt.setBinaryStream(1, new ByteArrayInputStream(report.getBytes()), report.length());
+	pstmt.executeUpdate();
+	
+	return true;
+    }
     /**
        Inserts a new user in the database, returning a unique key.
        @param conn connection object obtained by a previous call on connect()
