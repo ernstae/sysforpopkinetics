@@ -1,9 +1,18 @@
 /** 
  * @file compiler.cpp
  *
- * This is supposed to be the ASPK Compliler driver that
- * makes a pair of SpkSourceML and SpkDataML documents
- * translated into C++ source code and the build information.
+ * This is the ASPK Compliler that compiles C++ source code from
+ * a pair of SpkSourceML and SpkDataML documents.
+ *
+ * Usage: <code>compiler <em>SOURCE</em> <em>DATA</em> [-print]</code>
+ * @htmlonly
+ * <dl>
+ *   <dt><em>SOURCE</em></dt><dd>file path to an SpkSourceML document</dd>
+ *   <dt><em>DATA</i></em><dd>file path to an SpkDataML document</dd>
+ *   <dt>-print</dt><dd>request for displaying the progress in the standard output.</dd>
+ * </dl>
+ * @endhtmlonly
+ *
  */
 
 #include <iostream>
@@ -53,8 +62,8 @@ static client::type getClientName( xercesc::DOMDocument* source )
  * Usage: <code>compiler <em>SOURCE</em> <em>DATA</em> [-print]</code>
  *
  * <dl>
- *   <dt><em>SOURCE</em></dt><dd>An SpkSourceML document file path</dd>
- *   <dt><em>DATA</i></em><dd>An SpkDataML document file path</dd>
+ *   <dt><em>SOURCE</em></dt><dd>file path to an SpkSourceML document</dd>
+ *   <dt><em>DATA</i></em><dd>file path to an SpkDataML document</dd>
  *   <dt>-print</dt><dd>request for displaying the progress in the standard output.</dd>
  * </dl>
  */
@@ -62,26 +71,29 @@ static void usage()
 {
   cout << "Usage: compiler SOURCE DATA [-print]" << endl;
   cout << endl;
-  cout << "   SOURCE    --- An SpkSourceML document file path" << endl;
-  cout << "   DATA      --- An SpkDataML document file path" << endl;
+  cout << "   SOURCE    --- file path to an SpkSourceML document" << endl;
+  cout << "   DATA      --- file path to an SpkDataML document" << endl;
   cout << "   -print    --- request for displaying the progress in the standard output " << endl;
   return;
 }
 /**
- * The ASPK Compiler driver
- * The driver takes two required arguments and an optional argument.
- * Within it, a parse tree is generated from each XML document: SpkSourceML and SpkDataML.
- * The SpkSourceML document contains the information about the origin of the
- * document.  Once the client is determined, a corresponding XML->C++ translator takes
- * care of the rest of the interpretation work.
- *
- * Usage: <code>compiler <em>SOURCE</em> <em>DATA</em> [-print]</code>
- *
+ * <code>compiler</code> compiles C++ source code from 
+ * a pair of an SpkSourceML and an SpkDataML documents.
+ * <em>When 0 is returned</em>, there will be a set of following files in the current directory:
  * <dl>
- *   <dt><em>SOURCE</em></dt><dd>An SpkSourceML document file path</dd>
- *   <dt><em>DATA</i></em><dd>An SpkDataML document file path</dd>
- *   <dt>-print</dt><dd>request for displaying the progress in the standard output.</dd>
+ *   <dt><code>driver.cpp</code></dt><dd>The CSPK driver for the given pair of SpkSourceML
+ *       and SpkDataML documents.</dd>
+ *   <dt><code>Pred.h</code></dt><dd>Declare and define a template class, Pred.</dd>
+ *   <dt><code>DataSet.h</code></dt><dd>Declare and define a template class, DataSet.</dd>
+ *   <dt><code>IndData.h</code></dt><dd>Declare and define a template class, IndData.</dd>
+ *   <dt><code>generatedMakefile</code></dt><dd>Makefile file to build an executable from 
+ *       the above files.</dd>
  * </dl>
+ * <em>When non-zero is returned</em>, a file named:
+ * <dl>
+ * <dt><code>compilation_error.xml</code></dt><dd>an SpkResultML document containing error messages.</dd>
+ * </dl>
+ * will be placed in the current directory.
  *
  */
 int main( int argc, char * argv[] )
