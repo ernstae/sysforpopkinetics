@@ -44,20 +44,26 @@
 	<revremark>Updated the license keys valid through Aug. 2004.</revremark>      </revision>
       <revision>
 	<revnumber>1.6</revnumber>
-	<date>September 19, 20033</date>
+	<date>September 19, 2003</date>
 	<authorinitials>sh</authorinitials>
 	<revremark>Fixed html syntax errors in the example C++ code.</revremark>
+      </revision>
+      <revision>
+        <revnumber>1.7</revnumber>
+        <date>March 08, 2004</date>
+        <authorinitials>sh</authorinitials>
+        <revremark>Updated the instruction for a newer NAG library, Mark 7, installation.</revremark>
       </revision>
 
    </revhistory>
   <abstract>
       <para>
-      SPK Library relies on some of the components from NAG Library
-      such as a re-entrant optimizer, matrix mutiplication routine and so on.
-      The installation package comes as a simple compressed archive.
-      The installer is expected to unpack the package and manually place 
-      headers and libraries in appropriate places.  This tutorial
-      explains these steps.
+      SPK Library is dependent on some of the basic linear algebra routines 
+      offered by the NAG C Library.  The NAG shared library must be installed on each machine
+      in order build and/or execute SPK applications.  This document focuses on
+      installation of components minimally required for building the SPK library
+      and its applications since the library is about to be replaced by 
+      and open-source equivalent(s) soon.
       </para>
   </abstract>
   </articleinfo>
@@ -66,40 +72,41 @@
     <orderedlist>
       <listitem>
         <para>
-        As ordinary user, download the linux version of the Nag C library
-        from whitechuck:
+        As an ordinary user, download the Nag C Mark 7 library from whitechuck to /tmp 
+on your machine:
           <screen>
 cd /tmp
-scp whitechuck:/opt/download/lux06dbt.Z .
+scp whitechuck:/opt/download/cllux07ddl.tgz .
           </screen>
         </para>
       </listitem>
       <listitem>
         <para>
-        Become root,
+From the /tmp directory, type the following to uncompress and unpack the tar ball:
+          <screen>
+tar xvzf cllux07ddl.tgz
+          </screen>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+To install the NAG libraries (ie. static and shared versions) and
+headers into proper locations, you must first become root.
           <screen>
 su -
           </screen>
-        </para>
-      </listitem>
-      <listitem>
-        <para>
-        Unpack the archive
-          <screen>
-cd /tmp
-tar xvzf lux06dbt.Z
-          </screen>
+Change directory to /tmp/cllux07ddl/.
         </para>
       </listitem>
       <listitem>
         <para>
         Install the library and headers
           <screen>
-cd cllux06db
-cp libnagc* /usr/local/lib
+cp libnagc.a /usr/local/lib
+cp libnagc.so.7 /user/local/lib
 cp include/* /usr/local/include
 cd /usr/local/lib
-ln -s libnagc.so.6 libnagc.so
+ln -s libnagc.so.7 libnagc.so
           </screen> 
         </para>
       </listitem>
@@ -124,8 +131,8 @@ FEATURE NAGWareFtools NAG 9.900 01-aug-2004 0 ECDEB423F87A659A99EB "ANY" DEMO
         Clean up
           <screen>
 cd /tmp
-rm lux06dbt.Z
-rm -rf cllux06db
+rm cllux07ddl.tgz
+rm -rf cllux07ddl
           </screen>
         </para>
       </listitem>
@@ -146,6 +153,13 @@ rm -rf cllux06db
 #include &lt;cassert&gt;
 #include &lt;string&gt;
 
+extern "C"{
+# include "nag.h"
+# include "nag_types.h"
+# include "nag_names.h"
+# include "nagf06.h"
+}
+
 using namespace std;
 static void NagDgemm(
     char transa,            // Is matrix A transpose (At) or non (An)?
@@ -161,7 +175,7 @@ static void NagDgemm(
 );
 
 static const valarray&lt;double&gt; multiply( const valarray&lt;double&gt; & A, int nColsA, 
-					const valarray&lt;double&gt;& B, int nColsB );
+					const valarray&lt;double&gt; & B, int nColsB );
 
 void printInMatrix( const valarray&lt;double&gt; & A, int cols );
 
@@ -215,10 +229,10 @@ void printInMatrix( const valarray&lt;double&gt;& A, int cols )
   int rows = A.size() / cols;
   assert( rows * cols * A.size() );
 
-  for( int i=0; i&lt;rows; i++ )
+  for( int i=0; i &lt; rows; i++ )
     {
       cout << "[ ";
-      for( int j=0; j&lt;cols; j++ )
+      for( int j=0; j &lt; cols; j++ )
 	{
 	  cout << A[j + i * cols] << " ";
 	}
@@ -241,39 +255,26 @@ const valarray&lt;double&gt; multiply( const valarray&lt;double&gt;& A, int nCol
 
   assert( nColsA == nRowsB );
 
-  double pA[ A.size() ];
-  for( int i=0; i&lt;A.size(); i++ )
-     pA[i] = A[i];
-  double pB[ B.size() ];
-  for( int i=0; i&lt;B.size(); i++ )
-     pB[i] = B[i];
-  double pC[ nRowsA * nColsB ];
+  const double *pA = &(A[0]);
+  const double *pB = &(B[0]);
+
+  valarray&lt;double&gt; C( nRowsA * nColsB );
+  double *pC = &(C[0]);
   
+  /**************************************************************
+   *
+   * dgemm (f06yac) performs real matrix-matrix multiplication: 
+   *    C = (alpha * A B) + (beta * C)
+   *
+   **************************************************************/
   NagDgemm('n', 'n', nRowsA, nColsB, nColsA, 1.0, pA, pB, 0.0, pC);
   return C;
 };
 
-/*******************************************************************************
- *
- *                NagDgemm Implementation   
- *
- * Cpp interface to Nag's dgemm (f06yac)
- *
- * dgemm (f06yac) performs real matrix-matrix multiplication: 
- *    C = (alpha * A B) + (beta * C)
- *
- * This function terminates the program when receives an invalid argument value.
- *
- *******************************************************************************/
 # include &lt;stdio.h&gt;
 # include &lt;stdlib.h&gt;
 
-extern "C"{
-# include "nag.h"
-# include "nag_types.h"
-# include "nag_names.h"
-# include "nagf06.h"
-}
+
 static void NagDgemm(
     char transa,            // Is matrix A transpose (At) or non (An)?
     char transb,            // Is matrix B transpose (Bt) or non (Bn)? 
@@ -316,7 +317,7 @@ static void NagDgemm(
         exit(-1);
     }
     
-    dgemm(
+    f06yac(
         transA, 
         transB, 
         (Integer) m, 
@@ -332,6 +333,7 @@ static void NagDgemm(
         (Integer) n
     );
 }
+
         </screen>
       </listitem>
       <listitem>
@@ -341,7 +343,7 @@ static void NagDgemm(
         <filename>mlib</filename>:
         </para>
         <screen>
-g++ nag_test.cpp -static -lnagc -lpthread -lm -o test
+g++ nag_test.cpp -lnagc -lpthread -lm -o test
         </screen>
         <para>
         The following warning messages will be displayed.  Please ignore.
