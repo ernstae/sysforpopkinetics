@@ -542,6 +542,7 @@
 #include "SpkModel.h"
 #include "simulate.h"
 #include "randNormal.h"
+#include "intToOrdinalString.h"
 
 using namespace std;
 using SPK_VA::valarray;
@@ -605,14 +606,16 @@ void simulate( SpkModel &model,
       catch( SpkException& e )
 	{
 	  char buf[ SpkError::maxMessageLen() ];
-	  sprintf( buf, "Failed to simulate the %d-th individual's random effects.\n", i );
+	  sprintf( buf, "Failed to simulate the %s individual's random effects.\n", 
+		   intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
 	  e.push( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
 	  throw e;
 	}
       catch( ... )
 	{
 	  char buf[ SpkError::maxMessageLen() ];
-	  sprintf( buf, "Failed to simulate the %d-th individual's random effects.\n", i );
+	  sprintf( buf, "Failed to simulate the %s individual's random effects.\n", 
+		   intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
 	  throw SpkError( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
 	}
            
@@ -658,14 +661,16 @@ void simulate( SpkModel &model,
       catch( SpkException& e )
 	{
 	  char buf[ SpkError::maxMessageLen() ];
-	  sprintf( buf, "Failed to simulate measurements for the %d-th individual.\n", i );
+	  sprintf( buf, "Failed to simulate measurements for the %s individual.\n",
+		   intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
 	  e.push( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
 	  throw e;
 	}
       catch( ... )
 	{
 	  char buf[ SpkError::maxMessageLen() ];
-	  sprintf( buf, "Failed to simulate measurements for the %d-th individual.\n", i );
+	  sprintf( buf, "Failed to simulate measurements for the %s individual.\n",
+		   intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
 	  throw SpkError( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
 	} 
     }

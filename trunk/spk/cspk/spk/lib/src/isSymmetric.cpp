@@ -75,7 +75,7 @@ $$
 $section Verify Symmetry of a Matrix Up To Epsilon$$
 
 $index isSymmetric$$
-$cindex Verify Symmetry /of /a /Matrix /Up /To /Epsilon$$
+$cindex Verify Symmetry \of \a \Matrix \Up \To \Epsilon$$
 
 $table
 $bold Prototype:$$   $cend  

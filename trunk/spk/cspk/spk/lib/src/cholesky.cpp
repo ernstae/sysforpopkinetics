@@ -189,6 +189,7 @@ extern "C"{
 
 #include "SpkValarray.h"
 #include "isSymmetric.h"
+#include "intToOrdinalString.h"
 
 using SPK_VA::valarray;
 
@@ -240,14 +241,13 @@ const valarray<double> cholesky( const valarray<double>& A, int n )
   int cholStatus = clapack_dpotrf( CblasColMajor, CblasLower, n, &AChol[0], lda );
   if( cholStatus < 0 )
   {
-     // illegal value detected in the source matrix, A.
      char mess[ SpkError::maxMessageLen() ];
-     sprintf( mess, "Cholesky factorization failed: Illegal value detected at %d-th element of the source matrix.\n", -cholStatus );
+     sprintf( mess, "Cholesky factorization failed: the %s argument had an illegal value.\n", 
+              intToOrdinalString( -cholStatus, ONE_IS_FIRST_INT ).c_str() );
      throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
   }
   if( cholStatus > 0 )
   {
-     // i-th value is a source of failure
      char mess[ SpkError::maxMessageLen() ];
      sprintf( mess, "Cholesky factorization failed: the leading minor of order %d is not positive definite.\n", cholStatus );
      throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );

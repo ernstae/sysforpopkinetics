@@ -46,7 +46,7 @@
 $begin PpkaOptParallel$$
 
 $spell
-	Model model
+  Model model
   bool  
   cbc  
   cmath  
@@ -1504,6 +1504,45 @@ namespace // [Begin: unnamed namespace]
       DoubleMatrix dmatBCurr( nB, nInd );
       double dLTildeCurr = 0.0;
       DoubleMatrix* pdmatNull = 0;
+      //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      // [Revisit - Population Level Back Up when an Individual Objective Hessian is not Positive Definite - Mitch]
+      // Once the optimizer can do back ups, replace the existing code with the following:
+      //
+      /*
+      try
+      {
+        lTilde(
+          isMultiProcessed,
+          *pSharedDirectory,
+          *pModel,
+          objective,
+          *pdvecY,
+          *pdvecN,
+          *pIndOptInfo,
+          dvecAlpCurr,
+          *pdvecBLow,
+          *pdvecBUp,
+          *pdvecBStep,
+          dmatBBest,
+          &dmatBCurr,
+          &dLTildeCurr,
+          pdmatNull );
+      }
+      catch( SpkException& e )
+      {
+        // If objective function is infinite, then tell the 
+        // optimizer to back up in the population level 
+        // optimization.
+        if ( e[ e.size()-1 ].code() == SpkError::SPK_INF_OBJ_ERR ) 
+        {
+                ...;
+        }
+
+        throw e;
+      }
+      */
+      //
+      //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       lTilde(
         isMultiProcessed,
         *pSharedDirectory,
@@ -2069,7 +2108,7 @@ void ppkaOpt(
 //          broadCastEndOfSpk(sharedDirectory);
 
         throw SpkException(e, 
-              "A standard exception was thrown during an attempt to approximate the second derivative of lTilde with respect to alp.",
+              "A standard exception was thrown during an attempt to approximate the second \nderivative of lTilde with respect to alp.",
               __LINE__, __FILE__);
       }
       catch( ... )
@@ -2085,7 +2124,7 @@ void ppkaOpt(
 
         throw SpkException(
             SpkError::SPK_DIFF_ERR,  
-              "Unknown exception was thrown during an attempt to approximate the second derivative of lTilde with respect to alp",
+              "An unknown exception was thrown during an attempt to approximate the second \nderivative of lTilde with respect to alp",
               __LINE__, __FILE__);
       }
   }

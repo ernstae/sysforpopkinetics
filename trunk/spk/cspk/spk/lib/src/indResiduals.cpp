@@ -23,6 +23,7 @@
  *
  * File: indResiduals.cpp
  *
+ *
  * Calculates residuals for an individual.
  *
  * Author: Mitch Watrous
@@ -58,7 +59,7 @@ $$
 $section Computing Residuals for an Individual$$
 
 $index indResiduals$$
-$cindex /Computing Residuals /for /an Individual$$
+$cindex \Computing Residuals \for \an Individual$$
 
 $table
 $bold Prototype:$$ $cend

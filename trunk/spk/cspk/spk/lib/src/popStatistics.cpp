@@ -50,6 +50,7 @@
 #include "SpkValarray.h"
 #include "statistics.h"
 #include "printInMatrix.h"
+#include "intToOrdinalString.h"
 
 using SPK_VA::valarray;
 using SPK_VA::slice;
@@ -122,11 +123,12 @@ namespace{
 	char mess[ SpkError::maxMessageLen() ];
 	
 	valarray<double> diag = h_x_x[ slice(0, nX, nX+1) ];
-	sprintf( mess, "The second drivative of the object does not seem positive definite.\n" );
+	sprintf( mess, "The Hessian of the objective function could not be inverted.\n" );
 	for( int i=0; i<nX; i++ )
 	  {
 	    if( diag[i] <= 0.0 )
-	      sprintf( mess, "The %d-th diagonal element of second derivative of the objective, which is supposed to be positive definite, is not postive.\n", i );
+	      sprintf( mess, "The %s diagonal element of the Hessian is not positive.\n",
+		       intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
 	  }
 	e.push( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
 	throw e;
@@ -136,11 +138,12 @@ namespace{
 	char mess[ SpkError::maxMessageLen() ];
 	
 	valarray<double> diag = h_x_x[ slice(0, nX, nX+1) ];
-	sprintf( mess, "The second drivative of the object may not be positive definite.\n" );
+	sprintf( mess, "The Hessian of the objective function could not be inverted.\n" );
 	for( int i=0; i<nX; i++ )
 	  {
 	    if( diag[i] < 0.0 )
-	      sprintf( mess, "The %d-th diagonal element of second derivative of the objective, which is supposed to be positive definite, is not postive.\n", i );
+	      sprintf( mess, "The %s diagonal element of the Hessian is not positive.\n",
+		       intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
 	  }
 	SpkException e( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
 	throw e;
@@ -222,7 +225,7 @@ $section Computing Statistics of Population Parameter Estimates$$
 
 $index popStatistics$$
 $index covariance, standard error, correlation matrix, population parameters$$
-$cindex /Computing Statistics /of Population /Parameter /Estimates$$
+$cindex \Computing Statistics \of Population \Parameter \Estimates$$
 
 $table
 $bold Enumerators:$$ $cend
@@ -658,7 +661,7 @@ void popStatistics( SpkModel&                popModel,
 	{
 	  char message[ SpkError::maxMessageLen() ];
           sprintf( message, 
-		   "The degree of freedom (#of measurements<%d> - #of fixed effects<%d>) must be positive.\n",
+		   "The number of degrees of freedom (#of measurements<%d> - #of fixed effects<%d>) must be positive.\n",
 		   nY, nAlp );
 
         throw SpkException(
@@ -672,7 +675,7 @@ void popStatistics( SpkModel&                popModel,
     if( nY != nMeasurementsAll.sum() )
     {
       char message[ SpkError::maxMessageLen() ];
-      sprintf( message, "The sum <%d> of the values contained in nMeasurementsAll vector must match the size <%d> of measurementsAll vector.\n",
+      sprintf( message, "The sum <%d> of the values contained in nMeasurementsAll vector must match \nthe size <%d> of measurementsAll vector.\n",
 	       nMeasurementsAll.sum(), nY );
 
         throw SpkException(
@@ -732,8 +735,7 @@ void popStatistics( SpkModel&                popModel,
     {
       char message[ SpkError::maxMessageLen() ];
       sprintf( message,
-	       "Tilde_alp_alp vector that contains the second derivative of objective function \
-must have n times n length, where n is the size of population parameter <%d>.  ", 
+	       "Tilde_alp_alp vector that contains the Hessian of objective function must have n times n length, \nwhere n is the size of population parameter <%d>.", 
 	       popObj_popPar_popPar.size() );
 
         throw SpkException(
@@ -756,8 +758,9 @@ must have n times n length, where n is the size of population parameter <%d>.  "
         {
 	  char message[ SpkError::maxMessageLen() ];
           sprintf( message, 
-		   "The number of measurements must be greater than zero.  %d -th element, %d, is invalid.", 
-		   i, nMeasurementsAll[i] );
+		   "The number of measurements must be greater than zero.  The %s element, %d, is invalid.", 
+		   intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str(),
+		   nMeasurementsAll[i] );
             throw SpkException(
                     SpkError::SPK_USER_INPUT_ERR,  
                     message,
@@ -775,9 +778,11 @@ must have n times n length, where n is the size of population parameter <%d>.  "
             {
 	      char message[ SpkError::maxMessageLen() ];
               sprintf( message, "The initial value for the individual parameter must \
-be less than or equal to the upper bound value and \
-greater than or equal to the lower boundary value.  \
-message %d-the element, %f, is invalid.", i, indParAll[ i + j * nB ] );
+be less than or equal to \nthe upper bound value and \
+greater than or equal to the lower bound value. \
+\nThe %s element, %f, is invalid.",
+		       intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str(),
+		       indParAll[ i + j * nB ] );
 
                 throw SpkException(
                         SpkError::SPK_USER_INPUT_ERR,  
@@ -972,7 +977,7 @@ $section Computing Statistics of Population Parameter Estimates when Individual 
 
 $index popStatistics$$
 $index covariance, standard error, correlation matrix, population parameters$$
-$cindex /Computing Statistics /of Population /Parameter /Estimates /when Individual /Objective /Derivatives /have /been /Calculated$$
+$cindex \Computing Statistics \of Population \Parameter \Estimates \when Individual \Objective \Derivatives \have \been \Calculated$$
 
 $table
 $bold Enumerator:$$ $cend
@@ -1503,7 +1508,7 @@ $section Computing Statistics of Population Parameter Estimates when Individual 
 
 $index popStatistics$$
 $index covariance, standard error, correlation matrix, population parameters$$
-$cindex /Computing Statistics /of Population /Parameter /Estimates /when Individual /Objective /Derivatives /have /been /Calculated /and All /Elements /are /Active$$
+$cindex \Computing Statistics \of Population \Parameter \Estimates \when Individual \Objective \Derivatives \have \been \Calculated \and All \Elements \are \Active$$
 
 $table
 $bold Enumerator:$$ $cend
@@ -2305,16 +2310,14 @@ void popStatistics( const valarray<double>& y,
       catch( SpkException& e )
       {
          char mess[ SpkError::maxMessageLen() ];
-	 sprintf( mess, "Failed to invert R as in NONMEM Statistics.  R is symmetric but not positive definite.\n" );
-	 cerr << "NONMEM R: " << endl;
-         printInMatrix( popObj_alp_alp, nAlp  );
+	 sprintf( mess, "Failed to invert the Hessian approximation for the information matrix.\n" );
 	 e.push( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
 	 throw e;  
       }
       catch( ... )
       {
          char mess[ SpkError::maxMessageLen() ];
-	 sprintf( mess, "Failed to invert R as in NONMEM Statistics. R is symmetric but not positive definite.\n" );
+	 sprintf( mess, "Failed to invert the Hessian approximation for the information matrix.\n" );
 	 SpkException e( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
 	 throw e;  
       }
@@ -2328,14 +2331,14 @@ void popStatistics( const valarray<double>& y,
       catch( SpkException& e )
       {
          char mess[ SpkError::maxMessageLen() ];
-         sprintf( mess, "Failed to invert S as in NONMEM Statistics.\n" );
+	 sprintf( mess, "Failed to invert the cross product gradient approximation for the information matrix.\n" );
          e.push( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
          throw e;  
       }
       catch( ... )
       {
          char mess[ SpkError::maxMessageLen() ];
-         sprintf( mess, "Failed to invert S as in NONMEM Statistics.\n" );
+	 sprintf( mess, "Failed to invert the cross product gradient approximation for the information matrix.\n" );
          SpkException e( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
          throw e;  
          }
@@ -2351,14 +2354,14 @@ void popStatistics( const valarray<double>& y,
       catch( SpkException& e )
       {
          char mess[ SpkError::maxMessageLen() ];
-         sprintf( mess, "Failed to invert (R * S^-1 * R) as in NONMEM Statistics.\n" );
+	 sprintf( mess, "Failed to invert the sandwich approximation for the information matrix.\n" );
          e.push( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
          throw e;  
       }
       catch( ... )
       {
          char mess[ SpkError::maxMessageLen() ];
-         sprintf( mess, "Failed to invert (R * S^-1 * R) as in NONMEM Statistics.\n" );
+	 sprintf( mess, "Failed to invert the sandwich approximation for the information matrix.\n" );
          SpkException e( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
          throw e;  
       }

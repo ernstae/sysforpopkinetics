@@ -2420,7 +2420,7 @@ $$
 $section Allocates Memory for the State Information$$
 
 $index Optimizer, state information, initStateInfo$$
-$cindex Allocates Memory /for /the State Information$$
+$cindex Allocates Memory \for \the State Information$$
 
 $table
 $bold Prototype$$ $cend
@@ -2536,7 +2536,7 @@ $$
 $section Free Memory Allocated for the State Information$$
 
 $index Optimizer, state information, freeStateInfo$$
-$cindex Free Memory /Allocated /for /the State Information$$
+$cindex Free Memory \Allocated \for \the State Information$$
 
 $table
 $bold Prototype$$ $cend
@@ -3290,7 +3290,7 @@ $$
 
 $section Get the Value of an Attribute in the Current Element$$
 
-$cindex Get /the /Value /of /an Attribute /in /the /Current /Element$$
+$cindex Get \the \Value \of \an Attribute \in \the \Current \Element$$
 $index Optimizer, attribute value, getAttributeValue$$
 
 $table
@@ -3451,7 +3451,7 @@ $$
 
 $section Get a Single Value from a Subelement of the Current Element (XMLCh Tag Version)$$
 
-$cindex Get /a /Single /Value /from /a Subelement /of /the Current Element (XMLCh /Tag /Version)$$
+$cindex Get \a \Single \Value \from \a Subelement \of \the Current Element \(XMLCh \Tag \Version)$$
 $index Optimizer, single value, getValue$$
 
 $table
@@ -3683,9 +3683,9 @@ $spell
     const 
 $$
 
-$section Get an Array of Values from a Subelement of the Current Element (XMLCh /Tag /Version)$$
+$section Get an Array of Values from a Subelement of the Current Element (XMLCh \Tag \Version)$$
 
-$cindex Get /an Array /of /Values /from /a Subelement /of /the Current Element (XMLCh Tag /Version)$$
+$cindex Get \an Array \of \Values \from \a Subelement \of \the Current Element \(XMLCh \Tag \Version)$$
 $index Optimizer, array, getArray$$
 
 $table
@@ -3961,7 +3961,7 @@ $$
 
 $section Get a Single Value from a Subelement of the Current Element (Char Tag Version)$$
 
-$cindex Get /a /Single /Value /from /a Subelement /of /the Current Element (Char /Tag /Version)$$
+$cindex Get \a \Single \Value \from \a Subelement \of \the Current Element \(Char \Tag \Version)$$
 $index Optimizer, single value, getValue$$
 
 $table
@@ -4099,9 +4099,9 @@ $spell
     const 
 $$
 
-$section Get an Array of Values from a Subelement of the Current Element (char /Tag /Version)$$
+$section Get an Array of Values from a Subelement of the Current Element (Char \Tag \Version)$$
 
-$cindex Get /an Array /of /Values /from /a Subelement /of /the Current Element (char Tag /Version)$$
+$cindex Get \an Array \of \Values \from \a Subelement \of \the Current Element \(Char \Tag \Version)$$
 $index Optimizer, array, getArray$$
 
 $table
@@ -4255,7 +4255,7 @@ $$
 
 $section Write the XML version to the Restart File$$
 
-$cindex Write /the XML version /to /the /Restart /File$$
+$cindex Write \the XML version \to \the \Restart \File$$
 $index Optimizer, XML version, writeXMLVersion$$
 
 $table
@@ -4310,7 +4310,7 @@ $$
 
 $section Write an Attribute Name and Value to the Restart File$$
 
-$cindex Write /an Attribute Name /and Value /to /the /Restart /File$$
+$cindex Write \an Attribute Name \and Value \to \the \Restart \File$$
 $index Optimizer, attribute value, writeAttribute$$
 
 $table
@@ -4426,7 +4426,7 @@ $$
 
 $section Write a Subelement of the Current Element that Contains a Single Value (Char Tag Version)$$
 
-$cindex Write /a Subelement /of /the Current Element /that /Contains /a /Single /Value (Char /Tag /Version)$$
+$cindex Write \a Subelement \of \the Current Element \that \Contains \a \Single \Value \(Char \Tag \Version)$$
 $index Optimizer, single value, writeValue$$
 
 $table
@@ -4565,7 +4565,7 @@ $$
 
 $section Write a Subelement of the Current Element that Contains an Array of Values (Char Tag Version)$$
 
-$cindex Write /a Subelement /of /the Current Element /that /Contains /an /Array of /Values (Char /Tag /Version)$$
+$cindex Write \a Subelement \of \the Current Element \that \Contains \an \Array of \Values \(Char \Tag \Version)$$
 $index Optimizer, array of values, writeArray$$
 
 $table
@@ -4734,7 +4734,7 @@ $$
 
 $section Write an XML Start Tag$$
 
-$cindex Write /an /XML Start Tag$$
+$cindex Write \an \XML Start Tag$$
 $index Optimizer, start tag, writeStartTag$$
 
 $table
@@ -4830,7 +4830,7 @@ $$
 
 $section Write the Final Bracket for an XML Start Tag$$
 
-$cindex Write /the /Final Bracket /for /an /XML Start Tag$$
+$cindex Write \the \Final Bracket \for \an \XML Start Tag$$
 $index Optimizer, start tag final bracket, writeStartTagFinalBracket$$
 
 $table
@@ -4898,7 +4898,7 @@ $$
 
 $section Write an XML End Tag$$
 
-$cindex Write /an /XML End Tag$$
+$cindex Write \an \XML End Tag$$
 $index Optimizer, end tag, writeEndTag$$
 
 $table

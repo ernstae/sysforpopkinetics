@@ -176,6 +176,7 @@ extern "C"{
 #include "transpose.h"
 #include "isDmatEpsEqual.h"
 #include "DoubleMatrix.h"
+#include "intToOrdinalString.h"
 
 
 /*------------------------------------------------------------------------
@@ -282,8 +283,8 @@ void det( const DoubleMatrix &A, double* pdB, long int* plC )
   if( info > 0 )
     {
       char mess[SpkError::maxMessageLen()];
-      sprintf( mess, "The leading minor of order %d is not positive definite, and the factorization could not be completed!",
-	       info, info );
+      sprintf( mess, "The leading minor of order %d is not positive definite, and the factorization \ncould not be completed!",
+	       info );
       throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, 
 			  mess,
 			  __LINE__, __FILE__ );
@@ -291,7 +292,8 @@ void det( const DoubleMatrix &A, double* pdB, long int* plC )
   else if( info < 0 )
     {
       char mess[SpkError::maxMessageLen()];
-      sprintf( mess, "Programming error!  The %d th argument to clapack_dgetrf() is illegal.", -info );
+      sprintf( mess, "Programming error!  The %s argument to clapack_dgetrf() is illegal.", 
+               intToOrdinalString( -info, ONE_IS_FIRST_INT ).c_str() );
       throw SpkException( SpkError::SPK_UNKNOWN_ERR, 
 			  mess,
 			  __LINE__, __FILE__ );
@@ -604,19 +606,20 @@ void det( const valarray<double> &A, int n, double* pdB, long int* plC )
   int info = clapack_dpotrf( order, uplo, n, a, lda );
   if( info )
   {
-    if( info < 0 )
+    if( info > 0 )
       {
 	char mess[SpkError::maxMessageLen()];
-	sprintf( mess, "U(%d,%d) is exactly zero.  The LU factorization is completed, but the U is exatly singlar.",
-		 info, info );
+        sprintf( mess, "The leading minor of order %d is not positive definite, and the factorization \ncould not be completed!",
+	         info );
 	throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, 
 			    mess,
 			    __LINE__, __FILE__ );
       }
-    else if( info > 0 )
+    else if( info < 0 )
       {
 	char mess[SpkError::maxMessageLen()];
-	sprintf( mess, "Programming error!  The %d th argument to clapack_dgetrf() is illegal.", -info );
+	sprintf( mess, "Programming error!  The %s argument to clapack_dgetrf() is illegal.", 
+                 intToOrdinalString( -info, ONE_IS_FIRST_INT ).c_str() );
 	throw SpkException( SpkError::SPK_UNKNOWN_ERR, 
 			    mess,
 			    __LINE__, __FILE__ );

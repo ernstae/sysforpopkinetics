@@ -2049,6 +2049,9 @@ void checkPopPar(
   string colSpacer = "  ";
 
   warning << "The following population parameters are at their bounds." << endl;
+  warning << "The following population parameters are at or near their bounds." << endl;
+  warning << "The following population parameters are near their bounds." << endl;
+  warning << "The following population parameters are close to their bounds." << endl;
   warning << endl;
   warning << "Parameter      Value         Bound"   << endl;
   warning << "---------  --------------  ---------" << endl;

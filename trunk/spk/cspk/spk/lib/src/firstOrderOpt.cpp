@@ -1654,13 +1654,13 @@ void firstOrderOpt(
     catch( const std::exception& e )
     {
       throw SpkException(e,
-        "A standard exception was thrown during the evaluation of the derivatives of the individuals' objective contributions.", 
+        "A standard exception was thrown during the evaluation of the derivatives of \nthe individuals' objective contributions.", 
         __LINE__, __FILE__);
     }
     catch( ... )
     {
       throw SpkException(SpkError::SPK_UNKNOWN_OPT_ERR,
-        "An unknown exception was thrown during the evaluation of the derivatives of the individuals' objective contributions.",
+        "An unknown exception was thrown during the evaluation of the derivatives of \nthe individuals' objective contributions.",
         __LINE__, __FILE__);
     }
   }
