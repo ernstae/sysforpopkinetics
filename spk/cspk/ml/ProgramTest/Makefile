@@ -38,8 +38,10 @@ Sim : Sim.cpp
 	g++ -g Sim.cpp -lgsl -lcblas -latlas -o Sim
 
 monteDriver : monteDriver.cpp $(OBJECT) $(INCLUDE)
-	g++ -g $(OBJECT) -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -o monteDriver -lspk -lxerces-c -lspkopt -lspkpred -lgsl -latlas_lapack -lcblas -latlas -lpthread -lm
+	g++ -g $(OBJECT) -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -o monteDriver -lspk -lspkopt -lspkpred -lgsl -latlas_lapack -lcblas -latlas -lpthread -lm -lxerces-c
 
-# Rule for compiling C++ source files
+# Rule for compiling C++ soruce files
+#%.o : %.cpp $(INCLUDE) 
+#	g++ $(CPPFLAGS) $< -o $@
 monteDriver.o : ../monteDriver.cpp $(INCLUDE)
 	g++ $(CPPFLAGS) ../monteDriver.cpp 
