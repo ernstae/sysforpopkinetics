@@ -789,7 +789,6 @@ $end
 
 #include <cmath>
 #include <cassert>
-#include <strstream>
 #include "mapOpt.h"
 #include "mapObj.h"
 #include "mapObjDiff.h"
@@ -1076,11 +1075,11 @@ void mapOpt(  SpkModel& model,
           // This should dump all the parameter values to a file and 
           // give the filename as an error message.
           //
-          strstream stream;
-          stream << e.what() << endl;
-          stream << "An attempt to approximate the derivative of mapObj_b with respect to b failed." << endl;
-          stream.put(NULL);
-          throw SpkException(e, stream.str(), __LINE__, __FILE__);
+          const int max = SpkError::maxMessageLen();
+          char buf[max];
+          sprintf( buf, "%s\nAn attempt to approximate the derivative of mapObj_b with respect to b failed.",
+            e.what() );
+          throw SpkException( e, buf, __LINE__, __FILE__ );
       }
       catch( ... )
       {
