@@ -717,7 +717,7 @@ sub end_job() {
 	return 0;
     }
     unless ($sth->execute($report)) {
-	$errstr = "en_q2r failed to update the job table";
+	$errstr = "end_job failed to update the job table";
 	$err = $UPDATE_FAILED;
 	return 0;
     }

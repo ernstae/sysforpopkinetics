@@ -125,8 +125,9 @@ my $build_failure_exit_value = 101;
 my $database_open = 0;
 my $filename_makefile = "generatedMakefile";
 my $filename_data = "data.xml";
-my $filename_serr = "software_error";
+my $filename_optimizer_trace = "optimizer_trace.txt";
 my $filename_results = "results.xml";
+my $filename_serr = "software_error";
 my $filename_source = "source.xml";
 my $filename_runner = "driver";
 my $service_name = "spkrund";
@@ -255,6 +256,9 @@ sub fork_runner {
 	      #$? = $build_failure_exit_value << 8;
 	      die;
 	  }
+	  # Redirect Standard output to a file
+	  open STDOUT, ">$filename_optimizer_trace";
+
 	  # Redirect Standard Error to a file
 	  open STDERR, ">$filename_serr";
 
@@ -282,11 +286,20 @@ sub fork_runner {
 }
 sub format_error_report {
     my $content = shift;
-    my $report = "<spkreportML>\n";
-    $report .= "  <error_message>\n";
-    $report .= "    $content\n";
-    $report .= "  </error_message>\n";
-    $report .= "</spkreportML>\n";
+    my $report = "<spkreport>\n";
+    $report   .= "  <error_message>\n";
+    $report   .= "    $content\n";
+    $report   .= "  </error_message>\n";
+    $report   .= "</spkreport>\n";
+    return $report;
+}
+sub insert_optimizer_trace {
+    my $trace = shift;
+    my $report = shift;
+
+    $trace = "  <opt_trace_out>\n" . $trace . "\n  </opt_trace_out>\n";
+    $report =~ s/<\/spkreport>/$trace<\/spkreport>\n/;
+    return $report;
 }
 sub reaper {
     # Handler for SIGCHLD which processes any children which have terminated
@@ -301,8 +314,10 @@ sub reaper {
 	my $child_signal_number = $? & 0x7f;
 	my $child_dumped_core   = $? & 0x80;
 	my $job_id;
+	my $optimizer_trace;
 	my $report;
 	my $status_msg = "";
+	my $end_code;
 
 	# Get the job_id from the file spkcmpd.pl wrote to the working
 	# directory of this process
@@ -313,19 +328,24 @@ sub reaper {
 	read(FH, $job_id, -s FH);
 	close(FH);
 
+	# Get optimizer trace 
+
+	open(FH, $filename_optimizer_trace)
+	    or death('emerg', "can't open $tmp_dir/$working_dir/$filename_optimizer_trace");
+	read(FH, $optimizer_trace, -s FH);
+	close(FH);
+
 	# Normal termination at end of run
 	if (-f $filename_results) {
+	    $end_code = "srun";
 
-	    # Read the results file
-	    my $results;
+	    # Read the results file into the report variable
 	    open(FH, $filename_results)
 		or death('emerg', "can't open $tmp_dir/$working_dir/$filename_results");
-	    read(FH, $results, -s FH);
+	    read(FH, $report, -s FH);
 	    close(FH);
 
-	    # Copy the results to the database and a message to the system log
-	    &end_job($dbh, $job_id, "srun", $report)
-		or death('emerg', "job_id=$job_id: $Spkdb::errstr");
+	    # Place a message in the system log
 	    syslog('info', "job_id=$job_id terminated normally");
 
 	    # Remove the working directory
@@ -333,7 +353,7 @@ sub reaper {
 	}
 	# Error termination
 	else {
-	    my $end_code = "serr";
+	    $end_code = "serr";
 	    my $err_msg = "";
 	    my $err_rpt = "";
 	    # Prepare part of an error message
@@ -372,16 +392,17 @@ sub reaper {
 		$end_code = "herr";
 		$err_msg = "run died unexpectedly: $status_msg";
 	    }
-	    # Place error report in database messages in system log
+	    # Format error report and place amessage in system log
 	    $report = format_error_report("$err_msg: $err_rpt");
-	    &end_job($dbh, $job_id, $end_code, $report)
-		or death('emerg', "job_id=$job_id: $Spkdb::errstr");
 	    syslog('info', "job_id=$job_id: $err_msg");
 
 	    # Rename working directory to make evidence easier to find
 	    rename "$tmp_dir/$working_dir", "$tmp_dir/$prefix_working_dir$job_id"
 		or death('emerg', "couldn't rename working directory");
 	}
+	$report = insert_optimizer_trace($optimizer_trace, $report);
+	&end_job($dbh, $job_id, $end_code, $report)
+	    or death('emerg', "job_id=$job_id: $Spkdb::errstr");
     }
     sigprocmask(SIG_SETMASK, $sigset)
 	or death('emerg', "could not restore SIGCHLD in reaper");
