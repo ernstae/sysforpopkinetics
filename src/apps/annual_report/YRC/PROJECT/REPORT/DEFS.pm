@@ -11,7 +11,7 @@ $STARTDATE = '2001-01-01';
 
 ## $ENDDATE DECLARATION
 ## THIS IS THE LATEST DATE FROM WHICH WE WILL INCLUDE PROJECTS
-$ENDDATE = '2003-06-11';
+$ENDDATE = '2010-12-31';
 
 ## THE NAME OF OUR LOCAL HOST IN THE REPORT
 ## THIS WILL NOT BE PRINTED IN THE NONHOST PORTION OF THE
@@ -24,7 +24,7 @@ $HOST_NAME = 'University of Washington';
 ## THE PROJECT FROM THE LOCAL RESOURCE CENTER
 ## THE GROUPS ARE LISTED THE ORDER WHICH THEY APPEAR IN THIS ARRAY
 ## ONLY PROJECTS AFFILIATED WITH THESE GROUPS IN THE DB WILL APPEAR IN THE REPORT   
-@LABS = ('IntMetab', 'LipidMetab', 'DynandKin', 'EnvTox', 'CBNet', 'PMImageD');
+@LABS = ('IntMetab', 'LipidMetab', 'PKPD', 'EnvTox', 'CBNet', 'PMImageD', 'SysMod', 'StatMod', 'SoftDev');
 
 ## %MEMBERS DECLARATION
 ## THIS IS A LIST OF RESEARCHERS ASSOCIATED WITH THE RESOURCE CENTER GROUP LABS
@@ -34,33 +34,24 @@ $HOST_NAME = 'University of Washington';
 ## THIS SHOULD REALLY BE MOVED TO XML OR A DATABASE
 %MEMBERS = (
    IntMetab=>[
-        ["Yates III, John R.", "Ph.D.", "Cell Biology", "Scripps Research Institute", "La Jolla", "CA"],
-        ["McDonald, W. Hayes", "Ph.D.", "Cell Biology", "Scripps Research Institute", "La Jolla", "CA"],
-        ["Anderson, Scott D.", "B.S.", "Cell Biology", "Scripps Research Institute", "La Jolla", "CA"], 
    ],
    LipidMetab=>[
-        ["Aebersold, Rudolph H.", "Ph.D.", "", "Institute for Systems Biology", "Seattle", "WA"],
-        ["Newitt, Richard A.", "Ph.D.", "", "Institute for Systems Biology", "Seattle", "WA"],   
    ],
-   DynandKin=>[
-        ["Fields, Stanley", "Ph.D", "Genome Sciences", "University of Washington", "Seattle", "WA"],
-        ["Hazbun, Tony R.", "Ph.D", "Genome Sciences", "University of Washington", "Seattle", "WA"],
-        ["Aranda, Jennifer R.", "B.A.", "Genome Sciences", "University of Washington", "Seattle", "WA"],
+   PKPD=>[
    ],
    EnvTox=>[
-        ["Davis, Trisha N.", "Ph.D.", "Biochemistry", "University of Washington", "Seattle", "WA"],
-        ["Muller, Eric G. D.", "Ph.D.", "Biochemistry", "University of Washington", "Seattle", "WA"],
-        ["Sundin, Bryan A.", "B.S.", "Biochemistry", "University of Washington", "Seattle", "WA"],   
-        ["Snydsman, Brian E.", "B.S.", "Biochemistry", "University of Washington", "Seattle", "WA"], 
    ],
    CBNet=>[
-        ["Baker, David", "Ph.D.", "Biochemistry", "University of Washington", "Seattle", "WA"],
-        ["Malmstroem, Lars G.", "M.S.", "Biochemistry", "University of Washington", "Seattle", "WA"],
-        ["Schief, William R.", "Ph.D.", "Biochemistry", "University of Washington", "Seattle", "WA"],
    ],
    PMImageD=>[
-        ["Riffle, Michael E.", "B.S.", "Biochemistry", "University of Washington", "Seattle", "WA"],
+   ],
+   SysMod=>[
+   ],
+   StatMod=>[
+   ],
+   SoftDev=>[
    ]
 );
 
 1;
+
