@@ -317,7 +317,13 @@ void NonmemTranslator::parseSource()
     table->insertUserVar( "RES" );
   if( myTarget == POP && table->findi( "WRES" ) == Symbol::empty() )
     table->insertUserVar( "WRES" );
-
+  if( table->findi( "MDV" ) == Symbol::empty() )
+    {
+      Symbol * s = table->insertLabel( "MDV", "", myRecordNums );
+      for( int i=0; i<myPopSize; i++ )
+	s->initial[i] = "0";
+      
+    }
   //
   // Generate the headers and definition files for IndData class and
   // DataSet class.
@@ -1353,18 +1359,32 @@ void NonmemTranslator::generateIndData( ) const
       // if an iteration fails, the system can return the previously
       // successfully computed values.
       //
+      const string sTHETA = SymbolTable::key( table->findi("theta")->name );
+      const string sETA   = SymbolTable::key( table->findi("eta")->name );
+      const string sEPS   = SymbolTable::key( table->findi("eps")->name );
+      const string sOMEGA = ( table->findi("omega")->name );
+      const string sSIGMA = ( table->findi("sigma")->name );
       pRawTable = rawTable->begin();
       for( ; pRawTable != rawTable->end(); pRawTable++ )
 	{
-	    if( find( labels->begin(), labels->end(), pRawTable->second.name ) 
-                == labels->end() )
+	  const string key = SymbolTable::key( pRawTable->second.name );
+	  //
+	  // The place holders for completed values.
+	  //
+	  if( key == sTHETA )
+	    oIndData_h << "," << endl << key << "( " << myThetaLen << " )";
+	  else if( key == sOMEGA )
+	    oIndData_h << "," << endl << key << "( " << myOmegaElemNum << " )";
+	  else if( key == sSIGMA )
+	    oIndData_h << "," << endl << key << "( " << mySigmaElemNum << " )";
+	  else if( key == sETA )
+	    oIndData_h << "," << endl << key << "( " << myEtaLen << " )";
+	  else if( key == sEPS )
+	    oIndData_h << "," << endl << key << "( " << myEpsLen << " )";
+	  else if( find( labels->begin(), labels->end(), pRawTable->second.name ) 
+	      == labels->end() )
 	    {
-	      oIndData_h << "," << endl;
-
-	      //
-	      // The place holders for completed values.
-	      //
- 	      oIndData_h << SymbolTable::key( pRawTable->second.name ) << "( nIn )";
+	      oIndData_h << "," << endl << key << "( nIn )";
 	    }
 	}
 
@@ -1624,6 +1644,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 
       oPred_h << "#include <vector>" << endl;
       oPred_h << "#include <string>" << endl;
+      oPred_h << "#include \"DataSet.h\"" << endl;
  
       //----------------------------------------------
       // Declaration
@@ -1656,8 +1677,6 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       oPred_h << "           const std::vector<Value>& spk_indepVar," << endl;
       oPred_h << "           std::vector<Value>& spk_depVar );" << endl;
 
-      // getComputedValues() returns a completed set of computed values.
-      oPred_h << "const DataSet<Value>& getComputedValues() const;" << endl;
       oPred_h << endl;
 
       //
@@ -1673,10 +1692,8 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       // 
       // Private member delarations
       //
-      // const DataSet<T> *data: A pointer to the read-only data set.
+      // const DataSet<T> *perm: A pointer to the read-only data set.
       // DataSet<T> temp:        The temporary storage for current values
-      // mutable int prev_i:     The previous index-to-individual value
-      // mutable int prev_j:     The previous index-to-data-record value
       // mutable string id:      A place holder for the current ID value
       // mutable T data_item1:   A place holder for a data item, data_item1
       // mutable T data_item2:   A place holder fot a data item, data_item2
@@ -1688,10 +1705,9 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       // mutable T NONMEM_var1:  A place holder for a NONMEM required variable
       // ...
       oPred_h << "private:" << endl;
-      oPred_h << "const DataSet<Value> *data;" << endl;
-      //      oPred_h << "DataSet<Value> temp;" << endl;
-      //oPred_h << "mutable int prev_i;" << endl;
-      //oPred_h << "mutable int prev_j;" << endl;
+      oPred_h << "const int nIndividuals;" << endl;
+      oPred_h << "const DataSet<Value> *perm;" << endl;
+      oPred_h << "DataSet<Value> temp;" << endl;
       oPred_h << "mutable bool isIterationCompleted;" << endl;
 
       // Taking care of the data items (from the data file).
@@ -1754,12 +1770,8 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       //----------------------------------------------
       oPred_h << "template <class Value>" << endl;
       oPred_h << "Pred<Value>::Pred( const DataSet<Value>* dataIn )" << endl;
-      oPred_h << ": data(dataIn)," << endl;
-      //oPred_h << "  prev_i(-1)," << endl;
-      //oPred_h << "  prev_j(-1)," << endl;
-      //oPred_h << "  nTheta(" << myThetaLen << ")," << endl;
-      //oPred_h << "  nEta(" << myEtaLen << ")," << endl;
-      //oPred_h << "  nEps(" << myEpsLen << ")," << endl;
+      oPred_h << ": perm( dataIn )," << endl;
+      oPred_h << "  nIndividuals( " << myPopSize << " )," << endl;
       oPred_h << "  isIterationCompleted( true )" << endl;
       oPred_h << "{" << endl;
       oPred_h << "}" << endl;
@@ -1784,15 +1796,15 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       oPred_h << "  assert( spk_thetaLen == " << myThetaLen << " );" << endl;
       oPred_h << "  assert( spk_etaLen   == " << myEtaLen << " );" << endl;
       oPred_h << "  assert( spk_epsLen   == " << myEpsLen << " );" << endl;
-      //oPred_h << "  assert( spk_fLen     == data->data[spk_i]->id.size() );" << endl;
-      //oPred_h << "  assert( spk_yLen     == data->data[spk_i]->id.size() );" << endl;
+      //oPred_h << "  assert( spk_fLen     == perm->data[spk_i]->id.size() );" << endl;
+      //oPred_h << "  assert( spk_yLen     == perm->data[spk_i]->id.size() );" << endl;
       oPred_h << endl;
 
       ///////////////////////////////////////////////////////////////////////////////////
       // Assign the current data (i,j) to appropriate variables
       // so that the user's (originally-fortran) code can easily
       // access them.
-      // ex.  cp = data->data[spk_i]->cp
+      // ex.  cp = perm->data[spk_i]->cp
       // ...given that the user's PRED code has a reference to something
       // ...like "aaa = cp * 10.0".
       //
@@ -1801,13 +1813,13 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
          const Symbol *s = table->findi( *pLabel );
          // label
          oPred_h << SymbolTable::key( s->name );
-         oPred_h << " = data->data[spk_i]->";
+         oPred_h << " = perm->data[spk_i]->";
 	 oPred_h << SymbolTable::key( s->name ) << "[spk_j];" << endl;
          // synonym
          if( !s->synonym.empty() )
          {
             oPred_h << SymbolTable::key( s->synonym );
-	    oPred_h << " = data->data[spk_i]->";
+	    oPred_h << " = perm->data[spk_i]->";
 	    oPred_h << SymbolTable::key( s->synonym ) << "[spk_j];" << endl;
          }
       }
@@ -1851,17 +1863,53 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       oPred_h << "// End User Code                           " << endl;
       oPred_h << "//=========================================" << endl;
       
-      /*
       ///////////////////////////////////////////////////////////////////////////////////
+      // Store the current values in temporary storage
+      // : the user defined variable values and the NONMEM required variable values.
+      for( pRawTable = rawTable->begin(); pRawTable != rawTable->end(); pRawTable++ )
+	{
+	  // THETA, ETA, EPS are given Pred::eval() as vectors by the caller.
+	  // So, we have to treat these guys a bit different from the user variables
+	  // which are scalar values.
+          const string label     = pRawTable->second.name;
+          const string label_key = SymbolTable::key( label );
+	  if( label_key == sTHETA 
+	      || label_key == sETA 
+	      || label_key == sEPS
+	      || label_key == sOMEGA 
+	      || label_key == sSIGMA )
+	    {
+	      oPred_h << "copy( " << label_key << ", " << label_key << " + ";
+	      if( label_key == sTHETA )
+		oPred_h << myThetaLen;
+	      else if( label_key == sETA )
+		oPred_h << myEtaLen;
+	      else //if( label_key == sEPS )
+		oPred_h << myEpsLen;
+	      oPred_h << ", temp.data[ spk_i ]->" << label_key << ".begin() );" << endl;
+	    }
+	  else
+	    {
+	      if( find( labels->begin(), labels->end(), label ) 
+                  == labels->end() )
+		{
+		  oPred_h << "temp.data[ spk_i ]->" << label_key;
+		  oPred_h << "[ spk_j ]";
+		  oPred_h << " = " << label_key << ";" << endl;
+		}
+	    }
+	}   
+      oPred_h << endl;
+
       // Saving/moving computed values to ensure a complete set of values
       // is available even when a failure occurs.
       //
-      oPred_h << "if( spk_i < prev_i )" << endl;
+      oPred_h << "if( spk_i == " << myPopSize << "-1 && spk_j == perm->data[spk_i]->id.size()-1 )" << endl;
       oPred_h << "{" << endl;
       oPred_h << "  // This means, SPK advanced in iteration." << endl;
       oPred_h << "  // Move temporary storage to permanent storage." << endl;
       oPred_h << "  isIterationCompleted = true;" << endl;
-      oPred_h << "  for( int i=0; i<data->popSize; i++ )" << endl;
+      oPred_h << "  for( int i=0; i < nIndividuals; i++ )" << endl;
       oPred_h << "  {" << endl;
       // User defined variables temp(current) => permanent
       // The user defined scalar variables
@@ -1871,7 +1919,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 	  const string label_key = SymbolTable::key( label );
 	  if( find( labels->begin(), labels->end(), label ) == labels->end() )
 	    {
-	      oPred_h << "    data->data[ i ]->" << label_key;
+	      oPred_h << "    perm->data[ i ]->" << label_key;
 	      oPred_h << " = temp.data[ i ]->";
 	      oPred_h << label_key << ";" << endl;
 	    }
@@ -1883,71 +1931,19 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       oPred_h << "  isIterationCompleted = false;" << endl;
       oPred_h << "}" << endl;
       oPred_h << endl;
-      */
 
-      // Store the current values in temporary storage
-      // : the user defined variable values and the NONMEM required variable values.
-      for( pRawTable = rawTable->begin(); pRawTable != rawTable->end(); pRawTable++ )
-	{
-	  // THETA, ETA, EPS are given Pred::eval() as vectors by the caller.
-	  // So, we have to treat these guys a bit different from the user variables
-	  // which are scalar values.
-          const string label     = pRawTable->second.name;
-          const string label_key = SymbolTable::key( label );
-	  /*
-	  if( label_key == sTHETA || label_key == sETA || label_key == sEPS
-	  || label_key == sOMEGA || label_key == sSIGMA )
-	    {
-	      oPred_h << "copy( " << label_key << ".begin(), " << label_key << ".begin() + ";
-	      if( label_key == sTHETA )
-		oPred_h << myThetaLen;
-	      else if( label_key == sETA )
-		oPred_h << myEtaLen;
-	      else //if( label_key == sEPS )
-		oPred_h << myEpsLen;
-	      oPred_h << ", data->data[ spk_i ]->" << label_key << ".begin() );" << endl;
-	    }
-	  else
-	  */
-	  if( label_key != sTHETA 
-	      && label_key != sETA 
-	      && label_key != sEPS
-	      && label_key != sOMEGA
-	      && label_key != sSIGMA )
-	    {
-	      if( find( labels->begin(), labels->end(), label ) 
-                  == labels->end() )
-		{
-		  oPred_h << "data->data[ spk_i ]->" << label_key;
-		  oPred_h << "[ spk_j ]";
-		  oPred_h << " = " << label_key << ";" << endl;
-		}
-	    }
-	}   
-      oPred_h << endl;
       ///////////////////////////////////////////////////////////////////////////////////
 
       // Set the output values
       oPred_h << "spk_depVar[ spk_fOffset ] = f;" << endl;
       oPred_h << "spk_depVar[ spk_yOffset ] = y;" << endl;
 
-      // Save the current i and j values for future reference
-      //oPred_h << "prev_i = spk_i;" << endl;
-      //oPred_h << "prev_j = spk_j;" << endl;
-
       // Pred::eval() returns true if MDV(i,j) is 0, which means DV is NOT missing.
       // In this iteration, it is assumed that MDV=true for all, so return true.
-      oPred_h << "return true;" << endl;
+      oPred_h << "if( perm->data[ spk_i ]->mdv[ spk_j ] == 0 )" << endl;
+      oPred_h << "   return true;" << endl;
+      oPred_h << "else return false;" << endl;
 
-      oPred_h << "}" << endl;
-
-      oPred_h << "template <class Value>" << endl;
-      oPred_h << "const DataSet<Value>& Pred<Value>::getComputedValues() const" << endl;
-      oPred_h << "{" << endl;
-      oPred_h << "  if( isIterationCompleted )" << endl;
-      oPred_h << "    return data;" << endl;
-      //oPred_h << "  else" << endl;
-      //oPred_h << "    return temp;" << endl;
       oPred_h << "}" << endl;
 
       oPred_h << "template <class Value>" << endl;
@@ -1982,17 +1978,16 @@ void NonmemTranslator::generateIndDriver( ) const
   ofstream oDriver ( fDriver_cpp );
   assert( oDriver.good() );
 
+  const Symbol* pTheta = table->findi("theta");
+  const Symbol* pOmega = table->findi("omega");
+
   oDriver << "#include <iostream>" << endl;
   oDriver << "#include <fstream>" << endl;
   oDriver << "#include <sys/time.h>" << endl;
-  oDriver << "#include \"IndData.h\"" << endl;
-  oDriver << "#include \"DataSet.h\"" << endl;
-  oDriver << "#include \"Pred.h\"" << endl;
   oDriver << endl;
 
   oDriver << "#include <spk/SpkValarray.h>" << endl;
   oDriver << "#include <spk/SpkException.h>" << endl;
-  oDriver << "#include \"IndPredModel.h\"" << endl;
   if( myIsEstimate )
   {
      oDriver << "#include <spk/fitIndividual.h>" << endl;
@@ -2002,6 +1997,16 @@ void NonmemTranslator::generateIndDriver( ) const
      oDriver << "#include <spk/indStatistics.h>" << endl;
   if( myIsSimulate )
      oDriver << "#include <spk/simulate.h>" << endl;
+  oDriver << "#include \"IndData.h\"" << endl;
+  oDriver << "#include \"DataSet.h\"" << endl;
+  oDriver << endl;
+
+  oDriver << "///////////////////////////////////////////////////////////////////////////////////" << endl;
+  oDriver << "//   NONMEM PRED SPECIFIC" << endl;
+  oDriver << "#include \"Pred.h\"" << endl;
+  oDriver << "#include \"IndPredModel.h\"" << endl;
+  oDriver << "//" << endl;
+  oDriver << "///////////////////////////////////////////////////////////////////////////////////" << endl;
   oDriver << endl;
 
   oDriver << "using SPK_VA::valarray;" << endl;
@@ -2011,17 +2016,45 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "int main( int argc, const char argv[] )" << endl;
   oDriver << "{" << endl;
 
+  oDriver << "/*******************************************************************/" << endl;
+  oDriver << "/*                                                                 */" << endl;
+  oDriver << "/*   Set up                                                        */" << endl;
+  oDriver << "/*                                                                 */" << endl;
+  oDriver << "/*******************************************************************/" << endl;
   oDriver << "char fError[] = \"spk_error.tmp\";" << endl;
   oDriver << "ofstream oError( fError );" << endl;
-  oDriver << "assert( oError.good() );" << endl;
+  oDriver << "if( !oError.good() )" << endl;
+  oDriver << "  {" << endl;
+  oDriver << "      cerr << \"Faital error!!!  Failed to create a file, spk_error.tmp!!!  Terminating...\" << endl;" << endl;
+  oDriver << "      return -1;" << endl;
+  oDriver << "  }" << endl;
+  oDriver << endl;
 
-  oDriver << "const int nTheta = " << myThetaLen << ";" << endl;
   oDriver << "const int nY = " << myRecordNums.sum() << ";" << endl;
+  oDriver << "DataSet<double> set;" << endl;
+  oDriver << endl;
+  
+  oDriver << "const bool isSimRequested = " << (myIsSimulate? "true":"false") << ";" << endl;
+  oDriver << "bool haveCompleteData = false;" << endl;
   if( myIsSimulate )
     oDriver << "const unsigned int seed = " << mySeed << ";" << endl;
   oDriver << endl;
 
-  const Symbol* pTheta = table->findi("theta");
+  oDriver << "const bool isOptRequested = " << (myIsEstimate? "true":"false") << ";" << endl;
+  oDriver << "bool isOptSuccess  = false;" << endl;
+  oDriver << endl;
+
+  oDriver << "const bool isStatRequested = " << (myIsStat? "true":"false") << ";" << endl;
+  oDriver << "bool isStatSuccess = false;" << endl;
+  oDriver << endl;
+
+  oDriver << "//////////////////////////////////////////////////////////////////////" << endl;
+  oDriver << "//   NONMEM Specific" << endl;
+  oDriver << endl;
+
+  oDriver << "const int nTheta = " << myThetaLen << ";" << endl;
+  oDriver << endl;
+
   oDriver << "double c_thetaIn[nTheta] = { ";
   for( int j=0; j<myThetaLen; j++ )
     {
@@ -2067,17 +2100,40 @@ void NonmemTranslator::generateIndDriver( ) const
       oDriver << "valarray<double> thetaStep( nTheta );" << endl;
     }
   oDriver << endl;
-
   oDriver << "valarray<double> thetaOut( nTheta );" << endl;
-  
-  oDriver << "DataSet<double> set;" << endl;
+
+  // Omega
+  oDriver << "const int nOmega   = " << myOmegaElemNum;
+  oDriver << "; // #of elements in Omega matrix" << endl;
+  oDriver << "const int dimOmega = " << myOmegaDim;
+  oDriver << "; // dimension of Omeaga matrix" << endl;
+  oDriver << "double c_omegaIn[nOmega] = { "; 
+  for( int j=0; j<myOmegaElemNum; j++ )
+    {
+      if( j>0 )
+	oDriver << ", ";
+      oDriver << pOmega->initial[0][j];
+    }
+  oDriver << " };" << endl;
+  oDriver << "const valarray<double> omegaIn( c_omegaIn, nOmega );" << endl;
+  oDriver << "valarray<double> omegaOut( nOmega );" << endl;
+  oDriver << endl;
+  oDriver << "//" << endl;
+  oDriver << "//////////////////////////////////////////////////////////////" << endl;
+  oDriver << endl;
+
+  oDriver << "//////////////////////////////////////////////////////////////////////" << endl;
+  oDriver << "//   NONMEM PRED Specific" << endl;
   oDriver << "Pred<double> mPred(&set);" << endl;
   if( myOmegaStruct == Symbol::TRIANGLE )
-    oDriver << "enum PredModel::COV_STRUCT omegaStruct = BLOCK;" << endl;
+    oDriver << "enum PredModel::COV_STRUCT omegaStruct = PredModel::BLOCK;" << endl;
   else 
-    oDriver << "enum PredModel::COV_STRUCT omegaStruct = DIAGONAL;" << endl;
+    oDriver << "enum PredModel::COV_STRUCT omegaStruct = PredModel::DIAGONAL;" << endl;
   
-  oDriver << "IndPredModel model( nTheta, thetaLow, thetaUp, thetaIn, nEta, omegaStruct, omegaIn );" << endl;
+  oDriver << "IndPredModel model( nTheta, thetaLow, thetaUp, thetaIn, omegaStruct, omegaIn );" << endl;
+  oDriver << "//" << endl;
+  oDriver << "//////////////////////////////////////////////////////////////////////" << endl;
+  oDriver << endl;
 
   oDriver << "const int nB = model.getNIndPar();" << endl;
   oDriver << "valarray<double> bIn  ( nB );" << endl;
@@ -2085,26 +2141,41 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "valarray<double> bLow ( nB );" << endl;
   oDriver << "valarray<double> bUp  ( nB );" << endl;
   oDriver << "valarray<double> bOut ( nB );" << endl;
+  if( myIsEstimate )
+    {
+      oDriver << "double           bObjOut;" << endl;
+      oDriver << "valarray<double> bObj_bOut( nB );" << endl;
+      oDriver << "valarray<double> bObj_b_bOut( nB * nB );" << endl;
+      oDriver << endl;
+      oDriver << "const double eps   = " << myIndEpsilon    << ";" << endl;
+      oDriver << "const int    mitr  = " << myIndMitr       << ";" << endl;
+      oDriver << "const int    trace = " << myIndTraceLevel << ";" << endl;
+      oDriver << "Optimizer    opt( eps, mitr, trace );" << endl;
+    }
+  oDriver << endl;  
   oDriver << "model.getIndPar       ( bIn );" << endl;
   oDriver << "model.getIndParLimits ( bLow, bUp );" << endl;
   oDriver << "model.getIndParStep   ( bStep );" << endl;
   oDriver << endl;
 
-  // do data simulation first to replace DV data in IndData objects
-  oDriver << "bool haveCompleteData = false;" << endl;
+  oDriver << "/*******************************************************************/" << endl;
+  oDriver << "/*                                                                 */" << endl;
+  oDriver << "/*   Data Initialization                                           */" << endl;
+  oDriver << "/*                                                                 */" << endl;
+  oDriver << "/*******************************************************************/" << endl;
   if( myIsSimulate )
     {
        oDriver << "valarray<double> y   ( nY );" << endl;
        oDriver << "valarray<double> yOut( nY );" << endl;
        oDriver << "try" << endl;
        oDriver << "{" << endl;
-       oDriver << "   simulate( model, alpIn, nY, bLow, bUp, yOut, bOut, seed );" << endl;
+       oDriver << "   simulate( model, nY, bIn, yOut, seed );" << endl;
        if( myIsEstimate )
 	 {
 	   oDriver << "   bIn = bOut;" << endl;
 	   oDriver << "   y   = yOut;" << endl;
 	 }
-       oDriver << "haveCompleteData = true;" << endl;
+       oDriver << "   haveCompleteData = true;" << endl;
        oDriver << "}" << endl;
        oDriver << "catch( const SpkException& e )" << endl;
        oDriver << "{" << endl;
@@ -2149,56 +2220,71 @@ void NonmemTranslator::generateIndDriver( ) const
       oDriver << "haveCompeleteData = true;" << endl;
       oDriver << endl;
     }
+
   if( myIsEstimate )
     {
-      oDriver << "if( haveCompleteData )" << endl;
-      oDriver << "{" << endl;
-
-      oDriver << "double           bObjOut;" << endl;
-      oDriver << "valarray<double> bObj_bOut( nB );" << endl;
-      oDriver << "valarray<double> bObj_b_bOut( nB * nB );" << endl;
-      oDriver << endl;
-      oDriver << "const double eps   = " << myIndEpsilon    << ";" << endl;
-      oDriver << "const int    mitr  = " << myIndMitr       << ";" << endl;
-      oDriver << "const int    trace = " << myIndTraceLevel << ";" << endl;
-      oDriver << "Optimizer    opt( eps, mitr, trace );" << endl;
-      oDriver << endl;
+      oDriver << "/*******************************************************************/" << endl;
+      oDriver << "/*                                                                 */" << endl;
+      oDriver << "/*   Parameter Estimation                                          */" << endl;
+      oDriver << "/*                                                                 */" << endl;
+      oDriver << "/*******************************************************************/" << endl;
       oDriver << "timeval optBegin, optEnd;" << endl;
-      oDriver << "gettimeofday( &optBegin, NULL );" << endl;
+      oDriver << "double optTimeSec = 0.0;" << endl;
+      oDriver << "if( isOptRequested && haveCompleteData )" << endl;
+      oDriver << "{" << endl;
+      oDriver << "  gettimeofday( &optBegin, NULL );" << endl;
       
-      oDriver << "try" << endl;
-      oDriver << "{" << endl;
-      oDriver << "   fitIndividual( model," << endl;
-      oDriver << "                  y," << endl;
-      oDriver << "                  opt," << endl;
-      oDriver << "                  bLow," << endl;
-      oDriver << "                  bUp," << endl;
-      oDriver << "                  bIn," << endl;
-      oDriver << "                  bStep," << endl;
-      oDriver << "                 &bOut," << endl;
-      oDriver << "                 &bObjOut," << endl;
-      oDriver << "                 &bObj_bOut," << endl;
-      oDriver << "                 &bObj_b_bOut," << endl;
-      oDriver << "                  true);" << endl;
+      oDriver << "  try" << endl;
+      oDriver << "  {" << endl;
+      oDriver << "     fitIndividual( model," << endl;
+      oDriver << "                    y," << endl;
+      oDriver << "                    opt," << endl;
+      oDriver << "                    bLow," << endl;
+      oDriver << "                    bUp," << endl;
+      oDriver << "                    bIn," << endl;
+      oDriver << "                    bStep," << endl;
+      oDriver << "                   &bOut," << endl;
+      oDriver << "                   &bObjOut," << endl;
+      oDriver << "                   &bObj_bOut," << endl;
+      oDriver << "                   &bObj_b_bOut," << endl;
+      oDriver << "                    true);" << endl;
+      oDriver << "     isOptSuccess = true;" << endl;
+      oDriver << "  }" << endl;
+      oDriver << "  catch( const SpkException& e )" << endl;
+      oDriver << "  {" << endl;
+      oDriver << "     oError << e << endl;" << endl;
+      oDriver << "     isOptSuccess = false;" << endl;
+      oDriver << "  }" << endl;
+      oDriver << "  catch( ... )" << endl;
+      oDriver << "  {" << endl;
+      oDriver << "     oError << \"Unknown exception: failed in parameter estimation!!!\" << endl;" << endl;
+      oDriver << "     isOptSuccess = false;" << endl;
+      oDriver << "  }" << endl;
+      oDriver << "  gettimeofday( &optEnd, NULL );" << endl;
+      oDriver << "  optTimeSec = difftime( optEnd.tv_sec, optBegin.tv_sec );" << endl;
+      oDriver << endl;
+      oDriver << "  //////////////////////////////////////////////////////////////////////" << endl;
+      oDriver << "  //   NONMEM Specific" << endl;
+      oDriver << "  if( isOptSuccess )" << endl;
+      oDriver << "  {" << endl;
+      oDriver << "     model.getTheta( thetaOut );" << endl;
+      oDriver << "     model.getOmega( omegaOut );" << endl;
+      oDriver << "  }" << endl;
+      oDriver << "  //" << endl;
+      oDriver << "  //////////////////////////////////////////////////////////////////////" << endl;    
       oDriver << "}" << endl;
-      oDriver << "catch( const SpkException& e )" << endl;
-      oDriver << "{" << endl;
-      oDriver << "   cerr << e << endl;" << endl;
-      oDriver << "   return 1;" << endl;
-      oDriver << "}" << endl;
-      oDriver << "catch( ... )" << endl;
-      oDriver << "{" << endl;
-      oDriver << "   cerr << \"Unknown exception: failed in parameter estimation!!!\" << endl;" << endl;
-      oDriver << "   return 1;" << endl;
-      oDriver << "}" << endl;
-      
-      oDriver << "gettimeofday( &optEnd, NULL );" << endl;
-      oDriver << "double optTimeSec = difftime( optEnd.tv_sec, optBegin.tv_sec );" << endl;
 
       // Statistics can be only computed when the parameter estimation has been done.
       if( myIsStat )
 	{
+
+	  oDriver << "/*******************************************************************/" << endl;
+	  oDriver << "/*                                                                 */" << endl;
+	  oDriver << "/*   Statistics                                                    */" << endl;
+	  oDriver << "/*                                                                 */" << endl;
+	  oDriver << "/*******************************************************************/" << endl;
   	  oDriver << "timeval statBegin, statEnd;" << endl;
+	  oDriver << "double statTimeSec = 0.0;" << endl;
           if( myIsCov )
 	    oDriver << "valarray<double> covOut( nB * nB );" << endl;
 	  if( myIsStderr )
@@ -2212,56 +2298,72 @@ void NonmemTranslator::generateIndDriver( ) const
 	  if( myIsInvCov )
 	    oDriver << "valarray<double> invCov( nB * nB );" << endl;
 	  
+          oDriver << "valarray<double> f_bOut( nY * nB );" << endl;
+	  oDriver << "valarray<double> R_bOut( nY * nY * nB );" << endl;
+	  oDriver << "valarray<double> RInvOut( nY * nY );" << endl;
+	  oDriver << "if( isStatRequested && haveCompleteData && isOptSuccess )" << endl;
+          oDriver << "{" << endl;
+	  oDriver << "   model.setIndPar( bOut );" << endl;
+	  oDriver << "   model.dataMean_indPar( f_bOut );" << endl;
+	  oDriver << "   model.dataVariance_indPar( R_bOut );" << endl;
+	  oDriver << "   model.dataVarianceInv( RInvOut );" << endl;
+
           // indStatistics
-	  oDriver << "gettimeofday( &statBegin, NULL );" << endl;
-          oDriver << "try" << endl;
-          oDriver << "{" << endl;
-          oDriver << "   indStatistics( model, " << endl;
-	  oDriver << "                  bOut, " << endl;
-          oDriver << "                  " << (myIsCov?         "covOut"        :"NULL") << ", " << endl;
-          oDriver << "                  " << (myIsStderr?      "seOut"         :"NULL") << ", " << endl;
-          oDriver << "                  " << (myIsCorrelation? "correlationOut":"NULL") << ", " << endl;
-          oDriver << "                  " << (myIsCoefficient? "coeficientOut" :"NULL") << ", " << endl;
-          oDriver << "                  " << (myIsConfidence?  "confidenceOut" :"NULL") << " );" << endl;
-          oDriver << "}" << endl;
-          oDriver << "catch( const SpkException& e )" << endl;
-          oDriver << "{" << endl;
-          oDriver << "   cerr << e << endl;" << endl;
-          oDriver << "   return 1;" << endl;
-          oDriver << "}" << endl;
-          oDriver << "catch( ... )" << endl;
-          oDriver << "{" << endl;
-          oDriver << "   cerr << \"Unknown exception: failed in statistics calculation!!!\" << endl;" << endl;
-          oDriver << "   return 1;" << endl;
-          oDriver << "}" << endl;
+	  oDriver << "   gettimeofday( &statBegin, NULL );" << endl;
+          oDriver << "   try" << endl;
+          oDriver << "   {" << endl;
+          oDriver << "      indStatistics( bOut, " << endl;
+	  oDriver << "                     f_bOut," << endl;
+          oDriver << "                     R_bOut," << endl;
+	  oDriver << "                     RInvOut," << endl;
+          oDriver << "                     " << (myIsCov?         "&covOut"        :"NULL") << ", " << endl;
+          oDriver << "                     " << (myIsStderr?      "&seOut"         :"NULL") << ", " << endl;
+          oDriver << "                     " << (myIsCorrelation? "&correlationOut":"NULL") << ", " << endl;
+          oDriver << "                     " << (myIsCoefficient? "&coeficientOut" :"NULL") << ", " << endl;
+          oDriver << "                     " << (myIsConfidence?  "&confidenceOut" :"NULL") << " );" << endl;
+	  oDriver << "      isStatSuccess = true;" << endl;
+          oDriver << "   }" << endl;
+          oDriver << "   catch( const SpkException& e )" << endl;
+          oDriver << "   {" << endl;
+          oDriver << "      oError << e << endl;" << endl;
+          oDriver << "      isStatSuccess = false;" << endl;
+          oDriver << "   }" << endl;
+          oDriver << "   catch( ... )" << endl;
+          oDriver << "   {" << endl;
+          oDriver << "      oError << \"Unknown exception: failed in statistics calculation!!!\" << endl;" << endl;
+          oDriver << "      isStatSuccess = false;" << endl;
+          oDriver << "   }" << endl;
+          oDriver << endl;
 
 	  if( myIsInvCov )
 	    {
-	      oDriver << "try" << endl;
-	      oDriver << "{" << endl;
-	      oDriver << "   invCovOut = inverse( covOut, nB );" << endl;
-	      oDriver << "}" << endl;
-	      oDriver << "catch( const SpkException& e )" << endl;
-	      oDriver << "{" << endl;
-	      oDriver << "   cerr << e << endl;" << endl;
-	      oDriver << "   return 1;" << endl;
-	      oDriver << "}" << endl;
-	      oDriver << "catch( ... )" << endl;
-	      oDriver << "{" << endl;
-	      oDriver << "   cerr << \"Unknown exception: failed to invert the covariance of the final estimate of individual parameter!!!\" << endl;" << endl;
-	      oDriver << "   return 1;" << endl;
-	      oDriver << "}" << endl;
+	      oDriver << "   try" << endl;
+	      oDriver << "   {" << endl;
+	      oDriver << "      invCovOut = inverse( covOut, nB );" << endl;
+	      oDriver << "   }" << endl;
+	      oDriver << "   catch( const SpkException& e )" << endl;
+	      oDriver << "   {" << endl;
+	      oDriver << "      oError << e << endl;" << endl;
+	      oDriver << "      isStatSuccess = false;" << endl;
+	      oDriver << "   }" << endl;
+	      oDriver << "   catch( ... )" << endl;
+	      oDriver << "   {" << endl;
+	      oDriver << "      oError << \"Unknown exception: failed to invert the covariance of the final estimate of individual parameter!!!\" << endl;" << endl;
+	      oDriver << "      isStatSuccess = false;" << endl;
+	      oDriver << "   }" << endl;
 	    }
-	  oDriver << "gettimeofday( &statEnd, NULL );" << endl;
-	  oDriver << "double statTimeSec = difftime( statEnd.tv_sec, statBegin.tv_sec );" << endl;
+	  oDriver << "   gettimeofday( &statEnd, NULL );" << endl;
+	  oDriver << "   statTimeSec = difftime( statEnd.tv_sec, statBegin.tv_sec );" << endl;
 	  oDriver << "}" << endl;
        }
     }
+  oDriver << endl;
 
-
-  //
-  // Results assembly
-  //
+  oDriver << "/*******************************************************************/" << endl;
+  oDriver << "/*                                                                 */" << endl;
+  oDriver << "/*   ResultML Document                                             */" << endl;
+  oDriver << "/*                                                                 */" << endl;
+  oDriver << "/*******************************************************************/" << endl;
   oDriver << "ofstream oResults( \"result.xml\" );" << endl;
   oDriver << "if( !oResults.good() )" << endl;
   oDriver << "{" << endl;
@@ -2270,32 +2372,60 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "}" << endl;
 
   oDriver << "oResults << \"<spkreportML>\" << endl;" << endl;
- 
-  oDriver << "oResults << \"<error_message>\" << endl;" << endl;
-  oDriver << "oResults << oError << endl;" << endl;
-  oDriver << "oResults << \"</error_message>\" << endl;" << endl;
+  oDriver << endl;
 
+  oDriver << "char buf[ SpkError::maxMessageLen() ];" << endl;
+  oDriver << "ifstream iError( fError );" << endl;
+  oDriver << "oResults << \"<error_message>\" << endl;" << endl;
+  oDriver << "while( iError.good() )" << endl;
+  oDriver << "{" << endl;
+  oDriver << "   iError.getline(buf, SpkError::maxMessageLen() );" << endl;
+  oDriver << "   oResults << buf << endl;" << endl;
+  oDriver << "}" << endl;
+  oDriver << "oResults << \"</error_message>\" << endl;" << endl;
+  oDriver << "iError.close();" << endl;
+
+  oDriver << endl;
+
+  oDriver << "if( !haveCompleteData )" << endl;
+  oDriver << "{" << endl;
+  oDriver << "   oResults << \"</spkreportML>\" << endl;" << endl;
+  oDriver << "   oResults.close();" << endl;
+  oDriver << "   return 1;" << endl;
+  oDriver << "}" << endl;
+  oDriver << endl;
 
   if( myIsEstimate )
     {
-      oDriver << "if( haveCompleteData )" << endl;
-      oDriver << "{" << endl;
       oDriver << "oResults << \"<ind_analysis_result>\" << endl;" << endl;
+      oDriver << endl;
       oDriver << "oResults << \"<ind_opt_result elapsedtime=\\\"\" << optTimeSec << \"\\\">\" << endl;" << endl;
       oDriver << "oResults << \"<ind_obj_out>\" << endl;" << endl;
       oDriver << "oResults << \"<value>\" << bObjOut << \"</value>\" << endl;" << endl;
       oDriver << "oResults << \"</ind_obj_out>\" << endl;" << endl;
-      oDriver << "oResults << \"<theta_out>\" << endl;" << endl;
+      oDriver << endl;
+
+      oDriver << "//////////////////////////////////////////////////////////////////////" << endl;
+      oDriver << "//    NONMEM Specific" << endl;
       // theta (b)
-      oDriver << "for( int i=0; i<nB; i++ )" << endl;
+      oDriver << "oResults << \"<theta_out>\" << endl;" << endl;
+      oDriver << "for( int i=0; i<nTheta; i++ )" << endl;
       oDriver << "{" << endl;
-      oDriver << "   oResults << \"<value>\" << bOut[i] << \"</value>\" << endl;" << endl;
+      oDriver << "   oResults << \"<value>\" << thetaOut[i] << \"</value>\" << endl;" << endl;
       oDriver << "}" << endl;
       oDriver << "oResults << \"</theta_out>\" << endl;" << endl;
-      oDriver << "oResults << \"<omega_out>\" << endl;" << endl;
       // omega 
+      oDriver << "oResults << \"<omega_out>\" << endl;" << endl;
+      oDriver << "for( int i=0; i<nOmega; i++ )" << endl;
+      oDriver << "{" << endl;
+      oDriver << "   oResults << \"<value>\" << omegaOut[i] << \"</value>\" << endl;" << endl;
+      oDriver << "}" << endl;
       oDriver << "oResults << \"</omega_out>\" << endl;" << endl;
+      oDriver << "//" << endl;
+      oDriver << "//////////////////////////////////////////////////////////////////////" << endl;
+      oDriver << endl;
       oDriver << "oResults << \"</ind_opt_result>\" << endl;" << endl;
+      oDriver << endl;
 
       if( myIsStat )
 	{
@@ -2362,9 +2492,10 @@ void NonmemTranslator::generateIndDriver( ) const
 	      oDriver << "oResults << \"</ind_confidence_out>\" << endl;" << endl;
 	    }
 	  oDriver << "oResults << \"</ind_stat_result>\" << endl;" << endl;
+	  oDriver << endl;
 	}
       oDriver << "oResults << \"</ind_analysis_result>\" << endl;" << endl;
-      oDriver << "}" << endl;
+      oDriver << endl;
     }
 
 
@@ -2380,16 +2511,16 @@ void NonmemTranslator::generateIndDriver( ) const
   const vector<string>::const_iterator pLabelEnd   = table->getLabels()->end();
   vector<string> whatGoesIn;  // will hold those labels in the order that actually go into the data section.
 
-  oDriver << "if( haveCompleteData )" << endl;
-  oDriver << "{" << endl;
-
   oDriver << "oResults << \"<presentation_data>\" << endl;" << endl;
   oDriver << "oResults << \"<data_labels>\" << endl;" << endl;
 
   // Put ID first in the sequence
   whatGoesIn.push_back( pID->name );
   oDriver << "oResults << \"<label name=\\\"" << pID->name << "\\\"/>\" << endl;" << endl;
+  oDriver << endl;
 
+  oDriver << "///////////////////////////////////////////////////////////////////" << endl;
+  oDriver << "//  Data Set Specific" << endl;
   // ...aaand, following ID is, all the left hand side quantities in the model definition.
   for( pEntry = t->begin(); pEntry!=t->end(); pEntry++ )
     {
@@ -2399,11 +2530,15 @@ void NonmemTranslator::generateIndDriver( ) const
 	  oDriver << "oResults << \"<label name=\\\"" << pEntry->second.name << "\\\"/>\" << endl;" << endl;
 	}
     }
+  oDriver << "//" << endl;
+  oDriver << "///////////////////////////////////////////////////////////////////" << endl;
   oDriver << "oResults << \"</data_labels>\" << endl;" << endl;
 
   vector<string>::const_iterator pWhatGoesIn;
   oDriver << "for( int i=0, cnt=1; i<nY; i++, cnt++ )" << endl;
   oDriver << "{" << endl;
+  oDriver << "   ///////////////////////////////////////////////////////////////////" << endl;
+  oDriver << "   //" << endl;
   oDriver << "   oResults << \"<row position=\\\"\" << cnt << \"\\\">\" << endl;" << endl;
   for( pWhatGoesIn = whatGoesIn.begin(); pWhatGoesIn!=whatGoesIn.end(); pWhatGoesIn++ )
     {
@@ -2419,10 +2554,11 @@ void NonmemTranslator::generateIndDriver( ) const
       oDriver << " << \"</value>\" << endl;" << endl;
     }
   oDriver << "   oResults << \"</row>\" << endl;" << endl;
+  oDriver << "   //" << endl;
+  oDriver << "   ///////////////////////////////////////////////////////////////////" << endl;
   oDriver << "}" << endl;
 
   oDriver << "oResults << \"</presentation_data>\" << endl;" << endl;
-  oDriver << "}" << endl;
 
   //
   //=============================================================================
@@ -2430,8 +2566,9 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "oResults << \"</spkreportML>\" << endl;" << endl;
 
   oDriver << "oResults.close();" << endl;
+  oDriver << "remove( fError );" << endl;
 
-  oDriver << "return 0;" << endl;
+  oDriver << "return !( haveCompleteData && isOptSuccess && isStatSuccess );" << endl;
   oDriver << "}" << endl;
   oDriver.close();
 }
@@ -2452,20 +2589,11 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "#include <iostream>" << endl;
   oDriver << "#include <fstream>" << endl;
   oDriver << "#include <sys/time.h>" << endl;
-  oDriver << "#include \"IndData.h\"" << endl;
-  oDriver << "#include \"DataSet.h\"" << endl;
-  oDriver << "#include \"Pred.h\"" << endl;
   oDriver << endl;
 
   oDriver << "#include <spk/SpkValarray.h>" << endl;
   oDriver << "#include <spk/SpkException.h>" << endl;
-
-  /////////////////////////////////////////////////////////////////
-  //  oDriver << "#include <spkpred/PopPredModel.h>" << endl;
-  oDriver << "#include \"PopPredModel.h\"" << endl;
-  /////////////////////////////////////////////////////////////////
-
-  if( myIsEstimate )
+   if( myIsEstimate )
   {
      oDriver << "#include <spk/fitPopulation.h>" << endl;
      oDriver << "#include <spk/Optimizer.h>" << endl;
@@ -2474,26 +2602,68 @@ void NonmemTranslator::generatePopDriver() const
      oDriver << "#include <spk/popStatistics.h>" << endl;
   if( myIsSimulate )
      oDriver << "#include <spk/simulate.h>" << endl;
+  oDriver << "#include \"IndData.h\"" << endl;
+  oDriver << "#include \"DataSet.h\"" << endl;
+  oDriver << endl;
+
+  oDriver << "///////////////////////////////////////////////////////////////////" << endl;
+  oDriver << "//   NONMEM PRED specific" << endl;
+  oDriver << "#include \"Pred.h\"" << endl;
+  oDriver << "#include \"PopPredModel.h\"" << endl;
+  oDriver << "//" << endl;
+  oDriver << "///////////////////////////////////////////////////////////////////" << endl;
   oDriver << endl;
 
   oDriver << "using SPK_VA::valarray;" << endl;
   oDriver << "using namespace std;" << endl;
   oDriver << endl;
+
   oDriver << "int main( int argc, const char argv[] )" << endl;
   oDriver << "{" << endl;
 
   oDriver << "char fError[] = \"spk_error.tmp\";" << endl;
   oDriver << "ofstream oError( fError );" << endl;
-  oDriver << "assert( oError.good() );" << endl;
-  
-  // #of individuals
-  oDriver << "const int nPop     = " << myPopSize;
-  oDriver << "; // #of subjects" << endl;
+  oDriver << "if( !oError.good() )" << endl;
+  oDriver << "{" << endl;
+  oDriver << "   cerr << \"Faital error!!!  Faild to create a file, \";" << endl;
+  oDriver << "   cerr << fError << \"!!!  Terminating...\" << endl;" << endl;
+  oDriver << "   return -1;" << endl;
+  oDriver << "}" << endl;
   oDriver << endl;
 
+  oDriver << "const int nPop = " << myPopSize << ";" << endl;
+  oDriver << "DataSet<double> set;" << endl;
+  oDriver << endl;
+
+  oDriver << "const bool isSimRequested  = " << (myIsSimulate? "true":"false") << ";" << endl;
+  oDriver << "bool haveCompleteData      = false;" << endl;
+  if( myIsSimulate )
+    oDriver << "const unsigned int seed  = " << mySeed << ";" << endl;
+
+  oDriver << "const bool isOptRequested  = " << (myIsEstimate? "true":"false") << ";" << endl;
+  oDriver << "bool isOptSuccess          = false;" << endl;
+  if( myIsEstimate )
+    {
+      oDriver << "Objective objective    = ";
+      if( myApproximation == FO )
+	oDriver << "FIRST_ORDER;" << endl;
+      else if( myApproximation == FOCE )
+	oDriver << "EXPECTED_HESSIAN;" << endl;
+      else
+	oDriver << "MODIFIED_LAPLACE;" << endl;
+    }
+
+  oDriver << "const bool isStatRequested = " << (myIsStat? "true":"false") << ";" << endl;
+  oDriver << "bool isStatSuccess         = false;" << endl;
+  if( myIsStat )
+    oDriver << "enum PopCovForm covForm  = " << myCovForm << ";" << endl;
+  oDriver << endl;
+
+  oDriver << "///////////////////////////////////////////////////////////////////" << endl;
+  oDriver << "// NONMEM Sepcific" << endl;
   // theta
-  oDriver << "const int nTheta = " << myThetaLen << "; // length of theta vector" << endl;
-  oDriver << "double c_thetaIn[nTheta] = { ";
+  oDriver << "const int nTheta          = " << myThetaLen << "; // length of theta vector" << endl;
+  oDriver << "double c_thetaIn[nTheta]  = { ";
   for( int j=0; j<myThetaLen; j++ )
     {
       if( j>0 )
@@ -2502,7 +2672,7 @@ void NonmemTranslator::generatePopDriver() const
     }
   oDriver << " };" << endl;
   oDriver << "const valarray<double> thetaIn( c_thetaIn, nTheta );" << endl;
-  oDriver << "double c_thetaUp[nTheta] = { ";
+  oDriver << "double c_thetaUp[nTheta]  = { ";
   for( int j=0; j<myThetaLen; j++ )
     {
       if( j>0 )
@@ -2524,9 +2694,9 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << endl;
 
   // Omega
-  oDriver << "const int nOmega   = " << myOmegaElemNum;
+  oDriver << "const int nOmega         = " << myOmegaElemNum;
   oDriver << "; // #of elements in Omega matrix" << endl;
-  oDriver << "const int dimOmega = " << myOmegaDim;
+  oDriver << "const int dimOmega       = " << myOmegaDim;
   oDriver << "; // dimension of Omeaga matrix" << endl;
   oDriver << "double c_omegaIn[nOmega] = { "; 
   for( int j=0; j<myOmegaElemNum; j++ )
@@ -2541,11 +2711,11 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << endl;
   
   // Sigma
-  oDriver << "const int nSigma   = " << mySigmaElemNum;
+  oDriver << "const int nSigma         = " << mySigmaElemNum;
   oDriver << "; // #of elements in Sigma matrix" << endl;
   oDriver << "const int dimSigma = " << mySigmaDim;
   oDriver << "; // order of Sigma matrix" << endl;
-  oDriver << "const int nEps = dimSigma;" << endl;
+  oDriver << "const int nEps           = dimSigma;" << endl;
   oDriver << "double c_sigmaIn[nSigma] = { ";
   for( int j=0; j<mySigmaElemNum; j++ )
     {
@@ -2558,7 +2728,7 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "valarray<double> sigmaOut( nSigma );" << endl;
   oDriver << endl;
 
-  oDriver << "const int nEta     = " << myEtaLen << ";" << endl;
+  oDriver << "const int nEta              = " << myEtaLen << ";" << endl;
   oDriver << "double c_etaIn[nEta * nPop] = { ";
   for( int i=0; i<myPopSize; i++ )
     {
@@ -2573,56 +2743,86 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "const valarray<double> etaIn ( c_etaIn, nEta * nPop );" << endl;
   oDriver << "valarray<double> etaOut( nEta * nPop );" << endl;
   oDriver << endl;
+  oDriver << "//" << endl;
+  oDriver << "///////////////////////////////////////////////////////////////////" << endl;
+  oDriver << endl;
 
-  oDriver << "DataSet<double> set;" << endl;
-  oDriver << "Pred<double>    mPred(&set);" << endl;
+  oDriver << "///////////////////////////////////////////////////////////////////" << endl;
+  oDriver << "//   NONMEM PRED Specific" << endl;
+  oDriver << "Pred<double> mPred(&set);" << endl;
   if( myOmegaStruct == Symbol::TRIANGLE )
-    oDriver << "enum PredModel::COV_STRUCT omegaStruct = PredModel::BLOCK;";
+    oDriver << "enum PredModel::COV_STRUCT omegaStruct = PredModel::BLOCK;" << endl;
   else
-    oDriver << "enum PredModel::COV_STRUCT omegaStruct = PredModel::DIAGONAL;";
+    oDriver << "enum PredModel::COV_STRUCT omegaStruct = PredModel::DIAGONAL;" << endl;
   if( mySigmaStruct == Symbol::TRIANGLE )
-    oDriver << "enum PredModel::COV_STRUCT sigmaStruct = PredModel::BLOCK;";
+    oDriver << "enum PredModel::COV_STRUCT sigmaStruct = PredModel::BLOCK;" << endl;
   else
-    oDriver << "enum PredModel::COV_STRUCT sigmaStruct = PredModel::DIAGONAL;";
+    oDriver << "enum PredModel::COV_STRUCT sigmaStruct = PredModel::DIAGONAL;" << endl;
 
-  oDriver << "PopPredModel model( nTheta, thetaLow, thetaUp, thetaIn, nEta, etaIn, omegaStruct, omegaIn, sigmaStruct, sigmaIn );" << endl;
+  oDriver << "PopPredModel model( nTheta," << endl;
+  oDriver << "                    thetaLow," << endl;
+  oDriver << "                    thetaUp," << endl;
+  oDriver << "                    thetaIn," << endl;
+  oDriver << "                    nEta," << endl;
+  oDriver << "                    etaIn," << endl;
+  oDriver << "                    omegaStruct," << endl;
+  oDriver << "                    omegaIn," << endl;
+  oDriver << "                    sigmaStruct," << endl;
+  oDriver << "                    sigmaIn );" << endl;
+  oDriver << "//" << endl;
+  oDriver << "///////////////////////////////////////////////////////////////////" << endl;
   oDriver << endl;
 
   oDriver << "const int nAlp = model.getNPopPar();" << endl;
   oDriver << "const int nB   = model.getNIndPar();" << endl;
-  oDriver << "const int offsetTheta = model.getOffsetTheta();" << endl;
-  oDriver << "const int offsetOmega = model.getOffsetOmega();" << endl;
-  oDriver << "const int offsetSigma = model.getOffsetSigma();" << endl;
+  oDriver << endl;
    
   oDriver << "valarray<double> alpIn  ( nAlp );" << endl;
   oDriver << "valarray<double> alpUp  ( nAlp );" << endl;
   oDriver << "valarray<double> alpLow ( nAlp );" << endl;
   oDriver << "valarray<double> alpStep( nAlp );" << endl;
   oDriver << "valarray<double> alpOut ( nAlp );" << endl;
+  if( myIsEstimate )
+    {
+      oDriver << "double           alpObjOut;" << endl;
+      oDriver << "valarray<double> alpObj_alpOut    ( nAlp );" << endl;
+      oDriver << "valarray<double> alpObj_alp_alpOut( nAlp * nAlp );" << endl;
+    }
   oDriver << "model.getPopPar         ( alpIn );" << endl;
   oDriver << "model.getPopParLimits   ( alpLow, alpUp );" << endl;
   oDriver << "model.getPopParStep     ( alpStep );" << endl;
+  oDriver << endl;
 
   oDriver << "valarray<double> bIn  ( nB );" << endl;
   oDriver << "valarray<double> bUp  ( nB );" << endl;
   oDriver << "valarray<double> bLow ( nB );" << endl;
+  if( myIsEstimate )
+    {
+      oDriver << "valarray<double> bStep( nB );" << endl;
+    }
   oDriver << "valarray<double> bOut ( nB * nPop );" << endl;
   oDriver << "model.getIndPar       ( bIn );" << endl;
   oDriver << "model.getIndParLimits ( bLow, bUp );" << endl;
   if( myIsEstimate )
     {
-      oDriver << "valarray<double> bStep( nB );" << endl;
-      oDriver << "model.getIndParStep( bStep );" << endl;
+      oDriver << "model.getIndParStep   ( bStep );" << endl;
     }
-
-  if( myIsSimulate )
-    oDriver << "const unsigned int seed = " << mySeed << ";" << endl;
-  if( myIsStat )
-    oDriver << "enum PopCovForm covForm = " << myCovForm << ";" << endl;
-
   oDriver << endl;
 
-  oDriver << "bool haveCompleteData = false;" << endl;
+  if( myIsEstimate )
+    {
+      oDriver << "const double popEps   = " << myPopEpsilon    << ";" << endl;
+      oDriver << "const int    popMitr  = " << myPopMitr       << ";" << endl;
+      oDriver << "const int    popTrace = " << myPopTraceLevel << ";" << endl;
+      oDriver << "Optimizer    popOpt( popEps, popMitr, popTrace );" << endl;
+      oDriver << endl;
+      oDriver << "const double indEps   = " << myIndEpsilon    << ";" << endl;
+      oDriver << "const int    indMitr  = " << myIndMitr       << ";" << endl;
+      oDriver << "const int    indTrace = " << myIndTraceLevel << ";" << endl;
+      oDriver << "Optimizer    indOpt( indEps, indMitr, indTrace );" << endl;
+      oDriver << endl;
+    }
+
   oDriver << "int c_N[nPop] = { ";
   for( int i=0; i<myPopSize; i++ )
     {
@@ -2633,32 +2833,38 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << " };" << endl;
   oDriver << "const valarray<int> N( c_N, nPop );" << endl; 
   oDriver << "const int nY = N.sum();" << endl; // total number of measurments" << endl;
+  oDriver << endl;
 
   // do data simulation first to replace DV data in IndData objects
+  oDriver << "/*******************************************************************/" << endl;
+  oDriver << "/*                                                                 */" << endl;
+  oDriver << "/*   Data Initialization                                           */" << endl;
+  oDriver << "/*                                                                 */" << endl;
+  oDriver << "/*******************************************************************/" << endl;
   if( myIsSimulate )
     {
-       oDriver << "valarray<double> y   ( nY );" << endl;
-       oDriver << "valarray<double> yOut( nY );" << endl;
-       oDriver << "try" << endl;
-       oDriver << "{" << endl;
-       oDriver << "   simulate( model, alpIn, N, bLow, bUp, yOut, bOut, seed );" << endl;
-       if( myIsEstimate )
-	 {
-	   oDriver << "   bIn = bOut;" << endl;
-	   oDriver << "   y   = yOut;" << endl;
-	 }
-       oDriver << "   haveCompleteData = true;" << endl;
-       oDriver << "}" << endl;
-       oDriver << "catch( const SpkException& e )" << endl;
-       oDriver << "{" << endl;
-       oDriver << "   oError << e << endl;" << endl;
-       oDriver << "   haveCompleteData = false;" << endl;
-       oDriver << "}" << endl;
-       oDriver << "catch( ... )" << endl;
-       oDriver << "{" << endl;
-       oDriver << "   oError << \"!!! Unknown exception: failed in data simulation!!!\" << endl;" << endl;
-       oDriver << "   haveCompleteData = false;" << endl;
-       oDriver << "}" << endl;
+      oDriver << "valarray<double> y   ( nY );" << endl;
+      oDriver << "valarray<double> yOut( nY );" << endl;
+      oDriver << "try" << endl;
+      oDriver << "{" << endl;
+      oDriver << "   simulate( model, alpIn, N, bLow, bUp, yOut, bOut, seed );" << endl;
+      if( myIsEstimate )
+	{
+	  oDriver << "   bIn = bOut;" << endl;
+	  oDriver << "   y   = yOut;" << endl;
+	}
+      oDriver << "   haveCompleteData = true;" << endl;
+      oDriver << "}" << endl;
+      oDriver << "catch( const SpkException& e )" << endl;
+      oDriver << "{" << endl;
+      oDriver << "   oError << e << endl;" << endl;
+      oDriver << "   haveCompleteData = false;" << endl;
+      oDriver << "}" << endl;
+      oDriver << "catch( ... )" << endl;
+      oDriver << "{" << endl;
+      oDriver << "   oError << \"!!! Unknown exception: failed in data simulation!!!\" << endl;" << endl;
+      oDriver << "   haveCompleteData = false;" << endl;
+      oDriver << "}" << endl;
     }
   else
     {
@@ -2696,95 +2902,79 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << endl;
     }
 
-  oDriver << "bool optSucceeded = false;" << endl;
   if( myIsEstimate )
     {
-      oDriver << "Objective objective = ";
-      if( myApproximation == FO )
-	oDriver << "FIRST_ORDER;" << endl;
-      else if( myApproximation == FOCE )
-	oDriver << "EXPECTED_HESSIAN;" << endl;
-      else
-	oDriver << "MODIFIED_LAPLACE;" << endl;
 
-      oDriver << "double           alpObjOut;" << endl;
-      oDriver << "valarray<double> alpObj_alpOut( nAlp );" << endl;
-      oDriver << "valarray<double> alpObj_alp_alpOut( nAlp * nAlp );" << endl;
-      oDriver << endl;
-      oDriver << "const double popEps   = " << myPopEpsilon    << ";" << endl;
-      oDriver << "const int    popMitr  = " << myPopMitr       << ";" << endl;
-      oDriver << "const int    popTrace = " << myPopTraceLevel << ";" << endl;
-      oDriver << "Optimizer    popOpt( popEps, popMitr, popTrace );" << endl;
-      oDriver << endl;
-      oDriver << "const double indEps   = " << myIndEpsilon    << ";" << endl;
-      oDriver << "const int    indMitr  = " << myIndMitr       << ";" << endl;
-      oDriver << "const int    indTrace = " << myIndTraceLevel << ";" << endl;
-      oDriver << "Optimizer    indOpt( indEps, indMitr, indTrace );" << endl;
-      oDriver << endl;
+      oDriver << "/*******************************************************************/" << endl;
+      oDriver << "/*                                                                 */" << endl;
+      oDriver << "/*   Parameter Estimation                                          */" << endl;
+      oDriver << "/*                                                                 */" << endl;
+      oDriver << "/*******************************************************************/" << endl;
       oDriver << "timeval optBegin, optEnd;" << endl;
       oDriver << "double optTimeSec = 0.0;" << endl;
 
-      oDriver << "if( haveCompleteData )" << endl;
+      oDriver << "if( isOptRequested && haveCompleteData )" << endl;
       oDriver << "{" << endl;
 
-      oDriver << "gettimeofday( &optBegin, NULL );" << endl;
-      oDriver << "try" << endl;
-      oDriver << "{" << endl;
-      oDriver << "   fitPopulation( model," << endl;
-      oDriver << "                  objective, " << endl;
-      oDriver << "                  N," << endl;
-      oDriver << "                  y," << endl;
-      oDriver << "                  popOpt," << endl;
-      oDriver << "                  alpLow," << endl;
-      oDriver << "                  alpUp," << endl;
-      oDriver << "                  alpIn," << endl;
-      oDriver << "                  alpStep," << endl;
-      oDriver << "                 &alpOut," << endl;
-      oDriver << "                  indOpt," << endl;
-      oDriver << "                  bLow," << endl;
-      oDriver << "                  bUp," << endl;
-      oDriver << "                  bIn," << endl;
-      oDriver << "                  bStep," << endl;
-      oDriver << "                 &bOut," << endl;
-      oDriver << "                 &alpObjOut," << endl;
-      oDriver << "                 &alpObj_alpOut," << endl;
-      oDriver << "                 &alpObj_alp_alpOut );" << endl;
-      oDriver << "   optSucceeded = true;" << endl;
-      oDriver << "}" << endl;
-      oDriver << "catch( const SpkException& e )" << endl;
-      oDriver << "{" << endl;
+      oDriver << "   gettimeofday( &optBegin, NULL );" << endl;
+      oDriver << "   try" << endl;
+      oDriver << "   {" << endl;
+      oDriver << "      fitPopulation( model," << endl;
+      oDriver << "                     objective, " << endl;
+      oDriver << "                     N," << endl;
+      oDriver << "                     y," << endl;
+      oDriver << "                     popOpt," << endl;
+      oDriver << "                     alpLow," << endl;
+      oDriver << "                     alpUp," << endl;
+      oDriver << "                     alpIn," << endl;
+      oDriver << "                     alpStep," << endl;
+      oDriver << "                    &alpOut," << endl;
+      oDriver << "                     indOpt," << endl;
+      oDriver << "                     bLow," << endl;
+      oDriver << "                     bUp," << endl;
+      oDriver << "                     bIn," << endl;
+      oDriver << "                     bStep," << endl;
+      oDriver << "                    &bOut," << endl;
+      oDriver << "                    &alpObjOut," << endl;
+      oDriver << "                    &alpObj_alpOut," << endl;
+      oDriver << "                    &alpObj_alp_alpOut );" << endl;
+      oDriver << "      isOptSuccess = true;" << endl;
+      oDriver << "   }" << endl;
+      oDriver << "   catch( const SpkException& e )" << endl;
+      oDriver << "   {" << endl;
+      oDriver << "      oError << e << endl;" << endl;
+      oDriver << "      isOptSuccess = false;" << endl;
+      oDriver << "   }" << endl;
+      oDriver << "   catch( ... )" << endl;
+      oDriver << "   {" << endl;
+      oDriver << "      oError << \"Unknown exception: failed in parameter estimation!!!\" << endl;" << endl;
+      oDriver << "      isOptSuccess = false;" << endl;
+      oDriver << "   }" << endl;
       oDriver << "   gettimeofday( &optEnd, NULL );" << endl;
       oDriver << "   optTimeSec = difftime( optEnd.tv_sec, optBegin.tv_sec );" << endl;
-      oDriver << "   oError << e << endl;" << endl;
-      oDriver << "   optSucceeded = false;" << endl;
-      oDriver << "}" << endl;
-      oDriver << "catch( ... )" << endl;
-      oDriver << "{" << endl;
-      oDriver << "   gettimeofday( &optEnd, NULL );" << endl;
-      oDriver << "   optTimeSec = difftime( optEnd.tv_sec, optBegin.tv_sec );" << endl;
-      oDriver << "   oError << \"Unknown exception: failed in parameter estimation!!!\" << endl;" << endl;
-      oDriver << "   optSucceeded = false;" << endl;
-      oDriver << "}" << endl;
-      oDriver << "gettimeofday( &optEnd, NULL );" << endl;
-      oDriver << "optTimeSec = difftime( optEnd.tv_sec, optBegin.tv_sec );" << endl;
-      ///////////////////////////////////////////////////////////////////////////////////
-      // START FROM HERE 3/22/04 (Sat)
-      // Get thetaOut, etaOut, OmegaOut, SigmaOut
-      // Get the previous values if optimization failed.
-      ///////////////////////////////////////////////////////////////////////////////////
-      oDriver << "if( optSucceeded )" << endl;
-      oDriver << "{" << endl;
-      oDriver << "thetaOut = model.getTheta();" << endl;
-      oDriver << "omegaOut = model.getOmega();" << endl;
-      oDriver << "sigmaOut = model.getSigma();" << endl;
-      oDriver << "etaOut   = model.getEta();"   << endl;
-      oDriver << "}" << endl;
-      
+      oDriver << endl;
+
+      oDriver << "   ///////////////////////////////////////////////////////////////////" << endl;
+      oDriver << "   //   NONMEM Specific" << endl;
+      oDriver << "   if( isOptSuccess )" << endl;
+      oDriver << "   {" << endl;
+      oDriver << "      model.getTheta( thetaOut );" << endl;
+      oDriver << "      model.getOmega( omegaOut );" << endl;
+      oDriver << "      model.getSigma( sigmaOut );" << endl;
+      oDriver << "      model.getEta( etaOut );"   << endl;
+      oDriver << "   }" << endl;
+      oDriver << "   //" << endl;
+      oDriver << "   ///////////////////////////////////////////////////////////////////" << endl;      
       oDriver << "}" << endl;
 
       // Statistics can be only computed when the parameter estimation has been done.
       if( myIsStat )
 	{
+	  oDriver << "/*******************************************************************/" << endl;
+	  oDriver << "/*                                                                 */" << endl;
+	  oDriver << "/*   Statistics                                                    */" << endl;
+	  oDriver << "/*                                                                 */" << endl;
+	  oDriver << "/*******************************************************************/" << endl;
   	  oDriver << "timeval statBegin, statEnd;" << endl;
 	  oDriver << "double statTimeSec = 0.0;" << endl;
           if( myIsCov )
@@ -2800,78 +2990,70 @@ void NonmemTranslator::generatePopDriver() const
 	  if( myIsInvCov )
 	    oDriver << "valarray<double> invCov( nAlp * nAlp );" << endl;
 	  
-          // statistics
-	  oDriver << "bool statSucceeded = false;" << endl;
-	  oDriver << "if( haveCompleteData )" << endl;
+	  oDriver << "if( isStatRequested && haveCompleteData && isOptSuccess )" << endl;
 	  oDriver << "{" << endl;
 
-	  oDriver << "gettimeofday( &statBegin, NULL );" << endl;
-          oDriver << "try" << endl;
-          oDriver << "{" << endl;
-          oDriver << "   popStatistics( model, " << endl;
-          oDriver << "                  objective," << endl;
-          oDriver << "                  N," << endl;
-          oDriver << "                  y," << endl;
-	  oDriver << "                  alpOut, " << endl;
-          oDriver << "                  alpObj_alpOut, " << endl;
-          oDriver << "                  bOut," << endl;
-          oDriver << "                  bLow," << endl;
-          oDriver << "                  bUp," << endl;
-          oDriver << "                  bStep," << endl;
-          oDriver << "                  covForm," << endl;
-          oDriver << "                  " << (myIsCov?         "&covOut"        :"NULL") << ", " << endl;
-          oDriver << "                  " << (myIsStderr?      "&seOut"         :"NULL") << ", " << endl;
-          oDriver << "                  " << (myIsCorrelation? "&correlationOut":"NULL") << ", " << endl;
-          oDriver << "                  " << (myIsCoefficient? "&coeficientOut" :"NULL") << ", " << endl;
-          oDriver << "                  " << (myIsConfidence?  "&confidenceOut" :"NULL") << " );" << endl;
-          oDriver << "   statSucceeded = true;" << endl;
-          oDriver << "}" << endl;
-          oDriver << "catch( const SpkException& e )" << endl;
-          oDriver << "{" << endl;
- 	  oDriver << "   gettimeofday( &statEnd, NULL );" << endl;
-	  oDriver << "   statTimeSec = difftime( statEnd.tv_sec, statBegin.tv_sec );" << endl;
-          oDriver << "   oError << e << endl;" << endl;
-          oDriver << "   statSucceeded = false;" << endl;
-          oDriver << "}" << endl;
-          oDriver << "catch( ... )" << endl;
-          oDriver << "{" << endl;
- 	  oDriver << "   gettimeofday( &statEnd, NULL );" << endl;
-	  oDriver << "   statTimeSec = difftime( statEnd.tv_sec, statBegin.tv_sec );" << endl;
-          oDriver << "   oError << \"Unknown exception: failed in statistics calculation!!!\" << endl;" << endl;
-          oDriver << "   statSucceeded = false;" << endl;
-          oDriver << "}" << endl;
+	  oDriver << "   gettimeofday( &statBegin, NULL );" << endl;
+          oDriver << "   try" << endl;
+          oDriver << "   {" << endl;
+          oDriver << "      popStatistics( model, " << endl;
+          oDriver << "                     objective," << endl;
+          oDriver << "                     N," << endl;
+          oDriver << "                     y," << endl;
+	  oDriver << "                     alpOut, " << endl;
+          oDriver << "                     alpObj_alpOut, " << endl;
+          oDriver << "                     bOut," << endl;
+          oDriver << "                     bLow," << endl;
+          oDriver << "                     bUp," << endl;
+          oDriver << "                     bStep," << endl;
+          oDriver << "                     covForm," << endl;
+          oDriver << "                     " << (myIsCov?         "&covOut"        :"NULL") << ", " << endl;
+          oDriver << "                     " << (myIsStderr?      "&seOut"         :"NULL") << ", " << endl;
+          oDriver << "                     " << (myIsCorrelation? "&correlationOut":"NULL") << ", " << endl;
+          oDriver << "                     " << (myIsCoefficient? "&coeficientOut" :"NULL") << ", " << endl;
+          oDriver << "                     " << (myIsConfidence?  "&confidenceOut" :"NULL") << " );" << endl;
+          oDriver << "      isStatSuccess = true;" << endl;
+          oDriver << "   }" << endl;
+          oDriver << "   catch( const SpkException& e )" << endl;
+          oDriver << "   {" << endl;
+          oDriver << "      oError << e << endl;" << endl;
+          oDriver << "      isStatSuccess = false;" << endl;
+          oDriver << "   }" << endl;
+          oDriver << "   catch( ... )" << endl;
+          oDriver << "   {" << endl;
+          oDriver << "      oError << \"Unknown exception: failed in statistics calculation!!!\" << endl;" << endl;
+          oDriver << "      isStatSuccess = false;" << endl;
+          oDriver << "   }" << endl;
 
 	  if( myIsInvCov )
 	    {
-	      oDriver << "try" << endl;
-	      oDriver << "{" << endl;
-	      oDriver << "   invCovOut = inverse( covOut, nAlp );" << endl;
-	      oDriver << "}" << endl;
-	      oDriver << "catch( const SpkException& e )" << endl;
-	      oDriver << "{" << endl;
-	      oDriver << "   gettimeofday( &statEnd, NULL );" << endl;
-	      oDriver << "   statTimeSec = difftime( statEnd.tv_sec, statBegin.tv_sec );" << endl;
-	      oDriver << "   oError << e << endl;" << endl;
-	      oDriver << "   statSucceeded = false;" << endl;
-	      oDriver << "}" << endl;
-	      oDriver << "catch( ... )" << endl;
-	      oDriver << "{" << endl;
-	      oDriver << "   gettimeofday( &statEnd, NULL );" << endl;
-	      oDriver << "   statTimeSec = difftime( statEnd.tv_sec, statBegin.tv_sec );" << endl;
-	      oDriver << "   oError << \"Unknown exception: failed to invert the covariance of the final estimate of individual parameter!!!\" << endl;" << endl;
-	      oDriver << "   statSucceeded = false;" << endl;
-	      oDriver << "}" << endl;
+	      oDriver << "   try" << endl;
+	      oDriver << "   {" << endl;
+	      oDriver << "      invCovOut = inverse( covOut, nAlp );" << endl;
+	      oDriver << "   }" << endl;
+	      oDriver << "   catch( const SpkException& e )" << endl;
+	      oDriver << "   {" << endl;
+	      oDriver << "      oError << e << endl;" << endl;
+	      oDriver << "      isStatSuccess = false;" << endl;
+	      oDriver << "   }" << endl;
+	      oDriver << "   catch( ... )" << endl;
+	      oDriver << "   {" << endl;
+	      oDriver << "      oError << \"Unknown exception: failed to invert the covariance of the final estimate of individual parameter!!!\" << endl;" << endl;
+	      oDriver << "      isStatSuccess = false;" << endl;
+	      oDriver << "   }" << endl;
 	    }
- 	  oDriver << "gettimeofday( &statEnd, NULL );" << endl;
-	  oDriver << "statTimeSec = difftime( statEnd.tv_sec, statBegin.tv_sec );" << endl;
+ 	  oDriver << "   gettimeofday( &statEnd, NULL );" << endl;
+	  oDriver << "   statTimeSec = difftime( statEnd.tv_sec, statBegin.tv_sec );" << endl;
 	  oDriver << "}" << endl;
        }
     }
 
 
-  //
-  // Results assembly
-  //
+  oDriver << "/*******************************************************************/" << endl;
+  oDriver << "/*                                                                 */" << endl;
+  oDriver << "/*   ResultML Document                                             */" << endl;
+  oDriver << "/*                                                                 */" << endl;
+  oDriver << "/*******************************************************************/" << endl;
   oDriver << "ofstream oResults( \"result.xml\" );" << endl;
   oDriver << "if( !oResults.good() )" << endl;
   oDriver << "{" << endl;
@@ -2880,6 +3062,7 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "}" << endl;
 
   oDriver << "oResults << \"<spkreportML>\" << endl;" << endl;
+  oDriver << endl;
 
   // Error messages, if any
   oDriver << "oError.close();" << endl;
@@ -2893,17 +3076,28 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "}" << endl;
   oDriver << "oResults << \"</error_message>\" << endl;" << endl;
   oDriver << "iError.close();" << endl;
+  oDriver << endl;
 
+  oDriver << "if( !haveCompleteData )" << endl;
+  oDriver << "{" << endl;
+  oDriver << "   oResults << \"</spkreportML>\" << endl;" << endl;
+  oDriver << "   oResults.close();" << endl;
+  oDriver << "   return 1;" << endl;
+  oDriver << "}" << endl;
+  oDriver << endl;
+
+  oDriver << "oResults << \"<pop_analysis_result>\" << endl;" << endl;
+  oDriver << endl;
   if( myIsEstimate )
     {
-      oDriver << "if( haveCompleteData )" << endl;
-      oDriver << "{" << endl;
-
-      oDriver << "oResults << \"<pop_analysis_result>\" << endl;" << endl;
       oDriver << "oResults << \"<pop_opt_result elapsedtime=\\\"\" << optTimeSec << \"\\\">\" << endl;" << endl;
       oDriver << "oResults << \"<pop_obj_out>\" << endl;" << endl;
       oDriver << "oResults << \"<value>\" << alpObjOut << \"</value>\" << endl;" << endl;
-      oDriver << "oResults << \"</alp_obj_out>\" << endl;" << endl;
+      oDriver << "oResults << \"</pop_obj_out>\" << endl;" << endl;
+      oDriver << endl;
+
+      oDriver << "///////////////////////////////////////////////////////////////////" << endl;
+      oDriver << "//   NONMEM Specific" << endl;
       oDriver << "oResults << \"<theta_out>\" << endl;" << endl;
       // theta
       oDriver << "for( int i=0; i<nTheta; i++ )" << endl;
@@ -2925,7 +3119,11 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << "   oResults << \"<value>\" << alpOut[i] << \"</value>\" << endl;" << endl;
       oDriver << "}" << endl;
       oDriver << "oResults << \"</sigma_out>\" << endl;" << endl;
+      oDriver << "//" << endl;
+      oDriver << "///////////////////////////////////////////////////////////////////" << endl;
       oDriver << "oResults << \"</pop_opt_result>\" << endl;" << endl;
+      oDriver << endl;
+
       if( myIsStat )
 	{
 	  oDriver << "oResults << \"<pop_stat_result elapsedtime=\\\"\" << statTimeSec << \"\\\">\" << endl;" << endl;
@@ -2935,9 +3133,9 @@ void NonmemTranslator::generatePopDriver() const
 	      oDriver << "oResults << \"<pop_covariance_out struct=\\\"block\\\" dimension=\\\"\" << nB << \"\\\">\" << endl;" << endl;
 	      oDriver << "for( int i=0; i<covElemNum; i++ )" << endl;
 	      oDriver << "{" << endl;
-	         oDriver << "oResults << \"   <value>\" << covOut[i] << \"</value>\" << endl;" << endl;
+	      oDriver << "oResults << \"   <value>\" << covOut[i] << \"</value>\" << endl;" << endl;
 	      oDriver << "}" << endl;
-
+	      
 	      oDriver << "oResults << \"</pop_covariance_out>\" << endl;" << endl;
 	    }
 	  if( myIsInvCov )
@@ -2945,9 +3143,9 @@ void NonmemTranslator::generatePopDriver() const
 	      oDriver << "oResults << \"<pop_inverse_covariance_out struct=\\\"block\\\" dimension=\\\"\" << nB << \"\\\">\" << endl;" << endl;
 	      oDriver << "for( int i=0; i<covElemNum; i++ )" << endl;
 	      oDriver << "{" << endl;
-	         oDriver << "oResults << \"   <value>\" << invCovOut[i] << \"</value>\" << endl;" << endl;
+	      oDriver << "oResults << \"   <value>\" << invCovOut[i] << \"</value>\" << endl;" << endl;
 	      oDriver << "}" << endl;
-
+	      
 	      oDriver << "oResults << \"</pop_inverse_covariance_out>\" << endl;" << endl;
 	    }
 	  if( myIsStderr )
@@ -2955,9 +3153,9 @@ void NonmemTranslator::generatePopDriver() const
 	      oDriver << "oResults << \"<pop_stderror_out length=\\\"\" << nB << \"\\\">\" << endl;" << endl;
 	      oDriver << "for( int i=0; i<nB; i++ )" << endl;
 	      oDriver << "{" << endl;
-	         oDriver << "oResults << \"   <value>\" << seOut[i] << \"</value>\" << endl;" << endl;
+	      oDriver << "oResults << \"   <value>\" << seOut[i] << \"</value>\" << endl;" << endl;
 	      oDriver << "}" << endl;
-
+	      
 	      oDriver << "oResults << \"</pop_stderror_out>\" << endl;" << endl;
 	    }
 	  if( myIsCorrelation )
@@ -2965,9 +3163,9 @@ void NonmemTranslator::generatePopDriver() const
 	      oDriver << "oResults << \"<pop_correlation_out struct=\\\"block\\\" dimension=\\\"\" << nB << \"\\\">\" << endl;" << endl;
 	      oDriver << "for( int i=0; i<covElemNum; i++ )" << endl;
 	      oDriver << "{" << endl;
-	         oDriver << "oResults << \"   <value>\" << correlationOut[i] << \"</value>\" << endl;" << endl;
+	      oDriver << "oResults << \"   <value>\" << correlationOut[i] << \"</value>\" << endl;" << endl;
 	      oDriver << "}" << endl;
-
+	      
 	      oDriver << "oResults << \"</pop_correlation_out>\" << endl;" << endl;
 	    }
 	  if( myIsCoefficient )
@@ -2975,9 +3173,9 @@ void NonmemTranslator::generatePopDriver() const
 	      oDriver << "oResults << \"<pop_coefficient_out length=\\\"\" << nB << \"\\\">\" << endl;" << endl;
 	      oDriver << "for( int i=0; i<nB; i++ )" << endl;
 	      oDriver << "{" << endl;
-	         oDriver << "oResults << \"   <value>\" << coefficientOut[i] << \"</value>\" << endl;" << endl;
+	      oDriver << "oResults << \"   <value>\" << coefficientOut[i] << \"</value>\" << endl;" << endl;
 	      oDriver << "}" << endl;
-
+	      
 	      oDriver << "oResults << \"</pop_coefficient_out>\" << endl;" << endl;
 	    }
 	  if( myIsConfidence )
@@ -2985,17 +3183,19 @@ void NonmemTranslator::generatePopDriver() const
 	      oDriver << "oResults << \"<pop_confidence_out length=\\\"\" << nB*2 << \"\\\">\" << endl;" << endl;
 	      oDriver << "for( int i=0; i<nB*2; i++ )" << endl;
 	      oDriver << "{" << endl;
-	         oDriver << "oResults << \"   <value>\" << confidenceOut[i] << \"</value>\" << endl;" << endl;
+	      oDriver << "oResults << \"   <value>\" << confidenceOut[i] << \"</value>\" << endl;" << endl;
 	      oDriver << "}" << endl;
-
+	      
 	      oDriver << "oResults << \"</pop_confidence_out>\" << endl;" << endl;
 	    }
 	  oDriver << "oResults << \"</pop_stat_result>\" << endl;" << endl;
+	  oDriver << endl;
 	}
-
+  
       oDriver << "oResults << \"</pop_analysis_result>\" << endl;" << endl;
-      oDriver << "}" << endl;
     }
+  oDriver << endl;
+
 
   //=============================================================================
   // LABELS
@@ -3008,8 +3208,6 @@ void NonmemTranslator::generatePopDriver() const
   const vector<string>::const_iterator pLabelBegin = table->getLabels()->begin();
   const vector<string>::const_iterator pLabelEnd   = table->getLabels()->end();
   vector<string> whatGoesIn;  // will hold those labels in the order that actually go into the data section.
-  oDriver << "if( haveCompleteData )" << endl;
-  oDriver << "{" << endl;
 
   oDriver << "oResults << \"<presentation_data>\" << endl;" << endl;
   oDriver << "oResults << \"<data_labels>\" << endl;" << endl;
@@ -3018,6 +3216,9 @@ void NonmemTranslator::generatePopDriver() const
   whatGoesIn.push_back( pID->name );
   oDriver << "oResults << \"<label name=\\\"" << pID->name << "\\\"/>\" << endl;" << endl;
   
+  oDriver << "///////////////////////////////////////////////////////////////////" << endl;
+  oDriver << "//   DATA SET Specific" << endl;
+
   // ...aaand, following ID is, all the left hand side quantities in the model definition.
   for( pEntry = t->begin(); pEntry!=t->end(); pEntry++ )
     {
@@ -3027,7 +3228,10 @@ void NonmemTranslator::generatePopDriver() const
 	  oDriver << "oResults << \"<label name=\\\"" << pEntry->second.name << "\\\"/>\" << endl;" << endl;
 	    }
     }
+  oDriver << "//"  << endl;
+  oDriver << "///////////////////////////////////////////////////////////////////" << endl;
   oDriver << "oResults << \"</data_labels>\" << endl;" << endl;
+  oDriver << endl;
   
   vector<string>::const_iterator pWhatGoesIn;
   oDriver << "for( int j=0, cnt=1; j<nPop; j++ )" << endl;
@@ -3035,6 +3239,9 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "   for( int i=0; i<N[j]; i++, cnt++ )" << endl;
   oDriver << "   {" << endl;
   oDriver << "      oResults << \"<row position=\\\"\" << cnt << \"\\\">\" << endl;" << endl;
+  oDriver << "      ///////////////////////////////////////////////////////////////////" << endl;
+  oDriver << "      //   DATA SET Specific" << endl;
+
   for( pWhatGoesIn = whatGoesIn.begin(); pWhatGoesIn!=whatGoesIn.end(); pWhatGoesIn++ )
     {
       oDriver << "      oResults << \"<value>\" << "; 
@@ -3048,12 +3255,13 @@ void NonmemTranslator::generatePopDriver() const
 	}
       oDriver << " << \"</value>\" << endl;" << endl;
     }
+  oDriver << "      //" << endl;
+  oDriver << "      ///////////////////////////////////////////////////////////////////" << endl;
   oDriver << "      oResults << \"</row>\" << endl;" << endl;
   oDriver << "   }" << endl;
   oDriver << "}" << endl;
   
   oDriver << "oResults << \"</presentation_data>\" << endl;" << endl;
-  oDriver << "}" << endl;
   //
   //=============================================================================
   
@@ -3061,9 +3269,7 @@ void NonmemTranslator::generatePopDriver() const
   
   oDriver << "oResults.close();" << endl;
   oDriver << "remove( fError );" << endl;
-  oDriver << "cout << ( (optSucceeded && statSucceeded && haveCompleteData)? \"success\" : \"failure\") << endl;" << endl;
-
-  oDriver << "return !(haveCompleteData && optSucceeded && statSucceeded);" << endl;
+  oDriver << "return !( haveCompleteData && isOptSuccess && isStatSuccess );" << endl;
   oDriver << "}" << endl;
   oDriver.close();
 }
