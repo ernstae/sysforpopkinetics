@@ -2893,7 +2893,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   oPred_h << "#include <CppAD/CppAD.h>" << endl;
   oPred_h << "#include \"DataSet.h\"" << endl;
   oPred_h << endl;
-  
+  /*
   oPred_h << "const CppAD::AD<double> pow( const CppAD::AD<double>& x, int n )" << endl;
   oPred_h << "{" << endl;
   oPred_h << "   CppAD::AD<double> y = 1.0;" << endl;
@@ -2925,7 +2925,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   oPred_h << "{" << endl;
   oPred_h << "   return pow( CppAD::AD<double>( x ), n );" << endl;
   oPred_h << "}" << endl;
-
+  */
   oPred_h << endl;
   
   
@@ -3631,8 +3631,8 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "#include \"DataSet.h\"" << endl;
   oDriver << "#include \"NonmemPars.h\"" << endl;
   oDriver << endl;
-  oDriver << "#include <spk/multiply.h>" << endl;
-  oDriver << "#include <spk/cholesky.h>" << endl;
+  //  oDriver << "#include <spk/multiply.h>" << endl;
+  //  oDriver << "#include <spk/cholesky.h>" << endl;
 
   oDriver << "///////////////////////////////////////////////////////////////////////////////////" << endl;
   oDriver << "//   NONMEM PRED SPECIFIC" << endl;
@@ -3648,26 +3648,6 @@ void NonmemTranslator::generateIndDriver( ) const
 
   oDriver << "enum RETURN_CODE { SUCCESS=0, CONVERGENCE_FAILURE=1, FILE_ACCESS_FAILURE=2, OTHER_FAILURE };" << endl;
   oDriver << endl;
-
-  oDriver << "namespace{" << endl;
-  oDriver << "// Compute the residuals for i-th individual." << endl;
-  oDriver << "const vector<CppAD::AD<double> > wres( int n," << endl;
-  oDriver << "                                       const valarray<double> & Ri," << endl;
-  oDriver << "                                       const vector  < CppAD::AD<double> > & residual )" << endl;
-  oDriver << "{" << endl;
-  oDriver << "   assert( Ri.size() == n * n );" << endl;
-  oDriver << "   assert( residual.size() == n );" << endl;
-  oDriver << "   valarray<double> r( n );" << endl;
-  oDriver << "   for( int i=0; i<n; i++ ) r[i] = CppAD::Value( residual[i] );" << endl;
-  oDriver << "   valarray<double> C( 0.0, n * n );" << endl;
-  oDriver << "   C = cholesky( Ri, n );" << endl;
-  oDriver << "   valarray<double> w = multiply( C, n, r, 1 );" << endl;
-  oDriver << "   vector< CppAD::AD<double> > Cr(n);" << endl;
-  oDriver << "   for( int i=0; i<n; i++ ) Cr[i] = w[i];" << endl;
-  oDriver << "   return Cr;" << endl;
-  oDriver << "}" << endl;
-  oDriver << endl;
-  oDriver << "};" << endl;
 
   oDriver << "int main( int argc, const char argv[] )" << endl;
   oDriver << "{" << endl;
@@ -3685,6 +3665,9 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "      return FILE_ACCESS_FAILURE;" << endl;
   oDriver << "  }" << endl;
   oDriver << endl;
+
+  oDriver << "// Clear/initialize global warnings" << endl;
+  oDriver << "WarningsManager::clearAllWarnings();" << endl;
 
   oDriver << "const int nY = " << myRecordNums[0] << ";" << endl;
   oDriver << "DataSet< CppAD::AD<double> > set;" << endl;
@@ -3859,16 +3842,15 @@ void NonmemTranslator::generateIndDriver( ) const
       oDriver << "  //   NONMEM Specific" << endl;
       oDriver << "  if( isOptSuccess || !isOptSuccess )" << endl;
       oDriver << "  {" << endl;
-      oDriver << "     valarray<double> ROut( nY * nY );" << endl;
+      oDriver << "     valarray<double> RiOut( nY * nY );" << endl;
       oDriver << "     model.getTheta( thetaOut );" << endl;
       oDriver << "     model.getOmega( omegaOut );" << endl;
       oDriver << "     model.setIndPar( bOut );" << endl;
-      oDriver << "     model.dataVariance( ROut );" << endl;
-      oDriver << "     for( int j=0; j<nY; j++ )" << endl;
-      oDriver << "        set.data[0]->" << UserStr.RES << "[j] ";
-      oDriver << "= y[j] - set.data[0]->" << UserStr.PRED << "[j];" << endl;
-      oDriver << "     set.data[0]->" << UserStr.WRES;
-      oDriver << " = wres( nY, ROut, set.data[0]->" << UserStr.RES << " ); " << endl;
+      oDriver << "     model.dataVariance( RiOut );" << endl;
+      oDriver << "     vector< valarray<double> > R( 1 );" << endl;
+      oDriver << "     R[0].resize( nY * nY );" << endl;
+      oDriver << "     R[0] = RiOut;" << endl;
+      oDriver << "     set.compAllWeightedResiduals( R );" << endl;
       oDriver << "  }" << endl;
       oDriver << "  //" << endl;
       oDriver << "  //////////////////////////////////////////////////////////////////////" << endl;    
@@ -3972,17 +3954,6 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "/*   ReportML Document                                             */" << endl;
   oDriver << "/*                                                                 */" << endl;
   oDriver << "/*******************************************************************/" << endl;
-  oDriver << "valarray<double> ROut( nY, nY );" << endl;
-  oDriver << "model.setIndPar( bOut );" << endl;
-  oDriver << "model.dataVariance( ROut );" << endl;
-  oDriver << "for( int j=0; j<nY; j++ )" << endl;
-  oDriver << "{" << endl;
-  oDriver << "   set.data[0]->" << UserStr.RES << "[j] = y[j] - set.data[0]->" << UserStr.PRED << "[j];" << endl;
-  oDriver << "}" << endl;
-  oDriver << "set.data[0]->" << UserStr.WRES << " = wres( nY, ROut, set.data[0]->" << UserStr.RES << " ); " << endl;
-  
-  //oDriver << "set.compWeightedResiduals( ROut );" << endl;
-  oDriver << endl;
 
   oDriver << "ofstream oResults( \"" << fResult_xml << "\" );" << endl;
   oDriver << "if( !oResults.good() )" << endl;
@@ -4009,6 +3980,12 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "   iRuntimeError.close();" << endl;
   oDriver << "}" << endl;
   oDriver << "remove( \"" << fSpkRuntimeError_tmp << "\" );" << endl;
+  oDriver << "if( WarningsManager::anyWarnings() )" << endl;
+  oDriver << "{" << endl;
+  oDriver << "   string warningsOut;" << endl;
+  oDriver << "   WarningsManager::getAllWarnings( warningsOut );" << endl;
+  oDriver << "   oResults << warningsOut << endl;" << endl;
+  oDriver << "}" << endl;
   oDriver << endl;
 
   oDriver << "if( !haveCompleteData )" << endl;
@@ -4367,25 +4344,6 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "using namespace std;" << endl;
   oDriver << endl;
 
-  oDriver << "namespace{" << endl;
-  oDriver << "const vector<CppAD::AD<double> > wres( int n," << endl;
-  oDriver << "                                       const valarray<double> & Ri," << endl;
-  oDriver << "                                       const vector  < CppAD::AD<double> > & residual )" << endl;
-  oDriver << "{" << endl;
-  oDriver << "   assert( Ri.size() == n * n );" << endl;
-  oDriver << "   assert( residual.size() == n );" << endl;
-  oDriver << "   valarray<double> r( n );" << endl;
-  oDriver << "   for( int i=0; i<n; i++ ) r[i] = CppAD::Value( residual[i] );" << endl;
-  oDriver << "   valarray<double> C( 0.0, n * n );" << endl;
-  oDriver << "   C = cholesky( Ri, n );" << endl;
-  oDriver << "   valarray<double> w = multiply( C, n, r, 1 );" << endl;
-  oDriver << "   vector< CppAD::AD<double> > Cr(n);" << endl;
-  oDriver << "   for( int i=0; i<n; i++ ) Cr[i] = w[i];" << endl;
-  oDriver << "   return Cr;" << endl;
-  oDriver << "}" << endl;
-  oDriver << endl;
-  oDriver << "};" << endl;
-
   oDriver << "enum RETURN_CODE { SUCCESS=0, CONVERGENCE_FAILURE=1, FILE_ACCESS_FAILURE=2, OTHER_FAILURE };" << endl;
   oDriver << endl;
 
@@ -4677,6 +4635,22 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << "      model.getTheta( thetaOut );" << endl;
       oDriver << "      model.getOmega( omegaOut );" << endl;
       oDriver << "      model.getSigma( sigmaOut );" << endl;
+      oDriver << endl;
+      oDriver << "      vector< valarray<double> > R( nPop );" << endl;
+      oDriver << "      model.setPopPar( alpOut );" << endl;
+      oDriver << "      for( int i=0; i<nPop; i++ )" << endl;
+      oDriver << "      {" << endl;
+      oDriver << "         valarray<double> RiOut( N[i] * N[i] );" << endl;
+      oDriver << "         model.selectIndividual(i);" << endl;
+      oDriver << "         model.setIndPar( bOut[ slice( i*nB, nB, 1 ) ] );" << endl;
+      oDriver << "         model.dataVariance( RiOut );" << endl;
+      oDriver << "         for( int j=0; j<N[i]; j++ )" << endl;
+      oDriver << "         {" << endl;
+      oDriver << "            R[i].resize( N[i] * N[i] );" << endl;
+      oDriver << "            R[i] = RiOut;" << endl;
+      oDriver << "         }" << endl;
+      oDriver << "      }" << endl;
+      oDriver << "      set.compAllWeightedResiduals( R );" << endl;
       oDriver << "   }" << endl;
       oDriver << "   //" << endl;
       oDriver << "   ///////////////////////////////////////////////////////////////////" << endl;      
@@ -4799,20 +4773,6 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "/*   ReportML Document                                             */" << endl;
   oDriver << "/*                                                                 */" << endl;
   oDriver << "/*******************************************************************/" << endl;
-  oDriver << "model.setPopPar( alpOut );" << endl;
-  oDriver << "for( int i=0; i<nPop; i++ )" << endl;
-  oDriver << "{" << endl;
-  oDriver << "   valarray<double> RiOut( N[i] * N[i] );" << endl;
-  oDriver << "   model.selectIndividual(i);" << endl;
-  oDriver << "   model.setIndPar( bOut[ slice( i*nB, nB, 1 ) ] );" << endl;
-  oDriver << "   model.dataVariance( RiOut );" << endl;
-  oDriver << "   for( int j=0; j<N[i]; j++ )" << endl;
-  oDriver << "   {" << endl;
-  oDriver << "      set.data[i]->" << UserStr.RES << "[j] = y[j] - set.data[i]->" << UserStr.PRED << "[j] ;" << endl;
-  oDriver << "   }" << endl;
-  oDriver << "   set.data[i]->" << UserStr.WRES << " = wres( N[i], RiOut, set.data[i]->" << UserStr.RES << " ); " << endl;
-  oDriver << "}" << endl;
-
   oDriver << "ofstream oResults( \"" << fResult_xml << "\" );" << endl;
   oDriver << "if( !oResults.good() )" << endl;
   oDriver << "{" << endl;
@@ -4837,6 +4797,12 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "   iRuntimeError.close();" << endl;
   oDriver << "}" << endl;
   oDriver << "remove( \"" << fSpkRuntimeError_tmp << "\" );" << endl;
+  oDriver << "if( WarningsManager::anyWarnings() )" << endl;
+  oDriver << "{" << endl;
+  oDriver << "   string warningsOut;" << endl;
+  oDriver << "   WarningsManager::getAllWarnings( warningsOut );" << endl;
+  oDriver << "   oResults << warningsOut << endl;" << endl;
+  oDriver << "}" << endl;
   oDriver << endl;
 
   oDriver << "if( !haveCompleteData )" << endl;
