@@ -153,6 +153,7 @@ extern "C"{
 #include "SpkException.h"
 #include "isDblEpsEqual.h"
 #include "transpose.h"
+#include "intToOrdinalString.h"
 
 using SPK_VA::valarray;
 
@@ -181,7 +182,7 @@ const DoubleMatrix inverse(const DoubleMatrix& dmatA)
            {
               sprintf( mess, 
               "The difference between two reflecting elements is too large: a(%d, %d)=%f - a(%d, %d)=%f = %f.\n",
-              i, j, A[i], j, i, At[i], fabs(a-at) );
+              i+1, j+1, A[i], j+1, i+1, At[i], fabs(a-at) );
                                                                                                                          
               throw SpkException( SpkError::SPK_NOT_SYMMETRIC_ERR, mess, __LINE__, __FILE__ );
            }
@@ -224,16 +225,15 @@ const DoubleMatrix inverse(const DoubleMatrix& dmatA)
   int cholStatus = clapack_dpotrf( CblasColMajor, CblasLower, n, a, lda );
   if( cholStatus < 0 )
   {
-     // illegal value detected in the source matrix, A.
      char mess[ SpkError::maxMessageLen() ];
-     sprintf( mess, "Cholesky factorization failed: Illegal value detected at %d-th element of the source matrix.\n", -cholStatus );
+     sprintf( mess, "Cholesky factorization failed: the %s argument had an illegal value.\n", 
+              intToOrdinalString( -cholStatus, ONE_IS_FIRST_INT ).c_str() );
      throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
   }
   if( cholStatus > 0 )
   {
-     // i-th value is a source of failure
      char mess[ SpkError::maxMessageLen() ];
-     sprintf( mess, "Cholesky factorization failed: %d-th value is a source of problem.\n", cholStatus );
+     sprintf( mess, "Cholesky factorization failed: the leading minor of order %d is not positive definite.\n", cholStatus );
      throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
   }
   // 
@@ -268,16 +268,16 @@ const DoubleMatrix inverse(const DoubleMatrix& dmatA)
   int invStatus = clapack_dpotri( CblasColMajor, CblasLower, n, a, lda );
   if( invStatus < 0 )
   {
-     // i-th element of the source matrix has an illegal value.
      char mess[ SpkError::maxMessageLen() ];
-     sprintf( mess, "Inversion based upon Choleksy factorization failed:\nIllegal value detected at %d-th element of the source matrix.\n", -cholStatus );
+     sprintf( mess, "Inversion based upon Choleksy factorization failed: \nthe %s argument had an illegal value.\n", 
+              intToOrdinalString( -invStatus, ONE_IS_FIRST_INT ).c_str() );
      throw SpkException( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
   }
-  if( cholStatus > 0 )
+  if( invStatus > 0 )
   {
-     // i-th value is a source of failure
      char mess[ SpkError::maxMessageLen() ];
-     sprintf( mess, "Inversion based on Cholesky factorization failed: %d-th value is a source of problem.\n", cholStatus );
+     sprintf( mess, "Inversion based on Cholesky factorization failed: \nthe %s diagonal element of the Cholesky factor is zero.\n",
+              intToOrdinalString( invStatus, ONE_IS_FIRST_INT ).c_str() );
      throw SpkException( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
   }
 
@@ -305,14 +305,13 @@ const valarray<double> inverse( const valarray<double> &A, int n )
   int cholStatus = clapack_dpotrf( CblasColMajor, CblasLower, n, &AInv[0], lda );
   if( cholStatus < 0 )
   {
-     // illegal value detected in the source matrix, A.
      char mess[ SpkError::maxMessageLen() ];
-     sprintf( mess, "Cholesky factorization failed: Illegal value detected at %d-th element of the source matrix.\n", -cholStatus );
+     sprintf( mess, "Cholesky factorization failed: the %s argument had an illegal value.\n", 
+              intToOrdinalString( -cholStatus, ONE_IS_FIRST_INT ).c_str() );
      throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
   }
   if( cholStatus > 0 )
   {
-     // i-th value is a source of failure
      char mess[ SpkError::maxMessageLen() ];
      sprintf( mess, "Cholesky factorization failed: the leading minor of order %d is not positive definite.\n", cholStatus );
      throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
@@ -322,16 +321,16 @@ const valarray<double> inverse( const valarray<double> &A, int n )
   int invStatus = clapack_dpotri( CblasColMajor, CblasLower, n, &AInv[0], lda );
   if( invStatus < 0 )
   {
-     // i-th element of the source matrix has an illegal value.
      char mess[ SpkError::maxMessageLen() ];
-     sprintf( mess, "Inversion based upon Choleksy factorization failed:\nIllegal value detected at %d-th element of the source matrix.\n", -cholStatus );
+     sprintf( mess, "Inversion based upon Choleksy factorization failed: \nthe %s argument had an illegal value.\n", 
+              intToOrdinalString( -invStatus, ONE_IS_FIRST_INT ).c_str() );
      throw SpkException( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
   }
-  if( cholStatus > 0 )
+  if( invStatus > 0 )
   {
-     // i-th value is a source of failure
      char mess[ SpkError::maxMessageLen() ];
-     sprintf( mess, "Inversion based on Cholesky factorization failed: %d-th value is a source of problem.\n", cholStatus );
+     sprintf( mess, "Inversion based on Cholesky factorization failed: \nthe %s diagonal element of the Cholesky factor is zero.\n",
+              intToOrdinalString( invStatus, ONE_IS_FIRST_INT ).c_str() );
      throw SpkException( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
   }
   // 

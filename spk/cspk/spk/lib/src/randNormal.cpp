@@ -41,6 +41,7 @@
 #include "multiply.h"
 #include "randNormal.h"
 #include "isSymmetric.h"
+#include "intToOrdinalString.h"
 
 extern "C"{
   #include <atlas/clapack.h>
@@ -160,7 +161,7 @@ const valarray<double> randNormal( const valarray<double> & V, int n )
       char mess[SpkError::maxMessageLen()];
       sprintf( mess, 
 	       "The leading minor of order %d is not positive definite, and the factorization could not be completed!",
-	       info, info );
+	       info );
       throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, 
 			  mess,
 			  __LINE__, __FILE__ );
@@ -168,8 +169,8 @@ const valarray<double> randNormal( const valarray<double> & V, int n )
   else if( info < 0 )
     {
       char mess[SpkError::maxMessageLen()];
-      sprintf( mess, 
-	       "Programming error!  The %d th argument to clapack_dgetrf() is illegal.", -info );
+      sprintf( mess, "Programming error!  The %s argument to clapack_dgetrf() is illegal.", 
+               intToOrdinalString( -info, ONE_IS_FIRST_INT ).c_str() );
       throw SpkException( SpkError::SPK_UNKNOWN_ERR, 
 			  mess,
 			  __LINE__, __FILE__ );

@@ -202,6 +202,7 @@ $end
 #include <cassert>
 #include "backDiv.h"
 #include "DoubleMatrix.h"
+#include "intToOrdinalString.h"
 
 /*------------------------------------------------------------------------
  * Function definition
@@ -274,13 +275,14 @@ const DoubleMatrix backDiv(const DoubleMatrix &dmatA, const DoubleMatrix &dmatB)
   if( info < 0 )
     {
       char mess[ SpkError::maxMessageLen() ];
-      sprintf( mess, "Programming error!!!  The %d th argument to DGETRF() is illegal!", -info );
+      sprintf( mess, "Programming error!!!  The %s argument to DGETRF() is illegal!", 
+               intToOrdinalString( -info, ONE_IS_FIRST_INT ).c_str() );
       throw SpkException( SpkError::SPK_UNKNOWN_ERR, mess, __LINE__, __FILE__ );
     }
   else if( info > 0 )
     {
       char mess[ SpkError::maxMessageLen() ];
-      sprintf( mess, "U(%d,%d) is exactly zero, which means the matrix is not positive definite!", info );
+      sprintf( mess, "U(%d,%d) is exactly zero, which means the matrix is not positive definite!", info, info );
       throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
     }
 
@@ -313,7 +315,8 @@ const DoubleMatrix backDiv(const DoubleMatrix &dmatA, const DoubleMatrix &dmatB)
   if( info < 0 )
     {
       char mess[ SpkError::maxMessageLen() ];
-      sprintf( mess, "Programming error!!!  The %d th argument to DGETRF() is illegal!", -info );
+      sprintf( mess, "Programming error!!!  The %s argument to DGETRF() is illegal!", 
+               intToOrdinalString( -info, ONE_IS_FIRST_INT ).c_str() );
       throw SpkException( SpkError::SPK_UNKNOWN_ERR, mess, __LINE__, __FILE__ );
     }
 

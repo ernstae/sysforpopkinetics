@@ -740,7 +740,7 @@ namespace // [Begin: unnamed namespace]
       {
         throw e.push(
           SpkError::SPK_OPT_ERR, 
-          "An SpkException was thrown during the evaluation of the objective function.",
+          "The evaluation of the objective function failed.",
           __LINE__, 
           __FILE__ );
       }
@@ -805,7 +805,7 @@ namespace // [Begin: unnamed namespace]
       {
         throw e.push(
           SpkError::SPK_OPT_ERR, 
-          "An SpkException was thrown during the evaluation of the gradient of the objective.",
+          "The evaluation of the gradient of the objective function failed.",
           __LINE__, 
           __FILE__ );
       }
@@ -813,7 +813,7 @@ namespace // [Begin: unnamed namespace]
       {
         throw SpkException(
           stde,
-          "An standard exception was thrown during the evaluation of the gradient of the objective.",
+          "An standard exception was thrown during the evaluation of the gradient of the objective function.",
           __LINE__, 
           __FILE__ );
       }  
@@ -821,7 +821,7 @@ namespace // [Begin: unnamed namespace]
       {
         throw SpkException(
           SpkError::SPK_UNKNOWN_ERR, 
-          "An unknown exception was thrown during the evaluation of the gradient of the objective.",
+          "An unknown exception was thrown during the evaluation of the gradient of the objective function.",
           __LINE__, 
           __FILE__ );
       }
@@ -1062,7 +1062,7 @@ void quasiNewtonAnyBox(
     {
       throw e.push(
         SpkError::SPK_OPT_ERR, 
-        "An SpkException was thrown during the initial evaluation of the objective and gradient.",
+        "The initial evaluation of the objective function and gradient failed.",
         __LINE__, 
         __FILE__ );
     }
@@ -1070,7 +1070,7 @@ void quasiNewtonAnyBox(
     {
       throw SpkException(
         stde,
-        "An standard exception was thrown during the initial evaluation of the objective and gradient.",
+        "An standard exception was thrown during the initial evaluation of the objective function and gradient.",
         __LINE__, 
         __FILE__ );
     }  
@@ -1078,7 +1078,7 @@ void quasiNewtonAnyBox(
     {
       throw SpkException(
         SpkError::SPK_UNKNOWN_ERR, 
-        "An unknown exception was thrown during the initial evaluation of the objective and gradient.",
+        "An unknown exception was thrown during the initial evaluation of the objective function and gradient.",
         __LINE__, 
         __FILE__ );
     }
@@ -1400,7 +1400,7 @@ void quasiNewtonAnyBox(
   {
     throw e.push(
       SpkError::SPK_OPT_ERR, 
-      "An SpkException was thrown during the optimization of the objective function.",
+      "The optimization of the objective function failed.",
       __LINE__, 
       __FILE__ );
   }

@@ -784,7 +784,7 @@ void estimateB(
 				// give the filename as an error message.
 				//
 				throw e.push(SpkError::SPK_DIFF_ERR, 
-					"An attempt to approximate the first derivative of Lambda with respect to the population parameter failed.",
+					"An attempt to approximate the first derivative of Lambda with respect to the \npopulation parameter failed.",
 					__LINE__, __FILE__);
 			}
 			catch( const std::exception& e )
@@ -797,7 +797,7 @@ void estimateB(
 				//
  			        const int max = SpkError::maxMessageLen();
                                 char buf[max];
-				sprintf( buf, "%s\nAn standard error was thrown during an approximation \
+				sprintf( buf, "%s\nA standard error was thrown during an approximation \
                                                of the first derivative of Lambda with respect to the population parameter.",
 					 e.what() );
 				throw SpkException( e, buf, __LINE__, __FILE__ );

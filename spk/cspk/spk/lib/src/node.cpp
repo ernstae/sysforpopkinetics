@@ -158,6 +158,7 @@ $end
 #include "PARALLEL_FILE_CONSTS.h"
 #include "Objective.h"
 #include "NaiveFoModel.h"
+#include "intToOrdinalString.h"
 
 /*------------------------------------------------------------------------
  * Local function declarations
@@ -343,8 +344,8 @@ void node(const char* c_sharedDirectory, SpkModel& model)
 #endif
       if( level > 0 )
       {
-          cout << "<PopID: " << masterPopItr << ">" << endl;
-          cout << "<IndID: " << who << ">" << endl;
+          cout << "<PopIter: " << masterPopItr + 1 << ">" << endl;
+          cout << "<IndID  : " << who + 1 << ">" << endl;
       }
 
       model.selectIndividual(who);
@@ -376,7 +377,8 @@ void node(const char* c_sharedDirectory, SpkModel& model)
       {
           const int max = SpkError::maxMessageLen();
           char buf[max];
-          sprintf( buf, "\nThe %d-th individual's analysis failed.", who );
+          sprintf( buf, "The analysis failed for the %s individual.",
+                   intToOrdinalString( who, ZERO_IS_FIRST_INT ).c_str() );
 
           channel.post(e.push(SpkError::SPK_UNKNOWN_ERR, buf, __LINE__,__FILE__));
           continue;
@@ -385,7 +387,8 @@ void node(const char* c_sharedDirectory, SpkModel& model)
       {
           const int max = SpkError::maxMessageLen();
           char buf[max];
-          sprintf( buf, "\nThe %d-th individual's analysis failed.", who );
+          sprintf( buf, "The analysis failed for the %s individual.",
+                   intToOrdinalString( who, ZERO_IS_FIRST_INT ).c_str() );
 
 	  // PARALLEL -- FIX LATER
           //channel.post(SpkException(stde,
@@ -398,7 +401,8 @@ void node(const char* c_sharedDirectory, SpkModel& model)
       {
           const int max = SpkError::maxMessageLen();
           char buf[max];
-          sprintf( buf, "\nThe %d-th individual's analysis failed.", who );
+          sprintf( buf, "The analysis failed for the %s individual.",
+                   intToOrdinalString( who, ZERO_IS_FIRST_INT ).c_str() );
 
 	  //          channel.post(SpkException(
 	  //  SpkError::SPK_UNKNOWN_ERR,

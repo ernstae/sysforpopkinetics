@@ -67,7 +67,7 @@ $$
 $section Computing Residuals for All of the Individuals in the Population$$
 
 $index popResiduals$$
-$cindex /Computing Residuals /for /All /of /the /Individuals /in /the Population$$
+$cindex \Computing Residuals \for \All \of \the \Individuals \in \the Population$$
 
 $table
 $bold Prototype:$$ $cend

@@ -189,9 +189,9 @@ $pre
 
 $$
 If an error is detected or failure occurs during the evaluation, an
-SpkException object will be thrown.  The state after an exception is
-thrown is defined in $xref/glossary/Exception Handling
-Policy/Exception Handling Policy/$$.
+SpkException object will be thrown.  
+The state after an exception is thrown is defined in 
+$xref/glossary/Exception Handling Policy/Exception Handling Policy/$$.
 
 $head Arguments$$
 $syntax/
@@ -587,9 +587,9 @@ $pre
 
 $$
 If an error is detected or failure occurs during the evaluation, an
-SpkException object will be thrown.  The state after an exception is
-thrown is defined in $xref/glossary/Exception Handling
-Policy/Exception Handling Policy/$$.
+SpkException object will be thrown.  
+The state after an exception is thrown is defined in 
+$xref/glossary/Exception Handling Policy/Exception Handling Policy/$$.
 
 $head Arguments$$
 $syntax/

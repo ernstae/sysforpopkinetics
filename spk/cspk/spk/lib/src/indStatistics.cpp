@@ -307,13 +307,14 @@ $spell
   Ruppert
   Sheiner
   Stefanski
+  symmetrized
 $$
 
 $section Computing Statistics of Individual Parameter Estimates$$
 
 $index indStatistics, coefficient of variation, confidence interval$$
 $index covariance, standard error, correlation matrix, individual parameters$$
-$cindex /Computing Statistics /of Individual /Parameter /Estimates$$
+$cindex \Computing Statistics \of Individual \Parameter \Estimates$$
 
 $table
 $bold Enumerator:$$ $cend
@@ -1615,7 +1616,7 @@ $section Computing Statistics of Individual Parameter Estimates (Deprecated)$$
 
 $index indStatistics, coefficient of variation, confidence interval$$
 $index covariance, standard error, correlation matrix, individual parameters$$
-$cindex /Computing Statistics /of Individual /Parameter /Estimates /(Deprecated)$$
+$cindex \Computing Statistics \of Individual \Parameter \Estimates \(Deprecated)$$
 
 $table
 $bold Prototype:$$ $cend
@@ -2127,7 +2128,7 @@ $section Computing Statistics of Individual Parameter Estimates when All Element
 
 $index indStatistics, coefficient of variation, confidence interval$$
 $index covariance, standard error, correlation matrix, individual parameters$$
-$cindex /Computing Statistics /of Individual /Parameter /Estimates /when All /Elements /are /Active /(Deprecated)$$
+$cindex \Computing Statistics \of Individual \Parameter \Estimates \when All \Elements \are \Active \(Deprecated)$$
 
 $table
 $bold Prototype:$$ $cend
