@@ -1928,7 +1928,8 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   // Eta plays the same role as EPS as in the population analysis.
   // Variance of data?
   char etaDefault[] = "0.0";
-  myEtaLen = myOmegaOrder;
+  //  myEtaLen = myOmegaOrder;
+  myEtaLen = myOmegaDim;
   Symbol * sym_eta = table->insertNMVector( DefaultStr.ETA, myEtaLen );
   for( int i=0; i<myEtaLen; i++ ) sym_eta->initial[0][i] = etaDefault;
   sym_eta->fixed[0] = false;
@@ -3231,6 +3232,26 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << endl;
 
   oNonmemPars << "   //-------------------------------------------" << endl;
+  oNonmemPars << "   // ETA" << endl;
+  oNonmemPars << "   //-------------------------------------------" << endl;
+  oNonmemPars << "   // The length of ETA vector, which determines the dimension of OMEGA covariance." << endl;
+  oNonmemPars << "   const int nEta = " << myEtaLen << ";" << endl;
+  oNonmemPars << endl;
+
+  oNonmemPars << "   // A C-arrary containing the initial estimates for ETA." << endl;
+  oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
+  oNonmemPars << "   double c_etaIn[nEta] = { ";
+  for( int i=0; i<myEtaLen; i++ )
+    {
+      if( i > 0 )
+	oNonmemPars << ", ";
+      oNonmemPars << pEta->initial[0][i];
+    }
+  oNonmemPars << " };" << endl;
+  oNonmemPars << "   const valarray<double> etaIn( c_etaIn, nEta );" << endl;
+  oNonmemPars << endl;
+
+  oNonmemPars << "   //-------------------------------------------" << endl;
   oNonmemPars << "   // OMEGA" << endl;
   oNonmemPars << "   //-------------------------------------------" << endl;  
   oNonmemPars << "   // The structure of OMEGA matrix." << endl;
@@ -3250,7 +3271,7 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << "   // If the matrix is full, the value is equal to the number of " << endl;
   oNonmemPars << "   // elements in a half triangle (diagonal elements included)." << endl;
   oNonmemPars << "   // If the matrix is diagonal, it is equal to the dimension of the symmetric matrix." << endl;
-  oNonmemPars << "   const int omegaOrder = " << myOmegaOrder << ";" << endl;
+  oNonmemPars << "   const int omegaOrder = " << (myOmegaStruct==Symbol::DIAGONAL? "nEta" : "nEta + (nEta+1) / 2" ) << ";" << endl;
   oNonmemPars << endl;
 
   oNonmemPars << "   // A C-arrary containing the initial estimates for OMEGA." << endl;
@@ -3267,54 +3288,13 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << endl;
 
   oNonmemPars << "   //-------------------------------------------" << endl;
-  oNonmemPars << "   // ETA" << endl;
-  oNonmemPars << "   //-------------------------------------------" << endl;
-  oNonmemPars << "   // The length of ETA vector, which is the order of OMEGA." << endl;
-  oNonmemPars << "   const int nEta = omegaOrder;" << endl;
-  oNonmemPars << endl;
-
-  oNonmemPars << "   // A C-arrary containing the initial estimates for ETA." << endl;
-  oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
-  oNonmemPars << "   double c_etaIn[nEta] = { ";
-  for( int i=0; i<myEtaLen; i++ )
-    {
-      if( i > 0 )
-	oNonmemPars << ", ";
-      oNonmemPars << pEta->initial[0][i];
-    }
-  oNonmemPars << " };" << endl;
-  oNonmemPars << "   const valarray<double> etaIn( c_etaIn, nEta );" << endl;
-  oNonmemPars << endl;
-
-  oNonmemPars << "   //-------------------------------------------" << endl;
-  oNonmemPars << "   // SIGMA" << endl;
+  oNonmemPars << "   // EPS" << endl;
   oNonmemPars << "   //-------------------------------------------" << endl;  
+  oNonmemPars << "   // The length of EPS vector, which determines the dimension of SIGMA." << endl;
   if( myTarget == POP )
     {
-      oNonmemPars << "   const enum PopPredModel::covStruct sigmaStruct = ";
-      oNonmemPars << "PopPredModel::" << (mySigmaStruct == Symbol::TRIANGLE? "FULL" : "DIAGONAL" ) << ";" << endl;
-
-      oNonmemPars << "   // The dimension of SIGMA (square) matrix." << endl;
-      oNonmemPars << "   const int sigmaDim = " << mySigmaDim << ";" << endl;
-      oNonmemPars << endl;
-
-      oNonmemPars << "   // The order of SIGMA matrix." << endl;
-      oNonmemPars << "   // If the matrix is full, the value is equal to the number of " << endl;
-      oNonmemPars << "   // elements in a half triangle (diagonal elements included)." << endl;
-      oNonmemPars << "   // If the matrix is diagonal, it is equal to the dimension of the symmetric matrix." << endl;
-      oNonmemPars << "   const int sigmaOrder = " << mySigmaOrder << ";" << endl;
-      oNonmemPars << endl;
-
-      oNonmemPars << "   double c_sigmaIn[ sigmaOrder ] = { ";
-      for( int j=0; j<mySigmaOrder; j++ )
-	{
-	  if( j>0 )
-	    oNonmemPars << ", ";
-	  oNonmemPars << pSigma->initial[0][j];
-	}
-      oNonmemPars << " };" << endl;
-      oNonmemPars << "   const valarray<double> sigmaIn( c_sigmaIn, sigmaOrder );" << endl;
-    }
+      oNonmemPars << "   const int nEps = " << myEpsLen << ";" << endl;
+      }
   else
     {
       oNonmemPars << "// NOTE:" << endl;
@@ -3325,13 +3305,34 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << endl;
 
   oNonmemPars << "   //-------------------------------------------" << endl;
-  oNonmemPars << "   // EPS" << endl;
+  oNonmemPars << "   // SIGMA" << endl;
   oNonmemPars << "   //-------------------------------------------" << endl;  
-  oNonmemPars << "   // The length of ETA vector, which is the order of OMEGA." << endl;
   if( myTarget == POP )
     {
-      oNonmemPars << "   const int nEps = sigmaOrder;" << endl;
-      }
+      oNonmemPars << "   // The structure of SIGMA matrix." << endl;
+      oNonmemPars << "   // \"FULL\" indicates that possibly all elements of the symmetric matrix may be non-zero." << endl;
+      oNonmemPars << "   // \"DIAGONAL\" indicates that only the diagonal elements are non-zero and the rest are all zero." << endl;
+      oNonmemPars << "   const enum PopPredModel::covStruct sigmaStruct = ";
+      oNonmemPars << "PopPredModel::" << (mySigmaStruct == Symbol::TRIANGLE? "FULL" : "DIAGONAL" ) << ";" << endl;
+
+      oNonmemPars << "   // The order of SIGMA matrix." << endl;
+      oNonmemPars << "   // If the matrix is full, the value is equal to the number of " << endl;
+      oNonmemPars << "   // elements in a half triangle (diagonal elements included)." << endl;
+      oNonmemPars << "   // If the matrix is diagonal, it is equal to the dimension of the symmetric matrix." << endl;
+      oNonmemPars << "   const int sigmaOrder = nEps" << (mySigmaStruct==Symbol::DIAGONAL? ";" : " * ( nEps + 1 ) / 2;") << endl;
+
+      oNonmemPars << "   // A C-arrary containing the initial estimates for SIGMA." << endl;
+      oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
+      oNonmemPars << "   double c_sigmaIn[ sigmaOrder ] = { ";
+      for( int j=0; j<mySigmaOrder; j++ )
+	{
+	  if( j>0 )
+	    oNonmemPars << ", ";
+	  oNonmemPars << pSigma->initial[0][j];
+	}
+      oNonmemPars << " };" << endl;
+      oNonmemPars << "   const valarray<double> sigmaIn( c_sigmaIn, sigmaOrder );" << endl;
+    }
   else
     {
       oNonmemPars << "// NOTE:" << endl;
