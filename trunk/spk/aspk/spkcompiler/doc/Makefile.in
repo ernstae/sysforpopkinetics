@@ -1,0 +1,6 @@
+SUFFIXES = .dox
+.html.dox : 
+	doxygen $<
+
+html : SpkCompiler.dox
+	doxygen $?
