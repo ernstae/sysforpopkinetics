@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "/usr/share/sgml/docbook/xml-dtd-4.2-1.0-14/docbookx.dtd" [
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+]>
+<article><title>XML Representation of Data Set</title>
+ <articleinfo>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>December 9, 2003</date>
+	<authorinitials>sh</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+    </revhistory>
+  <abstract>
+      <para>
+The data set given by the user is convereted to an XML format that conforms SpreadsheetML schema when it crosses the client-server boundary.
+      </para>
+  </abstract>
+ </articleinfo>
+  <sect1>
+    <title>SpreadsheetML</title>
+    <para>SpreadsheetML is the XML used among Microsoft Office products and, thus, most likely used by many others.  
+For the XML schema, refer directly to: 
+        <ulink url="http://www.microsoft.com/downloads/details.aspx?FamilyId=FE118952-3547-420A-A412-00A2662442D9&amp;displaylang=en"><citetitle>Microsoft Office 2003 XML Reference Schema</citetitle></ulink>
+    </para>
+  </sect1>
+</article>
