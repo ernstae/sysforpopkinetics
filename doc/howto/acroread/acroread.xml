@@ -12,6 +12,12 @@
 	<authorinitials>afw</authorinitials>
 	<revremark>Initial version.</revremark>
       </revision>
+      <revision>
+	<revnumber>1.01</revnumber>
+	<date>December 30, 2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Relative to RHEL Version 3..</revremark>
+      </revision>
     </revhistory>
   <abstract>
     <para>
@@ -53,8 +59,8 @@ rpm -Uhv acroread*.rpm
       place the <filename moreinfo="none">acroread</filename> shell
       script under local source control: 
       <screen format="linespecific">
-	cd /usr/lib/Acrobat5/bin
-	ci -l acroread
+cd /usr/lib/Acrobat5/bin
+ci -l acroread
       </screen>
     </para>
     <para>
@@ -63,15 +69,15 @@ rpm -Uhv acroread*.rpm
       Just after the comment that starts the file, enter
       two lines:
       <screen format="linespecific">
-	LANG=C
-	export LANG
+LANG=C
+export LANG
       </screen>
     </para>
     <para>
       You can use <command moreinfo="none">rcsdiff -c</command> to
       verify that your editing is correct:
       <screen format="linespecific">
-	rcsdiff -c acroread
+rcsdiff -c acroread
       </screen>
     </para>
   </sect1>
@@ -81,7 +87,7 @@ rpm -Uhv acroread*.rpm
       Open a shell window as an ordinary user, and enter the
       command:
       <screen format="linespecific">
-	acroread
+acroread
       </screen>
       If the Acrobat Reader comes up, your installation is a
       success.
@@ -98,7 +104,7 @@ rpm -Uhv acroread*.rpm
       </screen>
       At this point the "File Types and Programs" window will appear; continue:
       <screen format="linespecific">
-	<guimenu moreinfo="none">Documents</guimenu> => <guimenu moreinfo="none">Published Materials</guimenu> => <guimenuitem moreinfo="none">PDF document</guimenuitem>
+<guimenu moreinfo="none">Documents</guimenu> => <guimenu moreinfo="none">Published Materials</guimenu> => <guimenuitem moreinfo="none">PDF document</guimenuitem>
 
 Press the <guibutton moreinfo="none">Edit</guibutton> button
       </screen>
@@ -119,44 +125,6 @@ and the "Edit file type" window will appear.
       where <emphasis>username</emphasis> is your username).  Click
       on the image of a .pdf file, and the the Acrobat Reader should
       start.
-    </para>
-  </sect1>
-  <sect1>
-    <title>Configure Mozilla</title>
-    <para>
-      In order to have Mozilla use the Acrobat Reader, we need to
-      configure <command moreinfo="none">acroread</command> to be
-      the helper application for Mozilla to use whenever it 
-      receives a .pdf file.  Perform the following operations on
-      the Mozilla menus:
-      <screen format="linespecific">
-<guimenu moreinfo="none">Edit</guimenu> => <guimenu moreinfo="none">Preferences</guimenu>
-      </screen>
-      to bring up the "Preferences" window.
-      <screen format="linespecific">
-	<emphasis>Select</emphasis>
-
-<guimenuitem moreinfo="none">Helper Applications</guimenuitem>
-      </screen>
-      to open a list of applications.
-      <screen format="linespecific">
-	<emphasis>Press</emphasis>
-
-<guibutton moreinfo="none">New Type</guibutton>
-
-	<emphasis>Fill in the form that appears as follows</emphasis>
-
-<guilabel moreinfo="none">Description of type</guilabel>: Adobe PDF file
-<guilabel moreinfo="none">File extension</guilabel>: pdf
-<guilabel moreinfo="none">MIME type</guilabel>: application/pdf
-<guilabel moreinfo="none">Application to use</guilabel>: /usr/bin/acroread
-      </screen>
-    </para>
-    <para>
-      You can test this by opening a .pdf file with the browser.
-      For example, the RFPK HOWTO documents are available in 
-      .pdf form on the Software Team page:
-      <ulink url="http://whitechuck.rfpk.washington.edu/soft/index.html"></ulink>
     </para>
   </sect1>
 </article>

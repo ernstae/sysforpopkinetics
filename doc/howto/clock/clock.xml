@@ -13,10 +13,16 @@
 	<revremark>Initial version.</revremark>
       </revision>
       <revision>
-	<revnumber>1.1</revnumber>
+	<revnumber>1.01</revnumber>
 	<date>July 25, 2003</date>
 	<authorinitials>afw</authorinitials>
 	<revremark>Added sections for server and cluster</revremark>
+      </revision>
+      <revision>
+	<revnumber>1.02</revnumber>
+	<date>December 31, 2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Relative to RHEL 3.</revremark>
       </revision>
     </revhistory>
   <abstract>
@@ -150,7 +156,6 @@ rcsdiff ntp.conf
       <screen format="linespecific">
 cd /etc/ntp
 echo whitechuck.rfpk.washington.edu > step-tickers
-echo time.nist.gov >> step-tickers
       </screen>
     </para>
   </sect1>
@@ -163,14 +168,14 @@ echo time.nist.gov >> step-tickers
       input the following commands:
       <screen format="linespecific">
 /etc/rc.d/init.d/ntpd restart
-chkconfig --level 2345 ntpd on
+/sbin/chkconfig --level 2345 ntpd on
       </screen>
     </para>
     <para>
       You should now check that your ntp daemon is working.
       Wait a few seconds after restarting ntpd, then issue this command:
       <screen format="linespecific">
-ntpq -p
+/usr/sbin/ntpq -p
       </screen>
       You should see output that looks something like this:
       <screen format="linespecific">
