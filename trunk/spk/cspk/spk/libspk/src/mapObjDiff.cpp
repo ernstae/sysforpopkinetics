@@ -353,7 +353,6 @@ $end
 #pragma warning( disable : 4786 )
 
 #include <iostream>
-#include <strstream>
 #include "mapObj.h"
 #include "mapObjDiff.h"
 #include "centdiff.h"
@@ -430,11 +429,11 @@ void mapObjDiff(
         }
         catch( const std::exception& e )
         {
-            strstream stream;
-            stream << e.what() << endl;
-            stream << "A standard error was thrown during an attempt to approximate the gradient." << endl;
-            stream.put(NULL);
-            throw SpkException(e, stream.str(), __LINE__, __FILE__);
+            const int max = SpkError::maxMessageLen();
+            char buf[max];
+            sprintf( buf, "%s\nA standard error was thrown during an attempt to approximate the gradient.",
+              e.what() );
+            throw SpkException( e, buf, __LINE__, __FILE__ );
         }
         catch( ... )
         {
@@ -460,11 +459,11 @@ void mapObjDiff(
         }
         catch( const std::exception& e )
         {
-            strstream stream;
-            stream << e.what() << endl;
-            stream << "A standard error was thrown during an attempt to approximate the hessian." << endl;
-            stream.put(NULL);
-            throw SpkException(e, "centdiff(mapObj_b)_b threw std::exception.", __LINE__, __FILE__);
+            const int max = SpkError::maxMessageLen();
+            char buf[max];
+            sprintf( buf, "%s\nA standard error was thrown during an attempt to approximate the hessian.",
+              e.what() );
+            throw SpkException( e, buf, __LINE__, __FILE__ );
         }
         catch( ... )
         {
