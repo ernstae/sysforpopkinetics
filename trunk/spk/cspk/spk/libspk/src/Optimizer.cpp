@@ -1428,9 +1428,9 @@ Optimizer& Optimizer::operator=( const Optimizer& right )
 void Optimizer::setupWarmStart( int n )
 {
   stateInfo.n = n;
-  if ( stateInfo.x ) delete [] stateinfo.x;;
-  if ( stateInfo.g ) delete [] stateinfo.g;;
-  if ( stateInfo.h ) delete [] stateinfo.h;;
+  if ( stateInfo.x ) delete [] stateInfo.x;;
+  if ( stateInfo.g ) delete [] stateInfo.g;;
+  if ( stateInfo.h ) delete [] stateInfo.h;;
   stateInfo.x = new double[ n ];
   stateInfo.g = new double[ n ];
   stateInfo.h = new double[ n * n ];
@@ -1442,7 +1442,7 @@ void Optimizer::setupWarmStart( int n )
 }
 
 // Set the is-a-sub-level flag.
-void setIsSubLevelOpt( bool s );
+void Optimizer::setIsSubLevelOpt( bool s )
 {
   isSubLevelOpt = s;
 
