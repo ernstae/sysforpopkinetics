@@ -774,7 +774,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   // REVISIT - Sachiko 01/22/04
   // The boundary values must be computed automatically too.
   //-----------------------------------------------------------
-  myEtaLen = myThetaLen;
+  myEtaLen = myOmegaDim;
   char etaDefault[] = "0.0";
   Symbol * sym_eta = table->insertNMVector( "ETA", myEtaLen );
   sym_eta->initial[0] = etaDefault;
