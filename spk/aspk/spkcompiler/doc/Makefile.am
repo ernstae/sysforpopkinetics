@@ -1,3 +1,7 @@
+include ../../../../../../doc/webdir.mk
+T = spkcompiler
+WEB = $(WEBDIR)/v0.1/specs/$T
+
 SUBDIRS = common nonmem
 SUFFIXES = .dox
 .html.dox : 
@@ -23,3 +27,8 @@ all  :
 	rm -rf latex
 	rm -rf man
 	doxygen spkcompiler.cfg
+
+install:
+	scp html/*.html $(WEB)/html
+	scp nonmem/html/*.html $(WEB)/nonmem/html
+	scp common/html/*.html $(WEB)/common/html
