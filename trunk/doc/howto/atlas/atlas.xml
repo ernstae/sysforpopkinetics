@@ -120,15 +120,15 @@ Build and install the new CLAPACK.
           <para>
           Unpack the tarball as follows:
             <screen>
-> cd /tmp/
-> tar xvzf atlas3.6.0.tgz
+cd /tmp/
+tar xvzf atlas3.6.0.tgz
             </screen>
           This will unpack the package into a new subdirectory, 
           <literal>ATLAS</literal>.  
           </para>
           <para>Then, change directory to <literal>ATLAS</literal>.
             <screen>
-> cd ATLAS
+cd ATLAS
             </screen>
           </para>
         </listitem>
@@ -139,11 +139,11 @@ Build and install the new CLAPACK.
           argument that tells the system which ANSII C compiler to use.
           Enter the following:
             <screen>
-> make config CC=gcc
+make config CC=gcc
             </screen>
           The size of a display page will be asked.  Type in an appropriate value.
             <screen>
-Enter number at top left of screen [0]: &lt;your answer&gt;
+   Enter number at top left of screen [0]: &lt;your answer&gt;
             </screen>
           Say "yes" to the following three questions unless you strongly disagree:
             <screen>
@@ -189,13 +189,24 @@ Configuration completed successfully.  You may want to examine the make include
 file (Make.Linux_P4) for accuracy before starting the install with the command:   
 make install arch=Linux_P4
             </screen>
+          The value of <literal>arch</literal> at the last line above reflects
+          the architecture of your installing machine.  Thus, the actual value
+          displayed may be different from <literal>Linux_P4</literal>.
+          </para>
+          <para>
+          Come up with a value that best describes your architecture and
+          set it as a shell variable.  For the sake of demonstration, I will
+          use <literal>LinuxRH9_P4</literal> to describe RedHat Linux 9.0 on Pentium 4.
+            <screen>
+export ARCH=LinuxRH_P4
+            </screen>
           </para>
         </listitem>
         <listitem>
           <para>
           Build the library by entering the following:
             <screen>
-> make install arch=Linux_P4
+make install arch=$ARCH
             </screen>
           The string on the right hand side of <literal>arch</literal>
           assignment is arbitrary.  If you want to change it to something else,
@@ -207,21 +218,21 @@ make install arch=Linux_P4
           <para>
           Install the package (ie. libraries and headers).
             <screen>
-> mv lib/Linux_P4/liblapack.a lib/Linux_P4/libatlas_lapack.a
-> su  (stay in the directory)
-> 
-> mkdir /usr/local/lib/atlas
-> mkdir /usr/local/include/atlas
-> cp lib/Linux_P4/libatlas.a /usr/local/lib/atlas
-> cp lib/Linux_P4/libcblas.a /usr/local/lib/atlas
-> cp lib/Linux_P4/libatlas_lapack.a /usr/local/lib/atlas
-> cp lib/Linux_P4/libf77blas.a /usr/local/lib/atlas
-> cp include/cblas.h /usr/local/include/atlas
-> cp include/clapack.h /usr/local/include/atlas
-> ln -s /usr/local/lib/atlas/libatlas.a /usr/local/lib/libatlas.a
-> ln -s /usr/local/lib/atlas/libcblas.a /usr/local/lib/libcblas.a
-> ln -s /usr/local/lib/atlas/libatlas_lapack.a /usr/local/lib/libatlas_lapack.a
-> ln -s /usr/local/lib/atlas/libf77blas.a /usr/local/lib/libf77blas.a
+mv lib/Linux_P4/liblapack.a lib/$ARCH/libatlas_lapack.a
+su
+ 
+mkdir /usr/local/lib/atlas
+mkdir /usr/local/include/atlas
+cp lib/$ARCH/libatlas.a /usr/local/lib/atlas
+cp lib/$ARCH/libcblas.a /usr/local/lib/atlas
+cp lib/$ARCH/libatlas_lapack.a /usr/local/lib/atlas
+cp lib/$ARCH/libf77blas.a /usr/local/lib/atlas
+cp include/cblas.h /usr/local/include/atlas
+cp include/clapack.h /usr/local/include/atlas
+ln -s /usr/local/lib/atlas/libatlas.a /usr/local/lib/libatlas.a
+ln -s /usr/local/lib/atlas/libcblas.a /usr/local/lib/libcblas.a
+ln -s /usr/local/lib/atlas/libatlas_lapack.a /usr/local/lib/libatlas_lapack.a
+ln -s /usr/local/lib/atlas/libf77blas.a /usr/local/lib/libf77blas.a
             </screen>
           </para>
           <para>
@@ -231,7 +242,7 @@ make install arch=Linux_P4
           library directory in the searc path.  Enter the following
           from the terminal.
             <screen>
-> export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
             </screen>
           </para>
         </listitem>
@@ -257,7 +268,7 @@ LAPACKlib = -latlas_lapack
           <para>
           Run the tests included in the disctribution:
             <screen>
-> make sanity_test arch=Linux_P4
+make sanity_test arch=$ARCH
             </screen>
           If all things go well, you'll see messages like these:
             <screen>
@@ -276,13 +287,13 @@ fgrep -e fault -e FAULT -e error -e ERROR -e fail -e FAIL \
 DONE
 SCOPING FOR FAILURES IN CBLAS TESTS:
 fgrep -e fault -e FAULT -e error -e ERROR -e fail -e FAIL \
-        interfaces/blas/C/testing/Linux_PII/sanity.out | \
+        interfaces/blas/C/testing/$ARCH/sanity.out | \
                 fgrep -v PASSED
 make[1]: [sanity_test] Error 1 (ignored)
 DONE
 SCOPING FOR FAILURES IN F77BLAS TESTS:
 fgrep -e fault -e FAULT -e error -e ERROR -e fail -e FAIL \
-        interfaces/blas/F77/testing/Linux_PII/sanity.out | \
+        interfaces/blas/F77/testing/$ARCH/sanity.out | \
                 fgrep -v PASSED
 make[1]: [sanity_test] Error 1 (ignored)
 DONE
