@@ -64,4 +64,8 @@ namespace client{
        return NOT_SUPPORTED;
    }
 }
+/**
+ * @example clientTest.cpp
+ */
+
 #endif

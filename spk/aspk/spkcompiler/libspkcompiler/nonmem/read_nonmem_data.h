@@ -10,6 +10,11 @@
 /**
  * @file read_nonmem_data.h
  * Declares the read_nonmem_data() function.
+ * 
+ * @ingroup nonmem
+ */
+/**
+ * @example read_nonmem_dataTest.cpp
  */
 /**
  * Process <data> section of SpkInML document to gather information
@@ -28,7 +33,7 @@ void read_nonmem_data(
         int nIndividuals,
 	SymbolTable & table,
 	std::map<nonmem::LABEL, nonmem::ALIAS> &label_alias_mappingOut,
-	std::map<nonmem::LABEL, nonmem::MEASUREMENT> data_forOut[],
+	std::vector< std::map<nonmem::LABEL, nonmem::MEASUREMENT> > & data_forOut,
 	std::string order_id_pairOut[],
         struct SpkParameters & spk
 	);

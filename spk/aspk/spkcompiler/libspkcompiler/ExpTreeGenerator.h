@@ -12,6 +12,9 @@
  * Declares ExpTreeGenerator class.
  */
 /**
+ * @example ExpTreeGeneratorTest.cpp
+ */
+/**
  * ExpTreeGenerator offers a way to create an expression (DOM-based)
  * parse tree and other tools to construct/populate the tree.
  */

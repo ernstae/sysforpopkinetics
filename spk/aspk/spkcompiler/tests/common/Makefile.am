@@ -2,6 +2,8 @@ bin_PROGRAMS = test_common
 
 COMMON = common
 
+CXXFLAGS = -g
+
 test_common_SOURCES = \
 	../config.h \
 	test_common.cpp \

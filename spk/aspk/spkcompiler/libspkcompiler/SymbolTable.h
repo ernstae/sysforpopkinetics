@@ -14,6 +14,9 @@
  * Declares SymbolTable class
  */
 /**
+ * @example SymbolTableTest.cpp
+ */
+/**
  * SymbolTable maintains a symbol table that is the central 
  * place where information 
  * about variables/functions appeared in source files are 

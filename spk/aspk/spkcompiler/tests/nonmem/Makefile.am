@@ -2,8 +2,7 @@ bin_PROGRAMS = test_nonmem
 
 NONMEM = nonmem
 
-AM_CFLAGS   = -g
-AM_CPPFLAGS = -g
+CXXFLAGS = -g
 
 test_nonmem_SOURCES = \
 	../config.h \

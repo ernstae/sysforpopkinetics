@@ -10,6 +10,9 @@
  *
  * @defgroup nonmem NONMEM
  */
+/**
+ * @example NonmemTranslatorTest.cpp
+ */
 #include <vector>
 #include <valarray>
 #include <map>
@@ -24,8 +27,7 @@
 namespace nonmem{
   enum MODEL { NONE,   
                ADVAN1,  ADVAN2,  ADVAN3,  ADVAN4,  ADVAN5, 
-	       ADVAN6,  ADVAN7,  ADVAN8,  ADVAN9,  ADVAN10, 
-	       ADVAN11, ADVAN12 };
+	       ADVAN6,  ADVAN7,  ADVAN8,  ADVAN9,  ADVAN10 };
   enum TRANS { DEFAULT,
 	       TRANS1, TRANS2, TRANS3, TRANS4, TRANS5 };
 
@@ -274,7 +276,7 @@ class NonmemTranslator : public ClientTranslator
 		    int nIndividuals,
 		    const SymbolTable* table,
 		    const std::map<nonmem::LABEL, nonmem::ALIAS> & label_alias_mapping,
-		    const std::map<nonmem::LABEL, nonmem::MEASUREMENT> data_for[],
+		    const std::vector< std::map<nonmem::LABEL, nonmem::MEASUREMENT > > &data_for,
 		    const std::string order_id_pair[]
 		 );
 };

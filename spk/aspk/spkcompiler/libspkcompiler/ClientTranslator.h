@@ -10,6 +10,9 @@
  * Declares ClientTranslator abstract class.
  */
 /**
+ * @example ClientTranslatorTest.cpp
+ */
+/**
  * ClientTranslator class defines the interfaces
  * to be implemented by sublasses specific to clients (ex. NONMEM, SAAM2...).
  *
