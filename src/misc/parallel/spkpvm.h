@@ -20,10 +20,11 @@ extern const char *spkpvm_spawn_error(int);
 #define SpkPvmLogMessage   501
 
 // special exit values
-#define SpkPvmUnreported   -1
-#define SpkPvmDied         -2
-#define SpkPvmChildError   -3
-#define SpkPvmHostDeleted  -4
+#define SpkPvmUnreported       -1
+#define SpkPvmDied             -2
+#define SpkPvmChildError       -3
+#define SpkPvmHostDeleted      -4
+#define SpkPvmErrorPending     -5
 
 // architectures
 static char *i686 = "i686";

@@ -235,6 +235,7 @@ int main(int argc, char** argv) {
 	      die("pvm_upkint failed to unpack tid from PvmTaskExit message");
 	    sprintf(buf, "received PvmHostDelete, source=%0x, tid=%0x", source, tid);
 	    spklog(buf);
+	    spklog("respawned spkpop");
 	    goto pop_start;
 	  }
 	}

@@ -86,8 +86,11 @@ static void spklog(const char*);
 
 // perform the computation
 static void compute(int iid) {
+  const int t = 17;
   if (iid == 1 and time(NULL) % 10 == 0) {
-    spklog("going to cause a segmentation fault");
+    char buf[100];
+    sprintf(buf, "going to cause a segmentation fault in %d sec.", t);
+    spklog(buf);
     sleep(17);
     char *x;
     strcpy(x, "hello");
