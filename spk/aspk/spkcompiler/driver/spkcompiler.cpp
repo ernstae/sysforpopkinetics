@@ -1,18 +1,53 @@
 /** 
- * @file compiler.cpp
+ * @file spkcompiler.cpp
  *
- * This is the ASPK Compliler that compiles C++ source code from
- * a pair of SpkSourceML and SpkDataML documents.
+ * The <code>main</code> function defined in this file
+ * compiles C++ source code from a pair of an SpkSourceML and an SpkDataML documents.
  *
- * Usage: <code>spkcompiler <em>SOURCE</em> <em>DATA</em> [-print]</code>
- * @htmlonly
- * <dl>
- *   <dt><em>SOURCE</em></dt><dd>file path to an SpkSourceML document</dd>
- *   <dt><em>DATA</i></em><dd>file path to an SpkDataML document</dd>
- *   <dt>-print</dt><dd>request for displaying the progress in the standard output.</dd>
- * </dl>
- * @endhtmlonly
+ * The executable should have a name, <code>spkcompiler</code> and installed into
+ * <code>/usr/local/bin/</code> in which the ASPK daemon expects to find it.
+ * 
+ * - Dependencies:
+ *   - xerces-c version 2.5.0 library
+ *   - spkcompiler version 0.1 library
  *
+ * - Built executable name and install directory requirements:
+ *   - <code>spkcompiler</code>
+ *   - <code>/usr/local/bin/</code>
+ *
+ * - Usage: <code>spkcompiler SOURCE DATA</code>
+ *   - <em>SOURCE</em>    --- file path to an SpkSourceML document
+ *   - <em>DATA</em>      --- file path to an SpkDataML document
+ *
+ * - @ref EXIT_CODE "Normal Exit Code":
+ *   - <code>SUCCESS</code> (0)       --- The compilation completed successfully
+ *                         A makefile, <code>generatedMakefile</code>, along with the source
+ *                         code files are generated in the current directory.
+ *   - <code>XML_PARSE_ERR</code> (1) --- Syntax errors are found in either/both SOURCE or/and DATA.
+ *                         <code>compilation_error.xml</code> will be generated in the current directory.
+ *   - <code>ACCESS_ERR</code> (2)    --- File/directory access denied.
+ *   - &gt;2              --- Any other error is reported with an unspecified exit code 
+ *                        greater than 2. <code>compilation_error.xml</code> may be generated in 
+ *                        the current directory.
+ *
+ * - Generated files (upon <em>successful</em> completion):
+ *   - <code>driver.cpp</code> --- The CSPK driver for the given pair of SpkSourceML
+ *       and SpkDataML documents.
+ *   - <code>Pred.h</code>    --- Declare and define a template class, Pred.
+ *   - <code>DataSet.h</code> --- Declare and define a template class, DataSet.
+ *   - <code>IndData.h</code> --- Declare and define a template class, IndData.
+ *   - <code>generatedMakefile</code> --- Makefile file to build an executable from 
+ *       the above files.
+ * 
+ * - Generated files (upon <em>abnormal</em> completion):
+ *   - <code>compilation_error.xml</code> --- An SpkReportML document containing only the 
+ *                                            <code>error_message</code> element which contains
+ *                                            the error messages.  This file may no be generated
+ *                                            if the return code is <code>ACCESS_ERR</code>
+ *                                            or the program is terminated abruptly 
+ *                                            (ex. by asynchronous signals such as 
+ *                                            <code>SIG_ABRT</code>, <code>SIG_TERM</code> ...).
+ * 
  */
 
 #include <iostream>
@@ -38,81 +73,89 @@
 using namespace std;
 using namespace xercesc;
 
-/**
- * client::type getClientName( xercesc::DOMDocument* source )
- *
- * Extract information about the origin of the source document.
- *
- * @return The enumulator indicating the type of client.
- * @param source A pointer to the DOMDocument tree containing the client information.
- */
-static client::type getClientName( xercesc::DOMDocument* source )
-{
-   DOMElement * root = source->getDocumentElement();
-   DOMTreeWalker * walker = source->createTreeWalker( root, 
-						      DOMNodeFilter::SHOW_ELEMENT, 
-						      NULL, 
-						      false );
-   const XMLCh * c = walker->firstChild()->getNodeName();
- 
-   if( XMLString::equals( c, XMLString::transcode("nonmem") ) )
+
+namespace{ 
+
+  /**
+   * client::type getClientName( xercesc::DOMDocument* source )
+   *
+   * Extract information about the origin of the source document.
+   *
+   * @return The enumulator indicating the type of client.
+   * @param source A pointer to the DOMDocument tree containing the client information.
+   */
+  client::type getClientName( xercesc::DOMDocument* source )
+  {
+    DOMElement * root = source->getDocumentElement();
+    DOMTreeWalker * walker = source->createTreeWalker( root, 
+						       DOMNodeFilter::SHOW_ELEMENT, 
+						       NULL, 
+						       false );
+    const XMLCh * c = walker->firstChild()->getNodeName();
+    
+    if( XMLString::equals( c, XMLString::transcode("nonmem") ) )
       return client::NONMEM;
-   return client::NOT_SUPPORTED;
-}
+    return client::NOT_SUPPORTED;
+  }
+
+  /**
+   * Displays the usage.
+   *
+   * @param o A string buffer in which a generated message is placed.
+   * 
+   */
+  void usage( char* o )
+  {
+    strcpy( o, "\n\n" );
+    strcat( o, "Usage: spkcompiler SOURCE DATA\n" );
+    strcat( o, "\n" );
+    strcat( o, "   SOURCE    --- file path to an SpkSourceML document\n" );
+    strcat( o ,"   DATA      --- file path to an SpkDataML document\n" );
+    strcat( o, "\n" );
+    strcat( o, "<Exit Code>\n" );
+    strcat( o, "   0: The compilation completed successfully.\n" );
+    strcat( o, "      A makefile, \"generatedMakefile\", along with the source\n" );
+    strcat( o, "      code files are generated in the current directory.\n" );
+    strcat( o, "   1: Syntax errors are found in either/both SOURCE or/and DATA.\n" );
+    strcat( o, "      compilation_error.xml will be generated in the current directory.\n" );
+    strcat( o, "   2: File/directory access denied.\n" );
+    strcat( o, "   x: Any other error is reported with an unspecified exit code greater than 2.\n" );
+    strcat( o, "      compilation_error.xml will generated in the current directory.\n" );
+    
+    return;
+  }
+};
 
 /**
- * Usage: <code>spkcompiler <em>SOURCE</em> <em>DATA</em> [-print]</code>
+ * @enum EXIT_CODE
  *
- * <dl>
- *   <dt><em>SOURCE</em></dt><dd>file path to an SpkSourceML document</dd>
- *   <dt><em>DATA</i></em><dd>file path to an SpkDataML document</dd>
- *   <dt>-print</dt><dd>request for displaying the progress in the standard output.</dd>
- * </dl>
+ * Exit codes.
  */
-static void usage( char* o )
-{
-  strcpy( o, "\n\n" );
-  strcat( o, "Usage: spkcompiler SOURCE DATA\n" );
-  strcat( o, "\n" );
-  strcat( o, "   SOURCE    --- file path to an SpkSourceML document\n" );
-  strcat( o ,"   DATA      --- file path to an SpkDataML document\n" );
-  strcat( o, "\n" );
-  strcat( o, "<Exit Code>\n" );
-  strcat( o, "   0: The compilation completed successfully.\n" );
-  strcat( o, "      A makefile, \"generatedMakefile\", along with the source\n" );
-  strcat( o, "      code files are generated in the current directory.\n" );
-  strcat( o, "   1: Syntax errors are found in either/both SOURCE or/and DATA.\n" );
-  strcat( o, "      compilation_error.xml will be generated in the current directory.\n" );
-  strcat( o, "   2: File/directory access permission error.\n" );
-  strcat( o, "   x: Any other error is reported with an unspecified exit code greater than 2.\n" );
-  strcat( o, "      compilation_error.xml will generated in the current directory.\n" );
-
-  return;
-}
-
-enum RETURN_CODE { SUCCESS=0, XML_PARSE_ERR=1, PERMISSION_ERR=2, OTHER_ERR };
+enum EXIT_CODE { SUCCESS=0,       /**< The compilation completed successfully. */
+		 XML_PARSE_ERR=1, /**< Syntax errors detected in either/both SpkSourceML or SpkDataML documents. */
+		 ACCESS_ERR=2,    /**< File/directory access denied. */
+		 OTHER_ERR        /**< Unclassified error. */
+               };
 
 /**
- * <code>spkcompiler</code> compiles C++ source code from 
- * a pair of an SpkSourceML and an SpkDataML documents.
- * <em>When 0 is returned</em>, there will be a set of following files in the current directory:
- * <dl>
- *   <dt><code>driver.cpp</code></dt><dd>The CSPK driver for the given pair of SpkSourceML
- *       and SpkDataML documents.</dd>
- *   <dt><code>Pred.h</code></dt><dd>Declare and define a template class, Pred.</dd>
- *   <dt><code>DataSet.h</code></dt><dd>Declare and define a template class, DataSet.</dd>
- *   <dt><code>IndData.h</code></dt><dd>Declare and define a template class, IndData.</dd>
- *   <dt><code>generatedMakefile</code></dt><dd>Makefile file to build an executable from 
- *       the above files.</dd>
- * </dl>
- * <em>When non-zero is returned</em>, a file named:
- * <dl>
- * <dt><code>compilation_error.xml</code></dt><dd>an SpkResultML document containing error messages.</dd>
- * </dl>
- * will be placed in the current directory.
+ * This main() function is the SPK Compiler.  
+ * It takes file paths to an SpkSourceML and an SpkDataML documents
+ * and compiles C++ source code from these documents.
+ *
+ * @param argc The number of command line arguments.  This is given by the OS automatically.
+ *             When argc = 1, the usage is printed out on the standard out.
+ * 
+ * @param argv The array of pointers to strings that represent command line arguments.
+ *             argv[0] is the name of the executable given by the system automatically, 
+ *             <code>spkcompiler</code> in this case.
+ *             argv[1] shall be a file path to an SpkSourceML document and argv[2] shall be
+ *             a file path to an SpkDataML document.
+ *
+ * @return An @ref EXIT_CODE "exit code" indicating the state of completion.
+ *         See the Detailed Description section of this page for details.
  *
  */
-int main( int argc, char * argv[] )
+int main( int argc, const char* argv[] )
 {
   SpkCompilerException myError;
   char compilation_error_xml[] = "compilation_error.xml";
@@ -139,11 +182,6 @@ int main( int argc, char * argv[] )
   }  
   const char * gSource = argv[1];
   const char * gData   = argv[2];
-  bool isPrint = false;
-  if( argc == 4 && strcmp( argv[3], "-print") == 0 )
-    {
-      isPrint = true;
-    }
   
   try
     {
