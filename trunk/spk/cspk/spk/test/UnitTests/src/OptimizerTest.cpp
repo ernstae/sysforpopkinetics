@@ -138,10 +138,9 @@ void OptimizerTest::case1()
   StateInfo s3;
   s3 = opt1.getStateInfo();
   CPPUNIT_ASSERT_EQUAL( s3.n, 2 );
-  CPPUNIT_ASSERT_MESSAGE( "The memory for warm start is not allocated", s3.x      != 0 );
-  CPPUNIT_ASSERT_MESSAGE( "The memory for warm start is not allocated", s3.state  != 0 );
-  CPPUNIT_ASSERT_MESSAGE( "The memory for warm start is not allocated", s3.lambda != 0 );	
-  CPPUNIT_ASSERT_MESSAGE( "The memory for warm start is not allocated", s3.h      != 0 );	
+  CPPUNIT_ASSERT_MESSAGE( "The memory for warm start is not allocated", s3.x != 0 );
+  CPPUNIT_ASSERT_MESSAGE( "The memory for warm start is not allocated", s3.g != 0 );	
+  CPPUNIT_ASSERT_MESSAGE( "The memory for warm start is not allocated", s3.h != 0 );	
   
   // setIsWarmStart
   opt1.setIsWarmStart( true );
@@ -149,29 +148,31 @@ void OptimizerTest::case1()
   CPPUNIT_ASSERT( opt1.getIsWarmStart() );
   
   // setStateInfo
-  int     n        = 2;
-  double  x     [] = { 1.0, 2.0 };
-  Integer state [] = { 1  , 2   };
-  double  lambda[] = { 1.0, 2.0 };
-  double  h     [] = { 1.0, 2.0, 3.0, 4.0 };
+  int     n   = 2;
+  double  r   = 5.2;
+  double  f   = 7.5;
+  double  x[] = { 1.0, 2.0 };
+  double  g[] = { 1.0, 2.0 };
+  double  h[] = { 1.0, 2.0, 3.0, 4.0 };
   StateInfo s1;
-  s1.n      = n;
-  s1.x      = x;
-  s1.state  = state;
-  s1.lambda = lambda;
-  s1.h      = h;
+  s1.n = n;
+  s1.r = r;
+  s1.f = f;
+  s1.x = x;
+  s1.g = g;
+  s1.h = h;
   opt1.setStateInfo( s1 );
   
   // getStateInfo
   StateInfo s2;
   s2 = opt1.getStateInfo();
   CPPUNIT_ASSERT_EQUAL( s2.n, 2 );
+  CPPUNIT_ASSERT_EQUAL( s2.r, 5.2 );
+  CPPUNIT_ASSERT_EQUAL( s2.f, 7.5 );
   CPPUNIT_ASSERT_EQUAL( s2.x[ 0 ], 1.0 );
   CPPUNIT_ASSERT_EQUAL( s2.x[ 1 ], 2.0 );
-  CPPUNIT_ASSERT_EQUAL( static_cast<int>(s2.state[ 0 ]), 1 );
-  CPPUNIT_ASSERT_EQUAL( static_cast<int>(s2.state[ 1 ]), 2 );
-  CPPUNIT_ASSERT_EQUAL( s2.lambda[ 0 ], 1.0 );
-  CPPUNIT_ASSERT_EQUAL( s2.lambda[ 1 ], 2.0 );
+  CPPUNIT_ASSERT_EQUAL( s2.g[ 0 ], 1.0 );
+  CPPUNIT_ASSERT_EQUAL( s2.g[ 1 ], 2.0 );
   CPPUNIT_ASSERT_EQUAL( s2.h[ 0 ], 1.0 );
   CPPUNIT_ASSERT_EQUAL( s2.h[ 1 ], 2.0 );
   CPPUNIT_ASSERT_EQUAL( s2.h[ 2 ], 3.0 );
@@ -181,8 +182,7 @@ void OptimizerTest::case1()
   opt1.deleteStateInfo();
   s2 = opt1.getStateInfo();
   CPPUNIT_ASSERT_EQUAL ( s2.n, 0 );
-  CPPUNIT_ASSERT_MESSAGE( "The memory should be returned", s2.x      == 0 );	
-  CPPUNIT_ASSERT_MESSAGE( "The memory should be returned", s2.state  == 0 );	
-  CPPUNIT_ASSERT_MESSAGE( "The memory should be returned", s2.lambda == 0 );	
-  CPPUNIT_ASSERT_MESSAGE( "The memory should be returned", s2.h      == 0 );	
+  CPPUNIT_ASSERT_MESSAGE( "The memory should be returned", s2.x == 0 );	
+  CPPUNIT_ASSERT_MESSAGE( "The memory should be returned", s2.g == 0 );	
+  CPPUNIT_ASSERT_MESSAGE( "The memory should be returned", s2.h == 0 );	
 }
