@@ -224,18 +224,6 @@ Either label or synonym may be one of the NONMEM reserved identifiers, among whi
 <!-- <ind_analysis is_restart="yes"> Request to warm-start the optimization process; "yes" or "no", default to "yes".-->
 <!ATTLIST ind_analysis is_restart (yes|no) #IMPLIED>
 
-<!-- <ind_analysis is_obj_out="yes"> Request to return the final objective value; "yes" or "no", default to "yes".-->
-<!ATTLIST ind_analysis is_obj_out (yes|no) #IMPLIED>
-
-<!-- <ind_analysis is_par_out="yes"> Request to return the final value for the individual parameter; "yes" or "no", default to "yes". -->
-<!ATTLIST ind_analysis is_par_out (yes|no) #IMPLIED>
-
-<!-- <ind_analysis is_obj_deriv1_out="yes"> Request to return the first derivative of the objective value with respect to the individual parameter; "yes" or "no", default to "yes".-->
-<!ATTLIST ind_analysis is_obj_deriv1_out (yes|no) #IMPLIED>
-
-<!-- <ind_analysis is_obj_deriv2_out="yes"> Request to return the second derivative of the objective value with respect to the individual parameter; "yes" or "no", default to "yes". -->
-<!ATTLIST ind_analysis is_obj_deriv2_out (yes|no) #IMPLIED>
-
 <!-- <pop_analysis> Request for the population level analysis. The <nm_model> definition is assumed to be for a population.-->
 <!ELEMENT pop_analysis (submission | description? | data_labels | theta | omega+ | sigma+ | pop_stat? | simulation?)>
 
@@ -255,21 +243,6 @@ Either label or synonym may be one of the NONMEM reserved identifiers, among whi
 
 <!-- <pop_analysis is_restart="yes"> Request to warm-start the optimization process; "yes" or "no", default to "yes".-->
 <!ATTLIST pop_analysis is_restart (yes|no) #IMPLIED>
-
-<!-- <pop_analysis is_obj_out="yes"> Request to return the final objective value; "yes" or "no", default to "yes".-->
-<!ATTLIST pop_analysis is_obj_out (yes|no) #IMPLIED>
-
-<!-- <pop_analysis is_pop_par_out="yes"> Request to return the final value for the population parameter; "yes" or "no", default to "yes".-->
-<!ATTLIST pop_analysis is_pop_par_out (yes|no) #IMPLIED>
-
-<!-- <pop_analysis is_ind_par_out="yes"> Request to return the final value for the individual parameters; "yes" or "no", default to "yes".-->
-<!ATTLIST pop_analysis is_ind_par_out (yes|no) #IMPLIED>
-
-<!-- <pop_analysis is_obj_deriv1_out="yes"> Request to return the first derivative of the objective with respect to the population parameter; "yes" or "no", default to "yes".-->
-<!ATTLIST pop_analysis is_obj_deriv1_out (yes|no) #IMPLIED>
-
-<!-- <pop_analysis is_obj_deriv2_out="yes"> Request to return the second derivative of the objective with respect to the population parameter; "yes" or "no", default to "yes".-->
-<!ATTLIST pop_analysis is_obj_deriv2_out (yes|no) #IMPLIED>
 
 <!-- <pop_analysis is_sigma_out="yes"> Request to return the final value for sigma matrix; "yes" or "no", default to "yes".-->
 <!ATTLIST pop_analysis is_sigma_out (yes|no) #IMPLIED>
@@ -627,34 +600,28 @@ This may contain only the messages reported by the SPK library, AT THIS POINT (R
 <!ELEMENT simulation_result ( nm_data )>
 
 <!-- <pop_opt_result> Final values from the population parameter estimation.-->
-<!ELEMENT pop_opt_result (pop_par_out? | pop_obj_out? | pop_obj_deriv1_out? | pop_obj_deriv2_out? | ind_par_out? )>
+<!ELEMENT pop_opt_result (pop_obj_out | theta_out | omega_out | sigma_out | eta_out? )>
 
 <!-- <ind_opt_result> Final values from the individual parameter estimation.-->
-<!ELEMENT ind_opt_result (ind_par_out? | ind_obj_out? | ind_obj_deriv1_out? | ind_obj_deriv2_out?)>
+<!ELEMENT ind_opt_result (ind_obj_out | theta_out)>
 
-<!-- <pop_par_out> Final value for the population parameter. -->
-<!ELEMENT pop_par_out (value)+>
+<!-- <theta_out> Final value for the theta. -->
+<!ELEMENT theta_out (value)+>
+
+<!-- <omega_out> Final value for the Omega. -->
+<!ELEMENT omega_out (value)+>
+
+<!-- <sigma_out> Final value for the Sigma. -->
+<!ELEMENT sigma_out (value)+>
+
+<!-- <eta_out> Final value for the eta. -->
+<!ELEMENT eta_out (value)+>
 
 <!-- <pop_obj_out> Final objective value for the population parameter. -->
 <!ELEMENT pop_obj_out (value)+>
 
-<!-- <pop_obj_deriv1_out> Final value for the first derivative of the objective with respect to the population parameter. -->
-<!ELEMENT pop_obj_deriv1_out (value)+>
-
-<!-- <pop_obj_deriv2_out> Final value for the second derivative of the objective with respect to the population parameter. -->
-<!ELEMENT pop_obj_deriv2_out (value)+>
-
-<!-- <ind_par_out> Final value for the individual parameter. -->
-<!ELEMENT ind_par_out (value)+>
-
 <!-- <ind_obj_out> Final objective value for the individual parameter. -->
 <!ELEMENT ind_obj_out (value)+>
-
-<!-- <ind_obj_deriv1_out> Final value for the first derivative of the objective with respect to the individual parameter. -->
-<!ELEMENT ind_obj_deriv1_out (value)+>
-
-<!-- <ind_obj_deriv2_out> Final value for the second derivative of the objective with respect to the individual parameter. -->
-<!ELEMENT ind_obj_deriv2_out (value)+>
 
 <!-- <pop_stat_result> Statistical analysis results on the final estimate for the population parameter. -->
 <!ELEMENT pop_stat_result (pop_stderror_out? | pop_covariance_out? | pop_correlation_out? | pop_confidence_out? | pop_coefficient_out?)>
@@ -671,7 +638,7 @@ This may contain only the messages reported by the SPK library, AT THIS POINT (R
 <!-- <pop_confidence_out> Upper limit of the cofidence interval of the final estimate for population parameter. -->
 <!ELEMENT pop_confidence_out (value)+>
 
-<!-- <pop_coefficient_out> Coefficient of the final estimate for population parameter. -->
+<!-- <pop_coefficient_out> Coefficient of variation in the final estimate for population parameter. -->
 <!ELEMENT pop_coefficient_out (value)+>
 
 <!-- <ind_stat_result> Statistical analysis results on the final estimate for the individual parameter. -->
@@ -689,12 +656,12 @@ This may contain only the messages reported by the SPK library, AT THIS POINT (R
 <!-- <ind_confidence_out> Upper limit of the confidence interval of the final estimate(s) for individual parameter(s). -->
 <!ELEMENT ind_confidence_out (value)+>
 
-<!-- <ind_coefficient_out> Coefficient of the final estimate(s) for individual parameter(s). -->
+<!-- <ind_coefficient_out> Coefficient of variation in the final estimate(s) for individual parameter(s). -->
 <!ELEMENT ind_coefficient_out (value)+>
 
 <!-- <pred_defined_result> A list of PRED-defined item values requested;
 
-That is, the items specified as <column> within <table> or <x> or <y> within <scatterplot> other than the data labels or THETA, OMEGA, ETA or SIGMA.
+That is, the items specified as <column> within <table> or <x> or <y> within <scatterplot> other than the data labels or THETA, OMEGA, ETA or SIGMA will be returned within this block.
 The list always include the predictions (PRED), the residuals (RES) and the weighted residuals (WRES).
 -->
 <!ELEMENT pred_defined_result (pred_defined_out)+>
