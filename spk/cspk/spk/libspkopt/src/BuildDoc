@@ -1,7 +1,0 @@
-#
-omhelp_dir=~/OMhelp
-export omhelp_dir
-rm Doc/* 
-cd Doc
-omhelp ../QuasiNewton01Box.h -xml 
-omhelp ../QuasiNewton01Box.h -xml -printable 
