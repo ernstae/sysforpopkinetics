@@ -902,15 +902,19 @@ namespace // [Begin: unnamed namespace]
       const DoubleMatrix*  pdvecYIn,
       const bool*          pbWithDIn,
       const bool*          pbIsFoIn,
-      const DoubleMatrix*  pdvecNIn )
+      const DoubleMatrix*  pdvecNIn,
+      Optimizer*           pOptInfoIn )
       :
       nB           ( nBIn ),
       pModel       ( pModelIn ),
       pdvecY       ( pdvecYIn ),
       pbWithD      ( pbWithDIn ),
       pbIsFo       ( pbIsFoIn ),
-      pdvecN       ( pdvecNIn )
+      pdvecN       ( pdvecNIn ),
+      pOptInfo     ( pOptInfoIn )
     {
+      // Give the optimizer controller a pointer to this objective.
+      pOptInfo->setObjFunc( this );
     }
 
     //----------------------------------------------------------
@@ -928,6 +932,8 @@ namespace // [Begin: unnamed namespace]
     const bool*          pbWithD;
     const bool*          pbIsFo;
     const DoubleMatrix*  pdvecN;
+
+    Optimizer*  pOptInfo;
 
 
     //----------------------------------------------------------
@@ -959,7 +965,7 @@ namespace // [Begin: unnamed namespace]
         *pdvecY, 
         dvecBCurr, 
         &dMapObjCurr,
-	pdmatNull,
+        pdmatNull,
         *pbWithD,
         *pbIsFo, 
         pdvecN );
@@ -990,7 +996,7 @@ namespace // [Begin: unnamed namespace]
         *pModel,
         *pdvecY,
         dvecBCurr,
-	pdNull,
+        pdNull,
         &drowMapObj_bCurr,
         *pbWithD,
         *pbIsFo,
@@ -1049,7 +1055,8 @@ void mapOpt(  SpkModel& model,
     &dvecY,
     &withD,
     &isFo,
-    pdvecN );
+    pdvecN,
+    &optInfo );
 
   // Instantiate a temporary column vector to hold the final b 
   // value that will be returned by quasiNewtonAnyBox.
