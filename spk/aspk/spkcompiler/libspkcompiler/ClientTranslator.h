@@ -154,18 +154,18 @@ public:
 
  private:
 
-  XMLCh* X_SPKDATA;
-  XMLCh* X_VERSION;
-  XMLCh* X_POINTONE;
-  XMLCh* X_TABLE;
-  XMLCh* X_COLUMNS;
-  XMLCh* X_ROWS;
-  XMLCh* X_DESCRIPTION;
-  XMLCh* X_ROW;
-  XMLCh* X_POSITION;
-  XMLCh* X_VALUE;
-  XMLCh* X_TYPE;
-  XMLCh* X_NUMERIC;
-  XMLCh* X_ID;
+  static const char * C_SPKDATA;     XMLCh* X_SPKDATA;
+  static const char * C_VERSION;     XMLCh* X_VERSION;
+  static const char * C_POINTONE;    XMLCh* X_POINTONE;
+  static const char * C_TABLE;       XMLCh* X_TABLE;
+  static const char * C_COLUMNS;     XMLCh* X_COLUMNS;
+  static const char * C_ROWS;        XMLCh* X_ROWS;
+  static const char * C_DESCRIPTION; XMLCh* X_DESCRIPTION;
+  static const char * C_ROW;         XMLCh* X_ROW;
+  static const char * C_POSITION;    XMLCh* X_POSITION;
+  static const char * C_VALUE;       XMLCh* X_VALUE;
+  static const char * C_TYPE;        XMLCh* X_TYPE;
+  static const char * C_NUMERIC;     XMLCh* X_NUMERIC;
+  static const char * C_ID;          XMLCh* X_ID;
 };
 #endif

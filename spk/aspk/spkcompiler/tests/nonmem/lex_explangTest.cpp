@@ -21,6 +21,8 @@ extern "C"{
   void nm_error( char * m );
   void nm_restart( FILE* f );
   void nm_terminate();
+  int  nm_debug;
+
 };
 
 int gSpkExpLines  = 0;
@@ -64,7 +66,7 @@ void lex_explangTest::testWhiteSpaces()
   fclose( nm_in );
   CPPUNIT_ASSERT( TOKEN == '\n' );
   CPPUNIT_ASSERT_EQUAL( 0, gSpkExpErrors );
-  CPPUNIT_ASSERT_EQUAL( 1, gSpkExpLines );
+  CPPUNIT_ASSERT_EQUAL( 0, gSpkExpLines ); // lex should not modify the counter
   remove( testInput );
 }
 void lex_explangTest::testComment()
@@ -118,6 +120,8 @@ void lex_explangTest::testIllegalComment()
       cerr << "Abnormal return." << endl;
     }
   CPPUNIT_ASSERT_EQUAL( 1, gSpkExpErrors );
+  CPPUNIT_ASSERT_EQUAL( 0, gSpkExpLines ); // lex should not modify the counter
+
   //CPPUNIT_ASSERT_EQUAL( COMMENT, TOKEN );
   fclose( nm_in );
   remove( testInput );
@@ -140,6 +144,7 @@ void lex_explangTest::testNamedConstant()
   int TOKEN = nm_lex();
   CPPUNIT_ASSERT_MESSAGE( nm_lval.c_str, strcmp( nm_lval.c_str, "Ab9DEf" ) == 0 );
   CPPUNIT_ASSERT_EQUAL( NAME, TOKEN );
+  CPPUNIT_ASSERT_EQUAL( 0, gSpkExpLines ); // lex should not modify the counter
 
   fclose( nm_in );
   remove( testInput );  
@@ -167,6 +172,7 @@ void lex_explangTest::testNameLength()
      cerr << e << endl;
   }
   CPPUNIT_ASSERT( gSpkExpErrors > 0 );
+  CPPUNIT_ASSERT_EQUAL( 0, gSpkExpLines ); // lex should not modify the counter
 
   fclose( nm_in );
   remove( testInput );  
@@ -225,6 +231,8 @@ void lex_explangTest::testEngineeringNotation()
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
   CPPUNIT_ASSERT_MESSAGE( nm_lval.c_str, strcmp( nm_lval.c_str, "1e1" ) == 0 );
 
+  CPPUNIT_ASSERT_EQUAL( 0, gSpkExpLines ); // lex should not modify the counter
+
   fclose( nm_in );
   remove( testInput );  
 }
@@ -242,8 +250,10 @@ void lex_explangTest::testFloatingPoint()
   nm_in = fopen( testInput, "r" );
   nm_restart( nm_in );
   int TOKEN = nm_lex();
+
   CPPUNIT_ASSERT_EQUAL( SIGNIFICAND, TOKEN );
   TOKEN = nm_lex();
+
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
   CPPUNIT_ASSERT_MESSAGE( nm_lval.c_str, strcmp( nm_lval.c_str, "1.0" ) == 0 );
     
@@ -258,6 +268,8 @@ void lex_explangTest::testFloatingPoint()
   TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
   CPPUNIT_ASSERT_MESSAGE( nm_lval.c_str, strcmp( nm_lval.c_str, ".1" ) == 0 );
+
+  CPPUNIT_ASSERT_EQUAL( 0, gSpkExpLines ); // lex should not modify the counter
 
   fclose( nm_in );
   remove( testInput );  
@@ -274,6 +286,9 @@ void lex_explangTest::testDigitString()
   nm_in = fopen( testInput, "r" );
   nm_restart( nm_in );
   int TOKEN = nm_lex();
+
+  CPPUNIT_ASSERT_EQUAL( 0, gSpkExpLines ); // lex should not modify the counter
+
   CPPUNIT_ASSERT_EQUAL( DIGIT_STRING, TOKEN );
   fclose( nm_in );
   remove( testInput );
@@ -290,6 +305,9 @@ void lex_explangTest::testExit()
   nm_in = fopen( testInput, "r" );
   nm_restart( nm_in );
   int TOKEN = nm_lex();
+
+  CPPUNIT_ASSERT_EQUAL( 0, gSpkExpLines ); // lex should not modify the counter
+
   CPPUNIT_ASSERT_EQUAL( EXIT, TOKEN );
   fclose( nm_in );
   remove( testInput );
@@ -329,6 +347,7 @@ void lex_explangTest::testControl()
   TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
 
+
   fclose( nm_in );
   remove( testInput );
 }
@@ -348,6 +367,7 @@ void lex_explangTest::testBool()
   nm_restart( nm_in );
 
   int TOKEN = nm_lex();
+
   CPPUNIT_ASSERT_EQUAL( TRUE, TOKEN );
   TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
@@ -356,6 +376,8 @@ void lex_explangTest::testBool()
   CPPUNIT_ASSERT_EQUAL( FALSE, TOKEN );
   TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
+
+  CPPUNIT_ASSERT_EQUAL( 0, gSpkExpLines ); // lex should not modify the counter
 
   fclose( nm_in );
   remove( testInput );
@@ -374,6 +396,9 @@ void lex_explangTest::testBinaryFunc()
   nm_restart( nm_in );
 
   int TOKEN = nm_lex();
+
+  CPPUNIT_ASSERT_EQUAL( 0, gSpkExpLines ); // lex should not modify the counter
+
   CPPUNIT_ASSERT_EQUAL( NAME, TOKEN );
   
   TOKEN = nm_lex();
@@ -381,6 +406,8 @@ void lex_explangTest::testBinaryFunc()
 
   TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( NAME, TOKEN );
+
+  CPPUNIT_ASSERT_EQUAL( 0, gSpkExpLines ); // lex should not modify the counter
 
   fclose( nm_in );
   remove( testInput );
@@ -405,6 +432,8 @@ void lex_explangTest::testUnaryFunc()
   nm_restart( nm_in );
 
   int TOKEN = nm_lex();
+
+
   CPPUNIT_ASSERT_EQUAL( DEFINED_UNARY_FUNCTION, TOKEN );
   TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
@@ -423,6 +452,8 @@ void lex_explangTest::testUnaryFunc()
   CPPUNIT_ASSERT_EQUAL( DEFINED_UNARY_FUNCTION, TOKEN );
   TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( static_cast<int>('\n'), TOKEN );
+
+  CPPUNIT_ASSERT_EQUAL( 0, gSpkExpLines ); // lex should not modify the counter
 
   fclose( nm_in );
   remove( testInput );
@@ -451,6 +482,7 @@ void lex_explangTest::testArray()
   TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( CLOSE_ARRAY_ELEM_LIST, TOKEN );
 
+  CPPUNIT_ASSERT_EQUAL( 0, gSpkExpLines ); // lex should not modify the count
   fclose( nm_in );
   remove( testInput ); 
 }
@@ -575,6 +607,8 @@ void lex_explangTest::testLogical()
   TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( EQV_OP, TOKEN );
   nm_lex(); // newline
+
+  CPPUNIT_ASSERT_EQUAL( 0, gSpkExpLines ); // lex should not modify the counter
 
   fclose( nm_in );
   remove( testInput );

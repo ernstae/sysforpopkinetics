@@ -1188,7 +1188,7 @@ void pop_fixedParaTest::testReportML()
   DOMNodeList *presentation_data = report->getElementsByTagName( X_PRESENTATION_DATA );
   CPPUNIT_ASSERT( presentation_data->getLength() == 1 );
 
-  okToClean = false;
+  okToClean = true;
 }
 
 CppUnit::Test * pop_fixedParaTest::suite()
