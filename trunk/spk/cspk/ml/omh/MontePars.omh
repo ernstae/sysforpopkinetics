@@ -1,4 +1,12 @@
-$begin MontePars.omh$$
+$begin MontePars$$
+
+$spell
+   namespace
+   const
+   enum
+   Eval
+$$
+
 $section Parameters for Monte Carlo Integration$$
 
 $table
@@ -23,7 +31,7 @@ The value
 $syntax%
 	const int %numberEval%
 %$$
-specifies the number of function evalautions to use for each
+specifies the number of function evaluations to use for each
 individual in the population.
 Actually it is the maximum number when $italic method$$ is 
 $code grid$$ and it is not used when $italic method$$ is $code analytic$$.
