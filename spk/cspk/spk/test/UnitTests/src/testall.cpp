@@ -43,6 +43,7 @@
 #include "src/IkronBtimesCTest.h"
 #include "src/IndInputDataPackageTest.h"
 #include "src/IndOutputDataPackageTest.h"
+#include "src/indResidualsTest.h"
 #include "src/IndResultsTest.h"
 #include "src/indStatisticsTest.h"
 #include "src/IndVarsTest.h"
@@ -71,6 +72,7 @@
 #include "src/OptimizerTest.h"
 #include "src/placeRowsTest.h"
 #include "src/PopConstValsTest.h"
+#include "src/popResidualsTest.h"
 #include "src/popStatisticsTest.h"
 #include "src/PopVarsTest.h"
 #include "src/ppkaOptTest.h"
@@ -156,6 +158,7 @@ int main( int argc, const char * argv[] )
   master_list_of_tests[ "IkronBtimesCTest" ]                 = IkronBtimesCTest::suite();
   master_list_of_tests[ "IndInputDataPackageTest" ]          = IndInputDataPackageTest::suite();
   master_list_of_tests[ "IndOutputDataPackageTest" ]         = IndOutputDataPackageTest::suite();
+  master_list_of_tests[ "indResidualsTest" ]                 = indResidualsTest::suite();
   master_list_of_tests[ "IndResultsTest" ]                   = IndResultsTest::suite();
   master_list_of_tests[ "indStatisticsTest" ]                = indStatisticsTest::suite();
   master_list_of_tests[ "IndVarsTest" ]                      = IndVarsTest::suite();
@@ -184,6 +187,7 @@ int main( int argc, const char * argv[] )
   master_list_of_tests[ "OptimizerTest" ]                    = OptimizerTest::suite();
   master_list_of_tests[ "placeRowsTest" ]                    = placeRowsTest::suite();
   master_list_of_tests[ "PopConstValsTest" ]                 = PopConstValsTest::suite();
+  master_list_of_tests[ "popResidualsTest" ]                 = popResidualsTest::suite();
   master_list_of_tests[ "popStatisticsTest" ]                = popStatisticsTest::suite();
   master_list_of_tests[ "PopVarsTest" ]                      = PopVarsTest::suite();
   master_list_of_tests[ "ppkaOptTest" ]                      = ppkaOptTest::suite();
