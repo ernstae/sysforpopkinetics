@@ -412,7 +412,7 @@ sub reaper {
 	# Get email address of user
 	my $email = &email_for_job($dbh, $job_id);
 	
-	$format error report and place a message in the system log
+	#format error report and place a message in the system log
 	$report = format_error_report("$err_msg $err_rpt");
 	&end_job($dbh, $job_id, $end_code, $report)
 	    or death('emerg', "job_id=$job_id: $Spkdb::errstr");
