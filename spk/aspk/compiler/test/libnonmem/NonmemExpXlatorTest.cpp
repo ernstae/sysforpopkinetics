@@ -37,7 +37,7 @@ void NonmemExpXlatorTest::setUp()
 
   // Populate the symbol table with pre-defined symbols.
   //
-  file = fopen( "pk", "r" );
+  file = fopen( "exp.in", "r" );
   if( !file )
     {
       fprintf( stderr, "Failed to open %s!\n", "exp.in" );
@@ -75,7 +75,7 @@ void NonmemExpXlatorTest::testParse()
   fclose( file );
   if( gSpkExpErrors == 0 )
   {
-    gSpkExpTreeGenerator->printToStdout( );
+    //  gSpkExpTreeGenerator->printToStdout( );
   }
   else
     {    
@@ -83,7 +83,7 @@ void NonmemExpXlatorTest::testParse()
     }
 
   cout << endl;
-  gSpkExpSymbolTable->dump();
+    gSpkExpSymbolTable->dump();
 
   cout << endl;
   cout << "Read " << gSpkExpLines << " lines of code from " << "exp.in" << endl;

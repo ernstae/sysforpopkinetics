@@ -51,6 +51,7 @@ void NonmemCompilerTest::testInterpret()
 
   SymbolTable *table = compiler->getTable();
   CPPUNIT_ASSERT_MESSAGE( "SpkCompiler::getTable() returned a NULL pointer!", table != NULL );
+  table->dump();
 
   FitParameters * spkRequired = table->spkSymbols;
   CPPUNIT_ASSERT_MESSAGE( "The pointer to a FitParameters object was NULL!", 
