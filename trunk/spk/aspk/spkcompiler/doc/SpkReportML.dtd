@@ -10,7 +10,7 @@ This documentation specifies the information passed back from CSPK to MDA.
 <!-- <spkreportML> For CSPK, this contains everything needed for returning the requested values back to the user.  For MDA, it is for presenting them before the user.
 -->
 
-<!ELEMENT spkreportML (error_message? | simulated_data? | pop_analysis_result? | ind_analysis_result?)>
+<!ELEMENT spkreportML (error_message? | pop_analysis_result? | ind_analysis_result?)>
 
 <!-- ===================================== -->
 <!--                 MESSAGE               -->
@@ -22,13 +22,13 @@ This documentation specifies the information passed back from CSPK to MDA.
 <!--                 REPORTS               -->
 <!-- ===================================== -->
 <!-- <pop_analysis_result> Population analysis results. -->
-<!ELEMENT pop_analysis_result ( pop_opt_result? | pop_stat_result? )>
+<!ELEMENT pop_analysis_result ( pop_opt_result? | pop_stat_result? | presentation_data? )>
 
 <!-- <pop_opt_result> Final values from the population parameter estimation.-->
 <!ELEMENT pop_opt_result (pop_obj_out | theta_out | omega_out | sigma_out)>
 
 <!-- <ind_analysis_result> Individual analysis results. -->
-<!ELEMENT ind_analysis_result ( ind_opt_result? | ind_stat_result? )>
+<!ELEMENT ind_analysis_result ( ind_opt_result? | ind_stat_result? | presentation_data? )>
 
 <!-- <ind_opt_result> Final values from the individual parameter estimation.-->
 <!ELEMENT ind_opt_result (ind_obj_out | theta_out | omega_out)>
@@ -81,18 +81,38 @@ This documentation specifies the information passed back from CSPK to MDA.
 <!-- <ind_correlation_out> Correlation matrix of the final estimate(s) for individual parameter(s). -->
 <!ELEMENT ind_correlation_out (value)*>
 
-<!-- <simulated_data> The simulated data (DV in NONMEM, y in SPK) if simulation has been performed. 
+<!-- <presentation_data> An augmented data set, containing the values that appear on the left hand side of the equations in <model> and the following extra data items evaluated at each sampling point, along with the original data set values.
 
-The sequence of <individual_data>s shall match the data sequence appeared in the original data set.
+An augumented data record contains the following extra data items (the string in parenthesises is the label for the item):
+   <html:ul>
+      <html:li>Observation record identifier (ID)</html:li>
+      <html:li>Prediction (PRED)</html:li>
+      <html:li>Residual (RES)</html:li>
+      <html:li>Weighted residual (WRES)</html:li>
+      </html:li>
+      <html:li>Simulated data (ie. dependent variable) if <simulation> were requested (SIMDV).</html:ul>
+   </html:ul>
+
+The XML format in which these values are laied out shall follow the convention to express a
+table of values adapted by
+popular spreadsheet programs such as MS Excel, Sun StarOffice or OpenOffice.org.
 -->
-<!ELEMENT simulated_data (individual)+>
+<!ELEMENT presentation_data (row)* >
 
-<!-- <individual> The data (DV in NONMEM, y in SPK) for the individual indentified by the number in which this tag appeared under <simulated_data> or the value of ID attribute. -->
-<!ELEMENT individual (value)*>
+<!-- <row> A row in the table of values.  A row is composed of <item>s.  -->
+<!ELEMENT row (item)*>
 
-<!-- <individual id=""> The identifier of the individual to which the following data belongs.-->
-<!ATTLIST individual id CDATA #IMPLIED>
+<!-- <row position="1"> The position of the <row> in the table/matrix, >= 1.  -->
+<!ATTLIST row position CDATA #REQUIRED>
 
+<!-- <item> The element in a <row> that contains a value.-->
+<!ELEMENT item (#PCDATA)>
+                                                                                                               
+<!-- <item position="1"> The positon of the <item> in the <row>, >=1. -->
+<!ATTLIST item position CDATA #REQUIRED>
+                                                                                                               
+<!-- <item type="numeric"> The type of the value: "numeric" or "string", default to "numeric".-->
+<!ATTLIST item type (string|numeric) #IMPLIED>
 <!-- ================================================================================ -->
 <!--                                                                                  -->
 <!--                                 end of REPORT                                    -->
@@ -111,9 +131,6 @@ The sequence of <individual_data>s shall match the data sequence appeared in the
 For numbers, you can use the decimal format (ex. 0.1) or scientific notation (ex. 1E-1).  The leading zeros before the decimal point or the trailing zeros after the decimal point may be omitted (ex. ".1", "1.") as long as there is one significant digit on either side (ex. "." by itself is illegal).
 -->
 <!ELEMENT value (#PCDATA)>
-
-<!-- <value fixed="no"> "yes" ensures the value to be retained during the optimization, default to "no". For processes other than optimization, this setting is ignored.-->
-<!ATTLIST value fixed (yes|no) #IMPLIED>
 
 <!-- <label> The name/label of the i-th item, where i is the order in which this label appears under <data_labels>.
 -->
