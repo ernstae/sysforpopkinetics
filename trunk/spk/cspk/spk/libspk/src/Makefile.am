@@ -94,6 +94,7 @@ libspk_la_SOURCES = \
 	replaceIth.cpp \
 	replaceJth.cpp \
 	replaceSubblock.cpp \
+	residuals.cpp \
 	rvecInverse.cpp \
 	sqpAnyBox.cpp \
 	StatusList.cpp \
@@ -199,6 +200,7 @@ libspk_la_SOURCES = \
 	replaceIth.h \
 	replaceJth.h \
 	replaceSubblock.h \
+	residuals.h \
 	rvec.h \
 	rvecInverse.h \
 	Spk.h \
@@ -303,6 +305,7 @@ libspk_release_la_SOURCES = \
 	replaceIth.cpp \
 	replaceJth.cpp \
 	replaceSubblock.cpp \
+	residuals.cpp \
 	rvecInverse.cpp \
 	sqpAnyBox.cpp \
 	StatusList.cpp \
@@ -408,6 +411,7 @@ libspk_release_la_SOURCES = \
 	replaceIth.h \
 	replaceJth.h \
 	replaceSubblock.h \
+	residuals.h \
 	rvec.h \
 	rvecInverse.h \
 	Spk.h \
@@ -519,6 +523,7 @@ pkginclude_HEADERS = \
 	replaceIth.h \
 	replaceJth.h \
 	replaceSubblock.h \
+	residuals.h \
 	rvec.h \
 	rvecInverse.h \
 	Spk.h \
