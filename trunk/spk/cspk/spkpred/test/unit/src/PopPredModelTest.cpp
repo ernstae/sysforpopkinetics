@@ -2102,9 +2102,10 @@ void PopPredModelTest::OneExpF_ModelBasedExpY_Test()
   valarray<double> bCurr( nIndPar );
   model.getIndPar( bCurr );
 
-  valarray<double> dataMean              ( nY_i );
-  valarray<double> dataMean_popPar       ( nY_i * nPopPar );
-  valarray<double> dataMean_indPar       ( nY_i * nIndPar );
+  valarray<double> dataMean       ( nY_i );
+  valarray<double> dataMean_popPar( nY_i * nPopPar );
+  valarray<double> dataMean_indPar( nY_i * nIndPar );
+
   valarray<double> dataVariance          ( nY_i * nY_i );
   valarray<double> dataVariance_popPar   ( nY_i * nY_i * nPopPar );
   valarray<double> dataVariance_indPar   ( nY_i * nY_i * nIndPar );
@@ -2112,20 +2113,32 @@ void PopPredModelTest::OneExpF_ModelBasedExpY_Test()
   valarray<double> dataVarianceInv_popPar( nY_i * nY_i * nPopPar );
   valarray<double> dataVarianceInv_indPar( nY_i * nY_i * nIndPar );
 
+  valarray<double> indParVariance          ( nIndPar * nIndPar );
+  valarray<double> indParVariance_popPar   ( nIndPar * nIndPar * nPopPar );
+  valarray<double> indParVarianceInv       ( nIndPar * nIndPar );
+  valarray<double> indParVarianceInv_popPar( nIndPar * nIndPar * nPopPar );
+
   bool ok;
 
   // Evaluate these quantities at the current population and 
   // individual parameter values, which are set when the model
   // is constructed.
-  model.dataMean                   ( dataMean );
-  model.dataVariance               ( dataVariance );
-  model.dataVarianceInv            ( dataVarianceInv );
-  ok = model.dataMean_popPar       ( dataMean_popPar );
-  ok = model.dataMean_indPar       ( dataMean_indPar );
+  model.dataMean         ( dataMean );
+  model.dataVariance     ( dataVariance );
+  model.dataVarianceInv  ( dataVarianceInv );
+  model.indParVariance   ( indParVariance );
+  model.indParVarianceInv( indParVarianceInv );
+
+  ok = model.dataMean_popPar( dataMean_popPar );
+  ok = model.dataMean_indPar( dataMean_indPar );
+
   ok = model.dataVariance_popPar   ( dataVariance_popPar );
   ok = model.dataVariance_indPar   ( dataVariance_indPar );
   ok = model.dataVarianceInv_popPar( dataVarianceInv_popPar );
   ok = model.dataVarianceInv_indPar( dataVarianceInv_indPar );
+
+  ok = model.indParVariance_popPar   ( indParVariance_popPar );
+  ok = model.indParVarianceInv_popPar( indParVarianceInv_popPar );
 
   valarray<double> popParLow ( nPopPar );
   valarray<double> popParUp  ( nPopPar );
@@ -2247,15 +2260,21 @@ void PopPredModelTest::OneExpF_ModelBasedExpY_Test()
   // Prepare known values related to the model functions.
   //------------------------------------------------------------
 
-  valarray<double> dataMeanKnown              ( nY_i );
-  valarray<double> dataMean_popParKnown       ( nY_i * nPopPar );
-  valarray<double> dataMean_indParKnown       ( nY_i * nIndPar );
+  valarray<double> dataMeanKnown       ( nY_i );
+  valarray<double> dataMean_popParKnown( nY_i * nPopPar );
+  valarray<double> dataMean_indParKnown( nY_i * nIndPar );
+
   valarray<double> dataVarianceKnown          ( nY_i * nY_i );
   valarray<double> dataVariance_popParKnown   ( nY_i * nY_i * nPopPar );
   valarray<double> dataVariance_indParKnown   ( nY_i * nY_i * nIndPar );
   valarray<double> dataVarianceInvKnown       ( nY_i * nY_i );
   valarray<double> dataVarianceInv_popParKnown( nY_i * nY_i * nPopPar );
   valarray<double> dataVarianceInv_indParKnown( nY_i * nY_i * nIndPar );
+
+  valarray<double> indParVarianceKnown          ( nIndPar * nIndPar );
+  valarray<double> indParVariance_popParKnown   ( nIndPar * nIndPar * nPopPar );
+  valarray<double> indParVarianceInvKnown       ( nIndPar * nIndPar );
+  valarray<double> indParVarianceInv_popParKnown( nIndPar * nIndPar * nPopPar );
 
   double time;
   double ds;
@@ -2492,6 +2511,61 @@ void PopPredModelTest::OneExpF_ModelBasedExpY_Test()
     dataVariance_indParKnown, nIndPar );
   dataVarianceInv_indParKnown *= -1.0;
 
+  // Set the known value for the variance of the individual parameter,
+  //
+  //     D ( alpha )  =  omega( omegaPar )  .
+  //
+  indParVarianceKnown = omegaKnown;
+
+  // Calculate the known value for the derivative with respect
+  // to the population parameter of the variance of the individual
+  // parameter,
+  //
+  //     d       D ( alpha )
+  //      alpha
+  //
+  //             -                                                              -
+  //            |  0, 0, ... , 0,                                 0, 0, ... , 0  |
+  //            |                                                                |
+  //         =  |  0, 0, ... , 0,  d          omega ( omega  ) ,  0, 0, ... , 0  |  ,
+  //            |                   omegaPar                                     |  
+  //            |  0, 0, ... , 0,                                 0, 0, ... , 0  |
+  //             -                                                              -
+  //
+  indParVariance_popParKnown = 0.0;
+  nRow = nIndPar * nIndPar;
+  for ( k = 0; k < nOmegaPar; k++ )
+  {
+    for ( j = 0; j < nRow; j++ )
+    {
+      row = j;
+      col = k + omegaParOffsetInPopPar;
+
+      indParVariance_popParKnown[row + col * nRow] = omega_omegaParKnown[j + k * nRow];
+    }
+  }
+
+  // Calculate the known value for the inverse of the variance
+  // of the individual parameter.
+  indParVarianceInvKnown = inverse( indParVarianceKnown, nIndPar );
+
+  // Calculate the known value for the derivative with respect
+  // to the population parameter of the inverse of the variance
+  // of the individual parameter using Lemma 10 of B. M. Bell,
+  // "Approximating the marginal likelihood estimate for models
+  // with random parameters", Applied Mathematics and Computation,
+  // 119 (2001), pp. 57-73, which states that
+  //
+  //          -1               -1              -1
+  //     d   A  ( x )  =  - [ A  ( x )  kron  A  ( x ) ]  d   A ( x )  .
+  //      x                                                x
+  //
+  indParVarianceInv_popParKnown = AkronBtimesC(
+    indParVarianceInvKnown,     nIndPar,
+    indParVarianceInvKnown,     nIndPar,
+    indParVariance_popParKnown, nPopPar );
+  indParVarianceInv_popParKnown *= -1.0;
+
 
   //------------------------------------------------------------
   // Prepare known values related to SPK estimation.
@@ -2627,6 +2701,30 @@ void PopPredModelTest::OneExpF_ModelBasedExpY_Test()
     dataVarianceInv_indPar,
     dataVarianceInv_indParKnown,
     "dataVarianceInv_indPar",
+    tol );
+
+  compareToKnown( 
+    indParVariance,
+    indParVarianceKnown,
+    "indParVariance",
+    tol );
+
+  compareToKnown( 
+    indParVariance_popPar,
+    indParVariance_popParKnown,
+    "indParVariance_popPar",
+    tol );
+
+  compareToKnown( 
+    indParVarianceInv,
+    indParVarianceInvKnown,
+    "indParVarianceInv",
+    tol );
+
+  compareToKnown( 
+    indParVarianceInv_popPar,
+    indParVarianceInv_popParKnown,
+    "indParVarianceInv_popPar",
     tol );
 }
 
@@ -2774,9 +2872,10 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
   valarray<double> bCurr( nIndPar );
   model.getIndPar( bCurr );
 
-  valarray<double> dataMean              ( nY_i );
-  valarray<double> dataMean_popPar       ( nY_i * nPopPar );
-  valarray<double> dataMean_indPar       ( nY_i * nIndPar );
+  valarray<double> dataMean       ( nY_i );
+  valarray<double> dataMean_popPar( nY_i * nPopPar );
+  valarray<double> dataMean_indPar( nY_i * nIndPar );
+
   valarray<double> dataVariance          ( nY_i * nY_i );
   valarray<double> dataVariance_popPar   ( nY_i * nY_i * nPopPar );
   valarray<double> dataVariance_indPar   ( nY_i * nY_i * nIndPar );
@@ -2784,20 +2883,32 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
   valarray<double> dataVarianceInv_popPar( nY_i * nY_i * nPopPar );
   valarray<double> dataVarianceInv_indPar( nY_i * nY_i * nIndPar );
 
+  valarray<double> indParVariance          ( nIndPar * nIndPar );
+  valarray<double> indParVariance_popPar   ( nIndPar * nIndPar * nPopPar );
+  valarray<double> indParVarianceInv       ( nIndPar * nIndPar );
+  valarray<double> indParVarianceInv_popPar( nIndPar * nIndPar * nPopPar );
+
   bool ok;
 
   // Evaluate these quantities at the current population and 
   // individual parameter values, which are set when the model
   // is constructed.
-  model.dataMean                   ( dataMean );
-  model.dataVariance               ( dataVariance );
-  model.dataVarianceInv            ( dataVarianceInv );
-  ok = model.dataMean_popPar       ( dataMean_popPar );
-  ok = model.dataMean_indPar       ( dataMean_indPar );
+  model.dataMean         ( dataMean );
+  model.dataVariance     ( dataVariance );
+  model.dataVarianceInv  ( dataVarianceInv );
+  model.indParVariance   ( indParVariance );
+  model.indParVarianceInv( indParVarianceInv );
+
+  ok = model.dataMean_popPar( dataMean_popPar );
+  ok = model.dataMean_indPar( dataMean_indPar );
+
   ok = model.dataVariance_popPar   ( dataVariance_popPar );
   ok = model.dataVariance_indPar   ( dataVariance_indPar );
   ok = model.dataVarianceInv_popPar( dataVarianceInv_popPar );
   ok = model.dataVarianceInv_indPar( dataVarianceInv_indPar );
+
+  ok = model.indParVariance_popPar   ( indParVariance_popPar );
+  ok = model.indParVarianceInv_popPar( indParVarianceInv_popPar );
 
   valarray<double> popParLow ( nPopPar );
   valarray<double> popParUp  ( nPopPar );
@@ -2919,15 +3030,21 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
   // Prepare known values related to the model functions.
   //------------------------------------------------------------
 
-  valarray<double> dataMeanKnown              ( nY_i );
-  valarray<double> dataMean_popParKnown       ( nY_i * nPopPar );
-  valarray<double> dataMean_indParKnown       ( nY_i * nIndPar );
+  valarray<double> dataMeanKnown       ( nY_i );
+  valarray<double> dataMean_popParKnown( nY_i * nPopPar );
+  valarray<double> dataMean_indParKnown( nY_i * nIndPar );
+
   valarray<double> dataVarianceKnown          ( nY_i * nY_i );
   valarray<double> dataVariance_popParKnown   ( nY_i * nY_i * nPopPar );
   valarray<double> dataVariance_indParKnown   ( nY_i * nY_i * nIndPar );
   valarray<double> dataVarianceInvKnown       ( nY_i * nY_i );
   valarray<double> dataVarianceInv_popParKnown( nY_i * nY_i * nPopPar );
   valarray<double> dataVarianceInv_indParKnown( nY_i * nY_i * nIndPar );
+
+  valarray<double> indParVarianceKnown          ( nIndPar * nIndPar );
+  valarray<double> indParVariance_popParKnown   ( nIndPar * nIndPar * nPopPar );
+  valarray<double> indParVarianceInvKnown       ( nIndPar * nIndPar );
+  valarray<double> indParVarianceInv_popParKnown( nIndPar * nIndPar * nPopPar );
 
   double time;
   double ds;
@@ -3142,6 +3259,61 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
     dataVariance_indParKnown, nIndPar );
   dataVarianceInv_indParKnown *= -1.0;
 
+  // Set the known value for the variance of the individual parameter,
+  //
+  //     D ( alpha )  =  omega( omegaPar )  .
+  //
+  indParVarianceKnown = omegaKnown;
+
+  // Calculate the known value for the derivative with respect
+  // to the population parameter of the variance of the individual
+  // parameter,
+  //
+  //     d       D ( alpha )
+  //      alpha
+  //
+  //             -                                                              -
+  //            |  0, 0, ... , 0,                                 0, 0, ... , 0  |
+  //            |                                                                |
+  //         =  |  0, 0, ... , 0,  d          omega ( omega  ) ,  0, 0, ... , 0  |  ,
+  //            |                   omegaPar                                     |  
+  //            |  0, 0, ... , 0,                                 0, 0, ... , 0  |
+  //             -                                                              -
+  //
+  indParVariance_popParKnown = 0.0;
+  nRow = nIndPar * nIndPar;
+  for ( k = 0; k < nOmegaPar; k++ )
+  {
+    for ( j = 0; j < nRow; j++ )
+    {
+      row = j;
+      col = k + omegaParOffsetInPopPar;
+
+      indParVariance_popParKnown[row + col * nRow] = omega_omegaParKnown[j + k * nRow];
+    }
+  }
+
+  // Calculate the known value for the inverse of the variance
+  // of the individual parameter.
+  indParVarianceInvKnown = inverse( indParVarianceKnown, nIndPar );
+
+  // Calculate the known value for the derivative with respect
+  // to the population parameter of the inverse of the variance
+  // of the individual parameter using Lemma 10 of B. M. Bell,
+  // "Approximating the marginal likelihood estimate for models
+  // with random parameters", Applied Mathematics and Computation,
+  // 119 (2001), pp. 57-73, which states that
+  //
+  //          -1               -1              -1
+  //     d   A  ( x )  =  - [ A  ( x )  kron  A  ( x ) ]  d   A ( x )  .
+  //      x                                                x
+  //
+  indParVarianceInv_popParKnown = AkronBtimesC(
+    indParVarianceInvKnown,     nIndPar,
+    indParVarianceInvKnown,     nIndPar,
+    indParVariance_popParKnown, nPopPar );
+  indParVarianceInv_popParKnown *= -1.0;
+
 
   //------------------------------------------------------------
   // Prepare known values related to SPK estimation.
@@ -3278,6 +3450,30 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
     dataVarianceInv_indParKnown,
     "dataVarianceInv_indPar",
     tol );
+
+  compareToKnown( 
+    indParVariance,
+    indParVarianceKnown,
+    "indParVariance",
+    tol );
+
+  compareToKnown( 
+    indParVariance_popPar,
+    indParVariance_popParKnown,
+    "indParVariance_popPar",
+    tol );
+
+  compareToKnown( 
+    indParVarianceInv,
+    indParVarianceInvKnown,
+    "indParVarianceInv",
+    tol );
+
+  compareToKnown( 
+    indParVarianceInv_popPar,
+    indParVarianceInv_popParKnown,
+    "indParVarianceInv_popPar",
+    tol );
 }
 
 
@@ -3310,9 +3506,9 @@ void PopPredModelTest::isCachingProperlyTest()
   //------------------------------------------------------------
 
   // Set the number of data values for this individual.
-  int nY_iKnown = 3;
+  int nY_iKnown = 5;
 
-  NoEta_OneExpF_ModelBasedExpY_Pred< AD<double> > predEvaluator( nY_iKnown );
+  OneExpF_AdditivePlusThetaDepY_Pred< AD<double> > predEvaluator( nY_iKnown );
 
 
   //------------------------------------------------------------
@@ -3320,14 +3516,15 @@ void PopPredModelTest::isCachingProperlyTest()
   //------------------------------------------------------------
 
   // Set the number of independent variables.
-  const int nTheta = 2;
-  const int nEta   = 0;
-  const int nEps   = 1;
+  const int nTheta = 3;
+  const int nEta   = 2;
+  const int nEps   = 2;
 
   // Set the current value for theta.
   valarray<double> thetaCurr( nTheta );
   thetaCurr[0] = 3.0;
   thetaCurr[1] = 0.08;
+  thetaCurr[2] = 100.0;
 
   // Set the limits for theta.
   valarray<double> thetaLow( nTheta );
@@ -3336,13 +3533,17 @@ void PopPredModelTest::isCachingProperlyTest()
   thetaUp [0] = 100.0;
   thetaLow[1] = 0.005;
   thetaUp [1] = 0.7;
+  thetaLow[2] = 0.001;
+  thetaUp [2] = 500.0;
 
   // Set the current value for eta.
   valarray<double> etaCurr( nEta );
+  etaCurr[0] = -0.3;
+  etaCurr[1] =  0.2;
 
 
   //------------------------------------------------------------
-  // Initialize quantities related to the covariance matrix.
+  // Initialize quantities related to the covariance matrices.
   //------------------------------------------------------------
 
   // Set the structure of omega, the covariance matrix for eta.
@@ -3353,6 +3554,8 @@ void PopPredModelTest::isCachingProperlyTest()
 
   // Set the diagonal elements for the current value for omega.
   valarray<double> omegaMinRep( nOmegaPar );
+  omegaMinRep[0] = 0.0001;
+  omegaMinRep[1] = 0.02;
 
   // Set the structure of sigma, the covariance matrix for eps.
   PopPredModel::covStruct sigmaStruct = PopPredModel::DIAGONAL;
@@ -3363,6 +3566,7 @@ void PopPredModelTest::isCachingProperlyTest()
   // Set the diagonal elements for the current value for sigma.
   valarray<double> sigmaMinRep( nSigmaPar );
   sigmaMinRep[0] = 0.25;
+  sigmaMinRep[1] = 0.001;
 
 
   //------------------------------------------------------------
@@ -3388,8 +3592,10 @@ void PopPredModelTest::isCachingProperlyTest()
   // Get information related to the individual.
   //------------------------------------------------------------
 
-  // Get the number elements in the population parameter.
+  // Get the number elements in the population and individual 
+  // parameters.
   int nPopPar = model.getNPopPar();
+  int nIndPar = model.getNIndPar();
 
   // Get the number of observations for this individual.
   int iCurr = 0;
@@ -3400,12 +3606,21 @@ void PopPredModelTest::isCachingProperlyTest()
   // Prepare to see if values are being cached.
   //------------------------------------------------------------
 
-  valarray<double> dataMean              ( nY_i );
-  valarray<double> dataMean_popPar       ( nY_i * nPopPar );
+  valarray<double> dataMean       ( nY_i );
+  valarray<double> dataMean_popPar( nY_i * nPopPar );
+  valarray<double> dataMean_indPar( nY_i * nIndPar );
+
   valarray<double> dataVariance          ( nY_i * nY_i );
   valarray<double> dataVariance_popPar   ( nY_i * nY_i * nPopPar );
+  valarray<double> dataVariance_indPar   ( nY_i * nY_i * nIndPar );
   valarray<double> dataVarianceInv       ( nY_i * nY_i );
   valarray<double> dataVarianceInv_popPar( nY_i * nY_i * nPopPar );
+  valarray<double> dataVarianceInv_indPar( nY_i * nY_i * nIndPar );
+
+  valarray<double> indParVariance          ( nIndPar * nIndPar );
+  valarray<double> indParVariance_popPar   ( nIndPar * nIndPar * nPopPar );
+  valarray<double> indParVarianceInv       ( nIndPar * nIndPar );
+  valarray<double> indParVarianceInv_popPar( nIndPar * nIndPar * nPopPar );
 
   valarray<double> popParLow( nPopPar );
   valarray<double> popParUp ( nPopPar );
@@ -3418,12 +3633,22 @@ void PopPredModelTest::isCachingProperlyTest()
   // Evaluate these quantities at the current population and 
   // individual parameter values, which are set when the model
   // is constructed.
-  model.dataMean                   ( dataMean );
-  model.dataVariance               ( dataVariance );
-  model.dataVarianceInv            ( dataVarianceInv );
-  ok = model.dataMean_popPar       ( dataMean_popPar );
+  model.dataMean         ( dataMean );
+  model.dataVariance     ( dataVariance );
+  model.dataVarianceInv  ( dataVarianceInv );
+  model.indParVariance   ( indParVariance );
+  model.indParVarianceInv( indParVarianceInv );
+
+  ok = model.dataMean_popPar( dataMean_popPar );
+  ok = model.dataMean_indPar( dataMean_indPar );
+
   ok = model.dataVariance_popPar   ( dataVariance_popPar );
+  ok = model.dataVariance_indPar   ( dataVariance_indPar );
   ok = model.dataVarianceInv_popPar( dataVarianceInv_popPar );
+  ok = model.dataVarianceInv_indPar( dataVarianceInv_indPar );
+
+  ok = model.indParVariance_popPar   ( indParVariance_popPar );
+  ok = model.indParVarianceInv_popPar( indParVarianceInv_popPar );
 
 
   //------------------------------------------------------------
@@ -3435,60 +3660,96 @@ void PopPredModelTest::isCachingProperlyTest()
   model.setPopPar( popParLow );
 
   model.dataMean( dataMean );
-
-  // This test must be done here before the cached value for this
-  // quantity is used by the next model function.
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for dataMean was used when it was not valid.",
+    model.getUsedCachedDataMean() == false );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached Pred block AD function object was used when it was not valid.",
     model.getUsedCachedPredADFun() == false );
 
   model.dataVariance( dataVariance );
-
-  // This test must be done here before the cached value for this
-  // quantity is used by the next model function.
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for dataVariance was used when it was not valid.",
+    model.getUsedCachedDataVariance() == false );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached Pred block first derivatives were used when they were not valid.",
     model.getUsedCachedPredFirstDeriv() == false );
-
-  // This test must be done here before the cached value for this
-  // quantity is used by the next model function.
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for sigma was used when it was not valid.",
     model.getUsedCachedSigma() == false );
 
-  model.dataVarianceInv         ( dataVarianceInv );
-  ok = model.dataMean_popPar    ( dataMean_popPar );
-  ok = model.dataVariance_popPar( dataVariance_popPar );
-
-  // This test must be done here before the cached value for this
-  // quantity is used by the next model function.
-  CPPUNIT_ASSERT_MESSAGE( 
-    "The cached Pred block second derivatives were used when they were not valid.",
-    model.getUsedCachedPredSecondDeriv() == false );
-
-  // This test must be done here before the cached value for this
-  // quantity is used by the next model function.
-  CPPUNIT_ASSERT_MESSAGE( 
-    "The cached value for sigma_sigmaPar was used when it was not valid.",
-    model.getUsedCachedSigma_sigmaPar() == false );
-
-  ok = model.dataVarianceInv_popPar( dataVarianceInv_popPar );
-
-  CPPUNIT_ASSERT_MESSAGE( 
-    "The cached value for dataMean was used when it was not valid.",
-    model.getUsedCachedDataMean() == false );
-
-  CPPUNIT_ASSERT_MESSAGE( 
-    "The cached value for dataMean_popPar was used when it was not valid.",
-    model.getUsedCachedDataMean_popPar() == false );
-
+  model.dataVarianceInv( dataVarianceInv );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for dataVarianceInv was used when it was not valid.",
     model.getUsedCachedDataVarianceInv() == false );
 
+  ok = model.dataMean_popPar( dataMean_popPar );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for dataMean_popPar was used when it was not valid.",
+    model.getUsedCachedDataMean_popPar() == false );
+
+  ok = model.dataMean_indPar( dataMean_indPar );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for dataMean_indPar was used when it was not valid.",
+    model.getUsedCachedDataMean_indPar() == false );
+
+  ok = model.dataVariance_popPar( dataVariance_popPar );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for dataVariance_popPar was used when it was not valid.",
+    model.getUsedCachedDataVariance_popPar() == false );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached Pred block second derivatives were used when they were not valid.",
+    model.getUsedCachedPredSecondDeriv() == false );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for sigma_sigmaPar was used when it was not valid.",
+    model.getUsedCachedSigma_sigmaPar() == false );
+
+  ok = model.dataVariance_indPar( dataVariance_indPar );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for dataVariance_indPar was used when it was not valid.",
+    model.getUsedCachedDataVariance_indPar() == false );
+
+  ok = model.dataVarianceInv_popPar( dataVarianceInv_popPar );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for dataVarianceInv_popPar was used when it was not valid.",
     model.getUsedCachedDataVarianceInv_popPar() == false );
+
+  ok = model.dataVarianceInv_indPar( dataVarianceInv_indPar );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for dataVarianceInv_indPar was used when it was not valid.",
+    model.getUsedCachedDataVarianceInv_indPar() == false );
+
+  model.indParVariance( indParVariance );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for indParVariance was used when it was not valid.",
+    model.getUsedCachedIndParVariance() == false );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for omega was used when it was not valid.",
+    model.getUsedCachedOmega() == false );
+
+  model.indParVarianceInv( indParVarianceInv );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for indParVarianceInv was used when it was not valid.",
+    model.getUsedCachedIndParVarianceInv() == false );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for omegaInv was used when it was not valid.",
+    model.getUsedCachedOmegaInv() == false );
+
+  ok = model.indParVariance_popPar( indParVariance_popPar );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for indParVariance_popPar was used when it was not valid.",
+    model.getUsedCachedIndParVariance_popPar() == false );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for omega_omegaPar was used when it was not valid.",
+    model.getUsedCachedOmega_omegaPar() == false );
+
+  ok = model.indParVarianceInv_popPar( indParVarianceInv_popPar );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for indParVarianceInv_popPar was used when it was not valid.",
+    model.getUsedCachedIndParVarianceInv_popPar() == false );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for omegaInv_omegaPar was used when it was not valid.",
+    model.getUsedCachedOmegaInv_omegaPar() == false );
 
 
   //------------------------------------------------------------
@@ -3498,68 +3759,107 @@ void PopPredModelTest::isCachingProperlyTest()
   // Evaluate the quantities at the same parameter value.
   // The cached values should be used in this case.
   model.setPopPar( popParLow );
-  model.dataMean( dataMean );
 
-  // This test must be done here before the cached value for this
-  // quantity is used by the next model function.
+  model.dataMean( dataMean );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for dataMean was not used when it was valid.",
+    model.getUsedCachedDataMean() == true );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached Pred block AD function object was not used when it was valid.",
     model.getUsedCachedPredADFun() == true );
 
   model.dataVariance( dataVariance );
-
-  // This test must be done here before the cached value for this
-  // quantity is used by the next model function.
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for dataVariance was not used when it was valid.",
+    model.getUsedCachedDataVariance() == true );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached Pred block first derivatives were not used when they were valid.",
     model.getUsedCachedPredFirstDeriv() == true );
-
-  // This test must be done here before the cached value for this
-  // quantity is used by the next model function.
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for sigma was not used when it was valid.",
     model.getUsedCachedSigma() == true );
 
-  model.dataVarianceInv         ( dataVarianceInv );
-  ok = model.dataMean_popPar    ( dataMean_popPar );
-  ok = model.dataVariance_popPar( dataVariance_popPar );
-
-  ok = model.dataVarianceInv_popPar( dataVarianceInv_popPar );
-
-  CPPUNIT_ASSERT_MESSAGE( 
-    "The cached value for dataMean was not used when it was valid.",
-    model.getUsedCachedDataMean() == true );
-
-  CPPUNIT_ASSERT_MESSAGE( 
-    "The cached value for dataMean_popPar was not used when it was valid.",
-    model.getUsedCachedDataMean_popPar() == true );
-
+  model.dataVarianceInv( dataVarianceInv );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for dataVarianceInv was not used when it was valid.",
     model.getUsedCachedDataVarianceInv() == true );
 
+  ok = model.dataMean_popPar( dataMean_popPar );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for dataMean_popPar was not used when it was valid.",
+    model.getUsedCachedDataMean_popPar() == true );
+
+  ok = model.dataMean_indPar( dataMean_indPar );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for dataMean_indPar was not used when it was valid.",
+    model.getUsedCachedDataMean_indPar() == true );
+
+  ok = model.dataVariance_popPar( dataVariance_popPar );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for dataVariance_popPar was not used when it was valid.",
+    model.getUsedCachedDataVariance_popPar() == true );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached Pred block second derivatives were not used when they were valid.",
+    model.getUsedCachedPredSecondDeriv() == true );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for sigma_sigmaPar was not used when it was valid.",
+    model.getUsedCachedSigma_sigmaPar() == true );
+
+  ok = model.dataVariance_indPar( dataVariance_indPar );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for dataVariance_indPar was not used when it was valid.",
+    model.getUsedCachedDataVariance_indPar() == true );
+
+  ok = model.dataVarianceInv_popPar( dataVarianceInv_popPar );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for dataVarianceInv_popPar was not used when it was valid.",
     model.getUsedCachedDataVarianceInv_popPar() == true );
+
+  ok = model.dataVarianceInv_indPar( dataVarianceInv_indPar );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for dataVarianceInv_indPar was not used when it was valid.",
+    model.getUsedCachedDataVarianceInv_indPar() == true );
+
+  model.indParVariance( indParVariance );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for indParVariance was not used when it was valid.",
+    model.getUsedCachedIndParVariance() == true );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for omega was not used when it was valid.",
+    model.getUsedCachedOmega() == true );
+
+  model.indParVarianceInv( indParVarianceInv );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for indParVarianceInv was not used when it was valid.",
+    model.getUsedCachedIndParVarianceInv() == true );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for omegaInv was not used when it was valid.",
+    model.getUsedCachedOmegaInv() == true );
+
+  ok = model.indParVariance_popPar( indParVariance_popPar );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for indParVariance_popPar was not used when it was valid.",
+    model.getUsedCachedIndParVariance_popPar() == true );
+
+  ok = model.indParVarianceInv_popPar( indParVarianceInv_popPar );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for indParVarianceInv_popPar was not used when it was valid.",
+    model.getUsedCachedIndParVarianceInv_popPar() == true );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached value for omegaInv was not used when it was valid.",
+    model.getUsedCachedOmegaInv() == true );
 
 
   //------------------------------------------------------------
   // See if these cached values are not used when the parameter does not change.
   //------------------------------------------------------------
 
-  // Because the cached value for dataVariance_popPar contain the
-  // second derivatives of the Pred block, this cached value is
-  // not required and therefore is not used in this case.
-  CPPUNIT_ASSERT_MESSAGE( 
-    "The cached Pred block second derivatives were used when they should not have been.",
-    model.getUsedCachedPredSecondDeriv() == false );
-
-  // Because the cached value for dataVariance_popPar contain the
-  // derivatives of sigma, this cached value is not required and
+  // Because the cached value for indParVariance_indPar contains the
+  // derivatives of omega, this cached value is not required and
   // therefore is not used in this case.
   CPPUNIT_ASSERT_MESSAGE( 
-    "The cached value for sigma_sigmaPar was used when it should not have been.",
-    model.getUsedCachedSigma_sigmaPar() == false );
+    "The cached value for omega_omegaPar was used when it should not have been.",
+    model.getUsedCachedOmega_omegaPar() == false );
 }
 
  

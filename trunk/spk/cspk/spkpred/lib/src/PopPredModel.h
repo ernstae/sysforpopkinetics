@@ -157,11 +157,11 @@ protected:
   Cov* pSigmaCurr;                                   // Pointer to the covariance of eps.
 
   // These quantities do not have cache flags associated with them
-  // because the Cov object maintains them itself.
-  mutable SPK_VA::valarray<double> omegaCurr;           // Current value for the covariance of eta.
-  mutable SPK_VA::valarray<double> omega_omegaParCurr;  // Current value for the derivative of the covariance of eps.
-  mutable SPK_VA::valarray<double> sigmaCurr;           // Current value for the covariance of eta.
-  mutable SPK_VA::valarray<double> sigma_sigmaParCurr;  // Current value for the derivative of the covariance of eps.
+  // because the Cov objects maintain them themself.
+  mutable SPK_VA::valarray<double> omega_omegaParCurr;    // Current value for the derivative of the covariance of eta.
+  mutable SPK_VA::valarray<double> omegaInv_omegaParCurr; // Current derivative of the inverse of the covariance of eta.
+  mutable SPK_VA::valarray<double> sigmaCurr;             // Current value for the covariance of eps.
+  mutable SPK_VA::valarray<double> sigma_sigmaParCurr;    // Current value for the derivative of the covariance of eps.
 
   // This is not const because it is reset each time the
   // expressions in the Pred block are evaluated for a 
@@ -177,6 +177,8 @@ protected:
   mutable SPK_VA::valarray<double> dataVarianceInvCurr;
   mutable SPK_VA::valarray<double> dataVarianceInv_popParCurr;
   mutable SPK_VA::valarray<double> dataVarianceInv_indParCurr;
+  mutable SPK_VA::valarray<double> indParVariance_popParCurr;
+  mutable SPK_VA::valarray<double> indParVarianceInv_popParCurr;
 
   mutable bool isDataMeanCurrOk;
   mutable bool isDataMean_popParCurrOk;
@@ -187,6 +189,8 @@ protected:
   mutable bool isDataVarianceInvCurrOk;
   mutable bool isDataVarianceInv_popParCurrOk;
   mutable bool isDataVarianceInv_indParCurrOk;
+  mutable bool isIndParVariance_popParCurrOk;
+  mutable bool isIndParVarianceInv_popParCurrOk;
   mutable bool isPredADFunCurrOk;
   mutable bool isPredFirstDerivCurrOk;
   mutable bool isPredSecondDerivCurrOk;
@@ -200,27 +204,37 @@ protected:
   mutable bool usedCachedDataVarianceInv;
   mutable bool usedCachedDataVarianceInv_popPar;
   mutable bool usedCachedDataVarianceInv_indPar;
+  mutable bool usedCachedIndParVariance;
+  mutable bool usedCachedIndParVariance_popPar;
+  mutable bool usedCachedIndParVarianceInv;
+  mutable bool usedCachedIndParVarianceInv_popPar;
   mutable bool usedCachedPredADFun;
   mutable bool usedCachedPredFirstDeriv;
   mutable bool usedCachedPredSecondDeriv;
 
 public:
-  bool getUsedCachedDataMean()               const;
-  bool getUsedCachedDataMean_popPar()        const;
-  bool getUsedCachedDataMean_indPar()        const;
-  bool getUsedCachedDataVariance()           const;
-  bool getUsedCachedDataVariance_popPar()    const;
-  bool getUsedCachedDataVariance_indPar()    const;
-  bool getUsedCachedDataVarianceInv()        const;
-  bool getUsedCachedDataVarianceInv_popPar() const;
-  bool getUsedCachedDataVarianceInv_indPar() const;
-  bool getUsedCachedPredADFun()              const;
-  bool getUsedCachedPredFirstDeriv()         const;
-  bool getUsedCachedPredSecondDeriv()        const;
-  bool getUsedCachedOmega()                  const;
-  bool getUsedCachedOmega_omegaPar()         const;
-  bool getUsedCachedSigma()                  const;
-  bool getUsedCachedSigma_sigmaPar()         const;
+  bool getUsedCachedDataMean()                 const;
+  bool getUsedCachedDataMean_popPar()          const;
+  bool getUsedCachedDataMean_indPar()          const;
+  bool getUsedCachedDataVariance()             const;
+  bool getUsedCachedDataVariance_popPar()      const;
+  bool getUsedCachedDataVariance_indPar()      const;
+  bool getUsedCachedDataVarianceInv()          const;
+  bool getUsedCachedDataVarianceInv_popPar()   const;
+  bool getUsedCachedDataVarianceInv_indPar()   const;
+  bool getUsedCachedIndParVariance()           const;
+  bool getUsedCachedIndParVariance_popPar()    const;
+  bool getUsedCachedIndParVarianceInv()        const;
+  bool getUsedCachedIndParVarianceInv_popPar() const;
+  bool getUsedCachedPredADFun()                const;
+  bool getUsedCachedPredFirstDeriv()           const;
+  bool getUsedCachedPredSecondDeriv()          const;
+  bool getUsedCachedOmega()                    const;
+  bool getUsedCachedOmega_omegaPar()           const;
+  bool getUsedCachedOmegaInv()                 const;
+  bool getUsedCachedOmegaInv_omegaPar()        const;
+  bool getUsedCachedSigma()                    const;
+  bool getUsedCachedSigma_sigmaPar()           const;
 
 
   //------------------------------------------------------------
