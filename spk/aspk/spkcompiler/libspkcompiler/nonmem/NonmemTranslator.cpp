@@ -4118,7 +4118,7 @@ void NonmemTranslator::generateIndDriver( ) const
       oDriver << endl;
       oDriver << "  //////////////////////////////////////////////////////////////////////" << endl;
       oDriver << "  //   NONMEM Specific" << endl;
-      oDriver << "  if( isOptRequested || isOptSuccess )" << endl;
+      oDriver << "  if( isOptRequested && isOptSuccess )" << endl;
       oDriver << "  {" << endl;
       oDriver << "     valarray<double> ROut( nY * nY );" << endl;
       oDriver << "     model.getTheta( thetaOut );" << endl;
@@ -4725,7 +4725,7 @@ void NonmemTranslator::generatePopDriver() const
 
       oDriver << "   ///////////////////////////////////////////////////////////////////" << endl;
       oDriver << "   //   NONMEM Specific" << endl;
-      oDriver << "   if( isOptRequested || isOptSuccess )" << endl;
+      oDriver << "   if( isOptRequested && isOptSuccess )" << endl;
       oDriver << "   {" << endl;
       oDriver << "      model.getTheta( thetaOut );" << endl;
       oDriver << "      model.getOmega( omegaOut );" << endl;
