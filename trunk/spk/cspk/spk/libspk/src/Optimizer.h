@@ -94,7 +94,9 @@ public:
   inline void setLevel( int l ) { level = l; }
   inline void setNIterCompleted( int n ) { nIterCompleted = n; }
   inline void setIsTooManyIter( bool b ) { isTooManyIter = b; }
-  inline void setIsSubLevelOpt( bool s ) { isSubLevelOpt = s; }
+  inline void setSaveStateAtEndOfOpt( bool s ) { saveStateAtEndOfOpt = s; }
+  inline void setThrowExcepIfMaxIter( bool t ) { throwExcepIfMaxIter = t; }
+  void setIsSubLevelOpt( bool s );
   void setIsWarmStart( bool w );
   void setStateInfo( const StateInfo& s );
   void deleteStateInfo();
