@@ -342,7 +342,7 @@ void NonmemTranslator::parseSource()
 }
 void NonmemTranslator::generateMakefile() const
 {
-  fstream oMake( fMakefile );
+  ofstream oMake( fMakefile );
   if( oMake.good() )
     {
       oMake << "driver : driver.cpp Pred.h DataSet.h IndData.h" << endl;
