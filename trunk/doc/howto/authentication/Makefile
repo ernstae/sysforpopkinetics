@@ -1,8 +1,7 @@
 T = authentication
 HTML_OPS = --nochunks
 STYLE = ../../stylesheet
-REL = rhel3
-WEB = whitechuck.rfpk.washington.edu:/var/www/html/soft/howto/$REL/$T
+WEB = whitechuck.rfpk.washington.edu:/var/www/html/soft/howto/rhel3/$T
 PNG = $(wildcard *.png)
 
 all:	html pdf rtf
