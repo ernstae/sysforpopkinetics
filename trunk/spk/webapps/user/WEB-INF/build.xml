@@ -20,7 +20,7 @@ distribution.
 author: Jiaji Du
 -->
 
-<project name="web" default="javadoc" basedir=".">
+<project name="web" default="all" basedir=".">
   <description>Build web server of SPK</description>
 
   <target name="init">
