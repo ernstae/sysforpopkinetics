@@ -1184,7 +1184,10 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
 	    strcpy( str_val, tmp_c_val );
 	    delete tmp_c_val;
 	  }
-	sym_theta->lower[0][i] = str_val;
+	if( sym_theta->fixed[0][i] )
+           sym_theta->lower[0][i] = sym_theta->initial[0][i];
+        else
+           sym_theta->lower[0][i] = str_val;
       }
 
     //<up>
@@ -1221,17 +1224,25 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
 	    strcpy( str_val, tmp_c_val );
 	    delete tmp_c_val;
 	  }
-	sym_theta->upper[0][i] = str_val;
+        if( sym_theta->fixed[0][i] )
+           sym_theta->upper[0][i] = sym_theta->initial[0][i];
+        else
+	   sym_theta->upper[0][i] = str_val;
       }
 
     // step values
     for( int i=0; i<myThetaLen; i++ )
     {
-      double tmp_dbl = fabs( atof( sym_theta->upper[0][i].c_str() ) 
-			     - atof( sym_theta->lower[0][i].c_str() ) ) / 1000.0;
-      char tmp_char[256];
-      sprintf( tmp_char, "%f", tmp_dbl );
-      sym_theta->step[0][i] = string( tmp_char );
+      if( sym_theta->fixed[0][i] )
+         sym_theta->step[0][i] = "0.0";
+      else
+      {
+         double tmp_dbl = fabs( atof( sym_theta->upper[0][i].c_str() ) 
+	                - atof( sym_theta->lower[0][i].c_str() ) ) / 1000.0;
+         char tmp_char[256];
+         sprintf( tmp_char, "%f", tmp_dbl );
+         sym_theta->step[0][i] = string( tmp_char );
+      }
     }
   }
 
