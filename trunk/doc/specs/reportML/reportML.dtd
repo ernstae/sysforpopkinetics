@@ -10,7 +10,7 @@ This documentation specifies the information passed back from CSPK to MDA.
 <!-- <spkreport> For CSPK, this contains everything needed for returning the requested values back to the user.  For MDA, it is for presenting them before the user.  The values reported in this document are expressed in the scientific notation with 2 significant digits: ex. 0.12E01, 3.20E00, -0.12E01, 0.12E-01, -0.12E-01.
 -->
 
-<!ELEMENT spkreport ( error_list? |  warning_list? | ( ( (pop_analysis_result | ind_analysis_result) | presentation_data | opt_trace_out? ) | pop_monte_result ) ) >
+<!ELEMENT spkreport ( error_list |  warning_list | ( ( (pop_analysis_result | ind_analysis_result) | presentation_data | opt_trace_out? ) | pop_monte_result ) ) >
 
 <!-- <spkreport version="0.1"> The version number of the SpkReportML document.  For the initial version, it is "0.1".-->
 <!ATTLIST spkreport version (0.1|0.2) #REQUIRED>
@@ -18,7 +18,10 @@ This documentation specifies the information passed back from CSPK to MDA.
 <!-- ===================================== -->
 <!--                 MESSAGE               -->
 <!-- ===================================== -->
-<!-- <error_list> A list of error messages generated from ASPK and/or CSPK. -->
+<!-- <error_list> A list of (fatal) errors caught by the driver of ASPK and/or CSPK. 
+
+Note that errors that are directly directed to the standard error or output and cause an immediate
+program termination are ignored by the drivers and are not reported as an <error>. -->
 <!ELEMENT error_list (error)*>
 
 <!-- <error> An error is a message or diagnosis for a problem encountered during the execution on ASPK/CSPK.
