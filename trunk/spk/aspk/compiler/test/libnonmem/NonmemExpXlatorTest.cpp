@@ -14,7 +14,7 @@
 
 #include "SymbolTable.h"
 #include "ExpTreeGenerator.h"
-#include "explang.tab.h"
+#include "explang.h"
 
 using namespace std;
 using namespace CppUnit;
