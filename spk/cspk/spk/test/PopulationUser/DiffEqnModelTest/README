@@ -1,0 +1,50 @@
+This package has been installed successfully with the following versions of
+tools:
+
+automake 1.6.3
+libtool  1.4.2
+
+-----------------------------------------------------------------------------
+[ Installation ]
+
+Required installations:
+  * SPK Library
+  * NAG Library
+
+
+1. > ./autogen.sh
+
+   This creates "configure.in" along with other things.  If this succeeds,
+   forward to the next step.  If fails, check the versions of automake
+   and libtool.  Update the packages if necessarily and come back to
+   this step.
+
+2. > ./configure
+
+   This creates "Makefile"s recursively.
+
+3. > ./make
+
+   If any of the required installations were missing, this would fail.
+
+4. > cd src
+
+5. > ./DiffEqnModelTest
+
+   If this complains about NAG Library, the chances are, you have not
+   updated their license keys.  Go to:
+  
+   http://whitechuck.rfpk.washington.edu/soft/howto/nag-install/nag-install.html
+
+   to obtain the latest license keys and follow the instruction to update.
+
+   Also note that, by default, the Makefile that builds this executable
+   links to a version of driver that is meant to be driven by a Perl script.
+   If you want a standalone driver, consult with
+   Sachiko (honda99@u.washington.edu).
+--------------------------------------------------------------------------------
+REVISIT by Sachiko - 09/03/03: 
+This README was prepared in response to an internal user's urgent needs.  
+Refine before distribution.
+
+~                                                
