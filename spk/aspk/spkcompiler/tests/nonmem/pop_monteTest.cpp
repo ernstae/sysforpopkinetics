@@ -423,6 +423,19 @@ void pop_monteTest::tearDown()
       remove( fReportML );
       remove( fSavedReportML );
       remove( fTraceOut );
+
+      remove( "MapMonte.h" );
+      remove( "MapMonte.cpp" );
+      remove( "MapBay.h" );
+      remove( "MapBay.cpp" );
+      remove( "GridIntegral.h" );
+      remove( "GridIntegral.cpp" );
+      remove( "Gsl2SpkError.h" );
+      remove( "Gsl2SpkError.cpp" );
+      remove( "MontePopObj.h" );
+      remove( "MontePopObj.cpp" );
+      remove( "monteDriver.cpp" );
+      remove( "monteDriver" );
     }
   XMLPlatformUtils::Terminate();
 }

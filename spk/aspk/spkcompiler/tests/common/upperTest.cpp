@@ -8,7 +8,7 @@
 #include <cppunit/ui/text/TestRunner.h>
 
 
-#include <spkcompiler/upper.h>
+#include "spkcompiler/upper.h"
 #include "upperTest.h"
 
 using namespace std;
