@@ -27,14 +27,22 @@ static const unsigned int maxChars = 2047;
  */
 class ClientTranslatorSubclass : public ClientTranslator
 {
+  int myPopSize;
 public:
-  ClientTranslatorSubclass( DOMDocument * sourceIn, DOMDocument* dataIn )
-    : ClientTranslator( sourceIn, dataIn )
+  ClientTranslatorSubclass( DOMDocument * sourceIn, DOMDocument* dataIn, int popSize )
+    : ClientTranslator( sourceIn, dataIn ), myPopSize( popSize )
   {
+  }
+  virtual int detAnalysisType()
+  {
+    if( myPopSize > 0 )
+      ourTarget = POP;
+    else
+      ourTarget = IND;
+    return myPopSize;
   }
   virtual void parseSource(){}
 };
-
 void ClientTranslatorTest::createDataWithID( const char *dataFile )
 {
    ofstream oData( dataFile );
@@ -87,6 +95,58 @@ void ClientTranslatorTest::createDataWithID( const char *dataFile )
        CPPUNIT_ASSERT_MESSAGE( "Faild to open a new file for writing a data set!", false );
      }
 }
+void ClientTranslatorTest::createDataWithIDShaffuled( const char *dataFile )
+{
+   ofstream oData( dataFile );
+   if( oData.good() )
+     {
+       oData << "<spkdata version=\"0.1\">\n" << endl;
+       oData << "<table columns=\"3\" rows=\"7\">\n" << endl;
+       oData << "<description>ClientTranslator Test Data Set</description>\n" << endl;
+       oData << "<row position=\"1\">\n" << endl;
+       oData << "<value type=\"string\">TIME</value>\n" << endl;
+       oData << "<value type=\"string\">DV</value>\n" << endl;
+       oData << "<value type=\"string\">ID</value>\n" << endl;
+       oData << "</row>" << endl;
+       oData << "<row position=\"2\">" << endl;
+       oData << "<value type=\"numeric\">0.0</value>\n" << endl;
+       oData << "<value type=\"numeric\">0.0</value>\n" << endl;
+       oData << "<value type=\"string\">Sachiko</value>\n" << endl;
+       oData << "</row>" << endl;
+       oData << "<row position=\"3\">" << endl;
+       oData << "<value type=\"numeric\">0.1</value>\n" << endl;
+       oData << "<value type=\"numeric\">0.1</value>\n" << endl;
+       oData << "<value type=\"string\">Sachiko</value>\n" << endl;
+       oData << "</row>" << endl;
+       oData << "<row position=\"4\">" << endl;
+       oData << "<value type=\"numeric\">0.2</value>\n" << endl;
+       oData << "<value type=\"numeric\">0.2</value>\n" << endl;
+       oData << "<value type=\"string\">Sachiko</value>\n" << endl;
+       oData << "</row>" << endl;
+       oData << "<row position=\"5\">" << endl;
+       oData << "<value type=\"numeric\">10.0</value>\n" << endl;
+       oData << "<value type=\"numeric\">10.0</value>\n" << endl;
+       oData << "<value type=\"string\">Minoru</value>\n" << endl;
+       oData << "</row>" << endl;
+       oData << "<row position=\"6\">" << endl;
+       oData << "<value type=\"numeric\">10.1</value>\n" << endl;
+       oData << "<value type=\"numeric\">10.1</value>\n" << endl;
+       oData << "<value type=\"string\">Minoru</value>\n" << endl;
+       oData << "</row>" << endl;
+       oData << "<row position=\"7\">" << endl;
+       oData << "<value type=\"numeric\">20.0</value>\n" << endl;
+       oData << "<value type=\"numeric\">20.0</value>\n" << endl;
+       oData << "<value type=\"string\">Noriko</value>\n" << endl;
+       oData << "</row>" << endl;
+       oData << "</table>" << endl;
+       oData << "</spkdata>" << endl;
+       oData.close();
+     }
+   else
+     {
+       CPPUNIT_ASSERT_MESSAGE( "Faild to open a new file for writing a data set!", false );
+     }
+}
 void ClientTranslatorTest::createDataNoID( const char* dataFile )
 {
    ofstream oData( dataFile );
@@ -120,6 +180,7 @@ void ClientTranslatorTest::createDataNoID( const char* dataFile )
        CPPUNIT_ASSERT_MESSAGE( "Faild to open a new file for writing a data set!", false );
      }
 }
+
 void ClientTranslatorTest::setUp()
 {
 }
@@ -194,7 +255,7 @@ void ClientTranslatorTest::testDataWithID()
     }
 
 
-   ClientTranslatorSubclass xlator( source, data );
+   ClientTranslatorSubclass xlator( source, data, 3 );
    xlator.parseData();
    const SymbolTable * table = xlator.getSymbolTable();
    //   cout << *table << endl;
@@ -294,7 +355,7 @@ void ClientTranslatorTest::testDataNoID()
     }
 
 
-   ClientTranslatorSubclass xlator( source, data );
+   ClientTranslatorSubclass xlator( source, data, 1 );
    xlator.parseData();
    const SymbolTable * table = xlator.getSymbolTable();
    //   cout << *table << endl;
