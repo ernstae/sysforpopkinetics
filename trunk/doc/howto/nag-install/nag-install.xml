@@ -54,6 +54,12 @@
         <authorinitials>sh</authorinitials>
         <revremark>Updated the instruction for a newer NAG library, Mark 7, installation.</revremark>
       </revision>
+      <revision>
+        <revnumber>1.8</revnumber>
+        <date>March 29, 2004</date>
+        <authorinitials>sh</authorinitials>
+        <revremark>Fixed typos.  Added a note to set LD_LIBRARY_PATH.</revremark>
+      </revision>
 
    </revhistory>
   <abstract>
@@ -91,29 +97,30 @@ tar xvzf cllux07ddl.tgz
       <listitem>
         <para>
 To install the NAG libraries (ie. static and shared versions) and
-headers into proper locations, you must first become root.
+headers into proper locations, you must first become root.  Note that it has no "-".
           <screen>
-su -
+su
           </screen>
-Change directory to /tmp/cllux07ddl/.
+You should be in the directory, /tmp/cllux07ddl/.
         </para>
       </listitem>
       <listitem>
         <para>
-        Install the library and headers
+        Install the library and headers in /usr/local:
           <screen>
 cp libnagc.a /usr/local/lib
-cp libnagc.so.7 /user/local/lib
+cp libnagc.so.7 /usr/local/lib
 cp include/* /usr/local/include
 cd /usr/local/lib
 ln -s libnagc.so.7 libnagc.so
           </screen> 
+  If your linker failed to find a nag libarary, make sure /usr/local/lib is in the linker's search path.  Add /usr/local/lib in LD_LIBRARY_PATH environment variable.
         </para>
       </listitem>
       <listitem>
         <para>
-        Make sure <filename>/usr/local/flexlm/licenses/license.dat</filename> 
-        contains the following license key entries:
+        Create or update <filename>/usr/local/flexlm/licenses/license.dat</filename> 
+        with the following license key entries:
         </para>
         <screen>
 FEATURE NAG_CL NAG 9.900 01-aug-2004 0 BC5E444363B0CF819FC9 "ANY" DEMO
