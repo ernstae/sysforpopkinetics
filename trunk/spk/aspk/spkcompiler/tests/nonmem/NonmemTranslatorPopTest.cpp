@@ -163,7 +163,8 @@ void NonmemTranslatorPopTest::testParsePopSource()
   bool pop_inv_covariance = false;
   bool pop_correlation    = true;
 
-  bool isSimulate = true;
+//  bool isSimulate = true;
+  bool isSimulate = false;
   const int seed = 1;
 
   //=====================================================

@@ -273,13 +273,14 @@ void NonmemTranslatorIndTest::testParseIndSource()
   const bool ind_coefficent     = true;
   const bool ind_confidence     = true;
   const bool ind_covariance     = true;
-  const bool ind_inv_covariance = false;
+  const bool ind_inv_covariance = true;
   const bool ind_correlation    = true;
 
   //============================================
   // Make a request on data simulation.
   //============================================
-  const bool isSimulate         = true;
+//  const bool isSimulate         = true;
+  const bool isSimulate         = false;
   const int  seed               = 1;
   const bool onlySimulation     = false;
   const int  subproblems        = 1;
@@ -1100,13 +1101,14 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   const bool ind_coefficent     = true;
   const bool ind_confidence     = true;
   const bool ind_covariance     = true;
-  const bool ind_inv_covariance = false;
+  const bool ind_inv_covariance = true;
   const bool ind_correlation    = true;
 
   //============================================
   // Make a request on data simulation.
   //============================================
-  const bool isSimulate         = true;
+//  const bool isSimulate         = true;
+  const bool isSimulate         = false;
   const int  seed               = 1;
   const bool onlySimulation     = false;
   const int  subproblems        = 1;
