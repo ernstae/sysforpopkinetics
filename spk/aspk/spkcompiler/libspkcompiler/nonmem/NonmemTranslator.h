@@ -251,6 +251,8 @@ class NonmemTranslator : public ClientTranslator
   XMLCh* X_MITR;
   XMLCh* X_IND_STAT;
   XMLCh* X_SIG_DIGITS;
+  XMLCh* X_ONLYSIMULATION;
+  XMLCh* X_SUBPROBLEMS;
   //========================================
 
 };
