@@ -569,9 +569,20 @@ OR
   class QuasiNewton01Obj
   {
   public:
+    QuasiNewton01Obj(
+      const DoubleMatrix* const pdvecXLowIn,
+      const DoubleMatrix* const pdvecXUpIn,
+      const DoubleMatrix* const pdvecXDiffIn )
+      :
+      pdvecXLow   ( pdvecXLowIn ),
+      pdvecXUp    ( pdvecXUpIn ),
+      pdvecXDiff  ( pdvecXDiffIn )
+    {
+    }
+
     const char* function( const double* xIn, double& fOut )
     {
-      return pObj->function( xIn, fOut );
+      return pObj->function( xIn, fOut ),;
     }
 
     const char* gradient( double* gOut );
@@ -580,27 +591,12 @@ OR
     }
 
   private:
-    QuasiNewtonAnyBoxObj* pObj;
+    const QuasiNewtonAnyBoxObj* const pObj;
 
-    const DoubleMatrix* pdvecXLow;      // Unscaled lower bounds.
-    const DoubleMatrix* pdvecXUp;       // Unscaled upper bounds.
-    const DoubleMatrix* pdvecXDiff;     // Difference between unscaled  
-                                        // lower and upper bounds.
-
-    void setXLow( const DoubleMatrix* const pdvecXLowIn )
-    {
-      pdvecXLow = pdvecXLowIn;
-    }
-
-    void setXUp( const DoubleMatrix* const pdvecXUpIn )
-    {
-      pdvecXUp = pdvecXUpIn;
-    }
-
-    void setXDiff( const DoubleMatrix* const pdvecXDiffIn )
-    {
-      pdvecXDiff = pdvecXDiffIn;
-    }
+    const DoubleMatrix* const pdvecXLow;      // Unscaled lower bounds.
+    const DoubleMatrix* const pdvecXUp;       // Unscaled upper bounds.
+    const DoubleMatrix* const pdvecXDiff;     // Difference between unscaled  
+                                              // lower and upper bounds.
 
     SpkException exceptionOb;
   };
