@@ -19,12 +19,33 @@
 %************************************************************************
 
 */
-#ifndef RAND_NORMAL_H
-#define RAND_NORMAL_H
+/*************************************************************************
+ *
+ * File: simulateTest.h
+ *
+ *
+ * Declare simulateTest class.
+ *
+ * Author: Viet Nyuyen
+ * Updated by: Sachiko Honda
+ *
+ *************************************************************************/
 
-#include <nag.h>
-#include "SpkValarray.h"
+#ifndef SIMULATE_TEST_H
+#define SIMULATE_TEST_H
 
-SPK_VA::valarray<double> randNormal( const SPK_VA::valarray<double> & V, int n );
+#include <cppunit/TestFixture.h>
+
+class simulateTest : public CppUnit::TestFixture
+{
+public: 
+    static CppUnit::Test* suite();
+
+    void setUp();
+    void tearDown();
+
+    void test_with_simplemodel();
+    void test_with_complexmodel();
+};
 
 #endif

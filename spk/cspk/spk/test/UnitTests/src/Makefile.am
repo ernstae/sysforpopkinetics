@@ -152,6 +152,8 @@ testall_SOURCES = \
 	rvecInverseTest.h \
 	rvecTest.cpp \
 	rvecTest.h \
+	simulateTest.cpp \
+	simulateTest.h \
 	SpkErrorTest.cpp \
 	SpkErrorTest.h \
 	SpkExceptionTest.cpp \
@@ -259,6 +261,7 @@ pkginclude_HEADERS = \
 	residualsTest.h \
 	rvecInverseTest.h \
 	rvecTest.h \
+	simulateTest.h \
 	SpkErrorTest.h \
 	SpkExceptionTest.h \
 	SpkModelErrorTest.h \

@@ -97,6 +97,7 @@ libspk_la_SOURCES = \
 	replaceSubblock.cpp \
 	residuals.cpp \
 	rvecInverse.cpp \
+	simulate.cpp \
 	sqpAnyBox.cpp \
 	StatusList.cpp \
 	subtract.cpp \
@@ -205,6 +206,7 @@ libspk_la_SOURCES = \
 	residuals.h \
 	rvec.h \
 	rvecInverse.h \
+	simulate.h \
 	Spk.h \
 	SpkError.h \
 	SpkException.h \
@@ -310,6 +312,7 @@ libspk_release_la_SOURCES = \
 	replaceSubblock.cpp \
 	residuals.cpp \
 	rvecInverse.cpp \
+	simulate.cpp \
 	sqpAnyBox.cpp \
 	StatusList.cpp \
 	subtract.cpp \
@@ -531,6 +534,7 @@ pkginclude_HEADERS = \
 	residuals.h \
 	rvec.h \
 	rvecInverse.h \
+	simulate.h \
 	Spk.h \
 	SpkError.h \
 	SpkException.h \
