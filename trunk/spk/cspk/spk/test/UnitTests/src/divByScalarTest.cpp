@@ -40,6 +40,7 @@
 
 #include <spk/DoubleMatrix.h>
 #include <spk/divByScalar.h>
+#include <spk/isDblEpsEqual.h>
 #include "divByScalarTest.h"
 
 #include <ctime>
@@ -112,15 +113,23 @@ void divByScalarTest::testMatScalarVal()
       double* pdB  = dmatB.data();
       double* pdA  = _As[i]->data();
       
-      
       // Compute A = dmatAA = B * scalar
       for(int j=0; j<_rows[i]*_cols[i]; j++ )
 	{
 	  double actual   = pdA[j];
 	  double expected = pdB[j] * _scalar;
-	  
-	  CPPUNIT_ASSERT_DOUBLES_EQUAL( actual, expected, 
-					fabs( ( actual-expected ) / expected ) );
+	  double scale;
+
+	  if ( expected != 0.0 )
+	  {
+	    scale = expected;
+	  }
+	  else
+	  {
+	    scale = actual;
+	  }
+
+	  CPPUNIT_ASSERT( isDblEpsEqual( actual, expected, scale ) );
 	}
     }
   
@@ -146,9 +155,20 @@ void divByScalarTest::testMatMatVal()
       // Compute A = dmatAA = B * scalar
       for(int j=0; j<_rows[i]*_cols[i]; j++ )
         {
-	  CPPUNIT_ASSERT_DOUBLES_EQUAL( pdA[j], pdB[j]*pdScalars[j], 
-					fabs(pdA[j] - pdB[j]*pdScalars[j])/fabs(pdA[j])*DBL_EPS_EQUAL_MULT
-					);
+	  double actual   = pdA[j];
+	  double expected = pdB[j]*pdScalars[j];
+	  double scale;
+
+	  if ( expected != 0.0 )
+	  {
+	    scale = expected;
+	  }
+	  else
+	  {
+	    scale = actual;
+	  }
+
+	  CPPUNIT_ASSERT( isDblEpsEqual( actual, expected, scale ) );
 	}
     }
   
@@ -168,9 +188,20 @@ void divByScalarTest::testMatScalarRef()
       // Compute A = dmatAA = B * scalar
       for(int j=0; j<_rows[i]*_cols[i]; j++ )
         {
-	  CPPUNIT_ASSERT_DOUBLES_EQUAL( pdA[j], pdB[j]*_scalar, 
-					fabs(pdA[j] - pdB[j]*_scalar)/fabs(pdA[j])*DBL_EPS_EQUAL_MULT
-					);
+	  double actual   = pdA[j];
+	  double expected = pdB[j]*_scalar;
+	  double scale;
+
+	  if ( expected != 0.0 )
+	  {
+	    scale = expected;
+	  }
+	  else
+	  {
+	    scale = actual;
+	  }
+
+	  CPPUNIT_ASSERT( isDblEpsEqual( actual, expected, scale ) );
 	}
     }
   
@@ -196,9 +227,20 @@ void divByScalarTest::testMatMatRef()
       // Compute A = dmatAA = B * scalar
       for(int j=0; j<_rows[i]*_cols[i]; j++ )
         {
-	  CPPUNIT_ASSERT_DOUBLES_EQUAL( pdA[j], pdB[j]*pdScalars[j], 
-					fabs(pdA[j] - pdB[j]*pdScalars[j])/fabs(pdA[j])*DBL_EPS_EQUAL_MULT
-					);
+	  double actual   = pdA[j];
+	  double expected = pdB[j]*pdScalars[j];
+	  double scale;
+
+	  if ( expected != 0.0 )
+	  {
+	    scale = expected;
+	  }
+	  else
+	  {
+	    scale = actual;
+	  }
+
+	  CPPUNIT_ASSERT( isDblEpsEqual( actual, expected, scale ) );
 	}
     }  
 }
