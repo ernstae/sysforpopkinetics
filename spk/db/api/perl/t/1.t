@@ -2,7 +2,7 @@
 
 use strict;
 
-use Test::Simple tests => 49;  # number of ok() tests
+use Test::Simple tests => 51;  # number of ok() tests
 
 use Spkdb (
     'connect', 'disconnect', 'new_job', 'job_status', 
@@ -10,20 +10,19 @@ use Spkdb (
     'en_q2r', 'de_q2r', 'end_job', 'job_report',
     'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
     'new_model', 'get_model', 'update_model', 'user_models',
-    'new_user', 'update_user', 'get_user' 
+    'new_user', 'update_user', 'get_user', 'email_for_job'
 	   );
-
 my $rv;
-
-
 
 my $tmp_name = "/tmp/junk$$";
 my $admin = "../../admin";
 my $schema = "$admin/schema.sql";
+my $data = "$admin/data.sql";
 my $drop   = "$admin/drop.sql";
 system "echo 'use spktest;' > $tmp_name";
 system "cat $tmp_name $drop   | mysql --force -ptester -utester > /dev/null 2>&1";
 system "cat $tmp_name $schema | mysql --force -ptester -utester";
+system "cat $tmp_name $data   | mysql --force -ptester -utester";
 
 my $dbh = &connect("spktest", "localhost", "tester", "tester");
 
@@ -102,6 +101,14 @@ foreach $row (@$row_array) {
 }
 ok($flag, "user_jobs for maxnum = 3");
 
+my $email = &email_for_job($dbh, 1);
+ok(!defined $email, "email address was never defined");
+
+my $email_addr = "mj\@u.washington.edu";
+&update_user($dbh, "user_id", 1, "email", $email_addr);
+
+$email = &email_for_job($dbh, 1);
+ok($email =~ $email_addr, "email_for_job");
 
 $row = &de_q2c($dbh);
 ok($row && $row->{"job_id"} == $job_id
