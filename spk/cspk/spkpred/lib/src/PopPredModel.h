@@ -148,7 +148,7 @@ protected:
   Cov* pSigmaCurr;                                   // Pointer to the covariance of eps.
 
   // These quantities do not have cache flags associated with them
-  // because the Cov objects maintain them themself.
+  // because the Cov objects maintain them themselves.
   mutable SPK_VA::valarray<double> omega_omegaParCurr;    // Current value for the derivative of the covariance of eta.
   mutable SPK_VA::valarray<double> omegaInv_omegaParCurr; // Current derivative of the inverse of the covariance of eta.
   mutable SPK_VA::valarray<double> sigmaCurr;             // Current value for the covariance of eps.
@@ -322,6 +322,9 @@ public:
   void getEta  ( SPK_VA::valarray<double>& ret ) const;
   void getOmega( SPK_VA::valarray<double>& ret ) const;
   void getSigma( SPK_VA::valarray<double>& ret ) const;
+
+  void getStandardPar       ( SPK_VA::valarray<double>& ret ) const;
+  void getStandardPar_popPar( SPK_VA::valarray<double>& ret ) const;
 
 
   //------------------------------------------------------------
