@@ -5,14 +5,15 @@
   <srun>
     <job>15</job> <!-- pop opt, FO, non-linear, stat -->
     <job>46</job> <!-- pop opt, FO, non-linear, stat -->
-    <job>88</job> <!-- Linear, FOCE, monte carlo -->
-    <job>89</job> <!-- Linear, FOCE, miser -->
-    <job>90</job> <!-- Linear, FOCE, grid -->
+    <job>262</job><!-- verified: pop opt, FO, Brad's simplest linear, stat -->
+    <job>273</job><!-- verified: MC based on #262 -->
+    <job>274</job><!-- verified: Miser based on #262 -->
+    <job>275</job><!-- verified: Grid based on #262 -->
+    <job>267</job><!-- Verified: pop opt, FOCE, Brad's simplest linear, stat -->
+    <job>264</job><!-- Verified: pop opt, Laplace, Brad's simplest linear, stat -->
     <job>104</job><!-- Non-linear, FOCE -->
     <job>215</job><!-- Non-linear, individual, generates a warning -->
-    <job>237</job><!-- Verified! Linear, pop, FO,      theta(1), Omega(1x1), stat -->
-    <job>238</job><!-- Verified! Linear, pop, FOCE,    theta(1), Omega(1x1), stat -->
-    <job>240</job><!-- Verified! Linear, pop, Laplace, theta(1), Omega(1x1), stat -->
+    <job>253</job><!-- pop opt (success), FO, non-linear, 3x3 full Omega, stat (fail) -->
     <ignore>elapsedtime</ignore>
   </srun>
 </regression_test>
