@@ -555,12 +555,14 @@ namespace // [Begin: unnamed namespace]
     const DoubleMatrix* const pdvecXDiff;     // Difference between unscaled  
                                               // lower and upper bounds.
 
-    DoubleMatrix dvecXCurr;                   // Current value.
+    DoubleMatrix dvecXCurr;                   // Current parameter value.
+    DoubleMatrix drowF_xCurr;                 // Current gradient value.
 
     double* pdvecXLowData;
     double* pdvecXUpData;
     double* pdvecXDiffData;
     double* pdXCurrData;
+    double* pdrowF_xCurrData;
 
 
     //----------------------------------------------------------
@@ -650,15 +652,12 @@ namespace // [Begin: unnamed namespace]
 
       try
       {
-        pObjective->gradient( pdRowfScaledOut );
+        pObjective->gradient( &dRowF_xOut );
 
-	SHOULD THE ARGUMENTS FOR THIS function BE C ARRAYS, VALARRAYS, OR DOUBLEMATRIX'S
-	SHOULD THE ARGUMENTS FOR THIS function BE C ARRAYS, VALARRAYS, OR DOUBLEMATRIX'S
-	SHOULD THE ARGUMENTS FOR THIS function BE C ARRAYS, VALARRAYS, OR DOUBLEMATRIX'S
-	SHOULD THE ARGUMENTS FOR THIS function BE C ARRAYS, VALARRAYS, OR DOUBLEMATRIX'S
-	SHOULD THE ARGUMENTS FOR THIS function BE C ARRAYS, VALARRAYS, OR DOUBLEMATRIX'S
-	SHOULD THE ARGUMENTS FOR THIS function BE C ARRAYS, VALARRAYS, OR DOUBLEMATRIX'S
-	SHOULD THE ARGUMENTS FOR THIS function BE C ARRAYS, VALARRAYS, OR DOUBLEMATRIX'S
+	// Reset this pointer since it could be changed during
+	// the call to gradient.
+        pdF_xCurrData = drowF_xCurr.data();
+
 
   virtual void gradient( DoubleMatrix* pdrowF_xOut ) const = 0;
 
