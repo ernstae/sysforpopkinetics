@@ -201,12 +201,39 @@
      necessary to define the physiological and
      the statistical models.
 ----------------------------------------------------->
-<!ELEMENT model ( (pk, error) | (pred) )>
+<!ELEMENT model ( (((des, de_model, pk)|(de_model, pk)), error?) 
+                | (pk, error) 
+                | (pred) )>
+
+<!--
+     <de_model> is required with a general model (ADVAN5-9).
+     In this block, parameters required to define the compartmental
+     model are given.
+-->
+<!ELEMENT de_model (compartment)+>
+
+<!ATTLIST de_model ncompartments CDATA #REQUIRED>
+<!ATTLIST de_model nequilibrium  #FIXED "0">
+<!ATTLIST de_model nparamters #IMPLIED>
+
+<!ELEMENT compartment EMPTY>
+<!ATTLIST compartment name CDATA #REQUIRED>
+<!ATTLIST compartment initial_off (yes|no) #REQUIRED>
+<!ATTLIST compartment no_off (yes|no) #REQUIRED>
+<!ATTLIST compartment no_dose (yes|no) #REQUIRED>
+<!ATTLIST compartment equilibrium (yes|no) #REQUIRED>
+<!ATTLIST compartment exclude (yes|no) #REQUIRED>
+
+<!--
+     <de> is required with ADVAN6, 8, 9.
+     In this block, a differential equation is defined.
+-->
+<!ELEMENT des (#PCDATA)>
 
 <!--
      <pk> is required when "base" attribute of <model>
-     is present.  This is the user-portion of
-     f(alp, b) definition.
+     is present: that is, when a canned model is used.
+     This is the user-portion of f(alp, b) definition.
 -->
 <!ELEMENT pk (#PCDATA)>
 
@@ -234,8 +261,17 @@
      blocks must be provided too.
      When this is not given, <pred> must appear.
 -->
-<!ATTLIST model base (advan1|advan2|advan3|advan4|advan5) #IMPLIED>
+<!ATTLIST model base (advan1|advan2|advan3|advan4|advan5|advan6
+                     |advan7|advan8|advan9|advan10|advan11|advan12) #IMPLIED>
 
+<!--
+     When a canned model is used, that is when "base" attribute
+     is set to one of the ADVAN routines, <model> may
+     also take "tolerance" attribute value.
+     "tolerance" is set to an integer that defines the required
+     number of digits.
+-->
+<!ATTLIST model tolerance (#PCDATA) #IMPLIED>
 
 <!---------------------------------------------------
      <data> section contains various measurements
