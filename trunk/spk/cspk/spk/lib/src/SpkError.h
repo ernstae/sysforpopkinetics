@@ -210,6 +210,8 @@ public:
   const char* message() const throw();
 
   // serialize
+  const std::string getXml( ) const;
+
   friend std::string& operator<<(std::string& s, const SpkError& e);
   friend std::ostream& operator<<(std::ostream& stream, const SpkError& e);
 

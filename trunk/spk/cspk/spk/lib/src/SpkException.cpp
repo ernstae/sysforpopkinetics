@@ -294,6 +294,28 @@ $pre
 $$
 where each error object is expressed in the format 
 described in the $xref/SpkError//SpkError/$$ section.
+$syntax/
+
+const std::string getXml( ) const
+/$$
+Returns a string object containg the content of the object in the following XML format:
+$pre
+<error_list length=NUM_ERRORS>\n
+<error>\n
+   <code>ERROR_CODE</code>\n
+   <file_name>FILE_NAME</file_name>\n
+   <line_number>LINE_NUMBER</line_number>\n
+   <message>MESSAGE</message>\n
+</error>\n
+</error_list>\n
+$$
+$table
+$bold NUM_ERROR$$   $cend the number of error messages. $rend
+$bold ERROR_CODE$$  $cend an SpkError::ErrorCode value associated with the error.$rend
+$bold FILE_NAME$$   $cend the name of the file in which the error is found. $rend
+$bold LINE_NUMBER$$ $cend the line number at which the error is found. $rend
+$bold MESSAGE$$     $cend an error message.$rend
+$tend
 
 $syntax/
 
@@ -638,7 +660,17 @@ std::ostream& operator<<(std::ostream& stream, const SpkException& e)
     stream.put('\0');
     return stream;
 }
-
+const std::string SpkException::getXml() const
+{
+  std::ostringstream o;
+  o << "<error_list length=\"" << this->size() << "\">" << endl;
+  for( int i=0; i<this->size(); i++ )
+    {
+      o << _error_list[i].getXml();
+    }
+  o << "</error_list>" << endl;
+  return o.str();
+}
 std::string& operator>>(std::string& s, SpkException& e)
 {
     std::istringstream stream(s);
