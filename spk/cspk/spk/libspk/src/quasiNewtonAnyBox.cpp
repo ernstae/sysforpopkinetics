@@ -1095,7 +1095,9 @@ GET THE PROPER WARM START STUFF
   // Determine if the optimization was successful.
   //------------------------------------------------------------
 
-  bool ok = false;
+  bool ok            = false;
+  bool saveStateInfo = false;
+
   SpkError::ErrorCode errorCode;
   StateInfo stateInfo;
   std::strstream message;
@@ -1105,36 +1107,31 @@ GET THE PROPER WARM START STUFF
   {
     optimizer.setIsTooManyIter( false );
     optimizer.setNIterCompleted( iterCurr );
-    optimizer.deleteStateInfo();
+    if( optimizer.getSaveStateInfoAfterConv() )
+    {
+      saveStateInfo = true;
+    }
 
     ok = true;
   }
   else if ( iterCurr == nMaxIter )  // The maximum number of iterations 
                                     // have been performed.
   {
-    optimizer.setIsTooManyIter( true );
-    optimizer.setNIterCompleted( iterCurr );
-    if( !optimizer.getIsSubLevelOpt() && optimizer.getStateInfo().n )
-    {
-      // Save state information for warm start.
-      stateInfo.n = nObjPar;
-      stateInfo.r = rScaled;
-      stateInfo.f = fScaled;
-      stateInfo.x = yCurr;
-      stateInfo.g = gScaled;
-      stateInfo.h = hScaled;
-      optimizer.setStateInfo( stateInfo );
-
-      ok = true;
-    }
-    else
+    if( optimizer.getThrowExcepIfMaxIter() )
     {
       optimizer.deleteStateInfo();
-
       errorCode = SpkError::SPK_TOO_MANY_ITER;
       message << "Maximum number of iterations performed without convergence.";
 
       ok = false;
+    }
+    else
+    {
+      optimizer.setIsTooManyIter( true );
+      optimizer.setNIterCompleted( iterCurr );
+      saveStateInfo = true;
+
+      ok = true;
     }
   }
   else                              // This function's convergence
@@ -1143,7 +1140,6 @@ GET THE PROPER WARM START STUFF
     optimizer.setIsTooManyIter( false );
     optimizer.setNIterCompleted( iterCurr );
     optimizer.deleteStateInfo();
-
     errorCode = SpkError::SPK_NOT_CONVERGED;
     message << "Unable to satisfy convergence criterion for quasiNewtonAnyBox.";
 
@@ -1160,6 +1156,23 @@ GET THE PROPER WARM START STUFF
   //------------------------------------------------------------
   // If the optimization succeeded, set the values to be returned.
   //------------------------------------------------------------
+
+  // If the state information should be saved for future warm starts,
+  // then set all of the values that are required.
+  if ( saveStateInfo )
+  {
+    optimizer.deleteStateInfo();
+    optimizer.setupWarmStart( nObjPar );
+
+    stateInfo.n = nObjPar;
+    stateInfo.r = rScaled;
+    stateInfo.f = fScaled;
+    stateInfo.x = yCurr;
+    stateInfo.g = gScaled;
+    stateInfo.h = hScaled;
+
+    optimizer.setStateInfo( stateInfo );
+  }
 
   // If the final x value should be returned, then compute it
   // from the final y value.
