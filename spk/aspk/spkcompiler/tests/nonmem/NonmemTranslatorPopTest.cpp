@@ -43,6 +43,14 @@ namespace{
   char fPredDriver_cpp[128];
   char fDriver[128];
   char fDriver_cpp[128];
+  char fReport_xml[128];
+
+  //============================================
+  // Optimizer controls
+  //============================================
+  const int  mitr       = 100;
+  const bool isEstimate = true;
+  const char approx[]   = "fo";
 
   const char * strID    = "ID";
   const char * strTIME  = "TIME";
@@ -149,7 +157,6 @@ namespace{
   //=====================================================
 
   const int  sig_digits = 3;
-  const char approx[]   = "foce";
   const char PRED[]     = "ka = THETA(1) + ETA(1)\nke = THETA(2) + ETA(2)\nF = ke * ka\nY = F + EPS(1) + EPS(2)\n";
 
   const int thetaLen    = 2;
@@ -179,7 +186,7 @@ namespace{
   vector<bool>   eps_fix;
 
   bool pop_stderr         = false;
-  bool pop_coefficent     = false;
+  bool pop_coefficient    = false;
   bool pop_confidence     = false;
   bool pop_covariance     = false;
   bool pop_inv_covariance = false;
@@ -392,7 +399,7 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
   oSource << "<constraint>" << endl;
   // default: is_eta_out=no, is_restart=yes
   oSource << "<pop_analysis approximation=\"" << approx << "\" pop_size=\"" << pop_size << "\" ";
-  oSource << "is_estimation=\"yes\" sig_digits=\"" << sig_digits << "\">" << endl;
+  oSource << "is_estimation=\"" << (isEstimate? "yes":"no") << "\" mitr =\"" << mitr << "\"" << " sig_digits=\"" << sig_digits << "\">" << endl;
   oSource << "<data_labels>" << endl;
 
   const char * alias = NULL;
@@ -458,9 +465,11 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
   oSource << "</sigma>" << endl;
 
   oSource << "<pop_stat covariance_form=\"" << pop_cov_form << "\" ";
-  oSource << "is_standarderr_out=\""        << (pop_stderr?         "yes":"no") << "\" ";
+  oSource << "is_stderror_out=\""           << (pop_stderr?         "yes":"no") << "\" ";
   oSource << "is_covariance_out=\""         << (pop_covariance?     "yes":"no") << "\" ";
   oSource << "is_inverse_covariance_out=\"" << (pop_inv_covariance? "yes":"no") << "\" ";
+  oSource << "is_confidence_out=\""         << (pop_confidence?     "yes":"no") << "\" ";
+  oSource << "is_coefficient_out=\""        << (pop_coefficient?    "yes":"no") << "\" ";
   oSource << "is_correlation_out=\""        << (pop_correlation?    "yes":"no") << "\"/>" << endl;
 
   if( isSimulate )
