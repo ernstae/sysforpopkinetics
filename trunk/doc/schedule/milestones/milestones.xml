@@ -13,13 +13,17 @@
 	<authorinitials>afw</authorinitials>
 	<revremark>Initial version.</revremark>
       </revision>
-    </revhistory>
-    <revhistory>
       <revision>
 	<revnumber>1.01</revnumber>
 	<date>December 5, 2003</date>
 	<authorinitials>afw</authorinitials>
 	<revremark>The "Model and Data" spec was split into two specs.</revremark>
+      </revision>
+      <revision>
+	<revnumber>1.02</revnumber>
+	<date>May 18, 2004</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Modified to reflect reassignment of tasks.</revremark>
       </revision>
     </revhistory>
   <abstract>
@@ -144,7 +148,7 @@
 	      <entry><link linkend="optimizer">Optimizer Replacement</link></entry>
 	      <entry>Mitch Watrous</entry>
 	      <entry>12/08/2003</entry>
-	      <entry>01/12/2004`</entry>
+	      <entry>01/12/2004</entry>
 	    </row>
 	    <row>
 	      <entry><link linkend="comp_out">Aspk Compiler Output (C++)</link></entry>
@@ -165,22 +169,10 @@
 	      <entry>12/24/2003</entry>
 	    </row>
 	    <row>
-	      <entry><link linkend="build">Cspk Object Build Spec</link></entry>
-	      <entry>Mitch Watrous</entry>
-	      <entry>12/22/2003</entry>
-	      <entry></entry>
-	    </row>
-	    <row>
 	      <entry><link linkend="out_opt">User Output Spec</link></entry>
 	      <entry>Jiaji Du</entry>
 	      <entry>01/05/2004</entry>
 	      <entry>01/08/2004</entry>
-	    </row>
-	    <row>
-	      <entry><link linkend="comp_pop">Aspk Compiler Output (Pop)</link></entry>
-	      <entry>Sachiko Honda</entry>
-	      <entry>01/19/2004</entry>
-	      <entry></entry>
 	    </row>
 	    <row>
 	      <entry><link linkend="out_imp">User Output</link></entry>
@@ -196,15 +188,15 @@
 	    </row>
 	    <row>
 	      <entry><link linkend="build_imp">Cspk Object Build</link></entry>
-	      <entry>Mitch Watrous</entry>
-	      <entry>02/19/2004</entry>
-	      <entry></entry>
+	      <entry>Alan Westhagen</entry>
+	      <entry>02/29/2004</entry>
+	      <entry>04/30/2004</entry>
 	    </row>
 	    <row>
 	      <entry><link linkend="comp_ind">Askp Compiler Output (Ind)</link></entry>
 	      <entry>Sachiko Honda</entry>
 	      <entry>02/19/2004</entry>
-	      <entry></entry>
+	      <entry>05/10/2004</entry>
 	    </row>
 	    <row>
 	      <entry><link linkend="submit">MDA Submits Jobs</link></entry>
@@ -220,9 +212,9 @@
 	    </row>
 	    <row>
 	      <entry><link linkend="run">Cspk Builds and Runs Jobs</link></entry>
-	      <entry>Mitch Watrous</entry>
-	      <entry>03/08/2004</entry>
-	      <entry></entry>
+	      <entry>Alan Westhagen</entry>
+	      <entry>03/29/2004</entry>
+	      <entry>05/17/2004</entry>
 	    </row>
 	    <row>
 	      <entry><link linkend="web_spec">Web Site Functional Spec</link></entry>
@@ -232,9 +224,9 @@
 	    </row>
 	    <row>
 	      <entry><link linkend="report">Cspk Generates Report</link></entry>
-	      <entry>Mitch Watrous</entry>
-	      <entry>03/15/2004</entry>
-	      <entry></entry>
+	      <entry>Alan Westhagen</entry>
+	      <entry>03/29/2004</entry>
+	      <entry>05/30/2004</entry>
 	    </row>
 	    <row>
 	      <entry><link linkend="net_security">Network Security</link></entry>
@@ -253,6 +245,30 @@
 	      <entry>Jiaji Du</entry>
 	      <entry>03/29/2004</entry>
 	      <entry>03/28/2004</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="pred">Cspk Pred Class</link></entry>
+	      <entry>Mitch Watrous</entry>
+	      <entry>03/29/2004</entry>
+	      <entry>05/05/2004</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="covariance">Cspk Covariance Class</link></entry>
+	      <entry>Mitch Watrous</entry>
+	      <entry>03/29/2004</entry>
+	      <entry></entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="comp_pop">Aspk Compiler Output (Pop)</link></entry>
+	      <entry>Sachiko Honda</entry>
+	      <entry>03/29/2004</entry>
+	      <entry></entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="mda_pop">MDA Presents Results (Pop)</link></entry>
+	      <entry>Jiaji Du</entry>
+	      <entry>03/29/2004</entry>
+	      <entry></entry>
 	    </row>
 	  </tbody>
 	</tgroup>
@@ -325,15 +341,6 @@
       <para>
 	This milestone builds object code, ready for execution, from source
 	code received from the Aspk compiler.
-      </para>
-    </sect2>
-    <sect2 id="build">
-      <title>Cspk Object Build Environment Specification</title>
-      <para>
-	Models are compiled into object code and linked to the Spk
-	library and other model invariant libraries in the Cspk.
-	This model describes the way this process is organized,
-	in terms of memory layout and execution.
       </para>
     </sect2>
     <sect2 id="api_spec">
@@ -555,6 +562,25 @@
 	This document is now available for viewing
 	<ulink url="../../specs/reportML/reportML.html">here</ulink>.
 	Return to <link linkend="milestone_table">table</link>.
+      </para>
+    </sect2>
+    <sect2>
+      <title id="pred">Cspk Pred Class</title>
+      <para>
+	C++ class which represents the part of the mixed-effects model
+	which remains the same, from model to model.
+      </para>
+    </sect2>
+    <sect2>
+      <title id="covariance">Cspk Covariance Class</title>
+      <para>
+	Software to calculate and return the covariance.
+      </para>
+    </sect2>
+    <sect2>
+      <title id="mda_pop">MDA Presents Population Results</title>
+      <para>
+	The MDA presents results to a user for a population model.
       </para>
     </sect2>
   </sect1>
