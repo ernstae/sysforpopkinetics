@@ -1479,6 +1479,27 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       }
     DOMElement * omega_in = dynamic_cast<DOMElement*>( omega_in_list->item(0) );
 
+    //
+    // Omega specification contains the minimal representation of the matrix.
+    //
+    //     /                 \
+    //     |  a11  a12  a13  |
+    // A = |  a21  a22  a23  |
+    //     |  a31  a32  a33  |
+    //     \                 /
+    //
+    // For full, the list contains the LOWER half in the row major order.
+    // For diagonal, only the diagonal elements.
+    //
+    // If A is full, the user-given list will contain elements in the following order:
+    // A' = { a11, a21, a22, a31, a32, a33 }
+    //
+    // xxxPredModel's constructor expects the list containing elements of
+    // the UPPER half in the row major order.
+    //
+    // Thus, A has to be reorganized and stored in an internal array in the following order:
+    // A" = { a11, a21, a31, a22, a32, a33 }
+    //
     DOMNodeList * value_list = omega_in->getElementsByTagName( X_VALUE );
     if( myOmegaOrder != value_list->getLength() )
       {
@@ -1489,29 +1510,75 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
 	SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
 	throw e;
       }
-    for( int i=0; i<myOmegaOrder; i++ )
+    if( myOmegaStruct == Symbol::TRIANGLE )
       {
-	char str_val[128];
-        bool isFixed = false;
-	DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(i) );
-	if( value->hasAttribute( X_FIXED ) )
+	// First construct a full n by n matrix.
+	valarray<string> omega_in_full ( myOmegaDim * myOmegaDim );
+	valarray<bool> omega_fix_full( myOmegaDim * myOmegaDim );
+	for( int i=0, cnt=0; i<myOmegaDim; i++ )
 	  {
-	    const XMLCh* xml_fixed = value->getAttribute( X_FIXED );
-	    isFixed = (XMLString::equals( xml_fixed, X_YES )? true : false );
-	  }
-	const XMLCh* xml_val = value->getFirstChild()->getNodeValue();
+	    for( int j=0; j<=i; j++, cnt++ )
+	      {
+		char str_val[128];
+		bool isFixed = false;
+		DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(cnt) );
+		if( value->hasAttribute( X_FIXED ) )
+		  {
+		    const XMLCh* xml_fixed = value->getAttribute( X_FIXED );
+		    isFixed = (XMLString::equals( xml_fixed, X_YES )? true : false );
+		  }
+		const XMLCh* xml_val = value->getFirstChild()->getNodeValue();
 
-	if( XMLString::stringLen( xml_val ) == 0 )
-	  strcpy( str_val, valueDefault );
-	else
-	  {
-	    char * tmp_c_val = XMLString::transcode( xml_val );
-	    strcpy( str_val, tmp_c_val );
-	    delete tmp_c_val;
+		if( XMLString::stringLen( xml_val ) == 0 )
+		  strcpy( str_val, valueDefault );
+		else
+		  {
+		    char * tmp_c_val = XMLString::transcode( xml_val );
+		    strcpy( str_val, tmp_c_val );
+		    delete tmp_c_val;
+		  }
+		//omega_in_full[ j + i*dim ] = a[cnt]; // filling a lower triangle element
+		omega_in_full [ i + j*myOmegaDim ] = str_val; // filling a upper triangle element
+		omega_fix_full[ i + j*myOmegaDim ] = isFixed;
+	      }
 	  }
-	sym_omega->initial[0][i] = str_val;
-	sym_omega->fixed[0][i]   = isFixed;
+	// Then, extract only the upper half in the row major order.
+	for( int i=0, cnt=0; i<myOmegaDim; i++ )
+	  {
+	    for( int j=i; j<myOmegaDim; j++, cnt++ )
+	      {
+		sym_omega->initial[0][cnt] = omega_in_full [ j + i * myOmegaDim ];
+		sym_omega->fixed  [0][cnt] = omega_fix_full[ j + i * myOmegaDim ];
+	      }
+	  }
       }
+    else // diagonal case
+      {
+	for( int i=0; i<myOmegaDim; i++ )
+	  {
+	    char str_val[128];
+	    bool isFixed = false;
+	    DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(i) );
+	    if( value->hasAttribute( X_FIXED ) )
+	      {
+		const XMLCh* xml_fixed = value->getAttribute( X_FIXED );
+		isFixed = (XMLString::equals( xml_fixed, X_YES )? true : false );
+	      }
+	    const XMLCh* xml_val = value->getFirstChild()->getNodeValue();
+
+	    if( XMLString::stringLen( xml_val ) == 0 )
+	      strcpy( str_val, valueDefault );
+	    else
+	      {
+		char * tmp_c_val = XMLString::transcode( xml_val );
+		strcpy( str_val, tmp_c_val );
+		delete tmp_c_val;
+	      }
+	    sym_omega->initial[0][i] = str_val;
+	    sym_omega->fixed[0][i]   = isFixed;
+	  }
+      }
+
   }
 
   DOMNodeList * sigma_list = pop_analysis->getElementsByTagName( X_SIGMA );
@@ -1605,6 +1672,27 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       }
     DOMElement * sigma_in = dynamic_cast<DOMElement*>( sigma_in_list->item(0) );
 
+    //
+    // Sigma specification contains the minimal representation of the matrix.
+    //
+    //     /                 \
+    //     |  a11  a12  a13  |
+    // A = |  a21  a22  a23  |
+    //     |  a31  a32  a33  |
+    //     \                 /
+    //
+    // For full, the list contains the LOWER half in the row major order.
+    // For diagonal, only the diagonal elements.
+    //
+    // If A is full, the user-given list will contain elements in the following order:
+    // A' = { a11, a21, a22, a31, a32, a33 }
+    //
+    // xxxPredModel's constructor expects the list containing elements of
+    // the UPPER half in the row major order.
+    //
+    // Thus, A has to be reorganized and stored in an internal array in the following order:
+    // A" = { a11, a21, a31, a22, a32, a33 }
+    //
     DOMNodeList * value_list = sigma_in->getElementsByTagName( X_VALUE );
     if( mySigmaOrder != value_list->getLength() )
       {
@@ -1615,28 +1703,73 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
 	SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
 	throw e;
       }
-    for( int i=0; i<mySigmaOrder; i++ )
+    if( mySigmaStruct == Symbol::TRIANGLE )
       {
-	char str_val[128];
-        bool isFixed = false;
-	DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(i) );
-	if( value->hasAttribute( X_FIXED ) )
+	// First construct a full n by n matrix.
+	valarray<string> sigma_in_full ( mySigmaDim * mySigmaDim );
+	valarray<bool>   sigma_fix_full( mySigmaDim * mySigmaDim );
+	for( int i=0, cnt=0; i<mySigmaDim; i++ )
 	  {
-	    const XMLCh* xml_fixed = value->getAttribute( X_FIXED );
-	    isFixed = (XMLString::equals( xml_fixed, X_YES )? true : false );
-	  }
-	const XMLCh* xml_val = value->getFirstChild()->getNodeValue();
+	    for( int j=0; j<=i; j++, cnt++ )
+	      {
+		char str_val[128];
+		bool isFixed = false;
+		DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(cnt) );
+		if( value->hasAttribute( X_FIXED ) )
+		  {
+		    const XMLCh* xml_fixed = value->getAttribute( X_FIXED );
+		    isFixed = (XMLString::equals( xml_fixed, X_YES )? true : false );
+		  }
+		const XMLCh* xml_val = value->getFirstChild()->getNodeValue();
 
-	if( XMLString::stringLen( xml_val ) == 0 )
-	  strcpy( str_val, valueDefault );
-	else
-	  {
-	    char * tmp_c_val = XMLString::transcode( xml_val );
-	    strcpy( str_val, tmp_c_val );
-	    delete tmp_c_val;
+		if( XMLString::stringLen( xml_val ) == 0 )
+		  strcpy( str_val, valueDefault );
+		else
+		  {
+		    char * tmp_c_val = XMLString::transcode( xml_val );
+		    strcpy( str_val, tmp_c_val );
+		    delete tmp_c_val;
+		  }
+		//sigma_in_full[ j + i*dim ] = str_val; // filling a lower triangle element
+		sigma_in_full [ i + j*mySigmaDim ] = str_val; // filling a upper triangle element
+		sigma_fix_full[ i + j*mySigmaDim ] = isFixed;
+	      }
 	  }
-	sym_sigma->initial[0][i] = str_val;
-	sym_sigma->fixed[0][i]   = isFixed;
+	// Then, extract only the upper half in the row major order.
+	for( int i=0, cnt=0; i<mySigmaDim; i++ )
+	  {
+	    for( int j=i; j<mySigmaDim; j++, cnt++ )
+	      {
+		sym_sigma->initial[0][cnt] = sigma_in_full [ j + i * mySigmaDim ];
+		sym_sigma->fixed  [0][cnt] = sigma_fix_full[ j + i * mySigmaDim ];
+	      }
+	  }
+      }
+    else // diagonal case
+      {
+	for( int i=0; i<mySigmaDim; i++ )
+	  {
+	    char str_val[128];
+	    bool isFixed = false;
+	    DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(i) );
+	    if( value->hasAttribute( X_FIXED ) )
+	      {
+		const XMLCh* xml_fixed = value->getAttribute( X_FIXED );
+		isFixed = (XMLString::equals( xml_fixed, X_YES )? true : false );
+	      }
+	    const XMLCh* xml_val = value->getFirstChild()->getNodeValue();
+
+	    if( XMLString::stringLen( xml_val ) == 0 )
+	      strcpy( str_val, valueDefault );
+	    else
+	      {
+		char * tmp_c_val = XMLString::transcode( xml_val );
+		strcpy( str_val, tmp_c_val );
+		delete tmp_c_val;
+	      }
+	    sym_sigma->initial[0][i] = str_val;
+	    sym_sigma->fixed[0][i]   = isFixed;
+	  }
       }
   }
   
@@ -2349,38 +2482,105 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
 	throw e;
       }
     DOMElement * omega_in = dynamic_cast<DOMElement*>( omega_in_list->item(0) );
-
+    //
+    // Omega specification contains the minimal representation of the matrix.
+    //
+    //     /                 \
+    //     |  a11  a12  a13  |
+    // A = |  a21  a22  a23  |
+    //     |  a31  a32  a33  |
+    //     \                 /
+    //
+    // For full, the list contains the LOWER half in the row major order.
+    // For diagonal, only the diagonal elements.
+    //
+    // If A is full, the user-given list will contain elements in the following order:
+    // A' = { a11, a21, a22, a31, a32, a33 }
+    //
+    // xxxPredModel's constructor expects the list containing elements of
+    // the UPPER half in the row major order.
+    //
+    // Thus, A has to be reorganized and stored in an internal array in the following order:
+    // A" = { a11, a21, a31, a22, a32, a33 }
+    //
+    char valueDefault[] = "0.0";
     DOMNodeList * value_list = omega_in->getElementsByTagName( X_VALUE );
     if( myOmegaOrder != value_list->getLength() )
       {
 	char mess[ SpkCompilerError::maxMessageLen() ];
-	sprintf( mess, "The number of <%s> elements under <%s> does not match with the <%s::%s> attribute value.",
-		 C_VALUE, C_IN, C_OMEGA, C_LENGTH );
+	sprintf( mess,
+		 "The number of <%s> elements does not match with the <%s::%s> attribute value.", 
+		 C_VALUE, C_OMEGA, C_LENGTH );
 	SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
 	throw e;
       }
-    for( int i=0; i<myOmegaOrder; i++ )
+    if( myOmegaStruct == Symbol::TRIANGLE )
       {
-	char str_val[128];
-        bool isFixed = false;
-	DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(i) );
-        const XMLCh* xml_fixed = value->getAttribute( X_FIXED );
-	if( XMLString::stringLen( xml_fixed ) != 0 )
+	// First construct a full n by n matrix.
+	valarray<string> omega_in_full ( myOmegaDim * myOmegaDim );
+	valarray<bool> omega_fix_full( myOmegaDim * myOmegaDim );
+	for( int i=0, cnt=0; i<myOmegaDim; i++ )
 	  {
-	    isFixed = (XMLString::equals( xml_fixed, X_YES )? true : false );
-	  }
-	const XMLCh* xml_val = value->getFirstChild()->getNodeValue();
+	    for( int j=0; j<=i; j++, cnt++ )
+	      {
+		char str_val[128];
+		bool isFixed = false;
+		DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(cnt) );
+		if( value->hasAttribute( X_FIXED ) )
+		  {
+		    const XMLCh* xml_fixed = value->getAttribute( X_FIXED );
+		    isFixed = (XMLString::equals( xml_fixed, X_YES )? true : false );
+		  }
+		const XMLCh* xml_val = value->getFirstChild()->getNodeValue();
 
-	if( XMLString::stringLen( xml_val ) == 0 )
-	  strcpy( str_val, "0.0" );
-	else
-	  {
-	    char * tmp_c_val = XMLString::transcode( xml_val );
-	    strcpy( str_val, tmp_c_val );
-	    delete tmp_c_val;
+		if( XMLString::stringLen( xml_val ) == 0 )
+		  strcpy( str_val, valueDefault );
+		else
+		  {
+		    char * tmp_c_val = XMLString::transcode( xml_val );
+		    strcpy( str_val, tmp_c_val );
+		    delete tmp_c_val;
+		  }
+		//omega_in_full[ j + i*dim ] = a[cnt]; // filling a lower triangle element
+		omega_in_full [ i + j*myOmegaDim ] = str_val; // filling a upper triangle element
+		omega_fix_full[ i + j*myOmegaDim ] = isFixed;
+	      }
 	  }
-	sym_omega->initial[0][i] = str_val;
-	sym_omega->fixed[0][i]   = isFixed;
+	// Then, extract only the upper half in the row major order.
+	for( int i=0, cnt=0; i<myOmegaDim; i++ )
+	  {
+	    for( int j=i; j<myOmegaDim; j++, cnt++ )
+	      {
+		sym_omega->initial[0][cnt] = omega_in_full [ j + i * myOmegaDim ];
+		sym_omega->fixed  [0][cnt] = omega_fix_full[ j + i * myOmegaDim ];
+	      }
+	  }
+      }
+    else // diagonal case
+      {
+	for( int i=0; i<myOmegaDim; i++ )
+	  {
+	    char str_val[128];
+	    bool isFixed = false;
+	    DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(i) );
+	    if( value->hasAttribute( X_FIXED ) )
+	      {
+		const XMLCh* xml_fixed = value->getAttribute( X_FIXED );
+		isFixed = (XMLString::equals( xml_fixed, X_YES )? true : false );
+	      }
+	    const XMLCh* xml_val = value->getFirstChild()->getNodeValue();
+
+	    if( XMLString::stringLen( xml_val ) == 0 )
+	      strcpy( str_val, valueDefault );
+	    else
+	      {
+		char * tmp_c_val = XMLString::transcode( xml_val );
+		strcpy( str_val, tmp_c_val );
+		delete tmp_c_val;
+	      }
+	    sym_omega->initial[0][i] = str_val;
+	    sym_omega->fixed[0][i]   = isFixed;
+	  }
       }
   }
 
@@ -2651,6 +2851,7 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "#include <spk/SpkValarray.h>" << endl;
   oIndData_h << "#include <spk/cholesky.h>" << endl;
   oIndData_h << "#include <spk/multiply.h>" << endl;
+  oIndData_h << "#include <spk/wres.h>" << endl;
   oIndData_h << "#include <CppAD/CppAD.h>" << endl;
   oIndData_h << endl;
   
@@ -3066,6 +3267,7 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "// that returns a corresponding double-precision value." << endl;
   oIndData_h << "// It is (unfortunately) essentially requiring that the argument is of CppAD. " << endl;
   oIndData_h << "template <class spk_ValueType>" << endl;
+  /*
   oIndData_h << "void IndData<spk_ValueType>::compWeightedResiduals( const SPK_VA::valarray<double>& Ri )" << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   using SPK_VA::valarray;" << endl;
@@ -3084,10 +3286,33 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "   for( int i=0; i<n; i++ )" << endl;
   oIndData_h << "      " << UserStr.WRES << "[i] = w[i];" << endl;
   oIndData_h << "   return;" << endl;
-
   oIndData_h << "}" << endl;
-  oIndData_h << endl;
+  oIndData_h << endl; 
+  */
+  oIndData_h << "void IndData<spk_ValueType>::compWeightedResiduals( const SPK_VA::valarray<double>& Ri )" << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "   using SPK_VA::valarray;" << endl;
+  oIndData_h << "   assert( Ri.size() == n * n );" << endl;
+  oIndData_h << "   valarray<double> y(n);     // DV" << endl;
+  oIndData_h << "   valarray<double> yHat(n);  // PRED" << endl;
+  oIndData_h << "   valarray<double> r(n);" << endl;
+  oIndData_h << "   valarray<double> wr(n);" << endl;
+  oIndData_h << "   for( int i=0; i<n; i++ )" << endl;
+  oIndData_h << "   {" << endl;
+  oIndData_h << "      y[i]    = CppAD::Value( " << UserStr.DV   << "[i] );" << endl;
+  oIndData_h << "      yHat[i] = CppAD::Value( " << UserStr.PRED << "[i] );" << endl;
+  oIndData_h << "   }" << endl;
+  oIndData_h << "   wres( y, yHat, Ri, r, wr );" << endl;
+  oIndData_h << "   for( int i=0; i<n; i++ )" << endl;
+  oIndData_h << "   {" << endl;
+  oIndData_h << "      " << UserStr.RES  << "[i] = r[i];"  << endl;
+  oIndData_h << "      " << UserStr.WRES << "[i] = wr[i];" << endl;
+  oIndData_h << "   }" << endl;
+  oIndData_h << "   return;" << endl;
+  oIndData_h << "}" << endl;
   
+
+
   oIndData_h << "#endif" << endl;
 
   oIndData_h.close();
@@ -3393,8 +3618,8 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "template <class spk_ValueType>" << endl;
   oDataSet_h << "DataSet<spk_ValueType>::~DataSet()" << endl;
   oDataSet_h << "{" << endl;
-  oDataSet_h << "   const int n = data.size();" << endl;
-  oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
+  oDataSet_h << "   const int nPop = data.size();" << endl;
+  oDataSet_h << "   for( int i=0; i<nPop; i++ )" << endl;
   oDataSet_h << "   {" << endl;
   oDataSet_h << "      delete data[i];" << endl;
   oDataSet_h << "   }" << endl;
@@ -3504,8 +3729,8 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "template <class spk_ValueType>" << endl;
   oDataSet_h << "void DataSet<spk_ValueType>::compAllWeightedResiduals( std::vector< SPK_VA::valarray<double> >& R )" << endl;
   oDataSet_h << "{" << endl;
-  oDataSet_h << "   const int n = data.size();" << endl;
-  oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
+  oDataSet_h << "   const int nPop = data.size();" << endl;
+  oDataSet_h << "   for( int i=0; i<nPop; i++ )" << endl;
   oDataSet_h << "   {" << endl;
   oDataSet_h << "      data[i]->compWeightedResiduals( R[i] );" << endl;
   oDataSet_h << "   }" << endl;
@@ -4896,29 +5121,30 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "oResults << \"<spkreport>\" << endl;" << endl;
   oDriver << endl;
 
-  // Error messages, if any
+  // Print out <error_list> even when it is empty.
+  oDriver << "oResults << \"<error_list length=\\\"\" << errors.size() << \"\\\">\" << endl;" << endl;
   oDriver << "if( !(haveCompleteData && isOptSuccess && isStatSuccess) )" << endl;
   oDriver << "{" << endl;
-  oDriver << "   char buf[ SpkError::maxMessageLen() ];" << endl;
+  oDriver << "   // Print out a long error message if exists." << endl;
+  oDriver << "   char buf[ 128 ];" << endl;
   oDriver << "   ifstream iLongError( \"" << fSpkRuntimeLongError_tmp << "\" );" << endl;
-  oDriver << "   oResults << \"<error_list length=\\\"\" << errors.size() << \"\\\">\" << endl;" << endl;
-  oDriver << "   while( iLongError.getline(buf, SpkError::maxMessageLen()) )" << endl;
+  oDriver << "   while( iLongError.getline(buf, 128) )" << endl;
   oDriver << "   {" << endl;
   oDriver << "      oResults << buf << endl;" << endl;   // Write a long error to the SpkReportML document.
   oDriver << "   }" << endl;
+  oDriver << endl;
+  oDriver << "   // Print out ordinary-length error messages" << endl;
   oDriver << "   oResults << errors << endl;" << endl;
   oDriver << "   iLongError.close();" << endl;
-  oDriver << "   oResults << \"</error_list>\" << endl;" << endl;
   oDriver << "}" << endl;
+  oDriver << "oResults << \"</error_list>\" << endl;" << endl;
   oDriver << "remove( \"" << fSpkRuntimeLongError_tmp << "\" );" << endl;
   oDriver << endl;
 
-  oDriver << "if( WarningsManager::anyWarnings() )" << endl;
-  oDriver << "{" << endl;
-  oDriver << "   string warningsOut;" << endl;
-  oDriver << "   WarningsManager::getAllWarnings( warningsOut );" << endl;
-  oDriver << "   oResults << warningsOut << endl;" << endl;
-  oDriver << "}" << endl;
+  // Print out <warning_list> even when it is empty.
+  oDriver << "string warningsOut;" << endl;
+  oDriver << "WarningsManager::getAllWarnings( warningsOut );" << endl;
+  oDriver << "oResults << warningsOut << endl;" << endl;
   oDriver << endl;
 
   oDriver << "if( !haveCompleteData )" << endl;
@@ -4956,11 +5182,38 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "   else" << endl;
   oDriver << "      oResults << \"block\";" << endl;
   oDriver << "   oResults << \"\\\"\" << \">\" << endl;" << endl;
-
+  /*
   oDriver << "   for( int i=0; i<NonmemPars::omegaOrder; i++ )" << endl;
   oDriver << "   {" << endl;
   oDriver << "      oResults << \"<value>\" << omegaOut[i] << \"</value>\" << endl;" << endl;
   oDriver << "   }" << endl;
+  */
+  oDriver << "   if( NonmemPars::omegaStruct==IndPredModel::DIAGONAL )" << endl;
+  oDriver << "   {" << endl;
+  oDriver << "      for( int i=0; i<NonmemPars::omegaDim; i++ )" << endl;
+  oDriver << "      {" << endl;
+  oDriver << "         oResults << \"<value>\" << omegaOut[i] << \"</value>\" << endl;" << endl;
+  oDriver << "      }" << endl;
+  oDriver << "   }" << endl;
+  oDriver << "   else // full" << endl;
+  oDriver << "   {" << endl;
+  oDriver << "      valarray<double> omegaFullTemp( (NonmemPars::omegaDim * (NonmemPars::omegaDim+1)) / 2 );" << endl;
+  oDriver << "      for( int j=0, cnt=0; j<NonmemPars::omegaDim; j++ )" << endl;
+  oDriver << "      {" << endl;
+  oDriver << "         for( int i=j; i<NonmemPars::omegaDim; i++, cnt++ ) // lower only" << endl;
+  oDriver << "         {" << endl;
+  oDriver << "            omegaFullTemp[ i + j * NonmemPars::omegaDim ] = omegaOut[cnt];" << endl;
+  oDriver << "         }" << endl;
+  oDriver << "      }" << endl;
+  oDriver << "      for( int j=0, cnt=0; j<NonmemPars::omegaDim; j++ )" << endl;
+  oDriver << "      {" << endl;
+  oDriver << "         for( int i=0; i<=j; i++, cnt++ )" << endl;
+  oDriver << "         {" << endl;
+  oDriver << "            oResults << \"<value>\" << omegaFullTemp[ j+i*NonmemPars::omegaDim ] << \"</value>\" << endl;" << endl;
+  oDriver << "         }" << endl;
+  oDriver << "      }" << endl;
+  oDriver << "   }" << endl;
+
   oDriver << "   oResults << \"</omega_out>\" << endl;" << endl;
   oDriver << "   //" << endl;
   oDriver << "   //////////////////////////////////////////////////////////////////////" << endl;
@@ -5576,28 +5829,30 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "oResults << \"<spkreport>\" << endl;" << endl;
   oDriver << endl;
 
+  // Print out <error_list> even when it is empty.
+  oDriver << "oResults << \"<error_list length=\\\"\" << errors.size() << \"\\\">\" << endl;" << endl;
   oDriver << "if( !(haveCompleteData && isOptSuccess && isStatSuccess) )" << endl;
   oDriver << "{" << endl;
-  oDriver << "   char buf[ SpkError::maxMessageLen() ];" << endl;
+  oDriver << "   // Print out a long error message if exists." << endl;
+  oDriver << "   char buf[ 128 ];" << endl;
   oDriver << "   ifstream iLongError( \"" << fSpkRuntimeLongError_tmp << "\" );" << endl;
-  oDriver << "   oResults << \"<error_list length=\\\"\" << errors.size() << \"\\\">\" << endl;" << endl;
-  oDriver << "   while( iLongError.getline(buf, SpkError::maxMessageLen()) )" << endl;
+  oDriver << "   while( iLongError.getline(buf, 128) )" << endl;
   oDriver << "   {" << endl;
-  oDriver << "      oResults << buf << endl;" << endl;   // Write a long error to the SpkReportML document.
+  oDriver << "      oResults << buf << endl;" << endl;
   oDriver << "   }" << endl;
+  oDriver << endl;
+  oDriver << "   // Print out ordinary-length error messages" << endl;
   oDriver << "   oResults << errors << endl;" << endl;
   oDriver << "   iLongError.close();" << endl;
-  oDriver << "   oResults << \"</error_list>\" << endl;" << endl;
   oDriver << "}" << endl;
+  oDriver << "oResults << \"</error_list>\" << endl;" << endl;
   oDriver << "remove( \"" << fSpkRuntimeLongError_tmp << "\" );" << endl;
   oDriver << endl;
 
-  oDriver << "if( WarningsManager::anyWarnings() )" << endl;
-  oDriver << "{" << endl;
-  oDriver << "   string warningsOut;" << endl;
-  oDriver << "   WarningsManager::getAllWarnings( warningsOut );" << endl;
-  oDriver << "   oResults << warningsOut << endl;" << endl;
-  oDriver << "}" << endl;
+  // Print out <warning_list> even when it is empty.
+  oDriver << "string warningsOut;" << endl;
+  oDriver << "WarningsManager::getAllWarnings( warningsOut );" << endl;
+  oDriver << "oResults << warningsOut << endl;" << endl;
   oDriver << endl;
 
   oDriver << "if( !haveCompleteData )" << endl;
@@ -5641,6 +5896,35 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "   {" << endl;
   oDriver << "      oResults << \"<value>\" << omegaOut[i] << \"</value>\" << endl;" << endl;
   oDriver << "   }" << endl;
+
+  /*
+  oDriver << "   if( NonmemPars::omegaStruct==PopPredModel::DIAGONAL )" << endl;
+  oDriver << "   {" << endl;
+  oDriver << "      for( int i=0; i<NonmemPars::omegaDim; i++ )" << endl;
+  oDriver << "      {" << endl;
+  oDriver << "         oResults << \"<value>\" << omegaOut[i] << \"</value>\" << endl;" << endl;
+  oDriver << "      }" << endl;
+  oDriver << "   }" << endl;
+  oDriver << "   else // full" << endl;
+  oDriver << "   {" << endl;
+  oDriver << "      valarray<double> omegaFullTemp( (NonmemPars::omegaDim * (NonmemPars::omegaDim+1)) / 2 );" << endl;
+  oDriver << "      for( int j=0, cnt=0; j<NonmemPars::omegaDim; j++ )" << endl;
+  oDriver << "      {" << endl;
+  oDriver << "         for( int i=j; i<NonmemPars::omegaDim; i++, cnt++ ) // lower only" << endl;
+  oDriver << "         {" << endl;
+  oDriver << "            omegaFullTemp[ i + j * NonmemPars::omegaDim ] = omegaOut[cnt];" << endl;
+  oDriver << "         }" << endl;
+  oDriver << "      }" << endl;
+  oDriver << "      for( int j=0, cnt=0; j<NonmemPars::omegaDim; j++ )" << endl;
+  oDriver << "      {" << endl;
+  oDriver << "         for( int i=0; i<=j; i++, cnt++ )" << endl;
+  oDriver << "         {" << endl;
+  oDriver << "            oResults << \"<value>\" << omegaFullTemp[ j+i*NonmemPars::omegaDim ] << \"</value>\" << endl;" << endl;
+  oDriver << "         }" << endl;
+  oDriver << "      }" << endl;
+  oDriver << "   }" << endl;
+  */
+
   oDriver << "   oResults << \"</omega_out>\" << endl;" << endl;
   // Sigma
   oDriver << "   oResults << \"<sigma_out dimension=\" << \"\\\"\" << NonmemPars::sigmaDim << \"\\\"\";" << endl;
@@ -5655,6 +5939,35 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "   {" << endl;
   oDriver << "      oResults << \"<value>\" << sigmaOut[i] << \"</value>\" << endl;" << endl;
   oDriver << "   }" << endl;
+
+  /*
+  oDriver << "   if( NonmemPars::sigmaStruct==PopPredModel::DIAGONAL )" << endl;
+  oDriver << "   {" << endl;
+  oDriver << "      for( int i=0; i<NonmemPars::sigmaDim; i++ )" << endl;
+  oDriver << "      {" << endl;
+  oDriver << "         oResults << \"<value>\" << sigmaOut[i] << \"</value>\" << endl;" << endl;
+  oDriver << "      }" << endl;
+  oDriver << "   }" << endl;
+  oDriver << "   else // full" << endl;
+  oDriver << "   {" << endl;
+  oDriver << "      valarray<double> sigmaFullTemp( (NonmemPars::sigmaDim * (NonmemPars::sigmaDim+1)) / 2 );" << endl;
+  oDriver << "      for( int j=0, cnt=0; j<NonmemPars::sigmaDim; j++ )" << endl;
+  oDriver << "      {" << endl;
+  oDriver << "         for( int i=j; i<NonmemPars::sigmaDim; i++, cnt++ ) // lower only" << endl;
+  oDriver << "         {" << endl;
+  oDriver << "            sigmaFullTemp[ i + j * NonmemPars::sigmaDim ] = sigmaOut[cnt];" << endl;
+  oDriver << "         }" << endl;
+  oDriver << "      }" << endl;
+  oDriver << "      for( int j=0, cnt=0; j<NonmemPars::sigmaDim; j++ )" << endl;
+  oDriver << "      {" << endl;
+  oDriver << "         for( int i=0; i<=j; i++, cnt++ )" << endl;
+  oDriver << "         {" << endl;
+  oDriver << "            oResults << \"<value>\" << sigmaFullTemp[ j+i*NonmemPars::sigmaDim ] << \"</value>\" << endl;" << endl;
+  oDriver << "         }" << endl;
+  oDriver << "      }" << endl;
+  oDriver << "   }" << endl;
+  */
+
   oDriver << "   oResults << \"</sigma_out>\" << endl;" << endl;
   oDriver << "   //" << endl;
   oDriver << "   ///////////////////////////////////////////////////////////////////" << endl;
