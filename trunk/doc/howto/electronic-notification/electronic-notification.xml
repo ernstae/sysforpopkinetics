@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "/usr/share/sgml/docbook/xml-dtd-4.2-1.0-14/docbookx.dtd" [
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd"[
   <!ENTITY uw "University of Washington">
   <!ENTITY dept "Department of Bioengineering">
 ]>
@@ -222,7 +223,7 @@ m4 sendmail.mc > sendmail.cf
 	  <listitem>
 	    <para>
 	      An alias IP address:
-	<systemitem moreinfo="none" class="ipaddress">127.0.0.1</systemitem>.
+	<systemitem moreinfo="none" class="resource">127.0.0.1</systemitem>.
 	    </para>
 	  </listitem>
 	</itemizedlist>
