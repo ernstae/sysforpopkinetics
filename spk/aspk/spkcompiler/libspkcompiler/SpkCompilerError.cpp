@@ -254,11 +254,23 @@ std::ostream& operator<<(std::ostream& stream, const SpkCompilerError& e)
 const std::string SpkCompilerError::getXml() const
 {
     ostringstream o;
+    string m = myMessage;
+    for( int i = m.find( '<', 0 ); i != string::npos; i = m.find( '<', i ) )
+      {
+	m.erase( i, 1 );
+	m.insert( i, "&lt;" );
+      }
+    for( int i = m.find( '>', 0 ); i != string::npos; i = m.find( '>', i ) )
+      {
+	m.erase( i, 1 );
+	m.insert( i, "&gt;" );
+      }
+
     o << "<error>"          << endl;
     o << "   <code>"        << this->describe(myErrorCode) << "</code>"        << endl;
     o << "   <file_name>"   << myFileName  << "</file_name>"   << endl;
     o << "   <line_number>" << myLineNum   << "</line_number>" << endl;
-    o << "   <message>"     << myMessage   << "</message>"     << endl;
+    o << "   <message>"     << m   << "</message>"     << endl;
     o << "</error>"         << endl;
     return o.str();
 }
@@ -289,11 +301,11 @@ const SpkCompilerError::ErrorMap SpkCompilerError::fillErrorMap()
     ErrorMap tmpMap;
     
     tmpMap.insert( ErrorMap::value_type(ASPK_STD_ERR,        "ASPK_STD_ERR") );
-    tmpMap.insert( ErrorMap::value_type(ASPK_SOURCEML_ERR,   "ASPK_SOURCEML_ERR"));
-    tmpMap.insert( ErrorMap::value_type(ASPK_DATAML_ERR,     "ASPK_DATAML_ERR"));
-    tmpMap.insert( ErrorMap::value_type(ASPK_FTOC_ERR,    "ASPK_FOTC_ERR"));
+    tmpMap.insert( ErrorMap::value_type(ASPK_SOURCEML_ERR,   "ASPK_SOURCEML_ERR") );
+    tmpMap.insert( ErrorMap::value_type(ASPK_DATAML_ERR,     "ASPK_DATAML_ERR") );
+    tmpMap.insert( ErrorMap::value_type(ASPK_FTOC_ERR,       "ASPK_FOTC_ERR") );
     tmpMap.insert( ErrorMap::value_type(ASPK_UNKNOWN_ERR,    "ASPK_UNKNOWN_ERR") );
-    tmpMap.insert( ErrorMap::value_type(ASPK_PROGRAMMER_ERR,"ASPK_PROGRAMMER_ERR"));
-    tmpMap.insert( ErrorMap::value_type(ASPK_XMLDOM_ERR,     "ASPK_XMLDOM_ERR"));
+    tmpMap.insert( ErrorMap::value_type(ASPK_PROGRAMMER_ERR, "ASPK_PROGRAMMER_ERR") );
+    tmpMap.insert( ErrorMap::value_type(ASPK_XMLDOM_ERR,     "ASPK_XMLDOM_ERR") );
     return tmpMap;
 }
