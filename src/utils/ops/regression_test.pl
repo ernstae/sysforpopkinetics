@@ -312,4 +312,9 @@ Add the jobs to their appropriate subsets in the configuration file.
 
 =back
 
+=head1 EXIT STATUS
+
+Returns 0 as exit status if the regression test was successful; otherwise
+a non-zero value is returned.
+
 =cut
