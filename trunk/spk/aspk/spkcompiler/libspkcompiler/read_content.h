@@ -13,10 +13,11 @@
  */
 /**
  * Extract the verion of SpkInML document, the @ref client type
- * and the @ref SpkParameters::Analysis "analysis" type from the given DOMDocumentation.
+ * and the @ref SpkParameters::Analysis "analysis" type 
+ * specified as attributes of the given DOMElement.
  *
- * @arg tree is a pointer to the DOMDocumentation that represents
- * the input SkInML document.  It must contain <content> tag.
+ * @arg content_node is a pointer to the DOMElement node that
+ * represents the root of <content> subtree.
  *
  * @arg spkml_verOut will contain a string extracted as
  * the value of a <content> attribute, "spkinml_ver".
@@ -30,7 +31,7 @@
  * @return true if it finds "spkinml_ver", "client" and "analysis" attribute
  * values associated with the <content> tag.
  */
-bool read_content( xercesc::DOMDocument* tree, 
+bool read_content( xercesc::DOMElement * content_node, 
 		   std::string & spkml_verOut, 
 		   enum client::type & clientOut, 
 		   enum SpkParameters::Analysis& analysisOut  );

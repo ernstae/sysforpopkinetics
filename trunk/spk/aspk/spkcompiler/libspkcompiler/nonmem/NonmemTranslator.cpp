@@ -187,14 +187,27 @@ const char* const NonmemTranslator::toString( enum NonmemTranslator::NonmemModel
 }
 void NonmemTranslator::translate( DOMDocument* tree )
 {
+  assert( tree != NULL );
+
   string spkinml_verOut;
   enum client::type client_typeOut;
   enum SpkParameters::Analysis analysis_typeOut;
-  if( !readContent( tree, spkinml_verOut, client_typeOut, analysis_typeOut ) )
+
+  assert( tree->getElementsByTagName( X("content") ) != NULL );
+  DOMElement * content_node
+    = dynamic_cast<DOMElement*>( tree->getElementsByTagName( X("content") )->item(0) );
+  assert( content_node != NULL );
+  if( !readContent( content_node, spkinml_verOut, client_typeOut, analysis_typeOut ) )
     {
       char buf[] = "Rough content checking failed!";
       exit( error(buf, __LINE__, __FILE__) );
     }
+  if( client_typeOut != client::NONMEM )
+    {
+      char buf[] = "Client type must be NONMEM!";
+      exit( error(buf, __LINE__, __FILE__) );
+    }
+
   ourSpk.analysis = analysis_typeOut;
   int nIndividuals = readDriver( tree, ourSpk, ourNonmem );
 
@@ -266,63 +279,14 @@ void NonmemTranslator::initSymbolTable( SymbolTable& )
 }
 
 bool NonmemTranslator::readContent( 
-     DOMDocument* tree, 
+     DOMElement * content_node, 
      string & spkml_verOut, 
-     enum client::type clientOut, 
-     enum SpkParameters::Analysis analysisOut )
+     enum client::type & clientOut, 
+     enum SpkParameters::Analysis & analysisOut )
 {
-  return read_content( tree, spkml_verOut, clientOut, analysisOut );
-  /*
-  //
-  // Get the version of SpkInML this document is supposed to comply with.
-  //
-  assert( tree != NULL );
-
-  assert( tree->getElementsByTagName( X("content") ) != NULL );
-  DOMElement * content_node
-    = dynamic_cast<DOMElement*>(tree->getElementsByTagName( X("content") )->item(0));
   assert( content_node != NULL );
 
-  //
-  // Verify SpkInML version specification
-  //
-  const char* c_spkml_ver = C( content_node->getAttribute( X("spkinml_ver") ) );
-  if( strcmp( c_spkml_ver, "1.0" ) != 0 )
-  {
-    char buf[128];
-    sprintf( buf, "SpkInML version mismatch!  Only \"1.0\" supported!  \
-                   The version you gave me says %s.\n", c_spkml_ver );
-    exit( error( buf, __LINE__, __FILE__ ) );
-  }
-  
-  //
-  // Verify client specification
-  //
-  const char * c_client = C( content_node->getAttribute( X("client") ) );
-  if( strcmp( c_client, "nonmem" ) != 0 )
-  {
-    char buf[128];
-    sprintf( buf, "Anything besides \"nonmem\" does not make sense in this context!  \
-                  You gave me %s (case sensitive).\n", c_client );
-    exit( error( buf, __LINE__, __FILE__ ) );
-  }
-
-  //
-  // analysis level
-  //
-  const char * c_analysis = C( content_node->getAttribute( X("analysis") ) );
-  if( strcmp( c_analysis, "population" ) != 0 )
-  {
-    char buf[128];
-    sprintf( buf, "Currently only \"population\" is supported!  You gave me %s (case sensitive).\n",
-	     c_analysis );
-    exit( error( buf, __LINE__, __FILE__ ) );
-  }
-  else
-    spkOut.analysis = SpkParameters::POPULATION;
-
-  return true;
-  */
+  return read_content( content_node, spkml_verOut, clientOut, analysisOut );
 }
 
 //=====================================================================================
@@ -1055,6 +1019,7 @@ void NonmemTranslator::readData(
   assert( tree->getElementsByTagName( X("data") ) != NULL );
   DOMNode * dataTree = tree->getElementsByTagName( X("data") )->item(0);
   assert( dataTree != NULL );
+
   //
   // Get the list of <individual> nodes.  Each <individual> node is the root
   // of that individual's data subtree and determine the number of 

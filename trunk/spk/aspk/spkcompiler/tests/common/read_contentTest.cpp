@@ -66,7 +66,7 @@ void read_contentTest::test()
     string verOut;
     enum client::type clientOut;
     enum SpkParameters::Analysis analysisOut;
-    read_content( doc, verOut, clientOut, analysisOut );
+    read_content( contentNode, verOut, clientOut, analysisOut );
     
     CPPUNIT_ASSERT_MESSAGE( verOut, verOut == "1.0" );
     CPPUNIT_ASSERT_MESSAGE( client::toString(clientOut), clientOut == client::NONMEM );
@@ -76,7 +76,7 @@ void read_contentTest::test()
     contentNode->setAttribute( XMLString::transcode( "client" ), XMLString::transcode( client::STR_NOT_SUPPORTED ) );
     contentNode->setAttribute( XMLString::transcode( "analysis" ), XMLString::transcode( "individual" ) );
 
-    read_content( doc, verOut, clientOut, analysisOut );
+    read_content( contentNode, verOut, clientOut, analysisOut );
     CPPUNIT_ASSERT_MESSAGE( verOut, verOut == "1.1" );
     CPPUNIT_ASSERT_MESSAGE( client::toString(clientOut), clientOut == client::NOT_SUPPORTED );
     CPPUNIT_ASSERT_MESSAGE( "should be population", analysisOut == SpkParameters::INDIVIDUAL );

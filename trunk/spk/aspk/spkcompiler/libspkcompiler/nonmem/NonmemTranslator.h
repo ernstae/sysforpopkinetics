@@ -265,10 +265,10 @@ class NonmemTranslator : public ClientTranslator
   std::vector<NonmemDataRecords> data_for_all_subjects;
 
   void initSymbolTable( SymbolTable& );
-  bool readContent( DOMDocument* tree,
-		    std::string& spkinml_verOut,
-		    enum client::type client_typeOut,
-		    enum SpkParameters::Analysis analysis_typeOut );// returns true if rough content checking passes
+  bool readContent( DOMElement * content_node,
+		    std::string & spkinml_verOut,
+		    enum client::type & client_typeOut,
+		    enum SpkParameters::Analysis & analysis_typeOut );// returns true if rough content checking passes
   int  readDriver(  DOMDocument* tree, 
 		    SpkParameters& spkOut, 
 		    NonmemParameters & nonmemOut );// returns the number of individuals
