@@ -393,12 +393,13 @@ void NonmemTranslator::parseSource()
   bool isPredDone = false;
   parsePred( pred );
   isPredDone = true;
-
+  // By now, the variables found during the PRED parsing are in mixed cases.
+  
   //------------------------------------------------------
   // <presentation>
   //------------------------------------------------------
   // PRED parsing and <xxx_analysis> parsing must have been completed so that the symbol table
-  // contains entries for the user defined variables and THETA/OMEGA/SIGMA/ETA, respectively.
+  // contains entries for the user defined variables and THETA/OMEGA/SIGMA/ETA.
   assert( isPredDone );
   assert( isAnalysisDone );
   
@@ -418,7 +419,10 @@ void NonmemTranslator::parseSource()
   // * THETA, OMEGA, (SIGMA), (ETA) --- <xxx_analysis> should have been done by now
   // * data labels  --- parseData() should have been done by now
   // * user defined variables in PRED definition --- PRED parsing should have been done by now
-  // * PRED, RES, WRES
+  // * PRED, RES, WRES, MDV
+  // 
+  // Unless PRED/RES/WRES/MDV appeared in the PRED definition, they are not in the
+  // symbol table.  Register if they are not yet done.
   if( table->findi( KeyStr::PRED ) == Symbol::empty() )
     table->insertUserVar( DefaultStr::PRED );
   if( table->findi( KeyStr::RES )  == Symbol::empty() )
