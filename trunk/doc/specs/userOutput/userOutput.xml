@@ -71,7 +71,7 @@ MDA saves the tables into text files, specified in the input file by the user, o
   <sect1>
     <title>Summary report</title>
     <para>
-MDA presents a summary report in MDA's editor window.  The user may save it and/or print it out using MDA's file menu.  The summary report includes the job identification number that is the order number of the user's jobs, time of submission, time of completion, and SPK computing time, the model name, version and description, the data file name, the error message, the minimum value of objective function and a table listing the final parameter estimate, the statistics including standard error, coefficent of variation and 95% confidence interval, as well as the interindividual variability derived from the value of the diagonal elements of the OMEGA matrix and the residual variability derived from the value of the diagonal elements of the SIGMA matrix.   
+MDA presents a summary report in MDA's editor window.  The user may save it and/or print it out using MDA's file menu.  The summary report includes the job discription, time of submission, time of completion, and SPK computing time, the model name, version and description, the data file name, version and description, the error message, the minimum value of objective function and a table listing the final parameter estimate, the statistics including standard error, coefficent of variation and 95% confidence interval, as well as the interindividual variability derived from the value of the diagonal elements of the OMEGA matrix and the residual variability derived from the value of the diagonal elements of the SIGMA matrix.   
     </para>
   </sect1>
   <sect1>
