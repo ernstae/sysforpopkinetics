@@ -129,6 +129,7 @@ $end
 # include "MapBay.h"
 # include "MapMonte.h"
 # include "MontePars.h"
+# include "Gsl2SpkError.h"
 
 #include <stdlib.h>
 #include <gsl/gsl_math.h>
@@ -227,11 +228,14 @@ void MapMonte(
 	// default random set up
 	gsl_rng_env_setup();
 
+	// error flag
+	int GslError;
+
 	if( MontePars::method == MontePars::plain )
 	{	// very simple monte carlo integration
 		gsl_monte_plain_state *state = 
 			gsl_monte_plain_alloc (numberRandomEffects);
-		gsl_monte_plain_integrate(
+		GslError = gsl_monte_plain_integrate(
 			&Integrand                    , 
 			Lower                         , 
 			Upper                         , 
@@ -242,6 +246,8 @@ void MapMonte(
 			&integralEstimate             , 
 			&estimateStd
 		);
+		if( GslError != 0 )
+			ThrowGsl2SpkError();
 		gsl_monte_plain_free(state);
 	}
 	else if ( MontePars::method == MontePars::miser )
@@ -262,7 +268,7 @@ void MapMonte(
 			<< std::endl; 
 
 		}
-		gsl_monte_miser_integrate(
+		GslError = gsl_monte_miser_integrate(
 			&Integrand                    , 
 			Lower                         , 
 			Upper                         , 
@@ -273,6 +279,8 @@ void MapMonte(
 			&integralEstimate             , 
 			&estimateStd
 		);
+		if( GslError != 0 )
+			ThrowGsl2SpkError();
 		gsl_monte_miser_free(state);
 	}
 	else	assert(0);	// should not happen

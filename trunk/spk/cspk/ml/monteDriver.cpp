@@ -166,6 +166,7 @@ $end
 # include <sys/time.h>
 # include <spk/SpkException.h>
 # include <cstdlib>
+# include <gsl/gsl_errno.h>
 
 # include "AnalyticIntegral.h"
 # include "GridIntegral.h"
@@ -176,6 +177,7 @@ $end
 # include "DataSet.h"
 # include "NonmemPars.h"
 # include "MontePars.h"
+# include "Gsl2SpkError.h"
 
 # define monteDriverDebug 0
 
@@ -529,6 +531,9 @@ int main(int argc, const char *argv[])
 	// start timing
 	timeval timeBegin;
 	gettimeofday( &timeBegin, NULL );
+
+	// replace the default GSL error handler with an SPK exception thow
+	gsl_set_error_handler(Gsl2SpkError);
 
 	// space used to hold the results
 	double pop_obj_estimate;
