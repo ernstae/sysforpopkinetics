@@ -57,11 +57,13 @@ void ppkaOptTest::tearDown()
 
 Test* ppkaOptTest::suite()
 {
-	TestSuite *suiteOfTests = new TestSuite( "ppkaOptTest" );
+  TestSuite *suiteOfTests = new TestSuite( "ppkaOptTest" );
 
-    suiteOfTests->addTest(new TestCaller<ppkaOptTest>("modifiedLaplaceTest", &ppkaOptTest::modifiedLaplaceTest));
-    suiteOfTests->addTest(new TestCaller<ppkaOptTest>("expectedHessianTest", &ppkaOptTest::expectedHessianTest));
+  suiteOfTests->addTest( new TestCaller<ppkaOptTest>("modifiedLaplaceTest", 
+						     &ppkaOptTest::modifiedLaplaceTest));
 
+  suiteOfTests->addTest( new TestCaller<ppkaOptTest>("expectedHessianTest",
+						     &ppkaOptTest::expectedHessianTest));
     return suiteOfTests;
 }
 
@@ -69,11 +71,13 @@ void ppkaOptTest::modifiedLaplaceTest()
 {
     ppkaOptExampleTest(MODIFIED_LAPLACE);
     ppkaOptZeroIterationsTest(MODIFIED_LAPLACE);
+    ppkaOptFixedAlpTest(MODIFIED_LAPLACE);
 }
 void ppkaOptTest::expectedHessianTest()
 {
-    ppkaOptExampleTest(EXPECTED_HESSIAN);
-    ppkaOptZeroIterationsTest(EXPECTED_HESSIAN);
+  ppkaOptExampleTest(EXPECTED_HESSIAN);
+  ppkaOptZeroIterationsTest(EXPECTED_HESSIAN);
+  ppkaOptFixedAlpTest(EXPECTED_HESSIAN);
 }
 /*------------------------------------------------------------------------
  * Include Files
@@ -158,7 +162,7 @@ private:
         //
         // D = [ alp[1] ]
         //
-        ret.resize(_nYi);
+        ret.resize(_nB);
         ret[0] = _a[1];
     }
     bool doIndParVariance_popPar( valarray<double>& ret ) const
@@ -166,7 +170,7 @@ private:
         //
         // D_alp = [ 0  1 ]
         //
-        ret.resize(_nYi * _nA);
+        ret.resize(_nB * _nA);
         ret[0] = 0.0;
         ret[1] = 1.0;
         return true;
@@ -350,6 +354,7 @@ void ppkaOptTest::ppkaOptExampleTest(enum Objective whichObjective)
   valarray<double> sdBCov(nY*nY);
   sdBCov[ slice( 0, nY, nY+1 ) ] = sdBTrue;
 
+  srand( 1 );
   valarray<double> y = meanBTrue + randNormal( sdBCov, nY ) + randNormal( sdECov, nY );
   copy( &(y[0]), &(y[0])+nY, pdYData );
     
@@ -1230,8 +1235,10 @@ void ppkaOptTest::doTheTest( bool ok,
   // 
   //      abs(alpOut - alpHat) <= epsAlp (alpUp - alpLow)
   //
+  // Note that the last element of alp was fixed, so
+  // it should be skipped for checking.
   bool isConverged = true;
-  for ( i = 0; i < nAlp; i++ )
+  for ( i = 0; i < nAlp - 1; i++ )
   {
     if ( fabs(pdAlpOutData[ i ] - pdAlpHatData[ i ]) > 
             epsAlp * (pdAlpUpData[ i ] - pdAlpLowData[ i ]) )
@@ -1274,4 +1281,516 @@ void ppkaOptTest::doTheTest( bool ok,
   
 }
 
+/*************************************************************************
+ *
+ * Function: ppkaOptFixedAlpTest
+ *
+ *
+ * This test implements the example problem from the ppkaOpt specification
+ * with one extra alp components being fixed. 
+ *
+ *************************************************************************/
 
+class UserModelPpkaOptFixedAlpTest : public SpkModel
+{
+    valarray<double> _a, _b;
+    int _i;
+    const int _nA;
+    const int _nB;
+    const int _nYi;
+public:
+    UserModelPpkaOptFixedAlpTest(int nA, int nB, int nYi)
+      :
+      _nA(nA), _nB(nB), _nYi(nYi), _a(nA), _b(nB)
+    {
+      CPPUNIT_ASSERT_EQUAL( 3, nA );
+      CPPUNIT_ASSERT_EQUAL( 1, nB );
+    };    
+    ~UserModelPpkaOptFixedAlpTest(){};
+private:
+    void doSelectIndividual(int inx)
+    {
+        _i = inx;
+    }
+    void doSetPopPar(const valarray<double>& aval)
+    {
+        _a = aval;
+    }
+    void doSetIndPar(const valarray<double>& bval)
+    {
+        _b = bval;
+    }
+    void doIndParVariance( valarray<double>& ret ) const
+    {
+        //
+        // D = [ alp[1] ]
+        //
+        ret.resize(_nB);
+        ret[0] = _a[1];
+    }
+    bool doIndParVariance_popPar( valarray<double>& ret ) const
+    {
+        //
+        // D_alp = [ 0  1  0 ]
+        //
+        ret.resize(_nB * _nA);
+        ret[0] = 0.0;
+        ret[1] = 1.0;
+	ret[2] = 0.0;
+        return true;
+    }
+    void doIndParVarianceInv( valarray<double>& ret ) const
+    {
+        //
+        // Dinv = [ 1.0 / alp[1] ]
+        //
+        assert(_a[1] != 0.0);
+        ret.resize(_nB * _nB);
+        ret[0] = ( 1.0 / _a[1] );
+    }
+    bool doIndParVarianceInv_popPar( valarray<double>& ret ) const
+    {
+        //
+        // Dinv_alp = [ 0    -alp[1]^(-2)   0 ]
+        //
+        ret.resize(_nB * _nA);
+        ret[0] = 0.0;
+        ret[1] = -1.0 / (_a[1]*_a[1]);
+	ret[2] = 0.0;
+        return true;
+    }
+    void doDataMean( valarray<double>& ret ) const
+    {
+        //
+        // f = [ alp[0]+b[0] ]
+        //
+        ret.resize(_nYi);
+        ret[0] = ( _a[0] + _b[0] );
+    }
+    bool doDataMean_popPar( valarray<double>& ret ) const
+    {
+        //
+        // f_alp = [ 1   0   0 ]
+        //
+        ret.resize(_nYi * _nA);
+        ret[0] = 1.0;
+        ret[1] = 0.0;
+        ret[2] = 0.0;
+        return true;
+    }
+    bool doDataMean_indPar( valarray<double>& ret ) const
+    {
+        //
+        // f_b = [ 1 ]
+        //
+        ret.resize(_nYi * _nB);
+        ret[0] = 1.0;
+        return true;
+    }
+    void doDataVariance( valarray<double>& ret ) const
+    {
+        //
+        // R = [ 1 ]
+        //
+        ret.resize(_nB*_nB);
+        ret[0] = 1.0;
+    }
+    bool doDataVariance_popPar( valarray<double>& ret ) const
+    {
+        //
+        // R_alp = [ 0  0  0 ]
+        //
+        ret.resize(_nB * _nA);
+        ret[0] = 0.0;
+        ret[1] = 0.0;
+        ret[2] = 0.0;
+        return false;
+    }
+    bool doDataVariance_indPar( valarray<double>& ret ) const
+    {
+        //
+        // R_b = [ 0 ]
+        //
+        ret.resize(_nB *_nB);
+        ret[0] = 0.0;
+        return false;
+    }
+    void doDataVarianceInv( valarray<double>& ret ) const
+    {
+        //
+        // Rinv = [ 1 ]
+        //
+        ret.resize(_nB * _nB);
+        ret[0] = 1.0;
+    }
+    bool doDataVarianceInv_popPar( valarray<double>& ret ) const
+    {
+        //
+        // Rinv_alp = [ 0  0  0 ]
+        //
+        ret.resize(_nB * _nA);
+        ret[0] = 0.0;
+        ret[1] = 0.0;
+	ret[2] = 0.0;
+        return false;
+    }
+    bool doDataVarianceInv_indPar( valarray<double>& ret ) const
+    {
+        //
+        // Rinv_b = [ 0 ]
+        //
+        ret.resize(_nB * _nB * _nB);
+        ret[0] = 0.0;
+        return false;
+    }   
+
+};
+
+
+void ppkaOptTest::ppkaOptFixedAlpTest(enum Objective whichObjective)
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  int i, k;
+
+  //preTestPrinting( "Specification Example" );
+
+
+  // Number of individuals.
+  const int nInd = 10;
+
+  // Number of measurements per individual (same for all)
+  const int nYi = 1;
+
+  // Number of measurements in total
+  const int nY = nInd * nYi;
+
+  // The model is really defined for 2 fixed effects, so
+  // just add a dummy (fixed element) at the end of the vector.
+  const int nAlp = 2 + 1;
+
+  const int nB = 1;
+
+  //------------------------------------------------------------
+  // Quantities related to the user-provided model.
+  //------------------------------------------------------------
+
+  UserModelPpkaOptFixedAlpTest model( nAlp, nB, nYi );
+
+
+  //------------------------------------------------------------
+  // Quantities that define the problem.
+  //------------------------------------------------------------
+
+  // Mean and variance of the true transfer rate, betaTrue.
+  double meanBetaTrue = 1.0;
+  double varBetaTrue  = 5.0;
+
+
+
+  //------------------------------------------------------------
+  // Quantities related to the data vector, y.
+  //------------------------------------------------------------
+
+  // Measurement values, y.
+  DoubleMatrix dvecY( nY, 1 );
+  double* pdYData = dvecY.data();
+
+  // Number of measurements for each individual. 
+  DoubleMatrix dvecN( nInd, 1 );
+  dvecN.fill( (double) 1 );
+
+  // These will hold the generated values for the true measurement 
+  // noise, eTrue, and the true random population parameters, bTrue.
+  double eTrue;
+  double bTrue;
+
+  // Mean, variance, and standard deviation of eTrue and bTrue.
+  double meanETrue = 0.0;
+  double varETrue  = 1.0;
+  double sdETrue   = sqrt( varETrue );
+  double meanBTrue = 0.0;
+  double varBTrue  = varBetaTrue;
+  double sdBTrue   = sqrt( varBTrue );
+
+  // Compute the measurements for each individual.
+  valarray<double> sdECov(nY*nY);
+  sdECov[ slice( 0, nY, nY+1 ) ] = sdETrue;
+
+  valarray<double> sdBCov(nY*nY);
+  sdBCov[ slice( 0, nY, nY+1 ) ] = sdBTrue;
+
+  srand( 1 );
+  valarray<double> y = meanBTrue + randNormal( sdBCov, nY ) + randNormal( sdECov, nY );
+  copy( &(y[0]), &(y[0])+nY, pdYData );
+    
+  //------------------------------------------------------------
+  // Quantities related to the fixed population parameter, alp.
+  //------------------------------------------------------------
+
+
+  DoubleMatrix dvecAlpTrue( nAlp, 1 );
+  DoubleMatrix dvecAlpLow ( nAlp, 1 );
+  DoubleMatrix dvecAlpUp  ( nAlp, 1 );
+  DoubleMatrix dvecAlpIn  ( nAlp, 1 );
+  DoubleMatrix dvecAlpOut ( nAlp, 1 );
+  DoubleMatrix dvecAlpStep( nAlp, 1 );
+
+  double* pdAlpTrueData = dvecAlpTrue.data();
+  double* pdAlpLowData  = dvecAlpLow .data();
+  double* pdAlpUpData   = dvecAlpUp  .data();
+  double* pdAlpInData   = dvecAlpIn  .data();
+  double* pdAlpStepData = dvecAlpStep.data();
+
+  // Set the values associated with alp(1).
+  pdAlpTrueData[ 0 ] = meanBetaTrue;
+  pdAlpLowData [ 0 ] = -10.0;
+  pdAlpUpData  [ 0 ] = 10.0;
+  pdAlpInData  [ 0 ] = -1.0;
+  pdAlpStepData[ 0 ] = 1.0e-2;
+
+  // Set the values associated with alp(2).
+  pdAlpTrueData[ 1 ] = varBetaTrue;
+  pdAlpLowData [ 1 ] = 1.0e-3;
+  pdAlpUpData  [ 1 ] = 100.0;
+  pdAlpInData  [ 1 ] = 0.5;
+  pdAlpStepData[ 1 ] = 1.0e-2;
+  
+  // Set the values associated with alp(3).
+  // This element is fixed.
+  pdAlpTrueData[ 2 ] = 10.0;
+  pdAlpInData  [ 2 ] = pdAlpTrueData[ 2 ];
+  pdAlpLowData [ 2 ] = pdAlpInData[ 2 ];
+  pdAlpUpData  [ 2 ] = pdAlpInData[ 2 ];
+  pdAlpStepData[ 2 ] = 0.0;
+
+  //------------------------------------------------------------
+  // Quantities related to the random population parameters, b.
+  //------------------------------------------------------------
+
+
+  DoubleMatrix dvecBLow ( nB, 1 );
+  DoubleMatrix dvecBUp  ( nB, 1 );
+  DoubleMatrix dvecBStep( nB, 1 );
+
+  dvecBLow .fill( -1.5e+1 );
+  dvecBUp  .fill( +1.0e+1 );
+  dvecBStep.fill(  1.0e-2 );
+
+  DoubleMatrix dmatBIn ( nB, nInd );
+  DoubleMatrix dmatBOut( nB, nInd );
+
+  dmatBIn.fill( 1.0 );
+
+
+  //------------------------------------------------------------
+  // Quantities related to the population objective function.
+  //------------------------------------------------------------
+
+  double dLTildeOut;
+
+  DoubleMatrix drowLTilde_alpOut    ( 1,    nAlp );
+  DoubleMatrix dmatLTilde_alp_alpOut( nAlp, nAlp );
+
+
+  //------------------------------------------------------------
+  // Remaining inputs to ppkaOpt.
+  //------------------------------------------------------------
+
+  int popMItr = 0;
+  if( whichObjective == MODIFIED_LAPLACE )
+    popMItr = 11;
+  else if( whichObjective == EXPECTED_HESSIAN )
+    popMItr = 10;
+  else
+    popMItr = 10;
+  Optimizer popOptimizer( 1.0e-6, popMItr, 0 );
+  Optimizer indOptimizer( 1.0e-6, 40, 0 );
+  popOptimizer.setupWarmStart( nAlp );
+  
+  //------------------------------------------------------------
+  // Optimize the population objective function.
+  //------------------------------------------------------------
+
+  bool ok;
+  try{
+	while( true )
+	{
+      ppkaOpt(
+               model,
+               whichObjective,
+               dvecN,
+               dvecY,
+               popOptimizer,
+               dvecAlpLow,
+               dvecAlpUp,
+               dvecAlpIn,
+               &dvecAlpOut,
+               dvecAlpStep,
+	       indOptimizer,
+               dvecBLow,
+               dvecBUp,
+	       dmatBIn,
+               &dmatBOut,
+               dvecBStep,
+               &dLTildeOut,
+               &drowLTilde_alpOut,
+               &dmatLTilde_alp_alpOut );
+	  if( !popOptimizer.getIsTooManyIter() )
+		// Finished
+		break;
+
+	  // Turn on warm start.
+      popOptimizer.setIsWarmStart( true );
+	}
+    ok = true;
+  }
+  catch( const SpkException& e )
+    {
+      cerr << e << endl;
+      CPPUNIT_ASSERT_MESSAGE( "ppkaOpt failed!", false );
+    }
+  catch(...)
+  {
+      CPPUNIT_ASSERT_MESSAGE( "ppkaOpt failed for unknown reasons!", false );
+  }
+
+
+  //------------------------------------------------------------
+  // Known values.
+  //------------------------------------------------------------
+
+  //************************************************************
+  // Note: equations for the known (analytic) values computed 
+  // here are derived in "The Importance of Marginal Estimation
+  // ", B. M. Bell, Applied Physics
+  // Laboratory, University of Washington, May 25, 2000.
+  //************************************************************
+
+  CPPUNIT_ASSERT_EQUAL( nInd, nY );
+  CPPUNIT_ASSERT( nY != 1 );
+
+  // Compute the mean of the data, yBar.
+  double yBar = 0.0;
+  for ( i = 0; i < nInd; i++ )
+  {
+    yBar += pdYData[ i ];
+  }
+  yBar /= nInd;
+
+  // Compute the sample variance, sSquared.
+  double sSquared = 0.0;
+  for ( i = 0; i < nInd; i++ )
+  {
+    sSquared += pow( ( pdYData[ i ] - yBar ), 2 );
+  }
+  sSquared /= ( nInd - 1 );
+
+  // The value for alpHat(1) and alpHat(2) are contained in
+  // section 9 of the above reference.
+  // alp(3) is fixed so it's expected value stays the original
+  // value.
+  DoubleMatrix dvecAlpHat( nAlp, 1 );
+  double* pdAlpHatData = dvecAlpHat.data();
+  pdAlpHatData[ 0 ] = yBar;
+  pdAlpHatData[ 1 ] = sSquared * (nInd - 1) / nInd - 1.0;
+  pdAlpHatData[ 2 ] = pdAlpInData[ 2 ];
+
+  //========================================================
+  // Start from here! Sachiko 09/13/04
+  //
+  //  pDAlpHatData[ 2 ] = 
+  //=======================================================
+
+  // Compute bHat_i(alpHat) using equation (14) of the above reference.      
+  DoubleMatrix dmatBHat( nB, nInd );
+  double* pdBHatData = dmatBHat.data();
+  for ( i = 0; i < nInd; i++ )
+  {
+    for ( k = 0; k < nB; k++ )
+    {
+      pdBHatData[ k + i * nB ] = ( pdYData[ i ] - pdAlpHatData[ 0 ] ) 
+        / ( 1.0 + 1.0 / pdAlpHatData[ 1 ] );
+    }
+  }
+  double* pdAlpOutData  = dvecAlpOut.data();
+
+  // Compute ( 1 + alpOut(2) ).
+  double onePlusAlp2 = 1.0 + pdAlpOutData[ 1 ];
+
+  // Compute the sums involving ( y_i - alpOut(1) ).
+  double yMinAlp1;
+  double sumYMinAlp1    = 0.0;
+  double sumYMinAlp1Sqd = 0.0;
+  for ( i = 0; i < nInd; i++ )
+  {
+    yMinAlp1        = pdYData[ i ] - pdAlpOutData[ 0 ];
+    sumYMinAlp1    += yMinAlp1;
+    sumYMinAlp1Sqd += pow( yMinAlp1, 2 );
+  }
+
+  // Compute the known value for LTilde(alp) = -log[p(y|alp)]
+  // using equation (17) of the above reference.
+  double dLTildeKnown = sumYMinAlp1Sqd / ( 2.0 * ( onePlusAlp2 ) ) 
+    + nInd / 2.0 * log( 2.0 * PI * ( onePlusAlp2 ) );
+
+  // The value for LTilde_alp_alp(alp) was determined by taking the  
+  // derivative of equation (17) of the above reference, i.e.,
+  //
+  //                          partial
+  //     LTilde_alp(alp) = ------------- [- log[p(y|alp)] ] .
+  //                        partial alp
+  //
+  DoubleMatrix drowLTilde_alpKnown( 1, nAlp );
+  double* pdLTilde_alpKnownData = drowLTilde_alpKnown.data();
+  pdLTilde_alpKnownData[ 0 ] = - sumYMinAlp1 / onePlusAlp2;
+  pdLTilde_alpKnownData[ 1 ] = 0.5 / onePlusAlp2 
+                                * ( - sumYMinAlp1Sqd / onePlusAlp2 + nInd );
+  pdLTilde_alpKnownData[ 2 ] = 0.0;
+
+  // The value for LTilde_alp_alp(alp) was determined by taking the second 
+  // derivative of equation (17) of the above reference, i.e.,
+  //
+  //                             partial       partial   
+  //     LTilde_alp_alp(alp) = ------------- ------------- [- log[p(y|alp)] ] .
+  //                            partial alp   partial alp
+  //
+  DoubleMatrix dmatLTilde_alp_alpKnown( nAlp, nAlp );
+  double* pdLTilde_alp_alpKnownData = dmatLTilde_alp_alpKnown.data();
+  pdLTilde_alp_alpKnownData[ 0 ] = nInd / ( onePlusAlp2 );
+  pdLTilde_alp_alpKnownData[ 1 ] = pow( onePlusAlp2, -2 ) * sumYMinAlp1;
+  pdLTilde_alp_alpKnownData[ 2 ] = 0.0;
+  pdLTilde_alp_alpKnownData[ 3 ] = pdLTilde_alp_alpKnownData[ 1 ];
+  pdLTilde_alp_alpKnownData[ 4 ] = 0.5 * pow( onePlusAlp2, -2 ) 
+                                    * (2.0 / onePlusAlp2 * sumYMinAlp1Sqd 
+                                    - nInd );
+  pdLTilde_alp_alpKnownData[ 5 ] = 0.0;
+
+
+  //------------------------------------------------------------
+  // Do the test.
+  //------------------------------------------------------------
+
+  doTheTest(  ok,
+              dLTildeOut,
+              dLTildeKnown,
+              indOptimizer.getEpsilon(),
+			  popOptimizer.getEpsilon(),
+              dvecAlpLow,
+              dvecAlpUp,
+              dvecAlpOut,
+              dvecAlpHat,
+              dvecBLow,
+              dvecBUp,
+              dmatBOut,
+              dmatBHat,
+              drowLTilde_alpOut,
+              drowLTilde_alpKnown,
+              dmatLTilde_alp_alpOut,
+              dmatLTilde_alp_alpKnown );
+  
+}
