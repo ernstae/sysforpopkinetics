@@ -81,9 +81,9 @@ $syntax/void estimateB(
     SpkModel & /model/,
     bool   /isBlsq/,
     Optimizer& /optimizer/,
-    const  DoubleMatrix & /dataForAll/,
+    const  DoubleMatrix & /y/,
     const  DoubleMatrix & /alp/,
-    const  DoubleMatrix & /BInForAll/,
+    const  DoubleMatrix & /BIn/,
     const  DoubleMatrix & /bLow/,
     const  DoubleMatrix & /bUp/,
     const  DoubleMatrix & /bStep/,
@@ -174,7 +174,8 @@ $syntax/
 This function expects $italic model$$ to be a function of
 all three parameters: $math%alp%$$, $math%b%$$ and $math%i%$$.
 Refer $xref/glossary/Model Functions Depend on alp and b/Model Functions Depend on alp and b/$$
-for details. 
+for details. It expects that the individual has been selected by the caller
+so that the model will address a proper subset of the entire data array.
 $pre
 
 $$
