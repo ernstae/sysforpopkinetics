@@ -2,10 +2,10 @@
 #define SPKPARAMETERS_H
 
 #include <map>
-#include <valarray>
 #include <string>
 #include <spk/Objective.h>
 #include <spk/popStatistics.h>
+#include <spk/SpkValarray.h>
 #include "Symbol.h"
 #include "client.h"
 
@@ -28,16 +28,16 @@ struct SpkParameters{
   int                   seed;
   enum Objective        objective;
   int                   nIndividuals;
-  std::valarray<int>    nMeasurementsAll;
-  std::valarray<double> measurementsAll;
-  std::valarray<double> popParIn, popParLow, popParUp, popParStep;
+  SPK_VA::valarray<int>    nMeasurementsAll;
+  SPK_VA::valarray<double> measurementsAll;
+  SPK_VA::valarray<double> popParIn, popParLow, popParUp, popParStep;
   double                popEpsilon;
   int                   popMaxItr;
   int                   popTrace;
   bool                  isPopWarmStart;
   bool                  isPopParOut;
   bool                  isPopObjOut, isPopObj_popParOut, isPopObj_popPar_popParOut;  
-  std::valarray<double> indParIn, indParLow, indParUp, indParStep;
+  SPK_VA::valarray<double> indParIn, indParLow, indParUp, indParStep;
   double                indEpsilon;
   int                   indMaxItr;
   int                   indTrace;
@@ -58,7 +58,7 @@ struct SpkParameters{
   bool                  isIndCoefficientOut;
   bool                  isIndConfidenceOut;
   
-  //  std::map< std::string, std::valarray<double> > aliases;
+  //  std::map< std::string, SPK_VA::valarray<double> > aliases;
 };
 
 #endif

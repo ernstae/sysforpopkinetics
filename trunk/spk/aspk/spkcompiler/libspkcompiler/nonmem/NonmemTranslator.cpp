@@ -81,10 +81,6 @@ nonmem::toEnumMODEL( const char* str )
     return nonmem::ADVAN9;
   if( strcmp( str, nonmem::STR_ADVAN10 ) == 0 )
     return nonmem::ADVAN10;
-  if( strcmp( str, nonmem::STR_ADVAN11 ) == 0 )
-    return nonmem::ADVAN11;
-  if( strcmp( str, nonmem::STR_ADVAN12 ) == 0 )
-    return nonmem::ADVAN12;
 }
 enum nonmem::TRANS
 nonmem::toEnumTRANS( const char* str )
@@ -129,10 +125,6 @@ nonmem::toStringMODEL(
     return nonmem::STR_ADVAN9;
   if( e == nonmem::ADVAN10 )
     return nonmem::STR_ADVAN10;
-  if( e == nonmem::ADVAN11 )
-    return nonmem::STR_ADVAN11;
-  if( e == nonmem::ADVAN12 )
-    return nonmem::STR_ADVAN12;
 }
 
 const char* const 
@@ -465,7 +457,7 @@ void NonmemTranslator::translate( DOMDocument* tree )
   //                +---------+
   //                    ...
   // 
-  map< nonmem::LABEL, nonmem::MEASUREMENT > data_for[ nIndividuals +1 ];
+  vector< map< nonmem::LABEL, nonmem::MEASUREMENT > > data_for( nIndividuals );
 
   //
   // This table records the processing order vs. the identifier pair of each
@@ -520,7 +512,7 @@ std::vector<std::string> NonmemTranslator::emit(
 		  int nIndividuals,
                   const SymbolTable * table,
                   const std::map<nonmem::LABEL, nonmem::ALIAS> & label_alias_mapping,
-                  const std::map<nonmem::LABEL, nonmem::MEASUREMENT> data_for[],
+                  const std::vector< std::map<nonmem::LABEL, nonmem::MEASUREMENT > > & data_for,
                   const std::string order_id_pair[]
 )
 {
@@ -537,34 +529,16 @@ std::vector<std::string> NonmemTranslator::emit(
 		      ourNonmem );
   fclose( pDriver_cpp );
  
-  char IndData_h[] = "IndData.h";
-  FILE * pIndData_h = fopen( IndData_h, "w" );
+  char IndData_h[]    = "IndData.h";
+  FILE * pIndData_h   = fopen( IndData_h, "w" );
+  char IndData_cpp[]  = "IndData.cpp";
+  FILE * pIndData_cpp = fopen( IndData_cpp, "w" );
   emit_IndData(   pIndData_h, 
-		  nIndividuals, 
-		  gSpkExpSymbolTable, 
+		  pIndData_cpp,
 		  label_alias_mapping, 
 		  data_for, 
 		  order_id_pair );
   fclose( pIndData_h );
-
-  char IndData_cpp[] = "IndData.cpp";
-  FILE * pIndData_cpp = fopen( IndData_cpp, "w" );
-  emit_initIndDataObjects( 
-		  pIndData_cpp, 
-		  nIndividuals, 
-		  gSpkExpSymbolTable, 
-		  label_alias_mapping, 
-		  data_for, 
-		  order_id_pair );
-  
-  emit_releaseIndDataObjects( 
-		  pIndData_cpp, 
-		  nIndividuals, 
-		  gSpkExpSymbolTable, 
-		  label_alias_mapping, 
-		  data_for, 
-		  order_id_pair );
-
   fclose( pIndData_cpp );
   
   vector<string> filenames(8);

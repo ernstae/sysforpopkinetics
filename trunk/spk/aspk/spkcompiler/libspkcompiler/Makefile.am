@@ -5,8 +5,7 @@ INCLUDES    = -I@top_srcdir@/ -I$(NONMEM)/
 
 AM_LFLAGS   = -i
 AM_YFLAGS   = -d --verbose --debug
-AM_CFLAGS   = -g
-AM_CPPFLAGS = -g
+CXXFLAGS    = -g
 
 MOSTLYCLEANFILES = explang.cpp explang.h explang.output lex_explang.c
 

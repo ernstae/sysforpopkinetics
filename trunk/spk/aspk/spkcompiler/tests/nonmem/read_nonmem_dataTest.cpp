@@ -203,7 +203,7 @@ void read_nonmem_dataTest::testOrderMixedUp()
   //                +---------+
   //                    ...
   // 
-  map<nonmem::LABEL, nonmem::MEASUREMENT > data_for[ nIndividuals +1 ];
+  vector< map<nonmem::LABEL, nonmem::MEASUREMENT > > data_for( nIndividuals );
 
   //
   // This table records the processing order vs. the identifier pair of each

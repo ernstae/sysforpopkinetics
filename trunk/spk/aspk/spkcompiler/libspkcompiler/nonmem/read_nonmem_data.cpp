@@ -17,7 +17,7 @@ void read_nonmem_data(
         int nIndividuals,
 	SymbolTable & table,
 	map<nonmem::LABEL, nonmem::ALIAS> &label_alias_mappingOut,
-	map<nonmem::LABEL, nonmem::MEASUREMENT> data_forOut[],
+	vector< map<nonmem::LABEL, nonmem::MEASUREMENT> > & data_forOut,
 	string order_id_pairOut[],
         struct SpkParameters & spkOut 
       )

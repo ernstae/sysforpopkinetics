@@ -12,6 +12,9 @@
  * Declares read_content() function.
  */
 /**
+ * @example read_contentTest.cpp
+ */
+/**
  * Extract the verion of SpkInML document, the @ref client type
  * and the @ref SpkParameters::Analysis "analysis" type 
  * specified as attributes of the given DOMElement.

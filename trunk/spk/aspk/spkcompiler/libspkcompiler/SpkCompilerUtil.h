@@ -5,6 +5,9 @@
  * @file SpkCompilerUtil.h
  * Dealres SpkCompilerUtil class.
  */
+/**
+ * @example SpkCompilerUtilTest.cpp
+ */
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/dom/DOM.hpp>
 

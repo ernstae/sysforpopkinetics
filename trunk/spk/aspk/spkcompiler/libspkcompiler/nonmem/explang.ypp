@@ -3,6 +3,10 @@
  * @file explang.cpp
  * This file is generated from the YACC (BISON) syntax analyzer 
  * specification file, nonmem/explang.ypp, which defines the yyparse() for NONMEM.
+ * @ingroup nonmem
+ */
+/**
+ * @example NonmemExpXlatorTest.cpp
  */
 //
 // int yyparse( void )

@@ -3,8 +3,11 @@
  * @file lex_explang.c
  * This file is generated from the FLEX lexical analyzer 
  * specification file, nonmem/lex_explang.l, which defines the yylex() for NONMEM.
+ * @ingroup nonmem
  */
-
+/**
+ * @example NonmemExpXlatorTest.cpp
+ */
 #include <ctype.h>
 #include "explang.h"
 

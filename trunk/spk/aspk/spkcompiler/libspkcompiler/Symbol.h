@@ -8,6 +8,9 @@
  * Declares Symbol class
  */
 /**
+ * @example SymbolTest.cpp
+ */
+/**
  * A class of symbols.
  *
  * A symbol object represents a symbol with attributes like data type and structure.

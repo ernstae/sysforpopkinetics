@@ -23,6 +23,9 @@
  * the algebraic expression portions found in the input
  * XML document.
  */
+/**
+ * @example SpkMLToCppTest.cpp
+ */
 extern "C"{
   /**
    * The lexical analyzer (tokenizer) for expressions.
