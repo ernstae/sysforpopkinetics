@@ -311,6 +311,7 @@ INPUT                 += ../libspkcompiler/ClientTranslator.h
 INPUT                 += ../libspkcompiler/ExpNodeCarrier.h
 INPUT                 += ../libspkcompiler/ExpTreeGenerator.h
 INPUT                 += ../libspkcompiler/read_content.h
+INPUT                 += ../libspkcompiler/nonmem/nonmem.h
 INPUT                 += ../libspkcompiler/nonmem/read_nonmem_data.h
 INPUT                 += ../libspkcompiler/nonmem/read_nonmem_driver.h
 INPUT                 += ../libspkcompiler/nonmem/read_nonmem_model.h

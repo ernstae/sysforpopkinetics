@@ -11,6 +11,8 @@ MOSTLYCLEANFILES = explang.cpp explang.h explang.output lex_explang.c
 
 libspkcompiler_la_SOURCES = \
         config.h \
+	$(NONMEM)/nonmem.h \
+	$(NONMEM)/nonmem.cpp \
 	$(NONMEM)/explang.ypp \
 	$(NONMEM)/lex_explang.l \
 	$(NONMEM)/NonmemTranslator.cpp \
@@ -41,6 +43,7 @@ libspkcompiler_la_SOURCES = \
         emit_IndData.h
 
 pkginclude_HEADERS = \
+	$(NONMEM)/nonmem.h \
         $(NONMEM)/NonmemTranslator.h \
 	$(NONMEM)/read_nonmem_driver.h \
 	$(NONMEM)/read_nonmem_data.h \
