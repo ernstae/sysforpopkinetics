@@ -5472,18 +5472,18 @@ void NonmemTranslator::generatePopDriver() const
           oDriver << "valarray<double> stdPar( nAlp );"                          << endl;
           oDriver << "valarray<double> stdPar_alp( nAlp * nAlp );"               << endl;
           oDriver << "const int nDegOfFreedom = nY - nAlp;"                      << endl;
-	  if( myIsCov || myIsInvCov )
-	    oDriver << "valarray<double> stdParCovOut( nAlp * nAlp );"           << endl;
-	  if( myIsStderr )
-	    oDriver << "valarray<double> stdParSEOut( nAlp );"                   << endl;
-	  if( myIsCorrelation )
-	    oDriver << "valarray<double> stdParCorrelationOut( nAlp * nAlp );"   << endl;
-	  if( myIsCoefficient )
-	    oDriver << "valarray<double> stdParCoefficientOut( nAlp );"          << endl;
-	  if( myIsConfidence )
-	    oDriver << "valarray<double> stdParConfidenceOut( 2 * nAlp );"       << endl;
-	  if( myIsInvCov )
-	    oDriver << "valarray<double> stdParInvCovOut( nAlp * nAlp );"        << endl;
+	  oDriver << "bool isCovOut         = " << ( myIsCov?    "true" : "false" ) << ";" << endl;
+          oDriver << "bool isInvCovOut      = " << ( myIsInvCov? "true" : "false" ) << ";" << endl;
+          oDriver << "bool isStdErrOut      = " << ( myIsStderr? "true" : "false" ) << ";" << endl;
+          oDriver << "bool isCorrelationOut = " << ( myIsCorrelation? "true" : "false" ) << ";" << endl;
+          oDriver << "bool isCoefficientOut = " << ( myIsCoefficient? "true" : "false" ) << ";" << endl;
+          oDriver << "bool isConfidenceOut  = " << ( myIsConfidence? "true" : "false" ) << ";" << endl;
+	  oDriver << "valarray<double> stdParCovOut        ( nAlp * nAlp );"           << endl;
+	  oDriver << "valarray<double> stdParSEOut         ( nAlp );"                   << endl;
+	  oDriver << "valarray<double> stdParCorrelationOut( nAlp * nAlp );"   << endl;
+	  oDriver << "valarray<double> stdParCoefficientOut( nAlp );"          << endl;
+	  oDriver << "valarray<double> stdParConfidenceOut ( 2 * nAlp );"       << endl;
+	  oDriver << "valarray<double> stdParInvCovOut     ( nAlp * nAlp );"        << endl;
 	  
 	  oDriver << "if( isStatRequested && haveCompleteData && isOptSuccess )" << endl;
 	  oDriver << "{" << endl;
@@ -5562,12 +5562,12 @@ void NonmemTranslator::generatePopDriver() const
           oDriver << "                        stdPar,"          << endl;
           oDriver << "                        stdPar_alp,"      << endl;
           oDriver << "                        nDegOfFreedom,"   << endl;
-          oDriver << "                        " << ( myIsCov || myIsInvCov? "&stdParCovOut"        : "NULL" ) << "," << endl;
-          oDriver << "                        " << ( myIsCov || myIsInvCov? "&stdParInvCovOut"     : "NULL" ) << "," << endl;
-          oDriver << "                        " << ( myIsStderr?            "&stdParSEOut"         : "NULL" ) << "," << endl;
-          oDriver << "                        " << ( myIsCorrelation?       "&stdParCorrelationOut": "NULL" ) << "," << endl;
-          oDriver << "                        " << ( myIsCoefficient?       "&stdParCoefficientOut": "NULL" ) << "," << endl;
-          oDriver << "                        " << ( myIsConfidence?        "&stdParConfidenceOut" : "NULL" ) << endl;
+          oDriver << "                       (isCovOut || isInvCovOut? &stdParCovOut        : NULL)," << endl;
+          oDriver << "                       (isCovOut || isInvCovOut? &stdParInvCovOut     : NULL)," << endl;
+          oDriver << "                       (isStdErrOut?             &stdParSEOut         : NULL)," << endl;
+          oDriver << "                       (isCorrelationOut?        &stdParCorrelationOut: NULL)," << endl;
+          oDriver << "                       (isCoefficientOut?        &stdParCoefficientOut: NULL)," << endl;
+          oDriver << "                       (isConfidenceOut?         &stdParConfidenceOut : NULL) " << endl;
           oDriver << "                      );" << endl;
 	  oDriver << "      isStatSuccess = true;" << endl;
 	  oDriver << "   }" << endl;
@@ -5691,8 +5691,8 @@ void NonmemTranslator::generatePopDriver() const
       if( myIsStat )
 	{
 	  oDriver << "oResults << \"<pop_stat_result elapsedtime=\\\"\" << statTimeSec << \"\\\">\" << endl;" << endl;
-	  if( myIsCov )
-	    {
+	  oDriver << "if( isCovOut )" << endl;
+	  oDriver << "{" << endl;
 	      oDriver << "oResults << \"<pop_covariance_out struct=\\\"block\\\" dimension=\\\"\" << nAlp << \"\\\">\" << endl;" << endl;
 	      oDriver << "for( int i=0; i<nAlp; i++ )" << endl;
 	      oDriver << "{" << endl;
@@ -5703,9 +5703,9 @@ void NonmemTranslator::generatePopDriver() const
 	      oDriver << "}" << endl;
 	      
 	      oDriver << "oResults << \"</pop_covariance_out>\" << endl;" << endl;
-	    }
-	  if( myIsInvCov )
-	    {
+	  oDriver << "}" << endl;
+	  oDriver << "if( isInvCovOut )" << endl;
+	  oDriver << "{" << endl;
 	      oDriver << "oResults << \"<pop_inverse_covariance_out struct=\\\"block\\\" dimension=\\\"\" << nAlp << \"\\\">\" << endl;" << endl;
 	      oDriver << "for( int i=0; i<nAlp; i++ )" << endl;
 	      oDriver << "{" << endl;
@@ -5716,9 +5716,9 @@ void NonmemTranslator::generatePopDriver() const
 	      oDriver << "}" << endl;
 	      
 	      oDriver << "oResults << \"</pop_inverse_covariance_out>\" << endl;" << endl;
-	    }
-	  if( myIsStderr )
-	    {
+	  oDriver << "}" << endl;
+	  oDriver << "if( isStdErrOut )" << endl;
+	  oDriver << "{" << endl;
 	      oDriver << "oResults << \"<pop_stderror_out length=\\\"\" << nAlp << \"\\\">\" << endl;" << endl;
 	      oDriver << "for( int i=0; i<nAlp; i++ )" << endl;
 	      oDriver << "{" << endl;
@@ -5726,9 +5726,9 @@ void NonmemTranslator::generatePopDriver() const
 	      oDriver << "}" << endl;
 	      
 	      oDriver << "oResults << \"</pop_stderror_out>\" << endl;" << endl;
-	    }
-	  if( myIsCorrelation )
-	    {
+	  oDriver << "}" << endl;
+	  oDriver << "if( isCorrelationOut )" << endl;
+	  oDriver << "{" << endl;
 	      oDriver << "oResults << \"<pop_correlation_out struct=\\\"block\\\" dimension=\\\"\" << nAlp << \"\\\">\" << endl;" << endl;
 	      oDriver << "for( int i=0; i<nAlp; i++ )" << endl;
 	      oDriver << "{" << endl;
@@ -5739,9 +5739,9 @@ void NonmemTranslator::generatePopDriver() const
 	      oDriver << "}" << endl;
 	      
 	      oDriver << "oResults << \"</pop_correlation_out>\" << endl;" << endl;
-	    }
-	  if( myIsCoefficient )
-	    {
+	  oDriver << "}" << endl;
+	  oDriver << "if( isCoefficientOut )" << endl;
+	  oDriver << "{" << endl;
 	      oDriver << "oResults << \"<pop_coefficient_out length=\\\"\" << nAlp << \"\\\">\" << endl;" << endl;
 	      oDriver << "for( int i=0; i<nAlp; i++ )" << endl;
 	      oDriver << "{" << endl;
@@ -5749,9 +5749,9 @@ void NonmemTranslator::generatePopDriver() const
 	      oDriver << "}" << endl;
 	      
 	      oDriver << "oResults << \"</pop_coefficient_out>\" << endl;" << endl;
-	    }
-	  if( myIsConfidence )
-	    {
+	  oDriver << "}" << endl;
+	  oDriver << "if( isConfidenceOut )" << endl;
+	  oDriver << "{" << endl;
 	      oDriver << "oResults << \"<pop_confidence_out length=\\\"\" << nAlp*2 << \"\\\">\" << endl;" << endl;
 	      oDriver << "for( int i=0; i<nAlp*2; i++ )" << endl;
 	      oDriver << "{" << endl;
@@ -5759,7 +5759,7 @@ void NonmemTranslator::generatePopDriver() const
 	      oDriver << "}" << endl;
 	      
 	      oDriver << "oResults << \"</pop_confidence_out>\" << endl;" << endl;
-	    }
+	  oDriver << "}" << endl;
 	  oDriver << "oResults << \"</pop_stat_result>\" << endl;" << endl;
 	  oDriver << endl;
 	}
