@@ -869,11 +869,11 @@ void quasiNewtonAnyBox(
   // Input+Output Arguments
   size_t      &iterCurr;
   size_t     &quadCurr;
-  double        &rCurr;
-  double        &fCurr;
+  double        &rScaled;
+  double        &fScaled;
   double        *yCurr; // length n 
-  double        *gCurr; // length n 
-  const double  *hCurr; // length n * n 
+  double        *gScaled; // length n 
+  const double  *hScaled; // length n * n 
 
   const char *msg;
   const size_t              n = 5;
@@ -886,7 +886,7 @@ void quasiNewtonAnyBox(
   // warm start or if zero iterations have been requested.
   if ( !isAWarmRestart || nMaxIter == 0 )
   {
-    objective.function( yCurr, fCurr, gCurr, ... );
+    objective.function( yCurr, fScaled, gScaled, ... );
   }
 
 
@@ -934,6 +934,15 @@ void quasiNewtonAnyBox(
     // Retrieve the previous state information.
     if ( isWarmStart )
     {
+
+GET THE PROPER WARM START STUFF 
+GET THE PROPER WARM START STUFF 
+GET THE PROPER WARM START STUFF 
+GET THE PROPER WARM START STUFF 
+GET THE PROPER WARM START STUFF 
+GET THE PROPER WARM START STUFF 
+GET THE PROPER WARM START STUFF 
+
       options.start  = Nag_Warm;
       StateInfo stateInfo = optimizer.getStateInfo();
 
@@ -957,7 +966,7 @@ void quasiNewtonAnyBox(
     nIterMax = nObjPar;
 
     // Create an approximation for the Hessian.
-    hCurr = ... ;
+    hScaled = ... ;
   }
 
   // Set the maximum number of interior point iterations so
@@ -1004,8 +1013,8 @@ void quasiNewtonAnyBox(
         yCurr,
         yLow,
         yUp,
-        drowGScaled,
-        getLowerTriangle( arrayToDoubleMatrix( options.h, n, n ) ) ) )
+        gScaled,
+        hScaled ) )
       {
         isWithinTol = true;
       }
@@ -1014,7 +1023,7 @@ void quasiNewtonAnyBox(
         // Set delta to be less than the maximum of the absolute values of
         // the elements of the projected gradient so that the subproblems
         // only be solved with accuracy sufficient for the current y value.
-        delta = maxAbsProjGrad( gCurr ) / deltaScale;
+        delta = maxAbsProjGrad( gScaled ) / deltaScale;
 
         // Save the number of iterations that have been performed.
         iterCurrPrev = iterCurr;
@@ -1030,11 +1039,11 @@ void quasiNewtonAnyBox(
           objective,
           iterCurr,
           quadCurr,
-          rCurr,
-          fCurr,
+          rScaled,
+          fScaled,
           yCurr,
-          gCurr,
-          hCurr );
+          gScaled,
+          hScaled );
 
         // After the first call to the optimizer the approximation for the
         // Hessian should be accurate enough that this can reset.
@@ -1109,11 +1118,11 @@ void quasiNewtonAnyBox(
     {
       // Save state information for warm start.
       stateInfo.n = nObjPar;
-      stateInfo.r = rCurr;
-      stateInfo.f = fCurr;
+      stateInfo.r = rScaled;
+      stateInfo.f = fScaled;
       stateInfo.x = yCurr;
-      stateInfo.g = gCurr;
-      stateInfo.h = hCurr;
+      stateInfo.g = gScaled;
+      stateInfo.h = hScaled;
       optimizer.setStateInfo( stateInfo );
 
       ok = true;
@@ -1163,13 +1172,22 @@ void quasiNewtonAnyBox(
   // returned, then set it equal to the value from nag_opt_nlp.
   if ( pdFOut )
   {
-    *pdFOut = fCurr;
+    *pdFOut = fScaled;
   }
   
   if( pdrowF_xOut )
   {
     double* pdF_xOutData = pdrowF_xOut->data();
-    std::copy( gCurr, gCurr + nObjPar, pdF_xOutData );
+
+SHOULD gScaled BE UNSCALED BEFORE ITS COPIED TO f_x?
+SHOULD gScaled BE UNSCALED BEFORE ITS COPIED TO f_x?
+SHOULD gScaled BE UNSCALED BEFORE ITS COPIED TO f_x?
+SHOULD gScaled BE UNSCALED BEFORE ITS COPIED TO f_x?
+SHOULD gScaled BE UNSCALED BEFORE ITS COPIED TO f_x?
+SHOULD gScaled BE UNSCALED BEFORE ITS COPIED TO f_x?
+SHOULD gScaled BE UNSCALED BEFORE ITS COPIED TO f_x?
+
+    std::copy( gScaled, gScaled + nObjPar, pdF_xOutData );
   }
 }
 
