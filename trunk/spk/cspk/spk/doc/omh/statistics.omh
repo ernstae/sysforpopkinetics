@@ -23,10 +23,11 @@ $begin statistical$$
 $section Statistics Related Functions$$
 
 $childtable/
-	statistics.cpp/
-	derParStatistics.cpp/
-	calcMean.cpp/
-	residuals.cpp/$$
+    statistics.cpp/
+    derParStatistics.cpp/
+    calcMean.cpp/
+    residuals.cpp/
+    wres.cpp/$$
 
 $pre
 
@@ -37,4 +38,4 @@ $include shortCopyright.txt$$
 $$
 $$
 $end
-	
+
