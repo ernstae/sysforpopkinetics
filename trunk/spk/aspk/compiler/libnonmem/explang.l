@@ -14,13 +14,13 @@
 
 /**
  * A global counter for keeping track of # of lines read so far.
- * It is defined in the BISON parser specification file (nmabb.y).
+ * It is defined in the BISON parser specification file (explang.y).
  */
 extern int gSpkExpLines;
 
 /**
  * A global counter for counting errors.
- * It is defined in the BISON parser specification file (nmabb.y).
+ * It is defined in the BISON parser specification file (explang.y).
  */
 extern int gSpkExpErrors;
 %}
