@@ -4,7 +4,7 @@
  * Created on September 9, 2003, 9:01 AM
  */
 
-package uw.rfpk.mda.nonmem.wizard;
+package uw.rfpk.mda.nonmem;
 
 import javax.swing.JButton;
 import javax.swing.DefaultListModel;
@@ -320,7 +320,7 @@ public class Utility {
         {
             JOptionPane.showMessageDialog(null, "Error openning data file.",   
                                           "File Error",    
-                                          JOptionPane.ERROR_MESSAGE);            
+                                          JOptionPane.ERROR_MESSAGE);
         }
 
         return nTokens;
@@ -353,6 +353,9 @@ public class Utility {
         }
         catch(IOException ioe )
 	{
+            JOptionPane.showMessageDialog(null, "Error openning help document.",   
+                                          "File Error",    
+                                          JOptionPane.ERROR_MESSAGE);            
         } 
         return buffer.toString();
     }     
@@ -428,5 +431,22 @@ public class Utility {
             pre = c;
 	}
         return buffer.toString();
-    }    
+    } 
+    
+    /** This function format the data for better deadability
+     * @return A String object as the formated file content
+     * @param n Sum of number of significent digits and three
+     * @param value A String object containg the data value
+     */      
+    public static String formatData(int n, String value)
+    {
+        if(!value.startsWith("-"))
+            value = " " + value;
+        if(value.charAt(n) != '-')
+        {
+            StringBuffer sb = new StringBuffer(value);
+            value = sb.insert(n, '+').toString();
+        }
+        return value; 
+    }
 }
