@@ -68,8 +68,8 @@ class NonmemSpkMLToCpp : public SpkMLToCpp
   NonmemSpkMLToCpp( xercesc::DOMDocument * doc );
   ~NonmemSpkMLToCpp();
 
-  const struct FitParameters  getSpkParameters() const;
-  const struct NonmemParameters getNonmemParameters() const;
+  virtual const struct FitParameters * getSpkParameters() const;
+  virtual const void* getClientParameters() const;
   enum client::type getClient() const;
   
  protected:
@@ -111,5 +111,52 @@ class NonmemSpkMLToCpp : public SpkMLToCpp
   void emitModel();
 };
 
+class NonmemTranslator : public ClientTranslator
+{
+ public:
+  NonmemTranslator( xercesc::DOMDocument * doc );
+  ~NonmemTranslator();
+
+  virtual const struct FitParameters * getSpkParameters() const;
+  virtual const void * getClientParameters() const;
+  virtual void assemble ( xercesc::DOMDocument * tree );
+  virtual void emit     ( xercesc::DOMDocument * tree );
+  virtual const char * getDriverFilename() const;
+  virtual const std::vector< const char * > getModelFilenameList() const;
+  virtual enum client::type getClient() const;
+  
+ protected:
+
+  NonmemTranslator();
+  NonmemTranslator( const NonmemTranslator& right );
+  const NonmemTranslator& operator=( const NonmemTranslator& right );
+
+ private:
+
+  enum CannedModel { NONE, 
+		   ADVAN1, ADVAN2, ADVAN3, ADVAN4, ADVAN5, 
+		   ADVAN6, ADVAN7, ADVAN8, ADVAN9, ADVAN10, 
+		   ADVAN11, ADVAN12 };
+  enum CannedModel canned_model;
+  bool isCannedModelUsed;
+
+  ExpTreeGenerator expTreeUtils;
+
+  const xercesc::DOMDocument * tree;
+
+  struct FitParameters spk;
+  struct NonmemParameters nonmem;
+
+  std::vector<DataRecords> data_for_all_subjects;
+
+  void initSymbolTable( SymbolTable& );
+
+  void interpretContent();
+  void interpretDriver();
+  void interpretModel();
+  void interpretData();
+  void emitDriver();
+  void emitModel();
+};
 #endif
 

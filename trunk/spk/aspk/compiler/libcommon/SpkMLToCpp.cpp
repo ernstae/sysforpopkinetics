@@ -20,25 +20,39 @@ static const char* trim( const XMLCh* source )
 }
 
 SpkMLToCpp::SpkMLToCpp( const char* inputSpkMLIn )
-  : inputSpkML( inputSpkMLIn )
+  : inputSpkML( inputSpkMLIn ), who( client::NOT_SUPPORTED ), tree( NULL ), client_translator( NULL )
 {
   initializeDOM();
   tree = buildTreeFromSpkML( inputSpkML );
   who  = discoverClient( tree );
-  client_translator = SpkMLToCpp::createTranslator( who, tree );
+  client_translator = SpkMLToCpp::createChild( who );
+  assert( client_translator != NULL );
 }
 
 SpkMLToCpp::~SpkMLToCpp()
 {
+  //  tree->release();
+  delete parser;
+  //delete client_translator;
   terminateDOM();
-  delete client_translator;
-  tree->release();
 }
 
 void SpkMLToCpp::translate()
 {
   assemble( tree );
   emit( tree );
+}
+const SpkMLToCpp * SpkMLToCpp::getInstance() const
+{
+  return client_translator;
+}
+const struct FitParameters * SpkMLToCpp::getSpkParameters() const
+{
+  return client_translator->getSpkParameters();
+}
+const void* SpkMLToCpp::getClientParameters() const
+{
+  return client_translator->getClientParameters();
 }
 
 void SpkMLToCpp::assemble( xercesc::DOMDocument * tree )
@@ -110,14 +124,14 @@ void SpkMLToCpp::terminateDOM() const
 {
   XMLPlatformUtils::Terminate();
 }
-xercesc::DOMDocument * SpkMLToCpp::buildTreeFromSpkML( const char * input ) const
+DOMDocument* SpkMLToCpp::buildTreeFromSpkML( const char * input )
 {
-  xercesc::XercesDOMParser parser;
-  parser.setValidationScheme( XercesDOMParser::Val_Auto );
-  parser.setDoNamespaces(true );
-  parser.setDoSchema(true );
-  parser.setValidationSchemaFullChecking(true);
-  parser.setCreateEntityReferenceNodes(true);
+  parser = new xercesc::XercesDOMParser;
+  parser->setValidationScheme( XercesDOMParser::Val_Auto );
+  parser->setDoNamespaces(true );
+  parser->setDoSchema(true );
+  parser->setValidationSchemaFullChecking(true);
+  parser->setCreateEntityReferenceNodes(true);
 
   try
   {
@@ -132,7 +146,7 @@ xercesc::DOMDocument * SpkMLToCpp::buildTreeFromSpkML( const char * input ) cons
       }
     else
       ifs.close();
-    parser.parse(input);
+    parser->parse(input);
   }
   catch( const XMLException& e )
   {
@@ -169,7 +183,7 @@ xercesc::DOMDocument * SpkMLToCpp::buildTreeFromSpkML( const char * input ) cons
     exit( -1 );
   }
   
-  return parser.getDocument();
+  return parser->getDocument();
 }
 enum client::type SpkMLToCpp::discoverClient( const xercesc::DOMDocument* tree ) const
 {
@@ -189,18 +203,31 @@ enum client::type SpkMLToCpp::discoverClient( const xercesc::DOMDocument* tree )
 
   return client::toEnum( c_client );
 }
-SpkMLToCpp * SpkMLToCpp::createTranslator( enum client::type who, DOMDocument* doc ) const
+SpkMLToCpp * SpkMLToCpp::createChild( enum client::type who ) const
 {
   if( who == client::NONMEM )
     {
-      NonmemSpkMLToCpp *tmp = new NonmemSpkMLToCpp( doc );
-      assert( tmp != NULL );
-      return tmp;
+      return new NonmemSpkMLToCpp( tree );
     }
   else
     {
       char buf[256];
-      sprintf( buf, "Not supported (%s)!\n", client::toString( who ) );
+      sprintf( buf, "Not supported (%s)! (%d, %s)\n", client::toString( who ), __LINE__, __FILE__ );
+      fprintf( stderr, buf );
+      return NULL;
+    }
+  return NULL;
+}
+ClientTranslator * SpkMLToCpp::createTranslator( enum client::type who ) const
+{
+  if( who == client::NONMEM )
+    {
+      return new NonmemTranslator( tree );
+    }
+  else
+    {
+      char buf[256];
+      sprintf( buf, "Not supported (%s)! (%d, %s)\n", client::toString( who ), __LINE__, __FILE__ );
       fprintf( stderr, buf );
       return NULL;
     }

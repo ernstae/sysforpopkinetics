@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <xercesc/dom/DOM.hpp>
+#include <xercesc/parsers/XercesDOMParser.hpp>
 #include "client.h"
 #include "SymbolTable.h"
 #include "ExpTreeGenerator.h"
@@ -82,6 +83,18 @@ extern SymbolTable *gSpkExpSymbolTable;
  */
 extern xercesc::DOMDocument *gSpkExpTree;
 
+class ClientTranslator
+{
+ public:
+  virtual const struct FitParameters * getSpkParameters() const = 0;
+  virtual const void * getClientParameters() const = 0;
+  virtual void assemble ( xercesc::DOMDocument * tree ) = 0;
+  virtual void emit     ( xercesc::DOMDocument * tree ) = 0;
+  virtual const char * getDriverFilename() const = 0;
+  virtual const std::vector< const char * > getModelFilenameList() const = 0;
+  virtual enum client::type getClient() const = 0;
+};
+
 /**
  * The purpose of this class serves as the interface to
  * invoking a SpkML->C++ translation process and
@@ -96,10 +109,14 @@ class SpkMLToCpp
 
   void translate();
 
+  const SpkMLToCpp * getInstance() const;
   enum client::type getClient() const;
   const char * getInputFilename () const;
   const char * getDriverFilename() const;
   const std::vector< const char * > getModelFilenameList() const;
+
+  virtual const struct FitParameters * getSpkParameters() const;
+  virtual const void * getClientParameters() const;
 
  protected:
 
@@ -117,14 +134,15 @@ class SpkMLToCpp
   void                        initializeDOM     () const;
   void                        terminateDOM      () const;
   enum client::type           discoverClient    ( const xercesc::DOMDocument* tree ) const;
-  xercesc::DOMDocument      * buildTreeFromSpkML( const char * inputSpkMLIn ) const;
-  SpkMLToCpp                * createTranslator  
-    ( enum client::type, xercesc::DOMDocument* doc ) const;
+  xercesc::DOMDocument      * buildTreeFromSpkML( const char * inputSpkMLIn );
+  SpkMLToCpp                * createChild  ( enum client::type ) const;
+  ClientTranslator          * createTranslator  ( enum client::type ) const;
 
   const char                * inputSpkML;
 
   enum client::type           who;
   SpkMLToCpp                * client_translator;
+  xercesc::XercesDOMParser  * parser;
   xercesc::DOMDocument      * tree;
   std::vector<const char *>   model_files;
   char                      * driver_file;
