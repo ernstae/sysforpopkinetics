@@ -917,6 +917,7 @@ void pop_monteTest::testDriver()
   // 2 indicates some file access problem.
   // Since I didn't set the problem so that it makes sense in either scientifically
   // or mathematially, the return code of anything other than 2 is ignored here.
+  system( "link monteDriver.cpp keep_monteDriver.cpp" );
   exitcode = system( command );
   if( exitcode == 1 )
     {
@@ -950,6 +951,7 @@ void pop_monteTest::testDriver()
 }
 void pop_monteTest::testReportML()
 {
+  printf( "\n--- %s ---\n", "Report Test" );
   const double scale = 0.05;
 
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
