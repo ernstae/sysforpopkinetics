@@ -212,54 +212,8 @@ $syntax/
 
 /StateInfo/
 /$$
-This $code StateInfo$$ object contains the information required by 
-the restart(later warm start) run.  
-The $italic StateInfo$$ object has the following elements.
-
-$syntax/
-
-/n/
-/$$
-The element $italic n$$ specifies the number of components
-in the element vector $italic x$$.
-
-$syntax/
-
-/r/
-/$$
-The element $italic r$$ contains the current trust region radius
-(as an infinity norm bound on the step size).
-
-$syntax/
-
-/f/
-/$$
-The element $italic f$$ contains the value for $math%f(x)%$$
-at the point $math%x%$$.
-
-$syntax/
-
-/x/
-/$$
-The element $italic x$$ is a vector of length $italic n$$.
-It specifies the point at which the objective function, 
-its gradient, and its Hessian were evaluated.
-
-$syntax/
-
-/g/
-/$$
-The vector $italic g$$ must have length $math%n%$$.
-It contains the gradient of $math%f(x)%$$
-at the point $math%x%$$.
-
-$syntax/
-
-/h/
-/$$
-The vector $italic h$$ must have length $math%n^2%$$.
-It contains an approximation for the hessian of $math%f(x)%$$
-at the point $math%x%$$.
+This $code StateInfo$$ object contains the optimizer state information
+required to perform a warm start.
 
 $head Example$$
 See $xref/Optimizer/Example/Example/$$
