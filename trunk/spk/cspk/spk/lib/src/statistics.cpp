@@ -86,7 +86,7 @@ $syntax/
 /degFree/
 /$$
 is the degree of freedom used to compute the confidence interval. 
-It is defined as degFree = n - m, where n is the length of parameter vector,
+It is defined as degFree = m - n, where n is the length of parameter vector,
 in this case, x, and m is the number of fitted data points.
 The value must be greater than zero, although
 it will not be referenced at all if ciOut is set to NULL.
