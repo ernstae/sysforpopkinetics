@@ -731,7 +731,7 @@ sub get_run_jobs() {
     $err = 0;
     $errstr = "";
 
-    my $sql = "select job_id, cpp_source "
+    my $sql = "select job_id, cpp_source, checkpoint "
 	. "from job where state_code='run' "
 	. "order by job_id;";
     my $sth = $dbh->prepare($sql);
