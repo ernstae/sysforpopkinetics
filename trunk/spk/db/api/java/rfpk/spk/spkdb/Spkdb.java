@@ -426,12 +426,12 @@ public abstract class Spkdb {
 	     if (pattern1.matcher(name[i]).find() || pattern2.matcher(name[0]).find()) {
 		 throw new SpkdbException("invalid attempt to change username or user_id");
 	     }
-	     if (i == 0)
+	     if (i != 0)
 		 sql += ", ";
 	     if (pattern3.matcher(name[i]).find()) 
-		 sql += name[i] + "=MD5('" + value[i] + ")'";
+		 sql += name[i] + "=MD5('" + value[i] + "')";
 	     else
-		 sql += ", " + name[i] + "='" + value[i] + "'";
+		 sql += name[i] + "='" + value[i] + "'";
 	 }
 	 sql += " where user_id=" + userId + ";";
 	 Statement stmt = conn.createStatement();
