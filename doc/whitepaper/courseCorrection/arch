@@ -7,25 +7,25 @@
     <dia:attribute name="paper">
       <dia:composite type="paper">
         <dia:attribute name="name">
-          <dia:string>#A4#</dia:string>
+          <dia:string>#Letter#</dia:string>
         </dia:attribute>
         <dia:attribute name="tmargin">
-          <dia:real val="2.8222"/>
+          <dia:real val="2.54"/>
         </dia:attribute>
         <dia:attribute name="bmargin">
-          <dia:real val="2.8222"/>
+          <dia:real val="2.54"/>
         </dia:attribute>
         <dia:attribute name="lmargin">
-          <dia:real val="2.8222"/>
+          <dia:real val="2.54"/>
         </dia:attribute>
         <dia:attribute name="rmargin">
-          <dia:real val="2.8222"/>
+          <dia:real val="2.54"/>
         </dia:attribute>
         <dia:attribute name="is_portrait">
           <dia:boolean val="true"/>
         </dia:attribute>
         <dia:attribute name="scaling">
-          <dia:real val="1"/>
+          <dia:real val="0.5"/>
         </dia:attribute>
         <dia:attribute name="fitto">
           <dia:boolean val="false"/>
