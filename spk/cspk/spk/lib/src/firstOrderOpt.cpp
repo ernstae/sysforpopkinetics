@@ -396,7 +396,7 @@ $syntax/
 /$$
 If $italic pdrowLTilde_popOut$$ is not $code NULL$$, then the 
 $code DoubleMatrix$$ pointed to by $italic pdrowLTilde_popOut$$ 
-must be declared in the function that calls this function, and it 
+vmust be declared in the function that calls this function, and it 
 must be a row vector that is the same length as
 the fixed population parameter vector $math%pop%$$.
 If $italic pdrowLTilde_popOut$$ is not $code NULL$$, 
@@ -429,6 +429,27 @@ $code DoubleMatrix$$ pointed to by $italic pdmatLTilde_pop_popOut$$.
 The approximation for the second derivative is formed using central
 differences of the function $math%LTilde_pop(pop)%$$ with
 step sizes specified by $italic dvecPopStep$$.
+
+$syntax/
+
+/dmatLambdaTilde_popOut/
+/$$
+
+If $italic dmatLambdaTilde_popOut$$ is not $code NULL$$, then the
+$code DoubleMatrix$$ pointed to by $italic dmatLambdaTilde_popOut$$
+must be declared in the function that calls this function, and its
+number of columns must be equal to the number of individuals and its
+number of rows must be equal to the length of the population parameter
+vector $math%pop%$$.
+If $italic dmatLambdaTilde_popOut$$ is not $code NULL$$, and if this
+function completed the optimization successfully, then the $code
+DoubleMatrix$$ pointed to by $italic dmatLambdaTilde_popOut$$ will
+contain the derivatives of this individuals' contributions to
+the population objective function.
+Each column of the matrix contains the transpose of the derivative
+ for a single individual.
+Otherwise, this function will not attempt to change the contents of the 
+$code DoubleMatrix$$ pointed to by $italic dmatLambdaTilde_popOut$$.
 
 $head Example$$
 The following demonstrates running firstOrderOpt(). 
@@ -1001,9 +1022,11 @@ $end
 #include "EqIndModel.h"
 #include "SpkModel.h"
 #include "mapOpt.h"
+#include "mapObj.h"
 #include "replaceJth.h"
 #include "getSubblock.h"
 #include "getCol.h"
+#include "transpose.h"
 #include "isDmatEpsEqual.h"
 #include "File.h"
 #include "SpkException.h"
@@ -1011,6 +1034,148 @@ $end
 #include "Objective.h"
 
 using namespace std;
+
+/*------------------------------------------------------------------------
+ * Local class definitions
+ *------------------------------------------------------------------------*/
+
+namespace // [Begin: unnamed namespace]
+{
+  //**********************************************************************
+  //
+  // Class: IndIndexFixedModel
+  //
+  //
+  // This class behaves the same as the class passed in when it is
+  // constructed except that it does not allow the individual index to
+  // be changed from the value set at construction time.
+  //
+  //**********************************************************************
+
+  class IndIndexFixedModel : public SpkModel
+  {
+    //----------------------------------------------------------
+    // Class members.
+    //----------------------------------------------------------
+
+  private:
+    SpkModel* pModel;
+
+
+    //----------------------------------------------------------
+    // Constructors.
+    //----------------------------------------------------------
+
+  public:
+    // This constructor sets the individual index in the model passed
+    // in to a value that will not be changed.
+    IndIndexFixedModel( SpkModel* pModelIn, int iFixed )
+      :
+      pModel ( pModelIn )
+    {
+      pModel->selectIndividual( iFixed );
+    }
+
+
+    //----------------------------------------------------------
+    // Functions that do nothing.
+    //----------------------------------------------------------
+
+    // This function does nothing because it is not allowed to change
+    // the individual index from the value set at construction time.
+    void doSelectIndividual( int iIn )
+    {
+      assert ( iIn == 0 );
+    }
+
+
+    //----------------------------------------------------------
+    // State changing functions that just call the contained model.
+    //----------------------------------------------------------
+
+    void doSetPopPar( const valarray<double>& popParIn )
+    {
+      pModel->setPopPar( popParIn );
+    }
+
+    void doSetIndPar( const valarray<double>& indParIn )
+    {
+      pModel->setIndPar( indParIn );
+    }
+
+
+    //----------------------------------------------------------
+    // Model evaluation functions that just call the contained model.
+    //----------------------------------------------------------
+
+    void doDataMean( valarray<double>& ret ) const
+    {
+      pModel->dataMean( ret );
+    }
+
+    bool doDataMean_indPar( valarray<double>& ret ) const
+    {
+      return pModel->dataMean_indPar( ret );
+    }
+
+    bool doDataMean_popPar( valarray<double>& ret ) const
+    {
+      return pModel->dataMean_popPar( ret );
+    }
+
+    void doDataVariance( valarray<double>& ret ) const
+    {
+      pModel->dataVariance( ret );
+    }
+
+    bool doDataVariance_indPar( valarray<double>& ret ) const
+    {
+      return pModel->dataVariance_indPar( ret );
+    }
+
+    bool doDataVariance_popPar( valarray<double>& ret ) const
+    {
+      return pModel->dataVariance_popPar( ret );
+    }
+
+    void doDataVarianceInv( valarray<double>& ret ) const
+    {
+      pModel->dataVarianceInv( ret );
+    }
+
+    bool doDataVarianceInv_indPar( valarray<double>& ret ) const
+    {
+      return pModel->dataVarianceInv_indPar( ret );
+    }
+
+    bool doDataVarianceInv_popPar( valarray<double>& ret ) const
+    {
+      return pModel->dataVarianceInv_popPar( ret );
+    }
+
+    void doIndParVariance( valarray<double>& ret ) const
+    {
+      pModel->indParVariance( ret );
+    }
+
+    bool doIndParVariance_popPar( valarray<double>& ret ) const
+    {
+      return pModel->indParVariance_popPar( ret );
+    }
+
+    void doIndParVarianceInv( valarray<double>& ret ) const
+    {
+      pModel->indParVarianceInv( ret );
+    }
+
+    bool doIndParVarianceInv_popPar( valarray<double>& ret ) const
+    {
+      return pModel->indParVarianceInv_popPar( ret );
+    }
+
+  };
+
+} // [End: unnamed namespace]
 
 /*------------------------------------------------------------------------
  * Function definition
@@ -1025,7 +1190,7 @@ void firstOrderOpt(
                     const DoubleMatrix&     dvecAlpIn,
                     DoubleMatrix*           pdvecAlpOut,
                     const DoubleMatrix&     dvecAlpStep,
-					Optimizer&              indOptimizer,
+                    Optimizer&              indOptimizer,
                     const DoubleMatrix&     dvecBLow,
                     const DoubleMatrix&     dvecBUp,
                     const DoubleMatrix&     dmatBIn,
@@ -1033,18 +1198,20 @@ void firstOrderOpt(
                     const DoubleMatrix&     dvecBStep,
                     double*                 pdLTildeOut,
                     DoubleMatrix*           pdrowLTilde_alpOut,
-                    DoubleMatrix*           pdmatLTilde_alp_alpOut
+                    DoubleMatrix*           pdmatLTilde_alp_alpOut,
+                    DoubleMatrix*           pdmatLambdaTilde_alpOut
                   )
 {  
     //------------------------------------------------------------
     // Preliminaries.
     //------------------------------------------------------------
     // Return if there are no output values to compute.
-    if( pdvecAlpOut            == 0 && 
-        pdmatBOut              == 0 && 
-        pdLTildeOut            == 0 && 
-        pdrowLTilde_alpOut     == 0 && 
-        pdmatLTilde_alp_alpOut == 0    )
+    if( pdvecAlpOut             == 0 && 
+        pdmatBOut               == 0 && 
+        pdLTildeOut             == 0 && 
+        pdrowLTilde_alpOut      == 0 && 
+        pdmatLTilde_alp_alpOut  == 0 && 
+        pdmatLambdaTilde_alpOut == 0    )
 	{
         return;
 	}
@@ -1081,13 +1248,8 @@ void firstOrderOpt(
 
   // Instantiate a temporary column vector to hold the final alp 
   // value that will be returned by mapOpt.
-  DoubleMatrix dvecAlpOutTemp;
-  DoubleMatrix* pdvecAlpOutTemp = 0;
-  if ( pdvecAlpOut )
-  {
-    dvecAlpOutTemp.resize( nAlp, 1 );
-    pdvecAlpOutTemp = &dvecAlpOutTemp;
-  }
+  DoubleMatrix dvecAlpOutTemp( nAlp, 1 );
+  DoubleMatrix* pdvecAlpOutTemp = &dvecAlpOutTemp;
 
   // Instantiate a temporary matrix to hold the optimal b values
   // for each individual.
@@ -1114,13 +1276,16 @@ void firstOrderOpt(
     pdLTildeOutTemp = 0;
   }
 
-  // If this function is going to return the derivative of the 
-  // population objective function with respect to alp, instantiate 
-  // a temporary row vector to hold it.  Otherwise, set the temporary 
-  // pointer to zero so that mapOpt will not return it either.
+  // If this function is going to return the derivative of the
+  // population objective function with respect to alp, or if it is
+  // going to return the derivatives with respect to alp of the
+  // individuals' contributions to the population objective function,
+  // instantiate a temporary row vector to hold it.  Otherwise, set
+  // the temporary pointer to zero so that mapOpt will not return it
+  // either.
   DoubleMatrix drowLTilde_alpOutTemp;
   DoubleMatrix* pdrowLTilde_alpOutTemp = &drowLTilde_alpOutTemp;
-  if ( pdrowLTilde_alpOut )
+  if ( pdrowLTilde_alpOut || pdmatLambdaTilde_alpOut )
   {
     drowLTilde_alpOutTemp.resize( 1, nAlp );
   }
@@ -1144,6 +1309,22 @@ void firstOrderOpt(
     pdmatLTilde_alp_alpOutTemp = 0;
   }
 
+  // If this function is going to return the derivatives with respect
+  // to alp of the individuals' contributions to the population
+  // objective function, instantiate a temporary row vector to hold
+  // it.  Otherwise, set the temporary pointer to zero so that mapOpt
+  // will not return it either.
+  DoubleMatrix dmatLambdaTilde_alpOutTemp;
+  DoubleMatrix* pdmatLambdaTilde_alpOutTemp = &dmatLambdaTilde_alpOutTemp;
+  if ( pdmatLambdaTilde_alpOut )
+  {
+    dmatLambdaTilde_alpOutTemp.resize( nAlp, nInd );
+  }
+  else
+  {
+    pdmatLambdaTilde_alpOutTemp = 0;
+  }
+  
   //----------------------------------------------------------------
   // Construct an equivalent individual model from population model.
   //----------------------------------------------------------------
@@ -1151,7 +1332,8 @@ void firstOrderOpt(
   valarray<double> bStep = dvecBStep.toValarray();
   valarray<int> N(nInd);
   const double * pN = dvecN.data();
-  for( int i=0; i<nInd; i++ )
+  int i;
+  for( i=0; i<nInd; i++ )
   {
     N[i] = (int)pN[i];
   }
@@ -1197,8 +1379,86 @@ void firstOrderOpt(
   catch( ... )
   {
     throw SpkException(SpkError::SPK_UNKNOWN_OPT_ERR,
-      "An exception of unknown type was thrown during the population level optimization.", 
+      "An unknown exception was thrown during the population level optimization.", 
       __LINE__, __FILE__);
+  }
+
+  //----------------------------------------------------------------
+  // Evaluate the derivatives of each individual's contribution.
+  //----------------------------------------------------------------
+
+  valarray<int> nYi( 1 );
+  DoubleMatrix dvecYi;
+  DoubleMatrix dvecNi;
+  double* pdNull = 0;
+  int startRow;
+
+  if( pdmatLambdaTilde_alpOut && !popOptimizer.getIsTooManyIter() )
+  {
+    try
+    {
+      // In order to get the derivatives of each individual's
+      // contribution to the population objective function, an
+      // equivalent individual model that contains only a single
+      // individual will be created for each individual.
+      startRow = 0;
+      for ( i = 0; i < nInd; i++ )
+      {
+        // Get this individual's data.
+        dvecNi   =  getSubblock( dvecN, i,        0, 1,    1 );
+        dvecYi   =  getSubblock( dvecY, startRow, 0, N[i], 1 );
+        nYi[0]   =  N[i];
+        startRow += N[i];
+      
+        // Construct a population model with its individual index fixed to
+        // that of the current individual.
+        IndIndexFixedModel indIndexFixedModel( &model, i );
+      
+        // Construct an equivalent individual model that only includes the
+        // current individual.
+        EqIndModel oneIndEqIndModel( &indIndexFixedModel, nYi, bStep, nAlp );
+        
+        // Evaluate the derivative of this individual's contribution to
+        // the population objective function.
+        mapObj(
+                oneIndEqIndModel,
+                dvecYi,
+                dvecAlpOutTemp,
+                pdNull,
+                pdrowLTilde_alpOutTemp,
+                false,
+                true,
+                &dvecNi
+              );
+
+        // Save the derivative of this individual's contribution to
+        // the population objective function.
+        replaceJth(
+                    dmatLambdaTilde_alpOutTemp,
+                    i,
+                    transpose( drowLTilde_alpOutTemp )
+                   );
+      }
+    }
+    catch( SpkException& e )
+    {
+      throw e.push(
+        SpkError::SPK_OPT_ERR,
+        "Evaluation of the derivatives of the individuals' objective contributions failed.", 
+        __LINE__, __FILE__);
+    }
+    catch( const std::exception& e )
+    {
+      throw SpkException(e,
+        "A standard exception was thrown during the evaluation of the derivatives of the individuals' objective contributions.", 
+        __LINE__, __FILE__);
+    }
+    catch( ... )
+    {
+      throw SpkException(SpkError::SPK_UNKNOWN_OPT_ERR,
+        "An unknown exception was thrown during the evaluation of the derivatives of the individuals' objective contributions.",
+        __LINE__, __FILE__);
+    }
   }
 
   //----------------------------------------------------------------
@@ -1211,11 +1471,11 @@ void firstOrderOpt(
 	  DoubleMatrix dvecBOut( nB, 1 );
 
 	  model.setPopPar( pdvecAlpOutTemp->toValarray() );
-	  int startRow = 0;
+	  startRow = 0;
 	  for( int i = 0; i < nInd; i++ )
 	  {
 		  model.selectIndividual( i );
-		  DoubleMatrix dvecYi = getSubblock( dvecY, startRow, 0, (int)pdNData[ i ], 1 );
+		  dvecYi = getSubblock( dvecY, startRow, 0, (int)pdNData[ i ], 1 );
 		  dvecBIn = getCol( dmatBIn, i );
 		  try
 		  {
@@ -1250,7 +1510,7 @@ void firstOrderOpt(
 		  catch( ... )
 		  {
 		  	throw SpkException(SpkError::SPK_UNKNOWN_OPT_ERR,
-			  "An exception of unknown type was thrown during the individual level optimization.", 
+			  "An unknown exception was thrown during the individual level optimization.", 
 			  __LINE__, __FILE__);
 		  }
 
@@ -1295,6 +1555,13 @@ void firstOrderOpt(
     *pdmatLTilde_alp_alpOut = dmatLTilde_alp_alpOutTemp;
   }
 
+  // Set the derivatives of the individuals' contributions to
+  // the population objective function.
+  if ( pdmatLambdaTilde_alpOut && !popOptimizer.getIsTooManyIter() )
+  {
+    *pdmatLambdaTilde_alpOut = dmatLambdaTilde_alpOutTemp;
+  }
+    
   // Reset these individual optimizer flags to their original values.
   indOptimizer.setSaveStateAtEndOfOpt( oldIndSaveState );
   indOptimizer.setThrowExcepIfMaxIter( oldIndThrowExcep );
