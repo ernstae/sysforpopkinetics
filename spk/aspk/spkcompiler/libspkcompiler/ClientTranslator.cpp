@@ -208,8 +208,15 @@ void ClientTranslator::parseData()
 		    ++nIDs;
 		  }
 	      }
-	      char * c_value = ( XMLString::stringLen( xml_value )>0? XMLString::transcode( xml_value ) : NULL );
-	      tmp_values[id][tmp_labels[k]].push_back( string(c_value) );
+              //
+              // If a data value is ".", that means 0.0.
+              //
+	      char * c_value = 
+                 ( XMLString::stringLen( xml_value )>0? XMLString::transcode( xml_value ) : NULL );
+              if( strcmp( c_value, "." ) == 0 )
+                 tmp_values[id][tmp_labels[k]].push_back( "0.0" );
+              else
+	         tmp_values[id][tmp_labels[k]].push_back( string(c_value) );
 	      delete c_value;
 	    }
 	  delete id;
