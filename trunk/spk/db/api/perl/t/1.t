@@ -207,7 +207,7 @@ ok(&new_model($dbh, $user_id, "Model-R", "Fine model", "model R text"),
    "newer_model");
 
 $row_array = &Spkdb::user_models($dbh, $user_id);
-my $d_id = 2;
+$d_id = 2;
 $flag = 1;
 foreach $row (@$row_array) {
     if ($row->{"model_id"} != $d_id--) {

@@ -24,6 +24,7 @@ package Spkdb;
 use 5.008;
 use strict;
 use warnings;
+use Sys::Hostname;
 
 use Exporter;
 our @ISA = qw(Exporter);
@@ -96,7 +97,7 @@ Establish a connection to the database, returning
 a handle which is a required argument to all other
 subroutines in this package:
 
-    $dbh = &Spkdb::connect($dbname, $hostname, $username, $password);
+$dbh = &Spkdb::connect($dbname, $hostname, $username, $password);
 
 $dbname is a string containing the name of an existing database. 
 
@@ -1483,9 +1484,11 @@ sub add_to_history() {
     my $dbh = shift;
     my $job_id = shift;
     my $state_code = shift;
+    my $event_time = time();
+    my $host = hostname;
 
-    my $sql = "insert into history (job_id, state_code) "
-	         . "values($job_id, '$state_code');";
+    my $sql = "insert into history (job_id, state_code, event_time, host) "
+	         . "values($job_id, '$state_code', $event_time, '$host');";
 
     $dbh->do($sql);
 }
