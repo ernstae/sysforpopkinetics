@@ -1722,6 +1722,46 @@ void ppkaOpt(
   }
   
   //------------------------------------------------------------
+  // Check for individual level parameters that are constrained.
+  //------------------------------------------------------------
+
+  const double* pdBOutTempData = dmatBOutTemp.data();
+  const double* pdBLowData     = dvecBLow    .data();
+  const double* pdBUpData      = dvecBUp     .data();
+
+  int i;
+  int k;
+
+  // Check each individual's final parameter value to see if they
+  // are constrained by their lower or upper bound;
+  bool isAnyBAtLimit = false;
+  for ( i = 0; i < nInd; i++ )
+  {
+    for ( k = 0; k < nB; k++ )
+    {
+      if( pdBOutTempData[ k + i * nB ] == pdBLowData[k] ||
+          pdBOutTempData[ k + i * nB ] == pdBUpData[k] )
+      {
+        isAnyBAtLimit = true;
+      }
+    }
+  }
+
+  if ( isAnyBAtLimit )
+  {
+      // [Revisit - No Mechanism for Warning Messages - Mitch]
+      // Once SPK has a mechanism for passing warning messages,
+      // it shoud be used here.
+      //
+      cout << endl;
+      cout << "*********************************************************" << endl;
+      cout << "Warning:  Some individual parameters are at their bounds." << endl;
+      cout << "*********************************************************" << endl;
+      cout << endl;
+  }
+
+
+  //------------------------------------------------------------
   // Compute the second derivative of the population objective function.
   //------------------------------------------------------------
 
