@@ -69,8 +69,8 @@ use Getopt::Long;
 =cut
 
 my $usage = 
-    "usage: $0 --schema name1 --basedata name2 --userdata name3 --database name4\n"
-    . "\t--user name5 --password name6\n"
+    "usage: $0 --schema name1 --basedata name2 --userdata name3 --host name4 --database name5\n"
+    . "\t--user name6 --password name7\n"
     . "where the optional arguments override the folowing defaults:\n"
     . "\tschema.sql\n"
     . "\tbasedata.sql\n"
