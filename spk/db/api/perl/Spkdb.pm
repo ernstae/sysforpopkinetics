@@ -456,7 +456,7 @@ sub de_q2c() {
     my $state_code = "cmp";
     my $event_time = time();
     
-    $sql = "update job set state_code = '$state_code, event_time = $event_time' where job_id=$job_id;";
+    $sql = "update job set state_code = '$state_code', event_time = '$event_time' where job_id=$job_id;";
     unless ($dbh->do($sql)) {
 	$err = $UPDATE_FAILED;
 	$errstr = "could not execute $sql; error returned ";
@@ -639,7 +639,7 @@ sub de_q2r() {
     my $event_time = time();
     
     my $state_code = "run";
-    $sql = "update job set state_code = '$state_code, event_time = $event_time' where job_id=$job_id;";
+    $sql = "update job set state_code = '$state_code', event_time = '$event_time' where job_id=$job_id;";
     unless ($dbh->do($sql)) {
 	$err = $UPDATE_FAILED;
 	$errstr = "could not execute $sql; error returned ";
@@ -736,6 +736,7 @@ sub end_job() {
     my $job_id = shift;
     my $end_code = shift;
     my $report = shift;
+    my $event_time = time();
     $err = 0;
     $errstr = "";
 
@@ -761,6 +762,7 @@ sub end_job() {
     $sql = "update job "
 	      .  "set state_code='$state_code', "
               .      "end_code='$end_code', "
+	      .      "event_time=$event_time, "
               .      "report=? "
               .  "where job_id=$job_id;";
 

@@ -2,12 +2,12 @@
 
 use strict;
 
-use Test::Simple tests => 52;  # number of ok() tests
+use Test::Simple tests => 53;  # number of ok() tests
 
 use Spkdb (
     'connect', 'disconnect', 'new_job', 'job_status', 
     'de_q2c', 
-    'en_q2r', 'de_q2r', 'end_job', 'job_report',
+    'en_q2r', 'de_q2r', 'get_job', 'end_job', 'job_report',
     'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
     'new_model', 'get_model', 'update_model', 'user_models',
     'new_user', 'update_user', 'get_user', 'email_for_job'
@@ -154,6 +154,9 @@ ok(&end_job($dbh, $job_id + 1, "srun", "end report"), "end_job");
 
 ok(&end_job($dbh, $job_id, "abcd", "end report") == 0,
    "end_job, with invalid end code");
+
+$row = &get_job($dbh, $job_id);
+ok($row->{'event_time'} - $row->{'start_time'} == 4, "job time difference");
 
 my $report = &job_report($dbh, $job_id + 1);
 ok($report && $report =~ /^end report$/, "job_report");
