@@ -1,2 +1,4 @@
+include ../../../doc/webdir.mk
+
 install:
-	scp index.html whitechuck:/var/www/html/soft/v0.1/specs/index.html
+	scp index.html $(WEBDIR)/v0.1/specs/index.html
