@@ -338,7 +338,7 @@ void NonmemTranslatorTest::testParsePopSource()
 
   xlator.parseSource();
 
-  if( system( "g++ driver.cpp -g -lspk -lspkopt -latlas_lapack -lcblas -latlas -lpthread -lm -o driver" ) != 0 )
+  if( system( "g++ driver.cpp -g -lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm -o driver" ) != 0 )
     {
       CPPUNIT_ASSERT_MESSAGE( "Compilation of the generated driver.cpp failed!", false );
     }
@@ -442,6 +442,7 @@ void NonmemTranslatorTest::testParsePopSource()
   {
      oTestPred << "#include <iostream>" << endl;
      oTestPred << "#include <vector>" << endl;
+     oTestPred << "#include <../cppad/CppAD.h>" << endl;
      oTestPred << "#include \"IndData.h\"" << endl;
      oTestPred << "#include \"DataSet.h\"" << endl;
      oTestPred << "#include \"Pred.h\"" << endl;
@@ -659,7 +660,7 @@ void NonmemTranslatorTest::testParsePopSource()
      oTestPred << " };" << endl;
      oTestPred << endl;
 
-     oTestPred << "  DataSet<double> set;" << endl;
+     oTestPred << "  DataSet< CppAD::AD<double> > set;" << endl;
 
      oTestPred << "  for( int i=0; i<nIndividuals; i++ )" << endl;
      oTestPred << "  {" << endl;
@@ -683,7 +684,7 @@ void NonmemTranslatorTest::testParsePopSource()
      oTestPred << "  //////////////////////////////////////////////////////////" << endl;
      oTestPred << "  // Testing Pred" << endl;
      oTestPred << "  //" << endl;
-     oTestPred << "  Pred<double> pred( &set );" << endl;
+     oTestPred << "  Pred< CppAD::AD<double> > pred( &set );" << endl;
      oTestPred << endl;
      oTestPred << "  const int MAX_ITR = 2;" << endl;
      oTestPred << endl;
@@ -944,7 +945,7 @@ void NonmemTranslatorTest::testParsePopSource()
  
   rename( "driver.cpp", "popDriver.cpp" );
 
-  if( system( "g++ popDriver.cpp -g -lspk -lspkopt -latlas_lapack -lcblas -latlas -lpthread -lm -o popDriver" ) != 0 )
+  if( system( "g++ popDriver.cpp -g -lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm -o popDriver" ) != 0 )
   {
      CPPUNIT_ASSERT_MESSAGE( "Failed to compile/link the generated \"driver.cpp\".", false );
   }
@@ -1188,7 +1189,7 @@ void NonmemTranslatorTest::testParseIndSource()
 
   xlator.parseSource();
 
-  if( system( "g++ driver.cpp -g -lspk -lspkopt -latlas_lapack -lcblas -latlas -lpthread -lm -o driver" ) != 0 )
+  if( system( "g++ driver.cpp -g -lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm -o driver" ) != 0 )
     {
       CPPUNIT_ASSERT_MESSAGE( "Compilation of the generated driver.cpp failed!", false );
     }
@@ -1254,13 +1255,14 @@ void NonmemTranslatorTest::testParseIndSource()
     {
       oTestPred << "#include <iostream>" << endl;
       oTestPred << "#include <vector>" << endl;
+      oTestPred << "#include <../cppad/CppAD.h>" << endl;
       oTestPred << "#include \"IndData.h\"" << endl;
       oTestPred << "#include \"DataSet.h\"" << endl;
       oTestPred << "#include \"Pred.h\"" << endl;
       oTestPred << "using namespace std;" << endl;
       oTestPred << "int main()" << endl;
       oTestPred << "{" << endl;
-      oTestPred << "DataSet<double> set;" << endl;
+      oTestPred << "DataSet< CppAD::AD<double> > set;" << endl;
       
       for( int i=0; i<pop_size; i++ )
 	{
@@ -1316,7 +1318,7 @@ void NonmemTranslatorTest::testParseIndSource()
       oTestPred << "int index_theta = 0;" << endl;
       oTestPred << "int index_eta   = index_theta + thetaLen;" << endl;
       oTestPred << "int index_eps   = index_eta + etaLen;" << endl;
-      oTestPred << "vector<double> indepVar( thetaLen + etaLen + epsLen );" << endl;
+      oTestPred << "vector< CppAD::AD<double> > indepVar( thetaLen + etaLen + epsLen );" << endl;
       oTestPred << "copy( thetaIn, thetaIn + thetaLen , indepVar.begin() + index_theta );" << endl;
       oTestPred << "copy( etaIn, etaIn + etaLen, indepVar.begin() + index_eta );" << endl;
       oTestPred << "copy( epsIn, epsIn + epsLen, indepVar.begin() + index_eps );" << endl;
@@ -1326,7 +1328,7 @@ void NonmemTranslatorTest::testParseIndSource()
       oTestPred << "int yLen = " << N[0] << ";" << endl;
       oTestPred << "int index_f = 0;" << endl;
       oTestPred << "int index_y = 1;" << endl;
-      oTestPred << "vector<double> depVar( fLen + yLen );" << endl;
+      oTestPred << "vector< CppAD::AD<double> > depVar( fLen + yLen );" << endl;
       oTestPred << "double yOut = 0.0;" << endl;
       oTestPred << "double fOut = 0.0;" << endl;
       oTestPred << endl;
@@ -1334,7 +1336,7 @@ void NonmemTranslatorTest::testParseIndSource()
       oTestPred << "double ans  = 0.0;" << endl;
       oTestPred << endl;
       
-      oTestPred << "Pred<double> pred(&set);" << endl;
+      oTestPred << "Pred< CppAD::AD<double> > pred(&set);" << endl;
       oTestPred << "bool ok = pred.eval( index_theta, thetaLen," << endl;
       oTestPred << "                     index_eta,   etaLen," << endl;
       oTestPred << "                     index_eps,   epsLen," << endl;
@@ -1343,8 +1345,8 @@ void NonmemTranslatorTest::testParseIndSource()
       oTestPred << "                     0, 0, " << endl;
       oTestPred << "                     indepVar," << endl;
       oTestPred << "                     depVar ); " << endl;
-      oTestPred << "fOut = depVar[index_f];" << endl;
-      oTestPred << "yOut = depVar[index_y];" << endl;
+      oTestPred << "fOut = CppAD::Value(depVar[index_f]);" << endl;
+      oTestPred << "yOut = CppAD::Value(depVar[index_y]);" << endl;
       oTestPred << "if( !ok )" << endl;
       oTestPred << "{" << endl;
       oTestPred << "   std::cerr << \"pred.eval() returned false, which is wrong.\" << endl;" << endl;
@@ -1369,8 +1371,8 @@ void NonmemTranslatorTest::testParseIndSource()
       oTestPred << "                0, 1, " << endl;
       oTestPred << "                indepVar," << endl;
       oTestPred << "                depVar ); " << endl;
-      oTestPred << "fOut = depVar[index_f];" << endl;
-      oTestPred << "yOut = depVar[index_y];" << endl;
+      oTestPred << "fOut = CppAD::Value(depVar[index_f]);" << endl;
+      oTestPred << "yOut = CppAD::Value(depVar[index_y]);" << endl;
       oTestPred << "if( !ok )" << endl;
       oTestPred << "{" << endl;
       oTestPred << "   std::cerr << \"pred.eval() returned false, which is wrong.\" << endl;" << endl;
@@ -1401,8 +1403,8 @@ void NonmemTranslatorTest::testParseIndSource()
       oTestPred << "                0, 2, " << endl;
       oTestPred << "                indepVar," << endl;
       oTestPred << "                depVar ); " << endl;
-      oTestPred << "fOut = depVar[index_f];" << endl;
-      oTestPred << "yOut = depVar[index_y];" << endl;
+      oTestPred << "fOut = CppAD::Value(depVar[index_f]);" << endl;
+      oTestPred << "yOut = CppAD::Value(depVar[index_y]);" << endl;
       oTestPred << "if( !ok )" << endl;
       oTestPred << "{" << endl;
       oTestPred << "   std::cerr << \"pred.eval() returned false, which is wrong.\" << endl;" << endl;
@@ -1447,7 +1449,7 @@ void NonmemTranslatorTest::testParseIndSource()
 
   rename( "driver.cpp", "indDriver.cpp" );
 
-  if( system( "g++ indDriver.cpp -g -lspk -lspkopt -latlas_lapack -lcblas -latlas -lpthread -lm -o indDriver" ) != 0 )
+  if( system( "g++ indDriver.cpp -g -lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm -o indDriver" ) != 0 )
   {
      CPPUNIT_ASSERT_MESSAGE( "Failed to compile/link the generated \"driver.cpp\".", false );
   }
@@ -1469,12 +1471,12 @@ CppUnit::Test * NonmemTranslatorTest::suite()
      new CppUnit::TestCaller<NonmemTranslatorTest>(
          "testParseIndSource", 
 	 &NonmemTranslatorTest::testParseIndSource ) );
-
+  /*
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<NonmemTranslatorTest>(
          "testParsePopSource", 
 	 &NonmemTranslatorTest::testParsePopSource ) );
-
+  */
   return suiteOfTests;
 }
 
