@@ -1212,14 +1212,8 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
 
   int i = 0;
   itrMax = 1;
-  while ( i < maxI; i++ )
+  while ( i < nMaxIter; i++ )
   {
-    // Decrease delta;
-  }
-
-
-
-
      msg = QuasiNewton01Box(
           // Input Arguments
           os,
@@ -1239,6 +1233,7 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
           HCur 
      );
 
+    // See if this functions convergence criterion has been met.
       // If the final y value is actally within epsilon tolerance of 
       // the true value yStar, then go on.  Note that NAG arrays use
       // row-major order.
@@ -1256,9 +1251,14 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
     
       }
 
+    // See if QuasiNewton01Box's convergence criterion has been met.
+    if ( ... )
+    {
+      // Decrease delta;
+      delta = delta / 10.0;
+    }
 
-
-
+  }
 
 
   //------------------------------------------------------------
