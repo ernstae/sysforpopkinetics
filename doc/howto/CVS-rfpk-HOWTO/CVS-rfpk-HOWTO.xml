@@ -1,0 +1,288 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+    "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"
+[
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+  <!ENTITY cvs "<emphasis>cvs</emphasis>">
+  <!ENTITY ssh "<emphasis>ssh</emphasis>">
+]>
+<article><title>CVS RFPK HOWTO</title>
+ <articleinfo>
+  <author><firstname>Alan</firstname><surname>Westhagen</surname></author>
+  <abstract>
+    <title>Abstract:</title>
+    <para>
+    </para>
+  </abstract>
+ </articleinfo>
+<sect1><title>Introduction</title>
+  <para>
+    Brad Bell and Ranjan Dash have started a new project that will
+    include text documents as well as computer source code.  To manage
+    revisions to their documents, they have decided to use a system
+    known as CVS rather than Microsoft Visual SourceSafe, which is 
+    currently being used by the Software Team to manage revisions
+    to SPK.
+  </para>
+  <para>
+    CVS is a free, open source product used to manage revisions
+    for many important software projects, including Apache, Mozilla, 
+    and Linux.  It is especially useful when multiple authors, 
+    geographically dispersed, collaborate on the same documents.  
+    As configured at RFPK, CVS can be accessed with excellent 
+    security from anywhere that there is an internet connection.
+  </para>
+  <para>
+    CVS is available to anyone in RFPK who has a need to manage 
+    revisions to their text documents.  This paper contains 
+    information specific to the RFPK installation of CVS.  Complete
+    information is available in two manuals which are available for        
+    download over the Internet.  These are 
+    <ulink url="http://www.cvshome.org/docs/manual/">
+    <emphasis>Version Management with CVS</emphasis>
+    </ulink>, 
+    by Per Cederqvist and
+    <ulink url="http://cvsbook.red-bean.com/">
+    <emphasis>The CVS Book</emphasis>
+    </ulink>, <emphasis>Open Source Development with CVS,</emphasis>
+    by Karl Fogel.
+    If you have any questions, please feel free to contact 
+    Alan Westhagen (afw@u.washington.edu).
+  </para>     
+  <para>
+    The CVS repository is on the Linux system with Internet
+    domain name, 
+    <systemitem moreinfo="none" class="domainname">
+	whitechuck.rfpk.washington.edu
+    </systemitem>
+    In order to use the CVS repositories on this system, you
+    need to be installed as one of its users.  Please contact
+    Mike Macaulay (macaulay@apl.washington.edu) to add your
+    login to
+    <systemitem moreinfo="none" class="systemname">
+       whitechuck
+    </systemitem>.
+  </para>
+</sect1>
+  <sect1>
+    <title>CVS and other Revision Control Systems</title>
+    <para>CVS is an example of systems variously referred to as
+      <emphasis>revision control</emphasis> systems,
+      <emphasis>source control</emphasis> systems, or
+      <emphasis>version control</emphasis> systems.
+      Widely used revision control systems include SCCS, RCS,
+      Microsoft Visual SourceSafe (VSS) and CVS. 
+      All of these
+      systems were designed to work very much as 
+      does SCCS, the senior member of the group, which was developed
+      at Bell Labs in the 1970s.  As does SCCS, they all store
+      revisions as differences between the revised version and
+      the original, rather than complete copies of each version, using
+      the same algorithms that were incorporated in SCCS. 
+    </para>
+    <para>
+      In one important respect, however, CVS differs from the
+      others.  With all of the other systems, only one user
+      is allowed to work on a particular document at
+      any one time.  When a user wants to make changes to 
+      a text, she must first <emphasis>check it out</emphasis>,
+      which means that the revision control systems gives
+      her the exclusive right to make changes until she 
+      subsequently <emphasis>commits</emphasis> her modifications
+      and relinquishes exclusive control.  If someone else
+      has checked out the document that she wants to change,
+      she must wait until that person relinquishes it.  If she
+      is slow at making her changes, others must wait for
+      her.
+    </para>
+    <para>
+      CVS, too, also originally designed to encorporate the
+      exclusive checkout model.  This strategy was abandoned, however.
+      The change came about in response to a new set
+      of requirements that arose primarily as a result of the rapid expansion
+      of the Internet in the 1990s.  Previously, software 
+      development groups had almost always consisted of individuals
+      working in the same office or the same building.  In fact,
+      the leading software development methodologies required
+      this.  When you are in the same office, it is relatively
+      easy to negotiate directly with your co-workers about who
+      should have exclusive modification access to a particular
+      document.  When, conversely, you have people who are working on different
+      continents and in different timezones and communications
+      is asynchronous via email, it may take days to get a 
+      co-worker to relinquish control.  Similarly, with 
+      frequent travel, it became a necessity for team members
+      to continue to work at hotels which may or may not have had
+      good Internet conectivity, or even while on airplanes
+      or in airports.  The exclusive checkout model had become
+      an impediment to productivity in the new global environement.
+    </para>
+    <para>
+      The break-through came with the reversal of the checkout 
+      model.  When a user checks out a project from CVS, she
+      gets a complete working copy on her own machine.  She is
+      free to make changes to any of the files in her working
+      copy.  If, for example, her working copy is on a laptop,
+      she can take her laptop off-line, travel to a conference
+      or to her vacation home and continue to work on her project,
+      secure in the knowledge that just because her 
+      computer is temporarily cut off from the Internet or just
+      because she can only devote a small part of the day
+      to the project, she is in no way impeding her collaborators.
+      When her computer comes back on line, whether by dial-up
+      connection, connection at an Internet cafe, or the connection
+      at her office, she can have her working copy
+      updated with any changes her co-workers have committed just
+      by issue a single command to CVS.
+    </para>
+    <para>
+      What happens if the user's changes conflict with changes
+      that have been committed by her collaborators in the
+      mean time?  This,
+      of course, is the situation that the exclusive checkout
+      model avoids.  With the CVS model, however,
+      it really is not a problem.  When the user
+      asks CVS to
+      <emphasis>commit</emphasis> her changes, CVS will refuse, informing
+      her that there are potential conflicts and that she
+      will have to perform a <emphasis>merge</emphasis>.
+      To observe all the 
+      differences between her working copy and the current
+      copy in the CVS repository, she can run the CVS 
+      <emphasis>diff</emphasis> command.  She can then edit
+      her working copy to resolve any differences.  When
+      she finally runs the CVS <emphasis>merge</emphasis>
+      command, CVS will provide an editing window in which
+      she can make her final changes if any potential
+      conflicts still remain.
+      Once she completes the merge, her revision
+      becomes the most recent revision in the repository.
+    </para>
+    <para>
+      Occasionally having to enter into a merging process is
+      the price users of CVS pay for the freedom to make revisions
+      whenever and wherever they can be done most effectively.
+      Especially given the importance of collaboration with 
+      partners at other institutions within the academic and
+      scientific world, CVS will be a valuable addition to
+      RFPK's set of resources.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Repositories</title>
+    <para>
+      All of the documents under revision control are stored in
+      <emphasis>repository</emphasis> on a server.  CVS permits
+      several repositories on a single server.  At present,
+      we have defined two.  One repository is for the work
+      being done by Ranjan and Brad.  The other is for certain
+      documents of the Software Team, including this tutorial.
+    </para>
+    <para>
+      The repository set up for Ranjan and Brad
+      has its root in the directory at the absolute path 
+      <filename moreinfo="none" class='directory'>
+	/usr/local/cvs_repos/rfpk/r1
+      </filename> 
+      on the server with Internet domain name
+      <systemitem moreinfo="none" class="systemname">
+	whitechuck.rfpk.washington.edu
+      </systemitem>
+      The other repository on
+      <systemitem moreinfo="none">whitechuck</systemitem>
+      has its root in the directory at absolute path
+      <systemitem moreinfo="none">
+	/usr/local/cvs_repos/rfpk/r2
+      </systemitem>
+      .
+    </para>
+    <para>
+      Within a repository, sets of documents are organized as
+      modules.  A module could be all the source code for a 
+      computer application, or all the source code for a part
+      of the application.  It could be all the documents 
+      required for an academic paper, or all the chapters of
+      a book.  Within the operating system of the computer,
+      the repository is directory hierarchy.  A module name
+      can be associated with any directory in the hierarchy,
+      with a single file, or even with a list of files.
+    </para>
+    <para>
+      For example, the first module added to the 
+      <systemitem moreinfo="none">r1</systemitem> repository
+      was the module called <emphasis>muscle</emphasis>,
+      so named because it holds a paper that Ranjan and
+      Brad are collaborating on which has something to 
+      do with muscle tissue.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Accessing a Repository</title>
+    <para>
+      At present, the only way to use CVS at RFPK
+      is from a Unix of 
+      Linux computer, or from the Cygwin environment on a 
+      Windows computer.  In either case, CVS provides
+      the same command-line interface.
+    </para>
+    <para>
+      All access to CVS at RFPK is via
+      <emphasis>ssh</emphasis>, the secure shell.  When you 
+      issue a CVS command from the command line on your
+      workstation, the local copy of the &cvs; program communicates
+      with the server via an encrypted channel that it
+      calls upon $ssh; to provide.  The command is actually 
+      executed on the server, with data being piped through the
+      encrypted channel between the server and your workstation.
+      This is, arguably, the most secure arrangement possible on
+      the Internet. 
+    </para>
+    <para>
+      Because CVS was originally designed to perform remote
+      execution using not &ssh; but rather an insecure program
+      called <emphasis>rsh</emphasis>, it is necessary to indicate
+      to CVS that only $ssh; should be used.  This can be accomplished
+      by setting and exporting the <varname>CVS_RSH</varname> 
+      environment variable.  Using the Bash shell, which is 
+      standard with Cygwin, most Linux systems and many Unix
+      systems, you would input the following commands at the
+      to the command-line interface:
+      <programlisting format="linespecific">
+	CVS_RSH=ssh
+	export CVS_RSH
+      </programlisting>
+      To avoid having to type these two lines in every time you log
+      in to a Linux or Unix shell or start the Cygwin shell
+      window, you should add them to your
+      <filename moreinfo="none">.bash_profile</filename> shell
+      initialization file.
+    </para>
+    <para>
+      Since the server supports several CVS repositories, you must 
+      tell CVS which repository you are working with.  Although
+      all &cvs; commands allow you to identify the repository with
+      a command-line argument, it is usually more convenient to
+      define an environment variable.  The following lines should
+      be added to your 
+      <filename moreinfo="none">.bash_profile</filename> shell
+      initialization file:
+      <programlisting format="linespecific">
+        USER=<emphasis>user</emphasis>
+	CVSHOST=whitechuck.rfpk.washington.edu
+	CVSPATH=/usr/local/cvs_repos/rfpk/r1
+	CVSROOT=:ext:$USER@$CVSHOST:$CVSPATH
+        export CVSROOT
+      </programlisting>
+      where <emphasis>user</emphasis> is your login user name on 
+      the the server.  
+      <emphasis>Note the r1 at the end of the line which
+      defines CVSPATH</emphasis>.  This indicates that you
+      want to use the 
+      <systemitem class="resource"  moreinfo="none">r1</systemitem>
+      repository rather than
+      <systemitem moreinfo="none" class="resource">r2</systemitem>
+      or some other repository.
+    </para>
+  </sect1>
+</article>
