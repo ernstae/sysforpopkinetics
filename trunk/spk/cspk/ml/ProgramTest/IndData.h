@@ -4,6 +4,8 @@
 #include <vector>
 #include <map>
 #include <spk/SpkValarray.h>
+#include <spk/cholesky.h>
+#include <spk/multiply.h>
 #include <CppAD/CppAD.h>
 
 template <class ValueType>
@@ -30,16 +32,18 @@ std::vector<ValueType> Y;
 
 ~IndData();
 const SPK_VA::valarray<double> getMeasurements() const;
+void compResiduals();
+void compWeightedResiduals( const SPK_VA::valarray<double>& R );
 
 protected:
 IndData();
 IndData( const IndData& );
 IndData& operator=( const IndData& );
 
-int nY; // #of measurements.
+int nY; // #of measurements (DVs where MDV=0).
 SPK_VA::valarray<double> measurements;
 private:
-const int n; // #of measurements.
+const int n; // the number of data records.
 void assignToDbl( double&, const CppAD::AD<double>& ) const;
 void assignToDbl( double&, double ) const;
 };
@@ -108,6 +112,46 @@ template <class ValueType>
 void IndData<ValueType>::assignToDbl( double & left, double right  ) const
 {
    left = right;
+   return;
+}
+
+template <class ValueType>
+void IndData<ValueType>::compResiduals()
+{
+   for( int i=0; i<n; i++ )
+   {
+      RES[i] =DV[i] - PRED[i];
+   }
+}
+
+#include <spk/printInMatrix.h>
+// It is unfortunately that this function is dependent on CppAD. 
+// The type of template argument must have CppAD::Value() operator.
+template <class ValueType>
+void IndData<ValueType>::compWeightedResiduals( const SPK_VA::valarray<double>& Ri )
+{
+   using SPK_VA::valarray;
+   using std::vector;
+   assert( Ri.size() == n * n );
+   compResiduals();
+   valarray<double> r( n );
+   cout << "{ ";
+   for( int i=0; i<n; i++ )
+   {
+      r[i] = CppAD::Value( RES[i] );
+      if( i>0 )
+         cout << ", ";
+      cout << r[i];
+   }
+   cout << " }" << endl;
+   cout << "R = " << endl;
+   printInMatrix( Ri, n );
+   valarray<double> C( 0.0, n * n );
+   C = cholesky( Ri, n );
+   valarray<double> w = multiply( C, n, r, 1 );
+   vector< CppAD::AD<double> > Cr(n);
+   for( int i=0; i<n; i++ )
+      WRES[i] = w[i];
    return;
 }
 #endif

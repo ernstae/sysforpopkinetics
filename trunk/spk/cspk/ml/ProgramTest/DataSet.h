@@ -15,8 +15,11 @@ DataSet();
 std::vector<IndData<ValueType>*> data;
 const int popSize;
 const SPK_VA::valarray<double> getAllMeasurements() const;
-void compRES();
-void compWRES( const SPK_VA::valarray<double>& R );
+int getPopSize() const;
+const SPK_VA::valarray<int> getN() const;
+void compAllResiduals();
+void compAllWeightedResiduals( std::vector< SPK_VA::valarray<double> >& R );
+std::ostream& xmlOut( std::ostream& o, const char* title ) const;
 
 protected:
 DataSet( const DataSet& );
@@ -99,31 +102,85 @@ const SPK_VA::valarray<double> DataSet<ValueType>::getAllMeasurements() const
 }
 
 template <class ValueType>
-void DataSet<ValueType>::compRES()
+int DataSet<ValueType>::getPopSize() const
+{
+   return popSize;
+}
+
+template <class ValueType>
+const SPK_VA::valarray<int> DataSet<ValueType>::getN() const
+{
+   return N;
+}
+
+template <class ValueType>
+void DataSet<ValueType>::compAllResiduals()
 {
    const int n = data.size();
    for( int i=0; i<n; i++ )
    {
-      data[0]->RES[i] = y[i] - data[0]->PRED[i];
+      data[i]->compResiduals();
    }
 }
+
 template <class ValueType>
-void DataSet<ValueType>::compWRES( const SPK_VA::valarray<double>& R )
+void DataSet<ValueType>::compAllWeightedResiduals( std::vector< SPK_VA::valarray<double> >& R )
 {
-   using SPK_VA::valarray;
-   using std::vector;
    const int n = data.size();
-   assert( R.size() == n * n );
-   compRES();
-   valarray<double> r( n );
    for( int i=0; i<n; i++ )
-      r[i] = CppAD::Value( data[0]->RES[i] );
-   valarray<double> C( 0.0, n * n );
-   C = cholesky( Ri, n );
-   valarray<double> w = multiply( C, n, r, 1 );
-   vector< CppAD::AD<double> > Cr(n);
-   for( int i=0; i<n; i++ )
-      data[0]->WRES[i] = w[i];
-   return;
+   {
+      data[i]->compWeightedResiduals( R[i] );
+   }
+}
+
+template <class ValueType>
+std::ostream& DataSet<ValueType>::xmlOut( std::ostream& o, const char * title ) const
+{
+o << "<" << title << " rows=\"" << N.sum() << "\" ";
+o << "columns=\"12\">" << endl;
+o << "<data_labels>" << endl;
+o << "<DEFANGED_label name=\"ID\"/>" << endl;
+///////////////////////////////////////////////////////////////////
+//   DATA SET Specific
+o << "<DEFANGED_label name=\"DV\"/>" << endl;
+o << "<DEFANGED_label name=\"EPS(1)\"/>" << endl;
+o << "<DEFANGED_label name=\"ETA(1)\"/>" << endl;
+o << "<DEFANGED_label name=\"F\"/>" << endl;
+o << "<DEFANGED_label name=\"MDV\"/>" << endl;
+o << "<DEFANGED_label name=\"PRED\"/>" << endl;
+o << "<DEFANGED_label name=\"RES\"/>" << endl;
+o << "<DEFANGED_label name=\"THETA(1)\"/>" << endl;
+o << "<DEFANGED_label name=\"TIME\"/>" << endl;
+o << "<DEFANGED_label name=\"WRES\"/>" << endl;
+o << "<DEFANGED_label name=\"Y\"/>" << endl;
+//
+///////////////////////////////////////////////////////////////////
+o << "</data_labels>" << endl;
+
+for( int i=0, position=1; i<popSize; i++ )
+{
+   for( int j=0; j<N[i]; j++, position++ )
+   {
+      o << "<row position=\"" << position << "\">" << endl;
+      ///////////////////////////////////////////////////////////////////
+      //   DATA SET Specific
+   o << "<value ref=\"ID\">" << data[i]->ID[j] << "</value>" << endl;
+   o << "<value ref=\"DV\">" << data[i]->DV[j] << "</value>" << endl;
+   o << "<value ref=\"EPS(1)\">" << data[i]->EPS[j][0] << "</value>" << endl;
+   o << "<value ref=\"ETA(1)\">" << data[i]->ETA[j][0] << "</value>" << endl;
+   o << "<value ref=\"F\">" << data[i]->F[j] << "</value>" << endl;
+   o << "<value ref=\"MDV\">" << data[i]->MDV[j] << "</value>" << endl;
+   o << "<value ref=\"PRED\">" << data[i]->PRED[j] << "</value>" << endl;
+   o << "<value ref=\"RES\">" << data[i]->RES[j] << "</value>" << endl;
+   o << "<value ref=\"THETA(1)\">" << data[i]->THETA[j][0] << "</value>" << endl;
+   o << "<value ref=\"TIME\">" << data[i]->TIME[j] << "</value>" << endl;
+   o << "<value ref=\"WRES\">" << data[i]->WRES[j] << "</value>" << endl;
+   o << "<value ref=\"Y\">" << data[i]->Y[j] << "</value>" << endl;
+      //
+      ///////////////////////////////////////////////////////////////////
+      o << "</row>" << endl;
+   }
+}
+o << "</" << title << ">" << endl;
 }
 #endif

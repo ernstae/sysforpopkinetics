@@ -193,18 +193,23 @@ int main(int argc, const char *argv[])
 	DataSet< CppAD::AD<double> > set;
 	Pred< CppAD::AD<double> > mPred(&set);
 
-	const size_t nPop = set.popSize;
-	valarray<int> N(nPop);
+	const int nPop = set.getPopSize();
+	if( nPop <= 0 )
+	{	cerr << "monteDriver: DataSet.getPopSize() <= 0 " << endl;
+		return ReturnFailure;
+	}
+	valarray<int> N = set.getN();
 	for(i = 0; i < nPop; i++)
-		N[i] = set.data[i]->DV.size();
-
+	{	if( N[i] <= 0 )
+		{	cerr << "monteDriver: DataSet.getN() <= 0" << endl;
+			return ReturnFailure;
+		}
+	}
+	valarray<double> y = set.getAllMeasurements();
 	const int nY = N.sum();
-	valarray<double> y(nY);
-	size_t j;
-	size_t k = 0;
-	for(i= 0; i < nPop; i++)
-	{	for(j = 0; j < N[i]; j++)
-			y[k++] = Value( set.data[i]->DV[j] );
+	if( nY != y.size() )
+	{	cerr << "monteDriver: y.size != N[0] + ... + N[M-1]" << endl;
+		return ReturnFailure;
 	}
 
 	// model constructor
