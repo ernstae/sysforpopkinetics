@@ -72,16 +72,6 @@ class ClientTranslator
   virtual const void * getClientParameters() const = 0;
 
   /**
-   * Obtain a pointer to a character array holding the name of the
-   * generated SPK driver file.
-   * 
-   * @return a character array containing a path followed by the
-   * filename associated with the C++ source code file definining
-   * a SPK driver.
-   */
-  virtual const char * getDriverFilename() const = 0;
-
-  /**
    * Obtain a list of character arrays holding the names of the
    * generated files that, together, define a subclass of SpkModel.
    * 
@@ -89,7 +79,7 @@ class ClientTranslator
    * the filenames associated with the C++ source code files defining
    * a SpkModel subclass.
    */
-  virtual const std::vector< const char * > getModelFilenameList() const = 0;
+  virtual const std::vector< std::string > getFilenameList() const = 0;
 };
 
 #endif

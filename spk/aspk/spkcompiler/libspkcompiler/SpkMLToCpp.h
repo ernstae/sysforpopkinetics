@@ -193,27 +193,19 @@ class SpkMLToCpp
   const ClientTranslator* translate() const;
 
   /**
-   * Obtain a pointer to a character array specifying the name
-   * of the generated SPK driver file.
-   *
-   * @return a pointer to a character array specifying the name
-   * of the generated SPK driver file if translate() has been
-   * completed successfully prior to the call.  If not,
-   * the value is undertermined.
-   */
-  const char * getDriverFilename() const;
-
-  /**
    * Obtain the vector containg pointers to character arrays,
    * each containing a file name.  These files, as together,
-   * defines a subclass of SpkModel class.
+   * defines a subclass of SpkModel class, a measurement
+   * data structure, and a driver.
    *
    * @return a vector containing filenames, together define
-   * a subclass of SpkModel class if translate() has been
+   * a subclass of SpkModel class, a data structure which
+   * will capture measurement data and a driver
+   * if translate() has been
    * completed successfully prior to the call.  If not,
    * the values are undetermined.
    */
-  const std::vector<const char *> getModelFilenameList() const;
+  const std::vector<std::string> getFilenameList() const;
   
  protected:
 
