@@ -530,6 +530,12 @@ namespace // [Begin: unnamed namespace]
       pdvecXUp    ( pdvecXUpIn ),
       pdvecXDiff  ( pdvecXDiffIn )
     {
+      dvecXCurr.resize( pdvecXDiff->nr(), 1 );
+
+      pdvecXLow   ( pdvecXLowIn ),
+      pdvecXUp    ( pdvecXUpIn ),
+      pdvecXDiff  ( pdvecXDiffIn )
+      pdXCurrData = dvecXCurr.data();
     }
 
   private:
@@ -549,6 +555,13 @@ namespace // [Begin: unnamed namespace]
     const DoubleMatrix* const pdvecXDiff;     // Difference between unscaled  
                                               // lower and upper bounds.
 
+    DoubleMatrix dvecXCurr;                   // Current value.
+
+    double* pdvecXLowData;
+    double* pdvecXUpData;
+    double* pdvecXDiffData;
+    double* pdXCurrData;
+
 
     //----------------------------------------------------------
     // Functions required by QuasiNewton01Box.
@@ -557,43 +570,15 @@ namespace // [Begin: unnamed namespace]
   public:
     // Evaluate the scaled version of the objective function, 
     // fScaled(y), at the current point y.
-    const char* function( const double* xIn, double& fOut )
+    const char* function( const double* yIn, double& fScaledOut )
     {
-      message_FINISH_ME;
-
-
       //--------------------------------------------------------
       // Prepare the parameters for the unscaled objective function.
       //--------------------------------------------------------
 
       // Transform the elements of the y vector back to their 
       // unscaled form. 
-      DoubleMatrix dvecX(n, 1);
-      double* pdXData = dvecX.data();
-      unscaleElem( n, y, pdXLowData, pdXUpData, pdXDiffData, pdXData );
-
-      // Check to see if the scaled objective function, fScaled(y), needs 
-      // to be returned by this function.  If not, set the pointer to zero
-      // so fval will not evaluate the unscaled objective function, f(x).
-      double  dFOut  = 0.0;
-      double* pdFOut = 0;
-  
-      if ( comm->flag == 0 || comm->flag == 2 ) 
-      {
-        pdFOut = &dFOut;
-      }
-  
-      // Check to see if the gradient of the scaled objective function, 
-      // gScaled(y), needs to be returned by this function.  If not, set 
-      // the pointer to zero so that fval will not evaluate the unscaled 
-      // gradient, g(x).s
-      DoubleMatrix drowGOut( 1, n );
-      DoubleMatrix* pdrowGOut = 0;
-
-      if ( comm->flag == 2 )
-      {
-        pdrowGOut = &drowGOut;
-      }
+      unscaleElem( n, y, pdXLowData, pdXUpData, pdXDiffData, pdXCurrData );
 
 
       //--------------------------------------------------------
@@ -602,9 +587,9 @@ namespace // [Begin: unnamed namespace]
 
       try
       {
-	fval( dvecX, pdFOut, pdrowGOut, pInfo->pFvalInfo );
-
-        message_FINISH_ME =  pObjective->function( xIn, fOut );
+	// Note that the scaled and unscaled objective function 
+	// values are the same.
+        pObjective->function( dvecXCurr, &fScaledOut );
       }
       catch( SpkException& e )
       {
@@ -632,49 +617,72 @@ namespace // [Begin: unnamed namespace]
       }
 
 
-  //--------------------------------------------------------
-  // Set the scaled objective function and/or its gradient.
-  //--------------------------------------------------------
+      //--------------------------------------------------------
+      // Evaluate the gradient of the unscaled objective function.
+      //--------------------------------------------------------
 
-  //
-  // Review - Sachiko: redundant
-  //
-  // comm-flag is validated eariler.  It's only either 0 or 2 at this point.
-  // Assert, as a pre-condition, instead of if statement which has some 
-  // run time overhead.
-  //
-      // If this function should return the value for the scaled 
-      // objective function, then set it.
-      if (comm->flag == 0 || comm->flag == 2)
+      try
       {
-        assert( pdFOut != 0 );
-        *objf = *pdFOut;
+	SHOULD THE ARGUMENTS FOR THIS function BE C ARRAYS, VALARRAYS, OR DOUBLEMATRIX'S
+	SHOULD THE ARGUMENTS FOR THIS function BE C ARRAYS, VALARRAYS, OR DOUBLEMATRIX'S
+	SHOULD THE ARGUMENTS FOR THIS function BE C ARRAYS, VALARRAYS, OR DOUBLEMATRIX'S
+	SHOULD THE ARGUMENTS FOR THIS function BE C ARRAYS, VALARRAYS, OR DOUBLEMATRIX'S
+	SHOULD THE ARGUMENTS FOR THIS function BE C ARRAYS, VALARRAYS, OR DOUBLEMATRIX'S
+	SHOULD THE ARGUMENTS FOR THIS function BE C ARRAYS, VALARRAYS, OR DOUBLEMATRIX'S
+	SHOULD THE ARGUMENTS FOR THIS function BE C ARRAYS, VALARRAYS, OR DOUBLEMATRIX'S
+
+  virtual void gradient( DoubleMatrix* pdrowF_xOut ) const = 0;
+
+        message_FINISH_ME =  pObjective->gradient( gOut );
+        message_FINISH_ME =  pObjective->gradient( dvecGOut );
+      }
+      catch( SpkException& e )
+      {
+        throw e.push(
+          SpkError::SPK_OPT_ERR, 
+          "An SpkException was thrown during the evaluation of the gradient of the function.",
+          __LINE__, 
+          __FILE__ );
+      }
+      catch( const std::exception& stde )
+      {
+        throw SpkException(
+          stde,
+          "An standard exception was thrown during the evaluation of the gradient of the function.",
+          __LINE__, 
+          __FILE__ );
+      }  
+      catch( ... )
+      {
+        throw SpkException(
+          SpkError::SPK_UNKNOWN_ERR, 
+          "An unknown exception was thrown during the evaluation of the gradient of the function.",
+          __LINE__, 
+          __FILE__ );
       }
 
-  // If this function should return the value for the gradient 
-  // of the scaled objective function, then set it.
-      if (comm->flag == 2)
-      {
+
         assert( pdrowGOut != 0 );
         double* pdGOutData = pdrowGOut->data();
         int nGCols = pdrowGOut->nc();
         assert( n == nGCols );
     
         scaleGradElem( n, pdGOutData, pdXDiffData, gvalScaled);
-      }
 
-  // If the fval function returns false, set the flag to -2.
-  // This is to terminate nag_opt_nlp and to escape from throwing SpkException.
-
+	SET THE G VALUE
+	SET THE G VALUE
+	SET THE G VALUE
+	SET THE G VALUE
+	SET THE G VALUE
+	SET THE G VALUE
+	SET THE G VALUE
 
 
       //--------------------------------------------------------
       // Finish up.
       //--------------------------------------------------------
 
-      return okString // Note: an acception could be thrown 
-                      //       when things go awry.
-      return notOkString;
+      return "ok";
     }
 
     // Evaluate the gradient of the scaled version of the objective
@@ -702,7 +710,7 @@ void quasiNewtonAnyBox(
   const DoubleMatrix&    dvecXIn,
   DoubleMatrix*          pdvecXOut,
   double*                pdFOut,
-  DoubleMatrix*          pF_xOut )
+  DoubleMatrix*          pdrowF_xOut );
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -1151,9 +1159,9 @@ void quasiNewtonAnyBox(
     *pdFOut = objf;
   }
   
-  if( pF_xOut )
+  if( pdrowF_xOut )
   {
-      double* pdF_x = pF_xOut->data();
+      double* pdF_x = pdrowF_xOut->data();
       std::copy(gvalScaled, gvalScaled+nObjPars, pdF_x);
   }
 }
