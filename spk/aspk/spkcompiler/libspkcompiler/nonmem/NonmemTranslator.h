@@ -14,6 +14,7 @@
 #include <valarray>
 #include <map>
 #include <xercesc/dom/DOM.hpp>
+#include <xercesc/util/XMLChar.hpp>
 
 #include "../SpkParameters.h"
 #include "../SpkMLToCpp.h"
@@ -265,13 +266,6 @@ class NonmemTranslator : public ClientTranslator
   std::vector<NonmemDataRecords> data_for_all_subjects;
 
   void initSymbolTable( SymbolTable& );
-  bool readContent( DOMElement * content_node,
-		    std::string & spkinml_verOut,
-		    enum client::type & client_typeOut,
-		    enum SpkParameters::Analysis & analysis_typeOut );// returns true if rough content checking passes
-  int  readDriver(  DOMDocument* tree, 
-		    SpkParameters& spkOut, 
-		    NonmemParameters & nonmemOut );// returns the number of individuals
   void readModel(   xercesc::DOMDocument* tree, 
 		    int nIndividuals,
 		    SymbolTable * table);
@@ -292,5 +286,6 @@ class NonmemTranslator : public ClientTranslator
 		    const std::string order_id_pair[]
 		 );
 };
+
 #endif
 
