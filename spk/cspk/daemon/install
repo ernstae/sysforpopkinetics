@@ -1,5 +1,13 @@
 #!/bin/sh
 
+if [ $UID -ne 0 ];
+then
+    echo "You must be root to run this program"
+    exit 1
+fi
+
+source ../../../../../doc/webdir.sh
+
 SERVICE_ROOT=spkrun
 
 cp ${SERVICE_ROOT}testd /etc/rc.d/init.d
@@ -7,3 +15,8 @@ cp ${SERVICE_ROOT}d.pl /usr/local/bin/spktest
 echo "installed /etc/rc.d/init.d/${SERVICE_ROOT}testd "
 echo "installed /usr/local/bin/spktest/${SERVICE_ROOT}d.pl"
 
+
+D=${SERVICE_ROOT}d
+pod2html $D.pl > $D.pl.html
+
+scp $D.pl.html $WEBHOST:/$WEBDIR/man/$D.pl.html
