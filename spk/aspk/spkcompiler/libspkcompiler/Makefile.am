@@ -3,9 +3,12 @@ lib_LTLIBRARIES = libspkcompiler.la
 NONMEM      = nonmem
 INCLUDES    = -I@top_srcdir@/ -I$(NONMEM)/
 
+AM_LFLAGS   = -i
 AM_YFLAGS   = -d --verbose --debug
-AM_CFLAGS   = -d
-AM_CPPFLAGS = -d
+AM_CFLAGS   = -g
+AM_CPPFLAGS = -g
+
+MOSTLYCLEANFILES = explang.cpp explang.h explang.output lex_explang.c
 
 libspkcompiler_la_SOURCES = \
         config.h \
