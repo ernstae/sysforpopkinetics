@@ -26,7 +26,6 @@
 
 #include <iostream>
 #include <ostream>
-#include <strstream>
 #include <ctime>
 #include <vector>
 #include <string>
