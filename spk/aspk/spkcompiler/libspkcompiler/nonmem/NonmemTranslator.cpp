@@ -2684,14 +2684,18 @@ void NonmemTranslator::generateIndDriver( ) const
       oDriver << "//////////////////////////////////////////////////////////////////////" << endl;
       oDriver << "//    NONMEM Specific" << endl;
       // theta (b)
-      oDriver << "oResults << \"<theta_out>\" << endl;" << endl;
+      oDriver << "oResults << \"<theta_out length=\\\"\" << nTheta << \"\\\">\" << endl;" << endl;
       oDriver << "for( int i=0; i<nTheta; i++ )" << endl;
       oDriver << "{" << endl;
       oDriver << "   oResults << \"<value>\" << thetaOut[i] << \"</value>\" << endl;" << endl;
       oDriver << "}" << endl;
       oDriver << "oResults << \"</theta_out>\" << endl;" << endl;
       // omega 
-      oDriver << "oResults << \"<omega_out>\" << endl;" << endl;
+      oDriver << "oResults << \"<omega_out dimension=\\\"\" << dimOmega << \"\\\"";
+      if( myOmegaStruct == Symbol::TRIANGLE )
+	oDriver << "struct=\\\"diagonal\\\">\" << endl;" << endl;
+      else
+	oDriver << "struct=\\\"block\\\">\" << endl;" << endl;
       oDriver << "for( int i=0; i<nOmega; i++ )" << endl;
       oDriver << "{" << endl;
       oDriver << "   oResults << \"<value>\" << omegaOut[i] << \"</value>\" << endl;" << endl;
@@ -2921,7 +2925,7 @@ void NonmemTranslator::generateIndDriver( ) const
   //
   //=============================================================================
 
-  oDriver << "oResults << \"</spkreportML>\" << endl;" << endl;
+  oDriver << "oResults << \"</spkreport>\" << endl;" << endl;
 
   oDriver << "oResults.close();" << endl;
   oDriver << "if( haveCompleteData && isOptSuccess && isStatSuccess )" << endl;
@@ -3692,9 +3696,9 @@ void NonmemTranslator::generatePopDriver() const
   for( pWhatGoesIn = whatGoesIn.begin(); pWhatGoesIn!=whatGoesIn.end(); pWhatGoesIn++ )
     {
       keyWhatGoesIn = SymbolTable::key( *pWhatGoesIn );
-      if( keyWhatGoesIn == "simdv" )
+      if( keyWhatGoesIn == keySIMDV )
 	{
-	  oDriver << "   oResults << \"<value label=\\\"" << keyWhatGoesIn << "\\\"" << ">\" << ";
+	  oDriver << "   oResults << \"<value label=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
 	  oDriver << "yOut[cnt]";
 	  oDriver << " << \"</value>\" << endl;" << endl;
 	}
@@ -3703,7 +3707,7 @@ void NonmemTranslator::generatePopDriver() const
 	  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
 	    {
 	      oDriver << "   oResults << \"<value label=\\\"";
-	      oDriver << keyWhatGoesIn << "(" << cntTheta << ")" << "\\\"" << ">\" << ";
+	      oDriver << *pWhatGoesIn << "(" << cntTheta << ")" << "\\\"" << ">\" << ";
 	      oDriver << "set.data[i]->" << keyWhatGoesIn << "[j][" << cntTheta << "]";
 	      oDriver << " << \"</value>\" << endl;" << endl;
 	    }
@@ -3713,7 +3717,7 @@ void NonmemTranslator::generatePopDriver() const
 	  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
 	    {
 	      oDriver << "   oResults << \"<value label=\\\"";
-	      oDriver << keyWhatGoesIn << "(" << cntEta << ")"<< "\\\"" << ">\" << ";
+	      oDriver << *pWhatGoesIn << "(" << cntEta << ")"<< "\\\"" << ">\" << ";
 	      oDriver << "set.data[i]->" << keyWhatGoesIn << "[j][" << cntEta << "]";
 	      oDriver << " << \"</value>\" << endl;" << endl;
 	    }
@@ -3723,7 +3727,7 @@ void NonmemTranslator::generatePopDriver() const
 	  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
 	    {
 	      oDriver << "   oResults << \"<value label=\\\"";
-	      oDriver << keyWhatGoesIn << "(" << cntEps << ")"<< "\\\"" << ">\" << ";
+	      oDriver << *pWhatGoesIn << "(" << cntEps << ")"<< "\\\"" << ">\" << ";
 	      oDriver << "set.data[i]->" << keyWhatGoesIn << "[j][" << cntEps << "]";
 	      oDriver << " << \"</value>\" << endl;" << endl;
 	    }
@@ -3734,7 +3738,7 @@ void NonmemTranslator::generatePopDriver() const
 	}
       else
 	{
-	  oDriver << "   oResults << \"<value label=\\\"" << keyWhatGoesIn << "\\\"" << ">\" << ";
+	  oDriver << "   oResults << \"<value label=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
           oDriver << "set.data[i]->" << keyWhatGoesIn << "[j]";
 	  oDriver << " << \"</value>\" << endl;" << endl;
 	}
