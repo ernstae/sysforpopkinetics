@@ -1,4 +1,6 @@
 #include <iostream>
+#include <map>
+#include <string>
 
 #include "SymbolTable.h"
 #include "client.h"
@@ -9,6 +11,14 @@ SymbolTable::SymbolTable( )
 }
 SymbolTable::~SymbolTable()
 { 
+}
+map<string, Symbol>::const_iterator SymbolTable::begin() const
+{
+   return userSymbols.begin();
+}
+map<string, Symbol>::const_iterator SymbolTable::end() const
+{
+   return userSymbols.end();
 }
 void SymbolTable::dump() const
 {

@@ -77,6 +77,11 @@ std::pair<enum nonmem::MODEL,
     }
   else if( base == nonmem::ADVAN2 )
     {
+      //
+      // This is not supported yet!
+      //
+      fprintf( stderr, "%s is not supported!\n", nonmem::toStringMODEL( base ) );
+      exit(-1);
       advan2( tran, modelNode, nIndividuals, table );
     }
   else
@@ -93,6 +98,53 @@ void pred(   enum nonmem::TRANS,
 	     int nIndividuals,
 	     SymbolTable * table )
 {
+  DOMImplementation * impl 
+    = DOMImplementationRegistry::getDOMImplementation(XMLString::transcode("Core"));
+  
+  DOMDocument * doc = modelNode->getOwnerDocument();
+  DOMTreeWalker * walker = doc->createTreeWalker(  modelNode,
+                                                   DOMNodeFilter::SHOW_ELEMENT,
+                                                   NULL,
+                                                   false
+						   );
+  DOMElement * pred = dynamic_cast<DOMElement*>( walker->firstChild() );
+  assert( pred != NULL );
+
+  ExpTreeGenerator expUtils;
+  char pred_i_filename[] = "pred.eqn";
+  const XMLCh* pred_def = pred->getFirstChild()->getNodeValue();
+  ofstream o( pred_i_filename );
+  if( !o )
+    {
+      fprintf( stderr, "Error opening a file <%s>\n", pred_i_filename );
+    }
+  o << C(pred_def) << endl;
+  o.close();
+  
+  FILE * pPRED_in = fopen( pred_i_filename, "r" );
+  assert( pPRED_in );
+  yyin = pPRED_in;  
+  //yydebug = 1;
+  gSpkExpErrors = 0;
+  gSpkExpLines  = 0;
+  gSpkExpSymbolTable = table;
+  yyrestart( yyin );
+
+  yyparse();
+
+  fclose( pPRED_in );
+
+  // Y and F must be assigned to some values within PRED; it's required!
+  if( table->find( "y" ) == NULL )
+    {
+      fprintf( stderr, "Y must be assigned to a value! <%d, %s>\n", __LINE__, __FILE__ );
+      exit(-1);
+    }
+  if( table->find( "f" ) == NULL )
+    {
+      fprintf( stderr, "F must be assigned to a value! <%d, %s>\n", __LINE__, __FILE__ );
+      exit(-1);
+    }
 }
 void advan2( enum nonmem::TRANS trans,
 	     xercesc::DOMElement* modelNode,
@@ -110,7 +162,6 @@ void advan2( enum nonmem::TRANS trans,
                                                    DOMNodeFilter::SHOW_ELEMENT,
                                                    NULL,
                                                    false
-
 						   );
   ExpTreeGenerator expUtils;
 

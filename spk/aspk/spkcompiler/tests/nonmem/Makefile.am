@@ -20,7 +20,9 @@ test_nonmem_SOURCES = \
 	read_nonmem_modelTest.cpp \
 	read_nonmem_modelTest.h \
         emit_nonmem_driverTest.cpp \
-	emit_nonmem_driverTest.h 
+	emit_nonmem_driverTest.h \
+	emit_nonmem_modelTest.cpp \
+	emit_nonmem_modelTest.h
 
 test_nonmem_INCLUDES = \
 	FitPopulationTestModel.h \
@@ -29,7 +31,8 @@ test_nonmem_INCLUDES = \
 	read_nonmem_driverTest.h \
 	read_nonmem_dataTest.h \
 	read_nonmem_modelTest.h \
-        emit_nonmem_driverTest.h
+        emit_nonmem_driverTest.h \
+	emit_nonmem_modelTest.h
 
 AM_LDFLAGS = -lspk /usr/local/lib/libnagc.a -lpthread -lm -lxerces-c -lcppunit -lspkcompiler
 

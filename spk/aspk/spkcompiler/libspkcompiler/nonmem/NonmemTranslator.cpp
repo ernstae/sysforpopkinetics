@@ -10,6 +10,7 @@
 #include "read_nonmem_data.h"
 #include "emit_IndData.h"
 #include "emit_nonmem_driver.h"
+#include "emit_nonmem_model.h"
 #include <xercesc/dom/DOM.hpp>
 
 #include <iostream>
@@ -155,10 +156,15 @@ void NonmemTranslator::translate( DOMDocument* tree )
   Symbol eta(   "eta",   Symbol::VECTOR, Symbol::DOUBLE, true );
   Symbol omega( "omega", Symbol::MATRIX, Symbol::DOUBLE, true );
   Symbol sigma( "sigma", Symbol::MATRIX, Symbol::DOUBLE, true );
-  table.insert( theta );
-  table.insert( eta );
-  table.insert( omega );
+  Symbol eps(   "eps",   Symbol::VECTOR, Symbol::DOUBLE, true );
+  if( analysis_typeOut == SpkParameters::POPULATION )
+    {
+      table.insert( theta );
+      table.insert( omega );
+      table.insert( eps );
+    }
   table.insert( sigma );
+  table.insert( eta );
 
   assert( tree->getElementsByTagName( X("data") ) != NULL );
   DOMElement * dataNode = dynamic_cast<DOMElement*>( 
@@ -178,14 +184,13 @@ void NonmemTranslator::translate( DOMDocument* tree )
      tree->getElementsByTagName( X("model") )->item(0) );
   assert( modelNode != NULL );
 
-  gSpkExpSymbolTable = &table;
   pair<enum nonmem::MODEL, enum nonmem::TRANS> model_type 
-    = read_nonmem_model( modelNode, nIndividuals, gSpkExpSymbolTable );
+    = read_nonmem_model( modelNode, nIndividuals, &table );
   nonmemModel = model_type.first;
   nonmemTrans = model_type.second;
 
   ourGeneratedFileNames = emit(nIndividuals, 
-			       gSpkExpSymbolTable, 
+			       &table, 
 			       label_alias_mapping, 
 			       data_for, 
 			       order_id_pair );
@@ -225,7 +230,13 @@ std::vector<std::string> NonmemTranslator::emit(
 		  order_id_pair );
   fclose( pIndData_h );
   fclose( pIndData_cpp );
-  
+  /*
+  FILE * pEvalPred_cpp = fopen( "evalPred.cpp", "w" );
+  emit_nonmem_model( pEvalPred_cpp,
+		     
+		     table,
+		     label_alais_mapping );
+  */
   vector<string> filenames(8);
   filenames.push_back( driver_cpp );
   filenames.push_back( "IndData.h" );
@@ -234,7 +245,7 @@ std::vector<std::string> NonmemTranslator::emit(
   filenames.push_back( "pk.cpp" );
   filenames.push_back( "error.cpp" );
   filenames.push_back( "omega.cpp" );
-  filenames.push_back( "sigma_cpp" );
+  filenames.push_back( "sigma.cpp" );
   return filenames;
 }
 const struct SpkParameters * NonmemTranslator::getSpkParameters() const

@@ -49,14 +49,22 @@
  * @param tableOut Symbol table to which the values of
  * attributes, @a label and @a synonym, are inserted as @a keyword (predefined).
  *
- * @param label_aliasOut Table to which the values of attribute,
+ * @param label_aliasOut A table to which the values of attribute,
  * @a label, is inserted as keys and @a synonym as entries.
  * When a @a synonym is not given, an empty string will be inserted
  * as the entry of the corresponding key (@a label).
+ * Additional labels, "evid" and "mdv" shall be added to this table
+ * with no alias associated with each of them if they do not appear
+ * in the data set.
  *
- * @param data_forOut Ordered list of tables in which the i-th table
+ * @param data_forOut An ordered list of tables in which the i-th table
  * contains the i-th subject's data set.  Each table mapps @a labels
  * and their corresponding arrays of data.
+ * The i-th map in the list shall contain additional "evid" and
+ * "mdv" data arrays if they were not found in the data tree. 
+ * In this case, i-th individuals "evid" data array is filled with
+ * @a nonmem::EVID_OBSERVATION and "mdv" is filled with
+ * @a nonmem::MDV_NOT_MISSING.
  * 
  * @param IDsOut Ordered list of strings that identify subjects.
  * The i-th entry identifies the i-th subject in the population.
