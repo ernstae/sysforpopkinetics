@@ -174,9 +174,6 @@ my $bugzilla_product = "SPK";
 my $submit_to_bugzilla = 1;
 my $retain_working_dir = 0;
 
-my $service_name = "$service_root" . "d";
-my $prefix_working_dir = $service_root;
-
 my $dbh;
 my $build_failure_exit_value = 101;
 my $database_open = 0;
@@ -202,6 +199,8 @@ if ($mode =~ "test") {
     $spk_library_path = "/usr/local/lib/spktest";
     $cpath = "/usr/local/include/spktest";
 }
+my $service_name = "$service_root" . "d";
+my $prefix_working_dir = $service_root;
 
 my $pathname_bugzilla_submit = "/usr/local/bin/bugzilla-submit";
 my $pathname_make = "/usr/bin/make";
@@ -552,7 +551,7 @@ start();
 
 # Add directories of shared libraries to the load path
 $ENV{LD_LIBRARY_PATH} = "/usr/lib:" . $spk_library_path;
-$ENV(CPATH) = $cpath;
+$ENV{CPATH} = $cpath;
 
 # Create a new process group, with this process as leader.  This will
 # allow us to send the TERM signal to all of our children with a single
@@ -583,6 +582,7 @@ else {
 # loop until interrupted by a signal
 use POSIX ":sys_wait_h";
 my $child_pid;
+syslog('info', "processing new computational runs");
 
 while(1) {
     # if there is a job queued-to-run, fork the runner
