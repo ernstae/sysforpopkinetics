@@ -737,6 +737,15 @@ void quasiNewtonAnyBox(
   int    nMaxIter    = optimizer.getNMaxIter();
   int    level       = optimizer.getLevel();
   bool   isWarmStart = optimizer.getIsWarmStart();
+
+  IF THIS IS KEPT (I.E., NO ZERO ITERATIONS WARM STARTS), PUT IT IN THE SPEC
+  IF THIS IS KEPT (I.E., NO ZERO ITERATIONS WARM STARTS), PUT IT IN THE SPEC
+  IF THIS IS KEPT (I.E., NO ZERO ITERATIONS WARM STARTS), PUT IT IN THE SPEC
+  IF THIS IS KEPT (I.E., NO ZERO ITERATIONS WARM STARTS), PUT IT IN THE SPEC
+  // If the number of iterations is zero, then the warm start information
+  // will not be used.  This forces this function to evaluate the 
+  // objective, its gradient, and its derivative at xIn.
+  bool   isWarmStart = optimizer.getIsWarmStart() && nMaxIter > 0;
   
 
   //------------------------------------------------------------
@@ -895,6 +904,11 @@ void quasiNewtonAnyBox(
     objective.function( yCurr, fScaled, gScaled, ... );
   }
 
+  COMMENT THIS
+  COMMENT THIS
+  COMMENT THIS
+  COMMENT THIS
+  COMMENT THIS
 
   if ( isAWarmRestart )
   {
@@ -929,6 +943,7 @@ void quasiNewtonAnyBox(
 	__FILE__ );
     }
   }
+  else if ( nMaxIter == 0 )
   else
   {
     // Set the number of quasi-Newton iterations high enough that 
@@ -972,6 +987,14 @@ void quasiNewtonAnyBox(
   // of the projected gradient is less than or equal to delta.
   double delta;
   double deltaScale = 10.0;
+
+
+ CONSIDER: MOVE THIS SPECIAL ZERO ITERATIONS STUFF UP TO THE PREVIOUS BIG IF BLOCK
+ CONSIDER: MOVE THIS SPECIAL ZERO ITERATIONS STUFF UP TO THE PREVIOUS BIG IF BLOCK
+ CONSIDER: MOVE THIS SPECIAL ZERO ITERATIONS STUFF UP TO THE PREVIOUS BIG IF BLOCK
+ CONSIDER: MOVE THIS SPECIAL ZERO ITERATIONS STUFF UP TO THE PREVIOUS BIG IF BLOCK
+ CONSIDER: MOVE THIS SPECIAL ZERO ITERATIONS STUFF UP TO THE PREVIOUS BIG IF BLOCK
+ CONSIDER: MOVE THIS SPECIAL ZERO ITERATIONS STUFF UP TO THE PREVIOUS BIG IF BLOCK
 
   // Initialize the convergence flag and iteration counter.
   bool isWithinTol;
