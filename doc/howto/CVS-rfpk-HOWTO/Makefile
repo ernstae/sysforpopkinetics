@@ -1,25 +1,25 @@
-D = CVS-rfpk-HOWTO
-JARS = "F:/Programs/java/xalan.jar;F:/Programs/java/xerces.jar"
-PROC = org.apache.xalan.xslt.Process
-S = f:/cygwin/usr/local/lib/xml/stylesheets/docbook-xsl
-HTML = $S/html/docbook.xsl
-FO = $S/fo/docbook.xsl
-# comment
-all:	html fo
+T = CVS-rfpk-HOWTO
+#HTML_OPS = --nochunks --output $T.html
+HTML_OPS = --output $T.html
 
-html:	$D.html
+all:	html pdf rtf
 
-fo:	$D.fo
+html:	$T.html
 
-$D.html:	$D.xml
-	java -cp ${JARS} ${PROC} -in $D.xml -xsl ${HTML} -out $D.html
+pdf:	$T.pdf
 
-$D.fo:	$D.xml
-	java -cp ${JARS} ${PROC} -in $D.xml -xsl ${FO} -out $D.fo
+rtf:	$T.rtf
 
-install:
-	cp -f $D.html H:/HOWTO/$D.html
+%.html : %.xml
+	docbook2html --dsl ../stylesheet/local.dsl#html $(HTML_OPS)  $<
+
+%.pdf : %.xml
+	docbook2pdf --dsl ../stylesheet/local.dsl#print $<
+
+%.rtf : %.xml
+	docbook2rtf --dsl ../stylesheet/local.dsl#print $<
 
 clean:
-	rm -f $D.html $D.fo
+	rm -f $T.pdf $T.rtf *.html/*
+	rmdir *.html 
 

@@ -1,25 +1,25 @@
-D = SUBJECT-rfpk-HOWTO
-JARS = F:/Programs/Java
-PROC = org.apache.xalan.xslt.Process
-S = f:/cygwin/usr/local/lib/xml/stylesheets/docbook-xsl
-HTML = $S/html/docbook.xsl
-FO = $S/fo/docbook.xsl
+T = SUBJECT-rfpk-HOWTO
+#HTML_OPS = --nochunks --output $T.html
+HTML_OPS = --output $T.html
 
-all:	html fo
+all:	html pdf rtf
 
-html:	$D.html
+html:	$T.html
 
-fo:	$D.fo
+pdf:	$T.pdf
 
-$D.html:	$D.xml
-	java -cp ${JARS} ${PROC} -in $D.xml -xsl ${HTML} -out $D.html
+rtf:	$T.rtf
 
-$D.fo:	$D.xml
-	java -cp ${JARS} ${PROC} -in $D.xml -xsl ${FO} -out $D.fo
+%.html : %.xml
+	docbook2html --dsl ../stylesheet/local.dsl#html $(HTML_OPS)  $<
 
-install:
-	cp -f $D.html H:/HOWTO/$D.html
+%.pdf : %.xml
+	docbook2pdf --dsl ../stylesheet/local.dsl#print $<
+
+%.rtf : %.xml
+	docbook2rtf --dsl ../stylesheet/local.dsl#print $<
 
 clean:
-	rm -f $D.html $D.fo
+	rm -f $T.pdf $T.rtf *.html/*
+	rmdir *.html 
 
