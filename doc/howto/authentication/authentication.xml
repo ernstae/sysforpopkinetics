@@ -1,0 +1,188 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"[
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+]>
+<article><title>AUTHENTICATION AND ENCRYPTION HOWTO</title>
+ <articleinfo>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>July 4, 1776</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+    </revhistory>
+  <abstract>
+      <para>
+	Due to the private nature of patient data and proprietary
+	PK models, authentication and encryption are critical to
+	the functioning of Spk.  This document provides specific
+	directions for installing the required software infrastructure
+	for the RFPK Spk demo system.
+      </para>
+  </abstract>
+ </articleinfo>
+  <sect1>
+    <title>Introduction</title>
+    <para>
+      The authentication and encryption infrastructure must achieve
+      the following goals:
+      <orderedlist>
+	<listitem>
+	  <para>
+	    A user logging into the web site must have confidence
+	    that this is, indeed, the proper site and not an imposter.
+   	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    All communication between Spk components that travels
+	    over the public Internet must be encrypted.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    The web server must have confidence that the client
+	    application with which it is communicating is a valid
+	    unmodified version of software released by RFPK.
+	  </para>
+	</listitem>
+      </orderedlist>
+    </para>
+    <para>
+      The first two goals are accomplished by configuring the web
+      server to use the Secure Socket Layer (SSL) and by installing
+      a validated authentication certificate.  
+    </para>
+    <para>
+      Authentication is performed
+      whenever a user selects a URL that starts with 
+      "https://", indicating that the secure version of the
+      http protocal is to used, the version that incorporates
+      the Secure Socket Layer (SSL).
+      In the process of establishing an SSL connection to the
+      web server, the user's browser is sent a copy of the certificate
+      by the server.  To be accepted, the certificate must have been
+      digitally signed by a Certificate Authority (CA) whose
+      signature and public encryption key
+      are already on file within the browser.  Using this 
+      encryption key, the browser deciphers the signature field
+      in the certificate, and if the answer is indeed the 
+      expected signature of the CA, the connection process goes
+      forward.
+    </para>
+    <para>
+      Over an SSL connection, every message is encrypted, in
+      either direction. A 128-bit cipher is used, providing
+      the measure of security that is now standard for the
+      best commercial web sites.
+    </para>
+    <para>
+      The third goal is accomplished by the Java WebStart technology
+      used to destribute new and updated versions the Spk client,
+      called the MDA. The MDA itself is digitally signed by the
+      RFPK software team.  WebStart is configured so that only
+      properly signed software will run.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Obtaining a Certificate</title>
+    <para>
+      A certificate must be signed by a Certificate Authority (CA).
+      The best known CAs, including Versign, Thawte, GeoTrust,
+      provide this service for a fee.  They are respected and 
+      have been in the business long enough that most browsers
+      come with copies of their root certificates 
+      pre-installed. Any certificate sold by one of these 
+      well-known CAs will be derivative of one or another of
+      these pre-installed root certificates and, hence, will
+      be accpeted automatically by 99% of the browsers, without
+      requiring any user feedback.
+    </para>
+    <para>
+      The University of Washington (UW) is a CA. In fact, any one
+      can self-sign a certificate and hence act as a CA.  A
+      certificate signed by the University of Washington is 
+      apt to accepted by a broader spectrum of users than one
+      signed by Alan Westhagen, Jiaji Du, or even RFPK. 
+      The UW root certificate is not,
+      however, pre-installed in browsers.  To access secure
+      services at the UW, users are asked to 
+      <ulink url="https://www.washington.edu/computing/ca/index.html">
+	install the UW Services Certificate
+      </ulink>,
+      which can done automatically, with a button click, with most
+      browsers.
+    </para>
+    <para>
+      The UW Computing and Communications Department has a
+      <ulink url="https://certs.cac.washington.edu/">web site</ulink>
+      that partially automates the process of obtaining a certificate.
+      To use it, you must have a MyNetId weblogin.  You must
+      also be listed in the DNS record as one of the system 
+      administrators for the server for which you are obtaining
+      a certificate. If you are not sure whether or not you are
+      in the system administrator list, start the process anyway,
+      because checking the DNS record and adding you if necessary
+      is one of the steps that will follow.
+    </para>
+    <para>
+      After providing information about the use of the certificate,
+      you will be asked to paste a Certificate Signing Request (CSR)
+      into a field in a form on the screen.
+      The following process for generating a CSR 
+      assumes that you have a recent Java SDK installed and that
+      the environment variable JAVA_HOME points to the directory where
+      the installation is located. It also assumes that we wil be
+      using the tomcat web server.
+    </para>
+    <para>
+      The first step is to produce a randomly generated
+      public/private encryption key pair.  They keys are placed
+      in a binary file which, in this process, we will call
+      <filename>keystore</filename>.
+      <screen>
+$JAVA_HOME/bin/keytool -genkey -alias tomcat -keyalg RSA -keystore keystore
+      </screen>
+    </para>
+    <para>
+      You will be asked to provide a password.  Make it a good one,
+      because this password will provide access to the key pair that
+      you are about to generate.
+    </para>
+    <para>
+      The <command>keytool</command> program will ask you a number of
+      questions. It is most imporant that you provide a good password
+      when requested, because this will protect secrecy of your
+      public/private key pair.  Be certain, as well, to provide the
+      full domain name of the server, rather than your own first
+      and last name.
+    </para>
+    <para>
+      Here is the list of questions and suggested responses.
+      The questions are in 
+      <emphasis>italics</emphasis> and the responses in normal text:
+      <screen>
+<emphasis>Enter keystore password:</emphasis> Make@!This&*Good
+<emphasis>What is your first and last name?
+[Unknown]:</emphasis> spk.rfpk.washington.edu
+<emphasis>What is the name of your organizational unit?
+[Unknown]:</emphasis> RFPK
+<emphasis>What is the name of your organization?
+[Unknown]:</emphasis> University of Washington
+<emphasis><What is the name of your City or Locality?
+[Unknown]:/emphasis> Seattle
+<emphasis>What is the name of your State or Province?
+[Unknown]:</emphasis> WA
+<emphasis>What is the two-letter country code for this unit?
+[Unknown]:</emphasis> US
+<emphasis>Is CN=spk.rfpk.washington.edu, OU=University of Washington, O=RFPK, L=Seattle, ST=WA, C=US correct?
+[no]:</emphasis> yes
+<emphasis>Enter key password for &lt;tomcat&gt;
+    (RETURN if same as keystore password): </emphasis> (press enter)
+      </screen>
+    </para>
+  </sect1>
+</article>
