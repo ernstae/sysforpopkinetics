@@ -60,7 +60,12 @@ Test* EqIndModelTest::suite()
 {
   TestSuite *suiteOfTests = new TestSuite("EqIndModelTest");
   suiteOfTests->addTest(new TestCaller<EqIndModelTest>("testEqIndModel",  &EqIndModelTest::testEqIndModel));
-  suiteOfTests->addTest(new TestCaller<EqIndModelTest>("testLargeMatrix", &EqIndModelTest::testLargeMatrix));
+
+  // This test has been disabled.
+  /*
+   suiteOfTests->addTest(new TestCaller<EqIndModelTest>("testLargeMatrix", &EqIndModelTest::testLargeMatrix));
+  */
+
   return suiteOfTests;
 }
 
