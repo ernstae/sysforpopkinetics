@@ -1,5 +1,5 @@
 DiffEqnModelTest_SOURCES = \
-    genericDriver.cpp \
+    main.cpp \
     convertStatisticsToNonmem.cpp \
     DiffEqnModelD.cpp \
     DiffEqnModelF_Analytic.cpp \
@@ -18,7 +18,7 @@ DiffEqnModelTest_SOURCES = \
     ode4rk.h \
     readNonmemTheophylline.h
 
-DiffEqnModelTest_OBJECTS = genericDriver.o \
+DiffEqnModelTest_OBJECTS = main.o \
 	convertStatisticsToNonmem.o \
         DiffEqnModelD.o \
 	DiffEqnModelF_Analytic.o \
@@ -30,14 +30,14 @@ DiffEqnModelTest_OBJECTS = genericDriver.o \
 	nonmemEqvContainers.o \
 	readNonmemTheophylline.o
 
-CPPFLAGS = -g
+CPPFLAGS = -g -Wno-deprecated
 LDFLAGS = -static -lspk -lnagc -lpthread -lm
 
 DiffEqnModelTest : $(DiffEqnModelTest_SOURCES) $(DiffEqnModelTest_OBJECTS)
 	g++ $(CPPFLAGS) $(DiffEqnModelTest_OBJECTS) $(LDFLAGS) -o $@
 
-genericDriver.o : genericDriver.cpp
-	g++ $(CPPFLAGS) genericDriver.cpp -c
+main.o : main.cpp
+	g++ $(CPPFLAGS) main.cpp -c
 
 convertStatisticsToNonmem.o : convertStatisticsToNonmem.cpp convertStatisticsToNonmem.h
 	g++ $(CPPFLAGS) convertStatisticsToNonmem.cpp  -c

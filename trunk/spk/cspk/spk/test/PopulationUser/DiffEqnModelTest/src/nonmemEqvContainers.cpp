@@ -34,11 +34,10 @@
 #pragma warning( disable : 4786 )
 
 #include <string>
-#include <strstream>
 #include <iostream>
 #include <cmath>
 #include <limits>
-
+#include <strstream>
 #include <spk/SpkValarray.h>
 #include <spk/pi.h>
 #include <spk/Objective.h>
