@@ -223,7 +223,7 @@ int main(int argc, const char *argv[])
 	model.getIndParLimits( bLow, bUp );
 
 	// start the output file
-	cout << "<?xml version \"1.0\"?>" << endl;
+	cout << "<?xml version=\"1.0\"?>" << endl;
 	cout << "<spkreport>" << endl;
         
 	// start timing
