@@ -128,6 +128,14 @@ my @args;
 
 my $jobs_that_differed = 0;
 
+# Added by Sachiko on 02/14/2005
+# Add this array to keep track of which jobs actually failed
+# so that the list of failed jobs can be reported at the
+# very end of process.  
+# Without it, we had to pipe the output to a file because
+# output could be too long to fit in a screen buffer.
+my @job_ids_for_differed;
+
 for ('cerr', 'srun') {
     my $job    =  $config->{$_}[0]{'job'};
     my $ignore =  $config->{$_}[0]{'ignore'};
@@ -135,7 +143,12 @@ for ('cerr', 'srun') {
     /cerr/ and do {
 	print "\nchecking differences for jobs with end_code 'cerr'";
 	for my $job_id (@$job) {
-	    print "\n\tjob $job_id";
+            # Modified by Sachiko on 02/14/2005
+            # Added ": " after the job_id so that the 'diff' command's output
+            # does not follow the id without a break.
+            # Without a break, it was hard to determine the id#
+            # because 'diff' output starts with line #.
+	    print "\n\tjob $job_id: ";
 	    @args = ("diff", "-bB");
 	    for my $regexp (@$ignore) {
 		push @args, ("--ignore-matching-lines", "\"$regexp\"");
@@ -143,9 +156,10 @@ for ('cerr', 'srun') {
 	    push @args, "$base_dir/$_/spkcmptest-job-$job_id/compilation_error.xml";
 	    push @args, "/tmp/spkcmptest-job-$job_id/compilation_error.xml";
 	    if (system(@args) == 0) {
-		print "\t\t\t\t\t\t\t\tOK";
+		print "\t\t\t\t\t\t\tOK";
 	    }
 	    else {
+		push @job_ids_for_differed, $job_id;
 		$jobs_that_differed++;
 	    }
 	}
@@ -153,7 +167,12 @@ for ('cerr', 'srun') {
     /srun/ and do {
 	print "\nchecking differences for jobs with end_code 'srun'";
 	for my $job_id (@$job) {
-	    print "\n\tjob $job_id";
+            # Modified by Sachiko on 02/14/2005
+            # Added ": " after the job_id so that the 'diff' command's output
+            # does not follow the id without a break.
+            # Without a break, it was hard to determine the id#
+            # because 'diff' output starts with line #.
+	    print "\n\tjob $job_id: ";
 	    @args = ("ssh", $cluster, "diff", "-bB");
 	    for my $regexp (@$ignore) {
 		push @args, ("--ignore-matching-lines", "\"$regexp\"");
@@ -162,15 +181,23 @@ for ('cerr', 'srun') {
 	    push @args, "/tmp/spkruntest-job-$job_id/result.xml";
 	    system(@args);
 	    if (system(@args) == 0) {
-		print "\t\t\t\t\t\t\t\tOK";
+		print "\t\t\t\t\t\t\tOK";
 	    }
 	    else {
+		push @job_ids_for_differed, $job_id;
 		$jobs_that_differed++;
 	    }
 	}
     };
 }
 print "\nNumber of jobs that differed: $jobs_that_differed\n";
+
+# Added by Sachiko on 02/14/2005
+# Printing out the list of jobs that differed.
+for my $tmp_job_id (@job_ids_for_differed){
+	print "\t", $tmp_job_id;
+}
+
 print "\nTotal elapsed time for compiling and running: $elapsed_time seconds\n";
 
 exit $jobs_that_differed;
