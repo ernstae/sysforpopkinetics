@@ -1943,12 +1943,8 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   oPred_h << "{" << endl;
 
   oPred_h << "  assert( spk_thetaLen == " << myThetaLen << " );" << endl;
-  // REVISIT SACHIKO
-  // ??? the value is busted!
-  //      oPred_h << "  assert( spk_etaLen   == " << myEtaLen << " );" << endl;
+  oPred_h << "  assert( spk_etaLen   == " << myEtaLen << " );" << endl;
   oPred_h << "  assert( spk_epsLen   == " << myEpsLen << " );" << endl;
-  //oPred_h << "  assert( spk_fLen     == perm->data[spk_i]->id.size() );" << endl;
-  //oPred_h << "  assert( spk_yLen     == perm->data[spk_i]->id.size() );" << endl;
   oPred_h << endl;
 
   ///////////////////////////////////////////////////////////////////////////////////
