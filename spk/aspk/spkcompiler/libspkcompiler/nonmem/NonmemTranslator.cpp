@@ -2369,7 +2369,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "enum RETURN_CODE { SUCCESS=0, CONVERGENCE_FAILURE=1, FILE_ACCESS_FAILURE=2, OTHER_FAILURE };" << endl;
   oDriver << endl;
 
- 
+  oDriver << "namespace{" << endl;
   oDriver << "const vector<CppAD::AD<double> > wres( int n," << endl;
   oDriver << "                                       const valarray<double> & Ri," << endl;
   oDriver << "                                       const vector  < CppAD::AD<double> > & residual )" << endl;
@@ -2386,6 +2386,12 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "   return Cr;" << endl;
   oDriver << "}" << endl;
   oDriver << endl;
+  oDriver << "int series( int a, int d, int n )" << endl;
+  oDriver << "{" << endl;
+  oDriver << "   int l = a + (n-1)*d;" << endl;
+  oDriver << "   return n * (a+l) / 2;" << endl;
+  oDriver << "}" << endl;
+  oDriver << "};" << endl;
 
   oDriver << "int main( int argc, const char argv[] )" << endl;
   oDriver << "{" << endl;
@@ -2855,8 +2861,8 @@ void NonmemTranslator::generateIndDriver( ) const
 
       if( myIsStat )
 	{
+	  oDriver << "int covElemNum = series(1, 1, nB);" << endl;
 	  oDriver << "oResults << \"<ind_stat_result elapsedtime=\\\"\" << statTimeSec << \"\\\">\" << endl;" << endl;
-	  oDriver << "int covElemNum = " << series( 1, 1, myThetaLen ) << ";" << endl;
 	  if( myIsCov )
 	    {
 	      oDriver << "oResults << \"<ind_covariance_out struct=\\\"block\\\" dimension=\\\"\" << nB << \"\\\">\" << endl;" << endl;
@@ -3138,6 +3144,8 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "#include \"IndData.h\"" << endl;
   oDriver << "#include \"DataSet.h\"" << endl;
   oDriver << endl;
+  oDriver << "#include <spk/multiply.h>" << endl;
+  oDriver << "#include <spk/cholesky.h>" << endl;
 
   oDriver << "///////////////////////////////////////////////////////////////////" << endl;
   oDriver << "//   NONMEM PRED specific" << endl;
@@ -3151,6 +3159,30 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "using SPK_VA::valarray;" << endl;
   oDriver << "using namespace std;" << endl;
   oDriver << endl;
+
+  oDriver << "namespace{" << endl;
+  oDriver << "const vector<CppAD::AD<double> > wres( int n," << endl;
+  oDriver << "                                       const valarray<double> & Ri," << endl;
+  oDriver << "                                       const vector  < CppAD::AD<double> > & residual )" << endl;
+  oDriver << "{" << endl;
+  oDriver << "   assert( Ri.size() == n * n );" << endl;
+  oDriver << "   assert( residual.size() == n );" << endl;
+  oDriver << "   valarray<double> r( n );" << endl;
+  oDriver << "   for( int i=0; i<n; i++ ) r[i] = CppAD::Value( residual[i] );" << endl;
+  oDriver << "   valarray<double> C( 0.0, n * n );" << endl;
+  oDriver << "   C = cholesky( Ri, n );" << endl;
+  oDriver << "   valarray<double> w = multiply( C, n, r, 1 );" << endl;
+  oDriver << "   vector< CppAD::AD<double> > Cr(n);" << endl;
+  oDriver << "   for( int i=0; i<n; i++ ) Cr[i] = w[i];" << endl;
+  oDriver << "   return Cr;" << endl;
+  oDriver << "}" << endl;
+  oDriver << endl;
+  oDriver << "int series( int a, int d, int n )" << endl;
+  oDriver << "{" << endl;
+  oDriver << "   int l = a + (n-1)*d;" << endl;
+  oDriver << "   return n * (a+l) / 2;" << endl;
+  oDriver << "}" << endl;
+  oDriver << "};" << endl;
 
   oDriver << "enum RETURN_CODE { SUCCESS=0, CONVERGENCE_FAILURE=1, FILE_ACCESS_FAILURE=2, OTHER_FAILURE };" << endl;
   oDriver << endl;
@@ -3521,18 +3553,11 @@ void NonmemTranslator::generatePopDriver() const
 
       oDriver << "   ///////////////////////////////////////////////////////////////////" << endl;
       oDriver << "   //   NONMEM Specific" << endl;
-      oDriver << "   if( isOptSuccess )" << endl;
+      oDriver << "   if( isOptSuccess || !isOptSuccess )" << endl;
       oDriver << "   {" << endl;
-      oDriver << "      valarray<double> biOut(nB);" << endl;
       oDriver << "      model.getTheta( thetaOut );" << endl;
       oDriver << "      model.getOmega( omegaOut );" << endl;
       oDriver << "      model.getSigma( sigmaOut );" << endl;
-      oDriver << "      for( int i=0; i<nPop; i++ )" << endl;
-      oDriver << "      {" << endl;
-      oDriver << "         model.selectIndividual( i ); " << endl;
-      oDriver << "         model.getIndPar( biOut );"   << endl;
-      oDriver << "         bOut[ slice( i*nB, nB, 1 ) ] = biOut; " << endl;
-      oDriver << "      }" << endl;
       oDriver << "   }" << endl;
       oDriver << "   //" << endl;
       oDriver << "   ///////////////////////////////////////////////////////////////////" << endl;      
@@ -3638,6 +3663,20 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "/*   ReportML Document                                             */" << endl;
   oDriver << "/*                                                                 */" << endl;
   oDriver << "/*******************************************************************/" << endl;
+  oDriver << "model.setPopPar( alpOut );" << endl;
+  oDriver << "for( int i=0; i<nPop; i++ )" << endl;
+  oDriver << "{" << endl;
+  oDriver << "   valarray<double> RiOut( N[i] * N[i] );" << endl;
+  oDriver << "   model.selectIndividual(i);" << endl;
+  oDriver << "   model.setIndPar( bOut[ slice( i*nB, nB, 1 ) ] );" << endl;
+  oDriver << "   model.dataVariance( RiOut );" << endl;
+  oDriver << "   for( int j=0; j<N[i]; j++ )" << endl;
+  oDriver << "   {" << endl;
+  oDriver << "      set.data[i]->" << UserStr::RES << "[j] = y[j] - set.data[i]->" << UserStr::PRED << "[j] ;" << endl;
+  oDriver << "   }" << endl;
+  oDriver << "   set.data[i]->" << UserStr::WRES << " = wres( N[i], RiOut, set.data[i]->" << UserStr::RES << " ); " << endl;
+  oDriver << "}" << endl;
+
   oDriver << "ofstream oResults( \"" << fResult_xml << "\" );" << endl;
   oDriver << "if( !oResults.good() )" << endl;
   oDriver << "{" << endl;
@@ -3697,7 +3736,7 @@ void NonmemTranslator::generatePopDriver() const
 	oDriver << "struct=\\\"block\\\">\" << endl;" << endl;
       else
 	oDriver << "struct=\\\"diagonal\\\">\" << endl;" << endl;
-      oDriver << "for( int i=nTheta; i<nTheta+nOmega; i++ )" << endl;
+      oDriver << "for( int i=0; i<nOmega; i++ )" << endl;
       oDriver << "{" << endl;
       oDriver << "   oResults << \"<value>\" << omegaOut[i] << \"</value>\" << endl;" << endl;
       oDriver << "}" << endl;
@@ -3708,7 +3747,7 @@ void NonmemTranslator::generatePopDriver() const
 	oDriver << "struct=\\\"block\\\">\" << endl;" << endl;
       else
 	oDriver << "struct=\\\"diagonal\\\">\" << endl;" << endl;
-      oDriver << "for( int i=nTheta+nOmega; i<nTheta+nOmega+nSigma; i++ )" << endl;
+      oDriver << "for( int i=0; i<nSigma; i++ )" << endl;
       oDriver << "{" << endl;
       oDriver << "   oResults << \"<value>\" << sigmaOut[i] << \"</value>\" << endl;" << endl;
       oDriver << "}" << endl;
@@ -3721,10 +3760,10 @@ void NonmemTranslator::generatePopDriver() const
       if( myIsStat )
 	{
 	  oDriver << "oResults << \"<pop_stat_result elapsedtime=\\\"\" << statTimeSec << \"\\\">\" << endl;" << endl;
-	  oDriver << "int covElemNum = " << series( 1, 1, myThetaLen ) << ";" << endl;
+	  oDriver << "int covElemNum = series( 1, 1, nAlp );" << endl;
 	  if( myIsCov )
 	    {
-	      oDriver << "oResults << \"<pop_covariance_out struct=\\\"block\\\" dimension=\\\"\" << nB << \"\\\">\" << endl;" << endl;
+	      oDriver << "oResults << \"<pop_covariance_out struct=\\\"block\\\" dimension=\\\"\" << nAlp << \"\\\">\" << endl;" << endl;
 	      oDriver << "for( int i=0; i<covElemNum; i++ )" << endl;
 	      oDriver << "{" << endl;
 	      oDriver << "oResults << \"   <value>\" << covOut[i] << \"</value>\" << endl;" << endl;
@@ -3734,7 +3773,7 @@ void NonmemTranslator::generatePopDriver() const
 	    }
 	  if( myIsInvCov )
 	    {
-	      oDriver << "oResults << \"<pop_inverse_covariance_out struct=\\\"block\\\" dimension=\\\"\" << nB << \"\\\">\" << endl;" << endl;
+	      oDriver << "oResults << \"<pop_inverse_covariance_out struct=\\\"block\\\" dimension=\\\"\" << nAlp << \"\\\">\" << endl;" << endl;
 	      oDriver << "for( int i=0; i<covElemNum; i++ )" << endl;
 	      oDriver << "{" << endl;
 	      oDriver << "oResults << \"   <value>\" << invCovOut[i] << \"</value>\" << endl;" << endl;
@@ -3744,8 +3783,8 @@ void NonmemTranslator::generatePopDriver() const
 	    }
 	  if( myIsStderr )
 	    {
-	      oDriver << "oResults << \"<pop_stderror_out length=\\\"\" << nB << \"\\\">\" << endl;" << endl;
-	      oDriver << "for( int i=0; i<nB; i++ )" << endl;
+	      oDriver << "oResults << \"<pop_stderror_out length=\\\"\" << nAlp << \"\\\">\" << endl;" << endl;
+	      oDriver << "for( int i=0; i<nAlp; i++ )" << endl;
 	      oDriver << "{" << endl;
 	      oDriver << "oResults << \"   <value>\" << seOut[i] << \"</value>\" << endl;" << endl;
 	      oDriver << "}" << endl;
@@ -3754,7 +3793,7 @@ void NonmemTranslator::generatePopDriver() const
 	    }
 	  if( myIsCorrelation )
 	    {
-	      oDriver << "oResults << \"<pop_correlation_out struct=\\\"block\\\" dimension=\\\"\" << nB << \"\\\">\" << endl;" << endl;
+	      oDriver << "oResults << \"<pop_correlation_out struct=\\\"block\\\" dimension=\\\"\" << nAlp << \"\\\">\" << endl;" << endl;
 	      oDriver << "for( int i=0; i<covElemNum; i++ )" << endl;
 	      oDriver << "{" << endl;
 	      oDriver << "oResults << \"   <value>\" << correlationOut[i] << \"</value>\" << endl;" << endl;
@@ -3764,8 +3803,8 @@ void NonmemTranslator::generatePopDriver() const
 	    }
 	  if( myIsCoefficient )
 	    {
-	      oDriver << "oResults << \"<pop_coefficient_out length=\\\"\" << nB << \"\\\">\" << endl;" << endl;
-	      oDriver << "for( int i=0; i<nB; i++ )" << endl;
+	      oDriver << "oResults << \"<pop_coefficient_out length=\\\"\" << nAlp << \"\\\">\" << endl;" << endl;
+	      oDriver << "for( int i=0; i<nAlp; i++ )" << endl;
 	      oDriver << "{" << endl;
 	      oDriver << "oResults << \"   <value>\" << coefficientOut[i] << \"</value>\" << endl;" << endl;
 	      oDriver << "}" << endl;
@@ -3774,8 +3813,8 @@ void NonmemTranslator::generatePopDriver() const
 	    }
 	  if( myIsConfidence )
 	    {
-	      oDriver << "oResults << \"<pop_confidence_out length=\\\"\" << nB*2 << \"\\\">\" << endl;" << endl;
-	      oDriver << "for( int i=0; i<nB*2; i++ )" << endl;
+	      oDriver << "oResults << \"<pop_confidence_out length=\\\"\" << nAlp*2 << \"\\\">\" << endl;" << endl;
+	      oDriver << "for( int i=0; i<nAlp*2; i++ )" << endl;
 	      oDriver << "{" << endl;
 	      oDriver << "oResults << \"   <value>\" << confidenceOut[i] << \"</value>\" << endl;" << endl;
 	      oDriver << "}" << endl;
