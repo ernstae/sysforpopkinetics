@@ -24,6 +24,7 @@ spkind: spkind.o $(objects)
 
 install:
 	cp spkjob spkpop spkind newjob.sh $(SPK_SHARE)/arch/bin/$(PVM_ARCH)/spk$(MODE)
+	cp pvmhosts $(SPK_SHARE)/pvmhosts
 
 clean:
 	rm -f *.o
