@@ -40,8 +40,8 @@
 class QuasiNewtonAnyBoxObj
 {
 public:
-  virtual const char *function( double* xIn, double& fOut ) = 0;
-  virtual const char *gradient( double* gOut ) = 0;
+  virtual const char* function( double* xIn, double& fOut ) = 0;
+  virtual const char* gradient( double* gOut ) = 0;
 };
 
 void quasiNewtonAnyBox( 
