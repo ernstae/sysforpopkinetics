@@ -9,9 +9,29 @@
     <a class=quick href="/info/index.jsp">SPK Home</a>
 </p>
 <p>
-    <a class=quick href="/user/index.jsp">MySPK</a>
+    <a class=quick href="index.jsp">MySPK</a>
 </p>
 <p>
-    <a class=quick href="/user/main.jsp">Member</a>
+    <a class=quick href="usermain.jsp">Member</a>
 </p>
- 
+<p>
+    <a class=quick href="chpassword.jsp">Password</a>
+</p> 
+<p>
+    <a class=quick href="getmda.jsp">Download</a>
+</p>
+<p>
+    <a class=quick href="userjobs.jsp">My Jobs</a>
+</p>
+<p>
+    <a class=quick href="usermodels.jsp?start=0&counter=0">Models</a>
+</p>
+<p>
+    <a class=quick href="userdatasets.jsp?start=0&counter=0">Datasets</a>
+</p>
+<p>
+    <a class=quick href="modellibrary.jsp?start=0&counter=0">Library</a>
+</p>
+<p>
+    <a class=quick href="userinfo.jsp">Account</a>
+</p>

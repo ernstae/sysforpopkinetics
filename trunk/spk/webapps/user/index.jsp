@@ -1,16 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "xhtml1-transitional.dtd">
 <%@page contentType="text/html"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <html>
-<head>
+  <head>
    <title>SPK Login Page</title>
     <link href=stylesheet.css type="text/css" rel=stylesheet>
-</head>
-<body>
-<%-- <jsp:useBean id="beanInstanceName" scope="session" class="package.class" /> --%>
-<%-- <jsp:getProperty name="beanInstanceName"  property="propertyName" /> --%>
-<table align=left border=0 width=602>
+  </head>
+  <body>
+    <table align=left border=0 width=602>
       <tbody> 
 	<tr> 
 	  <td colSpan=3 vAlign=top>
@@ -39,7 +39,7 @@
                 and <a href="instructLin.jsp">here</a> for Linux users.
             </p>
 	    <p>
-                Please log into MySPK, the "members only" section of SPK.
+                Please log into MySPK, the "members only" section of SPK. When you are done, please <a href="logout.jsp">log out</a>.
             </p>
 
             <form action="checkuser.jsp" method="post">
@@ -54,8 +54,8 @@
                   <th align="left"><input type="password" name="password" ></td>
                 </tr>
                 <tr>
-                  <th align="right"><input type="submit" value="Log In"></th>
-                  <th align="left"><input type="reset"></td>
+                  <th align="right"><input type="Submit" value="Log In"></th>
+                  <th align="left"><input type="Reset"></td>
                 </tr>
               </table>
             </form>
@@ -69,7 +69,7 @@
                 limited, membership is by invitation only. 
                 RFPK is looking for qualified researchers who would be willing to   
                 participate in the ongoing development of SPK by joining our
-                our select group of users.  If you think that you would be a good
+                selected group of users.  If you think that you would be a good
                 candidate for membership, please contact 
                 <a href="mailto:vicini@u.washington.edu">Dr. Paolo Vicini</A>, 
                 the RFPK Principal Investigator.              
@@ -77,5 +77,5 @@
 	</tr>
       </tbody>
     </table>
-</body>
+  </body>
 </html>

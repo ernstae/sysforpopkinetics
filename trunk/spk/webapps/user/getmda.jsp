@@ -1,3 +1,5 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "xhtml1-transitional.dtd">
 <%@page contentType="text/html"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="java.io.BufferedWriter" %>
@@ -113,7 +115,7 @@
             <p>
                Model Design Agent has various user interface types. <br>
                Please select one to download.  You should see a
-               window that says "JAVA loading..." and then "Model Design Agent RFPK
+               window that says "Java loading..." and then "Model Design Agent RFPK
                UW". The MDA will automatically check for the latest version. Answer
                "Yes" if you are asked another security question. Windows user can choose to have
                the MDA on your desktop or not (it's up to you).<br><br>
