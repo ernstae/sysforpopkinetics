@@ -8,7 +8,7 @@ public class TestSpkdb {
 	String password = "codered";
 	String firstName = "Mike";
 	String surname = "Jordan";
-	final int maxTests = 42;
+	final int maxTests = 43;
 	String xmlSource = "<spksource>\n\tline1\n\tline2\n</spksource>";
 	boolean b = true;
 	boolean target = true;
@@ -155,8 +155,8 @@ public class TestSpkdb {
 					      "1.4.3",
 					      xmlSource,
 					      "fo",
-					      0
-					      );
+					      0,
+					      false);
 		    b = jobId != 0;
 		    s += ": job number " + jobId;
 		    break;
@@ -187,8 +187,8 @@ public class TestSpkdb {
 					      "1.4.3",
 					      xmlSource,
 					      "la",
-					      0
-					      );
+					      0,
+					      false);
 		    b = newerJobId != 0;
 		    s += ": job number " + newerJobId;
 
@@ -206,7 +206,8 @@ public class TestSpkdb {
 					      "1.4.3",
 					      xmlSource,
 					      "eh",
-					       0);
+					       0,
+                                               false);
 		    b = newestJobId != 0;
 		    s += ": job number " + newestJobId;
 		    break;
@@ -575,6 +576,23 @@ public class TestSpkdb {
 			count++;
 		    }
 		    b = count == 2;
+		    break;
+                case 43:
+		    target = true;
+		    s = "newJob";
+		    jobId = Spkdb.newJob(conn, 
+					      userId,
+					      "Abstract: Job 1",
+					      33,
+					      "1.01",
+					      44,
+					      "1.4.3",
+					      xmlSource,
+					      "fo",
+					      0,
+					      true);
+		    b = jobId != 0;
+		    s += ": job number " + jobId;
 		    break;
 		default:
 		    break;
