@@ -2,6 +2,7 @@ CC=g++
 CFLAGS=-g
 MODE=test
 SPK_SHARE=/usr/local/spk/share
+MODE=test
 
 includes = spkpvm.h 
 
@@ -10,19 +11,19 @@ objects = spkpvm.o
 all:	spkjob spkpop spkind
 
 spkjob:	spkjob.o $(objects)
-	$(CC) -o spkjob spkjob.o $(objects) -lpvm3 -L$(SPK_SHARE)/lib/$(PVM_ARCH)/spktest
+	$(CC) -o spkjob spkjob.o $(objects) -lpvm3 -L$(PVM_ROOT)/lib/$(PVM_ARCH)/
 
 spkpop: spkpop.o $(objects)
-	$(CC) -o spkpop spkpop.o $(objects) -lpvm3 -L$(SPK_SHARE)/lib/$(PVM_ARCH)/spktest
+	$(CC) -o spkpop spkpop.o $(objects) -lpvm3 -L$(PVM_ROOT)/lib/$(PVM_ARCH)/
 
 spkind: spkind.o $(objects)
-	$(CC) -o spkind spkind.o $(objects) -lpvm3 -L$(SPK_SHARE)/lib/$(PVM_ARCH)/spktest
+	$(CC) -o spkind spkind.o $(objects) -lpvm3 -L$(PVM_ROOT)/lib/$(PVM_ARCH)/
 
 %.o : %.cpp $(includes)
-	$(CC) -c $(CFLAGS) $< -o $@ -DARCH=\"$(PVM_ARCH)\"
+	$(CC) -c $(CFLAGS) $< -o $@ -DARCH=\"$(PVM_ARCH)\" -I$(PVM_ROOT)/include -I.
 
 install:
-	cp spkjob spkpop spkind $(SPK_SHARE)/arch/$(ARCH)/bin/spk$(MODE)
+	cp spkjob spkpop spkind $(SPK_SHARE)/arch/bin/$(PVM_ARCH)/spk$(MODE)
 
 clean:
 	rm -f *.o
