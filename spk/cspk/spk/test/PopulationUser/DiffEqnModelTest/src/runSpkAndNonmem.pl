@@ -62,14 +62,18 @@ $inputFullpath = $ARGV[0];
 -f $inputFullpath or die "\nERROR!!!  Failed to find file \"$inputFullpath\"!!!\n";
 
 $inputFilename = $inputFullpath;
+
 # removing file extensions
 $inputFilename =~ s/\.[\w]+//;
 
-# removing the /xxx or \xxx patterns
-$inputFilename =~ s/[\/\\][\w\d]+//;
+# removing the leading . or ..
+$inputFilename =~ s/\.+([\/\\]+)/$1/;
 
 # removing the leading / or \
 $inputFilename =~ s/[\/\\]([\w\d]+)/$1/;
+
+# removing the xxx/ or xxx\ patterns
+$inputFilename =~ s/^(\S*\/)*//;
 
 $spkExecFullpath = $ARGV[1];
 -f $spkExecFullpath or die "\nERROR!!!  Failed to find file \"$spkExecFullpath\"!!!\n";
