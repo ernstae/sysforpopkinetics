@@ -77,10 +77,18 @@ void ClientTranslatorTest::testInterface()
 					    0);                   // document type object (DTD).
 
   MyTranslator xlator;
+
   xlator.translate( pTree );
-  const void* clientpara = xlator.getClientParameters();
+
+  // This doesn't have to be a valid data structure.
+  const void* clientpara = xlator.getClientParameters(); 
+
+  // This doesn't have to be a valid data structure either.
   const SpkParameters * spk = xlator.getSpkParameters();
+
+  // This, however, has to contain a list of filenames.
   const vector<string> files = xlator.getFilenameList();
+  CPPUNIT_ASSERT( files.size() > 0 );
 
   pTree->release();
   XMLPlatformUtils::Terminate();
