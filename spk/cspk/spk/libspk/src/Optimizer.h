@@ -84,6 +84,8 @@ public:
   inline int    getLevel() const { return level; }
   inline int    getNIterCompleted() const { return nIterCompleted; }
   inline bool   getIsTooManyIter() const { return isTooManyIter; }
+  inline bool   getSaveStateAtEndOfOpt() { return saveStateAtEndOfOpt; }
+  inline bool   getThrowExcepIfMaxIter() { return throwExcepIfMaxIter; }
   inline bool   getIsSubLevelOpt() const { return isSubLevelOpt; }
   inline bool   getIsWarmStart() const { return isWarmStart; }
   inline StateInfo  getStateInfo() const { return stateInfo; }
@@ -115,6 +117,8 @@ private:
   int       level;
   int       nIterCompleted;
   bool      isTooManyIter;
+  bool      saveStateAtEndOfOpt;
+  bool      throwExcepIfMaxIter;
   bool      isSubLevelOpt;
   bool      isWarmStart;
   StateInfo stateInfo;
