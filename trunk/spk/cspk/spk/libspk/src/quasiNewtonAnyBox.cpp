@@ -505,12 +505,12 @@ namespace // [Begin: unnamed namespace]
 namespace // [Begin: unnamed namespace]
 {
   //
-  // Class: QuasiNewton01Obj
+  // Class: QuasiNewton01BoxObj
   //
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  class QuasiNewton01Obj
+  class QuasiNewton01BoxObj
   {
   public:
     const char* function( const double* xIn, double& fOut );
@@ -526,7 +526,7 @@ namespace // [Begin: unnamed namespace]
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  class QuasiNewton01Obj : public QuasiNewtonAnyBoxObj
+  class QuasiNewton01BoxObj : public QuasiNewtonAnyBoxObj
   {
   public:
     virtual const char* function( const double* xIn, double& fOut );
@@ -542,7 +542,7 @@ namespace // [Begin: unnamed namespace]
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  class QuasiNewton01Obj
+  class QuasiNewton01BoxObj
   {
   public:
     virtual const char* function( const double* xIn, double& fOut ) = 0;
@@ -566,14 +566,14 @@ OR
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  class QuasiNewton01Obj
+  class QuasiNewton01BoxObj
   {
     //----------------------------------------------------------
     // Constructors.
     //----------------------------------------------------------
 
   public:
-    QuasiNewton01Obj(
+    QuasiNewton01BoxObj(
       QuasiNewtonAnyBoxObj* const  pObjectiveIn;
       const DoubleMatrix* const    pdvecXLowIn,
       const DoubleMatrix* const    pdvecXUpIn,
@@ -588,7 +588,7 @@ OR
 
   private:
     // This is not defined so that it can't be used.
-    QuasiNewton01Obj();
+    QuasiNewton01BoxObj();
 
 
     //----------------------------------------------------------
@@ -742,7 +742,7 @@ void quasiNewtonAnyBox(
   // Prepare the objective function object.
   //------------------------------------------------------------
   
-  QuasiNewton01Obj objective( &dvecXLow, &dvecXUp, &dvecXDiff );
+  QuasiNewton01BoxObj objective( &dvecXLow, &dvecXUp, &dvecXDiff );
 
 
   //------------------------------------------------------------
