@@ -57,14 +57,13 @@ public abstract class Spkdb {
 			      String datasetVersion,
 			      long modelId,
 			      String modelVersion,
-			      String xmlSourceFileName)
+			      String xmlSource)
 	throws SQLException, SpkdbException, FileNotFoundException
     {
 	long jobId = 0;
 	java.util.Date date = new java.util.Date(); 
 	long eventTime = date.getTime()/1000;
 	long startTime = eventTime;
-	File xmlSource = new File(xmlSourceFileName);
 	String stateCode = "q2c";
 	String sql = "insert into job (state_code, user_id, abstract, dataset_id, "
                                     + "dataset_version, model_id, model_version, "
@@ -73,7 +72,7 @@ public abstract class Spkdb {
                                    + ",'" + datasetVersion + "'," + modelId + ",'" + modelVersion
                                    + "', ?," + startTime + "," + eventTime + ");";
 	PreparedStatement pstmt = conn.prepareStatement(sql);
-	pstmt.setBinaryStream(1, new FileInputStream(xmlSourceFileName), (int)xmlSource.length());
+	pstmt.setBinaryStream(1, new ByteArrayInputStream(xmlSource.getBytes()), xmlSource.length());
 	pstmt.executeUpdate();
 	ResultSet rs = pstmt.getGeneratedKeys();
 	if (rs.next()) {
