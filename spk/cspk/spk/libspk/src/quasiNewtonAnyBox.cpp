@@ -568,30 +568,50 @@ OR
 
   class QuasiNewton01Obj
   {
+    //----------------------------------------------------------
+    // Constructors.
+    //----------------------------------------------------------
+
   public:
     QuasiNewton01Obj(
-      const DoubleMatrix* const pdvecXLowIn,
-      const DoubleMatrix* const pdvecXUpIn,
-      const DoubleMatrix* const pdvecXDiffIn )
+      QuasiNewtonAnyBoxObj* const  pObjectiveIn;
+      const DoubleMatrix* const    pdvecXLowIn,
+      const DoubleMatrix* const    pdvecXUpIn,
+      const DoubleMatrix* const    pdvecXDiffIn )
       :
+      pObjective  ( pObjectiveIn ),
       pdvecXLow   ( pdvecXLowIn ),
       pdvecXUp    ( pdvecXUpIn ),
       pdvecXDiff  ( pdvecXDiffIn )
     {
     }
 
+  private:
+    // This is not defined so that it can't be used.
+    QuasiNewton01Obj();
+
+
+    //----------------------------------------------------------
+    // Functions required by QuasiNewton01Box.
+    //----------------------------------------------------------
+
     const char* function( const double* xIn, double& fOut )
     {
-      return pObj->function( xIn, fOut ),;
+      return pObjective->function( xIn, fOut );
     }
 
     const char* gradient( double* gOut );
     {
-      return pObj->gradient( gOut );
+      return pObjective->gradient( gOut );
     }
 
+
+    //----------------------------------------------------------
+    // Information required by QuasiNewtonAnyBox.
+    //----------------------------------------------------------
+
   private:
-    const QuasiNewtonAnyBoxObj* const pObj;
+    QuasiNewtonAnyBoxObj* const pObjective;
 
     const DoubleMatrix* const pdvecXLow;      // Unscaled lower bounds.
     const DoubleMatrix* const pdvecXUp;       // Unscaled upper bounds.
@@ -600,9 +620,6 @@ OR
 
     SpkException exceptionOb;
   };
-
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 } // [End: unnamed namespace]
 
