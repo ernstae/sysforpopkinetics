@@ -252,6 +252,7 @@ class NonmemTranslator : public ClientTranslator
   void interpretDriver();
   void interpretModel();
   void interpretData();
+
   void emitDriver();
   void emitModel();
 };
