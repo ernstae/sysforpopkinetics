@@ -31,9 +31,9 @@ Each version of the XML has a unique set of grammer and syntax that is designed 
  </articleinfo>
   <sect1>
     <title>
-       <ulink url="nonmem/SpkSourceML_html/elt-spksourceML.html">NONMEM (ie. NM-TRAN)</ulink>
+       <ulink url="nonmem/html/elt-spksourceML.html">NONMEM (ie. NM-TRAN)</ulink>
     </title>
-    <para><ulink url="nonmem/SpkSourceML_nonmem.xml"><citetitle>Example: CONTROL4 + THEO</citetitle></ulink> (view it as "source" if your browser tries to be cleaver but not)</para>
+    <para><ulink url="nonmem/sourceML_nonmem.xml"><citetitle>Example: CONTROL4 + THEO</citetitle></ulink> (view it as "source" if your browser tries to be cleaver but not)</para>
   </sect1>
   <sect1>
     <title>SAAM-II</title>
