@@ -12,9 +12,6 @@ This documentation specifies the information passed back from CSPK to MDA.
 
 <!ELEMENT spkreportML (error_message? | pop_analysis_result? | ind_analysis_result? | presentation_data?)>
 
-<!-- <spkreportML turnaround="600"> The number of seconds elapsed since the submission of the job request until the time this incident of report is made.  -->
-<!ATTLIST spkreportML turnaround CDATA #REQUIRED>
-
 <!-- ===================================== -->
 <!--                 MESSAGE               -->
 <!-- ===================================== -->
