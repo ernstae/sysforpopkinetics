@@ -21,46 +21,61 @@
 */
 /*************************************************************************
  *
- * File: popStatistics.h
+ * File: indStatistics.h
  *
  *
- * This header file includes other headers and declares components
- * necessary for the user to get statistics of population parameter estimates.
+ * Compute the covariance matrix, standard errors, correlation matrix and 
+ * 95% confidence interval for individual parameter estimates.
  *
  * Author: Jiaji Du
+ *
+ * Modified later by: Mitch Watrous
  *
  *************************************************************************/
 
 #ifndef INDSTATISTICS_H
 #define INDSTATISTICS_H
 
-//
-// Necessary component headers for indStatistics() declaration.
-//
+#include "popStatistics.h"
 #include "SpkValarray.h"
 #include "SpkModel.h"
 
-void indStatistics( const SPK_VA::valarray<double>& indPar,
-                    const SPK_VA::valarray<double>& dataMean_indPar,
-                    const SPK_VA::valarray<double>& dataVariance_indPar,
-                    const SPK_VA::valarray<double>& dataVarianceInv,
-                    SPK_VA::valarray<double>*       indParCovOut,
-                    SPK_VA::valarray<double>*       indParSEOut,                          
-                    SPK_VA::valarray<double>*       indParCorOut,
-					SPK_VA::valarray<double>*       indParCVOut,
-                    SPK_VA::valarray<double>*       indParCIOut
-                  );
+typedef PopCovForm IndCovForm;
 
-void indStatistics( const SPK_VA::valarray<bool>           & mask,
-		    const SPK_VA::valarray<double> & b,
-		    const SPK_VA::valarray<double> & f_b,
-		    const SPK_VA::valarray<double> & R_b,
-		    const SPK_VA::valarray<double> & RInv,
-		    SPK_VA::valarray<double>       * bCovOut,
-		    SPK_VA::valarray<double>       * bSEOut,                          
-		    SPK_VA::valarray<double>       * bCorOut,
-		    SPK_VA::valarray<double>       * bCVOut,
-		    SPK_VA::valarray<double>       * bCIOut
-		    );
+void indStatistics( SpkModel&                        model,
+                    const SPK_VA::valarray<double>&  measurements,
+                    const SPK_VA::valarray<double>&  indPar,
+                    const SPK_VA::valarray<bool>&    indParMask,
+                    const SPK_VA::valarray<double>&  indObj_indPar_indPar,
+                    const IndCovForm                 formulation,
+                    SPK_VA::valarray<double>*        indParCovOut,
+                    SPK_VA::valarray<double>*        indParSEOut,                          
+                    SPK_VA::valarray<double>*        indParCorOut,
+                    SPK_VA::valarray<double>*        indParCVOut,
+                    SPK_VA::valarray<double>*        indParCIOut,
+                    bool                             withD );
+
+// Deprecated.
+void indStatistics( const SPK_VA::valarray<bool>&    indParMask,
+                    const SPK_VA::valarray<double>&  indPar,
+                    const SPK_VA::valarray<double>&  dataMean_indPar,
+                    const SPK_VA::valarray<double>&  dataVariance_indPar,
+                    const SPK_VA::valarray<double>&  dataVarianceInv,
+                    SPK_VA::valarray<double>*        indParCovOut,
+                    SPK_VA::valarray<double>*        indParSEOut,                          
+                    SPK_VA::valarray<double>*        indParCorOut,
+                    SPK_VA::valarray<double>*        indParCVOut,
+                    SPK_VA::valarray<double>*        indParCIOut );
+
+// Deprecated.
+void indStatistics( const SPK_VA::valarray<double>&  indPar,
+                    const SPK_VA::valarray<double>&  dataMean_indPar,
+                    const SPK_VA::valarray<double>&  dataVariance_indPar,
+                    const SPK_VA::valarray<double>&  dataVarianceInv,
+                    SPK_VA::valarray<double>*        indParCovOut,
+                    SPK_VA::valarray<double>*        indParSEOut,                          
+                    SPK_VA::valarray<double>*        indParCorOut,
+                    SPK_VA::valarray<double>*        indParCVOut,
+                    SPK_VA::valarray<double>*        indParCIOut );
 
 #endif
