@@ -1257,7 +1257,15 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
     return;
   }
 
+  // Set the number of quasi-Newton iterations high enough so 
+  // that the optimizer can build up a reasonable accurate 
+  // approximation for the Hessian, but not so high that it
+  // will spend too much time in the optimizer.
   itrMax   = 5;
+
+  // Set the maximum number of interior point iterations so
+  // that the optimizer can solve the quadratic subproblems
+  // with sufficient accuracy.
   quadMax  = 100;
 
   int i = 0;
