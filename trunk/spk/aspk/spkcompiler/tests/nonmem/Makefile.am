@@ -3,7 +3,7 @@ bin_PROGRAMS = test_nonmem
 NONMEM = nonmem
 
 CXXFLAGS = -g
-MOSTLYCLEANFILES = Pred.h predEqn.cpp predEqn.fortran IndData.h DataSet.h testInd testPop test_nonmem
+MOSTLYCLEANFILES = Pred.h predEqn.cpp predEqn.fortran IndData.h DataSet.h testInd testPop test_nonmem testPopDriver.cpp testIndDriver.cpp driver.cpp driver result.xml generatedMakefile 
 
 test_nonmem_SOURCES = \
 	../config.h \
@@ -20,7 +20,7 @@ test_nonmem_INCLUDES = \
 	explangTest.h \
 	NonmemTranslatorTest.h
 
-AM_LDFLAGS = -lxerces-c -lcppunit -lspkcompiler
+AM_LDFLAGS = -lxerces-c -lcppunit -lspkcompiler -latlas_lapack -lcblas -latlas -lm
 
 INCLUDES = \
 	-I@top_srcdir@/ \
