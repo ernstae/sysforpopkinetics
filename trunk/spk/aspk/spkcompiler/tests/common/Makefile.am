@@ -1,5 +1,5 @@
-bin_PROGRAMS     = test_common
-noinst_PROGRAMS  = test_common
+bin_PROGRAMS     = testall
+noinst_PROGRAMS  = testall
 COMMON = common
 INST_BASE        = /usr/local
 
@@ -8,7 +8,7 @@ MOSTLYCLEANFILES = IndData.h \
                    convertDataTestInput.dat
 CXXFLAGS = -g
 
-test_common_SOURCES = \
+testall_SOURCES = \
 	../config.h \
 	test_common.cpp \
 	lowerTest.cpp \
@@ -23,16 +23,22 @@ test_common_SOURCES = \
         SymbolTableTest.cpp \
 	SymbolTableTest.h \
 	ClientTranslatorTest.cpp \
-	ClientTranslatorTest.h
+	ClientTranslatorTest.h \
+	SpkCompilerErrorTest.h \
+	SpkCompilerErrorTest.cpp \
+	SpkCompilerExceptionTest.h \
+	SpkCompilerExceptionTest.cpp
 
-test_common_INCLUDES = \
+testall_INCLUDES = \
 	clientTest.h \
         lowerTest.h \
         upperTest.h \
         seriesTest.h \
         SymbolTest.h \
 	SymbolTableTest.h \
-	ClientTranslatorTest.h
+	ClientTranslatorTest.h \
+	SpkCompilerErrorTest.h \
+	SpkCompilerErrorTest.cpp
 
 AM_LDFLAGS = -lxerces-c -lcppunit -L$(INST_BASE)/lib/spktest -lspkcompiler
 
