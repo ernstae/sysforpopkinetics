@@ -1386,34 +1386,34 @@ v  //***************************************************************************
     iterCurr = 0;
   }
 
-  // Try to satisfy this function's convergence criterion before
+  // Attempt to satisfy this function's convergence criterion before
   // the maximum number of iterations have been performed.
-  while ( !isWithinTol && iterCurr <= nMaxIter )
+  try
   {
-    // See if this function's convergence criterion has been met.
-    if ( isWithinTol( 
-      epsilon,
-      dvecY,
-      dvecYLow,
-      dvecYUp,
-      drowGScaled,
-      getLowerTriangle( arrayToDoubleMatrix( options.h, n, n ) ) ) )
+    while ( !isWithinTol && iterCurr <= nMaxIter )
     {
-      isWithinTol = true;
-    }
-    else
-    {
-      // Set delta to be less than the maximum of the absolute values of
-      // the elements of the projected gradient so that the subproblems
-      // only be solved with accuracy sufficient for the current x value.
-      delta = maxAbsProjGrad( gCurr ) / deltaScale;
-
-      // Save the number of iterations that have been performed.
-      iterCurrPrev = iterCurr;
-
-      // Ask the optimizer to take perform a limited number of iterations.
-      try
+      // See if this function's convergence criterion has been met.
+      if ( isWithinTol( 
+        epsilon,
+	dvecY,
+	dvecYLow,
+	dvecYUp,
+	drowGScaled,
+	getLowerTriangle( arrayToDoubleMatrix( options.h, n, n ) ) ) )
       {
+	isWithinTol = true;
+      }
+      else
+      {
+	// Set delta to be less than the maximum of the absolute values of
+	// the elements of the projected gradient so that the subproblems
+	// only be solved with accuracy sufficient for the current x value.
+	delta = maxAbsProjGrad( gCurr ) / deltaScale;
+
+	// Save the number of iterations that have been performed.
+	iterCurrPrev = iterCurr;
+
+	// Ask the optimizer to take perform a limited number of iterations.
         msg = QuasiNewton01Box(
           os,
           level,
@@ -1429,50 +1429,50 @@ v  //***************************************************************************
           xCurr,
           gCurr,
           hCurr );
-      }
-      catch( SpkException& e )
-      {
-        throw e.push(
-          SpkError::SPK_OPT_ERR, 
-          "An SpkException was thrown during the optimization of the objective function.",
-          __LINE__, 
-          __FILE__ );
-      }
-      catch( const std::exception& stde )
-      {
-        throw SpkException(
-          stde,
-          "An standard exception was thrown during the optimization of the objective function.",
-          __LINE__, 
-          __FILE__ );
-      }  
-      catch( ... )
-      {
-        throw SpkException(
-          SpkError::SPK_UNKNOWN_ERR, 
-          "An unknown exception was thrown during the optimization of the objective function.",
-          __LINE__, 
-          __FILE__ );
-      }
 
-      // After the first call to the optimizer the approximation for the
-      // Hessian should be accurate enough that this can reset.
-      iterMax = 1;
+        // After the first call to the optimizer the approximation for the
+        // Hessian should be accurate enough that this can reset.
+        iterMax = 1;
 
-      // This function assumes that delta is set small enough that the
-      // optimizer's convergence criterion will not be satisfied for the
-      // current x value and that the optimizer will therefore be able to
-      // perform at least one Quasi-Newton itertion.  If that is not the
-      // case, then throw an exception.
-      if ( iterCurr == iterCurrPrev )
-      {
-	throw SpkException( 
-          SpkError::SPK_OPT_ERR,
-          "QuasiNewton01Box failed to perform at least one Quasi-Newton iteration.",
-          __LINE__,
-          __FILE__ );
+	// This function assumes that delta is set small enough that the
+	// optimizer's convergence criterion will not be satisfied for the
+	// current x value and that the optimizer will therefore be able to
+	// perform at least one Quasi-Newton itertion.  If that is not the
+	// case, then throw an exception.
+	if ( iterCurr == iterCurrPrev )
+        {
+	  throw SpkException( 
+            SpkError::SPK_OPT_ERR,
+	    "QuasiNewton01Box failed to perform at least one Quasi-Newton iteration.",
+	    __LINE__,
+	    __FILE__ );
+	}
       }
     }
+  }
+  catch( SpkException& e )
+  {
+    throw e.push(
+      SpkError::SPK_OPT_ERR, 
+      "An SpkException was thrown during the optimization of the objective function.",
+      __LINE__, 
+      __FILE__ );
+  }
+  catch( const std::exception& stde )
+  {
+    throw SpkException(
+      stde,
+      "An standard exception was thrown during the optimization of the objective function.",
+      __LINE__, 
+      __FILE__ );
+  }  
+  catch( ... )
+  {
+    throw SpkException(
+      SpkError::SPK_UNKNOWN_ERR, 
+      "An unknown exception was thrown during the optimization of the objective function.",
+      __LINE__, 
+      __FILE__ );
   }
 
 
