@@ -597,6 +597,7 @@
 #include "PARALLEL_FILE_CONSTS.h"
 #include "transpose.h"
 #include "mulByScalar.h"
+#include "WarningsManager.h"
 
 /*------------------------------------------------------------------------
  * Local function declarations
@@ -780,7 +781,11 @@ void lTilde(
 	    // Print out a warning message to the standard error if
 	    // user has specified a print level greater than 4.
 	    //
-	    cerr << "Warning! Backed up the search direction for " << i << "th individual!" << endl;
+	    char mess[ SpkError::maxMessageLen() ];
+	    sprintf( mess, 
+		    "Warning! Backed up the search direction for the %d-th individual!",
+		    i );
+	    WarningsManager::addWarning( mess, __LINE__, __FILE__ );
 	    const double FACTOR = 1.0;
 	    if( isLTildeOut  )
 	      {
@@ -1141,7 +1146,13 @@ void lTilde(
 	      // user has specified a print level greater than 4.
 	      //
 	      if( optimizer.getLevel() > 0 )
-		cerr << "Warning! Backed up the search direction for " << i << "th individual!" << endl;
+		{
+		  char mess[ SpkError::maxMessageLen() ];
+		  sprintf( mess, 
+			  "Warning! Backed up the search direction for the %d-th individual!",
+			  i );
+		  WarningsManager::addWarning( mess, __LINE__, __FILE__ );
+		}
 	      const double FACTOR = 1.0;
 	      if( isLTildeOut  )
                 {
