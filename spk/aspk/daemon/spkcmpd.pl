@@ -412,12 +412,12 @@ sub reaper {
 	# Get email address of user
 	my $email = &email_for_job($dbh, $job_id);
 	
+	$format error report and place a message in the system log
 	$report = format_error_report("$err_msg $err_rpt");
 	&end_job($dbh, $job_id, $end_code, $report)
 	    or death('emerg', "job_id=$job_id: $Spkdb::errstr");
-	syslog('info',
-	       "job_id=$job_id $err_msg");
-	syslog('info', "submit_to_bugzilla = $submit_to_bugzilla");
+	syslog('info', "job_id=$job_id $err_msg");
+
 	# Submit compiler bugs to bugzilla
 	if ($submit_to_bugzilla && ($end_code == "serr" || $end_code == "herr")) {
 	    my $summary = $end_code == "serr" ? "soft" : "hard";
