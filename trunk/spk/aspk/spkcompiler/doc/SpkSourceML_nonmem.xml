@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<source>
+<spksource>
    <nonmem>
        <constraint>
           <pop_analysis is_estimation="yes"
@@ -15,41 +15,41 @@
              </data_labels>
              <theta length="3">
                 <low>
-                   <double value="0.1"/>
-                   <double value=".008"/>
-                   <double value=".004"/>
+                   <value>0.1</value>
+                   <value>.008</value>
+                   <value>.004</value>
                 </low>
                 <in>
-                   <double value="3."/>
-                   <double value=".08"/>
-                   <double value="0.04"/>
+                   <value>3.</value>
+                   <value>.08</value>
+                   <value>0.04</value>
                 </in>
                 <up>
-                   <double value="5"/>
-                   <double value=".5"/>
-                   <double value="0.9"/>
+                   <value>5</value>
+                   <value>.5</value>
+                   <value>0.9</value>
                 </up>
              </theta>
              <omega struct="block" dimension="3">
                 <in>
-                   <double value="6"/>
-                   <double value="0.005"/>
-                   <double value="0.0002"/>
-                   <double value=".3"/>
-                   <double value=".006"/>
-                   <double value=".4"/>
+                   <value>6</value>
+                   <value>0.005</value>
+                   <value>0.0002</value>
+                   <value>.3</value>
+                   <value>.006</value>
+                   <value>.4</value>
                 </in>
              </omega>
              <sigma struct="diagonal" dimension="1">
                 <in>
-                   <double value=".4"/>
+                   <value>.4</value>
                 </in>   
              </sigma>
              <eta length="3">
                 <in>
-                   <double value="0.0"/>
-                   <double value="0.0"/>
-                   <double value="0.0"/>
+                   <value>0.0</value>
+                   <value>0.0</value>
+                   <value>0.0</value>
                 </in>
              </eta>
              <pop_stat is_stderror_out="yes"
@@ -97,4 +97,4 @@
           </scatterplot>
        </presentation>
    </nonmem>
-</source>
+</spksource>
