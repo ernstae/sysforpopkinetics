@@ -293,7 +293,7 @@ class NonmemTranslator : public ClientTranslator
   XMLCh* X_COLUMN;              static const char* C_COLUMN;
   XMLCh* X_X;                   static const char* C_X;
   XMLCh* X_Y;                   static const char* C_Y;
-  XMLCh* X_BY;                  static const char* C_BY;
+  XMLCh* X_SPLIT;               static const char* C_SPLIT;
   XMLCh* X_APPROXIMATION;       static const char* C_APPROXIMATION;
   XMLCh* X_FO;                  static const char* C_FO;
   XMLCh* X_FOCE;                static const char* C_FOCE;
