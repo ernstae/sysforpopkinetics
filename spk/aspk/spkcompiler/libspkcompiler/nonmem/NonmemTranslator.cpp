@@ -4134,7 +4134,7 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << endl;
 
   oDriver << "const bool isOptRequested  = " << (myIsEstimate? "true":"false") << ";" << endl;
-  oDriver << "bool isOptSuccess          = false;" << endl;
+  oDriver << "bool isOptSuccess          = " << (myIsEstimate? "false":"true") << ";" << endl;
   if( myIsEstimate )
     {
       oDriver << "Objective objective    = ";
@@ -4147,7 +4147,7 @@ void NonmemTranslator::generatePopDriver() const
     }
 
   oDriver << "const bool isStatRequested = " << (myIsStat? "true":"false") << ";" << endl;
-  oDriver << "bool isStatSuccess         = false;" << endl;
+  oDriver << "bool isStatSuccess         = " << (myIsStat? "false":"true") << ";" << endl;
   if( myIsStat )
     oDriver << "enum PopCovForm covForm  = " << myCovForm << ";" << endl;
   oDriver << endl;
