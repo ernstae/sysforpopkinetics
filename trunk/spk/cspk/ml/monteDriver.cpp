@@ -90,7 +90,9 @@ $subhead pop_obj_estimate$$
 $index pop_obj_estimate$$
 A record of this type is present if and only if
 a $code pop_monte_result$$ record is present. 
-This record contains the estimate for the integral.
+This record contains the estimate for the 
+negative log likelihood as a function of the population parameters
+(the individual parameters have been integrated out).
 
 $subhead pop_obj_stderror$$
 $index pop_obj_stderror$$
@@ -235,8 +237,7 @@ int main(int argc, const char *argv[])
 	// analytic integral
 	if( analytic )
 	{	for(i = 0; i < nPop; i++)
-		{
-			pop_obj_estimate += AnalyticIntegral(
+		{	pop_obj_estimate += - log( AnalyticIntegral(
 				model               , 
 				N                   ,
 				y                   ,
@@ -244,7 +245,7 @@ int main(int argc, const char *argv[])
 				bLow                ,
 				bUp                 ,
 				i
-			);
+			) );
 
 		}
 	}
@@ -305,8 +306,8 @@ int main(int argc, const char *argv[])
 				estimate,
 				error
 			);
-			pop_obj_estimate += estimate,
-			pop_obj_stderr   += error;
+			pop_obj_estimate -= log( estimate ),
+			pop_obj_stderr   += error / estimate;
 		}
 	}
 
@@ -349,10 +350,8 @@ int main(int argc, const char *argv[])
 	// report the Monte Carlo integration results
 	OutputValue( "pop_obj_estimate", pop_obj_estimate); 
 
-	if( monte | grid )
-	{	// estimate of the standard error in pop_obj_estimate
-		OutputValue( "pop_obj_stderr", pop_obj_stderr); 
-	}
+	// estimate of the standard error in pop_obj_estimate
+	OutputValue( "pop_obj_stderr", pop_obj_stderr); 
 
 	// return from main program
         cout << "</pop_monte_result>" << endl;
