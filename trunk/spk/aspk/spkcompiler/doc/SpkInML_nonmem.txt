@@ -106,10 +106,10 @@
 <!ELEMENT sigma (in)>
 
 <!--
-     <sigma> takes "span" attribute which
-     specifies the span of SIGMA matrix.
+     <sigma> takes "dimension" attribute which
+     specifies the dimension of SIGMA (square) matrix.
 -->
-<!ATTLIST sigma span CDATA #REQUIRED>
+<!ATTLIST sigma dimension CDATA #REQUIRED>
 
 <!---
      <sigma> may take "same_as_previous" attribute
@@ -133,10 +133,10 @@
 <!ELEMENT omega (in)>
 
 <!--
-     <omega> takes "span" attribute which speicifies
-     the span of OMEGA matrix.
+     <omega> takes "dimension" attribute which speicifies
+     the dimension of OMEGA (square) matrix.
 -->
-<!ATTLIST omega span CDATA #REQUIRED>
+<!ATTLIST omega dimension CDATA #REQUIRED>
 
 <!--
      <omega> takes "struct" attribute which specifies
