@@ -91,18 +91,18 @@
 <data>
 	<individual order="1" id="mouse" length="2">
 		<item label="time">
-                       <value>0.0</value>
-		       <value>0.1</value>
+                       <value>1.0</value>
+		       <value>1.0</value>
 		</item>
 
 		<item label="cp" synonym="dv">
                         <value>1.0</value>
-			<value>1.1</value>
+			<value>1.0</value>
 		</item>
 
                 <item label="dose" synonym="amt">
-			<value>2.0</value>
-                        <value>2.1</value>
+			<value>1.0</value>
+                        <value>1.0</value>
                 </item>
 
 		<item label="wt">
@@ -114,18 +114,18 @@
 
         <individual order="2" id="cow" length="2">
                 <item label="time">
-                        <value>0.0</value>
-                        <value>0.1</value>
+                        <value>2.0</value>
+                        <value>2.0</value>
                 </item>
                  
                 <item label="cp" synonym="dv">
-                        <value>1.0</value>
-                        <value>1.1</value>
+                        <value>2.0</value>
+                        <value>2.0</value>
                 </item>
 
                 <item label="dose" synonym="amt">
                         <value>2.0</value>
-                        <value>2.1</value>
+                        <value>2.0</value>
                 </item>
 
                 <item label="wt">
@@ -136,18 +136,18 @@
 
         <individual order="3" id="tiger" length="2">
                 <initem label="time">
-                        <value>0.0</value>
-                        <value>0.1</value>
+                        <value>3.0</value>
+                        <value>3.0</value>
                 </initem>
                  
                 <item label="cp" synonym="dv">
-                        <value>1.0</value>
-                        <value>1.1</value>
+                        <value>3.0</value>
+                        <value>3.0</value>
                 </item>
 
                 <item label="dose" synonym="amt">
-                        <value>2.0</value>
-                        <value>2.1</value>
+                        <value>3.0</value>
+                        <value>3.0</value>
                  </item>
 
                 <item label="wt">
@@ -158,18 +158,18 @@
 
         <individual order="4" id="rabit" length="2">
                 <initem label="time">
-                        <value>0.0</value>
-                        <value>0.1</value>
+                        <value>4.0</value>
+                        <value>4.0</value>
                 </initem>
                  
                 <item label="cp" synonym="dv">
-                        <value>1.0</value>
-                        <value>1.1</value>
+                        <value>4.0</value>
+                        <value>4.0</value>
                 </item>
 
                 <item label="dose" synonym="amt">
-                        <value>2.0</value>
-                        <value>2.1</value>
+                        <value>4.0</value>
+                        <value>4.0</value>
                 </item>
 
                 <item label="wt">
@@ -180,18 +180,18 @@
 
         <individual order="5" id="dragon" length="2">
                 <initem label="time">
-                        <value>0.0</value>
-                        <value>0.1</value>
+                        <value>5.0</value>
+                        <value>5.0</value>
                 </initem>
                  
                 <item label="cp" synonym="dv">
-                        <value>1.0</value>
-                        <value>1.1</value>
+                        <value>5.0</value>
+                        <value>5.0</value>
                 </item>
 
                 <item label="dose" synonym="amt">
-                        <value>2.0</value>
-                        <value>2.1</value>
+                        <value>5.0</value>
+                        <value>5.0</value>
                 </item>
 
                 <item label="wt">
@@ -202,18 +202,18 @@
 
         <individual order="6" id="snake" length="2">
                 <initem label="time">
-                        <value>0.0</value>
-                        <value>0.1</value>
+                        <value>6.0</value>
+                        <value>6.0</value>
                 </initem>
                  
                 <item label="cp" synonym="dv">
-                        <value>1.0</value>
-                        <value>1.1</value>
+                        <value>6.0</value>
+                        <value>6.0</value>
                 </item>
 
                 <item label="dose" synonym="amt">
-                        <value>2.0</value>
-                        <value>2.1</value>
+                        <value>6.0</value>
+                        <value>6.</value>
                 </item>
 
                 <item label="wt">
@@ -224,18 +224,18 @@
 
         <individual order="7" id="horse" length="2">
                 <initem label="time">
-                        <value>0.0</value>
-                        <value>0.1</value>
+                        <value>7.0</value>
+                        <value>7.0</value>
                 </initem>
                  
                 <item label="cp" synonym="dv">
-                        <value>1.0</value>
-                        <value>1.1</value>
+                        <value>7.0</value>
+                        <value>7.0</value>
                 </item>
 
                 <item label="dose" synonym="amt">
-                        <value>2.0</value>
-                        <value>2.1</value>
+                        <value>7.0</value>
+                        <value>7.0</value>
                 </item>
 
                 <item label="wt">
@@ -246,18 +246,18 @@
 
         <individual order="8" id="sheep" length="2">
                 <initem label="time">
-                        <value>0.0</value>
-                        <value>0.1</value>
+                        <value>8.0</value>
+                        <value>8.0</value>
                 </initem>
                  
                 <item label="cp" synonym="dv">
-                        <value>1.0</value>
-                        <value>1.1</value>
+                        <value>8.0</value>
+                        <value>8.0</value>
                 </item>
 
                 <item label="dose" synonym="amt">
-                        <value>2.0</value>
-                        <value>2.1</value>
+                        <value>8.0</value>
+                        <value>8.0</value>
                 </item>
 
                 <item label="wt">
@@ -268,18 +268,18 @@
 
         <individual order="9" id="nonkey" length="2">
                 <initem label="time">
-                        <value>0.0</value>
-                        <value>0.1</value>
+                        <value>9.0</value>
+                        <value>9.0</value>
                 </initem>
                  
                 <item label="cp" synonym="dv">
-                        <value>1.0</value>
-                        <value>1.1</value>
+                        <value>9.0</value>
+                        <value>9.0</value>
                 </item>
 
                 <item label="dose" synonym="amt">
-                        <value>2.0</value>
-                        <value>2.1</value>
+                        <value>9.0</value>
+                        <value>9.0</value>
                 </item>
 
                 <item label="wt">
@@ -290,18 +290,18 @@
 
         <individual order="10" id="hen" length="2">
                 <initem label="time">
-                        <value>0.0</value>
-                        <value>0.1</value>
+                        <value>10.0</value>
+                        <value>10.0</value>
                 </initem>
                  
                 <item label="cp" synonym="dv">
-                        <value>1.0</value>
-                        <value>1.1</value>
+                        <value>10.0</value>
+                        <value>10.0</value>
                 </item>
 
                 <item label="dose" synonym="amt">
-                        <value>2.0</value>
-                        <value>2.1</value>
+                        <value>10.0</value>
+                        <value>10.0</value>
                 </item>
 
                 <item label="wt">
@@ -313,18 +313,18 @@
 
         <individual order="12" id="boar" length="2">
                 <initem label="time">
-                        <value>0.0</value>
-                        <value>0.1</value>
+                        <value>12.0</value>
+                        <value>12.0</value>
                 </initem>
                  
                 <item label="cp" synonym="dv">
-                        <value>1.0</value>
-                        <value>1.1</value>
+                        <value>12.0</value>
+                        <value>12.0</value>
                 </item>
 
                 <item label="dose" synonym="amt">
-                        <value>2.0</value>
-                        <value>2.1</value>
+                        <value>12.0</value>
+                        <value>12.0</value>
                 </item>
 
                 <item label="wt">
@@ -335,18 +335,18 @@
 
         <individual order="11" id="dog" length="2">
                 <initem label="time">
-                        <value>0.0</value>
-                        <value>0.1</value>
+                        <value>11.0</value>
+                        <value>11.0</value>
                 </initem>
                  
                 <item label="cp" synonym="dv">
-                        <value>1.0</value>
-                        <value>1.1</value>
+                        <value>11.0</value>
+                        <value>11.0</value>
                 </item>
 
                 <item label="dose" synonym="amt">
-                        <value>2.0</value>
-                        <value>2.1</value>
+                        <value>11.0</value>
+                        <value>11.0</value>
                 </item>
 
                 <item label="wt">

@@ -208,7 +208,7 @@ void NonmemDataReaderTest::testNoSkip()
  *   "label" and "alias" (if an alias is given).
  */
 void NonmemDataReaderTest::read_data( 
-	xercesc::DOMDocument* dataTree, 
+	xercesc::DOMDocument* tree, 
         int nIndividuals,
 	SymbolTable * table,
 	map<LABEL, ALIAS> label_alias_mapping,
@@ -216,14 +216,19 @@ void NonmemDataReaderTest::read_data(
 	const char* order_id_pair[]
       )
 {
+  assert( tree->getElementsByTagName( X("data") ) != NULL );
+  DOMNode * dataTree = tree->getElementsByTagName( X("data") )->item(0);
+  assert( dataTree != NULL );
   //
   // Get the list of <individual> nodes.  Each <individual> node is the root
   // of that individual's data subtree and determine the number of 
   // sets (= #individuals) of data.
   //
-  DOMNodeList * individualsList = dataTree->getElementsByTagName(X("individual"));
-  assert( static_cast<int>( (individualsList->getLength()) == nIndividuals ) );
-  
+  DOMTreeWalker * walker = tree->createTreeWalker( dataTree,
+						   DOMNodeFilter::SHOW_ELEMENT,
+						   NULL,
+						   false );
+       
   //=================================================================================
   //
   // Traversing the DATA tree to gather information.
@@ -252,9 +257,10 @@ void NonmemDataReaderTest::read_data(
   // (see "$INPUT" section, p56, NONMEM User's Guide VIII, for a complete list).
   // If either of them is "skip" or "drop", ignore the entire measurement vector.
   //
+  DOMElement * individual = dynamic_cast<DOMElement*>( walker->firstChild() );
   for( int i=0; i<nIndividuals; i++ )
     {
-      DOMElement * individual = dynamic_cast<DOMElement*>( individualsList->item(i) );
+      //      DOMElement * individual = dynamic_cast<DOMElement*>( individualsList->item(i) );
 
       //
       // First, take care the <individual> tag's attributes.
@@ -291,10 +297,12 @@ void NonmemDataReaderTest::read_data(
       //                                              |
       //                                             NULL
       //
+      /*
       DOMTreeWalker * walker = dataTree->createTreeWalker( individual,
 							   DOMNodeFilter::SHOW_ELEMENT,
 							   NULL,
 							   false );
+      */
       int nItems = 0;
       DOMElement * item = dynamic_cast<DOMElement*>( walker->firstChild() );
       for( nItems=0; item != NULL; ++nItems )
@@ -388,7 +396,7 @@ void NonmemDataReaderTest::read_data(
 	      //
 	      data_for[i].insert( pair<string, valarray<double> >(label, values) );
 	    } 
-	  item = dynamic_cast<DOMElement*>( walker->nextSibling() );  
+	  item = dynamic_cast<DOMElement*>( walker->nextSibling() );
 	}
       
       walker->parentNode();

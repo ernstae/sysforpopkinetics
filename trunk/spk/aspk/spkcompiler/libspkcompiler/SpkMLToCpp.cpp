@@ -162,7 +162,7 @@ ClientTranslator * SpkMLToCpp::createTranslator( enum client::type who ) const
 {
   if( who == client::NONMEM )
     {
-      return new NonmemTranslator( tree );
+      return new NonmemTranslator;
     }
   else
     {
