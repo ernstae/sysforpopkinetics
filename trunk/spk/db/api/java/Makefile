@@ -1,6 +1,5 @@
 HOST = "localhost.localdomain"
 
-
 java:	
 	javac @sourcefiles
 	javadoc -d docs rfpk.spk.spkdb
