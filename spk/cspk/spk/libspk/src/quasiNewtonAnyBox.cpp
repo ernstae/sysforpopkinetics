@@ -940,26 +940,34 @@ void quasiNewtonAnyBox(
     // Retrieve the previous state information.
     if ( isWarmStart )
     {
-
-GET THE PROPER WARM START STUFF 
-GET THE PROPER WARM START STUFF 
-GET THE PROPER WARM START STUFF 
-GET THE PROPER WARM START STUFF 
-GET THE PROPER WARM START STUFF 
-GET THE PROPER WARM START STUFF 
-GET THE PROPER WARM START STUFF 
-
-      options.start  = Nag_Warm;
       StateInfo stateInfo = optimizer.getStateInfo();
 
-      for( int j = 0; j < n; j++ )
+      if ( stateInfo.n == nObjPar )
       {
-	yCurr[ j ] = stateInfo.x[ j ];
-      }
+        rScaled = stateInfo.r;
+	fScaled = stateInfo.f;
 
-      options.state  = stateInfo.state;
-      options.lambda = stateInfo.lambda;
-      options.h      = stateInfo.h;
+
+            REPLACE THESE WITH LOOPS OVER ALL ELEMENTS
+            REPLACE THESE WITH LOOPS OVER ALL ELEMENTS
+            REPLACE THESE WITH LOOPS OVER ALL ELEMENTS
+            REPLACE THESE WITH LOOPS OVER ALL ELEMENTS
+            REPLACE THESE WITH LOOPS OVER ALL ELEMENTS
+
+	yCurr   = stateInfo.x;
+	gScaled = stateInfo.g;
+	hScaled = stateInfo.h;
+      }
+      else
+      {
+
+        THROW AN EXCEPTION
+        THROW AN EXCEPTION
+        THROW AN EXCEPTION
+        THROW AN EXCEPTION
+        THROW AN EXCEPTION
+
+      }
     }
   }
   else
