@@ -51,6 +51,11 @@ void read_nonmem_data(
   // Iterate through the list of <individual> blocks to register
   // label-alias mappings and to populate the data_forOut table.
   //
+  // EVID and MDV are required by NONMEM (not to be confused with NM-TRAN).
+  // They are useful anyway to weed in/out different types of records.
+  // So, if they don't appear in the data set (data file), insert them
+  // with values, nonmem::EVID_OBSERVATIONS = 0 and nonmem::MDV_NOT_MISSING = 0,
+  // respectively.
   //
   // <individual> tag comes with the following attributes:
   //
@@ -72,14 +77,16 @@ void read_nonmem_data(
   DOMElement * individual = dynamic_cast<DOMElement*>( walker->firstChild() );
   for( int i=0, y_pos=0; i<nIndividuals; i++ )
     {
+      bool isDVgiven = false;
       //      DOMElement * individual = dynamic_cast<DOMElement*>( individualsList->item(i) );
-
+      
       //
       // First, take care the <individual> tag's attributes.
       //
       int nMeasurements = atoi( C( individual->getAttribute( X("length") ) ) );
+      assert( nMeasurements > 0 );
       const string id = string( C( individual->getAttribute( X("id") ) ) );
-
+      
       int order = i;
       const XMLCh* xml_order = individual->getAttribute( X("order") );
       if( !XMLString::isAllWhiteSpace( xml_order ) || xml_order != NULL )
@@ -87,12 +94,12 @@ void read_nonmem_data(
 	  order = atoi( C( xml_order ) ) - 1;
 	  assert( order >= 0 );
 	}
-
+      
       //
       // Map the processing order and the individual's identifier.
       //
       order_id_pairOut[order] = id;
-
+      
       //
       // Next, get the entire subtree of <individual> and traverse
       // the tree to collect a data set for this individual.
@@ -143,7 +150,7 @@ void read_nonmem_data(
 	  if( XMLString::equals( xml_label, X_SKIP ) || XMLString::equals( xml_label, X_DROP )
 	      || XMLString::equals( xml_synonym, X_SKIP ) || XMLString::equals( xml_synonym, X_DROP ) )
 	    {
-	      // This record is to be ignored.
+	      // This set is to be ignored.
 	    }
 	  else
 	    {
@@ -199,21 +206,64 @@ void read_nonmem_data(
               
               if( label == "dv" || synonym == "dv" )
 		{
-		  spkOut.nMeasurements[order] = nMeasurements;
+		  isDVgiven = true;
                   for( int j=0; j<nMeasurements; j++ )
 		    y_temp.push_back( values[j] );
 		}      
+	      spkOut.nMeasurements[order] = nMeasurements;
 
 	      walker->parentNode();
 	    } 
 	  item = dynamic_cast<DOMElement*>( walker->nextSibling() );
+	}
+      // DV must appear for each individual's data set.
+      if( !isDVgiven )
+	{
+	  fprintf( stderr, "DV is missing in %s's <individual>!\n", id.c_str() );
+	  exit(-1);
 	}
       
       walker->parentNode();
       individual = dynamic_cast<DOMElement*>( walker->nextSibling() );
     }
 
+  //
+  // This is "y".
+  //
   spkOut.measurementsAll.resize( y_temp.size() );
   for( int i=0; i<y_temp.size(); i++ )
     spkOut.measurementsAll[i] = y_temp[i];
+
+  //
+  // If EVID column was not in the data set, that means all records are for
+  // observations.
+  //
+  if( table.find( "evid" ) == NULL )
+    {
+      Symbol evid( "evid", Symbol::VECTOR, Symbol::DOUBLE, true );
+      table.insert( evid );
+      string label = "evid";
+      label_alias_mappingOut[label] = "";
+      for( int i=0; i<nIndividuals; i++ )
+	{
+	  valarray<double> values( nonmem::EVID_OBSERVATION, spkOut.nMeasurements[i] );
+	  data_forOut[i].insert( pair<string, valarray<double> >( label, values ) );
+	} 
+    }
+  //
+  // If MDV column was not in the data set, that means all records have
+  // observations.
+  //
+  if( table.find( "mdv" ) == NULL )
+    {
+      Symbol mdv( "mdv", Symbol::VECTOR, Symbol::DOUBLE, true );
+      table.insert( mdv );
+      string label = "mdv";
+      label_alias_mappingOut[label] = "";
+      for( int i=0; i<nIndividuals; i++ )
+	{
+	  valarray<double> values( nonmem::MDV_NOT_MISSING, spkOut.nMeasurements[i] );
+	  data_forOut[i].insert( pair<string, valarray<double> >( label, values ) );
+	} 
+    }
 }

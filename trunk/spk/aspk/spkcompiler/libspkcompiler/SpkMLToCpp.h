@@ -50,6 +50,8 @@ extern "C"{
    * YACC definition.
    */
   int yyparse(void);
+
+  void yyrestart( FILE* );
 };
 /**
  * A global flag used by yyparse() to indicate as to whether

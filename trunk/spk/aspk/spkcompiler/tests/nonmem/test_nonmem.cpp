@@ -10,10 +10,24 @@
 #include "read_nonmem_modelTest.h"
 #include "explangTest.h"
 #include "emit_nonmem_driverTest.h"
+#include "emit_nonmem_modelTest.h"
 
 using namespace std;
 using namespace CppUnit;
-
+/*
+extern "C"{
+  int yylex(void);
+  int yyparse(void);
+  FILE * yyin;
+  FILE * yyout;
+  void yyrestart( FILE* );
+  void yyerror( char * m )
+  {
+     fprintf( stderr, "%s\n", m );
+     exit(-1);
+  }	  
+};
+*/
 int main( int argc, const char * argv[] )
 {
   map<string, CppUnit::Test*> master;
@@ -25,6 +39,7 @@ int main( int argc, const char * argv[] )
   master[ "read_nonmem_dataTest" ]   = read_nonmem_dataTest::suite();
   master[ "read_nonmem_modelTest" ]  = read_nonmem_modelTest::suite();
   master[ "emit_nonmem_driverTest" ] = emit_nonmem_driverTest::suite();
+  master[ "emit_nonmem_modelTest" ]  = emit_nonmem_modelTest::suite();
 
   if( argc == 1 )
     {

@@ -23,7 +23,6 @@
 using namespace std;
 using namespace CppUnit;
 using namespace xercesc;
-
 void read_nonmem_modelTest::setUp()
 {
   XMLPlatformUtils::Initialize();
@@ -33,6 +32,132 @@ void read_nonmem_modelTest::tearDown()
   XMLPlatformUtils::Terminate();
 }
 
+void read_nonmem_modelTest::create_pred(
+   DOMDocument * doc, SymbolTable * table )
+{
+  //
+  // <model [tolerance=INT]>
+  //    <pred>
+  //       ;THETA(1) = MEAN OBESRVATION RATE CONSTANT (1/HR)
+  //       ;THETA(2) = MEAN ELIMINATION RATE CONSTANT (1/HR)
+  //       ;THETA(3) = SLOPE OF CLEARANCE VS WEIGHT RELATIONSHIP (LITER/HR/KG)
+  //       ;DOSE = WT-ADJUSTED DOSE (MG/KG)
+  //       ;DS = NON-WT-ADJUSTED DOSE (MG)
+  //       IF (DOSE.NE.0) THEN
+  //          DS = DOSE*WT
+  //          W  = WT
+  //       ENDIF
+  //       KA = THETA(1) + ETA(1)
+  //       KE = THETA(2) + ETA(2)
+  //       CL = THETA(3) * W + ETA(3)
+  //       D  = EXP( -KE * TIME ) - EXP( -KA * TIME )
+  //       E  = CL * ( KA - KE )
+  //       F  = DS * KE * KA / E * D
+  //       Y = F + EPS(1)
+  //    </pred>
+  // </model> 
+  //
+  //
+  // --- target ---
+  //
+  // #include <libspkcompiler/nonmem.h>
+  // #include "IndData.h"
+  //
+  // namespace{
+  //    IndDataSet all;
+  //    double ka;
+  //    double ke;
+  //    double cl;
+  //    double d;
+  //    double e;
+  //    double ds;
+  //    double w;
+  // };
+  //
+  // bool evalPred( const Type* const theta, 
+  //                int nTheta,
+  //                const Type* const eta, 
+  //                int nEta,
+  //                const Type* const eps,
+  //                int nEps,
+  //                int i, // who
+  //                int j, // t(j)
+  //                double& f, 
+  //                double& y )
+  // {
+  //    double wt   = all[i].wt[j];
+  //    double dose = all[i].dose[j];
+  //    double time = all[i].time[j];
+  //
+  //    //THETA(1) = MEAN OBESRVATION RATE CONSTANT (1/HR)
+  //    //THETA(2) = MEAN ELIMINATION RATE CONSTANT (1/HR)
+  //    //THETA(3) = SLOPE OF CLEARANCE VS WEIGHT RELATIONSHIP (1/HR/KG)
+  //    //DOSE = WT-ADJUSTED DOSE (MG/KG)
+  //    //DS = NON_WT_ADJUSTED DOSE (MG)
+  //    if( dose != 0 )
+  //    {
+  //       ds = dose * wt;
+  //       w  = wt;
+  //    }
+  //    ka = theta[0] + eta[0];
+  //    ke = theta[1] + eta[1];
+  //    cl = theta[2] = w + eta[2];
+  //    d  = exp( -ke * time ) - exp( -ka * time );
+  //    e  = cl * ( ka - ke );
+  //    f = ds * ke * ka / e * d;
+  //    y = f + eps[0];
+  //
+  //    //if( all[i].evid[j] != nonmem::OBSERVATION )
+  //    //   return false;
+  //    return true;
+  // }
+  //
+  DOMElement * rootElem = doc->getDocumentElement();
+   
+  DOMElement* model  = doc->createElement( XMLString::transcode( "model" ) );
+  rootElem->appendChild( model ); 
+
+  model->setAttribute( XMLString::transcode("tolerance"),  XMLString::transcode( "3" ) );
+
+  DOMElement * predNode = doc->createElement( XMLString::transcode( "pred" ) );
+  DOMNode * pred = doc->createTextNode( XMLString::transcode( "pred" ) );
+  char pred_def[512];
+  sprintf( pred_def, "IF( DOSE.NE.0 ) THEN\n \
+		      DS=DOSE * WT\n \
+		      W=WT\n \
+		      ENDIF\n \
+		      KA=THETA(1) + ETA(1)\n \
+		      KE=THETA(2) + ETA(2)\n \
+		      CL=THETA(3) * W + ETA(3)\n \
+		      D=EXP(-KE*TIME)-EXP(-KA*TIME)\n \
+		      E=CL*(KA-KE)\n \
+		      F=DS * KE * KA / E * D\n \
+		      Y=F + EPS(1)\n" );
+   //
+   // NONMEM keywords
+   //
+   Symbol theta( "theta", Symbol::VECTOR, Symbol::DOUBLE, true );
+   theta.size( 3 );
+   Symbol eta  ( "eta",   Symbol::VECTOR, Symbol::DOUBLE, true );
+   eta.size( 3 );
+   Symbol eps  ( "eps",   Symbol::VECTOR, Symbol::DOUBLE, true );
+   eps.size( 2 );
+   table->insert( theta );
+   table->insert( eta );
+   table->insert( eps );
+
+   pred->setNodeValue( XMLString::transcode(pred_def) );
+
+   predNode->appendChild( pred );
+   model->appendChild( predNode );
+
+
+   DOMWriter * writer = ((DOMImplementationLS*)impl)->createDOMWriter();
+   writer->setNewLine( XMLString::transcode("\n") );
+   StdOutFormatTarget destination;
+
+   //writer->writeNode( &destination, *rootElem );
+}
 //
 // ADVAN2: One Compartmental Linear Model with First Order Absorption
 //
@@ -140,19 +265,42 @@ void read_nonmem_modelTest::test()
 		0);                              // document type object (DTD).
 
   SymbolTable table;
-  create_advan2_trans2( doc, &table );
+  create_pred( doc, &table );
 
+  //
+  // Data labels && keywords
+  //
+  int n = 5;
+  map<string, string> label_alias;
+  label_alias["time"] = "";
+  label_alias["wt"]   = "";
+  label_alias["dose"] = "";
+  label_alias["dv"]   = "";
+  map<string, string>::const_iterator label = label_alias.begin();
+  while( label != label_alias.end() )
+  {
+     Symbol xxx( label->first, Symbol::VECTOR, Symbol::DOUBLE, true );
+     xxx.size( n );
+     table.insert( xxx );
+     if( label->second != "" )
+     {
+        Symbol yyy( label->second, Symbol::VECTOR, Symbol::DOUBLE, true );
+	yyy.size( n );
+	table.insert( yyy );
+     }
+     ++label;
+  }
+   
   DOMElement * modelNode = dynamic_cast<DOMElement*>(
 	     doc->getElementsByTagName( XMLString::transcode( "model" ) )->item(0) );
-  //
-  // register names found in data file
-  //
-  yydebug = 0;
 
-  gSpkExpOutput = fopen( "junk", "w" );
+  yydebug = 0;
+  gSpkExpOutput = fopen( "pred.cpp", "w" );
   read_nonmem_model( modelNode, nIndividuals, &table );
   fclose( gSpkExpOutput );
-  remove( "junk" );
+
+
+
   return;
 }
 

@@ -22,7 +22,7 @@
       strcmp( str, nonmem::STR_DV   )    == 0 |
       strcmp( str, nonmem::STR_MDV  )    == 0 |
       strcmp( str, nonmem::STR_TIME )    == 0 |
-      strcmp( str, nonmem::STR_DATA )    == 0 |
+      strcmp( str, nonmem::STR_DATE )    == 0 |
       strcmp( str, nonmem::STR_DAT1 )    == 0 |
       strcmp( str, nonmem::STR_DAT2 )    == 0 |
       strcmp( str, nonmem::STR_DAT3 )    == 0 |
@@ -33,7 +33,7 @@
       strcmp( str, nonmem::STR_RATE )    == 0 |
       strcmp( str, nonmem::STR_SS   )    == 0 |
       strcmp( str, nonmem::STR_II   )    == 0 |
-      strcmp( str, nonmem::STR_ADD1 )    == 0 |
+      strcmp( str, nonmem::STR_ADDL )    == 0 |
       strcmp( str, nonmem::STR_CMT  )    == 0 |
       strcmp( str, nonmem::STR_PCMT )    == 0 |
       strcmp( str, nonmem::STR_CALL )    == 0 |
@@ -426,8 +426,8 @@ enum nonmem::LABEL nonmem::toEnumLABEL( const char * str )
     return nonmem::MDV;
   else if( strcmp( str, nonmem::STR_TIME ) == 0 )
     return nonmem::TIME;
-  else if( strcmp( str, nonmem::STR_DATA ) == 0 )
-    return nonmem::DATA;
+  else if( strcmp( str, nonmem::STR_DATE ) == 0 )
+    return nonmem::DATE;
   else if( strcmp( str, nonmem::STR_DAT1 ) == 0 )
     return nonmem::DAT1;
   else if( strcmp( str, nonmem::STR_DAT2 ) == 0 )
@@ -448,8 +448,8 @@ enum nonmem::LABEL nonmem::toEnumLABEL( const char * str )
     return nonmem::SS;
   else if( strcmp( str, nonmem::STR_II   ) == 0 )
     return nonmem::II;
-  else if( strcmp( str, nonmem::STR_ADD1 ) == 0 )
-    return nonmem::ADD1;
+  else if( strcmp( str, nonmem::STR_ADDL ) == 0 )
+    return nonmem::ADDL;
   else if( strcmp( str, nonmem::STR_CMT  ) == 0 )
     return nonmem::CMT;
   else if( strcmp( str, nonmem::STR_PCMT ) == 0 )
@@ -478,8 +478,8 @@ const char * const nonmem::toStringLABEL( enum nonmem::LABEL e )
     return nonmem::STR_MDV;
   else if( e == nonmem::TIME )
     return nonmem::STR_TIME;
-  else if( e == nonmem::DATA )
-    return nonmem::STR_DATA;
+  else if( e == nonmem::DATE )
+    return nonmem::STR_DATE;
   else if( e == nonmem::DAT1 )
     return nonmem::STR_DAT1;
   else if( e == nonmem::DAT2 )
@@ -500,8 +500,8 @@ const char * const nonmem::toStringLABEL( enum nonmem::LABEL e )
     return nonmem::STR_SS;
   else if( e == nonmem::II )
     return nonmem::STR_II;
-  else if( e == nonmem::ADD1 )
-    return nonmem::STR_ADD1;
+  else if( e == nonmem::ADDL )
+    return nonmem::STR_ADDL;
   else if( e == nonmem::CMT )
     return nonmem::STR_CMT;
   else if( e == nonmem::PCMT )

@@ -38,6 +38,11 @@ void read_nonmem_dataTest::createDataTree(
    int nObservations, char * label    [], char * synonym[],
    int nMeasurements, char * str_value[] )
 {  
+
+  //
+  // This initializer does not insert "evid" or "mdv" columns.
+  //
+
   DOMElement * individuals [nIndividuals +1];
   DOMElement * observations[nObservations+1];
   DOMElement * measurements[nMeasurements+1];
@@ -113,20 +118,27 @@ void read_nonmem_dataTest::testOrderMixedUp()
 
   for( int j=0; j<nObservations; j++ )
     {
-      label[j]   = new char[128];
+      label[j]   = new char[20];
       sprintf( label[j],   "label_%03d", j+1 );
-      synonym[j] = new char[128];
-      sprintf( synonym[j], "alias_%03d", j+1 );
+      synonym[j] = new char[20];
+      
+      //
+      // Data set must contain DV data.  So, set the first column to DV.
+      //
+      if( j == 0 )
+	sprintf( synonym[j], "dv" );
+      else
+	sprintf( synonym[j], "alias_%03d", j+1 );
     }
   for( int i=0; i<nIndividuals; i++ )
     {
       // Flip around the order of process.
-      str_order[i] = new char[128];
+      str_order[i] = new char[20];
       sprintf( str_order[i], "%d",   nIndividuals-i );
-      id[i]        = new char[128];
+      id[i]        = new char[20];
       sprintf( id[i],        "%03d", i+1 );
 
-      str_len[i]   = new char[128];
+      str_len[i]   = new char[20];
       sprintf( str_len[i],   "%d",   nMeasurements );
 
       for( int j=0; j<nObservations; j++ )
@@ -134,7 +146,7 @@ void read_nonmem_dataTest::testOrderMixedUp()
 	  for( int k=0; k<nMeasurements; k++ )
 	    {
 	      str_value[i*nObservations*nMeasurements+j*nMeasurements+k] 
-		= new char[128];
+		= new char[20];
 	      sprintf( str_value[i*nObservations*nMeasurements+j*nMeasurements+k], 
 		       "%f", 
 		       static_cast<double>(i*nObservations*nMeasurements+j*nMeasurements+k) );
@@ -153,6 +165,15 @@ void read_nonmem_dataTest::testOrderMixedUp()
 		  nObservations, 
 		  label, synonym, 
 		  nMeasurements, str_value );
+  DOMElement * dataNode = dynamic_cast<DOMElement*>(
+	     doc->getElementsByTagName( XMLString::transcode( "data" ) )->item(0) );
+
+  /*
+  DOMWriter * writer = ((DOMImplementationLS*)impl)->createDOMWriter();
+  writer->setNewLine( XMLString::transcode("\n") );
+  StdOutFormatTarget destination;
+  writer->writeNode( &destination, *dataNode );
+  */
 
   struct NonmemParameters nonmem;
   struct SpkParameters spk;
@@ -215,9 +236,6 @@ void read_nonmem_dataTest::testOrderMixedUp()
 
   SymbolTable table;
 
-  DOMElement * dataNode = dynamic_cast<DOMElement*>(
-	     doc->getElementsByTagName( XMLString::transcode( "data" ) )->item(0) );
-
   read_nonmem_data( dataNode,
 		    nIndividuals,
 		    table,
@@ -226,41 +244,72 @@ void read_nonmem_dataTest::testOrderMixedUp()
 		    order_id_pair,
 		    spk );
 
-  CPPUNIT_ASSERT_EQUAL( (int)label_alias_mapping.size(), nObservations );
+  for ( int i=0; i<nIndividuals; i++ )
+    {
+      CPPUNIT_ASSERT_EQUAL( nMeasurements, spk.nMeasurements[i] );
+    }
+
+  int nColumns = nObservations + 2; // plus the column for EVID
+
+  CPPUNIT_ASSERT( table.find( "evid" ) != NULL );
+  CPPUNIT_ASSERT( table.find( "mdv" ) != NULL );
+
+  // EVID columns should've been added, so the size is plus one.
+  CPPUNIT_ASSERT_EQUAL( nColumns, (int)label_alias_mapping.size() );
   
-  cout << endl;
+  //  cout << endl;
   for( int i=0; i<nIndividuals; i++ )
     {
-      char id[128];
+      char id[20];
       sprintf( id, "%03d", nIndividuals-i );
       CPPUNIT_ASSERT_MESSAGE( order_id_pair[i], strcmp( id, order_id_pair[i].c_str()) == 0 );
-      CPPUNIT_ASSERT_EQUAL( (int)data_for[i].size(), nObservations );
+      CPPUNIT_ASSERT_EQUAL( nColumns, (int)data_for[i].size() );
 
       //      cout << "order = " << i << ", ID = " << id << endl;
       map<string, valarray<double> >::const_iterator column 
 	= data_for[i].begin();
 
-      for( int j=0; j<nObservations, column != data_for[i].end(); j++ )
+      for( int j=0, real=0; j<nColumns, column != data_for[i].end(); j++, column++ )
 	{
-	  char label[128];
-	  char alias[128];
-	  sprintf( label, "label_%03d", j+1 );
-	  sprintf( alias, "alias_%03d", j+1 );
-	  CPPUNIT_ASSERT_MESSAGE( label_alias_mapping[label].c_str(), 
-				  strcmp( label_alias_mapping[label].c_str(), alias ) == 0 );
-
-	  //	  cout << column->first << endl;
-	  for( int k=0; k<nMeasurements; k++ )
+	  if( column->first == "evid" )
 	    {
-	      CPPUNIT_ASSERT_EQUAL( static_cast<double>( 
-				       (nIndividuals-i-1)*nObservations*nMeasurements+j*nMeasurements+k),
-				    column->second[k]);
+	      for( int k=0; k<nMeasurements; k++ )
+		{
+		  CPPUNIT_ASSERT_EQUAL( nonmem::EVID_OBSERVATION, column->second[k] );
+		}
 	    }
-	  column++;
-	}  
-    }
+	  else if( column->first == "mdv" )
+	    {
+	      for( int k=0; k<nMeasurements; k++ )
+		{
+		  CPPUNIT_ASSERT_EQUAL( nonmem::MDV_NOT_MISSING, column->second[k] );
+		}
+	    }
+	  else
+	    {
 
-  cout << endl;
+	      char label[20];
+	      char alias[20];
+	      sprintf( label, "label_%03d", real+1 );
+	      if( real == 0 )
+		sprintf( alias, "dv" );
+	      else
+		sprintf( alias, "alias_%03d", real+1 );
+	      CPPUNIT_ASSERT_MESSAGE( label_alias_mapping[label].c_str(), 
+		 strcmp( label_alias_mapping[label].c_str(), alias ) == 0 );
+
+	      for( int k=0; k<nMeasurements; k++ )
+		{
+		  CPPUNIT_ASSERT_EQUAL( static_cast<double>( 
+		     (nIndividuals-i-1)*(nObservations)*nMeasurements+real*nMeasurements+k),
+			column->second[k]);
+		}
+	      ++real;
+	    }
+	}
+    }
+  
+  //cout << endl;
   for( int j=0; j<nObservations; j++ )
   {
     delete label[j];
@@ -275,7 +324,7 @@ void read_nonmem_dataTest::testOrderMixedUp()
 	{
 	  for( int k=0; k<nMeasurements; k++ )
 	    {
-	      delete str_value[i*nObservations*nMeasurements+j*nMeasurements+k];
+	      delete str_value[i*(nObservations)*nMeasurements+j*nMeasurements+k];
 	    }
 	}
     }

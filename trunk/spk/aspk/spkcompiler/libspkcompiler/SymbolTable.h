@@ -34,6 +34,7 @@
 class SymbolTable{
   
  public:
+  typedef std::map < std::string, Symbol > UserSymbols;
   /**
    * Default constructor
    */
@@ -99,6 +100,19 @@ class SymbolTable{
   inline int size() const{ return userSymbols.size(); }
 
   /**
+   * Obtain an constant iterator to the first entry, pair <string, Symbol>, in the table.
+   * 
+   * @return A pair<string,Symbol> iterator pointing to the first entry in the table.
+   */
+  UserSymbols::const_iterator begin() const ;
+
+  /**
+   * Obtain an contant iterator to the last entry, pair <string, Symbol>, in the table.
+   *
+   * @return A pair<string, Sybmol> iterator pointing to one after the last entry in the table.
+   * */
+  UserSymbols::const_iterator end() const;
+  /**
    * Dumps the contents of the table to the standard output.
    */
   void dump() const;
@@ -111,7 +125,6 @@ class SymbolTable{
  private:
   client::type who;
 
-  typedef std::map < std::string, Symbol > UserSymbols;
   UserSymbols userSymbols;
 
 };

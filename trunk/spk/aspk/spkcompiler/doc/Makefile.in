@@ -19,6 +19,7 @@ SOURCE = ../libspkcompiler/client.h \
          ../libspkcompiler/nonmem/read_nonmem_driver.h \
          ../libspkcompiler/nonmem/read_nonmem_model.h \
          ../libspkcompiler/nonmem/emit_nonmem_driver.h \
+         ../libspkcompiler/nonmem/emit_nonmem_model.h \
          ../libspkcompiler/SpkCompilerUtil.h \
          ../libspkcompiler/SpkMLToCpp.h \
          ../libspkcompiler/SpkParameters.h \

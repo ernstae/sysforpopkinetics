@@ -14,22 +14,19 @@
 
 using namespace std;
 using namespace CppUnit;
-
 extern "C"{
   int yylex(void);  
   int yyparse(void);
   FILE * yyin;
   void yyrestart( FILE* );
-
-  void yyerror( char * m )
-  {
-    // For this test, be silent.
-  }
+  void yyerror( char * m );
 };
 
 int gSpkExpLines  = 0;
 int gSpkExpErrors = 0;
-
+void yyerror( char * m )
+{
+}
 void lex_explangTest::setUp()
 {
 }
