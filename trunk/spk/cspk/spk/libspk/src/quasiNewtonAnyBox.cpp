@@ -1360,127 +1360,14 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
     errorcode = SpkError::SPK_UNKNOWN_OPT_ERR;
   }
 
-
-
-
-
-  switch ( fail.code ) 
-  {
-  case NE_NOERROR:
-	  optimizer.setIsTooManyIter( false );
-	  optimizer.setNIterCompleted( options.iter );
-      optimizer.deleteStateInfo();
-      ok = true;
-      break;
-  case NW_NOT_CONVERGED:    // The final iterate y satisfies 
-                            // the first-order Kuhn-Tucker
-                            // conditions for a minimum up to the 
-                            // accuracy requested, but the
-                            // sequence of iterates, i.e., y
-                            // values, has not yet converged.
-                            // (See the description of optim_tol 
-                            // and see section 9.1 of the
-                            // documentation for nag_opt_nlp in 
-                            // the NAG C Library Manual.)
-
-      // If the final y value is actually within epsilon tolerance of 
-      // the true value yStar, then go on.  Note that NAG arrays use
-      // row-major order.
-      if ( isWithinTol( epsilon, dvecY, dvecYLow, dvecYUp, drowGScaled, 
-               getLowerTriangle( arrayToDoubleMatrix( options.h, n, n ) ) ) )
-      {
-        ok = true;
-        break;
-      }
-      else
-      {
-        ok = false;
-        errorcode = SpkError::SPK_NOT_CONVERGED;
-        break;
-    
-      }
-
-  case NW_KT_CONDITIONS:          // The current point cannot be 
-                                  // improved upon. The final point
-                                  // does not satisfy the first-order 
-                                  // Kuhn-Tucker conditions and
-                                  // no improved point for the merit 
-                                  // function could be found
-                                  // during the final line search.
-
-      // If the final y value is actually within epsilon tolerance of 
-      // the true value yStar, then go on.  Note that NAG arrays use
-      // row-major order.
-      if ( isWithinTol( epsilon, dvecY, dvecYLow, dvecYUp, drowGScaled, 
-               getLowerTriangle( arrayToDoubleMatrix( options.h, n, n ) ) ) )
-      {
-        ok = true;
-        break;
-      }
-      else
-      {
-        ok = false;
-        errorcode = SpkError::SPK_KT_CONDITIONS;
-        break;
-      }
-
-  case NW_LIN_NOT_FEASIBLE:       // No feasible point was found for 
-                                  // the linear constraints and bounds.
-      ok = false;
-      errorcode = SpkError::SPK_LIN_NOT_FEASIBLE;
-      break;
-
-  case NW_NONLIN_NOT_FEASIBLE:    // No feasible point could be found 
-                                  // for the nonlinear constraints.
-      ok = false;
-      errorcode = SpkError::SPK_NONLIN_NOT_FEASIBLE;
-      break;
-
-  case NW_TOO_MANY_ITER:          // The maximum number of iterations 
-                                  // have been performed.
-	  optimizer.setIsTooManyIter( true );
-      optimizer.setNIterCompleted( options.iter );
-
-	  //------------------------------------------------------------
-      // Save state information for warm start
-      //------------------------------------------------------------
-
-      if( !optimizer.getIsSubLevelOpt() && optimizer.getStateInfo().n )
-	  {
-		  stateInfo.n      = n;
-	      stateInfo.x      = y;
-          stateInfo.state  = options.state;
-          stateInfo.lambda = options.lambda;
-          stateInfo.h      = options.h;
-	      optimizer.setStateInfo( stateInfo );
-
-          ok = true;
-	  }
-	  else
-	  {
-	      ok = false;
-          errorcode = SpkError::SPK_TOO_MANY_ITER;
-	  }
-
-      break;
-
-  default:
-
-      // If any other errors or warnings are returned by nag_opt_nlp,
-      // then throw an exception.
-      ok = false;
-      errorcode = SpkError::SPK_UNKNOWN_OPT_ERR;
-      break;
-  }
-
   if( !ok )
   {
-      const int max = SpkError::maxMessageLen();
-      char message[max];
-      sprintf( message, "%d%s%d\0", fail.code, fail.message, fail.errnum );
-      SpkError err(errorcode, message, __LINE__, __FILE__ );
+    const int max = SpkError::maxMessageLen();
+    char message[max];
+    sprintf( message, "%d%s%d\0", fail.code, fail.message, fail.errnum );
+    SpkError err(errorcode, message, __LINE__, __FILE__ );
 
-      throw info.exceptionOb.push(err);
+    throw info.exceptionOb.push(err);
   }
 
   //------------------------------------------------------------
