@@ -51,7 +51,7 @@
 #include <spk/SpkValarray.h>
 
 // CppAD header files.
-#include <cppad/include/CppAD.h>
+#include <CppAD/CppAD.h>
 
 // CppUnit framework header files.
 #include <cppunit/TestSuite.h>

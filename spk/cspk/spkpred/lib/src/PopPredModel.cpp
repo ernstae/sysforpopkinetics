@@ -84,8 +84,8 @@ namespace // [Begin: unnamed namespace]
 #include <spk/SpkValarray.h>
 
 // CppAD header files.
-#include <cppad/include/CppAD.h>
-#include <cppad/include/Independent.h>
+#include <CppAD/CppAD.h>
+//#include <CppAD/include/Independent.h>
 
 // Standard library header files.
 #include <cassert>
