@@ -18,7 +18,7 @@ spkcompiler_SOURCES = \
 	../config.h \
 	spkcompiler.cpp
 
-AM_LDFLAGS = -lxerces-c -L$(INST_BASE)/lib/spktest -lspkcompiler
+AM_LDFLAGS = -lxerces-c -L/usr/local/lib -L$(INST_BASE)/lib/spktest -lspkcompiler
 
 INCLUDES = \
 	-I@top_srcdir@/ \
