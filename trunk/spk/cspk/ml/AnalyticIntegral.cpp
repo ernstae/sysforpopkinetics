@@ -42,10 +42,10 @@ $fend 25$$
 
 
 $head Linear Model$$
-We use the $xref/MonteSpkModel/Notation/Monte-Carlo model notation/$$ with the
-individual index $italic i$$ fixed (and hence left out).
-A $code LinearModel$$ is derived from an $code SpkModel$$
-and defines the following functions
+We use the $xref/MonteSpkModel/Notation/Monte-Carlo model notation/$$ 
+with the individual index $italic i$$ fixed (and hence left out).
+We also assume that there is only one random effect; i.e.,  $latex n = 1$$
+and
 $latex \[
 \begin{array}{rcl}
 	D  ( \alpha )            & = & \sigma_D^2 
