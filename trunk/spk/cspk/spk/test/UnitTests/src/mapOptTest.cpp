@@ -637,7 +637,6 @@ void mapOptTest::mapOptExampleTest()
   Optimizer optimizer( epsilon, nMaxIter, level ); 
 
   // Set these to exercise the warm start capabilities of mapOpt.
-  optimizer.setupWarmStart( nB );
   optimizer.setThrowExcepIfMaxIter( false );
   optimizer.setSaveStateAtEndOfOpt( true );
 

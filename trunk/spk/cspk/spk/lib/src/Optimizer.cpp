@@ -29,9 +29,7 @@
  * Author: Jiaji Du
  *
  * Modified later by: Sachiko Honda
- *   Note:  Function arguments of basic data type (ex. int, double)
- *          were unnecessarily passed by const reference.
- *          Modified to pass by mere values.
+ * Modified later by: Mitch Watrous
  *
  *************************************************************************/
 
@@ -129,7 +127,13 @@ $syntax//saveStateAtEndOfOpt//$$ $cend
 false $rend
 $syntax//throwExcepIfMaxIter//$$ $cend
 true $rend
+$syntax//isWarmStartPossible//$$ $cend
+false $rend
 $syntax//isWarmStart//$$ $cend
+false $rend
+$syntax//didOptFinishOk//$$ $cend
+false $rend
+$syntax//isBeginOfIterStateInfo//$$ $cend
 false $rend
 $tend
 and setting all the element pointers of $code StateInfo$$ to $code NULL$$.
@@ -141,7 +145,7 @@ $head Arguments$$
 N/A
 
 $head Example$$
-See $xref/Optimizer/Example/Example/$$
+There is no example for this class.
 $end
 */
 
@@ -212,7 +216,7 @@ $syntax/
 
 /isTooManyIter/
 /$$
-This flag indicates that if the too-many-iteration failure has occurred.  
+This flag indicates whether the too-many-iteration failure has occurred.  
 It is set to $code false$$ at the construction time.
 
 $syntax/
@@ -233,20 +237,77 @@ It is set to $code true$$ at the construction time.
 
 $syntax/
 
-/isWarmStart/
+/isWarmStartPossible/
 /$$
-This flag indicates that if the optimization should run a warm start.  
+This flag indicates whether it is possible to perform a warm start 
+using the current optimizer state information.
 It is set to $code false$$ at the construction time.
 
 $syntax/
 
-/StateInfo/
+/isWarmStart/
 /$$
-This $code StateInfo$$ object contains the optimizer state information
+This flag indicates whether the optimization should run a warm start.  
+It is set to $code false$$ at the construction time.
+
+$syntax/
+
+/didOptFinishOk/
+/$$
+This flag indicates whether the optimizer completed without an 
+error occurring during the previous time it was called.
+It is set to $code false$$ at the construction time.
+
+$syntax/
+
+/isBeginOfIterStateInfo/
+/$$
+This flag indicates whether the current optimizer state information 
+is from the beginning of the last iteration during the previous 
+time the optimizer was called.
+It is set to $code false$$ at the construction time.
+
+$syntax/
+
+/stateInfo/
+/$$
+This $code stateInfo$$ structure contains the optimizer state information
 required to perform a warm start.
+Each of its elements is described separately below.
+
+$subhead stateInfo.n$$
+The element $italic n$$ specifies the number of components
+in the element vector $italic x$$.
+
+$subhead stateInfo.b$$
+The element $italic b$$ specifies the number of Bfgs updates
+that have been made to the Hessian approximation $italic h$$.
+
+$subhead stateInfo.r$$
+The element $italic r$$ contains the current trust region radius
+(as an infinity norm bound on the step size).
+
+$subhead stateInfo.f$$
+The element $italic f$$ contains the value for $math%f(x)%$$
+at the point $math%x%$$.
+
+$subhead stateInfo.x$$
+The element $italic x$$ is a vector of length $italic n$$.
+It specifies the point at which the objective function, 
+its gradient, and its Hessian were evaluated.
+
+$subhead stateInfo.g$$
+The vector $italic g$$ must have length $math%n%$$.
+It contains the gradient of $math%f(x)%$$
+at the point $math%x%$$.
+
+$subhead stateInfo.h.$$
+The vector $italic h$$ must have length $math%n^2%$$.
+It contains an approximation for the Hessian of $math%f(x)%$$
+at the point $math%x%$$.
 
 $head Example$$
-See $xref/Optimizer/Example/Example/$$
+There is no example for this class.
 $end
 */
 
@@ -282,10 +343,11 @@ $$
 $pre
 $$
 $head Description$$
-Destroy itself with no memory leak.
+Frees memory allocated to hold the optimizer state information used
+in warm starts.
 
 $head Example$$
-See $xref/Optimizer/Example/Example/$$
+There is no example for this class.
 
 $end
 
@@ -325,7 +387,7 @@ Constructs a new $code Optimizer$$ object identical to $italic original$$.
 Only shallow copy is implemented. 
 
 $head Example$$
-See $xref/Optimizer/Example/Example/$$
+There is no example for this class.
 
 $end
 */
@@ -364,7 +426,7 @@ returns $italic this$$ (where $italic *this$$ is the $code Optimizer$$
 object on the left side of the = sign).  Only shallow copy is implemented.
 
 $head Example$$
-See $xref/Optimizer/Example/Example/$$
+There is no example for this class.
 
 $end
 */
@@ -404,7 +466,7 @@ as $italic epsilon$$ at the construction time or the most recent value
 altered via $code setEpsilon()$$.
 
 $head Example$$
-See $xref/Optimizer/Example/Example/$$
+There is no example for this class.
 
 $end
 */
@@ -444,7 +506,7 @@ given at the construction time or the most recent value altered via
 $code setNMaxIter()$$.
 
 $head Example$$
-See $xref/Optimizer/Example/Example/$$
+There is no example for this class.
 
 $end
 */
@@ -485,7 +547,7 @@ $italic traceLevel$$ at the construction time or the most recent value
 altered via $code setLevel()$$.
 
 $head Example$$
-See $xref/Optimizer/Example/Example/$$
+There is no example for this class.
 $end
 */
 
@@ -525,7 +587,7 @@ either $code 0$$ given at the construction time or the most recent value
 altered via $code setNIterCompleted()$$.
 
 $head Example$$
-See $xref/Optimizer/Example/Example/$$
+There is no example for this class.
 $end
 */
 
@@ -565,7 +627,7 @@ either $code false$$ given at the construction time or the most recent
 value altered via $code setIsTooManyIter()$$.
 
 $head Example$$
-See $xref/Optimizer/Example/Example/$$
+There is no example for this class.
 $end
 */
 
@@ -604,7 +666,7 @@ value altered via $code setSaveStateAtEndOfOpt()$$.
 
 
 $head Example$$
-See $xref/Optimizer/Example/Example/$$
+There is no example for this class.
 $end
 */
 
@@ -643,7 +705,46 @@ value altered via $code setThrowExcepIfMaxIter()$$.
 
 
 $head Example$$
-See $xref/Optimizer/Example/Example/$$
+There is no example for this class.
+$end
+*/
+
+/* 
+-------------------------------------------------------------
+   Get the is warm start possible flag
+-------------------------------------------------------------
+$begin getIsWarmStartPossible$$
+
+$spell
+  getIsWarmStartPossible bool Optimizer
+    const 
+$$
+
+$section Get is warm start possible flag$$
+
+$index Optimizer, is warm start possible, isWarmStartPossible, getIsWarmStartPossible$$
+
+$table
+$bold Prototype$$ $cend
+$syntax/bool Optimizer::getIsWarmStartPossible() const/$$ $rend
+$tend
+
+$fend 20$$
+
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$pre
+$$
+$head Description$$
+$code getIsWarmStartPossible()$$ returns the value of $italic
+isWarmStartPossible$$ either $code false$$ given at the construction
+time or the most recent value altered via $code setIsWarmStartPossible()$$.
+
+$head Example$$
+There is no example for this class.
 $end
 */
 
@@ -682,28 +783,28 @@ either $code false$$ given at the construction time or the most recent
 value altered via $code setIsWarmStart()$$.
 
 $head Example$$
-See $xref/Optimizer/Example/Example/$$
+There is no example for this class.
 $end
 */
 
 /* 
 -------------------------------------------------------------
-   Get the state information for warm start
+   Get the did the optimizer finish ok flag
 -------------------------------------------------------------
-$begin getStateInfo$$
+$begin getDidOptFinishOk$$
 
 $spell
-  getStateInfo stateInfo Optimizer
-    const nlp
+  getDidOptFinishOk bool Optimizer
+    const 
 $$
 
-$section Get state information for warm start$$
+$section Get the did the optimizer finish ok flag$$
 
-$index Optimizer, state optimization, getStateInfo$$
+$index Optimizer, optimizer finish ok, didOptFinishOk, getDidOptFinishOk$$
 
 $table
 $bold Prototype$$ $cend
-$syntax/StateInfo Optimizer::getStateInfo() const/$$ $rend
+$syntax/bool Optimizer::getDidOptFinishOk() const/$$ $rend
 $tend
 
 $fend 20$$
@@ -716,17 +817,53 @@ $$
 $pre
 $$
 $head Description$$
-$code getStateInfo()$$ returns the value of $italic StateInfo$$ 
-object that contains the information required for later warm start.
-The content of the $italic StateInfo$$ object is described in 
-$xref/OptimizerConstructor//Constructor/$$ section.
-
+$code getDidOptFinishOk()$$ returns the value of $italic didOptFinishOk$$
+either $code false$$ given at the construction time or the most recent 
+value altered via $code setDidOptFinishOk()$$.
 
 $head Example$$
-See $xref/Optimizer/Example/Example/$$
+There is no example for this class.
 $end
 */
 
+/* 
+-------------------------------------------------------------
+   Get the is beginning of iteration state information flag
+-------------------------------------------------------------
+$begin getIsBeginOfIterStateInfo$$
+
+$spell
+  getIsBeginOfIterStateInfo bool Optimizer
+    const 
+$$
+
+$section Get the is beginning of iteration state information flag$$
+
+$index Optimizer, beginning of iteration state, isBeginOfIterStateInfo, getIsBeginOfIterStateInfo$$
+
+$table
+$bold Prototype$$ $cend
+$syntax/bool Optimizer::getIsBeginOfIterStateInfo() const/$$ $rend
+$tend
+
+$fend 20$$
+
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$pre
+$$
+$head Description$$
+$code getIsBeginOfIterStateInfo()$$ returns the value of $italic isBeginOfIterStateInfo$$
+either $code false$$ given at the construction time or the most recent 
+value altered via $code setIsBeginOfIterStateInfo()$$.
+
+$head Example$$
+There is no example for this class.
+$end
+*/
 
 /* 
 -------------------------------------------------------------
@@ -761,7 +898,7 @@ $code setEpsilon()$$ sets $italic epsilon$$ as
 the convergence tolerance epsilon.
 
 $head Example$$
-See $xref/Optimizer/Example/Example/$$
+There is no example for this class.
 
 $end
 */
@@ -800,7 +937,7 @@ $code setNMaxIter()$$ sets $italic nMaxIter$$ as
 the maximum number of iterations.
 
 $head Example$$
-See $xref/Optimizer/Example/Example/$$
+There is no example for this class.
 
 $end
 */
@@ -839,7 +976,7 @@ $code setLevel()$$ sets $italic level$$ as
 the level of tracing.
 
 $head Example$$
-See $xref/Optimizer/Example/Example/$$
+There is no example for this class.
 
 $end
 */
@@ -879,7 +1016,7 @@ $code setNIterCompleted()$$ sets the value $italic nIterCompleted$$
 as the number of iterations completed.
 
 $head Example$$
-See $xref/Optimizer/Example/Example/$$
+There is no example for this class.
 $end
 */
 
@@ -915,10 +1052,10 @@ $pre
 $$
 $head Description$$
 $code setIsTooManyIter()$$ sets the value $italic isTooManyIter$$
-as a flag to indicate that if too-many-iteration failure has occurred.
+as a flag to indicate whether too-many-iteration failure has occurred.
 
 $head Example$$
-See $xref/Optimizer/Example/Example/$$
+There is no example for this class.
 $end
 */
 
@@ -938,7 +1075,7 @@ $index Optimizer, state, setSaveStateAtEndOfOpt$$
 
 $table
 $bold Prototype$$ $cend
-$syntax/void Optimizer::setSaveStateAtEndOfOpt(bool /s/)/$$ $rend
+$syntax/void Optimizer::setSaveStateAtEndOfOpt(bool /b/)/$$ $rend
 $tend
 
 $fend 20$$
@@ -957,7 +1094,7 @@ should be saved at the end of the optimization process.
 
 
 $head Example$$
-See $xref/Optimizer/Example/Example/$$
+There is no example for this class.
 $end
 */
 
@@ -977,7 +1114,7 @@ $index Optimizer, throwExceptionIfMaxIter, setThrowExcepIfMaxIter$$
 
 $table
 $bold Prototype$$ $cend
-$syntax/void Optimizer::setThrowExcepIfMaxIter(bool /t/)/$$ $rend
+$syntax/void Optimizer::setThrowExcepIfMaxIter(bool /b/)/$$ $rend
 $tend
 
 $fend 20$$
@@ -995,13 +1132,54 @@ as a flag to indicate if the optimizer should throw an exception when
 the maximum number of iterations is exhausted.
 
 $head Example$$
-See $xref/Optimizer/Example/Example/$$
+There is no example for this class.
 $end
 */
 
 /* 
 -------------------------------------------------------------
-   Set the isWarmStart flag
+   Set the is warm start possible flag
+-------------------------------------------------------------
+$begin setIsWarmStartPossible$$
+
+$spell
+  setIsWarmStartPossible bool Optimizer
+    const
+$$
+
+$section Set the is warm start possible flag$$
+
+$index Optimizer, warm startPossible, isWarmStartPossible, setIsWarmStartPossible$$
+
+$table
+$bold Prototype$$ $cend
+$syntax/void Optimizer::setIsWarmStartPossible(bool /b/)/$$ $rend
+$tend
+
+$fend 20$$
+
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$pre
+$$
+$head Description$$
+
+$code setIsWarmStartPossible()$$ sets the value 
+$italic isWarmStartPossible$$ as a flag to indicate whether
+it is possible to perform a warm start using the current 
+optimizer state information.
+
+$head Example$$
+There is no example for this class.
+$end
+*/
+
+/* 
+-------------------------------------------------------------
+   Set the is a warm start flag
 -------------------------------------------------------------
 $begin setIsWarmStart$$
 
@@ -1010,7 +1188,7 @@ $spell
     const
 $$
 
-$section Set warm start flag$$
+$section Set the is a warm start flag$$
 
 $index Optimizer, warm start, isWarmStart, setIsWarmStart$$
 
@@ -1030,31 +1208,31 @@ $pre
 $$
 $head Description$$
 $code setIsWarmStart()$$ sets the value $italic isWarmStart$$
-as a flag to indicate that if the optimization should run a warm start.
+as a flag to indicate whether the optimization should run a warm start.
 
 $head Example$$
-See $xref/Optimizer/Example/Example/$$
+There is no example for this class.
 $end
 */
 
 /* 
 -------------------------------------------------------------
-   Set up warm start
+   Set the did the optimizer finish ok flag
 -------------------------------------------------------------
-$begin setupWarmStart$$
+$begin setDidOptFinishOk$$
 
 $spell
-  setupWarmStart Optimizer
-    Integer NCLin NCNlin const
+  setDidOptFinishOk bool Optimizer
+    const
 $$
 
-$section Set up warm start$$
+$section Set the did the optimizer finish ok flag$$
 
-$index Optimizer, warm start, setupWarmStart$$
+$index Optimizer, optimizer finish ok, didOptFinishOk, setDidOptFinishOk$$
 
 $table
 $bold Prototype$$ $cend
-$syntax/void Optimizer::setupWarmStart(int /N/)/$$ $rend
+$syntax/void Optimizer::setDidOptFinishOk(bool /b/)/$$ $rend
 $tend
 
 $fend 20$$
@@ -1067,24 +1245,157 @@ $$
 $pre
 $$
 $head Description$$
-$code setupWarmStart()$$ // Allocate memory for storing state 
-information for later warm start.  If future warm start is 
-intended,this function must be called before 
-$xref/fitIndividual//fitIndividual()/$$ or 
-$xref/fitPopulation//fitPopulation()/$$ is called.
+$code setDidOptFinishOk()$$ sets the value $italic didOptFinishOk$$
+as a flag to indicate whether the optimizer completed without an 
+error occurring during the previous time it was called.
+
+$head Example$$
+There is no example for this class.
+$end
+*/
+
+/* 
+-------------------------------------------------------------
+   Set the is beginning of iteration state information flag
+-------------------------------------------------------------
+$begin setIsBeginOfIterStateInfo$$
+
+$spell
+  setIsBeginOfIterStateInfo bool Optimizer
+    const
+$$
+
+$section Set the is beginning of iteration state information flag$$
+
+$index Optimizer, beginning of iteration state, isBeginOfIterStateInfo, setIsBeginOfIterStateInfo$$
+
+$table
+$bold Prototype$$ $cend
+$syntax/void Optimizer::setIsBeginOfIterStateInfo(bool /b/)/$$ $rend
+$tend
+
+$fend 20$$
+
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$pre
+$$
+$head Description$$
+$code setIsBeginOfIterStateInfo()$$ sets the value 
+$italic isBeginOfIterStateInfo$$ as a flag to indicate the current 
+optimizer state information is from the beginning of the last 
+iteration during the previous time the optimizer was called.
+
+$head Example$$
+There is no example for this class.
+$end
+*/
+
+/* 
+-------------------------------------------------------------
+   Get the state information for warm start
+-------------------------------------------------------------
+$begin getStateInfo$$
+
+$spell
+  getStateInfo stateInfo Optimizer
+    const nlp
+$$
+
+$section Get state information for a warm start$$
+
+$index Optimizer, state optimization, getStateInfo$$
+
+$table
+$bold Prototype$$ $cend
+$syntax/void Optimizer::getStateInfo(
+  int            /nIn/,
+  size_t         /bOut/,
+  double         /rOut/,
+  double         /fOut/,
+  double* const  /xOut/,
+  double* const  /gOut/,
+  double* const  /hOut/ )
+/$$
+$rend
+$tend
+
+$fend 20$$
+
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$pre
+$$
+$head Description$$
+This function gets state information required for a later warm start.
 
 $head Arguments$$
 $syntax/
-/N/
+/nIn/
 /$$
-This int number is the number of variables.  
-It must be greater than $math%0.0%$$.
+The argument $italic nIn$$ specifies the number of components
+in the argument vector $italic xOut$$.
 
+$syntax/
+
+/bOut/
+/$$
+The argument $italic bOut$$ will be set equal to the number of 
+Bfgs updates that have been made to the Hessian approximation 
+$italic hOut$$.
+
+$syntax/
+
+/rOut/
+/$$
+The argument $italic rOut$$ will be set equal to the current 
+trust region radius (as an infinity norm bound on the step size).
+
+$syntax/
+
+/fOut/
+/$$
+The argument $italic fOut$$ will be set equal to the value for
+$math%f(x)%$$ at the point $math%xOut%$$.
+
+$syntax/
+
+/xOut/
+/$$
+The array pointed to by $italic xOut$$ must have length 
+$italic nIn$$.
+It will be set equal to the point at which the objective 
+function, its gradient, and its Hessian were evaluated.
+
+$syntax/
+
+/gOut/
+/$$
+The array pointed to by $italic gOut$$ must have length 
+$italic nIn$$.
+It will be set equal to the gradient of $math%f(x)%$$
+at the point $math%xOut%$$.
+
+$syntax/
+
+/hOut/
+/$$
+The array pointed to by $italic hOut$$ must have length 
+$italic nIn$$ * $italic nIn$$.
+It will be set equal to an approximation for the Hessian 
+of $math%f(x)%$$ at the point $math%xOut%$$.
 
 $head Example$$
-See $xref/Optimizer/Example/Example/$$
+There is no example for this class.
 $end
 */
+
 
 /* 
 -------------------------------------------------------------
@@ -1097,13 +1408,26 @@ $spell
     Integer const
 $$
 
-$section Set state information for warm start$$
+$section Set state information for a warm start$$
 
 $index Optimizer, warm start, state information, setStateInfo$$
 
 $table
 $bold Prototype$$ $cend
-$syntax/void Optimizer::setStateInfo(const StateInfo& /s/)/$$ $rend
+$syntax/void Optimizer::setStateInfo(
+  int                  /nIn/,
+  size_t               /bIn/,
+  double               /rIn/,
+  double               /fIn/,
+  const double* const  /xIn/,
+  const double* const  /gIn/,
+  const double* const  /hIn/,
+  int                  /mIn/,
+  const double* const  /lowIn/,
+  const double* const  /upIn/,
+  const int*    const  /posIn/ )
+/$$
+$rend
 $tend
 
 $fend 20$$
@@ -1116,40 +1440,121 @@ $$
 $pre
 $$
 $head Description$$
-$code setStateInfo( const StateInfo& s )$$ sets state information required 
-for later warm start.  This function is for SPK internal use only.
+This function sets state information required for a later warm start.
 
 $head Arguments$$
 $syntax/
-/s/
+/nIn/
 /$$
-This $italic StateInfo$$ object contains the information required by warm start.  
-The content of the $italic StateInfo$$ object is described in 
-$xref/OptimizerConstructor//Constructor/$$ section.
+The argument $italic nIn$$ specifies the number of free objective
+function parameters.
 
+$syntax/
+
+/bIn/
+/$$
+The argument $italic bIn$$ specifies the number of Bfgs updates
+that have been made to the Hessian approximation $italic hIn$$.
+
+$syntax/
+
+/rIn/
+/$$
+The argument $italic rIn$$ contains the current trust region radius
+(as an infinity norm bound on the step size).
+
+$syntax/
+
+/fIn/
+/$$
+The argument $italic fIn$$ contains the value for $math%f(x)%$$
+at the point $math%xIn%$$.
+
+$syntax/
+
+/xIn/
+/$$
+The array pointed to by $italic xIn$$ must have length 
+$italic nIn$$.
+It specifies the point at which the objective function, 
+its gradient, and its Hessian were evaluated.
+
+$syntax/
+
+/gIn/
+/$$
+The array pointed to by $italic gIn$$ must have length 
+$italic nIn$$.
+It contains the gradient of $math%f(x)%$$
+at the point $math%xIn%$$.
+
+$syntax/
+
+/hIn/
+/$$
+The array pointed to by $italic hIn$$ must have length 
+$italic nIn$$ * $italic nIn$$.
+It contains an approximation for the Hessian of $math%f(x)%$$
+at the point $math%xIn%$$.
+
+$syntax/
+/mIn/
+/$$
+The argument $italic mIn$$ specifies the total number of objective 
+function parameters, i.e., the number of free parameters plus the 
+number of parameters that are constrained by both their lower and 
+upper bounds.
+
+$syntax/
+
+/lowIn/
+/$$
+The array pointed to by $italic lowIn$$ must have length 
+$italic mIn$$.
+It specifies the lower bounds for all of the objective function 
+parameters in their original coordinates.
+
+$syntax/
+
+/upIn/
+/$$
+The array pointed to by $italic upIn$$ must have length 
+$italic mIn$$.
+It specifies the upper bounds for all of the objective function 
+parameters in their original coordinates.
+
+$syntax/
+
+/posIn/
+/$$
+The array pointed to by $italic posIn$$ must have length 
+$italic nIn$$.
+It specifies the positions, i.e., indices, of the free objective 
+function parameters in the full objective function parameter.
 
 $head Example$$
-See $xref/Optimizer/Example/Example/$$
+There is no example for this class.
 $end
 */
 
 /* 
 -------------------------------------------------------------
-   Delete state information
+   Determine if there is any error information
 -------------------------------------------------------------
-$begin deleteStateInfo$$
+$begin isThereErrorInfo$$
 
 $spell
-  deleteStateInfo Optimizer
+  isThereErrorInfo bool Optimizer
+    const 
 $$
 
-$section Delete state information$$
+$section Determine if there is error information$$
 
-$index Optimizer, warm start, state information, deleteStateInfo$$
+$index Optimizer, error information, isThereErrorInfo$$
 
 $table
 $bold Prototype$$ $cend
-$syntax/void Optimizer::deleteStateInfo()/$$ $rend
+$syntax/bool Optimizer::isThereErrorInfo() const/$$ $rend
 $tend
 
 $fend 20$$
@@ -1162,12 +1567,84 @@ $$
 $pre
 $$
 $head Description$$
-$code deleteStateInfo()$$ deletes state information used in 
-warm start.  It is for SPK internal use only.
-
+Returns true if there was an error during the previous call to the
+optimizer and if there is state information from the beginning of the
+iteration that caused the error.
 
 $head Example$$
-See $xref/Optimizer/Example/Example/$$
+There is no example for this class.
+$end
+*/
+
+/* 
+-------------------------------------------------------------
+   Get the error information
+-------------------------------------------------------------
+$begin getErrorInfo$$
+
+$spell
+  getErrorInfo errorInfo Optimizer
+    const nlp
+$$
+
+$section Get error information$$
+
+$index Optimizer, error information, getErrorInfo$$
+
+$table
+$bold Prototype$$ $cend
+$syntax/void Optimizer::getErrorInfo( 
+  const std::string  /headerStr/,
+  std::string&       /messageStr/,
+  unsigned int       /lineNumber/,
+  const char*        /fileName/ )
+/$$
+$rend
+$tend
+
+$fend 20$$
+
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$pre
+$$
+$head Description$$
+
+This function gets any error information that is available and formats
+it in the same form as the $xref/SpkError//SpkError/$$ serialize function.
+
+$head Arguments$$
+$syntax/
+/headerStr/
+/$$
+This string is added to the beginning of the error message before
+it is formatted.
+
+$syntax/
+
+/messageStr/
+/$$
+This string will contain the formatted error message.
+It will be set equal to an empty string if there is no error
+information.
+
+$syntax/
+
+/lineNumber/
+/$$
+This is the line number in the file where the error was generated.
+
+$syntax/
+
+/fileName/
+/$$
+This is the name of the file where the error was generated.
+
+$head Example$$
+There is no example for this class.
 $end
 */
 
@@ -1265,153 +1742,114 @@ $end
 
 #include "Optimizer.h"
 #include "SpkException.h"
+#include <spkopt/Memory.h>
+#include <iomanip>
+#include <iostream>
+#include <sstream> 
+#include <string> 
 
 // Default constructor
 //Goddard review 9/17/02: Default values should be reasonable; "arbitrary" isn't useful.
 Optimizer::Optimizer()
-                    : epsilon( 0.0001 ), nMaxIter( 40 ), level( 1 ), 
-            nIterCompleted( 0 ), isTooManyIter( false ),
-            saveStateAtEndOfOpt( false ), throwExcepIfMaxIter( true ),
-            isWarmStart( false )
+  :
+  epsilon                 ( 0.0001 ),
+  nMaxIter                ( 40 ),
+  level                   ( 1 ),
+  nIterCompleted          ( 0 ),
+  isTooManyIter           ( false ),
+  saveStateAtEndOfOpt     ( false ),
+  throwExcepIfMaxIter     ( true ),
+  isWarmStartPossible     ( false ),
+  isWarmStart             ( false ),
+  didOptFinishOk          ( false ),
+  isBeginOfIterStateInfo  ( false )
 {
-  // Note: the state information maintained by this class 
-  // is specific to the optimizer QuasiNewton01Box.
-  stateInfo.n = 0;
-  stateInfo.b = 0;
-  stateInfo.r = 0;
-  stateInfo.f = 0;
-  stateInfo.x = 0;
-  stateInfo.g = 0;
-  stateInfo.h = 0;
+  stateInfo.n   = 0;
+  stateInfo.b   = 0;
+  stateInfo.r   = 0;
+  stateInfo.f   = 0;
+  stateInfo.x   = 0;
+  stateInfo.g   = 0;
+  stateInfo.h   = 0;
+  stateInfo.m   = 0;
+  stateInfo.low = 0;
+  stateInfo.up  = 0;
+  stateInfo.pos = 0;
 }
 
 // Constructor
 Optimizer::Optimizer( double Epsilon, int NMaxIter, int Level )
-              : epsilon( Epsilon ), nMaxIter( NMaxIter ), level( Level ),
-            nIterCompleted( 0 ), isTooManyIter( false ), 
-            saveStateAtEndOfOpt( false ), throwExcepIfMaxIter( true ),
-            isWarmStart( false )
+  :
+  epsilon                 ( Epsilon ),
+  nMaxIter                ( NMaxIter ),
+  level                   ( Level ),
+  nIterCompleted          ( 0 ),
+  isTooManyIter           ( false ),
+  saveStateAtEndOfOpt     ( false ),
+  throwExcepIfMaxIter     ( true ),
+  isWarmStartPossible     ( false ),
+  isWarmStart             ( false ),
+  didOptFinishOk          ( false ),
+  isBeginOfIterStateInfo  ( false )
 {
-  // Note: the state information maintained by this class 
-  // is specific to the optimizer QuasiNewton01Box.
-  stateInfo.n = 0;
-  stateInfo.b = 0;
-  stateInfo.r = 0;
-  stateInfo.f = 0;
-  stateInfo.x = 0;
-  stateInfo.g = 0;
-  stateInfo.h = 0;
+  stateInfo.n   = 0;
+  stateInfo.b   = 0;
+  stateInfo.r   = 0;
+  stateInfo.f   = 0;
+  stateInfo.x   = 0;
+  stateInfo.g   = 0;
+  stateInfo.h   = 0;
+  stateInfo.m   = 0;
+  stateInfo.low = 0;
+  stateInfo.up  = 0;
+  stateInfo.pos = 0;
 }
 
 // Copy constructor
 Optimizer::Optimizer( const Optimizer& right ) 
-                    : epsilon( right.epsilon ), nMaxIter( right.nMaxIter ),
-              level( right.level ), nIterCompleted( right.nIterCompleted ), 
-            isTooManyIter( right.isTooManyIter ),
-            saveStateAtEndOfOpt( right.saveStateAtEndOfOpt ),
-	    throwExcepIfMaxIter( right.throwExcepIfMaxIter ),
-            isWarmStart( right.isWarmStart ), stateInfo( right.stateInfo )
-{}
+  :
+  epsilon                 ( right.epsilon ),
+  nMaxIter                ( right.nMaxIter ),
+  level                   ( right.level ),
+  nIterCompleted          ( right.nIterCompleted ),
+  isTooManyIter           ( right.isTooManyIter ),
+  saveStateAtEndOfOpt     ( right.saveStateAtEndOfOpt ),
+  throwExcepIfMaxIter     ( right.throwExcepIfMaxIter ),
+  isWarmStartPossible     ( right.isWarmStartPossible ),
+  isWarmStart             ( right.isWarmStart ),
+  didOptFinishOk          ( right.didOptFinishOk ),
+  isBeginOfIterStateInfo  ( right.isBeginOfIterStateInfo )
+{
+  stateInfo.n   = 0;
+  stateInfo.b   = 0;
+  stateInfo.r   = 0;
+  stateInfo.f   = 0;
+  stateInfo.x   = 0;
+  stateInfo.g   = 0;
+  stateInfo.h   = 0;
+  stateInfo.m   = 0;
+  stateInfo.low = 0;
+  stateInfo.up  = 0;
+  stateInfo.pos = 0;
+
+  setStateInfo(
+    right.stateInfo.n,
+    right.stateInfo.b,
+    right.stateInfo.r,
+    right.stateInfo.f,
+    right.stateInfo.x,
+    right.stateInfo.g,
+    right.stateInfo.h,
+    right.stateInfo.m,
+    right.stateInfo.low,
+    right.stateInfo.up,
+    right.stateInfo.pos );
+}
 
 // Destructor
 Optimizer::~Optimizer()
 {
-    deleteStateInfo();
-}
-
-// Assignment operator
-Optimizer& Optimizer::operator=( const Optimizer& right ) 
-{
-  epsilon             = right.epsilon;
-  nMaxIter            = right.nMaxIter;
-  level               = right.level;
-  nIterCompleted      = right.nIterCompleted;
-  isTooManyIter       = right.isTooManyIter;
-  saveStateAtEndOfOpt = right.saveStateAtEndOfOpt;
-  throwExcepIfMaxIter = right.throwExcepIfMaxIter;
-  isWarmStart         = right.isWarmStart;
-  stateInfo           = right.stateInfo;
-  return *this;
-}
-
-// Allocate memory for returning state information for warm start
-void Optimizer::setupWarmStart( int n )
-{
-  stateInfo.n = n;
-  stateInfo.b = 0;
-  if ( stateInfo.x ) delete [] stateInfo.x;;
-  if ( stateInfo.g ) delete [] stateInfo.g;;
-  if ( stateInfo.h ) delete [] stateInfo.h;;
-  stateInfo.x = new double[ n ];
-  stateInfo.g = new double[ n ];
-  stateInfo.h = new double[ n * n ];
-  if( !stateInfo.x || !stateInfo.g || !stateInfo.h )
-  {
-        char errmsg[] = "setUpWarmStart() failed to allocate memory.";
-        throw SpkException( SpkError::SPK_INSUFFICIENT_MEM_ERR, errmsg, __LINE__, __FILE__ );
-    }
-}
-
-// Set turning on/off warm start flag 
-void Optimizer::setIsWarmStart( bool w ) 
-{ 
-  // Note: the state information maintained by this class 
-  // is specific to the optimizer QuasiNewton01Box.
-  if( w )
-  {
-    if( stateInfo.x && stateInfo.g && stateInfo.h ) 
-    {
-      isWarmStart = true;
-    }
-    else
-    {
-            char errmsg[] = "It's not ready for warm start. Call setupWarmStart().";
-            throw SpkException( SpkError::SPK_NOT_READY_WARM_START_ERR, errmsg, __LINE__, __FILE__ );
-    }
-  }
-  else
-  {
-        isWarmStart = false;
-  }
-}
-
-// Set state info
-void Optimizer::setStateInfo( const StateInfo& s )
-{
-  // Note: the state information maintained by this class 
-  // is specific to the optimizer QuasiNewton01Box.
-    if( stateInfo.n != s.n )
-  {
-        char errmsg[] = "The number of variables is incorrect. Check calling setupWarmStart().";
-        throw SpkException( SpkError::SPK_USER_INPUT_ERR, errmsg, __LINE__, __FILE__ );
-  }
-  stateInfo.b = s.b;
-  stateInfo.r = s.r;
-  stateInfo.f = s.f;
-  if( stateInfo.x && stateInfo.g && stateInfo.h ) 
-  {
-      for( int i = 0; i < stateInfo.n; i++ )
-    {
-            stateInfo.x[ i ] = s.x[ i ];
-            stateInfo.g[ i ] = s.g[ i ];
-    }
-      for( int i = 0; i < stateInfo.n * stateInfo.n; i++ )
-    {
-        stateInfo.h[ i ] = s.h[ i ];
-    }
-  }
-  else
-  {
-        char errmsg[] = "It's not ready for warm start. Check calling setupWarmStart().";
-        throw SpkException( SpkError::SPK_NOT_READY_WARM_START_ERR, errmsg, __LINE__, __FILE__ );
-  }
-}
-
-// Delete state info
-void Optimizer::deleteStateInfo()
-{
-  // Note: the state information maintained by this class 
-  // is specific to the optimizer QuasiNewton01Box.
+  // Free any memory that has allocated and reset the state variables.
   stateInfo.n = 0;
   stateInfo.b = 0;
   if( stateInfo.x ) 
@@ -1429,6 +1867,495 @@ void Optimizer::deleteStateInfo()
     delete [] stateInfo.h;
     stateInfo.h = 0;
   }
+  if( stateInfo.low )
+  {
+    delete [] stateInfo.low;
+    stateInfo.low = 0;
+  }
+  if( stateInfo.up )
+  {
+    delete [] stateInfo.up;
+    stateInfo.up = 0;
+  }
+  if( stateInfo.pos )
+  {
+    delete [] stateInfo.pos;
+    stateInfo.pos = 0;
+  }
+}
+
+// Assignment operator
+Optimizer& Optimizer::operator=( const Optimizer& right ) 
+{
+  epsilon                = right.epsilon;
+  nMaxIter               = right.nMaxIter;
+  level                  = right.level;
+  nIterCompleted         = right.nIterCompleted;
+  isTooManyIter          = right.isTooManyIter;
+  saveStateAtEndOfOpt    = right.saveStateAtEndOfOpt;
+  throwExcepIfMaxIter    = right.throwExcepIfMaxIter;
+  isWarmStartPossible    = right.isWarmStartPossible;
+  isWarmStart            = right.isWarmStart;
+  didOptFinishOk         = right.didOptFinishOk;
+  isBeginOfIterStateInfo = right.isBeginOfIterStateInfo;
+
+  stateInfo.n   = 0;
+  stateInfo.b   = 0;
+  stateInfo.r   = 0;
+  stateInfo.f   = 0;
+  stateInfo.x   = 0;
+  stateInfo.g   = 0;
+  stateInfo.h   = 0;
+  stateInfo.m   = 0;
+  stateInfo.low = 0;
+  stateInfo.up  = 0;
+  stateInfo.pos = 0;
+
+  setStateInfo(
+    right.stateInfo.n,
+    right.stateInfo.b,
+    right.stateInfo.r,
+    right.stateInfo.f,
+    right.stateInfo.x,
+    right.stateInfo.g,
+    right.stateInfo.h,
+    right.stateInfo.m,
+    right.stateInfo.low,
+    right.stateInfo.up,
+    right.stateInfo.pos );
+
+  return *this;
+}
+
+// Get state information
+void Optimizer::getStateInfo(
+  int            nIn,
+  size_t&        bOut,
+  double&        rOut,
+  double&        fOut,
+  double* const  xOut,
+  double* const  gOut,
+  double* const  hOut )
+{
+  // Check that there are state variables to get.
+  if( stateInfo.n == 0 )
+  {
+    throw SpkException( 
+        SpkError::SPK_USER_INPUT_ERR,
+        "There are currently no stored optimizer state variables to get.",
+        __LINE__,
+        __FILE__ );
+  }
+
+  // Check the dimensions of the requested state variables.
+  if( stateInfo.n != nIn )
+  {
+    throw SpkException( 
+        SpkError::SPK_USER_INPUT_ERR,
+        "The number of optimizer state variables requested does not match the number stored.",
+        __LINE__,
+        __FILE__ );
+  }
+
+  int i;
+
+  // Set the output values.
+  if( stateInfo.x && stateInfo.g && stateInfo.h ) 
+  {
+    bOut = stateInfo.b;
+    rOut = stateInfo.r;
+    fOut = stateInfo.f;
+    for ( i = 0; i < nIn; i++ )
+    {
+      xOut[i] = stateInfo.x[i];
+      gOut[i] = stateInfo.g[i];
+    }
+    for ( i = 0; i < nIn * nIn; i++ )
+    {
+      hOut[i] = stateInfo.h[i];
+    }
+  }
+  else
+  {
+    throw SpkException( 
+        SpkError::SPK_NOT_READY_WARM_START_ERR,
+        "The optimizer state variables were not allocated properly.",
+        __LINE__,
+        __FILE__ );
+  }
+}
+
+// Set state information
+void Optimizer::setStateInfo(
+  int                  nIn,
+  size_t               bIn,
+  double               rIn,
+  double               fIn,
+  const double* const  xIn,
+  const double* const  gIn,
+  const double* const  hIn,
+  int                  mIn,
+  const double* const  lowIn,
+  const double* const  upIn,
+  const int*    const  posIn )
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  // If it has not already been done, then prepare the variables to
+  // hold the state information.
+  if( stateInfo.n == 0 )
+  {
+    stateInfo.n = nIn;
+    stateInfo.b = 0;
+    if ( stateInfo.x ) delete [] stateInfo.x;;
+    if ( stateInfo.g ) delete [] stateInfo.g;;
+    if ( stateInfo.h ) delete [] stateInfo.h;;
+    stateInfo.x = new double[ nIn ];
+    stateInfo.g = new double[ nIn ];
+    stateInfo.h = new double[ nIn * nIn ];
+
+    if( !stateInfo.x || !stateInfo.g || !stateInfo.h )
+    {
+      char errmsg[] = "Failed to allocate memory for the optimzer warm start information.";
+      throw SpkException( SpkError::SPK_INSUFFICIENT_MEM_ERR, errmsg, __LINE__, __FILE__ );
+    }
+  }
+
+  // Check the dimensions of the input state variables.
+  if( stateInfo.n != nIn )
+  {
+    throw SpkException( 
+        SpkError::SPK_USER_INPUT_ERR,
+        "The number of input optimizer state variables does not match the number stored.",
+        __LINE__,
+        __FILE__ );
+  }
+
+  // If it has not already been done, then prepare the variables to
+  // hold the original coordinate information.
+  if( stateInfo.m == 0 )
+  {
+    stateInfo.m = mIn;
+    if ( stateInfo.low ) delete [] stateInfo.low;;
+    if ( stateInfo.up )  delete [] stateInfo.up;;
+    if ( stateInfo.pos ) delete [] stateInfo.pos;;
+    stateInfo.low = new double[ mIn ];
+    stateInfo.up  = new double[ mIn ];
+    stateInfo.pos = new int   [ nIn ];
+
+    if( !stateInfo.low || !stateInfo.up || !stateInfo.pos )
+    {
+      char errmsg[] = "Failed to allocate memory for the original coordinate information.";
+      throw SpkException( SpkError::SPK_INSUFFICIENT_MEM_ERR, errmsg, __LINE__, __FILE__ );
+    }
+  }
+
+  // Check the dimensions of the input original coordinate
+  // information.
+  if( stateInfo.m != mIn )
+  {
+    throw SpkException( 
+        SpkError::SPK_USER_INPUT_ERR,
+        "The dimensions of the original coordinate information input do not match the dimensions stored.",
+        __LINE__,
+        __FILE__ );
+  }
+
+  // Check that there are at least as many free parameters as there
+  // are total parameters.
+  if( mIn < nIn )
+  {
+    throw SpkException( 
+        SpkError::SPK_USER_INPUT_ERR,
+        "The dimensions of the input state variables and the original coordinate information do not match.",
+        __LINE__,
+        __FILE__ );
+  }
+
+
+  //------------------------------------------------------------
+  // Set the stored optimizer state variables.
+  //------------------------------------------------------------
+
+  int i;
+
+  if( stateInfo.x && stateInfo.g && stateInfo.h ) 
+  {
+    stateInfo.b = bIn;
+    stateInfo.r = rIn;
+    stateInfo.f = fIn;
+    for ( i = 0; i < nIn; i++ )
+    {
+      stateInfo.x[i] = xIn[i];
+      stateInfo.g[i] = gIn[i];
+    }
+    for ( i = 0; i < nIn * nIn; i++ )
+    {
+      stateInfo.h[i] = hIn[i];
+    }
+  }
+  else
+  {
+    throw SpkException( 
+        SpkError::SPK_NOT_READY_WARM_START_ERR,
+        "The optimizer state variables were not allocated properly.",
+        __LINE__,
+        __FILE__ );
+  }
+
+
+  //------------------------------------------------------------
+  // Set the stored original coordinate information.
+  //------------------------------------------------------------
+
+  if( stateInfo.low && stateInfo.up && stateInfo.pos ) 
+  {
+    for ( i = 0; i < mIn; i++ )
+    {
+      stateInfo.low[i] = lowIn[i];
+      stateInfo.up[i]  = upIn[i];
+    }
+    for ( i = 0; i < nIn; i++ )
+    {
+      stateInfo.pos[i] = posIn[i];
+    }
+  }
+  else
+  {
+    throw SpkException( 
+        SpkError::SPK_NOT_READY_WARM_START_ERR,
+        "The original coordinate information was not allocated properly.",
+        __LINE__,
+        __FILE__ );
+  }
+}
+
+// Check to see if there is any error information to get.
+bool Optimizer::isThereErrorInfo() const
+{
+  // Return true if there was an error during the optimization
+  // and if the current state information is from the beginning
+  // of the last iteration.
+  return ( !didOptFinishOk && isBeginOfIterStateInfo );
+}
+
+// Get the error information.
+void Optimizer::getErrorInfo( 
+  const std::string  headerStr,
+  std::string&       messageStr,
+  unsigned int       lineNumber,
+  const char*        fileName )
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  // If there isn't any error information, set the message 
+  // equal to an empty string and return.
+  if ( !isThereErrorInfo() )
+  {
+    messageStr = "";
+    return;
+  }
+
+  // Check that there are state variables to get.
+  if( stateInfo.n == 0 )
+  {
+    throw SpkException( 
+        SpkError::SPK_OPT_ERR,
+        "There are currently no stored optimizer state variables to generate the error information.",
+        __LINE__,
+        __FILE__ );
+  }
+
+
+  //------------------------------------------------------------
+  // Prepare to get the error information.
+  //------------------------------------------------------------
+
+  // Create the message stream with the header at the beginning.
+  ostringstream message;
+  message << headerStr;
+
+  Memory<double> memoryDbl( stateInfo.m );
+  double* diff = memoryDbl( stateInfo.m );
+
+  double xOrig;
+  double gOrig;
+  double gProjOrig;
+
+
+  //------------------------------------------------------------
+  // Get the parameter and gradient information.
+  //------------------------------------------------------------
+
+  int i;
+
+  bool isAnyElemConstrained = false;
+
+  int colWidth1 = 9 - 2;
+  int colWidth2 = 12 + 2;
+  int colWidth3 = 9;
+  int colWidth4 = colWidth2;
+  int colWidth5 = colWidth2;
+  string colSpacer = "  ";
+
+  message << "An error occurred in the optimizer for the iteration that" << endl;
+  message << "started with the following parameters:" << endl;
+  message << endl;
+  message << "Parameter      Value       At Bound?     Gradient     Proj. Gradient"   << endl;
+  message << "---------  --------------  ---------  --------------  --------------" << endl;
+
+  for ( i = 0; i < stateInfo.m; i++ )
+  {
+    //------------------------------------------------------------
+    // Convert the state information back to the original coordinates.
+    //------------------------------------------------------------
+
+    // Calculate the distance between the original bounds.
+    diff[i] = stateInfo.up[i] - stateInfo.low[i];
+
+    // Calculate the parameter in the original coordinates.
+    xOrig = stateInfo.low[i] + diff[i] * stateInfo.x[i];
+
+    // Calculate the gradient in the original coordinates.
+    if ( diff[i] != 0.0 )
+    {
+      gOrig = stateInfo.g[i] / diff[i];
+    }
+    else
+    {
+      gOrig = 0.0;
+    }
+
+    // Calculate the projected gradient in the original coordinates.
+    // The projected gradient is the gradient multiplied by the 
+    // distance to the parameter's upper or lower bound depending on
+    // whether the gradient is negative or nonnegative, respectively.
+    if ( gOrig >= 0.0 )
+    {
+      gProjOrig = ( xOrig - stateInfo.low[i] ) * gOrig;
+    }
+    else
+    {
+      gProjOrig = ( stateInfo.up[i] - xOrig ) * gOrig;
+    }
+
+
+    //------------------------------------------------------------
+    // Put the parameter and gradient information into the message.
+    //------------------------------------------------------------
+
+    // Column 1.
+    message << setw( colWidth1 ) << i + 1 << colSpacer;
+
+    // Column 2.
+    message << setw( colWidth2 ) << scientific 
+          << setprecision( 2 ) << xOrig << colSpacer;
+
+    // Column 3.
+    message << setw( colWidth3 );
+    if ( stateInfo.low[i] == stateInfo.up[i] )
+    {
+      message << "Both ";
+      isAnyElemConstrained = true;
+    }
+    else if ( xOrig == stateInfo.low[i] )
+    {
+      message << "Lower";
+    }
+    else if ( xOrig == stateInfo.up[i] )
+    {
+      message << "Upper";
+    }
+    else
+    {
+      message << "No   ";
+    }
+    message << colSpacer;
+
+    // Column 4.
+    message << setw( colWidth4 ) << scientific 
+          << setprecision( 2 ) << gOrig << colSpacer;
+
+    // Column 5.
+    message << setw( colWidth5 ) << scientific 
+          << setprecision( 2 ) << gProjOrig << colSpacer;
+
+    message << endl;
+  }
+
+  message << endl;
+  message << "The projected gradient is the gradient multiplied by the distance to" << endl;
+  message << "the upper (lower) bound if the gradient is negative (nonnegative)." << endl;
+
+  message << endl;
+
+
+  //------------------------------------------------------------
+  // Get the Hessian information.
+  //------------------------------------------------------------
+
+  int j;
+
+  int colWidth = 10;
+
+  message << "The Hessian approximation used internally by the optimizer" << endl;
+  message << "at that point was as follows:" << endl;
+  message << endl;
+  message << "Hessian =" << endl;
+  message << endl;
+
+  // Put the Hessian information into the message after converting
+  // them to the original coordinates.
+  for ( i = 0; i < stateInfo.n; i++ )
+  {
+    message << "[ ";
+
+    for ( j = 0; j < stateInfo.n; j++ )
+    {
+      message << setw( colWidth ) << scientific << setprecision( 2 )
+              << stateInfo.h[i + j * stateInfo.n] /
+                   ( diff[stateInfo.pos[i]] * diff[stateInfo.pos[j]] );
+
+      if ( j < stateInfo.n - 1 )
+      {
+        message << ", ";
+      }
+    }
+
+    message << " ]" << endl;
+  }
+
+  // Add a warning if any elements are contrained by both bounds.
+  if ( isAnyElemConstrained )
+  {
+    message << "Note:  some of the elements of the parameter are not included in" << endl;
+    message << "the above Hessian because they are constrained by both their" << endl;
+    message << "lower and upper bounds and are not optimized over." << endl;
+    message << endl;
+  }
+
+
+  //------------------------------------------------------------
+  // Finish up.
+  //------------------------------------------------------------
+
+  // Format the error information message in the same way as an
+  // SpkError message.  This error message is too long to be stored in
+  // one of the SpkError objects that is contained in an SpkException,
+  // and so the message must be formatted here.
+  formatLongError(
+    SpkError::SPK_OPT_ERR,
+    message.str(),
+    lineNumber,
+    fileName,
+    messageStr );
+
 }
 
 // Stream insertion operator

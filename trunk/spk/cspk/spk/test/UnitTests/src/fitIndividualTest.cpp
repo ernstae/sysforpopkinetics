@@ -83,6 +83,9 @@ Test* fitIndividualTest::suite()
     suiteOfTests->addTest(new TestCaller<fitIndividualTest>(
                          "fitIndividualLimitsWarningsTest", 
                          &fitIndividualTest::fitIndividualLimitsWarningsTest));
+    suiteOfTests->addTest(new TestCaller<fitIndividualTest>(
+                         "fitIndividualOptErrorTest", 
+                         &fitIndividualTest::fitIndividualOptErrorTest));
 
 
     return suiteOfTests;
@@ -501,7 +504,6 @@ void fitIndividualTest::fitIndividualExampleTest()
   Optimizer indOptimizer( 1.e-3, 5, 0 );
 
   // Set these to exercise the warm start capabilities of fitIndividual.
-  indOptimizer.setupWarmStart( nB );
   indOptimizer.setThrowExcepIfMaxIter( false );
   indOptimizer.setSaveStateAtEndOfOpt( true );
 
@@ -539,8 +541,9 @@ void fitIndividualTest::fitIndividualExampleTest()
   }
   catch(...)
   {
-      CPPUNIT_ASSERT(false);
+    CPPUNIT_ASSERT_MESSAGE( "fitIndividual failed!", false );
   }
+
 
   //------------------------------------------------------------
   // Known values.
@@ -717,7 +720,7 @@ void fitIndividualTest::fitIndividualQuadraticTest()
   }
   catch(...)
   {
-      CPPUNIT_ASSERT(false);
+    CPPUNIT_ASSERT_MESSAGE( "fitIndividual failed!", false );
   }
 
 
@@ -958,7 +961,7 @@ void fitIndividualTest::fitIndividualZeroIterationsTest()
   }
   catch(...)
   {
-      CPPUNIT_ASSERT(false);
+    CPPUNIT_ASSERT_MESSAGE( "fitIndividual failed!", false );
   }
 
 
@@ -991,7 +994,7 @@ void fitIndividualTest::fitIndividualZeroIterationsTest()
   }
   catch(...)
   {
-      CPPUNIT_ASSERT(false);
+    CPPUNIT_ASSERT_MESSAGE( "fitIndividual failed!", false );
   }
       valarray<double> drowMapObj_bKnown;
       MapObj_bKnown.toValarray( drowMapObj_bKnown );
@@ -1223,7 +1226,7 @@ void fitIndividualTest::fitIndividualLimitsWarningsTest()
   }
   catch(...)
   {
-      CPPUNIT_ASSERT_MESSAGE( "fitIndividual failed!", false );
+    CPPUNIT_ASSERT_MESSAGE( "fitIndividual failed!", false );
   }
 
 
@@ -1237,6 +1240,167 @@ void fitIndividualTest::fitIndividualLimitsWarningsTest()
   WarningsManager::getAllWarnings( warnings );
   cout << "########################################" << endl;
   cout << warnings;
+  cout << "########################################" << endl;
+  */
+
+}
+
+
+/*************************************************************************
+ *
+ * Function: fitIndividualOptErrorTest
+ *
+ *
+ * This test implements the example problem from the fitIndividual
+ * specification but sets the number of iterations to be few enough to
+ * cause an error to occur during the call to the optimizer. 
+ *
+ *************************************************************************/
+
+void fitIndividualTest::fitIndividualOptErrorTest()
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  //------------------------------------------------------------
+  // Quantities related to the data vector, y.
+  //------------------------------------------------------------
+
+  int nY = 2;
+  valarray<double> dvecY( 2.0, nY );
+
+  //------------------------------------------------------------
+  // Quantities related to the objective function parameter, b.
+  //------------------------------------------------------------
+
+  int nB = 2;
+
+  valarray<double> dmatD( nB * nB );
+  dmatD[0] = 1.0;
+  dmatD[1] = 0.0;
+  dmatD[2] = 0.0;
+  dmatD[3] = 0.5;
+
+  valarray<double> dvecBLow ( -4.0, nB );
+  valarray<double> dvecBUp  (  4.0, nB );
+  valarray<double> dvecBIn  (  2.0, nB );
+  valarray<double> dvecBOut (       nB );
+  valarray<double> dvecBStep( .001, nB );
+
+
+  //------------------------------------------------------------
+  // Quantities related to the user-provided model.
+  //------------------------------------------------------------
+
+  UserModelFitIndividualExampleTest model( nB, nY );
+
+  //------------------------------------------------------------
+  // Quantities related to the objective function, MapObj(b).
+  //------------------------------------------------------------
+
+  double dMapObjOut;
+
+  valarray<double> drowMapObj_bOut  ( nB );
+  valarray<double> dmatMapObj_b_bOut( nB * nB );
+
+
+  //------------------------------------------------------------
+  // Remaining inputs to fitIndividual.
+  //------------------------------------------------------------
+
+  bool withD = true;
+
+  // Set the number of iterations small enough to generate a
+  // maximum iterations exceeded error in fitIndividual.
+  Optimizer indOptimizer( 1.e-3, 3, 0 );
+
+
+  //------------------------------------------------------------
+  // Optimize MapObj(b).
+  //------------------------------------------------------------
+
+  try
+  {
+    fitIndividual( model,
+                   dvecY,
+                   indOptimizer,
+                   dvecBLow,
+                   dvecBUp,
+                   dvecBIn,
+                   dvecBStep,
+                   &dvecBOut,            
+                   &dMapObjOut,
+                   &drowMapObj_bOut,
+                   &dmatMapObj_b_bOut,
+                   withD );
+  }
+  catch( SpkException& e )
+  {
+    // Check that at least one of the error codes in list of SpkError
+    // objects contained in the exception is the proper one.
+    CPPUNIT_ASSERT_MESSAGE(
+      "The maximum iterations exceeded error was not thrown in fitIndividual.",
+      e.find( SpkError::SPK_TOO_MANY_ITER ) >= 0 );
+  }
+  catch(...)
+  {
+    CPPUNIT_ASSERT_MESSAGE(
+      "An unexpected exception was thrown in fitIndividual.",
+      false );
+  }
+
+
+  //------------------------------------------------------------
+  // Check to see if an error occurred.
+  //------------------------------------------------------------
+
+  CPPUNIT_ASSERT_MESSAGE(
+    "The did-the-optimizer-finish-ok flag was not set to false.",
+    indOptimizer.getDidOptFinishOk() == false );
+
+  CPPUNIT_ASSERT_MESSAGE(
+    "The optimizer state information was not from the beginning of the iteration.",
+    indOptimizer.getIsBeginOfIterStateInfo() );
+
+  CPPUNIT_ASSERT_MESSAGE(
+    "There was no optizer error information.",
+    indOptimizer.isThereErrorInfo() );
+
+  CPPUNIT_ASSERT_MESSAGE(
+    "The maximum number of iterations was not exceeded.",
+    indOptimizer.getIsTooManyIter() );
+
+
+  //----------------------------------------------------------
+  // Get the error message.
+  //----------------------------------------------------------
+
+  string optErrHeader;
+  string optErrMessage;
+
+  optErrHeader =  "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n";
+  optErrHeader += "Individual level optimization failure details. \n";
+  optErrHeader += "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n";
+  optErrHeader += "\n";
+
+  indOptimizer.getErrorInfo(
+    optErrHeader,
+    optErrMessage,
+    __LINE__,
+    __FILE__ );
+
+
+  //----------------------------------------------------------
+  // Finish up.
+  //----------------------------------------------------------
+
+  // Uncomment these statements to see the warnings.
+  /*
+  cout << "########################################" << endl;
+  cout << optErrMessage;
   cout << "########################################" << endl;
   */
 
