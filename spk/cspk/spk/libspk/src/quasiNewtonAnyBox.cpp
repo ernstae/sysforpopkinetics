@@ -583,7 +583,7 @@ namespace // [Begin: unnamed namespace]
     //
     //**********************************************************
 
-    const char* function( const double* yCurr, double& fScaledOut )
+    const char* function( const double* const yCurr, double& fScaledOut )
     {
       //--------------------------------------------------------
       // Prepare the parameters for the unscaled objective function.
