@@ -449,6 +449,7 @@ extern "C" {
 #include "DoubleMatrix.h"
 #include "SpkException.h"
 
+
 /*------------------------------------------------------------------------
  * Local function declarations
  *------------------------------------------------------------------------*/
@@ -497,69 +498,102 @@ namespace // [Begin: unnamed namespace]
 
 
 
-TO DO: TAKE OUT OLD FVAL STUFF
-TO DO: TAKE OUT OLD FVAL STUFF
-TO DO: TAKE OUT OLD FVAL STUFF
-TO DO: TAKE OUT OLD FVAL STUFF
-TO DO: TAKE OUT OLD FVAL STUFF
-TO DO: TAKE OUT OLD FVAL STUFF
-TO DO: TAKE OUT OLD FVAL STUFF
-TO DO: TAKE OUT OLD FVAL STUFF
-TO DO: TAKE OUT OLD FVAL STUFF
+/*------------------------------------------------------------------------
+ * Local class declarations
+ *------------------------------------------------------------------------*/
 
-//
-// Review - Sachiko: Intentional?  but confusing.
-//
-// The same namespace is defined in quasiNewtonAnyBox.h too.  One in the header
-// defines only FVAL_PROTOTYPE.  The definition here must be appending
-// more information but it's a bit confusing.  Since FVAL_PROTOTYPE
-// is not needed to be defined in the header, perhaps just move that
-// portion to here and compress them.
-// 
-namespace quasinewtonanybox 
+namespace // [Begin: unnamed namespace]
 {
   //
-  // Structure: FvalScaledInfo
+  // Class: QuasiNewton01Obj
   //
-  struct FvalScaledInfo 
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  class QuasiNewton01Obj
   {
-    //
-    // Review - Sachiko:  Error
-    // 
-    // This function prototype "FVAL_PROTOTYPE" is not documented
-    // anywhere even though it is defined in the header (ie. visible to external).
-    // Suggest moving the definition local to this file.
-    //
-    FVAL_PROTOTYPE fval;                // Pointer to fval.
-    const void* pFvalInfo;              // Pointer to information for fval.
+  public:
+    const char* function( const double* xIn, double& fOut );
+    const char* gradient( double* gOut );
+
+  private:
     const DoubleMatrix* pdvecXLow;      // Unscaled lower bounds.
     const DoubleMatrix* pdvecXUp;       // Unscaled upper bounds.
     const DoubleMatrix* pdvecXDiff;     // Difference between unscaled  
                                         // lower and upper bounds.
     SpkException exceptionOb;
-  } ;
-
-  //
-  // Class: NagOptWrapper
-  //
-  //
-  // This class ensures that the NAG allocation and deallocation functions 
-  // are called when the NAG options structure is created and destroyed.
-  // It does this by including the allocation and deallocation functions 
-  // in the constructor and destructor functions, respectively.
-  //
-  class NagOptWrapper
-  {
-  public:
-    Nag_E04_Opt options;
-
-    NagOptWrapper()  { e04xxc( &options ); }
-    ~NagOptWrapper() { e04xzc( &options, "all", NAGERR_DEFAULT ); }
   };
 
-}
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-using namespace quasinewtonanybox;
+  class QuasiNewton01Obj : public QuasiNewtonAnyBoxObj
+  {
+  public:
+    virtual const char* function( const double* xIn, double& fOut );
+    virtual const char* gradient( double* gOut );
+
+  private:
+    const DoubleMatrix* pdvecXLow;      // Unscaled lower bounds.
+    const DoubleMatrix* pdvecXUp;       // Unscaled upper bounds.
+    const DoubleMatrix* pdvecXDiff;     // Difference between unscaled  
+                                        // lower and upper bounds.
+    SpkException exceptionOb;
+  };
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  class QuasiNewton01Obj
+  {
+  public:
+    virtual const char* function( const double* xIn, double& fOut ) = 0;
+    virtual const char* gradient( double* gOut ) = 0;
+
+  private:
+    const DoubleMatrix* pdvecXLow;      // Unscaled lower bounds.
+    const DoubleMatrix* pdvecXUp;       // Unscaled upper bounds.
+    const DoubleMatrix* pdvecXDiff;     // Difference between unscaled  
+                                        // lower and upper bounds.
+    SpkException exceptionOb;
+  };
+  class QuasiNewtonAnyBoxObj : private QuasiNewtonAnyBoxObj
+OR
+  class QuasiNewtonAnyBoxObj : private QuasiNewtonAnyBoxObj
+  {
+  public:
+    virtual const char* function( const double* xIn, double& fOut );
+    virtual const char* gradient( double* gOut );
+  };
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  class QuasiNewton01Obj
+  {
+  public:
+    const char* function( const double* xIn, double& fOut )
+    {
+      return pObj->function( xIn, fOut );
+    }
+
+    const char* gradient( double* gOut );
+    {
+      return pObj->gradient( gOut );
+    }
+
+  private:
+    QuasiNewtonAnyBoxObj* pObj;
+
+    const DoubleMatrix* pdvecXLow;      // Unscaled lower bounds.
+    const DoubleMatrix* pdvecXUp;       // Unscaled upper bounds.
+    const DoubleMatrix* pdvecXDiff;     // Difference between unscaled  
+                                        // lower and upper bounds.
+    SpkException exceptionOb;
+  };
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+} // [End: unnamed namespace]
+
 
 
 /*------------------------------------------------------------------------
@@ -567,15 +601,14 @@ using namespace quasinewtonanybox;
  *------------------------------------------------------------------------*/
 
 void quasiNewtonAnyBox( 
-  quasiNewtonAnyBox::FVAL_PROTOTYPE  fval,
-  const void*                        pFvalInfo,
-  Optimizer&                         optimizer,
-  const DoubleMatrix&                dvecXLow,
-  const DoubleMatrix&                dvecXUp,
-  const DoubleMatrix&                dvecXIn,
-  DoubleMatrix*                      pdvecXOut,
-  double*                            pdFOut,
-  DoubleMatrix*                      pF_xOut )
+  QuasiNewtonAnyBoxObj&  objective,
+  Optimizer&             optimizer,
+  const DoubleMatrix&    dvecXLow,
+  const DoubleMatrix&    dvecXUp,
+  const DoubleMatrix&    dvecXIn,
+  DoubleMatrix*          pdvecXOut,
+  double*                pdFOut,
+  DoubleMatrix*          pF_xOut )
 {
   //------------------------------------------------------------
   // Preliminaries.
