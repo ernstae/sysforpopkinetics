@@ -295,7 +295,6 @@ void indStatisticsTest::statisticsExampleTest()
     cout << "-----------------------" << endl;
 */
     }
-/*
     catch( const SpkException& e )
       {
 	cerr << e << endl;
@@ -305,11 +304,7 @@ void indStatisticsTest::statisticsExampleTest()
       {
 	CPPUNIT_ASSERT_MESSAGE(false, "Unknown error from indStatistics()" );
       }
-*/
-	catch(...)
-	  {
-	    //do nothing but don't re-throw
-	  }
+    
     double eps = 0.000000001;
 
 	//------------------------------------------------------------
