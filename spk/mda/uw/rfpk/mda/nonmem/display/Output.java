@@ -43,6 +43,8 @@ public class Output {
     public String analysis = null;
     /** The method for the analysis. */
     public String method = null;
+    /** The method for the monte carlo. */
+    public String mcMethod = null;    
     /** The model name. */
     public String modelName = null;
     /** The model version. */
@@ -59,6 +61,8 @@ public class Output {
     public Properties dataLabelMap = null;
     /** The error message. */
     public String error = null;
+    /** The warning messages. (message, file_name, line_number)s */
+    public String[][] warning = null; 
     /** The optimization trace output. */
     public String trace = null;    
     /** The objective value. */

@@ -16,6 +16,9 @@ Washington Free-Fork License as a public service.  A copy of the
 License can be found in the COPYING file in the root directory of this
 distribution.
 ---------------------------------------------------------------------->
+<!--
+author: Jiaji Du
+-->
 <?xml version="1.0"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "xhtml1-transitional.dtd">
 <%@ page contentType="text/html" %>
@@ -40,10 +43,13 @@ distribution.
     <%-- Set number of rows to process --%>
     <c:set var="noOfRows" value="${initParam.maxNum}" />
 
+    <%-- Get user id --%>
     <sql:query var="user">
       SELECT user_id FROM user WHERE username = ?
       <sql:param value='librarian' />
     </sql:query>
+
+    <%-- Get job status information --%>
     <c:set var="dbValues" value="${user.rows[0]}" />
     <sql:query var="userJobs" startRow="${param.start}" maxRows="${noOfRows}">
       SELECT * FROM job WHERE user_id = ? ORDER BY job_id desc

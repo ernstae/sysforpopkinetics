@@ -277,7 +277,12 @@ public class XMLReader {
         // Get error message 
         NodeList error_messageList = spkreport.getElementsByTagName("error_message");
         if(error_messageList.getLength() > 0)
-            getErrorMessage((Element)error_messageList.item(0)); 
+            getErrorMessage((Element)error_messageList.item(0));
+     
+        // Get warning message 
+        NodeList warning_messageList = spkreport.getElementsByTagName("warning_message");
+        if(warning_messageList.getLength() > 0)
+            getWarningMessage((Element)warning_messageList.item(0));         
         
         // Get population analysis result
         NodeList pop_analysis_resultList = spkreport.getElementsByTagName("pop_analysis_result");
@@ -353,8 +358,29 @@ public class XMLReader {
         if(node != null)
             output.error = node.getNodeValue();  
         else
-            output.error = "No error found";
+            output.error = "No error message found";
     }
+
+    // Get warning message    
+    private void getWarningMessage(Element warning_message)
+    {
+        NodeList warningList = warning_message.getElementsByTagName("warning");
+        if(warningList.getLength() != 0)
+            output.warning = new String[warningList.getLength()][3];
+        for(int i = 0; i < warningList.getLength(); i++)
+        {
+            Element warning = (Element)warningList.item(i);
+            NodeList list = warning.getElementsByTagName("message");
+            if(list.getLength() != 0)
+                output.warning[i][0] = list.item(0).getFirstChild().getNodeValue();
+            list = warning.getElementsByTagName("file_name");
+            if(list.getLength() != 0)
+                output.warning[i][1] = list.item(0).getFirstChild().getNodeValue();           
+            list = warning.getElementsByTagName("line_number");
+            if(list.getLength() != 0)
+                output.warning[i][2] = list.item(0).getFirstChild().getNodeValue();           
+        }
+    }    
     
     // Get error message    
     private void getOptTraceOut(Element opt_trace_out)

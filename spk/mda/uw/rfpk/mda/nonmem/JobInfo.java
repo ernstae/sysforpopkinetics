@@ -352,6 +352,7 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 12;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(8, 12, 6, 12);
         getContentPane().add(jButton5, gridBagConstraints);
 
@@ -378,6 +379,7 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 13;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 12, 12);
         getContentPane().add(jButton6, gridBagConstraints);
 
