@@ -1039,6 +1039,18 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
 	  xml_is_restart = pop_analysis->getAttribute( X_IS_RESTART );
 	  myIsRestart = ( XMLString::equals( xml_is_restart, X_YES )? true : false );
 	}
+      if( pop_analysis->hasAttribute( X_MITR ) )
+	{
+	  const XMLCh* xml_mitr = pop_analysis->getAttribute( X_MITR );
+	  if( !XMLString::textToBin( xml_mitr, myPopMitr ) )
+	    {
+	      char mess[ SpkCompilerError::maxMessageLen() ];
+	      sprintf( mess, "Invalid %s attribute value?  You gave me \"%s\".", 
+		       C_MITR, XMLString::transcode(xml_mitr) );
+	      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+	      throw e;
+	    }
+	}
       const XMLCh* xml_sig_digits;
       if( pop_analysis->hasAttribute( X_SIG_DIGITS ) )
 	{
@@ -4388,7 +4400,13 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "using namespace std;"    <<endl;
   oDriver << endl;
 
-  oDriver << "enum RETURN_CODE { SUCCESS=0, CONVERGENCE_FAILURE=1, FILE_ACCESS_FAILURE=2, MONTE_FAILURE=3, OTHER_FAILURE };" << endl;
+  oDriver << "enum RETURN_CODE { SUCCESS=0,"             << endl;
+  oDriver << "                   CONVERGENCE_FAILURE=1," << endl;
+  oDriver << "                   FILE_ACCESS_FAILURE=2," << endl;
+  oDriver << "                   MONTE_FAILURE=3,"       << endl;
+  oDriver << "                   STAT_FAILURE=4,"        << endl;
+  oDriver << "                   SIMULATION_FAILURE=5," << endl;
+  oDriver << "                   OTHER_FAILURE };"       << endl;
   oDriver << endl;
   oDriver << "int main( int argc, const char argv[] )" << endl;
   oDriver << "{" << endl;
@@ -4877,11 +4895,17 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "oResults << \"</spkreport>\" << endl;" << endl;
 
   oDriver << "oResults.close();" << endl;
-  oDriver << "if( !haveCompleteData || !isStatSuccess )" << endl;
-  oDriver << "   return OTHER_FAILURE;" << endl;
-  oDriver << "if( !isOptSuccess )" << endl;
-  oDriver << "   return CONVERGENCE_FAILURE;" << endl;
-  oDriver << "return SUCCESS;" << endl;
+  oDriver << "enum RETURN_CODE ret;" << endl;
+  oDriver << "if( !haveCompleteData )" << endl;
+  oDriver << "   ret = SIMULATION_FAILURE;" << endl;
+  oDriver << "else if( !isStatSuccess )" << endl;
+  oDriver << "   ret = STAT_FAILURE;" << endl;
+  oDriver << "else if( !isOptSuccess )" << endl;
+  oDriver << "   ret = CONVERGENCE_FAILURE;" << endl;
+  oDriver << "else" << endl;
+  oDriver << "   ret = SUCCESS;" << endl;
+  oDriver << "cout << \"exit code = \" << ret << endl;" << endl;
+  oDriver << "return ret;" << endl;
   oDriver << "}" << endl;
   oDriver.close();
 }
@@ -4952,7 +4976,13 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "using SPK_VA::valarray;" << endl;
   oDriver << "using namespace std;" << endl;
   oDriver << endl;
-  oDriver << "enum RETURN_CODE { SUCCESS=0, CONVERGENCE_FAILURE=1, FILE_ACCESS_FAILURE=2, MONTE_FAILURE=3, OTHER_FAILURE };" << endl;
+  oDriver << "enum RETURN_CODE { SUCCESS=0,"             << endl;
+  oDriver << "                   CONVERGENCE_FAILURE=1," << endl;
+  oDriver << "                   FILE_ACCESS_FAILURE=2," << endl;
+  oDriver << "                   MONTE_FAILURE=3,"       << endl;
+  oDriver << "                   STAT_FAILURE=4,"        << endl;
+  oDriver << "                   SIMULATION_FAILURE=5,"  << endl;
+  oDriver << "                   OTHER_FAILURE };"       << endl;
   oDriver << endl;
 
   oDriver << "int main( int argc, const char argv[] )" << endl;
@@ -5571,13 +5601,19 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "oResults << \"</spkreport>\" << endl;" << endl;
   
   oDriver << "oResults.close();" << endl;
+  oDriver << "enum RETURN_CODE ret;" << endl;
   oDriver << "if( haveCompleteData && isOptSuccess && isStatSuccess )" << endl;
   oDriver << "   remove( \"" << fSpkRuntimeLongError_tmp << "\" );" << endl;
-  oDriver << "if( !haveCompleteData || !isStatSuccess )" << endl;
-  oDriver << "   return OTHER_FAILURE;" << endl;
-  oDriver << "if( !isOptSuccess )" << endl;
-  oDriver << "   return CONVERGENCE_FAILURE;" << endl;
-  oDriver << "return SUCCESS;" << endl;
+  oDriver << "if( !haveCompleteData )" << endl;
+  oDriver << "   ret = SIMULATION_FAILURE;" << endl;
+  oDriver << "else if( !isStatSuccess )" << endl;
+  oDriver << "   ret = STAT_FAILURE;" << endl;
+  oDriver << "else if( !isOptSuccess )" << endl;
+  oDriver << "   ret = CONVERGENCE_FAILURE;" << endl;
+  oDriver << "else" << endl;
+  oDriver << "   ret = SUCCESS;" << endl;
+  oDriver << "cout << \"exit code = \" << ret << endl;" << endl;
+  oDriver << "return ret;" << endl;
   oDriver << "}" << endl;
   oDriver.close();
 }
