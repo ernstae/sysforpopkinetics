@@ -25,20 +25,27 @@
 	<authorinitials>afw</authorinitials>
 	<revremark>Relative to RHEL 3.</revremark>
       </revision>
+      <revision>
+	<revnumber>1.03</revnumber>
+	<date>May 6, 2004</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Modified for firewall.</revremark>
+      </revision>
     </revhistory>
   <abstract>
     <para>
 	It is important that the system clocks in the Linux 
 	workstations of the RFPK Software Team be closely 
-	synchronized with the clock in the Linux server,
-	<systemitem moreinfo="none" class="systemname">whitechuck</systemitem>,
-	because the CVS application on that machine as well as the
-	backup process depends on the comparison of timestamps on
-	files residing on different machines.  This tutorial
+	synchronized to the clock in the server which hosts the CVS
+	repository, or to the time standard to which that server is 
+	synchronized, because the CVS application, as well as the
+	backup process which runs on the same server, depend for their
+	proper operation on the comparison of timestamps of files 
+	residing on different.machines. This tutorial
 	explains how to configure your workstation so that it
-	stays synchronized within a fraction of a second with that on
- 	<systemitem moreinfo="none" class="systemname">whitechuck</systemitem>.
-    </para>
+	stays synchronized within a fraction of a second with that
+	server.
+      </para>
   </abstract>
  </articleinfo>
   <sect1>
@@ -64,40 +71,68 @@
       </systemitem>
       is a <emphasis>level one</emphasis> NTP server equipped
       with a clock that gets its time from GPS satellites. 
-      The RFPK Linux server,
-      <systemitem moreinfo="none" class="systemname">whitechuck</systemitem>,
+      The RFPK CVS server
       is synchronized to 
       <systemitem moreinfo="none" class="systemname">bigben</systemitem>
       and several other <emphasis>level one</emphasis> NTP servers.
       This document describes the way to configure your 
       RedHat Linux 8.0 workstation to synchronize to 
-      <systemitem moreinfo="none" class="systemname">whitechuck</systemitem>.
+      to one or the other of these servers.
     </para>
     <para>
-      There are two reasons for synchronizing our workstations to
-      <systemitem moreinfo="none" class="systemname">whitechuck</systemitem>
-      rather than to 
-      <systemitem moreinfo="none" class="systemname">bigben</systemitem>:
-      <itemizedlist>
+      If your machine is on the LAN behind the SPK firewall, it can be 
+      synchronized to the the CVS server, which is located on the LAN.
+      If it is not on the LAN, it can be synchronized to 
+      <systemitem moreinfo="none" class="systemname">
+	bigben.cac.washington.edu
+      </systemitem>
+      or to some other external time server.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Defining Timeserver</title>
+    <para>
+      The following instructions will be easier to follow if we define
+      a system alias for the 
+      time server we are going to use.  This will also allow us to move
+      machines from one network to another, only having to change the
+      alias definition in a single file rather than references in a number
+      of files.
+    </para>
+    <para>
+      The changes will be made to the <filename>/etc/hosts</filename> file.
+      There are three cases:
+      <orderedlist numeration="lowerroman">
 	<listitem>
 	  <para>
-	    Reduce the load on 
-	    <systemitem moreinfo="none" class="systemname">bigben</systemitem>.
+	    Your machine is outside the firewall.  
+	    Add the following line to <filename>/etc/hosts</filename>:
+	    <screen>
+140.142.16.34    bigben.cac.washington.edu   timeserver
+	    </screen>
 	  </para>
 	</listitem>
 	<listitem>
 	  <para>
-	    Synchronize to the machine that we really want to be 
-	    in sync with.  Even if
-	    <systemitem moreinfo="none" class="systemname">whitechuck</systemitem>
-	    should go out of sync with the <emphasis>level one</emphasis>
-	    servers because of Internet problems, for example, our CVS
-	    and backup processes would still work well because they would be
-	    comparing timestamps on files on our workstations with those on
-	    <systemitem moreinfo="none" class="systemname">whitechuck</systemitem>.
+	    Your machine is behind the firewall and
+	    there is already an entry for the CVS server (IP address
+	    192.168.1.2) in your 
+	    <filename>/etc/hosts</filename> file.  In this case, simply add
+	    <emphasis>timeserver</emphasis> to the end of that line.
 	  </para>
 	</listitem>
-      </itemizedlist>
+	<listitem>
+	  <para>
+	    Your machine is behind the firewall, but 
+	    there is no entry for the CVS server.
+	    Add the following line to 
+	    <filename>/etc/hosts</filename>
+	    <screen>
+192.168.1.2 timeserver
+	    </screen>
+	  </para>
+	</listitem>
+      </orderedlist>
     </para>
   </sect1>
   <sect1>
@@ -127,7 +162,7 @@ restrict default ignore
 restrict default nomodify
       </screen>
       Next specify that 
-      <systemitem moreinfo="none" class="systemname">whitechuck</systemitem>
+      <systemitem moreinfo="none" class="systemname">timesever</systemitem>
       is a trusted time server by making this change:
       <screen format="linespecific">
 	after
@@ -137,8 +172,8 @@ restrict default nomodify
 
 	insert the following pair of lines
 
-restrict whitechuck.rfpk.washington.edu nomodify notrap noquery
-server whitechuck
+restrict timeserver nomodify notrap noquery
+server timeserver
       </screen>
     </para>
     <para>
@@ -156,7 +191,7 @@ rcsdiff ntp.conf
     <para>
       <screen format="linespecific">
 cd /etc/ntp
-echo whitechuck.rfpk.washington.edu > step-tickers
+echo timeserver > step-tickers
       </screen>
     </para>
   </sect1>
@@ -174,7 +209,7 @@ echo whitechuck.rfpk.washington.edu > step-tickers
     </para>
     <para>
       You should now check that your ntp daemon is working.
-      Wait a few seconds after restarting ntpd, then issue this command:
+      Wait a few minutes after restarting ntpd, then issue this command:
       <screen format="linespecific">
 /usr/sbin/ntpq -p
       </screen>
@@ -185,37 +220,15 @@ echo whitechuck.rfpk.washington.edu > step-tickers
  LOCAL(0)        LOCAL(0)        10 l   63   64  377    0.000    0.000   0.008
 *whitechuck.rfpk bigben.cac.wash  2 u  192  256  377    0.684    0.075   0.024
       </screen>
-    </para>
-    <para>
-      I believe that this
-      shows that there are two time servers, the dummy local server to
-      be used in case the network is down, and 
-      <systemitem moreinfo="none" class="systemname">whitechuck</systemitem>.
-      It shows that 
-      <systemitem moreinfo="none" class="systemname">whitechuck</systemitem>
-      gets its time from 
-      <systemitem moreinfo="none" class="systemname">bigben</systemitem>,
-      <systemitem moreinfo="none" class="systemname">whitechuck</systemitem>
-      is a level 2 server, it is remote, it was last queried 192 seconds ago,
-      it is queried every 256 seconds, a measure of its estimated
-      "reachability" is 377, there is a delay of 0.684 milli-seconds
-      between the
-      time it is queried and the time the response arrives, an offset of 
-      0.075 milli-seconds was applied in order to synchronize
-      the clocks and an 
-      estimate of the random error is 0.024 milli-seconds.
-    </para>
-    <para>
-      If you do not get comparable numbers (for example, the jitter is 0.000)
-      there is something wrong. 
+      If delay, offset, and jitter are not small numbers, the clock has not
+      sychronized which may indicate that there is an error your configuration.
     </para>
   </sect1>
   <sect1>
-    <title>Configuring the RFPK Time Server on Whitechuck</title>
+    <title>Configuring the RFPK Time Server on Timeserver</title>
     <para>
-      The RFPK time server running on 
-      <systemitem moreinfo="none" class="systemname">whitechuck</systemitem>
-      needs to be configured somewhat differently than those running on
+      The RFPK time server
+      needs to be configured somewhat differently from the 
       workstations.
     </para>
     <para>
@@ -261,25 +274,25 @@ restrict 128.95.35.0 mask 255.255.255.0 notrust nomodify notrap
     <title>Configuring Time Service for the Cluster</title>
     <para>
       The gateway node should be configured to be the same as
-      <systemitem moreinfo="none" class="systemname">whitechuck</systemitem>,
+      <systemitem moreinfo="none" class="systemname">timeserver</systemitem>,
       except that 
       <systemitem moreinfo="none" class="systemname">
 	bigben.cac.washington.edu
       </systemitem>
       should be replaced by
       <systemitem moreinfo="none" class="systemname">
-	whitechuck.rfpk.washington.edu
+	timeserver
       </systemitem> 
       and the range of client IP addresses should be
-      "192.168.1.0 mask 255.255.255.0".
+      "192.168.3.0 mask 255.255.255.0".
     </para>
     <para>
       Each of the other nodes should be configured as workstations,
       except that the trusted server specification should be the
       following:
       <screen>
-restrict 192.168.1.1 mask 255.255.255.255 nomodify notrap noquery
-server 192.168.1.1
+restrict 192.168.3.1 mask 255.255.255.255 nomodify notrap noquery
+server 192.168.3.1
       </screen>
     </para>
   </sect1>

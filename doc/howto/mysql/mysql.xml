@@ -69,6 +69,7 @@ tar xvf mysql-db.tar
 su
 cd mysql-db
 rpm -Uhv *
+cd /tmp
 rm -rf mysql-db.tar mysql-db
 	</screen>
       </para>
