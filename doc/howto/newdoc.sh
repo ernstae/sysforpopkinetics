@@ -24,7 +24,7 @@ if [ $# -eq 0 ] || [ $1 == -h ] || [ $1 == --help ]; then
 fi
 
 SUBJECT=$1
-WEBDIR=/var/www/html/soft/howto/$SUBJECT
+WEBDIR=/var/www/html/soft/howto/rhel3/$SUBJECT
 WEBHOST=whitechuck.rfpk.washington.edu
 
 mkdir $SUBJECT
