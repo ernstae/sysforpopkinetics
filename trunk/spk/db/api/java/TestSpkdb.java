@@ -1,3 +1,4 @@
+
 import rfpk.spk.spkdb.*;
 import java.sql.*;
 
@@ -7,13 +8,14 @@ public class TestSpkdb {
 	String password = "codered";
 	String firstName = "Mike";
 	String surname = "Jordan";
-	final int maxTests = 33;
+	final int maxTests = 36;
 	String xmlSource = "<spksource></spksource>";
 
 	boolean b = true;
 	boolean target = true;
 	String s = "connection";
 	int i = 1;
+	int count = 0;
  	long datasetId = 0;
 	long newDatasetId = 0;
 	long newerDatasetId = 0;
@@ -186,7 +188,7 @@ public class TestSpkdb {
 		case 14:
 		    target = true;
 		    s = "userJobs, maxNum = 1";
-		    rs = Spkdb.userJobs(conn, userId, 1);
+		    rs = Spkdb.userJobs(conn, userId, 1, 0);
 		    if (rs.next()) {
 			b = rs.getLong("job_id") == newestJobId;
 		    } 
@@ -199,18 +201,21 @@ public class TestSpkdb {
 		case 15:
 		    b = target = true;
 		    s = "userJobs, maxNum = 3";
- 		    rs = Spkdb.userJobs(conn, userId, 3);
-		    long jj = newestJobId;
+ 		    rs = Spkdb.userJobs(conn, userId, 3, newestJobId);
+		    jobId = newestJobId;
 
+		    count = 0;
 		    while (rs.next()) {
 			long j;
-			if ((j = rs.getLong("job_id")) != jj--) {
-			    s += "; jobId" + j + " is out of order";
+			if ((j = rs.getLong("job_id")) >= jobId) {
+			    s += "; jobId = " + j + " is out of order";
                             b = false;
 			    break;
 			}
+			jobId = j;
+			count++;
 		    }
-		    s += "; " + (newestJobId - jj) + " were returned";
+		    s += "; " + count + " were returned";
 		    break;
 		case 16:
 		    b = target = true;
@@ -224,17 +229,23 @@ public class TestSpkdb {
 		    break;
 		case 18:
 		    target = true;
+		    s = "jobSource";
+		    String source = Spkdb.jobSource(conn, newerJobId);
+		    b = source.compareTo(xmlSource) == 0;
+		    break;
+		case 19:
+		    target = true;
 		    s = "jobReport";
 		    String report = Spkdb.jobReport(conn, newerJobId);
 		    b = report.compareTo("job report") == 0;
 		    break;
-		case 19:
+		case 20:
 		    target = false;
 		    s = "jobReport";
 		    report = Spkdb.jobReport(conn, newestJobId);
 		    b = report.compareTo("job report") == 0;
 		    break;
-		case 20:
+		case 21:
 		    target = true;
 		    s = "newDataset";
 		    datasetId 
@@ -242,7 +253,7 @@ public class TestSpkdb {
 		    s += ": datasetId = " + datasetId;
 		    b = datasetId > 0;
 		    break;
-		case 21:
+		case 22:
 		    target = false;
 		    s = "newDataset";
 		    datasetId 
@@ -250,13 +261,13 @@ public class TestSpkdb {
 		    s += ": datasetId = " + datasetId;
 		    b = datasetId > 0;
 		    break;
-		case 22:
+		case 23:
 		    target = false;
 		    s = "getDataset";
 		    String dataset = Spkdb.getDataset(conn, datasetId);
 		    b = dataset.compareTo("1 2 4 3") == 0;
 		    break;
-		case 23:
+		case 24:
 		    target = true;
 		    s = "updateDataset";
 		    {
@@ -265,7 +276,7 @@ public class TestSpkdb {
 			b = Spkdb.updateDataset(conn, datasetId, n, v);
 		    }
 		    break;
-		case 24:
+		case 25:
 		    target = false;
 		    s = "updateDataset";
 		    {
@@ -274,7 +285,7 @@ public class TestSpkdb {
 			b = Spkdb.updateDataset(conn, datasetId, n, v);
 		    }
 		    break;
-		case 25:
+		case 26:
 		    target = false;
 		    s = "updateDataset";
 		    {
@@ -283,7 +294,7 @@ public class TestSpkdb {
 			b = Spkdb.updateDataset(conn, datasetId, n, v);
 		    }
 		    break;
-		case 26:
+		case 27:
 		    b = target = true;
 		    s = "userDatasets, maxNum = 3";
 		    newDatasetId
@@ -293,20 +304,40 @@ public class TestSpkdb {
 		    newestDatasetId
 			= Spkdb.newDataset(conn, userId, "T4", "Dataset T4", "1 2 4 8");
 		    		    
- 		    rs = Spkdb.userDatasets(conn, userId, 3);
-		    jj = newestDatasetId;
-
+ 		    rs = Spkdb.userDatasets(conn, userId, 3, 0);
+		    
+		    count = 0;
 		    while (rs.next()) {
-			long j;
-			if ((j = rs.getLong("dataset_id")) != jj--) {
+			long j = rs.getLong("dataset_id");
+			if (count != 0 && j >= datasetId) {
 			    s += "; datasetId" + j + " is out of order";
                             b = false;
 			    break;
 			}
+			datasetId = j;
+			count++;
 		    }
-		    s += "; " + (newestDatasetId - jj) + " were returned";
+		    s += "; " + count + " were returned";
 		    break;
-		case 27:
+		case 28:
+		    b = target = true;
+		    s = "userDatasets, maxNum = 3";
+ 		    rs = Spkdb.userDatasets(conn, userId, 3, datasetId);
+
+		    count = 0;
+		    while (rs.next()) {
+			long j;
+			if ((j = rs.getLong("dataset_id")) >= datasetId) {
+			    s += "; datasetId" + j + " is out of order";
+                            b = false;
+			    break;
+			}
+			datasetId = j;
+			count++;
+		    }
+		    s += "; " + count + " were returned";
+		    break;
+		case 29:
 		    target = true;
 		    s = "newModel";
 		    modelId 
@@ -314,7 +345,7 @@ public class TestSpkdb {
 		    s += ": modelId = " + modelId;
 		    b = modelId > 0;
 		    break;
-		case 28:
+		case 30:
 		    target = false;
 		    s = "newModel";
 		    modelId 
@@ -322,13 +353,13 @@ public class TestSpkdb {
 		    s += ": modelId = " + modelId;
 		    b = modelId > 0;
 		    break;
-		case 29:
+		case 31:
 		    target = false;
 		    s = "getModel";
 		    String model = Spkdb.getModel(conn, modelId);
 		    b = model.compareTo("1 2 4 3") == 0;
 		    break;
-		case 30:
+		case 32:
 		    target = true;
 		    s = "updateModel";
 		    {
@@ -337,7 +368,7 @@ public class TestSpkdb {
 			b = Spkdb.updateModel(conn, modelId, n, v);
 		    }
 		    break;
-		case 31:
+		case 33:
 		    target = false;
 		    s = "updateModel";
 		    {
@@ -346,7 +377,7 @@ public class TestSpkdb {
 			b = Spkdb.updateModel(conn, modelId, n, v);
 		    }
 		    break;
-		case 32:
+		case 34:
 		    target = false;
 		    s = "updateModel";
 		    {
@@ -355,30 +386,49 @@ public class TestSpkdb {
 			b = Spkdb.updateModel(conn, modelId, n, v);
 		    }
 		    break;
-		case 33:
+		case 35:
 		    b = target = true;
 		    s = "userModels, maxNum = 3";
 		    newModelId
-			= Spkdb.newModel(conn, userId, "M2", "Model M2", "1 4 4 3");
+			= Spkdb.newModel(conn, userId, "T2", "Model T2", "1 4 4 3");
 		    newerModelId 
-			= Spkdb.newModel(conn, userId, "M3", "Model M3", "6 2 4 3");
+			= Spkdb.newModel(conn, userId, "T3", "Model T3", "6 2 4 3");
 		    newestModelId
-			= Spkdb.newModel(conn, userId, "M4", "Model M4", "1 2 4 8");
+			= Spkdb.newModel(conn, userId, "T4", "Model T4", "1 2 4 8");
 		    		    
- 		    rs = Spkdb.userModels(conn, userId, 3);
-		    jj = newestModelId;
-
+ 		    rs = Spkdb.userModels(conn, userId, 3, 0);
+		    
+		    count = 0;
 		    while (rs.next()) {
-			long j;
-			if ((j = rs.getLong("model_id")) != jj--) {
+			long j = rs.getLong("model_id");
+			if (count != 0 && j >= modelId) {
 			    s += "; modelId" + j + " is out of order";
                             b = false;
 			    break;
 			}
+			modelId = j;
+			count++;
 		    }
-		    s += "; " + (newestModelId - jj) + " were returned";
+		    s += "; " + count + " were returned";
 		    break;
+		case 36:
+		    b = target = true;
+		    s = "userModels, maxNum = 3";
+ 		    rs = Spkdb.userModels(conn, userId, 3, modelId);
 
+		    count = 0;
+		    while (rs.next()) {
+			long j;
+			if ((j = rs.getLong("model_id")) >= modelId) {
+			    s += "; modelId" + j + " is out of order";
+                            b = false;
+			    break;
+			}
+			modelId = j;
+			count++;
+		    }
+		    s += "; " + count + " were returned";
+		    break;
 		default:
 		    break;
 		}
