@@ -1,0 +1,685 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "/usr/share/sgml/docbook/xml-dtd-4.2-1.0-14/docbookx.dtd" [
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+]>
+<article><title>Database Schema</title>
+ <articleinfo>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>November 21, 2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+    </revhistory>
+  <abstract>
+      <para>
+	The schema for the Spk database (spkdb) is presented in SQL.
+	In addition, the context for the database design is 
+	presented, as well as a short description of each table
+	and each field.
+      </para>
+  </abstract>
+ </articleinfo>
+  <sect1>
+    <title>Introduction</title>
+    <para>
+      This specification describes the logical design of the
+      Spk database.  It complements two other specifications:
+      <itemizedlist>
+	<listitem>
+	  <para>
+	    <ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/erModel/erModel.html">
+	      Database Entity-Relationship Model
+	    </ulink>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    <ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/jobHistory/jobHistory.html">
+	      Job History Model
+	    </ulink>
+	  </para>
+	</listitem>
+      </itemizedlist>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Architectural Context</title>
+    <para>
+      The Spk system architecture is comprised of three major 
+      independent processes, each of which may have multiple
+      instances running simultaneously.  The major processes
+      are the following:
+      <orderedlist>
+	<listitem>
+	  <para> 
+	    <emphasis>MDA Surrogate.</emphasis>
+	    The Model Design Agent is a client application which
+	    runs on the user's workstation.  There will typically
+	    be many MDAs in operation at any given time.  Each
+	    MDA communicates with the rest of Spk via a secure
+	    Internet connection to a web server.  The portion of
+	    the web server which supports the MDA is called 
+	    the MDA Surrogate.  For performance reasons, the
+	    architecture permits multiple MDA Surrogates to 
+	    be running simultaneously on one or more server
+	    machines.  
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    <emphasis>Aspk Compiler</emphasis>.  The Application
+	    Server for Population Kinetics is a specialized compiler
+	    which translates model specifications received from 
+	    MDAs into C++ source code to be compiled and linked
+	    into object code and then run by the Cspk. To 
+	    optimize performance, there can be multiple Aspk
+	    Compilers running simultaneously on one or more
+	    server machines.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    <emphasis>Cspk</emphasis>.  The Computational Server
+	    for Population Kinetics receives source code for a
+	    model along with scientific
+	    data from the Aspk, utilizes a C++ compiler and linker
+	    to build a representation of the model in object code,
+	    and then executes it.  There can be multiple
+	    Cspk server machines and processor clusters.
+	  </para>
+	</listitem>
+      </orderedlist>
+    </para>
+    <para>
+      These three tasks run continuously and, hence, are
+      the type of processes known as <emphasis>daemons</emphasis>.
+      A daemon is implemented and installed in such a way that
+      it starts automatically when the host computer on 
+      which it runs is booted up, and it stops gracefully when
+      the machine is shut down.
+    </para>
+    <para>
+      The Spk database is <emphasis>the sole means of communication</emphasis>
+      between these daemons. It plays, 
+      therefore, a central role in the Spk architecture.  The principal
+      interprocess communications are the following:
+      <itemizedlist>
+	<listitem>
+	  <para>
+	    <emphasis>MDA Surrogate to Aspk Compiler</emphasis>.
+	    The MDA submits a user job, via the Surrogate,
+	    by creating a new row
+	    in the <emphasis>job</emphasis> table, storing
+	    the model in the <emphasis>xml_model</emphasis> field,
+	    the data in the <emphasis>xml_data</emphasis> field,
+	    the user's identification number in the
+	    <emphasis>user_id</emphasis> field, and
+	    setting the <emphasis>state_code</emphasis> field to
+	    "Queued to Compile".
+	    The Aspk Compiler 
+	    selects the job from the queue when it has become the highest
+	    priority job with "Queued to Compile" status,
+	    retrieving the model and data and setting 
+	    <emphasis>state_code</emphasis> to "Compiling".
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    <emphasis>Aspk Compiler to MDA</emphasis>. If, for any 
+	    reason, the compilation process fails, the Aspk Compiler
+	    stores an error report in the
+	    <emphasis>report</emphasis> field of the 
+	    job, sets <emphasis>state_code </emphasis> to "End"
+	    and <emphasis>end_code</emphasis>
+	    to "Compilation Error".  When querying the database,
+	    an MDA Surrogate notices that one of its jobs has reached the
+	    "End" state and retrieves the report from the database.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    <emphasis>Aspk Compiler to Cspk</emphasis>.  If the model
+	    compiles successfully, the Aspk Compiler stores
+	    an archive of C++ source code and data into the 
+	    <emphasis>cpp_source</emphasis> field of the job
+	    and sets <emphasis>state_code</emphasis> to "Queued to Run".
+	    A Cspk selects the job when it is the job of highest
+	    priority in the "Queued to Run" state, retrieving 
+	    the source code and data and setting 
+	    <emphasis>state_code</emphasis> to "Running".
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    <emphasis>Cspk to MDA Surrogate</emphasis>.  
+	    When the model runs to completion, the Cspk stores
+	    the final report in the <emphasis>report</emphasis>
+	    field of the job, sets <emphasis>state_code</emphasis>
+	    to "End" and <emphasis>end_code</emphasis> to
+	    "Successful Run".  When an MDA Surrogate notices that one of
+	    its jobs had reached the "End" state, 
+	    it retrieves the final report.
+	  </para>
+	</listitem>
+      </itemizedlist>
+     </para>
+    <para>
+      Several very important points must be emphasized:
+      <itemizedlist>
+	<listitem>
+	  <para>
+	    All the high-level interprocess communication described
+	    above is <emphasis>asynchronous</emphasis>. The loose
+	    coupling between the daemons is very attractive from
+	    an operational standpoint because additional instances
+	    of the daemons can be easily added or subtracted at
+	    any time.  There is a slight penalty to be paid in 
+	    terms of communications latency, but this is negligible
+	    given the low activity level in the queues.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Multiple processes may be updating the 
+	    <emphasis>job</emphasis> table simultaneously. 
+	    These updates must be <emphasis>atomic</emphasis>
+	    transactions.
+	  </para>
+	</listitem>
+      </itemizedlist>
+    </para>
+  </sect1>
+  <sect1>
+    <title>SQL Schema</title>
+    <para>
+      The following SQL statements will create an empty copy of 
+      the Spkdb database.
+      <screen>
+CREATE TABLE end (
+  end_code char(4) NOT NULL default '',
+  end_name char(20) default NULL,
+  PRIMARY KEY  (end_code)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'end'
+--
+
+INSERT INTO end VALUES ('cerr','Compilation Error');
+INSERT INTO end VALUES ('srun','Successful Run');
+
+--
+-- Table structure for table 'history'
+--
+
+CREATE TABLE history (
+  id int(10) unsigned NOT NULL auto_increment,
+  time timestamp(14) NOT NULL,
+  state_code char(3) default NULL,
+  job_id int(10) unsigned default NULL,
+  PRIMARY KEY  (id)
+) TYPE=MyISAM;
+
+
+--
+-- Table structure for table 'job'
+--
+
+CREATE TABLE job (
+  job_id int(10) unsigned NOT NULL auto_increment,
+  user_id int(10) NOT NULL default '0',
+  model_id int(10) NOT NULL default '0',
+  version varchar(10) NOT NULL default '',
+  xml_source longblob,
+  xml_data longblob,
+  state_code char(3) default NULL,
+  report longblob,
+  time timestamp(14) NOT NULL,
+  cpp_source longblob,
+  end_code varchar(4) default NULL,
+  PRIMARY KEY  (job_id)
+) TYPE=InnoDB;
+
+
+--
+-- Table structure for table 'model'
+--
+
+CREATE TABLE model (
+  model_id int(10) unsigned NOT NULL auto_increment,
+  name varchar(20) default NULL,
+  abstract varchar(30) default NULL,
+  archive longblob,
+  user_id int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (model_id)
+) TYPE=MyISAM;
+
+--
+-- Table structure for table 'state'
+--
+
+CREATE TABLE state (
+  state_code char(3) NOT NULL default '',
+  state_name char(20) default NULL,
+  PRIMARY KEY  (state_code)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'state'
+--
+
+INSERT INTO state VALUES ('q2c','Queued to compile');
+INSERT INTO state VALUES ('cmp','Compiling');
+INSERT INTO state VALUES ('q2r','Queued to run');
+INSERT INTO state VALUES ('run','Running');
+INSERT INTO state VALUES ('end','End');
+
+--
+-- Table structure for table 'user'
+--
+
+CREATE TABLE user (
+  user_id int(10) unsigned NOT NULL auto_increment,
+  first_name varchar(30) default NULL,
+  surname varchar(40) default NULL,
+  password varchar(32) NOT NULL default '',
+  username varchar(20) NOT NULL default '',
+  PRIMARY KEY  (user_id),
+  UNIQUE KEY username (username)
+) TYPE=MyISAM;
+      </screen>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Tables and Fields</title>
+    <sect2>
+      <title>end</title>
+      <para>
+	The <emphasis>end</emphasis> table provides short and long text for
+	the end condition.  No row is ever deleted from this table.
+      </para>
+      <para>
+	<table frame='all'><title>end</title>
+	  <tgroup cols='3' align='left' colsep='1' rowsep='1'>
+	    <colspec colwidth="1*" colname='c1'/>
+	    <colspec colwidth="2*" colname='c2'/>
+	    <colspec colwidth="4*" colname='c3'/>
+	    <thead>
+	      <row>
+		<entry>Field</entry>
+		<entry>Type</entry>
+		<entry>Description</entry>
+	      </row>
+	    </thead>
+	    <tbody>
+	      <row>
+		<entry>end_code</entry>
+		<entry>char(4)</entry>
+		<entry>Primary key.</entry>
+	      </row>
+	      <row>
+		<entry>end_name</entry>
+		<entry>char(20)</entry>
+		<entry>Expanded name.</entry>
+	      </row>
+	    </tbody>
+	  </tgroup>
+	</table>
+      </para>
+    </sect2>
+    <sect2>
+      <title>history</title>
+      <para>
+	The <emphasis>history</emphasis> table records all changes of state
+	of every job.  Each time that the <emphasis>state_code</emphasis>
+	field of a row in the <emphasis>job</emphasis> table is changed,
+	a row must be added to <emphasis>history</emphasis>.  Rows are
+	never deleted from this table.
+      </para>
+      <para>
+	<table frame='all'><title>history</title>
+	  <tgroup cols='3' align='left' colsep='1' rowsep='1'>
+	    <colspec colwidth="2*" colname='c1'/>
+	    <colspec colwidth="3*" colname='c2'/>
+	    <colspec colwidth="8*" colname='c3'/>
+	    <thead>
+	      <row>
+		<entry>Field</entry>
+		<entry>Type</entry>
+		<entry>Description</entry>
+	      </row>
+	    </thead>
+	    <tbody>
+	      <row>
+		<entry>id</entry>
+		<entry>int(10) unsigned</entry>
+		<entry>
+		  Primary key. A unique positive integer, supplied
+		  automatically when a row is created.
+		</entry>
+	      </row>
+	      <row>
+		<entry>time</entry>
+		<entry>timestamp(14)</entry>
+		<entry>
+		  The time at which the row was added to the table, 
+		  supplied automatically, with resolution of one second.
+		</entry>
+	      </row>
+	      <row>
+		<entry>state_code</entry>
+		<entry>char(3)</entry>
+		<entry>
+		  The state to which the given job transitioned at the
+		  given time.  A foreign key to the state table.
+		</entry>
+	      </row>
+	      <row>
+		<entry>job_id</entry>
+		<entry>int(10) unsigned</entry>
+		<entry>
+		  The job that underwent a transition at the given 
+		  time. A foreign key to the job table.
+		</entry>
+	      </row>
+	    </tbody>
+	  </tgroup>
+	</table>
+      </para>
+    </sect2>
+    <sect2>
+      <title>job</title>
+      <para>
+	Each row in this table represents an Spk job. It is updated
+	each time the job makes a state transition.  Rows are never
+	deleted from this table.
+      </para>
+      <para>
+	<table frame='all'><title>job</title>
+	  <tgroup cols='3' align='left' colsep='1' rowsep='1'>
+	    <colspec colwidth="1*" colname='c1'/>
+	    <colspec colwidth="2*" colname='c2'/>
+	    <colspec colwidth="4*" colname='c3'/>
+	    <thead>
+	      <row>
+		<entry>Field</entry>
+		<entry>Type</entry>
+		<entry>Description</entry>
+	      </row>
+	    </thead>
+	    <tbody>
+	      <row>
+		<entry>job_id</entry>
+		<entry>int(10) unsigned</entry>
+		<entry>
+		  Primary key. A unique positive number, supplied
+		  automatically when the row is created.
+		</entry>
+	      </row>
+	      <row>
+		<entry>user_id</entry>
+		<entry>int (10)</entry>
+		<entry>
+		  The user to whom the job belongs.  A foreign key
+		  to the user table.
+		</entry>
+	      </row>
+	      <row>
+		<entry>model_id</entry>
+		<entry>int(10)</entry>
+		<entry>
+		  The model, a version of which this job runs.
+		  A foreign key to the model table.
+		</entry>
+	      </row>
+	      <row>
+		<entry>version</entry>
+		<entry>varchar(10)</entry>
+		<entry>
+		  The version code of the model being run.
+		</entry>
+	      </row>
+	      <row>
+		<entry>xml_source</entry>
+		<entry>longblob</entry>
+		<entry>
+		  The source code for the model, expressed as XML,
+		  that is provided by the MDA when the row is
+		  created. This file is input to the Aspk Compiler,
+		  which incorporates it into the cpp_source field,
+		  which is its output.
+		</entry>
+	      </row>
+	      <row>
+		<entry>xml_data</entry>
+		<entry>longblob</entry>
+		<entry>
+		  The scientific data for this job, expressed as XML,
+		  that is provided by the MDA when the row is created.
+		  This file is input to the Aspk Compiler, which
+		  incorporates into the cpp_source field,
+		  which is its output.
+		</entry>
+	      </row>
+	      <row>
+		<entry>state_code</entry>
+		<entry>char(3)</entry>
+		<entry>
+		  The current state of the job.  A foreign key 
+		  to the state table.
+		</entry>
+	      </row>
+	      <row>
+		<entry>report</entry>
+		<entry>longblob</entry>
+		<entry>
+		  The final report, expressed as XML, added to the row
+		  at the time the job makes the transition to the
+		  "End" state.  
+		</entry>
+	      </row>
+	      <row>
+		<entry>time</entry>
+		<entry>timestamp(14)</entry>
+		<entry>
+		  The time, to a resolution of one second, at which the 
+		  job entered its current state.  This field is supplied
+		  automatically when the row is created and whenever
+		  it is updated.
+		</entry>
+	      </row>
+	      <row>
+		<entry>cpp_source</entry>
+		<entry>longblob</entry>
+		<entry>
+		  An archive of files, containing c++ source code
+		  and scientific data, 
+		  which is output by the Aspk Compiler for the
+		  use of the Cspk when the job enters the 
+		  "Ready to Run" state.
+		</entry>
+	      </row>
+	      <row>
+		<entry>end_code</entry>
+		<entry>char(4)</entry>
+		<entry>
+		  A code the designates the way that the job ended.
+		  A foreign key to the end table.
+		</entry>
+	      </row>
+	    </tbody>
+	  </tgroup>
+	</table>
+      </para>
+    </sect2>
+    <sect2>
+      <title>model</title>
+      <para>
+	Each row of the <emphasis>model</emphasis> table represents
+	the source code for a scientific model.  A text file, 
+	stored in the <emphasis>archive</emphasis> field, contains
+	the current and all previous versions of the model, in 
+	compressed RCS-compatible format.
+      </para>
+      <para>
+	<table frame='all'><title>model</title>
+	  <tgroup cols='3' align='left' colsep='1' rowsep='1'>
+	    <colspec colwidth="1*" colname='c1'/>
+	    <colspec colwidth="2*" colname='c2'/>
+	    <colspec colwidth="4*" colname='c3'/>
+	    <thead>
+	      <row>
+		<entry>Field</entry>
+		<entry>Type</entry>
+		<entry>Description</entry>
+	      </row>
+	    </thead>
+	    <tbody>
+	      <row>
+		<entry>model_id</entry>
+		<entry>int(10) unsigned</entry>
+		<entry>
+		  Primary key, supplied automatically when the row is created.
+		</entry>
+	      </row>
+	      <row>
+		<entry>name</entry>
+		<entry>varchar(20)</entry>
+		<entry>The name of the  model.</entry>
+	      </row>
+	      <row>
+		<entry>abstract</entry>
+		<entry>varchar(100)</entry>
+		<entry>A short description of the model.</entry>
+	      </row>
+	      <row>
+		<entry>archive</entry>
+		<entry>longblob</entry>
+		<entry>
+		  A text file containing the current and all previous
+		  versions, in compressed RCS-compatible format.
+		</entry>
+	      </row>
+	      <row>
+		<entry>user_id</entry>
+		<entry>int(10) unsigned</entry>
+		<entry>
+		  The user who owns this model. A foreign key to the
+		  user table.
+		</entry>
+	      </row>
+	    </tbody>
+	  </tgroup>
+	</table>
+      </para>
+    </sect2>
+    <sect2>
+      <title>state</title>
+      <para>
+	The <emphasis>state</emphasis> tables provides short and
+	long names for the states that a job can be in.  Rows
+	must never be deleted from this table.
+      </para>
+      <para>
+	<table frame='all'><title>state</title>
+	  <tgroup cols='3' align='left' colsep='1' rowsep='1'>
+	    <colspec colwidth="1*" colname='c1'/>
+	    <colspec colwidth="2*" colname='c2'/>
+	    <colspec colwidth="4*" colname='c3'/>
+	    <thead>
+	      <row>
+		<entry>Field</entry>
+		<entry>Type</entry>
+		<entry>Description</entry>
+	      </row>
+	    </thead>
+	    <tbody>
+	      <row>
+		<entry>state_code</entry>
+		<entry>char(3)</entry>
+		<entry>
+		  Primary key.  The short name of a job state.
+		</entry>
+	      </row>
+	      <row>
+		<entry>state_name</entry>
+		<entry>char(20)</entry>
+		<entry>Long name for a state.</entry>
+	      </row>
+	    </tbody>
+	  </tgroup>
+	</table>
+      </para>
+    </sect2>
+    <sect2>
+      <title>user</title>
+      <para>
+	The <emphasis>user</emphasis> tables contains information about
+	the user.  The MDA consults this table when a user logs in.
+	This table identifies jobs and models.  Rows must never be
+	deleted from this table.
+      </para>
+      <para>
+	<table frame='all'><title>user</title>
+	  <tgroup cols='3' align='left' colsep='1' rowsep='1'>
+	    <colspec colwidth="1*" colname='c1'/>
+	    <colspec colwidth="2*" colname='c2'/>
+	    <colspec colwidth="4*" colname='c3'/>
+	    <thead>
+	      <row>
+		<entry>Field</entry>
+		<entry>Type</entry>
+		<entry>Description</entry>
+	      </row>
+	    </thead>
+	    <tbody>
+	      <row>
+		<entry>user_id</entry>
+		<entry>int(10) unsigned</entry>
+		<entry>
+		  Primary key.  Provided automatically when the row is created.
+		</entry>
+	      </row>
+	      <row>
+		<entry>first_name</entry>
+		<entry>varchar(30)</entry>
+		<entry>The given name of this user.</entry>
+	      </row>
+	      <row>
+		<entry>surname</entry>
+		<entry>varchar(40)</entry>
+		<entry>The family name of this user.</entry>
+	      </row>
+	      <row>
+		<entry>password</entry>
+		<entry>varchar(32)</entry>
+		<entry>An encrypted password, used when logging in.</entry>
+	      </row>
+	      <row>
+		<entry>username</entry>
+		<entry>varchar(20)</entry>
+		<entry>
+		  A user name used for logging in.  Must be unique.
+		</entry>
+	      </row>
+	    </tbody>
+	  </tgroup>
+	</table>
+      </para>
+    </sect2>
+  </sect1>
+</article>
+
+<!--  LocalWords:  xml DOCTYPE DocBook uw articleinfo revhistory revnumber Spk
+ -->
+<!--  LocalWords:  authorinitials revremark spkdb SQL itemizedlist listitem url
+ -->
+<!--  LocalWords:  ulink orderedlist MDA MDAs Aspk Cspk cpp MyISAM cerr srun
+ -->
+<!--  LocalWords:  timestamp varchar longblob InnoDB cmp username tgroup colsep
+ -->
+<!--  LocalWords:  rowsep colspec colwidth colname thead tbody
+ -->
