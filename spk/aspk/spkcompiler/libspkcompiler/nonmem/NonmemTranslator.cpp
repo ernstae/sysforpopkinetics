@@ -2253,6 +2253,7 @@ void NonmemTranslator::parsePred( DOMElement * pred )
   gSpkExpOutput = fopen( fPredEqn_cpp, "w" );
   gSpkExpSymbolTable = table;
   gSpkExpErrors = 0;
+  gSpkExpLines  = 0;
   gSpkExpErrorMessages = new char[ SpkCompilerError::maxMessageLen()-50 ];
   strcpy( gSpkExpErrorMessages, "" );
 
