@@ -162,10 +162,10 @@ If A were <html:font color='red'>diagonal</html:font>, <sigma_out> specifies as 
 <!ATTLIST sigma_out dimension CDATA #REQUIRED>
 
 
-<!-- <pop_obj_out> Final objective value for the population parameter. -->
+<!-- <pop_obj_out> Final objective value for the SPK population parameter which is a composite of NONMEM's theta and function values of Omega and Sigma. -->
 <!ELEMENT pop_obj_out (value)+>
 
-<!-- <ind_obj_out> Final objective value for the individual parameter. -->
+<!-- <ind_obj_out> Final objective value for the SPK individual parameter which is a composite of NONMEM's theta and function value of Omega. -->
 <!ELEMENT ind_obj_out (value)+>
 
 <!-- <pop_stat_result> Statistical analysis results on the final estimate for the population parameter.  The NONMEM fixed effect parameters are mapped to the SPK population parameter in the oder of {THETA, OMEGA, SIGMA}.
