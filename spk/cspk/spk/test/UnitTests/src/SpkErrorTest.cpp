@@ -102,6 +102,9 @@ Test* SpkErrorTest::suite()
     suiteOfTests->addTest(new TestCaller<SpkErrorTest>(
                           "serializeTest", 
                           &SpkErrorTest::serializeTest));
+    suiteOfTests->addTest(new TestCaller<SpkErrorTest>(
+                          "formatLongErrorTest", 
+                          &SpkErrorTest::formatLongErrorTest));
 
     return suiteOfTests;
 }
@@ -343,4 +346,55 @@ void SpkErrorTest::serializeTest()
     CPPUNIT_ASSERT_MESSAGE( "e1.filename()==e3.filename()", strcmp(e1.filename(),e3.filename())==0 );
     CPPUNIT_ASSERT_MESSAGE( "e1.message()==e3.message()", strcmp(e1.message(),e3.message())==0 );
   
+}
+
+void SpkErrorTest::formatLongErrorTest()
+{
+    using namespace SpkError_const;
+    
+    // Create an error message that is too long to be stored
+    // in an SpkError object.
+    ostringstream message;
+    string messageStr;
+    message << "An error occurred during individual level estimation." << endl;
+    message << endl;
+    message << "The analysis failed during the optimization of the parameters for" << endl;
+    message << "individual 3." << endl;
+    message << endl;
+    message << "At the last successful iteration of the individual level optimizer the" << endl;
+    message << "individual parameter and its gradient had the following values:" << endl;
+    message << endl;
+    message << "Index  Parameter  Bounds?    Gradient" << endl;
+    message << "-----  ---------  -------    --------" << endl;
+    message << endl;
+    message << "1        3.40      Lower      -0.004 " << endl;
+    message << "2        49.0      Free        0.088 " << endl;
+    message << "3      -0.030      Both       -9.839 " << endl;
+    messageStr = message.str();
+
+    // This will be the message formatted the same way a shorter
+    // message would be formatted by the serialize function.
+    string formattedMessage;
+
+    // Format the long error message.
+    formatLongError(
+        SpkError::SPK_OPT_ERR,
+        messageStr,
+        __LINE__,
+        __FILE__,
+        formattedMessage );
+
+    // Check that the formatted message is not empty.
+    CPPUNIT_ASSERT_MESSAGE(
+        "The formatted long message string is empty. ",
+        messageStr.empty() == false );
+
+    // Uncomment these statements to see the error message.
+    /*
+    cout << endl;
+    cout << "########################################" << endl;
+    cout << formattedMessage;
+    cout << "########################################" << endl;
+    */
+
 }

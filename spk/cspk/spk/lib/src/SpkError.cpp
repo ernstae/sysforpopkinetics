@@ -294,6 +294,31 @@ friend std::string& operator<<(std::string& /s/, const SpkError& /e/)
 /$$
 Behaves the same as $code std::ostream& SpkError::operator<<(std::ostream&, SpkError&)$$
 does, except this version takes a std::string object in place of std::ostream.
+$syntax/
+
+friend void formatLongError(
+    enum SpkError::ErrorCode  /ecode/,
+    const std::string&        /mess/,
+    unsigned int              /line/,
+    const char*               /file/,
+    std::string&              /formattedError/ )
+/$$
+
+Formats error messages that are too long to be stored in SpkError
+objects.
+This allows these long messages to be displayed in the same
+way as SpkError messages, but it does not allow them to be included
+in the list of SpkErrors maintained by an
+$xref/SpkException//SpkException/$$.
+$pre
+
+$$
+In particular, this function sets $italic formattedError$$ equal to an
+error message formatted as described in the 
+$code std::istream& SpkError::operator>>(std::istream&, SpkError&)$$ 
+section with the error code equal to $italic ecode$$, the
+message equal to $italic mess$$, the line number equal to $italic
+line$$, and the file name equal to $italic file$$.
 
 
 $head Class Members$$
@@ -836,6 +861,33 @@ std::istream& operator>>(std::istream& stream, SpkError& e)
 
     strcpy(e._message, buf);
     return stream;
+}
+
+void formatLongError(
+    enum SpkError::ErrorCode  ecode,
+    const std::string&        mess,
+    unsigned int              line,
+    const char*               file,
+    std::string&              formattedError )
+{
+    std::ostringstream stream;
+
+    stream << ERRORCODE_FIELD_NAME << endl;
+    stream << ecode << endl;
+
+    stream << ERRORCODE_DESCRIPTION_FIELD_NAME << endl;
+    stream << SpkError::describe( ecode ) << endl << '\r';
+
+    stream << LINENUM_FIELD_NAME   << endl;
+    stream << line  << endl;
+    
+    stream << FILENAME_FIELD_NAME  << endl;
+    stream << file  << endl;
+    
+    stream << MESSAGE_FIELD_NAME   << endl;
+    stream << mess  << endl;
+   
+    formattedError = stream.str();
 }
 
 enum SpkError::ErrorCode SpkError::code() const throw()

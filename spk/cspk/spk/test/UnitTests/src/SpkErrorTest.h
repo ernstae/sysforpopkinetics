@@ -60,6 +60,7 @@ public:
     void filenameTest();
     void messageTest();
     void serializeTest();
+    void formatLongErrorTest();
 
     void mapTest();
 };
