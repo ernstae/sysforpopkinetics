@@ -216,7 +216,7 @@
 	      <entry><link linkend="net_spec">Network Security Spec</link></entry>
 	      <entry>Alan Westhagen</entry>
 	      <entry>03/01/2004</entry>
-	      <entry></entry>
+	      <entry>04/08/2004</entry>
 	    </row>
 	    <row>
 	      <entry><link linkend="run">Cspk Builds and Runs Jobs</link></entry>
@@ -456,8 +456,12 @@
 	security and describes a practical solution which meets
 	the requirements.
       </para>
+      <para>
+	This document is now complete and can be viewed
+	<ulink url="../..//specs/netSecure/netSecure.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
+      </para>
     </sect2>
-
     <sect2 id="optimizer">
       <title>Replacement of the NAG Optimizer</title>
       <para>
