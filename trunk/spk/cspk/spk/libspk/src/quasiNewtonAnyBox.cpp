@@ -256,6 +256,9 @@ $syntax/
 /$$
 This $xref/Optimizer//Optimizer/$$ class object has three attributes.  
 These attributes are parameters of the optimizer used in the optimization.
+If the number of iterations parameter is equal to zero, then the input
+value for x is accepted as the final value, and any requested output
+values are evaluated at that final value.
 
 $syntax/
 
@@ -1243,8 +1246,24 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   double delta;
   double deltaScale = 10.0;
 
-  bool isWithinTol = false;
-  int iterCurr = 1;
+  // Initialize the convergence flag and iteration counter.
+  bool isWithinTol;
+  int iterCurr;
+  if ( nMaxIter > 0 )
+  {
+    isWithinTol = false;
+    iterCurr = 1;
+  }
+  else
+  {
+    // If zero iterations have been requested, then the input value
+    // for x is accepted as the final value.
+    isWithinTol = true;
+    iterCurr = 0;
+  }
+
+  // Try to satisfy this function's convergence criterion before
+  // the maximum number of iterations have been performed.
   while ( !isWithinTol && iterCurr <= nMaxIter )
   {
     // See if this function's convergence criterion has been met.
@@ -1304,14 +1323,6 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
 	throw exceptionOb.push( err );
       }
     }
-  }
-
-  // If zero iterations were requested, reset these quantities so that 
-  // the requested output values will be set.
-  if ( nMaxIter == 0 )
-  {
-    isWithinTol = true;
-    iterCurr = 0;
   }
 
 
