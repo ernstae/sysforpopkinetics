@@ -82,7 +82,6 @@ const char* NonmemTranslator::C_SYNONYM                    ( "synonym" );
 const char* NonmemTranslator::C_THETA                      ( "theta" );
 const char* NonmemTranslator::C_LENGTH                     ( "length" );
 const char* NonmemTranslator::C_OMEGA                      ( "omega" );
-const char* NonmemTranslator::C_ONLYSIMULATION             ( "onlysimulation" );
 const char* NonmemTranslator::C_SIGMA                      ( "sigma" );
 const char* NonmemTranslator::C_SIMULATION                 ( "simulation" );
 const char* NonmemTranslator::C_SEED                       ( "seed" );
@@ -122,7 +121,6 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     myIsSimulate        ( false ),
     myIsMonte           ( false ),
     myIsStat            ( false ),
-    myIsOnlySimulation  ( false ),
     mySubproblemsN      ( 1 ),
     myApproximation     ( FO ),
     myMonteMethod       ( MONTE ),
@@ -258,7 +256,6 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   X_NAME           = XMLString::transcode( C_NAME );
   X_SYNONYM        = XMLString::transcode( C_SYNONYM );
   X_LENGTH         = XMLString::transcode( C_LENGTH );
-  X_ONLYSIMULATION = XMLString::transcode( C_ONLYSIMULATION );
   X_SEED           = XMLString::transcode( C_SEED );
   X_SUBPROBLEMS    = XMLString::transcode( C_SUBPROBLEMS );
   X_COVARIANCE_FORM= XMLString::transcode( C_COVARIANCE_FORM );
@@ -366,7 +363,6 @@ NonmemTranslator::~NonmemTranslator()
   XMLString::release( &X_MITR );
   XMLString::release( &X_IND_STAT );
   XMLString::release( &X_SIG_DIGITS );
-  XMLString::release( &X_ONLYSIMULATION );
   XMLString::release( &X_SUBPROBLEMS );
 }
 NonmemTranslator::NonmemTranslator( const NonmemTranslator& )
@@ -841,6 +837,27 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   const XMLCh * xml_is_estimation = pop_analysis->getAttribute( X_IS_ESTIMATION );
   myIsEstimate = ( XMLString::equals( xml_is_estimation, X_YES )? true : false );
 
+  //
+  // Finding out the population size
+  //
+  if( !pop_analysis->hasAttribute( X_POP_SIZE ) )
+    {
+      char mess[ SpkCompilerError::maxMessageLen() ];
+      sprintf( mess, "Missing \"%s\" attribute in \"%s\" tag.", C_POP_ANALYSIS, C_POP_SIZE );
+      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
+      throw e;
+    }
+  const XMLCh * xml_pop_size = pop_analysis->getAttribute( X_POP_SIZE );
+  if( !XMLString::textToBin( xml_pop_size, myPopSize ) )
+    {
+      char mess[ SpkCompilerError::maxMessageLen() ];
+      sprintf( mess, 
+	       "Invalid %s attribute value in \"%s\" tag: %s", C_POP_SIZE, C_POP_ANALYSIS,
+	       XMLString::transcode(xml_pop_size) );
+      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
+      throw e;
+    }
+
   if( myIsEstimate )
     {
       //
@@ -867,26 +884,6 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
 	  sprintf( mess, "Invalid \"%s\" attribute value: %s.", C_APPROXIMATION, XMLString::transcode(xml_approx) );
 	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
 	  throw e;
-	}
-      //
-      // Finding out the population size
-      //
-      if( !pop_analysis->hasAttribute( X_POP_SIZE ) )
-	{
-	  char mess[ SpkCompilerError::maxMessageLen() ];
-	  sprintf( mess, "Missing \"%s\" attribute in \"%s\" tag.", C_POP_ANALYSIS, C_POP_SIZE );
-	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
-	  throw e;
-	}
-      const XMLCh * xml_pop_size = pop_analysis->getAttribute( X_POP_SIZE );
-      if( !XMLString::textToBin( xml_pop_size, myPopSize ) )
-	{
-	  char mess[ SpkCompilerError::maxMessageLen() ];
-	  sprintf( mess, 
-		   "Invalid %s attribute value in \"%s\" tag: %s", C_POP_SIZE, C_POP_ANALYSIS,
-		   XMLString::transcode(xml_pop_size) );
-      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
-      throw e;
 	}
     }
 
@@ -1465,16 +1462,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
            SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
            throw e;
 	}
-      if( simulation->hasAttribute( X_ONLYSIMULATION ) )
-      {
-         const XMLCh* xml_only_simulation = simulation->getAttribute( X_ONLYSIMULATION );
-         if( XMLString::equals( xml_only_simulation, X_YES ) )
-	   {
-	     myIsOnlySimulation = true;
-	   }
-         else
-           myIsOnlySimulation = false;
-      }
+
       if( simulation->hasAttribute( X_SUBPROBLEMS ) )
       {
          const XMLCh* xml_subproblems = simulation->getAttribute( X_SUBPROBLEMS );
@@ -1574,14 +1562,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       myIsConfidence = false;
       myIsCoefficient = false;
     }
-  if( myIsOnlySimulation && myIsEstimate )
-    {
-      char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "%s::%s and %s::%s are exclusive to each other.", 
-	       C_SIMULATION, C_ONLYSIMULATION, C_POP_ANALYSIS, C_IS_ESTIMATION, C_ONLYSIMULATION  );
-      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
-      throw e;
-    }
+
   myIsStat = myIsStderr 
     || myIsCorrelation 
     || myIsCov 
@@ -1630,16 +1611,6 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
           throw e;
 	}
    
-      if( simulation->hasAttribute( X_ONLYSIMULATION ) )
-      {
-         const XMLCh* xml_only_simulation = simulation->getAttribute( X_ONLYSIMULATION );
-         if( XMLString::equals( xml_only_simulation, X_YES ) )
-	   {
-	     myIsOnlySimulation = true;
-	   }
-         else
-           myIsOnlySimulation = false;
-      }
       if( simulation->hasAttribute( X_SUBPROBLEMS ) )
       {
          const XMLCh* xml_subproblems = simulation->getAttribute( X_SUBPROBLEMS );
@@ -2179,16 +2150,6 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
       myIsCoefficient = false;
     }
 
-
-  if( myIsOnlySimulation && myIsEstimate )
-    {
-      char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "%s::%s and %s::%s are exclusive to each other.", 
-	       C_SIMULATION, C_ONLYSIMULATION, C_POP_ANALYSIS, C_IS_ESTIMATION, C_ONLYSIMULATION  );
-      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
-      throw e;
-    }
-
   myIsStat = myIsStderr 
     || myIsCorrelation 
     || myIsCov 
@@ -2584,6 +2545,7 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "}" << endl;
   oIndData_h << endl;
 
+  oIndData_h << "#include <spk/printInMatrix.h>" << endl;
   oIndData_h << "// It is unfortunately that this function is dependent on CppAD. " << endl;
   oIndData_h << "// The type of template argument must have CppAD::Value() operator." << endl;
   oIndData_h << "template <class ValueType>" << endl;
@@ -2594,8 +2556,18 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "   assert( Ri.size() == n * n );" << endl;
   oIndData_h << "   compResiduals();" << endl;
   oIndData_h << "   valarray<double> r( n );" << endl;
+  oIndData_h << "   cout << \"{ \";" << endl;
   oIndData_h << "   for( int i=0; i<n; i++ )" << endl;
+  oIndData_h << "   {" << endl;
   oIndData_h << "      r[i] = CppAD::Value( " << UserStr.RES << "[i] );" << endl;
+  oIndData_h << "      if( i>0 )" << endl;
+  oIndData_h << "         cout << \", \";" << endl;
+  oIndData_h << "      cout << r[i];" << endl;
+  oIndData_h << "   }" << endl;
+  oIndData_h << "   cout << \" }\" << endl;" << endl;
+  oIndData_h << "   cout << \"R = \" << endl;" << endl;
+  oIndData_h << "   printInMatrix( Ri, n );" << endl;
+
   oIndData_h << "   valarray<double> C( 0.0, n * n );" << endl;
   oIndData_h << "   C = cholesky( Ri, n );" << endl;
   oIndData_h << "   valarray<double> w = multiply( C, n, r, 1 );" << endl;
@@ -2605,7 +2577,19 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "   return;" << endl;
 
   oIndData_h << "}" << endl;
+  /*
+  oDriver << "   assert( Ri.size() == n * n );" << endl;
+  oDriver << "   assert( residual.size() == n );" << endl;
+  oDriver << "   valarray<double> r( n );" << endl;
+  oDriver << "   for( int i=0; i<n; i++ ) r[i] = CppAD::Value( residual[i] );" << endl;
+  oDriver << "   valarray<double> C( 0.0, n * n );" << endl;
+  oDriver << "   C = cholesky( Ri, n );" << endl;
+  oDriver << "   valarray<double> w = multiply( C, n, r, 1 );" << endl;
+  oDriver << "   vector< CppAD::AD<double> > Cr(n);" << endl;
+  oDriver << "   for( int i=0; i<n; i++ ) Cr[i] = w[i];" << endl;
+  oDriver << "   return Cr;" << endl;
 
+   */
   oIndData_h << "#endif" << endl;
 
   oIndData_h.close();
@@ -3588,7 +3572,6 @@ void NonmemTranslator::generateIndDriver( ) const
 {
   //==================================================================
   // Generate the SPK driver
-  assert( !(myIsOnlySimulation && myIsEstimate) );
   //==================================================================
   ofstream oDriver ( fFitDriver_cpp );
   if( !oDriver.good() )
@@ -3690,7 +3673,6 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "DataSet< CppAD::AD<double> > set;" << endl;
   oDriver << endl;
   
-  oDriver << "const bool isSimOnly       = " << ( myIsOnlySimulation? "true":"false" ) << ";" << endl;
   oDriver << "const bool isSimRequested  = " << ( myIsSimulate? "true":"false" ) << ";" << endl;
   oDriver << "bool haveCompleteData      = " << ( myIsSimulate? "false":"true" ) << ";" << endl;
   oDriver << endl;
@@ -3864,16 +3846,18 @@ void NonmemTranslator::generateIndDriver( ) const
       oDriver << "     model.getOmega( omegaOut );" << endl;
       oDriver << "     model.setIndPar( bOut );" << endl;
       oDriver << "     model.dataVariance( ROut );" << endl;
-/*
+      /*
       oDriver << "     for( int j=0; j<nY; j++ )" << endl;
       oDriver << "        set.data[0]->" << UserStr.RES << "[j] ";
       oDriver << "= y[j] - set.data[0]->" << UserStr.PRED << "[j];" << endl;
       oDriver << "     set.data[0]->" << UserStr.WRES;
       oDriver << " = wres( nY, ROut, set.data[0]->" << UserStr.RES << " ); " << endl;
-*/
+      */
       oDriver << "     vector< valarray<double> > R( 1 );" << endl;
       oDriver << "     R[0].resize( nY * nY );" << endl;
+      oDriver << "     R[0] = ROut;" << endl;
       oDriver << "     set.compAllWeightedResiduals( R );" << endl;
+      
       oDriver << "  }" << endl;
       oDriver << "  //" << endl;
       oDriver << "  //////////////////////////////////////////////////////////////////////" << endl;    
@@ -3977,19 +3961,6 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "/*   ReportML Document                                             */" << endl;
   oDriver << "/*                                                                 */" << endl;
   oDriver << "/*******************************************************************/" << endl;
-/*
-  oDriver << "valarray<double> ROut( nY, nY );" << endl;
-  oDriver << "model.setIndPar( bOut );" << endl;
-  oDriver << "model.dataVariance( ROut );" << endl;
-  oDriver << "for( int j=0; j<nY; j++ )" << endl;
-  oDriver << "{" << endl;
-  oDriver << "   set.data[0]->" << UserStr.RES << "[j] = y[j] - set.data[0]->" << UserStr.PRED << "[j];" << endl;
-  oDriver << "}" << endl;
-  oDriver << "set.data[0]->" << UserStr.WRES << " = wres( nY, ROut, set.data[0]->" << UserStr.RES << " ); " << endl;
-  
-  //oDriver << "set.compWeightedResiduals( ROut );" << endl;
-  oDriver << endl;
-*/
   oDriver << "ofstream oResults( \"" << fResult_xml << "\" );" << endl;
   oDriver << "if( !oResults.good() )" << endl;
   oDriver << "{" << endl;
@@ -4147,7 +4118,6 @@ void NonmemTranslator::generateIndDriver( ) const
       oDriver << "oResults << \"</ind_analysis_result>\" << endl;" << endl;
       oDriver << endl;
     }
-
 
   //=============================================================================
   // LABELS
@@ -4423,7 +4393,6 @@ void NonmemTranslator::generatePopDriver() const
 
   oDriver << "const bool isSimRequested  = " << (myIsSimulate? "true":"false") << ";" << endl;
   oDriver << "bool haveCompleteData      = false;" << endl;
-  oDriver << "const bool isSimOnly       = " << (myIsOnlySimulation? "true":"false") << ";" << endl;
   oDriver << endl;
 
   oDriver << "const bool isOptRequested  = " << (myIsEstimate? "true":"false") << ";" << endl;
@@ -4599,25 +4568,6 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << "   cerr << message << endl;    // Printing out to the standard error." << endl;
       oDriver << "   haveCompleteData = false;" << endl;
       oDriver << "}" << endl;
-
-      // RETURN HERE!!! 6/23/04
-      if( myIsOnlySimulation )
-	{
-	  oDriver << endl;
-	  oDriver << "model.setPopPar( alpIn );" << endl;
-	  oDriver << "for( int i=0, cnt=0; i<nPop; i++ )" << endl;
-          oDriver << "{" << endl;
-	  oDriver << "   model.selectIndividual(i);" << endl;
-	  oDriver << "   model.setIndPar( bIn[ slice( cnt, N[i], 1 ) ] );" << endl;
-          oDriver << "   valarray<double> tmp_fiOut( N[i] );" << endl;
-          oDriver << "   valarray<double> tmp_RiOut( N[i] * N[i] );" << endl;
-          oDriver << "   valarray<double> tmp_DOut( nB * nB );" << endl; 
-          oDriver << "   model.dataMean( tmp_fiOut );" << endl;
-          oDriver << "   model.dataVariance( tmp_RiOut );" << endl;
-          oDriver << "   model.indParVariance( tmp_DOut );" << endl;
-          oDriver << "}" << endl;
-          oDriver << "set.data[i]->" << UserStr.WRES << " = 0.0;" << endl;
-	}
     }
   else
     {
@@ -4691,25 +4641,31 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << "      model.getTheta( thetaOut );" << endl;
       oDriver << "      model.getOmega( omegaOut );" << endl;
       oDriver << "      model.getSigma( sigmaOut );" << endl;
+      oDriver << endl;
+      oDriver << "      model.setPopPar( alpOut );" << endl;
+      oDriver << "      vector< valarray<double> > R( nPop );" << endl;
+      oDriver << "      for( int i=0; i<nPop; i++ )" << endl;
+      oDriver << "      {" << endl;
+      oDriver << "         valarray<double> RiOut( N[i] * N[i] );" << endl;
+      oDriver << "         model.selectIndividual(i);" << endl;
+      oDriver << "         model.setIndPar( bOut[ slice( i*nB, nB, 1 ) ] );" << endl;
+      oDriver << "         model.dataVariance( RiOut );" << endl;
+      /*
+     oDriver << "         for( int j=0; j<N[i]; j++ )" << endl;
+     oDriver << "         {" << endl;
+     oDriver << "            set.data[i]->" << UserStr.RES << "[j] = y[j] - set.data[i]->" << UserStr.PRED << "[j] ;" << endl;
+     oDriver << "         }" << endl;
+     oDriver << "         set.data[i]->" << UserStr.WRES << " = wres( N[i], RiOut, set.data[i]->" << UserStr.RES << " ); " << endl;
+     oDriver << "       }" << endl;
+      */
+      oDriver << "         R[i].resize( N[i] * N[i] );" << endl;
+      oDriver << "         R[i] = RiOut;" << endl;
+      oDriver << "      }" << endl;
+      oDriver << "      set.compAllWeightedResiduals( R );" << endl;
       oDriver << "   }" << endl;
-  oDriver << "if( isOptRequested && isOptSuccess )" << endl;
-  oDriver << "{" << endl;
-     oDriver << "model.setPopPar( alpOut );" << endl;
-     oDriver << "vector< valarray<double> > R( nPop );" << endl;
-     oDriver << "for( int i=0; i<nPop; i++ )" << endl;
-     oDriver << "{" << endl;
-     oDriver << "   valarray<double> RiOut( N[i] * N[i] );" << endl;
-     oDriver << "   model.selectIndividual(i);" << endl;
-     oDriver << "   model.setIndPar( bOut[ slice( i*nB, nB, 1 ) ] );" << endl;
-     oDriver << "   model.dataVariance( RiOut );" << endl;
-     oDriver << "   R[i].resize( N[i] * N[i] );" << endl;
-     oDriver << "   R[i] = RiOut;" << endl;
-     oDriver << "}" << endl;
-     oDriver << "set.compAllWeightedResiduals( R );" << endl;
-  oDriver << "}" << endl;
+      oDriver << "}" << endl;
       oDriver << "   //" << endl;
       oDriver << "   ///////////////////////////////////////////////////////////////////" << endl;      
-      oDriver << "}" << endl;
 
       // Statistics can be only computed when the parameter estimation has been done.
       if( myIsStat )
@@ -4828,16 +4784,6 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "/*   ReportML Document                                             */" << endl;
   oDriver << "/*                                                                 */" << endl;
   oDriver << "/*******************************************************************/" << endl;
-/*
-     oDriver << "   for( int j=0; j<N[i]; j++ )" << endl;
-     oDriver << "   {" << endl;
-     oDriver << "      set.data[i]->" << UserStr.RES << "[j] = y[j] - set.data[i]->" << UserStr.PRED << "[j] ;" << endl;
-     oDriver << "   }" << endl;
-     oDriver << "   set.data[i]->" << UserStr.WRES << " = wres( N[i], RiOut, set.data[i]->" << UserStr.RES << " ); " << endl;
-     oDriver << "}" << endl;
-*/
-  oDriver << endl;
-
   oDriver << "ofstream oResults( \"" << fResult_xml << "\" );" << endl;
   oDriver << "if( !oResults.good() )" << endl;
   oDriver << "{" << endl;
