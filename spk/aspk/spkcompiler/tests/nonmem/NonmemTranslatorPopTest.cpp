@@ -29,22 +29,86 @@ using namespace xercesc;
 
 namespace{
   const unsigned int maxChars = 2047;
-};
 
-void NonmemTranslatorPopTest::setUp()
-{
-}
-void NonmemTranslatorPopTest::tearDown()
-{
-}
-void NonmemTranslatorPopTest::testParsePopSource()
-{
+  char fPrefix[128];
+  char fData[128];
+  char fSource[128];
+  char fIndDataDriver[128];
+  char fIndDataDriver_cpp[128];
+  char fDataSetDriver[128];
+  char fDataSetDriver_cpp[128];
+  char fPredDriver[128];
+  char fPredDriver_cpp[128];
+  char fDriver[128];
+  char fDriver_cpp[128];
+
+  const char * strID    = "ID";
+  const char * strTIME  = "TIME";
+  const char * strCP    = "CP";
+  const char * strDV    = "DV";
+  const char * strKA    = "ka";
+  const char * strKE    = "ke";
+  const char * strF     = "F";
+  const char * strY     = "Y";
+  const char * strTHETA = "THETA";
+  const char * strOMEGA = "OMEGA";
+  const char * strSIGMA = "SIGMA";
+  const char * strETA   = "ETA";
+  const char * strEPS   = "EPS";
+  const char * strPRED  = "PRED";
+  const char * strRES   = "RES";
+  const char * strWRES  = "WRES";
+  const char * strMDV   = "MDV";
+  const char * strSIMDV = "SIMDV";
+
+  //=====================================================
+  // Instanciate the NONMEM translator.
+  // It initializes the symbol table and allows us to
+  // handle it.
+  // Fill the symbol table with data records as if
+  // an spkdataML document has been parsed.
+  //
+  // Population size:          3
+  // Data labels/items:        [ ID, TIME CP/DV ]
+  //
+  // Data Set
+  // --------
+  //  
+  //   ID      TIME     CP=DV    (MDV)
+  //   1       0.0       0.0      0
+  //   2       0.0       0.0      0
+  //   2       1.0      10.0      0
+  //   3       0.0       0.0      0
+  //   3       1.0      10.0      0
+  //   3       2.0      20.0      0
+  //   4       0.0       0.0      0
+  //   4       1.0      10.0      0
+  //   4       2.0      20.0      0
+  //   4       3.0      25.0      0
+  //=====================================================
+  const int pop_size   = 4;
+  const int nLabels    = 4;
+  const char * label[] = { strID, strTIME, strCP, strMDV };
+  map<const char*, const char*> label_alias;
+
+  const int    nRecords  = 10;
+  const int    nItems    = nLabels;
+  valarray<int> N( pop_size );
+  const double record0[] = { 1, 0.0,  0.0, 0 };
+  const double record1[] = { 2, 0.0,  0.0, 0 };
+  const double record2[] = { 2, 1.0, 10.0, 0 };
+  const double record3[] = { 3, 0.0,  0.0, 0 };
+  const double record4[] = { 3, 1.0, 10.0, 0 };
+  const double record5[] = { 3, 2.0, 20.0, 0 };
+  const double record6[] = { 4, 0.0,  0.0, 0 };
+  const double record7[] = { 4, 1.0, 10.0, 0 };
+  const double record8[] = { 4, 2.0, 20.0, 0 };
+  const double record9[] = { 4, 3.0, 25.0, 0 };
+  double const * record[nRecords];
+
   //=====================================================
   // Set up the test parameters
   // --------------------------
-  //
-  // Population size:          3
-  // Data labels/items:        [ ID, CP/DV ]
   //
   // theta (initial):          [ 1, 2, 3 ]
   // theta (upper):            [ 11, 12, 13 ]
@@ -78,39 +142,74 @@ void NonmemTranslatorPopTest::testParsePopSource()
   // PRED model:               KA=THETA(1) + ETA(1)
   //                           KE=THETA(2) + ETA(2)
   //                           F=KE*KA
-  //                           Y=F+EPS(1)
+  //                           Y=F+EPS(1)+EPS(2)
   //
   //=====================================================
-  const int pop_size = 3;
-  const int nLabels = 2;
 
-  const string strID = "ID";
-  const string strCP = "CP";
-  const string strDV = "DV";
-  const string strKA = "ka";
-  const string strKE = "ke";
-  const string strF  = "F";
-  const string strY  = "Y";
-  const string strTHETA = "THETA";
-  const string strOMEGA = "OMEGA";
-  const string strSIGMA = "SIGMA";
-  const string strETA   = "ETA";
-  const string strEPS   = "EPS";
-  const string strPRED  = "PRED";
-  const string strRES   = "RES";
-  const string strWRES  = "WRES";
-  const string strMDV   = "MDV";
-  const string strSIMDV = "SIMDV";
+  const int  sig_digits = 3;
+  const char approx[]   = "foce";
+  const char PRED[]     = "ka = THETA(1) + ETA(1)\nke = THETA(2) + ETA(2)\nF = ke * ka\nY = F + EPS(1) + EPS(2)\n";
 
-  map<string, string> labels;
-  labels["ID"]   = "";
-  labels["CP"]   = "DV";
-
-  const int thetaLen = 3;
+  const int thetaLen    = 2;
   vector<double> theta_in (thetaLen);
   vector<double> theta_up (thetaLen);
   vector<double> theta_low(thetaLen);
   vector<bool>   theta_fix(thetaLen);
+
+  const int omegaDim = 2;
+  Symbol::Structure omegaStruct;
+  int omegaOrder;
+  vector<double> omega_in;
+  vector<bool>   omega_fix;
+
+  const int sigmaDim = 2;
+  Symbol::Structure sigmaStruct;
+  int sigmaOrder;
+  vector<double> sigma_in;
+  vector<bool>   sigma_fix;
+
+  int etaLen;
+  vector<double> eta_in;
+  vector<bool>   eta_fix;
+
+  int epsLen;
+  vector<double> eps_in;
+  vector<bool>   eps_fix;
+
+  bool pop_stderr         = false;
+  bool pop_coefficent     = false;
+  bool pop_confidence     = false;
+  bool pop_covariance     = false;
+  bool pop_inv_covariance = false;
+  bool pop_correlation    = false;
+
+  string pop_cov_form     = "r";
+  bool isSimulate         = false;
+  const int seed          = 1;
+};
+
+void NonmemTranslatorPopTest::setUp()
+{
+  sprintf( fDriver, "driver" );
+  sprintf( fDriver_cpp, "driver.cpp" );
+
+  label_alias[strID]   = NULL;
+  label_alias[strTIME] = NULL;
+  label_alias[strCP]   = strDV;
+  for( int i=0; i<pop_size; i++ )
+     N[i] = i+1;
+  
+  record[0] = record0;
+  record[1] = record1;
+  record[2] = record2;
+  record[3] = record3;
+  record[4] = record4;
+  record[5] = record5;
+  record[6] = record6;
+  record[7] = record6;
+  record[8] = record6;
+  record[9] = record6;
+
   for( int i=0; i<thetaLen; i++ )
     {
       theta_in[i]  =  i+1;
@@ -119,173 +218,11 @@ void NonmemTranslatorPopTest::testParsePopSource()
       theta_fix[i] = ( i%2==0? true : false );
     }
 
-  const int omegaDim = 2;
-  const Symbol::Structure omegaStruct = Symbol::DIAGONAL;
-  int omegaOrder = ( omegaStruct == Symbol::DIAGONAL? omegaDim : series(1,1,omegaDim) );
-  vector<double> omega_in (omegaOrder);
-  vector<bool>     omega_fix(omegaOrder);
-  for( int i=0; i<omegaOrder; i++ )
-    {
-      omega_in[i]  = i+1;
-      omega_fix[i] = ( i%2==0? true : false );
-    }
-
-  const int sigmaDim = 2;
-  const Symbol::Structure sigmaStruct = Symbol::DIAGONAL;
-  int sigmaOrder = ( sigmaStruct == Symbol::DIAGONAL? sigmaDim : series(1,1,sigmaDim) );
-  vector<double> sigma_in (omegaOrder);
-  vector<bool>     sigma_fix(omegaOrder);
-  for( int i=0; i<sigmaOrder; i++ )
-    {
-      sigma_in[i]  = i+1;
-      sigma_fix[i] = ( i%2==0? true : false );
-    }
-
-  const int etaLen = omegaOrder;
-  vector<double> eta_in (etaLen);
-  vector<bool>   eta_fix(etaLen);
-  fill( eta_in.begin(), eta_in.end(), 0.0 );
-  for( int i=0; i<etaLen; i++ )
-    eta_fix[i] = false;
-
-  const int epsLen = sigmaOrder;
-  vector<double> eps_in (epsLen);
-  vector<bool>   eps_fix(epsLen);
-  fill( eps_in.begin(), eps_in.end(), 0.0 );
-  for( int i=0; i<epsLen; i++ )
-    eps_fix[i] = false;
-
-  string pop_cov_form     = "r";
-  bool pop_stderr         = true;
-  bool pop_coefficent     = true;
-  bool pop_confidence     = true;
-  bool pop_covariance     = true;
-  bool pop_inv_covariance = false;
-  bool pop_correlation    = true;
-
-//  bool isSimulate = true;
-  bool isSimulate = false;
-  const int seed = 1;
-
-  //=====================================================
-  // Generate a sourceML document.
-  //=====================================================
-  const char gSource[] = "NonmemTranslatorPopTest.sourceML";
-  ofstream oSource( gSource );
-  if( oSource.good() )
-    {
-      oSource << "<spksource>" << endl;
-      oSource << "<nonmem>" << endl;
-      
-      oSource << "<constraint>" << endl;
-      // default: is_eta_out=no, is_restart=yes
-      oSource << "<pop_analysis approximation=\"foce\" pop_size=\"3\" ";
-      oSource << "is_estimation=\"yes\" sig_digits=\"3\">" << endl;
-      oSource << "<data_labels>" << endl;
-
-      map<string,string>::const_iterator pLabel = labels.begin();
-      for( int i=0; i<nLabels, pLabel!=labels.end(); i++, pLabel++ )
-	{
-	  oSource << "<label name=";
-          oSource << "\"" << pLabel->first << "\"";
-          if( pLabel->second != "" )
-	    oSource << " synonym=\"" << pLabel->second << "\"";
-          oSource << "/>" << endl;
-	}
-
-      oSource << "</data_labels>" << endl;
-      oSource << "<theta length=\"" << thetaLen << "\">" << endl;
-      oSource << "<in>" << endl;
-      for( int i=0; i<thetaLen; i++ )
-	{
-	  oSource << "<value";
-          if( theta_fix[i] )
-	    oSource << " fixed=\"yes\"";
-	  oSource << ">" << theta_in[i] << "</value>" << endl;
-	}
-      oSource << "</in>" << endl;
-      oSource << "<low>" << endl;
-      for( int i=0; i<thetaLen; i++ )
-	oSource << "<value>" << theta_low[i] << "</value>" << endl;
-      oSource << "</low>" << endl;
-      oSource << "<up>" << endl;
-      for( int i=0; i<thetaLen; i++ )
-	oSource << "<value>" << theta_up[i] << "</value>" << endl;
-      oSource << "</up>" << endl;
-      oSource << "</theta>" << endl;
-
-      oSource << "<omega struct=\"";
-      oSource << (omegaStruct==Symbol::DIAGONAL? "diagonal" : "block");
-      oSource << "\" dimension=\"";
-      oSource << omegaDim << "\">" << endl;
-      oSource << "<in>" << endl;
-
-      for( int i=0; i<omegaOrder; i++ )
-	{
-	  oSource << "<value";
-          if( omega_fix[i] )
-	    oSource << " fixed=\"yes\"";
-	  oSource << ">" << omega_in[i] << "</value>" << endl;
-	}
-      oSource << "</in>" << endl;
-      oSource << "</omega>" << endl;
-
-      oSource << "<sigma struct=\"";
-      oSource << (sigmaStruct==Symbol::DIAGONAL? "diagonal" : "block");
-      oSource << "\" dimension=\"";
-      oSource << sigmaDim << "\">" << endl;
-      oSource << "<in>" << endl;
-      for( int i=0; i<sigmaOrder; i++ )
-	{
-	  oSource << "<value";
-          if( sigma_fix[i] )
-	    oSource << " fixed=\"yes\"";
-	  oSource << ">" << sigma_in[i] << "</value>" << endl;
-	}
-      oSource << "</in>" << endl;
-      oSource << "</sigma>" << endl;
-
-      oSource << "<pop_stat covariance_form=\"" << pop_cov_form << "\" ";
-      oSource << "is_standarderr_out=\""        << (pop_stderr? "yes":"no") << "\" ";
-      oSource << "is_covariance_out=\""         << (pop_covariance? "yes":"no") << "\" ";
-      oSource << "is_inverse_covariance_out=\"" << (pop_inv_covariance? "yes":"no") << "\" ";
-      oSource << "is_correlation_out=\""        << (pop_correlation? "yes":"no") << "\"/>" << endl;
-
-      if( isSimulate )
-	{
-	  oSource << "<simulation seed=\"" << seed << "\"/>" << endl;
-	}
-      oSource << "</pop_analysis>" << endl;
-      oSource << "</constraint>" << endl;
-      
-      oSource << "<model>" << endl;
-      oSource << "<pred>" << endl;
-      oSource << "   " << strKA << "=" << strTHETA << "(1) + " << strETA << "(1)" << endl;
-      oSource << "   " << strKE << "=" << strTHETA << "(2) + " << strETA << "(2)" << endl;
-      oSource << "   " << strF  << "=" << strKE << "*" << strKA << endl;
-      oSource << "   " << strY  << "=" << strF << "+" << strEPS << "(1)" << endl;
-      oSource << "</pred>" << endl;
-      oSource << "</model>" << endl;
-      
-      oSource << "<presentation>" << endl;
-      oSource << "<table header=\"one\" save_as=\"xxx\">" << endl;
-      oSource << "<column label=\"" << strTHETA << "(1)\" appearance_order=\"2\"/>" << endl;
-      oSource << "<column label=\"" << strTHETA << "(3)\" appearance_order=\"4\"/>" << endl;
-      oSource << "<column label=\"" << strTHETA << "(2)\" appearance_order=\"3\"/>" << endl;
-      oSource << "</table>" << endl;
-      oSource << "<table header=\"every\">" << endl;
-      oSource << "<column label=\"" << strDV << "\" appearance_order=\"2\"/>" << endl;
-      oSource << "</table>" << endl;
-      oSource << "</presentation>" << endl;
-      
-      oSource << "</nonmem>" << endl;
-      oSource << "</spksource>" << endl;
-    }
-  oSource.close();
-
-  //=====================================================
-  // Initialize Xerces DOM parser
-  //=====================================================  
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  //
+  // Initializing the XML
+  //
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   try
     {
       XMLPlatformUtils::Initialize();
@@ -297,28 +234,266 @@ void NonmemTranslatorPopTest::testParsePopSource()
                XMLString::transcode( toCatch.getMessage() ) );
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
-    
-  xercesc::XercesDOMParser *parser = new xercesc::XercesDOMParser;
-  parser->setValidationScheme( XercesDOMParser::Val_Auto );
-  parser->setDoNamespaces( true );
-  parser->setDoSchema( true );
-  parser->setValidationSchemaFullChecking( true );
-  parser->setCreateEntityReferenceNodes( true );
+
+}
+void NonmemTranslatorPopTest::tearDown()
+{
+  remove( fData );
+  remove( fSource );
+  remove( fIndDataDriver );
+  remove( fIndDataDriver_cpp );
+  remove( fDataSetDriver );
+  remove( fDataSetDriver_cpp );
+  remove( fPredDriver );
+  remove( fPredDriver_cpp );
+  remove( fDriver );
+  remove( "driver.cpp" );
+  remove( "IndData.h" );
+  remove( "DataSet.h" );
+  remove( "Pred.h" );
+  remove( "predEqn.cpp" );
+  remove( "generatedMakefile" );
+                                                                          
+  XMLPlatformUtils::Terminate();
+
+}
+void NonmemTranslatorPopTest::diagOmegaDiagSigma()
+{
+  sprintf( fPrefix, "pop" );
+
+  omegaStruct = Symbol::DIAGONAL;
+  omegaOrder  = ( omegaStruct == Symbol::DIAGONAL? omegaDim : series(1,1,omegaDim) );
+  omega_in    .resize( omegaOrder );
+  omega_fix   .resize( omegaOrder );
+
+  sigmaStruct = Symbol::DIAGONAL;
+  sigmaOrder  = ( sigmaStruct == Symbol::DIAGONAL? sigmaDim : series(1,1,sigmaDim) );
+  sigma_in    .resize( sigmaOrder );
+  sigma_fix   .resize( sigmaOrder );
+
+  etaLen = omegaOrder;
+  eta_in  .resize( etaLen );
+  eta_fix .resize( etaLen );
+
+  epsLen = sigmaOrder;
+  eps_in  .resize( epsLen );
+  eps_fix .resize( epsLen );
+
+  for( int i=0; i<omegaOrder; i++ )
+    {
+      omega_in[i]  = i+1;
+      omega_fix[i] = ( i%2==0? true : false );
+    }
+  for( int i=0; i<sigmaOrder; i++ )
+    {
+      sigma_in[i]  = i+1;
+      sigma_fix[i] = ( i%2==0? true : false );
+    }
+  fill( eta_in.begin(), eta_in.end(), 0.0 );
+  for( int i=0; i<etaLen; i++ )
+    eta_fix[i] = false;
+
+  fill( eps_in.begin(), eps_in.end(), 0.0 );
+  for( int i=0; i<epsLen; i++ )
+    eps_fix[i] = false;
+
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  //
+  // Generating a dataML document
+  //
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  sprintf( fData, "%s_dataML.xml", fPrefix );
+  ofstream oData( fData );
+  CPPUNIT_ASSERT( oData.good() );
+  oData << "<spkdata version=\"0.1\">" << endl;
+  oData << "<table columns=\"" << nLabels << "\" rows=\"" << nRecords + 1 << "\">" << endl;
+  oData << "<description>" << endl;
+  oData << "Diagonal Sigma and Diagonal Omega" << endl;
+  oData << "</description>" << endl;
+  oData << "<row position=\"1\">" << endl;
+  for( int i=0; i<nItems; i++ )
+    {
+      oData << "<value type=\"string\">" << label[i] << "</value>" << endl;
+    }
+  oData << "</row>" << endl;
+  for( int i=0; i<nRecords; i++ )
+    {
+      oData << "<row position=\"" << i+2 << "\">" << endl;
+      oData << "<value type=\"string\">"  << record[i][0] << "</value>" << endl;
+      for( int j=1; j<nItems; j++ )
+	{
+	  oData << "<value type=\"numeric\">" << record[i][j] << "</value>" << endl;
+	}
+      oData << "</row>" << endl;
+    }
+  oData << "</table>" << endl;
+  oData << "</spkdata>" << endl;
+  oData.close();
+
+  xercesc::XercesDOMParser *dataParser = new xercesc::XercesDOMParser;
+  dataParser->setValidationScheme( XercesDOMParser::Val_Auto );
+  dataParser->setDoNamespaces( true );
+  dataParser->setDoSchema( true );
+  dataParser->setValidationSchemaFullChecking( true );
+  dataParser->setCreateEntityReferenceNodes( true );
+  
+  try{
+    dataParser->parse( fData );
+    data = dataParser->getDocument();
+  }
+  catch( const XMLException& e )
+    {
+      XMLPlatformUtils::Terminate();
+      char buf[maxChars + 1];
+      sprintf( buf, "An error occurred during parsing %s.\n   Message: %s\n",
+	       fData, XMLString::transcode(e.getMessage() ) );
+      CPPUNIT_ASSERT_MESSAGE( buf, false );
+    }
+  catch( const DOMException& e )
+    {
+      XMLCh errText[maxChars + 1]; 
+      if (DOMImplementation::loadDOMExceptionMsg(e.code, errText, maxChars))
+	{
+          XMLPlatformUtils::Terminate();
+          char buf[maxChars + 1];
+          sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
+                   fData, e.code, XMLString::transcode(errText) );
+          CPPUNIT_ASSERT_MESSAGE( buf, false );
+	}
+    }
+  catch( ... )
+    {
+      XMLPlatformUtils::Terminate();
+      char buf[maxChars + 1];
+      sprintf( buf, "An unknown error occurred during parsing %s.\n", fData );
+      CPPUNIT_ASSERT_MESSAGE( buf, false );
+    }
+  
+  //=====================================================
+  // Generate a sourceML document.
+  //=====================================================
+  sprintf( fSource, "%s_sourceML.xml", fPrefix );
+  ofstream oSource( fSource );
+  assert( oSource.good() );
+  oSource << "<spksource>" << endl;
+  oSource << "<nonmem>" << endl;
+      
+  oSource << "<constraint>" << endl;
+  // default: is_eta_out=no, is_restart=yes
+  oSource << "<pop_analysis approximation=\"" << approx << "\" pop_size=\"" << pop_size << "\" ";
+  oSource << "is_estimation=\"yes\" sig_digits=\"" << sig_digits << "\">" << endl;
+  oSource << "<data_labels>" << endl;
+
+  const char * alias = NULL;
+  for( int i=0; i<nLabels; i++ )
+    {
+      oSource << "<label name=";
+      oSource << "\"" << label[i] << "\"";
+      if( (alias = label_alias[ label[i] ]) != NULL )
+	oSource << " synonym=\"" << alias << "\"";
+      oSource << "/>" << endl;
+    }
+
+  oSource << "</data_labels>" << endl;
+  oSource << "<theta length=\"" << thetaLen << "\">" << endl;
+  oSource << "<in>" << endl;
+  for( int i=0; i<thetaLen; i++ )
+    {
+      oSource << "<value";
+      if( theta_fix[i] )
+	oSource << " fixed=\"yes\"";
+      oSource << ">" << theta_in[i] << "</value>" << endl;
+    }
+  oSource << "</in>" << endl;
+  oSource << "<low>" << endl;
+  for( int i=0; i<thetaLen; i++ )
+    oSource << "<value>" << theta_low[i] << "</value>" << endl;
+  oSource << "</low>" << endl;
+  oSource << "<up>" << endl;
+  for( int i=0; i<thetaLen; i++ )
+    oSource << "<value>" << theta_up[i] << "</value>" << endl;
+  oSource << "</up>" << endl;
+  oSource << "</theta>" << endl;
+
+  oSource << "<omega struct=\"";
+  oSource << (omegaStruct==Symbol::DIAGONAL? "diagonal" : "block");
+  oSource << "\" dimension=\"";
+  oSource << omegaDim << "\">" << endl;
+  oSource << "<in>" << endl;
+
+  for( int i=0; i<omegaOrder; i++ )
+    {
+      oSource << "<value";
+      if( omega_fix[i] )
+	oSource << " fixed=\"yes\"";
+      oSource << ">" << omega_in[i] << "</value>" << endl;
+    }
+  oSource << "</in>" << endl;
+  oSource << "</omega>" << endl;
+
+  oSource << "<sigma struct=\"";
+  oSource << (sigmaStruct==Symbol::DIAGONAL? "diagonal" : "block");
+  oSource << "\" dimension=\"";
+  oSource << sigmaDim << "\">" << endl;
+  oSource << "<in>" << endl;
+  for( int i=0; i<sigmaOrder; i++ )
+    {
+      oSource << "<value";
+      if( sigma_fix[i] )
+	oSource << " fixed=\"yes\"";
+      oSource << ">" << sigma_in[i] << "</value>" << endl;
+    }
+  oSource << "</in>" << endl;
+  oSource << "</sigma>" << endl;
+
+  oSource << "<pop_stat covariance_form=\"" << pop_cov_form << "\" ";
+  oSource << "is_standarderr_out=\""        << (pop_stderr?         "yes":"no") << "\" ";
+  oSource << "is_covariance_out=\""         << (pop_covariance?     "yes":"no") << "\" ";
+  oSource << "is_inverse_covariance_out=\"" << (pop_inv_covariance? "yes":"no") << "\" ";
+  oSource << "is_correlation_out=\""        << (pop_correlation?    "yes":"no") << "\"/>" << endl;
+
+  if( isSimulate )
+    {
+      oSource << "<simulation seed=\"" << seed << "\"/>" << endl;
+    }
+  oSource << "</pop_analysis>" << endl;
+  oSource << "</constraint>" << endl;
+      
+  oSource << "<model>" << endl;
+  oSource << "<pred>" << endl;
+  oSource << PRED << endl;
+  oSource << "</pred>" << endl;
+  oSource << "</model>" << endl;
+      
+  oSource << "<presentation>" << endl;
+  oSource << "<table header=\"one\" save_as=\"xxx\">" << endl;
+  oSource << "<column label=\"" << strTHETA << "(1)\" appearance_order=\"2\"/>" << endl;
+  oSource << "<column label=\"" << strTHETA << "(3)\" appearance_order=\"4\"/>" << endl;
+  oSource << "<column label=\"" << strTHETA << "(2)\" appearance_order=\"3\"/>" << endl;
+  oSource << "</table>" << endl;
+  oSource << "<table header=\"every\">" << endl;
+  oSource << "<column label=\"" << strDV << "\" appearance_order=\"2\"/>" << endl;
+  oSource << "</table>" << endl;
+  oSource << "</presentation>" << endl;
+      
+  oSource << "</nonmem>" << endl;
+  oSource << "</spksource>" << endl;
+
+  oSource.close();
+
+  xercesc::XercesDOMParser *sourceParser = new xercesc::XercesDOMParser;
+  sourceParser->setValidationScheme( XercesDOMParser::Val_Auto );
+  sourceParser->setDoNamespaces( true );
+  sourceParser->setDoSchema( true );
+  sourceParser->setValidationSchemaFullChecking( true );
+  sourceParser->setCreateEntityReferenceNodes( true );
   
   //=====================================================
   // Let the Xerces DOM parser parse the sourceML document.
   //=====================================================
   try{
-    ifstream iSource( gSource );
-    if( !iSource.good() )
-      {
-	XMLPlatformUtils::Terminate();
-	char buf[maxChars + 1];
-	sprintf( buf, "Failed to open %s!\n", gSource );
-	CPPUNIT_ASSERT_MESSAGE( buf, false );
-      }
-    parser->parse( gSource );
-    data = parser->getDocument();
+    sourceParser->parse( fSource );
+    source = sourceParser->getDocument();
   }
   catch( const XMLException& e )
     {
@@ -336,7 +511,7 @@ void NonmemTranslatorPopTest::testParsePopSource()
           XMLPlatformUtils::Terminate();
           char buf[maxChars + 1];
           sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
-                   gSource, e.code, XMLString::transcode(errText) );
+                   fSource, e.code, XMLString::transcode(errText) );
           CPPUNIT_ASSERT_MESSAGE( buf, false );
 	}
     }
@@ -352,48 +527,15 @@ void NonmemTranslatorPopTest::testParsePopSource()
   // Instanciate the NONMEM translator.
   // It initializes the symbol table and allows us to
   // handle it.
-  // Fill the symbol table with data records as if
-  // an spkdataML document has been parsed.
-  //
-  // Data Set
-  // --------
-  //  
-  //   ID       CP/DV     MDV
-  //   #1         0.0       0
-  //   #2         0.0       0
-  //   #2        10.0       0
-  //   #3         0.0       0
-  //   #3        10.0       0
-  //   #3        20.0       0
   //=====================================================
-  NonmemTranslator xlator( data, source );
+  NonmemTranslator xlator( source, data );
+
+  //=====================================================
+  // Parse the dataML document
+  //=====================================================
+  xlator.parseData();
   SymbolTable *table = xlator.getSymbolTable();
-
-  valarray<int> N(pop_size);
-  for( int i=0; i<pop_size; i++ )
-     N[i] = i+1;
-
-  // By giving the vector, N, containing the #of measurements
-  // for subjects, SymbolTable initializes the internal arrays
-  // in proper dimensions.
-  Symbol * id   = table->insertLabel( strID,  "",   N );
-  Symbol * cp   = table->insertLabel( strCP,  strDV, N );
-  Symbol * mdv  = table->insertLabel( strMDV, "",   N );
-
-  // Now, populate the properly sized arrays.
-  // These values within the symbol table will be used by
-  // the SPK Compiler to generate code for initializing
-  // DataSet and IndData objects.
-  id->  initial[0][0] = "#1";  cp->initial[0][0] =  "0.0";  mdv-> initial[0][0] = "0";
-
-  id->  initial[1][0] = "#2";  cp->initial[1][0] =  "0.0";  mdv-> initial[1][0] = "0";
-  id->  initial[1][1] = "#2";  cp->initial[1][1] = "10.0";  mdv-> initial[1][1] = "0";
-
-  id->  initial[2][0] = "#3";  cp->initial[2][0] = "0.0";   mdv-> initial[2][0] = "0";
-  id->  initial[2][1] = "#3";  cp->initial[2][1] = "10.0";  mdv-> initial[2][1] = "0";
-  id->  initial[2][2] = "#3";  cp->initial[2][2] = "20.0";  mdv-> initial[2][2] = "0";
-
-  //=====================================================
+//=====================================================
   // Parse the sourceML document.
   // Upon the successful return, the following files
   // shall be generated:
@@ -405,8 +547,6 @@ void NonmemTranslatorPopTest::testParsePopSource()
   //=====================================================
   xlator.parseSource();
 
-  //  cout << *table << endl;
-
   //=====================================================
   // Test the contents of the symbol table after
   // parsing the sourceML document.  WRES/RES/PRED
@@ -414,8 +554,9 @@ void NonmemTranslatorPopTest::testParsePopSource()
   // default requirements.
   // THETA/ETA/SIGMA/OMEGA/KA/KE/F/Y for PRED.
   //=====================================================
-  map<string,string>::const_iterator pLabel = labels.begin();
+  map<const char*, const char*>::const_iterator pLabel = label_alias.begin();
   CPPUNIT_ASSERT( table->findi(strID)   != Symbol::empty() ); // from data set
+  CPPUNIT_ASSERT( table->findi(strTIME) != Symbol::empty() ); // from data set
   CPPUNIT_ASSERT( table->findi(strCP)   != Symbol::empty() ); // from data set
   CPPUNIT_ASSERT( table->findi(strDV)   != Symbol::empty() ); // from data set
   CPPUNIT_ASSERT( table->findi(strMDV)  != Symbol::empty() ); // from data set
@@ -514,6 +655,7 @@ void NonmemTranslatorPopTest::testParsePopSource()
   //  
   //  - Read-only Data Items
   //  * id      : S^n
+  //  * time    : R^n
   //  * cp = dv : R^n
   //  * mdv     : I^n
   // 
@@ -535,8 +677,8 @@ void NonmemTranslatorPopTest::testParsePopSource()
   //  * f       : R^n
   //  * y       : R^n
   //=====================================================
-  char fIndDataDriver[]     = "pop_IndDataDriver";
-  char fIndDataDriver_cpp[] = "pop_IndDataDriver.cpp";
+  sprintf( fIndDataDriver, "%s_IndDataDriver", fPrefix );
+  sprintf( fIndDataDriver_cpp, "%s_IndDataDriver.cpp", fPrefix );
   ofstream oIndDataDriver( fIndDataDriver_cpp );
   CPPUNIT_ASSERT( oIndDataDriver.good() );
 
@@ -560,114 +702,57 @@ void NonmemTranslatorPopTest::testParsePopSource()
   oIndDataDriver << "   const int thetaLen = " << thetaLen << ";" << endl;
   oIndDataDriver << "   const int etaLen   = " << etaLen   << ";" << endl;
   oIndDataDriver << "   const int epsLen   = " << epsLen   << ";" << endl;
-  oIndDataDriver << "   vector<char*> a_id(1);" << endl;
-  oIndDataDriver << "   char id1[] = \"1\";" << endl;
-  oIndDataDriver << "   a_id[0] = id1;" << endl;
-  oIndDataDriver << "   vector<double> a_cp(1);" << endl;
-  oIndDataDriver << "   a_cp[0] = 0.0;" << endl;
-  oIndDataDriver << "   vector<double> a_mdv(1);" << endl;
-  oIndDataDriver << "   a_mdv[0] = 0;" << endl;
-  oIndDataDriver << endl;
-  oIndDataDriver << "   vector<char*> b_id(2);" << endl;
-  oIndDataDriver << "   char id2[] = \"2\";" << endl;
-  oIndDataDriver << "   b_id[0] = id2;" << endl;
-  oIndDataDriver << "   b_id[1] = id2;" << endl;
-  oIndDataDriver << "   vector<double> b_cp(2);" << endl;
-  oIndDataDriver << "   b_cp[0] = 0.0;" << endl;
-  oIndDataDriver << "   b_cp[1] = 10.0;" << endl;
-  oIndDataDriver << "   vector<double> b_mdv(2);" << endl;
-  oIndDataDriver << "   b_mdv[0] = 0;" << endl;
-  oIndDataDriver << "   b_mdv[1] = 0;" << endl;
-  oIndDataDriver << endl;
-  oIndDataDriver << "   vector<char*> c_id(3);" << endl;
-  oIndDataDriver << "   char id3[] = \"3\";" << endl;
-  oIndDataDriver << "   c_id[0] = id3;" << endl;
-  oIndDataDriver << "   c_id[1] = id3;" << endl;
-  oIndDataDriver << "   c_id[2] = id3;" << endl;
-  oIndDataDriver << "   vector<double> c_cp(3);" << endl;
-  oIndDataDriver << "   c_cp[0] = 0.0;" << endl;
-  oIndDataDriver << "   c_cp[1] = 10.0;" << endl;
-  oIndDataDriver << "   c_cp[2] = 20.0;" << endl;
-  oIndDataDriver << "   vector<double> c_mdv(3);" << endl;
-  oIndDataDriver << "   c_mdv[0] = 0;" << endl;
-  oIndDataDriver << "   c_mdv[1] = 0;" << endl;
-  oIndDataDriver << "   c_mdv[2] = 0;" << endl;
+  for( int i=0; i<pop_size; i++ )
+    {
+      oIndDataDriver << "   vector<char*> " << label[0] << i+1 << "(" <<  N[i] << ");" << endl;
+      for( int h=1; h<nLabels; h++ )
+	{
+	  oIndDataDriver << "   vector<double> " << label[h] << i+1 << "(" <<  N[i] << ");" << endl;
+	}
+      for( int j=0; j<N[i]; j++ )
+	{
+	  oIndDataDriver << "   " << label[0] << i+1 << "[" << j << "] = \"" << record[i][0] << "\";" << endl;
+	  for( int h=1; h<nLabels; h++ )
+	    {
+	      oIndDataDriver << "   " << label[h] << i+1 << "[" << j << "] = " << record[i][h] << ";" << endl;
+	    }
+	}
+      oIndDataDriver << endl;
+    }
+
+  for( int i=0; i<pop_size; i++ )
+    {
+      oIndDataDriver << "   IndData<double> subject" << i+1 << "( " << N[i];
+      for( int j=0; j<nLabels; j++ )
+	oIndDataDriver << ", " << label[j] << i+1;
+      oIndDataDriver << " );" << endl;
+    }
   oIndDataDriver << endl;
 
-  oIndDataDriver << "   IndData<double> A( 1, a_id, a_cp, a_mdv );" << endl;
-  oIndDataDriver << "   IndData<double> B( 2, b_id, b_cp, b_mdv );" << endl;
-  oIndDataDriver << "   IndData<double> C( 3, c_id, c_cp, c_mdv );" << endl;
-  oIndDataDriver << endl;
-
-  oIndDataDriver << "   assert( strcmp( A." << strID << "[0], id1 ) == 0 );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 0.0, A." << strCP << "[0] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 0.0, A." << strDV << "[0] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 0,   A." << strMDV << "[0] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, A." << strTHETA << "[0].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( epsLen,   A." << strEPS << "[0].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen,   A." << strETA << "[0].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 1, A." << strRES << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 1, A." << strWRES << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 1, A." << strPRED << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 1, A." << strF << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 1, A." << strY << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 1, A." << strKA << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 1, A." << strKE << ".size() );" << endl;
-  oIndDataDriver << endl;
-
-  oIndDataDriver << "   assert( strcmp( B." << strID << "[0], id2 ) == 0 );" << endl;
-  oIndDataDriver << "   assert( strcmp( B." << strID << "[1], id2 ) == 0 );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 0.0,  B." << strCP << "[0] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 10.0, B." << strCP << "[1] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 0.0,  B." << strDV << "[0] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 10.0, B." << strDV << "[1] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 0, B." << strMDV << "[0] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 0, B." << strMDV << "[1] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, B." << strTHETA << "[0].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, B." << strTHETA << "[1].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( epsLen,   B." << strEPS << "[0].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( epsLen,   B." << strEPS << "[1].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen,   B." << strETA << "[0].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen,   B." << strETA << "[1].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 2, B." << strRES  << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 2, B." << strWRES << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 2, B." << strPRED << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 2, B." << strF    << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 2, B." << strY    << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 2, B." << strKA   << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 2, B." << strKE   << ".size() );" << endl;
-  oIndDataDriver << endl;
-
-  oIndDataDriver << "   assert( strcmp( C." << strID << "[0], id3 ) == 0 );" << endl;
-  oIndDataDriver << "   assert( strcmp( C." << strID << "[1], id3 ) == 0 );" << endl;
-  oIndDataDriver << "   assert( strcmp( C." << strID << "[2], id3 ) == 0 );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 0.0,  C." << strCP << "[0] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 10.0, C." << strCP << "[1] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 20.0, C." << strCP << "[2] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 0.0,  C." << strDV << "[0] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 10.0, C." << strDV << "[1] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 20.0, C." << strDV << "[2] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 0, C." << strMDV << "[0] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 0, C." << strMDV << "[1] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 0, C." << strMDV << "[2] );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, C." << strTHETA << "[0].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, C." << strTHETA << "[1].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, C." << strTHETA << "[2].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( epsLen,   C." << strEPS << "[0].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( epsLen,   C." << strEPS << "[1].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( epsLen,   C." << strEPS << "[2].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen,   C." << strETA << "[0].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen,   C." << strETA << "[1].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen,   C." << strETA << "[2].size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 3, C." << strRES << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 3, C." << strWRES << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 3, C." << strPRED << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 3, C." << strF << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 3, C." << strY << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 3, C." << strKA << ".size() );" << endl;
-  oIndDataDriver << "   MY_ASSERT_EQUAL( 3, C." << strKE << ".size() );" << endl;
-  oIndDataDriver << endl;
-
+  for( int i=0; i<pop_size; i++ )
+    {
+      for( int j=0; j<N[i]; j++ )
+	{
+	  oIndDataDriver << "   assert( strcmp( subject" << i+1 << "." << strID << "[" << j << "], ";
+	  oIndDataDriver << label[0] << i+1 << "[" << j << "] ) == 0 );" << endl;
+	  for( int h=1; h<nLabels; h++ )
+	    {
+	      oIndDataDriver << "   MY_ASSERT_EQUAL( " << label[h] << i+1 << "[" << j << "], ";
+              oIndDataDriver << "subject" << i+1 << "." << label[h] << "[" << j << "] );" << endl;
+	    }
+	}
+      oIndDataDriver << "   MY_ASSERT_EQUAL( thetaLen, subject" << i+1 << "." << strTHETA << "[" << i << "].size() );" << endl;
+      oIndDataDriver << "   MY_ASSERT_EQUAL( epsLen,   subject" << i+1 << "." << strEPS   << "[" << i << "].size() );" << endl;
+      oIndDataDriver << "   MY_ASSERT_EQUAL( etaLen,   subject" << i+1 << "." << strETA   << "[" << i << "].size() );" << endl;
+      oIndDataDriver << "   MY_ASSERT_EQUAL( " << N[i] << ", subject" << i+1 << "." << strRES   << ".size() );" << endl;
+      oIndDataDriver << "   MY_ASSERT_EQUAL( " << N[i] << ", subject" << i+1 << "." << strWRES  << ".size() );" << endl;
+      oIndDataDriver << "   MY_ASSERT_EQUAL( " << N[i] << ", subject" << i+1 << "." << strPRED  << ".size() );" << endl;
+      oIndDataDriver << "   MY_ASSERT_EQUAL( " << N[i] << ", subject" << i+1 << "." << strF     << ".size() );" << endl;
+      oIndDataDriver << "   MY_ASSERT_EQUAL( " << N[i] << ", subject" << i+1 << "." << strY     << ".size() );" << endl;
+      oIndDataDriver << "   MY_ASSERT_EQUAL( " << N[i] << ", subject" << i+1 << "." << strKA    << ".size() );" << endl;
+      oIndDataDriver << "   MY_ASSERT_EQUAL( " << N[i] << ", subject" << i+1 << "." << strKE    << ".size() );" << endl;
+      oIndDataDriver << endl;
+    }
   oIndDataDriver << "}" << endl;
   oIndDataDriver.close();
 
@@ -693,8 +778,9 @@ void NonmemTranslatorPopTest::testParsePopSource()
   // data set correctly.
   //
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  char fDataSetDriver[]     = "pop_DataSetDriver";
-  char fDataSetDriver_cpp[] = "pop_DataSetDriver.cpp";
+
+  sprintf( fDataSetDriver, "%s_DataSetDriver", fPrefix );
+  sprintf( fDataSetDriver_cpp, "%s_DataSetDriver.cpp", fPrefix );
   ofstream oDataSetDriver( fDataSetDriver_cpp );
   CPPUNIT_ASSERT( oDataSetDriver.good() );
 
@@ -724,75 +810,31 @@ void NonmemTranslatorPopTest::testParsePopSource()
   oDataSetDriver << "   const int epsLen   = " << epsLen   << ";" << endl;
   oDataSetDriver << endl;
 
-  oDataSetDriver << "   assert( strcmp( set.data[0]->" << strID << "[0], \"#1\" ) == 0 );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 0.0, set.data[0]->" << strCP << "[0] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 0.0, set.data[0]->" << strDV << "[0] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 0,   set.data[0]->" << strMDV << "[0] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( thetaLen, set.data[0]->" << strTHETA << "[0].size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( epsLen,   set.data[0]->" << strEPS << "[0].size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( etaLen,   set.data[0]->" << strETA << "[0].size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 1, set.data[0]->" << strRES << ".size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 1, set.data[0]->" << strWRES << ".size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 1, set.data[0]->" << strPRED << ".size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 1, set.data[0]->" << strF << ".size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 1, set.data[0]->" << strY << ".size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 1, set.data[0]->" << strKA << ".size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 1, set.data[0]->" << strKE << ".size() );" << endl;
-  oDataSetDriver << endl;
+  for( int i=0, cnt=0; i<pop_size; i++ )
+    {
+      for( int j=0; j<N[i]; j++, cnt++ )
+	{
+	  oDataSetDriver << "   assert( strcmp( set.data[" << i << "]->" << label[0] << "[" << j << "], ";
+	  oDataSetDriver << "\"" << record[cnt][0] << "\"" << " ) == 0 );" << endl;
 
-  oDataSetDriver << "   assert( strcmp( set.data[1]->" << strID << "[0], \"#2\" ) == 0 );" << endl;
-  oDataSetDriver << "   assert( strcmp( set.data[1]->" << strID << "[1], \"#2\" ) == 0 );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 0.0,  set.data[1]->" << strCP << "[0] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 10.0, set.data[1]->" << strCP << "[1] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 0.0,  set.data[1]->" << strDV << "[0] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 10.0, set.data[1]->" << strDV << "[1] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 0, set.data[1]->" << strMDV << "[0] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 0, set.data[1]->" << strMDV << "[1] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( thetaLen, set.data[1]->" << strTHETA << "[0].size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( thetaLen, set.data[1]->" << strTHETA << "[1].size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( epsLen,   set.data[1]->" << strEPS << "[0].size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( epsLen,   set.data[1]->" << strEPS << "[1].size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( etaLen,   set.data[1]->" << strETA << "[0].size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( etaLen,   set.data[1]->" << strETA << "[1].size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 2, set.data[1]->" << strRES << ".size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 2, set.data[1]->" << strWRES << ".size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 2, set.data[1]->" << strPRED << ".size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 2, set.data[1]->" << strF << ".size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 2, set.data[1]->" << strY << ".size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 2, set.data[1]->" << strKA << ".size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 2, set.data[1]->" << strKE << ".size() );" << endl;
-  oDataSetDriver << endl;
-
-  oDataSetDriver << "   assert( strcmp( set.data[2]->" << strID << "[0], \"#3\" ) == 0 );" << endl;
-  oDataSetDriver << "   assert( strcmp( set.data[2]->" << strID << "[1], \"#3\" ) == 0 );" << endl;
-  oDataSetDriver << "   assert( strcmp( set.data[2]->" << strID << "[2], \"#3\" ) == 0 );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 0.0,  set.data[2]->" << strCP << "[0] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 10.0, set.data[2]->" << strCP << "[1] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 20.0, set.data[2]->" << strCP << "[2] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 0.0,  set.data[2]->" << strDV << "[0] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 10.0, set.data[2]->" << strDV << "[1] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 20.0, set.data[2]->" << strDV << "[2] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 0, set.data[2]->" << strMDV << "[0] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 0, set.data[2]->" << strMDV << "[1] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 0, set.data[2]->" << strMDV << "[2] );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( thetaLen, set.data[2]->" << strTHETA << "[0].size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( thetaLen, set.data[2]->" << strTHETA << "[1].size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( thetaLen, set.data[2]->" << strTHETA << "[2].size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( epsLen,   set.data[2]->" << strEPS << "[0].size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( epsLen,   set.data[2]->" << strEPS << "[1].size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( epsLen,   set.data[2]->" << strEPS << "[2].size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( etaLen,   set.data[2]->" << strETA << "[0].size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( etaLen,   set.data[2]->" << strETA << "[1].size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( etaLen,   set.data[2]->" << strETA << "[2].size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 3, set.data[2]->" << strRES << ".size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 3, set.data[2]->" << strWRES << ".size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 3, set.data[2]->" << strPRED << ".size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 3, set.data[2]->" << strF << ".size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 3, set.data[2]->" << strY << ".size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 3, set.data[2]->" << strKA << ".size() );" << endl;
-  oDataSetDriver << "   MY_ASSERT_EQUAL( 3, set.data[2]->" << strKE << ".size() );" << endl;
-  oDataSetDriver << endl;
-
+	  for( int h=1; h<nLabels; h++ )
+	    {
+	      oDataSetDriver << "   MY_ASSERT_EQUAL( " << record[cnt][h] << ", ";
+              oDataSetDriver << "set.data[" << i << "]->" << label[h] << "[" << j << "] );" << endl;
+	    }
+	}
+      oDataSetDriver << "   MY_ASSERT_EQUAL( thetaLen, set.data[" << i << "]->" << strTHETA << "[" << i << "].size() );" << endl;
+      oDataSetDriver << "   MY_ASSERT_EQUAL( epsLen,   set.data[" << i << "]->" << strEPS   << "[" << i << "].size() );" << endl;
+      oDataSetDriver << "   MY_ASSERT_EQUAL( etaLen,   set.data[" << i << "]->" << strETA   << "[" << i << "].size() );" << endl;
+      oDataSetDriver << "   MY_ASSERT_EQUAL( " << N[i] << ", set.data[" << i << "]->" << strRES << ".size() );" << endl;
+      oDataSetDriver << "   MY_ASSERT_EQUAL( " << N[i] << ", set.data[" << i << "]->" << strWRES << ".size() );" << endl;
+      oDataSetDriver << "   MY_ASSERT_EQUAL( " << N[i] << ", set.data[" << i << "]->" << strPRED << ".size() );" << endl;
+      oDataSetDriver << "   MY_ASSERT_EQUAL( " << N[i] << ", set.data[" << i << "]->" << strF << ".size() );" << endl;
+      oDataSetDriver << "   MY_ASSERT_EQUAL( " << N[i] << ", set.data[" << i << "]->" << strY << ".size() );" << endl;
+      oDataSetDriver << "   MY_ASSERT_EQUAL( " << N[i] << ", set.data[" << i << "]->" << strKA << ".size() );" << endl;
+      oDataSetDriver << "   MY_ASSERT_EQUAL( " << N[i] << ", set.data[" << i << "]->" << strKE << ".size() );" << endl;
+      oDataSetDriver << endl;
+    }
   oDataSetDriver << "}" << endl;
   
   oDataSetDriver.close();
@@ -829,8 +871,8 @@ void NonmemTranslatorPopTest::testParsePopSource()
   //   Y=F+EPS(1)
   //    
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  char fPredDriver[]     = "pop_PredDriver";
-  char fPredDriver_cpp[] = "pop_PredDriver.cpp";
+  sprintf( fPredDriver, "%s_PredDriver", fPrefix );
+  sprintf( fPredDriver_cpp, "%s_PredDriver.cpp", fPrefix );
   ofstream oPredDriver( fPredDriver_cpp );
   CPPUNIT_ASSERT( oPredDriver.good() );
 
@@ -855,9 +897,13 @@ void NonmemTranslatorPopTest::testParsePopSource()
   oPredDriver << "   bool ok = true;" << endl;
   oPredDriver << "   DataSet< CppAD::AD<double> > set;" << endl;
   oPredDriver << "   Pred< CppAD::AD<double> > pred( &set );" << endl;
-  oPredDriver << "   const int nIndividuals = 3;" << endl;
+  oPredDriver << "   const int nIndividuals = " << pop_size << ";" << endl;
   oPredDriver << "   vector<int> N(nIndividuals); // numbers of measurements" << endl;
-  oPredDriver << "   N[0] = 1; N[1] = 2; N[2] = 3;" << endl;
+  for( int i=0; i<pop_size; i++ )
+    {
+      oPredDriver << "N[" << i << "] = " << N[i] << ";" << endl;
+    }
+  
   oPredDriver << "   const int thetaLen    = " << thetaLen << ";" << endl;
   oPredDriver << "   const int etaLen      = " << etaLen << ";" << endl;
   oPredDriver << "   const int epsLen      = " << epsLen << ";" << endl;
@@ -865,9 +911,9 @@ void NonmemTranslatorPopTest::testParsePopSource()
   oPredDriver << "   const int etaOffset   = thetaLen;" << endl;
   oPredDriver << "   const int epsOffset   = thetaLen + etaLen;" << endl;
   oPredDriver << "   vector< CppAD::AD<double> > indepVar( thetaLen + etaLen + epsLen );" << endl;
-  oPredDriver << "   vector< CppAD::AD<double> > depVar( (1+2+3) * 2 );" << endl;
+  oPredDriver << "   vector< CppAD::AD<double> > depVar( " << N.sum() << " * 2 );" << endl;
   oPredDriver << "   fill( indepVar.begin(), indepVar.end(), 0.0 );" << endl;
-  oPredDriver << "   fill( depVar.begin(), depVar.end(), 0.0 );" << endl;
+  oPredDriver << "   fill( depVar.begin(),   depVar.end(), 0.0 );" << endl;
   oPredDriver << "   const double C1       = 1.0;" << endl;
   oPredDriver << "   const double C2       = 2.0;" << endl;
   //---------------------------------------------------------------------------------
@@ -875,7 +921,7 @@ void NonmemTranslatorPopTest::testParsePopSource()
   //
   oPredDriver << endl;
   oPredDriver << "   double expectedF, actualF, expectedY, actualY;" << endl;
-  oPredDriver << "   for( int i=0; i<3; i++ )" << endl;
+  oPredDriver << "   for( int i=0; i<" << pop_size << "; i++ )" << endl;
   oPredDriver << "   {" << endl;
   oPredDriver << "      int n = N[i];" << endl;
   oPredDriver << "      depVar.resize( n * 2 );" << endl;
@@ -885,6 +931,7 @@ void NonmemTranslatorPopTest::testParsePopSource()
   oPredDriver << "      {" << endl;
   oPredDriver << "         indepVar[thetaOffset+0] = C1*j; // theta(1)" << endl;
   oPredDriver << "         indepVar[thetaOffset+1] = C1*j; // theta(2)" << endl;
+  oPredDriver << "         indepVar[thetaOffset+2] = C1*j; // theta(3)" << endl;
   oPredDriver << "         indepVar[etaOffset  +0] = C1*j; // eta(1)" << endl;
   oPredDriver << "         indepVar[etaOffset  +1] = C1*j; // eta(2)" << endl;
   oPredDriver << "         indepVar[epsOffset  +0] = C1*j; // eps(1)" << endl;
@@ -914,18 +961,18 @@ void NonmemTranslatorPopTest::testParsePopSource()
   oPredDriver << "      {" << endl;
   oPredDriver << "         indepVar[thetaOffset+0] = C1*j; // theta(1)" << endl;
   oPredDriver << "         indepVar[thetaOffset+1] = C1*j; // theta(2)" << endl;
+  oPredDriver << "         indepVar[thetaOffset+2] = C1*j; // theta(3)" << endl;
   oPredDriver << "         indepVar[etaOffset  +0] = C1*j; // eta(1)" << endl;
   oPredDriver << "         indepVar[etaOffset  +1] = C1*j; // eta(2)" << endl;
   oPredDriver << "         indepVar[epsOffset  +0] = C1*j; // eps(1)" << endl;
   oPredDriver << "         expectedF = CppAD::Value(indepVar[thetaOffset+0] + indepVar[etaOffset+0] )" << endl;
   oPredDriver << "                   * CppAD::Value(indepVar[thetaOffset+1] + indepVar[etaOffset+1] );" << endl;
   oPredDriver << "         double pred =expectedF;" << endl;
-  oPredDriver << "         MY_ASSERT_EQUAL( C1*j, set.data[i]->" << strTHETA << "[j][0] );" << endl;
-  oPredDriver << "         MY_ASSERT_EQUAL( C1*j, set.data[i]->" << strTHETA << "[j][1] );" << endl;
-  oPredDriver << "         MY_ASSERT_EQUAL( C1*j, set.data[i]->" << strETA << "[j][0] );" << endl;
-  oPredDriver << "         MY_ASSERT_EQUAL( C1*j, set.data[i]->" << strETA << "[j][1] );" << endl;
+  for( int i=0; i<thetaLen; i++ )
+    oPredDriver << "         MY_ASSERT_EQUAL( C1*j, set.data[i]->" << strTHETA << "[j][" << i << "] );" << endl;
+  for( int i=0; i<etaLen; i++ )
+    oPredDriver << "         MY_ASSERT_EQUAL( C1*j, set.data[i]->" << strETA << "[j][" << i << "] );" << endl;
   oPredDriver << "         MY_ASSERT_EQUAL( pred, set.data[i]->" << strPRED << "[j] );" << endl;
-  oPredDriver << "         MY_ASSERT_EQUAL( set.data[i]->" << strDV << "[j] - pred, set.data[i]->" << strRES << "[j] );" << endl;
   oPredDriver << "         MY_ASSERT_EQUAL( pred, set.data[i]->" << strF << "[j] );" << endl;
   oPredDriver << "      }" << endl;
   oPredDriver << "   }" << endl;
@@ -955,8 +1002,6 @@ void NonmemTranslatorPopTest::testParsePopSource()
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Test driver.cpp to see if it compiles/links successfully.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  char fDriver[]     = "driver";
-  char fDriver_cpp[] = "driver.cpp";
   int  exitcode      = 0;
 
   sprintf( command, "make -f generatedMakefile" );
@@ -966,7 +1011,7 @@ void NonmemTranslatorPopTest::testParsePopSource()
       sprintf( message, "Compilation of the generated %s failed!", fDriver_cpp );
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
-  /*
+
   sprintf( command, "./%s", fDriver );
   
   // The exist code of 0 indicates success.  1 indicates convergence problem.
@@ -992,19 +1037,6 @@ void NonmemTranslatorPopTest::testParsePopSource()
       sprintf( message, "%s failed for reasons other than convergence propblem or access permission <%d>!", fDriver, exitcode );
       CPPUNIT_ASSERT_MESSAGE( message, true );
     }
-  */
-
-  /*
-  remove( gSource ); // clean up
-  remove( "driver.cpp" );
-  remove( "Pred.h" );
-  remove( "DataSet.h" );
-  remove( "IndData.h" );
-  remove( "generatedMakefile" );
-  remove( "spk_error.tmp" );
-  remove( "result.xml" );
-  remove( "predEqn.cpp" );
-  */
 
   /*
   //=====================================================
@@ -1211,7 +1243,7 @@ void NonmemTranslatorPopTest::testParsePopSource()
   }
 
   XMLPlatformUtils::Terminate();
-  remove( gSource );
+  remove( fSource );
   //remove( fTestPred );
  
   rename( "driver.cpp", "popDriver.cpp" );
@@ -1231,8 +1263,8 @@ CppUnit::Test * NonmemTranslatorPopTest::suite()
   CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite( "NonmemTranslatorPopTest" );
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<NonmemTranslatorPopTest>(
-         "testParsePopSource", 
-	 &NonmemTranslatorPopTest::testParsePopSource ) );
+         "diagOmegaDiagSigma", 
+	 &NonmemTranslatorPopTest::diagOmegaDiagSigma ) );
   
   return suiteOfTests;
 }

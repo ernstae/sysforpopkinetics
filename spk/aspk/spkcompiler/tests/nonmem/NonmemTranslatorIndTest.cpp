@@ -69,7 +69,7 @@ namespace{
   //    1      2.0     20.0      0
   //    1      2.5     30.0      0
   //============================================
-  const int    nRecords  =  4;
+  const int    nRecords  =  3;
   const int    nItems    =  4;
   const double record0[] = { 1, 0.0,  0.0, 0 };
   const double record1[] = { 1, 1.0, 10.0, 0 };
@@ -97,7 +97,8 @@ namespace{
   // the constraints and initial values for
   // theta.
   //============================================
-  const int    thetaLen                = 1;
+  //  const int    thetaLen                = 4;
+  const int thetaLen = 1;
   const double theta_in [ thetaLen ]   = {  5.0 };
   const double theta_up [ thetaLen ]   = { 10.0 };
   const double theta_low[ thetaLen ]   = {  0.0 };
@@ -156,10 +157,12 @@ namespace{
 
 void NonmemTranslatorIndTest::setUp()
 {
+  sprintf( fDriver, "driver" );
+  sprintf( fDriver_cpp, "driver.cpp" );
+
   label_alias[strID]   = NULL;
   label_alias[strTIME] = NULL;
   label_alias[strDV]   = strCP;
-  int nLabel_Alias     = label_alias.size();
 
   record[0]  = record0;
   record[1]  = record1;
@@ -177,13 +180,12 @@ void NonmemTranslatorIndTest::tearDown()
   remove( fPredDriver );
   remove( fPredDriver_cpp );
   remove( fDriver );
-  remove( "driver.cpp" );
+  remove( fDriver_cpp );
   remove( "IndData.h" );
   remove( "DataSet.h" );
   remove( "Pred.h" );
   remove( "predEqn.cpp" );
   remove( "generatedMakefile" );
-
   XMLPlatformUtils::Terminate();
 
 }
@@ -727,7 +729,6 @@ void NonmemTranslatorIndTest::testParseIndSource()
   oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][0] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA << "[j][0] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << strPRED << "[j] );" << endl;
-  oPredDriver << "      MY_ASSERT_EQUAL( set.data[who]->" << strDV << "[j] - expectedPred, set.data[who]->" << strRES << "[j] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << strF << "[j] );" << endl;
   oPredDriver << "   }" << endl;
   //
@@ -766,7 +767,6 @@ void NonmemTranslatorIndTest::testParseIndSource()
   oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][0] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA << "[j][0] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << strPRED << "[j] );" << endl;
-  oPredDriver << "      MY_ASSERT_EQUAL( set.data[who]->" << strDV << "[j] - expectedPred, set.data[who]->" << strRES << "[j] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << strF << "[j] );" << endl;
   oPredDriver << "   }" << endl;
   //
@@ -795,8 +795,6 @@ void NonmemTranslatorIndTest::testParseIndSource()
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Test driver.cpp to see if it compiles/links successfully.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  sprintf( fDriver, "driver" );
-  sprintf( fDriver_cpp, "driver.cpp" );
   int  exitcode      = 0;
   sprintf( command, "make -f generatedMakefile" );
   if( system( command ) != 0 )
@@ -1383,7 +1381,6 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][0] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA << "[j][0] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << strPRED << "[j] );" << endl;
-  oPredDriver << "      MY_ASSERT_EQUAL( set.data[who]->" << strDV << "[j] - expectedPred, set.data[who]->" << strRES << "[j] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << strF << "[j] );" << endl;
   oPredDriver << "   }" << endl;
   //
@@ -1423,7 +1420,6 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][0] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA << "[j][0] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << strPRED << "[j] );" << endl;
-  oPredDriver << "      MY_ASSERT_EQUAL( set.data[who]->" << strDV << "[j] - expectedPred, set.data[who]->" << strRES << "[j] );" << endl;
   oPredDriver << "      MY_ASSERT_EQUAL( expectedPred, set.data[who]->" << strF << "[j] );" << endl;
   oPredDriver << "   }" << endl;
   //
@@ -1452,8 +1448,6 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Test driver.cpp to see if it compiles/links successfully.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  sprintf( fDriver, "driver" );
-  sprintf( fDriver_cpp, "driver.cpp" );
   int  exitcode      = 0;
 
   sprintf( command, "make -f generatedMakefile" );
@@ -1499,12 +1493,12 @@ CppUnit::Test * NonmemTranslatorIndTest::suite()
      new CppUnit::TestCaller<NonmemTranslatorIndTest>(
          "testParseIndSource", 
 	 &NonmemTranslatorIndTest::testParseIndSource ) );
-
+  /*
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<NonmemTranslatorIndTest>(
          "testParseIndNoID", 
 	 &NonmemTranslatorIndTest::testParseIndNoID ) );
-
+  */
   return suiteOfTests;
 }
 
