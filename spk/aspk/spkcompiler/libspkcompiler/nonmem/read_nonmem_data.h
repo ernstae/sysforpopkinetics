@@ -43,6 +43,9 @@
  * is the root of <data> subtree in the parsed SpkInML document.
  * The subtree is expected to obey the DTD grammer specification.
  *
+ * @param nIndividuals The number of subjects in the population or
+ * 1 when the individual analysis is requested.
+ *
  * @param tableOut Symbol table to which the values of
  * attributes, @a label and @a synonym, are inserted as @a keyword (predefined).
  *
@@ -85,7 +88,7 @@ void read_nonmem_data(
 	xercesc::DOMElement* dataNode, 
         int nIndividuals,
 	SymbolTable & tableOut,
-	std::map<std::string, std::string> &label_synonymOut,
+	std::map<std::string, std::string> &label_aliasOut,
 	std::vector< std::map<std::string, SPK_VA::valarray<double> > > & data_forOut,
 	std::string IDsOut[],
         struct SpkParameters & spkInfoOut
