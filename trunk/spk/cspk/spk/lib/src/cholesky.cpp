@@ -213,23 +213,18 @@ const valarray<double> cholesky( const valarray<double>& A, int n )
   //         |  a31  a32  a33  |
   //         \                 /
   //
-  valarray<double> AChol( n*n );
-  for( int j=0; j<n; j++ )
+  // Put all of the elements of A into the Cholesky factor and then
+  // zero the elements in the upper triangle.
+  valarray<double> AChol( A );
+  int i;
+  int j;
+  for ( j = 1; j < n; j++ )
+  {
+    for ( i = 0; i < j; i++ )
     {
-      for( int i=0; i<n; i++ )
-	{
-	  // Zeros in the upper
-	  if( i<j )
-	    {
-	      AChol[i+j*n] = 0.0;
-	    }
-	  // Copy the lower + diagonal elements in A
-	  else
-	    {
-	      AChol[i+j*n] = A[i+j*n];
-	    }
-	}
+      AChol[i + j*n] = 0.0;
     }
+  }
 
   //
   // Use an Atlas provided CLAPACK routine to compute L such that A = L*L^t
@@ -242,7 +237,21 @@ const valarray<double> cholesky( const valarray<double>& A, int n )
   // 5) lda:           the stride from a column to the next (ie. = n in our case).
   //
   int lda = n;
-  clapack_dpotrf( CblasColMajor, CblasLower, n, &AChol[0], lda );
+  int cholStatus = clapack_dpotrf( CblasColMajor, CblasLower, n, &AChol[0], lda );
+  if( cholStatus < 0 )
+  {
+     // illegal value detected in the source matrix, A.
+     char mess[ SpkError::maxMessageLen() ];
+     sprintf( mess, "Cholesky factorization failed: Illegal value detected at %d-th element of the source matrix.\n", -cholStatus );
+     throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
+  }
+  if( cholStatus > 0 )
+  {
+     // i-th value is a source of failure
+     char mess[ SpkError::maxMessageLen() ];
+     sprintf( mess, "Cholesky factorization failed: the leading minor of order %d is not positive definite.\n", cholStatus );
+     throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
+  }
 
   return AChol;
 }
