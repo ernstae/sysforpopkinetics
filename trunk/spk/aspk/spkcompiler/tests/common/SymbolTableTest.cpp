@@ -65,7 +65,7 @@ void SymbolTableTest::testInsertLabel()
    SymbolTable table;
    string aaa_name( "aaa" );
    string aaa_alias( "AAA" );
-   vector<int> aaa_dim( 2 );
+   valarray<int> aaa_dim( 2 );
    aaa_dim[0] = 2;
    aaa_dim[1] = 1;
    Symbol *aaa = table.insertLabel( aaa_name, aaa_alias, aaa_dim );
