@@ -330,7 +330,7 @@
      When this is not given, <pred> must appear.
 -->
 <!ATTLIST model base (advan1|advan2|advan3|advan4|advan5|advan6
-                     |advan7|advan8|advan9|advan10|advan11|advan12) #IMPLIED>
+                     |advan7|advan8|advan9|advan10) #IMPLIED>
 
 
 <!--
