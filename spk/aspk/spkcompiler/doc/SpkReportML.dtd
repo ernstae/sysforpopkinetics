@@ -4,9 +4,9 @@ This documentation specifies the information passed back from CSPK to MDA.
 </html:p>
 -->
 
-<!-- ================================================================================ -->
+<!-- =============================================================================== -->
 <!--                                  REPORT                                          -->
-<!-- ================================================================================ -->
+<!-- =============================================================================== -->
 <!-- <spkreportML> For CSPK, this contains everything needed for returning the requested values back to the user.  For MDA, it is for presenting them before the user.  The values reported in this document are expressed in the scientific notation with 2 significant digits: ex. 0.12E01, 3.20E00, -0.12E01, 0.12E-01, -0.12E-01.
 -->
 

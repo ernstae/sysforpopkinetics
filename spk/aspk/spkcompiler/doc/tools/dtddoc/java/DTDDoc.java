@@ -4,7 +4,6 @@ import com.wutka.dtd.*;
 import org.apache.oro.text.regex.*;
 
 public class DTDDoc {
-
   public static void main(String[] args) throws IOException {
     DTDParser p = new DTDParser(new FileReader(args[0]));
     File dest = new File( args[1] );
