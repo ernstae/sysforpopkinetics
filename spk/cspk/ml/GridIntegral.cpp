@@ -17,7 +17,7 @@ $syntax%void GridIntegral(
 	double (*%Feval%)(double *%X%, size_t %m%, void *p) ,
 	size_t                        %m%   ,
 	void                         *%p%   ,
-	const std::valarray<size_t>  *%N%   ,
+	const std::valarray<int>     &%N%   ,
 	const std::valarray<double>  &%L%   ,
 	const std::valarray<double>  &%U%   ,
 	double                       &%integralEstimate%,
@@ -61,6 +61,7 @@ The space between grid points in the $th i$$ component direction is
 $latex \[
 	( U_i - L_i ) / N_i
 \] $$
+(All the elements of $italic N$$ must be greater than zero.)
 
 $head L$$
 The vector $italic L$$ has length $italic m$$ and specifies
@@ -83,8 +84,8 @@ namespace {
 	// map the vector I to a single index
 	size_t Index(
 		size_t m, 
-		const std::valarray<size_t> &N, 
-		const size_t                *I)
+		const std::valarray<int> &N, 
+		const size_t             *I)
 	{	size_t index = 0;
 		size_t i;
 		i = m;
@@ -98,8 +99,8 @@ namespace {
 	// increment the vector I
 	bool Increment(
 		size_t m, 
-		const std::valarray<size_t> &N, 
-		size_t                      *I)
+		const std::valarray<int> &N, 
+		size_t                   *I)
 	{	size_t i = 0;
 		I[i]++;
 		while( i < m && I[i] == N[i] )
@@ -118,7 +119,7 @@ void GridIntegral(
 	double (*Feval)(double *X, size_t m, void *p)  ,
 	size_t                                 m   ,
 	void                                  *p   ,
-	const std::valarray<size_t>           &N   ,
+	const std::valarray<int>              &N   ,
 	const std::valarray<double>           &L   ,
 	const std::valarray<double>           &U   ,
 	double                                &integralEstimate,
@@ -136,6 +137,8 @@ void GridIntegral(
 	{	I[i] = 0;
 		volume *= (U[i] - L[i]);
 		Ntot   *= N[i];
+
+		assert( N[i] > 0 );
 	}
 	double *F = new double[Ntot];
 
