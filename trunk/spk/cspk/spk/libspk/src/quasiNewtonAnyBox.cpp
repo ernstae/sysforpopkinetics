@@ -1007,27 +1007,40 @@ void quasiNewtonAnyBox(
   // Optimize the scaled objective function.
   //------------------------------------------------------------
 
+  valarray<double> hScaledVA( nObjPar * nObjPar );
+  valarray<double> rScaledVA( nObjPar * nObjPar );
+
   try
   {
     // Attempt to satisfy this function's convergence criterion before
     // the maximum number of iterations have been performed.
     while ( !isAcceptable && iterCurr <= nMaxIter )
     {
-      // Get the Cholesky factor of the current scaled Hessian
-      // and put its elements in row-major order.
-      calcCholFactor( nObjPar, hScaled, rScaled );
-?      transpose( rScaled );
+      // Get the Cholesky factor of the scaled Hessian.  Since this factor
+      // is lower triangular and in column-major order, it is equivalent to
+      //  a factor that is upper triangular and in row-major order.
+      doubleArrayToValarray( hScaled, hScaledVA );
+      rScaledVA = cholesky( hScaledVA, nObjPar );
+      doubleArrayFromValarray( rScaledVA, rScaled );
+
+
+is there a valarray to double* converter function in stl
+is there a valarray to double* converter function in stl
+is there a valarray to double* converter function in stl
+is there a valarray to double* converter function in stl
+is there a valarray to double* converter function in stl
+is there a valarray to double* converter function in stl
+is there a valarray to double* converter function in stl
+
 
       // See if this function's convergence criterion has been met.
       if ( isWithinTol( 
+	nObjPar,
         epsilon,
         yCurr,
         yLow,
         yUp,
         gScaled,
-
-	CONSIDER: hRMOScaled
-
 	hScaled,
         rScaled,
 	deltaY,
@@ -1366,7 +1379,7 @@ void scaleGradElem(
  *
  * r
  *
- * The lower triangular Cholesky factor R(x) of the  Hessian H(x) 
+ * The upper triangular Cholesky factor R(x) of the  Hessian H(x) 
  * evaluated at xHat.  Note that the existence of R implies that H is
  * symmetric and positive-definite.  It must be of length n * n, and
  * its elements must be in row-major order.
