@@ -877,6 +877,7 @@ $end
 #include <iostream>
 #include <cmath>
 #include "popStatistics.h"
+#include "NaiveFoModel.h"
 #include "getCol.h"
 #include "replaceJth.h"
 #include "transpose.h"
@@ -991,10 +992,6 @@ void popStatistics( SpkModel&                popModel,
     // Return if there are no output values to compute.
     if( popParCovOut == 0 && popParSEOut == 0 && popParCorOut == 0 && 
 		popParCVOut && popParCIOut == 0 ) 
-        return;
-  
-    // Return if FIRST_ORDER objective with formulation != R
-    if( objective == FIRST_ORDER && formulation != R )
         return;
 
     const int nInd = nMeasurementsAll.size();
@@ -1186,38 +1183,71 @@ message %d-the element, %f, is invalid.", i, indParAll[ i + j * nB ] );
         DoubleMatrix dmatBIn( indParAll, nInd );
         DoubleMatrix dvecBStep( indParStep );
 
-         //---------------------------------------------------------------------------
-        // Compute the derivative of individual level objectives with
-	// respect to the population parameter.
-	// 
-	//                    /                                                   \
-	//                    |          (1) |          (2) |      |          (n) | 
-	// LambdaLTilde_alp = | Labmda_alp   | Lambda_alp,  | ...  | Lambda_alp   |
-	//                    |              |              |      |              |
-	//                    \                                                   /
-	// where the superscript (i) indentifies the i-th individial and
-	// n is the total number of individuals.
+        //---------------------------------------------------------------------------
+        // Compute the derivative with respect to the population parameter
+        // of each individual's contribution to the population objective
+        // function,
+        // 
+        //                    /                                                   \
+        //                    |          (1) |          (2) |      |          (n) | 
+        // LambdaLTilde_alp = | Labmda_alp   | Lambda_alp,  | ...  | Lambda_alp   |
+        //                    |              |              |      |              |
+        //                    \                                                   /
+        // where the superscript (i) indentifies the i-th individual and
+        // n is the total number of individuals.
         //---------------------------------------------------------------------------
         
-        // let lTilde routine simply calculate the objectives at the given alp and b.
-	Optimizer optimizer( 1.0e-6, 0, 0 );
+        // Set the number of iterations for the individual level
+        // optimizer equal to zero so that the derivatives are
+        // evaluated at the given alp and b.
+        Optimizer optimizer( 1.0e-6, 0, 0 );
   
-	lTilde( popModel, 
-		objective, 
-		dvecY, 
-		dvecN,
-		optimizer,
-		dvecAlp,
-		dvecBLow,
-		dvecBUp,
-		dvecBStep,
-		dmatBIn,
-		0,
-		0, 
-		0, 
-		&dmatLambdaLTilde_alpOut );
+        // Calculate the derivatives.
+        if( objective != FIRST_ORDER )
+        {
+            // If the first order objective is not being used,
+            // then use the model that was passed in.
+            lTilde( popModel, 
+                    objective, 
+                    dvecY, 
+                    dvecN,
+                    optimizer,
+                    dvecAlp,
+                    dvecBLow,
+                    dvecBUp,
+                    dvecBStep,
+                    dmatBIn,
+                    0,
+                    0, 
+                    0, 
+                    &dmatLambdaLTilde_alpOut );
+        }
+        else
+        {
+            // If the first order objective is being used, then
+            // instantiate a naive first order model because the more
+            // efficient one is not compatible with lTilde and does
+            // not return the derivatives that are needed here.
+            NaiveFoModel   naiveFoPopModel( &popModel, indParStep );
+            enum Objective naiveFoObjective = NAIVE_FIRST_ORDER;
 
-	indObj_popPar = dmatLambdaLTilde_alpOut.toValarray();
+            lTilde( naiveFoPopModel, 
+                    naiveFoObjective, 
+                    dvecY, 
+                    dvecN,
+                    optimizer,
+                    dvecAlp,
+                    dvecBLow,
+                    dvecBUp,
+                    dvecBStep,
+                    dmatBIn,
+                    0,
+                    0, 
+                    0, 
+                    &dmatLambdaLTilde_alpOut );
+        }
+
+        indObj_popPar = dmatLambdaLTilde_alpOut.toValarray();
 	if( formulation == S )
 	  {
 	    try{
