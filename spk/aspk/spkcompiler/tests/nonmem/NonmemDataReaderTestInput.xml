@@ -1,0 +1,289 @@
+<data>
+	<individual order="1" id="mouse" length="2">
+		<item label="time">
+                       <value>0.0</value>
+		       <value>0.1</value>
+		</item>
+
+		<item label="skip">
+                        <value>1.0</value>
+                        <value></value>
+                </item>
+
+		<item label="cp" synonym="dv">
+                        <value>1.0</value>
+			<value>1.1</value>
+		</item>
+
+                <item label="dose" synonym="amt">
+			<value>2.0</value>
+                        <value>2.1</value>
+                </item>
+
+		<item label="wt">
+                        <value>1.0</value>
+                        <value></value>
+                </item>
+
+	</individual>
+
+        <individual order="2" id="cow" length="2">
+                <item label="time">
+                        <value>0.0</value>
+                        <value>0.1</value>
+                </item>
+                 
+                <item label="cp" synonym="dv">
+                        <value>1.0</value>
+                        <value>1.1</value>
+                </item>
+
+                <item label="drop">
+                        <value>1.0</value>
+                        <value>1.1</value>
+                </item>
+
+                <item label="dose" synonym="amt">
+                        <value>2.0</value>
+                        <value>2.1</value>
+                </item>
+
+                <item label="wt">
+                        <value>2.0</value>
+                        <value></value>
+                </item>
+        </individual>
+
+        <individual order="3" id="tiger" length="2">
+                <initem label="time">
+                        <value>0.0</value>
+                        <value>0.1</value>
+                </initem>
+                 
+                <item label="cp" synonym="dv">
+                        <value>1.0</value>
+                        <value>1.1</value>
+                </item>
+
+                <item label="dose" synonym="amt">
+                        <value>2.0</value>
+                        <value>2.1</value>
+                 </item>
+
+                <item label="wt">
+                        <value>3.0</value>
+                        <value></value>
+                </item>
+        </individual>
+
+        <individual order="4" id="rabit" length="2">
+                <initem label="time">
+                        <value>0.0</value>
+                        <value>0.1</value>
+                </initem>
+                 
+                <item label="cp" synonym="dv">
+                        <value>1.0</value>
+                        <value>1.1</value>
+                </item>
+
+                <item label="dose" synonym="amt">
+                        <value>2.0</value>
+                        <value>2.1</value>
+                </item>
+
+                <item label="wt">
+                        <value>4.0</value>
+                        <value></value>
+                </item>
+        </individual>
+
+        <individual order="5" id="dragon" length="2">
+                <initem label="time">
+                        <value>0.0</value>
+                        <value>0.1</value>
+                </initem>
+                 
+                <item label="cp" synonym="dv">
+                        <value>1.0</value>
+                        <value>1.1</value>
+                </item>
+
+                <item label="dose" synonym="amt">
+                        <value>2.0</value>
+                        <value>2.1</value>
+                </item>
+
+                <item label="wt">
+                        <value>5.0</value>
+                        <value></value>
+                </item>
+        </individual>
+
+        <individual order="6" id="snake" length="2">
+                <initem label="time">
+                        <value>0.0</value>
+                        <value>0.1</value>
+                </initem>
+                 
+                <item label="cp" synonym="dv">
+                        <value>1.0</value>
+                        <value>1.1</value>
+                </item>
+
+                <item label="dose" synonym="amt">
+                        <value>2.0</value>
+                        <value>2.1</value>
+                </item>
+
+                <item label="wt">
+                        <value>6.0</value>
+                        <value/>
+                </item>
+        </individual>
+
+        <individual order="7" id="horse" length="2">
+                <initem label="time">
+                        <value>0.0</value>
+                        <value>0.1</value>
+                </initem>
+                 
+                <item label="cp" synonym="dv">
+                        <value>1.0</value>
+                        <value>1.1</value>
+                </item>
+
+                <item label="dose" synonym="amt">
+                        <value>2.0</value>
+                        <value>2.1</value>
+                </item>
+
+                <item label="wt">
+                        <value>7.0</value>
+                        <value></value>
+                </item>
+        </individual>
+
+        <individual order="8" id="sheep" length="2">
+                <initem label="time">
+                        <value>0.0</value>
+                        <value>0.1</value>
+                </initem>
+                 
+                <item label="cp" synonym="dv">
+                        <value>1.0</value>
+                        <value>1.1</value>
+                </item>
+
+                <item label="dose" synonym="amt">
+                        <value>2.0</value>
+                        <value>2.1</value>
+                </item>
+
+                <item label="wt">
+                        <value>8.0</value>
+                        <value></value>
+                </item>
+        </individual>
+
+        <individual order="9" id="monkey" length="2">
+                <initem label="time">
+                        <value>0.0</value>
+                        <value>0.1</value>
+                </initem>
+                 
+                <item label="cp" synonym="dv">
+                        <value>1.0</value>
+                        <value>1.1</value>
+                </item>
+
+                <item label="dose" synonym="amt">
+                        <value>2.0</value>
+                        <value>2.1</value>
+                </item>
+
+                <item label="wt">
+                        <value>9.0</value>
+                        <value></value>
+                </item>
+        </individual>
+
+        <individual order="10" id="hen" length="2">
+                <initem label="time">
+                        <value>0.0</value>
+                        <value>0.1</value>
+                </initem>
+                 
+                <item label="cp" synonym="dv">
+                        <value>1.0</value>
+                        <value>1.1</value>
+                </item>
+
+                <item label="dose" synonym="amt">
+                        <value>2.0</value>
+                        <value>2.1</value>
+                </item>
+
+                <item label="wt">
+                        <value>10.0</value>
+                        <value/>
+                </item>
+        </individual>
+
+
+        <individual order="12" id="boar" length="2">
+                <initem label="time">
+                        <value>0.0</value>
+                        <value>0.1</value>
+                </initem>
+                 
+                <item label="cp" synonym="dv">
+                        <value>1.0</value>
+                        <value>1.1</value>
+                </item>
+
+                <item label="dose" synonym="amt">
+                        <value>2.0</value>
+                        <value>2.1</value>
+                </item>
+
+                <item label="wt">
+                        <value>12.0</value>
+                        <value></value>
+                </item>
+
+                <item label="junk" synonym="drop">
+                        <value>12.0</value>
+                        <value></value>
+                </item>
+
+        </individual>
+
+        <individual order="11" id="dog" length="2">
+                <initem label="time">
+                        <value>0.0</value>
+                        <value>0.1</value>
+                </initem>
+                 
+                <item label="cp" synonym="dv">
+                        <value>1.0</value>
+                        <value>1.1</value>
+                </item>
+
+                <item label="junk" synonym="drop">
+                        <value>2.0</value>
+                        <value>2.1</value>
+                </item>
+
+                <item label="dose" synonym="amt">
+                        <value>2.0</value>
+                        <value>2.1</value>
+                </item>
+
+                <item label="wt">
+                        <value>11.0</value>
+                        <value></value>
+                </item>
+        </individual>
+
+</data>
