@@ -1288,7 +1288,7 @@ void Optimizer::setIsWarmStart( bool w )
 { 
   if( w )
   {
-    if( stateInfo.x && stateInfo.state && stateInfo.lambda && stateInfo.h ) 
+    if( stateInfo.x && stateInfo.g && stateInfo.h ) 
     {
       isWarmStart = true;
     }
@@ -1312,13 +1312,12 @@ void Optimizer::setStateInfo( const StateInfo& s )
         char errmsg[] = "The number of variables is incorrect. Check calling setupWarmStart().";
         throw SpkException( SpkError::SPK_USER_INPUT_ERR, errmsg, __LINE__, __FILE__ );
   }
-  if( stateInfo.x && stateInfo.state && stateInfo.lambda && stateInfo.h ) 
+  if( stateInfo.x && stateInfo.g && stateInfo.h ) 
   {
       for( int i = 0; i < stateInfo.n; i++ )
     {
             stateInfo.x[ i ] = s.x[ i ];
-            stateInfo.state [ i ] = s.state[ i ];
-        stateInfo.lambda[ i ] = s.lambda[ i ];
+            stateInfo.g[ i ] = s.g[ i ];
     }
       for( int i = 0; i < stateInfo.n * stateInfo.n; i++ )
     {
@@ -1341,15 +1340,10 @@ void Optimizer::deleteStateInfo()
     delete [] stateInfo.x;
     stateInfo.x = 0;
   }
-  if( stateInfo.state ) 
+  if( stateInfo.g ) 
   {
-    delete [] stateInfo.state;
-    stateInfo.state = 0;
-  }
-  if( stateInfo.lambda )
-  {
-    delete [] stateInfo.lambda;
-    stateInfo.lambda = 0;
+    delete [] stateInfo.g;
+    stateInfo.g = 0;
   }
   if( stateInfo.h )
   {
