@@ -101,129 +101,333 @@ void NonmemDataReaderTest::testNoSkip()
 {
   translate_data( dataTree );
 }
+/**
+ * Process <data> section of SpkInML document and genreate the source code
+ * for the following entities:
+ *
+ * - the definition of IndRecords class
+ * - the initialization of IndRecords objects for all individuals
+ * 
+ * IndRecords class
+ *   This class lists all observation records associated with an individual.
+ *   It allows accessing a set of observation records (column) by both
+ *   "label" and "alias" (if an alias is given).
+ */
 std::vector<const char*> NonmemDataReaderTest::translate_data( xercesc::DOMDocument* dataTree )
 {
-  map<string, const char*> master_alias_table;
+  // LABEL data type:
+  // The reason for the key data type being "string"
+  // instead of "char*" is that, if I use "char*" type, 
+  // the memory address is rather used as a key, causing multiple entries
+  // getting registered in the map for the same string/name.
+  typedef string LABEL;
 
+  // ALIAS data type:
+  // The reason for the key data type being "string"
+  // instead of "char*" is to be consistent with LABEL data type.
+  typedef string ALIAS;
+
+  // MEASUREMENT data type:
+  // Let's just make them all expressed in double-precision.
+  typedef valarray<double> MEASUREMENT;
+
+  //
+  // This table maps labels and corresponding aliases.
+  // When no alias is defined for a label, the entry (alias) field shall contain
+  // an empty string.
+  //
+  //     key          entry
+  //   (label)       (alias)
+  // +---------+   +---------+
+  // | label_a |---| alias_a |
+  // +---------+   +---------+
+  // | label_b |---|   ""    |
+  // +---------+   +---------+
+  //      .             .
+  //      .             .
+  //      .             .
+  // +---------+   +---------+
+  // | label_x |   | alias_x |
+  // +---------+   +---------+
+  //
+  map<LABEL, ALIAS> label_alias_mapping;
+
+  //
+  // Get the list of <individual> nodes.  Each <individual> node is the root
+  // of that individual's data subtree and determine the number of 
+  // sets (= #individuals) of data.
+  //
   DOMNodeList * individualsList = dataTree->getElementsByTagName(X("individual"));
   const int nIndividuals = static_cast<int>( (individualsList->getLength()) );
-  assert( nIndividuals == 12 );
 
-  vector< map< string, valarray<double> > > alias_maps(nIndividuals);
+  //
+  // This table is used to record the following map:
+  //
+  //
+  //     index          key                 entry
+  // (individual#)    (label)           (measurements)
+  //    +---+       +---------+    +-----+-----+-----+-----+
+  //    | 0 |------>| label_a |--->| 0.0 | 1.0 | 2.0 | 2.3 |...
+  //    +---+       +---------+    +-----+-----+-----+-----+
+  //    | 1 |       | label_b |
+  //    +---+       +---------+
+  //      .         | label_c |
+  //      .         +---------+
+  //      .             ...
+  //      .  
+  //    +---+       +---------+    +-----+-----+-----+-----+
+  //    | n |------>| label_a |--->| 0.0 | 1.2 | 1.9 | 2.3 |...
+  //    +---+       +---------+    +-----+-----+-----+-----+
+  //                | label_b |
+  //                +---------+
+  //                | label_c |
+  //                +---------+
+  //                    ...
+  // 
+  map< LABEL, MEASUREMENT > data_for[ nIndividuals +1 ];
+
+  //
+  // This table records the processing order vs. the identifier pair of each
+  // individual.
+  //
+  const char* order_id_pair[ nIndividuals +1 ];
+  
+  //=================================================================================
+  //
+  // Traversing the DATA tree to gather information.
+  //
+  //=================================================================================
+
+  //
+  // Iterate through the list of <individual> blocks to register
+  // label-alias mappings and to populate the data_for table.
+  //
+  //
+  // <individual> tag comes with the following attributes:
+  //
+  // order  --- (optional) the order at which the individual's data shall be processed.
+  // id     --- (required) the alpha-numerical value identifying the individual.
+  // length --- (required) the number of measurements for every observation.
+  //
+  // and contains x number of <item> tags.
+  // <item> tag comes with the following attributes:
+  //
+  // label  --- (required) the title used to refer to the observation.
+  // synonym--- (optional) an alias for the label.
+  // 
+  // Either of the label or the synonym in each pair MUST be one of 
+  // NONMEM-reserved words 
+  // (see "$INPUT" section, p56, NONMEM User's Guide VIII, for a complete list).
+  // If either of them is "skip" or "drop", ignore the entire measurement vector.
+  //
   for( int i=0; i<nIndividuals; i++ )
     {
       DOMElement * individual = dynamic_cast<DOMElement*>( individualsList->item(i) );
 
-      int order = atoi( C( individual->getAttribute( X("order") ) ) );
-      const char * const id = C( individual->getAttribute( X("id") ) );
+      //
+      // First, take care the <individual> tag's attributes.
+      //
       int nMeasurements = atoi( C( individual->getAttribute( X("length") ) ) );
-      
+      const char * id = C( individual->getAttribute( X("id") ) );
+
+      int order = i;
+      const XMLCh* xml_order = individual->getAttribute( X("order") );
+      if( !XMLString::isAllWhiteSpace( xml_order ) || xml_order != NULL )
+	{
+	  order = atoi( C( xml_order ) ) - 1;
+	}
+
+      //
+      // Map the processing order and the individual's identifier.
+      //
+      order_id_pair[order] = id;
+
+      //
+      // Next, get the entire subtree of <individual> and traverse
+      // the tree to collect a data set for this individual.
+      // 
+      //           <individual>
+      //                 |
+      //                 |
+      //                \|/
+      //              <item> ---> <item> ---> <item> ---> <item> ---> ...   --+
+      //                 |           |
+      //                 |          \|/                                      |
+      //                 |        <value> ---> <value> ---> ... --+         NULL
+      //                \|/                                       |
+      //              <value> ---> <value> ---> ... --+         NULL
+      //                                              |
+      //                                             NULL
+      //
       DOMTreeWalker * walker = dataTree->createTreeWalker( individual,
-							   DOMNode::ELEMENT_NODE,
+							   DOMNodeFilter::SHOW_ELEMENT,
 							   NULL,
 							   false );
       int nItems = 0;
       DOMElement * item = dynamic_cast<DOMElement*>( walker->firstChild() );
       for( nItems=0; item != NULL; ++nItems )
 	{
-	  // synonym can be null but label has to be non empty.
-	  const char * label = C( item->getAttribute( X("label" ) ) );
-	  assert( label != NULL );
-	  const XMLCh * x_synonym = item->getAttribute( X("synonym") );
-	  
-	  const char * const synonym 
-	    = ( XMLString::isAllWhiteSpace( x_synonym )? NULL : C( x_synonym ) );
+	  // 
+	  // Retrieve the attributes (label and synonym) for this item/column
+	  // and register the pair in the label-alias map.
+	  // 
+	  // - label is required.
+	  // - synonym is optional.
+	  //
+	  // Make sure, if no alias is defined, the entry associated with
+	  // the key (label) must be set to NULL because the later operations
+	  // will assume it's NULL.
+	  //
+	  // If either of them says "skip" or "drop", ignore the column 
+	  // completely.
+	  //
+	  const XMLCh * xml_label = item->getAttribute( X("label" ) );
+	  assert( !XMLString::isAllWhiteSpace( xml_label ) );
 
-	  master_alias_table[ label ] = synonym;
+	  const XMLCh * xml_synonym = item->getAttribute( X("synonym") );
 
-	  int nValues = 0;
-	  valarray<double> values(nMeasurements);
-	  DOMElement * valueTag = dynamic_cast<DOMElement*>( walker->firstChild() );
-	  for( nValues=0; valueTag != NULL; ++nValues )
+	  const XMLCh* X_SKIP = X("skip");
+	  const XMLCh* X_DROP = X("drop");
+	  if( XMLString::equals( xml_label, X_SKIP ) || XMLString::equals( xml_label, X_DROP )
+	      || XMLString::equals( xml_synonym, X_SKIP ) || XMLString::equals( xml_synonym, X_DROP ) )
 	    {
-	      DOMNode * val_node = valueTag->getFirstChild();
-	      if( val_node != NULL )
-		{
-		  values[nValues] = atof( C( val_node->getNodeValue() ) );
-		}
-	      else
-		{
-		  values[nValues] = 0.0;
-		}
-	      valueTag = dynamic_cast<DOMElement*>( walker->nextSibling() );
+	      // This column is to be ignored.
 	    }
-	  assert( nMeasurements == nValues );
-	  walker->parentNode();
+	  else
+	    {
+	      const char * label = C( xml_label );
+	      const char * synonym = C( xml_synonym );
+	      if( XMLString::isAllWhiteSpace( xml_synonym ) )
+		label_alias_mapping[ label ] = "";
+	      else
+		label_alias_mapping[ label ] = string(  C( xml_synonym ) );
 
-	  alias_maps[i].insert( pair<string, valarray<double> >(label, values) );
-
-	  item = dynamic_cast<DOMElement*>( walker->nextSibling() );
+	      //
+	      // Now, go though the set (column) of measurement data.
+	      //
+	      // The <value> subtree is an interesting one.  In the xml document
+	      // it appears like this:
+	      //   <value>1.0</value>
+	      // so, it looks like the Node Value of <value> is "1.0".
+	      // Wrong!  The value "1.0" is stored as the value of a text node (DOMText) 
+	      // in a deeper level.
+	      // 
+	      // NOTE by Sachiko:
+	      // Thought specifying DOMNodeFilter::SHOW_ELEMENT when creating a DOMTreeWalker
+	      // would supress this DOMText representation but doesn't.  Why?
+	      //
+	      int nValues = 0;
+	      valarray<double> values(nMeasurements);
+	      DOMElement * valueTag = dynamic_cast<DOMElement*>( walker->firstChild() );
+	      for( nValues=0; valueTag != NULL; ++nValues )
+		{
+		  //
+		  // <value> tag could be empty, implying the value is supposed to be 0.0.
+		  //
+		  DOMText * val_node = dynamic_cast<DOMText*>( valueTag->getFirstChild() );
+		  if( val_node != NULL )
+		    {
+		      values[nValues] = atof( C( trim( val_node->getNodeValue() ) ) );
+		    }
+		  else
+		    {
+		      values[nValues] = 0.0;
+		    }
+		  valueTag = dynamic_cast<DOMElement*>( walker->nextSibling() );
+		}
+	      assert( nMeasurements == nValues );
+	      walker->parentNode();
+	      
+	      //
+	      // Register the label-values pair in the data_for map.
+	      //
+	      data_for[i].insert( pair<string, valarray<double> >(label, values) );
+	    } 
+	  item = dynamic_cast<DOMElement*>( walker->nextSibling() );  
 	}
       
       walker->parentNode();
     }
 
+  //=================================================================================
+  //
+  // Convert the gathered information into C++ source code.
+  //
+  //=================================================================================
+
   //
   // Write the definition of "class IndRecords".
   //
-  cout << "class IndRecords{" << endl;
-  cout << "public:" << endl;
-  cout << "\tIndRecords(" << endl;
-  map<string, const char*>::const_iterator names = master_alias_table.begin();
-  while( names != master_alias_table.end() )
+  const char* str_IndRecords = "IndRecords";
+
+  cout << "class " << str_IndRecords << "{\n";
+  cout << "public:\n";
+  cout << "\t" << str_IndRecords << "(\n";
+  map<LABEL, ALIAS>::const_iterator names = label_alias_mapping.begin();
+  while( names != label_alias_mapping.end() )
     {
-      if( names != master_alias_table.begin() )
-	cout << ", " << endl;
-      cout << "\t\tconst double * " << names->first << "In";
+      if( names != label_alias_mapping.begin() )
+	{
+	  cout << ", \n";
+	}
+      cout << "\t\t" << "const double * " << names->first << "In";
       ++names;
     }
-  cout << endl;
-  cout << "\t)" << endl;
+  cout << "\n";
+  cout << "\t)\n";
   cout << "\t : ";
-  names = master_alias_table.begin();
-  while( names != master_alias_table.end() )
+  names = label_alias_mapping.begin();
+  while( names != label_alias_mapping.end() )
     {
-      if( names != master_alias_table.begin() )
-	cout << ", ";
+      if( names != label_alias_mapping.begin() )
+	{
+	  cout << ",\n\t";
+	}
       cout << names->first << "(" << names->first << "In" << ")";
-      if( names->second != NULL )
+      if( names->second != "" )
 	{
 	  cout << ", " << names->second << "(" << names->first << ")";
 	}
       ++names;
     }
-  cout << endl;
-  cout << "\t{ /* do nothing */ }" << endl;
+  cout << "\n";
+  cout << "\t{ /* have nothing really to do */ }\n";
+  cout << "\n";
   
-  names = master_alias_table.begin();
-  while( names != master_alias_table.end() )
+  names = label_alias_mapping.begin();
+  while( names != label_alias_mapping.end() )
     {
-      cout << "\tconst double * " << names->first << ";" << endl;
-      if( names->second != NULL )
+      cout << "\tconst double * " << names->first << ";\n";
+      if( names->second != "" )
 	{
-	  cout << "\tconst double * " << names->second << ";" << endl;
+	  cout << "\tconst double * " << names->second << ";\n";
 	}
       ++names;
     }
-  cout << endl;
-  cout << "};" << endl;
+
+  cout << "\n";
+  cout << "protected:\n";
+  cout << "\t" << str_IndRecords << "(){}\n";
+  cout << "\t" << str_IndRecords << "( const " << str_IndRecords << "& ){}\n";
+  cout << "\t" << str_IndRecords << "* operator=( const " << str_IndRecords << "& ){}\n";
+  cout << "};\n";
 
   //
-  // Allocate memory
+  // Declare an array of #nIndividual number of IndRecords objects.
   //
-  cout << "const int nIndividuals = " << nIndividuals << ";" << endl;
-  cout << "IndRecords * data[nIndividuals+1]" << ";" << endl;
-  cout << endl;
+  cout << "const int nIndividuals = " << nIndividuals << ";\n";
+  cout << str_IndRecords << " * data[nIndividuals+1]" << ";\n";
+  cout << "\n";
 
   //
-  // Write the initialization code for IndRecords records for all individuals.
+  // Write the initialization code for IndRecords records for each individual.
   //
-  map< string, valarray<double> >::const_iterator map_records;
+  map< LABEL, MEASUREMENT >::const_iterator map_records;
   for( int i=0; i<nIndividuals; i++ )
     {
-      cout << "// " << i << " individual's data" << endl;
-      map_records = alias_maps[i].begin();
-      while( map_records != alias_maps[i].end() )
+      cout << "// " << order_id_pair[i] << "'s data (process order = " << i << ")\n";
+      map_records = data_for[i].begin();
+      while( map_records != data_for[i].end() )
 	{
 	  cout << "const double " << map_records->first << "_" << i << "[] = ";
        	  cout << "{ ";
@@ -233,28 +437,32 @@ std::vector<const char*> NonmemDataReaderTest::translate_data( xercesc::DOMDocum
 		cout << ", ";
 	      cout << map_records->second[j];
 	    }
-	  cout << " };" << endl;
+	  cout << " };\n";
 	  ++map_records;
 	}
       
-      cout << "IndRecords * data" << "_" << i << " = new IndRecords( ";
-      map_records = alias_maps[i].begin();
-      while( map_records != alias_maps[i].end() )
+      cout << str_IndRecords << " * data" << "_" << i << " = new " << str_IndRecords << "( ";
+      map_records = data_for[i].begin();
+      while( map_records != data_for[i].end() )
 	{
-	  if( map_records != alias_maps[i].begin() )
+	  if( map_records != data_for[i].begin() )
 	    cout << ", ";
 	  cout << map_records->first << "_" << i;
 	  ++map_records;
 	}
-      cout << " );" << endl;
-      cout << "data[" << i << "] = " << "data_" << i << ";" << endl;
+      cout << " );\n";
+      cout << "data_for[" << i << "] = " << "data_" << i << ";\n";
       cout << endl;
    }
 
-  cout << "for( int i=0; i<nIndividuals; i++ )" << endl;
-  cout << "{" << endl;
-  cout << "   delete data[i];" << endl;
-  cout << "}" << endl;
+  //
+  // Clean-up code
+  //
+  cout << "// Release memory allocated for " << str_IndRecords << " objects.\n";
+  cout << "for( int i=0; i<nIndividuals; i++ )\n";
+  cout << "{\n";
+  cout << "   delete data[i];\n";
+  cout << "}\n";
 
   vector<const char*> filenames;
   return filenames;
