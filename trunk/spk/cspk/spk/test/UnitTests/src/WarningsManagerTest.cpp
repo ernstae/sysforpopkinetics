@@ -141,15 +141,12 @@ void WarningsManagerTest::basicTest()
   WarningsManager::addWarning( warning2, __LINE__, __FILE__);
   WarningsManager::getAllWarnings( warnings );
 
-  // [Remove]=======================================
-  //
+  // Uncomment these statements to see the warnings.
   /*
   cout << "########################################" << endl;
   cout << warnings;
   cout << "########################################" << endl;
   */
-  //
-  // [Remove]=======================================
 
   // Make sure there are warnings in the list after some have been
   // added.
@@ -164,16 +161,14 @@ void WarningsManagerTest::basicTest()
     "There were still warnings in the list after they had all been removed.",
     WarningsManager::anyWarnings() == false );
 
-  // [Remove]=======================================
-  //
+  // Uncomment these statements to see the warnings.
   /*
   WarningsManager::getAllWarnings( warnings );
   cout << "########################################" << endl;
   cout << warnings;
   cout << "########################################" << endl;
   */
-  //
-  // [Remove]=======================================
+
 }
 
 
