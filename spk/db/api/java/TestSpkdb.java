@@ -7,13 +7,14 @@ public class TestSpkdb {
 	String password = "codered";
 	String firstName = "Mike";
 	String surname = "Jordan";
-	final int maxTests = 5;
+	final int maxTests = 8;
 
 	boolean b = true;
 	boolean target = true;
 	String s = "connection";
 	int i = 1;
 
+	long userId = 0;
 	
 	Connection conn;
 
@@ -32,7 +33,7 @@ public class TestSpkdb {
 		switch (i) {
 		case 2:
 		    target = false;
-		    s = "new user: missing password";
+		    s = "new user";
 		    {
 			String n[] = {"username", "first_name", "surname"};
 			String v[] = { username,  firstName, surname };
@@ -42,7 +43,7 @@ public class TestSpkdb {
 		    break;
 		case 3:
 		    target = false;
-		    s = "new user: missing username";
+		    s = "new user";
 		    {
 			String n[] = {"password", "first_name", "surname"};
 			String v[] = { password,  firstName, surname };
@@ -56,19 +57,46 @@ public class TestSpkdb {
 			String n[] = {"username", "password", "first_name", "surname"};
 			String v[] = { username,  password, firstName, surname };
 			s = "new user";
-			long r = Spkdb.newUser(conn, n, v);		    
-			s += " is user number " + r;
-			b = r == 1;
+			userId = Spkdb.newUser(conn, n, v);		    
+			s += " is user number " + userId;
+			b = userId == 1;
 		    }
 		    break;
 		case 5:
 		    target = false;
-		    s = "new user: duplicate username";
+		    s = "new user";
 		    {
 			String n[] = {"username", "password", "first_name", "surname"};
 			String v[] = { username,  password, firstName, surname };
 			long r = Spkdb.newUser(conn, n, v);		    
 			b = r == 1;
+		    }
+		    break;
+		case 6:
+		    target = true;
+		    s = "update user";
+		    {
+			String n[] = {"first_name", "surname"};
+			String v[] = {"Gerry",       "Peyton" };
+			b = Spkdb.updateUser(conn, userId, n, v);
+		    }
+		    break;
+		case 7:
+		    target = false;
+		    s = "update user";
+		    {
+			String n[] = {"username", "first_name"};
+			String v[] = {"glove",    "Gary"      };
+			b = Spkdb.updateUser(conn, userId, n, v);
+		    }
+		    break;
+		case 8:
+		    target = false;
+		    s = "update user";
+		    {
+			String n[] = {"first_name", "username"};
+			String v[] = {"Gary",       "glove"   };
+			b = Spkdb.updateUser(conn, userId, n, v);
 		    }
 		    break;
 		}
