@@ -1064,11 +1064,13 @@ time_t SESSION_ID;
 
 
 /*------------------------------------------------------------------------
- * Include file
+ * Include files
  *------------------------------------------------------------------------*/
 
 #include <iostream>
 #include <strstream>
+#include <iomanip>
+#include <sstream>
 
 #include "SpkValarray.h"
 #include "fitPopulation.h"
@@ -1077,8 +1079,33 @@ time_t SESSION_ID;
 #include "firstOrderOpt.h"
 #include "File.h"
 #include "broadCastEndOfSpk.h"
+#include "WarningsManager.h"
 
 using SPK_VA::valarray;
+
+
+/*------------------------------------------------------------------------
+ * Local function declarations
+ *------------------------------------------------------------------------*/
+
+namespace // [Begin: unnamed namespace]
+{
+  void checkPopPar(
+    const DoubleMatrix& dvecAlpLow,
+    const DoubleMatrix& dvecAlpUp,
+    const DoubleMatrix& dvecAlpOut );
+
+  void checkIndPar(
+    const DoubleMatrix& dvecBLow,
+    const DoubleMatrix& dvecBUp,
+    const DoubleMatrix& dmatBOut );
+
+} // [End: unnamed namespace]
+
+
+/*------------------------------------------------------------------------
+ * Function definition
+ *------------------------------------------------------------------------*/
 
 void fitPopulation( 
 				    SpkModel&                   model,
@@ -1379,7 +1406,7 @@ void fitPopulation(
   // lower and upper bounds.
   for ( i = 0; i < nAlp; i++ )
   {
-      if( popParIn[i] <= popParLow[i] || popParIn[i] >= popParUp[i] )
+      if( popParIn[i] < popParLow[i] || popParIn[i] > popParUp[i] )
       {
         std::strstream message;
         message << "The initial value for the population parameter must ";
@@ -1401,7 +1428,7 @@ void fitPopulation(
   {
     for ( i = 0; i < nB; i++ )
     {
-      if( indParAllIn[ i + j * nB ] <= indParLow[i] || indParAllIn[ i + j * nB ] >= indParUp[i] )
+      if( indParAllIn[ i + j * nB ] < indParLow[i] || indParAllIn[ i + j * nB ] > indParUp[i] )
       {
         std::strstream message;
         message << "The initial value for the individual parameter must ";
@@ -1772,6 +1799,20 @@ void fitPopulation(
     }
   }
 
+  //------------------------------------------------------------
+  // Issue warning messages for parameters that are constrained.
+  //------------------------------------------------------------
+
+  // Check for population level parameters that are constrained.
+  checkPopPar( dvecAlpLow, dvecAlpUp, dvecAlpOut );
+
+  // Check for individual level parameters that are constrained.
+  checkIndPar( dvecBLow, dvecBUp, dmatBOut );
+
+  //------------------------------------------------------------
+  // Finish up.
+  //------------------------------------------------------------
+
   // Convert results to valarray
   if( popParOut )
   {
@@ -1792,3 +1833,243 @@ void fitPopulation(
   if(isMultiple)
     broadCastEndOfSpk(sharedDirectory);
 }
+
+
+/*========================================================================
+ *
+ *
+ * Local Function Definitions
+ *
+ *
+ *========================================================================*/
+
+namespace // [Begin: unnamed namespace]
+{
+
+/*************************************************************************
+ *
+ * Function: checkPopPar
+ *
+ *
+ * Checks the vector of output population parameters to see if any of
+ * its elements is constrained by its corresponding lower and/or
+ * upper limit.
+ *
+ *************************************************************************/
+
+void checkPopPar(
+  const DoubleMatrix& dvecAlpLow,
+  const DoubleMatrix& dvecAlpUp,
+  const DoubleMatrix& dvecAlpOut )
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  const double* pdAlpLowData = dvecAlpLow.data();
+  const double* pdAlpUpData  = dvecAlpUp .data();
+  const double* pdAlpOutData = dvecAlpOut.data();
+
+  int nAlp   = dvecAlpOut.nr();
+
+
+  //------------------------------------------------------------
+  // Check the parameters to see if any are constrained.
+  //------------------------------------------------------------
+
+  // Prepare a warning message that will only be issued if there
+  // are constrained parameters.
+  ostringstream warning;
+
+  int k;
+
+  int colWidth1 = 9 - 2;
+  int colWidth2 = 13 + 2;
+  int colWidth3 = 9;
+  string colSpacer = "  ";
+
+  warning << "The following population parameters are at their bounds." << endl;
+  warning << endl;
+  warning << "Parameter       Value         Bound"   << endl;
+  warning << "---------  ---------------  ---------" << endl;
+
+  // Check the final population parameter value to see if it 
+  // is constrained by its lower or upper bound;
+  bool isAnyAlpAtLimit = false;
+  for ( k = 0; k < nAlp; k++ )
+  {
+    if ( pdAlpOutData[k] == pdAlpLowData[k] || 
+         pdAlpOutData[k] == pdAlpUpData[k] )
+    {
+      isAnyAlpAtLimit = true;
+
+      // Column 1.
+      warning << setw( colWidth1 ) << k + 1 << colSpacer;
+
+      // Column 2.
+      warning << setw( colWidth2 ) << scientific 
+            << setprecision( 2 ) << pdAlpOutData[k] << colSpacer;
+
+      // Column 3.
+      warning << setw( colWidth3 );
+      if ( pdAlpOutData[k] == pdAlpLowData[k] && 
+           pdAlpOutData[k] == pdAlpUpData[k] )
+      {
+        warning << "Both ";
+      }
+      else if ( pdAlpOutData[k] == pdAlpLowData[k] )
+      {
+        warning << "Lower";
+      }
+      else
+      {
+        warning << "Upper";
+      }
+
+      warning << endl;
+    }
+  }
+
+
+  //------------------------------------------------------------
+  // Issue a warning message if necessary.
+  //------------------------------------------------------------
+
+  // Only issue the warning message if at least one of the
+  // values is constrained.
+  if ( isAnyAlpAtLimit )
+  {
+    string warningStr = warning.str();
+    WarningsManager::addWarning( warningStr, __LINE__, __FILE__);
+  }
+}
+
+
+/*************************************************************************
+ *
+ * Function: checkIndPar
+ *
+ *
+ * Checks the matrix of output individual parameters to see if any of
+ * its elements is constrained by its corresponding lower and/or
+ * upper limit.
+ *
+ *************************************************************************/
+
+void checkIndPar(
+  const DoubleMatrix& dvecBLow,
+  const DoubleMatrix& dvecBUp,
+  const DoubleMatrix& dmatBOut )
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  const double* pdBLowData = dvecBLow.data();
+  const double* pdBUpData  = dvecBUp .data();
+  const double* pdBOutData = dmatBOut.data();
+
+  int nB   = dmatBOut.nr();
+  int nInd = dmatBOut.nc();
+
+
+  //------------------------------------------------------------
+  // Check the parameters to see if any are constrained.
+  //------------------------------------------------------------
+
+  // Prepare a warning message that will only be issued if there
+  // are constrained parameters.
+  ostringstream warning;
+
+  int i;
+  int k;
+  double bOut_i_k;
+
+  int colWidth1 = 10 - 2;
+  int colWidth2 = 9;
+  int colWidth3 = 13 + 2;
+  int colWidth4 = 9;
+  string colSpacer = "  ";
+
+  warning << "The following individual parameters are at their bounds." << endl;
+  warning << endl;
+  warning << "Individual  Parameter       Value         Bound"   << endl;
+  warning << "----------  ---------  ---------------  ---------" << endl;
+
+  // Check each individual's final parameter value to see if they
+  // are constrained by their lower or upper bound;
+  bool isAnyBAtLimit = false;
+  bool printIndex;
+  for ( i = 0; i < nInd; i++ )
+  {
+    printIndex = true;
+
+    for ( k = 0; k < nB; k++ )
+    {
+      bOut_i_k = pdBOutData[k + i * nB];
+
+      if ( bOut_i_k == pdBLowData[k] || bOut_i_k == pdBUpData[k] )
+      {
+        isAnyBAtLimit = true;
+
+        // Column 1.
+        warning << setw( colWidth1 );
+        if ( printIndex )
+        {
+          warning << i + 1;
+        }
+        else
+        {
+          warning << "";
+        }
+        warning << colSpacer;
+
+        // Column 2.
+        warning << setw( colWidth2 ) << k + 1 << colSpacer;
+
+        // Column 3.
+        warning << setw( colWidth3 ) << scientific 
+                << setprecision( 3 ) << bOut_i_k << colSpacer;
+
+        // Column 4.
+	warning << setw( colWidth4 );
+        if ( bOut_i_k == pdBLowData[k] && bOut_i_k == pdBUpData[k] )
+        {
+          warning << "Both ";
+        }
+        else if ( bOut_i_k == pdBLowData[k] )
+        {
+          warning << "Lower";
+        }
+        else
+        {
+          warning << "Upper";
+        }
+
+	warning << endl;
+
+        printIndex = false;
+      }
+    }
+  }
+
+
+  //------------------------------------------------------------
+  // Issue a warning message if necessary.
+  //------------------------------------------------------------
+
+  // Only issue the warning message if at least one of the
+  // values is constrained.
+  if ( isAnyBAtLimit )
+  {
+    string warningStr = warning.str();
+    WarningsManager::addWarning( warningStr, __LINE__, __FILE__);
+  }
+}
+
+} // [End: unnamed namespace]
+
