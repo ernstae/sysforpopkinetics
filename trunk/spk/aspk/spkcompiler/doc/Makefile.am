@@ -2,6 +2,13 @@ SUFFIXES = .dox
 .html.dox : 
 	doxygen $<
 
+dist_pkgdata_DATA = core.cfg \
+                    nonmem.cfg \
+                    spkcompiler.cfg \
+                    nonmem_menu.html \
+                    core_menu.html \
+                    menu.html
+
 CORE_SRC   = ../spkcompiler/client.h \
              ../spkcompiler/Symbol.h \
              ../spkcompiler/SymbolTable.h \

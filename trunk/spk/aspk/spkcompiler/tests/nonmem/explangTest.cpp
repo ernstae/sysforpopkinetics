@@ -14,8 +14,8 @@
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
 
-#include <spkcompiler/SymbolTable.h>
-#include <spkcompiler/nonmem/explang.h>
+#include "spkcompiler/SymbolTable.h"
+#include "spkcompiler/nonmem/explang.h"
 
 using namespace std;
 using namespace CppUnit;

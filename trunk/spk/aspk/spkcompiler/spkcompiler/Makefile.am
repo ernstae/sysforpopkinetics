@@ -10,7 +10,7 @@ MOSTLYCLEANFILES = libcommon.a
 spkcompiler_SOURCES = \
 	main.cpp
 
-libcommon_a_SOURCES = \
+dist_libcommon_a_SOURCES = \
         client.h \
         series.h \
         series.cpp \
@@ -28,3 +28,4 @@ libcommon_a_SOURCES = \
         SpkCompilerError.h \
         SpkCompilerException.h \
         SpkCompilerException.cpp 
+

@@ -11,8 +11,8 @@
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/util/XMLString.hpp>
 
-#include <spkcompiler/ClientTranslator.h>
-#include <spkcompiler/SymbolTable.h>
+#include "spkcompiler/ClientTranslator.h"
+#include "spkcompiler/SymbolTable.h"
 #include "ClientTranslatorTest.h"
 
 using namespace std;

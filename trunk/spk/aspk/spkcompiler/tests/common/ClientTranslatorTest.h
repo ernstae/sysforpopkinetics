@@ -14,7 +14,7 @@
 
 #include <xercesc/dom/DOMDocument.hpp>
 
-#include <spkcompiler/ClientTranslator.h>
+#include "spkcompiler/ClientTranslator.h"
 /**
  *
  */

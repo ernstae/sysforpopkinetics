@@ -1,6 +1,6 @@
 noinst_PROGRAMS      = testall
 AM_LDFLAGS           = -lxerces-c -lcppunit ../../spkcompiler/libcommon.a
-AM_CPPFLAGS          = -I../../spkcompiler
+AM_CPPFLAGS          = -I@top_srcdir@
 MOSTLYCLEANFILES     = IndData.h 
 MAINTEINERCLEANFILES = Makefile.in
 

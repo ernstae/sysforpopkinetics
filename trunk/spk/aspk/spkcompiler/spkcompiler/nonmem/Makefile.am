@@ -9,7 +9,7 @@ MOSTLYCLEANFILES = explang.output \
                    lex_explang.c \
 	           libnonmem.a
 
-libnonmem_a_SOURCES = \
+dist_libnonmem_a_SOURCES = \
         explang.ypp \
         lex_explang.l \
 	nonmem.cpp \
