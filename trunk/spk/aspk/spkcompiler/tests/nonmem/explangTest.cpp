@@ -3,7 +3,7 @@
 #include <fstream>
 #include <string>
 
-#include "NonmemExpXlatorTest.h"
+#include "explangTest.h"
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestCaller.h>
@@ -34,14 +34,16 @@ extern FILE             * yyin;
 extern int                yydebug;
 
 
-void NonmemExpXlatorTest::setUp()
+void explangTest::setUp()
 {
 }
-void NonmemExpXlatorTest::tearDown()
+void explangTest::tearDown()
 {
 }
-void NonmemExpXlatorTest::testScalarAssignmentToScalar()
+void explangTest::testScalarAssignmentToScalar()
 {
+  // Attention!!! yylex() converts any capitalized letter to lower case.
+
   SymbolTable table;
   char input[]        = "testScalarAssignmentToScalar.in";
   char output[]       = "testScalarAssignmentToScalar.out";
@@ -79,7 +81,7 @@ void NonmemExpXlatorTest::testScalarAssignmentToScalar()
 
   yyparse();
 
-  CPPUNIT_ASSERT( table.find( "A" ));
+  CPPUNIT_ASSERT( table.find( "a" ));
   fclose( pInput );
   fclose( gSpkExpOutput );
 
@@ -97,77 +99,77 @@ void NonmemExpXlatorTest::testScalarAssignmentToScalar()
   CPPUNIT_ASSERT( pOutput.good() );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "1;" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "1.0;" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1.E01;" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1.e01;" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1.0E01;" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1.0e01;" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1.0E1;" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1.0e1;" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "+1;" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "+1.0;" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "-1.E01;" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "-1.e01;" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "-1.0E01;" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "-1.0e01;" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "-1.0E1;" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "-1.0e1;" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
@@ -178,7 +180,7 @@ void NonmemExpXlatorTest::testScalarAssignmentToScalar()
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
@@ -189,7 +191,7 @@ void NonmemExpXlatorTest::testScalarAssignmentToScalar()
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
   
   pOutput >> buf;  
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
@@ -204,7 +206,7 @@ void NonmemExpXlatorTest::testScalarAssignmentToScalar()
   remove( input );
   remove( output );
 }
-void NonmemExpXlatorTest::testVectorElementAssignmentToScalar()
+void explangTest::testVectorElementAssignmentToScalar()
 {
   SymbolTable table;
   
@@ -232,7 +234,7 @@ void NonmemExpXlatorTest::testVectorElementAssignmentToScalar()
 
   yyparse();
 
-  CPPUNIT_ASSERT( table.find( "A" ));
+  CPPUNIT_ASSERT( table.find( "a" ));
   
   fclose( pInput );
   fclose( gSpkExpOutput );
@@ -251,7 +253,7 @@ void NonmemExpXlatorTest::testVectorElementAssignmentToScalar()
   CPPUNIT_ASSERT( pOutput.good() );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A[" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a[" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "(" );
   pOutput >> buf;
@@ -273,7 +275,7 @@ void NonmemExpXlatorTest::testVectorElementAssignmentToScalar()
   remove( input );
   remove( output );
 }
-void NonmemExpXlatorTest::testFunctions()
+void explangTest::testFunctions()
 {
   SymbolTable table;
   char input[]        = "testFunctions.in";
@@ -312,8 +314,8 @@ void NonmemExpXlatorTest::testFunctions()
 
   yyparse();
 
-  CPPUNIT_ASSERT( table.find( "A" ));
-  CPPUNIT_ASSERT( table.find( "B" ));
+  CPPUNIT_ASSERT( table.find( "a" ));
+  CPPUNIT_ASSERT( table.find( "b" ));
   
   fclose( pInput );
   fclose( gSpkExpOutput );
@@ -332,18 +334,18 @@ void NonmemExpXlatorTest::testFunctions()
   CPPUNIT_ASSERT( pOutput.good() );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "exp(" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "x" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "B[" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "b[" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "(" );
   pOutput >> buf;
@@ -361,12 +363,12 @@ void NonmemExpXlatorTest::testFunctions()
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "exp(" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "x" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
@@ -377,7 +379,7 @@ void NonmemExpXlatorTest::testFunctions()
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
@@ -388,7 +390,7 @@ void NonmemExpXlatorTest::testFunctions()
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
@@ -399,19 +401,19 @@ void NonmemExpXlatorTest::testFunctions()
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "B[" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "b[" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "(" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "pow(" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X," );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "x," );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "Y" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "y" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
   pOutput >> buf;
@@ -424,13 +426,13 @@ void NonmemExpXlatorTest::testFunctions()
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "];" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "exp(" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "x" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
   pOutput >> buf;
@@ -438,12 +440,12 @@ void NonmemExpXlatorTest::testFunctions()
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "sqrt(" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "Y" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "y" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
@@ -455,13 +457,13 @@ void NonmemExpXlatorTest::testFunctions()
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "exp(" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "x" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "+" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "Y" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "y" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
 
@@ -470,7 +472,7 @@ void NonmemExpXlatorTest::testFunctions()
   remove( output );
 }
 
-void NonmemExpXlatorTest::testIfStmt()
+void explangTest::testIfStmt()
 {
   SymbolTable table;
   
@@ -505,7 +507,7 @@ void NonmemExpXlatorTest::testIfStmt()
 
   yyparse();
 
-  CPPUNIT_ASSERT( table.find( "A" ) );
+  CPPUNIT_ASSERT( table.find( "a" ) );
   
   fclose( pInput );
   fclose( gSpkExpOutput );
@@ -526,22 +528,22 @@ void NonmemExpXlatorTest::testIfStmt()
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "if(" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "x" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "!=" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "Y" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "y" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "{" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "B[" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "b[" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "(" );
   pOutput >> buf;
@@ -560,21 +562,21 @@ void NonmemExpXlatorTest::testIfStmt()
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "if(" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "x" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "!=" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "Y" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "y" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "{" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "B[" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "b[" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "(" );
   pOutput >> buf;
@@ -598,7 +600,7 @@ void NonmemExpXlatorTest::testIfStmt()
   remove( input );
   remove( output );
 }
-void NonmemExpXlatorTest::testIfThenStmt()
+void explangTest::testIfThenStmt()
 {
   SymbolTable table;
   
@@ -638,8 +640,8 @@ void NonmemExpXlatorTest::testIfThenStmt()
 
   yyparse();
 
-  CPPUNIT_ASSERT( table.find( "C" ) );
-  CPPUNIT_ASSERT( table.find( "A" ) );
+  CPPUNIT_ASSERT( table.find( "c" ) );
+  CPPUNIT_ASSERT( table.find( "a" ) );
   fclose( pInput );
   fclose( gSpkExpOutput );
 
@@ -659,21 +661,21 @@ void NonmemExpXlatorTest::testIfThenStmt()
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "if(" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "x" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "!=" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "Y" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "y" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "{" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "B[" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "b[" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "(" );
   pOutput >> buf;
@@ -687,11 +689,11 @@ void NonmemExpXlatorTest::testIfThenStmt()
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "];" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "C" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "c" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "D;" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "d;" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "//" );
   pOutput >> buf;
@@ -704,34 +706,34 @@ void NonmemExpXlatorTest::testIfThenStmt()
   remove( output );
 }
 
-CppUnit::Test * NonmemExpXlatorTest::suite()
+CppUnit::Test * explangTest::suite()
 {
-  CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite( "NonmemExpXlatorTest" );
+  CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite( "explangTest" );
 
   suiteOfTests->addTest( 
-     new CppUnit::TestCaller<NonmemExpXlatorTest>(
+     new CppUnit::TestCaller<explangTest>(
          "testScalarAssignmentToScalar", 
-	 &NonmemExpXlatorTest::testScalarAssignmentToScalar ) );
+	 &explangTest::testScalarAssignmentToScalar ) );
 
   suiteOfTests->addTest( 
-     new CppUnit::TestCaller<NonmemExpXlatorTest>(
+     new CppUnit::TestCaller<explangTest>(
          "testVectorElementAssignmentToScalar", 
-	 &NonmemExpXlatorTest::testVectorElementAssignmentToScalar ) );
+	 &explangTest::testVectorElementAssignmentToScalar ) );
 
   suiteOfTests->addTest( 
-     new CppUnit::TestCaller<NonmemExpXlatorTest>(
+     new CppUnit::TestCaller<explangTest>(
          "testFunctions",
-	 &NonmemExpXlatorTest::testFunctions ) );
+	 &explangTest::testFunctions ) );
 
   suiteOfTests->addTest( 
-     new CppUnit::TestCaller<NonmemExpXlatorTest>(
+     new CppUnit::TestCaller<explangTest>(
          "testIfStmt",
-	 &NonmemExpXlatorTest::testIfStmt) );
+	 &explangTest::testIfStmt) );
 
   suiteOfTests->addTest( 
-     new CppUnit::TestCaller<NonmemExpXlatorTest>(
+     new CppUnit::TestCaller<explangTest>(
          "testIfThenStmt",
-	 &NonmemExpXlatorTest::testIfThenStmt) );
+	 &explangTest::testIfThenStmt) );
   
      return suiteOfTests;
 }

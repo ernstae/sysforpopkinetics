@@ -8,7 +8,7 @@
 #include "read_nonmem_driverTest.h"
 #include "read_nonmem_dataTest.h"
 #include "read_nonmem_modelTest.h"
-#include "NonmemExpXlatorTest.h"
+#include "explangTest.h"
 #include "emit_nonmem_driverTest.h"
 
 using namespace std;
@@ -20,7 +20,7 @@ int main( int argc, const char * argv[] )
   vector<CppUnit::Test*> subset;
 
   master[ "lex_explangTest" ]        = lex_explangTest::suite();
-  master[ "NonmemExpXlatorTest" ]    =  NonmemExpXlatorTest::suite();
+  master[ "explangTest" ]            = explangTest::suite();
   master[ "read_nonmem_driverTest" ] = read_nonmem_driverTest::suite();
   master[ "read_nonmem_dataTest" ]   = read_nonmem_dataTest::suite();
   master[ "read_nonmem_modelTest" ]  = read_nonmem_modelTest::suite();
