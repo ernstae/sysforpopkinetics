@@ -249,51 +249,46 @@ The following two tables summerieze the parameter and function mappings:
         </para>
      </sect2>
      <sect2>
-        <title>static bool <classname>Pred</classname>::<function>eval()</function></title>
+        <title>C++ Implementation of NONMEM PRED Model</title>
         <para>
 For v0.1, ASPK Compiler supports only the NONMEM's most general modeling framework,
-<literal>$PRED</literal>.  The content of <literal>$PRED</literal> is translated
-to C++ and inserted in as the core part of the definition of the static member
-function, <function>eval(...)</function>, of <classname>Pred</classname> class.
-The ASPK Compiler generates the entire code for the class, the declaration and 
-the definition, on the fly and the name of the class and 
-the <emphasis>interface</emphasis> for the <function>eval()</function> 
-member function is the only fixed part that never changes.
+<literal>$PRED</literal>.  
         </para>
         <para>
-In the $PRED block embedded in the definition of <classname>Pred</classname>::
-<function>eval(...)</function>, 
-the NONMEM user specifies 
-the pharmacokinetic model (equivalent of $PK) and the error model (equivalent of $ERROR).
-For the individual analysis, the PK model is the 1st term and
-the error model is the 2nd term in the equation (2) in 
-<link linkend="tableProblemMap">table 1</link>.
-Similarly, for the population analysis, the 1st term is the PK model and the 2nd
-term is the error model in the equation (4) in 
-<link linkend="tableProblemMap">table 1</link>.
+The definition of <literal>$PRED</literal>, which is written 
+in NM-TRAN (ie. a subset of FORTRAN 77), is translated into C++ and 
+inserted into a dynamically generated (by the SPK Compiler) 
+subclass of a pre-specified abstract class, <classname>PredBase</classname>.  
+<classname>PredBase</classname>
+declares a pure virtual member function called <function>eval(...)</function>,
+and this is where the C++ version of <literal>$PRED</literal> definition
+is embedded in.
         </para>
-        <programlisting>
+        <para>
+The following is the <classname>PredBase</classname>:
+           <programlisting>
 template &lt;class T&gt;
-class Pred{
-   public:
-      static bool eval( const T* const theta,
-                        int            spk_nTheta,
-                        const T* const eta,
-                        int            spk_nEta,
-                        const T* const eps,
-                        int            spk_nEps,
-                        int            spk_i,
-                        int            spk_j,
-                        double       & f,
-                        double       & y );
-   protected:
-      Pred();
-      Pred( const Pred & );
-      Pred & operator=( const Pred & );
-      ~Pred();
+class PredBase
+{
+public:
+  virtual bool eval( int spk_thetaOffset, int spk_thetaLen,
+		     int spk_etaOffset,   int spk_etaLen,
+		     int spk_epsOffset,   int spk_epsLen,
+		     int spk_fOffset,     int spk_fLen,
+		     int spk_yOffset,     int spk_yLen,
+		     int spk_i,
+		     int spk_j,
+		     const std::vector&lt;T&gt; & spk_indepVar,
+		     std::vector&lt;T&gt; & spk_depVar ) = 0;
+ protected:
+  ~PredBase(){}
+  PredBase(){}
+  PredBase( const PredBase& ){}
+  PredBase & operator=( const PredBase&lt;T&gt;& ){}
 };
-        </programlisting>
-        
+           </programlisting>
+        </para>
+
         <formalpara>
            <title>Description</title>
            <para>
@@ -341,8 +336,8 @@ within their portion of code.
         <formalpara>
            <title>Returned Value</title>
            <para>
-True if the MDV for the data record were 0.  
-False if it were 1.  MDV is a flag (0/1) indicating
+<literal>true</literal> if the MDV for the the i-th individual's j-th data record were marked 0.  
+<literal>false</literal> if it were 1.  MDV is a flag (0/1) indicating
 as to whether the data record contains the DV (Dependent Variable, our 
 <literal>y</literal>).  This information comes from the user's 
 data set.  If the data record did not have this field, ASPK Compiler
@@ -353,35 +348,95 @@ For v0.1, only the MDV data items of value 0 is supported.
         <variablelist>
            <title>Arguments</title>
            <varlistentry>
-              <term>theta</term>
-              <term>spk_nTheta</term>
-              <listitem>
-                 <para>
-<varname>theta</varname> is a pointer to the array of length 
-<varname>spk_nTheta</varname> to which the user's definition of $PRED
-refers as <literal>THETA(1)</literal>, <literal>THETA(2)</literal>, ...
-                 </para>
-             </listitem>
-           </varlistentry>
-           <varlistentry>
-              <term>eta</term>
-              <term>spk_nEta</term>
-              <listitem>
-                 <para>
-<varname>eta</varname> is a pointer to the array of length
-<varname>spk_nEta</varname> to which the user's definition of $PRED
-refers as <literal>ETA(1)</literal>, <literal>ETA(2)</literal>, ...
+              <term>spk_thetaOffset</term>
+               <listitem>
+	         <para>
+                 The index to the head of THETA vector within spk_indepVar.
                  </para>
               </listitem>
            </varlistentry>
            <varlistentry>
-              <term>eps</term>
-              <term>spk_nEps</term>
+              <term>spk_thetaLen</term>
               <listitem>
                  <para>
-<varname>eps</varname> is a pointer to the array of length
-<varname>spk_nEps</varname> to which the user's definition of $PRED
-refers as <literal>EPS(1)</literal>, <literal>EPS(2)</literal>, ....
+                 The length of THETA vector.  The vector elements are assumed to be placed
+                 from <literal>spk_indepVar[spk_thetaOffset]</literal> 
+                 to <literal>spk_indepVar[spk_theetaOffset + spk_theetaLen]</literal>.
+                 </para>
+              </listitem>
+           </varlistentry>
+           <varlistentry>
+              <term>spk_etaOffset</term>
+              <listitem>
+                 <para>
+                 The index to the head of ETA vector within spk_indepVar.
+                 </para>
+              </listitem>
+           </varlistentry>
+           <varlistentry>
+              <term>spk_etaLen</term>
+              <listitem>
+                 <para>
+                 The length of ETA vector.  The vector elements are assumed to be placed
+                 from <literal>spk_indepVar[spk_etaOffset]</literal>
+                 to <literal>spk_indepVar[spk_etaOffset + spk_etaLen]</literal>.
+                 </para>
+              </listitem>
+           </varlistentry>
+           <varlistentry>
+              <term>spk_epsOffset</term>
+              <listitem>
+                 <para>
+                 The index to the head of EPS vector within spk_indepVar.
+                 </para>
+              </listitem>
+           </varlistentry>
+           <varlistentry>
+              <term>spk_epsLen</term>
+              <listitem>
+                 <para>
+                 The length of EPS vector.
+                 The vector elements are assumed to be placed
+                 from <literal>spk_indepVar[spk_thetaOffset]</literal> 
+                 to <literal>spk_indepVar[spk_theetaOffset + spk_theetaLen]</literal>.
+                 </para>
+              </listitem>
+           </varlistentry>
+           <varlistentry>
+              <term>spk_fOffset</term>
+              <listitem>
+                 <para>
+                 The index to the memory location within spk_depVar in which
+                 the computed <literal>F</literal> (ie. prediction) 
+                 for the j-th measurement of the i-th individual
+                 shall be placed.
+                 </para>
+              </listitem>
+           </varlistentry>
+           <varlistentry>
+              <term>spk_fLen</term>
+              <listitem>
+                 <para>
+                 The total length of <literal>F</literal> vector.
+                 </para>
+              </listitem>
+           </varlistentry>
+           <varlistentry>
+              <term>spk_yOffset</term>
+              <listitem>
+                 <para>
+                 The index to the memory location within spk_depVar in which
+                 the computed <literal>Y</literal> (ie. data variance) 
+                 for the j-th measurement of the i-th individual
+                 shall be placed.
+                 </para>
+              </listitem>
+           </varlistentry>
+           <varlistentry>
+              <term>spk_yLen</term>
+              <listitem>
+                 <para>
+                 The total length of <literal>Y</literal> vector.
                  </para>
               </listitem>
            </varlistentry>
@@ -389,8 +444,8 @@ refers as <literal>EPS(1)</literal>, <literal>EPS(2)</literal>, ....
               <term>spk_i</term>
               <listitem>
                  <para>
-<varname>spk_i</varname> is a number indicating the subject of interest.
-<literal>0</literal> points to the first subject.
+                 The index to the individual of interest 
+                 within the population (0 indicates the first individual).
                  </para>
               </listitem>
            </varlistentry>
@@ -398,37 +453,32 @@ refers as <literal>EPS(1)</literal>, <literal>EPS(2)</literal>, ....
               <term>spk_j</term>
               <listitem>
                  <para>
-<varname>spk_j</varname> is a number such that <varname>spk_j</varname>-th
-measurement of the <varname>spk_i</varname>-th subject is estimated by
-the set of equations given as $PRED block.  <literal>0</literal>
-points to the first evaluation point.
+                 The index to the sampling point of interest.
                  </para>
               </listitem>
            </varlistentry>
            <varlistentry>
-              <term>f</term>
+              <term>spk_indepVar</term>
               <listitem>
                  <para>
-The content to which the reference <varname>f</varname> refers to will
-be altered to the value of <literal>F</literal> that is required to 
-appear on the left hand side of an equation within the $PRED block.
+                 The vector containing independent variables: 
+                 <literal>THETA</literal>, <literal>ETA</literal> and <literal>EPS</literal>.
                  </para>
               </listitem>
            </varlistentry>
            <varlistentry>
-              <term>y</term>
+              <term>spk_depVar</term>
               <listitem>
                  <para>
-The content to which the reference <varname>y</varname> refers to will
-be altered to the value of <literal>Y</literal> that is required to
-appear on the left hand side of an equation within the $PRED block.
+                 (output) The vector whose spk_yOffset-th and spk_yOffset-th elements
+                 are replaced with newly computed values.
                  </para>
               </listitem>
            </varlistentry>
         </variablelist>
      </sect2>
      <sect2>
-        <title>An Example of User-defined $PRED</title>
+        <title>An Example of $PRED</title>
         <programlisting>
    ;THETA(1)=MEAN ABSORPTION RATE CONSTANT (1/HR)
    ;THETA(2)=MEAN ELIMINATION RATE CONSTANT (1/HR)
@@ -450,129 +500,204 @@ appear on the left hand side of an equation within the $PRED block.
         </programlisting>
       </sect2>
       <sect2>
-         <title>A Realization of The Model Requirements</title>
+         <title>A C++ Realization of $PRED</title>
          <programlisting>
+// THIS FILE IS GENERATED BY THE ASPK COMPILER
+#ifndef PRED_H
+#define PRED_H
 
-// Pred.h
-#include "<link linkend="inddata">IndData.h</link>"
-
-template &lt;class T&gt;
-class Pred{
-   public:
-      bool eval( const T * const theta,
-                 int       spk_nTheta,
-                 const T * const eta,
-                 int       spk_nEta,
-                 const T * const eps,
-                 int       spk_nEps,
-                 int       spk_i,
-                 int       spk_j,
-                 T        & f,
-                 T        & y
-               );
-   
-      const <link linkend="inddata">IndDataSet</link> spk_all;
-      const <link linkend="inddata">IndDataSet</link> spk_cached_all;
-      const <link linkend="inddata">IndDataSet</link> spk_backup_all;
-
-      T ds;
-      T w;
-      T ka;
-      T ke;
-      T cl;
-      T d;
-      T e;
-      T f;
-      T y;
-
-   protected:
-      Pred();
-      Pred( const Pred & );
-      Pred& operator=( const Pred & );
-      ~Pred();
-};
-          </programlisting>
-          <para>
-          </para>
-          <programlisting>
-// Pred.cpp
-#include &lt;libspkcompiler/nonmem.h&gt;
-#include "<link linkend="inddata">IndData.h</link>"
-
-int Pred::cached_theta( 
+#include &lt;vector&gt;
+#include &lt;string&gt;
+#include "DataSet.h"
+#include "PredBase.h"
 
 template &lt;class T&gt;
-bool Pred::eval( const T * const theta,
-                 int             spk_nTheta,
-                 const T * const eta,
-                 int             spk_nEta,
-                 const T * const eps,
-                 int             spk_nEps,
-                 int             spk_i,
-                 int             spk_j,
-                 T             & f,
-                 T             & y )
+class Pred : public PredBase
 {
-   if( previous_i > spk_i )
-   {
-      // This means, the optimizer advanced 
-      // after a successful completion of the previous iteration.
-      // So, move cached information into the backup storage.
-      spk_backup_all = spk_cached_all;
-   }
-   dose = spk_all[spk_i].dose [spk_j];
-   wt   = spk_all[spk_i].wt   [spk_j];
-   time = spk_all[spk_i].time [spk_j];
-   mdv  = spk_all[spk_i].mdv  [spk_j];
-   cp   = spk_all[spk_i].cp   [spk_j];
+public:
+Pred( const DataSet&lt;T&gt; * dataIn );
+~Pred();
+bool eval( int spk_thetaOffset, int spk_thetaLen,
+           int spk_etaOffset,   int spk_etaLen,
+           int spk_epsOffset,   int spk_epsLen,
+           int spk_fOffset,     int spk_fLen,
+           int spk_yOffset,     int spk_yLen,
+           int spk_i,
+           int spk_j,
+           const std::vector&lt;T&gt;& spk_indepVar,
+           std::vector&lt;T&gt;& spk_depVar );
 
-   //===========================================
-   // User's PRED Definition Begin
-   //-------------------------------------------
-   
-   //THETA(1)=MEAN ABSORPTION RATE CONSTANT (1/HR)
-   //THETA(2)=MEAN ELIMINATION RATE CONSTANT (1/HR)
-   //THETA(3)=SLOPE OF CLEARANCE VS WEIGHT RELATIONSHIP (LITERS/HR/KG)
-   //DOSE=WT-ADJUSTED DOSE (MG/KG)
-   //DS=NON-WT-ADJUSTED DOSE (MG)
-   
-   if( dose != 0 ){
-      ds = dose * wt;
-      w = wt;
-   }
-   ka = theta[0] + eta[0];
-   ke = theta[1] + eta[1];
-   cl = theta[2] * w + eta[2];
-   d = exp(-ke * time) - exp(-ka * time);
-   e = cl * (ka - ke);
-   f = ds * ke * ka / e * d;
-   y = f + eps[0]; 
-
-   //-------------------------------------------
-   // End of User's PRED Definition
-   //===========================================
-
-   // ones given to this routine as arguments
-   spk_cached_theta[spk_i][spk_j] = spk_theta;
-   spk_cached_eta  [spk_i][spk_j] = spk_eta;
-   spk_cached_eps  [spk_i][spk_j] = spk_eps;
-
-   // ones that appeared on the left hand side of assignements
-   spk_cached_ds[spk_i][spk_j] = ds;
-   spk_cached_w [spk_i][spk_j] = w;
-   spk_cached_ka[spk_i][spk_j] = ka;
-   spk_cached_ke[spk_i][spk_j] = ke;
-   spk_cached_cl[spk_i][spk_j] = cl;
-   spk_cached_d [spk_i][spk_j] = d;
-   spk_cached_e [spk_i][spk_j] = e;
-   spk_cached_f [spk_i][spk_j] = f;
-   spk_cached_y [spk_i][spk_j] = y;
-
-   if( spk_all[spk_i].evid[spk_j] == nonmem::EVID_OBSERVATION )
-      return true;
-   else
-      return false;
+protected:
+Pred();
+Pred( const Pred& );
+Pred & operator=( const Pred& );
+private:
+const int nIndividuals;
+const DataSet&lt;T&gt; *perm;
+DataSet&lt;T&gt; temp;
+mutable bool isIterationCompleted;
+mutable std::string id;
+mutable T time;
+mutable T cp;
+mutable T dv;
+mutable T wt;
+mutable T dose;
+mutable T mdv;
+mutable T cl;
+mutable T d;
+mutable T ds;
+mutable T e;
+mutable T f;
+mutable T ka;
+mutable T ke;
+mutable T omega;
+mutable T pred;
+mutable T res;
+mutable T sigma;
+mutable T w;
+mutable T wres;
+mutable T y;
+};
+template &lt;class T&gt;
+Pred&lt;T&gt;::Pred( const DataSet&lt;T&gt;* dataIn )
+: perm( dataIn ),
+  nIndividuals( 3 ),
+  isIterationCompleted( true )
+{
 }
+template &lt;class T&gt;
+Pred&lt;T&gt;::~Pred()
+{
+}
+template &lt;class T&gt;
+bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
+                    int spk_etaOffset,   int spk_etaLen,
+                    int spk_epsOffset,   int spk_epsLen,
+                    int spk_fOffset,     int spk_fLen,
+                    int spk_yOffset,     int spk_yLen,
+                    int spk_i,
+                    int spk_j,
+                    const std::vector&lt;T&gt;& spk_indepVar,
+                    std::vector&lt;T&gt;& spk_depVar )
+{
+  assert( spk_thetaLen == 3 );
+  assert( spk_etaLen   == 3 );
+  assert( spk_epsLen   == 2 );
+
+id = perm->data[spk_i]->id[spk_j];
+time = perm->data[spk_i]->time[spk_j];
+cp = perm->data[spk_i]->cp[spk_j];
+dv = perm->data[spk_i]->dv[spk_j];
+wt = perm->data[spk_i]->wt[spk_j];
+dose = perm->data[spk_i]->dose[spk_j];
+mdv = perm->data[spk_i]->mdv[spk_j];
+typename std::vector&lt;T&gt;::const_iterator theta1 = spk_indepVar.begin() + spk_thetaOffset + 0;
+typename std::vector&lt;T&gt;::const_iterator theta2 = spk_indepVar.begin() + spk_thetaOffset + 1;
+typename std::vector&lt;T&gt;::const_iterator theta3 = spk_indepVar.begin() + spk_thetaOffset + 2;
+typename std::vector&lt;T&gt;::const_iterator eta1 = spk_indepVar.begin() + spk_etaOffset + 0;
+typename std::vector&lt;T&gt;::const_iterator eta2 = spk_indepVar.begin() + spk_etaOffset + 1;
+typename std::vector&lt;T&gt;::const_iterator eta3 = spk_indepVar.begin() + spk_etaOffset + 2;
+typename std::vector&lt;T&gt;::const_iterator eps1 = spk_indepVar.begin() + spk_epsOffset + 0;
+typename std::vector&lt;T&gt;::const_iterator eps2 = spk_indepVar.begin() + spk_epsOffset + 1;
+typename std::vector&lt;T&gt;::const_iterator theta = spk_indepVar.begin() + spk_thetaOffset;
+typename std::vector&lt;T&gt;::const_iterator eta = spk_indepVar.begin() + spk_etaOffset;
+typename std::vector&lt;T&gt;::const_iterator eps = spk_indepVar.begin() + spk_epsOffset;
+T f = 0.0;
+T y = 0.0;
+//=========================================
+// Begin User Code                         
+//-----------------------------------------
+
+// THETA(1)=MEAN ABSORPTION RATE CONSTANT (1/HR)
+// THETA(2)=MEAN ELIMINATION RATE CONSTANT (1/HR)
+// THETA(3)=SLOPE OF CLEARANCE VS WEIGHT RELATIONSHIP (LITERS/HR/kg)
+// DOSE=WT-ADJUSTED DOSE (mg/kg)
+// DS=NON-WT-ADJUSTED DOSE (mg)
+if( dose != 0 )
+{
+ds = dose * wt;
+w = wt;
+}
+
+ka = theta[ ( 1 ) - 1 ] + eta[ ( 1 ) - 1 ];
+ke = theta[ ( 2 ) - 1 ] + eta[ ( 2 ) - 1 ];
+cl = theta[ ( 3 ) - 1 ] * w + eta[ ( 3 ) - 1 ];
+d = exp( -ke * time ) - exp( -ka * time );
+e = cl * ( ka - ke );
+f = ds * ke * ka / e * d;
+y = f + eps[ ( 1 ) - 1 ];
+//-----------------------------------------
+// End User Code                           
+//=========================================
+temp.data[ spk_i ]->cl[ spk_j ] = cl;
+temp.data[ spk_i ]->d[ spk_j ] = d;
+temp.data[ spk_i ]->ds[ spk_j ] = ds;
+temp.data[ spk_i ]->e[ spk_j ] = e;
+copy( eps, eps + 2, temp.data[ spk_i ]->eps.begin() );
+copy( eta, eta + 3, temp.data[ spk_i ]->eta.begin() );
+temp.data[ spk_i ]->f[ spk_j ] = f;
+temp.data[ spk_i ]->ka[ spk_j ] = ka;
+temp.data[ spk_i ]->ke[ spk_j ] = ke;
+temp.data[ spk_i ]->omega[ spk_j ] = omega;
+temp.data[ spk_i ]->pred[ spk_j ] = pred;
+temp.data[ spk_i ]->res[ spk_j ] = res;
+temp.data[ spk_i ]->sigma[ spk_j ] = sigma;
+copy( theta, theta + 3, temp.data[ spk_i ]->theta.begin() );
+temp.data[ spk_i ]->w[ spk_j ] = w;
+temp.data[ spk_i ]->wres[ spk_j ] = wres;
+temp.data[ spk_i ]->y[ spk_j ] = y;
+
+if( spk_i == 3-1 && spk_j == perm->data[spk_i]->id.size()-1 )
+{
+  // This means, SPK advanced in iteration.
+  // Move temporary storage to permanent storage.
+  isIterationCompleted = true;
+  for( int i=0; i < nIndividuals; i++ )
+  {
+    perm->data[ i ]->cl = temp.data[ i ]->cl;
+    perm->data[ i ]->d = temp.data[ i ]->d;
+    perm->data[ i ]->ds = temp.data[ i ]->ds;
+    perm->data[ i ]->e = temp.data[ i ]->e;
+    perm->data[ i ]->eps = temp.data[ i ]->eps;
+    perm->data[ i ]->eta = temp.data[ i ]->eta;
+    perm->data[ i ]->f = temp.data[ i ]->f;
+    perm->data[ i ]->ka = temp.data[ i ]->ka;
+    perm->data[ i ]->ke = temp.data[ i ]->ke;
+    perm->data[ i ]->omega = temp.data[ i ]->omega;
+    perm->data[ i ]->pred = temp.data[ i ]->pred;
+    perm->data[ i ]->res = temp.data[ i ]->res;
+    perm->data[ i ]->sigma = temp.data[ i ]->sigma;
+    perm->data[ i ]->theta = temp.data[ i ]->theta;
+    perm->data[ i ]->w = temp.data[ i ]->w;
+    perm->data[ i ]->wres = temp.data[ i ]->wres;
+    perm->data[ i ]->y = temp.data[ i ]->y;
+  }
+}
+else
+{
+  isIterationCompleted = false;
+}
+
+spk_depVar[ spk_fOffset ] = f;
+spk_depVar[ spk_yOffset ] = y;
+if( perm->data[ spk_i ]->mdv[ spk_j ] == 0 )
+   return true;
+else return false;
+}
+template &lt;class T&gt;
+Pred&lt;T&gt;::Pred()
+{
+}
+template &lt;class T&gt;
+Pred&lt;T&gt;::Pred( const Pred&lt;T&gt;& )
+{
+}
+template &lt;class T&gt;
+Pred&lt;T&gt; & Pred&lt;T&gt;::operator=( const Pred&lt;T&gt;& )
+{
+}
+#endif
+
          </programlisting>
       </sect2>
    </sect1>
