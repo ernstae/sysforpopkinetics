@@ -820,7 +820,8 @@ void NonmemCompiler::interpretData()
 	  data[order].columns[item_cnt-1].label = const_cast<char*>(label);
           data[order].columns[item_cnt-1].synonym = const_cast<char*>(synonym);
 
-	  bool isNonmemKeyword = false;
+	  bool isNonmemKeyword = true;
+	  /*
 	  if( strcmp( label, "id" ) == 0 |
 	      strcmp( label, "l1" ) == 0 |
 	      strcmp( label, "l2" ) == 0 |
@@ -844,10 +845,11 @@ void NonmemCompiler::interpretData()
 	      strcmp( label, "call" ) == 0 |
 	      strcmp( label, "cont" ) == 0 )
 	    isNonmemKeyword = true;
+	  */
 	  Symbol lab( label, Symbol::VECTOR, Symbol::DOUBLE, isNonmemKeyword ); 
 	  lab.size( length );
 	  table->insert( lab );
-
+	  /*
 	  isNonmemKeyword = false;
 	  if( strcmp( synonym, "id" ) == 0 |
 	      strcmp( synonym, "l1" ) == 0 |
@@ -872,6 +874,7 @@ void NonmemCompiler::interpretData()
 	      strcmp( synonym, "call" ) == 0 |
 	      strcmp( synonym, "cont" ) == 0 )
 	    isNonmemKeyword = true;
+	  */
 	  Symbol syn( synonym, Symbol::VECTOR, Symbol::DOUBLE, isNonmemKeyword ); 
 	  syn.size( length );
 	  table->insert( syn );
