@@ -40,18 +40,20 @@ static const char *const substr(const char * begin,
 /*------------------------------------------------------------------------
  * Static member variables
  *------------------------------------------------------------------------*/
-  const unsigned int SpkCompilerError::ERRORCODE_FIELD_LEN = 4;
+  const unsigned int SpkCompilerError::ERRORCODE_FIELD_LEN = 8;
+  const unsigned int SpkCompilerError::ERRORCODE_DESCRIPTION_FIELD_LEN = 128;
   const unsigned int SpkCompilerError::LINENUM_FIELD_LEN   = 6;
   const unsigned int SpkCompilerError::FILENAME_FIELD_LEN  = 128;
   const unsigned int SpkCompilerError::MESSAGE_FIELD_LEN   = 256;
 
   const unsigned int SpkCompilerError::ERROR_SIZE        
       = SpkCompilerError::FILENAME_FIELD_LEN + 1
+      + SpkCompilerError::ERRORCODE_DESCRIPTION_FIELD_LEN + 1
       + SpkCompilerError::MESSAGE_FIELD_LEN + 1
       + SpkCompilerError::ERRORCODE_FIELD_LEN + 1
       + SpkCompilerError::LINENUM_FIELD_LEN + 1
-      //+ strlen("errorcode\n") + strlen("linenum\n") + strlen("filename\n") + strlen("message\n");
-      + 10 + 8 + 9 + 8;
+      //+ strlen("errorcode\n") + strlen("description\n") + strlen("linenum\n") + strlen("filename\n") + strlen("message\n");
+      + 10 + 12 + 8 + 9 + 8;
 
   const char SpkCompilerError::ERRORCODE_FIELD_NAME[] = "errorcode";
   const char SpkCompilerError::ERRORCODE_DESCRIPTION_FIELD_NAME[] = "description";
@@ -74,6 +76,8 @@ const char* SpkCompilerError::describe( enum ErrorCode key )
 }
 unsigned int SpkCompilerError::maxErrorcode() throw()
 {
+  return pow( 2.0, (double)sizeof( int ) /*bytes*/ * 7 /* 8 bits - a signed bit*/ ) - 1;
+  /*
     try{
         unsigned int max = 0;
         for(unsigned int i=1, multiplier=1; i<=ERRORCODE_FIELD_LEN; i++, multiplier*=10)
@@ -87,6 +91,7 @@ unsigned int SpkCompilerError::maxErrorcode() throw()
         cerr << "SpkCompilerError::maxErrorcode() shall not throw... terminating..." << endl;
         abort();
     }
+  */
 }
 unsigned int SpkCompilerError::maxLinenum() throw()
 {
@@ -153,7 +158,7 @@ SpkCompilerError::SpkCompilerError(enum ErrorCode ecode, const char* mess, unsig
     }
 }
 SpkCompilerError::SpkCompilerError( const std::exception& e, const char* mess, unsigned int line, const char* file) throw()
-: myErrorCode(SpkCompilerError::SPK_COMPILER_STD_ERR), myLineNum(line)
+: myErrorCode(SpkCompilerError::ASPK_STD_ERR), myLineNum(line)
 {
     try{
       if( strlen(mess) > maxMessageLen() )
@@ -243,6 +248,11 @@ std::ostream& operator<<(std::ostream& stream, const SpkCompilerError& e)
     stream << e.myErrorCode << endl;
 
     stream << SpkCompilerError::ERRORCODE_DESCRIPTION_FIELD_NAME << endl;
+    ///////////////////////////////////////////////
+    //  04/02/04 SACHIKO
+    // COME BACK HERE!!!
+    // Does this need the trailing '\r'?  Why???
+    ///////////////////////////////////////////////
     stream << SpkCompilerError::describe( e.myErrorCode ) << endl << '\r';
 
     stream << SpkCompilerError::LINENUM_FIELD_NAME   << endl;
@@ -329,17 +339,12 @@ const SpkCompilerError::ErrorMap SpkCompilerError::fillErrorMap()
     //
     ErrorMap tmpMap;
     
-    tmpMap.insert( ErrorMap::value_type(SPK_COMPILER_STD_ERR,        "SPK_COMPILER_STD_ERR") );
-    tmpMap.insert( ErrorMap::value_type(SPK_COMPILER_INSUFFICIENT_MEM_ERR,"SPK_COMPILER_INSUFFICIENT_MEM_ERR") );
-    tmpMap.insert( ErrorMap::value_type(SPK_COMPILER_DRIVER_ERR,     "SPK_COMPILER_DRIVER_ERR") );
-    tmpMap.insert( ErrorMap::value_type(SPK_COMPILER_SOURCEML_ERR,   "SPK_COMPILER_SOURCEML_ERR"));
-    tmpMap.insert( ErrorMap::value_type(SPK_COMPILER_DATAML_ERR,     "SPK_COMPILER_DATAML_ERR"));
-    tmpMap.insert( ErrorMap::value_type(SPK_COMPILER_FORTRAN_ERR,    "SPK_COMPILER_FORTRAN_ERR"));
-
-    tmpMap.insert( ErrorMap::value_type(SPK_COMPILER_UNKNOWN_ERR,    "SPK_COMPILER_UNKNOWN_ERR") );
-
-    tmpMap.insert( ErrorMap::value_type(SPK_COMPILER_USER_INPUT_ERR, "SPK_COMPILER_USER_INPUT_ERR"));
-
-    tmpMap.insert( ErrorMap::value_type(SPK_COMPILER_XMLDOM_ERR,     "SPK_COMPILER_XMLDOM_ERR"));
+    tmpMap.insert( ErrorMap::value_type(ASPK_STD_ERR,        "ASPK_STD_ERR") );
+    tmpMap.insert( ErrorMap::value_type(ASPK_SOURCEML_ERR,   "ASPK_SOURCEML_ERR"));
+    tmpMap.insert( ErrorMap::value_type(ASPK_DATAML_ERR,     "ASPK_DATAML_ERR"));
+    tmpMap.insert( ErrorMap::value_type(ASPK_FTOC_ERR,    "ASPK_FOTC_ERR"));
+    tmpMap.insert( ErrorMap::value_type(ASPK_UNKNOWN_ERR,    "ASPK_UNKNOWN_ERR") );
+    tmpMap.insert( ErrorMap::value_type(ASPK_PROGRAMMER_ERR,"ASPK_PROGRAMMER_ERR"));
+    tmpMap.insert( ErrorMap::value_type(ASPK_XMLDOM_ERR,     "ASPK_XMLDOM_ERR"));
     return tmpMap;
 }

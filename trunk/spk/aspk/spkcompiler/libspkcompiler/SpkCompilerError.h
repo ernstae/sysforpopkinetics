@@ -1,37 +1,32 @@
+/**
+ * @file SpkCompilerError.h
+ * Declare SpkCompilerError class
+ */
 #ifndef SPKCOMPILERERROR_H
 #define SPKCOMPILERERROR_H
 
 #include <map>
 #include <exception>
 #include <string>
-/*
-namespace SpkCompilerError_const{
-  const unsigned int ERRORCODE_FIELD_LEN = 4;
-  const unsigned int LINENUM_FIELD_LEN   = 6;
-  const unsigned int FILENAME_FIELD_LEN  = 128;
-  const unsigned int MESSAGE_FIELD_LEN   = 256;
 
-  const unsigned int ERROR_SIZE        
-      = FILENAME_FIELD_LEN + 1
-      + MESSAGE_FIELD_LEN + 1
-      + ERRORCODE_FIELD_LEN + 1
-      + LINENUM_FIELD_LEN + 1
-      //+ strlen("errorcode\n") + strlen("linenum\n") + strlen("filename\n") + strlen("message\n");
-      + 10 + 8 + 9 + 8;
-
-  const char ERRORCODE_FIELD_NAME[] = "errorcode";
-  const char ERRORCODE_DESCRIPTION_FIELD_NAME[] = "description";
-  const char FILENAME_FIELD_NAME[]  = "filename";
-  const char LINENUM_FIELD_NAME[]   = "linenum";
-  const char MESSAGE_FIELD_NAME[]   = "message";
-}
-*/
+/**
+ * 
+ */
 class SpkCompilerError
 {
 
-public:
-
+ public:
+  
+  /**
+   * The length of the field that contains an error code.
+   * Error codes are of tppe of ErrorCode enumulation.
+   * The size of an enumulation cannot be larger than
+   * sizeof( int ).  The largest number expressed in the
+   * integral type is obtained by an ANSII macro INT_MAX 
+   * defined in <filename>limits.h</filename>.
+   */
   static const unsigned int ERRORCODE_FIELD_LEN;
+  static const unsigned int ERRORCODE_DESCRIPTION_FIELD_LEN;
   static const unsigned int LINENUM_FIELD_LEN;
   static const unsigned int FILENAME_FIELD_LEN;
   static const unsigned int MESSAGE_FIELD_LEN;
@@ -44,43 +39,32 @@ public:
   static const char LINENUM_FIELD_NAME[];
   static const char MESSAGE_FIELD_NAME[];
 
-  //
-  // Each error code is preceded by SPK_ in order to avoid name conflict.
-  // Somewhere in the vender supplied libraries predefine OVERFLOW.
-  // For consistency, all error codes here got SPK_ prefix.
-  //
   enum ErrorCode {
-      // C++ Standard library errors
-      SPK_COMPILER_STD_ERR, 
+    /** C++ Standard library errors */
+    ASPK_STD_ERR,
 
-      // User input error
-      SPK_COMPILER_USER_INPUT_ERR,
+    /** XML DOM parser error */
+    ASPK_XMLDOM_ERR,
 
-      // Insufficient memory error
-      SPK_COMPILER_INSUFFICIENT_MEM_ERR,
+    /** SpkSourceML->C++ compilation error */
+    ASPK_SOURCEML_ERR,
 
-      // SPK Compiler Driver error
-      SPK_COMPILER_DRIVER_ERR,
+    /** SpkDataML->C++ compilation error */
+    ASPK_DATAML_ERR,
 
-      // XML DOM error
-      SPK_COMPILER_XMLDOM_ERR,
+    /** Fortran->C++ compilation error */
+    ASPK_FTOC_ERR,
 
-      // SpkSourceML->C++ compilation error
-      SPK_COMPILER_SOURCEML_ERR,
+    /** ASPK Compiler implemntator's programming error */
+    ASPK_PROGRAMMER_ERR,
 
-      // SpkDataML->C++ compilation error
-      SPK_COMPILER_DATAML_ERR,
-
-      // Fortran->C++ compilation error
-      SPK_COMPILER_FORTRAN_ERR,
-
-      // Unknown
-      SPK_COMPILER_UNKNOWN_ERR
+    /** Unknown */
+    ASPK_UNKNOWN_ERR
   };
   typedef std::map< enum ErrorCode, const char* > ErrorMap;
 
-private:
-  // The associated array [ErrorCode - Default Message]
+ private:
+  // Map: ErrorCode vs. Default Message
   static const ErrorMap mapping;
 
   // filling the default error code vs message map
@@ -101,7 +85,7 @@ private:
   // returns the maximum value allowed for error code
   unsigned int maxErrorcode() throw();
 
-public:
+ public:
 
   // Displays a default error message corresponding to the error code
   static const char* describe( enum ErrorCode key );
