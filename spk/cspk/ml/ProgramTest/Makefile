@@ -32,7 +32,7 @@ OBJECT = \
 	MapBay.o \
 	MapMonte.o
 
-All : Sim monteDriver
+All : monteDriver
 
 Sim : Sim.cpp
 	g++ -g Sim.cpp -lgsl -lcblas -latlas -o Sim
