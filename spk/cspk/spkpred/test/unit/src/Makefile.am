@@ -4,10 +4,12 @@ testall_SOURCES = \
 	compareToKnown.cpp \
 	DiagCovTest.cpp \
 	IndPredModelTest.cpp \
+	PopPredModelTest.cpp \
 	testall.cpp \
 	compareToKnown.h \
 	DiagCovTest.h \
 	IndPredModelTest.h \
+	PopPredModelTest.h \
 	../config.h
 
 testall_CXXFLAGS = -I/usr/local/cppunit/include
@@ -18,4 +20,5 @@ INCLUDES = -I@top_srcdir@/
 pkginclude_HEADERS = \
 	compareToKnown.h \
 	DiagCovTest.h \
-	IndPredModelTest.h
+	IndPredModelTest.h \
+	PopPredModelTest.h

@@ -6,6 +6,7 @@
 
 #include "src/DiagCovTest.h"
 #include "src/IndPredModelTest.h"
+#include "src/PopPredModelTest.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -30,6 +31,7 @@ int main( int argc, const char * argv[] )
 
   master_list_of_tests[ "DiagCovTest" ]               = DiagCovTest::suite();
   master_list_of_tests[ "IndPredModelTest  " ]        = IndPredModelTest  ::suite();
+  master_list_of_tests[ "PopPredModelTest  " ]        = PopPredModelTest  ::suite();
 
   //
   // This is the case where user didn't select specific unit tests.
