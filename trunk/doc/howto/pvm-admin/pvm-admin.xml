@@ -191,14 +191,26 @@ grep cspk /etc/group
       </para>
     </sect2>
     <sect2>
-      <title>Configure NFS</title>
+      <title>Defining Environment Variables</title>
+      <para>
+	For each of the potential users, add the following lines to its
+	<filename>~/.bashrc</filename> file:
+	<screen>
+PVM_ROOT=/usr/share/pvm3
+PVM_RSH=/usr/bin/ssh
+export PVM_ROOT PVM_RSH
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Configuring NFS</title>
       <para>
 	The new host does not have to be an NFS server.  It merely needs
 	to be configured to mount a directory tree that resides on the
 	remote file server.
       </para>
       <sect3>
-	<title>Identify fileserver</title>
+	<title>Identify fileserver on New Host</title>
 	<para>
 	  First we should establish <emphasis>fileserver</emphasis>
 	  as an alias for the
@@ -213,7 +225,7 @@ grep cspk /etc/group
 	</para>
       </sect3>
       <sect3>
-	<title>Create a Directory for Mounting the Remote File System</title>
+	<title>Create a Directory for Mounting the Remote File System on New Host</title>
 	<para>
 	  The remote file system will be mounted on a directory in the
 	  host.  Create this directory as follows:
@@ -224,13 +236,45 @@ mkdir -p /usr/local/spk/share
 	</para>
       </sect3>
       <sect3>
-	<title>Add Mount Information to <filename>/etc/fstab</filename></title>
+	<title>Add Mount Information to <filename>/etc/fstab</filename> on New Host</title>
 	<para>
 	  As root, add the following line to <filename>/etc/fstab</filename>, using
 	  your favorite editor:
 	  <screen>
 fileserver:/usr/local/spk/share /usr/local/spk/share nfs rsize=8194,wsize=8192,timeo=14,intr
 	  </screen>
+	</para>
+      </sect3>
+      <sect3>
+	<title>Grant Access to fileserver for New Host</title>
+	<para>
+	  As root, on fileserver, append the following line to 
+	  <filename>/etc/exports</filename>
+	  <screen>
+/usr/local/spk/share  <emphasis>newhost</emphasis>(rw,sync,no_root_squash)
+	  </screen>
+	  where <emphasis>newhost</emphasis> is an alias for the new host on 
+	  <emphasis>fileserver</emphasis>.  If the alias is not already defined 
+	  on <emphasis>fileserver</emphasis>, add it by editing 
+	  the <filename>/etc/hosts</filename> file.
+	</para>
+	<para>
+	  In a root window, activate the change with the command:
+	  <screen>
+/usr/sbin/exportfs -r
+	  </screen>
+	</para>
+      </sect3>
+      <sect3>
+	<title>Verify the NFS Configuration</title>
+	<para>
+	  In a root window on the new host, enter
+	  <screen>
+mount /usr/local/spk/share
+	  </screen>
+	  If no error messages come back, <command>cd</command> to the directory
+	  and use <command>ls</command> to verify that files have, indeed, been
+	  mounted.
 	</para>
       </sect3>
     </sect2>

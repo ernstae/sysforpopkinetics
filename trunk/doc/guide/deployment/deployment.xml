@@ -276,6 +276,16 @@ deploy_candidate.pl
 release_notes
 	    </screen>
 	  </para>
+	  <para>
+	    This will concatenate the release notes together and copy them to 
+	    the web server.  
+	  </para>
+	  <para>
+	    To make the web notes accessible, add a url to the software team
+	    web page, by editing the file <filename>index.html</filename>
+	    in the cvs directory <filename>dvl/r2/web</filename>, then 
+	    executing <command>make</command> in that directory.
+	  </para>
 	</listitem>
 	<listitem>
 	  <para>

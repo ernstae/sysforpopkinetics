@@ -462,11 +462,11 @@ scp 'whitechuck:/opt/download/bugzilla-submit*gz' .
 tar xvzf bugzilla-submit*gz
 cd bugzilla-submit
 su
-cp bugzilla-submit /usr/local/bugzilla-submit
+cp bugzilla-submit /usr/local/bin/bugzilla-submit
       </screen>
     </sect2>
     <sect2>
-      <title>Install .netrc</title>
+      <title>Configure <filename>.netrc</filename></title>
       <para>
 	<screen>
 su
@@ -496,6 +496,17 @@ password        <emphasis>secretpassword</emphasis>
 	the machine that hosts bugzilla is changed, the new IP
 	address must be changed in both daemons and all .netrc
 	files.
+      </para>
+      <para>
+	The <filename>.netrc</filename> file will not be read if 
+	the mode bits allow access to anyone but the owner.  If
+	<command>ls -l .netrc</command> does not show -rw-------,
+	set mode properly as follows:
+	<screen>
+su
+cd
+chmod 0600 .netrc
+	</screen>
       </para>
     </sect2>
   </sect1>
