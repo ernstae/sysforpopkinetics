@@ -778,9 +778,9 @@ void NonmemTranslatorIndTest::testParseIndSource()
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Test driver.cpp to see if it compiles/links successfully.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  char fDriver[]           = "driver";
-  char fDriver_cpp[]       = "driver.cpp";
-
+  char fDriver[]     = "driver";
+  char fDriver_cpp[] = "driver.cpp";
+  int  exitcode      = 0;
   sprintf( command, "make -f generatedMakefile" );
   if( system( command ) != 0 )
     {
@@ -789,12 +789,30 @@ void NonmemTranslatorIndTest::testParseIndSource()
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   sprintf( command, "./%s", fDriver );
-  if( system( command ) != 0 )
+  // The exist code of 0 indicates success.  1 indicates convergence problem.
+  // 2 indicates some file access problem.
+  // Since I didn't set the problem so that it makes sense in either scientifically
+  // or mathematially, the return code of anything other than 2 is ignored here.
+  exitcode = system( command );
+  if( exitcode == 1 )
     {
       char message[256];
-      sprintf( message, "%s failed!  But, it's okay.  The problem set up was not real.", fDriver );
+      sprintf( message, "%s failed for convergence problem <%d>!", fDriver, exitcode );
       CPPUNIT_ASSERT_MESSAGE( message, true );
     }
+  if( exitcode == 2 )
+    {
+      char message[256];
+      sprintf( message, "%s failed due to inproper file access permission <%d>!", fDriver, exitcode );
+      CPPUNIT_ASSERT_MESSAGE( message, false );
+    }
+  if( exitcode > 2 )
+    {
+      char message[256];
+      sprintf( message, "%s failed for reasons other than convergence propblem or access permission <%d>!", fDriver, exitcode );
+      CPPUNIT_ASSERT_MESSAGE( message, true );
+    }
+
 
   remove( fIndDataDriver );
   remove( fIndDataDriver_cpp );
@@ -1544,8 +1562,9 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Test driver.cpp to see if it compiles/links successfully.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  char fDriver[]           = "driver";
-  char fDriver_cpp[]       = "driver.cpp";
+  char fDriver[]     = "driver";
+  char fDriver_cpp[] = "driver.cpp";
+  int  exitcode      = 0;
 
   sprintf( command, "make -f generatedMakefile" );
   if( system( command ) != 0 )
@@ -1555,10 +1574,28 @@ void NonmemTranslatorIndTest::testParseIndNoID()
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   sprintf( command, "./%s", fDriver );
-  if( system( command ) != 0 )
+  
+  // The exist code of 0 indicates success.  1 indicates convergence problem.
+  // 2 indicates some file access problem.
+  // Since I didn't set the problem so that it makes sense in either scientifically
+  // or mathematially, the return code of anything other than 2 is ignored here.
+  exitcode = system( command );
+  if( exitcode == 1 )
     {
       char message[256];
-      sprintf( message, "%s failed!  But, it's okay.  The problem set up was not real.", fDriver );
+      sprintf( message, "%s failed for convergence problem <%d>!", fDriver, exitcode );
+      CPPUNIT_ASSERT_MESSAGE( message, true );
+    }
+  if( exitcode == 2 )
+    {
+      char message[256];
+      sprintf( message, "%s failed due to inproper file access permission <%d>!", fDriver, exitcode );
+      CPPUNIT_ASSERT_MESSAGE( message, false );
+    }
+  if( exitcode > 2 )
+    {
+      char message[256];
+      sprintf( message, "%s failed for reasons other than convergence propblem or access permission <%d>!", fDriver, exitcode );
       CPPUNIT_ASSERT_MESSAGE( message, true );
     }
 
