@@ -827,13 +827,13 @@ int main( int argc, const char *const argv[] )
         popParIn[5]  = omegaInFull[4];
         popParIn[6]  = omegaInFull[8];
 
-        popParLow[4] = popParIn[4] * 1.0e-6;
-        popParLow[5] = popParIn[5] * 1.0e-6;
-        popParLow[6] = popParIn[6] * 1.0e-6;
+        popParLow[4] = popParIn[4] * 1.0e-3;
+        popParLow[5] = popParIn[5] * 1.0e-3;
+        popParLow[6] = popParIn[6] * 1.0e-3;
 
-        popParUp[4]  = popParIn[4] * 100.0;
-        popParUp[5]  = popParIn[5] * 100.0;
-        popParUp[6]  = popParIn[6] * 100.0;
+        popParUp[4]  = popParIn[4] * 10.0;
+        popParUp[5]  = popParIn[5] * 10.0;
+        popParUp[6]  = popParIn[6] * 10.0;
     }
 
     //
