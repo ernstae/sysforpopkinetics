@@ -1073,7 +1073,7 @@ DEFINED_UNARY_FUNCTION '(' arithmatic_expr ')' {
    // allocate for the longest string.
    //
    int n = strlen( $1 ); 
-   char buf[ n + strlen( "(  )" ) + 1 ];
+   char buf[ n + strlen( "(  )" ) + strlen( $3 ) + 1 ];
    char lowercase[ n + 1 ];
    strcpy( lowercase, $1 );
    for( int i=0; i<n; i++ )
