@@ -896,24 +896,59 @@ void quasiNewtonAnyBox(
   }
 
 
-     // construct function object
-     Fun obj(exponential, n, Q, b);
+  if ( isAWarmRestart )
+  {
+    // This function assumes that the Hessian provided during
+    // a warm start is sufficiently accurate that the optimizer
+    // does not need extra iterations in order to approximate
+    // the Hessian the first time it is called.
+    nIterMax = 1;
 
-     /*
-     Current iterate values
-     */
-     size_t        ItrCur = 0;
-     size_t       QuadCur = 0;
-     double          rCur = .5;
-     double          fCur;
-     /*
-     Output values
-     */
-     double         fOut;
+    // Retrieve the previous state information.
+    StateInfo stateInfo = optimizer.getStateInfo();
 
-     // initial yCur
-     for(i = 0; i < n; i++)
-          yCur[i] = .5;
+    if ( stateInfo.n == nObjPar )
+    {
+      rScaled = stateInfo.r;
+	fScaled = stateInfo.f;
+
+
+          REPLACE THESE WITH LOOPS OVER ALL ELEMENTS
+          REPLACE THESE WITH LOOPS OVER ALL ELEMENTS
+          REPLACE THESE WITH LOOPS OVER ALL ELEMENTS
+          REPLACE THESE WITH LOOPS OVER ALL ELEMENTS
+          REPLACE THESE WITH LOOPS OVER ALL ELEMENTS
+
+	yCurr   = stateInfo.x;
+	gScaled = stateInfo.g;
+	hScaled = stateInfo.h;
+    }
+    else
+    {
+
+      THROW AN EXCEPTION
+      THROW AN EXCEPTION
+      THROW AN EXCEPTION
+      THROW AN EXCEPTION
+      THROW AN EXCEPTION
+
+    }
+  }
+  else
+  {
+    // Set the number of quasi-Newton iterations high enough that 
+    // the optimizer can build up a reasonably accurate approximation
+    // for the Hessian the first time it is called, but not so high
+    // that it will perform too many iterations before this function's
+    // convergence criterion is checked.
+    nIterMax = nObjPar;
+    
+     rScaled = .5;    WHY THIS VALUE?
+     rScaled = .5;    WHY THIS VALUE?
+     rScaled = .5;    WHY THIS VALUE?
+     rScaled = .5;    WHY THIS VALUE?
+     rScaled = .5;    WHY THIS VALUE?
+
 
      // fCur is objective function value at yCur
      msg = obj.function(yCur, fCur); 
@@ -927,57 +962,6 @@ void quasiNewtonAnyBox(
      for(i = 0; i < n; i++)
           for(j = 0; j < n; j++)
                HCur[i * n + j ] = static_cast<double>( i == j );
-
-
-  if ( isAWarmRestart )
-  {
-    // This function assumes that the Hessian provided during
-    // a warm start is sufficiently accurate that the optimizer
-    // does not need extra iterations in order to approximate
-    // the Hessian the first time it is called.
-    nIterMax = 1;
-
-    // Retrieve the previous state information.
-    if ( isWarmStart )
-    {
-      StateInfo stateInfo = optimizer.getStateInfo();
-
-      if ( stateInfo.n == nObjPar )
-      {
-        rScaled = stateInfo.r;
-	fScaled = stateInfo.f;
-
-
-            REPLACE THESE WITH LOOPS OVER ALL ELEMENTS
-            REPLACE THESE WITH LOOPS OVER ALL ELEMENTS
-            REPLACE THESE WITH LOOPS OVER ALL ELEMENTS
-            REPLACE THESE WITH LOOPS OVER ALL ELEMENTS
-            REPLACE THESE WITH LOOPS OVER ALL ELEMENTS
-
-	yCurr   = stateInfo.x;
-	gScaled = stateInfo.g;
-	hScaled = stateInfo.h;
-      }
-      else
-      {
-
-        THROW AN EXCEPTION
-        THROW AN EXCEPTION
-        THROW AN EXCEPTION
-        THROW AN EXCEPTION
-        THROW AN EXCEPTION
-
-      }
-    }
-  }
-  else
-  {
-    // Set the number of quasi-Newton iterations high enough that 
-    // the optimizer can build up a reasonably accurate approximation
-    // for the Hessian the first time it is called, but not so high
-    // that it will perform too many iterations before this function's
-    // convergence criterion is checked.
-    nIterMax = nObjPar;
 
     // Create an approximation for the Hessian.
     hScaled = ... ;
