@@ -31,13 +31,16 @@ test_nonmem_SOURCES = \
         ind_withIDTest.cpp \
         ind_withIDTest.h \
 	ind_withoutIDTest.cpp \
-	ind_withoutIDTest.h
+	ind_withoutIDTest.h \
+	ind_simTest.cpp \
+        ind_simTest.h
 
 test_nonmem_INCLUDES = \
 	lex_explangTest.h \
 	explangTest.h \
         ind_withIDTest.h \
-	ind_withoutIDTest.h
+	ind_withoutIDTest.h \
+	ind_simTest.h
 
 AM_LDFLAGS = -lxerces-c -lcppunit -L$(INST_BASE)/lib/spktest -lspkcompiler 
 
