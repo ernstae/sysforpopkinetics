@@ -30,7 +30,7 @@
   <sect1>
     <title>Introduction</title>
     <para>
-      Three stages of testing are employed are employed in the enhancement
+      Three stages of testing are employed in the enhancement
       and modification of SPK:
       <orderedlist>
 	<listitem>
@@ -505,12 +505,6 @@ load_spktest.pl
 	      </listitem>
 	      <listitem>
 		<para>
-		  You can now commit your additions and modifications to
-		  the cvs repository.
-		</para>
-	      </listitem>
-	      <listitem>
-		<para>
 		  Exit this step-by-step procedure.
 		</para>
 	      </listitem>
@@ -523,6 +517,12 @@ load_spktest.pl
 	    <orderedlist>
 	      <listitem>
 		<para>
+		  You can now commit your additions and modifications to
+		  the cvs repository.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
 		  Add your candidate to the list of deployment candidates.
 		</para>
 		<para>
@@ -530,12 +530,21 @@ load_spktest.pl
 		  <screen>
 stage_candidate.pl
 		  </screen>
+		  You may want to write down the name of the release-notes
+		  file created by stage_candidate.pl, because you will need
+		  to edit it.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
 		  Inform the other developers that the test environment is
 		  now available.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  Edit the release-notes file created by the execution of 
+		  stage_candidate.pl
 		</para>
 	      </listitem>
 	      <listitem>
