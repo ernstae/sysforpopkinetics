@@ -283,13 +283,23 @@
                      |advan7|advan8|advan9|advan10|advan11|advan12) #IMPLIED>
 
 <!--
-     When a canned model is used, that is when "base" attribute
-     is set to one of the ADVAN routines, <model> may
-     also take "tolerance" attribute value.
-     "tolerance" is set to an integer that defines the required
-     number of digits.
+     When one of ADVAN models is going to be used, this is where
+     the user chooses one from the list.  
 -->
+
+<!ATTLIST model trans (trans1|trans2|trans3|trans4|trans5) #FIXED="trans1">
+<!--
+     When one of ADVAN models is used, the user may choose
+     a specific TRANS routine from the list.  
+     The default is TRANS1.
+-->
+
 <!ATTLIST model tolerance (#PCDATA) #IMPLIED>
+<!-- 
+     When one of ADVAN models is used, the user may set "tolerance"
+     to an integer value that defines the required number of digits
+     of accuracy.
+-->
 
 <!---------------------------------------------------
      <data> section contains various measurements
