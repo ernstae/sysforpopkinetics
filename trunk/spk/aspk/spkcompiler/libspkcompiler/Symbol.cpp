@@ -275,7 +275,6 @@ std::ostream& operator<<( std::ostream& o, const Symbol& s )
   else if( s.symbol_type == Symbol::NONMEMDEF )
     {
       o << "NONMEM defined" << endl;
-      o << "Vector Size : " << s.initial.size() << endl;
     }
   else
     o << "unknown" << endl;
@@ -287,11 +286,27 @@ std::ostream& operator<<( std::ostream& o, const Symbol& s )
     }
   else if( s.object_type == Symbol::VECTOR )
     {
-      o << "vector";
+      int n=s.initial.size();
+      o << (n>1? "vectors" : "vector" ) << " { ";
+      for( int i=0; i<n; i++ )
+	{
+	  if( i>0 )
+	    o << ", ";
+	  o << s.initial[i].size();
+	}
+      o << " }";
     }
   else if( s.object_type == Symbol::MATRIX )
     {
-      o << "matrix";
+      int n= s.initial.size();
+      o << (n>1? "matrices" : "matrix") << " { ";
+      for( int i=0; i<n; i++ )
+	{
+	  if( i > 0 )
+	    o << ", ";
+	  o << "(" << s.dimension[i] << " by " << s.dimension[i] << ")";
+	}
+      o << " }";
     }
   else
     o << "unknown";
