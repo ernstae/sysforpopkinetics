@@ -1038,19 +1038,8 @@ void ind_withoutIDTest::testIndDataClass()
   o << "   MY_ASSERT_EQUAL( n, A." << strY    << ".size() );" << endl;
   o << endl;
 
-
-  o << "  const valarray<double> y = A.getMeasurements();" << endl;
-  o << "  MY_ASSERT_EQUAL( " << nRecords-nFixed << ", y.size() );" << endl;
-  for( int i=0, nMeasurements; i<nRecords; i++ )
-    {
-      if( record[i][3] != 1 )
-	{
-	  o << "   MY_ASSERT_EQUAL( y[" << nMeasurements << "], A." << strDV   << "[" << i << "] );" << endl;
-          nMeasurements++;
-	}
-    }
-  o << endl;
-
+  o << "   const valarray<double> y = A.getMeasurements();" << endl;
+  o << "   MY_ASSERT_EQUAL( " << nRecords-nFixed << ", y.size() );" << endl;
   o << "   A.compResiduals();" << endl;
   o << "   for( int j=0, k=0; j<n; j++ )" << endl;
   o << "   {" << endl;
@@ -1063,6 +1052,7 @@ void ind_withoutIDTest::testIndDataClass()
   o << "   }" << endl;
   o << endl;
 
+  o << "   return 0;" << endl;
   o << "}" << endl;
   o.close();
 

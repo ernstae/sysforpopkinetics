@@ -79,7 +79,7 @@ namespace{
 #define MY_ASSERT_EQUAL( expected, actual ) \\\n \
 if( actual != expected ) \\\n \
  { \\\n \
-   std::cerr << __FILE__ << \"(\" << __LINE__ << \"): but was \" << actual << std::endl; \\\n \
+   std::cerr << __FILE__ << \"(\" << __LINE__ << \"): expected \" << expected << \" but was \" << actual << std::endl; \\\n \
    raise( SIGABRT ); \\\n \
 } \\\n\n";
 
@@ -303,10 +303,10 @@ if( actual != expected ) \\\n \
   // b0 = THETA(1)
   // b1 = THETA(2)
   // x = TIME
-  // F = b0 + b1 * x = THETA(1) + THETA(2)*TIME
+  // F = b0 + b1 ** x
   // Y = F + ETA(1)
   //============================================
-  const char PRED[] = "b0 = THETA(1)\nb1 = THETA(2)\nx = TiMe\nF = b0 + b1 * x\nY = F + ETA(1)\n";
+  const char PRED[] = "b0 = THETA(1)\nb1 = THETA(2)\nx = TiMe\nF = b0 + b1 ** x\nY = F + ETA(1)\n";
 
 
   //============================================
