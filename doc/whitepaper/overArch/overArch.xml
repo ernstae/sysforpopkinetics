@@ -36,7 +36,7 @@
 	equations that comprise these models contain parameters whose
 	values must be determined by "fitting" the equations to real-world
 	data.  In the biomedical field of population kinetics (PK), models
-	of a type known as <emphasis>non-parametric mixed-effect</emphasis>,
+	of a type known as <emphasis>nonlinear mixed-effects</emphasis>,
 	are popular.  This technique, when properly applied,
 	can provide models which
 	accurately project the behavior of an entire population from
@@ -55,11 +55,11 @@
 	<itemizedlist>
 	  <listitem>
 	    <para>
-	      Computing the parameters is highly machine intensive. In 
-	      the process of developing a model, it may be necessary
+	      Computing the parameters is highly processor intensive. In 
+	      developing a model, it may be necessary
 	      to perform the computation many times.  On a 
 	      very fast workstation, each recalculation of the
-	      model can take a week.  If a workstation is used,
+	      model can take a week.  On a typical single processor workstation,
 	      only one such calculation can be performed at a time.
 	      Clearly, it would be desirable to offload the 
 	      calculation to a specialized computational engine.
@@ -87,18 +87,18 @@
 	  </listitem>
 	  <listitem>
 	    <para>
-	      Internet connectivity is as just important to the creative
+	      Internet connectivity is just as important to the creative
 	      designer of PK models as is the workstation or laptop
-	      of his or her choice.  While a model's parameters are 
+	      of her choice.  While a model's parameters are 
 	      being computed, the user will be working on other models
 	      or other unrelated work, but will need to monitor
-	      the progress of PK jobs in progress, as they are processed
+	      the progress of her PK jobs in progress, as they are processed
 	      to completion.  The user should be able, for example,
 	      to submit a job
-	      for computation at his or her office, obtain results and
+	      for computation at her office, obtain results and
 	      submit a modified model at an airport enroute to a 
 	      conference, and receive the completed work upon arrival
-	      at the destination.
+	      at her destination.
 	    </para>
 	  </listitem>
 	</itemizedlist>
@@ -111,7 +111,7 @@
 	web, which enables them to develop PK models quickly and
 	efficiently. The service is offered to a designated set of 
 	users by an SPK service provider.  At the present time, the
-	only SPK service provider is RPFK itself.  In the future,
+	only SPK service provider is RPFK itself, but in the future
 	there will, in all probability, be additional service providers
 	located at both academic and commercial research laboratories.
       </para>
@@ -122,20 +122,23 @@
 	service will not be free. We believe that competition between
 	service providers will, however, insure that pricing will 
 	be fair.  In part to encourage the establishment of as many
-	SPK installations as possible, SPK will be distributed 
-	free-of-charge under and open source license.
+	SPK installations as possible, SPK software will be distributed 
+	free-of-charge under an open source license.
       </para>
     </sect2>
     <sect2>
-      <title>The User Perspective</title>
+      <title id="mda">The User Perspective</title>
       <para>
 	The user's access to SPK is provided by two graphical user interface
-	(GUI) programs.  One of these programs is the user's favorite
-	web browser.  The other is a component of SPK called the Model
+	(GUI) programs.  One of these is simply the web browser of the user's
+	choice, such as Internet Explorer, Mozilla, or Opera. 
+	The other is a component of SPK called the Model
 	Design Agent (MDA).
+      </para>
+      <para>
 	The MDA is written in the Java language, so that
 	it works under nearly any operating system, including 
-	Windows, Linux, Mac or Unix.  The first time the user 
+	Windows, Linux, Macintosh.  The first time the user 
 	accesses an SPK installation with her browser,
 	she is lead through the downloading and installation 
 	of the MDA and, if required,
@@ -143,7 +146,7 @@
 	minutes.  At the beginning of subsequent sessions, she
 	does not need to download any software, unless updated 
 	versions are available, in which case, the download and 
-	update occur automatically.
+	installation occur automatically.
       </para>
       <para>
 	The following is an abbreviated list of functions that a 
@@ -181,13 +184,13 @@
 	      initial estimates of model parameters
 	      and some additional information to create a job and
 	      submit it for transformation into an executable program and
-	      subsequent execution on the computational engine.
+	      subsequent running on the computational engine.
 	    </para>
 	  </listitem>
 	  <listitem>
 	    <para>
 	      Check the status of all jobs that the user has submitted.
-	      A job can be
+	      At a given moment in time, a job can be
 	      <itemizedlist>
 		<listitem>
 		  <para>
@@ -203,7 +206,7 @@
 		<listitem>
 		  <para>
 		    In queue, waiting to be transformed from C++ into
-		    executable binary code and the run on the computational
+		    executable binary code and then run on the computational
 		    engine.
 		  </para>
 		</listitem>
@@ -220,25 +223,124 @@
 	      </itemizedlist>
 	    </para>
 	  </listitem>
+	  <listitem>
+	    <para>
+	      Provide a simple and convenient presentation of results.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Export results in forms required by other analysis and
+	      visualization tools.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Create a new job by cloning a previous job, changing 
+	      initial arguments, run parameters, method or dataset.
+	      For example,  SPK currently supports four methods of 
+	      calculation, including 
+	      <emphasis>first order </emphasis>,
+	      <emphasis>expected Hessian </emphasis>,
+	      <emphasis>Laplace approximation </emphasis> and
+	      <emphasis>Monte Carlo likelihood </emphasis>, 
+	      sorted in order of increasing computational cost.
+	      The user might want to start with a quick 
+	      computation using the first order method, then
+	      follow with one of the more expensive methods,
+	      using as initial estimates the first order results.
+	      The MDA makes this very convenient for users.
+	    </para>
+	  </listitem>
 	</itemizedlist>
-      </para>
-      <para>
-	Here are some of the 
       </para>
     </sect2>
     <sect2>
       <title>The Service Provider Perspective</title>
       <para>
+	The MDA, described in the section 
+	<link linkend="mda">above</link>, is the client side of
+	SPK.  Everything else is on the server side, which is provided 
+	by an SPK service provider. The server side consists of an
+	application server, computational server, web server and
+	a database server.  The servers in this list are
+	<emphasis>functional</emphasis> servers, rather than individual
+	machines.  At RFPK, the application server and the database
+	server share a machine.  The web server is a separate machine
+	and the computational server is a cluster.
+      </para>
+      <para>
+	All SPK server-side software, developed using the GNU software
+	development tools,
+	is designed to be portable to any
+	Linux or Unix environment.  Unlike the client-side MDA, it cannot
+	be run on Windows and Macintosh systems.  Installing and operating
+	the server side is non-trivial.  In the development of SPK,
+	a strategic decision was made to move as much of the inherent
+	complexity of the system onto the server side as possible, in 
+	order to maximize the convenience to the end user.  The server side
+	is no more complex, however, than comparable web-based applications,
+	and well within the competence of system administrators typically
+	found in University departments or commercial research facilities.
+      </para>
+      <para>
+        SPK is distributed free-of-charge under an open source license.  
+	This distribution stragegy reduces the risk to service providers,
+	because they can modify or continue the development of SPK 
+	independent of RFPK, if necessary.  On the other hand, RPFK 
+	will eagerly encourage collaborative development by other 
+	interested parties.
       </para>
     </sect2>
     <sect2>
       <title>The Software Developer Perspective</title>
       <para>
+	RFPK uses the GNU Gcc compiler and many related tools to develop
+	SPK server-side software, and the Standard Edition of Sun Java-2
+	for the MDA.  Source code is managed by the CVS revision control
+	system.  All of the computers used in software development at
+	RFPK run RedHat Enterprise Linux, version 3.
+      </para>
+      <para>
+	One of the reasons for distributing SPK under an open source license
+	is to encourage cooperative development of the software.  Any
+	organization or individual has access to the source code and can
+	set set up a development and test environment on a few PCs.  
+	RPFK is eager to work with any serious co-developers.
       </para>
     </sect2>
     <sect2>
       <title>Current Status and Future Directions</title>
       <para>
+	At the present time (June, 2004), SPK would have to be classed as 
+	a <emphasis>beta</emphasis> product.  The only service provider is
+	RFPK itself, and the only users are scientists associated with the
+	lab.  It will be at least nine months before source code be well
+	enough organized for general release.  The system is being tested
+	in end-to-end mode and the initial results look good.
+      </para>
+      <para>
+	In the coming months, these are some of the capabilities that
+	will be added:
+	<itemizedlist>
+	  <listitem>
+	    <para>
+	      Support for objective functions expressed as differential
+	      equations.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Support for parallel computation.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Open source distribution of the software, via the
+	      internet.
+	    </para>
+	  </listitem>
+	</itemizedlist>
       </para>
     </sect2>
     <sect2>
@@ -248,13 +350,38 @@
     </sect2>
   </sect1>
   <sect1>
-    <title></title>
+    <title>Architectural Strategy</title>
     <para>
-    </para>
-  </sect1>
-  <sect1>
-    <title></title>
-    <para>
+      The design of SPK is guided by certain architectural 
+      principals:
+      <orderedlist>
+	<listitem>
+	  <para>
+	    Minimize dependencies between major modules.  This allows
+	    a module to be modified with little or no impact on other
+	    modules.  In practical terms, this means that all communication
+	    between modules must be tightly controlled, fully documented,
+	    and narrow-band.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Make maximum use of widely available libraries, programs and methods.
+	    This reduces the quantity of new code that must be written and
+	    significantly improves reliability.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Consider security at every stage.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Reliability and accuracy first. Speed and efficiency will follow.
+	  </para>
+	</listitem>
+      </orderedlist>
     </para>
   </sect1>
   <sect1>
