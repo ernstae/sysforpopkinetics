@@ -9,7 +9,7 @@ use Getopt::Long;
 
 =head1 SYNOPSIS
 
-    load_spktest.pl --schema name1 --basedata name2 --userdata name3 --database name4
+    load_spktest.pl --schema name1 --basedata name2 --userdata name3 --database name4 --user name5 --password --name6
 
 =head1 ABSTRACT
     
