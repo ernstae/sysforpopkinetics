@@ -4,9 +4,17 @@
   <!ENTITY uw "University of Washington">
   <!ENTITY dept "Department of Bioengineering">
 ]>
-<article><title>BLAS and CLAPACK Installation</title>
+<article><title>ATLAS's C-BLAS & C-LAPACK Installation</title>
  <articleinfo>
     <revhistory>
+      <revision>
+        <revnumber>1.1</revnumber>
+        <date>March 26, 2004</date>
+        <authorinitials>sh</authorinitials>
+        <revremark>A typo was fixed.  The document title was fixed.
+                   The instruction for building/installing the ATLAS-based CLAPAC has been commented out since it was not necessary.
+        </revremark>
+      </revision>
       <revision>
 	<revnumber>1.0</revnumber>
 	<date>March 9, 2004</date>
@@ -69,17 +77,17 @@ extern "C"{
   #include &lt;atlas/cblas.h&gt;
   #include &lt;atlas/clapack.h&gt;
 
-  // CLAPACK interfaces
-  #include &lt;lapack/f2c.h&gt;
-  #include &lt;lapack/blaswrap.h&gt;
-  #include &lt;lapack/clapack.h&gt;
+  // Standard/widely-distributed CLAPACK interfaces
+  #include &lt;f2c.h&gt;
+  #include &lt;blaswrap.h&gt;
+  #include &lt;clapack.h&gt;
 }
       </screen>
       Here is the outline of what you have to do:
       <orderedlist>
         <listitem>
           <para>
-Uninstall existing BLAS and CLAPACK if any.
+Uninstall existing BLAS if any.
           </para>
         </listitem>
         <listitem>
@@ -87,11 +95,13 @@ Uninstall existing BLAS and CLAPACK if any.
 Build and install the new ATLAS.
           </para>
         </listitem>
+<!---
         <listitem>
           <para>
 Build and install the new CLAPACK.
           </para>
         </listitem>
+-->
       </orderedlist>
     </para>
   </sect1>
@@ -197,7 +207,7 @@ make install arch=Linux_P4
           <para>
           Install the package (ie. libraries and headers).
             <screen>
-> mv lib/Linux_P4/liblapack.a lib/Linux_P/libatlas_lapack.a
+> mv lib/Linux_P4/liblapack.a lib/Linux_P4/libatlas_lapack.a
 > su  (stay in the directory)
 > 
 > mkdir /usr/local/lib/atlas
@@ -287,6 +297,7 @@ DONE
       </orderedlist>
     </para>
   </sect1>
+<!---
   <sect1>
     <title>CLAPACK Installation for The Entire Set of LAPACK</title>
     <orderedlist>
@@ -419,4 +430,5 @@ BLASlib = ../WRAP/libcblaswr.a -lcblas -latlas
       </listitem>
     </orderedlist>
   </sect1>
+-->
 </article>
