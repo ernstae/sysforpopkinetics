@@ -187,17 +187,71 @@ Either label or synonym may be one of the NONMEM reserved identifiers, among whi
 <!-- <theta length="10"> Length of the theta vector. The value must match the number of values appeared under the tree. -->
 <!ATTLIST theta length CDATA #REQUIRED>
 
-<!-- <omega> The NONMEM Omega matrix. (in) will list the lower triangle elements if the matrix structure is said to be "block" or the diagonal elements if it is "diagonal", in the row-major order. 
+<!-- <omega> A minimal representation of NONMEM Omega (symmetric positive definite) matrix. For full (ie. "block") matrix, <omega> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <omega> lists only the diagonal elements from the upper left corner.
+
+Given a 3 by 3 matrix, A:
+<html:pre>
+/                   \
+|  a11   a12   a13  |
+|  a21   a22   a23  |
+|  a31   a32   a33  |
+\                   / 
+</html:pre>
+
+If A were <html:font color='red'>full</html:font> (ie. block) symmetric, <omega> specifies as follows:
+<html:pre>
+    &lt;omega&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+       &lt;value&gt;a21&lt;/value&gt;&lt;value&gt;a22&lt;/value&gt;
+       &lt;value&gt;a31&lt;/value&gt;&lt;value&gt;a32&lt;/value&gt;&lt;value&gt;a33&lt;/value&gt;
+    &lt;/omega&gt;
+</html:pre>
+If A were <html:font color='red'>diagonal</html:font>, <omega> specifies as follows:
+<html:pre>
+    &lt;omega&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+                         &lt;value&gt;a22&lt;/value&gt;
+                                           &lt;value&gt;a33&lt;/value&gt;
+    &lt;/omega&gt;
+</html:pre>
 -->
 <!ELEMENT omega (in)>
 
 <!-- <omega dimension=""> Dimension of square Omega matrix. For example, for a 3 by 3, say "3". -->
 <!ATTLIST omega dimension CDATA #REQUIRED>
 
-<!-- <omega struct="block"> Structure of Omega matrix, either "block" or "diagonal". -->
+<!-- <omega struct="block"> Structure of Omega matrix, either "block" or "diagonal".  "block" suggests that any elements in the symmetric matrix could be non-zero. "diagonal" indicates all zeros except for the diagonal elements.
+ -->
 <!ATTLIST omega struct (block|diagonal) #REQUIRED>
 
-<!-- <sigma> The NONMEM Sigma matrix. (in) will list the lower triangle elements if the matrix structure is said to be "block" or the diagonal elements if it is "diagonal" in the row-major order.
+<!-- <sigma>  
+A minimal representation of NONMEM Omega matrix. For full (ie. "block") matrix, <sigma> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <sigma> lists only the diagonal elements from the upper left corner.
+
+Given a 3 by 3 matrix, A:
+<html:pre>
+/                   \
+|  a11   a12   a13  |
+|  a21   a22   a23  |
+|  a31   a32   a33  |
+\                   / 
+</html:pre>
+
+If A were <html:font color='red'>full</html:font> (ie. block) symmetric, <sigma> specifies as follows:
+<html:pre>
+    &lt;sigma&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+       &lt;value&gt;a21&lt;/value&gt;&lt;value&gt;a22&lt;/value&gt;
+       &lt;value&gt;a31&lt;/value&gt;&lt;value&gt;a32&lt;/value&gt;&lt;value&gt;a33&lt;/value&gt;
+    &lt;/sigma&gt;
+</html:pre>
+If A were <html:font color='red'>diagonal</html:font>, <omega> specifies as follows:
+<html:pre>
+    &lt;sigma&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+                         &lt;value&gt;a22&lt;/value&gt;
+                                           &lt;value&gt;a33&lt;/value&gt;
+    &lt;/sigma&gt;
+</html:pre>
 -->
 <!ELEMENT sigma (in)>
 
@@ -207,7 +261,8 @@ Either label or synonym may be one of the NONMEM reserved identifiers, among whi
 <!-- <sigma same_as_previous="no"> "yes" to duplicate the initial and final values of the previously appeared Sigma block's values to this block's, default to "no". -->
 <!ATTLIST sigma same_as_previous (yes|no) #IMPLIED>
 
-<!-- <sigma struct="block"> Structure of Sigma matrix, either "block" or "diagonal". -->
+<!-- <sigma struct="block"> Structure of Sigma matrix, either "block" or "diagonal". "block" suggests that any elements in the symmetric matrix could be non-zero.  "diagonal" indicates all zeros except for the diagonal elements.
+-->
 <!ATTLIST sigma struct (block|diagonal) #REQUIRED>
 
 <!-- <simulation> Request to simulate a data set. 
