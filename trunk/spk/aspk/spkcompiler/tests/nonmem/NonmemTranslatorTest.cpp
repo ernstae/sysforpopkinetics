@@ -16,6 +16,7 @@
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
 #include "SymbolTable.h"
+#include "SpkParameters.h"
 #include "NonmemTranslator.h"
 
 using namespace std;
@@ -73,15 +74,15 @@ void NonmemTranslatorTest::testTranslate()
 
   const struct NonmemParameters * nonmem = static_cast<const NonmemParameters*>(compiler.getClientParameters());
 
-  const struct FitParameters * spkRequired = compiler.getSpkParameters();
+  const struct SpkParameters * spkRequired = compiler.getSpkParameters();
 
   const int nIndividuals = 12;
   CPPUNIT_ASSERT_EQUAL_MESSAGE( "#of individuals is supposed to be 12!", 
 			  nIndividuals, spkRequired->nIndividuals );
 
   // <optimization> section
-  CPPUNIT_ASSERT_MESSAGE( "The objective is supposed to be FO!", 
-			  spkRequired->objective == FO );
+  CPPUNIT_ASSERT_MESSAGE( "The objective is supposed to be FIRST_ORDER!", 
+			  spkRequired->objective == FIRST_ORDER );
   CPPUNIT_ASSERT_EQUAL_MESSAGE( "(pop) epsilon is supposed to be 0.001!",
 			  0.001, spkRequired->popEpsilon );
   CPPUNIT_ASSERT_EQUAL_MESSAGE( "(pop) mitr is supposed be 450!",
