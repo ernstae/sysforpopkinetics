@@ -511,7 +511,6 @@ $$
 $end
 */
 
-#include <strstream>
 #include <cmath>
 #include "indStatistics.h"
 #include "SpkException.h"
@@ -555,19 +554,20 @@ void indStatistics( SpkModel&                indModel,
 	indModel.dataVarianceInv( RInv );
 
     // Number of data points
-    const int nY = sqrt( RInv.size() );
+    const int nY = static_cast<int>( sqrt( RInv.size() ) );
 
     // Degree of freedom
     const int nF = nY - nB;
 	
     if( !nF )
 	{
-        std::strstream message;
-        message << "The degree of freedom must be positive." << ends;
+	  const int max = SpkError::maxMessageLen();
+	  char message[max];
+	  sprintf( message, "The degree of freedom must be positive." );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR, 
-                message.str(),
+                message,
                 __LINE__, __FILE__
         );
 	}
