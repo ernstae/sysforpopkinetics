@@ -1318,7 +1318,7 @@ void NonmemTranslator::generateIndData( ) const
   // object that holds "ID" data items handy for
   // frequent references.
   //
-  const Symbol * pID = table->findi( "id" );
+  const Symbol * pID = table->findi( KeyStr::ID );
 
   //
   // The order in which the label strings appear is crutial.
@@ -1601,7 +1601,7 @@ void NonmemTranslator::generateDataSet( ) const
   const vector<string> *labels = table->getLabels();
   vector<string>::const_iterator pLabel;
   int nLabels = labels->size();
-  const Symbol * pID = table->findi( "id" );
+  const Symbol * pID = table->findi( KeyStr::ID );
 
   //
   // Declare and define DataSet template class.
@@ -1621,7 +1621,7 @@ void NonmemTranslator::generateDataSet( ) const
   // is defined and the time when the IndData constructor
   // is declared/defined, the SymbolTable object
   // may NOT be modified.
-  //  const Symbol* pID = table->findi("id");
+  //  const Symbol* pID = table->findi(KeyStr::ID);
   //
   ofstream oDataSet_h( fDataSet_h );
   assert( oDataSet_h.good() );
@@ -1925,7 +1925,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   // Taking care of the data items (from the data file).
   // Only the "ID" data item values are of type string,
   // otherwise all numeric, T.
-  const Symbol * pID = table->findi( "id" );
+  const Symbol * pID = table->findi( KeyStr::ID );
   pLabel = labels->begin();
   for( int i=0; i<nLabels, pLabel != labels->end(); i++, pLabel++ )
     {
