@@ -33,9 +33,6 @@ install:
 	scp $T.html $(WEB)
 	scp nonmem/sourceML_nonmem.xml $(WEB)/nonmem
 	scp nonmem/html/*.html $(WEB)/nonmem/html
-	for i in $(HTML); do \
-             scp $$i $(WEB)/nonmem/html; \
-        done
 
 	scp $T.pdf  $(WEB)
 	for i in $(PNG); do \

@@ -4,9 +4,15 @@ HTML_OPS = --nochunks
 STYLE = ../../stylesheet
 WEB = $(WEBDIR)/v0.1/specs/$T
 PNG = $(wildcard *.png)
-HTML = $(wildcard nonmem/SpkReportML_html/*.html)
+HTML = $(wildcard nonmem/html/*.html)
 
-all:	html pdf rtf
+all:	nonmem_html html pdf rtf
+
+nonmem_html:
+	rm -rf nonmem/html
+	mkdir nonmem/html
+	javac -classpath ../tools/dtddoc/java/dtdparser119.jar:../tools/dtddoc/java/jakarta-oro-2.0.6.jar ../tools/dtddoc/java/DTDDoc.java
+	java -classpath ../tools/dtddoc/java/dtdparser119.jar:../tools/dtddoc/java/jakarta-oro-2.0.6.jar:.:../tools/dtddoc/java DTDDoc $T.dtd nonmem/html 
 
 html:	$T.html
 
@@ -14,21 +20,19 @@ pdf:	$T.pdf
 
 rtf:	$T.rtf
 
-%.html : %.xml
+%.html : $T.xml
 	docbook2html --dsl $(STYLE)/local.dsl#html $(HTML_OPS)  $<
 
-%.pdf : %.xml
+%.pdf : $T.xml
 	docbook2pdf --dsl $(STYLE)/local.dsl#print $<
 
-%.rtf : %.xml
+%.rtf : $T.xml
 	docbook2rtf --dsl $(STYLE)/local.dsl#print $<
 
 install:
 	scp $T.html $(WEB)
-	scp nonmem/SpkReportML_nonmem.xml $(WEB)/nonmem
-	for i in $(HTML); do \
-             scp $$i $(WEB)/nonmem/SpkReportML_html; \
-        done
+	scp nonmem/reportML_nonmem.xml $(WEB)/nonmem
+	scp nonmem/html/*.html $(WEB)/nonmem/html
 
 	scp $T.pdf  $(WEB)
 	for i in $(PNG); do \
@@ -37,4 +41,4 @@ install:
 
 clean:
 	rm -f $T.pdf $T.rtf $T.html
-
+	rm -rf nonmem/html
