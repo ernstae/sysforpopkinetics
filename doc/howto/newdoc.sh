@@ -35,6 +35,6 @@ sed  "s/SUBJECT/$SUBJECT/" < makefile > Makefile
 sed  "s/Subject/$SUBJECT/" < x.xml > $SUBJECT.xml
 rm makefile x.xml
 
-ssh $WEBHOST "mkdir $WEBDIR/howto/$SUBJECT > /dev/null 2>&1"
+ssh $WEBHOST "mkdir $WEBDIR/howto/rhel3//$SUBJECT > /dev/null 2>&1"
 
 exit 0

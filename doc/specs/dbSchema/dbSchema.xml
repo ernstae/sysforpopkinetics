@@ -339,7 +339,9 @@ CREATE TABLE job (
   start_time int(10) unsigned NOT NULL,
   event_time int(10) unsigned NOT NULL,
   cpp_source longblob,
-  end_code varchar(4) default NULL,
+  end_code char(4) default NULL,
+  method_code char(2) default NULL,
+  parent int(10) unsigned default 0, 
   PRIMARY KEY  (job_id)
 ) TYPE=InnoDB;
 
@@ -367,6 +369,17 @@ INSERT INTO state VALUES ('q2r','Queued to run');
 INSERT INTO state VALUES ('run','Running');
 INSERT INTO state VALUES ('end','End');
 
+CREATE TABLE method (
+  method_code char(2) NOT NULL default '',
+  method_name char(20) default NULL,
+  PRIMARY KEY  (method_code)
+) TYPE=MyISAM;
+
+INSERT INTO method VALUES ('fo', 'First Order');
+INSERT INTO method VALUES ('eh', 'Expected Hessian');
+INSERT INTO method VALUES ('la', 'Laplacian');
+INSERT INTO method VALUES ('ml', 'Monte Carlo Likelihood');
+INSERT INTO method VALUES ('mc', 'Monte Carlo Markov Chain');
 
 CREATE TABLE user (
   user_id int(10) unsigned NOT NULL auto_increment,
@@ -374,9 +387,13 @@ CREATE TABLE user (
   surname varchar(40) NOT NULL default '',
   password varchar(32) NOT NULL,
   username varchar(20) NOT NULL,
+  test BOOL default 0,
+  dev  BOOL default 0,
   PRIMARY KEY  (user_id),
-  UNIQUE KEY username (username)
+  UNIQUE KEY username (username),
 ) TYPE=InnoDB;
+
+
       </screen>
     </para>
   </sect1>
@@ -704,11 +721,19 @@ CREATE TABLE user (
 		</entry>
 	      </row>
 	      <row>
-		<entry>end_code</entry>
-		<entry>char(4)</entry>
+		<entry>method_code</entry>
+		<entry>char(2)</entry>
 		<entry>
-		  A code the designates the way that the job ended.
-		  A foreign key to the end table.
+		  The method to be used for the calculation. A foreign key
+		  to the method table.
+		</entry>
+	      </row>
+	      <row>
+		<entry>parent</entry>
+		<entry>int(10)</entry>
+		<entry>
+		  The job_id of the parent job, if this job depends on
+		  a previous one. 
 		</entry>
 	      </row>
 	    </tbody>
@@ -744,6 +769,46 @@ CREATE TABLE user (
 	The situation is fully equivalent to that of selecting
 	a job to compile, as described above, and the remedy is
 	the same, as well.
+      </para>
+    </sect2>
+    <sect2>
+      <title>method</title>
+      <para>
+	The <emphasis>method</emphasis> table provides short and long text for
+	the method of calculation.  No row is ever deleted from this table.
+      </para>
+      <para>
+	<table frame='all'><title>method</title>
+	  <tgroup cols='3' align='left' colsep='1' rowsep='1'>
+	    <colspec colwidth="1*" colname='c1'/>
+	    <colspec colwidth="2*" colname='c2'/>
+	    <colspec colwidth="4*" colname='c3'/>
+	    <thead>
+	      <row>
+		<entry>Field</entry>
+		<entry>Type</entry>
+		<entry>Description</entry>
+	      </row>
+	    </thead>
+	    <tbody>
+	      <row>
+		<entry>method_code</entry>
+		<entry>char(2)</entry>
+		<entry>Primary key.</entry>
+	      </row>
+	      <row>
+		<entry>method_name</entry>
+		<entry>char(20)</entry>
+		<entry>Expanded name.</entry>
+	      </row>
+	    </tbody>
+	  </tgroup>
+	</table>
+      </para>
+      <bridgehead renderas="sect3">Transaction Processing Considerations</bridgehead>
+      <para>
+	This table is not updated by applications. There are no 
+	transaction processing issues.
       </para>
     </sect2>
     <sect2>
@@ -919,6 +984,21 @@ CREATE TABLE user (
 		<entry>varchar(20)</entry>
 		<entry>
 		  A user name used for logging in.  Must be unique.
+		</entry>
+	      </row>
+	      <row>
+		<entry>test</entry>
+		<entry>bool</entry>
+		<entry>
+		  Whether or not the user is authorized to access features
+		  that are still under test.
+		</entry>
+	      </row>
+	      <row>
+		<entry>dev</entry>
+		<entry>bool</entry>
+		<entry>
+		  Whether the user is one of the developers of this software.
 		</entry>
 	      </row>
 	    </tbody>
