@@ -33,7 +33,7 @@
 	<listitem>
 	  <para>
 	    A user logging into the web site must have confidence
-	    that this is, indeed, the proper site and not an imposter.
+	    that this is, indeed, the proper site and not an impostor.
    	  </para>
 	</listitem>
 	<listitem>
@@ -60,7 +60,7 @@
       Authentication is performed
       whenever a user selects a URL that starts with 
       "https://", indicating that the secure version of the
-      http protocal is to used, the version that incorporates
+      http protocol is to used, the version that incorporates
       the Secure Socket Layer (SSL).
       In the process of establishing an SSL connection to the
       web server, the user's browser is sent a copy of the certificate
@@ -81,24 +81,76 @@
     </para>
     <para>
       The third goal is accomplished by the Java WebStart technology
-      used to destribute new and updated versions the Spk client,
+      used to distribute new and updated versions the Spk client,
       called the MDA. The MDA itself is digitally signed by the
       RFPK software team.  WebStart is configured so that only
       properly signed software will run.
     </para>
   </sect1>
   <sect1>
+    <title>Good Housekeeping</title>
+    <para>
+      We will start by creating a file to hold our certificates, certificate
+      request, and our certificate password.  Not everyone will agree that
+      it is a good idea to keep a plain text version of the password in 
+      a file, but here is the reasoning:
+      <orderedlist>
+	<listitem>
+	  <para>
+	    The certificate is worthless if the password is forgotten.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    The password must be provided to the tomcat webserver as 
+	    an argument, each time it starts up. In order for tomcat
+	    to start automatically when the computer reboots, it is
+	    necessary to place the password, in plain text, in a
+	    configuration file called <filename>server.xml</filename>.
+	    Unless the server is always started manually, there is
+	    no way to avoid storing the password, somewhere, in 
+	    plain text.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Since we must store the password in plain text, the important
+	    thing is to be careful with file access permissions on the
+	    files in which we store it.
+	  </para>
+	</listitem>
+      </orderedlist>
+    </para>
+    <para>
+      Let's get started, then:
+      <screen>
+su -
+mkdir cert
+chmod 750 cert
+cd cert
+      </screen>
+    </para>
+    <para>
+	Next think up a very good password.  Store a copy of it in a file
+	called password, so that it will not be forgotten:
+      <screen>
+echo 'Make@!This&*Good' > password
+chmod 440 password
+      </screen>
+    </para>
+  </sect1>
+  <sect1>
     <title>Obtaining a Certificate</title>
     <para>
       A certificate must be signed by a Certificate Authority (CA).
-      The best known CAs, including Versign, Thawte, GeoTrust,
+      The best known CAs, including Verisign, Thawte, GeoTrust,
       provide this service for a fee.  They are respected and 
       have been in the business long enough that most browsers
       come with copies of their root certificates 
       pre-installed. Any certificate sold by one of these 
       well-known CAs will be derivative of one or another of
       these pre-installed root certificates and, hence, will
-      be accpeted automatically by 99% of the browsers, without
+      be accepted automatically by 99% of the browsers, without
       requiring any user feedback.
     </para>
     <para>
@@ -132,12 +184,12 @@
       <para>
 	The first step is to produce a randomly generated
 	public/private encryption key pair.  The keys are placed
-	in a binary file which, in this process, we will call
-	<filename>~root/.keystore</filename>, which is the default
-	for tomcat.
+	in a binary file which we will call 
+	<filename>~root/cert/keystore</filename>.
 	<screen>
 su -
-$JAVA_HOME/bin/keytool -genkey -alias tomcat -keyalg RSA -keystore .keystore
+cd cert
+$JAVA_HOME/bin/keytool -genkey -alias tomcat -keyalg RSA -keystore keystore
 	</screen>
       </para>
       <para>
@@ -147,7 +199,7 @@ $JAVA_HOME/bin/keytool -genkey -alias tomcat -keyalg RSA -keystore .keystore
       </para>
       <para>
 	The <command>keytool</command> program will ask you a number of
-	questions. It is most imporant that you provide a good password
+	questions. It is most important that you provide a good password
 	when requested, because this will protect secrecy of your
 	public/private key pair.  Be certain, as well, to provide the
 	full domain name of the server, rather than your own first
@@ -192,7 +244,7 @@ $JAVA_HOME/bin/keytool -genkey -alias tomcat -keyalg RSA -keystore .keystore
       <para>
 	Now that you have your keys, you can generate a CSR.
 	<screen>
-$JAVA_HOME/bin/keytool -certreq -keyalg RSA -alias tomcat -file certreq.csr -keystore .keystore
+$JAVA_HOME/bin/keytool -certreq -keyalg RSA -alias tomcat -file certreq.csr -keystore keystore
 	</screen>
       </para>
       <para>
@@ -286,6 +338,7 @@ sX4Tk2V0XThXv02MsLPqkFiD0Mx2xilDA5pxOke1
 	directory and start your favorite editor:
 	<screen>
 su -
+cd cert
 emacs spk_cert.pem
 	</screen>
 	to create a file to store your certificate, and cut
@@ -296,31 +349,23 @@ emacs spk_cert.pem
     </sect2>
   </sect1>
   <sect1>
-    <title>Importing Certificates into Tomcat</title>
+    <title>Getting the University of Washington Root Certificate</title>
     <para>
-      You will need to install two certificates in tomcat:
-      <orderedlist>
-	<listitem>
-	  <para>
-	    The root certificate of the University of Washington
-	    from which our new server certificate derives its
-	    authority.
-	  </para>
-	</listitem>
-	<listitem>
-	  <para>
-	    The new server certificate.
-	  </para>
-	</listitem>
-      </orderedlist>
+      The spk certificate that you just obtained derives its authority from
+      the root certificate of the University of Washington.  The tomcat
+      web server will need copies of both of these certificates.  The
+      UW root is available on a UW web page but, for convenience,
+      a copy appears, below, in this document.  We will cut and paste
+      it into a file, similar to the one that we created to hold
+      the spk certificate.
+      
     </para>
     <para>
-      First, create a file containing the text of the UW root
-      certificate, similar to the one that you created for the
-      server certificate.  In a terminal window, in the root
+      In a terminal window, in the root
       user's home directory, start your favorite editor:
       <screen>
 su -
+cd cert
 emacs uw_root_cert.pem
       </screen>
       to create the file to contain the certificate, then cut
@@ -355,129 +400,51 @@ EskaIXSx0PywbyfIR1wWxMpr8gbCjAEUHNF/
       into the file and save it.
     </para>
     <para>
-      The following two commands import the two certificates and
-      add them to the keystore file <filename>.keystore</filename>:
-      <screen>
-$JAVA_HOME/bin/keytool -import -alias root -keystore .keystore -trustcacerts -file uw_root_cert.pem
-$JAVA_HOME/bin/keytool -import -alias tomcat -keystore .keystore -trustcacerts -file spk_cert.pem
-      </screen>
     </para>
   </sect1>
   <sect1>
-    <title>Configuring Tomcat</title>
+    <title>Preparing for Tomcat Configuration</title>
     <para>
-      In this section, we will modify the Tomcat server configuration 
-      file, <filename>$CATALINA_HOME/conf/server.xml</filename> to
-      do the following:
-      <orderedlist>
-	<listitem>
-	  <para>
-	    Use tcp port 80 rather than 8080 for http connections and
-	    port 443 rather than 8443 for https connections.  Ports
-	    80 and 443 are the standard ports used by most web servers,
-	    and hence will be most likely allowed by users firewalls
-	    and proxies.
-	  </para>
-	</listitem>
-	<listitem>
-	  <para>
-	    Activate the SSL feature, using our new certificate.
-	  </para>
-	</listitem>
-      </orderedlist>
+      The 
+      <ulink url="http://whitechuck.rfpk.washington.edu/soft/howto/rhel3/web-server/web-server.html">
+	Web Server HOWTO
+      </ulink> 
+      describes the configuration of the tomcat web server for
+      secure https connections, using the certificates
+      obtained via this document.  If your
+      <filename>cert</filename> directory is already located 
+      in the ~root directory on the machine hosting the web server,
+      you are ready to proceed to the Web Server HOWTO.
     </para>
     <para>
-      Save a copy of <filename>server.xml</filename> as backup.
+      If you have been working on another machine, you should prepare
+      a tarball of the <filename>cert</filename> directory and
+      transfer it to the web server host.
       <screen>
-su 
-cd $CATALINA_HOME/conf
-cp server.xml server.xml.bak
+su
+cd
+tar cvzf cert.tgz cert
+chmod 640 cert.tgz
       </screen>
-    </para>
+    </para>    
     <para>
-      Now edit <filename>server.xml</filename> to make the necessary
-      changes.
-    </para>
-    <para>
-      Before changes, the element that configures the http port looks
-      like this:
-      <screen>
-&lt;Connector port="8080"
-      maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
-      enableLookups="false" redirectPort="8443" acceptCount="100"
-      debug="0" connectionTimeout="20000"
-      disableUploadTimeout="true" /&gt;
-      </screen>
-      Afterward, it should look like this:
-      <screen>
-&lt;Connector port="80"
-      maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
-      enableLookups="false" redirectPort="443" acceptCount="100"
-      debug="0" connectionTimeout="20000"
-      disableUploadTimeout="true" /&gt;
-      </screen>
-      Note that the <emphasis>port</emphasis> attribute has been changed
-      to <emphasis>80</emphasis> and the <emphasis>redirectPort</emphasis>
-      attribute to <emphasis>443</emphasis>.
-    </para>
-    <para>
-      The other element that needs to be changed is that which configures
-      the https port.  Before editing, it looks like this:
-      <screen>
-&lt;!-- Define a SSL Coyote HTTP/1.1 Connector on port 8443 --&gt;
-&lt;!--
-&lt;Connector port="8443"
-    maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
-    enableLookups="false" disableUploadTimeout="true"
-    acceptCount="100" debug="0" scheme="https" secure="true"
-    clientAuth="false" sslProtocol="TLS" /&gt;
---&gt;
-      </screen>
-      After editing, it should look like this:
-      <screen>
-&lt;!-- Define a SSL Coyote HTTP/1.1 Connector on port 8443 --&gt;
- 
-&lt;Connector port="443"
-    maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
-    enableLookups="false" disableUploadTimeout="true"
-    acceptCount="100" debug="0" scheme="https" secure="true"
-    clientAuth="false" sslProtocol="TLS"
-    keystoreFile="/root/.keystore" keystorePass="Make@!This&*Good"
-    /&gt'
-      </screen>
-      Note the following changes:
-      <itemizedlist>
-	<listitem>
-	  <para>
-	    Before, the entire element was commented out.  After,
-	    the comment brackets have been removed.
-	  </para>
-	</listitem>
-	<listitem>
-	  <para>
-	    The <emphasis>port</emphasis> attribute has been changed
-	    to <emphasis>443</emphasis>.
-	  </para>
-	</listitem>
-	<listitem>
-	  <para>
-	    A <emphasis>keystoreFile</emphasis> attribute has been added,
-	    to make explicit the location of the keystore file rather
-	    than to leave it as a default.  This is not absolutely
-	    necessary, but
-	    it might help another Tomcat administer find the file.
-	  </para>
-	</listitem>
-	<listitem>
-	  <para>
-	    A <emphasis>keystorePass</emphasis> attribute has been 
-	    added.  The value <emphasis>should not be
-	    "Make@!This&*Good"</emphasis> but rather should be the
-	    password that you supplied when you
-	    <link linkend="password">created</link> the keystore.
-	  </para>
-	</listitem>
-      </itemizedlist>
+      To prepare for installation in tomcat, transfer the 
+      <filename>cert.tgz</filename> file to the ~root directory
+      of the web server host (currently 192.168.2.2, behind the
+      firewall). 
     </para>
   </sect1>
 </article>
+
+<!--  LocalWords:  xml DOCTYPE DocBook uw HOWTO articleinfo revhistory Spk RFPK
+ -->
+<!--  LocalWords:  revnumber authorinitials revremark orderedlist listitem SSL
+ -->
+<!--  LocalWords:  http WebStart MDA webserver su mkdir chmod cd CAs Verisign
+ -->
+<!--  LocalWords:  Thawte GeoTrust pre Westhagen Jiaji ulink url genkey keyalg
+ -->
+<!--  LocalWords:  RSA keystore keytool keycap CN OU lt CSR certreq csr DNS spk
+ -->
+<!--  LocalWords:  weblogin guimenuitem pem https cvzf tgz
+ -->
