@@ -8,6 +8,12 @@
  <articleinfo>
     <revhistory>
       <revision>
+         <revnumber>1.8</revnumber>
+         <date>Aug 24, 2004</date>
+         <authorinitials>honda</authorinitials>
+         <revremark>Removed "simonly" option.</revremark>
+      </revision>
+      <revision>
          <revnumber>1.7</revnumber>
          <date>May 21, 2004</date>
          <authorinitials>honda</authorinitials>
