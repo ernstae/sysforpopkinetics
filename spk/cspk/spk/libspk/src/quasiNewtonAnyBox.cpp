@@ -265,6 +265,7 @@ It must be greater than $math%0.0%$$.
 
   // *                                                                    *
   // *     abs( xOut - xStar )  <=  epsilon (xUp - xLow) .                *
+
   // *                                                                    *
 
 $subhead optimizer.nMaxIter$$
@@ -302,7 +303,7 @@ $pre
 
 $$
 For more details on the tracing see the description of the level 
-parameter for the optimizer QuasiNewton01Box.
+parameter for the optimizer $xref/QuasiNewton01Box//QuasiNewton01Box/$$.
 
 $subhead 
 
@@ -316,7 +317,6 @@ $subhead
 optimizer.isTooManyIter$$
 
 This flag indicates that if the too-many-iteration failure has occurred.  
-It is set to $code false$$ at the construction time.
 
 $subhead 
 
@@ -324,7 +324,6 @@ optimizer.saveStateAtEndOfOpt$$
 
 This flag indicates if the state information required for a warm start
 should be saved at the end of the optimization process.
-It is set to $code false$$ at the construction time.
 
 $subhead 
 
@@ -344,15 +343,13 @@ $subhead
 optimizer.isSubLevelOpt$$
 
 This flag indicates that if the optimizer is for a sub level optimization.  
-It is set to $code false$$ at the construction time.  It is for SPK internal
-use only.
+It is for SPK internal use only.
 
 $subhead 
 
 optimizer.isWarmStart$$
 
 This flag indicates that if the optimization should run a warm start.  
-It is set to $code false$$ at the construction time.
 
 $subhead 
 
