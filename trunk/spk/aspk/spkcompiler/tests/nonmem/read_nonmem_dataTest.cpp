@@ -85,7 +85,7 @@ void read_nonmem_dataTest::createDataTree(
   DOMWriter * writer = ((DOMImplementationLS*)impl)->createDOMWriter();
   writer->setNewLine( XMLString::transcode("\n") );
   StdOutFormatTarget destination;
-  writer->writeNode( &destination, *rootElem );
+  //  writer->writeNode( &destination, *rootElem );
 }
 //
 // Tests if read_nonmem_data() can properly handles a data set
