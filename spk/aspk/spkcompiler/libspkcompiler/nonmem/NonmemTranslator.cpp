@@ -2699,6 +2699,7 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "const SPK_VA::valarray<int> getN() const;" << endl;
   oDataSet_h << "void compAllResiduals();" << endl;
   oDataSet_h << "void compAllWeightedResiduals( std::vector< SPK_VA::valarray<double> >& R );" << endl;
+  oDataSet_h << "std::ostream& xmlOut( std::ostream& o, const char* title ) const;" << endl;
   oDataSet_h << endl;
  
   //
@@ -2878,6 +2879,190 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "   }" << endl;
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
+
+  oDataSet_h << "template <class ValueType>" << endl;
+  oDataSet_h << "std::ostream& DataSet<ValueType>::xmlOut( std::ostream& o, const char * title ) const" << endl;
+  oDataSet_h << "{" << endl;
+
+  t = table->getTable();
+  if( pID == Symbol::empty() )
+    {
+      char mess [ SpkCompilerError::maxMessageLen() ];
+      sprintf( mess, "\"ID\" is not defined." );
+      SpkCompilerException e( SpkCompilerError::ASPK_PROGRAMMER_ERR, mess, __LINE__, __FILE__ );
+      throw e;
+    }
+  const int nItems = t->size();
+  int nColumns = nItems + myThetaLen-1 + myEtaLen-1 + (myTarget==POP? (myEpsLen - 1) : 0 )
+    - (table->findi(KeyStr.OMEGA) == Symbol::empty()? 0 : 1 )
+    - (table->findi(KeyStr.SIGMA) == Symbol::empty()? 0 : 1 );
+
+  map<const string, Symbol>::const_iterator pEntry = t->begin();
+  const vector<string>::const_iterator pLabelBegin = table->getLabels()->begin();
+  const vector<string>::const_iterator pLabelEnd   = table->getLabels()->end();
+  vector<string> whatGoesIn;  // will hold those labels in the order that actually go into the data section.
+  vector<string>::const_iterator pWhatGoesIn;
+  string keyWhatGoesIn;
+
+  oDataSet_h << "o << \"<\" << title << \" rows=\\\"\" << N.sum() << \"\\\" \";" << endl;
+  oDataSet_h << "o << \"columns=\\\"" << nColumns << "\\\">\" << endl;" << endl;
+  //=============================================================================
+  // LABELS
+  //
+  oDataSet_h << "o << \"<data_labels>\" << endl;" << endl;
+  
+  // Put ID first in the sequence
+  whatGoesIn.push_back( pID->name );
+  oDataSet_h << "o << \"<label name=\\\"" << pID->name << "\\\"/>\" << endl;" << endl;
+  
+  oDataSet_h << "///////////////////////////////////////////////////////////////////" << endl;
+  oDataSet_h << "//   DATA SET Specific" << endl;
+
+  // ...aaand, following ID is, all the left hand side quantities in the model definition.
+  // cntColumns is initialized to 1 because the ID column is already printed out.
+  int cntColumns = 1;
+  for( cntColumns=1,  pEntry = t->begin(); pEntry!=t->end(); pEntry++ )
+    {
+      if( pEntry->first != KeyStr.ID )
+	{
+	  // these three --- theta, omega and sigma --- don't get saved within Pred::eval()
+	  // and are already printed out in the reportML earlier during this step.
+	  if( pEntry->first != KeyStr.OMEGA && pEntry->first != KeyStr.SIGMA )
+	    {
+	      whatGoesIn.push_back( pEntry->second.name );
+	      
+	      if( pEntry->first == KeyStr.THETA )
+		{
+		  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
+		    {
+		      oDataSet_h << "o << \"<label name=\\\"";
+		      oDataSet_h << pEntry->second.name << "(" << cntTheta+1 << ")";
+		      oDataSet_h << "\\\"/>\" << endl;" << endl;		      
+		      cntColumns++;
+		    }
+		}
+	      else if( pEntry->first == KeyStr.ETA )
+		{
+		  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
+		    {
+		      oDataSet_h << "o << \"<label name=\\\"";
+		      oDataSet_h << pEntry->second.name << "(" << cntEta+1 << ")";
+		      oDataSet_h << "\\\"/>\" << endl;" << endl;		      
+		      cntColumns++;
+		    }
+		}
+	      else if( pEntry->first == KeyStr.EPS )
+		{
+		  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
+		    {
+		      oDataSet_h << "o << \"<label name=\\\"";
+		      oDataSet_h << pEntry->second.name << "(" << cntEps+1 << ")";
+		      oDataSet_h << "\\\"/>\" << endl;" << endl;		      
+		      cntColumns++;
+		    }
+		}
+	      else
+		{
+		  oDataSet_h << "o << \"<label name=\\\"";
+		  oDataSet_h << pEntry->second.name;
+		  oDataSet_h << "\\\"/>\" << endl;" << endl;
+		  cntColumns++;
+		}
+	    }
+	}
+    }
+  if( cntColumns != nColumns )
+    {
+      char mess[ SpkCompilerError::maxMessageLen() ];
+      sprintf( mess, "The number of data items, %d, does not the number of labels, %d.",
+	       cntColumns, nColumns );
+      SpkCompilerException e( SpkCompilerError::ASPK_PROGRAMMER_ERR, mess, __LINE__, __FILE__ );
+      throw e;
+    }
+  oDataSet_h << "//"  << endl;
+  oDataSet_h << "///////////////////////////////////////////////////////////////////" << endl;
+  oDataSet_h << "o << \"</data_labels>\" << endl;" << endl;
+  oDataSet_h << endl;
+  
+  oDataSet_h << "for( int i=0, position=1; i<popSize; i++ )" << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   for( int j=0; j<N[i]; j++, position++ )" << endl;
+  oDataSet_h << "   {" << endl;
+  oDataSet_h << "      o << \"<row position=\\\"\" << position << \"\\\">\" << endl;" << endl;
+  oDataSet_h << "      ///////////////////////////////////////////////////////////////////" << endl;
+  oDataSet_h << "      //   DATA SET Specific" << endl;
+
+  for( cntColumns=0, pWhatGoesIn = whatGoesIn.begin(); pWhatGoesIn!=whatGoesIn.end(); pWhatGoesIn++ )
+    {
+      keyWhatGoesIn = SymbolTable::key( *pWhatGoesIn );
+      if( keyWhatGoesIn == KeyStr.SIMDV )
+	{
+	  oDataSet_h << "   o << \"<value ref=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
+	  oDataSet_h << "measurements[position]";
+	  oDataSet_h << " << \"</value>\" << endl;" << endl;
+	  cntColumns++;
+	}
+      else if( keyWhatGoesIn == KeyStr.THETA )
+	{
+	  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
+	    {
+	      oDataSet_h << "   o << \"<value ref=\\\"";
+	      oDataSet_h << *pWhatGoesIn << "(" << cntTheta+1 << ")" << "\\\"" << ">\" << ";
+	      oDataSet_h << "data[i]->" << *pWhatGoesIn << "[j][" << cntTheta << "]";
+	      oDataSet_h << " << \"</value>\" << endl;" << endl;
+	      cntColumns++;
+	    }
+	}
+      else if( keyWhatGoesIn == KeyStr.ETA )
+	{
+	  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
+	    {
+	      oDataSet_h << "   o << \"<value ref=\\\"";
+	      oDataSet_h << *pWhatGoesIn << "(" << cntEta+1 << ")"<< "\\\"" << ">\" << ";
+	      oDataSet_h << "data[i]->" << *pWhatGoesIn << "[j][" << cntEta << "]";
+	      oDataSet_h << " << \"</value>\" << endl;" << endl;
+	      cntColumns++;
+	    }
+	}
+      else if( keyWhatGoesIn == KeyStr.EPS && myTarget == POP )
+	{
+	  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
+	    {
+	      oDataSet_h << "   o << \"<value ref=\\\"";
+	      oDataSet_h << *pWhatGoesIn << "(" << cntEps+1 << ")"<< "\\\"" << ">\" << ";
+	      oDataSet_h << "data[i]->" << *pWhatGoesIn << "[j][" << cntEps << "]";
+	      oDataSet_h << " << \"</value>\" << endl;" << endl;
+	      cntColumns++;
+	    }
+	}
+      else if( keyWhatGoesIn == KeyStr.OMEGA || keyWhatGoesIn == KeyStr.SIGMA )
+	{
+	  // ignore
+	}
+      else
+	{
+	  oDataSet_h << "   o << \"<value ref=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
+	  oDataSet_h << "data[i]->" << *pWhatGoesIn << "[j]";
+	  oDataSet_h << " << \"</value>\" << endl;" << endl;
+	  cntColumns++;
+	}
+    }
+  if( cntColumns != nColumns )
+    {
+      char mess[ SpkCompilerError::maxMessageLen() ];
+      sprintf( mess, "The number of data items, %d, does not the number of labels, %d.",
+	       cntColumns, nColumns );
+      SpkCompilerException e( SpkCompilerError::ASPK_PROGRAMMER_ERR, mess, __LINE__, __FILE__ );
+      throw e;
+    }
+  oDataSet_h << "      //" << endl;
+  oDataSet_h << "      ///////////////////////////////////////////////////////////////////" << endl;
+  oDataSet_h << "      o << \"</row>\" << endl;" << endl;
+  oDataSet_h << "   }" << endl;
+  oDataSet_h << "}" << endl;
+  
+  oDataSet_h << "o << \"</\" << title << \">\" << endl;" << endl;
+  oDataSet_h << "}" << endl;
 
   oDataSet_h << "#endif" << endl;
   oDataSet_h.close();
@@ -4133,161 +4318,9 @@ void NonmemTranslator::generateIndDriver( ) const
       oDriver << endl;
     }
 
-  //=============================================================================
-  // LABELS
-  //
-  const map<const string, Symbol> * t = table->getTable();
-  const Symbol * pID = table->findi(KeyStr.ID);
-  if( pID == Symbol::empty() )
-    {
-      char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "\"ID\" is not defined." );
-      SpkCompilerException e( SpkCompilerError::ASPK_PROGRAMMER_ERR, mess, __LINE__, __FILE__ );
-      throw e;
-    }
-  const int nItems = t->size();
-  int nColumns = nItems + myThetaLen-1 + myEtaLen-1 
-    - (table->findi(KeyStr.OMEGA) == Symbol::empty()? 0 : 1 )
-    - (table->findi(KeyStr.SIGMA) == Symbol::empty()? 0 : 1 )
-    - (table->findi(KeyStr.EPS)   == Symbol::empty()? 0 : 1 );
-
-  map<const string, Symbol>::const_iterator pEntry = t->begin();
-  const vector<string>::const_iterator pLabelBegin = table->getLabels()->begin();
-  const vector<string>::const_iterator pLabelEnd   = table->getLabels()->end();
-  vector<string> whatGoesIn;  // will hold those labels in the order that actually go into the data section.
-  vector<string>::const_iterator pWhatGoesIn;
-  string keyWhatGoesIn;
-
-  oDriver << "oResults << \"<presentation_data rows=\\\"\" << nY << \"\\\" \";" << endl;
-  oDriver << "oResults << \"columns=\\\"" << nColumns << "\\\">\" << endl;" << endl;
-  oDriver << "oResults << \"<data_labels>\" << endl;" << endl;
-
-  // Put ID first in the sequence
-  whatGoesIn.push_back( pID->name );
-  oDriver << "oResults << \"<label name=\\\"" << UserStr.ID << "\\\"/>\" << endl;" << endl;
-  oDriver << endl;
-
-  oDriver << "///////////////////////////////////////////////////////////////////" << endl;
-  oDriver << "//  Data Set Specific" << endl;
-  // ...aaand, following ID is, all the left hand side quantities in the model definition.
-  // cntColumns is initialized to 1 because the ID column is already printed out.
-  int cntColumns = 1;
-  for( cntColumns = 1, pEntry = t->begin(); pEntry!=t->end(); pEntry++ )
-    {
-      if( pEntry->first != KeyStr.ID 
-	  /* && ( find( pLabelBegin, pLabelEnd, pEntry->second.name )==pLabelEnd ) */ )
-	{
-	  // These ones are not stored by Pred::eval() or the data set.
-	  if( pEntry->first != KeyStr.OMEGA && pEntry->first != KeyStr.SIGMA )
-	    {
-	      whatGoesIn.push_back( pEntry->second.name );
-	      
-	      if( pEntry->first == KeyStr.THETA )
-		{
-		  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
-		    {
-		      oDriver << "oResults << \"<label name=\\\"";
-		      oDriver << pEntry->second.name << "(" << cntTheta+1 << ")";
-		      oDriver << "\\\"/>\" << endl;" << endl;	
-		      cntColumns++;
-		    }
-		}
-	      else if( pEntry->first == KeyStr.ETA )
-		{
-		  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
-		    {
-		      oDriver << "oResults << \"<label name=\\\"";
-		      oDriver << pEntry->second.name << "(" << cntEta+1 << ")";
-		      oDriver << "\\\"/>\" << endl;" << endl;		      
-		      cntColumns++;
-		    }
-		}
-	      else
-		{
-		  oDriver << "oResults << \"<label name=\\\"";
-		  oDriver << pEntry->second.name;
-		  oDriver << "\\\"/>\" << endl;" << endl;
-		  cntColumns++;
-		}
-	    }
-	}
-    }
-  if( cntColumns != nColumns )
-    {
-      char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "The number of data items, %d, does not the number of labels, %d.",
-	       cntColumns, nColumns );
-      SpkCompilerException e( SpkCompilerError::ASPK_PROGRAMMER_ERR, mess, __LINE__, __FILE__ );
-      throw e;
-    }
-  oDriver << "//" << endl;
-  oDriver << "///////////////////////////////////////////////////////////////////" << endl;
-  oDriver << "oResults << \"</data_labels>\" << endl;" << endl;
-
-  oDriver << "for( int j=0, cnt=1; j<nY; j++, cnt++ )" << endl;
-  oDriver << "{" << endl;
-  oDriver << "   ///////////////////////////////////////////////////////////////////" << endl;
-  oDriver << "   //" << endl;
-  oDriver << "   oResults << \"<row position=\\\"\" << cnt << \"\\\">\" << endl;" << endl;
-
-  for( cntColumns=0, pWhatGoesIn = whatGoesIn.begin(); pWhatGoesIn!=whatGoesIn.end(); pWhatGoesIn++ )
-    {
-      keyWhatGoesIn = SymbolTable::key( *pWhatGoesIn );
-      if( keyWhatGoesIn == KeyStr.SIMDV )
-	{
-	  oDriver << "   oResults << \"<value ref=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
-	  oDriver << "yOut[cnt]";
-	  oDriver << " << \"</value>\" << endl;" << endl;
-	  cntColumns++;
-	}
-      else if( keyWhatGoesIn == KeyStr.THETA )
-	{
-	  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
-	    {
-	      oDriver << "   oResults << \"<value ref=\\\"";
-	      oDriver << *pWhatGoesIn << "(" << cntTheta+1 << ")"<< "\\\"" << ">\" << ";
-	      oDriver << "set.data[0]->" << *pWhatGoesIn << "[j][" << cntTheta << "]";
-	      oDriver << " << \"</value>\" << endl;" << endl;
-	      cntColumns++;
-	    }
-	}
-      else if( keyWhatGoesIn == KeyStr.ETA )
-	{
-	  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
-	    {
-	      oDriver << "   oResults << \"<value ref=\\\"";
-	      oDriver << *pWhatGoesIn << "(" << cntEta+1 << ")"<< "\\\"" << ">\" << ";
-	      oDriver << "set.data[0]->" << *pWhatGoesIn << "[j][" << cntEta << "]";
-	      oDriver << " << \"</value>\" << endl;" << endl;
-	      cntColumns++;
-	    }
-	}
-      else
-	{
-	  oDriver << "   oResults << \"<value ref=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
-	  oDriver << "set.data[0]->" << *pWhatGoesIn << "[j]";
-	  oDriver << " << \"</value>\" << endl;" << endl;
-	  cntColumns++;
-	}
-    }
-  if( cntColumns != nColumns )
-    {
-      char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "The number of data items, %d, does not the number of labels, %d.",
-	       cntColumns, nColumns );
-      SpkCompilerException e( SpkCompilerError::ASPK_PROGRAMMER_ERR, mess, __LINE__, __FILE__ );
-      throw e;
-    }
-  oDriver << "   oResults << \"</row>\" << endl;" << endl;
-  oDriver << "   //" << endl;
-  oDriver << "   ///////////////////////////////////////////////////////////////////" << endl;
-  oDriver << "}" << endl;
-
-  oDriver << "oResults << \"</presentation_data>\" << endl;" << endl;
-
-  //
-  //=============================================================================
-
+  // This prints out <presentation_data></presentation_data>
+  oDriver << "oResults << set.xmlOut( oResults, \"presentation_data\" ) << endl;" << endl;
+  
   oDriver << "oResults << \"</spkreport>\" << endl;" << endl;
 
   oDriver << "oResults.close();" << endl;
@@ -4930,190 +4963,9 @@ void NonmemTranslator::generatePopDriver() const
     }
   oDriver << endl;
 
-
-  //=============================================================================
-  // LABELS
-  //
-  const map<const string, Symbol> * t = table->getTable();
-  const Symbol * pID = table->findi(KeyStr.ID);
-  if( pID == Symbol::empty() )
-    {
-      char mess [ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "\"ID\" is not defined." );
-      SpkCompilerException e( SpkCompilerError::ASPK_PROGRAMMER_ERR, mess, __LINE__, __FILE__ );
-      throw e;
-    }
-  const int nItems = t->size();
-  int nColumns = nItems + myThetaLen-1 + myEtaLen-1 + myEpsLen-1
-    - (table->findi(KeyStr.OMEGA) == Symbol::empty()? 0 : 1 )
-    - (table->findi(KeyStr.SIGMA) == Symbol::empty()? 0 : 1 );
-
-  map<const string, Symbol>::const_iterator pEntry = t->begin();
-  const vector<string>::const_iterator pLabelBegin = table->getLabels()->begin();
-  const vector<string>::const_iterator pLabelEnd   = table->getLabels()->end();
-  vector<string> whatGoesIn;  // will hold those labels in the order that actually go into the data section.
-  vector<string>::const_iterator pWhatGoesIn;
-  string keyWhatGoesIn;
-
-  oDriver << "oResults << \"<presentation_data rows=\\\"\" << N.sum() << \"\\\" \";" << endl;
-  oDriver << "oResults << \"columns=\\\"" << nColumns << "\\\">\" << endl;" << endl;
-  oDriver << "oResults << \"<data_labels>\" << endl;" << endl;
-  
-  // Put ID first in the sequence
-  whatGoesIn.push_back( pID->name );
-  oDriver << "oResults << \"<label name=\\\"" << pID->name << "\\\"/>\" << endl;" << endl;
-  
-  oDriver << "///////////////////////////////////////////////////////////////////" << endl;
-  oDriver << "//   DATA SET Specific" << endl;
-
-  // ...aaand, following ID is, all the left hand side quantities in the model definition.
-  // cntColumns is initialized to 1 because the ID column is already printed out.
-  int cntColumns = 1;
-  for( cntColumns=1,  pEntry = t->begin(); pEntry!=t->end(); pEntry++ )
-    {
-      if( pEntry->first != KeyStr.ID 
-	  /*&& ( find( pLabelBegin, pLabelEnd, pEntry->second.name )==pLabelEnd )*/ )
-	{
-	  // these three --- theta, omega and sigma --- don't get saved within Pred::eval()
-	  // and are already printed out in the reportML earlier during this step.
-	  if( pEntry->first != KeyStr.OMEGA && pEntry->first != KeyStr.SIGMA )
-	    {
-	      whatGoesIn.push_back( pEntry->second.name );
-	      
-	      if( pEntry->first == KeyStr.THETA )
-		{
-		  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
-		    {
-		      oDriver << "oResults << \"<label name=\\\"";
-		      oDriver << pEntry->second.name << "(" << cntTheta+1 << ")";
-		      oDriver << "\\\"/>\" << endl;" << endl;		      
-		      cntColumns++;
-		    }
-		}
-	      else if( pEntry->first == KeyStr.ETA )
-		{
-		  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
-		    {
-		      oDriver << "oResults << \"<label name=\\\"";
-		      oDriver << pEntry->second.name << "(" << cntEta+1 << ")";
-		      oDriver << "\\\"/>\" << endl;" << endl;		      
-		      cntColumns++;
-		    }
-		}
-	      else if( pEntry->first == KeyStr.EPS )
-		{
-		  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
-		    {
-		      oDriver << "oResults << \"<label name=\\\"";
-		      oDriver << pEntry->second.name << "(" << cntEps+1 << ")";
-		      oDriver << "\\\"/>\" << endl;" << endl;		      
-		      cntColumns++;
-		    }
-		}
-	      else
-		{
-		  oDriver << "oResults << \"<label name=\\\"";
-		  oDriver << pEntry->second.name;
-		  oDriver << "\\\"/>\" << endl;" << endl;
-		  cntColumns++;
-		}
-	    }
-	}
-    }
-  if( cntColumns != nColumns )
-    {
-      char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "The number of data items, %d, does not the number of labels, %d.",
-	       cntColumns, nColumns );
-      SpkCompilerException e( SpkCompilerError::ASPK_PROGRAMMER_ERR, mess, __LINE__, __FILE__ );
-      throw e;
-    }
-  oDriver << "//"  << endl;
-  oDriver << "///////////////////////////////////////////////////////////////////" << endl;
-  oDriver << "oResults << \"</data_labels>\" << endl;" << endl;
-  oDriver << endl;
-  
-  oDriver << "for( int i=0, position=1; i<nPop; i++ )" << endl;
-  oDriver << "{" << endl;
-  oDriver << "   for( int j=0; j<N[i]; j++, position++ )" << endl;
-  oDriver << "   {" << endl;
-  oDriver << "      oResults << \"<row position=\\\"\" << position << \"\\\">\" << endl;" << endl;
-  oDriver << "      ///////////////////////////////////////////////////////////////////" << endl;
-  oDriver << "      //   DATA SET Specific" << endl;
-
-  for( cntColumns=0, pWhatGoesIn = whatGoesIn.begin(); pWhatGoesIn!=whatGoesIn.end(); pWhatGoesIn++ )
-    {
-      keyWhatGoesIn = SymbolTable::key( *pWhatGoesIn );
-      if( keyWhatGoesIn == KeyStr.SIMDV )
-	{
-	  oDriver << "   oResults << \"<value ref=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
-	  oDriver << "yOut[position]";
-	  oDriver << " << \"</value>\" << endl;" << endl;
-	  cntColumns++;
-	}
-      else if( keyWhatGoesIn == KeyStr.THETA )
-	{
-	  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
-	    {
-	      oDriver << "   oResults << \"<value ref=\\\"";
-	      oDriver << *pWhatGoesIn << "(" << cntTheta+1 << ")" << "\\\"" << ">\" << ";
-	      oDriver << "set.data[i]->" << *pWhatGoesIn << "[j][" << cntTheta << "]";
-	      oDriver << " << \"</value>\" << endl;" << endl;
-	      cntColumns++;
-	    }
-	}
-      else if( keyWhatGoesIn == KeyStr.ETA )
-	{
-	  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
-	    {
-	      oDriver << "   oResults << \"<value ref=\\\"";
-	      oDriver << *pWhatGoesIn << "(" << cntEta+1 << ")"<< "\\\"" << ">\" << ";
-	      oDriver << "set.data[i]->" << *pWhatGoesIn << "[j][" << cntEta << "]";
-	      oDriver << " << \"</value>\" << endl;" << endl;
-	      cntColumns++;
-	    }
-	}
-      else if( keyWhatGoesIn == KeyStr.EPS )
-	{
-	  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
-	    {
-	      oDriver << "   oResults << \"<value ref=\\\"";
-	      oDriver << *pWhatGoesIn << "(" << cntEps+1 << ")"<< "\\\"" << ">\" << ";
-	      oDriver << "set.data[i]->" << *pWhatGoesIn << "[j][" << cntEps << "]";
-	      oDriver << " << \"</value>\" << endl;" << endl;
-	      cntColumns++;
-	    }
-	}
-      else if( keyWhatGoesIn == KeyStr.OMEGA || keyWhatGoesIn == KeyStr.SIGMA )
-	{
-	  // ignore
-	}
-      else
-	{
-	  oDriver << "   oResults << \"<value ref=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
-	  oDriver << "set.data[i]->" << *pWhatGoesIn << "[j]";
-	  oDriver << " << \"</value>\" << endl;" << endl;
-	  cntColumns++;
-	}
-    }
-  if( cntColumns != nColumns )
-    {
-      char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "The number of data items, %d, does not the number of labels, %d.",
-	       cntColumns, nColumns );
-      SpkCompilerException e( SpkCompilerError::ASPK_PROGRAMMER_ERR, mess, __LINE__, __FILE__ );
-      throw e;
-    }
-  oDriver << "      //" << endl;
-  oDriver << "      ///////////////////////////////////////////////////////////////////" << endl;
-  oDriver << "      oResults << \"</row>\" << endl;" << endl;
-  oDriver << "   }" << endl;
-  oDriver << "}" << endl;
-  
-  oDriver << "oResults << \"</presentation_data>\" << endl;" << endl;
-  //
-  //=============================================================================
-  
+  // This prints out <presentation_data></presentation_data>
+  oDriver << "oResults << set.xmlOut( oResults, \"presentation_data\" ) << endl;" << endl;
+ 
   oDriver << "oResults << \"</spkreport>\" << endl;" << endl;
   
   oDriver << "oResults.close();" << endl;
