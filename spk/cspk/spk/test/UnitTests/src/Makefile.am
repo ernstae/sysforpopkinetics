@@ -144,6 +144,8 @@ testall_SOURCES = \
 	replaceJthTest.h \
 	replaceSubblockTest.cpp \
 	replaceSubblockTest.h \
+	residualsTest.cpp \
+	residualsTest.h \
 	rvecInverseTest.cpp \
 	rvecInverseTest.h \
 	rvecTest.cpp \

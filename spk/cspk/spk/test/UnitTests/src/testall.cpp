@@ -74,6 +74,7 @@
 #include "src/replaceIthTest.h"
 #include "src/replaceJthTest.h"
 #include "src/replaceSubblockTest.h"
+#include "src/residualsTest.h"
 #include "src/rvecInverseTest.h"
 #include "src/rvecTest.h"
 #include "src/SpkErrorTest.h"
@@ -167,6 +168,7 @@ int main( int argc, const char * argv[] )
   runner.addTest( replaceIthTest::suite() );
   runner.addTest( replaceJthTest::suite() );
   runner.addTest( replaceSubblockTest::suite() );
+  runner.addTest( residualsTest::suite() );
   runner.addTest( rvecInverseTest::suite() );
   runner.addTest( rvecTest::suite() );
   runner.addTest( SpkErrorTest::suite() );
