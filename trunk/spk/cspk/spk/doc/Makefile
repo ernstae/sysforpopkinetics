@@ -28,5 +28,19 @@
 #    (3.) the HTML files should be created in the htm directory.
 #
 # -----------------------------------------------------------------
-all :
+include ../../../../../../doc/webdir.mk
+T = spkLib
+HTML_DIR = htm
+DEST_HTML_DIR =  
+WEB = $(WEBDIR)/v0.1/specs/$T
+
+all : html
+
+html:
 	make -C omh
+
+install:
+	scp $(HTML_DIR)/*.htm $(WEB)/$(DEST_HTML_DIR)
+
+clean:
+	rm -f -r $(HTML_DIR)
