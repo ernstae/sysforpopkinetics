@@ -2,7 +2,7 @@
 /**
  * @file explang.cpp
  * This file is generated from the YACC (BISON) syntax analyzer 
- * specification file, nonmem/explang.ypp, which defines the yyparse() for NONMEM.
+ * specification file, nonmem/explang.ypp, which defines the nm_parse() for NONMEM.
  * @ingroup nonmem
  */
 /**
@@ -20,7 +20,7 @@ using namespace std;
  * Global counter for errors encountered during parsing.
  * This counter is initialized to zero at compilation time only
  * and it is the caller's responsibility to re-initialize the value
- * when necessarily.  In other words, yyparse() does not reset the value.
+ * when necessarily.  In other words, nm_parse() does not reset the value.
  */
 int gSpkExpErrors = 0;
 
@@ -28,7 +28,7 @@ int gSpkExpErrors = 0;
  * Global counter for lines that have been read so far during parsing.
  * This counter is initialized to zero at compilation time only
  * and it is the caller's responsibility to re-initialize the value
- * when necessarily.  In other words, yyparse() does not reset the value.
+ * when necessarily.  In other words, nm_parse() does not reset the value.
  */
 int gSpkExpLines  = 0;
 
@@ -36,12 +36,12 @@ int gSpkExpLines  = 0;
  * Global pointer to a SymbolTable object.
  *
  * This pointer has to be initialized to point to a valid object
- * in the caller (of yyparse()) space.  The allocated resource
+ * in the caller (of nm_parse()) space.  The allocated resource
  * must be released by the caller too.
  *
  * @note If the pointer is found to be pointing to NULL at
- * the very beginning of parsing, yyparse() will call
- * yyerror() which in turn forces yyparse() to return immediately with
+ * the very beginning of parsing, nm_parse() will call
+ * nm_error() which in turn forces nm_parse() to return immediately with
  * a non-zero value.
  */
 SymbolTable * gSpkExpSymbolTable;
@@ -51,15 +51,15 @@ extern "C"{
     * This parser converts "algebraic expressions + control statements"
     *  written in
     * the NONMEM Abbriviated language to C++ language.
-    * The NONMEM version of yylex() is expected to tokenize the input,
+    * The NONMEM version of nm_lex() is expected to tokenize the input,
     * convert it to all @em lower-case and pass back to this routine.  
     * The input expressions must be
-    * stored in an open readable file pointed by a FILE handler, @a yyin.
+    * stored in an open readable file pointed by a FILE handler, @a nm_in.
     * The generated C++ source code is appended to an open writable
     * file pointed by a FILE handler, gSpkExpOut.
     * output to a file pointed by yet another file handler, gSpkExpOutput.
     * The grobal counter, gSpkExpErrors, shall be incremented
-    * as yyparse() or yylex() encounters syntax errors.
+    * as nm_parse() or nm_lex() encounters syntax errors.
     * 
     * @note The code for this function is generated from
     * a YACC (BISON) specification file, explang.ypp.  
@@ -90,32 +90,32 @@ extern "C"{
     * (thus, for a vector, you have a(start:end:stride) and for a matrix, A(start:end:stride, start:end:stride).
     *
     */
-    int yyparse(void);
+    int nm_parse(void);
 
    /**
     * The lexical analyzer for NONMEM Abbriviated code.
-    * The input string stream yylex() reads in is assumed to 
-    * be pointed by a FILE handler, @a yyin.
+    * The input string stream nm_lex() reads in is assumed to 
+    * be pointed by a FILE handler, @a nm_in.
     *
     * @note The code for this function is generated from
     * a LEX (FLEX) specification file, lex_explang.l.
     */
-    int yylex(void);
+    int nm_lex(void);
 
-    int yywrap()
+    int nm_wrap()
     {
       return 1;
     }
    /**
-    * The error handler used by yyparse() when it finds an error.  
+    * The error handler used by nm_parse() when it finds an error.  
     * Currently, it is only to display an error message and
-    * and return from yyparse() with a value -1.
+    * and return from nm_parse() with a value -1.
     *
-    * @todo This error handler forces yyparse() to immediately return.
+    * @todo This error handler forces nm_parse() to immediately return.
     * It probably want to do more than that.
     *
     */
-    int yyerror( char * err_message )
+    int nm_error( char * err_message )
     { 
       ++gSpkExpErrors;
       cerr <<  "!!! Error (" << gSpkExpErrors << ") at line " << gSpkExpLines << ": " << endl;
@@ -125,14 +125,14 @@ extern "C"{
     }
 
    /**
-    * A signal that forces yyparse() to immediately return normally.
+    * A signal that forces nm_parse() to immediately return normally.
     */
-    int YYACCEPT;
+    int NM_ACCEPT;
 
    /**
-    * A signal that forces yyparse() to immediately return abnormaly.
+    * A signal that forces nm_parse() to immediately return abnormaly.
     */
-    int YYABORT;
+    int NM_ABORT;
 
    /**
     * Global pointer to a FILE handler to which output is redirected.
@@ -142,7 +142,7 @@ extern "C"{
    /**
     * The file hander pointing to the input file to read in.  It must be open & readable.
     */
-    extern FILE * yyin;
+    extern FILE * nm_in;
 };
 
 namespace{
@@ -579,7 +579,7 @@ NAME {
      {
         char buf[128];
         sprintf( buf, "%s is not defined in the symbol table.", $1 );
-        yyerror( buf );
+        nm_error( buf );
      }
      else
      {
@@ -620,7 +620,7 @@ NAME '(' slice ')' {
       {
          char buf[128];
          sprintf( buf, "%s is not defined in the symbol table.", $1 );
-         yyerror( buf );
+         nm_error( buf );
       }
       else
       {
@@ -1075,7 +1075,7 @@ DEFINED_UNARY_FUNCTION '(' arithmatic_expr ')' {
    {
       char err[128];
       sprintf( err, "%s is not a supported operation!\n", lowercase );
-      yyerror( err );
+      nm_error( err );
    }
    delete $3;
    $$ = (char*)strdup(buf);

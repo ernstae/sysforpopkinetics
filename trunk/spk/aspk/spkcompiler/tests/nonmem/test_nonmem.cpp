@@ -16,12 +16,12 @@ using namespace std;
 using namespace CppUnit;
 /*
 extern "C"{
-  int yylex(void);
-  int yyparse(void);
-  FILE * yyin;
-  FILE * yyout;
-  void yyrestart( FILE* );
-  void yyerror( char * m )
+  int nm_lex(void);
+  int nm_parse(void);
+  FILE * nm_in;
+  FILE * nm_out;
+  void nm_restart( FILE* );
+  void nm_error( char * m )
   {
      fprintf( stderr, "%s\n", m );
      exit(-1);

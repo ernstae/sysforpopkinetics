@@ -294,7 +294,7 @@ void read_nonmem_modelTest::test()
   DOMElement * modelNode = dynamic_cast<DOMElement*>(
 	     doc->getElementsByTagName( XMLString::transcode( "model" ) )->item(0) );
 
-  yydebug = 0;
+  nm_debug = 0;
   gSpkExpOutput = fopen( "pred.cpp", "w" );
   read_nonmem_model( modelNode, nIndividuals, &table );
   fclose( gSpkExpOutput );

@@ -15,7 +15,7 @@
  * Encapsulate Constant values and utitilies specific to NONMEM.
  */
 namespace nonmem{
-
+  
   /**
    * NONMEM ADVAN routine names or none.
    */

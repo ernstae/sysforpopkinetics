@@ -37,7 +37,7 @@ extern "C"{
    * @note This function is implemented in the form of
    * LEX definition.
    */
-  int yylex(void);  
+  int nm_lex(void);  
   
   /**
    * The syntax analyzer for expressions.
@@ -49,96 +49,96 @@ extern "C"{
    * @note This function is implemented in the form of 
    * YACC definition.
    */
-  int yyparse(void);
+  int nm_parse(void);
 
-  void yyrestart( FILE* );
+  void nm_restart( FILE* );
 };
 /**
- * A global flag used by yyparse() to indicate as to whether
- * yyparse() emits debugging information as it proceeds.
+ * A global flag used by nm_parse() to indicate as to whether
+ * nm_parse() emits debugging information as it proceeds.
  *
  * @note YACC (BISON in Linux) declares this flag.
  */
-extern int yydebug;
+extern int nm_debug;
 
 /**
- * A global pointer used by yylex() and yyparse().  The caller of yylex()
+ * A global pointer used by nm_lex() and nm_parse().  The caller of nm_lex()
  * sets the pointer to a FILE handler for the input (expressions) file.
  *
  * @note LEX (FLEX in Linux) declares this pointer.
  */
-extern FILE *yyin;
+extern FILE *nm_in;
   
 /**
- * A global counter used by yylex() to count the number of lines it
+ * A global counter used by nm_lex() to count the number of lines it
  * has read so far.
  *
  * 
- * yylex() only increments (hence, it does not initialize)
+ * nm_lex() only increments (hence, it does not initialize)
  * the counter from the value set prior to the call.
- * It will probably most make sense if the caller of yyparse()
- * initialize this counter just before a call to yyparse() which
- * in turn calls yylex() repetively until all contents in a file
+ * It will probably most make sense if the caller of nm_parse()
+ * initialize this counter just before a call to nm_parse() which
+ * in turn calls nm_lex() repetively until all contents in a file
  * are read.  One example of situations where the counter is
  * initialized to a value greater than zero is where
  * the file contains expressions extracted from another file
  * and the first expression appeared somewhere in the middle
  * of the original file.
  * 
- * @note This counter is actually declared in a file that defines yylex()
+ * @note This counter is actually declared in a file that defines nm_lex()
  * for each client type.
  */
 extern int gSpkExpLines;
 
 
 /**
- * A global counter used by yylex() and yyparse() to keep track of
+ * A global counter used by nm_lex() and nm_parse() to keep track of
  * the number of syntax and semantics errors detected during the process.
  *
- * yylex() and yyparse() only increment the counter from the value
- * set prior to the call to yyparse() which in turn calls yylex() repectively.
- * It will probably most make sense if the caller of yyparse()
- * initialize this counter just before a call to yyparse()
+ * nm_lex() and nm_parse() only increment the counter from the value
+ * set prior to the call to nm_parse() which in turn calls nm_lex() repectively.
+ * It will probably most make sense if the caller of nm_parse()
+ * initialize this counter just before a call to nm_parse()
  *
- * @note This counter is acutally declared in a file that defines yyparse()
+ * @note This counter is acutally declared in a file that defines nm_parse()
  * for each client type.
  */
 extern int gSpkExpErrors;
 
 /**
- * A global pointer to the symbol table used by yyparse().
+ * A global pointer to the symbol table used by nm_parse().
  *
- * yyparse() inserts new user-defined variables discovered 
+ * nm_parse() inserts new user-defined variables discovered 
  * in a given set of expressions that are not found in the
- * table prior to the call.  In other words, yyparse()
+ * table prior to the call.  In other words, nm_parse()
  * does not initialize or allocate memory and
- * only adds new variables.  yyparse() also does not 
+ * only adds new variables.  nm_parse() also does not 
  * disturb the information about the variables already
  * found in the table prior to the call.
  *
- * @note This pointer is actually declared in a file that defines yyparse()
+ * @note This pointer is actually declared in a file that defines nm_parse()
  * for each client type.
  */
 extern SymbolTable *gSpkExpSymbolTable;
 
 /**
- * A global pointer to a DOM based parse tree used by yyparse().
+ * A global pointer to a DOM based parse tree used by nm_parse().
  *
- * yyparse() builds a DOM based parse tree from a set of expressions
- * passed through yylex().  yyparse() assumes this pointer points to an
+ * nm_parse() builds a DOM based parse tree from a set of expressions
+ * passed through nm_lex().  nm_parse() assumes this pointer points to an
  * already allocated area of memory for the tree.
- * In other words, yyparse() does not do memory management
+ * In other words, nm_parse() does not do memory management
  * and only inserts new nodes below the
  * root node pointed by the pointer set prior to the call.
  *
  * @note This pointer is acutally declared in a file that defines 
- * a yyparse() for a target client type.
+ * a nm_parse() for a target client type.
  */
 //extern xercesc::DOMDocument *gSpkExpTree;
 
 /**
  * Global pointer to a FILE handler pointing to an open writable
- * file to which the results of yyparse() is redirected.
+ * file to which the results of nm_parse() is redirected.
  */
 extern FILE * gSpkExpOutput;
 

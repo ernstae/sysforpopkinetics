@@ -23,15 +23,15 @@ using namespace CppUnit;
 using namespace xercesc;
 
 extern "C"{
-  int yylex(void);  
-  int yyparse(void);
+  int nm_lex(void);  
+  int nm_parse(void);
 };
 extern int                gSpkExpLines;
 extern int                gSpkExpErrors;
 extern SymbolTable      * gSpkExpSymbolTable;
 extern FILE             * gSpkExpOutput;
-extern FILE             * yyin;
-extern int                yydebug;
+extern FILE             * nm_in;
+extern int                nm_debug;
 
 
 void explangTest::setUp()
@@ -42,7 +42,7 @@ void explangTest::tearDown()
 }
 void explangTest::testScalarAssignmentToScalar()
 {
-  // Attention!!! yylex() converts any capitalized letter to lower case.
+  // Attention!!! nm_lex() converts any capitalized letter to lower case.
 
   SymbolTable table;
   char input[]        = "testScalarAssignmentToScalar.in";
@@ -69,17 +69,17 @@ void explangTest::testScalarAssignmentToScalar()
   pInput = fopen( input, "r" );
   CPPUNIT_ASSERT( pInput != NULL );
 
-  yyin = pInput;
-  CPPUNIT_ASSERT( yyin != NULL );
+  nm_in = pInput;
+  CPPUNIT_ASSERT( nm_in != NULL );
 
   gSpkExpErrors = 0;
   gSpkExpLines  = 0;
   gSpkExpSymbolTable = &table;
   CPPUNIT_ASSERT( gSpkExpSymbolTable != NULL );
   gSpkExpOutput = fopen( output, "w" );
-  yydebug = 0;
+  nm_debug = 0;
 
-  yyparse();
+  nm_parse();
 
   CPPUNIT_ASSERT( table.find( "a" ));
   fclose( pInput );
@@ -222,17 +222,17 @@ void explangTest::testVectorElementAssignmentToScalar()
   pInput = fopen( input, "r" );
   CPPUNIT_ASSERT( pInput != NULL );
 
-  yyin = pInput;
-  CPPUNIT_ASSERT( yyin != NULL );
+  nm_in = pInput;
+  CPPUNIT_ASSERT( nm_in != NULL );
 
   gSpkExpErrors = 0;
   gSpkExpLines  = 0;
   gSpkExpSymbolTable = &table;
   CPPUNIT_ASSERT( gSpkExpSymbolTable != NULL );
   gSpkExpOutput = fopen( output, "w" );
-  yydebug = 0;
+  nm_debug = 0;
 
-  yyparse();
+  nm_parse();
 
   CPPUNIT_ASSERT( table.find( "a" ));
   
@@ -302,17 +302,17 @@ void explangTest::testFunctions()
   pInput = fopen( input, "r" );
   CPPUNIT_ASSERT( pInput != NULL );
 
-  yyin = pInput;
-  CPPUNIT_ASSERT( yyin != NULL );
+  nm_in = pInput;
+  CPPUNIT_ASSERT( nm_in != NULL );
 
   gSpkExpErrors = 0;
   gSpkExpLines  = 0;
   gSpkExpSymbolTable = &table;
   CPPUNIT_ASSERT( gSpkExpSymbolTable != NULL );
   gSpkExpOutput = fopen( output, "w" );
-  yydebug = 0;
+  nm_debug = 0;
 
-  yyparse();
+  nm_parse();
 
   CPPUNIT_ASSERT( table.find( "a" ));
   CPPUNIT_ASSERT( table.find( "b" ));
@@ -495,17 +495,17 @@ void explangTest::testIfStmt()
   pInput = fopen( input, "r" );
   CPPUNIT_ASSERT( pInput != NULL );
 
-  yyin = pInput;
-  CPPUNIT_ASSERT( yyin != NULL );
+  nm_in = pInput;
+  CPPUNIT_ASSERT( nm_in != NULL );
 
   gSpkExpErrors = 0;
   gSpkExpLines  = 0;
   gSpkExpSymbolTable = &table;
   CPPUNIT_ASSERT( gSpkExpSymbolTable != NULL );
   gSpkExpOutput = fopen( output, "w" );
-  yydebug = 0;
+  nm_debug = 0;
 
-  yyparse();
+  nm_parse();
 
   CPPUNIT_ASSERT( table.find( "a" ) );
   
@@ -628,17 +628,17 @@ void explangTest::testIfThenStmt()
   pInput = fopen( input, "r" );
   CPPUNIT_ASSERT( pInput != NULL );
 
-  yyin = pInput;
-  CPPUNIT_ASSERT( yyin != NULL );
+  nm_in = pInput;
+  CPPUNIT_ASSERT( nm_in != NULL );
 
   gSpkExpErrors = 0;
   gSpkExpLines  = 0;
   gSpkExpSymbolTable = &table;
   CPPUNIT_ASSERT( gSpkExpSymbolTable != NULL );
   gSpkExpOutput = fopen( output, "w" );
-  yydebug = 0;
+  nm_debug = 0;
 
-  yyparse();
+  nm_parse();
 
   CPPUNIT_ASSERT( table.find( "c" ) );
   CPPUNIT_ASSERT( table.find( "a" ) );
