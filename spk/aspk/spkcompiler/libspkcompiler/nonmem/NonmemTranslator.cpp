@@ -61,12 +61,12 @@ namespace{
   unsigned int      mySeed = 0;
 
   string            myCovForm       = "R";
-  bool              myIsStderr      = false;
-  bool              myIsCorrelation = false;
-  bool              myIsCov         = false;
-  bool              myIsInvCov      = false;
-  bool              myIsConfidence  = false;
-  bool              myIsCoefficient = false;
+  bool              myIsStderr      = true;
+  bool              myIsCorrelation = true;
+  bool              myIsCov         = true;
+  bool              myIsInvCov      = true;
+  bool              myIsConfidence  = true;
+  bool              myIsCoefficient = true;
   valarray<int>     myRecordNums;
 };
 namespace UserStr{
@@ -944,12 +944,12 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   
   DOMNodeList * pop_stat_list = pop_analysis->getElementsByTagName( X_POP_STAT );
   myCovForm       = "R";  //default
-  myIsStderr      = false;//default
-  myIsCorrelation = false;//default
-  myIsCov         = false;//default
-  myIsInvCov      = false;//default
-  myIsConfidence  = false;//default
-  myIsCoefficient = false;//default
+  myIsStderr      = true;//default
+  myIsCorrelation = true;//default
+  myIsCov         = true;//default
+  myIsInvCov      = true;//default
+  myIsConfidence  = true;//default
+  myIsCoefficient = true;//default
   // Statistics computation can be done only when the parameter estimation
   // is requested.
   if( pop_stat_list->getLength() > 0 && myIsEstimate )
@@ -1299,12 +1299,12 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
     }
 
   DOMNodeList * ind_stat_list = ind_analysis->getElementsByTagName( X_IND_STAT );
-  myIsStderr      = false;//default
-  myIsCorrelation = false;//default
-  myIsCov         = false;//default
-  myIsInvCov      = false;//default
-  myIsConfidence  = false;//default
-  myIsCoefficient = false;//default
+  myIsStderr      = true;//default
+  myIsCorrelation = true;//default
+  myIsCov         = true;//default
+  myIsInvCov      = true;//default
+  myIsConfidence  = true;//default
+  myIsCoefficient = true;//default
 
   // Statistics computation can be done only when the parameter estimation
   // is requested.
@@ -2307,7 +2307,13 @@ void NonmemTranslator::generateIndDriver( ) const
      oDriver << "#include <spk/Optimizer.h>" << endl;
   }
   if( myIsEstimate && myIsStat )
-     oDriver << "#include <spk/indStatistics.h>" << endl;
+    {
+      oDriver << "#include <spk/inverse.h>" << endl;
+      oDriver << "#include <spk/indStatistics.h>" << endl;
+      oDriver << "#include <spk/printInMatrix.h>" << endl;
+      oDriver << "#include <spk/isSymmetric.h>" << endl;
+      oDriver << "#include <spk/symmetrize.h>" << endl;
+    }
   if( myIsSimulate )
      oDriver << "#include <spk/simulate.h>" << endl;
   oDriver << "#include \"IndData.h\"" << endl;
@@ -2660,7 +2666,7 @@ void NonmemTranslator::generateIndDriver( ) const
 	  if( myIsConfidence )
 	    oDriver << "valarray<double> confidenceOut( 2 * nB );" << endl;
 	  if( myIsInvCov )
-	    oDriver << "valarray<double> invCov( nB * nB );" << endl;
+	    oDriver << "valarray<double> invCovOut( nB * nB );" << endl;
 	  
           oDriver << "valarray<double> f_bOut( nY * nB );" << endl;
 	  oDriver << "valarray<double> R_bOut( nY * nY * nB );" << endl;
@@ -2683,7 +2689,7 @@ void NonmemTranslator::generateIndDriver( ) const
           oDriver << "                     " << (myIsCov?         "&covOut"        :"NULL") << ", " << endl;
           oDriver << "                     " << (myIsStderr?      "&seOut"         :"NULL") << ", " << endl;
           oDriver << "                     " << (myIsCorrelation? "&correlationOut":"NULL") << ", " << endl;
-          oDriver << "                     " << (myIsCoefficient? "&coeficientOut" :"NULL") << ", " << endl;
+          oDriver << "                     " << (myIsCoefficient? "&coefficientOut" :"NULL") << ", " << endl;
           oDriver << "                     " << (myIsConfidence?  "&confidenceOut" :"NULL") << " );" << endl;
           oDriver << "      //FpErrorChecker::check( __LINE__, __FILE__ );" << endl;
 	  oDriver << "      isStatSuccess = true;" << endl;
@@ -2721,7 +2727,7 @@ void NonmemTranslator::generateIndDriver( ) const
 	      oDriver << "   }" << endl;
 	      oDriver << "   catch( ... )" << endl;
 	      oDriver << "   {" << endl;
-	      oDriver << "      char message[] = \"Unknown exception: failed to invert the covariance of the final estimate of individual parameter!!!\"" << endl;
+	      oDriver << "      char message[] = \"Unknown exception: failed to invert the covariance of the final estimate of individual parameter!!!\";" << endl;
               oDriver << "      oRuntimeError << message << endl;" << endl;
               oDriver << "      cerr << message << endl;" << endl;
 	      oDriver << "      isStatSuccess = false;" << endl;
@@ -3088,7 +3094,10 @@ void NonmemTranslator::generatePopDriver() const
      oDriver << "#include <spk/Optimizer.h>" << endl;
   }
   if( myIsEstimate && myIsStat )
-     oDriver << "#include <spk/popStatistics.h>" << endl;
+    {
+      oDriver << "#include <spk/popStatistics.h>" << endl;
+      oDriver << "#include <spk/inverse.h>" << endl;
+    }
   if( myIsSimulate )
      oDriver << "#include <spk/simulate.h>" << endl;
   oDriver << "#include \"IndData.h\"" << endl;
@@ -3506,7 +3515,7 @@ void NonmemTranslator::generatePopDriver() const
 	  if( myIsConfidence )
 	    oDriver << "valarray<double> confidenceOut( 2 * nAlp );" << endl;
 	  if( myIsInvCov )
-	    oDriver << "valarray<double> invCov( nAlp * nAlp );" << endl;
+	    oDriver << "valarray<double> invCovOut( nAlp * nAlp );" << endl;
 	  
 	  oDriver << "if( isStatRequested && haveCompleteData && isOptSuccess )" << endl;
 	  oDriver << "{" << endl;
@@ -3528,7 +3537,7 @@ void NonmemTranslator::generatePopDriver() const
           oDriver << "                     " << (myIsCov?         "&covOut"        :"NULL") << ", " << endl;
           oDriver << "                     " << (myIsStderr?      "&seOut"         :"NULL") << ", " << endl;
           oDriver << "                     " << (myIsCorrelation? "&correlationOut":"NULL") << ", " << endl;
-          oDriver << "                     " << (myIsCoefficient? "&coeficientOut" :"NULL") << ", " << endl;
+          oDriver << "                     " << (myIsCoefficient? "&coefficientOut" :"NULL") << ", " << endl;
           oDriver << "                     " << (myIsConfidence?  "&confidenceOut" :"NULL") << " );" << endl;
           oDriver << "      //FpErrorChecker::check( __LINE__, __FILE__ );" << endl;
           oDriver << "      isStatSuccess = true;" << endl;
@@ -3565,7 +3574,7 @@ void NonmemTranslator::generatePopDriver() const
 	      oDriver << "   }" << endl;
 	      oDriver << "   catch( ... )" << endl;
 	      oDriver << "   {" << endl;
-	      oDriver << "      char message[] = \"Unknown exception: failed to invert the covariance of the final estimate of individual parameter!!!\"" << endl;
+	      oDriver << "      char message[] = \"Unknown exception: failed to invert the covariance of the final estimate of individual parameter!!!\";" << endl;
               oDriver << "      oRuntimeError << message << endl;" << endl;
               oDriver << "      cerr << message << endl;" << endl;
 	      oDriver << "      isStatSuccess = false;" << endl;
