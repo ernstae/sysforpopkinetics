@@ -7,7 +7,8 @@ public class TestSpkdb {
 	String password = "codered";
 	String firstName = "Mike";
 	String surname = "Jordan";
-	final int maxTests = 14;
+	final int maxTests = 17;
+	String xmlSource = "<spksource></spksource>";
 
 	boolean b = true;
 	boolean target = true;
@@ -116,20 +117,6 @@ public class TestSpkdb {
 		    } 
 		    break;
 		case 10:
-		    target = false;
-		    s = "newJob";
-		    jobId = Spkdb.newJob(conn, 
-					      userId,
-					      "abstract",
-					      33,
-					      "1.01",
-					      44,
-					      "1.4.3",
-					      "nonexistantfile");
-		    b = jobId != 0;
-		    s += ": job number " + jobId;
-		    break;
-		case 11:
 		    target = true;
 		    s = "newJob";
 		    jobId = Spkdb.newJob(conn, 
@@ -139,11 +126,11 @@ public class TestSpkdb {
 					      "1.01",
 					      44,
 					      "1.4.3",
-					      "xmlSource");
+					      xmlSource);
 		    b = jobId != 0;
 		    s += ": job number " + jobId;
 		    break;
-		case 12:
+		case 11:
 		    target = true;
 		    s = "jobStatus";
 		    rs = Spkdb.jobStatus(conn, jobId);
@@ -156,10 +143,11 @@ public class TestSpkdb {
 			b = false;
 		    } 
 		    break;
-		case 13:
+		case 12:
 		    Thread.sleep(1000);
 		    target = true;
 		    s = "newJob";
+
 		    newerJobId = Spkdb.newJob(conn, 
 					      userId,
 					      "Abstract: job 2",
@@ -167,11 +155,12 @@ public class TestSpkdb {
 					      "1.01",
 					      44,
 					      "1.4.3",
-					      "xmlSource");
+					      xmlSource);
 		    b = newerJobId != 0;
 		    s += ": job number " + newerJobId;
+
 		    break;
-		case 14:
+		case 13:
 		    Thread.sleep(1000);
 		    target = true;
 		    s = "newJob";
@@ -182,9 +171,48 @@ public class TestSpkdb {
 					      "1.01",
 					      44,
 					      "1.4.3",
-					      "xmlSource");
+					      xmlSource);
 		    b = newestJobId != 0;
 		    s += ": job number " + newestJobId;
+		    break;
+		case 14:
+		    target = true;
+		    s = "userJobs, maxNum = 1";
+		    rs = Spkdb.userJobs(conn, userId, 1);
+		    if (rs.next()) {
+			b = rs.getLong("job_id") == newestJobId;
+		    } 
+		    else {
+			s += ": no record for userId = " + userId;
+			b = false;
+		    } 
+
+		    break;
+		case 15:
+		    b = target = true;
+		    s = "userJobs, maxNum = 3";
+		    rs = Spkdb.userJobs(conn, userId, 3);
+		    long jj = newestJobId;
+
+		    while (rs.next()) {
+			long j;
+			if ((j = rs.getLong("job_id")) != jj--) {
+			    s += "; jobId" + j + " is out of order";
+                            b = false;
+			    break;
+			}
+		    }
+		    s += "; " + (newestJobId - jj) + " were returned";
+		    break;
+		case 16:
+		    b = target = true;
+		    s = "endJob";
+		    b = Spkdb.endJob(conn, newerJobId, "srun", "job report");
+		    break;
+		case 17:
+		    b = target = false;
+		    s = "endJob";
+		    b = Spkdb.endJob(conn, newerJobId, "xxxx", "job report");
 		    break;
 		}
 	    } catch (Exception e) {
