@@ -7,6 +7,9 @@ CPPFLAGS = \
 	-c \
         -I/usr/local/include/spktest
 
+INSTALL_DIR = \
+	/usr/local/src
+
 INCLUDE = \
 	AnalyticIntegral.h \
 	GridIntegral.h \
@@ -36,3 +39,8 @@ OBJECT = \
 
 monteDriver : $(OBJECT)
 	g++ -g $(OBJECT) -o monteDriver -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -lspk -lspkopt -lspkpred -lgsl -latlas_lapack -lcblas -latlas -lpthread -lm
+
+install : AnalyticIntegral.h AnalyticIntegral.cpp GridIntegral.h GridIntegral.cpp MontePopObj.h MontePopObj.cpp MapBay.h MapBay.cpp MapMonte.h MapMonte.cpp monteDriver.cpp
+	mkdir -p /usr/local/src/spktest/ml
+	cp $? /usr/local/src/spktest/ml
+
