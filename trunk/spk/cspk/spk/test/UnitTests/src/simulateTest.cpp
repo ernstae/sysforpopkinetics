@@ -39,7 +39,6 @@
 #include <spk/calcMean.h>
 #include "simulateTest.h"
 #include <spk/identity.h>
-#include <nag.h>
 #include <cmath>
 
 

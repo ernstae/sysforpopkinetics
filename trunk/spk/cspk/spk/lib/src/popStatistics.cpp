@@ -90,7 +90,6 @@ $spell
   covariances
   cor
   cmath
-  nagg
   statistics
 $$
 
@@ -410,8 +409,7 @@ $codep
 
 #include <iostream>
 #include <cmath>
-#include <nag.h>
-#include <nagg05.h>
+#include "randNormal.h"
 #include "SpkModel.h"
 #include "lTilde.h"
 #include "inverse.h"
@@ -638,8 +636,8 @@ int main()
   g05cbc(seed);
   for ( i = 0; i < nInd; i++ )
   {
-    eTrue = nag_random_normal( meanETrue, sdETrue );
-    bTrue = nag_random_normal( meanBTrue, sdBTrue );
+    eTrue = randomNormal( meanETrue, sdETrue );
+    bTrue = randomNormal( meanBTrue, sdBTrue );
 
     Y[ i ] = meanBetaTrue + bTrue + eTrue;
   }

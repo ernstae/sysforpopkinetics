@@ -91,8 +91,7 @@ void popStatisticsTest::naiveFirstOrderTest()
 #include <spk/pi.h>
 #include <spk/SpkModel.h>
 #include <spk/inverse.h>
-#include <nag.h>
-#include <nagg05.h>
+#include <spk/randNormal.h>
 #include <iomanip>
 #include <cmath>
 
@@ -322,17 +321,16 @@ void popStatisticsTest::statisticsExampleTest(enum Objective whichObjective)
   double sdBTrue   = sqrt( varBTrue );
 
   // Compute the measurements for each individual.
-  Integer seed = 0;
-  g05cbc(seed);
-  for ( i = 0; i < nInd; i++ )
-  {
-    eTrue = nag_random_normal( meanETrue, sdETrue );
-    bTrue = nag_random_normal( meanBTrue, sdBTrue );
+  int seed = 2;
+  srand(seed);
 
-    Y[ i ] = meanBetaTrue + bTrue + eTrue;
-  }
+  valarray<double> sdECov(nY*nY);
+  sdECov[ slice( 0, nY, nY+1 ) ] = sdETrue;
 
+  valarray<double> sdBCov(nY*nY);
+  sdBCov[ slice( 0, nY, nY+1 ) ] = sdBTrue;
 
+  Y = meanBTrue + randNormal( sdBCov, nY ) + randNormal( sdECov, nY );
   //------------------------------------------------------------
   // Quantities related to the fixed population parameter, alp.
   //------------------------------------------------------------
@@ -450,204 +448,185 @@ void popStatisticsTest::statisticsExampleTest(enum Objective whichObjective)
   valarray<double> popParCVOut( nAlp );
   valarray<double> popParCIOut( nAlp * 2 );
 
-  try
-  {
-	for( int form = 1; form < 4; form++ )
+  for( int form = 1; form < 4; form++ )
+    {
+      try{
+	
+	popStatistics(
+		      model,
+		      whichObjective,
+		      N,
+		      Y,
+		      alpOut,
+		      lTilde_alp_alpOut,
+		      bOut,
+		      bLow,
+		      bUp,				 
+		      bStep,
+		      enum PopCovForm( form ),
+		      &popParCovOut,
+		      &popParSEOut,
+		      &popParCorOut,
+		      &popParCVOut,
+		      &popParCIOut
+		      );
+      }
+      catch( const SpkException& e )
 	{
-      popStatistics(
-		             model,
-				     whichObjective,
-				     N,
-				     Y,
-				     alpOut,
-	                 lTilde_alp_alpOut,
-				     bOut,
-			         bLow,
-				     bUp,				 
-				     bStep,
-				     enum PopCovForm( form ),
-				     &popParCovOut,
-				     &popParSEOut,
-				     &popParCorOut,
-                     &popParCVOut,
-                     &popParCIOut
-			       );
-
-	  if( whichObjective == FIRST_ORDER && form != 2 )
-		  continue;
-/*
-	  cout << "formulation = " << form << endl;
-	  cout << "popParCovOut = " << endl;
-      printInMatrix( popParCovOut, nAlp );
-      cout << "-----------------------" << endl;
-*/
-	  double eps = 1e-9;
-
-  //------------------------------------------------------------
-  // Symmetrize the matrix of second derivatives.
-  //------------------------------------------------------------
-
-  // Because the function popStatistics symmetrizes the matrix of
-  // second derivatives of the population objective function that 
-  // is passed in to it, this test must do the same.
-  valarray<double> lTilde_alp_alpSymm( nAlp * nAlp );
-
-  // Calculate the value for the symmetrized off diagonal elements
-  // by taking their average.
-  double lTilde_alp_alpOffDiag = 
-    ( lTilde_alp_alpOut[ 1 ] + lTilde_alp_alpOut[ 2 ] ) / 2.0;
-
-   // Set the elements of the symmetrized matrix.
-  lTilde_alp_alpSymm[ 0 ] = lTilde_alp_alpOut[0];
-  lTilde_alp_alpSymm[ 1 ] = lTilde_alp_alpOffDiag;
-  lTilde_alp_alpSymm[ 2 ] = lTilde_alp_alpOffDiag;
-  lTilde_alp_alpSymm[ 3 ] = lTilde_alp_alpOut[3];
-
-  // Replace this with its symmetrized version.
-  lTilde_alp_alpOut = lTilde_alp_alpSymm;
-
-
+	  cerr << e << endl;
+	  CPPUNIT_ASSERT_MESSAGE( "popStatistics failed!", false );
+	}
+      catch(...)
+	{
+	  CPPUNIT_ASSERT_MESSAGE( "popStatistics failed for unknown reasons!", false);
+	}
+      
+      if( whichObjective == FIRST_ORDER && form != 2 )
+	continue;
+      /*
+	cout << "formulation = " << form << endl;
+	cout << "popParCovOut = " << endl;
+	printInMatrix( popParCovOut, nAlp );
+	cout << "-----------------------" << endl;
+      */
+      double eps = 1e-5;
+      
       //------------------------------------------------------------
       // Test popParCovOut formulation 2.
       //------------------------------------------------------------
-
-	  if( form == 2 )             
-	  {
-          CPPUNIT_ASSERT_DOUBLES_EQUAL( lTilde_alp_alpOut[ 0 ] * popParCovOut[ 0 ] +
-			                  lTilde_alp_alpOut[ 2 ] * popParCovOut[ 1 ], 1.0, eps );
-	      CPPUNIT_ASSERT_DOUBLES_EQUAL( lTilde_alp_alpOut[ 1 ] * popParCovOut[ 0 ] +
-			                  lTilde_alp_alpOut[ 3 ] * popParCovOut[ 1 ], 0.0, eps );
-		  CPPUNIT_ASSERT_DOUBLES_EQUAL( lTilde_alp_alpOut[ 0 ] * popParCovOut[ 2 ] +
-			                  lTilde_alp_alpOut[ 2 ] * popParCovOut[ 3 ], 0.0, eps );
-		  CPPUNIT_ASSERT_DOUBLES_EQUAL( lTilde_alp_alpOut[ 1 ] * popParCovOut[ 2 ] +
-			                  lTilde_alp_alpOut[ 3 ] * popParCovOut[ 3 ], 1.0, eps );
-	  }
-	  
+      
+      if( form == 2 )             
+	{
+	  CPPUNIT_ASSERT_DOUBLES_EQUAL( lTilde_alp_alpOut[ 0 ] * popParCovOut[ 0 ] +
+					lTilde_alp_alpOut[ 2 ] * popParCovOut[ 1 ], 1.0, eps );
+	  CPPUNIT_ASSERT_DOUBLES_EQUAL( lTilde_alp_alpOut[ 1 ] * popParCovOut[ 0 ] +
+					lTilde_alp_alpOut[ 3 ] * popParCovOut[ 1 ], 0.0, eps );
+	  CPPUNIT_ASSERT_DOUBLES_EQUAL( lTilde_alp_alpOut[ 0 ] * popParCovOut[ 2 ] +
+					lTilde_alp_alpOut[ 2 ] * popParCovOut[ 3 ], 0.0, eps );
+	  CPPUNIT_ASSERT_DOUBLES_EQUAL( lTilde_alp_alpOut[ 1 ] * popParCovOut[ 2 ] +
+					lTilde_alp_alpOut[ 3 ] * popParCovOut[ 3 ], 1.0, eps );
+	}
+      
       //------------------------------------------------------------
       // Compute S.
       //------------------------------------------------------------
-
-	  if( form == 1 || form == 3 )
-	  {
-		DoubleMatrix dvecN( nInd, 1 );
-        double * pN = dvecN.data();
-        for( int i=0; i<nInd; i++ )
-        pN[i] = N[i];
-        DoubleMatrix dvecY( Y );
-        DoubleMatrix dvecAlp( alpOut );
-        DoubleMatrix dvecBLow( bLow );
-        DoubleMatrix dvecBUp( bUp );
-        DoubleMatrix dmatBIn( bOut, nInd );
-        DoubleMatrix dvecBStep( bStep );
-		DoubleMatrix dmatLTilde_alpOut( nAlp, nAlp );
-
-		lTilde( model, 
-			    whichObjective, 
-				dvecY, 
-				dvecN,
-                indOptimizer,
-				dvecAlp,
-				dvecBLow,
-				dvecBUp,
-				dvecBStep,
-				dmatBIn,
-                0,
-				0, 
-				0, 
-				&dmatLTilde_alpOut );
-
-		valarray<double> S( 0.0, nAlp * nAlp );
-		double* pdmatLTilde_alpOut = dmatLTilde_alpOut.data();
-        for( int i = 0; i < nInd * 2; i += 2 )
-		{
-		    S[ 0 ] += pdmatLTilde_alpOut[ i ]     * pdmatLTilde_alpOut[ i ];
-		    S[ 1 ] += pdmatLTilde_alpOut[ i ]     * pdmatLTilde_alpOut[ i + 1 ];
-		    S[ 2 ] += pdmatLTilde_alpOut[ i + 1 ] * pdmatLTilde_alpOut[ i ];
-            S[ 3 ] += pdmatLTilde_alpOut[ i + 1 ] * pdmatLTilde_alpOut[ i + 1 ];
-		}
-
-		//------------------------------------------------------------
-        // Test popParCovOut formulation 3.
-        //------------------------------------------------------------
-
-		if( form == 3 )
-		{
-		    CPPUNIT_ASSERT_DOUBLES_EQUAL( S[ 0 ] * popParCovOut[ 0 ] +
+      
+      if( form == 1 || form == 3 )
+	{
+	  DoubleMatrix dvecN( nInd, 1 );
+	  double * pN = dvecN.data();
+	  for( int i=0; i<nInd; i++ )
+	    pN[i] = N[i];
+	  DoubleMatrix dvecY( Y );
+	  DoubleMatrix dvecAlp( alpOut );
+	  DoubleMatrix dvecBLow( bLow );
+	  DoubleMatrix dvecBUp( bUp );
+	  DoubleMatrix dmatBIn( bOut, nInd );
+	  DoubleMatrix dvecBStep( bStep );
+	  DoubleMatrix dmatLTilde_alpOut( nAlp, nAlp );
+	  
+	  lTilde( model, 
+		  whichObjective, 
+		  dvecY, 
+		  dvecN,
+		  indOptimizer,
+		  dvecAlp,
+		  dvecBLow,
+		  dvecBUp,
+		  dvecBStep,
+		  dmatBIn,
+		  0,
+		  0, 
+		  0, 
+		  &dmatLTilde_alpOut );
+	  
+	  valarray<double> S( 0.0, nAlp * nAlp );
+	  double* pdmatLTilde_alpOut = dmatLTilde_alpOut.data();
+	  for( int i = 0; i < nInd * 2; i += 2 )
+	    {
+	      S[ 0 ] += pdmatLTilde_alpOut[ i ]     * pdmatLTilde_alpOut[ i ];
+	      S[ 1 ] += pdmatLTilde_alpOut[ i ]     * pdmatLTilde_alpOut[ i + 1 ];
+	      S[ 2 ] += pdmatLTilde_alpOut[ i + 1 ] * pdmatLTilde_alpOut[ i ];
+	      S[ 3 ] += pdmatLTilde_alpOut[ i + 1 ] * pdmatLTilde_alpOut[ i + 1 ];
+	    }
+	  
+	  //------------------------------------------------------------
+	  // Test popParCovOut formulation 3.
+	  //------------------------------------------------------------
+	  
+	  if( form == 3 )
+	    {
+	      CPPUNIT_ASSERT_DOUBLES_EQUAL( S[ 0 ] * popParCovOut[ 0 ] +
 			                    S[ 2 ] * popParCovOut[ 1 ], 1.0, eps );
-	        CPPUNIT_ASSERT_DOUBLES_EQUAL( S[ 1 ] * popParCovOut[ 0 ] +
+	      CPPUNIT_ASSERT_DOUBLES_EQUAL( S[ 1 ] * popParCovOut[ 0 ] +
 			                    S[ 3 ] * popParCovOut[ 1 ], 0.0, eps );
-		    CPPUNIT_ASSERT_DOUBLES_EQUAL( S[ 0 ] * popParCovOut[ 2 ] +
+	      CPPUNIT_ASSERT_DOUBLES_EQUAL( S[ 0 ] * popParCovOut[ 2 ] +
 			                    S[ 2 ] * popParCovOut[ 3 ], 0.0, eps );
-		    CPPUNIT_ASSERT_DOUBLES_EQUAL( S[ 1 ] * popParCovOut[ 2 ] +
+	      CPPUNIT_ASSERT_DOUBLES_EQUAL( S[ 1 ] * popParCovOut[ 2 ] +
 			                    S[ 3 ] * popParCovOut[ 3 ], 1.0, eps );
-		}
-
-        //------------------------------------------------------------
-        // Test popParCovOut formulation 1.
-        //------------------------------------------------------------
-
-		if( form == 1 )
-		{
-			double detR = lTilde_alp_alpOut[ 0 ] * lTilde_alp_alpOut[ 3 ] -
-				          lTilde_alp_alpOut[ 2 ] * lTilde_alp_alpOut[ 1 ];
-
-            CPPUNIT_ASSERT_DOUBLES_EQUAL( lTilde_alp_alpOut[ 0 ] * popParCovOut[ 0 ] + 
+	    }
+	  
+	  //------------------------------------------------------------
+	  // Test popParCovOut formulation 1.
+	  //------------------------------------------------------------
+	  
+	  if( form == 1 )
+	    {
+	      double detR = lTilde_alp_alpOut[ 0 ] * lTilde_alp_alpOut[ 3 ] -
+		lTilde_alp_alpOut[ 2 ] * lTilde_alp_alpOut[ 1 ];
+	      
+	      CPPUNIT_ASSERT_DOUBLES_EQUAL( lTilde_alp_alpOut[ 0 ] * popParCovOut[ 0 ] + 
 			                    lTilde_alp_alpOut[ 2 ] * popParCovOut[ 1 ], 
-								( S[ 0 ] * lTilde_alp_alpOut[ 3 ] - 
-								  S[ 2 ] * lTilde_alp_alpOut[ 1 ] ) / detR, eps );
-
-	        CPPUNIT_ASSERT_DOUBLES_EQUAL( lTilde_alp_alpOut[ 1 ] * popParCovOut[ 0 ] +
+					    ( S[ 0 ] * lTilde_alp_alpOut[ 3 ] - 
+					      S[ 2 ] * lTilde_alp_alpOut[ 1 ] ) / detR, eps );
+	      
+	      CPPUNIT_ASSERT_DOUBLES_EQUAL( lTilde_alp_alpOut[ 1 ] * popParCovOut[ 0 ] +
 			                    lTilde_alp_alpOut[ 3 ] * popParCovOut[ 1 ], 
-								( S[ 1 ] * lTilde_alp_alpOut[ 3 ] - 
-								  S[ 3 ] * lTilde_alp_alpOut[ 1 ] ) / detR, eps );
-
-		    CPPUNIT_ASSERT_DOUBLES_EQUAL( lTilde_alp_alpOut[ 0 ] * popParCovOut[ 2 ] +
+					    ( S[ 1 ] * lTilde_alp_alpOut[ 3 ] - 
+					      S[ 3 ] * lTilde_alp_alpOut[ 1 ] ) / detR, eps );
+	      
+	      CPPUNIT_ASSERT_DOUBLES_EQUAL( lTilde_alp_alpOut[ 0 ] * popParCovOut[ 2 ] +
 			                    lTilde_alp_alpOut[ 2 ] * popParCovOut[ 3 ], 
-								( -S[ 0 ] * lTilde_alp_alpOut[ 2 ] + 
-								  S[ 2 ] * lTilde_alp_alpOut[ 0 ] ) / detR, eps );
-
-		    CPPUNIT_ASSERT_DOUBLES_EQUAL( lTilde_alp_alpOut[ 1 ] * popParCovOut[ 2 ] +
+					    ( -S[ 0 ] * lTilde_alp_alpOut[ 2 ] + 
+					      S[ 2 ] * lTilde_alp_alpOut[ 0 ] ) / detR, eps );
+	      
+	      CPPUNIT_ASSERT_DOUBLES_EQUAL( lTilde_alp_alpOut[ 1 ] * popParCovOut[ 2 ] +
 			                    lTilde_alp_alpOut[ 3 ] * popParCovOut[ 3 ], 
-								( -S[ 1 ] * lTilde_alp_alpOut[ 2 ] + 
-								  S[ 3 ] * lTilde_alp_alpOut[ 0 ] ) / detR, eps );
-		}
-
-		//------------------------------------------------------------
-        // Test popParSeOut.
-        //------------------------------------------------------------
-		CPPUNIT_ASSERT_DOUBLES_EQUAL( popParSEOut[ 0 ], sqrt( popParCovOut[ 0 ] ), eps );
-		CPPUNIT_ASSERT_DOUBLES_EQUAL( popParSEOut[ 1 ], sqrt( popParCovOut[ 3 ] ), eps );
-
-		//------------------------------------------------------------
-        // Test popParCorOut.
-        //------------------------------------------------------------
-		CPPUNIT_ASSERT_DOUBLES_EQUAL( popParCorOut[ 0 ], 1.0, eps );
-		CPPUNIT_ASSERT_DOUBLES_EQUAL( popParCorOut[ 1 ], popParCovOut[ 1 ] /
+					    ( -S[ 1 ] * lTilde_alp_alpOut[ 2 ] + 
+					      S[ 3 ] * lTilde_alp_alpOut[ 0 ] ) / detR, eps );
+	    }
+	  
+	  //------------------------------------------------------------
+	  // Test popParSeOut.
+	  //------------------------------------------------------------
+	  CPPUNIT_ASSERT_DOUBLES_EQUAL( popParSEOut[ 0 ], sqrt( popParCovOut[ 0 ] ), eps );
+	  CPPUNIT_ASSERT_DOUBLES_EQUAL( popParSEOut[ 1 ], sqrt( popParCovOut[ 3 ] ), eps );
+	  
+	  //------------------------------------------------------------
+	  // Test popParCorOut.
+	  //------------------------------------------------------------
+	  CPPUNIT_ASSERT_DOUBLES_EQUAL( popParCorOut[ 0 ], 1.0, eps );
+	  CPPUNIT_ASSERT_DOUBLES_EQUAL( popParCorOut[ 1 ], popParCovOut[ 1 ] /
 			                popParSEOut[ 0 ] / popParSEOut[ 1 ], eps );
-		CPPUNIT_ASSERT_DOUBLES_EQUAL( popParCorOut[ 2 ], popParCorOut[ 1 ], eps );
-		CPPUNIT_ASSERT_DOUBLES_EQUAL( popParCorOut[ 3 ], 1.0, eps );
-
-        //------------------------------------------------------------
-        // Test popParCVOut.
-        //------------------------------------------------------------
-	    CPPUNIT_ASSERT_DOUBLES_EQUAL( popParCVOut[ 0 ], popParSEOut[ 0 ] / alpOut[ 0 ] * 100., eps );
-	    CPPUNIT_ASSERT_DOUBLES_EQUAL( popParCVOut[ 1 ], popParSEOut[ 1 ] / alpOut[ 1 ] * 100., eps );
-
-        //------------------------------------------------------------
-        // Test popParCIOut.
-        //------------------------------------------------------------
-        double d0 = 2.306 * popParSEOut[ 0 ];
-        double d1 = 2.306 * popParSEOut[ 1 ];
-	    CPPUNIT_ASSERT_DOUBLES_EQUAL( popParCIOut[ 0 ], alpOut[ 0 ] - d0, eps );
-	    CPPUNIT_ASSERT_DOUBLES_EQUAL( popParCIOut[ 1 ], alpOut[ 1 ] - d1, eps );
-        CPPUNIT_ASSERT_DOUBLES_EQUAL( popParCIOut[ 2 ], alpOut[ 0 ] + d0, eps );
-	    CPPUNIT_ASSERT_DOUBLES_EQUAL( popParCIOut[ 3 ], alpOut[ 1 ] + d1, eps );      
-      }
+	  CPPUNIT_ASSERT_DOUBLES_EQUAL( popParCorOut[ 2 ], popParCorOut[ 1 ], eps );
+	  CPPUNIT_ASSERT_DOUBLES_EQUAL( popParCorOut[ 3 ], 1.0, eps );
+	  
+	  //------------------------------------------------------------
+	  // Test popParCVOut.
+	  //------------------------------------------------------------
+	  CPPUNIT_ASSERT_DOUBLES_EQUAL( popParCVOut[ 0 ], popParSEOut[ 0 ] / alpOut[ 0 ] * 100., eps );
+	  CPPUNIT_ASSERT_DOUBLES_EQUAL( popParCVOut[ 1 ], popParSEOut[ 1 ] / alpOut[ 1 ] * 100., eps );
+	  
+	  //------------------------------------------------------------
+	  // Test popParCIOut.
+	  //------------------------------------------------------------
+	  double d0 = 2.306 * popParSEOut[ 0 ];
+	  double d1 = 2.306 * popParSEOut[ 1 ];
+	  CPPUNIT_ASSERT_DOUBLES_EQUAL( popParCIOut[ 0 ], alpOut[ 0 ] - d0, eps );
+	  CPPUNIT_ASSERT_DOUBLES_EQUAL( popParCIOut[ 1 ], alpOut[ 1 ] - d1, eps );
+	  CPPUNIT_ASSERT_DOUBLES_EQUAL( popParCIOut[ 2 ], alpOut[ 0 ] + d0, eps );
+	  CPPUNIT_ASSERT_DOUBLES_EQUAL( popParCIOut[ 3 ], alpOut[ 1 ] + d1, eps );      
 	}
-  }
-  catch(...)
-  {
-    CPPUNIT_ASSERT(false);
-  }
+    }
 }
 

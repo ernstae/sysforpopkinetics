@@ -28,117 +28,165 @@
 *	Description:  Matrix returned is equal to the matrix product: (L)(indx), 
 *		      where L is the Cholesky factor of V and indx is a vector of 
 *		      random numbers normally distributed with mean zero and 
-*		      variance 1.
+*		      the specified variance.
 *
 *       Author: Viet Nguyen
 *       Updated by: Sachiko Honda
 *
-*	Parameters:	const valarray<double> &V, int n
-*	Return Value:	vector 
-*
-********************************************************************************
-*
-*	Divided into 2 steps:
-*
-*	Step #1:  Create indx - a vector of random numbers normally distributed
-*	Step #2:  Calculate the Cholesky factor of V
-*
 ********************************************************************************/
-#include <nag.h>
-#include <nagf03.h>  // for Cholesky factoring
-#include <nagg05.h>  // random number generator
+
+#include <cstdlib>
+
 #include "SpkValarray.h"
 #include "multiply.h"
 #include "randNormal.h"
+#include "isSymmetric.h"
+
+extern "C"{
+  #include <atlas/clapack.h>
+  #include <atlas/cblas.h>
+}
 
 using SPK_VA::valarray;
 
-valarray<double> randNormal( const valarray<double> & V, int n )
+//============================================================================
+// Version of randNormal() that generate random numbers drawn from
+// normal distribution with mean zero.
+//============================================================================
+const valarray<double> randNormal( int n )
 {
   //--------------------------------------------------------------------------
   // Preliminary steps
   //--------------------------------------------------------------------------
-  
-  int i = 0, j = 0;// iterators
-  
+  const double mean = 0.0;  
   assert (n > 0);
+
+  //--------------------------------------------------------------------------
+  // Step #1: Generate random numbers drawn from normal distribution
+  //          with mean zero.
+  //--------------------------------------------------------------------------
+  
+  valarray<double> r(n);							
+  
+  // From Linux manual page for rand()
+  // NOTES
+  //     The versions of rand() and srand() in the Linux C Library use the  same
+  //     random  number  generator as random() and srandom(), so the lower-order
+  //     bits should be as random as the higher-order bits.  However,  on  older
+  //     rand()  implementations, the lower-order bits are much less random than
+  //     the higher-order bits.
+  //                                                                             
+  //     In Numerical Recipes in C: The Art of Scientific Computing (William  H.
+  //     Press, Brian P. Flannery, Saul A. Teukolsky, William T. Vetterling; New
+  //     York: Cambridge University Press, 1992 (2nd ed., p. 277)), the  follow-
+  //     ing comments are made:
+  //            "If  you want to generate a random integer between 1 and 10, you
+  //            should always do it by using high-order bits, as in
+  //                                                                             
+  //                   j=1+(int) (10.0*rand()/(RAND_MAX+1.0));
+  //                                                                             
+  //            and never by anything resembling
+  //                                                                             
+  //                   j=1+(rand() % 10);
+  //                                                                             
+  //            (which uses lower-order bits)."
+                                                                               
+  for (int i = 0; i < n; i++)
+    {
+      double rsq, v1, v2;
+      // Draw random numbers from normal distribution of mean 0 and stdev 1
+      do{
+	// Pick two uniform numbers in the square extending from -1 to +1 in each direction.
+	// rand()/(RAND_MAX+1.0) normalizes the genrated number.
+	// NOTE: Need two to compute the equation of circle.
+	v1 = 2.0 * (mean + rand()/(RAND_MAX+1.0)) - 1.0;
+	v2 = 2.0 * (mean + rand()/(RAND_MAX+1.0)) - 1.0;
+	
+	// See if v1 and v2 are in the unit circle
+	rsq = v1 * v1 + v2 * v2;
+      }while( rsq >= 1.0 || rsq == 0.0 ); // if they are not in the unit circule, try again.
+
+      // Make the Box-Muller transformation to get a normal deviate.
+      r[i]   = v1 * sqrt( -2.0*log(rsq)/rsq );
+    }
+  return r;
+}
+
+//============================================================================
+// The version of randNormal() that ensures the random numbers vary
+// within the specified variance.
+//============================================================================
+const valarray<double> randNormal( const valarray<double> & V, int n )
+{
+  //--------------------------------------------------------------------------
+  // Preliminary steps
+  //--------------------------------------------------------------------------
   assert (V.size() == n * n);
+  assert (isSymmetric( V, n ) );
 
   //--------------------------------------------------------------------------
-  // Step #1:  Create indx - a vector of random numbers normally distributed
+  // Step #1: Generate random numbers drawn from normal distribution
+  //          with mean zero.
   //--------------------------------------------------------------------------
-  
-  double indx[n];							
-  
-  // Fill indx with random numbers from a normal distribution of mean 0 and stdev 1
-  for (i = 0; i < n; i++)
+  valarray<double> r(n);
+  r = randNormal(n);
+
+  //--------------------------------------------------------------------------
+  // Step #2: Compute the Cholesky factor
+  //--------------------------------------------------------------------------
+  enum CBLAS_ORDER order = CblasColMajor;
+  enum CBLAS_UPLO  uplo  = CblasLower;
+
+  // double *a
+  //
+  // (on entry) The array pointed by *a contains the values of matrix A(n,n) 
+  // to be decomposed in the column major order if "order" = CblasColMajor,
+  // or in the row major order if "order" = CblasRowMajor.
+  //
+  // (on exit)  The array pointed by *a contains the L such that A = L*L^T
+  // if "uplo" is set to CblasLower, or the U if "uplo" = CblasUpper.
+  valarray<double> A( V );
+  double *a = &(A[0]);
+
+  // int lda
+  //
+  // The leading dimension of A.  It is the #of rows if order = CblasColMajor
+  // or #of columns if order = CblasRowsMajor.
+  int lda  = n;
+
+  int info = clapack_dpotrf( order, uplo, n, a, lda );
+  if( info > 0 )
     {
-      indx[i] = nag_random_normal(0, 1);
+      char mess[SpkError::maxMessageLen()];
+      sprintf( mess, 
+	       "The leading minor of order %d is not positive definite, and the factorization could not be completed!",
+	       info, info );
+      throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, 
+			  mess,
+			  __LINE__, __FILE__ );
     }
-  
-  //--------------------------------------------------------------------------
-  // Step #2:  Calculate the Cholesky factor of V
-  //--------------------------------------------------------------------------
-  
-  // Need parameters:
-  // 
-  // int n           = order of matrix V
-  // double Vt[]     = the transposed matrix that will be factored
-  // int tda         = the last dimension of V
-  // double p[]      = an array that stores the reciprocals of the diagonals of the cholesky
-  // double detf     = helps in calculating determinant (not used)
-  // int dete        = helps in calculating determinant (not used)
-  // NagError *fail  = reporting failures
-  
-  // Parameter #2: non-const version of V which will receive the Cholesky factor.
-  double Vt[ n * n ];
-  for( int i=0; i<n*n; i++ )
+  else if( info < 0 )
     {
-      Vt[i] = V[i];
+      char mess[SpkError::maxMessageLen()];
+      sprintf( mess, 
+	       "Programming error!  The %d th argument to clapack_dgetrf() is illegal.", -info );
+      throw SpkException( SpkError::SPK_UNKNOWN_ERR, 
+			  mess,
+			  __LINE__, __FILE__ );
     }
 
-  // Parameter #3:
-  int tda = n;
-  assert (tda >= 1);
-  
-  // Parameter #4:
-  double p[ n ];  // Make p an nx1 matrix
-  
-  // Parameters #5-7
-  double  detf;	 // Dummy 
-  Integer dete;	 // Dummy
-  
-  static NagError fail;  // This portion is lifted from inverse.cpp
-  INIT_FAIL(fail);
-  
-  nag_real_cholesky(n, Vt, tda, p, &detf, &dete, &fail);
-  
-  assert(fail.code == NE_NOERROR);
-  
-  valarray<double> V_copy( n * n );
-  // nag_real_cholesky returns row major format, so transpose it
-  for( j = 0; j < n; j++ )
+  // Zero out the upper triangle.
+  for( int j=0; j<n; j++ )
     {
-      for( i = 0; i < n; i++ )
+      for( int i=0; i<j; i++ )
 	{
-	  V_copy[ j + i * n ] = Vt[ i + j * n ];
+	  A[i+j*n] = 0.0;
 	}
     }
-    
-  for (i = 1; i < n; i++)  // format V_copy to be lower triangular
-    {
-      for (j = 0; j < i; j++)
-	{
-	  V_copy [i*n + j] = 0.0;  // all upper triangular values become zero
-	}
-    }
-  
-  for (int i = 0; i < n; i++)  // copy the diagonal values into V_copy
-    {
-      V_copy[i + i*n] = 1/p[i];
-    }
-  
-  return (multiply(V_copy, n, valarray<double>( indx, n ), 1));  // returns an n x 1 matrix
+  //--------------------------------------------------------------------------
+  // Step #3: Weight the random numbers with mean zero with the variance.
+  //--------------------------------------------------------------------------
+  return multiply( A, n, r, 1 );
 }
 
 /*
@@ -161,7 +209,7 @@ $index Cholesky testing random number normal distribution multivariate$$
 
 $table
 $bold Prototype:$$ $cend 
-$syntax/ valarray<double> randNormal( const valarray<double> &/V/, int n, Integer /seed/)/$$
+$syntax/ valarray<double> randNormal( const valarray<double> &/V/, int n, int /seed/)/$$
 $tend
 
 $fend 15$$
@@ -218,19 +266,22 @@ If you compile, link, and run the following program,
 $codep
 	
 	#include <iostream>
+        #include <cstdlib> // for srand()
 	#include <spk/SpkValarray.h>
-	#include <nag.h>
 	#include "randNormal.h"
 
 	void main()
 	{
 		
-		using namespace std;
+		using SPK_VA::valarray;
+                using cout;
+                using endl;
 
-		Integer seed = 1;
+		// Generated a seed
+		int seed = 1;
 
-		// Required for NAG routines
-		g05cbc(seed);					
+		// Start the random number generator with the seed.
+		srand(1);					
 
 		valarray<double> V( 2 * 2 ), randNorm( 2 );
 

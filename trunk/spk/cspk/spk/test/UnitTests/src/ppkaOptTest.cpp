@@ -41,6 +41,7 @@
 #include "ppkaOptTest.h"
 #include <spk/SpkException.h>
 #include <spk/SpkValarray.h>
+#include <spk/randNormal.h>
 
 using SPK_VA::valarray;
 using namespace CppUnit;
@@ -56,7 +57,7 @@ void ppkaOptTest::tearDown()
 
 Test* ppkaOptTest::suite()
 {
-    TestSuite *suiteOfTests = new TestSuite( "ppkaOptTest" );
+	TestSuite *suiteOfTests = new TestSuite( "ppkaOptTest" );
 
     suiteOfTests->addTest(new TestCaller<ppkaOptTest>("modifiedLaplaceTest", &ppkaOptTest::modifiedLaplaceTest));
     suiteOfTests->addTest(new TestCaller<ppkaOptTest>("expectedHessianTest", &ppkaOptTest::expectedHessianTest));
@@ -81,8 +82,7 @@ void ppkaOptTest::expectedHessianTest()
 #include <spk/lTilde.h>
 #include <spk/pi.h>
 #include <spk/SpkModel.h>
-#include <nag.h>
-#include <nagg05.h>
+
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -344,17 +344,15 @@ void ppkaOptTest::ppkaOptExampleTest(enum Objective whichObjective)
   double sdBTrue   = sqrt( varBTrue );
 
   // Compute the measurements for each individual.
-  Integer seed = 0;
-  g05cbc(seed);
-  for ( i = 0; i < nInd; i++ )
-  {
-    eTrue = nag_random_normal( meanETrue, sdETrue );
-    bTrue = nag_random_normal( meanBTrue, sdBTrue );
+  valarray<double> sdECov(nY*nY);
+  sdECov[ slice( 0, nY, nY+1 ) ] = sdETrue;
 
-    pdYData[ i ] = meanBetaTrue + bTrue + eTrue;
-  }
+  valarray<double> sdBCov(nY*nY);
+  sdBCov[ slice( 0, nY, nY+1 ) ] = sdBTrue;
 
-
+  valarray<double> y = meanBTrue + randNormal( sdBCov, nY ) + randNormal( sdECov, nY );
+  copy( &(y[0]), &(y[0])+nY, pdYData );
+    
   //------------------------------------------------------------
   // Quantities related to the fixed population parameter, alp.
   //------------------------------------------------------------
@@ -423,22 +421,16 @@ void ppkaOptTest::ppkaOptExampleTest(enum Objective whichObjective)
 
   Optimizer popOptimizer( 1.0e-6, 10, 0 );
   Optimizer indOptimizer( 1.0e-6, 40, 0 );
-
-  // Set these to exercise the warm start capabilities of ppkaOpt.
   popOptimizer.setupWarmStart( nAlp );
-  popOptimizer.setThrowExcepIfMaxIter( false );
-  popOptimizer.setSaveStateAtEndOfOpt( true );
-
-
+  
   //------------------------------------------------------------
   // Optimize the population objective function.
   //------------------------------------------------------------
 
   bool ok;
-
   try{
-    while( true )
-    {
+	while( true )
+	{
       ppkaOpt(
                model,
                whichObjective,
@@ -450,30 +442,32 @@ void ppkaOptTest::ppkaOptExampleTest(enum Objective whichObjective)
                dvecAlpIn,
                &dvecAlpOut,
                dvecAlpStep,
-               indOptimizer,
+			   indOptimizer,
                dvecBLow,
                dvecBUp,
-               dmatBIn,
+			   dmatBIn,
                &dmatBOut,
                dvecBStep,
                &dLTildeOut,
                &drowLTilde_alpOut,
                &dmatLTilde_alp_alpOut );
+	  if( !popOptimizer.getIsTooManyIter() )
+		// Finished
+		break;
 
-      // Exit this loop if the maximum number of iterations was
-      // not exceeded, i.e., if the optimization was successful.
-      if( !popOptimizer.getIsTooManyIter() )
-        break;
-
-      // Set this so that ppkaOpt performs a warm start when it
-      // is called again.
+	  // Turn on warm start.
       popOptimizer.setIsWarmStart( true );
-    }
+	}
     ok = true;
   }
+  catch( const SpkException& e )
+    {
+      cerr << e << endl;
+      CPPUNIT_ASSERT_MESSAGE( "ppkaOpt failed!", false );
+    }
   catch(...)
   {
-    CPPUNIT_ASSERT(false);
+      CPPUNIT_ASSERT_MESSAGE( "ppkaOpt failed for unknown reasons!", false );
   }
   //------------------------------------------------------------
   // Known values.
@@ -524,17 +518,18 @@ void ppkaOptTest::ppkaOptExampleTest(enum Objective whichObjective)
         / ( 1.0 + 1.0 / pdAlpHatData[ 1 ] );
     }
   }
+  double* pdAlpOutData  = dvecAlpOut.data();
 
-  // Compute ( 1 + alpHat(2) ).
-  double onePlusAlp2 = 1.0 + pdAlpHatData[ 1 ];
+  // Compute ( 1 + alpOut(2) ).
+  double onePlusAlp2 = 1.0 + pdAlpOutData[ 1 ];
 
-  // Compute the sums involving ( y_i - alpHat(1) ).
+  // Compute the sums involving ( y_i - alpOut(1) ).
   double yMinAlp1;
   double sumYMinAlp1    = 0.0;
   double sumYMinAlp1Sqd = 0.0;
   for ( i = 0; i < nInd; i++ )
   {
-    yMinAlp1        = pdYData[ i ] - pdAlpHatData[ 0 ];
+    yMinAlp1        = pdYData[ i ] - pdAlpOutData[ 0 ];
     sumYMinAlp1    += yMinAlp1;
     sumYMinAlp1Sqd += pow( yMinAlp1, 2 );
   }
@@ -582,7 +577,7 @@ void ppkaOptTest::ppkaOptExampleTest(enum Objective whichObjective)
               dLTildeOut,
               dLTildeKnown,
               indOptimizer.getEpsilon(),
-              popOptimizer.getEpsilon(),
+			  popOptimizer.getEpsilon(),
               dvecAlpLow,
               dvecAlpUp,
               dvecAlpOut,
@@ -1038,7 +1033,7 @@ void ppkaOptTest::ppkaOptZeroIterationsTest(enum Objective whichObjective)
             dvecAlpIn,
             &dvecAlpOut,
             dvecAlpStep,
-            indOptimizer,
+			indOptimizer,
             dvecBLow,
             dvecBUp,
             dmatBIn,
@@ -1049,9 +1044,15 @@ void ppkaOptTest::ppkaOptZeroIterationsTest(enum Objective whichObjective)
             &dmatLTilde_alp_alpOut );
         okPpkaOpt = true;
     }
+    catch( const SpkException& e )
+    {
+      cerr << e << endl;
+      CPPUNIT_ASSERT_MESSAGE( "ppkaOpt failed!", false );
+    }
+
     catch(...)
     {
-        CPPUNIT_ASSERT(false);
+        CPPUNIT_ASSERT_MESSAGE( "ppkaOpt failed for unknown reasons!", false );
     }
 
     //----------------------------------------------------------
@@ -1075,9 +1076,14 @@ void ppkaOptTest::ppkaOptZeroIterationsTest(enum Objective whichObjective)
                  &drowLTilde_alpKnown);
         okLTilde = true;
     }
+    catch( const SpkException& e )
+    {
+      cerr << e << endl;
+      CPPUNIT_ASSERT_MESSAGE( "ppkaOpt failed!", false );
+    }
     catch(...)
     {
-        CPPUNIT_ASSERT( false );
+        CPPUNIT_ASSERT_MESSAGE( "ppkaOpt failed for unknown reasons!", false );
     }
 
     //----------------------------------------------------------
@@ -1088,7 +1094,7 @@ void ppkaOptTest::ppkaOptZeroIterationsTest(enum Objective whichObjective)
                 dLTildeOut,
                 dLTildeKnown,
                 indOptimizer.getEpsilon(),
-                popOptimizer.getEpsilon(),
+				popOptimizer.getEpsilon(),
                 dvecAlpLow,
                 dvecAlpUp,
                 dvecAlpOut,
@@ -1117,7 +1123,7 @@ void ppkaOptTest::doTheTest( bool ok,
                        double dLTildeOut,
                        double dLTildeKnown,
                        const double epsB,
-                       const double epsAlp,
+					   const double epsAlp,
                        const DoubleMatrix& dvecAlpLow,
                        const DoubleMatrix& dvecAlpUp,
                        const DoubleMatrix& dvecAlpOut,
@@ -1161,7 +1167,6 @@ void ppkaOptTest::doTheTest( bool ok,
   //------------------------------------------------------------
   // Print the results.
   //------------------------------------------------------------
-
 
   /*
   cout << endl;
@@ -1208,8 +1213,6 @@ void ppkaOptTest::doTheTest( bool ok,
   }
 
   */
-
-
   //------------------------------------------------------------
   // Check to see if the optimization completed sucessfully.
   //------------------------------------------------------------

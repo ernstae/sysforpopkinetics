@@ -55,11 +55,10 @@
 #include "isDmatEpsEqual.h"
 #include "isSymmetric.h"
 
-// NAG include files.
-#include "nag.h"
-#include "nagf03.h"
-#include "nagf06.h"
-
+extern "C"{
+#include <atlas/clapack.h>
+#include <atlas/cblas.h>
+}
 
 using namespace std;
 
@@ -576,7 +575,7 @@ static DoubleMatrix dvecP(__FILE__);
 /*------------------------------------------------------------------------
  * Function Definition
  *------------------------------------------------------------------------*/
-
+#include "symmetrize.h"
 void FullCovariance::calcCholesky( valarray<double>& VAChol )  const
 {
   //------------------------------------------------------------
@@ -586,121 +585,10 @@ void FullCovariance::calcCholesky( valarray<double>& VAChol )  const
   // Initially set the Cholesky factor Chol equal to the current value 
   // for the covariance matrix Cov.
   doCov( VAChol );
-  DoubleMatrix dmatChol( VAChol, static_cast<int>(sqrt( static_cast<double>(VAChol.size()))) );
-
-  int nChol = dmatChol.nr();
-  assert( VAChol.size() == nChol * nChol );
-
-  //------------------------------------------------------------
-  // Validate the inputs (debug version only).
-  //------------------------------------------------------------
-
-  assert( dmatChol.nc() == nChol );    // Cov must be square.
-  assert( nChol > 0 );                 // Cov must have at least one row.
-  assert( isSymmetric( dmatChol ) );   // Cov must be symmetric.
-
-
-  //------------------------------------------------------------
-  // Define the parameters for the function nag_real_cholesky (f03aec), 
-  // which computes a Cholesky factorization of a real symmetric
-  // positive-definite matrix, and evaluates its determinant.
-  //------------------------------------------------------------
-  // Parameter: n.
-  // Input: n, the order of the matrix Cov. 
-  // Output: unspecified.
-  // Constraint: n >= 1. 
-  Integer n = nChol;
-  assert( n >= 1 );
-
-  // Parameter: tdchol.
-  // Input: the last dimension of the array chol as declared in the
-  // function from which nag_real_cholesky is called.
-  // Output: unspecified.
-  // Constraint: tdchol >= n.
-  Integer tdchol = n;
-
-  // Parameter: chol.
-  // Input: the upper triangle of the n by n positive-definite
-  // symmetric matrix Cov.  The elements of the array below the
-  // diagonal need not be set.
-  // Output: the sub-diagonal elements of the lower triangular
-  // matrix Chol. The upper triangle of Cov is unchanged.
-  // Note:  The data elements of DoubleMatrix matrices are stored 
-  // in column-major order while NAG routines expect arrays to be
-  // stored in row-major order.
-  double* chol = dmatChol.data();
-
-  // Parameter: p
-  // Input: unspecified.
-  // Output: the reciprocals of the diagonal elements of Chol.
-  dvecP.resize( nChol, 1);
-  double* p = dvecP.data();
-
-  // Parameter: detf.
-  // Parameter: dete.
-  // Input: unspecified.
-  // Output: the determinant of Cov is given by detf * 2.0^dete.
-  // It is given in this form to avoid overflow or underflow.
-  double detf;
-  Integer dete;
-
-
-  //------------------------------------------------------------
-  // Perform the Cholesky factorization.
-  //------------------------------------------------------------
-
-  // Revisit - Exceptions - Mitch: if an error occurs in this
-  // NAG routine, the program will be stopped using exit or abort. 
-  // Brad: changed to an assert for tracking in debugger 12/12/00
-  // Sachiko: Changed to exception throwing 10/15/2002
-  static NagError fail;
-  INIT_FAIL(fail);
-  nag_real_cholesky( n, chol, tdchol, p, &detf, &dete, &fail);
-  if( fail.code != NE_NOERROR )
-  {
-    switch( fail.code )
-    {
-    case NE_NOT_POS_DEF:
-      throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, 
-        "The matrix is not positive-definite,  possibly due to round-ing errors.",
-      __LINE__, __FILE__ );
-      break;
-    default:
-      throw SpkException( SpkError::SPK_UNKNOWN_ERR, 
-        "Failed to compute a Cholesky factorization.",
-      __LINE__, __FILE__ );
-      break;
-    }
-  }
-
-
-  //------------------------------------------------------------
-  // Transform the Cholesky factor for output.
-  //------------------------------------------------------------
-
-  // ************************************************************
-  // * Note:  The data elements of DoubleMatrix matrices are    *
-  // * stored in column-major order while NAG routines expect   *
-  // * arrays to be stored in row-major order.                  *
-  // ************************************************************
-
-  // Set the final values for the elements of the DoubleMatrix that 
-  // contains the lower triangular Cholesky factor Chol.
-  for ( int i = 0; i < nChol; i++ )
-  {
-    // Set the diagonal elements.
-    chol[i + i * nChol] = 1.0 / p[i];
-    
-    for ( int j = 0; j < i; j++ )
-    {
-      // Copy the super-diagonal elements to the sub-diagonal.
-      chol[i + j * nChol] = chol[j + i * nChol];
-      
-      // Zero the super-diagonal elements.
-      chol[j + i * nChol] = 0.0;
-    }
-  }
-  VAChol = dmatChol.toValarray();
+  int n = static_cast<int>( sqrt( static_cast<double>( VAChol.size() ) ) );
+  int lda = n;
+  clapack_dpotrf( CblasColMajor, CblasLower, n, &VAChol[0], lda );
+  symmetrize( VAChol, n, VAChol );
 }
 
 
@@ -904,7 +792,7 @@ $end
 // Declare this static to reduce the calls to the DoubleMatrix constructor.
 static DoubleMatrix dvecX( __FILE__ );
 
-
+#include "symmetrize.h"
 /*------------------------------------------------------------------------
  * Function Definition
  *------------------------------------------------------------------------*/
@@ -916,20 +804,9 @@ double FullCovariance::doWeightedSumOfSquares( const valarray<double>& z ) const
   //------------------------------------------------------------
 
   updateCache();
-
-  DoubleMatrix dmatCholeskyCached( choleskyCached, static_cast<int>(sqrt(static_cast<double>(choleskyCached.size()))));
-  int nChol = dmatCholeskyCached.nr();
-
-
+  
   //------------------------------------------------------------
-  // Validate the current state (debug version only).
-  //------------------------------------------------------------
-
-  assert( dmatCholeskyCached.nc() == nChol );
-
-
-  //------------------------------------------------------------
-  // Define the parameters for the NAG function dtrsv (f06pjc) 
+  // Define the parameters for the BLAS function dtrsv 
   // that performs one of the matrix-vector operations,
   //
   //             -1                    -T
@@ -938,75 +815,72 @@ double FullCovariance::doWeightedSumOfSquares( const valarray<double>& z ) const
   //  where A is an n by n real triangular matrix, and x is an 
   //  n element real  vector.
   //------------------------------------------------------------
-  
-  // Parameter: uplo  -  MatrixTriangle
-  // Input: specifies whether A is upper or lower triangular as follows:
-  // if uplo = UpperTriangle, A is upper triangular;
-  // if uplo = LowerTriangle, A is lower triangular.
-  // Constraint: uplo = UpperTriangle or LowerTriangle.
-  // Note:  Because the data elements of DoubleMatrix are stored 
-  // in column-major order and NAG routines expect arrays to be
-  // stored in row-major order, the lower triangle Cholesky factor
-  // in the cached DoubleMatrix, dmatCholeskyCached, is upper triangular
-  // as far as the NAG routine is concerned.
-  MatrixTriangle uplo = UpperTriangle;
 
-  // Parameter: trans  -  MatrixTranspose
+  // Parameter: order - enum CBLAS_ORDER
+  // Input: specifies the order in which the matrix A is stored in the array, a.
+  // if order = CblasColMajor, the array, a, is assumed to store the values of A
+  //            in the column major order.
+  // if order = CblasRowMajor, the array, a, is assumed to store the values of A
+  //            in the row major order.
+  // NOTE: In SPK, all matrices are stored in the column major order.
+  enum CBLAS_ORDER order = CblasColMajor;
+
+  // Parameter: uplo  -  enum CBLAS_UPLO
+  // Input: specifies whether A is upper or lower triangular as follows:
+  // if uplo = CblasUpper, A is upper triangular;
+  // if uplo = CblasLower, A is lower triangular.
+  enum CBLAS_UPLO uplo = CblasLower;
+
+  // Parameter: trans  -  enum CBLAS_TRANSPOSE
   // Input: specifies the operation to be performed as follows:
-  // if trans = NoTranspose, x  <--  A^(-1) x ;
+  // if trans = CblasNoTrans, x  <--  A^(-1) x ;
   // if trans = Transpose or ConjugateTraspose, x  <--  A^(-T) x.
-  // Constraint: trans = NoTranspose, Transpose or ConjugateTranspose.
-  // Note:  Since we want the product of the inverse of the lower
-  // triangular Cholesky factor (rather than the upper triangular
-  // factor) we want the NAG routine to take the transpose of A
-  // in addition to computing its inverse.
-  MatrixTranspose trans = Transpose;
+  // Constraint: trans = CblasNoTrans, CblasTrans or CblasConjTrans.
+  enum CBLAS_TRANSPOSE trans = CblasNoTrans;
 
   // Parameter: diag  -  MatrixUnitTriangular
   // Input: specifies whether A has non-unit or unit diagonal elements, 
   // as follows:
-  // if diag = NotUnitTriangular, the diagonal elements are stored explicitly;
-  // if diag = UnitTriangular, the diagonal elements are assumed to be 1, and 
+  // if diag = CblasNonUnit, the diagonal elements are stored explicitly;
+  // if diag = CblasUnit, the diagonal elements are assumed to be 1, and 
   //           are not referenced.
-  // Constraint: diag = NotUnitTriangular or UnitTriangular.
-  MatrixUnitTriangular diag = NotUnitTriangular;
+  // Constraint: diag = CblasNonUnit or CblasUnit.
+  enum CBLAS_DIAG diag = CblasNonUnit;
 
-  // Parameter: n  -  Integer
+  // Parameter: n  -  
   // Input: n, the order of the matrix A.
   // Constraint: n >= 0.
-  Integer n = nChol;
-  assert( n >= 0 );
+  int n = static_cast<int>( sqrt( static_cast<double>( choleskyCached.size() ) ) );
+  assert( n * n == choleskyCached.size() );
 
-  // Parameter: a[n][tda]  -  double
-  // Input: the n by n triangular matrix A. If uplo = UpperTriangle, 
-  // A is upper triangular and the elements of the array below the 
-  // diagonal are not referenced; if uplo = LowerTriangle, A is lower 
-  // triangular and the elements of the array above the diagonal are 
-  // not referenced. If diag = UnitTriangular, the diagonal elements 
-  // of A are not referenced, but are assumed to be 1.
-  // Note:  See the note for the uplo parameter above.
-  double* a = dmatCholeskyCached.data();
-
-  // Parameter: tda  -  Integer
+  // Parameter: lda  -  int
   // Input: the last dimension of the array a as declared in the 
   // function from which dtrsv is called.
-  // Constraint: tda >= max(1,n).
-  Integer tda = n;
+  // Constraint: lda >= max(1,n).
+  int lda = n;
+  assert( z.size() == n );
+
+  // Parameter: a[n][lda]  -  double
+  // Input: the n by n triangular matrix A. If uplo = CblasUpper, 
+  // A is upper triangular and the elements of the array below the 
+  // diagonal are not referenced; if uplo = CblasLower, A is lower 
+  // triangular and the elements of the array above the diagonal are 
+  // not referenced. If diag = CblasUnit, the diagonal elements 
+  // of A are not referenced, but are assumed to be 1.
+  // Note:  See the note for the uplo parameter above.
+  double* a = &(choleskyCached[0]);
 
   // Parameter: x[]  -  double []
   // Input: the vector x of length n.
   // Output: the updated vector x.
-  DoubleMatrix dvecZ( z, 1 );
-  dvecX = dvecZ;
-  double* x = dvecX.data();
+  valarray<double> x( z );
 
-  // Parameter: incx  -  Integer
+  // Parameter: incx  -  int
   // Input: the increment in the subscripts of x between successive 
   // elements of x.
   // Constraint: incx != 0.
-  Integer incx = 1;
-
-
+  int incx = 1;
+  
   //------------------------------------------------------------
   // Compute the product of the Cholesky inverse and the input vector.
   //------------------------------------------------------------
@@ -1024,9 +898,8 @@ double FullCovariance::doWeightedSumOfSquares( const valarray<double>& z ) const
   //               -1
   //     x  =  Chol    z  .
   //
-  dtrsv(uplo, trans, diag, n, a, tda, x, incx);
 
-  choleskyCached = dmatCholeskyCached.toValarray();
+  cblas_dtrsv( order, uplo, trans, diag, n, a, lda, &x[0], incx );
 
   //------------------------------------------------------------
   // Compute the weighted sum of squares.
@@ -1046,11 +919,11 @@ double FullCovariance::doWeightedSumOfSquares( const valarray<double>& z ) const
   //                 =  || x  ||   .
   //
   double value = 0.0;
-  for ( int i = 0; i < nChol; i++ )
+  for ( int i = 0; i < n; i++ )
   {
     value += x[i] * x[i];
   }
-
   return value;
+
 }
 

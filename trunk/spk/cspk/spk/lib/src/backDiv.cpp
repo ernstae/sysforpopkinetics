@@ -87,12 +87,10 @@ $$
 $pre
 $$
 $head Description$$
-Solve $math%A x = B%$$ for $italic x$$, which is often expressed as $math%A \ B = x%$$, and
-return $italic x$$.
-$italic A$$ is first decomposed into lower, $math%L%$$, and upper, $math%U%$$, 
-triangular matrices by Nag's nag_real_lu (f03afc) and 
-fed into nag_real_lu_solve_mult_rhs (f04ajc) to solve for 
-$italic x$$.
+Solve $math%A x = B%$$ for $italic x$$, which is often expressed as $math%A \ B = x%$$,
+using LU decomposition for A being a postivie definite matrix.
+Given A as a $math%m by n%$$ matrix and B as $math%m by l%$$ where $math%m = n%$$,
+the solution $math%x%$$ has $math%m by l%$$ dimensions.
 $pre
 
 $$
@@ -101,7 +99,7 @@ $pre
 
 $$
 This routine assumes the input $italic A$$ matrix is positive definite.  If not
-it will terminate the program.
+it will throw a SpkException exception.
 
 $head Arguments$$
 
@@ -109,13 +107,15 @@ $syntax/
 
 &/A/
 /$$
-is a $math%n by n%$$ representing the system of equations.
+is a $math%m by n%$$ positive definite matrix (i.e. $math%m = n%$$) 
+that represents the system of
+$math%m%$$ equations with $math%n%$$ variables.
 
 $syntax/
 
 &/B/
 /$$
-is a $math%m by n%$$ matrix representing the values of $math%A x%$$.
+is the right hand side quantities reprented in the form of $math%m by l%$$ matrix.
 
 $head Example$$
 If you compile, link, and run the following program:
@@ -186,12 +186,6 @@ $end
  * Implementation Notes
  * --------------------
  *
- * Nag assumes matrices are stored in the row-major order.  Since
- * what we have in DoubleMatrix is in the column-major order,
- * we have to transpose inputs to and output from the last nag
- * routine.
- *      
- *
  * Given A x = B and 
  * A is positive definite, but not necessary symmetric.
  * 
@@ -206,156 +200,121 @@ $end
  *------------------------------------------------------------------------*/
 #include <cassert>
 #include "backDiv.h"
-#include "transpose.h"
 #include "DoubleMatrix.h"
 
 /*------------------------------------------------------------------------
- * Local function declarations
- *------------------------------------------------------------------------*/
-
-static DoubleMatrix INagRealPosDefLUbasedSolvingEqs(
-    DoubleMatrix &dmatA,
-    DoubleMatrix &dmatB);
-
-static DoubleMatrix toDM( const double *pdblData, const int nr, const int nc );
-
-static DoubleMatrix dmatTransA(__FILE__);
-static DoubleMatrix dmatTransB(__FILE__);
-static DoubleMatrix dmatTransX(__FILE__);
-static DoubleMatrix dmatX(__FILE__);
-/*------------------------------------------------------------------------
  * Function definition
  *------------------------------------------------------------------------*/
+extern "C"{
+#include <atlas/clapack.h>
+#include <atlas/cblas.h>
+}
+#include <algorithm>
+using namespace std;
 
-DoubleMatrix backDiv(const DoubleMatrix &dmatA, const DoubleMatrix &dmatB)
+const DoubleMatrix backDiv(const DoubleMatrix &dmatA, const DoubleMatrix &dmatB)
 {
-    // assume A is square
-    assert( dmatA.nr() == dmatA.nc() );
-    // assume #cols in A == #rows in B
-    assert( dmatA.nc() == dmatB.nr() );
-    if( dmatA.isEmpty() || dmatB.isEmpty() )
+  // A is assumed to be square.
+  int m = dmatA.nr();
+  int n = dmatA.nc();
+  assert( m == n );
+
+  // B is m by l matrix, where l is the number of right hand sides.
+  int l = dmatB.nc();
+  assert( dmatB.nr() == m );
+
+  if( dmatA.isEmpty() || dmatB.isEmpty() )
+    return DoubleMatrix( 0, 0 );
+
+  //==============================================================
+  // First decompose A into LU such that A = P * L * U, 
+  // where P is the permutation matrix,
+  // L is the lower triangle and the U the upper triangle.
+  //
+  // We use CLAPACK's DGETRF() which does LU decomposition
+  // with partial (ie. row interchanges only) pivoting.
+  //==============================================================
+  
+  // enum CBLAS_ORDER order =: (CblasColMajor | CblasRowMajor)
+  //
+  // If order = CblasColMajor, the array, a, is assumed to 
+  // hold each matrix A's column in the contiguous manner
+  // in memory (ie. A is said to be in the column major order).
+  // If order = CblasRowMajor, the array, a, is assumed to
+  // hold each matrix A's row in the contiguous manner
+  // in memory (ie. A is said to be in the row major order).
+  enum CBLAS_ORDER order = CblasColMajor;
+
+  // double *a
+  //
+  // (on entry) a points to the elements of matrix A(m,n) 
+  // in the column major order if "order" = CblasColMajor, 
+  // or in the row major order if "order" = CblasRowMajor.
+  //
+  // (on exit) The lower triangle (j<=i) is replaced by L
+  // and the upper triangle (j>i) is replaced by U.
+  double a[m*n];
+  copy( dmatA.data(), dmatA.data()+m*n, a );
+
+  // int lda
+  // 
+  // The leading dimension of A.  
+  // If A is in the column major order, lda = m.
+  // If A is in the row major order, lda = n.
+  int lda = m;
+
+  // int ipiv(m)
+  //
+  // (on exit) The i-th row in A was interchanged with the row
+  // indicated by the value in ipiv[i].
+  int ipiv[m];
+
+  int info = clapack_dgetrf( order, m, n, a, lda, ipiv );
+  if( info < 0 )
     {
-        return DoubleMatrix(0,0/*dmatB.nc()*/);
+      char mess[ SpkError::maxMessageLen() ];
+      sprintf( mess, "Programming error!!!  The %d th argument to DGETRF() is illegal!", -info );
+      throw SpkException( SpkError::SPK_UNKNOWN_ERR, mess, __LINE__, __FILE__ );
+    }
+  else if( info > 0 )
+    {
+      char mess[ SpkError::maxMessageLen() ];
+      sprintf( mess, "U(%d,%d) is exactly zero, which means the matrix is not positive definite!", info );
+      throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
     }
 
-    const int iAnr = dmatA.nr();
-    const int iAnc = dmatA.nc();
-    const int iBnr = dmatB.nr();
-    const int iBnc = dmatB.nc();
+  //==============================================================
+  // Solve A x = B for x using the LU computed in the previous
+  // step.
+  // Note that A is now assumed to be square: m = n.
+  //==============================================================
+  
+  // int rhs
+  //
+  // The number of right hand sides (ie. the number of columns of B).
+  int nrhs = l;
 
-    transpose(dmatA, dmatTransA);
-    transpose(dmatB, dmatTransB); 
+  // int ldb
+  // The leading dimension of B.
+  // If B is in the column major order, ldb = m.
+  // If B is in the row major order, ldb = l.
+  int ldb = m;
 
-    dmatTransX = INagRealPosDefLUbasedSolvingEqs( dmatTransA, dmatTransB );
-    transpose(dmatTransX, dmatX);
+  // double *x
+  //
+  // (on entry) x points to the elements of B in the column major
+  // order if "order" = CblasColMajor or in the row major otherwise.
+  // (on exit) x points to the solution matrix, x (m=n by l).
+  DoubleMatrix X( dmatB );
+  double * x = X.data();// This points to b on entry and contains the solution x upon exit
 
-    return dmatX;
-}
+  info = clapack_dgetrs( order, CblasNoTrans, n, nrhs, a, lda, ipiv, x, ldb );
+  if( info < 0 )
+    {
+      char mess[ SpkError::maxMessageLen() ];
+      sprintf( mess, "Programming error!!!  The %d th argument to DGETRF() is illegal!", -info );
+      throw SpkException( SpkError::SPK_UNKNOWN_ERR, mess, __LINE__, __FILE__ );
+    }
 
-
-/*========================================================================
- *
- *
- * Local Function Definitions
- *
- *
- *========================================================================*/
-
-/*************************************************************************
- *
- * Function: INagRealPosDefLUbasedSolvingEqs
- *
- * 
- * Description
- * -----------
- *
- * For LU decomposition, this routine uses nag_real_lu (f03afc).
- * For solving a system of equations using the LU-decomposed matrix,
- * this routine uses nag_real_lu_solve_mult_rhs (f04ajc).
- *
- *************************************************************************/
-
-/*------------------------------------------------------------------------
- * Function definition
- *------------------------------------------------------------------------*/
-#include <iostream>
-
-#include "nag.h"
-#include "nag_types.h"
-#include "nag_stdlib.h"
-#include "nagf03.h"
-#include "nagf04.h"
-
-static DoubleMatrix INagRealPosDefLUbasedSolvingEqs(
-    DoubleMatrix &dmatTransA, 
-    DoubleMatrix &dmatTransB)
-{
- 
-	double *pdTransAdata = dmatTransA.data();
-    double *pdTransBdata = dmatTransB.data();
-    const  int iAdim     = dmatTransA.nc(); // transA is n by n
-    const  int iTransBnr = dmatTransB.nr(); // transB is n by m 
-    const  int iTransBnc = dmatTransB.nc(); // transB is n by m
-
-    // Integer n
-    // Input: n, the order of the matrix A
-    const Integer n = iAdim;
-    assert( n >= 1 );
-
-    // double a[n][tda]
-    // Input: n by n matrix
-    // Output: A is overwritten by the lower trinagular matrix L and 
-    // the off-diagonal elements of the upper triangular matrix U.
-    // The unit diagonal elements of U are not stored.
-    double *a = pdTransAdata;
-
-    // Integer tda
-    // Input: the last dimension of the matrix A as declared in
-    // the function from which nag_real_lu is called.
-    // constraint: tda >= n
-    const Integer tda = n;
-    assert( tda >= n );
-
-    // Integer pivot[n]
-    // Output: pivot[i-1] gives the row index of the ith pivot.
-    Integer *pivot = new Integer[n+1];
-
-    // double detf
-    // Interger dete
-    // Output: the determinant of A is given by detf * 2.0^dete.
-    double  detf = 0.0;
-    Integer dete = 0;
-
-    nag_real_lu( n, a, tda, pivot, &detf, &dete, NAGERR_DEFAULT);
-
-    // Integer nrhs
-    // Input: the number of right-hand sides
-    Integer nrhs = iTransBnr;
-    assert( nrhs >= 1 );
-
-    // double b[n][tdb]
-    // Input: the n by tdb right-hand side matrix B
-    double *b = pdTransBdata;
-
-    // Integer tdb
-    // Input: the last dimension of the array b as declared 
-    // in the function from which nag_real_lu_solve_mult_rhs is called.
-    Integer tdb =iTransBnr;
-    assert( tdb >= nrhs );
-
-    nag_real_lu_solve_mult_rhs(n,nrhs,a,tda,pivot,b,tdb,NAGERR_DEFAULT);
-
-    DoubleMatrix dmatTransX = toDM(b, dmatTransB.nr(), dmatTransB.nc());
-    delete [] pivot;
-    return dmatTransX;
-}
-
-static DoubleMatrix toDM( const double *data, const int nr, const int nc )
-{
-    DoubleMatrix dmatA(nr,nc);
-    double *pdA = dmatA.data();
-
-    std::copy(data, data+nr*nc, pdA);
-    
-    return dmatA;
+  return X; 
 }

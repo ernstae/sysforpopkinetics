@@ -76,7 +76,6 @@ $spell
   Iter  
   Laplace
   Max  
-  nagg  
   namespace  
   Obj  
   ok  
@@ -658,10 +657,9 @@ $codep
 
 #include "fitPopulation.h"
 #include "SpkValarray.h"
+#include "randNormal.h"
 
 // For generating random numbers
-#include <nag.h>
-#include <nagg05.h>
 
 using std::string;
 
@@ -879,8 +877,8 @@ int main()
   g05cbc(seed);
   for ( i = 0; i < nInd; i++ )
   {
-    eTrue = nag_random_normal( meanETrue, sdETrue );
-    bTrue = nag_random_normal( meanBTrue, sdBTrue );
+    eTrue = randNormal( meanETrue, sdETrue );
+    bTrue = randNormal( meanBTrue, sdBTrue );
 
     dvecY[ i ] = meanBetaTrue + bTrue + eTrue;
   }

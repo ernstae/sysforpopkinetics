@@ -40,8 +40,10 @@
 #include <fstream>
 #include <string>
 
-#include <nag.h>
-#include <nagg05.h>
+extern "C"{
+  #include <atlas/clapack.h>
+  #include <atlas/cblas.h>
+}
 
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
@@ -57,6 +59,7 @@
 #include <spk/SpkModel.h>
 #include <spk/EqIndModel.h>
 #include <spk/mapObj.h>
+#include <spk/randNormal.h>
 
 #include "firstOrderOptTest.h"
 
@@ -80,16 +83,17 @@ void firstOrderOptTest::tearDown()
 Test* firstOrderOptTest::suite()
 {
   TestSuite *suiteOfTests = new TestSuite("firstOrderOptTest");
-    suiteOfTests->addTest(new TestCaller<firstOrderOptTest>("firstOrderTest", &firstOrderOptTest::firstOrderTest));
-    return suiteOfTests;
+
+  /*
+  suiteOfTests->addTest(new TestCaller<firstOrderOptTest>("firstOrderExampleTest", 
+							  &firstOrderOptTest::firstOrderOptExampleTest));
+  */
+  suiteOfTests->addTest(new TestCaller<firstOrderOptTest>("firstOrderOptZeroIterationsTest",
+							  &firstOrderOptTest::firstOrderOptZeroIterationsTest));
+  return suiteOfTests;
 }
 
-void firstOrderOptTest::firstOrderTest()
-{
-    using namespace population_analysis;
-    //firstOrderOptExampleTest();
-    firstOrderOptZeroIterationsTest();
-}
+
 /*------------------------------------------------------------------------
  * Local Function Declarations
  *------------------------------------------------------------------------*/
@@ -342,16 +346,17 @@ void firstOrderOptTest::firstOrderOptExampleTest()
   double sdBTrue   = sqrt( varBTrue );
 
   // Compute the measurements for each individual.
-  Integer seed = 0;
-  g05cbc(seed);
-  for ( i = 0; i < nInd; i++ )
-  {
-    eTrue = nag_random_normal( meanETrue, sdETrue );
-    bTrue = nag_random_normal( meanBTrue, sdBTrue );
+  int seed = 2;
+  srand(seed);
 
-    pdYData[ i ] = meanBetaTrue + bTrue + eTrue;
-  }
+  valarray<double> sdECov(nY*nY);
+  sdECov[ slice( 0, nY, nY+1 ) ] = sdETrue;
 
+  valarray<double> sdBCov(nY*nY);
+  sdBCov[ slice( 0, nY, nY+1 ) ] = sdBTrue;
+
+  valarray<double> y = meanBTrue + randNormal( sdBCov, nY ) + randNormal( sdECov, nY );
+  copy( &(y[0]), &(y[0])+nY, pdYData );
 
   //------------------------------------------------------------
   // Quantities related to the fixed population parameter, alp.

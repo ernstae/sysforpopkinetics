@@ -55,8 +55,6 @@
 #pragma warning( disable : 4786 )
 #include <vector>
 #include <ctime>
-#include <nag.h>
-#include <nagg05.h>
 #include "SpkValarray.h"
 #include "SpkModel.h"
 #include "simulate.h"
@@ -76,7 +74,8 @@ bool simulate( SpkModel &model,
 	       int seed )
 {		
   // *** Random number seed for NAG routines - Default value is random ***
-  g05cbc( static_cast<Integer>( seed ) );
+  srand( seed );
+//  g05cbc( static_cast<Integer>( seed ) );
   
   // *** Constants/Iterators ***
   int i, j, k;	      // Iterators
@@ -100,13 +99,42 @@ bool simulate( SpkModel &model,
   model.setPopPar(alp);
 
   valarray<double> D( nB * nB );
-  model.indParVariance(D);// D matrix from model
+  try{
+     model.indParVariance(D);// D matrix from model
+  }
+  catch( SpkException& e )
+  {
+     e.push( SpkError::SPK_UNKNOWN_ERR, "Evaluation of D(alp) failed during data simulation.\n",
+     __LINE__, __FILE__ );
+     throw e;
+  }
+  catch( ... )
+  {
+     throw SpkError( SpkError::SPK_UNKNOWN_ERR, "Evaluation of D(alp) failed during data simulation.\n",
+     __LINE__, __FILE__ );
+  }
 
   valarray<double> D_norm( nB );
 
   for (i = 0, k = 0; i < nIndividuals; i++)  // do this nIndividuals times
     {
-      D_norm = randNormal(D, nB);                // call randomizer for each time
+     
+      try{
+         D_norm = randNormal(D, nB);                // call randomizer for each time
+      }
+      catch( SpkException& e )
+      {
+         char buf[ SpkError::maxMessageLen() ];
+         sprintf( buf, "Failed to simulate the %d-th individual's random effects.\n", i );
+         e.push( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
+         throw e;
+      }
+      catch( ... )
+      {
+         char buf[ SpkError::maxMessageLen() ];
+         sprintf( buf, "Failed to simulate the %d-th individual's random effects.\n", i );
+         throw SpkError( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
+      }
            
       for (j = 0; j < nB; j++, k++)          // copy entries from latest call to randomizer
 	{
@@ -136,18 +164,32 @@ bool simulate( SpkModel &model,
   
   for (i = 0, k = 0; i < nIndividuals; i++)  // individuals start at 1, go to nIndividuals
     {					     // k indexes the entire bAllOut matrix
-      model.selectIndividual(i);	     // selectIndividual sets i as it is
-      fi.resize( N[i] );
-      Ri.resize( N[i] * N[i] );
-      ei.resize( N[i] );
-      model.setIndPar( bAllOut[ slice( k, nB, 1 ) ] );
-      model.dataMean(fi);
-      model.dataVariance(Ri);
-      ei = randNormal( Ri, N[i] );
+      try{
+         model.selectIndividual(i);	     // selectIndividual sets i as it is
+         fi.resize( N[i] );
+         Ri.resize( N[i] * N[i] );
+         ei.resize( N[i] );
+         model.setIndPar( bAllOut[ slice( k, nB, 1 ) ] );
+         model.dataMean(fi);
+         model.dataVariance(Ri);
+         ei = randNormal( Ri, N[i] );
       
-      simY[i].resize( N[i] );
-      simY[i] = fi + ei;	            // simY[i] = yi = fi + ei
-      
+         simY[i].resize( N[i] );
+         simY[i] = fi + ei;	            // simY[i] = yi = fi + ei
+      }
+      catch( SpkException& e )
+      {
+         char buf[ SpkError::maxMessageLen() ];
+         sprintf( buf, "Failed to simulate measurements for the %d-th individual.\n", i );
+         e.push( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
+         throw e;
+      }
+      catch( ... )
+      {
+         char buf[ SpkError::maxMessageLen() ];
+         sprintf( buf, "Failed to simulate measurements for the %d-th individual.\n", i );
+         throw SpkError( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
+      } 
     }
   
   //--------------------------------------------------------------------------

@@ -24,10 +24,9 @@
  * File: det.cpp
  *
  *
- * Computes the determinant of a symmetric, positive-definite,
- * double precision matrix.
+ * Computes the determinant of a positive definite symmetric matrix.
  *
- * Author: Mitch Watrous
+ * Author: Sachiko Honda
  *
  *************************************************************************/
 
@@ -48,7 +47,7 @@ setprecision endl cstdlib pow cmath namespace std
   Spk
 $$
 
-$section Determinant of a Matrix$$
+$section Determinant of a Positive Definite Symmetric Matrix$$
 
 $index det$$
 $cindex Determinant \of \a matrix$$
@@ -69,12 +68,12 @@ $$
 $pre
 $$
 $head Description$$
-Evaluates the determinant of the square, symmetric, positive-definite 
-matrix $math%A%$$.
+Evaluates the determinant of the positive definite symmetric matrix $math%A%$$.
 $pre
 
 $$
-To be specific, this function computes the determinant of $math%A%$$ as
+To be specific, this function computes the determinant of 
+positive definite symmetric $math%A%$$ as
 $math%
                     c
     det( A ) = b * 2  ,
@@ -86,9 +85,10 @@ $head Arguments$$
 $syntax/
 /dmatA/
 /$$
-The $code DoubleMatrix$$ $italic dmatA$$ contains the square, symmetric, 
-positive-definite matrix $math%A%$$.  If the matrix did not
-have these properties, it throws an $xref/SpkException//SpkException/$$.
+The $code DoubleMatrix$$ $italic dmatA$$ contains the 
+positive definite symmetric matrix $math%A%$$.  
+If the matrix does not have these properties, 
+it throws an $xref/SpkException//SpkException/$$.
 
 $syntax/
 
@@ -163,6 +163,10 @@ $end
 /*------------------------------------------------------------------------
  * Include files
  *------------------------------------------------------------------------*/
+extern "C"{
+#include <atlas/cblas.h>
+#include <atlas/clapack.h>
+};
 
 #include <iostream>
 #include <cassert>
@@ -171,10 +175,6 @@ $end
 #include "det.h"
 #include "transpose.h"
 #include "isDmatEpsEqual.h"
-#include "nag.h"
-#include "nag_types.h"
-#include "nag_stdlib.h"
-#include "nagf03.h"
 #include "DoubleMatrix.h"
 
 
@@ -182,40 +182,39 @@ $end
  * Function definition
  *------------------------------------------------------------------------*/
 
-void det( const DoubleMatrix &dmatA, double* pdB, long int* plC )
+void det( const DoubleMatrix &A, double* pdB, long int* plC )
 {
   using namespace std;
   //------------------------------------------------------------
   // Preliminaries.
   //------------------------------------------------------------
 
-  int nARow = dmatA.nr();
-  int nACol = dmatA.nc();
-
+  int m = A.nr();
+  int n = A.nc();
 
   //------------------------------------------------------------
   // Validate the inputs (debug version only).
   //------------------------------------------------------------
 
-  assert( nARow == nACol );   // The matrix A must be square.
-  assert( nARow > 0 );        // A must have at least one row.
+  assert( m == n );   // The matrix A must be square.
+  assert( m > 0 );    // A must have at least one row.
 
   #ifndef NDEBUG //===============[Begin: debug only code]========
 
   // Create a scale matrix.
-  DoubleMatrix dmatScale( dmatA );
-  double* pdScaleData = dmatScale.data();
-  for (int i = 0; i < nARow; i++)
+  DoubleMatrix scale(A);
+  double * pScale = scale.data();
+  for (int i = 0; i < n; i++)
   { 
-      for(int j = 0; j < nACol; j++)
+      for(int j = 0; j < n; j++)
       {
-            pdScaleData[i + j * nARow] = 10.0 * (fabs( pdScaleData[i + j * nARow] +  pdScaleData[j + i * nACol] )) ;
+            pScale[i + j * n] = 10.0 * (fabs( pScale[i + j * n] +  pScale[j + i * n] )) ;
       }
   }
   
   // Verify that A is symmetric up to epsilon by checking the
   // equality of it and its transpose.
-  assert( isDmatEpsEqual( dmatA, transpose( dmatA ), dmatScale ) );
+  assert( isDmatEpsEqual( A, A, scale ) );
   
   #endif // ======================[End:   debug only code]========
 
@@ -224,7 +223,7 @@ void det( const DoubleMatrix &dmatA, double* pdB, long int* plC )
 
 
   //------------------------------------------------------------
-  // Define the parameters for the function nag_real_cholesky (f03aec), 
+  // Define the parameters for the function clapack_dpotrf(), 
   // which computes a Cholesky factorization of a real symmetric
   // positive-definite matrix, and evaluates its determinant.
   // Note: this function (det) only makes use of the 
@@ -235,37 +234,23 @@ void det( const DoubleMatrix &dmatA, double* pdB, long int* plC )
   // Input: n, the order of the matrix A. 
   // Output: unspecified.
   // Constraint: n >= 1. 
-  Integer n = nARow;
   assert( n >= 1 );
 
-  // Parameter: tda.
+  // Parameter: lda.
   // Input: the last dimension of the array a as declared in the
-  // function from which nag_real_cholesky is called.
+  // function from which dgetrm() is called.
   // Output: unspecified.
-  // Constraint: tda >= n.
-  Integer tda = n;
+  // Constraint: lda >= n.
+  int lda = n;
 
   // Parameter: a.
   // Input: the upper triangle of the n by n positive-definite
   // symmetric matrix A.  The elements of the array below the
   // diagonal need not be set.
-  // Output: the sub-diagonal elements of the lower triangular
-  // matrix L. The upper triangle of A is unchanged.
-  // Note: (1.) Because the data elements of DoubleMatrix are stored 
-  // in column-major order and NAG routines expect arrays to be
-  // stored in row-major order, the call to nag_real_cholesky 
-  // will actually compute det( A^T ), which is equal to det( A ).
-  // (2.) A temporary copy of A is created here because dmatA is
-  // declared const, but nag_real_cholesky overwrites the lower 
-  // triangle of the matrix pointed to by a.
-  DoubleMatrix dmatATemp = dmatA;
-  double* a = dmatATemp.data();
-
-  // Parameter: p
-  // Input: unspecified.
-  // Output: the reciprocals of the diagonal elements of L.
-  DoubleMatrix dmatLDiag = DoubleMatrix( nARow, 1 );
-  double* p = dmatLDiag.data();
+  // Output: the L (lower) triangle without diagonal elements which are unity
+  //         and the U (upper) triangle
+  double a[n*n];
+  copy( A.data(), A.data()+m*n, a );
 
   // Parameter: detf.
   // Parameter: dete.
@@ -273,37 +258,95 @@ void det( const DoubleMatrix &dmatA, double* pdB, long int* plC )
   // Output: the determinant of A is given by detf * 2.0^dete.
   // It is given in this form to avoid overflow or underflow.
   double detf;
-  Integer dete;
+  int    dete;
 
   //------------------------------------------------------------
   // Perform the Cholesky factorization.
+  // (using ATLAS implementation of DPOTRF())
   //------------------------------------------------------------
-  
-  // Revisit - Exceptions - Mitch: if an error occurs in this
-  // NAG routine, the program will be stopped using exit or abort. 
-  // Brad: changed to an assert for tracking in debugger 12/12/00
-  // Sachiko: Changed to exception throwing 10/15/2002
-  static NagError fail;
-  INIT_FAIL(fail);
-  nag_real_cholesky( n, a, tda, p, &detf, &dete, &fail);
-  if( fail.code != NE_NOERROR )
-  {
-    switch( fail.code )
+  //
+  // DPOTRF() computes the Cholesky factorization of a real 
+  // symmetric/Hermitian positive definite matrix A such that
+  // The factorization has the form A = U^H * U, if uplo
+  // is CblasUpper, or A = L*L^H, if uplo is CblasLower,
+  // where U is an upper triangular matrix and L is lower triangular.
+  // This factorization is sometimes referred to as
+  // "taking the square root of" the matrix.  Thus, one
+  // should immediately realize that the resulting L
+  // contains the square root of the actual values.
+  //
+  enum CBLAS_UPLO  uplo  = CblasLower;
+  enum CBLAS_ORDER order = CblasColMajor;
+
+  int info = clapack_dpotrf( order, uplo, n, a, lda );
+  if( info > 0 )
     {
-    case NE_NOT_POS_DEF:
+      char mess[SpkError::maxMessageLen()];
+      sprintf( mess, "The leading minor of order %d is not positive definite, and the factorization could not be completed!",
+	       info, info );
       throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, 
-        "The matrix is not positive-definite,  possibly due to round-ing errors.",
-      __LINE__, __FILE__ );
-      break;
-    default:
-      throw SpkException( SpkError::SPK_UNKNOWN_ERR, 
-        "Failed to compute a Cholesky factorization.",
-      __LINE__, __FILE__ );
-      break;
+			  mess,
+			  __LINE__, __FILE__ );
     }
-  }
+  else if( info < 0 )
+    {
+      char mess[SpkError::maxMessageLen()];
+      sprintf( mess, "Programming error!  The %d th argument to clapack_dgetrf() is illegal.", -info );
+      throw SpkException( SpkError::SPK_UNKNOWN_ERR, 
+			  mess,
+			  __LINE__, __FILE__ );
+    }
 
+  /*
+  // trace #of permutations
+  int nInterchanges = 0;
+  for( int i=0, tmp; i<n-1; i++ )
+    {
+      if( ipiv[i] != i )
+	{
+	  tmp = ipiv[i];
+	  ipiv[ i ] = ipiv[ tmp ];
+	  ipiv[ tmp ] = i;
+	  nInterchanges++;
+	}
+    }
+  // #permulations = even --- sign = +1
+  //               = odd  --- sign = -1
+  //double sign = pow( -1.0, nInterchanges );
+  */
 
+  // The determinant of symmetric positive definite matrix
+  // is ALWAYS POSITIVE!!!
+  double sign = +1.0;
+
+  //                    n
+  //                  -----
+  //                   | |   
+  //  sign * det(A) =  | | L(i,j)^2, i=j
+  //
+  //                 i=0, j=0
+  //
+  double det = sign;
+  for( int j=0; j<n; j++ )
+    {  
+      for( int i=0; i<n; i++ )
+	{
+	  if( i==j )
+	    {
+	      // To avoid over- or under-flow,
+	      // devide (make smaller) the devider
+	      // by two.
+	      // Note: The devider does not have to
+	      // be 2.  It is 2 only because the NAG implementation
+	      // of GDETRF() returned the determiant-related info
+	      // in this way.
+	      det *= a[j*n+i] * a[j*n+i] / 4.0;
+	    }
+	}
+    }
+  
+  detf = det;
+  dete = 2 * n;
   //------------------------------------------------------------
   // Finish up.
   //------------------------------------------------------------
@@ -317,19 +360,9 @@ void det( const DoubleMatrix &dmatA, double* pdB, long int* plC )
 /*************************************************************************
  *
  *
- * Computes the determinant of a symmetric, positive-definite,
- * double precision matrix.
+ * Computes the determinant of a matrix using LU factorization
  *
- * Author: Mitch Watrous
- *
- *************************************************************************/
-
-/*************************************************************************
- *
- * Function: det (valarray version)
- * a derivation of Mitch's DoubleMatrix version of det()
- *
- * Author: Sachiko Honda (based upon Mitch's version)
+ * Author: Sachiko Honda
  *
  *************************************************************************/
 
@@ -373,8 +406,7 @@ $$
 $pre
 $$
 $head Description$$
-Evaluates the determinant of the square, symmetric, positive-definite 
-matrix $math%A%$$.
+Evaluates the determinant of the square matrix $math%A%$$.
 $pre
 
 $$
@@ -390,9 +422,8 @@ $head Arguments$$
 $syntax/
 /A/
 /$$
-The $code valarray$$ $italic A$$ contains the square, symmetric, 
-positive-definite matrix $math%A%$$ in the column major order.  If the matrix did not
-have these properties, it throws an $xref/SpkException//SpkException/$$.
+The $code valarray$$ $italic A$$ contains the square matrix $math%A%$$ in the column major order.  
+If the matrix is not LU-decomposable, it throws an $xref/SpkException//SpkException/$$.
 $syntax/
 
 /n/
@@ -449,7 +480,7 @@ int main()
   
   cout << setiosflags(ios::scientific) << setprecision(15);
   cout << "A = " << endl;
-  DoubleMatrix( A, nACol ).print();
+  printInMatrix( A, nACol );
   cout << endl;
   cout << "det( A )     = " << b * pow( 2.0, c ) << endl;
 
@@ -481,21 +512,19 @@ using SPK_VA::valarray;
 void det( const valarray<double> &A, int n, double* pdB, long int* plC )
 {
   using namespace std;
-  //------------------------------------------------------------
-  // Preliminaries.
-  //------------------------------------------------------------
-
+ 
   //------------------------------------------------------------
   // Validate the inputs (debug version only).
   //------------------------------------------------------------
 
   assert( n > 0 );               // A must have at least one row.
   assert( A.size() == n * n );   // The matrix A must be square.
+  int m = n;
 
   #ifndef NDEBUG //===============[Begin: debug only code]========
 
   // Create a scale matrix.
-  valarray<double> scale = A;
+  valarray<double> scale( A );
   for (int i = 0; i < n; i++)
   { 
       for(int j = 0; j < n; j++)
@@ -515,46 +544,34 @@ void det( const valarray<double> &A, int n, double* pdB, long int* plC )
 
 
   //------------------------------------------------------------
-  // Define the parameters for the function nag_real_cholesky (f03aec), 
+  // Define the parameters for the function clapack_dgetrf(), 
   // which computes a Cholesky factorization of a real symmetric
   // positive-definite matrix, and evaluates its determinant.
   // Note: this function (det) only makes use of the 
-  // determinant value and not the Cholesky factorization.
+  // determinant value and not the LU factorization.
   //------------------------------------------------------------
   
-  // Parameter: nag_n.
-  // Input: nag_n, the order of the matrix A. 
+  // Parameter: n.
+  // Input: n, the order of the matrix A. 
   // Output: unspecified.
-  // Constraint: nag_n >= 1. 
-  Integer nag_n = n;
-  assert( nag_n >= 1 );
+  // Constraint: n >= 1. 
+  assert( n >= 1 );
 
-  // Parameter: tda.
+  // Parameter: lda.
   // Input: the last dimension of the array a as declared in the
-  // function from which nag_real_cholesky is called.
+  // function from which dgetrf is called.
   // Output: unspecified.
-  // Constraint: tda >= nag_n.
-  Integer tda = nag_n;
+  // Constraint: lda >= n.
+  int lda = n;
 
   // Parameter: a.
-  // Input: the upper triangle of the nag_n by nag_n positive-definite
+  // Input: the upper triangle of the n by n positive-definite
   // symmetric matrix A.  The elements of the array below the
   // diagonal need not be set.
-  // Output: the sub-diagonal elements of the lower triangular
-  // matrix L. The upper triangle of A is unchanged.
-  // Note: (1.) Because the data elements of DoubleMatrix are stored 
-  // in column-major order and NAG routines expect arrays to be
-  // stored in row-major order, the call to nag_real_cholesky 
-  // will actually compute det( A^T ), which is equal to det( A ).
-  // (2.) A temporary copy of A is created here because dmatA is
-  // declared const, but nag_real_cholesky overwrites the lower 
-  // triangle of the matrix pointed to by a.
-  valarray<double> a = A;
-
-  // Parameter: p
-  // Input: unspecified.
-  // Output: the reciprocals of the diagonal elements of L.
-  valarray<double> p( n );
+  // Output: the L (lower) triangle without diagonal elements which are unity
+  //         and the U (upper) triangle
+  double a[n*n];
+  copy( &(A[0]), &(A[m*n]), a );
 
   // Parameter: detf.
   // Parameter: dete.
@@ -562,36 +579,99 @@ void det( const valarray<double> &A, int n, double* pdB, long int* plC )
   // Output: the determinant of A is given by detf * 2.0^dete.
   // It is given in this form to avoid overflow or underflow.
   double detf;
-  Integer dete;
+  int    dete;
 
   //------------------------------------------------------------
-  // Perform the Cholesky factorization.
+  // Perform the Cholesky factorization 
+  // (using ATLAS implementation of DPOTRF())
   //------------------------------------------------------------
-  
-  // Revisit - Exceptions - Mitch: if an error occurs in this
-  // NAG routine, the program will be stopped using exit or abort. 
-  // Brad: changed to an assert for tracking in debugger 12/12/00
-  // Sachiko: Changed to exception throwing 10/15/2002
-  static NagError fail;
-  INIT_FAIL(fail);
-  nag_real_cholesky( nag_n, &a[0], tda, &p[0], &detf, &dete, &fail);
-  if( fail.code != NE_NOERROR )
+  //
+  // DPOTRF() computes the Cholesky factorization of a real 
+  // symmetric/Hermitian positive definite matrix A such that
+  // The factorization has the form A = U^H * U, if uplo
+  // is CblasUpper, or A = L*L^H, if uplo is CblasLower,
+  // where U is an upper triangular matrix and L is lower triangular.
+  // This factorization is sometimes referred to as
+  // "taking the square root of" the matrix.  Thus, one
+  // should immediately realize that the resulting L
+  // contains the square root of the actual values.
+
+  enum CBLAS_UPLO  uplo  = CblasLower;
+  enum CBLAS_ORDER order = CblasColMajor;
+
+  int ipiv[n];
+
+  int info = clapack_dpotrf( order, uplo, n, a, lda );
+  if( info )
   {
-    switch( fail.code )
-    {
-    case NE_NOT_POS_DEF:
-      throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, 
-        "The matrix is not positive-definite,  possibly due to round-ing errors.",
-      __LINE__, __FILE__ );
-      break;
-    default:
-      throw SpkException( SpkError::SPK_UNKNOWN_ERR, 
-        "Failed to compute a Cholesky factorization.",
-      __LINE__, __FILE__ );
-      break;
-    }
+    if( info < 0 )
+      {
+	char mess[SpkError::maxMessageLen()];
+	sprintf( mess, "U(%d,%d) is exactly zero.  The LU factorization is completed, but the U is exatly singlar.",
+		 info, info );
+	throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, 
+			    mess,
+			    __LINE__, __FILE__ );
+      }
+    else if( info > 0 )
+      {
+	char mess[SpkError::maxMessageLen()];
+	sprintf( mess, "Programming error!  The %d th argument to clapack_dgetrf() is illegal.", -info );
+	throw SpkException( SpkError::SPK_UNKNOWN_ERR, 
+			    mess,
+			    __LINE__, __FILE__ );
+      }
   }
+  /*
+  // trace #of permutations
+  int nInterchanges = 0;
+  for( int i=0, tmp; i<n-1; i++ )
+    {
+      if( ipiv[i] != i )
+	{
+	  tmp = ipiv[i];
+	  ipiv[ i ] = ipiv[ tmp ];
+	  ipiv[ tmp ] = i;
+	  nInterchanges++;
+	}
+    }
+  // #permulations = even --- sign = +1
+  //               = odd  --- sign = -1
+  //double sign = pow( -1.0, nInterchanges );
+  */
 
+  // The determinant of symmetric positive definite matrix
+  // is ALWAYS POSITIVE!!!
+  double sign = +1.0;
+
+  //                    n
+  //                  -----
+  //                   | |   
+  //  sign * det(A) =  | | L(i,j)^2, i=j
+  //
+  //                 i=0, j=0
+  //
+  double det = sign;
+  for( int j=0; j<n; j++ )
+    {  
+      for( int i=0; i<n; i++ )
+	{
+	  if( i==j )
+	    {
+	      // To avoid over- or under-flow,
+	      // devide (make smaller) the devider
+	      // by 2^2.
+	      // Note: The devider does not have to
+	      // be 2.  It is 2 only because the NAG implementation
+	      // of GDETRF() returned the determiant-related info
+	      // in this way.
+	      det *= a[j*n+i] * a[j*n+i] / 4.0;
+	    }
+	}
+    }
+  
+  detf = det;
+  dete = 2 * n;
   //------------------------------------------------------------
   // Finish up.
   //------------------------------------------------------------
