@@ -94,9 +94,8 @@ namespace{
   char fPredEqn_cpp[]     = "predEqn.cpp";
   char fNonmemPars_h[]    = "NonmemPars.h";
   char fMontePars_h[]     = "MontePars.h";
-  char fMonteDriver_cpp[] = "monteDriver.cpp";
-  char fFitDriver_cpp[]   = "fitDriver.cpp";
   char fMakefile[]        = "Makefile.SPK";
+  char fDriver_cpp[]      = "fitDriver.cpp";
   char fDriver[]          = "driver";
   char fReportML[]        = "result.xml";
   char fSavedReportML[]   = "saved_result.xml";
@@ -558,8 +557,6 @@ void ind_withIDTest::tearDown()
       remove( fMontePars_h );
       remove( fNonmemPars_h );
       remove( fDriver );
-      remove( fFitDriver_cpp );
-      remove( fMonteDriver_cpp );
       remove( fIndData_h );
       remove( fDataSet_h );
       remove( fPred_h );
@@ -854,38 +851,34 @@ void ind_withIDTest::parse()
   // Pred.h
   // Makefile.SPK
   // Makefile.MC
-  // fitDriver.cpp
-  // monteDriver.cpp
+  // driver.cpp
   // ==========================================
   FILE * nonmemPars = fopen( fNonmemPars_h, "r" );
-  CPPUNIT_ASSERT( nonmemPars != NULL );
+  CPPUNIT_ASSERT_MESSAGE( "Missing NonmemPars.h", nonmemPars != NULL );
   fclose( nonmemPars );
 
   FILE * montePars = fopen( fMontePars_h, "r" );
-  CPPUNIT_ASSERT( montePars == NULL );
+  CPPUNIT_ASSERT_MESSAGE( "Missing MontePars.h", montePars == NULL );
   
   FILE * indData = fopen( fIndData_h, "r" );
-  CPPUNIT_ASSERT( indData != NULL );
+  CPPUNIT_ASSERT_MESSAGE( "Missing IndData.h", indData != NULL );
   fclose( indData );
 
   FILE * dataSet = fopen( fDataSet_h, "r" );
-  CPPUNIT_ASSERT( dataSet != NULL );
+  CPPUNIT_ASSERT_MESSAGE( "Missing DataSet.h", dataSet != NULL );
   fclose( dataSet );
 
   FILE * pred = fopen( fPred_h, "r" );
-  CPPUNIT_ASSERT( pred != NULL );
+  CPPUNIT_ASSERT_MESSAGE( "Missing Pred.h", pred != NULL );
   fclose( pred );
 
   FILE * makeSPK = fopen( fMakefile, "r" );
-  CPPUNIT_ASSERT( makeSPK != NULL );
+  CPPUNIT_ASSERT_MESSAGE( "Missing Makefile.SPK", makeSPK != NULL );
   fclose( makeSPK );
  
-  FILE * fitDriver = fopen( fFitDriver_cpp, "r" );
-  CPPUNIT_ASSERT( fitDriver != NULL );
+  FILE * fitDriver = fopen( fDriver_cpp, "r" );
+  CPPUNIT_ASSERT_MESSAGE( "Missing fitDriver.cpp", fitDriver != NULL );
   fclose( fitDriver );
-
-  FILE * monteDriver = fopen( fMonteDriver_cpp, "r" );
-  CPPUNIT_ASSERT( monteDriver == NULL );
 }
 void ind_withIDTest::testNonmemPars_h()
 {
@@ -1313,7 +1306,7 @@ void ind_withIDTest::testDriver()
   if( system( command ) != 0 )
     {
       char message[256];
-      sprintf( message, "Compilation of the generated %s failed!", fFitDriver_cpp );
+      sprintf( message, "Compilation of the generated %s failed!", fDriver_cpp );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
@@ -1631,7 +1624,6 @@ CppUnit::Test * ind_withIDTest::suite()
      new CppUnit::TestCaller<ind_withIDTest>(
          "testPredClass", 
 	 &ind_withIDTest::testPredClass ) );
-
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<ind_withIDTest>(
          "testDriver", 
