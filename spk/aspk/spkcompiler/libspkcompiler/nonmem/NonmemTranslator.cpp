@@ -62,7 +62,7 @@ const char* NonmemTranslator::C_SCATTERPLOT                ( "scatterplot" );
 const char* NonmemTranslator::C_COLUMN                     ( "column" );
 const char* NonmemTranslator::C_X                          ( "x" );
 const char* NonmemTranslator::C_Y                          ( "y" );
-const char* NonmemTranslator::C_BY                         ( "by" );
+const char* NonmemTranslator::C_SPLIT                      ( "split" );
 const char* NonmemTranslator::C_APPROXIMATION              ( "approximation" );
 const char* NonmemTranslator::C_FO                         ( "fo" );
 const char* NonmemTranslator::C_FOCE                       ( "foce" );
@@ -145,7 +145,7 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     myPopTraceLevel     ( 1 ),
     myIndTraceLevel     ( 1 ),
     mySeed              ( 0 ),
-    myCovForm           ( "R" ),
+    myCovForm           ( "RSR" ),
     myIsStderr          ( true ),
     myIsCorrelation     ( true ),
     myIsCov             ( true ),
@@ -225,7 +225,7 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   X_LABELS         = XMLString::transcode( C_LABELS );
   X_X              = XMLString::transcode( C_X );
   X_Y              = XMLString::transcode( C_Y );
-  X_BY             = XMLString::transcode( C_BY );
+  X_SPLIT          = XMLString::transcode( C_SPLIT );
   X_THETA          = XMLString::transcode( C_THETA );
   X_OMEGA          = XMLString::transcode( C_OMEGA );
   X_SIGMA          = XMLString::transcode( C_SIGMA );
@@ -336,7 +336,7 @@ NonmemTranslator::~NonmemTranslator()
   XMLString::release( &X_COLUMN );
   XMLString::release( &X_X );
   XMLString::release( &X_Y );
-  XMLString::release( &X_BY );
+  XMLString::release( &X_SPLIT );
   XMLString::release( &X_APPROXIMATION );
   XMLString::release( &X_FO );
   XMLString::release( &X_FOCE );
