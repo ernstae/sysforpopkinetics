@@ -1178,33 +1178,27 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   // CONSIDER:  make convergence properties of SPK (i.e. its specification) be that
   // of the optimizer object passed in
   //
-  // CONSIDER: store final value for delta to use next time
-  //
   // [Remove]======================================
 
-  std::ostream    &os;
+  std::ostream    os = std::cout;
   size_t        level;
-  size_t       ItrMax;
-  size_t      QuadMax;
+  size_t       iterMax;
+  size_t      quadMax;
   size_t            n;
   double        delta;
   Fun          &obj;
   // Input+Output Arguments
-  size_t      &ItrCur;
-  size_t     &QuadCur;
-  double        &rCur;
-  double        &fCur;
-  double        *xCur; // length n 
-  double        *gCur; // length n 
-  const double  *HCur; // length n * n 
+  size_t      &iterCurr;
+  size_t     &quadCurr;
+  double        &rCurr;
+  double        &fCurr;
+  double        *xCurr; // length n 
+  double        *gCurr; // length n 
+  const double  *hCurr; // length n * n 
 
   const char *msg;
-  std::ostream            &os = std::cout;
-  const size_t          level = 0;
-  const size_t         ItrMax = 50;
-  const size_t              m = 5;
   const size_t              n = 5;
-  const size_t        QuadMax = 20 * n;
+  const size_t        quadMax = 20 * n;
   const bool      exponential = true;
   const double          delta = 1e-7;
 
@@ -1215,7 +1209,7 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
     // a warm start is sufficiently accurate that the optimizer
     // does not need extra iterations in order to approximate
     // the Hessian the first time it is called.
-    itrMax = 1;
+    iterMax = 1;
   }
   else
   {
@@ -1224,19 +1218,19 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
     // for the Hessian the first time it is called, but not so high
     // that it will perform too many iterations before this function's
     // convergence criterion is checked.
-    itrMax = nObjPars;
+    iterMax = nObjPars;
 
     // Evaluate the objective and its gradient.
-    objEval( xCur, fCur, gCur, ... );
+    objEval( xCurr, fCurr, gCurr, ... );
 
     // Create an approximation for the Hessian.
-    hCur = ... ;
+    hCurr = ... ;
   }
 
   // Set the maximum number of interior point iterations so
   // that the optimizer can solve the quadratic subproblems
   // with sufficient accuracy.
-  quadMax = 100;
+  quadMax = 20 * nObjPars;
 
   // If the return value of QuasiNewton01Box is "ok", then the
   // infinity norm (element with the maximum absolute value) 
@@ -1245,8 +1239,8 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   double deltaScale = 10.0;
 
   bool isWithinTol = false;
-  int itrCurr = 0;
-  while ( !isWithinTol && itrCurr < nMaxIter )
+  int iterCurr = 0;
+  while ( !isWithinTol && iterCurr < nMaxIter )
   {
     // See if this function's convergence criterion has been met.
     if ( isWithinTol( 
@@ -1264,38 +1258,38 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
       // Set delta to be less than the maximum of the absolute values of
       // the elements of the projected gradient so that the subproblems
       // only be solved with accuracy sufficient for the current x value.
-      delta = maxAbsProjGrad( gCur ) / deltaScale;
+      delta = maxAbsProjGrad( gCurr ) / deltaScale;
 
       // Save the number of iterations that have been performed.
-      itrCurrPrev = itrCur;
+      iterCurrPrev = iterCurr;
 
       // Ask the optimizer to take perform a limited number of iterations.
       msg = QuasiNewton01Box(
         os,
         level,
-        ItrMax,
-        QuadMax,
+        iterMax,
+        quadMax,
         n,
         delta,
         obj,
-        itrCurr,
-        QuadCur,
-        rCur,
-        fCur,
-        xCur,
-        gCur,
-        HCur );
+        iterCurr,
+        quadCurr,
+        rCurr,
+        fCurr,
+        xCurr,
+        gCurr,
+        hCurr );
 
       // After the first call to the optimizer the approximation for the
       // Hessian should be accurate enough that this can reset.
-      itrMax = 1;
+      iterMax = 1;
 
       // This function assumes that delta is set small enough that the
       // optimizer's convergence criterion will not be satisfied for the
       // current x value and that the optimizer will therefore be able to
       // perform at least one Quasi-Newton itertion.  If that is not the
       // case, then throw an exception.
-      if ( itrCurr == itrCurrPrev )
+      if ( iterCurr == iterCurrPrev )
       {
 	ok = false;
 	errorcode = SpkError::SPK_UNKNOWN_OPT_ERR;
