@@ -114,6 +114,12 @@
 	      <entry>11/17/2003</entry>
 	    </row>
 	    <row>
+	      <entry><link linkend="results">XML Results</link></entry>
+	      <entry>Sachiko Honda</entry>
+	      <entry>11/20/2003</entry>
+	      <entry></entry>
+	    </row>
+	    <row>
 	      <entry><link linkend="sql_schema">Database SQL Schema</link></entry>
 	      <entry>Alan Westhagen</entry>
 	      <entry>11/21/2003</entry>
@@ -285,6 +291,13 @@
 	communicate with each other by means of a relation database.
 	The entity-relationship model is the high-level design document
 	for this database.
+      </para>
+    </sect2>
+    <sect2 id="results">
+      <title>XML Results</title>
+      <para>
+	The results are formatted as an XML file, according to this 
+	specification.
       </para>
     </sect2>
     <sect2 id="sql_schema">
