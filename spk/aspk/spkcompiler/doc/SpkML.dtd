@@ -57,21 +57,21 @@ and have ASPK return the results and its originating request information all tog
 <html:h4>MDA -> ASPK: process request</html:h4>
 <html:pre><html:code>
    &lt;nonmem&gt;
-      &lt;<nm_request>&gt;
+      &lt;<nm_input>&gt;
       ...
-      &lt;/nm_request&gt;
+      &lt;/nm_input&gt;
    &lt;/nonmem&gt;
 </html:code></html:pre>
 
 <html:h4>ASPK -> MDA: result report</html:h4>
 <html:pre><html:code>
    &lt;nonmem&gt;
-      &lt;<nm_request>&gt;
+      &lt;<nm_input>&gt;
       ...
-      &lt;/nm_request&gt;
-      &lt;<nm_result>&gt;
+      &lt;/nm_input&gt;
+      &lt;<nm_input>&gt;
       ...
-      &lt;/nm_result&gt;
+      &lt;/nm_input&gt;
    &lt;/nonmem&gt;
 </html:code></html:pre>
 --> 
