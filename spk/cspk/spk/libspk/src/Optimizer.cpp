@@ -85,6 +85,10 @@ $syntax//nIterCompleted//$$ $cend
 0 $rend
 $syntax//isTooManyIter//$$ $cend
 false $rend
+$syntax//saveStateAtEndOfOpt//$$ $cend
+false $rend
+$syntax//throwExcepIfMaxIter//$$ $cend
+true $rend
 $syntax//isSubLevelOpt//$$ $cend
 false $rend
 $syntax//isWarmStart//$$ $cend
@@ -193,6 +197,22 @@ $syntax/
 /$$
 This flag indicates that if the too-many-iteration failure has occurred.  
 It is set to $code false$$ at the construction time.
+
+$syntax/
+
+/saveStateAtEndOfOpt/
+/$$
+This flag indicates if the state information required for a warm start
+should be saved at the end of the optimization process.
+It is set to $code false$$ at the construction time.
+
+$syntax/
+
+/throwExcepIfMaxIter/
+/$$
+This flag indicates if the optimizer should throw an exception when
+the maximum number of iterations is exhausted.
+It is set to $code true$$ at the construction time.
 
 $syntax/
 
@@ -1281,6 +1301,19 @@ void Optimizer::setupWarmStart( int n )
         char errmsg[] = "setUpWarmStart() failed to allocate memory.";
         throw SpkException( SpkError::SPK_INSUFFICIENT_MEM_ERR, errmsg, __LINE__, __FILE__ );
     }
+}
+
+// Set the is-a-sub-level flag.
+void setIsSubLevelOpt( bool s );
+{
+  isSubLevelOpt = s;
+
+  // If this is a sub-level problem, then don't save the state
+  // information at the end of the optimizaton but do throw an
+  // exception is the maximum number of iterations is exhausted.
+  setSaveStateAtEndOfOpt( !s );
+  setThrowExcepIfMaxIter( s );
+
 }
 
 // Set turning on/off warm start flag 
