@@ -8,9 +8,15 @@
     <revhistory>
       <revision>
 	<revnumber>1.0</revnumber>
-	<date>November 21, 2003</date>
+	<date>November 19, 2003</date>
 	<authorinitials>afw</authorinitials>
 	<revremark>Initial version.</revremark>
+      </revision>
+      <revision>
+	<revnumber>1.01</revnumber>
+	<date>November 21, 2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Clarified description of xml_source.</revremark>
       </revision>
     </revhistory>
   <abstract>
@@ -113,7 +119,7 @@
 	    The MDA submits a user job, via the Surrogate,
 	    by creating a new row
 	    in the <emphasis>job</emphasis> table, storing
-	    the model in the <emphasis>xml_model</emphasis> field,
+	    the model in the <emphasis>xml_source</emphasis> field,
 	    the data in the <emphasis>xml_data</emphasis> field,
 	    the user's identification number in the
 	    <emphasis>user_id</emphasis> field, and
@@ -251,9 +257,10 @@ CREATE TABLE job (
 CREATE TABLE model (
   model_id int(10) unsigned NOT NULL auto_increment,
   name varchar(20) default NULL,
-  abstract varchar(30) default NULL,
+  abstract varchar(100) default NULL,
   archive longblob,
   user_id int(10) unsigned NOT NULL default '0',
+  time timestamp(14) NOT NULL,
   PRIMARY KEY  (model_id)
 ) TYPE=MyISAM;
 
@@ -446,11 +453,12 @@ CREATE TABLE user (
 		<entry>xml_source</entry>
 		<entry>longblob</entry>
 		<entry>
-		  The source code for the model, expressed as XML,
+		  An XML file containing source code for the model,
+		  constraints, paramerters and presentation directives
 		  that is provided by the MDA when the row is
 		  created. This file is input to the Aspk Compiler,
-		  which incorporates it into the cpp_source field,
-		  which is its output.
+		  which translates it into the cpp_source field,
+		  for use by the Cspk.
 		</entry>
 	      </row>
 	      <row>
@@ -569,6 +577,13 @@ CREATE TABLE user (
 		<entry>
 		  The user who owns this model. A foreign key to the
 		  user table.
+		</entry>
+	      </row>
+	      <row>
+		<entry>time</entry>
+		<entry>timestamp(14)</entry>
+		<entry>
+		  The time, to the second, at which the model was last modified.
 		</entry>
 	      </row>
 	    </tbody>
