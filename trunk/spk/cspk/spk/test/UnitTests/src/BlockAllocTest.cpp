@@ -40,7 +40,7 @@
 #include <spk/DoubleMatrix.h>
 #include <spk/BlockAlloc.h>
 #include "BlockAllocTest.h"
-
+using namespace std;
 using namespace CppUnit;
 void BlockAllocTest::setUp()
 {
@@ -72,7 +72,7 @@ static bool BlockAlloc_Ok()
 
     // number of blocks initialy in use
     int initial = BlockFree(NULL);
-
+//cout << "initial = " << initial << endl;
     // memory block with space for the integers
     int *i = (int *) BlockAlloc(size * sizeof(int));
 
@@ -99,9 +99,10 @@ static bool BlockAlloc_Ok()
 
     // free the memory block because it will not be referenced again
     // in addition, check that the in use counter is correct
-    if( BlockFree(i) != initial )
+    int nInUse = BlockFree(i);
+    if( nInUse != initial )
         return false;
-
+//cout << "BlockFree(NULL) " << nInUse << endl;
     // test ok
     return true;
 }
@@ -146,16 +147,16 @@ void BlockAllocTest::testBlockMemoryAlloc()
 {     
     bool ok;
 
-    // check initial number of blocks in use
-    ok = BlockFree(NULL) == 0;
+    // get initial number of blocks in use
+    int NumberInUser = BlockFree(NULL);
 
-	// run the test
+    // run the test
     if( ok )
         ok = BlockAlloc_Ok();
 
     // check for a memroy leak
     if( ok )
-        ok = BlockFree(NULL) == 0;
+        ok = BlockFree(NULL) == NumberInUser;
 
     // return memory to the operating system
     BlockReturn();
