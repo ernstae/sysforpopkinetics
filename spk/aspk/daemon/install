@@ -1,0 +1,5 @@
+#!/bin/sh
+
+scp spkcompilerd aspkserver:/etc/rc.d/init.d
+scp compilerd aspkserver:/usr/local/bin
+
