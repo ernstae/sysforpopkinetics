@@ -203,7 +203,6 @@ file will being with a string "error" teminated by a new line caracter,
 there were any.
 */
 #pragma warning( disable : 4786 )
-
 #include <iostream>
 #include <string>
 #include <math.h>

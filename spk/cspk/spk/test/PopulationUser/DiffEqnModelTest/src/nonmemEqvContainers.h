@@ -36,7 +36,6 @@
 #pragma warning( disable : 4786 )
 
 #include <string>
-#include <strstream>
 #include <iostream>
 #include <cmath>
 #include <limits>
