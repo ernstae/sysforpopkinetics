@@ -3,6 +3,7 @@
 #include "NonmemTranslator.h"
 #include "explang.h"
 #include "../lower.h"
+#include "../factorial.h"
 
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOM.hpp>
@@ -14,17 +15,7 @@ using namespace xercesc;
 //========================================
 // Local namespace
 //----------------------------------------
-namespace{
 
-  // n!
-  unsigned int factorial( unsigned int n )
-  {
-    if( n == 0 )
-      return 0;
-    else
-      return n + factorial( n-1 );
-  }
-};
 //========================================
 
 //========================================
