@@ -2231,9 +2231,9 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 	{
 	  // ignore.  these don't get used within PRED.
 	}
-      else if( keyLabel == KeyStr::WRES )
+      else if( keyLabel == KeyStr::WRES || keyLabel == KeyStr::RES )
 	{
-	  // ignore.  This value is only computed outside at the final estimate.
+	  // ignore.  These values are only computed outside at the final estimate.
 	}
       else
 	{
@@ -2265,7 +2265,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
     {
       const string label     = pRawTable->second.name;
       const string keyLabel = SymbolTable::key( label );
-      if( keyLabel == KeyStr::OMEGA || keyLabel == KeyStr::SIGMA )
+      if( keyLabel == KeyStr::OMEGA || keyLabel == KeyStr::SIGMA || keyLabel == KeyStr::WRES || keyLabel == KeyStr::RES )
 	continue;
 
       if( find( labels->begin(), labels->end(), label ) == labels->end() )
