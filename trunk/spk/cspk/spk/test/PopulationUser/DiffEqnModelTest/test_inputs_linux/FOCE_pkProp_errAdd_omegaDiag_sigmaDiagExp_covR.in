@@ -34,7 +34,7 @@
 	<relTol>0.01</relTol>
 </Sigma>
 <eta>
-	<low><anon>-10.0</anon><anon>-10.0</anon><anon>-10.0</anon></low>
+	<low><anon>-5.0</anon><anon>-10.0</anon><anon>-10.0</anon></low>
 	<in><anon>0.0</anon><anon>0.0</anon><anon>0.0</anon></in>
 	<up><anon>10.0</anon><anon>10.0</anon><anon>10.0</anon></up>
 </eta>
