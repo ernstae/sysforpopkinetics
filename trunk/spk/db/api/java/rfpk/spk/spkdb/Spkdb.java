@@ -85,8 +85,6 @@ public abstract class Spkdb {
 	long eventTime = date.getTime()/1000;
 	long startTime = eventTime;
 	String stateCode = "q2c";
-	if (methodCode.equals("ml"))
-	    stateCode = "q2ml";
 	String sql = "insert into job (state_code, user_id, abstract, dataset_id, "
                                     + "dataset_version, model_id, model_version, "
                                     + "xml_source, method_code, parent, start_time, event_time)"
