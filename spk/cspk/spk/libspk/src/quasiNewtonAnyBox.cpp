@@ -175,6 +175,44 @@ $math%g(x)%$$, for a particular value of $math%x%$$.
 Note that the gradient of the objective function may also sometimes
 be denoted as $math%f_x(x)%$$.
 
+Any data that is special to this functions definition can be stored as private data in the class
+and initialized when $italic obj$$ object is constructed.
+It must have the following member functions:
+
+$subhead Objective Function$$
+The syntax
+$syntax%
+	const char *obj.function(const double *%x%, double *%f%)
+%$$
+evaluates the objective.
+If the return value of $italic obj$$ is "ok",
+this sets the scalar $italic f$$
+equal to the objective function at $italic x$$
+where $italic x$$ is a vector of length $italic n$$ and
+$latex 0 \leq x \leq 1$$.
+If the return value of 
+$syntax%%obj%.function%$$ 
+is not "ok",
+$code QuasiNewton01Box$$ will abort its operation and return with its return value
+equal to the value returned by 
+$syntax%%obj%.function%$$.
+
+$subhead Gradient$$
+The objective function is alway evaluated at the same $italic x$$ value directly before
+evaluating the gradient of the objective function.
+The syntax
+$syntax%
+	const char *obj.gradient(double *%g%)
+%$$
+evaluates the gradient using the value of $italic x$$ in the previous 
+call to $syntax%%obj%.function%$$.
+If the return value of 
+$syntax%%obj%.gradient%$$ 
+is not "ok",
+$code QuasiNewton01Box$$ will abort its operation and return with its return value
+equal to the value returned by 
+$syntax%%obj%.gradient%$$ .
+
 $syntax/
 
 /dvecXLow/
@@ -362,145 +400,8 @@ to by $italic pF_xOut$$.
 
 
 $head Example$$
-The following example program minimizes the function
-$math%
-                 N
-             1  ----                               2
-     f(x) =  -  >       i^2 * [ x(i) + (-1)^i * i ]
-             2  ----
-                i = 1
-%$$
-subject to the constraint that 
-$math%
-     -(N-1) \le x \le +(N-1) .
-%$$
-In the case below, where $math%N%$$ is $4$$, the minimizer
-is the vector $math%(1, -2, 3, -3)%$$.
-$pre 
+There is currently no example for this function.
 
-$$
-If you compile, link, and run the following program:
-$codep
-
-
-#include <iostream>
-#include <iomanip>
-#include <cmath>
-#include "DoubleMatrix.h"
-#include "quasiNewtonAnyBox.h"
-#include "Optimizer.h"
-
-
-//---------------------------------------------
-// Function: fourParamQuadratic
-//---------------------------------------------
-
-static void fourParamQuadratic( const DoubleMatrix& dvecX, double* pdFOut, 
-                DoubleMatrix* pdrowGOut, const void* pFvalInfo )
-{
-  int nObjPar = 4;
-  
-  double* pdXData = dvecX.data();
-  int nXRows = dvecX.nr();
-
-  int i, j;
-  double tot;
-
-  if ( pdFOut ) 
-  {
-    // Set the objective function value.
-    tot = 0.0;
-    for ( j = 0; j < nObjPar; j++ )
-    {
-      i = j + 1;
-      tot += pow(i, 2.0) * pow( pdXData[j] + pow( -1.0, i ) * i, 2.0 );
-    }
-    *pdFOut = 0.5 * tot;
-  }
-
-  if ( pdrowGOut )
-  {
-    double* pdGOutData = pdrowGOut->data();
-
-    // Set the elements of the gradient.
-    for ( j = 0; j < nObjPar; j++ )
-    {
-      i = j + 1;
-      pdGOutData[j] =  pow(i, 2.0) * ( pdXData[j] + pow( -1.0, i ) * i );
-    }
-  }
-}
-
-  
-//---------------------------------------------
-// Function: main
-//---------------------------------------------
-
-void main()
-{
-  using namespace std;
-
-  bool ok;
-
-  int nObjPar = 4;
-
-  DoubleMatrix dvecXLow(nObjPar, 1);
-  DoubleMatrix dvecXUp(nObjPar, 1);
-  DoubleMatrix dvecXIn(nObjPar, 1);
-  DoubleMatrix dvecXOut(nObjPar, 1);
-
-  double* pdXLowData = dvecXLow.data();
-  double* pdXUpData  = dvecXUp .data();
-  double* pdXInData  = dvecXIn .data();
-  double* pdXOutData = dvecXOut.data();
-
-  for ( int i = 0; i < nObjPar; i++ )
-  {
-    pdXLowData[i] = -(nObjPar - 1.0);
-    pdXUpData[i]  = +(nObjPar - 1.0);
-
-    pdXInData[i]  = 0.0;
-  }
-
-  double epsilon  = 1.e-5; 
-  int nMaxIter    = 50; 
-  double fOut     = 0.0;
-  DoubleMatrix f_xOut(1, nObjPar);
-  int level       = 0;
-  Optimizer optimizer( epsilon, nMaxIter, level );
-
-  void* pFvalInfo = 0;
-
-  ok = quasiNewtonAnyBox( fourParamQuadratic, pFvalInfo, optimizer, 
-    dvecXLow, dvecXUp, dvecXIn, &dvecXOut, &fOut, &f_xOut );
-
-  cout << setiosflags(ios::scientific) << setprecision(15);
-
-  cout << "ok   =  " << ( ok ? "true" : "false" ) << endl;
-  cout << "xOut =  " << endl;
-  dvecXOut.print();
-  cout << "fOut =  " << fOut << endl;
-  cout << "f_xOut= " << f_xOut << endl;
-}
-
-$$
-then it will display the following when it is run:
-$codep
-
-ok   =  true
-
-xOut =
-[1.000000093264926e+000]
-[-2.000000087050101e+000]
-[3.000000000000000e+000]
-[-3.000000000000000e+000]
-
-fOut =  8.000000000000020e+000
-
-f_xOut=
-[ 1.1368702459435553e-006 -4.1424990371297099e-007 0.0000000000000000e+000 9.6000000000000000e+001 ]
-
-$$
 $end
 */
 
