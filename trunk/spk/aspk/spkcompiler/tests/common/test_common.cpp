@@ -4,6 +4,9 @@
 #include <cppunit/ui/text/TestRunner.h>
 
 #include "clientTest.h"
+#include "lowerTest.h"
+#include "factorialTest.h"
+#include "upperTest.h"
 #include "SymbolTest.h"
 #include "SymbolTableTest.h"
 #include "ClientTranslatorTest.h"
@@ -17,6 +20,9 @@ int main( int argc, const char * argv[] )
   vector<CppUnit::Test*> subset;
 
   master[ "clientTest" ]           = clientTest::suite();
+  master[ "lowerTest" ]            = lowerTest::suite();
+  master[ "upperTest" ]            = upperTest::suite();
+  master[ "factorialTest" ]        = factorialTest::suite();
   master[ "SymbolTest" ]           = SymbolTest::suite();
   master[ "SymbolTableTest" ]      = SymbolTableTest::suite();
   master[ "ClientTranslatorTest" ] = ClientTranslatorTest::suite();
