@@ -10,6 +10,7 @@
 using namespace std;
 using namespace xercesc;
 
+
 static const char* trim( const XMLCh* source )
 {
   XMLCh* target = XMLString::replicate( source );
@@ -18,7 +19,6 @@ static const char* trim( const XMLCh* source )
 }
 static const char* tolower( char* buf, const char* mixed )
 {
-  assert( strlen( buf ) >= strlen( mixed ) );
   int len = strlen( mixed );
   for( int i=0; i<len; i++ )
     buf[i] = tolower( mixed[i] );
@@ -41,14 +41,14 @@ NonmemCompiler::NonmemCompiler( const char* filename )
     isCannedModelUsed( false ),
     baseModel( NONE )
 {
-  //gSpkExpTreeGenerator = new ExpTreeGenerator;
-  //gSpkExpSymbolTable   = new SymbolTable( client::NONMEM );
+  gSpkExpTreeGenerator = new ExpTreeGenerator;
+  gSpkExpSymbolTable   = getTable();
+  gSpkExpTree = gSpkExpTreeGenerator->getRoot();
 }
 
 NonmemCompiler::~NonmemCompiler( )
 {
-  //delete gSpkExpTreeGenerator;
-  //delete gSpkExpSymbolTable;
+  delete gSpkExpTreeGenerator;
 }
 
 const set<string> NonmemCompiler::emit()
@@ -61,9 +61,15 @@ const set<string> NonmemCompiler::emit()
 void NonmemCompiler::interpret()
 {
   interpretContent();
+
+  // data set must be parsed first 
+  // so that data item names are registered in the symbol table
+  // before they're referenced in driver or model section.
+  interpretData();
+
   interpretDriver();
   interpretModel();
-  interpretData();
+
   //interpretOutput();
 }
 void NonmemCompiler::interpretContent()
@@ -706,9 +712,25 @@ void NonmemCompiler::interpretData()
   // Register the number of individuals, information derived from the number of
   // <individual> tags in <data> subtree.
   //
-  SymbolTable * table = getTable();
+  SymbolTable *table = getTable();
+  assert( table != NULL );
 
-  assert( table->spkSymbols->nIndividuals > 0 );
+  Symbol dose( "dose", Symbol::VECTOR, Symbol::DOUBLE, false );
+  table->insert( dose );
+
+  Symbol wt( "wt", Symbol::VECTOR, Symbol::DOUBLE, false );
+  table->insert( wt );
+
+  Symbol w( "w", Symbol::VECTOR, Symbol::DOUBLE, false );
+  table->insert( w );
+
+  Symbol time( "time", Symbol::VECTOR, Symbol::DOUBLE, false );
+  table->insert( time );
+
+  Symbol ds( "ds", Symbol::VECTOR, Symbol::DOUBLE, false );
+  table->insert( ds );
+
+  assert( gSpkExpSymbolTable->spkSymbols->nIndividuals > 0 );
 }
 void NonmemCompiler::interpretModel()
 {
@@ -730,29 +752,38 @@ void NonmemCompiler::interpretModel()
   // Register the number of individuals, information derived from the number of
   // <individual> tags in <data> subtree.
   //
-  SymbolTable * table = getTable();
+  assert( gSpkExpSymbolTable == getTable() );
+  assert( gSpkExpSymbolTable != NULL );
 
   DOMTreeWalker * walker = doc->createTreeWalker( modelTree, DOMNodeFilter::SHOW_ELEMENT, NULL, false );
+  
   // 
   // Determine if a canned model is requested.
-  //
-  // If a canned model is requested, then <pk> and <error> are required.
-  // Otherwise, <pred> is required.
   //
   const char* c_baseModel = C( dynamic_cast<DOMElement*>(modelTree)->getAttribute( X("base") ) );
   if( c_baseModel == NULL || XMLString::stringLen( c_baseModel ) == 0 )
     {
+      //
+      // If no canned model is used, <pred> has to follow.
+      //
       isCannedModelUsed = false;
+
       DOMNode * pred = walker->firstChild();
       assert( XMLString::equals( pred->getNodeName(), X("pred") ) );
       setCannedModel( "none" );
     }
   else
     {
+      //
+      // When a canned model is used, either (comp_model, diffeqn) or (comp_model?, (pk, error), diffeqn?)
+      // combination must follow.
+      //
       isCannedModelUsed = true;
 
-      bool isPkGiven    = false;
-      bool isErrorGiven = false;
+      bool isPkGiven        = false;
+      bool isErrorGiven     = false;
+      bool isCompModelGiven = false;
+      bool isDiffEqnGiven   = false;
       DOMNode * model = walker->firstChild();
 
       while( model != NULL )
@@ -761,20 +792,30 @@ void NonmemCompiler::interpretModel()
 	  if( strcmp( name, "pk" ) == 0 )
 	    {
 	      isPkGiven = true;
-	      /*
-	      FILE * fo = fopen( "junk", "w" );	      
-	      fprintf( fo, "a = 1.0\n" );
-	      fclose( fo );
-	      yyin = fopen( "junk", "r" );
-              yydebug = 1;
-	      yyparse();
-	      gSpkExpTreeGenerator->printToStdout();
-	      */
+              
+	      FILE * fo = fopen( "pk", "w" );	      
+	      const char * mixed = trim( model->getFirstChild()->getNodeValue() );
+              const int  len = strlen( mixed );
+	      char buf[ strlen( mixed ) + 1 ];
 
+	      fprintf( fo, "%s\n", tolower( buf, mixed ) );
+	      fclose( fo );
+	      yyin = fopen( "pk", "r" );
+              yydebug = 0;
+	      yyparse();
+	      //	      gSpkExpTreeGenerator->printToStdout();
 	    }
 	  else if( strcmp( name, "error" ) == 0 )
 	    {
 	      isErrorGiven = true;
+	    }
+	  else if( strcmp( name, "comp_model" ) == 0 )
+	    {
+	      isCompModelGiven = true;
+	    }
+	  else if( strcmp( name, "diffeqn" ) == 0 )
+	    {
+	      isDiffEqnGiven = true;
 	    }
 	  else
 	    {
@@ -862,6 +903,16 @@ enum NonmemCompiler::BaseModel NonmemCompiler::setCannedModel( const char* c_mod
     baseModel = ADVAN6;
   else if( strcmp( c_model, "advan7" ) == 0 )
     baseModel = ADVAN7;
+  else if( strcmp( c_model, "advan8" ) == 0 )
+    baseModel = ADVAN8;
+  else if( strcmp( c_model, "advan9" ) == 0 )
+    baseModel = ADVAN9;
+  else if( strcmp( c_model, "advan10" ) == 0 )
+    baseModel = ADVAN10;
+  else if( strcmp( c_model, "advan11" ) == 0 )
+    baseModel = ADVAN11;
+  else if( strcmp( c_model, "advan12" ) == 0 )
+    baseModel = ADVAN12;
   else
     {
       char mess[128];
@@ -888,6 +939,16 @@ const char* NonmemCompiler::whichCannedModel() const
     return "advan6";
   else if( baseModel == ADVAN7 )
     return "advan7";
+  else if( baseModel == ADVAN8 )
+    return "advan8";
+  else if( baseModel == ADVAN9 )
+    return "advan9";
+  else if( baseModel == ADVAN10 )
+    return "advan10";
+  else if( baseModel == ADVAN11 )
+    return "advan11";
+  else if( baseModel == ADVAN12 )
+    return "advan12";
   else
     return NULL;
 }
