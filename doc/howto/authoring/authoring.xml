@@ -17,6 +17,16 @@
     </revhistory>
   <abstract>
       <para>
+	Docbook XML is the preferred format for RFPK Software
+	documents, for reasons of efficiency, standardization,
+	maintainability and ease of publishing.  This tutorial
+	explains how to get set up to use Docbook, how to 
+	to create new documents, how to edit documents
+	with Emacs, how to make diagrams with Dia, how to check
+	spelling, how to publish 
+	completed documents to the Software Team web page, how to
+	archive document versions in CVS, and how to interface with
+	Microsoft Word.
       </para>
   </abstract>
  </articleinfo>
