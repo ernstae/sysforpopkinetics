@@ -42,9 +42,9 @@
 // it is not actually an optimizer itself.  Its name should be
 // changed to something that is more accurate.  For example,
 //
+//     OptimizerInformation    OptInformation    OptInfo
 //     OptimizerController     OptController     OptControl
 //     OptimizerManager        OptManager        OptMan
-//     OptimizerInformation    OptInformation    OptInfo
 //
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -129,8 +129,6 @@ $syntax//saveStateAtEndOfOpt//$$ $cend
 false $rend
 $syntax//throwExcepIfMaxIter//$$ $cend
 true $rend
-$syntax//isSubLevelOpt//$$ $cend
-false $rend
 $syntax//isWarmStart//$$ $cend
 false $rend
 $tend
@@ -232,14 +230,6 @@ $syntax/
 This flag indicates if the optimizer should throw an exception when
 the maximum number of iterations is exhausted.
 It is set to $code true$$ at the construction time.
-
-$syntax/
-
-/isSubLevelOpt/
-/$$
-This flag indicates that if the optimizer is for a sub level optimization.  
-It is set to $code false$$ at the construction time.  It is for SPK internal
-use only.
 
 $syntax/
 
@@ -659,47 +649,6 @@ $end
 
 /* 
 -------------------------------------------------------------
-   Get the sub-level optimization flag
--------------------------------------------------------------
-$begin getIsSubLevelOpt$$
-
-$spell
-  getIsSubLevelOpt bool Optimizer
-    const sub-level
-$$
-
-$section Get sub-level optimization flag$$
-
-$index Optimizer, sub-level optimization, getIsSubLevelOpt$$
-
-$table
-$bold Prototype$$ $cend
-$syntax/bool Optimizer::getIsSubLevelOpt() const/$$ $rend
-$tend
-
-$fend 20$$
-
-$center
-$italic
-$include shortCopyright.txt$$
-$$
-$$
-$pre
-$$
-$head Description$$
-$code getIsSubLevelOpt()$$ returns the value of $italic isSubLevelOpt$$
-either $code false$$ given at the construction time or the most recent 
-value altered via $code setIsSubLevelOpt()$$.  This function is for SPK 
-internal use only.
-
-
-$head Example$$
-See $xref/Optimizer/Example/Example/$$
-$end
-*/
-
-/* 
--------------------------------------------------------------
    Get the warm start flag
 -------------------------------------------------------------
 $begin getIsWarmStart$$
@@ -1052,45 +1001,6 @@ $end
 
 /* 
 -------------------------------------------------------------
-   Set the isSubLevelOpt flag
--------------------------------------------------------------
-$begin setIsSubLevelOpt$$
-
-$spell
-  setIsSubLevelOpt bool Optimizer
-    const sub-level
-$$
-
-$section Set sub-level optimization flag$$
-
-$index Optimizer, isSubLevelOpt, setIsSubLevelOpt$$
-
-$table
-$bold Prototype$$ $cend
-$syntax/void Optimizer::setIsSubLevelOpt(bool /b/)/$$ $rend
-$tend
-
-$fend 20$$
-
-$center
-$italic
-$include shortCopyright.txt$$
-$$
-$$
-$pre
-$$
-$head Description$$
-$code setIsSubLevelOpt()$$ sets the value $italic isSubLevelOpt$$
-as a flag to indicate that if the optimizer object is for a sub-level
-optimization.  This function is for SPK internal use only.
-
-$head Example$$
-See $xref/Optimizer/Example/Example/$$
-$end
-*/
-
-/* 
--------------------------------------------------------------
    Set the isWarmStart flag
 -------------------------------------------------------------
 $begin setIsWarmStart$$
@@ -1362,11 +1272,12 @@ Optimizer::Optimizer()
                     : epsilon( 0.0001 ), nMaxIter( 40 ), level( 1 ), 
             nIterCompleted( 0 ), isTooManyIter( false ),
             saveStateAtEndOfOpt( false ), throwExcepIfMaxIter( true ),
-            isSubLevelOpt( false ), isWarmStart( false )
+            isWarmStart( false )
 {
   // Note: the state information maintained by this class 
   // is specific to the optimizer QuasiNewton01Box.
   stateInfo.n = 0;
+  stateInfo.b = 0;
   stateInfo.r = 0;
   stateInfo.f = 0;
   stateInfo.x = 0;
@@ -1379,11 +1290,12 @@ Optimizer::Optimizer( double Epsilon, int NMaxIter, int Level )
               : epsilon( Epsilon ), nMaxIter( NMaxIter ), level( Level ),
             nIterCompleted( 0 ), isTooManyIter( false ), 
             saveStateAtEndOfOpt( false ), throwExcepIfMaxIter( true ),
-            isSubLevelOpt( false ), isWarmStart( false )
+            isWarmStart( false )
 {
   // Note: the state information maintained by this class 
   // is specific to the optimizer QuasiNewton01Box.
   stateInfo.n = 0;
+  stateInfo.b = 0;
   stateInfo.r = 0;
   stateInfo.f = 0;
   stateInfo.x = 0;
@@ -1398,7 +1310,6 @@ Optimizer::Optimizer( const Optimizer& right )
             isTooManyIter( right.isTooManyIter ),
             saveStateAtEndOfOpt( right.saveStateAtEndOfOpt ),
 	    throwExcepIfMaxIter( right.throwExcepIfMaxIter ),
-            isSubLevelOpt( right.isSubLevelOpt ),
             isWarmStart( right.isWarmStart ), stateInfo( right.stateInfo )
 {}
 
@@ -1418,7 +1329,6 @@ Optimizer& Optimizer::operator=( const Optimizer& right )
   isTooManyIter       = right.isTooManyIter;
   saveStateAtEndOfOpt = right.saveStateAtEndOfOpt;
   throwExcepIfMaxIter = right.throwExcepIfMaxIter;
-  isSubLevelOpt       = right.isSubLevelOpt;
   isWarmStart         = right.isWarmStart;
   stateInfo           = right.stateInfo;
   return *this;
@@ -1428,6 +1338,7 @@ Optimizer& Optimizer::operator=( const Optimizer& right )
 void Optimizer::setupWarmStart( int n )
 {
   stateInfo.n = n;
+  stateInfo.b = 0;
   if ( stateInfo.x ) delete [] stateInfo.x;;
   if ( stateInfo.g ) delete [] stateInfo.g;;
   if ( stateInfo.h ) delete [] stateInfo.h;;
@@ -1439,18 +1350,6 @@ void Optimizer::setupWarmStart( int n )
         char errmsg[] = "setUpWarmStart() failed to allocate memory.";
         throw SpkException( SpkError::SPK_INSUFFICIENT_MEM_ERR, errmsg, __LINE__, __FILE__ );
     }
-}
-
-// Set the is-a-sub-level flag.
-void Optimizer::setIsSubLevelOpt( bool s )
-{
-  isSubLevelOpt = s;
-
-  // If this is a sub-level problem, then don't save the state
-  // information at the end of the optimizaton but do throw an
-  // exception if the maximum number of iterations is exhausted.
-  setSaveStateAtEndOfOpt( !s );
-  setThrowExcepIfMaxIter( s );
 }
 
 // Set turning on/off warm start flag 
@@ -1486,6 +1385,7 @@ void Optimizer::setStateInfo( const StateInfo& s )
         char errmsg[] = "The number of variables is incorrect. Check calling setupWarmStart().";
         throw SpkException( SpkError::SPK_USER_INPUT_ERR, errmsg, __LINE__, __FILE__ );
   }
+  stateInfo.b = s.b;
   stateInfo.r = s.r;
   stateInfo.f = s.f;
   if( stateInfo.x && stateInfo.g && stateInfo.h ) 
@@ -1513,6 +1413,7 @@ void Optimizer::deleteStateInfo()
   // Note: the state information maintained by this class 
   // is specific to the optimizer QuasiNewton01Box.
   stateInfo.n = 0;
+  stateInfo.b = 0;
   if( stateInfo.x ) 
   {
     delete [] stateInfo.x;
