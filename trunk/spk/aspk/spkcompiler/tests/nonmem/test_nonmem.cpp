@@ -8,6 +8,7 @@
 #include "explangTest.h"
 #include "ind_withIDTest.h"
 #include "ind_withoutIDTest.h"
+#include "ind_simTest.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -26,10 +27,11 @@ int main( int argc, const char * argv[] )
   // test for NonmemTranslator: ability to handle a data set with ID
   master[ "ind_withIDTest" ]    = ind_withIDTest::suite();
 
-  // test for NonmemTranslator: ability to handle a data set with ID
+  // test for NonmemTranslator: ability to handle a data set missing ID
   master[ "ind_withoutIDTest" ] = ind_withoutIDTest::suite();
 
-  // test for NonmemTranslator: ability to handle a data set missing ID
+  // test for NonmemTranslator: ability to handle data simulation
+  master[ "ind_simTest" ] = ind_simTest::suite();
 
   // test for NonmemTranslator: NonmemPars.h
   // test for NonmemTranslator: MontePars.h
