@@ -225,10 +225,10 @@
 	      <entry></entry>
 	    </row>
 	    <row>
-	      <entry><link linkend="web_spec">Web Site Spec</link></entry>
+	      <entry><link linkend="web_spec">Web Site Functional Spec</link></entry>
 	      <entry>Alan Westhagen</entry>
 	      <entry>03/12/2004</entry>
-	      <entry></entry>
+	      <entry>04/30/2004</entry>
 	    </row>
 	    <row>
 	      <entry><link linkend="report">Cspk Generates Report</link></entry>
@@ -500,6 +500,11 @@
 	The functional specification describes the web site from the 
 	point of view of the services and usability.  It does not
 	specify visual design.
+      </para>
+      <para>
+	This document is now complete and can be viewed
+	<ulink url="../../specs/website/website.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
       </para>
     </sect2>
     <sect2 id="web_site">

@@ -467,6 +467,12 @@ public abstract class Spkdb {
 	ResultSet rs = stmt.getResultSet();
 	return rs;
     }
+    /**
+       Get the entire state table
+       @param conn open connection to the database
+       @return Object of a class which implements the java.sql.ResultSet interface,
+       containing a row for each row of the table.
+     */
     public static ResultSet getStateTable(Connection conn)
 	throws SQLException, SpkdbException
     {
