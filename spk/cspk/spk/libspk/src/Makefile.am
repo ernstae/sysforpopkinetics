@@ -99,6 +99,7 @@ libspk_la_SOURCES = \
 	rvecInverse.cpp \
 	simulate.cpp \
 	sqpAnyBox.cpp \
+        statistics.cpp \
 	StatusList.cpp \
 	subtract.cpp \
 	symmetrize.cpp \
@@ -214,6 +215,7 @@ libspk_la_SOURCES = \
 	SpkValarray.h \
 	SpkWarning.h \
 	sqpAnyBox.h \
+        statistics.h \
 	StatusList.h \
 	subtract.h \
 	symmetrize.h \
@@ -428,6 +430,7 @@ libspk_release_la_SOURCES = \
 	SpkValarray.h \
 	SpkWarning.h \
 	sqpAnyBox.h \
+        statistics.h \
 	StatusList.h \
 	subtract.h \
 	symmetrize.h \
@@ -542,6 +545,7 @@ pkginclude_HEADERS = \
 	SpkValarray.h \
 	SpkWarning.h \
 	sqpAnyBox.h \
+        statistics.h \
 	StatusList.h \
 	subtract.h \
 	symmetrize.h \
