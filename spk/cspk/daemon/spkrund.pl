@@ -456,6 +456,7 @@ sub reaper {
 	    or death('emerg', "can't open $working_dir/$filename_serr");
 	read(FH, $err_rpt, -s FH);
 	close(FH);
+
 	$end_code = "serr";
 	$err_msg .= "software bug caught as exception; ";
     }
@@ -485,13 +486,12 @@ sub reaper {
 	# Get email address of user
 	my $email = &email_for_job($dbh, $job_id);
 
-        if( length($filename_results) > 0 ){
+        if( -f $filename_results && -s $filename_results > 0 ){
            # Read the results file, if produced, into the report variable.
            open(FH, $filename_results)
               or death( 'emerg', "can't open $$working_dir/$filename_results");
 	   read(FH, $report, -s FH );
            close(FH);
- 
            # Insert the return value and its description in the results file.
 	   $report = insert_error($err_msg, $err_rpt, $report);
         }
