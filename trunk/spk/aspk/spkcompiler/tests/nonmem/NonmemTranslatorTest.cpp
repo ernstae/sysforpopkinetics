@@ -205,10 +205,10 @@ void NonmemTranslatorTest::testParsePopSource()
       oSource << "   ENDIF" << endl;
       oSource << "   KA=THETA(1) + ETA(1)" << endl;
       oSource << "   KE=THETA(2) + ETA(2)" << endl;
-      oSource << "   CL=THETA(3) * WT + ETA(3)" << endl;
+      oSource << "   CL=THETA(3) * W + ETA(3)" << endl;
       oSource << "   D=EXP(-KE*TIME)-EXP(-KA*TIME)" << endl;
       oSource << "   E=CL*(KA-KE)" << endl;
-      oSource << "   F=DV*KE*KA/E*D" << endl;
+      oSource << "   F=DS*KE*KA/E*D" << endl;
       oSource << "   Y=F+EPS(1)" << endl;
       oSource << "</pred>" << endl;
       oSource << "</model>" << endl;
@@ -585,7 +585,10 @@ void NonmemTranslatorTest::testParsePopSource()
   {
      CPPUNIT_ASSERT_MESSAGE( "The generated/built \"testPop\" failed to run successfully.", false );
   }
+
   XMLPlatformUtils::Terminate();
+  remove( gSource );
+  remove( fTestDriver );
 }
 void NonmemTranslatorTest::testParseIndSource()
 {
@@ -719,10 +722,10 @@ void NonmemTranslatorTest::testParseIndSource()
       oSource << "   ENDIF" << endl;
       oSource << "   KA=THETA(1)" << endl;
       oSource << "   KE=THETA(2)" << endl;
-      oSource << "   CL=THETA(3) * WT" << endl;
+      oSource << "   CL=THETA(3) * W" << endl;
       oSource << "   D=EXP(-KE*TIME)-EXP(-KA*TIME)" << endl;
       oSource << "   E=CL*(KA-KE)" << endl;
-      oSource << "   F=DV*KE*KA/E*D" << endl;
+      oSource << "   F=DS*KE*KA/E*D" << endl;
       oSource << "   Y=F+EPS(1)" << endl;
       oSource << "</pred>" << endl;
       oSource << "</model>" << endl;
@@ -1009,14 +1012,14 @@ void NonmemTranslatorTest::testParseIndSource()
       oTestDriver << "   std::cerr << \"pred.eval() returned false, which is wrong.\" << endl;" << endl;
       oTestDriver << "   return 1;" << endl;
       oTestDriver << "}" << endl;
-      oTestDriver << "ans = 1.56026;" << endl;
+      oTestDriver << "ans = 0.780131;" << endl;
       oTestDriver << "tol = fabs(ans-fOut)/ans * 10.0;" << endl;
-      oTestDriver << "if( !( fOut >= ans-tol || fOut <= ans+tol ) )" << endl;
+       oTestDriver << "if( !( fOut >= ans-tol && fOut <= ans+tol ) )" << endl;
       oTestDriver << "{" << endl;
       oTestDriver << "   cerr << \"fOut should've been \" << ans << \" but it was \" << fOut << endl;" << endl;
       oTestDriver << "   return 1;" << endl;
       oTestDriver << "}" <<endl;
-      oTestDriver << "ans = 2.56026;" << endl;
+      oTestDriver << "ans = 1.78013;" << endl;
       oTestDriver << "tol = fabs(ans-yOut)/ans * 10.0;" << endl;
       oTestDriver << "if( !( yOut >= ans-tol && yOut <= ans+tol ) )" << endl;
       oTestDriver << "{" << endl;
@@ -1043,6 +1046,8 @@ void NonmemTranslatorTest::testParseIndSource()
   }
 
   XMLPlatformUtils::Terminate();
+  remove( fTestDriver );
+  remove( gSource );
 }
 CppUnit::Test * NonmemTranslatorTest::suite()
 {
