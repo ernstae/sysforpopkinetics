@@ -28,7 +28,7 @@
 #include "src/expectedHessianTest.h"
 #include "src/firstOrderOptTest.h"
 #include "src/fitIndividualErrorTest.h"
-#include "src/fitIndividualTe
+#include "src/fitIndividualTest.h"
 #include "src/FunctionTest.h"
 #include "src/getColTest.h"
 #include "src/getMulColsTest.h"
@@ -121,11 +121,11 @@ int main( int argc, const char * argv[] )
   runner.addTest( expectedHessianTest::suite() );
   runner.addTest( firstOrderOptTest::suite() );
   runner.addTest( fitIndividualErrorTest::suite() );
-  runner.addTest( fitIndividualTe
+  runner.addTest( fitIndividualTest::suite() );
   runner.addTest( FunctionTest::suite() );
   runner.addTest( getColTest::suite() );
   runner.addTest( getMulColsTest::suite() );
-  //  runner.addTest( getMulRowsTest::suite() );
+  runner.addTest( getMulRowsTest::suite() );
   //  runner.addTest( getRowTest::suite() );
   //  runner.addTest( getSubblockTest::suite() );
   runner.addTest( identityTest::suite() );
@@ -163,7 +163,7 @@ int main( int argc, const char * argv[] )
   runner.addTest( popStatisticsTest::suite() );
   //  runner.addTest( PopVarsTest::suite() );
   runner.addTest( ppkaOptTest::suite() );
-  //  runner.addTest( printInMatrixTest::suite() );
+  runner.addTest( printInMatrixTest::suite() );
   runner.addTest( replaceIthTest::suite() );
   runner.addTest( replaceJthTest::suite() );
   runner.addTest( replaceSubblockTest::suite() );
