@@ -56,7 +56,7 @@ public:
     void expectedHessianTest();
     void firstOrderTest();
     void naiveFirstOrderTest();
-    void testWrapper();
+    void popMaskTest();
 
     };
 
