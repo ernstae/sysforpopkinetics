@@ -1291,15 +1291,13 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
       // case, then throw an exception.
       if ( iterCurr == iterCurrPrev )
       {
-	ok = false;
-	errorcode = SpkError::SPK_UNKNOWN_OPT_ERR;
+	SpkError err( 
+          SpkError::SPK_UNKNOWN_OPT_ERR,
+	  "QuasiNewto01Box failed to perform at least one Quasi-Newton iteration.",
+	  __LINE__,
+	  __FILE__ );
 
-	const int max = SpkError::maxMessageLen();
-	char message[max];
-	sprintf( message, "%d%s%d\0", fail.code, fail.message, fail.errnum );
-	SpkError err(errorcode, message, __LINE__, __FILE__ );
-
-	throw info.exceptionOb.push(err);
+	throw exceptionOb.push( err );
       }
     }
   }
