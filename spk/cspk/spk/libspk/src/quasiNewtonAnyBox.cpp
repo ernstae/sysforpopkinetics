@@ -549,8 +549,6 @@ namespace // [Begin: unnamed namespace]
     const DoubleMatrix* const pdvecXDiff;     // Difference between unscaled  
                                               // lower and upper bounds.
 
-    SpkException exceptionOb;
-
 
     //----------------------------------------------------------
     // Functions required by QuasiNewton01Box.
@@ -602,15 +600,6 @@ namespace // [Begin: unnamed namespace]
       // Evaluate the unscaled objective function.
       //--------------------------------------------------------
 
-      //
-      // Sachiko
-      // 
-      // the objective function now returns nothing.  Instead
-      // throw an exception.
-      // Catch it and pass it back through a placeholder permitted
-      // in the arbitrary information package.
-      //
-
       try
       {
 	fval( dvecX, pdFOut, pdrowGOut, pInfo->pFvalInfo );
@@ -619,75 +608,27 @@ namespace // [Begin: unnamed namespace]
       }
       catch( SpkException& e )
       {
-	throw AN_EXCEPTION_THAT_TELLS_WHAT_ERROR_AND_WHERE_ETC
-  catch( SpkException& e )
-  {
-    throw e.push(
-        SpkError::SPK_MODEL_SET_INDEX_ERR, 
-        "Data Covariance's selectCovIndividual() threw an SpkException",
-        __LINE__, 
-        __FILE__
-      );
-  }
-  catch(const std::exception& stde)
-  {
-    SpkException e(stde, "Data Covariance's setIndex() threw std::exception.", __LINE__, __FILE__);
-    throw e.push(
-        SpkError::SPK_MODEL_SET_INDEX_ERR, 
-        "User-implemented selectCovIndividual() threw an std::exception",
-        __LINE__, 
-        __FILE__ 
-        );
-  }  
-  catch(...)
-  {
-    throw SpkException(
-        SpkError::SPK_MODEL_SET_INDEX_ERR, 
-        "Data Covariance's selectCovIndividual() threw an unknown exception",
-        __LINE__, 
-        __FILE__
-      );
-  }
-
-
-	// If there was a problem, set the flag to terminate nag_opt_nlp.
-	//
-	comm->flag = -1; 
-
-	// Extract the exception object from pFvalInfo.
-	pInfo->exceptionOb = e;
-	return;
+        throw e.push(
+          SpkError::SPK_OPT_ERR, 
+          "An SpkException was thrown during an attempt to evaluate the objective function.",
+          __LINE__, 
+          __FILE__ );
       }
       catch( const std::exception& stde )
       {
-	// If there was a problem, set the flag to terminate nag_opt_nlp.
-	//
-	comm->flag = -1; 
-
-	// Extract the exception object from pFvalInfo.
-	pInfo->exceptionOb = SpkException(
-          stde, 
-          "A standard exception was thrown during an attempt to evaluate the given objective function.",
+        throw SpkException(
+          stde,
+          "An standard exception was thrown during an attempt to evaluate the objective function.",
           __LINE__, 
-          __FILE__ 
-        );
-	return;
-      }
-
-      catch(...)
+          __FILE__ );
+      }  
+      catch( ... )
       {
-	// If there was a problem, set the flag to terminate nag_opt_nlp.
-	//
-	comm->flag = -1; 
-
-	// Extract the exception object from pFvalInfo.
-	pInfo->exceptionOb = SpkException(
+        throw SpkException(
           SpkError::SPK_UNKNOWN_ERR, 
-          "Unknown exception was thrown during an attempt to evaluate the given objective function.",
+          "An unknown exception was thrown during an attempt to evaluate the objective function.",
           __LINE__, 
-          __FILE__ 
-	  );
-	return;
+          __FILE__ );
       }
 
 
@@ -1471,21 +1412,37 @@ v  //***************************************************************************
       iterCurrPrev = iterCurr;
 
       // Ask the optimizer to take perform a limited number of iterations.
-      msg = QuasiNewton01Box(
-        os,
-        level,
-        iterMax,
-        quadMax,
-        n,
-        delta,
-        objective,
-        iterCurr,
-        quadCurr,
-        rCurr,
-        fCurr,
-        xCurr,
-        gCurr,
-        hCurr );
+      try
+      {
+        msg = QuasiNewton01Box(
+          os,
+          level,
+          iterMax,
+          quadMax,
+          n,
+          delta,
+          objective,
+          iterCurr,
+          quadCurr,
+          rCurr,
+          fCurr,
+          xCurr,
+          gCurr,
+          hCurr );
+      }
+      catch( ...
+      {
+        FINISH THIS
+        FINISH THIS
+        FINISH THIS
+        FINISH THIS
+        FINISH THIS
+        FINISH THIS
+        FINISH THIS
+        FINISH THIS
+        FINISH THIS
+        FINISH THIS
+      }
 
       // After the first call to the optimizer the approximation for the
       // Hessian should be accurate enough that this can reset.
