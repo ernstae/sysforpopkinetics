@@ -255,6 +255,9 @@ These attributes are parameters of the optimizer used in the optimization.
 If the number of iterations parameter is equal to zero, then the input
 value for x is accepted as the final value, and any requested output
 values are evaluated at that final value.
+In this case, a warm start will not be performed in order to ensure
+that the objective function, its gradient, and its Hessian will all be
+evaluated at the input value for x.
 If the throwxEcepIfMaxIter parameter is true, then when
 the maximum number of iterations is exhausted, an exception will
 be thrown and the output values for this function will not be set.
@@ -733,19 +736,14 @@ void quasiNewtonAnyBox(
 
   int i;
 
-  double epsilon     = optimizer.getEpsilon();
-  int    nMaxIter    = optimizer.getNMaxIter();
-  int    level       = optimizer.getLevel();
-  bool   isWarmStart = optimizer.getIsWarmStart();
+  double epsilon  = optimizer.getEpsilon();
+  int    nMaxIter = optimizer.getNMaxIter();
+  int    level    = optimizer.getLevel();
 
-  IF THIS IS KEPT (I.E., NO ZERO ITERATIONS WARM STARTS), PUT IT IN THE SPEC
-  IF THIS IS KEPT (I.E., NO ZERO ITERATIONS WARM STARTS), PUT IT IN THE SPEC
-  IF THIS IS KEPT (I.E., NO ZERO ITERATIONS WARM STARTS), PUT IT IN THE SPEC
-  IF THIS IS KEPT (I.E., NO ZERO ITERATIONS WARM STARTS), PUT IT IN THE SPEC
-  // If the number of iterations is zero, then the warm start information
-  // will not be used.  This forces this function to evaluate the 
-  // objective, its gradient, and its derivative at xIn.
-  bool   isWarmStart = optimizer.getIsWarmStart() && nMaxIter > 0;
+  // Don't allow a warm start if zero iterations are requested.
+  // This ensures that the objective function, its gradient, and
+  // its Hessian are all evaluated at xIn.
+  bool isWarmStart = optimizer.getIsWarmStart() && nMaxIter > 0;
   
 
   //------------------------------------------------------------
