@@ -5,24 +5,26 @@
   <srun>
     <job>15</job> <!-- pop opt, FO, non-linear, stat -->
     <job>46</job> <!-- pop opt, FO, non-linear, stat -->
-    <job>262</job><!-- verified: pop opt, FO, Brad's simplest linear, stat -->
+    <job>294</job><!-- verified: pop opt, FO, Brad's simplest linear, stat -->
     <job>273</job><!-- verified: MC       based on #262 (FO) -->
     <job>274</job><!-- verified: Miser    based on #262 (FO) -->
     <job>275</job><!-- verified: Grid     based on #262 (FO) -->
     <job>276</job><!-- verified: Analytic based on #262 (FO) -->
-    <job>267</job><!-- Verified: pop opt, FOCE, Brad's simplest linear, stat -->
+    <job>296</job><!-- Verified: pop opt, FOCE, Brad's simplest linear, stat -->
     <job>281</job><!-- verified: MC       based on #267 (FOCE) -->
     <job>282</job><!-- verified: Miser    based on #267 (FOCE) -->
     <job>283</job><!-- verified: Grid     based on #267 (FOCE) -->
     <job>284</job><!-- verified: Analytic based on #267 (FOCE) -->
-    <job>264</job><!-- Verified: pop opt, Laplace, Brad's simplest linear, stat -->
+    <job>295</job><!-- Verified: pop opt, Laplace, Brad's simplest linear, stat -->
     <job>285</job><!-- verified: MC       based on #267 (Laplace) -->
     <job>286</job><!-- verified: Miser    based on #267 (Laplace) -->
     <job>287</job><!-- verified: Grid     based on #267 (Laplace) -->
     <job>288</job><!-- verified: Analytic based on #267 (Laplace) -->
     <job>104</job><!-- Non-linear, FOCE -->
     <job>215</job><!-- Non-linear, individual, generates a warning -->
-    <job>293</job><!-- Non-linear, FO, 3x3 full Omega -->
+    <job>293</job><!-- FO, non-linear, 3x3 full Omega -->
     <ignore>elapsedtime</ignore>
   </srun>
+  <serr>
+  </serr>
 </regression_test>
