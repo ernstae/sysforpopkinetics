@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # chkconfig: 2345 91 9
-# description: Starts and stops the SPK runtime daemon
+# description: Starts and stops the SPK runtime test daemon
 #
 
 DATABASE=spktest
