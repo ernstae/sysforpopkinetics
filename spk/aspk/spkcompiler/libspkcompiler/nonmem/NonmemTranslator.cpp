@@ -1757,7 +1757,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   oPred_h << "#include <vector>" << endl;
   oPred_h << "#include <string>" << endl;
   oPred_h << "#include <spkpred/PredBase.h>" << endl;
-  oPred_h << "#include <cppad/CppAD.h>" << endl;
+  oPred_h << "#include <cppad/include/CppAD.h>" << endl;
   oPred_h << "#include \"DataSet.h\"" << endl;
   oPred_h << endl;
   
@@ -2166,7 +2166,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "//   NONMEM PRED SPECIFIC" << endl;
   oDriver << "#include \"Pred.h\"" << endl;
   oDriver << "#include <spkpred/IndPredModel.h>" << endl;
-  oDriver << "#include <cppad/CppAD.h>" << endl;
+  oDriver << "#include <cppad/include/CppAD.h>" << endl;
   oDriver << "//" << endl;
   oDriver << "///////////////////////////////////////////////////////////////////////////////////" << endl;
   oDriver << endl;
@@ -2848,7 +2848,7 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "//   NONMEM PRED specific" << endl;
   oDriver << "#include \"Pred.h\"" << endl;
   oDriver << "#include <spkpred/PopPredModel.h>" << endl;
-  oDriver << "#include <cppad/CppAD.h>" << endl;
+  oDriver << "#include <cppad/include/CppAD.h>" << endl;
   oDriver << "//" << endl;
   oDriver << "///////////////////////////////////////////////////////////////////" << endl;
   oDriver << endl;
