@@ -1,14 +1,20 @@
 <?xml version="1.0"?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
-    "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"
+    "file://~/docbook/docbookx.dtd"
 [
   <!ENTITY uw "University of Washington">
   <!ENTITY dept "Department of Bioengineering">
 ]>
-
-<article><title></title>
+<article><title>Subject</title>
  <articleinfo>
-  <author><firstname></firstname><surname></surname></author>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date></date>
+	<authorinitials></authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+    </revhistory>
   <abstract>
     <para>
     </para>

@@ -1,0 +1,252 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+    "file://~/docbook/docbookx.dtd"
+[
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+  <!ENTITY cygurl
+"http://muir.rfpk.washington.edu:800/HOWTO/CYGWIN-rfpk-HOWTO.html">
+  <!ENTITY emacsVersion "emacs-21.2">
+]>
+<article><title>Emacs Installation HOWTO</title>
+ <articleinfo>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>01/22/2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+    </revhistory>
+  <abstract>
+    <para>
+	Following a brief discussion of the advantages of using
+	the Emacs text editor, a process for obtaining and 
+	installing the software on RFPK workstations is 
+	described.
+    </para>
+  </abstract>
+ </articleinfo>
+  <sect1>
+    <title>Introduction: Why Emacs?</title>
+    <para>
+      Unix
+      depends heavily upon text files, both for data and
+      for configuration.  This contrasts sharply with Windows and
+      various legacy mainframe operating systems, which depend 
+      on proprietary binary files, instead.  
+      Whereas text editing
+      in a Windows environment is usually accomplished using
+      the rudimentary Wordpad or Notepad programs, the Unix
+      environment offers much more powerful tools.  These tools
+      make Unix a preferred environment for text work.  (This also
+      applies to Linux, the free Unix-compatible operating system,
+      and to Cygwin, a Unix-compatible environment which runs on 
+      top of the Windows operating system.)  It should also be
+      pointed out that the growing importance of text-based 
+      markup languages, including SGML, XML and HTML, is elavating
+      the importance of text files in all operating system 
+      environments, including Windows.
+    </para>
+    <para>
+      The principal text editors are Vi and Emacs.  
+      To underline the importance and the exceptional
+      quality of these programs, it is worth noting that they
+      were created by some of the worlds most illustrious 
+      programmers.  Vi was the work of Bill Joy, the technical
+      leader of Sun Microsystems, and one of its founders.  Emacs
+      is the work of Richard Stallman, the founder of GNU and the
+      open source movement, along with many others, including
+      Jim Gosling, the creator of Java.
+    </para>
+    <para>
+      How do you choose one or the other?  This depends on
+      the nature of the work that you do.  The two editors
+      fill somewhat different roles.  For many years now, Vi has
+      been the default editor for Unix and Unix-like systems.
+      Whenever you log in to one of these systems, you can be
+      nearly certain that Vi will be there.  For this reason,
+      at least some familiarity with Vi is a necessity for 
+      anyone who is doing any system administration or
+      application configuration work.  Emacs, on the other
+      hand, may be absent on a system that you need to 
+      use.  Correcting that problem is the main topic of
+      this tutorial.
+    </para>
+    <para>
+      Emacs came originally out of the MIT Artificial Intelligence
+      Laboratory.  Though the core of the program
+      is written in C, for machine efficiency,
+      it is extended in Lisp, for human efficiency.  It is
+      this extensibility that sets Emacs apart.  Important 
+      extensions, known as modes, add features that understand the
+      syntax of the particular file or files being edited.  For
+      example, there is a C++ mode that understands the syntax
+      of the C++ programming language.  There is an SGML/XML mode
+      that understands not only the syntax of SGML or XML in
+      general but, if the document starts with a reference to
+      a Document Type Definition (DTD), it understands the syntax
+      of that particular markup language.  For example, the
+      SGML/XML mode enables Emacs to understand the syntax of
+      Docbook or the syntax of Xhtml.  Because of the availability
+      of many preprogrammed modes, Emacs should be preferred over
+      Vi for editing documents which must adhere to complex
+      syntax rules.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Which Emacs?</title>
+    <para>
+      Going back to the 1970s, there have been a number of
+      versions of Emacs.  From about 1987 until the late
+      1990s, however, GNU Emacs was without a doubt the
+      Emacs of choice.  This editor was free, available
+      on a wide variety of platforms, and was the product
+      of Richard Stallman, the creator of the original
+      version of Emacs.
+    </para>
+    <para>
+      Until the late 90s,
+      the Emacs user interface was entirely driven by
+      commands expressed as keystroke sequences starting
+      with control codes.  This design was very efficient
+      for experience users, but could be difficult to learn
+      and difficult to remember for occasional users.  
+      The GNU Emacs developers were on their way to creating
+      a menu-driven, more user-friendly version of Emacs, 
+      but were proceeding very deliberately.
+    </para>
+    <para>
+      All too, deliberately, in the opinion of some.  A new,
+      independent open source project, called XEmacs was
+      born with the goal of producing an Emacs with the
+      long overdue user-friendly features.  The XEmacs
+      project put pressure on GNU Emacs,
+      forcing it to catch up with the times.
+    </para>
+    <para>
+      Today we have a choice of two user-friendly versions of
+      Emacs.  Although we owe the XEmacs developers a debt
+      of gratitude for lighting a fire under the feet of
+      their GNU Emacs counterparts, this tutorial recommends
+      the use of GNU Emacs for the reasons of guaranteed 
+      compatibility and respect for the GNU tradition.  The
+      rest of this document will concentrate on a process for
+      obtaining and installing the latest version of
+      GNU Emacs.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Installing Emacs in a Cygwin Environment</title>
+    <para>
+      The process that follows assumes that the user had
+      already installed Cygwin.  If that is not the case, the
+      <ulink url="&cygurl;">Cygwin Installation</ulink> HOWTO
+      will help you to accomplish this.
+    </para>
+    <para>
+      In the following procedure, it is assumed, for sake
+      of this example, that the latest version of
+      GNU Emacs for Windows is version &emacsVersion;.
+    </para>
+    <orderedlist inheritnum="ignore" continuation="restarts">
+      <listitem>
+	<para>
+	  Decide in which directory you want to install Emacs.
+	  A good choice would be the
+	  <filename moreinfo="none">/usr/local</filename>
+	  within your Cygwin environment.
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  Go to the website 
+	  <ulink url="http://ftp.gnu.org/gnu/windows/emacs/latest"></ulink>
+	  which contains links for downloading the binary distribution 
+	  of the latest 
+	  version of GNU Emacs for Windows.
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  While depressing the <keycap moreinfo="none">Shift</keycap>
+	  key, left-click the link to
+	  <filename moreinfo="none">
+	    &emacsVersion;-fullbin-i386.tar.gz
+	  </filename>
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  A file window will appear.  Select the directory
+	  into which you want the tarball to be downloaded,
+	  and click on the <guibutton moreinfo="none">Save</guibutton>
+	  button.
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  After the download has completed, open a Cygwin shell
+	  window and use the <command moreinfo="none">cd</command>
+	  command to go to the directory which contains the
+	  new file.
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  Decompress and expand the tarball by issuing the command
+	  <screen format="linespecific">
+	    tar xvzf &emacsVersion;-fullbin-i386.tar.gz
+	  </screen>
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  Run the Emacs installation program:
+	  <screen format="linespecific">
+	    &emacsVersion;/bin/runemacs
+	  </screen>
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  Add Emacs to your execution path.  In this example
+	  we assume you that installed Emacs in the directory
+	  <filename moreinfo="none">/usr/local</filename> within
+	  your Cygwin environment.  
+	</para>
+	<para>
+	  Add the following lines to the 
+	  <filename moreinfo="none">.bash_profile</filename> 
+	  configuration file in your home directory
+	  <screen format="linespecific">
+	    EMACSBIN=/usr/local/&emacsVersion;/bin
+	    PATH=$EMACSBIN:$PATH
+	  </screen>
+	  Test this by first closing all Cygwin shell windows,
+	  then opening a shell window and typing
+	  <screen format="linespecific">
+	    emacs &amp;
+	  </screen>
+	  An emacs window should open up, and run independent
+	  of the Cygwin window.
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  When you are convinced that everything is working fine,
+	  you can clean up by removing the download file,
+	  <filename moreinfo="none">
+	    &emacsVersion;-fullbin-i386.tar.gz
+	  </filename>
+	</para>
+      </listitem>
+    </orderedlist>
+  </sect1>
+  <sect1>
+    <title>Configuring Emacs for XML and C++</title>
+    <para>
+      
+    </para>
+  </sect1>
+</article>
