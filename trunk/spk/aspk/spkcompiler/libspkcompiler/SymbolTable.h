@@ -4,58 +4,9 @@
 #include <map>
 #include <valarray>
 #include <string>
+#include "SpkParameters.h"
 #include "Symbol.h"
 #include "client.h"
-
-/**
- * Approximation methods applied during the population parameter estimation process.
- *
- * This enumulator is already defined in Objective.h in Spk.lib.
- * It is repeated here until the library is ported to Linux.
- */
-enum Objective {LAPLACE, FOCE, FO};
-
-/**
- * A bundle of SPK (fitPopulation) required values.
- *
- * This structure bundles all these values required to fun fitPopulation().
- * It also maps the symbols used within SPK to describe these values to the symbols
- * used within the client space.
- */
-struct FitParameters{
-  enum Objective        objective;
-  int                   nIndividuals;
-  std::valarray<int>    nMeasurementsAll;
-  std::valarray<double> measurementsAll;
-  std::valarray<double> popParIn, popParLow, popParUp, popParStep;
-  double                popEpsilon;
-  int                   popMaxItr;
-  int                   popTrace;
-  bool                  isPopWarmStart;
-  bool                  isPopParOut;
-  bool                  isPopObjOut, isPopObj_popParOut, isPopObj_popPar_popParOut;  
-  std::valarray<double> indParIn, indParLow, indParUp, indParStep;
-  double                indEpsilon;
-  int                   indMaxItr;
-  int                   indTrace;
-  bool                  isIndWarmStart;
-  bool                  isIndParOut;
-  bool                  isIndObjOut, isIndObj_indParOut, isIndObj_indPar_indParOut;  
-
-  bool                  isPopStderrorOut;
-  bool                  isPopCorrelationOut;
-  bool                  isPopCovarianceOut;
-  bool                  isPopCoefficientOut;
-  bool                  isPopConfidenceOut;
-  
-  bool                  isIndStderrorOut;
-  bool                  isIndCorrelationOut;
-  bool                  isIndCovarianceOut;
-  bool                  isIndCoefficientOut;
-  bool                  isIndConfidenceOut;
-  
-  std::map< std::string, std::valarray<double> > aliases;
-};
 
 /**
  * @file SymbolTable.h
@@ -63,13 +14,18 @@ struct FitParameters{
  * Declares SymbolTable class
  */
 /**
- * SymbolTable maintains a symbol table that is the central place where information 
- * about variables/functions appeared in source files are gathered and maintained and
+ * SymbolTable maintains a symbol table that is the central 
+ * place where information 
+ * about variables/functions appeared in source files are 
+ * gathered and maintained and
  * provide methods for the caller to manipulate the table.
  *
- * The table is implemented using std::map.  It is a set of (unique) key-entry pairs.
- * The keys are null termimated arrays of characters.  Each key reflects a name discovered 
- * and associated with a Symbol object which contains information such as data type and structure 
+ * The table is implemented using std::map.  It is a set 
+ * of (unique) key-entry pairs.
+ * The keys are null termimated arrays of characters.  
+ * Each key reflects a name discovered 
+ * and associated with a Symbol object which contains 
+ * information such as data type and structure 
  * related to the name.
  */
 class SymbolTable{

@@ -9,6 +9,7 @@
 #include <valarray>
 #include <xercesc/dom/DOM.hpp>
 
+#include "../SpkParameters.h"
 #include "../SpkMLToCpp.h"
 #include "../client.h"
 #include "../ExpTreeGenerator.h"
@@ -72,7 +73,7 @@ class NonmemTranslator : public ClientTranslator
   NonmemTranslator( xercesc::DOMDocument * doc );
   ~NonmemTranslator();
 
-  virtual const struct FitParameters * getSpkParameters() const;
+  virtual const struct SpkParameters * getSpkParameters() const;
   virtual const void * getClientParameters() const;
   virtual void translate ( xercesc::DOMDocument * tree );
   virtual const char * getDriverFilename() const;
@@ -97,7 +98,7 @@ class NonmemTranslator : public ClientTranslator
 
   const xercesc::DOMDocument * tree;
 
-  struct FitParameters spk;
+  struct SpkParameters spk;
   struct NonmemParameters nonmem;
 
   std::vector<DataRecords> data_for_all_subjects;

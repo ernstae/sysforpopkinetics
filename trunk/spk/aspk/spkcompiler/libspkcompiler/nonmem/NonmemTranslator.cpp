@@ -171,7 +171,7 @@ void NonmemTranslator::interpretDriver()
 
   //
   // Get a pointer to the symbol table.  In this <driver> section parsing, 
-  // the components in FitParameters data structure held in the table
+  // the components in SpkParameters data structure held in the table
   // get filled with actual values.
   // The objectof the data structure in the table is called "spkSymbols".
   //
@@ -510,11 +510,11 @@ void NonmemTranslator::interpretDriver()
 	  assert( XMLString::stringLen( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X("approximation") ) ) > 0 );
 	  const char *approx = C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X("approximation") ) );
 	  if( strcmp( approx, "fo" ) == 0 )
-	    spk.objective = FO;
+	    spk.objective = FIRST_ORDER;
 	  else if( strcmp( approx, "foce" ) == 0 )
-	    spk.objective = FOCE;
+	    spk.objective = EXPECTED_HESSIAN;
 	  else if( strcmp( approx, "laplace" ) == 0 )
-	    spk.objective = LAPLACE;
+	    spk.objective = MODIFIED_LAPLACE;
 	  else
 	    {
 	      char buf[128];
@@ -1047,7 +1047,7 @@ void NonmemTranslator::emitDriver()
 void NonmemTranslator::emitModel()
 {
 }
-const struct FitParameters * NonmemTranslator::getSpkParameters() const
+const struct SpkParameters * NonmemTranslator::getSpkParameters() const
 {
   return &spk;
 }
