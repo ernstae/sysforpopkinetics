@@ -120,6 +120,7 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     myModelSpec         ( PRED ),
     myIsEstimate        ( true ),
     myIsSimulate        ( false ),
+    myIsMonte           ( false ),
     myIsStat            ( false ),
     myIsOnlySimulation  ( false ),
     mySubproblemsN      ( 1 ),
@@ -822,58 +823,11 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
 {
   
   //================================================================================
-  // Required attributes
+  // <pop_analysis>: Attributes required when "is_estimation=yes".
   //================================================================================
   // * approximation = {fo, foce, laplace}
   // * pop_size
   // * is_estimation = {yes, no}
-
-  //
-  // Finding out the approximation method
-  //
-  if( !pop_analysis->hasAttribute( X_APPROXIMATION ) )
-  {
-     char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "%s attribute is missing in <%s> tag.", C_APPROXIMATION, C_POP_ANALYSIS );
-     SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
-     throw e;
-  }
-  const XMLCh * xml_approx = pop_analysis->getAttribute( X_APPROXIMATION );
-
-  if( XMLString::equals( xml_approx, X_FO ) )
-    myApproximation = FO;
-  else if( XMLString::equals( xml_approx, X_FOCE ) )
-    myApproximation = FOCE;
-  else if( XMLString::equals( xml_approx, X_LAPLACE ) )
-    myApproximation = LAPLACE;  
-  else
-  {
-     char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "Invalid \"%s\" attribute value: %s.", C_APPROXIMATION, XMLString::transcode(xml_approx) );
-     SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
-     throw e;
-  }
-  //
-  // Finding out the population size
-  //
-  if( !pop_analysis->hasAttribute( X_POP_SIZE ) )
-  {
-     char mess[ SpkCompilerError::maxMessageLen() ];
-     sprintf( mess, "Missing \"%s\" attribute in <%s> tag.", C_POP_ANALYSIS, C_POP_SIZE );
-     SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
-     throw e;
-  }
-  const XMLCh * xml_pop_size = pop_analysis->getAttribute( X_POP_SIZE );
-  if( !XMLString::textToBin( xml_pop_size, myPopSize ) )
-    {
-      char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, 
-	       "Invalid %s attribute value in <%s> tag: %s", C_POP_SIZE, C_POP_ANALYSIS,
-	       XMLString::transcode(xml_pop_size) );
-      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
-      throw e;
-    }
-
   //
   // Finding out if parameter estimation is requested.
   //
@@ -886,6 +840,55 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   }
   const XMLCh * xml_is_estimation = pop_analysis->getAttribute( X_IS_ESTIMATION );
   myIsEstimate = ( XMLString::equals( xml_is_estimation, X_YES )? true : false );
+
+  if( myIsEstimate )
+    {
+      //
+      // Finding out the approximation method
+      //
+      if( !pop_analysis->hasAttribute( X_APPROXIMATION ) )
+	{
+	  char mess[ SpkCompilerError::maxMessageLen() ];
+	  sprintf( mess, "%s attribute is missing in <%s> tag.", C_APPROXIMATION, C_POP_ANALYSIS );
+	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
+	  throw e;
+	}
+      const XMLCh * xml_approx = pop_analysis->getAttribute( X_APPROXIMATION );
+      
+      if( XMLString::equals( xml_approx, X_FO ) )
+	myApproximation = FO;
+      else if( XMLString::equals( xml_approx, X_FOCE ) )
+	myApproximation = FOCE;
+      else if( XMLString::equals( xml_approx, X_LAPLACE ) )
+	myApproximation = LAPLACE;  
+      else
+	{
+	  char mess[ SpkCompilerError::maxMessageLen() ];
+	  sprintf( mess, "Invalid \"%s\" attribute value: %s.", C_APPROXIMATION, XMLString::transcode(xml_approx) );
+	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
+	  throw e;
+	}
+      //
+      // Finding out the population size
+      //
+      if( !pop_analysis->hasAttribute( X_POP_SIZE ) )
+	{
+	  char mess[ SpkCompilerError::maxMessageLen() ];
+	  sprintf( mess, "Missing \"%s\" attribute in <%s> tag.", C_POP_ANALYSIS, C_POP_SIZE );
+	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
+	  throw e;
+	}
+      const XMLCh * xml_pop_size = pop_analysis->getAttribute( X_POP_SIZE );
+      if( !XMLString::textToBin( xml_pop_size, myPopSize ) )
+	{
+	  char mess[ SpkCompilerError::maxMessageLen() ];
+	  sprintf( mess, 
+		   "Invalid %s attribute value in <%s> tag: %s", C_POP_SIZE, C_POP_ANALYSIS,
+		   XMLString::transcode(xml_pop_size) );
+      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
+      throw e;
+	}
+    }
 
   myIndTraceLevel = 0;
   myPopTraceLevel = 1;
@@ -1591,7 +1594,68 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
 void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
 {
   //================================================================================
-  // Required attributes
+  // Parse <simulate> if exists.  There's a chance in which only data simulation
+  // is requested but not estimation.
+  //================================================================================
+  myIsSimulate = false;
+  mySeed = 0;
+  DOMNodeList * simulations = ind_analysis->getElementsByTagName( X_SIMULATION );
+  if( simulations->getLength() > 0 )
+    {
+      if( simulations->getLength() != 1 )
+      {
+         char mess[ SpkCompilerError::maxMessageLen() ];
+         sprintf( mess, "At most one <%s> tag may appear in the sourceML document.",
+                  C_SIMULATION );
+         SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+         throw e;
+      }
+      myIsSimulate = true;
+      DOMElement* simulation = dynamic_cast<DOMElement*>( simulations->item(0) );
+      if( !simulation->hasAttribute( X_SEED ) )
+      {
+         char mess[ SpkCompilerError::maxMessageLen() ];
+         sprintf( mess, "Missing %s attribute in <%s> tag.",
+                  C_SEED, C_SIMULATION );
+         SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+         throw e;
+      }
+      const XMLCh* xml_seed = simulation->getAttribute( X_SEED );
+      if( !XMLString::textToBin( xml_seed, mySeed ) )
+	{
+          char mess[ SpkCompilerError::maxMessageLen() ];
+	  sprintf( mess, "Invalid %s attribute value?  You gave me \"%s\".", 
+		   C_SEED, XMLString::transcode( xml_seed ) );
+          SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+          throw e;
+	}
+   
+      if( simulation->hasAttribute( X_ONLYSIMULATION ) )
+      {
+         const XMLCh* xml_only_simulation = simulation->getAttribute( X_ONLYSIMULATION );
+         if( XMLString::equals( xml_only_simulation, X_YES ) )
+	   {
+	     myIsOnlySimulation = true;
+	   }
+         else
+           myIsOnlySimulation = false;
+      }
+      if( simulation->hasAttribute( X_SUBPROBLEMS ) )
+      {
+         const XMLCh* xml_subproblems = simulation->getAttribute( X_SUBPROBLEMS );
+         if( !XMLString::textToBin( xml_subproblems, mySubproblemsN ) )
+         {
+           char mess[ SpkCompilerError::maxMessageLen() ];
+	   sprintf( mess, "Invalid %s attribute value?  You gave me \"%s\".", 
+	            C_SUBPROBLEMS, XMLString::transcode(xml_subproblems) );
+           SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+           throw e;
+         }
+      }
+    }
+
+  //================================================================================
+  // <pop_analysis> Required attributes
   //================================================================================
   // * is_estimation = {yes, no}
   if( !ind_analysis->hasAttribute( X_IS_ESTIMATION ) )
@@ -1601,6 +1665,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
   }
+
   const XMLCh * xml_is_estimation = ind_analysis->getAttribute( X_IS_ESTIMATION );
   if( XMLString::equals( xml_is_estimation, X_YES ) )
       myIsEstimate = true;
@@ -1612,6 +1677,8 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
               C_IS_ESTIMATION, xml_is_estimation, C_IND_ANALYSIS, C_YES );
      myIsEstimate = true;
   }
+
+
   myIndTraceLevel = 1;
   myPopTraceLevel = 1;
 
@@ -2039,7 +2106,6 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   // Optional elements
   //================================================================================
   // <description>  --- ignore!
-  // <simulation>
   // <ind_stat>
   // <pop_stat>
   DOMNodeList * descriptions = ind_analysis->getElementsByTagName( X_DESCRIPTION );
@@ -2054,63 +2120,6 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
 	  delete [] myDescription;
 	  myDescription = XMLString::transcode( description );
 	}
-    }
-
-  myIsSimulate = false;
-  mySeed = 0;
-  DOMNodeList * simulations = ind_analysis->getElementsByTagName( X_SIMULATION );
-  if( simulations->getLength() > 0 )
-    {
-      if( simulations->getLength() != 1 )
-      {
-         char mess[ SpkCompilerError::maxMessageLen() ];
-         sprintf( mess, "At most one <%s> tag may appear in the sourceML document.",
-                  C_SIMULATION );
-         SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
-         throw e;
-      }
-      myIsSimulate = true;
-      DOMElement* simulation = dynamic_cast<DOMElement*>( simulations->item(0) );
-      if( !simulation->hasAttribute( X_SEED ) )
-      {
-         char mess[ SpkCompilerError::maxMessageLen() ];
-         sprintf( mess, "Missing %s attribute in <%s> tag.",
-                  C_SEED, C_SIMULATION );
-         SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
-         throw e;
-      }
-      const XMLCh* xml_seed = simulation->getAttribute( X_SEED );
-      if( !XMLString::textToBin( xml_seed, mySeed ) )
-	{
-          char mess[ SpkCompilerError::maxMessageLen() ];
-	  sprintf( mess, "Invalid %s attribute value?  You gave me \"%s\".", 
-		   C_SEED, XMLString::transcode( xml_seed ) );
-          SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
-          throw e;
-	}
-   
-      if( simulation->hasAttribute( X_ONLYSIMULATION ) )
-      {
-         const XMLCh* xml_only_simulation = simulation->getAttribute( X_ONLYSIMULATION );
-         if( XMLString::equals( xml_only_simulation, X_YES ) )
-	   {
-	     myIsOnlySimulation = true;
-	   }
-         else
-           myIsOnlySimulation = false;
-      }
-      if( simulation->hasAttribute( X_SUBPROBLEMS ) )
-      {
-         const XMLCh* xml_subproblems = simulation->getAttribute( X_SUBPROBLEMS );
-         if( !XMLString::textToBin( xml_subproblems, mySubproblemsN ) )
-         {
-           char mess[ SpkCompilerError::maxMessageLen() ];
-	   sprintf( mess, "Invalid %s attribute value?  You gave me \"%s\".", 
-	            C_SUBPROBLEMS, XMLString::transcode(xml_subproblems) );
-           SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
-           throw e;
-         }
-      }
     }
 
   DOMNodeList * ind_stat_list = ind_analysis->getElementsByTagName( X_IND_STAT );
@@ -2291,7 +2300,7 @@ void NonmemTranslator::generateIndData( ) const
   //-----------------------------------------------
   // Declaration
   //-----------------------------------------------
-  oIndData_h << "template <class T>" << endl;
+  oIndData_h << "template <class ValueType>" << endl;
   oIndData_h << "class IndData{" << endl;
   
   //
@@ -2330,7 +2339,7 @@ void NonmemTranslator::generateIndData( ) const
       // If the label is of "ID", then, the data type is char*.
       // Otherwise, all others have double precision.
       //
-      oIndData_h << '\t' << "const std::vector<" << (isID? "char*":"T") << ">";
+      oIndData_h << '\t' << "const std::vector<" << (isID? "char*":"ValueType") << ">";
       oIndData_h << " & " << *pLabel << "In";
     }
   oIndData_h << ");" << endl;
@@ -2353,12 +2362,12 @@ void NonmemTranslator::generateIndData( ) const
       if( type == Symbol::DATALABEL )
 	{
 	  bool isID = ( varName==pID->name? true : false );
-          oIndData_h << "const std::vector<" << (isID? "char *" : "T") << ">";
+          oIndData_h << "const std::vector<" << (isID? "char *" : "ValueType") << ">";
 	  oIndData_h << " " << varName << ";" << endl;
 	  if( varAlias != "" )
             {
 	      isID = ( varAlias == pID->name? true : false );
-	      oIndData_h << "const std::vector<" << (isID? "char" : "T") << ">";
+	      oIndData_h << "const std::vector<" << (isID? "char" : "ValueType") << ">";
 	      oIndData_h << " " << varAlias << ";" << endl;
             }
 	}
@@ -2368,7 +2377,7 @@ void NonmemTranslator::generateIndData( ) const
 	  if( keyVarName == KeyStr.THETA 
 	      || keyVarName == KeyStr.ETA 
 	      || keyVarName == KeyStr.EPS )
-	    oIndData_h << "std::vector< std::vector<T> > " << varName << ";" << endl;
+	    oIndData_h << "std::vector< std::vector<ValueType> > " << varName << ";" << endl;
 	  if( keyVarName == KeyStr.OMEGA 
               || keyVarName == KeyStr.SIGMA )
 	    {}
@@ -2376,7 +2385,7 @@ void NonmemTranslator::generateIndData( ) const
 	}
       else // All others, ie. the user (pred) defined variables, are writable.
 	{
-	  oIndData_h << "std::vector<T> " << varName << ";" << endl;
+	  oIndData_h << "std::vector<ValueType> " << varName << ";" << endl;
 	}
     }
 
@@ -2422,8 +2431,8 @@ void NonmemTranslator::generateIndData( ) const
   // The order must be consistant with the declaration.
   //
   string synonym;
-  oIndData_h << "template <class T>" << endl;
-  oIndData_h << "IndData<T>::IndData( int nIn";
+  oIndData_h << "template <class ValueType>" << endl;
+  oIndData_h << "IndData<ValueType>::IndData( int nIn";
   pLabel = labels->begin();
   for( ; pLabel != labels->end(); pLabel++ )
     {
@@ -2434,7 +2443,7 @@ void NonmemTranslator::generateIndData( ) const
       // If the label string is of "ID", then the data type is char*.
       // Othewise, double.
       //
-      oIndData_h << "const std::vector<" << (isID? "char*":"T") << "> ";
+      oIndData_h << "const std::vector<" << (isID? "char*":"ValueType") << "> ";
       oIndData_h << "& " << *pLabel << "In";
     }
   oIndData_h << ")" << endl;
@@ -2501,7 +2510,7 @@ void NonmemTranslator::generateIndData( ) const
 
   oIndData_h << "{" << endl;
   //oIndData_h << "   nY = std::count_if( " << UserStr.MDV << ".begin(), ";
-  //oIndData_h << UserStr.MDV << ".end(), logical_true<T>() );" << endl;
+  //oIndData_h << UserStr.MDV << ".end(), logical_true<ValueType>() );" << endl;
   oIndData_h << "   for( int i=0; i<n; i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      if( " << UserStr.MDV << "[i] != 1 )" << endl;
@@ -2528,40 +2537,40 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "}" << endl;
 
   oIndData_h << endl;
-  oIndData_h << "template <class T>" << endl;
-  oIndData_h << "IndData<T>::~IndData(){}" << endl;
+  oIndData_h << "template <class ValueType>" << endl;
+  oIndData_h << "IndData<ValueType>::~IndData(){}" << endl;
 
-  oIndData_h << "template <class T>" << endl;
-  oIndData_h << "IndData<T>::IndData(){}" << endl;
+  oIndData_h << "template <class ValueType>" << endl;
+  oIndData_h << "IndData<ValueType>::IndData(){}" << endl;
 
-  oIndData_h << "template <class T>" << endl;
-  oIndData_h << "IndData<T>::IndData( const IndData<T>& ){}" << endl;
+  oIndData_h << "template <class ValueType>" << endl;
+  oIndData_h << "IndData<ValueType>::IndData( const IndData<ValueType>& ){}" << endl;
 
-  oIndData_h << "template <class T>" << endl;
-  oIndData_h << "IndData<T>& IndData<T>::operator=( const IndData<T>& ){}" << endl;
+  oIndData_h << "template <class ValueType>" << endl;
+  oIndData_h << "IndData<ValueType>& IndData<ValueType>::operator=( const IndData<ValueType>& ){}" << endl;
 
-  oIndData_h << "template <class T>" << endl;
-  oIndData_h << "const SPK_VA::valarray<double> IndData<T>::getMeasurements() const" << endl;
+  oIndData_h << "template <class ValueType>" << endl;
+  oIndData_h << "const SPK_VA::valarray<double> IndData<ValueType>::getMeasurements() const" << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   return measurements;" << endl;
   oIndData_h << "}" << endl;
 
-  oIndData_h << "template <class T>" << endl;
-  oIndData_h << "void IndData<T>::assignToDbl( double & d, const CppAD::AD<double>& ad ) const" << endl;
+  oIndData_h << "template <class ValueType>" << endl;
+  oIndData_h << "void IndData<ValueType>::assignToDbl( double & d, const CppAD::AD<double>& ad ) const" << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   d = CppAD::Value( ad );" << endl;
   oIndData_h << "   return;" << endl;
   oIndData_h << "}" << endl;
 
-  oIndData_h << "template <class T>" << endl;
-  oIndData_h << "void IndData<T>::assignToDbl( double & left, double right  ) const" << endl;
+  oIndData_h << "template <class ValueType>" << endl;
+  oIndData_h << "void IndData<ValueType>::assignToDbl( double & left, double right  ) const" << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   left = right;" << endl;
   oIndData_h << "   return;" << endl;
   oIndData_h << "}" << endl;
 /*
-  oIndData_h << "template <class T>" << endl;
-  oIndData_h << "bool IndData<T>::logical_true( const CppAD::AD<double>& val ) const" << endl;
+  oIndData_h << "template <class ValueType>" << endl;
+  oIndData_h << "bool IndData<ValueType>::logical_true( const CppAD::AD<double>& val ) const" << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   if( CppAD::Value(val) == 1.0 )" << endl;
   oIndData_h << "      return true;" << endl;
@@ -2624,7 +2633,7 @@ void NonmemTranslator::generateDataSet( ) const
   //-----------------------------------------------
   // Declaration
   //-----------------------------------------------
-  oDataSet_h << "template <class T>" << endl;
+  oDataSet_h << "template <class ValueType>" << endl;
   oDataSet_h << "class DataSet" << endl;
   oDataSet_h << "{" << endl;
       
@@ -2634,14 +2643,14 @@ void NonmemTranslator::generateDataSet( ) const
   // The default constructor initializes the entire data set
   // internally.
   //
-  // vector<IndData<T>*> data: The entire data set.
+  // vector<IndData<ValueType>*> data: The entire data set.
   // const int popSize:      : The number of individuals in the population.
   oDataSet_h << "public:" << endl;
   oDataSet_h << "DataSet();" << endl;
   oDataSet_h << "~DataSet();" << endl;
   oDataSet_h << endl;
 
-  oDataSet_h << "std::vector<IndData<T>*> data;" << endl;
+  oDataSet_h << "std::vector<IndData<ValueType>*> data;" << endl;
   oDataSet_h << "const int popSize;" << endl;
   oDataSet_h << "const SPK_VA::valarray<double> getAllMeasurements() const;" << endl;
   oDataSet_h << "void compRES();" << endl;
@@ -2675,8 +2684,8 @@ void NonmemTranslator::generateDataSet( ) const
   //
   // Initialize the class member variables.
   //
-  oDataSet_h << "template <class T>" << endl;
-  oDataSet_h << "DataSet<T>::DataSet()" << endl;
+  oDataSet_h << "template <class ValueType>" << endl;
+  oDataSet_h << "DataSet<ValueType>::DataSet()" << endl;
   oDataSet_h << ": popSize( " << myPopSize << " )," << endl;
   oDataSet_h << "  data( " << myPopSize << " )," << endl;
   oDataSet_h << "  N( " << myPopSize << " )" << endl;
@@ -2715,7 +2724,7 @@ void NonmemTranslator::generateDataSet( ) const
 	  string carray_name   = s->name + "_" + c_who + "_c";
 	  string vector_name = s->name + "_" + c_who;
 
-	  oDataSet_h << (isID? "char*":"T") << " " << carray_name << "[] = { ";
+	  oDataSet_h << (isID? "char*":"ValueType") << " " << carray_name << "[] = { ";
 	  for( int j=0; j<nRecords; j++ )
 	    {
 	      if( j > 0 )
@@ -2726,7 +2735,7 @@ void NonmemTranslator::generateDataSet( ) const
 		oDataSet_h << s->initial[who][j];
 	    }
 	  oDataSet_h << " };" << endl;
-	  oDataSet_h << "std::vector<" << (isID? "char*":"T") << "> ";
+	  oDataSet_h << "std::vector<" << (isID? "char*":"ValueType") << "> ";
 	  oDataSet_h << vector_name;
 	  oDataSet_h << "( " << nRecords << " );" << endl;
 	  oDataSet_h << "copy( " << carray_name << ", " << carray_name << "+" << nRecords;
@@ -2739,7 +2748,7 @@ void NonmemTranslator::generateDataSet( ) const
       // compliant to the order in which the label strings are stored
       // in the list returned by SymbolTable::getLabels().
       //
-      oDataSet_h << "data[" << who << "] = new IndData<T>";
+      oDataSet_h << "data[" << who << "] = new IndData<ValueType>";
       oDataSet_h << "( " << nRecords << ", ";
       pLabel = labels->begin();
       for( int i=0; pLabel != labels->end(), i<nLabels; i++, pLabel++ )
@@ -2768,8 +2777,8 @@ void NonmemTranslator::generateDataSet( ) const
 
   // The destructor
   // Free memory allocated for the entire data set.
-  oDataSet_h << "template <class T>" << endl;
-  oDataSet_h << "DataSet<T>::~DataSet()" << endl;
+  oDataSet_h << "template <class ValueType>" << endl;
+  oDataSet_h << "DataSet<ValueType>::~DataSet()" << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   const int n = data.size();" << endl;
   oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
@@ -2778,20 +2787,20 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "   }" << endl;
   oDataSet_h << "}" << endl;
 
-  oDataSet_h << "template <class T>" << endl;
-  oDataSet_h << "DataSet<T>::DataSet( const DataSet<T>& ){}" << endl;
+  oDataSet_h << "template <class ValueType>" << endl;
+  oDataSet_h << "DataSet<ValueType>::DataSet( const DataSet<ValueType>& ){}" << endl;
 
-  oDataSet_h << "template <class T>" << endl;
-  oDataSet_h << "DataSet<T>& DataSet<T>::operator=( const DataSet<T>& ){}" << endl;
-  oDataSet_h << "template <class T>" << endl;
-  oDataSet_h << "const SPK_VA::valarray<double> DataSet<T>::getAllMeasurements() const" << endl;
+  oDataSet_h << "template <class ValueType>" << endl;
+  oDataSet_h << "DataSet<ValueType>& DataSet<ValueType>::operator=( const DataSet<ValueType>& ){}" << endl;
+  oDataSet_h << "template <class ValueType>" << endl;
+  oDataSet_h << "const SPK_VA::valarray<double> DataSet<ValueType>::getAllMeasurements() const" << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   return measurements;" << endl;
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
 
-  oDataSet_h << "template <class T>" << endl;
-  oDataSet_h << "void DataSet<T>::compRES()" << endl;
+  oDataSet_h << "template <class ValueType>" << endl;
+  oDataSet_h << "void DataSet<ValueType>::compRES()" << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   const int n = data.size();" << endl;
   oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
@@ -2800,8 +2809,8 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "   }" << endl;
   oDataSet_h << "}" << endl;
 
-  oDataSet_h << "template <class T>" << endl;
-  oDataSet_h << "void DataSet<T>::compWRES( const SPK_VA::valarray<double>& R )" << endl;
+  oDataSet_h << "template <class ValueType>" << endl;
+  oDataSet_h << "void DataSet<ValueType>::compWRES( const SPK_VA::valarray<double>& R )" << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   using SPK_VA::valarray;" << endl;
   oDataSet_h << "   using std::vector;" << endl;
@@ -2820,30 +2829,6 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "   return;" << endl;
 
   oDataSet_h << "}" << endl;
-  /*
-  oDriver << "for( int j=0; j<nY; j++ )" << endl;
-  oDriver << "{" << endl;
-  oDriver << "   set.data[0]->" << UserStr.RES << "[j] = y[j] - set.data[0]->" << UserStr.PRED << "[j];" << endl;
-  oDriver << "}" << endl;
-  oDriver << "set.data[0]->" << UserStr.WRES << " = wres( nY, ROut, set.data[0]->" << UserStr.RES << " ); " << endl;
-  oDriver << endl;
-  oDriver << "const vector<CppAD::AD<double> > wres( int n," << endl;
-  oDriver << "                                       const valarray<double> & Ri," << endl;
-  oDriver << "                                       const vector  < CppAD::AD<double> > & residual )" << endl;
-  oDriver << "{" << endl;
-  oDriver << "   assert( Ri.size() == n * n );" << endl;
-  oDriver << "   assert( residual.size() == n );" << endl;
-  oDriver << "   valarray<double> r( n );" << endl;
-  oDriver << "   for( int i=0; i<n; i++ ) r[i] = CppAD::Value( residual[i] );" << endl;
-  oDriver << "   valarray<double> C( 0.0, n * n );" << endl;
-  oDriver << "   C = cholesky( Ri, n );" << endl;
-  oDriver << "   valarray<double> w = multiply( C, n, r, 1 );" << endl;
-  oDriver << "   vector< CppAD::AD<double> > Cr(n);" << endl;
-  oDriver << "   for( int i=0; i<n; i++ ) Cr[i] = w[i];" << endl;
-  oDriver << "   return Cr;" << endl;
-  oDriver << "}" << endl;
-
-  */
 
   oDataSet_h << "#endif" << endl;
   oDataSet_h.close();
@@ -2929,8 +2914,8 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   //----------------------------------------------
   // Declaration
   //----------------------------------------------
-  oPred_h << "template <class Value>" << endl;
-  oPred_h << "class Pred : public PredBase<Value>" << endl;
+  oPred_h << "template <class ValueType>" << endl;
+  oPred_h << "class Pred : public PredBase<ValueType>" << endl;
   oPred_h << "{" << endl;
       
   //
@@ -2941,7 +2926,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   // The legal constructor.
   // This constructor takes a pointer to the DataSet (the set of
   // all individuals' data).
-  oPred_h << "Pred( const DataSet<Value>* dataIn );" << endl;
+  oPred_h << "Pred( const DataSet<ValueType>* dataIn );" << endl;
 
   // The destructor.
   oPred_h << "~Pred();" << endl;
@@ -2957,8 +2942,8 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   oPred_h << "           int spk_yOffset,     int spk_yLen," << endl;
   oPred_h << "           int spk_i," << endl;
   oPred_h << "           int spk_j," << endl;
-  oPred_h << "           const std::vector<Value>& spk_indepVar," << endl;
-  oPred_h << "           std::vector<Value>& spk_depVar );" << endl;
+  oPred_h << "           const std::vector<ValueType>& spk_indepVar," << endl;
+  oPred_h << "           std::vector<ValueType>& spk_depVar );" << endl;
 
   oPred_h << endl;
 
@@ -2975,8 +2960,8 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   // 
   // Private member delarations
   //
-  // const DataSet<T> *perm: A pointer to the read-only data set.
-  // DataSet<T> temp:        The temporary storage for current values
+  // const DataSet<ValueType> *perm: A pointer to the read-only data set.
+  // DataSet<ValueType> temp:The temporary storage for current values
   // mutable string id:      A place holder for the current ID value
   // mutable T data_item1:   A place holder for a data item, data_item1
   // mutable T data_item2:   A place holder fot a data item, data_item2
@@ -2989,8 +2974,8 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   // ...
   oPred_h << "private:" << endl;
   oPred_h << "const int nIndividuals;" << endl;
-  oPred_h << "const DataSet<Value> *perm;" << endl;
-  oPred_h << "DataSet<Value> temp;" << endl;
+  oPred_h << "const DataSet<ValueType> *perm;" << endl;
+  oPred_h << "DataSet<ValueType> temp;" << endl;
   oPred_h << "mutable bool isIterationCompleted;" << endl;
 
   // Taking care of the data items (from the data file).
@@ -3002,11 +2987,11 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       bool isID = (SymbolTable::key( *pLabel ) == KeyStr.ID );
 
       const Symbol* s = table->findi( *pLabel );
-      oPred_h << "mutable " << ( isID? "std::string" : "Value" );
+      oPred_h << "mutable " << ( isID? "std::string" : "ValueType" );
       oPred_h << " " << s->name << ";" << endl;
       if( !s->synonym.empty() )
 	{
-	  oPred_h << "mutable " << ( isID? "std::string" : "Value" );
+	  oPred_h << "mutable " << ( isID? "std::string" : "ValueType" );
 	  oPred_h << " " << s->synonym << ";" << endl;
 	}
     }
@@ -3038,7 +3023,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 	  if( find( labels->begin(), labels->end(), label ) 
 	      == labels->end() )
 	    {
-	      oPred_h << "mutable Value " << label;
+	      oPred_h << "mutable ValueType " << label;
 	      oPred_h << ";" << endl;
 	    }
 	}
@@ -3050,36 +3035,36 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   //----------------------------------------------
   // Definition
   //----------------------------------------------
-  oPred_h << "template <class Value>" << endl;
-  oPred_h << "Pred<Value>::Pred( const DataSet<Value>* dataIn )" << endl;
+  oPred_h << "template <class ValueType>" << endl;
+  oPred_h << "Pred<ValueType>::Pred( const DataSet<ValueType>* dataIn )" << endl;
   oPred_h << ": perm( dataIn )," << endl;
   oPred_h << "  nIndividuals( " << myPopSize << " )," << endl;
   oPred_h << "  isIterationCompleted( true )" << endl;
   oPred_h << "{" << endl;
   oPred_h << "}" << endl;
 
-  oPred_h << "template <class Value>" << endl;
-  oPred_h << "Pred<Value>::~Pred()" << endl;
+  oPred_h << "template <class ValueType>" << endl;
+  oPred_h << "Pred<ValueType>::~Pred()" << endl;
   oPred_h << "{" << endl;
   oPred_h << "}" << endl;
 
-  oPred_h << "template <class Value>" << endl;
-  oPred_h << "int Pred<Value>::getNObservs( int spk_i ) const" << endl;
+  oPred_h << "template <class ValueType>" << endl;
+  oPred_h << "int Pred<ValueType>::getNObservs( int spk_i ) const" << endl;
   oPred_h << "{" << endl;
   oPred_h << "  return perm->data[spk_i]->" << UserStr.ID << ".size();" << endl;
   oPred_h << "}" << endl;
 
 
-  oPred_h << "template <class Value>" << endl;
-  oPred_h << "bool Pred<Value>::eval( int spk_thetaOffset, int spk_thetaLen," << endl;
+  oPred_h << "template <class ValueType>" << endl;
+  oPred_h << "bool Pred<ValueType>::eval( int spk_thetaOffset, int spk_thetaLen," << endl;
   oPred_h << "                        int spk_etaOffset,   int spk_etaLen," << endl;
   oPred_h << "                        int spk_epsOffset,   int spk_epsLen," << endl;
   oPred_h << "                        int spk_fOffset,     int spk_fLen," << endl;
   oPred_h << "                        int spk_yOffset,     int spk_yLen," << endl;
   oPred_h << "                        int spk_i," << endl;
   oPred_h << "                        int spk_j," << endl;
-  oPred_h << "                        const std::vector<Value>& spk_indepVar," << endl;
-  oPred_h << "                        std::vector<Value>& spk_depVar )" << endl;
+  oPred_h << "                        const std::vector<ValueType>& spk_indepVar," << endl;
+  oPred_h << "                        std::vector<ValueType>& spk_depVar )" << endl;
   oPred_h << "{" << endl;
 
   oPred_h << "  assert( spk_thetaLen == " << myThetaLen << " );" << endl;
@@ -3112,12 +3097,12 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
     }
   for( int i=0; i<myThetaLen; i++ )
     {
-      oPred_h << "typename std::vector<Value>::const_iterator " << UserStr.THETA << i+1;
+      oPred_h << "typename std::vector<ValueType>::const_iterator " << UserStr.THETA << i+1;
       oPred_h << " = spk_indepVar.begin() + spk_thetaOffset + " << i << ";" << endl;
     }
   for( int i=0; i<myEtaLen; i++ )
     {
-      oPred_h << "typename std::vector<Value>::const_iterator " << UserStr.ETA << i+1;
+      oPred_h << "typename std::vector<ValueType>::const_iterator " << UserStr.ETA << i+1;
       oPred_h << " = spk_indepVar.begin() + spk_etaOffset + " << i << ";" << endl;
     }
 
@@ -3127,22 +3112,22 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   // "myEpsLen" has been set to zero; thus the following loop loops zero times.
   for( int i=0; i<myEpsLen; i++ )
     {
-      oPred_h << "typename std::vector<Value>::const_iterator " << UserStr.EPS << i+1;
+      oPred_h << "typename std::vector<ValueType>::const_iterator " << UserStr.EPS << i+1;
       oPred_h << " = spk_indepVar.begin() + spk_epsOffset + " << i << ";" << endl;
     }
-  oPred_h << "typename std::vector<Value>::const_iterator " << UserStr.THETA;
+  oPred_h << "typename std::vector<ValueType>::const_iterator " << UserStr.THETA;
   oPred_h << " = spk_indepVar.begin() + spk_thetaOffset;" << endl;
-  oPred_h << "typename std::vector<Value>::const_iterator " << UserStr.ETA;
+  oPred_h << "typename std::vector<ValueType>::const_iterator " << UserStr.ETA;
   oPred_h << " = spk_indepVar.begin() + spk_etaOffset;" << endl;
   if( myTarget == POP )
     {
-      oPred_h << "typename std::vector<Value>::const_iterator " << UserStr.EPS;
+      oPred_h << "typename std::vector<ValueType>::const_iterator " << UserStr.EPS;
       oPred_h << " = spk_indepVar.begin() + spk_epsOffset;" << endl;
     }
 
-  oPred_h << "Value " << UserStr.F << " = 0.0;" << endl;
+  oPred_h << "ValueType " << UserStr.F << " = 0.0;" << endl;
 
-  oPred_h << "Value " << UserStr.Y << " = 0.0;" << endl;
+  oPred_h << "ValueType " << UserStr.Y << " = 0.0;" << endl;
   ///////////////////////////////////////////////////////////////////////////////////
       
   oPred_h << "//=========================================" << endl;
@@ -3262,18 +3247,18 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 
   oPred_h << "}" << endl;
 
-  oPred_h << "template <class Value>" << endl;
-  oPred_h << "Pred<Value>::Pred()" << endl;
+  oPred_h << "template <class ValueType>" << endl;
+  oPred_h << "Pred<ValueType>::Pred()" << endl;
   oPred_h << "{" << endl;
   oPred_h << "}" << endl;
 
-  oPred_h << "template <class Value>" << endl;
-  oPred_h << "Pred<Value>::Pred( const Pred<Value>& )" << endl;
+  oPred_h << "template <class ValueType>" << endl;
+  oPred_h << "Pred<ValueType>::Pred( const Pred<ValueType>& )" << endl;
   oPred_h << "{" << endl;
   oPred_h << "}" << endl;
 
-  oPred_h << "template <class Value>" << endl;
-  oPred_h << "Pred<Value> & Pred<Value>::operator=( const Pred<Value>& )" << endl;
+  oPred_h << "template <class ValueType>" << endl;
+  oPred_h << "Pred<ValueType> & Pred<ValueType>::operator=( const Pred<ValueType>& )" << endl;
   oPred_h << "{" << endl;
   oPred_h << "}" << endl;
 
@@ -3485,7 +3470,7 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << "   // If the matrix is full, the value is equal to the number of " << endl;
   oNonmemPars << "   // elements in a half triangle (diagonal elements included)." << endl;
   oNonmemPars << "   // If the matrix is diagonal, it is equal to the dimension of the symmetric matrix." << endl;
-  oNonmemPars << "   const int omegaOrder = " << (myOmegaStruct==Symbol::DIAGONAL? "omegaDim" : "omegaDim + (omegaDim+1) / 2" ) << ";" << endl;
+  oNonmemPars << "   const int omegaOrder = " << (myOmegaStruct==Symbol::DIAGONAL? "omegaDim" : "omegaDim * (omegaDim+1) / 2" ) << ";" << endl;
   oNonmemPars << endl;
 
   oNonmemPars << "   // A C-arrary containing the initial estimates for OMEGA." << endl;
