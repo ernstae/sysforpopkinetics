@@ -3,12 +3,12 @@
 use strict;
 use Cwd;
 use Spkdb (
-    'connect', 'disconnect', 'new_job', 'get_job', 'job_status', 
-    'de_q2c', 'job_history',
-    'en_q2r', 'de_q2r', 'end_job', 'job_report',
-    'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
-    'new_model', 'get_model', 'update_model', 'user_models',
-    'new_user', 'update_user', 'get_user', 'email_for_job'
+	   'connect', 'disconnect', 'new_job', 'get_job', 'job_status', 
+	   'de_q2c', 'job_history',
+	   'en_q2r', 'de_q2r', 'end_job', 'job_report',
+	   'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
+	   'new_model', 'get_model', 'update_model', 'user_models',
+	   'new_user', 'update_user', 'get_user', 'email_for_job'
 	   );
 use Fcntl qw(:DEFAULT :flock);
 
@@ -20,7 +20,7 @@ use Fcntl qw(:DEFAULT :flock);
 
     take_snapshot.pl job_id ...
 
-=head1 DESCRIPTION
+    =head1 DESCRIPTION
 
     Given a list of job_id numbers, this program extracts from the
     production database, spkdb, the corresponding rows of the job
@@ -50,13 +50,13 @@ use Fcntl qw(:DEFAULT :flock);
 
     This program uses the following utility programs to do much of its work:
     
-        dump_spkdb.pl
-        load_spktest.pl
-        mysqldump
+    dump_spkdb.pl
+    load_spktest.pl
+    mysqldump
 
     It also uses the SPK Perl API module:
 
-        Spkdb.pm
+    Spkdb.pm
 
 =head1 BUGS
 
@@ -180,35 +180,44 @@ for my $job_id (@ARGV) {
     $dataset_list{$row->{'dataset_id'}} = 0;
     $user_list{$row->{'user_id'}}     = 0;
 
-    # Copy the xml_source field (which is a long blob)
-    my $xml_source = $row->{'xml_source'};
+    # Copy the xml_source and checkpoint fields (which are long
+    # blobs). We do this so that we will not have to insert quotes
+    # around any field contents that might confuse the SQL parser.
 
-    # Delete from the row hash xml_source and all fields that are NULL when a
-    # job is first submitted
+    my $xml_source = $row->{'xml_source'};  
+    my $checkpoint = $row->{'checkpoint'};
+
+    # Delete from the row hash xml_source, checkpoint, and all fields
+    # that are NULL when a job is first submitted
+
     delete $row->{'xml_source'};
+    delete $row->{'checkpoint'};
     delete $row->{'cpp_source'};
     delete $row->{'report'};
     delete $row->{'end_code'};
-    delete $row->{'checkpoint'};
+
 
     # Store in the row values that are correct for a job that has just been submitted
     $row->{'state_code'} = 'q2r';
     $row->{'start_time'} = $row->{'event_time'} = $event_time;
     $row->{'state_code'} = 'q2c';
 
-    # Prepare the sql for inserting the job into spktmp.  Note the ? for xml_source,
-    # which will allow us to insert the field with out messing with quotes.  Note also the
-    # NULL values for the fields that are NULL when a job is submitted.
-    $sql = "insert into job (xml_source,cpp_source,report,end_code,checkpoint,"
+    # Prepare the sql for inserting the job into spktmp.  Note the ?
+    # signs for xml_source and checkpoint which will allow us to
+    # insert the field with out messing with quotes.  Note also the
+    # NULL values for the fields that are NULL when a job is
+    # submitted.
+
+    $sql = "insert into job (xml_source, checkpoint, cpp_source, report, end_code,"
 	. (join ",", keys %$row)
-	. ") values (?,NULL,NULL,NULL,NULL,'"
+	. ") values (?,?,NULL,NULL,NULL,'"
 	. (join "','", values %$row)
 	. "');";
     my $job_sth = $spktmp_dbh->prepare($sql)
 	or death("prepare of '$sql' failed");
     
     # Insert the modified job row into spktmp
-    $job_sth->execute($xml_source)
+    $job_sth->execute($xml_source, $checkpoint)
 	or death("execute of '$sql' failed");
 }
 $history_sth->finish; 
