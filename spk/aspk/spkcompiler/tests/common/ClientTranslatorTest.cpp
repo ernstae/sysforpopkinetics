@@ -43,7 +43,7 @@ public:
   // A list of file paths must be ready to donwloaded via
   // getFilenameList().
   //
-  virtual void translate( xercesc::DOMDocument * pTree )
+  virtual void translate( const xercesc::DOMDocument * doc, const xercesc::DOMElement * clientTree )
   {
     filenames.push_back( "driver.cpp" );
     filenames.push_back( "model.h" );
@@ -71,14 +71,15 @@ void ClientTranslatorTest::testInterface()
   DOMImplementation* impl 
     =  DOMImplementationRegistry::getDOMImplementation(XMLString::transcode("Core"));
   
-  DOMDocument* pTree = impl->createDocument(
-					    0,                    // root element namespace URI.
-					    XMLString::transcode("spkinml"),         // root element name
-					    0);                   // document type object (DTD).
+  DOMDocument* doc = impl->createDocument( 0 /* root element namespace URI */,
+					   XMLString::transcode("spkinml") /* root element name */,
+					   0 /* document type object (DTD) */
+		  );
 
+  DOMElement * clientTreeRoot = doc->createElement( XMLString::transcode("client") );
   MyTranslator xlator;
 
-  xlator.translate( pTree );
+  xlator.translate( doc, clientTreeRoot );
 
   // This doesn't have to be a valid data structure.
   const void* clientpara = xlator.getClientParameters(); 
@@ -90,7 +91,7 @@ void ClientTranslatorTest::testInterface()
   const vector<string> files = xlator.getFilenameList();
   CPPUNIT_ASSERT( files.size() > 0 );
 
-  pTree->release();
+  doc->release();
   XMLPlatformUtils::Terminate();
 }
 
