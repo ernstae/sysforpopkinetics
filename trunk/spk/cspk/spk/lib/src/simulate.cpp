@@ -651,7 +651,7 @@ void simulate( SpkModel &model,
   valarray<double> bi( 0.0, nB );            // same dimension as bLow and bUp
   valarray<double> Ri, fi, ei;               // Create matrices needed to fill simY
   
-  for (i = 0, k = 0; i < nIndividuals; i++)  // individuals start at 1, go to nIndividuals
+  for (i = 0, k = 0; i < nIndividuals; k+=N[i++])  // individuals start at 1, go to nIndividuals
     {					     // k indexes the entire bAllOut matrix
       try{
 	model.selectIndividual(i);	     // selectIndividual sets i as it is
@@ -684,6 +684,7 @@ void simulate( SpkModel &model,
   
   for (i = 0, k = 0; i < nIndividuals; i++)    // loop through nIndividuals matrices
     {
+      yOut[ slice( k, nB, 1 ) ] = simY[i];
       for (j = 0; (double)j < N[i]; j++, k++)  // loop through # of measurements
 	{
 	  yOut[k] = simY[i][j];                // copies the values one by one
