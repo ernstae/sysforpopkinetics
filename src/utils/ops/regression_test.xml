@@ -3,6 +3,7 @@
     <job>56</job>
   </cerr>
   <srun>
+    <job>299</job><!-- ind opt, single expo non-linear -->
     <job>15</job> <!-- pop opt, FO, non-linear, stat -->
     <job>46</job> <!-- pop opt, FO, non-linear, stat -->
     <job>294</job><!-- verified: pop opt, FO, Brad's simplest linear, stat -->
