@@ -98,6 +98,25 @@ void Cov::setPar( const valarray<double>& parIn )
 
 /*************************************************************************
  *
+ * Function: setCov
+ *
+ *************************************************************************/
+
+void Cov::setCov( const valarray<double>& covIn )
+{
+  assert( covIn.size() == nCovRow * nCovRow );
+
+  // Get the parameters that correspond to this covariance matrix.
+  valarray<double> parTemp( nPar );
+  calcPar( covIn, parTemp );
+
+  // Set the new value for the parameter if it has changed.
+  setPar( parTemp );
+}
+
+
+/*************************************************************************
+ *
  * Function: invalidateCache
  *
  *************************************************************************/
