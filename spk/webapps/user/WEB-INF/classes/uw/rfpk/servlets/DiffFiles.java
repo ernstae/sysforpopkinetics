@@ -9,8 +9,9 @@ import java.nio.*;
  * The first String object is the secret code to identify the client.  The second String  
  * object is the first text.  The third String object is the second String object.  The 
  * servlet saves the texts in two files and then call Linux command 'diff' to get revision.
+ * There is a time limit for running this process.  The time limit is specified in web.xml. 
  * The servlet sends back two objects.  The first object is a String containing the error 
- * message if there is an error or an empty String if there is not any error.  The second 
+ * message if there is an error, or an empty String if there is not any error.  The second 
  * object is the returning revision as a String object.
  *
  * @author Jiaji Du
@@ -30,8 +31,10 @@ public class DiffFiles extends HttpServlet
 	throws ServletException, IOException
     {
         // Prepare output message
-        String messageOut = "";
         String revision = "";
+        
+        // Set time limit
+        timeLimit = Integer.parseInt(getServletContext().getInitParameter("timeLimit"));
         
         // Get the input stream for reading data from the client
         ObjectInputStream in = new ObjectInputStream(req.getInputStream());  
@@ -47,10 +50,6 @@ public class DiffFiles extends HttpServlet
         // to our buffer
         ObjectOutputStream out = new ObjectOutputStream(byteOut);
 
-        // Declare File objects
-        File file1 = null;
-        File file2 = null;
-        
         try
         {
             // Read the data from the client 
@@ -73,11 +72,22 @@ public class DiffFiles extends HttpServlet
                 BufferedWriter out2 = new BufferedWriter(new FileWriter(file2));
                 out2.write(text2);
                 out2.close();
-            
+                
+                // Start timer              
+                (new Thread(new Timer())).start(); 
+
                 // Create a subprocess
                 String[] c = new String[]{"diff", file1.getPath(), file2.getPath()}; 
-                Process process = runtime.exec(c);
-            
+                process = runtime.exec(c);
+                process.waitFor();
+                if(process.exitValue() > 1)
+                {
+                    file1.delete();
+                    file2.delete();
+                    messageOut = "Time out.  The time limit is " + timeLimit + " second(s)";
+                }
+                else
+                {
                 // Get stdout and stderr of the subprocess
                 BufferedInputStream in1 = new BufferedInputStream(process.getInputStream());
                 BufferedInputStream er1 = new BufferedInputStream(process.getErrorStream());
@@ -103,6 +113,7 @@ public class DiffFiles extends HttpServlet
                 process.destroy(); 
                 
                 messageOut = error;
+                }
             }
             else
             {
@@ -114,6 +125,10 @@ public class DiffFiles extends HttpServlet
         {
             messageOut = e.getMessage();
         }
+        catch(InterruptedException e)
+        {
+            messageOut = e.getMessage();
+        }        
         finally
         {
             file1.delete();
@@ -141,5 +156,31 @@ public class DiffFiles extends HttpServlet
         servletOut.write(buf);
         servletOut.close();
     }
+    
+    class Timer implements Runnable
+    {
+        public void run() 
+        {
+            try
+            {
+                Thread.sleep(timeLimit * 1000);
+                process.destroy();
+            }
+            catch(InterruptedException e)
+            {
+            }
+        }
+    }
+    
+    // Declare File objects
+    File file1 = null;
+    File file2 = null;
+    
+    // Sub process
+    private Process process = null;
+    private String messageOut = "";
+    
+    // Time limit
+    private int timeLimit;
 }
 

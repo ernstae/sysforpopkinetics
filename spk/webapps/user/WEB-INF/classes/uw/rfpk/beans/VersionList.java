@@ -17,51 +17,12 @@ public class VersionList implements java.io.Serializable
     /** Constructor with no argument
      */     
     public VersionList(){}
-    
-    /** Sets database host.
-     * @param dbHost the name of the database host.
-     */    
-    public void setDbHost(String dbHost)
-    {
-        this.dbHost = dbHost;
-    }
-    
-    /** Sets database name.
-     * @param dbName the name of the database.
-     */    
-    public void setDbName(String dbName)
-    {
-        this.dbName = dbName;
-    }
-    
-    /** Sets database username.
-     * @param dbUser the username of the database.
-     */    
-    public void setDbUser(String dbUser)
-    {
-        this.dbUser = dbUser;
-    }    
-
-    /** Sets database password.
-     * @param dbPass the password of the database.
-     */    
-    public void setDbPass(String dbPass)
-    {
-        this.dbPass = dbPass;
-    }    
-    
-    /** Sets username of the client.
-     * @param username the username of the client.
-     */    
-    public void setUsername(String username)
-    {
-        this.username = username;
-    }    
-    
+       
     /** Gets list of versions.
      * @return The list of versions.
      */    
-    public String[][] getVersionList(long id, String type)
+    public String[][] getVersionList(long id, String type, String dbName, String dbHost,
+                                     String dbUser, String dbPass)
     {
         // Prepare for the return   
         String[][] versionList = null;  
@@ -112,11 +73,4 @@ public class VersionList implements java.io.Serializable
         }
         return versionList;
     }
-        
-    private String dbHost = null;
-    private String dbName = null;
-    private String dbUser = null;
-    private String dbPass = null;
-    private String dbType = null;
-    private String username = null;
 }

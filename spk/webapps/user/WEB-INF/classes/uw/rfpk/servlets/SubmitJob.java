@@ -62,7 +62,8 @@ public class SubmitJob extends HttpServlet
         // Create the output stream to be used to write the data
         // to our buffer
         ObjectOutputStream out = new ObjectOutputStream(byteOut);
-
+        
+        String which = null;
         try
         {
             // Read the data from the client 
@@ -105,7 +106,10 @@ public class SubmitJob extends HttpServlet
                 if(isNewModel.equals("true"))
                 {
                     Archive arch = new Archive(modelArchive.split("\n"), ""); 
-                    arch.findNode(new Version("1.1")).setAuthor(username);
+                    Node node = arch.findNode(new Version("1.1"));
+                    node.setAuthor(username);
+                    node.setLog(modelLog);
+                    which = "model";
                     modelId = Spkdb.newModel(con, 
                                              userId, 
                                              modelName, 
@@ -113,7 +117,7 @@ public class SubmitJob extends HttpServlet
                                              arch.toString("\n"));
                     messages += "A new model, " + modelName +
                                 ", has been added to the database.\n";
-                    modelVersion = String.valueOf(1);                    
+                    modelVersion = "1.1";                    
                 }
                 else
                 {        
@@ -122,18 +126,19 @@ public class SubmitJob extends HttpServlet
                         ResultSet modelRS = Spkdb.getModel(con, 
                                                            modelId);
                         modelRS.next();
-                        String strAr = modelRS.getString("archive");
+                        Blob blobArchive = modelRS.getBlob("archive");
+                        long length = blobArchive.length();
+                        String strAr = new String(blobArchive.getBytes(1L, (int)length));                        
                         Archive arch = new Archive("", new ByteArrayInputStream(strAr.getBytes()));
                         arch.addRevision(modelArchive.split("\n"), modelLog);
-                        int number = arch.getRevisionVersion().last();
-                        arch.findNode(new Version("1." + number)).setAuthor(username);
+                        arch.findNode(arch.getRevisionVersion()).setAuthor(username);
                         Spkdb.updateModel(con, 
                                           modelId, 
                                           new String[]{"archive"}, 
                                           new String[]{arch.toString("\n")}); 
                         messages += "The model, " + modelName +
                                     ", in the database has been updated.\n";                      
-                        modelVersion = String.valueOf(arch.getRevisionVersion().last());                       
+                        modelVersion = String.valueOf(arch.getRevisionVersion());                       
                     }
                 }
  
@@ -141,7 +146,10 @@ public class SubmitJob extends HttpServlet
                 if(isNewDataset.equals("true"))
                 {
                     Archive arch = new Archive(dataset.split("\n"), "");
-                    arch.findNode(new Version("1.1")).setAuthor(username);                    
+                    Node node = arch.findNode(new Version("1.1"));
+                    node.setAuthor(username);
+                    node.setLog(datasetLog);
+                    which = "dataset";
                     datasetId = Spkdb.newDataset(con, 
                                                  userId, 
                                                  datasetName, 
@@ -149,7 +157,7 @@ public class SubmitJob extends HttpServlet
                                                  arch.toString("\n"));
                     messages += "A new dataset, " + datasetName +
                                 ", has been added to the database.\n";  
-                    datasetVersion = String.valueOf(1);
+                    datasetVersion = "1.1";
                 }
                 else
                 {        
@@ -158,18 +166,19 @@ public class SubmitJob extends HttpServlet
                         ResultSet datasetRS = Spkdb.getDataset(con, 
                                                                datasetId);;
                         datasetRS.next();
-                        String strAr = datasetRS.getString("archive");
+                        Blob blobArchive = datasetRS.getBlob("archive");
+                        long length = blobArchive.length();
+                        String strAr = new String(blobArchive.getBytes(1L, (int)length));                        
                         Archive arch = new Archive("", new ByteArrayInputStream(strAr.getBytes()));
                         arch.addRevision(dataset.split("\n"), datasetLog);
-                        int number = arch.getRevisionVersion().last();
-                        arch.findNode(new Version("1." + number)).setAuthor(username);                       
+                        arch.findNode(arch.getRevisionVersion()).setAuthor(username);                       
                         Spkdb.updateDataset(con, 
                                             datasetId, 
                                             new String[]{"archive"}, 
                                             new String[]{arch.toString("\n")});  
                         messages += "The dataset, " + datasetName +
                                     ", in the database has been updated.\n";                      
-                        datasetVersion = String.valueOf(arch.getRevisionVersion().last());
+                        datasetVersion = String.valueOf(arch.getRevisionVersion());
                     }
                 }            
                                  
@@ -197,6 +206,15 @@ public class SubmitJob extends HttpServlet
         catch(SQLException e)
         {
             messageOut = e.getMessage();
+            if(messageOut.indexOf("Duplicate entry") != -1 && which != null)
+            {
+                int bIndex = messageOut.indexOf("-") + 1;
+                int eIndex = messageOut.indexOf("'", bIndex);
+                
+                messageOut = "The name '" + messageOut.substring(bIndex, eIndex) + 
+                             "' has already been used for a " + which +
+                             ".\nPlease use another name if it is a different one";
+            }
         }        
         catch(SpkdbException e)
         {

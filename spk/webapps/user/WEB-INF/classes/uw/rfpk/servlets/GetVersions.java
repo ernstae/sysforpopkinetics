@@ -11,12 +11,15 @@ import java.text.SimpleDateFormat;
 import org.apache.commons.jrcs.rcs.*;
 import org.apache.commons.jrcs.util.ToString;
 import org.apache.commons.jrcs.diff.*;
+import uw.rfpk.beans.UserInfo;
 
-/** This servlet receives a String array containing three String objects from the client.
+/** This servlet receives a String array containing four String objects from the client.
  * The first String object is the secret code to identify the client.  The second String  
  * object is the id of the model or the dataset.  The third String object is archive type
- * that is either model or data.  The servlet first checks if this id belongs to the user
- * using the id list saved in the Session object, MODELIDS or DATASETIDS.  If authentified
+ * that is either model or data.  The fourth String object is a flag that specified if 
+ * this call is from a library patron.  The servlet first checks if this id belongs to the user
+ * using ,database API method, getUser, to get the user_id and using database API method, 
+ * getJob, to get user_id, then comparing them.  If they are the same,
  * the servlet calls database API methods, getModel or getDataset, to get the archive.  
  * Then the servlet uses the JRCS API methods to get the status of the versions including 
  * version number, author name, revision time and log of the versions.  The servlet puts 
@@ -41,6 +44,10 @@ public class GetVersions extends HttpServlet
     public void service(HttpServletRequest req, HttpServletResponse resp)
 	throws ServletException, IOException
     {
+        // Get the user name of the session
+        UserInfo user = (UserInfo)req.getSession().getAttribute("validUser");
+        String username = user.getUserName();
+        
         // Prepare output message
         String messageOut = "";
         String[][] versionList = null;
@@ -65,57 +72,68 @@ public class GetVersions extends HttpServlet
             String[] messageIn = (String[])in.readObject();
             String secret = messageIn[0];
             String type = messageIn[2];
-            Vector ids = null;
-            if(type.equals("model"))
-                ids = (Vector)(req.getSession().getAttribute("MODELIDS")); 
-            if(type.equals("data"))
-                ids = (Vector)(req.getSession().getAttribute("DATASETIDS"));            
-            if(secret.equals((String)req.getSession().getAttribute("SECRET")) &&
-               ids.contains(messageIn[1]))             
+            
+            if(secret.equals((String)req.getSession().getAttribute("SECRET")))             
             {                        
  	        long id = Long.parseLong(messageIn[1]);
-
+                if(messageIn[3].equals("true"))
+                    username = "librarian";
+                
                 // Connect to the database
                 ServletContext context = getServletContext();
                 Connection con = Spkdb.connect(context.getInitParameter("database_name"),
                                                context.getInitParameter("database_host"),
                                                context.getInitParameter("database_username"),
                                                context.getInitParameter("database_password"));                
- 
-                // Get model archive
+
+                // Get user id
+                ResultSet userRS = Spkdb.getUser(con, username);
+                userRS.next();
+                long userId = userRS.getLong("user_id");                
+                
+                // Get model or data archive
                 ResultSet archiveRS = null;
                 if(type.equals("model"))
                     archiveRS = Spkdb.getModel(con, id); 
                 if(type.equals("data"))
                     archiveRS = Spkdb.getDataset(con, id);
-                
                 archiveRS.next();
-      	        Blob blobArchive = archiveRS.getBlob("archive");
-	        long length = blobArchive.length(); 
-	        String archive = new String(blobArchive.getBytes(1L, (int)length));                  
+                
+                // Check if the job belongs to the user
+                if(archiveRS.getLong("user_id") == userId)
+                {                
+      	            Blob blobArchive = archiveRS.getBlob("archive");
+	            long length = blobArchive.length(); 
+	            String archive = new String(blobArchive.getBytes(1L, (int)length));                  
                             
-                // Disconnect to the database
-                Spkdb.disconnect(con);
+                    // Disconnect to the database
+                    Spkdb.disconnect(con);
             
-                // Generate version list for the model
-                Archive arch = new Archive("", new ByteArrayInputStream(archive.getBytes())); 
-                int number = arch.getRevisionVersion().last(); 
-                versionList = new String[number][4];
-                for(int i = 0; i < number; i++)
-                {
-                    int n = number - i;
-                    Node node = arch.findNode(new Version("1." + n));  
-                    versionList[i][0] = String.valueOf(n);
-                    versionList[i][1] = node.getAuthor().toString();
-                    versionList[i][2] = node.getDate().toString();
-                    versionList[i][3] = arch.getLog("1." + n);
+                    // Generate version list for the model or the dataset
+                    Archive arch = new Archive("", new ByteArrayInputStream(archive.getBytes())); 
+                    int number = arch.getRevisionVersion().last(); 
+                    versionList = new String[number][4];
+                    for(int i = 0; i < number; i++)
+                    {
+                        int n = number - i;
+                        Node node = arch.findNode(new Version("1." + n));  
+                        versionList[i][0] = String.valueOf(n);
+                        versionList[i][1] = node.getAuthor().toString();
+                        versionList[i][2] = node.getDate().toString();
+                        versionList[i][3] = arch.getLog("1." + n);
+                    }
+                    req.getSession().setAttribute("ARCHIVE", arch);
                 }
-                req.getSession().setAttribute("ARCHIVE", arch);
+                else
+                {
+                    // Write the outgoing messages
+                    messageOut = "Authorization error.";                
+                }
             }
             else
             {
                 // Write the outgoing messages
-                messageOut = "Authentication or Authorization error.";              
+                messageOut = "Authentication error.";              
             }                
         }      
         catch(SQLException e)

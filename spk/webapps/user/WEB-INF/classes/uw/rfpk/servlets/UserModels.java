@@ -18,8 +18,7 @@ import uw.rfpk.beans.UserInfo;
  * the least model_id previously returned.  The fourth String object indicates if it is to 
  * get the model list of the model library.  The servlet calls database API method, userModels,
  * to get model status that includes id, name, newest version number, and abstract
- * of the models.  The servlet puts these data into a String[][] object and saves the user's
- * model id list in the Session object, MODELIDS.
+ * of the models.  The servlet puts these data into a String[][] object.
  * The servlet sends back two objects.  The first object is a String containing the error 
  * message if there is an error or an empty String if there is not any error.  The second 
  * object is the returning data String[][] object.
@@ -89,7 +88,7 @@ public class UserModels extends HttpServlet
                 userRS.next();
                 long userId = userRS.getLong("user_id");
  
-                // Get user jobs
+                // Get user models
                 ResultSet userModelsRS = Spkdb.userModels(con, userId, maxNum, leftOff);  
              
                 // Fill in the List
@@ -105,11 +104,12 @@ public class UserModels extends HttpServlet
                     Archive archive = new Archive("", new ByteArrayInputStream(modelArchive.getBytes()));
                     
                     // Fill in the list 
-                    String[] model = new String[4];
+                    String[] model = new String[5];
                     model[0] = String.valueOf(modelId); 
                     model[1] = userModelsRS.getString("name");
-                    model[2] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
-                    model[3] = userModelsRS.getString("abstract");
+                    model[2] = String.valueOf(archive.getRevisionVersion().last());                    
+                    model[3] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
+                    model[4] = userModelsRS.getString("abstract");
                     modelList.add(model);
                 }
                 
@@ -120,16 +120,9 @@ public class UserModels extends HttpServlet
                 int nModel = modelList.size(); 
                 if(nModel > 0)
                 {
-                    userModels = new String[nModel][4]; 
-                    Vector modelIds = (Vector)req.getSession().getAttribute("MODELIDS");
-                    if(modelIds == null)
-                        modelIds = new Vector();              
+                    userModels = new String[nModel][5]; 
                     for(int i = 0; i < nModel; i++)
-                    {
-                        userModels[i] = (String[])modelList.get(i);
-                        modelIds.add(userModels[i][0]); 
-                    }
-                    req.getSession().setAttribute("MODELIDS", modelIds);                    
+                        userModels[i] = (String[])modelList.get(i);                     
                 }
                 else
                     messageOut = "No model was found in the database";

@@ -11,13 +11,13 @@ import java.util.Properties;
 import java.text.SimpleDateFormat;
 import uw.rfpk.beans.UserInfo;
 
-/** This servlet receives a String array containing three String objects from the client.
+/** This servlet receives a String array containing four String objects from the client.
  * The first String object is the secret code to identify the client.  The second String  
  * object is the maximum number of jobs to provide status for.  The third String object is
- * the least job_id previously returned.  The servlet calls database API method, userJobs,
+ * the least job_id previously returned.  The fourth String object is a flag that specified 
+ * if this call is from a library patron.  The servlet calls database API method, userJobs,
  * to get job status that includes id, start_time, state_code, end-cod and abstract
- * of the jobs.  The servlet puts these data into a String[][] object and saves the user's
- * job id list in the Session object, JOBIDS.
+ * of the jobs.  The servlet puts these data into a String[][] object.
  * The servlet sends back two objects.  The first object is a String containing the error 
  * message if there is an error or an empty String if there is not any error.  The second 
  * object is the returning data String[][] object.
@@ -63,18 +63,6 @@ public class UserJobs extends HttpServlet
         // Prepare for the return
         Vector jobList = new Vector();
  
-        // Set state_code conversion
-        Properties state = new Properties();
-        String[] code = {"q2c", "cmp", "q2r", "run", "end"};
-        String[] name = {"Queued to compile", "Compiling", "Queued to run", "Running", "End"};
-        for(int j = 0; j < 5; j++)
-            state.setProperty(code[j], name[j]); 
-         
-        // Set end_code conversion
-        Properties end = new Properties();
-        end.setProperty("cerr", "Error found");
-        end.setProperty("srun", "Job finished");
-         
         try
         {
             // Read the data from the client 
@@ -84,6 +72,8 @@ public class UserJobs extends HttpServlet
             {                        
  	        int maxNum = Integer.parseInt(messageIn[1]); 
                 long leftOff = Long.parseLong(messageIn[2]);
+                if(messageIn[3].equals("true"))
+                    username = "librarian";
                 
                 // Connect to the database
                 ServletContext context = getServletContext();
@@ -99,10 +89,19 @@ public class UserJobs extends HttpServlet
  
                 // Get user jobs
                 ResultSet userJobsRS = Spkdb.userJobs(con, userId, maxNum, leftOff);  
-             
-                // Disconnect to the database
-                Spkdb.disconnect(con);
- 
+                                
+                // Set state_code conversion
+                ResultSet stateRS = Spkdb.getStateTable(con);
+                Properties state = new Properties();                
+                while(stateRS.next())
+                    state.setProperty(stateRS.getString(1), stateRS.getString(2));
+
+                // Set end_code conversion
+                ResultSet endRS = Spkdb.getEndTable(con);                
+                Properties end = new Properties();
+                while(endRS.next())
+                    end.setProperty(endRS.getString(1), endRS.getString(2));
+
                 // Fill in the List
                 SimpleDateFormat formater = new SimpleDateFormat("EEE, MMM, d yyyy 'at' HH:mm:ss z");
                 while(userJobsRS.next())
@@ -122,19 +121,15 @@ public class UserJobs extends HttpServlet
                 int nJob = jobList.size();
                 if(nJob > 0)
                 {
-                    userJobs = new String[nJob][4];    
-                    Vector jobIds = (Vector)req.getSession().getAttribute("JOBIDS");
-                    if(jobIds == null)
-                        jobIds = new Vector(); 
+                    userJobs = new String[nJob][];    
                     for(int i = 0; i < nJob; i++)
-                    {
-                        userJobs[i] = (String[])jobList.get(i); 
-                        jobIds.add(userJobs[i][0]);
-                    }
-                    req.getSession().setAttribute("JOBIDS", jobIds);                    
+                        userJobs[i] = (String[])jobList.get(i);                     
                 }
                 else
                     messageOut = "No job was found in the database";
+                
+                // Disconnect to the database
+                Spkdb.disconnect(con);
             }
             else
             {
