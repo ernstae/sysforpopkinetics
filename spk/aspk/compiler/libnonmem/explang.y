@@ -691,7 +691,7 @@ assignment_stmt :
 
    assert( s != NULL );
    // Don't update the symbol table entry if this assignment statement appears in a conditional block!
-   if( !inConditional )
+   //   if( !inConditional )
      {
        s->dataType  ( lhs_datatype );
        s->objectType( lhs_structure );
@@ -848,9 +848,21 @@ NAME '(' slice ')' {
 
   DOMElement * vector = gSpkExpTree->createElement( X( Symbol::C_VECTOR) );
   vector->setAttribute( X( STR_NAME), X( $1 ) );
-  vector->setAttribute( X( STR_TYPE ), X( Symbol::C_UNKNOWN ) );
-  vector->setAttribute( X( STR_STRUCTURE ), X( Symbol::C_VECTOR ) );
-  vector->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );
+
+  Symbol * s = NULL;
+  if( ( s = gSpkExpSymbolTable->find( $1 ) ) != NULL )
+    {
+      vector->setAttribute( X( STR_TYPE ), X( Symbol::toCString( s->dataType() ) ) );
+    }
+  else
+    {
+      vector->setAttribute( X( STR_TYPE ), X( Symbol::C_UNKNOWN ) );
+    }
+
+  vector->setAttribute( X( STR_STRUCTURE) , $3->node->getAttribute( X( STR_STRUCTURE ) ) );
+  vector->setAttribute( X( STR_SIGN ),      X( Symbol::C_UNKNOWN ) );
+  vector->setAttribute( X( STR_ROWS ),      $3->node->getAttribute( X( STR_ROWS ) ) );
+  vector->setAttribute( X( STR_COLS ),      $3->node->getAttribute( X( STR_COLS ) ) );
 
   vector->appendChild( $3->node );
 
@@ -879,9 +891,65 @@ NAME '(' slice ',' slice ')' {
 
   DOMElement * matrix = gSpkExpTree->createElement( X( Symbol::C_MATRIX ) );
   matrix->setAttribute( X( STR_NAME ), X( $1 ) );
-  matrix->setAttribute( X( STR_TYPE ), X( Symbol::C_UNKNOWN ) );
-  matrix->setAttribute( X( STR_STRUCTURE ), X( Symbol::C_MATRIX ) );
-  matrix->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );
+  // matrix->setAttribute( X( STR_TYPE ), X( Symbol::C_UNKNOWN ) );  
+  // matrix->setAttribute( X( STR_STRUCTURE ), X( Symbol::C_MATRIX ) );
+  // matrix->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );
+
+  Symbol * s = NULL;
+  if( ( s = gSpkExpSymbolTable->find( $1 ) ) != NULL )
+    {
+      matrix->setAttribute( X( STR_TYPE ), X( Symbol::toCString( s->dataType() ) ) );
+    }
+  else
+    {
+      matrix->setAttribute( X( STR_TYPE ), X( Symbol::C_UNKNOWN ) );
+    }
+
+  if( XMLString::equals( $3->node->getAttribute( X( STR_STRUCTURE ) ), X( Symbol::C_SCALAR ) ) )
+    {
+      if( XMLString::equals( $5->node->getAttribute( X( STR_STRUCTURE ) ), X( Symbol::C_SCALAR ) ) )
+	{
+	  matrix->setAttribute( X( STR_STRUCTURE), X( Symbol::C_SCALAR ) );
+	  matrix->setAttribute( X( STR_ROWS ),     X( "1" ) );
+	  matrix->setAttribute( X( STR_COLS ),     X( "1" ) );
+	}
+      else if(  XMLString::equals( $5->node->getAttribute( X( STR_STRUCTURE ) ), X( Symbol::C_VECTOR ) ) )
+	{
+	  // The 1st is a scalar and the 2nd slice is a vector, 
+	  //which means the column selection is vectorized.
+	  matrix->setAttribute( X( STR_STRUCTURE), X( Symbol::C_VECTOR ) );
+	  matrix->setAttribute( X( STR_ROWS ),     X( "1" ) );
+	  matrix->setAttribute( X( STR_COLS ),     $5->node->getAttribute( X( STR_ROWS ) ) );
+	}
+      else
+	{
+	  yyerror( "The return type of \"slice\" should be either scalar or vector" );
+	}
+    }
+  else if( XMLString::equals( $3->node->getAttribute( X( STR_STRUCTURE ) ), X( Symbol::C_VECTOR ) ) )
+    {
+      if( XMLString::equals( $5->node->getAttribute( X( STR_STRUCTURE ) ), X( Symbol::C_SCALAR ) ) )
+	{
+	  matrix->setAttribute( X( STR_STRUCTURE), X( Symbol::C_SCALAR ) );
+	  matrix->setAttribute( X( STR_ROWS ),     $5->node->getAttribute( X( STR_ROWS ) ) );
+	  matrix->setAttribute( X( STR_COLS ),     X( "1" ) );
+	}
+      else if(  XMLString::equals( $5->node->getAttribute( X( STR_STRUCTURE ) ), X( Symbol::C_VECTOR ) ) )
+	{
+	  matrix->setAttribute( X( STR_STRUCTURE), X( Symbol::C_VECTOR ) );
+	  matrix->setAttribute( X( STR_ROWS ),     $5->node->getAttribute( X( STR_ROWS ) ) );
+	  matrix->setAttribute( X( STR_COLS ),     $5->node->getAttribute( X( STR_ROWS ) ) );
+	}
+      else
+	{
+	  yyerror( "The return type of \"slice\" should be either scalar or vector" );
+	}
+    } 
+  else
+    {
+      yyerror( "The return type of \"slice\" should be either scalar or vector" );
+    }
+  matrix->setAttribute( X( STR_SIGN ),      X( Symbol::C_UNKNOWN ) );
 
   matrix->appendChild( $3->node );
   matrix->appendChild( $5->node );
@@ -927,6 +995,11 @@ int_expr {
   DOMElement * index_expr = gSpkExpTree->createElement( X( STR_INDEX ) );
 
   index_expr->appendChild( $1->node );
+  index_expr->setAttribute( X( STR_TYPE ), X( Symbol::C_UNKNOWN ) );
+  index_expr->setAttribute( X( STR_STRUCTURE ), X( Symbol::C_SCALAR ) ) ;
+  index_expr->setAttribute( X( STR_ROWS ), X( "1" ) );
+  index_expr->setAttribute( X( STR_COLS ), X( "1" ) );
+  index_expr->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );
 
   struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
   carrier->node = index_expr;
@@ -961,6 +1034,12 @@ start_subscript ':' end_subscript {
   mySlice->appendChild( myEnd );
   mySlice->appendChild( myStride );
 
+  mySlice->setAttribute( X( STR_STRUCTURE ), X( Symbol::C_VECTOR ) );
+  mySlice->setAttribute( X( STR_TYPE ), X( Symbol::C_UNKNOWN ) );
+  mySlice->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );
+  mySlice->setAttribute( X( STR_ROWS ), X( Symbol::C_UNKNOWN ) );
+  mySlice->setAttribute( X( STR_COLS ), X( Symbol::C_UNKNOWN ) );
+
   carrier->node = mySlice;
   $$ = carrier;
 }
@@ -986,6 +1065,12 @@ start_subscript ':' end_subscript ':' stride {
   mySlice->appendChild( myStart );
   mySlice->appendChild( myEnd );
   mySlice->appendChild( myStride );
+
+  mySlice->setAttribute( X( STR_STRUCTURE ), X( Symbol::C_VECTOR ) );
+  mySlice->setAttribute( X( STR_TYPE ), X( Symbol::C_UNKNOWN ) );
+  mySlice->setAttribute( X( STR_SIGN ), X( Symbol::C_UNKNOWN ) );
+  mySlice->setAttribute( X( STR_ROWS ), X( Symbol::C_UNKNOWN ) );
+  mySlice->setAttribute( X( STR_COLS ), X( Symbol::C_UNKNOWN ) );
 
   carrier->node = mySlice;
   $$ = carrier;
