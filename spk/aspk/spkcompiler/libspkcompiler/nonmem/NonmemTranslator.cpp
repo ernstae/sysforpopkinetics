@@ -343,17 +343,11 @@ void NonmemTranslator::parseSource()
 void NonmemTranslator::generateMakefile() const
 {
   ofstream oMake( fMakefile );
-  if( oMake.good() )
-    {
-      oMake << "driver : driver.cpp Pred.h DataSet.h IndData.h" << endl;
-      oMake << "\tg++ -g driver.cpp -o driver ";
-      oMake << "-lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm";
-      oMake << endl;
-    }
-  else
-    {
-      assert( false );
-    }
+  assert( oMake.good() );
+  oMake << "driver : driver.cpp Pred.h DataSet.h IndData.h" << endl;
+  oMake << "\tg++ -g driver.cpp -o driver ";
+  oMake << "-lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm";
+  oMake << endl;
   oMake.close();
   return;
 }
@@ -373,16 +367,13 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   assert( pop_analysis->hasAttribute( X_APPROXIMATION ) );
   const XMLCh * xml_approx = pop_analysis->getAttribute( X_APPROXIMATION );
 
+  assert( XMLString::equals( xml_approx, X_FO ) || XMLString::equals( xml_approx, X_FOCE ) || XMLString::equals( xml_approx, X_LAPLACE ) );
   if( XMLString::equals( xml_approx, X_FO ) )
     myApproximation = FO;
   else if( XMLString::equals( xml_approx, X_FOCE ) )
     myApproximation = FOCE;
-  else if( XMLString::equals( xml_approx, X_LAPLACE ) )
-    myApproximation = LAPLACE;
-  else
-    {
-      assert( false );
-    }
+  else //( XMLString::equals( xml_approx, X_LAPLACE ) )
+    myApproximation = LAPLACE;  
 
   //
   // Finding out the population size
@@ -391,7 +382,10 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   const XMLCh * xml_pop_size = pop_analysis->getAttribute( X_POP_SIZE );
   if( !XMLString::textToBin( xml_pop_size, myPopSize ) )
     {
-      assert( false );
+      fprintf( stderr, 
+	       "Failed to evaluate XMLString::textToBin( %s, myPopSize )\n",
+	       XMLString::transcode(xml_pop_size) );
+      abort();
     }
 
   //
@@ -475,7 +469,10 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   myThetaLen = 0;
   if( !XMLString::textToBin( xml_theta_len, myThetaLen ) )
     {
-      assert( myThetaLen > 0 );
+      fprintf( stderr, 
+	       "XMLString::textToBin( %s, myThetaLen ) returned false.\n", 
+	       XMLString::transcode( xml_theta_len ) );
+      abort();
     }
   Symbol * sym_theta = table->insertNMVector( "THETA", myThetaLen );
   {
@@ -570,23 +567,26 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   const XMLCh* xml_omega_dim = omega->getAttribute( X_DIMENSION );
   if( !XMLString::textToBin( xml_omega_dim, myOmegaDim ) )
     {
-      assert( myOmegaDim > 0 );
+      fprintf( stderr, 
+	       "XMLString::textToBin( %s, myOmegaDim ) returned false.\n", 
+	       XMLString::transcode( xml_omega_dim ) );
+      abort();
     }
 
   assert( omega->hasAttribute( X_STRUCT ) );
   const XMLCh* xml_omega_struct = omega->getAttribute( X_STRUCT );
+  assert( XMLString::equals( xml_omega_struct, X_DIAGONAL ) || XMLString::equals( xml_omega_struct, X_BLOCK ) );
   if( XMLString::equals( xml_omega_struct, X_DIAGONAL ) )
     {
       myOmegaStruct = Symbol::DIAGONAL;
       myOmegaElemNum = myOmegaDim;
     }
-  else if( XMLString::equals( xml_omega_struct, X_BLOCK ) )
+  else //( XMLString::equals( xml_omega_struct, X_BLOCK ) )
     {
       myOmegaStruct = Symbol::TRIANGLE;
       myOmegaElemNum = series( 1, 1, myOmegaDim );
     }
-  else
-    assert( false );
+
   Symbol * sym_omega = table->insertNMMatrix( "OMEGA", myOmegaStruct, myOmegaDim );
   {
     //<in>
@@ -630,23 +630,25 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   const XMLCh* xml_sigma_dim = sigma->getAttribute( X_DIMENSION );
   if( !XMLString::textToBin( xml_sigma_dim, mySigmaDim ) )
     {
-      assert( mySigmaDim > 0 );
+      fprintf( stderr, 
+	       "XMLString::textToBin( %s, mySigmaDim ) returned false.\n", 
+	       XMLString::transcode( xml_sigma_dim ) );
+      abort();
     }
 
   assert( sigma->hasAttribute( X_STRUCT ) );
   const XMLCh* xml_sigma_struct = sigma->getAttribute( X_STRUCT );
+  assert( XMLString::equals( xml_sigma_struct, X_DIAGONAL ) || XMLString::equals( xml_sigma_struct, X_BLOCK ) );
   if( XMLString::equals( xml_sigma_struct, X_DIAGONAL ) )
     {
       mySigmaStruct = Symbol::DIAGONAL;
       mySigmaElemNum = mySigmaDim;
     }
-  else if( XMLString::equals( xml_sigma_struct, X_BLOCK ) )
+  else //( XMLString::equals( xml_sigma_struct, X_BLOCK ) )
     {
       mySigmaStruct = Symbol::TRIANGLE;
       mySigmaElemNum = series( 1, 1, mySigmaDim );
     }
-  else
-    assert( false );
 
   Symbol * sym_sigma = table->insertNMMatrix( "SIGMA", mySigmaStruct, mySigmaDim ); 
   {
@@ -724,7 +726,9 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       const XMLCh* xml_seed = simulation->getAttribute( X_SEED );
       if( !XMLString::textToBin( xml_seed, mySeed ) )
 	{
-	  assert( false );
+	  fprintf( stderr, "XMLString::textToBin( %s, mySeed ) returned false.\n", 
+		   XMLString::transcode(xml_seed) );
+	  abort();
 	}
     }
   
@@ -868,7 +872,9 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   myThetaLen = 0;
   if( !XMLString::textToBin( xml_theta_len, myThetaLen ) )
     {
-      assert( myThetaLen > 0 );
+      fprintf( stderr, "XMLString::textToBin( %s, myThetaLen ) returned false.\n", 
+	       XMLString::transcode( xml_theta_len ) );
+      abort();
     }
   Symbol * sym_theta = table->insertNMVector( "THETA", myThetaLen );
   {
@@ -964,22 +970,24 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   assert( XMLString::stringLen( xml_omega_dim ) > 0 );
   if( !XMLString::textToBin( xml_omega_dim, myOmegaDim ) )
     {
-      assert( myOmegaDim > 0 );
+      fprintf( stderr, "XMLString::textToBin( %s, myOmegaDim ) returned false.\n", 
+	       XMLString::transcode(xml_omega_dim) );
+      abort();
     }
   const XMLCh* xml_omega_struct = omega->getAttribute( X_STRUCT );
   assert( XMLString::stringLen( xml_omega_struct ) > 0 );
+  assert( XMLString::equals( xml_omega_struct, X_DIAGONAL ) || XMLString::equals( xml_omega_struct, X_BLOCK ) );
   if( XMLString::equals( xml_omega_struct, X_DIAGONAL ) )
     {
       myOmegaStruct = Symbol::DIAGONAL;
       myOmegaElemNum = myOmegaDim;
     }
-  else if( XMLString::equals( xml_omega_struct, X_BLOCK ) )
+  else //( XMLString::equals( xml_omega_struct, X_BLOCK ) )
     {
       myOmegaStruct = Symbol::TRIANGLE;
       myOmegaElemNum = series( 1, 1, myOmegaDim );
     }
-  else
-    assert( false );
+
   Symbol * sym_omega = table->insertNMMatrix( "OMEGA", myOmegaStruct, myOmegaDim );
   {
     //<in>
@@ -1039,7 +1047,10 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
       assert( XMLString::stringLen( xml_seed ) > 0 );
       if( !XMLString::textToBin( xml_seed, mySeed ) )
 	{
-	  assert( false );
+	  fprintf( stderr, 
+		   "XMLString::textToBin( %s, mySeed ) returned false.\n", 
+		   XMLString::transcode( xml_seed ) );
+	  abort();
 	}
     }
 
@@ -1120,8 +1131,8 @@ void NonmemTranslator::parsePred( DOMElement * pred )
   }
   catch( ... )
     {
-      cerr << "Fortran to C++ translation failed for some reason." << endl;
-      assert( false );
+      fprintf( stderr, "Fortran to C++ translator, nm_parse(), threw an unknown expection." );
+      abort();
     }
 
   fclose( nm_in );
@@ -1179,237 +1190,233 @@ void NonmemTranslator::generateIndData( ) const
   // to convert a label to the commonly used case.
   //
   ofstream oIndData_h( fIndData_h );
-  if( oIndData_h.good() )
+  assert( oIndData_h.good() );
+  
+  oIndData_h << BURNER << " <" << __FILE__ << ">" << endl;
+  
+  oIndData_h << "#ifndef INDDATA_H" << endl;
+  oIndData_h << "#define INDDATA_H" << endl;
+  oIndData_h << "#include <vector>" << endl;
+  oIndData_h << endl;
+  
+  //-----------------------------------------------
+  // Declaration
+  //-----------------------------------------------
+  oIndData_h << "template <class T>" << endl;
+  oIndData_h << "class IndData{" << endl;
+  
+  //
+  // Public member declaration.
+  //
+  //
+  // A constructor that takes the number of measurements
+  // for this particular set and the data item values
+  // (from the data file) are given as arguments.
+  // 
+  // IndData( int nIn,
+  //          const vector<char*> IDIn,
+  //          const vector<double> d1In,  // data item 1
+  //          const vector<double> d2In,  // data item 2
+  //          ...,
+  //        )
+  // : n(nIn), d1(d1In), d1_alias(d1In), d2(d2In), d2_alias(d2In)...
+  // {...}
+  // 
+  oIndData_h << "public:" << endl;
+  
+  //
+  // Constructor declaration.
+  // The constructor takes a list of valarray objects as arguments.
+  // The arguments are for the variables whose names
+  // are defined as *the data labels* in the NONMEM term.
+  //
+  oIndData_h << "IndData( int nIn";
+  pLabel = labels->begin();
+  for( ; pLabel != labels->end(); pLabel++ )
     {
-      oIndData_h << BURNER << " <" << __FILE__ << ">" << endl;
-
-      oIndData_h << "#ifndef INDDATA_H" << endl;
-      oIndData_h << "#define INDDATA_H" << endl;
-      oIndData_h << "#include <vector>" << endl;
-      oIndData_h << endl;
-
-      //-----------------------------------------------
-      // Declaration
-      //-----------------------------------------------
-      oIndData_h << "template <class T>" << endl;
-      oIndData_h << "class IndData{" << endl;
-
-      //
-      // Public member declaration.
-      //
-      //
-      // A constructor that takes the number of measurements
-      // for this particular set and the data item values
-      // (from the data file) are given as arguments.
-      // 
-      // IndData( int nIn,
-      //          const vector<char*> IDIn,
-      //          const vector<double> d1In,  // data item 1
-      //          const vector<double> d2In,  // data item 2
-      //          ...,
-      //        )
-      // : n(nIn), d1(d1In), d1_alias(d1In), d2(d2In), d2_alias(d2In)...
-      // {...}
-      // 
-      oIndData_h << "public:" << endl;
-
-      //
-      // Constructor declaration.
-      // The constructor takes a list of valarray objects as arguments.
-      // The arguments are for the variables whose names
-      // are defined as *the data labels* in the NONMEM term.
-      //
-      oIndData_h << "IndData( int nIn";
-      pLabel = labels->begin();
-      for( ; pLabel != labels->end(); pLabel++ )
-	{
-          bool isID = ( *pLabel == pID->name );
-	  oIndData_h << "," << endl;
+      bool isID = ( *pLabel == pID->name );
+      oIndData_h << "," << endl;
 	  
-	  //
-	  // If the label is of "ID", then, the data type is char*.
-	  // Otherwise, all others have double precision.
-	  //
-	  oIndData_h << '\t' << "const std::vector<" << (isID? "char*":"T") << ">";
-          oIndData_h << " & " << SymbolTable::key( *pLabel ) << "In";
-	}
-      oIndData_h << ");" << endl;
-      oIndData_h << endl;
-
-      // 
-      // Declare the data item labels (from the data file) and their
-      // corresponding synonyms if they have.  They are all have double
-      // precision except for the ID data item which has char* type.
       //
-      for( pRawTable=rawTable->begin(); pRawTable != rawTable->end(); pRawTable++ )
-      {
-         const string varName         = pRawTable->second.name;
-         const string varAlias        = pRawTable->second.synonym;
-         const string keyVarName      = SymbolTable::key( varName );
-         const string keyVarAlias     = SymbolTable::key( varAlias );
-         enum Symbol::SymbolType type = pRawTable->second.symbol_type;
-         if( type == Symbol::DATALABEL )
-         {
-            bool isID = ( varName==pID->name? true : false );
-            oIndData_h << "const std::vector<" << (isID? "char *" : "T") << ">";
-            oIndData_h << " " << keyVarName << ";" << endl;
-            if( varAlias != "" )
-            {
-               isID = ( varAlias == pID->name? true : false );
-               oIndData_h << "const std::vector<" << (isID? "char" : "T") << ">";
-               oIndData_h << " " << keyVarAlias << ";" << endl;
-            }
-         }
-         else //if( type == Symbol::USERDEF || type == Symbol::NONMEMDEF )
-         {
-            oIndData_h << "std::vector<T> " << keyVarName << ";" << endl;
-         }
-      }
-      string synonym;
-      oIndData_h << endl;
-      oIndData_h << "~IndData();" << endl;
-
-      // 
-      // Protected member declarations.
+      // If the label is of "ID", then, the data type is char*.
+      // Otherwise, all others have double precision.
       //
-      // The default and the copy constructors are prohibited.
-      // The assignment is also prohibited.
-      //
-      oIndData_h << "protected:" << endl;
-      oIndData_h << "IndData();" << endl;
-      oIndData_h << "IndData( const IndData& );" << endl;
-      oIndData_h << "IndData& operator=( const IndData& );" << endl;
-      oIndData_h << endl;
-
-      //
-      // Private member declarations.
-      //
-      // const int n: #of measurements in this set (ie. individual).
-      //
-      oIndData_h << "private:" << endl;
-      oIndData_h << "const int n; // #of measurements." << endl;
-
-      oIndData_h << "};" << endl;
-
-
-      //-----------------------------------------------
-      // Definition
-      //-----------------------------------------------
-      //
-      // Definition of the constructor that takes a list of
-      // valarray objects as arguments.
-      // The order must be consistant with the declaration.
-      //
-      oIndData_h << "template <class T>" << endl;
-      oIndData_h << "IndData<T>::IndData( int nIn";
-      pLabel = labels->begin();
-      for( ; pLabel != labels->end(); pLabel++ )
-	{
-          bool isID = ( *pLabel == pID->name );
-	  oIndData_h << "," << endl;
-
-	  //
-	  // If the label string is of "ID", then the data type is char*.
-	  // Othewise, double.
-	  //
-	  oIndData_h << "const std::vector<" << (isID? "char*":"T") << "> ";
-          oIndData_h << "& " << SymbolTable::key( *pLabel ) << "In";
-	}
-      oIndData_h << ")" << endl;
-      oIndData_h << ": n( nIn )";
-
-
-      //
-      // The constructor initialization.
-      // Assign the argument values to the internal valarray variables.
-      // Also assign the same values to equivalent (synonym) variables
-      // if the variable has a synonym defined.
-      //
-      pLabel = labels->begin();
-      for( ; pLabel != labels->end(); pLabel++ )
-	{
-	  const string label_key = SymbolTable::key( *pLabel );
-	  oIndData_h << "," << endl;
-	  oIndData_h << label_key;
-	  oIndData_h << "( " << label_key << "In" << " )";
-
-	  //
-	  // If the label has a synonym, apply the same value to the synonym.
-	  //
-	  if( ( synonym = table->findi( *pLabel )->synonym ) != "" )
-	    {
-	      oIndData_h << "," << endl;
-	      oIndData_h << SymbolTable::key( synonym );
-	      oIndData_h << "( " << label_key << "In" << " )";
-	    }
-	}
-
-      //
-      // The constructor body.
-      // Initialize the sizes of the user defined variables that
-      // appear in the model definition.
-      // We don't know the values yet, so just assign the size,
-      // which is the same as the number of data records for a subject.
-      //
-      // These arrays will be internally (ie. PRED routine) used to store 
-      // intermediate values.  The intermediate values are
-      // returned to the user for tabular display or plot display.
-      // They need corresponding shadow placeholders so that
-      // if an iteration fails, the system can return the previously
-      // successfully computed values.
-      //
-      const string sTHETA = SymbolTable::key( table->findi("theta")->name );
-      const string sETA   = SymbolTable::key( table->findi("eta")->name );
-      const string sEPS   = SymbolTable::key( table->findi("eps")->name );
-      const string sOMEGA = ( table->findi("omega")->name );
-      const string sSIGMA = ( table->findi("sigma")->name );
-      pRawTable = rawTable->begin();
-      for( ; pRawTable != rawTable->end(); pRawTable++ )
-	{
-	  const string key = SymbolTable::key( pRawTable->second.name );
-	  //
-	  // The place holders for completed values.
-	  //
-	  if( key == sTHETA )
-	    oIndData_h << "," << endl << key << "( " << myThetaLen << " )";
-	  else if( key == sOMEGA )
-	    oIndData_h << "," << endl << key << "( " << myOmegaElemNum << " )";
-	  else if( key == sSIGMA )
-	    oIndData_h << "," << endl << key << "( " << mySigmaElemNum << " )";
-	  else if( key == sETA )
-	    oIndData_h << "," << endl << key << "( " << myEtaLen << " )";
-	  else if( key == sEPS )
-	    oIndData_h << "," << endl << key << "( " << myEpsLen << " )";
-	  else if( find( labels->begin(), labels->end(), pRawTable->second.name ) 
-	      == labels->end() )
-	    {
-	      oIndData_h << "," << endl << key << "( nIn )";
-	    }
-	}
-
-      oIndData_h << endl;
-      oIndData_h << "{" << endl;
-      oIndData_h << "}" << endl;
-
-      oIndData_h << endl;
-      oIndData_h << "template <class T>" << endl;
-      oIndData_h << "IndData<T>::~IndData(){}" << endl;
-
-      oIndData_h << "template <class T>" << endl;
-      oIndData_h << "IndData<T>::IndData(){}" << endl;
-
-      oIndData_h << "template <class T>" << endl;
-      oIndData_h << "IndData<T>::IndData( const IndData<T>& ){}" << endl;
-
-      oIndData_h << "template <class T>" << endl;
-      oIndData_h << "IndData<T>& IndData<T>::operator=( const IndData<T>& ){}" << endl;
-
-      oIndData_h << "#endif" << endl;
+      oIndData_h << '\t' << "const std::vector<" << (isID? "char*":"T") << ">";
+      oIndData_h << " & " << SymbolTable::key( *pLabel ) << "In";
     }
-    else
+  oIndData_h << ");" << endl;
+  oIndData_h << endl;
+
+  // 
+  // Declare the data item labels (from the data file) and their
+  // corresponding synonyms if they have.  They are all have double
+  // precision except for the ID data item which has char* type.
+  //
+  for( pRawTable=rawTable->begin(); pRawTable != rawTable->end(); pRawTable++ )
     {
-      assert( false );
+      const string varName         = pRawTable->second.name;
+      const string varAlias        = pRawTable->second.synonym;
+      const string keyVarName      = SymbolTable::key( varName );
+      const string keyVarAlias     = SymbolTable::key( varAlias );
+      enum Symbol::SymbolType type = pRawTable->second.symbol_type;
+      if( type == Symbol::DATALABEL )
+	{
+	  bool isID = ( varName==pID->name? true : false );
+	  oIndData_h << "const std::vector<" << (isID? "char *" : "T") << ">";
+	  oIndData_h << " " << keyVarName << ";" << endl;
+	  if( varAlias != "" )
+            {
+	      isID = ( varAlias == pID->name? true : false );
+	      oIndData_h << "const std::vector<" << (isID? "char" : "T") << ">";
+	      oIndData_h << " " << keyVarAlias << ";" << endl;
+            }
+	}
+      else //if( type == Symbol::USERDEF || type == Symbol::NONMEMDEF )
+	{
+	  oIndData_h << "std::vector<T> " << keyVarName << ";" << endl;
+	}
     }
+  string synonym;
+  oIndData_h << endl;
+  oIndData_h << "~IndData();" << endl;
+
+  // 
+  // Protected member declarations.
+  //
+  // The default and the copy constructors are prohibited.
+  // The assignment is also prohibited.
+  //
+  oIndData_h << "protected:" << endl;
+  oIndData_h << "IndData();" << endl;
+  oIndData_h << "IndData( const IndData& );" << endl;
+  oIndData_h << "IndData& operator=( const IndData& );" << endl;
+  oIndData_h << endl;
+
+  //
+  // Private member declarations.
+  //
+  // const int n: #of measurements in this set (ie. individual).
+  //
+  oIndData_h << "private:" << endl;
+  oIndData_h << "const int n; // #of measurements." << endl;
+
+  oIndData_h << "};" << endl;
+
+
+  //-----------------------------------------------
+  // Definition
+  //-----------------------------------------------
+  //
+  // Definition of the constructor that takes a list of
+  // valarray objects as arguments.
+  // The order must be consistant with the declaration.
+  //
+  oIndData_h << "template <class T>" << endl;
+  oIndData_h << "IndData<T>::IndData( int nIn";
+  pLabel = labels->begin();
+  for( ; pLabel != labels->end(); pLabel++ )
+    {
+      bool isID = ( *pLabel == pID->name );
+      oIndData_h << "," << endl;
+
+      //
+      // If the label string is of "ID", then the data type is char*.
+      // Othewise, double.
+      //
+      oIndData_h << "const std::vector<" << (isID? "char*":"T") << "> ";
+      oIndData_h << "& " << SymbolTable::key( *pLabel ) << "In";
+    }
+  oIndData_h << ")" << endl;
+  oIndData_h << ": n( nIn )";
+
+
+  //
+  // The constructor initialization.
+  // Assign the argument values to the internal valarray variables.
+  // Also assign the same values to equivalent (synonym) variables
+  // if the variable has a synonym defined.
+  //
+  pLabel = labels->begin();
+  for( ; pLabel != labels->end(); pLabel++ )
+    {
+      const string label_key = SymbolTable::key( *pLabel );
+      oIndData_h << "," << endl;
+      oIndData_h << label_key;
+      oIndData_h << "( " << label_key << "In" << " )";
+
+      //
+      // If the label has a synonym, apply the same value to the synonym.
+      //
+      if( ( synonym = table->findi( *pLabel )->synonym ) != "" )
+	{
+	  oIndData_h << "," << endl;
+	  oIndData_h << SymbolTable::key( synonym );
+	  oIndData_h << "( " << label_key << "In" << " )";
+	}
+    }
+
+  //
+  // The constructor body.
+  // Initialize the sizes of the user defined variables that
+  // appear in the model definition.
+  // We don't know the values yet, so just assign the size,
+  // which is the same as the number of data records for a subject.
+  //
+  // These arrays will be internally (ie. PRED routine) used to store 
+  // intermediate values.  The intermediate values are
+  // returned to the user for tabular display or plot display.
+  // They need corresponding shadow placeholders so that
+  // if an iteration fails, the system can return the previously
+  // successfully computed values.
+  //
+  const string sTHETA = SymbolTable::key( table->findi("theta")->name );
+  const string sETA   = SymbolTable::key( table->findi("eta")->name );
+  const string sEPS   = SymbolTable::key( table->findi("eps")->name );
+  const string sOMEGA = ( table->findi("omega")->name );
+  const string sSIGMA = ( table->findi("sigma")->name );
+  pRawTable = rawTable->begin();
+  for( ; pRawTable != rawTable->end(); pRawTable++ )
+    {
+      const string key = SymbolTable::key( pRawTable->second.name );
+      //
+      // The place holders for completed values.
+      //
+      if( key == sTHETA )
+	oIndData_h << "," << endl << key << "( " << myThetaLen << " )";
+      else if( key == sOMEGA )
+	oIndData_h << "," << endl << key << "( " << myOmegaElemNum << " )";
+      else if( key == sSIGMA )
+	oIndData_h << "," << endl << key << "( " << mySigmaElemNum << " )";
+      else if( key == sETA )
+	oIndData_h << "," << endl << key << "( " << myEtaLen << " )";
+      else if( key == sEPS )
+	oIndData_h << "," << endl << key << "( " << myEpsLen << " )";
+      else if( find( labels->begin(), labels->end(), pRawTable->second.name ) 
+	       == labels->end() )
+	{
+	  oIndData_h << "," << endl << key << "( nIn )";
+	}
+    }
+
+  oIndData_h << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "}" << endl;
+
+  oIndData_h << endl;
+  oIndData_h << "template <class T>" << endl;
+  oIndData_h << "IndData<T>::~IndData(){}" << endl;
+
+  oIndData_h << "template <class T>" << endl;
+  oIndData_h << "IndData<T>::IndData(){}" << endl;
+
+  oIndData_h << "template <class T>" << endl;
+  oIndData_h << "IndData<T>::IndData( const IndData<T>& ){}" << endl;
+
+  oIndData_h << "template <class T>" << endl;
+  oIndData_h << "IndData<T>& IndData<T>::operator=( const IndData<T>& ){}" << endl;
+
+  oIndData_h << "#endif" << endl;
+
   oIndData_h.close();
 }
 void NonmemTranslator::generateDataSet( ) const
@@ -1441,169 +1448,164 @@ void NonmemTranslator::generateDataSet( ) const
   //  const Symbol* pID = table->findi("id");
   //
   ofstream oDataSet_h( fDataSet_h );
-  if( oDataSet_h.good() )
-    {
-      oDataSet_h << BURNER << " <" << __FILE__ << ">" << endl;
+  assert( oDataSet_h.good() );
 
-      oDataSet_h << "#ifndef DATASET_H" << endl;
-      oDataSet_h << "#define DATASET_H" << endl;
+  oDataSet_h << BURNER << " <" << __FILE__ << ">" << endl;
 
-      oDataSet_h << "#include <vector>" << endl;
-      oDataSet_h << "#include \"IndData.h\"" << endl;
-      oDataSet_h << endl;
+  oDataSet_h << "#ifndef DATASET_H" << endl;
+  oDataSet_h << "#define DATASET_H" << endl;
 
-      //-----------------------------------------------
-      // Declaration
-      //-----------------------------------------------
-      oDataSet_h << "template <class T>" << endl;
-      oDataSet_h << "class DataSet" << endl;
-      oDataSet_h << "{" << endl;
+  oDataSet_h << "#include <vector>" << endl;
+  oDataSet_h << "#include \"IndData.h\"" << endl;
+  oDataSet_h << endl;
+
+  //-----------------------------------------------
+  // Declaration
+  //-----------------------------------------------
+  oDataSet_h << "template <class T>" << endl;
+  oDataSet_h << "class DataSet" << endl;
+  oDataSet_h << "{" << endl;
       
-      //
-      // public member declarations
-      //
-      // The default constructor initializes the entire data set
-      // internally.
-      //
-      // vector<IndData<T>*> data: The entire data set.
-      // const int popSize:      : The number of individuals in the population.
-      oDataSet_h << "public:" << endl;
-      oDataSet_h << "DataSet();" << endl;
-      oDataSet_h << "~DataSet();" << endl;
-      oDataSet_h << endl;
+  //
+  // public member declarations
+  //
+  // The default constructor initializes the entire data set
+  // internally.
+  //
+  // vector<IndData<T>*> data: The entire data set.
+  // const int popSize:      : The number of individuals in the population.
+  oDataSet_h << "public:" << endl;
+  oDataSet_h << "DataSet();" << endl;
+  oDataSet_h << "~DataSet();" << endl;
+  oDataSet_h << endl;
 
-      oDataSet_h << "std::vector<IndData<T>*> data;" << endl;
-      oDataSet_h << "const int popSize;" << endl;
-      oDataSet_h << endl;
+  oDataSet_h << "std::vector<IndData<T>*> data;" << endl;
+  oDataSet_h << "const int popSize;" << endl;
+  oDataSet_h << endl;
 
-      //
-      // protected member declarations
-      //
-      // The copy constructor and the assigment operator are 
-      // prohibited in use.
-      //
-      oDataSet_h << "protected:" << endl;
-      oDataSet_h << "DataSet( const DataSet& );" << endl;
-      oDataSet_h << "DataSet& operator=( const DataSet& );" << endl;
-      oDataSet_h << endl;
+  //
+  // protected member declarations
+  //
+  // The copy constructor and the assigment operator are 
+  // prohibited in use.
+  //
+  oDataSet_h << "protected:" << endl;
+  oDataSet_h << "DataSet( const DataSet& );" << endl;
+  oDataSet_h << "DataSet& operator=( const DataSet& );" << endl;
+  oDataSet_h << endl;
 
-      oDataSet_h << "};" << endl;
+  oDataSet_h << "};" << endl;
 
 
-      //-----------------------------------------------
-      // Definition
-      //-----------------------------------------------
+  //-----------------------------------------------
+  // Definition
+  //-----------------------------------------------
        
-      //
-      // The constructor
-      //
-      // Initialize the class member variables.
-      //
-      oDataSet_h << "template <class T>" << endl;
-      oDataSet_h << "DataSet<T>::DataSet()" << endl;
-      oDataSet_h << ": data(" << myPopSize << ")," << endl;
-      oDataSet_h << "  popSize( " << myPopSize << " )" << endl;
-      oDataSet_h << "{" << endl;
+  //
+  // The constructor
+  //
+  // Initialize the class member variables.
+  //
+  oDataSet_h << "template <class T>" << endl;
+  oDataSet_h << "DataSet<T>::DataSet()" << endl;
+  oDataSet_h << ": data(" << myPopSize << ")," << endl;
+  oDataSet_h << "  popSize( " << myPopSize << " )" << endl;
+  oDataSet_h << "{" << endl;
       
-      // Initialize the entire data set.
-      for( int who=0; who < myPopSize; who++ )
+  // Initialize the entire data set.
+  for( int who=0; who < myPopSize; who++ )
+    {
+      char c_who[256];
+      sprintf( c_who, "%d", who );
+      int nRecords = pID->initial[who].size();
+      const string id = pID->initial[who][0];
+
+      //
+      // The order in which the labels appear must be consistent
+      // with the order in the constructor declaration.
+      // By using the iterator in both places, here and up there,
+      // they shall match.  However, this should be tested in
+      // the corresponding unit tests.
+      //
+      oDataSet_h << "//------------------------------------" << endl;
+      oDataSet_h << "// Subject <" << id << "> " << endl;
+      oDataSet_h << "// # of sampling points = " << nRecords << endl;
+      oDataSet_h << "//------------------------------------" << endl;
+	  
+      //
+      // Initialize C arrays with data values.
+      // The C arrays are passed to the valarray's constructor.
+      //
+      pLabel = labels->begin();
+      for( int i=0; pLabel != labels->end(), i<nLabels; i++, pLabel++ )
 	{
-          char c_who[256];
-          sprintf( c_who, "%d", who );
-          int nRecords = pID->initial[who].size();
-          const string id = pID->initial[who][0];
+	  const Symbol * s = table->findi( *pLabel );
+	  bool isID = (*pLabel == pID->name);
+	  string carray_name   = SymbolTable::key( s->name ) + "_" + c_who + "_c";
+	  string valarray_name = SymbolTable::key( s->name ) + "_" + c_who;
 
-          //
-          // The order in which the labels appear must be consistent
-          // with the order in the constructor declaration.
-          // By using the iterator in both places, here and up there,
-          // they shall match.  However, this should be tested in
-          // the corresponding unit tests.
-          //
-          oDataSet_h << "//------------------------------------" << endl;
-          oDataSet_h << "// Subject <" << id << "> " << endl;
-	  oDataSet_h << "// # of sampling points = " << nRecords << endl;
-          oDataSet_h << "//------------------------------------" << endl;
-	  
-	  //
-	  // Initialize C arrays with data values.
-	  // The C arrays are passed to the valarray's constructor.
-	  //
-	  pLabel = labels->begin();
-	  for( int i=0; pLabel != labels->end(), i<nLabels; i++, pLabel++ )
+	  oDataSet_h << (isID? "char*":"T") << " " << carray_name << "[] = { ";
+	  for( int j=0; j<nRecords; j++ )
 	    {
-	      const Symbol * s = table->findi( *pLabel );
-              bool isID = (*pLabel == pID->name);
-              string carray_name   = SymbolTable::key( s->name ) + "_" + c_who + "_c";
-              string valarray_name = SymbolTable::key( s->name ) + "_" + c_who;
-
-              oDataSet_h << (isID? "char*":"T") << " " << carray_name << "[] = { ";
-	      for( int j=0; j<nRecords; j++ )
-		{
-		  if( j > 0 )
-		    oDataSet_h << ", ";
-                  if( *pLabel == pID->name )
-                     oDataSet_h << "\"" << s->initial[who][j] << "\"";
-                  else
-		     oDataSet_h << s->initial[who][j];
-		}
-	      oDataSet_h << " };" << endl;
-	      oDataSet_h << "std::vector<" << (isID? "char*":"T") << "> ";
-              oDataSet_h << valarray_name;
-	      // oDataSet_h << "(" << carray_name << ", " << nRecords << ");" << endl;
-	      oDataSet_h << "( " << nRecords << " );" << endl;
-              oDataSet_h << "copy( " << carray_name << ", " << carray_name << "+" << nRecords;
-              oDataSet_h << ", " << valarray_name << ".begin() );" << endl;
-	    }
-
-	  //
-	  // Create an IndData object.  The order in which the arguments
-	  // are passed to the IndData constructor must be strictly
-	  // compliant to the order in which the label strings are stored
-	  // in the list returned by SymbolTable::getLabels().
-	  //
-	  oDataSet_h << "data[" << who << "] = new IndData<T>";
-          oDataSet_h << "( " << nRecords << ", ";
-	  pLabel = labels->begin();
-	  for( int i=0; pLabel != labels->end(), i<nLabels; i++, pLabel++ )
-	    {
-	      if( i>0 )
+	      if( j > 0 )
 		oDataSet_h << ", ";
-	      const Symbol * s = table->findi( *pLabel );
-              string array_name = SymbolTable::key( s->name ) + "_" + c_who;
-              oDataSet_h << array_name;
+	      if( *pLabel == pID->name )
+		oDataSet_h << "\"" << s->initial[who][j] << "\"";
+	      else
+		oDataSet_h << s->initial[who][j];
 	    }
-	  
-	  oDataSet_h << " );" << endl;
-          oDataSet_h << endl;
+	  oDataSet_h << " };" << endl;
+	  oDataSet_h << "std::vector<" << (isID? "char*":"T") << "> ";
+	  oDataSet_h << valarray_name;
+	  // oDataSet_h << "(" << carray_name << ", " << nRecords << ");" << endl;
+	  oDataSet_h << "( " << nRecords << " );" << endl;
+	  oDataSet_h << "copy( " << carray_name << ", " << carray_name << "+" << nRecords;
+	  oDataSet_h << ", " << valarray_name << ".begin() );" << endl;
 	}
 
-      oDataSet_h << "}" << endl;
-
-      // The destructor
-      // Free memory allocated for the entire data set.
-      oDataSet_h << "template <class T>" << endl;
-      oDataSet_h << "DataSet<T>::~DataSet()" << endl;
-      oDataSet_h << "{" << endl;
-      oDataSet_h << "   const int n = data.size();" << endl;
-      oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
-      oDataSet_h << "   {" << endl;
-      oDataSet_h << "      delete data[i];" << endl;
-      oDataSet_h << "   }" << endl;
-      oDataSet_h << "}" << endl;
-
-      oDataSet_h << "template <class T>" << endl;
-      oDataSet_h << "DataSet<T>::DataSet( const DataSet<T>& ){}" << endl;
-
-      oDataSet_h << "template <class T>" << endl;
-      oDataSet_h << "DataSet<T>& DataSet<T>::operator=( const DataSet<T>& ){}" << endl;
-
-      oDataSet_h << "#endif" << endl;
+      //
+      // Create an IndData object.  The order in which the arguments
+      // are passed to the IndData constructor must be strictly
+      // compliant to the order in which the label strings are stored
+      // in the list returned by SymbolTable::getLabels().
+      //
+      oDataSet_h << "data[" << who << "] = new IndData<T>";
+      oDataSet_h << "( " << nRecords << ", ";
+      pLabel = labels->begin();
+      for( int i=0; pLabel != labels->end(), i<nLabels; i++, pLabel++ )
+	{
+	  if( i>0 )
+	    oDataSet_h << ", ";
+	  const Symbol * s = table->findi( *pLabel );
+	  string array_name = SymbolTable::key( s->name ) + "_" + c_who;
+	  oDataSet_h << array_name;
+	}
+	  
+      oDataSet_h << " );" << endl;
+      oDataSet_h << endl;
     }
-  else
-    {
-      assert( false );
-    }
+
+  oDataSet_h << "}" << endl;
+
+  // The destructor
+  // Free memory allocated for the entire data set.
+  oDataSet_h << "template <class T>" << endl;
+  oDataSet_h << "DataSet<T>::~DataSet()" << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   const int n = data.size();" << endl;
+  oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
+  oDataSet_h << "   {" << endl;
+  oDataSet_h << "      delete data[i];" << endl;
+  oDataSet_h << "   }" << endl;
+  oDataSet_h << "}" << endl;
+
+  oDataSet_h << "template <class T>" << endl;
+  oDataSet_h << "DataSet<T>::DataSet( const DataSet<T>& ){}" << endl;
+
+  oDataSet_h << "template <class T>" << endl;
+  oDataSet_h << "DataSet<T>& DataSet<T>::operator=( const DataSet<T>& ){}" << endl;
+
+  oDataSet_h << "#endif" << endl;
   oDataSet_h.close();
 }
 void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
@@ -1633,364 +1635,359 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   // are both stored in a single file: Pred.h
   // 
   ofstream oPred_h( fPred_h );
-  if( oPred_h.good() )
+  assert( oPred_h.good() );
+
+  // macros and header includes
+  oPred_h << BURNER << endl;
+  oPred_h << "#ifndef PRED_H" << endl;
+  oPred_h << "#define PRED_H" << endl;
+  oPred_h << endl;
+
+  oPred_h << "#include <vector>" << endl;
+  oPred_h << "#include <string>" << endl;
+  oPred_h << "#include <spkpred/PredBase.h>" << endl;
+  oPred_h << "#include <../cppad/CppAD.h>" << endl;
+  oPred_h << "#include \"DataSet.h\"" << endl;
+  oPred_h << endl;
+
+  oPred_h << "const CppAD::AD<double> pow( const CppAD::AD<double>& x, double y )" << endl;
+  oPred_h << "{" << endl;
+  oPred_h << "   return pow( CppAD::Value(x), y );" << endl;
+  oPred_h << "}" << endl;
+  oPred_h << "const CppAD::AD<double> pow( double x, const CppAD::AD<double>& y )" << endl;
+  oPred_h << "{" << endl;
+  oPred_h << "   return pow( x, CppAD::Value(y) );" << endl;
+  oPred_h << "}" << endl;
+  oPred_h << endl;
+      
+  //----------------------------------------------
+  // Declaration
+  //----------------------------------------------
+  oPred_h << "template <class Value>" << endl;
+  oPred_h << "class Pred : public PredBase<Value>" << endl;
+  oPred_h << "{" << endl;
+      
+  //
+  // public interfaces
+  //
+  oPred_h << "public:" << endl;
+
+  // The legal constructor.
+  // This constructor takes a pointer to the DataSet (the set of
+  // all individuals' data).
+  oPred_h << "Pred( const DataSet<Value>* dataIn );" << endl;
+
+  // The destructor.
+  oPred_h << "~Pred();" << endl;
+
+  // Function that retuns the number of the i-th individual's measurments
+  oPred_h << "int getNObservs( int ) const;" << endl;
+
+  // eval(): evaluates PRED.
+  oPred_h << "bool eval( int spk_thetaOffset, int spk_thetaLen," << endl;
+  oPred_h << "           int spk_etaOffset,   int spk_etaLen," << endl;
+  oPred_h << "           int spk_epsOffset,   int spk_epsLen," << endl;
+  oPred_h << "           int spk_fOffset,     int spk_fLen," << endl;
+  oPred_h << "           int spk_yOffset,     int spk_yLen," << endl;
+  oPred_h << "           int spk_i," << endl;
+  oPred_h << "           int spk_j," << endl;
+  oPred_h << "           const std::vector<Value>& spk_indepVar," << endl;
+  oPred_h << "           std::vector<Value>& spk_depVar );" << endl;
+
+  oPred_h << endl;
+
+  //
+  // Protected member declarations.
+  //
+  // Illegal constructors and member functions.
+  //
+  oPred_h << "protected:" << endl;
+  oPred_h << "Pred();" << endl;
+  oPred_h << "Pred( const Pred& );" << endl;
+  oPred_h << "Pred & operator=( const Pred& );" << endl;
+
+  // 
+  // Private member delarations
+  //
+  // const DataSet<T> *perm: A pointer to the read-only data set.
+  // DataSet<T> temp:        The temporary storage for current values
+  // mutable string id:      A place holder for the current ID value
+  // mutable T data_item1:   A place holder for a data item, data_item1
+  // mutable T data_item2:   A place holder fot a data item, data_item2
+  // ...
+  // mutable T user_var1:    A place holder for a user defined variable, user_var1
+  // mutable T user_var2:    A place holder for a user defined variable, user_var2
+  // ...
+  // mutable T NONMEM_var1:  A place holder for a NONMEM required variable
+  // mutable T NONMEM_var1:  A place holder for a NONMEM required variable
+  // ...
+  oPred_h << "private:" << endl;
+  oPred_h << "const int nIndividuals;" << endl;
+  oPred_h << "const DataSet<Value> *perm;" << endl;
+  oPred_h << "DataSet<Value> temp;" << endl;
+  oPred_h << "mutable bool isIterationCompleted;" << endl;
+
+  // Taking care of the data items (from the data file).
+  // Only the "ID" data item values are of type string,
+  // otherwise all numeric, T.
+  const Symbol * pID = table->findi( "id" );
+  pLabel = labels->begin();
+  for( int i=0; i<nLabels, pLabel != labels->end(); i++, pLabel++ )
     {
-      // macros and header includes
-      oPred_h << BURNER << endl;
-      oPred_h << "#ifndef PRED_H" << endl;
-      oPred_h << "#define PRED_H" << endl;
-      oPred_h << endl;
+      bool isID = (*pLabel == pID->name);
 
-      oPred_h << "#include <vector>" << endl;
-      oPred_h << "#include <string>" << endl;
-      oPred_h << "#include <spkpred/PredBase.h>" << endl;
-      oPred_h << "#include <../cppad/CppAD.h>" << endl;
-      oPred_h << "#include \"DataSet.h\"" << endl;
-      oPred_h << endl;
-
-      oPred_h << "const CppAD::AD<double> pow( const CppAD::AD<double>& x, double y )" << endl;
-      oPred_h << "{" << endl;
-      oPred_h << "   return pow( CppAD::Value(x), y );" << endl;
-      oPred_h << "}" << endl;
-      oPred_h << "const CppAD::AD<double> pow( double x, const CppAD::AD<double>& y )" << endl;
-      oPred_h << "{" << endl;
-      oPred_h << "   return pow( x, CppAD::Value(y) );" << endl;
-      oPred_h << "}" << endl;
-      oPred_h << endl;
-      
-      //----------------------------------------------
-      // Declaration
-      //----------------------------------------------
-      oPred_h << "template <class Value>" << endl;
-      oPred_h << "class Pred : public PredBase<Value>" << endl;
-      oPred_h << "{" << endl;
-      
-      //
-      // public interfaces
-      //
-      oPred_h << "public:" << endl;
-
-      // The legal constructor.
-      // This constructor takes a pointer to the DataSet (the set of
-      // all individuals' data).
-      oPred_h << "Pred( const DataSet<Value>* dataIn );" << endl;
-
-      // The destructor.
-      oPred_h << "~Pred();" << endl;
-
-      // Function that retuns the number of the i-th individual's measurments
-      oPred_h << "int getNObservs( int ) const;" << endl;
-
-      // eval(): evaluates PRED.
-      oPred_h << "bool eval( int spk_thetaOffset, int spk_thetaLen," << endl;
-      oPred_h << "           int spk_etaOffset,   int spk_etaLen," << endl;
-      oPred_h << "           int spk_epsOffset,   int spk_epsLen," << endl;
-      oPred_h << "           int spk_fOffset,     int spk_fLen," << endl;
-      oPred_h << "           int spk_yOffset,     int spk_yLen," << endl;
-      oPred_h << "           int spk_i," << endl;
-      oPred_h << "           int spk_j," << endl;
-      oPred_h << "           const std::vector<Value>& spk_indepVar," << endl;
-      oPred_h << "           std::vector<Value>& spk_depVar );" << endl;
-
-      oPred_h << endl;
-
-      //
-      // Protected member declarations.
-      //
-      // Illegal constructors and member functions.
-      //
-      oPred_h << "protected:" << endl;
-      oPred_h << "Pred();" << endl;
-      oPred_h << "Pred( const Pred& );" << endl;
-      oPred_h << "Pred & operator=( const Pred& );" << endl;
-
-      // 
-      // Private member delarations
-      //
-      // const DataSet<T> *perm: A pointer to the read-only data set.
-      // DataSet<T> temp:        The temporary storage for current values
-      // mutable string id:      A place holder for the current ID value
-      // mutable T data_item1:   A place holder for a data item, data_item1
-      // mutable T data_item2:   A place holder fot a data item, data_item2
-      // ...
-      // mutable T user_var1:    A place holder for a user defined variable, user_var1
-      // mutable T user_var2:    A place holder for a user defined variable, user_var2
-      // ...
-      // mutable T NONMEM_var1:  A place holder for a NONMEM required variable
-      // mutable T NONMEM_var1:  A place holder for a NONMEM required variable
-      // ...
-      oPred_h << "private:" << endl;
-      oPred_h << "const int nIndividuals;" << endl;
-      oPred_h << "const DataSet<Value> *perm;" << endl;
-      oPred_h << "DataSet<Value> temp;" << endl;
-      oPred_h << "mutable bool isIterationCompleted;" << endl;
-
-      // Taking care of the data items (from the data file).
-      // Only the "ID" data item values are of type string,
-      // otherwise all numeric, T.
-      const Symbol * pID = table->findi( "id" );
-      pLabel = labels->begin();
-      for( int i=0; i<nLabels, pLabel != labels->end(); i++, pLabel++ )
+      const Symbol* s = table->findi( *pLabel );
+      oPred_h << "mutable " << ( isID? "std::string" : "Value" );
+      oPred_h << " " << SymbolTable::key( s->name ) << ";" << endl;
+      if( !s->synonym.empty() )
 	{
-          bool isID = (*pLabel == pID->name);
-
-	  const Symbol* s = table->findi( *pLabel );
 	  oPred_h << "mutable " << ( isID? "std::string" : "Value" );
-          oPred_h << " " << SymbolTable::key( s->name ) << ";" << endl;
-          if( !s->synonym.empty() )
-	    {
-	      oPred_h << "mutable " << ( isID? "std::string" : "Value" );
-	      oPred_h << " " << SymbolTable::key( s->synonym ) << ";" << endl;
-	    }
+	  oPred_h << " " << SymbolTable::key( s->synonym ) << ";" << endl;
 	}
-
-      // Taking care of the user defined scalar variables.
-      // The entries in the symbol table include everything,
-      // the NONMEM required items such as THETA and EPS
-      // and the data item labels as well as the user defined
-      // scalar variable names.  The data item variables
-      // are taken care in the previous step, so now
-      // just pull out the user defined scalar variables.
-      // The NONMEM variables are given to
-      // Pred::eval() every time the iteration advances.
-      for( pRawTable = rawTable->begin(); pRawTable != rawTable->end(); pRawTable++ )
-	{
-	  const string label     = pRawTable->second.name;
-	  const string label_key = SymbolTable::key( label );
-
-	  // Ignore if the label is of the NONMEM required variable names.
-	  // They have to be declared in the body of PRED() because
-	  // they (theta, eta, eps) have to be "const" double array.
-	  if( label_key != sTHETA 
-	      && label_key != sETA 
-	      && label_key != sEPS 
-	      && label_key != sSIGMA
-	      && label_key != sOMEGA )
-	    {
-	      // Ignore if the label is of the data item's.
-	      if( find( labels->begin(), labels->end(), label ) 
-		  == labels->end() )
-		{
-		  oPred_h << "mutable Value " << label_key;
-		  oPred_h << ";" << endl;
-		}
-	    }
-	}
-
-      // footer
-      oPred_h << "};" << endl;
-
-      //----------------------------------------------
-      // Definition
-      //----------------------------------------------
-      oPred_h << "template <class Value>" << endl;
-      oPred_h << "Pred<Value>::Pred( const DataSet<Value>* dataIn )" << endl;
-      oPred_h << ": perm( dataIn )," << endl;
-      oPred_h << "  nIndividuals( " << myPopSize << " )," << endl;
-      oPred_h << "  isIterationCompleted( true )" << endl;
-      oPred_h << "{" << endl;
-      oPred_h << "}" << endl;
-
-      oPred_h << "template <class Value>" << endl;
-      oPred_h << "Pred<Value>::~Pred()" << endl;
-      oPred_h << "{" << endl;
-      oPred_h << "}" << endl;
-
-      oPred_h << "template <class Value>" << endl;
-      oPred_h << "int Pred<Value>::getNObservs( int spk_i ) const" << endl;
-      oPred_h << "{" << endl;
-      oPred_h << "  return perm->data[spk_i]->id.size();" << endl;
-      oPred_h << "}" << endl;
-
-
-      oPred_h << "template <class Value>" << endl;
-      oPred_h << "bool Pred<Value>::eval( int spk_thetaOffset, int spk_thetaLen," << endl;
-      oPred_h << "                        int spk_etaOffset,   int spk_etaLen," << endl;
-      oPred_h << "                        int spk_epsOffset,   int spk_epsLen," << endl;
-      oPred_h << "                        int spk_fOffset,     int spk_fLen," << endl;
-      oPred_h << "                        int spk_yOffset,     int spk_yLen," << endl;
-      oPred_h << "                        int spk_i," << endl;
-      oPred_h << "                        int spk_j," << endl;
-      oPred_h << "                        const std::vector<Value>& spk_indepVar," << endl;
-      oPred_h << "                        std::vector<Value>& spk_depVar )" << endl;
-      oPred_h << "{" << endl;
-
-      oPred_h << "  assert( spk_thetaLen == " << myThetaLen << " );" << endl;
-// REVISIT SACHIKO
-// ??? the value is busted!
-//      oPred_h << "  assert( spk_etaLen   == " << myEtaLen << " );" << endl;
-      oPred_h << "  assert( spk_epsLen   == " << myEpsLen << " );" << endl;
-      //oPred_h << "  assert( spk_fLen     == perm->data[spk_i]->id.size() );" << endl;
-      //oPred_h << "  assert( spk_yLen     == perm->data[spk_i]->id.size() );" << endl;
-      oPred_h << endl;
-
-      ///////////////////////////////////////////////////////////////////////////////////
-      // Assign the current data (i,j) to appropriate variables
-      // so that the user's (originally-fortran) code can easily
-      // access them.
-      // ex.  cp = perm->data[spk_i]->cp
-      // ...given that the user's PRED code has a reference to something
-      // ...like "aaa = cp * 10.0".
-      //
-      for( pLabel = labels->begin(); pLabel != labels->end(); pLabel++ )
-      {
-         const Symbol *s = table->findi( *pLabel );
-         // label
-         oPred_h << SymbolTable::key( s->name );
-         oPred_h << " = perm->data[spk_i]->";
-	 oPred_h << SymbolTable::key( s->name ) << "[spk_j];" << endl;
-         // synonym
-         if( !s->synonym.empty() )
-         {
-            oPred_h << SymbolTable::key( s->synonym );
-	    oPred_h << " = perm->data[spk_i]->";
-	    oPred_h << SymbolTable::key( s->synonym ) << "[spk_j];" << endl;
-         }
-      }
-      for( int i=0; i<myThetaLen; i++ )
-	{
-	  oPred_h << "typename std::vector<Value>::const_iterator theta" << i+1;
-	  oPred_h << " = spk_indepVar.begin() + spk_thetaOffset + " << i << ";" << endl;
-	}
-      for( int i=0; i<myEtaLen; i++ )
-	{
-	  oPred_h << "typename std::vector<Value>::const_iterator eta" << i+1;
-	  oPred_h << " = spk_indepVar.begin() + spk_etaOffset + " << i << ";" << endl;
-	}
-      for( int i=0; i<myEpsLen; i++ )
-	{
-	  oPred_h << "typename std::vector<Value>::const_iterator eps" << i+1;
-	  oPred_h << " = spk_indepVar.begin() + spk_epsOffset + " << i << ";" << endl;
-	}
-      oPred_h << "typename std::vector<Value>::const_iterator theta";
-      oPred_h << " = spk_indepVar.begin() + spk_thetaOffset;" << endl;
-      oPred_h << "typename std::vector<Value>::const_iterator eta";
-      oPred_h << " = spk_indepVar.begin() + spk_etaOffset;" << endl;
-      oPred_h << "typename std::vector<Value>::const_iterator eps";
-      oPred_h << " = spk_indepVar.begin() + spk_epsOffset;" << endl;
-
-
-      oPred_h << "Value f = 0.0;" << endl;
-      oPred_h << "Value y = 0.0;" << endl;
-      ///////////////////////////////////////////////////////////////////////////////////
-      
-      oPred_h << "//=========================================" << endl;
-      oPred_h << "// Begin User Code                         " << endl;
-      oPred_h << "//-----------------------------------------" << endl;
-      char ch;
-      ifstream iPredEqn( fPredEqn_cpp );
-      assert( iPredEqn.good() );
-      while( iPredEqn.get(ch) )
-	oPred_h.put(ch);
-      iPredEqn.close();
-      oPred_h << "//-----------------------------------------" << endl;
-      oPred_h << "// End User Code                           " << endl;
-      oPred_h << "//=========================================" << endl;
-      
-      ///////////////////////////////////////////////////////////////////////////////////
-      // Store the current values in temporary storage
-      // : the user defined variable values and the NONMEM required variable values.
-      for( pRawTable = rawTable->begin(); pRawTable != rawTable->end(); pRawTable++ )
-	{
-	  // THETA, ETA, EPS are given Pred::eval() as vectors by the caller.
-	  // So, we have to treat these guys a bit different from the user variables
-	  // which are scalar values.
-          const string label     = pRawTable->second.name;
-          const string label_key = SymbolTable::key( label );
-	  if( label_key == sTHETA 
-	      || label_key == sETA 
-	      || label_key == sEPS
-	      || label_key == sOMEGA 
-	      || label_key == sSIGMA )
-	    {
-	      oPred_h << "copy( " << label_key << ", " << label_key << " + ";
-	      if( label_key == sTHETA )
-		oPred_h << myThetaLen;
-	      else if( label_key == sETA )
-		oPred_h << myEtaLen;
-	      else //if( label_key == sEPS )
-		oPred_h << myEpsLen;
-	      oPred_h << ", temp.data[ spk_i ]->" << label_key << ".begin() );" << endl;
-	    }
-	  else
-	    {
-	      if( find( labels->begin(), labels->end(), label ) 
-                  == labels->end() )
-		{
-		  oPred_h << "temp.data[ spk_i ]->" << label_key;
-		  oPred_h << "[ spk_j ]";
-		  oPred_h << " = " << label_key << ";" << endl;
-		}
-	    }
-	}   
-      oPred_h << endl;
-
-      // Saving/moving computed values to ensure a complete set of values
-      // is available even when a failure occurs.
-      //
-      oPred_h << "if( spk_i == " << myPopSize << "-1 && spk_j == perm->data[spk_i]->id.size()-1 )" << endl;
-      oPred_h << "{" << endl;
-      oPred_h << "  // This means, SPK advanced in iteration." << endl;
-      oPred_h << "  // Move temporary storage to permanent storage." << endl;
-      oPred_h << "  isIterationCompleted = true;" << endl;
-      oPred_h << "  for( int i=0; i < nIndividuals; i++ )" << endl;
-      oPred_h << "  {" << endl;
-      // User defined variables temp(current) => permanent
-      // The user defined scalar variables
-      for( pRawTable = rawTable->begin(); pRawTable != rawTable->end(); pRawTable++ )
-	{
-	  const string label     = pRawTable->second.name;
-	  const string label_key = SymbolTable::key( label );
-	  if( find( labels->begin(), labels->end(), label ) == labels->end() )
-	    {
-	      oPred_h << "    perm->data[ i ]->" << label_key;
-	      oPred_h << " = temp.data[ i ]->";
-	      oPred_h << label_key << ";" << endl;
-	    }
-	}      
-      oPred_h << "  }" << endl;
-      oPred_h << "}" << endl;
-      oPred_h << "else" << endl;
-      oPred_h << "{" << endl;
-      oPred_h << "  isIterationCompleted = false;" << endl;
-      oPred_h << "}" << endl;
-      oPred_h << endl;
-
-      ///////////////////////////////////////////////////////////////////////////////////
-
-      // Set the output values
-      oPred_h << "spk_depVar[ spk_fOffset ] = f;" << endl;
-      oPred_h << "spk_depVar[ spk_yOffset ] = y;" << endl;
-
-      // Pred::eval() returns true if MDV(i,j) is 0, which means DV is NOT missing.
-      // In this iteration, it is assumed that MDV=true for all, so return true.
-      oPred_h << "if( perm->data[ spk_i ]->mdv[ spk_j ] == 0 )" << endl;
-      oPred_h << "   return true;" << endl;
-      oPred_h << "else return false;" << endl;
-
-      oPred_h << "}" << endl;
-
-      oPred_h << "template <class Value>" << endl;
-      oPred_h << "Pred<Value>::Pred()" << endl;
-      oPred_h << "{" << endl;
-      oPred_h << "}" << endl;
-
-      oPred_h << "template <class Value>" << endl;
-      oPred_h << "Pred<Value>::Pred( const Pred<Value>& )" << endl;
-      oPred_h << "{" << endl;
-      oPred_h << "}" << endl;
-
-      oPred_h << "template <class Value>" << endl;
-      oPred_h << "Pred<Value> & Pred<Value>::operator=( const Pred<Value>& )" << endl;
-      oPred_h << "{" << endl;
-      oPred_h << "}" << endl;
-
-      oPred_h << "#endif" << endl;
     }
-  else
+
+  // Taking care of the user defined scalar variables.
+  // The entries in the symbol table include everything,
+  // the NONMEM required items such as THETA and EPS
+  // and the data item labels as well as the user defined
+  // scalar variable names.  The data item variables
+  // are taken care in the previous step, so now
+  // just pull out the user defined scalar variables.
+  // The NONMEM variables are given to
+  // Pred::eval() every time the iteration advances.
+  for( pRawTable = rawTable->begin(); pRawTable != rawTable->end(); pRawTable++ )
     {
-      assert( false );
+      const string label     = pRawTable->second.name;
+      const string label_key = SymbolTable::key( label );
+
+      // Ignore if the label is of the NONMEM required variable names.
+      // They have to be declared in the body of PRED() because
+      // they (theta, eta, eps) have to be "const" double array.
+      if( label_key != sTHETA 
+	  && label_key != sETA 
+	  && label_key != sEPS 
+	  && label_key != sSIGMA
+	  && label_key != sOMEGA )
+	{
+	  // Ignore if the label is of the data item's.
+	  if( find( labels->begin(), labels->end(), label ) 
+	      == labels->end() )
+	    {
+	      oPred_h << "mutable Value " << label_key;
+	      oPred_h << ";" << endl;
+	    }
+	}
     }
+
+  // footer
+  oPred_h << "};" << endl;
+
+  //----------------------------------------------
+  // Definition
+  //----------------------------------------------
+  oPred_h << "template <class Value>" << endl;
+  oPred_h << "Pred<Value>::Pred( const DataSet<Value>* dataIn )" << endl;
+  oPred_h << ": perm( dataIn )," << endl;
+  oPred_h << "  nIndividuals( " << myPopSize << " )," << endl;
+  oPred_h << "  isIterationCompleted( true )" << endl;
+  oPred_h << "{" << endl;
+  oPred_h << "}" << endl;
+
+  oPred_h << "template <class Value>" << endl;
+  oPred_h << "Pred<Value>::~Pred()" << endl;
+  oPred_h << "{" << endl;
+  oPred_h << "}" << endl;
+
+  oPred_h << "template <class Value>" << endl;
+  oPred_h << "int Pred<Value>::getNObservs( int spk_i ) const" << endl;
+  oPred_h << "{" << endl;
+  oPred_h << "  return perm->data[spk_i]->id.size();" << endl;
+  oPred_h << "}" << endl;
+
+
+  oPred_h << "template <class Value>" << endl;
+  oPred_h << "bool Pred<Value>::eval( int spk_thetaOffset, int spk_thetaLen," << endl;
+  oPred_h << "                        int spk_etaOffset,   int spk_etaLen," << endl;
+  oPred_h << "                        int spk_epsOffset,   int spk_epsLen," << endl;
+  oPred_h << "                        int spk_fOffset,     int spk_fLen," << endl;
+  oPred_h << "                        int spk_yOffset,     int spk_yLen," << endl;
+  oPred_h << "                        int spk_i," << endl;
+  oPred_h << "                        int spk_j," << endl;
+  oPred_h << "                        const std::vector<Value>& spk_indepVar," << endl;
+  oPred_h << "                        std::vector<Value>& spk_depVar )" << endl;
+  oPred_h << "{" << endl;
+
+  oPred_h << "  assert( spk_thetaLen == " << myThetaLen << " );" << endl;
+  // REVISIT SACHIKO
+  // ??? the value is busted!
+  //      oPred_h << "  assert( spk_etaLen   == " << myEtaLen << " );" << endl;
+  oPred_h << "  assert( spk_epsLen   == " << myEpsLen << " );" << endl;
+  //oPred_h << "  assert( spk_fLen     == perm->data[spk_i]->id.size() );" << endl;
+  //oPred_h << "  assert( spk_yLen     == perm->data[spk_i]->id.size() );" << endl;
+  oPred_h << endl;
+
+  ///////////////////////////////////////////////////////////////////////////////////
+  // Assign the current data (i,j) to appropriate variables
+  // so that the user's (originally-fortran) code can easily
+  // access them.
+  // ex.  cp = perm->data[spk_i]->cp
+  // ...given that the user's PRED code has a reference to something
+  // ...like "aaa = cp * 10.0".
+  //
+  for( pLabel = labels->begin(); pLabel != labels->end(); pLabel++ )
+    {
+      const Symbol *s = table->findi( *pLabel );
+      // label
+      oPred_h << SymbolTable::key( s->name );
+      oPred_h << " = perm->data[spk_i]->";
+      oPred_h << SymbolTable::key( s->name ) << "[spk_j];" << endl;
+      // synonym
+      if( !s->synonym.empty() )
+	{
+	  oPred_h << SymbolTable::key( s->synonym );
+	  oPred_h << " = perm->data[spk_i]->";
+	  oPred_h << SymbolTable::key( s->synonym ) << "[spk_j];" << endl;
+	}
+    }
+  for( int i=0; i<myThetaLen; i++ )
+    {
+      oPred_h << "typename std::vector<Value>::const_iterator theta" << i+1;
+      oPred_h << " = spk_indepVar.begin() + spk_thetaOffset + " << i << ";" << endl;
+    }
+  for( int i=0; i<myEtaLen; i++ )
+    {
+      oPred_h << "typename std::vector<Value>::const_iterator eta" << i+1;
+      oPred_h << " = spk_indepVar.begin() + spk_etaOffset + " << i << ";" << endl;
+    }
+  for( int i=0; i<myEpsLen; i++ )
+    {
+      oPred_h << "typename std::vector<Value>::const_iterator eps" << i+1;
+      oPred_h << " = spk_indepVar.begin() + spk_epsOffset + " << i << ";" << endl;
+    }
+  oPred_h << "typename std::vector<Value>::const_iterator theta";
+  oPred_h << " = spk_indepVar.begin() + spk_thetaOffset;" << endl;
+  oPred_h << "typename std::vector<Value>::const_iterator eta";
+  oPred_h << " = spk_indepVar.begin() + spk_etaOffset;" << endl;
+  oPred_h << "typename std::vector<Value>::const_iterator eps";
+  oPred_h << " = spk_indepVar.begin() + spk_epsOffset;" << endl;
+
+
+  oPred_h << "Value f = 0.0;" << endl;
+  oPred_h << "Value y = 0.0;" << endl;
+  ///////////////////////////////////////////////////////////////////////////////////
+      
+  oPred_h << "//=========================================" << endl;
+  oPred_h << "// Begin User Code                         " << endl;
+  oPred_h << "//-----------------------------------------" << endl;
+  char ch;
+  ifstream iPredEqn( fPredEqn_cpp );
+  assert( iPredEqn.good() );
+  while( iPredEqn.get(ch) )
+    oPred_h.put(ch);
+  iPredEqn.close();
+  oPred_h << "//-----------------------------------------" << endl;
+  oPred_h << "// End User Code                           " << endl;
+  oPred_h << "//=========================================" << endl;
+      
+  ///////////////////////////////////////////////////////////////////////////////////
+  // Store the current values in temporary storage
+  // : the user defined variable values and the NONMEM required variable values.
+  for( pRawTable = rawTable->begin(); pRawTable != rawTable->end(); pRawTable++ )
+    {
+      // THETA, ETA, EPS are given Pred::eval() as vectors by the caller.
+      // So, we have to treat these guys a bit different from the user variables
+      // which are scalar values.
+      const string label     = pRawTable->second.name;
+      const string label_key = SymbolTable::key( label );
+      if( label_key == sTHETA 
+	  || label_key == sETA 
+	  || label_key == sEPS
+	  || label_key == sOMEGA 
+	  || label_key == sSIGMA )
+	{
+	  oPred_h << "copy( " << label_key << ", " << label_key << " + ";
+	  if( label_key == sTHETA )
+	    oPred_h << myThetaLen;
+	  else if( label_key == sETA )
+	    oPred_h << myEtaLen;
+	  else //if( label_key == sEPS )
+	    oPred_h << myEpsLen;
+	  oPred_h << ", temp.data[ spk_i ]->" << label_key << ".begin() );" << endl;
+	}
+      else
+	{
+	  if( find( labels->begin(), labels->end(), label ) 
+	      == labels->end() )
+	    {
+	      oPred_h << "temp.data[ spk_i ]->" << label_key;
+	      oPred_h << "[ spk_j ]";
+	      oPred_h << " = " << label_key << ";" << endl;
+	    }
+	}
+    }   
+  oPred_h << endl;
+
+  // Saving/moving computed values to ensure a complete set of values
+  // is available even when a failure occurs.
+  //
+  oPred_h << "if( spk_i == " << myPopSize << "-1 && spk_j == perm->data[spk_i]->id.size()-1 )" << endl;
+  oPred_h << "{" << endl;
+  oPred_h << "  // This means, SPK advanced in iteration." << endl;
+  oPred_h << "  // Move temporary storage to permanent storage." << endl;
+  oPred_h << "  isIterationCompleted = true;" << endl;
+  oPred_h << "  for( int i=0; i < nIndividuals; i++ )" << endl;
+  oPred_h << "  {" << endl;
+  // User defined variables temp(current) => permanent
+  // The user defined scalar variables
+  for( pRawTable = rawTable->begin(); pRawTable != rawTable->end(); pRawTable++ )
+    {
+      const string label     = pRawTable->second.name;
+      const string label_key = SymbolTable::key( label );
+      if( find( labels->begin(), labels->end(), label ) == labels->end() )
+	{
+	  oPred_h << "    perm->data[ i ]->" << label_key;
+	  oPred_h << " = temp.data[ i ]->";
+	  oPred_h << label_key << ";" << endl;
+	}
+    }      
+  oPred_h << "  }" << endl;
+  oPred_h << "}" << endl;
+  oPred_h << "else" << endl;
+  oPred_h << "{" << endl;
+  oPred_h << "  isIterationCompleted = false;" << endl;
+  oPred_h << "}" << endl;
+  oPred_h << endl;
+
+  ///////////////////////////////////////////////////////////////////////////////////
+
+  // Set the output values
+  oPred_h << "spk_depVar[ spk_fOffset ] = f;" << endl;
+  oPred_h << "spk_depVar[ spk_yOffset ] = y;" << endl;
+
+  // Pred::eval() returns true if MDV(i,j) is 0, which means DV is NOT missing.
+  // In this iteration, it is assumed that MDV=true for all, so return true.
+  oPred_h << "if( perm->data[ spk_i ]->mdv[ spk_j ] == 0 )" << endl;
+  oPred_h << "   return true;" << endl;
+  oPred_h << "else return false;" << endl;
+
+  oPred_h << "}" << endl;
+
+  oPred_h << "template <class Value>" << endl;
+  oPred_h << "Pred<Value>::Pred()" << endl;
+  oPred_h << "{" << endl;
+  oPred_h << "}" << endl;
+
+  oPred_h << "template <class Value>" << endl;
+  oPred_h << "Pred<Value>::Pred( const Pred<Value>& )" << endl;
+  oPred_h << "{" << endl;
+  oPred_h << "}" << endl;
+
+  oPred_h << "template <class Value>" << endl;
+  oPred_h << "Pred<Value> & Pred<Value>::operator=( const Pred<Value>& )" << endl;
+  oPred_h << "{" << endl;
+  oPred_h << "}" << endl;
+
+  oPred_h << "#endif" << endl;
   oPred_h.close();
 }
 
