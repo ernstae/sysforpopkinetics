@@ -66,6 +66,7 @@ public abstract class Spkdb {
        @param xmlSource source code for the job
        @param methodCode key to a row in the method table
        @param parent the job_id of the job that is the parent; otherwise 0
+       @param isWarmStart true for being a warm start job; false for otherwise
        @return key to the new row in the job table
      */
     public static long newJob(Connection conn, 
@@ -77,7 +78,8 @@ public abstract class Spkdb {
 			      String modelVersion,
 			      String xmlSource,
 			      String methodCode,
-			      long parent)
+			      long parent,
+                              boolean isWarmStart)
 	throws SQLException, SpkdbException, FileNotFoundException
     {
 	long jobId = 0;
@@ -85,6 +87,7 @@ public abstract class Spkdb {
 	long eventTime = date.getTime()/1000;
 	long startTime = eventTime;
 	String stateCode = "q2c";
+        if(isWarmStart) stateCode = "q2ws";
 	String sql = "insert into job (state_code, user_id, abstract, dataset_id, "
                                     + "dataset_version, model_id, model_version, "
                                     + "xml_source, method_code, parent, start_time, event_time)"
