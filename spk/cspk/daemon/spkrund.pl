@@ -225,12 +225,13 @@ my $dbh;
 my $build_failure_exit_value = 101;
 my $database_open = 0;
 
+my $filename_checkpoint = "checkpoint.xml";
 my $filename_data = "data.xml";
+my $filename_driver = "driver";
 my $filename_job_id = "job_id";
 my $filename_makefile = "Makefile.SPK";
 my $filename_optimizer_trace = "optimizer_trace.txt";
 my $filename_results = "result.xml";
-my $filename_driver = "driver";
 my $filename_serr = "software_error";
 my $filename_source = "source.xml";
 
@@ -453,6 +454,7 @@ sub reaper {
     my $job_id;
     my $optimizer_trace;
     my $report;
+    my $checkpoint;
     my $end_code;
 
     $concurrent--;
@@ -553,6 +555,12 @@ sub reaper {
     }
 
     if ($end_code =~ "srun") {
+	# Read the checkpoint file into the checkpoint variable
+	open(FH, $filename_checkpoint)
+	    or death('emerg', "can't open $$working_dir/$filename_checkpoint");
+	read(FH, $checkpoint, -s FH);
+	close(FH);
+
 	# Read the results file into the report variable
 	open(FH, $filename_results)
 	    or death('emerg', "can't open $$working_dir/$filename_results");
@@ -569,8 +577,16 @@ sub reaper {
 	# Get email address of user
 	my $email = &email_for_job($dbh, $job_id);
 
+        if( -f $filename_checkpoint && -s $filename_checkpoint > 0 ){
+           # Read the checkpoint file, if it exists, into the checkpoint variable.
+           open(FH, $filename_checkpoint)
+              or death( 'emerg', "can't open $$working_dir/$filename_checkpoint");
+	   read(FH, $checkpoint, -s FH );
+           close(FH);
+        }
+
         if( -f $filename_results && -s $filename_results > 0 ){
-           # Read the results file, if produced, into the report variable.
+           # Read the results file, if it exists, into the report variable.
            open(FH, $filename_results)
               or death( 'emerg', "can't open $$working_dir/$filename_results");
 	   read(FH, $report, -s FH );
@@ -623,7 +639,7 @@ sub reaper {
 	$report = insert_optimizer_trace($optimizer_trace, $report);
     }
 
-    &end_job($dbh, $job_id, $end_code, $report)
+    &end_job($dbh, $job_id, $end_code, $report, $checkpoint)
 	or death('emerg', "job_id=$job_id: $Spkdb::errstr");
 }
 sub start {
