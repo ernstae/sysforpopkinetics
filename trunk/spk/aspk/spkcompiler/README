@@ -1,0 +1,56 @@
+The Directory Structure
+
+   spkcompiler
+   ===========
+      | autogen.sh
+      | configure.ac
+      | Makefile.am
+      | ChangeLog
+      | README
+      | AUTHORS
+      | COPYING
+      | NEWS
+      | INSTALL
+      | 
+      |--- libspkcompiler
+      |    ==============
+      |       | Makefile.am
+      |       | ...cpp
+      |       | ...h
+      |       |
+      |       |--- nonmem
+      |            ======
+      |                Nonmem...cpp
+      |                Nonmem...h
+      |
+      |--- tests
+      |    =====
+      |       | Makefile.am
+      |       |
+      |       |--- common
+      |       |    ======
+      |       |        ...Test.cpp
+      |       |        ...Test.h
+      |       |        (possibly some data files)
+      |       |
+      |       |--- nonmem
+      |            ======
+      |                ...Test.cpp
+      |                ...Test.h
+      |                (possibly some data files)
+      |
+      |---  doc
+      |    =====
+      |       | Makefile.in
+      |       | SpkCompiler.dox
+      |       |
+      |       |--- html
+      |            ====
+      |                 (generated html, gif and other files)
+      |
+      |--- driver
+           ======
+              | Makefile.in
+              | (TBD)
+
+
