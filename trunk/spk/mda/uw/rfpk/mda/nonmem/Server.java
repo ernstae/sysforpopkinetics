@@ -14,14 +14,14 @@ import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 
 /** This class makes calls to the server for the transactions required by the model
- *  dasign agent of the SPK.  
+ *  design agent of the SPK.  
  *
  * @author  jiaji Du
  */
 public class Server { 
     /** Constructor to initiate the instant variables of the class.
-     * @param sessionId the sesion id to identify the session.
-     * @param secret the secret code to identify the user.
+     * @param args A String array containning server host name, server port number,
+     * session ID and secret code.
      */
     public Server(String[] args)
     {
@@ -45,8 +45,14 @@ public class Server {
         String[] messageOut = new String[19];
         messageOut[0] = secret;
         messageOut[1] = source;
-        messageOut[2] = dataset;
-        messageOut[3] = modelArchive;
+        if(dataInfo.isNewArchive || dataInfo.isNewVersion)
+            messageOut[2] = dataset;
+        else
+            messageOut[2] = "";
+        if(modelInfo.isNewArchive || modelInfo.isNewVersion)
+            messageOut[3] = modelArchive;
+        else
+            messageOut[3] = "";
         messageOut[4] = jobAbstract;
         messageOut[5] = modelInfo.description;
         messageOut[6] = modelInfo.log;
@@ -78,7 +84,7 @@ public class Server {
         }
         catch(Exception e)
 	{
-            JOptionPane.showMessageDialog(null, e,    
+            JOptionPane.showMessageDialog(null, "Session expired or other server problem",    
                                           "Network Error",         
                                           JOptionPane.ERROR_MESSAGE);
         }   
@@ -115,7 +121,7 @@ public class Server {
         catch(Exception e)
 	{
             JOptionPane.showMessageDialog(null, e,    
-                                          "Network Error",         
+                                          "Session expired or other server problem",         
                                           JOptionPane.ERROR_MESSAGE);
         }
         return jobList;    
@@ -147,7 +153,7 @@ public class Server {
         catch(Exception e)
 	{
             JOptionPane.showMessageDialog(null, e,    
-                                          "Network Error",         
+                                          "Session expired or other server problem",         
                                           JOptionPane.ERROR_MESSAGE);
         }
         return spkOutput;            
@@ -186,7 +192,7 @@ public class Server {
         catch(Exception e)
 	{
             JOptionPane.showMessageDialog(null, e,    
-                                          "Network Error",         
+                                          "Session expired or other server problem",         
                                           JOptionPane.ERROR_MESSAGE);
         }        
         return modelList;   
@@ -223,7 +229,7 @@ public class Server {
         catch(Exception e)
 	{
             JOptionPane.showMessageDialog(null, e,    
-                                          "Network Error",         
+                                          "Session expired or other server problem",         
                                           JOptionPane.ERROR_MESSAGE);
         }
         return datasetList;   
@@ -260,7 +266,7 @@ public class Server {
         catch(Exception e)
 	{
             JOptionPane.showMessageDialog(null, e,    
-                                          "Network Error",         
+                                          "Session expired or other server problem",         
                                           JOptionPane.ERROR_MESSAGE);
         }        
         return versionList;
@@ -292,7 +298,7 @@ public class Server {
         catch(Exception e)
 	{
             JOptionPane.showMessageDialog(null, e,    
-                                          "Network Error",         
+                                          "Session expired or other server problem",         
                                           JOptionPane.ERROR_MESSAGE);
         }               
         return archive;   
@@ -326,7 +332,7 @@ public class Server {
         catch(Exception e)
 	{
             JOptionPane.showMessageDialog(null, e,    
-                                          "Network Error",         
+                                          "Session expired or other server problem",         
                                           JOptionPane.ERROR_MESSAGE);
         }       
         return revision;

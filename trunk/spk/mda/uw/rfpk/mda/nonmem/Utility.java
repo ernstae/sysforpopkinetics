@@ -386,9 +386,9 @@ public class Utility {
     }
 
     /** Determine if a character sting is a name of a standard data item
-     * @param s A String object containing the the character string 
      * @return A boolean, true for it is a name of a standard data item,
      * false for otherwise
+     * @param item A String object containing a data item name.
      */      
     public static boolean isStdItem(String item)
     {
@@ -404,7 +404,7 @@ public class Utility {
     
     /** This function format the XML file for better deadability
      * @return A String object as the formated file content
-     * @param text
+     * @param text A String object containing a one-line XML document.
      */    
     public static String formatXML(String text)
     {

@@ -72,7 +72,7 @@ public class Test{
 //            Data step = new Data(i);
 //            Des step = new Des();
 //            Error step = new Error(i);
-//            GettingStarted step = new GettingStarted(i);
+            GettingStarted step = new GettingStarted(i);
 //            Estimation step = new Estimation();
 //            Input step = new Input(i);
 //            Model step = new Model(i);
@@ -83,7 +83,7 @@ public class Test{
 //            ScatterPlot step = new ScatterPlot(i); 
 //            Simulation step = new Simulation();
 //            Subroutines step = new Subroutines(i);
-            Table step = new Table(i);
+//            Table step = new Table(i);
 //            Theta step = new Theta(i);
             MDAObject object = new MDAObject();
             Properties records = object.getRecords();

@@ -152,18 +152,22 @@ public class Des extends javax.swing.JPanel implements WizardStep {
             wizardPane = wizard;
             String value = ((MDAObject)wizard.getCustomizedObject()).getRecords().getProperty("Des");
             if(value.equals(""))
-                jTextArea1.setText("DADT(1)=\nDADT(2)=");
+            {
+                String ls = System.getProperty("line.separator");
+                jTextArea1.setText("DADT(1)=" + ls + "DADT(2)=");
+            }
             else
                 jTextArea1.setText(value.substring(6));                    
 	}
 
 	public void hidingStep(JWizardPane wizard){
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
-            String record = jTextArea1.getText().trim();
+            String ls = System.getProperty("line.separator");
+            String record = jTextArea1.getText().trim().replaceAll("\n", ls);
             if(!record.equals("") && !Utility.checkTag(record, "DES code"))
             {
-                object.getRecords().setProperty("Des", "$DES \n" + record);
-                object.getSource().des = "\n" + record + "\n";
+                object.getRecords().setProperty("Des", "$DES " + ls + record);
+                object.getSource().des = ls + record + ls;
             }
 	}
 

@@ -155,12 +155,13 @@ public class Aesinitial extends javax.swing.JPanel implements WizardStep {
 	}
 
 	public void hidingStep(JWizardPane wizard){
-            String record = jTextArea1.getText().trim();
-            MDAObject object = (MDAObject)wizard.getCustomizedObject();
+            MDAObject object = (MDAObject)wizard.getCustomizedObject();            
+            String ls = System.getProperty("line.separator");            
+            String record = jTextArea1.getText().trim().replaceAll("\n", ls);
             if(!record.equals("") && !Utility.checkTag(record, "AESINITIAL code"))
             {
-                object.getRecords().setProperty("Aesinitial", "$AESINITIAL \n" + record);
-                object.getSource().aesinitial = "\n" + record + "\n";
+                object.getRecords().setProperty("Aesinitial", "$AESINITIAL " + ls + record);
+                object.getSource().aesinitial = ls + record + ls;
             }
 	}
 

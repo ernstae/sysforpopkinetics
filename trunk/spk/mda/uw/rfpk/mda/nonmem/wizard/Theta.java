@@ -395,8 +395,8 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
     }//GEN-LAST:event_jCheckBox2ActionPerformed
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-       // Remove the selected element 
-       model.removeElement(jList1.getSelectedValue());
+        // Remove the selected element 
+        model.removeElement(jList1.getSelectedValue());
         jList1.setSelectedIndex(--index);
 
         // Set add, change, delete and left buttons
@@ -609,9 +609,12 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
 	public void showingStep(JWizardPane wizard){
             wizardPane = wizard;
             if(nTheta != iterator.getNTheta())
-                model.removeAllElements();
-            nTheta = iterator.getNTheta(); 
-	}
+            {
+                nTheta = iterator.getNTheta();
+                isValid = false;
+                wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());                
+            }
+ 	}
 
 	public void hidingStep(JWizardPane wizard){
             jTextField1.setText("");
@@ -624,8 +627,9 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
                 return;
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             String record = "";
+            String ls = System.getProperty("line.separator");
             for(int i = 0; i < nTheta; i++)
-                record = record + "\n" + model.get(i);
+                record = record + ls + model.get(i);
             if(!record.equals(""))
             {
                 object.getRecords().setProperty("Theta", "$THETA " + record);

@@ -824,7 +824,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
                 record = object.getRecords().getProperty("PK");
             else
                 record = object.getRecords().getProperty("Pred");
-            String[] p = Utility.eliminateComments(record).split("\n");  
+            String[] p = Utility.eliminateComments(record).split(System.getProperty("line.separator"));  
             for(int i = 1; i < p.length; i++)
             {
                 if(p[i].indexOf("=") > 0)
@@ -865,8 +865,9 @@ public class Table extends javax.swing.JPanel implements WizardStep {
             MDAObject object = (MDAObject)wizard.getCustomizedObject();  
             // Create and save record
             String record = (String)model.get(0);
+            String ls = System.getProperty("line.separator");
             for(int i = 1; i < size; i++)
-                record = record + "\n" + model.get(i);            
+                record = record + ls + model.get(i);            
             if(which.equals("$ESTIMATION"))
             {
                 nTableEst = size;

@@ -57,7 +57,8 @@ public class XMLWriter
         if(source.estimation != null)
         {
             analysis.setAttribute("is_estimation", "yes");
-            analysis.setAttribute("is_restart", source.estimation[4]);            
+            analysis.setAttribute("is_restart", source.estimation[4]);
+            analysis.setAttribute("mitr", source.estimation[2]);
             if(source.analysis.equals("population"))
             {
                 analysis.setAttribute("approximation", source.estimation[0]);
@@ -342,16 +343,16 @@ public class XMLWriter
         if(source.tableEst != null || source.splotEst != null ||
            source.tableSim != null || source.splotSim != null)
         {
-            Element nm_presentation = docSource.createElement("nm_presentation");
-            parent.appendChild(nm_presentation); 
+            Element presentation = docSource.createElement("presentation");
+            parent.appendChild(presentation); 
             if(source.tableEst != null)
-                setTable(nm_presentation, true);
+                setTable(presentation, true);
             if(source.tableSim != null)
-                setTable(nm_presentation, false);
+                setTable(presentation, false);
             if(source.splotEst != null)
-                setScatterplot(nm_presentation, true);
+                setScatterplot(presentation, true);
             if(source.splotSim != null)
-                setScatterplot(nm_presentation, false);
+                setScatterplot(presentation, false);
 	}
     }
             
@@ -515,7 +516,7 @@ public class XMLWriter
         docModel = new DocumentImpl();  
         Element spkmodel = docModel.createElement("spkmodel"); 
         docModel.appendChild(spkmodel);
-        spkmodel.appendChild(docModel.createTextNode("\n" + control));        
+        spkmodel.appendChild(docModel.createTextNode(System.getProperty("line.separator") + control));        
     }
     
     /** Generate SPK output file content.
@@ -544,7 +545,8 @@ public class XMLWriter
         String job = Utility.formatXML(((DocumentImpl)docJob).saveXML(docJob));                 
 
         // Return Spk output
-        return job + "\n" + spkOutput.getProperty("report") + "\n" + spkOutput.getProperty("source");        
+        String ls = System.getProperty("line.separator");
+        return job + ls + spkOutput.getProperty("report") + ls + spkOutput.getProperty("source");        
     }
     
     /** This method saves the XML document as a text file in XML format.
@@ -555,8 +557,9 @@ public class XMLWriter
         try
 	{
             PrintWriter writer = new PrintWriter(new FileWriter(file));
-            writer.println(Utility.formatXML(((DocumentImpl)docSource).saveXML(docSource)) + "\n" +
-                           Utility.formatXML(((DocumentImpl)docData).saveXML(docData)) + "\n" +
+            String ls = System.getProperty("line.separator");
+            writer.println(Utility.formatXML(((DocumentImpl)docSource).saveXML(docSource)) + ls +
+                           Utility.formatXML(((DocumentImpl)docData).saveXML(docData)) + ls +
                            Utility.formatXML(((DocumentImpl)docModel).saveXML(docModel))); 
             writer.close();
         }
@@ -574,8 +577,9 @@ public class XMLWriter
       */    
     public String getDocument()
     {
-        return Utility.formatXML(((DocumentImpl)docSource).saveXML(docSource)) + "\n" +
-               Utility.formatXML(((DocumentImpl)docData).saveXML(docData)) + "\n" +
+        String ls = System.getProperty("line.separator");
+        return Utility.formatXML(((DocumentImpl)docSource).saveXML(docSource)) + ls +
+               Utility.formatXML(((DocumentImpl)docData).saveXML(docData)) + ls +
                Utility.formatXML(((DocumentImpl)docModel).saveXML(docModel));      
     }
     

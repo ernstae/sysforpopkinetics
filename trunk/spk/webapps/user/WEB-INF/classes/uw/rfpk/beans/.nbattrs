@@ -4,6 +4,18 @@
     <fileobject name="UserInfo.java">
         <attr name="class_dependency_java.io.Serializable" stringvalue="UserInfo"/>
     </fileobject>
+    <fileobject name="ModelList.java">
+        <attr name="class_dependency_java.io.Serializable" stringvalue="ModelList"/>
+    </fileobject>
+    <fileobject name="VersionList.java">
+        <attr name="class_dependency_java.io.Serializable" stringvalue="VersionList"/>
+    </fileobject>
+    <fileobject name="Conversion.java">
+        <attr name="class_dependency_java.io.Serializable" stringvalue="Conversion"/>
+    </fileobject>
+    <fileobject name="DatasetList.java">
+        <attr name="class_dependency_java.io.Serializable" stringvalue="DatasetList"/>
+    </fileobject>
     <fileobject name="DigestPassword.java">
         <attr name="class_dependency_java.io.Serializable" stringvalue="DigestPassword"/>
     </fileobject>
