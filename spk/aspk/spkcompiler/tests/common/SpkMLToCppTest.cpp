@@ -2,6 +2,7 @@
 #include <string>
 #include <map>
 #include <valarray>
+#include <vector>
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestCaller.h>
@@ -28,6 +29,9 @@ void SpkMLToCppTest::test()
 {
   SpkMLToCpp nonmem2cpp( "SpkMLToCppTestInput.xml" );
   nonmem2cpp.translate();
+  vector<string> filenames = nonmem2cpp.getFilenameList();
+  for ( int i=0; i<filenames.size(); i++ )
+    cout << filenames[i] << endl;
 }
 
 
