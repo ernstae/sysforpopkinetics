@@ -491,11 +491,12 @@ void derParStatisticsTest::testWrapper()
   z_x[0 + 2 * nZ] = 2.0;
   z_x[2 + 2 * nZ] = 4.0;
   
-  valarray<double> zCovOut( nZ * nZ );
-  valarray<double> zSEOut ( nZ );
-  valarray<double> zCorOut( nZ * nZ );
-  valarray<double> zCVOut ( nZ );
-  valarray<double> zCIOut ( 2 * nZ );
+  valarray<double> zCovOut   ( nZ * nZ );
+  valarray<double> zInvCovOut( nZ * nZ );
+  valarray<double> zSEOut    ( nZ );
+  valarray<double> zCorOut   ( nZ * nZ );
+  valarray<double> zCVOut    ( nZ );
+  valarray<double> zCIOut    ( 2 * nZ );
 
 
   //------------------------------------------------------------
@@ -509,6 +510,7 @@ void derParStatisticsTest::testWrapper()
 		    z_x,
 		    nDegFreedom,
 		    &zCovOut,
+                    &zInvCovOut,
 		    &zSEOut,
 		    &zCorOut,
 		    &zCVOut,
@@ -518,11 +520,12 @@ void derParStatisticsTest::testWrapper()
   // Calculate the known values.
   //------------------------------------------------------------
 
-  valarray<double> zCovKnown( NAN, nZ * nZ );
-  valarray<double> zSEKnown ( NAN, nZ );
-  valarray<double> zCorKnown( NAN, nZ * nZ );
-  valarray<double> zCVKnown ( NAN, nZ );
-  valarray<double> zCIKnown ( NAN, 2 * nZ );
+  valarray<double> zCovKnown   ( NAN, nZ * nZ );
+  valarray<double> zInvCovKnown( NAN, nZ * nZ );
+  valarray<double> zSEKnown    ( NAN, nZ );
+  valarray<double> zCorKnown   ( NAN, nZ * nZ );
+  valarray<double> zCVKnown    ( NAN, nZ );
+  valarray<double> zCIKnown    ( NAN, 2 * nZ );
 
   // Set the known covariance of z(x),
   //
@@ -536,6 +539,18 @@ void derParStatisticsTest::testWrapper()
   zCovKnown[2 + 0 * nZ] = 63.0;
   zCovKnown[0 + 2 * nZ] = 63.0;
   zCovKnown[2 + 2 * nZ] = 137.0;
+
+  // Inverse of zCov, ignoring zeros.
+  //
+  //                      | 1/29  0   1/63  |
+  //     cov[ z(x) ]^-1 = |  0    0    0    |
+  //                      | 1/63  0   1/137 |
+  //
+  zInvCovKnown[0 + 0 * nZ] = 1.0/29.0;
+  zInvCovKnown[2 + 0 * nZ] = 1.0/63.0;
+  zInvCovKnown[0 + 2 * nZ] = 1.0/63.0;
+  zInvCovKnown[2 + 2 * nZ] = 1.0/137.0;
+  
 
   // Set the known standard errors for z(x),
   //
