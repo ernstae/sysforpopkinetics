@@ -50,7 +50,7 @@ void NonmemTranslatorTest::testParsePopSource()
   labels["TIME"] = "";
   labels["CP"]   = "DV";
   labels["WT"]   = "";
-  labels["DOSE"] = "";
+  labels["DOSE"] = "AMT";
 
   const int thetaLen = 3;
   vector<double> theta_in (thetaLen);
@@ -312,6 +312,8 @@ void NonmemTranslatorTest::testParsePopSource()
   Symbol * wt   = table->insertLabel( "WT", "", N );
   Symbol * dose = table->insertLabel( "DOSE", "", N );
   Symbol * mdv  = table->insertLabel( "MDV", "", N );
+
+  dose->synonym = string("AMT");
  
   id->  initial[0][0] = "#1";
   time->initial[0][0] = "0.0";  cp->initial[0][0] = "0.0";   wt->initial[0][0] = "10.0";  dose->initial[0][0] = "10.0";
@@ -360,7 +362,7 @@ void NonmemTranslatorTest::testParsePopSource()
   CPPUNIT_ASSERT( table->findi("wres") != Symbol::empty() );
   CPPUNIT_ASSERT( table->findi("res")  != Symbol::empty() );
 
-  Symbol *theta = table->find( "theta" );
+  Symbol *theta = table->findi( "theta" );
   CPPUNIT_ASSERT( theta != Symbol::empty() );
   CPPUNIT_ASSERT_EQUAL( thetaLen, theta->dimension[0] );
   CPPUNIT_ASSERT_EQUAL( thetaLen, static_cast<int>( theta->initial[0].size() ) );
@@ -376,7 +378,7 @@ void NonmemTranslatorTest::testParsePopSource()
       CPPUNIT_ASSERT_EQUAL( theta_up[i],  atof( theta->upper[0][i].c_str() ) );
     }
   
-  Symbol *omega = table->find( "omega" );
+  Symbol *omega = table->findi( "omega" );
   CPPUNIT_ASSERT( omega != Symbol::empty() );
   CPPUNIT_ASSERT( omega->structure == omegaStruct );
   CPPUNIT_ASSERT_EQUAL( omegaDim, omega->dimension[0] );
@@ -392,7 +394,7 @@ void NonmemTranslatorTest::testParsePopSource()
       CPPUNIT_ASSERT_EQUAL( omega_in[i],  atof( omega->initial[0][i].c_str() ) );
    }
 
-  Symbol *sigma = table->find( "sigma" );
+  Symbol *sigma = table->findi( "sigma" );
   CPPUNIT_ASSERT( sigma != Symbol::empty() );
   CPPUNIT_ASSERT( sigma->structure == sigmaStruct );
   CPPUNIT_ASSERT_EQUAL( sigmaDim, sigma->dimension[0] );
@@ -403,7 +405,7 @@ void NonmemTranslatorTest::testParsePopSource()
       CPPUNIT_ASSERT_EQUAL( sigma_in[i],  atof( sigma->initial[0][i].c_str() ) );
    }
 
-  Symbol *eta = table->find( "eta" );
+  Symbol *eta = table->findi( "eta" );
   CPPUNIT_ASSERT( eta != Symbol::empty() );
   CPPUNIT_ASSERT_EQUAL( etaLen, static_cast<int>( eta->initial[0].size() ) );
   CPPUNIT_ASSERT_EQUAL( etaLen, static_cast<int>( eta->upper[0].size() ) );
@@ -415,7 +417,7 @@ void NonmemTranslatorTest::testParsePopSource()
       CPPUNIT_ASSERT_EQUAL( eta_in[i],  atof( eta->initial[0][i].c_str() ) );
     }
 
-  Symbol *eps = table->find( "eps" );
+  Symbol *eps = table->findi( "eps" );
   CPPUNIT_ASSERT( eta != Symbol::empty() );
   CPPUNIT_ASSERT_EQUAL( epsLen, static_cast<int>( eps->initial[0].size() ) );
   CPPUNIT_ASSERT_EQUAL( epsLen, static_cast<int>( eps->upper[0].size() ) );
