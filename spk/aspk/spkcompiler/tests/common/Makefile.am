@@ -8,6 +8,8 @@ AM_CPPFLAGS = -g
 test_common_SOURCES = \
 	../config.h \
 	test_common.cpp \
+	clientTest.cpp \
+        clientTest.h \
 	ExpTreeGeneratorTest.cpp \
 	ExpTreeGeneratorTest.h \
 	SpkCompilerUtilTest.cpp \
@@ -25,6 +27,7 @@ test_common_SOURCES = \
         SpkMLToCppTest.h
 
 test_common_INCLUDES = \
+	clientTest.h \
 	ExpTreeGeneratorTest.h \
 	ExpNodeCarrierTest.h \
 	SpkCompilerUtilTest.h \

@@ -95,6 +95,7 @@ void emit_IndDataTest::test()
   fclose( IndData_h );
   
   FILE * IndData_cpp = fopen( "IndData.cpp", "w" );
+  assert( IndData_cpp != NULL );
   emit_initIndDataObjects( IndData_cpp, nIndividuals, &table, label_alias_mapping, data_for, order_id_pair );
   emit_releaseIndDataObjects( IndData_cpp, nIndividuals, &table, label_alias_mapping, data_for, order_id_pair );
   fclose( IndData_cpp );
