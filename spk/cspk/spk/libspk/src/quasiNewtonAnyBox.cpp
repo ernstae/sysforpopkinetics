@@ -1205,36 +1205,33 @@ namespace // [Begin: unnamed namespace]
  *
  * Returns the unscaled value for y.   
  *
- * Note - Sachiko:
- * No possibility for "div by zero" error.
- *
  *************************************************************************/
 
 void unscaleElem(
-  int n,
-  const double* const py, 
-  const double* const pxLow, 
-  const double* const pxUp, 
-  const double* const pxDiff,
-  double* px )
+  int                  n,
+  const double* const  y, 
+  const double* const  xLow, 
+  const double* const  xUp, 
+  const double* const  xDiff,
+  double*              x )
 {
-    for(int i=0; i<n; i++)
+  for ( int i = 0; i < n; i++ )
+  {
+    if ( y[i] != 1.0 ) 
     {
-      if ( py[i] != 1.0 ) 
-      {
-        // Transform the element of the y vector back to the unscaled 
-        // form. Note that for those elements of x for which the
-        // lower and upper bounds are the same, xDiff is zero, and
-        // the x values are equal to their lower bounds.
-        px[i] = pxLow[i] + py[i] * pxDiff[i];
-      }
-      else
-      {
-        // If y is at the upper bound, calculate the unscaled value
-        // in a way that avoids roundoff error.
-        px[i] = pxUp[i];
-      }
+      // Transform the element of the y vector back to the unscaled 
+      // form. Note that for those elements of x for which the
+      // lower and upper bounds are the same, xDiff is zero, and
+      // the x values are equal to their lower bounds.
+      x[i] = xLow[i] + y[i] * xDiff[i];
     }
+    else
+    {
+      // If y is at the upper bound, calculate the unscaled value
+      // in a way that avoids roundoff error.
+      x[i] = xUp[i];
+    }
+  }
 }
 
 
@@ -1255,8 +1252,8 @@ void scaleGradElem(
   const double* const pxDiff,
   double* pScaledG )
 {
-    for(int i=0; i<n; i++)
-        pScaledG[i] = pxDiff[i] * pg[i];
+  for(int i=0; i<n; i++)
+      pScaledG[i] = pxDiff[i] * pg[i];
 }
 
 
