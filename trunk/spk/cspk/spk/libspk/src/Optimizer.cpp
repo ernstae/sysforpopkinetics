@@ -142,8 +142,9 @@ $head Arguments$$
 $syntax/
 /epsilon/
 /$$
-This real number must be greater than $math%0.0%$$ and 
-less than or equal to $math%1.0%$$.
+This real number is used to specify the convergence criteria
+for the optimizer.
+It must be greater than $math%0.0%$$.
 
 $syntax/
 
@@ -152,35 +153,13 @@ $syntax/
 This integer must be greater than or equal to zero.
 It specifies the maximum number of 
 iterations to attempt before giving up on convergence.
-If $italic nMaxIter$$ is zero, then the top-level search
-function ($mref%fitIndividual%fitPopulation%$$) will simply
-compute the objective function without performing a search.
 
 $syntax/
 
 /traceLevel/
 /$$
 This integer scalar specifies the amount of tracing.
-Tracing is done using a scaled version of the
-objective function.  For this scaled version the elements of
-the parameter vector are constrained to the interval $math%[0, 1]%$$. 
-If $math%level \ge 1%$$, trace values are directed to standard output 
-(stdout).  
-Larger values of $italic traceLevel$$ entail more tracing, 
-with $math%4%$$ being the highest level of tracing.
-Note that in the output the $math%i%$$-th component of the scaled
-objective function parameter is 
-denoted Vi, e.g., V3, and is printed under the heading "Varbl". 
-Also note that the scaled objective function is termed the 
-"objective", and the derivative of the scaled objective function is 
-termed the "objective gradient".
-If $math%level \ge 4%$$, additional diagnostic information 
-will be printed before the optimization process is started.  
-First, the parameter values that are passed to the optimizer 
-will be printed.  
-Second, the derivative of the scaled objective 
-function as computed using Model derivatives is compared with its 
-numerical value computed using a finite difference approximation. 
+Larger values of $italic traceLevel$$ entail more tracing.
 
 $head Other data members$$
 $syntax/
