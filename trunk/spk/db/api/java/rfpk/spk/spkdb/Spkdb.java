@@ -87,18 +87,43 @@ public abstract class Spkdb {
 	long eventTime = date.getTime()/1000;
 	long startTime = eventTime;
 	String stateCode = "q2c";
-        if(isWarmStart) stateCode = "q2ws";
-	String sql = "insert into job (state_code, user_id, abstract, dataset_id, "
+        String sql;
+        Blob checkpoint = null;
+        if(isWarmStart)
+        {
+            sql = "select checkpoint from job where job_id=" + parent + ";";
+            Statement stmt = conn.createStatement();
+	    stmt.execute(sql);
+	    ResultSet rs = stmt.getResultSet();
+            if (!rs.next())
+	        throw new SpkdbException("Checkpoint file was not found.");
+            checkpoint = rs.getBlob("checkpoint");
+            if (checkpoint == null)
+	        throw new SpkdbException("Checkpoint file was not found.");
+	    sql = "insert into job (state_code, user_id, abstract, dataset_id, "
+                                    + "dataset_version, model_id, model_version, "
+                                    + "xml_source, method_code, parent, start_time, event_time, checkpoint)"
+                  + " values ('" + stateCode + "'," + userId + ", ?," + datasetId
+                              + ",'" + datasetVersion + "'," + modelId + ",'" + modelVersion
+                              + "', ?,'" + methodCode + "'," + parent + "," 
+	                      + startTime + "," + eventTime + ", ?);";
+        }
+        else
+        {
+	    sql = "insert into job (state_code, user_id, abstract, dataset_id, "
                                     + "dataset_version, model_id, model_version, "
                                     + "xml_source, method_code, parent, start_time, event_time)"
-                           + " values ('" + stateCode + "'," + userId + ", ?," + datasetId
-                                   + ",'" + datasetVersion + "'," + modelId + ",'" + modelVersion
-                                   + "', ?,'" + methodCode + "'," + parent + "," 
-	                           + startTime + "," + eventTime + ");";
+                  + " values ('" + stateCode + "'," + userId + ", ?," + datasetId
+                              + ",'" + datasetVersion + "'," + modelId + ",'" + modelVersion
+                              + "', ?,'" + methodCode + "'," + parent + "," 
+	                      + startTime + "," + eventTime + ");";
+        }
 	PreparedStatement pstmt = conn.prepareStatement(sql);
-	pstmt.setString(1, abstraction);
+        pstmt.setString(1, abstraction);
 	pstmt.setBinaryStream(2, new ByteArrayInputStream(xmlSource.getBytes()), xmlSource.length());
-	pstmt.executeUpdate();
+        if(isWarmStart && checkpoint != null) 
+            pstmt.setBlob(3, checkpoint);
+        pstmt.executeUpdate();
 	ResultSet rs = pstmt.getGeneratedKeys();
 	if (rs.next()) {
 	    jobId = rs.getLong(1);
