@@ -426,9 +426,9 @@
 <!ATTLIST y label CDATA #REQUIRED>
 <!ATTLIST y split (yes|no) #REQUIRED>
 
-<!ATTLIST scatterplot unit_slope (show|hide) #REQUIRED "hide">
+<!ATTLIST scatterplot unit_slope (show|hide) #REQUIRED>
 
-<!ATTLIST scatterplot x0_line (show|hide) #REQUIRED "hide">
+<!ATTLIST scatterplot x0_line (show|hide) #REQUIRED>
 
 <!ATTLIST scatterplot begin #FIXED "1">
 <!ATTLIST scatterplot end   #FIXED "900">
