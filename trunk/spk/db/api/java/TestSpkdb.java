@@ -7,7 +7,7 @@ public class TestSpkdb {
 	String password = "codered";
 	String firstName = "Mike";
 	String surname = "Jordan";
-	final int maxTests = 20;
+	final int maxTests = 22;
 	String xmlSource = "<spksource></spksource>";
 
 	boolean b = true;
@@ -17,6 +17,7 @@ public class TestSpkdb {
 
 	long userId = 0;
 	long jobId = 0;
+	long datasetId = 0;
 	long newerJobId = 0;
 	long newestJobId = 0;
 	
@@ -226,6 +227,28 @@ public class TestSpkdb {
 		    report = Spkdb.jobReport(conn, newestJobId);
 		    b = report.compareTo("job report") == 0;
 		    break;
+		case 20:
+		    target = true;
+		    s = "newDataset";
+		    datasetId 
+			= Spkdb.newDataset(conn, userId, "dataset T", "T", "1 2 4 3");
+		    s += ": datasetId = " + datasetId;
+		    b = datasetId > 0;
+		    break;
+		case 21:
+		    target = false;
+		    s = "newDataset";
+		    datasetId 
+			= Spkdb.newDataset(conn, userId, "dataset T", "T", "1 2 4 3");
+		    s += ": datasetId = " + datasetId;
+		    b = datasetId > 0;
+		    break;
+		case 22:
+		    target = false;
+		    s = "getDataset";
+		    String dataset = Spkdb.getDataset(conn, datasetId);
+		    b = dataset.compareTo("1 2 4 3") == 0;
+		    break;
 		default:
 		    break;
 		}
@@ -233,8 +256,7 @@ public class TestSpkdb {
 		s += " >> " + e;
 		b = false;
 	    }
-	    if (i <= maxTests)
-		ok(b == target, i, s);
+	    ok(b == target, i, s);
 	}
 	try {
 	    b = Spkdb.disconnect(conn);
