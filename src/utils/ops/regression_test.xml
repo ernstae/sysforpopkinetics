@@ -3,12 +3,13 @@
     <job>56</job>
   </cerr>
   <srun>
-    <job>15</job>
-    <job>46</job>
-    <job>62</job>
-    <job>88</job>
-    <job>89</job>
-    <job>90</job>
+    <job>15</job><!-- pop opt, FO, non-linear, stat -->
+    <job>46</job><!-- pop opt, FO, non-linear, stat -->
+    <job>88</job><!-- monte carlo, linear -->
+    <job>89</job><!-- miser, linear -->
+    <job>90</job><!-- grid, linear -->
+    <job>104</job><!-- pop opt, FOCE, nonlinear -->
+    <job>215</job><!-- ind opt, generates a warning -->
     <ignore>elapsedtime</ignore>
   </srun>
 </regression_test>
