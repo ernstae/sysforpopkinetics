@@ -1582,9 +1582,9 @@ bool IndPredModel::doDataMean_indPar( valarray<double>& ret ) const
   // Calculate the value.
   //------------------------------------------------------------
 
-  int col;
   int j;
   int k;
+  int q;
 
   // Set all of the elements of the derivative of the data 
   // mean equal to zero.
@@ -1593,7 +1593,7 @@ bool IndPredModel::doDataMean_indPar( valarray<double>& ret ) const
   // Set the values for the partial derivatives of the elements
   // of the data mean:
   //
-  //      (k)
+  //      (q)
   //     d     f    ( b  )  .
   //      b     i(j)   i
   //
@@ -1630,15 +1630,15 @@ bool IndPredModel::doDataMean_indPar( valarray<double>& ret ) const
 
     // Set the partial derivatives that depend on theta:
     //
-    //      (k)                      
+    //      (k)
     //     d       f    ( b  )  .
-    //      theta   i(j)   i       
+    //      theta   i(j)   i
     //
     for ( k = 0; k < nTheta; k++ )
     {
-      col = k + thetaOffsetInIndPar;
+      q = k + thetaOffsetInIndPar;
 
-      dataMean_indParCurr[j + col * nRow] = f_thetaCurr[j + col * nRow];
+      dataMean_indParCurr[j + q * nRow] = f_thetaCurr[j + q * nRow];
     }
 
   }
@@ -1905,11 +1905,11 @@ bool IndPredModel::doDataVariance_indPar( valarray<double>& ret ) const
   int h_thetaRow;
   int h_thetaCol;
   int row;
-  int col;
   int j;
   int k;
   int m;
   int n;
+  int q;
 
   // Set all of the elements of the derivative of the data 
   // variance equal to zero.
@@ -1918,7 +1918,7 @@ bool IndPredModel::doDataVariance_indPar( valarray<double>& ret ) const
   // Set the values for the partial derivatives of the diagonal
   // elements of the data variance:
   //
-  //      (k)
+  //      (q)
   //     d     R      ( b  )  .
   //      b     i(j,j)   i
   //
@@ -2020,9 +2020,9 @@ bool IndPredModel::doDataVariance_indPar( valarray<double>& ret ) const
     //
     for ( k = 0; k < nTheta; k++ )
     {
-      col = k + thetaOffsetInIndPar;
+      q = k + thetaOffsetInIndPar;
 
-      dataVariance_indParCurr[row + col * nRow] =
+      dataVariance_indParCurr[row + q * nRow] =
         2.0 * dataVarianceDiag_theta[k];
     }
 
@@ -2051,9 +2051,9 @@ bool IndPredModel::doDataVariance_indPar( valarray<double>& ret ) const
     // where kron represents the Kronecker product operator.
     for ( k = 0; k < nOmegaPar; k++ )
     {
-      col = k + omegaParOffsetInIndPar;
+      q = k + omegaParOffsetInIndPar;
 
-      dataVariance_indParCurr[row + col * nRow] =
+      dataVariance_indParCurr[row + q * nRow] =
         dataVarianceDiag_omegaPar[k];
     }
 
@@ -2240,9 +2240,8 @@ bool IndPredModel::doDataVarianceInv_indPar( valarray<double>& ret ) const
   //------------------------------------------------------------
 
   int row;
-  int col;
   int j;
-  int k;
+  int q;
 
   // Set the derivative of the inverse equal to the derivative of
   // the data variance itself since they have zero valued elements
@@ -2252,10 +2251,10 @@ bool IndPredModel::doDataVarianceInv_indPar( valarray<double>& ret ) const
   // Set the values for the partial derivatives of the diagonal
   // elements of the inverse of the data variance:
   //
-  //                                  (k)
+  //                                  (q)
   //                              -  d     R      ( b  )
   //                                  b     i(j,j)   i  
-  //      (k)   -1
+  //      (q)   -1
   //     d     R      ( b  )  =  ------------------------  .
   //      b     i(j,j)   i                           2
   //                                   R      ( b  )
@@ -2268,14 +2267,12 @@ bool IndPredModel::doDataVarianceInv_indPar( valarray<double>& ret ) const
     row = j * nEventCurr + j;
 
     // Set the partial derivatives.
-    for ( k = 0; k < nIndPar; k++ )
+    for ( q = 0; q < nIndPar; q++ )
     {
       assert( dataVarianceCurr[j + j * nEventCurr] != 0.0 );
 
-      col = k;
-
-      dataVarianceInv_indParCurr[row + col * nRow] = 
-        - dataVariance_indParCurr[row + col * nRow]
+      dataVarianceInv_indParCurr[row + q * nRow] = 
+        - dataVariance_indParCurr[row + q * nRow]
         / ( dataVarianceCurr[j + j * nEventCurr] * 
 	    dataVarianceCurr[j + j * nEventCurr] );
     }
