@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "/usr/share/sgml/docbook/xml-dtd-4.2-1.0-14/docbookx.dtd" [
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+]>
+<article><title>modelXML</title>
+ <articleinfo>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>July 4, 1776</date>
+	<authorinitials>???</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+    </revhistory>
+  <abstract>
+      <para>
+      </para>
+  </abstract>
+ </articleinfo>
+  <sect1>
+    <title></title>
+    <para>
+    </para>
+  </sect1>
+</article>
