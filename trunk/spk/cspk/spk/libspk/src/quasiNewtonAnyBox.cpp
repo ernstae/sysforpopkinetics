@@ -186,28 +186,27 @@ and initialized when $italic objective$$ is constructed.
 $pre
 
 $$
-The concrete subclass that is the type for $italic objective$$ 
+The concrete subclass that is the type of $italic objective$$ 
 must define the following pure virtual member functions of the 
 abstract base class $code QuasiNewtonAnyBoxObj$$.
 
 $subhead Objective Function$$
-The syntax
+The function that evaluates the objective function has this prototype:
 $syntax%
-    virtual void function( const DoubleMatrix& dvecXIn, double* pdFOut ) = 0;
-	const char *objective.function(const double *%x%, double *%f%)
+    virtual void function( const DoubleMatrix& /dvecXIn/, double* /pdFOut/ ) = 0;
 %$$
-evaluates the objective.
-If the return value of $italic objective$$ is "ok",
-this sets the scalar $italic f$$
-equal to the objective function at $italic x$$
-where $italic x$$ is a vector of length $italic n$$ and
-$latex 0 \leq x \leq 1$$.
-If the return value of 
-$syntax%%objective%.function%$$ 
-is not "ok",
-$code QuasiNewton01Box$$ will abort its operation and return with its return value
-equal to the value returned by 
-$syntax%%objective%.function%$$.
+If there is a problem during the evaluation of this function,
+it should be indicated by throwing an exception.
+The function $code quasiNewtonAnyBox$$ will catch any exception,
+and then rethrow it as an SpkException.
+$pre
+
+$$
+If no exceptions are thrown, then on return the scalar value
+pointed to by $italic pdFout$$ will be equal to the objective
+function at $italic dvecXIn$$.
+The vector $italic dvecXIn$$ has the same dimension as the vector 
+$italic dvecXLow$$ described below.
 
 $subhead Gradient$$
 The objective function is alway evaluated at the same $italic x$$ value directly before
@@ -215,7 +214,9 @@ evaluating the gradient of the objective function.
 The syntax
 $syntax%
     virtual void gradient( DoubleMatrix* pdrowF_xOut ) const = 0;
-	const char *objective.gradient(double *%g%)
+
+    void objective.gradient( DoubleMatrix* pdrowF_xOut );
+    const char *objective.gradient(double *%g%)
 %$$
 evaluates the gradient using the value of $italic x$$ in the previous 
 call to $syntax%%objective%.function%$$.
@@ -336,6 +337,9 @@ This flag indicates that if the too-many-iteration failure has occurred.
 $subhead optimizer.saveStateAtEndOfOpt$$
 This flag indicates if the state information required for a warm start
 should be saved at the end of the optimization process.
+If this value is $code true$$, then this state information will
+...
+even if an exception is thrown.
 
 $subhead optimizer.throwExcepIfMaxIter$$
 This flag indicates if the optimizer should throw an exception when
