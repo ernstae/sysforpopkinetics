@@ -1,0 +1,25 @@
+#!/bin/sh
+
+#chkconfig 2345 91 9
+
+LOCKFILE_PATH=/tmp/lock_compilerd
+
+#restart()
+start() {
+    /usr/local/bin/compilerd
+}
+stop() {
+    PID=`cat $LOCKFILE_PATH`
+    kill $PID
+}
+
+case $1 in
+    restart)
+	;;
+    start)
+	start
+	;;
+    stop)
+	stop
+	;;
+esac
