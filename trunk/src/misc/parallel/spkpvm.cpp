@@ -28,3 +28,14 @@ extern const char *spkpvm_spawn_error(int error) {
   }
   return err_string;
 }
+
+extern const int spkpvm_siglist[] = {
+  SIGILL,
+  SIGABRT,
+  SIGFPE,
+  SIGSEGV,
+  SIGTERM,
+  SIGBUS
+};
+
+extern const int spkpvm_siglist_length = sizeof(spkpvm_siglist) / sizeof(int);

@@ -3,7 +3,11 @@
 #ifndef SPKPVM_H
 #define SPKPVM_H
 
+#include <csignal>
 #include <pvm3.h>
+
+extern const int  spkpvm_siglist[];
+extern const int  spkpvm_siglist_length;
 
 // function prototypes
 extern const char *spkpvm_spawn_error(int);

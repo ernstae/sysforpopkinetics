@@ -196,13 +196,13 @@ static void signal_initialize() {
   struct sigaction signal_action;
   sigset_t block_mask;
   sigemptyset(&block_mask);
-  for (int i = 0; i < NSIG; i++)
-    sigaddset(&block_mask, i);
+  for (int i = 0; i < spkpvm_siglist_length; i++)
+    sigaddset(&block_mask, spkpvm_siglist[i]);
   signal_action.sa_handler = signal_handler;
   signal_action.sa_flags = 0;
   signal_action.sa_mask = block_mask;
-  for (int i = 0; i < NSIG; i++)
-    sigaction(i,  &signal_action, NULL);
+  for (int i = 0; i < spkpvm_siglist_length; i++)
+    sigaction(spkpvm_siglist[i],  &signal_action, NULL);
 }
 // spawn an individual
 static void spawn_individual(int iid) {
