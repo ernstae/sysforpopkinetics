@@ -17,6 +17,7 @@
 using namespace std;
 
 /**
+ * @var int gSpKExpErrors = 0
  * Global counter for errors encountered during parsing.
  * This counter is initialized to zero at compilation time only
  * and it is the caller's responsibility to re-initialize the value
@@ -25,6 +26,7 @@ using namespace std;
 int gSpkExpErrors = 0;
 
 /**
+ * @var int gSpkExpLines = 0
  * Global counter for lines that have been read so far during parsing.
  * This counter is initialized to zero at compilation time only
  * and it is the caller's responsibility to re-initialize the value
@@ -33,6 +35,8 @@ int gSpkExpErrors = 0;
 int gSpkExpLines  = 0;
 
 /**
+ * @var SymbolTable * gSpkExpSymbolTable
+
  * Global pointer to a SymbolTable object.
  *
  * This pointer has to be initialized to point to a valid object
