@@ -11,8 +11,8 @@ extern const char *spkpvm_spawn_error(int);
 
 // paths
 #define SPK_SHARE      "/usr/local/spk/share"
-#define SPK_WORKING    "/usr/local/spk/share/working"
-#define SPKLOG_PATH    "/usr/local/spk/share/log/messages"
+//#define SPK_WORKING    "/usr/local/spk/share/working"
+//#define SPKLOG_PATH    "/usr/local/spk/share/log/messages"
 
 
 // message tags
@@ -23,6 +23,7 @@ extern const char *spkpvm_spawn_error(int);
 #define SpkPvmUnreported   -1
 #define SpkPvmDied         -2
 #define SpkPvmChildError   -3
+#define SpkPvmHostDeleted  -4
 
 // architectures
 static char *i686 = "i686";

@@ -1,22 +1,26 @@
 /*
   NAME
-  spook -- perform the computation for an SPK job
+  spkjob -- perform the computation for an SPK job
       
   SYNOPSIS
-  spkjob job_id individual-count
+  spkjob job_id individual-count mode
 
   DESCRIPTION 
   This program should run on the head node of the cluster.  It has
   reponsibility for initialization, for spawning the population level
   of the computation, and for cleanup.  It writes messages directly to
-  the spk log file, which is on the same node.  The standard output of
-  descendent nodes is directed to this same file, through the magic of
-  pvm.
+  the spk log file, which is on the same node. It assists dependent
+  nodes to write to the same log, by receiving their messages and
+  copying them to the log.
 
-  job_id is the whole number which is the key to the job in the spk
-  database.
+  job_id is a whole number which is the key in the database identifying
+  the job that is being worked on
 
-  individual-count is the number of individuals being modelled.
+  individual-count is the number of individuals being modeled.
+
+  mode is either "test" or "prod" depending on whether the job is 
+  running in the test environment or the production environment
+
 */
 
 #include <sys/types.h>
@@ -30,10 +34,11 @@
 #include <map>
 #include <spkpvm.h>
 
+// note: ARCH is defined on the command line of the make file
+
 static int my_tid;
 static int pop_tid;
 static int pop_host;
-static bool pop_done = false;
 static int pop_exit_value = SpkPvmUnreported;
 static FILE *logfile;
 static void die(char*);
@@ -41,7 +46,7 @@ static char *job_id;
 static sigset_t block_set;
 static volatile bool terminating = false;
 
-static void finish(void);
+static void finish(int);
 static void signal_block(void);
 static void signal_handler(int);
 static void signal_initialize(void);
@@ -52,12 +57,14 @@ static void writelog(const char*);
 // call this function in case of fatal error
 static void die(char* message) {
   spklog(message);
-  finish();
+  finish(SpkPvmDied);
   exit(SpkPvmDied);
 }
 // call this function to clean up before ending
-static void finish() {
-  spklog("stop");
+static void finish(int exit_value) {
+  char buf[100];
+  sprintf(buf, "stop; exit value = %d", exit_value);
+  spklog(buf);
   fclose(logfile);
 }
 // block termination signals
@@ -73,7 +80,7 @@ static void signal_handler(int signum) {
   } 
   else {
     spklog("a second termination signal received");    
-    finish();
+    finish(signum);
     exit(1);
   }
   terminating = true;
@@ -119,29 +126,31 @@ static void writelog(const char *message) {
   fflush(logfile);
 }
 int main(int argc, char** argv) {
-  char *usage = "usage: spkjob job_id individual_count";
+  char *usage = "usage: spkjob job_id individual_count mode";
   char buf[100];
   pid_t my_pid = getpid();
   int bufid;
     
   // Process arguments
-  if (argc != 3) {
+  if (argc != 4) {
     fprintf(stderr, "%s\n", usage);
     return 1;
   }
   job_id = argv[1];
   char *individual_count = argv[2];
+  char *mode = argv[3];
 
   // Enroll in pvm
   if ((my_tid = pvm_mytid()) < 0) {
-    die("pvm_tid failed");
+    die("pvm_mytid failed");
   }
   // Disallow direct routing of messages between tasks;
   // otherwise messages will arrive out of sequence. 
   pvm_setopt(PvmRoute, PvmDontRoute);
 
   // Open the log file
-  if ((logfile = fopen(SPKLOG_PATH, "a")) == NULL) {
+  sprintf(buf, "%s/log/spk%s/messages", SPK_SHARE, mode);
+  if ((logfile = fopen(buf, "a")) == NULL) {
     logfile = stdout;
     die("could not open spk log file");
   }
@@ -160,14 +169,16 @@ int main(int argc, char** argv) {
   signal_initialize();
 
  pop_start:
+
   // Spawn the population level
-  char* arg[3]; 
+  char* arg[4]; 
   arg[0] = job_id;
   arg[1] = individual_count;
-  arg[2] = NULL;
-  sprintf(buf, "%s/arch/%s/bin/spkpop", SPK_SHARE, ARCH);
+  arg[2] = mode;
+  arg[3] = NULL;
+  sprintf(buf, "%s/arch/%s/bin/spk%s/spkpop", SPK_SHARE, ARCH, mode); 
   int rval = pvm_spawn(buf, arg, 0, NULL, 1, &pop_tid);
-   if (rval < 0) 
+  if (rval < 0) 
     die("could not spawn population level due to system error");
   if (rval == 0) {
     const char *err_string = spkpvm_spawn_error(pop_tid);
@@ -176,8 +187,9 @@ int main(int argc, char** argv) {
   }
   if ((pop_host = pvm_tidtohost(pop_tid)) < 0)
     die("can't get host for spkpop");
+
   // Change working directory
-  sprintf(buf, "%s/spkjob-%s", SPK_WORKING, job_id);
+  sprintf(buf, "%s/working/spk%s/spkjob-%s", SPK_SHARE, mode, job_id);
   if (chdir(buf) != 0)
     die("could not change working directory");
 
@@ -189,16 +201,16 @@ int main(int argc, char** argv) {
 
   // Loop until the population level is done
 
-  while (!pop_done && ((bufid = pvm_recv(-1, -1)) > 0)) {
-    int bytes, msgtag, junk, tid[1];
-    if (pvm_bufinfo(bufid, &bytes, &msgtag, tid) < 0)
+  while (pop_exit_value == SpkPvmUnreported && ((bufid = pvm_recv(-1, -1)) > 0)) {
+    int bytes, msgtag, junk, tid;
+    if (pvm_bufinfo(bufid, &bytes, &msgtag, &tid) < 0)
       die("pvm_bufinfo failed");
     if (bufid < 0)
-      die("pvm_nrecv returned an error");
+      die("pvm_recv returned an error");
     switch (msgtag) {
     case SpkPvmExitValue:
-      if (*tid != pop_tid) {
-	sprintf(buf, "received SpkPvmExitValue from unexpected tid %0x", *tid);
+      if (tid != pop_tid) {
+	sprintf(buf, "received SpkPvmExitValue from unexpected tid %0x", tid);
 	spklog(buf);
       }
       if (pvm_upkint(&pop_exit_value, 1, 1) < 0)
@@ -207,10 +219,29 @@ int main(int argc, char** argv) {
       spklog(buf);
       break;
     case PvmTaskExit:
-      if (pvm_upkint(tid, 1, 1) < 0)
+      int source;
+      if (pvm_upkint(&tid, 1, 1) < 0)
 	die("pvm_upkint returned an error at PvmTaskExit");
       spklog("received PvmTaskExit for spkpop");
-      pop_done = pop_exit_value != SpkPvmUnreported;
+      if (pop_exit_value == SpkPvmUnreported) {
+	sleep(10);  // give PvmHostDelete time to arrive if such a message is en route
+	while ((bufid = pvm_nrecv(-1, -1)) != 0) {
+	  if (bufid == -1)
+	    die("pvm_nrecv failed");
+	  if (pvm_bufinfo(bufid, &bytes, &msgtag, &source) < 0)
+	    die("pvm_bufinfo failed");
+	  if (msgtag == PvmHostDelete) {
+	    if (pvm_upkint(&tid, 1, 1) < 0)
+	      die("pvm_upkint failed to unpack tid from PvmTaskExit message");
+	    sprintf(buf, "received PvmHostDelete, source=%0x, tid=%0x", source, tid);
+	    spklog(buf);
+	    goto pop_start;
+	  }
+	}
+	sprintf(buf, "spkpop died without returning a value");
+	spklog(buf);
+	pop_exit_value = SpkPvmDied;
+      }
       break;
     case PvmHostDelete:
       spklog("PvmHostDelete received; restarting spkpop");
@@ -227,6 +258,6 @@ int main(int argc, char** argv) {
     }
   }
   // Finish up
-  finish();
+  finish(pop_exit_value);
   return pop_exit_value;
 }
