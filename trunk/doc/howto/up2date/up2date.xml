@@ -12,6 +12,12 @@
 	<authorinitials>afw</authorinitials>
 	<revremark>Initial version.</revremark>
       </revision>
+      <revision>
+	<revnumber>1.1</revnumber>
+	<date>July 25, 2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Updated for systems that do not dual-boot</revremark>
+      </revision>
     </revhistory>
   <abstract>
       <para>
@@ -94,10 +100,14 @@
   <sect1>
     <title>After a Kernel Update</title>
     <para>
-      Because the Software Team workstations are dual-booted, 
-      we use a diskette to boot onto Linux.  Before we can boot'
-      up a new kernel, we need to make a boot diskette and 
-      a backup boot diskette.  Here is the procedure to follow.
+      If you boot Linux from the hard drive, there is nothing more
+      to do.  The next time you boot, the machine will come up on
+      the new version of Linux.
+    </para>
+    <para>
+      If your machine is dual-booted and you use a diskette to
+      boot onto Linux, you will need to make a new boot diskette and
+      a new backup boot diskette.  Here is the procedure to follow.
       <orderedlist>
 	<listitem>
 	  <para>
@@ -148,25 +158,31 @@ su
 	    diskettes you have just made.
 	  </para>
 	</listitem>
-	<listitem>
-	  <para>
-	    You only need to have two kernels installed: the
-	    current kernel and the previous kernel.  To
-	    reduce clutter, you can remove old kernel packages.
-	    Suppose that the 
-	    <command>rpm -qa | grep kernel-[0-9]</command>
-	    command line returned the names of three kernel
-	    packages, and that
-	    <filename>kernel-2.4.14.8.0</filename> was the
-	    oldest of them.  To remove that package,
-	    use these commands:
-	    <screen>
+      </orderedlist>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Removing Redundant Kernels</title>
+    <para>
+      You only need to have two kernels installed: the
+      current kernel and the previous kernel.  To
+      reduce clutter, you can remove old kernel packages.
+      Suppose that the 
+      <command>rpm -qa | grep kernel-[0-9]</command>
+      command line returned the names of three kernel
+      packages, and that
+      <filename>kernel-2.4.14.8.0</filename> was the
+      oldest of them.  To remove that package,
+      use these commands:
+      <screen>
 su
 rpm -ev kernel-2.4.14.8.0	      
-	    </screen>
-	  </para>
-	</listitem>
-      </orderedlist>
+      </screen>
+      You can get a list of all kernels installed by using the
+      rpm query function:
+      <screen>
+rpm -qa | grep kernel
+      </screen>
     </para>
   </sect1>
   <sect1>
