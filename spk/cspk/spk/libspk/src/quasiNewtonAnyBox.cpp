@@ -804,8 +804,8 @@ void quasiNewtonAnyBox(
   double* deltaY         = memoryDbl( nObjPar );
   double* gScaledProj    = memoryDbl( nObjPar );
   double* hScaledWork    = memoryDbl( nObjPar * nObjPar );
-  double* rScaled        = memoryDbl( nObjPar * nObjPar );
-  double* rScaledDiagRec = memoryDbl( nObjPar );
+  double* lScaled        = memoryDbl( nObjPar * nObjPar );
+  double* lScaledDiagRec = memoryDbl( nObjPar );
 
   // These variables are used by the function isWithinTol.
   bool* isElemFree = memoryBool( nObjPar );
@@ -1010,7 +1010,7 @@ void quasiNewtonAnyBox(
   //------------------------------------------------------------
 
   valarray<double> hScaledVA( nObjPar * nObjPar );
-  valarray<double> rScaledVA( nObjPar * nObjPar );
+  valarray<double> lScaledVA( nObjPar * nObjPar );
 
   try
   {
@@ -1021,8 +1021,8 @@ void quasiNewtonAnyBox(
       // Get the Cholesky factor of the scaled Hessian in lower triangular 
       // form and column-major order, and then put it in row-major order.
       doubleArrayToValarray( hScaled, hScaledVA );
-      rScaledVA = cholesky( hScaledVA, nObjPar );
-      valarrayToDoubleArrayTrans( nObjPar, rScaledVA, rScaled );
+      lScaledVA = cholesky( hScaledVA, nObjPar );
+      valarrayToDoubleArrayTrans( nObjPar, lScaledVA, lScaled );
 
       // See if this function's convergence criterion has been met.
       if ( isWithinTol( 
@@ -1033,11 +1033,11 @@ void quasiNewtonAnyBox(
         yUp,
         gScaled,
 	hScaled,
-        rScaled,
+        lScaled,
 	deltaY,
 	gScaledProj,
 	hScaledWork,
-	rScaledDiagRec,
+	lScaledDiagRec,
 	isElemFree ) )
       {
         isAcceptable = true;
@@ -1410,10 +1410,10 @@ void valarrayToDoubleArray( const valarray<double>& xVA, double* x )
  * its elements must be in row-major order.
  *
  *
- * r
+ * l
  *
- * The lower triangular Cholesky factor R(x) of the  Hessian H(x) 
- * evaluated at xHat.  Note that the existence of R implies that H is
+ * The lower triangular Cholesky factor L(x) of the Hessian H(x) 
+ * evaluated at xHat.  Note that the existence of L implies that H is
  * symmetric and positive-definite.  It must be of length n * n, and
  * its elements must be in row-major order.
  *
@@ -1438,10 +1438,10 @@ void valarrayToDoubleArray( const valarray<double>& xVA, double* x )
  * elements of its Cholesky factor.
  *
  *
- * rDiagRec
+ * lDiagRec
  *
  * On input, this must be allocated to hold n elements.  On output, it
- * contains the reciprocals of the diagonals of the Cholesky factor of
+ * contains the reciprocals of the diagonals of L(x), the Cholesky factor of
  * the Hessian.
  *
  *
@@ -1453,8 +1453,6 @@ void valarrayToDoubleArray( const valarray<double>& xVA, double* x )
  *
  *************************************************************************/
 
-#include "multiply.h"
-
 bool isWithinTol(
   double         tol,
   int            n,
@@ -1463,11 +1461,11 @@ bool isWithinTol(
   const double*  xUp,
   const double*  g,
   const double*  h,
-  const double*  r,
+  const double*  l,
   double*        deltaX,
   double*        gProj,
   double*        hWork,
-  double*        rDiagRec,
+  double*        lDiagRec,
   bool*          isElemFree )
 {
   //------------------------------------------------------------
@@ -1478,7 +1476,7 @@ bool isWithinTol(
   int j;
   int k;
 
-  assert( isLowerTriangular( r ) );
+  assert( isLowerTriangular( l ) );
 
 
   //------------------------------------------------------------
@@ -1495,10 +1493,10 @@ bool isWithinTol(
       hWork[i * n + j] = h[i * n + j];
     }
   
-    // Copy the sub-diagonal elements from the sub-diagonal of R.
+    // Copy the sub-diagonal elements from the sub-diagonal of L.
     for ( j = i + 1; j < n; j++ )
     {
-      hWork[i * n + j] = r[i * n + j];
+      hWork[i * n + j] = l[i * n + j];
     }
   }
 
@@ -1528,8 +1526,8 @@ bool isWithinTol(
       gProj[i] = g[i];
 
       // Set the reciprocal of the corresponding R diagonal.
-      assert( r[i * n + i] != 0.0 );
-      rDiagRec[i] = 1.0 / r[i * n + i];
+      assert( l[i * n + i] != 0.0 );
+      lDiagRec[i] = 1.0 / l[i * n + i];
     }
     else
     {
@@ -1559,8 +1557,8 @@ bool isWithinTol(
         hWork[j * n + i] = 0.0;
       }
   
-      // Set the reciprocal of the corresponding R diagonal equal to one.
-      rDiagRec[i] = 1.0;
+      // Set the reciprocal of the corresponding L diagonal equal to one.
+      lDiagRec[i] = 1.0;
     }
   }
 
@@ -1594,15 +1592,8 @@ bool isWithinTol(
   // * 
   // * Note that 
   // *               T
-  // *     A  =  L  L  ,
+  // *     A  =  L  L  .
   // *
-  // * and
-  // *               T
-  // *     H  =  R  R  ,
-  // *
-  // * but 
-  // *            T
-  // *     L  =  R  .
   // ***********************************************************
 
   // Parameter: n.
@@ -1624,20 +1615,6 @@ bool isWithinTol(
   // Cholesky factor L, as returned by nag_real_cholesky
   // (f03aec).
   // Output: unspecified.
-  // Note: NAG functions expect the elements of a[n][tda] to be 
-  // in row-major order while the elements of the DoubleMatrix 
-  // dmatH are stored in column-major order.  This is the reason  
-  // the sub-diagonal elements of r were copied to the 
-  // super-diagonal elements of dmatH.
-
-A (which is just H) is in row major order
-A (which is just H) is in row major order
-A (which is just H) is in row major order
-A (which is just H) is in row major order
-A (which is just H) is in row major order
-A (which is just H) is in row major order
-A (which is just H) is in row major order
-
   double* a = hWork;
 
   // Parameter: tda.
@@ -1652,7 +1629,7 @@ A (which is just H) is in row major order
   // Input:the reciprocals of the diagonal elements of L, as
   // returned by nag_real_cholesky (f03aec).
   // Output: unspecified.
-  double* p = rDiagRec;
+  double* p = lDiagRec;
 
   // Parameter: b[n][tdb].
   // Input:the n by r right-hand side matrix B.  
@@ -1670,7 +1647,7 @@ A (which is just H) is in row major order
   // Parameter: x[n][tdx].
   // Input: unspecified.
   // Output: the n by r solution matrix X.  
-  double* x = pdDeltaXData;
+  double* x = deltaX;
 
   // Parameter: tdx.
   // Input:the last dimension of the array x as declared in the
@@ -1679,6 +1656,7 @@ A (which is just H) is in row major order
   // Output: unspecified.
   // Constraint:  tdx >= nrhs.
   Integer tdx = nrhs;
+
 
   //------------------------------------------------------------
   // Solve the system of equations to compute deltaX.
@@ -1702,7 +1680,7 @@ A (which is just H) is in row major order
     // earlier to be necessary for this tolerance calculation.
     if ( isElemFree[i] )
     {
-      if ( fabs( pdDeltaXData[i] ) > tol )
+      if ( fabs( deltaX[i] ) > tol )
       {
         // Get out of the routine as soon as possible if
 	// one of the elements is not within tolerance.
