@@ -11,6 +11,7 @@ libspk_la_SOURCES = \
 	blockDiagonalDerivative.cpp \
 	broadCastEndOfSpk.cpp \
 	centdiff.cpp \
+	Channel.cpp \
 	cholesky.cpp \
 	countTrues.cpp \
 	Covariance.cpp \
@@ -92,6 +93,7 @@ libspk_la_SOURCES = \
 	SpkException.cpp \
 	SpkModel.cpp \
 	SpkWarning.cpp \
+        System.cpp \
 	transpose.cpp \
 	transposeDerivative.cpp \
 	transposeRowBlocks.cpp \

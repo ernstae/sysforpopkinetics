@@ -1,4 +1,4 @@
-AC_INIT(src/DiffEqnModelTest.cpp)
+AC_INIT(src/genericDriver.cpp)
 AM_INIT_AUTOMAKE(DiffEqnModelTest,0.1)
 AM_CONFIG_HEADER(config.h)
 AC_PROG_CC

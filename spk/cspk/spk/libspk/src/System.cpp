@@ -297,7 +297,6 @@ There is a default string size limit for paths of 248 characters.
 $end
 */
 
-#define UNIX
 /*------------------------------------------------------------------------
  * Include files
  *------------------------------------------------------------------------*/
@@ -306,8 +305,9 @@ $end
   #include <io.h>     // for _findfirst and _access
   #include <windows.h>
   #include <time.h>   // for clock()
-#elif UNIX
-  #include <sys/unistd.h> // for getcwd
+#else
+  #include <sys/types.h>
+  #include <unistd.h>
 #endif
 
 #include <iostream>
@@ -639,6 +639,7 @@ const File System::pwd()
 /*------------------------------------------------------------------------
  * System::beginthread(void( __cdecl * start_address )( void * ), unsigned stack_size, void * arglist)
  *------------------------------------------------------------------------*/
+/*
 int System::beginthread( void( __cdecl * start_address )( void * ), unsigned int stack_size, void * arglist )
 {
 #ifdef WIN32
@@ -648,10 +649,12 @@ int System::beginthread( void( __cdecl * start_address )( void * ), unsigned int
     exit(-1);
 #endif
 }
+*/
 
 /*------------------------------------------------------------------------
  * System::pid()
  *------------------------------------------------------------------------*/
+/*
 void System::endthread()
 {
 #ifdef WIN32
@@ -661,6 +664,7 @@ void System::endthread()
     exit(-1);
 #endif
 }
+*/
 /*------------------------------------------------------------------------
  * System::sleep(long int ms)
  *------------------------------------------------------------------------*/
