@@ -126,6 +126,7 @@ unsigned int SpkCompilerError::maxMessageLen() throw()
 SpkCompilerError::SpkCompilerError() throw()
 : myErrorCode(), myLineNum(0)
 {
+/*
     try{
         std::fill(myFileName, myFileName+FILENAME_FIELD_LEN+1, '\0');
         std::fill(myMessage, myMessage+MESSAGE_FIELD_LEN+1, '\0');
@@ -135,6 +136,7 @@ SpkCompilerError::SpkCompilerError() throw()
         cerr << "SpkCompilerError::SpkCompilerError() shall not throw... terminating..." << endl;
         abort();
     }
+*/
 }
 SpkCompilerError::SpkCompilerError(enum ErrorCode ecode, const char* mess, unsigned int line, const char* file) throw() 
 : myErrorCode(ecode), myLineNum(line)
