@@ -246,26 +246,67 @@ The i-th &lt;<value>&gt; corresponds to the i-th element of the parameter vector
 <!ATTLIST ind_coefficient_out length CDATA #REQUIRED>
 
 
-<!-- <presentation_data> The data item values in the given data set, the values that appear on the left hand side of the equations in the model definition and the following extra items, both evaluated at each sampling point:
+<!-- <presentation_data> An augmented data set: a set of all values associated with or evaluated at each individual's sampling points.
+        
+The set includes the complete set of data item values in the given data set, 
+the quantities computed and stored in the variables that appear on the left hand side 
+of the equations in the model definition, plus the following extra items:
 
    <html:ul>
-      <html:li>Observation record identifier (ID)</html:li>
-      <html:li>Prediction (PRED)</html:li>
-      <html:li>Residual (RES) (= DV - RRED)</html:li>
-      <html:li>Weighted residual (WRES) if population analysis were requested.</html:li>
+      <html:li>Missing Dependent Variable [MDV] if it were missing in the original data set</html:li>
+      <html:li>Prediction [PRED]</html:li>
+      <html:li>Residual [RES] where RES = DV - RRED</html:li>
+      <html:li>Weighted residual [WRES].  WRES = Cij*RES where Cij is the i-th individual's j-th 
+diagonal element of C such that W = C * C^T.  W = SPK's R(b) for the individual analysis. 
+ W = g( R(alp,b), D(alp) ) for the population analysis for some function g().</html:li>
       </html:li>
-      <html:li>Simulated data (ie. dependent variable) if data simulation were requested (SIMDV).</html:ul>
+      <html:li>Simulated data (ie. simulated dependent variable) if data simulation were requested [SIMDV].</html:ul>
    </html:ul>
 
 with THETA set to:
 
    <html:ul>
-      <html:li>initial values if no parameter estimation is requested.</html:li>
-      <html:li>final values if parameter estimation is requested.</html:li>
+      <html:li>
+      initial values if no parameter estimation is requested.
+      </html:li>
+      <html:li>
+      final values or values from the last successful & complete iteration if parameter estimation is requested.
+      </html:li>
    </html:ul>
 
-The data set is considered as a table/matrix here and the first row in the
-table would contain the labels that describe the nature of the values that follow (column-wise).
+
+Conceptual Example:
+<html:pre>
+      [ Model Defintion ]
+
+      F = TIME * 10.0 + DOSE
+      Y = F * F
+
+      [ Original Data Set ]                     
+	ID	TIME	DV	DOSE
+	1	0	8	10
+	1	0.1	1	0
+	1	0.2	2	0
+	2	0	10	8.5
+	2	0.1	1	0
+	3	0	10	12
+	3	0.5	5	0
+	3	1	9.5	0
+	3	2	20	0
+
+      [ Presentation Data Set ]
+	ID	TIME	DV	DOSE	PRED	RES	WRES	MDV	F	Y
+	1	0	8	10	10	-2	...	0	10	100
+	1	0.1	1	0	1	0		0	1	1
+	1	0.2	2	0	2	0		0	2	4
+	2	0	10	8.5	8.5	1.5		0	8.5	72.25
+	2	0.1	1	0	1	0		0	1	1
+	3	0	10	12	12	-2		0	12	144
+	3	0.5	5	0	5	0		0	5	25
+	3	1	9.5	0	10	-0.5		0	10	100
+	3	2	20	0	20	0		0	20	400
+</html:pre>
+
 -->
 <!ELEMENT presentation_data (data_labels | row*) > 
 
