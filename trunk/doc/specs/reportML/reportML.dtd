@@ -368,17 +368,14 @@ would be assigned.
          <html:dt>PRED</html:dt>
          <html:dd>Prediction.</html:dd>
          <html:dt>RES</html:dt>
-         <html:dd>Residual, where RES = DV - PRED.</html:dd>
+         <html:dd>Residual for the prediction, where RES = DV - PRED.</html:dd>
          <html:dt>WRES</html:dt>
-         <html:dd>Weighted residual.  The weighted residuals are
-         calculated by multiplying the vector of residuals for the
-         individual by the matrix square root of the inverse of the
-         covariance matrix for their data.
+         <html:dd>Weighted residual for the prediction
          </html:dd>
          <html:dt>ETARES</html:dt>
-         <html:dd>Residual for population parameter (only available for population analaysis)</html:dd>
+         <html:dd>Residual for eta (only available for population analaysis)</html:dd>
          <html:dt>WETARES</html:dt>
-         <html:dd>Weighted residual for population parameter (only available for population analysis)</html:dd>
+         <html:dd>Weighted residual for eta (only available for population analysis)</html:dd>
          <html:dt>ORGDV</html:dt>
          <html:dd>The original DV value when a new data set is simulated.  The new data set populates DV.
       </html:ul>
