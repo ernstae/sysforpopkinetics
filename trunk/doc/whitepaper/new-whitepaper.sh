@@ -24,14 +24,17 @@ if [ $# -eq 0 ] || [ $1 == -h ] || [ $1 == --help ]; then
 fi
 
 SUBJECT=$1
-NAME=$SUBJECT-rfpk-WHITEPAPER
+WEBDIR=/var/www/html/soft/whitepaper/$SUBJECT
+WEBHOST=whitechuck
 
-mkdir $NAME
-cp template/Makefile $NAME/makefile
-cp template/SUBJECT-rfpk-WHITEPAPER.xml $NAME/x.xml
-cd $NAME
+mkdir $SUBJECT
+cp template/Makefile $SUBJECT/makefile
+cp template/SUBJECT.xml $SUBJECT/x.xml
+cd $SUBJECT
 sed  "s/SUBJECT/$SUBJECT/" < makefile > Makefile
-sed  "s/Subject/$SUBJECT/" < x.xml > $NAME.xml
+sed  "s/Subject/$SUBJECT/" < x.xml > $SUBJECT.xml
 rm makefile x.xml
+
+ssh $WEBHOST "mkdir $WEBDIR > /dev/null 2>&1"
 
 exit 0
