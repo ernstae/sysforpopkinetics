@@ -68,6 +68,12 @@ namespace{
   bool              myIsConfidence  = false;
   bool              myIsCoefficient = false;
 
+  const string keyTHETA = SymbolTable::key( "theta" );
+  const string keyETA   = SymbolTable::key( "eta" );
+  const string keyEPS   = SymbolTable::key( "eps" );
+  const string keyOMEGA = SymbolTable::key( "omega" );
+  const string keySIGMA = SymbolTable::key( "sigma" );
+
   valarray<int> myRecordNums;
 };
 //========================================
@@ -1367,7 +1373,16 @@ void NonmemTranslator::generateIndData( ) const
 	      oIndData_h << " " << keyVarAlias << ";" << endl;
             }
 	}
-      else //if( type == Symbol::USERDEF || type == Symbol::NONMEMDEF )
+      else if( type == Symbol::NONMEMDEF )
+	{
+	  if( keyVarName == keyTHETA 
+	      || keyVarName == keyOMEGA 
+	      || keyVarName == keyETA 
+	      || keyVarName == keyEPS
+              || keyVarName == keySIGMA )
+	    oIndData_h << "std::vector< std::vector<T> > " << keyVarName << ";" << endl;
+	}
+      else // type == Symbol::USERDEF
 	{
 	  oIndData_h << "std::vector<T> " << keyVarName << ";" << endl;
 	}
@@ -1465,11 +1480,6 @@ void NonmemTranslator::generateIndData( ) const
   // if an iteration fails, the system can return the previously
   // successfully computed values.
   //
-  const string sTHETA = SymbolTable::key( "theta" );
-  const string sETA   = SymbolTable::key( "eta" );
-  const string sEPS   = SymbolTable::key( "eps" );
-  const string sOMEGA = ""; //SymbolTable::key( "omega" );
-  const string sSIGMA = ""; //SymbolTable::key( "sigma" );
   pRawTable = rawTable->begin();
   for( ; pRawTable != rawTable->end(); pRawTable++ )
     {
@@ -1477,25 +1487,36 @@ void NonmemTranslator::generateIndData( ) const
       //
       // The place holders for completed values.
       //
-      if( key == sTHETA )
+      /*
+      if( key == keyTHETA )
 	oIndData_h << "," << endl << key << "( " << myThetaLen << " )";
-      else if( key == sOMEGA )
+      else if( key == keyOMEGA )
 	oIndData_h << "," << endl << key << "( " << myOmegaElemNum << " )";
-      else if( key == sSIGMA )
+      else if( key == keySIGMA )
 	oIndData_h << "," << endl << key << "( " << mySigmaElemNum << " )";
-      else if( key == sETA )
+      else if( key == keyETA )
 	oIndData_h << "," << endl << key << "( " << myEtaLen << " )";
-      else if( key == sEPS )
+      else if( key == keyEPS )
 	oIndData_h << "," << endl << key << "( " << myEpsLen << " )";
-      else if( find( labels->begin(), labels->end(), pRawTable->second.name ) 
-	       == labels->end() )
-	{
-	  oIndData_h << "," << endl << key << "( nIn )";
-	}
+      */
+      if( find( labels->begin(), labels->end(), pRawTable->second.name ) 
+	  == labels->end() )
+	oIndData_h << "," << endl << key << "( nIn )";
     }
-
-  oIndData_h << endl;
   oIndData_h << "{" << endl;
+  oIndData_h << "   for( int i=0; i<nIn; i++ )" << endl;
+  oIndData_h << "   {" << endl;
+  if( myThetaLen > 0 )
+    oIndData_h << "      " << keyTHETA << "[i].resize( " << myThetaLen << " );" << endl;
+  if( myEtaLen > 0 )
+    oIndData_h << "      " << keyETA   << "[i].resize( " << myEtaLen << " );" << endl;
+  if( myEpsLen > 0 )
+    oIndData_h << "      " << keyEPS   << "[i].resize( " << myEpsLen << " );" << endl;
+  if( myOmegaElemNum > 0 )
+    oIndData_h << "      " << keyOMEGA << "[i].resize( " << myOmegaElemNum << " );" << endl;
+  if( mySigmaElemNum > 0 )
+    oIndData_h << "      " << keySIGMA << "[i].resize( " << mySigmaElemNum << " );" << endl;
+  oIndData_h << "   }" << endl;
   oIndData_h << "}" << endl;
 
   oIndData_h << endl;
@@ -1719,12 +1740,6 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   const map<const string, Symbol> * rawTable = table->getTable();
   map<const string, Symbol>::const_iterator pRawTable;
 
-  const string sTHETA = SymbolTable::key( "theta" );
-  const string sETA   = SymbolTable::key( "eta" );
-  const string sEPS   = SymbolTable::key( "eps" );
-  const string sOMEGA = ""; //SymbolTable::key( "omega" );
-  const string sSIGMA = ""; //SymbolTable::key( "sigma" );
-
   //
   // Declare and define Pred template class.
   // For name binding reason, the declaration and the definition
@@ -1879,11 +1894,11 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       // Ignore if the label is of the NONMEM required variable names.
       // They have to be declared in the body of PRED() because
       // they (theta, eta, eps) have to be "const" double array.
-      if( label_key != sTHETA 
-	  && label_key != sETA 
-	  && label_key != sEPS 
-	  && label_key != sSIGMA
-	  && label_key != sOMEGA )
+      if( label_key != keyTHETA 
+	  && label_key != keyETA 
+	  && label_key != keyEPS 
+	  && label_key != keySIGMA
+	  && label_key != keyOMEGA )
 	{
 	  // Ignore if the label is of the data item's.
 	  if( find( labels->begin(), labels->end(), label ) 
@@ -2013,6 +2028,12 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   oPred_h << "//=========================================" << endl;
       
   ///////////////////////////////////////////////////////////////////////////////////
+  // Compute RES, WRES and PRED
+  //
+  oPred_h << "pred = f;" << endl;
+  oPred_h << "res = perm->data[spk_i]->dv[spk_j] - pred;" << endl;
+
+  ///////////////////////////////////////////////////////////////////////////////////
   // Store the current values in temporary storage
   // : the user defined variable values and the NONMEM required variable values.
   for( pRawTable = rawTable->begin(); pRawTable != rawTable->end(); pRawTable++ )
@@ -2022,20 +2043,16 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       // which are scalar values.
       const string label     = pRawTable->second.name;
       const string label_key = SymbolTable::key( label );
-      if( label_key == sTHETA 
-	  || label_key == sETA 
-	  || label_key == sEPS
-	  || label_key == sOMEGA 
-	  || label_key == sSIGMA )
+      if( label_key == keyTHETA 
+	  || label_key == keyETA 
+	  || label_key == keyEPS )
 	{
-	  oPred_h << "copy( " << label_key << ", " << label_key << " + ";
-	  if( label_key == sTHETA )
-	    oPred_h << myThetaLen;
-	  else if( label_key == sETA )
-	    oPred_h << myEtaLen;
-	  else //if( label_key == sEPS )
-	    oPred_h << myEpsLen;
-	  oPred_h << ", temp.data[ spk_i ]->" << label_key << ".begin() );" << endl;
+	  oPred_h << "copy( " << label_key << ", " << label_key << "+spk_etaLen, ";
+          oPred_h << "temp.data[ spk_i ]->" << label_key << "[ spk_j ].begin() ); " << endl;
+	}
+      else if( label_key == keyOMEGA || label_key == keySIGMA )
+	{
+	  // ignore.  these don't get used within PRED.
 	}
       else
 	{
@@ -2692,6 +2709,8 @@ void NonmemTranslator::generateIndDriver( ) const
   const vector<string>::const_iterator pLabelBegin = table->getLabels()->begin();
   const vector<string>::const_iterator pLabelEnd   = table->getLabels()->end();
   vector<string> whatGoesIn;  // will hold those labels in the order that actually go into the data section.
+  vector<string>::const_iterator pWhatGoesIn;
+  string keyWhatGoesIn;
 
   oDriver << "oResults << \"<presentation_data>\" << endl;" << endl;
   oDriver << "oResults << \"<data_labels>\" << endl;" << endl;
@@ -2716,24 +2735,57 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "///////////////////////////////////////////////////////////////////" << endl;
   oDriver << "oResults << \"</data_labels>\" << endl;" << endl;
 
-  vector<string>::const_iterator pWhatGoesIn;
-  oDriver << "for( int i=0, cnt=1; i<nY; i++, cnt++ )" << endl;
+  oDriver << "for( int j=0, cnt=1; j<nY; j++, cnt++ )" << endl;
   oDriver << "{" << endl;
   oDriver << "   ///////////////////////////////////////////////////////////////////" << endl;
   oDriver << "   //" << endl;
   oDriver << "   oResults << \"<row position=\\\"\" << cnt << \"\\\">\" << endl;" << endl;
   for( pWhatGoesIn = whatGoesIn.begin(); pWhatGoesIn!=whatGoesIn.end(); pWhatGoesIn++ )
     {
-      oDriver << "   oResults << \"<value>\" << "; 
-      if( *pWhatGoesIn == "SIMDV" )
+      keyWhatGoesIn = SymbolTable::key( *pWhatGoesIn );
+      if( keyWhatGoesIn == "simdv" )
 	{
+	  oDriver << "   oResults << \"<value>\" << ";
 	  oDriver << "yOut[cnt]";
+	  oDriver << " << \"</value>\" << endl;" << endl;
+	}
+      else if( keyWhatGoesIn == keyTHETA )
+	{
+	  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
+	    {
+	      oDriver << "   oResults << \"<value>\" << ";
+	      oDriver << "set.data[0]->" << keyWhatGoesIn << "[j][" << cntTheta << "]";
+	      oDriver << " << \"</value>\" << endl;" << endl;
+	    }
+	}
+      else if( keyWhatGoesIn == keyETA )
+	{
+	  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
+	    {
+	      oDriver << "   oResults << \"<value>\" << ";
+	      oDriver << "set.data[0]->" << keyWhatGoesIn << "[j][" << cntEta << "]";
+	      oDriver << " << \"</value>\" << endl;" << endl;
+	    }
+	}
+      else if( keyWhatGoesIn == keyEPS )
+	{
+	  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
+	    {
+	      oDriver << "   oResults << \"<value>\" << ";
+	      oDriver << "set.data[0]->" << keyWhatGoesIn << "[j][" << cntEps << "]";
+	      oDriver << " << \"</value>\" << endl;" << endl;
+	    }
+	}
+      else if( keyWhatGoesIn == keyOMEGA || keyWhatGoesIn == keySIGMA )
+	{
+	  // ignore
 	}
       else
 	{
-	  oDriver << "set.data[0]->" << SymbolTable::key( *pWhatGoesIn ) << "[i]";
+	  oDriver << "   oResults << \"<value>\" << ";
+          oDriver << "set.data[0]->" << keyWhatGoesIn << "[j]";
+	  oDriver << " << \"</value>\" << endl;" << endl;
 	}
-      oDriver << " << \"</value>\" << endl;" << endl;
     }
   oDriver << "   oResults << \"</row>\" << endl;" << endl;
   oDriver << "   //" << endl;
@@ -3435,6 +3487,9 @@ void NonmemTranslator::generatePopDriver() const
   const vector<string>::const_iterator pLabelBegin = table->getLabels()->begin();
   const vector<string>::const_iterator pLabelEnd   = table->getLabels()->end();
   vector<string> whatGoesIn;  // will hold those labels in the order that actually go into the data section.
+  vector<string>::const_iterator pWhatGoesIn;
+  string keyWhatGoesIn;
+
 
   oDriver << "oResults << \"<presentation_data>\" << endl;" << endl;
   oDriver << "oResults << \"<data_labels>\" << endl;" << endl;
@@ -3460,10 +3515,9 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "oResults << \"</data_labels>\" << endl;" << endl;
   oDriver << endl;
   
-  vector<string>::const_iterator pWhatGoesIn;
-  oDriver << "for( int j=0, cnt=1; j<nPop; j++ )" << endl;
+  oDriver << "for( int i=0, cnt=1; i<nPop; i++ )" << endl;
   oDriver << "{" << endl;
-  oDriver << "   for( int i=0; i<N[j]; i++, cnt++ )" << endl;
+  oDriver << "   for( int j=0; j<N[i]; j++, cnt++ )" << endl;
   oDriver << "   {" << endl;
   oDriver << "      oResults << \"<row position=\\\"\" << cnt << \"\\\">\" << endl;" << endl;
   oDriver << "      ///////////////////////////////////////////////////////////////////" << endl;
@@ -3471,16 +3525,50 @@ void NonmemTranslator::generatePopDriver() const
 
   for( pWhatGoesIn = whatGoesIn.begin(); pWhatGoesIn!=whatGoesIn.end(); pWhatGoesIn++ )
     {
-      oDriver << "      oResults << \"<value>\" << "; 
-      if( *pWhatGoesIn == "SIMDV" )
+      keyWhatGoesIn = SymbolTable::key( *pWhatGoesIn );
+      if( keyWhatGoesIn == "simdv" )
 	{
+	  oDriver << "   oResults << \"<value>\" << ";
 	  oDriver << "yOut[cnt]";
+	  oDriver << " << \"</value>\" << endl;" << endl;
+	}
+      else if( keyWhatGoesIn == keyTHETA )
+	{
+	  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
+	    {
+	      oDriver << "   oResults << \"<value>\" << ";
+	      oDriver << "set.data[i]->" << keyWhatGoesIn << "[j][" << cntTheta << "]";
+	      oDriver << " << \"</value>\" << endl;" << endl;
+	    }
+	}
+      else if( keyWhatGoesIn == keyETA )
+	{
+	  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
+	    {
+	      oDriver << "   oResults << \"<value>\" << ";
+	      oDriver << "set.data[i]->" << keyWhatGoesIn << "[j][" << cntEta << "]";
+	      oDriver << " << \"</value>\" << endl;" << endl;
+	    }
+	}
+      else if( keyWhatGoesIn == keyEPS )
+	{
+	  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
+	    {
+	      oDriver << "   oResults << \"<value>\" << ";
+	      oDriver << "set.data[i]->" << keyWhatGoesIn << "[j][" << cntEps << "]";
+	      oDriver << " << \"</value>\" << endl;" << endl;
+	    }
+	}
+      else if( keyWhatGoesIn == keyOMEGA || keyWhatGoesIn == keySIGMA )
+	{
+	  // ignore
 	}
       else
 	{
-	  oDriver << "set.data[j]->" << SymbolTable::key( *pWhatGoesIn ) << "[i]";
+	  oDriver << "   oResults << \"<value>\" << ";
+          oDriver << "set.data[i]->" << keyWhatGoesIn << "[j]";
+	  oDriver << " << \"</value>\" << endl;" << endl;
 	}
-      oDriver << " << \"</value>\" << endl;" << endl;
     }
   oDriver << "      //" << endl;
   oDriver << "      ///////////////////////////////////////////////////////////////////" << endl;
