@@ -123,7 +123,7 @@ tok_endif                   "ENDIF"
                                  strcat( mess, nm_text );
                                  strcat( mess, ", exceeds 6!"  );
                                  nm_error( (char*)strdup( mess ) );
-                                 //nm_terminate(); 
+                                 nm_terminate(); 
                               }
                               nm_lval.c_str = (char*)strdup(nm_text); 
                               /*
@@ -140,6 +140,6 @@ tok_endif                   "ENDIF"
                               char buf[128];
                               sprintf( buf, "Invalid charactor '%s'.", nm_text );
                               nm_error( (char*)strdup( buf ) ); 
-                              // nm_terminate();  
+                              nm_terminate();  
                             }
 %%
