@@ -93,7 +93,7 @@ bool MontePopObjTest(void)
 	double integral = 0;
 	for(i = 0; i < numberIndividuals; i++)
 	{
-		integral += AnalyticIntegral(
+		integral -= log( AnalyticIntegral(
 			Model               , 
 			N                   ,
 			y                   ,
@@ -101,11 +101,11 @@ bool MontePopObjTest(void)
 			L                   ,
 			U                   ,
 			i
-		);
+		) );
 	}
 
 	ok  &= NearEqual( integral, integralEstimate, 0., 3 * estimateStd);
-	ok  &= ( (0. < estimateStd) & (estimateStd < 1e-2) ); 
+	ok  &= ( (0. < estimateStd) & (estimateStd / integral < 1e-2) ); 
 
 	return ok;
 }
