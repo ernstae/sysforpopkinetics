@@ -1,7 +1,8 @@
 T = SUBJECT
 HTML_OPS = --nochunks
 STYLE = ../../stylesheet
-WEB = whitechuck.rfpk.washington.edu:/var/www/html/soft/howto/$T
+REL = rhel3
+WEB = whitechuck.rfpk.washington.edu:/var/www/html/soft/howto/$REL/$T
 PNG = $(wildcard *.png)
 
 all:	html pdf rtf

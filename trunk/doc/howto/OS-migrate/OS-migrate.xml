@@ -23,15 +23,55 @@
   </abstract>
  </articleinfo>
   <sect1>
+    <title>Introduction</title>
+    <para>
+      RedHat Enterprise Linux, Version 3 (RHEL3), is closely related to 
+      RedHat Linux 8.0 (RH8), but the differences are great enough
+      that a simple update is not possible.  In the future, when
+      we go from one version of RHEL to the next, an update function
+      that preserves data and applications while upgrading
+      the operating system will be available.  No such update function is 
+      offered for the migration from RH8 to RHEL3.  
+    </para>
+    <para>
+      Even when such an update function is available, it is dangerous
+      to use.  If the update process fails after having made
+      irreversible changes to a hard disk, the recovery process
+      is likely to be very difficult and only partially successful.
+    </para>
+    <para>
+      Our strategy to reduce risk and to simplify the migration 
+      process is to utilize two hard disks.  One disk
+      contains the current operating system and all of the
+      software and data that needs to be preserved. During the
+      migration it will be untouched.  After the migration, it
+      will be placed on-line in a read-only state, so that its
+      contents will be fully accessible.  The other disk 
+      contains nothing that requires preservation. Its contents
+      will be completely wiped out.  It is the disk on which
+      the new version will be installed.
+    </para>
+    <para>
+      There is always some risk that the first disk will not be
+      readable after the new system is installed. In such a case
+      we have to fall back onto the backups which were copied to
+      the whitechuck server. Part of the preparation described
+      in the next section is concerned with making sure that
+      these backups would be available if needed.
+    </para>
+  </sect1>
+  <sect1>
     <title>Preparation</title>
     <para>
-      In the future, it should be possible to migrate from one
-      version of Redhat Enterprise Linux (RHEL) to the next via
-      an update process, in which most files in your system
-      will remain intact. This is, unfortunately, not possible in the
-      migration from Redhat Linux to RHEL.  Your entire disk 
-      storage will be wiped clean.  It is, therefore, crucial that
-      you prepare carefully for the move.
+      It is imperative that we collect information about the
+      current system and store it in forms that will not
+      be over-written when the new version is installed.
+      Some of the data has already been provided by the automatic nightly
+      backups to whitechuck.  We must verify that these backups
+      are usable. Some additional data not
+      included in the nightly backups must be copied to
+      whitechuck.  Finally, the contents of some key configuration
+      files must be printed out.
     </para>
     <sect2>
       <title>Get a Hard Copy of this Document</title>
@@ -159,17 +199,17 @@ scp /tmp/etc.tgz whitechuck:
       </para>
     </sect2>
     <sect2>
-      <title>Print Out Key Network Configuration Files</title>
+      <title>Print Out Configuration Files and Reports</title>
       <para>
-	The RHEL installation script will ask certain questions
-	about your network configuration.  It will be useful
-	to have printout of key files to refer to.  From a 
-	shell window:
+	We need to list some key network configuration files
+	and reports describing the layout of the filesystem:
 	<screen>
 pr /etc/resolv.conf | lpr
 pr /etc/hosts | lpr
 pr /etc/sysconfig/network | lpr
 pr /etc/sysconfig/network-scripts/ifcfg-eth0 | lpr
+pr /etc/fstab | lpr
+df | lpr
 	</screen>
       </para>
     </sect2>
@@ -272,6 +312,11 @@ pr /etc/sysconfig/network-scripts/ifcfg-eth0 | lpr
 	      </listitem>
 	      <listitem>
 		<para>
+		  KDE Software Development.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
 		  Legacy Software Development.
 		</para>
 	      </listitem>
@@ -312,27 +357,6 @@ pr /etc/sysconfig/network-scripts/ifcfg-eth0 | lpr
 	</listitem>
 	<listitem>
 	  <para>
-	    Register with RedHat Network. When you get to
-	    <guimenu>Step 2: Login</guimenu>, check the 
-	    <guimenuitem>Use Existing Account</guimenuitem>
-	    radio button and supply this information:
-	    <screen>
-Username:        alanwesthagen
-Password:        (get this from the Software Team manager)
-Email address:   afw@u.washington.edu
-	    </screen>
-	  </para>
-	  <para>
-	    This should link you up to use one of a set of
-	    RHN Management Entitlements that RFPK has purchased.
-	    The <command>up2date</command> wizard will start
-	    automatically.  Allow it to install any updates
-	    to RHEL Version 3 that have been created since the
-	    cdroms were made, including updates to the kernel.
-	  </para>
-	</listitem>
-	<listitem>
-	  <para>
 	    At this point, the installation is complete.  Reboot
 	    your system, to ensure that any updates will go
 	    into effect.
@@ -352,93 +376,129 @@ whitechuck.rfpk.washington.edu/soft/index.html
       </screen>
       This should bring up the Software Team web page, from 
       which you can bring up a copy of this document..  In the
-      steps that follow, having a copy on the screen will facilite
+      steps that follow, having a copy on the screen will facilitate
       entering commands into shell windows, because you can
       cut and paste.
     </para>
   </sect1>
-  <sect1 id="extra">
-    <title>Create Extra Directory</title>
-    <para>
-      The Software Team backup process places a copy of your
-      entire home directory on &whitechuck; after each working
-      day.  Sometimes you need storage for files which do not
-      require nightly backup. This is a convenient way to 
-      provide this storage in a way that is accessible with
-      ordinary user permissions.
-    </para>
-    <para>
-      In a shell window (note <command>su</command> is not followed
-      by the - option symbol):
-      <screen>
-su
-cd /opt
-mkdir extra
-chown $USER extra
-exit
-cd
-ln -s /opt/extra extra
-      </screen>
-    </para>
-  </sect1>
-  <sect1 id='old_home'>
-    <title>Install Copies of Your Old Home and Old Etc</title>
-    <para>
-      In order to simplify the task of restoring the functions
-      that you enjoyed before the migration, you can copy the
-      most recent backup of your home directory, and the 
-      the copy you made of <filename>/etc</filename>
-      from &whitechuck; to your workstation.
-    </para>
-    <para>
-      The following assumes that you have set up directory which is
-      located outside of your home directory, but to which you have
-      write privilege and to which there is a symbolic link called
-      <filename>extra</filename> in your home directory.  For details,
-      see <link linkend="extra">Create Extra Directory</link>.
-      <screen>
-ssh whitechuck
-cd backup
-B=<emphasis>name of latest backup</emphasis>
-cp -R $B /tmp/last_backup
-cd /tmp
-tar cvzf last_backup.tgz last_backup
-exit
-cd ~/extra
-scp whitechuck:/tmp/last_backup.tgz .
-tar xvzf last_backup.tgz
-rm last_backup.tgz
-scp whitechuck:etc.tgz .
-tar xvzf etc.tgz
-rm etc.tgz
-cd
-ln -s /opt/extra/last_backup/$USER old_home
-ln -s /opt/extra/etc old_etc
-      </screen>
-    </para>
-  </sect1>
   <sect1>
+    <title>Make Old Disk Accessible</title>
+    <para>
+      Your old disk, with your RH8 installation, should now be made 
+      accessible.  We mount the partitions of the old disk on
+      a directory called <filename>/old</filename> which we will
+      create on the new disk.
+    </para>
+    <para>
+      List all the disk partitions known to RHEL:
+      <screen>
+su -
+fdisk -l
+      </screen>
+    </para>
+    <para>
+      You will get a list of the partitions of both your disks. 
+      Compare this with the output of the
+      <command>df</command> that you printed before the 
+      migration.  This latter list shows what mount points
+      the partitions had before migration.
+    </para>
+    <para>
+      By comparing the two lists, determine whether the disk
+      device changed. This might have happened if you 
+      changed the physical connections of your hard drives
+      as might occur, for example, if you added a second
+      drive.  
+    </para>
+    <para>
+      As root,
+      create an empty directory 
+      on which the old partitions will be mounted:
+      <screen>
+mkdir /old
+      </screen>
+    </para>
+    <para>
+      Make a backup copy of <filename>/etc/fstab</filename>:
+      <screen>
+cd /etc
+cp fstab fstab.bak
+      </screen>
+    </para>
+    <para>
+      With <command>emacs</command>, edit <filename>/etc/fstab</filename>,
+      adding one line for each of the old partitions that you want
+      to mount.
+    </para>
+    <para>
+      For example, assume that a comparison of the old 
+      <command>df</command> listing with the current output of
+      <command>fdisk -l</command> shows that the contents of
+      the current <filename>/dev/hdb1</filename> was mounted previously
+      on <filename>/</filename>. In this case you would add the 
+      following line:
+      <screen>
+/dev/hdb1      /old           ext3    ro,suid,dev,exec,auto,nouser,async  1 2
+      </screen>
+    </para>
+    <para>
+      With the above definition, paths relative to 
+      <filename>/</filename> on the old system will now be
+      relative to <filename>/old</filename> on the new one.
+      For example, the old <filename>/home</filename> is
+      now <filename>/old/home</filename>.
+    </para>
+    <para>
+      Further suppose that the contents of the current
+      <filename>/dev/hdb3</filename> used to be mounted on
+      <filename>/home</filename>.  We add the following line to
+      <filename>/etc/fstab</filename>:
+      <screen>
+/dev/hdb3      /old/home      ext3    ro,suid,dev,exec,auto,nouser,async  1 2
+      </screen>
+    </para>
+    <para>
+      Suppose that the contents of the current
+      <filename>/dev/hdb5</filename> was mounted previously on
+      <filename>/usr</filename>.  We add this line:
+      <screen>
+/dev/hdb5      /old/usr       ext3    ro,suid,dev,exec,auto,nouser,async  1 2
+      </screen>
+    </para>
+    <para>
+      Continue until all of the "Linux" file systems (not including the "Linux swap"
+      file system) shown on the <command>fdisk -l</command> listing have been
+      accounted for with lines added to <filename>/etc/fstab</filename>.
+      You may need fewer than three lines.  You may need more.  It all
+      depends on how many ordinary linux filesystem partitions your old
+      system had.
+    </para>
+    <para>
+      Save <filename>/etc/fstab</filename>, then reboot your system.
+      When you now do <command>df</command>, you should see that the
+      old partitions are mounted.
+    </para>
+  </sect1>
+<sect1>
     <title>Restore Your Home Directory</title>
     <para>
-      After completion of the previous 
-      <link linkend="old_home">section</link> that established
-      <filename>old_home</filename> as a symbolic link to a
-      copy of the most recent pre-migration backup of your home
-      directory, you are ready to restore most of the contents
-      of that directory.  To do this, we will use the
+      After establishing access to your old home directory,
+      you are ready to restore most
+      of its contents.  To do this, we will use the
       <command>rsync</command> command, which gives us a convenient
       means of copying a directory tree while excluding a few
       things we do not want copied.  In particular, we do not
-      want to overwrite the gnome and rhn settings that have just
-      been set up.
+      want to overwrite the gnome, rhn, nautilus and metacity
+      settings that have just been set up by the RHEL installation.
     </para>
     <para>
-      From a terminal window (note that <command>su</command>
-      is not followed by the - option symbol):
+      From a terminal window:
       <screen>
 cd
+H=/old/home/$USER
+export H
 su
-rsync -a --exclude '.g*' --exclude '.rhn*' old_home/* old_home/.* .
+rsync -a --exclude '.g*' --exclude '.rhn*' --exclude '.nautilus*' --exclude '.metacity*' $H/* $H/.* .
       </screen>
     </para>
     <para>
@@ -458,7 +518,7 @@ rsync -a --exclude '.g*' --exclude '.rhn*' old_home/* old_home/.* .
       This works fine, but at this point your machine is not
       accessible by name from the outside, because the IP that
       DHCP assigns can change every time you restart your network
-      interface.  For the time being, at least, the Softwar Team
+      interface.  For the time being, at least, the Software Team
       workstations are accessible by host name from the Internet,
       because they have had static IP addresses assigned.  
     </para>
@@ -470,10 +530,128 @@ rsync -a --exclude '.g*' --exclude '.rhn*' old_home/* old_home/.* .
 su 
 cd /etc/sysconfig/network-scripts
 cp ifcfg-eth0 ifcfg-eth0.bak
-cp /home/$USER/old_etc/sysconfig/network-scripts/ifcfg-eth0 .
+cp /old/etc/sysconfig/network-scripts/ifcfg-eth0 .
 /etc/rc.d/init.d/network restart
       </screen>
     </para>
+  </sect1>
+  <sect1>
+    <title>Register with the RedHat Network</title>
+    <para>
+      Now that you have restored your static IP address, you
+      can register with RedHat Network. RFPK purchases a set
+      of annual subscriptions that entitle our RHEL machines
+      to receive automatic updates, via the
+      <command>up2date</command> program.  In this section,
+      you register your machine with RedHat so that this
+      function is enabled.
+    </para>
+    <para>
+      Notice the small red-colored circle at the lower right-hand
+      corner of the screen, just to the left of the date and
+      time.  Double click this to start <command>up2date</command>.
+    </para>
+    <para>
+      Follow the dialog.  At some point you will be asked to 
+      register with RedHat Network and presented with a 
+      window that allows you to either 
+      <guimenuitem>Create a New Account</guimenuitem> or
+      <guimenuitem>Use Existing Account</guimenuitem>.
+    </para>
+    <para>
+      Click the <guimenuitem>Use Existing Account</guimenuitem>
+      radio button and supply this information:
+      <screen>
+	Username:        alanwesthagen
+	Password:        (get this from the Software Team manager)
+	Email address:   afw@u.washington.edu
+      </screen>
+    </para>
+    <para>
+      This should link you up to use one of the
+      RedHat Network Management Entitlements that RFPK has purchased.
+      The <command>up2date</command> wizard will start
+      automatically.  Allow it to install any updates
+      to RHEL Version 3 that have been created since the
+      cdroms were made, including updates to the kernel.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Set Up Printers</title>
+    <para>
+      There are two Hewlett Packard laser printers located in the lab:
+      <orderedlist>
+	<listitem>
+	  <para>
+	    HP LaserJet 4200 dtn, located near the front door to the lab.
+	    This printer has its own interface to the network, and its
+	    own domain name, which is <emphasis>arunta</emphasis>.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    HP LaserJet 5000 dtn, locate near the back door to the lab.
+	    At present, this printer's network interface is broken.
+	    The firewall on whitechuck prevents us from accessing
+	    this  printer, at the present time.
+	  </para>
+	</listitem>
+      </orderedlist>
+    </para>
+    <sect2>
+      <title>Configuring lj4200</title>
+      <para>
+	To configure access to the LaserJet 4200:
+	Bring up the <guimenuitem>Printer Configuration</guimenuitem> window:
+	<screen>
+	  <guimenu>Main</guimenu> => <guimenu>System Settings</guimenu> => <guimenuitem>Printing</guimenuitem>
+	</screen>
+      </para>
+      <para>
+	Press the <guibutton>New</guibutton> button to bring up the
+	<guimenuitem>Add a new print queue</guimenuitem> window.
+	Provide this "wizard" with the following answers:
+	<itemizedlist>
+	  <listitem>
+	    <para>
+	      <guilabel>Name</guilabel>: lj4200
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      <guilabel>Short description</guilabel>: HP LaserJet 4200 near front door
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      <guimenu>Select a queue type</guimenu>: Networked JetDirect
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      <guilabel>Printer</guilabel>: arunta
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      <guilabel>Select the printer manufacturer and model</guilabel>: PostScript Printer
+	    </para>
+	  </listitem>
+	</itemizedlist>
+      </para>
+      <para>
+	Let the wizard <guibutton>apply</guibutton> this definition and 
+	print a test page.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Configuring lj5000</title>
+      <para>
+	As explained above, the firewall on whitechuck inhibits
+	us from accessing this printer until the JetDirect
+	interface is repaired.
+      </para>
+    </sect2>
   </sect1>
   <sect1>
     <title>Restore Password-Free SSH Connections</title>
@@ -486,7 +664,7 @@ cp /home/$USER/old_etc/sysconfig/network-scripts/ifcfg-eth0 .
       steps in this section.
     </para>
     <para>
-      Now configure the Gnome desktop manager.
+      Configure the Gnome desktop manager.
       <screen format="linespecific">
 <guimenu moreinfo="none">Main</guimenu> => <guimenu moreinfo="none">Preferences</guimenu> => <guimenu moreinfo="none">More Preferences</guimenu> => <guimenuitem moreinfo="none">Sessions</guimenuitem> => left-click
       </screen>
@@ -513,26 +691,16 @@ cp /home/$USER/old_etc/sysconfig/network-scripts/ifcfg-eth0 .
     </para>
   </sect1>
   <sect1>
-    <title>Get New CVS Workspace</title>
+    <title>Update CVS</title>
     <para>
-      At this point, you have a copy of your CVS workspace
-      that was in the backup of your home directory.  If,
-      as recommended by this document, you did a 
-      <command>cvs commit</command> just before you started
-      the installation and after the backup was made, the
-      copy you now have is out of date. In order to get
-      an up-to-date workspace, the easiest method is to
-      delete the out-of-date copy and then do a
-      <command>cvs checkout</command>.
+      During the migration, other developers may have committed
+      changes to the cvs repository.  This would be a good time
+      to update your cvs work space.
     </para>
     <para>
-      Assume that R2 contains the path of the root of your
-      workspace:
+      Assume that R2 contains the path of the root of your workspace:
       <screen>
 cd $R2
-cd ..
-rm -rf r2
-cvs checkout r2
 cvs update -dP
       </screen>
     </para>
@@ -542,7 +710,7 @@ cvs update -dP
     <para>
       If your workstation was previously configured to use the
       network time protocol to automatically synchronize its
-      internal clock to those of time standards on the Internet,
+      internal clock that of whitechuck,
       you can easily restore this function by executing the
       following commands from a shell window.
     </para>
@@ -554,8 +722,8 @@ su
 cd /etc
 mv ntp.conf ntp.conf.bak
 mv ntp/step-tickers ntp/step-tickers.bak
-cp /home/$USER/old_etc/ntp.conf .
-cp /home/$USER/old_etc/ntp/step-tickers ntp 
+cp /old/etc/ntp.conf .
+cp /old/etc/ntp/step-tickers ntp 
 /etc/rc.d/init.d/ntpd restart
 /sbin/chkconfig --level 2345 ntpd on
       </screen>
@@ -601,6 +769,18 @@ Close the file, and your home directory will be backed up to
 whitechuck 2:30 AM, each morning that follows a work day.
     </para>
   </sect1>
+  <sect1>
+    <title>Reinstall Acrobat Reader</title>
+    <para>
+      If your prefer the Adobe Acrobat Reader to the default
+      reader provided with RHEL, you will need to reinstall 
+      <command>acroread.</command>  This is easily accomplished by
+      following the steps in the
+      <ulink url="http://whitechuck.rfpk.washington.edu/soft/howto/rhel3/acroread/acroread.html">
+	Acrobat Reader Installation
+      </ulink> howto.
+    </para>
+  </sect1>
 </article>
 
 <!--  LocalWords:  xml DOCTYPE DocBook uw whitechuck systemitem systemname afw
@@ -611,7 +791,13 @@ whitechuck 2:30 AM, each morning that follows a work day.
  -->
 <!--  LocalWords:  chown tgz lpr Cdrom mkdir lt ln RHN RFPK alanwesthagen cp mv
  -->
-<!--  LocalWords:  linkend xvzf pre rsync rhn guimenu guimenuitem Howto ntp
+<!--  LocalWords:  linkend xvzf pre rsync rhn guimenu guimenuitem Howto ntp pdf
  -->
-<!--  LocalWords:  linespecific moreinfo guibutton conf ntpd username
+<!--  LocalWords:  linespecific moreinfo guibutton conf ntpd username CVS linux
+ -->
+<!--  LocalWords:  cdroms hostname UTC itemizedlist MySQL Mozilla fdisk df bak
+ -->
+<!--  LocalWords:  fstab ro suid dev nouser async usr filesystem metacity IP dP
+ -->
+<!--  LocalWords:  DHCP ifcfg eth cvs crontab acroread ulink url howto
  -->
