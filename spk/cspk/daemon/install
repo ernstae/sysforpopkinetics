@@ -9,12 +9,15 @@ fi
 source ../../../../../doc/webdir.sh
 
 SERVICE_ROOT=spkrun
+SERVICE_HOST=cspkserver
 
-cp ${SERVICE_ROOT}testd /etc/rc.d/init.d
-cp ${SERVICE_ROOT}d.pl /usr/local/bin/spktest
-echo "installed /etc/rc.d/init.d/${SERVICE_ROOT}testd "
-echo "installed /usr/local/bin/spktest/${SERVICE_ROOT}d.pl"
-
+scp ${SERVICE_ROOT}d     ${SERVICE_HOST}:/etc/rc.d/init.d
+scp ${SERVICE_ROOT}testd ${SERVICE_HOST}:/etc/rc.d/init.d
+scp ${SERVICE_ROOT}d.pl  ${SERVICE_HOST}:/usr/local/bin/spktest
+echo "installed ${SERVICE_HOST}:/etc/rc.d/init.d/${SERVICE_ROOT}d "
+echo "installed ${SERVICE_HOST}:/etc/rc.d/init.d/${SERVICE_ROOT}testd "
+echo "installed ${SERVICE_HOST}:/usr/local/bin/spktest/${SERVICE_ROOT}d.pl"
+echo "Note: installation of $SERVICE_ROOT}d.pl must be completed by the deployment process."
 
 D=${SERVICE_ROOT}d
 pod2html $D.pl > $D.pl.html
