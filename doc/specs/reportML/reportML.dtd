@@ -282,11 +282,16 @@ The i-th &lt;<value>&gt; corresponds to the i-th element of the parameter vector
 
 <!-- <presentation_data> An augmented data set: a set of all values associated with or evaluated at each individual's sampling points.
         
-Three sets of data are returned under &lt;presentation_data&gt;:
+The first <label> value in <data_labels> will be always a label for ID.  If ID was not given for an individual data set,
+the field would be populated with a value "1".  For a population data set, sequencial numbers (beginning with 1)
+would be assigned.
+
+<presentation_data> is composed of three kinds of data sets:
 <html:ul>
    <html:li>
-   the exact original data set 
-   or the original data with DV replaced by simulated data when simulation had been done.
+   the exact original data set
+   or the original data with DV replaced by a newly simulated data set when simulation was requested.
+   Also, the ID data item may be present if no ID value was given in the original set.
    </html:li>
    <html:li>
    the quantities computed and stored in the variables that appear on the left hand side 
@@ -308,7 +313,7 @@ Three sets of data are returned under &lt;presentation_data&gt;:
          W = g( R(alp,b), D(alp) ) for the population analysis for some function g().
          </html:dd>
          <html:dt>ORGDV</html:dt>
-         <html:dd>The original DV value when simulated data replaced DV.
+         <html:dd>The original DV value when a new data set is simulated.  The new data set populates DV.
       </html:ul>
 
 with THETA set to:
