@@ -177,6 +177,9 @@ void DiagCovTest::oneByOneCovTest()
   valarray<double> omegaAtParLow( nRow * nRow );
   valarray<double> omegaAtParUp ( nRow * nRow );
 
+  valarray<double> omegaMinRep    ( nPar );
+  valarray<double> omegaMinRep_par( nPar * nPar );
+
   valarray<double> omegaCovTimesInv( nRow * nRow );
 
   // Calculate the covariance matrix, its derivative, its inverse,
@@ -196,6 +199,11 @@ void DiagCovTest::oneByOneCovTest()
   omega.setPar( parUp );
   omega.cov( omegaAtParUp );
 
+  // Calculate the minimal representation for the covariance matrix
+  // and its derivative.
+  omega.calcCovMinRep    ( omegaCov,           omegaMinRep );
+  omega.calcCovMinRep_par( omegaCov_par, nPar, omegaMinRep_par );
+
   // Multiply the covariance matrix and its inverse.
   omegaCovTimesInv = multiply( omegaCov, nRow, omegaInv, nRow );
 
@@ -211,6 +219,9 @@ void DiagCovTest::oneByOneCovTest()
 
   valarray<double> omegaAtParLowKnown( nRow * nRow );
   valarray<double> omegaAtParUpKnown ( nRow * nRow );
+
+  valarray<double> omegaMinRepKnown    ( nPar );
+  valarray<double> omegaMinRep_parKnown( nPar * nPar );
 
   valarray<double> omegaCovTimesInvKnown( nRow * nRow );
 
@@ -233,6 +244,11 @@ void DiagCovTest::oneByOneCovTest()
   //
   omegaAtParLowKnown[0] = omegaCovKnown[0] / 100.0;
   omegaAtParUpKnown[0]  = omegaCovKnown[0] * 100.0;
+
+  // Set the known value for the minimal representation for the
+  // covariance matrix and its derivative.
+  omegaMinRepKnown[0]     = omegaCovKnown[0];
+  omegaMinRep_parKnown[0] = omegaCov_parKnown[0];
 
   // The covariance matrix multiplied by its inverse should be
   // equal to the identity matrix.
@@ -282,6 +298,18 @@ void DiagCovTest::oneByOneCovTest()
     tol );
 
   compareToKnown( 
+    omegaMinRep,
+    omegaMinRepKnown,
+    "omegaMinRep",
+    tol );
+
+  compareToKnown( 
+    omegaMinRep_par,
+    omegaMinRep_parKnown,
+    "omegaMinRep_par",
+    tol );
+
+  compareToKnown( 
     omegaCovTimesInv,
     omegaCovTimesInvKnown,
     "omegaCov times omegaInv",
@@ -309,6 +337,7 @@ void DiagCovTest::twoByTwoCovTest()
   using namespace std;
 
   int i;
+  int k;
 
 
   //------------------------------------------------------------
@@ -351,6 +380,9 @@ void DiagCovTest::twoByTwoCovTest()
   valarray<double> omegaAtParLow( nRow * nRow );
   valarray<double> omegaAtParUp ( nRow * nRow );
 
+  valarray<double> omegaMinRep    ( nPar );
+  valarray<double> omegaMinRep_par( nPar * nPar );
+
   valarray<double> omegaCovTimesInv( nRow * nRow );
 
   // Calculate the covariance matrix, its derivative, its inverse,
@@ -370,6 +402,11 @@ void DiagCovTest::twoByTwoCovTest()
   omega.setPar( parUp );
   omega.cov( omegaAtParUp );
 
+  // Calculate the minimal representation for the covariance matrix
+  // and its derivative.
+  omega.calcCovMinRep    ( omegaCov,           omegaMinRep );
+  omega.calcCovMinRep_par( omegaCov_par, nPar, omegaMinRep_par );
+
   // Multiply the covariance matrix and its inverse.
   omegaCovTimesInv = multiply( omegaCov, nRow, omegaInv, nRow );
 
@@ -385,6 +422,9 @@ void DiagCovTest::twoByTwoCovTest()
 
   valarray<double> omegaAtParLowKnown( nRow * nRow );
   valarray<double> omegaAtParUpKnown ( nRow * nRow );
+
+  valarray<double> omegaMinRepKnown    ( nPar );
+  valarray<double> omegaMinRep_parKnown( nPar * nPar );
 
   valarray<double> omegaCovTimesInvKnown( nRow * nRow );
 
@@ -435,6 +475,19 @@ void DiagCovTest::twoByTwoCovTest()
     omegaAtParUpKnown[ i + i * nRow] = omegaCovKnown[i + i * nRow] * 100.0;
   }
 
+  // Set the known value for the minimal representation for the
+  // covariance matrix and its derivative.
+  for ( i = 0; i < nPar; i++ )
+  {
+    omegaMinRepKnown[i] = omegaCovKnown[i + i * nRow];
+
+    for ( k = 0; k < nPar; k++ )
+    {
+      omegaMinRep_parKnown[( i            ) + k * nPar] = 
+        omegaCov_parKnown [( i * nRow + i ) + k * nCov_parRow];
+    }
+  }
+
   // The covariance matrix multiplied by its inverse should be
   // equal to the identity matrix.
   identity( nRow, omegaCovTimesInvKnown );
@@ -480,6 +533,18 @@ void DiagCovTest::twoByTwoCovTest()
     omegaAtParUp,
     omegaAtParUpKnown,
     "omega at parUp",
+    tol );
+
+  compareToKnown( 
+    omegaMinRep,
+    omegaMinRepKnown,
+    "omegaMinRep",
+    tol );
+
+  compareToKnown( 
+    omegaMinRep_par,
+    omegaMinRep_parKnown,
+    "omegaMinRep_par",
     tol );
 
   compareToKnown( 
