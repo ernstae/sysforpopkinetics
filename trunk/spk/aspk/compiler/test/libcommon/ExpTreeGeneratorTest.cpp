@@ -58,14 +58,14 @@ void ExpTreeGeneratorTest::testGetRoot()
   CPPUNIT_ASSERT_MESSAGE( "DOMDocument::createElement() returned NULL.", node1 != NULL );
 
 }
-void ExpTreeGeneratorTest::testNodeCarrier()
+void ExpTreeGeneratorTest::testExpNodeCarrier()
 {
   ExpTreeGenerator tree;
   DOMDocument * getRoot = tree.getRoot();
-  struct NodeCarrier *node1 = tree.createNodeCarrier();
+  struct ExpNodeCarrier *node1 = tree.createExpNodeCarrier();
   node1->node = getRoot->createElement( X("node1") );
-  int n = tree.releaseNodeCarriers();
-  CPPUNIT_ASSERT_MESSAGE( "ExpTreeGenerator:releaseNodeCarriers() should have released one NodeCarrier object.", n == 1 );
+  int n = tree.releaseExpNodeCarriers();
+  CPPUNIT_ASSERT_MESSAGE( "ExpTreeGenerator:releaseExpNodeCarriers() should have released one ExpNodeCarrier object.", n == 1 );
 }
 
 CppUnit::Test * ExpTreeGeneratorTest::suite()
@@ -75,8 +75,8 @@ CppUnit::Test * ExpTreeGeneratorTest::suite()
 						    &ExpTreeGeneratorTest::testCreate ) );
   suiteOfTests->addTest( new CppUnit::TestCaller<ExpTreeGeneratorTest>("testGetRoot",
 						    &ExpTreeGeneratorTest::testGetRoot ) );
-  suiteOfTests->addTest( new CppUnit::TestCaller<ExpTreeGeneratorTest>("testNodeCarrier",
-						    &ExpTreeGeneratorTest::testNodeCarrier ) );
+  suiteOfTests->addTest( new CppUnit::TestCaller<ExpTreeGeneratorTest>("testExpNodeCarrier",
+						    &ExpTreeGeneratorTest::testExpNodeCarrier ) );
    return suiteOfTests;
 
 }

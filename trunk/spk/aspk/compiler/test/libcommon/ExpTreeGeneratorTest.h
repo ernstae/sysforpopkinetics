@@ -30,7 +30,7 @@ public:
     /**
      * @test Tests createNode() and releaseNodes()
      */
-    void testNodeCarrier();
+    void testExpNodeCarrier();
 
     static CppUnit::Test * suite();
 };
