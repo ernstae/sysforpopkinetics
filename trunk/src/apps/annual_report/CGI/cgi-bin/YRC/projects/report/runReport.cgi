@@ -10,9 +10,9 @@ my($output) = '';
 my($rtf) = RTF::Writer->new_to_string(\$output);
 
 $rtf->prolog( 
-	'title'		=>	"NIH YRC REPORT",
+	'title'		=>	"NIH RFPK REPORT",
 	'fonts'		=>	[ "Times" ],
-	'author'	=>	"Perl Script by Michael Riffle"
+	'author'	=>	"Perl Script by Michael Rifflei, Mods by M. Macaulay"
 );
 
 
