@@ -21,4 +21,9 @@ do
   cp $prog /usr/local/bin
 done
 
+chmod +x regression_test
+cp regression_test /usr/local/bin
+
+cp regression_test.xml /usr/local/spk/ops/regression_test/config
+
 exit 0
