@@ -95,13 +95,6 @@ using namespace std;
  * Local Function Declarations
  *------------------------------------------------------------------------*/
 
-namespace fitindividualexample
-{
-  static valarray<double> funF  (const valarray<double> &dvecB );
-  static valarray<double> funF_b(const valarray<double> &dvecFb, const valarray<double> &dvecB );
-  static valarray<double> funR  (const valarray<double> &dvecB );
-  static valarray<double> funR_b(const valarray<double> &dmatRb, const valarray<double> &dvecB );
-}
 
 namespace fitindividualquadratictest
 {
@@ -142,45 +135,68 @@ private:
     }
     void doDataMean( valarray<double>& fOut ) const
     {
-        using namespace fitindividualexample;
-	fOut.resize( _nY );
-        fOut = funF(_b);
+      //
+      //        / b(2) \
+      // f(b) = |      |
+      //        \ b(2) /
+      //
+      fOut.resize( _nY );
+      fOut[0] = _b[1];
+      fOut[1] = _b[1];
     }
     bool doDataMean_indPar( valarray<double>& f_bOut ) const
     {
-        using namespace fitindividualexample;
-	valarray<double> fOut( _nY );
-        doDataMean(fOut);
-
-	f_bOut.resize( _nY * _b.size() );
-        f_bOut = funF_b(fOut, _b);
-        return !allZero(f_bOut);
+      //
+      //           / 0   1 \ 
+      //  f_b(b) = |       |   .
+      //           \ 0   1 /
+      //
+      f_bOut.resize( _nY * _b.size() );
+      f_bOut[0] = 0.0;
+      f_bOut[1] = 0.0;
+      f_bOut[2] = 1.0;
+      f_bOut[3] = 1.0;
+      return true;
     }
     void doDataVariance( valarray<double>& ROut ) const
     {
-        using namespace fitindividualexample;
-	ROut.resize( _nY * _nY );
-        ROut = funR(_b);
+      //
+      //         /  exp[b(1)]     0  \ 
+      //  R(b) = |                   |   .
+      //         \  0      exp[b(1)] / 
+      //
+      ROut.resize( _nY * _nY );
+      ROut[0] = exp( _b[0] );
+      ROut[1] = 0.0;
+      ROut[2] = 0.0;
+      ROut[3] = exp( _b[0] );
+      return;
     }
     bool doDataVariance_indPar( valarray<double>& R_bOut ) const
     {
-        using namespace fitindividualexample;
-        valarray<double> ROut( _nY * _nY );
-	doDataVariance(ROut);
-        
-	R_bOut.resize( _nY * _nY * _b.size() );
-	R_bOut = funR_b(ROut, _b);
-        return !allZero(R_bOut);
+      //
+      //          /  exp[b(1)]     0  \ 
+      // R_b(b) = |  0             0  |   .
+      //          |  0             0  | 
+      //          \  exp[b(1)]     0  / 
+      //
+      R_bOut.resize( _nY * _nY * _b.size() );
+      R_bOut[0] = exp( _b[0] );
+      R_bOut[1] = 0.0;
+      R_bOut[2] = 0.0;
+      R_bOut[3] = exp( _b[0] );
+      R_bOut[4] = 0.0;
+      R_bOut[5] = 0.0;
+      R_bOut[6] = 0.0;
+      R_bOut[7] = 0.0;
     }   
     void doIndParVariance( valarray<double>& DOut ) const
     {
-        using namespace fitindividualexample;
-
-	DOut.resize( _b.size() * _b.size() );
-        DOut[0] = 1.0;
-        DOut[1] = 0.0;
-        DOut[2] = 0.0;
-        DOut[3] = 0.5;
+      DOut.resize( _b.size() * _b.size() );
+      DOut[0] = 1.0;
+      DOut[1] = 0.0;
+      DOut[2] = 0.0;
+      DOut[3] = 0.5;
     }
     UserModelFitIndividualExampleTest() {};
 };
@@ -311,8 +327,6 @@ void fitIndividualTest::fitIndividualExampleTest()
 
   using namespace std;
 
-  using namespace fitindividualexample;
-
   //------------------------------------------------------------
   // Quantities related to the data vector, y.
   //------------------------------------------------------------
@@ -436,105 +450,6 @@ void fitIndividualTest::fitIndividualExampleTest()
               dmatMapObj_b_bOut, 
               dmatMapObj_b_bKnown );
   
-}
-
-
-/*************************************************************************
- *
- * Function: funR
- *
- *
- * Calculates
- *
- *            /  exp[b(1)]     0  \ 
- *     R(b) = |                   |   .
- *            \  0      exp[b(1)] / 
- *
- *************************************************************************/
-
-static valarray<double> fitindividualexample::funR( const valarray<double> &dvecB )
-{
-  valarray<double> dmatR( 2 * 2 );
-  dmatR[0] = exp( dvecB[0] );
-  dmatR[1] = 0.0;
-  dmatR[2] = 0.0;
-  dmatR[3] = exp( dvecB[0] );
-  
-  return dmatR;
-}
-
-
-/*************************************************************************
- *
- * Function: funR_b
- *
- *
- * Calculates
- *
- *              /  exp[b(1)]     0  \ 
- *     R_b(b) = |  0             0  |   .
- *              |  0             0  | 
- *              \  exp[b(1)]     0  / 
- *
- *************************************************************************/
-
-static valarray<double> fitindividualexample::funR_b( const valarray<double> &dmatR, 
-                                                      const valarray<double> &dvecB )
-{
-  valarray<double> dmatR_b( 0.0, dmatR.size() * dvecB.size() );
-  dmatR_b[0] = exp( dvecB[0] );
-  dmatR_b[3] = exp( dvecB[0] );
-  
-  return dmatR_b;
-}
-
-
-/*************************************************************************
- *
- * Function: funF
- *
- *
- * Calculates
- *
- *            / b(2) \ 
- *     f(b) = |      |   .
- *            \ b(2) /
- *
- *************************************************************************/
-
-static valarray<double> fitindividualexample::funF( const valarray<double> &dvecB )
-{
-  valarray<double> dvecF( 2 );
-  dvecF[0] = dvecB[1];
-  dvecF[1] = dvecB[1];
-
-  return dvecF;
-}
-
-
-/*************************************************************************
- *
- * Function: funF_b
- *
- *
- * Calculates
- *
- *              / 0   1 \ 
- *     f_b(b) = |       |   .
- *              \ 0   1 /
- *
- *************************************************************************/
-
-static valarray<double> fitindividualexample::funF_b( const valarray<double> &dvecF, 
-                                                      const valarray<double> &dvecB )
-{
-  valarray<double> dmatF_b( 2 * 2 );
-  dmatF_b[0] = 0.0;
-  dmatF_b[1] = 0.0;
-  dmatF_b[2] = 1.0;
-  dmatF_b[3] = 1.0;
-  
-  return dmatF_b;
 }
 
 
