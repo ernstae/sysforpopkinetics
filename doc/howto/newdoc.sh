@@ -1,10 +1,10 @@
 #!/bin/sh
 
-# To set up a directory for the development of a new WHITEPAPER document,
-# execute this command from the r2/doc/whitepaper directory in you 
+# To set up a directory for the development of a new HOWTO document,
+# execute this command from the r2/doc/howto directory in your 
 # CVS sandbox:
 #
-#     ./new-whitepaper.sh SUBJECT
+#     sh newdoc.sh SUBJECT
 #
 # The following components are created, where SUBJECT is the parameter
 # to this script.
@@ -18,13 +18,13 @@
 
 if [ $# -eq 0 ] || [ $1 == -h ] || [ $1 == --help ]; then
     echo "usage: $0 SUBJECT"
-    echo -e "\tSUBJECT is the subject of your whitepaper"
+    echo -e "\tSUBJECT is the subject of your howto"
     echo -e "\texample: CLOCK-SYNC"
     exit 1
 fi
 
 SUBJECT=$1
-WEBDIR=/var/www/html/soft/whitepaper/$SUBJECT
+WEBDIR=/var/www/html/soft/howto/$SUBJECT
 WEBHOST=whitechuck
 
 mkdir $SUBJECT
