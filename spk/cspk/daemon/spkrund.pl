@@ -154,8 +154,10 @@ use Fcntl qw(:DEFAULT :flock);
 use File::Path;
 use POSIX qw(:signal_h);
 use Proc::Daemon;
-use Spkdb('connect', 'disconnect', 'de_q2r', 'en_q2r', 'get_run_jobs', 'end_job', 'email_for_job');
+use Spkdb('connect', 'disconnect', 'de_q2r', 'en_q2r', 'get_run_jobs', 'end_job',
+	  'job_history', 'email_for_job');
 use Sys::Syslog('openlog', 'syslog', 'closelog');
+use Sys::hostname;
 
 my $database = shift;
 my $host     = shift;
@@ -187,8 +189,8 @@ my $filename_runner = "spkDriver";
 my $filename_serr = "software_error";
 my $filename_source = "source.xml";
 
-my $spk_library_path = "/usr/local/lib/spkprod";
-my $cpath = "/usr/local/include/spkprod";
+my $spk_library_path = "/usr/local/cspk/LLv1/lib/spkprod";
+my $cpath = "/usr/local/cspk/LLv1/include/spkprod";
 
 
 if ($mode =~ "test") {
@@ -196,8 +198,8 @@ if ($mode =~ "test") {
     $service_root .= "test";
     $bugzilla_product = "TestProduct";
     $retain_working_dir = 1;
-    $spk_library_path = "/usr/local/lib/spktest";
-    $cpath = "/usr/local/include/spktest";
+    $spk_library_path = "/usr/local/cspk/LLv1/lib/spktest";
+    $cpath = "/usr/local/cspk/LLv1/include/spktest";
 }
 my $service_name = "$service_root" . "d";
 my $prefix_working_dir = $service_root;
@@ -537,8 +539,6 @@ sub stop {
     # now we can die
     death('info', 'received the TERM signal (normal mode of termination)');
 }
-my $row;
-my $row_array;
 
 # become a daemon
 Proc::Daemon::Init();
@@ -565,11 +565,16 @@ $SIG{'QUIT'} = 'IGNORE';
 $SIG{'TERM'} = \&stop;
 
 # rerun any runs that were interrupted when we last terminated
-$row_array = &get_run_jobs($dbh);
+my $job_array = &get_run_jobs($dbh);
 syslog('info', "looking for interrupted computational runs");
-if (defined $row_array) {
-    foreach $row (@$row_array) {
-	&fork_runner($row);
+if (defined $job_array) {
+    foreach my $job_row (@$job_array) {
+	my $history_array = &job_history($dbh, $job_row->{'job_id'});
+	my $history_row = $history_array->[@$history_array - 1];
+	print "host = $history_row->{'host'}\n";
+	if ($history_row->{'host'} == Hostname::hostname) {
+	    &fork_runner($job_row);
+	}
     }
 }
 else {
@@ -584,10 +589,10 @@ syslog('info', "processing new computational runs");
 while(1) {
     # if there is a job queued-to-run, fork the runner
     if ($concurrent < $max_concurrent) {
-	$row = &de_q2r($dbh);
-	if (defined $row) {
-	    if ($row) {
-		&fork_runner($row);
+	my $job_row = &de_q2r($dbh);
+	if (defined $job_row) {
+	    if ($job_row) {
+		&fork_runner($job_row);
 	    }
 	}
 	else {
