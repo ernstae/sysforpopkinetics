@@ -578,7 +578,6 @@ $end
 #include <cmath>
 #include <cfloat>
 #include <cassert>
-#include <strstream>
 #include <exception>
 
 #include "DoubleMatrix.h"
@@ -701,7 +700,7 @@ void lTilde(
     int sum = 0;
     for( i=0; i<num_subjects; i++ )
     {
-        sum += pdNy[i];
+        sum += static_cast<int>( pdNy[i] );
     }
     assert( sum == num_y );
 #endif
@@ -751,7 +750,7 @@ void lTilde(
         }
 
         // Get the number of data values for the ith subject.
-        num_y_i = pdNy[i];
+        num_y_i = static_cast<int>( pdNy[i] );
         // Get the data for this subject.
         dvecY_i = getElements( dvecY_forAll, inx_yi0, num_y_i );
 
@@ -810,26 +809,26 @@ void lTilde(
         }
         catch( const std::exception& stde )
         {
-            std::strstream stream;
-            stream << i << "th individual's analysis failed." << endl;
-            stream.put('\0');
+	  const int max = SpkError::maxMessageLen();
+	  char message[max];
+	  sprintf( message, "%d-th individual's analysis failed.\n", i );
 
             throw SpkException(
                 stde,
-                stream.str(),
+                message,
                 __LINE__,
                 __FILE__
                 );
         }
         catch( ... )
         {
-            std::strstream stream;
-            stream << i << "th individual's analysis failed." << endl;
-            stream.put('\0');
+            const int max = SpkError::maxMessageLen();
+	    char message[max];
+            sprintf( message, "%d-th individual's analysis failed.\n", i );
 
             throw SpkException(
                 SpkError::SPK_UNKNOWN_ERR,
-                stream.str(),
+                message,
                 __LINE__,
                 __FILE__
                 );
@@ -1031,7 +1030,7 @@ void lTilde(
     int sum = 0;
     for( i=0; i<num_subjects; i++ )
     {
-        sum += pdNy[i];
+        sum += static_cast<int>( pdNy[i] );
     }
     assert( sum == num_y );
 
@@ -1086,10 +1085,9 @@ void lTilde(
     //
     if( cntPopItrs == 0 )
     {
-      strstream session;
-      session << SESSION_ID;
-      session.put(NULL);
-      channel.write("session.id", session.str());
+      char session[50];
+      sprintf( session, "%d", SESSION_ID );
+      channel.write("session.id", session);
     }
 
     //
@@ -1101,10 +1099,9 @@ void lTilde(
     // so that the file name can be encapsulated and nodes can access it without
     // knowing the exact name.
     //
-    strstream stream;
-    stream << cntPopItrs;
-    stream.put(NULL);
-    channel.write("pop.itr", stream.str());
+    char str_number[ 100 ];
+    sprintf( str_number, "%d", cntPopItrs );
+    channel.write("pop.itr", str_number);
 
     StatusList checklist(num_subjects);
     inx_yi0 = 0;
@@ -1112,7 +1109,7 @@ void lTilde(
     {
     
         // Get the number of data values for the ith subject.
-        num_y_i = pdNy[id];
+        num_y_i = static_cast<int>( pdNy[id] );
         // Get the data for this subject.
         dvecY_i = getElements( dvecY_forAll, inx_yi0, num_y_i );
 
@@ -1169,18 +1166,20 @@ void lTilde(
         }
         catch( const std::exception& stde )
         {
-          std::strstream mess;
-          mess << stde.what() << endl;
-          mess << "A standard:exception was thrown during an attempt to post  " << id << "th individual's data." << endl;
-          mess.put(NULL);
-          throw SpkException( SpkError::SPK_PARALLEL_ERR, mess.str(), __LINE__, __FILE__ );
+	  const int max = SpkError::maxMessageLen();
+	  char message[max];
+          sprintf( message, "%s\n \
+                             A standard:exception was thrown during an attempt to post %d-th individual's data.\n",
+		   stde.what(), id );
+          throw SpkException( SpkError::SPK_PARALLEL_ERR, message, __LINE__, __FILE__ );
         }
         catch( ... )
         {
-          std::strstream mess;
-          mess << "An unknonw exception was thrown during an attempt to post " << id << "th individual's data." << endl;
-          mess.put(NULL);
-          throw SpkException( SpkError::SPK_PARALLEL_ERR, mess.str(), __LINE__, __FILE__ );
+	  const int max = SpkError::maxMessageLen();
+	  char message[max];
+          sprintf( message, "An unknonw exception was thrown during an attempt to post %d-th individual's data.\n",
+		   id );
+          throw SpkException( SpkError::SPK_PARALLEL_ERR, message, __LINE__, __FILE__ );
         }
         checklist.issued(id, handle, inpack, false);
 
@@ -1231,25 +1230,26 @@ void lTilde(
             }
             catch( SpkException& e )
             {
-              std::strstream mess;
-              mess << "An failure occured while an attempt to obtain an individual analysis result." << endl;
-              mess.put(NULL);
-              throw e.push(SpkError::SPK_PARALLEL_ERR, mess.str(), __LINE__, __FILE__ );
+	      const int max = SpkError::maxMessageLen();
+	      char mess[max];
+              sprintf( mess, "An failure occured while an attempt to obtain an individual analysis result.\n" );
+              throw e.push(SpkError::SPK_PARALLEL_ERR, mess, __LINE__, __FILE__ );
             }
             catch( const std::exception & stde )
             {
-              std::strstream mess;
-              mess << stde.what() << endl;
-              mess << "An standard exception was thrown while an attempt to obtain an individual analysis result." << endl;
-              mess.put(NULL);
-              throw SpkException(SpkError::SPK_PARALLEL_ERR, mess.str(), __LINE__, __FILE__ );
+	      const int max = SpkError::maxMessageLen();
+              char mess[max];
+	      sprintf( mess, "%s\n \
+                             An standard exception was thrown while an attempt to obtain an individual analysis result.\n",
+		       stde.what() );
+              throw SpkException(SpkError::SPK_PARALLEL_ERR, mess, __LINE__, __FILE__ );
             }
             catch( ... )
             {
-              std::strstream mess;
-              mess << "An unknown exception was thrown while an attempt to obtain an individual analysis result." << endl;
-              mess.put(NULL);
-              throw SpkException( SpkError::SPK_PARALLEL_ERR, mess.str(), __LINE__, __FILE__ );
+	      const int max = SpkError::maxMessageLen();
+	      char mess[max];
+              sprintf( mess, "An unknown exception was thrown while an attempt to obtain an individual analysis result.\n" );
+              throw SpkException( SpkError::SPK_PARALLEL_ERR, mess, __LINE__, __FILE__ );
             }
             
             if(outpack.empty())
@@ -1268,10 +1268,10 @@ void lTilde(
                   }
                   catch( SpkException& e )
                   {
-                      std::strstream mess;
-                      mess << "Trouble re-posting " << toBeReIssued << "th individual's data." << endl;
-                      mess.put('\0');
-                      throw e.push(SpkError::SPK_PARALLEL_ERR, mess.str(), __LINE__, __FILE__);
+		    const int max = SpkError::maxMessageLen();
+		    char mess[max];
+		    sprintf( mess, "Touble re-posting %d-th individual's data.\n", toBeReIssued );
+                    throw e.push(SpkError::SPK_PARALLEL_ERR, mess, __LINE__, __FILE__);
                   }
 #ifdef _DEBUG
                   cout << endl << "Master> Re-posted " << toBeReIssued << endl;
