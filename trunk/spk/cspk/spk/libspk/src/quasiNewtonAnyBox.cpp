@@ -1018,8 +1018,8 @@ void quasiNewtonAnyBox(
         rScaled,
 	deltaY,
 	gScaledProj,
-	rScaledDiagRec,
-	hScaledWork ) )
+	hScaledWork,
+	rScaledDiagRec ) )
       {
         isAcceptable = true;
       }
@@ -1363,8 +1363,8 @@ bool isWithinTol(
   const double*  r,
   double*        deltaX,
   double*        gProj,
-  double*        rDiagRec,
-  double*        hWork )
+  double*        hWork,
+  double*        rDiagRec )
 {
   //------------------------------------------------------------
   // Preliminaries.
