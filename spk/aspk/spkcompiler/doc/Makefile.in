@@ -2,5 +2,25 @@ SUFFIXES = .dox
 .html.dox : 
 	doxygen $<
 
-html : SpkCompiler.dox
-	doxygen $?
+SOURCE = ../libspkcompiler/client.h \
+         ../libspkcompiler/ClientTranslator.h \
+         ../driver/compiler.cpp \
+         ../libspkcompiler/emit_driver.h \
+         ../libspkcompiler/emit_IndData.h \
+         ../libspkcompiler/explang.cpp \
+         ../libspkcompiler/ExpNodeCarrier.h \
+         ../libspkcompiler/ExpTreeGenerator.h \
+         ../libspkcompiler/nonmem/lex_explang.c \
+         ../libspkcompiler/nonmem/NonmemTranslator.h \
+         ../libspkcompiler/read_content.h \
+         ../libspkcompiler/nonmem/read_nonmem_data.h \
+         ../libspkcompiler/nonmem/read_nonmem_driver.h \
+         ../libspkcompiler/nonmem/read_nonmem_model.h \
+         ../libspkcompiler/SpkCompilerUtil.h \
+         ../libspkcompiler/SpkMLToCpp.h \
+         ../libspkcompiler/SpkParameters.h \
+         ../libspkcompiler/Symbol.h \
+         ../libspkcompiler/SymbolTable.h
+
+html : SpkCompiler.dox $(SOURCE)
+	doxygen SpkCompiler.dox 
