@@ -237,7 +237,6 @@ my $filename_source = "source.xml";
 my $spk_library_path = "/usr/local/lib/spkprod";
 my $cpath = "/usr/local/include/spkprod";
 
-
 if ($mode =~ "test") {
     $submit_to_bugzilla = !$bugzilla_production_only;
     $service_root .= "test";
@@ -350,7 +349,12 @@ sub fork_driver {
 		  syslog('emerg', "can't rename working directory");
 		  die;
 	      };
+<<<<<<< spkrund.pl
+
+	  # Compile and link the runner
+=======
 	  # Compile and link the driver
+>>>>>>> 1.27
           if ($mode =~ "test"){
 	     @args = ($pathname_make, "-f", $filename_makefile, "test");
           }
@@ -359,7 +363,6 @@ sub fork_driver {
           }
 	  unless (system(@args) == 0)  {
 	      $! = 101;
-	      #$? = $build_failure_exit_value << 8;
 	      die;
 	  }
 	  # Redirect Standard output to a file
