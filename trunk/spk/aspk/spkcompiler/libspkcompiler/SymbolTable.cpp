@@ -18,35 +18,51 @@ SymbolTable& SymbolTable::operator=( const SymbolTable& )
 }
 Symbol* SymbolTable::find( const string& name )
 {
-   string low = key( name );
-   map<string, Symbol>::iterator p = table.find( low );
-   return &(p->second);
+   map<string, Symbol>::iterator p = table.begin();
+   while( p != table.end() )
+     {
+       if( p->second.name == name || p->second.synonym == name )
+	 return &(p->second);
+       p++;
+     }
+   
+   return (const_cast<Symbol*>( Symbol::empty() ) );
 }
 const Symbol* SymbolTable::find( const string& name ) const
 {
-   string low = key( name );
-   map<string, Symbol>::const_iterator p = table.find( low );
-   if( p->second.name == name )
-     return &(p->second);
-   else
-     return Symbol::empty();
+   map<string, Symbol>::const_iterator p = table.begin();
+   while( p != table.end() )
+     {
+       if( p->second.name == name || p->second.synonym == name )
+	 return &(p->second);
+       p++;
+     }
+   return Symbol::empty();
 }
 
 Symbol* SymbolTable::findi( const string& name )
 {
    string low = key( name );
-   map<string, Symbol>::iterator p = table.find( low );
-   if( p== table.end() )
-     return (const_cast<Symbol*>( Symbol::empty() ) );
-   return &(p->second);
+   map<string, Symbol>::iterator p = table.begin();
+   while( p != table.end() )
+   {
+     if( key( p->second.name ) == low || key( p->second.synonym ) == low )
+       return &(p->second);
+     p++;
+   }
+   return (const_cast<Symbol*>( Symbol::empty() ) );
 }
 const Symbol* SymbolTable::findi( const string& name ) const
 {
    string low = key( name );
-   map<string, Symbol>::const_iterator p = table.find( low );
-   if( p == table.end() )
-     return Symbol::empty();
-   return &(p->second);
+   map<string, Symbol>::const_iterator p = table.begin();
+   while( p != table.end() )
+   {
+     if( key( p->second.name ) == low || key( p->second.synonym ) == low )
+       return &(p->second);
+     p++;
+   }
+   return Symbol::empty();
 }
 const string SymbolTable::key( const string& str )
 {

@@ -44,32 +44,53 @@ class SymbolTable{
    static const std::string key( const std::string& str );
 
   /**
-   * Search a Symbol object in the table by the name [case sensitive].
+   * Search the table by the given name [case sensitive].
+   * 
    *
-   * @return A pointer to the found Symbol object.
-   * @param name The name by which a search is performed.
+   * @return A pointer to the found Symbol object that has
+   *         either the name or the synonym (ie. alias) field string
+   *         matches.  If no entry is found, it returns the reference
+   *         to an empty Symbol object.
+   *
+   * @param str The string by which a search is performed.
+   *         Both the name and the synonym (ie. alias) are compared.
    */
-  Symbol* find( const std::string& name );
+  Symbol* find( const std::string& str );
 
   /**
    * Search a Symbol object in the table by the name [case sensitive].
    *
-   * @return A (constant) pointer to the found Symbol object.
-   * @param name The name by which a search is performed.
+   * @return A (constan ) pointer to the found Symbol object that has
+   *         either the name or the synonym (ie. alias) field string
+   *         matches.  If no entry is found, it returns the reference
+   *         to an empty Symbol object.
+   *
+   * @param str The string by which a search is performed.
+   *         Both the name and the synonym (ie. alias) are compared.
    */
   const Symbol* find( const std::string& name ) const;
 
   /**
    * Search a Symbol object in the table by the name [case INsensitive].
-   * @return A pointer to the found Symbol object.
-   * @param name The name by which a search is performed.
+   * @return A  pointer to the found Symbol object that has
+   *         either the name or the synonym (ie. alias) field string
+   *         matches.  If no entry is found, it returns the reference
+   *         to an empty Symbol object.
+   *
+   * @param str The string by which a search is performed.
+   *         Both the name and the synonym (ie. alias) are compared.
    */
   Symbol* findi( const std::string& name );
 
   /**
    * Search a Symbol object in the table by the name [case INsensitive].
-   * @return A (constant) pointer to the found Symbol object.
-   * @param name The name by which a search is performed.
+   * @return A (constant) pointer to the found Symbol object that has
+   *         either the name or the synonym (ie. alias) field string
+   *         matches.  If no entry is found, it returns the reference
+   *         to an empty Symbol object.
+   *
+   * @param str The string by which a search is performed.
+   *         Both the name and the synonym (ie. alias) are compared.
    */
   const Symbol* findi( const std::string& name ) const;
 
