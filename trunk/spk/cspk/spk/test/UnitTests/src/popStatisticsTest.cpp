@@ -68,8 +68,8 @@ Test* popStatisticsTest::suite()
 							  &popStatisticsTest::firstOrderTest));
   suiteOfTests->addTest(new TestCaller<popStatisticsTest>("naiveFirstOrderTest", 
 							  &popStatisticsTest::naiveFirstOrderTest));
-  suiteOfTests->addTest(new TestCaller<popStatisticsTest>("testWrapper", 
-							  &popStatisticsTest::testWrapper));
+  suiteOfTests->addTest(new TestCaller<popStatisticsTest>("popMaskTest", 
+							  &popStatisticsTest::popMaskTest));
 
   return suiteOfTests;
 }
@@ -366,7 +366,10 @@ void popStatisticsTest::statisticsExampleTest(enum Objective whichObjective)
   alpUp  [ 1 ] = 100.0;
   alpIn  [ 1 ] = 0.5;
   alpStep[ 1 ] = 1.0e-2;
-  
+
+  // Set the mask for trancating the alp vector.
+  valarray<bool> alpMask( true, nAlp );
+
 
   //------------------------------------------------------------
   // Quantities related to the random population parameters, b.
@@ -469,6 +472,7 @@ void popStatisticsTest::statisticsExampleTest(enum Objective whichObjective)
 		      N,
 		      Y,
 		      alpOut,
+		      alpMask,
 		      lTilde_alp_alpOut,
 		      bOut,
 		      bLow,
@@ -1199,7 +1203,7 @@ private:
 
 };
 
-void popStatisticsTest::testWrapper()
+void popStatisticsTest::popMaskTest()
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -1617,3 +1621,4 @@ void popStatisticsTest::testWrapper()
 
     }
 }
+
