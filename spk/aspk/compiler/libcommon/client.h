@@ -26,7 +26,7 @@ namespace client{
   /**
    * String representation of enum, client::NONMEM.
    */
-   const char * const STR_NONMEM = "NONMEM";
+   const char * const STR_NONMEM = "nonmem";
 
   /**
    * String representation of enum, client::NOT_SUPPORTED.

@@ -17,6 +17,7 @@ public:
     virtual void setUp();
     virtual void tearDown();
 
+    void testConstructor();
     void testTranslate();
 };
 
