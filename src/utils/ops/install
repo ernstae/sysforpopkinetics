@@ -24,9 +24,13 @@ done
 chmod +x regression_test
 cp regression_test /usr/local/bin
 
+chmod +x release_notes
+cp release_notes /usr/local/bin
+
 cp regression_test.xml /usr/local/spk/ops/regression_test/config
 
 scp rt_script.html $WEBHOST:$WEBDIR/ops/utils/rt_script.html
+scp rn_script.html $WEBHOST:$WEBDIR/ops/utils/rn_script.html
 
 
 exit 0
