@@ -8,9 +8,8 @@
                              pop_size="12">
                   <submission>
                      <owner>
-                        <last_name>RFPK</last_name>
-                        <first_name>Honda</first_name>
-                        <description>Software engineer</description>
+                        <login>honda</login>
+                        <description>RFPK Software engineer</description>
                      </owner>
                      <date>
                         <mm>10</mm>
@@ -18,8 +17,8 @@
                         <yyyy>2003</yyyy>
                      </date>
                      <time>
-                        <hr>11</hr>
-                        <min>00</min>
+                        <hr>15</hr>
+                        <min>30</min>
                         <sec>00</sec>
                      </time>
                   </submission>
@@ -73,14 +72,10 @@
                   <pop_stat is_stderror_out="yes"
                             is_covariance_out="yes"
                             is_correlation_out="yes"
-                            is_confidence_out="yes"
-                            covariance_form="r"
-                            is_coefficient="yes"/>
+                            covariance_form="r"/>
                   <ind_stat is_stderror_out="no"
                             is_covariance_out="yes"
-                            is_correlation_out="no"
-                            is_confidence_out="no"
-                            is_coefficient_out="no"/>
+                            is_correlation_out="no"/>
                </pop_analysis>
             </nm_constraint>
          </nm_request>
