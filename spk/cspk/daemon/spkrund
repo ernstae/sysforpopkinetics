@@ -5,7 +5,7 @@
 #
 
 DATABASE=spktest
-HOST=localhost
+DBHOST=dbserver
 DBUSER=tester
 DBPASSWD=tester
 
@@ -16,7 +16,7 @@ ulimit -c 1000000  # this enables a core dump if the runner crashes
 
 #restart()
 start() {
-    /usr/local/bin/${SERVICE_NAME}.pl $DATABASE $HOST $DBUSER $DBPASSWD
+    /usr/local/bin/${SERVICE_NAME}.pl $DATABASE $DBHOST $DBUSER $DBPASSWD
     echo "started"
 }
 stop() {

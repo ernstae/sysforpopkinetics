@@ -314,7 +314,7 @@ sub reaper {
 	my $child_signal_number = $? & 0x7f;
 	my $child_dumped_core   = $? & 0x80;
 	my $job_id;
-	my $optimizer_trace;
+	my $optimizer_trace = undef;
 	my $report;
 	my $status_msg = "";
 	my $end_code;
@@ -329,11 +329,12 @@ sub reaper {
 	close(FH);
 
 	# Get optimizer trace 
-
-	open(FH, $filename_optimizer_trace)
-	    or death('emerg', "can't open $tmp_dir/$working_dir/$filename_optimizer_trace");
-	read(FH, $optimizer_trace, -s FH);
-	close(FH);
+	if (-f $filename_optimizer_trace) {
+	    open(FH, $filename_optimizer_trace)
+		or death('emerg', "can't open $tmp_dir/$working_dir/$filename_optimizer_trace");
+	    read(FH, $optimizer_trace, -s FH);
+	    close(FH);
+	}
 
 	# Normal termination at end of run
 	if (-f $filename_results) {
@@ -400,7 +401,9 @@ sub reaper {
 	    rename "$tmp_dir/$working_dir", "$tmp_dir/$prefix_working_dir$job_id"
 		or death('emerg', "couldn't rename working directory");
 	}
-	$report = insert_optimizer_trace($optimizer_trace, $report);
+	if (define $optimizer_trace) {
+	    $report = insert_optimizer_trace($optimizer_trace, $report);
+	}
 	&end_job($dbh, $job_id, $end_code, $report)
 	    or death('emerg', "job_id=$job_id: $Spkdb::errstr");
     }
