@@ -1021,7 +1021,7 @@ void quasiNewtonAnyBox(
       //  a factor that is upper triangular and in row-major order.
       doubleArrayToValarray( hScaled, hScaledVA );
       rScaledVA = cholesky( hScaledVA, nObjPar );
-      doubleArrayFromValarray( rScaledVA, rScaled );
+      valarrayToDoubleArray( rScaledVA, rScaled );
 
 
 is there a valarray to double* converter function in stl
