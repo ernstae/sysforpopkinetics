@@ -5,8 +5,8 @@
 /**
  * @file client.h
  * 
- * In this file, a namespace, client, is defined, which 
- * declares constant values used to identify the clients of Spk Compiler
+ * Declare a namespace, client, which 
+ * defines constant values used to identify different clients using Spk Compiler
  * and some helper functions associated with these constant values.
  */
 /**
