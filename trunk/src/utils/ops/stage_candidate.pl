@@ -19,6 +19,16 @@ use cand("stage_directory", "make_directory");
     moving an SPK system from test into production. It captures software
     that has passed system test, and stores it for subsequent deployment.
 
+=head1 RUNNING
+
+    To run this program, you must satisfy these conditions:
+    -  Have a terminal window or ssh window on whitechuck
+    -  Run as root in the root environment. One way to achieve this is
+       to log in as an ordinary user, then upgrade with 
+            su -
+        Note that the "-" sign is necessary. Without it, you will be root
+        but you will be running in the ordinary user's environment.
+
 =head1 DESCRIPTION
 
     In the RFPK installation of SPK, two identical platforms are maintained:
@@ -31,15 +41,16 @@ use cand("stage_directory", "make_directory");
         repeated.  This occurs as many times as necessary, until system
         test results are satisfactory.
     4.  stage_candidate.pl is run, making a complete copy of the tested
-        system, in a form that can be deployed by a companion utilityk
+        system, in a form that can be deployed by a companion utility
         called deploy_candidate.pl
     5.  A system is not necessarily deployed immediately, unless it contains
         fixes to bugs with serious impact on users.  Instead, deployments
         are scheduled on a regular basis.  Therefore, it is normal for
         several candidates to be assembled and tested, before deployment
-        of the most recent one takes place.
-    6.  stage_candidate will stage a number of candidates (the default is
-        four).
+        of the most recent one takes place. stage_candidate can stage a number 
+        of candidates (the default is four).
+    6.  The companion utility, deploy_candidate.pl, copies the candidate
+        onto the production platform.
 
 =head2 DIRECTORY STRUCTURE
 
