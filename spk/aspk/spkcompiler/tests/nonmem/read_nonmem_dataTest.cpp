@@ -211,11 +211,14 @@ void read_nonmem_dataTest::testOrderMixedUp()
   //
   string order_id_pair[ nIndividuals +1 ];
 
+  SymbolTable table;
+
   DOMElement * dataNode = dynamic_cast<DOMElement*>(
 	     doc->getElementsByTagName( XMLString::transcode( "data" ) )->item(0) );
 
   read_nonmem_data( dataNode,
 		    nIndividuals,
+		    table,
 		    label_alias_mapping, 
 		    data_for,
 		    order_id_pair );

@@ -80,9 +80,9 @@ tok_endif                   "ENDIF"
 
 %%
 [ \t]                       { /* white space; ignore */ }
-[;].*/\n                    { yylval.str = (char*)strdup(yytext+1);  ++gSpkExpLines; return COMMENT; }
-{tok_engineering_notation}  { yylval.str = (char*)strdup(yytext);  return ENG_NOTATION; }
-{tok_significand}           { yylval.str = (char*)strdup(yytext);  return SIGNIFICAND; }
+[;].*/\n                    { yylval.c_str = (char*)strdup(yytext+1);  ++gSpkExpLines; return COMMENT; }
+{tok_engineering_notation}  { yylval.c_str = (char*)strdup(yytext);  return ENG_NOTATION; }
+{tok_significand}           { yylval.c_str = (char*)strdup(yytext);  return SIGNIFICAND; }
 {tok_exit}                  { return EXIT;; }
 {tok_if}                    { return IF; }
 {tok_else}                  { return ELSE; }
@@ -91,8 +91,8 @@ tok_endif                   "ENDIF"
 {tok_open_array_elem_list}  { return OPEN_ARRAY_ELEM_LIST; }
 {tok_close_array_elem_list} { return CLOSE_ARRAY_ELEM_LIST; }
 {tok_power_op}              { return POWER_OP; }
-{tok_digit_string}          { yylval.str = (char*)strdup(yytext);  return DIGIT_STRING; }
-{tok_defined_function}      { yylval.str = (char*)strdup(yytext);  return DEFINED_UNARY_FUNCTION; }
+{tok_digit_string}          { yylval.c_str = (char*)strdup(yytext);  return DIGIT_STRING; }
+{tok_defined_function}      { yylval.c_str = (char*)strdup(yytext);  return DEFINED_UNARY_FUNCTION; }
 {tok_true}                  { return TRUE; }
 {tok_false}                 { return FALSE; }
 {tok_eq_op}                 { return EQ_OP; }
@@ -116,10 +116,11 @@ tok_endif                   "ENDIF"
                                  yyerror( (char*)strdup( mess ) );
                                  //yyterminate(); 
                               }
-                              yylval.str = (char*)strdup(yytext);  
+                              yylval.c_str = (char*)strdup(yytext);  
                               return NAME; 
                             }
 {tok_special_character}     { yylval.ch = yytext[0];  return yytext[0]; }
+<<EOF>>                     { return EOF_MARKER; }
 \n                          { ++gSpkExpLines; return '\n'; }
 .                           { 
                               gSpkExpErrors++;  
