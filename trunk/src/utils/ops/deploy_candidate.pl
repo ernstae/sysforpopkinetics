@@ -155,9 +155,9 @@ foreach my $s ("aspkserver", "cspkserver") {
 }
 $sdir = "$tmp_dir/webserver/usr/local/tomcat/instance/prodssl/webapps";
 $ddir =  "webserver/usr/local/tomcat/instance/prodssl/webapps";
-my @args = ($scp_command, "-r", "$sdir/user.war", "$ddir/user.war");
+@args = ($scp_command, "-r", "$sdir/user.war", "$ddir/user.war");
 system(@args);
-my $exit_status = $? >> 8;
+$exit_status = $? >> 8;
 if ($exit_status != 0) {
     die "'scp -r $sdir/user.war $ddir/user.war' failed\n";
 }
