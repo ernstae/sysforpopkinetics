@@ -1,0 +1,10 @@
+$begin Model$$
+
+$section Model Object Properties Necessary for Monte Carlo Program$$
+
+$contents%
+	omh/MonteSpkModel.omh%
+	omh/PopPredModel.omh
+%$$
+
+$end
