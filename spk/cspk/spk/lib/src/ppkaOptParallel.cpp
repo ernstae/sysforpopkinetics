@@ -66,7 +66,6 @@ $spell
   Iter  
   Laplace
   Max  
-  nagg  
   namespace  
   Obj  
   pd  
@@ -541,8 +540,7 @@ $codep
 #include <iomanip>
 #include <string>
 #include <cmath>
-#include <nag.h>
-#include <nagg05.h>
+#include "randNormal.h"
 #include "ppkaOpt.h"
 #include "namespace_population_analysis.h"
 #include "identity.h"
@@ -701,8 +699,8 @@ void main()
   g05cbc(seed);
   for ( i = 0; i < nB; i++ )
   {
-    eTrue = nag_random_normal( meanETrue, sdETrue );
-    bTrue = nag_random_normal( meanBTrue, sdBTrue );
+    eTrue = randNormal( meanETrue, sdETrue );
+    bTrue = randNormal( meanBTrue, sdBTrue );
 
     pdYData[ i ] = meanBetaTrue + bTrue + eTrue;
   }

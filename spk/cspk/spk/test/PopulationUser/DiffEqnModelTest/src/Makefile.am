@@ -21,7 +21,7 @@ genericDriver_SOURCES = \
 	readNonmemTheophylline.h \
 	../config.h
 
-genericDriver_LDFLAGS = -lspk -lspkopt /usr/local/lib/libnagc.a -lpthread -lm
+genericDriver_LDFLAGS = -lspk -lspkopt -latlas_lapack -lcblas -latlas -lpthread -lm
 
 INCLUDES = -I@top_srcdir@/
 

@@ -22,9 +22,9 @@
 #ifndef RAND_NORMAL_H
 #define RAND_NORMAL_H
 
-#include <nag.h>
 #include "SpkValarray.h"
 
-SPK_VA::valarray<double> randNormal( const SPK_VA::valarray<double> & V, int n );
+const SPK_VA::valarray<double> randNormal( const SPK_VA::valarray<double> & V, int n );
+const SPK_VA::valarray<double> randNormal( int n );
 
 #endif

@@ -24,6 +24,6 @@
 
 #include "DoubleMatrix.h"
 
-DoubleMatrix backDiv(const DoubleMatrix &dmatA, const DoubleMatrix &dmatB);
+const DoubleMatrix backDiv(const DoubleMatrix &dmatA, const DoubleMatrix &dmatB);
 
 #endif

@@ -66,7 +66,6 @@ $spell
 	iomanip
 	iostream
 	Iter
-	nagg
 	namespace
 	Obj
 	optimizer
@@ -439,8 +438,6 @@ $codep
 #include <iomanip>
 #include <string>
 #include <cmath>
-#include <nag.h>
-#include <nagg05.h>
 #include "firstOrderOpt.h"
 #include "namespace_population_analysis.h"
 #include "identity.h"
@@ -448,6 +445,7 @@ $codep
 #include "SpkModel.h"
 #include "File.h"
 #include "Optimizer.h"
+#include "randNormal.h"
 
 using std::string;
 
@@ -613,8 +611,8 @@ void main()
   g05cbc(seed);
   for ( i = 0; i < nB; i++ )
   {
-    eTrue = nag_random_normal( meanETrue, sdETrue );
-    bTrue = nag_random_normal( meanBTrue, sdBTrue );
+    eTrue = randNormal( meanETrue, sdETrue );
+    bTrue = randNormal( meanBTrue, sdBTrue );
 
     pdYData[ i ] = meanBetaTrue + bTrue + eTrue;
   }

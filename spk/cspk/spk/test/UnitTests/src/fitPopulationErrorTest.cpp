@@ -39,10 +39,7 @@
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 
-#include <nag.h>
-#include <nagg05.h>
-
-
+#include <spk/randNormal.h>
 #include <spk/DoubleMatrix.h>
 #include <spk/fitPopulation.h>
 #include <spk/SpkValarray.h>
@@ -916,16 +913,16 @@ void fitPopulationErrorTest::setAllValid(fitpopulationerrortest::Info& info)
     double sdBTrue   = sqrt( varBTrue );
 
     // Compute the measurements for each individual.
-    Integer seed = 0;
-    g05cbc(seed);
-    for ( i = 0; i < nInd; i++ )
-    {
-        eTrue = nag_random_normal( meanETrue, sdETrue );
-        bTrue = nag_random_normal( meanBTrue, sdBTrue );
-
-        info.Y[ i ] = meanBetaTrue + bTrue + eTrue;
-    }
-
+    int seed = 2;
+    srand(seed);
+    
+    valarray<double> sdECov(nY*nY);
+    sdECov[ slice( 0, nY, nY+1 ) ] = sdETrue;
+    
+    valarray<double> sdBCov(nY*nY);
+    sdBCov[ slice( 0, nY, nY+1 ) ] = sdBTrue;
+    
+    info.Y = meanBTrue + randNormal( sdBCov, nY ) + randNormal( sdECov, nY );
 
     //------------------------------------------------------------
     // Quantities related to the fixed population parameter, alp.

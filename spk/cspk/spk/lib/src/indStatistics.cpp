@@ -89,7 +89,6 @@ $spell
   covariances
   cor
   cmath
-  nagg
   statistics
   confint
   exp
