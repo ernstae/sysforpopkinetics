@@ -381,6 +381,7 @@ $syntax/void derParStatistics(
   const SPK_VA::valarray<double>& /z_x/,
   int                             /nDegFreedom/,
   SPK_VA::valarray<double>*       /zCovOut/,
+  SPK_VA::valarray<double>*       /zInvCovOut/,
   SPK_VA::valarray<double>*       /zSEOut/,
   SPK_VA::valarray<double>*       /zCorOut/,
   SPK_VA::valarray<double>*       /zCVOut/,
@@ -495,6 +496,20 @@ will be replaced by NaN if $code mask[i]$$ or $code mask[j]$$ is $math%false%$$.
 
 $syntax/
 
+/zInvCovOut/
+/$$
+will point to an n * n dimensional vector containing the inverse of the covariance
+matrix for the derived parameter Cov[z(x)] in column major order if
+the pointer points to an n * n valarray.
+If it points to NULL, it will remain unchanged.
+If it points to a valarray sized other than n * n, the resulting
+behavior is undetermined.
+
+The $math%(i,j)%$$-the element of the inverse of the covariance matrix
+will be replaced by NaN if $code mask[i]$$ or $code mask[j]$$ is $math%false%$$.
+
+$syntax/
+
 /zSEOut/
 /$$
 will point to an n dimensional vector containing the standard errors
@@ -564,6 +579,7 @@ will be replaced by NaN if $code mask[i]$$ is $math%false%$$.
 
 $end
 */
+#include "inverse.h"
 namespace
 {
   //=========================================================
@@ -598,6 +614,7 @@ void derParStatistics( const SPK_VA::valarray<bool>   & mask,
 		       const SPK_VA::valarray<double> & z_x,
 		       int                              nDegOfFreedom,
 		       SPK_VA::valarray<double>       * zCovOut,
+                       SPK_VA::valarray<double>       * zInvCovOut,
 		       SPK_VA::valarray<double>       * zSEOut,
 		       SPK_VA::valarray<double>       * zCorOut,
 		       SPK_VA::valarray<double>       * zCVOut,
@@ -612,13 +629,14 @@ void derParStatistics( const SPK_VA::valarray<bool>   & mask,
    
    const int nY = mask[ mask ].size();
    const int nW = nY;
-   valarray<double> yCov( nY * nY );
-   valarray<double> w   ( nY );
-   valarray<double> w_y ( nY * nY );
-   valarray<double> ySE ( nY );
-   valarray<double> yCor( nY * nY );
-   valarray<double> yCV ( nY );
-   valarray<double> yCI ( nY * 2 );
+   valarray<double> yCov   ( nY * nY );
+   valarray<double> yInvCov( nY * nY );
+   valarray<double> w      ( nY );
+   valarray<double> w_y    ( nY * nY );
+   valarray<double> ySE    ( nY );
+   valarray<double> yCor   ( nY * nY );
+   valarray<double> yCV    ( nY );
+   valarray<double> yCI    ( nY * 2 );
 
    // eliminating fixed elements from xCov
    for( int j=0, jj=0; j<nX; j++ )
@@ -671,6 +689,8 @@ void derParStatistics( const SPK_VA::valarray<bool>   & mask,
 		     ( zCVOut?  &yCV  : NULL ),
 		     ( zCIOut?  &yCI  : NULL )
 		     );
+  yInvCov = inverse( yCov, nY );
+
 
   valarray<bool> zCI_mask ( nZ * 2 );
   valarray<bool> zSE_mask ( nZ );
@@ -713,6 +733,10 @@ void derParStatistics( const SPK_VA::valarray<bool>   & mask,
   if( zCovOut )
     {
       placeVal( zCov_mask, yCov, *zCovOut, val );
+    }
+  if( zInvCovOut )
+    {
+      placeVal( zCov_mask, yInvCov, *zInvCovOut, val );
     }
   if( zCorOut )
     {
