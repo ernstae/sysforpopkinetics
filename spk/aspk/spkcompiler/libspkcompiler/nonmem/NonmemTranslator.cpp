@@ -727,7 +727,7 @@ void NonmemTranslator::parseSource()
   generatePred( fPredEqn_cpp );
   generateNonmemParsNamespace();
   generateMonteParsNamespace();
-  if( !myIsMonte )
+  if( myIsEstimate || myIsSimulate )
     {
       if( myTarget == POP )
 	generatePopDriver();
@@ -2688,18 +2688,18 @@ void NonmemTranslator::generateDataSet( ) const
   // vector<IndData<ValueType>*> data: The entire data set.
   // const int popSize:      : The number of individuals in the population.
   oDataSet_h << "public:" << endl;
-  oDataSet_h << "DataSet();" << endl;
-  oDataSet_h << "~DataSet();" << endl;
+  oDataSet_h << "   DataSet();" << endl;
+  oDataSet_h << "   ~DataSet();" << endl;
   oDataSet_h << endl;
 
-  oDataSet_h << "std::vector<IndData<ValueType>*> data;" << endl;
-  oDataSet_h << "const int popSize;" << endl;
-  oDataSet_h << "const SPK_VA::valarray<double> getAllMeasurements() const;" << endl;
-  oDataSet_h << "int getPopSize() const;" << endl;
-  oDataSet_h << "const SPK_VA::valarray<int> getN() const;" << endl;
-  oDataSet_h << "void compAllResiduals();" << endl;
-  oDataSet_h << "void compAllWeightedResiduals( std::vector< SPK_VA::valarray<double> >& R );" << endl;
-  oDataSet_h << "std::ostream& xmlOut( std::ostream& o, const char* title ) const;" << endl;
+  oDataSet_h << "   std::vector<IndData<ValueType>*> data;" << endl;
+  oDataSet_h << "   const int popSize;" << endl;
+  oDataSet_h << "   const SPK_VA::valarray<double> getAllMeasurements() const;" << endl;
+  oDataSet_h << "   int getPopSize() const;" << endl;
+  oDataSet_h << "   const SPK_VA::valarray<int> getN() const;" << endl;
+  oDataSet_h << "   void compAllResiduals();" << endl;
+  oDataSet_h << "   void compAllWeightedResiduals( std::vector< SPK_VA::valarray<double> >& R );" << endl;
+  oDataSet_h << "   friend std::ostream& operator<< <ValueType>( std::ostream& o, const DataSet<ValueType>& A );" << endl;
   oDataSet_h << endl;
  
   //
@@ -2709,13 +2709,13 @@ void NonmemTranslator::generateDataSet( ) const
   // prohibited in use.
   //
   oDataSet_h << "protected:" << endl;
-  oDataSet_h << "DataSet( const DataSet& );" << endl;
-  oDataSet_h << "DataSet& operator=( const DataSet& );" << endl;
+  oDataSet_h << "   DataSet( const DataSet& );" << endl;
+  oDataSet_h << "   DataSet& operator=( const DataSet& );" << endl;
   oDataSet_h << endl;
 
   oDataSet_h << "private:" << endl;
-  oDataSet_h << "SPK_VA::valarray<double> measurements; // a long vector containg all measurements" << endl;
-  oDataSet_h << "SPK_VA::valarray<int> N; // a vector containing the # of measurements for each individual." << endl;
+  oDataSet_h << "   SPK_VA::valarray<double> measurements; // a long vector containg all measurements" << endl;
+  oDataSet_h << "   SPK_VA::valarray<int> N; // a vector containing the # of measurements for each individual." << endl;
 
   oDataSet_h << "};" << endl;
 
@@ -2751,10 +2751,10 @@ void NonmemTranslator::generateDataSet( ) const
       // they shall match.  However, this should be tested in
       // the corresponding unit tests.
       //
-      oDataSet_h << "//------------------------------------" << endl;
-      oDataSet_h << "// Subject <" << id << "> " << endl;
-      oDataSet_h << "// # of sampling points = " << nRecords << endl;
-      oDataSet_h << "//------------------------------------" << endl;
+      oDataSet_h << "   //------------------------------------" << endl;
+      oDataSet_h << "   // Subject <" << id << "> " << endl;
+      oDataSet_h << "   // # of sampling points = " << nRecords << endl;
+      oDataSet_h << "   //------------------------------------" << endl;
       oDataSet_h << "   N[" << who << "] = " << nRecords << ";" << endl;
 
       //
@@ -2780,10 +2780,10 @@ void NonmemTranslator::generateDataSet( ) const
 		oDataSet_h << s->initial[who][j];
 	    }
 	  oDataSet_h << " };" << endl;
-	  oDataSet_h << "std::vector<" << (isID? "char*":"ValueType") << "> ";
+	  oDataSet_h << "   std::vector<" << (isID? "char*":"ValueType") << "> ";
 	  oDataSet_h << vector_name;
 	  oDataSet_h << "( " << nRecords << " );" << endl;
-	  oDataSet_h << "copy( " << carray_name << ", " << carray_name << "+" << nRecords;
+	  oDataSet_h << "   copy( " << carray_name << ", " << carray_name << "+" << nRecords;
 	  oDataSet_h << ", " << vector_name << ".begin() );" << endl;
 	}
 
@@ -2793,7 +2793,7 @@ void NonmemTranslator::generateDataSet( ) const
       // compliant to the order in which the label strings are stored
       // in the list returned by SymbolTable::getLabels().
       //
-      oDataSet_h << "data[" << who << "] = new IndData<ValueType>";
+      oDataSet_h << "   data[" << who << "] = new IndData<ValueType>";
       oDataSet_h << "( " << nRecords << ", ";
       pLabel = labels->begin();
       for( int i=0; pLabel != labels->end(), i<nLabels; i++, pLabel++ )
@@ -2833,10 +2833,15 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "}" << endl;
 
   oDataSet_h << "template <class ValueType>" << endl;
-  oDataSet_h << "DataSet<ValueType>::DataSet( const DataSet<ValueType>& ){}" << endl;
+  oDataSet_h << "DataSet<ValueType>::DataSet( const DataSet<ValueType>& )" << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "}" << endl;
 
   oDataSet_h << "template <class ValueType>" << endl;
-  oDataSet_h << "DataSet<ValueType>& DataSet<ValueType>::operator=( const DataSet<ValueType>& ){}" << endl;
+  oDataSet_h << "DataSet<ValueType>& DataSet<ValueType>::operator=( const DataSet<ValueType>& )" << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "}" << endl;
+
   oDataSet_h << "template <class ValueType>" << endl;
   oDataSet_h << "const SPK_VA::valarray<double> DataSet<ValueType>::getAllMeasurements() const" << endl;
   oDataSet_h << "{" << endl;
@@ -2881,7 +2886,7 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << endl;
 
   oDataSet_h << "template <class ValueType>" << endl;
-  oDataSet_h << "std::ostream& DataSet<ValueType>::xmlOut( std::ostream& o, const char * title ) const" << endl;
+  oDataSet_h << "std::ostream& operator<<( std::ostream& o, const DataSet<ValueType>& A )" << endl;
   oDataSet_h << "{" << endl;
 
   t = table->getTable();
@@ -2904,19 +2909,19 @@ void NonmemTranslator::generateDataSet( ) const
   vector<string>::const_iterator pWhatGoesIn;
   string keyWhatGoesIn;
 
-  oDataSet_h << "o << \"<\" << title << \" rows=\\\"\" << N.sum() << \"\\\" \";" << endl;
-  oDataSet_h << "o << \"columns=\\\"" << nColumns << "\\\">\" << endl;" << endl;
+  oDataSet_h << "   o << \"<\" << \"presentation_data\" << \" rows=\\\"\" << A.N.sum() << \"\\\" \";" << endl;
+  oDataSet_h << "   o << \"columns=\\\"" << nColumns << "\\\">\" << endl;" << endl;
   //=============================================================================
   // LABELS
   //
-  oDataSet_h << "o << \"<data_labels>\" << endl;" << endl;
+  oDataSet_h << "   o << \"<data_labels>\" << endl;" << endl;
   
   // Put ID first in the sequence
   whatGoesIn.push_back( pID->name );
-  oDataSet_h << "o << \"<label name=\\\"" << pID->name << "\\\"/>\" << endl;" << endl;
+  oDataSet_h << "   o << \"<label name=\\\"" << pID->name << "\\\"/>\" << endl;" << endl;
   
-  oDataSet_h << "///////////////////////////////////////////////////////////////////" << endl;
-  oDataSet_h << "//   DATA SET Specific" << endl;
+  oDataSet_h << "   ///////////////////////////////////////////////////////////////////" << endl;
+  oDataSet_h << "   //   DATA SET Specific" << endl;
 
   // ...aaand, following ID is, all the left hand side quantities in the model definition.
   // cntColumns is initialized to 1 because the ID column is already printed out.
@@ -2935,7 +2940,7 @@ void NonmemTranslator::generateDataSet( ) const
 		{
 		  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
 		    {
-		      oDataSet_h << "o << \"<label name=\\\"";
+		      oDataSet_h << "   o << \"<label name=\\\"";
 		      oDataSet_h << pEntry->second.name << "(" << cntTheta+1 << ")";
 		      oDataSet_h << "\\\"/>\" << endl;" << endl;		      
 		      cntColumns++;
@@ -2945,7 +2950,7 @@ void NonmemTranslator::generateDataSet( ) const
 		{
 		  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
 		    {
-		      oDataSet_h << "o << \"<label name=\\\"";
+		      oDataSet_h << "   o << \"<label name=\\\"";
 		      oDataSet_h << pEntry->second.name << "(" << cntEta+1 << ")";
 		      oDataSet_h << "\\\"/>\" << endl;" << endl;		      
 		      cntColumns++;
@@ -2955,7 +2960,7 @@ void NonmemTranslator::generateDataSet( ) const
 		{
 		  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
 		    {
-		      oDataSet_h << "o << \"<label name=\\\"";
+		      oDataSet_h << "   o << \"<label name=\\\"";
 		      oDataSet_h << pEntry->second.name << "(" << cntEps+1 << ")";
 		      oDataSet_h << "\\\"/>\" << endl;" << endl;		      
 		      cntColumns++;
@@ -2963,7 +2968,7 @@ void NonmemTranslator::generateDataSet( ) const
 		}
 	      else
 		{
-		  oDataSet_h << "o << \"<label name=\\\"";
+		  oDataSet_h << "   o << \"<label name=\\\"";
 		  oDataSet_h << pEntry->second.name;
 		  oDataSet_h << "\\\"/>\" << endl;" << endl;
 		  cntColumns++;
@@ -2979,26 +2984,26 @@ void NonmemTranslator::generateDataSet( ) const
       SpkCompilerException e( SpkCompilerError::ASPK_PROGRAMMER_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
-  oDataSet_h << "//"  << endl;
-  oDataSet_h << "///////////////////////////////////////////////////////////////////" << endl;
-  oDataSet_h << "o << \"</data_labels>\" << endl;" << endl;
+  oDataSet_h << "   //"  << endl;
+  oDataSet_h << "   ///////////////////////////////////////////////////////////////////" << endl;
+  oDataSet_h << "   o << \"</data_labels>\" << endl;" << endl;
   oDataSet_h << endl;
   
-  oDataSet_h << "for( int i=0, position=1; i<popSize; i++ )" << endl;
-  oDataSet_h << "{" << endl;
-  oDataSet_h << "   for( int j=0; j<N[i]; j++, position++ )" << endl;
+  oDataSet_h << "   for( int i=0, position=1; i<A.getPopSize(); i++ )" << endl;
   oDataSet_h << "   {" << endl;
-  oDataSet_h << "      o << \"<row position=\\\"\" << position << \"\\\">\" << endl;" << endl;
-  oDataSet_h << "      ///////////////////////////////////////////////////////////////////" << endl;
-  oDataSet_h << "      //   DATA SET Specific" << endl;
+  oDataSet_h << "      for( int j=0; j<A.N[i]; j++, position++ )" << endl;
+  oDataSet_h << "      {" << endl;
+  oDataSet_h << "         o << \"<row position=\\\"\" << position << \"\\\">\" << endl;" << endl;
+  oDataSet_h << "         ///////////////////////////////////////////////////////////////////" << endl;
+  oDataSet_h << "         //   DATA SET Specific" << endl;
 
   for( cntColumns=0, pWhatGoesIn = whatGoesIn.begin(); pWhatGoesIn!=whatGoesIn.end(); pWhatGoesIn++ )
     {
       keyWhatGoesIn = SymbolTable::key( *pWhatGoesIn );
       if( keyWhatGoesIn == KeyStr.SIMDV )
 	{
-	  oDataSet_h << "   o << \"<value ref=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
-	  oDataSet_h << "measurements[position]";
+	  oDataSet_h << "         o << \"<value ref=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
+	  oDataSet_h << "A.measurements[position]";
 	  oDataSet_h << " << \"</value>\" << endl;" << endl;
 	  cntColumns++;
 	}
@@ -3006,9 +3011,9 @@ void NonmemTranslator::generateDataSet( ) const
 	{
 	  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
 	    {
-	      oDataSet_h << "   o << \"<value ref=\\\"";
+	      oDataSet_h << "         o << \"<value ref=\\\"";
 	      oDataSet_h << *pWhatGoesIn << "(" << cntTheta+1 << ")" << "\\\"" << ">\" << ";
-	      oDataSet_h << "data[i]->" << *pWhatGoesIn << "[j][" << cntTheta << "]";
+	      oDataSet_h << "A.data[i]->" << *pWhatGoesIn << "[j][" << cntTheta << "]";
 	      oDataSet_h << " << \"</value>\" << endl;" << endl;
 	      cntColumns++;
 	    }
@@ -3017,9 +3022,9 @@ void NonmemTranslator::generateDataSet( ) const
 	{
 	  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
 	    {
-	      oDataSet_h << "   o << \"<value ref=\\\"";
+	      oDataSet_h << "         o << \"<value ref=\\\"";
 	      oDataSet_h << *pWhatGoesIn << "(" << cntEta+1 << ")"<< "\\\"" << ">\" << ";
-	      oDataSet_h << "data[i]->" << *pWhatGoesIn << "[j][" << cntEta << "]";
+	      oDataSet_h << "A.data[i]->" << *pWhatGoesIn << "[j][" << cntEta << "]";
 	      oDataSet_h << " << \"</value>\" << endl;" << endl;
 	      cntColumns++;
 	    }
@@ -3028,9 +3033,9 @@ void NonmemTranslator::generateDataSet( ) const
 	{
 	  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
 	    {
-	      oDataSet_h << "   o << \"<value ref=\\\"";
+	      oDataSet_h << "         o << \"<value ref=\\\"";
 	      oDataSet_h << *pWhatGoesIn << "(" << cntEps+1 << ")"<< "\\\"" << ">\" << ";
-	      oDataSet_h << "data[i]->" << *pWhatGoesIn << "[j][" << cntEps << "]";
+	      oDataSet_h << "A.data[i]->" << *pWhatGoesIn << "[j][" << cntEps << "]";
 	      oDataSet_h << " << \"</value>\" << endl;" << endl;
 	      cntColumns++;
 	    }
@@ -3041,8 +3046,8 @@ void NonmemTranslator::generateDataSet( ) const
 	}
       else
 	{
-	  oDataSet_h << "   o << \"<value ref=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
-	  oDataSet_h << "data[i]->" << *pWhatGoesIn << "[j]";
+	  oDataSet_h << "         o << \"<value ref=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
+	  oDataSet_h << "A.data[i]->" << *pWhatGoesIn << "[j]";
 	  oDataSet_h << " << \"</value>\" << endl;" << endl;
 	  cntColumns++;
 	}
@@ -3055,13 +3060,13 @@ void NonmemTranslator::generateDataSet( ) const
       SpkCompilerException e( SpkCompilerError::ASPK_PROGRAMMER_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
-  oDataSet_h << "      //" << endl;
-  oDataSet_h << "      ///////////////////////////////////////////////////////////////////" << endl;
-  oDataSet_h << "      o << \"</row>\" << endl;" << endl;
+  oDataSet_h << "         //" << endl;
+  oDataSet_h << "         ///////////////////////////////////////////////////////////////////" << endl;
+  oDataSet_h << "         o << \"</row>\" << endl;" << endl;
+  oDataSet_h << "      }" << endl;
   oDataSet_h << "   }" << endl;
-  oDataSet_h << "}" << endl;
   
-  oDataSet_h << "o << \"</\" << title << \">\" << endl;" << endl;
+  oDataSet_h << "   o << \"</\" << \"presentation_data\" << \">\";" << endl;
   oDataSet_h << "}" << endl;
 
   oDataSet_h << "#endif" << endl;
@@ -4319,7 +4324,7 @@ void NonmemTranslator::generateIndDriver( ) const
     }
 
   // This prints out <presentation_data></presentation_data>
-  oDriver << "oResults << set.xmlOut( oResults, \"presentation_data\" ) << endl;" << endl;
+  oDriver << "oResults << set << endl;" << endl;
   
   oDriver << "oResults << \"</spkreport>\" << endl;" << endl;
 
@@ -4964,7 +4969,7 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << endl;
 
   // This prints out <presentation_data></presentation_data>
-  oDriver << "oResults << set.xmlOut( oResults, \"presentation_data\" ) << endl;" << endl;
+  oDriver << "oResults << set << endl;" << endl;
  
   oDriver << "oResults << \"</spkreport>\" << endl;" << endl;
   
