@@ -10,13 +10,13 @@
 using namespace std;
 using namespace xercesc;
 
-extern int gSpkExpLines;
-extern int gSpkExpErrors;
-extern ParseTree * gSpkExpUtil;
-extern DOMDocument * gSpkExpDOMDocument;
-extern SymbolTable * gSpkExpSymbolTable;
-extern FILE * yyin;
-extern int yydebug;
+extern int                gSpkExpLines;
+extern int                gSpkExpErrors;
+extern ExpTreeGenerator * gSpkExpTreeGenerator;
+extern DOMDocument      * gSpkExpTree;
+extern SymbolTable      * gSpkExpSymbolTable;
+extern FILE             * yyin;
+extern int                yydebug;
 
 static const char* trim( const XMLCh* source )
 {
@@ -40,14 +40,14 @@ NonmemCompiler::NonmemCompiler( const char* filename )
     isCannedModelUsed( false ),
     baseModel( NONE )
 {
-  gSpkExpUtil        = new ParseTree;
-  gSpkExpDOMDocument  = gSpkExpUtil->handler();
-  gSpkExpSymbolTable = new SymbolTable( client::NONMEM );
+  gSpkExpTreeGenerator = new ExpTreeGenerator;
+  gSpkExpTree          = gSpkExpTreeGenerator->root();
+  gSpkExpSymbolTable   = new SymbolTable( client::NONMEM );
 }
 
 NonmemCompiler::~NonmemCompiler( )
 {
-  delete gSpkExpUtil;
+  delete gSpkExpTreeGenerator;
   delete gSpkExpSymbolTable;
 }
 
@@ -645,7 +645,7 @@ void NonmemCompiler::interpretModel()
 	      yyin = fopen( "junk", "r" );
               yydebug = 1;
 	      yyparse();
-	      gSpkExpUtil->printToStdout();
+	      gSpkExpTreeGenerator->printToStdout();
 
 	    }
 	  else if( strcmp( name, "error" ) == 0 )
