@@ -69,6 +69,13 @@ class ClientTranslator{
    */
   const SymbolTable* getSymbolTable() const;
 
+  /**
+   * Return a pointer to the (writable) symbol table.
+   *
+   * @return t A pointer to the symbol table.
+   */
+  SymbolTable* getSymbolTable();
+
  protected:
   /**
    * A pointer to the SpkSourceML parse tree.
@@ -83,7 +90,7 @@ class ClientTranslator{
   /**
    * The symbol table.
    */
-  SymbolTable stable;
+  SymbolTable table;
 
   /**
    * The default constructor.
@@ -98,5 +105,17 @@ class ClientTranslator{
    */
   ClientTranslator & operator=( const ClientTranslator& );
 
+ private:
+  XMLCh* X_SPKDATA;
+  XMLCh* X_VERSION;
+  XMLCh* X_TABLE;
+  XMLCh* X_COLUMNS;
+  XMLCh* X_ROWS;
+  XMLCh* X_DESCRIPTION;
+  XMLCh* X_ROW;
+  XMLCh* X_POSITION;
+  XMLCh* X_VALUE;
+  XMLCh* X_TYPE;
+  XMLCh* X_NUMERIC;
 };
 #endif
