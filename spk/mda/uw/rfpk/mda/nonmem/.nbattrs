@@ -5,6 +5,7 @@
         <attr name="class_dependency_javax.swing.table.AbstractTableModel" stringvalue="MDAFrame.DisplayTableModel"/>
         <attr name="class_dependency_java.awt.event.AdjustmentListener" stringvalue="MDAFrame.ScrollBarListener"/>
         <attr name="class_dependency_javax.swing.JFrame" stringvalue="MDAFrame"/>
+        <attr name="class_dependency_javax.swing.table.DefaultTableCellRenderer" stringvalue="MDAFrame.CellRenderer"/>
         <attr name="class_dependency_javax.swing.event.CaretListener" stringvalue="MDAFrame.ACaretListener"/>
     </fileobject>
     <fileobject name="Printer.java">

@@ -163,11 +163,12 @@ public class PK extends javax.swing.JPanel implements WizardStep {
 
 	public void hidingStep(JWizardPane wizard){
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
-            String record = jTextArea1.getText().trim(); 
+            String ls = System.getProperty("line.separator");            
+            String record = jTextArea1.getText().trim().replaceAll("\n", ls); 
             if(!record.equals("") && !Utility.checkTag(record, "PK code"))
             {
-                object.getRecords().setProperty("PK", "$PK \n" + record);
-                object.getSource().pk = "\n" + record + "\n";
+                object.getRecords().setProperty("PK", "$PK " + ls + record);
+                object.getSource().pk = ls + record + ls;
                 // Eliminate comments
                 record = Utility.eliminateComments(record); 
                 // Find number of THETAs

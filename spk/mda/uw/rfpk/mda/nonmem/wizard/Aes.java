@@ -170,11 +170,12 @@ public class Aes extends javax.swing.JPanel implements WizardStep {
 
 	public void hidingStep(JWizardPane wizard){
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
-            String record = jTextArea1.getText().trim();
+            String ls = System.getProperty("line.separator");            
+            String record = jTextArea1.getText().trim().replaceAll("\n", ls);
             if(!record.equals("") && !Utility.checkTag(record, "AES code"))
             {
-                object.getRecords().setProperty("Aes", "$AES \n" + record);
-                object.getSource().aes = "\n" + record + "\n";
+                object.getRecords().setProperty("Aes", "$AES " + ls + record);
+                object.getSource().aes = ls + record + ls;
             }
 	}
 

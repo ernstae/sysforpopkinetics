@@ -682,10 +682,11 @@ public class Model extends javax.swing.JPanel implements WizardStep {
                 record = record + "NEQUILIBRIUM=" + n2 + " ";
             String n3 = jTextField3.getText().trim();
             if(!n3.equals(""))
-                record = record + "NPARAMETERS=" + n3; 
-
+                record = record + "NPARAMETERS=" + n3;
+            
+            String ls = System.getProperty("line.separator");
             for(int i = 0; i < size; i++)
-                record = record + "\n" + model.get(i);
+                record = record + ls + model.get(i);
             object.getRecords().setProperty("Model", "$MODEL" + record); 
             String[][] compartments = new String[size + 1][];
             compartments[0] = new String[3]; 

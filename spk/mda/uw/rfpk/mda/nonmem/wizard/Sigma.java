@@ -821,7 +821,7 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
         }        
     }
     
-    class ATableModel extends AbstractTableModel {
+    private class ATableModel extends AbstractTableModel {
         public String getColumnName(int c) {
             String name = null;
             if(c == 0) 
@@ -866,7 +866,7 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
         }
     }
 
-    class HeaderCellRenderer extends DefaultTableCellRenderer 
+    private class HeaderCellRenderer extends DefaultTableCellRenderer 
     {
         public Component getTableCellRendererComponent(JTable table,
             Object value,boolean isSelected, boolean hasFocus, int row,int col) 
@@ -933,8 +933,11 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
 	public void showingStep(JWizardPane wizard){
             wizardPane = wizard;
             if(nEps != iterator.getNEps())
-                model.removeAllElements();
-            nEps = iterator.getNEps(); 
+            {
+                nEps = iterator.getNEps(); 
+                isValid = false;
+                wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray()); 
+            }
 	}
 
 	public void hidingStep(JWizardPane wizard){
@@ -942,9 +945,10 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
             if(size != 0)
             {
                 MDAObject object = (MDAObject)wizard.getCustomizedObject();
-                String record = (String)model.get(0);  
+                String record = (String)model.get(0); 
+                String ls = System.getProperty("line.separator");
                 for(int i = 1; i < size; i++)
-                    record = record + "\n" + model.get(i);
+                    record = record + ls + model.get(i);
                 object.getRecords().setProperty("Sigma", record);
                 String[][] sigma = new String[nEps][];
                 for(int i = 0; i < size; i++)

@@ -152,11 +152,12 @@ public class Error extends javax.swing.JPanel implements WizardStep {
 
 	public void hidingStep(JWizardPane wizard){
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
-            String record = jTextArea1.getText().trim(); 
+            String ls = System.getProperty("line.separator");
+            String record = jTextArea1.getText().trim().replaceAll("\n", ls); 
             if(!record.equals("") && !Utility.checkTag(record, "ERROR code"))
             {
-                object.getRecords().setProperty("Error", "$ERROR \n" + record);
-                object.getSource().error = "\n" + record + "\n";
+                object.getRecords().setProperty("Error", "$ERROR " + ls + record);
+                object.getSource().error = ls + record + ls;
                 // Eliminate comments
                 record = Utility.eliminateComments(record); 
                 // Find number of EPSs

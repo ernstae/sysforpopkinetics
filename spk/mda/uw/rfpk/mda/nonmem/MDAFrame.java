@@ -257,12 +257,6 @@ public class MDAFrame extends JFrame
 
         jPanel2.setMinimumSize(new java.awt.Dimension(300, 200));
         jPanel2.setPreferredSize(new java.awt.Dimension(300, 300));
-        jPanel2.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                jPanel2FocusGained(evt);
-            }
-        });
-
         jRadioButton1.setFont(new java.awt.Font("Default", 0, 12));
         jRadioButton1.setSelected(true);
         jRadioButton1.setText("New model (NONMEM control file)");
@@ -366,12 +360,6 @@ public class MDAFrame extends JFrame
 
         jPanel3.setMinimumSize(new java.awt.Dimension(300, 200));
         jPanel3.setPreferredSize(new java.awt.Dimension(300, 300));
-        jPanel3.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                jPanel3FocusGained(evt);
-            }
-        });
-
         jRadioButton4.setFont(new java.awt.Font("Default", 0, 12));
         jRadioButton4.setSelected(true);
         jRadioButton4.setText("New dataset");
@@ -472,12 +460,6 @@ public class MDAFrame extends JFrame
         jTabbedPane1.addTab("Dataset", jPanel3);
 
         jPanel5.setLayout(new java.awt.GridBagLayout());
-
-        jPanel5.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                jPanel5FocusGained(evt);
-            }
-        });
 
         jLabel7.setFont(new java.awt.Font("Default", 0, 12));
         jLabel7.setText("short description (<=100 characters)     ");
@@ -1408,20 +1390,27 @@ public class MDAFrame extends JFrame
 
     private void findMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findMenuActionPerformed
         String string = JOptionPane.showInputDialog(null, "Enter a string to find.");
-        if(string.equals(""))
+        String text = textArea.getText();
+        if(string == null)
             return;
+        if(string.equals("") || text.toLowerCase().indexOf(string.toLowerCase()) == -1)
+        {
+            JOptionPane.showMessageDialog(null, "The string '" + string + "' was not found.", 
+                                              "Find Result", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
         removeHighlights(textArea); 
         try 
         {
             Highlighter hilite = textArea.getHighlighter();
-            String text = textArea.getText();
+
             int pos = 0;
     
             // Search for string
             while ((pos = text.toLowerCase().indexOf(string.toLowerCase(), pos)) >= 0) {
              
                 hilite.addHighlight(pos, pos + string.length(), 
-                                    new DefaultHighlighter.DefaultHighlightPainter(Color.CYAN));
+                                    new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW));
                 pos += string.length();
             }
         } 
@@ -1475,10 +1464,11 @@ public class MDAFrame extends JFrame
                                           JOptionPane.INFORMATION_MESSAGE);  
             return;
         }
-        if(!text1.endsWith("\n"))
-            jTextArea3.append("\n"); 
-        if(!text2.endsWith("\n"))
-            jTextArea4.append("\n");
+        String ls = System.getProperty("line.separator");
+        if(!text1.endsWith(ls))
+            jTextArea3.append(ls); 
+        if(!text2.endsWith(ls))
+            jTextArea4.append(ls);
 
         String revision = server.diffFiles(jTextArea3.getText(), jTextArea4.getText());
         if(revision == null)
@@ -1658,7 +1648,7 @@ public class MDAFrame extends JFrame
         String newLine = "";
         for(int i = 0; i < nSpace; i++)
             newLine += " ";
-        newLine += "\n";
+        newLine += System.getProperty("line.separator");
         String newLines = "";
         for(int i = 0; i < nLine; i++)
             newLines += newLine;
@@ -1801,29 +1791,6 @@ public class MDAFrame extends JFrame
         }        
     }
 
-    private void jPanel5FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jPanel5FocusGained
-//        jTextField7.setText("");
-    }//GEN-LAST:event_jPanel5FocusGained
-
-    private void jPanel3FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jPanel3FocusGained
-
-        jRadioButton4.setSelected(true); 
-        jTextField4.setEnabled(true);
-        jTextField5.setEnabled(true);
-//        jTextField4.setText("");
-//        jTextField5.setText("");
-        jTextField6.setText("1");        
-    }//GEN-LAST:event_jPanel3FocusGained
-
-    private void jPanel2FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jPanel2FocusGained
-        jRadioButton1.setSelected(true); 
-        jTextField1.setEnabled(true);
-        jTextField2.setEnabled(true);
-//        jTextField1.setText("");
-//        jTextField2.setText("");
-        jTextField3.setText("1");  
-    }//GEN-LAST:event_jPanel2FocusGained
-
     private void jRadioButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton3ActionPerformed
         jTextField1.setEnabled(false);
         jTextField2.setEnabled(false);
@@ -1922,23 +1889,33 @@ public class MDAFrame extends JFrame
                         {
                             jInternalFrame2.setTitle(title);
                             textL = XMLReader.parseDataXML(archive);
-                            jTextArea3.setText(textL);
-                            jTextArea3.setCaretPosition(0);
+                            if(textL != null)
+                            {
+                                jTextArea3.setText(textL);
+                                jTextArea3.setCaretPosition(0);
+                            }
                         }
                         else
                         {
                             jInternalFrame3.setTitle(title);
                             textR = XMLReader.parseDataXML(archive);
-                            jTextArea4.setText(textR);
-                            jTextArea4.setCaretPosition(0);
+                            if(textR != null)
+                            {
+                                jTextArea4.setText(textR);
+                                jTextArea4.setCaretPosition(0);
+                            }
                         }                            
                     }
                     else
                     {
-                        jInternalFrame1.setTitle(title); 
-                        textArea.setText(XMLReader.parseDataXML(archive));
-                        textArea.setCaretPosition(0);                        
-                        file = null;
+                        jInternalFrame1.setTitle(title);
+                        String text = XMLReader.parseDataXML(archive);
+                        if(text != null)
+                        {
+                            textArea.setText(text);
+                            textArea.setCaretPosition(0);                        
+                            file = null;
+                        }
                     }
                 }
             }
@@ -2063,6 +2040,8 @@ public class MDAFrame extends JFrame
                     {
                         jTextField3.setText(String.valueOf(modelVersions.length + 1)); 
                         modelArchive.log = JOptionPane.showInputDialog("Enter log for the new version (<=100 characters)");
+                        if(modelArchive.log == null)
+                            modelArchive.log = "";
                         reportDialog.dispose();
                     }
                 }
@@ -2081,6 +2060,8 @@ public class MDAFrame extends JFrame
                     {
                         jTextField6.setText(String.valueOf(datasetVersions.length + 1));                     
                         dataArchive.log = JOptionPane.showInputDialog("Enter log for the new version (<=100 characters)");
+                        if(dataArchive.log == null)
+                            dataArchive.log = "";
                         reportDialog.dispose();  
                     }
                 }
@@ -2093,6 +2074,7 @@ public class MDAFrame extends JFrame
         saveFile();
 
         // Preparation
+        String ls = System.getProperty("line.separator");
         DecimalFormat f = new DecimalFormat("0.00E00");
         NumberFormat p = NumberFormat.getPercentInstance();
         p.setMaximumFractionDigits(1);
@@ -2117,7 +2099,7 @@ public class MDAFrame extends JFrame
                         getSpace(14 - rse.length()) + rse + "    " + 
                         Utility.formatData(6, f.format(lb)) + "  " +
                         Utility.formatData(6, f.format(ub));
-                theta += "\n";                    
+                theta += ls;                    
             }
         }
         
@@ -2143,7 +2125,7 @@ public class MDAFrame extends JFrame
                             Utility.formatData(6, f.format(ub));
                     if(j == i + 1)
                         omega += getSpace(14 - cv.length()) + cv;
-                    omega += "\n"; 
+                    omega += ls; 
                 }
             }
         }
@@ -2169,7 +2151,7 @@ public class MDAFrame extends JFrame
                             Utility.formatData(6, f.format(ub));                   
                     if(j == i + 1)
                         sigma +=  "     " + Utility.formatData(6, sd);
-                    sigma += "\n";                    
+                    sigma += ls;                    
                 }
             }
         }
@@ -2717,7 +2699,8 @@ public class MDAFrame extends JFrame
         for(int i = 0; i < 21; i++)
         {
             if(!records.getProperty(names[i]).equals("")) 
-                control = control + records.getProperty(names[i]) + "\n"; 
+                control = control + records.getProperty(names[i]) + 
+                          System.getProperty("line.separator"); 
         }
         if(JOptionPane.showConfirmDialog(null, 
                                          "Do you want to save the NONMEM control file?",   
@@ -2766,6 +2749,7 @@ public class MDAFrame extends JFrame
     private void readOutput()
     { 
         String text = textArea.getText();
+        String ls = System.getProperty("line.separator");
         if(text.indexOf("<spkreport>") == -1 || text.indexOf("<spksource>") == -1)
         {
             JOptionPane.showMessageDialog(null, "SPK output file is not loaded",  
@@ -2827,7 +2811,7 @@ public class MDAFrame extends JFrame
                                     if(tableI[0][1].equals("every") ||
                                        (tableI[0][1].equals("one") && k == 0))
                                     {
-                                        out.write("TABLE NO.  " + (i + 1) + "\n");
+                                        out.write("TABLE NO.  " + (i + 1) + ls);
                                         for(int j = 1; j < nColumns; j++)
                                         {                                            
                                             out.write(getSpace(12 - header[j].length()));
@@ -2835,8 +2819,8 @@ public class MDAFrame extends JFrame
                                         }      
                                     }
                                     else
-                                        out.write("\n");
-                                    out.write("\n");  
+                                        out.write(ls);
+                                    out.write(ls);  
                                     
                                     // Format and write data
                                     for(k = start; k < nRows && k < start + 900; k++) 
@@ -2844,7 +2828,7 @@ public class MDAFrame extends JFrame
                                         // Format and write data
                                         for(int l = 1; l < nColumns; l++)
                                             out.write(" " + Utility.formatData(8, f.format(Double.parseDouble(data[k][l]))));
-                                        out.write("\n");
+                                        out.write(ls);
                                     }
                                     start = k;
                                 }
@@ -2894,13 +2878,13 @@ public class MDAFrame extends JFrame
                         out.write(getSpace(12 - label.length()));
                         out.write(label);
                     }
-                    out.write("\n");
+                    out.write(ls);
                     DecimalFormat f = new DecimalFormat("0.0000E00");
                     for(int j = 0; j < nRows; j++)
                     {
                         for(int i = 0; i < nColumns; i++)
                             out.write(" " + Utility.formatData(8, f.format(output.dataAll[j][i]))); 
-                        out.write("\n");
+                        out.write(ls);
                     }
                     out.close();
                 }
@@ -3001,13 +2985,13 @@ public class MDAFrame extends JFrame
             case 'm':
             {
                 title = "Model List"; 
-                header = new String[]{"Model Name", "Last Revised Time", "Description"};
+                header = new String[]{"Model Name", "No. of Versions", "Last Revised Time", "Description"};
                 break;
             }
             case 'd':
             {
                 title = "Dataset List";
-                header = new String[]{"Dataset Name", "Last Revised Time", "Description"};
+                header = new String[]{"Dataset Name", "No. of Versions", "Last Revised Time", "Description"};
                 break;
             }            
             default: return;
@@ -3016,7 +3000,7 @@ public class MDAFrame extends JFrame
         if(indexList < lists.size())
         {
             archiveList = (String[][])lists.get(indexList);
-            if(archiveList.length < maxNum)
+            if(archiveList.length <= maxNum)
                 nextButton.setEnabled(false);
         }
         else
@@ -3029,17 +3013,17 @@ public class MDAFrame extends JFrame
             {            
                 case 'j':
                 {
-                    archiveList = server.getUserJobs(maxNum, leftOff);
+                    archiveList = server.getUserJobs(maxNum + 1, leftOff);
                     break;
                 }
                 case 'm':
                 {
-                    archiveList = server.getUserModels(maxNum, leftOff, isLibrary);
+                    archiveList = server.getUserModels(maxNum + 1, leftOff, isLibrary);
                     break;
                 }
                 case 'd':
                 {
-                    archiveList = server.getUserDatasets(maxNum, leftOff);
+                    archiveList = server.getUserDatasets(maxNum + 1, leftOff);
                     break;
                 }
                 default: return;             
@@ -3052,21 +3036,16 @@ public class MDAFrame extends JFrame
                                                   JOptionPane.INFORMATION_MESSAGE);               
                 return;
             }
-            
-            if(archiveList.length > 0)
-            {
-                // Add the list to the collection
-                lists.add(archiveList);
-                if(archiveList.length < maxNum)
-                    // Turn off the next button
-                    nextButton.setEnabled(false); 
-                else
-                    // Turn on the next button
-                    nextButton.setEnabled(true);                    
-            }
-            else
+
+            // Add the list to the collection
+            lists.add(archiveList);
+            if(archiveList.length <= maxNum)
                 // Turn off the next button
                 nextButton.setEnabled(false); 
+            else
+                // Turn on the next button
+                nextButton.setEnabled(true);            
+
             if(indexList == 0)
                 previousButton.setEnabled(false);
         }
@@ -3078,8 +3057,12 @@ public class MDAFrame extends JFrame
         DisplayTableModel reportModel = new DisplayTableModel(archiveList, header, 1);  
         jTable1.setModel(reportModel); 
         TableColumnModel columnModel = jTable1.getColumnModel();
+        columnModel.getColumn(1).setCellRenderer(new CellRenderer());
         columnModel.getColumn(header.length - 1).setPreferredWidth(500);
-        reportDialog.setSize(800, 16 * archiveList.length + 90);  
+        int length = archiveList.length;
+        if(length > maxNum)
+            length--;        
+        reportDialog.setSize(800, 16 * length + 90);  
         reportDialog.setTitle(title);
         reportDialog.show();
     }
@@ -3122,10 +3105,15 @@ public class MDAFrame extends JFrame
         {
             return header.length; 
         }
-        public int getRowCount() {
-            return data.length;
+        public int getRowCount()
+        {
+            int length = data.length;
+            if(length > maxNum)
+                length--;
+            return length;
         }
-        public Object getValueAt(int r, int c) {
+        public Object getValueAt(int r, int c)
+        {
             return data[r][c + start];
         }
 
@@ -3137,6 +3125,17 @@ public class MDAFrame extends JFrame
         
         // Starting column
         int start = 0;
+    }    
+
+    private class CellRenderer extends DefaultTableCellRenderer 
+    {
+        public Component getTableCellRendererComponent(JTable table,
+            Object value,boolean isSelected, boolean hasFocus, int row,int col) 
+        {
+            super.getTableCellRendererComponent(table,value,isSelected,hasFocus,row,col);
+            setHorizontalAlignment(SwingConstants.CENTER);
+            return this;
+	}
     }    
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -3346,5 +3345,5 @@ public class MDAFrame extends JFrame
     private String archiveName = null;
     
     // Maximum number of items
-    private static final int maxNum = 25;
+    private static final int maxNum = 4;
 }

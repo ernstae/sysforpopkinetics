@@ -711,8 +711,8 @@ public class XMLReader {
     }
    
     /** Convert the data XML back to the original.
-     * @param dataXML Data XMl as a String object.
-     * @return A String object containing the original data.
+     * @param dataXML Data XML as a String object.
+     * @return A String object containing the original data, null if failed.
      */
     public static String parseDataXML(String dataXML)
     {
@@ -726,13 +726,15 @@ public class XMLReader {
             parser.parse(new InputSource(new ByteArrayInputStream(dataXML.getBytes()))); 
             docData = parser.getDocument();            
         }
-        catch(SAXException se)
+        catch(SAXException e)
         {
-            System.out.println(se);
+            JOptionPane.showMessageDialog(null, e, "SAXException", JOptionPane.ERROR_MESSAGE);
+            return null;
         }
-        catch(IOException ioe)
+        catch(IOException e)
         {
-            System.out.println(ioe);
+            JOptionPane.showMessageDialog(null, e, "IOException", JOptionPane.ERROR_MESSAGE);
+            return null;
         }    
         
         //Get root element of spksource
@@ -742,6 +744,7 @@ public class XMLReader {
         NodeList rowList = spkdata.getElementsByTagName("row"); 
         if(rowList.getLength() > 1)
         {
+            String ls = System.getProperty("line.separator");
             for(int i = 1; i < rowList.getLength(); i++)
             {
                 row = (Element)rowList.item(i);
@@ -757,7 +760,7 @@ public class XMLReader {
                             data += formatNumeric(value.getFirstChild().getNodeValue());
                     }
                 } 
-                data += "\n";
+                data += ls;
             }
         }        
         return data;
@@ -781,7 +784,7 @@ public class XMLReader {
         return Utility.formatData(8, f.format(Double.parseDouble(number)));  
     }
     
-    /** Get model archive text from model XML document.  The first '\n' is removed.
+    /** Get model archive text from model XML document.  The first line is removed.
      * @param model A String object containing the model XML document.
      * @return A String object containing the model archive text.
      */ 
@@ -790,14 +793,14 @@ public class XMLReader {
         String modelArchive = null;
         try
         {
-            // Parse archive XML document
+            // Parse spkmodel XML document
             DOMParser parser = new DOMParser();                
             parser.parse(new InputSource(new ByteArrayInputStream(model.getBytes())));                  
             Document docModel = parser.getDocument();              
             Element spkmodel = docModel.getDocumentElement();
             modelArchive = spkmodel.getFirstChild().getNodeValue();
             if(!modelArchive.equals(""))
-                modelArchive = modelArchive.substring(1);
+                modelArchive = modelArchive.substring(modelArchive.indexOf('\n') + 1);
         }
         catch(IOException e)
         {
