@@ -1325,7 +1325,9 @@ $end
 #include "firstOrderOpt.h"
 #include "ppkaOpt.h"
 #include "lTilde.h"
+#include "Optimizer.h"
 #include "quasiNewtonAnyBox.h"
+#include "QuasiNewtonAnyBoxObj.h"
 #include "matabs.h"
 #include "isDmatEpsEqual.h"
 #include "File.h"
@@ -1371,6 +1373,7 @@ namespace // [Begin: unnamed namespace]
       const DoubleMatrix*  pdvecBLowIn,
       const DoubleMatrix*  pdvecBUpIn,
       const DoubleMatrix*  pdvecBStepIn,
+      Optimizer*           pPopOptInfoIn,
       Optimizer*           pIndOptInfoIn,
       bool                 isMultiProcessedIn )
       :
@@ -1388,9 +1391,12 @@ namespace // [Begin: unnamed namespace]
       pdvecBLow         ( pdvecBLowIn ),        
       pdvecBUp          ( pdvecBUpIn ),         
       pdvecBStep        ( pdvecBStepIn ),       
+      pPopOptInfo       ( pPopOptInfoIn ),      
       pIndOptInfo       ( pIndOptInfoIn ),      
       isMultiProcessed  ( isMultiProcessedIn ) 
     {
+      // Give the optimizer controller a pointer to this objective.
+      pPopOptInfo->setObjFunc( this );
     }
 
 
@@ -1407,7 +1413,7 @@ namespace // [Begin: unnamed namespace]
 
     // These hold the best value for the population objective 
     // function that has been computed by lTilde() so far, along
-    // with the corresponding set of b values.
+    // with the corresponding alp and set of b values.
     double            dLTildeBest;
     bool              isLTildeBestSet;
     DoubleMatrix      dvecAlpBest;
@@ -1443,6 +1449,7 @@ namespace // [Begin: unnamed namespace]
     const DoubleMatrix*  pdvecBUp;
     const DoubleMatrix*  pdvecBStep;
     
+    Optimizer*  pPopOptInfo;
     Optimizer*  pIndOptInfo;
     bool        isMultiProcessed;
 
@@ -1499,20 +1506,20 @@ namespace // [Begin: unnamed namespace]
       DoubleMatrix* pdmatNull = 0;
       lTilde(
         isMultiProcessed,
-	*pSharedDirectory,
-	*pModel,
-	objective,
-	*pdvecY,
-	*pdvecN,
-	*pIndOptInfo,
-	dvecAlpCurr,
-	*pdvecBLow,
-	*pdvecBUp,
-	*pdvecBStep,
-	dmatBBest,
-	&dmatBCurr,
-	&dLTildeCurr,
-	pdmatNull );
+        *pSharedDirectory,
+        *pModel,
+        objective,
+        *pdvecY,
+        *pdvecN,
+        *pIndOptInfo,
+        dvecAlpCurr,
+        *pdvecBLow,
+        *pdvecBUp,
+        *pdvecBStep,
+        dmatBBest,
+        &dmatBCurr,
+        &dLTildeCurr,
+        pdmatNull );
     
       
       //----------------------------------------------------------
@@ -1578,18 +1585,18 @@ namespace // [Begin: unnamed namespace]
       DoubleMatrix drowLTilde_alpCurr( 1, nAlp );
       lTilde(
         isMultiProcessed,
-	*pSharedDirectory,
-	*pModel,
-	objective,
-	*pdvecY,
-	*pdvecN,
-	*pIndOptInfo,
-	dvecAlpCurr,
-	*pdvecBLow,
-	*pdvecBUp,
-	*pdvecBStep,
-	dmatBBest,
-	&dmatBCurr,
+        *pSharedDirectory,
+        *pModel,
+        objective,
+        *pdvecY,
+        *pdvecN,
+        *pIndOptInfo,
+        dvecAlpCurr,
+        *pdvecBLow,
+        *pdvecBUp,
+        *pdvecBStep,
+        dmatBBest,
+        &dmatBCurr,
         pdNull,
         &drowLTilde_alpCurr );
     
@@ -1600,6 +1607,52 @@ namespace // [Begin: unnamed namespace]
     
       // Set the gradient value.
       *pdrowLTilde_alpOut = drowLTilde_alpCurr;
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: readRestartInfoFromFile
+    //
+    //
+    // Reads any information from the restart file that is required by
+    // the objective function.
+    //
+    //**********************************************************
+
+    virtual void readRestartInfoFromFile()
+    {
+      // Get the best value for the population objective function
+      // that has been computed so far, along with the corresponding
+      // alp and set of b values.
+      pPopOptInfo->getValue( "dLTildeBest",     dLTildeBest );
+      pPopOptInfo->getValue( "isLTildeBestSet", isLTildeBestSet );
+
+      pPopOptInfo->getArray( "dvecAlpBest", nAlp,      dvecAlpBest.data() );
+      pPopOptInfo->getArray( "dmatBBest",   nB * nInd, dmatBBest.data() );
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: writeRestartInfoToFile
+    //
+    //
+    // Writes any information to the restart file that is required by
+    // the objective function.
+    //
+    //**********************************************************
+
+    virtual void writeRestartInfoToFile() const
+    {
+      // Write the best value for the population objective function
+      // that has been computed so far, along with the corresponding
+      // alp and set of b values.
+      pPopOptInfo->writeValue( "dLTildeBest",     dLTildeBest );
+      pPopOptInfo->writeValue( "isLTildeBestSet", isLTildeBestSet );
+
+      pPopOptInfo->writeArray( "dvecAlpBest", nAlp,      dvecAlpBest.data() );
+      pPopOptInfo->writeArray( "dmatBBest",   nB * nInd, dmatBBest.data() );
     }
 
   };
@@ -1810,18 +1863,19 @@ void ppkaOpt(
   // values, with pointers to the ppkaOptParallel inputs, and with
   // miscellaneous other information.
   PpkaOptObj ppkaOptObj( isLTildeBestSet,
-			 dvecAlpIn,
-			 dmatBIn,
-			 &sharedDirectory,
-			 &model,
-			 objective,
-			 &dvecN,
-			 &dvecY, 
-			 &dvecBLow,
-			 &dvecBUp,
-			 &dvecBStep,
-			 &indOptInfo,
-			 isMultiple );
+                         dvecAlpIn,
+                         dmatBIn,
+                         &sharedDirectory,
+                         &model,
+                         objective,
+                         &dvecN,
+                         &dvecY, 
+                         &dvecBLow,
+                         &dvecBUp,
+                         &dvecBStep,
+                         &popOptInfo,
+                         &indOptInfo,
+                         isMultiple );
 
 
   //------------------------------------------------------------
@@ -1836,13 +1890,13 @@ void ppkaOpt(
       // has been found so far is cached in indLevelInfo.
       try{
           quasiNewtonAnyBox( ppkaOptObj,
-			     popOptInfo, 
-			     dvecAlpLow, 
-			     dvecAlpUp, 
-			     dvecAlpIn, 
-			     &dvecAlpOutTemp, 
-			     pdLTildeOutTemp,
-			     pdrowLTilde_alpOutTemp ); 
+                             popOptInfo, 
+                             dvecAlpLow, 
+                             dvecAlpUp, 
+                             dvecAlpIn, 
+                             &dvecAlpOutTemp, 
+                             pdLTildeOutTemp,
+                             pdrowLTilde_alpOutTemp ); 
       }
       catch( SpkException& e )
       {

@@ -372,40 +372,66 @@ The following set of subsections specify how this function uses
 the elements of $code optInfo.stateInfo$$.
 
 $subhead optInfo.stateInfo.n$$
-The element $italic n$$ specifies the number of components
-in the element vector $italic x$$.
+The element $code n$$ specifies the number of components
+in the element vector $code x$$.
 
 $subhead optInfo.stateInfo.b$$
-The element $italic b$$ specifies the number of Bfgs updates
-that have been made to the Hessian approximation $italic h$$.
+The element $code b$$ specifies the number of Bfgs updates
+that have been made to the Hessian approximation $code h$$.
 This function assumes that once the number of Bfgs updates
-is equal to the number of objective function parameters $italic n$$,
+is equal to the number of objective function parameters $code n$$,
 then the Hessian approximation is accurate enough to use.
 If the Hessian is known, rather than being an approximation,
-then $italic b$$ should be set equal to $italic n$$.
+then $code b$$ should be set equal to $code n$$.
 
 $subhead optInfo.stateInfo.r$$
-The element $italic r$$ contains the current trust region radius
+The element $code r$$ contains the current trust region radius
 (as an infinity norm bound on the step size).
 
 $subhead optInfo.stateInfo.f$$
-The element $italic f$$ contains the value for $math%f(x)%$$
+The element $code f$$ contains the value for $math%f(x)%$$
 at the point $math%x%$$.
 
 $subhead optInfo.stateInfo.x$$
-The element $italic x$$ is a vector of length $italic n$$.
+The element $code x$$ is a vector of length $code n$$.
 It specifies the point at which the objective function, 
 its gradient, and its Hessian were evaluated.
 
-$subhead optInfo.stateInfo.g$$
-The vector $italic g$$ must have length $math%n%$$.
+$subhead stateInfo.g$$
+The element $code g$$ is a vector of length $code n$$.
 It contains the gradient of $math%f(x)%$$
 at the point $math%x%$$.
 
-$subhead optInfo.stateInfo.h.$$
-The vector $italic h$$ must have length $math%n^2%$$.
+$subhead stateInfo.h$$
+The element $code h$$ is a vector of length $code n * n$$.
 It contains an approximation for the Hessian of $math%f(x)%$$
 at the point $math%x%$$.
+
+$subhead stateInfo.m$$
+The element $code m$$ specifies the total number of objective 
+function parameters, i.e., the number of free parameters plus the 
+number of parameters that are constrained by both their lower and 
+upper bounds.
+
+$subhead stateInfo.low$$
+The element $code low$$ is a vector of length $code m$$.
+It specifies the lower bounds for all of the objective function 
+parameters in their original coordinates.
+
+$subhead stateInfo.up$$
+The element $code up$$ is a vector of length $code m$$.
+It specifies the upper bounds for all of the objective function 
+parameters in their original coordinates.
+
+$subhead stateInfo.pos$$
+The element $code pos$$ is a vector of length $code n$$.
+It specifies the positions, i.e., indices, of the free objective 
+function parameters in the full objective function parameter.
+
+$subhead stateInfo.acceptStepCount$$
+The element $code acceptStepCount$$ specifies 
+the number of consecutive iterations that acceptable 
+step values have been calculated.
 
 $syntax/
 
@@ -556,6 +582,8 @@ namespace // [Begin: unnamed namespace]
     int            n,
     const double*  gCurr,
     double*        h );
+
+  bool meetsConvCrit( int nAccept, int nPar );
 
   void calcScaledProjGrad(
     int            n,
@@ -972,7 +1000,27 @@ void quasiNewtonAnyBox(
   // Prepare the optimization state information for QuasiNewto01Box.
   //------------------------------------------------------------
 
-  size_t bfgsCurr = 0;
+  // Set this so that this function's convergence criterion
+  // will be checked at the beginning of each iteration.
+  bool checkConvAtBeginOfIter = true;
+
+  // Initialize the convergence flag.
+  bool isWithinTol;
+  if ( nMaxIterAnyBox > 0 )
+  {
+    // Set the value for the case of one or more iterations.
+    isWithinTol = false;
+  }
+  else
+  {
+    // If zero iterations have been requested, then accept the input
+    // value for x as the final value.
+    isWithinTol = true;
+  }
+
+  size_t bfgsCurr       = 0;
+  int    nSScaledAccept = 0;
+
   double rScaled;
   double fScaled;
 
@@ -1046,16 +1094,6 @@ void quasiNewtonAnyBox(
     // Prepare for a quasiNewtonAnyBox warm start.
     //----------------------------------------------------------
 
-    // Check to see if a warm start is possible.
-    if ( !optInfo.getIsWarmStartPossible() )
-    {
-      throw SpkException( 
-        SpkError::SPK_OPT_ERR,
-        "It is not possible to perform a warm start using the current optimizer state information.",
-        __LINE__,
-        __FILE__ );
-    }
-
     // Set the current values equal to the previous values.
     optInfo.getStateInfo( 
       nObjParFree,
@@ -1064,7 +1102,27 @@ void quasiNewtonAnyBox(
       fScaled,
       yCurr,
       gScaled,
-      hScaled );
+      hScaled,
+      nObjPar,
+      pdXLowData,
+      pdXUpData,
+      indexYInX,
+      nSScaledAccept );
+
+    // See if enough consecutive acceptable sScaled values have been
+    // calculated to meet this function's convergence criterion.
+    if ( meetsConvCrit( nSScaledAccept, nObjParFree ) )
+    {
+      // Set this to indicate the optimizer converged the
+      // previous time.
+      isWithinTol = true;
+    }
+    else
+    {
+      // Set this so that the first convergence check will
+      // not occur until after a step has been taken.
+      checkConvAtBeginOfIter = false;
+    }
   }
 
   // Set this flag to indicate the main optimization loop has not yet
@@ -1072,24 +1130,15 @@ void quasiNewtonAnyBox(
   // optimization loop if it does not cause an error.
   optInfo.setDidOptFinishOk( false );
 
+  // Set these flags to indicate no iterations have been completed and
+  // that the maximum number of iterations has not been reached.
+  optInfo.setNIterCompleted( 0 );
+  optInfo.setIsTooManyIter ( false );
+
 
   //------------------------------------------------------------
   // Set the rest of the parameters that control the optimization.
   //------------------------------------------------------------
-
-  // Initialize the convergence flag.
-  bool isWithinTol;
-  if ( nMaxIterAnyBox > 0 )
-  {
-    // Set the value for the case of one or more iterations.
-    isWithinTol = false;
-  }
-  else
-  {
-    // If zero iterations have been requested, then accept the input
-    // value for x as the final value.
-    isWithinTol = true;
-  }
 
   // The iteration counter tracks the number of quasi-Newton iterations 
   // that have been performed by the optimizer.
@@ -1111,9 +1160,6 @@ void quasiNewtonAnyBox(
   // If this flag is true, then the current sScaled value solves the
   // optimizer's quadratic subproblem.
   bool isSScaledOk = false;
-
-  // This counter tracks the number of acceptable sScaled values.
-  int nSScaledAccept = 0;
 
   // Send the output to standard cout.
   std::ostream& outputStream = std::cout;
@@ -1165,86 +1211,95 @@ void quasiNewtonAnyBox(
       }
       else
       {
-        // Set the maximum number of iterations equal to the current
-        // number of iterations.  This will allow the optimizer to
-        // determine an accurate sScaled value without taking a step.
-        iterMax  = iterCurr;
-        quadCurr = 0;
-
-        // Try to get the current sScaled value.
-        charMessage = QuasiNewton01Box(
-          outputStream,
-          level,
-          iterMax,
-          nQuadMax,
-          nObjParFree,
-          delta,
-          objective01Box,
-          isSScaledOk,
-          iterCurr,
-          quadCurr,
-          bfgsCurr,
-          rScaled,
-          fScaled,
-          yCurr,
-          sScaled,
-          gScaled,
-          hScaled );
-
-        // Check this function's convergence criterion, if necessary.
-        if ( isSScaledOk )
+        // Check this function's convergence criterion 
+        // unless the flag has been turned off.
+        if ( checkConvAtBeginOfIter )
         {
-          // The current y value satisfies this function's convergence 
-          // criterion if
-          //
-          //     | yCurr - yHat |  <=  epsilon  ,
-          //
-          // where yHat is a local minimizer of the objective function.
-          //
-          // Note that sScaled is the solution to the optimizer's quadratic
-          // subproblem and is the step the optimizer will take at the next
-          // iteration, if it takes one.  This function assumes that if
-          // sScaled is small enough, then the current y value is close to
-          // yHat and sScaled is an accurate estimate of the distance to
-          // the true local miminizer, i.e.,
-          //
-          //              ~
-          //     sScaled  =  yCurr - yHat  .
-          //
-          // This assumption makes use of the fact that the Hessian
-          // approximation is postive definite.
-          //
-          // To ensure that the final y value is within epsilon of the
-          // solution, this function requires that sScaled be smaller
-          // than epsilon.  The reason for this is that the quadratic
-          // subproblem uses a quadratic approximation for the objective, 
-          // which may not necessarily be accurate for the current y value.  
-          //
-          if ( MaxAbs( nObjParFree, sScaled ) < epsilon / 5.0 )
+          // Set the maximum number of iterations equal to the current
+          // number of iterations.  This will allow the optimizer to
+          // determine an accurate sScaled value without taking a step.
+          iterMax  = iterCurr;
+          quadCurr = 0;
+    
+          // Try to get the current sScaled value.
+          charMessage = QuasiNewton01Box(
+            outputStream,
+            level,
+            iterMax,
+            nQuadMax,
+            nObjParFree,
+            delta,
+            objective01Box,
+            isSScaledOk,
+            iterCurr,
+            quadCurr,
+            bfgsCurr,
+            rScaled,
+            fScaled,
+            yCurr,
+            sScaled,
+            gScaled,
+            hScaled );
+    
+          // Check this function's convergence criterion, if necessary.
+          if ( isSScaledOk )
           {
-            // If sScaled is not too large, increment the counter.
-            nSScaledAccept++;
-          }
-          else
-          {
-            // If sScaled is too large, zero the counter.
-            nSScaledAccept = 0;
-          }
-
-          // This function requires that nObjParFree + 1 consecutive acceptable
-          // sScaled values must be calculated.  The reason for this is to
-          // build up an accurate Hessian approximation so that the current
-          // sScaled value, which is assumed to be the distance to the
-          // solution, is accurate.
-          if ( nSScaledAccept >= nObjParFree + 1 )
-          {
-            // If enough consecutive acceptable sScaled values have been
-            // calculated, then accept the current y value.
-            isWithinTol = true;
-            break;
+            // The current y value satisfies this function's convergence 
+            // criterion if
+            //
+            //     | yCurr - yHat |  <=  epsilon  ,
+            //
+            // where yHat is a local minimizer of the objective function.
+            //
+            // Note that sScaled is the solution to the optimizer's quadratic
+            // subproblem and is the step the optimizer will take at the next
+            // iteration, if it takes one.  This function assumes that if
+            // sScaled is small enough, then the current y value is close to
+            // yHat and sScaled is an accurate estimate of the distance to
+            // the true local miminizer, i.e.,
+            //
+            //              ~
+            //     sScaled  =  yCurr - yHat  .
+            //
+            // This assumption makes use of the fact that the Hessian
+            // approximation is postive definite.
+            //
+            // To ensure that the final y value is within epsilon of the
+            // solution, this function requires that sScaled be smaller
+            // than epsilon.  The reason for this is that the quadratic
+            // subproblem uses a quadratic approximation for the objective, 
+            // which may not necessarily be accurate for the current y value.  
+            //
+            if ( MaxAbs( nObjParFree, sScaled ) < epsilon / 5.0 )
+            {
+              // If sScaled is not too large, increment the counter.
+              nSScaledAccept++;
+            }
+            else
+            {
+              // If sScaled is too large, zero the counter.
+              nSScaledAccept = 0;
+            }
+    
+            // This function requires that nObjParFree + 1 consecutive acceptable
+            // sScaled values must be calculated.  The reason for this is to
+            // build up an accurate Hessian approximation so that the current
+            // sScaled value, which is assumed to be the distance to the
+            // solution, is accurate.
+            if ( meetsConvCrit( nSScaledAccept, nObjParFree ) )
+            {
+              // If enough consecutive acceptable sScaled values have been
+              // calculated, then accept the current y value.
+              isWithinTol = true;
+              break;
+            }
           }
         }
       }
+
+      // Reset this so that this function's convergence criterion
+      // will be checked at the beginning of each iteration
+      checkConvAtBeginOfIter = true;
 
       
       //--------------------------------------------------------
@@ -1271,13 +1326,14 @@ void quasiNewtonAnyBox(
         nObjPar,
         pdXLowData,
         pdXUpData,
-        indexYInX );
+        indexYInX,
+        nSScaledAccept );
 
-      // Since the state information being saved is from the beginning
-      // of the iteration, and since an error might occur for these
-      // state variables, warm starts are not currently possible.
+      // Set these flags to indicate that the state information being
+      // saved is from the beginning of the iteration and that a warm
+      // start is possible.
       optInfo.setIsBeginOfIterStateInfo( true );
-      optInfo.setIsWarmStartPossible   ( false );
+      optInfo.setIsWarmStartPossible   ( true );
 
       // Only perform a single Quasi-Newton iteration.
       iterBefore = iterCurr;
@@ -1395,7 +1451,7 @@ void quasiNewtonAnyBox(
     if ( level > 0 && nMaxIterAnyBox > 0 )
     {
       outputStream << endl;
-      outputStream << "Maximum number of iterations exceeded." << endl;
+      outputStream << "Maximum number of iterations performed without convergence." << endl;
       outputStream << endl;
     }
 
@@ -1464,11 +1520,12 @@ void quasiNewtonAnyBox(
       nObjPar,
       pdXLowData,
       pdXUpData,
-      indexYInX );
+      indexYInX,
+      nSScaledAccept );
 
     // Set these flags to indicate that the state information
     // corresponds to the state at the end of the last iteration 
-    // and that a warm start is, therefore, possible.
+    // and that a warm start is possible.
     optInfo.setIsBeginOfIterStateInfo( false );
     optInfo.setIsWarmStartPossible   ( true );
   }
@@ -1862,6 +1919,22 @@ void initHessApprox(
     }
   }
 
+}
+
+
+/*************************************************************************
+ *
+ * Function: meetsConvCrit
+ *
+ *
+ * Returns true if the number of consecutive acceptable values
+ * nAccept is greater than the number of parameters nPar.
+ *
+ *************************************************************************/
+
+bool meetsConvCrit( int nAccept, int nPar )
+{
+  return ( nAccept > nPar );
 }
 
 
