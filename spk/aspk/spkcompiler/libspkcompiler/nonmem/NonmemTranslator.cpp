@@ -149,6 +149,7 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     fOmega_h         ( "Omega.h" ),
     fOmega_cpp       ( "Omega.cpp" ),
     fNonmemPars_h    ( "NonmemPars.h" ),
+    fHalfCvec_h      ( "halfCvec.h" ),
     fDriver_cpp      ( "driver.cpp" ),
     fSoftwareError_xml( "software_error.xml" ),
     fSpkRuntimeError_tmp( "spk_error.tmp" ),
@@ -428,7 +429,7 @@ void NonmemTranslator::parseSource()
   assert( isAnalysisDone );
   
   DOMNodeList * presentations = nonmem->getElementsByTagName( X_PRESENTATION );
-  assert( presentations->getLength() == 1 );
+  assert( presentations->getLength() <= 1 );
   DOMElement * presentation = dynamic_cast<DOMElement*>( presentations->item(0) );
 
   myRecordNums.resize( myPopSize );
@@ -541,6 +542,7 @@ void NonmemTranslator::parseSource()
   generateIndData( );
   generatePred( fPredEqn_cpp );
   generateNonmemParsNamespace( );
+  //  generateUtils( );
   if( myTarget == POP )
     generatePopDriver();
   else
@@ -553,12 +555,12 @@ void NonmemTranslator::generateMakefile() const
   assert( oMake.good() );
   oMake << "prod : driver.cpp Pred.h DataSet.h IndData.h" << endl;
   oMake << "\tg++ -g driver.cpp -o driver ";
-  oMake << "-L/usr/local/lib/spkprod -I/usr/local/include/spkprod ";
+  oMake << "-L/usr/local/lib/spkprod -I/usr/local/include/spkprod -Wl,--rpath -Wl,/usr/local/lib/spkprod ";
   oMake << "-lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm";
   oMake << endl;
   oMake << "test : driver.cpp Pred.h DataSet.h IndData.h" << endl;
   oMake << "\tg++ -g driver.cpp -o driver ";
-  oMake << "-L/usr/local/lib/spktest -I/usr/local/include/spktest ";
+  oMake << "-L/usr/local/lib/spktest -I/usr/local/include/spktest -Wl,--rpath -Wl,/usr/local/lib/spktest ";
   oMake << "-lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm";
   oMake << endl;
   oMake << "clean : " << endl;
@@ -566,6 +568,80 @@ void NonmemTranslator::generateMakefile() const
   oMake.close();
   return;
 }
+/*
+void NonmemTranslator::generateUtils() const
+{
+  ofstream oHalfCvec( fHalfCvec_h );
+  assert( oHalfCvec.good() ); 
+  oHalfCvec << "#ifndef HALFCVEC_H" << endl;
+  oHalfCvec << "#define HALFCVEC_H" << endl;
+  oHalfCvec << "#include <iostream>" << endl;
+  oHalfCvec << "#include <vector>" << endl;
+  oHalfCvec << endl;
+  oHalfCvec << "template <class T>" << endl;
+  oHalfCvec << "const std::vector<T> half_cvec( const std::vector<T> & a, int dim );" << endl;
+  oHalfCvec << "//===========================================================" << endl;
+  oHalfCvec << "// Takes a vector containing the half triangle of a " << endl;
+  oHalfCvec << "// square matrix in the column major order and" << endl;
+  oHalfCvec << "// returns another vector containing the triangle" << endl;
+  oHalfCvec << "// in the row major order." << endl;
+  oHalfCvec << "//" << endl;
+  oHalfCvec << "// Given a std::vector a," << endl;
+  oHalfCvec << "//" << endl;
+  oHalfCvec << "//     a : { 1 2 3 4 5 6 }" << endl;
+  oHalfCvec << "//" << endl;
+  oHalfCvec << "// which stores the elements of half triangle of 3 by 3 matrix A in the" << endl;
+  oHalfCvec << "// column major order:" << endl;
+  oHalfCvec << "//" << endl;
+  oHalfCvec << "//         / 1 . . \\ " << endl;
+  oHalfCvec << "//     A : | 2 4 . | " << endl;
+  oHalfCvec << "//         \\ 3 5 6 / " << endl;
+  oHalfCvec << "//" << endl;
+  oHalfCvec << "// , half_cvec( a, 3 ) returns at;" << endl;
+  oHalfCvec << "//" << endl;
+  oHalfCvec << "//     at : { 1 2 4 3 5 6 }" << endl;
+  oHalfCvec << "//" << endl;
+  oHalfCvec << "// that is a vector containing the same matrix A in the row major order." << endl;
+  oHalfCvec << "//===========================================================" << endl;
+  oHalfCvec << " template <class T>" << endl;
+  oHalfCvec << "const std::vector<T> halfCvec( const std::vector<T> & a, int dim )" << endl;
+  oHalfCvec << "{" << endl;
+  oHalfCvec << "   const int n = dim;" << endl;
+  oHalfCvec << "   const int m = n * (n+1) / 2;" << endl;
+  oHalfCvec << endl;
+  oHalfCvec << "   std::vector<int> A(m*m);" << endl;
+  oHalfCvec << "   std::vector<int> at(m);" << endl;
+  oHalfCvec << "   for( int j=0, cnt=0; j<n; j++ )" << endl;
+  oHalfCvec << "   {" << endl;
+  oHalfCvec << "      for( int i=0; i<n; i++ )" << endl;
+  oHalfCvec << "      {" << endl;
+  oHalfCvec << "        if( i>=j )" << endl;
+  oHalfCvec << "        {" << endl;
+  oHalfCvec << "	   A[i+j*n] = a[cnt];" << endl;
+  oHalfCvec << "           cnt++;" << endl;
+  oHalfCvec << "        }" << endl;
+  oHalfCvec << "        else" << endl;
+  oHalfCvec << "           A[i+j*n] = 0;" << endl;
+  oHalfCvec << "      }" << endl;
+  oHalfCvec << "   }" << endl;
+  oHalfCvec << "   for( int j=0, cnt=0; j<n; j++ )" << endl;
+  oHalfCvec << "   {" << endl;
+  oHalfCvec << "      for( int i=0; i<n; i++)" << endl;
+  oHalfCvec << "      {" << endl;
+  oHalfCvec << "          if( i<=j )" << endl;
+  oHalfCvec << "          {" << endl;
+  oHalfCvec << "             at[cnt] = A[j+i*n];" << endl;
+  oHalfCvec << "             cnt++;" << endl;
+  oHalfCvec << "          }" << endl;
+  oHalfCvec << "      }" << endl;
+  oHalfCvec << "   }" << endl;
+  oHalfCvec << "   return at;" << endl;
+  oHalfCvec << "}" << endl;
+  oHalfCvec << "#endif" << endl;
+  oHalfCvec.close();
+  return;
+}
+*/
 void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
 {
   
@@ -1776,7 +1852,7 @@ void NonmemTranslator::generateDataSet( ) const
   // SPK's y cannot be initialized at my compilation time.  The values have to be initialized with the simulated data set
   // if the user requested a data simulation.
   //========================================================================================================================  
-  oDataSet_h << "int getMeasurements( SPK_VA::valarray<double>& spk_yOut, SPK_VA::valarray<int>& spk_NOut ) const;" << endl;
+  //oDataSet_h << "int getMeasurements( SPK_VA::valarray<double>& spk_yOut, SPK_VA::valarray<int>& spk_NOut );" << endl;
   
   oDataSet_h << endl;
 
@@ -1791,8 +1867,10 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "DataSet& operator=( const DataSet& );" << endl;
   oDataSet_h << endl;
   oDataSet_h << "private:" << endl;
+  /*
   oDataSet_h << "SPK_VA::valarray<double> spk_y; // a long vector containg all measurements" << endl;
   oDataSet_h << "SPK_VA::valarray<int>    spk_N; // a vector containing the # of measurements for each individual." << endl;
+  */
 
   oDataSet_h << "};" << endl;
 
@@ -1801,18 +1879,6 @@ void NonmemTranslator::generateDataSet( ) const
   // Definition
   //-----------------------------------------------
        
-  // getMeasurements( y, N )
-  oDataSet_h << "template <class T>" << endl;
-  oDataSet_h << "int DataSet<T>::getMeasurements( SPK_VA::valarray<double>& spk_yOut, SPK_VA::valarray<int>& spk_NOut ) const" << endl;
-  oDataSet_h << "{" << endl;
-  oDataSet_h << "   int n = " << myRecordNums.sum() << ";" << endl;
-  oDataSet_h << "   spk_yOut.resize(n);" << endl;
-  oDataSet_h << "   spk_yOut = spk_y;" << endl;
-  oDataSet_h << "   spk_NOut.resize(" << myPopSize << ");" << endl;
-  oDataSet_h << "   spk_NOut = spk_N;" << endl;
-  oDataSet_h << "   return n;" << endl;
-  oDataSet_h << "}" << endl;
-
   //
   // The constructor
   //
@@ -1821,11 +1887,10 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "template <class T>" << endl;
   oDataSet_h << "DataSet<T>::DataSet()" << endl;
   oDataSet_h << ": data( " << myPopSize << " )," << endl;
-  oDataSet_h << "  popSize( " << myPopSize << " )," << endl;
-  oDataSet_h << "  spk_y( " << myRecordNums.sum() << " )," << endl;
-  oDataSet_h << "  spk_N( " << myPopSize << " )" << endl;
+  oDataSet_h << "  popSize( " << myPopSize << " )" << endl;
   oDataSet_h << "{" << endl;
 
+  /*
   oDataSet_h << "int c_N[] = { ";
   for( int i=0; i<myPopSize; i++ )
     {
@@ -1836,6 +1901,8 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << " };" << endl; 
   oDataSet_h << "spk_N = SPK_VA::valarray<int>( c_N, " << myPopSize << " );" << endl;
 
+
+  oDataSet_h << "spk_y.resize( " << myPopSize << " );" << endl;
   const Symbol* pDV = table->findi( KeyStr::DV );
   oDataSet_h << "double c_y[] = { ";
   for( int i=0; i<myPopSize; i++ )
@@ -1848,7 +1915,9 @@ void NonmemTranslator::generateDataSet( ) const
 	}
     }
   oDataSet_h << " };" << endl;
-  oDataSet_h << "spk_y = SPK_VA::valarray<double>( c_y, " << myRecordNums.sum() << " );" << endl;
+  oDataSet_h << "SPK_VA::valarray<double> yIn( c_y, " << myRecordNums.sum() << " );" << endl;
+  oDataSet_h << "spk_y = yIn;" << endl;
+  */
 
   // Initialize the entire data set.
   for( int who=0, sofar=0, nRecords=0; who < myPopSize; who++, sofar+=nRecords )
@@ -2507,6 +2576,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "#include \"IndData.h\"" << endl;
   oDriver << "#include \"DataSet.h\"" << endl;
   oDriver << "#include \"NonmemPars.h\"" << endl;
+  //  oDriver << "#include \"halfCvec.h\"" << endl;
   oDriver << endl;
   oDriver << "#include <spk/multiply.h>" << endl;
   oDriver << "#include <spk/cholesky.h>" << endl;
@@ -3239,6 +3309,8 @@ void NonmemTranslator::generatePopDriver() const
      oDriver << "#include <spk/simulate.h>" << endl;
   oDriver << "#include \"IndData.h\"" << endl;
   oDriver << "#include \"DataSet.h\"" << endl;
+  //  oDriver << "#include \"halfCvec.h\"" << endl;
+
   oDriver << endl;
   oDriver << "#include <spk/multiply.h>" << endl;
   oDriver << "#include <spk/cholesky.h>" << endl;
