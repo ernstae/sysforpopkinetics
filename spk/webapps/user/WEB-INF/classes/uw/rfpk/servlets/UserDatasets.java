@@ -7,7 +7,6 @@ import java.nio.*;
 import java.sql.*;
 import rfpk.spk.spkdb.*;
 import java.util.Vector;
-import java.text.SimpleDateFormat;
 import org.apache.commons.jrcs.rcs.*;
 import org.apache.commons.jrcs.util.ToString;
 import org.apache.commons.jrcs.diff.*;
@@ -87,20 +86,19 @@ public class UserDatasets extends HttpServlet
                 userRS.next();
                 long userId = userRS.getLong("user_id");
  
-                // Get user jobs
+                // Get user datasetss
                 ResultSet userDatasetsRS = Spkdb.userDatasets(con, userId, maxNum, leftOff);  
              
                 // Fill in the List
-                SimpleDateFormat formater = new SimpleDateFormat("EEE, MMM, d yyyy 'at' HH:mm:ss z");
                 while(userDatasetsRS.next())
                 {                  
-                    // Get model id
+                    // Get dataset id
                     long datasetId = userDatasetsRS.getLong("dataset_id"); 
                     
-                    // Get model archive
-                    ResultSet datasetRS = Spkdb.getModel(con, datasetId);
-                    datasetRS.next();
-                    String datasetArchive = datasetRS.getString("archive");
+                    // Get dataset archive
+       	            Blob blobArchive = userDatasetsRS.getBlob("archive");
+	            long length = blobArchive.length(); 
+	            String datasetArchive = new String(blobArchive.getBytes(1L, (int)length));                    
                     Archive archive = new Archive("", new ByteArrayInputStream(datasetArchive.getBytes()));
                     
                     // Fill in the list 

@@ -90,8 +90,10 @@ public class GetVersions extends HttpServlet
                     archiveRS = Spkdb.getDataset(con, id);
                 
                 archiveRS.next();
-                String archive = archiveRS.getString("archive");  
-            
+      	        Blob blobArchive = archiveRS.getBlob("archive");
+	        long length = blobArchive.length(); 
+	        String archive = new String(blobArchive.getBytes(1L, (int)length));                  
+                            
                 // Disconnect to the database
                 Spkdb.disconnect(con);
             
