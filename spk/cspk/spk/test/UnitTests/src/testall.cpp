@@ -49,6 +49,7 @@
 #include "src/IndVarsTest.h"
 #include "src/inverseTest.h"
 #include "src/inxToMaxTest.h"
+#include "src/intToOrdinalStringTest.h"
 #include "src/isDblEpsEqualTest.h"
 #include "src/isDmatEpsEqualTest.h"
 #include "src/isGreaterThanOrEqualToTest.h"
@@ -164,6 +165,7 @@ int main( int argc, const char * argv[] )
   master_list_of_tests[ "IndVarsTest" ]                      = IndVarsTest::suite();
   master_list_of_tests[ "inverseTest" ]                      = inverseTest::suite();
   master_list_of_tests[ "inxToMaxTest" ]                     = inxToMaxTest::suite();
+  master_list_of_tests[ "intToOrdinalStringTest" ]           = intToOrdinalStringTest::suite();
   master_list_of_tests[ "isDblEpsEqualTest" ]                = isDblEpsEqualTest::suite();
   master_list_of_tests[ "isDmatEpsEqualTest" ]               = isDmatEpsEqualTest::suite();
   master_list_of_tests[ "isGreaterThanOrEqualToTest" ]       = isGreaterThanOrEqualToTest::suite();
