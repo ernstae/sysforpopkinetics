@@ -69,36 +69,36 @@ CREATE TABLE history (
 -- Dumping data for table `history`
 --
 
-INSERT INTO history VALUES (1,0,'cmp',1);
-INSERT INTO history VALUES (2,0,'q2r',1);
-INSERT INTO history VALUES (3,0,'cmp',2);
-INSERT INTO history VALUES (4,0,'q2r',2);
-INSERT INTO history VALUES (5,0,'cmp',3);
-INSERT INTO history VALUES (6,0,'end',3);
-INSERT INTO history VALUES (7,0,'cmp',4);
-INSERT INTO history VALUES (8,0,'end',4);
-INSERT INTO history VALUES (9,0,'cmp',5);
-INSERT INTO history VALUES (10,0,'end',5);
-INSERT INTO history VALUES (11,0,'cmp',6);
-INSERT INTO history VALUES (12,0,'end',6);
-INSERT INTO history VALUES (13,0,'cmp',7);
-INSERT INTO history VALUES (14,0,'end',7);
-INSERT INTO history VALUES (15,0,'cmp',8);
-INSERT INTO history VALUES (16,0,'end',8);
-INSERT INTO history VALUES (17,0,'cmp',9);
-INSERT INTO history VALUES (18,0,'end',9);
-INSERT INTO history VALUES (19,0,'cmp',10);
-INSERT INTO history VALUES (20,0,'end',10);
-INSERT INTO history VALUES (21,0,'cmp',11);
-INSERT INTO history VALUES (22,0,'end',11);
-INSERT INTO history VALUES (23,0,'cmp',12);
-INSERT INTO history VALUES (24,0,'end',12);
-INSERT INTO history VALUES (25,0,'cmp',13);
-INSERT INTO history VALUES (26,0,'end',13);
-INSERT INTO history VALUES (27,0,'cmp',14);
-INSERT INTO history VALUES (28,0,'end',14);
-INSERT INTO history VALUES (29,0,'cmp',15);
-INSERT INTO history VALUES (30,0,'end',15);
+INSERT INTO history VALUES (1,0,'cmp',1,'');
+INSERT INTO history VALUES (2,0,'q2r',1,'');
+INSERT INTO history VALUES (3,0,'cmp',2,'');
+INSERT INTO history VALUES (4,0,'q2r',2,'');
+INSERT INTO history VALUES (5,0,'cmp',3,'');
+INSERT INTO history VALUES (6,0,'end',3,'');
+INSERT INTO history VALUES (7,0,'cmp',4,'');
+INSERT INTO history VALUES (8,0,'end',4,'');
+INSERT INTO history VALUES (9,0,'cmp',5,'');
+INSERT INTO history VALUES (10,0,'end',5,'');
+INSERT INTO history VALUES (11,0,'cmp',6,'');
+INSERT INTO history VALUES (12,0,'end',6,'');
+INSERT INTO history VALUES (13,0,'cmp',7,'');
+INSERT INTO history VALUES (14,0,'end',7,'');
+INSERT INTO history VALUES (15,0,'cmp',8,'');
+INSERT INTO history VALUES (16,0,'end',8,'');
+INSERT INTO history VALUES (17,0,'cmp',9,'');
+INSERT INTO history VALUES (18,0,'end',9,'');
+INSERT INTO history VALUES (19,0,'cmp',10,'');
+INSERT INTO history VALUES (20,0,'end',10,'');
+INSERT INTO history VALUES (21,0,'cmp',11,'');
+INSERT INTO history VALUES (22,0,'end',11,'');
+INSERT INTO history VALUES (23,0,'cmp',12,'');
+INSERT INTO history VALUES (24,0,'end',12,'');
+INSERT INTO history VALUES (25,0,'cmp',13,'');
+INSERT INTO history VALUES (26,0,'end',13,'');
+INSERT INTO history VALUES (27,0,'cmp',14,'');
+INSERT INTO history VALUES (28,0,'end',14,'');
+INSERT INTO history VALUES (29,0,'cmp',15,'');
+INSERT INTO history VALUES (30,0,'end',15,'');
 
 --
 -- Table structure for table `job`
