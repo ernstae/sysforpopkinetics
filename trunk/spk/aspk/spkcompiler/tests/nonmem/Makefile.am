@@ -37,7 +37,9 @@ test_nonmem_SOURCES = \
 	ind_simNoEstTest.cpp \
 	ind_simNoEstTest.h \
 	pop_basicTest.cpp \
-	pop_basicTest.h
+	pop_basicTest.h \
+	pop_monteTest.cpp \
+	pop_monteTest.h
 
 test_nonmem_INCLUDES = \
 	lex_explangTest.h \
@@ -46,7 +48,8 @@ test_nonmem_INCLUDES = \
 	ind_withoutIDTest.h \
 	ind_simTest.h \
 	ind_simNoEstTest.h \
-	pop_basicTest.h
+	pop_basicTest.h \
+	pop_monteTest.h
 
 AM_LDFLAGS = -lxerces-c -lcppunit -L$(INST_BASE)/lib/spktest -lspkcompiler 
 

@@ -11,6 +11,7 @@
 #include "ind_simTest.h"
 #include "ind_simNoEstTest.h"
 #include "pop_basicTest.h"
+#include "pop_monteTest.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -40,6 +41,9 @@ int main( int argc, const char * argv[] )
 
   // test for NonmemTranslator: ability to handle a basic population level request
   master[ "pop_basicTest" ] = pop_basicTest::suite();
+
+  // test for NonmemTranslator: ability to handle a population level Monte Carlo request
+  master[ "pop_monteTest" ] = pop_monteTest::suite();
 
   // test for NonmemTranslator: NonmemPars.h
   // test for NonmemTranslator: MontePars.h
