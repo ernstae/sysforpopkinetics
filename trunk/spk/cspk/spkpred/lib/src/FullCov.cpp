@@ -681,8 +681,9 @@ void FullCov::calcPar(
   // Preliminaries.
   //------------------------------------------------------------
 
-  // Get the number of rows in the covariance matrix.
+  // Set the number of rows in the covariance matrix.
   int nCovInRow = static_cast<int>( sqrt( static_cast<double>( covIn.size() ) ) );
+  assert( covIn.size() == nCovInRow * nCovInRow );
 
   // Set the number of parameters for this covariance matrix.
   int nCovInPar = nCovInRow * ( nCovInRow + 1 ) / 2;
@@ -761,8 +762,9 @@ void FullCov::calcCovMinRep(
   // Preliminaries.
   //------------------------------------------------------------
 
-  // Get the number of rows in the covariance matrix.
+  // Set the number of rows in the covariance matrix.
   int nCovInRow = static_cast<int>( sqrt( static_cast<double>( covIn.size() ) ) );
+  assert( covIn.size() == nCovInRow * nCovInRow );
 
   // Set the number of parameters for this covariance matrix.
   int nCovInPar = nCovInRow * ( nCovInRow + 1 ) / 2;
@@ -784,14 +786,80 @@ void FullCov::calcCovMinRep(
   {
     sumI += i;
 
-    // Get the elements from this row excluding the diagonal.
-    for ( j = 0; j < i; j++ )
+    // Get the elements from this row including the diagonal.
+    for ( j = 0; j <= i; j++ )
     {
       covMinRepOut[sumI + j] = covIn[i + j * nCovInRow];
     }    
+  }    
 
-    // Get the element that is on the diagonal.
-    covMinRepOut[sumI + i] = covIn[i + i * nCovInRow];
+}
+
+
+/*************************************************************************
+ *
+ * Function: calcCovMinRep_par
+ *
+ *
+ * Sets covMinRep_parOut equal to the derivative of the minimal
+ * representation for the covariance matrix.
+ *
+ * The minimal representation is the elements from the lower triangle
+ * of the covariance matrix stored in row major order.
+ *
+ *************************************************************************/
+
+void FullCov::calcCovMinRep_par( 
+  const valarray<double>& cov_parIn,
+  int                     nCov_parInCol,
+  valarray<double>&       covMinRep_parOut ) const
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  // Set the number of parameters for the covariance matrix.
+  int nCovInPar = nCov_parInCol;
+
+  // Set the number of rows in the covariance matrix.
+  int nCovInRow = static_cast<int>( 
+    sqrt( static_cast<double>( cov_parIn.size() / nCovInPar ) ) );
+  assert( cov_parIn.size() == nCovInRow * nCovInRow * nCovInPar );
+
+  // Set the number of rows in the derivative of the covariance matrix
+  // and its minimal representation.
+  int nCov_parInRow        = nCovInRow * nCovInRow;
+  int nCovMinRep_parOutRow = nCovInPar;
+
+  covMinRep_parOut.resize( nCovInPar * nCovInPar );
+
+
+  //------------------------------------------------------------
+  // Set the derivative of the covariance matrix minimal representation.
+  //------------------------------------------------------------
+
+  int i;
+  int j;
+  int k;
+
+  // Extract the derivatives of the elements from the lower triangle
+  // of the covariance matrix in row major order.
+  int sumI;
+  for ( k = 0; k < nCovInPar; k++ )
+  {
+    sumI = 0;
+    for ( i = 0; i < nCovInRow; i++ )
+    {
+      sumI += i;
+    
+      // Get the derivatives of the elements from this row
+      // including the diagonal.
+      for ( j = 0; j <= i; j++ )
+      {
+        covMinRep_parOut[( sumI + j )          + k * nCovMinRep_parOutRow] = 
+          cov_parIn     [( i + j * nCovInRow ) + k * nCov_parInRow];
+      }    
+    }    
   }    
 
 }
@@ -819,11 +887,12 @@ void FullCov::expandCovMinRep(
   // Preliminaries.
   //------------------------------------------------------------
 
-  // Get the number of parameters for this covariance matrix.
+  // Set the number of parameters for this covariance matrix.
   int nCovInPar = covMinRepIn.size();
 
   // Set the number of rows in the covariance matrix.
   int nCovInRow = ( -1 + static_cast<int>( sqrt( 1 + 8 * nCovInPar ) ) ) / 2;
+  assert( nCovInPar == nCovInRow * ( nCovInRow + 1 ) / 2 );
 
   covOut.resize( nCovInRow * nCovInRow );
 

@@ -465,8 +465,9 @@ void DiagCov::calcPar(
   // Preliminaries.
   //------------------------------------------------------------
 
-  // Get the number of rows in the covariance matrix.
+  // Set the number of rows in the covariance matrix.
   int nCovInRow = static_cast<int>( sqrt( static_cast<double>( covIn.size() ) ) );
+  assert( covIn.size() == nCovInRow * nCovInRow );
 
   // Set the number of parameters for this covariance matrix.
   int nCovInPar = nCovInRow;
@@ -499,7 +500,9 @@ void DiagCov::calcPar(
  *
  *
  * Sets covMinRepOut equal to the minimal representation for the
- * covariance matrix, i.e., the set of diagonal elements.
+ * covariance matrix.
+ *
+ * The minimal representation is the set of diagonal elements.
  *
  *************************************************************************/
 
@@ -511,8 +514,9 @@ void DiagCov::calcCovMinRep(
   // Preliminaries.
   //------------------------------------------------------------
 
-  // Get the number of rows in the covariance matrix.
+  // Set the number of rows in the covariance matrix.
   int nCovInRow = static_cast<int>( sqrt( static_cast<double>( covIn.size() ) ) );
+  assert( covIn.size() == nCovInRow * nCovInRow );
 
   // Set the number of parameters for this covariance matrix.
   int nCovInPar = nCovInRow;
@@ -536,12 +540,70 @@ void DiagCov::calcCovMinRep(
 
 /*************************************************************************
  *
+ * Function: calcCovMinRep_par
+ *
+ *
+ * Sets covMinRep_parOut equal to the derivative of the minimal
+ * representation for the covariance matrix.
+ *
+ * The minimal representation is the set of diagonal elements.
+ *
+ *************************************************************************/
+
+void DiagCov::calcCovMinRep_par( 
+  const valarray<double>& cov_parIn,
+  int                     nCov_parInCol,
+  valarray<double>&       covMinRep_parOut ) const
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  // Set the number of parameters for the covariance matrix.
+  int nCovInPar = nCov_parInCol;
+
+  // Set the number of rows in the covariance matrix.
+  int nCovInRow = nCovInPar;
+  assert( cov_parIn.size() == nCovInRow * nCovInRow * nCovInPar );
+
+  // Set the number of rows in the derivative of the covariance matrix
+  // and its minimal representation.
+  int nCov_parInRow        = nCovInRow * nCovInRow;
+  int nCovMinRep_parOutRow = nCovInPar;
+
+  covMinRep_parOut.resize( nCovInPar * nCovInPar );
+
+
+  //------------------------------------------------------------
+  // Set the derivative of the covariance matrix minimal representation.
+  //------------------------------------------------------------
+
+  int i;
+  int k;
+
+  // Extract the derivatives of the elements that are on the diagonal.
+  for ( k = 0; k < nCovInPar; k++ )
+  {
+    for ( i = 0; i < nCovInRow; i++ )
+    {
+      covMinRep_parOut[( i                 ) + k * nCovMinRep_parOutRow] = 
+        cov_parIn     [( i + i * nCovInRow ) + k * nCov_parInRow];
+    }    
+  }    
+
+}
+
+
+/*************************************************************************
+ *
  * Function: expandCovMinRep
  *
  *
  * Sets covOut equal to the full covariance matrix that corresponds
  * to the minimal representation for the covariance matrix that is
  * contained in covMinRepIn.
+ *
+ * The minimal representation is the set of diagonal elements.
  *
  *************************************************************************/
 
@@ -553,7 +615,7 @@ void DiagCov::expandCovMinRep(
   // Preliminaries.
   //------------------------------------------------------------
 
-  // Get the number of parameters for this covariance matrix.
+  // Set the number of parameters for this covariance matrix.
   int nCovInPar = covMinRepIn.size();
 
   // Set the number of rows in the covariance matrix.
