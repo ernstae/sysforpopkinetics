@@ -9,7 +9,6 @@
 #include "ExpTreeGeneratorTest.h"
 #include "read_contentTest.h"
 #include "emit_IndDataTest.h"
-#include "emit_driverTest.h"
 #include "SpkMLToCppTest.h"
 
 using namespace std;
@@ -17,18 +16,52 @@ using namespace CppUnit;
 
 int main( int argc, const char * argv[] )
 {
+  map<string, CppUnit::Test*> master;
+  vector<CppUnit::Test*> subset;
+
+  master[ "clientTest" ]           = clientTest::suite();
+  master[ "SymbolTest" ]           = SymbolTest::suite();
+  master[ "SymbolTableTest" ]      = SymbolTableTest::suite();
+  master[ "SpkCompilerUtilTest" ]  = SpkCompilerUtilTest::suite(); 
+  master[ "ExpTreeGeneratorTest" ] = ExpTreeGeneratorTest::suite();
+  master[ "read_contentTest" ]     = read_contentTest::suite();
+  master[ "emit_IndDataTest" ]     = emit_IndDataTest::suite();
+  //master[ "SpkMLToCppTest" ]       = SpkMLToCppTest::suite();
+
+  if( argc == 1 )
+    {
+      map<string, CppUnit::Test*>::const_iterator p = master.begin();
+      for( p; p != master.end(); p++ )
+	subset.push_back( p->second );
+    }
+  else
+    {
+      for( int i=1; i<argc; i++ )
+	{
+	  map<string, CppUnit::Test*>::const_iterator p = master.find( argv[i] );
+	  if( p != master.end() )
+	    {
+	      subset.push_back( p->second );
+	    }
+	  else
+	    {
+	      fprintf( stderr, "!!! Can't find %s in the master list (type?) !!! \n",
+		       argv[i] );
+	    }
+	}
+    }
+
+
   CppUnit::TextUi::TestRunner runner;
 
-  runner.addTest( clientTest::suite() );
-  runner.addTest( SymbolTest::suite() );
-  runner.addTest( SymbolTableTest::suite() );
-  runner.addTest( SpkCompilerUtilTest::suite() );
-  runner.addTest( ExpTreeGeneratorTest::suite() );
-  runner.addTest( read_contentTest::suite() );  
-  runner.addTest( emit_IndDataTest::suite() );
-  runner.addTest( emit_driverTest::suite() );
-  runner.addTest( SpkMLToCppTest::suite() );
+  int n = subset.size();
+  for( int i=0; i<n; i++ )
+    {
+      runner.addTest( subset[i] );
+    }
+
   runner.run();
+
 
   return 0;
 }

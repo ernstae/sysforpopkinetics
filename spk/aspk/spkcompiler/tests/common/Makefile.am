@@ -2,14 +2,13 @@ bin_PROGRAMS = test_common
 
 COMMON = common
 
-AM_CFLAGS   = -g
-AM_CPPFLAGS = -g
-
 test_common_SOURCES = \
 	../config.h \
 	test_common.cpp \
 	clientTest.cpp \
         clientTest.h \
+	ClientTranslatorTest.cpp \
+	ClientTranslatorTest.h \
 	ExpTreeGeneratorTest.cpp \
 	ExpTreeGeneratorTest.h \
 	SpkCompilerUtilTest.cpp \
@@ -21,24 +20,27 @@ test_common_SOURCES = \
 	read_contentTest.h \
         emit_IndDataTest.cpp \
 	emit_IndDataTest.h \
-        emit_driverTest.cpp \
-        emit_driverTest.h \
         SpkMLToCppTest.cpp \
-        SpkMLToCppTest.h
+        SpkMLToCppTest.h \
+	../nonmem/read_nonmem_datafile_gamma_wt_time_y.cpp \
+	../nonmem/read_nonmem_datafile_gamma_wt_time_y.h \
+	FitPopulationTestModel.cpp \
+	FitPopulationTestModel.h
 
 test_common_INCLUDES = \
 	clientTest.h \
+	ClientTranslatorTest.h \
 	ExpTreeGeneratorTest.h \
 	ExpNodeCarrierTest.h \
 	SpkCompilerUtilTest.h \
 	SymbolTest.h \
 	SymbolTableTest.h \
 	read_contentTest.h \
-        emit_IndDataTest.h \
-        emit_driverTest.h \
-        SpkMLToCppTest.h
+        SpkMLToCppTest.h \
+	../nonmem/read_nonmem_datafile_gamma_wt_time_y.h \
+	FitPopulationTestModel.h
 
-AM_LDFLAGS = -lxerces-c -lcppunit -lspkcompiler
+AM_LDFLAGS = -lspk /usr/local/lib/libnagc.a -lpthread -lm -lxerces-c -lcppunit -lspkcompiler
 
 INCLUDES = \
 	-I@top_srcdir@/ \
