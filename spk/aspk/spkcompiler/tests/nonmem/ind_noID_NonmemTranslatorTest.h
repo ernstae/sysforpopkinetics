@@ -29,9 +29,6 @@ public:
     void parse();
     void testIndDataClass();
     void testDataSetClass();
-    void testPredClass();
-    void testDriver();
-    void testReportML();
 };
 
 #endif
