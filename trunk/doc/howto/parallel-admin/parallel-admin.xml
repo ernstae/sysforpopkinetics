@@ -648,6 +648,28 @@ ps -a
 	</listitem>
 	<listitem>
 	  <para>
+	    When the first job completes, try another job.  This time
+	    delete a node on which several instances of spkind are running
+	    <screen>
+delete jambutty
+	    </screen>
+	    and see what happens.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Run another job.  This time delete the node that spkpop is
+	    running on.  (If the node is cspkserver, don't delete it.
+	    Wait until the job is done and then start another.)
+	    Suppose that spkpop is running on rose.  Delete that node
+	    <screen>
+delete rose
+	    </screen>
+	    and see what happens.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
 	    When you are tired of running jobs, halt the pvm by 
 	    entering the following at the console prompt:
 	    <screen>
