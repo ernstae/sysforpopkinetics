@@ -29,8 +29,8 @@ spkrund.pl database host dbuser dbpasswd
 =head1 ABSTRACT
 
 The SPK run daemon executes continuously on the CSPK server. It
-selects jobs from the run queue, forks processes to comopile, link
-and run them and inserts results into the database.
+selects jobs from the run queue, forks processes to compile, link
+and run them and, finally, inserts results into the database.
 
 =head1 DESCRIPTION
 
@@ -51,54 +51,53 @@ The program expects the following arguments:
 =head2 OPERATION
 
 The first think that spkcmp.pl does after starting up is to call
-Proc::Daemon::Init to make it into a daemon, by shedding its 
-inheirited environment and becoming a direct child of the system
-init process.
+Proc::Daemon::Init to make it into a daemon, by shedding its
+inheirited environment and becoming a direct child of the system init
+process.
 
 It then opens the system log so that it has a place to record progress
 and error messages.
 
 It attempts to create a lock-file if one does not already exist. The
-method that is used assures that the process of query and creation
-is atomic.  If the lock-file already exists, the program writes an
-error message to the system log and terminates, because only one 
-copy of spkrund.pl can be allowed run at any given time.
+method that is used assures that the process of query and creation is
+atomic.  If the lock-file already exists, the program writes an error
+message to the system log and terminates, because only one copy of
+spkrund.pl can be allowed to run at any given time.
 
 Next, it opens the database.
 
-The program designates itself to be a process group leader. This
-way it will be able to send signals to all of its descendents without
-having to know their PIDs. 
+The program designates itself to be a process group leader. This way
+it will be able to send signals to all of its descendents without
+having to know their PIDs.
 
-The "stop" subroutine is designated to catch the TERM signal,
-when it is received. As explained below, this will allow for
-an orderly shutdown of the daemon and its sub-processes.
+The "stop" subroutine is designated to catch the TERM signal, when it
+is received. As explained below, this will allow for an orderly
+shutdown of the daemon and its sub-processes.
 
 The last major step in the start-up sequence is to select from the
-database all jobs with a state_code field set to 'run'.  These
-jobs, if any exist, had been in the process of running when 
-the daemon last shut down.  All such jobs are rerun.
+database all jobs with a state_code field set to 'run'.  These jobs,
+if any exist, had been in the process of running when the daemon last
+shut down.  All such jobs are rerun.
 
 At this point, the program enters an endless loop from which it will
-escape only upon receipt of a signal. It queries the
-database to discover whether or not a job has been added to the run
-queue.  If so, a copy of job driver is started as an independent
-sub-process, working in its own directory on input provided by the
-job. The daemon then checks to see if any child processes have 
-terminated. If so, it moves them to "end" status and stores the
-results in the database. The daemon sleeps a second, before continuing
-its loop.
+escape only upon receipt of a signal. It queries the database to
+discover whether or not a job has been added to the run queue.  If so,
+a copy of the job's driver is started as an independent sub-process,
+working in its own directory.  The daemon then checks to see if any
+child processes have terminated. If so, it moves them to "end" status
+and stores the results in the database. The daemon sleeps a second,
+before continuing its loop.
 
-The normal way in which spkcmp.pl is terminated is by using the
-Unix "kill" command to send it the TERM signal.  When TERM is received,
+The normal way in which spkcmp.pl is terminated is by using the Unix
+"kill" command to send it the TERM signal.  When TERM is received,
 execution is passed to the 'stop' subroutine, which had previously
 been designated to catch this signal.
 
-To avoid a loop, 'stop' sets the signal mask to ignore any
-subsequent TERM signals. It then sends the TERM signal to every process
-in its process group, which consists of the daemon itself and all of its
-descendents. It waits for all sub-processes (which are job drivers)
-to terminate.  It closes the database and the system log, then dies.
+To avoid a loop, 'stop' sets the signal mask to ignore any subsequent
+TERM signals. It then sends the TERM signal to every process in its
+process group, which consists of the daemon itself and all of its
+descendents. It waits for all descendents (which are job drivers) to
+terminate.  It closes the database and the system log, then dies.
 
 NOTE: Life-Cycle of the Working Directory Name
 
@@ -151,44 +150,45 @@ process identifier (pid), the exit status and, in the case where the
 driver is terminated with a kill signal, the signal number.
 
 The end-code will be set to "srun", which indicates a successful run,
-only if the exit status and the signal number are both zero and if,
-in addition, no file called "software error" is found in the working 
-driver's working directory.  
+only if the exit status and the signal number are both zero and if, in
+addition, no file called "software error" is found in the job's
+working directory.
 
-If the signal number is SIGTERM, which indicates that the job was 
-terminated by an operator, a software error of some sort is assumed and
-end_code is set to "serr".  It may be that the only error is that the
-optimization failed to converge in a reasonable period of time.  Only
-subsequent analysis will determine what the problem was.
+If the signal number is SIGTERM, which indicates that the job was
+terminated by an operator, a software error of some sort is assumed
+and end_code is set to "serr".  It may be that the only error is that
+the optimization failed to converge in a reasonable period of time.
+Only subsequent analysis will determine what the problem was.
 
 If the signal number is SIGABRT, this indicates that the software
-itself discovered some internal inconsistency and terminated by raising
-an "assertion".  In this case, end_code is also set to "serr".
+itself discovered some internal inconsistency and terminated by
+raising an "assertion".  In this case, end_code is also set to "serr".
 
-If the job terminated with any signal other than SIGTERM or SIGABRT, 
-a hardware error is assumed, and the end_code is set to "herr". Of 
+If the job terminated with any signal other than SIGTERM or SIGABRT, a
+hardware error is assumed, and the end_code is set to "herr". Of
 course, many hardware errors are really caused by software, such as
-when the software attempts to divide a number by zero or when it 
+when the software attempts to divide a number by zero or when it
 attempts a reference via an invalid pointer.
 
-If the signal number is zero, indicating that the job did not terminate
-as the result of a signal, but the exit status is not zero, end_code
-is set to "serr".
+If the signal number is zero, indicating that the job did not
+terminate as the result of a signal, but the exit status is not zero,
+end_code is set to "serr".
 
-If the daemon finds a file called "software error", end_code is 
-always set to "serr" and it is assumed that an assertion was raised.
-In this case, the SIGABRT signal was probably also reported.
+If the daemon finds a file called "software error", end_code is always
+set to "serr" and it is assumed that an assertion was raised.  In this
+case, the SIGABRT signal was probably also reported.
 
 The daemon analyzes the various cases described above, and generates
 an error messages which is written to the report which goes into the
-database and is made available to the end user as well as to the system
-log, where it is available to developers and system adminstrators.
+database, to be made available to the end user, as well as to the
+system log, where it is available to developers and system
+adminstrators.
 
 =head1 RETURNS
 
 Nothing, because it has no parent (other than init) to which an exit
-code might be returned.  The program does, however, write event messages
-to the system log.
+code might be returned.  The program does, however, write event
+messages to the system log.
 
 =cut
 
@@ -274,9 +274,13 @@ sub death {
 	&disconnect($dbh)
     }
 
-    # remove the lockfile if ($lockfile_exists) {
-    unlink($lockfile_path); } # log final message, then close the
-    system log syslog("info", "stop"); closelog();
+    # remove the lockfile 
+    if ($lockfile_exists) {
+	unlink($lockfile_path);
+    } 
+    # log final message, then close the
+    system log syslog("info", "stop"); 
+    closelog();
 
     die;
 }
@@ -388,18 +392,24 @@ sub fork_driver {
   }
 }
 sub insert_error {
-    my $caught_mess = shift;
-    my $xml_errors  = shift;
+    my $daemon_text = shift;
+    my $driver_text = shift;
     my $report      = shift;
 
-    my $caught_err  = '<error>';
-    $caught_err    .= "\n<description>Exit status from the driver</description>\n";
-    $caught_err    .= "<file_name>N/A</file_name>\n";
-    $caught_err    .= "<line_number>N/A</line_number>\n";
-    $caught_err    .= "<message>$caught_mess</message>\n";
-    $caught_err    .= "</error>\n";
+    my $daemon_text_xml  = '<error>';
+    $daemon_text_xml    .= "\n<description>Exit status from the driver</description>\n";
+    $daemon_text_xml    .= "<file_name>N/A</file_name>\n";
+    $daemon_text_xml    .= "<line_number>N/A</line_number>\n";
+    $daemon_text_xml    .= "<message>$daemon_text</message>\n";
+    $daemon_text_xml    .= "</error>\n";
+    my $driver_text_xml  = '<error>';
+    $driver_text_xml    .= "\n<description>Assertion text from driver</description>\n";
+    $driver_text_xml    .= "<file_name>N/A</file_name>\n";
+    $driver_text_xml    .= "<line_number>N/A</line_number>\n";
+    $driver_text_xml    .= "<message>$driver_text</message>\n";
+    $driver_text_xml    .= "</error>\n";
 
-    $report =~ s/<\/error_list>/$caught_err $xml_errors<\/error_list>\n/;
+    $report =~ s/<\/error_list>/$daemon_text_xml $driver_text_xml<\/error_list>\n/;
     return $report;
 }
 sub format_error_report {
