@@ -160,7 +160,7 @@ class SpkMLToCpp
    * tree, will point to the parse tree upon the
    * sucessful completion of parsing process.
    *
-   * @arg SpkInML is a file path to the SpkML xml document
+   * @param SpkInML is a file path to the SpkML xml document
    * to be translated into C++ code.  The grammer for
    * an SpkML document is defined per client.
    * 

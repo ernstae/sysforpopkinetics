@@ -16,16 +16,16 @@
  * and the @ref SpkParameters::Analysis "analysis" type 
  * specified as attributes of the given DOMElement.
  *
- * @arg content_node is a pointer to the DOMElement node that
+ * @param content_node is a pointer to the DOMElement node that
  * represents the root of <content> subtree.
  *
- * @arg spkml_verOut will contain a string extracted as
+ * @param spkml_verOut will contain a string extracted as
  * the value of a <content> attribute, "spkinml_ver".
  *
- * @arg clientOut will contain an enum value extracted as
+ * @param clientOut will contain an enum value extracted as
  * the value of a <content> attribute, "client".
  *
- * @arg analysisOut will contain an enum value extracted as
+ * @param analysisOut will contain an enum value extracted as
  * the value of a <content> attribute, "analysis".
  *
  * @return true if it finds "spkinml_ver", "client" and "analysis" attribute
