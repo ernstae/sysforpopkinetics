@@ -247,7 +247,7 @@ $head Description$$
      # include <stdlib.h>
      # include <assert.h>
      # include <stdio.h>
-     # include <spk/SpkException.h>
+     # include "SpkException.h"
 
      # include "BlockAlloc.h"
 
