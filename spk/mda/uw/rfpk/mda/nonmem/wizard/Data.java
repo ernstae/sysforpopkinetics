@@ -6,6 +6,7 @@
 
 package uw.rfpk.mda.nonmem.wizard;
 
+import uw.rfpk.mda.nonmem.Utility;
 import org.netbeans.ui.wizard.*;
 import java.util.Vector;
 import java.io.File;
@@ -147,6 +148,8 @@ public class Data extends javax.swing.JPanel implements WizardStep {
                                           JOptionPane.ERROR_MESSAGE);
             return;
         }
+        if(nDataCol == 0)
+            return;
         ((MDAObject)wizardPane.getCustomizedObject()).setData(data);
         iterator.setNDataCol(nDataCol);           
         jLabel2.setText("There are " + nDataCol + " columns in the data file."); 

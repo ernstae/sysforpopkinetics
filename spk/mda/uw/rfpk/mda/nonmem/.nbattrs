@@ -2,12 +2,10 @@
 <!DOCTYPE attributes PUBLIC "-//NetBeans//DTD DefaultAttributes 1.0//EN" "http://www.netbeans.org/dtds/attributes-1_0.dtd">
 <attributes version="1.0">
     <fileobject name="MDAFrame.java">
+        <attr name="class_dependency_javax.swing.table.AbstractTableModel" stringvalue="MDAFrame.DisplayTableModel"/>
+        <attr name="class_dependency_java.awt.event.AdjustmentListener" stringvalue="MDAFrame.ScrollBarListener"/>
         <attr name="class_dependency_javax.swing.JFrame" stringvalue="MDAFrame"/>
-    </fileobject>
-    <fileobject name="MDAFrame_old.java">
-        <attr name="class_dependency_java.awt.print.Printable" stringvalue="MDAFrame_old.Printer"/>
-        <attr name="class_dependency_javax.swing.AbstractAction" stringvalue="MDAFrame_old.OperationAction;MDAFrame_old.FileAction"/>
-        <attr name="class_dependency_javax.swing.JFrame" stringvalue="MDAFrame_old"/>
+        <attr name="class_dependency_javax.swing.event.CaretListener" stringvalue="MDAFrame.ACaretListener"/>
     </fileobject>
     <fileobject name="Printer.java">
         <attr name="class_dependency_java.awt.print.Printable" stringvalue="Printer"/>

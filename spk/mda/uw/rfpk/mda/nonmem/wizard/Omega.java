@@ -6,6 +6,7 @@
 
 package uw.rfpk.mda.nonmem.wizard;
 
+import uw.rfpk.mda.nonmem.Utility;
 import org.netbeans.ui.wizard.*;
 import java.util.Vector;
 import javax.swing.JComponent;

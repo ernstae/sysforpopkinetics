@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 /**
- *
+ * This class defines an object that contains output data
  * @author  jiaji Du
  */
 public class Output {
@@ -19,22 +19,62 @@ public class Output {
     public Output() {
     }
 
-    public String title = null;             // problem title
-    public Properties dataLabelMap = null; // data lables map
-    public String error = null;             // error message
-    public String objective = null;         // objective value
-    public String[] theta = null;           // THETA parameters
-    public String[][] omega = null;         // OMEGA parameters
-    public String[][] sigma = null;         // SIGMA parameters  
-    public String[] statLabels = null;      // statistics label list
-    public String[] stdErrTheta = null;     // standard error vector
-    public String[][] stdErrOmega = null;   // standard error vector
-    public String[][] stdErrSigma = null;   // standard error vector    
-    public String[][] covariance = null;    // covariance matrix
-    public String[][] correlation = null;   // correlation matrix
-    public String[][] invCovariance = null; // invert covariance matrix
-    public String[][] dataAll = null;       // nCol(item) by nRow(sum(measurements of each individual)) // spk output data
-    public ArrayList dataItems = null;      // list of data item labels // able to determine the index of an element
-    public String[][][] table = null;       // ((file, header, process, nSorting), (items in appearance orders))s   
-    public String[][][] scatterplot = null; // ((from, to, unit, X0, Y0, process), (list1), (list2), (list3))s
+    /** job abstract */
+    public String jobAbstract = null;
+     /** job submission time */
+    public String submissionTime = null;
+    /** job completion time */
+    public String completionTime = null;    
+    /** computing times(estimation, statistics) */
+    public String[] computingTimes = null;
+    /** model name */
+    public String modelName = null;
+    /** model version */
+    public String modelVersion = null;
+    /** model abstract */
+    public String modelAbstract = null;    
+    /** data name */
+    public String dataName = null;
+    /** data version */
+    public String dataVersion = null;
+    /** data abstract */
+    public String dataAbstract = null;    
+    /** data lables map */    
+    public Properties dataLabelMap = null;
+    /** error message */
+    public String error = null;
+    /** objective value */
+    public String objective = null;
+    /** THETA vector */
+    public String[] theta = null;
+    /** OMEGA matrix */
+    public String[][] omega = null;
+    /** SIGMA matrix */
+    public String[][] sigma = null;
+    /** statistics label list */
+    public String[] statLabels = null;
+    /** standard error of THETA */
+    public String[] stdErrTheta = null;
+    /** standard error of OMEGA */
+    public String[][] stdErrOmega = null;
+    /** standard error of SIGMA */
+    public String[][] stdErrSigma = null;
+    /** covariance matrix */
+    public String[][] covariance = null;
+    /** correlation matrix */
+    public String[][] correlation = null;
+    /** invert covariance matrix */
+    public String[][] invCovariance = null;
+    /** coefficient of variation */
+    public String[] coefVariation = null;
+    /** 95% confidence interval (left, right) */
+    public String[][] confInterval = null;
+    /** nCol(item) by nRow(sum(measurements of each individual)) */
+    public double[][] dataAll = null;
+    /** data item label list */
+    public ArrayList dataItems = null;      
+    /** ((file, header, process, nSorting), (items in appearance orders))s */
+    public String[][][] table = null; 
+    /** ((from, to, X0, Y0, unit, process), (list1), (list2), (list3))s */
+    public String[][][] scatterplot = null;
 }

@@ -107,5 +107,5 @@ public class Printer implements Printable{
     private PageFormat pageFormat;
         
     // Print font
-    private Font printFont = new Font("Lucida Console", Font.PLAIN, 10);  
+    private Font printFont = new Font("Courier", Font.PLAIN, 9);  
 }

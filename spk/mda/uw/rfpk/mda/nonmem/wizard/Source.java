@@ -7,7 +7,7 @@
 package uw.rfpk.mda.nonmem.wizard;
 
 /**
- * This class defines an object that contains information of a NONMEM control file
+ * This class defines an object that contains input data
  * @author  jiaji Du
  */
 public class Source {

@@ -2,7 +2,7 @@ package uw.rfpk.mda.nonmem;
 
 import uw.rfpk.mda.nonmem.wizard.Source;
 import uw.rfpk.mda.nonmem.wizard.MDAObject;
-import uw.rfpk.mda.nonmem.wizard.Utility;
+import uw.rfpk.mda.nonmem.Utility;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Attr;
@@ -12,36 +12,40 @@ import java.io.PrintWriter;
 import java.io.FileWriter;
 import javax.swing.JOptionPane; 
 
-/**
- * This class defines an object that generates an XML SPk input file. 
+/** This class defines an object that generates an XML SPk input file.
+ *  
  * @author  Jiaji Du
  * @version 1.0
  */
 public class XMLWriter
 {
-    /** Constructor to initialize control and data, and create a root document
-     * @param modelInfo A ModelInfo object containing information for the model
-     * @param control A String object containing the text of the NONMEM control file
-     * @param object A MDAObject object containing control and data information
+    /** Constructor to initialize data members and then call private functions to
+     * generate spksource, spkdata and spkmodel XML documents.
+     * @param modelArchive An Archive object containing information for the model.
+     * @param dataArchive An Archive object containing information for the data.
+     * @param control A String object containing the text of the NONMEM control file.
+     * @param object A MDAObject object containing control and data information.
      */    
-    public XMLWriter(ModelInfo modelInfo, String control, MDAObject object)
+    public XMLWriter(ArchiveInfo modelArchive, ArchiveInfo dataArchive, String control, MDAObject object)
     {
         this.source = object.getSource();
         this.data = object.getData();
-        this.modelInfo = modelInfo;
+        this.modelArchive = modelArchive;
+        this.dataArchive = dataArchive;
         this.control = control;
         setSource(); 
         setData();
-        setControl();
+        setModel();
     }
 
-    /** This function creates Content section of the SPK input file */    
+    /** This function creates Content section of the SPK input file. */    
     private void setSource()
     {
         docSource = new DocumentImpl(); 
         Element spksource = docSource.createElement("spksource");  
         docSource.appendChild(spksource);  
-        Element nonmem = docSource.createElement("nonmem");  
+        Element nonmem = docSource.createElement("nonmem"); 
+        nonmem.setAttribute("version", "0.1"); 
         spksource.appendChild(nonmem);
         Element constraint = docSource.createElement("constraint");
         nonmem.appendChild(constraint);
@@ -88,18 +92,21 @@ public class XMLWriter
     // Generate description
     private void setDescription(Element parent)
     {
-        Element description = docSource.createElement("description");
-        parent.appendChild(description);
-        description.appendChild(docSource.createTextNode(source.problem));
+        if(source.problem != null)
+        {
+            Element description = docSource.createElement("description");
+            parent.appendChild(description);
+            description.appendChild(docSource.createTextNode(source.problem));
+        }
     }
 
     // Generate data_labels
     private void setInput(Element parent)
     {
-        Element data_labels = docSource.createElement("data_labels");
-        parent.appendChild(data_labels);
-        if(source.input != null)
+        if(source.input != null && source.data != null)
         {
+            Element data_labels = docSource.createElement("data_labels");
+            parent.appendChild(data_labels);
             for(int i = 0; i < source.input.length; i++)
             {
                 Element label = docSource.createElement("label");
@@ -109,7 +116,7 @@ public class XMLWriter
                 label.setAttribute("name", name);
                 if(names.length == 2 && Utility.isStdItem(names[0])) 
                     label.setAttribute("synonym", names[1]);
-            }
+            }            
         }
     }
     
@@ -443,7 +450,7 @@ public class XMLWriter
 	}
     }
 
-    // This function creates Data section of the SPK input file    
+    // This method creates Data section of the SPK input file.   
     private void setData()
     { 
         if(data == null || data.size() == 0 || source.input == null || 
@@ -455,7 +462,8 @@ public class XMLWriter
             nRows += ((Vector)data.get(i)).size(); 
         int nColumns = source.input.length;   
         docData = new DocumentImpl(); 
-        Element spkdata = docData.createElement("spkdata");  
+        Element spkdata = docData.createElement("spkdata");
+        spkdata.setAttribute("version", "0.1");
         docData.appendChild(spkdata);         
         Element table = docData.createElement("table");
         table.setAttribute("columns", String.valueOf(nColumns));
@@ -500,30 +508,47 @@ public class XMLWriter
             position += size;
         }
     }
+   
+    // This method generates model section of the SPK input file.    
+    private void setModel()
+    {    
+        docModel = new DocumentImpl();  
+        Element spkmodel = docModel.createElement("spkmodel"); 
+        docModel.appendChild(spkmodel);
+        spkmodel.appendChild(docModel.createTextNode("\n" + control));        
+    }
     
-    // This function generates model archive section of the SPK inut file 
-    private void setControl()
+    /** Generate SPK output file content.
+     * @param spkOutput A Properties object containing SPK output data returned from database.
+     * @return A String object containing the SPK output file content.
+     */
+    public static String setOutput(Properties spkOutput)
     {
-        docControl = new DocumentImpl(); 
-        Element model_archive = docControl.createElement("model_archive");  
-        docControl.appendChild(model_archive);          
-        Element information = docControl.createElement("information");
-        information.setAttribute("name", modelInfo.name);
-        if(modelInfo.isNewModel)
-            information.setAttribute("abstract", modelInfo.description);
-        else
-            if(!modelInfo.isNewVersion)
-                information.setAttribute("version", modelInfo.version);
-     
-        model_archive.appendChild(information);
-        
-        Element nm_control = docControl.createElement("nm_control");
-        model_archive.appendChild(nm_control); 
-        nm_control.appendChild(docControl.createTextNode("\n" + control));         
-    }    
+        // Generate Job XML
+        Document docJob = new DocumentImpl();
+        Element spkjob = docJob.createElement("spkjob");
+        spkjob.setAttribute("abstract", spkOutput.getProperty("jobAbstract")); 
+        spkjob.setAttribute("submission_time", spkOutput.getProperty("startTime"));
+        spkjob.setAttribute("completion_time", spkOutput.getProperty("eventTime"));          
+        Element model = docJob.createElement("model");
+        Element data = docJob.createElement("data");
+        model.setAttribute("name", spkOutput.getProperty("modelName"));
+        model.setAttribute("version", spkOutput.getProperty("modelVersion"));
+        model.setAttribute("abstract", spkOutput.getProperty("modelAbstract")); 
+        data.setAttribute("name", spkOutput.getProperty("datasetName"));
+        data.setAttribute("version", spkOutput.getProperty("datasetVersion"));
+        data.setAttribute("abstract", spkOutput.getProperty("datasetAbstract"));
+        spkjob.appendChild(model);
+        spkjob.appendChild(data);
+        docJob.appendChild(spkjob);
+        String job = Utility.formatXML(((DocumentImpl)docJob).saveXML(docJob));                 
+
+        // Return Spk output
+        return job + "\n" + spkOutput.getProperty("report") + "\n" + spkOutput.getProperty("source");        
+    }
     
-    /** This function saves the XML document as a text file in XML format
-     * @param file A String object as the filename of the file to be saved
+    /** This method saves the XML document as a text file in XML format.
+     * @param file A String object as the filename of the file to be saved.
      */    
     public void save(String file)
     {
@@ -532,25 +557,26 @@ public class XMLWriter
             PrintWriter writer = new PrintWriter(new FileWriter(file));
             writer.println(Utility.formatXML(((DocumentImpl)docSource).saveXML(docSource)) + "\n" +
                            Utility.formatXML(((DocumentImpl)docData).saveXML(docData)) + "\n" +
-                           Utility.formatXML(((DocumentImpl)docControl).saveXML(docControl))); 
+                           Utility.formatXML(((DocumentImpl)docModel).saveXML(docModel))); 
             writer.close();
         }
         catch(Exception e)
 	{
-            JOptionPane.showMessageDialog(null, "Error saving file",  // Display saving file
+            JOptionPane.showMessageDialog(null, "Error saving file.",  // Display saving file
                                           "File Error",               // error message
                                           JOptionPane.ERROR_MESSAGE);
 	}    
     }
     
-    /** This function returns the XML file content as a String object
-     * @return A String object as the formated XML file content
+    /** This method returns the XML documents, spksource, spkdata and spkarchibe 
+     * as a String object.
+     * @return A String object as the formated XML file content.
       */    
     public String getDocument()
     {
         return Utility.formatXML(((DocumentImpl)docSource).saveXML(docSource)) + "\n" +
                Utility.formatXML(((DocumentImpl)docData).saveXML(docData)) + "\n" +
-               Utility.formatXML(((DocumentImpl)docControl).saveXML(docControl));      
+               Utility.formatXML(((DocumentImpl)docModel).saveXML(docModel));      
     }
     
     private boolean exist(String[] strings, String string)
@@ -560,9 +586,9 @@ public class XMLWriter
                 return true;
         return false;
     }
-
+    
     // XML documents
-    private Document docSource, docData, docControl;
+    private Document docSource, docData, docModel;
 
     // Source object
     private Source source;
@@ -570,8 +596,11 @@ public class XMLWriter
     // Data vector
     private Vector data;
     
-    // Model information
-    private ModelInfo modelInfo;
+    // Model archive information
+    private ArchiveInfo modelArchive;
+    
+    // Data archive information
+    private ArchiveInfo dataArchive;  
     
     // Control file text
     private String control;
