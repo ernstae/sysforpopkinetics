@@ -915,8 +915,8 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "\tGridIntegral.cpp \\" << endl;
       oMakefile << "\tMontePopObj.cpp \\" << endl;
       oMakefile << "\tMapBay.cpp \\" << endl;
-      oMakefile << "\tGsl2SpkError.cpp \\" << endl;
-      oMakefile << "\tMapMonte.cpp" << endl;
+      oMakefile << "\tMapMonte.cpp \\" << endl;
+      oMakefile << "\tGsl2SpkError.cpp" << endl;
       oMakefile << endl;
 
       oMakefile << "MONTE_INCLUDE = \\" << endl;
@@ -4967,6 +4967,11 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "      errors.push( e );" << endl;
   oDriver << "      isOptSuccess = false;" << endl;
   oDriver << "   }" << endl;
+  oDriver << endl;
+  oDriver << "   // Get the latest value of theta and Omega." << endl;
+  oDriver << "   // These values may be garbage if optimization had failed." << endl;
+  oDriver << "   model.getTheta( thetaOut );" << endl;
+  oDriver << "   model.getOmega( omegaOut );" << endl;
   oDriver << "   if( !isOptSuccess )" << endl;
   oDriver << "   {" << endl;
   oDriver << "      string optErrHeader;" << endl;
@@ -5003,8 +5008,6 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "  if( isOptRequested && isOptSuccess )" << endl;
   oDriver << "  {" << endl;
   oDriver << "     valarray<double> ROut( nY * nY );" << endl;
-  oDriver << "     model.getTheta( thetaOut );" << endl;
-  oDriver << "     model.getOmega( omegaOut );" << endl;
   oDriver << "     model.setIndPar( bOut );" << endl;
   oDriver << "     model.dataVariance( ROut );" << endl;
   oDriver << "     vector< valarray<double> > R( 1 );" << endl;
@@ -5184,12 +5187,6 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "   else" << endl;
   oDriver << "      oResults << \"block\";" << endl;
   oDriver << "   oResults << \"\\\"\" << \">\" << endl;" << endl;
-  /*
-  oDriver << "   for( int i=0; i<NonmemPars::omegaOrder; i++ )" << endl;
-  oDriver << "   {" << endl;
-  oDriver << "      oResults << \"<value>\" << omegaOut[i] << \"</value>\" << endl;" << endl;
-  oDriver << "   }" << endl;
-  */
   oDriver << "   if( NonmemPars::omegaStruct==IndPredModel::DIAGONAL )" << endl;
   oDriver << "   {" << endl;
   oDriver << "      for( int i=0; i<NonmemPars::omegaDim; i++ )" << endl;
@@ -5421,9 +5418,12 @@ void NonmemTranslator::generatePopDriver() const
     oDriver << "EXPECTED_HESSIAN;" << endl;
   else
     oDriver << "MODIFIED_LAPLACE;" << endl;
+  oDriver << endl;
 
   oDriver << "const bool isStatRequested = " << (myIsStat? "true":"false") << ";" << endl;
   oDriver << "bool isStatSuccess         = !isStatRequested;" << endl;
+  oDriver << endl;
+
   oDriver << "enum PopCovForm covForm    = " << myCovForm << ";" << endl;
   oDriver << endl;
 
@@ -5618,6 +5618,12 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "   gettimeofday( &optEnd, NULL );" << endl;
   oDriver << "   optTimeSec = difftime( optEnd.tv_sec, optBegin.tv_sec );" << endl;
   oDriver << endl;
+  oDriver << "   // Get the latest values of theta, Omega and Sigma." << endl;
+  oDriver << "   // These values may be garbage if optimization had failed." << endl;
+  oDriver << "   model.getTheta( thetaOut );" << endl;
+  oDriver << "   model.getOmega( omegaOut );" << endl;
+  oDriver << "   model.getSigma( sigmaOut );" << endl;
+  oDriver << endl;
   oDriver << "   if( !isOptSuccess )" << endl;
   oDriver << "   {" << endl;
   oDriver << "      string optErrHeader;" << endl;
@@ -5665,10 +5671,6 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "   //   NONMEM Specific" << endl;
   oDriver << "   if( isOptRequested && isOptSuccess )" << endl;
   oDriver << "   {" << endl;
-  oDriver << "      model.getTheta( thetaOut );" << endl;
-  oDriver << "      model.getOmega( omegaOut );" << endl;
-  oDriver << "      model.getSigma( sigmaOut );" << endl;
-  oDriver << endl;
   oDriver << "      model.setPopPar( alpOut );" << endl;
   oDriver << "      vector< valarray<double> > R( nPop );" << endl;
   oDriver << "      for( int i=0; i<nPop; i++ )" << endl;
