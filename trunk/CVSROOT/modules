@@ -29,4 +29,5 @@ r2		.
 doc		doc
 howto		doc/howto
 CVShowto	doc/howto/CVS-rfpk-HOWTO
-
+cspk            src/apps/spk/cspk
+aspk            src/apps/spk/aspk
