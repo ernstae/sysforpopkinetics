@@ -36,10 +36,10 @@ void read_nonmem_driverTest::test()
   XMLPlatformUtils::Initialize();
   XercesDOMParser * parser = new xercesc::XercesDOMParser;
   parser->setValidationScheme( XercesDOMParser::Val_Auto );
-  parser->setDoNamespaces(true );
-  parser->setDoSchema(true );
-  parser->setValidationSchemaFullChecking(true);
-  parser->setCreateEntityReferenceNodes(true);
+  parser->setDoNamespaces( true );
+  parser->setDoSchema( true );
+  parser->setValidationSchemaFullChecking( true );
+  parser->setCreateEntityReferenceNodes( true );
 
   try
   {
@@ -176,44 +176,6 @@ void read_nonmem_driverTest::test()
   CPPUNIT_ASSERT_MESSAGE( "(ind) confidence interval computation is supposed to be requested!",
 			  !spk.isIndConfidenceOut );
 
-  int omegaElemNum = 3*(3+1)/2;
-  valarray<double> omega( 0.1, omegaElemNum );
-  valarray<double> omegaActual = nonmem.omegaIn;
-  CPPUNIT_ASSERT_EQUAL_MESSAGE( "Omega: #of elements", omegaElemNum, static_cast<int>(omegaActual.size()) );
-
-  for( int i=0; i<omegaElemNum; i++ )
-    CPPUNIT_ASSERT_EQUAL_MESSAGE( "Omega", omega[i], omegaActual[i] );
-
-  valarray<bool> omegaFixed( false, omegaElemNum );
-  valarray<bool> omegaFixedActual = nonmem.omegaFixed;
-  omegaFixed[0] = true;
-  omegaFixed[3] = true;
-  for( int i=0; i<omegaElemNum; i++ )
-    CPPUNIT_ASSERT_EQUAL_MESSAGE( "Omega fixed", omegaFixed[i], omegaFixedActual[i] );
-
-  int sigmaElemNum = 1*(1+1)/2;
-  valarray<double> sigma( 0.3, sigmaElemNum );
-  valarray<double> sigmaActual = nonmem.sigmaIn;
-  CPPUNIT_ASSERT_EQUAL_MESSAGE( "Sigma: #of elements", sigmaElemNum, static_cast<int>(sigmaActual.size()) );
-
-  for( int i=0; i<sigmaElemNum; i++ )
-    CPPUNIT_ASSERT_EQUAL_MESSAGE( "Sigma", sigma[i], sigmaActual[i] );
-
-  int etaElemNum = 3;
-  valarray<double> eta( 0.0, etaElemNum );
-  valarray<double> etaActual = nonmem.etaIn;
-  CPPUNIT_ASSERT_EQUAL_MESSAGE( "eta: #of elements", etaElemNum, static_cast<int>(etaActual.size()) );
-
-  for( int i=0; i<etaElemNum; i++ )
-    CPPUNIT_ASSERT_EQUAL_MESSAGE( "eta", eta[i], etaActual[i] );
-
-  valarray<bool> etaFixed( false, etaElemNum );
-  valarray<bool> etaFixedActual = nonmem.etaFixed;
-  etaFixed[1] = true;
-
-  for( int i=0; i<etaElemNum; i++ )
-    CPPUNIT_ASSERT_EQUAL_MESSAGE( "eta fixed", etaFixed[i], etaFixedActual[i] );
-
   int thetaElemNum = 3;
   valarray<double> thetaIn( 0.1, thetaElemNum );
   valarray<double> thetaInActual = nonmem.thetaIn;
@@ -247,6 +209,74 @@ void read_nonmem_driverTest::test()
 
   for( int i=0; i<thetaElemNum; i++ )
     CPPUNIT_ASSERT_EQUAL_MESSAGE( "thetaUp", thetaUp[i], thetaUpActual[i] );
+
+  int omegaElemNum = 3*(3+1)/2;
+  valarray<double> omegaIn( 0.1, omegaElemNum );
+  valarray<double> omegaInActual = nonmem.omegaIn;
+  CPPUNIT_ASSERT_EQUAL_MESSAGE( "Omega: #of elements", omegaElemNum, static_cast<int>(omegaInActual.size()) );
+
+  for( int i=0; i<omegaElemNum; i++ )
+    CPPUNIT_ASSERT_EQUAL_MESSAGE( "Omega", omegaIn[i], omegaInActual[i] );
+
+  valarray<bool> omegaFixed( false, omegaElemNum );
+  valarray<bool> omegaFixedActual = nonmem.omegaFixed;
+  omegaFixed[0] = true;
+  omegaFixed[3] = true;
+  for( int i=0; i<omegaElemNum; i++ )
+    CPPUNIT_ASSERT_EQUAL_MESSAGE( "Omega fixed", omegaFixed[i], omegaFixedActual[i] );
+
+  int sigmaElemNum = 1*(1+1)/2;
+  valarray<double> sigmaIn( 0.3, sigmaElemNum );
+  valarray<double> sigmaInActual = nonmem.sigmaIn;
+  CPPUNIT_ASSERT_EQUAL_MESSAGE( "Sigma: #of elements", sigmaElemNum, static_cast<int>(sigmaInActual.size()) );
+
+  for( int i=0; i<sigmaElemNum; i++ )
+    CPPUNIT_ASSERT_EQUAL_MESSAGE( "Sigma", sigmaIn[i], sigmaInActual[i] );
+
+  int etaElemNum = 3;
+  valarray<double> etaIn( 0.0, etaElemNum );
+  valarray<double> etaInActual = nonmem.etaIn;
+  CPPUNIT_ASSERT_EQUAL_MESSAGE( "eta: #of elements", etaElemNum, static_cast<int>(etaInActual.size()) );
+
+  for( int i=0; i<etaElemNum; i++ )
+    CPPUNIT_ASSERT_EQUAL_MESSAGE( "eta", etaIn[i], etaInActual[i] );
+
+  for( int i=0; i<etaElemNum; i++ )
+    CPPUNIT_ASSERT_EQUAL_MESSAGE( "eta", etaIn[i], etaInActual[i] );
+
+  valarray<bool> etaFixed( false, etaElemNum );
+  valarray<bool> etaFixedActual = nonmem.etaFixed;
+  etaFixed[1] = true;
+
+  for( int i=0; i<etaElemNum; i++ )
+    CPPUNIT_ASSERT_EQUAL_MESSAGE( "eta fixed", etaFixed[i], etaFixedActual[i] );
+
+
+  //
+  // Alpha should contain theta, Omega and Sigma in the order.
+  //
+  for( int i=0; i<thetaElemNum; i++ )
+    {
+      CPPUNIT_ASSERT_EQUAL( thetaIn [i], spk.popParIn [i] );  
+      CPPUNIT_ASSERT_EQUAL( thetaUp [i], spk.popParUp [i] );
+      CPPUNIT_ASSERT_EQUAL( thetaLow[i], spk.popParLow[i] );
+    }
+  for( int i=0; i<omegaElemNum; i++ )
+    {
+      CPPUNIT_ASSERT_EQUAL( omegaIn [i], spk.popParIn [thetaElemNum+i] );  
+    }
+  for( int i=0; i<sigmaElemNum; i++ )
+    {
+      CPPUNIT_ASSERT_EQUAL( sigmaIn [i], spk.popParIn [thetaElemNum+omegaElemNum+i] );  
+    }
+
+  //
+  // b should contain eta as it is.
+  //
+  for( int i=0; i<etaElemNum; i++ )
+    {
+      CPPUNIT_ASSERT_EQUAL( etaIn [i], spk.indParIn [i] );  
+    }
 
   delete parser;
   XMLPlatformUtils::Terminate();
