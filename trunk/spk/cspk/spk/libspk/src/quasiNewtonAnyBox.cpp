@@ -319,7 +319,7 @@ $codep
 static void fourParamQuadratic( const DoubleMatrix& dvecX, double* pdFOut, 
                 DoubleMatrix* pdrowGOut, const void* pFvalInfo )
 {
-  int nObjPars = 4;
+  int nObjPar = 4;
   
   double* pdXData = dvecX.data();
   int nXRows = dvecX.nr();
@@ -331,7 +331,7 @@ static void fourParamQuadratic( const DoubleMatrix& dvecX, double* pdFOut,
   {
     // Set the objective function value.
     tot = 0.0;
-    for ( j = 0; j < nObjPars; j++ )
+    for ( j = 0; j < nObjPar; j++ )
     {
       i = j + 1;
       tot += pow(i, 2.0) * pow( pdXData[j] + pow( -1.0, i ) * i, 2.0 );
@@ -344,7 +344,7 @@ static void fourParamQuadratic( const DoubleMatrix& dvecX, double* pdFOut,
     double* pdGOutData = pdrowGOut->data();
 
     // Set the elements of the gradient.
-    for ( j = 0; j < nObjPars; j++ )
+    for ( j = 0; j < nObjPar; j++ )
     {
       i = j + 1;
       pdGOutData[j] =  pow(i, 2.0) * ( pdXData[j] + pow( -1.0, i ) * i );
@@ -363,22 +363,22 @@ void main()
 
   bool ok;
 
-  int nObjPars = 4;
+  int nObjPar = 4;
 
-  DoubleMatrix dvecXLow(nObjPars, 1);
-  DoubleMatrix dvecXUp(nObjPars, 1);
-  DoubleMatrix dvecXIn(nObjPars, 1);
-  DoubleMatrix dvecXOut(nObjPars, 1);
+  DoubleMatrix dvecXLow(nObjPar, 1);
+  DoubleMatrix dvecXUp(nObjPar, 1);
+  DoubleMatrix dvecXIn(nObjPar, 1);
+  DoubleMatrix dvecXOut(nObjPar, 1);
 
   double* pdXLowData = dvecXLow.data();
   double* pdXUpData  = dvecXUp .data();
   double* pdXInData  = dvecXIn .data();
   double* pdXOutData = dvecXOut.data();
 
-  for ( int i = 0; i < nObjPars; i++ )
+  for ( int i = 0; i < nObjPar; i++ )
   {
-    pdXLowData[i] = -(nObjPars - 1.0);
-    pdXUpData[i]  = +(nObjPars - 1.0);
+    pdXLowData[i] = -(nObjPar - 1.0);
+    pdXUpData[i]  = +(nObjPar - 1.0);
 
     pdXInData[i]  = 0.0;
   }
@@ -386,7 +386,7 @@ void main()
   double epsilon  = 1.e-5; 
   int nMaxIter    = 50; 
   double fOut     = 0.0;
-  DoubleMatrix f_xOut(1, nObjPars);
+  DoubleMatrix f_xOut(1, nObjPar);
   int level       = 0;
   Optimizer optimizer( epsilon, nMaxIter, level );
 
@@ -745,7 +745,7 @@ void quasiNewtonAnyBox(
   assert( nXLowRows == nXInRows );
 
   // Set the number of objective function parameters.
-  int nObjPars  = nXInRows;
+  int nObjPar  = nXInRows;
 
   // If the final x value should be returned, do some initializations.
   double* pdXOutData;
@@ -753,10 +753,10 @@ void quasiNewtonAnyBox(
   {
     int nXOutRows = pdvecXOut->nr();
     pdXOutData    = pdvecXOut->data();
-    assert( nXOutRows == nObjPars );
+    assert( nXOutRows == nObjPar );
   }
 
-  DoubleMatrix dvecXDiff( nObjPars, 1 );
+  DoubleMatrix dvecXDiff( nObjPar, 1 );
 
   double* pdXDiffData = dvecXDiff.data();
 
@@ -771,22 +771,17 @@ void quasiNewtonAnyBox(
   // Initializations for the scaled objective function.
   //------------------------------------------------------------
 
+  Memory<double> memoryDbl( 4 * nObjPar );
+
   // The various y vectors are scaled versions of their x counterparts.
-  DoubleMatrix dvecYLow( nObjPars, 1 );
-  DoubleMatrix dvecYUp( nObjPars, 1 );
-  DoubleMatrix dvecY( nObjPars, 1 );
+  double* pdYLowData = dvecYLow= memoryDbl( nObjPar );
+  double* pdYUpData  = dvecYUp = memoryDbl( nObjPar );
+  double* pdYData    = dvecY   = memoryDbl( nObjPar );
 
   // Instantiate a row vector to hold the scaled gradient, 
   // gScaled(y) = fScaled_y(y).
-  DoubleMatrix drowGScaled( 1, nObjPars );
+  double* pdGScaledData = drowGScaled= memoryDbl( nObjPar );
 
-  double* pdYLowData = dvecYLow.data();
-  double* pdYUpData  = dvecYUp .data();
-  double* pdYData    = dvecY   .data();
-
-  double* pdGScaledData = drowGScaled.data();
-
-  Memory<double> dMemory(4 * n + 3 * n * n + m * n);
   double  *xCur = dMemory(n);
   double  *gCur = dMemory(n);
   double  *gOut = dMemory(n);
@@ -804,7 +799,7 @@ void quasiNewtonAnyBox(
   dvecYLow.fill(0);
   dvecYUp.fill(0);
   dvecY.fill(0);
-  for ( i = 0; i < nObjPars; i++ )
+  for ( i = 0; i < nObjPar; i++ )
   {
     pdXDiffData[i] = pdXUpData[i] - pdXLowData[i]; 
 
@@ -820,7 +815,7 @@ void quasiNewtonAnyBox(
   }
 
   // This function sets 0.0 to the corresponding output element when diff[i] is 0.0.
-  scaleElem(nObjPars, pdXInData, pdXLowData, pdXDiffData, pdYData);
+  scaleElem(nObjPar, pdXInData, pdXLowData, pdXDiffData, pdYData);
 
 
   //------------------------------------------------------------
@@ -960,7 +955,7 @@ void quasiNewtonAnyBox(
     // for the Hessian the first time it is called, but not so high
     // that it will perform too many iterations before this function's
     // convergence criterion is checked.
-    nIterMax = nObjPars;
+    nIterMax = nObjPar;
 
     // Create an approximation for the Hessian.
     hCurr = ... ;
@@ -969,7 +964,7 @@ void quasiNewtonAnyBox(
   // Set the maximum number of interior point iterations so
   // that the optimizer can solve the quadratic subproblems
   // with sufficient accuracy.
-  nQuadMax = 20 * nObjPars;
+  nQuadMax = 20 * nObjPar;
 
   // If the return value of QuasiNewton01Box is "ok", then the
   // infinity norm (element with the maximum absolute value) 
@@ -1161,7 +1156,7 @@ void quasiNewtonAnyBox(
   // from the final y value.
   if ( pdvecXOut ) 
   {
-    unscaleElem( nObjPars, pdYData, pdXLowData, pdXUpData, pdXDiffData, pdXOutData );
+    unscaleElem( nObjPar, pdYData, pdXLowData, pdXUpData, pdXDiffData, pdXOutData );
   }
 
   // If the final value for the objective function should be
@@ -1174,7 +1169,7 @@ void quasiNewtonAnyBox(
   if( pdrowF_xOut )
   {
     double* pdF_xOutData = pdrowF_xOut->data();
-    std::copy( gCurr, gCurr + nObjPars, pdF_xOutData );
+    std::copy( gCurr, gCurr + nObjPar, pdF_xOutData );
   }
 }
 
@@ -1351,6 +1346,14 @@ void scaleGradElem(
  *************************************************************************/
 
 #include "multiply.h"
+
+MAKE THIS WORK FOR C ARRAYS?
+MAKE THIS WORK FOR C ARRAYS?
+MAKE THIS WORK FOR C ARRAYS?
+MAKE THIS WORK FOR C ARRAYS?
+MAKE THIS WORK FOR C ARRAYS?
+MAKE THIS WORK FOR C ARRAYS?
+MAKE THIS WORK FOR C ARRAYS?
 
 bool isWithinTol( 
   double tol, 
