@@ -11,10 +11,13 @@ test_nonmem_SOURCES = \
 	NonmemExpXlatorTest.cpp \
 	NonmemExpXlatorTest.h \
 	NonmemTranslatorTest.cpp \
-	NonmemTranslatorTest.h
+	NonmemTranslatorTest.h \
+        NonmemDataReaderTest.cpp \
+        NonmemDataReaderTest.h
 test_nonmem_INCLUDES = \
 	NonmemExpXlatorTest.h \
-	NonmemTranslatorTest.h
+	NonmemTranslatorTest.h \
+        NonmemDataReaderTest.h
 
 AM_LDFLAGS = -lxerces-c -lcppunit -lspkcompiler
 
