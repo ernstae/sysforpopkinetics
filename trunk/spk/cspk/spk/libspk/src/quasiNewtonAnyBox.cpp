@@ -1198,17 +1198,15 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   double        *gCur; // length n 
   const double  *HCur; // length n * n 
 
-
-
-    const char *msg;
-     std::ostream            &os = std::cout;
-     const size_t          level = 0;
-     const size_t         ItrMax = 50;
-     const size_t              m = 5;
-     const size_t              n = 5;
-     const size_t        QuadMax = 20 * n;
-     const bool      exponential = true;
-     const double          delta = 1e-7;
+  const char *msg;
+  std::ostream            &os = std::cout;
+  const size_t          level = 0;
+  const size_t         ItrMax = 50;
+  const size_t              m = 5;
+  const size_t              n = 5;
+  const size_t        QuadMax = 20 * n;
+  const bool      exponential = true;
+  const double          delta = 1e-7;
 
 
   // [Remove]======================================
@@ -1233,6 +1231,17 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   //
   // [Remove]======================================
 
+
+  // See if this functions convergence criterion has been met.
+  // If the final y value is actally within epsilon tolerance of 
+  // the true value yStar, then go on.  Note that NAG arrays use
+  // row-major order.
+  if ( isWithinTol( epsilon, dvecY, dvecYLow, dvecYUp, drowGScaled, 
+           getLowerTriangle( arrayToDoubleMatrix( options.h, n, n ) ) ) )
+  {
+    // Set the output values.
+    return;
+  }
 
   // The argument delta specifies the convergence criteria.
   // If the return value of QuasiNewton01Box is "ok",
@@ -1289,7 +1298,7 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
           HCur );
 
      is the first iter zero or one
-     i += ItrCur;
+     i += itrCur;
 
     // See if this functions convergence criterion has been met.
       // If the final y value is actally within epsilon tolerance of 
