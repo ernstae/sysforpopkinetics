@@ -69,6 +69,12 @@ MDA saves the tables into text files, specified in the input file by the user, o
     </para>
   </sect1>
   <sect1>
+    <title>Summary report</title>
+    <para>
+MDA presents a summary report in MDA's editor window.  The user may save it and/or print it out using MDA's file menu.  The summary report includes the job identification number that is the job order number specifically for the user, the job completion time, the data file name, the error message, the minimum value of objective function and a table listing the final parameter estimate and statistics.   
+    </para>
+  </sect1>
+  <sect1>
     <title>Data format</title>
     <para>
 All presented data values except minimum value of objective function are expressed in scientific format with 3 significant digits, for instance: 1.23E+01, -1.23E+01, 1.23E-01, -1.23E-01.  The minimum value of objective function is presented in the format in which it is returned from the computational server.  All data values in saved text files are expressed in scientific format with 5 significant digits, for instance: 1.2345E+01, -1.2345E+01, 1.2345E-01, -1.2345E-01.    
