@@ -173,9 +173,9 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   DefaultStr.WRES  = "WRES";
   DefaultStr.PRED  = "PRED";
   DefaultStr.DV    = "DV";
+  DefaultStr.ORGDV = "ORGDV";
   DefaultStr.MDV   = "MDV";
   DefaultStr.ID    = "ID";
-  DefaultStr.SIMDV = "SIMDV";
   DefaultStr.F     = "F";
   DefaultStr.Y     = "Y";
 
@@ -188,9 +188,9 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   UserStr.WRES  = DefaultStr.WRES;
   UserStr.PRED  = DefaultStr.PRED;
   UserStr.DV    = DefaultStr.DV;
+  UserStr.ORGDV = DefaultStr.ORGDV;
   UserStr.MDV   = DefaultStr.MDV;
   UserStr.ID    = DefaultStr.ID;
-  UserStr.SIMDV = DefaultStr.SIMDV;
   UserStr.F     = DefaultStr.F;
   UserStr.Y     = DefaultStr.Y;
 
@@ -206,9 +206,9 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   KeyStr.WRES  = SymbolTable::key( DefaultStr.WRES );
   KeyStr.PRED  = SymbolTable::key( DefaultStr.PRED );
   KeyStr.DV    = SymbolTable::key( DefaultStr.DV );
+  KeyStr.ORGDV = SymbolTable::key( DefaultStr.ORGDV );
   KeyStr.MDV   = SymbolTable::key( DefaultStr.MDV );
   KeyStr.ID    = SymbolTable::key( DefaultStr.ID );
-  KeyStr.SIMDV = SymbolTable::key( DefaultStr.SIMDV );
   KeyStr.F     = SymbolTable::key( DefaultStr.F );
   KeyStr.Y     = SymbolTable::key( DefaultStr.Y );
 
@@ -572,11 +572,13 @@ void NonmemTranslator::parseSource()
       myRecordNums[i] = id->initial[i].size();
     }
 
-  if( myIsSimulate )
-    {
-      Symbol * p = table->insertUserVar(DefaultStr.SIMDV);
-    }
-
+  if( myIsSimulate ) 
+  {
+     Symbol * s  = table->insertLabel( DefaultStr.ORGDV, "", myRecordNums );
+     for( int i=0; i<myPopSize; i++ )
+	s->initial[i] = "0";
+  }
+ 
   // Keep the user-typed Nonmem Keyword strings
   Symbol * p;
   if( (p = table->findi( KeyStr.ID )) != Symbol::empty() )
@@ -642,17 +644,18 @@ void NonmemTranslator::parseSource()
 	s->initial[i] = "0";
      UserStr.MDV = DefaultStr.MDV;
   }
+  if( (p = table->findi( KeyStr.ORGDV )) != Symbol::empty() )
+     UserStr.ORGDV = p->name;
+  else
+  {
+     UserStr.ORGDV = DefaultStr.ORGDV; 
+  }
 
   if( (p = table->findi( KeyStr.DV )) != Symbol::empty() )
      UserStr.DV = p->name;
   else
      UserStr.DV = DefaultStr.DV;
-  
-  if( (p = table->findi( KeyStr.SIMDV )) != Symbol::empty() )
-     UserStr.SIMDV = p->name;
-  else
-     UserStr.SIMDV = DefaultStr.SIMDV;
-  
+
   if( (p = table->findi( KeyStr.F )) != Symbol::empty() )
      UserStr.F = p->name;
   else
@@ -2279,6 +2282,11 @@ void NonmemTranslator::generateIndData( ) const
   const Symbol * pID = table->findi( KeyStr.ID );
 
   //
+  // DV has to be declared non-constant if simulated data replaces it.
+  //
+  const Symbol * pDV = table->findi( KeyStr.DV );
+  const Symbol * pORGDV = table->findi( KeyStr.ORGDV );
+  //
   // The order in which the label strings appear is crutial.
   // So, get a constant pointer to the list and the iterator
   // for throughout use.
@@ -2402,12 +2410,16 @@ void NonmemTranslator::generateIndData( ) const
       if( type == Symbol::DATALABEL )
 	{
 	  bool isID = ( varName==pID->name? true : false );
-          oIndData_h << "const std::vector<" << (isID? "char *" : "ValueType") << ">";
+          bool isDV = ( varName==pDV->name? true : false );
+          bool isORGDV = (varName==pORGDV->name? true : false );
+          oIndData_h << ( (isDV || isORGDV) && myIsSimulate ? "" : "const " );
+          oIndData_h << "std::vector<" << (isID? "char *" : "ValueType") << ">";
 	  oIndData_h << " " << varName << ";" << endl;
 	  if( varAlias != "" )
             {
 	      isID = ( varAlias == pID->name? true : false );
-	      oIndData_h << "const std::vector<" << (isID? "char" : "ValueType") << ">";
+	      oIndData_h << ( (isDV || isORGDV) && myIsSimulate? "" : "const " );
+              oIndData_h << "std::vector<" << (isID? "char" : "ValueType") << ">";
 	      oIndData_h << " " << varAlias << ";" << endl;
             }
 	}
@@ -2435,8 +2447,9 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << endl;
   oIndData_h << "~IndData();" << endl;
   oIndData_h << "const SPK_VA::valarray<double> getMeasurements() const;" << endl;
+  oIndData_h << "void replaceMeasurements( const SPK_VA::valarray<double>& yyi );" << endl;
   oIndData_h << "void compResiduals();" << endl;
-  oIndData_h << "void compWeightedResiduals( const SPK_VA::valarray<double>& R );" << endl;
+  oIndData_h << "void compWeightedResiduals( const SPK_VA::valarray<double>& Ri );" << endl;
   oIndData_h << endl;
 
   // 
@@ -2551,8 +2564,6 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << endl;
 
   oIndData_h << "{" << endl;
-  //oIndData_h << "   nY = std::count_if( " << UserStr.MDV << ".begin(), ";
-  //oIndData_h << UserStr.MDV << ".end(), logical_true<ValueType>() );" << endl;
   oIndData_h << "   for( int i=0; i<n; i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      if( " << UserStr.MDV << "[i] != 1 )" << endl;
@@ -2596,13 +2607,32 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "{" << endl;
   oIndData_h << "   return measurements;" << endl;
   oIndData_h << "}" << endl;
+  oIndData_h << endl;
 
+  oIndData_h << "template <class ValueType>" << endl;
+  oIndData_h << "void IndData<ValueType>::replaceMeasurements( const SPK_VA::valarray<double>& yyi )" << endl;
+  oIndData_h << "{" << endl;
+  bool hasAlias = ( pDV->synonym != "" );
+  oIndData_h << "   for( int i=0, k=0; i<n; i++ )" << endl;
+  oIndData_h << "   {" << endl;
+  oIndData_h << "      if( " << UserStr.MDV << "[i] != 1 )" << endl;
+  oIndData_h << "      {" << endl;
+  oIndData_h << "         " << UserStr.ORGDV << "[i] = " << UserStr.DV << "[i];" << endl;
+  oIndData_h << "         " << UserStr.DV << "[i] = yyi[k];" << endl;
+  if( hasAlias )
+  oIndData_h << "         " << pDV->synonym << "[i] = yyi[k];" << endl;
+  oIndData_h << "         k++;" << endl;
+  oIndData_h << "      }" << endl;
+  oIndData_h << "   }" << endl;
+  oIndData_h << "}" << endl;
+  
   oIndData_h << "template <class ValueType>" << endl;
   oIndData_h << "void IndData<ValueType>::assignToDbl( double & d, const CppAD::AD<double>& ad ) const" << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   d = CppAD::Value( ad );" << endl;
   oIndData_h << "   return;" << endl;
   oIndData_h << "}" << endl;
+  oIndData_h << endl;
 
   oIndData_h << "template <class ValueType>" << endl;
   oIndData_h << "void IndData<ValueType>::assignToDbl( double & left, double right  ) const" << endl;
@@ -2724,6 +2754,7 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "   const SPK_VA::valarray<double> getAllMeasurements() const;" << endl;
   oDataSet_h << "   int getPopSize() const;" << endl;
   oDataSet_h << "   const SPK_VA::valarray<int> getN() const;" << endl;
+  oDataSet_h << "   void replaceAllMeasurements( const SPK_VA::valarray<double> & yy );" << endl;
   oDataSet_h << "   void compAllResiduals();" << endl;
   oDataSet_h << "   void compAllWeightedResiduals( std::vector< SPK_VA::valarray<double> >& R );" << endl;
   oDataSet_h << "   friend std::ostream& operator<< <ValueType>( std::ostream& o, const DataSet<ValueType>& A );" << endl;
@@ -2891,6 +2922,18 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << endl;
 
   oDataSet_h << "template <class ValueType>" << endl;
+  oDataSet_h << "void DataSet<ValueType>::replaceAllMeasurements( const SPK_VA::valarray<double> & yy )" << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   const int n= data.size();" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   {" << endl;
+  oDataSet_h << "      data[i]->replaceMeasurements( yy[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "   }" << endl;
+  oDataSet_h << "   measurements = yy;" << endl;
+  oDataSet_h << "}" << endl;
+  oDataSet_h << endl;
+
+  oDataSet_h << "template <class ValueType>" << endl;
   oDataSet_h << "void DataSet<ValueType>::compAllResiduals()" << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   const int n = data.size();" << endl;
@@ -3027,14 +3070,7 @@ void NonmemTranslator::generateDataSet( ) const
   for( cntColumns=0, pWhatGoesIn = whatGoesIn.begin(); pWhatGoesIn!=whatGoesIn.end(); pWhatGoesIn++ )
     {
       keyWhatGoesIn = SymbolTable::key( *pWhatGoesIn );
-      if( keyWhatGoesIn == KeyStr.SIMDV )
-	{
-	  oDataSet_h << "         o << \"<value ref=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
-	  oDataSet_h << "A.measurements[position]";
-	  oDataSet_h << " << \"</value>\" << endl;" << endl;
-	  cntColumns++;
-	}
-      else if( keyWhatGoesIn == KeyStr.THETA )
+      if( keyWhatGoesIn == KeyStr.THETA )
 	{
 	  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
 	    {
@@ -3988,12 +4024,8 @@ void NonmemTranslator::generateIndDriver( ) const
        oDriver << "try" << endl;
        oDriver << "{" << endl;
        oDriver << "   simulate( model, nY, bIn, yOut, NonmemPars::seed );" << endl;
-       oDriver << "   for( int j=0; j<nY; j++ )" << endl;
-       oDriver << "   {" << endl;
-       oDriver << "      set.data[0]->SIMDV[j] = yOut[j];" << endl;
-       oDriver << "   }" << endl;
+       oDriver << "   set.replaceAllMeasurements( yOut );" << endl;
        oDriver << "   y   = yOut;" << endl;
-       
        oDriver << "   haveCompleteData = true;" << endl;
        oDriver << "}" << endl;
        oDriver << "catch( SpkException& e )" << endl;
@@ -4587,19 +4619,9 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << "try" << endl;
       oDriver << "{" << endl;
       oDriver << "   simulate( model, alpIn, N, bLow, bUp, yOut, bOut, NonmemPars::seed );" << endl;
-      //      if( myIsEstimate )
-      {
-	oDriver << "   bIn = bOut;" << endl;
-	oDriver << "   for( int i=0, cnt=0; i<nPop; i++ )" << endl;
-	oDriver << "   {" << endl;
-	oDriver << "      for( int j=0; j<N[i]; j++ )" << endl;
-	oDriver << "      {" << endl;
-	oDriver << "         set.data[i]->SIMDV[j] = yOut[cnt];" << endl;
-	oDriver << "      }" << endl;
-	oDriver << "      cnt+=N[i];" << endl;
-	oDriver << "   }" << endl;
-	oDriver << "   y   = yOut;" << endl;
-      }
+      oDriver << "   bIn = bOut;" << endl;
+      oDriver << "   set.replaceAllMeasurements( yOut );" << endl;
+      oDriver << "   y   = yOut;" << endl;
       oDriver << "   haveCompleteData = true;" << endl;
       oDriver << "}" << endl;
       oDriver << "catch( SpkException& e )" << endl;

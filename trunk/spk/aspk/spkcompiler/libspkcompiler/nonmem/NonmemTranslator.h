@@ -45,9 +45,9 @@ class NonmemTranslator : public ClientTranslator
     std::string WRES;
     std::string PRED;
     std::string DV;
+    std::string ORGDV;
     std::string MDV;
     std::string ID;
-    std::string SIMDV;
     std::string F;
     std::string Y;
   };
