@@ -349,12 +349,8 @@ sub fork_driver {
 		  syslog('emerg', "can't rename working directory");
 		  die;
 	      };
-<<<<<<< spkrund.pl
-
 	  # Compile and link the runner
-=======
-	  # Compile and link the driver
->>>>>>> 1.27
+
           if ($mode =~ "test"){
 	     @args = ($pathname_make, "-f", $filename_makefile, "test");
           }
