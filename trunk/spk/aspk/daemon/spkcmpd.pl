@@ -121,14 +121,13 @@ my $host     = shift;
 my $dbuser   = shift;
 my $dbpasswd = shift;
 
-#my $compiler_path = "/usr/local/bin/spkcompiler";
-my $compiler_path = "/usr/local/bin/spkcompilerx";
 my $dbh;
 my $database_open = 0;
 my $service_name = "spkcmpd";
 my $lockfile_path = "/tmp/lock_$service_name";
 my $lockfile_exists = 0;
 my $pathname_co  = "/usr/bin/co";   # rcs checkout utility
+my $pathname_compiler = "/usr/local/bin/spkcompiler";
 my $pathname_tar = "/bin/tar";
 my $row;
 my $row_array;
@@ -213,11 +212,12 @@ sub fork_compiler {
 	  File::Path::rmtree("data.xml,v", 0, 0);
 
 	  # execute the spk compiler
-	  my $e = exec $compiler_path "spkcompiler", ("source.xml, data.xml");
+	  @args = ($pathname_compiler, "source.xml", "data.xml");
+	  my $e = exec(@args);
 
 	  # this statement will never be reached, unless the exec failed
 	  if (!$e) {
-	      syslog("emerg", "couldn't exec $compiler_path");
+	      syslog("emerg", "couldn't exec $pathname_compiler");
 	      die;
 	  }
       }
