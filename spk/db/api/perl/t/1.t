@@ -48,7 +48,7 @@ ok(! $user_id, "new_user, no password specified");
 
 $user_id = &new_user($dbh,
 			"username",   $username,
-			"password",   $password,
+			"password",   "very-secret",
 			"first_name", $first_name,
 			"surname",    $surname);
 ok($user_id, "new_user");
@@ -63,7 +63,8 @@ ok(! $rv, "new_user, duplicate entry");
 $first_name = "George";
 $rv = &update_user($dbh,
 			  "user_id", $user_id,
-			  "first_name", $first_name );
+			  "first_name", $first_name,
+		          "password", $password);
 ok($rv, "update_user");
 $rv = &update_user($dbh,
 			  "user_id", $user_id,

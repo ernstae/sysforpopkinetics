@@ -1,11 +1,11 @@
-HOST = "localhost.localdomain"
+HOST = "localhost"
 
 java:	
 	javac @sourcefiles
 	javadoc -d docs rfpk.spk.spkdb
 
 test:
-	bash reset_db.sh
+	bash reset_db.sh $(HOST)
 	java TestSpkdb $(HOST)
 
 install:
