@@ -24,11 +24,13 @@
  * File: OptimizerTest.h
  *
  *
- * Declare OptimizerTest class.
+ * Unit test for the Optimizer class.
  *
  * Author: Jiaji Du
+ * Modified later by: Mitch Watrous
  *
  *************************************************************************/
+
 #ifndef OPTIMIZER_TEST_H
 #define OPTIMIZER_TEST_H
 
@@ -44,7 +46,8 @@ public:
     void tearDown();
 
     // add test cases as void member functions
-    void case1();
+    void basicTest();
+    void restartFileTest();
 };
 
 #endif
