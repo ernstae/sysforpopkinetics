@@ -195,10 +195,11 @@ struct NonmemParameters
 class NonmemTranslator : public ClientTranslator
 {
  public:
-  enum NonmemModel { NONE, 
-		   ADVAN1, ADVAN2, ADVAN3, ADVAN4, ADVAN5, 
-		   ADVAN6, ADVAN7, ADVAN8, ADVAN9, ADVAN10, 
-		   ADVAN11, ADVAN12 };
+  enum NonmemModel { NONE,   
+                     ADVAN1,  ADVAN2,  ADVAN3,  ADVAN4,  ADVAN5, 
+		     ADVAN6,  ADVAN7,  ADVAN8,  ADVAN9,  ADVAN10, 
+		     ADVAN11, ADVAN12 
+                   };
   const char * const STR_NONE;
   const char * const STR_ADVAN1;
   const char * const STR_ADVAN2;
@@ -240,9 +241,8 @@ class NonmemTranslator : public ClientTranslator
    * translation (by translate()).
    */
   virtual const void * getClientParameters() const;
-  
   virtual const struct SpkParameters * getSpkParameters() const;
-  virtual std::vector<std::string> translate ( xercesc::DOMDocument * tree );
+  virtual void translate ( xercesc::DOMDocument * tree );
   virtual const char * getDriverFilename() const;
   virtual const std::vector< const char * > getModelFilenameList() const;
   
@@ -266,7 +266,9 @@ class NonmemTranslator : public ClientTranslator
 
   void initSymbolTable( SymbolTable& );
   bool readContent( DOMDocument* tree,
-		    SpkParameters& spkOut );// returns true if rough content checking passes
+		    std::string& spkinml_verOut,
+		    enum client::type client_typeOut,
+		    enum SpkParameters::Analysis analysis_typeOut );// returns true if rough content checking passes
   int  readDriver(  DOMDocument* tree, 
 		    SpkParameters& spkOut, 
 		    NonmemParameters & nonmemOut );// returns the number of individuals

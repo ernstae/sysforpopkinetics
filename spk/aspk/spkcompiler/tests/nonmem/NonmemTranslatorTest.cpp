@@ -50,6 +50,7 @@ void NonmemTranslatorTest::testConstructor()
 void NonmemTranslatorTest::testTranslate()
 {
   char input[] = "NonmemTranslatorTestInput.xml";
+  const ClientTranslator * client_translator = NULL;
 
   ifstream ifs( input );
   if( !ifs.good() )
@@ -65,16 +66,17 @@ void NonmemTranslatorTest::testTranslate()
   SpkMLToCpp compiler( input );
 
   try{
-    compiler.translate();
+      client_translator = compiler.translate();
   }
   catch(...)
     {
       CPPUNIT_ASSERT_MESSAGE( "Failed interpreting", false );
     }
 
-  const struct NonmemParameters * nonmem = static_cast<const NonmemParameters*>(compiler.getClientParameters());
+  const struct NonmemParameters * nonmem
+    = static_cast<const NonmemParameters*>(client_translator->getClientParameters());
 
-  const struct SpkParameters * spkRequired = compiler.getSpkParameters();
+  const struct SpkParameters * spkRequired = client_translator->getSpkParameters();
 
   const int nIndividuals = 12;
   CPPUNIT_ASSERT_EQUAL_MESSAGE( "#of individuals is supposed to be 12!", 

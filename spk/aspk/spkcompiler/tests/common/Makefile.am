@@ -14,14 +14,17 @@ test_common_SOURCES = \
 	SymbolTest.cpp \
 	SymbolTest.h \
 	SymbolTableTest.cpp \
-	SymbolTableTest.h
+	SymbolTableTest.h \
+	read_contentTest.cpp \
+	read_contentTest.h
 
 test_common_INCLUDES = \
 	ExpTreeGeneratorTest.h \
 	ExpNodeCarrier.h \
 	SpkCompilerUtilTest.h \
 	SymbolTest.h \
-	SymbolTableTest.h
+	SymbolTableTest.h \
+	read_content.h
 
 AM_LDFLAGS = -lxerces-c -lcppunit -lspkcompiler
 
