@@ -127,7 +127,7 @@ my $dbpasswd = shift;
 my $dbh;
 my $database_open = 0;
 my $filename_cerr_report = "compilation_error.xml";
-my $filename_serr_report = "software_error.xml";
+my $filename_serr = "software_error";
 my $service_name = "spkcmpd";
 my $lockfile_path = "/tmp/lock_$service_name";
 my $lockfile_exists = 0;
@@ -269,6 +269,9 @@ sub fork_compiler {
 		  syslog("emerg", "couldn't rename working directory");
 		  die;
 	      };
+	  # Redirect Standard Error to a file
+	  open STDERR, ">$filename_serr";
+
 	  # Execute the spk compiler, overlaying the child
 	  @args = ($pathname_compiler, "source.xml", "data.xml");
 	  my $e = exec(@args);
@@ -311,10 +314,8 @@ sub reaper {
 	my $child_exit_value    = $? >> 8;
 	my $child_signal_number = $? & 0x7f;
 	my $child_dumped_core   = $? & 0x80;
-	my $err_msg;
 	my $job_id;
-	my $report;
-	my $status_msg = "";
+	my $save_working_dir = 1;
 
 	# Get the job_id from the file we wrote to working directory
 	# of this process
@@ -325,21 +326,8 @@ sub reaper {
 	read(FH, $job_id, -s FH);
 	close(FH);
 
-	# Prepare part of an error message, which might be needed
-	if ($child_exit_value != 0) {
-	    $status_msg .= "exit value = $child_exit_value; ";
-	}
-	if ($child_signal_number == SIGSEGV) {
-	    $status_msg .= "segmentation fault; ";
-	}
-	elsif($child_signal_number != 0) {
-	    $status_msg .= "received signal number $child_signal_number";
-	}
-	if ($child_dumped_core) {
-	    $status_msg .= "core dump in $tmp_dir/$prefix_working_dir$job_id";
-	}
 
-	# Did the compiler exit normally?
+	# Normal termination
 	if ($child_exit_value == 0 && $child_signal_number == 0) {
 	    # Make a tar file from the working directory
 	    my @args = ($pathname_tar, 'cf', "cpp_source.tar");
@@ -363,57 +351,71 @@ sub reaper {
 	    &en_q2r($dbh, $job_id, $buf)
 		or death('emerg', "job_id=$job_id: errstr: $Spkdb::errstr");
 	    syslog('info', "job_id=$job_id compiled and has moved to run queue");
+
+	    $save_working_dir = 0;
 	}
-	# Did the compiler find errors in the user's source?
-	elsif (-f $filename_cerr_report && -s $filename_cerr_report != 0) {
-	    open(FH, $filename_cerr_report);
-	    read(FH, $err_msg, -s FH);
-	    close(FH);
-	    $report = format_error_report($err_msg);
-	    &end_job($dbh, $job_id, "cerr", $report)
+	# Error termination
+	else {
+	    my $err_msg = "";
+	    my $err_rpt = "";
+	    my $report = "";
+	    my $status_msg = "";
+	    my $end_code = "serr";
+
+	    # Prepare part of an error message
+	    if ($child_exit_value != 0) {
+		$status_msg .= "exit value = $child_exit_value; ";
+	    }
+	    if ($child_signal_number == SIGSEGV) {
+		$status_msg .= "segmentation fault; ";
+	    }
+	    elsif($child_signal_number != 0) {
+		$status_msg .= "received signal number $child_signal_number";
+	    }
+	    if ($child_dumped_core) {
+		$status_msg .= "core dump in $tmp_dir/$prefix_working_dir$job_id";
+	    }
+	    # Did the compiler find errors in the user's source?
+	    if (-f $filename_cerr_report && -s $filename_cerr_report != 0) {
+		open(FH, $filename_cerr_report);
+		read(FH, $err_rpt, -s FH);
+		close(FH);
+		$err_msg = "failed compilation do to source errors";
+		$end_code = "cerr";
+		$save_working_dir = 0;
+	    }
+	    # Did the compiler die because of a software fault?
+	    elsif (-f $filename_serr){
+		open(FH, $filename_serr);
+		read(FH, $err_rpt, -s FH);
+		close(FH);
+		$err_msg = "failed due to an SPK compiler bug";
+	    } 
+	    # Did the compiler die because it was aborted by an operator
+	    # suspecting a bug?
+	    elsif ($child_signal_number == SIGABRT
+		   || $child_signal_number == SIGTERM) {
+		$err_msg = "killed by operator suspecting an SPK bug";
+		$err_rpt = $status_msg;
+	    }
+	    else {
+		$err_msg = "SPK compiler died unexpectedly";
+		$err_rpt = $status_msg;
+	    }
+	    $report = format_error_report("$err_msg: $err_rpt");
+	    &end_job($dbh, $job_id, $end_code, $report)
 		or death('emerg', "job_id=$job_id: $Spkdb::errstr");
 	    syslog('info',
-                   "job_id=$job_id failed compilation due to source errors");
+		   "job_id=$job_id failed compilation due to source errors");
 	}
-	# Did the compiler die because of a software fault?
-	elsif (-f $filename_serr_report){
-	    open(FH, $filename_serr_report);
-	    read(FH, $err_msg, -s FH);
-	    close(FH);
-	    $report = format_error_report($err_msg);
-	    &end_job($dbh, $job_id, "serr", $report)
-		or death('emerg', "job_id=$job_id: $Spkdb::errstr");
-	    syslog('info', "job_id=$job_id failed due to a compiler bug");
-	} 
-	# Did the compiler die because it was aborted by an operator
-        # suspecting a bug?
-	elsif ($child_signal_number == SIGABRT
-            || $child_signal_number == SIGTERM) {
-	    $err_msg = "Compiler killed by operator: $status_msg";
-	    $report = format_error_report($err_msg);
-
-	    &end_job($dbh, $job_id, "serr", $report)
-		or death('emerg', "job_id=$job_id: $Spkdb::errstr");
-	    syslog('info', "job_id=$job_id terminated by operator who "
-                          ."suspected a compiler bug");
-	}
-	else {
-	    $err_msg = "Compiler died: $status_msg";
-	    $report = format_error_report($err_msg);
-	    &end_job($dbh, $job_id, "herr", $report)
-		or death('emerg', "job_id=$job_id: $Spkdb::errstr");
-	    syslog('info', "job_id=$job_id died unexpectedly during "
-		          ."compile: $status_msg");
-	}
-	if ($child_dumped_core) {
-	    # Rename the working directory with the job_id to make core
-            # dump easy to find
+	if ($save_working_dir) {
+	    # Rename working directory to make evidence easier to find
 	    rename "$tmp_dir/$working_dir", "$tmp_dir/$prefix_working_dir$job_id"
 		or death('emerg', "couldn't rename working directory");
 	}
 	else {
 	    # Remove the working directory
-#	    File::Path::rmtree("$tmp_dir/$working_dir");
+	    File::Path::rmtree("$tmp_dir/$working_dir");
 	}
     }
     sigprocmask(SIG_SETMASK, $sigset)
@@ -468,6 +470,9 @@ Proc::Daemon::Init();
 
 # Initialize
 start();
+
+# Add directories of shared libraries to the load path
+$ENV{LD_LIBRARY_PATH} = "/usr/lib:/usr/local/lib";
 
 # Create a new process group, with this process as leader.  This will
 # allow us to send the TERM signal to all of our children with a single
