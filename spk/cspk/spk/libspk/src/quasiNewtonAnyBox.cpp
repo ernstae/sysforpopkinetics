@@ -1224,7 +1224,7 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
     // for the Hessian the first time it is called, but not so high
     // that it will perform too many iterations before this function's
     // convergence criterion is checked.
-    itrMax = 5;
+    itrMax = nObjPars;
 
     // Evaluate the objective and its gradient.
     objEval( xCur, fCur, gCur, ... );
