@@ -359,7 +359,6 @@ sub insert_error {
     $caught_err    .= "</error>\n";
 
     $report =~ s/<\/error_list>/$caught_err $xml_errors<\/error_list>\n/;
-    syslog('info', "$report !!!");
     return $report;
 }
 sub format_error_report {
@@ -460,6 +459,11 @@ sub reaper {
 	$end_code = "serr";
 	$err_msg .= "software bug caught as exception; ";
     }
+    # Remove the empty STDERR captured file
+    else {
+        unlink($filename_serr);
+    }
+
     if ($child_dumped_core) {
 	$err_msg .= "core dump in $working_dir; ";
     }
