@@ -126,5 +126,6 @@ public:
   XMLCh* X_VALUE;
   XMLCh* X_TYPE;
   XMLCh* X_NUMERIC;
+  XMLCh* X_ID;
 };
 #endif
