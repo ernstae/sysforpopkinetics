@@ -6,7 +6,9 @@
 
 #include "lex_explangTest.h"
 #include "explangTest.h"
-#include "NonmemTranslatorIndTest.h"
+#include "ind_withID_NonmemTranslatorTest.h"
+#include "ind_noID_NonmemTranslatorTest.h"
+#include "ind_onlysim_NonmemTranslatorTest.h"
 #include "NonmemTranslatorPopTest.h"
 
 using namespace std;
@@ -19,7 +21,9 @@ int main( int argc, const char * argv[] )
 
   master[ "lex_explangTest" ]         = lex_explangTest::suite();
   master[ "explangTest" ]             = explangTest::suite();
-  master[ "NonmemTranslatorIndTest" ] = NonmemTranslatorIndTest::suite();
+  master[ "ind_withID_NonmemTranslatorTest" ] = ind_withID_NonmemTranslatorTest::suite();
+  master[ "ind_noID_NonmemTranslatorTest" ] = ind_noID_NonmemTranslatorTest::suite();
+  master[ "ind_onlysim_NonmemTranslatorTest" ] = ind_onlysim_NonmemTranslatorTest::suite();
   master[ "NonmemTranslatorPopTest" ] = NonmemTranslatorPopTest::suite();
 
   if( argc == 1 )
