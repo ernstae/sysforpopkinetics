@@ -10,7 +10,7 @@ This documentation specifies the information passed back from CSPK to MDA.
 <!-- <spkreport> For CSPK, this contains everything needed for returning the requested values back to the user.  For MDA, it is for presenting them before the user.  The values reported in this document are expressed in the scientific notation with 2 significant digits: ex. 0.12E01, 3.20E00, -0.12E01, 0.12E-01, -0.12E-01.
 -->
 
-<!ELEMENT spkreport ( error_message? |  warning_list? | ( ( (pop_analysis_result | ind_analysis_result) | presentation_data | opt_trace_out? ) | pop_monte_result ) ) >
+<!ELEMENT spkreport ( error_list? |  warning_list? | ( ( (pop_analysis_result | ind_analysis_result) | presentation_data | opt_trace_out? ) | pop_monte_result ) ) >
 
 <!-- <spkreport version="0.1"> The version number of the SpkReportML document.  For the initial version, it is "0.1".-->
 <!ATTLIST spkreport version (0.1|0.2) #REQUIRED>
@@ -18,8 +18,12 @@ This documentation specifies the information passed back from CSPK to MDA.
 <!-- ===================================== -->
 <!--                 MESSAGE               -->
 <!-- ===================================== -->
-<!-- <error_message> Error messages generated from ASPK and/or CSPK. -->
-<!ELEMENT error_message (#PCDATA)>
+<!-- <error_list> A list of error messages generated from ASPK and/or CSPK. -->
+<!ELEMENT error_list (error)*>
+
+<!-- <error> An error is a message or diagnosis for a problem encountered during the execution on ASPK/CSPK.
+A problem of this nature is considered fatal and results in an abnormal termination of the program. -->
+<!ELEMENT error ( message | file_name | line_number )>
 
 <!-- <warning_list> A list of warning messages generated from ASPK and/or CSPK. -->
 <!ELEMENT warning_list (warning)* >
@@ -27,7 +31,7 @@ This documentation specifies the information passed back from CSPK to MDA.
 <!-- <warning> A warning is a message or diagnosis for a problem encountered during the execution on ASPK/CSPK.  
 A problem of this nature is considered not fatal or does not 
 alter the normal execution flow.-->
-<!ELEMENT warning (message | file_name | line_number)>
+<!ELEMENT warning ( message | file_name | line_number )>
 
 <!-- <message> A diagonosis for the problem encountered.-->
 <!ELEMENT message (#PCDATA)>
