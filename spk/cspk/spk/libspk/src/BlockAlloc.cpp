@@ -247,6 +247,7 @@ $head Description$$
      # include <stdlib.h>
      # include <assert.h>
      # include <stdio.h>
+     # include <spk/SpkException.h>
 
      # include "BlockAlloc.h"
 
@@ -260,18 +261,19 @@ $head Description$$
 
      # ifdef NDEBUG
      # define ExternalAssert(exp,text) \
-          assert(exp)
+          if( !(exp) ) \
+          throw SpkException( SpkError(SpkError::SPK_UNKNOWN_ERR, "Error in usage of BlockAlloc:\n", __LINE__, __FILE__ ) );
+
      # define InternalAssert(exp) \
-          assert(exp)
+          if( !(exp) ) \
+          throw SpkException( SpkError(SpkError::SPK_UNKNOWN_ERR, "Error internal to BlockAlloc:\n", __LINE__, __FILE__ ) );
      # else
      # define ExternalAssert(exp,text) \
           if( ! (exp) ) \
-          fprintf(stderr, "Error in usage of BlockAlloc\n%s:\n", text); \
-          assert(exp)
+          throw SpkException( SpkError(SpkError::SPK_UNKNOWN_ERR, "Error in usage of BlockAlloc:\n", __LINE__, __FILE__ ) );
      # define InternalAssert(exp) \
           if( ! (exp) ) \
-          fprintf(stderr, "Error internal to BlockAlloc:\n"); \
-          assert(exp)
+          throw SpkException( SpkError(SpkError::SPK_UNKNOWN_ERR, "Error internal to BlockAlloc:\n", __LINE__, __FILE__ ) );
      # endif
 
      typedef struct info {
