@@ -112,9 +112,15 @@ static SpkCompilerUtil spkcompiler_util;
  * A macro for converting an ANSII character string to XMLCh string.
  */
 #define X(c) spkcompiler_util.createXmlString(c)
+
 /**
  * A macro for converting an XMLCh string to ANSII character string.
  */
 #define C(x) spkcompiler_util.createCString(x)
+
+/**
+ * Trim leading and trailing white spaces.
+ */
+XMLCh* trim( const XMLCh* source );
 
 #endif
