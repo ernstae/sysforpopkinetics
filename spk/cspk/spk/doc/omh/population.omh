@@ -46,6 +46,7 @@ $childtable/
     namespace_population_analysis.h/ 
     Objective.h/   
     ppkaOpt.cpp/
+    popResiduals.cpp/
     popStatistics.cpp/$$
 $pre
 
