@@ -26,7 +26,11 @@ libspkcompiler_la_SOURCES = \
 	SymbolTable.cpp \
 	SymbolTable.h \
 	ClientTranslator.cpp \
-	ClientTranslator.h 
+	ClientTranslator.h \
+	SpkCompilerError.cpp \
+	SpkCompilerError.h \
+	SpkCompilerException.cpp \
+	SpkCompilerException.h
 
 nobase_pkginclude_HEADERS = \
 	$(NONMEM)/nonmem.h \
@@ -41,5 +45,7 @@ pkginclude_HEADERS = \
 	Symbol.h \
 	SymbolTable.h \
 	client.h \
-	ClientTranslator.h
+	ClientTranslator.h \
+	SpkCompilerError.h \
+	SpkCompilerException.h
 
