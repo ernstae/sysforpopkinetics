@@ -6,7 +6,7 @@
 #include "../SymbolTable.h"
 #include "NonmemTranslator.h"
 
-std::pair<enum NonmemTranslator::NonmemModel, enum NonmemTranslator::NonmemParameterization>
+std::pair<enum nonmem::MODEL, enum nonmem::TRANS>
    read_nonmem_model( xercesc::DOMElement* modelNode, 
 			int nIndividuals, 
 			SymbolTable * gSpkExpSymbolTable );

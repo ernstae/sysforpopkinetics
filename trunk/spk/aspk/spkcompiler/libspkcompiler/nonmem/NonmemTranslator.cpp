@@ -21,12 +21,12 @@ using namespace std;
 ////////////////////////////////////////////////////////////////////////////////////
 
 //=======================================================
-// isNonmemKeyword( const string var )
+// isKeyword( const string var )
 //
 // Return true if "var" is one of the NONMEM reserved
 // words.
 //=======================================================
-static bool isNonmemKeyword( const string var )
+ bool nonmem::isKeyword( const string &var )
 {
   if( var =="id" |
       var =="l1" |
@@ -56,8 +56,102 @@ static bool isNonmemKeyword( const string var )
   else
     return false;
 }
+enum nonmem::MODEL
+nonmem::toEnumMODEL( const char* str )
+{
+  if( strcmp( str, nonmem::STR_NONE ) == 0 )
+    return nonmem::NONE;
+  if( strcmp( str, nonmem::STR_ADVAN1 ) == 0 )
+    return nonmem::ADVAN1;
+  if( strcmp( str, nonmem::STR_ADVAN2 ) == 0 )
+    return nonmem::ADVAN2;
+  if( strcmp( str, nonmem::STR_ADVAN3 ) == 0 )
+    return nonmem::ADVAN3;
+  if( strcmp( str, nonmem::STR_ADVAN4 ) == 0 )
+    return nonmem::ADVAN4;
+  if( strcmp( str, nonmem::STR_ADVAN5 ) == 0 )
+    return nonmem::ADVAN5;
+  if( strcmp( str, nonmem::STR_ADVAN6 ) == 0 )
+    return nonmem::ADVAN6;
+  if( strcmp( str, nonmem::STR_ADVAN7 ) == 0 )
+    return nonmem::ADVAN7;
+  if( strcmp( str, nonmem::STR_ADVAN8 ) == 0 )
+    return nonmem::ADVAN8;
+  if( strcmp( str, nonmem::STR_ADVAN9 ) == 0 )
+    return nonmem::ADVAN9;
+  if( strcmp( str, nonmem::STR_ADVAN10 ) == 0 )
+    return nonmem::ADVAN10;
+  if( strcmp( str, nonmem::STR_ADVAN11 ) == 0 )
+    return nonmem::ADVAN11;
+  if( strcmp( str, nonmem::STR_ADVAN12 ) == 0 )
+    return nonmem::ADVAN12;
+}
+enum nonmem::TRANS
+nonmem::toEnumTRANS( const char* str )
+{
+  if( strcmp( str, nonmem::STR_DEFAULT) == 0 )
+    return nonmem::DEFAULT;
+  if( strcmp( str, nonmem::STR_TRANS1 ) == 0 )
+    return nonmem::TRANS1;
+  if( strcmp( str, nonmem::STR_TRANS2 ) == 0 )
+    return nonmem::TRANS2;
+  if( strcmp( str, nonmem::STR_TRANS3 ) == 0 )
+    return nonmem::TRANS3;
+  if( strcmp( str, nonmem::STR_TRANS4 ) == 0 )
+    return nonmem::TRANS4;
+  if( strcmp( str, nonmem::STR_TRANS5 ) == 0 )
+    return nonmem::TRANS5;
+}
 
+const char* const 
+nonmem::toStringMODEL( 
+   enum nonmem::MODEL e )
+{
+  if( e == nonmem::NONE )
+    return nonmem::STR_NONE;
+  if( e == nonmem::ADVAN1 )
+    return nonmem::STR_ADVAN1;
+  if( e == nonmem::ADVAN2 )
+    return nonmem::STR_ADVAN2;
+  if( e == nonmem::ADVAN3 )
+    return nonmem::STR_ADVAN3;
+  if( e == nonmem::ADVAN4 )
+    return nonmem::STR_ADVAN4;
+  if( e == nonmem::ADVAN5 )
+    return nonmem::STR_ADVAN5;
+  if( e == nonmem::ADVAN6 )
+    return nonmem::STR_ADVAN6;
+  if( e == nonmem::ADVAN7 )
+    return nonmem::STR_ADVAN7;
+  if( e == nonmem::ADVAN8 )
+    return nonmem::STR_ADVAN8;
+  if( e == nonmem::ADVAN9 )
+    return nonmem::STR_ADVAN9;
+  if( e == nonmem::ADVAN10 )
+    return nonmem::STR_ADVAN10;
+  if( e == nonmem::ADVAN11 )
+    return nonmem::STR_ADVAN11;
+  if( e == nonmem::ADVAN12 )
+    return nonmem::STR_ADVAN12;
+}
 
+const char* const 
+nonmem::toStringTRANS( 
+   enum nonmem::TRANS e )
+{
+  if( e == nonmem::DEFAULT )
+    return nonmem::STR_DEFAULT;
+  if( e == nonmem::TRANS1 )
+    return nonmem::STR_TRANS1;
+  if( e == nonmem::TRANS2 )
+    return nonmem::STR_TRANS2;
+  if( e == nonmem::TRANS3 )
+    return nonmem::STR_TRANS3;
+  if( e == nonmem::TRANS4 )
+    return nonmem::STR_TRANS4;
+  if( e == nonmem::TRANS5 )
+    return nonmem::STR_TRANS5;
+}
 //=======================================================
 // error( const char * message )
 //
@@ -76,33 +170,15 @@ static int error( const char * message, int line, const char* file )
   ++errors;
   return 1;
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 //  NonmemTranslator class
 //
 ////////////////////////////////////////////////////////////////////////////////
-const char * const NonmemTranslator::STR_NONE    = "none";
-const char * const NonmemTranslator::STR_ADVAN1  = "advan1";
-const char * const NonmemTranslator::STR_ADVAN2  = "advan2";
-const char * const NonmemTranslator::STR_ADVAN3  = "advan3";
-const char * const NonmemTranslator::STR_ADVAN4  = "advan4";
-const char * const NonmemTranslator::STR_ADVAN5  = "advan5";
-const char * const NonmemTranslator::STR_ADVAN6  = "advan6";
-const char * const NonmemTranslator::STR_ADVAN7  = "advan7";
-const char * const NonmemTranslator::STR_ADVAN8  = "advan8";
-const char * const NonmemTranslator::STR_ADVAN9  = "advan9";
-const char * const NonmemTranslator::STR_ADVAN10 = "advan10";
-const char * const NonmemTranslator::STR_ADVAN11 = "advan11";
-const char * const NonmemTranslator::STR_ADVAN12 = "advan12";
-const char * const NonmemTranslator::STR_DEFAULT = "default";
-const char * const NonmemTranslator::STR_TRANS1  = "trans1";
-const char * const NonmemTranslator::STR_TRANS2  = "trans2";
-const char * const NonmemTranslator::STR_TRANS3  = "trans3";
-const char * const NonmemTranslator::STR_TRANS4  = "trans4";
-const char * const NonmemTranslator::STR_TRANS5  = "trans5";
 
 NonmemTranslator::NonmemTranslator( )
-  : nonmemModel( NONE ), nonmemParameterization( DEFAULT )
+  : nonmemModel( nonmem::NONE ), nonmemTrans( nonmem::DEFAULT )
 {
   //  gSpkExpSymbolTable = new SymbolTable;
   //  gSpkExpTree        = expTreeUtils.createTree( "unit" );
@@ -112,103 +188,6 @@ NonmemTranslator::~NonmemTranslator( )
   //delete symbol_checker;
   //  delete gSpkExpSymbolTable;
 }
-enum NonmemTranslator::NonmemModel
-NonmemTranslator::toNonmemModelEnum( const char* str )
-{
-  if( strcmp( str, STR_NONE ) == 0 )
-    return NONE;
-  if( strcmp( str, STR_ADVAN1 ) == 0 )
-    return ADVAN1;
-  if( strcmp( str, STR_ADVAN2 ) == 0 )
-    return ADVAN2;
-  if( strcmp( str, STR_ADVAN3 ) == 0 )
-    return ADVAN3;
-  if( strcmp( str, STR_ADVAN4 ) == 0 )
-    return ADVAN4;
-  if( strcmp( str, STR_ADVAN5 ) == 0 )
-    return ADVAN5;
-  if( strcmp( str, STR_ADVAN6 ) == 0 )
-    return ADVAN6;
-  if( strcmp( str, STR_ADVAN7 ) == 0 )
-    return ADVAN7;
-  if( strcmp( str, STR_ADVAN8 ) == 0 )
-    return ADVAN8;
-  if( strcmp( str, STR_ADVAN9 ) == 0 )
-    return ADVAN9;
-  if( strcmp( str, STR_ADVAN10 ) == 0 )
-    return ADVAN10;
-  if( strcmp( str, STR_ADVAN11 ) == 0 )
-    return ADVAN11;
-  if( strcmp( str, STR_ADVAN12 ) == 0 )
-    return ADVAN12;
-}
-enum NonmemTranslator::NonmemParameterization
-NonmemTranslator::toNonmemParameterizationEnum( const char* str )
-{
-  if( strcmp( str, STR_DEFAULT) == 0 )
-    return DEFAULT;
-  if( strcmp( str, STR_TRANS1 ) == 0 )
-    return TRANS1;
-  if( strcmp( str, STR_TRANS2 ) == 0 )
-    return TRANS2;
-  if( strcmp( str, STR_TRANS3 ) == 0 )
-    return TRANS3;
-  if( strcmp( str, STR_TRANS4 ) == 0 )
-    return TRANS4;
-  if( strcmp( str, STR_TRANS5 ) == 0 )
-    return TRANS5;
-}
-
-const char* const 
-NonmemTranslator::toNonmemModelString( 
-   enum NonmemTranslator::NonmemModel e )
-{
-  if( e == NONE )
-    return STR_NONE;
-  if( e == ADVAN1 )
-    return STR_ADVAN1;
-  if( e == ADVAN2 )
-    return STR_ADVAN2;
-  if( e == ADVAN3 )
-    return STR_ADVAN3;
-  if( e == ADVAN4 )
-    return STR_ADVAN4;
-  if( e == ADVAN5 )
-    return STR_ADVAN5;
-  if( e == ADVAN6 )
-    return STR_ADVAN6;
-  if( e == ADVAN7 )
-    return STR_ADVAN7;
-  if( e == ADVAN8 )
-    return STR_ADVAN8;
-  if( e == ADVAN9 )
-    return STR_ADVAN9;
-  if( e == ADVAN10 )
-    return STR_ADVAN10;
-  if( e == ADVAN11 )
-    return STR_ADVAN11;
-  if( e == ADVAN12 )
-    return STR_ADVAN12;
-}
-
-const char* const 
-NonmemTranslator::toNonmemParameterizationString( 
-   enum NonmemTranslator::NonmemParameterization e )
-{
-  if( e == DEFAULT )
-    return STR_DEFAULT;
-  if( e == TRANS1 )
-    return STR_TRANS1;
-  if( e == TRANS2 )
-    return STR_TRANS2;
-  if( e == TRANS3 )
-    return STR_TRANS3;
-  if( e == TRANS4 )
-    return STR_TRANS4;
-  if( e == TRANS5 )
-    return STR_TRANS5;
-}
-
 void NonmemTranslator::translate( DOMDocument* tree )
 {
   assert( tree != NULL );
@@ -272,7 +251,7 @@ void NonmemTranslator::translate( DOMDocument* tree )
   // | label_x |   | alias_x |
   // +---------+   +---------+
   //
-  map<NonmemTranslator::LABEL, NonmemTranslator::ALIAS> label_alias_mapping;
+  map<nonmem::LABEL, nonmem::ALIAS> label_alias_mapping;
 
 
   //
@@ -299,7 +278,7 @@ void NonmemTranslator::translate( DOMDocument* tree )
   //                +---------+
   //                    ...
   // 
-  map< NonmemTranslator::LABEL, NonmemTranslator::MEASUREMENT > data_for[ nIndividuals +1 ];
+  map< nonmem::LABEL, nonmem::MEASUREMENT > data_for[ nIndividuals +1 ];
 
   //
   // This table records the processing order vs. the identifier pair of each
@@ -336,10 +315,10 @@ void NonmemTranslator::translate( DOMDocument* tree )
   assert( modelNode != NULL );
 
   gSpkExpSymbolTable = &table;
-  pair<enum NonmemModel, enum NonmemParameterization> model_type 
+  pair<enum nonmem::MODEL, enum nonmem::TRANS> model_type 
     = read_nonmem_model( modelNode, nIndividuals, gSpkExpSymbolTable );
   nonmemModel = model_type.first;
-  nonmemParameterization = model_type.second;
+  nonmemTrans = model_type.second;
 
   ourGeneratedFileNames = emit(nIndividuals, 
 			       gSpkExpSymbolTable, 
@@ -353,8 +332,8 @@ void NonmemTranslator::translate( DOMDocument* tree )
 std::vector<std::string> NonmemTranslator::emit(
 		  int nIndividuals,
                   const SymbolTable * table,
-                  const std::map<LABEL, ALIAS> & label_alias_mapping,
-                  const std::map<LABEL, MEASUREMENT> data_for[],
+                  const std::map<nonmem::LABEL, nonmem::ALIAS> & label_alias_mapping,
+                  const std::map<nonmem::LABEL, nonmem::MEASUREMENT> data_for[],
                   const std::string order_id_pair[]
 )
 {

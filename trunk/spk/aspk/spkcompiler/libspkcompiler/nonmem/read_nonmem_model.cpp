@@ -14,17 +14,17 @@
 using namespace std;
 using namespace xercesc;
 
-static void pred(   enum NonmemTranslator::NonmemParameterization trans,
+static void pred(   enum nonmem::TRANS trans,
 		    xercesc::DOMElement* modelNode,
 		    int nIndividuals,
 		    SymbolTable * table );
-static void advan2( enum NonmemTranslator::NonmemParameterization trans,
+static void advan2( enum nonmem::TRANS trans,
 		    xercesc::DOMElement* modelNode,
 		    int nIndividuals,
 		    SymbolTable * table );
 
-std::pair<enum NonmemTranslator::NonmemModel,
-	  enum NonmemTranslator::NonmemParameterization>
+std::pair<enum nonmem::MODEL,
+	  enum nonmem::TRANS>
    read_nonmem_model( xercesc::DOMElement * modelNode, 
 		      int nIndividuals, 
 		      SymbolTable * table )
@@ -47,22 +47,22 @@ std::pair<enum NonmemTranslator::NonmemModel,
   const XMLCh* xml_parameterization = modelNode->getAttribute( X("parameterization") );
   const XMLCh* xml_tol  = modelNode->getAttribute( X("tolerance") );
 
-  pair<enum NonmemTranslator::NonmemModel, 
-       enum NonmemTranslator::NonmemParameterization>
+  pair<enum nonmem::MODEL, 
+       enum nonmem::TRANS>
        model_type;
-  enum NonmemTranslator::NonmemModel base = NonmemTranslator::NONE;
-  enum NonmemTranslator::NonmemParameterization tran = NonmemTranslator::DEFAULT;
+  enum nonmem::MODEL base = nonmem::NONE;
+  enum nonmem::TRANS tran  = nonmem::DEFAULT;
   int tol = 1;
 
   if( !XMLString::isAllWhiteSpace(xml_base) && xml_base != NULL )
     {
       const char * c_base = C(xml_base);
-      base = NonmemTranslator::toNonmemModelEnum( c_base );
+      base = nonmem::toEnumMODEL( c_base );
     }
   if( !XMLString::isAllWhiteSpace( xml_parameterization ) && xml_parameterization != NULL )
     { 
       const char * c_tran = C(xml_parameterization);
-      tran = NonmemTranslator::toNonmemParameterizationEnum( c_tran );
+      tran = nonmem::toEnumTRANS( c_tran );
     }
   if( xml_tol != NULL )
     {
@@ -71,30 +71,30 @@ std::pair<enum NonmemTranslator::NonmemModel,
   model_type.first  = base;
   model_type.second = tran;
 
-  if( base == NonmemTranslator::NONE )
+  if( base == nonmem::NONE )
     {
       pred( tran, modelNode, nIndividuals, table );
     }
-  else if( base == NonmemTranslator::ADVAN2 )
+  else if( base == nonmem::ADVAN2 )
     {
       advan2( tran, modelNode, nIndividuals, table );
     }
   else
     {
       fprintf( stderr, "%s is not supported!", 
-	       NonmemTranslator::toNonmemModelString( base ) );
+	       nonmem::toStringMODEL( base ) );
       exit(-1);
     }
 
   return model_type;
 }
-void pred(   enum NonmemTranslator::NonmemParameterization,
+void pred(   enum nonmem::TRANS,
 	     xercesc::DOMElement* modelNode,
 	     int nIndividuals,
 	     SymbolTable * table )
 {
 }
-void advan2( enum NonmemTranslator::NonmemParameterization trans,
+void advan2( enum nonmem::TRANS trans,
 	     xercesc::DOMElement* modelNode,
 	     int nIndividuals,
 	     SymbolTable * table )
@@ -149,7 +149,7 @@ void advan2( enum NonmemTranslator::NonmemParameterization trans,
 	  gSpkExpLines  = 0;
           gSpkExpSymbolTable = table;
           gSpkExpOutput = pPK_output;
-	  if( trans == NonmemTranslator::TRANS1 )
+	  if( trans == nonmem::TRANS1 )
 	    {
 	      //
 	      //  This is the default parameterization for ADVAN2
@@ -168,7 +168,7 @@ void advan2( enum NonmemTranslator::NonmemParameterization trans,
 	      // are defined (appear on the left hand side of equations).
 	      //             
 	    }
-	  else if( trans == NonmemTranslator::TRANS2 || trans == NonmemTranslator::DEFAULT )
+	  else if( trans == nonmem::TRANS2 || trans == nonmem::DEFAULT )
 	    {
 	      //
 	      // Required PK Parameters:
@@ -237,8 +237,8 @@ void advan2( enum NonmemTranslator::NonmemParameterization trans,
 	    }
 	  else
 	    {
-	      cerr << "Invalid parameterization: ";
-	      cerr << NonmemTranslator::toNonmemParameterizationString( trans );
+	      cerr << "Invalid TRANS: ";
+	      cerr << nonmem::toStringTRANS( trans );
 	      cerr << "." << endl;
 	      exit(-1);
 	    }
