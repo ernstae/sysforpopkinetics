@@ -31,6 +31,7 @@ libspk_la_SOURCES = \
 	cholesky.cpp \
 	countTrues.cpp \
 	Covariance.cpp \
+	derParStatistics.cpp \
 	det.cpp \
 	DirBasedParallelControls.cpp \
 	divByScalar.cpp \
@@ -135,6 +136,7 @@ libspk_la_SOURCES = \
 	countTrues.h \
 	Covariance.h \
 	DBL_EPS_EQUAL_MULT.h \
+	derParStatistics.h \
 	det.h \
 	DoubleMatrix.h \
 	divByScalar.h \
@@ -248,6 +250,7 @@ libspk_release_la_SOURCES = \
 	cholesky.cpp \
 	countTrues.cpp \
 	Covariance.cpp \
+	derParStatistics.cpp \
 	det.cpp \
 	DirBasedParallelControls.cpp \
 	divByScalar.cpp \
@@ -351,6 +354,7 @@ libspk_release_la_SOURCES = \
 	countTrues.h \
 	Covariance.h \
 	DBL_EPS_EQUAL_MULT.h \
+	derParStatistics.h \
 	det.h \
 	DoubleMatrix.h \
 	divByScalar.h \
@@ -464,6 +468,7 @@ pkginclude_HEADERS = \
 	countTrues.h \
 	Covariance.h \
 	DBL_EPS_EQUAL_MULT.h \
+	derParStatistics.h \
 	det.h \
 	divByScalar.h \
 	DirBasedParallelControls.h \
