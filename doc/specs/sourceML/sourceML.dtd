@@ -10,14 +10,14 @@ to have SPK Compiler translate the information into an executable and have CSPK 
 </html:p>
 -->
 
-<!-- <spksourceML> A package of information passed from MDA to ASPK.  The top element of SpkSourceML.
+<!-- <spksource> A package of information passed from MDA to ASPK.  The top element of SpkSourceML.
 
 These information also must distinguish client types (ex. NONMEM, SAAM-II, etc.) to which MDA is interfacing
 so that ASPK can (almost) directly interpret the request written in their language.
 
 Currently, the only supported client is NONMEM (ie. NM-TRAN).  
 -->
-<!ELEMENT spksourceML (nonmem)>
+<!ELEMENT spksource (nonmem)>
 
 <!-- ================================================================================ -->
 <!--                                                                                  -->
