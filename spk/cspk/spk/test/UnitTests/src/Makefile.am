@@ -34,6 +34,8 @@ testall_SOURCES = \
 	countTruesTest.h \
 	CovarianceTest.cpp \
 	CovarianceTest.h \
+	derParStatisticsTest.cpp \
+	derParStatisticsTest.h \
 	detTest.cpp \
 	detTest.h \
 	divByScalarTest.cpp \
@@ -203,6 +205,7 @@ pkginclude_HEADERS = \
 	choleskyTest.h \
 	countTruesTest.h \
 	CovarianceTest.h \
+	derParStatisticsTest.h \
 	detTest.h \
 	divByScalarTest.h \
 	elementwiseAndTest.h \
