@@ -54,6 +54,8 @@ testall_SOURCES = \
 	fitIndividualErrorTest.h \
 	fitIndividualTest.cpp \
 	fitIndividualTest.h \
+	fitPopulationTest.cpp \
+	fitPopulationTest.h \
 	FunctionTest.cpp \
 	FunctionTest.h \
 	getColTest.cpp \
@@ -212,6 +214,7 @@ pkginclude_HEADERS = \
 	firstOrderOptTest.h \
 	fitIndividualErrorTest.h \
 	fitIndividualTest.h \
+	fitPopulationTest.h \
 	FunctionTest.h \
 	getColTest.h \
 	getMulColsTest.h \

@@ -31,6 +31,7 @@
 #include "src/firstOrderOptTest.h"
 #include "src/fitIndividualErrorTest.h"
 #include "src/fitIndividualTest.h"
+#include "src/fitPopulationTest.h"
 #include "src/FunctionTest.h"
 #include "src/getColTest.h"
 #include "src/getMulColsTest.h"
@@ -141,6 +142,7 @@ int main( int argc, const char * argv[] )
   master_list_of_tests[ "firstOrderOptTest" ]                = firstOrderOptTest::suite();
   master_list_of_tests[ "fitIndividualErrorTest" ]           = fitIndividualErrorTest::suite();
   master_list_of_tests[ "fitIndividualTest" ]                = fitIndividualTest::suite();
+  master_list_of_tests[ "fitPopulationTest" ]                = fitPopulationTest::suite();
   master_list_of_tests[ "FunctionTest" ]                     = FunctionTest::suite();
   master_list_of_tests[ "getColTest" ]                       = getColTest::suite();
   master_list_of_tests[ "getMulColsTest" ]                   = getMulColsTest::suite();
