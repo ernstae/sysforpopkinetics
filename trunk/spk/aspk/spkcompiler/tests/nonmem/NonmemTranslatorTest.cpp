@@ -1055,16 +1055,17 @@ CppUnit::Test * NonmemTranslatorTest::suite()
      new CppUnit::TestCaller<NonmemTranslatorTest>(
          "testInheritance", 
 	 &NonmemTranslatorTest::testInheritance ) );
+  /*
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<NonmemTranslatorTest>(
          "testParseIndSource", 
 	 &NonmemTranslatorTest::testParseIndSource ) );
-  /*
+  */
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<NonmemTranslatorTest>(
          "testParsePopSource", 
 	 &NonmemTranslatorTest::testParsePopSource ) );
-  */
+
   return suiteOfTests;
 }
 

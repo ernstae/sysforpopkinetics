@@ -153,6 +153,9 @@ class NonmemTranslator : public ClientTranslator
   XMLCh* X_STRUCT;
   XMLCh* X_DIMENSION;
   XMLCh* X_LABEL;
+  XMLCh* X_COV_R;
+  XMLCh* X_COV_RSR;
+  XMLCh* X_COV_S;
   XMLCh* X_IS_ERR_OUT;
   XMLCh* X_IS_CORR_OUT;
   XMLCh* X_IS_COV_OUT;
