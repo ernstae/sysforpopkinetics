@@ -345,10 +345,26 @@ int main( int argc, const char* argv[] )
   if( cl == client::NONMEM )
     xlator = new NonmemTranslator( source, data );
 
-  xlator->translate();
+  try{
+    xlator->translate();
+  }
+  catch( const SpkCompilerException& e )
+  {
+    oError << e << endl;
+    oError.close();
+    return XML_PARSE_ERR;
+  }
+  catch( ... )
+  {
+    XMLPlatformUtils::Terminate();
+    sprintf( error_message, "An unknown error occurred during compilation.\n %d, %s\n" );
+    myError.push( SpkCompilerError::ASPK_XMLDOM_ERR, error_message, __LINE__, __FILE__ );
+    return XML_PARSE_ERR;
+  }
+
   delete xlator;
 
-  cout << "Completed successfully" << endl;
+  cout << "Completed succssfully." << endl;
   remove( compilation_error_xml );
   return SUCCESS;
 }
