@@ -84,36 +84,13 @@ Test* firstOrderOptTest::suite()
 {
   TestSuite *suiteOfTests = new TestSuite("firstOrderOptTest");
 
-  /*
   suiteOfTests->addTest(new TestCaller<firstOrderOptTest>("firstOrderExampleTest", 
 							  &firstOrderOptTest::firstOrderOptExampleTest));
-  */
+
   suiteOfTests->addTest(new TestCaller<firstOrderOptTest>("firstOrderOptZeroIterationsTest",
 							  &firstOrderOptTest::firstOrderOptZeroIterationsTest));
   return suiteOfTests;
 }
-
-
-/*------------------------------------------------------------------------
- * Local Function Declarations
- *------------------------------------------------------------------------*/
-
-static void doTheTest( bool ok,
-                       double dLTildeOut,
-                       double dLTildeKnown,
-                       const DoubleMatrix& dvecEpsilon,
-                       const DoubleMatrix& dvecAlpLow,
-                       const DoubleMatrix& dvecAlpUp,
-                       const DoubleMatrix& dvecAlpOut,
-                       const DoubleMatrix& dvecAlpHat,
-                       const DoubleMatrix& dvecBLow,
-                       const DoubleMatrix& dvecBUp,
-                       const DoubleMatrix& dmatBOut,
-                       const DoubleMatrix& dmatBHat,
-                       const DoubleMatrix& drowLTilde_alpOut,
-                       const DoubleMatrix& drowLTilde_alpKnown,
-                       const DoubleMatrix& dmatLTilde_alp_alpOut,
-                       const DoubleMatrix& dmatLTilde_alp_alpKnown );
 
 
 /*************************************************************************
@@ -416,8 +393,9 @@ void firstOrderOptTest::firstOrderOptExampleTest()
 
   double dLTildeOut;
 
-  DoubleMatrix drowLTilde_alpOut    ( 1,    nAlp );
-  DoubleMatrix dmatLTilde_alp_alpOut( nAlp, nAlp );
+  DoubleMatrix drowLTilde_alpOut     ( 1,    nAlp );
+  DoubleMatrix dmatLTilde_alp_alpOut ( nAlp, nAlp );
+  DoubleMatrix dmatLambdaTilde_alpOut( nAlp, nInd );
 
 
   //------------------------------------------------------------
@@ -455,7 +433,8 @@ void firstOrderOptTest::firstOrderOptExampleTest()
 				     dvecBStep,
 				     &dLTildeOut,
 				     &drowLTilde_alpOut,
-				     &dmatLTilde_alp_alpOut );
+				     &dmatLTilde_alp_alpOut,
+				     &dmatLambdaTilde_alpOut );
       if( !popOptimizer.getIsTooManyIter() )
 		// Finished
 		break;
@@ -539,7 +518,7 @@ void firstOrderOptTest::firstOrderOptExampleTest()
   double dLTildeKnown = sumYMinAlp1Sqd / ( 2.0 * ( onePlusAlp2 ) ) 
     + nInd / 2.0 * log( 2.0 * PI * ( onePlusAlp2 ) );
 
-  // The value for LTilde_alp_alp(alp) was determined by taking the  
+  // The value for LTilde_alp(alp) was determined by taking the  
   // derivative of equation (17) of the above reference, i.e.,
   //
   //                          partial
@@ -551,6 +530,28 @@ void firstOrderOptTest::firstOrderOptExampleTest()
   pdLTilde_alpKnownData[ 0 ] = - sumYMinAlp1 / onePlusAlp2;
   pdLTilde_alpKnownData[ 1 ] = 0.5 / onePlusAlp2 
                                 * ( - sumYMinAlp1Sqd / onePlusAlp2 + nInd );
+
+  // The value for the derivative of each individual's contribution
+  // to LTilde(alp) was determined by taking the derivative of each
+  // individual's contribution to equation (17) of the above
+  // reference, i.e.,
+  //
+  //                               partial
+  //     [ LTilde (alp) ]_alp = ------------- [- log[p(y |alp)] ] .
+  //             i               partial alp            i
+  //
+  DoubleMatrix dmatLambdaTilde_alpKnown( nAlp, nInd );
+  double* pdLambdaTilde_alpKnownData = dmatLambdaTilde_alpKnown.data();
+  double y_iMinAlp1;
+  for ( i = 0; i < nInd; i++ )
+  {
+    y_iMinAlp1 = pdYData[ i ] - pdAlpHatData[ 0 ];
+
+    pdLambdaTilde_alpKnownData[ 0 + i * nAlp ] = - y_iMinAlp1 / onePlusAlp2;
+    pdLambdaTilde_alpKnownData[ 1 + i * nAlp ] = 0.5 / onePlusAlp2 
+                                                   * ( - pow( y_iMinAlp1, 2 )
+                                                       / onePlusAlp2 + 1.0 );
+  }
 
   // The value for LTilde_alp_alp(alp) was determined by taking the second 
   // derivative of equation (17) of the above reference, i.e.,
@@ -577,7 +578,7 @@ void firstOrderOptTest::firstOrderOptExampleTest()
               dLTildeOut,
               dLTildeKnown,
               indOptimizer.getEpsilon(),
-			  popOptimizer.getEpsilon(),
+              popOptimizer.getEpsilon(),
               dvecAlpLow,
               dvecAlpUp,
               dvecAlpOut,
@@ -588,6 +589,8 @@ void firstOrderOptTest::firstOrderOptExampleTest()
               dmatBHat,
               drowLTilde_alpOut,
               drowLTilde_alpKnown,
+              dmatLambdaTilde_alpOut,
+              dmatLambdaTilde_alpKnown,
               dmatLTilde_alp_alpOut,
               dmatLTilde_alp_alpKnown );
   
@@ -902,8 +905,9 @@ void firstOrderOptTest::firstOrderOptZeroIterationsTest()
 
   double dLTildeOut;
 
-  DoubleMatrix drowLTilde_alpOut    ( 1,    nAlp );
-  DoubleMatrix dmatLTilde_alp_alpOut( nAlp, nAlp );
+  DoubleMatrix drowLTilde_alpOut     ( 1,    nAlp );
+  DoubleMatrix dmatLTilde_alp_alpOut ( nAlp, nAlp );
+  DoubleMatrix dmatLambdaTilde_alpOut( nAlp, nInd );
 
   Optimizer indOptimizer( 1.0e-6, 0, 0 );
   Optimizer popOptimizer( 1.0e-6, 0, 0 );
@@ -923,6 +927,12 @@ void firstOrderOptTest::firstOrderOptZeroIterationsTest()
   double dLTildeKnown;
   DoubleMatrix drowLTilde_alpKnown( 1, nAlp );
   DoubleMatrix* pdmatNull = 0;
+  double* pdLTilde_alpKnownData;
+
+  // The derivatives of each individual's contribution to lTilde
+  // should be equal.
+  DoubleMatrix dmatLambdaTilde_alpKnown( nAlp, nInd );
+  double* pdLambdaTilde_alpKnownData;
 
   // The second derivatives should all be zero.
   DoubleMatrix dmatLTilde_alp_alpKnown( nAlp, nAlp );
@@ -1037,7 +1047,8 @@ void firstOrderOptTest::firstOrderOptZeroIterationsTest()
 					 dvecBStep,
 					 &dLTildeOut,
 					 &drowLTilde_alpOut,
-					 &dmatLTilde_alp_alpOut 
+					 &dmatLTilde_alp_alpOut,
+					 &dmatLambdaTilde_alpOut 
 				   );
       okFirstOrderOpt = true;
     }
@@ -1051,6 +1062,7 @@ void firstOrderOptTest::firstOrderOptZeroIterationsTest()
     //----------------------------------------------------------
 
     bool okLTilde;
+    int k;
     
     //
     // [ Comment by Sachiko, 09/18/2002 ]
@@ -1082,7 +1094,7 @@ void firstOrderOptTest::firstOrderOptZeroIterationsTest()
                  &drowLTilde_alpKnown);
 */
     std::valarray<int> N( nInd );
-	for( int k = 0; k < nInd; k++ )
+	for( k = 0; k < nInd; k++ )
 		N[ k ] = (int)dvecN.data()[ k ];
 	EqIndModel FoModel( &model, N, dvecBStep.toValarray(), nAlp );
 
@@ -1100,6 +1112,22 @@ void firstOrderOptTest::firstOrderOptZeroIterationsTest()
     catch(...)
     {
       CPPUNIT_ASSERT( false );
+    }
+    
+    pdLTilde_alpKnownData      = drowLTilde_alpKnown.data();
+    pdLambdaTilde_alpKnownData = dmatLambdaTilde_alpKnown.data();
+
+    // Calculate the derivatives of each individual's contribution to
+    // lTilde, which should be equal since they all have the same data
+    // and should all have the same b values.
+    for ( j = 0; j < nAlp; j++ )
+    {
+      for ( k = 0; k < nInd; k++ )
+      {
+        pdLambdaTilde_alpKnownData[ j + k * nAlp ] = pdLTilde_alpKnownData[ j ] / nInd;
+      }
+    }
+
 
     //----------------------------------------------------------
     // Compare the results.
@@ -1109,7 +1137,7 @@ void firstOrderOptTest::firstOrderOptZeroIterationsTest()
                 dLTildeOut,
                 dLTildeKnown,
                 indOptimizer.getEpsilon(),
-				popOptimizer.getEpsilon(),
+                popOptimizer.getEpsilon(),
                 dvecAlpLow,
                 dvecAlpUp,
                 dvecAlpOut,
@@ -1120,11 +1148,11 @@ void firstOrderOptTest::firstOrderOptZeroIterationsTest()
                 dmatBHat,
                 drowLTilde_alpOut,
                 drowLTilde_alpKnown,
+                dmatLambdaTilde_alpOut,
+                dmatLambdaTilde_alpKnown,
                 dmatLTilde_alp_alpOut,
                 dmatLTilde_alp_alpKnown );
 
-    }
-    
   }
 }
 
@@ -1151,6 +1179,8 @@ void firstOrderOptTest::doTheTest( bool ok,
 				     const DoubleMatrix& dmatBHat,
 				     const DoubleMatrix& drowLTilde_alpOut,
 				     const DoubleMatrix& drowLTilde_alpKnown,
+				     const DoubleMatrix& dmatLambdaTilde_alpOut,
+				     const DoubleMatrix& dmatLambdaTilde_alpKnown,
 				     const DoubleMatrix& dmatLTilde_alp_alpOut,
 				     const DoubleMatrix& dmatLTilde_alp_alpKnown )
 {
@@ -1185,7 +1215,7 @@ void firstOrderOptTest::doTheTest( bool ok,
   // Print the results.
   //------------------------------------------------------------
 
-  
+  /*
   cout << endl;
 
   cout << "ok = " << ( ok ? "True" : "False" ) << endl;
@@ -1220,6 +1250,12 @@ void firstOrderOptTest::doTheTest( bool ok,
   drowLTilde_alpKnown.print();
   cout << endl;
 
+  cout << "LambdaTilde_alpOut  = " << endl;
+  dmatLambdaTilde_alpOut.print();
+  cout << "LambdaTilde_alpKnown  = " << endl;
+  dmatLambdaTilde_alpKnown.print();
+  cout << endl;
+
   if ( nAlp <= 5 )
   {
     cout << "LTilde_alp_alpOut  = " << endl;
@@ -1228,6 +1264,7 @@ void firstOrderOptTest::doTheTest( bool ok,
     dmatLTilde_alp_alpKnown.print();
     cout << endl;
   }
+  */
 
   
   //------------------------------------------------------------
