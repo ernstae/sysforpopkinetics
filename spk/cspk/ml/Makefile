@@ -1,3 +1,6 @@
+# This makefile is counting on the files 
+# Pred.h, DataSet.h, IndData.h and NonmemPars.h 
+# being properly generated in some separate fashion.
 #
 CPPFLAGS = \
 	-g \
