@@ -29,16 +29,6 @@
  * Author: Sachiko Honda
  *
  *************************************************************************/
-
-
-/*************************************************************************
- *
- * Class: getMulRowsTest
- *
- *
- * Performs the unit test for getMulRows.
- *
- *************************************************************************/
 #include <iostream>
 #include <spk/getMulRows.h>
 #include <spk/isDmatEpsEqual.h>
