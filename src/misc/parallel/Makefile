@@ -23,7 +23,7 @@ spkind: spkind.o $(objects)
 	$(CC) -c $(CFLAGS) $< -o $@ -DARCH=\"$(PVM_ARCH)\" -I$(PVM_ROOT)/include -I.
 
 install:
-	cp spkjob spkpop spkind $(SPK_SHARE)/arch/bin/$(PVM_ARCH)/spk$(MODE)
+	cp spkjob spkpop spkind newjob.sh $(SPK_SHARE)/arch/bin/$(PVM_ARCH)/spk$(MODE)
 
 clean:
 	rm -f *.o
