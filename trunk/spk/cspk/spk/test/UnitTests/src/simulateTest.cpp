@@ -68,64 +68,69 @@ static int myseed()
 //-----------------------------------------------------------------------------
 class simulateTestModel : public SpkModel
 {
-  valarray<double> _a, _b;
-  valarray<int>   _N;
-  int _i;
+  valarray<double> alp, b;
+  valarray<int>   N;
+  int who;
   
 public:
-  simulateTestModel(int nAlp, int nB, const valarray<int> & N )
+  simulateTestModel(int nAlp, int nB, const valarray<int> & NIn )
+    : alp( nAlp ), b( nB ), N( NIn )
     
   {
-    _a.resize( nAlp );
-    _b.resize( nB );
-    _N.resize( N.size() );
-    _N = N;
   }
   ~simulateTestModel(){}
 protected:
   void doSelectIndividual(int i)
   {
-    _i = i;
+    who = i;
   }
-  void doSetPopPar(const valarray<double>& alp)
+  void doSetPopPar(const valarray<double>& alpIn)
   {
-    _a = alp;
+    alp = alpIn;
   }
-  void doSetIndPar(const valarray<double>& b)
+  void doSetIndPar(const valarray<double>& bIn)
   {
-    _b = b;
+    b = bIn;
   }
-  void doDataMean( valarray<double>& f ) const 
+  void doDataMean( valarray<double>& fiOut ) const 
   {
-    f = _a[ 0 ] + _b[ 0 ];
+    fiOut.resize( N[who] );
+    fiOut = alp[ 0 ] + b[ 0 ];
     
   }
-  bool doDataMean_popPar( valarray<double>& ret ) const 
+  bool doDataMean_popPar( valarray<double>& fi_alpOut ) const 
   {
+    fi_alpOut.resize( N[who] * alp.size() );
     return false;
   }
-  bool doDataMean_indPar( valarray<double>& ret ) const
+  bool doDataMean_indPar( valarray<double>& fi_bOut ) const
   {
+    fi_bOut.resize( N[who] * b.size() );
     return false;
   }
-  void doDataVariance( valarray<double>& ret ) const
+  void doDataVariance( valarray<double>& RiOut ) const
   {
-    identity( _N[_i], ret );
+    RiOut.resize( N[who] * N[who] );
+    identity( N[who], RiOut );
   }
-  bool doDataVariance_popPar( valarray<double>& ret ) const
+  bool doDataVariance_popPar( valarray<double>& Ri_alpOut ) const
   {
+    Ri_alpOut.resize( N[who] * N[who] * alp.size() );
     return false;
   }
-  bool doDataVariance_indPar( valarray<double>& ret ) const
+  bool doDataVariance_indPar( valarray<double>& Ri_bOut ) const
   {
+    Ri_bOut.resize( N[who] * N[who] * b.size() );
     return false;
   }
-  void doIndParVariance( valarray<double>& D ) const
+  void doIndParVariance( valarray<double>& DOut ) const
   {
-    D = _a[ 1 ];
+    DOut.resize( b.size() * b.size() );
+    DOut = alp[ 1 ];
   }
-  bool doIndParVariance_popPar( valarray<double>& ret ) const
+  bool doIndParVariance_popPar( valarray<double>& D_alpOut ) const
   {
+    D_alpOut.resize( b.size() * b.size() * alp.size() );
     return false;
   }
 };
@@ -136,95 +141,100 @@ protected:
 
 class simulateTestModelComplex : public SpkModel
 {
-  valarray<double> _a, _b;
-  valarray<int>    _N;
-  int _i, r;
+  valarray<double> alp, b;
+  valarray<int>    N;
+  int who;
   
 public:
-  simulateTestModelComplex( int nAlp, int nB, valarray<int> & N )
+  simulateTestModelComplex( int nAlp, int nB, valarray<int> & NIn )
+  : alp( nAlp ), b( nB ), N( NIn )
   {
-    _a.resize( nAlp );
-    _b.resize( nB );
-    _N.resize( N.size() );
-    _N = N;
   }
   ~simulateTestModelComplex(){}
 protected:
   void doSelectIndividual(int i)
   {
-    _i = i;
+    who = i;
   }
-  void doSetPopPar(const valarray<double>& alp)
+  void doSetPopPar(const valarray<double>& alpIn)
   {
-    _a = alp;
+    alp = alpIn;
   }
-  void doSetIndPar(const valarray<double>& b)
+  void doSetIndPar(const valarray<double>& bIn)
   {
-    _b = b;
+    b = bIn;
   }
-  void doDataMean( valarray<double>& f ) const 
+  void doDataMean( valarray<double>& fiOut ) const 
   {    
+    fiOut.resize( N[who] );
     for (int i = 0; i <= 3; i++)
       {
-	f[i] = _a[i] + _b[i];
+	fiOut[i] = alp[i] + b[i];
       }
     
     for (int i = 4; i <= 7; i++)
       {
-	f[i] = 5* (_a[i - 4] + _b[i - 4]);
+	fiOut[i] = 5* (alp[i - 4] + b[i - 4]);
       }
     
-    for (int i = 8; i < _N[_i]; i++)
+    for (int i = 8; i < N[who]; i++)
       {
-	f[i] = 6* (_a[r] + _b[r]);
+	fiOut[i] = 6* (alp[ (i+1)%3 ] + b[(i+1)%3 ]);
       }
     
   }
-  bool doDataMean_popPar( valarray<double>& ret ) const 
+  bool doDataMean_popPar( valarray<double>& fi_alpOut ) const 
   {
+    fi_alpOut.resize( N[who] * alp.size() );
     return false;
   }
-  bool doDataMean_indPar( valarray<double>& ret ) const
+  bool doDataMean_indPar( valarray<double>& fi_bOut ) const
   {
+    fi_bOut.resize( N[who] * b.size() );
     return false;
   }
-  void doDataVariance( valarray<double>& Ri ) const
+  void doDataVariance( valarray<double>& RiOut ) const
   {
-    Ri = 0.0;
-    for (int i = 0; i < _N[_i]; i++)
+    RiOut.resize( N[who] * N[who] );
+    RiOut = 0.0;
+    for (int i = 0; i < N[who]; i++)
       {
-	Ri[i*_N[_i] + i] = _a[4];
+	RiOut[i*N[who] + i] = alp[4];
       }
   }
-  bool doDataVariance_popPar( valarray<double>& ret ) const
+  bool doDataVariance_popPar( valarray<double>& Ri_alpOut ) const
   {
+    Ri_alpOut.resize( N[who] * N[who] * alp.size() );
     return false;
   }
-  bool doDataVariance_indPar( valarray<double>& ret ) const
+  bool doDataVariance_indPar( valarray<double>& Ri_bOut ) const
   {
+    Ri_bOut.resize( N[who] * N[who] * b.size() );
     return false;
   }
-  void doIndParVariance( valarray<double>& D ) const
+  void doIndParVariance( valarray<double>& DOut ) const
   { 
-    D[0]  =  0.36;
-    D[1]  = -0.12;
-    D[2]  =  0.3;
-    D[3]  =  0.0012;
-    D[4]  = -0.12;
-    D[5]  =  0.05;
-    D[6]  = -0.099;
-    D[7]  =  0.0036;
-    D[8]  =  0.3;
-    D[9]  = -0.099;
-    D[10] =  0.4101;
-    D[11] =  0.015;
-    D[12] =  0.0012;
-    D[13] =  0.0036;
-    D[14] =  0.015;
-    D[15] =  0.002776;
+    DOut.resize( b.size() * b.size() );
+    DOut[0]  =  0.36;
+    DOut[1]  = -0.12;
+    DOut[2]  =  0.3;
+    DOut[3]  =  0.0012;
+    DOut[4]  = -0.12;
+    DOut[5]  =  0.05;
+    DOut[6]  = -0.099;
+    DOut[7]  =  0.0036;
+    DOut[8]  =  0.3;
+    DOut[9]  = -0.099;
+    DOut[10] =  0.4101;
+    DOut[11] =  0.015;
+    DOut[12] =  0.0012;
+    DOut[13] =  0.0036;
+    DOut[14] =  0.015;
+    DOut[15] =  0.002776;
   }
-  bool doIndParVariance_popPar( valarray<double>& ret ) const
+  bool doIndParVariance_popPar( valarray<double>& D_alpOut ) const
   {
+    D_alpOut.resize( b.size() * b.size() * alp.size() );
     return false;
   }
 };
