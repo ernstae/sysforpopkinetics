@@ -7,7 +7,13 @@
  <articleinfo>
     <revhistory>
       <revision>
-	<revnumber>1.0</revnumber>
+	<revnumber>1.2</revnumber>
+	<date>December 12, 2003</date>
+	<authorinitials>sh</authorinitials>
+	<revremark>Adapted the convension used to express the spreadsheet table.</revremark>
+      </revision>
+      <revision>
+	<revnumber>1.1</revnumber>
 	<date>December 9, 2003</date>
 	<authorinitials>sh</authorinitials>
 	<revremark>Initial version.</revremark>
@@ -15,15 +21,102 @@
     </revhistory>
   <abstract>
       <para>
-The data set given by the user is convereted to an XML format that conforms SpreadsheetML schema when it crosses the client-server boundary.
+The experimental data set is merely a set of records and a record is a set of values,
+or a matrix of values.  This type of matrix is very-well handled by many
+existing spreadsheet programs today: Microsoft Excel, Sun StarOffice and OpenOffice
+to name a few.  These applications are all going to use or already have adapted
+XML as the inter-product exhange format.  Unfortunately so far they have exclaimed
+different syntaxes.  Their XML *grammer*, however, has some common feature, which
+is to see a spreadsheet as a place to lay one or more tables and each table
+is composed of multiple rows.  A row, in turn, is made of multiple cells that 
+contain actual values.  We will follow this convension to express our data set in XML
+even though the actual syntax may not match any of them.
       </para>
   </abstract>
  </articleinfo>
   <sect1>
-    <title>SpreadsheetML</title>
-    <para>SpreadsheetML is the XML used among Microsoft Office products and, thus, most likely used by many others.  
-For the XML schema, refer directly to: 
-        <ulink url="http://www.microsoft.com/downloads/details.aspx?FamilyId=FE118952-3547-420A-A412-00A2662442D9&amp;displaylang=en"><citetitle>Microsoft Office 2003 XML Reference Schema</citetitle></ulink>
+    <title>SpkDataML DTD</title>
+    <para>
+       <screen>
+&lt;!ELEMENT spkdataML (table)*>
+&lt;!ATTLIST spkdataML version CDATA #REQUIRED>
+
+&lt;!ELEMENT table (row)*>
+&lt;!ATTLIST table columns CDATA #REQUIRED>
+&lt;!ATTLIST table rows CDATA #REQUIRED>
+
+&lt;!ELEMENT row (value)*>
+&lt;!ATTLIST row position CDATA #REQUIRED>
+
+&lt;ELEMENT value (#PCDATA)>
+&lt;!ATTLIST value type (numeric|string) #IMPLIED>
+       </screen>
+<variablelist>
+   <varlistentry>
+      <term>
+         <varname>spkdataML</varname>
+      </term>
+      <listitem>
+         <para>The top element of the SpkDataML document.  This can contain multiple tables.</para>
+         <variablelist>
+            <varlistentry>
+               <term>version</term>
+               <listitem>
+                  <para>The version number of SpkDataML.  The initial version is 0.1.</para>
+               </listitem>
+            </varlistentry>
+         </variablelist>
+      </listitem>
+   </varlistentry>
+   <varlistentry>
+      <term><varname>table</varname></term>
+      <listitem>
+         <para>A table or matrix of values.</para>
+         <variablelist>
+            <varlistentry>
+               <term>columns</term>
+               <listitem>
+                   <para>The number of columns in the table, >=0.</para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term>rows</term>
+               <listitem>
+                   <para>The number of rows in the table, >=0.</para>
+               </listitem>
+            </varlistentry>
+         </variablelist>
+      </listitem>
+   </varlistentry>
+   <varlistentry>
+      <term><varname>row</varname></term>
+      <listitem>
+         <para>A row in the table.</para>
+         <variablelist>
+            <varlistentry>
+               <term>position</term>
+               <listitem>
+                  <para>The position of the row in the table, >=1.</para>
+               </listitem>
+            </varlistentry>
+         </variablelist>
+      </listitem>
+   </varlistentry>
+   <varlistentry>
+      <term><varname>value</varname></term>
+      <listitem>
+         <para>A value (or *cell* if you will) in the row.</para>
+         <variablelist>
+            <varlistentry>
+               <term>type</term>
+               <listitem>
+                  <para>The data type of the value: "string" or "numeric", default to "numeric".</para>
+               </listitem>
+            </varlistentry>
+         </variablelist>
+      </listitem>
+   </varlistentry>
+</variablelist>
     </para>
   </sect1>
 </article>
