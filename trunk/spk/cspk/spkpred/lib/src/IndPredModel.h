@@ -85,7 +85,7 @@ IndPredModel::IndPredModel(
     const SPK_VA::valarray<double>&  thetaCurrIn,
     int                              nEtaIn,
     covStruct                        omegaStructIn,
-    const SPK_VA::valarray<double>&  omegaParCurrIn );
+    const SPK_VA::valarray<double>&  omegaMinRepIn );
 
   ~IndPredModel();
 
@@ -143,6 +143,11 @@ protected:
   // set in the constructor.
   Cov* pOmegaCurr;                                   // Pointer to the covariance of eta.
 
+  // These quantities do not have cache flags associated with them
+  // because the Cov object maintains them itself.
+  mutable SPK_VA::valarray<double> omegaCurr;           // Current value for the covariance of eta.
+  mutable SPK_VA::valarray<double> omega_omegaParCurr;  // Current value for the derivative of the covariance of eta.
+
   // This is not const because it is reset each time the
   // expressions in the Pred block are evaluated for a 
   // particular individual. 
@@ -154,8 +159,6 @@ protected:
   mutable SPK_VA::valarray<double> dataVariance_indParCurr;
   mutable SPK_VA::valarray<double> dataVarianceInvCurr;
   mutable SPK_VA::valarray<double> dataVarianceInv_indParCurr;
-  mutable SPK_VA::valarray<double> omegaCurr;           // Current value for the covariance of eta.
-  mutable SPK_VA::valarray<double> omega_omegaParCurr;  // Current value for the derivative of the covariance of eta.
 
   mutable bool isDataMeanCurrOk;
   mutable bool isDataMean_indParCurrOk;
@@ -166,8 +169,6 @@ protected:
   mutable bool isPredADFunCurrOk;
   mutable bool isPredFirstDerivCurrOk;
   mutable bool isPredSecondDerivCurrOk;
-  mutable bool isOmegaCurrOk;
-  mutable bool isOmega_omegaParCurrOk;
 
   mutable bool usedCachedDataMean;
   mutable bool usedCachedDataMean_indPar;
@@ -175,11 +176,9 @@ protected:
   mutable bool usedCachedDataVariance_indPar;
   mutable bool usedCachedDataVarianceInv;
   mutable bool usedCachedDataVarianceInv_indPar;
-  mutable bool usedCachedPredADFunCurr;
-  mutable bool usedCachedPredFirstDerivCurr;
-  mutable bool usedCachedPredSecondDerivCurr;
-  mutable bool usedCachedOmega;
-  mutable bool usedCachedOmega_omegaPar;
+  mutable bool usedCachedPredADFun;
+  mutable bool usedCachedPredFirstDeriv;
+  mutable bool usedCachedPredSecondDeriv;
 
 public:
   bool getUsedCachedDataMean()               const;
@@ -200,10 +199,10 @@ public:
   //------------------------------------------------------------
 
 protected:
-  void doDataMean              ( SPK_VA::valarray<double>& ret ) const; 
+  void doDataMean              ( SPK_VA::valarray<double>& ret ) const;
   bool doDataMean_indPar       ( SPK_VA::valarray<double>& ret ) const;
 
-  void doDataVariance          ( SPK_VA::valarray<double>& ret ) const; 
+  void doDataVariance          ( SPK_VA::valarray<double>& ret ) const;
   bool doDataVariance_indPar   ( SPK_VA::valarray<double>& ret ) const;
   void doDataVarianceInv       ( SPK_VA::valarray<double>& ret ) const;
   bool doDataVarianceInv_indPar( SPK_VA::valarray<double>& ret ) const;
@@ -263,7 +262,10 @@ protected:
 public:
   int getNIndPar() const;
 
-  void getIndPar( SPK_VA::valarray<double>& ret ) const; 
+  void getIndPar( SPK_VA::valarray<double>& ret ) const;
+
+  void getTheta( SPK_VA::valarray<double>& ret ) const;
+  void getOmega( SPK_VA::valarray<double>& ret ) const;
 
 
   //------------------------------------------------------------
