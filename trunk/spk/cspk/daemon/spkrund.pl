@@ -304,7 +304,12 @@ sub fork_runner {
 		  die;
 	      };
 	  # Compile and link the runner
-	  @args = ($pathname_make, "-f", $filename_makefile);
+          if ($mode =~ "test"){
+	     @args = ($pathname_make, "-f", $filename_makefile, "test");
+          }
+          else{
+             @args = ($pathname_make, "-f", $filename_makefile);
+          }
 	  unless (system(@args) == 0)  {
 	      $! = 101;
 	      #$? = $build_failure_exit_value << 8;
