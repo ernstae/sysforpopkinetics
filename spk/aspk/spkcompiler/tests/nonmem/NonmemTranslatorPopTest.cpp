@@ -57,6 +57,7 @@ namespace{
   const char * strTIME  = "TIME";
   const char * strCP    = "CP";
   const char * strDV    = "DV";
+
   const char * strKA    = "ka";
   const char * strKE    = "ke";
   const char * strF     = "F";
@@ -82,7 +83,7 @@ namespace{
   // Population size:          3
   // Data labels/items:        [ ID, TIME CP/DV ]
   //
-  // Data Set
+  // Data Set2
   // --------
   //  
   //   ID      TIME     CP=DV    (MDV)
