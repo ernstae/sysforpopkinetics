@@ -2306,7 +2306,7 @@ void PopPredModel::doDataVariance( valarray<double>& ret ) const
     /*
     // Make sure that the value is not infinite.
     if ( fabs( dataVarianceCurr[j + j * nEventCurr] ) == 
-	 numeric_limits<double>::infinity() )
+         numeric_limits<double>::infinity() )
     {
       // [Revisit - SPK Error Codes Don't Really Apply - Mitch]
       // This error code should be replaced with one that is accurate.
@@ -2321,7 +2321,7 @@ void PopPredModel::doDataVariance( valarray<double>& ret ) const
 
     // Make sure that the value is not a NaN.
     if ( dataVarianceCurr[j + j * nEventCurr] != 
-	 dataVarianceCurr[j + j * nEventCurr] )
+         dataVarianceCurr[j + j * nEventCurr] )
     {
       // [Revisit - SPK Error Codes Don't Really Apply - Mitch]
       // This error code should be replaced with one that is accurate.
@@ -2480,8 +2480,8 @@ bool PopPredModel::doDataVariance_popPar( valarray<double>& ret ) const
       // Set the derivative with respect to theta of this column.
       for ( k = 0; k < nTheta; k++ )
       {
-	// Note that an rvec operation is performed on the elements
-	// of h before the derivative is calculated.
+        // Note that an rvec operation is performed on the elements
+        // of h before the derivative is calculated.
         h_thetaRow = j * nEps + m;
         h_thetaCol = k;
 
@@ -2743,8 +2743,8 @@ bool PopPredModel::doDataVariance_indPar( valarray<double>& ret ) const
       // Set the derivative with respect to eta of this column.
       for ( k = 0; k < nEta; k++ )
       {
-	// Note that an rvec operation is performed on the elements
-	// of h before the derivative is calculated.
+        // Note that an rvec operation is performed on the elements
+        // of h before the derivative is calculated.
         h_etaRow = j * nEps + m;
         h_etaCol = k;
 
@@ -3034,7 +3034,7 @@ bool PopPredModel::doDataVarianceInv_popPar( valarray<double>& ret ) const
       dataVarianceInv_popParCurr[row + col * nRow] = 
         - dataVariance_popParCurr[row + col * nRow]
         / ( dataVarianceCurr[j + j * nEventCurr] * 
-	    dataVarianceCurr[j + j * nEventCurr] );
+            dataVarianceCurr[j + j * nEventCurr] );
     }
   }
 
@@ -3155,7 +3155,7 @@ bool PopPredModel::doDataVarianceInv_indPar( valarray<double>& ret ) const
       dataVarianceInv_indParCurr[row + col * nRow] = 
         - dataVariance_indParCurr[row + col * nRow]
         / ( dataVarianceCurr[j + j * nEventCurr] * 
-	    dataVarianceCurr[j + j * nEventCurr] );
+            dataVarianceCurr[j + j * nEventCurr] );
     }
   }
 
