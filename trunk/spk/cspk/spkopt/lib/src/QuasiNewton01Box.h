@@ -381,6 +381,8 @@ The argument $italic level$$ specifies the amount of tracing to do
 during the optimization procedure.
 If $latex level = 0$$, no tracing is done; i.e., $code QuasiNewton01Box$$
 does not write any output.
+Otherwise, tracing is done for each iteration during which the state changes
+($italic rCur$$, $italic xCur$$, or $italic HCur$$ changes).
 
 $subhead level >= 1$$
 $table
@@ -456,12 +458,13 @@ $code i$$    $cnext
 	The component of the vectors being printed
 $rnext
 $code x$$     $cnext
-	The current argument value $italic x^k$$
+	The current argument value $italic x^k$$; i.e., the value
+	of $italic xCur$$ at the beginning of the iteration.
 $rnext
 $code s$$     $cnext
 	The current step value $latex s^k$$.
 $rnext
-$code g$$
+$code g$$    $cnext
 	The current gradient $latex g( x^k )$$
 $rnext
 $code p$$     $cnext
