@@ -349,7 +349,7 @@ sub fork_runner {
 sub format_error_report {
     my $content = shift;
     my $report = '<?xml version="1.0"?>';
-    $report   .= "<spkreport>\n";
+    $report   .= "\n<spkreport>\n";
     $report   .= "  <error_message>\n";
     $report   .= "    $content\n";
     $report   .= "  </error_message>\n";
