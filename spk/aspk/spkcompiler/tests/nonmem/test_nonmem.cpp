@@ -4,6 +4,7 @@
 
 #include "read_nonmem_driverTest.h"
 #include "read_nonmem_dataTest.h"
+#include "read_nonmem_modelTest.h"
 #include "NonmemExpXlatorTest.h"
 
 using namespace std;
@@ -16,6 +17,7 @@ int main( int argc, const char * argv[] )
   runner.addTest( NonmemExpXlatorTest::suite() );
   runner.addTest( read_nonmem_driverTest::suite() );
   runner.addTest( read_nonmem_dataTest::suite() );
+  runner.addTest( read_nonmem_modelTest::suite() );
   runner.run();
 
   return 0;
