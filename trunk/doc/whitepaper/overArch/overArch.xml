@@ -5,7 +5,7 @@
   <!ENTITY dept "Department of Bioengineering">
 ]>
 <article><title>An Architectural Overview of SPK</title>
- <articleinfo>
+  <articleinfo>
     <revhistory>
       <revision>
 	<revnumber>1.0</revnumber>
@@ -14,11 +14,11 @@
 	<revremark>Initial version.</revremark>
       </revision>
     </revhistory>
-  <abstract>
+    <abstract>
       <para>
       </para>
-  </abstract>
- </articleinfo>
+    </abstract>
+  </articleinfo>
   <sect1>
     <title>What the Architecture Supports</title>
     <para>
@@ -35,16 +35,16 @@
 	believe will closely conform to the observational data.  The
 	equations that comprise these models contain parameters whose
 	values must be determined by "fitting" the equations to real-world
-	data.  In the biomedical field of population kinetics (PK), models
-	of a type known as <emphasis>nonlinear mixed-effects</emphasis>,
-	are popular.  This technique, when properly applied,
+	data.  In the biomedical field of population kinetics (PK), a methodology
+	known as <emphasis>nonlinear mixed-effects modeling</emphasis>,
+	has been very successful.  This technique, when properly applied,
 	can provide models which
 	accurately project the behavior of an entire population from
 	a small number of observations collected from a small sample 
-	of individuals from the population.  This makes the 
-	methodolgy very attactive in medicine and pharmaceutical 
+	of individuals.  This makes this technology 
+	very attactive in medicine and pharmaceutical 
 	development, because collecting data from living subjects is a
-	difficult, time-consuming and, inevitably, expensive procedure.
+	difficult, time-consuming, sometimes risky and, inevitably, expensive procedure.
       </para>
     </sect2>
     <sect2>
@@ -434,15 +434,103 @@
 	</listitem>
       </orderedlist>
     </para>
-    <figure>
-      <title>Logical Architecture</title>
-      <graphic scale="100" fileref="logical.png"/>
-    </figure>
   </sect1>
   <sect1>
-    <title>Testing</title>
-    <para>
-    </para>
+    <title>Software Architecture</title>
+    <sect2>
+      <title>The Database</title>
+      <para>
+	Architecturally, SPK software is built around a relational database.
+	Every significant change in the state of the system is recorded there.
+	For instance, a user's models and datasets are stored there. One 
+	implication of this is the user can employ one workstation at the office,
+	another at home and a third on the road without ever having to 
+	"synchronize" them.  Because models and datasets are stored
+	in a version control format, all versions of a model or dataset,
+	from the first to the most recent, are available. 
+      </para>
+      <para>
+	To have SPK compute model parameters, a user <emphasis>submits</emphasis>
+	a job. Behind the scenes, the MDA passes a request to the web server
+	which, in turn, creates a new row in the <emphasis>job table</emphasis> 
+	of the database.  From that point onward, the application server and
+	the computational server access the database for all of their inputs and
+	outputs concerning that job. Finally, the computational results are accessed by the
+	MDA via the web server
+      </para>
+      <para>
+	<figure>
+	  <title>Software Architecture</title>
+	  <graphic scale="100" fileref="logical.png"/>
+	</figure>
+      </para>
+      <para>
+	The use of a database as the sole medium of communication between the 
+	web server, the application server and the computational server is a
+	powerful expression of the concept that inter-module communication paths
+	should be very narrow and well defined, so that the modules themselves
+	can be as independent as possible.
+      </para>
+      <para>
+	The most important database fields concerning a job are formatted in
+	XML, and conform precisely to specifications that SPK has developed 
+	and which are  part of the open source release.  This is an example of the
+	leverage obtained from the use of widely accepted techniques and
+	standards.  Because SPK employs XML, it was not necessary to 
+	develop a special-purpose parser.  Instead, the widely used
+	Xerces parser is employed.
+      </para>
+    </sect2>
+    <sect2>
+      <title>The Lifecycle of a Job</title>
+      <para>
+	Central to the architecture of SPK is the concept of job lifecycle.
+	Milestones in the life of a job are implemented as events in a
+	finite state automaton, implemented by the three servers and the database.
+      </para>
+      <para>
+	As shown in the following diagram, the web server submits a job that it
+	has received from the MDA by adding a new row to the 
+	<emphasis>job</emphasis> table of the database and entering the
+	value <emphasis>queued to compile</emphasis> in the the <emphasis>state</emphasis>
+	field of that row.
+      </para>
+      <para>
+	Meanwhile the <emphasis>compiler daemon</emphasis>, which is a part of the
+	application server, will have noticed the appearance of a new job with
+	<emphasis>queued to compile</emphasis> status. When sufficent resources
+	become available to the application server so that it can compile another
+	job, the daemon will start an instance of the SPK compiler to transform
+	the job specifications in the database into C++ code.  If the compilation
+	completes without error, the daemon stores the resulting code in the
+	job's database row and changes the job state to <emphasis>queued to run</emphasis>.
+      </para>
+      <para>
+	As soon as the entry is changed in the database, another daemon, which is
+	part of the computational server, will notice it. In due time, when resources
+	become available and when the job is the highest priority job waiting with
+	<emphasis>queued to run</emphasis> status, the <emphasis>run-time daemon</emphasis>
+	will have the C++ code compiled and linked to form an executable binary and
+	will start it running on the computational cluster.
+      </para>
+      <para>
+	When the job's run is complete, the run-time daemon will store the results
+	into the database and will change the job state to <emphasis>end</emphasis>.
+      </para>
+      <para>
+	The next time the user checks the status of his jobs, either on his personal
+	SPK web page or with the MDA, he will notice that a job has results available.
+	He will use the MDA to transfer a copy of the results to his workstation
+	for analysis, presentation, or export to other tools.
+      </para>
+      <para>
+	<figure>
+	  <title>Job State Diagram</title>
+	  <graphic scale="100" fileref="job_state.png"/>
+	</figure>
+	
+      </para>
+    </sect2>
   </sect1>
   <sect1>
     <title></title>
