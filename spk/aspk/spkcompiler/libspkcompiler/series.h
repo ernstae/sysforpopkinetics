@@ -1,9 +1,10 @@
+#ifndef SERIES_H
+#define SERIES_H
+
 /**
  * @file series.h
  * Declare the series(a,d) function.
  */
-#ifndef SERIES_H
-#define SERIES_h
 
 /**
  * Calculate a + (a+d) + (a+2d) + ... + {a+(n-l)d},
