@@ -2,7 +2,7 @@
 
 use strict;
 
-use Test::Simple tests => 41;  # number of ok() tests
+use Test::Simple tests => 42;  # number of ok() tests
 
 use Spkdb (
     'connect', 'disconnect', 'new_job', 'job_status', 
@@ -52,6 +52,13 @@ $user_id = &new_user($dbh,
 			"first_name", $first_name,
 			"surname",    $surname);
 ok($user_id, "new_user");
+
+$rv = &new_user($dbh,
+			"username",   $username,
+			"password",   $password,
+			"first_name", $first_name,
+			"surname",    $surname);
+ok(! $rv, "new_user, duplicate entry");
 
 $first_name = "George";
 $rv = &update_user($dbh,

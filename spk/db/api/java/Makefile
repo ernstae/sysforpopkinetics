@@ -1,8 +1,9 @@
-java:
+java:	
 	javac @sourcefiles
-
-docs:
-	javadocs -d docs rfpk.spk.spkdb
+	javadoc -d docs rfpk.spk.spkdb
 
 test:
+	bash reset_db.sh
 	java TestSpkdb
+
+
