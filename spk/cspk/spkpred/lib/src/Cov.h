@@ -85,6 +85,7 @@ protected:
 
 public:
   void setPar( const SPK_VA::valarray<double>& parIn );
+  void setCov( const SPK_VA::valarray<double>& covIn );
 
 
   //------------------------------------------------------------
@@ -132,11 +133,24 @@ public:
     SPK_VA::valarray<double>&  parLow,
     SPK_VA::valarray<double>&  parUp ) const = 0;
 
+  virtual void calcPar( 
+    const SPK_VA::valarray<double>& covIn,
+    SPK_VA::valarray<double>&       parOut ) const = 0;
+
+  virtual void calcCovMinRep( 
+    const SPK_VA::valarray<double>& covIn,
+    SPK_VA::valarray<double>&       covMinRepOut ) const = 0;
+
+  virtual void expandCovMinRep( 
+    const SPK_VA::valarray<double>& covMinRepIn,
+    SPK_VA::valarray<double>&       covOut ) const = 0;
+
 
   //------------------------------------------------------------
   // Miscellaneous member functions.
   //------------------------------------------------------------
 
+public:
   int getNCovRow() const;
   int getNPar() const;
 

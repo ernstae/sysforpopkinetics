@@ -442,3 +442,123 @@ void DiagCov::getParLimits(
 
 }
 
+
+/*************************************************************************
+ *
+ * Function: calcPar
+ *
+ *
+ * Sets parOut equal to the covariance matrix parameters that
+ * correspond to the covariance matrix covIn.
+ *
+ *************************************************************************/
+
+void DiagCov::calcPar( 
+  const valarray<double>& covIn,
+  valarray<double>&       parOut ) const
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  parOut.resize( nPar );
+
+  assert( covIn.size() == nCovRow * nCovRow );
+
+
+  //------------------------------------------------------------
+  // Evaluate the covariance matrix.
+  //------------------------------------------------------------
+
+  // Set the parameter elements,
+  //
+  //              1
+  //    par   =  ---  log[ cov      ( par ) ]  .
+  //       i      2           (i, i)             
+  //
+  int i;
+  for ( i = 0; i < nPar; i++ )
+  {
+    parOut[i] = 0.5 * log( covIn[i + i * nCovRow] );
+  }    
+
+}
+
+
+/*************************************************************************
+ *
+ * Function: calcCovMinRep
+ *
+ *
+ * Sets covMinRepOut equal to the minimal representation for the
+ * covariance matrix, i.e., the set of diagonal elements.
+ *
+ *************************************************************************/
+
+void DiagCov::calcCovMinRep( 
+  const valarray<double>& covIn,
+  valarray<double>&       covMinRepOut ) const
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  covMinRepOut.resize( nPar );
+
+  assert( covIn.size() == nCovRow * nCovRow );
+
+
+  //------------------------------------------------------------
+  // Set the minimal representation for the covariance matrix.
+  //------------------------------------------------------------
+
+  // Extract the diagonal elements from the covariance matrix.
+  int i;
+  for ( i = 0; i < nPar; i++ )
+  {
+    covMinRepOut[i] = covIn[i + i * nCovRow];
+  }    
+
+}
+
+
+/*************************************************************************
+ *
+ * Function: expandCovMinRep
+ *
+ *
+ * Sets covOut equal to the full covariance matrix that corresponds
+ * to the minimal representation for the covariance matrix that is
+ * contained in covMinRepIn.
+ *
+ *************************************************************************/
+
+void DiagCov::expandCovMinRep( 
+  const valarray<double>& covMinRepIn,
+  valarray<double>&       covOut ) const
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  covOut.resize( nCovRow * nCovRow );
+
+  assert( covMinRepIn.size() == nPar );
+
+
+  //------------------------------------------------------------
+  // Expand the minimal representation for the covariance matrix.
+  //------------------------------------------------------------
+
+  // Set all of the covariance matrix elements equal to zero.
+  covOut = 0.0;
+
+  // Set the diagonal elements from the covariance matrix.
+  int i;
+  for ( i = 0; i < nPar; i++ )
+  {
+    covOut[i + i * nCovRow] = covMinRepIn[i];
+  }    
+
+}
+
