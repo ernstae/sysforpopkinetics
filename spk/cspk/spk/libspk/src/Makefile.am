@@ -312,5 +312,7 @@ pkginclude_HEADERS = \
 	subtract.h \
 	symmetrize.h \
 	transpose.h \
+	transposeDerivative.h \
+	transposeRowBlocks.h \
 	UTranTimesSymKronSymTimesU.h \
 	UTranTimesSymKronSymTimesU_x.h 
