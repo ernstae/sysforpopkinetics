@@ -271,6 +271,60 @@ namespace {
 		Indent(indent);
 		cout << "</row_major>" << endl;;
 	}
+       
+        // Added by Sachiko 01/19/2005
+        //
+        // Construct/retrieve a full symmetric matrix from
+        // Given a vector containing the diagonal elements only or
+        // the upper triangle of a symmetric matrix
+        // in the row major order (= lower triangle in the column major).
+        //
+        //     /           \
+        //     |  1  2  3  |
+        // A = |  2  4  5  |
+        //     |  3  5  6  |
+        //     \           /
+        //
+        // half = { 1, 2, 3, 4, 5, 6 }
+        //
+        // Full = A
+        //
+        void minRepToFull( size_t dim, const enum PopPredModel::covStruct structure, 
+					  const valarray<double>& minRep, 
+					  valarray<double>& Full )
+        {
+	  assert( Full.size() == dim * dim );
+	  if( structure == PopPredModel::DIAGONAL )
+	    {
+	      assert( minRep.size() == dim );
+	      Full = 0.0;
+	      
+	      // reading "minRep" vector as a sequence of diagonal elements.
+	      for( int j=0; j<dim; j++ )
+		{
+		  Full[ j + j * dim ] = minRep[ j ];
+		}
+	    }
+	  else
+	    {
+	      assert( minRep.size() == ( dim * (dim+1) ) / 2 );
+	      
+	      // reading "minRep" vector as a representation of lower triangle in column major
+	      // which is the same as upper triangle in row major.
+	      for( int j=0, k=0; j<dim; j++ )
+		{
+		  for( int i=j; i<dim; i++, k++ )
+		    {
+		      // filling upper half
+		      Full[ i + j * dim ] = minRep[ k ];
+		      // filling lower half
+		      if( i != j )
+			Full[ j + i * dim ] = minRep[ k ];
+		    }
+		}
+	    }
+        }
+
 	// Analytic negative log marginal likelihood for entire data set
 	void AnalyticIntegralAll(
 		double           &pop_obj_estimate, 
@@ -456,7 +510,7 @@ int main(int argc, const char *argv[])
 		cerr << "method is no analytic, grid, plain, or miser" << endl;
 		return UnknownFailure;
 	}
-	if( analytic && NonmemPars::nEta != 1 )
+	if( analytic && nEta != 1 )
 	{	cerr << "monteDriver: ";
 		cerr << "method is analytic and nEta != 1" << endl;
 		return UnknownFailure;
@@ -621,6 +675,42 @@ int main(int argc, const char *argv[])
         // Estimates completed successfully.  Print out emtpy <error_list>.
         cout << "<error_list/>" << endl;
 
+        // Get the step size used to estimate alpha, which is composed of step sizes for
+        // theta, Omega and Sigma.
+        model.getPopParStep( alpStep );
+        size_t alpIndex = 0;
+
+        // Get the step size used for and the final estimate of theta.
+        valarray<double> thetaOut ( nTheta );
+        model.getTheta( thetaOut );
+
+        valarray<double> thetaStep( nTheta );
+        thetaStep = alpStep[ slice(alpIndex, nTheta, 1) ];
+        alpIndex += nTheta;
+
+        // Get the step size used for and the final estimate of Omega.
+        valarray<double> omegaMinRepOut( omegaOrder );
+        valarray<double> omegaOut      ( omegaDim * omegaDim );
+        model.getOmega( omegaMinRepOut ); // this returns only the upper half in row major
+        minRepToFull( omegaDim, omegaStruct, omegaMinRepOut, omegaOut );
+        
+        valarray<double> omegaMinRepStep( omegaOrder );
+        valarray<double> omegaStep      ( omegaDim * omegaDim );
+        omegaMinRepStep = alpStep[ slice(alpIndex,  omegaOrder, 1) ];
+        minRepToFull( omegaDim, omegaStruct, omegaMinRepStep, omegaStep );
+        alpIndex += omegaOrder;
+
+        // Get the step size used for and the final estimate of Sigma.
+        valarray<double> sigmaMinRepOut( sigmaOrder );
+        valarray<double> sigmaOut      ( sigmaDim * sigmaDim );
+        model.getSigma( sigmaMinRepOut ); // this returns only the upper half in row major
+        minRepToFull( sigmaDim, sigmaStruct, sigmaMinRepOut, sigmaOut );
+
+        valarray<double> sigmaMinRepStep( sigmaOrder );
+        valarray<double> sigmaStep      ( sigmaDim * sigmaDim );
+        sigmaMinRepStep = alpStep[ slice(alpIndex, sigmaOrder, 1) ];
+        minRepToFull( sigmaDim, sigmaStruct, sigmaMinRepStep, sigmaStep );
+
 	timeval timeEnd;
 	gettimeofday( &timeEnd, NULL );
 
@@ -634,14 +724,20 @@ int main(int argc, const char *argv[])
 	cout << "\" >" << endl;
 
 	size_t indent = 4;
+	OutputColumnMajor(indent, thetaOut,   "theta_center", nTheta,   1);
+	OutputColumnMajor(indent, thetaStep,  "theta_step",   nTheta,   1);
+	OutputColumnMajor(indent, omegaOut,   "omega_center", omegaDim, omegaDim);
+	OutputColumnMajor(indent, omegaStep,  "omega_step",   omegaDim, omegaDim);
+	OutputColumnMajor(indent, sigmaOut,   "sigma_center", sigmaDim, sigmaDim);
+	OutputColumnMajor(indent, sigmaStep,  "sigma_step",   sigmaDim, sigmaDim);
+
 	size_t nrows = nAlp;
 	size_t ncols  = 1;
-	OutputColumnMajor(indent, alpIn,    "alpha_center", nrows, ncols);
-	OutputColumnMajor(indent, alpStep,  "alpha_step",   nrows, ncols);
-	nrows = nAlp;
-	ncols  = 3;
-	OutputRowMajor(indent, obj_value,   "obj_value",  nrows, ncols);
-	OutputRowMajor(indent, obj_std,     "obj_std",    nrows, ncols);
+        OutputRowMajor(indent, alpIn,     "alpha_center", nrows, 1 );
+        OutputRowMajor(indent, alpStep,   "alpha_step",   nrows, 1 );
+        ncols = 3; 
+	OutputRowMajor(indent, obj_value, "obj_value",    nrows, ncols);
+	OutputRowMajor(indent, obj_std,   "obj_std",      nrows, ncols);
 
 
 	// return from main program
