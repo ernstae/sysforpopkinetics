@@ -13,114 +13,6 @@ using namespace std;
 using namespace xercesc;
 
 //========================================
-// Local namespace
-//----------------------------------------
-namespace{
-
-  //
-  // Approximation method
-  //
-  enum APPROX     { FO, FOCE, LAPLACE };
-  enum TARGET     { IND, POP};
-  enum MODEL_SPEC { PRED };
-
-  //
-  // Place holders to hold values/info gathered through parsings.
-  // The reason why this is just locally defined, as opposed to
-  // defined as a NonmemTranslator class member, is 
-  // to hide the existence since it's just an object of convenience.
-  //
-  enum TARGET       myTarget        = POP;  
-  enum MODEL_SPEC   myModelSpec     = PRED;
-
-  bool              myIsEstimate    = true;
-  bool              myIsSimulate    = false;
-  bool              myIsStat        = false;
- 
-  bool              myIsOnlySimulation = false;
-  unsigned int      mySubproblemsN  = 1; 
-  APPROX            myApproximation = FO;
-  unsigned int      myPopSize       = 1;
-  
-  bool              myIsEtaOut      = false;
-  bool              myIsRestart     = true;
-  unsigned int      myThetaLen      = 0;
-  unsigned int      myOmegaDim      = 0;
-  unsigned int      myOmegaOrder    = 0;
-  Symbol::Structure myOmegaStruct   = Symbol::TRIANGLE;
-  unsigned int      mySigmaDim      = 0;
-  int               mySigmaOrder    = 0;
-  Symbol::Structure mySigmaStruct   = Symbol::TRIANGLE;
-  int               myEtaLen        = 0;
-  int               myEpsLen        = 0;
-    
-  unsigned int      myPopMitr       = 100;
-  unsigned int      myIndMitr       = 100;
-  unsigned int      mySigDigits     = 3;
-  double            myPopEpsilon    = pow( 10.0, -(mySigDigits+1.0) );
-  double            myIndEpsilon    = pow( 10.0, -(mySigDigits+1.0) );
-  int               myPopTraceLevel = 1;
-  int               myIndTraceLevel = 1;
-  unsigned int      mySeed = 0;
-
-  string            myCovForm       = "R";
-  bool              myIsStderr      = true;
-  bool              myIsCorrelation = true;
-  bool              myIsCov         = true;
-  bool              myIsInvCov      = true;
-  bool              myIsConfidence  = true;
-  bool              myIsCoefficient = true;
-  valarray<int>     myRecordNums;
-};
-namespace UserStr{
-  string            ID;
-  string            EPS;
-  string            ETA;
-  string            THETA;
-  string            OMEGA;
-  string            SIGMA;
-  string            RES;
-  string            WRES;
-  string            PRED;
-  string            DV;
-  string            SIMDV;
-  string            MDV;
-  string            F;
-  string            Y;
-};
-namespace DefaultStr{
-  const string THETA = "THETA";
-  const string ETA   = "ETA";
-  const string EPS   = "EPS";
-  const string OMEGA = "OMEGA";
-  const string SIGMA = "SIGMA";
-  const string RES   = "RES";
-  const string WRES  = "WRES";
-  const string PRED  = "PRED";
-  const string DV    = "DV";
-  const string MDV   = "MDV";
-  const string ID    = "ID";
-  const string SIMDV = "SIMDV";
-  const string F     = "F";
-  const string Y     = "Y";
-};
-namespace KeyStr{
-  const string THETA = SymbolTable::key( DefaultStr::THETA );
-  const string ETA   = SymbolTable::key( DefaultStr::ETA );
-  const string EPS   = SymbolTable::key( DefaultStr::EPS );
-  const string OMEGA = SymbolTable::key( DefaultStr::OMEGA );
-  const string SIGMA = SymbolTable::key( DefaultStr::SIGMA );
-  const string RES   = SymbolTable::key( DefaultStr::RES );
-  const string WRES  = SymbolTable::key( DefaultStr::WRES );
-  const string PRED  = SymbolTable::key( DefaultStr::PRED );
-  const string DV    = SymbolTable::key( DefaultStr::DV );
-  const string MDV   = SymbolTable::key( DefaultStr::MDV );
-  const string ID    = SymbolTable::key( DefaultStr::ID );
-  const string SIMDV = SymbolTable::key( DefaultStr::SIMDV );
-  const string F     = SymbolTable::key( DefaultStr::F );
-  const string Y     = SymbolTable::key( DefaultStr::Y );
-};
-//========================================
 
 //========================================
 // The global variables used by
@@ -138,66 +30,67 @@ extern "C"{
      int nm_parse(void);
 };
 //========================================
-const char* NonmemTranslator::C_YES                        = "yes";
-const char* NonmemTranslator::C_NO                         = "no";
-const char* NonmemTranslator::C_FIXED                      = "fixed";
-const char* NonmemTranslator::C_IN                         = "in";
-const char* NonmemTranslator::C_LOW                        = "low";
-const char* NonmemTranslator::C_UP                         = "up";
-const char* NonmemTranslator::C_DIAGONAL                   = "diagonal";
-const char* NonmemTranslator::C_BLOCK                      = "block";
-const char* NonmemTranslator::C_VALUE                      = "value";
-const char* NonmemTranslator::C_STRUCT                     = "struct";
-const char* NonmemTranslator::C_DIMENSION                  = "dimension";
-const char* NonmemTranslator::C_LABEL                      = "label";
-const char* NonmemTranslator::C_LABELS                     = "labels";
-const char* NonmemTranslator::C_COV_R                      = "r";
-const char* NonmemTranslator::C_COV_RSR                    = "rsr";
-const char* NonmemTranslator::C_COV_S                      = "s";
-const char* NonmemTranslator::C_NONMEM                     = "nonmem";
-const char* NonmemTranslator::C_POP_ANALYSIS               = "pop_analysis";
-const char* NonmemTranslator::C_IND_ANALYSIS               = "ind_analysis";
-const char* NonmemTranslator::C_CONSTRAINT                 = "constraint";
-const char* NonmemTranslator::C_MODEL                      = "model";
-const char* NonmemTranslator::C_PRED                       = "pred";
-const char* NonmemTranslator::C_PRESENTATION               = "presentation";
-const char* NonmemTranslator::C_TABLE                      = "table";
-const char* NonmemTranslator::C_SCATTERPLOT                = "scatterplot";
-const char* NonmemTranslator::C_COLUMN                     = "column";
-const char* NonmemTranslator::C_X                          = "x";
-const char* NonmemTranslator::C_Y                          = "y";
-const char* NonmemTranslator::C_BY                         = "by";
-const char* NonmemTranslator::C_APPROXIMATION              = "approximation";
-const char* NonmemTranslator::C_FO                         = "fo";
-const char* NonmemTranslator::C_FOCE                       = "foce";
-const char* NonmemTranslator::C_LAPLACE                    = "laplace";
-const char* NonmemTranslator::C_POP_SIZE                   = "pop_size";
-const char* NonmemTranslator::C_IS_ESTIMATION              = "is_estimation";
-const char* NonmemTranslator::C_IS_ETA_OUT                 = "is_eta_out";
-const char* NonmemTranslator::C_IS_RESTART                 = "is_restart";
-const char* NonmemTranslator::C_DATA_LABELS                = "data_labels";
-const char* NonmemTranslator::C_FILENAME                   = "filename";
-const char* NonmemTranslator::C_NAME                       = "name";
-const char* NonmemTranslator::C_SYNONYM                    = "synonym";
-const char* NonmemTranslator::C_THETA                      = "theta";
-const char* NonmemTranslator::C_LENGTH                     = "length";
-const char* NonmemTranslator::C_OMEGA                      = "omega";
-const char* NonmemTranslator::C_ONLYSIMULATION             = "onlysimulation";
-const char* NonmemTranslator::C_SIGMA                      = "sigma";
-const char* NonmemTranslator::C_SIMULATION                 = "simulation";
-const char* NonmemTranslator::C_SEED                       = "seed";
-const char* NonmemTranslator::C_SUBPROBLEMS                = "subproblems";
-const char* NonmemTranslator::C_POP_STAT                   = "pop_stat";
-const char* NonmemTranslator::C_COVARIANCE_FORM            = "covariance_form";
-const char* NonmemTranslator::C_MITR                       = "mitr";
-const char* NonmemTranslator::C_IND_STAT                   = "ind_stat";
-const char* NonmemTranslator::C_SIG_DIGITS                 = "sig_digits";
-const char* NonmemTranslator::C_IS_STDERROR_OUT            = "is_stderr_out";
-const char* NonmemTranslator::C_IS_CORRELATION_OUT         = "is_correlation_out";
-const char* NonmemTranslator::C_IS_COVARIANCE_OUT          = "is_covariance_out";
-const char* NonmemTranslator::C_IS_INVERSE_COVARIANCE_OUT  = "is_inverse_covariance_out";
-const char* NonmemTranslator::C_IS_COEFFICIENT_OUT         = "is_coefficient_out";
-const char* NonmemTranslator::C_IS_CONFIDENCE_OUT          = "is_confidence_out";
+
+const char* NonmemTranslator::C_YES                        ( "yes" );
+const char* NonmemTranslator::C_NO                         ( "no" );
+const char* NonmemTranslator::C_FIXED                      ( "fixed" );
+const char* NonmemTranslator::C_IN                         ( "in" );
+const char* NonmemTranslator::C_LOW                        ( "low" );
+const char* NonmemTranslator::C_UP                         ( "up" );
+const char* NonmemTranslator::C_DIAGONAL                   ( "diagonal" );
+const char* NonmemTranslator::C_BLOCK                      ( "block" );
+const char* NonmemTranslator::C_VALUE                      ( "value" );
+const char* NonmemTranslator::C_STRUCT                     ( "struct" );
+const char* NonmemTranslator::C_DIMENSION                  ( "dimension" );
+const char* NonmemTranslator::C_LABEL                      ( "label" );
+const char* NonmemTranslator::C_LABELS                     ( "labels" );
+const char* NonmemTranslator::C_COV_R                      ( "r" );
+const char* NonmemTranslator::C_COV_RSR                    ( "rsr" );
+const char* NonmemTranslator::C_COV_S                      ( "s" );
+const char* NonmemTranslator::C_NONMEM                     ( "nonmem" );
+const char* NonmemTranslator::C_POP_ANALYSIS               ( "pop_analysis" );
+const char* NonmemTranslator::C_IND_ANALYSIS               ( "ind_analysis" );
+const char* NonmemTranslator::C_CONSTRAINT                 ( "constraint" );
+const char* NonmemTranslator::C_MODEL                      ( "model" );
+const char* NonmemTranslator::C_PRED                       ( "pred" );
+const char* NonmemTranslator::C_PRESENTATION               ( "presentation" );
+const char* NonmemTranslator::C_TABLE                      ( "table" );
+const char* NonmemTranslator::C_SCATTERPLOT                ( "scatterplot" );
+const char* NonmemTranslator::C_COLUMN                     ( "column" );
+const char* NonmemTranslator::C_X                          ( "x" );
+const char* NonmemTranslator::C_Y                          ( "y" );
+const char* NonmemTranslator::C_BY                         ( "by" );
+const char* NonmemTranslator::C_APPROXIMATION              ( "approximation" );
+const char* NonmemTranslator::C_FO                         ( "fo" );
+const char* NonmemTranslator::C_FOCE                       ( "foce" );
+const char* NonmemTranslator::C_LAPLACE                    ( "laplace" );
+const char* NonmemTranslator::C_POP_SIZE                   ( "pop_size" );
+const char* NonmemTranslator::C_IS_ESTIMATION              ( "is_estimation" );
+const char* NonmemTranslator::C_IS_ETA_OUT                 ( "is_eta_out" );
+const char* NonmemTranslator::C_IS_RESTART                 ( "is_restart" );
+const char* NonmemTranslator::C_DATA_LABELS                ( "data_labels" );
+const char* NonmemTranslator::C_FILENAME                   ( "filename" );
+const char* NonmemTranslator::C_NAME                       ( "name" );
+const char* NonmemTranslator::C_SYNONYM                    ( "synonym" );
+const char* NonmemTranslator::C_THETA                      ( "theta" );
+const char* NonmemTranslator::C_LENGTH                     ( "length" );
+const char* NonmemTranslator::C_OMEGA                      ( "omega" );
+const char* NonmemTranslator::C_ONLYSIMULATION             ( "onlysimulation" );
+const char* NonmemTranslator::C_SIGMA                      ( "sigma" );
+const char* NonmemTranslator::C_SIMULATION                 ( "simulation" );
+const char* NonmemTranslator::C_SEED                       ( "seed" );
+const char* NonmemTranslator::C_SUBPROBLEMS                ( "subproblems" );
+const char* NonmemTranslator::C_POP_STAT                   ( "pop_stat" );
+const char* NonmemTranslator::C_COVARIANCE_FORM            ( "covariance_form" );
+const char* NonmemTranslator::C_MITR                       ( "mitr" );
+const char* NonmemTranslator::C_IND_STAT                   ( "ind_stat" );
+const char* NonmemTranslator::C_SIG_DIGITS                 ( "sig_digits" );
+const char* NonmemTranslator::C_IS_STDERROR_OUT            ( "is_stderror_out" );
+const char* NonmemTranslator::C_IS_CORRELATION_OUT         ( "is_correlation_out" );
+const char* NonmemTranslator::C_IS_COVARIANCE_OUT          ( "is_covariance_out" );
+const char* NonmemTranslator::C_IS_INVERSE_COVARIANCE_OUT  ( "is_inverse_covariance_out" );
+const char* NonmemTranslator::C_IS_COEFFICIENT_OUT         ( "is_coefficient_out" );
+const char* NonmemTranslator::C_IS_CONFIDENCE_OUT          ( "is_confidence_out" );
 
 
 NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
@@ -209,14 +102,98 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     fPredEqn_cpp     ( "predEqn.cpp" ),
     fPred_h          ( "Pred.h" ),
     fNonmemPars_h    ( "NonmemPars.h" ),
-//    fHalfCvec_h      ( "halfCvec.h" ),
     fDriver_cpp      ( "driver.cpp" ),
     fSpkRuntimeError_tmp( "spk_error.tmp" ),
     fResult_xml      ( "result.xml" ),
-    BURNER           ( "// THIS FILE IS GENERATED BY THE ASPK COMPILER" )
+    BURNER           ( "// THIS FILE IS GENERATED BY THE ASPK COMPILER" ),
+
+    myTarget         ( POP ),
+    myModelSpec      ( PRED ),
+    myIsEstimate     ( true ),
+    myIsSimulate     ( false ),
+    myIsStat         ( false ),
+    myIsOnlySimulation ( false ),
+    mySubproblemsN   ( 1 ),
+    myApproximation  ( FO ),
+    myPopSize        ( 1 ),
+    myIsEtaOut       ( false ),
+    myIsRestart      ( true ),
+    myThetaLen       ( 0 ),
+    myOmegaDim       ( 0 ),
+    myOmegaOrder     ( 0 ),
+    myOmegaStruct    ( Symbol::TRIANGLE ),
+    mySigmaDim       ( 0 ),
+    mySigmaOrder     ( 0 ),
+    mySigmaStruct    ( Symbol::TRIANGLE ),
+    myEtaLen         ( 0 ),
+    myEpsLen         ( 0 ),
+    mySigDigits      ( 3 ),
+    myPopMitr        ( 100 ),
+    myIndMitr        ( 100 ),
+    myPopEpsilon     ( pow( 10.0, -(mySigDigits+1.0) ) ),
+    myIndEpsilon     ( pow( 10.0, -(mySigDigits+1.0) ) ),
+    myPopTraceLevel  ( 1 ),
+    myIndTraceLevel  ( 1 ),
+    mySeed           ( 0 ),
+    myCovForm        ( "R" ),
+    myIsStderr       ( true ),
+    myIsCorrelation  ( true ),
+    myIsCov          ( true ),
+    myIsInvCov       ( true ),
+    myIsConfidence   ( true ),
+    myIsCoefficient  ( true ),
+    myRecordNums     ( 1 )
 
 {
   table = ClientTranslator::getSymbolTable();
+
+  DefaultStr.THETA = "THETA";
+  DefaultStr.ETA   = "ETA";
+  DefaultStr.EPS   = "EPS";
+  DefaultStr.OMEGA = "OMEGA";
+  DefaultStr.SIGMA = "SIGMA";
+  DefaultStr.RES   = "RES";
+  DefaultStr.WRES  = "WRES";
+  DefaultStr.PRED  = "PRED";
+  DefaultStr.DV    = "DV";
+  DefaultStr.MDV   = "MDV";
+  DefaultStr.ID    = "ID";
+  DefaultStr.SIMDV = "SIMDV";
+  DefaultStr.F     = "F";
+  DefaultStr.Y     = "Y";
+
+  UserStr.THETA = DefaultStr.THETA;
+  UserStr.ETA   = DefaultStr.ETA;
+  UserStr.EPS   = DefaultStr.EPS;
+  UserStr.OMEGA = DefaultStr.OMEGA;
+  UserStr.SIGMA = DefaultStr.SIGMA;
+  UserStr.RES   = DefaultStr.RES;
+  UserStr.WRES  = DefaultStr.WRES;
+  UserStr.PRED  = DefaultStr.PRED;
+  UserStr.DV    = DefaultStr.DV;
+  UserStr.MDV   = DefaultStr.MDV;
+  UserStr.ID    = DefaultStr.ID;
+  UserStr.SIMDV = DefaultStr.SIMDV;
+  UserStr.F     = DefaultStr.F;
+  UserStr.Y     = DefaultStr.Y;
+
+  // These are used as insensitive search keys to find the values of
+  // NONMEM-predefined variables in the symbol table or to be extracted
+  // as C++ variable names when cases are supposed to be insensitive.
+  KeyStr.THETA = SymbolTable::key( DefaultStr.THETA );
+  KeyStr.ETA   = SymbolTable::key( DefaultStr.ETA );
+  KeyStr.EPS   = SymbolTable::key( DefaultStr.EPS );
+  KeyStr.OMEGA = SymbolTable::key( DefaultStr.OMEGA );
+  KeyStr.SIGMA = SymbolTable::key( DefaultStr.SIGMA );
+  KeyStr.RES   = SymbolTable::key( DefaultStr.RES );
+  KeyStr.WRES  = SymbolTable::key( DefaultStr.WRES );
+  KeyStr.PRED  = SymbolTable::key( DefaultStr.PRED );
+  KeyStr.DV    = SymbolTable::key( DefaultStr.DV );
+  KeyStr.MDV   = SymbolTable::key( DefaultStr.MDV );
+  KeyStr.ID    = SymbolTable::key( DefaultStr.ID );
+  KeyStr.SIMDV = SymbolTable::key( DefaultStr.SIMDV );
+  KeyStr.F     = SymbolTable::key( DefaultStr.F );
+  KeyStr.Y     = SymbolTable::key( DefaultStr.Y );
 
   // TAG names
   X_IN             = XMLString::transcode( C_IN );
@@ -283,6 +260,9 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   X_FO             = XMLString::transcode( C_FO );
   X_FOCE           = XMLString::transcode( C_FOCE );
   X_LAPLACE        = XMLString::transcode( C_LAPLACE );
+
+  myPopEpsilon = pow( 10.0, -(mySigDigits+1.0) );
+  myIndEpsilon = pow( 10.0, -(mySigDigits+1.0) );
 
 }
 NonmemTranslator::NonmemTranslator()
@@ -489,12 +469,12 @@ void NonmemTranslator::parseSource()
   DOMElement * presentation = dynamic_cast<DOMElement*>( presentations->item(0) );
 
   myRecordNums.resize( myPopSize );
-  Symbol * id = table->findi( KeyStr::ID );
+  Symbol * id = table->findi( KeyStr.ID );
   if( id == NULL || id == Symbol::empty() )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
      sprintf( mess, "The data set is missing \"%s\" item or did you forget to label it?", 
-             DefaultStr::ID.c_str() ); 
+             DefaultStr.ID.c_str() ); 
      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
   }
@@ -505,94 +485,94 @@ void NonmemTranslator::parseSource()
 
   if( myIsSimulate )
     {
-      Symbol * p = table->insertUserVar(DefaultStr::SIMDV);
+      Symbol * p = table->insertUserVar(DefaultStr.SIMDV);
     }
 
   // Keep the user-typed Nonmem Keyword strings
   Symbol * p;
-  if( (p = table->findi( KeyStr::ID )) != Symbol::empty() )
-     UserStr::ID = p->name;
+  if( (p = table->findi( KeyStr.ID )) != Symbol::empty() )
+     UserStr.ID = p->name;
   else
-     UserStr::ID = DefaultStr::ID;
+     UserStr.ID = DefaultStr.ID;
 
-  if( (p = table->findi( KeyStr::THETA )) != Symbol::empty() )
-     UserStr::THETA = p->name;
+  if( (p = table->findi( KeyStr.THETA )) != Symbol::empty() )
+     UserStr.THETA = p->name;
   else
-     UserStr::THETA = DefaultStr::THETA;
+     UserStr.THETA = DefaultStr.THETA;
 
-  if( (p = table->findi( KeyStr::OMEGA )) != Symbol::empty() )
-     UserStr::OMEGA = p->name;
+  if( (p = table->findi( KeyStr.OMEGA )) != Symbol::empty() )
+     UserStr.OMEGA = p->name;
   else
-     UserStr::OMEGA = DefaultStr::OMEGA;
+     UserStr.OMEGA = DefaultStr.OMEGA;
 
-  if( (p = table->findi( KeyStr::SIGMA )) != Symbol::empty() )
-     UserStr::SIGMA = p->name;
+  if( (p = table->findi( KeyStr.SIGMA )) != Symbol::empty() )
+     UserStr.SIGMA = p->name;
   else
-     UserStr::SIGMA = DefaultStr::SIGMA;
+     UserStr.SIGMA = DefaultStr.SIGMA;
 
-  if( (p = table->findi( KeyStr::ETA )) != Symbol::empty() )
-     UserStr::ETA = p->name;
+  if( (p = table->findi( KeyStr.ETA )) != Symbol::empty() )
+     UserStr.ETA = p->name;
   else
-     UserStr::ETA = DefaultStr::ETA;
+     UserStr.ETA = DefaultStr.ETA;
 
-  if( (p = table->findi( KeyStr::EPS )) != Symbol::empty() )
-     UserStr::EPS = p->name;
+  if( (p = table->findi( KeyStr.EPS )) != Symbol::empty() )
+     UserStr.EPS = p->name;
   else
-     UserStr::EPS = DefaultStr::EPS;
+     UserStr.EPS = DefaultStr.EPS;
 
-  if( (p = table->findi( KeyStr::PRED )) != Symbol::empty() )
-     UserStr::PRED = p->name;
+  if( (p = table->findi( KeyStr.PRED )) != Symbol::empty() )
+     UserStr.PRED = p->name;
   else
   {
-     table->insertUserVar( DefaultStr::PRED );
-     UserStr::PRED = DefaultStr::PRED;
+     table->insertUserVar( DefaultStr.PRED );
+     UserStr.PRED = DefaultStr.PRED;
   }
 
-  if( (p = table->findi( KeyStr::RES )) != Symbol::empty() )
-     UserStr::RES = p->name;
+  if( (p = table->findi( KeyStr.RES )) != Symbol::empty() )
+     UserStr.RES = p->name;
   else
   {
-     table->insertUserVar( DefaultStr::RES );
-     UserStr::RES = DefaultStr::RES;
+     table->insertUserVar( DefaultStr.RES );
+     UserStr.RES = DefaultStr.RES;
   }
 
-  if( (p = table->findi( KeyStr::WRES )) != Symbol::empty() )
-     UserStr::WRES = p->name;
+  if( (p = table->findi( KeyStr.WRES )) != Symbol::empty() )
+     UserStr.WRES = p->name;
   else
   {
-     table->insertUserVar( DefaultStr::WRES );
-     UserStr::WRES = DefaultStr::WRES;
+     table->insertUserVar( DefaultStr.WRES );
+     UserStr.WRES = DefaultStr.WRES;
   }
 
-  if( (p = table->findi( KeyStr::MDV )) != Symbol::empty() )
-     UserStr::MDV = p->name;
+  if( (p = table->findi( KeyStr.MDV )) != Symbol::empty() )
+     UserStr.MDV = p->name;
   else
   {
-     Symbol * s = table->insertLabel( DefaultStr::MDV, "", myRecordNums );
+     Symbol * s = table->insertLabel( DefaultStr.MDV, "", myRecordNums );
      for( int i=0; i<myPopSize; i++ )
 	s->initial[i] = "0";
-     UserStr::MDV = DefaultStr::MDV;
+     UserStr.MDV = DefaultStr.MDV;
   }
 
-  if( (p = table->findi( KeyStr::DV )) != Symbol::empty() )
-     UserStr::DV = p->name;
+  if( (p = table->findi( KeyStr.DV )) != Symbol::empty() )
+     UserStr.DV = p->name;
   else
-     UserStr::DV = DefaultStr::DV;
+     UserStr.DV = DefaultStr.DV;
   
-  if( (p = table->findi( KeyStr::SIMDV )) != Symbol::empty() )
-     UserStr::SIMDV = p->name;
+  if( (p = table->findi( KeyStr.SIMDV )) != Symbol::empty() )
+     UserStr.SIMDV = p->name;
   else
-     UserStr::SIMDV = DefaultStr::SIMDV;
+     UserStr.SIMDV = DefaultStr.SIMDV;
   
-  if( (p = table->findi( KeyStr::F )) != Symbol::empty() )
-     UserStr::F = p->name;
+  if( (p = table->findi( KeyStr.F )) != Symbol::empty() )
+     UserStr.F = p->name;
   else
-     UserStr::F = DefaultStr::F;
+     UserStr.F = DefaultStr.F;
   
-  if( (p = table->findi( KeyStr::Y )) != Symbol::empty() )
-     UserStr::Y = p->name;
+  if( (p = table->findi( KeyStr.Y )) != Symbol::empty() )
+     UserStr.Y = p->name;
   else
-     UserStr::Y = DefaultStr::Y;
+     UserStr.Y = DefaultStr.Y;
   
   //
   // Generate the headers and definition files for IndData class and
@@ -605,7 +585,6 @@ void NonmemTranslator::parseSource()
   generateIndData( );
   generatePred( fPredEqn_cpp );
   generateNonmemParsNamespace( );
-  //  generateUtils( );
   if( myTarget == POP )
     generatePopDriver();
   else
@@ -932,7 +911,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
-  Symbol * sym_theta = table->insertNMVector( DefaultStr::THETA, myThetaLen );
+  Symbol * sym_theta = table->insertNMVector( DefaultStr.THETA, myThetaLen );
   {
     //<in>
     DOMNodeList * theta_in_list = theta->getElementsByTagName( X_IN );
@@ -1124,7 +1103,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
-  Symbol * sym_omega = table->insertNMMatrix( DefaultStr::OMEGA, myOmegaStruct, myOmegaDim );
+  Symbol * sym_omega = table->insertNMMatrix( DefaultStr.OMEGA, myOmegaStruct, myOmegaDim );
   {
     //<in>
     DOMNodeList * omega_in_list = omega->getElementsByTagName( X_IN );
@@ -1173,8 +1152,8 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       }
   }
 
-  DOMNodeList * simga_list = pop_analysis->getElementsByTagName( X_SIGMA );
-  int nSigmaSpecs = simga_list->getLength();
+  DOMNodeList * sigma_list = pop_analysis->getElementsByTagName( X_SIGMA );
+  int nSigmaSpecs = sigma_list->getLength();
   if( nSigmaSpecs != 1 )
   { 
      // v0.1 supports only one (full) Sigma specification
@@ -1184,7 +1163,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
      SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
      throw e;
   }
-  DOMElement * sigma = dynamic_cast<DOMElement*>( simga_list->item(0) );
+  DOMElement * sigma = dynamic_cast<DOMElement*>( sigma_list->item(0) );
   if( !sigma->hasAttribute( X_DIMENSION ) )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
@@ -1233,7 +1212,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       throw e;
     }
 
-  Symbol * sym_sigma = table->insertNMMatrix( DefaultStr::SIGMA, mySigmaStruct, mySigmaDim ); 
+  Symbol * sym_sigma = table->insertNMMatrix( DefaultStr.SIGMA, mySigmaStruct, mySigmaDim ); 
   {
     //<in>
     DOMNodeList * sigma_in_list = sigma->getElementsByTagName( X_IN );
@@ -1290,8 +1269,8 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   //-----------------------------------------------------------
   myEtaLen = myOmegaDim;
   char etaDefault[] = "0.0";
-  Symbol * sym_eta = table->insertNMVector( DefaultStr::ETA, myEtaLen );
-  sym_eta->initial[0] = etaDefault;
+  Symbol * sym_eta = table->insertNMVector( DefaultStr.ETA, myEtaLen );
+  for( int i=0; i<myEtaLen; i++ ) sym_eta->initial[0][i] = etaDefault;
   sym_eta->fixed[0] = false;
 
   //----------------------------------------------------------
@@ -1300,8 +1279,8 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   // the order of Sigma is the length of EPS vector.
   myEpsLen = mySigmaDim;
   char epsDefault[] = "0.0";
-  Symbol * sym_eps = table->insertNMVector( DefaultStr::EPS, myEpsLen );
-  sym_eps->initial[0] = epsDefault;
+  Symbol * sym_eps = table->insertNMVector( DefaultStr.EPS, myEpsLen );
+  for( int i=0; i<myEpsLen; i++ ) sym_eps->initial[0][i] = epsDefault;
   sym_eta->fixed[0] = false;
 
   //================================================================================
@@ -1385,7 +1364,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
           throw e;
       }
       DOMElement * pop_stat = dynamic_cast<DOMElement*>( pop_stat_list->item(0) );
-      if( !pop_stat->hasAttribute( X_COVARIANCE_FORM ) )
+      if( !pop_stat->hasAttribute( X_COVARIANCE_FORM ) && myIsStat )
       {
           char mess[ SpkCompilerError::maxMessageLen() ];
 	  sprintf( mess, "Missing %s attribute in <%s> tag.", 
@@ -1657,7 +1636,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
-  Symbol * sym_theta = table->insertNMVector( DefaultStr::THETA, myThetaLen );
+  Symbol * sym_theta = table->insertNMVector( DefaultStr.THETA, myThetaLen );
   {
     //<in>
     DOMNodeList * theta_in_list = theta->getElementsByTagName( X_IN );
@@ -1837,7 +1816,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   myOmegaStruct = Symbol::DIAGONAL;
   myOmegaOrder = myOmegaDim;
 
-  Symbol * sym_omega = table->insertNMMatrix( DefaultStr::OMEGA, myOmegaStruct, myOmegaDim );
+  Symbol * sym_omega = table->insertNMMatrix( DefaultStr.OMEGA, myOmegaStruct, myOmegaDim );
   {
     //<in>
     DOMNodeList * omega_in_list = omega->getElementsByTagName( X_IN );
@@ -1889,8 +1868,11 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   // ETA
   // Eta plays the same role as EPS as in the population analysis.
   // Variance of data?
+  char etaDefault[] = "0.0";
   myEtaLen = myOmegaOrder;
-  table->insertNMVector( DefaultStr::ETA, myEtaLen );
+  Symbol * sym_eta = table->insertNMVector( DefaultStr.ETA, myEtaLen );
+  for( int i=0; i<myEtaLen; i++ ) sym_eta->initial[0][i] = etaDefault;
+  sym_eta->fixed[0] = false;
   
   //================================================================================
   // Optional elements
@@ -2033,7 +2015,7 @@ void NonmemTranslator::generateIndData( ) const
   // object that holds "ID" data items handy for
   // frequent references.
   //
-  const Symbol * pID = table->findi( KeyStr::ID );
+  const Symbol * pID = table->findi( KeyStr.ID );
 
   //
   // The order in which the label strings appear is crutial.
@@ -2163,12 +2145,12 @@ void NonmemTranslator::generateIndData( ) const
 	}
       else if( type == Symbol::NONMEMDEF )
 	{
-	  if( keyVarName == KeyStr::THETA 
-	      || keyVarName == KeyStr::ETA 
-	      || keyVarName == KeyStr::EPS )
+	  if( keyVarName == KeyStr.THETA 
+	      || keyVarName == KeyStr.ETA 
+	      || keyVarName == KeyStr.EPS )
 	    oIndData_h << "std::vector< std::vector<T> > " << varName << ";" << endl;
-	  if( keyVarName == KeyStr::OMEGA 
-              || keyVarName == KeyStr::SIGMA )
+	  if( keyVarName == KeyStr.OMEGA 
+              || keyVarName == KeyStr.SIGMA )
 	    {}
 
 	}
@@ -2275,7 +2257,7 @@ void NonmemTranslator::generateIndData( ) const
     {
       const string label    = pRawTable->second.name;
       const string keyLabel = SymbolTable::key( label );
-      if( keyLabel == KeyStr::OMEGA || keyLabel == KeyStr::SIGMA )
+      if( keyLabel == KeyStr.OMEGA || keyLabel == KeyStr.SIGMA )
 	{
 	  continue;
 	}
@@ -2291,11 +2273,11 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "   for( int i=0; i<nIn; i++ )" << endl;
   oIndData_h << "   {" << endl;
   if( myThetaLen > 0 )
-    oIndData_h << "      " << UserStr::THETA << "[i].resize( " << myThetaLen << " );" << endl;
+    oIndData_h << "      " << UserStr.THETA << "[i].resize( " << myThetaLen << " );" << endl;
   if( myEtaLen > 0 )
-    oIndData_h << "      " << UserStr::ETA   << "[i].resize( " << myEtaLen << " );" << endl;
+    oIndData_h << "      " << UserStr.ETA   << "[i].resize( " << myEtaLen << " );" << endl;
   if( myEpsLen > 0 )
-    oIndData_h << "      " << UserStr::EPS   << "[i].resize( " << myEpsLen << " );" << endl;
+    oIndData_h << "      " << UserStr.EPS   << "[i].resize( " << myEpsLen << " );" << endl;
   oIndData_h << "   }" << endl;
   oIndData_h << "}" << endl;
 
@@ -2322,7 +2304,7 @@ void NonmemTranslator::generateDataSet( ) const
   const vector<string> *labels = table->getLabels();
   vector<string>::const_iterator pLabel;
   int nLabels = labels->size();
-  const Symbol * pID = table->findi( KeyStr::ID );
+  const Symbol * pID = table->findi( KeyStr.ID );
 
   //
   // Declare and define DataSet template class.
@@ -2342,7 +2324,7 @@ void NonmemTranslator::generateDataSet( ) const
   // is defined and the time when the IndData constructor
   // is declared/defined, the SymbolTable object
   // may NOT be modified.
-  //  const Symbol* pID = table->findi(KeyStr::ID);
+  //  const Symbol* pID = table->findi(KeyStr.ID);
   //
   ofstream oDataSet_h( fDataSet_h );
   if( !oDataSet_h.good() )
@@ -2442,7 +2424,7 @@ void NonmemTranslator::generateDataSet( ) const
 
 
   oDataSet_h << "spk_y.resize( " << myPopSize << " );" << endl;
-  const Symbol* pDV = table->findi( KeyStr::DV );
+  const Symbol* pDV = table->findi( KeyStr.DV );
   oDataSet_h << "double c_y[] = { ";
   for( int i=0; i<myPopSize; i++ )
     {
@@ -2702,7 +2684,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   pLabel = labels->begin();
   for( int i=0; i<nLabels, pLabel != labels->end(); i++, pLabel++ )
     {
-      bool isID = (SymbolTable::key( *pLabel ) == KeyStr::ID );
+      bool isID = (SymbolTable::key( *pLabel ) == KeyStr.ID );
 
       const Symbol* s = table->findi( *pLabel );
       oPred_h << "mutable " << ( isID? "std::string" : "Value" );
@@ -2731,11 +2713,11 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       // Ignore if the label is of the NONMEM required variable names.
       // They have to be declared in the body of PRED() because
       // they (theta, eta, eps) have to be "const" double array.
-      if( keyLabel != KeyStr::THETA 
-	  && keyLabel != KeyStr::ETA 
-	  && keyLabel != KeyStr::EPS 
-	  && keyLabel != KeyStr::SIGMA
-	  && keyLabel != KeyStr::OMEGA )
+      if( keyLabel != KeyStr.THETA 
+	  && keyLabel != KeyStr.ETA 
+	  && keyLabel != KeyStr.EPS 
+	  && keyLabel != KeyStr.SIGMA
+	  && keyLabel != KeyStr.OMEGA )
 	{
 	  // Ignore if the label is of the data item's.
 	  if( find( labels->begin(), labels->end(), label ) 
@@ -2769,7 +2751,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   oPred_h << "template <class Value>" << endl;
   oPred_h << "int Pred<Value>::getNObservs( int spk_i ) const" << endl;
   oPred_h << "{" << endl;
-  oPred_h << "  return perm->data[spk_i]->" << UserStr::ID << ".size();" << endl;
+  oPred_h << "  return perm->data[spk_i]->" << UserStr.ID << ".size();" << endl;
   oPred_h << "}" << endl;
 
 
@@ -2815,12 +2797,12 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
     }
   for( int i=0; i<myThetaLen; i++ )
     {
-      oPred_h << "typename std::vector<Value>::const_iterator " << UserStr::THETA << i+1;
+      oPred_h << "typename std::vector<Value>::const_iterator " << UserStr.THETA << i+1;
       oPred_h << " = spk_indepVar.begin() + spk_thetaOffset + " << i << ";" << endl;
     }
   for( int i=0; i<myEtaLen; i++ )
     {
-      oPred_h << "typename std::vector<Value>::const_iterator " << UserStr::ETA << i+1;
+      oPred_h << "typename std::vector<Value>::const_iterator " << UserStr.ETA << i+1;
       oPred_h << " = spk_indepVar.begin() + spk_etaOffset + " << i << ";" << endl;
     }
 
@@ -2830,22 +2812,22 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   // "myEpsLen" has been set to zero; thus the following loop loops zero times.
   for( int i=0; i<myEpsLen; i++ )
     {
-      oPred_h << "typename std::vector<Value>::const_iterator " << UserStr::EPS << i+1;
+      oPred_h << "typename std::vector<Value>::const_iterator " << UserStr.EPS << i+1;
       oPred_h << " = spk_indepVar.begin() + spk_epsOffset + " << i << ";" << endl;
     }
-  oPred_h << "typename std::vector<Value>::const_iterator " << UserStr::THETA;
+  oPred_h << "typename std::vector<Value>::const_iterator " << UserStr.THETA;
   oPred_h << " = spk_indepVar.begin() + spk_thetaOffset;" << endl;
-  oPred_h << "typename std::vector<Value>::const_iterator " << UserStr::ETA;
+  oPred_h << "typename std::vector<Value>::const_iterator " << UserStr.ETA;
   oPred_h << " = spk_indepVar.begin() + spk_etaOffset;" << endl;
   if( myTarget == POP )
     {
-      oPred_h << "typename std::vector<Value>::const_iterator " << UserStr::EPS;
+      oPred_h << "typename std::vector<Value>::const_iterator " << UserStr.EPS;
       oPred_h << " = spk_indepVar.begin() + spk_epsOffset;" << endl;
     }
 
-  oPred_h << "Value " << UserStr::F << " = 0.0;" << endl;
+  oPred_h << "Value " << UserStr.F << " = 0.0;" << endl;
 
-  oPred_h << "Value " << UserStr::Y << " = 0.0;" << endl;
+  oPred_h << "Value " << UserStr.Y << " = 0.0;" << endl;
   ///////////////////////////////////////////////////////////////////////////////////
       
   oPred_h << "//=========================================" << endl;
@@ -2871,7 +2853,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   ///////////////////////////////////////////////////////////////////////////////////
   // Store the current values in temporary storage
   // : the user defined variable values and the NONMEM required variable values.
-  oPred_h << UserStr::PRED << " = " << UserStr::F << ";" << endl;
+  oPred_h << UserStr.PRED << " = " << UserStr.F << ";" << endl;
 
   for( pRawTable = rawTable->begin(); pRawTable != rawTable->end(); pRawTable++ )
     {
@@ -2880,26 +2862,26 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       // which are scalar values.
       const string label    = pRawTable->second.name;
       const string keyLabel = SymbolTable::key( label );
-      if( keyLabel == KeyStr::THETA )
+      if( keyLabel == KeyStr.THETA )
 	{
 	  oPred_h << "copy( " << label << ", " << label << "+spk_thetaLen, ";
           oPred_h << "temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
 	}
-      else if( keyLabel == KeyStr::ETA )
+      else if( keyLabel == KeyStr.ETA )
 	{
 	  oPred_h << "copy( " << label << ", " << label << "+spk_etaLen, ";
           oPred_h << "temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
 	}
-      else if( keyLabel == KeyStr::EPS )
+      else if( keyLabel == KeyStr.EPS )
 	{
 	  oPred_h << "copy( " << label << ", " << label << "+spk_epsLen, ";
           oPred_h << "temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
 	}
-      else if( keyLabel == KeyStr::OMEGA || keyLabel == KeyStr::SIGMA )
+      else if( keyLabel == KeyStr.OMEGA || keyLabel == KeyStr.SIGMA )
 	{
 	  // ignore.  these don't get used within PRED.
 	}
-      else if( keyLabel == KeyStr::WRES || keyLabel == KeyStr::RES )
+      else if( keyLabel == KeyStr.WRES || keyLabel == KeyStr.RES )
 	{
 	  // ignore.  These values are only computed outside at the final estimate.
 	}
@@ -2920,7 +2902,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   // is available even when a failure occurs.
   //
   oPred_h << "if( spk_i == " << myPopSize << "-1 && spk_j == perm->data[spk_i]->";
-  oPred_h << UserStr::ID << ".size()-1 )" << endl;
+  oPred_h << UserStr.ID << ".size()-1 )" << endl;
   oPred_h << "{" << endl;
   oPred_h << "  // This means, SPK advanced in iteration." << endl;
   oPred_h << "  // Move temporary storage to permanent storage." << endl;
@@ -2933,7 +2915,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
     {
       const string label     = pRawTable->second.name;
       const string keyLabel = SymbolTable::key( label );
-      if( keyLabel == KeyStr::OMEGA || keyLabel == KeyStr::SIGMA || keyLabel == KeyStr::WRES || keyLabel == KeyStr::RES )
+      if( keyLabel == KeyStr.OMEGA || keyLabel == KeyStr.SIGMA || keyLabel == KeyStr.WRES || keyLabel == KeyStr.RES )
 	continue;
 
       if( find( labels->begin(), labels->end(), label ) == labels->end() )
@@ -2954,12 +2936,12 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   ///////////////////////////////////////////////////////////////////////////////////
 
   // Set the output values
-  oPred_h << "spk_depVar[ spk_fOffset+spk_j ] = " << UserStr::F << ";" << endl;
-  oPred_h << "spk_depVar[ spk_yOffset+spk_j ] = " << UserStr::Y << ";" << endl;
+  oPred_h << "spk_depVar[ spk_fOffset+spk_j ] = " << UserStr.F << ";" << endl;
+  oPred_h << "spk_depVar[ spk_yOffset+spk_j ] = " << UserStr.Y << ";" << endl;
 
   // Pred::eval() returns true if MDV(i,j) is 0, which means DV is NOT missing.
   // In this iteration, it is assumed that MDV=true for all, so return true.
-  oPred_h << "if( perm->data[ spk_i ]->" << UserStr::MDV << "[ spk_j ] == 0 )" << endl;
+  oPred_h << "if( perm->data[ spk_i ]->" << UserStr.MDV << "[ spk_j ] == 0 )" << endl;
   oPred_h << "   return true;" << endl;
   oPred_h << "else return false;" << endl;
 
@@ -2988,10 +2970,10 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   //==================================================================
   // Generate the NonmemPars namespace.
   //==================================================================
-  const Symbol* pTheta = table->findi(KeyStr::THETA);
-  const Symbol* pOmega = table->findi(KeyStr::OMEGA);
-  const Symbol* pSigma = table->findi(KeyStr::SIGMA);
-  const Symbol* pEta   = table->findi(KeyStr::ETA);
+  const Symbol* pTheta = table->findi(KeyStr.THETA);
+  const Symbol* pOmega = table->findi(KeyStr.OMEGA);
+  const Symbol* pSigma = table->findi(KeyStr.SIGMA);
+  const Symbol* pEta   = table->findi(KeyStr.ETA);
   ofstream oNonmemPars( fNonmemPars_h );
   if( !oNonmemPars.good() )
   {
@@ -3001,6 +2983,32 @@ void NonmemTranslator::generateNonmemParsNamespace() const
      throw e;
   }
  
+  oNonmemPars << "//=============================================================" << endl;
+  oNonmemPars << "// " << endl;
+  oNonmemPars << "// This file is generated by SPK Compiler." << endl;
+  oNonmemPars << "// " << endl;
+  oNonmemPars << "// The namespace NonmemPars exports the values " << endl;
+  oNonmemPars << "// given by the user or determined by SPK Compiler based ." << endl;
+  oNonmemPars << "// upon them." << endl;
+  oNonmemPars << "// " << endl;
+  oNonmemPars << "// The user requested the " << (myTarget==POP? "population":"individual") << " analysis." << endl;
+  oNonmemPars << "// This means that this namespace would contain materials related to " << endl;
+  if( myTarget==POP )
+    {
+      oNonmemPars << "// all of THETA, OMEGA, ETA, SIGMA and EPS." << endl;
+    }
+  else
+    {
+      oNonmemPars << "// only THETA, OMEGA and ETA." << endl;
+    }
+  if( myIsSimulate )
+    {
+      oNonmemPars << "// It also contains the input value(s) necessary to simulate a data set " << endl;
+      oNonmemPars << "// since it is also requested." << endl;
+    }
+  oNonmemPars << "// " << endl;
+  oNonmemPars << "//=============================================================" << endl;
+
   oNonmemPars << "#ifndef NONMEMPARS_H" << endl;
   oNonmemPars << "#define NONMEMPARS_H" << endl;
   oNonmemPars << endl;
@@ -3016,7 +3024,16 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << "namespace NonmemPars{" << endl;
 
   oNonmemPars << "using namespace std;" << endl;
+  oNonmemPars << endl;
+
+  oNonmemPars << "   //-------------------------------------------" << endl;
+  oNonmemPars << "   // THETA" << endl;
+  oNonmemPars << "   //-------------------------------------------" << endl;
+  oNonmemPars << "   // The length of THETA vector." << endl;
   oNonmemPars << "   const int nTheta = " << myThetaLen << ";" << endl;
+  oNonmemPars << endl;
+  oNonmemPars << "   // A C-arrary containing the upper boundary values for THETA." << endl;
+  oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
   oNonmemPars << "   double c_thetaUp[nTheta] = { ";
   for( int j=0; j<myThetaLen; j++ )
   {
@@ -3024,8 +3041,12 @@ void NonmemTranslator::generateNonmemParsNamespace() const
         oNonmemPars << ", ";
      oNonmemPars << pTheta->upper[0][j];
   }
-  oNonmemPars << " };" << endl;
+  oNonmemPars << "   };" << endl;
+  oNonmemPars << "   const valarray<double> thetaUp ( c_thetaUp,  " << myThetaLen << " );" << endl;
+  oNonmemPars << endl;
 
+  oNonmemPars << "   // A C-arrary containing the lower boundary values for THETA." << endl;
+  oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
   oNonmemPars << "   double c_thetaLow[nTheta] = { ";
   for( int j=0; j<myThetaLen; j++ )
   {
@@ -3033,7 +3054,11 @@ void NonmemTranslator::generateNonmemParsNamespace() const
 	oNonmemPars << ", ";
      oNonmemPars << pTheta->lower[0][j];
   }
-  oNonmemPars << " };" << endl;
+  oNonmemPars << "   };" << endl;
+  oNonmemPars << "   const valarray<double> thetaLow( c_thetaLow, " << myThetaLen << " );" << endl;
+
+  oNonmemPars << "   // A C-arrary containing the initial estimates for THETA." << endl;
+  oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
   oNonmemPars << "   double c_thetaIn[nTheta] = { ";
   for( int j=0; j<myThetaLen; j++ )
     {
@@ -3042,20 +3067,61 @@ void NonmemTranslator::generateNonmemParsNamespace() const
       oNonmemPars << pTheta->initial[0][j];
     }
   oNonmemPars << " };" << endl;
+  oNonmemPars << endl;
+
   if( myTarget == POP && myIsSimulate )
     {
+      oNonmemPars << "   // A valarray object that *will* contain the initial values for THETA." << endl;
+      oNonmemPars << "   // The object is intentionally non-constant because you will have to simulate the values " << endl;
+      oNonmemPars << "   // and place them  in this placeholder." << endl;
       oNonmemPars << "   valarray<double> thetaIn ( c_thetaIn, nTheta );" << endl;
     }
   else
     {
+      oNonmemPars << "   // A valarray object containing the initial values for THETA." << endl;
       oNonmemPars << "   const valarray<double> thetaIn ( c_thetaIn, nTheta );" << endl;
     }
   oNonmemPars << endl;
 
-  oNonmemPars << "   const valarray<double> thetaLow( c_thetaLow, " << myThetaLen << " );" << endl;
-  oNonmemPars << "   const valarray<double> thetaUp ( c_thetaUp,  " << myThetaLen << " );" << endl;
+  oNonmemPars << "   //-------------------------------------------" << endl;
+  oNonmemPars << "   // OMEGA" << endl;
+  oNonmemPars << "   //-------------------------------------------" << endl;  
+  oNonmemPars << "   // The structure of OMEGA matrix." << endl;
+  oNonmemPars << "   // \"FULL\" indicates that possibly all elements of the symmetric matrix may be non-zero." << endl;
+  oNonmemPars << "   // \"DIAGONAL\" indicates that only the diagonal elements are non-zero and the rest are all zero." << endl;
+  oNonmemPars << "   const enum " << (myTarget==POP? "Pop":"Ind") << "PredModel::covStruct omegaStruct = ";
+  oNonmemPars << (myTarget==POP? "Pop":"Ind") << "PredModel::" << (myOmegaStruct == Symbol::TRIANGLE? "FULL" : "DIAGONAL" ) << ";" << endl;
+  oNonmemPars << endl;
 
+  oNonmemPars << "   // The order of OMEGA matrix." << endl;
+  oNonmemPars << "   // If the matrix is full, the value is equal to the number of " << endl;
+  oNonmemPars << "   // elements in a half triangle (diagonal elements included)." << endl;
+  oNonmemPars << "   // If the matrix is diagonal, it is equal to the dimension of the symmetric matrix." << endl;
+  oNonmemPars << "   const int omegaOrder = " << myOmegaOrder << ";" << endl;
+  oNonmemPars << endl;
+
+  oNonmemPars << "   // A C-arrary containing the initial estimates for OMEGA." << endl;
+  oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
+  oNonmemPars << "   double c_omegaIn[ omegaOrder ] = { "; 
+  for( int j=0; j<myOmegaOrder; j++ )
+    {
+      if( j>0 )
+	oNonmemPars << ", ";
+      oNonmemPars << pOmega->initial[0][j];
+    }
+  oNonmemPars << " };" << endl;
+  oNonmemPars << "   const valarray<double> omegaIn( c_omegaIn, omegaOrder );" << endl;
+  oNonmemPars << endl;
+
+  oNonmemPars << "   //-------------------------------------------" << endl;
+  oNonmemPars << "   // ETA" << endl;
+  oNonmemPars << "   //-------------------------------------------" << endl;
+  oNonmemPars << "   // The length of ETA vector, which is the order of OMEGA." << endl;
   oNonmemPars << "   const int nEta = " << myEtaLen << ";" << endl;
+  oNonmemPars << endl;
+
+  oNonmemPars << "   // A C-arrary containing the initial estimates for ETA." << endl;
+  oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
   oNonmemPars << "   double c_etaIn[nEta] = { ";
   for( int i=0; i<myEtaLen; i++ )
     {
@@ -3064,33 +3130,69 @@ void NonmemTranslator::generateNonmemParsNamespace() const
       oNonmemPars << pEta->initial[0][i];
     }
   oNonmemPars << " };" << endl;
-  oNonmemPars << "   const valarray<double> etaIn( c_etaIn, " << myEtaLen << " );" << endl;
-  oNonmemPars << "   const enum " << (myTarget==POP? "Pop":"Ind") << "PredModel::covStruct omegaStruct = ";
-  oNonmemPars << (myTarget==POP? "Pop":"Ind") << "PredModel::" << (myOmegaStruct == Symbol::TRIANGLE? "FULL" : "DIAGONAL" ) << ";" << endl;
-  oNonmemPars << "   double c_omegaIn[" << myOmegaOrder << "] = { "; 
-  for( int j=0; j<myOmegaOrder; j++ )
-    {
-      if( j>0 )
-	oNonmemPars << ", ";
-      oNonmemPars << pOmega->initial[0][j];
-    }
-  oNonmemPars << " };" << endl;
-  oNonmemPars << "   const valarray<double> omegaIn( c_omegaIn, " << myOmegaOrder << " );" << endl;
+  oNonmemPars << "   const valarray<double> etaIn( c_etaIn, nEta );" << endl;
+  oNonmemPars << endl;
 
-  oNonmemPars << "   const int nEps = " << myEpsLen << ";" << endl;
-  oNonmemPars << "   const enum " << (myTarget==POP? "Pop":"Ind") << "PredModel::covStruct sigmaStruct = ";
-  oNonmemPars << (myTarget==POP? "Pop":"Ind") << "PredModel::" << (mySigmaStruct == Symbol::TRIANGLE? "FULL" : "DIAGONAL" ) << ";" << endl;
-  oNonmemPars << "   double c_sigmaIn[" << mySigmaOrder << "] = { ";
-  for( int j=0; j<mySigmaOrder; j++ )
+  oNonmemPars << "   //-------------------------------------------" << endl;
+  oNonmemPars << "   // SIGMA" << endl;
+  oNonmemPars << "   //-------------------------------------------" << endl;  
+  if( myTarget == POP )
     {
-      if( j>0 )
-	oNonmemPars << ", ";
-      oNonmemPars << pSigma->initial[0][j];
+      oNonmemPars << "   const enum PopPredModel::covStruct sigmaStruct = ";
+      oNonmemPars << "PopPredModel::" << (mySigmaStruct == Symbol::TRIANGLE? "FULL" : "DIAGONAL" ) << ";" << endl;
+      oNonmemPars << "   const int sigmaOrder = " << mySigmaOrder << ";" << endl;
+      oNonmemPars << "   double c_sigmaIn[ sigmaOrder ] = { ";
+      for( int j=0; j<mySigmaOrder; j++ )
+	{
+	  if( j>0 )
+	    oNonmemPars << ", ";
+	  oNonmemPars << pSigma->initial[0][j];
+	}
+      oNonmemPars << " };" << endl;
+      oNonmemPars << "   const valarray<double> sigmaIn( c_sigmaIn, sigmaOrder );" << endl;
     }
-  oNonmemPars << " };" << endl;
-  oNonmemPars << "   const valarray<double> sigmaIn( c_sigmaIn, " << mySigmaOrder << " );" << endl;
+  else
+    {
+      oNonmemPars << "// NOTE:" << endl;
+      oNonmemPars << "// EPS related variable(s) do not appear in this namespace" << endl;
+      oNonmemPars << "// because you requested the single individual analysis." << endl;
+      oNonmemPars << "// const int nEps;" << endl;
+    }
+  oNonmemPars << endl;
+
+  oNonmemPars << "   //-------------------------------------------" << endl;
+  oNonmemPars << "   // EPS" << endl;
+  oNonmemPars << "   //-------------------------------------------" << endl;  
+  if( myTarget == POP )
+    {
+      oNonmemPars << "   const int nEps = " << myEpsLen << ";" << endl;
+      }
+  else
+    {
+      oNonmemPars << "// NOTE:" << endl;
+      oNonmemPars << "// SIGMA related variables do not appear in this namespace" << endl;
+      oNonmemPars << "// because you requested the single individual analysis." << endl;
+      oNonmemPars << "// const enum PopPredModel::covStruct sigmaStruct;" << endl;
+      oNonmemPars << "// const valarray<double> sigmaIn;" << endl;
+    }
+  oNonmemPars << endl;
+
+  oNonmemPars << "   //-------------------------------------------" << endl;
+  oNonmemPars << "   // Data Simulation" << endl;
+  oNonmemPars << "   //-------------------------------------------" << endl;  
+  if( myIsSimulate )
+    {
+      oNonmemPars << "// The seed for data simulation." << endl;
+      oNonmemPars << "const int seed = " << mySeed << ";" << endl;
+    }
+  else
+    {
+      oNonmemPars << "// No simulation was requested." << endl;
+      oNonmemPars << "// const int seed;" << endl;      
+    }
+  oNonmemPars << endl;
+
   oNonmemPars << "};" << endl;
-
   oNonmemPars << "#endif" << endl;
   oNonmemPars.close();
 }
@@ -3107,9 +3209,9 @@ void NonmemTranslator::generateIndDriver( ) const
      SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
      throw e;
   }
-  const Symbol* pTheta = table->findi(KeyStr::THETA);
-  const Symbol* pEta   = table->findi(KeyStr::ETA);
-  const Symbol* pOmega = table->findi(KeyStr::OMEGA);
+  const Symbol* pTheta = table->findi(KeyStr.THETA);
+  const Symbol* pEta   = table->findi(KeyStr.ETA);
+  const Symbol* pOmega = table->findi(KeyStr.OMEGA);
 
   oDriver << "#include <iostream>" << endl;
   oDriver << "#include <fstream>" << endl;
@@ -3125,7 +3227,7 @@ void NonmemTranslator::generateIndDriver( ) const
      oDriver << "#include <spk/fitIndividual.h>" << endl;
      oDriver << "#include <spk/Optimizer.h>" << endl;
   }
-  if( myIsEstimate && myIsStat )
+  if( myIsStat )
     {
       oDriver << "#include <spk/inverse.h>" << endl;
       oDriver << "#include <spk/indStatistics.h>" << endl;
@@ -3209,9 +3311,11 @@ void NonmemTranslator::generateIndDriver( ) const
   
   oDriver << "const bool isSimRequested = " << (myIsSimulate? "true":"false") << ";" << endl;
   oDriver << "bool haveCompleteData = " << (myIsSimulate? "false":"true") << ";" << endl;
+  /*
   if( myIsSimulate )
     oDriver << "const unsigned int seed = " << mySeed << ";" << endl;
   oDriver << endl;
+  */
 
   oDriver << "const bool isOptRequested = " << (myIsEstimate? "true":"false") << ";" << endl;
   oDriver << "bool isOptSuccess  = " << (myIsEstimate? "false":"true") << ";" << endl;
@@ -3291,7 +3395,7 @@ void NonmemTranslator::generateIndDriver( ) const
        oDriver << "valarray<double> yOut( nY );" << endl;
        oDriver << "try" << endl;
        oDriver << "{" << endl;
-       oDriver << "   simulate( model, nY, bIn, yOut, seed );" << endl;
+       oDriver << "   simulate( model, nY, bIn, yOut, NonmemPars::seed );" << endl;
        //       if( myIsEstimate )
 	 {
 	   oDriver << "   for( int j=0; j<nY; j++ )" << endl;
@@ -3325,7 +3429,7 @@ void NonmemTranslator::generateIndDriver( ) const
     }
   else
     {
-      const Symbol* pDV = table->findi( KeyStr::DV );
+      const Symbol* pDV = table->findi( KeyStr.DV );
       if( pDV == Symbol::empty() )
 	{
 	  // "DV" may be registered as a synonym.  
@@ -3335,7 +3439,7 @@ void NonmemTranslator::generateIndDriver( ) const
           map<const string,Symbol>::const_iterator itr = t->begin();
           for( ; itr != t->end(); itr++ )
 	    {
-	      if( SymbolTable::key( itr->second.synonym ) == KeyStr::DV )
+	      if( SymbolTable::key( itr->second.synonym ) == KeyStr.DV )
 		{
 		  pDV = &itr->second;
 		  break;
@@ -3423,10 +3527,10 @@ void NonmemTranslator::generateIndDriver( ) const
       oDriver << "     model.setIndPar( bOut );" << endl;
       oDriver << "     model.dataVariance( ROut );" << endl;
       oDriver << "     for( int j=0; j<nY; j++ )" << endl;
-      oDriver << "        set.data[0]->" << UserStr::RES << "[j] ";
-      oDriver << "= y[j] - set.data[0]->" << UserStr::PRED << "[j];" << endl;
-      oDriver << "     set.data[0]->" << UserStr::WRES;
-      oDriver << " = wres( nY, ROut, set.data[0]->" << UserStr::RES << " ); " << endl;
+      oDriver << "        set.data[0]->" << UserStr.RES << "[j] ";
+      oDriver << "= y[j] - set.data[0]->" << UserStr.PRED << "[j];" << endl;
+      oDriver << "     set.data[0]->" << UserStr.WRES;
+      oDriver << " = wres( nY, ROut, set.data[0]->" << UserStr.RES << " ); " << endl;
       oDriver << "  }" << endl;
       oDriver << "  //" << endl;
       oDriver << "  //////////////////////////////////////////////////////////////////////" << endl;    
@@ -3443,7 +3547,7 @@ void NonmemTranslator::generateIndDriver( ) const
 	  oDriver << "/*******************************************************************/" << endl;
   	  oDriver << "timeval statBegin, statEnd;" << endl;
 	  oDriver << "double statTimeSec = 0.0;" << endl;
-          if( myIsCov )
+          if( myIsCov || myIsInvCov )
 	    oDriver << "valarray<double> covOut( nB * nB );" << endl;
 	  if( myIsStderr )
 	    oDriver << "valarray<double> seOut( nB );" << endl;
@@ -3474,7 +3578,7 @@ void NonmemTranslator::generateIndDriver( ) const
 	  oDriver << "                     f_bOut," << endl;
           oDriver << "                     R_bOut," << endl;
 	  oDriver << "                     RInvOut," << endl;
-          oDriver << "                     " << (myIsCov?         "&covOut"        :"NULL") << ", " << endl;
+          oDriver << "                     " << (myIsCov || myIsInvCov?  "&covOut" :"NULL") << ", " << endl;
           oDriver << "                     " << (myIsStderr?      "&seOut"         :"NULL") << ", " << endl;
           oDriver << "                     " << (myIsCorrelation? "&correlationOut":"NULL") << ", " << endl;
           oDriver << "                     " << (myIsCoefficient? "&coefficientOut" :"NULL") << ", " << endl;
@@ -3546,9 +3650,9 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "model.dataVariance( ROut );" << endl;
   oDriver << "for( int j=0; j<nY; j++ )" << endl;
   oDriver << "{" << endl;
-  oDriver << "   set.data[0]->" << UserStr::RES << "[j] = y[j] - set.data[0]->" << UserStr::PRED << "[j];" << endl;
+  oDriver << "   set.data[0]->" << UserStr.RES << "[j] = y[j] - set.data[0]->" << UserStr.PRED << "[j];" << endl;
   oDriver << "}" << endl;
-  oDriver << "set.data[0]->" << UserStr::WRES << " = wres( nY, ROut, set.data[0]->" << UserStr::RES << " ); " << endl;
+  oDriver << "set.data[0]->" << UserStr.WRES << " = wres( nY, ROut, set.data[0]->" << UserStr.RES << " ); " << endl;
   oDriver << endl;
 
   oDriver << "ofstream oResults( \"" << fResult_xml << "\" );" << endl;
@@ -3698,7 +3802,7 @@ void NonmemTranslator::generateIndDriver( ) const
   // LABELS
   //
   const map<const string, Symbol> * t = table->getTable();
-  const Symbol * pID = table->findi(KeyStr::ID);
+  const Symbol * pID = table->findi(KeyStr.ID);
   if( pID == Symbol::empty() )
   {
      char mess[ SpkCompilerError::maxMessageLen() ];
@@ -3708,9 +3812,9 @@ void NonmemTranslator::generateIndDriver( ) const
   }
   const int nItems = t->size();
   int nColumns = nItems + myThetaLen-1 + myEtaLen-1 
-    - (table->findi(KeyStr::OMEGA) == Symbol::empty()? 0 : 1 )
-    - (table->findi(KeyStr::SIGMA) == Symbol::empty()? 0 : 1 )
-    - (table->findi(KeyStr::EPS)   == Symbol::empty()? 0 : 1 );
+    - (table->findi(KeyStr.OMEGA) == Symbol::empty()? 0 : 1 )
+    - (table->findi(KeyStr.SIGMA) == Symbol::empty()? 0 : 1 )
+    - (table->findi(KeyStr.EPS)   == Symbol::empty()? 0 : 1 );
 
   map<const string, Symbol>::const_iterator pEntry = t->begin();
   const vector<string>::const_iterator pLabelBegin = table->getLabels()->begin();
@@ -3725,7 +3829,7 @@ void NonmemTranslator::generateIndDriver( ) const
 
   // Put ID first in the sequence
   whatGoesIn.push_back( pID->name );
-  oDriver << "oResults << \"<label name=\\\"" << UserStr::ID << "\\\"/>\" << endl;" << endl;
+  oDriver << "oResults << \"<label name=\\\"" << UserStr.ID << "\\\"/>\" << endl;" << endl;
   oDriver << endl;
 
   oDriver << "///////////////////////////////////////////////////////////////////" << endl;
@@ -3735,15 +3839,15 @@ void NonmemTranslator::generateIndDriver( ) const
   int cntColumns = 1;
   for( cntColumns = 1, pEntry = t->begin(); pEntry!=t->end(); pEntry++ )
     {
-      if( pEntry->first != KeyStr::ID 
+      if( pEntry->first != KeyStr.ID 
 	  /* && ( find( pLabelBegin, pLabelEnd, pEntry->second.name )==pLabelEnd ) */ )
 	{
 	  // These ones are not stored by Pred::eval() or the data set.
-	  if( pEntry->first != KeyStr::OMEGA && pEntry->first != KeyStr::SIGMA )
+	  if( pEntry->first != KeyStr.OMEGA && pEntry->first != KeyStr.SIGMA )
 	    {
 	      whatGoesIn.push_back( pEntry->second.name );
 	      
-	      if( pEntry->first == KeyStr::THETA )
+	      if( pEntry->first == KeyStr.THETA )
 		{
 		  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
 		    {
@@ -3753,7 +3857,7 @@ void NonmemTranslator::generateIndDriver( ) const
 		      cntColumns++;
 		    }
 		}
-	      else if( pEntry->first == KeyStr::ETA )
+	      else if( pEntry->first == KeyStr.ETA )
 		{
 		  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
 		    {
@@ -3794,14 +3898,14 @@ void NonmemTranslator::generateIndDriver( ) const
   for( cntColumns=0, pWhatGoesIn = whatGoesIn.begin(); pWhatGoesIn!=whatGoesIn.end(); pWhatGoesIn++ )
     {
       keyWhatGoesIn = SymbolTable::key( *pWhatGoesIn );
-      if( keyWhatGoesIn == KeyStr::SIMDV )
+      if( keyWhatGoesIn == KeyStr.SIMDV )
 	{
 	  oDriver << "   oResults << \"<value ref=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
 	  oDriver << "yOut[cnt]";
 	  oDriver << " << \"</value>\" << endl;" << endl;
 	  cntColumns++;
 	}
-      else if( keyWhatGoesIn == KeyStr::THETA )
+      else if( keyWhatGoesIn == KeyStr.THETA )
 	{
 	  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
 	    {
@@ -3812,7 +3916,7 @@ void NonmemTranslator::generateIndDriver( ) const
 	      cntColumns++;
 	    }
 	}
-      else if( keyWhatGoesIn == KeyStr::ETA )
+      else if( keyWhatGoesIn == KeyStr.ETA )
 	{
 	  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
 	    {
@@ -3876,10 +3980,10 @@ void NonmemTranslator::generatePopDriver() const
      throw e;
   }
 
-  const Symbol* pTheta = table->findi(KeyStr::THETA);
-  const Symbol* pOmega = table->findi(KeyStr::OMEGA);
-  const Symbol* pSigma = table->findi(KeyStr::SIGMA);
-  const Symbol* pEta   = table->findi(KeyStr::ETA);
+  const Symbol* pTheta = table->findi(KeyStr.THETA);
+  const Symbol* pOmega = table->findi(KeyStr.OMEGA);
+  const Symbol* pSigma = table->findi(KeyStr.SIGMA);
+  const Symbol* pEta   = table->findi(KeyStr.ETA);
   
   oDriver << "#include <iostream>" << endl;
   oDriver << "#include <fstream>" << endl;
@@ -3972,9 +4076,10 @@ void NonmemTranslator::generatePopDriver() const
 
   oDriver << "const bool isSimRequested  = " << (myIsSimulate? "true":"false") << ";" << endl;
   oDriver << "bool haveCompleteData      = false;" << endl;
+  /*
   if( myIsSimulate )
     oDriver << "const unsigned int seed  = " << mySeed << ";" << endl;
-
+  */
   oDriver << "const bool isOptRequested  = " << (myIsEstimate? "true":"false") << ";" << endl;
   oDriver << "bool isOptSuccess          = false;" << endl;
   if( myIsEstimate )
@@ -4122,7 +4227,7 @@ void NonmemTranslator::generatePopDriver() const
       oDriver << "valarray<double> yOut( nY );" << endl;
       oDriver << "try" << endl;
       oDriver << "{" << endl;
-      oDriver << "   simulate( model, alpIn, N, bLow, bUp, yOut, bOut, seed );" << endl;
+      oDriver << "   simulate( model, alpIn, N, bLow, bUp, yOut, bOut, NonmemPars::seed );" << endl;
       //      if( myIsEstimate )
 	{
 	  oDriver << "   bIn = bOut;" << endl;
@@ -4160,7 +4265,7 @@ void NonmemTranslator::generatePopDriver() const
     }
   else
     {
-      const Symbol* pDV = table->findi( KeyStr::DV );
+      const Symbol* pDV = table->findi( KeyStr.DV );
       if( pDV == Symbol::empty() )
 	{
 	  // "DV" may be registered as a synonym.  
@@ -4170,7 +4275,7 @@ void NonmemTranslator::generatePopDriver() const
           map<const string,Symbol>::const_iterator itr = t->begin();
           for( ; itr != t->end(); itr++ )
 	    {
-	      if( SymbolTable::key( itr->second.synonym ) == KeyStr::DV )
+	      if( SymbolTable::key( itr->second.synonym ) == KeyStr.DV )
 		{
 		  pDV = &itr->second;
 		  break;
@@ -4283,7 +4388,7 @@ void NonmemTranslator::generatePopDriver() const
 	  oDriver << "/*******************************************************************/" << endl;
   	  oDriver << "timeval statBegin, statEnd;" << endl;
 	  oDriver << "double statTimeSec = 0.0;" << endl;
-          if( myIsCov )
+          if( myIsCov || myIsInvCov )
 	    oDriver << "valarray<double> covOut( nAlp * nAlp );" << endl;
 	  if( myIsStderr )
 	    oDriver << "valarray<double> seOut( nAlp );" << endl;
@@ -4314,7 +4419,7 @@ void NonmemTranslator::generatePopDriver() const
           oDriver << "                     bUp," << endl;
           oDriver << "                     bStep," << endl;
           oDriver << "                     covForm," << endl;
-          oDriver << "                     " << (myIsCov?         "&covOut"        :"NULL") << ", " << endl;
+          oDriver << "                     " << (myIsCov || myIsInvCov? "&covOut"        :"NULL") << ", " << endl;
           oDriver << "                     " << (myIsStderr?      "&seOut"         :"NULL") << ", " << endl;
           oDriver << "                     " << (myIsCorrelation? "&correlationOut":"NULL") << ", " << endl;
           oDriver << "                     " << (myIsCoefficient? "&coefficientOut" :"NULL") << ", " << endl;
@@ -4389,9 +4494,9 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "   model.dataVariance( RiOut );" << endl;
   oDriver << "   for( int j=0; j<N[i]; j++ )" << endl;
   oDriver << "   {" << endl;
-  oDriver << "      set.data[i]->" << UserStr::RES << "[j] = y[j] - set.data[i]->" << UserStr::PRED << "[j] ;" << endl;
+  oDriver << "      set.data[i]->" << UserStr.RES << "[j] = y[j] - set.data[i]->" << UserStr.PRED << "[j] ;" << endl;
   oDriver << "   }" << endl;
-  oDriver << "   set.data[i]->" << UserStr::WRES << " = wres( N[i], RiOut, set.data[i]->" << UserStr::RES << " ); " << endl;
+  oDriver << "   set.data[i]->" << UserStr.WRES << " = wres( N[i], RiOut, set.data[i]->" << UserStr.RES << " ); " << endl;
   oDriver << "}" << endl;
 
   oDriver << "ofstream oResults( \"" << fResult_xml << "\" );" << endl;
@@ -4551,7 +4656,7 @@ void NonmemTranslator::generatePopDriver() const
   // LABELS
   //
   const map<const string, Symbol> * t = table->getTable();
-  const Symbol * pID = table->findi(KeyStr::ID);
+  const Symbol * pID = table->findi(KeyStr.ID);
   if( pID == Symbol::empty() )
   {
      char mess [ SpkCompilerError::maxMessageLen() ];
@@ -4561,8 +4666,8 @@ void NonmemTranslator::generatePopDriver() const
   }
   const int nItems = t->size();
   int nColumns = nItems + myThetaLen-1 + myEtaLen-1 + myEpsLen-1
-    - (table->findi(KeyStr::OMEGA) == Symbol::empty()? 0 : 1 )
-    - (table->findi(KeyStr::SIGMA) == Symbol::empty()? 0 : 1 );
+    - (table->findi(KeyStr.OMEGA) == Symbol::empty()? 0 : 1 )
+    - (table->findi(KeyStr.SIGMA) == Symbol::empty()? 0 : 1 );
 
   map<const string, Symbol>::const_iterator pEntry = t->begin();
   const vector<string>::const_iterator pLabelBegin = table->getLabels()->begin();
@@ -4587,16 +4692,16 @@ void NonmemTranslator::generatePopDriver() const
   int cntColumns = 1;
   for( cntColumns=1,  pEntry = t->begin(); pEntry!=t->end(); pEntry++ )
     {
-      if( pEntry->first != KeyStr::ID 
+      if( pEntry->first != KeyStr.ID 
 	  /*&& ( find( pLabelBegin, pLabelEnd, pEntry->second.name )==pLabelEnd )*/ )
 	{
 	  // these three --- theta, omega and sigma --- don't get saved within Pred::eval()
 	  // and are already printed out in the reportML earlier during this step.
-	  if( pEntry->first != KeyStr::OMEGA && pEntry->first != KeyStr::SIGMA )
+	  if( pEntry->first != KeyStr.OMEGA && pEntry->first != KeyStr.SIGMA )
 	    {
 	      whatGoesIn.push_back( pEntry->second.name );
 	      
-	      if( pEntry->first == KeyStr::THETA )
+	      if( pEntry->first == KeyStr.THETA )
 		{
 		  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
 		    {
@@ -4606,7 +4711,7 @@ void NonmemTranslator::generatePopDriver() const
 		      cntColumns++;
 		    }
 		}
-	      else if( pEntry->first == KeyStr::ETA )
+	      else if( pEntry->first == KeyStr.ETA )
 		{
 		  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
 		    {
@@ -4616,7 +4721,7 @@ void NonmemTranslator::generatePopDriver() const
 		      cntColumns++;
 		    }
 		}
-	      else if( pEntry->first == KeyStr::EPS )
+	      else if( pEntry->first == KeyStr.EPS )
 		{
 		  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
 		    {
@@ -4660,14 +4765,14 @@ void NonmemTranslator::generatePopDriver() const
   for( cntColumns=0, pWhatGoesIn = whatGoesIn.begin(); pWhatGoesIn!=whatGoesIn.end(); pWhatGoesIn++ )
     {
       keyWhatGoesIn = SymbolTable::key( *pWhatGoesIn );
-      if( keyWhatGoesIn == KeyStr::SIMDV )
+      if( keyWhatGoesIn == KeyStr.SIMDV )
 	{
 	  oDriver << "   oResults << \"<value ref=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
 	  oDriver << "yOut[position]";
 	  oDriver << " << \"</value>\" << endl;" << endl;
 	  cntColumns++;
 	}
-      else if( keyWhatGoesIn == KeyStr::THETA )
+      else if( keyWhatGoesIn == KeyStr.THETA )
 	{
 	  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
 	    {
@@ -4678,7 +4783,7 @@ void NonmemTranslator::generatePopDriver() const
 	      cntColumns++;
 	    }
 	}
-      else if( keyWhatGoesIn == KeyStr::ETA )
+      else if( keyWhatGoesIn == KeyStr.ETA )
 	{
 	  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
 	    {
@@ -4689,7 +4794,7 @@ void NonmemTranslator::generatePopDriver() const
 	      cntColumns++;
 	    }
 	}
-      else if( keyWhatGoesIn == KeyStr::EPS )
+      else if( keyWhatGoesIn == KeyStr.EPS )
 	{
 	  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
 	    {
@@ -4700,7 +4805,7 @@ void NonmemTranslator::generatePopDriver() const
 	      cntColumns++;
 	    }
 	}
-      else if( keyWhatGoesIn == KeyStr::OMEGA || keyWhatGoesIn == KeyStr::SIGMA )
+      else if( keyWhatGoesIn == KeyStr.OMEGA || keyWhatGoesIn == KeyStr.SIGMA )
 	{
 	  // ignore
 	}

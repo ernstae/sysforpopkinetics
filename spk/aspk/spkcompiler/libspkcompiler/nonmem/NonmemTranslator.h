@@ -12,6 +12,7 @@
 
 #include <xercesc/dom/DOMDocument.hpp>
 
+
 /**
  * NonmemTranslator is an implementation of ClientTranslator abstract class.
  *
@@ -23,6 +24,53 @@
 class NonmemTranslator : public ClientTranslator
 {
  public:
+
+  //
+  // Approximation method
+  //
+  enum APPROX     { FO, FOCE, LAPLACE };
+  enum TARGET     { IND, POP };
+  enum MODEL_SPEC { PRED };
+
+  struct NonmemKeyword{
+    std::string THETA;
+    std::string ETA;
+    std::string EPS;
+    std::string OMEGA;
+    std::string SIGMA;
+    std::string RES;
+    std::string WRES;
+    std::string PRED;
+    std::string DV;
+    std::string MDV;
+    std::string ID;
+    std::string SIMDV;
+    std::string F;
+    std::string Y;
+  };
+
+  /**
+   * These are the default string values for NONMEM-predefined
+   * variables.  The default values will be used when these variables do
+   * not appear in either <label> or <model> in the sourceML document.
+   */
+  NonmemKeyword DefaultStr;
+
+  /**
+   * These are used as insensitive search keys to find the values of
+   * NONMEM-predefined variables in the symbol table or to be extracted
+   * as C++ variable names when cases are supposed to be insensitive.
+   */
+  NonmemKeyword KeyStr;
+
+  /**
+   * These will hold the actual (NONMEM-predefined) variable names that
+   * may be composed of arbitrary mixture of letters in upper/lower
+   * cases.  These values would be determined from the <label> values or
+   * variable names used within <model> definition in the sourceML
+   * document.
+   */
+  NonmemKeyword UserStr;
 
   /**
    * The only legal constructor.
@@ -133,11 +181,6 @@ class NonmemTranslator : public ClientTranslator
   // Generate C++ source code for NonmemPars namespace.
   //
   void generateNonmemParsNamespace() const;
-
-  //
-  // Generate C++ source code for utility functions.
-  //
-  //void generateUtils() const;
 
   //
   // Generate C++ source code for the driver for population analysis.
@@ -265,6 +308,53 @@ class NonmemTranslator : public ClientTranslator
   XMLCh* X_SUBPROBLEMS;         static const char* C_SUBPROBLEMS;
   //========================================
 
+  //
+  // Place holders to hold values/info gathered through parsings.
+  // The reason why this is just locally defined, as opposed to
+  // defined as a NonmemTranslator class member, is 
+  // to hide the existence since it's just an object of convenience.
+  //
+  enum TARGET       myTarget;  
+  enum MODEL_SPEC   myModelSpec;
+
+  bool              myIsEstimate;
+  bool              myIsSimulate;
+  bool              myIsStat; 
+  bool              myIsOnlySimulation;
+
+  unsigned int      mySubproblemsN; 
+  APPROX            myApproximation;
+  unsigned int      myPopSize;
+  
+  bool              myIsEtaOut;
+  bool              myIsRestart;
+  unsigned int      myThetaLen;
+  unsigned int      myOmegaDim;
+  unsigned int      myOmegaOrder;
+  Symbol::Structure myOmegaStruct;
+  unsigned int      mySigmaDim;
+  int               mySigmaOrder;
+  Symbol::Structure mySigmaStruct;
+  int               myEtaLen;
+  int               myEpsLen;
+
+  unsigned int      mySigDigits;
+  unsigned int      myPopMitr;
+  unsigned int      myIndMitr;
+  double            myPopEpsilon;
+  double            myIndEpsilon;
+  int               myPopTraceLevel;
+  int               myIndTraceLevel;
+  unsigned int      mySeed;
+
+  std::string       myCovForm;
+  bool              myIsStderr;
+  bool              myIsCorrelation;
+  bool              myIsCov;
+  bool              myIsInvCov;
+  bool              myIsConfidence;
+  bool              myIsCoefficient;
+  std::valarray<int> myRecordNums;
 };
 
 #endif
