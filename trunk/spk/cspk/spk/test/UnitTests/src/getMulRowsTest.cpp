@@ -33,7 +33,7 @@
 
 /*************************************************************************
  *
- * Function: getMulRowsTest
+ * Class: getMulRowsTest
  *
  *
  * Performs the unit test for getMulRows.

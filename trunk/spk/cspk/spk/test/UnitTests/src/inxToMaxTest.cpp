@@ -32,7 +32,7 @@
 
 /*************************************************************************
  *
- * Function: inxToMax
+ * Class: inxToMaxTest
  *
  *
  * Performs the unit test for inxToMax.
