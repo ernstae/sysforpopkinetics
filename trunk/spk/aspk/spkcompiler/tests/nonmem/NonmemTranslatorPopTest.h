@@ -21,7 +21,7 @@ public:
     virtual void setUp();
     virtual void tearDown();
 
-    void testParsePopSource();
+    void diagOmegaDiagSigma();
 };
 
 #endif

@@ -30,6 +30,8 @@ using namespace xercesc;
 namespace{
   const unsigned int maxChars = 2047;
 
+  bool deleteBiproducts;
+
   char fPrefix[128];
   char fData[128];
   char fSource[128];
@@ -190,6 +192,8 @@ namespace{
 
 void NonmemTranslatorPopTest::setUp()
 {
+  deleteBiproducts = true;
+
   sprintf( fDriver, "driver" );
   sprintf( fDriver_cpp, "driver.cpp" );
 
@@ -238,21 +242,25 @@ void NonmemTranslatorPopTest::setUp()
 }
 void NonmemTranslatorPopTest::tearDown()
 {
-  remove( fData );
-  remove( fSource );
-  remove( fIndDataDriver );
-  remove( fIndDataDriver_cpp );
-  remove( fDataSetDriver );
-  remove( fDataSetDriver_cpp );
-  remove( fPredDriver );
-  remove( fPredDriver_cpp );
-  remove( fDriver );
-  remove( "driver.cpp" );
-  remove( "IndData.h" );
-  remove( "DataSet.h" );
-  remove( "Pred.h" );
-  remove( "predEqn.cpp" );
-  remove( "generatedMakefile" );
+  if( deleteBiproducts )
+    {
+
+      remove( fData );
+      remove( fSource );
+      remove( fIndDataDriver );
+      remove( fIndDataDriver_cpp );
+      remove( fDataSetDriver );
+      remove( fDataSetDriver_cpp );
+      remove( fPredDriver );
+      remove( fPredDriver_cpp );
+      remove( fDriver );
+      remove( "driver.cpp" );
+      remove( "IndData.h" );
+      remove( "DataSet.h" );
+      remove( "Pred.h" );
+      remove( "predEqn.cpp" );
+      remove( "generatedMakefile" );
+    }
                                                                           
   XMLPlatformUtils::Terminate();
 
@@ -347,6 +355,7 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
       char buf[maxChars + 1];
       sprintf( buf, "An error occurred during parsing %s.\n   Message: %s\n",
 	       fData, XMLString::transcode(e.getMessage() ) );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
   catch( const DOMException& e )
@@ -358,6 +367,7 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
           char buf[maxChars + 1];
           sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
                    fData, e.code, XMLString::transcode(errText) );
+	  deleteBiproducts = false;
           CPPUNIT_ASSERT_MESSAGE( buf, false );
 	}
     }
@@ -366,6 +376,7 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
       XMLPlatformUtils::Terminate();
       char buf[maxChars + 1];
       sprintf( buf, "An unknown error occurred during parsing %s.\n", fData );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
   
@@ -501,6 +512,7 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
       char buf[maxChars + 1];
       sprintf( buf, "An error occurred during parsing\n   Message: %s\n",
 	       XMLString::transcode(e.getMessage() ) );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
   catch( const DOMException& e )
@@ -512,6 +524,7 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
           char buf[maxChars + 1];
           sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
                    fSource, e.code, XMLString::transcode(errText) );
+	  deleteBiproducts = false;
           CPPUNIT_ASSERT_MESSAGE( buf, false );
 	}
     }
@@ -520,6 +533,7 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
       XMLPlatformUtils::Terminate();
       char buf[maxChars + 1];
       sprintf( buf, "An unknown error occurred during parsing.\n" );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
   
@@ -762,6 +776,7 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
     {
       char message[256];
       sprintf( message, "Compilation of the generated %s failed!", fIndDataDriver_cpp );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   sprintf( command, "./%s", fIndDataDriver );
@@ -769,6 +784,7 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
     {
       char message[256];
       sprintf( message, "A test driver, %s, failed!", fIndDataDriver );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
 
@@ -844,6 +860,7 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
     {
       char message[256];
       sprintf( message, "Compilation of the generated %s failed!", fDataSetDriver_cpp );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   sprintf( command, "./%s", fDataSetDriver );
@@ -851,6 +868,7 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
     {
       char message[256];
       sprintf( message, "A test driver, %s, failed!", fDataSetDriver );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
 
@@ -989,6 +1007,7 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
     {
       char message[256];
       sprintf( message, "Compilation of the generated %s failed!", fPredDriver_cpp );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   sprintf( command, "./%s", fPredDriver );
@@ -996,6 +1015,7 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
     {
       char message[256];
       sprintf( message, "A test driver, %s, failed!", fPredDriver );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
 
@@ -1009,6 +1029,7 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
     {
       char message[256];
       sprintf( message, "Compilation of the generated %s failed!", fDriver_cpp );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
 
@@ -1023,18 +1044,21 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
     {
       char message[256];
       sprintf( message, "%s failed for convergence problem <%d>!", fDriver, exitcode );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, true );
     }
   if( exitcode == 2 )
     {
       char message[256];
       sprintf( message, "%s failed due to inproper file access permission <%d>!", fDriver, exitcode );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   if( exitcode > 2 )
     {
       char message[256];
       sprintf( message, "%s failed for reasons other than convergence propblem or access permission <%d>!", fDriver, exitcode );
+      deleteBiproducts = false;
       CPPUNIT_ASSERT_MESSAGE( message, true );
     }
 
@@ -1231,14 +1255,17 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
   {
      char buf[256];
      sprintf( buf, "Failed to open %s as writable.", fTestPred );
+      deleteBiproducts = false;
      CPPUNIT_ASSERT_MESSAGE( buf, false );
   }
   if( system( "g++ testPopPred.cpp -g -I./ -o testPopPred" ) != 0 )
   {
+      deleteBiproducts = false;
      CPPUNIT_ASSERT_MESSAGE( "Failed to compile/link the generated \"testPopPred.cpp\".", false );
   }
   if( system( "./testPopPred" ) != 0 )
   {
+      deleteBiproducts = false;
      CPPUNIT_ASSERT_MESSAGE( "The generated/built \"testPopPred\" failed to run successfully.", false );
   }
 
@@ -1250,10 +1277,12 @@ void NonmemTranslatorPopTest::diagOmegaDiagSigma()
 
   if( system( "g++ popDriver.cpp -g -lspk -lspkopt -lspkpred -latlas_lapack -lcblas -latlas -lpthread -lm -o popDriver" ) != 0 )
   {
+      deleteBiproducts = false;
      CPPUNIT_ASSERT_MESSAGE( "Failed to compile/link the generated \"driver.cpp\".", false );
   }
   if( system( "./popDriver" ) != 0 )
   {
+      deleteBiproducts = false;
      CPPUNIT_ASSERT_MESSAGE( "The generated/built \"popDriver\" failed to run successfully.", false );
   }
   */

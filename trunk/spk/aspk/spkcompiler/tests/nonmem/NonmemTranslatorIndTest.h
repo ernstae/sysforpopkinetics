@@ -16,6 +16,7 @@ class NonmemTranslatorIndTest : public CppUnit::TestFixture {
 
   xercesc::DOMDocument *source;
   xercesc::DOMDocument *data;
+  xercesc::DOMDocument *report;
 public:
     static CppUnit::Test * suite();
     virtual void setUp();
