@@ -64,40 +64,117 @@ This documentation specifies the information passed back from CSPK to MDA.
 <!-- <ind_obj_out> Final objective value for the individual parameter. -->
 <!ELEMENT ind_obj_out (value)+>
 
-<!-- <pop_stat_result> Statistical analysis results on the final estimate for the population parameter.  The NONMEM fixed effect parameters are mapped to the SPK population parameter in the oder of {THETA, OMEGA, SIGMA}.-->
-<!ELEMENT pop_stat_result ( pop_stderror_out? | pop_covariance_out? | pop_inverse_covariance_out? | pop_correlation_out? )>
+<!-- <pop_stat_result> Statistical analysis results on the final estimate for the population parameter.  The NONMEM fixed effect parameters are mapped to the SPK population parameter in the oder of {THETA, OMEGA, SIGMA}.
 
-<!-- <pop_stderror_out> Standard error for the final estimate for population parameter. -->
+For example, given the following (full) covariance matrix:
+<html:pre>
+   /           \
+   |  <font color="red">1</font>  2  3  |
+   |  <font color="red">2</font>  <font color="red">4</font>  5  |
+   |  <font color="red">3</font>  <font color="red">5</font>  <font color="red">6</font>  |
+   \           /
+</html:pre>
+
+the following is returned:
+<html:pre>
+   &lt;<pop_covariance_out> dimension="3" struct="block"&gt;
+      &lt;<value>&gt;1&lt;/<value>&gt;
+      &lt;<value>&gt;2&lt;/<value>&gt;&lt;<value>&gt;4&lt;/<value>&gt;
+      &lt;<value>&gt;3&lt;/<value>&gt;&lt;<value>&gt;5&lt;/<value>&gt;&lt;<value>&gt;6&lt;/<value>&gt;
+   &lt;/<pop_covariance_out>&gt;
+</html:/pre>
+-->
+<!ELEMENT pop_stat_result ( pop_stderror_out? | pop_covariance_out? | pop_inverse_covariance_out? | pop_correlation_out?  | pop_coefficient_out? | pop_confidence_out? )>
+
+<!-- <pop_stderror_out> Standard error for the final estimate of population parameter.
+ The i-th &lt;<value>&gt; corresponds to the i-th element of the parameter vector.
+ -->
 <!ELEMENT pop_stderror_out (value)*>
 
-<!-- <pop_stderror_out length="0"> The length of the standard error vector. -->
+<!-- <pop_stderror_out length="0"> The length of the standard error vector, which is equal to the length of the parameter vector. -->
 <!ATTLIST pop_stderror_out length CDATA #REQUIRED>
 
-<!-- <pop_covariance_out> Covariance matrix of the final estimate for population parameter.  The lower triangle is always returned.-->
+<!-- <pop_covariance_out> Covariance matrix for the final estimate of population parameter.
+For the arrangement of &lt;<value>&gt;s under this tag, refer to &lt;<pop_stat_result>&gt;.
+-->
 <!ELEMENT pop_covariance_out (value)*>
 
 <!-- <pop_covariance_out dimension="0"> The dimension of the covariance matrix. -->
 <!ATTLIST pop_covariance_out dimension CDATA #REQUIRED>
 
-<!-- <pop_inverse_covariance_out> Inverse of the inverse of covariance matrix of the final estimate for population parameter.  The lower triangle is always retruned.-->
+<!-- <pop_inverse_covariance_out> Inverse of the covariance matrix for the final estimate of population parameter.  
+For the arrangement of &lt;<value>&gt;s under this tag, refer to &lt;<pop_stat_result>&gt;.
+-->
 <!ELEMENT pop_inverse_covariance_out (value)*>
 
 <!-- <pop_inverse_covariance_out dimension="0"> The dimension of the covariance matrix. -->
 <!ATTLIST pop_inverse_covariance_out dimension CDATA #REQUIRED>
 
-<!-- <pop_correlation_out> Correlation matrix of the final estimate for population parameter.  The lower triangle is always returned.-->
+<!-- <pop_correlation_out> Correlation matrix for the final estimate of population parameter.
+For the arrangement of &lt;<value>&gt;s under this tag, refer to &lt;<pop_stat_result>&gt;.
+-->
 <!ELEMENT pop_correlation_out (value)*>
 
 <!-- <pop_correlation_out dimension="0"> The dimension of the correlation matrix. -->
 <!ATTLIST pop_correlation_out dimension CDATA #REQUIRED>
 
-<!-- <ind_stat_result> Statistical analysis results on the final estimate for the individual parameter.  The NONMEM random effect parameter, ETA, is mapped to the SPK individual parameter, one-to-one.-->
-<!ELEMENT ind_stat_result (ind_stderror_out? | ind_covariance_out? | ind_inverse_covariance_out? | ind_correlation_out? )>
+<!-- <pop_confidence_out>  The confidence interval for the final estimate of population parameter. 
+The first n &lt;<value>&gt;s are the lower bounds and the remaining n
+&lt;<value>&gt;s are the upper bounds, where n is the length of parameter vector.
+Thus, the lower bound for the i-th element of the parameter vector is found at (0 * n + i)-th in 
+the &lt;<value>&gt;s sequence and the upper bound for the same parameter is found at (1 * n + i)-th.
+-->
+<!ELEMENT pop_confidence_out (value)*>
 
-<!-- <ind_stderror_out> Standard error for the final estimate(s) for individual parameter(s). -->
+<!-- <pop_confidence_out length="0"> The length of the vector containing
+the confidence intervals.
+-->
+<!ATTLIST pop_confidence_out length CDATA #REQUIRED>
+
+<!-- <pop_coefficient_out> The coefficient of variation for the final estimate of population parameter, which is twice long as the length of the parameter vector.
+The i-th &lt;<value>&gt; corresponds to the i-th element of the parameter vector.
+-->
+<!ELEMENT pop_coefficient_out (value)*>
+
+<!-- <pop_coefficient_out length="0"> The length of the vector containing
+the coefficient of variation, which is equal to the length of the parameter vector.
+-->
+<!ATTLIST pop_coefficient_out length CDATA #REQUIRED>
+
+<!-- <ind_stat_result> Statistical analysis results on the final estimate for the individual parameter.  The NONMEM random effect parameter, ETA, is mapped to the SPK individual parameter, one-to-one.
+
+For the symmetric matrices (ex. the covariance and the correlation matrices), the <value>s are arranged so that the lower triangle of the symmetric matrix is read in the row-major order.
+For example, given the following (full) covariance matrix:
+<html:pre>
+   /           \
+   |  <font color="red">1</font>  2  3  |
+   |  <font color="red">2</font>  <font color="red">4</font>  5  |
+   |  <font color="red">3</font>  <font color="red">5</font>  <font color="red">6</font>  |
+   \           /
+</html:pre>
+the following is returned:
+<html:pre>
+   &lt;<ind_covariance_out> dimension="3" struct="block"&gt;
+      &lt;<value>&gt;1&lt;/<value>&gt;
+      &lt;<value>&gt;2&lt;/<value>&gt;&lt;<value>&gt;4&lt;/<value>&gt;
+      &lt;<value>&gt;3&lt;/<value>&gt;&lt;<value>&gt;5&lt;/<value>&gt;&lt;<value>&gt;6&lt;/<value>&gt;
+   &lt;/<ind_covariance_out>&gt;
+</html:/pre>
+-->
+<!ELEMENT ind_stat_result (ind_stderror_out? | ind_covariance_out? | ind_inverse_covariance_out? | ind_correlation_out? | ind_coefficient_out? | ind_confidence_out?)>
+
+<!-- <ind_stderror_out> Standard error for the final estimate(s) of individual parameter(s).
+ The i-th &lt;<value>&gt; corresponds to the i-th element of the parameter vector.
+ -->
 <!ELEMENT ind_stderror_out (value)*>
 
-<!-- <ind_covariance_out> Covariance matrix of the final estimate(s) for individual parameter(s). -->
+<!-- <ind_stderror_out length="0"> The length of the standar error vector, which is equal to the length of the parameter vector.
+-->
+<!ATTLIST ind_stderror_out length CDATA #REQUIRED>
+
+<!-- <ind_covariance_out> Covariance matrix for the final estimate(s) of individual parameter(s).
+For the arrangement of &lt;<value>&gt;s under this tag, refer to &lt;<ind_stat_result>&gt;.
+-->
 <!ELEMENT ind_covariance_out (value)*>
 
 <!-- <ind_covariance_out dimension="0"> The dimension of the covariance matrix. -->
@@ -106,7 +183,8 @@ This documentation specifies the information passed back from CSPK to MDA.
 <!-- <ind_covariance_out struct="block"> The structure of the covariance matrix: "block" or "diagonal". -->
 <!ATTLIST ind_covariance_out struct (block|diagonal) #REQUIRED>
 
-<!-- <ind_inverse_covariance_out> Inverse of the covariance matrix of the final estimate(s) for individual parameter(s). -->
+<!-- <ind_inverse_covariance_out> Inverse of the covariance matrix for the final estimate(s) of individual parameter(s).  For the arrangement of &lt;<value>&gt;s under this tag, refer to &lt;<ind_stat_result>&gt;.
+-->
 <!ELEMENT ind_inverse_covariance_out (value)*>
 
 <!-- <ind_inverse_covariance_out dimension="0"> The dimension of the covariance matrix. -->
@@ -115,7 +193,9 @@ This documentation specifies the information passed back from CSPK to MDA.
 <!-- <ind_inverse_covariance_out struct="block"> The structure of the inverse of covariance matrix: "block" or "diagonal". -->
 <!ATTLIST ind_inverse_covariance_out struct (block|diagonal) #REQUIRED>
 
-<!-- <ind_correlation_out> Correlation matrix of the final estimate(s) for individual parameter(s). -->
+<!-- <ind_correlation_out> Correlation matrix for the final estimate(s) of individual parameter(s). 
+For the arrangement of &lt;<value>&gt;s under this tag, refer to &lt;<ind_stat_result>&gt;.
+-->
 <!ELEMENT ind_correlation_out (value)*>
 
 <!-- <ind_correlation_out dimension="0"> The dimension of the correlation matrix. -->
@@ -123,6 +203,30 @@ This documentation specifies the information passed back from CSPK to MDA.
 
 <!-- <ind_correlation_out struct="block"> The structure of the correlation matrix: "block" or "diagonal". -->
 <!ATTLIST ind_correlation_out struct (block|diagonal) #REQUIRED>
+
+<!-- <ind_confidence_out> Confidence interval for the final estimate(s) of
+individual parameter(s).  
+The first n &lt;<value>&gt;s are the lower bounds and the remaining n
+&lt;<value>&gt;s are the upper bounds, where n is the length of parameter vector.
+Thus, the lower bound for the i-th element of the parameter vector is found at (0 * n + i)-th in 
+the &lt;<value>&gt;s sequence and the upper bound for the same parameter is found at (1 * n + i)-th.
+-->
+<!ELEMENT ind_confidence_out (value)*>
+
+<!-- <ind_confidence_out length="0"> The length of the vector containing the confidence intervals, which is twice as long as of the parameter vector.
+-->
+<!ATTLIST ind_confidence_out length="0">
+
+<!-- <ind_coefficient_out> Coefficient of variation for the final estimate(s) of
+individual parameters(s).  
+The i-th &lt;<value>&gt; corresponds to the i-th element of the parameter vector.
+-->
+<!ELEMENT ind_coefficient_out (value)*>
+
+<!-- <ind_coefficient_out length="0"> The lenght of the vector containing the coefficient of variation, which is equal to the length of the parameter vector.
+-->
+<!ATTLIST ind_coefficient_out length CDATA #REQUIRED>
+
 
 <!-- <presentation_data> An augmented data set, containing the values that 
 appear on the left hand side of the equations in <model> and the following 
