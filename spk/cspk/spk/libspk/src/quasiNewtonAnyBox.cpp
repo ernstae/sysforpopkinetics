@@ -498,6 +498,7 @@ $end
 #include <iostream>
 #include <cassert>
 #include <cmath>
+#include <limits>
 
 
 /*------------------------------------------------------------------------
@@ -658,6 +659,13 @@ namespace // [Begin: unnamed namespace]
 
     const char* function( const double* yCurr, double& fScaledOut )
     {
+      //------------------------------------------------------------
+      // Preliminaries.
+      //------------------------------------------------------------
+
+      using namespace std;
+
+
       //--------------------------------------------------------
       // Prepare the parameters for the unscaled objective function.
       //--------------------------------------------------------
@@ -705,6 +713,26 @@ namespace // [Begin: unnamed namespace]
           SpkError::SPK_UNKNOWN_ERR, 
           "An unknown exception was thrown during the evaluation of the objective function.",
           __LINE__, 
+          __FILE__ );
+      }
+
+      // Make sure that the objective function value is not infinite.
+      if ( fabs( fScaledOut ) == numeric_limits<double>::infinity() )
+      {
+        throw SpkException(
+          SpkError::SPK_OPT_ERR, 
+          "An infinite value was generated for the objective function.",
+          __LINE__,
+          __FILE__ );
+      }
+
+      // Make sure that the objective function value is not a Nan.
+      if ( fScaledOut != fScaledOut )
+      {
+        throw SpkException(
+          SpkError::SPK_OPT_ERR, 
+          "A value that is Not a Number (NaN) was generated for the objective function.",
+          __LINE__,
           __FILE__ );
       }
 
