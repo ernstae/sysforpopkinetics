@@ -154,7 +154,7 @@ void MontePopObj(
 			numberEval, estimateOne, stdOne);
 		negLogLikeEstimate  -= log( estimateOne );
 		estimateVariance    += stdOne * stdOne 
-		                     / estimateOne * estimateOne;
+		                     / (estimateOne * estimateOne);
 	}
 	estimateStd = sqrt( estimateVariance );
 }
