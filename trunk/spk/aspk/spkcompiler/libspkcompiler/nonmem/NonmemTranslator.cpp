@@ -35,7 +35,9 @@ namespace{
   bool              myIsEstimate    = true;
   bool              myIsSimulate    = false;
   bool              myIsStat        = false;
-  
+ 
+  bool              myIsOnlySimulation = false;
+  unsigned int      mySubproblemsN  = 1; 
   APPROX            myApproximation = FO;
   unsigned int      myPopSize       = 1;
   
@@ -204,9 +206,11 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   X_THETA          = XMLString::transcode("theta");
   X_LENGTH         = XMLString::transcode("length");
   X_OMEGA          = XMLString::transcode("omega");
+  X_ONLYSIMULATION = XMLString::transcode("onlysimulation");
   X_SIGMA          = XMLString::transcode("sigma");
   X_SIMULATION     = XMLString::transcode("simulation");
   X_SEED           = XMLString::transcode("seed");
+  X_SUBPROBLEMS    = XMLString::transcode("subproblems");
   X_POP_STAT       = XMLString::transcode("pop_stat");
   X_COVARIANCE_FORM= XMLString::transcode("covariance_form");
   X_MITR           = XMLString::transcode("mitr");
@@ -282,6 +286,8 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   assert( XMLString::equals( X_MITR           , XMLString::transcode("mitr") ) );
   assert( XMLString::equals( X_IND_STAT       , XMLString::transcode("ind_stat") ) );
   assert( XMLString::equals( X_SIG_DIGITS     , XMLString::transcode("sig_digits" ) ) );
+  assert( XMLString::equals( X_ONLYSIMULATION , XMLString::transcode("onlysimulation") ) );
+  assert( XMLString::equals( X_SUBPROBLEMS    , XMLString::transcode("subproblems") ) );
 }
 NonmemTranslator::NonmemTranslator()
 {
@@ -346,6 +352,8 @@ NonmemTranslator::~NonmemTranslator()
   XMLString::release( &X_MITR );
   XMLString::release( &X_IND_STAT );
   XMLString::release( &X_SIG_DIGITS );
+  XMLString::release( &X_ONLYSIMULATION );
+  XMLString::release( &X_SUBPROBLEMS );
 }
 NonmemTranslator::NonmemTranslator( const NonmemTranslator& )
 {
@@ -432,9 +440,7 @@ void NonmemTranslator::parseSource()
 
   if( myIsSimulate )
     {
-      Symbol * p = table->insertLabel(DefaultStr::SIMDV, "", myRecordNums);
-      for( int i=0; i<myPopSize; i++ )
-	p->initial[i] = "0";
+      Symbol * p = table->insertUserVar(DefaultStr::SIMDV);
     }
 
   // Keep the user-typed Nonmem Keyword strings
@@ -906,8 +912,6 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   // NOTE: eta is not given by the user.  
   // eta's initial estimate is set to 0.0 automatically.
   //
-  // REVISIT - Sachiko 01/22/04
-  // The boundary values must be computed automatically too.
   //-----------------------------------------------------------
   myEtaLen = myOmegaDim;
   char etaDefault[] = "0.0";
@@ -947,6 +951,24 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
 		   XMLString::transcode(xml_seed) );
 	  abort();
 	}
+      if( simulation->hasAttribute( X_ONLYSIMULATION ) )
+      {
+         const XMLCh* xml_only_simulation = simulation->getAttribute( X_ONLYSIMULATION );
+         if( XMLString::equals( xml_only_simulation, X_YES ) )
+           myIsOnlySimulation = true;
+         else
+           myIsOnlySimulation = false;
+      }
+      if( simulation->hasAttribute( X_SUBPROBLEMS ) )
+      {
+         const XMLCh* xml_subproblems = simulation->getAttribute( X_SUBPROBLEMS );
+         if( !XMLString::textToBin( xml_subproblems, mySubproblemsN ) )
+         {
+	  fprintf( stderr, "XMLString::textToBin( %s, mySubproblemsN ) returned false.\n", 
+		   XMLString::transcode(xml_subproblems) );
+	  abort();
+         }
+      }
     }
   
   DOMNodeList * pop_stat_list = pop_analysis->getElementsByTagName( X_POP_STAT );
@@ -1506,15 +1528,7 @@ void NonmemTranslator::generateIndData( ) const
       if( type == Symbol::DATALABEL )
 	{
 	  bool isID = ( varName==pID->name? true : false );
-
-          //
-          // SIMDV, which is a place holder for simulated data,
-          // has to be writable.
-	  //
-	  bool isSIMDV = ( varName == DefaultStr::SIMDV? true : false );
-	  if( !isSIMDV )
-	    oIndData_h << "const ";
-          oIndData_h << "std::vector<" << (isID? "char *" : "T") << ">";
+          oIndData_h << "const std::vector<" << (isID? "char *" : "T") << ">";
 	  oIndData_h << " " << varName << ";" << endl;
 	  if( varAlias != "" )
             {
@@ -2531,7 +2545,6 @@ void NonmemTranslator::generateIndDriver( ) const
        oDriver << "   simulate( model, nY, bIn, yOut, seed );" << endl;
        //       if( myIsEstimate )
 	 {
-	   oDriver << "   bIn = bOut;" << endl;
 	   oDriver << "   for( int j=0; j<nY; j++ )" << endl;
 	   oDriver << "   {" << endl;
 	   oDriver << "      set.data[0]->SIMDV[j] = yOut[j];" << endl;
