@@ -19,6 +19,7 @@ distribution.
 package uw.rfpk.mda.nonmem;
 
 import javax.swing.JOptionPane;
+import uw.rfpk.mda.nonmem.display.Output;
 
 /** This class handles likelihood evaluation method.
  * @author  Jiaji Du
@@ -61,24 +62,15 @@ public class Likelihood {
             front = source.substring(0, source.indexOf("<simulation ") - 1);
             back = source.substring(source.indexOf(">", source.indexOf("<simulation ")) + 2);
             source = front + back;
-            
-            // Generate a dataset by replacing DV by simulated data from parent job's report.
-            String presentation_data = "<?xml version=\"1.0\"?>\n" + 
-                                       report.substring(report.indexOf("<presentation_data "), 
-                                                        report.lastIndexOf("</presentation_data>") + 20);
-            String[] dataLabels = XMLReader.getDataLabels(source);
-            String[][] dataset = XMLReader.getData(presentation_data, dataLabels);
-            String description = data.substring(data.indexOf("<description>") + 13, 
-                                                data.indexOf("</description>")).trim();
-            data = XMLWriter.setData(dataset, dataLabels, description) + "\n";
+            data = Utility.replaceDataDVbySimDV(report, source, data);
             JOptionPane.showMessageDialog(null, "The <simulation> element of the source has been removed." +
                                          "\nThe DV values of the dataset have been replaced by the" +
                                          "\nsimulated DV values obtained from the parent job.");            
         }
         return source + data + model;
     }
-    
-    // Replace parameter values of souce by those of report 
+                
+    // Replace initial values of parameters in the souce by those in the report 
     private static String replaceSourceParameters(String source, String report)
     {
         // Replace theta values of souce by those of report 

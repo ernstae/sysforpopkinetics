@@ -593,7 +593,7 @@ public class XMLWriter
         docData.appendChild(spkdata);
         Element table = docData.createElement("table");
         table.setAttribute("columns", String.valueOf(nColumns));
-        table.setAttribute("rows", String.valueOf(nRows));        
+        table.setAttribute("rows", String.valueOf(nRows + 1));        
         spkdata.appendChild(table);
         Element description = docData.createElement("description");
         description.appendChild(docData.createTextNode(replaceCharacter(datasetDescription)));

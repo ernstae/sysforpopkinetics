@@ -141,7 +141,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("Enter the name of the data items in the same order as the data columns\nlocated in the data file.  A data item may be standard or non-standard.\nThe standard data item may have alias.  The first data item is  \"ID\" if it \nexists in the data file.   \"Time\" and \"DV\" data items are always required.");
+        jTextPane1.setText("Enter the name of the data items in the same order as the data columns\nlocated in the data file.  A data item may be standard or non-standard.\nThe standard data item may have alias.  The first data item must be  \"ID\" \nif it exists in the data file.  Data item \"DV\"(data values) is always required.");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
@@ -197,6 +197,8 @@ public class Input extends javax.swing.JPanel implements WizardStep {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        jTable1.setColumnSelectionAllowed(true);
+        jTable1.setRowSelectionAllowed(false);
         jTable1.setSelectionForeground(new java.awt.Color(255, 51, 51));
         jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -409,7 +411,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         {
             if(!iterator.getIsPred())
             {
-                if(exist(input, "DV") && exist(input, "TIME"))
+                if(exist(input, "DV"))
                 {                
                     isValid = true;
                     wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray()); 
@@ -417,8 +419,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
                 else
                 {
                     JOptionPane.showMessageDialog(null, 
-                                                  "Both \"DV\" and \"Time\" data items " +
-                                                  "are required.",   
+                                                  "Data item \"DV\" is required.",   
                                                   "Input Error",    
                                                   JOptionPane.ERROR_MESSAGE); 
                     isValid = false;
@@ -435,8 +436,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
                 else
                 {
                     JOptionPane.showMessageDialog(null, 
-                                                  "\"DV\" data item " +
-                                                  "are required.",   
+                                                  "Data item \"DV\" is required.",   
                                                   "Input Error",    
                                                   JOptionPane.ERROR_MESSAGE);
                     isValid = false;
@@ -615,7 +615,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
             
             // Create columns
             jTable1.createDefaultColumnsFromModel();
-            jTable1.setRowSelectionAllowed(false);
+            jTable1.setColumnSelectionAllowed(true);
             
             // Set table cell renderer
             TableCellRenderer cellRenderer = new CellRenderer(); 

@@ -32,6 +32,8 @@ import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.Vector;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  * This class defines a step to create the $PRED record.
@@ -58,8 +60,9 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
         iterator = iter;
         initComponents();
         jButton1.addActionListener(new DefaultEditorKit.CutAction());
-        jButton2.addActionListener(new DefaultEditorKit.CopyAction()); 
+        jButton2.addActionListener(new DefaultEditorKit.CopyAction());
         jButton3.addActionListener(new DefaultEditorKit.PasteAction());
+        jTextArea1.getDocument().addDocumentListener(new MyDocumentListener());        
     }
     
     /** This method is called from within the constructor to
@@ -81,12 +84,6 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
         setLayout(new java.awt.BorderLayout());
 
         setBorder(new javax.swing.border.EmptyBorder(new java.awt.Insets(0, 12, 12, 12)));
-        jTextArea1.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                jTextArea1KeyTyped(evt);
-            }
-        });
-
         jScrollPane1.setViewportView(jTextArea1);
 
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -135,11 +132,6 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
         isValid = true;
         wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());       
     }//GEN-LAST:event_jButton3ActionPerformed
-
-    private void jTextArea1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextArea1KeyTyped
-        isValid = true;
-        wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
-    }//GEN-LAST:event_jTextArea1KeyTyped
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -152,6 +144,21 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JTextPane jTextPane1;
     // End of variables declaration//GEN-END:variables
 
+    private class MyDocumentListener implements DocumentListener {
+        public void insertUpdate(DocumentEvent e) {
+            isValid = true;
+            wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());         
+        }
+        public void removeUpdate(DocumentEvent e) {
+            if(jTextArea1.getText().equals(""))
+            {
+                isValid = false;
+                wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
+            }
+        }
+        public void changedUpdate(DocumentEvent e) {}
+    }
+    
     /**
      * This method is to return the StepDescriptor object.
      * @return a StepDescriptor object.

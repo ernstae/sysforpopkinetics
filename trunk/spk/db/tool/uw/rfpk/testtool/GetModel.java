@@ -37,7 +37,7 @@ import java.text.SimpleDateFormat;
  */
 public class GetModel extends javax.swing.JFrame {
     
-    /** Creates new form Report */
+    /** Creates new form GetModel */
     public GetModel() {
         initComponents();
         jTextField1.setText(dbHost);

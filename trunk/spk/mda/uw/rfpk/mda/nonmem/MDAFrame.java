@@ -100,8 +100,6 @@ public class MDAFrame extends JFrame
         if(isOnline)
       	{
             server = new Server(args);
-            serverName = args[0];
-            serverPort = args[1];
             isTester = args[4].equals("1") ? true : false;
             isDeveloper = args[5].equals("1") ? true : false;
         }
@@ -254,6 +252,25 @@ public class MDAFrame extends JFrame
         jLabel9 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         buttonGroup3 = new javax.swing.ButtonGroup();
+        ChildJob = new javax.swing.JDialog();
+        jTextArea6 = new javax.swing.JTextArea();
+        peRadioButton = new javax.swing.JRadioButton();
+        leRadioButton = new javax.swing.JRadioButton();
+        foRadioButton = new javax.swing.JRadioButton();
+        ehRadioButton = new javax.swing.JRadioButton();
+        laRadioButton = new javax.swing.JRadioButton();
+        mlRadioButton = new javax.swing.JRadioButton();
+        miRadioButton = new javax.swing.JRadioButton();
+        grRadioButton = new javax.swing.JRadioButton();
+        anRadioButton = new javax.swing.JRadioButton();
+        jTextArea7 = new javax.swing.JTextArea();
+        jPanel13 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        mcRadioButton = new javax.swing.JRadioButton();
+        buttonGroup4 = new javax.swing.ButtonGroup();
+        buttonGroup5 = new javax.swing.ButtonGroup();
+        buttonGroup6 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jTextPane1 = new javax.swing.JTextPane();
         jTextPane2 = new javax.swing.JTextPane();
@@ -305,16 +322,11 @@ public class MDAFrame extends JFrame
         correlationMenu = new javax.swing.JMenuItem();
         invCovarianceMenu = new javax.swing.JMenuItem();
         tableMenu = new javax.swing.JMenuItem();
-        scatterPlotMenu = new javax.swing.JMenu();
-        dotsMenu = new javax.swing.JMenuItem();
-        lineMenu = new javax.swing.JMenuItem();
-        bothMenu = new javax.swing.JMenuItem();
+        scatterPlotMenu = new javax.swing.JMenuItem();
         summaryMenu = new javax.swing.JMenuItem();
         traceMenu = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
-        dotsPlotMenu = new javax.swing.JMenuItem();
-        linePlotMenu = new javax.swing.JMenuItem();
-        bothPlotMenu = new javax.swing.JMenuItem();
+        useMDAMenu = new javax.swing.JMenuItem();
         useRMenu = new javax.swing.JMenuItem();
         jLabel16 = new javax.swing.JLabel();
 
@@ -1055,6 +1067,7 @@ public class MDAFrame extends JFrame
         jPanel8.add(jLabel9, gridBagConstraints);
 
         jLabel8.setBackground(java.awt.Color.green);
+        jLabel8.setFocusable(false);
         jLabel8.setPreferredSize(new java.awt.Dimension(50, 15));
         jLabel8.setOpaque(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1065,6 +1078,130 @@ public class MDAFrame extends JFrame
         jPanel8.add(jLabel8, gridBagConstraints);
 
         diffHelpDialog.getContentPane().add(jPanel8, java.awt.BorderLayout.CENTER);
+
+        ChildJob.getContentPane().setLayout(new java.awt.GridBagLayout());
+
+        jTextArea6.setBackground(new java.awt.Color(204, 204, 204));
+        jTextArea6.setText("Select the estimation method you want to use. \nInitial conditions will be provided by the results \nfrom the parent job.");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 6, 12);
+        ChildJob.getContentPane().add(jTextArea6, gridBagConstraints);
+
+        peRadioButton.setText("Parameter estimation using the method");
+        buttonGroup4.add(peRadioButton);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
+        ChildJob.getContentPane().add(peRadioButton, gridBagConstraints);
+
+        leRadioButton.setText("Likelihood evaluation using the method");
+        buttonGroup4.add(leRadioButton);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
+        ChildJob.getContentPane().add(leRadioButton, gridBagConstraints);
+
+        foRadioButton.setText("First Order");
+        buttonGroup5.add(foRadioButton);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 12);
+        ChildJob.getContentPane().add(foRadioButton, gridBagConstraints);
+
+        ehRadioButton.setText("Expected Hessian");
+        buttonGroup5.add(ehRadioButton);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 12);
+        ChildJob.getContentPane().add(ehRadioButton, gridBagConstraints);
+
+        laRadioButton.setText("Laplace Approximation");
+        buttonGroup5.add(laRadioButton);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 12);
+        ChildJob.getContentPane().add(laRadioButton, gridBagConstraints);
+
+        mlRadioButton.setText("Plain Monte Carlo");
+        buttonGroup6.add(mlRadioButton);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 12);
+        ChildJob.getContentPane().add(mlRadioButton, gridBagConstraints);
+
+        miRadioButton.setText("Miser Monte Carlo");
+        buttonGroup6.add(miRadioButton);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 12);
+        ChildJob.getContentPane().add(miRadioButton, gridBagConstraints);
+
+        grRadioButton.setText("Grid Integration");
+        buttonGroup6.add(grRadioButton);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 12);
+        ChildJob.getContentPane().add(grRadioButton, gridBagConstraints);
+
+        anRadioButton.setText("Analytical Integration");
+        buttonGroup6.add(anRadioButton);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 10;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 12);
+        ChildJob.getContentPane().add(anRadioButton, gridBagConstraints);
+
+        jTextArea7.setBackground(new java.awt.Color(204, 204, 204));
+        jTextArea7.setText("If data simulation was used in the parent job, the\nsimulated data will be analyzed by the child job\nusing the estimation method you have selected.");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 11;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 6, 12);
+        ChildJob.getContentPane().add(jTextArea7, gridBagConstraints);
+
+        jButton1.setText("OK");
+        jButton1.setMaximumSize(new java.awt.Dimension(75, 25));
+        jButton1.setMinimumSize(new java.awt.Dimension(75, 25));
+        jButton1.setPreferredSize(new java.awt.Dimension(75, 25));
+        jPanel13.add(jButton1);
+
+        jButton2.setText("Cancel");
+        jPanel13.add(jButton2);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 12;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 12, 12);
+        ChildJob.getContentPane().add(jPanel13, gridBagConstraints);
+
+        mcRadioButton.setText("Markov Chain Monte Carlo");
+        buttonGroup5.add(mcRadioButton);
+        mcRadioButton.setEnabled(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 12);
+        ChildJob.getContentPane().add(mcRadioButton, gridBagConstraints);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(0, 204, 204));
@@ -1321,6 +1458,17 @@ public class MDAFrame extends JFrame
         jInternalFrame1.setPreferredSize(new java.awt.Dimension(603, 460));
         jInternalFrame1.setVisible(true);
         textArea.setFont(new java.awt.Font("Courier", 0, 12));
+        textArea.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                textAreaKeyPressed(evt);
+            }
+        });
+        textArea.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                textAreaMouseClicked(evt);
+            }
+        });
+
         jScrollPane1.setViewportView(textArea);
 
         jInternalFrame1.getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -1363,7 +1511,7 @@ public class MDAFrame extends JFrame
 
         savaAsMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
         savaAsMenu.setMnemonic('a');
-        savaAsMenu.setText("Sava As");
+        savaAsMenu.setText("Save As");
         savaAsMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 savaAsMenuActionPerformed(evt);
@@ -1564,33 +1712,12 @@ public class MDAFrame extends JFrame
 
         jMenu9.add(tableMenu);
 
-        scatterPlotMenu.setText("ScatterPlots");
-        dotsMenu.setText("Dots");
-        dotsMenu.addActionListener(new java.awt.event.ActionListener() {
+        scatterPlotMenu.setText("Scatterplots");
+        scatterPlotMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dotsMenuActionPerformed(evt);
+                scatterPlotMenuActionPerformed(evt);
             }
         });
-
-        scatterPlotMenu.add(dotsMenu);
-
-        lineMenu.setText("Line");
-        lineMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                lineMenuActionPerformed(evt);
-            }
-        });
-
-        scatterPlotMenu.add(lineMenu);
-
-        bothMenu.setText("Both");
-        bothMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bothMenuActionPerformed(evt);
-            }
-        });
-
-        scatterPlotMenu.add(bothMenu);
 
         jMenu9.add(scatterPlotMenu);
 
@@ -1619,34 +1746,16 @@ public class MDAFrame extends JFrame
         jMenuBar1.add(jMenu9);
 
         jMenu1.setText("Plot");
-        dotsPlotMenu.setText("Dots");
-        dotsPlotMenu.addActionListener(new java.awt.event.ActionListener() {
+        useMDAMenu.setText("Use MDA Plotter");
+        useMDAMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dotsPlotMenuActionPerformed(evt);
+                useMDAMenuActionPerformed(evt);
             }
         });
 
-        jMenu1.add(dotsPlotMenu);
+        jMenu1.add(useMDAMenu);
 
-        linePlotMenu.setText("Line");
-        linePlotMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                linePlotMenuActionPerformed(evt);
-            }
-        });
-
-        jMenu1.add(linePlotMenu);
-
-        bothPlotMenu.setText("Both");
-        bothPlotMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bothPlotMenuActionPerformed(evt);
-            }
-        });
-
-        jMenu1.add(bothPlotMenu);
-
-        useRMenu.setText("Use R");
+        useRMenu.setText("Use R Language");
         useRMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 useRMenuActionPerformed(evt);
@@ -1684,6 +1793,23 @@ public class MDAFrame extends JFrame
 
         pack();
     }//GEN-END:initComponents
+
+    private void scatterPlotMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scatterPlotMenuActionPerformed
+        scatterPlot(0);
+    }//GEN-LAST:event_scatterPlotMenuActionPerformed
+
+    private void textAreaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textAreaMouseClicked
+        removeHighlights(textArea);       
+    }//GEN-LAST:event_textAreaMouseClicked
+
+    private void textAreaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textAreaKeyPressed
+        if(evt.getKeyCode() == 114)
+        {
+            if(indexPosition >= positions.size() - 1)
+                indexPosition -= positions.size();
+            textArea.setCaretPosition(((Integer)positions.get(++indexPosition)).intValue());
+        }
+    }//GEN-LAST:event_textAreaKeyPressed
 
     private void jRadioButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton12ActionPerformed
         jobMethodCode = "mi";
@@ -1740,29 +1866,9 @@ public class MDAFrame extends JFrame
         }
     }//GEN-LAST:event_useRMenuActionPerformed
 
-    private void bothPlotMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bothPlotMenuActionPerformed
-        new PlotTool(textArea.getText(), "both");
-    }//GEN-LAST:event_bothPlotMenuActionPerformed
-
-    private void linePlotMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_linePlotMenuActionPerformed
-        new PlotTool(textArea.getText(), "line");
-    }//GEN-LAST:event_linePlotMenuActionPerformed
-
-    private void dotsPlotMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dotsPlotMenuActionPerformed
-        new PlotTool(textArea.getText(), "dots"); 
-    }//GEN-LAST:event_dotsPlotMenuActionPerformed
-
-    private void bothMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bothMenuActionPerformed
-        scatterPlot("both");
-    }//GEN-LAST:event_bothMenuActionPerformed
-
-    private void lineMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lineMenuActionPerformed
-        scatterPlot("line");
-    }//GEN-LAST:event_lineMenuActionPerformed
-
-    private void dotsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dotsMenuActionPerformed
-        scatterPlot("dots");
-    }//GEN-LAST:event_dotsMenuActionPerformed
+    private void useMDAMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useMDAMenuActionPerformed
+        new PlotTool(textArea.getText()); 
+    }//GEN-LAST:event_useMDAMenuActionPerformed
 
     private void jRadioButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton9ActionPerformed
         jobMethodCode = "mc";
@@ -1829,7 +1935,7 @@ public class MDAFrame extends JFrame
             new Help("Instructions for Using Model Design Agent", 
                      GettingStarted.class.getResource("/uw/rfpk/mda/nonmem/help/MDAHelp.html"));
         else
-            Utility.openURL("https://" + serverName + ":" + serverPort + "/user/help/MDAHelp.jsp");
+            Utility.openURL("https://" + server.getHost() + ":" + server.getPort() + "/user/help/MDAHelp.jsp");
 */  
     }//GEN-LAST:event_HelpButtonActionPerformed
 
@@ -1886,16 +1992,18 @@ public class MDAFrame extends JFrame
         try 
         {
             Highlighter hilite = textArea.getHighlighter();
-
             int pos = 0;
-    
+            positions = new Vector();
+            
             // Search for string
             while ((pos = text.toLowerCase().indexOf(string.toLowerCase(), pos)) >= 0) {
              
                 hilite.addHighlight(pos, pos + string.length(), 
                                     new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW));
+                positions.add(new Integer(pos));
                 pos += string.length();
             }
+            textArea.setCaretPosition(((Integer)positions.get(0)).intValue());
         } 
         catch (BadLocationException e) 
         {
@@ -2781,12 +2889,12 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_SubmitJobButtonActionPerformed
 
     private void WriteInputButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_WriteInputButtonActionPerformed
-        MDAIterator iterator = new MDAIterator(serverName, serverPort, isOnline, 
-                                               this, isTester, isDeveloper, files);
+        MDAIterator iterator = new MDAIterator(server, isOnline, 
+                                               this, isTester, isDeveloper, files, jobId);
         writeInput(iterator);
     }//GEN-LAST:event_WriteInputButtonActionPerformed
 
-    private void scatterPlot(String type)
+    private void scatterPlot(int type)
     {
         if(output != null && output.scatterplot != null)
         {
@@ -3233,8 +3341,11 @@ public class MDAFrame extends JFrame
         server.endSession();       
     }//GEN-LAST:event_exitForm
 
-    // This method performs open file operation.
-    private String[] openOperation()
+    /** This method performs open file operation.
+     * @return a String[] of two elements.  The first element is the file path and the last element
+     * is the file content.
+     */
+    public String[] openOperation()
     {
         // Prepare for the return
         String[] text = null; 
@@ -3297,7 +3408,7 @@ public class MDAFrame extends JFrame
         wp = new JWizardPane(iterator, object); 
         wp.getContentPanel().setBackground(new Color(240, 245, 255));   
 //        wp.setContentImage((new javax.swing.ImageIcon(getClass().getResource("/uw/rfpk/mda/nonmem/wizard/nonmem-spk.gif"))).getImage()); 
-        wp.createDialog(this, "Model Design agent Input File Generation Tool").show();
+        wp.createDialog(this, "Model Design Agent Input File Generation Tool").show();
         WriteInputButton.setEnabled(false);
     }
     
@@ -3839,6 +3950,7 @@ public class MDAFrame extends JFrame
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JDialog ChildJob;
     private javax.swing.JButton CompareFilesButton;
     private javax.swing.JButton DataArchiveButton;
     private javax.swing.JButton DatasetLibraryButton;
@@ -3853,12 +3965,14 @@ public class MDAFrame extends JFrame
     private javax.swing.JButton SubmitJobButton;
     private javax.swing.JMenuItem ThetaMenu;
     private javax.swing.JButton WriteInputButton;
+    private javax.swing.JRadioButton anRadioButton;
     private javax.swing.JDialog archiveDialog;
-    private javax.swing.JMenuItem bothMenu;
-    private javax.swing.JMenuItem bothPlotMenu;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.ButtonGroup buttonGroup3;
+    private javax.swing.ButtonGroup buttonGroup4;
+    private javax.swing.ButtonGroup buttonGroup5;
+    private javax.swing.ButtonGroup buttonGroup6;
     private javax.swing.JButton cancelButton;
     private javax.swing.JMenuItem closeMenu;
     private javax.swing.JButton compareButton;
@@ -3872,14 +3986,17 @@ public class MDAFrame extends JFrame
     private javax.swing.JButton dataRButton;
     private javax.swing.JDialog diffDialog;
     private javax.swing.JDialog diffHelpDialog;
-    private javax.swing.JMenuItem dotsMenu;
-    private javax.swing.JMenuItem dotsPlotMenu;
+    private javax.swing.JRadioButton ehRadioButton;
     private javax.swing.JMenuItem errorMenu;
     private javax.swing.JDialog errorMessageDialog;
     private javax.swing.JMenuItem exitMenu;
     private javax.swing.JMenuItem findMenu;
+    private javax.swing.JRadioButton foRadioButton;
+    private javax.swing.JRadioButton grRadioButton;
     private javax.swing.JButton helpButton;
     private javax.swing.JMenuItem invCovarianceMenu;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JInternalFrame jInternalFrame1;
     private javax.swing.JInternalFrame jInternalFrame2;
     private javax.swing.JInternalFrame jInternalFrame3;
@@ -3908,6 +4025,7 @@ public class MDAFrame extends JFrame
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
+    private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -3946,6 +4064,8 @@ public class MDAFrame extends JFrame
     private javax.swing.JTextArea jTextArea3;
     private javax.swing.JTextArea jTextArea4;
     private javax.swing.JTextArea jTextArea5;
+    private javax.swing.JTextArea jTextArea6;
+    private javax.swing.JTextArea jTextArea7;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField14;
     private javax.swing.JTextField jTextField2;
@@ -3959,10 +4079,13 @@ public class MDAFrame extends JFrame
     private javax.swing.JTextPane jTextPane1;
     private javax.swing.JTextPane jTextPane2;
     private javax.swing.JTextPane jTextPane3;
-    private javax.swing.JMenuItem lineMenu;
-    private javax.swing.JMenuItem linePlotMenu;
+    private javax.swing.JRadioButton laRadioButton;
+    private javax.swing.JRadioButton leRadioButton;
     private javax.swing.JButton localLButton;
     private javax.swing.JButton localRButton;
+    private javax.swing.JRadioButton mcRadioButton;
+    private javax.swing.JRadioButton miRadioButton;
+    private javax.swing.JRadioButton mlRadioButton;
     private javax.swing.JButton modelLButton;
     private javax.swing.JButton modelLibLButton;
     private javax.swing.JButton modelLibRButton;
@@ -3975,13 +4098,14 @@ public class MDAFrame extends JFrame
     private javax.swing.JMenuItem openMenu;
     private javax.swing.JMenu parameterMenu;
     private javax.swing.JMenuItem pasteMenu;
+    private javax.swing.JRadioButton peRadioButton;
     private javax.swing.JButton previousButton;
     private javax.swing.JMenuItem printMenu;
     private javax.swing.JButton refreshButton;
     private javax.swing.JDialog reportDialog;
     private javax.swing.JMenuItem savaAsMenu;
     private javax.swing.JMenuItem saveMenu;
-    private javax.swing.JMenu scatterPlotMenu;
+    private javax.swing.JMenuItem scatterPlotMenu;
     private javax.swing.JMenu statisticsMenu;
     private javax.swing.JMenuItem stdErrOmegaMenu;
     private javax.swing.JMenuItem stdErrSigmaMenu;
@@ -3991,6 +4115,7 @@ public class MDAFrame extends JFrame
     private javax.swing.JMenuItem tableMenu;
     private javax.swing.JTextArea textArea;
     private javax.swing.JMenuItem traceMenu;
+    private javax.swing.JMenuItem useMDAMenu;
     private javax.swing.JMenuItem useRMenu;
     private javax.swing.JDialog versionDialog;
     private javax.swing.JMenuItem warningMenu;
@@ -4002,6 +4127,9 @@ public class MDAFrame extends JFrame
     
     /** The method table for the database. */
     protected HashMap methodTable = null;
+    
+    /** The Server object. */
+    protected Server server = null;
     
     /** The flag for the user being a tester. */
     protected boolean isTester = false;
@@ -4021,14 +4149,8 @@ public class MDAFrame extends JFrame
     // Analytical approximation method
     private String method = null;
     
-    /** The Server name. */
-    protected String serverName = null;
-    
     /** The flag for online status. */
     protected boolean isOnline = true;
-    
-    /** The server port. */
-    protected String serverPort = null;
 
     /** The file chooser. */
     protected JFileChooser files = new JFileChooser();
@@ -4056,9 +4178,6 @@ public class MDAFrame extends JFrame
 
     // JWizardPane
     private JWizardPane wp = null;
-    
-    /** The Server object. */
-    protected Server server = null;
 
     // List content
     private String listType = null;
@@ -4113,4 +4232,10 @@ public class MDAFrame extends JFrame
     
     // Has simulation in the source
     private boolean hasSimulation = false;
+    
+    // Positions of string found
+    private Vector positions = null;
+    
+    // Index of positions of string found
+    private int indexPosition = 0;
 }

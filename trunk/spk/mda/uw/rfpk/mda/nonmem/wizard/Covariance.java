@@ -216,8 +216,11 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
                     else if(text.indexOf("MATRIX=S") != -1)
                         jRadioButton2.setSelected(true);
                     else
-                        jRadioButton3.setSelected(true);                    
-                    jTextArea1.setText("$COVARIANCE " + text.substring(11).trim());
+                        jRadioButton3.setSelected(true);
+                    if(text.length() > 11)
+                        jTextArea1.setText("$COVARIANCE " + text.substring(11).trim());
+                    else
+                        jTextArea1.setText("$COVARIANCE");
                 }
             }
 	}

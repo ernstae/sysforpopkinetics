@@ -28,4 +28,8 @@
     <fileobject name="UserAccount.java">
         <attr name="class_dependency_javax.swing.JFrame" stringvalue="UserAccount"/>
     </fileobject>
+    <fileobject name="GetDataset.java">
+        <attr name="class_dependency_javax.swing.table.AbstractTableModel" stringvalue="GetDataset.DisplayTableModel"/>
+        <attr name="class_dependency_javax.swing.JFrame" stringvalue="GetDataset"/>
+    </fileobject>
 </attributes>

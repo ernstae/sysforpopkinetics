@@ -462,6 +462,7 @@ public class JobInfo extends javax.swing.JFrame {
 
         jTextArea5.setBackground(new java.awt.Color(204, 204, 204));
         jTextArea5.setText("To create input for a likelihood evaluation only job uncheck the\nfirst check box and make sure the third check box is checked.");
+        jTextArea5.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 7;
@@ -536,6 +537,7 @@ public class JobInfo extends javax.swing.JFrame {
         if(spkInput != null)
         {
             // Get SPK input file
+            String source = spkInput.getProperty("source");
             String model = spkInput.getProperty("model");
             String dataset = spkInput.getProperty("dataset");            
             
@@ -543,10 +545,31 @@ public class JobInfo extends javax.swing.JFrame {
             if(jCheckBox1.isSelected())
             {
                 // Start preparing input wizard
-                MDAIterator iterator = new MDAIterator(frame.serverName, frame.serverPort, frame.isOnline, 
-                                                       frame, frame.isTester, frame.isDeveloper, frame.files);
+                MDAIterator iterator = new MDAIterator(frame.server, 
+                                                       frame.isOnline, frame, frame.isTester, 
+                                                       frame.isDeveloper, frame.files, id);
                 iterator.setIsDataXML(true);
                 iterator.setIsReload(true);
+                if(id != 0 && source.indexOf("<pop_analysis ") != -1 && source.indexOf(" is_estimation=\"yes\" ") != -1 && 
+                   JOptionPane.showConfirmDialog(null, "Do you want to set parameter initial values to the estimates from the parent job?",
+                                                 "Question", JOptionPane.YES_NO_OPTION) == 0)
+                {
+                    // Get report
+                    Properties spkOutput = frame.server.getOutput(id, false);
+                    String report = spkOutput.getProperty("report");
+                    if(report.indexOf("<error_message>") != -1)
+                    {
+                        JOptionPane.showMessageDialog(null, "The parent job, Job ID = " + id + ", has error.",
+                                                      "Input Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    model = Utility.replaceModelParameters(model, report);                
+
+                    if(model.indexOf("$SIMULATION") != -1 &&
+                       JOptionPane.showConfirmDialog(null, "Do you want to use the simulated data from the parent job?",
+                                                     "Question", JOptionPane.YES_NO_OPTION) == 0)
+                        Utility.replaceDataDVbySimDV(report, source, dataset);
+                }
                 iterator.setDataXML(dataset);
                 iterator.parseControl(model);
                 frame.writeInput(iterator);

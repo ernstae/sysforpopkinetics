@@ -99,7 +99,7 @@
           <Color blue="cc" green="cc" red="cc" type="rgb"/>
         </Property>
         <Property name="editable" type="boolean" value="false"/>
-        <Property name="text" type="java.lang.String" value="Enter the name of the data items in the same order as the data columns&#xa;located in the data file.  A data item may be standard or non-standard.&#xa;The standard data item may have alias.  The first data item is  &quot;ID&quot; if it &#xa;exists in the data file.   &quot;Time&quot; and &quot;DV&quot; data items are always required."/>
+        <Property name="text" type="java.lang.String" value="Enter the name of the data items in the same order as the data columns&#xa;located in the data file.  A data item may be standard or non-standard.&#xa;The standard data item may have alias.  The first data item must be  &quot;ID&quot; &#xa;if it exists in the data file.  Data item &quot;DV&quot;(data values) is always required."/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -166,6 +166,8 @@
                 <Column editable="true" title="Title 4" type="java.lang.Object"/>
               </Table>
             </Property>
+            <Property name="columnSelectionAllowed" type="boolean" value="true"/>
+            <Property name="rowSelectionAllowed" type="boolean" value="false"/>
             <Property name="selectionForeground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="33" green="33" red="ff" type="rgb"/>
             </Property>

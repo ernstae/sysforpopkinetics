@@ -48,9 +48,9 @@ public class MDA
             File lockFile = null;
             try
             {
-                lockFile = new File(path);           
+                lockFile = new File(path);
                 if(lockFile.createNewFile())
-                    lockFile.deleteOnExit();                    
+                    lockFile.deleteOnExit();
                 else
                 {
                     JOptionPane.showMessageDialog(null, "A MDA is already runing.", 

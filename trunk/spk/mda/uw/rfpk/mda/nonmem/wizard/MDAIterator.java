@@ -20,6 +20,9 @@ package uw.rfpk.mda.nonmem.wizard;
 
 import uw.rfpk.mda.nonmem.MDAFrame;
 import uw.rfpk.mda.nonmem.XMLReader;
+import uw.rfpk.mda.nonmem.Server;
+import uw.rfpk.mda.nonmem.Utility;
+import uw.rfpk.mda.nonmem.display.Output;
 import org.netbeans.ui.wizard.*;
 import java.util.Vector;
 import java.util.Properties;
@@ -80,39 +83,38 @@ public class MDAIterator implements StepIterator{
     private int current = -1;
     private boolean isBack = false;
     private boolean isOnline = false;
-    private String serverName = null;
-    private String serverPort = null;
+    private Server server = null;
     private Properties reload = null;
     private MDAFrame frame = null;
     private boolean isReload = false;
     private boolean isDataXML = false;
     private String dataXML = null;
     private JFileChooser files = null;
-
+    private long jobId = 0;
+    
     /** Constructor to create a MDAIterator object.
-     * @param serverName name of the web server associated with the MDA.
-     * @param serverPort port on the web server associated with the MDA.
+     * @param the web server associated with the MDA.
      * @param isOnline true if the MDA is online, false otherwise.
      * @param frame a reference to the MDA main window class.
      * @param isTester true if the user is a SPK tester, false otherwise.
      * @param isDeveloper true if the user is a SPK developer, false otherwise.
      */  
-    public MDAIterator(String serverName, String serverPort, boolean isOnline, MDAFrame frame,
-                       boolean isTester, boolean isDeveloper, JFileChooser files)
+    public MDAIterator(Server server, boolean isOnline, MDAFrame frame,
+                       boolean isTester, boolean isDeveloper, JFileChooser files, long jobId)
     {
         beginningSteps.add(gettingStarted);
-        beginningSteps.add(new Problem(this)); 
+        beginningSteps.add(new Problem(this));
         beginningSteps.add(new Data(this));
-        beginningSteps.add(new Input(this)); 
+        beginningSteps.add(new Input(this));
         steps.addAll(beginningSteps);
         steps.add(cont);
-        this.serverName = serverName;
-        this.serverPort = serverPort;
+        this.server = server;
         this.isOnline = isOnline;
         this.frame = frame;
         this.isTester = isTester;
         this.isDeveloper = isDeveloper;
         this.files = files;
+        this.jobId = jobId;
     }
 
     /** Set if the back button was clicked.
@@ -288,12 +290,12 @@ public class MDAIterator implements StepIterator{
     /** Get the name of the server.
      * @return the name of the server.
      */    
-    public String getServerName() { return serverName; }
+    public String getServerName() { return server.getHost(); }
     
     /** Get the port number of the server.
      * @return the port number of the server.
      */    
-    public String getServerPort() { return serverPort; }
+    public String getServerPort() { return server.getPort(); }
 
     /** Get if the back button was clicked.
      * @return true if the back button was clicked, false otherwise.
@@ -457,13 +459,23 @@ public class MDAIterator implements StepIterator{
         --actual;
     }
     
-    /** Reload either a SPK input file or a model opened in MDA editor window. 
-     * @return 0 if either a model or a Spk input file is opened in the MDA editor
-     * window, -1 otherwise.
+    /** Reload either a SPK input file or a model opened in MDA editor window, or 
+     * from a file in the file system. 
+     * @return 0 if either a model or a Spk input file is loaded, -1 otherwise.
      */
     public int reloadInput()
     {
-        String text = frame.getEditorText();
+        String text = null;
+        Object[] possibleValues = {"Text openned in the editor", "A file in the file system"};
+        if(((String)JOptionPane.showInputDialog(null, "Choose a way to load it:", "Input",
+                                                JOptionPane.INFORMATION_MESSAGE, null,
+                                                possibleValues, 
+                                                possibleValues[0])).equals("Text openned in the editor"))
+            text = frame.getEditorText();
+        else
+        {
+            text = frame.openOperation()[1];
+        }
         if(text.indexOf("<spksource>") != -1 && text.indexOf("<spkdata") != -1 && 
            text.indexOf("<spkmodel>") != -1)
         {
@@ -481,8 +493,7 @@ public class MDAIterator implements StepIterator{
         }
         else
         {
-            JOptionPane.showMessageDialog(null, "Neither a SPK input file nor a model\n" +
-                                          "is opened in the MDA editor window.",
+            JOptionPane.showMessageDialog(null, "It is neither a SPK input file nor a model.",
                                           "Input Error", JOptionPane.ERROR_MESSAGE);
             return -1;   
         }
@@ -534,5 +545,5 @@ public class MDAIterator implements StepIterator{
         if(previousValue != null)
             value = previousValue + "," + value;
         return value;
-    }        
+    }
 }

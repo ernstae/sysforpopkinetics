@@ -29,6 +29,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  * This class defines a step to create the $PROBLEm record.
@@ -53,6 +55,7 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
     public Problem(MDAIterator iter) {
         iterator = iter;
         initComponents();
+        jTextArea1.getDocument().addDocumentListener(new MyDocumentListener());
     }
     
     /** This method is called from within the constructor to
@@ -115,11 +118,6 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
             highlighter.removeAllHighlights();
             isHighlight = false;
         }
-        if(!jTextArea1.getText().equals(""))
-        {
-            isValid = true;
-            wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
-        }
     }//GEN-LAST:event_jTextArea1KeyTyped
     
     
@@ -128,6 +126,21 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JTextPane jTextPane1;
     // End of variables declaration//GEN-END:variables
 
+    private class MyDocumentListener implements DocumentListener {
+        public void insertUpdate(DocumentEvent e) {
+            isValid = true;
+            wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());         
+        }
+        public void removeUpdate(DocumentEvent e) {
+            if(jTextArea1.getText().equals(""))
+            {
+                isValid = false;
+                wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
+            }
+        }
+        public void changedUpdate(DocumentEvent e) {}
+    }
+    
     /**
      * This method is to return the StepDescriptor object.
      * @return a StepDescriptor object.
