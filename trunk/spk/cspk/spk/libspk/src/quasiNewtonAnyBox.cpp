@@ -112,16 +112,16 @@ $cindex quasi-Newton optimization
 
 $table
 $bold Prototype:$$   $cend  
-$syntax/void quasiNewtonAnyBox(  
-    QuasiNewtonAnyBoxObj&  /objective/,
-    Optimizer& /optimizer/,
-    const DoubleMatrix& /dvecXLow/,
-    const DoubleMatrix& /dvecXUp/,
-    const DoubleMatrix& /dvecXIn/, 
-    DoubleMatrix* /pdvecXOut/, 
-    double* /pdFOut/, 
-    DoubleMatrix* /pF_xOut/
-)/$$
+$syntax/void quasiNewtonAnyBox( 
+  QuasiNewtonAnyBoxObj&  /objective/,
+  Optimizer&             /optimizer/,
+  const DoubleMatrix&    /dvecXLow/,
+  const DoubleMatrix&    /dvecXUp/,
+  const DoubleMatrix&    /dvecXIn/,
+  DoubleMatrix*          /pdvecXOut/,
+  double*                /pdFOut/,
+  DoubleMatrix*          /pdrowF_xOut/ )
+/$$
 $tend
 
 $fend 25$$
@@ -239,47 +239,6 @@ If no exceptions are thrown, then on return the $code DoubleMatrix$$
 pointed to by $italic pdrowF_xOut$$ will be equal to the gradient of
 the objective evaluated at the value of $italic dvecXIn$$ from the
 previous call to the objective function.
-
-$syntax/
-
-/dvecXLow/
-/$$
-The $code DoubleMatrix$$ $italic dvecXLow$$ contains the column vector 
-$math%xLow%$$.  It specifies the lower limit for the box constraints 
-in the problem.  
-
-$syntax/
-
-/dvecXUp/
-/$$
-The $code DoubleMatrix$$ $italic dvecXUp$$ contains the column vector 
-$math%xUp%$$.  It specifies the upper limit for the box constraints 
-in the problem, and it has the same dimensions as $italic dvecXLow$$.
-
-$syntax/
-
-/dvecXIn/
-/$$
-The $code DoubleMatrix$$ $italic dvecXIn$$ contains the column vector 
-$math%xIn%$$.  It specifies the initial estimate for the argument that 
-solves the problem, and it has the same dimension as $italic dvecXLow$$.  
-The initial estimate satisfies the box constraints
-$math%xLow \le xIn \le xUp%$$.
-
-$syntax/
-
-/pdvecXOut/
-/$$
-If the return value for $code quasiNewtonAnyBox$$ is true, and 
-if $italic pdvecXOut$$ is not equal to zero, then on output the 
-$code DoubleMatrix$$ pointed to by $italic pdvecXOut$$ will contain 
-the column vector $math%xOut%$$.  It is the final approximation for 
-the solution to the problem, and
-it has the same dimensions as $italic xLow$$.
-The final approximation satisfies the box constraints
-$math%xLow \le xOut \le xUp%$$.  
-Note that the $code DoubleMatrix$$ pointed to by $italic pdvecXOut$$ 
-must be constructed by the user.
 
 $syntax/
 
@@ -430,6 +389,47 @@ at the point $math%x%$$.
 
 $syntax/
 
+/dvecXLow/
+/$$
+The $code DoubleMatrix$$ $italic dvecXLow$$ contains the column vector 
+$math%xLow%$$.  It specifies the lower limit for the box constraints 
+in the problem.  
+
+$syntax/
+
+/dvecXUp/
+/$$
+The $code DoubleMatrix$$ $italic dvecXUp$$ contains the column vector 
+$math%xUp%$$.  It specifies the upper limit for the box constraints 
+in the problem, and it has the same dimensions as $italic dvecXLow$$.
+
+$syntax/
+
+/dvecXIn/
+/$$
+The $code DoubleMatrix$$ $italic dvecXIn$$ contains the column vector 
+$math%xIn%$$.  It specifies the initial estimate for the argument that 
+solves the problem, and it has the same dimension as $italic dvecXLow$$.  
+The initial estimate satisfies the box constraints
+$math%xLow \le xIn \le xUp%$$.
+
+$syntax/
+
+/pdvecXOut/
+/$$
+If the return value for $code quasiNewtonAnyBox$$ is true, and 
+if $italic pdvecXOut$$ is not equal to zero, then on output the 
+$code DoubleMatrix$$ pointed to by $italic pdvecXOut$$ will contain 
+the column vector $math%xOut%$$.  It is the final approximation for 
+the solution to the problem, and
+it has the same dimensions as $italic xLow$$.
+The final approximation satisfies the box constraints
+$math%xLow \le xOut \le xUp%$$.  
+Note that the $code DoubleMatrix$$ pointed to by $italic pdvecXOut$$ 
+must be constructed by the user.
+
+$syntax/
+
 /pdFOut/
 /$$
 If the return value for $code quasiNewtonAnyBox$$ is true, i.e., the algorithm
@@ -442,16 +442,16 @@ to by $italic pdFOut$$.
 
 $syntax/
 
-/pF_xOut/
+/pdrowF_xOut/
 /$$
 If the return value for $code quasiNewtonAnyBox$$ is true, i.e., the algorithm
 converged successfully, and 
-if $italic pF_xOut$$ is not equal to null, then on output the matrix
-value pointed to by $italic pF_xOut$$ will be equal to the 
+if $italic pdrowF_xOut$$ is not equal to null, then on output the matrix
+value pointed to by $italic pdrowF_xOut$$ will be equal to the 
 value of the gradient of objective function $math%f(x)%$$ with respect
 to the variable at the final iteration.
 Note that the user must allocate memory for the value pointed 
-to by $italic pF_xOut$$.
+to by $italic pdrowF_xOut$$.
 
 
 $head Example$$
@@ -752,7 +752,7 @@ void quasiNewtonAnyBox(
   const DoubleMatrix&    dvecXIn,
   DoubleMatrix*          pdvecXOut,
   double*                pdFOut,
-  DoubleMatrix*          pdrowF_xOut );
+  DoubleMatrix*          pdrowF_xOut )
 {
   //------------------------------------------------------------
   // Preliminaries.
