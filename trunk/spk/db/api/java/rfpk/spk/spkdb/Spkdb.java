@@ -81,6 +81,16 @@ public abstract class Spkdb {
 	}
 	return jobId;
     }
+    public static ResultSet jobStatus(Connection conn, long jobId)
+	throws SQLException, SpkdbException
+    {
+	String sql = "select state_code, event_time, end_code from job where job_id=" + jobId + ";";
+	Statement stmt = conn.createStatement();
+	stmt.execute(sql);
+	ResultSet rs = stmt.getResultSet();
+
+	return rs;
+    }
     /**
        Inserts a new user in the database, returning a unique key.
        @param conn connection object obtained by a previous call on connect()
