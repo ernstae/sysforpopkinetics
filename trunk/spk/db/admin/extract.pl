@@ -18,6 +18,23 @@
 #     University of Washington
 #     Seattle, WA 98195-2255
 ########################################################################
+# 
+# This script creates two files:
+# 
+#     drop.sql:     sql commands to drop all tables in the database
+#     schema.sql    sql commands to create all tables in the database
+# 
+# These two files are used to reinitialize the spktest database for
+# testing purposes.  
+# 
+# The script is typically run as follows:
+# 
+#     perl extract.pl spkdb <user>
+# 
+# where <user> is a database username which has backup read privileges
+# on the mysql table.
+# 
+########################################################################
 
 package Spkdb;
 
@@ -33,18 +50,24 @@ if (scalar(@ARGV) != 2) {
 my $db = shift;
 my $user = shift;
 
-my $dumpfl = "/tmp/dump.sql";
-my $schemafl = $db . "_schema.sql";
+my $dumpfl = "/tmp/junksql.$$";
+my $schemafl = "schema.sql";
+my $dropfl   = "drop.sql";
 
 
 system "mysqldump $db -u $user -p > $dumpfl";
 
 open(DUMP, $dumpfl);
 open(SCHEMA, ">$schemafl");
+open(DROP,   ">$dropfl");
 
-print SCHEMA "use $db;\n\n";
+#print SCHEMA "use $db;\n\n";
 
 while (<DUMP>) {
+    if (/CREATE TABLE/) {
+	@_ = split / /, $_;
+	print DROP "drop table $_[2];\n";
+    };
     /INSERT INTO history/ && next;
     /INSERT INTO job/ && next;
     /INSERT INTO model/ && next;

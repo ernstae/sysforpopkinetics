@@ -14,8 +14,15 @@ use Spkdb (
 
 my $rv;
 
-system "mysql --force -ptester -utester < t/drop.sql";
-system "mysql --force -ptester -utester < t/schema.sql";
+
+
+my $tmp_name = "junk$$";
+my $admin = "../../admin";
+my $schema = "$admin/schema.sql";
+my $drop   = "$admin/drop.sql";
+system "echo 'use spktest;' > $tmp_name";
+system "cat $tmp_name $drop   | mysql --force -ptester -utester > /dev/null 2>&1";
+system "cat $tmp_name $schema | mysql --force -ptester -utester";
 
 my $dbh = &connect("spktest", "localhost", "tester", "tester");
 
