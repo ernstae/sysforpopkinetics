@@ -1209,21 +1209,29 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   const double          delta = 1e-7;
 
 
-  if ( !thisIsAWarmRestart )
+  if ( isAWarmRestart )
   {
+    // This function assumes that the Hessian provided during
+    // a warm start is sufficiently accurate that the optimizer
+    // does not need extra iterations in order to approximate
+    // the Hessian the first time it is called.
+    itrMax = 1;
+  }
+  else
+  {
+    // Set the number of quasi-Newton iterations high enough that 
+    // the optimizer can build up a reasonably accurate approximation
+    // for the Hessian the first time it is called, but not so high
+    // that it will perform too many iterations before this function's
+    // convergence criterion is checked.
+    itrMax = 5;
+
     // Evaluate the objective and its gradient.
     objEval( xCur, fCur, gCur, ... );
 
     // Create an approximation for the Hessian.
     hCur = ... ;
   }
-
-  // Set the number of quasi-Newton iterations high enough so 
-  // that the optimizer can build up a reasonably accurate 
-  // approximation for the Hessian, but not so high that it
-  // will spend too much time in the optimizer before checking
-  // this function's convergence criterion.
-  itrMax = 5;
 
   // Set the maximum number of interior point iterations so
   // that the optimizer can solve the quadratic subproblems
@@ -1254,9 +1262,9 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
     else
     {
       // Set delta to be less than the maximum of the absolute values of
-      // the elements of the current gradient so that the subproblems
+      // the elements of the projected gradient so that the subproblems
       // only be solved with accuracy sufficient for the current x value.
-      delta = MaxAbs( gCur ) / deltaScale;
+      delta = maxAbsProjGrad( gCur ) / deltaScale;
 
       // Ask the optimizer to take perform a limited number of iterations.
       msg = QuasiNewton01Box(
@@ -1275,7 +1283,20 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
         gCur,
         HCur );
 
+      // After the first call to the optimizer the approximation for the
+      // Hessian should be accurate enough that this can reset.
+      itrMax = 1;
+
     QUES: SHOULD ANY ACTIONS BE TAKEN BASED ON THE OUTPUT VALUE FROM Q
+
+	    if ( msg == "ok" && itrCur == 0 )
+
+	      // If the optimizer is not able to perform any Quasi-Newton iterations,
+	      // 
+	      if ( itrCurr == 0 )
+		{
+		  // throw an exception.
+		}
 
       // Add the number of iterations that were performed.
       i += itrCur;
