@@ -17,8 +17,8 @@ test_common_SOURCES = \
 	SymbolTableTest.h \
 	read_contentTest.cpp \
 	read_contentTest.h \
-        emit_IndDataClassTest.cpp \
-	emit_IndDataClassTest.h
+        emit_IndDataTest.cpp \
+	emit_IndDataTest.h
 
 test_common_INCLUDES = \
 	ExpTreeGeneratorTest.h \
@@ -27,7 +27,7 @@ test_common_INCLUDES = \
 	SymbolTest.h \
 	SymbolTableTest.h \
 	read_contentTest.h \
-        emit_IndDataClassTest.h
+        emit_IndDataTest.h
 
 AM_LDFLAGS = -lxerces-c -lcppunit -lspkcompiler
 
