@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE attributes PUBLIC "-//NetBeans//DTD DefaultAttributes 1.0//EN" "http://www.netbeans.org/dtds/attributes-1_0.dtd">
+<attributes version="1.0">
+    <fileobject name="MDAFrame.java">
+        <attr name="class_dependency_java.awt.print.Printable" stringvalue="MDAFrame.Printer"/>
+        <attr name="class_dependency_javax.swing.AbstractAction" stringvalue="MDAFrame.OperationAction;MDAFrame.FileAction"/>
+        <attr name="class_dependency_javax.swing.JFrame" stringvalue="MDAFrame"/>
+    </fileobject>
+    <fileobject name="MDA.java">
+        <attr name="class_dependency_java.awt.event.WindowAdapter" stringvalue="MDA.WindowHandler"/>
+    </fileobject>
+</attributes>
