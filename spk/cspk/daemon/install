@@ -17,7 +17,7 @@ scp ${SERVICE_ROOT}d.pl  ${SERVICE_HOST}:/usr/local/bin/spktest
 echo "installed ${SERVICE_HOST}:/etc/rc.d/init.d/${SERVICE_ROOT}d "
 echo "installed ${SERVICE_HOST}:/etc/rc.d/init.d/${SERVICE_ROOT}testd "
 echo "installed ${SERVICE_HOST}:/usr/local/bin/spktest/${SERVICE_ROOT}d.pl"
-echo "Note: installation of $SERVICE_ROOT}d.pl must be completed by the deployment process."
+echo "Note: installation of ${SERVICE_ROOT}d.pl must be completed by the deployment process."
 
 D=${SERVICE_ROOT}d
 pod2html $D.pl > $D.pl.html
