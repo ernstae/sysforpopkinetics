@@ -286,21 +286,26 @@ If this element appears when the population analysis is chosen, a data set for n
    </html:li>
    <html:li>The following math functions are supported:
       <html:ul>
+         <html:li>EXP</html:li>
+         <html:li>LOG</html:li>
+         <html:li>LOG10</html:li>
+         <html:li>SQRT</html:li>
+         <html:li>ATAN</html:li>
+      </html:ul>
+   </html:li>
+   <html:li>The following additional functions are going to be supported:
+      <html:ul>
          <html:li>ABS</html:li>
          <html:li>ACOS</html:li>
          <html:li>ASIN</html:li>
-         <html:li>ATAN</html:li>
          <html:li>ATAN2</html:li>
          <html:li>COS</html:li>
          <html:li>COSH</html:li>
-         <html:li>LOG</html:li>
-         <html:li>LOG10</html:li>
          <html:li>MAX</html:li>
          <html:li>MIN</html:li>
          <html:li>MOD</html:li>
          <html:li>SIN</html:li>
          <html:li>SINH</html:li>
-         <html:li>SQRT</html:li>
          <html:li>TAN</html:li>
          <html:li>TANH</html:li>
       </html:ul>
