@@ -101,6 +101,8 @@ testall_SOURCES = \
 	inverseTest.h \
 	inxToMaxTest.cpp \
 	inxToMaxTest.h \
+	intToOrdinalStringTest.cpp \
+	intToOrdinalStringTest.h \
 	isDblEpsEqualTest.cpp \
 	isDblEpsEqualTest.h \
 	isDmatEpsEqualTest.cpp \
@@ -246,6 +248,7 @@ pkginclude_HEADERS = \
 	IndVarsTest.h \
 	inverseTest.h \
 	inxToMaxTest.h \
+	intToOrdinalStringTest.h \
 	isDblEpsEqualTest.h \
 	isDmatEpsEqualTest.h \
 	isGreaterThanOrEqualToTest.h \
