@@ -183,24 +183,25 @@ for my $job_id (@ARGV) {
     # Copy the xml_source field (which is a long blob)
     my $xml_source = $row->{'xml_source'};
 
-    # Delete from the row hash xml_source and three fields that are NULL when a
+    # Delete from the row hash xml_source and all fields that are NULL when a
     # job is first submitted
     delete $row->{'xml_source'};
     delete $row->{'cpp_source'};
     delete $row->{'report'};
     delete $row->{'end_code'};
+    delete $row->{'checkpoint'};
 
     # Store in the row values that are correct for a job that has just been submitted
     $row->{'state_code'} = 'q2r';
     $row->{'start_time'} = $row->{'event_time'} = $event_time;
     $row->{'state_code'} = 'q2c';
 
-    # Prepare the sql for inserting the job into spktmp.  Note the ? for the long blob field,
+    # Prepare the sql for inserting the job into spktmp.  Note the ? for xml_source,
     # which will allow us to insert the field with out messing with quotes.  Note also the
     # NULL values for the fields that are NULL when a job is submitted.
-    $sql = "insert into job (xml_source,cpp_source,report,end_code,"
+    $sql = "insert into job (xml_source,cpp_source,report,end_code,checkpoint,"
 	. (join ",", keys %$row)
-	. ") values (?,NULL,NULL,NULL,'"
+	. ") values (?,NULL,NULL,NULL,NULL,'"
 	. (join "','", values %$row)
 	. "');";
     my $job_sth = $spktmp_dbh->prepare($sql)
@@ -242,24 +243,26 @@ for my $job_id (@ancestor_list) {
     my $xml_source = $row->{'xml_source'};
     my $cpp_source = $row->{'cpp_source'};
     my $report     = $row->{'report'};
+    my $checkpoint = $row->{'checkpoint'};
 
     # Delete from the row hash the blob fields
     delete $row->{'xml_source'};
     delete $row->{'cpp_source'};
     delete $row->{'report'};
+    delete $row->{'checkpoint'};
 
     # Prepare the sql for inserting the job into spktmp.  Note the ? for the blob fields,
     # which will allow us to insert the fields with out messing with quotes.
-    my $sql = "insert into job (xml_source,cpp_source,report,"
+    my $sql = "insert into job (xml_source,cpp_source,report,checkpoint,"
 	. (join ",", keys %$row)
-	. ") values (?,?,?,'"
+	. ") values (?,?,?,?,'"
 	. (join "','", values %$row)
 	. "');";
     my $job_sth = $spktmp_dbh->prepare($sql)
 	or death("prepare of '$sql' failed");
     
     # Insert the modified job row into spktmp
-    $job_sth->execute($xml_source, $cpp_source, $report)
+    $job_sth->execute($xml_source, $cpp_source, $report, $checkpoint)
 	or death("execute of '$sql' failed");
 }
 
