@@ -1,4 +1,4 @@
-D = CVS-rfpk-HOWTO
+D = CYGWIN-rfpk-HOWTO
 JARS = "F:/Programs/java/xalan.jar;F:/Programs/java/xerces.jar"
 PROC = org.apache.xalan.xslt.Process
 S = f:/cygwin/usr/local/lib/xml/stylesheets/docbook-xsl
