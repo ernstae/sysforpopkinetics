@@ -216,6 +216,14 @@ public:
   // unserialize
   friend std::string& operator>>(std::string& s, SpkError& e);
   friend std::istream& operator>>(std::istream& stream, SpkError& e);
+
+  // formats an error message the same way as the serialize function 
+  friend void formatLongError(
+      enum SpkError::ErrorCode  ecode,
+      const std::string&        mess,
+      unsigned int              line,
+      const char*               file,
+      std::string&              formattedError );
 };
 
 #endif
