@@ -7,6 +7,7 @@ $spell
 	obj
 	std
 	xml
+	elapsedtime
 $$
 $latex 
 	\newcommand{\D}{ {\bf d} }
@@ -51,7 +52,7 @@ $syntax%
 		<error_message>
 			%PCDATA%
 		</error_message>
-		<pop_monte_result>
+		<pop_monte_result elapsedtime="%PCDATA%">
 			<pop_obj_estimate>
 				<value>
 					%PCDATA%
@@ -82,6 +83,8 @@ $subhead pop_monte_result$$
 $index pop_monte_result$$
 A record of this type is present if and only if 
 there is no $code error_message$$ record.
+It requires an attribute, $code elapsedtime$$, specifying
+the number of seconds it took to compute the results.
 
 $subhead pop_obj_estimate$$
 $index pop_obj_estimate$$
@@ -96,9 +99,6 @@ a $code pop_monte_result$$ record is present and
 $italic method$$ is $code monte$$. 
 This record contains an estimate of the standard deviation
 of the Monte-Carlo estimate for the integral.
-
-$subhead pop_obj_seconds$$
-is the number of seconds required to compute the result.
 
 $head Subroutine$$
 $tref Subroutine$$
@@ -224,8 +224,8 @@ int main(int argc, const char *argv[])
 
 	// start the output file
 	cout << "<?xml version \"1.0\"?>" << endl;
-	cout << "<report>" << endl;
-
+	cout << "<spkreport>" << endl;
+        
 	// start timing
 	timeval timeBegin;
 	gettimeofday( &timeBegin, NULL );
@@ -342,6 +342,10 @@ int main(int argc, const char *argv[])
 	timeval timeEnd;
 	gettimeofday( &timeEnd, NULL );
 
+	// report the time in seconds that Monte Carlo integration required
+	double pop_obj_seconds = difftime(timeEnd.tv_sec, timeBegin.tv_sec );
+	cout << "<pop_monte_result elapsedtime=\"" << pop_obj_seconds << "\">" << endl;
+	
 	// report the Monte Carlo integration results
 	OutputValue("pop_obj_estimate", pop_obj_estimate); 
 
@@ -350,11 +354,8 @@ int main(int argc, const char *argv[])
 		OutputValue("pop_obj_stderr", pop_obj_stderr); 
 	}
 
-	// report the time in seconds that Monte Carlo integration required
-	double pop_obj_seconds = difftime(timeEnd.tv_sec, timeBegin.tv_sec );
-	OutputValue("pop_obj_seconds", pop_obj_seconds); 
-
 	// return from main program
-	cout << "</report>" << endl; 
+        cout << "</pop_monte_result>" << endl;
+	cout << "</spkreport>" << endl; 
 	return ReturnSuccess;
 }
