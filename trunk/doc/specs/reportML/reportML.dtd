@@ -366,13 +366,14 @@ would be assigned.
          <html:dt>MDV</html:dt>
          <html:dd>Missing Dependent Variable if the data set did not have this data item in the first place.</html:dd>
          <html:dt>PRED</html:dt>
-         <html:dd>Prediction</html:dd>
+         <html:dd>Prediction.</html:dd>
          <html:dt>RES</html:dt>
-         <html:dd>Residual, where RES = DV - RRED</html:dd>
+         <html:dd>Residual, where RES = DV - PRED.</html:dd>
          <html:dt>WRES</html:dt>
-         <html:dd>Weighted residual.  WRES = Cij*RES where Cij is the i-th individual's j-th 
-         diagonal element of C such that W = C * C^T.  W = SPK's R(b) for the individual analysis. 
-         W = g( R(alp,b), D(alp) ) for the population analysis for some function g().
+         <html:dd>Weighted residual.  The weighted residuals are
+         calculated by multiplying the vector of residuals for the
+         individual by the matrix square root of the inverse of the
+         covariance matrix for their data.
          </html:dd>
          <html:dt>ORGDV</html:dt>
          <html:dd>The original DV value when a new data set is simulated.  The new data set populates DV.
