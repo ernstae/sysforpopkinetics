@@ -1,8 +1,9 @@
 #!/bin/sh
 
-SERVICE_NAME=spkcmpd
+SERVICE_ROOT=spkcmp
 
-cp $SERVICE_NAME /etc/rc.d/init.d
-cp ${SERVICE_NAME}.pl /usr/local/bin
+cp ${SERVICE_ROOT}d /etc/rc.d/init.d
+cp ${SERVICE_ROOT}testd /etc/rc.d/init.d
+cp ${SERVICE_ROOT}d.pl /usr/local/bin
 
 
