@@ -418,9 +418,7 @@ public abstract class Spkdb {
 	 pattern1 = Pattern.compile("^username$");
 	 pattern2 = Pattern.compile("^user_id$");
 	 pattern3 = Pattern.compile("^password$");
-	 if (pattern1.matcher(name[0]).find() || pattern2.matcher(name[0]).find()) {
-	     throw new SpkdbException("invalid attempt to change username or user_id");
-	 }
+
 	 String sql = "update user set ";
 	 for (int i = 0; i < name.length; i++) {
 	     if (pattern1.matcher(name[i]).find() || pattern2.matcher(name[0]).find()) {
