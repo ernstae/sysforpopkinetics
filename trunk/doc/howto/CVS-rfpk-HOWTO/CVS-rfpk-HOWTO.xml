@@ -370,11 +370,11 @@
       working copy by inserting modifications from the repository,
       and offsetting differences between your working copy
       and the repository with
-      sequences of &lts; or &gts;, depending on
+      strings like &lts; or &gts;, depending on
       whether the difference is in the the working copy or in the
       repository.  When this happens, you need to edit your
-      working copy to resolve any conflicts and remove the lines
-      of &lts; characters &gts; characters.
+      working copy to resolve any conflicts and remove the 
+      &lts; and &gts; strings.
     </para>
   </sect1>
   <sect1>
@@ -413,6 +413,23 @@
     </para>
     <para>
       After 
+    </para>
+    <para>
+      If someone else has made changes to the repository copy of
+      a file since you checked out or updated your working copy,
+      the &commit; command will report errors and will fail
+      to incorporate you changes in the repository.  Here is
+      an example of the output that you might expect to 
+      see.  A user called <emphasis>jones</emphasis> has attempted
+      to commit a file called <emphasis>Makefile</emphasis>, and
+      the CVS &commit; command has returned the following output:
+      <screen>
+	cvs commit: Examining .
+	jones@whitechuck.rfpk.washington.edu's password:
+	cvs server: Up-to-date check failed for `Makefile'
+	cvs [server aborted]: correct above errors first!
+	cvs commit: saving log message in /tmp/cvs610c74f4.1
+      </screen>
     </para>
   </sect1>
   <sect1>
