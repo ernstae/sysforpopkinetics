@@ -1,22 +1,22 @@
 #!/bin/sh
 #
 # chkconfig: 2345 91 9
-# description: Starts and stops the SPK run daemon
+# description: Starts and stops the SPK compiler daemon
 #
 
-DATABASE=spktest
+DATABASE=spkdb
 DBHOST=dbserver
-DBUSER=tester
-DBPASSWD=tester
+DBUSER=daemon
+DBPASSWD=daemon
+MODE=prod
 
 SERVICE_NAME=spkrund
 LOCKFILE_PATH=/tmp/lock_$SERVICE_NAME
 
-ulimit -c 1000000  # this enables a core dump if the runner crashes
+ulimit -c 10000000  # this enables a core dump if the compiler crashes
 
-#restart()
 start() {
-    /usr/local/bin/${SERVICE_NAME}.pl $DATABASE $DBHOST $DBUSER $DBPASSWD
+    /usr/local/bin/${SERVICE_NAME}.pl $DATABASE $DBHOST $DBUSER $DBPASSWD $MODE
     echo "started"
 }
 stop() {

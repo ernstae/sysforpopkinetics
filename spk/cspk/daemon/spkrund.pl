@@ -119,9 +119,19 @@ my $database = shift;
 my $host     = shift;
 my $dbuser   = shift;
 my $dbpasswd = shift;
+my $mode     = shift;
 
 my $max_concurrent = 1;
 my $concurrent = 0;
+
+my $service_root = "spkrun";
+
+if ($mode =~ "test") {
+    $service_root .= "test";
+}
+my $service_name = "$service_root" . "d";
+my $prefix_working_dir = "$service_root" . "-";
+
 
 my $dbh;
 my $build_failure_exit_value = 101;
@@ -129,16 +139,14 @@ my $database_open = 0;
 my $filename_makefile = "generatedMakefile";
 my $filename_data = "data.xml";
 my $filename_optimizer_trace = "optimizer_trace.txt";
-my $filename_results = "results.xml";
+my $filename_results = "result.xml";
 my $filename_serr = "software_error";
 my $filename_source = "source.xml";
 my $filename_runner = "driver";
-my $service_name = "spkrund";
 my $lockfile_path = "/tmp/lock_$service_name";
 my $lockfile_exists = 0;
 my $pathname_make = "/usr/bin/make";
 my $pathname_tar = "/bin/tar";
-my $prefix_working_dir = "spkrun-";
 my $tmp_dir = "/tmp";
 
 sub death {
@@ -173,12 +181,6 @@ sub fork_runner {
     my $job_id = $jrow->{'job_id'};
     my $cpp_source = $jrow->{'cpp_source'};
     my $pid;
-
-    # Block SIGCHLD while we are in this subroutine
-    my $sigset   = POSIX::SigSet->new;
-    my $blockset = POSIX::SigSet->new(SIGCHLD);
-    sigprocmask(SIG_BLOCK, $blockset, $sigset)
-	or death('emerg', "could not block SIGCHLD in repear");
 
     # NOTE: Working Directory Name
     #
@@ -285,8 +287,6 @@ sub fork_runner {
 	  death("emerg", "fork of run-time driver failed");
       }
   }
-    sigprocmask(SIG_SETMASK, $sigset)
-	or death('emerg', "could not restore SIGCHLD in reaper");
 }
 sub format_error_report {
     my $content = shift;
@@ -306,115 +306,109 @@ sub insert_optimizer_trace {
     return $report;
 }
 sub reaper {
-    # Handler for SIGCHLD which processes any children which have terminated
-    # Block SIGCHLD while we are in here 
-    my $sigset   = POSIX::SigSet->new;
-    my $blockset = POSIX::SigSet->new(SIGCHLD);
-    sigprocmask(SIG_BLOCK, $blockset, $sigset)
-	or death('emerg', "could not block SIGCHLD in repear");
+    my $child_pid = shift;
+    my $value = shift;
 
-    while ((my $child_pid = waitpid(-1, &WNOHANG)) > 0) {
-	my $child_exit_value    = $? >> 8;
-	my $child_signal_number = $? & 0x7f;
-	my $child_dumped_core   = $? & 0x80;
-	my $job_id;
-	my $optimizer_trace;
-	my $report;
-	my $status_msg = "";
-	my $end_code;
+    my $child_exit_value    = $value >> 8;
+    my $child_signal_number = $value & 0x7f;
+    my $child_dumped_core   = $value & 0x80;
+    my $job_id;
+    my $optimizer_trace;
+    my $report;
+    my $end_code;
 
-	$concurrent--;
+    $concurrent--;
 
-	# Get the job_id from the file spkcmpd.pl wrote to the working
-	# directory of this process
-	my $working_dir = "$prefix_working_dir$child_pid";
-	chdir "$tmp_dir/$working_dir";
-	open(FH, "job_id")
-	    or death('emerg', "can't open $tmp_dir/$working_dir/job_id");
-	read(FH, $job_id, -s FH);
+    # Get the job_id from the file spkcmpd.pl wrote to the working
+    # directory of this process
+    my $working_dir = "$prefix_working_dir$child_pid";
+    chdir "$tmp_dir/$working_dir";
+    open(FH, "job_id")
+	or death('emerg', "can't open $tmp_dir/$working_dir/job_id");
+    read(FH, $job_id, -s FH);
+    close(FH);
+
+    # Get optimizer trace 
+    if (-f $filename_optimizer_trace) {
+	open(FH, $filename_optimizer_trace)
+	    or death('emerg', "can't open $tmp_dir/$working_dir/$filename_optimizer_trace");
+	read(FH, $optimizer_trace, -s FH);
+	close(FH);
+    }
+
+    # Normal termination at end of run
+    if (-f $filename_results) {
+	$end_code = "srun";
+
+	# Read the results file into the report variable
+	open(FH, $filename_results)
+	    or death('emerg', "can't open $tmp_dir/$working_dir/$filename_results");
+	read(FH, $report, -s FH);
 	close(FH);
 
-	# Get optimizer trace 
-	if (-f $filename_optimizer_trace) {
-	    open(FH, $filename_optimizer_trace)
-		or death('emerg', "can't open $tmp_dir/$working_dir/$filename_optimizer_trace");
-	    read(FH, $optimizer_trace, -s FH);
-	    close(FH);
-	}
+	# Place a message in the system log
+	syslog('info', "job_id=$job_id terminated normally");
 
-	# Normal termination at end of run
-	if (-f $filename_results) {
-	    $end_code = "srun";
-
-	    # Read the results file into the report variable
-	    open(FH, $filename_results)
-		or death('emerg', "can't open $tmp_dir/$working_dir/$filename_results");
-	    read(FH, $report, -s FH);
-	    close(FH);
-
-	    # Place a message in the system log
-	    syslog('info', "job_id=$job_id terminated normally");
-
-	    # Remove the working directory
-	    File::Path::rmtree("$tmp_dir/$working_dir");
-	}
-	# Error termination
-	else {
-	    $end_code = "serr";
-	    my $err_msg = "";
-	    my $err_rpt = "";
-	    # Prepare part of an error message
-	    if ($child_exit_value != 0) {
-		$status_msg .= "exit value = $child_exit_value; ";
-	    }
-	    if ($child_signal_number == SIGSEGV) {
-		$status_msg .= "segmentation fault; ";
-	    }
-	    elsif($child_signal_number != 0) {
-		$status_msg .= "received signal number $child_signal_number";
-	    }
-	    if ($child_dumped_core) {
-		$status_msg .= "core dump in $tmp_dir/$prefix_working_dir$job_id";
-	    }
-
-	    # Did the run die due to a software error that was caught?
-	    if (-f $filename_serr && -s $filename_serr > 0) {
-		open(FH, $filename_serr)
-		    or death('emerg', "can't open $tmp_dir/$working_dir/$filename_serr");
-		read(FH, $err_rpt, -s FH);
-		close(FH);
-		$err_msg = "run died due to SPK bug";
-	    }
-	    # Was run aborted by an operator (suspecting a bug)
-	    elsif ($child_signal_number == SIGABRT
-		   || $child_signal_number == SIGTERM) {
-		$err_msg = "run killed by operator: $status_msg";
-	    }
-	    # Did the run fail when we tried to build the driver with "make"?
-	    elsif ($child_exit_value == $build_failure_exit_value) {
-		$err_msg = "c++ program generated by SPK failed to build";
-	    }
-	    # Died unexpectedly (probably a hard fault)
-	    else {
-		$end_code = "herr";
-		$err_msg = "run died unexpectedly: $status_msg";
-	    }
-	    # Format error report and place amessage in system log
-	    $report = format_error_report("$err_msg: $err_rpt");
-	    syslog('info', "job_id=$job_id: $err_msg");
-
-	    # Rename working directory to make evidence easier to find
-	    rename "$tmp_dir/$working_dir", "$tmp_dir/$prefix_working_dir$job_id"
-		or death('emerg', "couldn't rename working directory");
-	}
-	if (length($optimizer_trace) > 0) {
-	    $report = insert_optimizer_trace($optimizer_trace, $report);
-	}
-	&end_job($dbh, $job_id, $end_code, $report)
-	    or death('emerg', "job_id=$job_id: $Spkdb::errstr");
+	# Remove the working directory
+	File::Path::rmtree("$tmp_dir/$working_dir");
     }
-    sigprocmask(SIG_SETMASK, $sigset)
-	or death('emerg', "could not restore SIGCHLD in reaper");
+    # Error termination
+    else {
+	$end_code = "unknown";
+	my $err_msg = "";
+	my $err_rpt = "";
+	if ($child_exit_value == $build_failure_exit_value) {
+	    $end_code = "serr";
+	    $err_msg .= "c++ program generated by SPK failed to build";
+	}
+	elsif ($child_exit_value != 0) {
+	    $end_code = "serr";
+	    $err_msg .= "exit value = $child_exit_value; ";
+	}
+	if ($child_signal_number == SIGABRT) {
+	    $end_code = "serr";
+	    $err_msg .= "software bug asserted; ";
+	}
+	elsif ($child_signal_number == SIGTERM) {
+	    $end_code = "serr";
+	    $err_msg .= "killed by operator; ";
+	}
+	elsif ($child_signal_number == SIGSEGV) {
+	    $end_code = "herr";
+	    $err_msg .= "segmentation fault; ";
+	}
+	elsif($child_signal_number != 0) {
+	    $end_code = "herr";
+	    $err_msg .= "killed with signal $child_signal_number; ";
+	}
+	if (-f $filename_serr && -s $filename_serr > 0) {
+	    open(FH, $filename_serr)
+		or death('emerg', "can't open $tmp_dir/$working_dir/$filename_serr");
+	    read(FH, $err_rpt, -s FH);
+	    close(FH);
+	    $end_code = "serr";
+	    $err_msg .= "software bug caught as exception; ";
+	}
+	if ($end_code =~ "unknown") {
+	    $end_code = "herr";
+	    $err_msg = "run died unexpectedly; ";
+	}
+	if ($child_dumped_core) {
+	    $err_msg .= "core dump in $tmp_dir/$prefix_working_dir$job_id; ";
+	}
+	# Format error report and place a message in system log
+	$report = format_error_report("$err_msg $err_rpt");
+	syslog('info', "job_id=$job_id: $err_msg");
+
+	# Rename working directory to make evidence easier to find
+	rename "$tmp_dir/$working_dir", "$tmp_dir/$prefix_working_dir$job_id"
+	    or death('emerg', "couldn't rename working directory");
+    }
+    if (length($optimizer_trace) > 0) {
+	$report = insert_optimizer_trace($optimizer_trace, $report);
+    }
+    &end_job($dbh, $job_id, $end_code, $report)
+	or death('emerg', "job_id=$job_id: $Spkdb::errstr");
 }
 sub start {
     # open the system log and record that we have started
@@ -442,9 +436,6 @@ sub stop {
     
     # Become insensitive to TERM signal we are about to broadcast
     local $SIG{'TERM'} = 'IGNORE';
-
-    # Remove reaper as catcher of SIGCHLD
-    $SIG{'CHLD'} = 'DEFAULT';
 
     # send the TERM signal to every member of our process group
     kill('TERM', -$$);
@@ -480,8 +471,7 @@ $SIG{'HUP'}  = 'IGNORE';
 $SIG{'INT'}  = 'IGNORE';
 $SIG{'QUIT'} = 'IGNORE';
 
-# Designate handlers for certain signals
-$SIG{'CHLD'} = \&reaper;
+# Designate a handler for the "terminate" signal
 $SIG{'TERM'} = \&stop;
 
 # rerun any runs that were interrupted when we last terminated
@@ -498,14 +488,11 @@ else {
 
 # loop until interrupted by a signal
 use POSIX ":sys_wait_h";
-my $pid_of_deceased_child;
-my @args;
-my $job_id;
+my $child_pid;
 
 while(1) {
     # if there is a job queued-to-run, fork the runner
     if ($concurrent < $max_concurrent) {
-	syslog('info', "concurrent=$concurrent");
 	$row = &de_q2r($dbh);
 	if (defined $row) {
 	    if ($row) {
@@ -515,6 +502,10 @@ while(1) {
 	else {
 	    death("emerg", "error reading database: $Spkdb::errstr");
 	}
+    }
+    # process child processes that have terminated
+    while (($child_pid = waitpid(-1, &WNOHANG)) > 0) {    
+	reaper($child_pid, $?);
     }
     # sleep for a second
     sleep(1); # DO NOT REMOVE THIS LINE
