@@ -35,6 +35,8 @@ void emit_IndDataClass(
   fprintf( out, "#ifndef INDDATA_H\n" );
   fprintf( out, "#define INDDATA_H\n" );
   fprintf( out, "\n" );
+  fprintf( out, "#include <cstdlib>\n" );
+  fprintf( out, "#include <string>\n" );
 
   fprintf( out, "class %s{\n", classname );
   fprintf( out, "   public:\n" );
@@ -69,7 +71,7 @@ void emit_IndDataClass(
     {
   	fprintf( out, "         %s = new double[ nMeasurements ];\n", 
 			names->first.c_str() );
-	fprintf( out, "         memcpy( %s, %sIn, sizeof(double)*n );\n", 
+	fprintf( out, "         memcpy( %s, %sIn, sizeof(double)*nMeasurements );\n", 
 			names->first.c_str(), names->first.c_str());
 	if( names->second.c_str() != "" )
 	  {
@@ -104,7 +106,7 @@ void emit_IndDataClass(
   fprintf( out, "\n" );
   fprintf( out, "   protected:\n" );
   fprintf( out, "      %s(){}\n", classname );
-  fprintf( out, "      %s( const & %s ){}\n", classname, classname );
+  fprintf( out, "      %s( const %s & ){}\n", classname, classname );
   fprintf( out, "      %s& operator=( const %s& ){}\n", classname, classname );
   fprintf( out, "};\n" );
 
@@ -131,6 +133,8 @@ void emit_initIndDataObjects(
   // for individuals.
   //
   //=================================================================================
+  fprintf( out, "#include \"IndData.h\"\n" );
+  
   fprintf( out, "void initIndDataObjects( int nIndividuals, %s * data_for[] )\n", classname );
   fprintf( out, "{\n" );
   //
@@ -161,13 +165,12 @@ void emit_initIndDataObjects(
 	  ++map_records;
 	}
       
-      fprintf( out, "   %s * data_%s = new %s( ", classname, order_id_pair[i].c_str(), classname );
       map_records = data_for[i].begin();
+      fprintf( out, "   %s * data_%s = new %s( %d", classname, order_id_pair[i].c_str(), classname,
+	    map_records->second.size() );
       while( map_records != data_for[i].end() )
 	{
-	  if( map_records != data_for[i].begin() )
-	    fprintf( out, ", " );
-	  fprintf( out, "%s_%s", map_records->first.c_str(), order_id_pair[i].c_str() );
+	  fprintf( out, ", %s_%s", map_records->first.c_str(), order_id_pair[i].c_str() );
 	  ++map_records;
 	}
       fprintf( out, " );\n" );
@@ -192,6 +195,8 @@ void emit_releaseIndDataObjects(
   // IndData objects.
   //
   //=================================================================================
+  fprintf( out, "#include \"IndData.h\"\n" );
+  
   fprintf( out, "void releaseIndDataObjects( int nIndividuals, %s * data_for[] )\n", classname );
   fprintf( out, "{\n" );
   //
