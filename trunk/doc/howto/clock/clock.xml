@@ -38,6 +38,13 @@
 	<authorinitials>afw</authorinitials>
 	<revremark>Modified treatment of cluster.</revremark>
       </revision>
+      <revision>
+	<revnumber>1.05</revnumber>
+	<date>December 3, 2004</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Added section on firewall configuration for webserver and
+	removed section for cluster.</revremark>
+      </revision>
     </revhistory>
   <abstract>
     <para>
