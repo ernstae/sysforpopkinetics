@@ -14,6 +14,8 @@ testall_SOURCES = \
 	BlockAllocTest.h \
 	blockDiagonalDerivativeTest.cpp \
 	blockDiagonalDerivativeTest.h \
+	calcMeanTest.cpp \
+	calcMeanTest.h \
 	centdiffModelTest.cpp \
 	centdiffModelTest.h \
 	centdiffTest.cpp \
@@ -65,7 +67,7 @@ testall_SOURCES = \
 	getSubblockTest.cpp \
 	getSubblockTest.h \
 	identityTest.cpp \
-	identifyTest.h \
+	identityTest.h \
 	IkronBtimesCTest.cpp \
 	IkronBtimesCTest.h \
 	IndInputDataPackageTest.cpp \
@@ -161,7 +163,7 @@ testall_SOURCES = \
 	subtractTest.cpp \
 	subtractTest.h \
 	symmetrizeTest.cpp \
-	SymmetrizeTest.h \
+	symmetrizeTest.h \
 	testall.cpp \
 	transposeDerivativeTest.cpp \
 	transposeDerivativeTest.h \
@@ -178,3 +180,93 @@ testall_SOURCES = \
 testall_CXXFLAGS = -I/usr/local/cppunit/include
 
 testall_LDFLAGS = -lspk /usr/local/lib/libnagc.a -lpthread -lm -lcppunit
+
+INCLUDES = -I@top_srcdir@/
+pkginclude_HEADERS = \
+	ABA_xTest.h \
+	addTest.h \
+	AkronBtimesCTest.h \
+	AkronItimesCTest.h \
+	allTrueTest.h \
+	BlockAllocTest.h \
+	blockDiagonalDerivativeTest.h \
+	calcMeanTest.h \
+	centdiffTest.h \
+	centdiffModelTest.h \
+	choleskyTest.h \
+	countTruesTest.h \
+	CovarianceTest.h \
+	detTest.h \
+	divByScalarTest.h \
+	elementwiseAndTest.h \
+	elementwiseOrTest.h \
+	elsq_xBlockDiagTest.h \
+	elsq_xDiagTest.h \
+	elsq_xTest.h \
+	elsqTest.h \
+	EqIndModelTest.h \
+	estimateBTest.h \
+	expectedHessianTest.h \
+	firstOrderOptTest.h \
+	fitIndividualErrorTest.h \
+	fitIndividualTest.h \
+	FunctionTest.h \
+	getColTest.h \
+	getMulColsTest.h \
+	getMulRowsTest.h \
+	getRowTest.h \
+	getSubblockTest.h \
+	identityTest.h \
+	IkronBtimesCTest.h \
+	IndInputDataPackageTest.h \
+	IndOutputDataPackageTest.h \
+	IndResultsTest.h \
+	indStatisticsTest.h \
+	IndVarsTest.h \
+	inverseTest.h \
+	inxToMaxTest.h \
+	isDblEpsEqualTest.h \
+	isDmatEpsEqualTest.h \
+	isGreaterThanOrEqualToTest.h \
+	isLessThanOrEqualToTest.h \
+	isSymmetricTest.h \
+	lambda2diffTest.h \
+	lambdaTest.h \
+	lTildeTest.h \
+	mapObjDiffTest.h \
+	mapObjTest.h \
+	mapOptTest.h \
+	mapTildeTest.h \
+	matabsTest.h \
+	matmaxTest.h \
+	matminTest.h \
+	MatrixTest.h \
+	mulByScalarTest.h \
+	multiplyTest.h \
+	NaiveFoModelTest.h \
+	normTest.h \
+	OptimizerTest.h \
+	placeRowsTest.h \
+	PopConstValsTest.h \
+	popStatisticsTest.h \
+	PopVarsTest.h \
+	ppkaOptTest.h \
+	printInMatrixTest.h \
+	randNormalTest.h \
+	replaceIthTest.h \
+	replaceJthTest.h \
+	replaceSubblockTest.h \
+	residualsTest.h \
+	rvecInverseTest.h \
+	rvecTest.h \
+	SpkErrorTest.h \
+	SpkExceptionTest.h \
+	SpkModelErrorTest.h \
+	sqpAnyBoxTest.h \
+	subtractTest.h \
+	symmetrizeTest.h \
+	transposeDerivativeTest.h \
+	transposeRowBlocksTest.h \
+	transposeTest.h \
+	UTranTimesSymKronSymTimesU_xTest.h \
+	UTranTimesSymKronSymTimesUTest.h

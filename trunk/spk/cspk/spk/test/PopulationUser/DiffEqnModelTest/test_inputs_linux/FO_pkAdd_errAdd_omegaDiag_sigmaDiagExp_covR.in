@@ -20,11 +20,11 @@
 <Omega>
 	<structure>diagonal</structure>
 	<nonmem_param><anon>exponential</anon></nonmem_param>
-	<nonmem_param><anon>exponential</anon><anon>exponential</anon></nonmem_param>
-	<nonmem_param><anon>exponential</anon><anon>exponential</anon><anon>exponential</anon></nonmem_param>
+	<nonmem_param><anon>exponential</anon></nonmem_param>
+	<nonmem_param><anon>exponential</anon></nonmem_param>
 	<in><anon>1.0</anon></in>
-	<in><anon>0.005</anon><anon>0.0002</anon></in>
-	<in><anon>0.3</anon><anon>0.006</anon><anon>0.4</anon></in>
+	<in><anon>0.0002</anon></in>
+	<in><anon>0.4</anon></in>
 	<relTol>0.01</relTol>
 </Omega>
 <Sigma>
