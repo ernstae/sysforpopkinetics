@@ -359,10 +359,11 @@ ssh-keygen -t dsa
 	to. You can use <command moreinfo="none">scp</command>
 	to accomplish this.
 	In the following
-	example, we assume that the remote machine is named
-	<emphasis>whitechuck.rfpk.washington.edu</emphasis>:
+	example, we assume that the remote machine has the domain name
+	<emphasis>remote-host</emphasis>.  An IP address or an alias
+	could be used instead of the domain name.
 	<screen format="linespecific">
-scp ~/.ssh/id_dsa.pub whitechuck.rfpk.washington.edu:
+scp ~/.ssh/id_dsa.pub remote-host:
 	</screen>
 	You will be asked to supply your username and
 	password for the remote host, because
@@ -374,7 +375,7 @@ scp ~/.ssh/id_dsa.pub whitechuck.rfpk.washington.edu:
 	not <filename moreinfo="none">.ssh</filename> exists in your home
 	directory on that machine:
 	<screen>
-ssh whitechuck
+ssh remote-host
 ls -al
 	</screen>
 	If <filename>.ssh</filename> does not exist, create it 
@@ -435,7 +436,7 @@ Priority: 70
 	Open up a shell window on your workstation and connect to
 	the remote machine with <command moreinfo="none">ssh</command>:
 	<screen format="linespecific">
-ssh whitechuck.rfpk.washington.edu
+ssh remote-host
 	</screen>
 	If everything has been correctly configured, the connection
 	should go through without you having to supply a pass phrase
