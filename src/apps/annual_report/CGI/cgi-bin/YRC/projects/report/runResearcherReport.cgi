@@ -10,7 +10,7 @@ use YRC::DB;
 use YRC::PROJECT::PROJECT;
 use YRC::PROJECT::RESEARCHER;
 
-my($CUTOFF) = '2002-06-11';
+my($CUTOFF) = '2003-06-11';
 my(%FOUND_RESEARCHERS) = ( );
 my($HOST_NAME) = 'University of Washington';
 
@@ -48,7 +48,7 @@ my($rtf) = RTF::Writer->new_to_string(\$output);
 $rtf->prolog( 
 	'title'		=>	"SOURCES OF INVESTIGATOR SUPPORT",
 	'fonts'		=>	[ "Arial" ],
-	'author'	=>	"Perl Script by Michael Riffle"
+	'author'	=>	"Perl Script by Michael Riffle additions by M. Macaulay"
 );
 
 
