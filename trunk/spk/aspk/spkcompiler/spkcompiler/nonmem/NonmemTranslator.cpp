@@ -50,6 +50,8 @@ const char* NonmemTranslator::C_LABELS                     ( "labels" );
 const char* NonmemTranslator::C_COV_R                      ( "r" );
 const char* NonmemTranslator::C_COV_RSR                    ( "rsr" );
 const char* NonmemTranslator::C_COV_S                      ( "s" );
+const char* NonmemTranslator::C_COV_H                      ( "h" );
+const char* NonmemTranslator::C_COV_HSH                    ( "hsh" );
 const char* NonmemTranslator::C_NONMEM                     ( "nonmem" );
 const char* NonmemTranslator::C_POP_ANALYSIS               ( "pop_analysis" );
 const char* NonmemTranslator::C_IND_ANALYSIS               ( "ind_analysis" );
@@ -279,6 +281,8 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   X_COV_R           = XMLString::transcode( C_COV_R );
   X_COV_RSR         = XMLString::transcode( C_COV_RSR );
   X_COV_S           = XMLString::transcode( C_COV_S );
+  X_COV_H           = XMLString::transcode( C_COV_H );
+  X_COV_HSH         = XMLString::transcode( C_COV_HSH );
   X_FO              = XMLString::transcode( C_FO );
   X_FOCE            = XMLString::transcode( C_FOCE );
   X_LAPLACE         = XMLString::transcode( C_LAPLACE );
@@ -325,6 +329,8 @@ NonmemTranslator::~NonmemTranslator()
   XMLString::release( &X_COV_R );
   XMLString::release( &X_COV_RSR );
   XMLString::release( &X_COV_S );
+  XMLString::release( &X_COV_H );
+  XMLString::release( &X_COV_HSH );
   XMLString::release( &X_IS_ERR_OUT );
   XMLString::release( &X_IS_CORR_OUT );
   XMLString::release( &X_IS_COV_OUT );
@@ -2665,6 +2671,25 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
 	}
       DOMElement * ind_stat = dynamic_cast<DOMElement*>( ind_stat_list->item(0) );
       const XMLCh* xml_stderr = ind_stat->getAttribute( X_IS_ERR_OUT );
+      const XMLCh* cov_form = ind_stat->getAttribute( X_COVARIANCE_FORM ); // r, rsr, s, hsh, h
+      if( XMLString::equals( cov_form, X_COV_S ) )
+	myCovForm = "S";
+      else if( XMLString::equals( cov_form, X_COV_RSR ) )
+	myCovForm = "RSR";
+      else if( XMLString::equals( cov_form, X_COV_R ) )
+	myCovForm = "R";
+      else if( XMLString::equals( cov_form, X_COV_HSH ) )
+	myCovForm = "HSH";
+      else if( XMLString::equals( cov_form, X_COV_H ) )
+	myCovForm = "H";
+      else
+	{
+	  char mess[ SpkCompilerError::maxMessageLen() ];
+	  sprintf( mess, "Invalid <%s::%s> attribute value: \"%s\".", 
+		   C_IND_STAT, C_COVARIANCE_FORM, XMLString::transcode( cov_form )  );
+	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+	  throw e;
+	}
       if( XMLString::stringLen( xml_stderr ) > 0 )
 	{
 	  myIsStderr = (XMLString::equals( xml_stderr, X_YES )? true : false );
@@ -4937,13 +4962,18 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << endl;
 
   oDriver << "const bool isStatRequested    = " << ( myIsStat? "true":"false" ) << ";"     << endl;
+  oDriver << "IndCovForm covForm            = " << myCovForm << ";" << endl;
   oDriver << "bool isStatSuccess            = !isStatRequested;" << endl;
+  oDriver << endl;
   oDriver << endl;
 
   oDriver << "const bool isRestartRequested = " << ( myIsRestart? "true":"false" ) << ";"     << endl;
   oDriver << endl;
 
   oDriver << "const int nRepeats            = " << mySubproblemsN << ";" << endl;
+  oDriver << endl;
+
+  oDriver << "const bool withD              =  false;" << endl;
   oDriver << endl;
 
   oDriver << "valarray<double> thetaStep( NonmemPars::nTheta );" << endl;
@@ -4993,7 +5023,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "if( isRestartRequested && !iCheckpoint.good() )" << endl;
   oDriver << "{" << endl;
   oDriver << "   char m[ SpkError::maxMessageLen()];" << endl;
-  oDriver << "   sprintf( m, \"Warm start is request but no checkpoint file found.\" );" << endl;
+  oDriver << "   sprintf( m, \"Warm start is requested but no checkpoint file found.\" );" << endl;
   oDriver << "   SpkError e( SpkError::SPK_STD_ERR, m, __LINE__, __FILE__);" << endl;
   oDriver << "   errors.push( e );" << endl;
   oDriver << "   ret = FILE_ACCESS_FAILURE;" << endl;
@@ -5116,7 +5146,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "                    &bObjOut," << endl;
   oDriver << "                    &bObj_bOut," << endl;
   oDriver << "                    &bObj_b_bOut," << endl;
-  oDriver << "                     false );" << endl;
+  oDriver << "                     withD );" << endl;
   oDriver << "      isOptSuccess = true;" << endl;
   oDriver << "   }" << endl;
   oDriver << "   catch( SpkException& e )" << endl;
@@ -5205,28 +5235,24 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "/*******************************************************************/" << endl;
   oDriver << "if( isStatRequested && isOptRequested && haveCompleteData && isOptSuccess )" << endl;
   oDriver << "{" << endl;
-  oDriver << "   model.setIndPar( bOut );"              << endl;
-  oDriver << "   model.dataMean_indPar( f_bOut );"      << endl;
-  oDriver << "   model.dataVariance_indPar( R_bOut );"  << endl;
-  oDriver << "   model.dataVarianceInv( RInvOut );"     << endl;
-
   // indStatistics
   oDriver << "   gettimeofday( &statBegin, NULL );"     << endl;
   oDriver << "   try" << endl;
   oDriver << "   {" << endl;
   oDriver << "      model.getStandardPar( stdPar );"    << endl;
   oDriver << "      model.getStandardPar_indPar( stdPar_b );" << endl;
-  oDriver << "      indStatistics( bMask,"   << endl;
-  oDriver << "                     bOut, "   << endl;
-  oDriver << "                     f_bOut,"  << endl;
-  oDriver << "                     R_bOut,"  << endl;
-  oDriver << "                     RInvOut," << endl;
-  oDriver << "                    &bCov,"    << endl;
-  oDriver << "                     NULL,"    << endl;
-  oDriver << "                     NULL,"    << endl;
-  oDriver << "                     NULL,"    << endl;
-  oDriver << "                     NULL"     << endl;
-  oDriver << "                   );" << endl;
+  oDriver << "      indStatistics(   model,"   << endl;
+  oDriver << "                       y,"       << endl;
+  oDriver << "                       bOut, "   << endl;
+  oDriver << "                       bMask,"   << endl;
+  oDriver << "                       bObj_b_bOut,"  << endl;
+  oDriver << "                       covForm,"  << endl;
+  oDriver << "                      &bCov,"    << endl;
+  oDriver << "                       NULL,"    << endl;
+  oDriver << "                       NULL,"    << endl;
+  oDriver << "                       NULL,"    << endl;
+  oDriver << "                       NULL,"     << endl;
+  oDriver << "                       withD );" << endl;
   oDriver << "      derParStatistics( bMask,"         << endl;
   oDriver << "                        bCov,"          << endl;
   oDriver << "                        stdPar,"        << endl;
@@ -5564,13 +5590,13 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "ofstream oLongError;" << endl;
   oDriver << endl;
 
-  oDriver << "const bool isSimRequested  = " << (myIsSimulate? "true":"false") << ";" << endl;
-  oDriver << "bool haveCompleteData      = !isSimRequested;" << endl;
+  oDriver << "const bool isSimRequested     = " << (myIsSimulate? "true":"false") << ";" << endl;
+  oDriver << "bool haveCompleteData         = !isSimRequested;" << endl;
   oDriver << endl;
 
-  oDriver << "const bool isOptRequested  = " << (myIsEstimate? "true":"false") << ";" << endl;
-  oDriver << "bool isOptSuccess          = !isOptRequested;" << endl;
-  oDriver << "Objective objective        = ";
+  oDriver << "const bool isOptRequested     = " << (myIsEstimate? "true":"false") << ";" << endl;
+  oDriver << "bool isOptSuccess             = !isOptRequested;" << endl;
+  oDriver << "Objective objective           = ";
   if( ourApproximation == FO )
     oDriver << "FIRST_ORDER;" << endl;
   else if( ourApproximation == FOCE )
@@ -5579,20 +5605,18 @@ void NonmemTranslator::generatePopDriver() const
     oDriver << "MODIFIED_LAPLACE;" << endl;
   oDriver << endl;
 
-  oDriver << "const bool isStatRequested = " << (myIsStat? "true":"false") << ";" << endl;
-  oDriver << "bool isStatSuccess         = !isStatRequested;" << endl;
+  oDriver << "const bool isStatRequested    = " << (myIsStat? "true":"false") << ";" << endl;
+  oDriver << "enum PopCovForm covForm       = " << myCovForm << ";" << endl;
+  oDriver << "bool isStatSuccess            = !isStatRequested;" << endl;
   oDriver << endl;
 
   oDriver << "const bool isRestartRequested = " << (myIsRestart? "true":"false") << ";" << endl;
   oDriver << endl;
 
-  oDriver << "enum PopCovForm covForm    = " << myCovForm << ";" << endl;
-  oDriver << endl;
-
   oDriver << "DataSet< CppAD::AD<double> > set;" << endl;
-  oDriver << "const int           nPop = set.getPopSize();" << endl;
-  oDriver << "const valarray<int> N    = set.getN();" << endl;
-  oDriver << "const int           nY   = N.sum();" << endl;
+  oDriver << "const int           nPop      = set.getPopSize();" << endl;
+  oDriver << "const valarray<int> N         = set.getN();" << endl;
+  oDriver << "const int           nY        = N.sum();" << endl;
   oDriver << "valarray<double>    y( nY );" << endl;
   oDriver << endl;
 
@@ -5920,69 +5944,23 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "   {" << endl;
   oDriver << "      model.getStandardPar( stdPar );" << endl;
   oDriver << "      model.getStandardPar_popPar( stdPar_alp );" << endl;
-  oDriver << endl;
-  oDriver << "      DoubleMatrix dvecN   ( nPop, 1 );" << endl;
-  oDriver << "      for( int i=0; i<nPop; i++ )"       << endl;
-  oDriver << "         dvecN.data()[i] = N[i];"        << endl;
-  oDriver << "      DoubleMatrix dvecY          ( y,       1 );"    << endl;
-  oDriver << "      DoubleMatrix dmatBOut       ( bOut,    nPop );" << endl;
-  oDriver << "      DoubleMatrix dvecBLow       ( bLow,    1 );"    << endl;
-  oDriver << "      DoubleMatrix dvecBUp        ( bUp,     1 );"    << endl;
-  oDriver << "      DoubleMatrix dvecBStep      ( bStep,   1 );"    << endl;
-  oDriver << "      DoubleMatrix dvecBObj_alpOut( nAlp, nPop );"    << endl;
-  oDriver << "      DoubleMatrix dvecAlpOut     ( alpOut,  1 );"    << endl;
-  oDriver << "      DoubleMatrix dvecAlpUp      ( alpUp,   1 );"    << endl;
-  oDriver << "      DoubleMatrix dvecAlpLow     ( alpLow,  1 );"    << endl;
-  oDriver << "      DoubleMatrix dvecAlpStep    ( alpStep, 1 );"    << endl;
-  oDriver << "      valarray<double> bObj_alpOut( nPop * nAlp );"   << endl;                                                                                   
-  oDriver << "      if( objective != FIRST_ORDER )"     << endl;
-  oDriver << "      {" << endl;
-  oDriver << "         lTilde( model,"                  << endl;
-  oDriver << "                 objective,"              << endl;
-  oDriver << "                 dvecY,"                  << endl;
-  oDriver << "                 dvecN,"                  << endl;
-  oDriver << "                 indOpt,"                 << endl;
-  oDriver << "                 dvecAlpOut,"             << endl;
-  oDriver << "                 dvecBLow,"               << endl;
-  oDriver << "                 dvecBUp,"                << endl;
-  oDriver << "                 dvecBStep,"              << endl;
-  oDriver << "                 dmatBOut,"               << endl;
-  oDriver << "                 NULL,"                   << endl;
-  oDriver << "                 NULL,"                   << endl;
-  oDriver << "                 NULL,"                   << endl;
-  oDriver << "                &dvecBObj_alpOut );"      << endl;
-  oDriver << "      }" << endl;
-  oDriver << "      else" << endl;
-  oDriver << "      {" << endl;
-  oDriver << "         NaiveFoModel naiveFoModel( &model, bStep );" << endl;
-  oDriver << "         lTilde( naiveFoModel,"           << endl;
-  oDriver << "                 NAIVE_FIRST_ORDER,"      << endl;
-  oDriver << "                 dvecY,"                  << endl;
-  oDriver << "                 dvecN,"                  << endl;
-  oDriver << "                 indOpt,"                 << endl;
-  oDriver << "                 dvecAlpOut,"             << endl;
-  oDriver << "                 dvecBLow,"               << endl;
-  oDriver << "                 dvecBUp,"                << endl;
-  oDriver << "                 dvecBStep,"              << endl;
-  oDriver << "                 dmatBOut,"               << endl;
-  oDriver << "                 0,"                      << endl;
-  oDriver << "                 0,"                      << endl;
-  oDriver << "                 0,"                      << endl;
-  oDriver << "                &dvecBObj_alpOut );"      << endl;
-  oDriver << "      }" << endl;
-  oDriver << "      bObj_alpOut = dvecBObj_alpOut.toValarray();" << endl;
-  oDriver << endl;
-  oDriver << "      popStatistics( alpMask,"            << endl;
-  oDriver << "                     y,"                  << endl;
-  oDriver << "                     alpOut, "            << endl;
-  oDriver << "                     bObj_alpOut,"        << endl;
-  oDriver << "                     alpObj_alp_alpOut, " << endl;
-  oDriver << "                     covForm,"            << endl;
-  oDriver << "                    &alpCov, "            << endl;
-  oDriver << "                     NULL, "              << endl;
-  oDriver << "                     NULL, "              << endl;
-  oDriver << "                     NULL, "              << endl;
-  oDriver << "                     NULL );"             << endl;
+  oDriver << "      popStatistics(    model, "             << endl;
+  oDriver << "                        objective,"          << endl;
+  oDriver << "                        N,"                  << endl;
+  oDriver << "                        y,"                  << endl;
+  oDriver << "                        alpOut, "            << endl;
+  oDriver << "                        alpMask,"            << endl;
+  oDriver << "                        alpObj_alp_alpOut, " << endl;
+  oDriver << "                        bOut,"               << endl;
+  oDriver << "                        bLow,"               << endl;
+  oDriver << "                        bUp,"                << endl;
+  oDriver << "                        bStep,"              << endl;
+  oDriver << "                        covForm,"            << endl;
+  oDriver << "                       &alpCov, "            << endl;
+  oDriver << "                        NULL, "              << endl;
+  oDriver << "                        NULL, "              << endl;
+  oDriver << "                        NULL, "              << endl;
+  oDriver << "                        NULL );"             << endl;
   oDriver << endl;
   oDriver << "      derParStatistics( alpMask,"         << endl;
   oDriver << "                        alpCov,"          << endl;
