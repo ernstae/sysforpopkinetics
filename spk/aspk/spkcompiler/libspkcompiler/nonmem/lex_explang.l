@@ -15,7 +15,6 @@
 #define YYSTYPE yystype
 
 extern void nm_error(char*);
-extern union nm_lval;
 
 //
 // A global counter for keeping track of # of lines read so far.
