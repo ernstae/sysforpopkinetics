@@ -31,6 +31,7 @@ our @EXPORT_OK = (
     'connect', 'disconnect', 'new_job', 'job_status', 'user_jobs', 
     'de_q2c', 'en_q2c',
     'en_q2r', 'de_q2r', 'end_job', 'job_report',
+    'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
     'new_model', 'get_model', 'update_model', 'user_models',
     'new_user', 'update_user', 'get_user'
     );
@@ -61,7 +62,7 @@ in the Spk Database API Specification.
 
 =head1 DESCRIPTION
 
-A short discription of the usage of each of the subroutines 
+A short description of the usage of each of the subroutines 
 follows.
 
 =cut
@@ -87,6 +88,7 @@ our $NOT_ENDED = 13;
 our $MODEL_EXISTS = 14;
 our $TOO_MANY = 15;
 our $INVALID_CHANGE = 16;
+our $DATASET_EXISTS = 17;
 
 =head2 connect -- open a database connection
 
@@ -158,22 +160,28 @@ Submit a new job to be compiled and run.
 
     $job_id = &Spkdb::new_job($dbh,
                               $user_id,
+			      $abstract,
+			      $dataset_id,
+			      $dataset_version,
 			      $model_id,
-			      $version,
+			      $model_version,
 			      $xml_source,
-			      $xml_data
 			      );
 $dbh is the handle to an open database connection.
 
 $user_id is the user_id number of an existing user.
 
+$abstract is a string containing a brief description of the model.
+
+$dataset_id is the dataset_id number of an existing dataset
+
+$dataset_version is the version string of the dataset
+
 $model_id is the model_id number of an existing model.
 
-$version is the version string of the model.
+$model_version is the version string of the model.
 
 $xml_source is the source string.
-
-$xml_data is the data string.
 
 Returns:
 
@@ -185,22 +193,29 @@ Returns:
 =cut
 
 sub new_job() {
-    my $dbh      = shift;
-    my $user_id  = shift;
-    my $model_id = shift;
-    my $version  = shift;
-    my $r_source = \$_[0];
-    my $r_data   = \$_[1];
+    my $dbh             = shift;
+    my $user_id         = shift;
+    my $abstract        = shift;
+    my $dataset_id      = shift;
+    my $dataset_version = shift;
+    my $model_id        = shift;
+    my $model_version   = shift;
+    my $r_source        = \$_[0];
     $err = 0;
     $errstr = "";
 
     my $state_code = "q2c";
 
-    my $sql = "insert into job (state_code, user_id, model_id, version, "
-	            .          "xml_source, xml_data)"
-		    . " values ('$state_code', $user_id, $model_id, "
-                    .          "'$version', '$$r_source', "
-		    .          "'$$r_data');";
+    my $start_time = time();
+    my $event_time = $start_time;
+
+    my $sql = "insert into job (state_code, user_id, abstract, dataset_id, "
+	            .          "dataset_version, model_id, model_version, "
+	            .          "xml_source, start_time, event_time)"
+		    . " values ('$state_code', $user_id, '$abstract', "
+                    .          "$dataset_id, '$dataset_version', "
+		    .          "$model_id, '$model_version', '$$r_source', "
+		    .          "$start_time, $event_time);";
     unless ($dbh->do($sql)) {
 	$err = $INSERT_FAILED;
 	$errstr = "can't insert new job";
@@ -215,8 +230,8 @@ sub new_job() {
 
 =head2 job_status -- return the current state of a job
 
-Return the state_code, user_id, and time for a job.  Note that
-the time is the time of the last job state transistion, such
+Return the state_code, event_time, and end_code for a job.  Note that
+the event_time is the time of the last job state transistion, such
 as the transition from "queued to compile" to "compiling".
 
     $row = &Spkdb::job_status($dbh, $job_id);
@@ -232,8 +247,7 @@ Returns
   success: reference to a hash table containing the following
     columns from the selected row of the job table:
         state_code
-        time
-        user_id
+        event_time
         end_code
     In the hash table, the above field names are the keys and 
     the column values the values.
@@ -251,7 +265,7 @@ sub job_status() {
     $err = 0;
     $errstr = "";
 
-    my $sql = "select state_code, time, user_id, end_code "
+    my $sql = "select state_code, event_time, end_code "
 	      . "from job where job_id='$job_id';";
     my $sth = $dbh->prepare($sql);
     unless ($sth) {
@@ -279,7 +293,8 @@ Within the array, jobs are sorted in reverse order of job_id, hence
 the most recently submitted job appears first.  The maximum number 
 of jobs to return is the third argument.
 
-The fields returned are job_id, time, state_code and end_code.
+The fields returned are job_id, abstract, state_code, start_time,
+event_time and end_code.
 
     $array_row = $Spkdb::user_jobs($dbh, $user_id, $maxnum);
 
@@ -287,7 +302,7 @@ Returns
 
   success:
     reference to an array of references to hash tables, each 
-    representing a row in the job table
+    representing a subset of a row in the job table
 
   failure: undef
     $Spkdb::errstr contains an error message string
@@ -304,7 +319,7 @@ sub user_jobs() {
     $err = 0;
     $errstr = "";
 
-    my $sql = "select job_id, time, state_code, end_code "
+    my $sql = "select job_id, abstract, state_code, start_time, event_time, end_code "
 	. "from job where user_id='$user_id' "
 	. "order by job_id desc limit $maxnum;";
     my $sth = $dbh->prepare($sql);
@@ -340,8 +355,8 @@ Returns
     reference to a hash for the row of highest priority, 
     containing the following fields:
         job_id
+        dataset_id
         xml_source
-        xml_data
     false if compiler queue is empty   
 
   failure: undef
@@ -358,9 +373,9 @@ sub de_q2c() {
     
     $dbh->begin_work;
 
-    my $sql = "select job_id, xml_source, xml_data from job "
+    my $sql = "select job_id, dataset_id, xml_source from job "
 	    .       "where state_code='q2c' "
-            .       "order by time "
+            .       "order by event_time "
             .       "limit 1 "
             .       "for update; ";
 
@@ -386,8 +401,9 @@ sub de_q2c() {
     }
     my $job_id = $row->{"job_id"};
     my $state_code = "cmp";
+    my $event_time = time();
     
-    $sql = "update job set state_code = '$state_code' where job_id=$job_id;";
+    $sql = "update job set state_code = '$state_code, event_time = $event_time' where job_id=$job_id;";
     unless ($dbh->do($sql)) {
 	$err = $UPDATE_FAILED;
 	$errstr = "could not execute $sql; error returned ";
@@ -428,9 +444,11 @@ sub en_q2r() {
     $errstr = "";
 
     my $state_code = 'q2r';
+    my $event_time = time();
 
     my $sql = "update job "
 	      .  "set state_code='$state_code', "
+	      .  "event_time=$event_time, "
               .  "cpp_source=? "
               .  "where job_id=$job_id;";
 
@@ -485,7 +503,7 @@ sub de_q2r() {
 
     my $sql = "select job_id, cpp_source from job "
 	    .       "where state_code='q2r' "
-            .       "order by time "
+            .       "order by event_time "
             .       "limit 1 "
             .       "for update; ";
 
@@ -510,9 +528,10 @@ sub de_q2r() {
 	return;
     }
     my $job_id = $row->{"job_id"};
+    my $event_time = time();
     
     my $state_code = "run";
-    $sql = "update job set state_code = '$state_code' where job_id=$job_id;";
+    $sql = "update job set state_code = '$state_code, event_time = $event_time' where job_id=$job_id;";
     unless ($dbh->do($sql)) {
 	$err = $UPDATE_FAILED;
 	$errstr = "could not execute $sql; error returned ";
@@ -653,6 +672,249 @@ sub job_report() {
     }
     return $rrow->[1];
 }
+
+=head2 new_dataset -- add a new dataset
+
+Add a new dataset to a users collection of datasets stored 
+in the database.
+
+    $dataset_id = &Spkdb::new_dataset($dbh, $user_id, $name, $abstract, $archive);
+
+$dbh is the handle to an open database connection
+
+$user_id is the unique identifier of a user
+
+$name is the name of the dataset
+
+$abstract is a short description of the dataset
+
+$archive is a version archive, rcs format
+
+Returns
+
+  success: the automatically generated value of the dataset_id
+  failure: undef
+        $errstr contains an error message string
+        $err == $Spkdb::DATASET_EXISTS     if user_id + name is not unique
+             == $Spkdb::INSERT_FAILED    if the adding the new record failed
+
+=cut
+
+sub new_dataset() {
+    my $dbh = shift;
+    my $user_id = shift;
+    my $name = shift;
+    my $abstract = shift;
+    $err = 0;
+    $errstr = "";
+
+    my $r_archive = \$_[0];
+
+    # Don't allow a user to be added a name for the second time
+    # Note: this will not catch the case where some other connection
+    #       adds the user between the time we make this test and the
+    #       time we actually do the insert.  In that case, however,
+    #       our insert will fail, thus preserving the integrity of
+    #       the table, due to the UNIQUE key on the username column.
+
+    my $sql = "select name from dataset "
+	. "where user_id=$user_id and name='$name';";
+    unless ($dbh->do($sql) == 0) {
+	$err = $DATASET_EXISTS;
+	$errstr = "this user has another dataset with the same name";
+	return 0;
+    }
+    $sql = "insert into dataset (user_id, name, abstract, archive) "
+	. "values ($user_id, '$name', '$abstract', '$$r_archive')" ;
+    unless ($dbh->do($sql)) {
+	$err = $INSERT_FAILED;
+	$errstr = "can't insert new job";
+	$dbh->rollback;
+	return 0;
+    }
+    return $dbh->{'mysql_insertid'};
+}
+
+=head2 get_dataset -- retrieve a dataset for a user
+
+Retrieve the dataset corresponding to a name
+
+    $row = &Spkdb::get_dataset($dbh, $user_id, $name);
+
+$dbh is the handle to an open database connection
+
+$user_id is the integer which uniquely identifies the user
+
+$name is the name of a dataset
+
+Returns
+
+  success: reference to a hash table of column/value pairs
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed
+
+=cut
+
+sub get_dataset() {
+    my $dbh = shift;
+    my $user_id = shift;
+    my $name = shift;
+    $err = 0;
+    $errstr = "";
+
+    my $sql = "select * from dataset where user_id=$user_id and name='$name';";
+    my $sth = $dbh->prepare($sql);
+    unless ($sth) {
+	$err = $PREPARE_FAILED;
+	$errstr = "could not prepare statement: $sql";
+	return undef;
+    }
+    unless ($sth->execute())
+    {
+	$err = $EXECUTE_FAILED;
+	$errstr = "could not execute state: $sql; error returned "
+	    . $sth->errstr;
+    }
+    my $count = $sth->rows;
+
+    if ($count == 0) {
+	return;
+    }
+    unless ($count == 1) {
+	$err = $TOO_MANY;
+	$errstr = "duplicate dataset record";
+	return undef;
+    }
+    return $sth->fetchrow_hashref();
+}
+
+=head2 update_dataset -- update a dataset
+
+Update the abstract and/or the archive of a dataset.
+
+    $r = &Spkdb::update_dataset($dbh, "dataset_id", $dataset_id, ...);
+
+$dbh is a handle to an open database connection.
+
+"dataset_id", $dataset_id is a name value pair which uniquely identifies
+a dataset.
+
+Other name value pairs specify the fields to be change.  These
+may be:
+
+"abstract", $abstract
+"archive",  $archive
+
+These pairs may be in any order, but there must be at least one pair.
+
+Returns
+
+  success: 1
+  failure: 0
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err = $Spkdb::KEY_REQUIRED   if "dataset_id" not supplied
+                = $Spkdb::INVALID_CHANGE if you have asked to change a
+                            field that must never be changed
+                = $Spkdb::UPDATE_FAILED  if failure for some other reason
+
+=cut
+
+sub update_dataset() {
+    my $dbh = shift;
+    my %args = @_;
+    $err = 0;
+    $errstr = "";
+
+    # Make sure that args contain user_id, which is the primary key
+
+    unless (defined $args{dataset_id}) {
+	$err = $KEY_REQUIRED;
+	$errstr = "argument list must contain dataset_id";
+	return 0;
+    }
+    # Copy user_id, then remove from list because it won't change
+
+    my $dataset_id = $args{dataset_id};
+    my $sql = "update dataset set ";
+
+    # Build the sql statement.  Make sure that password is coded.
+
+    delete $args{dataset_id};
+    for my $column (keys %args) {
+	if ($column =~ /^archive$/ || $column =~ /^abstract$/) {
+	    my $value = "'$args{$column}'";
+	    $sql .= "$column=$value, ";
+	} 
+	else {
+	    $err = $INVALID_CHANGE;
+	    $errstr = "$column cannot be changed";
+	    return 0;
+	}
+    }
+    chop $sql; chop $sql;
+    $sql .= " where dataset_id=$dataset_id";
+
+    my $nrows = $dbh->do($sql);
+    unless ($nrows && $nrows == 1) {
+	$err = $UPDATE_FAILED;
+	$errstr = "update of user record $dataset_id failed";
+	return 0;
+    }    
+    return 1;
+}
+
+=head2 user_datasets -- get descriptions of all the datasets of a user
+
+Returns a reference to an array of rows.  Each row is a reference
+to a hash table, with the field name as key and field value as value.
+Within the array, datasets are sorted in order of name.  The fields
+returned are dataset_id, name, time and abstract.
+
+    $array_row = $Spkdb::user_datasets($dbh, $user_id);
+
+Returns
+
+  success:
+    reference to an array of references to hash tables, each 
+    representing a row in the dataset table
+
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed
+
+=cut
+
+sub user_datasets() {
+    
+    my $dbh = shift;
+    my $user_id = shift;
+    $err = 0;
+    $errstr = "";
+
+    my $sql = "select dataset_id, name, abstract from dataset "
+	. "where user_id='$user_id order by name;' ";
+
+    my $sth = $dbh->prepare($sql);
+    unless ($sth) {
+	$err = $PREPARE_FAILED;
+	$errstr = "could not prepare statement: $sql";
+	return;
+    }
+    unless ($sth->execute())
+    {
+	$err = $EXECUTE_FAILED;
+	$errstr = "could not execute statement: $sql; error returned "
+	    . $sth->errstr;
+	return;
+    }
+    my $array_row_ref = $sth->fetchall_arrayref({});
+
+    return $array_row_ref;
+}
+
 
 =head2 new_model -- add a new model
 
@@ -875,7 +1137,7 @@ sub user_models() {
     $err = 0;
     $errstr = "";
 
-    my $sql = "select model_id, name, time, abstract from model "
+    my $sql = "select model_id, name, abstract from model "
 	. "where user_id='$user_id order by name;' ";
 
     my $sth = $dbh->prepare($sql);

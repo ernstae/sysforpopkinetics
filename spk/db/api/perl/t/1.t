@@ -2,12 +2,13 @@
 
 use strict;
 
-use Test::Simple tests => 31;  # number of ok() tests
+use Test::Simple tests => 41;  # number of ok() tests
 
 use Spkdb (
     'connect', 'disconnect', 'new_job', 'job_status', 
     'de_q2c', 'en_q2c',
     'en_q2r', 'de_q2r', 'end_job', 'job_report',
+    'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
     'new_model', 'get_model', 'update_model', 'user_models',
     'new_user', 'update_user', 'get_user' 
 	   );
@@ -68,16 +69,16 @@ ok(!$rv, "update_user, where user user_id is not specified");
 my $row = &get_user($dbh, $username);
 ok($row && $row->{"first_name"} =~ /^$first_name$/, "get_user");
 			 
-my $job_id = &new_job($dbh, $user_id, 2, 3, "source", "data");
+my $job_id = &new_job($dbh, $user_id, "Job 1", 22, "1.01", 33, "2.2", "source");
 ok($job_id, "new_job");
 
 $row = &job_status($dbh, $job_id);
-ok($row && $row->{"user_id"} == $user_id, "job_status");
+ok($row && $row->{"state_code"} =~ /^q2c$/, "job_status");
 
 sleep(1);			 
-&new_job($dbh, $user_id, 2, 3, "source", "data");
+&new_job($dbh, $user_id, "Job 2", 33, "1.01", 55, "2.22", "source");
 sleep(1);
-my $newest_job_id = &new_job($dbh, $user_id, 2, 3, "source", "data");
+my $newest_job_id = &new_job($dbh, $user_id, "Job 3", "88", "4.01", 22, "1.11", "source");
 
 my $row_array = &Spkdb::user_jobs($dbh,  $user_id, 1);
 $row = $row_array->[0];
@@ -120,6 +121,43 @@ ok($report && $report =~ /^end report$/, "end_report");
 
 ok(! &job_report($dbh, $job_id) && $Spkdb::err == $Spkdb::NOT_ENDED,
    "end_report for a job not at end");
+
+ok(! &get_dataset($dbh, $user_id, "Dataset-T") && $Spkdb::err == 0,
+   "get_dataset when none exists");
+
+ok(&new_dataset($dbh, $user_id, "Dataset-T", "Good dataset", "dataset T text"),
+   "new_dataset");
+ok(! &new_dataset($dbh, $user_id, "Dataset-T", 'Good dataset', 'dataset T text'),
+   "new_dataset duplicate add");
+
+$row = &get_dataset($dbh, $user_id, "Dataset-T");
+ok($row, "get_dataset");
+
+ok(&update_dataset($dbh,
+		 "dataset_id", $row->{'dataset_id'}, 
+		 "abstract", "new_abstract"), "update_dataset");
+ok(!&update_dataset($dbh,
+		 "dataset_id", $row->{'dataset_id'}, 
+		 "name", "new_name"), "update_dataset, attempt to change name");
+ok(!&update_dataset($dbh,
+		 "abstract", "new_abstract"), "update_dataset, no dataset_id");
+
+my $dataset_id = &new_dataset($dbh,
+			  $user_id, "Dataset-A", "Better dataset", "dataset A text");
+
+ok($dataset_id, "another new_dataset");
+
+$row_array = &Spkdb::user_datasets($dbh,  $user_id);
+$flag = 1;
+foreach $row (@$row_array) {
+    if ($row->{"dataset_id"} != $dataset_id--) {
+	$flag = 0;
+	last;
+    }
+}
+ok($flag, "user_datasets");
+
+ok($row_array->[1]->{'name'} =~ /^Dataset-T$/, "user_datasets, sorting");
 
 ok(! &get_model($dbh, $user_id, "Model-T") && $Spkdb::err == 0,
    "get_model when none exists");
