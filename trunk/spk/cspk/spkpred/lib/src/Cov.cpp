@@ -55,16 +55,15 @@ using SPK_VA::valarray;
  *
  *************************************************************************/
 
-Cov::Cov( int nCovRowIn, int nParIn )
+Cov::Cov( int nRowIn, int nParIn )
   :
-  nCovRow          ( nCovRowIn ),
-  nCov_parRow      ( nCovRowIn * nCovRowIn ),
+  nRow             ( nRowIn ),
   nPar             ( nParIn ),
   parCurr          ( nParIn ),
-  covCurr          ( nCovRowIn * nCovRowIn ),
-  cov_parCurr      ( nCovRowIn * nCovRowIn * nParIn ),
-  invCurr          ( nCovRowIn * nCovRowIn ),
-  inv_parCurr      ( nCovRowIn * nCovRowIn * nParIn ),
+  covCurr          ( nRowIn * nRowIn ),
+  cov_parCurr      ( nRowIn * nRowIn * nParIn ),
+  invCurr          ( nRowIn * nRowIn ),
+  inv_parCurr      ( nRowIn * nRowIn * nParIn ),
   isCovCurrOk      ( false ),
   isCov_parCurrOk  ( false ),
   isInvCurrOk      ( false ),
@@ -104,7 +103,7 @@ void Cov::setPar( const valarray<double>& parIn )
 
 void Cov::setCov( const valarray<double>& covIn )
 {
-  assert( covIn.size() == nCovRow * nCovRow );
+  assert( covIn.size() == nRow * nRow );
 
   // Get the parameters that correspond to this covariance matrix.
   valarray<double> parTemp( nPar );
@@ -180,13 +179,13 @@ bool Cov::getUsedCachedInv_par() const
 
 /*************************************************************************
  *
- * Function: getNCovRow
+ * Function: getNRow
  *
  *************************************************************************/
 
-int Cov::getNCovRow() const
+int Cov::getNRow() const
 {
-  return nCovRow;
+  return nRow;
 }
 
 

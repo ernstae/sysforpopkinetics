@@ -54,7 +54,7 @@ class Cov
   //------------------------------------------------------------
 
 public:
-  Cov( int nCovRowIn, int nParIn );
+  Cov( int nRowIn, int nParIn );
 
   // The destructor must be virtual for an abstract class.
   virtual ~Cov() {}
@@ -65,9 +65,7 @@ public:
   //------------------------------------------------------------
 
 public:
-  const int nCovRow;
-  const int nCov_parRow;
-
+  const int nRow;
   const int nPar;
 
 
@@ -151,7 +149,7 @@ public:
   //------------------------------------------------------------
 
 public:
-  int getNCovRow() const;
+  int getNRow() const;
   int getNPar() const;
 
 
