@@ -123,6 +123,7 @@ namespace{
   char CLAPACKLIB[] = "atlas";
   char PTHREADLIB[] = "pthread";
   char MLIB[]       = "m";
+  char XERCESCLIB[] = "xerces-c";
   char LDPATH[]     = "-Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest";
   char CPPFLAG[]    = "-g -I/usr/local/include/spktest";
   char LDFLAG[514];
@@ -460,8 +461,8 @@ void ind_withIDTest::setUp()
   sprintf( fPredDriver,           "%s_PredDriver",           fPrefix );
   sprintf( fPredDriver_cpp,       "%s_PredDriver.cpp",       fPrefix );
 
-  sprintf( LDFLAG, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
-	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB );
+  sprintf( LDFLAG, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
+	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
 
   // ID doesn't have an alias
   label_alias[strID]   = NULL;
