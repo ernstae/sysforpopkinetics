@@ -62,6 +62,6 @@ public class Source {
     public String[][][] splotEst = null;  
     /** ((file, header), (list1), (appearance orders), (sorting orders))s */
     public String[][][] tableSim = null; 
-    /** ((from, to, unit, X0, Y0), (list1), (list2), (list3))s */
+    /** ((from, to, unit, Y0, X0), (list1), (list2), (list3))s */
     public String[][][] splotSim = null;
 }

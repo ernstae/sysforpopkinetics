@@ -53,8 +53,12 @@ public class Output {
     public String[] theta = null;
     /** OMEGA matrix */
     public String[][] omega = null;
+    /** OMEGA structure */
+    public String omegaStruct = null;
     /** SIGMA matrix */
     public String[][] sigma = null;
+    /** SIGMA structure */
+    public String sigmaStruct = null;    
     /** statistics label list */
     public String[] statLabels = null;
     /** standard error of THETA */

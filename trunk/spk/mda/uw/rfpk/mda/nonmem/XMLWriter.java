@@ -428,19 +428,19 @@ public class XMLWriter
                     scatterplot.setAttribute("end", scatter[0][1]);
                 parent.appendChild(scatterplot);
 
-                int xlength = scatter[1].length;
+                int xlength = scatter[2].length;
                 for(int j = 0; j < xlength; j++)
 	        {
                     Element x = docSource.createElement("x");
-                    x.setAttribute("label", scatter[1][j]);
+                    x.setAttribute("label", scatter[2][j]);
                     scatterplot.appendChild(x);
 		}
 
-                int ylength = scatter[2].length;
+                int ylength = scatter[1].length;
                 for(int j = 0; j < ylength; j++)
 	        {
                     Element y = docSource.createElement("y");
-                    y.setAttribute("label", scatter[2][j]);
+                    y.setAttribute("label", scatter[1][j]);
                     scatterplot.appendChild(y);
 	        }
      
