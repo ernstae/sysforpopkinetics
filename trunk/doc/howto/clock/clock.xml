@@ -34,6 +34,7 @@
     </revhistory>
   <abstract>
     <para>
+
 	It is important that the system clocks in the Linux 
 	workstations of the RFPK Software Team be closely 
 	synchronized to the clock in the server which hosts the CVS
