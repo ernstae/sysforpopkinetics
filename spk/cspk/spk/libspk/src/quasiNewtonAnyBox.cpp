@@ -1023,16 +1023,6 @@ void quasiNewtonAnyBox(
       rScaledVA = cholesky( hScaledVA, nObjPar );
       valarrayToDoubleArray( rScaledVA, rScaled );
 
-
-is there a valarray to double* converter function in stl
-is there a valarray to double* converter function in stl
-is there a valarray to double* converter function in stl
-is there a valarray to double* converter function in stl
-is there a valarray to double* converter function in stl
-is there a valarray to double* converter function in stl
-is there a valarray to double* converter function in stl
-
-
       // See if this function's convergence criterion has been met.
       if ( isWithinTol( 
 	nObjPar,
