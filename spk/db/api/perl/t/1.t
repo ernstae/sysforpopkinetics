@@ -2,12 +2,12 @@
 
 use strict;
 
-use Test::Simple tests => 54;  # number of ok() tests
+use Test::Simple tests => 56;  # number of ok() tests
 
 use Spkdb (
     'connect', 'disconnect', 'new_job', 'job_status', 
     'de_q2c', 
-    'en_q2r', 'de_q2r', 'get_job', 'end_job', 'job_report', 'job_history',
+    'en_q2r', 'de_q2r', 'get_job', 'end_job', 'job_report', 'job_checkpoint', 'job_history',
     'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
     'new_model', 'get_model', 'update_model', 'user_models',
     'new_user', 'update_user', 'get_user', 'email_for_job'
@@ -150,9 +150,9 @@ foreach $row (@$row_array) {
 ok($flag, "get_run_jobs");
 
 sleep(1);
-ok(&end_job($dbh, $job_id + 1, "srun", "end report"), "end_job");
+ok(&end_job($dbh, $job_id + 1, "srun", "end report", "end checkpoint"), "end_job");
 
-ok(&end_job($dbh, $job_id, "abcd", "end report") == 0,
+ok(&end_job($dbh, $job_id, "abcd", "end report", "end checkpoint") == 0,
    "end_job, with invalid end code");
 
 $row = &get_job($dbh, $job_id);
@@ -164,6 +164,12 @@ ok($report && $report =~ /^end report$/, "job_report");
 
 ok(! &job_report($dbh, $job_id) && $Spkdb::err == $Spkdb::NOT_ENDED,
    "job_report for a job not at end");
+
+my $checkpoint = &job_checkpoint($dbh, $job_id + 1);
+ok($checkpoint && $checkpoint =~ /^end checkpoint$/, "job_checkpoint");
+
+ok(! &job_checkpoint($dbh, $job_id) && $Spkdb::err == $Spkdb::NOT_ENDED,
+   "job_checkpoint for a job not at end");
 
 ok(! &get_dataset($dbh, 55) && $Spkdb::err == 0,
    "get_dataset when none exists");
