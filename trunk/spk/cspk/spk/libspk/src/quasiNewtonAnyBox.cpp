@@ -545,7 +545,7 @@ namespace // [Begin: unnamed namespace]
 
 
     //----------------------------------------------------------
-    // Information needed to evaluate the objective and its gradient.
+    // Quantities related to the unscaled objective and its gradient.
     //----------------------------------------------------------
 
   private:
@@ -589,9 +589,8 @@ namespace // [Begin: unnamed namespace]
       // Prepare the parameters for the unscaled objective function.
       //--------------------------------------------------------
 
-      // Transform the elements of the y vector back to their 
-      // unscaled form. 
-      unscaleElem( n, yCurr, pdXLowData, pdXUpData, pdXDiffData, pdXCurrData );
+      // Transform the elements of the y vector back to their unscaled form. 
+      unscaleElem( nX, yCurr, pdXLowData, pdXUpData, pdXDiffData, pdXCurrData );
 
 
       //--------------------------------------------------------
@@ -647,7 +646,7 @@ namespace // [Begin: unnamed namespace]
     //
     //**********************************************************
 
-    const char* gradient( double* gOut );
+    const char* gradient( double* gScaledOut );
     {
       //--------------------------------------------------------
       // Evaluate the gradient of the unscaled objective function.
@@ -655,7 +654,9 @@ namespace // [Begin: unnamed namespace]
 
       try
       {
-        pObjective->gradient( &dRowF_xOut );
+        pObjective->gradient( &dRowF_xCurr );
+
+	assert( drowF_xCurr->nc() == nX );
       }
       catch( SpkException& e )
       {
@@ -682,26 +683,12 @@ namespace // [Begin: unnamed namespace]
           __FILE__ );
       }
 
+      // Reset this pointer since it could be changed during
+      // the call to gradient.
+      pdrowF_xCurrData = drowF_xCurr.data();
 
-	// Reset this pointer since it could be changed during
-	// the call to gradient.
-        pdF_xCurrData = drowF_xCurr.data();
-
-
-        assert( pdrowGOut != 0 );
-        double* pdGOutData = pdrowGOut->data();
-        int nGCols = pdrowGOut->nc();
-        assert( n == nGCols );
-    
-        scaleGradElem( n, pdGOutData, pdXDiffData, gvalScaled);
-
-	SET THE G VALUE
-	SET THE G VALUE
-	SET THE G VALUE
-	SET THE G VALUE
-	SET THE G VALUE
-	SET THE G VALUE
-	SET THE G VALUE
+      // Transform the elements of the gradient vector to their scaled form. 
+      scaleGradElem( nX, pdrowF_xCurrData, pdXDiffData, gScaledOut );
 
 
       //--------------------------------------------------------
@@ -1175,13 +1162,13 @@ void quasiNewtonAnyBox(
   // returned, then set it equal to the value from nag_opt_nlp.
   if ( pdFOut )
   {
-    *pdFOut = objf;
+?    *pdFOut = objf;
   }
   
   if( pdrowF_xOut )
   {
-      double* pdF_x = pdrowF_xOut->data();
-      std::copy(gvalScaled, gvalScaled+nObjPars, pdF_x);
+      double* pdrowF_x = pdrowF_xOut->data();
+?      std::copy(gvalScaled, gvalScaled+nObjPars, pdrowF_x);
   }
 }
 
