@@ -201,20 +201,24 @@
      necessary to define the physiological and
      the statistical models.
 ----------------------------------------------------->
-<!ELEMENT model ( (((des, de_model, pk)|(de_model, pk)), error?) 
+<!ELEMENT model (( (comp_model, (pk, error, diffeqn?)?) 
                 | (pk, error) 
                 | (pred) )>
 
 <!--
-     <de_model> is required with a general model (ADVAN5-9).
-     In this block, parameters required to define the compartmental
-     model are given.
+     <comp_model> is required when a general 
+     model (ADVAN5-9) is used as the "base" model.
+     In this block, parameters that define a compartmental
+     model are provided.
+     <comp_model> would usually follow <pk> block.  
+     <pk> is omitted if <link>s are specified to define
+     the compartmental model.
 -->
-<!ELEMENT de_model (compartment)+>
+<!ELEMENT comp_model (compartment+, link*) >
 
-<!ATTLIST de_model ncompartments CDATA #REQUIRED>
-<!ATTLIST de_model nequilibrium  #FIXED "0">
-<!ATTLIST de_model nparamters #IMPLIED>
+<!ATTLIST comp_model ncompartments CDATA #REQUIRED>
+<!ATTLIST comp_model nequilibrium  #REQUIRED>
+<!ATTLIST comp_model nparameters #IMPLIED>
 
 <!ELEMENT compartment EMPTY>
 <!ATTLIST compartment name CDATA #REQUIRED>
@@ -225,10 +229,23 @@
 <!ATTLIST compartment exclude (yes|no) #REQUIRED>
 
 <!--
-     <de> is required with ADVAN6, 8, 9.
-     In this block, a differential equation is defined.
+     <link> is required only in the absence of <pk>
+     abbrivated code.  <link> defines a flow
+     rate constant, k,  from compartment-"from" to 
+     compartment-"to".  If the flow is bidirectional,
+     specify the flows with two <link> blocks.
 -->
-<!ELEMENT des (#PCDATA)>
+<!ELEMENT link EMPTY>
+<!ATTLIST link from CDATA #REQUIRED>
+<!ATTLIST link to   CDATA #REQUIRED>
+<!ATTLIST link k    CDATA #REQUIRED>
+
+<!--
+     <diffeqn> is required with ADVAN6, 8, 9.
+     In this block, a system of differential equations
+     is provided. (this corresponds to $DES in NONMEM)
+-->
+<!ELEMENT diffeqn (#PCDATA)>
 
 <!--
      <pk> is required when "base" attribute of <model>
