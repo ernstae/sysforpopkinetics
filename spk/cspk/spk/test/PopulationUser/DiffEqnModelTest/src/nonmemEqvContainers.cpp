@@ -37,11 +37,16 @@
 #include <iostream>
 #include <cmath>
 #include <limits>
-#include <strstream>
 #include <spk/SpkValarray.h>
 #include <spk/pi.h>
 #include <spk/Objective.h>
 #include "nonmemEqvContainers.h"
+
+#ifdef __GNUC__
+    #include <sstream>
+#elif WIN32
+    #include <strstream>
+#endif
 
 using SPK_VA::valarray;
 using namespace std;
@@ -82,7 +87,14 @@ int nonmemEqvContainers::factorial( int x )
 //---------------------------------------------------------------------    
 const string nonmemEqvContainers::Source::xml() const
 {
+#ifdef __GNUC__
+  ostringstream s;
+#elif WIN32
   strstream s;
+#else
+  cerr << "An equivalent of strstream(vc++)/stringstring(g++) not found!" << endl;
+  exit(-1);
+#endif
 
   s << OpenLB << tag << RB << endl;
   s << "\t" << "<spkVersion>" << version << "</spkVersion>" << endl;
@@ -125,8 +137,12 @@ const string nonmemEqvContainers::Source::xml() const
 //---------------------------------------------------------------------
 const string nonmemEqvContainers::Status::xml() const
 {
+#ifdef __GNUC__
+  ostringstream s;
+#elif WIN32
   strstream s;
-  
+#endif
+
   s << OpenLB << tag << RB << endl;
 
   s << "\t" << "<paramEstimationStep>" << endl;
@@ -159,7 +175,13 @@ const string nonmemEqvContainers::Status::xml() const
 //---------------------------------------------------------------------
 const string nonmemEqvContainers::Message::xml() const
 {
+
+#ifdef __GNUC__
+  ostringstream s;
+#elif WIN32
   strstream s;
+#endif
+
 
   s << OpenLB << tag << RB << endl;
   if( message.length() > 0 )
@@ -172,7 +194,12 @@ const string nonmemEqvContainers::Message::xml() const
 
 nonmemEqvContainers::Message& nonmemEqvContainers::operator+=( nonmemEqvContainers::Message& left, const string& str )
 {
+#ifdef __GNUC__
+  ostringstream s;
+#elif WIN32
   strstream s;
+#endif
+
   if( left.message.length() > 0 )
     s << left.message << endl;
   s << str << ends;
@@ -181,7 +208,12 @@ nonmemEqvContainers::Message& nonmemEqvContainers::operator+=( nonmemEqvContaine
 }
 nonmemEqvContainers::Message& nonmemEqvContainers::operator+=( nonmemEqvContainers::Message& left, const SpkException& e )
 {
+#ifdef __GNUC__
+  ostringstream s;
+#elif WIN32
   strstream s;
+#endif
+
   if( left.message.length() > 0 )
     s << endl;
   s << e << ends;
@@ -204,7 +236,11 @@ nonmemEqvContainers::Message& nonmemEqvContainers::operator+=( nonmemEqvContaine
 //---------------------------------------------------------------------
 const string nonmemEqvContainers::PopEpsilon::xml() const
 {
+#ifdef __GNUC__
+  ostringstream s;
+#elif WIN32
   strstream s;
+#endif
 
   s << OpenLB << tag << RB << epsilon << CloseLB << tag << RB << ends;
   return s.str();
@@ -236,7 +272,11 @@ const string nonmemEqvContainers::PopEpsilon::xml() const
 //---------------------------------------------------------------------
 const string nonmemEqvContainers::NonmemObjective::xml( bool isEstimateValid ) const
 {
+#ifdef __GNUC__
+  ostringstream s;
+#elif WIN32
   strstream s;
+#endif
 
   s << OpenLB << tag << RB << endl;
 
@@ -321,7 +361,11 @@ const string nonmemEqvContainers::NonmemObjective::xml( bool isEstimateValid ) c
 //---------------------------------------------------------------------
 const string nonmemEqvContainers::Theta::xml( bool isEstimateValid, bool isStdErrorValid )  const
 {
+#ifdef __GNUC__
+  ostringstream s;
+#elif WIN32
   strstream s;
+#endif
 
   s << OpenLB << tag << RB << endl;
 
@@ -521,7 +565,12 @@ const string nonmemEqvContainers::Theta::xml( bool isEstimateValid, bool isStdEr
 const string nonmemEqvContainers::Sigma::xml( bool isEstimateValid, bool isStdErrorValid ) const
 {
   int i;
+#ifdef __GNUC__
+  ostringstream s;
+#elif WIN32
   strstream s;
+#endif
+
   s << OpenLB << tag << RB << endl;
 
   s << "\t" << "<structure>";
@@ -799,8 +848,14 @@ const string nonmemEqvContainers::Sigma::xml( bool isEstimateValid, bool isStdEr
 const string nonmemEqvContainers::Omega::xml( bool isEstimateValid, bool isStdErrorValid ) const
 {
   int i;
+
+#ifdef __GNUC__
+  ostringstream s;
+#elif WIN32
   strstream s;
-  
+#endif
+
+
   s << OpenLB << tag << RB << endl;
   
   s << "\t" << "<structure>" << ( structure == DIAGONAL? "diagonal" : "full" ) << "</structure>" << endl;
@@ -979,7 +1034,12 @@ const string nonmemEqvContainers::Omega::xml( bool isEstimateValid, bool isStdEr
 const string nonmemEqvContainers::CovarianceOfEstimate::xml( bool isCovarianceValid ) const
 {
   int i, j;
+#ifdef __GNUC__
+  ostringstream s;
+#elif WIN32
   strstream s;
+#endif
+
 
   s << OpenLB << tag << RB << endl;
 
@@ -1047,7 +1107,12 @@ const string nonmemEqvContainers::CovarianceOfEstimate::xml( bool isCovarianceVa
 const string nonmemEqvContainers::CorrelationOfEstimate::xml( bool isCorrelationValid ) const
 {
   int i, j;
+#ifdef __GNUC__
+  ostringstream s;
+#elif WIN32
   strstream s;
+#endif
+
 
   s << OpenLB << tag << RB << endl;
 
@@ -1114,7 +1179,12 @@ const string nonmemEqvContainers::CorrelationOfEstimate::xml( bool isCorrelation
 const string nonmemEqvContainers::Eta::xml( bool isEstimateValid ) const
 {
   int i, j;
+#ifdef __GNUC__
+  ostringstream s;
+#elif WIN32
   strstream s;
+#endif
+
 
   s << OpenLB << tag << RB << endl;
 
@@ -1172,7 +1242,12 @@ const string nonmemEqvContainers::Eta::xml( bool isEstimateValid ) const
 const string nonmemEqvContainers::Prediction::xml( bool isEstimateValid ) const
 {
   int i, j, cnt;
+#ifdef __GNUC__
+  ostringstream s;
+#elif WIN32
   strstream s;
+#endif
+
 
   s << OpenLB << tag << RB << endl;
 
