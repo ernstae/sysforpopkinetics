@@ -17,6 +17,8 @@ using namespace std;
 using namespace CppUnit;
 using namespace xercesc;
 
+static void f( DOMDocument * tree, struct ExpNodeCarrier & carrier );
+
 void ExpNodeCarrierTest::setUp()
 {
 }
@@ -88,7 +90,7 @@ void ExpNodeCarrierTest::testExpNodeCarrier()
 
   DOMElement * node = tree->createElement( XMLString::transcode("node1") );
   struct ExpNodeCarrier carrier;
-  carrier.node = node; 
+  f( tree, carrier );
 
   CPPUNIT_ASSERT( strcmp( XMLString::transcode( carrier.node->getTagName() ), "node1" ) == 0 );
 }
@@ -100,5 +102,11 @@ CppUnit::Test * ExpNodeCarrierTest::suite()
 						    &ExpNodeCarrierTest::testExpNodeCarrier ) );
    return suiteOfTests;
 
+}
+void f( DOMDocument * tree, struct ExpNodeCarrier & carrier )
+{
+  DOMElement * node = tree->createElement( XMLString::transcode("node1") );
+  carrier.node = node; 
+  return;
 }
 
