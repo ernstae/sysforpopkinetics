@@ -108,6 +108,7 @@ $tref Subroutine$$
 $end
 */
 
+# include <cassert>
 # include <fstream>
 # include <valarray>
 # include <spkpred/PopPredModel.h>
@@ -155,27 +156,32 @@ int main(int argc, const char *argv[])
 	using std::cerr;
 	using std::cout;
 	using std::endl;
+	using std::valarray;
 
 	using namespace NonmemPars;
 
 	// method
 	bool   analytic   = MontePars::method == MontePars::analytic;
 	bool   grid       = MontePars::method == MontePars::grid;
-	bool   monte      = MontePars::method == MontePars::monte;
+	bool   monte      = (MontePars::method == MontePars::plain)
+	                  | (MontePars::method == MontePars::miser);
 
 	// numberEval
-	int    numberEval = MontePars::numberEval;
+	valarray<int>  numberEval = MontePars::numberEval;
 
 	if( ! (analytic | grid | monte) )
 	{	cerr << "monteDriver: ";
-		cerr << "method is no analytic, grid, or monte" << endl;
+		cerr << "method is no analytic, grid, plain, or miser" << endl;
 		return ReturnFailure;
 	}
 
-	if( numberEval <= 0 )
-	{	cerr << "monteDriver: ";
-		cerr << "numberEval is not greater than zero" << endl;
-		return ReturnFailure;
+	size_t i;
+	for(i = 0; i < numberEval.size(); i++)
+	{	if( numberEval[i] <= 0 )
+		{	cerr << "monteDriver: ";
+			cerr << "numberEval is not greater than zero" << endl;
+			return ReturnFailure;
+		}
 	}
 
 	// data set
@@ -184,7 +190,6 @@ int main(int argc, const char *argv[])
 
 	const size_t nPop = set.popSize;
 	valarray<int> N(nPop);
-	size_t i;
 	for(i = 0; i < nPop; i++)
 		N[i] = set.data[i]->DV.size();
 
@@ -252,11 +257,7 @@ int main(int argc, const char *argv[])
 
 	// grid integral approximation
 	if( grid )
-	{	double logNumberEval  = log( double(numberEval) );
-		size_t  numberGrid    = static_cast<size_t>(
-				exp( logNumberEval / double(nB) )
-		);
-		valarray<size_t> Ngrid(numberGrid, nB);
+	{	assert( numberEval.size() == nB );
 
 		size_t i;
 		for(i = 0; i < nPop; i++)
@@ -271,7 +272,7 @@ int main(int argc, const char *argv[])
 			assert( offset + N[i] <= y.size() );
 
 			// extract data for this individual
-			std::valarray<double> yi = 
+			valarray<double> yi = 
 				y[ std::slice(offset, N[i], 1) ];
 
 			// pseudo constructor for this individual
@@ -298,12 +299,12 @@ int main(int argc, const char *argv[])
 			double error;
 			GridIntegral(
 				ExpNegMapBay,
-				nB    , 
-				null  ,
-				Ngrid ,
-				bLow  ,
-				bUp   ,
-				estimate,
+				nB          , 
+				null        ,
+				numberEval  ,
+				bLow        ,
+				bUp         ,
+				estimate    ,
 				error
 			);
 			pop_obj_estimate -= log( estimate ),
@@ -313,7 +314,8 @@ int main(int argc, const char *argv[])
 
 	// Monte Carlo integral
 	if( monte )
-	{
+	{	assert( numberEval.size() == 1 );
+
 		try
 		{	MontePopObj(
 				model,
@@ -322,7 +324,7 @@ int main(int argc, const char *argv[])
 				alpIn,
 				bLow,
 				bUp,
-				numberEval,
+				numberEval[0],
 				pop_obj_estimate,
 				pop_obj_stderr
 			);
