@@ -10,7 +10,29 @@
  * Code is Sun Microsystems, Inc. Portions Copyright 1997-2000 Sun
  * Microsystems, Inc. All Rights Reserved.
  */
+/*
+ * This is the modified version of the original file.  The modification 
+ * was made by RFPK University of Washington to include it in a open source
+ * software product of which the licencse notice is stated bellow.
+ */
+/**********************************************************************
+From:   Resource Facility for Population Kinetics                    
+        Department of Bioengineering Box 352255                      
+        University of Washington                                     
+        Seattle, WA 98195-2255                                       
 
+This file is part of the System for Population Kinetics (SPK), which
+was developed with support from NIH grants RR-12609 and P41-
+EB001975. Please cite these grants in any publication for which this
+software is used and send a notification to the address given above.
+
+SPK is Copyright (C) 1998-2003, by the University of Washington,
+Resource Facility for Population Kinetics, and is made available as
+free open source software under the terms of the University of
+Washington Free-Fork License as a public service.  A copy of the
+License can be found in the COPYING file in the root directory of this
+distribution.
+**********************************************************************/
 package org.netbeans.ui.wizard;
 
 import javax.swing.JList;
@@ -33,8 +55,11 @@ import javax.swing.JComponent;
 import java.awt.Graphics;
 import java.awt.Image;
 
-class ContentPanel extends ImagedPanel {
+/** This class defines the content panel of the wizard.
+ */
+public class ContentPanel extends ImagedPanel {
 
+    /** The selected index. */
     protected int selectedIndex = -1;
 
     private JList contentList;
@@ -44,19 +69,20 @@ class ContentPanel extends ImagedPanel {
     private JLabel title;
 
 
-    /** */
+    /** The content numbered indicator. */
     transient protected  boolean contentNumbered = true;
-    /** */
+    /** The content visibility indicator. */
     transient protected boolean visibleContent = true;
-    /** */
+    /** The selected color. */
     transient protected  Color selectedColor = new Color(204, 204, 255);
-    /** */
+    /** The selection method. */
     transient protected  int selectedMetod = JWizardPane.SELECT_BY_FONT;
-    /** */
+    /** The accessible support indicator. */
     transient protected boolean accessibleSupport = true;
-    /** */
+    /** The title text. */
     transient protected String titleText = "Steps:";
 
+    /** Construct a content pane. */
     public ContentPanel(){ 
 	super(null);
 	this.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
@@ -105,12 +131,18 @@ class ContentPanel extends ImagedPanel {
 	setBackground(Color.white);
     }
 
+    /** Setter for title.
+     * @param value a string for the title.
+     */
     public void setTitle(String value){		
 	if (value != title.getText()) {		
 	    title.setText(value);		
 	} 					
     }						
 
+    /** Setter for title color.
+     * @param color a Color object for the title color.
+     */
     public void setTitleColor(Color color){
 	if (title.getForeground() != color){
 	    title.setForeground(color);
@@ -118,39 +150,63 @@ class ContentPanel extends ImagedPanel {
 	}
     }
 
+    /** Getter for title color.
+     * @return the title color.
+     */
     public Color getTitleColor(){
 	return title.getForeground();
     }
 
+    /** Setter for selected color.
+     * @param color a Color object for the selected color.
+     */
     public  void setSelectedColor(Color color){
 	selectedColor = color;
     }
-
+    
+    /** Getter for selected color.
+     * @return the selected color.
+     */
     public Color getSelectedColor(){
 	return selectedColor;
     }
-
+    
+    /** Setter for selection method.
+     * @param value an int to specify the selection method.
+     */
     public void setSelectMetod(int value){
 	if (selectedMetod != value) {
 	    selectedMetod = value;	
 	    if (isVisible() && visibleContent) repaint();
 	}
     }
-
+    
+    /** Getter for selected method.
+     * @return the selected method.
+     */
     public int getSelectedMetod(){
 	return selectedMetod;
     }
 
+    /** Setter for foreground.
+     * @param color a Color object for the foreground.
+     */
     public void setForeground(Color color){
 	if (title.getForeground() == this.getForeground()) title.setForeground(color);	    
   	super.setForeground(color);
     }
-
+    
+    /** Setter for background.
+     * @param color a Color object for the background.
+     */
     public void setBackground(Color color){
 	super.setBackground(color);
 	title.setBackground(color);
     }
-
+    
+    /** Setter for content numbered flag.
+     * @param flag a boolean to specify if the content being numbered.
+     */
     public void setContentNumbered(boolean flag){
 	if (contentNumbered != flag ) {
 	    contentNumbered = flag;
@@ -158,10 +214,16 @@ class ContentPanel extends ImagedPanel {
 	} 
     }
 
+    /** Getter for content numbered flag.
+     * @return the content numbered flag.
+     */
     public boolean getContentNumbered(){
 	return contentNumbered;
     }
 
+    /** Setter for visible content flag.
+     * @param flag a boolean for the visible content.
+     */
     public void setVisibleContent(boolean flag){
 	if (visibleContent != flag) {
 	    visibleContent = flag;
@@ -170,10 +232,16 @@ class ContentPanel extends ImagedPanel {
 	} 
     }
 
+    /** Getter for visible content flag.
+     * @return the visible content flag.
+     */
     public boolean getVisibleContent(){
 	return visibleContent;
     }
 
+    /** Setter for content items.
+     * @param content a String array for the content.
+     */    
     public void setContentItems(String[] content) {
 	if (contentList != null) {
 	    contentList.setListData(content);
@@ -183,6 +251,9 @@ class ContentPanel extends ImagedPanel {
 	}
     }
 
+    /** Setter for selected index.
+     * @param index an int for the selected index.
+     */    
     public void setSelectedIndex(int index) {
        	if (index != selectedIndex) {
 	    selectedIndex = index;
@@ -218,14 +289,23 @@ class ContentPanel extends ImagedPanel {
 //  	//  	}
 //      }
 
+    /** Getter for selected index.
+     * @return the selected index.
+     */    
     public int  getSelectedIndex(){
 	return selectedIndex;
     }
 
+    /** Getter for preferred size.
+     * @return the preferred size.
+     */    
     public Dimension getPreferredSize(){
 	return(new Dimension(204, 0));
     }
 
+    /** Getter for minimum size.
+     * @return the minimum size.
+     */    
     public Dimension getMinimumSize(){
         return getPreferredSize();
     }
@@ -337,19 +417,28 @@ class ContentPanel extends ImagedPanel {
         }
     }
 }
- 
+
+/** This class defines a image panel.
+ */ 
 class ImagedPanel extends JComponent {
 
-    Image image = null;
-    int alignment = SwingConstants.CENTER;
-    boolean visibleImage = true;
+    /** */    
+    private Image image = null;
+    private int alignment = SwingConstants.CENTER;
+    private boolean visibleImage = true;
 
+    /** Consruct a image panel.
+     * @param im an Image object for the image panel.
+     */    
     public ImagedPanel(Image im) {
 	setImage(im);
 	setLayout(new BorderLayout());
 	setOpaque(true);
     }
 
+    /** This method is called by the system to paint the component.
+     * @param graphics the graphics context.
+     */    
     protected void paintComponent(Graphics graphics) {
 	graphics.setColor(getBackground());
 	graphics.fillRect(0, 0, getWidth(), getHeight());
@@ -391,6 +480,9 @@ class ImagedPanel extends JComponent {
 	}
     }
         
+    /** Setter for image alignment.
+     * @param align an int for the image alignment.
+     */    
     public void setImageAlignment(int align) {
 	if (alignment != align ) {
 	    alignment = align;
@@ -398,10 +490,16 @@ class ImagedPanel extends JComponent {
 	} 
     }
 
+    /** Getter for image alignment.
+     * @return the image alignment.
+     */    
     public int getImageAlignment(){
 	return alignment;
     }
 
+    /** Setter for image.
+     * @param image an Image object for the image.
+     */    
     public void setImage(Image image) {
 	if (this.image != image) {
 	    this.image = image;	    
@@ -411,14 +509,23 @@ class ImagedPanel extends JComponent {
 	} 
     }
 
+    /** Getter for image.
+     * @return the image.
+     */    
     public Image getImage(){
 	return image;
     }
 
+    /** Getter for visibel image flag.
+     * @return the visibel image flag.
+     */    
     public boolean getVisibleImage(){
 	return visibleImage;
     }
 
+    /** Setter for visibel image flag
+     * @param flag a boolean for the visibel image flag.
+     */    
     public void setVisibleImage(boolean flag){
 	if (visibleImage != flag) {
 	    visibleImage = flag;

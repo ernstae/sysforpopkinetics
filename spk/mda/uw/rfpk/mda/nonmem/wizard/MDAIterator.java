@@ -1,9 +1,21 @@
-/*
- * MDAIterator.java
- *
- * Created on August 14, 2003, 9:35 AM
- */
+/**********************************************************************
+From:   Resource Facility for Population Kinetics                    
+        Department of Bioengineering Box 352255                      
+        University of Washington                                     
+        Seattle, WA 98195-2255                                       
 
+This file is part of the System for Population Kinetics (SPK), which
+was developed with support from NIH grants RR-12609 and P41-
+EB001975. Please cite these grants in any publication for which this
+software is used and send a notification to the address given above.
+
+SPK is Copyright (C) 1998-2003, by the University of Washington,
+Resource Facility for Population Kinetics, and is made available as
+free open source software under the terms of the University of
+Washington Free-Fork License as a public service.  A copy of the
+License can be found in the COPYING file in the root directory of this
+distribution.
+**********************************************************************/
 package uw.rfpk.mda.nonmem.wizard;
 
 import uw.rfpk.mda.nonmem.MDAFrame;
@@ -101,217 +113,217 @@ public class MDAIterator implements StepIterator{
     }
 
     /** Set if the back button was clicked.
-     * @param b A boolean, true if the back button was clicked, false for otherwise.
+     * @param b a boolean, true if the back button was clicked, false for otherwise.
      */    
     public void setIsBack(boolean b) { isBack = b; }
     
     /** Set if a control file is reloaded.
-     * @param b A boolean, true for a control file is reloaded, false for otherwise.
+     * @param b a boolean, true for a control file is reloaded, false for otherwise.
      */    
     public void setIsReload(boolean b) { isReload = b; }    
               
     /** Set if using XML data file.
-     * @param b A boolean, true for XML data file loaded, false for otherwise.
+     * @param b a boolean, true for XML data file loaded, false for otherwise.
      */    
     public void setIsDataXML(boolean b) { isDataXML = b; }    
            
     /** Set if a new data file is loaded.
-     * @param b A boolean, true for new data file loaded, false for otherwise.
+     * @param b a boolean, true for new data file loaded, false for otherwise.
      */    
     public void setIsNewData(boolean b) { isNewData = b; }    
         
     /** Set if it is an individual analysis.
-     * @param b A boolean, true for individual, false for population analysis.
+     * @param b a boolean, true for individual, false for population analysis.
      */    
     public void setIsInd(boolean b) { isInd = b; }
     
     /** Set if using user predefined PK model.
-     * @param b A boolean, true for using user defined model, false for using ADVANs.
+     * @param b a boolean, true for using user defined model, false for using ADVANs.
      */    
     public void setIsPred(boolean b) { isPred = b; }
     
     /** Set if statistics of estimate step is included. 
-     * @param b A boolean, true for including statistics, false for otherwise.
+     * @param b a boolean, true for including statistics, false for otherwise.
      */    
     public void setIsCov(boolean b) { isCov = b; }
     
     /** Set if the estimation step is included.
-     * @param b A boolean, true for including estimation, false for otherwise.
+     * @param b a boolean, true for including estimation, false for otherwise.
      */    
     public void setIsEstimation(boolean b) { isEstimation = b; }    
     
     /** Set if the simulation step is included.
-     * @param b A boolean, true for including simulation, false for otherwise.
+     * @param b a boolean, true for including simulation, false for otherwise.
      */    
     public void setIsSimulation(boolean b) { isSimulation = b; } 
     
     /** Set if the estimation step requires table output.
-     * @param b A boolean, true for requiring table output, false for otherwise.
+     * @param b a boolean, true for requiring table output, false for otherwise.
      */    
     public void setIsEstTable(boolean b) { isEstTable = b; }
     
     /** Set if the estimation step requires scatterplot output.
-     * @param b A boolean, true for requiring scatterplot output, false for otherwise.
+     * @param b a boolean, true for requiring scatterplot output, false for otherwise.
      */    
     public void setIsEstPlot(boolean b) { isEstPlot = b; } 
     
     /** Set if the simulation step requires table output.
-     * @param b A boolean, true for requiring table output, false for otherwise.
+     * @param b a boolean, true for requiring table output, false for otherwise.
      */     
     public void setIsSimTable(boolean b) { isSimTable = b; }
     
     /** Set if the simulation step requires scatterplot output.
-     * @param b A boolean, true for requiring scatterplot output, false for otherwise.
+     * @param b a boolean, true for requiring scatterplot output, false for otherwise.
      */    
     public void setIsSimPlot(boolean b) { isSimPlot = b; } 
 
      /** Set if the estimation method = 1 or posthoc is specified.
-     * @param b A boolean, true for estimation method = 1 or posthoc is specified, false for otherwise.
+     * @param b a boolean, true for estimation method = 1 or posthoc is specified, false for otherwise.
      */    
     public void setIsMethod1OrPosthoc(boolean b) { isMethod1OrPosthoc = b; }    
 
     /** Set data XML.
-     * @param s A String containing the data XML.
+     * @param s a String containing the data XML.
      */    
     public void setDataXML(String s) { dataXML = s; }
         
     /** Set which ADVAN subroutine is used.
-     * @param i An int, the ADVAN number.
+     * @param i an int, the ADVAN number.
      */    
     public void setAdvan(int i) { advan = i; }
     
     /** Set which TRANS subroutine is used.
-     * @param s An int, the TRANS number.
+     * @param s an int, the TRANS number.
      */    
     public void setTrans(String s) { trans = s; }
     
     /** Set the number of data column in the data file.
-     * @param i An int, number of data columns in the data file.
+     * @param i an int, number of data columns in the data file.
      */    
     public void setNDataCol(int i) { nDataCol = i; }
     
     /** Set the number of THETAs in $PK or $PRED record.
-     * @param i An int, number of THETAs.
+     * @param i an int, number of THETAs.
      */    
     public void setNTheta(int i) { nTheta = i; }
     
     /** Set the number of ETAs in $PK or $PRED record.
-     * @param i An int, number of ETAs.
+     * @param i an int, number of ETAs.
      */    
     public void setNEta(int i) { nEta = i; }
     
     /** Set the number of EPSs in $ERROR or $PRED record.
-     * @param i An int, number of EPSs.
+     * @param i an int, number of EPSs.
      */    
     public void setNEps(int i) { nEps = i; }
 
     /** Get if a control file is reloaded.
-     * @return A boolean, true if a control file is reloaded, false if otherwise.
+     * @return a boolean, true if a control file is reloaded, false if otherwise.
      */    
     public boolean getIsReload() { return isReload; };
 
     /** Get if using XML data file.
-     * @return A boolean, true if a XML data file is loaded, false if otherwise.
+     * @return a boolean, true if a XML data file is loaded, false if otherwise.
      */    
     public boolean getIsDataXML() { return isDataXML; };
         
     /** Get if a new data file is loaded.
-     * @return A boolean, true if a new data file is loaded, false if otherwise.
+     * @return a boolean, true if a new data file is loaded, false if otherwise.
      */    
     public boolean getIsNewData() { return isNewData; };
     
      /** Get if $ESTIMATION is included in the analysis.
-     * @return A boolean, true if $ESTIMATION is in analysis, false if otherwise.
+     * @return a boolean, true if $ESTIMATION is in analysis, false if otherwise.
      */    
     public boolean getIsEstimation() { return isEstimation; };    
        
     /** Get if it is an individual analysis.
-     * @return A boolean, true if individual analysis, false if otherwise.
+     * @return a boolean, true if individual analysis, false if otherwise.
      */    
     public boolean getIsInd() { return isInd; };    
     
     /** Get if using user predefined PK model.
-     * @return A boolean, true if using user defined model, false if otherwise.
+     * @return a boolean, true if using user defined model, false if otherwise.
      */    
     public boolean getIsPred() { return isPred; };    
  
     /** Get if estimation method = 1 or posthoc is specified.
-     * @return A boolean, true if estimation method = 1 or posthoc is specified, false if otherwise.
+     * @return a boolean, true if estimation method = 1 or posthoc is specified, false if otherwise.
      */    
     public boolean getIsMethod1OrPosthoc() { return isMethod1OrPosthoc; };        
 
     /** Get the ADVAN number.
-     * @return An int, the ADVAN number.
+     * @return an int, the ADVAN number.
      */    
     public int getAdvan() { return advan; };
     
     /** Get the TRANS number.
-     * @return An int, the TRANS number.
+     * @return an int, the TRANS number.
      */    
     public String getTrans() { return trans; };
     
     /** Get the number of data columns in the data file.
-     * @return An int, the number of data columns.
+     * @return an int, the number of data columns.
      */    
     public int getNDataCol() { return nDataCol; }
     
     /** Get the number of THETAs in $PK or $PRED record.
-     * @return An int, the number of THETAs.
+     * @return an int, the number of THETAs.
      */    
     public int getNTheta() { return nTheta; }
     
     /** Get the number of ETAs in $PK or $PRED record.
-     * @return An int, the number of ETAs.
+     * @return an int, the number of ETAs.
      */    
     public int getNEta() { return nEta; }
     
     /** Get the number of EPSs in $ERROR record.
-     * @return An int, the number of EPSs.
+     * @return an int, the number of EPSs.
      */    
     public int getNEps() { return nEps; }
     
     /** Get the name of the server.
-     * @return The name of the server.
+     * @return the name of the server.
      */    
     public String getServerName() { return serverName; }
     
     /** Get the port number of the server.
-     * @return The port number of the server.
+     * @return the port number of the server.
      */    
     public String getServerPort() { return serverPort; }
 
     /** Get if the back button was clicked.
-     * @return True if the back button was clicked.  False otherwise.
+     * @return true if the back button was clicked, false otherwise.
      */    
     public boolean getIsBack() { return isBack; }    
     
     /** Get if the MDA is on-line.
-     * @return True if MDA is on-line.  False otherwise.
+     * @return true if MDA is on-line, false otherwise.
      */    
     public boolean getIsOnline() { return isOnline; }    
 
     /** Get if the user is a SPK tester.
-     * @return True if the user is a SPK tester.  False otherwise.
+     * @return true if the user is a SPK tester, false otherwise.
      */    
     public boolean getIsTester() { return isTester; }    
     
     /** Get if the user is a SPK developer.
-     * @return True if the user is a SPK developer.  False otherwise.
+     * @return true if the user is a SPK developer, false otherwise.
      */    
     public boolean getIsDeveloper() { return isDeveloper; }
     
     /** Get SPK input data XML document.
-     * @return A String object containing SPK data XML document.
+     * @return a String object containing SPK data XML document.
      */    
     public String getDataXML() { return dataXML; }
     
     /** Get reload control records.
-     * @return A Properties object containing the reload control records.
+     * @return a Properties object containing the reload control records.
      */    
     public Properties getReload() { return reload; }      
     
     /** Get gettingStarted object reference.
-     * @return A gettingStarted object reference.
+     * @return a gettingStarted object reference.
      */    
     public GettingStarted getGettingStarted() { return gettingStarted; }      
         
@@ -388,7 +400,7 @@ public class MDAIterator implements StepIterator{
     }
     
     /** Get the current step.
-     * @return An WizardStep object, the current step object.
+     * @return an WizardStep object, the current step object.
      */    
     public WizardStep getCurrent(){
         if(current != -1 && isBack)
@@ -407,21 +419,21 @@ public class MDAIterator implements StepIterator{
     }
     
     /** Determine is finish ids allowed.
-     * @return A boolean, true for finish is allowed, false for otherwise.
+     * @return a boolean, true for finish is allowed, false for otherwise.
      */    
     public boolean canFinish(){
         return true;
     }
     
     /** Determine if the next step exists.
-     * @return A boolean, true for the next step exists, false for otherwise.
+     * @return a boolean, true for the next step exists, false for otherwise.
      */    
     public boolean hasNext(){
         return (actual < steps.size() - 1);
     }
     
     /** Determine if the previous step exists.
-     * @return A boolean, true for the previous step exists, false for otherwise.
+     * @return a boolean, true for the previous step exists, false for otherwise.
      */    
     public boolean hasPrevious(){
         return (actual > 0);
@@ -466,7 +478,7 @@ public class MDAIterator implements StepIterator{
     }
   
     /** Parse a model (NONMEM control file).
-     *  @param text The model text.
+     *  @param text the model text.
      */
     public void parseControl(String text)
     {

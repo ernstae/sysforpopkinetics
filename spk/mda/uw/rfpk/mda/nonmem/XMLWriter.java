@@ -1,3 +1,21 @@
+/**********************************************************************
+From:   Resource Facility for Population Kinetics                    
+        Department of Bioengineering Box 352255                      
+        University of Washington                                     
+        Seattle, WA 98195-2255                                       
+
+This file is part of the System for Population Kinetics (SPK), which
+was developed with support from NIH grants RR-12609 and P41-
+EB001975. Please cite these grants in any publication for which this
+software is used and send a notification to the address given above.
+
+SPK is Copyright (C) 1998-2003, by the University of Washington,
+Resource Facility for Population Kinetics, and is made available as
+free open source software under the terms of the University of
+Washington Free-Fork License as a public service.  A copy of the
+License can be found in the COPYING file in the root directory of this
+distribution.
+**********************************************************************/
 package uw.rfpk.mda.nonmem;
 
 import uw.rfpk.mda.nonmem.wizard.Source;
@@ -16,16 +34,15 @@ import javax.swing.JOptionPane;
 /** This class defines an object that generates an XML SPK input file.
  *  
  * @author  Jiaji Du
- * @version 1.0
  */
 public class XMLWriter
 {
     /** Constructor to initialize data members and then call private functions to
      * generate spksource, spkdata and spkmodel XML documents.
-     * @param modelArchive An Archive object containing information for the model.
-     * @param dataArchive An Archive object containing information for the data.
-     * @param control A String object containing the text of the NONMEM control file.
-     * @param object A MDAObject object containing control and data information.
+     * @param modelArchive an Archive object containing information for the model.
+     * @param dataArchive an Archive object containing information for the data.
+     * @param control a String object containing the text of the NONMEM control file.
+     * @param object a MDAObject object containing control and data information.
      */    
     public XMLWriter(ArchiveInfo modelArchive, ArchiveInfo dataArchive, String control, MDAObject object)
     {
@@ -530,8 +547,8 @@ public class XMLWriter
     }    
     
     /** This method generates model section of the SPK input file.
-     * @param text The model text.
-     * @ return A String object containing the text of the model XML document.
+     * @param text the model text.
+     * @return a String object containing the text of the model XML document.
      */
     public static String setModel(String text)
     {    
@@ -543,8 +560,8 @@ public class XMLWriter
     }
     
     /** Generate SPK output file content.
-     * @param spkOutput A Properties object containing SPK output data returned from database.
-     * @return A String object containing the SPK output file content.
+     * @param spkOutput a Properties object containing SPK output data returned from database.
+     * @return a String object containing the SPK output file content.
      */
     public static String setOutput(Properties spkOutput)
     {
@@ -574,7 +591,7 @@ public class XMLWriter
     }
     
     /** This method saves the XML document as a text file in XML format.
-     * @param file A String object as the filename of the file to be saved.
+     * @param file a String object as the filename of the file to be saved.
      */    
     public void save(String file)
     {
@@ -597,7 +614,7 @@ public class XMLWriter
     
     /** This method returns the XML documents, spksource, spkdata and spkarchibe 
      * as a String object.
-     * @return A String object as the formated XML file content.
+     * @return a String object as the formated XML file content.
       */    
     public String getDocument()
     {

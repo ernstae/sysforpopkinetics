@@ -1,94 +1,106 @@
-/*
- * Result.java
- *
- * Created on November 21, 2003, 9:25 AM
- */
+/**********************************************************************
+From:   Resource Facility for Population Kinetics                    
+        Department of Bioengineering Box 352255                      
+        University of Washington                                     
+        Seattle, WA 98195-2255                                       
 
+This file is part of the System for Population Kinetics (SPK), which
+was developed with support from NIH grants RR-12609 and P41-
+EB001975. Please cite these grants in any publication for which this
+software is used and send a notification to the address given above.
+
+SPK is Copyright (C) 1998-2003, by the University of Washington,
+Resource Facility for Population Kinetics, and is made available as
+free open source software under the terms of the University of
+Washington Free-Fork License as a public service.  A copy of the
+License can be found in the COPYING file in the root directory of this
+distribution.
+**********************************************************************/
 package uw.rfpk.mda.nonmem.display;
 
 import java.util.ArrayList;
 import java.util.Properties;
 
 /**
- * This class defines an object that contains output data
+ * This class defines an object that contains output data.
  * @author  Jiaji Du
  */
 public class Output {
     
-    /** Creates a new instance of Result */
+    /** Creates a new instance of Output. */
     public Output() {
     }
 
-    /** job abstract */
+    /** The job abstract. */
     public String jobAbstract = null;
-     /** job submission time */
+     /** The job submission time. */
     public String submissionTime = null;
-    /** job completion time */
+    /** The job completion time. */
     public String completionTime = null;    
-    /** computing times(estimation, statistics) */
+    /** The computing times (estimation, statistics). */
     public String[] computingTimes = null;
-    /** analysis type: population/individual */
+    /** The analysis type: population or individual. */
     public String analysis = null;
-    /** Method for the analysis */
+    /** The method for the analysis. */
     public String method = null;
-    /** model name */
+    /** The model name. */
     public String modelName = null;
-    /** model version */
+    /** The model version. */
     public String modelVersion = null;
-    /** model abstract */
+    /** The model abstract. */
     public String modelAbstract = null;    
-    /** data name */
+    /** The data name. */
     public String dataName = null;
-    /** data version */
+    /** The data version. */
     public String dataVersion = null;
-    /** data abstract */
+    /** The data abstract. */
     public String dataAbstract = null;    
-    /** data lables map */    
+    /** The data lables map. */    
     public Properties dataLabelMap = null;
-    /** error message */
+    /** The error message. */
     public String error = null;
-    /** optimization trace output */
+    /** The optimization trace output. */
     public String trace = null;    
-    /** objective value */
+    /** The objective value. */
     public String objective = null;
-    /** standard error of objective */
+    /** The standard error of objective. */
     public String objStdErr = null;    
-    /** THETA vector */
+    /** The THETA vector. */
     public String[] theta = null;
-    /** OMEGA matrix */
+    /** The OMEGA matrix. */
     public String[][][] omega = null;
-    /** OMEGA structure */
+    /** The OMEGA structure. */
     public String[] omegaStruct = null;
-    /** SIGMA matrix */
+    /** The SIGMA matrix. */
     public String[][][] sigma = null;
-    /** SIGMA structure */
+    /** The SIGMA structure. */
     public String[] sigmaStruct = null;    
-    /** statistics label list */
+    /** The statistics label list. */
     public String[] statLabels = null;
-    /** standard error of THETA */
+    /** The standard error of THETA. */
     public String[] stdErrTheta = null;
-    /** standard error of OMEGA */
+    /** The standard error of OMEGA. */
     public String[][][] stdErrOmega = null;
-    /** standard error of SIGMA */
+    /** The standard error of SIGMA. */
     public String[][][] stdErrSigma = null;
-    /** covariance matrix */
+    /** The covariance matrix. */
     public String[][] covariance = null;
-    /** correlation matrix */
+    /** The correlation matrix. */
     public String[][] correlation = null;
-    /** invert covariance matrix */
+    /** The invert covariance matrix. */
     public String[][] invCovariance = null;
-    /** coefficient of variation */
+    /** The coefficient of variation. */
     public String[] coefVariation = null;
-    /** 95% confidence interval (left, right) */
+    /** The 95% confidence interval (left, right). */
     public String[][] confInterval = null;
-    /** nCol(item) by nRow(sum(measurements of each individual)) */
+    /** The data matrix: nCol(item) by nRow(sum(measurements of each individual)). */
     public double[][] dataAll = null;
-    /** data item label list */
+    /** The data item label list. */
     public ArrayList dataItems = null;      
-    /** ((file, header, process, nSorting), (items in appearance orders))s */
+    /** The table specification: ((file, header, process, nSorting), (items in appearance orders))s */
     public String[][][] table = null; 
-    /** ((from, to, X0, Y0, unit, process), (list1), (list2), (list3))s */
+    /** The scatterplot specification: ((from, to, X0, Y0, unit, process), (list1), (list2), (list3))s */
     public String[][][] scatterplot = null;
-    /** a flag meaning succesful */
+    /** The flag meaning successful */
     public boolean ok = true;
 }

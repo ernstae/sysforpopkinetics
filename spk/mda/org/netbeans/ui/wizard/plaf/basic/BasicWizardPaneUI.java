@@ -11,6 +11,29 @@
  * Microsystems, Inc. All Rights Reserved.
  */
 
+/*
+ * This is the modified version of the original file.  The modification 
+ * was made by RFPK University of Washington to include it in a open source
+ * software product of which the licencse notice is stated bellow.
+ */
+/**********************************************************************
+From:   Resource Facility for Population Kinetics                    
+        Department of Bioengineering Box 352255                      
+        University of Washington                                     
+        Seattle, WA 98195-2255                                       
+
+This file is part of the System for Population Kinetics (SPK), which
+was developed with support from NIH grants RR-12609 and P41-
+EB001975. Please cite these grants in any publication for which this
+software is used and send a notification to the address given above.
+
+SPK is Copyright (C) 1998-2003, by the University of Washington,
+Resource Facility for Population Kinetics, and is made available as
+free open source software under the terms of the University of
+Washington Free-Fork License as a public service.  A copy of the
+License can be found in the COPYING file in the root directory of this
+distribution.
+**********************************************************************/
 package org.netbeans.ui.wizard.plaf.basic;
 
 import javax.swing.border.Border;
@@ -58,7 +81,9 @@ import java.util.ResourceBundle;
 
 public class BasicWizardPaneUI extends WizardPaneUI { 
 
+    /** The minimum width. */
     public static final int MinimumWidth = 700;
+    /** The minimum height. */
     public static final int MinimumHeight = 450;
     private static boolean DEBUG = false;
 
@@ -126,28 +151,29 @@ public class BasicWizardPaneUI extends WizardPaneUI {
      * JWizardPane that the reciever is providing the look and feel for.
      */
     protected JWizardPane wizardPane;
-
+    /** The step pane. */
     protected Component stepPanel = null;
-
+    /** The title pane. */
     protected JComponent titlePanel = null;
-
+    /** The left options. */
     protected JComponent leftOptions = null; 
-
+    /** The right options. */
     protected JComponent rightOptions = null; 
-
+    /** The miminum size. */
     protected Dimension minimumSize;
-
+    /** The property change listener. */
     protected PropertyChangeListener propertyChangeListener;
 
-    /**
-     * Creates a new BasicWizardPaneUI instance.
+    /** Creates a new BasicWizardPaneUI instance.
+     * @param x a JComponent for creating UI.
+     * @return the BasicWizardPaneUI object.
      */
     public static ComponentUI createUI(JComponent x) {
 	return new BasicWizardPaneUI();
     }
 
-    /**
-     * Installs the reciever as the L&F for the passed in JWizardPane
+    /** Installs the reciever as the L&F for the passed in JWizardPane
+     * @param c a JComponent for installing UI.
      */
     public void installUI(JComponent c) {
 	wizardPane = (JWizardPane) c;
@@ -159,9 +185,9 @@ public class BasicWizardPaneUI extends WizardPaneUI {
 	System.out.println("BasicWizardPaneUI-installUI");
     }
 
-    /**
-     * Removes the receiver from the L&F controller of the passed in split
+    /** Removes the receiver from the L&F controller of the passed in split
      * pane.
+     * @param c a JComponent for uninstalling UI.
      */
     public void uninstallUI(JComponent c) {
         uninstallComponents();
@@ -172,17 +198,20 @@ public class BasicWizardPaneUI extends WizardPaneUI {
 	wizardPane = null;
     }
 
+    /** Install defaults. */
     protected void installDefaults() {
         LookAndFeel.installColorsAndFont(wizardPane, "OptionPane.background","OptionPane.foreground", "OptionPane.font");
 	LookAndFeel.installBorder(wizardPane, "OptionPane.border");
         minimumSize = UIManager.getDimension("OptionPane.minimumSize");
 	wizardPane.setOpaque(true);
     }
-
+    
+    /** Uninstall defaults. */
     protected void uninstallDefaults() {
 	LookAndFeel.uninstallBorder(wizardPane);
     }
 
+    /** Install components. */    
     protected void installComponents() {
 
 	this.addContent();
@@ -195,18 +224,20 @@ public class BasicWizardPaneUI extends WizardPaneUI {
 	    System.out.println("BasicWizardPaneUI-installComponents()");
 	} // end of if ()
     }
-
+    
+    /** Uninstall components. */
     protected void uninstallComponents() {
 	wizardPane.removeAll();
     }
 
-    /** 
+    /** Create layout manager.
+     * @return a GridBagLayout.
      */
     protected LayoutManager createLayoutManager() {
 	return new GridBagLayout();
     }
 
-    /**
+    /** Install listeners.
      */
     protected void installListeners() {
         if ((propertyChangeListener = createPropertyChangeListener()) != null) {
@@ -214,7 +245,7 @@ public class BasicWizardPaneUI extends WizardPaneUI {
         }
     }
 
-    /**
+    /** Uninstall listeners.
      */
     protected void uninstallListeners() {
         if (propertyChangeListener != null) {
@@ -223,14 +254,14 @@ public class BasicWizardPaneUI extends WizardPaneUI {
         }
     }
 
-    /**
+    /** Create property change listeners.
+     * @return a PropertyChangeHandler.
      */
     protected PropertyChangeListener createPropertyChangeListener() {
         return new PropertyChangeHandler();
     }
 
-    /**
-     *
+    /** Update step title.
      */
     protected void updateStepTitle(){
 
@@ -256,13 +287,14 @@ public class BasicWizardPaneUI extends WizardPaneUI {
 	
     }
 
-    /**
+    /** Create separator.
+     * @return a JSeparator.
      */
     protected Container createSeparator() {
         return new JSeparator();
     }
 
-    /**
+    /** Add separator.
      */
     protected void addSeparator(){
 
@@ -279,7 +311,7 @@ public class BasicWizardPaneUI extends WizardPaneUI {
 	} // end of if ()
     }
 
-    /**
+    /** Update step.
      */
     protected void updateStep(){
 
@@ -305,7 +337,7 @@ public class BasicWizardPaneUI extends WizardPaneUI {
 	}
     }
 
-    /**
+    /** add content.
      */
     protected void addContent(){
 
@@ -373,7 +405,7 @@ public class BasicWizardPaneUI extends WizardPaneUI {
 	return cancelButton;
     }
 
-    /** 
+    /** Update left options.
      */
     protected void updateLeftOptions(){
 
@@ -408,7 +440,7 @@ public class BasicWizardPaneUI extends WizardPaneUI {
     }
 
 
-    /**
+    /** Update right options
      */
     protected void updateRightOptions(){
 	if (rightOptions != null) wizardPane.remove(rightOptions);
@@ -443,9 +475,9 @@ public class BasicWizardPaneUI extends WizardPaneUI {
 
 
 
-    /**
-     * Returns the minimum size the option pane should be. Primarily
+    /** Returns the minimum size the option pane should be. Primarily
      * provided for subclassers wishin to offer a different minimum size.
+     * @return the minimum size the option pane should be.
      */
     public Dimension getMinimumOptionPaneSize() {
         if (minimumSize == null) {
@@ -457,11 +489,12 @@ public class BasicWizardPaneUI extends WizardPaneUI {
 			     minimumSize.height);
     }
 
-    /**
-     * If c is the JWizardPane the reciever is contained in, the preferred
+    /** If c is the JWizardPane the reciever is contained in, the preferred
      * size that is returned is the maximum of the preferred size of
      * the LayoutManager for the JWizardPane, and
      * <code>getMinimumOptionPaneSize</code>.
+     * @param c a JComponent to get preferred size.
+     * @return the preferred size
      */
     public Dimension getPreferredSize(JComponent c) {
 	if ((JWizardPane)c == wizardPane) {
@@ -482,22 +515,24 @@ public class BasicWizardPaneUI extends WizardPaneUI {
 	return null;
     }
 
-    /**
-     * Messages getPreferredSize.
+    /** Messages getPreferredSize.
+     * @param c a JComponent to get minimum size.
+     * @return the minimum size.
      */
     public Dimension getMinimumSize(JComponent c) {
 	return getPreferredSize(c);
     }
 
-    /**
-     * Messages getPreferredSize.
+    /** Messages getPreferredSize.
+     * @param c a JComponent to get maximum size.
+     * @return the maximum size.
      */
     public Dimension getMaximumSize(JComponent c) {
 	return getPreferredSize(c);
     }
 
-    /**
-     *
+    /** Select default button.
+     * @param wp a JWizardPane object for the selection.
      */
     public void selectDefaultButton (JWizardPane wp) {
 	Object b = wp.getDefaultButton(); 
@@ -519,11 +554,11 @@ public class BasicWizardPaneUI extends WizardPaneUI {
      * Instantiate it only within subclasses of BasicOptionPaneUI.
      */  
     public class PropertyChangeHandler implements PropertyChangeListener {
-        /**
-         * If the source of the PropertyChangeEvent <code>e</code> equals the
+        /** If the source of the PropertyChangeEvent <code>e</code> equals the
          * wizardPane and is one of the ICON_PROPERTY, MESSAGE_PROPERTY,
          * OPTIONS_PROPERTY or INITIAL_VALUE_PROPERTY,
          * validateComponent is invoked.
+         * @param e the PropertyChangeEvent.
          */
         public void propertyChange(PropertyChangeEvent e) {
             if(e.getSource() == wizardPane) {

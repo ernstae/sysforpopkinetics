@@ -1,27 +1,39 @@
-/*
- * ThetaShow.java
- *
- * Created on December 16, 2003, 12:49 PM
- */
+/**********************************************************************
+From:   Resource Facility for Population Kinetics                    
+        Department of Bioengineering Box 352255                      
+        University of Washington                                     
+        Seattle, WA 98195-2255                                       
 
+This file is part of the System for Population Kinetics (SPK), which
+was developed with support from NIH grants RR-12609 and P41-
+EB001975. Please cite these grants in any publication for which this
+software is used and send a notification to the address given above.
+
+SPK is Copyright (C) 1998-2003, by the University of Washington,
+Resource Facility for Population Kinetics, and is made available as
+free open source software under the terms of the University of
+Washington Free-Fork License as a public service.  A copy of the
+License can be found in the COPYING file in the root directory of this
+distribution.
+**********************************************************************/
 package uw.rfpk.mda.nonmem.display;
 
 import uw.rfpk.mda.nonmem.Utility;
 import javax.swing.table.*;
 import java.text.DecimalFormat;
 
-/** This class's instance display a vector show on the screen
+/** This class's instance display a vector show on the screen.
  *
  * @author  Jiaji Du
  */
 public class VectorShow extends javax.swing.JFrame {
     
-    /** Creates new form VectorShow
-     * @param vector a String[] object containing the vector of data values
-     * @param header a String[] object containing the headers
-     * @param title a String object containing the title of the window
-     * @param text a String[] object containing the text to display in the window
-     * @param width the width of the window
+    /** Creates new form VectorShow.
+     * @param vector a String[] object containing the vector of data values.
+     * @param header a String[] object containing the headers.
+     * @param title a String object containing the title of the window.
+     * @param text a String[] object containing the text to display in the window.
+     * @param width the width of the window.
      */
     public VectorShow(String[] vector, String[] header, String title, String text,
                       int width) 

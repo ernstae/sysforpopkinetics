@@ -1,3 +1,21 @@
+/**********************************************************************
+From:   Resource Facility for Population Kinetics                    
+        Department of Bioengineering Box 352255                      
+        University of Washington                                     
+        Seattle, WA 98195-2255                                       
+
+This file is part of the System for Population Kinetics (SPK), which
+was developed with support from NIH grants RR-12609 and P41-
+EB001975. Please cite these grants in any publication for which this
+software is used and send a notification to the address given above.
+
+SPK is Copyright (C) 1998-2003, by the University of Washington,
+Resource Facility for Population Kinetics, and is made available as
+free open source software under the terms of the University of
+Washington Free-Fork License as a public service.  A copy of the
+License can be found in the COPYING file in the root directory of this
+distribution.
+**********************************************************************/
 package uw.rfpk.mda.nonmem;
 
 import javax.swing.*;
@@ -32,9 +50,9 @@ import java.text.SimpleDateFormat;
 public class MDAFrame extends JFrame
 {
     /** This is a constructor creating the applications main window.
-     * @param args A String array containing the server host name, the server
+     * @param args a String array containing the server host name, the server
      * port number, the session ID and the secret code.
-     * @param title a String object as the title of the window.
+     * @param title a String as the title of the window.
      */
     public MDAFrame(String title, String[] args)
     {
@@ -2744,19 +2762,6 @@ public class MDAFrame extends JFrame
         if(listType.equals("job"))
         {
             new JobInfo(this, id, isLibrary, false);
-/*            
-            Properties jobInfo = server.getJobInfo(id, isLibrary);
-            if(jobInfo == null)
-                return;
-            jTextField10.setText(jobInfo.getProperty("modelName"));
-            jTextField11.setText(jobInfo.getProperty("datasetName"));
-            jTextField12.setText(jobInfo.getProperty("modelVersion"));
-            jTextField13.setText(jobInfo.getProperty("datasetVersion"));
-            jCheckBox1.setSelected(true);
-            jCheckBox2.setSelected(true);            
-            jobDialog.setSize(400, 350);
-            jobDialog.show();
-*/
             reportDialog.dispose();        
             return;
         }
@@ -3508,13 +3513,6 @@ public class MDAFrame extends JFrame
                                           JOptionPane.ERROR_MESSAGE);                 
             return; 
         }
-        if(!Utility.isPosIntNumber(jTextField15.getText().trim()))
-        {
-            JOptionPane.showMessageDialog(null, "The number of individual objective evaluations is missing",  
-                                          "Input Error",            
-                                          JOptionPane.ERROR_MESSAGE);                 
-            return;            
-        }
 
         // Get the XML documents as String objects
         String spkInput = textArea.getText();
@@ -3553,8 +3551,18 @@ public class MDAFrame extends JFrame
         
         // Add number of objective function evaluations
         if(jobMethodCode.equals("ml"))
-            source = source.replaceFirst("</nonmem>", "   <monte carlo number_eval=\"" + 
-                                         jTextField15.getText().trim() + "\"/>\n   </nonmem>");
+        {
+            if(!Utility.isPosIntNumber(jTextField15.getText().trim()))
+            {
+                JOptionPane.showMessageDialog(null, "The number of individual objective evaluations is missing",  
+                                              "Input Error",            
+                                              JOptionPane.ERROR_MESSAGE);                 
+                return;
+            }
+            else
+                source = source.replaceFirst("</nonmem>", "   <monte carlo number_eval=\"" + 
+                                             jTextField15.getText().trim() + "\"/>\n   </nonmem>");
+        }
         
         // Get job parent
         long jobParent = 0;
@@ -3648,7 +3656,9 @@ public class MDAFrame extends JFrame
         }
     }
 
-    // Write input
+    /** Write input.
+     * @param iterator a MDAIterator object for the wizard.
+     */    
     protected void writeInput(MDAIterator iterator)
     {
         wp = new JWizardPane(iterator, object); 
@@ -3720,7 +3730,9 @@ public class MDAFrame extends JFrame
         WriteInputButton.setEnabled(true);
     }
    
-    // Read report
+    /** Read report
+     * @param text a String containing the SPK output.
+     */    
     protected void readOutput(String text)
     { 
         if(text.indexOf("<spkreport>") == -1 || text.indexOf("<spksource>") == -1)
@@ -3922,7 +3934,8 @@ public class MDAFrame extends JFrame
         return height;
     }  
     
-    // This function asks the user wether to save the text in the editor text area to a file
+    /** This function asks the user wether to save the text in the editor text area to a file.
+     */
     protected void saveFile()
     {
         if(!textArea.getText().equals(""))
@@ -4135,23 +4148,32 @@ public class MDAFrame extends JFrame
     }    
     
     /** Returns the text in the MDA editor.
-     * @return A String containing the text in the MDA editor.
+     * @return a String containing the text in the MDA editor.
      */
     public String getEditorText()
     {
         return textArea.getText();
     }
     
+    /** Set text to the editor.
+     * @param text a string to display in the editor.
+     */    
     protected void setEditorText(String text)
     {
         textArea.setText(text);   
     }
     
+    /** Set editor's caret position.
+     * @param position an int, the position for the caret.
+     */    
     protected void setEditorCaretPosition(int position)
     {
         textArea.setCaretPosition(position);
     }
     
+    /** Set editor title.
+     * @param title a string for the editor title.
+     */    
     protected void setEditorTitle(String title)
     {
         jInternalFrame1.setTitle(title);   
@@ -4333,40 +4355,40 @@ public class MDAFrame extends JFrame
     private javax.swing.JDialog versionDialog;
     // End of variables declaration//GEN-END:variables
 
-    // Is tester
-    private boolean isTester = false;
+    /** The flag for the user being a tester. */
+    protected boolean isTester = false;
     
-    // Is developer
-    private boolean isDeveloper = false;    
+    /** the flag for the user being a developer. */
+    protected boolean isDeveloper = false;    
     
-    // Job id
+    /** The current job id. */
     protected long jobId = 0; 
     
     // Method for estimation in SPK input file
     private String method = null;
 
-    // Server name
+    /** The Server name. */
     protected String serverName = null;
     
-    // Is online
+    /** The flag for online status. */
     protected boolean isOnline = true;
     
-    // Server port
+    /** The server port. */
     protected String serverPort = null; 
     
     // File chooser
     private JFileChooser files = new JFileChooser();
 
-    // Current file
+    /** The current file. */
     protected File file = null;
 
-    // Model information
+    // The model archive information
     private ArchiveInfo modelArchive = null;
     
-    // Data information
+    // The data archive information
     private ArchiveInfo dataArchive = null; 
     
-    // Nonmem Control file text 
+    // The model (Nonmem Control file) text 
     private String control = null;
     
     // MDA object
@@ -4381,7 +4403,7 @@ public class MDAFrame extends JFrame
     // JWizardPane
     private JWizardPane wp = null;
     
-    // Database
+    /** The Server object. */
     protected Server server = null;
 
     // List content
