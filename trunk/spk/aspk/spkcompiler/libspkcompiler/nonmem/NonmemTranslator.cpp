@@ -629,10 +629,8 @@ void NonmemTranslator::parseSource()
     }
 
   // ORGDV is a place for the original data set to be kept
-  // when a new data set is simulated.
-  Symbol * s  = table->insertLabel( DefaultStr.ORGDV, "", myRecordNums );
-  for( int i=0; i<ourPopSize; i++ )
-    s->initial[i] = "0";
+  // if a new data set is simulated.
+  Symbol * s  = table->insertUserVar( DefaultStr.ORGDV );
  
   // Keep the user-typed Nonmem Keyword strings
   Symbol * p;
