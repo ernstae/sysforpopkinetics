@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 
-opendir( D, "../inputs" );
+opendir( D, "." );
 
 my @allcontrols = readdir D;
 closedir D;
@@ -14,8 +14,8 @@ foreach my $file (@allcontrols) {
       if( $file =~ /\.in\b/ ) {
          my @command = ( "perl",
                          "./runSpkAndNonmem.pl",
-                         "../inputs/$file",
-                         "./DiffEqnModelTest"
+                         "$file",
+                        "./DiffEqnModelTest"
                        );
          system( @command );
          print( STDOUT "Done! ($file).\n" );

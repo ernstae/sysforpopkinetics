@@ -5,9 +5,8 @@ use warnings;
 use convert;
 
 my $skipNonmemSimulation  = 1;
-my $skipNonmemEstimation  = 1;
+my $skipNonmemEstimation  = 0;
 my $skipSpkEstimation     = 0;
-my $skipComparizon        = 0;
 my $simulationCompleted   = 0;
 my $isNonmemEstCompleted  = 0;
 my $isSpkEstCompleted     = 0;
@@ -280,6 +279,7 @@ else
 # Generate a NONMEM control file for estimation.
 #
 #------------------------------------------------------------------
+
 if( not $skipNonmemEstimation )
 {
   print( "===========================================================\n" );
@@ -413,31 +413,28 @@ if( not $skipSpkEstimation )
 # Run alphaTestPostprocessor.
 #
 #------------------------------------------------------------------
-if( not $skipComparizon )
-{
-    print( "===========================================================\n" );
-    print( " Compare results ...                                       \n" );
-    print( "===========================================================\n" );
-    $compResults = $inputFilename.".cmp";
-    print( "... An old $compResults exists... I must deleted it...\n" );
-    unlink( $compResults );
-    -f $spkOutputFile  or die "\n\nERROR!!!  No SPK result file $spkOutputFile found!!!\n";
-    -f $nonmemOutputFile or die "\n\nERROR!!!  No SPK result file $nonmemOutputFile found!!!\n";
-    my @compareCommand = ( "./compareSpkToNonmem.pl",
-			   $spkOutputFile,
-			   $nonmemOutputFile,
-			   $compResults );
+print( "===========================================================\n" );
+print( " Compare results ...                                       \n" );
+print( "===========================================================\n" );
+$compResults = $inputFilename.".cmp";
+print( "... An old $compResults exists... I must deleted it...\n" );
+unlink( $compResults );
+-f $spkOutputFile  or die "\n\nERROR!!!  No SPK result file $spkOutputFile found!!!\n";
+-f $nonmemOutputFile or die "\n\nERROR!!!  No SPK result file $nonmemOutputFile found!!!\n";
+my @compareCommand = ( "./compareSpkToNonmem.pl",
+                        $spkOutputFile,
+                        $nonmemOutputFile,
+                        $compResults );
                       
-    system( @compareCommand );
-    if( not -f $compResults )
-    {
-	print( STDERR "\n\nERROR!!!  Comparison failed!  Check out the preceeding error messages!!!\n" );
-    }
-    else
-    {
-	$isComparizonCompleted = 1;
-	print ( "\n... $compResults ... saved.\n" );
-    }
+system( @compareCommand );
+if( not -f $compResults )
+{
+ print( STDERR "\n\nERROR!!!  Comparison failed!  Check out the preceeding error messages!!!\n" );
+}
+else
+{
+  $isComparizonCompleted = 1;
+  print ( "\n... $compResults ... saved.\n" );
 }
 #------------------------------------------------------------------
 #
