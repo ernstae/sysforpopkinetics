@@ -43,7 +43,7 @@
  *                   |                                                    |
  *                   |                               exp[ 2 par       ]   |
  *                   |      0                                  nPar-1     |
- *                    -                                                -
+ *                    -                                                  -
  *
  * where par contains the current value for the parameters.
  *
