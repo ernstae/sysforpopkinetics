@@ -20,7 +20,7 @@ import uw.rfpk.mda.nonmem.*;
 /** This class encapsulates the database calls for the transactions required by the model
  *  dasign agent of the SPK.  
  *
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class Database {
     /** Constructor to initiate the data for the database connection and the user name.

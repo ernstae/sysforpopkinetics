@@ -17,6 +17,7 @@
 </c:if>
 
 <jsp:useBean id="sessionObj" class="uw.rfpk.beans.SessionObject" scope="session" />
+<jsp:useBean id="validUser" class="uw.rfpk.beans.UserInfo" scope="session"/>
 <%
     String sessionId = session.getId(); 
     String secret = null;
@@ -76,6 +77,8 @@
               "<argument>" + port + "</argument>\n"+
               "<argument>" + sessionId + "</argument>\n"+    
               "<argument>" + secret + "</argument>\n"+ 
+              "<argument>" + validUser.getTester() + "</argument>\n"+    
+              "<argument>" + validUser.getDeveloper() + "</argument>\n"+ 
               "</application-desc>\n"+
               "</jnlp>\n"
              );

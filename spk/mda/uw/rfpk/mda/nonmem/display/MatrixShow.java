@@ -16,7 +16,7 @@ import javax.swing.SwingConstants;
 
 /** This class's instance display a matrix show on the screen
  *
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class MatrixShow extends javax.swing.JFrame {
     
@@ -27,14 +27,19 @@ public class MatrixShow extends javax.swing.JFrame {
      * @param text a String[] object containing the text to display in the window.
      * @param width the width of the window.
      * @param height the height of the window.
+     * @param x horizontal location.
+     * @param y vertical location.
      * @param isDiagonal true if the matrix is diagonal, false otherwise.
      */
     public MatrixShow(String[][] data, String[] header, String title, String text,
-                      int width, int height, boolean isDiagonal)
+                      int width, int height, int x, int y, boolean isDiagonal)
     {
         initComponents();
         setTitle(title);
         setSize(width, height);
+        Point point = getLocation();
+        point.translate(x,  y);
+        setLocation(point);
         jTextPane1.setText(text);
         jScrollPane1.setPreferredSize(new java.awt.Dimension(width - 40, height - 100));
         

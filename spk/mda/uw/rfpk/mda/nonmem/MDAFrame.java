@@ -57,7 +57,7 @@ public class MDAFrame extends JFrame
         copyMenu.addActionListener(new DefaultEditorKit.CopyAction());  
         pasteMenu.addActionListener(new DefaultEditorKit.PasteAction()); 
         
-        if(args.length != 4)
+        if(args.length != 6)
             isOnline = false;
         else
         {
@@ -76,9 +76,11 @@ public class MDAFrame extends JFrame
         }
         if(isOnline)
       	{
-            server = new Server(args);   
+            server = new Server(args);
             serverName = args[0];
             serverPort = args[1];
+            isTester = args[4].equals("1") ? true : false;
+            isDeveloper = args[5].equals("1") ? true : false;
         }
         else
 	{
@@ -263,9 +265,17 @@ public class MDAFrame extends JFrame
         correlationMenu = new javax.swing.JMenuItem();
         invCovarianceMenu = new javax.swing.JMenuItem();
         tableMenu = new javax.swing.JMenuItem();
-        plotMenu = new javax.swing.JMenuItem();
+        scatterPlotMenu = new javax.swing.JMenu();
+        dotsMenu = new javax.swing.JMenuItem();
+        lineMenu = new javax.swing.JMenuItem();
+        bothMenu = new javax.swing.JMenuItem();
         summaryMenu = new javax.swing.JMenuItem();
         traceMenu = new javax.swing.JMenuItem();
+        jMenu1 = new javax.swing.JMenu();
+        dotsPlotMenu = new javax.swing.JMenuItem();
+        linePlotMenu = new javax.swing.JMenuItem();
+        bothPlotMenu = new javax.swing.JMenuItem();
+        useRMenu = new javax.swing.JMenuItem();
         jLabel16 = new javax.swing.JLabel();
 
         archiveDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
@@ -519,8 +529,8 @@ public class MDAFrame extends JFrame
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
         jPanel5.add(jLabel7, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -540,12 +550,12 @@ public class MDAFrame extends JFrame
         });
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
         jPanel5.add(jRadioButton7, gridBagConstraints);
 
         jRadioButton8.setFont(new java.awt.Font("Default", 0, 12));
-        jRadioButton8.setText("Use Monte Carlo Likelihood");
+        jRadioButton8.setText("Use Monte Carlo on Max. Likelihood   ");
         buttonGroup3.add(jRadioButton8);
         jRadioButton8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -556,8 +566,8 @@ public class MDAFrame extends JFrame
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
         jPanel5.add(jRadioButton8, gridBagConstraints);
 
         jLabel20.setFont(new java.awt.Font("Default", 0, 12));
@@ -565,8 +575,8 @@ public class MDAFrame extends JFrame
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
-        gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
         jPanel5.add(jLabel20, gridBagConstraints);
 
         jTextField14.setEditable(false);
@@ -577,7 +587,7 @@ public class MDAFrame extends JFrame
         jPanel5.add(jTextField14, gridBagConstraints);
 
         jRadioButton9.setFont(new java.awt.Font("Default", 0, 12));
-        jRadioButton9.setText("Use Monte Carlo Markov Chain          ");
+        jRadioButton9.setText("Use Gibbs Markov Chain Monte Carlo");
         buttonGroup3.add(jRadioButton9);
         jRadioButton9.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -588,25 +598,26 @@ public class MDAFrame extends JFrame
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
         jPanel5.add(jRadioButton9, gridBagConstraints);
 
         jLabel22.setFont(new java.awt.Font("Default", 0, 12));
-        jLabel22.setText("maximum number of M. C. simulations");
+        jLabel22.setText("Number of individual objective evaluations");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 7;
-        gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
         jPanel5.add(jLabel22, gridBagConstraints);
 
+        jTextField15.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 8;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 0);
         jPanel5.add(jTextField15, gridBagConstraints);
 
         jTabbedPane1.addTab("Job", jPanel5);
@@ -1052,8 +1063,8 @@ public class MDAFrame extends JFrame
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         jobDialog.getContentPane().add(jLabel21, gridBagConstraints);
 
         jTextField12.setEditable(false);
@@ -1198,8 +1209,8 @@ public class MDAFrame extends JFrame
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 9;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 12, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 12, 12);
         jobDialog.getContentPane().add(jButton5, gridBagConstraints);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -1689,16 +1700,35 @@ public class MDAFrame extends JFrame
 
         jMenu9.add(tableMenu);
 
-        plotMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
-        plotMenu.setMnemonic('l');
-        plotMenu.setText("Scatterplots");
-        plotMenu.addActionListener(new java.awt.event.ActionListener() {
+        scatterPlotMenu.setText("ScatterPlots");
+        dotsMenu.setText("Dots");
+        dotsMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                plotMenuActionPerformed(evt);
+                dotsMenuActionPerformed(evt);
             }
         });
 
-        jMenu9.add(plotMenu);
+        scatterPlotMenu.add(dotsMenu);
+
+        lineMenu.setText("Line");
+        lineMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lineMenuActionPerformed(evt);
+            }
+        });
+
+        scatterPlotMenu.add(lineMenu);
+
+        bothMenu.setText("Both");
+        bothMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bothMenuActionPerformed(evt);
+            }
+        });
+
+        scatterPlotMenu.add(bothMenu);
+
+        jMenu9.add(scatterPlotMenu);
 
         summaryMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_M, java.awt.event.InputEvent.CTRL_MASK));
         summaryMenu.setMnemonic('m');
@@ -1723,6 +1753,45 @@ public class MDAFrame extends JFrame
         jMenu9.add(traceMenu);
 
         jMenuBar1.add(jMenu9);
+
+        jMenu1.setText("Plot");
+        dotsPlotMenu.setText("Dots");
+        dotsPlotMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dotsPlotMenuActionPerformed(evt);
+            }
+        });
+
+        jMenu1.add(dotsPlotMenu);
+
+        linePlotMenu.setText("Line");
+        linePlotMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                linePlotMenuActionPerformed(evt);
+            }
+        });
+
+        jMenu1.add(linePlotMenu);
+
+        bothPlotMenu.setText("Both");
+        bothPlotMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bothPlotMenuActionPerformed(evt);
+            }
+        });
+
+        jMenu1.add(bothPlotMenu);
+
+        useRMenu.setText("Use R");
+        useRMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                useRMenuActionPerformed(evt);
+            }
+        });
+
+        jMenu1.add(useRMenu);
+
+        jMenuBar1.add(jMenu1);
 
         jInternalFrame1.setJMenuBar(jMenuBar1);
 
@@ -1752,16 +1821,57 @@ public class MDAFrame extends JFrame
         pack();
     }//GEN-END:initComponents
 
+    private void useRMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useRMenuActionPerformed
+        String[] c = null;
+        String operatingSystem = System.getProperty("os.name");
+        if(operatingSystem.startsWith("Linux") || operatingSystem.startsWith("Unix"))
+            c = new String[]{"xterm", "-e", "R"};
+        else if(operatingSystem.startsWith("Windows"))
+            c = new String[]{"Rgui"};
+        try
+        {
+            Process process = Runtime.getRuntime().exec(c);
+        }
+        catch(IOException e)
+        {
+            JOptionPane.showMessageDialog(null, e, "IOException", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_useRMenuActionPerformed
+
+    private void bothPlotMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bothPlotMenuActionPerformed
+        new PlotTool(textArea.getText(), "both");
+    }//GEN-LAST:event_bothPlotMenuActionPerformed
+
+    private void linePlotMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_linePlotMenuActionPerformed
+        new PlotTool(textArea.getText(), "line");
+    }//GEN-LAST:event_linePlotMenuActionPerformed
+
+    private void dotsPlotMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dotsPlotMenuActionPerformed
+        new PlotTool(textArea.getText(), "dots"); 
+    }//GEN-LAST:event_dotsPlotMenuActionPerformed
+
+    private void bothMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bothMenuActionPerformed
+        scatterPlot("both");
+    }//GEN-LAST:event_bothMenuActionPerformed
+
+    private void lineMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lineMenuActionPerformed
+        scatterPlot("line");
+    }//GEN-LAST:event_lineMenuActionPerformed
+
+    private void dotsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dotsMenuActionPerformed
+        scatterPlot("dots");
+    }//GEN-LAST:event_dotsMenuActionPerformed
+
     private void jRadioButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton9ActionPerformed
-        jTextField14.setText("M. C. Markov Chain");
+        jTextField14.setText("Markov Chain M. C.");
         jTextField15.setEnabled(true);
-        jTextField15.setText("10000");
+        jTextField15.setText("1000");
     }//GEN-LAST:event_jRadioButton9ActionPerformed
 
     private void jRadioButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton8ActionPerformed
         jTextField14.setText("M. C. Likelihood");
         jTextField15.setEnabled(true);        
-        jTextField15.setText("10000");
+        jTextField15.setText("1000");
     }//GEN-LAST:event_jRadioButton8ActionPerformed
 
     private void jRadioButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton7ActionPerformed
@@ -1805,7 +1915,7 @@ public class MDAFrame extends JFrame
             if(jCheckBox1.isSelected())
             {
                 // Start preparing input wizard
-                MDAIterator iterator = new MDAIterator(serverName, serverPort, isOnline, this);
+                MDAIterator iterator = new MDAIterator(serverName, serverPort, isOnline, this, isTester, isDeveloper);
                 iterator.setIsDataXML(true);
                 iterator.setIsReload(true);
                 iterator.setDataXML(dataset);
@@ -2327,7 +2437,9 @@ public class MDAFrame extends JFrame
         jScrollPane5.getVerticalScrollBar().addAdjustmentListener(new ScrollBarListener());
         jScrollPane6.getVerticalScrollBar().addAdjustmentListener(new ScrollBarListener());
         jTextArea3.addCaretListener(new ACaretListener()); 
-        jTextArea4.addCaretListener(new ACaretListener());         
+        jTextArea4.addCaretListener(new ACaretListener());
+        jTextArea3.setText("");
+        jTextArea4.setText("");
         deltaLines = null;  
         diffDialog.setSize(970, 630);
         diffDialog.show();
@@ -2631,7 +2743,7 @@ public class MDAFrame extends JFrame
         long id = Long.parseLong(((String[][])lists.get(indexList))[index][0]);
         if(listType.equals("job"))
         {
-            new JobInfo(this, id, isLibrary);
+            new JobInfo(this, id, isLibrary, false);
 /*            
             Properties jobInfo = server.getJobInfo(id, isLibrary);
             if(jobInfo == null)
@@ -2694,6 +2806,11 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_jTable1MouseClicked
 
     private void summaryMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_summaryMenuActionPerformed
+        makeSummary();
+    }//GEN-LAST:event_summaryMenuActionPerformed
+
+    private void makeSummary()
+    {
         // Ask the user wether to save the text to a file
         saveFile();
 
@@ -2708,13 +2825,14 @@ public class MDAFrame extends JFrame
         if(output.objective == null)
             output.objective = NA;
         
-        String theta = "THETA\n"; 
-        String omega = "OMEGA\n";
-        String sigma = "SIGMA\n";
+        String theta = ""; 
+        String omega = "";
+        String sigma = "";
         int k = 0;
-        // Write theta block
+        // Write theta
         if(output.theta != null)
         {
+            theta = "THETA" + ls;
             for(int i = 0; i < output.theta.length; i++)
             {
                 n = String.valueOf(i + 1);        
@@ -2734,105 +2852,117 @@ public class MDAFrame extends JFrame
             }
         }
         
-        // Write omega block
-        if(output.omega != null && output.omegaStruct.equals("block"))
+        // Write omega
+        if(output.omega != null && output.omegaStruct != null)
         {
-            for(int j = 1; j < output.omega.length + 1; j++)
+            for(int l = 0; l < output.omega.length; l++)
             {
-                for(int i = j - 1; i < output.omega.length; i++)  
+                omega += "OMEGA" + ls;
+                if(output.omegaStruct[l].equals("block"))
                 {
-                    par = output.omega[i][j] != null ? 
-                          Utility.formatData(6, f.format(Double.parseDouble(output.omega[i][j]))) : NA;
-                    ser = output.stdErrOmega != null && output.stdErrOmega[i][j] != null ? 
-                          Utility.formatData(6, f.format(Double.parseDouble(output.stdErrOmega[i][j]))) : NA;
-                    rse = output.coefVariation != null && output.coefVariation[k] != null ? 
-                          Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
-                    lb = output.confInterval != null && output.confInterval[0][k] != null ? 
-                         Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
-                    ub = output.confInterval != null && output.confInterval[1][k] != null ? 
-                         Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k++]))) : NA;
-                    cv = output.omega[i][j] != null && Double.parseDouble(output.omega[i][j]) >= 0 ? 
-                         Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(output.omega[i][j])))) : NA;
-                    omega = omega + "  " + j + "," + (i + 1) + "     " + par + getSpace(12 - par.length()) + ser +                            
-                            getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub;
-                    if(j == i + 1)
-                        omega += getSpace(14 - ub.length()) + cv;                    
-                    omega += ls;                     
+                    for(int j = 1; j < output.omega[l].length + 1; j++)
+                    {
+                        for(int i = j - 1; i < output.omega[l].length; i++)  
+                        {
+                            par = output.omega[l][i][j] != null ? 
+                                  Utility.formatData(6, f.format(Double.parseDouble(output.omega[l][i][j]))) : NA;
+                            ser = output.stdErrOmega != null && output.stdErrOmega[l][i][j] != null ? 
+                                  Utility.formatData(6, f.format(Double.parseDouble(output.stdErrOmega[l][i][j]))) : NA;
+                            rse = output.coefVariation != null && output.coefVariation[k] != null ? 
+                                  Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
+                            lb = output.confInterval != null && output.confInterval[0][k] != null ? 
+                                 Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
+                            ub = output.confInterval != null && output.confInterval[1][k] != null ? 
+                                 Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k++]))) : NA;
+                            cv = output.omega[l][i][j] != null && Double.parseDouble(output.omega[l][i][j]) >= 0 ? 
+                                 Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(output.omega[l][i][j])))) : NA;
+                            omega = omega + "  " + j + "," + (i + 1) + "     " + par + getSpace(12 - par.length()) + ser +                            
+                                    getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub;
+                            if(j == i + 1)
+                                omega += getSpace(14 - ub.length()) + cv;                    
+                            omega += ls;                     
+                        }
+                    }
+                }
+
+                if(output.omegaStruct[l].equals("diagonal"))
+                {
+                    for(int i = 0; i < output.omega[l].length; i++)
+                    {
+                        par = output.omega[l][i][i + 1] != null ?
+                              Utility.formatData(6, f.format(Double.parseDouble(output.omega[l][i][i + 1]))) : NA;
+                        ser = output.stdErrOmega != null && output.stdErrOmega[l][i][i + 1] != null ? 
+                              Utility.formatData(6, f.format(Double.parseDouble(output.stdErrOmega[l][i][i + 1]))) : NA;
+                        rse = output.coefVariation != null && output.coefVariation[k] != null ? 
+                              Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
+                        lb = output.confInterval != null && output.confInterval[0][k] != null ? 
+                             Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
+                        ub = output.confInterval != null && output.confInterval[1][k] != null ? 
+                             Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k++]))) : NA;
+                        cv = output.omega[l][i][i + 1] != null && Double.parseDouble(output.omega[l][i][i + 1]) >= 0 ? 
+                             Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(output.omega[l][i][i + 1])))) : NA;
+                        omega = omega + "  " + (i + 1) + "," + (i + 1) + "     " + par + getSpace(12 - par.length()) + ser +                            
+                                getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub +
+                                getSpace(14 - ub.length()) + cv + ls;
+                    }
                 }
             }
         }
         
-        // Write omega diagonal
-        if(output.omega != null && output.omegaStruct.equals("diagonal"))
-        {        
-            for(int i = 0; i < output.omega.length; i++)
-            {
-                par = output.omega[i][i + 1] != null ?
-                      Utility.formatData(6, f.format(Double.parseDouble(output.omega[i][i + 1]))) : NA;
-                ser = output.stdErrOmega != null && output.stdErrOmega[i][i + 1] != null ? 
-                      Utility.formatData(6, f.format(Double.parseDouble(output.stdErrOmega[i][i + 1]))) : NA;
-                rse = output.coefVariation != null && output.coefVariation[k] != null ? 
-                      Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
-                lb = output.confInterval != null && output.confInterval[0][k] != null ? 
-                     Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
-                ub = output.confInterval != null && output.confInterval[1][k] != null ? 
-                     Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k++]))) : NA;
-                cv = output.omega[i][i + 1] != null && Double.parseDouble(output.omega[i][i + 1]) >= 0 ? 
-                     Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(output.omega[i][i + 1])))) : NA;
-                omega = omega + "  " + (i + 1) + "," + (i + 1) + "     " + par + getSpace(12 - par.length()) + ser +                            
-                        getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub +
-                        getSpace(14 - ub.length()) + cv + ls;                     
-            }
-        }
-        
-        // Write sigma block
-        if(output.sigma != null && output.sigmaStruct.equals("block"))
+        // Write sigma
+        if(output.sigma != null && output.sigmaStruct != null)
         {
-            for(int j = 1; j < output.sigma.length + 1; j++)
+            for(int l = 0; l < output.sigma.length; l++)
             {
-                for(int i = j - 1; i < output.sigma.length; i++)  
-                {                        
-                    par = output.sigma[i][j] != null ? 
-                          Utility.formatData(6, f.format(Double.parseDouble(output.sigma[i][j]))) : NA;
-                    ser = output.stdErrSigma != null && output.stdErrSigma[i][j] != null ? 
-                          Utility.formatData(6, f.format(Double.parseDouble(output.stdErrSigma[i][j]))) : NA;   
-                    rse = output.coefVariation != null && output.coefVariation[k] != null ? 
-                          Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
-                    lb = output.confInterval != null && output.confInterval[0][k] != null ? 
-                         Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
-                    ub = output.confInterval != null && output.confInterval[1][k] != null ? 
-                         Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k++]))) : NA;
-                    sd = output.sigma[i][j] != null && Double.parseDouble(output.sigma[i][j]) >= 0 ? 
-                         Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(output.sigma[i][j])))) : NA;
-                    sigma = sigma + "  " + j + "," + (i + 1) + "     " + par + getSpace(12 - par.length()) + ser +               
-                            getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub;                   
-                    if(j == i + 1)
-                        sigma += getSpace(14 - ub.length()) + sd;
-                    sigma += ls;                    
+                sigma += "SIGMA" + ls;                
+                if(output.sigmaStruct[l].equals("block"))
+                {            
+                    for(int j = 1; j < output.sigma[l].length + 1; j++)
+                    {
+                        for(int i = j - 1; i < output.sigma[l].length; i++)  
+                        {                        
+                            par = output.sigma[l][i][j] != null ? 
+                                  Utility.formatData(6, f.format(Double.parseDouble(output.sigma[l][i][j]))) : NA;
+                            ser = output.stdErrSigma[l] != null && output.stdErrSigma[l][i][j] != null ? 
+                                  Utility.formatData(6, f.format(Double.parseDouble(output.stdErrSigma[l][i][j]))) : NA;   
+                            rse = output.coefVariation != null && output.coefVariation[k] != null ? 
+                                  Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
+                            lb = output.confInterval != null && output.confInterval[0][k] != null ? 
+                                 Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
+                            ub = output.confInterval != null && output.confInterval[1][k] != null ? 
+                                 Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k++]))) : NA;
+                            sd = output.sigma[l][i][j] != null && Double.parseDouble(output.sigma[l][i][j]) >= 0 ? 
+                                 Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(output.sigma[l][i][j])))) : NA;
+                            sigma = sigma + "  " + j + "," + (i + 1) + "     " + par + getSpace(12 - par.length()) + ser +               
+                                    getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub;                   
+                            if(j == i + 1)
+                                sigma += getSpace(14 - ub.length()) + sd;
+                            sigma += ls;                    
+                        }
+                    }
                 }
-            }
-        }
  
-        // Write sigma diagonal
-        if(output.sigma != null && output.sigmaStruct.equals("diagonal"))
-        {        
-            for(int i = 0; i < output.sigma.length; i++)
-            {
-                par = output.sigma[i][i + 1] != null ?
-                      Utility.formatData(6, f.format(Double.parseDouble(output.sigma[i][i + 1]))) : NA;
-                ser = output.stdErrSigma != null && output.stdErrSigma[i][i + 1] != null ? 
-                      Utility.formatData(6, f.format(Double.parseDouble(output.stdErrSigma[i][i + 1]))) : NA;
-                rse = output.coefVariation != null && output.coefVariation[k] != null ? 
-                      Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
-                lb = output.confInterval != null && output.confInterval[0][k] != null ? 
-                     Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
-                ub = output.confInterval != null && output.confInterval[1][k] != null ? 
-                     Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k++]))) : NA;
-                cv = output.sigma[i][i + 1] != null && Double.parseDouble(output.sigma[i][i + 1]) >= 0 ? 
-                     Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(output.sigma[i][i + 1])))) : NA;
-                sigma = sigma + "  " + (i + 1) + "," + (i + 1) + "     " + par + getSpace(12 - par.length()) + ser +                            
-                        getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub +
-                        getSpace(14 - ub.length()) + cv + ls;                     
+                if(output.sigmaStruct[l].equals("diagonal"))
+                {        
+                    for(int i = 0; i < output.sigma[l].length; i++)
+                    {
+                        par = output.sigma[l][i][i + 1] != null ?
+                              Utility.formatData(6, f.format(Double.parseDouble(output.sigma[l][i][i + 1]))) : NA;
+                        ser = output.stdErrSigma[l] != null && output.stdErrSigma[l][i][i + 1] != null ? 
+                              Utility.formatData(6, f.format(Double.parseDouble(output.stdErrSigma[l][i][i + 1]))) : NA;
+                        rse = output.coefVariation != null && output.coefVariation[k] != null ? 
+                              Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
+                        lb = output.confInterval != null && output.confInterval[0][k] != null ? 
+                             Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
+                        ub = output.confInterval != null && output.confInterval[1][k] != null ? 
+                             Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k++]))) : NA;
+                        cv = output.sigma[l][i][i + 1] != null && Double.parseDouble(output.sigma[l][i][i + 1]) >= 0 ? 
+                             Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(output.sigma[l][i][i + 1])))) : NA;
+                        sigma = sigma + "  " + (i + 1) + "," + (i + 1) + "     " + par + getSpace(12 - par.length()) + ser +                            
+                                getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub +
+                                getSpace(14 - ub.length()) + cv + ls;
+                    }
+                }
             }
         }       
         
@@ -2848,23 +2978,39 @@ public class MDAFrame extends JFrame
                 statisticsTime = Double.parseDouble(output.computingTimes[1]);
             computingTime = String.valueOf(estimationTime + statisticsTime) + " s";
         }
-        String errorMessage = output.error != null? output.error : NA;
-        String objective = output.objective != null? ls + output.objective : NA;
+
+        String jobAbstract = output.jobAbstract != null ? output.jobAbstract : NA;
+        String submissionTime = output.submissionTime != null ? formatTime(output.submissionTime) : NA;
+        String completionTime = output.completionTime != null ? formatTime(output.completionTime) : NA;        
+        String analysis = output.analysis != null ? output.analysis : NA;
+        String method = output.method != null ? output.method : NA;
+        String modelName = output.modelName != null ? output.modelName : NA;
+        String modelVersion = output.modelVersion != null ? output.modelVersion : NA;
+        String modelAbstract = output.modelAbstract != null ? output.modelAbstract : NA;
+        String dataName = output.dataName != null ? output.dataName : NA;
+        String dataVersion = output.dataVersion != null ? output.dataVersion : NA;
+        String dataAbstract = output.dataAbstract != null ? output.dataAbstract : NA;
+        String errorMessage = output.error != null ? ls + output.error : NA;        
+        String objective = output.objective != null ? output.objective : NA;
+        String objStdErr = output.objStdErr != null ? output.objStdErr : NA;
         
         // Write summary
         String summary = "Summary Report" + ls + ls + ls +
-                         "Job Description: " + output.jobAbstract + ls + ls +
-                         "Time of Job Submisison: " + formatTime(output.submissionTime) + ls + ls +
-                         "Time of Job Completion: " + formatTime(output.completionTime) + ls + ls +
-                         "SPK Computing Time: " + computingTime + ls + ls +              
-                         "Model Name: " + output.modelName + ls + ls +
-                         "Model Version: " + output.modelVersion + ls + ls +
-                         "Model Description: " + output.modelAbstract + ls + ls +
-                         "Dataset Name: " + output.dataName + ls + ls +
-                         "Dataset Version: " + output.dataVersion + ls + ls +
-                         "Dataset Description: " + output.dataAbstract + ls + ls +                      
+                         "Job Description: " + jobAbstract + ls + ls +
+                         "Time of Job Submisison: " + submissionTime + ls + ls +
+                         "Time of Job Completion: " + completionTime + ls + ls +
+                         "SPK Computing Time: " + computingTime + ls + ls +
+                         "Analysis Type: " + analysis + ls + ls +
+                         "Estimation Method: " + method + ls + ls +                         
+                         "Model Name: " + modelName + ls + ls +
+                         "Model Version: " + modelVersion + ls + ls +
+                         "Model Description: " + modelAbstract + ls + ls +
+                         "Dataset Name: " + dataName + ls + ls +
+                         "Dataset Version: " + dataVersion + ls + ls +
+                         "Dataset Description: " + dataAbstract + ls + ls +                      
                          "Error Message: " + errorMessage + ls + ls +
-                         "Minimum Value of Objective Function: " + output.objective + ls + ls +
+                         "Minimum Value of Objective Function: " + objective + ls + ls +
+                         "Standard Error of the Objective Function Value: " + objStdErr + ls + ls +
                          "Parameter Estimation Result: ";
         if(output.theta == null)
             summary += NA;
@@ -2886,9 +3032,9 @@ public class MDAFrame extends JFrame
         textArea.setText(summary);
         textArea.setCaretPosition(0);
         jInternalFrame1.setTitle("");
-        file = null;
-    }//GEN-LAST:event_summaryMenuActionPerformed
-
+        file = null;        
+    }
+    
     private void ReadOutputButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ReadOutputButtonActionPerformed
         readOutput(textArea.getText());
     }//GEN-LAST:event_ReadOutputButtonActionPerformed
@@ -2979,22 +3125,25 @@ public class MDAFrame extends JFrame
         jTextField4.setEnabled(true);
         jTextField5.setEnabled(true);
         jTextField14.setText(method);
+        jTextField15.setText("");
+        jTextField15.setEnabled(false);
         archiveDialog.setSize(300, 320);
         archiveDialog.setVisible(true);
     }//GEN-LAST:event_SubmitJobButtonActionPerformed
 
     private void WriteInputButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_WriteInputButtonActionPerformed
-        MDAIterator iterator = new MDAIterator(serverName, serverPort, isOnline, this);
+        MDAIterator iterator = new MDAIterator(serverName, serverPort, isOnline, this, isTester, isDeveloper);
         writeInput(iterator);
     }//GEN-LAST:event_WriteInputButtonActionPerformed
 
-    private void plotMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_plotMenuActionPerformed
+    private void scatterPlot(String type)
+    {
         if(output != null && output.scatterplot != null)
         {
             if(output.dataAll != null && output.dataItems != null && output.dataLabelMap != null)
             {
                 new PlotShow(output.scatterplot, output.dataAll, output.dataItems,  
-                             output.dataLabelMap);
+                             output.dataLabelMap, type);
             }
             else
             {
@@ -3007,8 +3156,8 @@ public class MDAFrame extends JFrame
             JOptionPane.showMessageDialog(null, "No scatterplot is available", 
                                           "Data not Found Error",               
                                           JOptionPane.ERROR_MESSAGE);        
-    }//GEN-LAST:event_plotMenuActionPerformed
-
+    }
+    
     private void tableMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tableMenuActionPerformed
         if(tableShow != null)
             tableShow.showTableList();
@@ -3027,7 +3176,7 @@ public class MDAFrame extends JFrame
                 header[i + 1] = output.invCovariance[i][0];           
             new MatrixShow(output.invCovariance, header, "Inv. Covariance of Estimate", 
                            "Inv.Covariance Matrix of Estimate",
-                           width(length), height(length), false);    
+                           width(length), height(length), 0, 0, false);    
         }
         else
             JOptionPane.showMessageDialog(null, "The INV. COVARIANCE is not available", 
@@ -3044,7 +3193,7 @@ public class MDAFrame extends JFrame
                 header[i + 1] = output.correlation[i][0];            
             new MatrixShow(output.correlation, header, "Correlation of Estimate", 
                            "Correlation Matrix of Estimate",
-                           width(length), height(length), false);    
+                           width(length), height(length), 0, 0, false);    
         }
         else
             JOptionPane.showMessageDialog(null, "The CORRELATION is not available", 
@@ -3061,7 +3210,7 @@ public class MDAFrame extends JFrame
                 header[i + 1] = output.covariance[i][0];            
             new MatrixShow(output.covariance, header, "Covariance of Estimate", 
                            "Covariance Matrix of Estimate",
-                           width(length), height(length), false);    
+                           width(length), height(length), 0, 0, false);    
         }
         else
             JOptionPane.showMessageDialog(null, "The COVARIANCE is not available", 
@@ -3072,13 +3221,16 @@ public class MDAFrame extends JFrame
     private void stdErrSigmaMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stdErrSigmaMenuActionPerformed
         if(output != null && output.stdErrSigma != null)
         {
-            int length = output.stdErrSigma.length;
-            String[] header = new String[length + 1];
-            for(int i = 0; i < length; i++)
-                header[i + 1] = output.stdErrSigma[i][0];     
-            new MatrixShow(output.stdErrSigma, header, "Standard Error of Estimate", 
-                           "SIGMA - Cov Matrix for Random Effects - ETAs",
-                           width(length), height(length), output.sigmaStruct.equals("diagonal"));  
+            for(int l = 0; l < output.stdErrSigma.length; l++)
+            {
+                int length = output.stdErrSigma[l].length;
+                String[] header = new String[length + 1];
+                for(int i = 0; i < length; i++)
+                    header[i + 1] = output.stdErrSigma[l][i][0];     
+                new MatrixShow(output.stdErrSigma[l], header, "Standard Error of SIGMA Estimate", 
+                               "SIGMA - Cov Matrix for Residuals - ETAs  Block " + (l+1),
+                               width(length), height(length), l*40, l*30, output.sigmaStruct.equals("diagonal"));
+            }
         }
         else
             JOptionPane.showMessageDialog(null, "The standard error of SIGMA is not available", 
@@ -3089,13 +3241,16 @@ public class MDAFrame extends JFrame
     private void stdErrOmegaMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stdErrOmegaMenuActionPerformed
         if(output != null && output.stdErrOmega != null)
         {
-            int length = output.stdErrOmega.length;
-            String[] header = new String[length + 1];
-            for(int i = 0; i < length; i++)
-                header[i + 1] = output.stdErrOmega[i][0]; 
-            new MatrixShow(output.stdErrOmega, header, "Standard Error of Estimate", 
-                           "OMEGA - Cov Matrix for Random Effects - ETAs",
-                           width(length), height(length), output.omegaStruct.equals("diagonal"));   
+            for(int l = 0; l < output.stdErrOmega.length; l++)
+            {
+                int length = output.stdErrOmega[l].length;
+                String[] header = new String[length + 1];
+                for(int i = 0; i < length; i++)
+                    header[i + 1] = output.stdErrOmega[l][i][0]; 
+                new MatrixShow(output.stdErrOmega[l], header, "Standard Error of OMEGA Estimate", 
+                               "OMEGA - Cov Matrix for Random Effects - ETAs  Block " + (l+1),
+                               width(length), height(length), l*40, l*30, output.omegaStruct.equals("diagonal"));
+            }
         }
         else
             JOptionPane.showMessageDialog(null, "The standard error of OMEGA is not available", 
@@ -3123,13 +3278,16 @@ public class MDAFrame extends JFrame
     private void SigmaMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SigmaMenuActionPerformed
         if(output != null && output.sigma != null)
         {
-            int length = output.sigma.length;
-            String[] header = new String[length + 1];
-            for(int i = 0; i < length; i++)
-                header[i + 1] = output.sigma[i][0];            
-            new MatrixShow(output.sigma, header, "SIGMA Parameter Estimate", 
-                           "SIGMA - Cov Matrix for Random Effects - EPSILONs",
-                           width(length), height(length), false);
+            for(int l = 0; l < output.sigma.length; l++)
+            {
+                int length = output.sigma[l].length;
+                String[] header = new String[length + 1];
+                for(int i = 0; i < length; i++)
+                    header[i + 1] = output.sigma[l][i][0];            
+                new MatrixShow(output.sigma[l], header, "SIGMA Parameter Estimate",
+                               "SIGMA - Cov Matrix for Residuals - EPSILONs  Block " + (l+1),
+                               width(length), height(length), l*40, l*30, false);
+            }
         }
         else
             JOptionPane.showMessageDialog(null, "The SIGMA is not available", 
@@ -3140,13 +3298,16 @@ public class MDAFrame extends JFrame
     private void OmegaMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OmegaMenuActionPerformed
         if(output != null && output.omega != null)
         {
-            int length = output.omega.length;
-            String[] header = new String[length + 1];
-            for(int i = 0; i < length; i++)
-                header[i + 1] = output.omega[i][0];
-            new MatrixShow(output.omega, header, "OMEGA Parameter Estimate", 
-                           "OMEGA - Cov Matrix for Random Effects - ETAs",
-                           width(length), height(length), false); 
+            for(int l =0; l < output.omega.length; l++)
+            {
+                int length = output.omega[l].length;
+                String[] header = new String[length + 1];
+                for(int i = 0; i < length; i++)
+                    header[i + 1] = output.omega[l][i][0];
+                new MatrixShow(output.omega[l], header, "OMEGA Parameter Estimate", 
+                               "OMEGA - Cov Matrix for Random Effects - ETAs  Block" + (l+1),
+                               width(length), height(length), l*40, l*30, false);
+            }
         }
         else
             JOptionPane.showMessageDialog(null, "The OMEGA is not available", 
@@ -3166,15 +3327,20 @@ public class MDAFrame extends JFrame
                            width(length - 1)); 
         }
         else
-            JOptionPane.showMessageDialog(null, "The THETA is not available", 
+            JOptionPane.showMessageDialog(null, "The THETA is not available",
                                           "Data Not Found Error",               
                                           JOptionPane.ERROR_MESSAGE);
     }//GEN-LAST:event_ThetaMenuActionPerformed
 
     private void objectiveMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_objectiveMenuActionPerformed
-        if(output != null && output.objective != null)
+        if(output != null && output.objective != null && output.method != null)
         {
-            jTextArea2.setText("Minimum Value of Objective Function: \n" + output.objective);
+            String objective = "Minimum Value of the Objective Function:\n" + output.objective + "\n";
+            String objStdErr = "";
+            if(output.method.equals("M.C. Likelihood") && output.objStdErr != null)
+                objStdErr = "\nStandard Error of the Objective Function Value:\n" + output.objStdErr + "\n";
+            String method = "\nEstimation Method Used in the Analysis:\n" + output.method;
+            jTextArea2.setText(objective + objStdErr + method);
             objectiveDialog.setSize(300, 150);
             objectiveDialog.setVisible(true);
             objectiveDialog.show();
@@ -3236,6 +3402,7 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_printMenuActionPerformed
 
     private void savaAsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_savaAsMenuActionPerformed
+        files.setDialogTitle("Save File");
         int result = files.showSaveDialog(null);
         if(result == files.APPROVE_OPTION)
 	{
@@ -3252,6 +3419,7 @@ public class MDAFrame extends JFrame
         }
         else
 	{
+            files.setDialogTitle("Save File");
             int result = files.showSaveDialog(null);
             if(result == files.APPROVE_OPTION)
 	    {
@@ -3271,10 +3439,13 @@ public class MDAFrame extends JFrame
         // Ask the user whether to save the text to a file
         saveFile();
         isDiff = false;
-        textArea.setText(openOperation()[1]);
-        textArea.setCaretPosition(0);
-        jInternalFrame1.setTitle(file.getName());        
-
+        String[] titleAndText = openOperation();
+        if(titleAndText != null && titleAndText[1] != null)
+        {
+            textArea.setText(titleAndText[1]);
+            textArea.setCaretPosition(0);
+            jInternalFrame1.setTitle(file.getName());
+        }
     }//GEN-LAST:event_openMenuActionPerformed
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
@@ -3336,7 +3507,14 @@ public class MDAFrame extends JFrame
                                           "Input Error",            
                                           JOptionPane.ERROR_MESSAGE);                 
             return; 
-        }   
+        }
+        if(!Utility.isPosIntNumber(jTextField15.getText().trim()))
+        {
+            JOptionPane.showMessageDialog(null, "The number of individual objective evaluations is missing",  
+                                          "Input Error",            
+                                          JOptionPane.ERROR_MESSAGE);                 
+            return;            
+        }
 
         // Get the XML documents as String objects
         String spkInput = textArea.getText();
@@ -3366,7 +3544,17 @@ public class MDAFrame extends JFrame
         if(jTextField14.getText().equals("Expected Hessian")) jobMethodCode = "eh";
         if(jTextField14.getText().equals("Laplace Approximation")) jobMethodCode = "la";
         if(jTextField14.getText().equals("M. C. Likelihood")) jobMethodCode = "ml";
-        if(jTextField14.getText().equals("M. C. Markov Chain")) jobMethodCode = "mc";
+        if(jTextField14.getText().equals("Markov Chain M. C.")) jobMethodCode = "mc";
+
+        // Remove number of objective function evaluations
+        int indexMC = source.indexOf("<monte carlo ");
+        if(indexMC != -1)
+            source = source.substring(0, indexMC - 3) + source.substring(source.indexOf("</nonmem>"));
+        
+        // Add number of objective function evaluations
+        if(jobMethodCode.equals("ml"))
+            source = source.replaceFirst("</nonmem>", "   <monte carlo number_eval=\"" + 
+                                         jTextField15.getText().trim() + "\"/>\n   </nonmem>");
         
         // Get job parent
         long jobParent = 0;
@@ -3377,9 +3565,14 @@ public class MDAFrame extends JFrame
         }
         else
         {
-            JOptionPane.showMessageDialog(null, "Job parent was not found.  If the job has a parent,\n" +
-                                          "Please click the Input button on the Job Information Dialog.",
-                                          "Information Dialog", JOptionPane.INFORMATION_MESSAGE);
+            if(jRadioButton8.isSelected())
+                JOptionPane.showMessageDialog(null, "The required Job Parent for the method was not found.\n" +
+                                              "Please click the Input button on the Job Information Dialog.",
+                                              "Information Dialog", JOptionPane.INFORMATION_MESSAGE);
+            else
+                JOptionPane.showMessageDialog(null, "Job parent was not found.  If the job has a parent,\n" +
+                                              "please click the Input button on the Job Information Dialog.",
+                                              "Information Dialog", JOptionPane.INFORMATION_MESSAGE);
         }
         
         // Submit the job
@@ -3404,7 +3597,7 @@ public class MDAFrame extends JFrame
     {
         // Prepare for the return
         String[] text = null; 
-        
+        files.setDialogTitle("Open File");
         int result = files.showOpenDialog(null);
         if(result == files.APPROVE_OPTION) 
 	{
@@ -3490,8 +3683,7 @@ public class MDAFrame extends JFrame
         for(int i = 0; i < 21; i++)
         {
             if(!records.getProperty(names[i]).equals("")) 
-                control = control + records.getProperty(names[i]) + 
-                          System.getProperty("line.separator"); 
+                control = control + records.getProperty(names[i]) + ls;
         }
         if(JOptionPane.showConfirmDialog(null, 
                                          "Do you want to save the NONMEM control file?",   
@@ -3504,7 +3696,7 @@ public class MDAFrame extends JFrame
             if(result == files.APPROVE_OPTION)
 	    {
                 file = files.getSelectedFile();
-                saveOperation(control.replaceAll("\n", System.getProperty("line.separator")));
+                saveOperation(control.replaceAll("\n", ls));
             }   
         }
         file = null;
@@ -3531,7 +3723,6 @@ public class MDAFrame extends JFrame
     // Read report
     protected void readOutput(String text)
     { 
-        String ls = System.getProperty("line.separator");
         if(text.indexOf("<spkreport>") == -1 || text.indexOf("<spksource>") == -1)
         {
             JOptionPane.showMessageDialog(null, "SPK output file is not loaded",  
@@ -3541,6 +3732,8 @@ public class MDAFrame extends JFrame
         }
         output = new Output();
         XMLReader reader = new XMLReader(text, output);
+        if(!output.ok)
+            return;
         
         // Promote user to save tables into files
         if(output.table != null)
@@ -3624,7 +3817,12 @@ public class MDAFrame extends JFrame
                                                               JOptionPane.ERROR_MESSAGE);
                                 return;
                             }
-                        }                           
+                        }
+                        else
+                        {
+                            files.setDialogTitle("");
+                            files.setSelectedFile(new File(""));    
+                        }
                     }
                 }
             }
@@ -3681,12 +3879,18 @@ public class MDAFrame extends JFrame
                                                       JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                }   
+                }
+                else
+                {
+                    files.setDialogTitle("");
+                    files.setSelectedFile(new File(""));                   
+                }
             }
         }
         JOptionPane.showMessageDialog(null, "Output processing is finished. Result is ready for presentation.",  
                                       "MDA Status Information",             
-                                      JOptionPane.INFORMATION_MESSAGE);        
+                                      JOptionPane.INFORMATION_MESSAGE);
+        makeSummary();
     }
     
     // This function return spaces
@@ -3736,13 +3940,16 @@ public class MDAFrame extends JFrame
                 {
                     int result = files.showSaveDialog(null);
                     if(result == files.APPROVE_OPTION)
+                    {
                         file = files.getSelectedFile();
+                        saveOperation(textArea.getText());
+                    }
                 }
                 else
                 {
-                    file = new File(pathName);   
+                    file = new File(pathName);
+                    saveOperation(textArea.getText());
                 }
-                saveOperation(textArea.getText());    
             }  
         }
     }
@@ -3966,6 +4173,8 @@ public class MDAFrame extends JFrame
     private javax.swing.JMenuItem ThetaMenu;
     private javax.swing.JButton WriteInputButton;
     private javax.swing.JDialog archiveDialog;
+    private javax.swing.JMenuItem bothMenu;
+    private javax.swing.JMenuItem bothPlotMenu;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.ButtonGroup buttonGroup3;
@@ -3982,6 +4191,8 @@ public class MDAFrame extends JFrame
     private javax.swing.JButton dataRButton;
     private javax.swing.JDialog diffDialog;
     private javax.swing.JDialog diffHelpDialog;
+    private javax.swing.JMenuItem dotsMenu;
+    private javax.swing.JMenuItem dotsPlotMenu;
     private javax.swing.JMenuItem errorMenu;
     private javax.swing.JDialog errorMessageDialog;
     private javax.swing.JMenuItem exitMenu;
@@ -4020,6 +4231,7 @@ public class MDAFrame extends JFrame
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu6;
     private javax.swing.JMenu jMenu7;
     private javax.swing.JMenu jMenu9;
@@ -4085,6 +4297,8 @@ public class MDAFrame extends JFrame
     private javax.swing.JTextPane jTextPane2;
     private javax.swing.JTextPane jTextPane3;
     private javax.swing.JDialog jobDialog;
+    private javax.swing.JMenuItem lineMenu;
+    private javax.swing.JMenuItem linePlotMenu;
     private javax.swing.JButton localLButton;
     private javax.swing.JButton localRButton;
     private javax.swing.JButton modelLButton;
@@ -4099,13 +4313,13 @@ public class MDAFrame extends JFrame
     private javax.swing.JMenuItem openMenu;
     private javax.swing.JMenu parameterMenu;
     private javax.swing.JMenuItem pasteMenu;
-    private javax.swing.JMenuItem plotMenu;
     private javax.swing.JButton previousButton;
     private javax.swing.JMenuItem printMenu;
     private javax.swing.JButton refreshButton;
     private javax.swing.JDialog reportDialog;
     private javax.swing.JMenuItem savaAsMenu;
     private javax.swing.JMenuItem saveMenu;
+    private javax.swing.JMenu scatterPlotMenu;
     private javax.swing.JMenu statisticsMenu;
     private javax.swing.JMenuItem stdErrOmegaMenu;
     private javax.swing.JMenuItem stdErrSigmaMenu;
@@ -4115,9 +4329,16 @@ public class MDAFrame extends JFrame
     private javax.swing.JMenuItem tableMenu;
     private javax.swing.JTextArea textArea;
     private javax.swing.JMenuItem traceMenu;
+    private javax.swing.JMenuItem useRMenu;
     private javax.swing.JDialog versionDialog;
     // End of variables declaration//GEN-END:variables
 
+    // Is tester
+    private boolean isTester = false;
+    
+    // Is developer
+    private boolean isDeveloper = false;    
+    
     // Job id
     protected long jobId = 0; 
     

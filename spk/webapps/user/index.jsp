@@ -36,7 +36,9 @@
                 To use SPK you need to have Java Runtime Environment (JRE) on your computer. 
                 Instructions for downloading and installing JRE are provided 
                 <a href="instructWin.jsp">here</a> for Windows users 
-                and <a href="instructLin.jsp">here</a> for Linux users.
+                and <a href="instructLin.jsp">here</a> for Linux users.  
+                If you would use R for SPK output display and post-processing analysis, you
+                may download and install R from <a href="http://www.r-project.org/">here</a>.
             </p>
 	    <p>
                 Please log into MySPK, the "members only" section of SPK. When you are done, please <a href="logout.jsp">log out</a>.

@@ -410,7 +410,7 @@
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Default" size="12" style="0"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="Use Monte Carlo Likelihood"/>
+                    <Property name="text" type="java.lang.String" value="Use Monte Carlo on Max. Likelihood   "/>
                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                       <ComponentRef name="buttonGroup3"/>
                     </Property>
@@ -452,7 +452,7 @@
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Default" size="12" style="0"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="Use Monte Carlo Markov Chain          "/>
+                    <Property name="text" type="java.lang.String" value="Use Gibbs Markov Chain Monte Carlo"/>
                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                       <ComponentRef name="buttonGroup3"/>
                     </Property>
@@ -471,7 +471,7 @@
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Default" size="12" style="0"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="maximum number of M. C. simulations"/>
+                    <Property name="text" type="java.lang.String" value="Number of individual objective evaluations"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -480,6 +480,9 @@
                   </Constraints>
                 </Component>
                 <Component class="javax.swing.JTextField" name="jTextField15">
+                  <Properties>
+                    <Property name="enabled" type="boolean" value="false"/>
+                  </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
                       <GridBagConstraints gridX="0" gridY="8" gridWidth="1" gridHeight="1" fill="2" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="3" insetsRight="0" anchor="17" weightX="0.0" weightY="0.0"/>
@@ -2154,18 +2157,37 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tableMenuActionPerformed"/>
                       </Events>
                     </MenuItem>
-                    <MenuItem class="javax.swing.JMenuItem" name="plotMenu">
+                    <Menu class="javax.swing.JMenu" name="scatterPlotMenu">
                       <Properties>
-                        <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                          <KeyStroke key="Ctrl+L"/>
-                        </Property>
-                        <Property name="mnemonic" type="int" value="108"/>
-                        <Property name="text" type="java.lang.String" value="Scatterplots"/>
+                        <Property name="text" type="java.lang.String" value="ScatterPlots"/>
                       </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="plotMenuActionPerformed"/>
-                      </Events>
-                    </MenuItem>
+                      <SubComponents>
+                        <MenuItem class="javax.swing.JMenuItem" name="dotsMenu">
+                          <Properties>
+                            <Property name="text" type="java.lang.String" value="Dots"/>
+                          </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dotsMenuActionPerformed"/>
+                          </Events>
+                        </MenuItem>
+                        <MenuItem class="javax.swing.JMenuItem" name="lineMenu">
+                          <Properties>
+                            <Property name="text" type="java.lang.String" value="Line"/>
+                          </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="lineMenuActionPerformed"/>
+                          </Events>
+                        </MenuItem>
+                        <MenuItem class="javax.swing.JMenuItem" name="bothMenu">
+                          <Properties>
+                            <Property name="text" type="java.lang.String" value="Both"/>
+                          </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bothMenuActionPerformed"/>
+                          </Events>
+                        </MenuItem>
+                      </SubComponents>
+                    </Menu>
                     <MenuItem class="javax.swing.JMenuItem" name="summaryMenu">
                       <Properties>
                         <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
@@ -2188,6 +2210,45 @@
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="traceMenuActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                  </SubComponents>
+                </Menu>
+                <Menu class="javax.swing.JMenu" name="jMenu1">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Plot"/>
+                  </Properties>
+                  <SubComponents>
+                    <MenuItem class="javax.swing.JMenuItem" name="dotsPlotMenu">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Dots"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dotsPlotMenuActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                    <MenuItem class="javax.swing.JMenuItem" name="linePlotMenu">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Line"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="linePlotMenuActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                    <MenuItem class="javax.swing.JMenuItem" name="bothPlotMenu">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Both"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bothPlotMenuActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                    <MenuItem class="javax.swing.JMenuItem" name="useRMenu">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Use R"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="useRMenuActionPerformed"/>
                       </Events>
                     </MenuItem>
                   </SubComponents>

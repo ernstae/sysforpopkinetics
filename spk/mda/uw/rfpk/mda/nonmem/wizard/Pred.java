@@ -23,7 +23,7 @@ import java.util.Vector;
 
 /**
  * This class defines a step to create the $PRED record
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class Pred extends javax.swing.JPanel implements WizardStep {
     
@@ -195,10 +195,20 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
                 String code = Utility.eliminateComments(record); 
                 // Find number of THETAs
                 iterator.setNTheta(Utility.find(code, "THETA"));
+                if(iterator.getNTheta() == 0)
+                    JOptionPane.showMessageDialog(null, "The number of fixed effect parameters is 0.\n",
+                                                  "Input Error", JOptionPane.ERROR_MESSAGE);
                 // Find number of ETAs
-                iterator.setNEta(Utility.find(code.replaceAll("THETA", ""), "ETA")); 
+                iterator.setNEta(Utility.find(code.replaceAll("THETA", ""), "ETA"));
+                if(iterator.getNEta() == 0)
+                    JOptionPane.showMessageDialog(null, "The number of random effect parameters is 0.\n",
+                                                  "Input Error", JOptionPane.ERROR_MESSAGE);      
                 // Find number of EPSs
-                iterator.setNEps(Utility.find(code, "EPS"));
+                iterator.setNEps(Utility.find(code, "EPS"));                
+                if(!iterator.getIsInd() && iterator.getNEps() == 0)
+                    JOptionPane.showMessageDialog(null, "The number of residual unkown variability parameters is 0.\n",
+                                                  "Input Error", JOptionPane.ERROR_MESSAGE);
+
                 // Check NONMEM compatibility
                 Vector names = Utility.checkMathFunction(code, title);
                 // Check parenthesis mismatch

@@ -44,14 +44,40 @@
             <p>
             <table border="1">
               <th>User ID</th>
-              <th>User Name</th>
+              <th>Username</th>
               <th>First Name</th>
-              <th>Last ID</th>
+              <th>Last Name</th>
+              <th>Company</th>
+              <th>Country</th>
+              <th>State</th>
+              <th>Email</th>
+              <th>Tester</th>
+              <th>Developer</th>
               <tr>
                 <td>${fn:escapeXml(validUser.userId)}</td>
                 <td>${fn:escapeXml(validUser.userName)}</td>
                 <td>${fn:escapeXml(validUser.firstName)}</td>
                 <td>${fn:escapeXml(validUser.lastName)}</td>
+                <td>${fn:escapeXml(validUser.company)}</td>
+                <td>${fn:escapeXml(validUser.country)}</td>
+                <td>${fn:escapeXml(validUser.state)}</td>
+                <td>${fn:escapeXml(validUser.email)}</td>
+                <c:choose>
+                  <c:when test="${validUser.tester == '1'}">
+                    <td>Yes</td>
+                  </c:when>
+                  <c:otherwise>
+                    <td>No</td>
+                  </c:otherwise>
+                </c:choose>
+                <c:choose>
+                  <c:when test="${validUser.developer == '1'}">
+                    <td>Yes</td>
+                  </c:when>
+                  <c:otherwise>
+                    <td>No</td>
+                  </c:otherwise>
+                </c:choose>
               </tr>
             </table>
             </c:otherwise>

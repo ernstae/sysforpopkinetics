@@ -9,6 +9,7 @@ package uw.rfpk.mda.nonmem.wizard;
 import uw.rfpk.mda.nonmem.Utility;
 import org.netbeans.ui.wizard.*;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.text.DefaultEditorKit;
 import java.awt.Component;
 import java.awt.event.ActionListener;
@@ -16,7 +17,7 @@ import java.awt.event.ActionEvent;
 
 /**
  * This class defines a step to create the $ERROR record
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class Error extends javax.swing.JPanel implements WizardStep {
     
@@ -166,6 +167,9 @@ public class Error extends javax.swing.JPanel implements WizardStep {
                 errorCode = Utility.eliminateComments(errorCode); 
                 // Find number of EPSs
                 iterator.setNEps(Utility.find(errorCode, "EPS"));
+                if(!iterator.getIsInd() && iterator.getNEps() == 0)
+                    JOptionPane.showMessageDialog(null, "The number of residual unkown variability parameters is 0.\n",
+                                                  "Input Error", JOptionPane.ERROR_MESSAGE);                
                 String record = "$ERROR " + "\n" + errorCode;
                 object.getRecords().setProperty("Error", record);
                 object.getSource().error = record.substring(7) + "\n";                

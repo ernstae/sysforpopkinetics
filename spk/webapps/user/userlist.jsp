@@ -56,12 +56,38 @@
               <th>User Name</th>
               <th>First Name</th>
               <th>Last Name</th>
+              <th>Company</th>
+              <th>Country</th>
+              <th>State</th>
+              <th>Email</th>
+              <th>Tester</th>
+              <th>Developer</th>
               <c:forEach items="${userList.rows}" var="row">
               <tr>
-                <td>${fn:escapeXml(row.user_id)}</td>
+                <td><a href=getuser.jsp?userName=${fn:escapeXml(row.username)}&password=${fn:escapeXml(row.password)}>${fn:escapeXml(row.user_id)}</a></td>
                 <td>${fn:escapeXml(row.username)}</td>
                 <td>${fn:escapeXml(row.first_name)}</td>
                 <td>${fn:escapeXml(row.surname)}</td>
+                <td>${fn:escapeXml(row.company)}</td>
+                <td>${fn:escapeXml(row.country)}</td>
+                <td>${fn:escapeXml(row.state)}</td>
+                <td>${fn:escapeXml(row.email)}</td>
+                <c:choose>
+                  <c:when test="${row.test == 1}">
+                    <td>Yes</td>
+                  </c:when>
+                  <c:otherwise>
+                    <td>No</td>
+                  </c:otherwise>
+                </c:choose>
+                <c:choose>
+                  <c:when test="${row.dev == 1}">
+                    <td>Yes</td>
+                  </c:when>
+                  <c:otherwise>
+                    <td>No</td>
+                  </c:otherwise>
+                </c:choose>
               </tr>
               </c:forEach>
             </table>

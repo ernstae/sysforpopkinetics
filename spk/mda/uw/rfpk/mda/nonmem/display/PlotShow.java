@@ -17,22 +17,23 @@ import javax.swing.JFrame;
 import javax.swing.DefaultListModel;
 import java.text.DecimalFormat;
 
-/** This class's instance processes scatterplot information and displays scatterplots
+/** This class's instance processes scatterplot information and displays scatterplots.
  *
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class PlotShow extends JFrame {
     
-    /** Creates new form PlotShow
-     * @param plotAll a String[][][] containing information for all the scatterplots
-     * @param dataAll a double[][] containing all pesentation data
-     * @param labelAll an Arraylist object containing the data labels
-     * @param dataLabelMap a Properties object containing the data label-alias mapping
+    /** Creates new form PlotShow.
+     * @param plotAll a String[][][] containing information for all the scatterplots.
+     * @param dataAll a double[][] containing all pesentation data.
+     * @param labelAll an Arraylist object containing the data labels.
+     * @param dataLabelMap a Properties object containing the data label-alias mapping.
      */
     public PlotShow(String[][][] plotAll, double[][] dataAll, ArrayList labelAll,
-                    Properties dataLabelMap) 
+                    Properties dataLabelMap, String type)
     {
         this.plotAll = plotAll;
+        this.type = type;
         
         // Display the window
         setSize(500, 500);
@@ -187,7 +188,6 @@ public class PlotShow extends JFrame {
         });
 
         jScrollPane1.setPreferredSize(new java.awt.Dimension(400, 200));
-        jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jList1.setFixedCellHeight(15);
         jScrollPane1.setViewportView(jList1);
 
@@ -202,70 +202,75 @@ public class PlotShow extends JFrame {
 
         getContentPane().add(jButton1, java.awt.BorderLayout.SOUTH);
 
-        jTextPane1.setText("Select a scatterplot to display");
+        jTextPane1.setEditable(false);
+        jTextPane1.setText("Select a scatterplot or scatterplots to display");
+        jTextPane1.setFocusable(false);
         getContentPane().add(jTextPane1, java.awt.BorderLayout.NORTH);
 
         pack();
     }//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        int selectedIndex = jList1.getSelectedIndex();
-        if(selectedIndex < 0)
+        int[] selectedIndex = jList1.getSelectedIndices();
+        if(selectedIndex.length == 1 && selectedIndex[0] < 0)
             return;
         
         // Get data and other information for the scatterplot record
-        String element = (String)jList1.getSelectedValue();
-        String[] tokens = element.split(" ");
-        int p = Integer.parseInt(tokens[1].split("_")[0]) - 1;
-        double[][] data = dataList[p]; 
-        String[][] plot = plotAll[p];
-        ArrayList alias = (ArrayList)aliasList.get(p);
-        ArrayList split = (ArrayList)splitList.get(p);
+        Object[] elements = jList1.getSelectedValues();
+        for(int j = 0; j < elements.length; j++)
+        {
+            String[] tokens = ((String)elements[j]).split(" ");
+            int p = Integer.parseInt(tokens[1].split("_")[0]) - 1;
+            double[][] data = dataList[p]; 
+            String[][] plot = plotAll[p];
+            ArrayList alias = (ArrayList)aliasList.get(p);
+            ArrayList split = (ArrayList)splitList.get(p);
         
-        // Put data in double arrays, only one curve in the plot
-        double[][] dataX = new double[1][];    
-        double[][] dataY = new double[1][];
-        String title = "";
-        if(plot[3] == null)
-        {
-            dataX[0] = new double[data.length];
-            dataY[0] = new double[data.length];
-            for(int i = 0; i < data.length; i++)
+            // Put data in double arrays, only one curve in the plot
+            double[][] dataX = new double[1][];    
+            double[][] dataY = new double[1][];
+            String title = "";
+            if(plot[3] == null)
             {
-                dataX[0][i] = data[i][alias.indexOf(tokens[4])];
-                dataY[0][i] = data[i][alias.indexOf(tokens[2])];
+                dataX[0] = new double[data.length];
+                dataY[0] = new double[data.length];
+                for(int i = 0; i < data.length; i++)
+                {
+                    dataX[0][i] = data[i][alias.indexOf(tokens[4])];
+                    dataY[0][i] = data[i][alias.indexOf(tokens[2])];
+                }
             }
-        }
-        else
-        {
-            String s = tokens[1].split("_")[2];
-            int n = Integer.parseInt(s.substring(0, s.length() - 1)) - 1;
-            Portion portion = (Portion)split.get(n); 
-            int length = portion.index2 - portion.index1;
-            dataX[0] = new double[length];
-            dataY[0] = new double[length];
- 	    for(int i = 0; i < length; i++) 
+            else
             {
-                dataX[0][i] = data[portion.index1 + i][alias.indexOf(tokens[4])];
-                dataY[0][i] = data[portion.index1 + i][alias.indexOf(tokens[2])];                
-	    }      
-            title = "This plot is for " + tokens[5];
-            if(plot[3].length > 1)
-                title += " " + tokens[6];
-        }
+                String s = tokens[1].split("_")[2];
+                int n = Integer.parseInt(s.substring(0, s.length() - 1)) - 1;
+                Portion portion = (Portion)split.get(n); 
+                int length = portion.index2 - portion.index1;
+                dataX[0] = new double[length];
+                dataY[0] = new double[length];
+                for(int i = 0; i < length; i++) 
+                {
+                    dataX[0][i] = data[portion.index1 + i][alias.indexOf(tokens[4])];
+                    dataY[0][i] = data[portion.index1 + i][alias.indexOf(tokens[2])];                
+                }      
+                title = "This plot is for " + tokens[5];
+                if(plot[3].length > 1)
+                    title += " " + tokens[6];
+            }
 
-        // Display the plot
-        Plotter plotter = new Plotter(dataX, dataY, title, tokens[4], tokens[2], 
-                                      plot[0][2].equals("show"), 
-                                      plot[0][3].equals("show"), 
-                                      plot[0][4].equals("yes"));
-        plotter.setToolTipText("");
-        JFrame frame = new JFrame();
-        frame.getContentPane().add(plotter);
-        frame.setLocation(50, 50);
-	frame.setSize(500,400);
-	frame.setTitle("Model Design Agent Scaterplot Display");	
-	frame.setVisible(true);        
+            // Display the plot
+            Plotter plotter = new Plotter(dataX, dataY, title, tokens[4], tokens[2], type,
+                                          plot[0][2].equals("show"), 
+                                          plot[0][3].equals("show"), 
+                                          plot[0][4].equals("show"));
+            plotter.setToolTipText("");
+            JFrame frame = new JFrame();
+            frame.getContentPane().add(plotter);
+            frame.setLocation(50 * j, 50 * j);
+            frame.setSize(500,400);
+            frame.setTitle("Model Design Agent Scaterplot Display");	
+            frame.setVisible(true);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     // Class to implements Comparator interface
@@ -320,4 +325,5 @@ public class PlotShow extends JFrame {
     private double[][][] dataList = null; 
     private ArrayList aliasList = new ArrayList();  
     private ArrayList splitList = new ArrayList();
+    private String type = null;
 }

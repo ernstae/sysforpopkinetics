@@ -20,7 +20,7 @@ import java.awt.event.ActionEvent;
 
 /**
  * This class defines a step to create the $INPUT record
- * @author  jiaji Du 
+ * @author  Jiaji Du 
  */
 public class Input extends javax.swing.JPanel implements WizardStep {
     
@@ -104,7 +104,6 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(17, 11, 10, 12);
         add(jTextField1, gridBagConstraints);
 
-        jTextField2.setText(" ");
         jTextField2.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -259,7 +258,6 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         add(jCheckBox2, gridBagConstraints);
 
         jButton1.setText("Remove");
-        jButton1.setEnabled(false);
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -296,7 +294,6 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         for(int i = j; i < input.length; i++)
             if(!input[i].equals(""))
                 return;
-        jButton1.setEnabled(false); 
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
@@ -440,10 +437,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         jTextField2.setText("");
         jCheckBox1.setSelected(false);
         jCheckBox2.setSelected(false);
-        
-        // Enable the Remove button
-        jButton1.setEnabled(true); 
-        
+
         // Repaint the table
         jTable1.repaint();
     }//GEN-LAST:event_addButtonActionPerformed

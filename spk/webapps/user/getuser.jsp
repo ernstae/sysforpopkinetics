@@ -24,7 +24,7 @@
 <sql:query var="userInfo">
   SELECT * FROM user WHERE username = ? AND password = ?
   <sql:param value="${param.userName}" />
-  <sql:param value="${digest.password}" />
+  <sql:param value="${param.password}" />
 </sql:query>
 
 <c:if test="${userInfo.rowCount == 0}">

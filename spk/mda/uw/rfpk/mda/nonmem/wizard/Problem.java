@@ -20,7 +20,7 @@ import java.awt.event.ActionEvent;
 
 /**
  * This class defines a step to create the $PROBLEm record
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class Problem extends javax.swing.JPanel implements WizardStep {
     

@@ -13,17 +13,30 @@
 </c:if>
 
 <c:set target="${digest}" property="password" value="${param.password}" />
-
+<c:set var="dev" value='0'  />
+<c:if test="${param.developer == '1'}">
+  <c:set var="dev" value='1'  />
+</c:if>
+<c:set var="test" value='0'  />
+<c:if test="${param.tester == '1'}">
+  <c:set var="test" value='1'  />
+</c:if>
 <c:choose>
   <c:when test="${param.task == 'addnew'}">
     <sql:update>
       INSERT INTO user 
-        (username, password, first_name, surname)
+        (username, password, first_name, surname, company, country, state, email, test, dev)
         VALUES(?, ?, ?, ?)
       <sql:param value="${param.userName}" />
       <sql:param value="${digest.password}" />
       <sql:param value="${param.firstName}" />
       <sql:param value="${param.lastName}" />
+      <sql:param value="${param.company}" />
+      <sql:param value="${param.country}" />
+      <sql:param value="${param.state}" />
+      <sql:param value="${param.email}" />
+      <sql:param value="${test}" />
+      <sql:param value="${dev}" />
     </sql:update>
   </c:when>
   <c:otherwise>
@@ -31,11 +44,23 @@
       UPDATE user
         SET password = ?, 
             first_name = ?, 
-            surname = ? 
+            surname = ?,
+            company = ?,
+            country = ?,
+            state = ?,
+            email = ?,
+            test = ?,
+            dev = ? 
         WHERE username = ?
       <sql:param value="${digest.password}" />
       <sql:param value="${param.firstName}" />
       <sql:param value="${param.lastName}" />
+      <sql:param value="${param.company}" />
+      <sql:param value="${param.country}" />
+      <sql:param value="${param.state}" />
+      <sql:param value="${param.email}" />
+      <sql:param value="${test}" />
+      <sql:param value="${dev}" />
       <sql:param value="${param.userName}" />
     </sql:update>
   </c:otherwise>

@@ -8,7 +8,7 @@ package uw.rfpk.mda.nonmem.wizard;
 
 /**
  * This class defines an object that contains input data
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class Source {
     

@@ -16,7 +16,7 @@ import java.awt.event.ActionEvent;
 
 /**
  * This class defines a step to create the Continue
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 
 public class Continue extends javax.swing.JPanel implements WizardStep {

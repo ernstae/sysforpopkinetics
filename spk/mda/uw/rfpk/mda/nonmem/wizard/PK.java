@@ -23,7 +23,7 @@ import java.util.Vector;
 
 /**
  * This class defines a step to create the $PK record
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class PK extends javax.swing.JPanel implements WizardStep {
     
@@ -193,8 +193,14 @@ public class PK extends javax.swing.JPanel implements WizardStep {
                 String code = Utility.eliminateComments(record); 
                 // Find number of THETAs
                 iterator.setNTheta(Utility.find(code, "THETA"));
+                if(iterator.getNTheta() == 0)
+                    JOptionPane.showMessageDialog(null, "The number of fixed effect parameters is 0.\n",
+                                                  "Input Error", JOptionPane.ERROR_MESSAGE);                
                 // Find number of ETAs
                 iterator.setNEta(Utility.find(code.replaceAll("THETA", ""), "ETA"));
+                if(iterator.getNEta() == 0)
+                    JOptionPane.showMessageDialog(null, "The number of random effect parameters is 0.\n",
+                                                  "Input Error", JOptionPane.ERROR_MESSAGE);                
                 // Check NONMEM compatibility
                 Vector names = Utility.checkMathFunction(code, title);
                 // Check parenthesis mismatch

@@ -16,7 +16,7 @@ public class MDA
     /**
      * The main method that creates the application object and initialize it.
      * @param args A String array containing the server host name, the server
-     * port number, session ID and secret code. 
+     * port number, session ID and secret code.
      */
     public static void main(String[] args)
     {

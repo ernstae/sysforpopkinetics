@@ -16,7 +16,7 @@ import java.awt.event.ActionEvent;
 
 /**
  * This class defines a step to create the $DES record
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class Des extends javax.swing.JPanel implements WizardStep {
     

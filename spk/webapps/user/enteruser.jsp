@@ -50,7 +50,7 @@
             </c:choose>
               <table>
                 <tr>
-                  <td>User Name:</td>
+                  <td>Username:</td>
                   <td><input type="text" name="userName"
                     value="${fn:escapeXml(param.userName)}">
                   </td>
@@ -77,6 +77,48 @@
                   </td>
                   <td><font color="red">${fn:escapeXml(lastNameError)}</font></td>
                 </tr>
+                <tr>
+                  <td>Company:</td>
+                  <td><input type="text" name="company"
+                    value="${fn:escapeXml(param.company)}">
+                  </td>
+                  <td><font color="red">${fn:escapeXml(companyError)}</font></td>
+                </tr>
+                <tr>
+                  <td>Country:</td>
+                  <td><input type="text" name="country"
+                    value="${fn:escapeXml(param.country)}">
+                  </td>
+                  <td><font color="red">${fn:escapeXml(countryError)}</font></td>
+                </tr>
+                <tr>
+                  <td>State:</td>
+                  <td><input type="text" name="state"
+                    value="${fn:escapeXml(param.state)}">
+                  </td>
+                  <td><font color="red">${fn:escapeXml(stateError)}</font></td>
+                </tr>
+                <tr>
+                  <td>Email:</td>
+                  <td><input type="text" name="email"
+                    value="${fn:escapeXml(param.email)}">
+                  </td>
+                  <td><font color="red">${fn:escapeXml(emailError)}</font></td>
+                </tr>
+                <tr>
+                  <td>Tester?:</td>
+                  <td><input type="checkbox" name="tester"
+                    value="1">
+                  </td>
+                  <td><font color="red">${fn:escapeXml(testerError)}</font></td>
+                </tr>
+                <tr>
+                  <td>Developer?:</td>
+                  <td><input type="checkbox" name="developer"
+                    value="1">
+                  </td>
+                  <td><font color="red">${fn:escapeXml(developerError)}</font></td>
+                </tr>                                        
                 <tr>
                   <th align="left"><input type="submit" value="Submit"></th>
                 </tr>

@@ -92,9 +92,9 @@ public class XMLWriter
         }
         setSimulation(analysis); 
         setModel(nonmem);   
-        setPresentation(nonmem); 
+        setPresentation(nonmem);
     } 
-    
+
     // Generate description
     private void setDescription(Element parent)
     {
@@ -305,8 +305,11 @@ public class XMLWriter
                 compartment.setAttribute("initial_off", source.model[i][1]);
                 compartment.setAttribute("no_off", source.model[i][2]);                
                 compartment.setAttribute("no_dose", source.model[i][3]);
-                compartment.setAttribute("equilibrium", source.model[i][4]);
-                compartment.setAttribute("exclude", source.model[i][5]);
+                if(source.subroutines[0].equals("advan9"))
+                {
+                    compartment.setAttribute("equilibrium", source.model[i][4]);
+                    compartment.setAttribute("exclude", source.model[i][5]);
+                }
                 compartment.setAttribute("def_observation", source.model[i][6]);
                 compartment.setAttribute("def_dose", source.model[i][7]);
                 comp_model.appendChild(compartment);
@@ -550,7 +553,8 @@ public class XMLWriter
         Element spkjob = docJob.createElement("spkjob");
         spkjob.setAttribute("abstract", spkOutput.getProperty("jobAbstract")); 
         spkjob.setAttribute("submission_time", spkOutput.getProperty("startTime"));
-        spkjob.setAttribute("completion_time", spkOutput.getProperty("eventTime"));          
+        spkjob.setAttribute("completion_time", spkOutput.getProperty("eventTime"));
+        spkjob.setAttribute("method", spkOutput.getProperty("method"));
         Element model = docJob.createElement("model");
         Element data = docJob.createElement("data");
         model.setAttribute("name", spkOutput.getProperty("modelName"));

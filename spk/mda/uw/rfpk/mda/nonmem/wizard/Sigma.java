@@ -26,7 +26,7 @@ import java.awt.event.KeyEvent;
 
 /**
  * This class defines a step to create the $SIGMA record
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class Sigma extends javax.swing.JPanel implements WizardStep {
     
@@ -38,13 +38,13 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
     private String attributes = "";
     private JWizardPane wizardPane = null;
     private boolean isValid = false;
-    private boolean isDiagonal = true;
-    private boolean isBlockFixed = false;
     private int dimension = 1;
     private int dimSum = 0;
     private int nEps = 0;
     private int index = -1;
-    private Object[][] data = null; 
+    private Object[][] data = null;
+    private Object[][] diagonalValues = null;
+    private Object[][] blockValues = null;
     private Vector dimList = new Vector();
     private String element = null;
 
@@ -93,7 +93,6 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
 
         jDialog1.getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        jDialog1.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         jDialog1.setBackground(java.awt.Color.white);
         jDialog1.setLocationRelativeTo(jDialog1);
         jDialog1.setModal(true);
@@ -227,7 +226,7 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("Enter the initial estimates and constraints for the elements of one or\nserveral blocks of the SIGMA matrix.  You may either enter data for a\nnew  block or constrain the block to be equal to the preceding block.");
+        jTextPane1.setText("Enter the initial estimates and constraints for the elements of one or\nserveral blocks of the residual unknown variability covariance matrix.\nYou may either enter data for a new  block or constrain the block to \nbe equal to the preceding block.");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
@@ -243,8 +242,8 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridy = 5;
         gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(11, 16, 30, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(11, 16, 30, 0);
         add(jTextPane2, gridBagConstraints);
 
         changeButton.setText("Change");
@@ -455,15 +454,72 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
     }//GEN-LAST:event_jTable1KeyTyped
 
     private void jList1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jList1MouseClicked
-        index = jList1.getSelectedIndex();    
+        index = jList1.getSelectedIndex();
+        
+        // Reload selected value
+        String selectedValue = (String)jList1.getSelectedValue();
+        if(selectedValue.endsWith("SAME"))
+        {
+            jRadioButton4.doClick();
+        }
+        else
+        {
+            jRadioButton3.doClick();
+            int index1 = selectedValue.indexOf("(");
+            int index2 = selectedValue.indexOf(")");
+            dimension = Integer.parseInt(selectedValue.substring(index1 + 1, index2));
+            jComboBox1.setSelectedItem(String.valueOf(dimension));
+            String[] items = selectedValue.substring(index2 + 2).replaceAll(" FIXED", "F").trim().split(" ");           
+            String item = null;
+            if(selectedValue.substring(7, index1).equals("BLOCK"))
+            {
+                jRadioButton2.doClick();
+                blockValues = new Object[dimension][dimension];
+                int k = 0;
+                jCheckBox1.setSelected(items[0].endsWith("F"));                
+                for(int i = 0; i < dimension; i++)
+                {
+                    for(int j = 1; j < i + 2; j++)
+                    {
+                        item = items[k++];
+                        if(item.endsWith("F"))
+                            item = item.substring(0, item.length() - 1);
+                        blockValues[i][j - 1] = item;
+                    }
+                }
+            }
+            else
+            {
+                jRadioButton1.doClick();
+                diagonalValues = new Object[dimension][2];
+                boolean isAllFixed = true;
+                for(int i = 0; i < dimension; i++)
+                {
+                    item = items[i];
+                    if(item.endsWith("F"))
+                    {
+                        diagonalValues[i][1] = new Boolean(true);
+                        item = item.substring(0, item.length() - 1);
+                    }
+                    else
+                    {
+                        diagonalValues[i][1] = new Boolean(false);
+                        isAllFixed = false;
+                    }
+                    diagonalValues[i][0] = item;
+                    jCheckBox1.setSelected(isAllFixed);
+                }
+            }
+        }        
+        jButton2.setEnabled(true);
         changeButton.setEnabled(true);
         deleteButton.setEnabled(true);        
         Utility.setUpDownButton(index, model, upButton, downButton);
     }//GEN-LAST:event_jList1MouseClicked
 
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
-        isBlockFixed = jCheckBox1.isSelected();
-        if(isDiagonal)
+        boolean isBlockFixed = jCheckBox1.isSelected();
+        if(jRadioButton1.isSelected())
         {
             for(int i = 0; i < dimension; i++)
                 tableModel.setValueAt(new Boolean(isBlockFixed), i, 2);
@@ -473,7 +529,7 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // Create an element to add to the list
-        if(isDiagonal)
+        if(jRadioButton1.isSelected())
         {
             element = "DIAGONAL(" + dimension + ")";
             for(int i = 0; i < dimension; i++)
@@ -533,7 +589,7 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
                         return;
                     }                    
                     element = element + " " + value;
-                    if(isBlockFixed) 
+                    if(jCheckBox1.isSelected()) 
                         element = element + " FIXED";
                 }
             }
@@ -575,15 +631,24 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
             return;
         }
         dimension = Integer.parseInt(size);
-        isDiagonal = jRadioButton1.isSelected();
-        if(isDiagonal)
+        if(jRadioButton1.isSelected())
         {
             data = new Object[dimension][3];
             for(int i = 0; i < dimension; i++)
             {
                 data[i][0] = String.valueOf(i + 1) + "," + String.valueOf(i + 1);
-                data[i][1] = "";
-                data[i][2] = new Boolean(false);
+                if(diagonalValues == null)
+                {
+                    data[i][1] = "";
+                    data[i][2] = new Boolean(false);
+                    jButton2.setEnabled(false);
+                    jCheckBox1.setSelected(false);                    
+                }
+                else
+                {
+                    data[i][1] = diagonalValues[i][0];
+                    data[i][2] = diagonalValues[i][1];                    
+                }                
             }            
         }
         else
@@ -599,7 +664,14 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
                     }
                     else 
                     {
-                        data[i][j] = "";
+                        if(blockValues == null)
+                        {
+                            data[i][j] = "";
+                            jButton2.setEnabled(false);
+                            jCheckBox1.setSelected(false);                            
+                        }
+                        else
+                            data[i][j] = blockValues[i][j - 1];                        
                     }
             }            
         }
@@ -628,7 +700,7 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
         };
         
         
-        if(isDiagonal)
+        if(jRadioButton1.isSelected())
         {
             if(dimension < 7)
             {
@@ -685,9 +757,6 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
         jScrollPane2.setRowHeader(jv);
         
         // Display the dialog
-        jButton2.setEnabled(false);
-        jCheckBox1.setSelected(false); 
-        isBlockFixed = false;
         jDialog1.setLocationRelativeTo(this);
         jDialog1.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -843,7 +912,7 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
             }
             else
             {
-                if(isDiagonal)
+                if(jRadioButton1.isSelected())
                 {
                     if(c == 1) name = "Initial Estimate"; 
                     if(c == 2) name = "Value is fixed";
@@ -859,7 +928,7 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
             return data[0][c].getClass();
         }
         public int getColumnCount() {
-            if(isDiagonal) return 3;
+            if(jRadioButton1.isSelected()) return 3;
             else return dimension + 1; 
         }
         public int getRowCount() {
@@ -870,7 +939,7 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
         }
         public boolean isCellEditable(int r, int c) {
             boolean isEditable = true;
-            if(isDiagonal) isEditable = !(c == 0);
+            if(jRadioButton1.isSelected()) isEditable = !(c == 0);
             else isEditable = !(c == 0 || c - r > 1); 
             return isEditable;
         }
@@ -1012,12 +1081,15 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
                     String block = (String)model.get(i);
                     block = block.replaceAll(" FIXED", "F");
                     String[] items = block.split(" ");
-                    sigma[i] = new String[items.length];
-                    sigma[i][0] = items[1].substring(0, items[1].indexOf("(")).toLowerCase();  
-                    sigma[i][1] = items[1].substring(items[1].indexOf("(") + 1, 
+                    String struc = items[1].substring(0, items[1].indexOf("(")).toLowerCase();  
+                    String dimen = items[1].substring(items[1].indexOf("(") + 1, 
                                                      items[1].length() - 1);
-                    for(int j = 2; j < items.length; j++)
-                        sigma[i][j] = items[j];
+                    items = block.substring(block.indexOf(")") + 2).trim().split(" ");                
+                    sigma[i] = new String[items.length + 2];
+                    sigma[i][0] = struc;
+                    sigma[i][1] = dimen;                    
+                    for(int j = 0; j < items.length; j++)
+                        sigma[i][j + 2] = items[j];                    
                 }
                 object.getSource().sigma = sigma;
             }

@@ -17,7 +17,7 @@ import java.awt.event.ActionEvent;
 
 /**
  * This class defines a step to create the $MODEL record
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class Model extends javax.swing.JPanel implements WizardStep {
     
@@ -56,7 +56,6 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         jTextPane3 = new javax.swing.JTextPane();
         jCheckBox6 = new javax.swing.JCheckBox();
         jCheckBox7 = new javax.swing.JCheckBox();
-        jTextField3 = new javax.swing.JTextField();
         addButton = new javax.swing.JButton();
         upButton = new javax.swing.JButton();
         downButton = new javax.swing.JButton();
@@ -74,6 +73,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         jButton1 = new javax.swing.JButton();
         jTextField1 = new javax.swing.JTextField();
         jTextField2 = new javax.swing.JTextField();
+        jTextField3 = new javax.swing.JTextField();
         jTextField4 = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jSeparator3 = new javax.swing.JSeparator();
@@ -171,22 +171,6 @@ public class Model extends javax.swing.JPanel implements WizardStep {
 
         setLayout(new java.awt.GridBagLayout());
 
-        jTextField3.setText(" ");
-        jTextField3.setPreferredSize(new java.awt.Dimension(8, 25));
-        jTextField3.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jTextField3FocusLost(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(10, 12, 17, 12);
-        add(jTextField3, gridBagConstraints);
-
         addButton.setText("Add");
         addButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -195,7 +179,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         });
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -210,7 +194,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         });
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -225,7 +209,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         });
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -234,27 +218,31 @@ public class Model extends javax.swing.JPanel implements WizardStep {
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("Enter total number of compartments other than the output compartment, \nnumber of equilibrium compartments, number of basic PK parameters.  \nThen enter the definition of each compartments: its name and attributes.\n(These items are all optional in order to create a compartment.)");
+        jTextPane1.setText("Enter total number of compartments other than the output compartment, \nnumber of equilibrium compartments, number of basic PK parameters.  \nThen enter the definition of each compartments: its name and attributes.\n(Note:  These items are all optional in order to create a compartment.)");
+        jTextPane1.setFocusable(false);
         jTextPane1.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jTextPane1.setMinimumSize(new java.awt.Dimension(500, 60));
         jTextPane1.setPreferredSize(new java.awt.Dimension(400, 60));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridwidth = 6;
+        gridBagConstraints.gridwidth = 7;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 8);
         add(jTextPane1, gridBagConstraints);
 
         jTextPane2.setBackground(new java.awt.Color(204, 204, 204));
+        jTextPane2.setEditable(false);
         jTextPane2.setText("List of the\ncompart-\nments\nyou have\nentered in\nNONMEM\nsyntax");
-        jTextPane2.setMinimumSize(new java.awt.Dimension(0, 81));
-        jTextPane2.setPreferredSize(new java.awt.Dimension(0, 81));
+        jTextPane2.setFocusable(false);
+        jTextPane2.setMaximumSize(new java.awt.Dimension(70, 81));
+        jTextPane2.setMinimumSize(new java.awt.Dimension(70, 81));
+        jTextPane2.setPreferredSize(new java.awt.Dimension(70, 81));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(11, 12, 12, 11);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(11, 12, 12, 5);
         add(jTextPane2, gridBagConstraints);
 
         changeButton.setText("Change");
@@ -265,7 +253,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         });
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -280,7 +268,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         });
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -290,14 +278,14 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = 6;
+        gridBagConstraints.gridwidth = 7;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 16);
         add(jSeparator1, gridBagConstraints);
 
         jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridheight = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
@@ -320,7 +308,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 5;
-        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.gridwidth = 4;
         gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
@@ -331,6 +319,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(13, 12, 12, 0);
         add(jLabel1, gridBagConstraints);
@@ -339,6 +328,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(9, 12, 9, 0);
         add(jLabel2, gridBagConstraints);
@@ -347,6 +337,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(9, 12, 18, 2);
         add(jLabel3, gridBagConstraints);
@@ -359,21 +350,16 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         });
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(7, 12, 14, 12);
         add(jButton1, gridBagConstraints);
 
         jTextField1.setPreferredSize(new java.awt.Dimension(4, 25));
-        jTextField1.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jTextField1FocusLost(evt);
-            }
-        });
-
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 50;
@@ -382,25 +368,28 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         add(jTextField1, gridBagConstraints);
 
         jTextField2.setPreferredSize(new java.awt.Dimension(4, 25));
-        jTextField2.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jTextField2FocusLost(evt);
-            }
-        });
-
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         add(jTextField2, gridBagConstraints);
 
+        jTextField3.setPreferredSize(new java.awt.Dimension(8, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 12, 17, 12);
+        add(jTextField3, gridBagConstraints);
+
         jTextField4.setMaximumSize(new java.awt.Dimension(80, 25));
         jTextField4.setMinimumSize(new java.awt.Dimension(80, 25));
         jTextField4.setPreferredSize(new java.awt.Dimension(80, 25));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 30;
@@ -410,7 +399,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
 
         jLabel4.setText("Name:");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(11, 12, 5, 12);
@@ -418,7 +407,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
 
         jSeparator3.setOrientation(javax.swing.SwingConstants.VERTICAL);
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridheight = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
@@ -426,47 +415,38 @@ public class Model extends javax.swing.JPanel implements WizardStep {
 
     }//GEN-END:initComponents
 
-    private void jTextField3FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField3FocusLost
-        String n = jTextField3.getText().trim();
-        if(!Utility.isPosIntNumber(n) && !n.equals("0"))
-        {
-            JOptionPane.showMessageDialog(null, 
-                                          "The number of basic PK parameters is " +
-                                          "not a positive integer or zero.",
-                                          "Input Error",  
-                                          JOptionPane.ERROR_MESSAGE); 
-            jTextField3.setText("");
-        }             
-    }//GEN-LAST:event_jTextField3FocusLost
-
-    private void jTextField2FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField2FocusLost
-        String n = jTextField2.getText().trim();
-        if(!Utility.isPosIntNumber(n) && !n.equals("0"))
-        {
-            JOptionPane.showMessageDialog(null, 
-                                          "The number of equilibrium equations is " +
-                                          "not a positive integer or zero.",
-                                          "Input Error",  
-                                          JOptionPane.ERROR_MESSAGE); 
-            jTextField2.setText("");
-        }              
-    }//GEN-LAST:event_jTextField2FocusLost
-
-    private void jTextField1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField1FocusLost
-        String n = jTextField1.getText().trim();
-        if(!Utility.isPosIntNumber(n))
-        {
-            JOptionPane.showMessageDialog(null, 
-                                          "The number of compartments other than the output compartment is " +
-                                          "not a positive integer",
-                                          "Input Error",  
-                                          JOptionPane.ERROR_MESSAGE); 
-            jTextField1.setText("");
-        }
-    }//GEN-LAST:event_jTextField1FocusLost
-
     private void jList1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jList1MouseClicked
-        index = jList1.getSelectedIndex();    
+        index = jList1.getSelectedIndex();
+        
+        // Reload selected value
+        String selectedValue = (String)jList1.getSelectedValue();        
+        int beginIndex = selectedValue.indexOf("(") + 1;
+        int endIndex = selectedValue.indexOf(")");
+        selectedValue = selectedValue.substring(beginIndex, endIndex);
+        jTextField4.setText(selectedValue.split(" ")[0]);        
+        int spaceIndex = selectedValue.indexOf(" ");
+        if(spaceIndex != -1)
+        {            
+            String attributes = selectedValue.substring(spaceIndex);
+            jCheckBox1.setSelected(selectedValue.indexOf(" INITIALOFF") != -1);
+            jCheckBox2.setSelected(selectedValue.indexOf(" NOOFF") != -1);
+            jCheckBox3.setSelected(selectedValue.indexOf(" NODOSE") != -1);
+            if(iterator.getAdvan() == 9)
+            {   
+                jCheckBox4.setEnabled(true);
+                jCheckBox5.setEnabled(true);
+                jCheckBox4.setSelected(selectedValue.indexOf(" EQUILIBRIUM") != -1);
+                jCheckBox5.setSelected(selectedValue.indexOf(" EXCLUDE") != -1);
+            }
+            else
+            {
+                jCheckBox4.setEnabled(false);
+                jCheckBox5.setEnabled(false);                
+            }
+            jCheckBox6.setSelected(selectedValue.indexOf(" DEFOBSERVATION") != -1);
+            jCheckBox7.setSelected(selectedValue.indexOf(" DEFDOSE") != -1);            
+        }
+        
         changeButton.setEnabled(true);
         deleteButton.setEnabled(true);        
         Utility.setUpDownButton(index, model, upButton, downButton);
@@ -475,19 +455,19 @@ public class Model extends javax.swing.JPanel implements WizardStep {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         attributes = "";
         if(jCheckBox1.isSelected())
-            attributes = attributes + " " + "INITIALOFF";
+            attributes = attributes + " INITIALOFF";
         if(jCheckBox2.isSelected())
-            attributes = attributes + " " + "NOOFF";
+            attributes = attributes + " NOOFF";
         if(jCheckBox3.isSelected())
-            attributes = attributes + " " + "NODOSE";
+            attributes = attributes + " NODOSE";
         if(iterator.getAdvan() == 9 && jCheckBox4.isSelected())
-            attributes = attributes + " " + "EQUILIBRIUM";
+            attributes = attributes + " EQUILIBRIUM";
         if(iterator.getAdvan() == 9 && jCheckBox5.isSelected())
-            attributes = attributes + " " + "EXCLUDE";
+            attributes = attributes + " EXCLUDE";
         if(jCheckBox6.isSelected())
-            attributes = attributes + " " + "DEFOBSERVATION";
+            attributes = attributes + " DEFOBSERVATION";
         if(jCheckBox7.isSelected())
-            attributes = attributes + " " + "DEFDOSE";
+            attributes = attributes + " DEFDOSE";
         jDialog1.setVisible(false);
         jDialog1.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -495,6 +475,11 @@ public class Model extends javax.swing.JPanel implements WizardStep {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         jCheckBox4.setEnabled(iterator.getAdvan() == 9);
         jCheckBox5.setEnabled(iterator.getAdvan() == 9);
+        if(iterator.getAdvan() != 9) 
+        {
+            jCheckBox4.setSelected(false);
+            jCheckBox5.setSelected(false);            
+        }
         jDialog1.setSize(250,280);            
         jDialog1.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -535,8 +520,12 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         // Check if changeable
         for(int i = 0; i < model.getSize(); i++)
             if(i != index && 
-               ((String)model.get(i)).split(" ")[0].equals(element.split(" ")[0])) 
-                return; 
+               ((String)model.get(i)).split(" ")[0].equals(element.split(" ")[0]))
+            {
+                JOptionPane.showMessageDialog(null, "The name '" + name + "' is already used.",
+                                              "Input Error", JOptionPane.ERROR_MESSAGE);                
+                return;
+            }
         model.setElementAt(element, index);     
         jList1.setSelectedIndex(index);
     }//GEN-LAST:event_changeButtonActionPerformed
@@ -562,8 +551,12 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         // Check if addable
         for(int i = 0; i < model.getSize(); i++)
         {
-            if(element.split(" ")[0].equals(((String)model.get(i)).split(" ")[0])) 
-                return;    
+            if(element.split(" ")[0].equals(((String)model.get(i)).split(" ")[0]))
+            {
+                JOptionPane.showMessageDialog(null, "The name '" + name + "' is already used.",
+                                              "Input Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
         }
         // Update the name of the followed compartments
         for(int i = index + 1; i < model.getSize(); i++)
@@ -580,12 +573,45 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         if(model.getSize() == 9)
             addButton.setEnabled(false);
         
-        // Set left options
-        isValid = true;
-        wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray()); 
-        
         // Set up and down buttons
         Utility.setUpDownButton(index, model, upButton, downButton);
+        
+        // Set left options
+        String n1 = jTextField1.getText().trim();
+        String n2 = jTextField2.getText().trim();
+        String n3 = jTextField3.getText().trim();        
+        if(!Utility.isPosIntNumber(n1))
+        {
+            JOptionPane.showMessageDialog(null, 
+                                          "The number of compartments other than the output compartment is " +
+                                          "not a positive integer",
+                                          "Input Error",  
+                                          JOptionPane.ERROR_MESSAGE); 
+            jTextField1.setText("");
+        }
+        else if(!Utility.isPosIntNumber(n2) && !n2.equals("0"))
+        {
+            JOptionPane.showMessageDialog(null, 
+                                          "The number of equilibrium equations is " +
+                                          "not a positive integer or zero.",
+                                          "Input Error",  
+                                          JOptionPane.ERROR_MESSAGE); 
+            jTextField2.setText("");
+        }
+        else if(!Utility.isPosIntNumber(n3) && !n3.equals("0"))
+        {
+            JOptionPane.showMessageDialog(null, 
+                                          "The number of basic PK parameters is " +
+                                          "not a positive integer or zero.",
+                                          "Input Error",  
+                                          JOptionPane.ERROR_MESSAGE); 
+            jTextField3.setText("");
+        }        
+        else
+        {
+            isValid = true;
+            wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());            
+        }        
     }//GEN-LAST:event_addButtonActionPerformed
 
     private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upButtonActionPerformed
@@ -684,8 +710,8 @@ public class Model extends javax.swing.JPanel implements WizardStep {
                     beginIndex = text.indexOf("COMP=(");
                     while(beginIndex != -1)
                     {
-                        endIndex = text.indexOf(")", beginIndex); 
-                        model.addElement(text.substring(beginIndex, endIndex + 1));
+                        endIndex = text.indexOf(")", beginIndex);
+                        model.addElement(checkAttribute(text.substring(beginIndex, endIndex + 1)));
                         beginIndex = text.indexOf("COMP=(", endIndex);
                     }
                     index = model.size() - 1;
@@ -693,9 +719,36 @@ public class Model extends javax.swing.JPanel implements WizardStep {
                     isValid = true;
                     wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());                    
                 }
+                else
+                    for(int i = 0; i < model.size(); i++)
+                        model.set(i, checkAttribute((String)model.get(i)));
             }
+            else
+                for(int i = 0; i < model.size(); i++)
+                    model.set(i, checkAttribute((String)model.get(i)));
 	}
 
+        private String checkAttribute(String element)
+        {
+            String cName = element.substring(6, element.indexOf(" "));
+            String attrs = element.substring(element.indexOf(" "), element.length() - 1);
+            if(iterator.getAdvan() != 9 && attrs.indexOf(" EQUILIBRIUM") != -1)
+            {
+                element = element.replaceAll(" EQUILIBRIUM", "");
+                JOptionPane.showMessageDialog(null, "The attribute 'EQUILIBRIUM' has been removed from compartment '" + cName + "'\n" +
+                                              "because it is only for ADVAN9.", 
+                                              "Input Error", JOptionPane.ERROR_MESSAGE);
+            }
+            if(iterator.getAdvan() != 9 && attrs.indexOf(" EXCLUDE") != -1)
+            {
+                element =element.replaceAll(" EXCLUDE", "");
+                JOptionPane.showMessageDialog(null, "The attribute 'EXCLUDE' has been removed from compartment '" + cName + "'\n" +
+                                              "because it is only for ADVAN9.", 
+                                              "Input Error", JOptionPane.ERROR_MESSAGE);
+            }
+            return element;
+        }
+        
 	public void hidingStep(JWizardPane wizard){
             if(iterator.getIsBack())
             {
@@ -739,39 +792,39 @@ public class Model extends javax.swing.JPanel implements WizardStep {
             for(int i = 1; i <= size; i++)
             {
                 String compartment = (String)model.get(i - 1);
-                String name = compartment.substring(6, compartment.indexOf(",", 6));              
+                String name = compartment.substring(6, compartment.indexOf(" ", 6));              
                 compartments[i] = new String[8];
                 if(name.startsWith("\"") || name.startsWith("'"))
                 {
                     name = name.substring(1, name.length() - 1);                    
                 }
                 compartments[i][0] = name; 
-                if(compartment.indexOf(",INITIALOFF") != -1)
+                if(compartment.indexOf(" INITIALOFF") != -1)
                     compartments[i][1] = "yes";
                 else
                     compartments[i][1] = "no";
                 
-                if(compartment.indexOf(",NOOFF") != -1)
+                if(compartment.indexOf(" NOOFF") != -1)
                     compartments[i][2] = "yes";
                 else
                     compartments[i][2] = "no";
-                if(compartment.indexOf(",NODOSE") != -1)
+                if(compartment.indexOf(" NODOSE") != -1)
                     compartments[i][3] = "yes";
                 else
                     compartments[i][3] = "no";
-                if(compartment.indexOf(",EQUILIBRIUM") != -1)
+                if(compartment.indexOf(" EQUILIBRIUM") != -1)
                     compartments[i][4] = "yes";
                 else
                     compartments[i][4] = "no";
-                if(compartment.indexOf(",EXCLUDE") != -1)
+                if(compartment.indexOf(" EXCLUDE") != -1)
                     compartments[i][5] = "yes";
                 else
                     compartments[i][5] = "no";
-                if(compartment.indexOf(",DEFOBSERVATION") != -1)
+                if(compartment.indexOf(" DEFOBSERVATION") != -1)
                     compartments[i][6] = "yes";
                 else
                     compartments[i][6] = "no";
-                if(compartment.indexOf(",DEFDOSE") != -1)
+                if(compartment.indexOf(" DEFDOSE") != -1)
                     compartments[i][7] = "yes";
                 else
                     compartments[i][7] = "no";

@@ -21,7 +21,7 @@ import java.text.SimpleDateFormat;
 
 /**
  * This is the main class of model archive management tool.
- * @author  jiaji
+ * @author  Jiaji
  */
 public class GetModel extends javax.swing.JFrame {
     
