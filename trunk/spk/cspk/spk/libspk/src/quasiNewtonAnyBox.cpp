@@ -1258,7 +1258,7 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
       // only be solved with accuracy sufficient for the current x value.
       delta = MaxAbs( gCur ) / deltaScale;
 
-      // 
+      // Ask the optimizer to take perform a limited number of iterations.
       msg = QuasiNewton01Box(
         os,
         level,
@@ -1274,6 +1274,8 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
         xCur,
         gCur,
         HCur );
+
+    QUES: SHOULD ANY ACTIONS BE TAKEN BASED ON THE OUTPUT VALUE FROM Q
 
       // Add the number of iterations that were performed.
       i += itrCur;
