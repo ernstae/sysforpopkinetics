@@ -32,31 +32,31 @@ public abstract class Spkdb {
 	} catch (Exception e) {
 	    throw new SpkdbException("Could not instantiate " + driverName); 
 	}
-	Connection con = DriverManager.getConnection("jdbc:mysql://" +
+	Connection conn = DriverManager.getConnection("jdbc:mysql://" +
 						      hostName + "/" +
 						      dbName + 
 						      "?user=" + dbUser + 
 						      "&password=" + dbPassword);
-	return con;
+	return conn;
     }
     /**
        Close a database connection.
-       @param con open connection to a database
+       @param conn open connection to a database
        @see #connect
      */
-    public static boolean disconnect(Connection con) throws SQLException {
-	con.close();
+    public static boolean disconnect(Connection conn) throws SQLException {
+	conn.close();
 	return true;
     }
     /**
        Inserts a new user in the database, returning a unique key.
-       @param con connection object obtained by a previous call on connect()
+       @param conn connection object obtained by a previous call on connect()
        @param name array of strings containing field names
        @param value array of values corresponding to field names in name
        @return long integer which is the unique key of the new row 
        @see #connect
      */
-    public static long newUser(Connection con, String name[], String value[])
+    public static long newUser(Connection conn, String name[], String value[])
 	throws SQLException, SpkdbException
     {
 	long userId = 0;
@@ -78,7 +78,7 @@ public abstract class Spkdb {
 	    throw new SpkdbException("username and/or password missing in name list");
 	}
 	String sql = "insert into user (" + nameList + ") values (" + valueList + ")";
-	Statement stmt = con.createStatement();
+	Statement stmt = conn.createStatement();
 	stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
 	ResultSet rs = stmt.getGeneratedKeys();
 	if (rs.next()) {
@@ -86,4 +86,26 @@ public abstract class Spkdb {
 	}
 	return userId;
     }
+    public static boolean updateUser(Connection conn, long userId, String name[], String value[])
+	throws SQLException, SpkdbException
+    {
+	 String nameList = name[0];
+	 String valueList = "'" + value[0] + "'";
+	 userPattern = Pattern.compile("^username$");
+	 if (userPattern.matcher(name[0]).find()) {
+	     throw new SpkdbException("invalid attempt to change username");
+	 }
+	 String sql = "update user set " + name[0] + "='" + value[0] + "'";
+	 for (int i = 1; i < name.length; i++) {
+	     if (userPattern.matcher(name[i]).find()) {
+		 throw new SpkdbException("invalid attempt to change username");
+	     }
+ 	     sql += ", " + name[i] + "='" + value[i] + "'";
+	 }
+	 sql += " where user_id=" + String.valueOf(userId) + ";";
+	 Statement stmt = conn.createStatement();
+	 stmt.executeUpdate(sql);
+	 return stmt.getUpdateCount() == 1;
+    }
+				    
 }
