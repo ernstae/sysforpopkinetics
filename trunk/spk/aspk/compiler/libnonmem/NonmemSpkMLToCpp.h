@@ -61,56 +61,7 @@ struct NonmemParameters
   std::valarray<bool>   etaFixed;
   std::valarray<double> etaIn;
 };
-/*
-class NonmemSpkMLToCpp : public SpkMLToCpp
-{
- public:
-  NonmemSpkMLToCpp( xercesc::DOMDocument * doc );
-  ~NonmemSpkMLToCpp();
 
-  virtual const struct FitParameters * getSpkParameters() const;
-  virtual const void* getClientParameters() const;
-  enum client::type getClient() const;
-  
- protected:
-
-  virtual void assemble( xercesc::DOMDocument* tree );
-  virtual void emit( xercesc::DOMDocument * tree );
-
-  NonmemSpkMLToCpp();
-  NonmemSpkMLToCpp( const NonmemSpkMLToCpp& right );
-  const NonmemSpkMLToCpp& operator=( const NonmemSpkMLToCpp& right );
-
- private:
-
-  enum CannedModel { NONE, 
-		   ADVAN1, ADVAN2, ADVAN3, ADVAN4, ADVAN5, 
-		   ADVAN6, ADVAN7, ADVAN8, ADVAN9, ADVAN10, 
-		   ADVAN11, ADVAN12 };
-  enum CannedModel canned_model;
-  bool isCannedModelUsed;
-
-  ExpTreeGenerator expTreeUtils;
-  NonmemSpkMLToCpp * specific_translator;
-  const xercesc::DOMDocument * tree;
-
-  struct FitParameters spk;
-  struct NonmemParameters nonmem;
-
-
-  std::vector<DataRecords> data_for_all_subjects;
-
-  void initSymbolTable( SymbolTable& );
-
-
-  void interpretContent();
-  void interpretDriver();
-  void interpretModel();
-  void interpretData();
-  void emitDriver();
-  void emitModel();
-};
-*/
 class NonmemTranslator : public ClientTranslator
 {
  public:
@@ -119,8 +70,7 @@ class NonmemTranslator : public ClientTranslator
 
   virtual const struct FitParameters * getSpkParameters() const;
   virtual const void * getClientParameters() const;
-  virtual void assemble ( xercesc::DOMDocument * tree );
-  virtual void emit     ( xercesc::DOMDocument * tree );
+  virtual void translate ( xercesc::DOMDocument * tree );
   virtual const char * getDriverFilename() const;
   virtual const std::vector< const char * > getModelFilenameList() const;
   
@@ -148,8 +98,10 @@ class NonmemTranslator : public ClientTranslator
 
   std::vector<DataRecords> data_for_all_subjects;
 
-  void initSymbolTable( SymbolTable& );
+  virtual void assemble ( xercesc::DOMDocument * tree );
+  virtual void emit     ( xercesc::DOMDocument * tree );
 
+  void initSymbolTable( SymbolTable& );
   void interpretContent();
   void interpretDriver();
   void interpretModel();

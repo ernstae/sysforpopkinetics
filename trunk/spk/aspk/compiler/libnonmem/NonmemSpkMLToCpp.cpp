@@ -75,7 +75,11 @@ NonmemTranslator::~NonmemTranslator( )
   //delete symbol_checker;
   delete gSpkExpSymbolTable;
 }
-
+void NonmemTranslator::translate( DOMDocument* tree )
+{
+  assemble(tree);
+  emit(tree);
+}
 void NonmemTranslator::assemble( DOMDocument* tree )
 {
   interpretContent();
