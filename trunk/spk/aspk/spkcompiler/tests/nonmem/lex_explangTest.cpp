@@ -20,6 +20,7 @@ extern "C"{
   FILE * nm_in;
   void nm_error( char * m );
   void nm_restart( FILE* f );
+  void nm_terminate();
 };
 
 int gSpkExpLines  = 0;
@@ -29,6 +30,10 @@ void nm_error( char* m )
   //cerr << m << endl;
   ++gSpkExpErrors;
   return;
+}
+void nm_terminate()
+{
+  //fprintf( stderr, "Abnormal return from the lexical analyzer, nm_lex().\n" );
 }
 void lex_explangTest::setUp()
 {
@@ -65,6 +70,8 @@ void lex_explangTest::testWhiteSpaces()
 void lex_explangTest::testComment()
 {
   // comment line.  
+  gSpkExpLines  = 0;
+  gSpkExpErrors = 0;
 
   char testInput[] = "lex_explangTestInput.txt";
   FILE * input = fopen( testInput, "w" );
@@ -78,6 +85,40 @@ void lex_explangTest::testComment()
   nm_restart( nm_in );
   int TOKEN = nm_lex();
   CPPUNIT_ASSERT_EQUAL( COMMENT, TOKEN );
+  CPPUNIT_ASSERT_EQUAL( 0, gSpkExpErrors );
+  fclose( nm_in );
+  remove( testInput );
+}
+void lex_explangTest::testIllegalComment()
+{
+  // comment line.  
+  gSpkExpLines  = 0;
+  gSpkExpErrors = 0;
+
+  char testInput[] = "lex_explangTestInput.txt";
+  FILE * input = fopen( testInput, "w" );
+  CPPUNIT_ASSERT( input != NULL );
+
+  // A token COMMENT should be returned;
+  fprintf( input, "% This is an illegal comment line.\n" );
+
+  fclose( input );
+  nm_in = fopen( testInput, "r" );
+  nm_restart( nm_in );
+  int TOKEN = 0;
+  try{
+     TOKEN = nm_lex();
+  }
+  catch ( const char* message )
+    {
+      cerr << message << endl;
+    }
+  catch( ... )
+    {
+      cerr << "Abnormal return." << endl;
+    }
+  CPPUNIT_ASSERT_EQUAL( 1, gSpkExpErrors );
+  //CPPUNIT_ASSERT_EQUAL( COMMENT, TOKEN );
   fclose( nm_in );
   remove( testInput );
 }
@@ -552,6 +593,10 @@ CppUnit::Test * lex_explangTest::suite()
 	 &lex_explangTest::testComment ) );
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<lex_explangTest>(
+         "testIllegalComment", 
+	 &lex_explangTest::testIllegalComment ) );
+  suiteOfTests->addTest( 
+     new CppUnit::TestCaller<lex_explangTest>(
          "testNamedConstant", 
 	 &lex_explangTest::testNamedConstant ) );
   suiteOfTests->addTest( 
@@ -607,6 +652,7 @@ CppUnit::Test * lex_explangTest::suite()
      new CppUnit::TestCaller<lex_explangTest>(
          "testLogical", 
 	 &lex_explangTest::testLogical ) );
+
   return suiteOfTests;
 }
 
