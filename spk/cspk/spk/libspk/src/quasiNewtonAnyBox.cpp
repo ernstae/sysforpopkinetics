@@ -780,11 +780,11 @@ void quasiNewtonAnyBox(
 
 
   //------------------------------------------------------------
-  // Initializations for the scaled objective function.
+  // Allocate all of the memory at the same time.
   //------------------------------------------------------------
 
-  // Allocate all of the memory at the same time.
   Memory<double> memoryDbl( 7 * nObjPar + 3 * nObjPar * nObjPar );
+  Memory<bool> memoryBool(  1 * nObjPar );
 
   // The various y vectors are scaled versions of their x counterparts.
   double* yLow  = memoryDbl( nObjPar );
@@ -804,6 +804,14 @@ void quasiNewtonAnyBox(
   double* hScaledWork    = memoryDbl( nObjPar * nObjPar );
   double* rScaled        = memoryDbl( nObjPar * nObjPar );
   double* rScaledDiagRec = memoryDbl( nObjPar );
+
+  // These variables are used by the function isWithinTol.
+  bool* isElemFree = memoryBool( nObjPar );
+
+
+  //------------------------------------------------------------
+  // Initializations for the scaled objective function.
+  //------------------------------------------------------------
 
   // Set the bounds and initial values for y.
   for ( i = 0; i < nObjPar; i++ )
@@ -1019,7 +1027,8 @@ void quasiNewtonAnyBox(
 	deltaY,
 	gScaledProj,
 	hScaledWork,
-	rScaledDiagRec ) )
+	rScaledDiagRec,
+	isElemFree ) )
       {
         isAcceptable = true;
       }
@@ -1378,7 +1387,14 @@ void scaleGradElem(
  *
  * On input, this must be allocated to hold n elements.  On output, it
  * contains the reciprocals of the diagonals of the Cholesky factor of
- * Hessian.
+ * the Hessian.
+ *
+ *
+ * isElemFree
+ *
+ * On input, this must be allocated to hold n elements.  On output, its
+ * elements will be equal to true if the corresponding xHat element is
+ * free and will be included in the tolerance calculation.
  *
  *************************************************************************/
 
@@ -1395,14 +1411,15 @@ bool isWithinTol(
   double*        deltaX,
   double*        gProj,
   double*        hWork,
-  double*        rDiagRec )
+  double*        rDiagRec,
+  bool*          isElemFree )
 {
   //------------------------------------------------------------
   // Preliminaries.
   //------------------------------------------------------------
 
   int i;
-  int j
+  int j;
   int k;
 
   assert( isLowerTriangular( r ) );
@@ -1415,37 +1432,27 @@ bool isWithinTol(
   // Prepare a version of the Hessian matrix H = R * R^(T) with its 
   // super-diagonal elements replaced by the sub-diagonal elements
   // of its (lower triangular) Cholesky factor R.
-  double* pdHData = dmatH.data();
   for ( i = 0; i < n; i++ )
   {
     // Compute the elements in this row of the lower triangle of H.
     for ( j = 0; j <= i ; j++ )
     {
-      pdHData[i + j * n] = 0.0;
+      hWork[i + j * n] = 0.0;
 
       // This loop does not include k > j since j <= i and R is lower
       // triangular, i.e., its (j,k)th element is zero for k > j.
       for ( k = 0; k <= j; k++ )
       {
-        pdHData[i + j * n] +=  pdRData[i + k * n] * pdRData[j + k * n];
+        hWork[i + j * n] +=  pdRData[i + k * n] * pdRData[j + k * n];
       }
     }
   
     // Copy the elements in this row of the super-diagonal of H.
     for ( j = i + 1; j < n; j++ )
     {
-      pdHData[i + j * n] = pdRData[j + i * n];
+      hWork[i + j * n] = pdRData[j + i * n];
     }
   }
-
-  // Instantiate a column vector p that will contain the 
-  // reciprocals of the diagonal elements of R.
-  double* pdPData = dvecP.data();
-
-  // Each of these flags will be true if the corresponding 
-  // xHat element will be included in the tolerance calculation 
-  // at the end of this function.
-  std::vector<bool> isElemIncluded( n );
 
   // Modify the Hessian, and set the elements of gProj and p.
   for ( i = 0; i < n; i++ )
@@ -1453,11 +1460,12 @@ bool isWithinTol(
       //----------------------------------------------------------
       // Compute the corresponding elements of H, gProj, and P.
       //----------------------------------------------------------
+
       if( (pdXHatData[i] >  pdXLowData[i] && pdXHatData[i] < pdXUpData[i])
           || (pdXHatData[i] == pdXLowData[i] && pdGData[i] < 0.0 )  
           || (pdXHatData[i] == pdXUpData[i]  && pdGData[i] > 0.0 ) )
       {
-            isElemIncluded[i] = true;
+            isElemFree[i] = true;
 
             //--------------------------------------------------------
             // This element will be included:  its deltaX should be computed.
@@ -1468,11 +1476,11 @@ bool isWithinTol(
 
             // Set the reciprocal of the corresponding R diagonal.
             assert( pdRData[i + i * n] != 0.0 );
-            pdPData[i] = 1.0 / pdRData[i + i * n];
+            rDiagRec[i] = 1.0 / pdRData[i + i * n];
       }
       else
       {
-            isElemIncluded[i] = false;
+            isElemFree[i] = false;
 
             //--------------------------------------------------------
             // This element won't be included:  force its deltaX to be zero.
@@ -1483,7 +1491,7 @@ bool isWithinTol(
             //
             // The following indented block can be reduced to a single statement:
             // 
-            //      pdHData[i + i * n] = 1.0;
+            //      hWork[i + i * n] = 1.0;
             //
             // if H, gProj and P were initialized to zero or one outside of the outer loop.
             // 
@@ -1492,26 +1500,26 @@ bool isWithinTol(
                 // H that come before the diagonal element.
                 for ( j = 0; j < i; j++ )
                 {
-                  pdHData[i + j * n] = 0.0;
-                  pdHData[j + i * n] = 0.0;
+                  hWork[i + j * n] = 0.0;
+                  hWork[j + i * n] = 0.0;
                 }
       
                 // Set the correponding diagonal element of H equal to one.
-                pdHData[i + i * n] = 1.0;
+                hWork[i + i * n] = 1.0;
       
                 // Zero the elements from the corresponding row and column of 
                 // H that come after the diagonal element.
                 for ( j = i + 1; j < n; j++ )
                 {
-                  pdHData[i + j * n] = 0.0;
-                  pdHData[j + i * n] = 0.0;
+                  hWork[i + j * n] = 0.0;
+                  hWork[j + i * n] = 0.0;
                 }
       
                 // Zero the corresponding element of the projected gradient.
                 pdGProjData[i] = 0.0;
 
                 // Set the reciprocal of the corresponding R diagonal equal to one.
-                pdPData[i] = 1.0;
+                rDiagRec[i] = 1.0;
       }
   }
 
@@ -1580,7 +1588,7 @@ bool isWithinTol(
   // dmatH are stored in column-major order.  This is the reason  
   // the sub-diagonal elements of r were copied to the 
   // super-diagonal elements of dmatH.
-  double* a = pdHData;
+  double* a = hWork;
 
   // Parameter: tda.
   // Input:the last dimension of the array a as declared in the
@@ -1594,7 +1602,7 @@ bool isWithinTol(
   // Input:the reciprocals of the diagonal elements of L, as
   // returned by nag_real_cholesky (f03aec).
   // Output: unspecified.
-  double* p = pdPData;
+  double* p = rDiagRec;
 
   // Parameter: b[n][tdb].
   // Input:the n by r right-hand side matrix B.  
@@ -1642,7 +1650,7 @@ bool isWithinTol(
   {
     // Only check the elements of xHat that were determined
     // earlier to be necessary for this tolerance calculation.
-    if ( isElemIncluded[i] )
+    if ( isElemFree[i] )
     {
       if ( fabs( pdDeltaXData[i] ) > tol )
       {
