@@ -136,6 +136,38 @@ public abstract class Spkdb {
 	
 	return new String(byteReport);
     }
+    public static long 
+	newDataset(Connection conn, long userId, String name, String abstraction, String archive)
+	throws SQLException, SpkdbException
+    {
+	long datasetId = 0;
+	String sql
+	    = "insert into dataset "
+	    + "(user_id, name, abstract, archive) "
+	    + "values (" + userId + ",'" + name + "','" + abstraction + "',?);";
+	PreparedStatement pstmt = conn.prepareStatement(sql);
+	pstmt.setBinaryStream(1, new ByteArrayInputStream(archive.getBytes()), archive.length());
+	pstmt.executeUpdate();
+	ResultSet rs = pstmt.getGeneratedKeys();
+	if (rs.next()) {
+	    datasetId = rs.getLong(1);
+	}
+	return datasetId;
+    }       
+    public static String getDataset(Connection conn, long datasetId)
+	throws SQLException, SpkdbException
+    {
+	String sql = "select archive from dataset where dataset_id=" + datasetId + ";";
+	Statement stmt = conn.createStatement();
+	ResultSet rs = stmt.executeQuery(sql);
+	rs.next();
+	Blob blobDataset = rs.getBlob("dataset");
+	long len = blobDataset.length();
+	byte[] byteDataset = blobDataset.getBytes(1L, (int)len);
+	
+	return new String(byteDataset);
+    }       
+
     /**
        Inserts a new user in the database, returning a unique key.
        @param conn connection object obtained by a previous call on connect()
