@@ -403,8 +403,12 @@ void firstOrderOptTest::firstOrderOptExampleTest()
   //------------------------------------------------------------
 
   Optimizer indOptimizer( 1.0e-6, 40, 0 );
-  Optimizer popOptimizer( 1.0e-6, 10, 0 );
-  popOptimizer.setupWarmStart( nAlp );
+  Optimizer popOptimizer( 1.0e-6, 5, 0 );
+
+  // Set these to exercise the warm start capabilities of firstOrderOpt.
+  popOptimizer.setThrowExcepIfMaxIter( false );
+  popOptimizer.setSaveStateAtEndOfOpt( true );
+
 
   //------------------------------------------------------------
   // Optimize the population objective function.
@@ -413,35 +417,39 @@ void firstOrderOptTest::firstOrderOptExampleTest()
   bool ok;
   try
   {
-	while( true )
-	{
+    while( true )
+    {
       firstOrderOpt(
-	  			     model,
-				     dvecN,
-				     dvecY,
-				     popOptimizer,
-				     dvecAlpLow,
-				     dvecAlpUp,
-				     dvecAlpIn,
-				     &dvecAlpOut,
-				     dvecAlpStep,
-				     indOptimizer,
-				     dvecBLow,
-				     dvecBUp,
-				     dmatBIn,
-				     &dmatBOut,
-				     dvecBStep,
-				     &dLTildeOut,
-				     &drowLTilde_alpOut,
-				     &dmatLTilde_alp_alpOut,
-				     &dmatLambdaTilde_alpOut );
-      if( !popOptimizer.getIsTooManyIter() )
-		// Finished
-		break;
+                     model,
+                     dvecN,
+                     dvecY,
+                     popOptimizer,
+                     dvecAlpLow,
+                     dvecAlpUp,
+                     dvecAlpIn,
+                     &dvecAlpOut,
+                     dvecAlpStep,
+                     indOptimizer,
+                     dvecBLow,
+                     dvecBUp,
+                     dmatBIn,
+                     &dmatBOut,
+                     dvecBStep,
+                     &dLTildeOut,
+                     &drowLTilde_alpOut,
+                     &dmatLTilde_alp_alpOut,
+                     &dmatLambdaTilde_alpOut );
 
-	  // Turn on warm start.
+      // Exit this loop if the maximum number of iterations was
+      // not exceeded, i.e., if the optimization was successful.
+      if( !popOptimizer.getIsTooManyIter() )
+        break;
+
+      // Set this so that firstOrderOpt performs a warm start when it
+      // is called again.
       popOptimizer.setIsWarmStart( true );
-	}
+    }
+
     ok = true;
   }
   catch(...)
@@ -1028,28 +1036,28 @@ void firstOrderOptTest::firstOrderOptZeroIterationsTest()
 
     bool okFirstOrderOpt;
     try
-	{
+    {
       firstOrderOpt( 
-					 model,
-					 dvecN,
-					 dvecY,
-					 popOptimizer,
-					 dvecAlpLow,
-					 dvecAlpUp,
-					 dvecAlpIn,
-					 &dvecAlpOut,
-					 dvecAlpStep,
-					 indOptimizer,
-					 dvecBLow,
-					 dvecBUp,
-					 dmatBIn,
-					 &dmatBOut,
-					 dvecBStep,
-					 &dLTildeOut,
-					 &drowLTilde_alpOut,
-					 &dmatLTilde_alp_alpOut,
-					 &dmatLambdaTilde_alpOut 
-				   );
+                     model,
+                     dvecN,
+                     dvecY,
+                     popOptimizer,
+                     dvecAlpLow,
+                     dvecAlpUp,
+                     dvecAlpIn,
+                     &dvecAlpOut,
+                     dvecAlpStep,
+                     indOptimizer,
+                     dvecBLow,
+                     dvecBUp,
+                     dmatBIn,
+                     &dmatBOut,
+                     dvecBStep,
+                     &dLTildeOut,
+                     &drowLTilde_alpOut,
+                     &dmatLTilde_alp_alpOut,
+                     &dmatLambdaTilde_alpOut 
+                   );
       okFirstOrderOpt = true;
     }
     catch(...)

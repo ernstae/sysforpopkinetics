@@ -44,6 +44,8 @@ class fitPopulationTest : public CppUnit::TestFixture
     void fitPopulationExampleTest(enum Objective whichObjective);
     void fitPopulationZeroIterationsTest(enum Objective whichObjective);
     void fitPopulationLimitsWarningsTest(enum Objective whichObjective);
+    void fitPopulationIndOptErrorTest(enum Objective whichObjective);
+    void fitPopulationPopOptErrorTest(enum Objective whichObjective);
     void doTheTest( bool ok,
                        double dLTildeOut,
                        double dLTildeKnown,

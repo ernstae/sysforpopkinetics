@@ -256,19 +256,22 @@ It has attributes for holding the optimization state information
 that is required to perform a warm start, i.e., to start the
 optimization process using a previous set of optimization state
 information.
-If a warm start is being performed, then before this function is called 
-the member function of the Optimizer object, setupWarmStart(), 
-must be called in order to set up the warm start information,
-and the upper and lower bounds for $math%x%$$ must be the same as
-they were during the earlier call to this function.
+If a warm start is being performed, then before this function is 
+called the optimization state information must be set.
+This information may have been set during a previous call to this
+function, or the information may be set directly using the
+Optimizer class member function, setStateInfo().
+Note that the upper and lower bounds for $math%x%$$ must be the 
+same as they were during the earlier call to this function.
 $pre
 
 $$
-Most of the optimizer information is accessible via public get functions,
-e.g., the value epsilon is returned by the function getEpsilon.
-The following subsections specify how this function uses each
-of the elements of the Optimizer object that are accessed in
-this way.
+Most of the optimizer information is accessible directly via public
+get functions, e.g., the value epsilon is returned by the Optimizer 
+class function $code getEpsilon()$$.  
+The following set of subsections specify how this function uses 
+some of the elements of the Optimizer object that are accessed 
+directly using get functions.
 
 $subhead optInfo.epsilon$$
 This real number is used to specify the convergence criteria
@@ -332,7 +335,7 @@ This integer scalar holds the number of iteration that have been
 completed in the optimizer.
 
 $subhead optInfo.isTooManyIter$$
-This flag indicates that if the too-many-iteration failure has occurred.  
+This flag indicates whether the too-many-iteration failure has occurred.  
 
 $subhead optInfo.saveStateAtEndOfOpt$$
 This flag indicates if the state information required for a warm start
@@ -350,17 +353,23 @@ Otherwise, the calling program will
 need to check the parameter isTooManyIter to see if the 
 maximum number of iterations was exhausted.
 
-$subhead optInfo.isSubLevelOpt$$
-This flag indicates that if the optimizer is for a sub level optimization.  
-It is for SPK internal use only.
+$subhead optInfo.isWarmStartPossible$$
+This flag indicates whether it is possible to perform a warm start 
+using the current optimizer state information.
 
 $subhead optInfo.isWarmStart$$
-This flag indicates that if the optimization should run a warm start.  
+This flag indicates whether the optimization should run a warm start.  
 
 $subhead optInfo.stateInfo$$
-This $code StateInfo$$ object contains the optimization state information
+This $code StateInfo$$ struct contains the optimization state information
 required to perform a warm start.
-Each of its elements is described separately below.
+Each of its elements is accessed using the Optimizer class member
+functions, $code getStateInfo()$$ and $$setStateInfo()$$.
+$pre
+
+$$
+The following set of subsections specify how this function uses 
+the elements of $code optInfo.stateInfo$$.
 
 $subhead optInfo.stateInfo.n$$
 The element $italic n$$ specifies the number of components
@@ -493,6 +502,7 @@ $end
 // SPK optimizer header files.
 #include <spkopt/QuasiNewton01Box.h>
 #include <spkopt/MaxAbs.h>
+#include <spkopt/Memory.h>
 
 // Standard library header files.
 #include <iostream>
@@ -962,8 +972,6 @@ void quasiNewtonAnyBox(
   // Prepare the optimization state information for QuasiNewto01Box.
   //------------------------------------------------------------
 
-  StateInfo stateInfo;
-
   size_t bfgsCurr = 0;
   double rScaled;
   double fScaled;
@@ -1038,33 +1046,31 @@ void quasiNewtonAnyBox(
     // Prepare for a quasiNewtonAnyBox warm start.
     //----------------------------------------------------------
 
-    // Retrieve the previous state information.
-    stateInfo = optInfo.getStateInfo();
-
-    // Check the number of parameters.
-    if ( stateInfo.n != nObjParFree )
+    // Check to see if a warm start is possible.
+    if ( !optInfo.getIsWarmStartPossible() )
     {
       throw SpkException( 
-        SpkError::SPK_USER_INPUT_ERR,
-        "The input number of free parameters is not equal to the warm start number.",
+        SpkError::SPK_OPT_ERR,
+        "It is not possible to perform a warm start using the current optimizer state information.",
         __LINE__,
         __FILE__ );
     }
 
     // Set the current values equal to the previous values.
-    bfgsCurr = stateInfo.b;
-    rScaled  = stateInfo.r;
-    fScaled  = stateInfo.f;
-    for ( i = 0; i < nObjParFree; i++ )
-    {
-      yCurr[i] = stateInfo.x[i];
-      gScaled[i] = stateInfo.g[i];
-    }
-    for ( i = 0; i < nObjParFree * nObjParFree; i++ )
-    {
-      hScaled[i] = stateInfo.h[i];
-    }
+    optInfo.getStateInfo( 
+      nObjParFree,
+      bfgsCurr,
+      rScaled,
+      fScaled,
+      yCurr,
+      gScaled,
+      hScaled );
   }
+
+  // Set this flag to indicate the main optimization loop has not yet
+  // completed.  Note that this will be reset after the main
+  // optimization loop if it does not cause an error.
+  optInfo.setDidOptFinishOk( false );
 
 
   //------------------------------------------------------------
@@ -1252,6 +1258,27 @@ void quasiNewtonAnyBox(
         break;
       }
 
+      // Save the current optimizer state information before
+      // attempting to perform the Quasi-Newton iteration.
+      optInfo.setStateInfo( 
+        nObjParFree,
+        bfgsCurr,
+        rScaled,
+        fScaled,
+        yCurr,
+        gScaled,
+        hScaled,
+        nObjPar,
+        pdXLowData,
+        pdXUpData,
+        indexYInX );
+
+      // Since the state information being saved is from the beginning
+      // of the iteration, and since an error might occur for these
+      // state variables, warm starts are not currently possible.
+      optInfo.setIsBeginOfIterStateInfo( true );
+      optInfo.setIsWarmStartPossible   ( false );
+
       // Only perform a single Quasi-Newton iteration.
       iterBefore = iterCurr;
       iterMax    = iterCurr + 1;
@@ -1333,51 +1360,6 @@ void quasiNewtonAnyBox(
 
 
   //------------------------------------------------------------
-  // Prepare for future quasiNewtonAnyBox warm starts.
-  //------------------------------------------------------------
-
-  // Save the optimization state information, if necessary.
-  if ( optInfo.getSaveStateAtEndOfOpt() )
-  {
-    // Retrieve the previous state information.
-    stateInfo = optInfo.getStateInfo();
-
-    // Reinitialize the optimization state information if the
-    // previous sizes don't match the current sizes.
-    if ( stateInfo.n != nObjParFree )
-    {
-      optInfo.deleteStateInfo();
-      optInfo.setupWarmStart( nObjParFree );
-
-      // Get a new copy of this information since the previous 
-      // version had the wrong sizes.
-      stateInfo = optInfo.getStateInfo();
-    }
-
-    // Set the values at the end of the optimization.
-    stateInfo.n = nObjParFree;
-    stateInfo.b = bfgsCurr;
-    stateInfo.r = rScaled;
-    stateInfo.f = fScaled;
-    for ( i = 0; i < nObjParFree; i++ )
-    {
-      stateInfo.x[i] = yCurr[i];
-      stateInfo.g[i] = gScaled[i];
-    }
-    for ( i = 0; i < nObjParFree * nObjParFree; i++ )
-    {
-      stateInfo.h[i] = hScaled[i];
-    }
-
-    optInfo.setStateInfo( stateInfo );
-  }
-  else
-  {
-    optInfo.deleteStateInfo();
-  }
-
-
-  //------------------------------------------------------------
   // Check the status of the optimization.
   //------------------------------------------------------------
 
@@ -1448,10 +1430,47 @@ void quasiNewtonAnyBox(
     ok = false;
   }
 
-  // If something went wrong, throw an exception.
+  // If something went wrong, exit without setting the return values.
   if ( !ok )
   {
-    throw SpkException( errorCode, stringMessage.c_str(), __LINE__, __FILE__ );
+    throw SpkException(
+      errorCode,
+      stringMessage.c_str(),
+      __LINE__,
+      __FILE__ );
+  }
+
+  // Set this flag to indicate the main optimization loop did not
+  // cause an error.
+  optInfo.setDidOptFinishOk( true );
+
+
+  //------------------------------------------------------------
+  // Prepare for future quasiNewtonAnyBox warm starts.
+  //------------------------------------------------------------
+ 
+  // Save the optimization state information, if necessary.
+  if ( optInfo.getSaveStateAtEndOfOpt() )
+  {
+    // Save the values at the end of the optimization.
+    optInfo.setStateInfo( 
+      nObjParFree,
+      bfgsCurr,
+      rScaled,
+      fScaled,
+      yCurr,
+      gScaled,
+      hScaled,
+      nObjPar,
+      pdXLowData,
+      pdXUpData,
+      indexYInX );
+
+    // Set these flags to indicate that the state information
+    // corresponds to the state at the end of the last iteration 
+    // and that a warm start is, therefore, possible.
+    optInfo.setIsBeginOfIterStateInfo( false );
+    optInfo.setIsWarmStartPossible   ( true );
   }
 
 
@@ -1671,12 +1690,10 @@ void scaleGradElem(
  * Function: unscaleGradElem
  *
  *
- * Calculates the gradient of the unscaled objective function with respect to x.
- *
  * Description
  * -----------
  *
- * Calculates the gradient of the scaled objective function with respect to y.
+ * Calculates the gradient of the unscaled objective function with respect to x.
  *
  *
  * Arguments
@@ -1857,6 +1874,10 @@ void initHessApprox(
  * -----------
  *
  * Calculates the scaled projected gradient.
+ *
+ * The projected gradient is the gradient multiplied by the 
+ * distance to the parameter's upper or lower bound depending on
+ * whether the gradient is negative or nonnegative, respectively.
  *
  *
  * Arguments

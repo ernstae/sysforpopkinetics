@@ -57,13 +57,11 @@ void ppkaOptTest::tearDown()
 
 Test* ppkaOptTest::suite()
 {
-  TestSuite *suiteOfTests = new TestSuite( "ppkaOptTest" );
+	TestSuite *suiteOfTests = new TestSuite( "ppkaOptTest" );
 
-  suiteOfTests->addTest( new TestCaller<ppkaOptTest>("modifiedLaplaceTest", 
-						     &ppkaOptTest::modifiedLaplaceTest));
+    suiteOfTests->addTest(new TestCaller<ppkaOptTest>("modifiedLaplaceTest", &ppkaOptTest::modifiedLaplaceTest));
+    suiteOfTests->addTest(new TestCaller<ppkaOptTest>("expectedHessianTest", &ppkaOptTest::expectedHessianTest));
 
-  suiteOfTests->addTest( new TestCaller<ppkaOptTest>("expectedHessianTest",
-						     &ppkaOptTest::expectedHessianTest));
     return suiteOfTests;
 }
 
@@ -75,9 +73,9 @@ void ppkaOptTest::modifiedLaplaceTest()
 }
 void ppkaOptTest::expectedHessianTest()
 {
-  ppkaOptExampleTest(EXPECTED_HESSIAN);
-  ppkaOptZeroIterationsTest(EXPECTED_HESSIAN);
-  ppkaOptFixedAlpTest(EXPECTED_HESSIAN);
+    ppkaOptExampleTest(EXPECTED_HESSIAN);
+    ppkaOptZeroIterationsTest(EXPECTED_HESSIAN);
+    ppkaOptFixedAlpTest(EXPECTED_HESSIAN);
 }
 /*------------------------------------------------------------------------
  * Include Files
@@ -424,20 +422,24 @@ void ppkaOptTest::ppkaOptExampleTest(enum Objective whichObjective)
   // Remaining inputs to ppkaOpt.
   //------------------------------------------------------------
 
-  Optimizer popOptimizer( 1.0e-6, 10, 0 );
+  Optimizer popOptimizer( 1.0e-6, 5, 0 );
   Optimizer indOptimizer( 1.0e-6, 40, 0 );
-  popOptimizer.setupWarmStart( nAlp );
+
+  // Set these to exercise the warm start capabilities of ppkaOpt.
+  popOptimizer.setThrowExcepIfMaxIter( false );
+  popOptimizer.setSaveStateAtEndOfOpt( true );
+
   
   //------------------------------------------------------------
   // Optimize the population objective function.
   //------------------------------------------------------------
 
   bool ok;
-  try{
-	while( true )
-	{
-      ppkaOpt(
-               model,
+  try
+  {
+    while( true )
+    {
+      ppkaOpt( model,
                whichObjective,
                dvecN,
                dvecY,
@@ -447,22 +449,26 @@ void ppkaOptTest::ppkaOptExampleTest(enum Objective whichObjective)
                dvecAlpIn,
                &dvecAlpOut,
                dvecAlpStep,
-			   indOptimizer,
+               indOptimizer,
                dvecBLow,
                dvecBUp,
-			   dmatBIn,
+               dmatBIn,
                &dmatBOut,
                dvecBStep,
                &dLTildeOut,
                &drowLTilde_alpOut,
                &dmatLTilde_alp_alpOut );
-	  if( !popOptimizer.getIsTooManyIter() )
-		// Finished
-		break;
 
-	  // Turn on warm start.
+      // Exit this loop if the maximum number of iterations was
+      // not exceeded, i.e., if the optimization was successful.
+      if( !popOptimizer.getIsTooManyIter() )
+        break;
+
+      // Set this so that ppkaOpt performs a warm start when it
+      // is called again.
       popOptimizer.setIsWarmStart( true );
-	}
+    }
+
     ok = true;
   }
   catch( const SpkException& e )
@@ -584,7 +590,7 @@ void ppkaOptTest::ppkaOptExampleTest(enum Objective whichObjective)
               dLTildeOut,
               dLTildeKnown,
               indOptimizer.getEpsilon(),
-			  popOptimizer.getEpsilon(),
+              popOptimizer.getEpsilon(),
               dvecAlpLow,
               dvecAlpUp,
               dvecAlpOut,
@@ -1040,7 +1046,7 @@ void ppkaOptTest::ppkaOptZeroIterationsTest(enum Objective whichObjective)
             dvecAlpIn,
             &dvecAlpOut,
             dvecAlpStep,
-			indOptimizer,
+            indOptimizer,
             dvecBLow,
             dvecBUp,
             dmatBIn,
@@ -1101,7 +1107,7 @@ void ppkaOptTest::ppkaOptZeroIterationsTest(enum Objective whichObjective)
                 dLTildeOut,
                 dLTildeKnown,
                 indOptimizer.getEpsilon(),
-				popOptimizer.getEpsilon(),
+                popOptimizer.getEpsilon(),
                 dvecAlpLow,
                 dvecAlpUp,
                 dvecAlpOut,
@@ -1119,167 +1125,6 @@ void ppkaOptTest::ppkaOptZeroIterationsTest(enum Objective whichObjective)
   
 }
 
-
-/*************************************************************************
- *
- * Function: doTheTest
- *
- *************************************************************************/
-
-void ppkaOptTest::doTheTest( bool ok,
-                       double dLTildeOut,
-                       double dLTildeKnown,
-                       const double epsB,
-					   const double epsAlp,
-                       const DoubleMatrix& dvecAlpLow,
-                       const DoubleMatrix& dvecAlpUp,
-                       const DoubleMatrix& dvecAlpOut,
-                       const DoubleMatrix& dvecAlpHat,
-                       const DoubleMatrix& dvecBLow,
-                       const DoubleMatrix& dvecBUp,
-                       const DoubleMatrix& dmatBOut,
-                       const DoubleMatrix& dmatBHat,
-                       const DoubleMatrix& drowLTilde_alpOut,
-                       const DoubleMatrix& drowLTilde_alpKnown,
-                       const DoubleMatrix& dmatLTilde_alp_alpOut,
-                       const DoubleMatrix& dmatLTilde_alp_alpKnown )
-{
-  //------------------------------------------------------------
-  // Preliminaries.
-  //------------------------------------------------------------
-
-  using namespace std;
-
-  int i, k;
-
-  string line = "----------------------------------------------------";
-
-  int nAlp = dvecAlpOut.nr();
-  int nB   = dmatBOut  .nr();
-  int nInd = dmatBOut  .nc();
-
-  // Updated 1-8-01 Alyssa
-  // fixed for const correctness
-  const double* pdAlpLowData = dvecAlpLow.data();
-  const double* pdAlpUpData  = dvecAlpUp .data();
-  const double* pdAlpOutData = dvecAlpOut.data();
-  const double* pdAlpHatData = dvecAlpHat.data();
-
-  const double* pdBLowData = dvecBLow.data();
-  const double* pdBUpData  = dvecBUp .data();
-  const double* pdBOutData = dmatBOut.data();
-  const double* pdBHatData = dmatBHat.data();
-
-
-  //------------------------------------------------------------
-  // Print the results.
-  //------------------------------------------------------------
-
-  /*
-  cout << endl;
-
-  cout << "ok = " << ( ok ? "True" : "False" ) << endl;
-  cout << endl;
-
-  cout << "alpOut = " << endl;
-  dvecAlpOut.print(); 
-  cout << "alpHat = " << endl;
-  dvecAlpHat.print(); 
-  cout << endl;
-  cout << "epsilon (for alphaOut) = " << epsAlp  << endl;
-  cout << endl;
-
-  if ( nInd <= 10 )
-  {
-    cout << "bOut = " << endl;
-    dmatBOut.print(); 
-    cout << "bHat = " << endl;
-    dmatBHat.print(); 
-    cout << endl;
-    cout << "epsilon (for bOut)     = " << epsB  << endl;
-    cout << endl;
-  }
-
-  cout << "LTildeOut   = " << dLTildeOut << endl;
-  cout << "LTildeKnown = " << dLTildeKnown << endl;
-  cout << endl;
-
-  cout << "LTilde_alpOut  = " << endl;
-  drowLTilde_alpOut.print();
-  cout << "LTilde_alpKnown  = " << endl;
-  drowLTilde_alpKnown.print();
-  cout << endl;
-
-  if ( nAlp <= 5 )
-  {
-    cout << "LTilde_alp_alpOut  = " << endl;
-    dmatLTilde_alp_alpOut.print();
-    cout << "LTilde_alp_alpKnown  = " << endl;
-    dmatLTilde_alp_alpKnown.print();
-    cout << endl;
-  }
-
-  */
-  //------------------------------------------------------------
-  // Check to see if the optimization completed sucessfully.
-  //------------------------------------------------------------
-
-  CPPUNIT_ASSERT(ok);
-
-  //------------------------------------------------------------
-  // Check the final fixed population parameter vector, alpOut.
-  //------------------------------------------------------------
-
-  // Check to see if any elements of alpOut fail to satisfy 
-  // the convergence criteria:
-  // 
-  //      abs(alpOut - alpHat) <= epsAlp (alpUp - alpLow)
-  //
-  // Note that the last element of alp was fixed, so
-  // it should be skipped for checking.
-  bool isConverged = true;
-  for ( i = 0; i < nAlp - 1; i++ )
-  {
-    if ( fabs(pdAlpOutData[ i ] - pdAlpHatData[ i ]) > 
-            epsAlp * (pdAlpUpData[ i ] - pdAlpLowData[ i ]) )
-    {
-      isConverged = false;
-    }
-  }
-
-  CPPUNIT_ASSERT(ok);
-  CPPUNIT_ASSERT(isConverged);
-
-
-  //------------------------------------------------------------
-  // Check the matrix of final random population parameter vectors, bOut.
-  //------------------------------------------------------------
-
-  // For each pair of vectors bOut_i and bHat_i, i.e., for each column 
-  // of bOut and bHat, check to see that the convergence criteria,
-  // 
-  //      abs(bOut_i - bHat_i) <= epsB (bUp - bLow)  ,
-  //
-  // is satisfied.
-  //
-  isConverged = true;
-  for ( i = 0; i < nInd; i++ )
-  {
-    for ( k = 0; k < nB; k++ )
-    {
-      if ( fabs(pdBOutData[ k + i * nB ] - pdBHatData[ k + i * nB  ]) > 
-        epsB * (pdBUpData[ k ] - pdBLowData[ k ]) )
-      {
-        isConverged = false;
-      }
-    }
-  }
-  
-  CPPUNIT_ASSERT(ok);
-  CPPUNIT_ASSERT(isConverged);
-
-  
-}
 
 /*************************************************************************
  *
@@ -1610,10 +1455,14 @@ void ppkaOptTest::ppkaOptFixedAlpTest(enum Objective whichObjective)
     popMItr = 10;
   Optimizer popOptimizer( 1.0e-6, popMItr, 0 );
   Optimizer indOptimizer( 1.0e-6, 40, 0 );
-  popOptimizer.setupWarmStart( nAlp );
+
+  // Set these to exercise the warm start capabilities of ppkaOpt.
+  popOptimizer.setThrowExcepIfMaxIter( false );
+  popOptimizer.setSaveStateAtEndOfOpt( true );
+
   
   //------------------------------------------------------------
-  // Optimize the population objective function.
+  // Optimize The Population Objective function.
   //------------------------------------------------------------
 
   bool ok;
@@ -1794,3 +1643,165 @@ void ppkaOptTest::ppkaOptFixedAlpTest(enum Objective whichObjective)
               dmatLTilde_alp_alpKnown );
   
 }
+
+
+/*************************************************************************
+ *
+ * Function: doTheTest
+ *
+ *************************************************************************/
+
+void ppkaOptTest::doTheTest( bool ok,
+                       double dLTildeOut,
+                       double dLTildeKnown,
+                       const double epsB,
+                       const double epsAlp,
+                       const DoubleMatrix& dvecAlpLow,
+                       const DoubleMatrix& dvecAlpUp,
+                       const DoubleMatrix& dvecAlpOut,
+                       const DoubleMatrix& dvecAlpHat,
+                       const DoubleMatrix& dvecBLow,
+                       const DoubleMatrix& dvecBUp,
+                       const DoubleMatrix& dmatBOut,
+                       const DoubleMatrix& dmatBHat,
+                       const DoubleMatrix& drowLTilde_alpOut,
+                       const DoubleMatrix& drowLTilde_alpKnown,
+                       const DoubleMatrix& dmatLTilde_alp_alpOut,
+                       const DoubleMatrix& dmatLTilde_alp_alpKnown )
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  int i, k;
+
+  string line = "----------------------------------------------------";
+
+  int nAlp = dvecAlpOut.nr();
+  int nB   = dmatBOut  .nr();
+  int nInd = dmatBOut  .nc();
+
+  // Updated 1-8-01 Alyssa
+  // fixed for const correctness
+  const double* pdAlpLowData = dvecAlpLow.data();
+  const double* pdAlpUpData  = dvecAlpUp .data();
+  const double* pdAlpOutData = dvecAlpOut.data();
+  const double* pdAlpHatData = dvecAlpHat.data();
+
+  const double* pdBLowData = dvecBLow.data();
+  const double* pdBUpData  = dvecBUp .data();
+  const double* pdBOutData = dmatBOut.data();
+  const double* pdBHatData = dmatBHat.data();
+
+
+  //------------------------------------------------------------
+  // Print the results.
+  //------------------------------------------------------------
+
+  /*
+  cout << endl;
+
+  cout << "ok = " << ( ok ? "True" : "False" ) << endl;
+  cout << endl;
+
+  cout << "alpOut = " << endl;
+  dvecAlpOut.print(); 
+  cout << "alpHat = " << endl;
+  dvecAlpHat.print(); 
+  cout << endl;
+  cout << "epsilon (for alphaOut) = " << epsAlp  << endl;
+  cout << endl;
+
+  if ( nInd <= 10 )
+  {
+    cout << "bOut = " << endl;
+    dmatBOut.print(); 
+    cout << "bHat = " << endl;
+    dmatBHat.print(); 
+    cout << endl;
+    cout << "epsilon (for bOut)     = " << epsB  << endl;
+    cout << endl;
+  }
+
+  cout << "LTildeOut   = " << dLTildeOut << endl;
+  cout << "LTildeKnown = " << dLTildeKnown << endl;
+  cout << endl;
+
+  cout << "LTilde_alpOut  = " << endl;
+  drowLTilde_alpOut.print();
+  cout << "LTilde_alpKnown  = " << endl;
+  drowLTilde_alpKnown.print();
+  cout << endl;
+
+  if ( nAlp <= 5 )
+  {
+    cout << "LTilde_alp_alpOut  = " << endl;
+    dmatLTilde_alp_alpOut.print();
+    cout << "LTilde_alp_alpKnown  = " << endl;
+    dmatLTilde_alp_alpKnown.print();
+    cout << endl;
+  }
+
+  */
+  //------------------------------------------------------------
+  // Check to see if the optimization completed sucessfully.
+  //------------------------------------------------------------
+
+  CPPUNIT_ASSERT(ok);
+
+  //------------------------------------------------------------
+  // Check the final fixed population parameter vector, alpOut.
+  //------------------------------------------------------------
+
+  // Check to see if any elements of alpOut fail to satisfy 
+  // the convergence criteria:
+  // 
+  //      abs(alpOut - alpHat) <= epsAlp (alpUp - alpLow)
+  //
+  bool isConverged = true;
+  for ( i = 0; i < nAlp; i++ )
+  {
+    if ( fabs(pdAlpOutData[ i ] - pdAlpHatData[ i ]) > 
+            epsAlp * (pdAlpUpData[ i ] - pdAlpLowData[ i ]) )
+    {
+      isConverged = false;
+    }
+  }
+
+  CPPUNIT_ASSERT(ok);
+  CPPUNIT_ASSERT(isConverged);
+
+
+  //------------------------------------------------------------
+  // Check the matrix of final random population parameter vectors, bOut.
+  //------------------------------------------------------------
+
+  // For each pair of vectors bOut_i and bHat_i, i.e., for each column 
+  // of bOut and bHat, check to see that the convergence criteria,
+  // 
+  //      abs(bOut_i - bHat_i) <= epsB (bUp - bLow)  ,
+  //
+  // is satisfied.
+  //
+  isConverged = true;
+  for ( i = 0; i < nInd; i++ )
+  {
+    for ( k = 0; k < nB; k++ )
+    {
+      if ( fabs(pdBOutData[ k + i * nB ] - pdBHatData[ k + i * nB  ]) > 
+        epsB * (pdBUpData[ k ] - pdBLowData[ k ]) )
+      {
+        isConverged = false;
+      }
+    }
+  }
+  
+  CPPUNIT_ASSERT(ok);
+  CPPUNIT_ASSERT(isConverged);
+
+  
+}
+
+

@@ -227,56 +227,125 @@ $syntax/
 
 /indOptimizer/
 /$$
-This $xref/Optimizer//Optimizer/$$ class object has attributes
-that describe the individual level optimizer's behavior.
-One of them specifies $math%epsilon%$$ which is used during the optimization
-procedures in order to determine if acceptable estimates have 
-been found for $math%bTilde_i%$$, and $math%bHat_i%$$.
-It has other attributes for handling running out of 
-maximum iterations and for holding the optimization state information 
-that is required by later restart(warm start) run.  
-
-If restart is intended, the member function of the Optimizer object 
-setupWarmStart() must be called to set up warm start before this function
-is called for the first time.  If warm start has been set up, when this 
-function returns, the Optimizer object contains the state information and 
-the object's member function getIsTooManyIter() returns true if and only if 
-the too-many-iter occurred during the optimization process.  
+This $xref/Optimizer//Optimizer/$$ object contains the information 
+that controls the individual level optimization process.
 $pre
 
 $$
-For a particular value of $math%alp%$$ and for the $math%i%$$-th 
-individual in the population, an individual parameter vector 
-$math%b_i%$$ is accepted as an approximation for $math%bHat_i%$$ if
+It has attributes for holding the optimization state information 
+that is required to perform a warm start, i.e., to start the
+optimization process using a previous set of optimization state
+information.
+If a warm start is being performed, then before this function is 
+called the optimization state information must be set.
+This information may have been set during a previous call to this
+function, or the information may be set directly using the
+Optimizer class member function, setStateInfo().
+Note that the upper and lower bounds for $math%b%$$ must be the 
+same as they were during the earlier call to this function.
+$pre
+
+$$
+Most of the optimizer information is accessible directly via public
+get functions, e.g., the value epsilon is returned by the Optimizer 
+class function $code getEpsilon()$$.  
+The following subsections specify how this function uses 
+some of the elements of the Optimizer object that are accessed 
+directly using get functions.
+
+$subhead optInfo.epsilon$$
+This real number is used to specify the convergence criteria
+for the optimizer.
+It must be greater than $math%0.0%$$.
+$pre
+
+$$
+A individual parameter value $math%bOut%$$ is accepted as an estimate for 
+$math%bHat%$$ if 
 $math%
-	abs(b_i - bHat_i) \le epsilon (bUp - bLow) ,
+        abs( bOut - bHat ) \le epsilon ( bUp - bLow )  ,
 %$$
 where $math%abs%$$ is the element-by-element absolute value function
-and $math%bHat_i%$$ is the true minimizer of $math%Lambda_i(alp, b)%$$
-with respect to $math%b%$$.  
-Since $math%bHat_i%$$ is unknown, the optimization algorithm must 
-estimate the left hand side of this inequality.
-Note that if $math%nMaxIter%$$ is zero, then 
-the $th i$$ column of $math%bIn%$$ is 
-accepted as the estimate for $math%bHat_i%$$.
+and $math%bHat%$$ is a local minimizer of $math%MapObj(b)%$$.
+Since $math%bHat%$$ is unknown, this function estimates the left hand
+side of this inequality in a way that is a good approximation when 
+the Hessian of the objective function is positive definite.
 $pre
 
 $$
-For a particular value of $math%alp%$$ and for the $math%i%$$-th 
-individual in the population, a random population parameter vector 
-$math%b_i%$$ is accepted as an approximation for $math%bTilde_i%$$ if
-$math%
-	abs(b_i - bTilde_i) \le epsilon (bUp - bLow) ,
-%$$
-where $math%abs%$$ is the element-by-element absolute value function 
-and $math%bTilde_i%$$ is the point where the approximate projected 
-gradient of $math%Lambda_i(alp, b)%$$ with respect to $math%b%$$ 
-is zero.
-Since $math%bTilde_i%$$ is unknown, the optimization algorithm must 
-estimate the left hand side of this inequality.
-Note that if $math%nMaxIter(1)%$$ is zero, then 
-the $th i$$ column of $math%bIn%$$ is 
-accepted as the estimate for $math%bTilde_i%$$.
+Note that if $italic nMaxIter$$ is set to zero, then $math%bIn%$$ is 
+accepted as the estimate for $math%bHat%$$.
+
+$subhead optInfo.nMaxIter$$
+This integer must be greater than or equal to zero.
+It specifies the maximum number of 
+iterations to attempt before giving up on convergence.
+If it is equal to zero, then the initial
+value for $math%b%$$ is accepted as the final value, and any requested output
+values are evaluated at that final value.
+
+$subhead optInfo.traceLevel$$
+This integer scalar specifies the amount of tracing.
+Larger values of $italic traceLevel$$ entail more tracing, 
+with $math%4%$$ being the highest level of tracing.
+If $math%level \ge 1%$$, trace values are directed to standard output 
+(stdout).  
+$pre
+
+$$
+Tracing is done using a scaled version of the
+objective function.  For this scaled version the elements of
+the parameter vector are constrained to the interval $math%[0, 1]%$$. 
+$pre
+
+$$
+If $italic traceLevel$$ is equal to $math%4%$$, then the tracing 
+will include the gradient of the objective and a finite difference 
+approximation for that gradient.
+These two gradients can be compared as a check on the consistency 
+of the objective function and its gradient.
+$pre
+
+$$
+For more details on the tracing see the description of the level 
+parameter for the optimizer $xref/QuasiNewton01Box//QuasiNewton01Box/$$.
+
+$subhead optInfo.nIterCompleted$$
+This integer scalar holds the number of iteration that have been 
+completed in the optimizer.
+
+$subhead optInfo.isTooManyIter$$
+This flag indicates whether the too-many-iteration failure has occurred.  
+
+$subhead optInfo.saveStateAtEndOfOpt$$
+This flag indicates if the state information required for a warm start
+should be saved at the end of the optimization process.
+This state information will not be saved if the optimization process
+results in an exception being thrown by $code quasiNewtonAnyBox$$.
+
+$subhead optInfo.throwExcepIfMaxIter$$
+This flag indicates if the optimizer should throw an exception when
+the maximum number of iterations is exhausted.
+If this parameter is true, then when
+the maximum number of iterations is exhausted, an exception will
+be thrown and the output values for this function will not be set.
+Otherwise, the calling program will
+need to check the parameter isTooManyIter to see if the 
+maximum number of iterations was exhausted.
+
+$subhead optInfo.isWarmStartPossible$$
+This flag indicates whether it is possible to perform a warm start 
+using the current optimizer state information.
+
+$subhead optInfo.isWarmStart$$
+This flag indicates whether the optimization should run a warm start.  
+
+$subhead optInfo.stateInfo$$
+This $code StateInfo$$ struct contains the optimization state information
+required to perform a warm start.
+Each of its elements is accessed using the Optimizer class member
+functions, $code getStateInfo()$$ and $$setStateInfo()$$.
+
 $syntax/
 
 /indParLow/
@@ -320,7 +389,7 @@ parameter vector $math%b%$$.
 
 $syntax/
 
-* /indParOut/
+/indParOut/
 /$$
 If $italic indParOut$$ is not $code NULL$$, then the $code SPK_VA::valarray<double>$$ 
 object pointed to by $italic indParOut$$ must be declared in the function that 
@@ -1029,14 +1098,14 @@ void checkIndPar(
   int k;
 
   int colWidth1 = 9 - 2;
-  int colWidth2 = 13 + 2;
+  int colWidth2 = 12 + 2;
   int colWidth3 = 9;
   string colSpacer = "  ";
 
   warning << "The following individual parameters are at their bounds." << endl;
   warning << endl;
-  warning << "Parameter       Value         Bound"   << endl;
-  warning << "---------  ---------------  ---------" << endl;
+  warning << "Parameter      Value         Bound"   << endl;
+  warning << "---------  --------------  ---------" << endl;
 
   // Check the final individual parameter value to see if it 
   // is constrained by its lower or upper bound;

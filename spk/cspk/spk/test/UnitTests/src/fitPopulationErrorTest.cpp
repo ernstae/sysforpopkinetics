@@ -296,10 +296,9 @@ void fitPopulationErrorTest::tooManyIter()
     // set for the population level.
     //
     info.popOptimizer.setNMaxIter( 2 );
-	info.popOptimizer.setupWarmStart( nAlp );
 		//
 		// [ Revisit --- Jiaji, 10/25/2002 ]
-		// If popOptimizer.setupWarmStart() is called , Too-Many-Iter at population
+		// If popOptimizer.setIsWarmStart() is called , Too-Many-Iter at population
 	    // level optimization is not treated as an error.  The state info for the 
 	    // later warm start will be stored in the popOptimizer object and returned 
 	    // by fitpopulation().  However, if Too-Many-Iter occurs at the individual

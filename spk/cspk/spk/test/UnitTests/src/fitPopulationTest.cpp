@@ -72,39 +72,42 @@ Test* fitPopulationTest::suite()
 void fitPopulationTest::modifiedLaplaceTest()
 {
     fitPopulationExampleTest(MODIFIED_LAPLACE);
-    //cout << "fitPopulationExampleTest(MODIFIED_LAPLACE)" << endl; 
     fitPopulationZeroIterationsTest(MODIFIED_LAPLACE);
-    //cout << "fitPopulationZeroIterationsTest(MODIFIED_LAPLACE)" << endl; 
     fitPopulationLimitsWarningsTest(MODIFIED_LAPLACE);
-    //cout << "fitPopulationLimitsWarningsTest(MODIFIED_LAPLACE)" << endl; 
+    fitPopulationIndOptErrorTest(MODIFIED_LAPLACE);
+    fitPopulationPopOptErrorTest(MODIFIED_LAPLACE);
 }
 void fitPopulationTest::expectedHessianTest()
 {
     fitPopulationExampleTest(EXPECTED_HESSIAN);
-    //cout << "fitPopulationExampleTest(EXPECTED_HESSIAN)" << endl;
     fitPopulationZeroIterationsTest(EXPECTED_HESSIAN);
-    //cout << "fitPopulationZeroIterationsTest(EXPECTED_HESSIAN)" << endl;
     fitPopulationLimitsWarningsTest(EXPECTED_HESSIAN);
-    //cout << "fitPopulationLimitsWarningsTest(EXPECTED_HESSIAN)" << endl;
+    fitPopulationIndOptErrorTest(EXPECTED_HESSIAN);
+    fitPopulationPopOptErrorTest(EXPECTED_HESSIAN);
 }
 void fitPopulationTest::firstOrderTest()
 {
     fitPopulationExampleTest(FIRST_ORDER);
-    //cout << "fitPopulationExampleTest(FIRST_ORDER)" << endl;
     fitPopulationZeroIterationsTest(FIRST_ORDER);
-    //cout << "fitPopulationZeroIterationsTest(FIRST_ORDER)" << endl;
     fitPopulationLimitsWarningsTest(FIRST_ORDER);
-    //cout << "fitPopulationLimitsWarningsTest(FIRST_ORDER)" << endl;
+
+    // Skip this test for the first order method since it doesn't
+    // optimize the individual level objectives.
+    /*
+    fitPopulationIndOptErrorTest(FIRST_ORDER);
+    */
+
+    fitPopulationPopOptErrorTest(FIRST_ORDER);
 }
 void fitPopulationTest::naiveFirstOrderTest()
 {
     fitPopulationExampleTest(NAIVE_FIRST_ORDER);
-    //cout << "fitPopulationExampleTest(NAIVE_FIRST_ORDER)" << endl;
     fitPopulationZeroIterationsTest(NAIVE_FIRST_ORDER);
-    //cout << "fitPopulationZeroIterationsTest(NAIVE_FIRST_ORDER)" << endl;
     fitPopulationLimitsWarningsTest(NAIVE_FIRST_ORDER);
-    //cout << "fitPopulationLimitsWarningsTest(NAIVE_FIRST_ORDER)" << endl;
+    fitPopulationIndOptErrorTest(NAIVE_FIRST_ORDER);
+    fitPopulationPopOptErrorTest(NAIVE_FIRST_ORDER);
 }
+
 
 /*------------------------------------------------------------------------
  * Include Files
@@ -437,57 +440,64 @@ void fitPopulationTest::fitPopulationExampleTest(enum Objective whichObjective)
   Optimizer indOptimizer( 1.0e-6, 40, 0 );
 
   // Set the values associated with the population objective function.
-  Optimizer popOptimizer( 1.0e-6, 10, 0 );
+  Optimizer popOptimizer( 1.0e-6, 5, 0 );
+
+  // Set these to exercise the warm start capabilities of fitPopulation.
+  popOptimizer.setThrowExcepIfMaxIter( false );
+  popOptimizer.setSaveStateAtEndOfOpt( true );
 
   // Set the parallel controls object
   DirBasedParallelControls parallelControls( false, 0, 0 );
 
-  // Set up warm start
-  popOptimizer.setupWarmStart( nAlp );
 
   //------------------------------------------------------------
   // Optimize the population objective function.
   //------------------------------------------------------------
 
   bool ok;
-  try{
-	  while( true )
-	  {
-          fitPopulation(
-					     model,
-					     whichObjective,
-					     N,
-					     Y,
-					     popOptimizer,
-					     alpLow,
-					     alpUp,
-					     dvecAlpIn,
-					     dvecAlpStep,
-					     &alpOut,
-					     indOptimizer,
-					     bLow,
-					     bUp,
-					     dmatBIn,            
-					     dvecBStep,
-					     &bOut,
-					     &dLTildeOut,
-					     &lTilde_alpOut,
-					     &lTilde_alp_alpOut, 
-					     parallelControls 
-			           );
-		  if( !popOptimizer.getIsTooManyIter() )
-		      // Finished
-			  break;
+  try
+  {
+    while( true )
+    {
+      fitPopulation( model,
+                     whichObjective,
+                     N,
+                     Y,
+                     popOptimizer,
+                     alpLow,
+                     alpUp,
+                     dvecAlpIn,
+                     dvecAlpStep,
+                     &alpOut,
+                     indOptimizer,
+                     bLow,
+                     bUp,
+                     dmatBIn,            
+                     dvecBStep,
+                     &bOut,
+                     &dLTildeOut,
+                     &lTilde_alpOut,
+                     &lTilde_alp_alpOut, 
+                     parallelControls );
 
-		  // Turn on warm start.
-          popOptimizer.setIsWarmStart( true );
-	  }
-       ok = true;
+      // Exit this loop if the maximum number of iterations was
+      // not exceeded, i.e., if the optimization was successful.
+      if( !popOptimizer.getIsTooManyIter() )
+        break;
+
+      // Set this so that fitPopulation performs a warm start when it
+      // is called again.
+      popOptimizer.setIsWarmStart( true );
+    }
+
+    ok = true;
   }
   catch(...)
   {
     CPPUNIT_ASSERT_MESSAGE( "fitPopulation failed", false );
   }
+
+
   //------------------------------------------------------------
   // Known values.
   //------------------------------------------------------------
@@ -1549,6 +1559,571 @@ void fitPopulationTest::fitPopulationLimitsWarningsTest(enum Objective whichObje
   WarningsManager::getAllWarnings( warnings );
   cout << "########################################" << endl;
   cout << warnings;
+  cout << "########################################" << endl;
+  */
+
+}
+
+
+/*************************************************************************
+ *
+ * Function: fitPopulationIndOptErrorTest
+ *
+ *
+ * This test implements the example problem from the fitPopulation 
+ * specification but sets the number of iterations to be few enough to
+ * cause an error to occur during the call to the individual level
+ * optimizer. 
+ *
+ *************************************************************************/
+
+void fitPopulationTest::fitPopulationIndOptErrorTest(enum Objective whichObjective)
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  int i, k;
+
+  // Number of individuals.
+  const int nInd = 10;
+
+  // Number of measurements per individual (same for all)
+  const int nYi = 1;
+
+  // Number of measurements in total
+  const int nY = nInd * nYi;
+
+  const int nAlp = 2;
+
+  const int nB = 1;
+
+  //------------------------------------------------------------
+  // Quantities related to the user-provided model.
+  //------------------------------------------------------------
+
+  UserModelFitPopulationExampleTest model( nAlp, nB, nYi );
+
+
+  //------------------------------------------------------------
+  // Quantities that define the problem.
+  //------------------------------------------------------------
+
+  // Mean and variance of the true transfer rate, betaTrue.
+  double meanBetaTrue = 1.0;
+  double varBetaTrue  = 5.0;
+
+  //------------------------------------------------------------
+  // Quantities related to the data vector, y.
+  //------------------------------------------------------------
+
+  // Measurement values, y.
+  valarray<double> Y( nY );
+
+  // Number of measurements for each individual. 
+  valarray<int> N( 1, nInd );
+
+  // These will hold the generated values for the true measurement 
+  // noise, eTrue, and the true random population parameters, bTrue.
+  double eTrue;
+  double bTrue;
+
+  // Mean, variance, and standard deviation of eTrue and bTrue.
+  double meanETrue = 0.0;
+  double varETrue  = 1.0;
+  double sdETrue   = sqrt( varETrue );
+  double meanBTrue = 0.0;
+  double varBTrue  = varBetaTrue;
+  double sdBTrue   = sqrt( varBTrue );
+
+  // Compute the measurements for each individual.
+  int seed = 2;
+  srand(seed);
+
+  valarray<double> sdECov(nY*nY);
+  sdECov[ slice( 0, nY, nY+1 ) ] = sdETrue;
+
+  valarray<double> sdBCov(nY*nY);
+  sdBCov[ slice( 0, nY, nY+1 ) ] = sdBTrue;
+
+  Y = meanBTrue + randNormal( sdBCov, nY ) + randNormal( sdECov, nY );
+
+  //------------------------------------------------------------
+  // Quantities related to the fixed population parameter, alp.
+  //------------------------------------------------------------
+
+  valarray<double> alpTrue( nAlp );
+  valarray<double> alpLow ( nAlp );
+  valarray<double> alpUp  ( nAlp );
+  valarray<double> dvecAlpIn  ( nAlp );
+  valarray<double> alpOut ( nAlp );
+  valarray<double> dvecAlpStep( nAlp );
+
+  // Set the values associated with alp(1).
+  alpTrue[ 0 ] = meanBetaTrue;
+  alpLow [ 0 ] = -10.0;
+  alpUp  [ 0 ] = 10.0;
+  dvecAlpIn  [ 0 ] = -1.0;
+  dvecAlpStep[ 0 ] = 1.0e-2;
+
+  // Set the values associated with alp(2).
+  alpTrue[ 1 ] = varBetaTrue;
+  alpLow [ 1 ] = 1.0e-3;
+  alpUp  [ 1 ] = 100.0;
+  dvecAlpIn  [ 1 ] = 0.5;
+  dvecAlpStep[ 1 ] = 1.0e-2;
+  
+
+  //------------------------------------------------------------
+  // Quantities related to the random population parameters, b.
+  //------------------------------------------------------------
+
+  valarray<double> bLow ( -1.5e+1, nB );
+  valarray<double> bUp  ( +1.0e+1, nB );
+  valarray<double> dvecBStep(  1.0e-2, nB );
+
+  valarray<double> dmatBIn ( 1., nB * nInd );
+  valarray<double> bOut(     nB * nInd );
+
+
+  //------------------------------------------------------------
+  // Quantities related to the population objective function.
+  //------------------------------------------------------------
+
+  double dLTildeOut;
+
+  valarray<double> lTilde_alpOut    ( nAlp );
+  valarray<double> lTilde_alp_alpOut( nAlp * nAlp );
+
+
+  //------------------------------------------------------------
+  // Remaining inputs to fitPopulation.
+  //------------------------------------------------------------
+
+  // Set the values associated with the individual objective function.
+  // Set the number of iterations small enough to generate a maximum
+  // iterations exceeded error during the individual level estimation.
+  Optimizer indOptimizer( 1.0e-6, 3, 0 );
+
+  // Set the values associated with the population objective function.
+  Optimizer popOptimizer( 1.0e-6, 50, 0 );
+
+  // Set the parallel controls object
+  DirBasedParallelControls parallelControls( false, 0, 0 );
+
+
+  //------------------------------------------------------------
+  // Optimize the population objective function.
+  //------------------------------------------------------------
+
+  try
+  {
+    fitPopulation( model,
+                   whichObjective,
+                   N,
+                   Y,
+                   popOptimizer,
+                   alpLow,
+                   alpUp,
+                   dvecAlpIn,
+                   dvecAlpStep,
+                   &alpOut,
+                   indOptimizer,
+                   bLow,
+                   bUp,
+                   dmatBIn,            
+                   dvecBStep,
+                   &bOut,
+                   &dLTildeOut,
+                   &lTilde_alpOut,
+                   &lTilde_alp_alpOut, 
+                   parallelControls );
+  }
+  catch( SpkException& e )
+  {
+    // Check that at least one of the error codes in list of SpkError
+    // objects contained in the exception is the proper one.
+    CPPUNIT_ASSERT_MESSAGE(
+      "The maximum iterations exceeded error was not thrown in fitPopulation.",
+      e.find( SpkError::SPK_TOO_MANY_ITER ) >= 0 );
+  }
+  catch(...)
+  {
+    CPPUNIT_ASSERT_MESSAGE(
+      "An unexpected exception was thrown in fitPopulation.",
+      false );
+  }
+
+
+  //------------------------------------------------------------
+  // Check to see if an error occurred at the individual level.
+  //------------------------------------------------------------
+
+  CPPUNIT_ASSERT_MESSAGE(
+    "The individual level optimizer did not finish with an error.",
+    indOptimizer.getDidOptFinishOk() == false );
+  
+  CPPUNIT_ASSERT_MESSAGE(
+    "The individual level optimizer state information was not from the beginning of the iteration.",
+    indOptimizer.getIsBeginOfIterStateInfo() );
+  
+  CPPUNIT_ASSERT_MESSAGE(
+    "There was no individual level optizer error information.",
+    indOptimizer.isThereErrorInfo() );
+  
+  CPPUNIT_ASSERT_MESSAGE(
+    "The maximum number of iterations was not exceeded at the individual level.",
+    indOptimizer.getIsTooManyIter() );
+
+
+  //------------------------------------------------------------
+  // Check to see if an error occurred at the population level.
+  //------------------------------------------------------------
+
+  CPPUNIT_ASSERT_MESSAGE(
+    "The population level optimizer did not finish with an error.",
+    popOptimizer.getDidOptFinishOk() == false );
+
+  CPPUNIT_ASSERT_MESSAGE(
+    "The population level optimizer state information was from the beginning of the iteration.",
+    popOptimizer.getIsBeginOfIterStateInfo() == false );
+
+  CPPUNIT_ASSERT_MESSAGE(
+    "There was population level optizer error information.",
+    popOptimizer.isThereErrorInfo() == false );
+
+  CPPUNIT_ASSERT_MESSAGE(
+    "The maximum number of iterations was exceeded at the population level.",
+    popOptimizer.getIsTooManyIter() == false );
+
+
+  //----------------------------------------------------------
+  // Get the error messages.
+  //----------------------------------------------------------
+
+  string optErrHeader;
+  string indOptErrMessage;
+  string popOptErrMessage;
+
+  optErrHeader =  "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n";
+  optErrHeader += "Individual level optimization failure details. \n";
+  optErrHeader += "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n";
+  optErrHeader += "\n";
+
+  indOptimizer.getErrorInfo(
+    optErrHeader,
+    indOptErrMessage,
+    __LINE__,
+    __FILE__ );
+
+  optErrHeader =  "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n";
+  optErrHeader += "Population level optimization failure details. \n";
+  optErrHeader += "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n";
+  optErrHeader += "\n";
+
+  popOptimizer.getErrorInfo(
+    optErrHeader,
+    popOptErrMessage,
+    __LINE__,
+    __FILE__ );
+
+
+  //----------------------------------------------------------
+  // Finish up.
+  //----------------------------------------------------------
+
+  // Uncomment these statements to see the warnings.
+  /*
+  cout << "########################################" << endl;
+  cout << indOptErrMessage;
+  cout << popOptErrMessage;
+  cout << "########################################" << endl;
+  */
+
+}
+
+
+/*************************************************************************
+ *
+ * Function: fitPopulationPopOptErrorTest
+ *
+ *
+ * This test implements the example problem from the fitPopulation 
+ * specification but sets the number of iterations to be few enough to
+ * cause an error to occur during the call to the population level
+ * optimizer. 
+ *
+ *************************************************************************/
+
+void fitPopulationTest::fitPopulationPopOptErrorTest(enum Objective whichObjective)
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  int i, k;
+
+  // Number of individuals.
+  const int nInd = 10;
+
+  // Number of measurements per individual (same for all)
+  const int nYi = 1;
+
+  // Number of measurements in total
+  const int nY = nInd * nYi;
+
+  const int nAlp = 2;
+
+  const int nB = 1;
+
+  //------------------------------------------------------------
+  // Quantities related to the user-provided model.
+  //------------------------------------------------------------
+
+  UserModelFitPopulationExampleTest model( nAlp, nB, nYi );
+
+
+  //------------------------------------------------------------
+  // Quantities that define the problem.
+  //------------------------------------------------------------
+
+  // Mean and variance of the true transfer rate, betaTrue.
+  double meanBetaTrue = 1.0;
+  double varBetaTrue  = 5.0;
+
+  //------------------------------------------------------------
+  // Quantities related to the data vector, y.
+  //------------------------------------------------------------
+
+  // Measurement values, y.
+  valarray<double> Y( nY );
+
+  // Number of measurements for each individual. 
+  valarray<int> N( 1, nInd );
+
+  // These will hold the generated values for the true measurement 
+  // noise, eTrue, and the true random population parameters, bTrue.
+  double eTrue;
+  double bTrue;
+
+  // Mean, variance, and standard deviation of eTrue and bTrue.
+  double meanETrue = 0.0;
+  double varETrue  = 1.0;
+  double sdETrue   = sqrt( varETrue );
+  double meanBTrue = 0.0;
+  double varBTrue  = varBetaTrue;
+  double sdBTrue   = sqrt( varBTrue );
+
+  // Compute the measurements for each individual.
+  int seed = 2;
+  srand(seed);
+
+  valarray<double> sdECov(nY*nY);
+  sdECov[ slice( 0, nY, nY+1 ) ] = sdETrue;
+
+  valarray<double> sdBCov(nY*nY);
+  sdBCov[ slice( 0, nY, nY+1 ) ] = sdBTrue;
+
+  Y = meanBTrue + randNormal( sdBCov, nY ) + randNormal( sdECov, nY );
+
+  //------------------------------------------------------------
+  // Quantities related to the fixed population parameter, alp.
+  //------------------------------------------------------------
+
+  valarray<double> alpTrue( nAlp );
+  valarray<double> alpLow ( nAlp );
+  valarray<double> alpUp  ( nAlp );
+  valarray<double> dvecAlpIn  ( nAlp );
+  valarray<double> alpOut ( nAlp );
+  valarray<double> dvecAlpStep( nAlp );
+
+  // Set the values associated with alp(1).
+  alpTrue[ 0 ] = meanBetaTrue;
+  alpLow [ 0 ] = -10.0;
+  alpUp  [ 0 ] = 10.0;
+  dvecAlpIn  [ 0 ] = -1.0;
+  dvecAlpStep[ 0 ] = 1.0e-2;
+
+  // Set the values associated with alp(2).
+  alpTrue[ 1 ] = varBetaTrue;
+  alpLow [ 1 ] = 1.0e-3;
+  alpUp  [ 1 ] = 100.0;
+  dvecAlpIn  [ 1 ] = 0.5;
+  dvecAlpStep[ 1 ] = 1.0e-2;
+  
+
+  //------------------------------------------------------------
+  // Quantities related to the random population parameters, b.
+  //------------------------------------------------------------
+
+  valarray<double> bLow ( -1.5e+1, nB );
+  valarray<double> bUp  ( +1.0e+1, nB );
+  valarray<double> dvecBStep(  1.0e-2, nB );
+
+  valarray<double> dmatBIn ( 1., nB * nInd );
+  valarray<double> bOut(     nB * nInd );
+
+
+  //------------------------------------------------------------
+  // Quantities related to the population objective function.
+  //------------------------------------------------------------
+
+  double dLTildeOut;
+
+  valarray<double> lTilde_alpOut    ( nAlp );
+  valarray<double> lTilde_alp_alpOut( nAlp * nAlp );
+
+
+  //------------------------------------------------------------
+  // Remaining inputs to fitPopulation.
+  //------------------------------------------------------------
+
+  // Set the values associated with the individual objective function.
+  Optimizer indOptimizer( 1.0e-6, 50, 0 );
+
+  // Set the values associated with the population objective function.
+  // Set the number of iterations small enough to generate a maximum
+  // iterations exceeded error during the population level estimation.
+  Optimizer popOptimizer( 1.0e-6, 3, 0 );
+
+  // Set the parallel controls object
+  DirBasedParallelControls parallelControls( false, 0, 0 );
+
+
+  //------------------------------------------------------------
+  // Optimize the population objective function.
+  //------------------------------------------------------------
+
+  try
+  {
+    fitPopulation( model,
+                   whichObjective,
+                   N,
+                   Y,
+                   popOptimizer,
+                   alpLow,
+                   alpUp,
+                   dvecAlpIn,
+                   dvecAlpStep,
+                   &alpOut,
+                   indOptimizer,
+                   bLow,
+                   bUp,
+                   dmatBIn,            
+                   dvecBStep,
+                   &bOut,
+                   &dLTildeOut,
+                   &lTilde_alpOut,
+                   &lTilde_alp_alpOut, 
+                   parallelControls );
+  }
+  catch( SpkException& e )
+  {
+    // Check that at least one of the error codes in list of SpkError
+    // objects contained in the exception is the proper one.
+    CPPUNIT_ASSERT_MESSAGE(
+      "The maximum iterations exceeded error was not thrown in fitPopulation.",
+      e.find( SpkError::SPK_TOO_MANY_ITER ) >= 0 );
+  }
+  catch(...)
+  {
+    CPPUNIT_ASSERT_MESSAGE(
+      "An unexpected exception was thrown in fitPopulation.",
+      false );
+  }
+
+
+  //------------------------------------------------------------
+  // Check to see if an error occurred at the individual level.
+  //------------------------------------------------------------
+
+  // Skip these checks for the first order method since it doesn't
+  // optimize the individual level objectives.
+  if ( whichObjective != FIRST_ORDER )
+  {
+    CPPUNIT_ASSERT_MESSAGE(
+      "The individual level optimizer did not finish without an error.",
+      indOptimizer.getDidOptFinishOk() == true );
+    
+    CPPUNIT_ASSERT_MESSAGE(
+      "The individual level optimizer state information was not from the beginning of the iteration.",
+      indOptimizer.getIsBeginOfIterStateInfo() );
+    
+    CPPUNIT_ASSERT_MESSAGE(
+      "There was individual level optizer error information.",
+      indOptimizer.isThereErrorInfo() == false );
+    
+    CPPUNIT_ASSERT_MESSAGE(
+      "The maximum number of iterations was exceeded at the individual level.",
+      indOptimizer.getIsTooManyIter() == false );
+  }
+
+
+  //------------------------------------------------------------
+  // Check to see if an error occurred at the population level.
+  //------------------------------------------------------------
+
+  CPPUNIT_ASSERT_MESSAGE(
+    "The population level optimizer did not finish with an error.",
+    popOptimizer.getDidOptFinishOk() == false );
+
+  CPPUNIT_ASSERT_MESSAGE(
+    "The population level optimizer state information was not from the beginning of the iteration.",
+    popOptimizer.getIsBeginOfIterStateInfo() );
+
+  CPPUNIT_ASSERT_MESSAGE(
+    "There was no population level optizer error information.",
+    popOptimizer.isThereErrorInfo() );
+
+  CPPUNIT_ASSERT_MESSAGE(
+    "The maximum number of iterations was not exceeded at the population level.",
+    popOptimizer.getIsTooManyIter() );
+
+
+  //----------------------------------------------------------
+  // Get the error messages.
+  //----------------------------------------------------------
+
+  string optErrHeader;
+  string indOptErrMessage;
+  string popOptErrMessage;
+
+  optErrHeader =  "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n";
+  optErrHeader += "Individual level optimization failure details. \n";
+  optErrHeader += "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n";
+  optErrHeader += "\n";
+
+  indOptimizer.getErrorInfo(
+    optErrHeader,
+    indOptErrMessage,
+    __LINE__,
+    __FILE__ );
+
+  optErrHeader =  "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n";
+  optErrHeader += "Population level optimization failure details. \n";
+  optErrHeader += "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n";
+  optErrHeader += "\n";
+
+  popOptimizer.getErrorInfo(
+    optErrHeader,
+    popOptErrMessage,
+    __LINE__,
+    __FILE__ );
+
+
+  //----------------------------------------------------------
+  // Finish up.
+  //----------------------------------------------------------
+
+  // Uncomment these statements to see the warnings.
+  /*
+  cout << "########################################" << endl;
+  cout << indOptErrMessage;
+  cout << popOptErrMessage;
   cout << "########################################" << endl;
   */
 
