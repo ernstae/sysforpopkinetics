@@ -20,7 +20,7 @@
   </abstract>
  </articleinfo>
   <sect1>
-    <title>Introduction</title>
+    <title>What the Architecture Supports</title>
     <para>
       The System for Population Kinetics (SPK) is software being developed
       by the RFPK Laboratory, in the Bioengineering Department of the 
@@ -259,36 +259,77 @@
       <title>The Service Provider Perspective</title>
       <para>
 	The MDA, described in the section 
-	<link linkend="mda">above</link>, is the client side of
-	SPK.  Everything else is on the server side, which is provided 
-	by an SPK service provider. The server side consists of an
-	application server, computational server, web server and
-	a database server.  The servers in this list are
-	<emphasis>functional</emphasis> servers, rather than individual
-	machines.  At RFPK, the application server and the database
-	server share a machine.  The web server is a separate machine
-	and the computational server is a cluster.
+	<link linkend="mda">above</link>, is the
+	<emphasis>client side</emphasis> of
+	SPK.  Everything else is on the 
+	<emphasis>server side</emphasis>, which is provided 
+	by an <emphasis>SPK service provider</emphasis>.
+        A service provider might simply be
+	a function within an academic department. It might be a function 
+	assumed by a campus-wide department of academic computing. The
+	service provider might be part of the IT department of a commercial
+	lab or pharmaceutical company.  It might be a function provided
+	by a consulting organization to its clients. 
       </para>
       <para>
-	All SPK server-side software, developed using the GNU software
-	development tools,
-	is designed to be portable to any
-	Linux or Unix environment.  Unlike the client-side MDA, it cannot
-	be run on Windows and Macintosh systems.  Installing and operating
+	There are, inevitably, costs involved with providing SPK service.
+	In some cases, these costs are simply absorbed in departmental
+	budgets or research grants.  In other cases, costs will be billed
+	back to users. Commercial operations may want to build a profit in to the
+	fees that they charge. At present, SPK software does not contain
+	any functions that directly support billing.
+      </para>
+      <para>
+	SPK does not require any predetermined set of computers.  It
+	is, in fact, possible to run the entire system on a single 
+	machine.  Other than for demonstration purposes, however,
+	using a single machine does not make sense, because this
+	brings insufficient computational power to bear. At RFPK,
+	the server side consists of two server machines, plus a
+	computational cluster.
+      </para>
+      <para>
+	In discussing Internet software, one is just as likely to 
+	apply the designation of <emphasis>server</emphasis> to a 
+	program as to a machine. For example, the Apache Web Server
+	is software, not hardware.  It is common for more than one
+	software server to run on a single machine.  It is also common
+	for a software server which requires a lot of resources to
+	be replicated on multiple machines in order to share the
+	load.
+      </para>
+      <para>
+	From a software point of view,
+	the server side of SPK consists of an
+	application server, computational server, a web server and
+	a database server. At RFPK, the web server is a separate 
+	machine for security reasons, the application and database
+	server share a machine, and the computational server a 
+	computational cluster.
+      </para>
+      <para>
+	All SPK server-side software is developed using the GNU software
+	development tools to be portable to any
+	Linux or Unix environment.  Unlike the client-side MDA,
+	the server side cannot
+	be run on Windows and Macintosh systems.
+      </para>
+      <para>
+	Installing and operating
 	the server side is non-trivial.  In the development of SPK,
 	a strategic decision was made to move as much of the inherent
 	complexity of the system onto the server side as possible, in 
 	order to maximize the convenience to the end user.  The server side
 	is no more complex, however, than comparable web-based applications,
 	and well within the competence of system administrators typically
-	found in University departments or commercial research facilities.
+	found in university departments or commercial research facilities.
       </para>
       <para>
         SPK is distributed free-of-charge under an open source license.  
 	This distribution stragegy reduces the risk to service providers,
 	because they can modify or continue the development of SPK 
 	independent of RFPK, if necessary.  On the other hand, RPFK 
-	will eagerly encourage collaborative development by other 
+	eagerly encourages collaborative development by all other 
 	interested parties.
       </para>
     </sect2>
@@ -297,16 +338,19 @@
       <para>
 	RFPK uses the GNU Gcc compiler and many related tools to develop
 	SPK server-side software, and the Standard Edition of Sun Java-2
-	for the MDA.  Source code is managed by the CVS revision control
+	for the MDA. The MySQL relational database management system
+	is a key component. Programming languages include C, C++,
+	Perl, and Java. Source code is managed by the CVS revision control
 	system.  All of the computers used in software development at
 	RFPK run RedHat Enterprise Linux, version 3.
       </para>
       <para>
 	One of the reasons for distributing SPK under an open source license
 	is to encourage cooperative development of the software.  Any
-	organization or individual has access to the source code and can
-	set set up a development and test environment on a few PCs.  
-	RPFK is eager to work with any serious co-developers.
+	organization or individual has access to the source code and 
+	the same open source development tools used by RFPK. A 
+	development and test environment can be set up very inexpensively
+	on a few PCs.  RPFK is eager to work with any serious co-developers.
       </para>
     </sect2>
     <sect2>
@@ -325,8 +369,8 @@
 	<itemizedlist>
 	  <listitem>
 	    <para>
-	      Support for objective functions expressed as differential
-	      equations.
+	      Support for model functions expressed as differential
+	      equations. (At present, only algebraic functions are supported).
 	    </para>
 	  </listitem>
 	  <listitem>
@@ -337,15 +381,10 @@
 	  <listitem>
 	    <para>
 	      Open source distribution of the software, via the
-	      internet.
+	      Internet.
 	    </para>
 	  </listitem>
 	</itemizedlist>
-      </para>
-    </sect2>
-    <sect2>
-      <title></title>
-      <para>
       </para>
     </sect2>
   </sect1>
@@ -357,8 +396,9 @@
       <orderedlist>
 	<listitem>
 	  <para>
-	    Minimize dependencies between major modules.  This allows
-	    a module to be modified with little or no impact on other
+	    <emphasis>Minimize dependencies between major modules</emphasis>.
+	    It must be  possible to modify
+	    a module with little or no impact on other
 	    modules.  In practical terms, this means that all communication
 	    between modules must be tightly controlled, fully documented,
 	    and narrow-band.
@@ -366,26 +406,41 @@
 	</listitem>
 	<listitem>
 	  <para>
-	    Make maximum use of widely available libraries, programs and methods.
-	    This reduces the quantity of new code that must be written and
-	    significantly improves reliability.
+	    <emphasis>Employ existing technologies whenever possible</emphasis>.
+	    Among the technologies employed are the MySQL relational database
+	    management system as the channel for all inter-server communication;
+	    the Gnu versions of Lex and Yacc for building the SPK compiler;
+	    the Xerces XML parser; the NetBeans IDE for building the graphical
+	    user interface; Java WebStart for rich-client java technology;
+	    the secure socket layer (SSL) to encrypt Internet communications;
+	    RCS for version control.
 	  </para>
 	</listitem>
 	<listitem>
 	  <para>
-	    Consider security at every stage.
+	    <emphasis>Build security into every stage</emphasis>. Employ 
+	    secure socket layer (SSL) security for connections across the
+	    public internet; password security and session security for the
+	    MDA; firewall security for the server network.
 	  </para>
 	</listitem>
 	<listitem>
 	  <para>
-	    Reliability and accuracy first. Speed and efficiency will follow.
+	    <emphasis>Incorporate only open source software</emphasis>.  
+	    This is, or course, a requirement for open source distribution.  
+	    Just as important, however, is that development resources are 
+	    are not wasted on licensing issues and cost considerations.
 	  </para>
 	</listitem>
       </orderedlist>
     </para>
+    <figure>
+      <title>Logical Architecture</title>
+      <graphic scale="100" fileref="logical.png"/>
+    </figure>
   </sect1>
   <sect1>
-    <title></title>
+    <title>Testing</title>
     <para>
     </para>
   </sect1>
