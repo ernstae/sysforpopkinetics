@@ -292,6 +292,9 @@ Either label or synonym may be one of the NONMEM reserved identifiers, among whi
 <!-- <pop_stat is_covariance_out="yes"> "yes" to request to return the covariance matrix of the final estimate(s) for population parameter, default to "no". -->
 <!ATTLIST pop_stat is_covariance_out  (yes|no) #IMPLIED>
 
+<!-- <pop_stat is_inverse_covariance_out="yes"> "yes" to request to return the inverse of covariance matrix of the final estimate(s) for population parameter, default to "no". -->
+<!ATTLIST pop_stat is_inverse_covariance_out  (yes|no) #IMPLIED>
+
 <!-- <pop_stat is_stderror_out="yes"> "yes" to request to return the standard error of the final estimate for population parameter, default to "no".  -->
 <!ATTLIST pop_stat is_stderror_out    (yes|no) #IMPLIED>
 
@@ -309,6 +312,9 @@ Either label or synonym may be one of the NONMEM reserved identifiers, among whi
 
 <!-- <ind_stat is_covariance_out="yes"> "yes" to request to return the covariance matrix of the final estimate(s) for individual parameter, default to "no". -->
 <!ATTLIST ind_stat is_covariance_out  (yes|no) #IMPLIED>
+
+<!-- <ind_stat is_inverse_covariance_out="yes"> "yes" to request to return the inverse of covariance matrix of the final estimate(s) for individual parameter, default to "no". -->
+<!ATTLIST ind_stat is_inverse_covariance_out  (yes|no) #IMPLIED>
 
 <!-- ===================================== -->
 <!--          END OF CONSTRAINT            -->
@@ -606,32 +612,41 @@ When either analysis failed or completed abnormally, only <error_message> may ap
 <!ELEMENT ind_obj_out (value)+>
 
 <!-- <pop_stat_result> Statistical analysis results on the final estimate for the population parameter. -->
-<!ELEMENT pop_stat_result (pop_stderror_out? | pop_covariance_out? | pop_correlation_out? )>
+<!ELEMENT pop_stat_result (stat_labels | pop_stderror_out? | pop_covariance_out? | pop_inverse_covariance_out? | pop_correlation_out? )>
+
+<!-- <stat_labels> Sequence of <label>s that identify the components of the statistics value. -->
+<!ELEMENT stat_labels (label)*>
 
 <!-- <pop_stderror_out> Standard error for the final estimate for population parameter. -->
-<!ELEMENT pop_stderror_out (value)+>
+<!ELEMENT pop_stderror_out (value)*>
 
 <!-- <pop_covariance_out> Covariance matrix of the final estimate for population parameter. -->
-<!ELEMENT pop_covariance_out (value)+>
+<!ELEMENT pop_covariance_out (value)*>
+
+<!-- <pop_inverse_covariance_out> Inverse of the covariance matrix of the final estimate for population parameter. -->
+<!ELEMENT pop_inverse_covariance_out (value)*>
 
 <!-- <pop_correlation_out> Correlation matrix of the final estimate for population parameter. -->
-<!ELEMENT pop_correlation_out (value)+>
+<!ELEMENT pop_correlation_out (value)*>
 
 <!-- <ind_stat_result> Statistical analysis results on the final estimate for the individual parameter. -->
-<!ELEMENT ind_stat_result (ind_stderror_out? | ind_covariance_out? | ind_correlation_out? )>
+<!ELEMENT ind_stat_result (stat_labels | ind_stderror_out? | ind_covariance_out? | ind_inverse_covariance_out? | ind_correlation_out? )>
 
 <!-- <ind_stderror_out> Standard error for the final estimate(s) for individual parameter(s). -->
-<!ELEMENT ind_stderror_out (value)+>
+<!ELEMENT ind_stderror_out (value)*>
 
 <!-- <ind_covariance_out> Covariance matrix of the final estimate(s) for individual parameter(s). -->
-<!ELEMENT ind_covariance_out (value)+>
+<!ELEMENT ind_covariance_out (value)*>
+
+<!-- <ind_inverse_covariance_out> Inverse of the covariance matrix of the final estimate(s) for individual parameter(s). -->
+<!ELEMENT ind_inverse_covariance_out (value)*>
 
 <!-- <ind_correlation_out> Correlation matrix of the final estimate(s) for individual parameter(s). -->
-<!ELEMENT ind_correlation_out (value)+>
+<!ELEMENT ind_correlation_out (value)*>
 
-<!-- <presentation_data> List of values used or generated while estimating a prediction for each observation point.
+<!-- <presentation_data> List of <individual>s' data <record>s containing values used or generated while estimating a prediction for each observation point.
 
-The list includes the followings:
+A data record includes the following data items:
    <html:ul>
       <html:li>Observation record identifier (ID)</html:li>
       <html:li>Prediction (PRED)</html:li>
@@ -644,18 +659,7 @@ were used or equations in <pk>, <error> and <diffeqn> if a PREDPP routine were u
       <html:li>Dependent variable (DV) if <simulation> were requested.</html:ul>
    </html:ul>
 -->
-<!ELEMENT presentation_data (data_column)+>
-
-<!-- <data_column> List of values for the item identified by the "label" attribute value. 
-The values appear chronologically.
--->
-<!ELEMENT data_column (value)*>
-
-<!-- <data_column label=""> Label (ie. variable name) associated with the list of values that follow. -->
-<!ATTLIST data_column label CDATA #REQUIRED>
-
-<!-- <data_column synonym=""> Alias for the label. Default to none (ie. empty). -->
-<!ATTLIST data_column synonym CDATA #IMPLIED>
+<!ELEMENT presentation_data (individual)*>
 
 <!-- ===================================== -->
 <!--              end of RESULTS           -->
