@@ -553,17 +553,16 @@ sub reaper {
     if ($child_dumped_core) {
 	$err_msg .= "core dump in $working_dir; ";
     }
-
     if ($end_code =~ "srun") {
 	# Read the checkpoint file into the checkpoint variable
 	open(FH, $filename_checkpoint)
-	    or death('emerg', "can't open $$working_dir/$filename_checkpoint");
+	    or death('emerg', "can't open $working_dir/$filename_checkpoint");
 	read(FH, $checkpoint, -s FH);
 	close(FH);
 
 	# Read the results file into the report variable
 	open(FH, $filename_results)
-	    or death('emerg', "can't open $$working_dir/$filename_results");
+	    or death('emerg', "can't open $working_dir/$filename_results");
 	read(FH, $report, -s FH);
 	close(FH);
 
@@ -580,7 +579,7 @@ sub reaper {
         if( -f $filename_checkpoint && -s $filename_checkpoint > 0 ){
            # Read the checkpoint file, if it exists, into the checkpoint variable.
            open(FH, $filename_checkpoint)
-              or death( 'emerg', "can't open $$working_dir/$filename_checkpoint");
+              or death( 'emerg', "can't open $working_dir/$filename_checkpoint");
 	   read(FH, $checkpoint, -s FH );
            close(FH);
         }
@@ -588,7 +587,7 @@ sub reaper {
         if( -f $filename_results && -s $filename_results > 0 ){
            # Read the results file, if it exists, into the report variable.
            open(FH, $filename_results)
-              or death( 'emerg', "can't open $$working_dir/$filename_results");
+              or death( 'emerg', "can't open $working_dir/$filename_results");
 	   read(FH, $report, -s FH );
            close(FH);
            # Insert the return value and its description in the results file.
@@ -627,7 +626,7 @@ sub reaper {
     }
     # Replace/write results in report file
     open(FH, ">$filename_results")
-       or death( 'emerg', "can't open $$working_dir/$filename_results");
+       or death( 'emerg', "can't open $working_dir/$filename_results");
     print FH $report;
     close(FH);
 
