@@ -478,8 +478,18 @@ void NonmemTranslatorIndTest::testParseIndSource()
   CPPUNIT_ASSERT( oIndDataDriver.good() );
 
   oIndDataDriver << "#include <vector>" << endl;
+  oIndDataDriver << "#include <sys/signal.h>" << endl;
   oIndDataDriver << "#include \"IndData.h\"" << endl;
   oIndDataDriver << "using namespace std;" << endl;
+  oIndDataDriver << "#define MY_ASSERT_EQUAL( expected, actual ) \\" << endl;
+  oIndDataDriver << "   if( actual != expected ) \\" << endl;
+  oIndDataDriver << "   { \\" << endl;
+  oIndDataDriver << "      cerr << __FILE__ << \"(\" << __LINE__ << \"): \"; \\" << endl;
+  oIndDataDriver << "      cerr << \"Expected \" << expected; \\" << endl;
+  oIndDataDriver << "      cerr << \" but was \" << actual << endl; \\" << endl;
+  oIndDataDriver << "      raise( SIGABRT ); \\" << endl;
+  oIndDataDriver << "   } " << endl;
+  oIndDataDriver << endl;
   oIndDataDriver << "int main()" << endl;
   oIndDataDriver << "{" << endl;
   oIndDataDriver << "   vector<char*> a_id(3);" << endl;
@@ -566,10 +576,21 @@ void NonmemTranslatorIndTest::testParseIndSource()
   CPPUNIT_ASSERT( oDataSetDriver.good() );
 
   oDataSetDriver << "#include <string>" << endl;
+  oDataSetDriver << "#include <sys/signal.h>" << endl;
   oDataSetDriver << "#include \"DataSet.h\"" << endl;
   oDataSetDriver << "using namespace std;" << endl;
+  oDataSetDriver << "#define MY_ASSERT_EQUAL( expected, actual ) \\" << endl;
+  oDataSetDriver << "   if( actual != expected ) \\" << endl;
+  oDataSetDriver << "   { \\" << endl;
+  oDataSetDriver << "      cerr << __FILE__ << \"(\" << __LINE__ << \"): \"; \\" << endl;
+  oDataSetDriver << "      cerr << \"Expected \" << expected; \\" << endl;
+  oDataSetDriver << "      cerr << \" but was \" << actual << endl; \\" << endl;
+  oDataSetDriver << "      raise( SIGABRT ); \\" << endl;
+  oDataSetDriver << "   } " << endl;
+  oDataSetDriver << endl;  
   oDataSetDriver << "int main()" << endl;
   oDataSetDriver << "{" << endl;
+  oDataSetDriver << "   const int n = 3;" << endl;
   oDataSetDriver << "   DataSet<double> set;" << endl;
   oDataSetDriver << "   assert( strcmp( set.data[0]->id[0], \"1\" ) == 0 );" << endl;
   oDataSetDriver << "   assert( strcmp( set.data[0]->id[1], \"1\" ) == 0 );" << endl;
@@ -587,17 +608,20 @@ void NonmemTranslatorIndTest::testParseIndSource()
   oDataSetDriver << "   assert( set.data[0]->mdv[1] == 0.0 );" << endl;
   oDataSetDriver << "   assert( set.data[0]->mdv[2] == 0.0 );" << endl;
 
-  oIndDataDriver << "   assert( A.theta.size() == " << thetaLen << " );" << endl;
-  //  oIndDataDriver << "   assert( A.omega.size() == " << omegaOrder << " );" << endl;
-  oIndDataDriver << "   assert( A.eta.size() == " << etaLen << " );" << endl;
+  oDataSetDriver << "for( int j=0; j<n; j++ )" << endl;
+  oDataSetDriver << "{" << endl;
+  oDataSetDriver << "   assert( set.data[0]->theta[j].size() == " << thetaLen << " );" << endl;
+  //  oDataSetDriver << "   assert( set.data[0]->omega[j].size() == " << omegaOrder << " );" << endl;
+  oDataSetDriver << "   assert( set.data[0]->eta[j].size() == " << etaLen << " );" << endl;
+  oDataSetDriver << "}" << endl;
 
   // The current values of RES/WRES/PRED should be always kept in memory
   // for displaying tables/scatterplots.
-  oIndDataDriver << "   assert( set.data[0].res.size() == 3 );" << endl;
-  oIndDataDriver << "   assert( set.data[0].wres.size() == 3 );" << endl;
-  oIndDataDriver << "   assert( set.data[0].pred.size() == 3 );" << endl;
+  oDataSetDriver << "   assert( set.data[0]->res.size() == n );" << endl;
+  oDataSetDriver << "   assert( set.data[0]->wres.size() == n );" << endl;
+  oDataSetDriver << "   assert( set.data[0]->pred.size() == n );" << endl;
 
-  oIndDataDriver << "   assert( set.data[0].f.size() == 3 );" << endl;
+  oDataSetDriver << "   assert( set.data[0]->f.size() == n );" << endl;
   oDataSetDriver << "}" << endl;
   
   oDataSetDriver.close();
@@ -1260,8 +1284,18 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   CPPUNIT_ASSERT( oIndDataDriver.good() );
 
   oIndDataDriver << "#include <string>" << endl;
+  oIndDataDriver << "#include <sys/signal.h>" << endl;
   oIndDataDriver << "#include \"IndData.h\"" << endl;
   oIndDataDriver << "using namespace std;" << endl;
+  oIndDataDriver << "#define MY_ASSERT_EQUAL( expected, actual ) \\" << endl;
+  oIndDataDriver << "   if( actual != expected ) \\" << endl;
+  oIndDataDriver << "   { \\" << endl;
+  oIndDataDriver << "      cerr << __FILE__ << \"(\" << __LINE__ << \"): \"; \\" << endl;
+  oIndDataDriver << "      cerr << \"Expected \" << expected; \\" << endl;
+  oIndDataDriver << "      cerr << \" but was \" << actual << endl; \\" << endl;
+  oIndDataDriver << "      raise( SIGABRT ); \\" << endl;
+  oIndDataDriver << "   } " << endl;
+  oIndDataDriver << endl;
   oIndDataDriver << "int main()" << endl;
   oIndDataDriver << "{" << endl;
   oIndDataDriver << "   vector<char*> a_id(3);" << endl;
@@ -1348,10 +1382,20 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   CPPUNIT_ASSERT( oDataSetDriver.good() );
 
   oDataSetDriver << "#include <string>" << endl;
+  oDataSetDriver << "#include <sys/signal.h>" << endl;
   oDataSetDriver << "#include \"DataSet.h\"" << endl;
-  oDataSetDriver << "using namespace std;" << endl;
+  oDataSetDriver << "#define MY_ASSERT_EQUAL( expected, actual ) \\" << endl;
+  oDataSetDriver << "   if( actual != expected ) \\" << endl;
+  oDataSetDriver << "   { \\" << endl;
+  oDataSetDriver << "      cerr << __FILE__ << \"(\" << __LINE__ << \"): \"; \\" << endl;
+  oDataSetDriver << "      cerr << \"Expected \" << expected; \\" << endl;
+  oDataSetDriver << "      cerr << \" but was \" << actual << endl; \\" << endl;
+  oDataSetDriver << "      raise( SIGABRT ); \\" << endl;
+  oDataSetDriver << "   } " << endl;
+  oDataSetDriver << endl;  oDataSetDriver << "using namespace std;" << endl;
   oDataSetDriver << "int main()" << endl;
   oDataSetDriver << "{" << endl;
+  oDataSetDriver << "   const int n = 3;" << endl;
   oDataSetDriver << "   DataSet<double> set;" << endl;
   oDataSetDriver << "   assert( strcmp( set.data[0]->id[0], \"1\" ) == 0 );" << endl;
   oDataSetDriver << "   assert( strcmp( set.data[0]->id[1], \"1\" ) == 0 );" << endl;
@@ -1369,17 +1413,20 @@ void NonmemTranslatorIndTest::testParseIndNoID()
   oDataSetDriver << "   assert( set.data[0]->mdv[1] == 0.0 );" << endl;
   oDataSetDriver << "   assert( set.data[0]->mdv[2] == 0.0 );" << endl;
 
-  oIndDataDriver << "   assert( A.theta.size() == " << thetaLen << " );" << endl;
-  //  oIndDataDriver << "   assert( A.omega.size() == " << omegaOrder << " );" << endl;
-  oIndDataDriver << "   assert( A.eta.size() == " << etaLen << " );" << endl;
+  oDataSetDriver << "for( int j=0; j<n; j++ )" << endl;
+  oDataSetDriver << "{" << endl;
+  oDataSetDriver << "   assert( set.data[0]->theta[j].size() == " << thetaLen << " );" << endl;
+  //  oDataSetDriver << "   assert( set.data[0]->omega[j].size() == " << omegaOrder << " );" << endl;
+  oDataSetDriver << "   assert( set.data[0]->eta[j].size() == " << etaLen << " );" << endl;
+  oDataSetDriver << "}" << endl;
 
   // The current values of RES/WRES/PRED should be always kept in memory
   // for displaying tables/scatterplots.
-  oIndDataDriver << "   assert( set.data[0].res.size() == 3 );" << endl;
-  oIndDataDriver << "   assert( set.data[0].wres.size() == 3 );" << endl;
-  oIndDataDriver << "   assert( set.data[0].pred.size() == 3 );" << endl;
+  oDataSetDriver << "   assert( set.data[0]->res.size() == n );" << endl;
+  oDataSetDriver << "   assert( set.data[0]->wres.size() == n );" << endl;
+  oDataSetDriver << "   assert( set.data[0]->pred.size() == n );" << endl;
 
-  oIndDataDriver << "   assert( set.data[0].f.size() == 3 );" << endl;
+  oDataSetDriver << "   assert( set.data[0]->f.size() == n );" << endl;
   oDataSetDriver << "}" << endl;
   
   oDataSetDriver.close();
