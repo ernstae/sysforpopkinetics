@@ -5,7 +5,7 @@ S = f:/cygwin/usr/local/lib/xml/stylesheets/docbook-xsl
 HTML = $S/html/docbook.xsl
 FO = $S/fo/docbook.xsl
 
-#SS = f:/cygwin/usr/local/lib/xml/stylesheets/docbook-xsl/html/docbook.xsl
+
 
 all:	html fo
 
