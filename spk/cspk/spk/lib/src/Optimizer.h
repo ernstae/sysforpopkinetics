@@ -47,6 +47,7 @@
 #define OPTIMIZER_H
 
 #include "QuasiNewtonAnyBoxObj.h"
+#include "SpkValarray.h"
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <fstream> 
@@ -138,7 +139,9 @@ private:
   //------------------------------------------------------------
 
 public:
-  void Optimizer::getStateInfo(
+  void getPar( SPK_VA::valarray<double>& parOut ) const;
+
+  void getStateInfo(
     int                  nIn,
     size_t&              bOut,
     double&              rOut,
