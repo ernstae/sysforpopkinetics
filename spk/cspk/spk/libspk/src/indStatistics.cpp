@@ -1,0 +1,673 @@
+/*
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+*/
+/*************************************************************************
+ *
+ * File: indStatistics.cpp
+ *
+ *
+ * Compute covariance matrix, standard error, correlation matrix and 
+ * 95% confidence interval of individual parameter estimates.
+ *
+ * Author: Jiaji Du
+ *
+ *************************************************************************/
+
+/*************************************************************************
+ *
+ * Function: indStatistics
+ *
+ *************************************************************************/
+
+/*------------------------------------------------------------------------
+ * Function Specification
+ *------------------------------------------------------------------------*/
+/*
+
+$begin indStatistics$$
+
+$spell
+  Model model
+  valarray
+  Cov
+  Obj
+  enum
+  Laplace
+  subvector
+  dmat
+  const
+  dvec
+  int
+  cout
+  endl
+  nr
+  nc
+  iostream
+  iomanip
+  namespace
+  std
+  ios
+  covariance
+  ind
+  cerr
+  Spk
+  inv
+  optimizer
+  fp
+  Optimizer optimizer
+  Fo
+  Dir
+  Yi
+  inx
+  aval
+  bval
+  resize
+  bool
+  Dinv
+  Rinv
+  var
+  sqrt
+  cbc
+  covariances
+  cor
+  cmath
+  nagg
+  statistics
+  confint
+  exp
+  Cramer-Rao
+$$
+
+$section Computing statistics of individual parameter estimates$$
+
+$index indStatistics, coefficient of variation, confidence interval$$
+$index covariance, standard error, correlation matrix, individual parameters$$
+
+$table
+$bold Prototype:$$ $cend
+$syntax/void indStatistics(  
+                   SpkModel&                       /indModel/,
+                   const SPK_VA::valarray<double>& /indPar/,
+                   SPK_VA::valarray<double>*       /indParCovOut/, 
+                   SPK_VA::valarray<double>*       /indParSEOut/,                          
+                   SPK_VA::valarray<double>*       /indParCorOut/,
+                   SPK_VA::valarray<double>*       /indParCVOut/,
+                   SPK_VA::valarray<double>*       /indParCIOut/
+                 )
+/$$
+$tend
+
+$fend 25$$
+
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$pre
+$$
+$head Description$$
+This function computes covariance matrix, standard error vector, correlation 
+matrix, coefficient of variation and confidence interval of individual parameter 
+estimates.  The covariance matrix is actually the lower limit of the true 
+covariance matrix.  It is calculated using the Cramer-Rao inequality:
+$math%         
+                             -1
+               Covariance \le A  
+               
+%$$
+where A is the Fisher information matrix.  The standard error 
+vector and the correlation matrix are calculated from the values of the 
+covariance matrix using their mathematical definitions, respectively. 
+The coefficient of variation is calculated as:
+$math%
+   
+               CV = SE / b * 100 
+
+%$$
+where CV stands for the coefficient of variation, SE stands for the standard 
+error and b stands for the value of the individual parameter estimate.
+The confidence interval is calculated from the values of the standard error 
+using its mathematical definition.
+
+$head Return Value$$
+Upon a successful completion, the function sets
+the given output value place holders to point to the result values.
+  
+$pre
+
+$$
+If an error is detected or failure occurs during the evaluation, a SpkException 
+object is thrown.  The state at which an exception is thrown is defined in
+$xref/glossary/Exception Handling Policy/Exception Handling Policy/$$.
+
+$head Arguments$$
+$syntax/
+/indModel/
+/$$
+This function expects $italic model$$ to be a function of
+parameters: $math%b%$$.
+Refer $xref/glossary/Model Functions Depend on only b/Model Functions 
+Depend on only b/$$ for details.
+
+$syntax/
+
+/indPar/
+/$$
+The $code SPK_VA::valarray<double>$$ $italic indPar$$ contains the vector 
+$math%b%$$, which specifies the estimates of the individual parameters.  
+The returned values $italic indParCovOut$$, $italic indParSEOut$$, 
+$italic indParCorOut$$, $italic indParCVOut$$ and $italic indParCIOut$$  
+will be evaluated at these estimates.  
+The $italic values of indPar$$ should be obtained by calling SPK function 
+$xref/fitIndividual//fitIndividual/$$.
+
+$syntax/
+
+/indParCovOut/ 
+/$$
+If $italic indParCovOut$$ is not $code NULL$$, then the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic indParCovOut$$ 
+must be declared in the function that calls this function, and its size must 
+be equal to the square of the length of the individual parameter vector 
+$math%b%$$.  If $italic popParCovOut$$ is not $code NULL$$ and this function 
+completed successfully, then the $code SPK_VA::valarray<double>$$ object 
+pointed to by $italic indParCovOut$$ will contain the covariance matrix
+of the individual parameter estimates, in column major order, that is evaluated 
+at $italic indPar$$.  Otherwise, this function will not attempt to change the 
+contents of the $code SPK_VA::valarray<double>$$ object pointed to by 
+$italic indParCovOut$$.  
+
+$syntax/
+
+/indParSEOut/ 
+/$$
+If $italic indParSEOut$$ is not $code NULL$$, then the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic indParSEOut$$ 
+must be declared in the function that calls this function, and its size must 
+be equal to the length of the individual parameter vector 
+$math%b%$$.  If $italic indParSEOut$$ is not $code NULL$$ and this function 
+completed successfully, then the $code SPK_VA::valarray<double>$$ object 
+pointed to by $italic indParSEOut$$ will contain the standard error vector
+of the individual parameter estimates, in column major order, that is evaluated 
+at $italic indPar$$.  Otherwise, this function will not attempt to change the 
+contents of the $code SPK_VA::valarray<double>$$ object pointed to by 
+$italic indParSEOut$$.  
+
+$syntax/
+
+/indParCorOut/ 
+/$$
+If $italic indParCorOut$$ is not $code NULL$$, then the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic indParCorOut$$ 
+must be declared in the function that calls this function, and its size must 
+be equal to the square of the length of the individual parameter vector 
+$math%b%$$.  If $italic popParCorOut$$ is not $code NULL$$ and this function 
+completed successfully, then the $code SPK_VA::valarray<double>$$ object 
+pointed to by $italic indParCorOut$$ will contain the correlation matrix
+of the individual parameter estimates, in column major order, that is evaluated 
+at $italic indPar$$.  Otherwise, this function will not attempt to change the 
+contents of the $code SPK_VA::valarray<double>$$ object pointed to by 
+$italic indParCorOut$$.  
+
+$syntax/
+
+/indParCVOut/ 
+/$$
+If $italic indParCVOut$$ is not $code NULL$$, then the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic indParCVOut$$ 
+must be declared in the function that calls this function, and its size must 
+be equal to the length of the individual parameter vector 
+$math%b%$$.  If $italic indParCVOut$$ is not $code NULL$$ and this function 
+completed successfully, then the $code SPK_VA::valarray<double>$$ object 
+pointed to by $italic indParCVOut$$ will contain the standard error vector
+of the individual parameter estimates, in column major order, that is evaluated 
+at $italic indPar$$.  Otherwise, this function will not attempt to change the 
+contents of the $code SPK_VA::valarray<double>$$ object pointed to by 
+$italic indParCVOut$$.  
+
+$syntax/
+
+/indParCIOut/ 
+/$$
+If $italic indParCIOut$$ is not $code NULL$$, then the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic indParCIOut$$ 
+must be declared in the function that calls this function, and its size must 
+be equal to the two times of the length of the individual parameter vector 
+$math%b%$$.  If $italic indParCIOut$$ is not $code NULL$$ and this function 
+completed successfully, then the $code SPK_VA::valarray<double>$$ object pointed 
+to by $italic indParCIOut$$ will contain the 95% confidence interval values 
+of the individual parameter estimates, in column major order, that is evaluated 
+at $italic indPar$$.  There are two columns in the object.  The first column 
+contains the lower limit, and the second column contains the upper limit of 
+the confidence interval of the individual parameter estimates.  Otherwise, 
+this function will not attempt to change the contents of the 
+$code SPK_VA::valarray<double>$$ object pointed to by $italic indParCIOut$$.  
+Note that in the calculation of the confidence interval, if the degree of freedom 
+(number of data - number of parameters) is greater than 120 it is treated as infinite.
+
+
+$head Example$$
+The following demonstrates running popStatistics() in the single processing mode.
+
+$codep
+
+#include <iostream>
+#include <cmath>
+#include "SpkModel.h"
+#include "indStatistics.h"
+#include "printInMatrix.h"
+#include "fitIndividual.h"
+#include "SpkValarray.h"
+
+using namespace std;
+
+/*------------------------------------------------------------------------
+ * Class Definition
+ *------------------------------------------------------------------------*/
+/*
+class UserModelIndStatisticsExampleTest : public SpkModel
+{
+    valarray<double> _b;
+public:
+    UserModelIndStatisticsExampleTest(){};    
+    ~UserModelIndStatisticsExampleTest(){};
+private:
+    void doSetIndPar(const valarray<double>& bval)
+    {
+        _b = bval;
+    }
+    void doDataMean( valarray<double>& ret ) const
+    {
+//
+//            / b(2) \ 
+//     f(b) = | b(2) |   
+//            \ b(2) /
+//
+        ret.resize( 3, _b[1] );
+    }
+    bool doDataMean_indPar( valarray<double>& ret ) const
+    {
+//
+//              / 0   1 \ 
+//     f_b(b) = | 0   1 |   
+//              \ 0   1 /
+//
+        ret.resize( 6, 0.0 );
+        ret[3] = 1.0;
+        ret[4] = 1.0;
+        ret[5] = 1.0;
+
+        return true;
+    }
+    void doDataVariance( valarray<double>& ret ) const
+    {
+//
+//            /  exp[b(1)]     0         0     \ 
+//     R(b) = |      0     exp[b(1)]     0     |   
+//            \      0         0     exp[b(1)] / 
+//
+        ret.resize( 9, 0.0 );
+        ret[0] = exp( _b[0] );
+        ret[4] = exp( _b[0] );
+        ret[8] = exp( _b[0] );
+    }
+    bool doDataVariance_indPar( valarray<double>& ret ) const
+    {
+//
+//              /  exp[b(1)]     0  \ 
+//     R_b(b) = |  0             0  |   
+//              |  0             0  | 
+//              |  0             0  |
+//              |  exp[b(1)]     0  | 
+//              |  0             0  |   
+//              |  0             0  | 
+//              |  0             0  |
+//              \  exp[b(1)]     0  / 
+//
+        ret.resize( 18, 0.0 );
+        ret[0] = exp( _b[0] );
+        ret[4] = exp( _b[0] );
+        ret[8] = exp( _b[0] );
+
+        return true;
+    }   
+    void doIndParVariance( valarray<double>& ret ) const
+    {
+//
+//            /  1.0     0   \ 
+//     D(b) = |              |   
+//            \  0       0.5 / 
+//
+        ret.resize( 4 );
+        ret[0] = 1.0;
+        ret[1] = 0.0;
+        ret[2] = 0.0;
+        ret[3] = 0.5;
+    }
+};
+
+int main()
+{
+    //------------------------------------------------------------
+    // Preliminaries.
+    //------------------------------------------------------------
+
+    using namespace std;
+
+    //------------------------------------------------------------
+    // Quantities related to the user-provided model.
+    //------------------------------------------------------------
+
+    UserModelIndStatisticsExampleTest model;
+
+    //------------------------------------------------------------
+    // Quantities related to the data vector, y.
+    //------------------------------------------------------------
+
+    int nY = 3;
+    valarray<double> Y(nY );
+    Y[ 0 ] = 1.8;
+    Y[ 1 ] = 2.0;
+    Y[ 2 ] = 2.2;
+
+    //------------------------------------------------------------
+    // Quantities related to the objective function parameter, b.
+    //------------------------------------------------------------
+
+    int nB = 2;
+
+    valarray<double> indParLow ( -4.0, nB );
+    valarray<double> indParUp  (  4.0, nB );
+    valarray<double> indParIn  (  2.0, nB );
+    valarray<double> indParOut (       nB );
+    valarray<double> indParStep( .001, nB );
+
+
+    //------------------------------------------------------------
+    // Quantities related to the objective function, MapObj(b).
+    //------------------------------------------------------------
+
+    double MapObjOut;
+
+    valarray<double> MapObj_bOut  ( nB );
+    valarray<double> MapObj_b_bOut( nB * nB );
+
+
+    //------------------------------------------------------------
+    // Remaining inputs to fitIndividual.
+    //------------------------------------------------------------
+
+    Optimizer indOptimizer( 1.e-3, 40, 0 );
+    bool withD      = false;
+
+    //------------------------------------------------------------
+    // Optimize MapObj(b).
+    //------------------------------------------------------------
+
+    try
+    {
+        fitIndividual( model,
+                       Y,
+                       indOptimizer,
+                       indParLow,
+                       indParUp,
+                       indParIn,
+                       indParStep,
+                       &indParOut,            
+                       &MapObjOut,
+                       &MapObj_bOut,
+                       &MapObj_b_bOut,
+                       withD );
+    }
+    catch(...)
+    {
+        cerr << "fitIndividual failed" << endl;
+    }
+
+    //------------------------------------------------------------
+    // Compute statistics of individual parameter estimates.
+    //------------------------------------------------------------
+
+    valarray<double> indParCovOut( nB * nB );
+    valarray<double> indParSEOut ( nB      );
+    valarray<double> indParCorOut( nB * nB );
+    valarray<double> indParCVOut ( nB      );
+    valarray<double> indParCIOut ( nB *  2 ); 
+
+    try
+    {
+        indStatistics( model,
+                       indParOut,
+                       &indParCovOut,
+                       &indParSEOut,                          
+                       &indParCorOut,
+                       &indParCVOut,
+                       &indParCIOut );
+    }
+    catch(...)
+    {
+        cerr << "indStatistics failed" << endl;
+        return 0;
+    }
+    
+    cout << "indParOut = " << endl;
+    printInMatrix( indParOut, 1 );
+    cout << "indParCovOut = " << endl;
+    printInMatrix( indParCovOut, nB );
+    cout << "indParSEOut = " << endl;
+    printInMatrix( indParSEOut, 1 );
+    cout << "indParCVOut = " << endl;
+    printInMatrix( indParCVOut, 1 );
+    cout << "indParCorOut = " << endl;
+    printInMatrix( indParCorOut, nB );
+    cout << "indParCIOut = " << endl;
+    printInMatrix( indParCIOut, 2 );
+    return 0;
+}
+$$
+The program will display the following when it is run:
+$codep
+
+indParOut =
+[ -3.62422 ]
+[ 2 ]
+indParCovOut =
+[ 0.666667 0 ]
+[ 0 0.00889 ]
+indParSEOut =
+[ 0.816497 ]
+[ 0.0942868 ]
+indParCVOut =
+[ -22.5289 ]
+[ 4.71434 ]
+indParCorOut =
+[ 1 0 ]
+[ 0 1 ]
+indParCIOut =
+[ -13.9986 6.75019 ]
+[ 0.801992 3.19801 ]
+
+$$
+
+$end
+*/
+
+#include <strstream>
+#include <cmath>
+#include "indStatistics.h"
+#include "SpkException.h"
+#include "multiply.h"
+#include "transpose.h"
+#include "AkronBtimesC.h"
+#include "inverse.h"
+
+using SPK_VA::valarray;
+using SPK_VA::slice;
+
+void indStatistics( SpkModel&                indModel,
+                    const valarray<double>&  indPar,
+                    valarray<double>*        indParCovOut,
+                    valarray<double>*        indParSEOut,                          
+                    valarray<double>*        indParCorOut,
+					valarray<double>*        indParCVOut,
+                    valarray<double>*        indParCIOut )
+{
+    using std::endl;
+    using std::ends;
+    //----------------------------------------------------------------
+    // Preliminaries.
+    //----------------------------------------------------------------
+    // Return if there are no output values to compute.
+    if( indParCovOut == 0 && indParSEOut == 0 && indParCorOut == 0 && 
+		indParCVOut && indParCIOut == 0 ) 
+       return;
+  
+    // Number of individual parameters
+    const int nB   = indPar.size();
+
+    //----------------------------------------------------------------
+    // Preparation. 
+    //----------------------------------------------------------------
+    indModel.setIndPar( indPar );
+    valarray<double> F_b, R_b, RInv; 
+	
+    indModel.dataMean_indPar( F_b );
+    indModel.dataVariance_indPar( R_b );
+	indModel.dataVarianceInv( RInv );
+
+    // Number of data points
+    const int nY = sqrt( RInv.size() );
+
+    // Degree of freedom
+    const int nF = nY - nB;
+	
+    if( !nF )
+	{
+        std::strstream message;
+        message << "The degree of freedom must be positive." << ends;
+
+        throw SpkException(
+                SpkError::SPK_USER_INPUT_ERR, 
+                message.str(),
+                __LINE__, __FILE__
+        );
+	}
+
+    //----------------------------------------------------------------
+    // Calculate Covariance of individual parameter estimates 
+    //----------------------------------------------------------------
+    valarray<double> indParCov;
+
+    try
+	{
+        indParCov = inverse( 0.5 * multiply( transpose( R_b, nB ), nY * nY,
+		                                     AkronBtimesC( RInv, nY, RInv, 
+										                   nY, R_b, nB ), nB )
+	                         + multiply( transpose( F_b, nB ), nY,
+				                         multiply( RInv, nY, F_b, nB ), nB ), 
+	                         nB );
+	}
+    catch(SpkException& e)
+	{
+        throw e.push( SpkError::SPK_NOT_INVERTABLE_ERR,
+                      "Failed to invert information matrix",
+                      __LINE__, __FILE__ );
+	}
+
+    //----------------------------------------------------------------
+    // Calculate Standard Error of individual parameter estimates
+    //----------------------------------------------------------------
+    valarray<double> indParSE( nB );
+
+    if( indParSEOut || indParCVOut || indParCIOut )
+    {
+        valarray<double> temp = indParCov[ slice( 0, nB, nB + 1 ) ];
+        for( int i = 0; i < nB; i++ )
+            indParSE[ i ] = sqrt( temp[ i ] );
+    }
+
+    //----------------------------------------------------------------
+    // Prepare output for Covariance 
+    //----------------------------------------------------------------
+    if( indParCovOut )
+        *indParCovOut = indParCov;
+
+    //----------------------------------------------------------------
+    // Prepare output for Standard Error 
+    //----------------------------------------------------------------
+    if( indParSEOut )
+        *indParSEOut = indParSE;
+
+    //----------------------------------------------------------------
+    // Prepare output for Correlation 
+    //----------------------------------------------------------------
+    if( indParCorOut )
+    {
+        int m = nB + 1;
+        int n = nB * nB;
+        for( int i = 0; i < n; i++ )
+            ( *indParCorOut )[ i ] = indParCov[ i ] / 
+                                     sqrt( indParCov[ i % nB * m ] * 
+                                           indParCov[ i / nB * m ] );
+    }
+
+    //----------------------------------------------------------------
+    // Prepare output for Coefficient of Variation 
+    //----------------------------------------------------------------
+    if( indParCVOut )
+    {
+        for( int i = 0; i < nB; i++ )
+            ( *indParCVOut )[ i ] = indParSE[ i ] / indPar[ i ] * 100.;  
+    }
+
+    //----------------------------------------------------------------
+    // Prepare output for Confidence Interval
+    //----------------------------------------------------------------
+    if( indParCIOut )
+    {
+        double t[] = { 12.706, 4.303, 3.182, 2.776, 2.571, 2.447, 
+			            2.365, 2.306, 2.262, 2.228, 2.201, 2.179, 
+						2.160, 2.145, 2.131, 2.120, 2.110, 2.101, 
+						2.093, 2.086, 2.080, 2.074, 2.069, 2.064, 
+						2.060, 2.056, 2.052, 2.048, 2.045, 2.042 };
+
+        double tn, distance;
+
+		if( nF <= 30 )
+			tn = t[ nF - 1 ];
+		if( nF > 30 && nF <= 40 )
+			tn = 2.042 - ( nF - 30 ) * 0.021 / 10.0;
+		if( nF > 40 && nF <= 60 )
+            tn = 2.021 - ( nF - 40 ) * 0.021 / 20.0;
+		if( nF > 60 && nF <= 120 )
+            tn = 2.000 - ( nF - 60 ) * 0.020 / 60.0;
+        if( nF > 120 )
+			tn = 1.960;
+
+		for( int i = 0; i < nB; i++ )
+		{
+			distance = indParSE[ i ] * tn;
+		    ( *indParCIOut )[ i ]      = indPar[ i ] - distance;
+			( *indParCIOut )[ i + nB ] = indPar[ i ] + distance;
+		}
+    }
+}
