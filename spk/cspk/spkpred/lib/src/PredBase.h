@@ -83,8 +83,10 @@ public:
    */
   virtual int getNObservs( int i ) const = 0;
 
+public:
+  virtual ~PredBase(){}
+
 protected:
-  ~PredBase(){}
   PredBase(){}
   PredBase( const PredBase& ){}
   PredBase & operator=( const PredBase& ){}
