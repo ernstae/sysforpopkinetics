@@ -25,27 +25,24 @@ SpkMLToCpp::SpkMLToCpp( const char* inputSpkMLIn )
   initializeDOM();
   tree = buildTreeFromSpkML( inputSpkML );
   who  = discoverClient( tree );
-  client_translator = SpkMLToCpp::createChild( who );
+  client_translator = SpkMLToCpp::createTranslator( who );
   assert( client_translator != NULL );
 }
 
 SpkMLToCpp::~SpkMLToCpp()
 {
-  //  tree->release();
   delete parser;
-  //delete client_translator;
+  //tree->release();
+  delete client_translator;
   terminateDOM();
 }
 
 void SpkMLToCpp::translate()
 {
-  assemble( tree );
-  emit( tree );
+  client_translator->assemble( tree );
+  client_translator->emit( tree );
 }
-const SpkMLToCpp * SpkMLToCpp::getInstance() const
-{
-  return client_translator;
-}
+
 const struct FitParameters * SpkMLToCpp::getSpkParameters() const
 {
   return client_translator->getSpkParameters();
@@ -53,33 +50,6 @@ const struct FitParameters * SpkMLToCpp::getSpkParameters() const
 const void* SpkMLToCpp::getClientParameters() const
 {
   return client_translator->getClientParameters();
-}
-
-void SpkMLToCpp::assemble( xercesc::DOMDocument * tree )
-{
-  client_translator->assemble( tree );
-}
-void SpkMLToCpp::emit( xercesc::DOMDocument * tree )
-{
-  client_translator->emit( tree );
-}
-enum client::type SpkMLToCpp::getClient() const
-{
-  return who;
-}
-const char* SpkMLToCpp::getInputFilename() const
-{
-  return inputSpkML;
-}
-
-const char * SpkMLToCpp::getDriverFilename() const
-{
-  return driver_file;
-}
-
-const std::vector< const char * > SpkMLToCpp::getModelFilenameList() const
-{
-  return model_files;
 }
 
 SpkMLToCpp::SpkMLToCpp()
@@ -94,15 +64,6 @@ SpkMLToCpp::SpkMLToCpp( const SpkMLToCpp& right )
 const SpkMLToCpp& SpkMLToCpp::operator=( const SpkMLToCpp& right )
 {
   return *this;
-}
-
-void SpkMLToCpp::setDriverFilename( const char * filename )
-{
-  strcpy( driver_file, filename );
-}
-void SpkMLToCpp::addModelFilename( const char * filename )
-{
-  model_files.push_back( filename );
 }
 
 void SpkMLToCpp::initializeDOM() const
@@ -161,7 +122,8 @@ DOMDocument* SpkMLToCpp::buildTreeFromSpkML( const char * input )
       const unsigned int maxChars = 2047;
       XMLCh errText[maxChars + 1];
       char buf[256];
-      sprintf( buf, "DOM Error during parsing \"%s\"\nDOMException code is: %d\n", input, e.code );
+      sprintf( buf, "DOM Error during parsing \"%s\"\nDOMException code is: %d\n", 
+	       input, e.code );
       fprintf( stderr, buf );
       exit(-1);
 
@@ -169,7 +131,7 @@ DOMDocument* SpkMLToCpp::buildTreeFromSpkML( const char * input )
       {
 	terminateDOM();
 	char buf[256];
-	sprintf( buf, "Message is: %s", C(errText) );
+	sprintf( buf, "Message is: %s.\n %d, %s\n", C(errText), __LINE__, __FILE__ );
 	fprintf( stderr, buf );
 	exit( -1 );
       }
@@ -178,7 +140,7 @@ DOMDocument* SpkMLToCpp::buildTreeFromSpkML( const char * input )
   {
     terminateDOM();
     char buf[128];
-    sprintf( buf, "An unknown error occurred during parsing\n " );
+    sprintf( buf, "An unknown error occurred during parsing.\n %d, %s\n", __LINE__, __FILE__ );
     fprintf( stderr, buf );
     exit( -1 );
   }
@@ -203,21 +165,7 @@ enum client::type SpkMLToCpp::discoverClient( const xercesc::DOMDocument* tree )
 
   return client::toEnum( c_client );
 }
-SpkMLToCpp * SpkMLToCpp::createChild( enum client::type who ) const
-{
-  if( who == client::NONMEM )
-    {
-      return new NonmemSpkMLToCpp( tree );
-    }
-  else
-    {
-      char buf[256];
-      sprintf( buf, "Not supported (%s)! (%d, %s)\n", client::toString( who ), __LINE__, __FILE__ );
-      fprintf( stderr, buf );
-      return NULL;
-    }
-  return NULL;
-}
+
 ClientTranslator * SpkMLToCpp::createTranslator( enum client::type who ) const
 {
   if( who == client::NONMEM )

@@ -11,7 +11,6 @@
 
 class NonmemCompilerTest : public CppUnit::TestFixture {
 
-  NonmemSpkMLToCpp * compiler;
 public:
     static CppUnit::Test * suite();
     virtual void setUp();
