@@ -9,6 +9,14 @@
    <articleinfo>
       <revhistory>
          <revision>
+            <revnumber>1.13</revnumber>
+            <date>September 8, 2004</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>
+            Added an explanation for IndData::getMeasurements() from the class client's perspective.
+            </revremark>
+         </revision>
+         <revision>
             <revnumber>1.12</revnumber>
             <date>September 8, 2004</date>
             <authorinitials>sh</authorinitials>
@@ -423,8 +431,12 @@ F = TmP1 + ETA(1)
             <term><literal>const std::valarray&lt;double&gt; getMeasurements() const</literal></term>
             <listitem>
                <para>
-               Returns a vector of only those DV
-               values of which corresponding MDV != 1.
+               Returns a vector of measurements.  The i-th element of the vector is the i-th measurement
+              (ie. the i-th sampling point) within this subject's data set.
+               </para>
+               <para>
+               For programmers, this means that the vector contains only those DV values 
+               of which corresponding MDV != 1.
                Thus, the i-th element of the vector is not necessary the DV value 
                from the i-th record.  For example, if there are 10 records among which 1st and 5th records have 
                MDV = 1.  The 1st element of the vector is the DV 
