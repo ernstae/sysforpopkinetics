@@ -6,34 +6,45 @@
 ]>
 <article><title>An Architectural Overview of SPK</title>
   <articleinfo>
+    <author>
+      <firstname>Alan</firstname>
+      <surname>Westhagen</surname>
+      <affiliation>
+	<jobtitle>Software Architect</jobtitle>
+	<jobtitle>RFPK Software Team Leader</jobtitle>
+      </affiliation>
+    </author>
     <revhistory>
       <revision>
 	<revnumber>1.0</revnumber>
-	<date>July 4, 1776</date>
+	<date>July 1, 2004</date>
 	<authorinitials>afw</authorinitials>
 	<revremark>Initial version.</revremark>
       </revision>
     </revhistory>
     <abstract>
       <para>
-      </para>
+	The System for Population Kinetics (SPK) is software being developed
+	by the RFPK Laboratory, in the Bioengineering Department of the 
+	University of Washington, under grant <emphasis>P41 EB-001975</emphasis>
+	from the National Institutes
+	of Health (NIH) of the U.S. Department of Health and Human Services.	
+	This whitepaper describes its architecture.
+    </para>
     </abstract>
   </articleinfo>
   <sect1>
     <title>What the Architecture Supports</title>
     <para>
-      The System for Population Kinetics (SPK) is software being developed
-      by the RFPK Laboratory, in the Bioengineering Department of the 
-      University of Washington, under grant <emphasis>P41 EB-001975</emphasis>
-      from the National Institutes
-      of Health (NIH) of the U.S. Department of Health and Human Services.
+      This section describes the requirements that the SPK architecture
+      is designed to satisfy.
     </para>
     <sect2>
       <title>The Problem to be Solved</title>
       <para>
 	To better understand and to predict the operation of biological
 	systems, researchers design mathematical models which they 
-	believe will closely conform to the observational data.  The
+	believe will closely conform to observations.  The
 	equations that comprise these models contain parameters whose
 	values must be determined by "fitting" the equations to real-world
 	data.  In the biomedical field of population kinetics (PK), a methodology
@@ -52,7 +63,7 @@
       <title>The Computational Challenge</title>
       <para>
 	From a computational stand-point, the process of developing
-	non-parametric mixed-effects models presents some interesting challenges.
+	nonlinear mixed-effects models presents some interesting challenges.
 	<itemizedlist>
 	  <listitem>
 	    <para>
@@ -83,21 +94,22 @@
 	      communicating with colleagues, etc.  In nearly
 	      every case, this platform will be a personal computer
 	      workstation or laptop running the user's preferred
-	      operating system, whether Windows, Mac,or Linux.
+	      operating system, whether Windows, Macintosh ,or Linux.
 	    </para>
 	  </listitem>
 	  <listitem>
 	    <para>
-	      Internet connectivity is just as important to the creative
-	      designer of PK models as is the workstation or laptop
-	      of her choice.  While a model's parameters are 
+	      Internet connectivity is just as important as her
+	      workstation or laptop to the creative
+	      designer of PK models.
+	      While a model's parameters are 
 	      being computed, the user will be working on other models
-	      or other unrelated work, but will need to monitor
-	      the progress of her PK jobs in progress, as they are processed
+	      or unrelated work, but will need to monitor
+	      the progress of her PK jobs as they are processed
 	      to completion.  The user should be able, for example,
 	      to submit a job
 	      for computation at her office, obtain results and
-	      submit a modified model at an airport en route to a 
+	      resubmit a modified model at an airport en route to a 
 	      conference, and receive the completed work upon arrival
 	      at her destination.
 	    </para>
@@ -109,12 +121,13 @@
       <title>SPK is a Web Service</title>
       <para>
 	SPK is a service delivered to researchers via the world wide
-	web, which enables them to develop PK models quickly and
+	web, which enables them to develop, compute and validate PK models quickly and
 	efficiently. The service is offered to a designated set of 
 	users by an SPK service provider.  At the present time, the
-	only SPK service provider is RFPK itself, but in the future
-	we envision many additional service providers
-	located at both academic and commercial research laboratories.
+	only SPK service provider is RFPK itself, but in the future,
+	many additional service providers,
+	located at both academic and commercial research laboratories,
+	are envisioned.
       </para>
       <para>
 	Although SPK can run on a single machine, its real power can
@@ -142,10 +155,10 @@
 	Windows, Linux and Macintosh.  The first time the user 
 	accesses an SPK installation with her browser,
 	she is lead through the downloading and installation 
-	of the MDA and, if required,
+	of the MDA and, if not already present,
 	the Java runtime environment.  This only takes a few 
 	minutes.  At the beginning of subsequent sessions, she
-	does not need to download any software, unless updated 
+	does not need to download any software unless updated 
 	versions are available, in which case, the download and 
 	installation occur automatically.
       </para>
@@ -239,13 +252,13 @@
 	    <para>
 	      Create a new job by cloning a previous job, changing 
 	      initial arguments, run parameters, method or dataset.
-	      For example,  SPK currently supports four methods of 
+	      For example,  SPK currently supports several methods of 
 	      calculation, including 
 	      <emphasis>first order </emphasis>,
 	      <emphasis>expected Hessian </emphasis>,
 	      <emphasis>Laplace approximation </emphasis> and
 	      <emphasis>Monte Carlo likelihood </emphasis>, 
-	      sorted in order of increasing computational cost.
+	      which have been listed in order of increasing computational cost.
 	      The user might want to start with a quick 
 	      computation using the first order method, then
 	      follow with one of the more expensive methods,
@@ -266,10 +279,10 @@
 	<emphasis>server side</emphasis>, which is provided 
 	by an <emphasis>SPK service provider</emphasis>.
         A service provider might simply be
-	a function within an academic department. It might be a function 
-	assumed by a campus-wide department of academic computing. The
+	a function within an academic department. It might be an operation
+	of a a campus-wide department of academic computing. The
 	service provider might be part of the IT department of a commercial
-	lab or pharmaceutical company.  It might be a function provided
+	lab or pharmaceutical company.  It might be a service provided
 	by a consulting organization to its clients. 
       </para>
       <para>
@@ -278,7 +291,9 @@
 	budgets or research grants.  In other cases, costs will be billed
 	back to users. Commercial operations may want to build a profit into the
 	fees that they charge. At present, SPK software does not contain
-	any functions that directly support billing.
+	any functions that directly support billing. Information that could
+	provide the basis for billing or charge-back is, however, present in
+	the database.
       </para>
       <para>
 	SPK does not require any predetermined set of computers.  It
@@ -329,7 +344,7 @@
         SPK is distributed free-of-charge under an open source license.  
 	This distribution strategy reduces the risk to service providers,
 	because they can modify or continue the development of SPK 
-	independent of RFPK, if necessary.  On the other hand, RPFK 
+	independent of RFPK, if necessary.  On the other hand, RFPK 
 	eagerly encourages collaborative development by all other 
 	interested parties.
       </para>
@@ -337,7 +352,8 @@
     <sect2>
       <title>The Software Developer Perspective</title>
       <para>
-	RFPK uses the GNU Gcc compiler and many related tools to develop
+	RFPK uses the GNU GCC compiler and many related tools to develop
+	most of the
 	SPK server-side software, and the Standard Edition of Sun Java-2
 	for the MDA. The MySQL relational database management system
 	is a key component. Programming languages include C, C++,
@@ -351,7 +367,7 @@
 	organization or individual has access to the source code and 
 	the same open source development tools used by RFPK. A 
 	development and test environment can be set up very inexpensively
-	on a few PCs.  RPFK is eager to work with any serious co-developers.
+	on a few PCs.  RFPK is eager to work with any serious co-developers.
       </para>
     </sect2>
     <sect2>
@@ -360,7 +376,7 @@
 	At the present time (July, 2004), SPK would have to be classed as 
 	a <emphasis>beta</emphasis> product.  The only service provider is
 	RFPK itself, and the only users are scientists associated with the
-	lab.  It will be at least nine months before source code be well
+	lab.  It will be at least nine months before source code will be well
 	enough organized for general release.  The system is being tested
 	in end-to-end mode and the initial results look good.
       </para>
@@ -399,13 +415,14 @@
 	  <para>
 	    <emphasis>Emphasize user effectiveness.</emphasis>
 	    The user's time is very valuable. Don't give the user a product that is
-	    hard to install and hard to use. Trade increased complexity
+	    hard to install or hard to use. Trade increased complexity
 	    on the server side for simplicity on the client side.
 	  </para>
 	</listitem>
 	<listitem>
 	  <para>
 	    <emphasis>Build security into every stage</emphasis>. Employ 
+	    public key authentication and the
 	    secure socket layer (SSL) security for connections across the
 	    public INTERNET; password security and session security for the
 	    MDA; firewall security for the server network.
@@ -414,9 +431,11 @@
 	<listitem>
 	  <para>
 	    <emphasis>Incorporate only open source software</emphasis>.  
-	    This is, or course, a requirement for open source distribution.  
-	    Just as important, however, is that development resources are 
-	    are not wasted on licensing issues and cost considerations.
+	    This is, of course, a requirement for open source distribution.  
+	    Equally important, however, is the access that this policy affords
+	    to a wealth of open source components which can be freely incorporated
+	    into SPK without the need to expend resources negotiating 
+	    commercial licensing and pricing issues.
 	  </para>
 	</listitem>
 	<listitem>
@@ -435,7 +454,9 @@
 	    Among the technologies employed are the MySQL relational database
 	    management system as the channel for all inter-server communication;
 	    the Gnu versions of Lex and Yacc for building the SPK compiler;
-	    the Xerces XML parser; the NetBeans IDE for building the graphical
+	    the Xerces XML parser;
+	    Sun Java-2 and the Java Runtime Engine;
+	    the NetBeans IDE for building the graphical
 	    user interface; Java WebStart for rich-client java technology;
 	    the secure socket layer (SSL) to encrypt Internet communications;
 	    RCS for version control.
@@ -446,13 +467,19 @@
   </sect1>
   <sect1>
     <title>Software Architecture</title>
+    <para>
+      <figure float="1">
+	<title>Software Architecture</title>
+	<graphic scale="50" fileref="logical.png"/>
+      </figure>
+    </para>
     <sect2>
       <title id="central">Centrality of the Database</title>
       <para>
 	Architecturally, SPK software is built around a relational database.
 	Every significant change in the state of the system is recorded there.
-	For instance, a user's models and datasets are stored in the database. One 
-	implication of this is the user can employ a workstation at the office,
+	For instance, a user's models and datasets are stored in the database. An
+	implication of this is that the user can employ one workstation at the office,
 	another at home and a third on the road without ever having to 
 	"synchronize" them.  Because models and datasets are stored
 	in a version control format, all versions of a model or dataset,
@@ -464,14 +491,8 @@
 	which, in turn, creates a new row in the <emphasis>job table</emphasis> 
 	of the database.  From that point onward, the application server and
 	the computational server access the database for all of their inputs and
-	outputs concerning that job. Finally, the computational results are accessed by the
-	MDA via the web server
-      </para>
-      <para>
-	<figure>
-	  <title>Software Architecture</title>
-	  <graphic scale="50" fileref="logical.png"/>
-	</figure>
+	outputs concerning that job. Finally, the computational results are
+	retrieved from the database by the MDA via the web server.
       </para>
       <para>
 	The use of a database as the sole medium of communication between the 
@@ -493,7 +514,7 @@
     <sect2>
       <title id="lifecycle">The Lifecycle of a Job</title>
       <para>
-	Central to the architecture of SPK is the concept of job lifecycle.
+	Another pillar of the architecture of SPK is the concept of job lifecycle.
 	Milestones in the life of a job are implemented as events in a
 	finite state automaton, implemented by the three servers and the database.
       </para>
@@ -519,8 +540,8 @@
 	field to <emphasis>q2r</emphasis> (queued to run).
       </para>
       <para>
-	As soon as the entry is changed in the database, another daemon, which is
-	part of the computational server, will notice it. In due time, when resources
+	As soon as the entry is changed in the database, another daemon which is
+	part of the computational server will notice it. In due time, when resources
 	become available and when the job is the highest priority job waiting with
 	<emphasis>queued to run</emphasis> status, the <emphasis>runtime daemon</emphasis>
 	will change the <emphasis>state_code</emphasis> field to 
@@ -540,7 +561,7 @@
 	for analysis, presentation, or export to other tools.
       </para>
       <para>
-	<figure>
+	<figure float="1">
 	  <title>Job State Diagram</title>
 	  <graphic scale="45" fileref="job_state.png"/>
 	</figure>
@@ -553,7 +574,7 @@
 	SPK employs the MySQL relational database management system to provide
 	the database which is central to its architecture. MySQL is very widely
 	used on the world wide web.  It bears an open source license when
-	distributed as part a system such as SPK which is distributed as
+	distributed as part of a system such as SPK which is also distributed as
 	open source.  Recent versions of MySQL support atomic transactions,
 	which is required by the <link linkend="lifecycle">lifecycle</link>
 	automaton because changes in job state require simultaneous 
@@ -571,21 +592,18 @@
       <para>
 	In the diagram that follows, the rectangles represent the most important
 	tables in the database, while the lines that connect them represent
-	relationships.  The solid triangle at one end of a connecting line
+	relationships.  The arrow head at one end of a connecting line
 	indicates the direction of the relationship.  For instance, the
-	fact that the dark triangle on the line between job and user is at
-	the user end, implies that the user <emphasis>has</emphasis> a 
-	job, rather than the other way around.  The crow's foot symbol at
-	the end of the line opposite the triangle indicates that more than
-	one row in the table at that end belongs to a single row at the
-	other end.  In the example of the relationship between job
-	and user, the crow's foot indicates that a user may have more than
-	one job.  If no crow's foot is present, the row in the table toward
-	which the solid triangle points is related to exactly one row in the
-	table at the other end.
+	fact that the arrow head on the line between job and user points
+	toward user implies that the user <emphasis>has</emphasis> a 
+	job, rather than the other way around.  The crow's foot symbol at 
+	the other end of the line indicates that a user may have zero or
+	more jobs.  If a line has no crow's foot, a row of the table at the
+	head of the arrow <emphasis>has</emphasis> exactly one row of the
+	table at the foot of the arrow.
       </para>
       <para>
-	<figure>
+	<figure float="1">
 	  <title>Database Diagram</title>
 	  <graphic scale="40" fileref="erModelDiagram.png"/>
 	</figure>
@@ -606,7 +624,8 @@
 	  time consuming and error-prone activity by automatically generating
 	  the C++ program from specifications they input into the MDA.  The
 	  resulting program can subsequently be compiled by the GNU G++
-	  compiler and linked to the SPK library to create a highly efficient
+	  compiler and linked to several 
+	  <link linkend="libraries">libraries</link> to create a highly efficient
 	  binary program for run on the computational engine. 
 	</para>
 	<para>
@@ -643,7 +662,8 @@
 	  process a job.
 	</para>
 	<para>
-	  When the daemon selects a job for compilation, it copies the
+	  When the daemon selects a job for compilation, it creates a 
+	  working directory for the job, copies the
 	  <emphasis>xml_source</emphasis> field from the database to a
 	  new file called <filename>source.xml</filename> and extracts
 	  the latest version of the dataset referenced by the
@@ -654,12 +674,12 @@
 	  <filename>data.xml</filename> as arguments.
 	</para>
 	<para>
-	  Because the compiler is the parent of the compiler, it is 
+	  Because the daemon is the parent of the compiler, it is 
 	  notified when the compiler 
 	  terminates for any reason, whether successfully
 	  or unsuccessfully. If the compilation
 	  was successful, the daemon creates an archive (using the
-	  Unix <command>tar</command> command) of the entire directory,
+	  Unix <command>tar</command> command) of the entire working directory,
 	  and stores it in the <emphasis>cpp_source</emphasis> field
 	  of the database. It changes the state_code to 
 	  <emphasis>q2r</emphasis> (queued to run).
@@ -675,16 +695,29 @@
     <sect2>
       <title>The Computational Server</title>
       <para>
-	The computational server is where the really heavy work gets done. This logical
-	server combines the SPK library, ATLAS, GNU Gcc compiler and libraries,
-	CppAd, and the SPK runtime daemon, in order to create an efficient 
-	binary and run it on the computational engine.
+	The Computational Server for Population Kinetics (CSPK)
+	is where the really heavy work gets done. This logical
+	server creates an efficient binary program by employing the GNU GCC
+	compiler to translate the C++ output of the
+	SPK compiler into object code and to link it to the GNU libraries, the
+	SPK library, ATLAS, and CppAd. It then runs this binary on the 
+	the computational engine.
       </para>
       <sect3>
-	<title>The SPK Library</title>
+	<title>GNU GCC Compiler and Libraries</title>
+	<para>
+	  <ulink url="http://www.gnu.org/">GNU</ulink> is the organization that invented
+	  open source.  The development tools that they distribute are among the very
+	  best.  They are available for essentially all Unix and Linux platforms, which
+	  means that SPK can run on all such platforms. The wide availability of these
+	  tools provides strong encouragement for cooperative development.
+	</para>
+      </sect3>
+      <sect3>
+	<title id="libraries">The SPK Library</title>
 	<para>
 	  The SPK library is the result of years of cooperative development at RFPK
-	  between the scientific team, the mathematics team and the software
+	  between a scientific team, a mathematics team and a software
 	  team.  This C++ class library encapsulates most of the logic 
 	  required to do the PK calculation.  It was originally released
 	  by itself, but was found to be impractical for most scientists
@@ -696,23 +729,13 @@
       <sect3>
 	<title>Atlas</title>
 	<para>
-	  Automatically Tuned Linear Algebra Software 
-	  <ulink url="http://math-atlas.sourceforge.net/">(ATLAS)</ulink> is a package that
-	  combines a C language implementation of Basic Linear Algebra Subprograms
-	  (BLAS), a small subset of a C implementation of Linear Algebra
-	  Package (LAPACK) with an installation program which automatically tunes
-	  the software for the particular processor that it will be running on.  This
+	  The Automatically Tuned Linear Algebra Software 
+	  <ulink url="http://math-atlas.sourceforge.net/">(ATLAS)</ulink> package
+	  provides a C language implementation of Basic Linear Algebra Subprograms
+	  (BLAS), and a small subset of a C implementation of Linear Algebra
+	  Package (LAPACK), along with an installation program that automatically tunes
+	  the software for the particular processor that it will be running on. This
 	  software is open source.
-	</para>
-      </sect3>
-      <sect3>
-	<title>GNU GCC Compiler and Libraries</title>
-	<para>
-	  <ulink url="http://www.gnu.org/">GNU</ulink> is the organization that invented
-	  open source.  The development tools that they distribute are among the very
-	  best.  They are available for essentially all Unix and Linux platforms, which
-	  means that SPK can run on all such platforms. The wide availability of these
-	  tools provides strong encouragement for cooperative development.
 	</para>
       </sect3>
       <sect3>
@@ -742,7 +765,7 @@
 	  daemon recreates on the cluster the job's working directory, as it
 	  was at the end of processing by the ASPK.  It then calls upon the
 	  GNU <command>make</command> command to compile the ASPK-generated
-	  driver and link it to GNU libraries, the SPK libraries, ATLAS, 
+	  driver and link it to GNU libraries, the SPK library, ATLAS, 
 	  and CppAd, to create a binary tuned to the processors of the
 	  cluster. The daemon then starts the binary running on the 
 	  cluster as a child process.
@@ -750,10 +773,9 @@
 	<para>
 	  When either the <emphasis>make</emphasis> process or the
 	  <emphasis>run</emphasis> process terminates, the daemon is
-	  immediately notified, because it is the parent process.  It
+	  immediately notified because it is the parent of these processes.  It
 	  creates a file called <filename>report.xml</filename> from
-	  the output, whether the run was successful or had errors,
-	  and then writes the contents of the file to the
+	  the output, then writes the contents of the file to the
 	  <emphasis>report</emphasis> field in the database. It
 	  changes the <emphasis>state_code</emphasis> field to
 	  <emphasis>end</emphasis>.
@@ -769,7 +791,7 @@
       <sect3>
 	<title>Java-Based Dynamic Content</title>
 	<para>
-	  The SPK web server supports both static and dynamic content.
+	  The SPK web server provides both static and dynamic content.
 	  Static content consists of web pages which do not change in
 	  response to what the user or her jobs are doing. Dynamic
 	  content is created on the fly, depending on the state of
@@ -784,7 +806,7 @@
 	<para>
 	  The dynamic content is part of the SPK software
 	  In particular, the web server acts as a server-side proxy for
-	  the MDA when it access the database.  Dynamic content
+	  the MDA when it accesses the database.  Dynamic content
 	  takes the form of Java servlets and Java Server Pages (JSP).
 	</para>
       </sect3>
@@ -797,8 +819,9 @@
 	  and the server are encrypted.
 	</para>
 	<para>
-	  In addition to encryption, an advantage of SSL is 
-	  server authentication. This allows a user to log in to
+	  In addition to encryption, the web server employs certificate
+	  based public key 
+	  server authentication. This allows a user to log into
 	  an SPK service with confidence, knowing that the system
 	  he is connecting to is not an impostor.
 	</para>
@@ -833,7 +856,7 @@
       <para>
 	The MDA is a complete editor for models, datasets and jobs.  It
 	submits jobs and presents results.  In many ways, it is quite
-	similar to modern software development tools known 
+	similar to a class of modern software development tools known 
 	generically as interactive development environments (IDEs).
 	This is no accident. The MDA is built from an open source 
 	Java IDE called NetBeans.  The MDA is, in effect, an 
@@ -862,6 +885,12 @@
       The diagram below depicts the hardware architecture of the
       SPK service provided by RFPK, except that at RFPK the 
       database server and ASPK server are the same machine.
+    </para>
+    <para>
+      <figure float="1">
+	<title>Hardware Architecture</title>
+	<graphic scale="65" fileref="physical.png"/>
+      </figure>
     </para>
     <para>
       The diagram shows a triple interface firewall.  Such
@@ -895,7 +924,7 @@
 	  <para>
 	    Shields the web server on the DMZ network from all Internet
 	    requests except http and https requests.  These requests
-	    are forwarded to the web server and nowhere else.
+	    are forwarded by the firewall to the web server and nowhere else.
 	  </para>
 	</listitem>
 	<listitem>
@@ -910,16 +939,11 @@
 	    The servers on the LAN can freely pass TCP/IP communications
 	    between them.  In particular, the ASPK and CSPK have free 
 	    access to the database server and, due to the protection afforded
-	    by the firewall, can do this without need for encryption.
+	    by the firewall, can do this without need for encryption
+	    or certificated authentication.
 	  </para>
 	</listitem>
       </itemizedlist>
-    </para>
-    <para>
-      <figure>
-	<title>Hardware Architecture</title>
-	<graphic scale="65" fileref="physical.png"/>
-      </figure>
     </para>
   </sect1>
 </article>
@@ -928,7 +952,7 @@
  -->
 <!--  LocalWords:  authorinitials afw revremark RFPK itemizedlist listitem
  -->
-<!--  LocalWords:  mda Mozilla ssp linkend Gcc MySQL CVS RedHat orderedlist SSL
+<!--  LocalWords:  mda Mozilla ssp linkend GCC MySQL CVS RedHat orderedlist SSL
  -->
 <!--  LocalWords:  Xerces NetBeans IDE WebStart fileref png lifecycle Lifecycle
  -->
