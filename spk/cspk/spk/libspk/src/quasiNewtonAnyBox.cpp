@@ -1220,6 +1220,121 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   //
   // [Remove]======================================
 
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  if ( !thisIsAWarmRestart )
+  {
+    // Evaluate the objective and its gradient.
+    objEval( xCur, fCur, gCur, ... );
+
+    // Create an approximation for the Hessian.
+    hCur = ... ;
+  }
+
+  // Set the number of quasi-Newton iterations high enough so 
+  // that the optimizer can build up a reasonable accurate 
+  // approximation for the Hessian, but not so high that it
+  // will spend too much time in the optimizer.
+  itrMax = 5;
+
+  // Set the maximum number of interior point iterations so
+  // that the optimizer can solve the quadratic subproblems
+  // with sufficient accuracy.
+  quadMax = 100;
+
+  // The argument delta specifies the convergence criteria.
+  // If the return value of QuasiNewton01Box is "ok",
+  //the infinity norm of the projected gradient at 
+  // x = xOut is less than or equal delta.
+  double delta;
+
+  double deltaScaleMax = 0.1;
+  double deltaScaleDiv = 10.0;
+  double deltaScale = deltaScaleMax;
+
+  int i = 0;
+  while ( i < nMaxIter )
+  {
+    // See if this functions convergence criterion has been met.
+    // If the final y value is actally within epsilon tolerance of 
+    // the true value yStar, then go on.  Note that NAG arrays use
+    // row-major order.
+    if ( isWithinTol( epsilon, dvecY, dvecYLow, dvecYUp, drowGScaled, 
+             getLowerTriangle( arrayToDoubleMatrix( options.h, n, n ) ) ) )
+    {
+      setOutputValues(  /* GET ARG'S FROM CODE AT END OF THIS FUNC */   )
+      return;
+    }
+
+    // Set delta to be the maximum of the absolute values of the
+    // elements (infinity norm) of the current gradient,
+    //
+    //            ~
+    //     delta  =  max { | G_i | }  .
+    //
+    // This ensures that the subproblems only be solved with accuracy
+    // sufficient for the current x value.
+    maxAbsGCurr = MaxAbs( gCur );
+
+    // If the gradient is already zero, then there is no need to 
+    // optimize the parameters more.
+    if ( delta == 0.0 )
+    {
+      setOutputValues(  /* GET ARG'S FROM CODE AT END OF THIS FUNC */   )
+      return;
+    }
+
+    delta = maxAbsGCurr * deltaScale;
+
+    msg = QuasiNewton01Box(
+      os,
+      level,
+      ItrMax,
+      QuadMax,
+      n,
+      delta,
+      obj,
+      ItrCur,
+      QuadCur,
+      rCur,
+      fCur,
+      xCur,
+      gCur,
+      HCur );
+
+    // Add the number of iterations that were performed.
+    i += itrCur;
+
+    // Set delta to be the maximum of the absolute values of the
+    // elements (infinity norm) of the current gradient,
+    //
+    //            ~
+    //     delta  =  max { | G_i | }  .
+    //
+    // This ensures that the subproblems only be solved with accuracy
+    // sufficient for the current x value.
+    maxAbsGCurr = MaxAbs( gCur );
+
+    // If QuasiNewton01Box's convergence criterion has been met,
+    // then the infinity norm of the current gradient is less than
+    // delta, and it needs to be decreased so that the optimizer
+    // can continue iterating toward the minimum to try to satisfy
+    // the conververgence criterion for this function.
+    if ( quasiNewtonOutput == ok )
+    {
+      deltaScale /= deltaScaleDiv;
+    }
+    else
+    {
+      deltaScale = deltaScaleMax;
+    }
+  }
+
+
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
   if ( thisIsAWarmRestart )
   {
     // See if this functions convergence criterion has been met.
@@ -1229,7 +1344,7 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
     if ( isWithinTol( epsilon, dvecY, dvecYLow, dvecYUp, drowGScaled, 
            getLowerTriangle( arrayToDoubleMatrix( options.h, n, n ) ) ) )
     {
-      // Set the output values.
+      setOutputValues(  /* GET ARG'S FROM CODE AT END OF THIS FUNC */   )
       return;
     }
   }
@@ -1264,13 +1379,16 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   //
   // This ensures that the subproblems only be solved with accuracy
   // sufficient for the current x value.
-  double deltaScale;
-  double delta = MaxAbs( gCur );
+  double deltaScaleMax = 0.1;
+  double deltaScaleDiv = 10.0;
+  double deltaScale = deltaScaleMax;
+  double delta = MaxAbs( gCur ) * deltaScale;
 
   // If the gradient is already zero, then there is no need to 
   // optimize the parameters more.
   if ( delta == 0.0 )
   {
+    setOutputValues(  /* GET ARG'S FROM CODE AT END OF THIS FUNC */   )
     return;
   }
 
@@ -1303,19 +1421,9 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
     if ( isWithinTol( epsilon, dvecY, dvecYLow, dvecYUp, drowGScaled, 
              getLowerTriangle( arrayToDoubleMatrix( options.h, n, n ) ) ) )
     {
-      // Set the output values.
+      setOutputValues(  /* GET ARG'S FROM CODE AT END OF THIS FUNC */   )
       return;
     }
-
-    // Set delta to be the maximum of the absolute values of the
-    // elements (infinity norm) of the current gradient,
-    //
-    //            ~
-    //     delta  =  max { | G_i | }  .
-    //
-    // This ensures that the subproblems only be solved with accuracy
-    // sufficient for the current x value.
-    deltaCurr = MaxAbs( gCur );
 
     // If QuasiNewton01Box's convergence criterion has been met,
     // then the infinity norm of the current gradient is less than
@@ -1324,14 +1432,22 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
     // the conververgence criterion for this function.
     if ( quasiNewtonOutput == ok )
     {
-      deltaScale /= 10.0;
+      deltaScale /= deltaScaleDiv;
     }
     else
     {
-      deltaScale = 1.0;
+      deltaScale = deltaScaleMax;
     }
     
-    delta = deltaCurr * deltaScale;
+    // Set delta to be the maximum of the absolute values of the
+    // elements (infinity norm) of the current gradient,
+    //
+    //            ~
+    //     delta  =  max { | G_i | }  .
+    //
+    // This ensures that the subproblems only be solved with accuracy
+    // sufficient for the current x value.
+    delta = MaxAbs( gCur ) * deltaScale;
   }
 
 
