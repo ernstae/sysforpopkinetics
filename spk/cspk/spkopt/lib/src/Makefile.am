@@ -1,13 +1,19 @@
 lib_LTLIBRARIES = libspkopt.la libspkopt_release.la
 
+INST_BASE = /usr/local
+
+libdir        = $(INST_BASE)/lib/spktest
+pkgincludedir = $(INST_BASE)/include/spktest/spkopt
+
+AM_CPPFLAGS = -I$(INST_BASE)/include/spktest
+AM_LDFLAGS  = -llapack -lg2c
+
 CXXFLAGS   =
 CXXCOMPILE =
 CFLAGS     =
 
-libspkopt_la_CXXFLAGS           = -g
-libspkopt_la_LDFLAGS            = -llapack -lg2c
-libspkopt_release_la_CXXFLAGS   = -O3
-libspkopt_release_la_LDFLAGS    = -llapack -lg2c
+libspkopt_la_CXXFLAGS         = -g
+libspkopt_release_la_CXXFLAGS = -O3
 
 FFLAGS =
 F77COMPILE = -g
@@ -72,7 +78,6 @@ libspkopt_release_la_SOURCES = \
 	Residual.h \
         vector.h
 
-INCLUDES = -I@top_srcdir@/
 pkginclude_HEADERS = \
         ADDefine.h \
 	Bfgs.h \

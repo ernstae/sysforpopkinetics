@@ -1,13 +1,18 @@
 lib_LTLIBRARIES = libspk.la libspk_release.la
 
+INST_BASE = /usr/local
+
+libdir        = $(INST_BASE)/lib/spktest
+pkgincludedir = $(INST_BASE)/include/spktest/spk
+
+AM_CPPFLAGS = -I$(INST_BASE)/include/spktest
+
 CXXFLAGS   =
 CXXCOMPILE =
 CFLAGS     =
 
-libspk_la_CXXFLAGS           = -g
-libspk_la_CXXCOMPILE         = -g
-libspk_release_la_CXXFLAGS   = -O3
-libspk_release_la_CXXCOMPILE = -O3
+libspk_la_CXXFLAGS         = -g
+libspk_release_la_CXXFLAGS = -O3
 
 libspk_la_SOURCES = \
 	ABA_x.cpp \
@@ -441,7 +446,6 @@ libspk_release_la_SOURCES = \
 	UTranTimesSymKronSymTimesU.h \
 	UTranTimesSymKronSymTimesU_x.h 
 
-INCLUDES = -I@top_srcdir@/
 pkginclude_HEADERS = \
 	ABA_x.h \
 	add.h \
