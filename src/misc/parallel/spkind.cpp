@@ -81,7 +81,7 @@ static void signal_initialize(void);
 // perform the computation
 static void compute(int iid) {
   const int t = 10;
-  if (iid == 1 and time(NULL) % 10 == 0) {
+  if (iid == 1 && time(NULL) % 10 == 0) {
     char buf[100];
     sprintf(buf, "going to cause a fault in %d sec.", t);
     spklog(buf);
