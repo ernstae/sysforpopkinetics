@@ -1252,81 +1252,73 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   double deltaScaleDiv = 10.0;
   double deltaScale = deltaScaleMax;
 
+  bool isWithinTol = false;
   int i = 0;
-  while ( i < nMaxIter )
+  while ( !isWithinTol && i < nMaxIter )
   {
     // See if this functions convergence criterion has been met.
-    // If the final y value is actally within epsilon tolerance of 
+    // If the final y value is actually within epsilon tolerance of 
     // the true value yStar, then go on.  Note that NAG arrays use
     // row-major order.
     if ( isWithinTol( epsilon, dvecY, dvecYLow, dvecYUp, drowGScaled, 
              getLowerTriangle( arrayToDoubleMatrix( options.h, n, n ) ) ) )
     {
-      setOutputValues(  /* GET ARG'S FROM CODE AT END OF THIS FUNC */   )
-      return;
-    }
-
-    // Set delta to be the maximum of the absolute values of the
-    // elements (infinity norm) of the current gradient,
-    //
-    //            ~
-    //     delta  =  max { | G_i | }  .
-    //
-    // This ensures that the subproblems only be solved with accuracy
-    // sufficient for the current x value.
-    maxAbsGCurr = MaxAbs( gCur );
-
-    // If the gradient is already zero, then there is no need to 
-    // optimize the parameters more.
-    if ( delta == 0.0 )
-    {
-      setOutputValues(  /* GET ARG'S FROM CODE AT END OF THIS FUNC */   )
-      return;
-    }
-
-    delta = maxAbsGCurr * deltaScale;
-
-    msg = QuasiNewton01Box(
-      os,
-      level,
-      ItrMax,
-      QuadMax,
-      n,
-      delta,
-      obj,
-      ItrCur,
-      QuadCur,
-      rCur,
-      fCur,
-      xCur,
-      gCur,
-      HCur );
-
-    // Add the number of iterations that were performed.
-    i += itrCur;
-
-    // Set delta to be the maximum of the absolute values of the
-    // elements (infinity norm) of the current gradient,
-    //
-    //            ~
-    //     delta  =  max { | G_i | }  .
-    //
-    // This ensures that the subproblems only be solved with accuracy
-    // sufficient for the current x value.
-    maxAbsGCurr = MaxAbs( gCur );
-
-    // If QuasiNewton01Box's convergence criterion has been met,
-    // then the infinity norm of the current gradient is less than
-    // delta, and it needs to be decreased so that the optimizer
-    // can continue iterating toward the minimum to try to satisfy
-    // the conververgence criterion for this function.
-    if ( quasiNewtonOutput == ok )
-    {
-      deltaScale /= deltaScaleDiv;
+      isWithinTol = true;
     }
     else
     {
-      deltaScale = deltaScaleMax;
+      // Set delta to be the maximum of the absolute values of the
+      // elements (infinity norm) of the current gradient,
+      //
+      //            ~
+      //     delta  =  max { | G_i | }  .
+      //
+      // This ensures that the subproblems only be solved with accuracy
+      // sufficient for the current x value.
+      delta = MaxAbs( gCur ) * deltaScale;
+
+      msg = QuasiNewton01Box(
+        os,
+	level,
+	ItrMax,
+	QuadMax,
+	n,
+	delta,
+	obj,
+	ItrCur,
+	QuadCur,
+	rCur,
+	fCur,
+	xCur,
+	gCur,
+	HCur );
+
+      // Add the number of iterations that were performed.
+      i += itrCur;
+
+      // Set delta to be the maximum of the absolute values of the
+      // elements (infinity norm) of the current gradient,
+      //
+      //            ~
+      //     delta  =  max { | G_i | }  .
+      //
+      // This ensures that the subproblems only be solved with accuracy
+      // sufficient for the current x value.
+      maxAbsGCurr = MaxAbs( gCur );
+
+      // If QuasiNewton01Box's convergence criterion has been met,
+      // then the infinity norm of the current gradient is less than
+      // delta, and it needs to be decreased so that the optimizer
+      // can continue iterating toward the minimum to try to satisfy
+      // the conververgence criterion for this function.
+      if ( quasiNewtonOutput == ok )
+      {
+	deltaScale /= deltaScaleDiv;
+      }
+      else
+      {
+	deltaScale = deltaScaleMax;
+      }
     }
   }
 
@@ -1338,7 +1330,7 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   if ( thisIsAWarmRestart )
   {
     // See if this functions convergence criterion has been met.
-    // If the final y value is actally within epsilon tolerance of 
+    // If the final y value is actually within epsilon tolerance of 
     // the true value yStar, then go on.  Note that NAG arrays use
     // row-major order.
     if ( isWithinTol( epsilon, dvecY, dvecYLow, dvecYUp, drowGScaled, 
@@ -1384,14 +1376,6 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   double deltaScale = deltaScaleMax;
   double delta = MaxAbs( gCur ) * deltaScale;
 
-  // If the gradient is already zero, then there is no need to 
-  // optimize the parameters more.
-  if ( delta == 0.0 )
-  {
-    setOutputValues(  /* GET ARG'S FROM CODE AT END OF THIS FUNC */   )
-    return;
-  }
-
   int i = 0;
   while ( i < nMaxIter )
   {
@@ -1415,7 +1399,7 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
     i += itrCur;
 
     // See if this functions convergence criterion has been met.
-    // If the final y value is actally within epsilon tolerance of 
+    // If the final y value is actually within epsilon tolerance of 
     // the true value yStar, then go on.  Note that NAG arrays use
     // row-major order.
     if ( isWithinTol( epsilon, dvecY, dvecYLow, dvecYUp, drowGScaled, 
@@ -1486,7 +1470,7 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
                             // documentation for nag_opt_nlp in 
                             // the NAG C Library Manual.)
 
-      // If the final y value is actally within epsilon tolerance of 
+      // If the final y value is actually within epsilon tolerance of 
       // the true value yStar, then go on.  Note that NAG arrays use
       // row-major order.
       if ( isWithinTol( epsilon, dvecY, dvecYLow, dvecYUp, drowGScaled, 
@@ -1511,7 +1495,7 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
                                   // function could be found
                                   // during the final line search.
 
-      // If the final y value is actally within epsilon tolerance of 
+      // If the final y value is actually within epsilon tolerance of 
       // the true value yStar, then go on.  Note that NAG arrays use
       // row-major order.
       if ( isWithinTol( epsilon, dvecY, dvecYLow, dvecYUp, drowGScaled, 
