@@ -91,7 +91,6 @@ libspk_la_SOURCES = \
 	PopVars.cpp \
 	ppkaOpt.cpp \
 	ppkaOptParallel.cpp \
-	quasiNewtonAnyBox.cpp \
 	randNormal.cpp \
 	replaceIth.cpp \
 	replaceJth.cpp \
@@ -99,7 +98,8 @@ libspk_la_SOURCES = \
 	residuals.cpp \
 	rvecInverse.cpp \
 	simulate.cpp \
-	statistics.cpp \
+	sqpAnyBox.cpp \
+        statistics.cpp \
 	StatusList.cpp \
 	subtract.cpp \
 	symmetrize.cpp \
@@ -107,7 +107,7 @@ libspk_la_SOURCES = \
 	SpkException.cpp \
 	SpkModel.cpp \
 	SpkWarning.cpp \
-	System.cpp \
+        System.cpp \
 	transpose.cpp \
 	transposeDerivative.cpp \
 	transposeRowBlocks.cpp \
@@ -200,7 +200,6 @@ libspk_la_SOURCES = \
 	PopVars.h \
 	ppkaOpt.h \
 	printInMatrix.h \
-	quasiNewtonAnyBox.h \
 	randNormal.h \
 	replaceIth.h \
 	replaceJth.h \
@@ -215,7 +214,8 @@ libspk_la_SOURCES = \
 	SpkModel.h \
 	SpkValarray.h \
 	SpkWarning.h \
-	statistics.h \
+	sqpAnyBox.h \
+        statistics.h \
 	StatusList.h \
 	subtract.h \
 	symmetrize.h \
@@ -308,7 +308,6 @@ libspk_release_la_SOURCES = \
 	PopVars.cpp \
 	ppkaOpt.cpp \
 	ppkaOptParallel.cpp \
-	quasiNewtonAnyBox.cpp \
 	randNormal.cpp \
 	replaceIth.cpp \
 	replaceJth.cpp \
@@ -316,6 +315,7 @@ libspk_release_la_SOURCES = \
 	residuals.cpp \
 	rvecInverse.cpp \
 	simulate.cpp \
+	sqpAnyBox.cpp \
 	StatusList.cpp \
 	subtract.cpp \
 	symmetrize.cpp \
@@ -323,7 +323,7 @@ libspk_release_la_SOURCES = \
 	SpkException.cpp \
 	SpkModel.cpp \
 	SpkWarning.cpp \
-	System.cpp \
+        System.cpp \
 	transpose.cpp \
 	transposeDerivative.cpp \
 	transposeRowBlocks.cpp \
@@ -416,7 +416,6 @@ libspk_release_la_SOURCES = \
 	PopVars.h \
 	ppkaOpt.h \
 	printInMatrix.h \
-	quasiNewtonAnyBox.h \
 	randNormal.h \
 	replaceIth.h \
 	replaceJth.h \
@@ -430,7 +429,8 @@ libspk_release_la_SOURCES = \
 	SpkModel.h \
 	SpkValarray.h \
 	SpkWarning.h \
-	statistics.h \
+	sqpAnyBox.h \
+        statistics.h \
 	StatusList.h \
 	subtract.h \
 	symmetrize.h \
@@ -530,7 +530,6 @@ pkginclude_HEADERS = \
 	PopVars.h \
 	ppkaOpt.h \
 	printInMatrix.h \
-	quasiNewtonAnyBox.h \
 	randNormal.h \
 	replaceIth.h \
 	replaceJth.h \
@@ -545,7 +544,8 @@ pkginclude_HEADERS = \
 	SpkModel.h \
 	SpkValarray.h \
 	SpkWarning.h \
-	statistics.h \
+	sqpAnyBox.h \
+        statistics.h \
 	StatusList.h \
 	subtract.h \
 	symmetrize.h \
