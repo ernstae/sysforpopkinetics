@@ -518,6 +518,8 @@ There can be as many as 10 <table>s and 20 <scatterplot>s.
 <!-- <monte_carlo is_grid="no"> "yes" requests to output the approximate integral corresponding to evaluation on a uniform grid of points and the estimate of the standard deviation of the Monte-Carlo estimate for the integral.  The default value is "no".-->
 <!ATTLIST monte_carlo is_grid (yes|no) #IMPLIED>
 
+<!-- <monte_carlo numberEval="40"> The number (>0) of function evalutions to use for each individual in the population.  Actually it is the maximum number when is_grid="yes" and it is not used when is_analytic="yes".  The default value is 1000.  -->
+<!ATTLIST monte_carlo numberEval CDATA #IMPLIED>
 
 <!-- ================================================================================ -->
 <!--                                                                                  -->
