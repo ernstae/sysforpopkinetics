@@ -164,7 +164,7 @@ my $dbpasswd = shift;
 my $mode     = shift;
 
 my $bugzilla_production_only = 1;
-my $bugzilla_url = "http://192.168.2.3:8081/";
+my $bugzilla_url = "http://192.168.2.2:8081/";
 
 my $max_concurrent = 1;
 my $concurrent = 0;
@@ -194,7 +194,7 @@ my $cpath = "/usr/local/include/spkprod";
 if ($mode =~ "test") {
     $submit_to_bugzilla = !$bugzilla_production_only;
     $service_root .= "test";
-    $bugzilla_product = "SPKtest";
+    $bugzilla_product = "TestProduct";
     $retain_working_dir = 1;
     $spk_library_path = "/usr/local/lib/spktest";
     $cpath = "/usr/local/include/spktest";
