@@ -1474,7 +1474,6 @@ void setIsSubLevelOpt( bool s );
   // exception if the maximum number of iterations is exhausted.
   setSaveStateAtEndOfOpt( !s );
   setThrowExcepIfMaxIter( s );
-
 }
 
 // Set turning on/off warm start flag 
