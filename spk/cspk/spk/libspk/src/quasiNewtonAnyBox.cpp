@@ -869,7 +869,7 @@ void quasiNewtonAnyBox(
 
 
   //------------------------------------------------------------
-  // Prepare to optimize the scaled objective function.
+  // Prepare the optimizer state information.
   //------------------------------------------------------------
 
   std::ostream    os = std::cout;
@@ -894,26 +894,61 @@ void quasiNewtonAnyBox(
   const bool      exponential = true;
   const double          delta = 1e-7;
 
- CONSIDER: MOVE THIS STUFF INTO IF BLOCK BELOW
- CONSIDER: MOVE THIS STUFF INTO IF BLOCK BELOW
- CONSIDER: MOVE THIS STUFF INTO IF BLOCK BELOW
- CONSIDER: MOVE THIS STUFF INTO IF BLOCK BELOW
- CONSIDER: MOVE THIS STUFF INTO IF BLOCK BELOW
-
-  // Evaluate the objective and its gradient if this is not a
-  // warm start or if zero iterations have been requested.
-  if ( !isAWarmRestart || nMaxIter == 0 )
+  // If zero iterations were requested or this is not a warm start,
+  // evaluate the objective function and its gradient.
+  These values will also be required if this is not a warm start, so calculate them here.
+  if ( nMaxIter == 0 || !isAWarmStart )
   {
     objective.function( yCurr, fScaled, gScaled, ... );
   }
 
-  COMMENT THIS
-  COMMENT THIS
-  COMMENT THIS
-  COMMENT THIS
-  COMMENT THIS
+  // Since the optimizer always does a warm start, i.e. it
+  // always makes use of the current values for the objective,
+  // its gradient, Hessian, etc., set those values here.
+  if ( !isAWarmRestart )
+  {
+    // Evaluate the objective function and its gradient at the initial value for y.
+    // gCur is gradient at yCur
+    // fCur is objective function value at yCur
+    objective.function( yCurr, fScaled, gScaled, ... );
+    msg = obj.function(yCur, fCur); 
+    ok &= strcmp(msg, "ok") == 0;
+    msg = obj.gradient(gCur); 
+    ok &= strcmp(msg, "ok") == 0;
 
-  if ( isAWarmRestart )
+    if ( nMaxIter > 0 )
+    {
+      // Set the number of quasi-Newton iterations high enough that 
+      // the optimizer can build up a reasonably accurate approximation
+      // for the Hessian the first time it is called, but not so high
+      // that it will perform too many iterations before this function's
+      // convergence criterion is checked.
+      nIterMax = nObjPar;
+
+      // Start the .. value with this value because ...      
+      // Start the .. value with this value because ...      
+      // Start the .. value with this value because ...      
+      // Start the .. value with this value because ...      
+      // Start the .. value with this value because ...      
+      // Start the .. value with this value because ...      
+      rScaled = 0.5;
+  
+      // Create an approximation for the Hessian.
+      // initialize the HCur as the identity matrix because ...
+      // initialize the HCur as the identity matrix because ...
+      // initialize the HCur as the identity matrix because ...
+      // initialize the HCur as the identity matrix because ...
+      // initialize the HCur as the identity matrix because ...
+      // initialize the HCur as the identity matrix because ...
+      hScaled = ... ;
+  
+       for(i = 0; i < n; i++)
+            for(j = 0; j < n; j++)
+                 HCur[i * n + j ] = static_cast<double>( i == j );
+  
+    }
+  }
+  else
   {
     // This function assumes that the Hessian provided during
     // a warm start is sufficiently accurate that the optimizer
@@ -946,56 +981,11 @@ void quasiNewtonAnyBox(
 	__FILE__ );
     }
   }
-  else if ( nMaxIter == 0 )
-  {
-       SHOULD THIS HAVE A SEPARATE BLOCK HERE?
-       SHOULD THIS HAVE A SEPARATE BLOCK HERE?
-       SHOULD THIS HAVE A SEPARATE BLOCK HERE?
-       SHOULD THIS HAVE A SEPARATE BLOCK HERE?
-       SHOULD THIS HAVE A SEPARATE BLOCK HERE?
-  }
-  else
-  {
-    // Evaluate the objective and its gradient if this is not a
-    // warm start or if zero iterations have been requested.
-    if ( nMaxIter == 0 )
-    {
-      CONSIDER: DO SPECIAL ZERO ITERATION STUFF HERE?
-      CONSIDER: DO SPECIAL ZERO ITERATION STUFF HERE?
-      CONSIDER: DO SPECIAL ZERO ITERATION STUFF HERE?
-      CONSIDER: DO SPECIAL ZERO ITERATION STUFF HERE?
-    }
-
-    // Set the number of quasi-Newton iterations high enough that 
-    // the optimizer can build up a reasonably accurate approximation
-    // for the Hessian the first time it is called, but not so high
-    // that it will perform too many iterations before this function's
-    // convergence criterion is checked.
-    nIterMax = nObjPar;
-    
-     rScaled = .5;    WHY THIS VALUE?
-     rScaled = .5;    WHY THIS VALUE?
-     rScaled = .5;    WHY THIS VALUE?
-     rScaled = .5;    WHY THIS VALUE?
-     rScaled = .5;    WHY THIS VALUE?
 
 
-     // fCur is objective function value at yCur
-     msg = obj.function(yCur, fCur); 
-     ok &= strcmp(msg, "ok") == 0;
-
-     // gCur is gradient at yCur
-     msg = obj.gradient(gCur); 
-     ok &= strcmp(msg, "ok") == 0;
-
-     // initialize the HCur as the identity matrix
-     for(i = 0; i < n; i++)
-          for(j = 0; j < n; j++)
-               HCur[i * n + j ] = static_cast<double>( i == j );
-
-    // Create an approximation for the Hessian.
-    hScaled = ... ;
-  }
+  //------------------------------------------------------------
+  // Set the parameters that control the optimization.
+  //------------------------------------------------------------
 
   // Set the maximum number of interior point iterations so
   // that the optimizer can solve the quadratic subproblems
@@ -1005,16 +995,11 @@ void quasiNewtonAnyBox(
   // If the return value of QuasiNewton01Box is "ok", then the
   // infinity norm (element with the maximum absolute value) 
   // of the projected gradient is less than or equal to delta.
+  // The scale is the value this norm will be divided by to get
+  // a delta value for which the current y value will still not be the soluton.
+ that the  will not be converged for.
   double delta;
   double deltaScale = 10.0;
-
-
- CONSIDER: MOVE THIS SPECIAL ZERO ITERATIONS STUFF UP TO THE PREVIOUS BIG IF BLOCK
- CONSIDER: MOVE THIS SPECIAL ZERO ITERATIONS STUFF UP TO THE PREVIOUS BIG IF BLOCK
- CONSIDER: MOVE THIS SPECIAL ZERO ITERATIONS STUFF UP TO THE PREVIOUS BIG IF BLOCK
- CONSIDER: MOVE THIS SPECIAL ZERO ITERATIONS STUFF UP TO THE PREVIOUS BIG IF BLOCK
- CONSIDER: MOVE THIS SPECIAL ZERO ITERATIONS STUFF UP TO THE PREVIOUS BIG IF BLOCK
- CONSIDER: MOVE THIS SPECIAL ZERO ITERATIONS STUFF UP TO THE PREVIOUS BIG IF BLOCK
 
   // Initialize the convergence flag and iteration counter.
   bool isWithinTol;
