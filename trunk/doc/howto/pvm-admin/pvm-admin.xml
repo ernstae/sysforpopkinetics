@@ -347,6 +347,7 @@ cat $PVM_ROOT/lib/bashrc.stub >> $PVM_ROOT/.bashrc
 	<screen>
 PVM_ROOT=/usr/share/pvm3
 PVM_RSH=/usr/bin/ssh
+export PVM_ROOT PVM_RSH
 	</screen>
 	Of course, if the value of your <varname>PVM_ROOT</varname> is 
 	not <filename>/usr/share/pvm3</filename>, let the command that
