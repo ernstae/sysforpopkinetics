@@ -70,17 +70,10 @@ alter the normal execution flow.-->
 <!ATTLIST ind_opt_result elapsedtime CDATA #REQUIRED>
 
 <!-- <pop_monte_result> The estimate for the integral.  -->
-<!ELEMENT pop_monte_result ( pop_obj_estimate? | pop_obj_stderror? ) >
+<!ELEMENT pop_monte_result ( row_major | column_major )* >
 
 <!-- <pop_monte_result elapsedtime="500"> The number of seconds it took to complete both <pop_obj_estimate> and <pop_obj_stderror>.-->
 <!ATTLIST pop_monte_result elapsedtime CDATA #REQUIRED>
-
-<!-- <pop_obj_estimate> The estimate for the integral computed using the method ("monte", "grid", "analytical") chosen earlier by the user.-->
-<!ELEMENT pop_obj_estimate (value)> 
-
-<!-- <pop_obj_stderror> This element is present if and only if the selected method of integration were "monte" or "grid"   It contains an estimate of the standard deviation of the estimate for the integral.
--->
-<!ELEMENT pop_obj_stderror (value)>
 
 <!-- <theta_out> Final value for the theta. -->
 <!ELEMENT theta_out (value)+>
@@ -442,11 +435,11 @@ Conceptual Example:
 <!-- <presentation_data rows="0"> The number of rows in the table, >=0. -->
 <!ATTLIST presentation_data rows CDATA #REQUIRED>
 
-<!-- <row> A row in the table of values.  A row is composed of <item>s.  -->
+<!-- <row> A row in the table/matrix.  -->
 <!ELEMENT row (value)*>
 
-<!-- <row position="1"> The position of the <row> in the table/matrix, >= 1.  The first (position="1") row contains the label for each column of items.  -->
-<!ATTLIST row position CDATA #REQUIRED>
+<!-- <row position="1"> The position of the <row> in the table/matrix, >= 1.  "1" means the row is the first row in the table/matrix.  If any <row> in the table/matrix had this attribute setting, all other <row>s must have the setting consistently.  If no <row> had this setting, the order of appearance of <row>s is taken as the order of rows.-->
+<!ATTLIST row position CDATA #IMPLIED>
 
 <!-- <opt_trace_out> The optimizer's tracing information produced to the standard output during the parameter estimation.  This element may be empty if no parameter estimation were attempted or the optimizer did not produce any information for some reason.
 
@@ -490,3 +483,30 @@ For numbers, you can use the decimal format (ex. 0.1) or scientific notation (ex
 <!-- <value ref="xxx">The string associated with the value.  The label here is only to provide you a visual guide though the list of <value>s.  The label values in <data_labels> superceed the values here.-->
 <!ATTLIST value ref CDATA #IMPLIED>
 
+<!-- <row_major> A structure that contains a matrix in row-major order. -->
+<!ELEMENT row_major (row)*>
+
+<!-- <row_major name="ABC"> The name of the matrix.  -->
+<!ATTLIST row_major name CDATA #REQUIRED>
+
+<!-- <row_major nrows="3"> The number of rows in the matrix -->
+<!ATTLIST row_major nrows CDATA #REQUIRED>
+
+<!-- <row_major ncols="3"> The number of columns in the matrix -->
+<!ATTLIST row_major ncols CDATA #REQUIRED>
+
+<!-- <column_major> A structure that contains a matrix in column-major order.
+-->
+<!ELEMENT column_major (column)*>
+
+<!-- <column> A column in matrix. -->
+<!ELEMENT column (value)*>
+
+<!-- <column_major name="ABC"> The name of the matrix.  -->
+<!ATTLIST column_major name CDATA #REQUIRED>
+
+<!-- <column_major nrows="3"> The number of rows in the matrix -->
+<!ATTLIST column_major nrows CDATA #REQUIRED>
+
+<!-- <column_major ncols="3"> The number of columns in the matrix -->
+<!ATTLIST column_major ncols CDATA #REQUIRED>
