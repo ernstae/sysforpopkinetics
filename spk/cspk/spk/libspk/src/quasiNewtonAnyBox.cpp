@@ -587,7 +587,7 @@ OR
     }
 
   private:
-    // This is not defined so that it can't be used.
+    // This is not defined so that it won't be used.
     QuasiNewton01BoxObj();
 
 
@@ -607,7 +607,7 @@ OR
 
 
     //----------------------------------------------------------
-    // Information required by QuasiNewtonAnyBox.
+    // Information required by the objective function.
     //----------------------------------------------------------
 
   private:
