@@ -22,7 +22,8 @@ libspkcompiler_la_SOURCES = \
 
 nobase_pkginclude_HEADERS = \
 	$(NONMEM)/nonmem.h \
-	$(NONMEM)/explang.h
+	$(NONMEM)/explang.h \
+	$(NONMEM)/NonmemTranslator.h
 
 pkginclude_HEADERS = \
 	Symbol.h \
