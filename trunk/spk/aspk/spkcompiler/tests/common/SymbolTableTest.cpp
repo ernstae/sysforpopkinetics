@@ -23,7 +23,7 @@ void SymbolTableTest::tearDown()
 void SymbolTableTest::testEnd()
 {
   SymbolTable table;
-  CPPUNIT_ASSERT( Symbol::empty() == table.end() );
+  CPPUNIT_ASSERT( Symbol::empty() == Symbol::empty() );
 }
 void SymbolTableTest::testInsertUserVar()
 {
@@ -43,7 +43,7 @@ void SymbolTableTest::testInsertUserVar()
    vector<int> aaa_dim( 1 );
    aaa_dim[0] = 1;
    Symbol *aaa = table.insertUserVar( aaa_name );
-   CPPUNIT_ASSERT( table.find( aaa_name ) != table.end() );
+   CPPUNIT_ASSERT( table.find( aaa_name ) != Symbol::empty() );
    CPPUNIT_ASSERT( table.find( aaa_name ) == aaa );
 
    aaa->initial[0][0] = "3.0";
@@ -69,7 +69,7 @@ void SymbolTableTest::testInsertLabel()
    aaa_dim[0] = 2;
    aaa_dim[1] = 1;
    Symbol *aaa = table.insertLabel( aaa_name, aaa_alias, aaa_dim );
-   CPPUNIT_ASSERT( table.find( aaa_name ) != table.end() );
+   CPPUNIT_ASSERT( table.find( aaa_name ) != Symbol::empty() );
    CPPUNIT_ASSERT( table.find( aaa_name ) == aaa );
 
    aaa->initial[0][0] = "3.0";
@@ -93,7 +93,7 @@ void SymbolTableTest::testInsertNMVector()
    string aaa_name( "aaa" );
    int aaa_dim = 2;
    Symbol *aaa = table.insertNMVector( aaa_name, aaa_dim );
-   CPPUNIT_ASSERT( table.find( aaa_name ) != table.end() );
+   CPPUNIT_ASSERT( table.find( aaa_name ) != Symbol::empty() );
    CPPUNIT_ASSERT( table.find( aaa_name ) == aaa );
 
    aaa->initial[0][0] = "3.0";
@@ -116,13 +116,13 @@ void SymbolTableTest::testInsertNMMatrix()
    string aaa_name( "aaa" );
    int aaa_dim = 2;
    Symbol *aaa = table.insertNMMatrix( aaa_name, diagonal, aaa_dim );
-   CPPUNIT_ASSERT( table.find( aaa_name ) != table.end() );
+   CPPUNIT_ASSERT( table.find( aaa_name ) != Symbol::empty() );
    CPPUNIT_ASSERT( table.find( aaa_name ) == aaa );
 
    string bbb_name( "bbb" );
    int bbb_dim = 2;
    Symbol *bbb = table.insertNMMatrix( bbb_name, triangle, bbb_dim );
-   CPPUNIT_ASSERT( table.find( bbb_name ) != table.end() );
+   CPPUNIT_ASSERT( table.find( bbb_name ) != Symbol::empty() );
    CPPUNIT_ASSERT( table.find( bbb_name ) == bbb );
 
    aaa->initial[0][0] = "3.0";
