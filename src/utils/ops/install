@@ -26,4 +26,7 @@ cp regression_test /usr/local/bin
 
 cp regression_test.xml /usr/local/spk/ops/regression_test/config
 
+scp rt_script.html $WEBHOST:$WEBDIR/ops/utils/rt_script.html
+
+
 exit 0
