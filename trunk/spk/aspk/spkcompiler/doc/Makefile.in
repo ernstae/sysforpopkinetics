@@ -9,8 +9,8 @@ SOURCE = ../libspkcompiler/client.h \
          ../libspkcompiler/ExpNodeCarrier.h \
          ../libspkcompiler/ExpTreeGenerator.h \
          ../libspkcompiler/read_content.h \
-         ../libspkcompiler/explang.cpp \
-         ../libspkcompiler/lex_explang.c \
+         ../libspkcompiler/nonmem/explang.cpp \
+         ../libspkcompiler/nonmem/lex_explang.c \
          ../libspkcompiler/nonmem/nonmem.h \
          ../libspkcompiler/nonmem/explang.ypp \
          ../libspkcompiler/nonmem/lex_explang.l \
