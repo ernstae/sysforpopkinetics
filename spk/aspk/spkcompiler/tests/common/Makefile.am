@@ -1,7 +1,7 @@
 bin_PROGRAMS = test_common
 
 COMMON = common
-MOSTLYCLEANFILES = IndData.h IndData.cpp
+MOSTLYCLEANFILES = IndData.h IndData.cpp convertDataTestInput.dat
 CXXFLAGS = -g
 
 test_common_SOURCES = \
