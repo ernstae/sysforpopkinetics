@@ -62,12 +62,13 @@ void NonmemCompiler::interpret()
 {
   interpretContent();
 
-  // data set must be parsed first 
-  // so that data item names are registered in the symbol table
-  // before they're referenced in driver or model section.
-  interpretData();
-
+  // <driver> must be parsed before <data> so that
+  // the size of population is discovered first.
   interpretDriver();
+
+  // <data> must be parsed before <model> so that
+  // symbols are registered into the symbol table.
+  interpretData();
   interpretModel();
 
   //interpretOutput();
@@ -183,6 +184,10 @@ void NonmemCompiler::interpretDriver()
 	  int len = atoi( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "length" ) ) ) );
 	  assert( len > 0 );
 	  
+	  Symbol theta( "theta", Symbol::VECTOR, Symbol::DOUBLE, true );
+	  theta.size( len );
+	  table->insert( theta );
+
 	  DOMNode * inNode = walker->firstChild();
 	  assert( inNode != NULL );
 
@@ -285,6 +290,9 @@ void NonmemCompiler::interpretDriver()
 	  int span = atoi( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "span" ) ) ) );
 	  assert( span > 0 );
 
+	  Symbol omega( "omega", Symbol::MATRIX, Symbol::DOUBLE, true );
+	  omega.dim( span, span );
+	  table->insert( omega );
 	  //
 	  // <omega struct (diagonal|block) #REQUIRED>
 	  //
@@ -341,6 +349,10 @@ void NonmemCompiler::interpretDriver()
 	  assert( XMLString::stringLen( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "span" ) ) ) > 0 );
 	  int span = atoi( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "span" ) ) ) );
 	  assert( span > 0 );
+
+	  Symbol sigma( "sigma", Symbol::MATRIX, Symbol::DOUBLE, true );
+	  sigma.dim( span, span );
+	  table->insert( sigma );
 
 	  //
 	  // <sigma struct (diagonal|block) #REQUIRED>
@@ -405,6 +417,9 @@ void NonmemCompiler::interpretDriver()
 	  int len = atoi( C( dynamic_cast<DOMElement*>(categoryNode)->getAttribute( X( "length" ) ) ) );
 	  assert( len > 0 );
 	  
+	  Symbol eta( "eta", Symbol::VECTOR, Symbol::DOUBLE, true );
+	  eta.size( len );
+
 	  etaIn.resize( len );
           etaFixed.resize( len );
 
@@ -692,6 +707,7 @@ void NonmemCompiler::interpretDriver()
     }
     return;
 }
+
 void NonmemCompiler::interpretData()
 {
   //
@@ -715,22 +731,180 @@ void NonmemCompiler::interpretData()
   SymbolTable *table = getTable();
   assert( table != NULL );
 
-  Symbol dose( "dose", Symbol::VECTOR, Symbol::DOUBLE, false );
-  table->insert( dose );
+  //
+  // Discover the number of data columns per individual set.
+  // The number must be the same for all individuals.
+  //
+  int ind_cnt=0;
+  int num_columns_previous = 0;
+  int num_columns_current  = 0;
+  DOMTreeWalker * walker = doc->createTreeWalker( dataTree, DOMNodeFilter::SHOW_ELEMENT, NULL, false );
+  DOMElement * individual = dynamic_cast< DOMElement* >(walker->firstChild());
+  while( individual != NULL )
+    {
+      ++ind_cnt;
+      num_columns_current = 0;
 
-  Symbol wt( "wt", Symbol::VECTOR, Symbol::DOUBLE, false );
-  table->insert( wt );
+      DOMElement * item = dynamic_cast< DOMElement* >( walker->firstChild() );
+      while( item != NULL )
+	{
+	  ++num_columns_current;
+	  item = dynamic_cast< DOMElement* >( walker->nextSibling() );
+	}
+      if( ind_cnt > 1 )
+	{
+	  assert( num_columns_current == num_columns_previous );
+	}
+      num_columns_previous = num_columns_current;
+      walker->parentNode();
+      individual = dynamic_cast<DOMElement*>( walker->nextSibling() );
+    }
+  walker->parentNode();
+  assert( ind_cnt == table->spkSymbols->nIndividuals );
 
-  Symbol w( "w", Symbol::VECTOR, Symbol::DOUBLE, false );
-  table->insert( w );
+  individual = dynamic_cast< DOMElement* >(walker->firstChild());
+  ind_cnt = 0;// reset the counter!
+  int num_columns = num_columns_previous;
+  //
+  // <data (individual)+>
+  // <individual length CDATA #REQUIRED>
+  //
+  // The number of <individual>s must agree with the number registered in 
+  // the value stored in table->spkSymbols->nIndividuals, which has been discovered during
+  // parsing of <driver>.
+  //
+  data.resize( table->spkSymbols->nIndividuals );
 
-  Symbol time( "time", Symbol::VECTOR, Symbol::DOUBLE, false );
-  table->insert( time );
+  while( individual != NULL )
+    {
+      //
+      // <individual (item)+>
+      // <item (value)+>
+      //
+      // <individual order CDATA #IMPLIED>
+      // <individual id CDATA #REQUIRED>
+      // <individual length CDATA #REQUIRED>
+      // <item label (id|l1|l2|dv|mdv|time|data|dat1|dat2|dat3|drop|skip|evid|amt|rate|ss|ii|add1|cmt|pcmt|call|cnt|CDATA) #REQUIRED>
+      // <item synonym (id|l1|l2|dv|mdv|time|data|dat1|dat2|dat3|drop|skip|evid|amt|rate|ss|ii|add1|cmt|pcmt|call|cnt|CDATA) #IMPLIED>
+      //
+      assert( XMLString::equals( individual->getNodeName(), X("individual") ) );
+      ++ind_cnt;
 
-  Symbol ds( "ds", Symbol::VECTOR, Symbol::DOUBLE, false );
-  table->insert( ds );
+      int length = atoi( trim( individual->getAttribute( X("length") ) ) );
 
-  assert( gSpkExpSymbolTable->spkSymbols->nIndividuals > 0 );
+      int order;
+      const XMLCh* xml_order = individual->getAttribute( X("order") );
+      if( xml_order == NULL )
+	order = ind_cnt - 1;
+      else 
+	order = atoi( C( xml_order ) ) - 1;
+
+      const char* id = C( individual->getAttribute( X("id") ) );
+
+      cout << id << "(" << order << ")" << endl;
+      data[order].columns.resize( num_columns );
+      data[order].id =  const_cast<char*>( id );
+
+      DOMElement * item = dynamic_cast< DOMElement* >( walker->firstChild() );
+      int item_cnt=0;
+      while( item != NULL )
+	{
+	  ++item_cnt;
+	  const XMLCh* xml_label = item->getAttribute( X("label") );
+	  assert( xml_label != NULL );
+	  const char* label = C( xml_label );
+
+	  const char * synonym = C( item->getAttribute( X("synonym") ) );
+
+	  data[order].columns[item_cnt-1].values.resize( length );
+	  data[order].columns[item_cnt-1].label = const_cast<char*>(label);
+          data[order].columns[item_cnt-1].synonym = const_cast<char*>(synonym);
+
+	  bool isNonmemKeyword = false;
+	  if( strcmp( label, "id" ) == 0 |
+	      strcmp( label, "l1" ) == 0 |
+	      strcmp( label, "l2" ) == 0 |
+	      strcmp( label, "dv" ) == 0 |
+	      strcmp( label, "mdv" ) == 0 |
+	      strcmp( label, "time" ) == 0 |
+	      strcmp( label, "data" ) == 0 |
+	      strcmp( label, "dat1" ) == 0 |
+	      strcmp( label, "dat2" ) == 0 |
+	      strcmp( label, "dat3" ) == 0 |
+	      strcmp( label, "drop" ) == 0 |
+	      strcmp( label, "skip" ) == 0 |
+	      strcmp( label, "evid" ) == 0 |
+	      strcmp( label, "amt" ) == 0 |
+	      strcmp( label, "rate" ) == 0 |
+	      strcmp( label, "ss" ) == 0 |
+	      strcmp( label, "ii" ) == 0 |
+	      strcmp( label, "add1" ) == 0 |
+	      strcmp( label, "cmt" ) == 0 |
+	      strcmp( label, "pcmt" ) == 0 |
+	      strcmp( label, "call" ) == 0 |
+	      strcmp( label, "cont" ) == 0 )
+	    isNonmemKeyword = true;
+	  Symbol lab( label, Symbol::VECTOR, Symbol::DOUBLE, isNonmemKeyword ); 
+	  lab.size( length );
+	  table->insert( lab );
+
+	  isNonmemKeyword = false;
+	  if( strcmp( synonym, "id" ) == 0 |
+	      strcmp( synonym, "l1" ) == 0 |
+	      strcmp( synonym, "l2" ) == 0 |
+	      strcmp( synonym, "dv" ) == 0 |
+	      strcmp( synonym, "mdv" ) == 0 |
+	      strcmp( synonym, "time" ) == 0 |
+	      strcmp( synonym, "data" ) == 0 |
+	      strcmp( synonym, "dat1" ) == 0 |
+	      strcmp( synonym, "dat2" ) == 0 |
+	      strcmp( synonym, "dat3" ) == 0 |
+	      strcmp( synonym, "drop" ) == 0 |
+	      strcmp( synonym, "skip" ) == 0 |
+	      strcmp( synonym, "evid" ) == 0 |
+	      strcmp( synonym, "amt" ) == 0 |
+	      strcmp( synonym, "rate" ) == 0 |
+	      strcmp( synonym, "ss" ) == 0 |
+	      strcmp( synonym, "ii" ) == 0 |
+	      strcmp( synonym, "add1" ) == 0 |
+	      strcmp( synonym, "cmt" ) == 0 |
+	      strcmp( synonym, "pcmt" ) == 0 |
+	      strcmp( synonym, "call" ) == 0 |
+	      strcmp( synonym, "cont" ) == 0 )
+	    isNonmemKeyword = true;
+	  Symbol syn( synonym, Symbol::VECTOR, Symbol::DOUBLE, isNonmemKeyword ); 
+	  syn.size( length );
+	  table->insert( syn );
+
+	  /*
+	  cout << data[order].columns[item_cnt-1].label;
+	  if( synonym != NULL ) cout << " = " << data[order].columns[item_cnt-1].synonym;
+          cout << endl;
+	  */
+
+	  DOMElement * valueNode = dynamic_cast< DOMElement* >( walker->firstChild() );
+	  int value_cnt=0;
+	  while( valueNode != NULL )
+	    {
+	      ++value_cnt;
+	      //
+	      // <value> may be empty.
+	      //
+	      DOMNode * actual = valueNode->getFirstChild();
+	      double value = atof( actual != NULL ? C( actual->getNodeValue() ) : "0.0" );
+
+	      data[order].columns[item_cnt-1].values[value_cnt-1] = value;
+	      /*
+      	      cout << "value = " << data[order].columns[item_cnt-1].values[value_cnt-1] << endl;
+	      */	      
+	      valueNode = dynamic_cast< DOMElement* >( walker->nextSibling() );
+	    }
+	  walker->parentNode();
+	  item = dynamic_cast< DOMElement* >( walker->nextSibling() );
+	}
+      walker->parentNode(); 
+      individual = dynamic_cast< DOMElement* >( walker->nextSibling() );
+    }
 }
 void NonmemCompiler::interpretModel()
 {
@@ -825,7 +999,6 @@ void NonmemCompiler::interpretModel()
 	    }
 	  model = walker->nextSibling();
 	}
-      assert( isPkGiven && isErrorGiven );
 
       setCannedModel( c_baseModel );
     }

@@ -58,6 +58,30 @@ extern DOMDocument *gSpkExpTree;
  */
 extern ExpTreeGenerator *gSpkExpTreeGenerator;
 
+class Column{
+public:
+  char* label;
+  char* synonym;
+  std::valarray<double> values;
+public:
+  Column() : values(3), label(0), synonym(0){}
+  Column( int nMeasurements ) : values(nMeasurements), label(0), synonym(0)
+  {
+  }
+};
+class Data{
+public:
+  char* id;
+  std::vector<Column> columns;
+public:
+  Data() : id(0){}
+  Data( int nColumns ) : id(0), columns(nColumns)
+  {
+  }
+  ~Data()
+  {
+  }
+};
 
 /**
  * Specialization of SpkCompiler for NONMEM.
@@ -144,9 +168,12 @@ class NonmemCompiler : public SpkCompiler{
    * as their keys.
    */
   void interpretData();
+  /*
   std::map< std::string, int > IDs;
   typedef std::map<const char*, std::valarray<double> > DataColumn;
   std::vector<DataColumn>  dataColumns;
+  */
+  std::vector<Data> data;
 
   /**
    * Interpret <model> section in the input SpkInML document
