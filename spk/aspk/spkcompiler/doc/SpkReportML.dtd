@@ -246,24 +246,45 @@ The i-th &lt;<value>&gt; corresponds to the i-th element of the parameter vector
 <!ATTLIST ind_coefficient_out length CDATA #REQUIRED>
 
 
-<!-- <presentation_data> An augmented data set, containing the values that 
-appear on the left hand side of the equations in <model> and the following 
-extra data items evaluated at each sampling point, along with the original 
-data set values:
+<!-- <presentation_data> The values that 
+appear on the left hand side of the equations in the model definition
+and the following extra items, both evaluated at each sampling point:
+
    <html:ul>
       <html:li>Observation record identifier (ID)</html:li>
       <html:li>Prediction (PRED)</html:li>
-      <html:li>Residual (RES)</html:li>
-      <html:li>Weighted residual (WRES)</html:li>
+      <html:li>Residual (RES) (= DV - RRED)</html:li>
+      <html:li>Weighted residual (WRES) if population analysis were requested.</html:li>
       </html:li>
-      <html:li>Simulated data (ie. dependent variable) if <simulation> were requested (SIMDV).</html:ul>
+      <html:li>Simulated data (ie. dependent variable) if data simulation were requested (SIMDV).</html:ul>
+   </html:ul>
+
+with THETA set to:
+
+   <html:ul>
+      <html:li>initial values if no parameter estimation is requested.</html:li>
+      <html:li>final values if parameter estimation is requested.</html:li>
    </html:ul>
 
 The data set is considered as a table/matrix here and the first row in the
 table would contain the labels that describe the nature of the values that follow (column-wise).
 -->
-<!ELEMENT presentation_data (row)* > 
+<!ELEMENT presentation_data (data_labels | row*) > 
 
+<!-- <data_labels> Sequence of data lables.  The <label>s are matched to the columns of data values from left to rigth, in the order of appearance.
+-->
+<!ELEMENT data_labels (label)+>
+
+<!-- <label> The name/label of the item. -->
+<!ELEMENT label EMPTY>
+                                                                                
+<!-- <label name=""> A string begining with an alphabet followed by any combination of alphabets, numbers, _ (underscore) that serves as the label.  Case-sensitive.  -->
+<!ATTLIST label name CDATA #REQUIRED>
+                                                                                
+<!-- <label synonym=""> [optional] Similar to "name" but this serves as an alias/synonym that references the same entity as "name" does, default to "" (none).
+-->
+<!ATTLIST label synonym CDATA #IMPLIED>
+                                                                                
 <!-- <presentation_data columns="0"> The number of colums in the table, >=0. -->
 <!ATTLIST presentation_data columns CDATA #REQUIRED>
 
