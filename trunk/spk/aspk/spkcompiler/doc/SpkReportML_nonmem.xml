@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <spkreport>
+   <error_message/>
    <pop_analysis_result>
-         <error_message/>
          <pop_opt_result>
             <pop_obj_out>
                <value>104.561</value>
@@ -21,15 +21,6 @@
             </sigma_out>
          </pop_opt_result>
          <pop_stat_result>
-            <stat_labels>
-               <label name="THETA(1)"/>
-               <label name="THETA(2)"/>
-               <label name="THETA(3)"/>
-               <label name="OMEGA(1,1)"/>
-               <label name="OMEGA(2,1)"/><label name="OMEGA(2,2)"/>
-               <label name="OMEGA(3,1)"/><label name="OMEGA(3,2)"/><label name="OMEGA(3,3)"/>
-               <label name="SIGMA(1,1)"/>
-            </stat_labels>
             <pop_stderr_out length="10">
                <value>7.08E01</value>
                <value>7.26E03</value>
