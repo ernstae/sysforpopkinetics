@@ -49,14 +49,14 @@
       <itemizedlist>
 	<listitem>
 	  <para>
-	    <ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/erModel/erModel.html">
+	    <ulink url="../erModel/erModel.html">
 	      Database Entity-Relationship Model
 	    </ulink>
 	  </para>
 	</listitem>
 	<listitem>
 	  <para>
-	    <ulink url="http://whitechuck.rfpk.washington.edu/soft/v0.1/specs/jobHistory/jobHistory.html">
+	    <ulink url="../jobHistory/jobHistory.html">
 	      Job History Model
 	    </ulink>
 	  </para>

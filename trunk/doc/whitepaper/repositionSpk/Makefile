@@ -1,7 +1,8 @@
+include ../../webdir.mk
 T = repositionSpk
 HTML_OPS = --nochunks
 STYLE = ../../stylesheet
-WEB = whitechuck.rfpk.washington.edu:/var/www/html/soft/whitepaper/$T
+WEB = $(WEBDIR)/whitepaper/$T
 PNG = $(wildcard *.png)
 
 all:	html pdf rtf

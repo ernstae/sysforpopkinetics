@@ -1,7 +1,8 @@
+include ../../webdir.mk
 T = modelXML
 HTML_OPS = --nochunks
 STYLE = ../../stylesheet
-WEB = whitechuck.rfpk.washington.edu:/var/www/html/soft/v0.1/specs/$T
+WEB = $(WEBDIR)/v0.1/specs/$T
 PNG = $(wildcard *.png)
 HTML = $(wildcard SpkML_html/*.html)
 

@@ -24,17 +24,21 @@ if [ $# -eq 0 ] || [ $1 == -h ] || [ $1 == --help ]; then
 fi
 
 SUBJECT=$1
-WEBDIR=/var/www/html/soft/decision/research/$SUBJECT
-WEBHOST=whitechuck.rfpk.washington.edu
+
+source ../../webdir.sh
 
 mkdir $SUBJECT
 cp template/Makefile $SUBJECT/makefile
 cp template/SUBJECT.xml $SUBJECT/x.xml
 cd $SUBJECT
 sed  "s/SUBJECT/$SUBJECT/" < makefile > Makefile
+
+
+
 sed  "s/Subject/$SUBJECT/" < x.xml > $SUBJECT.xml
 rm makefile x.xml
 
-ssh $WEBHOST "mkdir $WEBDIR > /dev/null 2>&1"
+ssh $WEBHOST "mkdir $WEBDIR/decision/research/$SUBJECT > /dev/null 2>&1"
+
 
 exit 0
