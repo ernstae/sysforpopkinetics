@@ -2,6 +2,8 @@ $begin DataSet$$
 $spell
 	const
 	valarray
+	Cpp
+	std
 $$
 
 $section The DataSet Class$$
@@ -15,6 +17,7 @@ $tend
 $fend 20$$
 
 $head DataSet$$
+$index DataSet$$
 The following is a documentation of the 
 aspects of the $code DataSet$$ class that are used
 by the monte carlo integration routine.
@@ -22,38 +25,45 @@ by the monte carlo integration routine.
 $head Constructor$$
 The syntax
 $syntax%
-	DataSet<double> %set%;
+	DataSet< CppAD::AD<double> > %set%;
 %$$
-constructs a data set in which each data value is stored
-as a $code double$$ value.
+constructs a data set. 
 
-
-$head popSize, M$$
-The variable
+$head getPopSize$$
+$index getPopSize$$
+The syntax
 $syntax%
-	const int %set%.popSize;
+	%M% = %set%.getPopSize();
 %$$
-specifies the number of individuals in the population
-data set.
+sets $italic M$$ to the number of individuals in the population data set
+where $italic M$$ is an $code int$$.
 
-$head data[i]->DV$$
-For $latex i = 0 , \ldots , M-1$$,
-$syntax%%set%.data[%i%]->DV%$$ is a $code valarray$$ that
-contains the measurement values for the $th i$$ individual.
-
-$subhead N[i]$$
-It follows that the corresponding number of measurements is
+$head getN$$
+$index getN$$
+If $italic N$$ is a $code std::valarray<int>$$ of size $italic M$$,
+the syntax 
 $syntax%
-	%N%[%i%] = %set%.data[%i%]->DV.size()
+	%N% = %set%.getN()
 %$$
+sets $latex N$$ to the number of measurements for each individual.
+For $latex i = 1, \ldots , M$$,
+$latex N[i]$$ is the number of measurements
+corresponding to the individual with index $italic i$$.
 
-$subhead Measurements$$
-It also follows that for $latex j = 0 , \ldots , N[i] - 1$$
+$subhead getAllMeasurements$$
+$index getAllMeasurements$$
+If $italic y$$ is a $code std::valarray<double>$$ of size 
+$latex N[0] + \ldots + N[M-1]$$,
+the syntax
 $syntax%
-	%set%.data[%i%]->DV[j]
+	%y% = %set%.getAllMeasurements()
 %$$
-is the $th j$$ measurement for the $th i$$ individual.
-
-
+set $italic y$$ the measurement values for all the individuals
+in the population. 
+The first $syntax%%N%[0]%$$ elements correspond to the
+individual with index zero,
+the next $syntax%%N%[1]%$$ elements correspond to the
+individual with index one,
+and so on.
 
 $end
