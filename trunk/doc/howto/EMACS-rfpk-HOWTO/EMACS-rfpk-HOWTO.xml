@@ -9,24 +9,24 @@
   <!ENTITY emacsVersion "emacs-21.2">
 ]>
 <article><title>Emacs Installation HOWTO</title>
- <articleinfo>
+  <articleinfo>
     <revhistory>
       <revision>
 	<revnumber>1.0</revnumber>
-	<date>01/22/2003</date>
+	<date>02/03/2003</date>
 	<authorinitials>afw</authorinitials>
 	<revremark>Initial version.</revremark>
       </revision>
     </revhistory>
-  <abstract>
-    <para>
+    <abstract>
+      <para>
 	Following a brief discussion of the advantages of using
 	the Emacs text editor, a process for obtaining and 
 	installing the software on RFPK workstations is 
 	described.
-    </para>
-  </abstract>
- </articleinfo>
+      </para>
+    </abstract>
+  </articleinfo>
   <sect1>
     <title>Introduction: Why Emacs?</title>
     <para>
@@ -44,7 +44,7 @@
       and to Cygwin, a Unix-compatible environment which runs on 
       top of the Windows operating system.)  It should also be
       pointed out that the growing importance of text-based 
-      markup languages, including SGML, XML and HTML, is elavating
+      markup languages, including SGML, XML and HTML, is elevating
       the importance of text files in all operating system 
       environments, including Windows.
     </para>
@@ -67,7 +67,7 @@
       Whenever you log in to one of these systems, you can be
       nearly certain that Vi will be there.  For this reason,
       at least some familiarity with Vi is a necessity for 
-      anyone who is doing any system administration or
+      someone who is doing any system administration or
       application configuration work.  Emacs, on the other
       hand, may be absent on a system that you need to 
       use.  Correcting that problem is the main topic of
@@ -130,7 +130,8 @@
       of gratitude for lighting a fire under the feet of
       their GNU Emacs counterparts, this tutorial recommends
       the use of GNU Emacs for the reasons of guaranteed 
-      compatibility and respect for the GNU tradition.  The
+      compatibility and respect for Richard Stallman and
+      the GNU tradition.  The
       rest of this document will concentrate on a process for
       obtaining and installing the latest version of
       GNU Emacs.
@@ -194,6 +195,7 @@
       </listitem>
       <listitem>
 	<para>
+	  <anchor id="fullbin"/>
 	  Decompress and expand the tarball by issuing the command
 	  <screen format="linespecific">
 	    tar xvzf &emacsVersion;-fullbin-i386.tar.gz
@@ -211,7 +213,7 @@
       <listitem>
 	<para>
 	  Add Emacs to your execution path.  In this example
-	  we assume you that installed Emacs in the directory
+	  we assume that you installed Emacs in the directory
 	  <filename moreinfo="none">/usr/local</filename> within
 	  your Cygwin environment.  
 	</para>
@@ -244,9 +246,290 @@
     </orderedlist>
   </sect1>
   <sect1>
-    <title>Configuring Emacs for XML and C++</title>
+    <title>Configuring Emacs for XML</title>
     <para>
-      
+      XML is just text, hence Emacs can edit XML without
+      any special configuration.  The functionality of Emacs for
+      editing XML can be greatly enhanced, however, by
+      the following two measures:
+      <orderedlist inheritnum="ignore" continuation="restarts">
+	<listitem>
+	  <para>
+	    Installation of SGML/XML mode.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Installation of a 
+	    <filename moreinfo="none">.emacs</filename> file.
+	  </para>
+	</listitem>
+      </orderedlist>
+    </para>
+    <sect2>
+      <title>Installation of SGML/XML Mode</title>
+      <para>
+	The SGML/XML mode (also known also as PSGML) is an
+	Emacs extension specifically tailored to XML.
+	Once installed, whenever you open a 
+	file which has the 
+	<filename moreinfo="none">.xml</filename>
+	filename suffix, Emacs will be transformed into
+	a specialized XML editor.  If you installed the
+	full binary version of Emacs, as described
+	<link linkend="fullbin">above</link>, you should
+	already have the SGML/XML mode.
+	<orderedlist inheritnum="ignore" continuation="restarts">
+	  <listitem>
+	    <para>
+	      Emacs will understand the syntax of a 
+	      <emphasis>well-formed</emphasis> XML
+	      document.  Essentially this means that 
+	      elements are delimited by a start-tag
+
+	      and an end-tag, that elements cannot
+	      overlap, and that there is a single
+	      top-level element, which is the document
+	      itself.  Emacs will color tags and
+	      provide automatic indentation in order to
+	      emphasize this structure and to make it
+	      obvious when the structure rules are
+	      violated.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      If in addition to the document being 
+	      well-formed, the preamble of the document contains
+	      a reference to a file called a
+	      <emphasis>Document Type Definition</emphasis>
+	      (DTD), Emacs will read that file, whether
+	      it resides on the local machine or somewhere
+	      on the Internet, and use the information to
+	      provide additional syntax enforcement as well
+	      as labor-saving features. 
+	    </para>
+	    <para>
+	      One of the things
+	      that a DTD (such as the Docbook DTD) does 
+	      is specify all of the elements that are allowed,
+	      what tag pairs delimit each element,
+	      and which elements can be contained in which
+	      other elements.  Based on the position of the
+	      cursor within the document, the 
+	      <guimenu moreinfo="none">Markup</guimenu> menu
+	      provides a list of elements allowed at that
+	      point.  When you click on one of the elements
+	      named in the pull-down list, a pair of tags
+	      is generated automatically.  For speed, you
+	      can also get tag generation via 
+	      auto-completion, after typing a key-stroke
+	      combination and the first few letters of an
+	      element name.
+	    </para>
+	  </listitem>
+	</orderedlist>
+      </para>
+    </sect2>
+    <sect2><title>Installation of a .emacs File</title>
+      <para>
+	When emacs starts, it reads a configuration file,
+	if one is available.  This file can provide a 
+	large amount of customization.  For instance,
+	it can provide a list of colors to be used for
+	syntax coloring; it can specify a default DTD;
+	it can specify many options.  Because it can be very
+	complex and usually contains lisp code, a detailed
+	description is outside the scope of this 
+	document.  Instead, the installation of a pre-made
+	configuration file will be described.
+      </para>
+      <para>
+	By default, the name of the Emacs configuration file is
+	<filename moreinfo="none">.emacs</filename> and it is 
+	located in your home directory.  Note that the file is 
+	a <emphasis>hidden file</emphasis>
+	under Unix, Linux, or Cygwin, because its name starts
+	with the dot character.  To see it in the output of the
+	<command moreinfo="none">ls</command> command, use the
+	<option>-a</option> option.  
+      </para>
+      <para>
+	How does Emacs know where to find your home directory?  If 
+	you start it from a Cygwin shell window, Emacs will inherit
+	the <varname>HOME</varname> environment variable from 
+	the shell.  If you start Emacs from a desktop icon, 
+	<varname>HOME</varname> may be undefined.
+      </para>
+      <para>
+	If you ever intend to run Emacs outside of Cygwin, 
+	it would be a good idea
+	to define <varname>HOME</varname> as a Windows environment
+	variable.  You do this in the 
+	<guimenuitem moreinfo="none">Environment Variables</guimenuitem>
+	screen, reached by the following series of menus:
+	<guimenu moreinfo="none">Start</guimenu>,
+	<guimenu moreinfo="none">Settings</guimenu>,
+	<guimenu moreinfo="none">Control Panel</guimenu>,
+	<guimenu moreinfo="none">System</guimenu>,
+	<guimenu moreinfo="none">Advanced</guimenu>,
+	<guimenu moreinfo="none">Environment Variables</guimenu>.
+	In the 
+	<guilabel moreinfo="none">User Variables</guilabel> section
+	of the screen, define the variable 
+	<varname>HOME</varname>, and specify the full path
+	of the directory in which
+	your <filename moreinfo="none">.emacs</filename> file 
+	resides (normally the full Windows path of your 
+	Cygwin home directory) as its value.
+      </para>
+      <para>
+	To use Emacs for XML, you do not
+	have to create or even understand your 
+	<filename moreinfo="none">.emacs</filename> file.  Instead,
+	you can make a copy of a file that someone else
+	has developed for this purpose.  A suitable file resides on the
+	RFPK server named <emphasis>muir</emphasis>.
+	The windows pathname of
+	the file to copy is 
+	<screen format="linespecific">
+	  <filename moreinfo="none">
+	    \\muir\SoftwareEngineers\Download\dot_emacs
+	  </filename>
+	</screen>
+	You can use the Windows
+	<guiicon moreinfo="none">My Computer</guiicon>
+	explorer to copy this
+	file to your home directory and then change the name
+	to <filename moreinfo="none">.emacs</filename> .
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Configuring Emacs for C or C++</title>
+    <para>
+      When Emacs opens a file whose name ends in one of the
+      usual C or C++ suffixes (.c, .h, .cpp, .cc, etc.), 
+      the CC mode is loaded.  This mode can provide 
+      syntax coloring, indentation and parentheses matching,
+      as well as interfacing with <command moreinfo="none">make</command>
+      and with <command moreinfo="none">gdb</command>, the
+      GNU debugger.  The user does not have to do much to
+      configure this behavior.  There are some options, however,
+      that can be specified in the <guimenu moreinfo="none">Options</guimenu>
+      menu. 
+    </para>
+    <para>
+      If you change options, the 
+      <guimenu moreinfo="none">Options</guimenu> menu will allow
+      you to save them.  The new values are automatically
+      appended to your <filename moreinfo="none">.emacs</filename>
+      file so that they will be applied the next time you start
+      Emacs.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Learning Emacs</title>
+    <para>
+      Emacs is not too difficult to learn, especially the menu-driven
+      version.  There are a number of freely available documents
+      that can help you.
+      <itemizedlist>
+	<listitem>
+	  <para>
+	    The built-in tutorial is a good place to begin.  Simply
+	    start emacs and choose
+	    <guimenuitem moreinfo="none">Emacs Tutorial</guimenuitem>
+	    from the <guimenu moreinfo="none">Help</guimenu> menu.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    The GNU Emacs Reference Card.  This is available in 
+	    <filename moreinfo="none">.pdf</filename> format on
+	    the RFPK server, <emphasis>muir</emphasis>, at
+	    pathname
+	    <screen format="linespecific">
+	      <filename moreinfo="none">
+		\\muir\SoftwareEngineers\Download\EmacsRefcard.pdf
+	      </filename>
+	    </screen>
+	    Using the Adobe Acrobat Reader, you can print this
+	    double-sided, on a single piece of paper, so that it
+	    can be folded into a reference card of six panels.
+	  </para>
+	  <para>
+	    In the Print window, select 
+	    <guimenuitem moreinfo="none">
+	      HP LaserJet 5000
+	    </guimenuitem>
+	    for the <guimenuitem moreinfo="none">Name</guimenuitem>
+	    field, and  
+	    <guimenuitem moreinfo="none">
+	      Language Level 2
+	    </guimenuitem>	
+	    for the <guimenuitem moreinfo="none">Print Method</guimenuitem>
+	    field.
+	  </para>
+	  <para>
+	    In the <guimenu moreinfo="none">Properties</guimenu>
+	    menu, select the <guimenu moreinfo="none">Layout</guimenu>
+	    page.
+	  </para>
+	  <para>
+	    In the <guimenu moreinfo="none">Orientation</guimenu> menu
+	    select the <guimenuitem moreinfo="none">Landscape</guimenuitem>
+	    radio button; and in the 
+	    <guimenu moreinfo="none">Print on Both Sides (Duplex)</guimenu>
+	    menu select the 
+	    <guimenuitem moreinfo="none">
+	      Flip on Short Edge
+	    </guimenuitem>
+	    radio button.
+	  </para>
+	  <para>
+	    Finally press the <guibutton moreinfo="none">OK</guibutton>
+	    button to print your reference card.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    The PSGML manual.
+	    The Emacs mode for editing XML and SGML is called
+	    PSGML.  The principal developer for this module is
+	    Lennart Staflin and he has written a manual,
+	    called <emphasis>Editing SGML with Emacs and PSGML</emphasis>,
+	    which covers the special features that the module has 
+	    added to Emacs.  You can get a copy of this manual in
+	    postscript from the RFPK server, muir, at the pathname
+	    <screen format="linespecific">
+	      <filename moreinfo="none">
+		\\muir\SoftwareEngineers\Download\psgml.ps
+	      </filename>
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    The official GNU Emacs manual is available
+	    <ulink
+	      url="http://www.gnu.org/manual/emacs/">
+	      online
+	    </ulink>.
+	  </para>
+	</listitem>
+      </itemizedlist>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Conclusion</title>
+    <para>
+      Emacs is the most powerful and most configurable text 
+      editor ever created.  We have only skimmed the surface
+      when discussing a few of the features of this tool.
+      The time and effort needed to acquire, install, and learn to
+      use this unique resource will be an excellent investment
+      for anyone with a need to edit structured text.
     </para>
   </sect1>
 </article>

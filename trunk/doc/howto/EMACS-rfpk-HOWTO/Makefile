@@ -1,10 +1,10 @@
 D = EMACS-rfpk-HOWTO
-JARS = "F:/Programs/java/xalan.jar;F:/Programs/java/xerces.jar"
+JARS = F:/Programs/Java
 PROC = org.apache.xalan.xslt.Process
 S = f:/cygwin/usr/local/lib/xml/stylesheets/docbook-xsl
 HTML = $S/html/docbook.xsl
 FO = $S/fo/docbook.xsl
-# comment
+
 all:	html fo
 
 html:	$D.html
