@@ -217,7 +217,7 @@ void ClientTranslator::parseData()
       // and save them in a temporary array.
       //
       vector<string>::const_iterator id = tmp_ids.begin();
-      for( int k=0; id != tmp_ids.end(), k<=nIDs; k++, id++ )
+      for( int k=0; id != tmp_ids.end(), k<nIDs; k++, id++ )
 	{
 	  nDataRecords[k] = tmp_values[*id][tmp_labels[0]].size();
 	}
