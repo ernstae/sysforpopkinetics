@@ -2094,7 +2094,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "valarray<double> bStep( nB );" << endl;
   oDriver << "valarray<double> bLow ( nB );" << endl;
   oDriver << "valarray<double> bUp  ( nB );" << endl;
-  oDirver << "valarray<double> bOut ( nB );" << endl;
+  oDriver << "valarray<double> bOut ( nB );" << endl;
   oDriver << "model.getIndPar       ( bIn );" << endl;
   oDriver << "model.getIndParLimits ( bLow, bUp );" << endl;
   oDriver << "model.getIndParStep   ( bStep );" << endl;
