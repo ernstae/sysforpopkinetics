@@ -17,7 +17,7 @@ import java.io.*;
 
 /**
  * This class defines a step to collect general information
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class GettingStarted extends javax.swing.JPanel implements WizardStep {
     

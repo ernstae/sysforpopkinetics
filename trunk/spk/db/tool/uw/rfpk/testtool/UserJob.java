@@ -16,7 +16,7 @@ import uw.rfpk.mda.nonmem.*;
 
 /**
  * This is the main class of job management tool.
- * @author  jiaji
+ * @author  Jiaji
  */
 public class UserJob extends javax.swing.JFrame {
     

@@ -15,7 +15,7 @@ import java.awt.event.ActionEvent;
 
 /**
  * This class defines a step to create the $SUBROUTINES record
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class Subroutines extends javax.swing.JPanel implements WizardStep {
     
@@ -226,9 +226,9 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
             int advanCurrent = iterator.getAdvan();
             String text = null;
             
-            // If advan was not changed and no reload for subroutines
+            // If advan was not changed and no reload for subroutines, return
             if(iterator.getIsReload())
-                text = iterator.getReload().getProperty("SUBROUTINES");            
+                text = iterator.getReload().getProperty("SUBROUTINES");           
             if(advan == advanCurrent && text == null)
                 return;
             
@@ -237,7 +237,10 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
             
             // remove the reload for subroutines
             if(text != null)
+            {
                 iterator.getReload().remove("SUBROUTINES");
+                text = text.trim().concat(" ");
+            }
 
             // Initialize the GUI according to the advan and the reload for subroutines
             if(advan == 6 || advan == 8 || advan == 9 || advan == 10)
@@ -245,13 +248,18 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
                 jTextPane1.setText("You have selected to use SUBROUTINE ADVAN" + String.valueOf(advan) +
                                    ".  You need to specify the number of significant digits" +
                                    " in the computation for each compartment.");
-                jComboBox1.setEnabled(true); 
+                jComboBox1.setEnabled(true);
                 jLabel1.setEnabled(true);
                 if(text != null)
                 {
-                    int tolIndex = text.indexOf("TOL=") + 4;
-                    if(tolIndex != -1)
-                        jComboBox1.setSelectedItem(text.substring(tolIndex, tolIndex + 1));
+                    int advanIndex = text.indexOf("ADVAN") + 5;
+                    int advanReload = Integer.parseInt(text.substring(advanIndex, text.indexOf(" ", advanIndex)));
+                    if(advanReload == advan)
+                    {
+                        int tolIndex = text.indexOf("TOL=") + 4;
+                        if(tolIndex != -1)
+                            jComboBox1.setSelectedItem(text.substring(tolIndex, tolIndex + 1));
+                    }
                 }
             }
             else
@@ -298,10 +306,13 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
                 jLabel2.setEnabled(true);
                 if(text != null)
                 {
-                    text = text.trim().concat(" "); 
-                    int transIndex = text.indexOf("TRANS");
-                    if(transIndex != -1)
-                        jComboBox2.setSelectedItem(text.substring(transIndex, transIndex + 6));
+                    int advanReload = Integer.parseInt(text.substring(18, text.indexOf(" ", 18)));
+                    if(advanReload == advan)
+                    {                    
+                        int transIndex = text.indexOf("TRANS");
+                        if(transIndex != -1)
+                            jComboBox2.setSelectedItem(text.substring(transIndex, transIndex + 6));
+                    }
                 }                
             }
             else

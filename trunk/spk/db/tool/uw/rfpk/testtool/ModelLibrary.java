@@ -21,7 +21,7 @@ import java.text.SimpleDateFormat;
 
 /**
  * This is the main class of model library management tool.
- * @author  jiaji
+ * @author  Jiaji
  */
 public class ModelLibrary extends javax.swing.JFrame {
     

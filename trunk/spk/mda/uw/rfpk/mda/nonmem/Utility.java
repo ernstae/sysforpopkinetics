@@ -26,7 +26,7 @@ import org.xml.sax.InputSource;
 
 /**
  * This class defines static functions used by steps.
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class Utility {
     

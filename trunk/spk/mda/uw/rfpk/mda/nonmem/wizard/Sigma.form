@@ -4,7 +4,6 @@
   <NonVisualComponents>
     <Container class="javax.swing.JDialog" name="jDialog1">
       <Properties>
-        <Property name="defaultCloseOperation" type="int" value="2"/>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" id="white" palette="1" red="ff" type="palette"/>
         </Property>
@@ -185,7 +184,7 @@
           <Color blue="cc" green="cc" red="cc" type="rgb"/>
         </Property>
         <Property name="editable" type="boolean" value="false"/>
-        <Property name="text" type="java.lang.String" value="Enter the initial estimates and constraints for the elements of one or&#xa;serveral blocks of the SIGMA matrix.  You may either enter data for a&#xa;new  block or constrain the block to be equal to the preceding block."/>
+        <Property name="text" type="java.lang.String" value="Enter the initial estimates and constraints for the elements of one or&#xa;serveral blocks of the residual unknown variability covariance matrix.&#xa;You may either enter data for a new  block or constrain the block to &#xa;be equal to the preceding block."/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">

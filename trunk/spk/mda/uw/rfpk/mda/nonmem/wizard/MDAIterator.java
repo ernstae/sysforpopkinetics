@@ -16,7 +16,7 @@ import java.util.StringTokenizer;
 
 /**
  * This class defines a iterator for the wizard.
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class MDAIterator implements StepIterator{ 
 
@@ -34,6 +34,8 @@ public class MDAIterator implements StepIterator{
     private boolean isSimPlot = false;
     private boolean isMethod1OrPosthoc = false;
     private boolean isNewData = true;
+    private boolean isTester = false;
+    private boolean isDeveloper = false;
     private int advan = 0;
     private int nDataCol = 0;
     private int nTheta = 0;
@@ -73,10 +75,16 @@ public class MDAIterator implements StepIterator{
     private boolean isDataXML = false;
     private String dataXML = null;
 
-    /**
-     * Constructor to create a MDAIterator object.
+    /** Constructor to create a MDAIterator object.
+     * @param serverName name of the web server associated with the MDA.
+     * @param serverPort port on the web server associated with the MDA.
+     * @param isOnline true if the MDA is online, false otherwise.
+     * @param frame a reference to the MDA main window class.
+     * @param isTester true if the user is a SPK tester, false otherwise.
+     * @param isDeveloper true if the user is a SPK developer, false otherwise.
      */  
-    public MDAIterator(String serverName, String serverPort, boolean isOnline, MDAFrame frame)
+    public MDAIterator(String serverName, String serverPort, boolean isOnline, MDAFrame frame,
+                       boolean isTester, boolean isDeveloper)
     {
         beginningSteps.add(gettingStarted);
         beginningSteps.add(new Problem(this)); 
@@ -88,6 +96,8 @@ public class MDAIterator implements StepIterator{
         this.serverPort = serverPort;
         this.isOnline = isOnline;
         this.frame = frame;
+        this.isTester = isTester;
+        this.isDeveloper = isDeveloper;
     }
 
     /** Set if the back button was clicked.
@@ -280,6 +290,16 @@ public class MDAIterator implements StepIterator{
      */    
     public boolean getIsOnline() { return isOnline; }    
 
+    /** Get if the user is a SPK tester.
+     * @return True if the user is a SPK tester.  False otherwise.
+     */    
+    public boolean getIsTester() { return isTester; }    
+    
+    /** Get if the user is a SPK developer.
+     * @return True if the user is a SPK developer.  False otherwise.
+     */    
+    public boolean getIsDeveloper() { return isDeveloper; }
+    
     /** Get SPK input data XML document.
      * @return A String object containing SPK data XML document.
      */    

@@ -14,7 +14,7 @@ import java.text.SimpleDateFormat;
 
 /**
  *
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class Test{ 
     /** Creates a new instance of Test */
@@ -58,7 +58,7 @@ public class Test{
     class Iterator extends MDAIterator{
         public Iterator(){
             super("",  "", false, null);
-            super.setAdvan(10);
+            super.setAdvan(9);
             super.setNDataCol(5);
             super.setNTheta(3);
             super.setNEta(7);
@@ -75,7 +75,7 @@ public class Test{
 //            Des step = new Des(i);
 //            Error step = new Error(i);
 //            GettingStarted step = new GettingStarted(i);
-            Estimation step = new Estimation(i);
+//            Estimation step = new Estimation(i);
 //            Input step = new Input(i);
 //            Model step = new Model(i);
 //            PK step = new PK(i);
@@ -83,7 +83,7 @@ public class Test{
 //            Problem step = new Problem(i);
 //            Omega step = new Omega(i); 
 //            Sigma step = new Sigma(i);
-//            ScatterPlot step = new ScatterPlot(i); 
+            ScatterPlot step = new ScatterPlot(i); 
 //            Simulation step = new Simulation(i);
 //            Subroutines step = new Subroutines(i);
 //            Table step = new Table(i);

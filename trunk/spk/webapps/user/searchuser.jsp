@@ -44,14 +44,36 @@
               <input type="hidden" name="OrigURL" value="${fn:escapeXml(param.origURL)}">
               <table>
                 <tr>
+                  <td>User ID:</td>
+                  <td><input type="text" name="userId"></td>
+                </tr>
+                <tr>
+                  <td>User Name:</td>
+                  <td><input type="text" name="userName"></td>
+                </tr>
+                <tr>
                   <td>First Name:</td>
-                  <td><input type="text" name="firstName">
-                  </td>
+                  <td><input type="text" name="firstName"></td>
                 </tr>
                 <tr>
                   <td>Last Name:</td>
-                  <td><input type="text" name="lastName">
-                  </td>
+                  <td><input type="text" name="lastName"></td>
+                </tr>
+                <tr>
+                  <td>Company:</td>
+                  <td><input type="text" name="company"></td>
+                </tr>
+                <tr>
+                  <td>Country:</td>
+                  <td><input type="text" name="country"></td>
+                </tr>
+                <tr>
+                  <td>State:</td>
+                  <td><input type="text" name="state"></td>
+                </tr>
+                <tr>
+                  <td>Email:</td>
+                  <td><input type="text" name="email"></td>
                 </tr>
                 <tr>
                   <th align="right"><input type="Submit" value="Submit"></th>

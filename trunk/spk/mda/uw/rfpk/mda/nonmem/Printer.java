@@ -13,7 +13,7 @@ import java.awt.*;
 
 /**
  * This class implements Printable interface that controls how to print
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class Printer implements Printable{
     

@@ -11,7 +11,7 @@ import java.util.Properties;
 
 /**
  * This class defines an object that contains output data
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class Output {
     
@@ -27,8 +27,10 @@ public class Output {
     public String completionTime = null;    
     /** computing times(estimation, statistics) */
     public String[] computingTimes = null;
-    /** analysis type */
+    /** analysis type: population/individual */
     public String analysis = null;
+    /** Method for the analysis */
+    public String method = null;
     /** model name */
     public String modelName = null;
     /** model version */
@@ -49,24 +51,26 @@ public class Output {
     public String trace = null;    
     /** objective value */
     public String objective = null;
+    /** standard error of objective */
+    public String objStdErr = null;    
     /** THETA vector */
     public String[] theta = null;
     /** OMEGA matrix */
-    public String[][] omega = null;
+    public String[][][] omega = null;
     /** OMEGA structure */
-    public String omegaStruct = null;
+    public String[] omegaStruct = null;
     /** SIGMA matrix */
-    public String[][] sigma = null;
+    public String[][][] sigma = null;
     /** SIGMA structure */
-    public String sigmaStruct = null;    
+    public String[] sigmaStruct = null;    
     /** statistics label list */
     public String[] statLabels = null;
     /** standard error of THETA */
     public String[] stdErrTheta = null;
     /** standard error of OMEGA */
-    public String[][] stdErrOmega = null;
+    public String[][][] stdErrOmega = null;
     /** standard error of SIGMA */
-    public String[][] stdErrSigma = null;
+    public String[][][] stdErrSigma = null;
     /** covariance matrix */
     public String[][] covariance = null;
     /** correlation matrix */
@@ -85,4 +89,6 @@ public class Output {
     public String[][][] table = null; 
     /** ((from, to, X0, Y0, unit, process), (list1), (list2), (list3))s */
     public String[][][] scatterplot = null;
+    /** a flag meaning succesful */
+    public boolean ok = true;
 }

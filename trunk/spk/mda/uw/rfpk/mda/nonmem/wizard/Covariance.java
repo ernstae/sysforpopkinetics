@@ -15,7 +15,7 @@ import java.awt.event.ActionEvent;
 
 /**
  * This class defines a step to create the $COVARIANCE record
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class Covariance extends javax.swing.JPanel implements WizardStep {
     

@@ -16,7 +16,7 @@ import java.awt.event.ActionEvent;
 
 /**
  * This class defines a step to create the $ESTIMATION record
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class Estimation extends javax.swing.JPanel implements WizardStep {
     
@@ -152,7 +152,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         jPanel1.setLayout(new java.awt.GridLayout(3, 1));
 
         jRadioButton1.setSelected(true);
-        jRadioButton1.setText("First order");
+        jRadioButton1.setText("First Order");
         buttonGroup1.add(jRadioButton1);
         jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

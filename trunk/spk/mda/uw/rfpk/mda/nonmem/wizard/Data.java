@@ -23,7 +23,7 @@ import java.awt.event.ActionEvent;
 
 /**
  * This class defines a step to create the $DATA record
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class Data extends javax.swing.JPanel implements WizardStep {
     

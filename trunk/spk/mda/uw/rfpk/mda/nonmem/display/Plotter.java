@@ -24,7 +24,7 @@ import javax.print.attribute.*;
 
 /** 
  * This class implements a XY plotter.
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class Plotter extends JPanel
 {
@@ -40,13 +40,14 @@ public class Plotter extends JPanel
      * @param uLine the flag specifies if unit slope line is required.
      */
     public Plotter(double[][] dataX, double[][] dataY, String title, String titleX, String titleY, 
-                   boolean xLine, boolean yLine, boolean uLine) 
+                   String type, boolean xLine, boolean yLine, boolean uLine) 
     {
 	this.dataX = dataX;
         this.dataY = dataY;
         this.title = title;
         this.titleX = titleX;
         this.titleY = titleY;
+        this.type = type;
         this.xLine = xLine;
         this.yLine = yLine;
         this.uLine = uLine;
@@ -77,9 +78,17 @@ public class Plotter extends JPanel
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 formMousePressed(evt);
             }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                formMouseReleased(evt);
+            }
         });
 
     }//GEN-END:initComponents
+
+    private void formMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseReleased
+        if (evt.isPopupTrigger()) 
+            jPopupMenu1.show(evt.getComponent(), evt.getX(), evt.getY());
+    }//GEN-LAST:event_formMouseReleased
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
 	// Get a PrinterJob object
@@ -184,22 +193,30 @@ public class Plotter extends JPanel
         double spanY = maxY - minY;
 	         
 	// draw the data curve
-        gc2D.setColor(Color.red);
-        
         newX = new int[dataX.length][dataX[0].length];
         newY = new int[dataY.length][dataY[0].length];
 
         for (int i = 0; i < dataX.length; i++)
         {	
+            if(i == 0) gc2D.setColor(Color.red);
+            if(i == 1) gc2D.setColor(Color.yellow);
+            if(i == 2) gc2D.setColor(Color.blue);            
             for (int j = 0; j < dataX[i].length; j++)
             {
 	        newX[i][j] = (int)(leftInset + (dataX[i][j] - minX)/spanX * width); 
                 newY[i][j] = (int)(height + top - (dataY[i][j] - minY)/spanY * height);
-                Ellipse2D.Double circle = new Ellipse2D.Double(newX[i][j] - 4, newY[i][j] - 4, 8, 8); 
-                gc2D.draw(circle);
-                gc2D.fill(circle);
             }
-//            gc2D.drawPolyline(newX[i], newY[i], dataX[i].length);
+            if(type.equals("dots") || type.equals("both"))
+            {
+                for (int j = 0; j < dataX[i].length; j++)
+                {                
+                    Ellipse2D.Double circle = new Ellipse2D.Double(newX[i][j] - 4, newY[i][j] - 4, 8, 8); 
+                    gc2D.draw(circle);
+                    gc2D.fill(circle);
+                }
+            }
+            if(type.equals("line") || type.equals("both"))
+                gc2D.drawPolyline(newX[i], newY[i], dataX[i].length);
         }
 	
 	// draw labels
@@ -282,12 +299,27 @@ public class Plotter extends JPanel
         int titleWidth = gc.getFontMetrics().stringWidth(title); 
         gc2D.drawString(title, leftInset + (width - titleWidth)/2, top - 10);
         gc2D.setFont(tf);
-        gc2D.setColor(Color.blue);
         int titleXWidth = gc.getFontMetrics().stringWidth(titleX);
         int titleYWidth = gc.getFontMetrics().stringWidth(titleY);        
         gc2D.drawString(titleX, leftInset + (width - titleXWidth)/2, top + height + 40);      
-        gc2D.rotate(Math.PI/2); 
-	gc2D.drawString(titleY, top + (height - titleYWidth)/2, -16);	
+        gc2D.rotate(Math.PI/2);
+        String[] titleYs = title.split(" ");
+        int shift = 0;
+        for(int i = 0; i < dataY.length; i++)
+        {
+            if(i == 0) gc2D.setColor(Color.red);
+            if(i == 1)
+            {
+                gc2D.setColor(Color.yellow);
+                shift = gc.getFontMetrics().stringWidth(titleYs[0] + " ");
+            }
+            if(i == 2)
+            {
+                gc2D.setColor(Color.blue);
+                shift += gc.getFontMetrics().stringWidth(titleYs[1] + " ");
+            }
+	    gc2D.drawString(titleYs[i], top + (height - titleYWidth)/2 + shift, -16);
+        }
     }
 
     /** This method specifies the tooltip to display.
@@ -347,18 +379,31 @@ public class Plotter extends JPanel
             double spanY = maxY - minY;
 
             for (int i = 0; i < dataX.length; i++)
-            {	
+            {
+                if(i == 0) gc2D.setColor(Color.red);
+                if(i == 1) gc2D.setColor(Color.yellow);
+                if(i == 2) gc2D.setColor(Color.blue);                 
                 for (int j = 0; j < dataX[i].length; j++)
                 {
-                    Ellipse2D.Double circle = new Ellipse2D.Double(newX[i][j] - 4, newY[i][j] - 4, 8, 8); 
-                    gc2D.draw(circle);
-                    gc2D.fill(circle); 
+	            newX[i][j] = (int)(left + (dataX[i][j] - minX)/spanX * width); 
+                    newY[i][j] = (int)(height + top - (dataY[i][j] - minY)/spanY * height);
+                }          
+                if(type.equals("dots") || type.equals("both"))
+                {
+                    for (int j = 0; j < dataX[i].length; j++)
+                    {
+                        Ellipse2D.Double circle = new Ellipse2D.Double(newX[i][j] - 4, newY[i][j] - 4, 8, 8);
+                        gc2D.draw(circle);
+                        gc2D.fill(circle);
+                    }
                 }
-                gc2D.drawPolyline(newX[i], newY[i], dataX[i].length); 
+                if(type.equals("line") || type.equals("both"))
+                    gc2D.drawPolyline(newX[i], newY[i], dataX[i].length); 
             }
             
             // draw labels
             gc2D.setFont(lf);
+            gc2D.setColor(Color.black);
             DecimalFormat f = new DecimalFormat("0.00E00");
             for(int i = 0; i < 6; i++)
             {
@@ -373,6 +418,7 @@ public class Plotter extends JPanel
             }
             
             // draw x = 0 line, y = 0 line, slope = 1 line
+            gc2D.setColor(Color.green);
             if(xLine && minX < 0 && maxX > 0)
                 gc2D.drawLine(left - (int)(minX * width / spanX), top, 
                               left - (int)(minX * width / spanX), top + height);   
@@ -400,7 +446,8 @@ public class Plotter extends JPanel
                               top + height - (int)((point2 - minY) * height / spanY));
             }
             
-            // draw grid  
+            // draw grid
+            gc2D.setColor(Color.gray);
             gc2D.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, 
                                            BasicStroke.JOIN_BEVEL, 0, 
                                            new float[]{5.0f, 2.0f}, 0));  
@@ -413,6 +460,7 @@ public class Plotter extends JPanel
             }
 
             // draw ticks
+            gc2D.setColor(Color.black);                               
             gc2D.setStroke(new BasicStroke());
             int spacingX = width/25;
             int spacingY = height/25;
@@ -433,11 +481,26 @@ public class Plotter extends JPanel
             gc2D.drawString(title, left + (width - titleWidth)/2, top - 10);
             gc2D.setFont(tf);
             int titleXWidth = gc.getFontMetrics().stringWidth(titleX);
-            int titleYWidth = gc.getFontMetrics().stringWidth(titleY);        
+            int titleYWidth = gc.getFontMetrics().stringWidth(titleY);
             gc2D.drawString(titleX, left + (width - titleXWidth)/2, top + height + 40);        
-            gc2D.rotate(Math.PI/2); 
-	    gc2D.drawString(titleY, top + (height - titleYWidth)/2, -16 - lineInsetX);
-            
+            gc2D.rotate(Math.PI/2);            
+            String[] titleYs = title.split(" ");
+            int shift = 0;
+            for(int i = 0; i < dataY.length; i++)
+            {            
+                if(i == 0) gc2D.setColor(Color.red);
+                if(i == 1)
+                {
+                    gc2D.setColor(Color.yellow);
+                    shift = gc.getFontMetrics().stringWidth(titleYs[0] + " ");
+                }
+                if(i == 2)
+                {
+                    gc2D.setColor(Color.blue);
+                    shift += gc.getFontMetrics().stringWidth(titleYs[1] + " ");
+                }
+                gc2D.drawString(titleYs[i], top + (height - titleYWidth)/2 + shift, -16 - lineInsetX);
+            }
             return PAGE_EXISTS; 
         } 
         
@@ -456,6 +519,7 @@ public class Plotter extends JPanel
     private String title; 
     private String titleX;
     private String titleY;
+    private String type;
     private boolean xLine, yLine, uLine;
     private final static Color bg = Color.white;
     private final static Color fg = Color.black;
@@ -463,8 +527,8 @@ public class Plotter extends JPanel
     private final static int rightInset = 20;
     private final static int topInset = 30;
     private final static int bottomInset = 60;
-    private static Font lf = new Font("SansSerif", Font.BOLD, 12);
-    private static Font tf = new Font("SansSerif", Font.BOLD, 16);
+    private final static Font lf = new Font("SansSerif", Font.BOLD, 12);
+    private final static Font tf = new Font("SansSerif", Font.BOLD, 16);
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem jMenuItem1;

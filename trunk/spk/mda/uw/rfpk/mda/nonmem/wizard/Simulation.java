@@ -16,7 +16,7 @@ import java.awt.event.ActionEvent;
 
 /**
  * This class defines a step to create the $SIMULATION record
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class Simulation extends javax.swing.JPanel implements WizardStep {
     

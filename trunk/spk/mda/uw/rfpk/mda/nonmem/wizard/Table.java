@@ -14,10 +14,11 @@ import javax.swing.JOptionPane;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.util.Vector;
 
 /**
  * This class defines a step to create the $TABLE record
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class Table extends javax.swing.JPanel implements WizardStep { 
     
@@ -42,8 +43,6 @@ public class Table extends javax.swing.JPanel implements WizardStep {
     public Table(MDAIterator iter) { 
         initComponents();
         iterator = iter; 
-        nTableEst = 0;
-        nTableSim = 0;
     }
     
     /** Set which output, table or scatterplot, is required
@@ -270,7 +269,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(13, 12, 12, 16);
+        gridBagConstraints.insets = new java.awt.Insets(13, 0, 12, 16);
         add(jTextField1, gridBagConstraints);
 
         addButton.setText("Add");
@@ -331,15 +330,18 @@ public class Table extends javax.swing.JPanel implements WizardStep {
 
         jTextPane2.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane2.setEditable(false);
-        jTextPane2.setText("List of the  \nTable options \nyou have \nselected in \nNONMEM syntax");
+        jTextPane2.setText("List of the  \nTable options \nyou have \nselected in \nNONMEM \nsyntax");
         jTextPane2.setFocusable(false);
+        jTextPane2.setMaximumSize(new java.awt.Dimension(90, 90));
+        jTextPane2.setMinimumSize(new java.awt.Dimension(90, 90));
+        jTextPane2.setPreferredSize(new java.awt.Dimension(90, 90));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.gridheight = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(11, 12, 29, 15);
+        gridBagConstraints.insets = new java.awt.Insets(11, 12, 29, 0);
         add(jTextPane2, gridBagConstraints);
 
         changeButton.setText("Change");
@@ -377,6 +379,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridy = 4;
         gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         add(jSeparator1, gridBagConstraints);
 
         jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
@@ -407,14 +410,13 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.ipady = 74;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(16, 12, 12, 16);
+        gridBagConstraints.insets = new java.awt.Insets(16, 0, 12, 16);
         add(jScrollPane1, gridBagConstraints);
 
         jLabel1.setText("File Name");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(12, 18, 12, 0);
         add(jLabel1, gridBagConstraints);
@@ -453,7 +455,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.insets = new java.awt.Insets(8, 12, 8, 0);
+        gridBagConstraints.insets = new java.awt.Insets(7, 17, 7, 0);
         add(jRadioButton1, gridBagConstraints);
 
         jRadioButton2.setText("One Header");
@@ -467,19 +469,29 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(8, 16, 8, 16);
+        gridBagConstraints.insets = new java.awt.Insets(7, 16, 7, 16);
         add(jRadioButton2, gridBagConstraints);
 
         jRadioButton3.setText("No Append");
+        jRadioButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton3ActionPerformed(evt);
+            }
+        });
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(8, 13, 8, 6);
+        gridBagConstraints.insets = new java.awt.Insets(7, 13, 7, 0);
         add(jRadioButton3, gridBagConstraints);
 
     }//GEN-END:initComponents
+
+    private void jRadioButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton3ActionPerformed
+        // Add your handling code here:
+    }//GEN-LAST:event_jRadioButton3ActionPerformed
 
     private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
         if(jRadioButton2.isSelected())
@@ -492,12 +504,79 @@ public class Table extends javax.swing.JPanel implements WizardStep {
     }//GEN-LAST:event_jRadioButton1ActionPerformed
 
     private void leftListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_leftListMouseClicked
-        changeItemButton.setEnabled(true);
-        deleteItemButton.setEnabled(true); 
+        changeItemButton.setEnabled(leftList.getSelectedIndex() >= 0);
+        deleteItemButton.setEnabled(leftList.getSelectedIndex() >= 0); 
     }//GEN-LAST:event_leftListMouseClicked
 
     private void jList1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jList1MouseClicked
-        index = jList1.getSelectedIndex(); 
+        index = jList1.getSelectedIndex();
+        
+        // Reload selected value
+        String element = (String)jList1.getSelectedValue() + " ";
+        
+        // Find file name
+        int ind = element.indexOf(" FILE=");
+        if(ind != -1)
+        {
+            int end = element.indexOf(" ", ind + 5);
+            jTextField1.setText(element.substring(ind + 6, end));                    
+        }
+        else
+        {
+            // Find header, append and the end index of list2
+            ind = element.indexOf(" NOHEADER");
+            if(ind == -1)
+            {   
+                jRadioButton1.setSelected(false);
+                ind = element.indexOf(" ONEHEADER");
+                if(ind == -1)
+                {
+                    jRadioButton2.setSelected(false);
+                    ind = element.indexOf(" NOAPPEND");
+                    if(ind == -1)
+                    {
+                        jRadioButton3.setSelected(false);
+                        ind = element.length() - 1;
+                    }
+                    else
+                        jRadioButton3.setSelected(true);
+                }
+                else
+                    jRadioButton2.setSelected(true);
+            }
+            else
+                jRadioButton1.setSelected(true);
+        }
+
+        // Find list1 and list2
+        String lists = element.substring(0, ind);
+        String[] list1 = null;
+        String[] list2 = null;
+        leftModel.removeAllElements();
+        rightModel.removeAllElements();
+ 
+        int indBy = lists.indexOf("BY ");
+        if(indBy != -1)
+        {
+            list1 = lists.substring(7, indBy - 1).trim().split(" ");
+            for(int i = 0; i < list1.length; i++)
+                leftModel.addElement(list1[i]);
+            list2 = lists.substring(indBy + 3).trim().split(" ");
+            for(int i = 0; i < list2.length; i++)            
+                rightModel.addElement(list2[i]);
+        }
+        else
+        {
+            if(lists.length() > 7)
+            {
+                list1 = lists.substring(7).trim().split(" ");
+                for(int i = 0; i < list1.length; i++)
+                    leftModel.addElement(list1[i]);
+            }
+        }
+        
+        changeItemButton.setEnabled(true);
+        deleteItemButton.setEnabled(true);         
         changeButton.setEnabled(true);
         deleteButton.setEnabled(true);        
         Utility.setUpDownButton(index, model, upButton, downButton);
@@ -593,14 +672,13 @@ public class Table extends javax.swing.JPanel implements WizardStep {
             }
         }
         addButton.setEnabled(true);
-        jDialog1.setVisible(false);
+        jComboBox1.setSelectedIndex(-1);
         jDialog1.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        leftModel.removeAllElements();
-        rightModel.removeAllElements();
-
+        leftList.setSelectedIndex(leftModel.size() - 1);
+        rightList.setSelectedIndex(rightModel.size() - 1);
         changeItemButton.setEnabled(false);
         deleteItemButton.setEnabled(false);
         leftButton.setEnabled(false); 
@@ -649,9 +727,11 @@ public class Table extends javax.swing.JPanel implements WizardStep {
                 element = element + " FILE=" + fileName;
         }   
         if(jRadioButton1.isSelected())
-            element = element + " " + "NOHEADER";
+            element = element + " NOHEADER";
         if(jRadioButton2.isSelected())
-            element = element + " " + "ONEHEADER";        
+            element = element + " ONEHEADER";
+        if(jRadioButton3.isSelected())
+            element = element + " NOAPPEND";        
         model.add(index, element);     
     }//GEN-LAST:event_changeButtonActionPerformed
 
@@ -831,14 +911,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
             leftList.setModel(leftModel);
             rightModel = new DefaultListModel();
             rightList.setModel(rightModel);
-        
-            // Set number of table = 0;
-//            model.removeAllElements();
-//            index = -1;
-//            if(which.equals("ESTIMATION"))
-//                nTableEst = 0;
-//            if(which.equals("SIMULATION")) 
-//                nTableSim = 0;
+
             if(iterator.getIsReload())
             {
                 String text = null;
@@ -852,20 +925,12 @@ public class Table extends javax.swing.JPanel implements WizardStep {
                         String[] values = text.split(",");
                         nTableEst = values.length;
                         for(int i = 0; i < nTableEst; i++)
-                            model.addElement("$TABLE " + values[i].substring(6).trim());
+                            model.addElement(checkItem("$TABLE " + values[i].substring(6).trim(), i));
                         index = nTableEst - 1;
-                        jList1.setSelectedIndex(index);
-                        isValid = true;
-                        
-                        // Set delete button
-                        deleteButton.setEnabled(nTableEst > 0);
-                        
-                        // Set left options
-                        wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
-                        
-                        // Set up and down buttons
-                        Utility.setUpDownButton(index, model, upButton, downButton);
                     }
+                    else
+                        for(int i = 0; i < model.size(); i++)
+                            model.set(i, checkItem((String)model.get(i), i));                    
                 }
                 else
                 {
@@ -877,29 +942,20 @@ public class Table extends javax.swing.JPanel implements WizardStep {
                         String[] values = text.split(",");
                         nTableSim = values.length;
                         for(int i = 0; i < values.length; i++)
-                            model.addElement("$TABLE " + values[i].substring(6).trim());
+                            model.addElement(checkItem("$TABLE " + values[i].substring(6).trim(), i));
                         index = values.length - 1;
-                        jList1.setSelectedIndex(index);
-                        isValid = true;
-                        
-                        // Set delete button
-                        deleteButton.setEnabled(nTableEst > 0);
-                        
-                        // Set left options                        
-                        wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
-                        
-                        // Set up and down buttons
-                        Utility.setUpDownButton(index, model, upButton, downButton);                        
                     }
+                    else
+                        for(int i = 0; i < model.size(); i++)
+                            model.set(i, checkItem((String)model.get(i), i));                    
                 }
             }
-            if(model.size() == 0)
-            {
-                isValid = false;
-                wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray()); 
-            }
+            else
+                for(int i = 0; i < model.size(); i++)
+                    model.set(i, checkItem((String)model.get(i), i));
                       
             // Check the number of tables
+            isValid = index >= 0 ? true : false;            
             if(nTableEst + nTableSim == maxNTable)
             {
                 JOptionPane.showMessageDialog(null, "The number of tables has reached\n" +
@@ -907,12 +963,60 @@ public class Table extends javax.swing.JPanel implements WizardStep {
                                               "Information for Input",               
                                               JOptionPane.INFORMATION_MESSAGE);
                 isValid = true;
-                wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray()); 
+                addButton.setEnabled(false); 
             }
+            if(nTableEst + nTableSim > maxNTable)
+            {
+                JOptionPane.showMessageDialog(null, "The number of tables has exceeded\n" +
+                                              "its limit, " + maxNTable + ".",   
+                                              "Information for Input",               
+                                              JOptionPane.INFORMATION_MESSAGE);
+                isValid = false;
+                addButton.setEnabled(false); 
+            }
+            
+            jList1.setSelectedIndex(index);
+            isValid = true;
+                        
+            // Set delete button
+            deleteButton.setEnabled(index >= 0);
+                        
+            // Set left options                        
+            wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
+                        
+            // Set up and down buttons
+            Utility.setUpDownButton(index, model, upButton, downButton);            
+            
+            // Request focus
             jTextField1.requestFocusInWindow(); 
 	}
-
-	public void hidingStep(JWizardPane wizard){
+        
+        private String checkItem(String record, int n)
+        {
+            String element = record;
+            element = element.replaceAll(" NOHEADER", "").replaceAll(" ONEHEADER", "").replaceAll(" NOAPPEND", "");
+            if(element.indexOf(" FILE=") != -1)
+                element = element.substring(7, element.indexOf(" FILE="));
+            else
+                element = element.substring(7);
+            if(element.indexOf(" BY ") != -1)
+                element = element.substring(0, element.indexOf(" BY "));
+            String[] items = element.trim().split(" ");
+            Vector availableItems = new Vector();
+            for(int i = 0; i < jComboBox1.getItemCount(); i++)
+                availableItems.addElement(jComboBox1.getItemAt(i));
+            for(int i = 0; i < items.length; i++)
+                if(availableItems.indexOf(items[i]) == -1)
+                {
+                    record = record.replaceAll(" " + items[i], "");
+                    JOptionPane.showMessageDialog(null, "The item '" + items[i] + "' has been removed from 'Table " + (n + 1) + "'\n" +
+                                                  "because it is not available in the current setting.", 
+                                                  "Input Error", JOptionPane.ERROR_MESSAGE);                       
+                }
+            return record;
+        }
+    
+    	public void hidingStep(JWizardPane wizard){
             if(iterator.getIsBack())
             {
                 iterator.setIsBack(false);
@@ -924,9 +1028,8 @@ public class Table extends javax.swing.JPanel implements WizardStep {
             MDAObject object = (MDAObject)wizard.getCustomizedObject();  
             // Create and save record
             String record = ((String)model.get(0)).replaceAll("\r", "");
-            String ls = System.getProperty("line.separator");
             for(int i = 1; i < size; i++)
-                record = record + ls + model.get(i);            
+                record = record + "\n" + model.get(i);            
             if(which.equals("ESTIMATION"))
             {
                 nTableEst = size;
@@ -946,20 +1049,25 @@ public class Table extends javax.swing.JPanel implements WizardStep {
 
                 // Find file name
                 int ind = element.indexOf(" FILE=");
-                if(ind == -1)
+                if(ind != -1)
                 {
+                    int end = element.indexOf(" ", ind + 5);
+                    tables[i][0][0] = element.substring(ind + 6, end);                    
+                }
+                else
+                {
+                    // Find end index of list2
                     ind = element.indexOf(" NOHEADER");
                     if(ind == -1)
                     {
                         ind = element.indexOf(" ONEHEADER");
                         if(ind == -1)
-                            ind = element.length() - 1;
+                        {
+                            ind = element.indexOf(" NOAPPEND");
+                            if(ind == -1)
+                                ind = element.length() - 1;
+                        }
                     }
-                }
-                else
-                {
-                    int end = element.indexOf(" ", ind + 5);
-                    tables[i][0][0] = element.substring(ind + 6, end);
                 }
                 
                 // Find header                
@@ -976,13 +1084,13 @@ public class Table extends javax.swing.JPanel implements WizardStep {
                 int indBy = lists.indexOf("BY ");
                 if(indBy != -1)
                 {
-                    list1 = lists.substring(7, indBy - 1).split(" "); 
-                    list2 = lists.substring(indBy + 3).split(" ");
+                    list1 = lists.substring(7, indBy - 1).trim().split(" "); 
+                    list2 = lists.substring(indBy + 3).trim().split(" ");
                 }
                 else
                 {
                     if(lists.length() > 7)
-                        list1 = lists.substring(7).split(" ");
+                        list1 = lists.substring(7).trim().split(" ");
                 }
                 
                 // Append DV, PRED, RES and WRES to the left list

@@ -33,7 +33,6 @@
       <SubComponents>
         <Component class="javax.swing.JList" name="jList1">
           <Properties>
-            <Property name="selectionMode" type="int" value="0"/>
             <Property name="fixedCellHeight" type="int" value="15"/>
           </Properties>
         </Component>
@@ -54,7 +53,9 @@
     </Component>
     <Component class="javax.swing.JTextPane" name="jTextPane1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Select a scatterplot to display"/>
+        <Property name="editable" type="boolean" value="false"/>
+        <Property name="text" type="java.lang.String" value="Select a scatterplot or scatterplots to display"/>
+        <Property name="focusable" type="boolean" value="false"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">

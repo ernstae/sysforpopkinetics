@@ -4,6 +4,9 @@
     <fileobject name="DataFormater.java">
         <attr name="class_dependency_javax.swing.JFrame" stringvalue="DataFormater"/>
     </fileobject>
+    <fileobject name="PlotTool.java">
+        <attr name="class_dependency_javax.swing.JFrame" stringvalue="PlotTool"/>
+    </fileobject>
     <fileobject name="JobInfo.java">
         <attr name="class_dependency_javax.swing.JFrame" stringvalue="JobInfo"/>
     </fileobject>

@@ -24,7 +24,7 @@ import java.awt.print.*;
 
 /**
  * This is the main class of source management tool.
- * @author  jiaji
+ * @author  Jiaji
  */
 public class GetSource extends javax.swing.JFrame {
     

@@ -21,7 +21,7 @@ import java.awt.Color;
 
 /**
  * This class defines a step to create the $THETA record
- * @author  jiaji Du
+ * @author Jiaji Du
  */
 public class Theta extends javax.swing.JPanel implements WizardStep {
     
@@ -30,9 +30,6 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
     private int nTheta = 0;
     private int index = -1;
     private int highlight = 0;
-    private boolean isFixed = false;
-    private boolean isUBInf = false;
-    private boolean isLBInf = false;
     private boolean isValid = false;
     private MDAIterator iterator = null;
     private DefaultListModel model = null; 
@@ -471,11 +468,14 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
                 jTextField3.setText(text3);               
             }
 
-            isFixed = false;
             jCheckBox1.setSelected(false);
             jCheckBox2.setSelected(false);
             jCheckBox3.setSelected(false);
-            
+            jCheckBox1.setEnabled(true);
+            jCheckBox3.setEnabled(true);            
+            jTextField1.setEnabled(true);
+            jTextField3.setEnabled(true);
+                
             if(highlight == 2)
             {
                 high2.removeAllHighlights();
@@ -534,7 +534,55 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
     }//GEN-LAST:event_jTextField2KeyTyped
 
     private void jList1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jList1MouseClicked
-        index = jList1.getSelectedIndex();  
+        index = jList1.getSelectedIndex();
+        
+        // Reload selected value
+        String selectedValue = (String)jList1.getSelectedValue();
+        selectedValue = selectedValue.substring(1, selectedValue.length() - 1);
+        if(selectedValue.endsWith("FIXED"))
+        {
+            jCheckBox2.setSelected(true);
+            jCheckBox1.setSelected(false);
+            jCheckBox3.setSelected(false);
+            jCheckBox1.setEnabled(false);
+            jCheckBox3.setEnabled(false);            
+            jTextField2.setText(selectedValue.split(" ")[0]);
+            jTextField1.setText("");
+            jTextField3.setText("");
+            jTextField1.setEnabled(false);
+            jTextField3.setEnabled(false);          
+        }
+        else
+        {
+            String[] items = selectedValue.split(",");        
+            jCheckBox2.setSelected(false);
+            if(items[0].equals("-1000000"))
+            {
+                jCheckBox1.setSelected(true);
+                jTextField1.setEnabled(false);             
+            }
+            else
+            {
+                jCheckBox1.setSelected(false);
+                jTextField1.setEnabled(true);             
+            }
+            if(items[2].equals("1000000"))
+            {
+                jCheckBox3.setSelected(true);
+                jTextField3.setEnabled(false);             
+            }
+            else
+            {
+                jCheckBox3.setSelected(false);
+                jTextField3.setEnabled(true);             
+            }            
+            jCheckBox1.setEnabled(true);
+            jCheckBox3.setEnabled(true);            
+            jTextField2.setText(items[1]);
+            jTextField1.setText(items[0]);
+            jTextField3.setText(items[2]);
+        }
+        
         changeButton.setEnabled(true);
         deleteButton.setEnabled(true);
         Utility.setUpDownButton(index, model, upButton, downButton);
@@ -542,7 +590,6 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
 
     private void jTextField3KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField3KeyTyped
         jCheckBox3.setSelected(false);
-        isUBInf = false;
         if(highlight == 3)
         {
             jTextField3.setText("");
@@ -553,7 +600,6 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
 
     private void jTextField1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyTyped
         jCheckBox1.setSelected(false);
-        isLBInf = false;
         if(highlight == 1)
         {
             high1.removeAllHighlights();  
@@ -565,45 +611,47 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
     private void jCheckBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox3ActionPerformed
         if(jCheckBox3.isSelected())
         {
-            isUBInf = true;
             jTextField3.setText("1000000");
-            jCheckBox2.setSelected(false);
-            isFixed = false;
+            jTextField3.setEnabled(false);
         }
         else
         {
-            isUBInf = false;
-            jTextField3.setText(""); 
+            jTextField3.setText("");
+            jTextField3.setEnabled(true);
         }
     }//GEN-LAST:event_jCheckBox3ActionPerformed
 
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
         if(jCheckBox1.isSelected())
         {
-            isLBInf = true;
             jTextField1.setText("-1000000");
-            jCheckBox2.setSelected(false);
-            isFixed = false;
+            jTextField1.setEnabled(false);
         }
         else
         {
-            isLBInf = false;
-            jTextField1.setText(""); 
+            jTextField1.setText("");
+            jTextField1.setEnabled(true);
         }
     }//GEN-LAST:event_jCheckBox1ActionPerformed
 
     private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
         if(jCheckBox2.isSelected())
         {
-            isFixed = true;
-            jTextField1.setText(jTextField2.getText());
-            jTextField3.setText(jTextField2.getText());
             jCheckBox1.setSelected(false);
             jCheckBox3.setSelected(false);
+            jCheckBox1.setEnabled(false);
+            jCheckBox3.setEnabled(false);            
+            jTextField1.setText("");
+            jTextField3.setText("");
+            jTextField1.setEnabled(false);
+            jTextField3.setEnabled(false);
         }
         else
         {
-            isFixed = false;
+            jCheckBox1.setEnabled(true);
+            jCheckBox3.setEnabled(true);            
+            jTextField1.setEnabled(true);
+            jTextField3.setEnabled(true);            
         }
     }//GEN-LAST:event_jCheckBox2ActionPerformed
 
@@ -709,7 +757,7 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
         String text3 = jTextField3.getText().trim();  
         
         // Check if text1, text2 and text3 are numbers
-        if(!isFixed && !Utility.isFloatNumber(text1))
+        if(!jCheckBox2.isSelected() && !Utility.isFloatNumber(text1))
         {
             JOptionPane.showMessageDialog(null, 
                                           "The Lower Bound is not a floating " +
@@ -727,7 +775,7 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
                                           JOptionPane.ERROR_MESSAGE);                
             return null;
         }
-        if(!isFixed && !Utility.isFloatNumber(text3))
+        if(!jCheckBox2.isSelected() && !Utility.isFloatNumber(text3))
         { 
             JOptionPane.showMessageDialog(null, 
                                           "The Upper Bound is not a floating " +
@@ -738,7 +786,7 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
         }
         
         // Check if text1, text2 and text3 are in order
-        if(!isFixed && new Double(text1).doubleValue() > new Double(text2).doubleValue())
+        if(!jCheckBox2.isSelected() && new Double(text1).doubleValue() > new Double(text2).doubleValue())
         {
             JOptionPane.showMessageDialog(null, 
                                           "The Lower Bound is greater than " +
@@ -747,7 +795,7 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
                                           JOptionPane.ERROR_MESSAGE);                
             return null;
         }
-        if(!isFixed && new Double(text2).doubleValue() > new Double(text3).doubleValue())
+        if(!jCheckBox2.isSelected() && new Double(text2).doubleValue() > new Double(text3).doubleValue())
         {
             JOptionPane.showMessageDialog(null, 
                                           "The Upper Bound is smaller than " +
@@ -788,17 +836,15 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
         
         // Construct the element for the list   
         String element = ""; 
-        if(!isFixed)
+        if(!jCheckBox2.isSelected())
         {
-            String lowerBound = isLBInf? "-INF":text1;
-            String upperBound = isUBInf? "INF":text3;
+            String lowerBound = jCheckBox1.isSelected() ? "-1000000" : text1;
+            String upperBound = jCheckBox3.isSelected() ? "1000000":text3;
             element = "(" + lowerBound + "," + text2 + "," + upperBound + ")";
         }
         else
         {
             element = "(" + text2 + " FIXED)";
-            jCheckBox2.setSelected(false);
-            isFixed = false;
         }
         return element;
     }

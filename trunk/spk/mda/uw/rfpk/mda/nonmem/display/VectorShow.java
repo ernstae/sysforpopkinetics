@@ -12,7 +12,7 @@ import java.text.DecimalFormat;
 
 /** This class's instance display a vector show on the screen
  *
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class VectorShow extends javax.swing.JFrame {
     

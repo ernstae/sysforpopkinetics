@@ -16,7 +16,7 @@ import java.awt.event.ActionEvent;
 
 /**
  * This class defines a step to create the $AES record
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class Aes extends javax.swing.JPanel implements WizardStep {
     

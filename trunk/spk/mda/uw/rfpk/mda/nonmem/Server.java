@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
 /** This class makes calls to the server for the transactions required by the model
  *  design agent of the SPK.  
  *
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class Server { 
     /** Constructor to initiate the instant variables of the class.
