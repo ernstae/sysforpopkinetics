@@ -70,7 +70,7 @@
 
 <model base="advan2"> 
 	<pk>
-		if (DOSE.NE.0) THEN
+ 		if (DOSE.NE.0) THEN
                    DS=DOSE*WT
                    W=WT
                 ENDIF

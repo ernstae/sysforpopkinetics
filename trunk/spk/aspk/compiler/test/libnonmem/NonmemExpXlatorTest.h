@@ -10,6 +10,7 @@
 
 class NonmemExpXlatorTest : public CppUnit::TestFixture {
 
+  FILE * file;
 public:
     static CppUnit::Test * suite();
     virtual void setUp();

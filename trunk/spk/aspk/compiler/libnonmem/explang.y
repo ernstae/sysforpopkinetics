@@ -231,6 +231,8 @@ extern "C"{
 %type  <node> if_stmt_or_block
 %type  <node> if_construct
 %type  <node> if_then_stmt
+%type  <node> if_then_clause
+%type  <node> else_clause
 %type  <node> block
 %type  <node> line
 %type  <node> assignment_stmt
@@ -1163,6 +1165,7 @@ IF '(' logical_expr ')' assignment_stmt {
 // </if>
 //
 //==================================================================================
+/*
 if_construct :
 if_then_stmt '\n'  { inConditional = true; } block  { inConditional = false; }
              ELSE '\n' { inConditional = true; } block { inConditional = false; } ENDIF '\n' { 
@@ -1184,6 +1187,48 @@ if_then_stmt '\n'  { inConditional = true; } block  { inConditional = false; }
 
   struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
   carrier->node = node;
+  $$ = carrier;
+}
+;
+*/
+
+if_construct :
+if_then_clause ENDIF '\n' { 
+  $$ = $1; 
+} 
+
+| if_then_clause else_clause ENDIF '\n' {
+  $1->node->appendChild( $2->node->getFirstChild() );
+  $$ = $1;
+}
+;
+
+if_then_clause :
+if_then_stmt '\n' { inConditional = true; } block  { inConditional = false; } {
+  DOMElement * node = gSpkExpTree->createElement( X( STR_IF ) );
+
+  DOMElement * myConditional_expr = gSpkExpTree->createElement( X( STR_CONDITION ) );
+  myConditional_expr->appendChild( $1->node );
+
+  DOMElement * then_block = gSpkExpTree->createElement( X( STR_THEN ) );
+  then_block->appendChild( $4->node );
+
+  node->appendChild( myConditional_expr );
+  node->appendChild( then_block );
+
+  struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+  carrier->node = node;
+  $$ = carrier;
+}
+;
+else_clause :
+ELSE '\n' { inConditional = true; } block  { inConditional = false; } {
+
+  DOMElement * else_block = gSpkExpTree->createElement( X( STR_ELSE ) );
+  else_block->appendChild( $4->node );
+
+  struct ExpNodeCarrier * carrier = gSpkExpTreeGenerator->createExpNodeCarrier();
+  carrier->node = else_block;
   $$ = carrier;
 }
 ;
