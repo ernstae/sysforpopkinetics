@@ -1,4 +1,4 @@
-T = SUBJECT-rfpk-WHITEPAPER
+T = courseCorrection-rfpk-WHITEPAPER
 HTML_OPS = --nochunks
 STYLE = ../../stylesheet
 
@@ -20,8 +20,9 @@ rtf:	$T.rtf
 	docbook2rtf --dsl $(STYLE)/local.dsl#print $<
 
 install:
-	scp $T.html whitechuck:/var/www/html/soft/howto/html
-	scp $T.pdf  whitechuck:/var/www/html/soft/howto/pdf
+	scp $T.html whitechuck:/var/www/html/soft/whitepaper/html
+	scp $T.pdf  whitechuck:/var/www/html/soft/whitepaper/pdf
+	scp *.png   whitechuck:/var/www/html/soft/whitepaper
 
 clean:
 	rm -f $T.pdf $T.rtf $T.html

@@ -28,9 +28,10 @@ NAME=$SUBJECT-rfpk-WHITEPAPER
 
 mkdir $NAME
 cp template/Makefile $NAME/makefile
-cp template/SUBJECT-rfpk-WHITEPAPER.xml $NAME/$NAME.xml
+cp template/SUBJECT-rfpk-WHITEPAPER.xml $NAME/x.xml
 cd $NAME
 sed  "s/SUBJECT/$SUBJECT/" < makefile > Makefile
-rm makefile
+sed  "s/Subject/$SUBJECT/" < x.xml > $NAME.xml
+rm makefile x.xml
 
 exit 0
