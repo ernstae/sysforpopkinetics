@@ -2,12 +2,15 @@
 CPPFLAGS = \
 	-g \
 	-c \
-	-I/usr/local/include/spktest/ 
+	-I/usr/local/include/spktest/  \
+	-I. \
+	-I..
 
 INCLUDES = \
 	../GridIntegral.h \
 	../MapBay.h \
 	../MapMonte.h \
+	MontePars.h \
 	LinearModel.h \
 	NearEqual.h
 
