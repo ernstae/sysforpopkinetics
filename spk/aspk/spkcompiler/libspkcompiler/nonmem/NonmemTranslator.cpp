@@ -2023,6 +2023,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   while( iPredEqn.get(ch) )
     oPred_h.put(ch);
   iPredEqn.close();
+  remove( fPredEqn_cpp );
   oPred_h << "//-----------------------------------------" << endl;
   oPred_h << "// End User Code                           " << endl;
   oPred_h << "//=========================================" << endl;
