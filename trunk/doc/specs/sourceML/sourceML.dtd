@@ -456,8 +456,8 @@ There can be as many as 10 <table>s and 20 <scatterplot>s.
 <!-- <column appearance_order=""> The order in which the column appears in the table (from left to right). -->
 <!ATTLIST column appearance_order CDATA #REQUIRED>
 
-<!-- <scatterplot> Information to request to produce a scatterplot. At most 2 <by>s are allowed.-->
-<!ELEMENT scatterplot (description? | x+ | y+ | by*)>
+<!-- <scatterplot> Information to request to produce a scatterplot. At most 2 <split>s are allowed.-->
+<!ELEMENT scatterplot (description? | x+ | y+ | split*)>
 
 <!-- <scatterplot unit_slope="hide"> "show" to show the unit slope, "hide" to hide it, default to "hide". -->
 <!ATTLIST scatterplot unit_slope (show|hide) #IMPLIED>
@@ -484,9 +484,9 @@ There can be as many as 10 <table>s and 20 <scatterplot>s.
 <!ELEMENT x EMPTY>
 <!ATTLIST x label CDATA #REQUIRED>   <!-- <x label=""> Label of the item. -->
 
-<!-- <by> Item to separate (page-break) the scatterplot.  At most 2 data items may be specified per scatterplot.-->
-<!ELEMENT by EMPTY>
-<!ATTLIST by label CDATA #REQUIRED><!-- <by label="">  Label of the item that separates the scatterplot. -->
+<!-- <split> Item to separate (page-break) the scatterplot.  At most 2 data items may be specified per scatterplot.-->
+<!ELEMENT split EMPTY>
+<!ATTLIST split label CDATA #REQUIRED><!-- <split label="">  Label of the item that separates the scatterplot. -->
 
 <!-- <y> Item to be plotted on the y axis.   It may be one of the followings:
 <html:ul>
