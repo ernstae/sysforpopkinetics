@@ -7,7 +7,7 @@
 #include "SpkParameters.h"
 /**
  * @file ClientTranslator.h
- * Declares ClientTranslator class.
+ * Declares ClientTranslator abstract class.
  */
 /**
  * ClientTranslator class defines the interfaces
@@ -25,16 +25,14 @@ class ClientTranslator
    * to generate a SPK driver file and an SpkModel definition
    * files.
    *
-   * When process is completed successfully, the pointer returned 
-   * by getDriverFilename() shall point to a character array containing
-   * a path followed by a filename indicating the C++ source
-   * code file for a SPK driver.  In addition, the vector returned
-   * by getModelFilenameList() shall contain character arrays, each
-   * specifies a path followed by a filename indicating the C++ 
-   * source code file containing a portion of SpkModel subclass
-   * definition.
+   * When process is completed successfully, the vector returned
+   * by getModelFilenameList() shall contain path names associated
+   * C++ source code files generated during the translation.
+   * Together, when they are linked to SPK Library, they must
+   * drive one of SPK entry points and obtain analysis results.
    * 
-   * When process is completed successfully, two sets of information are
+   * When process is completed successfully, two sets of information 
+   * besides C++ source code are
    * expected, but not required, to be assembled: A data set returned by
    * getSpkParameters() and a data set returned by getClientParameters().
    * The first set is composed in the form of SpkParameters data structure.
