@@ -10,10 +10,10 @@
 # to this script.
 #
 # A directory named 
-#    SUBJECT-rfpk-WHITEPAPER
-# The following files within SUBJECT-rfpk-WHITEPAPER
+#    SUBJECT
+# The following files within SUBJECT
 #        Makefile
-#        SUBJECT-rfpk-WHITEPAPER.xml
+#        SUBJECT.xml
 #
 
 if [ $# -eq 0 ] || [ $1 == -h ] || [ $1 == --help ]; then

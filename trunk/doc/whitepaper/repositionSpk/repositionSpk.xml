@@ -4,14 +4,17 @@
   <!ENTITY dept "Department of Bioengineering">
   <!ENTITY prod "SPK">
 ]>
-<article><title>Repositioning SPK</title>
+<article><title>Repositioning SPK as Open Source Software</title>
  <articleinfo>
-  <author><firstname>Alan</firstname><surname>Westhagen</surname></author>
-    <affiliation>
-      <jobtitle>Software Team Manager</jobtitle>
-      <orgname>Resource Facility for Population Kinetics (RFPK)</orgname>
-    </affiliation>
-  <abstract>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>January 20, 2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Initial Version.</revremark>
+      </revision>
+    </revhistory>
+   <abstract>
     <title>Abstract</title>
     <para>
 	The greatest challenge faced by the &prod; software product is a 
