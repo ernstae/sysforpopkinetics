@@ -104,17 +104,16 @@ $spell
   Optimizer optimizer
 $$
 
-$section Sequential Quadratic Programming Optimization with Derivatives and Box Constraints$$
+$section Quasi-Newton Optimization with Derivatives and Box Constraints$$
 
 $index quasiNewtonAnyBox$$
-$cindex sequential quadratic programming optimization 
+$cindex quasi-Newton optimization 
   \with derivatives \and box constraints$$
 
 $table
 $bold Prototype:$$   $cend  
 $syntax/void quasiNewtonAnyBox(  
-    void (* /fval/)( const DoubleMatrix&, double*, DoubleMatrix*, const void* )
-    const void* /pFvalInfo/, 
+    QuasiNewtonAnyBoxObj&  /objective/,
     Optimizer& /optimizer/,
     const DoubleMatrix& /dvecXLow/,
     const DoubleMatrix& /dvecXUp/,
@@ -135,7 +134,7 @@ $$
 $pre
 $$
 $head Description$$
-Uses a sequential quadratic programming (QUASINEWTON) method to solve the problem
+Uses a quasi-Newton method to solve the problem
 $math%
     \minimize f(x) \with \respect \to x
     \subject \to xLow \le x \le xUp  .
