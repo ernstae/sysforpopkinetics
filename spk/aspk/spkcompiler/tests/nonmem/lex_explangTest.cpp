@@ -90,14 +90,14 @@ void lex_explangTest::testNamedConstant()
   CPPUNIT_ASSERT( input != NULL );
 
   // A token NAME shall be returned and nm_lval.c_str shall contain
-  // the constant in all lower case.
+  // the exact phrase.
   fprintf( input, "Ab9DEf" );
 
   fclose( input );
   nm_in = fopen( testInput, "r" );
   nm_restart( nm_in );
   int TOKEN = nm_lex();
-  CPPUNIT_ASSERT_MESSAGE( nm_lval.c_str, strcmp( nm_lval.c_str, "ab9def" ) == 0 );
+  CPPUNIT_ASSERT_MESSAGE( nm_lval.c_str, strcmp( nm_lval.c_str, "Ab9DEf" ) == 0 );
   CPPUNIT_ASSERT_EQUAL( NAME, TOKEN );
 
   fclose( nm_in );

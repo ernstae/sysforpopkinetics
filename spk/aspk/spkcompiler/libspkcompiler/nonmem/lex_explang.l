@@ -126,9 +126,11 @@ tok_endif                   "ENDIF"
                                  //nm_terminate(); 
                               }
                               nm_lval.c_str = (char*)strdup(nm_text); 
+                              /*
                               int i;
                               for( i=0; i<nm_leng; i++ )
                                  nm_lval.c_str[i] = tolower( nm_lval.c_str[i] ); 
+                              */
                               return NAME; 
                             }
 {tok_special_character}     { nm_lval.ch = nm_text[0];  return nm_text[0]; }

@@ -28,7 +28,7 @@ libspkcompiler_la_SOURCES = \
 	SpkCompilerError.cpp \
 	SpkCompilerError.h \
 	SpkCompilerException.cpp \
-	SpkCompilerException.h
+	SpkCompilerException.h 
 
 nobase_pkginclude_HEADERS = \
 	$(NONMEM)/nonmem.h \

@@ -80,7 +80,7 @@ void explangTest::testScalarAssignmentToScalar()
 
   nm_parse();
 
-  CPPUNIT_ASSERT( table.findi( "a" ) != Symbol::empty() );
+  CPPUNIT_ASSERT( table.findi( "A" ) != Symbol::empty() );
   fclose( pInput );
   fclose( gSpkExpOutput );
 
@@ -98,77 +98,77 @@ void explangTest::testScalarAssignmentToScalar()
   CPPUNIT_ASSERT( pOutput.good() );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "1;" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "1.0;" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "1.e01;" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "1.0e01;" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "1.0e1;" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "+1;" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "+1.0;" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "-1.e01;" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "-1.0e01;" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "-1.0e1;" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
@@ -179,7 +179,7 @@ void explangTest::testScalarAssignmentToScalar()
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
@@ -190,7 +190,7 @@ void explangTest::testScalarAssignmentToScalar()
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
   
   pOutput >> buf;  
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
@@ -233,7 +233,7 @@ void explangTest::testVectorElementAssignmentToScalar()
 
   nm_parse();
 
-  CPPUNIT_ASSERT( table.findi( "a" ) != Symbol::empty() );
+  CPPUNIT_ASSERT( table.findi( "A" ) != Symbol::empty() );
   
   fclose( pInput );
   fclose( gSpkExpOutput );
@@ -252,7 +252,7 @@ void explangTest::testVectorElementAssignmentToScalar()
   CPPUNIT_ASSERT( pOutput.good() );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a[" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A[" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "(" );
   pOutput >> buf;
@@ -311,8 +311,8 @@ void explangTest::testFunctions()
 
   nm_parse();
 
-  CPPUNIT_ASSERT( table.findi( "a" ) != Symbol::empty() );
-  CPPUNIT_ASSERT( table.findi( "b" ) != Symbol::empty() );
+  CPPUNIT_ASSERT( table.findi( "A" ) != Symbol::empty() );
+  CPPUNIT_ASSERT( table.findi( "B" ) != Symbol::empty() );
   
   fclose( pInput );
   fclose( gSpkExpOutput );
@@ -331,18 +331,18 @@ void explangTest::testFunctions()
   CPPUNIT_ASSERT( pOutput.good() );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "exp(" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "x" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "b[" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "B[" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "(" );
   pOutput >> buf;
@@ -360,12 +360,12 @@ void explangTest::testFunctions()
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "exp(" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "x" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
@@ -376,7 +376,7 @@ void explangTest::testFunctions()
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
@@ -387,7 +387,7 @@ void explangTest::testFunctions()
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
@@ -398,19 +398,19 @@ void explangTest::testFunctions()
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "b[" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "B[" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "(" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "pow(" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "x," );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X," );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "y" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "Y" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
   pOutput >> buf;
@@ -423,13 +423,13 @@ void explangTest::testFunctions()
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "];" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "exp(" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "x" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
   pOutput >> buf;
@@ -437,12 +437,12 @@ void explangTest::testFunctions()
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "sqrt(" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "y" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "Y" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
@@ -454,13 +454,13 @@ void explangTest::testFunctions()
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "exp(" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "x" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "+" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "y" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "Y" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
 
@@ -501,7 +501,7 @@ void explangTest::testIfStmt()
 
   nm_parse();
 
-  CPPUNIT_ASSERT( table.findi( "a" ) != Symbol::empty() );
+  CPPUNIT_ASSERT( table.findi( "A" ) != Symbol::empty() );
   
   fclose( pInput );
   fclose( gSpkExpOutput );
@@ -522,22 +522,22 @@ void explangTest::testIfStmt()
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "if(" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "x" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "!=" );
 
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "y" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "Y" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "{" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "b[" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "B[" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "(" );
   pOutput >> buf;
@@ -556,21 +556,21 @@ void explangTest::testIfStmt()
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "if(" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "x" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "!=" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "y" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "Y" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "{" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "b[" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "B[" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "(" );
   pOutput >> buf;
@@ -629,8 +629,8 @@ void explangTest::testIfThenStmt()
 
   nm_parse();
 
-  CPPUNIT_ASSERT( table.findi( "c" ) != Symbol::empty() );
-  CPPUNIT_ASSERT( table.findi( "a" ) != Symbol::empty() );
+  CPPUNIT_ASSERT( table.findi( "C" ) != Symbol::empty() );
+  CPPUNIT_ASSERT( table.findi( "A" ) != Symbol::empty() );
   fclose( pInput );
   fclose( gSpkExpOutput );
 
@@ -650,21 +650,21 @@ void explangTest::testIfThenStmt()
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "if(" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "x" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "!=" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "y" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "Y" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "{" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "a" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "b[" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "B[" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "(" );
   pOutput >> buf;
@@ -678,11 +678,11 @@ void explangTest::testIfThenStmt()
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "];" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "c" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "C" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "d;" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "D;" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "//" );
   pOutput >> buf;
