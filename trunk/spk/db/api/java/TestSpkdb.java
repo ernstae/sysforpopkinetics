@@ -8,7 +8,7 @@ public class TestSpkdb {
 	String password = "codered";
 	String firstName = "Mike";
 	String surname = "Jordan";
-	final int maxTests = 41;
+	final int maxTests = 42;
 	String xmlSource = "<spksource>\n\tline1\n\tline2\n</spksource>";
 	boolean b = true;
 	boolean target = true;
@@ -153,7 +153,10 @@ public class TestSpkdb {
 					      "1.01",
 					      44,
 					      "1.4.3",
-					      xmlSource);
+					      xmlSource,
+					      "fo",
+					      0
+					      );
 		    b = jobId != 0;
 		    s += ": job number " + jobId;
 		    break;
@@ -182,7 +185,10 @@ public class TestSpkdb {
 					      "1.01",
 					      44,
 					      "1.4.3",
-					      xmlSource);
+					      xmlSource,
+					      "la",
+					      0
+					      );
 		    b = newerJobId != 0;
 		    s += ": job number " + newerJobId;
 
@@ -198,7 +204,9 @@ public class TestSpkdb {
 					      "1.01",
 					      44,
 					      "1.4.3",
-					      xmlSource);
+					      xmlSource,
+					      "eh",
+					       0);
 		    b = newestJobId != 0;
 		    s += ": job number " + newestJobId;
 		    break;
@@ -540,8 +548,8 @@ public class TestSpkdb {
 		    break;
 		case 40:
 		    target = true;
-		    s = "getStateTable";
-		    rs = Spkdb.getStateTable(conn);
+		    s = "getMethodTable";
+		    rs = Spkdb.getMethodTable(conn);
 		    count = 0;
 		    while (rs.next()) {
 			count++;
@@ -549,6 +557,16 @@ public class TestSpkdb {
 		    b = count == 5;
 		    break;
 		case 41:
+		    target = true;
+		    s = "getStateTable";
+		    rs = Spkdb.getStateTable(conn);
+		    count = 0;
+		    while (rs.next()) {
+			count++;
+		    }
+		    b = count == 6;
+		    break;
+		case 42:
 		    target = true;
 		    s = "jobHistory";
 		    rs = Spkdb.jobHistory(conn, 2);
