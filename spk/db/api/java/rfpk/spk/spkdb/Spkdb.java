@@ -72,7 +72,9 @@ public abstract class Spkdb {
 			      String datasetVersion,
 			      long modelId,
 			      String modelVersion,
-			      String xmlSource)
+			      String xmlSource,
+			      String methodCode,
+			      long parent)
 	throws SQLException, SpkdbException, FileNotFoundException
     {
 	long jobId = 0;
@@ -80,12 +82,15 @@ public abstract class Spkdb {
 	long eventTime = date.getTime()/1000;
 	long startTime = eventTime;
 	String stateCode = "q2c";
+	if (methodCode.equals("ml"))
+	    stateCode = "q2ml";
 	String sql = "insert into job (state_code, user_id, abstract, dataset_id, "
                                     + "dataset_version, model_id, model_version, "
-                                    + "xml_source, start_time, event_time)"
+                                    + "xml_source, method_code, parent, start_time, event_time)"
                            + " values ('" + stateCode + "'," + userId + ",'" + abstraction + "'," + datasetId
                                    + ",'" + datasetVersion + "'," + modelId + ",'" + modelVersion
-                                   + "', ?," + startTime + "," + eventTime + ");";
+                                   + "', ?,'" + methodCode + "'," + parent + "," 
+	                           + startTime + "," + eventTime + ");";
 	PreparedStatement pstmt = conn.prepareStatement(sql);
 	pstmt.setBinaryStream(1, new ByteArrayInputStream(xmlSource.getBytes()), xmlSource.length());
 	pstmt.executeUpdate();
@@ -482,6 +487,21 @@ public abstract class Spkdb {
 	throws SQLException, SpkdbException
     {
 	String sql = "select * from end;";
+	Statement stmt = conn.createStatement();
+	stmt.execute(sql);
+	ResultSet rs = stmt.getResultSet();
+	return rs;
+    }
+    /**
+       Get the entire method table
+       @param conn open connection to the database
+       @return Object of a class which implements the java.sql.ResultSet interface,
+       containing a row for each row of the table.
+     */
+    public static ResultSet getMethodTable(Connection conn)
+	throws SQLException, SpkdbException
+    {
+	String sql = "select * from method;";
 	Statement stmt = conn.createStatement();
 	stmt.execute(sql);
 	ResultSet rs = stmt.getResultSet();

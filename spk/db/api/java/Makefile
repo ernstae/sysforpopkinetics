@@ -8,10 +8,10 @@ java:
 	javadoc -d docs rfpk.spk.spkdb
 
 test:
-	bash reset_db.sh $(HOST)
+	load_spktest.pl 
 	java TestSpkdb $(HOST)
 
-install:
+installdocs:
 	scp -r docs/*.html docs/*.css docs/resources docs/rfpk $(WEB)
 
 
