@@ -145,105 +145,195 @@
       <ulink url="&cygurl;">Cygwin Installation</ulink> HOWTO
       will help you to accomplish this.
     </para>
-    <para>
-      In the following procedure, it is assumed, for sake
-      of this example, that the latest version of
-      GNU Emacs for Windows is version &emacsVersion;.
-    </para>
-    <orderedlist inheritnum="ignore" continuation="restarts">
-      <listitem>
-	<para>
-	  Decide in which directory you want to install Emacs.
-	  A good choice would be the
-	  <filename moreinfo="none">/usr/local</filename>
-	  within your Cygwin environment.
-	</para>
-      </listitem>
-      <listitem>
-	<para>
-	  Go to the website 
-	  <ulink url="http://ftp.gnu.org/gnu/windows/emacs/latest"></ulink>
-	  which contains links for downloading the binary distribution 
-	  of the latest 
-	  version of GNU Emacs for Windows.
-	</para>
-      </listitem>
-      <listitem>
-	<para>
-	  While depressing the <keycap moreinfo="none">Shift</keycap>
-	  key, left-click the link to
-	  <filename moreinfo="none">
-	    &emacsVersion;-fullbin-i386.tar.gz
-	  </filename>
-	</para>
-      </listitem>
-      <listitem>
-	<para>
-	  A file window will appear.  Select the directory
-	  into which you want the tarball to be downloaded,
-	  and click on the <guibutton moreinfo="none">Save</guibutton>
-	  button.
-	</para>
-      </listitem>
-      <listitem>
-	<para>
-	  After the download has completed, open a Cygwin shell
-	  window and use the <command moreinfo="none">cd</command>
-	  command to go to the directory which contains the
-	  new file.
-	</para>
-      </listitem>
-      <listitem>
-	<para>
-	  <anchor id="fullbin"/>
-	  Decompress and expand the tarball by issuing the command
-	  <screen format="linespecific">
-	    tar xvzf &emacsVersion;-fullbin-i386.tar.gz
-	  </screen>
-	</para>
-      </listitem>
-      <listitem>
-	<para>
-	  Run the Emacs installation program:
-	  <screen format="linespecific">
-	    &emacsVersion;/bin/runemacs
-	  </screen>
-	</para>
-      </listitem>
-      <listitem>
-	<para>
-	  Add Emacs to your execution path.  In this example
-	  we assume that you installed Emacs in the directory
-	  <filename moreinfo="none">/usr/local</filename> within
-	  your Cygwin environment.  
-	</para>
-	<para>
-	  Add the following lines to the 
-	  <filename moreinfo="none">.bash_profile</filename> 
-	  configuration file in your home directory
-	  <screen format="linespecific">
-	    EMACSBIN=/usr/local/&emacsVersion;/bin
-	    PATH=$EMACSBIN:$PATH
-	  </screen>
-	  Test this by first closing all Cygwin shell windows,
-	  then opening a shell window and typing
-	  <screen format="linespecific">
-	    emacs &amp;
-	  </screen>
-	  An emacs window should open up, and run independent
-	  of the Cygwin window.
-	</para>
-      </listitem>
-      <listitem>
-	<para>
-	  When you are convinced that everything is working fine,
-	  you can clean up by removing the download file,
-	  <filename moreinfo="none">
-	    &emacsVersion;-fullbin-i386.tar.gz
-	  </filename>
-	</para>
-      </listitem>
-    </orderedlist>
+    <sect2>
+      <title>Install Emacs</title>
+      <para>
+	In the following procedure, it is assumed, for sake
+	of this example, that the latest version of
+	GNU Emacs for Windows is version &emacsVersion;.
+      </para>
+      <orderedlist inheritnum="ignore" continuation="restarts">
+	<listitem>
+	  <para>
+	    Decide in which directory you want to install Emacs.
+	    This tutorial assumes that you will use the directory
+	    <filename moreinfo="none">/usr/local</filename>
+	    within your Cygwin environment.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Go to the website 
+	    <ulink url="http://ftp.gnu.org/gnu/windows/emacs/latest"></ulink>
+	    which contains links for downloading the binary distribution 
+	    of the latest 
+	    version of GNU Emacs for Windows.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    While depressing the <keycap moreinfo="none">Shift</keycap>
+	    key, left-click the link to
+	    <filename moreinfo="none">
+	      &emacsVersion;-fullbin-i386.tar.gz
+	    </filename>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    A file window will appear.  Select the directory
+	    into which you want the tarball to be downloaded,
+	    and click on the <guibutton moreinfo="none">Save</guibutton>
+	    button.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    After the download has completed, open a Cygwin shell
+	    window and use the <command moreinfo="none">cd</command>
+	    command to go to the directory which contains the
+	    new file.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    <anchor id="fullbin"/>
+	    Decompress and expand the tarball by issuing the command
+	    <screen format="linespecific">
+	      tar xvzf &emacsVersion;-fullbin-i386.tar.gz
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Run the Emacs installation program:
+	    <screen format="linespecific">
+	      &emacsVersion;/bin/runemacs
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Add Emacs to your execution path.  In this example
+	    we assume that you installed Emacs in the directory
+	    <filename moreinfo="none">/usr/local</filename> within
+	    your Cygwin environment.  
+	  </para>
+	  <para>
+	    Add the following lines to the 
+	    <filename moreinfo="none">.bash_profile</filename> 
+	    configuration file in your home directory
+	    <screen format="linespecific">
+	      EMACSBIN=/usr/local/&emacsVersion;/bin
+	      PATH=$EMACSBIN:$PATH
+	    </screen>
+	    Test this by first closing all Cygwin shell windows,
+	    then opening a shell window and typing
+	    <screen format="linespecific">
+	      emacs &amp;
+	    </screen>
+	    An emacs window should open up, and run independent
+	    of the Cygwin window.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    When you are convinced that everything is working fine,
+	    you can clean up by removing the download file,
+	    <filename moreinfo="none">
+	      &emacsVersion;-fullbin-i386.tar.gz
+	    </filename>
+	  </para>
+	</listitem>
+      </orderedlist>
+    </sect2>
+    <sect2>
+      <title>Install the Cygwin Mount Enhancement</title>
+      <para>
+	When used in a Cygwin environment, the Windows version
+	of GNU Emacs needs a little help in properly handling
+	Cygwin pathnames and logical links.
+	The enhancement consists of 
+	lisp code which you can copy from the RFPK server
+	called <emphasis>muir</emphasis>.
+	<orderedlist>
+	  <listitem>
+	    <para>
+	      Create a directory to hold this and other Emacs
+	      enhancements.  Open a Cygwin shell window and
+	      input the following command:
+	      <screen format="linespecific">
+		mkdir -p /usr/local/share/emacs/site-lisp
+	      </screen>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Using two <guiicon moreinfo="none">My Computer</guiicon>
+	      windows, copy the file with Windows pathname
+	      <screen format="linespecific">
+		\\muir\SoftwareEngineers\Download\cygwin-mount.el
+	      </screen>
+	      to the directory
+	      <screen format="linespecific">
+		\cygwin\usr\local\share\emacs\site-lisp
+	      </screen>
+	      on the drive that contains your Cygwin environment.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Byte-compile
+	      <filename moreinfo="none">cygwin-mount.el</filename>
+	      so that it will execute more efficiently.
+	    </para>
+	    <para>
+	      Open a Cygwin shell window and input the following:
+	      <screen format="linespecific">
+		cd /usr/local/share/emacs/site-lisp
+		emacs &amp;
+	      </screen>
+	      This should start an Emacs window.  Move screen focus
+	      to that window (normally accomplished by moving the
+	      mouse pointer to it) and then perform the following:
+	      <orderedlist inheritnum="ignore" continuation="restarts">
+		<listitem>
+		  <para>
+		    Type ALT-x (hold down the ALT key while
+		    pressing the x key).  The cursor should jump
+		    to the mini-buffer at the bottom of the 
+		    Emacs window.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    Type
+		    <screen format="linespecific">
+		      byte-compile-file
+		    </screen>
+		    In the minibuffer, Emacs will show the pathname
+		    of the current directory, so that you can
+		    append to it the name of the file you want
+		    compiled.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    Type
+		    <screen format="linespecific">
+		      cygwin-mount.el
+		    </screen>
+		    followed by the <keycode>Enter</keycode> keystroke
+		    and Emacs should compile the file, informing
+		    you of success or failure.
+		  </para>
+		</listitem>
+	      </orderedlist>
+	    </para>
+	  </listitem>
+	</orderedlist>
+      </para>
+    </sect2>
   </sect1>
   <sect1>
     <title>Configuring Emacs for XML</title>
