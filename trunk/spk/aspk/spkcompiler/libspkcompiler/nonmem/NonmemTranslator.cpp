@@ -3,7 +3,8 @@
 #include "read_content.h"
 #include "nonmem/read_nonmem_driver.h"
 #include "nonmem/read_nonmem_data.h"
-#include "read_nonmem_model.h"
+#include "nonmem/read_nonmem_model.h"
+#include "emit_IndDataClass.h"
 
 #include <xercesc/dom/DOM.hpp>
 
@@ -303,7 +304,7 @@ void NonmemTranslator::translate( DOMDocument* tree )
   // This table records the processing order vs. the identifier pair of each
   // individual.
   //
-  string order_id_pair[ nIndividuals +1 ];
+  string order_id_pair[ nIndividuals + 1 ];
 
 
   SymbolTable table;
@@ -314,7 +315,6 @@ void NonmemTranslator::translate( DOMDocument* tree )
 
   read_nonmem_data( dataNode, nIndividuals, table, label_alias_mapping, data_for, order_id_pair );
   
-  table.dump();
   assert( tree->getElementsByTagName( X("model") ) != NULL );
   DOMElement * modelNode = dynamic_cast<DOMElement*>( tree->getElementsByTagName( X("model") )->item(0) );
   assert( modelNode != NULL );
@@ -325,7 +325,8 @@ void NonmemTranslator::translate( DOMDocument* tree )
   nonmemModel = model_type.first;
   nonmemParameterization = model_type.second;
 
-  //emitData( nIndividuals, gSpkExpSymbolTable, label_alias_mapping, data_for, order_id_pair );
+  FILE * out;
+  emit_IndDataClass( out, nIndividuals, gSpkExpSymbolTable, label_alias_mapping, data_for, order_id_pair );
   
   return;
 }
@@ -334,7 +335,7 @@ void NonmemTranslator::initSymbolTable( SymbolTable& )
 {
 }
 
-
+/*
 std::vector<string> NonmemTranslator::emitData( 		
 		 int nIndividuals,
 		 SymbolTable* table,
@@ -386,7 +387,7 @@ std::vector<string> NonmemTranslator::emitData(
       ++names;
     }
   cout << "\n";
-  cout << "\t{ /* have nothing really to do */ }\n";
+  cout << "\t{ }\n";
   cout << "\n";
   
   names = label_alias_mapping.begin();
@@ -462,7 +463,7 @@ std::vector<string> NonmemTranslator::emitData(
   vector<string> filenames;
   return filenames;
 }
-
+*/
 void NonmemTranslator::emitDriver()
 {
 }
