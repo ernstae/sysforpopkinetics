@@ -1,3 +1,7 @@
+/**
+ * @file NonmemTranslator.h
+ * Declare NonmemTranslator class.
+ */
 #ifndef NONMEMTRANSLATOR_H
 #define NONMEMTRANSLATOR_H
 
@@ -8,12 +12,43 @@
 
 #include <xercesc/dom/DOMDocument.hpp>
 
+/**
+ * NonmemTranslator is an implementation of ClientTranslator abstract class.
+ *
+ * This class implements, in particular, the "parseSource()" virtual
+ * member function.  The function analyzes the SpkSourceML parse tree
+ * and generete the source code files for IndData class, DataSet class,
+ * the driver and Pred class.
+ */
 class NonmemTranslator : public ClientTranslator
 {
  public:
+
+  /**
+   * The only legal constructor.
+   *
+   * All strings of type XMLCh* or XMLString that will be used within the member
+   * functions will be created (ie. the resources are allocated dynamically)
+   * here.
+   *
+   * @param sourceIn A pointer to the SpkSourceML document.
+   * @param dataIn   A pointer to the SpkDataML document.  This is passed to the super class.
+   */
   NonmemTranslator( xercesc::DOMDocument* sourceIn, xercesc::DOMDocument* dataIn );
+
+  /**
+   * Destructor.
+   *
+   * All strings of type XMLCh* or XMLString that were created in the construction
+   * (ie. the resources were allocated dynamically) are destroyed properly
+   * here. 
+   */
   ~NonmemTranslator();
 
+  /**
+   * The implementation of ClientTranslator::parseSource() 
+   * particular to NONMEM-user-based inputs.
+   */
   virtual void parseSource();
 
  protected:
@@ -22,27 +57,67 @@ class NonmemTranslator : public ClientTranslator
   NonmemTranslator& operator=( const NonmemTranslator& );
   
  private:
-  int parsePopAnalysis ( xercesc::DOMElement* );  // return the pop. size
-  void parseIndAnalysis ( xercesc::DOMElement* );
-  void parsePred( xercesc::DOMElement*, SymbolTable& table, char [] );
-  void parseTables( xercesc::DOMNodeList*, std::vector<int>& );
-  void parseScatterplots( xercesc::DOMNodeList*, std::vector<int>& );
-  void generateIndData() const;
-  /**
-   * Generate C++ source code for declaring and defining DataSet class which
-   * is a C++ representation of the set of patient records.
-   *
-   * @param pop_size The number of different IDs in the data set, 
-   * which is interpreted as the size of the population.
-   */
-  void generateDataSet( int pop_size ) const;
 
+  //
+  // Analyze the <pop_analysis> subtree and returns the size of population.
+  //
+  int  parsePopAnalysis ( xercesc::DOMElement* sourceML );
+
+  //
+  // Analyze the <ind_analysis> subtree.
+  //
+  void parseIndAnalysis ( xercesc::DOMElement* sourceML );
+
+  //
+  // Analyzie the <pred> subtree.
+  //
+  void parsePred( xercesc::DOMElement* sourceML, SymbolTable& table, char [] );
+
+  // void parseTables( xercesc::DOMNodeList* tables, std::vector<int>&  );
+
+  // void parseScatterplots( xercesc::DOMNodeList*, std::vector<int>& );
+
+  //
+  // Generate C++ source code for declaring and defining IndData class which
+  // is a C++ representation of a single patient records.
+  //
+  // @param final_symbol_table The (const) reference to the symbol table which
+  // shall contain all entries extracted from SpkSourceML and SpkDataML
+  // documents.
+  //
+  void generateIndData( const SymbolTable& final_symbol_table ) const;
+
+  //
+  // Generate C++ source code for declaring and defining DataSet class which
+  // is a C++ representation of the set of patient records.
+  //
+  // @param pop_size The number of different IDs in the data set, 
+  // which is interpreted as the size of the population.
+  //
+  // @param final_symbol_table The (const) reference to the symbol table which
+  // shall contain all entries extracted from SpkSourceML and SpkDataML
+  // documents.
+  //
+  void generateDataSet( int pop_size, const SymbolTable& final_symbol_table ) const;
+
+  // The header file name for IndData class.
   const char *fIndData_h;
-  const char *fIndData_cpp;
-  const char *fDataSet_h;
-  const char *fDataSet_cpp;
-  const char *header;
 
+  // The definition file name for IndData class.
+  const char *fIndData_cpp;
+
+  // The header file name for DataSet class.
+  const char *fDataSet_h;
+
+  // The definition file name for DataSet class.
+  const char *fDataSet_cpp;
+
+  // The string for the file burner.
+  const char *BURNER;
+
+  //========================================
+  // Dynamically allocated string objects
+  //----------------------------------------
   XMLCh* X_YES;
   XMLCh* X_NO;
   XMLCh* X_FIXED;
@@ -97,6 +172,7 @@ class NonmemTranslator : public ClientTranslator
   XMLCh* X_COVARIANCE_FORM;
   XMLCh* X_MITR;
   XMLCh* X_IND_STAT;
+  //========================================
 };
 
 #endif
