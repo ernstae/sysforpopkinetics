@@ -10,12 +10,9 @@ pkgincludedir = $(INST_BASE)/include/spktest/spkcompiler
 
 # Clear C/C++ compiler global flags
 CXXFLAGS         =
-CXXCOMPILE       =
-CFLAGS           =
 
 # Set C/C++ compiler flags to the values we intend to set.
 AM_CXXFLAGS      = -g01 -I$(NONMEM) -I$(INST_BASE)/include/spktest
-AM_CXXCOMPILE    = -g01 -I$(NONMEM) -I$(INST_BASE)/include/spktest
 
 # Set linker flags
 AM_LDFLAGS       = ./nonmem/libnonmem.la

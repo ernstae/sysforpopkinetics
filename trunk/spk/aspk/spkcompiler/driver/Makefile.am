@@ -12,7 +12,7 @@ MOSTLYCLEANFILES = Pred.h \
                    driver \
                    compilation_error.xml
 
-CXXFLAGS = -g -dD
+CXXFLAGS   = -g
 
 spkcompiler_SOURCES = \
 	../config.h \
