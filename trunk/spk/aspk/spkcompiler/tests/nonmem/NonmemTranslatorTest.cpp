@@ -6,6 +6,7 @@
 #include <map>
 
 #include "NonmemTranslatorTest.h"
+#include <spkcompiler/series.h>
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestCaller.h>
@@ -25,15 +26,9 @@ using namespace std;
 using namespace CppUnit;
 using namespace xercesc;
 
-static const unsigned int maxChars = 2047;
-
-static int factorial( int n )
-{
-  if( n == 0 )
-    return 0;
-  else
-    return n + factorial( n-1 );
-}
+namespace{
+  const unsigned int maxChars = 2047;
+};
 
 void NonmemTranslatorTest::setUp()
 {
@@ -71,7 +66,7 @@ void NonmemTranslatorTest::testParsePopSource()
 
   const int omegaDim = 2;
   const Symbol::Structure omegaStruct = Symbol::TRIANGLE;
-  int omegaElemNum = ( omegaStruct == Symbol::DIAGONAL? omegaDim : factorial(omegaDim) );
+  int omegaElemNum = ( omegaStruct == Symbol::DIAGONAL? omegaDim : series(1,1,omegaDim) );
   valarray<double> omega_in (omegaElemNum);
   vector<bool>     omega_fix(omegaElemNum);
   for( int i=0; i<omegaElemNum; i++ )
@@ -82,7 +77,7 @@ void NonmemTranslatorTest::testParsePopSource()
 
   const int sigmaDim = 2;
   const Symbol::Structure sigmaStruct = Symbol::TRIANGLE;
-  int sigmaElemNum = ( sigmaStruct == Symbol::DIAGONAL? sigmaDim : factorial(sigmaDim) );
+  int sigmaElemNum = ( sigmaStruct == Symbol::DIAGONAL? sigmaDim : series(1,1,sigmaDim) );
   valarray<double> sigma_in (omegaElemNum);
   vector<bool>     sigma_fix(omegaElemNum);
   for( int i=0; i<sigmaElemNum; i++ )
@@ -619,7 +614,7 @@ void NonmemTranslatorTest::testParseIndSource()
 
   const int omegaDim = 2;
   const Symbol::Structure omegaStruct = Symbol::TRIANGLE;
-  int omegaElemNum = ( omegaStruct == Symbol::DIAGONAL? omegaDim : factorial(omegaDim) );
+  int omegaElemNum = ( omegaStruct == Symbol::DIAGONAL? omegaDim : series(1,1,omegaDim) );
   valarray<double> omega_in (omegaElemNum);
   vector<bool>     omega_fix(omegaElemNum);
   for( int i=0; i<omegaElemNum; i++ )
