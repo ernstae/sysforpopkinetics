@@ -1430,18 +1430,29 @@ v  //***************************************************************************
           gCurr,
           hCurr );
       }
-      catch( ...
+      catch( SpkException& e )
       {
-        FINISH THIS
-        FINISH THIS
-        FINISH THIS
-        FINISH THIS
-        FINISH THIS
-        FINISH THIS
-        FINISH THIS
-        FINISH THIS
-        FINISH THIS
-        FINISH THIS
+        throw e.push(
+          SpkError::SPK_OPT_ERR, 
+          "An SpkException was thrown during an attempt to optimize the objective function.",
+          __LINE__, 
+          __FILE__ );
+      }
+      catch( const std::exception& stde )
+      {
+        throw SpkException(
+          stde,
+          "An standard exception was thrown during an attempt to optimize the objective function.",
+          __LINE__, 
+          __FILE__ );
+      }  
+      catch( ... )
+      {
+        throw SpkException(
+          SpkError::SPK_UNKNOWN_ERR, 
+          "An unknown exception was thrown during an attempt to optimize the objective function.",
+          __LINE__, 
+          __FILE__ );
       }
 
       // After the first call to the optimizer the approximation for the
