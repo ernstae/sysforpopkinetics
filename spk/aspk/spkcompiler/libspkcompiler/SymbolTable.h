@@ -38,8 +38,7 @@ class SymbolTable{
    /**
     * Make a search key word for the string.
     *
-    * @param str The source string.
-    * @param A string object that represents the search key word for str.
+    * @param str The source string of which the key is generated.
     */
    static const std::string key( const std::string& str );
 
@@ -60,7 +59,7 @@ class SymbolTable{
   /**
    * Search a Symbol object in the table by the name [case sensitive].
    *
-   * @return A (constan ) pointer to the found Symbol object that has
+   * @return A (constant) pointer to the found Symbol object that has
    *         either the name or the synonym (ie. alias) field string
    *         matches.  If no entry is found, it returns the reference
    *         to an empty Symbol object.
@@ -68,7 +67,7 @@ class SymbolTable{
    * @param str The string by which a search is performed.
    *         Both the name and the synonym (ie. alias) are compared.
    */
-  const Symbol* find( const std::string& name ) const;
+  const Symbol* find( const std::string& str ) const;
 
   /**
    * Search a Symbol object in the table by the name [case INsensitive].
@@ -80,7 +79,7 @@ class SymbolTable{
    * @param str The string by which a search is performed.
    *         Both the name and the synonym (ie. alias) are compared.
    */
-  Symbol* findi( const std::string& name );
+  Symbol* findi( const std::string& str );
 
   /**
    * Search a Symbol object in the table by the name [case INsensitive].
@@ -92,7 +91,7 @@ class SymbolTable{
    * @param str The string by which a search is performed.
    *         Both the name and the synonym (ie. alias) are compared.
    */
-  const Symbol* findi( const std::string& name ) const;
+  const Symbol* findi( const std::string& str ) const;
 
   /**
    * Create and insert a user-defined (scalar) variable into the table.

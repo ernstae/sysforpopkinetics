@@ -8,7 +8,7 @@
 #include <string>
 
 /**
- * @param source The source string (length >= 0).
+ * @param mix    The source string (length >= 0) to be converted to all lower cases.
  * @return       A new string object equivalent to the source with all 
  *               lower case letters converted to the lower case.
  */
