@@ -8,6 +8,9 @@
  * Declares struct ExpNodeCarrier
  */
 /**
+ * @example ExpNodeCarrierTest.cpp
+ */
+/**
  * Data structure that serves as a carrier of node during the process of building a parse tree.
  *
  * The ExpNodeCarrier data structure is a dummy strcuture that wrapps a true node, in a sense, which

@@ -260,5 +260,4 @@ std::ostream& operator<<( std::ostream & o, const std::pair<FIRST, SECOND> &p )
 {
   return  o << "(" << p.first << ", " << p.second << ")";
 }
-
 #endif
