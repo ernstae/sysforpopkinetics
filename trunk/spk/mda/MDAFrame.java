@@ -412,7 +412,7 @@ public class MDAFrame extends JFrame
                 }
                 try
 		{
-                    Network network = new Network("http://rose.rfpk.washington.edu:8080/spk/servlet/uw.rfpk.servlets.ReceiveFile",
+                    Network network = new Network("https://rose.rfpk.washington.edu:8443/spk/servlet/uw.rfpk.servlets.ReceiveFile",
                                                   sessionId, key);
 
                     String[] messages = new String[2];
@@ -447,7 +447,7 @@ public class MDAFrame extends JFrame
                 }
                 try
 		{
-                    Network network = new Network("http://rose.rfpk.washington.edu:8080/spk/servlet/uw.rfpk.servlets.TransmitFile",
+                    Network network = new Network("https://rose.rfpk.washington.edu:8443/spk/servlet/uw.rfpk.servlets.TransmitFile",
                                                   sessionId, key);
 
                     String[] messages = new String[1];
