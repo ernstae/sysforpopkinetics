@@ -894,76 +894,100 @@ using SPK_VA::valarray;
 using SPK_VA::slice;
 using namespace std;
 
-//                         T      
-//     S = Sum{ gi_x * gi_x }
-//          i                          
-//
-static const valarray<double> nmS( const valarray<double> & x, 
-				   const valarray<double> & g_x )
-{
-  int nX = x.size();
-  int nF = g_x.size() / nX;
-  assert( g_x.size() == nX * nF );
-  
-  valarray<double> S( 0.0, nX * nX );
+namespace{
+  //=========================================================
+  // Expand the vector x to y. Insert "val" in places where mask[i] is false.
+  //=========================================================
 
-  valarray<double> gi_x( nX );
-  for( int i=0; i<nF; i++ )
-    {
-      gi_x = g_x[ slice( i * nX, nX, 1 ) ];
-      S += multiply( gi_x, 1, transpose( gi_x, 1 ), nX );
-    }
-  return S;
-}
-//
-// R = h_x_x
-// R^(-1) = (h_x_x)^(-1)
-//
-static const valarray<double> nmInvR( const valarray<double> & x, 
-				      const valarray<double> & h_x_x )
-{
-  int nX = x.size();
-  int nF = h_x_x.size() / nX / nX;
-  assert( nF == 1 );
-  assert( h_x_x.size() == nX * nX * nF ); 
-
-  // This makes sure the matrix to be inverted is symmetric.
-  // If the attempt to invert the matrix failed, it means the matrix is not positive definite.
-  valarray<double> invR( nX * nX );
-  try{
-    invR = inverse( ( h_x_x + transpose( h_x_x, nX ) ) * 0.5, nX );
+  void placeVal( const valarray<bool>   & mask,
+		 const valarray<double> & x,
+		 valarray<double>       & y,
+		 double val = NAN )
+  {
+    assert( mask.size() == y.size() );
+    const int nX = x.size();
+    const int nY = y.size();
+    
+    for( int i=0, ii=0; i<nY; i++ )
+      {
+	if( mask[i] )
+	  {
+	    y[i] = x[ii];
+	    ii++;
+	  }
+	else
+	  y[i] = val;
+      }
   }
-  catch( SpkException & e )
-    {
-      char mess[ SpkError::maxMessageLen() ];
-      
-      valarray<double> diag = h_x_x[ slice(0, nX, nX+1) ];
-      sprintf( mess, "The second drivative of the object does not seem positive definite.\n" );
-      for( int i=0; i<nX; i++ )
-	{
-	  if( diag[i] <= 0.0 )
-	    sprintf( mess, "The %d-th diagonal element of second derivative of the objective, which is supposed to be positive definite, is not postive.\n", i );
-	}
-      e.push( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
-      throw e;
-    }
-  catch( ... )
-    {
-      char mess[ SpkError::maxMessageLen() ];
-      
-      valarray<double> diag = h_x_x[ slice(0, nX, nX+1) ];
-      sprintf( mess, "The second drivative of the object may not be positive definite.\n" );
-      for( int i=0; i<nX; i++ )
-	{
-	  if( diag[i] < 0.0 )
-	    sprintf( mess, "The %d-th diagonal element of second derivative of the objective, which is supposed to be positive definite, is not postive.\n", i );
-	}
-      SpkException e( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
-      throw e;
-    }      
 
-  return  invR;
-}
+  //                         T      
+  //     S = Sum{ gi_x * gi_x }
+  //          i                          
+  //
+  const valarray<double> nmS( const valarray<double> & g_x, int nX )
+  {
+    int nF = g_x.size() / nX;
+    assert( g_x.size() == nX * nF );
+    
+    valarray<double> S( 0.0, nX * nX );
+    
+    valarray<double> gi_x( nX );
+    for( int i=0; i<nF; i++ )
+      {
+	gi_x = g_x[ slice( i * nX, nX, 1 ) ];
+	S += multiply( gi_x, 1, transpose( gi_x, 1 ), nX );
+      }
+    return S;
+  }
+  //
+  // R = h_x_x
+  // R^(-1) = (h_x_x)^(-1)
+  //
+  const valarray<double> nmInvR(  const valarray<double> & h_x_x,
+					 int nX )
+  {
+    int nF = h_x_x.size() / nX / nX;
+    assert( nF == 1 );
+    assert( h_x_x.size() == nX * nX * nF ); 
+    
+    // This makes sure the matrix to be inverted is symmetric.
+    // If the attempt to invert the matrix failed, it means the matrix is not positive definite.
+    valarray<double> invR( nX * nX );
+    try{
+      invR = inverse( ( h_x_x + transpose( h_x_x, nX ) ) * 0.5, nX );
+    }
+    catch( SpkException & e )
+      {
+	char mess[ SpkError::maxMessageLen() ];
+	
+	valarray<double> diag = h_x_x[ slice(0, nX, nX+1) ];
+	sprintf( mess, "The second drivative of the object does not seem positive definite.\n" );
+	for( int i=0; i<nX; i++ )
+	  {
+	    if( diag[i] <= 0.0 )
+	      sprintf( mess, "The %d-th diagonal element of second derivative of the objective, which is supposed to be positive definite, is not postive.\n", i );
+	  }
+	e.push( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
+	throw e;
+      }
+    catch( ... )
+      {
+	char mess[ SpkError::maxMessageLen() ];
+	
+	valarray<double> diag = h_x_x[ slice(0, nX, nX+1) ];
+	sprintf( mess, "The second drivative of the object may not be positive definite.\n" );
+	for( int i=0; i<nX; i++ )
+	  {
+	    if( diag[i] < 0.0 )
+	      sprintf( mess, "The %d-th diagonal element of second derivative of the objective, which is supposed to be positive definite, is not postive.\n", i );
+	  }
+	SpkException e( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
+	throw e;
+      }      
+    
+    return  invR;
+  }
+};
 
 
 
@@ -2043,7 +2067,7 @@ void popStatistics( const valarray<double>& y,
         // This local routine nmInvR does symmetrize the 2nd drivative before
 	// attempting to invert it.  So, if this attempt fails, it means
 	// the symmetric matrix is not positive definite.
-	alpCovTemp = nmInvR( alp, popObj_alp_alp );
+	alpCovTemp = nmInvR( popObj_alp_alp, nAlp );
       }
       catch( SpkException& e )
       {
@@ -2066,7 +2090,7 @@ void popStatistics( const valarray<double>& y,
    {
       try
       {
-         alpCovTemp = inverse( nmS( alp, indObj_alp ), nAlp );
+         alpCovTemp = inverse( nmS( indObj_alp, nAlp ), nAlp );
       }
       catch( SpkException& e )
       {
@@ -2087,8 +2111,8 @@ void popStatistics( const valarray<double>& y,
    {
       try
       {
-         valarray<double> RInv = nmInvR( alp, popObj_alp_alp );
-	 alpCovTemp = multiply( multiply( RInv, nAlp, nmS( alp, indObj_alp ), nAlp ), nAlp, 
+         valarray<double> RInv = nmInvR( popObj_alp_alp, nAlp );
+	 alpCovTemp = multiply( multiply( RInv, nAlp, nmS( indObj_alp, nAlp ), nAlp ), nAlp, 
                                           RInv, nAlp );
       }
       catch( SpkException& e )
@@ -2134,4 +2158,130 @@ void popStatistics( const valarray<double>& y,
 
    *alpCovOut = alpCovTemp;
    return;
+}
+void popStatistics( const valarray<bool>           & mask,
+		    const SPK_VA::valarray<double> & y,
+		    const SPK_VA::valarray<double> & alp,
+		    const SPK_VA::valarray<double> & indObj_alp,
+		    const SPK_VA::valarray<double> & popObj_alp_alp,
+		    enum PopCovForm                 form,
+		    SPK_VA::valarray<double>      * alpCovOut,
+		    SPK_VA::valarray<double>      * alpSEOut,
+		    SPK_VA::valarray<double>      * alpCorOut,
+		    SPK_VA::valarray<double>      * alpCVOut,
+		    SPK_VA::valarray<double>      * alpCIOut
+                   )
+{
+   const int nAlp = alp.size();
+   const int nY   = y.size();
+   const int nInd = indObj_alp.size() / nAlp;
+   assert( nInd * nAlp == indObj_alp.size() );
+                                                                                                        
+   const valarray<double> x = alp[ mask ];
+   const int nX = x.size();
+                                                                                                          
+                                                                                                        
+   valarray<double> indObj_x( nInd * nX );
+   valarray<double> popObj_x_x( nX * nX );
+   valarray<double> xCov( nX * nX );
+   valarray<double> xSE ( nX );
+   valarray<double> xCor( nX * nX );
+   valarray<double> xCV ( nX );
+   valarray<double> xCI ( nX * 2 );
+
+   for( int j=0; j<nInd; j++ )
+   {
+      for( int i=0, ii=0; i<nAlp; i++ )
+      {
+         if( mask[i] )
+         {
+            indObj_x[ ii + j * nX ] = indObj_alp[ i + j * nAlp ];
+            ii++;
+         }
+       }
+   }
+                                                                                                        
+   for( int j=0, jj=0; j<nAlp; j++ )
+   {
+      if( mask[j] )
+      {
+         for( int i=0, ii=0; i<nAlp; i++ )
+         {
+            if( mask[i] )
+            {
+               popObj_x_x[ ii + jj*nX ] = popObj_alp_alp[ i + j*nAlp ];
+               ii++;
+            }
+         }
+         jj++;
+      }
+   }
+                                                                                                        
+   popStatistics(y,
+                 x,
+                 indObj_x,
+                 popObj_x_x,
+                 form,
+                 ( alpCovOut? &xCov : NULL ),
+                 ( alpSEOut?  &xSE  : NULL ),
+                 ( alpCorOut? &xCor : NULL ),
+                 ( alpCVOut?  &xCV  : NULL ),
+                 ( alpCIOut?  &xCI  : NULL )
+                 );
+                                
+  valarray<bool> alpCI_mask ( nAlp * 2 );
+  valarray<bool> alpSE_mask ( nAlp );
+  valarray<bool> alpCV_mask ( nAlp );
+  valarray<bool> alpCov_mask( nAlp * nAlp );
+  valarray<bool> alpCor_mask( nAlp * nAlp );
+  double val = NAN;
+
+  for( int j=0; j<2; j++ )
+    {
+      for( int i=0; i<nAlp; i++ )
+	{
+	  alpCI_mask[ i + j * nAlp ] = mask[i];
+	}
+    }
+
+  for( int j=0; j<nAlp; j++ )
+    {
+      if( mask[j] )
+	{
+	  for( int i=0; i<nAlp; i++ )
+	    {
+	      alpCov_mask[ i + j * nAlp ] = mask[i];
+	      alpCor_mask[ i + j * nAlp ] = mask[i];
+	    }
+       
+	  alpSE_mask[ j ] = mask[j];
+	  alpCV_mask[ j ] = mask[j];
+	}
+      else
+	{
+	  alpCov_mask[ slice( j * nAlp, nAlp, 1 ) ] = false;
+	  alpCor_mask[ slice( j * nAlp, nAlp, 1 ) ] = false;
+	}
+    }
+  if( alpCIOut )
+    {
+      placeVal( alpCI_mask, xCI, *alpCIOut, val );
+    }
+  if( alpCovOut )
+    {
+      placeVal( alpCov_mask, xCov, *alpCovOut, val );
+    }
+  if( alpCorOut )
+    {
+      placeVal( alpCor_mask, xCor, *alpCorOut, val );
+    }
+  if( alpSEOut )
+    {
+      placeVal( alpSE_mask, xSE, *alpSEOut, val );
+    }
+  if( alpCVOut )
+    {
+      placeVal( alpCV_mask, xCV, *alpCVOut, val );
+    }
+                                                                        
 }

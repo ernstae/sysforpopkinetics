@@ -230,7 +230,34 @@ behavior is undetermined.
 using SPK_VA::valarray;
 using namespace std;
 
+namespace
+{
+  //=========================================================
+  // Expand the vector x to y. Insert "val" in places where 
+  // mask[i] is false.
+  //=========================================================
 
+  void placeVal( const valarray<bool>   & mask,
+		 const valarray<double> & x,
+		 valarray<double>       & y,
+		 double val = NAN )
+  {
+    assert( mask.size() == y.size() );
+    const int nX = x.size();
+    const int nY = y.size();
+    
+    for( int i=0, ii=0; i<nY; i++ )
+      {
+	if( mask[i] )
+	  {
+	    y[i] = x[ii];
+	    ii++;
+	  }
+	else
+	  y[i] = val;
+      }
+  }
+}
 /*------------------------------------------------------------------------
  * Function definition
  *------------------------------------------------------------------------*/
@@ -355,4 +382,141 @@ void derParStatistics(
     *zCovOut = zCovTemp;
   }
 
+}
+void derParStatistics( const SPK_VA::valarray<bool>   & mask,
+		       const SPK_VA::valarray<double> & xCov,
+		       const SPK_VA::valarray<double> & z,
+		       const SPK_VA::valarray<double> & z_x,
+		       int                              nDegOfFreedom,
+		       SPK_VA::valarray<double>       * zCovOut,
+		       SPK_VA::valarray<double>       * zSEOut,
+		       SPK_VA::valarray<double>       * zCorOut,
+		       SPK_VA::valarray<double>       * zCVOut,
+		       SPK_VA::valarray<double>       * zCIOut
+                      )
+{
+   const int nZ = z.size();
+   const int nX = z_x.size() / nZ;
+   assert( nX * nZ == z_x.size() );
+   assert( nX * nX == xCov.size() );
+   assert( nX == nZ );
+   
+   const int nY = mask[ mask ].size();
+   const int nW = nY;
+   valarray<double> yCov( nY * nY );
+   valarray<double> w   ( nY );
+   valarray<double> w_y ( nY * nY );
+   valarray<double> ySE ( nY );
+   valarray<double> yCor( nY * nY );
+   valarray<double> yCV ( nY );
+   valarray<double> yCI ( nY * 2 );
+
+   // eliminating fixed elements from xCov
+   for( int j=0, jj=0; j<nX; j++ )
+   {
+      if( mask[j] )
+      {
+         for( int i=0, ii=0; i<nX; i++ )
+         {
+            if( mask[i] )
+            {
+               yCov[ ii + jj * nY ] = xCov[ i + j * nX ];
+               ii++;
+            }
+         }
+         jj++;
+      }
+   }   
+   for( int i=0, ii=0; i<nZ; i++ )
+     {
+       if( mask[i] )
+	 {
+	   w[ ii ] = z[ i ];
+	   ii++;
+	 }
+     }
+
+   // eliminating fixed elements from z_x
+   for( int j=0, jj=0; j<nX; j++ )
+   {
+      if( mask[j] )
+      {
+         for( int i=0, ii=0; i<nZ; i++ )
+         {
+	   if( mask[i] )
+	     {
+               w_y[ ii + jj * nW ] = z_x[ i + j * nZ ];
+	       ii++;
+	     }
+         }
+         jj++;
+      }
+   }
+   derParStatistics( yCov, 
+		     w, 
+		     w_y, 
+		     nDegOfFreedom,
+		     ( zCovOut? &yCov : NULL ),
+		     ( zSEOut?  &ySE  : NULL ),
+		     ( zCorOut? &yCor : NULL ),
+		     ( zCVOut?  &yCV  : NULL ),
+		     ( zCIOut?  &yCI  : NULL )
+		     );
+
+  valarray<bool> zCI_mask ( nZ * 2 );
+  valarray<bool> zSE_mask ( nZ );
+  valarray<bool> zCV_mask ( nZ );
+  valarray<bool> zCov_mask( nZ * nZ );
+  valarray<bool> zCor_mask( nZ * nZ );
+  double val = NAN;
+
+  for( int j=0; j<2; j++ )
+    {
+      for( int i=0; i<nZ; i++ )
+	{
+	  zCI_mask[ i + j * nZ ] = mask[i];
+	}
+    }
+
+  for( int j=0; j<nZ; j++ )
+    {
+      if( mask[j] )
+	{
+	  for( int i=0; i<nZ; i++ )
+	    {
+	      zCov_mask[ i + j * nZ ] = mask[i];
+	      zCor_mask[ i + j * nZ ] = mask[i];
+	    }
+       
+	  zSE_mask[ j ] = mask[j];
+	  zCV_mask[ j ] = mask[j];
+	}
+      else
+	{
+	  zCov_mask[ slice( j * nZ, nZ, 1 ) ] = false;
+	  zCor_mask[ slice( j * nZ, nZ, 1 ) ] = false;
+	}
+    }
+  if( zCIOut )
+    {
+      placeVal( zCI_mask, yCI, *zCIOut, val );
+    }
+  if( zCovOut )
+    {
+      placeVal( zCov_mask, yCov, *zCovOut, val );
+    }
+  if( zCorOut )
+    {
+      placeVal( zCor_mask, yCor, *zCorOut, val );
+    }
+  if( zSEOut )
+    {
+      placeVal( zSE_mask, ySE, *zSEOut, val );
+    }
+  if( zCVOut )
+    {
+      placeVal( zCV_mask, yCV, *zCVOut, val );
+    }
+
+   return;
 }

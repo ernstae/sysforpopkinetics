@@ -548,6 +548,33 @@ $end
 using SPK_VA::valarray;
 using SPK_VA::slice;
 
+namespace
+{
+  //=========================================================
+  // Expand the vector x to y. Insert "val" in places where mask[i] is false.
+  //=========================================================
+
+  void placeVal( const valarray<bool>   & mask,
+		 const valarray<double> & x,
+		 valarray<double>       & y,
+		 double val = NAN )
+  {
+    assert( mask.size() == y.size() );
+    const int nX = x.size();
+    const int nY = y.size();
+    
+    for( int i=0, ii=0; i<nY; i++ )
+      {
+	if( mask[i] )
+	  {
+	    y[i] = x[ii];
+	    ii++;
+	  }
+	else
+	  y[i] = val;
+      }
+  }
+}
 void indStatistics( const valarray<double>&  indPar,
                     const valarray<double>&  dataMean_indPar,
                     const valarray<double>&  dataVariance_indPar,
@@ -635,4 +662,133 @@ void indStatistics( const valarray<double>&  indPar,
     if( indParCovOut != 0 )
       *indParCovOut = indParCov;
     statistics( indPar, indParCov, nFree, indParSEOut, indParCorOut, indParCVOut, indParCIOut );
+}
+
+
+void indStatistics( const SPK_VA::valarray<bool>           & mask,
+		    const SPK_VA::valarray<double> & b,
+		    const SPK_VA::valarray<double> & f_b,
+		    const SPK_VA::valarray<double> & R_b,
+		    const SPK_VA::valarray<double> & RInv,
+		    SPK_VA::valarray<double>       * bCovOut,
+		    SPK_VA::valarray<double>       * bSEOut,                          
+		    SPK_VA::valarray<double>       * bCorOut,
+		    SPK_VA::valarray<double>       * bCVOut,
+		    SPK_VA::valarray<double>       * bCIOut
+		    )
+{
+  assert( mask.size() == b.size() );
+  const int nB = b.size();
+
+  valarray<double> x= b[ mask ];
+  const int m = x.size();
+
+  const int nY = f_b.size() / nB;
+  assert( nY * nB == f_b.size() );
+
+  //
+  // Example:
+  //           
+  // Given b    = { b(1), b(2), b(3), b(4), b(5) }
+  //       mask = { T, F, T, F, T }
+  //
+  //        /                                            \
+  //        |        |        |        |        |        |
+  //  f_b = | f_b(1) | f_b(2) | f_b(3) | f_b(4) | f_b(5) |
+  //        |        |        |        |        |        |
+  //        \                                            /
+  //
+  //        /                          \
+  //        |        |        |        |
+  //  f_x = | f_b(1) | f_b(3) | f_b(5) |
+  //        |        |        |        |
+  //        \                          /
+  //
+  valarray<bool> mask_for_f_b( nY * nB );
+  for( int i=0; i<nB; i++ )
+    {
+      mask_for_f_b[ slice( i * nY, nY, 1 ) ] = mask[i];
+    }
+  valarray<double> f_x = f_b[ mask_for_f_b ];
+
+  valarray<bool> mask_for_R_b( nY * nY * nB );
+  for( int i=0; i<nB; i++ )
+    {
+      mask_for_R_b[ slice( i * nY * nY, nY * nY, 1 ) ] = mask[i];
+    }
+  valarray<double> R_x = R_b[ mask_for_R_b ];
+
+  valarray<double> xCov( m * m );
+  valarray<double> xSE ( m );
+  valarray<double> xCor( m * m );
+  valarray<double> xCV ( m );
+  valarray<double> xCI ( m * 2 );  // lower | upper
+
+  indStatistics( x,
+	         f_x,
+		 R_x,
+		 RInv,
+		 (bCovOut? &xCov : NULL ),
+		 (bSEOut?  &xSE  : NULL ),
+		 (bCorOut? &xCor : NULL ),
+		 (bCVOut?  &xCV  : NULL ),
+		 (bCIOut?  &xCI  : NULL ) 
+               );
+
+  valarray<bool> bCI_mask ( nB * 2 );
+  valarray<bool> bSE_mask ( nB );
+  valarray<bool> bCV_mask ( nB );
+  valarray<bool> bCov_mask( nB * nB );
+  valarray<bool> bCor_mask( nB * nB );
+  double val = NAN;
+
+  for( int j=0; j<2; j++ )
+    {
+      for( int i=0; i<nB; i++ )
+	{
+	  bCI_mask[ i + j * nB ] = mask[i];
+	}
+    }
+
+  for( int j=0; j<nB; j++ )
+    {
+      if( mask[j] )
+	{
+	  for( int i=0; i<nB; i++ )
+	    {
+	      bCov_mask[ i + j * nB ] = mask[i];
+	      bCor_mask[ i + j * nB ] = mask[i];
+	    }
+       
+	  bSE_mask[ j ] = mask[j];
+	  bCV_mask[ j ] = mask[j];
+	}
+      else
+	{
+	  bCov_mask[ slice( j * nB, nB, 1 ) ] = false;
+	  bCor_mask[ slice( j * nB, nB, 1 ) ] = false;
+	}
+    }
+  if( bCIOut )
+    {
+      placeVal( bCI_mask, xCI, *bCIOut, val );
+    }
+  if( bCovOut )
+    {
+      placeVal( bCov_mask, xCov, *bCovOut, val );
+    }
+  if( bCorOut )
+    {
+      placeVal( bCor_mask, xCor, *bCorOut, val );
+    }
+  if( bSEOut )
+    {
+      placeVal( bSE_mask, xSE, *bSEOut, val );
+    }
+  if( bCVOut )
+    {
+      placeVal( bCV_mask, xCV, *bCVOut, val );
+    }
+
+  return;
 }

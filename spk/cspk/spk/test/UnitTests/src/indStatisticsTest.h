@@ -44,6 +44,7 @@ public:
 
     void setUp();
     void tearDown();
+    void testIndWrapper();
 };
 
 #endif

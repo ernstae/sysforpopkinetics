@@ -73,4 +73,16 @@ void popStatistics( const SPK_VA::valarray<double>& y,
                     SPK_VA::valarray<double>      * alpCVOut,
                     SPK_VA::valarray<double>      * alpCIOut );
 
+void popStatistics( const SPK_VA::valarray<bool>   & mask,
+		    const SPK_VA::valarray<double> & y,
+		    const SPK_VA::valarray<double> & alp,
+		    const SPK_VA::valarray<double> & indObj_alp,
+		    const SPK_VA::valarray<double> & popObj_alp_alp,
+		    enum PopCovForm                 form,
+		    SPK_VA::valarray<double>      * alpCovOut,
+		    SPK_VA::valarray<double>      * alpSEOut,
+		    SPK_VA::valarray<double>      * alpCorOut,
+		    SPK_VA::valarray<double>      * alpCVOut,
+		    SPK_VA::valarray<double>      * alpCIOut
+		    );
 #endif
