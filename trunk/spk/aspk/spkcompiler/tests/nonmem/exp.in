@@ -1,10 +1,10 @@
-		if (DOSE.NE.0) THEN
-                  DS=DOSE*WT
-                  W=WT
-                ENDIF
-                KA=THETA(1)+ETA(1)
-                KE=THETA(2)+ETA(2)
-                CL=THETA(3)*W+ETA(3)
-                D=EXP(-KE*TIME)-EXP(-KA*TIME)
-                E=CL*(KA-KE)
-                F=DS*KE*KA/E*D
+IF (DOSE.NE.0) THEN
+	DS=DOSE*WT
+	W=WT
+ENDIF
+KA=THETA(1)+ETA(1)
+KE=THETA(2)+ETA(2)
+CL=THETA(3)*W+ETA(3)
+D=EXP(-KE*TIME)-EXP(-KA*TIME)
+E=CL*(KA-KE)
+F=DS*KE*KA/E*D
