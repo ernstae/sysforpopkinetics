@@ -5,7 +5,7 @@
 
 #include "clientTest.h"
 #include "lowerTest.h"
-#include "factorialTest.h"
+#include "seriesTest.h"
 #include "upperTest.h"
 #include "SymbolTest.h"
 #include "SymbolTableTest.h"
@@ -22,7 +22,7 @@ int main( int argc, const char * argv[] )
   master[ "clientTest" ]           = clientTest::suite();
   master[ "lowerTest" ]            = lowerTest::suite();
   master[ "upperTest" ]            = upperTest::suite();
-  master[ "factorialTest" ]        = factorialTest::suite();
+  master[ "seriesTest" ]           = seriesTest::suite();
   master[ "SymbolTest" ]           = SymbolTest::suite();
   master[ "SymbolTableTest" ]      = SymbolTableTest::suite();
   master[ "ClientTranslatorTest" ] = ClientTranslatorTest::suite();
