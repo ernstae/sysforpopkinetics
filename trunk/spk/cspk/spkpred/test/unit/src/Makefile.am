@@ -3,11 +3,13 @@ bin_PROGRAMS = testall
 testall_SOURCES = \
 	compareToKnown.cpp \
 	DiagCovTest.cpp \
+	FullCovTest.cpp \
 	IndPredModelTest.cpp \
 	PopPredModelTest.cpp \
 	testall.cpp \
 	compareToKnown.h \
 	DiagCovTest.h \
+	FullCovTest.h \
 	IndPredModelTest.h \
 	PopPredModelTest.h \
 	../config.h
@@ -20,5 +22,6 @@ INCLUDES = -I@top_srcdir@/
 pkginclude_HEADERS = \
 	compareToKnown.h \
 	DiagCovTest.h \
+	FullCovTest.h \
 	IndPredModelTest.h \
 	PopPredModelTest.h

@@ -5,6 +5,7 @@
 #include <cppunit/ui/text/TestRunner.h>
 
 #include "src/DiagCovTest.h"
+#include "src/FullCovTest.h"
 #include "src/IndPredModelTest.h"
 #include "src/PopPredModelTest.h"
 
@@ -30,6 +31,7 @@ int main( int argc, const char * argv[] )
   vector<CppUnit::Test*> tests_to_be_executed;
 
   master_list_of_tests[ "DiagCovTest" ]               = DiagCovTest::suite();
+  master_list_of_tests[ "FullCovTest" ]               = FullCovTest::suite();
   master_list_of_tests[ "IndPredModelTest  " ]        = IndPredModelTest  ::suite();
   master_list_of_tests[ "PopPredModelTest  " ]        = PopPredModelTest  ::suite();
 
