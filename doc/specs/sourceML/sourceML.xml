@@ -8,6 +8,37 @@
  <articleinfo>
     <revhistory>
       <revision>
+         <revnumber>1.7</revnumber>
+         <date>May 21, 2004</date>
+         <authorinitials>honda</authorinitials>
+         <revremark>Changed the dafault values for the statistics computation requests
+                    from "no" to "yes" throughout.</revremark>
+      </revision>
+      <revision>
+         <revnumber>1.6</revnumber>
+         <date>April 30, 2004</date>
+         <authorinitials>honda</authorinitials>
+         <revremark>Took out "ML" from "sourceML".</revremark>
+      </revision>
+      <revision>
+         <revnumber>1.5</revnumber>
+         <date>April 7, 2004</date>
+         <authorinitials>honda</authorinitials>
+         <revremark>Moved from r2/src/apps/spk/aspk/spkcompiler/doc.</revremark>
+      </revision>
+      <revision>
+         <revnumber>1.4</revnumber>
+         <date>Jaunary 6, 2004</date>
+         <authorinitials>alan</authorinitials>
+         <revremark>Changed version of Docbook DTD from 4.1.2 to 4.2 in all .xml files</revremark>
+      </revision>
+      <revision>
+         <revnumber>1.3</revnumber>
+         <date>January 5, 2004</date>
+         <authorinitials>alan</authorinitials>
+         <revremark>Clean up.</revremark>
+      </revision>
+      <revision>
 	<revnumber>1.2</revnumber>
 	<date>December 12, 2003</date>
 	<authorinitials>sh</authorinitials>

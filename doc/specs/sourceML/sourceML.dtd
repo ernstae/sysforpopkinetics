@@ -217,43 +217,43 @@ If this element appears when the population analysis is chosen, a data set for n
 <!-- <pop_stat covariance_form="r"> Form of covariance matrix; "r" for R^-1, "rsr" for R^-1*S*R^-1, "s" for S^-1.  -->
 <!ATTLIST pop_stat covariance_form    (rsr|r|s)  #REQUIRED>
 
-<!-- <pop_stat is_covariance_out="yes"> "yes" to request to return the covariance matrix of the final estimate(s) for population parameter, default to "no". -->
+<!-- <pop_stat is_covariance_out="yes"> "yes" to request to return the covariance matrix of the final estimate(s) for population parameter, default to "yes". -->
 <!ATTLIST pop_stat is_covariance_out  (yes|no) #IMPLIED>
 
-<!-- <pop_stat is_inverse_covariance_out="yes"> "yes" to request to return the inverse of covariance matrix of the final estimate(s) for population parameter, default to "no". -->
+<!-- <pop_stat is_inverse_covariance_out="yes"> "yes" to request to return the inverse of covariance matrix of the final estimate(s) for population parameter, default to "yes". -->
 <!ATTLIST pop_stat is_inverse_covariance_out  (yes|no) #IMPLIED>
 
-<!-- <pop_stat is_stderror_out="yes"> "yes" to request to return the standard error of the final estimate for population parameter, default to "no".  -->
+<!-- <pop_stat is_stderror_out="yes"> "yes" to request to return the standard error of the final estimate for population parameter, default to "yes".  -->
 <!ATTLIST pop_stat is_stderror_out    (yes|no) #IMPLIED>
 
-<!-- <pop_stat is_correlation_out="yes"> "yes" to request to return the correlation matrix of the final estimate for population parameter, default to "no".  -->
+<!-- <pop_stat is_correlation_out="yes"> "yes" to request to return the correlation matrix of the final estimate for population parameter, default to "yes".  -->
 <!ATTLIST pop_stat is_correlation_out (yes|no) #IMPLIED>
 
-<!-- <pop_stat is_coefficient_out="yes"> "yes" to request to return the coefficient for the final estimate for population parameter, default to "no".  -->
+<!-- <pop_stat is_coefficient_out="yes"> "yes" to request to return the coefficient for the final estimate for population parameter, default to "yes".  -->
 <!ATTLIST pop_stat is_coefficient_out (yes|no) #IMPLIED>
 
-<!-- <pop_stat is_confidence_out="yes"> "yes" to request to return the confidence interfals for the final estimate for population parameter, default to "no".  -->
+<!-- <pop_stat is_confidence_out="yes"> "yes" to request to return the confidence interfals for the final estimate for population parameter, default to "yes".  -->
 <!ATTLIST pop_stat is_confidence_out (yes|no) #IMPLIED>
 
 <!-- <ind_stat>  Request for the post statistial analysis on the final estimate(s) for individual parameter(s).  This process will be skipped unless the "is_estimation" of <ind_analysis> is set to "yes".  -->
 <!ELEMENT ind_stat EMPTY>
 
-<!-- <ind_stat is_stderror_out="yes"> "yes" to request to return the standard error of the final estimate(s) for individual parameter(s), default to "no".  -->
+<!-- <ind_stat is_stderror_out="yes"> "yes" to request to return the standard error of the final estimate(s) for individual parameter(s), default to "yes".  -->
 <!ATTLIST ind_stat is_stderror_out    (yes|no) #IMPLIED>
 
-<!-- <ind_stat is_correlation_out="yes"> "yes" to request to return the correlation matrix of the final estimate(s) of individual parameter, default to "no".  -->
+<!-- <ind_stat is_correlation_out="yes"> "yes" to request to return the correlation matrix of the final estimate(s) of individual parameter, default to "yes".  -->
 <!ATTLIST ind_stat is_correlation_out (yes|no) #IMPLIED>
 
-<!-- <ind_stat is_covariance_out="yes"> "yes" to request to return the covariance matrix of the final estimate(s) for individual parameter, default to "no". -->
+<!-- <ind_stat is_covariance_out="yes"> "yes" to request to return the covariance matrix of the final estimate(s) for individual parameter, default to "yes". -->
 <!ATTLIST ind_stat is_covariance_out  (yes|no) #IMPLIED>
 
-<!-- <ind_stat is_inverse_covariance_out="yes"> "yes" to request to return the inverse of covariance matrix of the final estimate(s) for individual parameter, default to "no". -->
+<!-- <ind_stat is_inverse_covariance_out="yes"> "yes" to request to return the inverse of covariance matrix of the final estimate(s) for individual parameter, default to "yes". -->
 <!ATTLIST ind_stat is_inverse_covariance_out  (yes|no) #IMPLIED>
 
-<!-- <ind_stat is_coefficient_out="yes"> "yes" to request to return the coefficents for the final estimate(s) for individual parameter, default to "no". -->
+<!-- <ind_stat is_coefficient_out="yes"> "yes" to request to return the coefficents for the final estimate(s) for individual parameter, default to "yes". -->
 <!ATTLIST ind_stat is_coefficient_out  (yes|no) #IMPLIED>
 
-<!-- <ind_stat is_confidence_out="yes"> "yes" to request to return the confidence intervals for the final estimate(s) for individual parameter, default to "no". -->
+<!-- <ind_stat is_confidence_out="yes"> "yes" to request to return the confidence intervals for the final estimate(s) for individual parameter, default to "yes". -->
 <!ATTLIST ind_stat is_confidence_out  (yes|no) #IMPLIED>
 
 <!-- ===================================== -->
