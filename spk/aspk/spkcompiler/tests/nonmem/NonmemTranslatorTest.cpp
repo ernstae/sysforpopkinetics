@@ -122,7 +122,7 @@ void NonmemTranslatorTest::testParsePopSource()
       oSource << "<constraint>" << endl;
       // default: is_eta_out=no, is_restart=yes
       oSource << "<pop_analysis approximation=\"foce\" pop_size=\"3\" is_estimation=\"yes\">" << endl;
-      oSource << "<data_labels filename=\"xxx.dat\">" << endl;
+      oSource << "<data_labels>" << endl;
 
       map<string,string>::const_iterator pLabel = labels.begin();
       for( int i=0; i<nLabels, pLabel!=labels.end(); i++, pLabel++ )
