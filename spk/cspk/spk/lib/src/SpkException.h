@@ -42,6 +42,7 @@
 // Necessary component headers for SpkException class declaration.
 //
 #include "SpkError.h"
+#include <string>
 
 //
 // A namespace used within SpkException class members.
@@ -109,6 +110,7 @@ public:
     int  findFile( const char* filename ) const throw();
 
     // serialize
+    const std::string getXml( ) const;
     friend std::ostream& operator<<(std::ostream& stream, const SpkException& e);
     friend std::string& operator<<(std::string& s, const SpkException& e);
 
