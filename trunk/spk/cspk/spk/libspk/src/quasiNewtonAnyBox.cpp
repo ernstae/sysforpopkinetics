@@ -1301,20 +1301,19 @@ void scaleGradElem(
  * Function: doubleArrayToValarray
  *
  *
- * Returns the scaled value for g.
+ * Sets the elements in the valarray of doubles xVA equal to those in
+ * the array of doubles x.  This function assumes that xVA and x have
+ * the same number of elements.
  *
  *************************************************************************/
 
-      doubleArrayToValarray( hScaled, hScaledVA );
-void doubleArrayToValarray( double*  g, 
-  const double*  xDiff,
-  double*              gScaled )
+void doubleArrayToValarray( const double* x, valarray<double>&  xVA )
 {
   int i;
 
-  for ( i = 0; i < n; i++ )
+  for ( i = 0; i < xVA.size(); i++ )
   {
-    gScaled[i] = xDiff[i] * g[i];
+    x[i] = xVA[i];
   }
 }
 
@@ -1324,7 +1323,8 @@ void doubleArrayToValarray( double*  g,
  *
  *
  * Sets the elements in the array of doubles x equal to those in the 
- * valarray of doubles xVA.
+ * valarray of doubles xVA.  This function assumes that x and xVA have
+ * the same number of elements.
  *
  *************************************************************************/
 
