@@ -99,7 +99,6 @@ PopPredModel::PopPredModel(
   //------------------------------------------------------------
 
 protected:
-  int nInd;                                    // Number of individuals.
   int nPopPar;                                 // Number of population parameters.
   int nIndPar;                                 // Number of individual parameters.
 
