@@ -257,7 +257,7 @@ namespace{
   // Make requests for statistics.
   //============================================
   const bool ind_stderr         = true;
-  const bool ind_coefficent     = true;
+  const bool ind_coefficient    = true;
   const bool ind_confidence     = true;
   const bool ind_covariance     = true;
   const bool ind_inv_covariance = true;
@@ -647,10 +647,12 @@ void ind_withID_NonmemTranslatorTest::createSourceML()
   oSource << "</omega>" << endl;
 
   oSource << "<ind_stat ";
-  oSource << "is_stderror_out=\""           << (ind_stderr? "yes":"no") << "\" ";
-  oSource << "is_covariance_out=\""         << (ind_covariance? "yes":"no") << "\" ";
+  oSource << "is_stderror_out=\""           << (ind_stderr?         "yes":"no") << "\" ";
+  oSource << "is_covariance_out=\""         << (ind_covariance?     "yes":"no") << "\" ";
   oSource << "is_inverse_covariance_out=\"" << (ind_inv_covariance? "yes":"no") << "\" ";
-  oSource << "is_correlation_out=\""        << (ind_correlation? "yes":"no") << "\"/>" << endl;
+  oSource << "is_confidence_out=\""         << (ind_confidence?     "yes":"no") << "\" ";
+  oSource << "is_coefficient_out=\""        << (ind_coefficient?    "yes":"no") << "\" ";
+  oSource << "is_correlation_out=\""        << (ind_correlation?    "yes":"no") << "\"/>" << endl;
 
   if( isSimulate )
     {
@@ -856,6 +858,8 @@ void ind_withID_NonmemTranslatorTest::testIndDataClass()
   oIndDataDriver.close();
 
   char command[256];
+  sprintf( command, "\necho --- %s ---\n", fIndDataDriver );
+  system( command );
   sprintf( command, "g++ -Wl,--rpath -Wl,/usr/local/lib/spktest -g %s -o %s -L/usr/local/lib/spktest -I/usr/local/include/spktest", fIndDataDriver_cpp, fIndDataDriver );
   if( system( command ) != 0 )
     {
@@ -947,6 +951,8 @@ void ind_withID_NonmemTranslatorTest::testDataSetClass()
   oDataSetDriver.close();
 
   char command[256];
+  sprintf( command, "\necho --- %s ---\n", fDataSetDriver );
+  system( command );
   sprintf( command, "g++ -Wl,--rpath -Wl,/usr/local/lib/spktest -g %s -o %s -L/usr/local/lib/spktest  -I/usr/local/include/spktest", fDataSetDriver_cpp, fDataSetDriver );
   if( system( command ) != 0 )
     {
@@ -1105,6 +1111,8 @@ void ind_withID_NonmemTranslatorTest::testPredClass()
   oPredDriver.close();
 
   char command[256];
+  sprintf( command, "\necho --- %s ---\n", fPredDriver );
+  system( command );
   sprintf( command, "g++ -Wl,--rpath -Wl,/usr/local/lib/spktest -g %s -o %s -L/usr/local/lib/spktest  -I/usr/local/include/spktest", fPredDriver_cpp, fPredDriver );
   if( system( command ) != 0 )
     {

@@ -202,7 +202,7 @@ namespace{
   // Make requests for statistics.
   //============================================
   const bool ind_stderr         = true;
-  const bool ind_coefficent     = true;
+  const bool ind_coefficient    = true;
   const bool ind_confidence     = true;
   const bool ind_covariance     = true;
   const bool ind_inv_covariance = true;
@@ -596,6 +596,8 @@ void ind_noID_NonmemTranslatorTest::createSourceML()
   oSource << "is_stderror_out=\""           << (ind_stderr?         "yes":"no") << "\" ";
   oSource << "is_covariance_out=\""         << (ind_covariance?     "yes":"no") << "\" ";
   oSource << "is_inverse_covariance_out=\"" << (ind_inv_covariance? "yes":"no") << "\" ";
+  oSource << "is_coefficient_out=\""        << (ind_coefficient?    "yes":"no") << "\" ";
+  oSource << "is_confidence_out=\""         << (ind_confidence?     "yes":"no") << "\" ";
   oSource << "is_correlation_out=\""        << (ind_correlation?    "yes":"no") << "\"/>" << endl;
 
   if( isSimulate )
@@ -813,6 +815,8 @@ void ind_noID_NonmemTranslatorTest::testIndDataClass()
   oIndDataDriver.close();
 
   char command[256];
+  sprintf( command, "\necho --- %s ---\n", fIndDataDriver );
+  system( command );
   sprintf( command, "g++ -g %s -o %s -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -I/usr/local/include/spktest", fIndDataDriver_cpp, fIndDataDriver );
   if( system( command ) != 0 )
     {
@@ -892,6 +896,8 @@ void ind_noID_NonmemTranslatorTest::testDataSetClass()
   oDataSetDriver.close();
 
   char command[256];
+  sprintf( command, "\necho --- %s ---\n", fDataSetDriver );
+  system( command );
   sprintf( command, "g++ -g %s -o %s -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -I/usr/local/include/spktest", fDataSetDriver_cpp, fDataSetDriver );
   if( system( command ) != 0 )
     {
