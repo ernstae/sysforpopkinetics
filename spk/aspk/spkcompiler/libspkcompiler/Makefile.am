@@ -13,6 +13,10 @@ MOSTLYCLEANFILES = explang.cpp explang.output lex_explang.c
 
 libspkcompiler_la_SOURCES = \
         config.h \
+	lower.h \
+	lower.cpp \
+	upper.h \
+	upper.cpp \
 	Symbol.cpp \
 	Symbol.h \
 	SymbolTable.cpp \
@@ -26,6 +30,8 @@ nobase_pkginclude_HEADERS = \
 	$(NONMEM)/NonmemTranslator.h
 
 pkginclude_HEADERS = \
+	lower.h \
+	upper.h \
 	Symbol.h \
 	SymbolTable.h \
 	client.h \
