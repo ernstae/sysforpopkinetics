@@ -1617,6 +1617,7 @@ void fitPopulation(
     // [ Comment by Sachiko, 10/09/2002 ]
     // This routine runs only in single processing mode.
     //
+    DoubleMatrix* pdmatNull = 0;
     firstOrderOpt( model,
                    dvecN,
    	   		       dvecY,
@@ -1634,7 +1635,8 @@ void fitPopulation(
 				   dvecBStep,
 				   popObjOut,
 				   pdrowLTilde_alpOut,
-				   pdmatLTilde_alp_alpOut );
+				   pdmatLTilde_alp_alpOut,
+				   pdmatNull );
 
   }  
   //
