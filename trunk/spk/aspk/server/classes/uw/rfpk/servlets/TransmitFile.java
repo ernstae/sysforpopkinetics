@@ -3,26 +3,24 @@ package uw.rfpk.servlets;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
-import java.security.*;
-import javax.crypto.*;
 import java.nio.*;
 import javax.swing.JOptionPane;
 
 /**
- * This servlet receives a stream and put it in a byte array.  The byte array
- * is decrypted and the results is contained in another byte array.  The first
+ * This servlet receives a stream and put it in a byte array.  The first
  * four-bytes of the resulting byte array is an int value that is the length 
  * of the first message.  The following bytes of the length is the content of
  * the first message.  The next four-bytes is another int value that is the 
  * length of the second message.  The messages are converted into String objects.
  * Currently, there is only one messages contained in the incoming stream.
  * The servlet uses the String object as the filename to open the requested
- * file in the directory /home/jiaji/User/USER_NAME.  The servlet then creats
- * two String objects.  The first String object is the coontent of the file and 
- * the last String object is the processing result message to the client.  If the
- * requested file does not exist, the first object will be only a character '/r'.
- * The servlet encodes these outgoing messages in the same way as the incoming 
- * messages before sending them out as a stream.
+ * file in the directory /home/jiaji/jakarta-tomcat-4.1.24/webapps/spk/User/USER_NAME.  
+ * The servlet then creats two String objects.  The first String object is the 
+ * content of the file and the last String object is the processing result message 
+ * to the client.  If the requested file does not exist, the first object will be "".
+ * The servlet puts the messages into a byte array in the same way as the incoming 
+ * messages and sends it out as a stream.
+ *
  * @author Jiaji Du
  * @version 1.0
  */
@@ -39,140 +37,95 @@ public class TransmitFile extends HttpServlet
     public void service(HttpServletRequest req, HttpServletResponse resp)
 	throws ServletException, IOException
     {
+        // Get the user name of the session for saving the file
+        String user = (String)req.getSession().getAttribute("USER_NAME");
+  
+        // Prepare output message
+        String message1 = null;
+        String message2 = null;
+        
+        // Get the input stream for reading data from the client
+        ObjectInputStream in = new ObjectInputStream(req.getInputStream());  
+        
+        // Set the content type we are sending
+        resp.setContentType("application/octet-stream");
+        
+        // Data will always be written to a byte array buffer so
+        // that we can tell the server the length of the data
+        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+        
+        // Create the output stream to be used to write the data
+        // to our buffer
+        ObjectOutputStream out = new ObjectOutputStream(byteOut);
+        
         try
-	{
-            // Get the user name of the session for saving the file
-            String user = (String)req.getSession().getAttribute("USER_NAME");
-
-            // Get the incoming messages
-            InputStream in = new DataInputStream(req.getInputStream());       
-            byte[] encryptedIn = new byte[req.getContentLength()];
-            in.read(encryptedIn);
-
-            // Get the secret key of the session for encryption and decryption
-            SecretKey key = (SecretKey)req.getSession().getAttribute("KEY");
-
-            // Decrypt the incoming messages
-            Cipher cipherIn = Cipher.getInstance("Blowfish", "SunJCE");
-            cipherIn.init(Cipher.DECRYPT_MODE, key); 
-            byte[] decryptedIn = crypt(encryptedIn, cipherIn);
-
-            // Recover the incoming message from the byte array
-            ByteBuffer byteBuffer = ByteBuffer.allocate(decryptedIn.length);
-            byteBuffer.put(decryptedIn);
-            byteBuffer.rewind();
-            byte[] messageIn = new byte[byteBuffer.getInt()];
-            byteBuffer.get(messageIn);
-
-            // Read the incoming message
-            String fileName = new String(messageIn);
-
-            // Open the file in the user's directory
-            String pathName = "/home/jiaji/jakarta-tomcat-4.1.24/webapps/spk/user/" + user + "/" + fileName;
-            File oldFile = new File(pathName);  
-            String message1, message2;
-            if(oldFile.exists())
-	    {
-                BufferedReader fileIn = new BufferedReader(new FileReader(oldFile));
-                String fileText = "";
-                while(true)
+        {
+            // Read the data from the client 
+            String secret = (String)in.readObject();
+            if(secret.equals((String)req.getSession().getAttribute("SECRET")))             
+            { 
+                String fileName = (String)in.readObject();
+        
+                // Open the file in the user's directory
+                String pathName = "/home/jiaji/jakarta-tomcat-4.1.24/webapps/spk/user/" + user + "/" + fileName;
+                File oldFile = new File(pathName);  
+                if(oldFile.exists())
 	        {
-                    int i = fileIn.read();
-                    if(i != -1)
-                        fileText += (char)i;
-                    else
-                        break;
-                }
-                fileIn.close();
+                    BufferedReader reader = new BufferedReader(new FileReader(pathName));
+                    StringBuffer buffer = new StringBuffer();
+                    boolean done = false;
+                    while(!done)
+                    {
+                        // Read a line
+                        String line = reader.readLine();                            
+                        if(line == null) 
+                            done = true;
+                        else
+                            buffer.append(line).append("\n");
+	            }                
+                    reader.close();
 
-                // Write the outgoing messages
-                message1 = fileText;
-                message2 = "The file " + fileName + " is transmitted.";
+                    // Write the outgoing messages
+                    message1 = buffer.toString();
+                    message2 = "The file " + fileName + " is transmitted.";
+                }
+                else
+	        {
+                    // Write the outgoing messages
+                    message1 = "";
+                    message2 = "The file " + fileName + " does not exist.";
+                }
             }
             else
-	    {
+            {
                 // Write the outgoing messages
                 message1 = "";
-                message2 = "The file " + fileName + " does not exist.";
+                message2 = "Authentication error.";              
             }
-
-            // Put the outgoing messages in a byte array
-            byte[] messageOut1 = message1.getBytes();
-            byte[] messageOut2 = message2.getBytes();
-            byteBuffer = ByteBuffer.allocate(8 + messageOut1.length + messageOut2.length);
-            byteBuffer.putInt(messageOut1.length);
-            byteBuffer.put(messageOut1);
-            byteBuffer.putInt(messageOut2.length);
-            byteBuffer.put(messageOut2);
-            byte[] decryptedOut = byteBuffer.array();
-
-            // Encrypt the outgoing mesage
-            Cipher cipherOut = Cipher.getInstance("Blowfish", "SunJCE");
-            cipherOut.init(Cipher.ENCRYPT_MODE, key);
-            byte[] encryptedOut = crypt(decryptedOut, cipherOut);
-
-            // Send the message out
-            resp.setContentType("application/octet-stream");
-            resp.setContentLength(encryptedOut.length);
-            ServletOutputStream servletOut = resp.getOutputStream();
-            servletOut.write(encryptedOut);
-            servletOut.close();
         }
-        catch(GeneralSecurityException e)
+        catch(ClassNotFoundException e)
         {
-            JOptionPane.showMessageDialog(null, 
-                                          "GeneralSecurityException = " + e,   
-                                          "Input Error",    
-                                          JOptionPane.ERROR_MESSAGE);         
         }
-    }
+        
+        // Write the data to our internal buffer
+        out.writeObject(message1);
+        out.writeObject(message2);
 
-    /**
-     * Uses a cipher to transform the bytes in a byte array
-     * and returns the transformed bytes to another byte array.
-     * @param in the input bytes in an array
-     * @param cipher the cipher that transforms the bytes
-     * @return out the output bytes in an array
-     * @exception IOException
-     * @exception GeneralSecurityException
-     */
-    public static byte[] crypt(byte[] in, Cipher cipher) 
-                         throws IOException, GeneralSecurityException
-    {
-        int blockSize = cipher.getBlockSize();
-        int outputSize = cipher.getOutputSize(blockSize);
-        int nBlock = in.length / blockSize;
-        int nFinal = in.length % blockSize;
-        int nTotal = 0;
-
-        byte[] outTotal = new byte[nBlock * outputSize + outputSize];
-        byte[] inBytes = new byte[blockSize];
-        byte[] outBytes = new byte[outputSize];
-
-        for(int i = 0; i < nBlock; i++)
-        {
-            System.arraycopy(in, i * blockSize, inBytes, 0, blockSize);
-            int outLength = cipher.update(inBytes, 0, blockSize, outBytes);
-            System.arraycopy(outBytes, 0, outTotal, nTotal, outLength);
-            nTotal += outLength;
-        }
-       
-        if (nFinal > 0)
-        {
-            System.arraycopy(in, nBlock * blockSize, inBytes, 0, nFinal);
-            outBytes = cipher.doFinal(inBytes, 0, nFinal);
-        }
-        else
-        {
-            outBytes = cipher.doFinal();
-        }
-
-        System.arraycopy(outBytes, 0, outTotal, nTotal, outBytes.length);
-        nTotal += outBytes.length;
-      
-        byte[] out = new byte[nTotal];
-        System.arraycopy(outTotal, 0, out, 0, nTotal);
-
-        return out;
+        // Flush the contents of the output stream to the byte array
+        out.flush();
+        
+        // Get the buffer that is holding our response
+        byte[] buf = byteOut.toByteArray();
+        
+        // Notify the client how much data is being sent
+        resp.setContentLength(buf.length);
+        
+        // Send the buffer to the client
+        ServletOutputStream servletOut = resp.getOutputStream();
+        
+        // Wrap up
+        servletOut.write(buf);
+        servletOut.close();
     }
 }
+
