@@ -673,12 +673,23 @@ const valarray<double> AkronBtimesC(const valarray<double> &A, int nColsA,
   valarray<double> At( nColsA * nRowsA ); 
   At = transpose( A, nColsA );
 
-  valarray<double> Cj;     // nRowsC x 1
-  valarray<double> BCjAt;  // ( nRowsB x 1 ) x ( nColsA x nRowsA ) = nRowsB x nRowsA
-  valarray<double> BCj;
+  valarray<double> Cj( nRowsC );
+  valarray<double> BCjAt( nRowsD ); 
+  valarray<double> BCj( nRowsB * nColsA );
 
   for( int j = 0; j < nColsC; j++ )
   {
+    // REVISIT - Sachiko 06/25/03
+    //
+    // With g++, the following code does not work:
+    //    valarray<double> a;
+    //    valarray<double> b( 1.0, 3 );// vector of size 3, filled with 1.0.
+    //    a = b;
+    // The reference of "b" does not get transfered to "a" properly.
+    // So, it's gatta be instead:
+    //    valarray<double> a = b;
+    // Same as true for valarray = slice assignment.
+    //
     Cj = C[ slice( j*nRowsC, nRowsC, 1) ]; // At this point this is a vector.
     assert( Cj.size() == nRowsC );
     // From this pointon, treat Cj as a nColsB by nColsA matrix.

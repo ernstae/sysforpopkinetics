@@ -514,9 +514,8 @@ const valarray<double> AkronItimesC(const valarray<double> &A, int nColsA,
   valarray<double> At( nColsA * nRowsA ); 
   At = transpose( A, nColsA );
 
-  valarray<double> Cj;     // nRowsC x 1
-  valarray<double> ICjAt;  // ( nRowsI x 1 ) x ( nColsA x nRowsA ) = nRowsI x nRowsA
-  valarray<double> ICj;
+  valarray<double> Cj( nRowsC );
+  valarray<double> ICjAt( nRowsD );
 
   for( int j = 0; j < nColsC; j++ )
   {
