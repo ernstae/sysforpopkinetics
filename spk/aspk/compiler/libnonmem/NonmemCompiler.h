@@ -3,8 +3,9 @@
 
 #include <map>
 #include "../libcommon/SpkCompiler.h"
-#include "../libnonmem/explang.tab.h"
+//#include "../libnonmem/explang.tab.h"
 
+/*
 extern "C"{
   int yylex(void);  
   int yyparse(void);
@@ -13,6 +14,8 @@ extern int yydebug;
 extern FILE *yyin;
   
 extern int gSpkExpLines;
+*/
+
 /**
  * A global counter to keep track of # of errors detected during a call to yyparse().
  *
@@ -23,7 +26,7 @@ extern int gSpkExpLines;
  * \note The documentation for the yyparse specification found in @c nmabb.y 
  * is not visible because DOXYGEN does not support YACC.
  */
-extern int gSpkExpErrors;
+//extern int gSpkExpErrors;
 
 /**
  * A global pointer to a ExpTreeGenerator object (providing a set of utilities re. DOM-based tree).
@@ -34,7 +37,7 @@ extern int gSpkExpErrors;
  * tree and its components as well as other utilities to print out the tree contents
  * to a file or standard output and possibly more.
  */
-extern ExpTreeGenerator *gSpkExpTreeGenerator;
+//extern ExpTreeGenerator *gSpkExpTreeGenerator;
 /**
  * A global pointer to a DOM document (tree).
  *
@@ -44,7 +47,7 @@ extern ExpTreeGenerator *gSpkExpTreeGenerator;
  * \todo Perhaps this pointer should not be exposed or should be accessed always though the
  * global pointer (util) to the ExpTreeGenerator object.
  */
-extern DOMDocument *gSpkExpTree;
+//extern DOMDocument *gSpkExpTree;
 
 /**
  * A global pointer to the symbol table.
@@ -53,7 +56,7 @@ extern DOMDocument *gSpkExpTree;
  * These symbols include both keywords (symbols predefined/reserved by the NMTRAN)
  * and arbitary symbols defined by the end user.
  */
-extern SymbolTable *gSpkExpSymbolTable;
+//extern SymbolTable *gSpkExpSymbolTable;
 
 /**
  * Specialization of SpkCompiler for NONMEM.
@@ -170,7 +173,10 @@ class NonmemCompiler : public SpkCompiler{
   /**
    *
    */
-  enum BaseModel { NONE, ADVAN1, ADVAN2, ADVAN3, ADVAN4, ADVAN5, ADVAN6, ADVAN7 };
+  enum BaseModel { NONE, 
+		   ADVAN1, ADVAN2, ADVAN3, ADVAN4, ADVAN5, 
+		   ADVAN6, ADVAN7, ADVAN8, ADVAN9, ADVAN10, 
+		   ADVAN11, ADVAn12 };
   enum BaseModel baseModel;
   enum BaseModel setCannedModel( const char* canned );
 

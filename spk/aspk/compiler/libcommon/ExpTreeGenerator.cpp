@@ -13,7 +13,20 @@
 using namespace std;
 using namespace xercesc;
 
+extern "C"{
+  int yylex(void);  
+  int yyparse(void);
+};
+extern int                gSpkExpLines;
+extern int                gSpkExpErrors;
+extern ExpTreeGenerator * gSpkExpTreeGenerator;
+extern SymbolTable      * gSpkExpSymbolTable;
+extern FILE             * yyin;
+extern int                yydebug;
+
+
 ExpTreeGenerator::ExpTreeGenerator()
+  : isToTerminate( true ) // Remember that this object initialized XMLPlatformUtils.
 {
   try
     {
@@ -34,18 +47,42 @@ ExpTreeGenerator::ExpTreeGenerator()
   // The string passed to getDOMImplementation is a list of features.  
   // "Core"... I do not know what it really means but do never change it!
   // 
-  core = const_cast<XMLCh*>( X("core") );
+  const XMLCh* core = const_cast<XMLCh*>( X("core") );
   assert( core != NULL );
   impl =  DOMImplementationRegistry::getDOMImplementation( core );
   assert( impl != NULL );
 
-  unit = const_cast<XMLCh*>( X("unit" ) );
+  doc = createTree( X( "unit" ) );
+  assert( doc != NULL );
+  root = doc->getDocumentElement();
+}
+ExpTreeGenerator::ExpTreeGenerator( bool shouldTerminate )
+  : isToTerminate( shouldTerminate )
+{
+  //
+  // The string passed to getDOMImplementation is a list of features.  
+  // "Core"... I do not know what it really means but do never change it!
+  // 
+  const XMLCh* core = X("core");
+  assert( core != NULL );
+  impl =  DOMImplementationRegistry::getDOMImplementation( core );
+  assert( impl != NULL );
+
+  doc = createTree( X( "unit" ) );
+  assert( doc != NULL );
+  root = doc->getDocumentElement();
+}
+DOMDocument* ExpTreeGenerator::createTree( const XMLCh* unit )
+{
   assert( unit != NULL );
+
   try{
-    doc = impl->createDocument(
-                    0,                    // root element namespace URI.
+     DOMDocument * newTree = impl->createDocument(
+                    0,               // root element namespace URI.
                     unit,            // root element name
-                    0);                   // document type object (DTD).
+                    0);              // document type object (DTD).
+     assert( newTree != NULL );
+     return newTree;
   }
   catch( const DOMException & e ) 
     {
@@ -56,27 +93,39 @@ ExpTreeGenerator::ExpTreeGenerator()
 	  break;
 
         case DOMException::NAMESPACE_ERR: 
-	  cerr << "The qualifiedName is malformed, if the qualifiedName has a prefix and the namespaceURI is null, or if the qualifiedName has a prefix that is xml and the namespaceURI is different from http://www.w3.org/XML/1998/namespace , or if the DOM implementation does not support the XML feature but a non-null namespace URI was provided, since namespaces were defined by XML." << endl;
+	  cerr << "The qualifiedName is malformed, ";
+	  cerr << "if the qualifiedName has a prefix and the namespaceURI is null, ";
+          cerr << "or if the qualifiedName has a prefix that is xml and the ";
+	  cerr << "namespaceURI is different from http://www.w3.org/XML/1998/namespace, ";
+	  cerr << "or if the DOM implementation does not support the XML feature ";
+	  cerr << "but a non-null namespace URI was provided, ";
+	  cerr << "since namespaces were defined by XML." << endl;
 	  break;
 
         case DOMException::WRONG_DOCUMENT_ERR: 
-	  cerr << "Doctype has already been used with a different document or was created from a different implementation." << endl;
+	  cerr << "Doctype has already been used with a different document or ";
+	  cerr << "was created from a different implementation." << endl;
 	  break;
 
         case DOMException::NOT_SUPPORTED_ERR: 
-	  cerr << "Maybe the DOM implementations does support the XML feature, if they choose not to support this method. Other features introduced in the future, by the DOM WG or in extensions defined by other groups, may also demand support for this method; please consult the definition of the feature to see if it requires this method." << endl;
+	  cerr << "Maybe the DOM implementations does support the XML feature, ";
+	  cerr << "if they choose not to support this method. Other features ";
+	  cerr << "introduced in the future, by the DOM WG or in extensions ";
+	  cerr << "defined by other groups, may also demand support for this method; ";
+	  cerr << "please consult the definition of the feature to see ";
+	  cerr << "if it requires this method." << endl;
 	  break;
 	}
+      return NULL;
     }
-  assert( doc != NULL );
-
-  root = doc->getDocumentElement();
 }
 ExpTreeGenerator::~ExpTreeGenerator()
 {
   releaseExpNodeCarriers();
   doc->release();
-  XMLPlatformUtils::Terminate();
+
+  if( isToTerminate )
+    XMLPlatformUtils::Terminate();
 }
 DOMDocument* ExpTreeGenerator::getRoot() const
 {
