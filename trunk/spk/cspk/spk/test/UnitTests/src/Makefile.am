@@ -81,4 +81,6 @@ testall_SOURCES = \
 	popStatisticsTest.cpp \
 	../config.h
 
+testall_CXXFLAGS = -I/usr/local/cppunit/include
+
 testall_LDFLAGS = -lspk /usr/local/lib/libnagc.a -lpthread -lm -lcppunit
