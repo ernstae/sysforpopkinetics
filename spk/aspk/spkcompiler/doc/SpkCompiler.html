@@ -10,12 +10,54 @@ SPK Compiler
 </h1></center>
 <p>
 SPK Compiler translates <a href="SpkML.html">SpkML</a> documents to C++
-source code files and compiles/links them on an target machine where the generated
-C++ program is executed.
+source code files.  The overall picture of package structure is demonstrated
+in the diagram below:
 </p>
+<pre>
+         +--------------------+
+         |  class SpkMLToCpp  |
+         +--------------------+-------------------------------+
+         | void translate()                                   |
+         | const vector&gt;string&lt; getFilenameList() const |
+         +----------------------------------------------------+
+            |
+            | USES
+            |
+           \|/
+         +--------------------------------+
+         | abstract class ClientTransltor |
+         +--------------------------------+---------------------------+
+         | virtual void translate()                                   |
+         | virtual const vector&gt;string&lt; getFilenameList() const |
+         | ...                                                        |
+         +------------------------------------------------------------+
+                    /|\
+                   /-+-\
+                     |
+                     | DERIVE
+                     |
+         +---------------------+
+         | class xxxTranslator |
+         +---------------------+---------------------------+
+         | void translate()                                |
+         | const vector&gt;string&lt; getFilenames() const |
+         | ...                                             |
+         +-------------------------------------------------+
+           |
+           | USES
+          \|/
+          yyparse() and yylex() (implemented specific to the client)
+
+</pre>
+A driver creats an SpkMLToCpp object and the object, in turn, plugs in a
+client specific (which is determined from the contents of the input XML document)
+ClientTranslator object.  SpkMLToCpp::translate() and SpkMLToCpp::getFilenameList()
+<i>use</i> ClientTranslator::translate() and ClientTranslate::getFilenameList(), 
+respectively.  Note that, it is "use" not "inherit".
+
 <p>
-The SpkML document is first converted to a DOM parse tree.  The compiler
-determines the MDA client (ex. NONMEM, MatLab, SAAM-II...) from which
+The SpkML document is first converted to a DOM parse tree within SpkMLToCpp object.
+The object determines the MDA client (ex. NONMEM, MatLab, SAAM-II...) from which
 the document is originated.  Depending on the client, the compiler switches
 the behavior accordingly.  For NONMEM, for example, the compiler
 determines whether the end-user has requested to use one of the predefined (canned)

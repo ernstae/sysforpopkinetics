@@ -1,0 +1,164 @@
+<!--------------------------------------------------------------------------------
+
+      Specification: SpkOutML for NONMEM
+
+      This document specifies the SpkOutML (output SpkML) grammer specialized
+      for NONMEM client when "population level analysis" is requested.
+
+      !! IMPORTANT !!!
+      Except for the very top element which specifies the type of document,
+      the followings are "additinal" elements and attributes to 
+      the existing ELEMENTs and ATTLISTs in the SpkInML DTD.  
+
+      Related document: SpkInML_nonmem.txt
+
+---------------------------------------------------------------------------------->
+
+<!---
+   This tag which specifies the type of document replaces:
+     <!ELEMENT spkinml (content, driver, model, data, note)>
+   in SpkInML DTD. 
+--->
+<!ELEMENT spkoutml (content, driver, model, data, presentation, note)>
+
+==================================================================
+  population parameter estimization related
+==================================================================
+<!---
+   This num_iterations_completed will have an integer value indicating
+   the number of iterations performed during the population level
+   optimization if population parameter estimation were requested.
+--->
+<!ATTLIST pop_opt num_iterations_completed CDATA  #IMPLIED>
+
+<!---
+   This too_many_iterations will have yes/no answer.
+   "yes" means the population level optimization completed
+   normally within less than or equal to the maximum number of
+   iterations allowed by the user if population parameter
+   estimation were requested.
+--->
+<!ATTLIST pop_opt too_many_iterations     (yes|no) #IMPLIED>
+
+<!---
+   pop_opt will follow the final estimate, the objective value,
+   the first derivative of objective with respect to the population parameter
+   and the second derivative of objective with respect to, both, population 
+   parameter if they were requested and successfully computed.
+   The (SPK) population parameter is a list of (theta, omega, sigma) in the
+   order, where the values of omega and sigma matrices used for computation 
+   are only the lower triangle read in the column major order.
+--->
+<!ELEMENT pop_opt (estimate?, 
+                   objective?, 
+                   objective_poppar?, 
+                   objective_poppar_poppar? )>
+
+<!---
+   theta will have the final estimate value.  The value is a duplicate
+   of the estimate value under pop_opt.
+--->
+<!ELEMENT theta (estimate)>
+
+<!---
+   omega will have the final estimate value and the boundary values 
+   computed/used by SPK.  The value is a duplicate of the estimate 
+   value under pop_opt.
+--->
+<!ELEMENT omega (low, up, estimate?)>
+
+<!---
+   sigma will have the final estimate value and the boundary values
+   computed/used by SPK.  The value is a duplicate of the estimate 
+   value under pop_opt.
+--->
+<!ELEMENT sigma (low, up, estimate)>
+
+==================================================================
+  individual parameter estimization related
+==================================================================
+<!---
+   This num_iterations_completed will have an integer value indicating
+   the number of iterations performed during the individual level
+   optimization if individual parameter estimation were requested.
+--->
+<!ATTLIST ind_opt num_itrations_completed #CDATA   #IMPLIED>
+
+<!---
+   This too_many_iterations will have yes/no answer.
+   "yes" means the individual level optimization completed
+   normally within less than or equal to the maximum number of
+   iterations allowed by the user if individual parameter estimation
+   were requested.
+--->
+<!ATTLIST ind_opt is_imcompleted          (yes|no) #IMPLIED>
+
+<!---
+   ind_opt will follow the final estimate, the objective value,
+   the first derivative of objective with respect to the individual parameter
+   and the second derivative of objective with respect to, both, 
+   individual parameter if they were requested and successfully computed.
+--->
+<!ELEMENT ind_opt (estimate?,
+                   objective?, 
+                   objective_indpar?, 
+                   objective_indpar_indpar? )>
+
+<!---
+   eta will have the final estimate value, the boundary values computed/used by SPK
+   and statistics values if they were requested.  The estimate value
+   is a duplicate of the estimate value returned under ind_opt.
+--->
+<!ELEMENT eta   (low, up, estimate?)>
+
+<!--- estimate will have the final estimate value for the parameter
+  (population/individual).  The size of the vector is the same as the
+  size of the parameter.  
+---> 
+<!ELEMENT estimate (value)+>
+
+==================================================================
+  population/individual parameter related statistics
+==================================================================
+
+<!ELEMENT pop_stat (stderror+, 
+                    correlation+, 
+                    covariance+, 
+                    coefficient+, 
+                    confidence+)>
+
+<!---
+   stderror will have the standard error for the parameter 
+   (population/indiviual).  The size of the vector is the same
+   as the size of the parameter.
+--->
+<!ELEMENT stderror    (value)+>
+
+<!---
+   correlation will have the correlation matrix for the parameter
+   (population/individual).  The size of the matrix is the same
+   as the squre of the size of the parameter.
+--->
+<!ELEMENT correlation (value)+>
+
+<!---
+   covariance will have the covariance matrix for the parameter 
+   (population/individual).  The size of the matrix is the same
+   as the square of the size of the parameter.
+--->
+<!ELEMENT covariance  (value)+>
+
+<!---
+   coefficient will have the coefficient for the parameter 
+   (population/individual).  The size of the vector is the same
+   as the size of the parameter.
+--->
+<!ELEMENT coefficient (value)+>
+
+<!---
+   confidence will have the confidence interval for the parameter 
+   (population/individual).  The size of the vector is twice
+   as long as the size of the parameter.
+--->
+<!ELEMENT confidence  (value)+>
+

@@ -2,12 +2,14 @@
 
       Specification: SpkInML for NONMEM
 
-      This document specifies the SpkInML format specialized
+      This document specifies the SpkInML (input SpkML) grammer specialized
       for NONMEM client when "population level analysis" is requested.
+
+      Related document: SpkOutML_nonmem.txt
 
 ---------------------------------------------------------------------------------->
 
-<!ELEMENT spkinml (content, driver, model, data, output*)>
+<!ELEMENT spkinml (content, driver, model, data, presentation, note)>
 
 <!----------------------------------------------------
     <content> specifies a short description or
@@ -32,27 +34,39 @@
 -->
 <!ATTLIST content client (nonmem|saam2|matlab|...) #FIXED "nonmem">
 
-<!--
-     <content> takes "process" attribute which chooses 
-     either parameter estimation process or data simulation prcess.
-     The default value is "estimate".
-     When "simulate" is chosen, only the following sub-elements
-     in the <driver> element are required 
-     (the rest, <model> and <data> remain the same):
+<!---
+     <content> takes "estimation" attribute which
+     requests/avoid the parameter estimation process.
+--->
+<!ATTLIST content estimation (yes|no) #REQUIRED>
 
-         <driver>
-            <theta>
-                <in>
-                <up>
-                <low>
-            <omega>
-                <in>
-            <sigma>
-                <in>
-            <eta>
-                <in>
--->
-<!ATTLIST content process (estimate|simulate) #FIXED "estimate">
+<!---
+     <content> takes "simulation" attribute which
+     requests/avoid the data simulation process.
+     When simulation is requested but estimation is avoided,
+     only the following elements are required for a population 
+     data simulation:
+
+         <data>		// a small set of data to begin with
+         <model>	// the entire model specification
+         <driver>       // only the components followed here
+            <pop_sim>
+            <pop_opt>
+               <theta>
+               <omega>
+               <sigma>
+               <eta>                  
+
+     For an individual data simulation:
+
+         <data>		// a small set of data to begin with
+         <model>	// the entire model specification
+         <driver>       // only the components followed here
+            <ind_sim>
+            <ind_opt>
+               <eta>
+--->                  
+<!ATTLIST content simulation (yes|no) #REQUIRED>
 
 <!--
      <content> takes "analysis" attribute which
@@ -68,8 +82,8 @@
      <driver> contains information necessary to
      define a SPK driver.
 ---------------------------------------------------->
-<!ELEMENT driver (theta, sigma, omega+, eta, 
-	  pop_opt, ind_opt, pop_stat, ind_stat)>
+<!ELEMENT driver (theta, sigma+, omega+, eta, 
+	  pop_opt, ind_opt, pop_stat, ind_stat, pop_sim?, ind_sim?)>
 
 <!--
      <theta> section contains the initial estimate (in),
@@ -163,15 +177,24 @@
 <!ELEMENT pop_opt EMPTY>
 
 <!ATTLIST pop_opt approximation (fo|foce|laplace) #REQUIRED>
-<!ATTLIST pop_opt pop_size CDATA #REQUIRED>
-<!ATTLIST pop_opt epsilon CDATA #REQUIRED>
-<!ATTLIST pop_opt mitr CDATA #REQUIRED>
-<!ATTLIST pop_opt trace CDATA #REQUIRED>
-<!ATTLIST pop_opt restart (yes|no) #REQUIRED>
-<!ATTLIST pop_opt par_out (yes|no) #REQUIRED>
-<!ATTLIST pop_opt obj_out (yes|no) #REQUIRED>
-<!ATTLIST pop_opt deriv1_out (yes|no) #REQUIRED>
-<!ATTLIST pop_opt deriv2_out (yes|no) #REQUIRED>
+<!ATTLIST pop_opt pop_size      CDATA    #REQUIRED>
+<!ATTLIST pop_opt epsilon       CDATA    #REQUIRED>
+<!ATTLIST pop_opt mitr          CDATA    #REQUIRED>
+<!ATTLIST pop_opt trace         CDATA    #REQUIRED>
+<!ATTLIST pop_opt is_restart    (yes|no) #REQUIRED>
+<!ATTLIST pop_opt is_par_out    (yes|no) #REQUIRED>
+<!ATTLIST pop_opt is_obj_out    (yes|no) #REQUIRED>
+<!ATTLIST pop_opt is_deriv1_out (yes|no) #REQUIRED>
+<!ATTLIST pop_opt is_deriv2_out (yes|no) #REQUIRED>
+
+<!ELEMENT pop_sim EMPTY>
+
+<!---
+     When <pop_sim> appears in the document, it must 
+     follow "seed" attribute, which is set to an integer
+     value used as a seed to generate random numbers.
+--->
+<!ATTLIST pop_sim seed CDATA #REQUIRED>
 
 <!--
       <ind_opt> is an empty element in which
@@ -181,14 +204,21 @@
 <!ELEMENT ind_opt EMPTY>
 
 
-<!ATTLIST ind_opt epsilon CDATA #REQUIRED>
-<!ATTLIST ind_opt mitr CDATA #REQUIRED>
-<!ATTLIST ind_opt trace CDATA #REQUIRED>
-<!ATTLIST ind_opt restart (yes|no) #REQUIRED>
-<!ATTLIST ind_opt par_out (yes|no) #REQUIRED>
-<!ATTLIST ind_opt obj_out (yes|no) #IMPLIED>
-<!ATTLIST ind_opt deriv1_out (yes|no) #IMPLIED>
-<!ATTLIST ind_opt deriv2_out (yes|no) #IMPLIED>
+<!ATTLIST ind_opt epsilon       CDATA    #REQUIRED>
+<!ATTLIST ind_opt mitr          CDATA    #REQUIRED>
+<!ATTLIST ind_opt trace         CDATA    #REQUIRED>
+<!ATTLIST ind_opt is_restart    (yes|no) #REQUIRED>
+<!ATTLIST ind_opt is_par_out    (yes|no) #REQUIRED>
+<!ATTLIST ind_opt is_obj_out    (yes|no) #FIXED "no">
+<!ATTLIST ind_opt is_deriv1_out (yes|no) #FIXED "no">
+<!ATTLIST ind_opt is_deriv2_out (yes|no) #FIXED "no">
+
+<!---
+     When <ind_sim> appears in the document, it must 
+     follow "seed" attribute, which is set to an integer
+     value used as a seed to generate random numbers.
+--->
+<!ATTLIST ind_sim seed CDATA #REQUIRED>
 
 <!--
       <pop_stat> is an empty element in which
@@ -198,12 +228,12 @@
 -->
 <!ELEMENT pop_stat EMPTY>
 
-<!ATTLIST pop_stat formulation (rsr|r|s) #REQUIRED>
-<!ATTLIST pop_stat stderror (yes|no) #REQUIRED>
-<!ATTLIST pop_stat correlation (yes|no) #REQUIRED>
-<!ATTLIST pop_stat covariance (yes|no) #REQUIRED>
-<!ATTLIST pop_stat coefficient (yes|no) #REQUIRED>
-<!ATTLIST pop_stat confidence (yes|no) #REQUIRED>
+<!ATTLIST pop_stat formulation        (rsr|r|s) #REQUIRED>
+<!ATTLIST pop_stat is_stderror_out    (yes|no) #REQUIRED>
+<!ATTLIST pop_stat is_correlation_out (yes|no) #REQUIRED>
+<!ATTLIST pop_stat is_covariance_out  (yes|no) #REQUIRED>
+<!ATTLIST pop_stat is_coefficient_out (yes|no) #REQUIRED>
+<!ATTLIST pop_stat is_confidence_out  (yes|no) #REQUIRED>
 
 <!--
       <ind_stat> is an empty element in which
@@ -213,11 +243,11 @@
 -->
 <!ELEMENT ind_stat EMPTY>
 
-<!ATTLIST ind_stat stderror (yes|no) #REQUIRED>
-<!ATTLIST ind_stat correlation (yes|no) #REQUIRED>
-<!ATTLIST ind_stat cov (yes|no) #REQUIRED>
-<!ATTLIST ind_stat coefficient (yes|no) #REQUIRED>
-<!ATTLIST ind_stat confidence (yes|no) #REQUIRED>
+<!ATTLIST ind_stat is_stderror_out    (yes|no) #REQUIRED>
+<!ATTLIST ind_stat is_correlation_out (yes|no) #REQUIRED>
+<!ATTLIST ind_stat is_cov_out         (yes|no) #REQUIRED>
+<!ATTLIST ind_stat is_coefficient_out (yes|no) #REQUIRED>
+<!ATTLIST ind_stat is_confidence_out  (yes|no) #REQUIRED>
 
 <!---------------------------------------------------
      <model> section contains information
@@ -380,11 +410,11 @@
 	  |drop|skip|evid|amt|rate|ss|ii|addl|cmt|pcmt|call|cont) #IMPLIED>
 
 <!---------------------------------------------------
-     <output> section contains the information 
+     <presentation> section contains the information 
      related to the format used to present
      the results.
 ----------------------------------------------------->
-<!ELEMENT output (table+, scatterplot+)>
+<!ELEMENT presentation (table+, scatterplot+)>
 
 <!--
      There can be as many as 10 <table>s per problem.
@@ -464,3 +494,15 @@
 
 <!ATTLIST scatterplot begin #FIXED "1">
 <!ATTLIST scatterplot end   #FIXED "900">
+
+<!---------------------------------------------------
+   <note> section will contain any additional
+   information that is wanted to be remembered for
+   the transaction.
+----------------------------------------------------->
+<!---
+     <note> element for NONMEM MDA contains the
+     NONMEM control records corresponding to this SpkInML
+     document.
+--->
+<!ELEMENT note CDATA #REQUIRED>
