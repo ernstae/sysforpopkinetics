@@ -4175,11 +4175,13 @@ void NonmemTranslator::generateIndDriver( ) const
           oDriver << "                     NULL,"    << endl;
           oDriver << "                     NULL"     << endl;
           oDriver << "                   );" << endl;
-          oDriver << "      derParStatistics( bCov,"          << endl;
+          oDriver << "      derParStatistics( bMask,"         << endl;
+          oDriver << "                        bCov,"          << endl;
           oDriver << "                        stdPar,"        << endl;
           oDriver << "                        stdPar_b,"      << endl;
           oDriver << "                        nDegOfFreedom," << endl;
           oDriver << "                        " << ( myIsCov || myIsInvCov? "&stdParCovOut"        : "NULL" ) << "," << endl;
+          oDriver << "                        " << ( myIsCov || myIsInvCov? "&stdParInvCovOut"     : "NULL" ) << "," << endl;
           oDriver << "                        " << ( myIsStderr?            "&stdParSEOut"         : "NULL" ) << "," << endl;
           oDriver << "                        " << ( myIsCorrelation?       "&stdParCorrelationOut": "NULL" ) << "," << endl;
           oDriver << "                        " << ( myIsCoefficient?       "&stdParCoefficientOut": "NULL" ) << "," << endl;

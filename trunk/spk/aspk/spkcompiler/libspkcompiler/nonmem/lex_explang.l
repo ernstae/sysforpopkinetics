@@ -34,7 +34,7 @@ tok_digit                   [0123456789]
 tok_underscore               _
 tok_character               ({tok_alphanumeric_character} |{tok_special_character})
 tok_alphanumeric_character  ({tok_letter}|{tok_digit}|{tok_underscore})
-tok_special_character       [=+-/(),.':!"%&;<>?$*]
+tok_special_character       [=,()+-/*]
 tok_other_character         [^{tok_character}]
 tok_name                    {tok_letter}{tok_alphanumeric_character}*
 tok_named_constant          {tok_name}
