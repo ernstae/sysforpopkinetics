@@ -147,6 +147,7 @@ static void finish(int exit_value) {
   sprintf(buf, "stop; exit value = %d", exit_value);
   spklog(buf);
   fclose(logfile);
+  pvm_exit();
 }
 // handle a termination signal
 static void signal_handler(int signum) {
@@ -221,8 +222,10 @@ int main(int argc, char** argv) {
   // Open the log file
   sprintf(buf, "%s/log/spk%s/messages", SPK_SHARE, mode);
   if ((logfile = fopen(buf, "a")) == NULL) {
+    char msg[100];
     logfile = stdout;
-    die("could not open spk log file");
+    sprintf(msg, "could not open spk log file: %s", buf);
+    die(msg);
   }
   // Write the name of my host and my pid to the log
   struct utsname un;
