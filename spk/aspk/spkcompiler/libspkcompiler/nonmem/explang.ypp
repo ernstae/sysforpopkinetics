@@ -144,7 +144,7 @@ extern "C"{
       assert( gSpkExpErrorMessages != 0 );
       char m[ SpkCompilerError::maxMessageLen() ];
       sprintf( m, 
-               "!!! Error (%d) at line %d: \n\t%s.\n", 
+               "!!! Error (%d) at line %d: \n\t%s\n", 
                gSpkExpErrors, gSpkExpLines, err_message );
       if( strlen( gSpkExpErrorMessages ) > 0 )
          strcat( gSpkExpErrorMessages, m );
