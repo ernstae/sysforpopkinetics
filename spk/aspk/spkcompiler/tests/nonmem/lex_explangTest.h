@@ -16,6 +16,7 @@ public:
   virtual void tearDown();
   void testWhiteSpaces();
   void testComment();
+  void testIllegalComment();
   void testNamedConstant();
   void testNameLength();
   void testEngineeringNotation();
