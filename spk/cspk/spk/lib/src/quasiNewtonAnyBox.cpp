@@ -829,6 +829,8 @@ void quasiNewtonAnyBox(
   int    level             = optInfo.getLevel();
   bool   isWarmStartAnyBox = optInfo.getIsWarmStart();
 
+  string stringMessage;
+
 
   //------------------------------------------------------------
   // Validate the inputs (debug mode).
@@ -1282,9 +1284,22 @@ void quasiNewtonAnyBox(
       // case, then throw an exception.
       if ( iterCurr == iterBefore )
       {
+        stringMessage = "Unable to find optimal parameter values in quasiNewtonAnyBox.";
+
+        // See if any of the free elements of the parameter is near
+        // its bounds, i.e., within epsilon.
+        for ( i = 0; i < nObjParFree; i++ )
+        {
+          if ( yCurr[i] < epsilon || 1.0 - yCurr[i] < epsilon )
+          {
+            stringMessage += "  Note that some parameter values are near their bounds.";
+            break;
+          }
+        }
+
         throw SpkException( 
           SpkError::SPK_OPT_ERR,
-          "QuasiNewton01Box failed to perform at least one Quasi-Newton iteration.",
+          stringMessage.c_str(),
           __LINE__,
           __FILE__ );
       }
@@ -1368,7 +1383,6 @@ void quasiNewtonAnyBox(
 
   bool ok = false;
   SpkError::ErrorCode errorCode;
-  string stringMessage;
 
   // The number of iterations completed is one less than the
   // current iteration number.
