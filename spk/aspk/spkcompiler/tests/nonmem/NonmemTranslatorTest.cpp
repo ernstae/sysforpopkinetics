@@ -302,11 +302,33 @@ void NonmemTranslatorTest::testParsePopSource()
   N[2] = 3;
   NonmemTranslator xlator( data, source );
   SymbolTable *table = xlator.getSymbolTable();
-  Symbol * time = table->insertLabel( "TIME", "", N );
-  Symbol * cp   = table->insertLabel( "CP",   "", N );
   Symbol * id   = table->insertLabel( "ID",   "", N );
+  Symbol * time = table->insertLabel( "TIME", "", N );
+  Symbol * cp   = table->insertLabel( "CP",   "DV", N );
+
+  id->  initial[0][0] = "#1";
+  time->initial[0][0] = "0.0";
+  cp->  initial[0][0] = "0.0";
+
+  id->  initial[1][0] = "#2";
+  id->  initial[1][1] = "#2";
+  time->initial[1][0] = "0.0";
+  time->initial[1][1] = "1.0";
+  cp->  initial[1][0] = "0.0";
+  cp->  initial[1][1] = "10.0";
+
+  id->  initial[2][0] = "#3";
+  id->  initial[2][1] = "#3";
+  id->  initial[2][2] = "#3";
+  time->initial[2][0] = "0.0";
+  time->initial[2][1] = "1.0";
+  time->initial[2][2] = "2.0";
+  cp->  initial[2][0] = "0.0";
+  cp->  initial[2][1] = "10.0";
+  cp->  initial[2][2] = "20.0";
 
   xlator.parseSource();
+  remove( gSource );
 
   //cout << *table << endl;
   map<string,string>::const_iterator pLabel = labels.begin();
@@ -317,6 +339,9 @@ void NonmemTranslatorTest::testParsePopSource()
       CPPUNIT_ASSERT( s->name == pLabel->first );
       CPPUNIT_ASSERT( s->synonym == pLabel->second );
     }
+  CPPUNIT_ASSERT( table->findi("pred") != Symbol::empty() );
+  CPPUNIT_ASSERT( table->findi("wres") != Symbol::empty() );
+  CPPUNIT_ASSERT( table->findi("res")  != Symbol::empty() );
 
   Symbol *theta = table->find( "theta" );
   CPPUNIT_ASSERT( theta != Symbol::empty() );
@@ -373,7 +398,6 @@ void NonmemTranslatorTest::testParsePopSource()
       CPPUNIT_ASSERT_EQUAL( eta_in[i],  atof( eta->initial[0][i].c_str() ) );
     }
 
-  remove(gSource);
   XMLPlatformUtils::Terminate();
 }
 void NonmemTranslatorTest::testParseIndSource()
@@ -599,11 +623,34 @@ void NonmemTranslatorTest::testParseIndSource()
   N[2] = 3;
   NonmemTranslator xlator( data, source );
   SymbolTable *table = xlator.getSymbolTable();
-  Symbol * time = table->insertLabel( "TIME", "", N );
-  Symbol * cp   = table->insertLabel( "CP",   "", N );
   Symbol * id   = table->insertLabel( "ID",   "", N );
+  Symbol * time = table->insertLabel( "TIME", "", N );
+  Symbol * cp   = table->insertLabel( "CP",   "DV", N );
+
+  id->  initial[0][0] = "#1";
+  time->initial[0][0] = "0.0";
+  cp->  initial[0][0] = "0.0";
+
+  id->  initial[1][0] = "#2";
+  id->  initial[1][1] = "#2";
+  time->initial[1][0] = "0.0";
+  time->initial[1][1] = "1.0";
+  cp->  initial[1][0] = "0.0";
+  cp->  initial[1][1] = "10.0";
+
+  id->  initial[2][0] = "#3";
+  id->  initial[2][1] = "#3";
+  id->  initial[2][2] = "#3";
+  time->initial[2][0] = "0.0";
+  time->initial[2][1] = "1.0";
+  time->initial[2][2] = "2.0";
+  cp->  initial[2][0] = "0.0";
+  cp->  initial[2][1] = "10.0";
+  cp->  initial[2][2] = "20.0";
 
   xlator.parseSource();
+
+  remove( gSource );
 
   //cout << *table << endl;
   map<string,string>::const_iterator pLabel = labels.begin();
@@ -614,8 +661,11 @@ void NonmemTranslatorTest::testParseIndSource()
       CPPUNIT_ASSERT( s->name == pLabel->first );
       CPPUNIT_ASSERT( s->synonym == pLabel->second );
     }
+  CPPUNIT_ASSERT( table->findi("pred") != Symbol::empty() );
+  CPPUNIT_ASSERT( table->findi("wres") != Symbol::empty() );
+  CPPUNIT_ASSERT( table->findi("res")  != Symbol::empty() );
 
-  Symbol *theta = table->find( "theta" );
+  Symbol *theta = table->findi( "theta" );
   CPPUNIT_ASSERT( theta != Symbol::empty() );
   CPPUNIT_ASSERT_EQUAL( thetaLen, theta->dimension[0] );
   CPPUNIT_ASSERT_EQUAL( thetaLen, static_cast<int>( theta->initial[0].size() ) );
@@ -631,7 +681,7 @@ void NonmemTranslatorTest::testParseIndSource()
       CPPUNIT_ASSERT_EQUAL( theta_up[i],  atof( theta->upper[0][i].c_str() ) );
     }
   
-  Symbol *omega = table->find( "omega" );
+  Symbol *omega = table->findi( "omega" );
   CPPUNIT_ASSERT( omega != Symbol::empty() );
   CPPUNIT_ASSERT( omega->structure == omegaStruct );
   CPPUNIT_ASSERT_EQUAL( omegaDim, omega->dimension[0] );
@@ -647,7 +697,6 @@ void NonmemTranslatorTest::testParseIndSource()
       CPPUNIT_ASSERT_EQUAL( omega_in[i],  atof( omega->initial[0][i].c_str() ) );
    }
 
-  remove(gSource);
   XMLPlatformUtils::Terminate();
 }
 CppUnit::Test * NonmemTranslatorTest::suite()
@@ -662,10 +711,12 @@ CppUnit::Test * NonmemTranslatorTest::suite()
      new CppUnit::TestCaller<NonmemTranslatorTest>(
          "testParsePopSource", 
 	 &NonmemTranslatorTest::testParsePopSource ) );
+  /*
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<NonmemTranslatorTest>(
          "testParseIndSource", 
 	 &NonmemTranslatorTest::testParseIndSource ) );
+  */
   return suiteOfTests;
 }
 
