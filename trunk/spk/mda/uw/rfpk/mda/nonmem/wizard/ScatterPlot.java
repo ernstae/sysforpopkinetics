@@ -728,8 +728,10 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
             }            
         }
         
+        scatterPlot = " " + lists;
+        
         changeItemButton.setEnabled(true);
-        deleteItemButton.setEnabled(true);        
+        deleteItemButton.setEnabled(true);
         changeButton.setEnabled(true);
         deleteButton.setEnabled(true);        
         Utility.setUpDownButton(index, model, upButton, downButton);
@@ -878,14 +880,10 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void changeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeButtonActionPerformed
-        // Remove the scatterplot record
-        model.removeElement(jList1.getSelectedValue());
-        dimList.removeElementAt(index);
-
-        // Check number of scatterplot against maximum limit
+        // Check number of scatterplots after change against maximum limit
         int nFamily = listModels[0].getSize() * listModels[1].getSize();
         int dimSum = nFamily;
-        for(int i = 0; i < dimList.size(); i++)
+        for(int i = 0; i < dimList.size() - 1; i++)
             dimSum = dimSum + ((Integer)dimList.get(i)).intValue();  
         if(dimSum > nPlotAllowed) 
         {
@@ -897,12 +895,17 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
             return;
         }
         
+        // Remove the scatterplot record
+        model.removeElement(jList1.getSelectedValue());
+        dimList.removeElementAt(index);
+        
         // Add the scaterplot record
         String element = "$SCATTERPLOT" + scatterPlot +                         
                          " FROM " + jTextField1.getText().trim() + 
                          " TO " + jTextField2.getText().trim() +
                          slopeLine + xLine + yLine;
-        model.add(index, element);     
+        model.add(index, element);
+        dimList.add(index, new Integer(nFamily));
         jList1.setSelectedIndex(index);
         
         // Set button

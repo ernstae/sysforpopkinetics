@@ -46,21 +46,18 @@ public class Likelihood {
  
         // Remove attributes of <pop_analysis>.
         String front = source.substring(0, source.indexOf("<pop_analysis "));
+        int popSizeIndex = source.indexOf("pop_size=", source.indexOf("<pop_analysis "));
+        String popSize = source.substring(popSizeIndex, source.indexOf(" ", popSizeIndex));
         String back = source.substring(source.indexOf(">", source.indexOf("<pop_analysis ")) + 1);
-        source = front + "<pop_analysis>" + back;
-        JOptionPane.showMessageDialog(null, "The initial values of the parameters have been replaced" +
-                                      "\nby the estimated values obtained in the parent job." +         
-                                      "\nThe attributes of the <pop_analysis> have been removed.");
+        source = front + "<pop_analysis is_estimation=\"no\" " + popSize + ">" + back;
+        JOptionPane.showMessageDialog(null, "Initial values of the parameters have been replaced" +
+                                      "\nby the estimated values obtained from the parent job." +         
+                                      "\nAttributes of the <pop_analysis> have been changed.");
         
-        // Remove simulation in source and model.
-        if(model.indexOf("$SIMULATION") != -1)
+        // Remove simulation in the source.
+        if(source.indexOf("<simulation ") != -1)
         {
-            // Remove $SIMULATION record from model.
-            front = model.substring(0, model.indexOf("$SIMULATION") - 1);
-            back = model.substring(model.indexOf("\n", model.indexOf("$SIMULATION")));
-            model = front + back;
-
-            // Remove <simulation> element from source.
+            // Remove <simulation> element from the source.
             front = source.substring(0, source.indexOf("<simulation ") - 1);
             back = source.substring(source.indexOf(">", source.indexOf("<simulation ")) + 2);
             source = front + back;
@@ -74,10 +71,9 @@ public class Likelihood {
             String description = data.substring(data.indexOf("<description>") + 13, 
                                                 data.indexOf("</description>")).trim();
             data = XMLWriter.setData(dataset, dataLabels, description) + "\n";
-            JOptionPane.showMessageDialog(null, "The $SIMULATION record of the model has been removed." +
-                                         "\nThe <simulation> element of the source has been removed." +
+            JOptionPane.showMessageDialog(null, "The <simulation> element of the source has been removed." +
                                          "\nThe DV values of the dataset have been replaced by the" +
-                                         "\nsimulated DV values obtained in the parent job.");            
+                                         "\nsimulated DV values obtained from the parent job.");            
         }
         return source + data + model;
     }
@@ -127,12 +123,13 @@ public class Likelihood {
     {
         // Find number of random effects
         int nEta = 0;
-        while(source.indexOf("<omega ") != -1)
+        String text = new String(source);
+        while(text.indexOf("<omega ") != -1)
         {
-            int beginIndex = source.indexOf("dimension=", source.indexOf("<omega ")) + 11;
-            int endIndex = source.indexOf("\"", beginIndex);
-            nEta += Integer.parseInt(source.substring(beginIndex, endIndex));
-            source = source.substring(endIndex);
+            int beginIndex = text.indexOf("dimension=", text.indexOf("<omega ")) + 11;
+            int endIndex = text.indexOf("\"", beginIndex);
+            nEta += Integer.parseInt(text.substring(beginIndex, endIndex));
+            text = text.substring(endIndex);
         }
         String nEvaluation = "";
         if(jobMethodCode.equals("gr"))
@@ -176,7 +173,6 @@ public class Likelihood {
             integrationMethod = "analytic";
 
         // Modify the source
-        source = source.replaceFirst("is_estimation=\"yes\"", "is_estimation=\"no\"");
         source = source.replaceFirst("</nonmem>", "   <monte_carlo method=\"" + integrationMethod + 
                                      "\">\n         <number_eval>" + nEvaluation + 
                                      "\n         </number_eval>\n      </monte_carlo>\n   </nonmem>");        

@@ -354,13 +354,13 @@ public class XMLReader
             Element error = (Element)errorList.item(i);
             NodeList list = error.getElementsByTagName("message");
             if(list.getLength() != 0)
-                output.error[i][0] = list.item(0).getFirstChild().getNodeValue();
+                output.error[i][0] = list.item(0).getFirstChild().getNodeValue().trim();
             list = error.getElementsByTagName("file_name");
             if(list.getLength() != 0)
-                output.error[i][1] = list.item(0).getFirstChild().getNodeValue();           
+                output.error[i][1] = list.item(0).getFirstChild().getNodeValue().trim();           
             list = error.getElementsByTagName("line_number");
             if(list.getLength() != 0)
-                output.error[i][2] = list.item(0).getFirstChild().getNodeValue();           
+                output.error[i][2] = list.item(0).getFirstChild().getNodeValue().trim(); 
         }
     }
 
@@ -375,13 +375,13 @@ public class XMLReader
             Element warning = (Element)warningList.item(i);
             NodeList list = warning.getElementsByTagName("message");
             if(list.getLength() != 0)
-                output.warning[i][0] = list.item(0).getFirstChild().getNodeValue();
+                output.warning[i][0] = list.item(0).getFirstChild().getNodeValue().trim();
             list = warning.getElementsByTagName("file_name");
             if(list.getLength() != 0)
-                output.warning[i][1] = list.item(0).getFirstChild().getNodeValue();           
+                output.warning[i][1] = list.item(0).getFirstChild().getNodeValue().trim();           
             list = warning.getElementsByTagName("line_number");
             if(list.getLength() != 0)
-                output.warning[i][2] = list.item(0).getFirstChild().getNodeValue();           
+                output.warning[i][2] = list.item(0).getFirstChild().getNodeValue().trim();           
         }
     }    
     

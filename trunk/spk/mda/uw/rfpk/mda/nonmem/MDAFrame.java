@@ -564,6 +564,7 @@ public class MDAFrame extends JFrame
 
         jPanel5.setLayout(new java.awt.GridBagLayout());
 
+        jPanel5.setFocusable(false);
         jLabel7.setFont(new java.awt.Font("Default", 0, 12));
         jLabel7.setText("short description (<=100 characters)     ");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1453,7 +1454,7 @@ public class MDAFrame extends JFrame
 
         objectiveMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_J, java.awt.event.InputEvent.CTRL_MASK));
         objectiveMenu.setMnemonic('j');
-        objectiveMenu.setText("Objective");
+        objectiveMenu.setText("Objective/Likelihood");
         objectiveMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 objectiveMenuActionPerformed(evt);
@@ -2525,7 +2526,7 @@ public class MDAFrame extends JFrame
         long id = Long.parseLong(((String[][])lists.get(indexList))[index][0]);
         if(listType.equals("job"))
         {
-            new JobInfo(this, id, isLibrary, false);
+            jobInfo = new JobInfo(this, id, isLibrary, false);
             timer.stop();
             reportDialog.dispose();        
             return;
@@ -2608,17 +2609,24 @@ public class MDAFrame extends JFrame
         }
 
         // If the user is going to use a likelihhod evaluation method modify the input file
-        jobMethodCode = "fo";
+        jobMethodClass = "";        
         if(jobId != 0 && text.indexOf("<pop_analysis ") != -1 && text.indexOf(" is_estimation=\"yes\" ") != -1 && 
            JOptionPane.showConfirmDialog(null, "Are you going to use a likelihood evaluation only method?",
                                          "Question", JOptionPane.YES_NO_OPTION) == 0)
         {
             // Get report
             String report = server.getOutput(jobId, isLibrary).getProperty("report");
+            if(report.indexOf("<error_message>") != -1)
+            {
+                JOptionPane.showMessageDialog(null, "The parent job, Job ID = " + jobId + ", has error.",
+                                              "Input Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            hasSimulation = text.indexOf("<simulation ") != -1;
             text = Likelihood.changeInput(text, report, jobId, isLibrary);
             textArea.setText(text);
             textArea.setCaretPosition(0);
-            jobMethodCode = "ml";
+            jobMethodClass = "le";
         }
                 
         // Find $PROBLEM
@@ -2632,7 +2640,8 @@ public class MDAFrame extends JFrame
         String data = text.substring(beginIndex, endIndex).trim();
         
         // Find method
-        if(!jobMethodCode.equals("ml"))
+        jobMethodCode = "fo";
+        if(!jobMethodClass.equals("le"))
         {
             if(text.indexOf("<ind_analysis") != -1)
             {
@@ -2643,7 +2652,7 @@ public class MDAFrame extends JFrame
                     jobMethodCode = "so";
                 else
                 {
-                    JOptionPane.showMessageDialog(null, "Neither estimation nor simulation is included in the job",
+                    JOptionPane.showMessageDialog(null, "The text is not a SPK input file",
                                                   "Input Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }                
@@ -2679,17 +2688,48 @@ public class MDAFrame extends JFrame
                 return;          
             }            
         }
-        
+
         // Collect archive information
         getArchive = false;
         modelArchive = new ArchiveInfo();
         dataArchive = new ArchiveInfo();
-        jRadioButton1.setSelected(true);
-        jRadioButton2.setSelected(false);
-        jRadioButton3.setSelected(false);
-        jRadioButton4.setSelected(true);
-        jRadioButton5.setSelected(false);
-        jRadioButton6.setSelected(false);
+        jTabbedPane1.removeAll();
+        jTextField1.setText("");
+        jTextField2.setText("");
+        jTextField3.setText("1");
+        jTextField4.setText(data);
+        jTextField5.setText("");
+        jTextField6.setText("1");        
+        if(jobMethodClass == "le")
+        {
+            jRadioButton3.setSelected(true);
+            jTextField1.setText(jobInfo.modelName);
+            jTextField2.setText(jobInfo.modelAbstract);
+            jTextField3.setText(jobInfo.modelVersion);
+            modelArchive.id = Long.parseLong(jobInfo.modelId);
+            jobMethodCode = "ml";
+            if(hasSimulation)
+            {
+                jRadioButton4.setSelected(true);
+                jTabbedPane1.add("Dataset", jPanel3);
+            }
+            else
+            {
+                jRadioButton6.setSelected(true);
+                jTextField4.setText(jobInfo.datasetName);
+                jTextField5.setText(jobInfo.datasetAbstract);
+                jTextField6.setText(jobInfo.datasetVersion);
+                dataArchive.id = Long.parseLong(jobInfo.datasetId);                               
+            }            
+        }
+        else
+        {
+            jRadioButton1.setSelected(true);
+            jRadioButton4.setSelected(true);
+            jTabbedPane1.add("Model", jPanel2);
+            jTabbedPane1.add("Dataset", jPanel3);
+        }
+        jTabbedPane1.add("Job", jPanel5);
         jRadioButton7.setSelected(false);
         jRadioButton8.setSelected(false);
         jRadioButton9.setSelected(false);
@@ -2714,17 +2754,12 @@ public class MDAFrame extends JFrame
         }
         else if(jobMethodCode.equals("fo") || jobMethodCode.equals("eh") || jobMethodCode.equals("la"))
         {
-            jRadioButton8.setEnabled(false);
-            jRadioButton10.setEnabled(false);
-            jRadioButton11.setEnabled(false);
-            jRadioButton12.setEnabled(false);
             jRadioButton7.setSelected(true);
             jRadioButton7.doClick();
         }
         else if(jobMethodCode.equals("ml"))
         {
             jRadioButton7.setEnabled(false);
-            jRadioButton9.setEnabled(false);
             jRadioButton8.setSelected(true);
         }
         jTextField14.setText(((String[])methodTable.get(jobMethodCode))[0]);
@@ -2736,12 +2771,6 @@ public class MDAFrame extends JFrame
             jRadioButton11.setEnabled(false);
             jRadioButton12.setEnabled(false);            
         }
-        jTextField1.setText("");
-        jTextField2.setText("");
-        jTextField3.setText("1");
-        jTextField4.setText(data);
-        jTextField5.setText("");
-        jTextField6.setText("1");
         jTextField7.setText(problem); 
         jTextField1.setEnabled(true);
         jTextField2.setEnabled(true);
@@ -2752,7 +2781,8 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_SubmitJobButtonActionPerformed
 
     private void WriteInputButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_WriteInputButtonActionPerformed
-        MDAIterator iterator = new MDAIterator(serverName, serverPort, isOnline, this, isTester, isDeveloper);
+        MDAIterator iterator = new MDAIterator(serverName, serverPort, isOnline, 
+                                               this, isTester, isDeveloper, files);
         writeInput(iterator);
     }//GEN-LAST:event_WriteInputButtonActionPerformed
 
@@ -2953,22 +2983,25 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_ThetaMenuActionPerformed
 
     private void objectiveMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_objectiveMenuActionPerformed
-        if(output != null && output.objective != null)
+        if(output != null && output.objective != null && output.methodCode != null)
         {
-            String objective = "Minimum Value of the Objective Function:\n" + output.objective + "\n";
+            String objective = null;
+            if(!((String[])methodTable.get(output.methodCode))[1].equals("le"))
+                objective = "Minimum Value of Objective Function:\n" + output.objective + "\n";
+            else
+                objective = "Estimate for Likelihood Function:\n" + output.objective + "\n";
             String objStdErr = "";
             String jobMethod = "";
             if(output.objStdErr != null)
-                objStdErr = "\nStandard Error of the Objective Function Value:\n" + output.objStdErr + "\n";
-            if(output.methodCode != null)
-                jobMethod = "\nMethod Used in the Analysis:\n" + 
-                            ((String[])methodTable.get(output.methodCode))[0] + "\n";
+                objStdErr = "\nStandard Error in Likelihood Function:\n" + output.objStdErr + "\n";
+            jobMethod = "\nMethod Used in the Analysis:\n" + 
+                        ((String[])methodTable.get(output.methodCode))[0] + "\n";
             jTextArea2.setText(objective + objStdErr + jobMethod);
             objectiveDialog.setSize(300, 200);
             objectiveDialog.show();
         }
         else
-            JOptionPane.showMessageDialog(null, "The objective is not available", 
+            JOptionPane.showMessageDialog(null, "The objective or the method code is not available", 
                                           "Data Not Found Error",               
                                           JOptionPane.ERROR_MESSAGE);
     }//GEN-LAST:event_objectiveMenuActionPerformed
@@ -3149,13 +3182,13 @@ public class MDAFrame extends JFrame
         String model = XMLReader.getModelArchive(spkInput.substring(index2 - 22));
         
         // Collect version logs
-        if((modelArchive.isNewArchive || modelArchive.isNewVersion) && (jRadioButton7.isSelected() || jRadioButton9.isSelected()))
+        if((modelArchive.isNewArchive || modelArchive.isNewVersion))
         {
             modelArchive.log = JOptionPane.showInputDialog("Enter log for the new version of the model (<=100 characters).  ");
             if(modelArchive.log == null)
                 modelArchive.log = "";
         }
-        if((dataArchive.isNewArchive || dataArchive.isNewVersion) && (jRadioButton7.isSelected() || jRadioButton9.isSelected()))
+        if((dataArchive.isNewArchive || dataArchive.isNewVersion))
         {
             dataArchive.log = JOptionPane.showInputDialog("Enter log for the new version of the dataset (<=100 characters).");
             if(dataArchive.log == null)
@@ -3166,14 +3199,12 @@ public class MDAFrame extends JFrame
         int indexMC = source.indexOf("<monte_carlo ");
         if(indexMC != -1)
             source = source.substring(0, indexMC - 3) + source.substring(source.indexOf("</nonmem>"));
-        
-        // Get job method class
-        String jobMethodClass = ((String[])methodTable.get(jobMethodCode))[1];
-        
+   
         // Add number of objective function evaluations
         if(jobMethodClass.equals("le"))
         {
-            if(Likelihood.insertLeElement(source, jobMethodCode) == null)
+            source = Likelihood.insertLeElement(source, jobMethodCode);
+            if(source == null)
                 return;
         }
         
@@ -3378,7 +3409,7 @@ public class MDAFrame extends JFrame
                         // Fill the table
                         String[][] data = new String[output.dataAll.length][tableI[1].length + 1]; 
                         String[] header = new String[tableI[1].length + 1];
-                        String path = System.getProperty("user.home") + System.getProperty("file.separator");
+//                        String path = System.getProperty("user.home") + System.getProperty("file.separator");
                         for(int j = 0; j < tableI[1].length; j++)
                         {
                              // For item "DV" replace it by the alias
@@ -3388,7 +3419,8 @@ public class MDAFrame extends JFrame
                         
                         tableShow.fillTable(tableI, data, header);
                         files.setDialogTitle("Save table File");
-                        files.setSelectedFile(new File(path + tableI[0][0])); 
+//                        files.setSelectedFile(new File(path + tableI[0][0]));
+                        files.setSelectedFile(new File(tableI[0][0]));
                         int result = files.showSaveDialog(null);
                         if(result == files.APPROVE_OPTION)
 	                {
@@ -3715,7 +3747,7 @@ public class MDAFrame extends JFrame
             columnModel.getColumn(3).setPreferredWidth(500);
             versionDialog.setTitle("Version List");
             versionDialog.setLocation(200, 200);
-            versionDialog.setSize(800, 16 * versionList.length + 60); 
+            versionDialog.setSize(800, 16 * versionList.length + 43); 
             versionDialog.show();
         }
     }    
@@ -3978,8 +4010,11 @@ public class MDAFrame extends JFrame
     protected boolean isDeveloper = false;    
     
     /** The current job id. */
-    protected long jobId = 0; 
-
+    protected long jobId = 0;
+    
+    // Job method class
+    private String jobMethodClass = null;
+    
     // Job method code
     private String jobMethodCode = null;
     
@@ -3995,8 +4030,8 @@ public class MDAFrame extends JFrame
     /** The server port. */
     protected String serverPort = null;
 
-    // File chooser
-    private JFileChooser files = new JFileChooser();
+    /** The file chooser. */
+    protected JFileChooser files = new JFileChooser();
 
     /** The current file. */
     protected File file = null;
@@ -4072,4 +4107,10 @@ public class MDAFrame extends JFrame
     
     // Timer for refreshing the job list dialog
     private Timer timer = null;
+    
+    // Job infomation
+    private JobInfo jobInfo = null;
+    
+    // Has simulation in the source
+    private boolean hasSimulation = false;
 }

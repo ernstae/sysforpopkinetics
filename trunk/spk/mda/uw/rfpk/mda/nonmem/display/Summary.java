@@ -226,6 +226,15 @@ public class Summary {
         String dataAbstract = output.dataAbstract != null ? output.dataAbstract : NA;
         String objective = output.objective != null ? output.objective : NA;
         String objStdErr = output.objStdErr != null ? output.objStdErr : NA;
+        String objectiveItem = null;
+        String objStdErrItem = "";
+        if(!((String[])methodTable.get(output.methodCode))[1].equals("le"))
+            objectiveItem = "\n\nMinimum Value of Objective Function: " + objective;
+        else
+        {
+            objectiveItem = "\n\nEstimate for Likelihood Function: " + objective;
+            objStdErrItem = "\n\nStandard Error in Likelihood Function: " + objStdErr;
+        }
         String errorMessage = "";
         if(output.error != null)
         {
@@ -238,7 +247,7 @@ public class Summary {
             }
         }
         else
-            errorMessage = "\n" + NA;        
+            errorMessage = "\nNone";        
         String warningMessage = "";
         if(output.warning != null)
         {
@@ -251,28 +260,27 @@ public class Summary {
             }
         }
         else
-            warningMessage = "\n" + NA;
+            warningMessage = "\nNone";
         
         // Write summary
-        String summary = "Summary Report" + "\n\n\n" +
-                         "Job Identification number: " + jobId + "\n\n" +
-                         "Job Description: " + jobAbstract + "\n\n" +
-                         "Time of Job Submisison: " + submissionTime + "\n\n" +
-                         "Time of Job Completion: " + completionTime + "\n\n" +
-                         "SPK Computing Time: " + computingTime + "\n\n" +
-                         "Analysis Type: " + analysis + "\n\n" +
-                         "Analysis Method: " + jobMethod + "\n\n" +                         
-                         "Model Name: " + modelName + "\n\n" +
-                         "Model Version: " + modelVersion + "\n\n" +
-                         "Model Description: " + modelAbstract + "\n\n" +
-                         "Dataset Name: " + dataName + "\n\n" +
-                         "Dataset Version: " + dataVersion + "\n\n" +
-                         "Dataset Description: " + dataAbstract + "\n\n" +                      
-                         "Error Messages: " + errorMessage + "\n\n" +
-                         "Warning Messages: " + warningMessage + "\n\n" +
-                         "Minimum Value of Objective Function: " + objective + "\n\n" +
-                         "Standard Error of the Objective Function Value: " + objStdErr + "\n\n" +
-                         "Parameter Estimation Result: ";
+        String summary = "Summary Report\n" +
+                         "\n\nJob Identification number: " + jobId +
+                         "\n\nJob Description: " + jobAbstract + 
+                         "\n\nTime of Job Submisison: " + submissionTime + 
+                         "\n\nTime of Job Completion: " + completionTime +
+                         "\n\nSPK Computing Time: " + computingTime +
+                         "\n\nAnalysis Type: " + analysis +
+                         "\n\nAnalysis Method: " + jobMethod +                      
+                         "\n\nModel Name: " + modelName +
+                         "\n\nModel Version: " + modelVersion +
+                         "\n\nModel Description: " + modelAbstract +
+                         "\n\nDataset Name: " + dataName +
+                         "\n\nDataset Version: " + dataVersion +
+                         "\n\nDataset Description: " + dataAbstract +                    
+                         "\n\nError Messages: " + errorMessage +
+                         "\n\nWarning Messages: " + warningMessage +
+                         objectiveItem + objStdErrItem +
+                         "\n\nParameter Estimation Result: ";
         if(output.theta == null)
             summary += NA;
         else

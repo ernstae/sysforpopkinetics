@@ -43,7 +43,7 @@ public class MDA
         {
             // Create lock file if there is none
             String path = System.getProperty("user.home") + System.getProperty("file.separator") +
-                          args[2] + ".lock";
+                          "." + args[2] + "_lock";
 
             File lockFile = null;
             try
@@ -52,7 +52,12 @@ public class MDA
                 if(lockFile.createNewFile())
                     lockFile.deleteOnExit();                    
                 else
+                {
+                    JOptionPane.showMessageDialog(null, "A MDA is already runing.", 
+                                                  "Staring MDA Error",                     
+                                                  JOptionPane.ERROR_MESSAGE);
                     System.exit(0);
+                }
             }
             catch(IOException ioe )
             {

@@ -40,7 +40,7 @@ import java.awt.print.*;
  */
 public class GetReport extends javax.swing.JFrame {
     
-    /** Creates new form Report */
+    /** Creates new form GetReport */
     public GetReport() {
         initComponents();
         jTextField1.setText(dbHost);

@@ -22,10 +22,13 @@ import java.io.*;
 import javax.swing.*;
 import java.util.StringTokenizer;
 import java.text.DecimalFormat;
-import uw.rfpk.mda.nonmem.Utility;
+import uw.rfpk.mda.nonmem.*;
+import javax.print.*;
+import javax.print.attribute.*;
+import java.awt.print.*;
 
 /**
- *
+ * This class formats nonmem data files.
  * @author  Jiaji Du
  */
 public class DataFormater extends javax.swing.JFrame {
@@ -46,6 +49,7 @@ public class DataFormater extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
 
@@ -84,6 +88,16 @@ public class DataFormater extends javax.swing.JFrame {
 
         jPanel1.add(jButton3);
 
+        jButton4.setText("Print");
+        jButton4.setPreferredSize(new java.awt.Dimension(78, 25));
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jButton4);
+
         getContentPane().add(jPanel1, java.awt.BorderLayout.NORTH);
 
         jTextArea1.setFont(new java.awt.Font("Courier", 0, 12));
@@ -93,6 +107,38 @@ public class DataFormater extends javax.swing.JFrame {
 
         pack();
     }//GEN-END:initComponents
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        String text = jTextArea1.getText();
+        if(!text.endsWith("\n"))
+            text += "\n";
+        Printer printable = new Printer(text);
+			
+	// Get a PrinterJob object
+        PrinterJob printerJob = PrinterJob.getPrinterJob();
+
+        // Display print dialog,if user return OK, setPrintable and print
+        PrintRequestAttributeSet attributes = new HashPrintRequestAttributeSet(); 
+//        PageFormat pageFormat = printerJob.pageDialog(attributes);
+//        if(pageFormat != null)
+        if(printerJob.printDialog(attributes))
+        {
+            printerJob.setPrintable(printable);
+//            Book book = new Book();
+//            book.append(printable, pageFormat, printable.getPageCount());   
+//            printerJob.setPageable(book);
+            try
+	    {
+                printerJob.print(attributes);
+            }
+            catch(PrinterException pe)
+	    {
+                JOptionPane.showMessageDialog(null, "Error printing " + pe,  // Display printing 
+                                              "Printer Error",               // error message
+                                              JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         String ls = System.getProperty("line.separator");
@@ -108,6 +154,7 @@ public class DataFormater extends javax.swing.JFrame {
             text += ls;
         }
         jTextArea1.setText(text);
+        jTextArea1.setCaretPosition(0);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     // Format the data of type string
@@ -202,6 +249,7 @@ public class DataFormater extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
