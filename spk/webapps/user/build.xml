@@ -48,7 +48,7 @@ author: Jiaji Du
       <fileset dir="src">
         <include name="*.jsp"/>
         <include name="*.shtml"/>
-        <include name="*.css"/
+        <include name="*.css"/>
       </fileset>
     </copy>
     <copy file="web.xml" todir="${webapp.path}/WEB-INF"/>
