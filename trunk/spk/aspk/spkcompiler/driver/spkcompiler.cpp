@@ -122,16 +122,13 @@ namespace{
        cerr << "Abnormal termination..." << endl;
        abort();
      }
-/*
      o << "<?xml version=\"1.0\"?>" << endl;
      o << "<spkreport>" << endl;
-     o << "<error_message>" << endl;
+     o << "<error_list>" << endl;
 
      o << e << endl;
-     o << "</error_message>" << endl;
+     o << "</error_list>" << endl;
      o << "</spkreport>" << endl;
-*/
-     o.flush();
      o << e << endl;
      o.close();
      return;
