@@ -6,6 +6,7 @@
 
 package uw.rfpk.mda.nonmem.wizard;
 
+import uw.rfpk.mda.nonmem.Utility;
 import org.netbeans.ui.wizard.*;
 import javax.swing.JComponent;
 import java.awt.Component;
@@ -20,10 +21,12 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
     
     private StepDescriptor sd = new MyStepDescriptor(); 
     private JComponent panel = this;
-
+    private MDAIterator iterator = null;
+    
     /** Creates new form Covariance 
      */
-    public Covariance() {
+    public Covariance(MDAIterator iter) {
+        iterator = iter;
         initComponents();
     }
     
@@ -36,9 +39,6 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
         java.awt.GridBagConstraints gridBagConstraints;
 
         buttonGroup1 = new javax.swing.ButtonGroup();
-        jDialog1 = new javax.swing.JDialog();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        help = new javax.swing.JTextArea();
         jTextArea1 = new javax.swing.JTextArea();
         jTextPane1 = new javax.swing.JTextPane();
         jTextPane2 = new javax.swing.JTextPane();
@@ -47,44 +47,45 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
         jRadioButton3 = new javax.swing.JRadioButton();
         jSeparator1 = new javax.swing.JSeparator();
 
-        jDialog1.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        help.setEditable(false);
-        jScrollPane1.setViewportView(help);
-
-        jDialog1.getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
-
         setLayout(new java.awt.GridBagLayout());
 
         jTextArea1.setColumns(20);
         jTextArea1.setEditable(false);
         jTextArea1.setRows(2);
+        jTextArea1.setText("$COVARIANCE");
+        jTextArea1.setFocusable(false);
+        jTextArea1.setMaximumSize(new java.awt.Dimension(360, 30));
+        jTextArea1.setMinimumSize(new java.awt.Dimension(360, 30));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 6;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipadx = 2;
-        gridBagConstraints.ipady = 12;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(6, 12, 12, 12);
         add(jTextArea1, gridBagConstraints);
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("Nonmem has three formulations for covariance matrix as listed.   Select a formulation or use the default. ");
+        jTextPane1.setText("You can use one of the  three formulations for estimating \ncovariance matrix, as listed below.  Select a formulation or \nuse the default. ");
+        jTextPane1.setFocusable(false);
+        jTextPane1.setMaximumSize(new java.awt.Dimension(360, 51));
+        jTextPane1.setMinimumSize(new java.awt.Dimension(360, 51));
+        jTextPane1.setPreferredSize(new java.awt.Dimension(360, 51));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipadx = 300;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 12, 12);
         add(jTextPane1, gridBagConstraints);
 
         jTextPane2.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane2.setEditable(false);
-        jTextPane2.setText("The $COVARANCE record you have created.");
+        jTextPane2.setText("The statistics option you have selected in NONMEM syntax");
+        jTextPane2.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(16, 12, 0, 12);
         add(jTextPane2, gridBagConstraints);
 
@@ -119,7 +120,7 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
         add(jRadioButton2, gridBagConstraints);
 
         jRadioButton3.setSelected(true);
-        jRadioButton3.setText("Default -- The Combined matrix");
+        jRadioButton3.setText("Default -- The Sandwich matrix");
         buttonGroup1.add(jRadioButton3);
         jRadioButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -138,6 +139,7 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         add(jSeparator1, gridBagConstraints);
 
@@ -158,12 +160,9 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JTextArea help;
-    private javax.swing.JDialog jDialog1;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JRadioButton jRadioButton3;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextPane jTextPane1;
@@ -185,19 +184,38 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
 	}
        
   	public String getContentItem(){
-  	    return "$COVARIANCE Record";
+  	    return "Estimate Statistics";
   	}
 
 	public String getStepTitle(){
-	    return "$COVARIANCE Record";
+	    return "Estimate Statistics";
 	}
 
-	public void showingStep(JWizardPane wizard){
-            jTextArea1.setText("$COVARIANCE");
+	public void showingStep(JWizardPane wizard){           
+            if(iterator.getIsReload())
+            {
+                String text = iterator.getReload().getProperty("COVARIANCE");
+                if(text != null)
+                {
+                    iterator.getReload().remove("COVARIANCE");
+                    if(text.indexOf("MATRIX=R") != -1)
+                        jRadioButton1.setSelected(true);
+                    else if(text.indexOf("MATRIX=S") != -1)
+                        jRadioButton2.setSelected(true);
+                    else
+                        jRadioButton3.setSelected(true);                    
+                    jTextArea1.setText("$COVARIANCE " + text.substring(11).trim());
+                }
+            }
 	}
 
 	public void hidingStep(JWizardPane wizard){
-            String record = jTextArea1.getText();
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }            
+            String record = jTextArea1.getText().trim();
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             object.getRecords().setProperty("Covariance", record);
             // Find method
@@ -216,9 +234,12 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
                 public void actionPerformed(ActionEvent e){ 
-                    jDialog1.setTitle("Help for " + getStepTitle());
-                    jDialog1.setSize(600, 500);
-                    jDialog1.show();
+                    if(!iterator.getIsOnline()) 
+                        new Help("Help for $COVARIANCE Record", 
+                                 Covariance.class.getResource("/uw/rfpk/mda/nonmem/help/Covariance.html"));
+                    else
+                        Utility.openURL("https://" + iterator.getServerName() + 
+                                        ":" + iterator.getServerPort() + "/user/help/Covariance.html");  
                 }
             };
 	}

@@ -30,7 +30,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
     private JWizardPane wizardPane = null;
     private boolean isValid = false;
     private String table = "";
-    private String which = "$Estimation";
+    private String which = "ESTIMATION";
     private int index = -1;
     private static int nTableEst = 0;
     private static int nTableSim = 0;
@@ -42,6 +42,8 @@ public class Table extends javax.swing.JPanel implements WizardStep {
     public Table(MDAIterator iter) { 
         initComponents();
         iterator = iter; 
+        nTableEst = 0;
+        nTableSim = 0;
     }
     
     /** Set which output, table or scatterplot, is required
@@ -74,9 +76,6 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         deleteItemButton = new javax.swing.JButton();
         changeItemButton = new javax.swing.JButton();
         jSeparator3 = new javax.swing.JSeparator();
-        jDialog2 = new javax.swing.JDialog();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        help = new javax.swing.JTextArea();
         jTextField1 = new javax.swing.JTextField();
         addButton = new javax.swing.JButton();
         upButton = new javax.swing.JButton();
@@ -263,15 +262,8 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 12, 12);
         jDialog1.getContentPane().add(jSeparator3, gridBagConstraints);
 
-        jDialog2.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        help.setEditable(false);
-        jScrollPane4.setViewportView(help);
-
-        jDialog2.getContentPane().add(jScrollPane4, java.awt.BorderLayout.CENTER);
-
         setLayout(new java.awt.GridBagLayout());
 
-        jTextField1.setText(" ");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
@@ -323,28 +315,31 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 16, 56, 16);
+        gridBagConstraints.insets = new java.awt.Insets(5, 16, 53, 16);
         add(downButton, gridBagConstraints);
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("Enter the output file name and select a header format.  The data items\nare listed as columns and the order of the rows may be sorted.  If No \nAppend is selected, DV, PRED, RES and WRES will not be in the output.");
+        jTextPane1.setText("Enter the output file name and select a header format.  The data items are\nlisted as columns and the order of the rows may be sorted.  If No Append\nis selected, data values, population prediction, residuals and weighted \nresiduals (i.e. DV, PRED, RES, WRES) will not be provided in the output.");
+        jTextPane1.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 12, 12);
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 2, 12);
         add(jTextPane1, gridBagConstraints);
 
         jTextPane2.setBackground(new java.awt.Color(204, 204, 204));
-        jTextPane2.setText("List of the  \n$TABLE \nrecords\nyou have \nentered.");
+        jTextPane2.setEditable(false);
+        jTextPane2.setText("List of the  \nTable options \nyou have \nselected in \nNONMEM syntax");
+        jTextPane2.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(11, 12, 44, 15);
+        gridBagConstraints.insets = new java.awt.Insets(11, 12, 29, 15);
         add(jTextPane2, gridBagConstraints);
 
         changeButton.setText("Change");
@@ -410,7 +405,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipady = 88;
+        gridBagConstraints.ipady = 74;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(16, 12, 12, 16);
         add(jScrollPane1, gridBagConstraints);
@@ -434,7 +429,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(9, 18, 21, 0);
         add(jLabel3, gridBagConstraints);
 
-        jButton1.setText("Enter Selection");
+        jButton1.setText("Make Selection");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -703,9 +698,9 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         isValid = true;
         wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray()); 
         int nTable = 0;
-        if(which.equals("$ESTIMATION"))
+        if(which.equals("ESTIMATION"))
             nTable = nTableSim;
-        if(which.equals("$SIMULATION"))
+        if(which.equals("SIMULATION"))
             nTable = nTableEst;
         if(model.getSize() + nTable == maxNTable)
             addButton.setEnabled(false);
@@ -732,12 +727,10 @@ public class Table extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton deleteItemButton;
     private javax.swing.JButton downButton;
-    private javax.swing.JTextArea help;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JDialog jDialog1;
-    private javax.swing.JDialog jDialog2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -748,7 +741,6 @@ public class Table extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
@@ -780,11 +772,11 @@ public class Table extends javax.swing.JPanel implements WizardStep {
 	}
        
   	public String getContentItem(){
-            return "$TABLE Record"; 
+            return "Table Output"; 
   	}
 
 	public String getStepTitle(){
-	    return "$TABLE Record - for the " + which + " step"; 
+	    return "Table Output - Following " + which + " Step"; 
 	}
 
 	public void showingStep(JWizardPane wizard){
@@ -816,7 +808,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
                     }
                 }
             }
-            if(!iterator.getIsInd() && which.equals("$ESTIMATION") && iterator.getIsMethod1OrPosthoc())
+            if(!iterator.getIsInd() && which.equals("ESTIMATION") && iterator.getIsMethod1OrPosthoc())
                 for(int i = 0; i < iterator.getNEta(); i++)
                     jComboBox1.addItem("ETA(" + (i + 1) +")");
             String record = null;
@@ -824,7 +816,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
                 record = object.getRecords().getProperty("PK");
             else
                 record = object.getRecords().getProperty("Pred");
-            String[] p = Utility.eliminateComments(record).split(System.getProperty("line.separator"));  
+            String[] p = Utility.eliminateComments(record).split("\n");  
             for(int i = 1; i < p.length; i++)
             {
                 if(p[i].indexOf("=") > 0)
@@ -841,39 +833,106 @@ public class Table extends javax.swing.JPanel implements WizardStep {
             rightList.setModel(rightModel);
         
             // Set number of table = 0;
-            model.removeAllElements();
-            index = -1;
-            if(which.equals("$ESTIMATION"))
-                nTableEst = 0;
-            if(which.equals("$SIMULATION")) 
-                nTableSim = 0;   
-            isValid = false;
-            wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray()); 
+//            model.removeAllElements();
+//            index = -1;
+//            if(which.equals("ESTIMATION"))
+//                nTableEst = 0;
+//            if(which.equals("SIMULATION")) 
+//                nTableSim = 0;
+            if(iterator.getIsReload())
+            {
+                String text = null;
+                if(which.equals("ESTIMATION"))
+                {
+                    text = iterator.getReload().getProperty("TABLEEST");
+                    if(text != null)
+                    {
+                        iterator.getReload().remove("TABLEEST");
+                        model.removeAllElements();
+                        String[] values = text.split(",");
+                        nTableEst = values.length;
+                        for(int i = 0; i < nTableEst; i++)
+                            model.addElement("$TABLE " + values[i].substring(6).trim());
+                        index = nTableEst - 1;
+                        jList1.setSelectedIndex(index);
+                        isValid = true;
+                        
+                        // Set delete button
+                        deleteButton.setEnabled(nTableEst > 0);
+                        
+                        // Set left options
+                        wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
+                        
+                        // Set up and down buttons
+                        Utility.setUpDownButton(index, model, upButton, downButton);
+                    }
+                }
+                else
+                {
+                    text = iterator.getReload().getProperty("TABLESIM");
+                    if(text != null)
+                    {
+                        iterator.getReload().remove("TABLESIM");
+                        model.removeAllElements();
+                        String[] values = text.split(",");
+                        nTableSim = values.length;
+                        for(int i = 0; i < values.length; i++)
+                            model.addElement("$TABLE " + values[i].substring(6).trim());
+                        index = values.length - 1;
+                        jList1.setSelectedIndex(index);
+                        isValid = true;
+                        
+                        // Set delete button
+                        deleteButton.setEnabled(nTableEst > 0);
+                        
+                        // Set left options                        
+                        wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
+                        
+                        // Set up and down buttons
+                        Utility.setUpDownButton(index, model, upButton, downButton);                        
+                    }
+                }
+            }
+            if(model.size() == 0)
+            {
+                isValid = false;
+                wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray()); 
+            }
                       
             // Check the number of tables
-            if(nTableEst == maxNTable || nTableSim == maxNTable)
+            if(nTableEst + nTableSim == maxNTable)
+            {
                 JOptionPane.showMessageDialog(null, "The number of tables has reached\n" +
                                               "its limit, " + maxNTable + ".",   
-                                              "Input Error",               
-                                              JOptionPane.ERROR_MESSAGE);
+                                              "Information for Input",               
+                                              JOptionPane.INFORMATION_MESSAGE);
+                isValid = true;
+                wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray()); 
+            }
+            jTextField1.requestFocusInWindow(); 
 	}
 
 	public void hidingStep(JWizardPane wizard){
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }            
             int size = model.getSize();
             if(size == 0)
                 return; 
             MDAObject object = (MDAObject)wizard.getCustomizedObject();  
             // Create and save record
-            String record = (String)model.get(0);
+            String record = ((String)model.get(0)).replaceAll("\r", "");
             String ls = System.getProperty("line.separator");
             for(int i = 1; i < size; i++)
                 record = record + ls + model.get(i);            
-            if(which.equals("$ESTIMATION"))
+            if(which.equals("ESTIMATION"))
             {
                 nTableEst = size;
                 object.getRecords().setProperty("TableEst", record); 
             }
-            if(which.equals("$SIMULATION")) 
+            if(which.equals("SIMULATION")) 
             {
                 nTableSim = size;
                 object.getRecords().setProperty("TableSim", record);
@@ -882,7 +941,10 @@ public class Table extends javax.swing.JPanel implements WizardStep {
             String[][][] tables = new String[size][4][];
             for(int i = 0; i < size; i++)
             {
-                String element = (String)model.get(i);
+                String element = (String)model.get(i) + " ";                
+                tables[i][0] = new String[2];                   // file and header
+
+                // Find file name
                 int ind = element.indexOf(" FILE=");
                 if(ind == -1)
                 {
@@ -891,10 +953,23 @@ public class Table extends javax.swing.JPanel implements WizardStep {
                     {
                         ind = element.indexOf(" ONEHEADER");
                         if(ind == -1)
-                            ind = element.length();
+                            ind = element.length() - 1;
                     }
                 }
+                else
+                {
+                    int end = element.indexOf(" ", ind + 5);
+                    tables[i][0][0] = element.substring(ind + 6, end);
+                }
                 
+                // Find header                
+                if(element.indexOf(" NOHEADER") != -1)
+                    tables[i][0][1] = "none";
+                else if(element.indexOf(" ONEHEADER") != -1)
+                    tables[i][0][1] = "one";
+                else   
+                    tables[i][0][1] = "every";    
+                    
                 String lists = element.substring(0, ind);
                 String[] list1 = null;
                 String[] list2 = null;
@@ -906,38 +981,34 @@ public class Table extends javax.swing.JPanel implements WizardStep {
                 }
                 else
                 {
-                    list1 = lists.substring(7).split(" ");
+                    if(lists.length() > 7)
+                        list1 = lists.substring(7).split(" ");
                 }
                 
                 // Append DV, PRED, RES and WRES to the left list
-                if(!jRadioButton3.isSelected())
+                if(element.indexOf(" NOAPPEND") == -1)
                 {
-                    String[] tempList = new String[list1.length + 4];
-                    for(int j = 0; j < list1.length; j++)
+                    int list1Length = 0;
+                    if(list1 != null)
+                        list1Length = list1.length;
+                        
+                    String[] tempList = new String[list1Length + 4];
+                    for(int j = 0; j < list1Length; j++)
                         tempList[j] = list1[j];
-                    tempList[list1.length] = "DV";
-                    tempList[list1.length + 1] = "PRED";
-                    tempList[list1.length + 2] = "RES";
-                    tempList[list1.length + 3] = "WRES";
+                    tempList[list1Length] = "DV";
+                    tempList[list1Length + 1] = "PRED";
+                    tempList[list1Length + 2] = "RES";
+                    tempList[list1Length + 3] = "WRES";
                     list1 = tempList;
-                }                
-                tables[i][0] = new String[2];               // file and header
-                tables[i][1] = list1;                       // list1
-                tables[i][2] = new String[list1.length];    // appearance order
-                tables[i][3] = new String[list1.length];    // sorting order
-                // Find file name
-                if(!jTextField1.getText().trim().equals(""))
-                    tables[i][0][0] = jTextField1.getText().trim();
-                else
-                    tables[i][0][0] = null;
-                // Find header
-                if(jRadioButton2.isSelected())
-                    tables[i][0][1] = "one";
-                if(jRadioButton1.isSelected())
-                    tables[i][0][1] = "none";
-                if(!jRadioButton1.isSelected() && !jRadioButton1.isSelected())
-                    tables[i][0][1] = "every";
-
+                } 
+                
+                tables[i][1] = list1;                           // list1                
+                if(list1 != null)
+                {
+                    tables[i][2] = new String[list1.length];    // appearance order
+                    tables[i][3] = new String[list1.length];    // sorting order
+                }
+                
                 // Find orders
                 int start = 0;
                 int length = 0;
@@ -968,9 +1039,9 @@ public class Table extends javax.swing.JPanel implements WizardStep {
                     }
                 }
             }
-            if(which.equals("$ESTIMATION"))
+            if(which.equals("ESTIMATION"))
                 object.getSource().tableEst = tables; 
-            if(which.equals("$SIMULATION")) 
+            if(which.equals("SIMULATION")) 
                 object.getSource().tableSim = tables;  
 	}
 
@@ -981,9 +1052,12 @@ public class Table extends javax.swing.JPanel implements WizardStep {
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
                 public void actionPerformed(ActionEvent e){ 
-                    jDialog2.setTitle("Help for " + getStepTitle());
-                    jDialog2.setSize(600, 500);
-                    jDialog2.show();
+                    if(!iterator.getIsOnline()) 
+                        new Help("Help for $TABLE Record", 
+                                 Table.class.getResource("/uw/rfpk/mda/nonmem/help/Table.html"));
+                    else
+                        Utility.openURL("https://" + iterator.getServerName() + 
+                                        ":" + iterator.getServerPort() + "/user/help/Table.html");  
                 }
             };
 	}

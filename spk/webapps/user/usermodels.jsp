@@ -86,12 +86,14 @@
                      for(int i = 0; i < size; i++)
                      { 
                          String[] model = (String[])modelList.get(i);
-                         String link = "<a href=versions.jsp?id=" + model[0] + "&type=model>" + model[1] + "</a>"; %>           
+                         String link = "<a href=versions.jsp?id=" + model[0] + "&type=model>" + model[1] + "</a>";
+                         String description = model[4].startsWith("http://") || model[4].startsWith("https://") ? 
+                                              "<a href=" + model[4] + ">" + model[4] + "</a>" : model[4]; %>           
                   <tr>
                     <td><%=link%></td>
                     <td align="center"><%=model[2]%></td>
                     <td><%=model[3]%></td>
-                    <td><%=model[4]%></td>
+                    <td><%=description%></td>
                   </tr>
                   <% } %>
                  </table>

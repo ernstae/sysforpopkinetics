@@ -35,7 +35,8 @@ public class SessionObject implements HttpSessionBindingListener
     public void valueUnbound(HttpSessionBindingEvent event)
     {
         // Delete the jnlp file for the session
-        file.delete();
+        if(file != null)
+            file.delete();
     }
 
     private File file = null;

@@ -28,6 +28,10 @@ public class GetModel extends javax.swing.JFrame {
     /** Creates new form Report */
     public GetModel() {
         initComponents();
+        jTextField1.setText(dbHost);
+        jTextField4.setText(dbName);
+        jTextField5.setText(userName);
+        jTextField6.setText(password);        
         setSize(700, 500);
     }
     
@@ -51,9 +55,9 @@ public class GetModel extends javax.swing.JFrame {
         jTextField3 = new javax.swing.JTextField();
         jButton3 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
@@ -135,7 +139,6 @@ public class GetModel extends javax.swing.JFrame {
         jLabel4.setText("User Name");
         jPanel2.add(jLabel4);
 
-        jTextField3.setText("scientist");
         jTextField3.setPreferredSize(new java.awt.Dimension(100, 19));
         jPanel2.add(jTextField3);
 
@@ -161,7 +164,18 @@ public class GetModel extends javax.swing.JFrame {
 
         jPanel2.add(jButton2);
 
-        jButton5.setText("To Library");
+        jButton4.setText("Get Model");
+        jButton4.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButton4.setPreferredSize(new java.awt.Dimension(90, 19));
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        jPanel2.add(jButton4);
+
+        jButton5.setText("New Version");
         jButton5.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButton5.setPreferredSize(new java.awt.Dimension(97, 19));
         jButton5.addActionListener(new java.awt.event.ActionListener() {
@@ -183,43 +197,29 @@ public class GetModel extends javax.swing.JFrame {
 
         jPanel2.add(jButton1);
 
-        jButton4.setText("Close File");
-        jButton4.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButton4.setPreferredSize(new java.awt.Dimension(90, 19));
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
-            }
-        });
-
-        jPanel2.add(jButton4);
-
         getContentPane().add(jPanel2, java.awt.BorderLayout.NORTH);
 
         jLabel2.setText("Database Host");
         jPanel1.add(jLabel2);
 
-        jTextField1.setText("rose.rfpk.washington.edu");
+        jTextField1.setPreferredSize(new java.awt.Dimension(140, 19));
         jPanel1.add(jTextField1);
 
         jLabel3.setText("Name");
         jPanel1.add(jLabel3);
 
-        jTextField4.setText("spktest");
         jTextField4.setPreferredSize(new java.awt.Dimension(80, 19));
         jPanel1.add(jTextField4);
 
         jLabel5.setText("Username");
         jPanel1.add(jLabel5);
 
-        jTextField5.setText("tester");
         jTextField5.setPreferredSize(new java.awt.Dimension(80, 19));
         jPanel1.add(jTextField5);
 
         jLabel6.setText("Password");
         jPanel1.add(jLabel6);
 
-        jTextField6.setText("tester");
         jTextField6.setPreferredSize(new java.awt.Dimension(80, 19));
         jPanel1.add(jTextField6);
 
@@ -242,7 +242,16 @@ public class GetModel extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        jTextArea1.setText("");
+        if(jTextField3.getText().equals(""))
+        {
+            JOptionPane.showMessageDialog(null, "User Name is required.", "Input Error",
+                                          JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        action = "get model";
+        indexList = 0;
+        lists = new Vector();
+        showArchiveList(0);
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -304,15 +313,22 @@ public class GetModel extends javax.swing.JFrame {
                                            jTextField5.getText(), 
                                            jTextField6.getText());
             
-            if(action.equals("get"))
+            if(action.startsWith("get"))
             {
                 ResultSet modelRS = Spkdb.getModel(con, modelId);
             
                 // Get model and display it
                 modelRS.next();
                 Blob blobArchive = modelRS.getBlob("archive");
-                long length = blobArchive.length(); 
-                jTextArea1.setText(new String(blobArchive.getBytes(1L, (int)length)));
+                long length = blobArchive.length();
+                String archive = new String(blobArchive.getBytes(1L, (int)length));
+                if(action.endsWith("archive"))
+                    jTextArea1.setText(archive);
+                if(action.endsWith("model"))
+                {
+                    Archive arch = new Archive("", new ByteArrayInputStream(archive.getBytes()));
+                    jTextArea1.setText(ToString.arrayToString(arch.getRevision(), "\n"));
+                }
                 jTextArea1.setCaretPosition(0);
             }
             if(action.equals("update"))
@@ -337,17 +353,25 @@ public class GetModel extends javax.swing.JFrame {
                 ResultSet modelRS = Spkdb.getModel(con, modelId);
                 modelRS.next();
                 Blob blobArchive = modelRS.getBlob("archive");
-                long length = blobArchive.length(); 
-                modelId = Spkdb.newModel(con, 
-                                         userId,
-                                         name,
-                                         modelRS.getString("abstract"),
-                                         new String(blobArchive.getBytes(1L, (int)length)));
-                if(modelId != 0)
-                    JOptionPane.showMessageDialog(null, 
-                                                  "Model '" + name + "' was added to model library.", 
-                                                  "Information",
-                                                  JOptionPane.INFORMATION_MESSAGE);                    
+                long length = blobArchive.length();
+                String strAr = new String(blobArchive.getBytes(1L, (int)length));
+                
+                String versionLog = JOptionPane.showInputDialog("Enter log for the new version (<=100 characters)");
+                if(versionLog == null)
+                    versionLog = "";
+                
+                Archive arch = new Archive("", new ByteArrayInputStream(strAr.getBytes()));
+                arch.addRevision(jTextArea1.getText().split("\n"), versionLog);
+                arch.findNode(arch.getRevisionVersion()).setAuthor(jTextField3.getText());
+                if(Spkdb.updateModel(con, 
+                                     modelId, 
+                                     new String[]{"archive"}, 
+                                     new String[]{arch.toString("\n")})) 
+                JOptionPane.showMessageDialog(null, 
+                                              "The Model '" + name + "' was updated to version " + 
+                                              String.valueOf(arch.getRevisionVersion().last()) + ".", 
+                                              "Information",
+                                              JOptionPane.INFORMATION_MESSAGE);                    
             }
             
             // Disconnect to the database
@@ -361,7 +385,23 @@ public class GetModel extends javax.swing.JFrame {
         catch(SQLException e) 
         {
             JOptionPane.showMessageDialog(null, e, "SQLException", JOptionPane.ERROR_MESSAGE);        
-        }                                                              
+        }
+        catch(InvalidFileFormatException e)
+        { 
+            JOptionPane.showMessageDialog(null, e, "InvalidFileFormatException", JOptionPane.ERROR_MESSAGE);
+        }
+        catch(ParseException e)
+        { 
+            JOptionPane.showMessageDialog(null, e, "ParseException", JOptionPane.ERROR_MESSAGE);
+        }
+        catch(PatchFailedException e)
+        {
+            JOptionPane.showMessageDialog(null, e, "PatchFailedException", JOptionPane.ERROR_MESSAGE);
+        }
+        catch(DiffException e)
+        {
+            JOptionPane.showMessageDialog(null, e, "DiffException", JOptionPane.ERROR_MESSAGE);         
+        }        
     }//GEN-LAST:event_jTable1MouseClicked
 
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
@@ -384,7 +424,7 @@ public class GetModel extends javax.swing.JFrame {
                                           JOptionPane.ERROR_MESSAGE);
             return;
         }
-        action = "get";
+        action = "get archive";
         indexList = 0;
         lists = new Vector();
         showArchiveList(0);
@@ -549,5 +589,17 @@ public class GetModel extends javax.swing.JFrame {
     private String action = null;
     
     // Maximum number of items
-    private static final int maxNum = 12; 
+    private static final int maxNum = 12;
+    
+    // Database host
+    private static final String  dbHost = "192.168.1.2";
+    
+    // Database name
+    private static final String  dbName = "spkdb";
+    
+    // Database username
+    private static final String  userName = "daemon";
+    
+    // Database password
+    private static final String  password = "daemon";    
 }

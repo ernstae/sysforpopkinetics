@@ -86,12 +86,14 @@
                      for(int i = 0; i < size; i++)
                      { 
                          String[] dataset = (String[])datasetList.get(i);
-                         String link = "<a href=versions.jsp?id=" + dataset[0] + "&type=data>" + dataset[1] + "</a>"; %>           
+                         String link = "<a href=versions.jsp?id=" + dataset[0] + "&type=data>" + dataset[1] + "</a>";
+                         String description = dataset[4].startsWith("http://") || dataset[4].startsWith("https://") ? 
+                                              "<a href=" + dataset[4] + ">" + dataset[4] + "</a>" : dataset[4]; %> 
                   <tr>
                     <td><%=link%></td>
                     <td align="center"><%=dataset[2]%></td>
                     <td><%=dataset[3]%></td>
-                    <td><%=dataset[4]%></td>
+                    <td><%=description%></td>
                   </tr>
                   <% } %>
                  </table>

@@ -1,8 +1,9 @@
 package uw.rfpk.beans;
 
+import java.sql.*;
 import java.util.Properties;
-import java.sql.Date;
 import java.text.SimpleDateFormat;
+import rfpk.spk.spkdb.*;
 
 /**
  * Converion of state code, end code, and time.
@@ -15,14 +16,42 @@ public class Conversion implements java.io.Serializable
      */     
     public Conversion()
     {
-        
-        String[] code = {"q2c", "cmp", "q2r", "run", "end", "cerr", "srun"};
-        String[] name = {"Queued to compile", "Compiling", "Queued to run", 
-                         "Running", "End", "Error found", "Job finished"};
-        for(int j = 0; j < 7; j++)
-            conversion.setProperty(code[j], name[j]);    
     }
 
+    /** Initialize the conversions for state code and end code.
+     * @param dbPass the name of the database.
+     * @param dbHost the name of the database host.
+     * @param dbUser the username of the database.
+     * @param dbPass the password of the database user.
+     */    
+    public void initConversion(String dbName, String dbHost, String dbUser, String dbPass)
+    {
+        try
+        {
+            // Connect to the database
+            Connection con = Spkdb.connect(dbName, dbHost, dbUser, dbPass); 
+
+            // Set state_code conversion
+            ResultSet stateRS = Spkdb.getStateTable(con);            
+            while(stateRS.next())
+            stateConv.setProperty(stateRS.getString(1), stateRS.getString(2));
+
+            // Set end_code conversion
+            ResultSet endRS = Spkdb.getEndTable(con);                
+            while(endRS.next())
+                endConv.setProperty(endRS.getString(1), endRS.getString(2));            
+            
+            // Disconnect to the database
+            Spkdb.disconnect(con);
+        }
+        catch(SQLException e)
+        {
+        }    
+        catch(SpkdbException e)
+        {
+        }        
+    }
+    
     /** Sets time to formated time.
      * @param time as a long number to second.
      */    
@@ -37,7 +66,7 @@ public class Conversion implements java.io.Serializable
      */    
     public void setState(String state)
     {
-        this.state = conversion.getProperty(state);
+        this.state = stateConv.getProperty(state);
     }    
     
     /** Sets end code to long end code.
@@ -46,7 +75,7 @@ public class Conversion implements java.io.Serializable
     public void setEnd(String end)
     {
         if(end != "")
-            this.end = conversion.getProperty(end);  
+            this.end = endConv.getProperty(end);  
         else
             this.end = "";
     }
@@ -75,7 +104,8 @@ public class Conversion implements java.io.Serializable
         return end;
     }
 
-    private Properties conversion = new Properties();    
+    private Properties stateConv = new Properties();
+    private Properties endConv = new Properties();
     private String state = null;
     private String end = null;
     private String time = null;

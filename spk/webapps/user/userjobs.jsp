@@ -63,6 +63,10 @@
               <th>End Code</th>
               <th>Description</th>
               <jsp:useBean id="conversion" scope="request" class="uw.rfpk.beans.Conversion" />
+              <% conversion.initConversion(getServletContext().getInitParameter("database_name"),
+                                           getServletContext().getInitParameter("database_host"),
+                                           getServletContext().getInitParameter("database_username"),
+                                           getServletContext().getInitParameter("database_password")); %>
               <c:forEach items="${userJobs.rows}" var="row">
               <c:set target="${conversion}" property="time" value="${row.start_time}" />
               <c:set target="${conversion}" property="state" value="${row.state_code}" />

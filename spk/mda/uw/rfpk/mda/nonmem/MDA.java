@@ -15,7 +15,8 @@ public class MDA
 {
     /**
      * The main method that creates the application object and initialize it.
-     * @param args A String array containing session ID and secret code. 
+     * @param args A String array containing the server host name, the server
+     * port number, session ID and secret code. 
      */
     public static void main(String[] args)
     {
@@ -27,7 +28,7 @@ public class MDA
             
             // Get path for lock file
             String path = null;
-            if(operatingSystem.equals("Linux") || operatingSystem.equals("Unix"))
+            if(operatingSystem.startsWith("Linux") || operatingSystem.startsWith("Unix"))
                 path = tempDirectory + "/" + args[0] + ".lock";
             else if(operatingSystem.startsWith("Windows"))
                 path = tempDirectory + args[0] + ".lock"; 

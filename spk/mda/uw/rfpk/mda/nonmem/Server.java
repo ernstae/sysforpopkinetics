@@ -84,7 +84,7 @@ public class Server {
         }
         catch(Exception e)
 	{
-            JOptionPane.showMessageDialog(null, "Session expired or other server problem",    
+            JOptionPane.showMessageDialog(null, "Session expired or other server problem encountered",    
                                           "Network Error",         
                                           JOptionPane.ERROR_MESSAGE);
         }   
@@ -93,6 +93,7 @@ public class Server {
     /** Get a sequence of jobs for a given user.
      * @param maxNum Maximum number of jobs to provide status for.
      * @param leftOff Least jobId previously returned (0 if first call in sequence).
+     * @param isLibrary A boolean specifying if it is a library call.
      * @return A String[][] object that contains job id, start time(date format), 
      *         state code(long format), end code(long format) and job abstract of the jobs.  
      *         The first index of the array is the job sequence in reversed order.  
@@ -121,24 +122,129 @@ public class Server {
         }
         catch(Exception e)
 	{
-            JOptionPane.showMessageDialog(null, e,    
-                                          "Session expired or other server problem",         
+            JOptionPane.showMessageDialog(null, "Session expired or other server problem encountered",
+                                          "Network Error",
                                           JOptionPane.ERROR_MESSAGE);
         }
         return jobList;    
     }
+
+    /** Get job information including model name, model version dataset name dataset version. 
+     * @param jobId Id number of the job.
+     * @param isLibrary A boolean specifying if it is a library call.
+     * @return A Properties object containing the job information including 
+     * model name, model version dataset name dataset version.  null if failed.
+     */
+    public Properties getJobInfo(long jobId, boolean isLibrary)
+    {
+        // Put secret and arguments in a String array
+        String[] messageOut = new String[3];
+        messageOut[0] = secret;
+        messageOut[1] = String.valueOf(jobId);
+        messageOut[2] = String.valueOf(isLibrary);
+        
+        // Prepare for the return
+        Properties jobInfo = null;
+        
+        try
+        {
+            // Talk to the server
+            Network network = new Network("https://" + serverHost + ":" + serverPort + 
+                                          "/user/servlet/uw.rfpk.servlets.GetJobInfo",
+                                          sessionId);
+            jobInfo = (Properties)network.talk(messageOut); 
+        }
+        catch(Exception e)
+	{
+            JOptionPane.showMessageDialog(null, "Session expired or other server problem encountered",    
+                                          "Network Error",
+                                          JOptionPane.ERROR_MESSAGE);
+        }
+        return jobInfo;            
+    }    
+
+    /** Get either model archive or dataset archive for the job. 
+     * @param jobId Id number of the job.
+     * @param type Either "model" or "data" to specify the type.
+     * @param isLibrary A boolean specifying if it is a library call.
+     * @return A Properties object containing the archive text, name and version.
+     */
+    public Properties getJobArchive(long jobId, String type, boolean isLibrary)
+    {
+        // Put secret and arguments in a String array
+        String[] messageOut = new String[4];
+        messageOut[0] = secret;
+        messageOut[1] = String.valueOf(jobId);
+        messageOut[2] = type;
+        messageOut[3] = String.valueOf(isLibrary);
+        
+        // Prepare for the return
+        Properties archive = null;
+        
+        try
+        {
+            // Talk to the server
+            Network network = new Network("https://" + serverHost + ":" + serverPort + 
+                                          "/user/servlet/uw.rfpk.servlets.GetJobArchive",
+                                          sessionId);
+            archive = (Properties)network.talk(messageOut); 
+        }
+        catch(Exception e)
+	{
+            JOptionPane.showMessageDialog(null, "Session expired or other server problem encountered",    
+                                          "Network Error",
+                                          JOptionPane.ERROR_MESSAGE);
+        }
+        return archive;            
+    }
     
+    /** Get SPK input data. 
+     * @param jobId Id number of the job.
+     * @param isLibrary A boolean specifying if it is a library call.
+     * @return A Properties object containing the SPK input data. 
+     *         null if failed.
+     */
+    public Properties getInput(long jobId, boolean isLibrary)
+    {
+        // Put secret and arguments in a String array
+        String[] messageOut = new String[3];
+        messageOut[0] = secret;
+        messageOut[1] = String.valueOf(jobId);
+        messageOut[2] = String.valueOf(isLibrary);
+        
+        // Prepare for the return
+        Properties spkInput = null;
+        
+        try
+        {
+            // Talk to the server
+            Network network = new Network("https://" + serverHost + ":" + serverPort + 
+                                          "/user/servlet/uw.rfpk.servlets.GetInput",
+                                          sessionId);
+            spkInput = (Properties)network.talk(messageOut); 
+        }
+        catch(Exception e)
+	{
+            JOptionPane.showMessageDialog(null, "Session expired or other server problem encountered",    
+                                          "Network Error",
+                                          JOptionPane.ERROR_MESSAGE);
+        }
+        return spkInput;            
+    }
+        
     /** Get SPK output data. 
      * @param jobId Id number of the job.
+     * @param isLibrary A boolean specifying if it is a library call.
      * @return A Properties object containing the SPK output data. 
      *         null if failed.
      */
-    public Properties getOutput(long jobId)
+    public Properties getOutput(long jobId, boolean isLibrary)
     {
         // Put secret and arguments in a String array
-        String[] messageOut = new String[2];
+        String[] messageOut = new String[3];
         messageOut[0] = secret;
         messageOut[1] = String.valueOf(jobId);
+        messageOut[2] = String.valueOf(isLibrary);        
         
         // Prepare for the return
         Properties spkOutput = null;
@@ -153,17 +259,52 @@ public class Server {
         }
         catch(Exception e)
 	{
-            JOptionPane.showMessageDialog(null, e,    
-                                          "Session expired or other server problem",         
+            JOptionPane.showMessageDialog(null, "Session expired or other server problem encountered",    
+                                          "Network Error",
                                           JOptionPane.ERROR_MESSAGE);
         }
         return spkOutput;            
     }
+
+    /** Get job history. 
+     * @param jobId Id number of the job.
+     * @param isLibrary A boolean specifying if it is a library call.
+     * @return A String[][] object containing the job history including event time, 
+     * state code and host. 
+     *         null if failed.
+     */
+    public String[][] getHistory(long jobId, boolean isLibrary)
+    {
+        // Put secret and arguments in a String array
+        String[] messageOut = new String[3];
+        messageOut[0] = secret;
+        messageOut[1] = String.valueOf(jobId);
+        messageOut[2] = String.valueOf(isLibrary);
+        
+        // Prepare for the return
+        String[][] jobHistory = null;
+        
+        try
+        {
+            // Talk to the server
+            Network network = new Network("https://" + serverHost + ":" + serverPort + 
+                                          "/user/servlet/uw.rfpk.servlets.GetHistory",
+                                          sessionId);
+            jobHistory = (String[][])network.talk(messageOut); 
+        }
+        catch(Exception e)
+	{
+            JOptionPane.showMessageDialog(null, "Session expired or other server problem encountered",    
+                                          "Network Error",
+                                          JOptionPane.ERROR_MESSAGE);
+        }
+        return jobHistory;            
+    }    
     
     /** Get a sequence of models for a given user.
      * @param maxNum Maximum number of models to provide status for.
      * @param leftOff Least modelId previously returned (0 if first call in sequence).
-     * @param isLibrary A boolean, true for model library, false for the user.
+     * @param isLibrary A boolean specifying if it is a library call.
      * @return A String[][] object that contains model id, model name,  
      *         last revision time(date format), and model abstract of the models.  
      *         The first index of the array is the model sequence in reversed order.  
@@ -192,8 +333,8 @@ public class Server {
         }
         catch(Exception e)
 	{
-            JOptionPane.showMessageDialog(null, e,    
-                                          "Session expired or other server problem",         
+            JOptionPane.showMessageDialog(null, "Session expired or other server problem encountered",    
+                                          "Network Error",         
                                           JOptionPane.ERROR_MESSAGE);
         }        
         return modelList;   
@@ -202,6 +343,7 @@ public class Server {
     /** Get a sequence of datasets for a given user.
      * @param maxNum Maximum number of datasets to provide status for.
      * @param leftOff Least datasetId previously returned (0 if first call in sequence).
+     * @param isLibrary A boolean specifying if it is a library call.
      * @return A String[][] object that contains dataset id, dataset name,  
      *         last revision time(date format), and dataset abstract of the datasets.  
      *         The first index of the array is the dataset sequence in reversed order.  
@@ -230,8 +372,8 @@ public class Server {
         }
         catch(Exception e)
 	{
-            JOptionPane.showMessageDialog(null, e,    
-                                          "Session expired or other server problem",         
+            JOptionPane.showMessageDialog(null, "Session expired or other server problem encountered",    
+                                          "Network Error",         
                                           JOptionPane.ERROR_MESSAGE);
         }
         return datasetList;   
@@ -240,19 +382,21 @@ public class Server {
     /** Get a sequence of versions for a given model or a given dataset.
      * @param id The id number of the model or the dataset.
      * @param type Specifying model or dataset.
+     * @param isLibrary A boolean specifying if it is a library call.
      * @return A String[][] object that contains version number, author name,  
      *         revision time(date format) and log message of the versions.  
      *         The first index of the array is the version sequence in reversed order.  
      *         The second index designates the fields. 
      *         null if failed.         
      */        
-    public String[][] getVersions(long id, String type)    
+    public String[][] getVersions(long id, String type, boolean isLibrary)    
     {
         // Put secret and arguments in a String array
-        String[] messageOut = new String[3];
+        String[] messageOut = new String[4];
         messageOut[0] = secret;
         messageOut[1] = String.valueOf(id);
         messageOut[2] = type;
+        messageOut[3] = String.valueOf(isLibrary);        
         
         // Prepare for the return
         String[][] versionList = null;
@@ -267,8 +411,8 @@ public class Server {
         }
         catch(Exception e)
 	{
-            JOptionPane.showMessageDialog(null, e,    
-                                          "Session expired or other server problem",         
+            JOptionPane.showMessageDialog(null, "Session expired or other server problem encountered",    
+                                          "Network Error",         
                                           JOptionPane.ERROR_MESSAGE);
         }        
         return versionList;
@@ -299,8 +443,8 @@ public class Server {
         }
         catch(Exception e)
 	{
-            JOptionPane.showMessageDialog(null, e,    
-                                          "Session expired or other server problem",         
+            JOptionPane.showMessageDialog(null, "Session expired or other server problem encountered",    
+                                          "Network Error",         
                                           JOptionPane.ERROR_MESSAGE);
         }               
         return archive;   
@@ -333,8 +477,8 @@ public class Server {
         }
         catch(Exception e)
 	{
-            JOptionPane.showMessageDialog(null, e,    
-                                          "Session expired or other server problem",         
+            JOptionPane.showMessageDialog(null, "Session expired or other server problem encountered",    
+                                          "Network Error",         
                                           JOptionPane.ERROR_MESSAGE);
         }       
         return revision;

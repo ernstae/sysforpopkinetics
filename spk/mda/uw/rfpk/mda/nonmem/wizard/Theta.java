@@ -59,9 +59,6 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
     private void initComponents() {//GEN-BEGIN:initComponents
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jDialog1 = new javax.swing.JDialog();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        help = new javax.swing.JTextArea();
         jTextField1 = new javax.swing.JTextField();
         jTextField2 = new javax.swing.JTextField();
         addButton = new javax.swing.JButton();
@@ -82,12 +79,6 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
         jCheckBox1 = new javax.swing.JCheckBox();
         jCheckBox2 = new javax.swing.JCheckBox();
         jCheckBox3 = new javax.swing.JCheckBox();
-
-        jDialog1.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        help.setEditable(false);
-        jScrollPane2.setViewportView(help);
-
-        jDialog1.getContentPane().add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -112,8 +103,8 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 125;
-        gridBagConstraints.insets = new java.awt.Insets(9, 0, 9, 10);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(9, 0, 9, 10);
         add(jTextField1, gridBagConstraints);
 
         jTextField2.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -134,8 +125,8 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(14, 0, 11, 10);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(14, 0, 11, 10);
         add(jTextField2, gridBagConstraints);
 
         addButton.setText("Add");
@@ -185,17 +176,17 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("Enter initial estimates and/or bounds for the fixed effects means.  If \nFIXED is selected, only the initial estimate is required.");
+        jTextPane1.setText("Enter initial estimates and/or bounds for the fixed effects means.  \nIf FIXED is selected, only the initial estimate is required.  If you use \nexponential expression, be aware that your control file may be \nuncompatible with NONMEM.");
         jTextPane1.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 0, 12);
         add(jTextPane1, gridBagConstraints);
 
         jTextPane2.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane2.setEditable(false);
-        jTextPane2.setText("List of THETA\nvalues you \nhave entered.");
+        jTextPane2.setText("List of fixed\neffect values\nand limits you\nhave entered\nin NONMEM\nSyntax");
         jTextPane2.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -278,16 +269,16 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.insets = new java.awt.Insets(9, 12, 9, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(9, 12, 9, 12);
         add(jLabel1, gridBagConstraints);
 
         jLabel2.setText("Initial Estimate");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.insets = new java.awt.Insets(14, 12, 11, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(14, 12, 11, 12);
         add(jLabel2, gridBagConstraints);
 
         jLabel3.setText("Upper Bound");
@@ -331,8 +322,8 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(8, 6, 6, 10);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(8, 6, 6, 10);
         add(jCheckBox1, gridBagConstraints);
 
         jCheckBox2.setText("FIXED");
@@ -345,8 +336,8 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.insets = new java.awt.Insets(12, 6, 9, 10);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 6, 9, 10);
         add(jCheckBox2, gridBagConstraints);
 
         jCheckBox3.setText("INF");
@@ -431,10 +422,59 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
                                               JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            
-            double value = Double.parseDouble(text);
-            jTextField1.setText(String.valueOf(value/10));
-            jTextField3.setText(String.valueOf(value*10));
+       
+            String text1 = "0";
+            String text3 = "0";
+            boolean isMinus = false;
+            if(text.startsWith("-"))
+            {
+                text = text.substring(1);
+                isMinus = true;
+            }
+            if(text.startsWith("0") && text.length() > 1)
+                text = text.substring(1);
+            while(text.endsWith("0") && text.indexOf(".") != -1)
+                text = text.substring(0, text.length() - 1);
+            if(!text.equals(".") && !text.equals(" ") && !text.equals("0"))
+            {
+                int l = text.length();
+                int i = text.indexOf('.');
+                if(i == -1)
+                {
+                    text1 = text.substring(0, l - 1) + "." + text.charAt(l - 1);
+                    text3 = text + "0";
+                }
+                else if(i == 0)
+                {
+                    text1 = ".0" + text.substring(1);
+                    text3 = text.charAt(1) + "." + text.substring(2);
+                }
+                else if(i == l - 1)
+                {
+                    text1 = text.substring(0, l - 2) + "." + text.charAt(l - 2);
+                    text3 = text.replace('.', '0');
+                }
+                else
+                {
+                    text1 = text.substring(0, i - 1) + "." + text.charAt(i - 1) + text.substring(i + 1);
+                    text3 = text.substring(0, i) + text.charAt(i + 1) + "." + text.substring(i + 2);     
+                }
+            }
+            if(isMinus)
+            {
+                jTextField1.setText("-" + text3);
+                jTextField3.setText("-" + text1);
+            }
+            else
+            {
+                jTextField1.setText(text1);
+                jTextField3.setText(text3);               
+            }
+
+            isFixed = false;
+            jCheckBox1.setSelected(false);
+            jCheckBox2.setSelected(false);
+            jCheckBox3.setSelected(false);
             
             if(highlight == 2)
             {
@@ -669,7 +709,7 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
         String text3 = jTextField3.getText().trim();  
         
         // Check if text1, text2 and text3 are numbers
-        if(!isFixed && !Utility.isFloatNumber(text1) && !isFixed)
+        if(!isFixed && !Utility.isFloatNumber(text1))
         {
             JOptionPane.showMessageDialog(null, 
                                           "The Lower Bound is not a floating " +
@@ -716,6 +756,35 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
                                           JOptionPane.ERROR_MESSAGE);                    
             return null;
         }
+
+        // Check if text1, text2 and text3 are too long
+        if(text1.length() > 8)
+        {
+            JOptionPane.showMessageDialog(null, 
+                                          "The Lower Bound has more than 8 characters.\n" +
+                                          "It is fine for SPK, but the generated control\n" +
+                                          "file may not be accepted by NONMEM.",   
+                                          "Warning Message",    
+                                          JOptionPane.INFORMATION_MESSAGE);           
+        }
+        if(text2.length() > 8)
+        {
+            JOptionPane.showMessageDialog(null, 
+                                          "The Initial Estimate has more than 8 characters.\n" +
+                                          "It is fine for SPK, but the generated control\n" +
+                                          "file may not be accepted by NONMEM.",   
+                                          "Warning Message",    
+                                          JOptionPane.INFORMATION_MESSAGE);           
+        }
+        if(text3.length() > 8)
+        {
+            JOptionPane.showMessageDialog(null, 
+                                          "The Upper Bound has more than 8 characters.\n" +
+                                          "It is fine for SPK, but the generated control\n" +
+                                          "file may not be accepted by NONMEM.",   
+                                          "Warning Message",    
+                                          JOptionPane.INFORMATION_MESSAGE);           
+        }
         
         // Construct the element for the list   
         String element = ""; 
@@ -727,7 +796,9 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
         }
         else
         {
-            element = "(" + text2 + " FIXED)";           
+            element = "(" + text2 + " FIXED)";
+            jCheckBox2.setSelected(false);
+            isFixed = false;
         }
         return element;
     }
@@ -736,17 +807,14 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JButton changeButton;
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton downButton;
-    private javax.swing.JTextArea help;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JCheckBox jCheckBox3;
-    private javax.swing.JDialog jDialog1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JList jList1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JTextField jTextField1;
@@ -772,15 +840,48 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
 	}
        
   	public String getContentItem(){
-  	    return "$THETA Record";
+  	    return "Fixed Effects";
   	}
 
 	public String getStepTitle(){
-	    return "$THETA Record";
+	    return "Fixed Effects Across The Population";
 	}
 
 	public void showingStep(JWizardPane wizard){
             wizardPane = wizard;
+            if(iterator.getIsReload())
+            {
+                String text = iterator.getReload().getProperty("THETA");
+                if(text != null)
+                {
+                    iterator.getReload().remove("THETA");
+                    model.removeAllElements();
+                    int beginIndex = text.indexOf("(");
+                    nTheta = 0;
+                    while(beginIndex != -1)
+                    {
+                        int endIndex = text.indexOf(")", beginIndex); 
+                        model.addElement(text.substring(beginIndex, endIndex + 1));
+                        beginIndex = text.indexOf("(", endIndex);
+                        nTheta++;
+                    }
+                    index = nTheta - 1;
+                    jList1.setSelectedIndex(index);
+
+                    // Set delete button
+                    deleteButton.setEnabled(nTheta > 0);
+                    
+                    // Set left options
+                    if(nTheta == iterator.getNTheta())
+                    {
+                        isValid = true;                    
+                        wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
+                    }
+                    
+                    // Set up and down buttons
+                    Utility.setUpDownButton(index, model, upButton, downButton);
+                }
+            }
             if(nTheta != iterator.getNTheta())
             {
                 nTheta = iterator.getNTheta();
@@ -805,19 +906,17 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
  	}
 
 	public void hidingStep(JWizardPane wizard){
-//            jTextField1.setText("");
-//            jTextField2.setText("");
-//            jTextField3.setText("");  
-//            jCheckBox1.setSelected(false);
-//            jCheckBox2.setSelected(false);
-//            jCheckBox3.setSelected(false);
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }
             if(nTheta == 0 || model.getSize() == 0 || model.getSize() != nTheta)
                 return;
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             String record = "";
-            String ls = System.getProperty("line.separator");
             for(int i = 0; i < nTheta; i++)
-                record = record + ls + model.get(i);
+                record = record + "\n" + ((String)model.get(i)).replaceAll("\r", "");
             if(!record.equals(""))
             {
                 object.getRecords().setProperty("Theta", "$THETA " + record);
@@ -852,9 +951,12 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
                 public void actionPerformed(ActionEvent e){ 
-                    jDialog1.setTitle("Help for " + getStepTitle());
-                    jDialog1.setSize(600, 500);
-                    jDialog1.show();
+                    if(!iterator.getIsOnline()) 
+                        new Help("Help for $THETA Record", 
+                                 Theta.class.getResource("/uw/rfpk/mda/nonmem/help/Theta.html"));
+                    else
+                        Utility.openURL("https://" + iterator.getServerName() + 
+                                        ":" + iterator.getServerPort() + "/user/help/Theta.html");  
                 }
             };
 	}

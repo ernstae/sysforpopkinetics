@@ -57,6 +57,7 @@ public class Test{
     }
     class Iterator extends MDAIterator{
         public Iterator(){
+            super("",  "", false, null);
             super.setAdvan(10);
             super.setNDataCol(5);
             super.setNTheta(3);
@@ -67,25 +68,26 @@ public class Test{
     class TestFrame extends javax.swing.JFrame{
         public TestFrame(){
             Iterator i = new Iterator();
-//            Aesinitial step = new Aesinitial();
-//            Aes step = new Aes();
+//            Aesinitial step = new Aesinitial(i);
+//            Aes step = new Aes(i);
+//            Covariance step = new Covariance(i);
 //            Data step = new Data(i);
-//            Des step = new Des();
+//            Des step = new Des(i);
 //            Error step = new Error(i);
 //            GettingStarted step = new GettingStarted(i);
-//            Estimation step = new Estimation();
+            Estimation step = new Estimation(i);
 //            Input step = new Input(i);
 //            Model step = new Model(i);
 //            PK step = new PK(i);
 //            Pred step = new Pred(i);
-//            Problem step = new Problem();
+//            Problem step = new Problem(i);
 //            Omega step = new Omega(i); 
 //            Sigma step = new Sigma(i);
 //            ScatterPlot step = new ScatterPlot(i); 
-//            Simulation step = new Simulation();
+//            Simulation step = new Simulation(i);
 //            Subroutines step = new Subroutines(i);
 //            Table step = new Table(i);
-            Theta step = new Theta(i);
+//            Theta step = new Theta(i);
             MDAObject object = new MDAObject();
             Properties records = object.getRecords();
             records.setProperty("Aesinitial",  "");

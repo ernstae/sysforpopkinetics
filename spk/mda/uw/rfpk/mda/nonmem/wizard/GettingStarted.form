@@ -13,6 +13,9 @@
         </Property>
         <Property name="autoscrolls" type="boolean" value="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="popupMenuCanceled" listener="javax.swing.event.PopupMenuListener" parameters="javax.swing.event.PopupMenuEvent" handler="jPopupMenu1PopupMenuCanceled"/>
+      </Events>
       <SubComponents>
         <MenuItem class="javax.swing.JMenuItem" name="jMenuItem1">
           <Properties>
@@ -112,31 +115,6 @@
         </MenuItem>
       </SubComponents>
     </Menu>
-    <Container class="javax.swing.JDialog" name="jDialog1">
-      <Properties>
-        <Property name="defaultCloseOperation" type="int" value="2"/>
-      </Properties>
-
-      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
-      <SubComponents>
-        <Container class="javax.swing.JScrollPane" name="jScrollPane1">
-          <Constraints>
-            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
-              <BorderConstraints direction="Center"/>
-            </Constraint>
-          </Constraints>
-
-          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-          <SubComponents>
-            <Component class="javax.swing.JEditorPane" name="help">
-              <Properties>
-                <Property name="editable" type="boolean" value="false"/>
-              </Properties>
-            </Component>
-          </SubComponents>
-        </Container>
-      </SubComponents>
-    </Container>
   </NonVisualComponents>
   <AuxValues>
     <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,113,0,0,1,-89"/>
@@ -150,7 +128,7 @@
           <Color blue="cc" green="cc" red="cc" type="rgb"/>
         </Property>
         <Property name="editable" type="boolean" value="false"/>
-        <Property name="text" type="java.lang.String" value="This wizard is guiding you in creation of a NONMEM control file(model).&#xa;Then, the wizard converts the control file and the data file into a SPK &#xa;input file .  Select the following items and then click the &quot;Next&quot; button."/>
+        <Property name="text" type="java.lang.String" value="This tool is guiding you in the creation of a structural - statistical mixed &#xa;effect model.  The tool converts the model in a NONMEM control file and a&#xa;SPK input file .  Select the following items and then click the &quot;Next&quot; button."/>
         <Property name="focusCycleRoot" type="boolean" value="false"/>
         <Property name="focusable" type="boolean" value="false"/>
       </Properties>
@@ -194,7 +172,7 @@
     </Component>
     <Component class="javax.swing.JRadioButton" name="jRadioButton3">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Using user predefined PK model"/>
+        <Property name="text" type="java.lang.String" value="Using user defined model"/>
         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
           <ComponentRef name="buttonGroup2"/>
         </Property>
@@ -210,7 +188,7 @@
     </Component>
     <Component class="javax.swing.JRadioButton" name="jRadioButton4">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Using NONMEM PK model library"/>
+        <Property name="text" type="java.lang.String" value="Using the RFPK model library"/>
         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
           <ComponentRef name="buttonGroup2"/>
         </Property>
@@ -228,9 +206,6 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Computing statistics of estimates"/>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioButton5ActionPerformed"/>
-      </Events>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
           <GridBagConstraints gridX="0" gridY="9" gridWidth="3" gridHeight="1" fill="0" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="20" insetsBottom="11" insetsRight="6" anchor="18" weightX="0.0" weightY="0.0"/>
@@ -297,9 +272,6 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Table output"/>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBox3ActionPerformed"/>
-      </Events>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
           <GridBagConstraints gridX="0" gridY="2" gridWidth="1" gridHeight="1" fill="0" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="47" insetsBottom="0" insetsRight="62" anchor="17" weightX="0.0" weightY="0.0"/>
@@ -308,11 +280,8 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="jCheckBox4">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Scatter plot output"/>
+        <Property name="text" type="java.lang.String" value="plot output"/>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBox4ActionPerformed"/>
-      </Events>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
           <GridBagConstraints gridX="0" gridY="3" gridWidth="1" gridHeight="1" fill="0" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="47" insetsBottom="8" insetsRight="21" anchor="17" weightX="0.0" weightY="0.0"/>
@@ -324,9 +293,6 @@
         <Property name="text" type="java.lang.String" value="Table output"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBox5ActionPerformed"/>
-      </Events>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
           <GridBagConstraints gridX="1" gridY="2" gridWidth="4" gridHeight="1" fill="0" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="20" insetsBottom="0" insetsRight="61" anchor="17" weightX="0.0" weightY="0.0"/>
@@ -335,12 +301,9 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="jCheckBox6">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Scatter plot output"/>
+        <Property name="text" type="java.lang.String" value="Plot output"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBox6ActionPerformed"/>
-      </Events>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
           <GridBagConstraints gridX="1" gridY="3" gridWidth="4" gridHeight="1" fill="0" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="20" insetsBottom="8" insetsRight="61" anchor="17" weightX="0.0" weightY="0.0"/>
@@ -370,7 +333,7 @@
           <Color blue="cc" green="cc" red="cc" type="rgb"/>
         </Property>
         <Property name="editable" type="boolean" value="false"/>
-        <Property name="text" type="java.lang.String" value="You may load back a model that was &#xa;created by this wizard to make changes."/>
+        <Property name="text" type="java.lang.String" value="You may load back a model that was &#xa;created by this tool or a SPK input file."/>
         <Property name="focusCycleRoot" type="boolean" value="false"/>
         <Property name="focusable" type="boolean" value="false"/>
       </Properties>
@@ -382,7 +345,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="jButton1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Load Model"/>
+        <Property name="text" type="java.lang.String" value="Load Model or Input"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>

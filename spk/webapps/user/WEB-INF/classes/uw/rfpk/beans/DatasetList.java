@@ -88,8 +88,8 @@ public class DatasetList implements java.io.Serializable
             // Fill in the List
             while(userDatasetsRS.next())
             {                  
-                // Get model id
-                long modelId = userDatasetsRS.getLong("dataset_id"); 
+                // Get dataset id
+                long datasetId = userDatasetsRS.getLong("dataset_id"); 
                     
                 // Get model archive
 	        Blob blobArchive = userDatasetsRS.getBlob("archive");
@@ -99,7 +99,7 @@ public class DatasetList implements java.io.Serializable
                     
                 // Fill in the list 
                 String[] dataset = new String[5];
-                dataset[0] = String.valueOf(modelId); 
+                dataset[0] = String.valueOf(datasetId); 
                 dataset[1] = userDatasetsRS.getString("name");
                 dataset[2] = String.valueOf(archive.getRevisionVersion().last());
                 dataset[3] = archive.findNode(archive.getRevisionVersion()).getDate().toString();

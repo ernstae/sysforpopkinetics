@@ -22,10 +22,12 @@ public class Simulation extends javax.swing.JPanel implements WizardStep {
     
     private StepDescriptor sd = new MyStepDescriptor(); 
     private JComponent panel = this;
+    private MDAIterator iterator = null;
 
     /** Creates new form Simulation 
      */
-    public Simulation() {
+    public Simulation(MDAIterator iter) {
+        iterator = iter;
         initComponents();
     }
     
@@ -37,9 +39,6 @@ public class Simulation extends javax.swing.JPanel implements WizardStep {
     private void initComponents() {//GEN-BEGIN:initComponents
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jDialog1 = new javax.swing.JDialog();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        help = new javax.swing.JTextArea();
         jTextPane1 = new javax.swing.JTextPane();
         jSeparator1 = new javax.swing.JSeparator();
         jLabel1 = new javax.swing.JLabel();
@@ -47,87 +46,177 @@ public class Simulation extends javax.swing.JPanel implements WizardStep {
         jTextField1 = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
-
-        jDialog1.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        help.setEditable(false);
-        jScrollPane2.setViewportView(help);
-
-        jDialog1.getContentPane().add(jScrollPane2, java.awt.BorderLayout.CENTER);
+        jLabel2 = new javax.swing.JLabel();
+        jTextField2 = new javax.swing.JTextField();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        jTextPane3 = new javax.swing.JTextPane();
+        jTextPane4 = new javax.swing.JTextPane();
+        jTextPane5 = new javax.swing.JTextPane();
+        jButton1 = new javax.swing.JButton();
 
         setLayout(new java.awt.GridBagLayout());
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("Enter an integer number as the seed for the random source.  The number should be between 0 and 21474836447.  Press the \"Enter\" key after typing in the number.");
+        jTextPane1.setText("Enter an integer number as the seed for the random source.  \nThe number should be between 0 and 21474836447. ");
+        jTextPane1.setFocusCycleRoot(false);
+        jTextPane1.setFocusable(false);
+        jTextPane1.setMaximumSize(new java.awt.Dimension(420, 35));
+        jTextPane1.setMinimumSize(new java.awt.Dimension(420, 35));
+        jTextPane1.setPreferredSize(new java.awt.Dimension(420, 35));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 12, 12);
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         add(jTextPane1, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(75, 12, 0, 12);
+        gridBagConstraints.insets = new java.awt.Insets(11, 12, 0, 12);
         add(jSeparator1, gridBagConstraints);
 
-        jLabel1.setText("Seed Number");
+        jLabel1.setText("Seed Number for Random Source");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(12, 76, 12, 12);
+        gridBagConstraints.insets = new java.awt.Insets(12, 36, 12, 12);
         add(jLabel1, gridBagConstraints);
 
         jTextPane2.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane2.setEditable(false);
         jTextPane2.setText("The $SIMULATION record you have entered.");
+        jTextPane2.setPreferredSize(new java.awt.Dimension(420, 21));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 8;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(21, 12, 0, 12);
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 0, 12);
         add(jTextPane2, gridBagConstraints);
 
         jTextField1.setText("889215690");
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
-            }
-        });
-
+        jTextField1.setMaximumSize(new java.awt.Dimension(100, 19));
+        jTextField1.setMinimumSize(new java.awt.Dimension(100, 19));
+        jTextField1.setPreferredSize(new java.awt.Dimension(100, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipadx = 125;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 80);
+        gridBagConstraints.insets = new java.awt.Insets(12, 0, 12, 36);
         add(jTextField1, gridBagConstraints);
 
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(420, 33));
         jTextArea1.setColumns(20);
         jTextArea1.setEditable(false);
         jTextArea1.setRows(2);
+        jTextArea1.setText("$SIMULATION (889215690)");
+        jTextArea1.setMaximumSize(new java.awt.Dimension(420, 50));
         jScrollPane1.setViewportView(jTextArea1);
 
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipady = 12;
+        gridBagConstraints.insets = new java.awt.Insets(10, 12, 12, 12);
+        add(jScrollPane1, gridBagConstraints);
+
+        jLabel2.setText("Number of Sub-Problems to Run\n");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 36, 12, 12);
+        add(jLabel2, gridBagConstraints);
+
+        jTextField2.setText("1");
+        jTextField2.setMaximumSize(new java.awt.Dimension(100, 19));
+        jTextField2.setMinimumSize(new java.awt.Dimension(100, 19));
+        jTextField2.setPreferredSize(new java.awt.Dimension(100, 19));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 0, 12, 36);
+        add(jTextField2, gridBagConstraints);
+
+        jCheckBox1.setText("Only Simulation");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 35, 11, 12);
+        add(jCheckBox1, gridBagConstraints);
+
+        jTextPane3.setBackground(new java.awt.Color(204, 204, 204));
+        jTextPane3.setEditable(false);
+        jTextPane3.setText("Click the \"Enter\" button to continue.");
+        jTextPane3.setFocusable(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(2, 13, 2, 0);
+        add(jTextPane3, gridBagConstraints);
+
+        jTextPane4.setBackground(new java.awt.Color(204, 204, 204));
+        jTextPane4.setEditable(false);
+        jTextPane4.setText("Repeatedly run the problem.  In each run, use the simulated data\nobtained from the previous run as the current random source.");
+        jTextPane4.setFocusable(false);
+        jTextPane4.setMaximumSize(new java.awt.Dimension(420, 35));
+        jTextPane4.setMinimumSize(new java.awt.Dimension(420, 35));
+        jTextPane4.setPreferredSize(new java.awt.Dimension(320, 35));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
+        add(jTextPane4, gridBagConstraints);
+
+        jTextPane5.setBackground(new java.awt.Color(204, 204, 204));
+        jTextPane5.setEditable(false);
+        jTextPane5.setText("Only Simulation means that Pred-defined data items are computed \nusing simulated etas and initial thetas and WRES values are 0.");
+        jTextPane5.setFocusable(false);
+        jTextPane5.setMaximumSize(new java.awt.Dimension(420, 35));
+        jTextPane5.setMinimumSize(new java.awt.Dimension(420, 35));
+        jTextPane5.setPreferredSize(new java.awt.Dimension(420, 35));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipady = 12;
-        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
-        add(jScrollPane1, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
+        add(jTextPane5, gridBagConstraints);
+
+        jButton1.setText("Enter");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 6;
+        add(jButton1, gridBagConstraints);
 
     }//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         String seed = jTextField1.getText().trim();
         if(seed.startsWith("+"))
             seed = seed.substring(1);
@@ -148,21 +237,44 @@ public class Simulation extends javax.swing.JPanel implements WizardStep {
                                           JOptionPane.ERROR_MESSAGE);                
             return;
         }
-        jTextArea1.setText("$SIMULATION (" + seed + ")");
-    }//GEN-LAST:event_jTextField1ActionPerformed
+        String subProblems = " SUBPROBLEMS=1";
+        String nProblem = jTextField2.getText().trim();
+        if(!nProblem.equals(""))
+        {
+            if(nProblem.startsWith("+"))
+                nProblem = nProblem.substring(1);        
+            if(!Utility.isPosIntNumber(nProblem))
+            {
+                JOptionPane.showMessageDialog(null, 
+                                              "The number of sub-problems to run " +
+                                              "is not a positive integer number.",   
+                                              "Input Error",    
+                                              JOptionPane.ERROR_MESSAGE);                
+                return;
+            }
+            if(Integer.parseInt(nProblem) > 1)
+                subProblems = " SUBPROBLEMS=" + nProblem;
+        }
+        String onlySimulation = jCheckBox1.isSelected() ? " ONLYSIMULATION" : "";
+        jTextArea1.setText("$SIMULATION (" + seed + ")" + onlySimulation + subProblems);
+    }//GEN-LAST:event_jButton1ActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextArea help;
-    private javax.swing.JDialog jDialog1;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
     private javax.swing.JTextPane jTextPane1;
     private javax.swing.JTextPane jTextPane2;
+    private javax.swing.JTextPane jTextPane3;
+    private javax.swing.JTextPane jTextPane4;
+    private javax.swing.JTextPane jTextPane5;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -180,23 +292,54 @@ public class Simulation extends javax.swing.JPanel implements WizardStep {
 	}
        
   	public String getContentItem(){
-  	    return "$SIMULATION Record";
+  	    return "Simulation";
   	}
 
 	public String getStepTitle(){
-	    return "$SIMULATION Record";
+	    return "Simulation";
 	}
 
 	public void showingStep(JWizardPane wizard){
-            jTextArea1.setText("$SIMULATION (" + jTextField1.getText() + ")");
-	}
+            jCheckBox1.setEnabled(!iterator.getIsEstimation());            
+            if(iterator.getIsReload())
+            {
+                String text = iterator.getReload().getProperty("SIMULATION");
+                if(text != null)
+                {
+                    iterator.getReload().remove("SIMULATION");
+                    jCheckBox1.setSelected(text.indexOf(" ONLYSIMULATION") != -1);
+                    jTextField1.setText(text.substring(text.indexOf("(") + 1, text.indexOf(")")));
+                    if(text.indexOf(" SUBPROBLEMS") != -1)
+                        jTextField2.setText(text.substring(text.indexOf("=") + 1).trim());
+                    else
+                        jTextField2.setText("1");
+                    jTextArea1.setText("$SIMULATION" + text.substring(11).trim());
+                    if(iterator.getIsEstimation())
+                        jCheckBox1.setEnabled(false);                    
+                }
+            }
+     	}
 
 	public void hidingStep(JWizardPane wizard){
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }            
             String record = jTextArea1.getText();
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             object.getRecords().setProperty("Simulation", record);
-            object.getSource().simulation = record.substring(record.indexOf("(") + 1,
-                                                              record.indexOf(")"));
+            String[] simu = new String[3];
+            simu[0] = record.substring(record.indexOf("(") + 1, record.indexOf(")"));
+            if(record.indexOf(" ONLYSIMULATION") != -1)
+                simu[1] = "yes";
+            else
+                simu[1] = "no";
+            if(record.indexOf(" SUBPROBLEMS") != -1)
+                simu[2] = record.substring(record.indexOf("=") + 1);
+            else
+                simu[2] = "1";
+            object.getSource().simulation = simu;
 	}
 
 	public boolean isValid(){
@@ -206,9 +349,12 @@ public class Simulation extends javax.swing.JPanel implements WizardStep {
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
                 public void actionPerformed(ActionEvent e){ 
-                    jDialog1.setTitle("Help for " + getStepTitle());
-                    jDialog1.setSize(600, 500);
-                    jDialog1.show();
+                    if(!iterator.getIsOnline()) 
+                        new Help("Help for $SIMULATION Record", 
+                                 Simulation.class.getResource("/uw/rfpk/mda/nonmem/help/Simulation.html"));
+                    else
+                        Utility.openURL("https://" + iterator.getServerName() + 
+                                        ":" + iterator.getServerPort() + "/user/help/Simulation.html");  
                 }
             };
 	}

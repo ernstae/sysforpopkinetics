@@ -131,9 +131,15 @@ public class XMLReader {
             NodeList ind_analysisList = constraint.getElementsByTagName("ind_analysis"); 
             Element analysis = null;
             if(pop_analysisList.getLength() > 0)
+            {
                 analysis = (Element)pop_analysisList.item(0);
+                output.analysis = "population";
+            }
             else if(ind_analysisList.getLength() > 0)
+            {
                 analysis = (Element)ind_analysisList.item(0);
+                output.analysis = "individual";
+            }
             else
                 return;
 
@@ -254,7 +260,7 @@ public class XMLReader {
         // Get error message 
         NodeList error_messageList = spkreport.getElementsByTagName("error_message");
         if(error_messageList.getLength() > 0)
-            getErrorMessage((Element)error_messageList.item(0));
+            getErrorMessage((Element)error_messageList.item(0)); 
         
         // Get population analysis result
         NodeList pop_analysis_resultList = spkreport.getElementsByTagName("pop_analysis_result");
@@ -282,16 +288,31 @@ public class XMLReader {
         NodeList presentation_dataList = spkreport.getElementsByTagName("presentation_data");
         if(presentation_dataList.getLength() > 0)       
             getPresentationData((Element)presentation_dataList.item(0));
+        
+        // Get optimization trace output
+        NodeList opt_trace_outList = spkreport.getElementsByTagName("opt_trace_out");
+        if(opt_trace_outList.getLength() > 0)
+            getOptTraceOut((Element)opt_trace_outList.item(0));        
     }
-    
+
     // Get error message    
     private void getErrorMessage(Element error_message)
     {
-        Node error = error_message.getFirstChild();
-        if(error != null)
-            output.error = error.getNodeValue();  
+        Node node = error_message.getFirstChild();
+        if(node != null)
+            output.error = node.getNodeValue();  
         else
             output.error = "No error found";
+    }
+    
+    // Get error message    
+    private void getOptTraceOut(Element opt_trace_out)
+    {
+        Node node = opt_trace_out.getFirstChild();
+        if(node != null)
+            output.trace = node.getNodeValue();  
+        else
+            output.trace = "Optimization trace output is not available.";
     }
     
     // Get population estimation result
@@ -328,6 +349,7 @@ public class XMLReader {
     private void getIndEstimationResult(Element ind_analysis_result)  
     {
         // Get pop_out_result
+        output.computingTimes = new String[2];
         NodeList ind_opt_resultList = ind_analysis_result.getElementsByTagName("ind_opt_result");
         if(ind_opt_resultList.getLength() > 0)
         {
@@ -682,30 +704,36 @@ public class XMLReader {
     {
         int nColumns = Integer.parseInt(presentation_data.getAttribute("columns"));
         int nRows = Integer.parseInt(presentation_data.getAttribute("rows"));
+        
+        // Get data label list
+        NodeList labelList = presentation_data.getElementsByTagName("label");
+        int nLabels = labelList.getLength();
+        if(nColumns == 0 || nRows == 0 || nLabels != nColumns)
+            return;
+        if(nColumns > 0)
+        {
+            output.dataItems = new ArrayList(nColumns);             
+            for(int i = 0; i < nColumns; i++)
+            {
+                Element label = (Element)labelList.item(i);
+                output.dataItems.add(i, label.getAttribute("name"));               
+            }
+        }
         NodeList rowList = presentation_data.getElementsByTagName("row");
         if(rowList.getLength() != nRows)
             return;
-        if(rowList.getLength() > 0)
+        if(nRows > 0)
         {
-            // Get data label list
-            Element labelRow = (Element)rowList.item(0);
-            NodeList valueList = labelRow.getElementsByTagName("value");
-            if(valueList.getLength() != nColumns)
-                return;
-            output.dataItems = new ArrayList(nColumns); 
-            for(int i = 0; i < nColumns; i++)
-                output.dataItems.add(i, valueList.item(i).getFirstChild().getNodeValue());
-        
             // Get all output data
-            output.dataAll = new double[nRows - 1][nColumns]; 
-            for(int i = 1; i < nRows; i++)
+            output.dataAll = new double[nRows][nColumns]; 
+            for(int i = 0; i < nRows; i++)
             {
                 Element dataRow = (Element)rowList.item(i);
-                valueList = dataRow.getElementsByTagName("value");
+                NodeList valueList = dataRow.getElementsByTagName("value");
                 if(valueList.getLength() != nColumns)
                     return;
                 for(int j = 0; j < nColumns; j++)
-                    output.dataAll[i - 1][j] = Double.parseDouble(valueList.item(j).getFirstChild().getNodeValue());
+                    output.dataAll[i][j] = Double.parseDouble(valueList.item(j).getFirstChild().getNodeValue());
             }
         }
     }
@@ -737,10 +765,10 @@ public class XMLReader {
             return null;
         }    
         
-        //Get root element of spksource
+        //Get root element of spkdata
         Element spkdata = docData.getDocumentElement();  
         
-        // Get nonmem
+        // Get rows
         NodeList rowList = spkdata.getElementsByTagName("row"); 
         if(rowList.getLength() > 1)
         {

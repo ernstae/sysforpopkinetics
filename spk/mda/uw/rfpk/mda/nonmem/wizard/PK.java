@@ -45,9 +45,6 @@ public class PK extends javax.swing.JPanel implements WizardStep {
     private void initComponents() {//GEN-BEGIN:initComponents
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jDialog1 = new javax.swing.JDialog();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        help = new javax.swing.JTextArea();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         jPanel1 = new javax.swing.JPanel();
@@ -55,12 +52,6 @@ public class PK extends javax.swing.JPanel implements WizardStep {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-
-        jDialog1.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        help.setEditable(false);
-        jScrollPane2.setViewportView(help);
-
-        jDialog1.getContentPane().add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
         setLayout(new java.awt.BorderLayout());
 
@@ -79,7 +70,8 @@ public class PK extends javax.swing.JPanel implements WizardStep {
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("Enter your PK program for $PK.");
+        jTextPane1.setText("Enter code for model parameters.");
+        jTextPane1.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 57);
@@ -118,14 +110,11 @@ public class PK extends javax.swing.JPanel implements WizardStep {
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextArea help;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JDialog jDialog1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextPane jTextPane1;
     // End of variables declaration//GEN-END:variables
@@ -145,37 +134,53 @@ public class PK extends javax.swing.JPanel implements WizardStep {
 	}
        
   	public String getContentItem(){
-  	    return "$PK Record";
+  	    return "Model Parameters";
   	}
 
 	public String getStepTitle(){
-	    return "$PK Record";
+	    return "Model Parameters";
 	}
 
 	public void showingStep(JWizardPane wizard){
             wizardPane = wizard;
-            String value = ((MDAObject)wizard.getCustomizedObject()).getRecords().getProperty("PK");
-            if(value.equals(""))
-                jTextArea1.setText(Utility.defaultPK(iterator.getAdvan(), iterator.getTrans()));
+            if(iterator.getIsReload())
+            {
+                String text = iterator.getReload().getProperty("PK");
+                if(text != null)
+                {
+                    jTextArea1.setText(text.substring(3).trim());
+                    iterator.getReload().remove("PK");
+                    isValid = true;
+                    wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
+                }
+            }
             else
-                jTextArea1.setText(value.substring(5));
+            {
+                String value = ((MDAObject)wizard.getCustomizedObject()).getRecords().getProperty("PK");
+                if(value.equals(""))
+                    jTextArea1.setText(Utility.defaultPK(iterator.getAdvan(), iterator.getTrans()));
+            }
             jTextArea1.requestFocusInWindow();
 	}
 
 	public void hidingStep(JWizardPane wizard){
-            MDAObject object = (MDAObject)wizard.getCustomizedObject();
-            String ls = System.getProperty("line.separator");            
-            String record = jTextArea1.getText().trim().replaceAll("\n", ls); 
-            if(!record.equals("") && !Utility.checkTag(record, "PK code"))
+            if(iterator.getIsBack())
             {
-                object.getRecords().setProperty("PK", "$PK " + ls + record);
-                object.getSource().pk = ls + record + ls;
+                iterator.setIsBack(false);
+                return;
+            }            
+            MDAObject object = (MDAObject)wizard.getCustomizedObject();        
+            String record = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase(); 
+            if(!record.equals("") && !Utility.checkTag(record, getStepTitle()))
+            {
+                object.getRecords().setProperty("PK", "$PK " + "\n" + record);
+                object.getSource().pk = "\n" + record + "\n";
                 // Eliminate comments
                 record = Utility.eliminateComments(record); 
                 // Find number of THETAs
-                iterator.setNTheta(Utility.find(record.toUpperCase(), "THETA"));
+                iterator.setNTheta(Utility.find(record, "THETA"));
                 // Find number of ETAs
-                iterator.setNEta(Utility.find(record.toUpperCase().replaceAll("THETA", ""), "ETA"));
+                iterator.setNEta(Utility.find(record.replaceAll("THETA", ""), "ETA"));
             }
 	}
         
@@ -186,9 +191,12 @@ public class PK extends javax.swing.JPanel implements WizardStep {
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
                 public void actionPerformed(ActionEvent e){ 
-                    jDialog1.setTitle("Help for " + getStepTitle());
-                    jDialog1.setSize(600, 500);
-                    jDialog1.show();
+                    if(!iterator.getIsOnline()) 
+                        new Help("Help for $PK Record", 
+                                 PK.class.getResource("/uw/rfpk/mda/nonmem/help/PK.html"));
+                    else
+                        Utility.openURL("https://" + iterator.getServerName() + 
+                                        ":" + iterator.getServerPort() + "/user/help/PK.html");  
                 }
             };
 	}

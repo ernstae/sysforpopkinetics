@@ -18,6 +18,9 @@ import org.apache.commons.jrcs.rcs.*;
 import org.apache.commons.jrcs.util.ToString;
 import org.apache.commons.jrcs.diff.*;
 import java.text.SimpleDateFormat;
+import javax.print.*;
+import javax.print.attribute.*;
+import java.awt.print.*;
 
 /**
  * This is the main class of source management tool.
@@ -28,6 +31,10 @@ public class GetSource extends javax.swing.JFrame {
     /** Creates new form Report */
     public GetSource() {
         initComponents();
+        jTextField1.setText(dbHost);
+        jTextField4.setText(dbName);
+        jTextField5.setText(userName);
+        jTextField6.setText(password);
         setSize(700, 500);
     }
     
@@ -53,6 +60,7 @@ public class GetSource extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
@@ -134,7 +142,6 @@ public class GetSource extends javax.swing.JFrame {
         jLabel4.setText("User Name");
         jPanel2.add(jLabel4);
 
-        jTextField3.setText("scientist");
         jTextField3.setPreferredSize(new java.awt.Dimension(100, 19));
         jPanel2.add(jTextField3);
 
@@ -182,32 +189,40 @@ public class GetSource extends javax.swing.JFrame {
 
         jPanel2.add(jButton4);
 
+        jButton5.setText("print");
+        jButton5.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButton5.setPreferredSize(new java.awt.Dimension(90, 19));
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
+        jPanel2.add(jButton5);
+
         getContentPane().add(jPanel2, java.awt.BorderLayout.NORTH);
 
         jLabel2.setText("Database Host");
         jPanel1.add(jLabel2);
 
-        jTextField1.setText("rose.rfpk.washington.edu");
+        jTextField1.setPreferredSize(new java.awt.Dimension(140, 19));
         jPanel1.add(jTextField1);
 
         jLabel3.setText("Name");
         jPanel1.add(jLabel3);
 
-        jTextField4.setText("spktest");
         jTextField4.setPreferredSize(new java.awt.Dimension(80, 19));
         jPanel1.add(jTextField4);
 
         jLabel5.setText("Username");
         jPanel1.add(jLabel5);
 
-        jTextField5.setText("tester");
         jTextField5.setPreferredSize(new java.awt.Dimension(80, 19));
         jPanel1.add(jTextField5);
 
         jLabel6.setText("Password");
         jPanel1.add(jLabel6);
 
-        jTextField6.setText("tester");
         jTextField6.setPreferredSize(new java.awt.Dimension(80, 19));
         jPanel1.add(jTextField6);
 
@@ -215,6 +230,38 @@ public class GetSource extends javax.swing.JFrame {
 
         pack();
     }//GEN-END:initComponents
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        String text = jTextArea1.getText();
+        if(!text.endsWith("\n"))
+            text += "\n";
+        Printer printable = new Printer(text);
+			
+	// Get a PrinterJob object
+        PrinterJob printerJob = PrinterJob.getPrinterJob();
+
+        // Display print dialog,if user return OK, setPrintable and print
+        PrintRequestAttributeSet attributes = new HashPrintRequestAttributeSet(); 
+//        PageFormat pageFormat = printerJob.pageDialog(attributes);
+//        if(pageFormat != null)
+        if(printerJob.printDialog(attributes))
+        {
+            printerJob.setPrintable(printable);
+//            Book book = new Book();
+//            book.append(printable, pageFormat, printable.getPageCount());   
+//            printerJob.setPageable(book);
+            try
+	    {
+                printerJob.print(attributes);
+            }
+            catch(PrinterException pe)
+	    {
+                JOptionPane.showMessageDialog(null, "Error printing " + pe,  // Display printing 
+                                              "Printer Error",               // error message
+                                              JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         jTextArea1.setText("");
@@ -291,7 +338,7 @@ public class GetSource extends javax.swing.JFrame {
             }
             if(action.equals("update"))
             {
-                String sql = "update job set xml_source='" + jTextArea1.getText() + 
+                String sql = "update job set xml_source='" + jTextArea1.getText().replaceAll("\r", "") + 
                              "' where job_id='" + jobId + "'";
                 Statement stmt = con.createStatement();
 	        stmt.executeUpdate(sql);
@@ -467,6 +514,7 @@ public class GetSource extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -500,4 +548,16 @@ public class GetSource extends javax.swing.JFrame {
     
     // Maximum number of items
     private static final int maxNum = 12;
+    
+    // Database host
+    private static final String  dbHost = "192.168.1.2";
+    
+    // Database name
+    private static final String  dbName = "spkdb";
+    
+    // Database username
+    private static final String  userName = "daemon";
+    
+    // Database password
+    private static final String  password = "daemon";    
 }

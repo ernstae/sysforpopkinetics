@@ -9,6 +9,7 @@ package uw.rfpk.mda.nonmem.wizard;
 import uw.rfpk.mda.nonmem.Utility;
 import org.netbeans.ui.wizard.*;
 import java.util.Vector;
+import java.util.ArrayList;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.DefaultListModel;
@@ -31,6 +32,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
     private String scatterPlot = "";
     private int list = 0;
     private int index = -1;
+    private long nDataRow = 0;
     private DefaultListModel[] listModels = null;
     private javax.swing.JList[] lists = null;
     private String xLine = " NOABS0";
@@ -43,12 +45,14 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
     private static final int maxNPlot = 20;  
     private int nPlotAllowed = 20;
 
-    /** Creates new form ScatterPlot 
+    /** Creates new form ScatterPlot
      * @param iter A MDAIterator object to initialize the field iterator
      */
     public ScatterPlot(MDAIterator iter) { 
         initComponents();
-        iterator = iter; 
+        iterator = iter;
+        nPlotEst = 0;
+        nPlotSim = 0;
     }
     
     /** Set which output, table or scatterplot, is required
@@ -87,9 +91,6 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         rightList = new javax.swing.JList();
         jSeparator4 = new javax.swing.JSeparator();
         buttonGroup1 = new javax.swing.ButtonGroup();
-        jDialog2 = new javax.swing.JDialog();
-        jScrollPane5 = new javax.swing.JScrollPane();
-        help = new javax.swing.JTextArea();
         jTextField1 = new javax.swing.JTextField();
         addButton = new javax.swing.JButton();
         upButton = new javax.swing.JButton();
@@ -326,12 +327,6 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 9, 12);
         jDialog1.getContentPane().add(jSeparator4, gridBagConstraints);
 
-        jDialog2.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        help.setEditable(false);
-        jScrollPane5.setViewportView(help);
-
-        jDialog2.getContentPane().add(jScrollPane5, java.awt.BorderLayout.CENTER);
-
         setLayout(new java.awt.GridBagLayout());
 
         jTextField1.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
@@ -398,6 +393,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
         jTextPane1.setText("Enter the range of the data for plotting.  The default starting number is 1.  \nUp to 900 data points may be plotted.  Lines along X=0, Y=0 or Slope=1 \nmay be added to the plot.  Select items for X, Y and parameters to plot.");
+        jTextPane1.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
@@ -406,14 +402,16 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         add(jTextPane1, gridBagConstraints);
 
         jTextPane2.setBackground(new java.awt.Color(204, 204, 204));
-        jTextPane2.setText("List of the  \n$SCATTERPLOT\nrecords\nyou have \nentered.");
+        jTextPane2.setEditable(false);
+        jTextPane2.setText("List of the  \nplotting \noptions\nyou have \nselected in \nNONMEM syntax");
+        jTextPane2.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(11, 12, 44, 0);
+        gridBagConstraints.insets = new java.awt.Insets(11, 12, 17, 0);
         add(jTextPane2, gridBagConstraints);
 
         changeButton.setText("Change");
@@ -514,7 +512,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(9, 18, 21, 12);
         add(jLabel3, gridBagConstraints);
 
-        jButton1.setText("Enter Selection");
+        jButton1.setText("Make Selection");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -530,7 +528,6 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         add(jButton1, gridBagConstraints);
 
         jTextField2.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
-        jTextField2.setText("900");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 1;
@@ -590,12 +587,15 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         String from = jTextField1.getText().trim();
         if(Utility.isPosIntNumber(from))
         {
-            jTextField2.setText(String.valueOf(Long.parseLong(from) + 899)); 
+            long max = Long.parseLong(from) + 899;
+            if(max > nDataRow)
+                max = nDataRow;
+            jTextField2.setText(String.valueOf(max)); 
         }
         else
         {
             JOptionPane.showMessageDialog(null, 
-                                          "The beginning data point number is not a " +
+                                          "The beginning data record number is not a " +
                                           "positive integer number.",   
                                           "Input Error",    
                                           JOptionPane.ERROR_MESSAGE);                
@@ -805,7 +805,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         if(!Utility.isPosIntNumber(from))
         {
             JOptionPane.showMessageDialog(null, 
-                                          "The beginning data point number is not a " +
+                                          "The beginning data record number is not a " +
                                           "positive integer number.",   
                                           "Input Error",    
                                           JOptionPane.ERROR_MESSAGE);                
@@ -815,20 +815,30 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         if(!Utility.isPosIntNumber(to))
         {
             JOptionPane.showMessageDialog(null, 
-                                          "The ending data point number is not a " +
+                                          "The ending data record number is not a " +
                                           "positive integer number.",   
                                           "Input Error",    
                                           JOptionPane.ERROR_MESSAGE);                
             return;
         }
-        else if(Long.parseLong(to) - Long.parseLong(from) > 899) 
+        if(Long.parseLong(to) - Long.parseLong(from) > 899) 
         {
             JOptionPane.showMessageDialog(null, 
-                                          "The number of data points is too big.",   
+                                          "The number of data records is too big.",   
                                           "Input Error",    
                                           JOptionPane.ERROR_MESSAGE);                
             return;
         }
+        if(Long.parseLong(to) > nDataRow)
+        {
+            JOptionPane.showMessageDialog(null, 
+                                          "The ending data record number is bigger than, " +
+                                          nDataRow + ", the total number of data records.",   
+                                          "Input Error",    
+                                          JOptionPane.ERROR_MESSAGE);                
+            return;
+        }
+        
         // Add the scatterplot record       
         String element = "$SCATTERPLOT" + scatterPlot + " FROM " + from + 
                          " TO " + to + slopeLine + xLine + yLine;
@@ -868,7 +878,6 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton deleteItemButton;
     private javax.swing.JButton downButton;
-    private javax.swing.JTextArea help;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JCheckBox jCheckBox1;
@@ -876,7 +885,6 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JCheckBox jCheckBox3;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JDialog jDialog1;
-    private javax.swing.JDialog jDialog2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -889,7 +897,6 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
@@ -922,16 +929,27 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
 	}
        
   	public String getContentItem(){
-            return "$SCATTERPLOT Record";
+            return "Plot Output";
   	}
 
 	public String getStepTitle(){
-	    return "$SCATTERPLOT Record - for the " + which + " step";
+	    return "Plot Output - Following " + which + " Step";
 	}
 
 	public void showingStep(JWizardPane wizard){
             wizardPane = wizard;
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
+            Vector data = ((MDAObject)wizard.getCustomizedObject()).getData();
+            if(data != null)
+            {
+                nDataRow = 0;
+                for(int i = 0; i < data.size(); i++)
+                    nDataRow += ((Vector)data.get(i)).size(); 
+            }
+            if(nDataRow < 900)
+                jTextField2.setText(String.valueOf(nDataRow));
+            else
+                jTextField2.setText("900");
             
             // Fill available items into the ComboBox
             jComboBox1.removeAllItems();
@@ -963,7 +981,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
             boolean isInd = iterator.getIsInd();
             boolean isMetod1 = iterator.getIsMethod1OrPosthoc();
             
-            if(!iterator.getIsInd() && which.equals("$ESTIMATION") && iterator.getIsMethod1OrPosthoc())
+            if(!iterator.getIsInd() && which.equals("ESTIMATION") && iterator.getIsMethod1OrPosthoc())
                 for(int i = 0; i < iterator.getNEta(); i++)
                     jComboBox1.addItem("ETA(" + (i + 1) +")");
 
@@ -972,7 +990,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
                 record = object.getRecords().getProperty("PK");
             else
                 record = object.getRecords().getProperty("Pred");
-            String[] p = Utility.eliminateComments(record).split(System.getProperty("line.separator"));  
+            String[] p = Utility.eliminateComments(record).split("\n");  
             for(int i = 1; i < p.length; i++)
             {
                 if(p[i].indexOf("=") > 0)
@@ -994,51 +1012,139 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
             for(int i = 0; i < 3; i++)
                 lists[i].setModel(listModels[i]);
                     
-            // Set number of table = 0 and find allowed number of plots to specify
-            model.removeAllElements(); 
-            index = -1;
-            if(which.equals("$ESTIMATION"))
+            // Find allowed number of plots
+//            model.removeAllElements(); 
+//            index = -1;
+            if(iterator.getIsReload())
             {
-                nPlotEst = 0;
-                nPlotAllowed = maxNPlot - nPlotSim;
-            }
-            if(which.equals("$SIMULATION")) 
-            {
-                nPlotSim = 0;  
-                nPlotAllowed = maxNPlot - nPlotEst;
-            }
-            isValid = false;
-            wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
+                String text = null;
+                if(which.equals("ESTIMATION"))
+                {
+                    text = iterator.getReload().getProperty("SCATTERPLOTEST");
+                    if(text != null)
+                    {
+                        iterator.getReload().remove("SCATTERPLOTEST");
+                        model.removeAllElements();
+                        String[] values = text.trim().split(",");
+                        nPlotEst = 0;
+                        for(int i = 0; i < values.length; i++)
+                        {
+                            text = values[i].substring(12).trim();
+                            model.addElement("$SCATTERPLOT " + text);
+                            nPlotEst += getNPlots(text);
+                        }
+                        index = values.length - 1;
+                        jList1.setSelectedIndex(index);
+                        isValid = true;
+                        
+                        // Set delete button
+                        deleteButton.setEnabled(index >= 0);
+                        
+                        // Set left options                        
+                        wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
+                        
+                        // Set up and down buttons
+                        Utility.setUpDownButton(index, model, upButton, downButton);                        
+                    }
+                }
+                else
+                {
+                    text = iterator.getReload().getProperty("SCATTERPLOTSIM");
+                    if(text != null)
+                    {
+                        iterator.getReload().remove("SCATTERPLOTSIM");
+                        model.removeAllElements();
+                        String[] values = text.trim().split(",");
+                        nPlotSim = 0;
+                        for(int i = 0; i < values.length; i++)
+                        {
+                            text = values[i].substring(12).trim();
+                            model.addElement("$SCATTERPLOT " + text);
+                            nPlotSim += getNPlots(text);
+                        }
+                        index = values.length - 1;
+                        jList1.setSelectedIndex(index);         
+                        isValid = true;
+                        
+                        // Set delete button
+                        deleteButton.setEnabled(index >= 0);
+                        
+                        // Set left options
+                        wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
+                        
+                        // Set up and down buttons
+                        Utility.setUpDownButton(index, model, upButton, downButton);                        
+                    }
+                }
+            }                 
             
-            // Check the number of tables
-            if(nPlotEst == maxNPlot || nPlotSim == maxNPlot)
+            nPlotAllowed = maxNPlot - nPlotSim - nPlotEst;
+
+            if(model.size() == 0)
+            {
+                isValid = false;
+                wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
+            }
+            
+            // Check the number of plots
+            if(nPlotAllowed == 0)
+            {
                 JOptionPane.showMessageDialog(null, "The number of scatterplots has reached\n" +
                                               "its limit, " + maxNPlot + ".",    
-                                              "Input Error",               
-                                              JOptionPane.ERROR_MESSAGE);            
+                                              "Information for Input",               
+                                              JOptionPane.INFORMATION_MESSAGE); 
+                isValid = true;
+                wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
+            }
+            jTextField1.requestFocusInWindow();
 	}
 
+        private int getNPlots(String text)
+        {
+            String[] items = text.trim().split(" ");
+            ArrayList list = new ArrayList();
+            for(int j = 0; j < items.length; j++)
+                list.add(items[j]);
+            int n1 = list.indexOf("VS");
+            int n2 = 0;
+            if(list.indexOf("BY") != -1)
+                n2 = list.indexOf("BY") - n1 - 1;
+            else
+                n2 = list.indexOf("FROM") - n1 - 1;
+            return n1 * n2;
+        }
+        
 	public void hidingStep(JWizardPane wizard){
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }            
             int size = model.getSize();
             if(size == 0)
                 return;
             MDAObject object = (MDAObject)wizard.getCustomizedObject(); 
             // Create and save record
             String record = (String)model.get(0);
+            int nPlot = getNPlots(record.substring(13));
             String ls = System.getProperty("line.separator");
             for(int i = 1; i < size; i++)
-                record = record + ls + model.get(i);
-            if(which.equals("$ESTIMATION"))
             {
-                nPlotEst = size;
+                record = record + ls + model.get(i);
+                nPlot += getNPlots(((String)model.get(i)).substring(13));
+            }
+            if(which.equals("ESTIMATION"))
+            {
+                nPlotEst = nPlot;
                 object.getRecords().setProperty("ScatterPlotEst", record); 
             }
-            if(which.equals("$SIMULATION"))
+            if(which.equals("SIMULATION"))
             {
-                nPlotSim = size;
+                nPlotSim = nPlot;
                 object.getRecords().setProperty("ScatterPlotSim", record);
             }
-            
+// JOptionPane.showMessageDialog(null, "nPlotSim = " + String.valueOf(nPlotSim), "1", JOptionPane.ERROR_MESSAGE);
+// JOptionPane.showMessageDialog(null, "nPlotEst = " + String.valueOf(nPlotEst), "2", JOptionPane.ERROR_MESSAGE);
             String[][][] splots = new String[size][4][];
             for(int i = 0; i < size; i++)
             {                            
@@ -1111,9 +1217,9 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
                 }
             }
                                 
-            if(which.equals("$ESTIMATION"))
+            if(which.equals("ESTIMATION"))
                 object.getSource().splotEst = splots; 
-            if(which.equals("$SIMULATION")) 
+            if(which.equals("SIMULATION")) 
                 object.getSource().splotSim = splots;  
 	}
 
@@ -1124,9 +1230,12 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
                 public void actionPerformed(ActionEvent e){ 
-                    jDialog2.setTitle("Help for " + getStepTitle());
-                    jDialog2.setSize(600, 500);
-                    jDialog2.show();
+                    if(!iterator.getIsOnline()) 
+                        new Help("Help for SCATTERPLOT Record", 
+                                 ScatterPlot.class.getResource("/uw/rfpk/mda/nonmem/help/ScatterPlot.html"));
+                    else
+                        Utility.openURL("https://" + iterator.getServerName() + 
+                                        ":" + iterator.getServerPort() + "/user/help/ScatterPlot.html");  
                 }
             };
 	}

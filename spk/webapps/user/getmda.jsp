@@ -116,7 +116,7 @@
             <p>
                Model Design Agent has various user interface types. <br>
                Please select one to download.  You should see a
-               window that says "Java loading..." and then "Model Design Agent RFPK
+               window that says "Java Loading..." and then "Model Design Agent RFPK
                UW". The MDA will automatically check for the latest version. Answer
                "Yes" if you are asked another security question. Windows user can choose to have
                the MDA on your desktop or not (it's up to you).<br><br>

@@ -27,6 +27,8 @@ public class Output {
     public String completionTime = null;    
     /** computing times(estimation, statistics) */
     public String[] computingTimes = null;
+    /** analysis type */
+    public String analysis = null;
     /** model name */
     public String modelName = null;
     /** model version */
@@ -43,6 +45,8 @@ public class Output {
     public Properties dataLabelMap = null;
     /** error message */
     public String error = null;
+    /** optimization trace output */
+    public String trace = null;    
     /** objective value */
     public String objective = null;
     /** THETA vector */
