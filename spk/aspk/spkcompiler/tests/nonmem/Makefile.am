@@ -10,12 +10,12 @@ test_nonmem_SOURCES = \
 	test_nonmem.cpp \
 	NonmemExpXlatorTest.cpp \
 	NonmemExpXlatorTest.h \
-	NonmemTranslatorTest.cpp \
-	NonmemTranslatorTest.h
+	read_nonmem_driverTest.cpp \
+	read_nonmem_driverTest.h
 
 test_nonmem_INCLUDES = \
 	NonmemExpXlatorTest.h \
-	NonmemTranslatorTest.h
+	read_nonmem_driverTest.h
 
 AM_LDFLAGS = -lxerces-c -lcppunit -lspkcompiler
 
