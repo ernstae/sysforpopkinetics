@@ -522,13 +522,21 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
 	  }
 	sym_theta->upper[0][i] = str_val;
       }
-    for( i=0; i<myThetaLen; i++ )
-      sym_theta->step[0][i] = ( atof( sym_theta->upper[0][i] ) - atof( sym_theta->lower[0][i] ) ) / 1000.;
+
+    // step values
+    for( int i=0; i<myThetaLen; i++ )
+    {
+      double tmp_dbl = fabs( atof( sym_theta->upper[0][i].c_str() ) - atof( sym_theta->lower[0][i].c_str() ) ) / 1000.0;
+      char tmp_char[256];
+      sprintf( tmp_char, "%f", tmp_dbl );
+      sym_theta->step[0][i] = string( tmp_char );
+      cout << "theta[0][" << i << "] = " << sym_theta->step[0][i] << endl;
+    }
   }
 
   DOMNodeList * omega_list = pop_analysis->getElementsByTagName( X_OMEGA );
   int nOmegaSpecs = omega_list->getLength();
-  assert( nOmegaSpecs == 1 );// v0.1 supports only one (full) Omega specification
+  assert( nOmegaSpecs == 1 ); // v0.1 supports only one (full) Omega specification
   DOMElement * omega = dynamic_cast<DOMElement*>( omega_list->item(0) );
   assert( omega->hasAttribute( X_DIMENSION ) );
   const XMLCh* xml_omega_dim = omega->getAttribute( X_DIMENSION );
@@ -891,6 +899,16 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
 	  }
 	sym_theta->upper[0][i] = str_val;
       }
+
+    // step values
+    for( int i=0; i<myThetaLen; i++ )
+    {
+      double tmp_dbl = fabs( ( atof( sym_theta->upper[0][i].c_str() ) - atof( sym_theta->lower[0][i].c_str() ) ) ) / 1000.0;
+      char tmp_char[256];
+      sprintf( tmp_char, "%f", tmp_dbl );
+      sym_theta->step[0][i] = string( tmp_char );
+    }
+
     }
 
   DOMNodeList * omega_list = ind_analysis->getElementsByTagName( X_OMEGA );
@@ -2003,53 +2021,51 @@ void NonmemTranslator::generateIndDriver( ) const
   assert( pID != Symbol::empty() );
 
   map<const string, Symbol>::const_iterator pEntry = t->begin();
-  vector<string>::const_iterator pLabelBegin = table.getLabels()->begin();
-  vector<string>::const_iterator pLabelEnd   = table.getLabels()->end();
+  const vector<string>::const_iterator pLabelBegin = table.getLabels()->begin();
+  const vector<string>::const_iterator pLabelEnd   = table.getLabels()->end();
   vector<string> whatGoesIn;  // will hold those labels in the order that actually go into the data section.
 
   oDriver << "oResults << \"<presentation_data>\" << endl;" << endl;
   oDriver << "oResults << \"<data_labels>\" << endl;" << endl;
 
-  // ID must come first no matter what
+  // Put ID first in the sequence
   whatGoesIn.push_back( pID->name );
   oDriver << "oResults << \"<label name=\\\"" << pID->name << "\\\"/>\" << endl;" << endl;
 
   // ...aaand, following ID is, all the left hand side quantities in the model definition.
-  for( ; pEntry!=t->end(); pEntry++ )
+  for( pEntry = t->begin(); pEntry!=t->end(); pEntry++ )
     {
-      if( pEntry->first != "id" || ( find( pLabelBegin, pLabelEnd, pEntry->second.name )==pLabelEnd ) )
+      if( pEntry->first != "id" && ( find( pLabelBegin, pLabelEnd, pEntry->second.name )==pLabelEnd ) )
 	{
 	  whatGoesIn.push_back( pEntry->second.name );
 	  oDriver << "oResults << \"<label name=\\\"" << pEntry->second.name << "\\\"/>\" << endl;" << endl;
 	}
     }
   oDriver << "oResults << \"</data_labels>\" << endl;" << endl;
-  oDriver << "oResults << \"</presentation_data>\" << endl;" << endl;
-  //
-  //=============================================================================
+
   vector<string>::const_iterator pWhatGoesIn;
-  oDriver << "int n = " << myPopSize << ";" << endl;
-  oDriver << "for( int j=0, cnt=0; j<n; j++ )" << endl;
+  oDriver << "for( int i=0, cnt=1; i<nY; i++, cnt++ )" << endl;
   oDriver << "{" << endl;
-  oDriver << "   for( int i=0; i<nY; i++, cnt++ )" << endl;
-  oDriver << "   {" << endl;
-  oDriver << "      oResults << \"<row>\" << endl;" << endl;
+  oDriver << "   oResults << \"<row position=\\\"\" << cnt << \"\\\">\" << endl;" << endl;
   for( pWhatGoesIn = whatGoesIn.begin(); pWhatGoesIn!=whatGoesIn.end(); pWhatGoesIn++ )
     {
-      oDriver << "      oResults << \"<value>\" << "; 
+      oDriver << "   oResults << \"<value>\" << "; 
       if( *pWhatGoesIn == "SIMDV" )
 	{
 	  oDriver << "yOut[cnt]";
 	}
       else
 	{
-	  oDriver << "set.data[j]->" << *pWhatGoesIn << "[i]";
+	  oDriver << "set.data[0]->" << *pWhatGoesIn << "[i]";
 	}
       oDriver << " << \"</value>\" << endl;" << endl;
     }
-  oDriver << "      oResults << \"</row>\" << endl;" << endl;
-  oDriver << "   }" << endl;
+  oDriver << "   oResults << \"</row>\" << endl;" << endl;
   oDriver << "}" << endl;
+
+  oDriver << "oResults << \"</presentation_data>\" << endl;" << endl;
+  //
+  //=============================================================================
 
   oDriver << "oResults << \"</spkreportML>\" << endl;" << endl;
 
