@@ -41,8 +41,8 @@ alter the normal execution flow.-->
 <!-- ===================================== -->
 <!--                 REPORTS               -->
 <!-- ===================================== -->
-<!-- <pop_analysis_result> Population analysis results. -->
-<!ELEMENT pop_analysis_result ( pop_opt_result? | pop_stat_result? )>
+<!-- <pop_analysis_result> This element appears only if the population parameter estimation is requested.  It contains the estimation results and may contain the statistics if it is requested. -->
+<!ELEMENT pop_analysis_result ( pop_opt_result | pop_stat_result? )>
 
 <!-- <pop_opt_result> Final values from the population parameter estimation.-->
 <!ELEMENT pop_opt_result (pop_obj_out | theta_out | omega_out | sigma_out)>
@@ -50,8 +50,8 @@ alter the normal execution flow.-->
 <!-- <pop_opt_result elapsedtime="500"> The number of seconds it took to complete the parameter estimation. -->
 <!ATTLIST pop_opt_result elapsedtime CDATA #REQUIRED>
 
-<!-- <ind_analysis_result> Individual analysis results. -->
-<!ELEMENT ind_analysis_result ( ind_opt_result? | ind_stat_result? )>
+<!-- <ind_analysis_result> This element appears only if the individual parameters estimation is requested.  It contains the estimation results and may contain the statistics if it is requested. -->
+<!ELEMENT ind_analysis_result ( ind_opt_result | ind_stat_result? )>
 
 <!-- <ind_analysis_result elapsedtime="500"> The number of seconds it took to complete the parameter estimation. -->
 <!ATTLIST ind_analysis_result elapsedtime CDATA #REQUIRED>
@@ -63,39 +63,18 @@ alter the normal execution flow.-->
 <!ATTLIST ind_opt_result elapsedtime CDATA #REQUIRED>
 
 <!-- <pop_monte_result> Monte carlo integration results. 
-A record of this type is present if and only if there is no <error_message> element. -->
-<!ELEMENT pop_monte_result ( pop_obj_analytic? | pop_obj_grid? | pop_obj_estimate? | pop_obj_stderror? ) >
+This element is present if and only if there is no <error_message> element. -->
+<!ELEMENT pop_monte_result ( error_message? | ( pop_obj_estimate? | pop_obj_stderror? | pop_obj_seconds?) ) >
 
-<!-- <pop_obj_analytic> If this is the LinearModel, the data in this record is the true value of the marginal likelihood where the random effects have been integrated out. 
+<!-- <pop_monte_result elapsedtime="500"> The number of seconds it took to complete both <pop_obj_estimate> and <pop_obj_stderror>.-->
+<!ATTLIST pop_monte_result elapsedtime CDATA #REQUIRED>
 
-An element of this type is present if and only if
-the computation of analytic integral is requested in the sourceML document
-and a pop_monte_result element is present.
+<!-- <pop_obj_estimate> This element is present if and only if a <pop_monte_result> is present.  It contains the estimate for the Monte Carlo estimate for the integral. -->
+<!ELEMENT pop_obj_estimate (value)> 
+
+<!-- <pop_obj_stderror> This element is present if and only if a <pop_monte_result> is presnt and Monte Carlo estimte (as opposed to Grid or Analytical) for the integral is requested.  It contains an estimate of the standard deviation of the Monte-Carlo estimate for the integral.
 -->
-<!ELEMENT pop_obj_analytic (#PCDATA)>
-
-<!-- <pop_obj_grid> The data in this element is the integral approximation corresponding to evaluation of the integrand on a uniform grid.
-
-Note that this approximation is not restricted to the Linear Model
-case as is the <pop_obj_analytic> calculation; i.e.,
-<pop_obj_grid> is a valid approximation for all models.
-
-An element of this type is present if and only if
-the integral approximation is requested and a <pop_monte_result> element is present.
--->
-<!ELEMENT pop_obj_grid (#PCDATA)>
-
-<!-- <pop_obj_estimate> This element contains the Monte-Carlo estimate for the integral.
-A record of this type is present if and only if
-a <pop_monte_result> element is present. 
--->
-<!ELEMENT pop_obj_estimate (#PCDATA)>
-
-<!-- <pop_obj_stderror> This element contains an estimate of the standard deviation of the Monte-Carlo estimate for the integral.
-
-An element of this type is present if and only if a <pop_monte_result> element is present. 
--->
-<!ELEMENT pop_obj_stderror (#PCDATA)>
+<!ELEMENT pop_obj_stderror (value)>
 
 <!-- <theta_out> Final value for the theta. -->
 <!ELEMENT theta_out (value)+>
