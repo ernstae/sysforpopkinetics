@@ -15,7 +15,8 @@ INCLUDES = \
 	MapMonte.h \
 	MontePars.h \
 	LinearModel.h \
-	NearEqual.h
+	NearEqual.h \
+	Gsl2SpkError.h
 
 OBJECTS = \
 	GridIntegral.o \
@@ -28,6 +29,7 @@ OBJECTS = \
 	MapMonteTest.o \
 	MontePopObjTest.o \
 	NearEqual.o \
+	Gsl2SpkError.o \
 	RunTest.o
 
 
