@@ -834,33 +834,6 @@ void quasiNewtonAnyBox(
   scaleElem(nObjPar, pdXInData, pdXLowData, pdXDiffData, yCurr);
 
 
-??  //***************************************************************************
-  // [Revisit - Next SPK Iteration - Improved Diagnostics - Mitch]
-  //
-  // Currently the tracing done for the NAG optimizer (called by quasiNewtonAnyBox) is
-  // pretty crude.  What's there right now is basically a cobbled together
-  // version of the tracing done in the O-Matrix version of SPK and the built
-  // in tracing for the NAG optimizer.  The result is that the specifications
-  // for the level parameter are complicated and hard to understand.
-  // 
-  // The NAG optimizer allows the user (us) to define our own tracing function
-  // that prints whatever we want using whatever format we want to code up.
-  // For example, one thing we could do is to unscale the parameters so that
-  // they are back in the original space that the user understands.
-  // 
-  // The NAG optimizer also provides the user-defined print function with
-  // derivative checking information.  Another thing we could do in quasiNewtonAnyBox
-  // is to analyze the derivative information from the NAG optimizer and
-  // provide diagnostics to the user that lets them know which component(s) of
-  // the user's derivative are in error.
-  // 
-  // Therefore, for the next iteration, we could improve the diagnostics for
-  // quasiNewtonAnyBox by defining our own tracing function and also our own
-  // derivative checking function.  I think that once we do that, then the
-  // specifications for the level parameter will be much easier to write.
-  //***************************************************************************
-
-
   //------------------------------------------------------------
   // Prepare the objective function object.
   //------------------------------------------------------------
