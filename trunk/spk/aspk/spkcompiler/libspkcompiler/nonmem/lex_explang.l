@@ -40,6 +40,7 @@ tok_name                    {tok_letter}{tok_alphanumeric_character}*
 tok_named_constant          {tok_name}
 
 tok_sign                    [+-]
+tok_ws                      [ \t]
 tok_digit_string            {tok_digit}+
 tok_signed_digit_string     {tok_sign}?{tok_digit_string}
 
@@ -83,8 +84,8 @@ tok_else                    "ELSE"
 tok_endif                   "ENDIF"
 
 %%
-[ \t]                       { /* white space; ignore */ }
-[;].*/\n                    { nm_lval.c_str = (char*)strdup(nm_text+1);  ++gSpkExpLines; return COMMENT; }
+{tok_ws}                    { /* white space */ }
+[;].*                       { nm_lval.c_str = (char*)strdup(nm_text+1);  return COMMENT; }
 {tok_engineering_notation}  { 
                               nm_lval.c_str = (char*)strdup(nm_text);
                               int i;
@@ -130,7 +131,7 @@ tok_endif                   "ENDIF"
                             }
 {tok_special_character}     { nm_lval.ch = nm_text[0];  return nm_text[0]; }
 <<EOF>>                     { return EOF_MARKER; }
-\n                          { ++gSpkExpLines; return '\n'; }
+\n                          { return '\n'; }
 .                           { 
                               char buf[128];
                               sprintf( buf, "Invalid charactor '%s'.", nm_text );
