@@ -7,6 +7,8 @@ CXXFLAGS = -g
 test_common_SOURCES = \
 	../config.h \
 	test_common.cpp \
+        choleskyTest.cpp \
+	choleskyTest.h \
 	lowerTest.cpp \
         lowerTest.h \
         upperTest.cpp \
@@ -14,23 +16,24 @@ test_common_SOURCES = \
 	seriesTest.cpp \
 	clientTest.cpp \
         clientTest.h \
-	SymbolTest.cpp \
-	SymbolTest.h \
+        SymbolTest.cpp \
+        SymbolTest.h \
         SymbolTableTest.cpp \
-        SymbolTabletest.h \
+	SymbolTableTest.h \
 	ClientTranslatorTest.cpp \
 	ClientTranslatorTest.h
 
 test_common_INCLUDES = \
 	clientTest.h \
+	choleksyTest.h \
         lowerTest.h \
         upperTest.h \
         seriesTest.h \
-	SymbolTest.h \
+        SymbolTest.h \
 	SymbolTableTest.h \
 	ClientTranslatorTest.h
 
-AM_LDFLAGS = -lxerces-c -lcppunit -lspkcompiler
+AM_LDFLAGS = -lxerces-c -lcppunit -lspkcompiler -latlas_lapack -lcblas -latlas -lm
 
 INCLUDES = \
 	-I@top_srcdir@/ \
