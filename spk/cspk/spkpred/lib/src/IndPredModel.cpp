@@ -95,6 +95,7 @@ namespace // [Begin: unnamed namespace]
 
 // Standard library header files.
 #include <cassert>
+#include <limits>
 #include <sstream>
 #include <vector>
 
@@ -109,14 +110,18 @@ using SPK_VA::valarray;
  *
  * Constructor for individual level Pred models.
  *
- * After this constructor has completed, the current individual parameter
- * will be equal to
+ * After this constructor has completed the current individual parameter
+ * will be 
  *
- *             -                -
- *            |   thetaCurrIn    |
- *     b   =  |                  |  .
- *      i     |  omegaParCurrIn  |
- *             -                -
+ *             -              -
+ *            |  thetaCurrIn   |
+ *     b   =  |                |  ,
+ *      i     |  omegaParCurr  |
+ *             -              -
+ *
+ * where omegaParCurr is the covariance matrix parameter that 
+ * corresponds to the minimal representation for omega that is
+ * contained in omegaMinRepIn.
  *
  *************************************************************************/
 
@@ -128,9 +133,8 @@ IndPredModel::IndPredModel(
     const valarray<double>&  thetaCurrIn,
     int                      nEtaIn,
     covStruct                omegaStructIn,
-    const valarray<double>&  omegaParCurrIn )
+    const valarray<double>&  omegaMinRepIn )
   :
-  predEvaluator                     ( predEvaluatorIn ),
   nTheta                            ( nThetaIn ),
   nEta                              ( nEtaIn ),
   thetaOffsetInIndPar               ( 0 ),
@@ -139,8 +143,9 @@ IndPredModel::IndPredModel(
   thetaOffsetInZ                    ( 0 ),
   etaOffsetInZ                      ( nThetaIn ),
   fOffsetInW                        ( 0 ),
-  thetaCurr                         ( nTheta ),
-  etaCurr                           ( nEta ),
+  pOmegaCurr                        ( 0 ),
+  pPredADFunCurr                    ( 0 ),
+  predEvaluator                     ( predEvaluatorIn ),
   zCurr                             ( nZ ),
   isDataMeanCurrOk                  ( false ),
   isDataMean_indParCurrOk           ( false ),
@@ -157,9 +162,9 @@ IndPredModel::IndPredModel(
   usedCachedDataVariance_indPar     ( false ),
   usedCachedDataVarianceInv         ( false ),
   usedCachedDataVarianceInv_indPar  ( false ),
-  usedCachedPredADFunCurr           ( false ),
-  usedCachedPredFirstDerivCurr      ( false ),
-  usedCachedPredSecondDerivCurr     ( false )
+  usedCachedPredADFun               ( false ),
+  usedCachedPredFirstDeriv          ( false ),
+  usedCachedPredSecondDeriv         ( false )
 {
   //------------------------------------------------------------
   // Initialize quantities related to the covariance matrix.
@@ -191,11 +196,37 @@ IndPredModel::IndPredModel(
   // this covariance matrix.
   nOmegaPar = pOmegaCurr->getNPar();
 
-  // Set the initial value for the omega parameters.
+  if ( omegaStructIn == DIAGONAL )
+  {
+    pOmegaCurr = new DiagCov( nEta );
+  }
+  else
+  {
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // [Revisit - Implement Full Covariance Matrices - Mitch]
+    // Currently, full covariance matrices are not supported.
+    /*
+    pOmegaCurr = new FullCov( nEta );
+    */
+    throw SpkException(
+      SpkError::SPK_USER_INPUT_ERR, 
+      "Full covariance matrices are not currently supported.",
+      __LINE__, 
+      __FILE__ );
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  }
+
+  // Save the omega value maintained by this class.
+  omegaCurr.resize( nEta * nEta );
+  pOmegaCurr->expandCovMinRep( omegaMinRepIn, omegaCurr );
+  assert( omegaMinRepIn.size() == nOmegaPar );
+
+  // Set the omega value maintained by the covariance class.
+  pOmegaCurr->setCov( omegaCurr );
+
+  // Save the initial value for the omega parameters.
   omegaParCurr.resize( nOmegaPar);
-  omegaParCurr = omegaParCurrIn;
-  pOmegaCurr->setPar( omegaParCurr );
-  assert( omegaParCurrIn.size() == nOmegaPar );
+  pOmegaCurr->calcPar( omegaCurr, omegaParCurr );
 
 
   //------------------------------------------------------------
@@ -203,18 +234,22 @@ IndPredModel::IndPredModel(
   //------------------------------------------------------------
 
   // Set the current value for theta.
+  thetaCurr.resize( nTheta );
   thetaCurr = thetaCurrIn;
   assert( thetaCurrIn.size() == nTheta );
 
   // Set the lower limit for theta.
+  thetaLow.resize( nTheta );
   thetaLow = thetaLowIn;
   assert( thetaLowIn.size() == nTheta );
 
   // Set the upper limit for theta.
+  thetaUp.resize( nTheta );
   thetaUp = thetaUpIn;
   assert( thetaUpIn.size() == nTheta );
 
   // For individual level Pred models, eta is always equal to zero.
+  etaCurr.resize( nEta );
   etaCurr = 0.0;
 
 
@@ -448,8 +483,138 @@ void IndPredModel::invalidateCache() const
   isPredADFunCurrOk              = false;
   isPredFirstDerivCurrOk         = false;
   isPredSecondDerivCurrOk        = false;
-  isOmegaCurrOk                  = false;
-  isOmega_omegaParCurrOk         = false;
+}
+
+
+/*************************************************************************
+ *
+ * Function: getUsedCachedDataMean
+ *
+ *************************************************************************/
+
+bool IndPredModel::getUsedCachedDataMean() const
+{
+  return usedCachedDataMean;
+}
+
+
+/*************************************************************************
+ *
+ * Function: getUsedCachedDataMean_indPar
+ *
+ *************************************************************************/
+
+bool IndPredModel::getUsedCachedDataMean_indPar() const
+{
+  return usedCachedDataMean_indPar;
+}
+
+
+/*************************************************************************
+ *
+ * Function: getUsedCachedDataVariance
+ *
+ *************************************************************************/
+
+bool IndPredModel::getUsedCachedDataVariance() const
+{
+  return usedCachedDataVariance;
+}
+
+
+/*************************************************************************
+ *
+ * Function: getUsedCachedDataVariance_indPar
+ *
+ *************************************************************************/
+
+bool IndPredModel::getUsedCachedDataVariance_indPar() const
+{
+  return usedCachedDataVariance_indPar;
+}
+
+
+/*************************************************************************
+ *
+ * Function: getUsedCachedDataVarianceInv
+ *
+ *************************************************************************/
+
+bool IndPredModel::getUsedCachedDataVarianceInv() const
+{
+  return usedCachedDataVarianceInv;
+}
+
+
+/*************************************************************************
+ *
+ * Function: getUsedCachedDataVarianceInv_indPar
+ *
+ *************************************************************************/
+
+bool IndPredModel::getUsedCachedDataVarianceInv_indPar() const
+{
+  return usedCachedDataVarianceInv_indPar;
+}
+
+
+/*************************************************************************
+ *
+ * Function: getUsedCachedPredADFun
+ *
+ *************************************************************************/
+
+bool IndPredModel::getUsedCachedPredADFun() const
+{
+  return usedCachedPredADFun;
+}
+
+
+/*************************************************************************
+ *
+ * Function: getUsedCachedPredFirstDeriv
+ *
+ *************************************************************************/
+
+bool IndPredModel::getUsedCachedPredFirstDeriv() const
+{
+  return usedCachedPredFirstDeriv;
+}
+
+
+/*************************************************************************
+ *
+ * Function: getUsedCachedPredSecondDeriv
+ *
+ *************************************************************************/
+
+bool IndPredModel::getUsedCachedPredSecondDeriv() const
+{
+  return usedCachedPredSecondDeriv;
+}
+
+
+/*************************************************************************
+ *
+ * Function: getUsedCachedOmega
+ *
+ *************************************************************************/
+
+bool IndPredModel::getUsedCachedOmega() const
+{
+  return pOmegaCurr->getUsedCachedCov();
+}
+
+
+/*************************************************************************
+ *
+ * Function: getUsedCachedOmega_omegaPar
+ *
+ *************************************************************************/
+
+bool IndPredModel::getUsedCachedOmega_omegaPar() const
+{
+  return pOmegaCurr->getUsedCachedCov_par();
 }
 
 
@@ -502,7 +667,13 @@ void IndPredModel::evalAllPred() const
   // object is valid.
   if ( isPredADFunCurrOk )
   {
+    usedCachedPredADFun = true;
+
     return;
+  }
+  else
+  {
+    usedCachedPredADFun = false;
   }
 
 
@@ -540,7 +711,9 @@ void IndPredModel::evalAllPred() const
   // Evaluate all of the predicted values for the data.
   //------------------------------------------------------------
 
+  // This message will be used if an error occurs.
   string taskIndAndValMessage;
+
   bool isObsEvent;
   double fCurr;
   double yCurr;
@@ -554,10 +727,9 @@ void IndPredModel::evalAllPred() const
     // Evaluate the predicted value for the data for this event.
     //----------------------------------------------------------
 
-    // This message will be used if an error occurs.
     taskIndAndValMessage = "during the evaluation of the " +
-        intToOrderString( j + 1 ) + " predicted value for the " +
-        intToOrderString( iCurr + 1 ) + " individual's data.";
+      intToOrderString( j + 1 ) + 
+      " predicted value for the individual's data.";
 
     // Evaluate the Pred block expressions for this event.
     try
@@ -617,51 +789,6 @@ void IndPredModel::evalAllPred() const
       throw SpkException(
         SpkError::SPK_MODEL_DATA_MEAN_ERR,
         ( "A non-observation event was encountered " + 
-          taskIndAndValMessage ).c_str(),
-        __LINE__,
-        __FILE__ );
-    }
-
-
-    //----------------------------------------------------------
-    // Validate the predicted value for the data for this event.
-    //----------------------------------------------------------
-
-    // Get the current values for the mean of the data,
-    //
-    //     f   ( theta )  ,
-    //      (j)
-    //
-    // and the predicted value for the data,
-    //
-    //     y   ( theta, eta )  .
-    //      (j)
-    //
-    fCurr = Value( wCurr[j + fOffsetInW] );
-    yCurr = Value( wCurr[j + yOffsetInW] );
-
-    // Make sure that the values are not infinite.
-    if ( fabs( fCurr ) == numeric_limits<double>::infinity() ||
-         fabs( yCurr ) == numeric_limits<double>::infinity() )
-    {
-      // [Revisit - SPK Error Codes Don't Really Apply - Mitch]
-      // This error code should be replaced with one that is accurate.
-      throw SpkException(
-        SpkError::SPK_MODEL_DATA_MEAN_ERR,
-        ( "An infinite value was generated " + taskIndAndValMessage ).c_str(),
-        __LINE__,
-        __FILE__ );
-    }
-
-    // Make sure that the values are not NaN's.
-    if ( fCurr != fCurr ||
-         yCurr != yCurr )
-    {
-      // [Revisit - SPK Error Codes Don't Really Apply - Mitch]
-      // This error code should be replaced with one that is accurate.
-      throw SpkException(
-        SpkError::SPK_MODEL_DATA_MEAN_ERR,
-        ( "A value that is Not a Number (NaN) was generated " + 
           taskIndAndValMessage ).c_str(),
         __LINE__,
         __FILE__ );
@@ -731,7 +858,13 @@ void IndPredModel::evalPredFirstDeriv() const
   // the Pred block if the current versions are valid.
   if ( isPredFirstDerivCurrOk )
   {
+    usedCachedPredFirstDeriv = true;
+
     return;
+  }
+  else
+  {
+    usedCachedPredFirstDeriv = false;
   }
 
 
@@ -903,7 +1036,13 @@ void IndPredModel::evalPredSecondDeriv() const
   // the Pred block if the current versions are valid.
   if ( isPredSecondDerivCurrOk )
   {
+    usedCachedPredSecondDeriv = true;
+
     return;
+  }
+  else
+  {
+    usedCachedPredSecondDeriv = false;
   }
 
 
@@ -1273,6 +1412,8 @@ void IndPredModel::doDataMean( valarray<double>& ret ) const
   // Preliminaries.
   //------------------------------------------------------------
 
+  using namespace std;
+
   int nRow = nEventCurr;
   int nCol = 1;
 
@@ -1283,19 +1424,16 @@ void IndPredModel::doDataMean( valarray<double>& ret ) const
 
   ret.resize( nRow * nCol );
 
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // [Revisit - Dummy Values for Integration Testing - Mitch]
-  // For the purposes of integration testing, this function 
-  // currently returns a dummy value that has the correct
-  // dimensions but was not calculated using the Pred block.
-  ret = 1.0;
-  return;
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
   if ( isDataMeanCurrOk )
   {
     ret = dataMeanCurr;
+    usedCachedDataMean = true;
+
     return;
+  }
+  else
+  {
+    usedCachedDataMean = false;
   }
 
   dataMeanCurr.resize( nRow * nCol );
@@ -1314,6 +1452,8 @@ void IndPredModel::doDataMean( valarray<double>& ret ) const
   // Calculate the value.
   //------------------------------------------------------------
 
+  // This message will be used if a value is not valid.
+  string taskIndAndValMessage;
   int j;
 
   // Set the values for the mean of the data:
@@ -1323,7 +1463,44 @@ void IndPredModel::doDataMean( valarray<double>& ret ) const
   //
   for ( j = 0; j < nEventCurr; j++ )
   {
+    // Set this element.
     dataMeanCurr[j] = Value( wCurr[j + fOffsetInW] );
+
+    taskIndAndValMessage = "during the evaluation of the " +
+      intToOrderString( j + 1 ) + " mean of the individual's data.";
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // [Revisit - Infinite Macro Does Not Seem to Work - Mitch]
+    // Remove the comments from this block once it is determined
+    // how to detect values of -inf or +inf
+    /*
+    // Make sure that the value is not infinite.
+    if ( fabs( dataMeanCurr[j] ) == numeric_limits<double>::infinity() )
+    {
+      // [Revisit - SPK Error Codes Don't Really Apply - Mitch]
+      // This error code should be replaced with one that is accurate.
+      throw SpkException(
+        SpkError::SPK_MODEL_DATA_MEAN_ERR,
+        ( "An infinite value was generated " + taskIndAndValMessage ).c_str(),
+        __LINE__,
+        __FILE__ );
+    }
+    */
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // Make sure that the value is not a NaN.
+    if ( dataMeanCurr[j] != dataMeanCurr[j] )
+    {
+      // [Revisit - SPK Error Codes Don't Really Apply - Mitch]
+      // This error code should be replaced with one that is accurate.
+      throw SpkException(
+        SpkError::SPK_MODEL_DATA_MEAN_ERR,
+        ( "A value that is Not a Number (NaN) was generated " + 
+          taskIndAndValMessage ).c_str(),
+        __LINE__,
+        __FILE__ );
+    }
+
   }
 
 
@@ -1376,22 +1553,18 @@ bool IndPredModel::doDataMean_indPar( valarray<double>& ret ) const
 
   ret.resize( nRow * nCol );
 
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // [Revisit - Dummy Values for Integration Testing - Mitch]
-  // For the purposes of integration testing, this function 
-  // currently returns a dummy value that has the correct
-  // dimensions but was not calculated using the Pred block.
-  ret = 0.0;
-  return false;
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
   if ( isDataMean_indParCurrOk )
   {
     ret = dataMean_indParCurr;
+    usedCachedDataMean_indPar = true;
 
     // Return a value of true if this derivative has at least one
     // nonzero element.
     return !allZero( dataMean_indParCurr );
+  }
+  else
+  {
+    usedCachedDataMean_indPar = false;
   }
 
   dataMean_indParCurr.resize( nRow * nCol );
@@ -1510,6 +1683,8 @@ void IndPredModel::doDataVariance( valarray<double>& ret ) const
   // Preliminaries.
   //------------------------------------------------------------
 
+  using namespace std;
+
   int nRow = nEventCurr;
   int nCol = nEventCurr;
 
@@ -1520,19 +1695,16 @@ void IndPredModel::doDataVariance( valarray<double>& ret ) const
 
   ret.resize( nRow * nCol );
 
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // [Revisit - Dummy Values for Integration Testing - Mitch]
-  // For the purposes of integration testing, this function 
-  // currently returns a dummy value that has the correct
-  // dimensions but was not calculated using the Pred block.
-  ret = 1.0;
-  return;
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
   if ( isDataVarianceCurrOk )
   {
     ret = dataVarianceCurr;
+    usedCachedDataVariance = true;
+
     return;
+  }
+  else
+  {
+    usedCachedDataVariance = false;
   }
 
   dataVarianceCurr.resize( nRow * nCol );
@@ -1564,22 +1736,74 @@ void IndPredModel::doDataVariance( valarray<double>& ret ) const
   //
   //                       ----
   //     R      ( b  )  =  \      h     ( theta )  omega       h     ( theta )  .
-  //      i(j,j)   i       /       (m,j)                (m,n)   (n,j)
+  //      i(j,j)   i       /       (j,m)                (m,n)   (j,n)
   //                       ----
   //                        m,n
   //
   for ( j = 0; j < nEventCurr; j++ )
   {
+    // Set this element.
     for ( m = 0; m < nEta; m++ )
     {
       for ( n = 0; n < nEta; n++ )
       {
         dataVarianceCurr[j + j * nEventCurr] += 
-          hCurr[m + j * nEventCurr] * omegaCurr[m + n * nEta] *
-          hCurr[n + j * nEventCurr];
+          hCurr[j + m * nEventCurr] * omegaCurr[m + n * nEta] *
+          hCurr[j + n * nEventCurr];
       }
     }
   }
+
+
+  //------------------------------------------------------------
+  // Validate the value.
+  //------------------------------------------------------------
+
+  // This message will be used if a value is not valid.
+  string taskIndAndValMessage = 
+    "during the evaluation of the variance of the individual's data.";
+
+  // Check the diagonal elements of the data variance:
+  //
+  //     R      ( b  )  .
+  //      i(j,j)
+  //
+  for ( j = 0; j < nEventCurr; j++ )
+  {
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // [Revisit - Infinite Macro Does Not Seem to Work - Mitch]
+    // Remove the comments from this block once it is determined
+    // how to detect values of -inf or +inf
+    /*
+    // Make sure that the value is not infinite.
+    if ( fabs( dataVarianceCurr[j + j * nEventCurr] ) == 
+	 numeric_limits<double>::infinity() )
+    {
+      // [Revisit - SPK Error Codes Don't Really Apply - Mitch]
+      // This error code should be replaced with one that is accurate.
+      throw SpkException(
+        SpkError::SPK_MODEL_DATA_MEAN_ERR,
+        ( "An infinite value was generated " + taskIndAndValMessage ).c_str(),
+        __LINE__,
+        __FILE__ );
+    }
+    */
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // Make sure that the value is not a NaN.
+    if ( dataVarianceCurr[j + j * nEventCurr] != 
+	 dataVarianceCurr[j + j * nEventCurr] )
+    {
+      // [Revisit - SPK Error Codes Don't Really Apply - Mitch]
+      // This error code should be replaced with one that is accurate.
+      throw SpkException(
+        SpkError::SPK_MODEL_DATA_MEAN_ERR,
+        ( "A value that is Not a Number (NaN) was generated " + 
+          taskIndAndValMessage ).c_str(),
+        __LINE__,
+        __FILE__ );
+    }
+}
 
 
   //------------------------------------------------------------
@@ -1633,22 +1857,18 @@ bool IndPredModel::doDataVariance_indPar( valarray<double>& ret ) const
 
   ret.resize( nRow * nCol );
 
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // [Revisit - Dummy Values for Integration Testing - Mitch]
-  // For the purposes of integration testing, this function 
-  // currently returns a dummy value that has the correct
-  // dimensions but was not calculated using the Pred block.
-  ret = 0.0;
-  return false;
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
   if ( isDataVariance_indParCurrOk )
   {
     ret = dataVariance_indParCurr;
+    usedCachedDataVariance_indPar = true;
 
     // Return a value of true if this derivative has at least one
     // nonzero element.
     return !allZero( dataVariance_indParCurr );
+  }
+  else
+  {
+    usedCachedDataVariance_indPar = false;
   }
 
   dataVariance_indParCurr.resize( nRow * nCol );
@@ -1663,10 +1883,9 @@ bool IndPredModel::doDataVariance_indPar( valarray<double>& ret ) const
 
   // Save the current value for omega and its derivative.
   pOmegaCurr->cov( omegaCurr );
-  pOmegaCurr->cov( omega_omegaParCurr );
+  pOmegaCurr->cov_par( omega_omegaParCurr );
 
   // These will hold the columns of h that correspond to each event.
-  valarray<double> hCol      ( nEta );
   valarray<double> hColTrans ( nEta );
   valarray<double> hCol_theta( nEta * nTheta );
 
@@ -1708,29 +1927,30 @@ bool IndPredModel::doDataVariance_indPar( valarray<double>& ret ) const
     // Set the row for this element in the rvec version of R.
     row = j * nEventCurr + j;
 
-    // Get the column of h that corresponds to this event, 
+    // Set the transpose and the derivative of the column of h
+    // that corresponds to this event,
     //
     //               -                       -
     //              |     h      ( theta )    |
-    //              |      (0, j)             |
+    //              |      (j, 0)             |
     //              |          .              |
-    //     hCol  =  |          .              |  ,
+    //     hCol  =  |          .              |  .
     //              |          .              |
     //              |          .              |
     //              |  h           ( theta )  |
-    //              |   (nEta-1, j)           |
+    //              |   (j, nEta-1)           |
     //               -                       -
     //
-    // and its transpose and derivative.
     for ( m = 0; m < nEta; m++ )
     {
-      // Get this column and its transpose.
-      hCol[m]      = hCurr[j + m * nEta];
-      hColTrans[m] = hCol[m];
+      // Set the transpose of this column.
+      hColTrans[m] = hCurr[j + m * nEventCurr];
 
-      // Get the derivative with respect to theta of this column.
+      // Set the derivative with respect to theta of this column.
       for ( k = 0; k < nTheta; k++ )
       {
+	// Note that an rvec operation is performed on the elements
+	// of h before the derivative is calculated.
         h_thetaRow = j * nEta + m;
         h_thetaCol = k;
 
@@ -1890,19 +2110,16 @@ void IndPredModel::doDataVarianceInv( valarray<double>& ret ) const
 
   ret.resize( nRow * nCol );
 
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // [Revisit - Dummy Values for Integration Testing - Mitch]
-  // For the purposes of integration testing, this function 
-  // currently returns a dummy value that has the correct
-  // dimensions but was not calculated using the Pred block.
-  ret = 1.0;
-  return;
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
   if ( isDataVarianceInvCurrOk )
   {
     ret = dataVarianceInvCurr;
+    usedCachedDataVarianceInv = true;
+
     return;
+  }
+  else
+  {
+    usedCachedDataVarianceInv = false;
   }
 
   dataVarianceInvCurr.resize( nRow * nCol );
@@ -1988,22 +2205,18 @@ bool IndPredModel::doDataVarianceInv_indPar( valarray<double>& ret ) const
 
   ret.resize( nRow * nCol );
 
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // [Revisit - Dummy Values for Integration Testing - Mitch]
-  // For the purposes of integration testing, this function 
-  // currently returns a dummy value that has the correct
-  // dimensions but was not calculated using the Pred block.
-  ret = 0.0;
-  return false;
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
   if ( isDataVarianceInv_indParCurrOk )
   {
     ret = dataVarianceInv_indParCurr;
+    usedCachedDataVarianceInv_indPar = true;
 
     // Return a value of true if this derivative has at least one
     // nonzero element.
     return !allZero( dataVarianceInv_indParCurr );
+  }
+  else
+  {
+    usedCachedDataVarianceInv_indPar = false;
   }
 
   dataVarianceInv_indParCurr.resize( nRow * nCol );
@@ -2044,7 +2257,7 @@ bool IndPredModel::doDataVarianceInv_indPar( valarray<double>& ret ) const
   //                                  b     i(j,j)   i  
   //      (k)   -1
   //     d     R      ( b  )  =  ------------------------  .
-  //      b     i(j,j)   i       
+  //      b     i(j,j)   i                           2
   //                                   R      ( b  )
   //                                    i(j,j)   i
   //
@@ -2063,7 +2276,8 @@ bool IndPredModel::doDataVarianceInv_indPar( valarray<double>& ret ) const
 
       dataVarianceInv_indParCurr[row + col * nRow] = 
         - dataVariance_indParCurr[row + col * nRow]
-        / dataVarianceCurr[j + j * nEventCurr];
+        / ( dataVarianceCurr[j + j * nEventCurr] * 
+	    dataVarianceCurr[j + j * nEventCurr] );
     }
   }
 
@@ -2201,7 +2415,7 @@ int IndPredModel::getNIndPar() const
 
 /*************************************************************************
  *
- * Function: doDataMean
+ * Function: getIndPar
  *
  *
  * Returns the current value for the individual parameter.
@@ -2213,6 +2427,40 @@ void IndPredModel::getIndPar( valarray<double>& ret ) const
   ret.resize( nIndPar );
 
   ret = bCurr;
+}
+
+
+/*************************************************************************
+ *
+ * Function: getTheta
+ *
+ *
+ * Returns the current value for theta.
+ *
+ *************************************************************************/
+
+void IndPredModel::getTheta( valarray<double>& ret ) const 
+{
+  ret.resize( nTheta );
+
+  ret = thetaCurr;
+}
+
+
+/*************************************************************************
+ *
+ * Function: getOmega
+ *
+ *
+ * Returns the minimal representation for the current value for omega.
+ *
+ *************************************************************************/
+
+void IndPredModel::getOmega( valarray<double>& ret ) const 
+{
+  ret.resize( pOmegaCurr->getNPar() );
+
+  pOmegaCurr->calcCovMinRep( omegaCurr, ret );
 }
 
 
