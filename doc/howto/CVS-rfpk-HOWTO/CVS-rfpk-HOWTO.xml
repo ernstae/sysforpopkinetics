@@ -412,7 +412,32 @@
       </screen>
     </para>
     <para>
-      After 
+      You can provide comments about the purpose of your change
+      by using the <option>-m</option> option to provide 
+      a revision message:
+      <screen format="linespecific">
+	cvs commit -m "Fix for bug 13.224."
+      </screen>
+      Revision messages go into a log which becomes part of the
+      revision history in the repository.
+    </para>
+    <para>
+      If you do not proved the <option>-m</option>, cvs will 
+      start a text editor for you, so that you can type in
+      the revision message.  Depending on what system you
+      are running on, the default editor might be 
+      <command moreinfo="none">emacs</command> or
+      <command moreinfo="none">vi</command>.  This can be
+      confusing, especially if the default editor is one that
+      you are not used to.  To avoid getting the default
+      editor, all you have to do is add a pair of lines to your
+      <filename moreinfo="none">.bash_profile</filename> 
+      shell configuration file.  Suppose that you prefer
+      <command moreinfo="none">emacs</command>:
+      <programlisting format="linespecific">
+	CVSEDITOR=emacs
+	export CVSEDITOR
+      </programlisting>     
     </para>
     <para>
       If someone else has made changes to the repository copy of
