@@ -6,10 +6,7 @@
 
 #include "lex_explangTest.h"
 #include "explangTest.h"
-#include "ind_withID_NonmemTranslatorTest.h"
-#include "ind_noID_NonmemTranslatorTest.h"
-#include "ind_onlysim_NonmemTranslatorTest.h"
-#include "NonmemTranslatorPopTest.h"
+#include "ind_withIDTest.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -19,12 +16,26 @@ int main( int argc, const char * argv[] )
   map<string, CppUnit::Test*> master;
   vector<CppUnit::Test*> subset;
 
-  master[ "lex_explangTest" ]         = lex_explangTest::suite();
-  master[ "explangTest" ]             = explangTest::suite();
-  master[ "ind_withID_NonmemTranslatorTest" ] = ind_withID_NonmemTranslatorTest::suite();
-  master[ "ind_noID_NonmemTranslatorTest" ] = ind_noID_NonmemTranslatorTest::suite();
-  master[ "ind_onlysim_NonmemTranslatorTest" ] = ind_onlysim_NonmemTranslatorTest::suite();
-  master[ "NonmemTranslatorPopTest" ] = NonmemTranslatorPopTest::suite();
+  // test for lexical analyzer
+  master[ "lex_explangTest" ] = lex_explangTest::suite();
+
+  // test for syntax analyzer
+  master[ "explangTest" ]     = explangTest::suite();
+
+  // test for NonmemTranslator: ability to handle a data set with ID
+  master[ "ind_withIDTest" ]  = ind_withIDTest::suite();
+
+  // test for NonmemTranslator: ability to handle a data set missing ID
+
+  // test for NonmemTranslator: NonmemPars.h
+  // test for NonmemTranslator: MontePars.h
+  // test for NonmemTranslator: IndData.h
+  // test for NonmemTranslator: DataSet.h
+  // test for NonmemTranslator: Pred.h
+  // test for NonmemTranslator: Makefile.SPK
+  // test for NonmemTranslator: Makefile.MC (monte carlo)
+  // test for NonmemTranslator: spkDriver.cpp
+  // test for NonmemTranslator: monteDriver.cpp
 
   if( argc == 1 )
     {
