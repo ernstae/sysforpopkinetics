@@ -277,6 +277,7 @@ sub death {
     if ($lockfile_exists) {
 	unlink($lockfile_path);
     } 
+
     # log final message, then close the
     system log syslog("info", "stop"); 
     closelog();
@@ -651,6 +652,13 @@ sub stop {
     
     # Become insensitive to TERM signal we are about to broadcast
     local $SIG{'TERM'} = 'IGNORE';
+
+    # Remove the lockfile. We may not get a chance to wait for all 
+    # the children to terminate.
+    if ($lockfile_exists) {
+	unlink($lockfile_path);
+	$lockfile_exists = 0;
+    } 
 
     # send the TERM signal to every member of our process group
     kill('TERM', -$$);
