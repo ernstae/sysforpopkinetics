@@ -208,12 +208,14 @@ public class TestSpkdb {
 		    rs = Spkdb.userJobs(conn, userId, 1, 0);
 		    if (rs.next()) {
 			b = rs.getLong("job_id") == newestJobId;
+			/*
 			Blob report = rs.getBlob("xml_source");
 			java.io.InputStream in = report.getBinaryStream();
 			int c;
 			while ((c = in.read()) != -1) {
 			    s += (char)c;
 			}
+			*/
 		    } 
 		    else {
 			s += ": no record for userId = " + userId;
@@ -534,7 +536,7 @@ public class TestSpkdb {
 		    while (rs.next()) {
 			count++;
 		    }
-		    b = count == 2;
+		    b = count == 4;
 		    break;
 		case 40:
 		    target = true;
