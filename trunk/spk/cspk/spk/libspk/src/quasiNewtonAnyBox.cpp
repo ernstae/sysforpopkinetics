@@ -269,24 +269,23 @@ $subhead optimizer.epsilon$$
 This real number is used to specify the convergence criteria
 for the optimizer.
 It must be greater than $math%0.0%$$.
-A population parameter value $math%alpOut%$$ is accepted as an 
-estimate for $math%alpHat%$$ if 
+$pre
+
+$$
+A  value $math%xOut%$$ is accepted as an 
+estimate for $math%xHat%$$ if 
 $math%
-	abs(alpOut - alpHat) \le epsilon (alpUp - alpLow)
+	abs( xOut - xHat ) \le epsilon ( xUp - xLow )
 %$$
 where $math%abs%$$ is the element-by-element absolute value function
-and $math%alpHat%$$ is the true minimizer of 
-the parametric population objective function.
-Since $math%alpHat%$$ is unknown, the optimization algorithm must 
+and $math%xHat%$$ is the true minimizer of the objective function.
+Since $math%xHat%$$ is unknown, the optimization algorithm must 
 estimate the left hand side of this inequality.
-Note that if another attribute that specifies
-$math%nMaxIter%$$ is set to zero, then $math%alpIn%$$ is 
-accepted as the estimate for $math%alpHat%$$.
+$pre
 
-  // *                                                                    *
-  // *     abs( xOut - xStar )  <=  epsilon (xUp - xLow) .                *
-
-  // *                                                                    *
+$$
+Note that if $italic nMaxIter$$ is set to zero, then $math%xIn%$$ is 
+accepted as the estimate for $math%xHat%$$.
 
 $subhead optimizer.nMaxIter$$
 This integer must be greater than or equal to zero.
