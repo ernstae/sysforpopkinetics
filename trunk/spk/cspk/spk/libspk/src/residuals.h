@@ -22,8 +22,8 @@
 #ifndef RESIDUALS_H
 #define RESIDUALS_H
 
-#include <spk/SpkValarray.h>
-#include <spk/SpkModel.h>
+#include "SpkValarray.h"
+#include "SpkModel.h"
 
 SPK_VA::valarray<double> residuals(SpkModel &model,
 				   int   nSubjects,
