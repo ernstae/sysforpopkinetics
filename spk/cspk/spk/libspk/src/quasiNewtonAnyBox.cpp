@@ -726,26 +726,44 @@ void quasiNewtonAnyBox(
   using namespace std;
 
   int i;
-  double epsilon  = optimizer.getEpsilon();
-  int    nMaxIter = optimizer.getNMaxIter();
-  int    level    = optimizer.getLevel();
+
+  double epsilon     = optimizer.getEpsilon();
+  int    nMaxIter    = optimizer.getNMaxIter();
+  int    level       = optimizer.getLevel();
+  bool   isWarmStart = optimizer.getIsWarmStart();
   
+
+  //------------------------------------------------------------
+  // Validate the inputs (debug mode).
+  //------------------------------------------------------------
+
   assert( epsilon >  0.0 );
   assert( epsilon <= 1.0 );
+
+  assert( dvecXLow.nr() == dvecXUp.nr() );
+  assert( dvecXLow.nr() == dvecXIn.nr() );
+
+  assert( dvecXLow.nc() == 1 );
+  assert( dvecXUp.nc()  == 1 );
+  assert( dvecXIn.nc()  == 1 );
+
+  // Validate the lower and upper bounds and verify that the 
+  // initial x value is between them.
+  assert( allTrue( dvecXLow <= dvecXUp ) );
+  assert( allTrue( dvecXLow <= dvecXIn ) );
+  assert( allTrue( dvecXIn  <= dvecXUp ) );
+
+
+  //------------------------------------------------------------
+  // Initializations for the unscaled objective function.
+  //------------------------------------------------------------
+
+  // Set the number of objective function parameters.
+  int nObjPar = dvecXIn.nr();
 
   const double* pdXLowData = dvecXLow.data();
   const double* pdXUpData  = dvecXUp.data();
   const double* pdXInData  = dvecXIn.data();
-
-  int nXLowRows  = dvecXLow.nr();
-  int nXUpRows   = dvecXUp.nr();
-  int nXInRows   = dvecXIn.nr();
-
-  assert( nXLowRows == nXUpRows );
-  assert( nXLowRows == nXInRows );
-
-  // Set the number of objective function parameters.
-  int nObjPar  = nXInRows;
 
   // If the final x value should be returned, do some initializations.
   double* pdXOutData;
@@ -759,12 +777,6 @@ void quasiNewtonAnyBox(
   DoubleMatrix dvecXDiff( nObjPar, 1 );
 
   double* pdXDiffData = dvecXDiff.data();
-
-  // Validate the lower and upper bounds and verify that the 
-  // initial x value is between them.
-  assert( allTrue( dvecXLow <= dvecXUp ) );
-  assert( allTrue( dvecXLow <= dvecXIn ) );
-  assert( allTrue( dvecXIn  <= dvecXUp ) );
 
 
   //------------------------------------------------------------
@@ -785,9 +797,9 @@ void quasiNewtonAnyBox(
   // equal and then set the bounds and the initial value y accordingly.
   //
   // Sachiko: For efficiency, intialize these vectors with default values before the loop.
-  dvecYLow.fill(0);
-  dvecYUp.fill(0);
-  dvecY.fill(0);
+  yLow.fill(0);
+  yUp.fill(0);
+  y.fill(0);
   for ( i = 0; i < nObjPar; i++ )
   {
     pdXDiffData[i] = pdXUpData[i] - pdXLowData[i]; 
@@ -842,10 +854,10 @@ void quasiNewtonAnyBox(
 
 
   //------------------------------------------------------------
-  // Retrieve state information for warm start
+  // Retrieve the previous state information if this is a warm start.
   //------------------------------------------------------------
 
-  if ( optimizer.getIsWarmStart() )
+  if ( isWarmStart )
   {
     options.start  = Nag_Warm;
         StateInfo stateInfo = optimizer.getStateInfo();
@@ -877,7 +889,7 @@ void quasiNewtonAnyBox(
   size_t     &quadCurr;
   double        &rCurr;
   double        &fCurr;
-  double        *xCurr; // length n 
+  double        *yCurr; // length n 
   double        *gCurr; // length n 
   const double  *hCurr; // length n * n 
 
@@ -892,7 +904,7 @@ void quasiNewtonAnyBox(
   // warm start or if zero iterations have been requested.
   if ( !isAWarmRestart || nMaxIter == 0 )
   {
-    objective.function( xCurr, fCurr, gCurr, ... );
+    objective.function( yCurr, fCurr, gCurr, ... );
   }
 
 
@@ -911,15 +923,15 @@ void quasiNewtonAnyBox(
      */
      double         fOut;
 
-     // initial xCur
+     // initial yCur
      for(i = 0; i < n; i++)
-          xCur[i] = .5;
+          yCur[i] = .5;
 
-     // fCur is objective function value at xCur
-     msg = obj.function(xCur, fCur); 
+     // fCur is objective function value at yCur
+     msg = obj.function(yCur, fCur); 
      ok &= strcmp(msg, "ok") == 0;
 
-     // gCur is gradient at xCur
+     // gCur is gradient at yCur
      msg = obj.gradient(gCur); 
      ok &= strcmp(msg, "ok") == 0;
 
@@ -991,9 +1003,9 @@ void quasiNewtonAnyBox(
       // See if this function's convergence criterion has been met.
       if ( isWithinTol( 
         epsilon,
-        dvecYCurr,
-        dvecYLow,
-        dvecYUp,
+        yCurr,
+        yLow,
+        yUp,
         drowGScaled,
         getLowerTriangle( arrayToDoubleMatrix( options.h, n, n ) ) ) )
       {
@@ -1003,7 +1015,7 @@ void quasiNewtonAnyBox(
       {
         // Set delta to be less than the maximum of the absolute values of
         // the elements of the projected gradient so that the subproblems
-        // only be solved with accuracy sufficient for the current x value.
+        // only be solved with accuracy sufficient for the current y value.
         delta = maxAbsProjGrad( gCurr ) / deltaScale;
 
         // Save the number of iterations that have been performed.
@@ -1022,7 +1034,7 @@ void quasiNewtonAnyBox(
           quadCurr,
           rCurr,
           fCurr,
-          xCurr,
+          yCurr,
           gCurr,
           hCurr );
 
@@ -1032,7 +1044,7 @@ void quasiNewtonAnyBox(
 
         // This function assumes that delta is set small enough that the
         // optimizer's convergence criterion will not be satisfied for the
-        // current x value and that the optimizer will therefore be able to
+        // current y value and that the optimizer will therefore be able to
         // perform at least one Quasi-Newton itertion.  If that is not the
         // case, then throw an exception.
         if ( iterCurr == iterCurrPrev )
@@ -1099,7 +1111,7 @@ void quasiNewtonAnyBox(
     {
       // Save state information for warm start.
       stateInfo.n      = n;
-      stateInfo.x      = y;
+?      stateInfo.x      = y;
       stateInfo.state  = options.state;
       stateInfo.lambda = options.lambda;
       stateInfo.h      = options.h;
