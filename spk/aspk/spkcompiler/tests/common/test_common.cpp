@@ -8,6 +8,7 @@
 #include "ExpTreeGeneratorTest.h"
 #include "read_contentTest.h"
 #include "emit_IndDataTest.h"
+#include "emit_driverTest.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -22,6 +23,8 @@ int main( int argc, const char * argv[] )
   runner.addTest( ExpTreeGeneratorTest::suite() );
   runner.addTest( read_contentTest::suite() );  
   runner.addTest( emit_IndDataTest::suite() );
+  runner.addTest( emit_driverTest::suite() );
+
   runner.run();
 
   return 0;

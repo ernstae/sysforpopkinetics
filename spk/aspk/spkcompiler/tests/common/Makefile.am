@@ -18,7 +18,9 @@ test_common_SOURCES = \
 	read_contentTest.cpp \
 	read_contentTest.h \
         emit_IndDataTest.cpp \
-	emit_IndDataTest.h
+	emit_IndDataTest.h \
+        emit_driverTest.cpp \
+        emit_driverTest.h
 
 test_common_INCLUDES = \
 	ExpTreeGeneratorTest.h \
@@ -27,7 +29,8 @@ test_common_INCLUDES = \
 	SymbolTest.h \
 	SymbolTableTest.h \
 	read_contentTest.h \
-        emit_IndDataTest.h
+        emit_IndDataTest.h \
+        emit_driverTest.h
 
 AM_LDFLAGS = -lxerces-c -lcppunit -lspkcompiler
 
