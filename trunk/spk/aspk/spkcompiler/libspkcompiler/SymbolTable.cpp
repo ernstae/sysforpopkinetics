@@ -18,14 +18,14 @@ SymbolTable& SymbolTable::operator=( const SymbolTable& )
 }
 Symbol* SymbolTable::find( const string& name )
 {
-   string up = lower( name );
-   map<string, Symbol>::iterator p = table.find( up );
+   string low = key( name );
+   map<string, Symbol>::iterator p = table.find( low );
    return &(p->second);
 }
 const Symbol* SymbolTable::find( const string& name ) const
 {
-   string up = lower( name );
-   map<string, Symbol>::const_iterator p = table.find( up );
+   string low = key( name );
+   map<string, Symbol>::const_iterator p = table.find( low );
    if( p->second.name == name )
      return &(p->second);
    else
@@ -34,31 +34,35 @@ const Symbol* SymbolTable::find( const string& name ) const
 
 Symbol* SymbolTable::findi( const string& name )
 {
-   string up = lower( name );
-   map<string, Symbol>::iterator p = table.find( up );
+   string low = key( name );
+   map<string, Symbol>::iterator p = table.find( low );
    if( p== table.end() )
      return (const_cast<Symbol*>( Symbol::empty() ) );
    return &(p->second);
 }
 const Symbol* SymbolTable::findi( const string& name ) const
 {
-   string up = lower( name );
-   map<string, Symbol>::const_iterator p = table.find( up );
+   string low = key( name );
+   map<string, Symbol>::const_iterator p = table.find( low );
    if( p == table.end() )
      return Symbol::empty();
    return &(p->second);
 }
+const string SymbolTable::key( const string& str )
+{
+  return lower( str );
+}
 Symbol* SymbolTable::insertUserVar( const string& name )
 {
    Symbol a = Symbol::createUserVar( name );
-   const string NAME = lower(name);
+   const string NAME = key(name);
    table[ NAME ] = a;
    return &(table[ NAME ]); 
 }
 Symbol* SymbolTable::insertNMVector( const string& name, int len )
 {
    Symbol a = Symbol::createNMVector( name, len );
-   const string NAME = lower(name);
+   const string NAME = key(name);
    table[ NAME ] = a;
    return &(table[ NAME ]);
 }
@@ -66,15 +70,15 @@ Symbol* SymbolTable::insertNMMatrix( const string& name,
                                 Symbol::Structure mt, int dim )
 {
    Symbol a = Symbol::createNMMatrix( name, mt, dim );
-   const string NAME = lower(name);
+   const string NAME = key(name);
    table[ NAME ] = a;
    return &(table[ NAME ]);
 }
 Symbol* SymbolTable::insertLabel( const string& label, const string& alias,
-                                  vector<int>& len )
+                                  valarray<int>& len )
 {
    Symbol a = Symbol::createLabel( label, alias, len );
-   const string LABEL = lower(label);
+   const string LABEL = key(label);
    table[ LABEL ] = a;
    labels.push_back( label );
    return &(table[ LABEL ]);

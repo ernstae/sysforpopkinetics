@@ -121,7 +121,7 @@ void ClientTranslator::parseData()
       vector<string> tmp_ids;
       string tmp_labels[ nVals ];
       string tmp_types [ nVals ];
-      vector<int>    tmp_nDataRecords;
+      valarray<int>  nDataRecords;
 
       /*
       DOMNodeList * description = dataTable->getElementsByTagName( X_DESCRIPTION );
@@ -211,15 +211,15 @@ void ClientTranslator::parseData()
 	}
      
       assert( nIDs == tmp_ids.size() );
-
+      nDataRecords.resize( nIDs );
       //
       // Figure out the number of data records for each individual
       // and save them in a temporary array.
       //
       vector<string>::const_iterator id = tmp_ids.begin();
-      for( int k=0; id != tmp_ids.end(); k++, id++ )
+      for( int k=0; id != tmp_ids.end(), k<=nIDs; k++, id++ )
 	{
-	  tmp_nDataRecords.push_back( tmp_values[*id][tmp_labels[0]].size() );
+	  nDataRecords[k] = tmp_values[*id][tmp_labels[0]].size();
 	}
 
       //
@@ -227,7 +227,7 @@ void ClientTranslator::parseData()
       //
       for( int k=0; k<nVals; k++ )
 	{
-	  table.insertLabel( tmp_labels[k], "", tmp_nDataRecords );
+	  table.insertLabel( tmp_labels[k], "", nDataRecords );
 
 	}
 

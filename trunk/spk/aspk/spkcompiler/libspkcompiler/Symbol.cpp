@@ -17,7 +17,7 @@ Symbol::Symbol( const string& nameIn,
                 enum SymbolType stIn,
                 enum ObjectType otIn,
                 enum Structure msIn,
-                const vector<int>& dimIn )
+                const valarray<int>& dimIn )
 : name( nameIn ),
   synonym( synonymIn ),
   symbol_type( stIn ),
@@ -35,6 +35,7 @@ Symbol::Symbol( const string& nameIn,
    initial.resize( n );
    upper.resize( n );
    lower.resize( n );
+   step.resize( n );
    fixed.resize( n );
 
    for( int i=0, len=0; i<n; i++ )
@@ -61,6 +62,7 @@ Symbol::Symbol( const string& nameIn,
        initial[i].resize( len );
        upper[i].resize( len );
        lower[i].resize( len );
+       step[i].resize( len );
        fixed[i].resize( len );
      }
 }
@@ -82,6 +84,7 @@ Symbol::Symbol( const Symbol& right )
    initial.resize( n );
    upper.resize( n );
    lower.resize( n );
+   step. resize( n );
    fixed.resize( n );
 
    for( int i=0, len=0; i<n; i++ )
@@ -108,11 +111,13 @@ Symbol::Symbol( const Symbol& right )
        initial[i].resize( len );
        upper[i].resize( len );
        lower[i].resize( len );
+       step [i].resize( len );
        fixed[i].resize( len );
 
        initial[i] = right.initial[i];
        upper[i]   = right.upper[i];
        lower[i]   = right.lower[i];
+       step [i]   = right.step [i];
        fixed[i]   = right.fixed[i];
      }
 }
@@ -134,6 +139,7 @@ Symbol& Symbol::operator=( const Symbol& right )
    initial.resize( n );
    upper.resize( n );
    lower.resize( n );
+   step. resize( n );
    fixed.resize( n );
 
    for( int i=0, len=0; i<n; i++ )
@@ -160,11 +166,13 @@ Symbol& Symbol::operator=( const Symbol& right )
        initial[i].resize( len );
        upper[i].resize( len );
        lower[i].resize( len );
+       step [i].resize( len );
        fixed[i].resize( len );
 
        initial[i] = right.initial[i];
        upper[i]   = right.upper[i];
        lower[i]   = right.lower[i];
+       step [i]   = right.step[i];
        fixed[i]   = right.fixed[i];
      }
    return *this;
@@ -202,6 +210,8 @@ bool Symbol::operator==( const Symbol& right ) const
 	 return false;
        if( lower[i].size() != right.lower[i].size() )
 	 return false;
+       if( step [i].size() != right.step [i].size() )
+	 return false;
        if( fixed[i].size() != right.fixed[i].size() )
 	 return false;
      }
@@ -213,25 +223,25 @@ bool Symbol::operator!=( const Symbol& right ) const
 }
 Symbol Symbol::createUserVar( const string& var )
 {
-   vector<int> one( 1 );
+   valarray<int> one( 1 );
    one[0] = 1;
    return Symbol( var, "", USERDEF, SCALAR, FULL, one );
 }
 Symbol Symbol::createNMVector( const string& var, int veclen )
 {
-   vector<int> len( 1 );
+   valarray<int> len( 1 );
    len[0] = veclen;
    return Symbol( var, "", NONMEMDEF, VECTOR, FULL, len );
 }
 Symbol Symbol::createNMMatrix( const string& var, enum Structure mt, int matdim )
 {
-   vector<int> dim( 1 );
+   valarray<int> dim( 1 );
    dim[0] = matdim;
    return Symbol( var, "", NONMEMDEF, MATRIX, mt, dim );
 }
 Symbol Symbol::createLabel( const string& label, 
                             const string& alias, 
-                            const vector<int>& dims )
+                            const valarray<int>& dims )
 {
   return Symbol( label, alias, DATALABEL, VECTOR, FULL, dims );
 }
