@@ -51,8 +51,9 @@ extern "C"{
     * This parser converts "algebraic expressions + control statements"
     *  written in
     * the NONMEM Abbriviated language to C++ language.
-    * The NONMEM version of yylex() is expected to tokenize the input
-    * and pass back to this routine.  The input expressions must be
+    * The NONMEM version of yylex() is expected to tokenize the input,
+    * convert it to all @em lower-case and pass back to this routine.  
+    * The input expressions must be
     * stored in an open readable file pointed by a FILE handler, @a yyin.
     * The generated C++ source code is appended to an open writable
     * file pointed by a FILE handler, gSpkExpOut.

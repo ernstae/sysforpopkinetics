@@ -6,7 +6,7 @@
  * @ingroup nonmem
  */
 /**
- * @example NonmemExpXlatorTest.cpp
+ * @example lex_explangTest.cpp
  */
 #include <ctype.h>
 #include "explang.h"
@@ -83,7 +83,13 @@ tok_endif                   "ENDIF"
 %%
 [ \t]                       { /* white space; ignore */ }
 [;].*/\n                    { yylval.c_str = (char*)strdup(yytext+1);  ++gSpkExpLines; return COMMENT; }
-{tok_engineering_notation}  { yylval.c_str = (char*)strdup(yytext);  return ENG_NOTATION; }
+{tok_engineering_notation}  { 
+                              yylval.c_str = (char*)strdup(yytext);
+                              int i;
+                              for( i=0; i<yyleng; i++ )
+                                 yylval.c_str[i] = tolower(yylval.c_str[i]);  
+                              return ENG_NOTATION; 
+                            }
 {tok_significand}           { yylval.c_str = (char*)strdup(yytext);  return SIGNIFICAND; }
 {tok_exit}                  { return EXIT;; }
 {tok_if}                    { return IF; }
@@ -118,7 +124,10 @@ tok_endif                   "ENDIF"
                                  yyerror( (char*)strdup( mess ) );
                                  //yyterminate(); 
                               }
-                              yylval.c_str = (char*)strdup(yytext);  
+                              yylval.c_str = (char*)strdup(yytext); 
+                              int i;
+                              for( i=0; i<yyleng; i++ )
+                                 yylval.c_str[i] = tolower( yylval.c_str[i] ); 
                               return NAME; 
                             }
 {tok_special_character}     { yylval.ch = yytext[0];  return yytext[0]; }
