@@ -19,7 +19,8 @@ INCLUDE = \
 	Pred.h \
 	DataSet.h \
 	IndData.h \
-	NonmemPars.h
+	NonmemPars.h \
+	Gsl2SpkError.h
 #
 OBJECT = \
 	monteDriver.o \
@@ -27,7 +28,8 @@ OBJECT = \
 	GridIntegral.o \
 	MontePopObj.o \
 	MapBay.o \
-	MapMonte.o
+	MapMonte.o \
+	Gsl2SpkError.o
 
 # Rule for compiling C++ soruce files
 %.o : %.cpp $(INCLUDES) 
@@ -51,6 +53,8 @@ install : driver \
 	  MapBay.cpp \
 	  MapMonte.h \
 	  MapMonte.cpp \
+	  Gsl2SpkError.h \
+	  Gsl2SpkError.cpp \
 	  monteDriver.cpp
 	rm -rf $(INSTALL_DIR)
 	mkdir -p $(INSTALL_DIR)
