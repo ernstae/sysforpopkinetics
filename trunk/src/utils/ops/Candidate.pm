@@ -28,7 +28,7 @@ sub stage_directory {
 sub make_directory {
     my $path = shift;
     my @args = ($mkdir_command, "-p", $path);
-     system(@args);
+    system(@args);
     my $exit_status = $? >> 8;
     if ($exit_status != 0) {
 	die "Could not make directory '$path'\n";
