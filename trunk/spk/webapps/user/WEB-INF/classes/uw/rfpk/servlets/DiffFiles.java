@@ -23,7 +23,8 @@ import javax.servlet.http.*;
 import java.io.*;
 import java.nio.*;
 
-/** This servlet receives a String array containing three String objects from the client.
+/** This servlet compares two text files and sends back the differences in unix format.  
+ * The servlet receives a String array containing three String objects from the client.
  * The first String object is the secret code to identify the client.  The second String  
  * object is the first text.  The third String object is the second String object.  The 
  * servlet saves the texts in two files and then call Linux command 'diff' to get revision.

@@ -30,7 +30,8 @@ import org.apache.commons.jrcs.util.ToString;
 import org.apache.commons.jrcs.diff.*;
 import uw.rfpk.beans.UserInfo; 
 
-/** This servlet receives a String array containing four String objects from the client.
+/** This servlet sends back information about a list of models belonging to the user.
+ * The servlet receives a String array containing four String objects from the client.
  * The first String object is the secret code to identify the client.  The second String  
  * object is the maximum number of models to provide status for.  The third String object is
  * the least model_id previously returned.  The fourth String object indicates if it is to 

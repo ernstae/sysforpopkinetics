@@ -28,7 +28,8 @@ import org.apache.commons.jrcs.rcs.*;
 import org.apache.commons.jrcs.diff.*;
 import uw.rfpk.beans.UserInfo;
 
-/** This servlet receives a String array containing ninteen String objects from the client.
+/** This servlet assemblies and then submits the job, the model and the dataset to the database.
+ * The servlet receives a String array containing ninteen String objects from the client.
  * The first String object is the secret code to identify the client.  The other eighteen
  * Strings are source, dataset, model archive, job_abstract, model_abstract, model_log, 
  * model_name, model_version, model_id, is_new_model, is_new_model_version, dataset_abstract, 

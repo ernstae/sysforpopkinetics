@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE attributes PUBLIC "-//NetBeans//DTD DefaultAttributes 1.0//EN" "http://www.netbeans.org/dtds/attributes-1_0.dtd">
 <attributes version="1.0">
+    <fileobject name="DataFormater.java">
+        <attr name="class_dependency_javax.swing.JFrame" stringvalue="DataFormater"/>
+    </fileobject>
     <fileobject name="UserJob.java">
         <attr name="class_dependency_javax.swing.table.AbstractTableModel" stringvalue="UserJob.DisplayTableModel"/>
         <attr name="class_dependency_javax.swing.JFrame" stringvalue="UserJob"/>
-    </fileobject>
-    <fileobject name="GetModel.java">
-        <attr name="class_dependency_javax.swing.table.AbstractTableModel" stringvalue="GetModel.DisplayTableModel"/>
-        <attr name="class_dependency_javax.swing.JFrame" stringvalue="GetModel"/>
     </fileobject>
     <fileobject name="ModelLibrary.java">
         <attr name="class_dependency_javax.swing.table.AbstractTableModel" stringvalue="ModelLibrary.DisplayTableModel"/>
         <attr name="class_dependency_javax.swing.JFrame" stringvalue="ModelLibrary"/>
         <attr name="class_dependency_javax.swing.table.DefaultTableCellRenderer" stringvalue="ModelLibrary.CellRenderer"/>
+    </fileobject>
+    <fileobject name="GetModel.java">
+        <attr name="class_dependency_javax.swing.table.AbstractTableModel" stringvalue="GetModel.DisplayTableModel"/>
+        <attr name="class_dependency_javax.swing.JFrame" stringvalue="GetModel"/>
     </fileobject>
     <fileobject name="GetSource.java">
         <attr name="class_dependency_javax.swing.table.AbstractTableModel" stringvalue="GetSource.DisplayTableModel"/>

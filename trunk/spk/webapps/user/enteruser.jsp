@@ -52,25 +52,14 @@ distribution.
 	  </td>
 	  <td colspan=1 vAlign=top width=10><img alt="trans gif" height=5 src="./images/white.gif" width=10/>
 	  <td colspan=1 vAlign=top>
-            <c:choose>
-              <c:when test="${param.task == 'addnew'}">
-	        <h3>Adding New User Account</h3>
-                <p>
-                Please enter information about the new user below and click the submit button to add the new user account.
-                <form action="validate.jsp?task=addnew" method="post">
-              </c:when>
-              <c:otherwise>
-	        <h3>Updating User Account</h3>
-                <p>
-                Please enter information about an existing user below and click the submit button to update the user account.
-                <form action="validate.jsp?task=update" method="post">
-              </c:otherwise>
-            </c:choose>
+            <p>
+              Please enter information about the new user below and click the submit button to add the new user account.
+            <form action="validate.jsp?task=addnew" method="post">
               <table>
                 <tr>
                   <td>Username:</td>
                   <td><input type="text" name="userName"
-                    value="${fn:escapeXml(param.userName)}">
+                    value="${fn:escapeXml(param.userName)}">                  
                   </td>
                   <td><font color="red">${fn:escapeXml(userNameError)}</font></td>
                 </tr>
@@ -100,42 +89,46 @@ distribution.
                   <td><input type="text" name="company"
                     value="${fn:escapeXml(param.company)}">
                   </td>
-                  <td><font color="red">${fn:escapeXml(companyError)}</font></td>
-                </tr>
-                <tr>
-                  <td>Country:</td>
-                  <td><input type="text" name="country"
-                    value="${fn:escapeXml(param.country)}">
-                  </td>
-                  <td><font color="red">${fn:escapeXml(countryError)}</font></td>
+                  <td><font color="red">${fn:escapeXml(companyNameError)}</font></td>
                 </tr>
                 <tr>
                   <td>State:</td>
                   <td><input type="text" name="state"
                     value="${fn:escapeXml(param.state)}">
                   </td>
-                  <td><font color="red">${fn:escapeXml(stateError)}</font></td>
+                  <td><font color="red">${fn:escapeXml(stateNameError)}</font></td>
+                </tr>
+                <tr>
+                  <td>Country:</td>
+                  <td><input type="text" name="country"
+                    value="${fn:escapeXml(param.country)}">
+                  </td>
+                  <td><font color="red">${fn:escapeXml(countryNameError)}</font></td>
                 </tr>
                 <tr>
                   <td>Email:</td>
                   <td><input type="text" name="email"
                     value="${fn:escapeXml(param.email)}">
                   </td>
-                  <td><font color="red">${fn:escapeXml(emailError)}</font></td>
+                  <td><font color="red">${fn:escapeXml(emailAddressError)}</font></td>
                 </tr>
                 <tr>
                   <td>Tester?:</td>
                   <td><input type="checkbox" name="tester"
+                    <c:if test="${param.tester == '1'}">
+                      checked
+                    </c:if>
                     value="1">
                   </td>
-                  <td><font color="red">${fn:escapeXml(testerError)}</font></td>
                 </tr>
                 <tr>
                   <td>Developer?:</td>
-                  <td><input type="checkbox" name="developer"
+                  <td><input type="checkbox" name="developer" 
+                    <c:if test="${param.developer == '1'}">
+                      checked
+                    </c:if>
                     value="1">
                   </td>
-                  <td><font color="red">${fn:escapeXml(developerError)}</font></td>
                 </tr>                                        
                 <tr>
                   <th align="left"><input type="submit" value="Submit"></th>

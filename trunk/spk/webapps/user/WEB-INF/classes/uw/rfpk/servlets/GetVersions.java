@@ -31,7 +31,10 @@ import org.apache.commons.jrcs.util.ToString;
 import org.apache.commons.jrcs.diff.*;
 import uw.rfpk.beans.UserInfo;
 
-/** This servlet receives a String array containing four String objects from the client.
+/** This servlet sends bsck the version list of the model or datsset that was selected by 
+ * the user from model list by the immediately previous call to the servlet UserModels
+ * or from dataset list by the immediately previous call to the servlet UserDatasets.
+ * The servlet receives a String array containing four String objects from the client.
  * The first String object is the secret code to identify the client.  The second String  
  * object is the id of the model or the dataset.  The third String object is archive type
  * that is either model or data.  The fourth String object is a flag that specified if 

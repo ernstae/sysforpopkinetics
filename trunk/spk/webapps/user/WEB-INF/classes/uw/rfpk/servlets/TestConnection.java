@@ -23,8 +23,8 @@ import javax.servlet.http.*;
 import java.io.*;
 import java.nio.*;
 
-/** This servlet is only used for testing connection.  It receives an emplty String object  
- * and sends back two empty String objects.  
+/** This servlet is only used for testing connection between the Model Design Agent and the associated
+ * web server.  It receives an emplty String object and sends back two empty String objects.  
  *
  * @author Jiaji Du
  */

@@ -29,22 +29,19 @@ import rfpk.spk.spkdb.*;
 import uw.rfpk.beans.UserInfo;
 import java.text.SimpleDateFormat;
 
-/** This servlet receives a String array containing three String objects from the client.
+/** This servlet sends back information of events occured in the job's processing histry. 
+ * The servlet receives a String array containing three String objects from the client.
  * The first String object is the secret code to identify the client.  The second String 
  * is the job_id.  The third String object is a flag that specified if this call is from 
  * a library patron.  The servlet first checks if the job_id belongs to the user using 
  * database API method, getUser, to get the user_id and using database API, getJob, to get
- * user_id, then comparing them.  If they are the same, the servlet gets the xml_source,
- * model_id, model_version, dataset_id and dataset_version from the getJob call resultset. 
- * Then, the model_id is paased in the database API method getModel to get model archive 
- * and the dataset_id is passed in the database API method getDataset to get dataset archive.  
- * The servlet calls JRCS API methods, getRevision and arrayToString, to get the archive 
- * text of the version that has been returned from the database API method getJob call for  
- * both the model and the dataset.  The servlet puts the xml_source, model and dataset
- * into a java,util.Properties object.  The servlet sends back two objects.  The first 
+ * user_id, then comparing them.  If they are the same, the servlet gets the event_time,
+ * state_code and host of all the events from the database API jobHistory call resultset.
+ * The servlet converts the state_code to its name by calling database API method 
+ * getStateTable, then sends back two objects.  The first 
  * object is a String containing the error message if there is an error or an empty String 
- * if there is not any error.  The second object is the Properties object containing the 
- * returned data.
+ * if there is not any error.  The second object is a String[][] object containing the 
+ * job history data.
  *
  * @author Jiaji Du
  */
