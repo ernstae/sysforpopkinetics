@@ -1388,6 +1388,7 @@ $end
 Optimizer::Optimizer()
                     : epsilon( 0.0001 ), nMaxIter( 40 ), level( 1 ), 
             nIterCompleted( 0 ), isTooManyIter( false ),
+            saveStateAtEndOfOpt( false ), throwExcepIfMaxIter( true ),
             isSubLevelOpt( false ), isWarmStart( false )
 {
   stateInfo.n = 0;
@@ -1402,6 +1403,7 @@ Optimizer::Optimizer()
 Optimizer::Optimizer( double Epsilon, int NMaxIter, int Level )
               : epsilon( Epsilon ), nMaxIter( NMaxIter ), level( Level ),
             nIterCompleted( 0 ), isTooManyIter( false ), 
+            saveStateAtEndOfOpt( false ), throwExcepIfMaxIter( true ),
             isSubLevelOpt( false ), isWarmStart( false )
 {
   stateInfo.n = 0;
@@ -1417,6 +1419,8 @@ Optimizer::Optimizer( const Optimizer& right )
                     : epsilon( right.epsilon ), nMaxIter( right.nMaxIter ),
               level( right.level ), nIterCompleted( right.nIterCompleted ), 
             isTooManyIter( right.isTooManyIter ),
+            saveStateAtEndOfOpt( right.saveStateAtEndOfOpt ),
+	    throwExcepIfMaxIter( right.throwExcepIfMaxIter ),
             isSubLevelOpt( right.isSubLevelOpt ),
             isWarmStart( right.isWarmStart ), stateInfo( right.stateInfo )
 {}
@@ -1430,14 +1434,16 @@ Optimizer::~Optimizer()
 // Assignment operator
 Optimizer& Optimizer::operator=( const Optimizer& right ) 
 {
-  epsilon        = right.epsilon;
-  nMaxIter       = right.nMaxIter;
-  level          = right.level;
-  nIterCompleted = right.nIterCompleted;
-  isTooManyIter  = right.isTooManyIter;
-  isSubLevelOpt  = right.isSubLevelOpt;
-  isWarmStart    = right.isWarmStart;
-  stateInfo      = right.stateInfo;
+  epsilon             = right.epsilon;
+  nMaxIter            = right.nMaxIter;
+  level               = right.level;
+  nIterCompleted      = right.nIterCompleted;
+  isTooManyIter       = right.isTooManyIter;
+  saveStateAtEndOfOpt = right.saveStateAtEndOfOpt;
+  throwExcepIfMaxIter = right.throwExcepIfMaxIter;
+  isSubLevelOpt       = right.isSubLevelOpt;
+  isWarmStart         = right.isWarmStart;
+  stateInfo           = right.stateInfo;
   return *this;
 }
 
@@ -1465,7 +1471,7 @@ void setIsSubLevelOpt( bool s );
 
   // If this is a sub-level problem, then don't save the state
   // information at the end of the optimizaton but do throw an
-  // exception is the maximum number of iterations is exhausted.
+  // exception if the maximum number of iterations is exhausted.
   setSaveStateAtEndOfOpt( !s );
   setThrowExcepIfMaxIter( s );
 
