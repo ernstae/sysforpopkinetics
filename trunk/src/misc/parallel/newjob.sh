@@ -11,11 +11,18 @@ fi
 ARCH=LINUXX86_64   # the architecture of the head node
 MODE=test
 
-if [ -n "$1" ] && [ "$1" = "-r" ];  # reset
+if [ -z "$1" ];
+then
+    echo "usage: newjob.sh (-r | individual_count)"
+    exit 1
+fi
+
+if [ "$1" = "-r" ];  # reset
 then
     rm -rf $SPK_SHARE/working/spktest/*
     rm -f $SPK_SHARE/log/spktest/*
     rm -f $NEXT_JOB
+    exit 0
 fi
 
 if [ -f $NEXT_JOB ];
@@ -23,11 +30,11 @@ then
     n=`cat $NEXT_JOB`
     let n=$n+1
 fi
-printf "%06d" $N > $NEXT_JOB
-printf "%06d" $N
-printf "\n"
+printf "%d" $n > $NEXT_JOB
 
-#mkdir $SPK_SHARE/working/spk$MODE/spkjob-$1
-#$SPK_SHARE/arch/bin/$ARCH/spk$MODE/spkjob $1 $2 $MODE
+mkdir -m 2775 $SPK_SHARE/working/spk$MODE/spkjob-$n
 
+$SPK_SHARE/arch/bin/$ARCH/spk$MODE/spkjob $n $1 $MODE
+
+exit 0
 

@@ -80,19 +80,19 @@ static void signal_initialize(void);
 
 // perform the computation
 static void compute(int iid) {
-  const int t = 17;
+  const int t = 10;
   if (iid == 1 and time(NULL) % 10 == 0) {
     char buf[100];
-    sprintf(buf, "going to cause a segmentation fault in %d sec.", t);
+    sprintf(buf, "going to cause a fault in %d sec.", t);
     spklog(buf);
-    sleep(17);
-    char *x;
-    strcpy(x, "hello");
+    sleep(t);
+    char *p = 0;
+    strcpy(p, "x");
   }
   srand(1023);
   for (int i = 0; i < 10 * iid; i++)
     rand();
-  sleep(10 + (int)(20.0*rand()/(RAND_MAX+1.0)));
+  sleep(5 + (int)(10.0*rand()/(RAND_MAX+1.0)));
 }
 
 // call this function in case of fatal error
@@ -114,6 +114,7 @@ static void finish(int exit_value) {
 static void signal_handler(int signum) {
   char buf[100];
   sprintf(buf, "caught termination signal %d", signum);
+  signal(signum, SIG_IGN);
   spklog(buf);
   finish(signum);
   exit(signum);
