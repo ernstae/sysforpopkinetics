@@ -10,7 +10,9 @@
 #include "ind_withoutIDTest.h"
 #include "ind_simTest.h"
 #include "ind_simNoEstTest.h"
+#include "ind_fixedParaTest.h"
 #include "pop_basicTest.h"
+#include "pop_fixedParaTest.h"
 #include "pop_monteTest.h"
 
 using namespace std;
@@ -45,15 +47,12 @@ int main( int argc, const char * argv[] )
   // test for NonmemTranslator: ability to handle a population level Monte Carlo request
   master[ "pop_monteTest" ] = pop_monteTest::suite();
 
-  // test for NonmemTranslator: NonmemPars.h
-  // test for NonmemTranslator: MontePars.h
-  // test for NonmemTranslator: IndData.h
-  // test for NonmemTranslator: DataSet.h
-  // test for NonmemTranslator: Pred.h
-  // test for NonmemTranslator: Makefile.SPK
-  // test for NonmemTranslator: Makefile.MC (monte carlo)
-  // test for NonmemTranslator: spkDriver.cpp
-  // test for NonmemTranslator: monteDriver.cpp
+  // test for NonmemTranslator: ability to handle fixed parameters (not fixed effects)
+  master[ "ind_fixedParaTest" ] = ind_fixedParaTest::suite();
+/*
+  // test for NonmemTranslator: ability to handle fixed parameters (not fixed effects)
+  master[ "pop_fixedParaTest" ] = pop_fixedParaTest::suite();
+*/
 
   if( argc == 1 )
     {

@@ -267,7 +267,7 @@ if( actual != expected ) \\\n \
   const double theta_in [ thetaLen ]   = { 0.2,  1.0 };
   const double theta_up [ thetaLen ]   = { 2.0, 10.0 };
   const double theta_low[ thetaLen ]   = { 0.02, 0.1 };
-  const bool   theta_fix[ thetaLen ]   = { false };
+  const bool   theta_fix[ thetaLen ]   = { false, false };
 
   //============================================
   // The SPK Compiler decides the constraints
@@ -910,6 +910,7 @@ void ind_withoutIDTest::testNonmemPars_h()
       o << "   MY_ASSERT_EQUAL( NonmemPars::thetaUp [" << i << "], " << theta_up [i] << " );" << endl;
       o << "   MY_ASSERT_EQUAL( NonmemPars::thetaLow[" << i << "], " << theta_low[i] << " );" << endl;
       o << "   MY_ASSERT_EQUAL( NonmemPars::thetaIn [" << i << "], " << theta_in [i] << " );" << endl;
+      o << "   MY_ASSERT_EQUAL( NonmemPars::thetaFixed[" << i << "], " << theta_fix[i] << " );" << endl;
     }						  
   o << "   MY_ASSERT_EQUAL( NonmemPars::omegaDim, " << omegaDim << " );" << endl;
   o << "   MY_ASSERT_EQUAL( NonmemPars::omegaOrder, " << omegaOrder << " );" << endl;
