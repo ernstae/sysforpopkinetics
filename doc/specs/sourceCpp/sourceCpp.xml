@@ -9,6 +9,22 @@
    <articleinfo>
       <revhistory>
          <revision>
+            <revnumber>1.18</revnumber>
+            <date>January 26, 2005</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>
+            Specifying the name of check-point file that is generated at run-time of fitDriver.cpp.
+            </revremark>
+         </revision>
+         <revision>
+            <revnumber>1.17</revnumber>
+            <date>December 15, 2004</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>
+            Specify generated drivers' screen output.
+            </revremark>
+         </revision>
+         <revision>
             <revnumber>1.16</revnumber>
             <date>November, 2004</date>
             <authorinitials>sh</authorinitials>
@@ -1107,6 +1123,18 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
                </para>
             </listitem>
          </varlistentry>
+      </variablelist>
+      <variablelist>
+         <title>File Output</title>
+            <varlistentry>
+               <term><filename>checkpoint.xml</filename></term>
+               <listitem>
+                  <para>
+                  The optimizer's state information from the last iteration is saved in this file.
+                  This file is generated always.
+                  </para>
+               </listitem>
+            </varlistentry>
       </variablelist>
       <variablelist>
          <title>Screen Output</title>
