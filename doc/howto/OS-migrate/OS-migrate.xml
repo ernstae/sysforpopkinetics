@@ -566,7 +566,7 @@ cp /home/$USER/old_etc/ntp/step-tickers ntp
     <para>
       Perform the following menu sequence:
 	<screen format="linespecific">
-<guimenu moreinfo="none">Main</guimenu> => <guimenu moreinfo="none">Extras</guimenu> => <guimenu moreinfo="none">Preferences</guimenu> => <guimenuitem moreinfo="none">Sessions</guimenuitem> => left-click
+<guimenu moreinfo="none">Main</guimenu> => <guimenu moreinfo="none">Preferences</guimenu> => <guimenu moreinfo="none">More Preferences</guimenu> => <guimenuitem moreinfo="none">Sessions</guimenuitem> => left-click
 	</screen>
 	This will open the <interface moreinfo="none">Sessions</interface>
 	window.  Press the 
@@ -583,7 +583,22 @@ Priority: 75
       <guibutton moreinfo="none">OK</guibutton> button.
     </para>
     <para>
-
+      As an ordinary user, from a terminal window, execute the following
+      command:
+      <screen>
+crontab -e
+      </screen>
+      and an <command>emacs</command> window should appear, displaying
+      the <filename>crontab</filename> file, ready for editing
+      (the file might be empty at this point).
+    </para>
+    <para>
+      Add the following line:
+      <screen>
+30 2 * * 2-6 ~/bin/shell/backup-home-full
+      </screen>
+Close the file, and your home directory will be backed up to
+whitechuck 2:30 AM, each morning that follows a work day.
     </para>
   </sect1>
 </article>
