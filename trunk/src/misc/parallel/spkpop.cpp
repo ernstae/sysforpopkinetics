@@ -3,10 +3,9 @@
   spkpop -- population level of SPK computation
 
   SYNOPSIS
-  spkpop job_id individual_count
+  spkpop job_id individual_count mode
 
   DESCRIPTION
-
   This program performs the SPK computation for the job given by its
   "job_id" argument.  It can run on any node of a parallel virtual
   machine (pvm).  It calls pvm_spawn to create an instance of the
@@ -19,18 +18,25 @@
   running on its node.  As a pvm task, it is the child of spkjob,
   which always runs on the head node of the pvm.
 
-  Pvm connects the standard output stream of this program to the spk
-  log file, which resides on the master node.  The program should not
-  write directly to either standard output or standard input, Instead,
-  all log messages should be posted using the "spklog" function, which
-  prepends identification information to the message, then writes it
-  to standard output. (Note that the logging system does not rely on
-  NFS.)
+  This program should not write directly to either stdout or stderr.
+  Instead, all event messages should be posted to the spk log using
+  the spklog function.  This function prepends identification
+  information to the message, then uses pvm_send to transmit it to the
+  spkjob program running on the front end which, in turn, writes it to
+  the log.
 
   The program runs in its own unique working directory, which is
   established by spkrund, the SPK runtime daemon, which is the unix
-  parent of spkjob.  It accesses the directory via the Network Files
+  parent of spkjob. It accesses the directory via the Network Files
   System (NFS).
+
+  job_id is a whole number which is the key in the database identifying
+  the job that is being worked on
+
+  individual_count is the number of individuals being modeled
+
+  mode is either "test" or "prod" depending on whether the job is 
+  running in the test environment or the production environment
 
   SEE ALSO
   spkjob
@@ -51,13 +57,17 @@
 #include <csignal>
 #include <spkpvm.h>
 
+// note: ARCH is defined on the command line of the make file
+
 static char *job_id = "?????";
+static char *mode;
 static int ntasks = 0;
 static int parent_tid = 0;
 static sigset_t block_set;
+static const int iterations = 3;
 static int *ind_tid;
 static int *host_tid;
-static bool *done;
+static bool *task_exit;
 static int *exit_val;
 static int my_exit_value = 0;
 static int my_tid = 0;
@@ -71,6 +81,14 @@ static void signal_initialize(void);
 static void signal_unblock(void);
 static void spawn_individual(int);
 static void spklog(const char*);
+
+// perform the population calculation for an iteration
+static void compute(int iter) {
+  char buf[100];
+  sprintf(buf, "performing population computation for iteration %d", iter);
+  spklog(buf);
+  sleep(1);
+}
 
 // call this function in case of fatal error
 static void die(char* message) {
@@ -98,26 +116,21 @@ static int tid2iid(int tid) {
 static void signal_block() {
   sigprocmask(SIG_BLOCK, &block_set, NULL);
 }
-// handle signals (all except alarm)
+// handle signals 
 static void signal_handler(int signum) {
   char buf[100];
+  int killed = 0;
+  signal_block();
   sprintf(buf, "received signal number %d", signum);
   spklog(buf);
-  if (signum == SIGALRM) {
-    /* 
-       SIGALRM should only be activated when PvmTaskExit has been
-       received for the last individual still running, and we need to
-       delay termination of spkpop to give a PvmHostDelete time to
-       arrive if that was the condition that caused the individual to
-       exit.
-    */
-    ndone++;
-  }
-  else {
-    for (int iid = 0; iid < ntasks; iid++)
+  my_exit_value = signum;
+  for (int iid = 0; iid < ntasks; iid++)
+    if (exit_val[iid] == SpkPvmUnreported) {
       pvm_kill(ind_tid[iid]);
-    my_exit_value = signum;
-  }
+      killed++;
+    }
+  if (killed > 0)
+    spklog("killed remaining spkind tasks");
 }
 // initialize signal handling
 static void signal_initialize() {
@@ -144,7 +157,7 @@ static void signal_unblock() {
 // spawn an individual
 static void spawn_individual(int iid) {
   int tid;
-  char* arg[4]; 
+  char* arg[5]; 
   char buf[100];
   char ind_id[6];
   char spkjob_tid[30];
@@ -153,8 +166,9 @@ static void spawn_individual(int iid) {
   arg[0] = job_id;
   arg[1] = ind_id;
   arg[2] = spkjob_tid;
-  arg[3] = NULL;
-  sprintf(buf, "%s/arch/%s/bin/spkind", SPK_SHARE, ARCH);
+  arg[3] = mode;
+  arg[4] = NULL;
+  sprintf(buf, "%s/arch/%s/bin/spk%s/spkind", SPK_SHARE, ARCH, mode);
   int rval = pvm_spawn(buf, arg, 0, NULL, 1, &tid);
   if (rval < 0) 
     die("could not spawn individual level due to system error");
@@ -166,13 +180,15 @@ static void spawn_individual(int iid) {
   ind_tid[iid]  = tid;
   host_tid[iid] = pvm_tidtohost(tid);
   exit_val[iid] = SpkPvmUnreported;
-  done[iid] = false;
+  task_exit[iid] = false;
 
-  // Establish notifications for this task and its host
+  // Establish notification for task exit of the task we have just spawned
   if (pvm_notify(PvmTaskExit, PvmTaskExit, 1, ind_tid + iid) < 0) {
     sprintf(buf, "pvm_notify failed for PvmTaskExit for individual %d", iid);
     die(buf);
   }
+  // Establish notification of deletion of the host of the task we have just
+  // spawned, if that we have not previously established that notification
   bool host_notified = false;
   for (int i = 0; i < ntasks; i++) {
     if (i != iid && host_tid[i] == host_tid[iid]) {
@@ -181,7 +197,7 @@ static void spawn_individual(int iid) {
     }
   }
   if (!host_notified && pvm_notify(PvmHostDelete, PvmHostDelete, 1, host_tid + iid) < 0) {
-    sprintf(buf, "pvm_notify failed for PvmHostExit for individual %d", iid);
+    sprintf(buf, "pvm_notify failed for PvmHostDelete for individual %d", iid);
     die(buf);
   }
 }
@@ -194,24 +210,27 @@ static void spklog(const char* message) {
   pvm_send(parent_tid, SpkPvmLogMessage);
 }
 
-
 int main(int argc, char** argv) {
+  // Disallow direct routing of messages between tasks;
+  // otherwise messages will arrive out of sequence. 
   pvm_setopt(PvmRoute, PvmDontRoute);
+
   my_tid  = pvm_mytid();          // attach to pvm
   int my_host = pvm_tidtohost(my_tid);
-  char *usage = "usage: spkpop job_id individual_count";
+  char *usage = "usage: spkpop job_id individual_count mode";
   char buf[100];
   int bufid;
 
   // Process arguments  
-  if (argc != 3)
+  if (argc != 4)
     die(usage);
   job_id = argv[1];
   ntasks = atoi(argv[2]);
+  mode = argv[3];
 
   // Set up signal handling for the signals that might be used
   // by human operators to terminate us
-  signal_initialize();
+  //signal_initialize();
 
   parent_tid = pvm_parent();
 
@@ -221,7 +240,6 @@ int main(int argc, char** argv) {
   sprintf(buf, "start: on host %s", un.nodename);
   spklog(buf);
 
-
   if (! (1 <= ntasks && ntasks <= SPK_MAX_INDIVIDUALS)) {
     sprintf(buf, "individual_count = %d > %d individuals (program  limit) -- %s",
 	    ntasks, SPK_MAX_INDIVIDUALS, usage);
@@ -229,7 +247,7 @@ int main(int argc, char** argv) {
   }
 
   // change working directory
-  sprintf(buf, "%s/spkjob-%s", SPK_WORKING, job_id);
+  sprintf(buf, "%s/working/spk%s/spkjob-%s", SPK_SHARE, mode, job_id);
   if (chdir(buf) != 0)
     die("could not change working directory");
 
@@ -246,92 +264,181 @@ int main(int argc, char** argv) {
       sprintf(buf, "couldn't make the %d-%s individual working directory", iid, s);
       die(buf);
     }
-  }
-
-  ind_tid  = new int[ntasks];
-  host_tid = new int[ntasks];
-  exit_val = new int[ntasks];
-  done     = new bool[ntasks];
-
-  // spawn the individuals
-  for (int iid =  0; iid < ntasks; iid++)
-    spawn_individual(iid);
+  }  
 
   // loop until the population level is done
-  ndone = 0;
-  alarm(1);
   int iid;
-  int exit_value = -1;
-  while (ndone < ntasks && (bufid = pvm_recv(-1, -1)) > 0) {
-    int bytes, msgtag, tid, source;
-    //signal_block();
-    if (pvm_bufinfo(bufid, &bytes, &msgtag, &source) < 0)
-      die("pvm_bufinfo failed");
-    switch (msgtag) {
-    case SpkPvmExitValue:
-      tid = source;
-      if ((iid = tid2iid(tid)) < 0) {
-	sprintf(buf, "received SpkPvmExitValue from unexpected tid %0x", tid);
+  int exit_value = 0;
+  int bytes, msgtag, tid, source;
+
+  for (int iter = 1; exit_value == 0 && iter <= iterations; iter++) {
+    int ndone = 0;
+    bool premature_child_exit = false;
+    bool respawned = false;
+    sprintf(buf, "starting iteration %d", iter);
+    spklog(buf);
+    ind_tid   = new int[ntasks];
+    host_tid  = new int[ntasks];
+    exit_val  = new int[ntasks];
+    task_exit = new bool[ntasks];
+
+    // spawn the individuals
+    for (iid =  0; iid < ntasks; iid++)
+      spawn_individual(iid);
+    while (ndone < ntasks && (bufid = pvm_recv(-1, -1)) > 0) {
+      //signal_block();
+      if (pvm_bufinfo(bufid, &bytes, &msgtag, &source) < 0)
+	die("pvm_bufinfo failed");
+      switch (msgtag) {
+      case SpkPvmExitValue:
+	tid = source;
+	if ((iid = tid2iid(tid)) < 0) {
+	  sprintf(buf, "received SpkPvmExitValue from unexpected tid %0x", tid);
+	  spklog(buf);
+	  break;
+	}
+	if (pvm_upkint(&exit_value, 1, 1) < 0)
+	  die("pvm_upkint returned an error at SpkPvmExitValue");
+	exit_val[iid] = exit_value;
+	sprintf(buf, "received exit value = %d from spkind(%d)", exit_value, iid);
 	spklog(buf);
+	if (my_exit_value == 0 && exit_value != 0) {
+	  int killed = 0;
+	  signal_block();
+	  my_exit_value = SpkPvmChildError;
+	  ndone++;
+	  for (int iid = 0; iid < ntasks; iid++)
+	    if (exit_val[iid] == SpkPvmUnreported) {
+	      pvm_kill(ind_tid[iid]);
+	      killed++;
+	      ndone++;
+	    }
+	  if (killed > 0)
+	    spklog("killed remaining spkind tasks");
+	} else
+	  ndone++;
+	break;
+       case PvmTaskExit:
+ 	if (pvm_upkint(&tid, 1, 1) < 0)
+ 	  die("pvm_upkint failed to unpack tid from PvmTaskExit message");
+ 	if ((iid = tid2iid(tid)) < 0) {
+	  // This happens at the beginning of one of the iterations
+	  // 2, 3, ... because the reception of exit values completes the 
+	  // previous iteration rather than task exit.  The task is now
+	  // unknown, because the tid's for the new iteration are different.
+	  // We just ignore this.
+ 	}
+	else {
+	  if (exit_val[iid] == SpkPvmUnreported) {
+	    sleep(10);  // give PvmHostDelete time to arrive if such a message is en route
+	    while ((bufid = pvm_nrecv(-1, -1)) != 0) {
+	      if (bufid == -1)
+		die("pvm_nrecv failed");
+	      if (pvm_bufinfo(bufid, &bytes, &msgtag, &source) < 0)
+		die("pvm_bufinfo failed");
+	      if (msgtag == PvmHostDelete) {
+		if (pvm_upkint(&tid, 1, 1) < 0)
+		  die("pvm_upkint failed to unpack tid from PvmTaskExit message");
+		sprintf(buf, "received PvmHostDelete, source=%0x, tid=%0x", source, tid);
+		spklog(buf);
+		// respawn individuals that were on the deleted host
+		if (my_exit_value == 0) {
+		  for (int iid = 0; iid < ntasks; iid++) 
+		    if (host_tid[iid] == tid && exit_val[iid] == SpkPvmUnreported) {
+		      spawn_individual(iid);
+		      respawned++;
+		    }
+		  if (respawned) {
+		    sprintf(buf, "respawned %d individuals", respawned);
+		    spklog(buf);
+		  }
+		}
+	      }
+	    }
+	    if (!respawned) {
+	      sprintf(buf, "spkind(%d) died without returning a value", iid);
+	      spklog(buf);
+	      exit_val[iid] = SpkPvmDied;
+	      ndone++;
+	    }
+	  }
+	  task_exit[iid] = true;
+	}
+ 	break;
+      case PvmHostDelete:
+	if (pvm_upkint(&tid, 1, 1) < 0)
+	  die("pvm_upkint failed to unpack tid from PvmTaskExit message");
+	sprintf(buf, "received PvmHostDelete, source=%0x, tid=%0x", source, tid);
+	spklog(buf);
+
+	// If my host has been deleted,
+	// 1. All my spkint children must die (so as not to waste resources)
+	// 2. I must exit
+	// The pvm daemon running on my host kills all pvm tasks, hence there
+	// is nothing more for me to do.
+	//
+	// If another host has been deleted,
+	// 1. All my spkint children running on that host must die
+	// 2. I must respawn all individuals that were on the deleted host
+	// respawn individuals that were on the deleted host
+	// The pvm daemon running on the deleted host takes care of 1) for me
+	// 
+	// respawn spkint children that were running on the deleted host
+	if (my_exit_value == 0) 
+	  for (int iid = 0; iid < ntasks; iid++) 
+	    //	    if (host_tid[iid] == tid && exit_val[iid] == SpkPvmUnreported) {
+	    if (host_tid[iid] == tid && !task_exit[iid]) {
+	      spawn_individual(iid);
+	      ndone--;
+	    }
+	break;
+      default:
+	spklog("unknown message tag");
 	break;
       }
-      if (pvm_upkint(&exit_value, 1, 1) < 0)
-	die("pvm_upkint returned an error at SpkPvmExitValue");
-      exit_val[iid] = exit_value;
-      sprintf(buf, "received exit value = %d from spkind(%d)", exit_value, iid);
-      spklog(buf);
-	
-      if (my_exit_value == 0 && exit_value != 0)
-	my_exit_value = SpkPvmChildError;
-      break;
-    case PvmTaskExit:
-      if (pvm_upkint(&tid, 1, 1) < 0)
-	die("pvm_upkint failed to unpack tid from PvmTaskExit message");
-      if ((iid = tid2iid(tid)) < 0) {
-	sprintf(buf, "received PvmTaskExit from tid %0x", tid);
-	spklog(buf);
-      }
-      else {
-	sprintf(buf, "received PvmTaskExit from spkind(%d)", iid);
-	spklog(buf);
-	done[iid] = true;
-      }
-      if (ndone + 1 == ntasks) {
-	alarm(10);  // give PvmHostDelete time to arrive
-	spklog("set alarm");
-      }
-      else
-	ndone++;
-      break;
-    case PvmHostDelete:
-      // Treat the case where the incrementing of ndone was delayed
-      // to give PvmHostDelete time to arrive
-      if (ndone + 1 == ntasks) {
-	alarm(0);  // cancel alarm
-	ndone++;
-      }
-      if (pvm_upkint(&tid, 1, 1) < 0)
-	die("pvm_upkint failed to unpack tid from PvmTaskExit message");
-      sprintf(buf, "received PvmHostDelete, source=%0x, tid=%0x", source, tid);
-      spklog(buf);
-      // respawn individuals that were on the deleted host
-      if (my_exit_value == 0) 
-	for (int iid = 0; iid < ntasks; iid++) 
-	  if (host_tid[iid] == tid && exit_val[iid] == SpkPvmUnreported) {
-	    spawn_individual(iid);
-	    ndone--;
-	  }
-      break;
-    default:
-      spklog("unknown message tag");
-      break;
     }
-    //signal_unblock();
-  }
-  for (int iid =  0; iid < ntasks && my_exit_value == 0; iid++) 
-    if (exit_val[iid] != 0) 
-      my_exit_value = -1;
+    // At this point, all of the individuals should have completed their work
+    // and reported their exit values.  If, however, one or more individuals 
+    // exited prematurely, it is possible that this occurred because the 
+    // host on which they were running was deleted from the pvm.  We need to
+    // check for this condition, and if true, restart the individuals on 
+    // another host.
+//    if (premature_child_exit) {
+//      sleep(10);  // give PvmHostDelete time to arrive if such a message is en route
+//      while ((bufid = pvm_nrecv(-1, -1)) != 0) {
+//	if (bufid == -1)
+//	  die("pvm_nrecv failed");
+//	if (pvm_bufinfo(bufid, &bytes, &msgtag, &source) < 0)
+//	  die("pvm_bufinfo failed");
+//	if (msgtag == PvmHostDelete) {
+//	  if (pvm_upkint(&tid, 1, 1) < 0)
+//	    die("pvm_upkint failed to unpack tid from PvmTaskExit message");
+//	  sprintf(buf, "received PvmHostDelete, source=%0x, tid=%0x", source, tid);
+//	  spklog(buf);
+//	  // respawn individuals that were on the deleted host
+//	  if (my_exit_value == 0) {
+//	    int respawned = 0;
+//	    for (int iid = 0; iid < ntasks; iid++) 
+//	      if (host_tid[iid] == tid && exit_val[iid] == SpkPvmUnreported) {
+//		spawn_individual(iid);
+//		ndone--;
+//	      }
+//	    if (respawned) {
+//	      sprintf(buf, "respawned %d individuals", respawned);
+//	      spklog(buf);
+//	      continue;
+//	    }
+//	  }
+//	}
+//      }
+//    }
+    for (int iid =  0; iid < ntasks && my_exit_value == 0; iid++) 
+      if (exit_val[iid] != 0) 
+	my_exit_value = SpkPvmChildError;
 
+    if (my_exit_value == 0)
+      compute(iter);
+  }
   finish(my_exit_value);
   return my_exit_value;
 }

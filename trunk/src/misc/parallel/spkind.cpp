@@ -3,7 +3,7 @@
   spkind -- individual level of SPK computation
 
   SYNOPSIS
-  spkind job_id individual_id spkjob_tid
+  spkind job_id individual_id spkjob_tid mode
 
   DESCRIPTION
 
@@ -50,6 +50,12 @@
       This is the tid of the instance of spkjob which is working on
       the given job and is, with respect to the parallel virtual
       machine (PVM) the grandparent of this task.
+
+  mode
+
+      mode is either "test" or "prod" depending on whether the job is 
+      running in the test environment or the production environment
+
  
   SEE ALSO
   spkjob
@@ -78,11 +84,26 @@ static void finish(int);
 static void signal_handler(int);
 static void spklog(const char*);
 
+// perform the computation
+static void compute(int iid) {
+  if (iid == 1 and time(NULL) % 10 == 0) {
+    spklog("going to cause a segmentation fault");
+    sleep(17);
+    char *x;
+    strcpy(x, "hello");
+  }
+  srand(1023);
+  for (int i = 0; i < 10 * iid; i++)
+    rand();
+  sleep(10 + (int)(20.0*rand()/(RAND_MAX+1.0)));
+}
+
 // call this function in case of fatal error
 static void die(char* message) {
   spklog(message);
   finish(SpkPvmDied);
   exit(1);
+  sleep(10);
 }
 // call this function to clean up before ending
 static void finish(int exit_value) {
@@ -94,7 +115,9 @@ static void finish(int exit_value) {
 }
 // handle a signal
 static void signal_handler(int signum) {
-  spklog("caught a termination signal");
+  char buf[100];
+  sprintf(buf, "caught termination signal %d", signum);
+  spklog(buf);
   finish(signum);
   exit(signum);
 }
@@ -110,16 +133,17 @@ static void spklog(const char* message) {
 int main(int argc, char** argv) {
   pvm_setopt(PvmRoute, PvmDontRoute);
   my_tid = pvm_mytid();          // attach to pvm
-  char *usage = "spkind job_id individual_id";
+  char *usage = "spkind job_id individual_id mode";
   char buf[100];
   int bufid;
 
   // process arguments  
-  if (argc != 4)
+  if (argc != 5)
     die(usage);
   job_id     = argv[1];
   ind_id     = argv[2];
   spkjob_tid = atoi(argv[3]);
+  char *mode = argv[4];
 
   int iid = atoi(ind_id);
   
@@ -144,22 +168,11 @@ int main(int argc, char** argv) {
   spklog(buf);
 
   // change working directory
-  sprintf(buf, "%s/spkjob-%s/%s", SPK_WORKING, job_id, ind_id);
+  sprintf(buf, "%s/working/spk%s/spkjob-%s/%s", SPK_SHARE, mode, job_id, ind_id);
   if (chdir(buf) != 0)
     die("could not change working directory");
 
-  if (strcmp(ind_id, "1") == 0) {
-    spklog("going to cause a segmentation fault");
-    sleep(17);
-    char *x;
-    strcpy(x, "hello");
-  }
-  srand(1023);
-  for (int i = 0; i < 10 * iid; i++)
-    rand();
-  sleep(1 + (int)(20.0*rand()/(RAND_MAX+1.0)));
-
-  sleep(10);
+  compute(iid);
   finish(0);
   return 0;
 }

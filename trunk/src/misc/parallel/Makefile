@@ -2,6 +2,7 @@ CC=g++
 CFLAGS=-g
 SPK_SHARE=/usr/local/spk/share
 ARCH=i686
+MODE=test
 
 includes = spkpvm.h 
 
@@ -37,10 +38,7 @@ sig:	sig.o
 	$(CC) -c $(CFLAGS) $< -o $@ -DARCH=$(ARCH) -I$(PVM_ROOT)/include -I.
 
 install:
-	cp spkjob spkpop spkind $(SPK_SHARE)/arch/$(ARCH)/bin
-
-install_example:
-	cp master1 slave1 $(SPK_SHARE)/arch/$(ARCH)/bin
+	cp spkjob spkpop spkind $(SPK_SHARE)/arch/$(ARCH)/bin/spk$(MODE)
 
 clean:
 	rm -f *.o
