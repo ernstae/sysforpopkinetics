@@ -107,7 +107,10 @@ Either, and only one of, the <ind_analysis> or <pop_analysis> element must follo
 <!ELEMENT nm_constraint (ind_analysis? | pop_analysis?) >
 
 <!-- <value> A double-precision number -->
-<!ELEMENT value (#PCDATA)>
+<!ELEMENT value EMPTY>
+
+<!-- <value val="0.0"> Double-precision number in the decimal format (ex. 0.1) or scientific notation (ex. 1E-1).  The leading zeros before the decimal point and the trailing zeros after the decimal point may be omitted (ex. ".1", "1.") -->
+<!ATTLIST value val CDATA #REQUIRED>
 
 <!-- <value fixed="no"> "yes" ensures the value to be retained during the optimization, default to "no". For processes other than optimization, this setting is ignored.-->
 <!ATTLIST value fixed (yes|no) #IMPLIED>
@@ -123,54 +126,54 @@ Either, and only one of, the <ind_analysis> or <pop_analysis> element must follo
 
 <!-- <data_labels> Sequence of data labels.  The <label>s are matched to the <item>s in <individual> in the order of appearance.
 
-For example, given the &lt;labels&gt; definition,
+For example, given the &lt;data_labels&gt; definition,
 <html:pre><html:code>
-   &lt;labels&gt;
-      &lt;label name="ID"/&gt;
-      &lt;label name="TIME"/&gt;
-      &lt;label name="X" synonym="DV"/&gt;
-   &lt;/labels&gt; 
+   &lt;data_labels&gt;
+      &lt;<label> name="ID"/&gt;
+      &lt;<label> name="TIME"/&gt;
+      &lt;<label> name="CP" synonym="DV"/&gt;
+   &lt;/data_labels&gt; 
 </html:code></html:pre>
 
 and the data below,
 <html:pre><html:code>
    &lt;<nm_data>&gt;
       &lt;<individual> length="2"&gt;
-         &lt;<item>&gt;
-            &lt;<value>&gt;foo&lt;/value&gt;
-            &lt;value&gt;foo&lt;/value&gt;
-         &lt;/item&gt;
-         &lt;item&gt;
-            &lt;value&gt;0.0&lt;/value&gt;
-            &lt;value&gt;1.0&lt;/value&gt;
-         &lt;/item&gt;
-         &lt;item&gt;
-            &lt;value&gt;0.15&lt;/value&gt;
-            &lt;value&gt;0.23&lt;/value&gt;
-         &lt;/item&gt;
+         &lt;<record>&gt;
+            &lt;<item> value="woo"/&gt;
+            &lt;<item> value="0.0"/&gt;
+            &lt;<item> value="0.15"/&gt;
+         &lt;/record&gt;
+         &lt;<record>&gt;
+            &lt;<item> value="woo"/&gt;
+            &lt;<item> value="1.0"/&gt;
+            &lt;<item> value="0.23"/&gt;
+         &lt;/record&gt;
       &lt;/individual&gt;
-      &lt;individual length="3"&gt;
-         &lt;item&gt;
-            &lt;value&gt;woo&lt;/value&gt;
-            &lt;value&gt;woo&lt;/value&gt;
-            &lt;value&gt;woo&lt;/value&gt;
-         &lt;/item&gt;
-         &lt;item&gt;
-            &lt;value&gt;0.0&lt;/value&gt;
-            &lt;value&gt;0.9&lt;/value&gt;
-            &lt;value&gt;1.3&lt;/value&gt;
-         &lt;/item&gt;
-         &lt;item&gt;
-            &lt;value&gt;0.10&lt;/value&gt;
-            &lt;value&gt;0.19&lt;/value&gt;
-            &lt;value&gt;1.35&lt;/value&gt;
-         &lt;/item&gt;
+      &lt;<individual> length="3"&gt;
+         &lt;<record>&gt;
+            &lt;<item> value="yah"/&gt;
+            &lt;<item> value="0.1"/&gt;
+            &lt;<item> value="0.2"/&gt;
+         &lt;/record&gt;
+         &lt;<record>&gt;
+            &lt;<item> value="yah"/&gt;
+            &lt;<item> value="1.1"/&gt;
+            &lt;<item> value="0.31"/&gt;
+         &lt;/record&gt;
+         &lt;<record>&gt;
+            &lt;<item> value="yah"/&gt;
+            &lt;<item> value="2.2"/&gt;
+            &lt;<item> value="0.4"/&gt;
+         &lt;/record&gt;
       &lt;/individual&gt;
+
    &lt;/nm_data&gt;
 </html:code></html:pre>
 
-The first individual's ID is "foo", TIME vector consists of values {0.0, 1.0} and X or DV vector consists of values {0.15, 0.25}.
-The second individual's ID is "woo", TIME vector {0.0, 0.9, 1.3} and X or DV vector {0.10, 0.19, 1.35}.
+The first individual's ID is "woo". Its sample, CP or DV, was 0.15 at TIME=0.0 and 0.23 at TIME=1.0.
+
+The second individual's ID is "yah", Its sample, CP or DV was 0.2 at TIME=0.1, 0.31 at TIME=1.1 and 0.4 at TIME=2.2.
 
 Either label or synonym may be one of the NONMEM reserved identifiers, among which the (bare minimal) required identifiers are emphasized:
 <html:ul>
@@ -488,16 +491,19 @@ NOTE: This element contains a set of equations written in the NONMEM abbriviated
 -->
 <!ELEMENT nm_data (description? | individual)+>
 
-<!-- <individual> A set of data records from a signle individual. 
+<!-- <individual> A sequence of data <record>s from a single individual.  -->
+<!ELEMENT individual (record)+>
 
-The order in which <item>s appear is assumed to match the order of <label>s.
- -->
-<!ELEMENT individual (item)+>
+<!-- <record> A data record which is a sequence of data <item>s.  The label for the i-th <item> in a record is th e i-th <label> under <data_labels>.-->
+<!ELEMENT record (item)+>
 
 <!-- <item> A data item.-->
-<!ELEMENT item (value)+>
+<!ELEMENT item EMPTY>
 
-<!-- <individual length="n"> The number of records from this individual. -->
+<!-- <item value="0.0"> A value for the item (ie. alpha-numeric string for ID item and double-precision for all other items). -->
+<!ATTLIST item value CDATA #REQUIRED>
+
+<!-- <individual length="n"> The number of data <record>s for this individual. -->
 <!ATTLIST individual length CDATA #REQUIRED>
 
 <!-- ===================================== -->
@@ -533,7 +539,7 @@ The order in which <item>s appear is assumed to match the order of <label>s.
 <!ATTLIST column sort_order CDATA #IMPLIED>
 
 <!-- <scatterplot> Information to request to produce a scatterplot.-->
-<!ELEMENT scatterplot (x+ | y+)>
+<!ELEMENT scatterplot (x+ | y+ | by*)>
 
 <!-- <scatterplot unit_slope="hide"> "show" to show the unit slope, "hide" to hide it, default to "hide". -->
 <!ATTLIST scatterplot unit_slope (show|hide) #IMPLIED>
@@ -553,12 +559,14 @@ The order in which <item>s appear is assumed to match the order of <label>s.
 <!-- <x> Item to be plotted on the x axis.  This may be one of data item labels, PRED, RED, WRES or ETA1, ETA2, ..., ETAA. -->
 <!ELEMENT x EMPTY>
 <!ATTLIST x label CDATA #REQUIRED>   <!-- <x label=""> Label of the item. -->
-<!ATTLIST x split (yes|no) #IMPLIED><!-- <x split="no"> "yes" forces to produce a separate scatterplot for this item, default to "no". -->
+
+<!-- <by> Item to separate (page-break) the scatterplot. -->
+<!ELEMENT by EMPTY>
+<!ATTLIST by label CDATA #REQUIRED><!-- <by label="">  Label of the item that separates the scatterplot. -->
 
 <!-- <y> Item to be plotted on the y axis.  This may be one of data item labels, PRED, RED, WRES or ETA1, ETA2, ..., ETAA.-->
 <!ELEMENT y EMPTY>
 <!ATTLIST y label CDATA    #REQUIRED>   <!-- <y label=""> Label of the item. -->
-<!ATTLIST y split (yes|no) #IMPLIED><!-- <y split="no"> "yes" forces to produce a separate scatterplot for this item, default to "no". -->
 <!-- ===================================== -->
 <!--           end of PRESENTATION         -->
 <!-- ===================================== -->
