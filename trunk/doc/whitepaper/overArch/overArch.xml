@@ -623,7 +623,7 @@
 	  models as C++ programs.  The compiler frees them from this very 
 	  time consuming and error-prone activity by automatically generating
 	  the C++ program from specifications they input into the MDA.  The
-	  resulting program can subsequently be compiled by the GNU G++
+	  resulting program can subsequently be compiled by the GNU GCC
 	  compiler and linked to several 
 	  <link linkend="libraries">libraries</link> to create a highly efficient
 	  binary program for run on the computational engine. 
@@ -829,9 +829,9 @@
       <sect3>
 	<title>Java WebStart</title>
 	<para>
-	  Unlike browser applications such as Java applets or JSP scripts, 
+	  Unlike browser applications such as Java applets or JavaScript, 
 	  the MDA is a full computer program.  This allows it to be both
-	  more responsive and more reliable than applets and JSPs are capable of
+	  more responsive and more reliable than applets and JavaScript are capable of
 	  being.  At the same time, it is very easily downloaded
 	  via Java WebStart from the
 	  SPK web site the first time a user accesses the system, and it
