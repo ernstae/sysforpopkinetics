@@ -7,7 +7,7 @@
 #include <xercesc/framework/LocalFileFormatTarget.hpp>
 
 #include "ExpTreeGenerator.h"
-#include "NodeCarrier.h"
+#include "ExpNodeCarrier.h"
 #include "SpkCompilerUtil.h"
 
 using namespace std;
@@ -74,7 +74,7 @@ ExpTreeGenerator::ExpTreeGenerator()
 }
 ExpTreeGenerator::~ExpTreeGenerator()
 {
-  releaseNodeCarriers();
+  releaseExpNodeCarriers();
   doc->release();
   XMLPlatformUtils::Terminate();
 }
@@ -82,14 +82,14 @@ DOMDocument* ExpTreeGenerator::getRoot() const
 {
   return doc;
 }
-struct NodeCarrier* ExpTreeGenerator::createNodeCarrier( )
+struct ExpNodeCarrier* ExpTreeGenerator::createExpNodeCarrier( )
 {
-  struct NodeCarrier * n = new NodeCarrier;
+  struct ExpNodeCarrier * n = new ExpNodeCarrier;
   nodes.push_back( n );
   return n;
 }
 
-int ExpTreeGenerator::releaseNodeCarriers()
+int ExpTreeGenerator::releaseExpNodeCarriers()
 {
   int n = nodes.size();
   for( int i=0; i<n; i++ )

@@ -13,7 +13,7 @@ using namespace xercesc;
 extern int                gSpkExpLines;
 extern int                gSpkExpErrors;
 extern ExpTreeGenerator * gSpkExpTreeGenerator;
-extern DOMDocument      * gSpkExpTree;
+//extern DOMDocument      * gSpkExpTree;
 extern SymbolTable      * gSpkExpSymbolTable;
 extern FILE             * yyin;
 extern int                yydebug;
@@ -41,7 +41,6 @@ NonmemCompiler::NonmemCompiler( const char* filename )
     baseModel( NONE )
 {
   gSpkExpTreeGenerator = new ExpTreeGenerator;
-  gSpkExpTree          = gSpkExpTreeGenerator->root();
   gSpkExpSymbolTable   = new SymbolTable( client::NONMEM );
 }
 

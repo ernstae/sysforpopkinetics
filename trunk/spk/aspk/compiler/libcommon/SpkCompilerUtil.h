@@ -50,7 +50,28 @@ class SpkCompilerUtil{
   const char * const createCString( const XMLCh* xml_str );
 
 #ifndef NDEBUG
+  /**
+   * Obtains the reference to a vector holding created XMLCh strings.
+   *
+   * The pointers to those XMLCh character arrays which were allocated memory via @c ExpTreeGenerator::createXmlString()
+   * are kept internally in a vector for bookkeeping.  
+   * This methods returns a pointer to the vector.  The users are not allowed to modify the contents or the pointer
+   * value; only to look at it.
+   *
+   * \note This method is available for internal debug purpose.
+   */
   const std::vector< XMLCh* > & debug_xml_strings();
+
+  /**
+   * Obtains the reference to a vector holding created C strings. 
+   *
+   * The pointers to those C character arrays which were allocated memory via @c ExpTreeGenerator::createCString()
+   * are kept internally in a vector for bookkeeping.  
+   * This methods returns a pointer to the vector.  The users are not allowed to modify the contents or the pointer
+   * value; only to look at it.
+   *
+   * \note This method is available for internal debug purpose.
+   */
   const std::vector< char*  > & debug_c_strings();
   int debug_call_releaseXmlStrings();
   int debug_call_releaseCStrings();
@@ -60,7 +81,24 @@ private:
   std::vector< XMLCh* > xml_strings;
   std::vector< char*  > c_strings;
 
+  /**
+   * Releases resources allocated for XML string objects.
+   *
+   * This method immediately releases the resources allocated for those XML string objects which were created
+   * via ExpTreeGenerator::createXMLString().
+   *
+   * @return the number of XML string objects whose allocated resources have been released.
+   */
   int releaseXmlStrings();
+
+  /**
+   * Releaseing reesources allocated for C strings.
+   *
+   * This method immediately releases the resources allocated for those C strings which were created
+   * via @c ExpTreeGenerator::createCString().
+   *
+   * @return the number of C strings whose allocated resources have been released.
+   */
   int releaseCStrings();
 };
 

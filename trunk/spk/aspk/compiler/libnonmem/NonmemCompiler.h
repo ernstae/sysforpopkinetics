@@ -26,25 +26,25 @@ extern int gSpkExpLines;
 extern int gSpkExpErrors;
 
 /**
- * A global pointer to a ParseTree object (providing a set of utilities re. DOM-based tree).
+ * A global pointer to a ExpTreeGenerator object (providing a set of utilities re. DOM-based tree).
  *
- * The ParseTree object pointed by this pointer is used to create and initialze DOM-based
+ * The ExpTreeGenerator object pointed by this pointer is used to create and initialze DOM-based
  * parse tree built during the syntax recoginition process.  The class provides
  * means to properly allocate and release resources required to generate
  * tree and its components as well as other utilities to print out the tree contents
  * to a file or standard output and possibly more.
  */
-extern ParseTree *gSpkExpUtil;
+extern ExpTreeGenerator *gSpkExpTreeGenerator;
 /**
  * A global pointer to a DOM document (tree).
  *
- * The DOMDocument object pointed by this pointer is created within the util (ParseTree) object.
+ * The DOMDocument object pointed by this pointer is created within the util (ExpTreeGenerator) object.
  * This is used to call tools like DOMDocument::createElement() to directly create DOM elements.
  *
  * \todo Perhaps this pointer should not be exposed or should be accessed always though the
- * global pointer (util) to the ParseTree object.
+ * global pointer (util) to the ExpTreeGenerator object.
  */
-extern DOMDocument *gSpkExpDOMDocument;
+extern DOMDocument *gSpkExpTree;
 
 /**
  * A global pointer to the symbol table.

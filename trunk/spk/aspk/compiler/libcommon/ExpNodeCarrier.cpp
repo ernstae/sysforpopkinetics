@@ -1,17 +1,18 @@
 #include <vector>
-#include "NodeCarrier.h"
 #include <xercesc/dom/DOM.hpp>
 
-static std::vector<NodeCarrier *> nodeList;
+#include "ExpNodeCarrier.h"
 
-struct NodeCarrier * createNodeCarrier()
+static std::vector<ExpNodeCarrier *> nodeList;
+
+struct ExpNodeCarrier * createExpNodeCarrier()
 {
-  struct NodeCarrier * n = new NodeCarrier;
+  struct ExpNodeCarrier * n = new ExpNodeCarrier;
   nodeList.push_back( n );
   return n;
 }
 
-int releaseNodeCarriers()
+int releaseExpNodeCarriers()
 {
   int n = nodeList.size();
   for( int i=0; i<n; i++ )
@@ -23,7 +24,7 @@ int releaseNodeCarriers()
 }
 
 #ifndef NDEFINE
-int numNodeCarriers()
+int numExpNodeCarriers()
 {
   return nodeList.size();
 }
