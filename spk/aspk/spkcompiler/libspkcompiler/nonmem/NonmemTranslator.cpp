@@ -2177,7 +2177,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "using namespace std;" <<endl;
   oDriver << endl;
 
-  oDriver << "enum RETURN_CODE { SUCCEEDED=0, FAILED };" << endl;
+  oDriver << "enum RETURN_CODE { SUCCESS=0, CONVERGENCE_FAILURE=1, FILE_ACCESS_FAILURE=2, OTHER_FAILURE };" << endl;
   oDriver << endl;
 
   oDriver << "int main( int argc, const char argv[] )" << endl;
@@ -2193,7 +2193,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "  {" << endl;
   oDriver << "      fprintf( stderr, \"%s:%d: Failed to create a temporary file, %s.\", ";
   oDriver << " __FILE__, __LINE__, \"" << fSpkRuntimeError_tmp << "\" );" << endl;
-  oDriver << "      return FAILED;" << endl;
+  oDriver << "      return FILE_ACCESS_FAILURE;" << endl;
   oDriver << "  }" << endl;
   oDriver << endl;
 
@@ -2566,7 +2566,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "if( !oResults.good() )" << endl;
   oDriver << "{" << endl;
   oDriver << "   fprintf( stderr, \"Failed to open a file, %s !!!\", \"" << fResult_xml << "\" );" << endl;
-  oDriver << "   return FAILED;" << endl;
+  oDriver << "   return FILE_ACCESS_FAILURE;" << endl;
   oDriver << "}" << endl;
 
   oDriver << "oResults << \"<?xml version=\\\"1.0\\\"?>\" << endl;" << endl;
@@ -2590,7 +2590,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "{" << endl;
   oDriver << "   oResults << \"</spkreportML>\" << endl;" << endl;
   oDriver << "   oResults.close();" << endl;
-  oDriver << "   return FAILED;" << endl;
+  oDriver << "   return OTHER_FAILURE;" << endl;
   oDriver << "}" << endl;
   oDriver << endl;
 
@@ -2802,8 +2802,11 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "oResults.close();" << endl;
   oDriver << "if( haveCompleteData && isOptSuccess && isStatSuccess )" << endl;
   oDriver << "   remove( \"" << fSpkRuntimeError_tmp << "\" );" << endl;
-
-  oDriver << "return !( haveCompleteData && isOptSuccess && isStatSuccess );" << endl;
+  oDriver << "if( !haveCompleteData || !isStatSuccess )" << endl;
+  oDriver << "   return OTHER_FAILURE;" << endl;
+  oDriver << "if( !isOptSuccess )" << endl;
+  oDriver << "   return CONVERGENCE_FAILURE;" << endl;
+  oDriver << "return SUCCESS;" << endl;
   oDriver << "}" << endl;
   oDriver.close();
 }
@@ -2856,7 +2859,7 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "using namespace std;" << endl;
   oDriver << endl;
 
-  oDriver << "enum RETURN_CODE { SUCCEEDED=0, FAILED };" << endl;
+  oDriver << "enum RETURN_CODE { SUCCESS=0, CONVERGENCE_FAILURE=1, FILE_ACCESS_FAILURE=2, OTHER_FAILURE };" << endl;
   oDriver << endl;
 
   oDriver << "int main( int argc, const char argv[] )" << endl;
@@ -2867,7 +2870,7 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "{" << endl;
   oDriver << "      fprintf( stderr, \"%s:%d: Failed to create a temporary file, %s.\", ";
   oDriver << " __FILE__, __LINE__, \"" << fSpkRuntimeError_tmp << "\" );" << endl;
-  oDriver << "      return FAILED;" << endl;
+  oDriver << "      return FILE_ACCESS_FAILURE;" << endl;
   oDriver << "}" << endl;
   oDriver << endl;
 
@@ -3336,7 +3339,7 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "if( !oResults.good() )" << endl;
   oDriver << "{" << endl;
   oDriver << "   fprintf( stderr, \"Failed to open a file, %s !!!\", \"" << fResult_xml << "\" );" << endl;
-  oDriver << "   return FAILED;" << endl;
+  oDriver << "   return FILE_ACCESS_FAILURE;" << endl;
   oDriver << "}" << endl;
 
   oDriver << "oResults << \"<?xml version=\\\"1.0\\\"?>\" << endl;" << endl;
@@ -3361,7 +3364,7 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "{" << endl;
   oDriver << "   oResults << \"</spkreport>\" << endl;" << endl;
   oDriver << "   oResults.close();" << endl;
-  oDriver << "   return FAILED;" << endl;
+  oDriver << "   return OTHER_FAILURE;" << endl;
   oDriver << "}" << endl;
   oDriver << endl;
 
@@ -3585,7 +3588,11 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "oResults.close();" << endl;
   oDriver << "if( haveCompleteData && isOptSuccess && isStatSuccess )" << endl;
   oDriver << "   remove( \"" << fSpkRuntimeError_tmp << "\" );" << endl;
-  oDriver << "return !( haveCompleteData && isOptSuccess && isStatSuccess );" << endl;
+  oDriver << "if( !haveCompleteData || !isStatSuccess )" << endl;
+  oDriver << "   return OTHER_FAILURE;" << endl;
+  oDriver << "if( !isOptSuccess )" << endl;
+  oDriver << "   return CONVERGENCE_FAILURE;" << endl;
+  oDriver << "return SUCCESS;" << endl;
   oDriver << "}" << endl;
   oDriver.close();
 }
