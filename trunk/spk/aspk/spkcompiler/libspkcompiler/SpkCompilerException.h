@@ -4,6 +4,7 @@
 //
 // Necessary component headers for SpkCompilerException class declaration.
 //
+#include <string>
 #include "SpkCompilerError.h"
 
 //
@@ -78,12 +79,9 @@ public:
     int  findFile( const char* filename ) const throw();
 
     // serialize
+    const std::string getXml() const;    
     friend std::ostream& operator<<(std::ostream& stream, const SpkCompilerException& e);
-    friend std::string& operator <<(std::string& s, const SpkCompilerException& e);
 
-    // unserialize 
-    friend std::istream& operator>>(std::istream& stream, SpkCompilerException& e);
-    friend std::string& operator >>(std::string& s, SpkCompilerException& e);
 
  private:
     // a fixed length list of Error objects

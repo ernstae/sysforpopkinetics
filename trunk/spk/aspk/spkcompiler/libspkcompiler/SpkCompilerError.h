@@ -131,6 +131,7 @@ class SpkCompilerError
   const char* message() const throw();
 
   // serialize
+  const std::string getXml() const;
   friend std::ostream& operator<<(std::ostream& stream, const SpkCompilerError& e);
 
 };

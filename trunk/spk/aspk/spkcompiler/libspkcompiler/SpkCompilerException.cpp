@@ -232,6 +232,18 @@ int SpkCompilerException::findFile( const char* filename ) const throw()
     return -1;
 }
 
+const std::string SpkCompilerException::getXml() const
+{
+    ostringstream o;
+    o << "<error_list length=\"" << this->size() << "\">" << endl;
+    for( int i=0; i<this->size(); i++)
+    {
+        o << myError_list[i].getXml();
+    }
+    o << "</error_list>" << endl;
+    return o.str();
+}
+
 std::ostream& operator<<(std::ostream& stream, const SpkCompilerException& e)
 {
     stream.flush();
@@ -244,4 +256,3 @@ std::ostream& operator<<(std::ostream& stream, const SpkCompilerException& e)
     stream.flush();
     return stream;
 }
-
