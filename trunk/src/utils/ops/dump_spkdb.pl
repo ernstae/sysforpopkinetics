@@ -11,7 +11,7 @@ use Getopt::Long;
 
     This program takes a symbolic dump of the production database, so that
     the a clone of the database can be constructed in the test database 
-    usiing load_spktest.pl.
+    using load_spktest.pl.
 
     Warning: the output of this program may contain inconsistencies if a transaction
     was in progress at the time the program was run.  The output should not, therefore,
@@ -34,7 +34,7 @@ use Getopt::Long;
     The output of this program consists of three files of sql statements:
     - schema:   'create table' statements
     - basedata: 'insert' statements for inserting all data into the non-transactional
-                table; namely, end, method, and state
+                table; namely, class, end, method, and state
     - userdata: 'insert' statements for inserting all data into the rest of the tables
 
     The output of the userdata file can be suppressed by specifying --nouserdata on the
@@ -93,7 +93,7 @@ my $userdata_name = "${prefix}userdata.sql";
 
 system("$mysqldump -h$dbhost -u$dbuser -p$dbpass  -d $db > $schema_name") == 0
     or die "Could not dump the schema\n";
-system("$mysqldump -h$dbhost -u$dbuser -p$dbpass -tc $db --tables end method state > $basedata_name") == 0
+system("$mysqldump -h$dbhost -u$dbuser -p$dbpass -tc $db --tables class end method state > $basedata_name") == 0
     or die "Could not dump the basedata tables\n";
 if ($userdata) {
     system("$mysqldump -h$dbhost -u$dbuser -p$dbpass -tc $db --tables dataset history job model user > $userdata_name") == 0
