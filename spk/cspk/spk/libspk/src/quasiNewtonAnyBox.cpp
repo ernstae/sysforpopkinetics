@@ -507,90 +507,11 @@ namespace // [Begin: unnamed namespace]
   //
   // Class: QuasiNewton01BoxObj
   //
-
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  class QuasiNewton01BoxObj
-  {
-  public:
-    virtual const char* function( const double* xIn, double& fOut ) = 0;
-    virtual const char* gradient( double* gOut ) = 0;
-
-  private:
-    const DoubleMatrix* const pdvecXLow;      // Unscaled lower bounds.
-    const DoubleMatrix* const pdvecXUp;       // Unscaled upper bounds.
-    const DoubleMatrix* const pdvecXDiff;     // Difference between unscaled  
-                                              // lower and upper bounds.
-
-    SpkException exceptionOb;
-  };
-
-  class QuasiNewtonAnyBoxObj : public QuasiNewton01BoxObj
-  {
-  public:
-    const char* function( const double* xIn, double& fOut ) = 0;
-    const char* gradient( double* gOut ) = 0;
-  };
-
-  class PpkaOptObj : public QuasiNewtonAnyBoxObj
-  {
-  public:
-    const char* function( const double* xIn, double& fOut )
-    {
-      // Calculate LTilde.
-
-      // PROBLEM: THIS FUNCTION DOESN'T KNOW ABOUT XLOW, XUP, ETC.
-    }
-    const char* gradient( double* gOut ) = 0;
-    {
-      // Calculate LTilde_x.
-
-      // PROBLEM: THIS FUNCTION DOESN'T KNOW ABOUT XLOW, XUP, ETC.
-    }
-  };
-
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  class QuasiNewton01BoxObj : public QuasiNewtonAnyBoxObj
-  {
-  public:
-    virtual const char* function( const double* xIn, double& fOut );
-    virtual const char* gradient( double* gOut );
-
-  private:
-    const DoubleMatrix* pdvecXLow;      // Unscaled lower bounds.
-    const DoubleMatrix* pdvecXUp;       // Unscaled upper bounds.
-    const DoubleMatrix* pdvecXDiff;     // Difference between unscaled  
-                                        // lower and upper bounds.
-    SpkException exceptionOb;
-  };
-
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  class QuasiNewton01BoxObj
-  {
-  public:
-    virtual const char* function( const double* xIn, double& fOut ) = 0;
-    virtual const char* gradient( double* gOut ) = 0;
-
-  private:
-    const DoubleMatrix* pdvecXLow;      // Unscaled lower bounds.
-    const DoubleMatrix* pdvecXUp;       // Unscaled upper bounds.
-    const DoubleMatrix* pdvecXDiff;     // Difference between unscaled  
-                                        // lower and upper bounds.
-    SpkException exceptionOb;
-  };
-  class QuasiNewtonAnyBoxObj : private QuasiNewtonAnyBoxObj
-OR
-  class QuasiNewtonAnyBoxObj : private QuasiNewtonAnyBoxObj
-  {
-  public:
-    virtual const char* function( const double* xIn, double& fOut );
-    virtual const char* gradient( double* gOut );
-  };
-
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+  // 
+  // Objects of this class are passed to QuasiNewton01Box in order to
+  // evaluate the scaled version of the objective function, fScaled(y),
+  // and its gradient, gScaled(y), at the current point y.
+  //
   class QuasiNewton01BoxObj
   {
     //----------------------------------------------------------
@@ -617,21 +538,6 @@ OR
 
 
     //----------------------------------------------------------
-    // Functions required by QuasiNewton01Box.
-    //----------------------------------------------------------
-
-    const char* function( const double* xIn, double& fOut )
-    {
-      return pObjective->function( xIn, fOut );
-    }
-
-    const char* gradient( double* gOut );
-    {
-      return pObjective->gradient( gOut );
-    }
-
-
-    //----------------------------------------------------------
     // Information required by the objective function.
     //----------------------------------------------------------
 
@@ -644,6 +550,23 @@ OR
                                               // lower and upper bounds.
 
     SpkException exceptionOb;
+
+
+    //----------------------------------------------------------
+    // Functions required by QuasiNewton01Box.
+    //----------------------------------------------------------
+
+  public:
+    const char* function( const double* xIn, double& fOut )
+    {
+      return pObjective->function( xIn, fOut );
+    }
+
+    const char* gradient( double* gOut );
+    {
+      return pObjective->gradient( gOut );
+    }
+
   };
 
 } // [End: unnamed namespace]
