@@ -13,11 +13,11 @@ LINK.cc    = $(CPP) $(CPPFLAGS) $(LDFLAGS) $(LDPATH)
 
 XERCESLIB  = xerces-c
 
-OBJECTS    = SymbolTable.o Symbol.o SpkCompilerUtil.o ExpTreeGenerator.o SpkCompiler.o 
+OBJECTS    = SymbolTable.o Symbol.o SpkCompilerUtil.o ExpNodeCarrier.o  ExpTreeGenerator.o SpkCompiler.o 
 
-HEADERS    = Symbol.h SymbolTable.h ExpTreeGenerator.h client.h NodeCarrier.h SpkCompilerUtil.h SpkCompiler.h
+HEADERS    = Symbol.h SymbolTable.h ExpTreeGenerator.h client.h ExpNodeCarrier.h SpkCompilerUtil.h SpkCompiler.h
 
-CPPS       = Symbol.cpp SymbolTable.cpp ExpTreeGenerator.cpp SpkCompilerUtil.cpp SpkComiler.cpp
+CPPS       = Symbol.cpp SymbolTable.cpp ExpTreeGenerator.cpp ExpNodeCarrier.cpp SpkCompilerUtil.cpp SpkComiler.cpp
 
 all: $(OBJECTS)
 
@@ -29,6 +29,9 @@ ExpTreeGenerator.o : ExpTreeGenerator.cpp ExpTreeGenerator.h SpkCompilerUtil.h
 
 SpkCompilerUtil.o : SpkCompilerUtil.h SpkCompilerUtil.cpp
 	$(COMPILE.cc) SpkCompilerUtil.cpp
+
+ExpNodeCarrier.o : ExpNodeCarrier.h ExpNodeCarrier.cpp
+	$(COMPILE.cc) ExpNodeCarrier.cpp
 
 SymbolTable.o : SymbolTable.cpp SymbolTable.h Symbol.h
 	$(COMPILE.cc) SymbolTable.cpp

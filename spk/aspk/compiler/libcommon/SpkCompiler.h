@@ -6,7 +6,7 @@
 
 #include "client.h"
 #include "SymbolTable.h"
-#include "ParseTree.h"
+#include "ExpTreeGenerator.h"
 #include "SpkCompilerUtil.h"
 #include <set>
 

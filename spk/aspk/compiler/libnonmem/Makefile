@@ -24,27 +24,27 @@ LD   = ld
 
 FLEX_OBJS = lex.yy.c
 
-BISON_OBJS = nmabb.tab.cpp nmabb.tab.h nmabb.output
+BISON_OBJS = explang.tab.cpp explang.tab.h explang.output
 
-OBJECTS = nmabb.tab.o lex.yy.o
+OBJECTS = explang.tab.o lex.yy.o
 
-all:	nmabb.tab.o lex.yy.o NonmemCompiler.o
+all:	explang.tab.o lex.yy.o NonmemCompiler.o
 
-NonmemCompiler.o : NonmemCompiler.h NonmemCompiler.cpp nmabb.tab.h
+NonmemCompiler.o : NonmemCompiler.h NonmemCompiler.cpp explang.tab.h
 	$(COMPILE.cc) $(CPPFLAGS) -I../libcommon/ NonmemCompiler.cpp
 
-nmabb.tab.o : nmabb.tab.cpp nmabb.tab.h nmabb.y $(COMMON_HEADERS)
-	$(COMPILE.cc) $(CPPFLAGS) -I../libcommon/ nmabb.tab.cpp
+explang.tab.o : explang.tab.cpp explang.tab.h explang.y $(COMMON_HEADERS)
+	$(COMPILE.cc) $(CPPFLAGS) -I../libcommon/ explang.tab.cpp
 
-lex.yy.o : lex.yy.c nmabb.tab.h nmabb.l
+lex.yy.o : lex.yy.c explang.tab.h explang.l
 	$(COMPILE.c) $(CFLAGS) lex.yy.c
 
-lex.yy.c : nmabb.l nmabb.tab.h
-	$(LEX.l) nmabb.l
+lex.yy.c : explang.l explang.tab.h
+	$(LEX.l) explang.l
 
-nmabb.tab.h nmabb.tab.cpp : nmabb.y
-	$(YACC.y) nmabb.y
-	mv nmabb.tab.c nmabb.tab.cpp
+explang.tab.h explang.tab.cpp : explang.y
+	$(YACC.y) explang.y
+	mv explang.tab.c explang.tab.cpp
 
 clean:
 	rm $(OBJECTS) $(FLEX_OBJS) $(BISON_OBJS)

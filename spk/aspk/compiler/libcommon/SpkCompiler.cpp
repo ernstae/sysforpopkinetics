@@ -16,7 +16,6 @@
 #include <fstream>
 
 #include "SpkCompiler.h"
-#include "ParseTree.h"
 #include "SymbolTable.h"
 #include "client.h"
 
