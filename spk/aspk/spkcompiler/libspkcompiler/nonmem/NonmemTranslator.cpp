@@ -158,6 +158,7 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     X_MITR           ( XMLString::transcode("mitr") ),
     X_IND_STAT       ( XMLString::transcode("ind_stat") )
 {
+  table = ClientTranslator::getSymbolTable();
 }
 NonmemTranslator::NonmemTranslator()
 {
@@ -230,7 +231,7 @@ NonmemTranslator& NonmemTranslator::operator=( const NonmemTranslator& )
 }
 void NonmemTranslator::parseSource()
 {
-  assert( table.getLabels()->size() > 0 );
+  assert( table->getLabels()->size() > 0 );
 
   DOMElement * spksouce = source->getDocumentElement();
   DOMNodeList * nonmems = spksouce->getElementsByTagName( X_NONMEM );
@@ -298,7 +299,7 @@ void NonmemTranslator::parseSource()
   DOMElement * presentation = dynamic_cast<DOMElement*>( presentations->item(0) );
 
   myRecordNums.resize( myPopSize );
-  Symbol * id = table.findi( "ID" );
+  Symbol * id = table->findi( "ID" );
   assert( id != NULL || id != Symbol::empty() );
   for( int i=0; i<myPopSize; i++ )
     {
@@ -310,12 +311,12 @@ void NonmemTranslator::parseSource()
   // * data labels  --- parseData() should have been done by now
   // * user defined variables in PRED definition --- PRED parsing should have been done by now
   // * PRED, RES, WRES
-  if( table.findi( "PRED" ) == Symbol::empty() )
-    table.insertUserVar( "PRED" );
-  if( table.findi( "RES" )  == Symbol::empty() )
-    table.insertUserVar( "RES" );
-  if( myTarget == POP && table.findi( "WRES" ) == Symbol::empty() )
-    table.insertUserVar( "WRES" );
+  if( table->findi( "PRED" ) == Symbol::empty() )
+    table->insertUserVar( "PRED" );
+  if( table->findi( "RES" )  == Symbol::empty() )
+    table->insertUserVar( "RES" );
+  if( myTarget == POP && table->findi( "WRES" ) == Symbol::empty() )
+    table->insertUserVar( "WRES" );
 
   //
   // Generate the headers and definition files for IndData class and
@@ -426,12 +427,6 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   assert( data_labels_list->getLength() == 1 );
   DOMElement * data_labels = dynamic_cast<DOMElement*>( data_labels_list->item(0) );
   {
-     // Required <data_labels> attributes
-     // * filename = CDATA
-    assert( data_labels->hasAttribute( X_FILENAME ) );
-     const XMLCh* xml_data_filename = data_labels->getAttribute( X_FILENAME );
-     assert( XMLString::stringLen( xml_data_filename ) > 0 );
-
      DOMNodeList * labels = data_labels->getElementsByTagName( X_LABEL );
      int nLabels = labels->getLength();
      assert( nLabels > 0 );
@@ -446,7 +441,8 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
 	 const XMLCh* xml_name = xml_label->getAttribute( X_NAME );
 	 assert( XMLString::stringLen( xml_name ) > 0 );
          char * c_name = XMLString::transcode( xml_name );
-	 Symbol * name = table.findi( c_name );
+	 Symbol * name = table->find( c_name );
+
 	 assert( name != Symbol::empty() );
          delete c_name;
 
@@ -475,7 +471,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
     {
       assert( myThetaLen > 0 );
     }
-  Symbol * sym_theta = table.insertNMVector( "THETA", myThetaLen );
+  Symbol * sym_theta = table->insertNMVector( "THETA", myThetaLen );
   {
     //<in>
     DOMNodeList * theta_in_list = theta->getElementsByTagName( X_IN );
@@ -585,7 +581,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
     }
   else
     assert( false );
-  Symbol * sym_omega = table.insertNMMatrix( "OMEGA", myOmegaStruct, myOmegaDim );
+  Symbol * sym_omega = table->insertNMMatrix( "OMEGA", myOmegaStruct, myOmegaDim );
   {
     //<in>
     DOMNodeList * omega_in_list = omega->getElementsByTagName( X_IN );
@@ -646,7 +642,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   else
     assert( false );
 
-  Symbol * sym_sigma = table.insertNMMatrix( "SIGMA", mySigmaStruct, mySigmaDim ); 
+  Symbol * sym_sigma = table->insertNMMatrix( "SIGMA", mySigmaStruct, mySigmaDim ); 
   {
     //<in>
     DOMNodeList * sigma_in_list = sigma->getElementsByTagName( X_IN );
@@ -690,7 +686,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   //-----------------------------------------------------------
   myEtaLen = myThetaLen;
   char etaDefault[] = "0.0";
-  Symbol * sym_eta = table.insertNMVector( "ETA", myEtaLen );
+  Symbol * sym_eta = table->insertNMVector( "ETA", myEtaLen );
   sym_eta->initial[0] = etaDefault;
   sym_eta->fixed[0] = false;
 
@@ -700,7 +696,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   // the order of Sigma is the length of EPS vector.
   myEpsLen = mySigmaDim;
   char epsDefault[] = "0.0";
-  Symbol * sym_eps = table.insertNMVector( "EPS", myEpsLen );
+  Symbol * sym_eps = table->insertNMVector( "EPS", myEpsLen );
   sym_eps->initial[0] = epsDefault;
   sym_eta->fixed[0] = false;
 
@@ -826,10 +822,6 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   assert( data_labels_list->getLength() == 1 );
   DOMElement * data_labels = dynamic_cast<DOMElement*>( data_labels_list->item(0) );
   {
-     // Required <data_labels> attributes
-     // * filename = CDATA
-     const XMLCh* xml_data_filename = data_labels->getAttribute( X_FILENAME );
-     assert( XMLString::stringLen( xml_data_filename ) > 0 );
 
      DOMNodeList * labels = data_labels->getElementsByTagName( X_LABEL );
      int nLabels = labels->getLength();
@@ -844,7 +836,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
 	 const XMLCh* xml_name = xml_label->getAttribute( X_NAME );
 	 assert( XMLString::stringLen( xml_name ) > 0 );
 	 char * c_name = XMLString::transcode( xml_name );
-	 Symbol * name = table.findi( c_name );
+	 Symbol * name = table->findi( c_name );
 	 assert( name != Symbol::empty() );
 	 delete c_name;
 
@@ -871,7 +863,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
     {
       assert( myThetaLen > 0 );
     }
-  Symbol * sym_theta = table.insertNMVector( "THETA", myThetaLen );
+  Symbol * sym_theta = table->insertNMVector( "THETA", myThetaLen );
   {
     //<in>
     DOMNodeList * theta_in_list = theta->getElementsByTagName( X_IN );
@@ -980,7 +972,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
     }
   else
     assert( false );
-  Symbol * sym_omega = table.insertNMMatrix( "OMEGA", myOmegaStruct, myOmegaDim );
+  Symbol * sym_omega = table->insertNMMatrix( "OMEGA", myOmegaStruct, myOmegaDim );
   {
     //<in>
     DOMNodeList * omega_in_list = omega->getElementsByTagName( X_IN );
@@ -1106,7 +1098,7 @@ void NonmemTranslator::parsePred( DOMElement * pred )
 
   nm_in = fopen( fPredEqn_fortran, "r" );
   gSpkExpOutput = fopen( fPredEqn_cpp, "w" );
-  gSpkExpSymbolTable = &table;
+  gSpkExpSymbolTable = table;
 
   try{
     nm_parse();
@@ -1136,21 +1128,21 @@ void NonmemTranslator::generateIndData( ) const
   // object that holds "ID" data items handy for
   // frequent references.
   //
-  const Symbol * pID = table.findi( "id" );
+  const Symbol * pID = table->findi( "id" );
 
   //
   // The order in which the label strings appear is crutial.
   // So, get a constant pointer to the list and the iterator
   // for throughout use.
   //
-  const vector<string> * labels = table.getLabels();
+  const vector<string> * labels = table->getLabels();
   vector<string>::const_iterator pLabel;
 
   // 
   // rawTable points to the actual std::map object that
   // maps the label strings and its associated data values.
   //
-  const map<const string, Symbol> * const rawTable = table.getTable();
+  const map<const string, Symbol> * const rawTable = table->getTable();
   map<const string, Symbol>::const_iterator pRawTable;
 
   //
@@ -1238,7 +1230,7 @@ void NonmemTranslator::generateIndData( ) const
           bool isID = ( *pLabel == pID->name );
 	  oIndData_h << "const std::vector<" << (isID? "char*":"T") << ">";
           oIndData_h << " " << SymbolTable::key( *pLabel ) << ";" << endl;
-	  if( ( synonym = table.findi( *pLabel )->synonym ) != "" )
+	  if( ( synonym = table->findi( *pLabel )->synonym ) != "" )
 	  {
              oIndData_h << "const std::vector<" << (isID? "char*":"T") << ">";
              oIndData_h << " " << SymbolTable::key( synonym ) << ";" << endl;
@@ -1339,7 +1331,7 @@ void NonmemTranslator::generateIndData( ) const
 	  //
 	  // If the label has a synonym, apply the same value to the synonym.
 	  //
-	  if( ( synonym = table.findi( *pLabel )->synonym ) != "" )
+	  if( ( synonym = table->findi( *pLabel )->synonym ) != "" )
 	    {
 	      oIndData_h << "," << endl;
 	      oIndData_h << SymbolTable::key( synonym );
@@ -1403,11 +1395,11 @@ void NonmemTranslator::generateIndData( ) const
 }
 void NonmemTranslator::generateDataSet( ) const
 {
-  const map<const string, Symbol> * t = table.getTable();
-  const vector<string> *labels = table.getLabels();
+  const map<const string, Symbol> * t = table->getTable();
+  const vector<string> *labels = table->getLabels();
   vector<string>::const_iterator pLabel;
   int nLabels = labels->size();
-  const Symbol * pID = table.findi( "id" );
+  const Symbol * pID = table->findi( "id" );
 
   //
   // Declare and define DataSet template class.
@@ -1427,7 +1419,7 @@ void NonmemTranslator::generateDataSet( ) const
   // is defined and the time when the IndData constructor
   // is declared/defined, the SymbolTable object
   // may NOT be modified.
-  //  const Symbol* pID = table.findi("id");
+  //  const Symbol* pID = table->findi("id");
   //
   ofstream oDataSet_h( fDataSet_h );
   if( oDataSet_h.good() )
@@ -1521,7 +1513,7 @@ void NonmemTranslator::generateDataSet( ) const
 	  pLabel = labels->begin();
 	  for( int i=0; pLabel != labels->end(), i<nLabels; i++, pLabel++ )
 	    {
-	      const Symbol * s = table.findi( *pLabel );
+	      const Symbol * s = table->findi( *pLabel );
               bool isID = (*pLabel == pID->name);
               string carray_name   = SymbolTable::key( s->name ) + "_" + c_who + "_c";
               string valarray_name = SymbolTable::key( s->name ) + "_" + c_who;
@@ -1558,7 +1550,7 @@ void NonmemTranslator::generateDataSet( ) const
 	    {
 	      if( i>0 )
 		oDataSet_h << ", ";
-	      const Symbol * s = table.findi( *pLabel );
+	      const Symbol * s = table->findi( *pLabel );
               string array_name = SymbolTable::key( s->name ) + "_" + c_who;
               oDataSet_h << array_name;
 	    }
@@ -1599,7 +1591,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 {
   // The vector, labels, contains the data (from the data file) item labels
   // and the variable names defined within the user's pred block.
-  const vector<string> * labels = table.getLabels();
+  const vector<string> * labels = table->getLabels();
   const int nLabels = labels->size();
   vector<string>::const_iterator pLabel;
 
@@ -1607,14 +1599,14 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   // contains all entries including the data (from the data file),
   // the NONMEM required entries (such as THETA, EPS, etc.) and
   // the user defined variable names.
-  const map<const string, Symbol> * rawTable = table.getTable();
+  const map<const string, Symbol> * rawTable = table->getTable();
   map<const string, Symbol>::const_iterator pRawTable;
 
-  const string sTHETA = SymbolTable::key( table.findi("theta")->name );
-  const string sETA   = SymbolTable::key( table.findi("eta")->name );
-  const string sEPS   = SymbolTable::key( table.findi("eps")->name );
-  const string sOMEGA = ( table.findi("omega")->name );
-  const string sSIGMA = ( table.findi("sigma")->name );
+  const string sTHETA = SymbolTable::key( table->findi("theta")->name );
+  const string sETA   = SymbolTable::key( table->findi("eta")->name );
+  const string sEPS   = SymbolTable::key( table->findi("eps")->name );
+  const string sOMEGA = ( table->findi("omega")->name );
+  const string sSIGMA = ( table->findi("sigma")->name );
 
   //
   // Declare and define Pred template class.
@@ -1705,13 +1697,13 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       // Taking care of the data items (from the data file).
       // Only the "ID" data item values are of type string,
       // otherwise all numeric, T.
-      const Symbol * pID = table.findi( "id" );
+      const Symbol * pID = table->findi( "id" );
       pLabel = labels->begin();
       for( int i=0; i<nLabels, pLabel != labels->end(); i++, pLabel++ )
 	{
           bool isID = (*pLabel == pID->name);
 
-	  const Symbol* s = table.findi( *pLabel );
+	  const Symbol* s = table->findi( *pLabel );
 	  oPred_h << "mutable " << ( isID? "std::string" : "Value" );
           oPred_h << " " << SymbolTable::key( s->name ) << ";" << endl;
           if( !s->synonym.empty() )
@@ -1806,7 +1798,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       //
       for( pLabel = labels->begin(); pLabel != labels->end(); pLabel++ )
       {
-         const Symbol *s = table.findi( *pLabel );
+         const Symbol *s = table->findi( *pLabel );
          // label
          oPred_h << SymbolTable::key( s->name );
          oPred_h << " = data->data[spk_i]->";
@@ -1996,7 +1988,6 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "#include \"IndData.h\"" << endl;
   oDriver << "#include \"DataSet.h\"" << endl;
   oDriver << "#include \"Pred.h\"" << endl;
-  oDriver << "#include \"CovMatrix.h\"" << endl;
   oDriver << endl;
 
   oDriver << "#include <spk/SpkValarray.h>" << endl;
@@ -2030,7 +2021,7 @@ void NonmemTranslator::generateIndDriver( ) const
     oDriver << "const unsigned int seed = " << mySeed << ";" << endl;
   oDriver << endl;
 
-  const Symbol* pTheta = table.findi("theta");
+  const Symbol* pTheta = table->findi("theta");
   oDriver << "double c_thetaIn[nTheta] = { ";
   for( int j=0; j<myThetaLen; j++ )
     {
@@ -2082,12 +2073,11 @@ void NonmemTranslator::generateIndDriver( ) const
   oDriver << "DataSet<double> set;" << endl;
   oDriver << "Pred<double> mPred(&set);" << endl;
   if( myOmegaStruct == Symbol::TRIANGLE )
-    oDriver << "FullCovMatrix " << endl;
+    oDriver << "enum PredModel::COV_STRUCT omegaStruct = BLOCK;" << endl;
   else 
-    oDriver << "DiagCovMatrix " << endl;
-  oDriver << "omega( nEta, omegaIn );" << endl;
+    oDriver << "enum PredModel::COV_STRUCT omegaStruct = DIAGONAL;" << endl;
   
-  oDriver << "IndPredModel model( nTheta, thetaLow, thetaUp, thetaIn, nEta, &omega );" << endl;
+  oDriver << "IndPredModel model( nTheta, thetaLow, thetaUp, thetaIn, nEta, omegaStruct, omegaIn );" << endl;
 
   oDriver << "const int nB = model.getNIndPar();" << endl;
   oDriver << "valarray<double> bIn  ( nB );" << endl;
@@ -2129,13 +2119,13 @@ void NonmemTranslator::generateIndDriver( ) const
     }
   else
     {
-      const Symbol* pDV = table.findi("dv");
+      const Symbol* pDV = table->findi("dv");
       if( pDV == Symbol::empty() )
 	{
 	  // "DV" may be registered as a synonym.  
 	  // In that case, have to search through the entries
 	  // in the map.
-	  const map<const string,Symbol> *t = table.getTable();
+	  const map<const string,Symbol> *t = table->getTable();
           map<const string,Symbol>::const_iterator itr = t->begin();
           for( ; itr != t->end(); itr++ )
 	    {
@@ -2381,13 +2371,13 @@ void NonmemTranslator::generateIndDriver( ) const
   //=============================================================================
   // LABELS
   //
-  const map<const string, Symbol> * t = table.getTable();
-  const Symbol * pID = table.findi("id");
+  const map<const string, Symbol> * t = table->getTable();
+  const Symbol * pID = table->findi("id");
   assert( pID != Symbol::empty() );
 
   map<const string, Symbol>::const_iterator pEntry = t->begin();
-  const vector<string>::const_iterator pLabelBegin = table.getLabels()->begin();
-  const vector<string>::const_iterator pLabelEnd   = table.getLabels()->end();
+  const vector<string>::const_iterator pLabelBegin = table->getLabels()->begin();
+  const vector<string>::const_iterator pLabelEnd   = table->getLabels()->end();
   vector<string> whatGoesIn;  // will hold those labels in the order that actually go into the data section.
 
   oDriver << "if( haveCompleteData )" << endl;
@@ -2454,10 +2444,10 @@ void NonmemTranslator::generatePopDriver() const
   ofstream oDriver ( fDriver_cpp );
   assert( oDriver.good() );
 
-  const Symbol* pTheta = table.findi("theta");
-  const Symbol* pOmega = table.findi("omega");
-  const Symbol* pSigma = table.findi("sigma");
-  const Symbol* pEta   = table.findi("eta");
+  const Symbol* pTheta = table->findi("theta");
+  const Symbol* pOmega = table->findi("omega");
+  const Symbol* pSigma = table->findi("sigma");
+  const Symbol* pEta   = table->findi("eta");
   
   oDriver << "#include <iostream>" << endl;
   oDriver << "#include <fstream>" << endl;
@@ -2473,7 +2463,6 @@ void NonmemTranslator::generatePopDriver() const
   /////////////////////////////////////////////////////////////////
   //  oDriver << "#include <spkpred/PopPredModel.h>" << endl;
   oDriver << "#include \"PopPredModel.h\"" << endl;
-  oDriver << "#include \"CovMatrix.h\"" << endl;
   /////////////////////////////////////////////////////////////////
 
   if( myIsEstimate )
@@ -2588,17 +2577,15 @@ void NonmemTranslator::generatePopDriver() const
   oDriver << "DataSet<double> set;" << endl;
   oDriver << "Pred<double>    mPred(&set);" << endl;
   if( myOmegaStruct == Symbol::TRIANGLE )
-    oDriver << "FullCovMatrix ";
+    oDriver << "enum PredModel::COV_STRUCT omegaStruct = PredModel::BLOCK;";
   else
-    oDriver << "DiagCovMatrix ";
-  oDriver << "omega( nEta, omegaIn );" << endl;
+    oDriver << "enum PredModel::COV_STRUCT omegaStruct = PredModel::DIAGONAL;";
   if( mySigmaStruct == Symbol::TRIANGLE )
-    oDriver << "FullCovMatrix ";
+    oDriver << "enum PredModel::COV_STRUCT sigmaStruct = PredModel::BLOCK;";
   else
-    oDriver << "DiagCovMatrix ";
-  oDriver << "sigma( nEps, sigmaIn );" << endl;
+    oDriver << "enum PredModel::COV_STRUCT sigmaStruct = PredModel::DIAGONAL;";
 
-  oDriver << "PopPredModel model( nTheta, thetaLow, thetaUp, thetaIn, nEta, etaIn, &omega, &sigma );" << endl;
+  oDriver << "PopPredModel model( nTheta, thetaLow, thetaUp, thetaIn, nEta, etaIn, omegaStruct, omegaIn, sigmaStruct, sigmaIn );" << endl;
   oDriver << endl;
 
   oDriver << "const int nAlp = model.getNPopPar();" << endl;
@@ -2675,13 +2662,13 @@ void NonmemTranslator::generatePopDriver() const
     }
   else
     {
-      const Symbol* pDV = table.findi("dv");
+      const Symbol* pDV = table->findi("dv");
       if( pDV == Symbol::empty() )
 	{
 	  // "DV" may be registered as a synonym.  
 	  // In that case, have to search through the entries
 	  // in the map.
-	  const map<const string,Symbol> *t = table.getTable();
+	  const map<const string,Symbol> *t = table->getTable();
           map<const string,Symbol>::const_iterator itr = t->begin();
           for( ; itr != t->end(); itr++ )
 	    {
@@ -2698,7 +2685,7 @@ void NonmemTranslator::generatePopDriver() const
 	{
 	  for( int j=0; j<myRecordNums[i]; j++ )
 	    {
-	      if( i>0 && j>0 )
+	      if( !(i==0&&j==0) )
 		oDriver << ", ";
 	      oDriver << atof( pDV->initial[i][j].c_str() );
 	    }
@@ -3013,13 +3000,13 @@ void NonmemTranslator::generatePopDriver() const
   //=============================================================================
   // LABELS
   //
-  const map<const string, Symbol> * t = table.getTable();
-  const Symbol * pID = table.findi("id");
+  const map<const string, Symbol> * t = table->getTable();
+  const Symbol * pID = table->findi("id");
   assert( pID != Symbol::empty() );
   
   map<const string, Symbol>::const_iterator pEntry = t->begin();
-  const vector<string>::const_iterator pLabelBegin = table.getLabels()->begin();
-  const vector<string>::const_iterator pLabelEnd   = table.getLabels()->end();
+  const vector<string>::const_iterator pLabelBegin = table->getLabels()->begin();
+  const vector<string>::const_iterator pLabelEnd   = table->getLabels()->end();
   vector<string> whatGoesIn;  // will hold those labels in the order that actually go into the data section.
   oDriver << "if( haveCompleteData )" << endl;
   oDriver << "{" << endl;
