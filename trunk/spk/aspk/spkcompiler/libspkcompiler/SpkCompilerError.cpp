@@ -76,7 +76,7 @@ const char* SpkCompilerError::describe( enum ErrorCode key )
 }
 unsigned int SpkCompilerError::maxErrorcode() throw()
 {
-  return pow( 2.0, (double)sizeof( int ) /*bytes*/ * 7 /* 8 bits - a signed bit*/ ) - 1;
+  return static_cast<unsigned int>( pow( 2.0, (double)sizeof( int ) /*bytes*/ * 7 /* 8 bits - a signed bit*/ ) - 1 );
   /*
     try{
         unsigned int max = 0;
