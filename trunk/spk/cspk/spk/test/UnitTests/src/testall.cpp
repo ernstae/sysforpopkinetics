@@ -17,6 +17,7 @@
 #include "src/choleskyTest.h"
 #include "src/countTruesTest.h"
 #include "src/CovarianceTest.h"
+#include "src/derParStatisticsTest.h"
 #include "src/detTest.h"
 #include "src/divByScalarTest.h"
 #include "src/elementwiseAndTest.h"
@@ -128,6 +129,7 @@ int main( int argc, const char * argv[] )
   master_list_of_tests[ "choleskyTest" ]                     = choleskyTest::suite();
   master_list_of_tests[ "countTruesTest" ]                   = countTruesTest::suite();
   master_list_of_tests[ "CovarianceTest" ]                   = CovarianceTest::suite();
+  master_list_of_tests[ "derParStatisticsTest" ]             = derParStatisticsTest::suite();
   master_list_of_tests[ "detTest" ]                          = detTest::suite();
   master_list_of_tests[ "divByScalarTest" ]                  = divByScalarTest::suite();
   master_list_of_tests[ "elementwiseAndTest" ]               = elementwiseAndTest::suite();
