@@ -23,6 +23,7 @@ public:
 
     void testParseIndNoID();
     void testParseIndSource();
+    void testParseIndOnlySim();
 };
 
 #endif
