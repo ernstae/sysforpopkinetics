@@ -922,9 +922,45 @@ static const valarray<double> nmInvR( const valarray<double> & x,
 {
   int nX = x.size();
   int nF = h_x_x.size() / nX / nX;
+  assert( nF == 1 );
   assert( h_x_x.size() == nX * nX * nF ); 
-  valarray<double> tmp( 0.0, nF * nX * nX );
-  return inverse( ( h_x_x + transpose( h_x_x, nX ) ) * 0.5, nX );
+
+  // This makes sure the matrix to be inverted is symmetric.
+  // If the attempt to invert the matrix failed, it means the matrix is not positive definite.
+  valarray<double> invR( nX * nX );
+  try{
+    invR = inverse( ( h_x_x + transpose( h_x_x, nX ) ) * 0.5, nX );
+  }
+  catch( SpkException & e )
+    {
+      char mess[ SpkError::maxMessageLen() ];
+      
+      valarray<double> diag = h_x_x[ slice(0, nX, nX+1) ];
+      sprintf( mess, "The second drivative of the object does not seem positive definite.\n" );
+      for( int i=0; i<nX; i++ )
+	{
+	  if( diag[i] <= 0.0 )
+	    sprintf( mess, "The %d-th diagonal element of second derivative of the objective, which is supposed to be positive definite, is not postive.\n", i );
+	}
+      e.push( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
+      throw e;
+    }
+  catch( ... )
+    {
+      char mess[ SpkError::maxMessageLen() ];
+      
+      valarray<double> diag = h_x_x[ slice(0, nX, nX+1) ];
+      sprintf( mess, "The second drivative of the object may not be positive definite.\n" );
+      for( int i=0; i<nX; i++ )
+	{
+	  if( diag[i] < 0.0 )
+	    sprintf( mess, "The %d-th diagonal element of second derivative of the objective, which is supposed to be positive definite, is not postive.\n", i );
+	}
+      SpkException e( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
+      throw e;
+    }      
+
+  return  invR;
 }
 
 
@@ -1104,7 +1140,28 @@ message %d-the element, %f, is invalid.", i, indParAll[ i + j * nB ] );
     //----------------------------------------------------------------
     if( formulation == R )
     {
-      popParCovTemp = nmInvR( popPar, popObj_popPar_popPar );
+      try{
+        // This local routine nmInvR does symmetrize the 2nd drivative before
+	// attempting to invert it.  So, if this attempt fails, it means
+	// the symmetric matrix is not positive definite.
+	popParCovTemp = nmInvR( popPar, popObj_popPar_popPar );
+      }
+      catch( SpkException& e )
+	{
+	  char mess[ SpkError::maxMessageLen() ];
+	  sprintf( mess, "Failed to invert R as in NONMEM Statistics.  R is symmetric but not positive definite.\n" );
+	  cerr << "NONMEM R: " << endl;
+          printInMatrix( popObj_popPar_popPar, nAlp  );
+	  e.push( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
+	  throw e;  
+	}
+      catch( ... )
+	{
+	  char mess[ SpkError::maxMessageLen() ];
+	  sprintf( mess, "Failed to invert R as in NONMEM Statistics. R is symmetric but not positive definite.\n" );
+	  SpkException e( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
+	  throw e;  
+	}
     }
     //----------------------------------------------------------------
     // Compute S or RSR
@@ -1163,16 +1220,70 @@ message %d-the element, %f, is invalid.", i, indParAll[ i + j * nB ] );
 	indObj_popPar = dmatLambdaLTilde_alpOut.toValarray();
 	if( formulation == S )
 	  {
-	    popParCovTemp = inverse( nmS( popPar, indObj_popPar ), nAlp );
+	    try{
+	       popParCovTemp = inverse( nmS( popPar, indObj_popPar ), nAlp );
+            }
+            catch( SpkException& e )
+            {
+               char mess[ SpkError::maxMessageLen() ];
+               sprintf( mess, "Failed to invert S as in NONMEM Statistics.\n" );
+               e.push( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
+               throw e;  
+            }
+            catch( ... )
+            {
+               char mess[ SpkError::maxMessageLen() ];
+               sprintf( mess, "Failed to invert S as in NONMEM Statistics.\n" );
+               SpkException e( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
+               throw e;  
+            }
 	  }
 	else //( formulation == RSR )
 	  {
-	    valarray<double> RInv = nmInvR( popPar, popObj_popPar_popPar );
-	    popParCovTemp = multiply( multiply( RInv, nAlp, nmS( popPar, indObj_popPar ), nAlp ), nAlp, RInv, nAlp );
+            try{
+	       valarray<double> RInv = nmInvR( popPar, popObj_popPar_popPar );
+	       popParCovTemp = multiply( multiply( RInv, nAlp, nmS( popPar, indObj_popPar ), nAlp ), nAlp, RInv, nAlp );
+            }
+            catch( SpkException& e )
+            {
+               char mess[ SpkError::maxMessageLen() ];
+               sprintf( mess, "Failed to invert (R * S^-1 * R) as in NONMEM Statistics.\n" );
+               e.push( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
+               throw e;  
+            }
+            catch( ... )
+            {
+               char mess[ SpkError::maxMessageLen() ];
+               sprintf( mess, "Failed to invert (R * S^-1 * R) as in NONMEM Statistics.\n" );
+               SpkException e( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
+               throw e;  
+            }
 	  }
     }
 
-    statistics( popPar, popParCovTemp, nF, popParSEOut, popParCorOut, popParCVOut, popParCIOut );
+    try{
+      statistics( popPar, 
+		  popParCovTemp, 
+		  nF, 
+		  popParSEOut, 
+		  popParCorOut, 
+		  popParCVOut, 
+		  popParCIOut );
+    }
+    catch( SpkException& e )
+      {
+	char mess[ SpkError::maxMessageLen() ];
+	sprintf( mess, "Failed to compute some/all of the Statistics values.\n" );
+	e.push( SpkError::SPK_STATISTICS_ERR, mess, __LINE__, __FILE__ );
+	throw e;  
+      }
+    catch( ... )
+      {
+	char mess[ SpkError::maxMessageLen() ];
+	sprintf( mess, "Failed to compute some/all of the statistics values.\n" );
+	SpkException e( SpkError::SPK_UNKNOWN_ERR, mess, __LINE__, __FILE__ );
+	throw e;  
+      }
 
     if( popParCovOut != 0 )
       *popParCovOut = popParCovTemp;
