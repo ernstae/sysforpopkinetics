@@ -264,7 +264,7 @@ deploy_candidate.pl --test
 	    with job_id numbers 256, 23, 45, 1834 from the production database.
 	  </para>
 	  <para>
-	    As an ordinary user:
+	    In an ordinary user terminal window:
 	    <screen>
 ssh dbserver
 take_snapshot.pl 256 23 45 1834
@@ -286,7 +286,8 @@ load_spktest.pl
 	</listitem>
 	<listitem>
 	  <para>
-	    Make a backup copy of your test database, in case you need to run
+	    If you have added jobs using the MDA,
+	    make a backup copy of your test database, in case you need to run
 	    your tests several times before your modifications work correctly.
 	  </para>
 	  <para>
