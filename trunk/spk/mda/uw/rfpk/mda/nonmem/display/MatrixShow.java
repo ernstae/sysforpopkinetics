@@ -168,7 +168,7 @@ public class MatrixShow extends javax.swing.JFrame {
 //        System.exit(0);
     }//GEN-LAST:event_exitForm
 
-    class DisplayTableModel extends AbstractTableModel 
+    private class DisplayTableModel extends AbstractTableModel 
     {
         public DisplayTableModel(String[][] data, String[] header)
         {
@@ -205,7 +205,7 @@ public class MatrixShow extends javax.swing.JFrame {
         String[] header = null;
     }
     
-    class HeaderCellRenderer extends DefaultTableCellRenderer 
+    private class HeaderCellRenderer extends DefaultTableCellRenderer 
     {
         public Component getTableCellRendererComponent(JTable table,
             Object value,boolean isSelected, boolean hasFocus, int row,int col) 
