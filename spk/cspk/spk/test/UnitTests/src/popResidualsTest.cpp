@@ -40,9 +40,11 @@
 #include <cppunit/TestCaller.h>
 #include <spk/identity.h>
 #include <spk/isDblEpsEqual.h>
+#include <spk/multiply.h>
 #include <spk/Objective.h>
 #include <spk/popResiduals.h>
 #include <spk/SpkModel.h>
+#include <spk/transpose.h>
 #include "popResidualsTest.h"
 
 using namespace std;
@@ -90,11 +92,36 @@ namespace // [Begin: unnamed namespace]
     }
     void doIndParVariance( valarray<double>& ret ) const
     {
+        // Create an arbitrary Cholesky factor that will be used to ensure that
+        // D is positive definite.
         //
-        //     D(alp) = I  .
+        //     DChol  =   /   1.2    0.0    0.0   0.0  \
+        //                |   2.2    3.5    0.0   0.0  |
+        //                |   4.2    5.5    6.7   0.0  |  .
+        //                \   7.2    8.5    9.7  10.0  /
+        //
+        valarray<double> DChol( _nB * _nB );
+        DChol = 0.0;
+        DChol[0 + 0 * _nB ] =  1.2;
+        DChol[1 + 0 * _nB ] =  2.2;
+        DChol[2 + 0 * _nB ] =  4.2;
+        DChol[3 + 0 * _nB ] =  7.2;
+        DChol[1 + 1 * _nB ] =  3.5;
+        DChol[2 + 1 * _nB ] =  5.5;
+        DChol[3 + 1 * _nB ] =  8.5;
+        DChol[2 + 2 * _nB ] =  6.7;
+        DChol[3 + 2 * _nB ] =  9.7;
+        DChol[3 + 3 * _nB ] = 10.0;
+
+        valarray<double> DCholTrans( _nB * _nB );
+        DCholTrans = transpose( DChol, _nB );
+
+        //
+        //                           T
+        //     D(alp) =  DChol  DChol   .
         //
         ret.resize(_nB * _nB);
-        identity( _nB, ret );
+        ret = multiply( DChol, _nB, DCholTrans, _nB );
     }
     bool doIndParVariance_popPar( valarray<double>& ret ) const
     {
@@ -127,12 +154,15 @@ namespace // [Begin: unnamed namespace]
     bool doDataMean_indPar( valarray<double>& ret ) const
     {
         //
-        //                   /  exp[b(1)] \ 
-        //     f_b(alp, b) = |  exp[b(1)] |  .
-        //                   \  exp[b(1)] / 
+        //                   /  exp[b(1)]     0     0     0  \ 
+        //     f_b(alp, b) = |  exp[b(1)]     0     0     0  |  .
+        //                   \  exp[b(1)]     0     0     0  / 
         //
         ret.resize(_nYi * _nB);
-        ret = exp( _b[0] );
+        ret = 0.0;
+        ret[0] = exp( _b[0] );
+        ret[1] = exp( _b[0] );
+        ret[2] = exp( _b[0] );
         return true;
     }
     void doDataVariance( valarray<double>& ret ) const
@@ -171,15 +201,15 @@ namespace // [Begin: unnamed namespace]
     bool doDataVariance_indPar( valarray<double>& ret ) const
     {
         //
-        //                   /   alp(1) exp[b(1)]          0  \ 
-        //                   |   0                         0  | 
-        //                   |   0                         0  | 
-        //                   |   0                         0  | 
-        //     R_b(alp, b) = |   alp(1) exp[b(1)]          0  |   .
-        //                   |   0                         0  | 
-        //                   |   0                         0  | 
-        //                   |   0                         0  | 
-        //                   \   alp(1) exp[b(1)]          0  / 
+        //                   /   alp(1) exp[b(1)]         0          0          0  \ 
+        //                   |   0                        0          0          0  | 
+        //                   |   0                        0          0          0  | 
+        //                   |   0                        0          0          0  | 
+        //     R_b(alp, b) = |   alp(1) exp[b(1)]         0          0          0  |   .
+        //                   |   0                        0          0          0  | 
+        //                   |   0                        0          0          0  | 
+        //                   |   0                        0          0          0  | 
+        //                   \   alp(1) exp[b(1)]         0          0          0  / 
         //
         ret.resize(_nYi * _nYi * _nB);
         ret = 0.0;
@@ -288,7 +318,7 @@ void popResidualsTest::threeDataValuesPerIndTest( enum Objective whichObjective 
 
   const int nAlp = 2;
 
-  const int nB = 1;
+  const int nB = 4;
 
 
   //------------------------------------------------------------
@@ -343,9 +373,11 @@ void popResidualsTest::threeDataValuesPerIndTest( enum Objective whichObjective 
   // Quantities related to the population residuals.
   //------------------------------------------------------------
 
-  valarray<double> popPredOut( nY );
-  valarray<double> popResOut ( nY );
-  valarray<double> popWresOut( nY );
+  valarray<double> popPredOut  ( nY );
+  valarray<double> popResOut   ( nY );
+  valarray<double> popResWtdOut( nY );
+
+  valarray<double> popIndParWtdOut( nB * nInd );
 
 
   //------------------------------------------------------------
@@ -363,7 +395,8 @@ void popResidualsTest::threeDataValuesPerIndTest( enum Objective whichObjective 
       bAll,            
       &popPredOut,
       &popResOut,
-      &popWresOut );
+      &popResWtdOut,
+      &popIndParWtdOut );
   }
   catch( const SpkException& e )
   {
@@ -385,8 +418,10 @@ void popResidualsTest::threeDataValuesPerIndTest( enum Objective whichObjective 
   printInMatrix( popPredOut, 1 );
   cout << "popResOut = " << endl;
   printInMatrix( popResOut, 1 );
-  cout << "popWresOut = " << endl;
-  printInMatrix( popWresOut, 1 );
+  cout << "popResWtdOut = " << endl;
+  printInMatrix( popResWtdOut, 1 );
+  cout << "popIndParWtdOut = " << endl;
+  printInMatrix( popIndParWtdOut, 1 );
   cout << "-----------------------" << endl;
   */
   // [Remove]==============================================
@@ -471,9 +506,9 @@ void popResidualsTest::threeDataValuesPerIndTest( enum Objective whichObjective 
       // 
       // The known values that appear here were calculated using the
       // Octave code that appears at the end of this function.
-      CPPUNIT_ASSERT( isDblEpsEqual( 0.479468726915712, popWresOut[i * nY_i + 0], fabs( popWresOut[i * nY_i + 0] ) ) );
-      CPPUNIT_ASSERT( isDblEpsEqual( 0.469981893935207, popWresOut[i * nY_i + 1], fabs( popWresOut[i * nY_i + 1] ) ) );
-      CPPUNIT_ASSERT( isDblEpsEqual( 0.485793282236049, popWresOut[i * nY_i + 2], fabs( popWresOut[i * nY_i + 2] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.456885896444145, popResWtdOut[i * nY_i + 0], fabs( popResWtdOut[i * nY_i + 0] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.447399063463640, popResWtdOut[i * nY_i + 1], fabs( popResWtdOut[i * nY_i + 1] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.463210451764482, popResWtdOut[i * nY_i + 2], fabs( popResWtdOut[i * nY_i + 2] ) ) );
     }
     else
     {
@@ -488,9 +523,47 @@ void popResidualsTest::threeDataValuesPerIndTest( enum Objective whichObjective 
       // 
       // The known values that appear here were calculated using the
       // Octave code that appears at the end of this function.
-      CPPUNIT_ASSERT( isDblEpsEqual( 0.388534872659817, popWresOut[i * nY_i + 0], fabs( popWresOut[i * nY_i + 0] ) ) );
-      CPPUNIT_ASSERT( isDblEpsEqual( 0.382780817593567, popWresOut[i * nY_i + 1], fabs( popWresOut[i * nY_i + 1] ) ) );
-      CPPUNIT_ASSERT( isDblEpsEqual( 0.392370909370650, popWresOut[i * nY_i + 2], fabs( popWresOut[i * nY_i + 2] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.355086538546659, popResWtdOut[i * nY_i + 0], fabs( popResWtdOut[i * nY_i + 0] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.349332483480409, popResWtdOut[i * nY_i + 1], fabs( popResWtdOut[i * nY_i + 1] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.358922575257491, popResWtdOut[i * nY_i + 2], fabs( popResWtdOut[i * nY_i + 2] ) ) );
+    }
+  }
+      
+  // The weighted individual parameters are calculated as follows:
+  //
+  //                       -1/2
+  //     bWtd   =  D(alpha)      *  b   .
+  //         i                       i
+  //
+  for ( i = 0; i < nInd; i++ )
+  {
+    if ( whichObjective == FIRST_ORDER || whichObjective == NAIVE_FIRST_ORDER  )
+    {
+      // For the first order objectives the individual parameters 
+      // are all set equal to zero, i.e.,
+      //
+      //     bWtd   =  0  .
+      //         i
+      //
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.0, popIndParWtdOut[0], fabs( popIndParWtdOut[0] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.0, popIndParWtdOut[1], fabs( popIndParWtdOut[1] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.0, popIndParWtdOut[2], fabs( popIndParWtdOut[2] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.0, popIndParWtdOut[3], fabs( popIndParWtdOut[3] ) ) );
+    }
+    else
+    {
+      // For the Laplace and Expected Hessian objectives the
+      // individual parameters are not set equal to zero.
+      //
+      // The known values that appear here were calculated using the
+      // Octave code that appears at the end of this function.
+      // 
+      // Note that the scales have been increased slightly for these
+      // comparisons.
+      CPPUNIT_ASSERT( isDblEpsEqual( -0.87351003662302229, popIndParWtdOut[0],  10.0 * fabs( popIndParWtdOut[0] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( -0.17854871318119675, popIndParWtdOut[1],  10.0 * fabs( popIndParWtdOut[1] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( -0.05911120680695928, popIndParWtdOut[2],  10.0 * fabs( popIndParWtdOut[2] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( -0.00178338758982985, popIndParWtdOut[3], 100.0 * fabs( popIndParWtdOut[3] ) ) );
     }
   }
       
@@ -514,64 +587,97 @@ void popResidualsTest::threeDataValuesPerIndTest( enum Objective whichObjective 
   //     #--------------------------------------------------------------------
   //     
   //     nY = 3
-  //     nB = 1
+  //     nB = 4
   //     
-  //     a  = 10.0
+  //     a = 10.0
   //     
-  //     bOrig = 1.0
+  //     bOrig = ones( nB, 1 )
+  //           
+  //     y = [ exp( bOrig(1) ) + 0.01;
+  //           exp( bOrig(1) ) - 0.02;
+  //           exp( bOrig(1) ) + 0.03 ]
   //     
-  //     y  =  [ exp( bOrig ) + 0.01;
-  //             exp( bOrig ) - 0.02;
-  //             exp( bOrig ) + 0.03 ]
+  //     # Create an arbitrary Cholesky factor that will be used to 
+  //     # ensure that D will be positive definite.
+  //     DChol = [ 1.2,    0.0,    0.0,   0.0;
+  //               2.2,    3.5,    0.0,   0.0;
+  //               4.2,    5.5,    6.7,   0.0;
+  //               7.2,    8.5,    9.7,  10.0 ]
   //     
-  //     D  = eye( nB )
+  //     D = DChol * DChol'
   //     
   //     
   //     #--------------------------------------------------------------------
   //     #
-  //     # First order (FO) weighted residuals.
+  //     # First order (FO) values.
   //     #
   //     # Note: this is just a copy of the Laplace or Expected Hessian (FOCE)
   //     # calculation with b equal to zero.
   //     #
   //     #--------------------------------------------------------------------
   //     
-  //     b  = 0.0
+  //     #--------------------------------------------------------------------
+  //     # Calculate the predicted values, residuals, and weighted residuals.
+  //     #--------------------------------------------------------------------
   //     
-  //     f  =  exp( b ) * ones( nY, 1 )
+  //     b = 0.0 * ones( nB, 1 )
+  //           
+  //     f = exp( b(1) ) * ones( nY, 1 )
   //     
-  //     f_b  =  f
+  //     f_b = [ f, 0.0 * ones( nB - 1, nB - 1 ) ]
   //     
-  //     pred  =  f - f_b * b
+  //     pred = f - f_b * b
   //     
-  //     R  =  a * exp( b ) * eye( nY )
+  //     R = a * exp( b(1) ) * eye( nY )
   //     
   //     cov = R + f_b * D * f_b'
   //     
-  //     wres = sqrtm( inverse( cov ) ) * ( y - pred )
+  //     resWtd = sqrtm( inverse( cov ) ) * ( y - pred )
+  //     
+  //     
+  //     #--------------------------------------------------------------------
+  //     # Calculate the weighted individual parameters.
+  //     #--------------------------------------------------------------------
+  //     
+  //     cov = D
+  //     
+  //     bWtd = sqrtm( inverse( cov ) ) * ( 0.0 * ones( nB, 1 ) - b )
   //     
   //     
   //     #--------------------------------------------------------------------
   //     #
-  //     # Laplace or Expected Hessian (FOCE) weighted residuals.
+  //     # Laplace or Expected Hessian (FOCE) values.
   //     #
   //     # Note: this is just a copy of the FO calculation with nonzero b.
   //     #
   //     #--------------------------------------------------------------------
   //     
-  //     b  = bOrig
+  //     #--------------------------------------------------------------------
+  //     # Calculate the predicted values, residuals, and weighted residuals.
+  //     #--------------------------------------------------------------------
   //     
-  //     f  =  exp( b ) * ones( nY, 1 )
+  //     b = bOrig
   //     
-  //     f_b  =  f
+  //     f = exp( b(1) ) * ones( nY, 1 )
   //     
-  //     pred  =  f - f_b * b
+  //     f_b = [ f, 0.0 * ones( nB - 1, nB - 1 ) ]
   //     
-  //     R  =  a * exp( b ) * eye( nY )
+  //     pred = f - f_b * b
+  //     
+  //     R = a * exp( b(1) ) * eye( nY )
   //     
   //     cov = R + f_b * D * f_b'
   //     
-  //     wres = sqrtm( inverse( cov ) ) * ( y - pred )
+  //     resWtd = sqrtm( inverse( cov ) ) * ( y - pred )
+  //     
+  //     
+  //     #--------------------------------------------------------------------
+  //     # Calculate the weighted individual parameters.
+  //     #--------------------------------------------------------------------
+  //     
+  //     cov = D
+  //     
+  //     bWtd = sqrtm( inverse( cov ) ) * ( 0.0 * ones( nB, 1 ) - b )
   //
   //~~~~~~~~~~~~~~~<End Octave Code>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
