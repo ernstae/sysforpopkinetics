@@ -42,15 +42,6 @@
  *
  *	Return Value:	void
  *
- **************************************************************************
- *
- *	Divided into 4 steps:
- *	
- *	Step #1:  Fill bAllOut
- *	Step #2:  Create simY - an unconcatenated version of yOut
- *	Step #3:  Fill simY
- *	Step #4:  Concatenate simY in yOut
- *
  *************************************************************************/
 /*
   $begin simulate$$
@@ -583,7 +574,7 @@ void simulate( SpkModel &model,
   bAllOut.resize(nB * nIndividuals);  // Set bAllOut to be the correct size
 	
   //--------------------------------------------------------------------------
-  // Step #1:  *** Fill bAllOut ***
+  // Step #1:  *** Simulate the random effects, b, and fill bAllOut ***
   //--------------------------------------------------------------------------
   model.setPopPar(alp);
 
@@ -639,30 +630,29 @@ void simulate( SpkModel &model,
     }
   
   //--------------------------------------------------------------------------
-  // Step #2:  *** Create simY - an unconcatenated version of yOut ***
-  //--------------------------------------------------------------------------
-  
-  vector< valarray<double> > simY( nIndividuals );  // simY is a vector of nIndividuals matrices
-  
-  //--------------------------------------------------------------------------
-  // Step #3:  *** Fill simY ***
+  // Step #3:  *** Simulate y and fill yOut ***
   //--------------------------------------------------------------------------
   
   valarray<double> bi( 0.0, nB );            // same dimension as bLow and bUp
   valarray<double> Ri, fi, ei;               // Create matrices needed to fill simY
-  
-  for (i = 0, k = 0; i < nIndividuals; i++, k+=nB)  // individuals start at 1, go to nIndividuals
+  valarray<double> simYi;
+
+  for (i = 0, j = 0, k = 0; i < nIndividuals; j+=N[i++], k+=nB)  // individuals start at 1, go to nIndividuals
     {					     // k indexes the entire bAllOut matrix
       try{
 	model.selectIndividual(i);	     // selectIndividual sets i as it is
 	fi.resize( N[i] );
 	Ri.resize( N[i] * N[i] );
 	ei.resize( N[i] );
-	simY[i].resize( N[i] );
+	//simY[i].resize( N[i] );
+        simYi.resize( N[i] );
 
 	// Simulate the data set for i-th individual, given b.
-	simulate( model, N[i], bAllOut[ slice( k, nB, 1 ) ], simY[i], seed );
-      }
+	simulate( model, N[i], bAllOut[ slice( k, nB, 1 ) ], simYi, seed );
+
+        // Place the data for i-th individual in the output array.
+        yOut[ slice( j, N[i], 1 ) ] = simYi; 
+     }
       catch( SpkException& e )
 	{
 	  char buf[ SpkError::maxMessageLen() ];
@@ -676,19 +666,6 @@ void simulate( SpkModel &model,
 	  sprintf( buf, "Failed to simulate measurements for the %d-th individual.\n", i );
 	  throw SpkError( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
 	} 
-    }
-  
-  //--------------------------------------------------------------------------
-  // Step #4:  *** Concatenate simY in yOut  *** 
-  //--------------------------------------------------------------------------
-  
-  for (i = 0, k = 0; i < nIndividuals; i++)    // loop through nIndividuals matrices
-    {
-      yOut[ slice( k, nB, 1 ) ] = simY[i];
-      for (j = 0; (double)j < N[i]; j++, k++)  // loop through # of measurements
-	{
-	  yOut[k] = simY[i][j];                // copies the values one by one
-	}
     }
   
   return;
@@ -747,7 +724,7 @@ void simulate( SpkModel &indModel,
   
     //---------------------------------------------------
     // REVISIT - Sachiko - 07/16/2004
-    // Bound the values of e.
+    // Bound the values of e?
     //---------------------------------------------------
     yOut = f + e;	            // simY = y = f + e
   }
@@ -764,7 +741,6 @@ void simulate( SpkModel &indModel,
       sprintf( buf, "Failed to simulate measurements.\n" );
       throw SpkError( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
     } 
-  
  
   return;
 }
