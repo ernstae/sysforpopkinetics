@@ -197,7 +197,6 @@ libspk_la_SOURCES = \
 	SpkWarning.h \
 	sqpAnyBox.h \
 	StatusList.h \
-	System.h \
 	subtract.h \
 	symmetrize.h \
 	System.h \
@@ -311,6 +310,7 @@ pkginclude_HEADERS = \
 	StatusList.h \
 	subtract.h \
 	symmetrize.h \
+	System.h \
 	transpose.h \
 	transposeDerivative.h \
 	transposeRowBlocks.h \
