@@ -608,6 +608,84 @@ $end
 
 /* 
 -------------------------------------------------------------
+   Get the save state at end of optimization flag
+-------------------------------------------------------------
+$begin getSaveStateAtEndOfOpt$$
+
+$spell
+  getSaveStateAtEndOfOpt bool Optimizer
+$$
+
+$section Get Save State at End of Optimization Flag$$
+
+$index Optimizer, state, getSaveStateAtEndOfOpt$$
+
+$table
+$bold Prototype$$ $cend
+$syntax/bool Optimizer::getSaveStateAtEndOfOpt() const/$$ $rend
+$tend
+
+$fend 20$$
+
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$pre
+$$
+$head Description$$
+$code getSaveStateAtEndOfOpt()$$ returns the value of $italic saveStateAtEndOfOpt$$
+either $code false$$ given at the construction time or the most recent 
+value altered via $code setSaveStateAtEndOfOpt()$$.
+
+
+$head Example$$
+See $xref/Optimizer/Example/Example/$$
+$end
+*/
+
+/* 
+-------------------------------------------------------------
+   Get the thrown exception if maxIter is exhausted flag
+-------------------------------------------------------------
+$begin getThrowExcepIfMaxIter$$
+
+$spell
+  getThrowExcepIfMaxIter bool Optimizer
+$$
+
+$section Get Throw Exception if Maximum Iterations Exhausted Flag$$
+
+$index Optimizer, maximum iterations, getThrowExcepIfMaxIter$$
+
+$table
+$bold Prototype$$ $cend
+$syntax/bool Optimizer::getThrowExcepIfMaxIter() const/$$ $rend
+$tend
+
+$fend 20$$
+
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$pre
+$$
+$head Description$$
+$code getThrowExcepIfMaxIter()$$ returns the value of $italic throwExcepIfMaxIter$$
+either $code true$$ given at the construction time or the most recent 
+value altered via $code setThrowExcepIfMaxIter()$$.
+
+
+$head Example$$
+See $xref/Optimizer/Example/Example/$$
+$end
+*/
+
+/* 
+-------------------------------------------------------------
    Get the sub-level optimization flag
 -------------------------------------------------------------
 $begin getIsSubLevelOpt$$
@@ -716,7 +794,7 @@ $$
 $pre
 $$
 $head Description$$
-$code getIsSubLevelOpt()$$ returns the value of $italic StateInfo$$ 
+$code getStateInfo()$$ returns the value of $italic StateInfo$$ 
 object that contains the information required for later warm start.
 The content of the $italic StateInfo$$ object is described in 
 $xref/OptimizerConstructor//Constructor/$$ section.
