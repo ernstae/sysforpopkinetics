@@ -1215,11 +1215,12 @@ Optimizer::Optimizer()
             nIterCompleted( 0 ), isTooManyIter( false ),
             isSubLevelOpt( false ), isWarmStart( false )
 {
-  stateInfo.n      = 0;
-    stateInfo.x      = 0;
-  stateInfo.state  = 0;
-  stateInfo.lambda = 0;
-  stateInfo.h      = 0;
+  stateInfo.n = 0;
+  stateInfo.r = 0;
+  stateInfo.f = 0;
+  stateInfo.x = 0;
+  stateInfo.g = 0;
+  stateInfo.h = 0;
 }
 
 // Constructor
@@ -1228,11 +1229,12 @@ Optimizer::Optimizer( double Epsilon, int NMaxIter, int Level )
             nIterCompleted( 0 ), isTooManyIter( false ), 
             isSubLevelOpt( false ), isWarmStart( false )
 {
-  stateInfo.n      = 0;
-  stateInfo.x      = 0;
-  stateInfo.state  = 0;
-  stateInfo.lambda = 0;
-  stateInfo.h      = 0;
+  stateInfo.n = 0;
+  stateInfo.r = 0;
+  stateInfo.f = 0;
+  stateInfo.x = 0;
+  stateInfo.g = 0;
+  stateInfo.h = 0;
 }
 
 // Copy constructor
@@ -1267,15 +1269,13 @@ Optimizer& Optimizer::operator=( const Optimizer& right )
 // Allocate memory for returning state information for warm start
 void Optimizer::setupWarmStart( int n )
 {
-    stateInfo.n = n;
-  if( stateInfo.x )      delete [] stateInfo.x;
-  if( stateInfo.state )  delete [] stateInfo.state;
-  if( stateInfo.lambda ) delete [] stateInfo.lambda;
-  if( stateInfo.h )    delete [] stateInfo.h;
-    stateInfo.x      = new double [ n ];
-  stateInfo.state  = new Integer[ n ];
-  stateInfo.lambda = new double [ n ];
-  stateInfo.h      = new double [ n * n ];
+  stateInfo.n = n;
+  if ( stateInfo.x ) delete [] stateinfo.x;;
+  if ( stateInfo.g ) delete [] stateinfo.g;;
+  if ( stateInfo.h ) delete [] stateinfo.h;;
+  stateInfo.x = new double[ n ];
+  stateInfo.g = new double[ n ];
+  stateInfo.h = new double[ n * n ];
   if( !stateInfo.x || !stateInfo.state || !stateInfo.lambda || !stateInfo.h )
   {
         char errmsg[] = "setUpWarmStart() failed to allocate memory.";
