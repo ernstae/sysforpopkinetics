@@ -79,21 +79,35 @@ use Candidate('make_directory', 'stage_directory');
             local
                 bin
                     spkprod
+                        (files)
                 include
                     spkprod
+                        (files)
                 lib
                     spkprod
+                        (files)
     cspkserver
         usr
             local
                 bin
                     spkprod
+                        (files)
                 include
                     spkprod
+                        (files)
                 lib
                     spkprod
+                        (files)
                 src
                     spkprod
+                        (files)
+    webserver
+        usr
+            local
+                tomcat
+                    prodssl
+                        webapps
+                            user.war
 
 =head1 FILES
 
@@ -129,6 +143,8 @@ my $candidate_dir = "$ops_root/candidate";
 my $candidate = "candidate";
 my $rotate_conf = "rotate.conf";
 my $dir_prefix = "spk-";
+
+my $scp_command = "/usr/bin/scp";
 
 my $logrotate_command = "/usr/sbin/logrotate";
 
@@ -188,6 +204,7 @@ my $new_dir = $dir_prefix . $date;
 &make_directory("$new_dir/aspkserver/usr/local/include/spktest");
 &make_directory("$new_dir/aspkserver/usr/local/lib/spktest");
 &make_directory("$new_dir/aspkserver/usr/local/src/spktest");
+&make_directory("$new_dir/webserver/usr/local/tomcat/instance/prodssl/webapps");
 
 chdir $new_dir;
 
@@ -199,4 +216,13 @@ chdir $new_dir;
 &stage_directory("cspkserver", "/usr/local/include");
 &stage_directory("cspkserver", "/usr/local/lib");
 &stage_directory("cspkserver", "/usr/local/src");
+
+my $srce = "webserver:/usr/local/tomcat/instance/testssl/webapps/user.war";
+my $dest =  "webserver/usr/local/tomcat/instance/prodssl/webapps/user.war";
+my @args = ($scp_command, "-r", $srce, $dest);
+system(@args);
+my $exit_status = $? >> 8;
+if ($exit_status != 0) {
+    die "'scp -r $srce $dest' failed\n";
+}
 

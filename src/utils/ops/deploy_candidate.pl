@@ -120,11 +120,25 @@ foreach my $s ("aspkserver", "cspkserver") {
 	}
     }
 }
+my $sdir =  "webserver/usr/local/tomcat/instance/prodssl/webapps";
+if ($test) {
+   $ddir = "$tmp_dir/webserver/usr/local/tomcat/instance/prodssl/webapps";
+   &make_directory($ddir);
+}
+else {
+   $ddir = "webserver:/usr/local/tomcat/instance/prodssl/webapps";
+}
+my @args = ($scp_command, "-r", "$sdir/user.war", "$ddir/user.war");
+system(@args);
+my $exit_status = $? >> 8;
+if ($exit_status != 0) {
+    die "'scp -r $sdir/user.war $ddir/user.war' failed\n";
+}
 
 exit 0 if (not $test);
 
-foreach my $d (glob "$tmp_dir/*/*") {
-    rename "$d/spkprod", "$d/spktest";
+foreach my $d ("bin", "lib", "include") {
+    rename "$tmp_dir/usr/local/$d/spkprod", "$tmp_dir/usr/local/$d/spktest";
 }
 
 foreach my $s ("aspkserver", "cspkserver") {
@@ -139,6 +153,15 @@ foreach my $s ("aspkserver", "cspkserver") {
 	}
     }
 }
+$sdir = "$tmp_dir/webserver/usr/local/tomcat/instance/prodssl/webapps";
+$ddir =  "webserver/usr/local/tomcat/instance/prodssl/webapps";
+my @args = ($scp_command, "-r", "$sdir/user.war", "$ddir/user.war");
+system(@args);
+my $exit_status = $? >> 8;
+if ($exit_status != 0) {
+    die "'scp -r $sdir/user.war $ddir/user.war' failed\n";
+}
+
 File::Path::rmtree($tmp_dir, 0, 0);
 
 exit 0;
