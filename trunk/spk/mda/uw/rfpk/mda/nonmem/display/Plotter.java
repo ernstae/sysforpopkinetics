@@ -1,9 +1,21 @@
-/*
- * Plotter.java
- *
- * Created on November 18, 2003, 10:11 AM
- */
+/**********************************************************************
+From:   Resource Facility for Population Kinetics                    
+        Department of Bioengineering Box 352255                      
+        University of Washington                                     
+        Seattle, WA 98195-2255                                       
 
+This file is part of the System for Population Kinetics (SPK), which
+was developed with support from NIH grants RR-12609 and P41-
+EB001975. Please cite these grants in any publication for which this
+software is used and send a notification to the address given above.
+
+SPK is Copyright (C) 1998-2003, by the University of Washington,
+Resource Facility for Population Kinetics, and is made available as
+free open source software under the terms of the University of
+Washington Free-Fork License as a public service.  A copy of the
+License can be found in the COPYING file in the root directory of this
+distribution.
+**********************************************************************/
 package uw.rfpk.mda.nonmem.display;
 
 import uw.rfpk.mda.nonmem.Utility;
@@ -38,6 +50,7 @@ public class Plotter extends JPanel
      * @param xLine the flag specifies if x = 0 line is required.
      * @param yLine the flag specifies if y = 0 line is required.
      * @param uLine the flag specifies if unit slope line is required.
+     * @param type format of presentation: "dots", "line" or "both".
      */
     public Plotter(double[][] dataX, double[][] dataY, String title, String titleX, String titleY, 
                    String type, boolean xLine, boolean yLine, boolean uLine) 

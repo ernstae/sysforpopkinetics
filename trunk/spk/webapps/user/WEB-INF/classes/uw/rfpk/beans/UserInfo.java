@@ -1,13 +1,30 @@
+/**********************************************************************
+From:   Resource Facility for Population Kinetics                    
+        Department of Bioengineering Box 352255                      
+        University of Washington                                     
+        Seattle, WA 98195-2255                                       
+
+This file is part of the System for Population Kinetics (SPK), which
+was developed with support from NIH grants RR-12609 and P41-
+EB001975. Please cite these grants in any publication for which this
+software is used and send a notification to the address given above.
+
+SPK is Copyright (C) 1998-2003, by the University of Washington,
+Resource Facility for Population Kinetics, and is made available as
+free open source software under the terms of the University of
+Washington Free-Fork License as a public service.  A copy of the
+License can be found in the COPYING file in the root directory of this
+distribution.
+**********************************************************************/
 package uw.rfpk.beans;
 
 /**
- * User bean contains user information
+ * User bean contains user information.
  * @author Jiaji Du
- * @version 1.0
  */
 public class UserInfo implements java.io.Serializable
 {
-    /** Constructor with no argument
+    /** Constructor with no argument.
      */     
     public UserInfo(){}
     
@@ -68,7 +85,7 @@ public class UserInfo implements java.io.Serializable
     }
         
     /** Sets email.
-     * @param state the email address as a character string.
+     * @param email the email address as a character string.
      */    
     public void setEmail(String email)
     {
@@ -76,7 +93,7 @@ public class UserInfo implements java.io.Serializable
     }
         
     /** Sets isTester.
-     * @param A String "1" if the user is a SPK tester, a String "0" otherwise.
+     * @param tester a String "1" if the user is a SPK tester, a String "0" otherwise.
      */    
     public void setTester(String tester)
     {
@@ -84,7 +101,7 @@ public class UserInfo implements java.io.Serializable
     }
         
     /** Sets developer.
-     * @param A String "1" if the user is a SPK developer, a String "0" otherwise.
+     * @param developer a String "1" if the user is a SPK developer, a String "0" otherwise.
      */    
     public void setDeveloper(String developer)
     {
@@ -92,7 +109,7 @@ public class UserInfo implements java.io.Serializable
     }
     
     /** Gets userId.
-     * @return The user ID as a character string.
+     * @return the user ID as a character string.
      */    
     public String getUserId()
     {
@@ -100,7 +117,7 @@ public class UserInfo implements java.io.Serializable
     }
        
     /** Gets userName.
-     * @return The user name as a character string.
+     * @return the user name as a character string.
      */    
     public String getUserName()
     {
@@ -108,7 +125,7 @@ public class UserInfo implements java.io.Serializable
     }
     
     /** Gets firstName.
-     * @return The first name as a character string.
+     * @return the first name as a character string.
      */    
     public String getFirstName()
     {
@@ -116,7 +133,7 @@ public class UserInfo implements java.io.Serializable
     }
 
     /** Gets lastName.
-     * @return The last name as a character string.
+     * @return the last name as a character string.
      */    
     public String getLastName()
     {
@@ -124,7 +141,7 @@ public class UserInfo implements java.io.Serializable
     }
     
     /** Gets company.
-     * @return The company name as a character string.
+     * @return the company name as a character string.
      */    
     public String getCompany()
     {
@@ -132,7 +149,7 @@ public class UserInfo implements java.io.Serializable
     }
 
     /** Gets country.
-     * @return The country name as a character string.
+     * @return the country name as a character string.
      */    
     public String getCountry()
     {
@@ -140,7 +157,7 @@ public class UserInfo implements java.io.Serializable
     }    
     
      /** Gets state.
-     * @return The state name as a character string.
+     * @return the state name as a character string.
      */    
     public String getState()
     {
@@ -148,7 +165,7 @@ public class UserInfo implements java.io.Serializable
     }   
     
     /** Gets email.
-     * @return The email address as a character string.
+     * @return the email address as a character string.
      */    
     public String getEmail()
     {
@@ -156,7 +173,7 @@ public class UserInfo implements java.io.Serializable
     }    
     
     /** Gets tester.
-     * @return A String "1" if the user is a SPK tester, a String "0" otherwise.
+     * @return a String "1" if the user is a SPK tester, a String "0" otherwise.
      */    
     public String getTester()
     {
@@ -164,7 +181,7 @@ public class UserInfo implements java.io.Serializable
     }
 
     /** Gets developer.
-     * @return A String "1" if the user is a SPK developer, a String "0" otherwise.
+     * @return a String "1" if the user is a SPK developer, a String "0" otherwise.
      */    
     public String getDeveloper()
     {

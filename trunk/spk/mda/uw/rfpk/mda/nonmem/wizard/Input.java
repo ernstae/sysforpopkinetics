@@ -1,9 +1,21 @@
-/*
- * Input.java
- *
- * Created on August 15, 2003, 1:17 PM
- */
+/**********************************************************************
+From:   Resource Facility for Population Kinetics                    
+        Department of Bioengineering Box 352255                      
+        University of Washington                                     
+        Seattle, WA 98195-2255                                       
 
+This file is part of the System for Population Kinetics (SPK), which
+was developed with support from NIH grants RR-12609 and P41-
+EB001975. Please cite these grants in any publication for which this
+software is used and send a notification to the address given above.
+
+SPK is Copyright (C) 1998-2003, by the University of Washington,
+Resource Facility for Population Kinetics, and is made available as
+free open source software under the terms of the University of
+Washington Free-Fork License as a public service.  A copy of the
+License can be found in the COPYING file in the root directory of this
+distribution.
+**********************************************************************/
 package uw.rfpk.mda.nonmem.wizard;
 
 import uw.rfpk.mda.nonmem.Utility;
@@ -19,7 +31,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 /**
- * This class defines a step to create the $INPUT record
+ * This class defines a step to create the $INPUT record.
  * @author  Jiaji Du 
  */
 public class Input extends javax.swing.JPanel implements WizardStep {
@@ -39,8 +51,8 @@ public class Input extends javax.swing.JPanel implements WizardStep {
                                 "ADDL", "II", "ABS", "LAG", "UPPER", "LOWER", "L1", 
                                 "L2", "CMT", "PCMT", "CALL", "CONT" };
 
-    /** Creates new form Input 
-     * @param iter A MDAIterator object to initialize the field iterator
+    /** Creates new form Input.
+     * @param iter a MDAIterator object to initialize the field iterator.
      */
     public Input(MDAIterator iter) { 
         initComponents();
@@ -442,7 +454,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         jTable1.repaint();
     }//GEN-LAST:event_addButtonActionPerformed
     
-        class ATableModel extends AbstractTableModel {
+        private class ATableModel extends AbstractTableModel {
         public String getColumnName(int c) {
              return "Column " + (c + 1);
         }
@@ -474,8 +486,17 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         }
     }
 
-    class CellRenderer extends DefaultTableCellRenderer 
+    private class CellRenderer extends DefaultTableCellRenderer 
     {
+        /**
+         * @param table
+         * @param value
+         * @param isSelected
+         * @param hasFocus
+         * @param row
+         * @param col
+         * @return
+         */        
         public Component getTableCellRendererComponent(JTable table,
             Object value,boolean isSelected, boolean hasFocus, int row,int col) 
         {
@@ -514,8 +535,8 @@ public class Input extends javax.swing.JPanel implements WizardStep {
     // End of variables declaration//GEN-END:variables
 
     /**
-     * This method is to return the StepDescriptor object
-     * @return A StepDescriptor object
+     * This method is to return the StepDescriptor object.
+     * @return a StepDescriptor object.
      */    
     public StepDescriptor getStepDescription(){
 	return sd;

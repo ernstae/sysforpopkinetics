@@ -1,9 +1,21 @@
-/*
- * ThetaShow.java
- *
- * Created on December 16, 2003, 12:49 PM
- */
+/**********************************************************************
+From:   Resource Facility for Population Kinetics                    
+        Department of Bioengineering Box 352255                      
+        University of Washington                                     
+        Seattle, WA 98195-2255                                       
 
+This file is part of the System for Population Kinetics (SPK), which
+was developed with support from NIH grants RR-12609 and P41-
+EB001975. Please cite these grants in any publication for which this
+software is used and send a notification to the address given above.
+
+SPK is Copyright (C) 1998-2003, by the University of Washington,
+Resource Facility for Population Kinetics, and is made available as
+free open source software under the terms of the University of
+Washington Free-Fork License as a public service.  A copy of the
+License can be found in the COPYING file in the root directory of this
+distribution.
+**********************************************************************/
 package uw.rfpk.mda.nonmem.display;
 
 import uw.rfpk.mda.nonmem.Utility; 
@@ -14,7 +26,7 @@ import java.awt.*;
 import javax.swing.JViewport;
 import javax.swing.SwingConstants;
 
-/** This class's instance display a matrix show on the screen
+/** This class's instance display a matrix show on the screen.
  *
  * @author  Jiaji Du
  */

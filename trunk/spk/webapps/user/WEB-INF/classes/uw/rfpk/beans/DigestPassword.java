@@ -1,3 +1,21 @@
+/**********************************************************************
+From:   Resource Facility for Population Kinetics                    
+        Department of Bioengineering Box 352255                      
+        University of Washington                                     
+        Seattle, WA 98195-2255                                       
+
+This file is part of the System for Population Kinetics (SPK), which
+was developed with support from NIH grants RR-12609 and P41-
+EB001975. Please cite these grants in any publication for which this
+software is used and send a notification to the address given above.
+
+SPK is Copyright (C) 1998-2003, by the University of Washington,
+Resource Facility for Population Kinetics, and is made available as
+free open source software under the terms of the University of
+Washington Free-Fork License as a public service.  A copy of the
+License can be found in the COPYING file in the root directory of this
+distribution.
+**********************************************************************/
 package uw.rfpk.beans;
 
 import java.security.MessageDigest;
@@ -6,11 +24,10 @@ import java.security.NoSuchAlgorithmException;
 /**
  * This bean digests password using MD5 algorithm.
  * @author Jiaji Du
- * @version 1.0
  */
 public class DigestPassword implements java.io.Serializable
 {
-    /** Constructor with no argument
+    /** Constructor with no argument.
      */
     public DigestPassword(){}
 
@@ -39,7 +56,7 @@ public class DigestPassword implements java.io.Serializable
     }
         
     /** Retrns the digested password.
-     * @return A character string as the fingerprint of the password.
+     * @return a character string as the fingerprint of the password.
      */
     public String getPassword()
     {

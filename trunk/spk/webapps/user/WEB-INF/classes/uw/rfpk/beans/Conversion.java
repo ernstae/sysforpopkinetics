@@ -1,3 +1,21 @@
+/**********************************************************************
+From:   Resource Facility for Population Kinetics                    
+        Department of Bioengineering Box 352255                      
+        University of Washington                                     
+        Seattle, WA 98195-2255                                       
+
+This file is part of the System for Population Kinetics (SPK), which
+was developed with support from NIH grants RR-12609 and P41-
+EB001975. Please cite these grants in any publication for which this
+software is used and send a notification to the address given above.
+
+SPK is Copyright (C) 1998-2003, by the University of Washington,
+Resource Facility for Population Kinetics, and is made available as
+free open source software under the terms of the University of
+Washington Free-Fork License as a public service.  A copy of the
+License can be found in the COPYING file in the root directory of this
+distribution.
+**********************************************************************/
 package uw.rfpk.beans;
 
 import java.sql.*;
@@ -8,18 +26,17 @@ import rfpk.spk.spkdb.*;
 /**
  * Converion of state code, end code, and time.
  * @author Jiaji Du
- * @version 1.0
  */
 public class Conversion implements java.io.Serializable
 {
-    /** Constructor with no argument
+    /** Constructor with no argument.
      */     
     public Conversion()
     {
     }
 
     /** Initialize the conversions for state code and end code.
-     * @param dbPass the name of the database.
+     * @param dbName the name of the database.
      * @param dbHost the name of the database host.
      * @param dbUser the username of the database.
      * @param dbPass the password of the database user.
@@ -53,7 +70,7 @@ public class Conversion implements java.io.Serializable
     }
     
     /** Sets time to formated time.
-     * @param time as a long number to second.
+     * @param time a long number to second.
      */    
     public void setTime(String time)
     {
@@ -81,7 +98,7 @@ public class Conversion implements java.io.Serializable
     }
     
     /** Gets formated time.
-     * @return The formated time.
+     * @return the formated time.
      */    
     public String getTime()
     {
@@ -89,7 +106,7 @@ public class Conversion implements java.io.Serializable
     }  
     
     /** Gets long state code.
-     * @return The long state code
+     * @return the long state code
      */    
     public String getState()
     {
@@ -97,7 +114,7 @@ public class Conversion implements java.io.Serializable
     }
     
     /** Gets long end code.
-     * @return The long end code.
+     * @return the long end code.
      */    
     public String getEnd()
     {

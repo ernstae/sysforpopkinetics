@@ -1,9 +1,21 @@
-/*
- * XMLReader.java
- *
- * Created on November 20, 2003, 3:17 PM
- */
+/**********************************************************************
+From:   Resource Facility for Population Kinetics                    
+        Department of Bioengineering Box 352255                      
+        University of Washington                                     
+        Seattle, WA 98195-2255                                       
 
+This file is part of the System for Population Kinetics (SPK), which
+was developed with support from NIH grants RR-12609 and P41-
+EB001975. Please cite these grants in any publication for which this
+software is used and send a notification to the address given above.
+
+SPK is Copyright (C) 1998-2003, by the University of Washington,
+Resource Facility for Population Kinetics, and is made available as
+free open source software under the terms of the University of
+Washington Free-Fork License as a public service.  A copy of the
+License can be found in the COPYING file in the root directory of this
+distribution.
+**********************************************************************/
 package uw.rfpk.mda.nonmem;
 
 import uw.rfpk.mda.nonmem.Utility;
@@ -30,8 +42,8 @@ import javax.swing.JOptionPane;
 public class XMLReader {
     
     /** Creates a new instance of XMLReader.
-     * @param text A Sting object containing two xml documents: spkreport and spksource.
-     * @param output An Output object to hold output information.
+     * @param text a Sting object containing two xml documents: spkreport and spksource.
+     * @param output an Output object to hold output information.
      */
     public XMLReader(String text, Output output) 
     {
@@ -833,8 +845,8 @@ public class XMLReader {
     }
    
     /** Convert the data XML back to the original.
-     * @param dataXML Data XML as a String object.
-     * @return A String object containing the original data, null if failed.
+     * @param dataXML data XML as a String object.
+     * @return a String object containing the original data, null if failed.
      */
     public static String parseDataXML(String dataXML)
     {
@@ -907,8 +919,8 @@ public class XMLReader {
     }
     
     /** Get model archive text from model XML document.  The first line is removed.
-     * @param model A String object containing the model XML document.
-     * @return A String object containing the model archive text.
+     * @param model a String object containing the model XML document.
+     * @return a String object containing the model archive text.
      */ 
     public static String getModelArchive(String model)
     {

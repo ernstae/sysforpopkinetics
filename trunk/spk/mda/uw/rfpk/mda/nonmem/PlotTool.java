@@ -1,9 +1,21 @@
-/*
- * SimpleFrame.java
- *
- * Created on November 12, 2003, 2:15 PM
- */
+/**********************************************************************
+From:   Resource Facility for Population Kinetics                    
+        Department of Bioengineering Box 352255                      
+        University of Washington                                     
+        Seattle, WA 98195-2255                                       
 
+This file is part of the System for Population Kinetics (SPK), which
+was developed with support from NIH grants RR-12609 and P41-
+EB001975. Please cite these grants in any publication for which this
+software is used and send a notification to the address given above.
+
+SPK is Copyright (C) 1998-2003, by the University of Washington,
+Resource Facility for Population Kinetics, and is made available as
+free open source software under the terms of the University of
+Washington Free-Fork License as a public service.  A copy of the
+License can be found in the COPYING file in the root directory of this
+distribution.
+**********************************************************************/
 package uw.rfpk.mda.nonmem;
 
 import uw.rfpk.mda.nonmem.Utility;
@@ -28,8 +40,8 @@ import javax.swing.text.BadLocationException;
 public class PlotTool extends JFrame {
     
     /** Creates new form PlotTool.
-     * @param text the data to be plotted as a text in columns.
-     * @param type the type of the plot, either dots, line or both.
+     * @param text a String containing the data to be plotted as a text in columns.
+     * @param type a String containing the type of the plot, either dots, line or both.
      */
     public PlotTool(String text, String type)
     {

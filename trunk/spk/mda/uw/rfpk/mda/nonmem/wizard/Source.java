@@ -1,67 +1,79 @@
-/*
- * Control.java
- *
- * Created on September 30, 2003, 11:42 AM
- */
+/**********************************************************************
+From:   Resource Facility for Population Kinetics                    
+        Department of Bioengineering Box 352255                      
+        University of Washington                                     
+        Seattle, WA 98195-2255                                       
 
+This file is part of the System for Population Kinetics (SPK), which
+was developed with support from NIH grants RR-12609 and P41-
+EB001975. Please cite these grants in any publication for which this
+software is used and send a notification to the address given above.
+
+SPK is Copyright (C) 1998-2003, by the University of Washington,
+Resource Facility for Population Kinetics, and is made available as
+free open source software under the terms of the University of
+Washington Free-Fork License as a public service.  A copy of the
+License can be found in the COPYING file in the root directory of this
+distribution.
+**********************************************************************/
 package uw.rfpk.mda.nonmem.wizard;
 
 /**
- * This class defines an object that contains input data
+ * This class defines an object that contains input data.
  * @author  Jiaji Du
  */
 public class Source {
     
-    /** Creates a new instance of Source */
+    /** Creates a new instance of Source. */
     public Source() {
     }
     
-    /** population or individual */
+    /** The analysis type: population or individual. */
     public String analysis = null;        
-    /** if estimation using simulated data */
+    /** The flag for estimation using simulated data .*/
     public boolean isUsingSimulatedData;
-    /** if continuing when maximum number of iterations is reached */
+    /** The flag for continuing when maximum number of iterations is reached. */
     public boolean isRestart;    
-    /** problem heading */
+    /** The problem heading. */
     public String problem = null;         
-    /** data file path and name */
+    /** The data file path and name. */
     public String data = null; 
-    /** data item names */
+    /** The data item names. */
     public String[] input = null;
-    /** ADVAN, TOL, TRANS */
+    /** The optionss for Subroutines: ADVAN, TOL, TRANS. */
     public String[] subroutines = null; 
-    /** (NCompartments, NEqCompartments, NParameters), (name, attr1, attr2, ...)s */
+    /** The options for Model: (NCompartments, NEqCompartments, NParameters), (name, attr1, attr2, ...)s. */
     public String[][] model = null;       
-    /** $AES program */
+    /** The $AES program. */
     public String aes = null; 
-    /** $AESINITIAL program */
+    /** The $AESINITIAL program. */
     public String aesinitial = null;      
-    /** $PRED program */
+    /** The $PRED program. */
     public String pred = null;            
-    /** $PK program */
+    /** The $PK program. */
     public String pk = null;
-    /** $ERROR program */
+    /** The $ERROR program. */
     public String error = null;
-    /** $DES program */
+    /** The $DES program. */
     public String des = null;
-    /** (Low, Ini, Up)s */
+    /** The Theta values: (Low, In, Up)s. */
     public String[][] theta = null;
-    /** (form, dim, elem1, elem2, ...)s */
+    /** The Omega values: (form, dim, elem1, elem2, ...)s. */
     public String[][] omega = null;
-    /** (form, dim, elem1, elem2, ...)s */
+    /** The Sigma values: (form, dim, elem1, elem2, ...)s. */
     public String[][] sigma = null; 
-    /** method, sigdigits, maxevals, print, noabort, ind_out, centering, interaction */
+    /** The options for Estimation: method, sigdigits, maxevals, print, noabort, ind_out, centering, interaction. */
     public String[] estimation = null; 
-    /** formulation */
+    /** The formulation for statistics. */
     public String covariance = null;
-    /** seed number, onlysimulation, subproblems */
+    /** The options for Simulation: seed number, onlysimulation, subproblems */
     public String[] simulation = null;
-    /** ((file, header), (list1), (appearance orders), (sorting orders))s */
+    /** The specification of Table for Estimation: ((file, header), (list1), (appearance orders), (sorting orders))s. */
     public String[][][] tableEst = null;
-    /** ((from, to, unit, X0, Y0), (list1), (list2), (list3))s */
+    /** The specification of Scatterplot for Estimation: ((from, to, unit, X0, Y0), (list1), (list2), (list3))s. */
     public String[][][] splotEst = null;  
-    /** ((file, header), (list1), (appearance orders), (sorting orders))s */
+    /** The specification of Table for Simulation: ((file, header), (list1), (appearance orders), (sorting orders))s. */
     public String[][][] tableSim = null; 
-    /** ((from, to, unit, Y0, X0), (list1), (list2), (list3))s */
+    /** The specification of Scatterplot for Simulation: ((from, to, unit, Y0, X0), (list1), (list2), (list3))s. */
     public String[][][] splotSim = null;
 }

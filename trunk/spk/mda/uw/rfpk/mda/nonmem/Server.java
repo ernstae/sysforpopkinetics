@@ -1,9 +1,21 @@
-/*
- * Server.java
- *
- * Created on February 11, 2004, 4:18 PM
- */
+/**********************************************************************
+From:   Resource Facility for Population Kinetics                    
+        Department of Bioengineering Box 352255                      
+        University of Washington                                     
+        Seattle, WA 98195-2255                                       
 
+This file is part of the System for Population Kinetics (SPK), which
+was developed with support from NIH grants RR-12609 and P41-
+EB001975. Please cite these grants in any publication for which this
+software is used and send a notification to the address given above.
+
+SPK is Copyright (C) 1998-2003, by the University of Washington,
+Resource Facility for Population Kinetics, and is made available as
+free open source software under the terms of the University of
+Washington Free-Fork License as a public service.  A copy of the
+License can be found in the COPYING file in the root directory of this
+distribution.
+**********************************************************************/
 package uw.rfpk.mda.nonmem;
 
 import java.io.*;
@@ -35,9 +47,11 @@ public class Server {
      * @param source Spk source XML document.
      * @param dataset Spk data XML document.
      * @param modelArchive Spk model archive text.
-     * @param jobAbstract Short description of the job.
-     * @param modelInfo Archive information of the model associated with the job.
-     * @param dataInfo Archive information of the dataset associated with the job.
+     * @param jobAbstract short description of the job.
+     * @param modelInfo archive information of the model associated with the job.
+     * @param dataInfo archive information of the dataset associated with the job.
+     * @param jobMethodCode a String containing job method code.
+     * @param jobParent a long representing the id of the parent job.
      */
     public void submitJob(String source, String dataset, String modelArchive, 
                           String jobAbstract, ArchiveInfo modelInfo, ArchiveInfo dataInfo,
@@ -94,10 +108,10 @@ public class Server {
     }        
 
     /** Get a sequence of jobs for a given user.
-     * @param maxNum Maximum number of jobs to provide status for.
-     * @param leftOff Least jobId previously returned (0 if first call in sequence).
-     * @param isLibrary A boolean specifying if it is a library call.
-     * @return A String[][] object that contains job id, start time(date format), 
+     * @param maxNum maximum number of jobs to provide status for.
+     * @param leftOff least jobId previously returned (0 if first call in sequence).
+     * @param isLibrary a boolean specifying if it is a library call.
+     * @return a String[][] object that contains job id, start time(date format), 
      *         state code(long format), end code(long format) and job abstract of the jobs.  
      *         The first index of the array is the job sequence in reversed order.  
      *         The second index designates the fields. 
@@ -133,9 +147,9 @@ public class Server {
     }
 
     /** Get job information including model name, model version dataset name dataset version. 
-     * @param jobId Id number of the job.
-     * @param isLibrary A boolean specifying if it is a library call.
-     * @return A Properties object containing the job information including 
+     * @param jobId id number of the job.
+     * @param isLibrary a boolean specifying if it is a library call.
+     * @return a Properties object containing the job information including 
      * model name, model version dataset name dataset version.  null if failed.
      */
     public Properties getJobInfo(long jobId, boolean isLibrary)
@@ -167,10 +181,10 @@ public class Server {
     }    
 
     /** Get either model archive or dataset archive for the job. 
-     * @param jobId Id number of the job.
-     * @param type Either "model" or "data" to specify the type.
-     * @param isLibrary A boolean specifying if it is a library call.
-     * @return A Properties object containing the archive text, name and version.
+     * @param jobId id number of the job.
+     * @param type either "model" or "data" to specify the type.
+     * @param isLibrary a boolean specifying if it is a library call.
+     * @return a Properties object containing the archive text, name and version.
      */
     public Properties getJobArchive(long jobId, String type, boolean isLibrary)
     {
@@ -202,9 +216,9 @@ public class Server {
     }
     
     /** Get SPK input data. 
-     * @param jobId Id number of the job.
-     * @param isLibrary A boolean specifying if it is a library call.
-     * @return A Properties object containing the SPK input data. 
+     * @param jobId id number of the job.
+     * @param isLibrary a boolean specifying if it is a library call.
+     * @return a Properties object containing the SPK input data. 
      *         null if failed.
      */
     public Properties getInput(long jobId, boolean isLibrary)
@@ -236,9 +250,9 @@ public class Server {
     }
         
     /** Get SPK output data. 
-     * @param jobId Id number of the job.
-     * @param isLibrary A boolean specifying if it is a library call.
-     * @return A Properties object containing the SPK output data. 
+     * @param jobId id number of the job.
+     * @param isLibrary a boolean specifying if it is a library call.
+     * @return a Properties object containing the SPK output data. 
      *         null if failed.
      */
     public Properties getOutput(long jobId, boolean isLibrary)
@@ -270,9 +284,9 @@ public class Server {
     }
 
     /** Get job history. 
-     * @param jobId Id number of the job.
-     * @param isLibrary A boolean specifying if it is a library call.
-     * @return A String[][] object containing the job history including event time, 
+     * @param jobId id number of the job.
+     * @param isLibrary a boolean specifying if it is a library call.
+     * @return a String[][] object containing the job history including event time, 
      * state code and host. 
      *         null if failed.
      */
@@ -305,10 +319,10 @@ public class Server {
     }    
     
     /** Get a sequence of models for a given user.
-     * @param maxNum Maximum number of models to provide status for.
-     * @param leftOff Least modelId previously returned (0 if first call in sequence).
-     * @param isLibrary A boolean specifying if it is a library call.
-     * @return A String[][] object that contains model id, model name,  
+     * @param maxNum maximum number of models to provide status for.
+     * @param leftOff least modelId previously returned (0 if first call in sequence).
+     * @param isLibrary a boolean specifying if it is a library call.
+     * @return a String[][] object that contains model id, model name,  
      *         last revision time(date format), and model abstract of the models.  
      *         The first index of the array is the model sequence in reversed order.  
      *         The second index designates the fields. 
@@ -344,10 +358,10 @@ public class Server {
     } 
 
     /** Get a sequence of datasets for a given user.
-     * @param maxNum Maximum number of datasets to provide status for.
-     * @param leftOff Least datasetId previously returned (0 if first call in sequence).
-     * @param isLibrary A boolean specifying if it is a library call.
-     * @return A String[][] object that contains dataset id, dataset name,  
+     * @param maxNum maximum number of datasets to provide status for.
+     * @param leftOff least datasetId previously returned (0 if first call in sequence).
+     * @param isLibrary a boolean specifying if it is a library call.
+     * @return a String[][] object that contains dataset id, dataset name,  
      *         last revision time(date format), and dataset abstract of the datasets.  
      *         The first index of the array is the dataset sequence in reversed order.  
      *         The second index designates the fields.  
@@ -383,10 +397,10 @@ public class Server {
     } 
     
     /** Get a sequence of versions for a given model or a given dataset.
-     * @param id The id number of the model or the dataset.
-     * @param type Specifying model or dataset.
-     * @param isLibrary A boolean specifying if it is a library call.
-     * @return A String[][] object that contains version number, author name,  
+     * @param id the id number of the model or the dataset.
+     * @param type a String specifying model or dataset.
+     * @param isLibrary a boolean specifying if it is a library call.
+     * @return a String[][] object that contains version number, author name,  
      *         revision time(date format) and log message of the versions.  
      *         The first index of the array is the version sequence in reversed order.  
      *         The second index designates the fields. 
@@ -422,8 +436,8 @@ public class Server {
     }
     
     /** Get archive and log of a given version.
-     * @param version Version number.
-     * @return A String object containing archive text of the version.
+     * @param version version number.
+     * @return a String object containing archive text of the version.
      *         null if failed.
      */
     public String getArchive(String version)    
@@ -454,9 +468,9 @@ public class Server {
     }
     
     /** Get archive and log of a given version.
-     * @param text1 A String object containing the first text to diff.
-     * @param text2 A String object containing the second text to diff.
-     * @return A String object containing the revision of the two texts in 
+     * @param text1 a String object containing the first text to diff.
+     * @param text2 a String object containing the second text to diff.
+     * @return a String object containing the revision of the two texts in 
      *         Unix format.  null if failed.
      */
     public String diffFiles(String text1, String text2)
