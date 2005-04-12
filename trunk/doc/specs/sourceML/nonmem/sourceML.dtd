@@ -366,18 +366,42 @@ If this element appears when the population analysis is chosen, a data set for n
       </html:ul>
    </html:li>
 </html:ul>
+
+The valid combinations of PREDPP library model and TRANS:
+<html:dl>
+   <html:dt>Advan1: One compartmental linear model</html:dt>
+      <html:dd>Trans1, Trans2</html:dd>
+   <html:dt>Advan2: One compartmental linear model with first order absorption</html:dt>
+      <html:dd>Trans1, Trans2</html:dd>
+   <html:dt>Advan3: Two compartmental linear model</html:dt>
+      <html:dd>Trans1, Trans3, Trans4, Trans5</html:dd>
+   <html:dt>Advan4: Two compartmental linear model with first order absorption</html:dt>
+      <html:dd>Trans1, Trans3, Trans4, Trans5</html:dd>
+   <html:dt>Advan5: General linear model</html:dt>
+      <html:dd>Trans1</html:dd>
+   <html:dt>Advan6: General nonlinear model</html:dt>
+      <html:dd>Trans1</html:dd>
+   <html:dt>Advan7: General linear model with real eigenvalues</html:dt>
+      <html:dd>Trans1</html:dd>
+   <html:dt>Advan8: General nonlinera model with stiff differential equations</html:dt>
+      <html:dd>Trans1</html:dd>
+   <html:dt>Advan9: General nonlinear model with equilibrium compartments</html:dt>
+      <html:dd>Trans1</html:dd>
+   <html:dt>Advan10: One compartmental model with Michaelis-Menten elimination</html:dt>
+      <html:dd>Trans1</html:dd>
+</html:dl>
 -->
 <!ELEMENT model ( description? | (pred | (pk | diffeqn | error) | (pk | comp_model | error ) ) ) >
 
-<!-- <model advan=""> ADVAN model chosen from { advan6 (General Nonlinear Defferential Equations) }.  If this attribute is omitted, <pred> must be defined.  The attribute setting will be ignored if <pred> is specified.  -->
+<!-- <model advan=""> PREDPP library model.  Currently supported models are { advan6 }.  If this attribute is omitted, <pred> must be defined.  The attribute setting will be ignored if <pred> is specified.  -->
 <!ATTLIST model advan (advan1|advan2|advan3|advan4|advan5|advan6
                      |advan7|advan8|advan9|advan10|advan11|advan12) #IMPLIED>
 
-<!-- <model trans="trans1"> Parameterization for the ADVAN model chosen from {trans1, trans2, trans3, trans4, trans5, trans6}, default to "trans1".  If no ADVAN model is used, this setting is ignored.
+<!-- <model trans="trans1"> Parameterization for the selected ADVAN model.  Choose from {trans1, trans2, trans3, trans4, trans5, trans6}, default to "trans1".  If no ADVAN model is used, this setting is ignored.
 -->
 <!ATTLIST model trans (trans1|trans2|trans3|trans4|trans5|trans6) #IMPLIED>
 
-<!-- <model tolerance=""> Required number of digits of accuracy used when an ADVAN model is used.
+<!-- <model tolerance=""> Number of digits of accuracy, used when an ADVAN model is selected.
 -->
 <!ATTLIST model tolerance CDATA #IMPLIED>
 
