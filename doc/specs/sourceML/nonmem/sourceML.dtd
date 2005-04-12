@@ -367,10 +367,9 @@ If this element appears when the population analysis is chosen, a data set for n
    </html:li>
 </html:ul>
 -->
-<!ELEMENT model ( description? | (pred | (comp_model? | pk | error | diffeqn?) ) ) >
+<!ELEMENT model ( description? | (pred | (pk | diffeqn | error) | (pk | comp_model | error ) ) ) >
 
-<!-- <model advan=""> ADVAN model chosen from {advan1, advan2, advan3, advan4, advan5, advan6, advan7, advan8, advan9, advan10, advan11, advan12}.  If this attribute is omitted, <pred> must be defined.  If, on the other hand, this attribute is set to a valid value yet <pred> is defined, this setting is ignored.
--->
+<!-- <model advan=""> ADVAN model chosen from { advan6 (General Nonlinear Defferential Equations) }.  If this attribute is omitted, <pred> must be defined.  The attribute setting will be ignored if <pred> is specified.  -->
 <!ATTLIST model advan (advan1|advan2|advan3|advan4|advan5|advan6
                      |advan7|advan8|advan9|advan10|advan11|advan12) #IMPLIED>
 
@@ -382,7 +381,7 @@ If this element appears when the population analysis is chosen, a data set for n
 -->
 <!ATTLIST model tolerance CDATA #IMPLIED>
 
-<!-- <pred> Equivalent of $PRED block that serves as the total of PK, ERROR and SUBROUTINES records. 
+<!-- <pred> Equivalent of $PRED block that serves as the aggregate of PK, ERROR and SUBROUTINES records. 
 -->
 <!ELEMENT pred (#PCDATA)>
 
