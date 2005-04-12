@@ -12,7 +12,7 @@ nonmem_html:
 	rm -rf nonmem/html
 	mkdir nonmem/html
 	javac -classpath ../tools/dtddoc/java/dtdparser119.jar:../tools/dtddoc/java/jakarta-oro-2.0.6.jar ../tools/dtddoc/java/DTDDoc.java
-	java -classpath ../tools/dtddoc/java/dtdparser119.jar:../tools/dtddoc/java/jakarta-oro-2.0.6.jar:.:../tools/dtddoc/java DTDDoc $T.dtd nonmem/html 
+	java -classpath ../tools/dtddoc/java/dtdparser119.jar:../tools/dtddoc/java/jakarta-oro-2.0.6.jar:.:../tools/dtddoc/java DTDDoc nonmem/$T.dtd nonmem/html 
 
 html:	$T.html
 
