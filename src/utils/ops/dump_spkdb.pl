@@ -21,7 +21,7 @@ use Getopt::Long;
 
 =head1 SYNOPSIS
 
-    dump_spkdb.pl [ --[no]prefix ][ --[no]userdata ]
+    dump_spkdb.pl [ --[no]prefix ][ --[no]userdata ][--spktest]
 
 =head1 DESCRIPTION
 
@@ -55,6 +55,7 @@ use Getopt::Long;
 
     --noprefix          - do not prefix the output file names with database, date and time
     --nouserdata        - do not output a userdata file
+    --spktest           - dump spktest database instead of spkdb
 
 =head2 DEPENDENCIES
 

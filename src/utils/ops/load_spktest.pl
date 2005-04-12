@@ -2,6 +2,7 @@
 
 use strict;
 use Getopt::Long;
+use DBI;
 
 =head1 NAME
 
@@ -10,9 +11,10 @@ use Getopt::Long;
 =head1 SYNOPSIS
 
     load_spktest.pl [--schema name1] [--basedata name2] [--userdata name3] \
-                    [ --database name4] \
-                    [--host name5] \
-                    [ --user name6[ [--password --name7]
+                    [ --modscript name4 \
+                    [ --database name5] \
+                    [--host name6] \
+                    [ --user name7[ [--password --name8]
 
 =head1 ABSTRACT 
 
@@ -32,11 +34,24 @@ use Getopt::Long;
 
 =head2 DEFAULT FILE NAME
 
-    The following default filenames are used:
+    The following default files are used:
 
     schema:   schema.sql
     basedata: basedata.sql
     userdata: userdata.sql
+
+    In each of the three cases, either a file of that name must exist
+    in the current directory, or the pathname of an existing file must
+    be given in the optional corresponding command-line argument.
+
+    In addition, the following file is used 
+
+  modscript:  modscript.sql
+
+    but only if it exists in the current directory or if the pathname of
+    an existing file is given in the optional "modscript" command-line
+    argument.  If neither the default modscript exists, nor a modscript
+    is specified on the command-line, no modscript will be used.
 
 =head2 OPTIONAL FILE NAMES
 
@@ -73,12 +88,19 @@ use Getopt::Long;
 =cut
 
 my $usage = 
-    "usage: $0 --schema name1 --basedata name2 --userdata name3 --host name4 --database name5\n"
-    . "\t--user name6 --password name7\n"
+    "usage: $0 [--schema name1] [--basedata name2] [--userdata name3]\n"
+    . "\t[--modscript name4]\n"
+    . "\t[--host name5 --database name6]\n"
+    . "\t[--user name7 --password name8]\n"
     . "where the optional arguments override the folowing defaults:\n"
     . "\tschema.sql\n"
     . "\tbasedata.sql\n"
-    . "\tuserdata.sql\n";
+    . "\tuserdata.sql\n"
+    . "\tmodscript.sql\n"
+    . "\tlocalhost\n"
+    . "\tspktest\n"
+    . "\ttester\n"
+    . "\ttester\n";
 
 my $tmp_name = "/tmp/junk$$";
 my $mysqldump = "/usr/bin/mysqldump";
@@ -86,21 +108,27 @@ my $dbuser = "tester";
 my $dbpass = "tester";
 my $dbname = "spktest";
 my $dbhost = "localhost";
+my $dbd    = "mysql";
 
 my %file = ();
 %file = (
-	   schema   => 'schema.sql',
-	   basedata => 'basedata.sql',
-	   userdata => 'userdata.sql',
+	 schema    => 'schema.sql',
+	 basedata  => 'basedata.sql',
+	 userdata  => 'userdata.sql',
+	 modscript => 'modscript.sql',
 	  );
 my %opt = ();
-GetOptions (\%opt, 'schema=s', 'basedata=s', 'userdata=s', 'host=s', 'database=s', 'user=s', 'password=s');
+GetOptions (\%opt, 'schema=s', 'basedata=s', 'userdata=s', 'modscript=s', 
+	    'host=s', 'database=s', 'user=s', 'password=s');
 
 for my $f (keys %file) {
     if (defined $opt{$f}) {
 	print "For '$f', using '$opt{$f}', which you supplied as an argument\n";
 	$file{$f} = $opt{$f};
     } 
+    elsif ($f =~ /modscript/ && ! -f $file{$f}) {
+	next;
+    }
     else {
 	print "For '$f', using './$file{$f}', which is the default\n";
     }
@@ -111,28 +139,37 @@ $dbhost = $opt{'host'}     if (defined $opt{'host'});
 $dbuser = $opt{'user'}     if (defined $opt{'user'});
 $dbpass = $opt{'password'} if (defined $opt{'password'});
 
+my $dbh = DBI->connect("dbi:$dbd:$dbname:$dbhost", $dbuser, $dbpass)
+    or die("Could not connect to database $dbname\n");
+
+my $sql = "show tables;";
+my $sth = $dbh->prepare($sql)
+    or die("prepare($sql) failes\n");
+$sth->execute()
+    or die("could not execute ($sql)\n");
+
 print "Building database '$dbname', on host $dbhost, with user '$dbuser'\n";
 
+
+#  create a drop statement for each table in the database
+
+my @row;
 open FD, ">$tmp_name"
     or die "Can't open $tmp_name\n";
 print FD "use $dbname;\n";
-print FD "drop table class;\n";
-print FD "drop table dataset;\n";
-print FD "drop table end;\n";
-print FD "drop table history;\n";
-print FD "drop table job;\n";
-print FD "drop table method;\n";
-print FD "drop table model;\n";
-print FD "drop table state;\n";
-print FD "drop table user;\n";
+while (@row = $sth->fetchrow_array) {
+    print FD "drop table $row[0];\n";
+}
 close FD;
+$dbh->disconnect;
 
 system "cat $tmp_name                 | mysql --force -h$dbhost -p$dbpass -u$dbuser > /dev/null 2>&1";
 system "echo 'use $dbname;' > $tmp_name";
 system "cat $tmp_name $file{schema}   | mysql --force -h$dbhost -p$dbpass -u$dbuser";
 system "cat $tmp_name $file{basedata} | mysql --force -h$dbhost -p$dbpass -u$dbuser";
 system "cat $tmp_name $file{userdata} | mysql --force -h$dbhost -p$dbpass -u$dbuser";
-
+system "cat $tmp_name $file{modscript}| mysql --force -h$dbhost -p$dbpass -u$dbuser"
+    if (defined $file{modscript} && -f $file{modscript});
 system "rm $tmp_name";
 
 
