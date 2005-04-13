@@ -215,6 +215,7 @@ if( actual != expected ) \\\n \
   //============================================
   // Make requests for statistics.
   //============================================
+  const char* ind_covform       = "rsr";
   const bool ind_stderr         = true;
   const bool ind_coefficient    = true;
   const bool ind_confidence     = true;
@@ -545,14 +546,6 @@ void ind_fixedParaTest::createSourceML()
     }
   oSource << "</in>" << endl;
   oSource << "</omega>" << endl;
-
-  oSource << "<ind_stat ";
-  oSource << "is_stderror_out=\""           << (ind_stderr?         "yes":"no") << "\" ";
-  oSource << "is_covariance_out=\""         << (ind_covariance?     "yes":"no") << "\" ";
-  oSource << "is_inverse_covariance_out=\"" << (ind_inv_covariance? "yes":"no") << "\" ";
-  oSource << "is_confidence_out=\""         << (ind_confidence?     "yes":"no") << "\" ";
-  oSource << "is_coefficient_out=\""        << (ind_coefficient?    "yes":"no") << "\" ";
-  oSource << "is_correlation_out=\""        << (ind_correlation?    "yes":"no") << "\"/>" << endl;
 
   if( isSimulate )
     {
