@@ -300,6 +300,7 @@ if( actual != expected ) \\\n \
   //============================================
   // Make requests for statistics.
   //============================================
+  const char* ind_covform       = "rsr";
   const bool ind_stderr         = true;
   const bool ind_coefficient    = true;
   const bool ind_confidence     = true;
@@ -722,6 +723,7 @@ void ind_withoutIDTest::createSourceML()
   oSource << "</omega>" << endl;
 
   oSource << "<ind_stat ";
+  oSource << "covariance_form=\""           << ind_covform << "\" ";
   oSource << "is_stderror_out=\""           << (ind_stderr?         "yes":"no") << "\" ";
   oSource << "is_covariance_out=\""         << (ind_covariance?     "yes":"no") << "\" ";
   oSource << "is_inverse_covariance_out=\"" << (ind_inv_covariance? "yes":"no") << "\" ";
