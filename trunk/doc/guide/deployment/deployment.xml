@@ -216,17 +216,39 @@
 	</listitem>
 	<listitem>
 	  <para>
-	    In a terminal window:
+	    Prepare for the regression test by logging into 
+	    <emphasis>aspkserver</emphasis> as root.
 	    <screen>
 ssh aspkserver
 su -
+	    </screen>
+	  </para>
+	  <para>
+	    <emphasis>If the changes to your software require structural 
+	    changes to the database</emphasis>, you must have a database modification
+	    script present in the current directory. You will
+	    have already used this script for unit testing and system testing.
+	    An
+	    <ulink url="../../howto/rhel3/mysql/mysql.html#example">
+	      example
+	    </ulink>,
+	    in the "MySQL and SPK" howto document, shows how to create such a 
+	    script.
+	  </para>
+	  <para>
+	    Run the regression test.
+	    <screen>
 regression_test
 	    </screen>
 	  </para>
 	</listitem>
 	<listitem>
 	  <para>
-	    If the regression test runs successfully, skip to step 8.
+	    If the regression test runs successfully, 
+	    <link linkend="after-regress">
+	      skip 
+	    </link>
+	    to the "After the regresssion test" step.
 	  </para>
 	</listitem>
 	<listitem>
@@ -261,9 +283,35 @@ recalibrate_regression.pl --config-file="name-of-file"
 	    should be staged.</emphasis>
 	  </para>
 	</listitem>
+	<listitem id="after-regress">
+	  <para>
+	    <command>After the regression test</command>,
+	    <emphasis>
+	      if the modifications being tested do not involve any structural
+	      modification of the database
+	    </emphasis>,
+	    <link linkend="deploy">
+	      skip
+	    </link>
+	    to the "Deploy" step.
+	  </para>
+	</listitem>
 	<listitem>
 	  <para>
-	    Deploy the software to the production environment by running
+	    Stop the web server,
+	    so that changes to the software and changes to 
+	    the database can be synchronized.
+	    <screen>
+ssh webserver
+su -
+/etc/rc.d/init.d/tomprod    stop
+/etc/rc.d/init.d/tomprodssl stop
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem id="deploy">
+	  <para>
+	    <command>Deploy</command> the software to the production environment by running
 	    <screen>
 deploy_candidate.pl
 	    </screen>
@@ -271,7 +319,56 @@ deploy_candidate.pl
 	</listitem>
 	<listitem>
 	  <para>
-	    Publish the release notes:
+	    If your changes did not require any modification of the database,
+	    <link linkend="publish">
+	      skip
+	    </link>
+	     to the "Publish" step.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Run your modification script against the <emphasis>production</emphasis>
+	    database.  Use <command>mysql</command> to verify the changes.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    If this deployment also requires the deployment of a modified
+	    web server application, do that at this time.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Restart the webserver.
+	    <screen>
+ssh webserver
+su -
+/etc/rc.d/init.d/tomprod    start
+/etc/rc.d/init.d/tomprodssl start
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    After production has started, but before any additional
+	    testing can occur, <emphasis>take_snapshot.pl</emphasis>
+	    may have to be modified, especially if the database 
+	    modifications added to the <emphasis>job</emphasis> table
+	    either a blob field or any field normally NULL at the time
+	    a job is submitted.  
+	    <emphasis>Do this before releasing the test environment.</emphasis>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Release the test environment by informing other software developers
+	    that the environment is now free.
+	  </para>
+	</listitem>
+	<listitem id="publish">
+	  <para>
+	    <command>Publish</command> the release notes:
 	    <screen>
 release_notes
 	    </screen>
@@ -285,11 +382,6 @@ release_notes
 	    web page, by editing the file <filename>index.html</filename>
 	    in the cvs directory <filename>dvl/r2/web</filename>, then 
 	    executing <command>make</command> in that directory.
-	  </para>
-	</listitem>
-	<listitem>
-	  <para>
-	    Inform other users of the test environment that it is now free.
 	  </para>
 	</listitem>
       </orderedlist>

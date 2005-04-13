@@ -52,8 +52,8 @@
       <title>Installing the Database Software</title>
       <para>
 	The preferred way to install software in an RHEL system is with 
-	packages assembled for installation using the <command>rpm</command>
-	command (Redhat Package Manager).  Files for <command>rpm</command>,
+	packages assembled for installation using the <emphasis>rpm</emphasis>
+	command (Redhat Package Manager).  Files for <emphasis>rpm</emphasis>,
 	which can be identified by the <filename>.rpm</filename> filename
 	suffix, are available for MySQL at the 
 	<ulink url="http://www.mysql.com/">MySQL</ulink> web site.  The needed
@@ -74,7 +74,7 @@ rm -rf mysql-db.tar mysql-db
 	</screen>
       </para>
       <para>
-	After the set of command listed above have been executed, MySQL
+	After the set of commands listed above have been executed, MySQL
 	should be installed on your machine and the MySQL server should
 	be running.  Furthermore, the server will start automatically
 	each time that you boot your machine.
@@ -191,7 +191,7 @@ rm -rf java java.tar
       </para>
       <para>
 	Before you can use java, you will need to set up the 
-	<command>JAVA_HOME</command> environment variable.  
+	<emphasis>JAVA_HOME</emphasis> environment variable.  
 	Add the following lines to your <filename>~/.bash_profile</filename>
 	file:
 	<screen>
@@ -206,7 +206,7 @@ export JAVA_HOME
       <para>
 	Finally, log out of the desk top and log back in again.  This will 
 	insure that all processes descendent from your desktop will have 
-	<command>JAVA_HOME</command> set properly.
+	<emphasis>JAVA_HOME</emphasis> set properly.
       </para>
     </sect2>
     <sect2>
@@ -233,12 +233,66 @@ rm -rf mysql-java.tar mysql-java
     </sect2>
   </sect1>
   <sect1>
+    <title>Backing Up the Spk Database</title>
+    <para>
+      Currently, a symbolic backup of the database is stored each night in the directory
+      <filename>dbserver:/usr/local/spk/db_backup</filename>.  The following
+      script,
+      <screen>
+#!/bin/sh
+ 
+# Remove any files in the current directory that have a filename suffix
+# of .sql and are more than eight days old.
+#
+# Make a backup copy of the spkdb database in the current directory.
+ 
+DB_BACKUP=/usr/local/spk/db_backup
+ 
+cd $DB_BACKUP
+find . -name '*.sql' -ctime +8 -exec rm -f {} \;
+ 
+/usr/local/bin/dump_spkdb.pl
+ 
+exit 0    
+      </screen>
+      which also resides in 
+      <filename>dbserver:/usr/local/spk/db_backup</filename>, is run nightly by the
+      <emphasis>cron.daily</emphasis> process.
+    </para>
+    <para>
+      The configuration of <emphasis>cron.daily</emphasis> needed to make this 
+      happen consists of a symbolic link in the 
+      <filename>/etc/cron.daily</filename> directory.  If this link should
+      need to be replaced, the following commands executed on 
+      <emphasis>dbserver</emphasis> would accomplish it:
+      <screen>
+su -
+cd /etc/cron.daily
+ln -s /usr/local/spk/db_backup/spkdb_backup.sh spkdb_backup.sh
+      </screen>
+    </para>
+    <para>
+      A week's worth of backups is retained online in the directory.
+      Once a week, the entire <emphasis>dbserver</emphasis>
+      is backed up to tape.
+    </para>
+    <para>
+      <emphasis>
+      This backup solution is adequate at the current time.  When the
+      database gets larger and there is much more usage, another 
+      solution will need to be implemented, because the symbolic 
+      backup is not guaranteed to provide a consistent snapshot of 
+      transactions in progress while the backup is running.  
+      </emphasis>
+    </para>
+  </sect1>
+  <sect1>
     <title>Installing the Spk Database Source</title>
     <para>
       The source for the Spk database API and administrative
       scripts is located in
       <filename>r2/src/apps/spk/db</filename> in the 
-      <command>cvs</command> tree. You can copy the
+      <emphasis>cvs</emphasis> tree. You can copy the
       <filename>db</filename> subtree to another location,
       if you want to.
     </para>
@@ -295,6 +349,218 @@ make test
       <para>
 	The commands listed above will compile the rfpk.spk.spkdb package, 
 	generate html documentation (using javadoc) and run the test suite.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1 id="example">
+    <title>Modify the Definition of the Database</title>
+    <para>
+      From time to time, the definition of the database (the schema of the database)
+      must be modified in order to support new features of the Spk application.
+      The process of making these changes must be an integral part of the processes
+      for 
+      <ulink url="../../../guide/system_test/system_test.html">
+	system test
+      </ulink>
+      and 
+      <ulink url="../../../guide/deployment/deployment.html">
+	deployment
+      </ulink>.
+    </para>
+    <sect2 id="modscript">
+      <title>Example Modification Script</title>
+      <para>
+	You could change the database schema by using
+	<emphasis>mysql</emphasis> interactively.  The problem with that approach
+	is that you might have to repeat the interaction several times, which
+	could be error prone.  It is better to place the SQL/DDL statements that
+	you would have used interactively in a file, and then use that file as
+	input to <emphasis>mysql</emphasis> in batch mode.
+      </para>
+      <para>
+	For example, let us suppose that you need to make the following changes:
+	<itemizedlist>
+	  <listitem>
+	    <para>
+	      Add an <emphasis>mda_code</emphasis> field to the 
+	      <emphasis>job</emphasis> table.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Create a new table, <emphasis>mda</emphasis>, with fields
+	      <emphasis>mda_code</emphasis> and <emphasis>mda_name</emphasis>.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Set the <emphasis>mda</emphasis> field of all existing jobs
+	      to 'nonmem';
+	    </para>
+	  </listitem>
+	</itemizedlist>
+      </para>
+      <para>
+	The following DDL would accomplish what you need:
+	<screen>
+ALTER TABLE job ADD mda_code varchar(6);
+CREATE TABLE mda (
+  mda_code char(6) NOT NULL default '',
+  mda_name char(20) default NULL,
+  PRIMARY KEY  (mda_code)
+) TYPE=MyISAM;
+INSERT INTO mda (mda_code, mda_name) VALUES ('nonmem','NONMEM Style MDA');
+INSERT INTO mda (mda_code, mda_name) VALUES ('saam2' ,'SAAM II Style MDA');
+UPDATE job SET mda_code='nonmem';
+	</screen>
+      </para>
+      <para>
+	Using a text editor as an ordinary user on <emphasis>dbserver</emphasis>,
+	place the above lines in a file.  You can use
+	any name for the file, but for this example, let us call it
+	<filename>modscript.sql</filename>, which is the default name used
+	by <emphasis>load_spktest.pl</emphasis>.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Using the Modification Script</title>
+      <para>
+	This section continues the above example, showing how the modification
+	script would be used.
+	<orderedlist>
+	  <listitem>
+	    <para>
+	      Get exclusive use of the test environment through negotiation
+	      with the other software engineers.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Take a snapshot of the production database to use to initialize
+	      a test database, using <emphasis>take_snapshot.pl</emphasis> for
+	      this purpose.  The snapshot will consist of three files, called
+	      <filename>basedata.sql</filename>, <filename>schema.sql</filename>
+	      and <filename>userdata.sql</filename>, created by 
+	      <emphasis>take_snapshot.pl</emphasis> in the current directory.
+	      Have <emphasis>take_snapshot.pl</emphasis> place several jobs in
+	      the snapshot: 10, 20, 30 (and parent and child jobs) for 
+	      example.
+	      <screen>
+take_snapshot.pl 10, 20, 30
+	      </screen>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Create a test database, <emphasis>spktest</emphasis>, using 
+	      <emphasis>load_spktest.pl</emphasis> for this purpose.  As input,
+	      <emphasis>load_spktest.pl</emphasis> will use your
+	      <filename>modscript.sql</filename> and well as the three files
+	      that were created by <emphasis>take_snapshot.pl</emphasis>.
+	      <screen>
+load_spktest.pl
+	      </screen>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Use <emphasis>mysql</emphasis> interactively to examine
+	      the <emphasis>spktest</emphasis> database that you have
+	      just created.  You should find that the
+	      <emphasis>mda_code</emphasis> field has been added to
+	      the <emphasis>job</emphasis> table, that all existing
+	      jobs have <emphasis>nonmem</emphasis> as the value of
+	      that field, and that the <emphasis>mda</emphasis> table
+	      has been created and populated.  Also, verify that the
+	      definitions of the new fields in the <emphasis>job</emphasis>
+	      and <emphasis>mda</emphasis> tables are what you expect.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      When you are convinced that your database modification script is
+	      working correctly, go on to test the software modifications
+	      which the database modifications were designed to support.
+	      You can use your test database to do unit testing,
+	      and then go on to perform full
+	      <ulink url="../../../guide/system_test/system_test.html">
+		system testing
+	      </ulink>
+	      as usual.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      After successful system testing and staging of a deployment
+	      candidate, <emphasis>do not</emphasis> release the test environment.
+	      You <emphasis>must</emphasis> perform a deployment before 
+	      system testing of any additional deployment candidates can occur.
+	    </para>
+	    <para>
+	      The 
+	      <ulink url="../../../guide/deployment/deployment.html">
+		deployment
+	      </ulink>
+	      procedure, as described in the 
+	      <emphasis>SPK System Deployment Guide</emphasis>, covers both the case
+	      where the database is changed structurally and that where it is not.
+	      The differences between the two cases are as follows: 
+	      <orderedlist>
+		<listitem>
+		  <para>
+		    If the database is being modified, a modification script
+		    similar to that in the above
+		    <link linkend="modscript">
+		      example
+		    </link>
+		    must be present on <emphasis>aspkserver</emphasis> in the 
+		    directory in which <emphasis>regression_test</emphasis>
+		    is run.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    The production web server must be stopped before 
+		    <emphasis>deploy_candidate.pl</emphasis> is run, so that 
+		    changes to the software and the database can be synchronized.
+		    It is best to schedule this interruption of service and to
+		    announce the time of the shutdown to the user community.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    After <emphasis>deploy_candidate.pl</emphasis> is run, the
+		    modification script must be run against the production 
+		    database.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    If the modification requires the deployment of a modified
+		    web server application, that should occur at this time.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    After the production database has been modified and 
+		    the changes verified, the production web server can be restarted,
+		    in order to restart production.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    After production has started, but before any additional
+		    testing can occur, <emphasis>take_snapshot.pl</emphasis>
+		    may have to be modified, especially if the database 
+		    modifications added to the <emphasis>job</emphasis> table
+		    either a blob field or any field normally NULL at the time
+		    a job is submitted.
+		  </para>
+		</listitem>
+	      </orderedlist>
+	    </para>
+	  </listitem>
+	</orderedlist>
       </para>
     </sect2>
   </sect1>

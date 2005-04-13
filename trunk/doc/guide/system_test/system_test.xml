@@ -107,10 +107,10 @@
 	<listitem>
 	  <para>
 	    The production database, <emphasis>spkdb</emphasis>.  The utility program
-	    <emphasis>take_snapshot.pl</emphasis> can be used to copy a set of 
+	    <command>take_snapshot.pl</command> can be used to copy a set of 
 	    previously run jobs 
 	    from <emphasis>spkdb</emphasis>, creating files that can be used by
-	    another utility, <emphasis>load_spktest.pl</emphasis> to initialize
+	    another utility, <command>load_spktest.pl</command> to initialize
 	    the test database,
 	    <emphasis>spktest</emphasis>, with the selected set of jobs along with
 	    all related jobs and data.  This is most useful for testing
@@ -129,7 +129,7 @@
     <para>
       Sometimes a test set must be run many times, as the software is debugged.  
       Eventually, all jobs in the set should run as expected.  At that point, the tester
-      runs a utility called <emphasis>stage_candidate.pl</emphasis>, which saves
+      runs a utility called <command>stage_candidate.pl</command>, which saves
       all the software in the test environment for subsequent deployment to the
       production environment.
     </para>
@@ -198,7 +198,7 @@
 	    that your modifications might "break" some existing features,
 	    you can use the regression testing infrastructure to prepare 
 	    a small automated test to include as part of your system test.
-	    See the manual pages for <emphasis>regression_test.pl</emphasis>
+	    See the manual pages for <command>regression_test.pl</command>
 	    for details.
 	  </para>
 	</listitem>
@@ -260,7 +260,8 @@ deploy_candidate.pl --test
 	</listitem>
 	<listitem>
 	  <para>
-	    Create a test set.  Let's assume that you want copies of jobs
+	    Take a test snapshot of the production database.
+	    Let's assume that you want copies of jobs
 	    with job_id numbers 256, 23, 45, 1834 from the production database.
 	  </para>
 	  <para>
@@ -268,14 +269,41 @@ deploy_candidate.pl --test
 	    <screen>
 ssh dbserver
 take_snapshot.pl 256 23 45 1834
-load_spktest.pl
 	    </screen>
 	    If you do not want any jobs that have previously run, use 
 	    <command>take_snapshot.pl</command>
 	    without providing any arguments. No jobs will be copied 
-	    from <emphasis>spkdb</emphasis>, but a valid
+	    from <emphasis>spkdb</emphasis>, but the files to build a valid
 	    <emphasis>spktest</emphasis>, containing no jobs, will be
 	    created.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    If your changes require the modification of the structure of the
+	    database, you will need a database modification script.  An
+	    <ulink url="../../howto/rhel3/mysql/mysql.html#example">
+	      example
+	    </ulink>
+	    of a modification script can be found in the 
+	    <emphasis>MySQL and SPK</emphasis> howto document.
+	    Place the script, which should
+	    be named <filename>modscript.sql</filename> in the current directory
+	    on <emphasis>dbserver</emphasis>, along with the 
+	    <filename>basedata.sql</filename>, <filename>schema.sql</filename>
+	    and <filename>userdata.sql</filename> files that were just created
+	    by <command>take_snapshot.pl</command>.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Create a test database from the <filename>.sql</filename> files
+	    that were created by <command>take_snapshot.pl</command> and,
+	    only if you are modifying the structure of the database,
+	    a <filename>modscript.sql</filename> file.
+	    <screen>
+load_spktest.pl
+	    </screen>
 	  </para>
 	  <para>
 	    You now have a test database.  If you need to add additional jobs
@@ -351,11 +379,11 @@ dump_spktest.pl
 	    <screen>
 ps -efl | grep spk
 	    </screen>
-	    should show you that <emphasis>spktest/spkcmpd.pl</emphasis> is running.
+	    should show you that <command>spktest/spkcmpd.pl</command> is running.
 	  </para>
 	  <para>
 	    On <emphasis>cspkserver</emphasis>, the same command should show that
-	    <emphasis>spktest/spkrund.pl</emphasis> is running.
+	    <command>spktest/spkrund.pl</command> is running.
 	  </para>
 	  <para>
 	    In the system log, the daemons record many important events, including their own starting and
@@ -532,8 +560,8 @@ load_spktest.pl
 stage_candidate.pl
 		  </screen>
 		  You may want to write down the name of the release-notes
-		  file created by stage_candidate.pl, because you will need
-		  to edit it.
+		  file created by <command>stage_candidate.pl</command>,
+		  because you will need to edit it.
 		</para>
 	      </listitem>
 	      <listitem>
@@ -545,7 +573,7 @@ stage_candidate.pl
 	      <listitem>
 		<para>
 		  Edit the release-notes file created by the execution of 
-		  stage_candidate.pl
+		  <command>stage_candidate.pl</command>
 		</para>
 	      </listitem>
 	      <listitem>

@@ -333,6 +333,7 @@ CREATE TABLE job (
   model_id int(10) unsigned NOT NULL default '0',
   model_version varchar(10) NOT NULL default '',
   xml_source longblob,
+  checkpoint longblob,
   state_code varchar(4) NOT NULL default '',
   report longblob,
   start_time int(10) unsigned NOT NULL default '0',
@@ -748,6 +749,16 @@ INSERT INTO state (state_code, state_name) VALUES ('end','End');
 		  created. This file is input to the Aspk Compiler,
 		  which translates it into the cpp_source field,
 		  for use by the Cspk.
+		</entry>
+	      </row>
+	      <row>
+		<entry>checkpoint</entry>
+		<entry>longblob</entry>
+		<entry>
+		  An XML file containing checkpoint information 
+		  that was written to a file by the job after its
+		  last iteration.  The runtime daemon copies the
+		  file to the database.
 		</entry>
 	      </row>
 	      <row>

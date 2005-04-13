@@ -1658,7 +1658,7 @@
 	    <glossterm>Synopsis</glossterm>
 	    <glossdef>
 	      <para>
-		r = end_job handle job_id end_code report
+		r = end_job handle job_id end_code report checkpoint
 	      </para>
 	    </glossdef>
 	  </glossentry>
@@ -1782,6 +1782,14 @@
 		    XML containing the final report, whether the results of
 		    successful computation, partial results after an incomplete
 		    run, or description of an error condition.
+		  </entry>
+		</row>
+		<row>
+		  <entry>checkpoint</entry>
+		  <entry>string</entry>
+		  <entry>
+		    XML containing the checkpoint file, in case the job completed
+		    without errors.  Otherwise, the string should be null.
 		  </entry>
 		</row>
 	      </tbody>
