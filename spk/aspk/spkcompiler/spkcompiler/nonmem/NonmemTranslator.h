@@ -24,7 +24,8 @@ class NonmemTranslator : public ClientTranslator
 {
  public:
 
-  enum MODEL_SPEC { PRED };
+  enum MODEL_SPEC { PRED, DIFFEQN };
+
 //==============================================================
 // REVISIT SACHIKO
 // Remove MONTE from the following enumulator
@@ -47,6 +48,11 @@ class NonmemTranslator : public ClientTranslator
     std::string ID;
     std::string F;
     std::string Y;
+
+    std::string T;
+    std::string P;
+    std::string A;
+    std::string DADT;
   };
 
   /**
@@ -152,11 +158,27 @@ class NonmemTranslator : public ClientTranslator
   void parseIndAnalysis ( xercesc::DOMElement* pIndAnalysis );
 
   //
-  // Analyzie the <pred> subtree.
+  // Analyzie the PRED specification.
   //
   // @param pPred A pointer to the <pred> node.
   //
   void parsePred( xercesc::DOMElement* pPred );
+
+  //
+  // Analyzie the differential equation specification.
+  // Following NONMEM convension, modules are parsed in the order of:
+  //   1. PK,
+  //   2. DES (DiffEqn)
+  //   3. ERROR
+  //
+  // @param pDiffEqn A pointer to the <diffeqn> node.
+  // @param pPk      A pointer to the <pk> node.
+  // @param pError   A pointer to the <error> node.
+  //
+  void parseDiffEqn( unsigned int advan,
+		     xercesc::DOMElement* pPk, 
+		     xercesc::DOMElement* pDiffEqn, 
+		     xercesc::DOMElement* pError );
 
   //
   // Analyze the <monte_carlo> subtree.
@@ -184,6 +206,12 @@ class NonmemTranslator : public ClientTranslator
   void generatePred( const char* predDefFilename ) const;
 
   //
+  // Generate C++ soruce code for ODEPred class.
+  //
+  void generateODEPred( const char* fPkEqn_cpp, 
+	                const char* fDiffEqn_cpp, 
+			const char* fErrorEqn_cpp ) const;
+  //
   // Generate C++ source code for NonmemPars namespace.
   //
   void generateNonmemParsNamespace() const;
@@ -202,6 +230,11 @@ class NonmemTranslator : public ClientTranslator
   // Generate C++ source code for the driver for individual analysis.
   //
   void generateIndDriver( ) const;
+
+  //
+  // Count the number of occurences of the text on the LHS of equations.
+  //
+  int countStrInLhs( const char * str,  const char * para );
 
   //
   // Generate a Makefile that builds an executable called, driver, 
@@ -228,6 +261,33 @@ class NonmemTranslator : public ClientTranslator
   
   // The header file for the Pred template class.
   const char * fPred_h;
+
+  // The name of file that contains fortran (ie. NONMEM TRAN) version of
+  // the user defined $DES.
+  const char * fDiffEqn_fortran;
+
+  // The name of file that contains C++ version of the user defined $DES 
+  // (equations only) model.
+  const char * fDiffEqn_cpp;
+  
+  // The header file for the ODEPred template class.
+  const char * fODEPred_h;
+
+  // The name of file that contains fortran (ie. NONMEM TRAN) version of
+  // the user defined $PK.
+  const char * fPkEqn_fortran;
+
+  // The name of file that contains C++ version of the user defined $PK 
+  // (equations only) model.
+  const char * fPkEqn_cpp;
+
+  // The name of file that contains fortran (ie. NONMEM TRAN) version of
+  // the user defined $ERROR.
+  const char * fErrorEqn_fortran;
+
+  // The name of file that contains C++ version of the user defined $DES 
+  // (equations only) model.
+  const char * fErrorEqn_cpp;
 
   // The NonmemPars namespace definition.
   const char * fNonmemPars_h;
@@ -292,7 +352,11 @@ class NonmemTranslator : public ClientTranslator
   XMLCh* X_IND_ANALYSIS;        static const char* C_IND_ANALYSIS;
   XMLCh* X_CONSTRAINT;          static const char* C_CONSTRAINT;
   XMLCh* X_MODEL;               static const char* C_MODEL;
+  XMLCh* X_ADVAN;               static const char* C_ADVAN;
   XMLCh* X_PRED;                static const char* C_PRED;
+  XMLCh* X_DIFFEQN;             static const char* C_DIFFEQN;
+  XMLCh* X_PK;                  static const char* C_PK;
+  XMLCh* X_ERROR;               static const char* C_ERROR;
   XMLCh* X_MONTE_CARLO;         static const char* C_MONTE_CARLO;
   XMLCh* X_PRESENTATION;        static const char* C_PRESENTATION;
   XMLCh* X_TABLE;               static const char* C_TABLE;
@@ -342,6 +406,7 @@ class NonmemTranslator : public ClientTranslator
   //  enum TARGET       myTarget;  
   enum MODEL_SPEC   myModelSpec;
   enum INTEG_METHOD myIntegMethod;
+  unsigned int      myAdvan;
 
   char             *myDescription;
   bool              myIsEstimate;
