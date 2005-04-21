@@ -8,6 +8,12 @@
  <articleinfo>
     <revhistory>
       <revision>
+         <revnumber>1.9</revnumber>
+         <date>Apr 13, 2005</date>
+         <authorinitials>honda</authorinitials>
+         <revremark>Added a nonmem compatable source.xml as an example.</revremark>
+      </revision>
+      <revision>
          <revnumber>1.8</revnumber>
          <date>Aug 24, 2004</date>
          <authorinitials>honda</authorinitials>
@@ -70,14 +76,21 @@ Each version of the XML has a unique set of grammer and syntax that is designed 
     <title>
        <ulink url="nonmem/html/elt-spksource.html">NONMEM (ie. NM-TRAN)</ulink>
     </title>
-    <para>
-<!--
-       <ulink url="nonmem/sourceML_nonmem.xml">
-         <citetitle>Example: CONTROL4 + THEO</citetitle>
-       </ulink> 
-(view it as "source" if your browser tries to be cleaver but not)
--->
-    </para>
+    <itemizedlist>
+       <title>
+Example: Population parameter estimation + stat analysis.  Linear model, Laplace method, 100 subjects.
+       </title>
+       <listitem>
+          <para>
+             <ulink url="nonmem/source.xml">source.xml</ulink>
+          </para>
+       </listitem>
+       <listitem>
+          <para>
+             <ulink url="nonmem/data.xml">data.xml</ulink>
+          </para>
+       </listitem>
+    </itemizedlist>
   </sect1>
   <sect1>
     <title>SAAM-II</title>

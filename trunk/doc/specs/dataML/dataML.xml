@@ -6,8 +6,15 @@
 ]>
 <article><title>XML Representation of Data Set</title>
  <articleinfo>
-
     <revhistory>
+      <revision>
+	<revnumber>1.5</revnumber>
+	<date>April 5, 2005</date>
+	<authorinitials>sh</authorinitials>
+	<revremark>
+        Added &lt;weight&gt;.
+        </revremark>
+      </revision>
       <revision>
 	<revnumber>1.4</revnumber>
 	<date>September 7, 2004</date>
@@ -57,11 +64,18 @@ even though the actual syntax may not match any of them.
 &lt;!ELEMENT spkdata (table)*>
 &lt;!ATTLIST spkdata version CDATA #REQUIRED>
 
-&lt;!ELEMENT table (description? | row*)>
+&lt;!ELEMENT table (description? | weight? | row*)>
 &lt;!ATTLIST table columns CDATA #REQUIRED>
 &lt;!ATTLIST table rows CDATA #REQUIRED>
 
 &lt;!ELEMENT description (#PCDATA)>
+
+&lt;!ELEMENT weight (#PCDATA)>
+&lt;!ATTLIST weight base (sd|fsd|pois|gen) #REQUIRED>
+&lt;!ATTLIST weight absolute (yes | no) #REQUIRED>
+&lt;!ATTLIST weight x CDATA #REQUIRED>
+&lt;!ATTLIST weight y CDATA #IMPLIED>
+&lt;!ATTLIST weight z CDATA #IMPLIED>
 
 &lt;!ELEMENT row (value)*>
 &lt;!ATTLIST row position CDATA #REQUIRED>
@@ -114,6 +128,87 @@ even though the actual syntax may not match any of them.
       </listitem>
    </varlistentry>
    <varlistentry>
+      <term><varname>weight</varname></term>
+      <listitem>
+         <para>A type of standard deviation used to calculate weights
+         on each datum.  Select one of the four types as  the <emphasis>base</emphasis> attribute value.
+         </para>
+         <variablelist>
+            <title>base = { <varname>sd</varname> | <varname>fsd</varname> | <varname>pois</varname> | <varname>gen</varname> }</title>
+            <varlistentry>
+               <term><varname>sd</varname></term>
+               <listitem>
+                  <para>Assign a known standard deviation, x, to each datum.</para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term><varname>fsd</varname></term>
+               <listitem>
+                  <para>Assign a known fractional standard deviation, x, to each datum.
+                  SD = x * | data <literal>ij</literal> |
+                  </para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term><varname>pois</varname></term>
+               <listitem>
+                  <para>
+                  Assign Poisson statistics.  SD = sqrt( x * | data <literal>ij</literal> | )
+                  </para>
+               </listitem>
+            </varlistentry>
+            <varlistentry>
+               <term><varname>gen</varname></term>
+               <listitem>
+                  <para>
+                  Assign a customized standard deviation using the formula:
+                  SD = sqrt( x + y * | data <literal>ij</literal> | ^z )
+                  </para>
+               </listitem>
+            </varlistentry>
+         </variablelist>
+         <variablelist>
+            <varlistentry>
+               <term>x, y, z</term>
+               <listitem>
+                  <para>  
+                  Set x attribute to the value used to calculate SD, FSD and POIS.
+                  Set all x, y and z to the values for GEN.
+                  </para>
+               </listitem>
+            </varlistentry>
+         </variablelist>
+         <variablelist>
+            <title>absolute = { <varname>yes</varname> | <varname>no</varname> }</title>
+            <varlistentry>
+               <term><varname>yes</varname></term>
+               <listitem>
+                 <para>
+The weights are assigned absolutely.  They are assumed to be known, 
+and are equal to the reciprocal of the variance 
+of each datum.  If "sd<literal>i</literal>" is the standard deviation of the i-th datum,
+then the weight associated with the datum is 1/sd<literal>i</literal>^2. --- SAAM II User Guide
+                  </para>
+               </listitem>
+            </varlistentry>
+         </variablelist>
+         <variablelist>
+            <varlistentry>
+               <term><varname>no</varname></term>
+               <listitem>
+                  <para>
+The weights are assigned relatively.  They are assumed to be known up to an unknown proportionality constant
+that is estimated from the data.  In this case, if sd<literal>i</literal> is the standard deviation 
+of the i-th  datum in the j-th block of data, the weight associated with the
+datum is v<literal>j</literal>/sd<literal>i</literal>^2.  The proportionality constant v<literal>j</literal>
+is estimated for each block of data.  --- SAAM II User Guide
+                  </para>
+               </listitem>
+            </varlistentry>
+         </variablelist>
+      </listitem>
+   </varlistentry>
+   <varlistentry>
       <term><varname>row</varname></term>
       <listitem>
          <para>A row in the table.</para>
@@ -138,9 +233,9 @@ even though the actual syntax may not match any of them.
          </para>
          <variablelist>
             <varlistentry>
-               <term>type</term>
+               <term>type = { <varname>string</varname> | <varname>numeric</varname> }</term>
                <listitem>
-                  <para>The data type of the value: "string" or "numeric", default to "numeric".</para>
+                  <para>The data type of the value.</para>
                </listitem>
             </varlistentry>
             <varlistentry>

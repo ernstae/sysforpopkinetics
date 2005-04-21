@@ -393,11 +393,10 @@ The valid combinations of PREDPP library model and TRANS:
 -->
 <!ELEMENT model ( description? | (pred | (pk | diffeqn | error) | (pk | comp_model | error ) ) ) >
 
-<!-- <model advan=""> PREDPP library model.  Currently supported models are { advan6 }.  If this attribute is omitted, <pred> must be defined.  The attribute setting will be ignored if <pred> is specified.  -->
-<!ATTLIST model advan (advan1|advan2|advan3|advan4|advan5|advan6
-                     |advan7|advan8|advan9|advan10|advan11|advan12) #IMPLIED>
+<!-- <model advan=""> The number that corresponds to PREDPP library model from ADVAN1 - ADVAN10.  Currently supported models are { 6 }.  If this attribute is omitted, <pred> must be defined.  The attribute setting will be ignored if <pred> is specified.  -->
+<!ATTLIST model advan ( 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 ) #IMPLIED>
 
-<!-- <model trans="trans1"> Parameterization for the selected ADVAN model.  Choose from {trans1, trans2, trans3, trans4, trans5, trans6}, default to "trans1".  If no ADVAN model is used, this setting is ignored.
+<!-- <model trans="1"> The number that corresponds to parameterization for the selected ADVAN model.  Choose from {1,2,3,4,5}, default to "1".  If no ADVAN model is used, this setting is ignored.
 -->
 <!ATTLIST model trans (trans1|trans2|trans3|trans4|trans5|trans6) #IMPLIED>
 
@@ -488,8 +487,32 @@ The order in which the <compartment>s appear is interpreted as the compartment n
 
 <!-- <diffeqn> System of differential equations, equivalent to $DES record in NONMEM. Required with ADVAN6, 8, 9. 
 
-The same requirements and rules imposed on $DES are applied to this element.
+<html:p>
+A differential equation must be specified for each compartment.  The DE for the first compartment is denoted as DADT(1), second as DADT(2), ... and n'th as DADT(n), where n is the number of compartments.
+</html:p>
+<html:p>
+On the right hand side of assignment statements, the following variables can be used.  Pay attention to items with <html:font color='red'>Attention!</html:font>.  These specificatons are different from NONMEM:
+</html:p>
+<html:ul>
+   <html:li>A(1), A(2), ..., A(n):
+   Current compartment amounts (may be random variables)</html:li>
 
+   <html:li>P(1), P(2), ..., P(n):
+   Explicit basic PK parameters (may be random variables)</html:li>
+  
+   <html:li>PK-defined items that appear as left-hand quantities in <pk>: Implicit basic PK parameters (may be random variables)</html:li>
+
+   <html:li>T: Time; may be random variable.  T takes values continuously over an integration interval.</html:li>
+
+   <html:li>DES-defined items that appeared earlier as left-hand quantities in <diffeqn></html:li>
+
+   <html:li>Data item labels specified in <label> (<html:font color='red'>Attention!</html:font> This is different from NONMEM)</html:li>
+ 
+</html:ul>
+Variables that were predefined in NONMEM but have no special meaning in SPK are:
+<html:ul>
+   <html:li>COMACT, NETEXT, ETEXT, COM(n), COMACT, COMSAV, MIXNUM, MIXEST</html:li>
+</html:ul>
 NOTE: This element contains a set of equations written in the NONMEM abbriviated code, which is a subset of FORTRAN 77.  Cases are ignored; that is, "tIMe" and "TiMe" are treated as the same.  
 -->
 <!ELEMENT diffeqn (#PCDATA)>
