@@ -16,9 +16,9 @@ Washington Free-Fork License as a public service.  A copy of the
 License can be found in the COPYING file in the root directory of this
 distribution.
 **********************************************************************/
-package uw.rfpk.mda.nonmem;
+package uw.rfpk.mda.saamii;
 
-import uw.rfpk.mda.nonmem.display.Output;
+import uw.rfpk.mda.saamii.Output;
 import javax.swing.JButton;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
@@ -27,8 +27,7 @@ import java.util.StringTokenizer;
 import java.io.*;
 import javax.jnlp.*;
 import java.net.URL;
-import org.apache.xerces.parsers.DOMParser;
-import org.apache.xerces.dom.DocumentImpl;
+import javax.xml.parsers.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Attr;
@@ -263,9 +262,17 @@ public class Utility {
         try
         {
             // Parse the XML documents
-            DOMParser parser = new DOMParser(); 
-            parser.parse(new InputSource(new ByteArrayInputStream(dataXML.getBytes()))); 
-            docData = parser.getDocument();            
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            docData = builder.parse(new InputSource(new ByteArrayInputStream(dataXML.getBytes())));
+//            DOMParser parser = new DOMParser(); 
+//            parser.parse(new InputSource(new ByteArrayInputStream(dataXML.getBytes()))); 
+//            docData = parser.getDocument();            
+        }
+        catch(ParserConfigurationException e)
+        {
+            JOptionPane.showMessageDialog(null, e, "ParserConfigurationException", JOptionPane.ERROR_MESSAGE);
+            return -1;
         }
         catch(SAXException e)
         {
@@ -368,7 +375,17 @@ public class Utility {
                 firstLineTokens[i] = lineToken.nextToken();
                 if(firstLineTokens[i].equals("."))
                     firstLineTokens[i] = "0.0";
-                Double.valueOf(firstLineTokens[i]);
+                try
+                {
+                    Double.valueOf(firstLineTokens[i]);
+                }
+                catch(NumberFormatException e)
+                {
+                    JOptionPane.showMessageDialog(null, "A number format error was found in the data file." +
+                                                  "\nColumn " + (i + 1) + ".",   
+                                                  "Number Format Error", JOptionPane.ERROR_MESSAGE);
+                    return -1;
+                }
             }
             
             String firstToken = null;
@@ -406,7 +423,17 @@ public class Utility {
                         tokens[i] = lineToken.nextToken();
                         if(tokens[i].equals("."))
                             tokens[i] = "0.0";
-                        Double.valueOf(tokens[i]);
+                        try
+                        {
+                            Double.valueOf(tokens[i]);
+                        }
+                        catch(NumberFormatException e)
+                        {
+                            JOptionPane.showMessageDialog(null, "A number format error was found in the data file." +
+                                                          "\nColumn " + (i + 1) + ".",   
+                                                          "Number Format Error", JOptionPane.ERROR_MESSAGE);
+                            return -1;
+                        }                        
                     }
 
                     if(isInd)
@@ -448,13 +475,6 @@ public class Utility {
                                           "File Error",    
                                           JOptionPane.ERROR_MESSAGE);
         }
-        catch(NumberFormatException e)
-        {
-            JOptionPane.showMessageDialog(null, "A number format error was found in the data file.",   
-                                          "Number Format Error",    
-                                          JOptionPane.ERROR_MESSAGE);
-            return -1;
-        }
 
         return nTokens;
     }    
@@ -482,6 +502,8 @@ public class Utility {
      */    
     public static String formatXML(String text)
     {
+        if(String.valueOf(text.charAt(text.indexOf(">") + 1)).equals("<"))
+            text = text.replaceFirst("><", ">\n<");
         StringBuffer buffer = new StringBuffer();
         int length = text.length();
         char pre = 'p';

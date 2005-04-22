@@ -16,12 +16,11 @@ Washington Free-Fork License as a public service.  A copy of the
 License can be found in the COPYING file in the root directory of this
 distribution.
 **********************************************************************/
-package uw.rfpk.mda.nonmem;
+package uw.rfpk.mda.saamii;
 
-import uw.rfpk.mda.nonmem.Utility;
-import uw.rfpk.mda.nonmem.display.Output;
-import org.apache.xerces.parsers.DOMParser;
-import org.apache.xerces.dom.DocumentImpl;
+import uw.rfpk.mda.saamii.Utility;
+import uw.rfpk.mda.saamii.Output;
+import javax.xml.parsers.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Attr;
@@ -53,21 +52,37 @@ public class XMLReader
         this.output = output;
         
         // Get the XML documents as String objects
-        int index1 = text.indexOf("<spkreport");
-        int index2 = text.indexOf("<spksource");        
-        String job = text.substring(0, index1 - 22);
-        String report = text.substring(index1 - 22, index2 - 22);
-        String source = text.substring(index2 - 22);  
+        int indexReport = text.lastIndexOf("<?xml ", text.indexOf("<spkreport"));
+        int indexSource = text.lastIndexOf("<?xml ", text.indexOf("<spksource"));
+        String job = text.substring(0, indexReport);
+        String report = text.substring(indexReport, indexSource);
+        String source = text.substring(indexSource);
+//        int index1 = text.indexOf("<spkreport");
+//        int index2 = text.indexOf("<spksource");
+//        String job = text.substring(0, index1 - 22);
+//        String report = text.substring(index1 - 22, index2 - 22);
+//        String source = text.substring(index2 - 22);  
         try
         {
             // Parse the XML documents
-            DOMParser parser = new DOMParser(); 
-            parser.parse(new InputSource(new ByteArrayInputStream(job.getBytes()))); 
-            docJob = parser.getDocument();            
-            parser.parse(new InputSource(new ByteArrayInputStream(report.getBytes()))); 
-            docReport = parser.getDocument(); 
-            parser.parse(new InputSource(new ByteArrayInputStream(source.getBytes()))); 
-            docSource = parser.getDocument();     
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            docJob = builder.parse(new InputSource(new ByteArrayInputStream(job.getBytes())));
+            docReport = builder.parse(new InputSource(new ByteArrayInputStream(report.getBytes())));
+            docSource = builder.parse(new InputSource(new ByteArrayInputStream(source.getBytes())));
+//            DOMParser parser = new DOMParser(); 
+//            parser.parse(new InputSource(new ByteArrayInputStream(job.getBytes()))); 
+//            docJob = parser.getDocument();            
+//            parser.parse(new InputSource(new ByteArrayInputStream(report.getBytes()))); 
+//            docReport = parser.getDocument(); 
+//            parser.parse(new InputSource(new ByteArrayInputStream(source.getBytes()))); 
+//            docSource = parser.getDocument();     
+        }
+        catch(ParserConfigurationException e)
+        {
+            JOptionPane.showMessageDialog(null, e, "ParserConfigurationException", JOptionPane.ERROR_MESSAGE);
+            output.ok = false;
+            return;
         }
         catch(SAXException e)
         {
@@ -952,6 +967,7 @@ public class XMLReader
         if(nRows > 0)
         {
             // Get all output data
+            output.indIDs = new String[nRows]; 
             output.dataAll = new double[nRows][nColumns]; 
             for(int i = 0; i < nRows; i++)
             {
@@ -959,6 +975,7 @@ public class XMLReader
                 NodeList valueList = dataRow.getElementsByTagName("value");
                 if(valueList.getLength() != nColumns)
                     return;
+                output.indIDs[i] = valueList.item(0).getFirstChild().getNodeValue();
                 for(int j = 0; j < nColumns; j++)
                     output.dataAll[i][j] = Double.parseDouble(valueList.item(j).getFirstChild().getNodeValue());
             }
@@ -977,9 +994,17 @@ public class XMLReader
         try
         {
             // Parse the XML documents
-            DOMParser parser = new DOMParser(); 
-            parser.parse(new InputSource(new ByteArrayInputStream(dataXML.getBytes()))); 
-            docData = parser.getDocument();            
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            docData = builder.parse(new InputSource(new ByteArrayInputStream(dataXML.getBytes())));
+//            DOMParser parser = new DOMParser(); 
+//            parser.parse(new InputSource(new ByteArrayInputStream(dataXML.getBytes()))); 
+//            docData = parser.getDocument();            
+        }
+        catch(ParserConfigurationException e)
+        {
+            JOptionPane.showMessageDialog(null, e, "ParserConfigurationException", JOptionPane.ERROR_MESSAGE);
+            return null;
         }
         catch(SAXException e)
         {
@@ -1049,13 +1074,22 @@ public class XMLReader
         try
         {
             // Parse spkmodel XML document
-            DOMParser parser = new DOMParser();                
-            parser.parse(new InputSource(new ByteArrayInputStream(model.getBytes())));                  
-            Document docModel = parser.getDocument();              
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document docModel = builder.parse(new InputSource(new ByteArrayInputStream(model.getBytes())));
+//            DOMParser parser = new DOMParser();                
+//            parser.parse(new InputSource(new ByteArrayInputStream(model.getBytes())));                  
+//            Document docModel = parser.getDocument();              
             Element spkmodel = docModel.getDocumentElement();
             modelArchive = spkmodel.getFirstChild().getNodeValue();
             if(!modelArchive.equals(""))
                 modelArchive = modelArchive.substring(modelArchive.indexOf('\n') + 1);
+        }
+        catch(ParserConfigurationException e)
+        {
+            JOptionPane.showMessageDialog(null, e, 
+                                          "ParserConfigurationException", 
+                                          JOptionPane.ERROR_MESSAGE);
         }
         catch(IOException e)
         {
@@ -1079,16 +1113,26 @@ public class XMLReader
         Document docSource;
         try
         {
-            DOMParser parser = new DOMParser();
-            parser.parse(new InputSource(new ByteArrayInputStream(source.getBytes()))); 
-            docSource = parser.getDocument();
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            docSource = builder.parse(new InputSource(new ByteArrayInputStream(source.getBytes())));
+//            DOMParser parser = new DOMParser();
+//            parser.parse(new InputSource(new ByteArrayInputStream(source.getBytes()))); 
+//            docSource = parser.getDocument();
+        }
+        catch(ParserConfigurationException e)
+        {
+            JOptionPane.showMessageDialog(null, e, "ParserConfigurationException", JOptionPane.ERROR_MESSAGE);
+            return null;
         }
         catch(SAXException e)
         {
+            JOptionPane.showMessageDialog(null, e, "SAXException", JOptionPane.ERROR_MESSAGE);
             return null;
         }
         catch(IOException e)
         {
+            JOptionPane.showMessageDialog(null, e, "IOException", JOptionPane.ERROR_MESSAGE);
             return null;
         }
         Element spksource = docSource.getDocumentElement();
@@ -1114,18 +1158,28 @@ public class XMLReader
         Document docDataAll;
         try
         {
-            DOMParser parser = new DOMParser();
-            parser.parse(new InputSource(new ByteArrayInputStream(data.getBytes()))); 
-            docDataAll = parser.getDocument();
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            docDataAll = builder.parse(new InputSource(new ByteArrayInputStream(data.getBytes())));
+//            DOMParser parser = new DOMParser();
+//            parser.parse(new InputSource(new ByteArrayInputStream(data.getBytes()))); 
+//            docDataAll = parser.getDocument();
+        }
+        catch(ParserConfigurationException e)
+        {
+            JOptionPane.showMessageDialog(null, e, "ParserConfigurationException", JOptionPane.ERROR_MESSAGE);
+            return null;
         }
         catch(SAXException e)
         {
+            JOptionPane.showMessageDialog(null, e, "SAXException", JOptionPane.ERROR_MESSAGE);
             return null;
         }
         catch(IOException e)
         {
+            JOptionPane.showMessageDialog(null, e, "IOException", JOptionPane.ERROR_MESSAGE);
             return null;
-        }
+        }        
         Element presentation_data = docDataAll.getDocumentElement();
         int nDataItem = dataLabels.length;
         int nColumns = Integer.parseInt(presentation_data.getAttribute("columns"));
@@ -1175,16 +1229,26 @@ public class XMLReader
         Document docParameterAll;
         try
         {
-            DOMParser parser = new DOMParser();
-            parser.parse(new InputSource(new ByteArrayInputStream(parameter_out.getBytes()))); 
-            docParameterAll = parser.getDocument();
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            docParameterAll = builder.parse(new InputSource(new ByteArrayInputStream(parameter_out.getBytes())));
+//            DOMParser parser = new DOMParser();
+//            parser.parse(new InputSource(new ByteArrayInputStream(parameter_out.getBytes()))); 
+//            docParameterAll = parser.getDocument();
+        }
+        catch(ParserConfigurationException e)
+        {
+            JOptionPane.showMessageDialog(null, e, "ParserConfigurationException", JOptionPane.ERROR_MESSAGE);
+            return false;
         }
         catch(SAXException e)
         {
+            JOptionPane.showMessageDialog(null, e, "SAXException", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         catch(IOException e)
         {
+            JOptionPane.showMessageDialog(null, e, "IOException", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         Element parameters = docParameterAll.getDocumentElement();

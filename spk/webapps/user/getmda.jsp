@@ -94,7 +94,7 @@ author: Jiaji Du
               "<title>Model Design Agent</title>\n"+
               "<vendor>RFPK UW</vendor>\n"+
               "<homepage href=\"http://www.rfpk.washington.edu\" />\n"+
-              "<description>Demonstration of MDA</description>\n"+
+              "<description>An User Interface of the SPK System</description>\n"+
               "<offline-allowed/>\n"+
               "</information>\n"+
               "<security>\n"+
@@ -102,7 +102,7 @@ author: Jiaji Du
               "</security>\n"+
               "<resources>\n"+
               "<j2se version=\"1.4+\" />\n"+
-              "<jar href=\"MDA.jar\"/>\n"+
+              "<jar href=\"MDAn.jar\"/>\n"+
               "<jar href=\"xercesImpl.jar\"/>\n"+
               "<jar href=\"xmlParserAPIs.jar\"/>\n"+
               "<jar href=\"jhall.jar\"/>\n"+
@@ -165,9 +165,9 @@ author: Jiaji Du
               <input type="hidden" name="port" value=<%=port%>>
               <input type="hidden" name="secret" value=<%=session.getAttribute("SECRET")%>>
               <input type="hidden" name="jnlp_dir" value=<%=jnlp_dir%>>
-              Model Design Agent - NONMEM type<input type="Submit" value="Download">
+              <input type="hidden" name="type" value="nonmem">
+              Model Design Agent - NONMEM Compatible<input type="Submit" value="Download">
             </form>
-
                <br><br>
             </p><p>
                Note:  FOR WINDOWS USERS: If the MDA fails to install:<br>

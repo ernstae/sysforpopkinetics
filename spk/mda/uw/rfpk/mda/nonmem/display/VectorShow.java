@@ -48,7 +48,12 @@ public class VectorShow extends javax.swing.JFrame {
         int dimension = vector.length;
         DecimalFormat f = new DecimalFormat("0.00E00");
         for(int i = 0; i < dimension; i++)
-            vector[i] = Utility.formatData(6, f.format(Double.parseDouble(vector[i])));         
+        {
+            if(!vector[i].equals("nan"))
+                vector[i] = Utility.formatData(6, f.format(Double.parseDouble(vector[i])));
+            else
+                vector[i] = "   N/A";
+        }
         String[][] data = new String[1][dimension];
         data[0] = vector;
         

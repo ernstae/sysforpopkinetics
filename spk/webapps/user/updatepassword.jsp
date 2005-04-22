@@ -61,7 +61,7 @@ author: Jiaji Du
     <c:redirect url="${param.origURL}" />
   </c:when>
   <c:otherwise>
-    <c:redirect url="main.jsp" />
+    <c:redirect url="usermain.jsp" />
   </c:otherwise>
 </c:choose>
 

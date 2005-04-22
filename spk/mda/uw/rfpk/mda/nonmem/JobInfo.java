@@ -16,8 +16,9 @@ Washington Free-Fork License as a public service.  A copy of the
 License can be found in the COPYING file in the root directory of this
 distribution.
 **********************************************************************/
-package uw.rfpk.mda.nonmem;
+package uw.rfpk.mda.saamii;
 
+import uw.rfpk.mda.*;
 import java.util.Properties;
 import java.awt.Cursor;
 import java.io.File;
@@ -75,7 +76,7 @@ public class JobInfo extends javax.swing.JFrame {
         if(row[1].equals("le"))
             jTextArea5.setText("Since this is a likelihood evaluation only job it cannot be used\n" + 
                                "as a parent to create a new job.");
-        jLabel5.setEnabled(jobParent != 0);
+        jTextArea8.setEnabled(jobParent != 0);
         jButton6.setEnabled(jobParent != 0);
         String endCode = jobInfo.getProperty("endCode");
         if((methodCode.equals("fo") || methodCode.equals("eh")||
@@ -142,7 +143,6 @@ public class JobInfo extends javax.swing.JFrame {
         jSeparator2 = new javax.swing.JSeparator();
         jTextArea3 = new javax.swing.JTextArea();
         jButton5 = new javax.swing.JButton();
-        jLabel5 = new javax.swing.JLabel();
         jButton6 = new javax.swing.JButton();
         jTextField5 = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
@@ -153,6 +153,7 @@ public class JobInfo extends javax.swing.JFrame {
         jTextArea5 = new javax.swing.JTextArea();
         jTextArea6 = new javax.swing.JTextArea();
         jButton7 = new javax.swing.JButton();
+        jTextArea8 = new javax.swing.JTextArea();
 
         historyDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -213,11 +214,12 @@ public class JobInfo extends javax.swing.JFrame {
 
         jLabel11.setFont(new java.awt.Font("Default", 0, 12));
         jLabel11.setText("Number of significant digits ");
+        jLabel11.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
-        gridBagConstraints.insets = new java.awt.Insets(5, 12, 4, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 12, 4, 0);
         warmStartDialog.getContentPane().add(jLabel11, gridBagConstraints);
 
         OKButton.setText("OK");
@@ -254,6 +256,7 @@ public class JobInfo extends javax.swing.JFrame {
         jComboBox1.setMaximumSize(new java.awt.Dimension(32767, 20));
         jComboBox1.setMinimumSize(new java.awt.Dimension(36, 20));
         jComboBox1.setPreferredSize(new java.awt.Dimension(36, 20));
+        jComboBox1.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 4;
@@ -463,7 +466,7 @@ public class JobInfo extends javax.swing.JFrame {
 
         jCheckBox1.setFont(new java.awt.Font("Dialog", 0, 12));
         jCheckBox1.setSelected(true);
-        jCheckBox1.setText("Start input preparation tool when Input button is clicked");
+        jCheckBox1.setText("Start input preparation tool when the Input button is clicked");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 10;
@@ -474,7 +477,7 @@ public class JobInfo extends javax.swing.JFrame {
 
         jCheckBox2.setFont(new java.awt.Font("Dialog", 0, 12));
         jCheckBox2.setSelected(true);
-        jCheckBox2.setText("Start output data processing when Output button is clicked");
+        jCheckBox2.setText("Parse the output report when the Output button is clicked");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 11;
@@ -494,7 +497,7 @@ public class JobInfo extends javax.swing.JFrame {
 
         jTextArea3.setBackground(new java.awt.Color(204, 204, 204));
         jTextArea3.setEditable(false);
-        jTextArea3.setText("You may get the job's processing history.");
+        jTextArea3.setText("You may get this job's processing history.");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 14;
@@ -516,16 +519,6 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(7, 12, 5, 12);
         getContentPane().add(jButton5, gridBagConstraints);
-
-        jLabel5.setFont(new java.awt.Font("Dialog", 0, 12));
-        jLabel5.setText("You may also get the job's parent job.");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 15;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(3, 12, 8, 12);
-        getContentPane().add(jLabel5, gridBagConstraints);
 
         jButton6.setText("Job Parent");
         jButton6.setMaximumSize(new java.awt.Dimension(104, 25));
@@ -647,6 +640,16 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 8, 12);
         getContentPane().add(jButton7, gridBagConstraints);
 
+        jTextArea8.setBackground(new java.awt.Color(204, 204, 204));
+        jTextArea8.setText("You may also get this job's parent job.");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 15;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 12, 8, 12);
+        getContentPane().add(jTextArea8, gridBagConstraints);
+
         pack();
     }//GEN-END:initComponents
 
@@ -704,7 +707,7 @@ public class JobInfo extends javax.swing.JFrame {
                 beginIndex = model.indexOf("SIGDIGITS=", model.indexOf("$ESTIMATION")) + 10;
                 endIndex = Math.min(model.indexOf(" ", beginIndex), model.indexOf("\n", beginIndex));
                 model = model.substring(0, beginIndex) + sigDig + model.substring(endIndex);
-                beginIndex = source.indexOf("sig_digits=", source.indexOf(analysis)) + 11;
+                beginIndex = source.indexOf("sig_digits=", source.indexOf(analysis)) + 12;
                 endIndex = Math.min(source.indexOf(" ", beginIndex), source.indexOf(">", beginIndex)) - 1;
                 source = source.substring(0, beginIndex) + sigDig + source.substring(endIndex);                
             }
@@ -715,7 +718,7 @@ public class JobInfo extends javax.swing.JFrame {
         beginIndex= source.indexOf("is_restart=", source.indexOf(analysis));
         if(beginIndex != -1)
         {
-            endIndex = Math.min(source.indexOf(" ", beginIndex), source.indexOf(">", beginIndex)) - 1;
+            endIndex = Math.min(source.indexOf(" ", beginIndex), source.indexOf(">", beginIndex));
             source = source.substring(0, beginIndex) + source.substring(endIndex);
         }
         source = source.replaceFirst(analysis, analysis + "is_restart=\"yes\" ");
@@ -837,11 +840,11 @@ public class JobInfo extends javax.swing.JFrame {
             if(jCheckBox1.isSelected())
             {
                 // Start preparing input wizard
-                frame.iterator = new MDAIterator(frame.server,
-                                                 frame.isOnline, frame, frame.isTester,
-                                                 frame.isDeveloper, frame.files, id);
-                frame.iterator.setIsDataXML(true);
-                frame.iterator.setIsReload(true);
+//                frame.iterator = new MDAIterator(frame.server,
+//                                                 frame.isOnline, frame, frame.isTester,
+//                                                 frame.isDeveloper, frame.files, id);
+//                frame.iterator.setIsDataXML(true);
+//                frame.iterator.setIsReload(true);
                 if(id != 0 && source.indexOf("<pop_analysis ") != -1 && source.indexOf(" is_estimation=\"yes\" ") != -1 && 
                    JOptionPane.showConfirmDialog(null, "Do you want to set parameter initial values to the estimates from the parent job?",
                                                  "Question", JOptionPane.YES_NO_OPTION) == 0)
@@ -862,10 +865,10 @@ public class JobInfo extends javax.swing.JFrame {
                                                      "Question", JOptionPane.YES_NO_OPTION) == 0)
                         Utility.replaceDataDVbySimDV(report, source, dataset);
                 }
-                frame.iterator.setDataXML(dataset, 0);
-                frame.iterator.parseControl(model);
-                frame.writeInput(frame.iterator);
-                frame.iterator.getGettingStarted().setOptions();
+//                frame.iterator.setDataXML(dataset, 0);
+//                frame.iterator.parseControl(model);
+//                frame.writeInput(frame.iterator);
+//                frame.iterator.getGettingStarted().setOptions();
             }
             else
             {
@@ -958,7 +961,6 @@ public class JobInfo extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
@@ -977,6 +979,7 @@ public class JobInfo extends javax.swing.JFrame {
     private javax.swing.JTextArea jTextArea5;
     private javax.swing.JTextArea jTextArea6;
     private javax.swing.JTextArea jTextArea7;
+    private javax.swing.JTextArea jTextArea8;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
@@ -987,8 +990,8 @@ public class JobInfo extends javax.swing.JFrame {
     private javax.swing.JDialog warmStartDialog;
     // End of variables declaration//GEN-END:variables
     
-    // Job ID
-    private long id = 0;
+    /** Job ID. */
+    protected long id = 0;
     
     // Job source
     private String source = null;
