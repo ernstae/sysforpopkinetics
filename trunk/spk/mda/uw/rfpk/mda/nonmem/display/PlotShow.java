@@ -18,6 +18,7 @@ distribution.
 **********************************************************************/
 package uw.rfpk.mda.nonmem.display;
 
+import uw.rfpk.mda.Plotter;
 import uw.rfpk.mda.nonmem.Utility;
 import java.awt.Component;
 import java.awt.geom.*;
@@ -287,7 +288,9 @@ public class PlotShow extends JFrame {
                                           plot[0][2].equals("show"),
                                           plot[0][3].equals("show"),
                                           plot[0][4].equals("show"),
-                                          false, false, true, true, null, null, null, null,
+                                          false, false, true, true, null, null,
+                                          new Color[]{Color.green, Color.green, Color.green, null, null}, 
+                                          null,
                                           5, 5, 6, 6, 4, 4, 4, 4, 0, 0, 0, 0,
                                           new Font("SansSerif", Font.BOLD, 14),
                                           new Font("SansSerif", Font.BOLD, 12),

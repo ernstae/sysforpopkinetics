@@ -73,7 +73,7 @@ author: Jiaji Du
                   Enter FileExtension as "jnlp"<br>
                   Enter MIME type as "Application/x-java-jnlp-file"<br>
                   Enter Handled by Application as<br>
-                  "C:\Program Files\Java\j2re1.4.2_05\javaws\javaws.exe for Windows.
+                  "C:\Program Files\Java\j2re1.4.2_05\javaws\javaws.exe", then click the "OK" buttons.
             </p><p>
                   Note that the version number may be different in the future.
 	    </p>

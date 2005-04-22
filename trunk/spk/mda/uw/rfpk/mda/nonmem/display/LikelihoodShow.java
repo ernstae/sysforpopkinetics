@@ -18,7 +18,9 @@ distribution.
 **********************************************************************/
 package uw.rfpk.mda.nonmem.display;
 
+import uw.rfpk.mda.Plotter;
 import uw.rfpk.mda.nonmem.MDAFrame;
+import uw.rfpk.mda.nonmem.Output;
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.JFrame;

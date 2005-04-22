@@ -19,9 +19,10 @@ mkdir mdaJar
             cd display
             cp /home/jiaji/MDA/uw/rfpk/mda/nonmem/display/*.class .
           cd ..
-          mkdir help
-            cd help
-            cp /home/jiaji/MDA/uw/rfpk/mda/nonmem/help/* .
+          mkdir compModel
+            cd compModel
+            cp /home/jiaji/MDA/uw/rfpk/mda/nonmem/compModel/*.class .
+            cp /home/jiaji/MDA/uw/rfpk/mda/nonmem/compModel/*.png .
           cd ..         
         cd ..
       cd ..

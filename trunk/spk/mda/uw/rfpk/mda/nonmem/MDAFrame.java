@@ -16,8 +16,9 @@ Washington Free-Fork License as a public service.  A copy of the
 License can be found in the COPYING file in the root directory of this
 distribution.
 **********************************************************************/
-package uw.rfpk.mda.nonmem;
+package uw.rfpk.mda.saamii;
 
+import uw.rfpk.mda.*;
 import javax.help.*; 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -35,8 +36,7 @@ import java.util.HashMap;
 import java.awt.print.*;
 import java.awt.font.*;
 import org.netbeans.ui.wizard.*;
-import uw.rfpk.mda.nonmem.wizard.*;
-import uw.rfpk.mda.nonmem.display.*;
+import uw.rfpk.mda.saamii.display.*;
 import javax.swing.table.*;  
 import java.text.DecimalFormat;
 
@@ -268,6 +268,9 @@ public class MDAFrame extends JFrame
         jPanel13 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        indIDDialog = new javax.swing.JDialog();
+        jScrollPane11 = new javax.swing.JScrollPane();
+        jTable3 = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
         jTextPane1 = new javax.swing.JTextPane();
         jTextPane2 = new javax.swing.JTextPane();
@@ -364,8 +367,11 @@ public class MDAFrame extends JFrame
         scatterPlotMenu = new javax.swing.JMenuItem();
         summaryMenu = new javax.swing.JMenuItem();
         traceMenu = new javax.swing.JMenuItem();
+        indIDMenu = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
         useMDAMenu = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JSeparator();
+        dataMenu = new javax.swing.JMenuItem();
         useRMenu = new javax.swing.JMenuItem();
         jLabel16 = new javax.swing.JLabel();
 
@@ -1232,6 +1238,23 @@ public class MDAFrame extends JFrame
         gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
         replaceDialog.getContentPane().add(jPanel13, gridBagConstraints);
 
+        indIDDialog.setTitle("Individual IDs");
+        indIDDialog.setLocationRelativeTo(this);
+        jTable3.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane11.setViewportView(jTable3);
+
+        indIDDialog.getContentPane().add(jScrollPane11, java.awt.BorderLayout.CENTER);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(0, 204, 204));
         setLocationRelativeTo(this);
@@ -1274,7 +1297,7 @@ public class MDAFrame extends JFrame
         jTextPane3.setBackground(new java.awt.Color(0, 204, 204));
         jTextPane3.setEditable(false);
         jTextPane3.setFont(new java.awt.Font("Dialog", 0, 14));
-        jTextPane3.setText("NONMEM  Compatible  Version:  0.1");
+        jTextPane3.setText("SAAMII  Style  Version:  0.1");
         jTextPane3.setFocusable(false);
         jTextPane3.setMinimumSize(new java.awt.Dimension(240, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1339,7 +1362,7 @@ public class MDAFrame extends JFrame
         gridBagConstraints.insets = new java.awt.Insets(7, 13, 7, 13);
         jPanel1.add(GetReportButton, gridBagConstraints);
 
-        ReadOutputButton.setText("Process Output");
+        ReadOutputButton.setText("Parse Report");
         ReadOutputButton.setBorder(new javax.swing.border.BevelBorder(javax.swing.border.BevelBorder.RAISED));
         ReadOutputButton.setMaximumSize(new java.awt.Dimension(110, 25));
         ReadOutputButton.setMinimumSize(new java.awt.Dimension(110, 25));
@@ -1595,6 +1618,8 @@ public class MDAFrame extends JFrame
         pasteMenu.setText("Paste");
         jMenu7.add(pasteMenu);
 
+        deleteMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
+        deleteMenu.setMnemonic('e');
         deleteMenu.setText("Delete");
         deleteMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1617,6 +1642,8 @@ public class MDAFrame extends JFrame
 
         jMenu7.add(findMenu);
 
+        replaceMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
+        replaceMenu.setMnemonic('p');
         replaceMenu.setText("Replace");
         replaceMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1796,6 +1823,17 @@ public class MDAFrame extends JFrame
 
         jMenu9.add(traceMenu);
 
+        indIDMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
+        indIDMenu.setMnemonic('i');
+        indIDMenu.setText("Individual IDs");
+        indIDMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                indIDMenuActionPerformed(evt);
+            }
+        });
+
+        jMenu9.add(indIDMenu);
+
         jMenuBar1.add(jMenu9);
 
         jMenu1.setText("Plot");
@@ -1809,6 +1847,19 @@ public class MDAFrame extends JFrame
         });
 
         jMenu1.add(useMDAMenu);
+
+        jMenu1.add(jSeparator1);
+
+        dataMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
+        dataMenu.setMnemonic('d');
+        dataMenu.setText("Report Data");
+        dataMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dataMenuActionPerformed(evt);
+            }
+        });
+
+        jMenu1.add(dataMenu);
 
         useRMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.CTRL_MASK));
         useRMenu.setMnemonic('g');
@@ -1850,6 +1901,44 @@ public class MDAFrame extends JFrame
 
         pack();
     }//GEN-END:initComponents
+
+    private void indIDMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_indIDMenuActionPerformed
+        if(output.indIDs == null)
+        {
+            JOptionPane.showMessageDialog(null, "Individual IDs are not available.",
+                                          "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        Vector indIDs = new Vector();
+        indIDs.add(output.indIDs[0]);
+        int n = output.indIDs.length;
+        for(int i = 1; i < n; i++)
+            if(!output.indIDs[i].equals(output.indIDs[i - 1]))
+                indIDs.add(output.indIDs[i]);
+        n = indIDs.size();
+        String[][] indID = new String[n][2];
+        for(int i = 0; i < n; i++)
+        {
+            indID[i][0] = String.valueOf(i + 1);
+            indID[i][1] = (String)indIDs.get(i);
+        }
+        jTable3.setModel(new DefaultTableModel(indID, new String[]{"Order", "ID"}));
+        indIDDialog.setSize(200, 200);
+        indIDDialog.show();
+    }//GEN-LAST:event_indIDMenuActionPerformed
+
+    private void dataMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dataMenuActionPerformed
+        if(dataBlock != null)
+        {
+            textArea.setText(dataBlock);
+            textArea.setCaretPosition(0);
+            String title = "Report Data: Job-" + jobInfo.id;
+            jInternalFrame1.setTitle(title);
+        }
+        else
+            JOptionPane.showMessageDialog(null, "Report data were not found.", "Input Error",
+                                          JOptionPane.ERROR_MESSAGE);
+    }//GEN-LAST:event_dataMenuActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         replaceDialog.dispose();
@@ -2008,7 +2097,17 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_useRMenuActionPerformed
 
     private void useMDAMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useMDAMenuActionPerformed
-        new PlotTool(textArea.getText()); 
+        if(dataBlock != null)
+        {
+            textArea.setText(dataBlock);
+            textArea.setCaretPosition(0);
+            String title = "Report Data: Job-" + jobInfo.id;
+            jInternalFrame1.setTitle(title);
+            new PlotTool(dataBlock, true);
+        }
+        else
+            JOptionPane.showMessageDialog(null, "Report data were not found.", "Input Error",
+                                          JOptionPane.ERROR_MESSAGE);
     }//GEN-LAST:event_useMDAMenuActionPerformed
 
     private void jRadioButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton9ActionPerformed
@@ -2029,10 +2128,10 @@ public class MDAFrame extends JFrame
     private void traceMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_traceMenuActionPerformed
         if(output != null && output.trace != null)
         {
-            saveFile();
+//            saveFile();
             textArea.setText(output.trace);
             textArea.setCaretPosition(0);
-            jInternalFrame1.setTitle("Optimization trace");   
+            jInternalFrame1.setTitle("Optimization Trace: Job-" + jobInfo.id);   
             file = null;            
         }
         else
@@ -2538,7 +2637,7 @@ public class MDAFrame extends JFrame
     }
 
     private void jRadioButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton3ActionPerformed
-        if(recentModel.name != null && recentModel.text.equals(modelArchive.text.trim()))
+        if(recentModel.name != null && recentModel.text.trim().equals(modelArchive.text.trim()))
         {
             modelRadioButtonState = 3;
             jTextField1.setText(recentModel.name);
@@ -2547,7 +2646,7 @@ public class MDAFrame extends JFrame
             modelArchive.id = recentModel.id;
             return;
         }
-        jTextField1.setEditable(false);      
+        jTextField1.setEditable(false);
         listType = "model";
         isLibrary = false;
         showVersions = true;
@@ -2696,19 +2795,19 @@ public class MDAFrame extends JFrame
                     {
                         if(isWizard)
                         {
-                            if(!iterator.getIsInd() && archive.indexOf(">ID</value>") == -1)
-                            {
-                                JOptionPane.showMessageDialog(null, "Data item 'ID' was not found in the dataset." +
-                                                              "\nIt is required for the population analysis.",
-                                                              "Input Error", JOptionPane.ERROR_MESSAGE);
-                                iterator.setIsNewData(false);
-                                versionDialog.dispose();
-                                reportDialog.dispose();
-                                return;
-                            }                            
-                            iterator.setDataXML(archive, 1);
-                            iterator.setDatasetName(archiveName, 1);
-                            iterator.setIsNewData(true);
+//                            if(!iterator.getIsInd() && archive.indexOf(">ID</value>") == -1)
+//                            {
+//                                JOptionPane.showMessageDialog(null, "Data item 'ID' was not found in the dataset." +
+//                                                              "\nIt is required for the population analysis.",
+//                                                              "Input Error", JOptionPane.ERROR_MESSAGE);
+//                                iterator.setIsNewData(false);
+//                                versionDialog.dispose();
+//                                reportDialog.dispose();
+//                                return;
+//                            }                            
+//                            iterator.setDataXML(archive, 1);
+//                            iterator.setDatasetName(archiveName, 1);
+//                            iterator.setIsNewData(true);
                         }                        
                         if(!isLibrary)
                         {
@@ -2739,8 +2838,10 @@ public class MDAFrame extends JFrame
             if(listType.equals("model"))
             {
                 String spkInput = textArea.getText();
-                int index2 = spkInput.indexOf("<spkmodel");        
-                String model = XMLReader.getModelArchive(spkInput.substring(index2 - 22)).trim();
+                int indexModel = spkInput.lastIndexOf("<?xml ", spkInput.indexOf("<spkmodel"));
+                String model = XMLReader.getModelArchive(spkInput.substring(indexModel)).trim();
+//                int index2 = spkInput.indexOf("<spkmodel");        
+//                String model = XMLReader.getModelArchive(spkInput.substring(index2 - 22)).trim();
                 if(model.equals(archive))
                 {
                     jTextField1.setText(modelArchive.name);
@@ -2759,9 +2860,12 @@ public class MDAFrame extends JFrame
             if(listType.equals("data"))
             {
                 String spkInput = textArea.getText();
-                int index1 = spkInput.indexOf("<spkdata");
-                int index2 = spkInput.indexOf("<spkmodel");        
-                String dataset = spkInput.substring(index1 - 22, index2 - 22).trim();
+                int indexData = spkInput.lastIndexOf("<?xml ", spkInput.indexOf("<spkdata"));
+                int indexModel = spkInput.lastIndexOf("<?xml ", spkInput.indexOf("<spkmodel"));
+                String dataset = spkInput.substring(indexData, indexModel).trim();
+//                int index1 = spkInput.indexOf("<spkdata");
+//                int index2 = spkInput.indexOf("<spkmodel");        
+//                String dataset = spkInput.substring(index1 - 22, index2 - 22).trim();
                 if(dataset.equals(archive))
                 {
                     jTextField4.setText(dataArchive.name);
@@ -2962,13 +3066,16 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_jTable1MouseClicked
 
     private void summaryMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_summaryMenuActionPerformed
-        saveFile();
-        textArea.setText(Summary.makeSummary(output, isOnline, isDeveloper, jobMethodCode, methodTable));
-        textArea.setCaretPosition(0);
-        jInternalFrame1.setTitle("");
-        file = null;
+//        saveFile();
+        String summary = Summary.makeSummary(output, isOnline, isDeveloper, jobMethodCode, methodTable);
+        if(summary != null)
+        {
+            textArea.setText(summary);
+            textArea.setCaretPosition(0);
+            jInternalFrame1.setTitle("Summary Report: Job-" + jobInfo.id);
+            file = null;
+        }
     }//GEN-LAST:event_summaryMenuActionPerformed
-
     
     private void ReadOutputButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ReadOutputButtonActionPerformed
         readOutput(textArea.getText());
@@ -3089,10 +3196,14 @@ public class MDAFrame extends JFrame
 
         // Collect archive information
         getArchive = false;
-        int index1 = text.indexOf("<spkdata");
-        int index2 = text.indexOf("<spkmodel");
-        String dataset = text.substring(index1 - 22, index2 - 22);
-        String model = XMLReader.getModelArchive(text.substring(index2 - 22));         
+        int indexData = text.lastIndexOf("<?xml ", text.indexOf("<spkdata"));
+        int indexModel = text.lastIndexOf("<?xml ", text.indexOf("<spkmodel"));
+        String dataset = text.substring(indexData, indexModel).trim();
+        String model = XMLReader.getModelArchive(text.substring(indexModel));
+//        int index1 = text.indexOf("<spkdata");
+//        int index2 = text.indexOf("<spkmodel");
+//        String dataset = text.substring(index1 - 22, index2 - 22);
+//        String model = XMLReader.getModelArchive(text.substring(index2 - 22));         
         modelArchive = new ArchiveInfo();
         dataArchive = new ArchiveInfo();
         modelArchive.text = model;
@@ -3124,7 +3235,7 @@ public class MDAFrame extends JFrame
         }
         else
         {
-            if(recentModel.name != null && recentModel.text.equals(model.trim()))
+            if(recentModel.name != null && recentModel.text.trim().equals(model.trim()))
                 jRadioButton3.doClick();
             else
                 jRadioButton1.doClick();
@@ -3181,8 +3292,8 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_SubmitJobButtonActionPerformed
 
     private void WriteInputButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_WriteInputButtonActionPerformed
-        iterator = new MDAIterator(server, isOnline, this, isTester, isDeveloper, files, jobId);
-        writeInput(iterator);
+//        iterator = new MDAIterator(server, isOnline, this, isTester, isDeveloper, files, jobId);
+//        writeInput(iterator);
     }//GEN-LAST:event_WriteInputButtonActionPerformed
 
     private void scatterPlot(int type)
@@ -3278,7 +3389,7 @@ public class MDAFrame extends JFrame
                     header[i + 1] = output.stdErrSigma[l][i][0];     
                 new MatrixShow(output.stdErrSigma[l], header, "Standard Error of SIGMA Estimate", 
                                "SIGMA - Cov Matrix for Residuals - ETAs  Block " + (l+1),
-                               width(length), height(length), l*40, l*30, output.sigmaStruct.equals("diagonal"));
+                               width(length), height(length), l*40, l*30, output.sigmaStruct[l].equals("diagonal"));
             }
         }
         else
@@ -3298,7 +3409,7 @@ public class MDAFrame extends JFrame
                     header[i + 1] = output.stdErrOmega[l][i][0]; 
                 new MatrixShow(output.stdErrOmega[l], header, "Standard Error of OMEGA Estimate", 
                                "OMEGA - Cov Matrix for Random Effects - ETAs  Block " + (l+1),
-                               width(length), height(length), l*40, l*30, output.omegaStruct.equals("diagonal"));
+                               width(length), height(length), l*40, l*30, output.omegaStruct[l].equals("diagonal"));
             }
         }
         else
@@ -3588,8 +3699,10 @@ public class MDAFrame extends JFrame
 
         // Get the XML documents as String objects
         String spkInput = textArea.getText();
-        int index = spkInput.indexOf("<spkdata");
-        String source = spkInput.substring(0, index - 22);
+        int indexData = spkInput.lastIndexOf("<?xml ", spkInput.indexOf("<spkdata"));
+        String source = spkInput.substring(0, indexData);
+//        int index = spkInput.indexOf("<spkdata");
+//        String source = spkInput.substring(0, index - 22);
 
         // Collect version logs
         if((modelArchive.isNewArchive || modelArchive.isNewVersion))
@@ -3709,14 +3822,14 @@ public class MDAFrame extends JFrame
     /** Write input.
      * @param iterator a MDAIterator object for the wizard.
      */    
-    protected void writeInput(MDAIterator iterator)
-    {
-        wp = new JWizardPane(iterator, object); 
-        wp.getContentPanel().setBackground(new Color(240, 245, 255));   
+//    protected void writeInput(MDAIterator iterator)
+//    {
+//        wp = new JWizardPane(iterator, object); 
+//        wp.getContentPanel().setBackground(new Color(240, 245, 255));   
 //        wp.setContentImage((new javax.swing.ImageIcon(getClass().getResource("/uw/rfpk/mda/nonmem/wizard/nonmem-spk.gif"))).getImage()); 
-        wp.createDialog(this, "Model Design Agent Input File Generation Tool").show();
-        WriteInputButton.setEnabled(false);
-    }
+//        wp.createDialog(this, "Model Design Agent Input File Generation Tool").show();
+//        WriteInputButton.setEnabled(false);
+//    }
     
     /** Enable Prepare Input button.
      *
@@ -3733,8 +3846,8 @@ public class MDAFrame extends JFrame
     {
         if(wp.getCustomizedObject() == null)
             return;
-        object = (MDAObject)wp.getCustomizedObject();
-        Properties records = object.getRecords();
+//        object = (MDAObject)wp.getCustomizedObject();
+//        Properties records = object.getRecords();
         String[] names = {"Problem", "Data", "Input", "Pred", "Subroutines", "Aes", 
                           "Aesinitial", "Model", "PK", "Theta", "Omega", "Des", 
                           "Error", "Sigma", "Simulation", "TableSim", "ScatterPlotSim",
@@ -3742,8 +3855,8 @@ public class MDAFrame extends JFrame
         control = "";
         for(int i = 0; i < 21; i++)
         {
-            if(!records.getProperty(names[i]).equals("")) 
-                control = control + records.getProperty(names[i]) + "\n";
+//            if(!records.getProperty(names[i]).equals("")) 
+//                control = control + records.getProperty(names[i]) + "\n";
         }
         if(JOptionPane.showConfirmDialog(null, 
                                          "Do you want to save the NONMEM control file?",   
@@ -3763,18 +3876,18 @@ public class MDAFrame extends JFrame
         files.setSelectedFile(new File(""));
  
         // Write SPK input file in XML format
-        if(object.getSource() == null || object.getData() == null || control == null)
-        {
-            JOptionPane.showMessageDialog(null, "Input information is not complete.", 
-                                          "Input Error", JOptionPane.ERROR_MESSAGE);
-        }
-        else
-        {
-            XMLWriter writer = new XMLWriter(control, object);
-            textArea.setText(writer.getDocument()); 
-            textArea.setCaretPosition(0);        
-            jInternalFrame1.setTitle("SPK input");
-        }
+//        if(object.getSource() == null || object.getData() == null || control == null)
+//        {
+//            JOptionPane.showMessageDialog(null, "Input information is not complete.", 
+//                                          "Input Error", JOptionPane.ERROR_MESSAGE);
+//        }
+//        else
+//        {
+//            XMLWriter writer = new XMLWriter(control, object);
+//            textArea.setText(writer.getDocument()); 
+//            textArea.setCaretPosition(0);        
+//            jInternalFrame1.setTitle("SPK input");
+//        }
         WriteInputButton.setEnabled(true);
     }
    
@@ -3893,6 +4006,32 @@ public class MDAFrame extends JFrame
             }
         }
 
+        // Create a presentation data block
+        if(output.dataItems != null && output.dataAll != null)
+        {
+            int nColumns = output.dataItems.size();
+            int nRows = output.dataAll.length;
+            StringBuffer sb = new StringBuffer();
+            for(int i = 0; i < nColumns; i++)
+            {
+                String label = (String)output.dataItems.get(i); 
+                sb.append(getSpace(12 - label.length()));
+                 sb.append(label);                            
+            }
+            sb.append(ls);
+            DecimalFormat f = new DecimalFormat("0.0000E00");
+            for(int j = 0; j < nRows; j++)
+            {
+                String ID = output.indIDs[j];
+                sb.append(getSpace(12 - ID.length()));
+                sb.append(ID);
+                for(int i = 1; i < nColumns; i++)
+                    sb.append(" " + Utility.formatData(8, f.format(output.dataAll[j][i]))); 
+                sb.append(ls);
+            }        
+            dataBlock = sb.toString();
+        }
+/*        
         // Promote user to save presentation data
         if(output.dataAll != null )
         {
@@ -3911,23 +4050,7 @@ public class MDAFrame extends JFrame
                     try
                     {
                         BufferedWriter out = new BufferedWriter(new FileWriter(file));
-                        int nColumns = output.dataItems.size();
-                        int nRows = output.dataAll.length;
-
-                        for(int i = 0; i < nColumns; i++)
-                        {
-                            String label = (String)output.dataItems.get(i); 
-                            out.write(getSpace(12 - label.length()));
-                            out.write(label);                            
-                        }
-                        out.write(ls);
-                        DecimalFormat f = new DecimalFormat("0.0000E00");
-                        for(int j = 0; j < nRows; j++)
-                        {
-                            for(int i = 0; i < nColumns; i++)
-                                out.write(" " + Utility.formatData(8, f.format(output.dataAll[j][i]))); 
-                            out.write(ls);
-                        }
+                        out.write(dataBlock);                   
                         file = null;
                         out.close();
                     }
@@ -3946,13 +4069,14 @@ public class MDAFrame extends JFrame
                 }
             }
         }
-        JOptionPane.showMessageDialog(null, "Output processing is finished. Result is ready for presentation.",  
+*/
+        JOptionPane.showMessageDialog(null, "Report parsing is finished. Result is ready for presentation.",  
                                       "MDA Status Information",             
                                       JOptionPane.INFORMATION_MESSAGE);
-        saveFile();
+//        saveFile();
         textArea.setText(Summary.makeSummary(output, isOnline, isDeveloper, jobMethodCode, methodTable));
         textArea.setCaretPosition(0);
-        jInternalFrame1.setTitle("");
+        jInternalFrame1.setTitle("Summary Report: Job-" + jobInfo.id);
         file = null;
     }
     
@@ -4111,7 +4235,7 @@ public class MDAFrame extends JFrame
         if(archiveList.length < 0)
             return;
     //    int start = listType.equals("job") ? 0:1;
-        DisplayTableModel reportModel = new DisplayTableModel(archiveList, header, 0);
+        DisplayTableModel reportModel = new DisplayTableModel(archiveList, header);
         jTable1.setModel(reportModel);
         TableColumnModel columnModel = jTable1.getColumnModel();
         if(listType.equals("job"))
@@ -4150,10 +4274,11 @@ public class MDAFrame extends JFrame
         String[][] versionList = server.getVersions(id, listType, isLibrary);             
         if(versionList != null)
         {
-            DisplayTableModel versionModel = new DisplayTableModel(versionList, header, 0); 
-            jTable2.setModel(versionModel);
+            jTable2.setModel(new DefaultTableModel(versionList, header));
             TableColumnModel columnModel = jTable2.getColumnModel();
-            columnModel.getColumn(3).setPreferredWidth(500);
+            columnModel.getColumn(0).setPreferredWidth(80);
+            columnModel.getColumn(2).setPreferredWidth(200);
+            columnModel.getColumn(3).setPreferredWidth(400);
             String title;
             if(listType.equals("model"))
                 title = "Version List - Model ID: " + id;
@@ -4170,11 +4295,10 @@ public class MDAFrame extends JFrame
 
     private class DisplayTableModel extends AbstractTableModel 
     {
-        public DisplayTableModel(String[][] data, String[] header, int start)
+        public DisplayTableModel(String[][] data, String[] header)
         {
             this.data = data;
             this.header = header;
-            this.start = start;
         }
         
         public String getColumnName(int c) 
@@ -4198,17 +4322,14 @@ public class MDAFrame extends JFrame
         }
         public Object getValueAt(int r, int c)
         {
-            return data[r][c + start];
+            return data[r][c];
         }
 
         // Table data array
-        String[][] data = null;
+        private String[][] data = null;
         
         // Table header array
-        String[] header = null;
-        
-        // Starting column
-        int start = 0;
+        private String[] header = null;
     }    
 
     private class CellRenderer extends DefaultTableCellRenderer 
@@ -4291,6 +4412,7 @@ public class MDAFrame extends JFrame
     private javax.swing.JButton dataLButton;
     private javax.swing.JButton dataLibLButton;
     private javax.swing.JButton dataLibRButton;
+    private javax.swing.JMenuItem dataMenu;
     private javax.swing.JButton dataRButton;
     private javax.swing.JMenuItem deleteMenu;
     private javax.swing.JDialog diffDialog;
@@ -4300,6 +4422,8 @@ public class MDAFrame extends JFrame
     private javax.swing.JMenuItem exitMenu;
     private javax.swing.JMenuItem findMenu;
     private javax.swing.JButton helpButton;
+    private javax.swing.JDialog indIDDialog;
+    private javax.swing.JMenuItem indIDMenu;
     private javax.swing.JMenuItem invCovarianceMenu;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
@@ -4357,6 +4481,7 @@ public class MDAFrame extends JFrame
     private javax.swing.JRadioButton jRadioButton9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane10;
+    private javax.swing.JScrollPane jScrollPane11;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
@@ -4365,6 +4490,7 @@ public class MDAFrame extends JFrame
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JScrollPane jScrollPane8;
     private javax.swing.JScrollPane jScrollPane9;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator4;
     private javax.swing.JSeparator jSeparator5;
     private javax.swing.JSeparator jSeparator6;
@@ -4373,6 +4499,7 @@ public class MDAFrame extends JFrame
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
+    private javax.swing.JTable jTable3;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextArea jTextArea10;
     private javax.swing.JTextArea jTextArea2;
@@ -4487,7 +4614,7 @@ public class MDAFrame extends JFrame
     private String control = null;
     
     // MDA object
-    private MDAObject object = new MDAObject();
+//    private MDAObject object = new MDAObject();
     
     // Spk output
     private Output output = null;
@@ -4577,8 +4704,11 @@ public class MDAFrame extends JFrame
     private boolean isVersionListOn = false;
     
     /** MDA iterator */
-    protected MDAIterator iterator = null;
+//    protected MDAIterator iterator = null;
     
     // Undo Manager
     private UndoManager undo = new UndoManager();
+    
+    // Data block
+    private String dataBlock = null;
 }

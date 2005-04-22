@@ -16,16 +16,19 @@ Washington Free-Fork License as a public service.  A copy of the
 License can be found in the COPYING file in the root directory of this
 distribution.
 **********************************************************************/
-package uw.rfpk.mda.nonmem;
+package uw.rfpk.mda.saamii;
 
-import uw.rfpk.mda.nonmem.wizard.Source;
-import uw.rfpk.mda.nonmem.wizard.MDAIterator;
-import uw.rfpk.mda.nonmem.wizard.MDAObject;
-import uw.rfpk.mda.nonmem.Utility;
+//import uw.rfpk.mda.nonmem.wizard.Source;
+//import uw.rfpk.mda.nonmem.wizard.MDAIterator;
+//import uw.rfpk.mda.nonmem.wizard.MDAObject;
+import uw.rfpk.mda.saamii.Utility;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Attr;
-import org.apache.xerces.dom.DocumentImpl;   
+import javax.xml.parsers.*;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.*;
+import javax.xml.transform.stream.*;
 import java.util.*;
 import java.io.PrintWriter;
 import java.io.FileWriter;
@@ -47,6 +50,15 @@ public class XMLWriter
         this.source = object.getSource();
         this.data = object.getData();
         this.control = control;
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        try
+        {
+            builder = factory.newDocumentBuilder();
+        }
+        catch(ParserConfigurationException e)
+        {
+            e.printStackTrace();
+        }
         setSource(); 
         setData();
         setModel();
@@ -55,7 +67,7 @@ public class XMLWriter
     /** This function creates Content section of the SPK input file. */    
     private void setSource()
     {
-        docSource = new DocumentImpl(); 
+        docSource = builder.newDocument();
         Element spksource = docSource.createElement("spksource");  
         docSource.appendChild(spksource);  
         Element nonmem = docSource.createElement("nonmem"); 
@@ -479,7 +491,7 @@ public class XMLWriter
         for(int i =0; i < nInd; i++)
             nRows += ((Vector)data.get(i)).size(); 
         int nColumns = source.input.length;   
-        docData = new DocumentImpl(); 
+        docData = builder.newDocument(); 
         Element spkdata = docData.createElement("spkdata");
         spkdata.setAttribute("version", "0.1");
         docData.appendChild(spkdata);         
@@ -530,10 +542,10 @@ public class XMLWriter
     // This method generates model section of the SPK input file.    
     private void setModel()
     {    
-        docModel = new DocumentImpl();  
+        docModel = builder.newDocument();  
         Element spkmodel = docModel.createElement("spkmodel"); 
         docModel.appendChild(spkmodel);
-        spkmodel.appendChild(docModel.createTextNode("\n" + replaceCharacter(control) + "\n"));        
+        spkmodel.appendChild(docModel.createTextNode("\n" + replaceCharacter(control)));        
     }    
     
     /** This method generates model section of the SPK input file.
@@ -541,12 +553,23 @@ public class XMLWriter
      * @return a String object containing the text of the model XML document.
      */
     public static String setModel(String text)
-    {    
-        Document document = new DocumentImpl();  
+    {   
+        text = text.trim();
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        try
+        {
+            builder = factory.newDocumentBuilder();
+        }
+        catch(ParserConfigurationException e)
+        {
+            e.printStackTrace();
+        }
+        Document document = builder.newDocument();
         Element spkmodel = document.createElement("spkmodel"); 
         document.appendChild(spkmodel);
         spkmodel.appendChild(document.createTextNode("\n" + replaceCharacter(text) + "\n"));
-        return Utility.formatXML(((DocumentImpl)document).saveXML(document));      
+        return getString(document);
+//        return Utility.formatXML(((DocumentImpl)document).saveXML(document));
     }
     
     /** Generate SPK output file content.
@@ -556,7 +579,16 @@ public class XMLWriter
     public static String setOutput(Properties spkOutput)
     {
         // Generate Job XML
-        Document docJob = new DocumentImpl();
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        try
+        {
+            builder = factory.newDocumentBuilder();
+        }
+        catch(ParserConfigurationException e)
+        {
+            e.printStackTrace();
+        }
+        Document docJob = builder.newDocument();
         Element spkjob = docJob.createElement("spkjob");
         spkjob.setAttribute("id", spkOutput.getProperty("jobId"));
         spkjob.setAttribute("abstract", replaceCharacter(spkOutput.getProperty("jobAbstract"))); 
@@ -574,11 +606,12 @@ public class XMLWriter
         spkjob.appendChild(model);
         spkjob.appendChild(data);
         docJob.appendChild(spkjob);
-        String job = Utility.formatXML(((DocumentImpl)docJob).saveXML(docJob));                 
+        String job = getString(docJob);
+//        String job = Utility.formatXML(((DocumentImpl)docJob).saveXML(docJob));                 
 
         // Return Spk output
-        String ls = System.getProperty("line.separator");
-        return job + ls + spkOutput.getProperty("report") + spkOutput.getProperty("source");        
+//        String ls = System.getProperty("line.separator");
+        return job + "\n" + spkOutput.getProperty("report") + spkOutput.getProperty("source");        
     }
     
     // Generate a dataset XML
@@ -586,7 +619,7 @@ public class XMLWriter
     {
         int nRows = dataAll.length;
         int nColumns = dataAll[0].length;
-        Document docData = new DocumentImpl(); 
+        Document docData = builder.newDocument(); 
         Element spkdata = docData.createElement("spkdata");
         spkdata.setAttribute("version", "0.1");
         docData.appendChild(spkdata);
@@ -621,7 +654,8 @@ public class XMLWriter
                 row.appendChild(value);                    
             }
         }
-        return Utility.formatXML(((DocumentImpl)docData).saveXML(docData));
+        return getString(docData);
+//        return Utility.formatXML(((DocumentImpl)docData).saveXML(docData));
     }    
     /** This method saves the XML document as a text file in XML format.
      * @param file a String object as the filename of the file to be saved.
@@ -631,10 +665,11 @@ public class XMLWriter
         try
 	{
             PrintWriter writer = new PrintWriter(new FileWriter(file));
-            String ls = System.getProperty("line.separator");
-            writer.println(Utility.formatXML(((DocumentImpl)docSource).saveXML(docSource)) + ls + 
-                           Utility.formatXML(((DocumentImpl)docData).saveXML(docData)) + ls + 
-                           Utility.formatXML(((DocumentImpl)docModel).saveXML(docModel))); 
+//            String ls = System.getProperty("line.separator");
+            writer.println(getString(docSource) + "\n" + getString(docData) + "\n" + getString(docModel));
+//            writer.println(Utility.formatXML(((DocumentImpl)docSource).saveXML(docSource)) + ls + 
+//                           Utility.formatXML(((DocumentImpl)docData).saveXML(docData)) + ls + 
+//                           Utility.formatXML(((DocumentImpl)docModel).saveXML(docModel))); 
             writer.close();
         }
         catch(Exception e)
@@ -651,10 +686,11 @@ public class XMLWriter
       */    
     public String getDocument()
     {
-        String ls = System.getProperty("line.separator");
-        return Utility.formatXML(((DocumentImpl)docSource).saveXML(docSource)) + ls +
-               Utility.formatXML(((DocumentImpl)docData).saveXML(docData)) + ls +
-               Utility.formatXML(((DocumentImpl)docModel).saveXML(docModel));      
+        return getString(docSource) + "\n" + getString(docData) + "\n" + getString(docModel);
+//        String ls = System.getProperty("line.separator");
+//        return Utility.formatXML(((DocumentImpl)docSource).saveXML(docSource)) + ls +
+//               Utility.formatXML(((DocumentImpl)docData).saveXML(docData)) + ls +
+//               Utility.formatXML(((DocumentImpl)docModel).saveXML(docModel));      
     }
     
     private boolean exist(String[] strings, String string)
@@ -674,6 +710,22 @@ public class XMLWriter
         text = text.replaceAll("'", "&apos;");
         return text;
     }
+    
+    private static String getString(Document document)
+    {
+        java.io.StringWriter writer = new java.io.StringWriter();
+        try
+        {
+            Transformer t = TransformerFactory.newInstance().newTransformer();            
+            t.transform(new DOMSource(document), new StreamResult(writer));
+        }
+        catch(TransformerConfigurationException e){}
+        catch(TransformerException e){};
+        return Utility.formatXML(writer.toString());
+    }
+    
+    // XML document builder
+    private static DocumentBuilder builder;
     
     // XML documents
     private Document docSource, docData, docModel;

@@ -74,9 +74,9 @@ author: Jiaji Du
                   Enter FileExtension as "jnlp"<br>
                   Enter MIME type as "Application/x-java-jnlp-file"<br>
                   Enter Handled by Application as<br>
-                  "/usr/java/j2re1.4.2_04/javaws/javaws" for Linux or
+                  "/usr/java/j2re1.4.2_04/javaws/javaws", then click the "OK" buttons.
             </p><p>
-                  Note that the version number may be different in the future.
+                  Note that the JRE version number may be different in the future.
 	    </p>
 	  </td>
 	</tr>

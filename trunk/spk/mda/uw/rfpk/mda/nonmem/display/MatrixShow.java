@@ -60,11 +60,21 @@ public class MatrixShow extends javax.swing.JFrame {
         DecimalFormat f = new DecimalFormat("0.00E00");
         if(isDiagonal)
             for(int i = 0; i < dimension; i++)
-                data[i][i + 1] = Utility.formatData(6, f.format(Double.parseDouble(data[i][i + 1])));
+            {
+                if(!data[i][i + 1].equals("nan"))
+                    data[i][i + 1] = Utility.formatData(6, f.format(Double.parseDouble(data[i][i + 1])));
+                else
+                    data[i][i + 1] = "   N/A";
+            }
         else
             for(int i = 0; i < dimension; i++)
                 for(int j = 1; j < data[i].length; j++)
-                    data[i][j] = Utility.formatData(6, f.format(Double.parseDouble(data[i][j])));
+                {
+                    if(!data[i][j].equals("nan"))
+                        data[i][j] = Utility.formatData(6, f.format(Double.parseDouble(data[i][j])));
+                    else
+                        data[i][j] = "   N/A";
+                }
 
         // Set table model
         DisplayTableModel tableModel = new DisplayTableModel(data, header);

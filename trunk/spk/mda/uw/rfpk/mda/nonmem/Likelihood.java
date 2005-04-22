@@ -16,17 +16,17 @@ Washington Free-Fork License as a public service.  A copy of the
 License can be found in the COPYING file in the root directory of this
 distribution.
 **********************************************************************/
-package uw.rfpk.mda.nonmem;
+package uw.rfpk.mda.saamii;
 
 import javax.swing.JOptionPane;
-import uw.rfpk.mda.nonmem.display.Output;
+import uw.rfpk.mda.nonmem.Output;
 
 /** This class handles likelihood evaluation method.
  * @author  Jiaji Du
  */
 public class Likelihood {
     
-    /** Creates a new instance of Likelihood.
+    /** Change input for a likelihood evaluation job.
      * @param spkInput SPK input file as a String object.
      * @param report SPK report file as a String object.
      * @param jobId job ID.
@@ -36,11 +36,16 @@ public class Likelihood {
     public static String changeInput(String spkInput, String report, long jobId, boolean isLibrary) 
     {
         // Get the model from the input file
-        int index1 = spkInput.indexOf("<spkdata");
-        int index2 = spkInput.indexOf("<spkmodel");
-        String source = spkInput.substring(0, index1 - 22);
-        String data = spkInput.substring(index1 - 22, index2 - 22);
-        String model = spkInput.substring(index2 - 22);
+        int indexData = spkInput.lastIndexOf("<?xml ", spkInput.indexOf("<spkdata"));
+        int indexModel = spkInput.lastIndexOf("<?xml ", spkInput.indexOf("<spkmodel"));
+        String source = spkInput.substring(0, indexData);
+        String data = spkInput.substring(indexData, indexModel);
+        String model = spkInput.substring(indexModel);
+//        int index1 = spkInput.indexOf("<spkdata");
+//        int index2 = spkInput.indexOf("<spkmodel");
+//        String source = spkInput.substring(0, index1 - 22);
+//        String data = spkInput.substring(index1 - 22, index2 - 22);
+//        String model = spkInput.substring(index2 - 22);
 
         // Modify source.
         source = replaceSourceParameters(source, report);

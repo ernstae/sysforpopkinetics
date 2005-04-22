@@ -18,10 +18,12 @@ distribution.
 **********************************************************************/
 package uw.rfpk.mda.nonmem.display;
 
+import uw.rfpk.mda.nonmem.Output;
 import java.text.DecimalFormat;
 import uw.rfpk.mda.nonmem.Utility;
 import java.util.Date;
 import java.util.HashMap;
+import javax.swing.JOptionPane;
 import java.text.SimpleDateFormat;
 //import java.text.NumberFormat;
 
@@ -42,13 +44,19 @@ public class Summary {
     public static String makeSummary(Output output, boolean isOnline, boolean isDeveloper, 
                                      String jobMethodCode, HashMap methodTable) 
     {
+        if(output == null)
+        {
+            JOptionPane.showMessageDialog(null, "Output was not found.", "Input Erorr",
+                                          JOptionPane.ERROR_MESSAGE);
+            return null;   
+        }
         // Preparation
         DecimalFormat f = new DecimalFormat("0.00E00");
 //        NumberFormat p = NumberFormat.getPercentInstance();
 //        p.setMaximumFractionDigits(1);
 //        p.setMinimumFractionDigits(1);
         String par = "", ser = "", rse = "", sd = "", cv = "", n, lb = "", ub = ""; 
-        String NA = "N/A";
+        String NA = "   N/A";
         
         if(output.objective == null)
             output.objective = NA;
@@ -64,15 +72,15 @@ public class Summary {
             for(int i = 0; i < output.theta.length; i++)
             {
                 n = String.valueOf(i + 1);        
-                par = output.theta[i] != null ? 
+                par = output.theta[i] != null && !output.theta[i].equals("nan") ? 
                       Utility.formatData(6, f.format(Double.parseDouble(output.theta[i]))) : NA;
-                ser = output.stdErrTheta != null && output.stdErrTheta[i] != null ? 
+                ser = output.stdErrTheta != null && output.stdErrTheta[i] != null && !output.stdErrTheta[i].equals("nan") ? 
                       Utility.formatData(6, f.format(Double.parseDouble(output.stdErrTheta[i]))) : NA;
-                rse = output.coefVariation != null && output.coefVariation[i] != null ? 
+                rse = output.coefVariation != null && output.coefVariation[i] != null && !output.coefVariation[i].equals("nan") ? 
                       Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[i]))) : NA;
-                lb = output.confInterval != null && output.confInterval[0][i] != null ? 
+                lb = output.confInterval != null && output.confInterval[0][i] != null && !output.confInterval[0][i].equals("nan") ? 
                      Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][i]))) : NA;
-                ub = output.confInterval != null && output.confInterval[1][i] != null ? 
+                ub = output.confInterval != null && output.confInterval[1][i] != null && !output.confInterval[1][i].equals("nan")? 
                      Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][i]))) : NA;
                 theta = theta + getSpace(5 - n.length()) + n + "     " + par + getSpace(12 - par.length()) + ser +
                         getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub + "\n";  
@@ -92,18 +100,18 @@ public class Summary {
                     {
                         for(int i = j - 1; i < output.omega[l].length; i++)  
                         {
-                            par = output.omega[l][i][j] != null ? 
+                            par = output.omega[l][i][j] != null && !output.omega[l][i][j].equals("nan") ? 
                                   Utility.formatData(6, f.format(Double.parseDouble(output.omega[l][i][j]))) : NA;
-                            ser = output.stdErrOmega != null && output.stdErrOmega[l][i][j] != null ? 
+                            ser = output.stdErrOmega != null && output.stdErrOmega[l][i][j] != null && !output.stdErrOmega[l][i][j].equals("nan") ? 
                                   Utility.formatData(6, f.format(Double.parseDouble(output.stdErrOmega[l][i][j]))) : NA;
-                            rse = output.coefVariation != null && output.coefVariation[k] != null ? 
+                            rse = output.coefVariation != null && output.coefVariation[k] != null && !output.coefVariation[k].equals("nan") ? 
                                   Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
-                            lb = output.confInterval != null && output.confInterval[0][k] != null ? 
+                            lb = output.confInterval != null && output.confInterval[0][k] != null && !output.confInterval[0][k].equals("nan") ? 
                                  Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
-                            ub = output.confInterval != null && output.confInterval[1][k] != null ? 
+                            ub = output.confInterval != null && output.confInterval[1][k] != null && !output.confInterval[1][k].equals("nan") ? 
                                  Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k++]))) : NA;
-                            cv = output.omega[l][i][j] != null && Double.parseDouble(output.omega[l][i][j]) >= 0 ? 
-                                 Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(output.omega[l][i][j])))) : NA;
+                            cv = !par.equals(NA) && Double.parseDouble(par) >= 0 ? 
+                                 Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(par)))) : NA;
                             omega = omega + "  " + j + "," + (i + 1) + "     " + par + getSpace(12 - par.length()) + ser +                            
                                     getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub;
                             if(j == i + 1)
@@ -117,18 +125,18 @@ public class Summary {
                 {
                     for(int i = 0; i < output.omega[l].length; i++)
                     {
-                        par = output.omega[l][i][i + 1] != null ?
+                        par = output.omega[l][i][i + 1] != null && !output.omega[l][i][i + 1].equals("nan") ?
                               Utility.formatData(6, f.format(Double.parseDouble(output.omega[l][i][i + 1]))) : NA;
-                        ser = output.stdErrOmega != null && output.stdErrOmega[l][i][i + 1] != null ? 
+                        ser = output.stdErrOmega != null && output.stdErrOmega[l][i][i + 1] != null && !output.stdErrOmega[l][i][i + 1].equals("nan") ? 
                               Utility.formatData(6, f.format(Double.parseDouble(output.stdErrOmega[l][i][i + 1]))) : NA;
-                        rse = output.coefVariation != null && output.coefVariation[k] != null ? 
+                        rse = output.coefVariation != null && output.coefVariation[k] != null && !output.coefVariation[k].equals("nan") ? 
                               Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
-                        lb = output.confInterval != null && output.confInterval[0][k] != null ? 
+                        lb = output.confInterval != null && output.confInterval[0][k] != null && !output.confInterval[0][k].equals("nan") ? 
                              Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
-                        ub = output.confInterval != null && output.confInterval[1][k] != null ? 
+                        ub = output.confInterval != null && output.confInterval[1][k] != null && !output.confInterval[1][k].equals("nan") ? 
                              Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k++]))) : NA;
-                        cv = output.omega[l][i][i + 1] != null && Double.parseDouble(output.omega[l][i][i + 1]) >= 0 ? 
-                             Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(output.omega[l][i][i + 1])))) : NA;
+                        cv = !par.equals(NA) && Double.parseDouble(par) >= 0 ? 
+                             Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(par)))) : NA;
                         omega = omega + "  " + (i + 1) + "," + (i + 1) + "     " + par + getSpace(12 - par.length()) + ser +                            
                                 getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub +
                                 getSpace(14 - ub.length()) + cv + "\n";
@@ -149,18 +157,18 @@ public class Summary {
                     {
                         for(int i = j - 1; i < output.sigma[l].length; i++)  
                         {                        
-                            par = output.sigma[l][i][j] != null ? 
+                            par = output.sigma[l][i][j] != null && !output.sigma[l][i][j].equals("nan") ? 
                                   Utility.formatData(6, f.format(Double.parseDouble(output.sigma[l][i][j]))) : NA;
-                            ser = output.stdErrSigma != null && output.stdErrSigma[l][i][j] != null ? 
+                            ser = output.stdErrSigma != null && output.stdErrSigma[l][i][j] != null && !output.stdErrSigma[l][i][j].equals("nan") ? 
                                   Utility.formatData(6, f.format(Double.parseDouble(output.stdErrSigma[l][i][j]))) : NA;   
-                            rse = output.coefVariation != null && output.coefVariation[k] != null ? 
+                            rse = output.coefVariation != null && output.coefVariation[k] != null && !output.coefVariation[k].equals("nan") ? 
                                   Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
-                            lb = output.confInterval != null && output.confInterval[0][k] != null ? 
+                            lb = output.confInterval != null && output.confInterval[0][k] != null && !output.confInterval[0][k].equals("nan") ? 
                                  Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
-                            ub = output.confInterval != null && output.confInterval[1][k] != null ? 
+                            ub = output.confInterval != null && output.confInterval[1][k] != null && !output.confInterval[1][k].equals("nan") ? 
                                  Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k++]))) : NA;
-                            sd = output.sigma[l][i][j] != null && Double.parseDouble(output.sigma[l][i][j]) >= 0 ? 
-                                 Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(output.sigma[l][i][j])))) : NA;
+                            sd = !par.equals(NA) && Double.parseDouble(par) >= 0 ? 
+                                 Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(par)))) : NA;
                             sigma = sigma + "  " + j + "," + (i + 1) + "     " + par + getSpace(12 - par.length()) + ser +               
                                     getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub;                   
                             if(j == i + 1)
@@ -174,18 +182,18 @@ public class Summary {
                 {        
                     for(int i = 0; i < output.sigma[l].length; i++)
                     {
-                        par = output.sigma[l][i][i + 1] != null ?
+                        par = output.sigma[l][i][i + 1] != null && !output.sigma[l][i][i + 1].equals("nan") ?
                               Utility.formatData(6, f.format(Double.parseDouble(output.sigma[l][i][i + 1]))) : NA;
-                        ser = output.stdErrSigma != null && output.stdErrSigma[l][i][i + 1] != null ? 
+                        ser = output.stdErrSigma != null && output.stdErrSigma[l][i][i + 1] != null && !output.stdErrSigma[l][i][i + 1].equals("nan") ? 
                               Utility.formatData(6, f.format(Double.parseDouble(output.stdErrSigma[l][i][i + 1]))) : NA;
-                        rse = output.coefVariation != null && output.coefVariation[k] != null ? 
+                        rse = output.coefVariation != null && output.coefVariation[k] != null && !output.coefVariation[k].equals("nan") ? 
                               Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
-                        lb = output.confInterval != null && output.confInterval[0][k] != null ? 
+                        lb = output.confInterval != null && output.confInterval[0][k] != null && !output.confInterval[0][k].equals("nan") ? 
                              Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
-                        ub = output.confInterval != null && output.confInterval[1][k] != null ? 
+                        ub = output.confInterval != null && output.confInterval[1][k] != null && !output.confInterval[1][k].equals("nan") ? 
                              Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k++]))) : NA;
-                        cv = output.sigma[l][i][i + 1] != null && Double.parseDouble(output.sigma[l][i][i + 1]) >= 0 ? 
-                             Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(output.sigma[l][i][i + 1])))) : NA;
+                        cv = !par.equals(NA) && Double.parseDouble(par) >= 0 ? 
+                             Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(par)))) : NA;
                         sigma = sigma + "  " + (i + 1) + "," + (i + 1) + "     " + par + getSpace(12 - par.length()) + ser +                            
                                 getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub +
                                 getSpace(14 - ub.length()) + cv + "\n";
@@ -245,10 +253,12 @@ public class Summary {
                 if(isDeveloper)
                     errorMessage += "\nThis message was issued from file: " + output.error[i][1] + 
                                       " at line: " + output.error[i][2];
+                if(i < output.error.length - 1) errorMessage += "\n";
             }
         }
         else
-            errorMessage = "\nNone";        
+            errorMessage = "\nNone\n";
+        errorMessage = errorMessage.replaceAll("\n", "\n     ");
         String warningMessage = "";
         if(output.warning != null)
         {
@@ -258,10 +268,12 @@ public class Summary {
                 if(isDeveloper)
                     warningMessage += "\nThis message was issued from file: " + output.warning[i][1] + 
                                       " at line: " + output.warning[i][2];
+                if(i < output.warning.length - 1) warningMessage += "\n";
             }
         }
         else
-            warningMessage = "\nNone";
+            warningMessage = "\nNone";       
+        warningMessage = warningMessage.replaceAll("\n", "\n     ");
         
         // Write summary
         String summary = "Summary Report\n" +
