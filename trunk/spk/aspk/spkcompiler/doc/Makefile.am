@@ -3,18 +3,18 @@ T = spkcompiler
 WEB = $(WEBDIR)/v0.1/specs/$T
 
 SUBDIRS = common nonmem
-SUFFIXES = .dox
-.html.dox : 
-	doxygen $<
 
 dist_pkgdata_DATA = spkcompiler.cfg \
                     main_menu.html
 
 DRIVER_SRC = ../spkcompiler/main.cpp
 
-html : compiler_html 
+html : overall_html components_html
 
-compiler_html : $(DRIVER_SRC) 
+overall_html : spkcompiler.xml
+	docbook2html --dsl ~/develop/r2/doc/stylesheet/"local.dsl#html" --nochunks $<
+
+components_html : $(DRIVER_SRC) 
 	doxygen -u spkcompiler.cfg
 
 clean : 
@@ -27,8 +27,10 @@ all  :
 	rm -rf latex
 	rm -rf man
 	doxygen spkcompiler.cfg
+	docbook2html --dsl ~/develop/r2/doc/stylesheet/"local.dsl#html" --nochunks spkcompiler.xml
 
 install:
+	scp *.html $(WEB)
 	scp html/*.html $(WEB)/html
 	scp nonmem/html/*.html $(WEB)/nonmem/html
 	scp common/html/*.html $(WEB)/common/html
