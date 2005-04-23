@@ -8,6 +8,12 @@
   <articleinfo>
     <revhistory>
       <revision>
+	<revnumber>1.2</revnumber>
+	<date>April 21, 2005</date>
+	<authorinitials>sh</authorinitials>
+	<revremark>Overall update</revremark>
+      </revision>
+      <revision>
 	<revnumber>1.1</revnumber>
 	<date>April 30, 2004</date>
 	<authorinitials>sh</authorinitials>
@@ -24,232 +30,138 @@
       <para>
 <!-- What do i have to tell the others about the compiler if they are to 
 take over this project?  purpose, architecture, front- & back- end -->
-The purpose of this documentation is to give you an overall view of SPK Compiler
-architecture, what it does and what it does not, and ultimately how it is 
-meant to be extended in the future.
+The purpose of this documentation is to give you an overall architectural view 
+of SPK Compiler and links to related documents.
       </para>
     </abstract>
   </articleinfo>
   <sect1>
      <title>Introduction</title>
      <para>
-       SPK Compiler, <function>spkcompiler</function>, is a command line application of
-       the SPK Compiler library that takes a pair of an <ulink url="../sourceML/sourceML.html">
-       SpkSourceML</ulink> document and an <ulink url="../dataML/dataML.html">SpkDataML</ulink>
-       document as inputs and generates a set of C++ source code files that are, as together,
-       built an application of computational SPK Library.
+       SPK Compiler, <filename>spkcompiler</filename>, is a command line application
+       that compiles information from a pair of an 
+       <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/sourceML/sourceML.html">
+       SpkSourceML</ulink> document and an 
+       <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/dataML/dataML.html">SpkDataML</ulink>
+       document and generates a number of C++ source code files that are, as together,
+       built as an application of the SPK (computational) Library.
      </para>
      <screen>
-     +---------------+                &lt;SPK Compiler&gt;
+     +---------------+    
      |               |                
-     |  SpkSourceML  |  fed to    /-------------------\             &lt;An SPK Application&gt;
-     |   document    |----------->|                   |
-     |               |            |                   |             +--------------+
-     +---------------+            |                   |  generates  |              |-+
-                                  |    spkcompiler    |------------>|  C++ source  | |-+
-     +---------------+            |                   |             |              | | |
-     |               |  fed to    |                   |             +--------------+ | |
-     |   SpkDataML   |----------->|                   |               +--------------+ |
-     |   document    |            \-------------------/                 +--------------+
-     |               |                      |                                   .
-     +---------------+                      | uses                               .
-                                            |                                     .
-                                           \|/
-                                    ==================       ================
-                                    |                |       |              |
-                                    |  SPK Compiler  | uses  |  Xerces-C++  |
-                                    |    Library     |------>|   Library    |
-                                    |                |       |              |
-                                    ==================       ================
+     |  <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/sourceML/sourceML.html">SpkSourceML</ulink>  |  fed to    /------------------\             &lt;An SPK Application&gt;
+     |   document    |----------->|                  |
+     |               |            |                  |             +--------------+
+     +---------------+            |                  |  generates  |              |-+
+                                  |   SPK Compiler   |------------>|  <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/sourceCpp/sourceCpp.html">C++ source</ulink>  | |-+
+     +---------------+            |                  |             |              | | |
+     |               |  fed to    |                  |             +--------------+ | |
+     |   <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/dataML/dataML.html">SpkDataML</ulink>   |----------->|                  |               +--------------+ |
+     |   document    |            \------------------/                 +--------------+
+     |               |              |             |                           .
+     +---------------+              | uses        | uses                       .
+                                   \|/           \|/                            .
+                                    +             +
+                /------------------------\    =================
+                |                        |    |               |
+                |     Domain specific    |    |   DOM Parser  |
+                |  expression language   |    |  (XERCES C++) |
+                |        compliler       |    |               |
+                |                        |    =================
+                \------------------------/
+
      </screen>
      <para>
-       The SPK Compiler library, in turn, relies XML-related operations upon
-       <ulink url="http://xml.apache.org/xerces-c/index.html">Xerces C++ Parser</ulink>
-       developed by <ulink url="http://xml.apache.org/index.html">Apache XML Project</ulink>.
+       As part of the process, <filename>spkcompiler</filename> uses 
+       a DOM parser provided by <ulink url="http://xml.apache.org/xerces-c/">XERCES C++</ulink>
+       library to generate a parse tree.  A parse tree is generated
+       so that the Compiler can visit elements more freely and repetitively
+       as it wishes.  
+     </para>
+     <para>
+       The input information can be categolized into three
+       main parts: model(s), a data set and control parameters.
+       The user defined model(s) which is essentially a set of expressions
+       may invoke a domain specific language compiler within the context
+       of SPK Compiler compilation process.  The primary job of the
+       domain specific language compiler is to discover new 
+       symbols (ie. variable names) and their attributes from the expressions
+       written in a language familar with target users (ex. FORTRAN 77)
+       and communicates it back to the calling SPK Compiler.
+       The calling SPK Compiler, then, merges it with the rest of the information collected
+       else where, and generates a complete application of SPK (computational) library.
      </para>
      <sect2>
-        <title><function>spkcompiler</function> Calling Convension</title>
+        <title>Usage of <filename>spkcompiler</filename></title>
+        <screen>
+        Usage: spkcompiler SOUCE_XML DATA_XML
+
+        SOURCE_XML - a path to an SpkSourceML document instance
+        DATA_XML   - a path to an SpkDataML document instance
+        </screen>
         <para>
+        Note: <filename>spkcompiler</filename> is assumed to be installed in one of
+        the system directories (ex. /usr/bin, /usr/local/bin, a directory set by 
+        <varname>LD_LIBRARY_PATH</varname>).
         </para>
      </sect2>
   </sect1>
   <sect1>
-     <title>Design</title>
+     <title>Software Components</title>
      <para>
-SPK Compiler translates a combination of a SpkSourceML and a SpkDataML documents to C++
-source code files.  The overall picture of package structure is demonstrated
-in the diagram below:
-     </para>
-     <screen>
-         +--------------------------------+
-         | abstract class ClientTransltor |
-         +--------------------------------+---------------------------+
-         | virtual void translate()                                   |
-         | virtual const vector&gt;string&lt; getFilenames() const          |
-         | ...                                                        |
-         +------------------------------------------------------------+
-                    /|\
-                   /-+-\
-                     |
-                     | DERIVE
-                     |
-         +---------------------+
-         | class xxxTranslator |
-         +---------------------+---------------------------+
-         | void translate()                                |
-         | const vector&gt;string&lt; getFilenames() const       |
-         | ...                                             |
-         +-------------------------------------------------+
-           |
-           | USES
-          \|/
-          yyparse() and yylex() (implemented specific to the client)
-
-     </screen>
-  </sect1>
-  <sect1>
-     <title>Model Library</title>
-     <para>
-     A model in a Model Library can be in any form (i.e. abstract, template, concrete).
-     The decision as to which form a model shall take is best left for meeting the 
-     specific needs imposed by the type of MDA client.
+     The unit level specifications of components making up 
+     <filename>spkcompiler</filename> are available at
+     <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkcompiler/html/index.html">
+     http://192.168.2.2:8080/soft/v0.1/specs/spkcompiler/html/index.html</ulink>.
      </para>
      <para>
-     For instance, for SAAM-II, it <emphasis>may</emphasis> make most sense to provide abstract
-     classes shown in the diagram below:
-        <screen>
-  +------------------------ SAAM-II Model Library -----------------------+
-  |                                                                      |
-  |                           +---------------+                          |
-  |                           |   SpkModel    |                          |
-  |                           |               |                          |
-  |                           |  (abstract)   |                          |
-  |                           +---------------+                          |
-  |                             /|\       /|\                            |
-  |                              |         |                             |
-  |                              |         |                             |
-  |     +---------------------------+   +--------------------------+     |
-  |     |   Differential equation   |   |     Non-differential     |     |
-  |     | based Physiological Model |   |   equation based model   |     |
-  |     |         (abstract)        |   |        (abstract)        |     |
-  |     +---------------------------+   +--------------------------+     |
-  |            /|\        /|\                 /|\        /|\             |
-  |             |          |                   |          |              |
-  |             |          |                   |          |              |
-  |     +---------------+  |            +---------------+ |              |
-  |     | Compartmental |  |            | Compartmental | |              |
-  |     |  (abstract)   |-------+       |  (abstract)   |-------+        |
-  |     +---+-----------+       |       +---+-----------+       |        |
-  |         | non-Compartmental |           | non-Compartmental |        |
-  |         |    (abstract)     |           |    (abstract)     |        |
-  |         +-------------------+ ...       +-------------------+ ...    |
-  |                                                                      |
-  +----------------------------------------------------------------------+
-
-        </screen>
-     </para>
-     <para>
-     Whereas, for NONMEM, its library <emphasis>may</emphasis> consists of concrete subclasses 
-     of SpkModel which requires/uses certain functions that have to be dynamically 
-     generated/defined by SPK Compiler:
-        <screen>
-                 +-------  NONMEM Model Libarary --------+
-                 |                                       |
-                 |            +--------------+           |
-                 |            |   SpkModel   |           |
-                 |            |              |           |
-                 |            |  (abstract)  |           |
-                 |            +--------------+           |
-                 |              /|\      /|\             |
-                 |               |        |              |  (these ones are dynamically defined)
-                 |               |        |              |
-                 |    +-------------+  +------------+    |     +- - - - - -+
-                 |    |   One Comp. |  |  One Comp. | =====&lt | Predict y |
-                 |    |  Non Linear |  |   Linear   |  (uses)  +- - - - - -+ - - +
-                 |    |  (concrete) |  | (concrete) |    |        | Compute error |
-                 |    +-------------+  +------------+    |        +- - - - - - - -+
-                 |                                       |
-                 +---------------------------------------+
-        </screen>
-     </para>
-  </sect1>
-  <sect1>
-     <title>Expression Language Compiler</title>
-     <para>
-     One (or more) parser is required per MDA client for SPK Compiler 
-     to translate algebraic expressions embedded in SpkML documents.
-     The expression parser shall be provided as a function named <function>int yyparse()</function>
-     which can be generated by a <ulink url="http://dinosaur.compilertools.net/yacc/index.html">
-     YACC</ulink> definition file.  The features an expression
-     parser shall be able to handle are listed in <ulink url="SpkExpLanguage.html">
-    Spk Expression Language Specification</ulink>.
-     </para>
+     In a nut shell, the 
+     <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkcompiler/html/main_8cpp.html">
+     main program</ulink> creates an instance of 
+     <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkcompiler/common/html/classClientTranslator.html">
+     <classname>ClientTranslator</classname></ulink>
+     specific to the type of user.  For example, an object of 
+     <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkcompiler/nonmem/html/classNonmemTranslator.html">
+     <classname>NonmemTranslator</classname></ulink>
+     that is derived from 
+     <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkcompiler/common/html/classClientTranslator.html">
+     <classname>ClientTranslator</classname></ulink> is created for users
+     familar with NONMEM.  The object provides a method, among other methods, that initiates
+     compilation and generates C++ source code for a complete C++ application.  The caller
+     of <filename>spkcompiler</filename>, then, can build the application using
+     the Makefile, which is also generated, and run it.</para>
+  
+     <sect2>
+        <title>Domain Specific Expression Language Compiler</title>
+        <para>
+        A part, if not entirely, of user model specifications is written in a language that permits
+        the users to write mathematical expresssions, while the rest may be expressed as parameters
+        in expected forms.  The hand-written mathematical expressions
+        have to be analyzed by a specialized subtool within SPK Compiler, namely, 
+        a domain specific expression language compiler.
+        For example, NONMEM users may write an entire model in a subset of FORTRAN 77 language
+        when they use $PRED style specification or only a part if they use one of NONMEM
+        canned models.
+        SAAM II users may need to express rate constants in mathematical equations
+        in a SAAM II specific language when they have a non-linear compartment model.
+        </para>
+        <para>
+        We use industorial standard tools, 
+        <ulink url="http://www.combo.org/lex_yacc_page/">FLEX</ulink> for generating
+        lexcal analyzers (ie. scanners) and 
+        <ulink url="http://www.combo.org/lex_yacc_page/">BISON</ulink> 
+        for generating compiler-compilers (ie. parsers). FLEX and BISON are a
+        GNU version of LEX and YACC, respectively.
+        </para>
+     </sect2>
   </sect1>
   <sect1>
      <title>Generated C++ Code</title>
-     <sect2>
-        <title>DataSet & IndData classes</title>
-        <para>
-        The data set associated with an individual is organized and expressed as an object.  
-        Its class shall be dynamically generated by SPK Compiler and be named, IndData.
-        This class provides a mechanism for the caller to access a value by multiple names
-        if the end-user has given it more than one names (aliases).
-        </para>
-        <para>
-        The below demonstrates the idea (and an example) 
-        of dynamically generated IndData class definition, 
-        from a data set containing the sampling points "t", the measurements at 
-        these sampling points "dv", the doses at various time points "dose", 
-        and the weight of the sample compartment "wt".
-        "dv" data has a synonym (alias), which is "y".
-           <screen>
-class IndData
-{
-public:
-   const string ID;
-   const double *wt;
-   const double *t;
-   const double *dv;
-   const double *y;
-   const double *dose;
-
-   IndData( const string & idIn, 
-            const double * wtIn, 
-            const double * tIn, 
-            const double * dvIn, 
-            const double * doseIn )
-   : ID(idIn), wt(wtIn), t(tIn), dv(dvIn), y(dvIn), dose(doseIn)
-   {}
-} 
-           </screen>
-        An IndData object has to be created and initialized per individual.
-        The process has to be done somewhere before it is used during the 
-        evaluation of models.
-        </para>
-     </sect2>
-  </sect1>
-  <sect1>
-     <title>Driver</title>
      <para>
-     It is the driver that prepares the parameters needed to call
-     <function>fitPopulation()</function> or <function>fitIndividual</function>.
-     Such parameters include the intial estimates for the population parameter 
-     vector and individual paramters vector, 
-     a vector composed of all individuals' time-dependent
-     measurements against which the estimated values are compared, and values
-     that control optimizer's behavior.  One way to provide such a driver is
-     to have a pre-defined generic driver that takes these parameters as 
-     command line arguments.  The problem of this approach is
-     that the number of arguments changes from a problem to another and
-     could be very, very large (hundreds).  Thus, it has to be genrated
-     dynamically.
-     </para>
-  </sect1>
-  <sect1>
-     <title>Partial Definition of SpkModel Sub-Class</title>
-     <para>
-     Depending on the type of MDA client, either only a part or the entire
-     body of an SpkModel sub-class will be generated.
+     SPK Compiler generates a number of C++ source code files and a Makefile.
+     The specifications for these files are found at:
+     <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/sourceCpp/sourceCpp.html">
+     http://192.168.2.2:8080/soft/v0.1/specs/sourceCpp/sourceCpp.html</ulink>.
      </para>
   </sect1>
   <sect1>
@@ -257,12 +169,12 @@ public:
      <itemizedlist>
         <listitem>
            <para>
-              <ulink url="../dataML/dataML.html">SpkDataML Specification</ulink>
+              <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/dataML/dataML.html">SpkDataML Specification</ulink>
            </para>
         </listitem>
         <listitem>
            <para>
-              <ulink url="../sourceML/sourceML.html">SpkSourceML Specification</ulink>
+              <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/sourceML/sourceML.html">SpkSourceML Specification</ulink>
            </para>
         </listitem>
         <listitem>
@@ -272,20 +184,18 @@ public:
         </listitem>
         <listitem>
            <para>
-             API Documentations can be constructed from running <literal>make</literal> 
-             in your workspace of <literal>r2/src/apps/spk/aspk/doc/</literal> CVS project.
-             It generates a subdirectory named <literal>api</literal> under which
-             you will find documentations for SPK Compiler Library components.
+              <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkcompiler/common/html/index.html">
+              SPK Compiler software component specifications</ulink>
            </para>
         </listitem>
         <listitem>
            <para>
-             <ulink url="../sourceCpp/sourceCpp.html">Generated C++ Source Code</ulink>
+             <ulink url="">Generated C++ Source Code</ulink>
            </para>
         </listitem>
         <listitem>
            <para>
-              <ulink url="../reportML/reportML.html">CSPK Results/Report (xml)</ulink>
+              <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/sourceCpp/sourceCpp.html">CSPK Results/Report (xml)</ulink>
            </para>
         </listitem>
      </itemizedlist>
