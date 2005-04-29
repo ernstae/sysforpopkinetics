@@ -38,12 +38,12 @@
       following commands:
       <screen format="linespecific">
 cd /tmp
-scp 'whitechuck:/opt/download/acroread*' .
+scp 'whitechuck:/opt/download/AdobeReader*' .
 su
 
     <emphasis>enter your root password at this point</emphasis>
 
-rpm -Uhv acroread*.rpm
+rpm -Uhv AdobeReader*.rpm
       </screen>
     </para>
   </sect1>

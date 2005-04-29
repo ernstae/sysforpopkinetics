@@ -56,29 +56,27 @@
   <sect1>
     <title>Introduction: What is SSH?</title>
     <para>
-      Until about ten years ago, there was no secure way to 
-      log into a remote computer and to do work on that machine
-      while using the keyboard and monitor on your own workstation.
-      The method that was normally used combined the Internet
-      <command moreinfo="none">telnet</command> service
-      with a Unix application running on the
-      user's machine, enabling the user to connect to a shell 
-      running on a remote machine and interact with it as if it
-      were local. To establish a session with the remote machine,
-      the user would enter her username and password. 
+      Until the mid-1990s, there was no secure way to 
+      log into and use a computer from a remote location on the internet.
+      The unsecure method that was commonly used was to start a 
+      <emphasis>telnet</emphasis> client on the local machine, which
+      would then establish a telnet protocol link to the remote
+      machine, after which a login program would be run and, if 
+      successful, a shell session would be established.
     </para>
     <para>
-      Authentication by username and password was acceptable 
-      practice during the early days of inter-networking, when
+      The login program required the user to key in a username
+      and password.  This type of authentication was acceptable 
+      practice during the early days of internetworking, when
       most connections were within college campuses or between
       academic laboratories. There was really very little
-      security, however. There was no encryption, either of
-      the username and password nor of message content. Anyone
+      security, however, because neither the authentication 
+      information nor message content was encrypted. Anyone
       with the ability to tap a communications circuit could
-      eavesdrop or, worse yet, steal a password.
+      eavesdrop or steal a password.
     </para>
     <para>
-      An even less secure practice was the use of another Internet
+      An even less secure practice was the use of another internet
       service called <command moreinfo="none">rsh</command>,
       or the remote shell,
       which was very similar to <command moreinfo="none">telnet</command>,
@@ -89,15 +87,15 @@
       on trust; there was no authentication and no encryption. 
       A companion to <command moreinfo="none">rsh</command> was 
       <command moreinfo="none">rcp</command>, the remote copy command,
-      which copied files
+      which transferred files
       between systems with a similar lack of security.
     </para>
     <para>
-      Well before the Internet was opened up to the world in the
+      Well before the internet was opened up to the world in the
       1990s, these practices were obsolete due to their 
       lack of security. With the advent of the World Wide Web there
       was an explosion of the number of machines connected to 
-      the Internet. There was a need to administer machines
+      the internet. There was a need to administer machines
       remotely, but this required secure connections. 
     </para>
     <para>
@@ -127,8 +125,8 @@
     <para>    
       With <command moreinfo="none">ssh</command>,
       you can log into a remote machine
-      with a high degree of security.  All of the communication between
-      your workstation and the remote system is encrypted, including
+      with a high degree of security.  All of the communications between
+      your workstation and the remote system are encrypted, including
       a password if it is needed.  It is also possible to establish
       sessions with remote machines without providing a password, 
       in a way that is functionally identical to 
@@ -164,13 +162,6 @@
 	  </para>
 	</listitem>
       </itemizedlist>
-      Normally you do not have to do anything
-      to benefit from encrypted tunneling
-      of X-Windows sessions.
-      You simply establish a connection with
-      <command moreinfo="none">ssh</command> and start
-      up an X-Windows application on the remote host. That application will
-      use the X-Server running in your workstation to display its output.
     </para>
   </sect1>
   <sect1>
@@ -283,7 +274,7 @@
       the cache.
     </para>
   </sect1>
-  <sect1>
+  <sect1 id="workstation-conf">
     <title>Configuring Password-Free Remote Connection for a Workstation</title>
     <para>
       This section describes the process for setting up the 
@@ -484,7 +475,7 @@ ssh remote-host
       </para>
     </sect2>
   </sect1>
-  <sect1>
+  <sect1 id="server-conf">
     <title>Configuring Password-Free Connections Originating on a Server</title>
     <para>
       The previous section describes setting up the capability to 
