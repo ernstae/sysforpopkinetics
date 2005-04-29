@@ -280,6 +280,31 @@ export SGML_CATALOG_FILES
 	</screen>
       </para>
     </sect2>
+    <sect2>
+      <title>SSH Configuration</title>
+      <para>
+	RFPK software documents are all built in a directory structure
+	that is contained in the CVS repository <filename>r2</filename>.
+	To create a new document, you <command>cd</command> to the 
+	appropriate directory for the type article you are about to
+	write and then execute a shell script called 
+	<command>newdoc.sh</command>.  The script will create a directory
+	for the document containing, among other files, a 
+	<filename>Makefile</filename>.  If you execute the command
+	<command>make install</command> in that directory, the
+	secure file transfer utility <command>scp</command> will be used
+	to publish your document on the web by copying a
+	<filename>.html</filename> file, a <filename>.pdf</filename> file
+	and a <filename>.rtf</filename> file to the SPK webserver.
+	For this to work smoothly, you need to configure ssh so that
+	connections can be established between your workstation and the
+	webserver without having to provide a password.  Information on
+	how to do this can be found in the 
+	<ulink url="../ssh/ssh.html#workstation-conf">
+	  SSH Configuration Howto
+	</ulink>.
+      </para>
+    </sect2>
   </sect1>
   <sect1>
     <title>Starting a New Document</title>
@@ -301,7 +326,7 @@ export SGML_CATALOG_FILES
 r2
     doc
 	  decision
-	  design
+	  guide
 	  howto
 	  schedule
 	  specs
@@ -314,7 +339,7 @@ r2
 	Various directories are dedicated to the following:
 	<glosslist>
 	  <glossentry>
-	    <glossterm>doc/decision/research</glossterm>
+	    <glossterm>doc/decision</glossterm>
 	    <glossdef>
 	      <para>
 		Decision research papers.
@@ -322,11 +347,10 @@ r2
 	    </glossdef>
 	  </glossentry>
 	  <glossentry>
-	    <glossterm>doc/design</glossterm>
+	    <glossterm>doc/guide</glossterm>
 	    <glossdef>
 	      <para>
-		Papers describing design issues from a higher level
-		than do specifications.
+		Guides concerning software development processes.
 	      </para>
 	    </glossdef>
 	  </glossentry>
