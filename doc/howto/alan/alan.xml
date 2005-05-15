@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
-                  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"[
+                  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" 
+[
   <!ENTITY uw "University of Washington">
   <!ENTITY dept "Department of Bioengineering">
   <!ENTITY user "<emphasis>alanwesthagen</emphasis>">
@@ -10,7 +11,7 @@
   <articleinfo>
     <abstract>
       <para>
-	This document explains the routine tasks that Alan Westhagen performed 
+	This document explains routine tasks that Alan Westhagen performed 
 	the RFPK Software Team Leader.
       </para>
       <para>
@@ -35,6 +36,69 @@
       </revision>
     </revhistory>
   </articleinfo>
+  <sect1>
+    <title>Passwords</title>
+    <para>
+      Administering machines and software packages requires one to know a 
+      lot of passwords.  Here is the method that Alan used at RFPK.
+    </para>
+    <sect2>
+      <title>The File</title>
+      <para>
+	All usernames and passwords are kept in a single text file, which is
+	always encrypted.  An unencrypted file is never allowed to remain
+	on disk, except during the short time that it is being edited.
+	The file has the pathname <filename>/root/pass.gpg</filename> and
+	is encrypted with a conventional assymmetric cypher, using the
+	command <command>gpg -c</command>.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Reading the File</title>
+      <para>
+	If you want to look for a password in the file, you can read it
+	without having to place an unencrypted copy of the file on disk,
+	by using the following commands:
+	<screen>
+su -
+gpg -d pass.gpg | less
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Finding a Password</title>
+      <para>
+	Suppose you want to find a password for whitechuck or for an application
+	installed on whitechuck.  Here's an easy way to do that, with out 
+	placing an unencrypted copy of the file on disk:
+	<screen>
+su -
+gpg -d pass.gpg | grep whitechuck
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Changing the file</title>
+      <para>
+	If you need to make changes to the file, you will have to create
+	one or more unencrypted copies on disk, depending on which editor
+	you use.  <emphasis>Remove all unencrypted copies as soon as
+	you have reencrypted the file.</emphasis>
+      </para>
+      <para>
+	To get a plain text file, edit it with emacs, make a backup copy of 
+	the file, reencrypt it and remove the plain text, do the following:
+	<screen>
+su -
+gpg pass.gpg
+cp pass.gpg pass.gpg.bak
+emacs pass
+gpg -c pass
+rm pass pass~
+	</screen>
+      </para>
+    </sect2>
+  </sect1>
   <sect1 id="buy_sub">
     <title>Purchase RHN Subscriptions</title>
     <para>
@@ -174,7 +238,7 @@
       if the subscription is for the workstation (WS) edition.  The academic
       price of WS is $25, but it is not offered anymore, except for renewals.
       If you allow the subscription to expire, you will have to purchase an
-      academic server (AS) subcription for $50. Even when you renew several
+      academic server (AS) subscription for $50. Even when you renew several
       months in advance of expiration, your credit card will not be charged 
       until the old subscription expires and the new subscription goes into
       effect.
@@ -217,7 +281,7 @@
 	  <para>
 	    Select the set of installation CDROMs appropriate for the version
 	    of Linux being used and for the processor architecture of the machine
-	    that will be the recipient of the softare.  If the required CDROMs
+	    that will be the recipient of the software.  If the required CDROMs
 	    cannot be located in the lab, you may have to 
 	    download new images and burn them onto blank CD-Rs.
 	  </para>
@@ -274,6 +338,62 @@
 	  <para>
 	    The next time that the machine is booted, the installation 
 	    will be complete.
+	  </para>
+	</listitem>
+      </orderedlist>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Check Cron and Logwatch Output</title>
+    <para>
+      Once a day, the email that root receives on whitechuck should be
+      checked.  If any of the programs that <command>cron</command> runs
+      automatically during the night has an error, email will be sent
+      to the root user.  Once each night a program called <command>logwatch</command>
+      filters the system log for what appear to be security breaches and sends
+      the output to the the root user.
+    </para>
+    <para>
+      To examine this output
+      <screen>
+ssh whitechuck
+su -
+pine
+      </screen>
+      then examine the mail in the inbox.
+      <orderedlist>
+	<listitem>
+	  <para>
+	    <emphasis>Cron:</emphasis> the system is backed up to tape Sunday 
+	    morning by a program called <command>bru</command>.  At completion
+	    of the backup run, an email summary is sent to root. Normally the
+	    report will simply say that there were no errors. If more than
+	    a handful of errors are reported, the backup should be run again.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    LogWatch: the report has several sections of interest:
+	    <orderedlist>
+	      <listitem>
+		<para>
+		  <emphasis>pam-unix:</emphasis> pam is the authentication 
+		  agent.  This section of the report summarizes authentication
+		  failures.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <emphasis>SSHD:</emphasis> because the gateway/firewall
+		  forwards <command>ssh</command> request to whitechuck, most
+		  attempts by outsiders to log into 
+		  <filename>spk.rfpk.washington.edu</filename> will be 
+		  handled by the ssh daemon.  All attempts are listed.
+		  Note: there is overlap between these attempts and those
+		  listed in the pam-unix section.
+		</para>
+	      </listitem>
+	    </orderedlist>
 	  </para>
 	</listitem>
       </orderedlist>
@@ -464,7 +584,7 @@
 	  </listitem>
 	  <listitem>
 	    <para>
-	      All file tranfers must be made via <command>scp</command>.
+	      All file transfers must be made via <command>scp</command>.
 	      No rcp or ftp, for example.
 	    </para>
 	  </listitem>
@@ -537,7 +657,7 @@ PermitRootLogin no
 	and a password.
       </para>
       <para>
-	The adminstrative web pages that are most frequently accessed are
+	The administrative web pages that are most frequently accessed are
 	<guilabel>Services</guilabel> and <guilabel>System</guilabel>.
       </para>
       <sect3>
@@ -774,6 +894,42 @@ su
     </sect2>
   </sect1>
   <sect1>
+    <title>Backup Administration</title>
+    <para>
+      The backup administrator takes overall responsibility for
+      the backup processes.  The 
+      <ulink url="../backup/backup.html">
+	Backup
+      </ulink> howto gives details.  
+    </para>
+    <para>
+      On a weekly basis or, preferably, more frequently, the backup
+      administrator should verify the following:
+      <orderedlist>
+	<listitem>
+	  <para>
+	    All developer home directories are being backed up to
+	    the <filename>/usr/local/backup</filename> directory
+	    on whitechuck.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Nightly symbolic dumps of the spkdb database are being
+	    copied to <filename>/usr/local/backup</filename> on 
+	    both whitechuck and cspkserver.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    The weekly tape backup of whitechuck is occurring without
+	    errors.
+	  </para>
+	</listitem>
+      </orderedlist>
+    </para>
+  </sect1>
+  <sect1>
     <title>Purchase Technical Books and Computer Hardware using ProCard</title>
     <para>
       Alan Westhagen used a Visa card issued by the &uw; under a program called
@@ -961,5 +1117,21 @@ su
 
 <!--  LocalWords:  xml DOCTYPE DocBook uw articleinfo SPK RFPK RFPK's linkend
  -->
-<!--  LocalWords:  ulink url
+<!--  LocalWords:  ulink url alanwesthagen spkdn Westhagen revhistory afw RHN
+ -->
+<!--  LocalWords:  authorinitials revremark RedHat orderedlist listitem ProCard
+ -->
+<!--  LocalWords:  guibutton WS cspkserver AMD Redhat CDROMs ISOs username Cron
+ -->
+<!--  LocalWords:  Logwatch whitechuck cron logwatch su inbox bru LogWatch pam
+ -->
+<!--  LocalWords:  unix SSHD internet IpCop Vectra AERL ethernet NICs LinkSys
+ -->
+<!--  LocalWords:  Compex DSR spyware IP rsh scp rcp PermitRootLogin webserver
+ -->
+<!--  LocalWords:  conf kvm guilabel dhcp dmz aspkserver mit edu eth HWaddr spk
+ -->
+<!--  LocalWords:  inet addr ifconfig routable howto spkdb itemizedlist RW
+ -->
+<!--  LocalWords:  PaymentNet Matousek Bugzilla Jiaji Editusers usersect
  -->
