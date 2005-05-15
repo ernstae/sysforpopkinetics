@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
-  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"[
-  <!ENTITY uw "University of Washington">
+                  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"
+[ <!ENTITY uw "University of Washington">
   <!ENTITY dept "Department of Bioengineering">
   <!ENTITY whitechuck '<systemitem class="systemname">whitechuck</systemitem>'>
 ]>
-<article><title>Authoring RFPK Software Documents</title>
+<article><title>Authoring RFPK Software Documents</title>  
  <articleinfo>
-    <revhistory>
+    <revhistory> 
       <revision>
 	<revnumber>1.0</revnumber>
-	<date>May 16, 2003</date>
+	<date>May 16, 2003</date> 
 	<authorinitials>afw</authorinitials>
 	<revremark>Initial version.</revremark>
       </revision>
@@ -18,7 +18,7 @@
 	<revnumber>1.01</revnumber>
 	<date>January 4, 2004</date>
 	<authorinitials>afw</authorinitials>
-	<revremark>Relative to RHEL 3.</revremark>
+	<revremark>Relative to RHEL 3.</revremark> 
       </revision>
       <revision>
 	<revnumber>1.02</revnumber>
@@ -228,7 +228,7 @@
       </para>
     </sect2>
     <sect2>
-      <title>Emacs Configuration</title>
+      <title>Emacs Configuration File</title>
       <para>
 	When Emacs starts up, it reads configuration information from
 	a file, named <filename>.emacs</filename> or 
@@ -268,16 +268,48 @@ mv xhtml1.soc /usr/share/sgml/xhtml1/xhtml1-20020801/DTD
     <sect2>
       <title>SGML_CATALOG_FILES Environment Variable</title>
       <para>
-	You will also need to set an environment variable so that 
-	<command>emacs</command> will be able to find the DTDs it needs to
-	parse docbook and xhtml.
-	So that the variable is set automatically,
-	add the following lines to the
-	<filename>.bash_profile</filename> in your home directory:
+	In order to parse xml files, emacs must have access to their
+	document type definition (DTD) files. To discover their location,
+	emacs consults catalog files.  The contents of the 
+	<varname>SGML_CATALOG_FILES</varname> environment variable is a
+	list of pathnames of catalog files to be considered.
+      </para>
+      <para>
+	Edit your <filename>~/.bash_profile</filename> to define this 
+	variable, giving it the pathname of the catalog for xhtml:
 	<screen>
-SGML_CATALOG_FILES=/etc/sgml/xml-docbook.cat:/usr/share/sgml/xhtml1/xhtml1-20020801/DTD/xhtml1.soc
+SGML_CATALOG_FILES=/usr/share/sgml/xhtml1/xhtml1-20020801/DTD/xhtml1.soc
+	</screen>
+      </para>
+      <para>
+	The DTDs for parsing docbook are in the rpm package <filename>docbook-dtds</filename>.
+	This package also contains a hierarchy of catalog files for each of
+	the major versions of docbook that are supported.
+      </para>
+      <para>
+	The base catalogs
+	are in the directory <filename>/etc/sgml/</filename>.
+	List this directory:
+	<screen>
+ls /etc/sgml/
+	</screen>
+	Add a line to your <filename>~/.bash_profile</filename> 
+	to append to <varname>SGML_CATALOG_FILES</varname> the pathname
+	of the catalog for each
+	version of docbook being used at RFPK, then export the variable:
+	<screen>
+SGML_CATALOG_FILES=$SGML_CATALOG_FILES:/etc/sgml/xml-docbook-4.2-1.0-25.cat
+SGML_CATALOG_FILES=$SGML_CATALOG_FILES:/etc/sgml/xml-docbook-4.3-1.0-25.cat
 export SGML_CATALOG_FILES
 	</screen>
+      </para>
+      <para>
+	<emphasis>Note:</emphasis> the above contents of for
+	<varname>SGML_CATALOG_FILES</varname> is just an example.  Each time
+	a new version of <filename>docbook_dtds</filename> is released, the
+	pathnames of the catalogs is apt to change and, consequently, you
+	will have to reedit the environment variable in your
+	<filename>~/.bash_profile/.</filename>
       </para>
     </sect2>
     <sect2>

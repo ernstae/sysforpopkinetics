@@ -39,9 +39,10 @@
   not access the database, however, so this can be any number.  Each
   time that the prototype is run, spkjob creates a new working
   directory called "spkjob-nnn", where nnn is the job_id.  If that
-  directory already exists, spkjob takes an error exit.  You should,
-  therefore, either use a different job_id every time you run the
-  prototype, or else remove the working directory each time.
+  directory already exists, spkjob takes an error exit. If you use
+  the newjob.sh script to run prototype jobs, this error will be
+  avoided because the script uses a different job_id each time that
+  it runs.
 
   individual-count is the number of individuals being modeled.
 
@@ -67,23 +68,23 @@
   SPK, because it has been designed so that write concurrency is not
   required.
 
-  /usr/local/spk/share/working/spkprod
-    working directories for jobs run in the production environment
-  /usr/local/spk/share/working/spktest
-    working directories for jobs run in the test environment
-  /usr/local/spk/share/log/spkprod/messages
-    log file for the production environment
-  /usr/local/spk/share/log/spktest/messages
-    log file for the test environment
-  /usr/local/spk/share/arch/i686/bin/spkprod
-    production executables and libraries for i686 processor architecture
-  /usr/local/spk/share/arch/i686/bin/spktest
-    test executables and libraries for i686 processor architecture
-  /usr/local/spk/share/arch/x86_64/bin/spkprod
-    production executables and libraries for x86_64 processor architecture
-  /usr/local/spk/share/arch/x86_64/bin/spktest
-    test executables and libraries for x86_64 processor architecture
-  ...
+  The file hierarchy looks like this:
+
+      /usr/local/spk/share/working/spkprod
+      ............................/spktest
+      ..................../log/spkprod
+      ......................../spktest
+      ..................../include/spkprod
+      ............................/spktest
+      ..................../arch/LINUXI386/lib/spkprod
+      ......................................./spktest
+      ........................./LINUXX86_64/lib/spkprod
+      ........................................./spktest
+      ..................../arch/LINUXI386/bin/spkprod
+      ......................................./spktest
+      ........................./LINUXX86_64/bin/spkprod
+      ........................................./spktest
+	    
 
   BUGS 
   The code in this program assumes that when an event occurs, pvm
