@@ -20,40 +20,12 @@
 
 */
 /*************************************************************************
+ *//**
+ * @file: FullCov.h
  *
- * File: FullCov.h
  *
- *
- * This class supports full covariance matrices.  It is a concrete 
- * subclass of the abstract covariance base class.
- *
- * This class utilizes the following parameterization for the covariance
- * matrix in order to insure that it is positive definite and symmetric:
- *
- *                                     T
- *    cov( par )  =  L( par )  L( par )  ,
- *
- * where par contains the current value for the parameters and
- * L( par ) is the following square, lower triangular matrix,
- *
- *                  -                                                            -
- *                 |  exp[ par  ]                                           0     |
- *                 |          0                                                   |
- *                 |                                                              |
- *                 |     par       exp[ par  ]                                    |
- *                 |        1              2                                      |
- *                 |                                                              |
- *    L( par )  =  |     par          par       exp[ par  ]                       |  ,
- *                 |        3            4              5                         |
- *                 |                                                              |
- *                 |       .            .    .            .                       |
- *                 |       .            .      .            .                     |
- *                 |       .            .        .            .                   |
- *                 |                                                              |
- *                 |                               par          exp[ par       ]  |
- *                 |                                  nPar-2            nPar-1    |
- *                  -                                                            -
- *
+ * Declares FullCov class.
+ *//*
  * Author: Mitch Watrous
  *
  *************************************************************************/
@@ -72,9 +44,36 @@
 #include <spk/SpkValarray.h>
 
 
-/*------------------------------------------------------------------------
- * Class declaration
- *------------------------------------------------------------------------*/
+/*************************************************************************
+ *
+ * Class: FullCov
+ *
+ *//**
+ * This class supports full covariance matrices.  It is a concrete 
+ * subclass of the abstract covariance base class.
+ *
+ * This class utilizes the following parameterization for the covariance
+ * matrix in order to insure that it is positive definite and symmetric:
+ * \f[
+ *     \mbox{cov}(\mbox{par}) =
+ *       L(\mbox{par}) \; L(\mbox{par})^{\mbox{T}} ,
+ * \f]
+ * where par contains the current value for the parameters and
+ *\f$ L(\mbox{par}) \f$ is the following square, lower triangular matrix,
+ * \f[
+ *     L(\mbox{par}) =
+ *       \left[ 
+ *         \begin{array}{ccccc}
+ *           \exp(\mbox{par}_1) &                    &                    &                            &                             0 \\
+ *           \mbox{par}_2       & \exp(\mbox{par}_3) &                    &                            &                               \\
+ *           \mbox{par}_4       & \mbox{par}_5       & \exp(\mbox{par}_6) &                            &                               \\
+ *           \vdots             & \vdots             & \ddots             & \ddots                     &                               \\
+ *                              &                    &                    & \mbox{par}_{\mbox{nPar}-1} & \exp(\mbox{par}_{\mbox{nPar}})
+ *         \end{array}
+ *       \right] .
+ * \f]
+ *//*
+ *************************************************************************/
 
 class FullCov : public Cov
 {

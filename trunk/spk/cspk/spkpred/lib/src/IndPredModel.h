@@ -20,13 +20,12 @@
 
 */
 /*************************************************************************
+ *//**
+ * @file: IndPredModel.h
  *
- * File: IndPredModel.h
  *
- *
- * This SpkModel subclass evaluates individual level models that
- * correspond to the expressions in an NM-TRAN $PRED block.
- *
+ * Declares IndPredModel class.
+ *//*
  * Author: Mitch Watrous
  *
  *************************************************************************/
@@ -50,9 +49,15 @@
 #include <spk/SpkValarray.h>
 
 
-/*------------------------------------------------------------------------
- * Class Declaration
- *------------------------------------------------------------------------*/
+/*************************************************************************
+ *
+ * Class: IndPredModel
+ *
+ *//**
+ * This SpkModel subclass evaluates individual level models that
+ * correspond to the expressions in an NM-TRAN $PRED block.
+ *//*
+ *************************************************************************/
 
 class IndPredModel : public SpkModel
 {
@@ -87,14 +92,14 @@ IndPredModel::IndPredModel(
   //------------------------------------------------------------
 
 protected:
-  int nIndPar;                                 // Number of individual parameters.
+  int nIndPar;                                 ///< Number of individual parameters.
 
-  const int nTheta;                            // Number of theta parameters.
-  const int nEta;                              // Number of eta parameters.
-  int       nOmegaPar;                         // Number of omega parameters.
+  const int nTheta;                            ///< Number of theta parameters.
+  const int nEta;                              ///< Number of eta parameters.
+  int       nOmegaPar;                         ///< Number of omega parameters.
 
-  const int thetaOffsetInIndPar;               // Offset for theta in the vector of individual parameters.
-  const int omegaParOffsetInIndPar;            // Offset for the omega parameters in the vector of individual parameters.
+  const int thetaOffsetInIndPar;               ///< Offset for theta in the vector of individual parameters.
+  const int omegaParOffsetInIndPar;            ///< Offset for the omega parameters in the vector of individual parameters.
 
 
   //------------------------------------------------------------
@@ -102,13 +107,13 @@ protected:
   //------------------------------------------------------------
 
 protected:
-  int iCurr;                                   // Current individual's index.
+  int iCurr;                                   ///< Current individual's index.
 
-  SPK_VA::valarray<double> bCurr;              // Current value for individual parameter.
+  SPK_VA::valarray<double> bCurr;              ///< Current value for individual parameter.
 
-  SPK_VA::valarray<double> thetaCurr;          // Current value for theta.
-  SPK_VA::valarray<double> etaCurr;            // Current value for eta.
-  SPK_VA::valarray<double> omegaParCurr;       // Current value for the omega parameters.
+  SPK_VA::valarray<double> thetaCurr;          ///< Current value for theta.
+  SPK_VA::valarray<double> etaCurr;            ///< Current value for eta.
+  SPK_VA::valarray<double> omegaParCurr;       ///< Current value for the omega parameters.
 
 
   //------------------------------------------------------------
@@ -132,17 +137,17 @@ protected:
   // This is not const because it is set in the constructor body.
   // This is not mutable because it should not change after it is
   // set in the constructor.
-  Cov* pOmegaCurr;                                   // Pointer to the covariance of eta.
+  Cov* pOmegaCurr;                                   ///< Pointer to the covariance of eta.
 
   // These quantities do not have cache flags associated with them
   // because the Cov object maintains them itself.
-  mutable SPK_VA::valarray<double> omegaCurr;           // Current value for the covariance of eta.
-  mutable SPK_VA::valarray<double> omega_omegaParCurr;  // Current value for the derivative of the covariance of eta.
+  mutable SPK_VA::valarray<double> omegaCurr;           ///< Current value for the covariance of eta.
+  mutable SPK_VA::valarray<double> omega_omegaParCurr;  ///< Current value for the derivative of the covariance of eta.
 
   // This is not const because it is reset each time the
   // expressions in the Pred block are evaluated for a 
   // particular individual. 
-  mutable CppAD::ADFun<double>*    pPredADFunCurr;    // Current Pred block automatic differentiation function object.
+  mutable CppAD::ADFun<double>*    pPredADFunCurr;    ///< Current Pred block automatic differentiation function object.
 
   mutable SPK_VA::valarray<double> dataMeanCurr;
   mutable SPK_VA::valarray<double> dataMean_indParCurr;
@@ -204,24 +209,24 @@ protected:
   //------------------------------------------------------------
 
 protected:
-  const int nZ;                                // Number of independent variables.
-  const int thetaOffsetInZ;                    // Offset for theta in the vector of independent variables.
-  const int etaOffsetInZ;                      // Offset for eta in the vector of independent variables.
+  const int nZ;                                ///< Number of independent variables.
+  const int thetaOffsetInZ;                    ///< Offset for theta in the vector of independent variables.
+  const int etaOffsetInZ;                      ///< Offset for eta in the vector of independent variables.
 
-  int       nW;                                // Number of dependent variables for current individual.
-  const int fOffsetInW;                        // Offset for f in the vector of dependent variables.
-  int       yOffsetInW;                        // Offset for y in the vector of dependent variables.
+  int       nW;                                ///< Number of dependent variables for current individual.
+  const int fOffsetInW;                        ///< Offset for f in the vector of dependent variables.
+  int       yOffsetInW;                        ///< Offset for y in the vector of dependent variables.
 
-  int       nEventCurr;                        // Number of events for current individual.
+  int       nEventCurr;                        ///< Number of events for current individual.
 
-  PredBase< CppAD::AD<double> >&  predEvaluator;   // Pred block expression evaluator.
+  PredBase< CppAD::AD<double> >&  predEvaluator;   ///< Pred block expression evaluator.
 
-  mutable std::vector< CppAD::AD<double> > zCurr;  // Current independent variables.
-  mutable std::vector< CppAD::AD<double> > wCurr;  // Current dependent variables.
+  mutable std::vector< CppAD::AD<double> > zCurr;  ///< Current independent variables.
+  mutable std::vector< CppAD::AD<double> > wCurr;  ///< Current dependent variables.
 
-  mutable SPK_VA::valarray<double> f_thetaCurr;    // Current value for f_theta.
-  mutable SPK_VA::valarray<double> hCurr;          // Current value for y_eta.
-  mutable SPK_VA::valarray<double> h_thetaCurr;    // Current value for y_eta_theta.
+  mutable SPK_VA::valarray<double> f_thetaCurr;    ///< Current value for f_theta.
+  mutable SPK_VA::valarray<double> hCurr;          ///< Current value for y_eta.
+  mutable SPK_VA::valarray<double> h_thetaCurr;    ///< Current value for y_eta_theta.
 
 protected:
   void evalAllPred() const;
@@ -242,8 +247,8 @@ public:
   void getIndParStep( SPK_VA::valarray<double>& indParStep ) const;
 
 protected:
-  SPK_VA::valarray<double> thetaLow;           // Lower limits for theta.
-  SPK_VA::valarray<double> thetaUp;            // Upper limits for theta.
+  SPK_VA::valarray<double> thetaLow;           ///< Lower limits for theta.
+  SPK_VA::valarray<double> thetaUp;            ///< Upper limits for theta.
 
 
   //------------------------------------------------------------

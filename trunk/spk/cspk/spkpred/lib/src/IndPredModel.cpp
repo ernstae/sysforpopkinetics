@@ -20,28 +20,15 @@
 
 */
 /*************************************************************************
+ *//**
+ * @file: IndPredModel.cpp
  *
- * File: IndPredModel.cpp
  *
- *
- * This SpkModel subclass evaluates individual level models that
- * correspond to the expressions in an NM-TRAN $PRED block.
- *
+ * Implements IndPredModel class.
+ *//*
  * Author: Mitch Watrous
  *
  *************************************************************************/
-
-/*************************************************************************
- *
- * Class: IndPredModel
- *
- *************************************************************************/
-
-/*------------------------------------------------------------------------
- * Class specification
- *------------------------------------------------------------------------*/
-
-
 
 /*------------------------------------------------------------------------
  * Include files
@@ -81,33 +68,35 @@ using SPK_VA::valarray;
  *
  * Function: IndPredModel
  *
- *
+ *//**
  * Constructor for individual level Pred models.
  *
  * After this constructor has completed the current individual parameter
  * will be 
- *
- *             -              -
- *            |  thetaCurrIn   |
- *     b   =  |                |  ,
- *      i     |  omegaParCurr  |
- *             -              -
- *
+ * \f[
+ *     b_i =
+ *       \left[ 
+ *         \begin{array}{c}
+ *           \mbox{thetaCurrIn} \\
+ *           \mbox{omegaParCurr}
+ *         \end{array}
+ *       \right] ,
+ * \f]
  * where omegaParCurr is the covariance matrix parameter that 
  * corresponds to the minimal representation for omega that is
  * contained in omegaMinRepIn.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
 IndPredModel::IndPredModel(
-    PredBase< AD<double> >&  predEvaluatorIn,
-    int                      nThetaIn,
-    const valarray<double>&  thetaLowIn,
-    const valarray<double>&  thetaUpIn,
-    const valarray<double>&  thetaCurrIn,
-    int                      nEtaIn,
-    covStruct                omegaStructIn,
-    const valarray<double>&  omegaMinRepIn )
+    PredBase< AD<double> >&          predEvaluatorIn,
+    int                              nThetaIn,
+    const SPK_VA::valarray<double>&  thetaLowIn,
+    const SPK_VA::valarray<double>&  thetaUpIn,
+    const SPK_VA::valarray<double>&  thetaCurrIn,
+    int                              nEtaIn,
+    covStruct                        omegaStructIn,
+    const SPK_VA::valarray<double>&  omegaMinRepIn )
   :
   nTheta                            ( nThetaIn ),
   nEta                              ( nEtaIn ),
@@ -280,10 +269,10 @@ IndPredModel::IndPredModel(
  *
  * Function: ~IndPredModel
  *
- *
+ *//**
  * Destructor.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
 IndPredModel::~IndPredModel()
 {
@@ -306,10 +295,10 @@ IndPredModel::~IndPredModel()
  *
  * Function: doSelectIndividual
  *
- *
+ *//**
  * Sets the index i for the current individual.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
 void IndPredModel::doSelectIndividual( int iIn )
 {
@@ -368,21 +357,23 @@ void IndPredModel::doSelectIndividual( int iIn )
  *
  * Function: doSetIndPar
  *
- *
+ *//**
  * Sets the current value for the individual parameter,
- *
- *             -              -
- *            |   thetaCurr    |
- *     b   =  |                |  .
- *      i     |  omegaParCurr  |
- *             -              -
- *
+ * \f[
+ *     b_i =
+ *       \left[ 
+ *         \begin{array}{c}
+ *           \mbox{thetaCurr} \\
+ *           \mbox{omegaParCurr}
+ *         \end{array}
+ *       \right] .
+ * \f]
  * These are the parameters that are optimized over when performing
  * individual level estimation.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-void IndPredModel::doSetIndPar( const valarray<double>& bIn ) 
+void IndPredModel::doSetIndPar( const SPK_VA::valarray<double>& bIn ) 
 { 
   //------------------------------------------------------------
   // See if the individual parameter has changed.
@@ -440,10 +431,10 @@ void IndPredModel::doSetIndPar( const valarray<double>& bIn )
  *
  * Function: invalidateCache
  *
- *
+ *//**
  * Invalidates all of the values stored in the cache.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
 void IndPredModel::invalidateCache() const
 {
@@ -595,7 +586,7 @@ bool IndPredModel::getUsedCachedOmega_omegaPar() const
  *
  * Function: evalAllPred
  *
- *
+ *//**
  * This function evaluates the predicted values for the data for
  * all of the events for the current individual.
  *
@@ -604,23 +595,28 @@ bool IndPredModel::getUsedCachedOmega_omegaPar() const
  *
  * Note that this function combines the parameters theta and eta
  * into a single vector of independent variables,
- *
- *            -       -
- *           |  theta  |
- *     z  =  |         |  .
- *           |  eta    |
- *            -       -
- *
+ * \f[
+ *     z =
+ *       \left[ 
+ *         \begin{array}{c}
+ *           \mbox{theta} \\
+ *           \mbox{eta}
+ *         \end{array}
+ *       \right] .
+ * \f]
  * In addition, this function combines the model functions f and y
  * into a single vector of dependent variables,
- *
- *                 -                 -
- *                |  f( theta )       |
- *     w( z )  =  |                   |  .
- *                |  y( theta, eta )  |
- *                 -                 -
- *
- *************************************************************************/
+ * \f[
+ *     w(z) =
+ *       \left[ 
+ *         \begin{array}{c}
+ *           f(\mbox{theta}) \\
+ *           y(\mbox{theta}, \mbox{eta})
+ *         \end{array}
+ *       \right] .
+ * \f]
+ */
+/*************************************************************************/
 
 void IndPredModel::evalAllPred() const
 {
@@ -803,18 +799,21 @@ void IndPredModel::evalAllPred() const
  *
  * Function: evalPredFirstDeriv
  *
+ *//**
+ * Evaluates first derivatives of the Pred block expressions.
  *
- * Evaluates the following first derivatives of the Pred block expressions:
- *
- *     d       f( theta )  ,
- *      theta
- *
+ * In particular, this function evaluates the following first derivatives:
+ * \f[
+ *     \partial_{\mbox{theta}} \; f(\mbox{theta}) ,
+ * \f]
  * and
- *                                           |
- *     h( theta )  =  d     y( theta, eta )  |          .
- *                     eta                   | eta = 0
- * 
- *************************************************************************/
+ * \f[
+ *     h(\mbox{theta}) =
+ *       \partial_{\mbox{eta}} \; y(\mbox{theta}, \mbox{eta})
+ *         \left|_{\mbox{eta}=0} \right. .
+ * \f]
+ */ 
+/*************************************************************************/
 
 void IndPredModel::evalPredFirstDeriv() const
 {
@@ -972,27 +971,30 @@ void IndPredModel::evalPredFirstDeriv() const
  *
  * Function: evalPredSecondDeriv
  *
+ *//**
+ * Evaluates first and second derivatives of the Pred block expressions.
  *
- * Evaluates the following second derivative of the Pred block expressions:
+ * In particular, this function evaluates the following second derivative:
+ * \f[
+ *     \partial_{\mbox{theta}}
+ *       \left[
+ *         \partial_{\mbox{eta}} \; y(\mbox{theta}, \mbox{eta})
+ *           \left|_{\mbox{eta}=0} \right. 
+ *       \right] .
+ * \f]
  *
- *              -                                   - 
- *             |                         |           |
- *     d       |  d     y( theta, eta )  |           |  .
- *      theta  |   eta                   | eta = 0   |
- *              -                                   - 
- *
- * In addition, this function evaluates the following first derivatives
- * of the Pred block expressions:
- *
- *     d       f( theta )  ,
- *      theta
- *
+ * In addition, this function evaluates the following first derivatives:
+ * \f[
+ *     \partial_{\mbox{theta}} \; f(\mbox{theta}) ,
+ * \f]
  * and
- *                                           |
- *     h( theta )  =  d     y( theta, eta )  |          .
- *                     eta                   | eta = 0
- * 
- *************************************************************************/
+ * \f[
+ *     h(\mbox{theta}) =
+ *       \partial_{\mbox{eta}} \; y(\mbox{theta}, \mbox{eta})
+ *         \left|_{\mbox{eta}=0} \right. .
+ * \f]
+ */ 
+/*************************************************************************/
 
 void IndPredModel::evalPredSecondDeriv() const
 {
@@ -1363,23 +1365,19 @@ void IndPredModel::evalPredSecondDeriv() const
  *
  * Function: doDataMean
  *
- *
+ *//**
  * Sets ret equal to the current value for the mean of the current
- * individual's data
- *
- *     f ( b  )  ,
- *      i   i
- *
+ * individual's data,
+ * \f[
+ *     f_i(b_i) ,
+ * \f]
  * where
- *
- *     i  = index for the current individual and
- *
- *     b  = current value for the individual parameter.
- *      i
- *
- *************************************************************************/
+ *     \f$ i      \f$  = index for the current individual and
+ *     \f$ b_i    \f$  = current value for the individual parameter.
+ */
+/*************************************************************************/
 
-void IndPredModel::doDataMean( valarray<double>& ret ) const 
+void IndPredModel::doDataMean( SPK_VA::valarray<double>& ret ) const 
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -1491,27 +1489,23 @@ void IndPredModel::doDataMean( valarray<double>& ret ) const
  *
  * Function: doDataMean_indPar
  *
- *
+ *//**
  * Sets ret equal to the current value for the derivative with respect
  * to the individual parameter of the mean of the current individual's
  * data,
- *
- *     d   f ( b  )  ,
- *      b   i   i
- *
+ * \f[
+ *     \partial_b f_i(b_i) ,
+ * \f]
  * where
- *
- *     i  = index for the current individual and
- *
- *     b  = current value for the individual parameter.
- *      i
+ *     \f$ i      \f$  = index for the current individual and
+ *     \f$ b_i    \f$  = current value for the individual parameter.
  *
  * This function returns a value of true if this derivative has 
  * at least one nonzero element.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-bool IndPredModel::doDataMean_indPar( valarray<double>& ret ) const 
+bool IndPredModel::doDataMean_indPar( SPK_VA::valarray<double>& ret ) const 
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -1635,23 +1629,19 @@ bool IndPredModel::doDataMean_indPar( valarray<double>& ret ) const
  *
  * Function: doDataVariance
  *
- *
+ *//**
  * Sets ret equal to the current value for the variance of the current
  * individual's data,
- *
- *     R ( b  )  ,
- *      i   i
- *
+ * \f[
+ *     R_i(b_i) ,
+ * \f]
  * where
- *
- *     i  = index for the current individual and
- *
- *     b  = current value for the individual parameter.
- *      i
- *
- *************************************************************************/
+ *     \f$ i      \f$  = index for the current individual and
+ *     \f$ b_i    \f$  = current value for the individual parameter.
+ */
+/*************************************************************************/
 
-void IndPredModel::doDataVariance( valarray<double>& ret ) const 
+void IndPredModel::doDataVariance( SPK_VA::valarray<double>& ret ) const 
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -1793,29 +1783,24 @@ void IndPredModel::doDataVariance( valarray<double>& ret ) const
  *
  * Function: doDataVariance_indPar
  *
- *
+ *//**
  * Sets ret equal to the current value for the derivative with 
  * respect to the individual parameter of the variance of the
  * current individual's data,
- *                                 -           -
- *                                |             |
- *     d   R ( b  )  =  d   rvec  |   R ( b  )  |.
- *      b   i   i        b        |    i   i    |
- *                                 -           -
- *
+ * \f[
+ *     \partial_b R_i(b_i) =
+ *       \partial_b \mbox{rvec} \left[ R_i(b_i) \right] ,
+ * \f]
  * where
- *
- *     i  = index for the current individual and
- *
- *     b  = current value for the individual parameter.
- *      i
+ *     \f$ i      \f$  = index for the current individual and
+ *     \f$ b_i    \f$  = current value for the individual parameter.
  *
  * This function returns a value of true if this derivative has 
  * at least one nonzero element.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-bool IndPredModel::doDataVariance_indPar( valarray<double>& ret ) const 
+bool IndPredModel::doDataVariance_indPar( SPK_VA::valarray<double>& ret ) const 
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -2051,24 +2036,19 @@ bool IndPredModel::doDataVariance_indPar( valarray<double>& ret ) const
  *
  * Function: doDataVarianceInv
  *
- *
+ *//**
  * Sets ret equal to the current value for the inverse of the variance
  * of the current individual's data,
- *
- *      -1
- *     R  ( b  )  ,
- *      i    i
- *
+ * \f[
+ *     R^{-1}_i(b_i) ,
+ * \f]
  * where
- *
- *     i  = index for the current individual and
- *
- *     b  = current value for the individual parameter.
- *      i
- *
- *************************************************************************/
+ *     \f$ i      \f$  = index for the current individual and
+ *     \f$ b_i    \f$  = current value for the individual parameter.
+ */
+/*************************************************************************/
 
-void IndPredModel::doDataVarianceInv( valarray<double>& ret ) const 
+void IndPredModel::doDataVarianceInv( SPK_VA::valarray<double>& ret ) const 
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -2141,29 +2121,24 @@ void IndPredModel::doDataVarianceInv( valarray<double>& ret ) const
  *
  * Function: doDataVarianceInv_indPar
  *
- *
+ *//**
  * Sets ret equal to the current value for the derivative with respect
  * to the individual parameter of the inverse of the variance of the
  * current individual's data,
- *                                  -            -
- *          -1                     |    -1        |
- *     d   R  ( b  )  =  d   rvec  |   R  ( b  )  |.
- *      b   i    i        b        |    i    i    |
- *                                  -            -
- *
+ * \f[
+ *     \partial_b R^{-1}_i(b_i) =
+ *       \partial_b \mbox{rvec} \left[ R^{-1}_i(b_i) \right] ,
+ * \f]
  * where
- *
- *     i  = index for the current individual and
- *
- *     b  = current value for the individual parameter.
- *      i
+ *     \f$ i      \f$  = index for the current individual and
+ *     \f$ b_i    \f$  = current value for the individual parameter.
  *
  * This function returns a value of true if this derivative has 
  * at least one nonzero element.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-bool IndPredModel::doDataVarianceInv_indPar( valarray<double>& ret ) const 
+bool IndPredModel::doDataVarianceInv_indPar( SPK_VA::valarray<double>& ret ) const 
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -2270,7 +2245,7 @@ bool IndPredModel::doDataVarianceInv_indPar( valarray<double>& ret ) const
  *
  * Function: getIndParLimits
  *
- *
+ *//**
  * Gets the lower and upper limits for the elements of the individual
  * parameter at the current individual parameter value.
  *
@@ -2279,12 +2254,12 @@ bool IndPredModel::doDataVarianceInv_indPar( valarray<double>& ret ) const
  *
  * This function assumes that the current value for the individual
  * parameter is approximately equal to its final or true value.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
 void IndPredModel::getIndParLimits(
-  valarray<double>&  indParLow,
-  valarray<double>&  indParUp ) const
+  SPK_VA::valarray<double>&  indParLow,
+  SPK_VA::valarray<double>&  indParUp ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -2331,16 +2306,16 @@ void IndPredModel::getIndParLimits(
  *
  * Function: getIndParStep
  *
- *
+ *//**
  * Gets a vector of step sizes for approximating derivatives with 
  * respect to the elements of the individual parameter.
  *
  * These step sizes can be used to approximate the derivatives of
  * objective functions that depend on the individual parameters.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-void IndPredModel::getIndParStep( valarray<double>&  indParStep ) const
+void IndPredModel::getIndParStep( SPK_VA::valarray<double>&  indParStep ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -2373,10 +2348,10 @@ void IndPredModel::getIndParStep( valarray<double>&  indParStep ) const
  *
  * Function: getNIndPar
  *
- *
+ *//**
  * Returns the number of elements in the individual parameter.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
 int IndPredModel::getNIndPar() const
 {
@@ -2388,12 +2363,12 @@ int IndPredModel::getNIndPar() const
  *
  * Function: getIndPar
  *
- *
+ *//**
  * Gets the current value for the individual parameter.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-void IndPredModel::getIndPar( valarray<double>& ret ) const 
+void IndPredModel::getIndPar( SPK_VA::valarray<double>& ret ) const 
 {
   ret.resize( nIndPar );
 
@@ -2405,12 +2380,12 @@ void IndPredModel::getIndPar( valarray<double>& ret ) const
  *
  * Function: getTheta
  *
- *
+ *//**
  * Gets the current value for theta.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-void IndPredModel::getTheta( valarray<double>& ret ) const 
+void IndPredModel::getTheta( SPK_VA::valarray<double>& ret ) const 
 {
   ret.resize( nTheta );
 
@@ -2422,12 +2397,12 @@ void IndPredModel::getTheta( valarray<double>& ret ) const
  *
  * Function: getOmega
  *
- *
+ *//**
  * Gets the minimal representation for the current value for omega.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-void IndPredModel::getOmega( valarray<double>& ret ) const 
+void IndPredModel::getOmega( SPK_VA::valarray<double>& ret ) const 
 {
   ret.resize( pOmegaCurr->getNPar() );
 
@@ -2443,19 +2418,24 @@ void IndPredModel::getOmega( valarray<double>& ret ) const
  *
  * Function: getStandardPar
  *
+ *//**
+ * Gets the current values for the standard parameters.
  *
- * Gets the current values for theta and the minimal representation
- * for omega combined into a single vector,
- *
- *                      -                 -
- *                     |     thetaCurr     |
- *     standardPar  =  |                   |  .
- *                     |  omegaMinRepCurr  |
- *                      -                 -
- *
- *************************************************************************/
+ * In particular, this function gets the current values for theta and 
+ * the minimal representation for omega combined into a single vector,
+ * \f[
+ *     \mbox{standardPar} =
+ *       \left[ 
+ *         \begin{array}{c}
+ *           \mbox{thetaCurr} \\
+ *           \mbox{omegaMinRepCurr}
+ *         \end{array}
+ *       \right] .
+ * \f]
+ */
+/*************************************************************************/
 
-void IndPredModel::getStandardPar( valarray<double>& ret ) const 
+void IndPredModel::getStandardPar( SPK_VA::valarray<double>& ret ) const 
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -2502,20 +2482,25 @@ void IndPredModel::getStandardPar( valarray<double>& ret ) const
  *
  * Function: getStandardPar_indPar
  *
+ *//**
+ * Gets the current values for the derivatives of the standard parameters.
  *
- * Gets the current values for the derivative with respect to the
- * individual parameter of theta and the minimal representation for
- * omega combined into a single vector,
- *
- *                              -                 -
- *                             |     thetaCurr     |
- *     d   standardPar  =  d   |                   |  .
- *      b                   b  |  omegaMinRepCurr  |
- *                              -                 -
- *
- *************************************************************************/
+ * In particular, this function gets the current values for the derivative 
+ * with respect to the individual parameter of theta and the minimal 
+ * representation for omega combined into a single vector,
+ * \f[
+ *     \partial_b \; \mbox{standardPar} = \partial_b 
+ *       \left[ 
+ *         \begin{array}{c}
+ *           \mbox{thetaCurr} \\
+ *           \mbox{omegaMinRepCurr}
+ *         \end{array}
+ *       \right] .
+ * \f]
+ */
+/*************************************************************************/
 
-void IndPredModel::getStandardPar_indPar( valarray<double>& ret ) const 
+void IndPredModel::getStandardPar_indPar( SPK_VA::valarray<double>& ret ) const 
 {
   //------------------------------------------------------------
   // Preliminaries.
