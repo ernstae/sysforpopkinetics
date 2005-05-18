@@ -600,7 +600,7 @@ Proc::Daemon::Init();
 start();
 
 # Add directories of shared libraries to the load path
-$ENV{LD_LIBRARY_PATH} = "/usr/lib:" . $spk_library_path;
+$ENV{LD_LIBRARY_PATH} = "/usr/lib:/usr/local/lib:" . $spk_library_path;
 $ENV{CPATH} = $cpath;
 $ENV{HOME} = "/root";
 
