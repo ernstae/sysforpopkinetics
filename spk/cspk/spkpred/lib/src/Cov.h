@@ -20,14 +20,12 @@
 
 */
 /*************************************************************************
+ *//**
+ * @file: Cov.h
  *
- * File: Cov.h
  *
- *
- * This is the abstract base class for covariance matrix classes.
- *
- * Covariance matrices must be positive definite and symmetric.
- *
+ * Declares Cov class.
+ *//*
  * Author: Mitch Watrous
  *
  *************************************************************************/
@@ -43,9 +41,16 @@
 #include <spk/SpkValarray.h>
 
 
-/*------------------------------------------------------------------------
- * Class declaration
- *------------------------------------------------------------------------*/
+/*************************************************************************
+ *
+ * Class: Cov
+ *
+ *//**
+ * This is the abstract base class for covariance matrix classes.
+ *
+ * Covariance matrices must be positive definite and symmetric.
+ *//*
+ *************************************************************************/
 
 class Cov
 {
@@ -65,8 +70,8 @@ public:
   //------------------------------------------------------------
 
 public:
-  const int nRow;
-  const int nPar;
+  const int nRow;                 ///< Number of rows.
+  const int nPar;                 ///< Number of minimal representation parameters.
 
 
   //------------------------------------------------------------
@@ -74,7 +79,7 @@ public:
   //------------------------------------------------------------
 
 protected:
-  SPK_VA::valarray<double> parCurr;
+  SPK_VA::valarray<double> parCurr;  ///< Current minimal representation parameters.
 
 
   //------------------------------------------------------------
@@ -121,29 +126,50 @@ public:
   //------------------------------------------------------------
 
 public:
+  /// Evaluates the covariance matrix at the current parameter value.
   virtual void cov    ( SPK_VA::valarray<double>& covOut     ) const = 0;
+
+  /// Evaluates the derivative of the covariance matrix at the current
+  /// parameter value.
   virtual void cov_par( SPK_VA::valarray<double>& cov_parOut ) const = 0;
 
+  /// Evaluates the inverse of the covariance matrix at the current
+  /// parameter value.
   virtual void inv    ( SPK_VA::valarray<double>& invOut     ) const = 0;
+
+  /// Evaluates the derivative of the inverse of the covariance matrix
+  /// at the current parameter value.
   virtual void inv_par( SPK_VA::valarray<double>& inv_parOut ) const = 0;
 
+  /// Gets the lower and upper limits for the covariance matrix parameters
+  /// at the current parameter value.  These limits are for use during the
+  /// optimization of objective functions that depend on these parameters.
   virtual void getParLimits(
     SPK_VA::valarray<double>&  parLow,
     SPK_VA::valarray<double>&  parUp ) const = 0;
 
+  /// Sets parOut equal to the covariance matrix parameters that
+  /// correspond to the covariance matrix covIn.
   virtual void calcPar( 
     const SPK_VA::valarray<double>& covIn,
     SPK_VA::valarray<double>&       parOut ) const = 0;
 
+  /// Sets covMinRepOut equal to the minimal representation for the
+  /// covariance matrix covIn.
   virtual void calcCovMinRep( 
     const SPK_VA::valarray<double>& covIn,
     SPK_VA::valarray<double>&       covMinRepOut ) const = 0;
 
+  /// Sets covMinRep_parOut equal to the derivative of the minimal
+  /// representation for the covariance matrix with derivative cov_parIn.
   virtual void calcCovMinRep_par( 
     const SPK_VA::valarray<double>& cov_parIn,
     int                             nCov_parInCol,
     SPK_VA::valarray<double>&       covMinRep_parOut ) const = 0;
 
+  /// Sets covOut equal to the covariance matrix that corresponds
+  /// to the minimal representation for the covariance matrix that
+  /// is contained in covMinRepIn.
   virtual void expandCovMinRep( 
     const SPK_VA::valarray<double>& covMinRepIn,
     SPK_VA::valarray<double>&       covOut ) const = 0;

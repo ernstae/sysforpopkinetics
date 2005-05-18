@@ -20,40 +20,12 @@
 
 */
 /*************************************************************************
+ *//**
+ * @file: FullCov.cpp
  *
- * File: FullCov.cpp
  *
- *
- * This class supports full covariance matrices.  It is a concrete 
- * subclass of the abstract covariance base class.
- *
- * This class utilizes the following parameterization for the covariance
- * matrix in order to insure that it is positive definite and symmetric:
- *
- *                                     T
- *    cov( par )  =  L( par )  L( par )  ,
- *
- * where par contains the current value for the parameters and
- * L( par ) is the following square, lower triangular matrix,
- *
- *                  -                                                            -
- *                 |  exp[ par  ]                                           0     |
- *                 |          0                                                   |
- *                 |                                                              |
- *                 |     par       exp[ par  ]                                    |
- *                 |        1              2                                      |
- *                 |                                                              |
- *    L( par )  =  |     par          par       exp[ par  ]                       |  ,
- *                 |        3            4              5                         |
- *                 |                                                              |
- *                 |       .            .    .            .                       |
- *                 |       .            .      .            .                     |
- *                 |       .            .        .            .                   |
- *                 |                                                              |
- *                 |                               par          exp[ par       ]  |
- *                 |                                  nPar-2            nPar-1    |
- *                  -                                                            -
- *
+ * Implements FullCov class.
+ *//*
  * Author: Mitch Watrous
  *
  *************************************************************************/
@@ -82,6 +54,9 @@ using SPK_VA::valarray;
  *
  * Function: FullCov
  *
+ *//**
+ * Constructs a full covariance matrix with nRowIn rows and columns.
+ *//*
  *************************************************************************/
 
 FullCov::FullCov( int nRowIn )
@@ -95,12 +70,17 @@ FullCov::FullCov( int nRowIn )
  *
  * Function: cov
  *
- *
+ *//**
  * Evaluates the covariance matrix at the current parameter value.
  *
+ * In particular, this function sets covOut equal to
+ * \f[
+ *     \mbox{cov}(\mbox{par}) .
+ * \f]
+ *//*
  *************************************************************************/
 
-void FullCov::cov( valarray<double>& covOut ) const
+void FullCov::cov( SPK_VA::valarray<double>& covOut ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -226,13 +206,19 @@ void FullCov::cov( valarray<double>& covOut ) const
  *
  * Function: cov_par
  *
- *
+ *//**
  * Evaluates the derivative of the covariance matrix at the current
  * parameter value.
  *
+ * In particular, this function sets cov_parOut equal to
+ * \f[
+ *     \partial_{\mbox{par}} \; \mbox{cov}(\mbox{par}) =
+ *       \partial_{\mbox{par}} \; \mbox{rvec} \left[ \mbox{cov}(\mbox{par}) \right] .
+ * \f]
+ *//*
  *************************************************************************/
 
-void FullCov::cov_par( valarray<double>& cov_parOut ) const
+void FullCov::cov_par( SPK_VA::valarray<double>& cov_parOut ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -406,17 +392,18 @@ void FullCov::cov_par( valarray<double>& cov_parOut ) const
  *
  * Function: inv
  *
- *
+ *//**
  * Evaluates the inverse of the covariance matrix at the current
- * parameter value,
+ * parameter value
  *
- *                                  -1
- *     inv( par )  =  [ cov( par ) ]    .
- * 
- *
+ * In particular, this function sets invOut equal to
+ * \f[
+ *     \mbox{cov}^{-1}(\mbox{par}) .
+ * \f]
+ *//*
  *************************************************************************/
 
-void FullCov::inv( valarray<double>& invOut ) const
+void FullCov::inv( SPK_VA::valarray<double>& invOut ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -473,18 +460,19 @@ void FullCov::inv( valarray<double>& invOut ) const
  *
  * Function: inv_par
  *
- *
+ *//**
  * Evaluates the derivative of the inverse of the covariance matrix
- * at the current parameter value,
- *                                 -                   -
- *                                |                -1   |
- *     d     inv( par )  =  d     |  [ cov( par ) ]     |  .
- *      par                  par  |                     |
- *                                 -                   -
+ * at the current parameter value.
  *
+ * In particular, this function sets inv_parOut equal to
+ * \f[
+ *     \partial_{\mbox{par}} \; \mbox{cov}^{-1}(\mbox{par}) =
+ *       \partial_{\mbox{par}} \; \mbox{rvec} \left[ \mbox{cov}^{-1}(\mbox{par}) \right] .
+ * \f]
+ *//*
  *************************************************************************/
 
-void FullCov::inv_par( valarray<double>& inv_parOut ) const
+void FullCov::inv_par( SPK_VA::valarray<double>& inv_parOut ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -567,19 +555,19 @@ void FullCov::inv_par( valarray<double>& inv_parOut ) const
  *
  * Function: getParLimits
  *
- *
+ *//**
  * Gets the lower and upper limits for the covariance matrix parameters
  * at the current parameter value.  These limits are for use during the
  * optimization of objective functions that depend on these parameters.
  *
  * This function assumes that the current values for the covariance
  * parameters are approximately equal to the final or true values.
- *
+ *//*
  *************************************************************************/
 
 void FullCov::getParLimits(
-  valarray<double>&  parLow,
-  valarray<double>&  parUp ) const
+  SPK_VA::valarray<double>&  parLow,
+  SPK_VA::valarray<double>&  parUp ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -667,15 +655,15 @@ void FullCov::getParLimits(
  *
  * Function: calcPar
  *
- *
+ *//**
  * Sets parOut equal to the covariance matrix parameters that
  * correspond to the covariance matrix covIn.
- *
+ *//*
  *************************************************************************/
 
 void FullCov::calcPar( 
-  const valarray<double>& covIn,
-  valarray<double>&       parOut ) const
+  const SPK_VA::valarray<double>& covIn,
+  SPK_VA::valarray<double>&       parOut ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -745,18 +733,18 @@ void FullCov::calcPar(
  *
  * Function: calcCovMinRep
  *
- *
+ *//**
  * Sets covMinRepOut equal to the minimal representation for the
- * covariance matrix.
+ * covariance matrix covIn.
  *
  * The minimal representation is the elements from the lower triangle
  * of the covariance matrix stored in column major order.
- *
+ *//*
  *************************************************************************/
 
 void FullCov::calcCovMinRep( 
-  const valarray<double>& covIn,
-  valarray<double>&       covMinRepOut ) const
+  const SPK_VA::valarray<double>& covIn,
+  SPK_VA::valarray<double>&       covMinRepOut ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -798,19 +786,19 @@ void FullCov::calcCovMinRep(
  *
  * Function: calcCovMinRep_par
  *
- *
+ *//**
  * Sets covMinRep_parOut equal to the derivative of the minimal
- * representation for the covariance matrix.
+ * representation for the covariance matrix with derivative cov_parIn.
  *
  * The minimal representation is the elements from the lower triangle
  * of the covariance matrix stored in column major order.
- *
+ *//*
  *************************************************************************/
 
 void FullCov::calcCovMinRep_par( 
-  const valarray<double>& cov_parIn,
-  int                     nCov_parInCol,
-  valarray<double>&       covMinRep_parOut ) const
+  const SPK_VA::valarray<double>& cov_parIn,
+  int                             nCov_parInCol,
+  SPK_VA::valarray<double>&       covMinRep_parOut ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -864,19 +852,19 @@ void FullCov::calcCovMinRep_par(
  *
  * Function: expandCovMinRep
  *
- *
- * Sets covOut equal to the full covariance matrix that corresponds
- * to the minimal representation for the covariance matrix that is
- * contained in covMinRepIn.
+ *//**
+ * Sets covOut equal to the covariance matrix that corresponds
+ * to the minimal representation for the covariance matrix that
+ * is contained in covMinRepIn.
  *
  * The minimal representation is the elements from the lower triangle
  * of the covariance matrix stored in column major order.
- *
+ *//*
  *************************************************************************/
 
 void FullCov::expandCovMinRep( 
-  const valarray<double>& covMinRepIn,
-  valarray<double>&       covOut ) const
+  const SPK_VA::valarray<double>& covMinRepIn,
+  SPK_VA::valarray<double>&       covOut ) const
 {
   //------------------------------------------------------------
   // Preliminaries.

@@ -20,24 +20,14 @@
 
 */
 /*************************************************************************
+ *//**
+ * @file: isEqual.cpp
  *
- * File: isEqual.cpp
  *
- *
- * This function returns true if two arrays are equal.
- *
+ * Implements isEqual() function.
+ *//*
  * Author: Mitch Watrous
  *
- *************************************************************************/
-
-/*************************************************************************
- *
- * Function: isEqual
- *
- *
- * Returns true if the arrays x and y have the same number of elements
- * and if every element in x is equal to the corresponding element in y.
- * 
  *************************************************************************/
 
 /*------------------------------------------------------------------------
@@ -50,13 +40,19 @@
 using SPK_VA::valarray;
 
 
-/*------------------------------------------------------------------------
- * Function definition
- *------------------------------------------------------------------------*/
+/*************************************************************************
+ *
+ * Function: isEqual
+ *
+ *//**
+ * Returns true if the arrays x and y have the same number of elements
+ * and if every element in x is equal to the corresponding element in y.
+ */
+/*************************************************************************/
 
 bool isEqual(
-  const valarray<double>&  x,
-  const valarray<double>&  y )
+  const SPK_VA::valarray<double>&  x,
+  const SPK_VA::valarray<double>&  y )
 {
   //------------------------------------------------------------
   // Preliminaries.

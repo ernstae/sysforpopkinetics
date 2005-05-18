@@ -20,28 +20,15 @@
 
 */
 /*************************************************************************
+ *//**
+ * @file: PopPredModel.cpp
  *
- * File: PopPredModel.cpp
  *
- *
- * This SpkModel subclass evaluates population level models that
- * correspond to the expressions in an NM-TRAN $PRED block.
- *
+ * Implements PopPredModel class.
+ *//*
  * Author: Mitch Watrous
  *
  *************************************************************************/
-
-/*************************************************************************
- *
- * Class: PopPredModel
- *
- *************************************************************************/
-
-/*------------------------------------------------------------------------
- * Class specification
- *------------------------------------------------------------------------*/
-
-
 
 /*------------------------------------------------------------------------
  * Include files
@@ -83,45 +70,46 @@ using SPK_VA::valarray;
  *
  * Function: PopPredModel
  *
- *
+ *//**
  * Constructor for population level Pred models.
  *
  * After this constructor has completed the current population parameter
  * will be 
- *
- *                -              -
- *               |  thetaCurrIn   |
- *               |                |
- *     alpha  =  |  omegaParCurr  |  ,
- *               |                |
- *               |  sigmaParCurr  |
- *                -              -
- *
+ * \f[
+ *     \alpha =
+ *       \left[ 
+ *         \begin{array}{c}
+ *           \mbox{thetaCurrIn} \\
+ *           \mbox{omegaParCurr} \\
+ *           \mbox{sigmaParCurr}
+ *         \end{array}
+ *       \right] ,
+ * \f]
  * where omegaParCurr and sigmaParCurr are the covariance matrix 
  * parameters that correspond to the minimal representations for
  * omega and sigma, respectively, that are contained in omegaMinRepIn
  * and sigmaMinRepIn.
  *
  * In addition, the current individual parameter will be 
- *
- *     b   =  etaCurrIn  .
- *      i
- *
- *************************************************************************/
+ * \f[
+ *     b_i = \mbox{etaCurrIn} .
+ * \f]
+ */
+/*************************************************************************/
 
 PopPredModel::PopPredModel(
-    PredBase< AD<double> >&  predEvaluatorIn,
-    int                      nThetaIn,
-    const valarray<double>&  thetaLowIn,
-    const valarray<double>&  thetaUpIn,
-    const valarray<double>&  thetaCurrIn,
-    int                      nEtaIn,
-    const valarray<double>&  etaCurrIn,
-    int                      nEpsIn,
-    covStruct                omegaStructIn,
-    const valarray<double>&  omegaMinRepIn,
-    covStruct                sigmaStructIn,
-    const valarray<double>&  sigmaMinRepIn )
+    PredBase< AD<double> >&          predEvaluatorIn,
+    int                              nThetaIn,
+    const SPK_VA::valarray<double>&  thetaLowIn,
+    const SPK_VA::valarray<double>&  thetaUpIn,
+    const SPK_VA::valarray<double>&  thetaCurrIn,
+    int                              nEtaIn,
+    const SPK_VA::valarray<double>&  etaCurrIn,
+    int                              nEpsIn,
+    covStruct                        omegaStructIn,
+    const SPK_VA::valarray<double>&  omegaMinRepIn,
+    covStruct                        sigmaStructIn,
+    const SPK_VA::valarray<double>&  sigmaMinRepIn )
   :
   nTheta                              ( nThetaIn ),
   nEta                                ( nEtaIn ),
@@ -407,10 +395,10 @@ PopPredModel::PopPredModel(
  *
  * Function: ~PopPredModel
  *
- *
+ *//**
  * Destructor.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
 PopPredModel::~PopPredModel()
 {
@@ -439,10 +427,10 @@ PopPredModel::~PopPredModel()
  *
  * Function: doSelectIndividual
  *
- *
+ *//**
  * Sets the index i for the current individual.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
 void PopPredModel::doSelectIndividual( int iIn )
 {
@@ -501,23 +489,24 @@ void PopPredModel::doSelectIndividual( int iIn )
  *
  * Function: doSetPopPar
  *
- *
+ *//**
  * Sets the current value for the population parameter,
- *
- *                -              -
- *               |   thetaCurr    |
- *               |                |
- *     alpha  =  |  omegaParCurr  |  .
- *               |                |
- *               |  sigmaParCurr  |
- *                -              -
- *
+ * \f[
+ *     \alpha =
+ *       \left[ 
+ *         \begin{array}{c}
+ *           \mbox{thetaCurr} \\
+ *           \mbox{omegaParCurr} \\
+ *           \mbox{sigmaParCurr}
+ *         \end{array}
+ *       \right] .
+ * \f]
  * These are the parameters that are optimized over when performing
  * population level estimation.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-void PopPredModel::doSetPopPar( const valarray<double>& alphaIn ) 
+void PopPredModel::doSetPopPar( const SPK_VA::valarray<double>& alphaIn ) 
 { 
   //------------------------------------------------------------
   // See if the population parameter has changed.
@@ -584,18 +573,17 @@ void PopPredModel::doSetPopPar( const valarray<double>& alphaIn )
  *
  * Function: doSetIndPar
  *
- *
+ *//**
  * Sets the current value for the individual parameter,
- *
- *     b   =  etaCurr  .
- *      i
- *
+ * \f[
+ *     b_i = \mbox{etaCurr} .
+ * \f]
  * This is the parameter that is optimized over when performing
  * individual level estimation.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-void PopPredModel::doSetIndPar( const valarray<double>& bIn ) 
+void PopPredModel::doSetIndPar( const SPK_VA::valarray<double>& bIn ) 
 { 
   //------------------------------------------------------------
   // See if the individual parameter has changed.
@@ -632,10 +620,10 @@ void PopPredModel::doSetIndPar( const valarray<double>& bIn )
  *
  * Function: invalidateCache
  *
- *
+ *//**
  * Invalidates all of the values stored in the cache.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
 void PopPredModel::invalidateCache() const
 {
@@ -924,7 +912,7 @@ bool PopPredModel::getUsedCachedSigma_sigmaPar() const
  *
  * Function: evalAllPred
  *
- *
+ *//**
  * This function evaluates the predicted values for the data for
  * all of the events for the current individual.
  *
@@ -933,25 +921,29 @@ bool PopPredModel::getUsedCachedSigma_sigmaPar() const
  *
  * Note that this function combines the parameters theta, eta, 
  * and eps into a single vector of independent variables,
- *
- *            -       -
- *           |  theta  |
- *           |         |
- *     z  =  |   eta   |  .
- *           |         |
- *           |   eps   |
- *            -       -
- *
+ * \f[
+ *     z =
+ *       \left[ 
+ *         \begin{array}{c}
+ *           \mbox{theta} \\
+ *           \mbox{eta} \\
+ *           \mbox{eps}
+ *         \end{array}
+ *       \right] .
+ * \f]
  * In addition, this function combines the model functions f and y
  * into a single vector of dependent variables,
- *
- *                 -                      -
- *                |  f( theta, eta )       |
- *     w( z )  =  |                        |  .
- *                |  y( theta, eta, eps )  |
- *                 -                      -
- *
- *************************************************************************/
+ * \f[
+ *     w(z) =
+ *       \left[ 
+ *         \begin{array}{c}
+ *           f(\mbox{theta}, \mbox{eta}) \\
+ *           y(\mbox{theta}, \mbox{eta}, \mbox{eps})
+ *         \end{array}
+ *       \right] .
+ * \f]
+ */
+/*************************************************************************/
 
 void PopPredModel::evalAllPred() const
 {
@@ -1137,22 +1129,24 @@ void PopPredModel::evalAllPred() const
  *
  * Function: evalPredFirstDeriv
  *
+ *//**
+ * Evaluates first derivatives of the Pred block expressions.
  *
- * Evaluates the following first derivatives of the Pred block expressions:
- *
- *     d       f( theta, eta )  ,
- *      theta
- *
- *
- *     d       f( theta, eta )  ,
- *      eta
- *
+ * In particular, this function evaluates the following first derivatives:
+ * \f[
+ *     \partial_{\mbox{theta}} \; f(\mbox{theta}, \mbox{eta}) ,
+ * \f]
+ * \f[
+ *     \partial_{\mbox{eta}} \; f(\mbox{theta}, \mbox{eta}) ,
+ * \f]
  * and
- *                                                     |
- *     h( theta, eta )  =  d     y( theta, eta, eps )  |          .
- *                          eps                        | eps = 0
- * 
- *************************************************************************/
+ * \f[
+ *     h(\mbox{theta}, \mbox{eta}) =
+ *       \partial_{\mbox{eps}} \; y(\mbox{theta}, \mbox{eta}, \mbox{eps})
+ *         \left|_{\mbox{eps}=0} \right. .
+ * \f]
+ */
+/*************************************************************************/
 
 void PopPredModel::evalPredFirstDeriv() const
 {
@@ -1337,31 +1331,33 @@ void PopPredModel::evalPredFirstDeriv() const
  *
  * Function: evalPredSecondDeriv
  *
+ *//**
+ * Evaluates first and second derivatives of the Pred block expressions.
  *
- * Evaluates the following second derivative of the Pred block expressions:
+ * In particular, this function evaluates the following second derivative:
+ * \f[
+ *     \partial_{\mbox{theta}}
+ *       \left[
+ *         \partial_{\mbox{eps}} \; y(\mbox{theta}, \mbox{eta}, \mbox{eps})
+ *           \left|_{\mbox{eps}=0} \right. 
+ *       \right] .
+ * \f]
  *
- *              -                                        - 
- *             |                              |           |
- *     d       |  d     y( theta, eta, eps )  |           |  .
- *      theta  |   eps                        | eps = 0   |
- *              -                                        - 
- *
- * In addition, this function evaluates the following first derivatives
- * of the Pred block expressions:
- *
- *     d       f( theta, eta )  ,
- *      theta
- *
- *
- *     d       f( theta, eta )  ,
- *      eta
- *
+ * In addition, this function evaluates the following first derivatives:
+ * \f[
+ *     \partial_{\mbox{theta}} \; f(\mbox{theta}, \mbox{eta}) ,
+ * \f]
+ * \f[
+ *     \partial_{\mbox{eta}} \; f(\mbox{theta}, \mbox{eta}) ,
+ * \f]
  * and
- *                                                     |
- *     h( theta, eta )  =  d     y( theta, eta, eps )  |          .
- *                          eps                        | eps = 0
- * 
- *************************************************************************/
+ * \f[
+ *     h(\mbox{theta}, \mbox{eta}) =
+ *       \partial_{\mbox{eps}} \; y(\mbox{theta}, \mbox{eta}, \mbox{eps})
+ *         \left|_{\mbox{eps}=0} \right. .
+ * \f]
+ */
+/*************************************************************************/
 
 void PopPredModel::evalPredSecondDeriv() const
 {
@@ -1839,25 +1835,20 @@ void PopPredModel::evalPredSecondDeriv() const
  *
  * Function: doDataMean
  *
- *
+ *//**
  * Sets ret equal to the current value for the mean of the current
- * individual's data
- *
- *     f ( alpha, b  )  ,
- *      i          i
- *
+ * individual's data,
+ * \f[
+ *     f_i(\alpha, b_i) ,
+ * \f]
  * where
- *
- *     i      = index for the current individual,
- *
- *     alpha  = current value for the population parameter, and
- *
- *     b      = current value for the individual parameter.
- *      i
- *
- *************************************************************************/
+ *     \f$ i      \f$  = index for the current individual,
+ *     \f$ \alpha \f$  = current value for the population parameter, and
+ *     \f$ b_i    \f$  = current value for the individual parameter.
+ */
+/*************************************************************************/
 
-void PopPredModel::doDataMean( valarray<double>& ret ) const 
+void PopPredModel::doDataMean( SPK_VA::valarray<double>& ret ) const 
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -1971,29 +1962,24 @@ void PopPredModel::doDataMean( valarray<double>& ret ) const
  *
  * Function: doDataMean_popPar
  *
- *
+ *//**
  * Sets ret equal to the current value for the derivative with respect
  * to the population parameter of the mean of the current individual's
  * data,
- *
- *     d       f ( alpha, b  )  ,
- *      alpha   i          i
- *
+ * \f[
+ *     \partial_{\alpha} f_i(\alpha, b_i) ,
+ * \f]
  * where
- *
- *     i      = index for the current individual,
- *
- *     alpha  = current value for the population parameter, and
- *
- *     b      = current value for the individual parameter.
- *      i
+ *     \f$ i      \f$  = index for the current individual,
+ *     \f$ \alpha \f$  = current value for the population parameter, and
+ *     \f$ b_i    \f$  = current value for the individual parameter.
  *
  * This function returns a value of true if this derivative has 
  * at least one nonzero element.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-bool PopPredModel::doDataMean_popPar( valarray<double>& ret ) const 
+bool PopPredModel::doDataMean_popPar( SPK_VA::valarray<double>& ret ) const 
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -2119,29 +2105,24 @@ bool PopPredModel::doDataMean_popPar( valarray<double>& ret ) const
  *
  * Function: doDataMean_indPar
  *
- *
+ *//**
  * Sets ret equal to the current value for the derivative with respect
  * to the individual parameter of the mean of the current individual's
  * data,
- *
- *     d   f ( alpha, b  )  ,
- *      b   i          i
- *
+ * \f[
+ *     \partial_b f_i(\alpha, b_i) ,
+ * \f]
  * where
- *
- *     i      = index for the current individual,
- *
- *     alpha  = current value for the population parameter, and
- *
- *     b      = current value for the individual parameter.
- *      i
+ *     \f$ i      \f$  = index for the current individual,
+ *     \f$ \alpha \f$  = current value for the population parameter, and
+ *     \f$ b_i    \f$  = current value for the individual parameter.
  *
  * This function returns a value of true if this derivative has 
  * at least one nonzero element.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-bool PopPredModel::doDataMean_indPar( valarray<double>& ret ) const 
+bool PopPredModel::doDataMean_indPar( SPK_VA::valarray<double>& ret ) const 
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -2227,25 +2208,20 @@ bool PopPredModel::doDataMean_indPar( valarray<double>& ret ) const
  *
  * Function: doDataVariance
  *
- *
+ *//**
  * Sets ret equal to the current value for the variance of the current
  * individual's data,
- *
- *     R ( alpha, b  )  ,
- *      i          i
- *
+ * \f[
+ *     R_i(\alpha, b_i) ,
+ * \f]
  * where
- *
- *     i      = index for the current individual,
- *
- *     alpha  = current value for the population parameter, and
- *
- *     b      = current value for the individual parameter.
- *      i
- *
- *************************************************************************/
+ *     \f$ i      \f$  = index for the current individual,
+ *     \f$ \alpha \f$  = current value for the population parameter, and
+ *     \f$ b_i    \f$  = current value for the individual parameter.
+ */
+/*************************************************************************/
 
-void PopPredModel::doDataVariance( valarray<double>& ret ) const 
+void PopPredModel::doDataVariance( SPK_VA::valarray<double>& ret ) const 
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -2387,31 +2363,25 @@ void PopPredModel::doDataVariance( valarray<double>& ret ) const
  *
  * Function: doDataVariance_popPar
  *
- *
+ *//**
  * Sets ret equal to the current value for the derivative with 
  * respect to the population parameter of the variance of the
  * current individual's data,
- *                                                -                  -
- *                                               |                    |
- *     d       R ( alpha, b  )  =  d       rvec  |   R ( alpha, b  )  |  ,
- *      alpha   i          i        alpha        |    i          i    |
- *                                                -                  -
- *
+ * \f[
+ *     \partial_{\alpha} R_i(\alpha, b_i) =
+ *       \partial_{\alpha} \mbox{rvec} \left[ R_i(\alpha, b_i) \right] ,
+ * \f]
  * where
- *
- *     i      = index for the current individual,
- *
- *     alpha  = current value for the population parameter, and
- *
- *     b      = current value for the individual parameter.
- *      i
+ *     \f$ i      \f$  = index for the current individual,
+ *     \f$ \alpha \f$  = current value for the population parameter, and
+ *     \f$ b_i    \f$  = current value for the individual parameter.
  *
  * This function returns a value of true if this derivative has 
  * at least one nonzero element.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-bool PopPredModel::doDataVariance_popPar( valarray<double>& ret ) const 
+bool PopPredModel::doDataVariance_popPar( SPK_VA::valarray<double>& ret ) const 
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -2651,31 +2621,25 @@ bool PopPredModel::doDataVariance_popPar( valarray<double>& ret ) const
  *
  * Function: doDataVariance_indPar
  *
- *
+ *//**
  * Sets ret equal to the current value for the derivative with 
  * respect to the individual parameter of the variance of the
  * current individual's data,
- *                                        -                  -
- *                                       |                    |
- *     d   R ( alpha, b  )  =  d   rvec  |   R ( alpha, b  )  |  ,
- *      b   i          i        b        |    i          i    |
- *                                        -                  -
- *
+ * \f[
+ *     \partial_b R_i(\alpha, b_i) =
+ *       \partial_b \mbox{rvec} \left[ R_i(\alpha, b_i) \right] ,
+ * \f]
  * where
- *
- *     i      = index for the current individual,
- *
- *     alpha  = current value for the population parameter, and
- *
- *     b      = current value for the individual parameter.
- *      i
+ *     \f$ i      \f$  = index for the current individual,
+ *     \f$ \alpha \f$  = current value for the population parameter, and
+ *     \f$ b_i    \f$  = current value for the individual parameter.
  *
  * This function returns a value of true if this derivative has 
  * at least one nonzero element.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-bool PopPredModel::doDataVariance_indPar( valarray<double>& ret ) const 
+bool PopPredModel::doDataVariance_indPar( SPK_VA::valarray<double>& ret ) const 
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -2869,26 +2833,20 @@ bool PopPredModel::doDataVariance_indPar( valarray<double>& ret ) const
  *
  * Function: doDataVarianceInv
  *
- *
+ *//**
  * Sets ret equal to the current value for the inverse of the variance
  * of the current individual's data,
- *
- *      -1
- *     R  ( alpha, b  )  ,
- *      i           i
- *
+ * \f[
+ *     R^{-1}_i(\alpha, b_i) ,
+ * \f]
  * where
- *
- *     i      = index for the current individual,
- *
- *     alpha  = current value for the population parameter, and
- *
- *     b      = current value for the individual parameter.
- *      i
- *
- *************************************************************************/
+ *     \f$ i      \f$  = index for the current individual,
+ *     \f$ \alpha \f$  = current value for the population parameter, and
+ *     \f$ b_i    \f$  = current value for the individual parameter.
+ */
+/*************************************************************************/
 
-void PopPredModel::doDataVarianceInv( valarray<double>& ret ) const 
+void PopPredModel::doDataVarianceInv( SPK_VA::valarray<double>& ret ) const 
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -2961,31 +2919,25 @@ void PopPredModel::doDataVarianceInv( valarray<double>& ret ) const
  *
  * Function: doDataVarianceInv_popPar
  *
- *
+ *//**
  * Sets ret equal to the current value for the derivative with respect
  * to the population parameter of the inverse of the variance of the
  * current individual's data,
- *                                                 -                   -
- *              -1                                |    -1               |
- *     d       R  ( alpha, b  )  =  d       rvec  |   R  ( alpha, b  )  |  ,
- *      alpha   i           i        alpha        |    i           i    |
- *                                                 -                   -
- *
+ * \f[
+ *     \partial_{\alpha} R^{-1}_i(\alpha, b_i) =
+ *       \partial_{\alpha} \mbox{rvec} \left[ R^{-1}_i(\alpha, b_i) \right] ,
+ * \f]
  * where
- *
- *     i      = index for the current individual,
- *
- *     alpha  = current value for the population parameter, and
- *
- *     b      = current value for the individual parameter.
- *      i
+ *     \f$ i      \f$  = index for the current individual,
+ *     \f$ \alpha \f$  = current value for the population parameter, and
+ *     \f$ b_i    \f$  = current value for the individual parameter.
  *
  * This function returns a value of true if this derivative has 
  * at least one nonzero element.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-bool PopPredModel::doDataVarianceInv_popPar( valarray<double>& ret ) const 
+bool PopPredModel::doDataVarianceInv_popPar( SPK_VA::valarray<double>& ret ) const 
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -3095,31 +3047,25 @@ bool PopPredModel::doDataVarianceInv_popPar( valarray<double>& ret ) const
  *
  * Function: doDataVarianceInv_indPar
  *
- *
+ *//**
  * Sets ret equal to the current value for the derivative with respect
  * to the individual parameter of the inverse of the variance of the
  * current individual's data,
- *                                         -                   -
- *          -1                            |    -1               |
- *     d   R  ( alpha, b  )  =  d   rvec  |   R  ( alpha, b  )  |  ,
- *      b   i           i        b        |    i           i    |
- *                                         -                   -
- *
+ * \f[
+ *     \partial_b R^{-1}_i(\alpha, b_i) =
+ *       \partial_b \mbox{rvec} \left[ R^{-1}_i(\alpha, b_i) \right] ,
+ * \f]
  * where
- *
- *     i      = index for the current individual,
- *
- *     alpha  = current value for the population parameter, and
- *
- *     b      = current value for the individual parameter.
- *      i
+ *     \f$ i      \f$  = index for the current individual,
+ *     \f$ \alpha \f$  = current value for the population parameter, and
+ *     \f$ b_i    \f$  = current value for the individual parameter.
  *
  * This function returns a value of true if this derivative has 
  * at least one nonzero element.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-bool PopPredModel::doDataVarianceInv_indPar( valarray<double>& ret ) const 
+bool PopPredModel::doDataVarianceInv_indPar( SPK_VA::valarray<double>& ret ) const 
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -3216,24 +3162,24 @@ bool PopPredModel::doDataVarianceInv_indPar( valarray<double>& ret ) const
  *
  * Function: doIndParVariance
  *
- *
+ *//**
  * Sets ret equal to the current value for the variance of the 
  * individual parameter,
- *
- *     D( alpha )  ,
- *
+ * \f[
+ *     D(\alpha) ,
+ * \f]
  * where
- *
- *     alpha  = current value for the population parameter.
+ *     \f$ \alpha \f$  = current value for the population parameter.
  *
  * Note that for the population level Pred model, the individual
  * parameter variance is equivalent to omega, i.e.,
- *
- *     D( alpha )  =  omega( omegaPar )  .
- *
- *************************************************************************/
+ * \f[
+ *     D(\alpha) = \Omega(\mbox{omegaPar}) .
+ * \f]
+ */
+/*************************************************************************/
 
-void PopPredModel::doIndParVariance( valarray<double>& ret ) const 
+void PopPredModel::doIndParVariance( SPK_VA::valarray<double>& ret ) const 
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -3278,31 +3224,29 @@ void PopPredModel::doIndParVariance( valarray<double>& ret ) const
  *
  * Function: doIndParVariance_popPar
  *
- *
+ *//**
  * Sets ret equal to the current value for the derivative with 
  * respect to the population parameter of the variance of the 
  * individual parameter,
- *
- *                                           -             -
- *                                          |               |
- *     d       D( alpha )  =  d       rvec  |   D( alpha )  |  ,
- *      alpha                  alpha        |               |
- *                                           -             -
+ * \f[
+ *     \partial_{\alpha} D(\alpha) =
+ *       \partial_{\alpha} \mbox{rvec} \left[ D(\alpha) \right] ,
+ * \f]
  * where
- *
- *     alpha  = current value for the population parameter.
- *
- * This function returns a value of true if this derivative has 
- * at least one nonzero element.
+ *     \f$ \alpha \f$  = current value for the population parameter.
  *
  * Note that for the population level Pred model, the individual
  * parameter variance is equivalent to omega, i.e.,
+ * \f[
+ *     D(\alpha) = \Omega(\mbox{omegaPar}) .
+ * \f]
+ * This function returns a value of true if this derivative has 
+ * at least one nonzero element.
  *
- *     D( alpha )  =  omega( omegaPar )  .
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-bool PopPredModel::doIndParVariance_popPar( valarray<double>& ret ) const 
+bool PopPredModel::doIndParVariance_popPar( SPK_VA::valarray<double>& ret ) const 
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -3422,25 +3366,24 @@ bool PopPredModel::doIndParVariance_popPar( valarray<double>& ret ) const
  *
  * Function: doIndParVarianceInv
  *
- *
+ *//**
  * Sets ret equal to the current value for the inverse of the variance
  * of the individual parameter,
- *
- *      -1
- *     D  ( alpha )  ,
- *
+ * \f[
+ *     D^{-1}(\alpha) ,
+ * \f]
  * where
- *
- *     alpha  = current value for the population parameter.
+ *     \f$ \alpha \f$  = current value for the population parameter.
  *
  * Note that for the population level Pred model, the individual
  * parameter variance is equivalent to omega, i.e.,
- *
- *     D( alpha )  =  omega( omegaPar )  .
- *
- *************************************************************************/
+ * \f[
+ *     D(\alpha) = \Omega(\mbox{omegaPar}) .
+ * \f]
+ */
+/*************************************************************************/
 
-void PopPredModel::doIndParVarianceInv( valarray<double>& ret ) const 
+void PopPredModel::doIndParVarianceInv( SPK_VA::valarray<double>& ret ) const 
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -3486,31 +3429,29 @@ void PopPredModel::doIndParVarianceInv( valarray<double>& ret ) const
  *
  * Function: doIndParVarianceInv_popPar
  *
- *
+ *//**
  * Sets ret equal to the current value for the derivative with respect
  * to the population parameter of the inverse of the variance of the 
  * individual parameter,
- *
- *                                             -               -
- *              -1                            |    -1           |
- *     d       D  ( alpha )  =  d       rvec  |   D  ( alpha )  |  ,
- *      alpha                    alpha        |                 |
- *                                             -               -
+ * \f[
+ *     \partial_{\alpha} D^{-1}(\alpha) =
+ *       \partial_{\alpha} \mbox{rvec} \left[ D^{-1}(\alpha) \right] ,
+ * \f]
  * where
- *
- *     alpha  = current value for the population parameter.
- *
- * This function returns a value of true if this derivative has 
- * at least one nonzero element.
+ *     \f$ \alpha \f$  = current value for the population parameter.
  *
  * Note that for the population level Pred model, the individual
  * parameter variance is equivalent to omega, i.e.,
+ * \f[
+ *     D(\alpha) = \Omega(\mbox{omegaPar}) .
+ * \f]
+ * This function returns a value of true if this derivative has 
+ * at least one nonzero element.
  *
- *     D( alpha )  =  omega( omegaPar )  .
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-bool PopPredModel::doIndParVarianceInv_popPar( valarray<double>& ret ) const 
+bool PopPredModel::doIndParVarianceInv_popPar( SPK_VA::valarray<double>& ret ) const 
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -3634,7 +3575,7 @@ bool PopPredModel::doIndParVarianceInv_popPar( valarray<double>& ret ) const
  *
  * Function: getPopParLimits
  *
- *
+ *//**
  * Gets the lower and upper limits for the elements of the population
  * parameter at the current population parameter value.
  *
@@ -3643,12 +3584,12 @@ bool PopPredModel::doIndParVarianceInv_popPar( valarray<double>& ret ) const
  *
  * This function assumes that the current value for the population
  * parameter is approximately equal to its final or true value.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
 void PopPredModel::getPopParLimits(
-  valarray<double>&  popParLow,
-  valarray<double>&  popParUp ) const
+  SPK_VA::valarray<double>&  popParLow,
+  SPK_VA::valarray<double>&  popParUp ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -3707,7 +3648,7 @@ void PopPredModel::getPopParLimits(
  *
  * Function: getIndParLimits
  *
- *
+ *//**
  * Gets the lower and upper limits for the elements of the individual
  * parameter at the current individual parameter value.
  *
@@ -3716,12 +3657,12 @@ void PopPredModel::getPopParLimits(
  *
  * This function assumes that the current value for the individual
  * parameter is approximately equal to its final or true value.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
 void PopPredModel::getIndParLimits(
-  valarray<double>&  indParLow,
-  valarray<double>&  indParUp ) const
+  SPK_VA::valarray<double>&  indParLow,
+  SPK_VA::valarray<double>&  indParUp ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -3764,16 +3705,16 @@ void PopPredModel::getIndParLimits(
  *
  * Function: getPopParStep
  *
- *
+ *//**
  * Gets a vector of step sizes for approximating derivatives with 
  * respect to the elements of the population parameter.
  *
  * These step sizes can be used to approximate the derivatives of
  * objective functions that depend on the population parameters.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-void PopPredModel::getPopParStep( valarray<double>&  popParStep ) const
+void PopPredModel::getPopParStep( SPK_VA::valarray<double>&  popParStep ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -3806,16 +3747,16 @@ void PopPredModel::getPopParStep( valarray<double>&  popParStep ) const
  *
  * Function: getIndParStep
  *
- *
+ *//**
  * Gets a vector of step sizes for approximating derivatives with 
  * respect to the elements of the individual parameter.
  *
  * These step sizes can be used to approximate the derivatives of
  * objective functions that depend on the individual parameters.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-void PopPredModel::getIndParStep( valarray<double>&  indParStep ) const
+void PopPredModel::getIndParStep( SPK_VA::valarray<double>&  indParStep ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -3848,10 +3789,10 @@ void PopPredModel::getIndParStep( valarray<double>&  indParStep ) const
  *
  * Function: getNPopPar
  *
- *
+ *//**
  * Returns the number of elements in the population parameter.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
 int PopPredModel::getNPopPar() const
 {
@@ -3863,10 +3804,10 @@ int PopPredModel::getNPopPar() const
  *
  * Function: getNIndPar
  *
- *
+ *//**
  * Returns the number of elements in the individual parameter.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
 int PopPredModel::getNIndPar() const
 {
@@ -3878,12 +3819,12 @@ int PopPredModel::getNIndPar() const
  *
  * Function: getPopPar
  *
- *
+ *//**
  * Gets the current value for the population parameter.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-void PopPredModel::getPopPar( valarray<double>& ret ) const 
+void PopPredModel::getPopPar( SPK_VA::valarray<double>& ret ) const 
 {
   ret.resize( nPopPar );
 
@@ -3895,12 +3836,12 @@ void PopPredModel::getPopPar( valarray<double>& ret ) const
  *
  * Function: getIndPar
  *
- *
+ *//**
  * Gets the current value for the individual parameter.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-void PopPredModel::getIndPar( valarray<double>& ret ) const 
+void PopPredModel::getIndPar( SPK_VA::valarray<double>& ret ) const 
 {
   ret.resize( nIndPar );
 
@@ -3912,12 +3853,12 @@ void PopPredModel::getIndPar( valarray<double>& ret ) const
  *
  * Function: getTheta
  *
- *
+ *//**
  * Gets the current value for theta.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-void PopPredModel::getTheta( valarray<double>& ret ) const 
+void PopPredModel::getTheta( SPK_VA::valarray<double>& ret ) const 
 {
   ret.resize( nTheta );
 
@@ -3929,12 +3870,12 @@ void PopPredModel::getTheta( valarray<double>& ret ) const
  *
  * Function: getEta
  *
- *
+ *//**
  * Gets the current value for eta.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-void PopPredModel::getEta( valarray<double>& ret ) const 
+void PopPredModel::getEta( SPK_VA::valarray<double>& ret ) const 
 {
   ret.resize( nEta );
 
@@ -3946,12 +3887,12 @@ void PopPredModel::getEta( valarray<double>& ret ) const
  *
  * Function: getOmega
  *
- *
+ *//**
  * Gets the minimal representation for the current value for omega.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-void PopPredModel::getOmega( valarray<double>& ret ) const 
+void PopPredModel::getOmega( SPK_VA::valarray<double>& ret ) const 
 {
   ret.resize( pOmegaCurr->getNPar() );
 
@@ -3968,12 +3909,12 @@ void PopPredModel::getOmega( valarray<double>& ret ) const
  *
  * Function: getSigma
  *
- *
+ *//**
  * Gets the minimal representation for the current value for sigma.
- *
- *************************************************************************/
+ */
+/*************************************************************************/
 
-void PopPredModel::getSigma( valarray<double>& ret ) const 
+void PopPredModel::getSigma( SPK_VA::valarray<double>& ret ) const 
 {
   ret.resize( pSigmaCurr->getNPar() );
 
@@ -3989,22 +3930,26 @@ void PopPredModel::getSigma( valarray<double>& ret ) const
  *
  * Function: getStandardPar
  *
+ *//**
+ * Gets the current values for the standard parameters.
  *
- * Gets the current values for theta, the minimal representation for
- * omega, and the minimal representation for sigma combined into a
- * single vector,
- *
- *                      -                 -
- *                     |     thetaCurr     |
- *                     |                   |
- *     standardPar  =  |  omegaMinRepCurr  |  .
- *                     |                   |
- *                     |  sigmaMinRepCurr  |
- *                      -                 -
- *
- *************************************************************************/
+ * In particular, this function gets the current values for theta,
+ * the minimal representation for omega, and the minimal representation 
+ * for sigma combined into a single vector,
+ * \f[
+ *     \mbox{standardPar} =
+ *       \left[ 
+ *         \begin{array}{c}
+ *           \mbox{thetaCurr} \\
+ *           \mbox{omegaMinRepCurr} \\
+ *           \mbox{sigmaMinRepCurr}
+ *         \end{array}
+ *       \right] .
+ * \f]
+ */
+/*************************************************************************/
 
-void PopPredModel::getStandardPar( valarray<double>& ret ) const 
+void PopPredModel::getStandardPar( SPK_VA::valarray<double>& ret ) const 
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -4066,23 +4011,27 @@ void PopPredModel::getStandardPar( valarray<double>& ret ) const
  *
  * Function: getStandardPar_popPar
  *
+ *//**
+ * Gets the current values for the derivatives of the standard parameters.
  *
- * Gets the current values for the derivative with respect to the
- * population parameter of theta, the minimal representation for
- * omega, and the minimal representation for sigma combined into a
- * single vector,
- *
- *                                      -                 -
- *                                     |     thetaCurr     |
- *                                     |                   |
- *     d       standardPar  =  d       |  omegaMinRepCurr  |  .
- *      alpha                   alpha  |                   |
- *                                     |  sigmaMinRepCurr  |
- *                                      -                 -
- *
- *************************************************************************/
+ * In particular, this function gets the current values for the 
+ * derivative with respect to the population parameter of theta, 
+ * the minimal representation for omega, and the minimal representation 
+ * for sigma combined into a single vector,
+ * \f[
+ *     \partial_{\alpha} \; \mbox{standardPar} = \partial_{\alpha} 
+ *       \left[ 
+ *         \begin{array}{c}
+ *           \mbox{thetaCurr} \\
+ *           \mbox{omegaMinRepCurr} \\
+ *           \mbox{sigmaMinRepCurr}
+ *         \end{array}
+ *       \right] .
+ * \f]
+ */
+/*************************************************************************/
 
-void PopPredModel::getStandardPar_popPar( valarray<double>& ret ) const 
+void PopPredModel::getStandardPar_popPar( SPK_VA::valarray<double>& ret ) const 
 {
   //------------------------------------------------------------
   // Preliminaries.

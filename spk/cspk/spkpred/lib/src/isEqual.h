@@ -20,12 +20,12 @@
 
 */
 /*************************************************************************
+ *//**
+ * @file: isEqual.h
  *
- * File: isEqual.h
  *
- *
- * This function returns true if two arrays are equal.
- *
+ * Declares isEqual() function.
+ *//*
  * Author: Mitch Watrous
  *
  *************************************************************************/

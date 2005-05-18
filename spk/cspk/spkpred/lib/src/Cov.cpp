@@ -20,13 +20,12 @@
 
 */
 /*************************************************************************
+ *//**
+ * @file: Cov.cpp
  *
- * File: Cov.cpp
  *
- *
- * This is the abstract base class for covariance matrix classes.
- *
- * Covariance matrices must be positive definite and symmetric.
+ * Implements Cov class.
+ *//*
  *
  * Author: Mitch Watrous
  *
@@ -53,6 +52,10 @@ using SPK_VA::valarray;
  *
  * Function: Cov
  *
+ *//**
+ * Constructs a covariance matrix with nRowIn rows and columns
+ * and with nParIn parameters in its minimal representation.
+ *//*
  *************************************************************************/
 
 Cov::Cov( int nRowIn, int nParIn )
@@ -76,9 +79,13 @@ Cov::Cov( int nRowIn, int nParIn )
  *
  * Function: setPar
  *
+ *//**
+ * Sets the current values for the minimal representation parameters
+ * equal to parIn.
+ *//*
  *************************************************************************/
 
-void Cov::setPar( const valarray<double>& parIn )
+void Cov::setPar( const SPK_VA::valarray<double>& parIn )
 {
   assert( parIn.size() == nPar );
 
@@ -99,9 +106,13 @@ void Cov::setPar( const valarray<double>& parIn )
  *
  * Function: setCov
  *
+ *//**
+ * Sets the current values for the minimal representation parameters
+ * equal to the minimal representation parameters for covIn.
+ *//*
  *************************************************************************/
 
-void Cov::setCov( const valarray<double>& covIn )
+void Cov::setCov( const SPK_VA::valarray<double>& covIn )
 {
   assert( covIn.size() == nRow * nRow );
 
@@ -118,6 +129,9 @@ void Cov::setCov( const valarray<double>& covIn )
  *
  * Function: invalidateCache
  *
+ *//**
+ * Invalidates all of the values stored in the cache.
+ *//*
  *************************************************************************/
 
 void Cov::invalidateCache() const

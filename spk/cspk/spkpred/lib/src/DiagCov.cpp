@@ -20,33 +20,12 @@
 
 */
 /*************************************************************************
+ *//**
+ * @file: DiagCov.cpp
  *
- * File: DiagCov.cpp
  *
- *
- * This class supports diagonal covariance matrices.  It is a concrete 
- * subclass of the abstract covariance base class.
- *
- * This class utilizes the following parameterization for the covariance
- * matrix in order to insure that it is positive definite and symmetric:
- *
- *                    -                                                  -
- *                   |  exp[ 2 par  ]                             0       |
- *                   |            0                                       |
- *                   |                                                    |
- *                   |              exp[ 2 par  ]                         |
- *                   |                        1                           |
- *    cov( par )  =  |                      .                             |  ,
- *                   |                                                    |
- *                   |                         .                          |
- *                   |                            .                       |
- *                   |                                                    |
- *                   |                               exp[ 2 par       ]   |
- *                   |      0                                  nPar-1     |
- *                    -                                                  -
- *
- * where par contains the current value for the parameters.
- *
+ * Implements DiagCov class.
+ *//*
  * Author: Mitch Watrous
  *
  *************************************************************************/
@@ -72,6 +51,9 @@ using SPK_VA::valarray;
  *
  * Function: DiagCov
  *
+ *//**
+ * Constructs a diagonal covariance matrix with nRowIn rows and columns.
+ *//*
  *************************************************************************/
 
 DiagCov::DiagCov( int nRowIn )
@@ -85,12 +67,17 @@ DiagCov::DiagCov( int nRowIn )
  *
  * Function: cov
  *
- *
+ *//**
  * Evaluates the covariance matrix at the current parameter value.
  *
+ * In particular, this function sets covOut equal to
+ * \f[
+ *     \mbox{cov}(\mbox{par}) .
+ * \f]
+ *//*
  *************************************************************************/
 
-void DiagCov::cov( valarray<double>& covOut ) const
+void DiagCov::cov( SPK_VA::valarray<double>& covOut ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -148,13 +135,19 @@ void DiagCov::cov( valarray<double>& covOut ) const
  *
  * Function: cov_par
  *
- *
+ *//**
  * Evaluates the derivative of the covariance matrix at the current
  * parameter value.
  *
+ * In particular, this function sets cov_parOut equal to
+ * \f[
+ *     \partial_{\mbox{par}} \; \mbox{cov}(\mbox{par}) =
+ *       \partial_{\mbox{par}} \; \mbox{rvec} \left[ \mbox{cov}(\mbox{par}) \right] .
+ * \f]
+ *//*
  *************************************************************************/
 
-void DiagCov::cov_par( valarray<double>& cov_parOut ) const
+void DiagCov::cov_par( SPK_VA::valarray<double>& cov_parOut ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -227,17 +220,18 @@ void DiagCov::cov_par( valarray<double>& cov_parOut ) const
  *
  * Function: inv
  *
- *
+ *//**
  * Evaluates the inverse of the covariance matrix at the current
- * parameter value,
+ * parameter value.
  *
- *                                  -1
- *     inv( par )  =  [ cov( par ) ]    .
- * 
- *
+ * In particular, this function sets invOut equal to
+ * \f[
+ *     \mbox{cov}^{-1}(\mbox{par}) .
+ * \f]
+ *//*
  *************************************************************************/
 
-void DiagCov::inv( valarray<double>& invOut ) const
+void DiagCov::inv( SPK_VA::valarray<double>& invOut ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -295,18 +289,19 @@ void DiagCov::inv( valarray<double>& invOut ) const
  *
  * Function: inv_par
  *
- *
+ *//**
  * Evaluates the derivative of the inverse of the covariance matrix
- * at the current parameter value,
- *                                 -                   -
- *                                |                -1   |
- *     d     inv( par )  =  d     |  [ cov( par ) ]     |  .
- *      par                  par  |                     |
- *                                 -                   -
+ * at the current parameter value.
  *
+ * In particular, this function sets inv_parOut equal to
+ * \f[
+ *     \partial_{\mbox{par}} \; \mbox{cov}^{-1}(\mbox{par}) =
+ *       \partial_{\mbox{par}} \; \mbox{rvec} \left[ \mbox{cov}^{-1}(\mbox{par}) \right] .
+ * \f]
+ *//*
  *************************************************************************/
 
-void DiagCov::inv_par( valarray<double>& inv_parOut ) const
+void DiagCov::inv_par( SPK_VA::valarray<double>& inv_parOut ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -380,19 +375,19 @@ void DiagCov::inv_par( valarray<double>& inv_parOut ) const
  *
  * Function: getParLimits
  *
- *
+ *//**
  * Gets the lower and upper limits for the covariance matrix parameters
  * at the current parameter value.  These limits are for use during the
  * optimization of objective functions that depend on these parameters.
  *
  * This function assumes that the current values for the covariance
  * parameters are approximately equal to the final or true values.
- *
+ *//*
  *************************************************************************/
 
 void DiagCov::getParLimits(
-  valarray<double>&  parLow,
-  valarray<double>&  parUp ) const
+  SPK_VA::valarray<double>&  parLow,
+  SPK_VA::valarray<double>&  parUp ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -451,15 +446,15 @@ void DiagCov::getParLimits(
  *
  * Function: calcPar
  *
- *
+ *//**
  * Sets parOut equal to the covariance matrix parameters that
  * correspond to the covariance matrix covIn.
- *
+ *//*
  *************************************************************************/
 
 void DiagCov::calcPar( 
-  const valarray<double>& covIn,
-  valarray<double>&       parOut ) const
+  const SPK_VA::valarray<double>& covIn,
+  SPK_VA::valarray<double>&       parOut ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -498,17 +493,17 @@ void DiagCov::calcPar(
  *
  * Function: calcCovMinRep
  *
- *
+ *//**
  * Sets covMinRepOut equal to the minimal representation for the
- * covariance matrix.
+ * covariance matrix covIn.
  *
  * The minimal representation is the set of diagonal elements.
- *
+ *//*
  *************************************************************************/
 
 void DiagCov::calcCovMinRep( 
-  const valarray<double>& covIn,
-  valarray<double>&       covMinRepOut ) const
+  const SPK_VA::valarray<double>& covIn,
+  SPK_VA::valarray<double>&       covMinRepOut ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -542,18 +537,18 @@ void DiagCov::calcCovMinRep(
  *
  * Function: calcCovMinRep_par
  *
- *
+ *//**
  * Sets covMinRep_parOut equal to the derivative of the minimal
- * representation for the covariance matrix.
+ * representation for the covariance matrix with derivative cov_parIn.
  *
  * The minimal representation is the set of diagonal elements.
- *
+ *//*
  *************************************************************************/
 
 void DiagCov::calcCovMinRep_par( 
-  const valarray<double>& cov_parIn,
-  int                     nCov_parInCol,
-  valarray<double>&       covMinRep_parOut ) const
+  const SPK_VA::valarray<double>& cov_parIn,
+  int                             nCov_parInCol,
+  SPK_VA::valarray<double>&       covMinRep_parOut ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -598,18 +593,18 @@ void DiagCov::calcCovMinRep_par(
  *
  * Function: expandCovMinRep
  *
- *
- * Sets covOut equal to the full covariance matrix that corresponds
- * to the minimal representation for the covariance matrix that is
- * contained in covMinRepIn.
+ *//**
+ * Sets covOut equal to the covariance matrix that corresponds
+ * to the minimal representation for the covariance matrix that
+ * is contained in covMinRepIn.
  *
  * The minimal representation is the set of diagonal elements.
- *
+ *//*
  *************************************************************************/
 
 void DiagCov::expandCovMinRep( 
-  const valarray<double>& covMinRepIn,
-  valarray<double>&       covOut ) const
+  const SPK_VA::valarray<double>& covMinRepIn,
+  SPK_VA::valarray<double>&       covOut ) const
 {
   //------------------------------------------------------------
   // Preliminaries.

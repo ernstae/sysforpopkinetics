@@ -20,33 +20,12 @@
 
 */
 /*************************************************************************
+ *//**
+ * @file: DiagCov.h
  *
- * File: DiagCov.h
  *
- *
- * This class supports diagonal covariance matrices.  It is a concrete 
- * subclass of the abstract covariance base class.
- *
- * This class utilizes the following parameterization for the covariance
- * matrix in order to insure that it is positive definite and symmetric:
- *
- *                    -                                                  -
- *                   |  exp[ 2 par  ]                             0       |
- *                   |            0                                       |
- *                   |                                                    |
- *                   |              exp[ 2 par  ]                         |
- *                   |                        1                           |
- *    cov( par )  =  |                      .                             |  ,
- *                   |                                                    |
- *                   |                         .                          |
- *                   |                            .                       |
- *                   |                                                    |
- *                   |                               exp[ 2 par       ]   |
- *                   |      0                                  nPar-1     |
- *                    -                                                  -
- *
- * where par contains the current value for the parameters.
- *
+ * Declares DiagCov class.
+ *//*
  * Author: Mitch Watrous
  *
  *************************************************************************/
@@ -65,9 +44,30 @@
 #include <spk/SpkValarray.h>
 
 
-/*------------------------------------------------------------------------
- * Class declaration
- *------------------------------------------------------------------------*/
+/*************************************************************************
+ *
+ * Class: DiagCov
+ *
+ *//**
+ * This class supports diagonal covariance matrices.  It is a concrete 
+ * subclass of the abstract covariance base class.
+ *
+ * This class utilizes the following parameterization for the covariance
+ * matrix in order to insure that it is positive definite and symmetric:
+ * \f[
+ *     \mbox{cov}(\mbox{par}) =
+ *       \left[ 
+ *         \begin{array}{cccc}
+ *           \exp(2 \mbox{par}_1) &                      &        &                                0   \\
+ *                                & \exp(2 \mbox{par}_2) &        &                                    \\
+ *                                &                      & \ddots &                                    \\
+ *           0                    &                      &        & \exp(2 \mbox{par}_{\mbox{nPar}})
+ *         \end{array}
+ *       \right] ,
+ * \f]
+ * where par contains the current value for the parameters.
+ *//*
+ *************************************************************************/
 
 class DiagCov : public Cov
 {
