@@ -10,7 +10,7 @@ This documentation specifies the information passed back from CSPK to MDA.
 <!-- <spkreport> For CSPK, this contains everything needed for returning the requested values back to the user.  For MDA, it is for presenting them before the user.  The values reported in this document are expressed in the scientific notation with 2 significant digits: ex. 0.12E01, 3.20E00, -0.12E01, 0.12E-01, -0.12E-01.
 -->
 
-<!ELEMENT spkreport ( error_list |  warning_list | ( ( (pop_analysis_result | ind_analysis_result) | presentation_data | opt_trace_out? ) | pop_monte_result ) ) >
+<!ELEMENT spkreport ( error_list |  warning_list | ( ( simulation? | (pop_analysis_result | ind_analysis_result) | presentation_data | opt_trace_out? )? | pop_monte_result ) ) >
 
 <!-- <spkreport version="0.1"> The version number of the SpkReportML document.  For the initial version, it is "0.1".-->
 <!ATTLIST spkreport version (0.1|0.2) #REQUIRED>
@@ -48,11 +48,21 @@ alter the normal execution flow.-->
 <!-- ===================================== -->
 <!--                 REPORTS               -->
 <!-- ===================================== -->
+<!-- <simulation> This element appears only if data simulation is requested.  It is empty but carries a few attribute values such as the seed used to simulate a data set.
+-->
+<!ELEMENT simulation EMPTY>
+<!-- <simulation seed="1">  The seed value used to simulate the data set.
+-->
+<!ATTLIST simulation seed #CDATA #REQUIRED>
+<!-- <simulation subproblem="1"> The iteration number during which this particular simulation was done.  The value, 1, indicates the first iteration.
+-->
+<!ATTLIST simulation subproblem #CDATA #REQUIRED>
+
 <!-- <pop_analysis_result> This element appears only if the population parameter estimation is requested.  It contains the estimation results and may contain the statistics if it is requested. -->
 <!ELEMENT pop_analysis_result ( pop_opt_result | pop_stat_result? )>
 
 <!-- <pop_opt_result> Final values from the population parameter estimation.-->
-<!ELEMENT pop_opt_result (pop_obj_out | theta_out | omega_out | sigma_out)>
+<!ELEMENT pop_opt_result (pop_obj_out | theta | omega | sigma | (theta_out | omega_out | sigma_out))>
 
 <!-- <pop_opt_result elapsedtime="500"> The number of seconds it took to complete the parameter estimation. -->
 <!ATTLIST pop_opt_result elapsedtime CDATA #REQUIRED>
@@ -64,7 +74,7 @@ alter the normal execution flow.-->
 <!ATTLIST ind_analysis_result elapsedtime CDATA #REQUIRED>
 
 <!-- <ind_opt_result> Final values from the individual parameter estimation.-->
-<!ELEMENT ind_opt_result (ind_obj_out | theta_out | omega_out)>
+<!ELEMENT ind_opt_result (ind_obj_out | theta | omega |(theta_out | omega_out))>
 
 <!-- <ind_opt_result elapsedtime="500"> The number of seconds it took to complete the parameter estimation. -->
 <!ATTLIST ind_opt_result elapsedtime CDATA #REQUIRED>
@@ -82,13 +92,96 @@ alter the normal execution flow.-->
 <!-- <pop_monte_result number_eval="1000"> The user's original request for the number of evaluations.  -->
 <!ATTLIST pop_monte_result number_eval CDATA #REQUIRED>
 
-<!-- <theta_out> Final value for theta when optimization completes (ie. converges) successfully.  If fails, this entry contains the value from the last successfully completed iteration.-->
+<!-- <theta_out> Deprecated (see <theta>): Final value for theta when optimization completes (ie. converges) successfully.  If fails, this entry contains the value from the last successfully completed iteration.-->
 <!ELEMENT theta_out (value)+>
 
 <!-- <theta_out length="0"> The length of the theta vector. -->
 <!ATTLIST theta_out length CDATA #REQUIRED>
 
-<!-- <omega_out> A minimal representation of the final value of Omega matrix when optimization completes (ie. converges) successfully.  If fails, this entry contains the value from the last successfully completed iteration.
+<!-- <theta> Theta -->
+<!ELEMENT theta (in | out)>
+<!-- <theta length="0"> The length of the theta vector. -->
+<!ATTLIST theta length CDATA #REQUIRED>
+
+<!-- <omega> A minimal representation of Omega matrix.
+
+For full (ie. "block") matrix, <omega> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <omega> lists only the diagonal elements from the upper left corner. 
+
+Given a 3 by 3 matrix, A:
+<html:pre>
+/                   \
+|  a11   a12   a13  |
+|  a21   a22   a23  |
+|  a31   a32   a33  |
+\                   / 
+</html:pre>
+
+If A were <html:font color='red'>full</html:font> (ie. block) symmetric, <omega> specifies as follows:
+<html:pre>
+    &lt;omega&gt;
+       &lt;in&gt;
+          &lt;value&gt;a11&lt;/value&gt;
+          &lt;value&gt;a21&lt;/value&gt;&lt;value&gt;a22&lt;/value&gt;
+          &lt;value&gt;a31&lt;/value&gt;&lt;value&gt;a32&lt;/value&gt;&lt;value&gt;a33&lt;/value&gt;
+       &lt;/in&gt;
+    &lt;/omega&gt;
+</html:pre>
+If A were <html:font color='red'>diagonal</html:font>, <omega> specifies as follows:
+<html:pre>
+    &lt;omega&gt;
+       &lt;in&gt;
+          &lt;value&gt;a11&lt;/value&gt;
+                            &lt;value&gt;a22&lt;/value&gt;
+                                              &lt;value&gt;a33&lt;/value&gt;
+       &lt;/in&gt;
+    &lt;/omega&gt;
+</html:pre>
+-->
+<!ELEMENT omega (in | out)>
+
+<!-- <sigma> A minimal representation of NONMEM Omega matrix when optimization completes (ie. converges) successfully.  If fails, this entry contains the value from the last successfully completed iteration.
+
+For full (ie. "block") matrix, <sigma> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <sigma> lists only the diagonal elements from the upper left corner.
+
+Given a 3 by 3 matrix, A:
+<html:pre>
+/                   \
+|  a11   a12   a13  |
+|  a21   a22   a23  |
+|  a31   a32   a33  |
+\                   / 
+</html:pre>
+
+If A were <html:font color='red'>full</html:font> (ie. block) symmetric, <sigma> specifies as follows:
+<html:pre>
+    &lt;sigma&gt;
+       &lt;in&gt;
+          &lt;value&gt;a11&lt;/value&gt;
+          &lt;value&gt;a21&lt;/value&gt;&lt;value&gt;a22&lt;/value&gt;
+          &lt;value&gt;a31&lt;/value&gt;&lt;value&gt;a32&lt;/value&gt;&lt;value&gt;a33&lt;/value&gt;
+       &lt;/in&gt;
+    &lt;/sigma&gt;
+</html:pre>
+If A were <html:font color='red'>diagonal</html:font>, <sigma> specifies as follows:
+<html:pre>
+    &lt;sigma&gt;
+       &lt;in&gt;
+          &lt;value&gt;a11&lt;/value&gt;
+                           &lt;value&gt;a22&lt;/value&gt;
+                                             &lt;value&gt;a33&lt;/value&gt;
+       &lt;/in&gt;
+    &lt;/sigma&gt;
+</html:pre>
+-->
+<!ELEMENT sigma (in | out)>
+
+<!-- <in> The initial value used for optimization. -->
+<!ELEMENT in (#PCDATA)>
+
+<!-- <out> The final estimate value from optimization when it converged successfully.  If optimization failed in the middle or did not converge within a given limit of iterations, this entry contains the value from the last successfully completed (optimization) iteration. -->
+<!ELEMENT out (#PCDATA)>
+
+<!-- <omega_out> Deprecated (see <omega>): A minimal representation of the final value of Omega matrix when optimization completes (ie. converges) successfully.  If fails, this entry contains the value from the last successfully completed iteration.
 
 For full (ie. "block") matrix, <omega_out> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <omega_out> lists only the diagonal elements from the upper left corner. 
 
@@ -126,7 +219,7 @@ If A were <html:font color='red'>diagonal</html:font>, <omega_out> specifies as 
 <!-- <omega_out dimension=""> The dimension of the Omega matrix. -->
 <!ATTLIST omega_out dimension CDATA #REQUIRED>
 
-<!-- <sigma_out> 
+<!-- <sigma_out> Depliated (see <sigma>): 
 A minimal representation of NONMEM Omega matrix when optimization completes (ie. converges) successfully.  If fails, this entry contains the value from the last successfully completed iteration.
 
 For full (ie. "block") matrix, <sigma_out> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <sigma_out> lists only the diagonal elements from the upper left corner.
