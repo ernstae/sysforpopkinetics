@@ -495,11 +495,14 @@ cd /usr/local/tomcat/instance
 	  maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
 	  enableLookups="false" disableUploadTimeout="true"
 	  acceptCount="100" debug="0" scheme="https" secure="true"
+          keystoreFile="/root/.keystore" keystorePass="2bon2btit?"
 	  clientAuth="false" sslProtocol="TLS" /&gt;
 	  </screen>
 	  Note that the comment brackets have been removed, and the port number
 	  has been changed from 8443 to 443 in both the introductory comment
 	  and as the value of the <emphasis>port</emphasis> attribute.
+          Not also that new two entries: 
+          <literal>keystore="/root/.keystore" keyPass="2bon2btit?"</literal>.
 	</para>
 	<para>
 	  <filename>testssl/conf/server.xml</filename> after editing:
@@ -510,9 +513,12 @@ cd /usr/local/tomcat/instance
 	  maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
 	  enableLookups="false" disableUploadTimeout="true"
 	  acceptCount="100" debug="0" scheme="https" secure="true"
+          keystore="/root/.keystore" keyPass="2bon2btit?"
 	  clientAuth="false" sslProtocol="TLS" /&gt;
 	  </screen>
 	  Note that only the comment brackets have been removed.
+          Note also that new two entries: 
+          <literal>keystore="/root/.keystore" keyPass="2bon2btit?"</literal>.
 	</para>
       </sect3>
     </sect2>
@@ -683,8 +689,10 @@ rm -rf r2
     </para>
   </sect1>
   <sect1>
-    <title>Installing Authentication Certificates</title>
-    <para>
+    <title>Setting Authentication Certificates</title>
+    <sect2>
+      <title>Installing for The First Time</title>
+      <para>
       If you have not obtained the certificates that tomcat will need for
       https connections, get them by following the instructions in the
       <ulink url="../authentication/authentication.html">
@@ -700,7 +708,46 @@ cd cert
 $JAVA_HOME/bin/keytool -import -alias root -keystore keystore -trustcacerts -file uw_root_cert.pem
 $JAVA_HOME/bin/keytool -import -alias tomcat -keystore keystore -trustcacerts -file spk_cert.pem
       </screen>
-    </para>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Renewal</title>
+      <para>
+      You are going to request a new SPK certificate from C&amp; and
+      replace the old entry in <filename>/root/.keystore</filename>.
+      You do not need to do anything about the UW root certificate.
+      </para>
+      <para>
+      First, generate a certificate request from the existing 
+      private/public key pair as following:
+      <screen>
+su -
+cd cert
+$JAVA_HOME/bin/keytool -certreq -alias tomcat -keyalg RSA -file certreq.csr
+      </screen>
+      A certificate request, <filename>certreq.csr</filename>,
+      is generated using the existing key pair in <filename>/root/.keystore</filename>,
+      which is the default location that keytool looks for,
+      in <filename>cert</filename> directory. WARNING! It is very & very 
+      important to have the key pair and the requested certificate matched!
+      </para> 
+      <para>
+      Submit the request to C&amp;C, following the procedures described in 
+      <ulink url="file://192.168.2.2:8080/soft/howto/authentication/authentication.html#AEN77">
+      Request a Signed Certificate</ulink> and 
+      <ulink url="http://192.168.2.2:8080/soft/howto/rhel3/authentication/authentication.html#AEN81">
+      Retrieve your Certificate</ulink>.  Once you retrieved the SPK certifiate, 
+      do the following to replace the old certificate entry registered in 
+      <filename>/root/.keystore</filename>.
+      <screen>
+$JAVA_HOME/bin/keytool -delete -alias tomcat
+$JAVA_HOME/bin/keytool -import -alias tomcat -trustcacerts -file spk_cert.pem
+      </screen>
+      The second command, i.e. import, will issue a message saying
+      the certifiate you imported was determined as a reply to the 
+      certificate request you generated earlier.
+      </para>
+    </sect2>
   </sect1>
   <sect1>
     <title>Deploying the Spk Web Applications</title>
