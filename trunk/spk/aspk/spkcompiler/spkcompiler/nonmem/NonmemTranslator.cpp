@@ -833,10 +833,18 @@ void NonmemTranslator::parseSource()
   generateDataSet();
   generateIndData();
 
-  if( myModelSpec != PRED )
-    generateODEPred( fPkEqn_cpp, fDiffEqn_cpp, fErrorEqn_cpp );
-  else //( myModelSpec == PRED )
+  if( myModelSpec == PRED )
     generatePred( fPredEqn_cpp );
+  else //( myModelSpec == PRED )
+    {
+      //    generateODEPred( fPkEqn_cpp, fDiffEqn_cpp, fErrorEqn_cpp );
+      char mess[ SpkCompilerError::maxMessageLen() ];
+      sprintf( mess, "Invalid model specification!." );
+      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess,
+			      __LINE__, __FILE__ );
+      throw e;
+
+    }
 
   generateNonmemParsNamespace();
   if( myIsMonte )
@@ -4997,6 +5005,7 @@ void NonmemTranslator::generateMonteParsNamespace() const
 
   oMontePars << "#endif" << endl;
 }
+/*
 void NonmemTranslator::generateODEPred( const char* fPkEqn_cpp, 
                                         const char* fDiffEqn_cpp, 
 					const char* fErrorEqn_cpp ) const
@@ -5752,6 +5761,7 @@ void NonmemTranslator::generateODEPred( const char* fPkEqn_cpp,
   oODEPred_h << "#endif" << endl;
   oODEPred_h.close();
 }
+*/
 void NonmemTranslator::generateNonmemParsNamespace() const
 {
   //---------------------------------------------------------------------------------------
