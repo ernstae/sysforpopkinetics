@@ -147,16 +147,17 @@ public class TestSpkdb {
 		    target = true;
 		    s = "newJob";
 		    jobId = Spkdb.newJob(conn, 
-					      userId,
-					      "Abstract: Job 1",
-					      33,
-					      "1.01",
-					      44,
-					      "1.4.3",
-					      xmlSource,
-					      "fo",
-					      0,
-					      false);
+					 userId,
+					 "Abstract: Job 1",
+					 33,
+					 "1.01",
+					 44,
+					 "1.4.3",
+					 xmlSource,
+				         "fo",
+                                         "owner",
+					 0,
+					 false);
 		    b = jobId != 0;
 		    s += ": job number " + jobId;
 		    break;
@@ -187,6 +188,7 @@ public class TestSpkdb {
 					      "1.4.3",
 					      xmlSource,
 					      "la",
+                                              "owner",
 					      0,
 					      false);
 		    b = newerJobId != 0;
@@ -198,14 +200,15 @@ public class TestSpkdb {
 		    target = true;
 		    s = "newJob";
 		    newestJobId = Spkdb.newJob(conn, 
-					      userId,
+					       userId,
 					       "Abstract: job 3",
-					      33,
-					      "1.01",
-					      44,
-					      "1.4.3",
-					      xmlSource,
-					      "eh",
+					       33,
+					       "1.01",
+					       44,
+					       "1.4.3",
+					       xmlSource,
+					       "eh",
+                                               "owner",
 					       0,
                                                false);
 		    b = newestJobId != 0;
@@ -545,7 +548,7 @@ public class TestSpkdb {
 		    while (rs.next()) {
 			count++;
 		    }
-		    b = count == 4;
+		    b = count == 5;
 		    break;
 		case 40:
 		    target = true;
@@ -555,7 +558,7 @@ public class TestSpkdb {
 		    while (rs.next()) {
 			count++;
 		    }
-		    b = count == 5;
+		    b = count == 10;
 		    break;
 		case 41:
 		    target = true;
@@ -580,17 +583,18 @@ public class TestSpkdb {
                 case 43:
 		    target = true;
 		    s = "newJob";
-		    jobId = Spkdb.newJob(conn, 
-					      userId,
-					      "Abstract: Job 1",
-					      33,
-					      "1.01",
-					      44,
-					      "1.4.3",
-					      xmlSource,
-					      "fo",
-					      0,
-					      true);
+		    jobId = Spkdb.newJob(conn,
+					 userId,
+					 "Abstract: Job 1",
+					 33,
+					 "1.01",
+					 44,
+					 "1.4.3",
+					 xmlSource,
+					 "fo",
+                                         "owner",
+					 0,
+					 true);
 		    b = jobId != 0;
 		    s += ": job number " + jobId;
 		    break;
