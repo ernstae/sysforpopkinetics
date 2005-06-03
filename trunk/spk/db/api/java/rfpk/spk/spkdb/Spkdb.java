@@ -65,6 +65,7 @@ public abstract class Spkdb {
        @param modelVersion rcs version code for the model
        @param xmlSource source code for the job
        @param methodCode key to a row in the method table
+       @param owner owner of the job
        @param parent the job_id of the job that is the parent; otherwise 0
        @param isWarmStart true for being a warm start job; false for otherwise
        @return key to the new row in the job table
@@ -78,6 +79,7 @@ public abstract class Spkdb {
 			      String modelVersion,
 			      String xmlSource,
 			      String methodCode,
+                              String owner,
 			      long parent,
                               boolean isWarmStart)
 	throws SQLException, SpkdbException, FileNotFoundException
@@ -96,26 +98,26 @@ public abstract class Spkdb {
 	    stmt.execute(sql);
 	    ResultSet rs = stmt.getResultSet();
             if (!rs.next())
-	        throw new SpkdbException("Checkpoint file was not found.");
+	        throw new SpkdbException("This job cannot restart because the\ncheckpoint file does not exist.");
             checkpoint = rs.getBlob("checkpoint");
             if (checkpoint == null)
-	        throw new SpkdbException("Checkpoint file was not found.");
+	        throw new SpkdbException("This job cannot restart because the\ncheckpoint file does not exist.");
 	    sql = "insert into job (state_code, user_id, abstract, dataset_id, "
                                     + "dataset_version, model_id, model_version, "
-                                    + "xml_source, method_code, parent, start_time, event_time, checkpoint)"
+                                    + "xml_source, method_code, owner, parent, start_time, event_time, checkpoint)"
                   + " values ('" + stateCode + "'," + userId + ", ?," + datasetId
                               + ",'" + datasetVersion + "'," + modelId + ",'" + modelVersion
-                              + "', ?,'" + methodCode + "'," + parent + "," 
+                              + "', ?,'" + methodCode + "','" + owner + "'," + parent + "," 
 	                      + startTime + "," + eventTime + ", ?);";
         }
         else
         {
 	    sql = "insert into job (state_code, user_id, abstract, dataset_id, "
                                     + "dataset_version, model_id, model_version, "
-                                    + "xml_source, method_code, parent, start_time, event_time)"
+                                    + "xml_source, method_code, owner, parent, start_time, event_time)"
                   + " values ('" + stateCode + "'," + userId + ", ?," + datasetId
                               + ",'" + datasetVersion + "'," + modelId + ",'" + modelVersion
-                              + "', ?,'" + methodCode + "'," + parent + "," 
+                              + "', ?,'" + methodCode + "','" + owner + "'," + parent + "," 
 	                      + startTime + "," + eventTime + ");";
         }
 	PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -199,7 +201,7 @@ public abstract class Spkdb {
        @param jobId key to the given job in the job table
        @param endCode the type of end that this job reached
        @param report final report 
-       @return true
+       @return true if the job's state_code is set to "end" by this method, otherwise false.
      */
     public static boolean endJob(Connection conn, long jobId, String endCode, String report)
 	throws SQLException, SpkdbException
@@ -212,12 +214,13 @@ public abstract class Spkdb {
 	    throw new SpkdbException("endCode = " + endCode + " is invalid");
 	}
 	sql = "update job set state_code='end', end_code='" + endCode + "', report=?"
-	    + " where job_id =" + jobId + ";";
+	    + " where job_id =" + jobId + " and state_code!='end';";
 	pstmt = conn.prepareStatement(sql);
 	pstmt.setBinaryStream(1, new ByteArrayInputStream(report.getBytes()), report.length());
-	pstmt.executeUpdate();
-	addToHistory(conn, jobId, "end", "unknown");
-	
+	if(pstmt.executeUpdate() == 1)
+	    addToHistory(conn, jobId, "end", "unknown");
+        else
+            return false;
 	return true;
     }
     /**
