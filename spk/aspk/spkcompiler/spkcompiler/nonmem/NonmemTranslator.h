@@ -24,7 +24,11 @@ class NonmemTranslator : public ClientTranslator
 {
  public:
 
-  enum MODEL_SPEC { PRED, DIFFEQN };
+  enum MODEL_SPEC { PRED=0, 
+		    ADVAN1=1, ADVAN2, ADVAN3, ADVAN4, 
+		    ADVAN5, ADVAN6, ADVAN7, ADVAN8, ADVAN9, 
+		    ADVAN10, ADVAN11, ADVAN12 };
+  enum TRANS { TRANS1=1, TRANS2, TRANS3, TRANS4, TRANS5, TRANS6 };
 
 //==============================================================
 // REVISIT SACHIKO
@@ -165,20 +169,57 @@ class NonmemTranslator : public ClientTranslator
   void parsePred( xercesc::DOMElement* pPred );
 
   //
-  // Analyzie the differential equation specification.
-  // Following NONMEM convension, modules are parsed in the order of:
-  //   1. PK,
-  //   2. DES (DiffEqn)
-  //   3. ERROR
+  // Analyze ADVAN 1 - 12.
   //
-  // @param pDiffEqn A pointer to the <diffeqn> node.
-  // @param pPk      A pointer to the <pk> node.
-  // @param pError   A pointer to the <error> node.
+  // @param advan A canned model
+  // @param trans A translation method
+  // @param model A pointer to <model> element.
   //
-  void parseDiffEqn( unsigned int advan,
-		     xercesc::DOMElement* pPk, 
-		     xercesc::DOMElement* pDiffEqn, 
-		     xercesc::DOMElement* pError );
+  void parseAdvan( enum MODEL_SPEC advan,
+		   enum TRANS      trans,
+		   const xercesc::DOMElement* model );
+  //
+  // Specialized to analyze ADVAN 6 - nonlinear ODE
+  //
+  // @param trans A translation method
+  // @param comp_model The compartmental model definition - equivalent of $MODEL
+  // @param pk The pharmacokinetic parameters definition - equivalent of $PK
+  // @param diffeqn The system of differential equations - equivalent of $DES
+  // @param error The error model definition - equivalent of $ERROR
+  //
+  void parseAdvan6( enum TRANS trans,
+		    const xercesc::DOMElement* comp_model,
+		    const xercesc::DOMElement* pk,
+		    const xercesc::DOMElement* diffeqn,
+		    const xercesc::DOMElement* error );
+
+  //
+  // Analyze <comp_model>, i.e. $MODEL
+  //
+  // @param comp_model A pointer to <comp_model> tree.
+  //
+  void parseCompModel( const xercesc:: DOMElement* comp_model );
+
+  //
+  // Analyze <pk>, i.e. $PK.
+  //
+  // @param A pointer to a <PK> tree.
+  //
+  void parsePK( const xercesc::DOMElement* pk );
+
+  //
+  // Analyze <diffeqn>, i.e. $DES
+  //
+  // @param diffeqn A pointer to <diffeqn> tree.
+  //
+  void parseDiffEqn( const xercesc::DOMElement* diffeqn );
+
+  //
+  // Analyze <error>, i.e. $ERROR
+  //
+  // @param error A pointer to <error> tree.
+  //
+  void parseError( const xercesc::DOMElement* error );
 
   //
   // Analyze the <monte_carlo> subtree.
@@ -353,7 +394,9 @@ class NonmemTranslator : public ClientTranslator
   XMLCh* X_CONSTRAINT;          static const char* C_CONSTRAINT;
   XMLCh* X_MODEL;               static const char* C_MODEL;
   XMLCh* X_ADVAN;               static const char* C_ADVAN;
+  XMLCh* X_TRANS;               static const char* C_TRANS;
   XMLCh* X_PRED;                static const char* C_PRED;
+  XMLCh* X_COMP_MODEL;          static const char* C_COMP_MODEL;
   XMLCh* X_DIFFEQN;             static const char* C_DIFFEQN;
   XMLCh* X_PK;                  static const char* C_PK;
   XMLCh* X_ERROR;               static const char* C_ERROR;
@@ -403,10 +446,9 @@ class NonmemTranslator : public ClientTranslator
   // defined as a NonmemTranslator class member, is 
   // to hide the existence since it's just an object of convenience.
   //
-  //  enum TARGET       myTarget;  
   enum MODEL_SPEC   myModelSpec;
   enum INTEG_METHOD myIntegMethod;
-  unsigned int      myAdvan;
+  enum TRANS        myTrans;
 
   char             *myDescription;
   bool              myIsEstimate;
