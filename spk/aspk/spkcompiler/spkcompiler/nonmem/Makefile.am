@@ -1,7 +1,7 @@
 noinst_LIBRARIES = libnonmem.a
 AM_LFLAGS        = -i -Pnm_ -olex.yy.c
 AM_YFLAGS        = -d --verbose --debug -p nm_
-AM_CPPFLAGS      = -I./ -I../
+AM_CPPFLAGS      = -I./ -I../ -O0
 
 MOSTLYCLEANFILES = explang.output \
                    explang.cpp \
