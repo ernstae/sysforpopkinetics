@@ -9,6 +9,15 @@
    <articleinfo>
       <revhistory>
          <revision>
+            <revnumber>1.20</revnumber>
+            <date>June 10, 2005</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>
+            IndData::getMeasurementIndex(j), IndData::getRecordIndex(j'),
+            DataSet::getMeasurementIndex(j), DataSet::getRecordIndex(j').
+            </revremark>
+         </revision>
+         <revision>
             <revnumber>1.19</revnumber>
             <date>March 1, 2005</date>
             <authorinitials>sh</authorinitials>
@@ -491,21 +500,29 @@ F = TmP1 + ETA(1)
             <term><literal>const std::valarray&lt;double&gt; getMeasurements() const</literal></term>
             <listitem>
                <para>
-               Returns a vector of measurements.  The i-th element of the vector is the i-th measurement
-              (ie. the i-th sampling point) within this subject's data set.
+               Returns a vector of measurements, i.e. DV values of which corresponding MDV values
+               are 0 in the original data set.
                </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>int getMeasurementIndex( int j ) const</literal></term>
+            <listitem>
                <para>
-               For programmers, this means that the vector contains only those DV values 
-               of which corresponding MDV != 1.
-               Thus, the i-th element of the vector is not necessary the DV value 
-               from the i-th record.  For example, if there are 10 records among which 1st and 5th records have 
-               MDV = 1.  The 1st element of the vector is the DV 
-               value from the 2nd record in the original set
-               and the 5th element is from the 7th record as demonstrated below:
-               <programlisting>
-indexes to all records                           : { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }
-indexes to those records which have measurements : { 2, 3, 4, 6, 7, 8, 9, 10 }
-               </programlisting>
+               Returns the index to an element of the measurement vector, i.e. y, that 
+               corresponds to the measurement, i.e. DV, value of the j-th row of the original data set.
+               If the MDV field value of the j-th row of the original data set were 1, indicating
+               the data record does not contain a valid measurement value, i.e. DV, the value 
+               returned by this method is -1.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>int getRecordIndex( int j' ) const</literal></term>
+            <listitem>
+               <para>
+               Returns the index to a record in the original data set from which the j'th 
+               element of the measurement vector, i.e. y, originated.
                </para>
             </listitem>
          </varlistentry>
@@ -530,8 +547,8 @@ indexes to those records which have measurements : { 2, 3, 4, 6, 7, 8, 9, 10 }
             <listitem>
                <para>
                <replaceable>yYy</replaceable> is replaced by a PRED item such as <varname>TmP1</varname> 
-               in the earlier example.  The name will be exactly the same as the corresponding PRED item name,
-               maintaining upper/lower cases.
+               in the earlier example.  The name will be exactly the same as the corresponding PRED
+               item name, maintaining upper/lower cases.
                It is a vector of length <varname>n</varname>, where <varname>n</varname>
                is the number of data records for the individual.
                </para>
@@ -541,7 +558,7 @@ indexes to those records which have measurements : { 2, 3, 4, 6, 7, 8, 9, 10 }
             <term><literal>std::vector&lt; std::vector&lt;T&gt; &gt; THETA</literal></term>
             <listitem>
                <para>
-               A read-write vector of <varname>n</varname> 
+               A read-write vector of <varname>n</varname>, 
                <varname>nTheta</varname>-dimensional vectors, 
                where <varname>n</varname> is the number of data records for the indiviual and
                <varname>nTheta</varname> is the size of <emphasis>theta</emphasis> vector.
@@ -613,8 +630,29 @@ indexes to those records which have measurements : { 2, 3, 4, 6, 7, 8, 9, 10 }
             <term><literal>const std::valarray&lt;double&gt; getAllMeasurements() const</literal></term>
             <listitem>
                <para>
-               Returns a vector of measurements from the entire data set for the population.
-               Every element of this vector can be subject to data fitting.
+               Returns a vector of measurements, i.e. DV values of which corresponding MDV values
+               are 0 in the original data set.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>int getMeasurementIndex( int j ) const</literal></term>
+            <listitem>
+               <para>
+               Returns the index to an element of the measurement vector, i.e. y, that 
+               corresponds to the measurement, i.e. DV, value of the j-th row of the original data set.
+               If the MDV field value of the j-th row of the original data set were 1, indicating
+               the data record does not contain a valid measurement value, i.e. DV, the value 
+               returned by this method is -1.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>int getRecordIndex( int j' ) const</literal></term>
+            <listitem>
+               <para>
+               Returns the index to a record in the original data set from which the j'th 
+               element of the measurement vector, i.e. y, originated.
                </para>
             </listitem>
          </varlistentry>
