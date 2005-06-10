@@ -5,7 +5,7 @@ AM_LDFLAGS           = -lxerces-c \
 		       ../../spkcompiler/libcommon.a \
 		       ../../spkcompiler/nonmem/libnonmem.a
 
-AM_CPPFLAGS          = -I@top_srcdir@
+AM_CPPFLAGS          = -I@top_srcdir@ -O0
 
 testall_DEPENDENCIES = ../../spkcompiler/libcommon.a \
 		       ../../spkcompiler/nonmem/libnonmem.a
@@ -46,11 +46,15 @@ testall_SOURCES      = \
                        ind_simTest.h \
 	               ind_simNoEstTest.cpp \
 	               ind_simNoEstTest.h \
+                       ind_mdvTest.cpp \
+                       ind_mdvTest.h \
 	               pop_basicTest.cpp \
 	               pop_basicTest.h \
 	               pop_monteTest.cpp \
 	               pop_monteTest.h \
 	               pop_fixedParaTest.cpp \
-	               pop_fixedParaTest.h
+	               pop_fixedParaTest.h \
+                       pop_diffeqnTest.cpp \
+                       pop_diffeqnTest.h
 
 
