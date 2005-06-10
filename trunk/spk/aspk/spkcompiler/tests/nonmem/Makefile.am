@@ -48,6 +48,8 @@ testall_SOURCES      = \
 	               ind_simNoEstTest.h \
                        ind_mdvTest.cpp \
                        ind_mdvTest.h \
+                       pop_mdvTest.cpp \
+                       pop_mdvTest.h \
 	               pop_basicTest.cpp \
 	               pop_basicTest.h \
 	               pop_monteTest.cpp \

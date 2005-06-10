@@ -15,6 +15,7 @@
 #include "pop_fixedParaTest.h"
 #include "pop_monteTest.h"
 #include "ind_mdvTest.h"
+#include "pop_mdvTest.h"
 //#include "pop_diffeqnTest.h"
 
 using namespace std;
@@ -57,6 +58,7 @@ int main( int argc, const char * argv[] )
 
   // test for NonmemTranslator: ability to handle a data set with rows without DVs.
   master[ "ind_mdvTest" ] = ind_mdvTest::suite();
+  master[ "pop_mdvTest" ] = pop_mdvTest::suite();
 
   // test for NonmemTranslator: ability to handle Differential Equations
 //  master[ "pop_diffeqnTest" ] = pop_diffeqnTest::suite();
