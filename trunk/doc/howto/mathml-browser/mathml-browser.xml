@@ -27,6 +27,12 @@
     </abstract>
     <revhistory>
       <revision>
+	<revnumber>1.1</revnumber>
+	<date>June 13, 2005</date>
+	<authorinitials>sh</authorinitials>
+	<revremark>troubleshooting: incorrect rendering</revremark>
+      </revision>
+      <revision>
 	<revnumber>1.0</revnumber>
 	<date>February 9, 2005</date>
 	<authorinitials>afw</authorinitials>
@@ -47,6 +53,20 @@
       document describes a procedure for downloading and installing
       these fonts.
     </para>
+  </sect1>
+  <sect1>
+    <title>Troubleshooting</title>
+    <sect2>
+      <title>Math Symbols: Incorrect Rendering</title>
+      <para>
+      If some symble is all the sudden displayed incorrectly in 
+      browsers although
+      it was rendered properly in the past, it may be due to
+      some recent Linux update.  In that case, repeat 
+      "Install the Type 1 Symbol Font" and reload the page containing
+      the problematic symbol(s).
+      </para>
+    </sect2>
   </sect1>
   <sect1>
     <title>Download the Fonts and Copy to <filename>/tmp</filename></title>
