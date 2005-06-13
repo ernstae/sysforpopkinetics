@@ -3284,14 +3284,14 @@ void NonmemTranslator::generateIndData( ) const
   // The data labels d1 and d2 have aliases "d1_alias" and 
   // "d2_alias", respectively.
   // 
-  // IndData( int nIn,
+  // IndData( int nRecordsIn,
   //          const vector<char*>         &IDIn,
   //          const vector<spk_ValueType> &d1In,  // data item 1
   //          const vector<spk_ValueType> &d2In   // data item 2 )
-  // : n(nIn), d1(d1In), d1_alias(d1In), d2(d2In), d2_alias(d2In)
+  // : n(nRecordsIn), d1(d1In), d1_alias(d1In), d2(d2In), d2_alias(d2In)
   // {...}
   // 
-  oIndData_h << "IndData( int nIn";
+  oIndData_h << "   IndData( int nRecordsIn";
   pLabel = labels->begin();
   for( ; pLabel != labels->end(); pLabel++ )
     {
@@ -3302,7 +3302,7 @@ void NonmemTranslator::generateIndData( ) const
       // If the label is of "ID", then, the data type is char*.
       // Otherwise, all others have double precision.
       //
-      oIndData_h << '\t' << "const std::vector<" << (isID? "char*":"spk_ValueType") << ">";
+      oIndData_h << '\t' << "   const std::vector<" << (isID? "char*":"spk_ValueType") << ">";
       oIndData_h << " & " << *pLabel << "In";
     }
   oIndData_h << ");" << endl;
@@ -3332,28 +3332,28 @@ void NonmemTranslator::generateIndData( ) const
 	  // measurements and the original DV values are moved/stored in ORGDV.
 	  // Thus, in case of data simulation, DV (and ORGDV) has to be writable.
 	  // Otherwise, DV is read-only.
-	  oIndData_h << "std::vector<";
+	  oIndData_h << "   std::vector<";
 	  if( isID )
 	    {
-	      oIndData_h << "char *";
+	      oIndData_h << "   char *";
 	    }
 	  else
 	    {
-	      oIndData_h << "spk_ValueType";
+	      oIndData_h << "   spk_ValueType";
 	    }
 	  oIndData_h << "> " << varName << ";" << endl;
 
 	  // If the current symbol has an alias, declare the alias as well.
 	  if( varAlias != "" )
 	    {
-	      oIndData_h << "std::vector<";
+	      oIndData_h << "   std::vector<";
 	      if( isID )
 		{
-		  oIndData_h << "char *";
+		  oIndData_h << "   char *";
 		}
 	      else
 		{
-		  oIndData_h << "spk_ValueType";
+		  oIndData_h << "   spk_ValueType";
 		}
 	      oIndData_h << "> " << varAlias << ";" << endl;
 	    }
@@ -3373,7 +3373,7 @@ void NonmemTranslator::generateIndData( ) const
 	      || keyVarName == KeyStr.DADT
 	      || keyVarName == KeyStr.P
 	      || keyVarName == KeyStr.A )
-	    oIndData_h << "std::vector< std::vector<spk_ValueType> > " << varName << ";" << endl;
+	    oIndData_h << "   std::vector< std::vector<spk_ValueType> > " << varName << ";" << endl;
 
 	  // The values of Omega and Sigma matrices are
 	  // rather expressed as ETA and EPS, respectively.
@@ -3388,7 +3388,7 @@ void NonmemTranslator::generateIndData( ) const
       // is evaluated.  Thus, these have to be declared writable.
       else
 	{
-	  oIndData_h << "std::vector<spk_ValueType> " << varName << ";" << endl;
+	  oIndData_h << "   std::vector<spk_ValueType> " << varName << ";" << endl;
 	}
     }
 
@@ -3397,21 +3397,24 @@ void NonmemTranslator::generateIndData( ) const
   // ----------
   // Destructor
   // ----------
-  oIndData_h << "~IndData();" << endl;
+  oIndData_h << "   ~IndData();" << endl;
 
   //----------------------------------------
   // Public member declarations
   //----------------------------------------
-  oIndData_h << "const SPK_VA::valarray<double> getMeasurements() const;" << endl;
-  oIndData_h << "void replaceMeasurements( const SPK_VA::valarray<double>& yyi );"  << endl;
-  oIndData_h << "void replacePred   ( const SPK_VA::valarray<double>& predIn );"     << endl;
-  oIndData_h << "void replaceRes    ( const SPK_VA::valarray<double>& resIn );"     << endl;
-  oIndData_h << "void replaceWRes   ( const SPK_VA::valarray<double>& wresIn );"    << endl;
+  oIndData_h << "   int getNRecords() const;" << endl;
+  oIndData_h << "   const SPK_VA::valarray<double> getMeasurements() const;" << endl;
+  oIndData_h << "   int getRecordIndex( int measurementIndex ) const;" << endl;
+  oIndData_h << "   int getMeasurementIndex( int recordIndex ) const;" << endl;
+  oIndData_h << "   void replaceMeasurements( const SPK_VA::valarray<double>& yyi );"  << endl;
+  oIndData_h << "   void replacePred   ( const SPK_VA::valarray<double>& predIn );"     << endl;
+  oIndData_h << "   void replaceRes    ( const SPK_VA::valarray<double>& resIn );"     << endl;
+  oIndData_h << "   void replaceWRes   ( const SPK_VA::valarray<double>& wresIn );"    << endl;
   if( ourTarget == POP )
   {
-     oIndData_h << "void replaceEta    ( const SPK_VA::valarray<double>& etaIn );"  << endl;
-     oIndData_h << "void replaceEtaRes ( const SPK_VA::valarray<double>& etaresIn );"  << endl;
-     oIndData_h << "void replaceWEtaRes( const SPK_VA::valarray<double>& wetaresIn );" << endl;
+     oIndData_h << "   void replaceEta    ( const SPK_VA::valarray<double>& etaIn );"  << endl;
+     oIndData_h << "   void replaceEtaRes ( const SPK_VA::valarray<double>& etaresIn );"  << endl;
+     oIndData_h << "   void replaceWEtaRes( const SPK_VA::valarray<double>& wetaresIn );" << endl;
   }
   oIndData_h << endl;
 
@@ -3419,20 +3422,46 @@ void NonmemTranslator::generateIndData( ) const
   // Protected member declarations.
   //----------------------------------------
   oIndData_h << "protected:" << endl;
-  oIndData_h << "IndData();" << endl;
-  oIndData_h << "IndData( const IndData& );" << endl;
-  oIndData_h << "IndData& operator=( const IndData& );" << endl;
+  oIndData_h << "   IndData();" << endl;
+  oIndData_h << "   IndData( const IndData& );" << endl;
+  oIndData_h << "   IndData& operator=( const IndData& );" << endl;
   oIndData_h << endl;
-  oIndData_h << "int nY; // #of measurements (DVs where MDV=0)." << endl;
-  oIndData_h << "SPK_VA::valarray<double> measurements;" << endl;
+  oIndData_h << "   int nY; // #of measurements (DVs where MDV=0)." << endl;
+  oIndData_h << "   SPK_VA::valarray<double> measurements;" << endl;
 
   //----------------------------------------
   // Private member declarations.
   //----------------------------------------
   oIndData_h << "private:" << endl;
-  oIndData_h << "const int n; // the number of data records." << endl;
-  oIndData_h << "void assign( double&, const CppAD::AD<double>& ) const;" << endl;
-  oIndData_h << "void assign( double&, double ) const;" << endl;
+  oIndData_h << "   const int nRecords; // the number of data records." << endl;
+  oIndData_h << "   void assign( double&, const CppAD::AD<double>& ) const;" << endl;
+  oIndData_h << "   void assign( double&, double ) const;" << endl;
+  oIndData_h << "   /////////////////////////////////////////////////////////" << endl;
+  oIndData_h << "   //      original                     y"                    << endl;
+  oIndData_h << "   //  -------------------      -------------------"          << endl;
+  oIndData_h << "   //   j    i   MDV   DV         j'  j   i   DV"             << endl;
+  oIndData_h << "   //  -------------------      -------------------"          << endl;
+  oIndData_h << "   //   0    0    0    0.1        0   0   0   0.1"            << endl;
+  oIndData_h << "   //   1    0    1               1   2   0   0.2"            << endl;
+  oIndData_h << "   //   2    0    0    0.2        2   4   0   0.3"            << endl;
+  oIndData_h << "   //   3    0    1"                                          << endl;
+  oIndData_h << "   //   4    0    0    0.3"                                   << endl;
+  oIndData_h << "   //"                                                        << endl;
+  oIndData_h << "   //"                                                        << endl;
+  oIndData_h << "   //   jTojPrime            jPrimeToj"                       << endl;
+  oIndData_h << "   //  -----------          -----------"                      << endl;
+  oIndData_h << "   //    j    j'              j'   j"                         << endl;
+  oIndData_h << "   //  -----------          -----------"                      << endl;
+  oIndData_h << "   //    0    0               0    0"                         << endl;
+  oIndData_h << "   //    1   -1*              1    2"                         << endl;
+  oIndData_h << "   //    2    1               2    4"                         << endl;
+  oIndData_h << "   //    3   -1*"                                             << endl;
+  oIndData_h << "   //    4    2"                                              << endl;
+  oIndData_h << "   //"                                                        << endl;
+  oIndData_h << "   //  * (-1) points to no j', i.e. MDV=1"                    << endl;
+  oIndData_h << "   /////////////////////////////////////////////////////////" << endl;
+  oIndData_h << "   std::vector<int> jTojPrime;" << endl;
+  oIndData_h << "   std::vector<int> jPrimeToj;" << endl;
   oIndData_h << "};" << endl;
 
 
@@ -3454,7 +3483,7 @@ void NonmemTranslator::generateIndData( ) const
   //
   string synonym;
   oIndData_h << "template <class spk_ValueType>" << endl;
-  oIndData_h << "IndData<spk_ValueType>::IndData( int nIn";
+  oIndData_h << "IndData<spk_ValueType>::IndData( int nRecordsIn";
   pLabel = labels->begin();
   for( ; pLabel != labels->end(); pLabel++ )
     {
@@ -3469,7 +3498,7 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "& " << *pLabel << "In";
     }
   oIndData_h << ")" << endl;
-  oIndData_h << ": n( nIn ), // # of records (including MDV=0)" << endl;
+  oIndData_h << ": nRecords( nRecordsIn ), // # of records (including MDV=0)" << endl;
   oIndData_h << "  nY( 0 )   // # of measurements" << endl;
 
   //
@@ -3531,38 +3560,36 @@ void NonmemTranslator::generateIndData( ) const
       //
       if( find( labels->begin(), labels->end(), pInternalTable->second.name ) 
 	  == labels->end() )
-	oIndData_h << "," << endl << label << "( nIn )";
+	oIndData_h << "," << endl << label << "( nRecordsIn )";
     }
   oIndData_h << endl;
 
   oIndData_h << "{" << endl;
-  oIndData_h << "   for( int i=0; i<n; i++ )" << endl;
+  oIndData_h << "   for( int i=0; i<nRecords; i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      if( " << UserStr.MDV << "[i] != 1 )" << endl;
   oIndData_h << "          ++nY;" << endl;
   oIndData_h << "   }" << endl;
   oIndData_h << endl;
   oIndData_h << "   measurements.resize( nY ); " << endl;
-  oIndData_h << "   for( int i=0, j=0; i<n; i++ )" << endl;
+  oIndData_h << "   jTojPrime.resize( nRecords );" << endl;
+  oIndData_h << "   jPrimeToj.resize( nY );" << endl;
+  oIndData_h << "   for( int j=0, jPrime=0; j<nRecords; j++ )" << endl;
   oIndData_h << "   {" << endl;
   if( myThetaLen > 0 )
-    oIndData_h << "      " << UserStr.THETA << "[i].resize( " << myThetaLen << " );" << endl;
+    oIndData_h << "      " << UserStr.THETA << "[j].resize( " << myThetaLen << " );" << endl;
   if( myEtaLen > 0 )
     {
-      oIndData_h << "      " << UserStr.ETA     << "[i].resize( " << myEtaLen << " );" << endl;
+      oIndData_h << "      " << UserStr.ETA     << "[j].resize( " << myEtaLen << " );" << endl;
       if( ourTarget == POP )
 	{
-	  oIndData_h << "      " << UserStr.ETARES  << "[i].resize( " << myEtaLen << " );" << endl;
-	  oIndData_h << "      " << UserStr.WETARES << "[i].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << UserStr.ETARES  << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << UserStr.WETARES << "[j].resize( " << myEtaLen << " );" << endl;
 	}
     }
   if( myEpsLen > 0 )
-    oIndData_h << "      " << UserStr.EPS   << "[i].resize( " << myEpsLen << " );" << endl;
+    oIndData_h << "      " << UserStr.EPS   << "[j].resize( " << myEpsLen << " );" << endl;
 
-  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // BEGIN FROM HERE on 04/15/2005
-  // P is not found in the table!
-  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   if( myModelSpec != PRED )
     {
       assert( table->findi( KeyStr.DADT ) != Symbol::empty() );
@@ -3570,17 +3597,23 @@ void NonmemTranslator::generateIndData( ) const
       assert( table->findi( KeyStr.P    ) != Symbol::empty() );
 
       int nComps  = table->findi( KeyStr.DADT )->initial[0].size();
-      oIndData_h << "      " << UserStr.DADT << "[i].resize( " << nComps  << " );" << endl;
-      oIndData_h << "      " << UserStr.A    << "[i].resize( " << nComps  << " );" << endl;
+      oIndData_h << "      " << UserStr.DADT << "[j].resize( " << nComps  << " );" << endl;
+      oIndData_h << "      " << UserStr.A    << "[j].resize( " << nComps  << " );" << endl;
 
       int nParams = table->findi( KeyStr.P    )->initial[0].size(); 
-      oIndData_h << "      " << UserStr.P    << "[i].resize( " << nParams << " );" << endl;
+      oIndData_h << "      " << UserStr.P    << "[j].resize( " << nParams << " );" << endl;
     }
 
-  oIndData_h << "        if( " << UserStr.MDV << "[i] != 1 )" << endl;
+  oIndData_h << "        if( " << UserStr.MDV << "[j] != 1 )" << endl;
   oIndData_h << "        {" << endl;
-  oIndData_h << "           assign( measurements[j], " << UserStr.DV << "[i] );" << endl;
-  oIndData_h << "           j++;" << endl;
+  oIndData_h << "           assign( measurements[jPrime], " << UserStr.DV << "[j] );" << endl;
+  oIndData_h << "           jPrimeToj[jPrime] = j;" << endl;
+  oIndData_h << "           jTojPrime[j] = jPrime;" << endl;
+  oIndData_h << "           jPrime++;" << endl;
+  oIndData_h << "        }" << endl;
+  oIndData_h << "        else" << endl;
+  oIndData_h << "        {" << endl;
+  oIndData_h << "           jTojPrime[j] = -1;" << endl;
   oIndData_h << "        }" << endl;
 
   oIndData_h << "   }" << endl;
@@ -3615,11 +3648,43 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "template <class spk_ValueType>" << endl;
   oIndData_h << "IndData<spk_ValueType>& IndData<spk_ValueType>::operator=( const IndData<spk_ValueType>& ){}" << endl;
 
+  //------------------
+  // getNRecords()
+  //------------------
+  oIndData_h << "// return the number of data records (include MDV=1)" << endl;
+  oIndData_h << "template <class spk_ValueType>" << endl;
+  oIndData_h << "int IndData<spk_ValueType>::getNRecords() const " << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "   return nRecords;" << endl;
+  oIndData_h << "}" << endl;
+
+  //----------------------------------------
+  // getMeasurementIndex( int j' )
+  //----------------------------------------
+  oIndData_h << "// Return an index to y (measurements/DVs) vector, j, such that " << endl;
+  oIndData_h << "// the value of j-th element in y corresponds to the DV value of " << endl;
+  oIndData_h << "// the j'-th record in the data set .  " << endl;
+  oIndData_h << "// If the j'-th record does not have a DV value, the returned value is -1." << endl;
+  oIndData_h << "template <class spk_ValueType>" << endl;
+  oIndData_h << "int IndData<spk_ValueType>::getMeasurementIndex( int recordIndex ) const" << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "   return jTojPrime[recordIndex];" << endl;
+  oIndData_h << "}" << endl;
+
+  //----------------------------------------
+  // getRecordIndex( int j )
+  //----------------------------------------
+  oIndData_h << "// Return the index, j', to a record in the dataset to which the value of " << endl;
+  oIndData_h << "// the j-th element of y (measurements/DVs) vector belongs." << endl;
+  oIndData_h << "template <class spk_ValueType>" << endl;
+  oIndData_h << "int IndData<spk_ValueType>::getRecordIndex( int measurementIndex ) const" << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "   return jPrimeToj[measurementIndex];" << endl;
+  oIndData_h << "}" << endl;
+
   // -----------------
   // getMeasurements()
   // -----------------
-  // Return SPK's y(i).
-  //
   oIndData_h << "// Return SPK's y" << endl;
   oIndData_h << "template <class spk_ValueType>" << endl;
   oIndData_h << "const SPK_VA::valarray<double> IndData<spk_ValueType>::getMeasurements() const" << endl;
@@ -3638,7 +3703,7 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replaceMeasurements( const SPK_VA::valarray<double>& yyi )" << endl;
   oIndData_h << "{" << endl;
   bool hasAlias = ( pDV->synonym != "" );
-  oIndData_h << "   for( int i=0, k=0; i<n; i++ )" << endl;
+  oIndData_h << "   for( int i=0, k=0; i<nRecords; i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      if( " << UserStr.MDV << "[i] != 1 )" << endl;
   oIndData_h << "      {" << endl;
@@ -3657,7 +3722,7 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "template <class spk_ValueType>" << endl;
   oIndData_h << "void IndData<spk_ValueType>::replacePred( const SPK_VA::valarray<double>& predIn )"     << endl;
   oIndData_h << "{" << endl;
-  oIndData_h << "   assert( predIn.size() == n );" << endl;
+  oIndData_h << "   assert( predIn.size() == nRecords );" << endl;
   oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.PRED << ".begin();" << endl;
   oIndData_h << "   for( int i=0; itr != " << UserStr.PRED << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
@@ -3672,7 +3737,7 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "template <class spk_ValueType>" << endl;
   oIndData_h << "void IndData<spk_ValueType>::replaceRes( const SPK_VA::valarray<double>& resIn )"     << endl;
   oIndData_h << "{" << endl;
-  oIndData_h << "   assert( resIn.size() == n );" << endl;
+  oIndData_h << "   assert( resIn.size() == nRecords );" << endl;
   oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.RES << ".begin();" << endl;
   oIndData_h << "   for( int i=0; itr != " << UserStr.RES << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
@@ -3687,7 +3752,7 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "template <class spk_ValueType>" << endl;
   oIndData_h << "void IndData<spk_ValueType>::replaceWRes( const SPK_VA::valarray<double>& wresIn )"    << endl;
   oIndData_h << "{" << endl;
-  oIndData_h << "   assert( wresIn.size() == n );" << endl;
+  oIndData_h << "   assert( wresIn.size() == nRecords );" << endl;
   oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.WRES << ".begin();" << endl;
   oIndData_h << "   for( int i=0; itr != " << UserStr.WRES << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
@@ -3696,17 +3761,17 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "}" << endl;
   oIndData_h << endl;
 
+  // --------------------
+  // replaceEta()
+  // --------------------
   if( ourTarget == POP )
     {
-      // --------------------
-      // replaceEta()
-      // --------------------
       oIndData_h << "template <class spk_ValueType>" << endl;
       oIndData_h << "void IndData<spk_ValueType>::replaceEta( const SPK_VA::valarray<double>& etaIn )"    << endl;
       oIndData_h << "{" << endl;
       oIndData_h << "   const int nEta = " << myEtaLen << ";" << endl;
       oIndData_h << "   assert( etaIn.size() == nEta );" << endl;
-      oIndData_h << "   for( int i=0; i<n; i++ )" << endl;
+      oIndData_h << "   for( int i=0; i<nRecords; i++ )" << endl;
       oIndData_h << "   {" << endl;
       oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
       oIndData_h << "      {" << endl;
@@ -3725,7 +3790,7 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "{" << endl;
       oIndData_h << "   const int nEta = " << myEtaLen << ";" << endl;
       oIndData_h << "   assert( etaresIn.size() == nEta );" << endl;
-      oIndData_h << "   for( int i=0; i<n; i++ )" << endl;
+      oIndData_h << "   for( int i=0; i<nRecords; i++ )" << endl;
       oIndData_h << "   {" << endl;
       oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
       oIndData_h << "      {" << endl;
@@ -3743,7 +3808,7 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "{" << endl;
       oIndData_h << "   const int nEta = " << myEtaLen << ";" << endl;
       oIndData_h << "   assert( wetaresIn.size() == nEta);" << endl;
-      oIndData_h << "   for( int i=0; i<n; i++ )" << endl;
+      oIndData_h << "   for( int i=0; i<nRecords; i++ )" << endl;
       oIndData_h << "   {" << endl;
       oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
       oIndData_h << "      {" << endl;
@@ -3932,6 +3997,8 @@ void NonmemTranslator::generateDataSet( ) const
   // Public member functions
   // -----------------------
   oDataSet_h << "   const SPK_VA::valarray<double> getAllMeasurements() const;" << endl;
+  oDataSet_h << "   int getMeasurementIndex( int recordIndex ) const;" << endl;
+  oDataSet_h << "   int getRecordIndex( int measurementIndex ) const;" << endl;
   oDataSet_h << "   int getPopSize() const;" << endl;
   oDataSet_h << "   const SPK_VA::valarray<int> getN() const;" << endl;
   oDataSet_h << "   void replaceAllMeasurements( const SPK_VA::valarray<double> & yy );"    << endl;
@@ -3960,6 +4027,42 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "   SPK_VA::valarray<double> measurements; // a long vector containg all measurements" << endl;
   oDataSet_h << "   SPK_VA::valarray<int> N; // a vector containing the # of measurements for each individual." << endl;
   oDataSet_h << "   const int popSize;" << endl;
+  oDataSet_h << "   /////////////////////////////////////////////////////////" << endl;
+  oDataSet_h << "   //      original                     y"                    << endl;
+  oDataSet_h << "   //  -------------------      -------------------"          << endl;
+  oDataSet_h << "   //   j    i   MDV   DV         j'  j   i   DV"             << endl;
+  oDataSet_h << "   //  -------------------      -------------------"          << endl;
+  oDataSet_h << "   //   0    0    0    0.1        0   0   0   0.1"            << endl;
+  oDataSet_h << "   //   1    0    1               1   2   0   0.2"            << endl;
+  oDataSet_h << "   //   2    0    0    0.2        2   4   0   0.3"            << endl;
+  oDataSet_h << "   //   3    0    1               3   5   1   0.01"           << endl;
+  oDataSet_h << "   //   4    0    0    0.3        4   7   1   0.02"           << endl;
+  oDataSet_h << "   //   5    1    0    0.1        5   9   1   0.03"           << endl;
+  oDataSet_h << "   //   6    1    1"                                          << endl;
+  oDataSet_h << "   //   7    1    0    0.2"                                   << endl;
+  oDataSet_h << "   //   8    1    1"                                          << endl;
+  oDataSet_h << "   //   9    1    0    0.3"                                   << endl;
+  oDataSet_h << "   //"                                                        << endl;
+  oDataSet_h << "   //"                                                        << endl;
+  oDataSet_h << "   //   jTojPrime            jPrimeToj"                       << endl;
+  oDataSet_h << "   //  -----------          -----------"                      << endl;
+  oDataSet_h << "   //    j    j'              j'   j"                         << endl;
+  oDataSet_h << "   //  -----------          -----------"                      << endl;
+  oDataSet_h << "   //    0    0               0    0"                         << endl;
+  oDataSet_h << "   //    1   -1*              1    2"                         << endl;
+  oDataSet_h << "   //    2    1               2    4"                         << endl;
+  oDataSet_h << "   //    3   -1*              3    5"                         << endl;
+  oDataSet_h << "   //    4    2               4    7"                         << endl;
+  oDataSet_h << "   //    5    3               5    9"                         << endl;
+  oDataSet_h << "   //    6   -1*"                                             << endl;
+  oDataSet_h << "   //    7    4"                                              << endl;
+  oDataSet_h << "   //    8   -1*"                                             << endl;
+  oDataSet_h << "   //    9    5"                                              << endl;
+  oDataSet_h << "   //"                                                        << endl;
+  oDataSet_h << "   //  * (-1) points to no j', i.e. MDV=1"                    << endl;
+  oDataSet_h << "   /////////////////////////////////////////////////////////" << endl;
+  oDataSet_h << "   std::vector<int> jTojPrime;" << endl;
+  oDataSet_h << "   std::vector<int> jPrimeToj;" << endl;
 
   oDataSet_h << "};" << endl;
   oDataSet_h << endl;
@@ -4065,13 +4168,29 @@ void NonmemTranslator::generateDataSet( ) const
   // 
   // Extracts measurements (ie. SPK's y) from the entire data set and keep it in "measurements".
   //
-  oDataSet_h << "   int nY = N.sum();" << endl;
+  oDataSet_h << "   int nRecords = 0;" << endl;
+  oDataSet_h << "   for( int i=0; i<popSize; i++ )" << endl;
+  oDataSet_h << "      nRecords += data[i]->getNRecords();" << endl;
+  oDataSet_h << "   " << endl;
+  oDataSet_h << "   int nY = N.sum();  // # of DVs" << endl;
   oDataSet_h << "   measurements.resize( nY ); " << endl;
-  oDataSet_h << "   for( int i=0, m=0; i<popSize; i++ )" << endl;
+  oDataSet_h << "   jPrimeToj.resize( nY );" << endl;
+  oDataSet_h << "   jTojPrime.resize( nRecords );" << endl;
+  oDataSet_h << "   for( int i=0, m=0, j=0, jPrime=0; i<popSize; i++ )" << endl;
   oDataSet_h << "   {" << endl;
   oDataSet_h << "      int nYi = data[i]->getMeasurements().size();" << endl;
   oDataSet_h << "      measurements[ SPK_VA::slice( m, nYi, 1 ) ] = data[i]->getMeasurements();" << endl;
   oDataSet_h << "      m+=nYi;" << endl;
+  oDataSet_h << "      int n = data[i]->getNRecords();" << endl;
+  oDataSet_h << "      for( int k=0; k<n; k++, j++ )" << endl;
+  oDataSet_h << "      {" << endl;
+  oDataSet_h << "         if( data[i]->" << UserStr.MDV << "[k] != 1 )" << endl;
+  oDataSet_h << "         {" << endl;
+  oDataSet_h << "            jPrimeToj[jPrime] = j;" << endl;
+  oDataSet_h << "            jTojPrime[j] = jPrime;" << endl;
+  oDataSet_h << "            jPrime++;" << endl;
+  oDataSet_h << "         }" << endl;
+  oDataSet_h << "      }" << endl;
   oDataSet_h << "   }" << endl;
 
   oDataSet_h << "}" << endl;
@@ -4112,6 +4231,24 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "{" << endl;
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
+
+  // ------------------------------
+  // getMeasurementIndex( int j )
+  // ------------------------------
+  oDataSet_h << "template <class spk_ValueType>" << endl;
+  oDataSet_h << "int DataSet<spk_ValueType>::getMeasurementIndex( int recordIndex ) const" << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   return jTojPrime[ recordIndex ];" << endl;
+  oDataSet_h << "}" << endl;
+
+  // ------------------------------
+  // getRecordIndex( int jPrime )
+  // ------------------------------
+  oDataSet_h << "template <class spk_ValueType>" << endl;
+  oDataSet_h << "int DataSet<spk_ValueType>::getRecordIndex( int measurementIndex ) const" << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   return jPrimeToj[ measurementIndex ];" << endl;
+  oDataSet_h << "}" << endl;
 
   // --------------------
   // getAllMeasurements()
