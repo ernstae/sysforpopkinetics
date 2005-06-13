@@ -275,6 +275,20 @@ std::ostream& operator<<( std::ostream& o, const Symbol& s )
   else if( s.symbol_type == Symbol::NONMEMDEF )
     {
       o << "NONMEM defined" << endl;
+      int n = s.initial.size();
+      o << "#Data Subsets  : " << n << endl;
+      for( int i=0; i<n; i++ )
+	{
+	  int m = s.initial[i].size();
+	  o << "[" << i << "]" "{ ";
+	  for( int j=0; j<m; j++ )
+	    {
+	      if( j > 0 )
+		o << ", ";
+	      o << s.initial[i][j];
+	    }
+	  o << " }" << endl;
+	}
     }
   else
     o << "unknown" << endl;
