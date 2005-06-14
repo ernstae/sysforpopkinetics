@@ -7406,7 +7406,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "         if( popOpt.isThereErrorInfo() )" << endl;
   oPopDriver << "         {" << endl;
   oPopDriver << "            optErrHeader  = \"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \\n\";" << endl;
-  oPopDriver << "            optErrHeader += \"Population level optmization failure detauls. \\n\";" << endl;
+  oPopDriver << "            optErrHeader += \"Population level optimization failure details. \\n\";" << endl;
   oPopDriver << "            optErrHeader += \"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \\n\";" << endl;
   oPopDriver << "            optErrHeader += \"\\n\";" << endl;
   oPopDriver << "            popOpt.getErrorInfo(" << endl;
