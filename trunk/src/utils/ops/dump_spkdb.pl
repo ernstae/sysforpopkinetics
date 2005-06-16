@@ -100,7 +100,7 @@ system("$mysqldump -h$dbhost -u$dbuser -p$dbpass  -d $db > $schema_name") == 0
 system("$mysqldump -h$dbhost -u$dbuser -p$dbpass -tc $db --tables class end method state > $basedata_name") == 0
     or die "Could not dump the basedata tables\n";
 if ($userdata) {
-    system("$mysqldump -h$dbhost -u$dbuser -p$dbpass -tc $db --tables dataset history job model user > $userdata_name") == 0
+    system("$mysqldump -h$dbhost -u$dbuser -p$dbpass -tc $db --single-transaction --tables dataset history job model user > $userdata_name") == 0
 	or die "Could not dump the userdata tables\n";
 }
 
