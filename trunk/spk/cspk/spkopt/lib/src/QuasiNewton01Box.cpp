@@ -19,7 +19,6 @@ distribution.
 -----------------------------------------------------------------------
 Software:   Brad Bell (brad@apl.washington.edu)
 Mathematics: Brad Bell & Jim Burke (burke@math.washington.edu)
-Version: 03-12-23
 
 */
 // BEGIN PROGRAM
@@ -141,8 +140,8 @@ private:
 bool QuasiNewton01Box(std::string &Msg)
 {	bool                   ok = true;
 	std::ostream            &os = std::cout;
-	const size_t          level = 0;
-	const size_t         ItrMax = 10;
+	int                   level = 0;
+	const size_t         ItrMax = 50;
 	const size_t              m = 7;
 	const size_t              n = 5;
 	const size_t        QuadMax = 20 * ItrMax;
@@ -156,7 +155,8 @@ bool QuasiNewton01Box(std::string &Msg)
 	size_t             k;
 	std::string      msg;
 
-	Memory<double> dMemory(5 * n + 3 * n * n + m * n);
+	Memory<double> dMemory(6 * n + 3 * n * n + m * n);
+	double  *xOut = dMemory(n);
 	double  *xCur = dMemory(n);
 	double  *sCur = dMemory(n);
 	double  *gCur = dMemory(n);
@@ -204,64 +204,109 @@ bool QuasiNewton01Box(std::string &Msg)
 	// construct function object
 	Fun obj(exponential, n, Q, b);
 
-	/*
-	Current iterate values
-	*/
-	bool          sOkCur = false;
-	size_t        ItrCur = 0;
-	size_t       QuadCur = 0;
-	size_t       BfgsCur = 0;
-	double          rCur = .5;
-	double          fCur;
-	/*
-	Output values
-	*/
-	double         fOut;
+	// State values
+	bool      sOkCur;
+	size_t    ItrCur;
+	size_t    QuadCur;
+	size_t    BfgsCur;
+	double    rCur;
+	double    fCur;
 
-	// initial xCur 
-	for(i = 0; i < n; i++)
-		xCur[i] = .75;
+	// Output values
+	double fOut;
 
-	// fCur is objective function value at xCur
-	msg = obj.function(xCur, fCur); 
-	ok &= (msg == "ok");
+	size_t run;
+	for(run = 1; run <= 2; run++)
+	{	// Initialize the state of the optimizer ---------------------------------
+		sOkCur = false;
+		ItrCur = 0;
+		QuadCur = 0;
+		BfgsCur = 0;
+		rCur = .5;
+		fCur;
 
-	// gCur is gradient at xCur
-	msg = obj.gradient(gCur); 
-	ok &= (msg == "ok");
+		// initial xCur 
+		for(i = 0; i < n; i++)
+			xCur[i] = .75;
 
-	// initialize the HCur as the identity matrix
-	for(i = 0; i < n; i++)
-		for(j = 0; j < n; j++)
-			HCur[i * n + j ] = static_cast<double>( i == j );
-	
-	// run test one iteration at a time
-	Msg = "";
-	while( Msg == "" )
-	{	size_t ItrPrev = ItrCur;
-		Msg = QuasiNewton01Box(
-			// Input Arguments
-			os,
-			level,
-			ItrCur+1,
-			QuadMax,
-			n,
-			delta,
-			obj,
-			// Input+Output Arguments
-			sOkCur,
-			ItrCur,
-			QuadCur,
-			BfgsCur,
-			rCur,
-			fCur,
-			xCur,
-			sCur,
-			gCur,
-			HCur 
-		);
-		if( (Msg != "ok") && ItrCur > ItrPrev )
-			Msg = "";
+		// fCur is objective function value at xCur
+		msg = obj.function(xCur, fCur); 
+		ok &= (msg == "ok");
+
+		// gCur is gradient at xCur
+		msg = obj.gradient(gCur); 
+		ok &= (msg == "ok");
+
+		// initialize the HCur as the identity matrix
+		for(i = 0; i < n; i++)
+			for(j = 0; j < n; j++)
+				HCur[i * n + j ] = static_cast<double>( i == j );
+
+		// Solve the optimization problem -----------------------------------
+		Msg = "";
+		while( Msg == "" && ItrCur < ItrMax )
+		{	size_t ItrPrev = ItrCur;
+			size_t ItrPlus;
+			if( run == 0 )
+				ItrPlus = ItrCur + ItrMax;
+			else	ItrPlus = ItrCur + 1;
+			Msg = QuasiNewton01Box(
+				// Input Arguments
+				os,
+				level,
+				ItrCur+ItrMax,
+				QuadMax,
+				n,
+				delta,
+				obj,
+				// Input+Output Arguments
+				sOkCur,
+				ItrCur,
+				QuadCur,
+				BfgsCur,
+				rCur,
+				fCur,
+				xCur,
+				sCur,
+				gCur,
+				HCur 
+			);
+			if( run == 1 )
+			{	assert( Msg != "" );
+				ok &= Msg == "ok";
+				// store solution corresponding to all iterations at once
+				for(i = 0; i < n; i++)
+					xOut[i] = xCur[i];
+				// tracing for one iteration at a time solution
+				level  = -level;
+			}
+			else if( Msg == "ok" )
+			{	// trace the last iterate
+				Msg = QuasiNewton01Box(
+					// Input Arguments
+					os,
+					abs(level),
+					ItrCur,
+					QuadMax,
+					n,
+					delta,
+					obj,
+					// Input+Output Arguments
+					sOkCur,
+					ItrCur,
+					QuadCur,
+					BfgsCur,
+					rCur,
+					fCur,
+					xCur,
+					sCur,
+					gCur,
+					HCur 
+				);
+			}
+			else if( ItrCur > ItrPrev )
+				Msg = "";
+		}
 	}
 	// check the reutrn message
 	if( Msg == "ok" )
@@ -271,6 +316,10 @@ bool QuasiNewton01Box(std::string &Msg)
 		Msg = buf.str();
 	}
 	else	ok = false;
+	// check that the all at once solution is equal to
+	// the once iteration at a time solution
+	for(i = 0; i < n; i++)
+		ok &= xOut[i] == xCur[i];
 	//
 	// evaluate the objective 
 	msg = obj.function(xCur, fOut);
@@ -291,7 +340,7 @@ bool QuasiNewton01Box(std::string &Msg)
 		
 		ok &= fabs(p) <= delta;
 	}
-	if( level >= 2 )
+	if( abs(level) >= 2 )
 	{	std::cout << "fOut = " << fOut << std::endl;
 		std::cout << "xOut[0] = " << xCur[0];
 		for(i = 1; i < n; i++)

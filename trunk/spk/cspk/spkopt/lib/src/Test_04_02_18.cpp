@@ -18,7 +18,6 @@ License can be found in the COPYING file in the root directory of this
 distribution.
 -----------------------------------------------------------------------
 Author: Brad Bell (brad@apl.washington.edu)
-Version: 04-02-18
 
 */
 // BEGIN PROGRAM
@@ -31,7 +30,7 @@ bool Test_04_02_18(std::string &Msg)
 {	bool ok = true;
 
 	size_t kMax    = 100;
-	size_t level   =   0;
+	int    level   =   0;
 	size_t n       =   1;
 	double epsilon = 1e-16;
 	double Q[]     = { 5e-12 };

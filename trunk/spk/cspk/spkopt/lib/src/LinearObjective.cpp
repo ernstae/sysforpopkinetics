@@ -18,7 +18,6 @@ License can be found in the COPYING file in the root directory of this
 distribution.
 -----------------------------------------------------------------------
 Author: Brad Bell (brad@apl.washington.edu)
-Version: 04-02-23
 
 */
 // BEGIN PROGRAM
@@ -75,7 +74,7 @@ bool LinearObjective(std::string &Msg)
 {	bool                   ok = true;
 	const char * msg;
 	std::ostream            &os = std::cout;
-	const size_t          level = 0;
+	const int             level = 0;
 	const size_t         ItrMax = 10;
 	const size_t              n = 1;
 	const size_t        QuadMax = 20 * ItrMax;

@@ -19,7 +19,7 @@ distribution.
 -----------------------------------------------------------------------
 Software:   Brad Bell (brad@apl.washington.edu)
 Mathematics: Brad Bell & Jim Burke (burke@math.washington.edu)
-Version: 04-02-25
+
 */
 # include "Bfgs.h"
 # include "Memory.h"

@@ -19,7 +19,6 @@ distribution.
 -----------------------------------------------------------------------
 Software:   Brad Bell (brad@apl.washington.edu)
 Mathematics: Brad Bell & Jim Burke (burke@math.washington.edu)
-Version: 03-11-12
 
 $begin  Delta$$
 $spell

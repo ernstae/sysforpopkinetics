@@ -21,11 +21,12 @@ distribution.
 -----------------------------------------------------------------------
 Software:    Brad Bell (brad@apl.washington.edu)
 Mathematics: Brad Bell & Jim Burke (burke@math.washington.edu)
-Version: 03-12-23
+
 
 $begin QuasiNewton01Box$$
 $include Macro.tex$$
 $spell
+	Tmp
 	Bradley
 	bool
 	optimizer
@@ -56,7 +57,7 @@ $syntax%template <class %Fun%>
 const char * QuasiNewton01Box(
 	// Arguments that are only Inputs
 	std::ostream    &%os%,
-	size_t        %level%,
+	int            %level%,
 	size_t       %ItrMax%,
 	size_t      %QuadMax%,
 	size_t            %n%,
@@ -166,6 +167,23 @@ this sets the scalar $italic f$$
 equal to the objective function at $italic x$$
 where $italic x$$ is a vector of length $italic n$$ and
 $latex 0 \leq x \leq 1$$.
+This may be equal to any finite value or $xref/PlusInfinity/$$
+(it cannot be not a number).
+$pre
+
+$$
+If the return value is plus infinity,
+the function is not assumed to be smooth 
+between its current best point ($italic xCur$$)
+and the requested new point ($italic xNext$$ or $italic xTmp$$).
+The optimizer will (in some sense) try to take a smaller step
+in its search for a new $italic x$$ near $italic xCur$$ where the objective
+is lower than its current best estimate of the minimizer.
+The gradient of the objective will not be evaluated at 
+any point where the objective is plus infinity.
+$pre
+
+$$
 If the return value of 
 $syntax%%obj%.function%$$ 
 is not equal to "ok",
@@ -177,6 +195,8 @@ $syntax%%obj%.function%$$.
 $subhead Gradient$$
 The objective function is alway evaluated at the same $italic x$$ value directly before
 evaluating the gradient of the objective function.
+In addition, the corresponding value of the objective will be finite; i.e., 
+not equal to plus infinity.
 The syntax
 $syntax%
 	const char * obj.gradient(double *%g%)
@@ -248,6 +268,8 @@ during which the current $italic x$$ value changes.
 $head fCur$$
 On input and output, $italic fCur$$ 
 contains the value $latex f(xCur)$$.
+This cannot (on input) and will not (on output)
+be equal to $xref/PlusInfinity/$$.
 
 $head rCur$$
 On input and output, $italic rCur$$ must be between
@@ -384,7 +406,14 @@ does not write any output.
 Otherwise, tracing is done for each iteration during which the state changes
 ($italic rCur$$, $italic xCur$$, or $italic HCur$$ changes).
 
-$subhead level >= 1$$
+$subhead level > 0$$
+If $italic level$$ is greater than zero,
+the final values corresponding to the final iteration are printed.
+Using $italic level$$ less than zero is useful when the optimization
+will be continued and the final iteration values will be the same
+as the first iteration of the continuation.
+
+$subhead abs(level) >= 1$$
 $table
 $bold label$$ $cnext $bold Description$$ 
 $rnext
@@ -449,7 +478,7 @@ $code |Herr|$$ $cnext
 $rnext
 $tend
 
-$subhead level >= 2$$
+$subhead abs(level) >= 2$$
 The information is printed above the $syntax%%level% >= 1%$$ information.
 $table
 $bold label$$ $cnext $bold Description$$ 
@@ -472,7 +501,7 @@ $code p$$     $cnext
 $rnext
 $tend
 
-$subhead level >= 3$$
+$subhead abs(level) >= 3$$
 The information is printed above the $syntax%%level% >= 2%$$ information.
 $table
 $bold label$$ $cnext $bold Description$$ $rnext
@@ -481,7 +510,7 @@ $code H$$     $cnext
 	The approximation for the Hessian $latex H^k$$.
 $tend
 
-$subhead level >= 4$$
+$subhead abs(level) >= 4$$
 $table
 $bold label$$ $cnext $bold Description$$ $rnext
 $rnext
@@ -521,6 +550,7 @@ $contents%
 	QuadBox.cpp%
 	Bfgs.cpp%
 	CppADUtil.h%
+	PlusInfinity.h%
 	glossary.omh
 %$$
 
@@ -536,6 +566,7 @@ $end
 # include "max.h"
 # include "Bfgs.h"
 # include "Memory.h"
+# include "PlusInfinity.h"
 # include <iostream> 
 
 # include "CppADUtil.h"
@@ -555,16 +586,18 @@ namespace {
 	}
 
 	template <class Fun>
-	const char *EvaluateFunction(std::ostream &os,
-		Fun &obj, size_t level, const double *x, double  &f)
+	const char *EvaluateFunction(std::ostream &os, const char *infinityMsg,
+		Fun &obj, int level, const double *x, double  &f)
 	{	const char *msg = 0;
 		msg = obj.function(x, f);
+		if( f == PlusInfinity(double(0)) )
+			return infinityMsg;
 		return msg;
 	}
 
 	template <class Fun>
 	const char *EvaluateGradient(std::ostream &os,
-		Fun &obj, size_t level, double *g)
+		Fun &obj, int level, double *g)
 	{	const char *msg = 0;
 		msg = obj.gradient(g);
 		return msg;
@@ -572,7 +605,7 @@ namespace {
 	const char *DetermineStep(
 		std::ostream &os,
 		size_t        n,
-		size_t        level,
+		int           level,
 		size_t        QuadMax,
 		size_t        QuadLevel,
 		double        delta,
@@ -645,7 +678,7 @@ template <class Fun>
 const char * QuasiNewton01Box(
 	// Input Arguments
 	std::ostream    &os,
-	size_t        level,
+	int           level,
 	size_t       ItrMax,
 	size_t      QuadMax,
 	size_t            n,
@@ -725,7 +758,7 @@ const char * QuasiNewton01Box(
 	CppADvector<double> HTmp;
 	CppADvector<double> Result;
 	CppADvector<double> Rhs;
-	if( level > 0 )
+	if( abs(level) > 0 )
 		HTmp.resize(n * n);
 
 	// initial trust region radius
@@ -736,7 +769,7 @@ const char * QuasiNewton01Box(
 	for(i = 0; i < n; i++)
 		assert( (0. <= xCur[i]) & (xCur[i] <= 1.) );
 
-	if( level >= 4 )
+	if( abs(level) >= 4 )
 	{	// numerical check of the gradient evaluation
 		for(i = 0; i < n; i++)
 		{	double fp;
@@ -748,13 +781,15 @@ const char * QuasiNewton01Box(
 			xi       = xCur[i];
 			xCur[i]  = xi + StepSize;
 			xCur[i]  = xp = min(1., xCur[i] );
-			msg = EvaluateFunction(os, obj, level, xCur, fp);
+			msg = "objective is +infinity at input value of xCur";
+			msg = EvaluateFunction(os, msg, obj, level, xCur, fp);
 			if( strcmp(msg, "ok") != 0 )
 				return msg;
 
 			xCur[i]  = xi - StepSize;
 			xCur[i]  = max(0., xCur[i] );
-			msg = EvaluateFunction(os, obj, level, xCur, fm);
+			msg = "objective is +infinity near input value of xCur";
+			msg = EvaluateFunction(os, msg, obj, level, xCur, fm);
 			if( strcmp(msg, "ok") != 0 )
 				return msg;
 
@@ -771,13 +806,15 @@ const char * QuasiNewton01Box(
 	}
 
 	// initialize next coordinate direction used to stabalize Hessian 
-	size_t index = 0;
+	size_t index = ItrCur % n;
 
 	// initialize error in previous Bfgs update
 	double Herr = 0.;
 	
 	while( true )
-	{	
+	{	// check that input value of fCur is not + infinity
+		assert( fCur != PlusInfinity(double(0)) );
+
 		// the scaled projected gradient 
 		ScaleProjectGradient(n, xCur, gCur, gProj);
 		double gNormProj = MaxAbs(n, gProj);
@@ -814,14 +851,43 @@ const char * QuasiNewton01Box(
 			if( ! sOkCur )
 				return msg;
 		}
-		// do not print trace in this case
-		if( ItrCur >= ItrMax && MaxAbs(n, gProj) <= delta )
+		// do not print final trace if level <= 0
+		bool done = MaxAbs(n, gProj) <= delta;
+		if( done && level <= 0)
 			return (const char *)("ok");
-		if( ItrCur >= ItrMax )
+		done |= ItrCur >= ItrMax;
+		if( done && level <= 0)
 		{	msg = "ItrMax reached without convergence";
 			return msg;
 		}
-		if( level >= 3 )
+		if( abs(level) >= 1 )
+		{	size_t m       = 0;
+			double logabsdet;
+			for(i = 0; i < n*n; i++)
+				HTmp[i] = HCur[i];
+			CppAD::LuSolve(n, m, HTmp, Result, Rhs, logabsdet);
+
+			os << "k = "    << ItrCur << std::endl; 
+			os << "r = "    << rCur              << ", ";
+			os << "f = "    << fCur              << ", ";
+			os << "|s| = "  << MaxAbs(n, sCur)   << ", ";
+			os << "|p| = "  << MaxAbs(n, gProj)  << ", ";
+			os << " |H| = " << MaxAbs(n*n, HCur) << ", ";
+			os << "det(H) = " << std::exp(logabsdet) << ", ";
+			os << "Bfgs = " << BfgsCur;
+			os << std::endl;
+		}
+		if( abs(level) >= 2 )
+		{	for(i = 0; i < n; i++)
+			{	os << "i = " << i        << ", ";
+				os << "x = " << xCur[i]  << ", ";
+				os << "s = " << sCur[i]  << ", ";
+				os << "g = " << gCur[i]  << ", ";
+				os << "p = " << gProj[i];
+				os << std::endl;
+			}
+		}
+		if( abs(level) >= 3 )
 		{	for(i = 0; i < n; i++)
 			{	os << "HCur(" << i << ",:) = ";
 				for(j = 0; j < n; j++)
@@ -832,52 +898,50 @@ const char * QuasiNewton01Box(
 				}
 			}
 		}
-		if( level >= 2 )
-		{	for(i = 0; i < n; i++)
-			{	os << "i = " << i        << ", ";
-				os << "x = " << xCur[i]  << ", ";
-				os << "s = " << sCur[i]  << ", ";
-				os << "g = " << gCur[i]  << ", ";
-				os << "p = " << gProj[i] << ", ";
-				os << std::endl;
-			}
-		}
-		if( level >= 1 )
-		{	size_t m       = 0;
-			double logabsdet;
-			for(i = 0; i < n*n; i++)
-				HTmp[i] = HCur[i];
-			CppAD::LuSolve(n, m, HTmp, Result, Rhs, logabsdet);
-
-			os << "k   = "  << ItrCur            << ", ";
-			os << "r   = "  << rCur              << ", ";
-			os << "f   = "  << fCur              << ", ";
-			os << "|s| = "  << MaxAbs(n, sCur)   << ", ";
-			os << "|p| = "  << MaxAbs(n, gProj)  << ", ";
-			os << "|H| = "  << MaxAbs(n*n, HCur) << ", ";
-			os << "det(H) = " << std::exp(logabsdet) << ", ";
-			os << "Bfgs = " << BfgsCur << ", ";
-			os << std::endl;
-		}
-		//
-		// check for convergence
+		// done printing final trach for these cases
 		if( MaxAbs(n, gProj) <= delta )
-			return (const char *) ("ok");
-
-		// corresponding value of x
-		for(i = 0; i < n; i++)
-		{	xNext[i] = xCur[i] + sCur[i];
-
-			// make sure do not go outside of box
-			if( xNext[i] < 0. )
-				xNext[i] = 0.;
-			if( xNext[i] > 1. )
-				xNext[i] = 1.;
+		{	assert( done );
+			return (const char *)("ok");
+		}
+		if( ItrCur >= ItrMax )
+		{	assert( done );
+			msg = "ItrMax reached without convergence";
+			return msg;
+		}
+		if( ItrCur >= ItrMax && MaxAbs(n, gProj) <= delta )
+			return (const char *)("ok");
+		if( ItrCur >= ItrMax )
+		{	msg = "ItrMax reached without convergence";
+			return msg;
 		}
 
-		// corresponding value of the objective function
-		msg = EvaluateFunction(os, obj, level, xNext, fNext);
-		if( strcmp(msg, "ok") != 0 )
+		double eta   = 1.;
+		fNext = PlusInfinity(double(0));
+		while( fNext == PlusInfinity(double(0)) && eta > MinRadius )
+		{
+			// corresponding value of x
+			for(i = 0; i < n; i++)
+			{	xNext[i] = xCur[i] + eta * sCur[i];
+
+				// make sure do not go outside of box
+				if( xNext[i] < 0. )
+					xNext[i] = 0.;
+				if( xNext[i] > 1. )
+					xNext[i] = 1.;
+			}
+
+			// corresponding value of the objective function
+			msg = "ok";
+			msg = EvaluateFunction(os, msg, obj, level, xNext, fNext);
+			if( strcmp(msg, "ok") != 0 )
+				return msg;
+
+			// check for value of + infinity
+			if( fNext == PlusInfinity(double(0)) && eta > MinRadius )
+				eta /= 2.;
+		}
+		msg = "objective is +infinity near current xCur";
+		if( fNext == PlusInfinity(double(0)) )
 			return msg;
 
 		// descent in objective and in the quadratic approximation
@@ -890,12 +954,10 @@ const char * QuasiNewton01Box(
 		}
 
 		// Line Search: extend this direction as long as good descent
-		double eta;
-		if( dq < 0. && df < AcceptRatio * dq )
-			eta = 1.;
-		else	eta = 0.;
+		if( dq > 0. || df > eta * AcceptRatio * dq )
+			eta = 0.;
 		double sNorm  = MaxAbs(n, sCur);
-		bool extend   = eta > 0.;
+		bool extend   = eta == 1.;
 		while( extend )
 		{	for(i = 0; i < n; i++)
 			{	xTmp[i] = xCur[i] + 2. * eta * sCur[i];
@@ -907,23 +969,30 @@ const char * QuasiNewton01Box(
 			}
 			// corresponding value of objective 
 			double fTmp;
-			msg = EvaluateFunction(os, obj, level, xTmp, fTmp);
+			msg = "ok";
+			msg = EvaluateFunction(os, msg, obj, level, xTmp, fTmp);
 			if( strcmp(msg, "ok") != 0 )
 				return msg;
 
 			extend = (fNext - fTmp) > AcceptRatio*gNormProj*sNorm*eta;
 			if( extend )
-			{	eta    = 2. * eta;
+			{	assert( fTmp != PlusInfinity(double(0)) );
+				eta    = 2. * eta;
 				fNext  = fTmp;
 				for(i = 0; i < n; i++)
 					xNext[i] = xTmp[i];
 			}
 		}
+		assert( fNext != PlusInfinity(double(0)) );
 
 		// must revaluate objective to evaluate gradient at xNext 
-		msg = EvaluateFunction(os, obj, level, xNext, fNext);
+		// (should use save and restore member functions of objective instead)
+		msg = "objective is +infinity (but previously was different for same x)";
+		msg = EvaluateFunction(os, msg, obj, level, xNext, fNext);
 		if( strcmp(msg, "ok") != 0 )
 			return msg;
+
+		assert( fNext != PlusInfinity(double(0)) );
 		msg = EvaluateGradient(os, obj, level, gNext);
 		if( strcmp(msg, "ok") != 0 )
 			return msg;
@@ -939,12 +1008,12 @@ const char * QuasiNewton01Box(
 		}
 
 		// finish up level 1 tracing
-		if( level >= 1 )
-		{	os << "k   = "  << ItrCur            << ", ";
-			os << "dq  = "  << dq << ", ";
-			os << "df  = "  << df << ", ";
-			os << "eta = "  << eta << ", ";
-			os << "Herr = " << Herr << std::endl;
+		if( abs(level) >= 1 )
+		{	os << "dq = "  << dq << ", ";
+				os << "df = "  << df << ", ";
+				os << "eta = "  << eta << ", ";
+			os << "Herr = " << Herr;
+			os << std::endl;
 		}
 
 		// flag indicating a change of state
@@ -985,10 +1054,12 @@ const char * QuasiNewton01Box(
 		if( xNext[index] > 1. )
 			xNext[index] = xCur[index] - StepSize;
 
-		msg = EvaluateFunction(os, obj, level, xNext, fNext);
+		msg = "objective is +infinity near xCur";
+		msg = EvaluateFunction(os, msg, obj, level, xNext, fNext);
 		if( strcmp(msg, "ok") != 0 )
 			return msg;
 
+		assert( fNext != PlusInfinity(double(0)) );
 		msg = EvaluateGradient(os, obj, level, gNext);
 		if( strcmp(msg, "ok") != 0 )
 			return msg;

@@ -25,7 +25,9 @@ libspkopt_la_SOURCES = \
 	MaxAbs.cpp \
 	NearEqual.cpp \
 	Next.cpp \
+	PlusInfinity.cpp \
 	QuadBox.cpp \
+	QuadFixed.cpp \
 	QuasiNewton01Box.cpp \
 	Residual.cpp \
         ADDefine.h \
@@ -41,7 +43,9 @@ libspkopt_la_SOURCES = \
 	NearEqual.h \
         min.h \
 	Next.h \
+	PlusInfinity.h \
 	QuadBox.h \
+	QuadFixed.h \
 	QuasiNewton01Box.h \
 	Residual.h \
         vector.h
@@ -53,7 +57,9 @@ libspkopt_release_la_SOURCES = \
 	MaxAbs.cpp \
 	NearEqual.cpp \
 	Next.cpp \
+	PlusInfinity.cpp \
 	QuadBox.cpp \
+	QuadFixed.cpp \
 	QuasiNewton01Box.cpp \
 	Residual.cpp \
         ADDefine.h \
@@ -69,7 +75,9 @@ libspkopt_release_la_SOURCES = \
 	NearEqual.h \
         min.h \
 	Next.h \
+	PlusInfinity.h \
 	QuadBox.h \
+	QuadFixed.h \
 	QuasiNewton01Box.h \
 	Residual.h \
         vector.h
@@ -88,7 +96,9 @@ pkginclude_HEADERS = \
 	NearEqual.h \
         min.h \
 	Next.h \
+	PlusInfinity.h \
 	QuadBox.h \
+	QuadFixed.h \
 	QuasiNewton01Box.h \
 	Residual.h \
         vector.h
