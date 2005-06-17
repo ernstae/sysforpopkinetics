@@ -18,7 +18,6 @@ License can be found in the COPYING file in the root directory of this
 distribution.
 -----------------------------------------------------------------------
 Author: Brad Bell (brad@apl.washington.edu)
-Version: 04-01-15
 
 */
 // BEGIN PROGRAM
@@ -95,7 +94,7 @@ bool ExpLeastSquares(std::string &Msg)
 {	bool                   ok = true;
 	const char * msg;
 	std::ostream            &os = std::cout;
-	const size_t          level = 0;
+	const int             level = 0;
 	const size_t         ItrMax = 100;
 	const size_t              n = 4;
 	const size_t        QuadMax = 20 * ItrMax;

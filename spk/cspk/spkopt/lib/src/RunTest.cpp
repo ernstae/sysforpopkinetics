@@ -18,7 +18,7 @@ License can be found in the COPYING file in the root directory of this
 distribution.
 -----------------------------------------------------------------------
 Author: Brad Bell (brad@apl.washington.edu)
-Version: 03-10-07
+
 */
 
 # include "Residual.h"
@@ -42,6 +42,7 @@ extern bool Test_04_02_18(std::string &msg);
 extern bool LinearObjective(std::string &msg);
 extern bool SingularUpdate(std::string &msg);
 extern bool ResidualIncrease(std::string &msg);
+extern bool PlusInfinity(std::string &msg);
 
 static bool RunTest(bool TestOk(std::string &msg), char *name)
 {	bool ok;
@@ -74,6 +75,7 @@ int main(void)
 	ok &= RunTest(LinearObjective,   "LinearObjective  ");
 	ok &= RunTest(SingularUpdate,    "SingularUpdate   ");
 	ok &= RunTest(ResidualIncrease,  "ResidualIncrease ");
+	ok &= RunTest(PlusInfinity,      "PlusInfinity     ");
 
 	if( ok )
 		return 0;

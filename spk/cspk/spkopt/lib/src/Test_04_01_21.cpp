@@ -18,7 +18,6 @@ License can be found in the COPYING file in the root directory of this
 distribution.
 -----------------------------------------------------------------------
 Author: Brad Bell (brad@apl.washington.edu)
-Version: 04-01-27
 
 */
 // BEGIN PROGRAM
@@ -242,7 +241,7 @@ bool Test_04_01_21(std::string &Msg)
 	const double      epsilon = 1e-10;
 	const char * msg;
 	std::ostream            &os = std::cout;
-	const size_t          level = 0;
+	const int             level = 0;
 	const size_t         ItrMax = 100;
 	const size_t              n = 3;
 	const size_t        QuadMax = 20 * ItrMax;

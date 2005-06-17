@@ -20,7 +20,7 @@ License can be found in the COPYING file in the root directory of this
 distribution.
 -----------------------------------------------------------------------
 Author: Brad Bell (brad@apl.washington.edu)
-Version: 03-10-07
+
 */
 
 /*

@@ -134,7 +134,7 @@ private:
 bool Degenerate(std::string &Msg)
 {	bool                   ok = true;
 	std::ostream            &os = std::cout;
-	const size_t          level = 0;
+	const int             level = 0;
 	const size_t         ItrMax = 20;
 	const size_t              n = 3;
 	const size_t        QuadMax = 20 * ItrMax;

@@ -19,10 +19,10 @@ distribution.
 -----------------------------------------------------------------------
 Software:   Brad Bell (brad@apl.washington.edu)
 Mathematics: Brad Bell & Jim Burke (burke@math.washington.edu)
-Version: 03-12-22
 
 $begin QuadBox$$
 $spell
+	eps
 	sstream
 	ostringstream
 	buf
