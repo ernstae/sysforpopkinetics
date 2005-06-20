@@ -41,11 +41,26 @@ class NonmemTranslator : public ClientTranslator
     std::string EPS;
     std::string OMEGA;
     std::string SIGMA;
+    std::string PRED;
     std::string RES;
     std::string WRES;
     std::string ETARES;
     std::string WETARES;
-    std::string PRED;
+    std::string IPRED;
+    std::string IRES;
+    std::string IWRES;
+    std::string IETARES;
+    std::string IWETARES;
+    std::string PPRED;
+    std::string PRES;
+    std::string PWRES;
+    std::string PETARES;
+    std::string PWETARES;
+    std::string CPRED;
+    std::string CRES;
+    std::string CWRES;
+    std::string CETARES;
+    std::string CWETARES;
     std::string DV;
     std::string ORGDV;
     std::string MDV;
@@ -459,7 +474,7 @@ class NonmemTranslator : public ClientTranslator
   bool              myPopWriteCheckpoint;
 
   unsigned int      mySubproblemsN;   
-  bool              myIsEtaOut;
+  bool              myIsPosthoc;
   bool              myIsRestart;
   unsigned int      myThetaLen;
   unsigned int      myOmegaDim;

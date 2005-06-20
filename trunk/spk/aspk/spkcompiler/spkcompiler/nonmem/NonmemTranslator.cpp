@@ -143,7 +143,7 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     myIntegMethod       ( PLAIN ),
     myIntegNumberEvals  ( 1 ), // this is a vector
     myIntegNEvals       ( 1 ),
-    myIsEtaOut          ( false ),
+    myIsPosthoc         ( true ),
     myIsRestart         ( false ),
     myIndWriteCheckpoint( true ),
     myPopWriteCheckpoint( true ),
@@ -176,152 +176,197 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
 {
   table = ClientTranslator::getSymbolTable();
 
-  DefaultStr.THETA   = "THETA";
-  DefaultStr.ETA     = "ETA";
-  DefaultStr.EPS     = "EPS";
-  DefaultStr.OMEGA   = "OMEGA";
-  DefaultStr.SIGMA   = "SIGMA";
-  DefaultStr.RES     = "RES";
-  DefaultStr.WRES    = "WRES";
-  DefaultStr.ETARES  = "ETARES";
-  DefaultStr.WETARES = "WETARES";
-  DefaultStr.PRED    = "PRED";
-  DefaultStr.DV      = "DV";
-  DefaultStr.ORGDV   = "ORGDV";
-  DefaultStr.MDV     = "MDV";
-  DefaultStr.ID      = "ID";
-  DefaultStr.F       = "F";
-  DefaultStr.Y       = "Y";
-  DefaultStr.T       = "T";
-  DefaultStr.P       = "P";
-  DefaultStr.A       = "A";
-  DefaultStr.DADT    = "DADT";
+  DefaultStr.THETA    = "THETA";
+  DefaultStr.ETA      = "ETA";
+  DefaultStr.EPS      = "EPS";
+  DefaultStr.OMEGA    = "OMEGA";
+  DefaultStr.SIGMA    = "SIGMA";
+  DefaultStr.PRED     = "PRED";
+  DefaultStr.RES      = "RES";
+  DefaultStr.WRES     = "WRES";
+  DefaultStr.ETARES   = "ETARES";
+  DefaultStr.WETARES  = "WETARES";
+  DefaultStr.IPRED    = "IPRED";
+  DefaultStr.IRES     = "IRES";
+  DefaultStr.IWRES    = "IWRES";
+  DefaultStr.IETARES  = "IETARES";
+  DefaultStr.IWETARES = "IWETARES";
+  DefaultStr.PPRED    = "PPRED";
+  DefaultStr.PRES     = "PRES";
+  DefaultStr.PWRES    = "PWRES";
+  DefaultStr.PETARES  = "PETARES";
+  DefaultStr.PWETARES = "PWETARES";
+  DefaultStr.CPRED    = "CPRED";
+  DefaultStr.CRES     = "CRES";
+  DefaultStr.CWRES    = "CWRES";
+  DefaultStr.CETARES  = "CETARES";
+  DefaultStr.CWETARES = "CWETARES";
+  DefaultStr.DV       = "DV";
+  DefaultStr.ORGDV    = "ORGDV";
+  DefaultStr.MDV      = "MDV";
+  DefaultStr.ID       = "ID";
+  DefaultStr.F        = "F";
+  DefaultStr.Y        = "Y";
+  DefaultStr.T        = "T";
+  DefaultStr.P        = "P";
+  DefaultStr.A        = "A";
+  DefaultStr.DADT     = "DADT";
 
-  UserStr.THETA      = DefaultStr.THETA;
-  UserStr.ETA        = DefaultStr.ETA;
-  UserStr.EPS        = DefaultStr.EPS;
-  UserStr.OMEGA      = DefaultStr.OMEGA;
-  UserStr.SIGMA      = DefaultStr.SIGMA;
-  UserStr.RES        = DefaultStr.RES;
-  UserStr.WRES       = DefaultStr.WRES;
-  UserStr.ETARES     = DefaultStr.ETARES;
-  UserStr.WETARES    = DefaultStr.WETARES;
-  UserStr.PRED       = DefaultStr.PRED;
-  UserStr.DV         = DefaultStr.DV;
-  UserStr.ORGDV      = DefaultStr.ORGDV;
-  UserStr.MDV        = DefaultStr.MDV;
-  UserStr.ID         = DefaultStr.ID;
-  UserStr.F          = DefaultStr.F;
-  UserStr.Y          = DefaultStr.Y;
-  UserStr.T          = DefaultStr.T;
-  UserStr.P          = DefaultStr.P;
-  UserStr.A          = DefaultStr.A;
-  UserStr.DADT       = DefaultStr.DADT;
+  UserStr.THETA       = DefaultStr.THETA;
+  UserStr.ETA         = DefaultStr.ETA;
+  UserStr.EPS         = DefaultStr.EPS;
+  UserStr.OMEGA       = DefaultStr.OMEGA;
+  UserStr.SIGMA       = DefaultStr.SIGMA;
+  UserStr.PRED        = DefaultStr.PRED;
+  UserStr.RES         = DefaultStr.RES;
+  UserStr.WRES        = DefaultStr.WRES;
+  UserStr.ETARES      = DefaultStr.ETARES;
+  UserStr.WETARES     = DefaultStr.WETARES;
+  UserStr.IPRED       = DefaultStr.IPRED;
+  UserStr.IRES        = DefaultStr.IRES;
+  UserStr.IWRES       = DefaultStr.IWRES;
+  UserStr.IETARES     = DefaultStr.IETARES;
+  UserStr.IWETARES    = DefaultStr.IWETARES;
+  UserStr.PPRED       = DefaultStr.PPRED;
+  UserStr.PRES        = DefaultStr.PRES;
+  UserStr.PWRES       = DefaultStr.PWRES;
+  UserStr.PETARES     = DefaultStr.PETARES;
+  UserStr.PWETARES    = DefaultStr.PWETARES;
+  UserStr.CPRED       = DefaultStr.CPRED;
+  UserStr.CRES        = DefaultStr.CRES;
+  UserStr.CWRES       = DefaultStr.CWRES;
+  UserStr.CETARES     = DefaultStr.CETARES;
+  UserStr.CWETARES    = DefaultStr.CWETARES;
+  UserStr.DV          = DefaultStr.DV;
+  UserStr.ORGDV       = DefaultStr.ORGDV;
+  UserStr.MDV         = DefaultStr.MDV;
+  UserStr.ID          = DefaultStr.ID;
+  UserStr.F           = DefaultStr.F;
+  UserStr.Y           = DefaultStr.Y;
+  UserStr.T           = DefaultStr.T;
+  UserStr.P           = DefaultStr.P;
+  UserStr.A           = DefaultStr.A;
+  UserStr.DADT        = DefaultStr.DADT;
 
   // These are used as insensitive search keys to find the values of
   // NONMEM-predefined variables in the symbol table or to be extracted
   // as C++ variable names when cases are supposed to be insensitive.
-  KeyStr.THETA       = SymbolTable::key( DefaultStr.THETA );
-  KeyStr.ETA         = SymbolTable::key( DefaultStr.ETA );
-  KeyStr.EPS         = SymbolTable::key( DefaultStr.EPS );
-  KeyStr.OMEGA       = SymbolTable::key( DefaultStr.OMEGA );
-  KeyStr.SIGMA       = SymbolTable::key( DefaultStr.SIGMA );
-  KeyStr.RES         = SymbolTable::key( DefaultStr.RES );
-  KeyStr.WRES        = SymbolTable::key( DefaultStr.WRES );
-  KeyStr.ETARES      = SymbolTable::key( DefaultStr.ETARES );
-  KeyStr.WETARES     = SymbolTable::key( DefaultStr.WETARES );
-  KeyStr.PRED        = SymbolTable::key( DefaultStr.PRED );
-  KeyStr.DV          = SymbolTable::key( DefaultStr.DV );
-  KeyStr.ORGDV       = SymbolTable::key( DefaultStr.ORGDV );
-  KeyStr.MDV         = SymbolTable::key( DefaultStr.MDV );
-  KeyStr.ID          = SymbolTable::key( DefaultStr.ID );
-  KeyStr.F           = SymbolTable::key( DefaultStr.F );
-  KeyStr.Y           = SymbolTable::key( DefaultStr.Y );
-  KeyStr.T           = SymbolTable::key( DefaultStr.T );
-  KeyStr.P           = SymbolTable::key( DefaultStr.P );
-  KeyStr.A           = SymbolTable::key( DefaultStr.A );
-  KeyStr.DADT        = SymbolTable::key( DefaultStr.DADT );
+  KeyStr.THETA        = SymbolTable::key( DefaultStr.THETA );
+  KeyStr.ETA          = SymbolTable::key( DefaultStr.ETA );
+  KeyStr.EPS          = SymbolTable::key( DefaultStr.EPS );
+  KeyStr.OMEGA        = SymbolTable::key( DefaultStr.OMEGA );
+  KeyStr.SIGMA        = SymbolTable::key( DefaultStr.SIGMA );
+  KeyStr.PRED         = SymbolTable::key( DefaultStr.PRED );
+  KeyStr.RES          = SymbolTable::key( DefaultStr.RES );
+  KeyStr.WRES         = SymbolTable::key( DefaultStr.WRES );
+  KeyStr.ETARES       = SymbolTable::key( DefaultStr.ETARES );
+  KeyStr.WETARES      = SymbolTable::key( DefaultStr.WETARES );
+  KeyStr.IPRED        = SymbolTable::key( DefaultStr.IPRED );
+  KeyStr.IRES         = SymbolTable::key( DefaultStr.IRES );
+  KeyStr.IWRES        = SymbolTable::key( DefaultStr.IWRES );
+  KeyStr.IETARES      = SymbolTable::key( DefaultStr.IETARES );
+  KeyStr.IWETARES     = SymbolTable::key( DefaultStr.IWETARES );
+  KeyStr.PPRED        = SymbolTable::key( DefaultStr.PPRED );
+  KeyStr.PRES         = SymbolTable::key( DefaultStr.PRES );
+  KeyStr.PWRES        = SymbolTable::key( DefaultStr.PWRES );
+  KeyStr.PETARES      = SymbolTable::key( DefaultStr.PETARES );
+  KeyStr.PWETARES     = SymbolTable::key( DefaultStr.PWETARES );
+  KeyStr.CPRED        = SymbolTable::key( DefaultStr.CPRED );
+  KeyStr.CRES         = SymbolTable::key( DefaultStr.CRES );
+  KeyStr.CWRES        = SymbolTable::key( DefaultStr.CWRES );
+  KeyStr.CETARES      = SymbolTable::key( DefaultStr.CETARES );
+  KeyStr.CWETARES     = SymbolTable::key( DefaultStr.CWETARES );
+  KeyStr.DV           = SymbolTable::key( DefaultStr.DV );
+  KeyStr.ORGDV        = SymbolTable::key( DefaultStr.ORGDV );
+  KeyStr.MDV          = SymbolTable::key( DefaultStr.MDV );
+  KeyStr.ID           = SymbolTable::key( DefaultStr.ID );
+  KeyStr.F            = SymbolTable::key( DefaultStr.F );
+  KeyStr.Y            = SymbolTable::key( DefaultStr.Y );
+  KeyStr.T            = SymbolTable::key( DefaultStr.T );
+  KeyStr.P            = SymbolTable::key( DefaultStr.P );
+  KeyStr.A            = SymbolTable::key( DefaultStr.A );
+  KeyStr.DADT         = SymbolTable::key( DefaultStr.DADT );
 
   // TAG names
-  X_DESCRIPTION     = XMLString::transcode( C_DESCRIPTION );
-  X_IN              = XMLString::transcode( C_IN );
-  X_NONMEM          = XMLString::transcode( C_NONMEM );
-  X_POP_ANALYSIS    = XMLString::transcode( C_POP_ANALYSIS );
-  X_IND_ANALYSIS    = XMLString::transcode( C_IND_ANALYSIS );
-  X_CONSTRAINT      = XMLString::transcode( C_CONSTRAINT );
-  X_MONTE_CARLO     = XMLString::transcode( C_MONTE_CARLO );
-  X_MODEL           = XMLString::transcode( C_MODEL );
-  X_ADVAN           = XMLString::transcode( C_ADVAN );
-  X_TRANS           = XMLString::transcode( C_TRANS );
-  X_PRED            = XMLString::transcode( C_PRED );
-  X_COMP_MODEL      = XMLString::transcode( C_COMP_MODEL );
-  X_DIFFEQN         = XMLString::transcode( C_DIFFEQN );
-  X_PK              = XMLString::transcode( C_PK );
-  X_ERROR           = XMLString::transcode( C_ERROR );
-  X_PRESENTATION    = XMLString::transcode( C_PRESENTATION );
-  X_TABLE           = XMLString::transcode( C_TABLE );
-  X_SCATTERPLOT     = XMLString::transcode( C_SCATTERPLOT );
-  X_COLUMN          = XMLString::transcode( C_COLUMN );
-  X_LOW             = XMLString::transcode( C_LOW );
-  X_UP              = XMLString::transcode( C_UP );
-  X_LABEL           = XMLString::transcode( C_LABEL );
-  X_LABELS          = XMLString::transcode( C_LABELS );
-  X_X               = XMLString::transcode( C_X );
-  X_Y               = XMLString::transcode( C_Y );
-  X_SPLIT           = XMLString::transcode( C_SPLIT );
-  X_THETA           = XMLString::transcode( C_THETA );
-  X_OMEGA           = XMLString::transcode( C_OMEGA );
-  X_SIGMA           = XMLString::transcode( C_SIGMA );
-  X_SIMULATION      = XMLString::transcode( C_SIMULATION );
-  X_POP_STAT        = XMLString::transcode( C_POP_STAT );
-  X_IND_STAT        = XMLString::transcode( C_IND_STAT );
+  X_DESCRIPTION       = XMLString::transcode( C_DESCRIPTION );
+  X_IN                = XMLString::transcode( C_IN );
+  X_NONMEM            = XMLString::transcode( C_NONMEM );
+  X_POP_ANALYSIS      = XMLString::transcode( C_POP_ANALYSIS );
+  X_IND_ANALYSIS      = XMLString::transcode( C_IND_ANALYSIS );
+  X_CONSTRAINT        = XMLString::transcode( C_CONSTRAINT );
+  X_MONTE_CARLO       = XMLString::transcode( C_MONTE_CARLO );
+  X_MODEL             = XMLString::transcode( C_MODEL );
+  X_ADVAN             = XMLString::transcode( C_ADVAN );
+  X_TRANS             = XMLString::transcode( C_TRANS );
+  X_PRED              = XMLString::transcode( C_PRED );
+  X_COMP_MODEL        = XMLString::transcode( C_COMP_MODEL );
+  X_DIFFEQN           = XMLString::transcode( C_DIFFEQN );
+  X_PK                = XMLString::transcode( C_PK );
+  X_ERROR             = XMLString::transcode( C_ERROR );
+  X_PRESENTATION      = XMLString::transcode( C_PRESENTATION );
+  X_TABLE             = XMLString::transcode( C_TABLE );
+  X_SCATTERPLOT       = XMLString::transcode( C_SCATTERPLOT );
+  X_COLUMN            = XMLString::transcode( C_COLUMN );
+  X_LOW               = XMLString::transcode( C_LOW );
+  X_UP                = XMLString::transcode( C_UP );
+  X_LABEL             = XMLString::transcode( C_LABEL );
+  X_LABELS            = XMLString::transcode( C_LABELS );
+  X_X                 = XMLString::transcode( C_X );
+  X_Y                 = XMLString::transcode( C_Y );
+  X_SPLIT             = XMLString::transcode( C_SPLIT );
+  X_THETA             = XMLString::transcode( C_THETA );
+  X_OMEGA             = XMLString::transcode( C_OMEGA );
+  X_SIGMA             = XMLString::transcode( C_SIGMA );
+  X_SIMULATION        = XMLString::transcode( C_SIMULATION );
+  X_POP_STAT          = XMLString::transcode( C_POP_STAT );
+  X_IND_STAT          = XMLString::transcode( C_IND_STAT );
 
   // Attribute names 
-  X_FIXED           = XMLString::transcode( C_FIXED );
-  X_VALUE           = XMLString::transcode( C_VALUE );
-  X_STRUCT          = XMLString::transcode( C_STRUCT );
-  X_DIMENSION       = XMLString::transcode( C_DIMENSION );
-  X_IS_ERR_OUT      = XMLString::transcode( C_IS_STDERROR_OUT );
-  X_IS_CORR_OUT     = XMLString::transcode( C_IS_CORRELATION_OUT );
-  X_IS_COV_OUT      = XMLString::transcode( C_IS_COVARIANCE_OUT );
-  X_IS_INV_COV_OUT  = XMLString::transcode( C_IS_INVERSE_COVARIANCE_OUT );
-  X_IS_COEF_OUT     = XMLString::transcode( C_IS_COEFFICIENT_OUT );
-  X_IS_CONF_OUT     = XMLString::transcode( C_IS_CONFIDENCE_OUT );
-  X_APPROXIMATION   = XMLString::transcode( C_APPROXIMATION );
-  X_METHOD          = XMLString::transcode( C_METHOD );
-  X_NUMBEREVAL      = XMLString::transcode( C_NUMBEREVAL );
-  X_POP_SIZE        = XMLString::transcode( C_POP_SIZE  );
-  X_IS_ESTIMATION   = XMLString::transcode( C_IS_ESTIMATION );
-  X_IS_ETA_OUT      = XMLString::transcode( C_IS_ETA_OUT );
-  X_IS_RESTART      = XMLString::transcode( C_IS_RESTART );
-  X_DATA_LABELS     = XMLString::transcode( C_DATA_LABELS );
-  X_FILENAME        = XMLString::transcode( C_FILENAME );
-  X_NAME            = XMLString::transcode( C_NAME );
-  X_SYNONYM         = XMLString::transcode( C_SYNONYM );
-  X_LENGTH          = XMLString::transcode( C_LENGTH );
-  X_SEED            = XMLString::transcode( C_SEED );
-  X_SUBPROBLEMS     = XMLString::transcode( C_SUBPROBLEMS );
-  X_COVARIANCE_FORM = XMLString::transcode( C_COVARIANCE_FORM );
-  X_MITR            = XMLString::transcode( C_MITR );
-  X_SIG_DIGITS      = XMLString::transcode( C_SIG_DIGITS );
+  X_FIXED             = XMLString::transcode( C_FIXED );
+  X_VALUE             = XMLString::transcode( C_VALUE );
+  X_STRUCT            = XMLString::transcode( C_STRUCT );
+  X_DIMENSION         = XMLString::transcode( C_DIMENSION );
+  X_IS_ERR_OUT        = XMLString::transcode( C_IS_STDERROR_OUT );
+  X_IS_CORR_OUT       = XMLString::transcode( C_IS_CORRELATION_OUT );
+  X_IS_COV_OUT        = XMLString::transcode( C_IS_COVARIANCE_OUT );
+  X_IS_INV_COV_OUT    = XMLString::transcode( C_IS_INVERSE_COVARIANCE_OUT );
+  X_IS_COEF_OUT       = XMLString::transcode( C_IS_COEFFICIENT_OUT );
+  X_IS_CONF_OUT       = XMLString::transcode( C_IS_CONFIDENCE_OUT );
+  X_APPROXIMATION     = XMLString::transcode( C_APPROXIMATION );
+  X_METHOD            = XMLString::transcode( C_METHOD );
+  X_NUMBEREVAL        = XMLString::transcode( C_NUMBEREVAL );
+  X_POP_SIZE          = XMLString::transcode( C_POP_SIZE  );
+  X_IS_ESTIMATION     = XMLString::transcode( C_IS_ESTIMATION );
+  X_IS_ETA_OUT        = XMLString::transcode( C_IS_ETA_OUT );
+  X_IS_RESTART        = XMLString::transcode( C_IS_RESTART );
+  X_DATA_LABELS       = XMLString::transcode( C_DATA_LABELS );
+  X_FILENAME          = XMLString::transcode( C_FILENAME );
+  X_NAME              = XMLString::transcode( C_NAME );
+  X_SYNONYM           = XMLString::transcode( C_SYNONYM );
+  X_LENGTH            = XMLString::transcode( C_LENGTH );
+  X_SEED              = XMLString::transcode( C_SEED );
+  X_SUBPROBLEMS       = XMLString::transcode( C_SUBPROBLEMS );
+  X_COVARIANCE_FORM   = XMLString::transcode( C_COVARIANCE_FORM );
+  X_MITR              = XMLString::transcode( C_MITR );
+  X_SIG_DIGITS        = XMLString::transcode( C_SIG_DIGITS );
 
   // Attribute values
-  X_YES             = XMLString::transcode( C_YES );
-  X_NO              = XMLString::transcode( C_NO );
-  X_DIAGONAL        = XMLString::transcode( C_DIAGONAL );
-  X_BLOCK           = XMLString::transcode( C_BLOCK );
-  X_COV_R           = XMLString::transcode( C_COV_R );
-  X_COV_RSR         = XMLString::transcode( C_COV_RSR );
-  X_COV_S           = XMLString::transcode( C_COV_S );
-  X_COV_H           = XMLString::transcode( C_COV_H );
-  X_COV_HSH         = XMLString::transcode( C_COV_HSH );
-  X_FO              = XMLString::transcode( C_FO );
-  X_FOCE            = XMLString::transcode( C_FOCE );
-  X_LAPLACE         = XMLString::transcode( C_LAPLACE );
-  X_ANALYTIC        = XMLString::transcode( C_ANALYTIC );
-  X_GRID            = XMLString::transcode( C_GRID );
-  X_PLAIN           = XMLString::transcode( C_PLAIN );
-  X_MISER           = XMLString::transcode( C_MISER );
+  X_YES               = XMLString::transcode( C_YES );
+  X_NO                = XMLString::transcode( C_NO );
+  X_DIAGONAL          = XMLString::transcode( C_DIAGONAL );
+  X_BLOCK             = XMLString::transcode( C_BLOCK );
+  X_COV_R             = XMLString::transcode( C_COV_R );
+  X_COV_RSR           = XMLString::transcode( C_COV_RSR );
+  X_COV_S             = XMLString::transcode( C_COV_S );
+  X_COV_H             = XMLString::transcode( C_COV_H );
+  X_COV_HSH           = XMLString::transcode( C_COV_HSH );
+  X_FO                = XMLString::transcode( C_FO );
+  X_FOCE              = XMLString::transcode( C_FOCE );
+  X_LAPLACE           = XMLString::transcode( C_LAPLACE );
+  X_ANALYTIC          = XMLString::transcode( C_ANALYTIC );
+  X_GRID              = XMLString::transcode( C_GRID );
+  X_PLAIN             = XMLString::transcode( C_PLAIN );
+  X_MISER             = XMLString::transcode( C_MISER );
 
   myPopEpsilon = pow( 10.0, -(mySigDigits+1.0) );
   myIndEpsilon = pow( 10.0, -(mySigDigits+1.0) );
@@ -750,6 +795,7 @@ void NonmemTranslator::parseSource()
   else
     UserStr.EPS = DefaultStr.EPS;
 
+  // PRED
   if( (p = table->findi( KeyStr.PRED )) != Symbol::empty() )
     UserStr.PRED = p->name;
   else
@@ -758,6 +804,7 @@ void NonmemTranslator::parseSource()
       UserStr.PRED = DefaultStr.PRED;
     }
 
+  // RES
   if( (p = table->findi( KeyStr.RES )) != Symbol::empty() )
     UserStr.RES = p->name;
   else
@@ -766,6 +813,7 @@ void NonmemTranslator::parseSource()
       UserStr.RES = DefaultStr.RES;
     }
 
+  // WRES
   if( (p = table->findi( KeyStr.WRES )) != Symbol::empty() )
     UserStr.WRES = p->name;
   else
@@ -774,8 +822,36 @@ void NonmemTranslator::parseSource()
       UserStr.WRES = DefaultStr.WRES;
     }
 
+  // IPRED
+  if( (p = table->findi( KeyStr.IPRED )) != Symbol::empty() )
+    UserStr.IPRED = p->name;
+  else
+    {
+      table->insertUserVar( DefaultStr.IPRED );
+      UserStr.IPRED = DefaultStr.IPRED;
+    }
+
+  // IRES
+  if( (p = table->findi( KeyStr.IRES )) != Symbol::empty() )
+    UserStr.IRES = p->name;
+  else
+    {
+      table->insertUserVar( DefaultStr.IRES );
+      UserStr.IRES = DefaultStr.IRES;
+    }
+
+  // IWRES
+  if( (p = table->findi( KeyStr.IWRES )) != Symbol::empty() )
+    UserStr.IWRES = p->name;
+  else
+    {
+      table->insertUserVar( DefaultStr.IWRES );
+      UserStr.IWRES = DefaultStr.IWRES;
+    }
+
   if( ourTarget == POP )
     {
+      // ETARES
       if( (p = table->findi( KeyStr.ETARES )) != Symbol::empty() )
 	UserStr.ETARES = p->name;
       else
@@ -783,6 +859,8 @@ void NonmemTranslator::parseSource()
 	  table->insertNMVector( DefaultStr.ETARES, myEtaLen );
 	  UserStr.ETARES = DefaultStr.ETARES;
 	}
+
+      // WETARES
       if( (p = table->findi( KeyStr.WETARES )) != Symbol::empty() )
 	UserStr.WETARES = p->name;
       else
@@ -790,8 +868,116 @@ void NonmemTranslator::parseSource()
 	  table->insertNMVector( DefaultStr.WETARES, myEtaLen );
 	  UserStr.WETARES = DefaultStr.WETARES;
 	}
+
+      // IETARES
+      if( (p = table->findi( KeyStr.IETARES )) != Symbol::empty() )
+	UserStr.IETARES = p->name;
+      else
+	{
+	  table->insertNMVector( DefaultStr.IETARES, myEtaLen );
+	  UserStr.IETARES = DefaultStr.IETARES;
+	}
+
+      // IWETARES
+      if( (p = table->findi( KeyStr.IWETARES )) != Symbol::empty() )
+	UserStr.IWETARES = p->name;
+      else
+	{
+	  table->insertNMVector( DefaultStr.IWETARES, myEtaLen );
+	  UserStr.IWETARES = DefaultStr.IWETARES;
+	}
+      // PPRED
+      if( (p = table->findi( KeyStr.PPRED )) != Symbol::empty() )
+	UserStr.PPRED = p->name;
+      else
+	{
+	  table->insertUserVar( DefaultStr.PPRED );
+	  UserStr.PPRED = DefaultStr.PPRED;
+	}
+      
+      // PRES
+      if( (p = table->findi( KeyStr.PRES )) != Symbol::empty() )
+	UserStr.PRES = p->name;
+      else
+	{
+	  table->insertUserVar( DefaultStr.PRES );
+	  UserStr.PRES = DefaultStr.PRES;
+	}
+      
+      // PWRES
+      if( (p = table->findi( KeyStr.PWRES )) != Symbol::empty() )
+	UserStr.PWRES = p->name;
+      else
+	{
+	  table->insertUserVar( DefaultStr.PWRES );
+	  UserStr.PWRES = DefaultStr.PWRES;
+	}
+
+      // PETARES
+      if( (p = table->findi( KeyStr.PETARES )) != Symbol::empty() )
+	UserStr.PETARES = p->name;
+      else
+	{
+	  table->insertNMVector( DefaultStr.PETARES, myEtaLen );
+	  UserStr.PETARES = DefaultStr.PETARES;
+	}
+
+      // PWETARES
+      if( (p = table->findi( KeyStr.PWETARES )) != Symbol::empty() )
+	UserStr.PWETARES = p->name;
+      else
+	{
+	  table->insertNMVector( DefaultStr.PWETARES, myEtaLen );
+	  UserStr.PWETARES = DefaultStr.PWETARES;
+	}
+
+      // CPRED
+      if( (p = table->findi( KeyStr.CPRED )) != Symbol::empty() )
+	UserStr.CPRED = p->name;
+      else
+	{
+	  table->insertUserVar( DefaultStr.CPRED );
+	  UserStr.CPRED = DefaultStr.CPRED;
+	}
+      
+      // CRES
+      if( (p = table->findi( KeyStr.CRES )) != Symbol::empty() )
+	UserStr.CRES = p->name;
+      else
+	{
+	  table->insertUserVar( DefaultStr.CRES );
+	  UserStr.CRES = DefaultStr.CRES;
+	}
+      
+      // CWRES
+      if( (p = table->findi( KeyStr.CWRES )) != Symbol::empty() )
+	UserStr.CWRES = p->name;
+      else
+	{
+	  table->insertUserVar( DefaultStr.CWRES );
+	  UserStr.CWRES = DefaultStr.CWRES;
+	}
+
+      // CETARES
+      if( (p = table->findi( KeyStr.CETARES )) != Symbol::empty() )
+	UserStr.CETARES = p->name;
+      else
+	{
+	  table->insertNMVector( DefaultStr.CETARES, myEtaLen );
+	  UserStr.CETARES = DefaultStr.CETARES;
+	}
+
+      // CWETARES
+      if( (p = table->findi( KeyStr.CWETARES )) != Symbol::empty() )
+	UserStr.CWETARES = p->name;
+      else
+	{
+	  table->insertNMVector( DefaultStr.CWETARES, myEtaLen );
+	  UserStr.CWETARES = DefaultStr.CWETARES;
+	}
     }
 
+  // MDV
   if( (p = table->findi( KeyStr.MDV )) != Symbol::empty() )
     UserStr.MDV = p->name;
   else
@@ -1152,16 +1338,15 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   //---------------------------------------------------------------------------------------
   // * is_eta_out = {yes, "no"}
   // * is_restart = {yes, "no"}
-  myIsEtaOut = false;
-  const XMLCh * xml_is_eta_out;
-  if( pop_analysis->hasAttribute( X_IS_ETA_OUT ) )
-    {
-      xml_is_eta_out = pop_analysis->getAttribute( X_IS_ETA_OUT );
-      myIsEtaOut = ( XMLString::equals( xml_is_eta_out, X_YES )? true : false );
-    }
-
   if( myIsEstimate )
     {
+      const XMLCh * xml_is_eta_out;
+      if( pop_analysis->hasAttribute( X_IS_ETA_OUT ) )
+	{
+	  xml_is_eta_out = pop_analysis->getAttribute( X_IS_ETA_OUT );
+	  myIsPosthoc = ( XMLString::equals( xml_is_eta_out, X_YES )? true : false );
+	}
+      
       const XMLCh * xml_is_restart;
       if( pop_analysis->hasAttribute( X_IS_RESTART ) )
 	{
@@ -3335,11 +3520,11 @@ void NonmemTranslator::generateIndData( ) const
 	  oIndData_h << "   std::vector<";
 	  if( isID )
 	    {
-	      oIndData_h << "   char *";
+	      oIndData_h << "char *";
 	    }
 	  else
 	    {
-	      oIndData_h << "   spk_ValueType";
+	      oIndData_h << "spk_ValueType";
 	    }
 	  oIndData_h << "> " << varName << ";" << endl;
 
@@ -3349,11 +3534,11 @@ void NonmemTranslator::generateIndData( ) const
 	      oIndData_h << "   std::vector<";
 	      if( isID )
 		{
-		  oIndData_h << "   char *";
+		  oIndData_h << "char *";
 		}
 	      else
 		{
-		  oIndData_h << "   spk_ValueType";
+		  oIndData_h << "spk_ValueType";
 		}
 	      oIndData_h << "> " << varAlias << ";" << endl;
 	    }
@@ -3370,10 +3555,16 @@ void NonmemTranslator::generateIndData( ) const
 	      || keyVarName == KeyStr.EPS 
 	      || keyVarName == KeyStr.ETARES
 	      || keyVarName == KeyStr.WETARES
+	      || keyVarName == KeyStr.IETARES
+	      || keyVarName == KeyStr.IWETARES
+	      || keyVarName == KeyStr.PETARES
+	      || keyVarName == KeyStr.PWETARES
+	      || keyVarName == KeyStr.CETARES
+	      || keyVarName == KeyStr.CWETARES
 	      || keyVarName == KeyStr.DADT
 	      || keyVarName == KeyStr.P
 	      || keyVarName == KeyStr.A )
-	    oIndData_h << "   std::vector< std::vector<spk_ValueType> > " << varName << ";" << endl;
+	    oIndData_h << "   std::vector<std::vector<spk_ValueType> > " << varName << ";" << endl;
 
 	  // The values of Omega and Sigma matrices are
 	  // rather expressed as ETA and EPS, respectively.
@@ -3403,18 +3594,33 @@ void NonmemTranslator::generateIndData( ) const
   // Public member declarations
   //----------------------------------------
   oIndData_h << "   int getNRecords() const;" << endl;
-  oIndData_h << "   const SPK_VA::valarray<double> getMeasurements() const;" << endl;
-  oIndData_h << "   int getRecordIndex( int measurementIndex ) const;" << endl;
-  oIndData_h << "   int getMeasurementIndex( int recordIndex ) const;" << endl;
-  oIndData_h << "   void replaceMeasurements( const SPK_VA::valarray<double>& yyi );"  << endl;
-  oIndData_h << "   void replacePred   ( const SPK_VA::valarray<double>& predIn );"     << endl;
-  oIndData_h << "   void replaceRes    ( const SPK_VA::valarray<double>& resIn );"     << endl;
-  oIndData_h << "   void replaceWRes   ( const SPK_VA::valarray<double>& wresIn );"    << endl;
+  oIndData_h << "   const SPK_VA::valarray<double> getMeasurements() const;"          << endl;
+  oIndData_h << "   int getRecordIndex( int measurementIndex ) const;"                << endl;
+  oIndData_h << "   int getMeasurementIndex( int recordIndex ) const;"                << endl;
+  oIndData_h << "   void replaceMeasurements( const SPK_VA::valarray<double>& yyi );" << endl;
+  oIndData_h << "   void replacePred   ( const SPK_VA::valarray<double>& predIn );"   << endl;
+  oIndData_h << "   void replaceRes    ( const SPK_VA::valarray<double>& ResIn );"    << endl;
+  oIndData_h << "   void replaceWRes   ( const SPK_VA::valarray<double>& WresIn );"   << endl;
+  oIndData_h << "   void replacePPred  ( const SPK_VA::valarray<double>& pPredIn );"  << endl;
+  oIndData_h << "   void replacePRes   ( const SPK_VA::valarray<double>& pResIn );"   << endl;
+  oIndData_h << "   void replacePWRes  ( const SPK_VA::valarray<double>& pWResIn );"  << endl;
+  oIndData_h << "   void replaceIPred  ( const SPK_VA::valarray<double>& iPredIn );"  << endl;
+  oIndData_h << "   void replaceIRes   ( const SPK_VA::valarray<double>& iResIn );"   << endl;
+  oIndData_h << "   void replaceIWRes  ( const SPK_VA::valarray<double>& iWresIn );"  << endl;
+  oIndData_h << "   void replaceCPred  ( const SPK_VA::valarray<double>& cPredIn );"  << endl;
+  oIndData_h << "   void replaceCRes   ( const SPK_VA::valarray<double>& cResIn );"   << endl;
+  oIndData_h << "   void replaceCWRes  ( const SPK_VA::valarray<double>& cWresIn );"  << endl;
   if( ourTarget == POP )
   {
-     oIndData_h << "   void replaceEta    ( const SPK_VA::valarray<double>& etaIn );"  << endl;
-     oIndData_h << "   void replaceEtaRes ( const SPK_VA::valarray<double>& etaresIn );"  << endl;
-     oIndData_h << "   void replaceWEtaRes( const SPK_VA::valarray<double>& wetaresIn );" << endl;
+     oIndData_h << "   void replaceEta     ( const SPK_VA::valarray<double>& etaIn );"      << endl;
+     oIndData_h << "   void replaceEtaRes  ( const SPK_VA::valarray<double>& EtaresIn );"  << endl;
+     oIndData_h << "   void replaceWEtaRes ( const SPK_VA::valarray<double>& WetaresIn );" << endl;
+     oIndData_h << "   void replaceIEtaRes ( const SPK_VA::valarray<double>& iEtaresIn );"  << endl;
+     oIndData_h << "   void replaceIWEtaRes( const SPK_VA::valarray<double>& iWetaresIn );" << endl;
+     oIndData_h << "   void replacePEtaRes ( const SPK_VA::valarray<double>& pEtaResIn );"  << endl;
+     oIndData_h << "   void replacePWEtaRes( const SPK_VA::valarray<double>& pWEtaResIn );" << endl;
+     oIndData_h << "   void replaceCEtaRes ( const SPK_VA::valarray<double>& cEtaResIn );"  << endl;
+     oIndData_h << "   void replaceCWEtaRes( const SPK_VA::valarray<double>& cWEtaResIn );" << endl;
   }
   oIndData_h << endl;
 
@@ -3570,25 +3776,90 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "      if( " << UserStr.MDV << "[i] != 1 )" << endl;
   oIndData_h << "          ++nY;" << endl;
   oIndData_h << "   }" << endl;
-  oIndData_h << endl;
   oIndData_h << "   measurements.resize( nY ); " << endl;
+  oIndData_h << endl;
+
+  oIndData_h << "   //" << endl;
+  oIndData_h << "   // Initialize scalar variables" << endl;
+  oIndData_h << "   //" << endl;
+  pInternalTable = internalTable->begin();
+  for( ; pInternalTable != internalTable->end(); pInternalTable++ )
+    {
+      const string label    = pInternalTable->second.name;
+      const string keyLabel = SymbolTable::key( label );
+      if( keyLabel == KeyStr.OMEGA 
+	  || keyLabel == KeyStr.SIGMA
+	  || keyLabel == KeyStr.THETA
+	  || keyLabel == KeyStr.ETA
+	  || keyLabel == KeyStr.ETARES
+	  || keyLabel == KeyStr.WETARES
+	  || keyLabel == KeyStr.IETARES
+	  || keyLabel == KeyStr.IWETARES
+	  || keyLabel == KeyStr.PETARES
+	  || keyLabel == KeyStr.PWETARES
+	  || keyLabel == KeyStr.CETARES
+	  || keyLabel == KeyStr.CWETARES
+	  || keyLabel == KeyStr.EPS
+	  || keyLabel == KeyStr.DADT
+	  || keyLabel == KeyStr.A
+	  || keyLabel == KeyStr.P
+	  )
+	{
+	  continue;
+	}
+
+      //
+      // Initialize place holders for computed values.
+      //
+      if( find( labels->begin(), labels->end(), pInternalTable->second.name ) 
+	  == labels->end() )
+	oIndData_h << "fill( " << label << ".begin(), " << label << ".end(), -99999 );" << endl;
+    }
+  oIndData_h << endl;
+  oIndData_h << "copy( " << UserStr.DV << ".begin(), " << UserStr.DV << ".end(), " << UserStr.ORGDV << ".begin() );" << endl;
+  oIndData_h << endl;
+
+  oIndData_h << "   //" << endl;
+  oIndData_h << "   // Resize and initialize vector variables" << endl;
+  oIndData_h << "   //" << endl;
   oIndData_h << "   jTojPrime.resize( nRecords );" << endl;
   oIndData_h << "   jPrimeToj.resize( nY );" << endl;
   oIndData_h << "   for( int j=0, jPrime=0; j<nRecords; j++ )" << endl;
   oIndData_h << "   {" << endl;
   if( myThetaLen > 0 )
-    oIndData_h << "      " << UserStr.THETA << "[j].resize( " << myThetaLen << " );" << endl;
+    {
+      oIndData_h << "      " << UserStr.THETA << "[j].resize( " << myThetaLen << " );" << endl;
+      oIndData_h << "      " << "fill( " << UserStr.THETA << "[j].begin(), " << UserStr.THETA << "[j].end(), -99999 );" << endl;
+    }
   if( myEtaLen > 0 )
     {
       oIndData_h << "      " << UserStr.ETA     << "[j].resize( " << myEtaLen << " );" << endl;
+      oIndData_h << "      " << "fill( " << UserStr.ETA << "[j].begin(), " << UserStr.ETA << "[j].end(), -99999 );" << endl;
       if( ourTarget == POP )
 	{
-	  oIndData_h << "      " << UserStr.ETARES  << "[j].resize( " << myEtaLen << " );" << endl;
-	  oIndData_h << "      " << UserStr.WETARES << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << UserStr.ETARES   << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << UserStr.WETARES  << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << UserStr.IETARES  << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << UserStr.IWETARES << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << UserStr.PETARES  << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << UserStr.PWETARES << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << UserStr.CETARES  << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << UserStr.CWETARES << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << "fill( " << UserStr.ETARES   << "[j].begin(), " << UserStr.ETARES   << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << UserStr.WETARES  << "[j].begin(), " << UserStr.WETARES  << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << UserStr.IETARES  << "[j].begin(), " << UserStr.IETARES  << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << UserStr.IWETARES << "[j].begin(), " << UserStr.IWETARES << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << UserStr.PETARES  << "[j].begin(), " << UserStr.PETARES  << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << UserStr.PWETARES << "[j].begin(), " << UserStr.PWETARES << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << UserStr.CETARES  << "[j].begin(), " << UserStr.CETARES  << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << UserStr.CWETARES << "[j].begin(), " << UserStr.CWETARES << "[j].end(), -99999 );" << endl;
 	}
     }
   if( myEpsLen > 0 )
-    oIndData_h << "      " << UserStr.EPS   << "[j].resize( " << myEpsLen << " );" << endl;
+    {
+      oIndData_h << "      " << UserStr.EPS   << "[j].resize( " << myEpsLen << " );" << endl;
+      oIndData_h << "      " << "fill( " << UserStr.EPS   << "[j].begin(), " << UserStr.EPS << "[j].end(), -99999 );" << endl;
+    }
 
   if( myModelSpec != PRED )
     {
@@ -3602,6 +3873,11 @@ void NonmemTranslator::generateIndData( ) const
 
       int nParams = table->findi( KeyStr.P    )->initial[0].size(); 
       oIndData_h << "      " << UserStr.P    << "[j].resize( " << nParams << " );" << endl;
+
+      oIndData_h << "      " << "fill( " << UserStr.DADT << "[j].begin(), " << UserStr.DADT << "[j].end(), -99999 );" << endl;
+      oIndData_h << "      " << "fill( " << UserStr.A    << "[j].begin(), " << UserStr.P    << "[j].end(), -99999 );" << endl;
+      oIndData_h << "      " << "fill( " << UserStr.P    << "[j].begin(), " << UserStr.A    << "[j].end(), -99999 );" << endl;
+
     }
 
   oIndData_h << "        if( " << UserStr.MDV << "[j] != 1 )" << endl;
@@ -3735,13 +4011,13 @@ void NonmemTranslator::generateIndData( ) const
   // replaceRes()
   // --------------------
   oIndData_h << "template <class spk_ValueType>" << endl;
-  oIndData_h << "void IndData<spk_ValueType>::replaceRes( const SPK_VA::valarray<double>& resIn )"     << endl;
+  oIndData_h << "void IndData<spk_ValueType>::replaceRes( const SPK_VA::valarray<double>& ResIn )"     << endl;
   oIndData_h << "{" << endl;
-  oIndData_h << "   assert( resIn.size() == nRecords );" << endl;
+  oIndData_h << "   assert( ResIn.size() == nRecords );" << endl;
   oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.RES << ".begin();" << endl;
   oIndData_h << "   for( int i=0; itr != " << UserStr.RES << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
-  oIndData_h << "      *itr = resIn[i];" << endl;
+  oIndData_h << "      *itr = ResIn[i];" << endl;
   oIndData_h << "   }" << endl;
   oIndData_h << "}" << endl;
   oIndData_h << endl;
@@ -3750,22 +4026,157 @@ void NonmemTranslator::generateIndData( ) const
   // replaceWRes()
   // --------------------
   oIndData_h << "template <class spk_ValueType>" << endl;
-  oIndData_h << "void IndData<spk_ValueType>::replaceWRes( const SPK_VA::valarray<double>& wresIn )"    << endl;
+  oIndData_h << "void IndData<spk_ValueType>::replaceWRes( const SPK_VA::valarray<double>& WResIn )"    << endl;
   oIndData_h << "{" << endl;
-  oIndData_h << "   assert( wresIn.size() == nRecords );" << endl;
+  oIndData_h << "   assert( WResIn.size() == nRecords );" << endl;
   oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.WRES << ".begin();" << endl;
   oIndData_h << "   for( int i=0; itr != " << UserStr.WRES << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
-  oIndData_h << "      *itr = wresIn[i];" << endl;
+  oIndData_h << "      *itr = WResIn[i];" << endl;
   oIndData_h << "   }" << endl;
   oIndData_h << "}" << endl;
   oIndData_h << endl;
 
   // --------------------
-  // replaceEta()
+  // replaceIPred()
   // --------------------
-  if( ourTarget == POP )
+  oIndData_h << "template <class spk_ValueType>" << endl;
+  oIndData_h << "void IndData<spk_ValueType>::replaceIPred( const SPK_VA::valarray<double>& iPredIn )"     << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "   assert( iPredIn.size() == nRecords );" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.IPRED << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != " << UserStr.IPRED << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   {" << endl;
+  oIndData_h << "      *itr = iPredIn[i];" << endl;
+  oIndData_h << "   }" << endl;
+  oIndData_h << "}" << endl;
+  oIndData_h << endl;
+
+  // --------------------
+  // replaceIRes()
+  // --------------------
+  oIndData_h << "template <class spk_ValueType>" << endl;
+  oIndData_h << "void IndData<spk_ValueType>::replaceIRes( const SPK_VA::valarray<double>& iResIn )"     << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "   assert( iResIn.size() == nRecords );" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.IRES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != " << UserStr.IRES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   {" << endl;
+  oIndData_h << "      *itr = iResIn[i];" << endl;
+  oIndData_h << "   }" << endl;
+  oIndData_h << "}" << endl;
+  oIndData_h << endl;
+
+  // --------------------
+  // replaceIWRes()
+  // --------------------
+  oIndData_h << "template <class spk_ValueType>" << endl;
+  oIndData_h << "void IndData<spk_ValueType>::replaceIWRes( const SPK_VA::valarray<double>& iWResIn )"    << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "   assert( iWResIn.size() == nRecords );" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.IWRES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != " << UserStr.IWRES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   {" << endl;
+  oIndData_h << "      *itr = iWResIn[i];" << endl;
+  oIndData_h << "   }" << endl;
+  oIndData_h << "}" << endl;
+  oIndData_h << endl;
+
+  // --------------------
+  // replacePPred()
+  // --------------------
+  oIndData_h << "template <class spk_ValueType>" << endl;
+  oIndData_h << "void IndData<spk_ValueType>::replacePPred( const SPK_VA::valarray<double>& pPredIn )"     << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "   assert( pPredIn.size() == nRecords );" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.PPRED << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != " << UserStr.PPRED << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   {" << endl;
+  oIndData_h << "      *itr = pPredIn[i];" << endl;
+  oIndData_h << "   }" << endl;
+  oIndData_h << "}" << endl;
+  oIndData_h << endl;
+
+  // --------------------
+  // replacePRes()
+  // --------------------
+  oIndData_h << "template <class spk_ValueType>" << endl;
+  oIndData_h << "void IndData<spk_ValueType>::replacePRes( const SPK_VA::valarray<double>& pResIn )"     << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "   assert( pResIn.size() == nRecords );" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.PRES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != " << UserStr.PRES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   {" << endl;
+  oIndData_h << "      *itr = pResIn[i];" << endl;
+  oIndData_h << "   }" << endl;
+  oIndData_h << "}" << endl;
+  oIndData_h << endl;
+
+  // --------------------
+  // replacePWRes()
+  // --------------------
+  oIndData_h << "template <class spk_ValueType>" << endl;
+  oIndData_h << "void IndData<spk_ValueType>::replacePWRes( const SPK_VA::valarray<double>& pWResIn )"    << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "   assert( pWResIn.size() == nRecords );" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.PWRES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != " << UserStr.PWRES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   {" << endl;
+  oIndData_h << "      *itr = pWResIn[i];" << endl;
+  oIndData_h << "   }" << endl;
+  oIndData_h << "}" << endl;
+  oIndData_h << endl;
+
+   // --------------------
+  // replaceCPred()
+  // --------------------
+  oIndData_h << "template <class spk_ValueType>" << endl;
+  oIndData_h << "void IndData<spk_ValueType>::replaceCPred( const SPK_VA::valarray<double>& cPredIn )"     << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "   assert( cPredIn.size() == nRecords );" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.CPRED << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != " << UserStr.CPRED << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   {" << endl;
+  oIndData_h << "      *itr = cPredIn[i];" << endl;
+  oIndData_h << "   }" << endl;
+  oIndData_h << "}" << endl;
+  oIndData_h << endl;
+
+  // --------------------
+  // replaceCRes()
+  // --------------------
+  oIndData_h << "template <class spk_ValueType>" << endl;
+  oIndData_h << "void IndData<spk_ValueType>::replaceCRes( const SPK_VA::valarray<double>& cResIn )"     << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "   assert( cResIn.size() == nRecords );" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.CRES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != " << UserStr.CRES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   {" << endl;
+  oIndData_h << "      *itr = cResIn[i];" << endl;
+  oIndData_h << "   }" << endl;
+  oIndData_h << "}" << endl;
+  oIndData_h << endl;
+
+  // --------------------
+  // replaceCWRes()
+  // --------------------
+  oIndData_h << "template <class spk_ValueType>" << endl;
+  oIndData_h << "void IndData<spk_ValueType>::replaceCWRes( const SPK_VA::valarray<double>& cWResIn )"    << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "   assert( cWResIn.size() == nRecords );" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.CWRES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != " << UserStr.CWRES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   {" << endl;
+  oIndData_h << "      *itr = cWResIn[i];" << endl;
+  oIndData_h << "   }" << endl;
+  oIndData_h << "}" << endl;
+  oIndData_h << endl;
+
+ if( ourTarget == POP )
     {
+      // --------------------
+      // replaceEta()
+      // --------------------
       oIndData_h << "template <class spk_ValueType>" << endl;
       oIndData_h << "void IndData<spk_ValueType>::replaceEta( const SPK_VA::valarray<double>& etaIn )"    << endl;
       oIndData_h << "{" << endl;
@@ -3781,20 +4192,19 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "}" << endl;
       oIndData_h << endl;
       
- 
       // --------------------
       // replaceEtaRes()
       // --------------------
       oIndData_h << "template <class spk_ValueType>" << endl;
-      oIndData_h << "void IndData<spk_ValueType>::replaceEtaRes( const SPK_VA::valarray<double>& etaresIn )"    << endl;
+      oIndData_h << "void IndData<spk_ValueType>::replaceEtaRes( const SPK_VA::valarray<double>& EtaResIn )"    << endl;
       oIndData_h << "{" << endl;
       oIndData_h << "   const int nEta = " << myEtaLen << ";" << endl;
-      oIndData_h << "   assert( etaresIn.size() == nEta );" << endl;
+      oIndData_h << "   assert( EtaResIn.size() == nEta );" << endl;
       oIndData_h << "   for( int i=0; i<nRecords; i++ )" << endl;
       oIndData_h << "   {" << endl;
       oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
       oIndData_h << "      {" << endl;
-      oIndData_h << "         " << UserStr.ETARES << "[i][j] = etaresIn[j];" << endl;
+      oIndData_h << "         " << UserStr.ETARES << "[i][j] = EtaResIn[j];" << endl;
       oIndData_h << "      }" << endl;
       oIndData_h << "   }" << endl;
       oIndData_h << "}" << endl;
@@ -3804,15 +4214,123 @@ void NonmemTranslator::generateIndData( ) const
       // replaceWEtaRes()
       // --------------------
       oIndData_h << "template <class spk_ValueType>" << endl;
-      oIndData_h << "void IndData<spk_ValueType>::replaceWEtaRes( const SPK_VA::valarray<double>& wetaresIn )"    << endl;
+      oIndData_h << "void IndData<spk_ValueType>::replaceWEtaRes( const SPK_VA::valarray<double>& WEtaResIn )"    << endl;
       oIndData_h << "{" << endl;
       oIndData_h << "   const int nEta = " << myEtaLen << ";" << endl;
-      oIndData_h << "   assert( wetaresIn.size() == nEta);" << endl;
+      oIndData_h << "   assert( WEtaResIn.size() == nEta );" << endl;
       oIndData_h << "   for( int i=0; i<nRecords; i++ )" << endl;
       oIndData_h << "   {" << endl;
       oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
       oIndData_h << "      {" << endl;
-      oIndData_h << "         " << UserStr.WETARES << "[i][j] = wetaresIn[j];" << endl;
+      oIndData_h << "         " << UserStr.WETARES << "[i][j] = WEtaResIn[j];" << endl;
+      oIndData_h << "      }" << endl;
+      oIndData_h << "   }" << endl;
+      oIndData_h << "}" << endl;
+      oIndData_h << endl;
+
+      // --------------------
+      // replaceIEtaRes()
+      // --------------------
+      oIndData_h << "template <class spk_ValueType>" << endl;
+      oIndData_h << "void IndData<spk_ValueType>::replaceIEtaRes( const SPK_VA::valarray<double>& iEtaResIn )"    << endl;
+      oIndData_h << "{" << endl;
+      oIndData_h << "   const int nEta = " << myEtaLen << ";" << endl;
+      oIndData_h << "   assert( iEtaResIn.size() == nEta );" << endl;
+      oIndData_h << "   for( int i=0; i<nRecords; i++ )" << endl;
+      oIndData_h << "   {" << endl;
+      oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
+      oIndData_h << "      {" << endl;
+      oIndData_h << "         " << UserStr.IETARES << "[i][j] = iEtaResIn[j];" << endl;
+      oIndData_h << "      }" << endl;
+      oIndData_h << "   }" << endl;
+      oIndData_h << "}" << endl;
+      oIndData_h << endl;
+      
+      // --------------------
+      // replaceIWEtaRes()
+      // --------------------
+      oIndData_h << "template <class spk_ValueType>" << endl;
+      oIndData_h << "void IndData<spk_ValueType>::replaceIWEtaRes( const SPK_VA::valarray<double>& iWEtaResIn )"    << endl;
+      oIndData_h << "{" << endl;
+      oIndData_h << "   const int nEta = " << myEtaLen << ";" << endl;
+      oIndData_h << "   assert( iWEtaResIn.size() == nEta );" << endl;
+      oIndData_h << "   for( int i=0; i<nRecords; i++ )" << endl;
+      oIndData_h << "   {" << endl;
+      oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
+      oIndData_h << "      {" << endl;
+      oIndData_h << "         " << UserStr.IWETARES << "[i][j] = iWEtaResIn[j];" << endl;
+      oIndData_h << "      }" << endl;
+      oIndData_h << "   }" << endl;
+      oIndData_h << "}" << endl;
+      oIndData_h << endl;
+ 
+      // --------------------
+      // replacePEtaRes()
+      // --------------------
+      oIndData_h << "template <class spk_ValueType>" << endl;
+      oIndData_h << "void IndData<spk_ValueType>::replacePEtaRes( const SPK_VA::valarray<double>& pEtaResIn )"    << endl;
+      oIndData_h << "{" << endl;
+      oIndData_h << "   const int nEta = " << myEtaLen << ";" << endl;
+      oIndData_h << "   assert( pEtaResIn.size() == nEta );" << endl;
+      oIndData_h << "   for( int i=0; i<nRecords; i++ )" << endl;
+      oIndData_h << "   {" << endl;
+      oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
+      oIndData_h << "      {" << endl;
+      oIndData_h << "         " << UserStr.PETARES << "[i][j] = pEtaResIn[j];" << endl;
+      oIndData_h << "      }" << endl;
+      oIndData_h << "   }" << endl;
+      oIndData_h << "}" << endl;
+      oIndData_h << endl;
+      
+      // --------------------
+      // replacePWEtaRes()
+      // --------------------
+      oIndData_h << "template <class spk_ValueType>" << endl;
+      oIndData_h << "void IndData<spk_ValueType>::replacePWEtaRes( const SPK_VA::valarray<double>& pWEtaResIn )"    << endl;
+      oIndData_h << "{" << endl;
+      oIndData_h << "   const int nEta = " << myEtaLen << ";" << endl;
+      oIndData_h << "   assert( pWEtaResIn.size() == nEta );" << endl;
+      oIndData_h << "   for( int i=0; i<nRecords; i++ )" << endl;
+      oIndData_h << "   {" << endl;
+      oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
+      oIndData_h << "      {" << endl;
+      oIndData_h << "         " << UserStr.PWETARES << "[i][j] = pWEtaResIn[j];" << endl;
+      oIndData_h << "      }" << endl;
+      oIndData_h << "   }" << endl;
+      oIndData_h << "}" << endl;
+      oIndData_h << endl;
+
+      // --------------------
+      // replaceCEtaRes()
+      // --------------------
+      oIndData_h << "template <class spk_ValueType>" << endl;
+      oIndData_h << "void IndData<spk_ValueType>::replaceCEtaRes( const SPK_VA::valarray<double>& cEtaResIn )"    << endl;
+      oIndData_h << "{" << endl;
+      oIndData_h << "   const int nEta = " << myEtaLen << ";" << endl;
+      oIndData_h << "   assert( cEtaResIn.size() == nEta );" << endl;
+      oIndData_h << "   for( int i=0; i<nRecords; i++ )" << endl;
+      oIndData_h << "   {" << endl;
+      oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
+      oIndData_h << "      {" << endl;
+      oIndData_h << "         " << UserStr.CETARES << "[i][j] = cEtaResIn[j];" << endl;
+      oIndData_h << "      }" << endl;
+      oIndData_h << "   }" << endl;
+      oIndData_h << "}" << endl;
+      oIndData_h << endl;
+      
+      // --------------------
+      // replaceCWEtaRes()
+      // --------------------
+      oIndData_h << "template <class spk_ValueType>" << endl;
+      oIndData_h << "void IndData<spk_ValueType>::replaceCWEtaRes( const SPK_VA::valarray<double>& cWEtaResIn )"    << endl;
+      oIndData_h << "{" << endl;
+      oIndData_h << "   const int nEta = " << myEtaLen << ";" << endl;
+      oIndData_h << "   assert( cWEtaResIn.size() == nEta );" << endl;
+      oIndData_h << "   for( int i=0; i<nRecords; i++ )" << endl;
+      oIndData_h << "   {" << endl;
+      oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
+      oIndData_h << "      {" << endl;
+      oIndData_h << "         " << UserStr.CWETARES << "[i][j] = cWEtaResIn[j];" << endl;
       oIndData_h << "      }" << endl;
       oIndData_h << "   }" << endl;
       oIndData_h << "}" << endl;
@@ -4002,12 +4520,27 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "   int getPopSize() const;" << endl;
   oDataSet_h << "   const SPK_VA::valarray<int> getN() const;" << endl;
   oDataSet_h << "   void replaceAllMeasurements( const SPK_VA::valarray<double> & yy );"    << endl;
-  oDataSet_h << "   void replaceAllPred   ( const SPK_VA::valarray<double>& predAllIn );"    << endl;
-  oDataSet_h << "   void replaceAllRes    ( const SPK_VA::valarray<double>& resAllIn );"     << endl;
-  oDataSet_h << "   void replaceAllWRes   ( const SPK_VA::valarray<double>& wresAllIn );"    << endl;
-  oDataSet_h << "   void replaceAllEta    ( const SPK_VA::valarray<double>& etaAllIn );"     << endl;
-  oDataSet_h << "   void replaceAllEtaRes ( const SPK_VA::valarray<double>& etaresAllIn );"  << endl;
-  oDataSet_h << "   void replaceAllWEtaRes( const SPK_VA::valarray<double>& wetaresAllIn );" << endl;
+  oDataSet_h << "   void replaceEta     ( const SPK_VA::valarray<double>& EtaIn );"      << endl;
+  oDataSet_h << "   void replacePred    ( const SPK_VA::valarray<double>& PredIn );"        << endl;
+  oDataSet_h << "   void replaceRes     ( const SPK_VA::valarray<double>& ResIn );"         << endl;
+  oDataSet_h << "   void replaceWRes    ( const SPK_VA::valarray<double>& WResIn );"        << endl;
+  oDataSet_h << "   void replaceEtaRes  ( const SPK_VA::valarray<double>& EtaResIn );"      << endl;
+  oDataSet_h << "   void replaceWEtaRes ( const SPK_VA::valarray<double>& WEtaResIn );"     << endl;
+  oDataSet_h << "   void replaceIPred   ( const SPK_VA::valarray<double>& iPredIn );"       << endl;
+  oDataSet_h << "   void replaceIRes    ( const SPK_VA::valarray<double>& iResIn );"        << endl;
+  oDataSet_h << "   void replaceIWRes   ( const SPK_VA::valarray<double>& iWResIn );"       << endl;
+  oDataSet_h << "   void replaceIEtaRes ( const SPK_VA::valarray<double>& iEtaResIn );"     << endl;
+  oDataSet_h << "   void replaceIWEtaRes( const SPK_VA::valarray<double>& iWEtaResIn );"    << endl;
+  oDataSet_h << "   void replacePPred   ( const SPK_VA::valarray<double>& pPredIn );"       << endl;
+  oDataSet_h << "   void replacePRes    ( const SPK_VA::valarray<double>& pResAllIn );"     << endl;
+  oDataSet_h << "   void replacePWRes   ( const SPK_VA::valarray<double>& pWResAllIn );"    << endl;
+  oDataSet_h << "   void replacePEtaRes ( const SPK_VA::valarray<double>& pEtaResAllIn );"  << endl;
+  oDataSet_h << "   void replacePWEtaRes( const SPK_VA::valarray<double>& pWEtaResAllIn );" << endl;
+  oDataSet_h << "   void replaceCPred   ( const SPK_VA::valarray<double>& cPredIn );"       << endl;
+  oDataSet_h << "   void replaceCRes    ( const SPK_VA::valarray<double>& cResAllIn );"     << endl;
+  oDataSet_h << "   void replaceCWRes   ( const SPK_VA::valarray<double>& cWResAllIn );"    << endl;
+  oDataSet_h << "   void replaceCEtaRes ( const SPK_VA::valarray<double>& cEtaResAllIn );"  << endl;
+  oDataSet_h << "   void replaceCWEtaRes( const SPK_VA::valarray<double>& cWEtaResAllIn );" << endl;
   oDataSet_h << endl;
   oDataSet_h << "   friend std::ostream& operator<< <spk_ValueType>( std::ostream& o, const DataSet<spk_ValueType>& A );" << endl;
   oDataSet_h << endl;
@@ -4307,76 +4840,317 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
 
+
+  // ------------------------
+  // replacePred()
+  // ------------------------
   oDataSet_h << "template <class spk_ValueType>" << endl;
-  oDataSet_h << "void DataSet<spk_ValueType>::replaceAllPred( const SPK_VA::valarray<double>& predAllIn )"     << endl;
+  oDataSet_h << "void DataSet<spk_ValueType>::replacePred( const SPK_VA::valarray<double>& PredIn )"     << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   const int n = data.size();" << endl;
   oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
   oDataSet_h << "   {" << endl;
-  oDataSet_h << "      data[i]->replacePred( predAllIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "      data[i]->replacePred( PredIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
   oDataSet_h << "   }" << endl;
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
 
+  // ------------------------
+  // replaceRes()
+  // ------------------------
   oDataSet_h << "template <class spk_ValueType>" << endl;
-  oDataSet_h << "void DataSet<spk_ValueType>::replaceAllRes( const SPK_VA::valarray<double>& resAllIn )"     << endl;
+  oDataSet_h << "void DataSet<spk_ValueType>::replaceRes( const SPK_VA::valarray<double>& ResIn )"     << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   const int n = data.size();" << endl;
   oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
   oDataSet_h << "   {" << endl;
-  oDataSet_h << "      data[i]->replaceRes( resAllIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "      data[i]->replaceRes( ResIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
   oDataSet_h << "   }" << endl;
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
 
+  // ------------------------
+  // replaceWRes()
+  // ------------------------
   oDataSet_h << "template <class spk_ValueType>" << endl;
-  oDataSet_h << "void DataSet<spk_ValueType>::replaceAllWRes( const SPK_VA::valarray<double>& wresAllIn )"    << endl;
+  oDataSet_h << "void DataSet<spk_ValueType>::replaceWRes( const SPK_VA::valarray<double>& WResIn )"    << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   const int n = data.size();" << endl;
   oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
   oDataSet_h << "   {" << endl;
-  oDataSet_h << "      data[i]->replaceWRes( wresAllIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "      data[i]->replaceWRes( WResIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "   }" << endl;
+  oDataSet_h << "}" << endl;
+  oDataSet_h << endl;
+
+  // ------------------------
+  // replaceIPred()
+  // ------------------------
+  oDataSet_h << "template <class spk_ValueType>" << endl;
+  oDataSet_h << "void DataSet<spk_ValueType>::replaceIPred( const SPK_VA::valarray<double>& iPredIn )"     << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   const int n = data.size();" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   {" << endl;
+  oDataSet_h << "      data[i]->replaceIPred( iPredIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "   }" << endl;
+  oDataSet_h << "}" << endl;
+  oDataSet_h << endl;
+
+  // ------------------------
+  // replaceIRes()
+  // ------------------------
+  oDataSet_h << "template <class spk_ValueType>" << endl;
+  oDataSet_h << "void DataSet<spk_ValueType>::replaceIRes( const SPK_VA::valarray<double>& iResIn )"     << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   const int n = data.size();" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   {" << endl;
+  oDataSet_h << "      data[i]->replaceIRes( iResIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "   }" << endl;
+  oDataSet_h << "}" << endl;
+  oDataSet_h << endl;
+
+  // ------------------------
+  // replaceIWRes()
+  // ------------------------
+  oDataSet_h << "template <class spk_ValueType>" << endl;
+  oDataSet_h << "void DataSet<spk_ValueType>::replaceIWRes( const SPK_VA::valarray<double>& iWResIn )"    << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   const int n = data.size();" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   {" << endl;
+  oDataSet_h << "      data[i]->replaceIWRes( iWResIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "   }" << endl;
+  oDataSet_h << "}" << endl;
+  oDataSet_h << endl;
+
+  // ------------------------
+  // replacePPred()
+  // ------------------------
+  oDataSet_h << "template <class spk_ValueType>" << endl;
+  oDataSet_h << "void DataSet<spk_ValueType>::replacePPred( const SPK_VA::valarray<double>& pPredIn )"     << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   const int n = data.size();" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   {" << endl;
+  oDataSet_h << "      data[i]->replacePPred( pPredIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "   }" << endl;
+  oDataSet_h << "}" << endl;
+  oDataSet_h << endl;
+
+  // ------------------------
+  // replacePRes()
+  // ------------------------
+  oDataSet_h << "template <class spk_ValueType>" << endl;
+  oDataSet_h << "void DataSet<spk_ValueType>::replacePRes( const SPK_VA::valarray<double>& pResIn )"     << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   const int n = data.size();" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   {" << endl;
+  oDataSet_h << "      data[i]->replacePRes( pResIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "   }" << endl;
+  oDataSet_h << "}" << endl;
+  oDataSet_h << endl;
+
+  // ------------------------
+  // replacePWRes()
+  // ------------------------
+  oDataSet_h << "template <class spk_ValueType>" << endl;
+  oDataSet_h << "void DataSet<spk_ValueType>::replacePWRes( const SPK_VA::valarray<double>& pWResIn )"    << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   const int n = data.size();" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   {" << endl;
+  oDataSet_h << "      data[i]->replacePWRes( pWResIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "   }" << endl;
+  oDataSet_h << "}" << endl;
+  oDataSet_h << endl;
+
+  // ------------------------
+  // replaceCPred()
+  // ------------------------
+  oDataSet_h << "template <class spk_ValueType>" << endl;
+  oDataSet_h << "void DataSet<spk_ValueType>::replaceCPred( const SPK_VA::valarray<double>& cPredIn )"     << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   const int n = data.size();" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   {" << endl;
+  oDataSet_h << "      data[i]->replaceCPred( cPredIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "   }" << endl;
+  oDataSet_h << "}" << endl;
+  oDataSet_h << endl;
+
+  // ------------------------
+  // replaceCRes()
+  // ------------------------
+  oDataSet_h << "template <class spk_ValueType>" << endl;
+  oDataSet_h << "void DataSet<spk_ValueType>::replaceCRes( const SPK_VA::valarray<double>& cResIn )"     << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   const int n = data.size();" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   {" << endl;
+  oDataSet_h << "      data[i]->replaceCRes( cResIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "   }" << endl;
+  oDataSet_h << "}" << endl;
+  oDataSet_h << endl;
+
+  // ------------------------
+  // replaceCWRes()
+  // ------------------------
+  oDataSet_h << "template <class spk_ValueType>" << endl;
+  oDataSet_h << "void DataSet<spk_ValueType>::replaceCWRes( const SPK_VA::valarray<double>& cWResIn )"    << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   const int n = data.size();" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   {" << endl;
+  oDataSet_h << "      data[i]->replaceCWRes( cWResIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
   oDataSet_h << "   }" << endl;
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
 
   if( ourTarget == POP )
     {
+      // ------------------------
+      // replaceEta()
+      // ------------------------
       oDataSet_h << "template <class spk_ValueType>" << endl;
-      oDataSet_h << "void DataSet<spk_ValueType>::replaceAllEta( const SPK_VA::valarray<double>& etaAllIn )"  << endl;
+      oDataSet_h << "void DataSet<spk_ValueType>::replaceEta( const SPK_VA::valarray<double>& etaIn )"  << endl;
       oDataSet_h << "{" << endl;
       oDataSet_h << "   const int n = data.size();" << endl;
       oDataSet_h << "   const int nEta = " << myEtaLen << "; // the length of eta" << endl;
-      oDataSet_h << "   assert( etaAllIn.size() == n * nEta );" << endl;
+      oDataSet_h << "   assert( etaIn.size() == n * nEta );" << endl;
       oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
       oDataSet_h << "   {" << endl;
-      oDataSet_h << "      data[i]->replaceEta( etaAllIn[ SPK_VA::slice(i*nEta, nEta, 1) ] );" << endl;
+      oDataSet_h << "      data[i]->replaceEta( etaIn[ SPK_VA::slice(i*nEta, nEta, 1) ] );" << endl;
       oDataSet_h << "   }" << endl;
       oDataSet_h << "}" << endl;
       oDataSet_h << endl;
 
+      // ------------------------
+      // replaceEtaRes()
+      // ------------------------
       oDataSet_h << "template <class spk_ValueType>" << endl;
-      oDataSet_h << "void DataSet<spk_ValueType>::replaceAllEtaRes( const SPK_VA::valarray<double>& etaresAllIn )"  << endl;
+      oDataSet_h << "void DataSet<spk_ValueType>::replaceEtaRes( const SPK_VA::valarray<double>& EtaResIn )"  << endl;
       oDataSet_h << "{" << endl;
       oDataSet_h << "   const int n = data.size();" << endl;
       oDataSet_h << "   const int nEta = " << myEtaLen << "; // the length of eta" << endl;
-      oDataSet_h << "   assert( etaresAllIn.size() == n * nEta );" << endl;
+      oDataSet_h << "   assert( EtaResIn.size() == n * nEta );" << endl;
       oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
       oDataSet_h << "   {" << endl;
-      oDataSet_h << "      data[i]->replaceEtaRes( etaresAllIn[ SPK_VA::slice(i*nEta, nEta, 1) ] );" << endl;
+      oDataSet_h << "      data[i]->replaceEtaRes( EtaResIn[ SPK_VA::slice(i*nEta, nEta, 1) ] );" << endl;
       oDataSet_h << "   }" << endl;
       oDataSet_h << "}" << endl;
       oDataSet_h << endl;
 
+      // ------------------------
+      // replaceWEtaRes()
+      // ------------------------
       oDataSet_h << "template <class spk_ValueType>" << endl;
-      oDataSet_h << "void DataSet<spk_ValueType>::replaceAllWEtaRes( const SPK_VA::valarray<double>& wetaresAllIn )" << endl;
+      oDataSet_h << "void DataSet<spk_ValueType>::replaceWEtaRes( const SPK_VA::valarray<double>& WEtaResIn )" << endl;
       oDataSet_h << "{" << endl;
       oDataSet_h << "   const int n = data.size();" << endl;
       oDataSet_h << "   const int nEta = " << myEtaLen << "; // the length of eta" << endl;
-      oDataSet_h << "   assert( wetaresAllIn.size() == n * nEta );" << endl;
+      oDataSet_h << "   assert( WEtaResIn.size() == n * nEta );" << endl;
       oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
       oDataSet_h << "   {" << endl;
-      oDataSet_h << "      data[i]->replaceWEtaRes( wetaresAllIn[ SPK_VA::slice(i*nEta, nEta, 1) ] );" << endl;
+      oDataSet_h << "      data[i]->replaceWEtaRes( WEtaResIn[ SPK_VA::slice(i*nEta, nEta, 1) ] );" << endl;
+      oDataSet_h << "   }" << endl;
+      oDataSet_h << "}" << endl;
+      oDataSet_h << endl;
+
+      // ------------------------
+      // replaceIEtaRes()
+      // ------------------------
+      oDataSet_h << "template <class spk_ValueType>" << endl;
+      oDataSet_h << "void DataSet<spk_ValueType>::replaceIEtaRes( const SPK_VA::valarray<double>& iEtaResIn )"  << endl;
+      oDataSet_h << "{" << endl;
+      oDataSet_h << "   const int n = data.size();" << endl;
+      oDataSet_h << "   const int nEta = " << myEtaLen << "; // the length of eta" << endl;
+      oDataSet_h << "   assert( iEtaResIn.size() == n * nEta );" << endl;
+      oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
+      oDataSet_h << "   {" << endl;
+      oDataSet_h << "      data[i]->replaceIEtaRes( iEtaResIn[ SPK_VA::slice(i*nEta, nEta, 1) ] );" << endl;
+      oDataSet_h << "   }" << endl;
+      oDataSet_h << "}" << endl;
+      oDataSet_h << endl;
+
+      // ------------------------
+      // replaceIWEtaRes()
+      // ------------------------
+      oDataSet_h << "template <class spk_ValueType>" << endl;
+      oDataSet_h << "void DataSet<spk_ValueType>::replaceIWEtaRes( const SPK_VA::valarray<double>& iWEtaResIn )" << endl;
+      oDataSet_h << "{" << endl;
+      oDataSet_h << "   const int n = data.size();" << endl;
+      oDataSet_h << "   const int nEta = " << myEtaLen << "; // the length of eta" << endl;
+      oDataSet_h << "   assert( iWEtaResIn.size() == n * nEta );" << endl;
+      oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
+      oDataSet_h << "   {" << endl;
+      oDataSet_h << "      data[i]->replaceIWEtaRes( iWEtaResIn[ SPK_VA::slice(i*nEta, nEta, 1) ] );" << endl;
+      oDataSet_h << "   }" << endl;
+      oDataSet_h << "}" << endl;
+      oDataSet_h << endl;
+
+      // ------------------------
+      // replacePEtaRes()
+      // ------------------------
+      oDataSet_h << "template <class spk_ValueType>" << endl;
+      oDataSet_h << "void DataSet<spk_ValueType>::replacePEtaRes( const SPK_VA::valarray<double>& pEtaResIn )"  << endl;
+      oDataSet_h << "{" << endl;
+      oDataSet_h << "   const int n = data.size();" << endl;
+      oDataSet_h << "   const int nEta = " << myEtaLen << "; // the length of eta" << endl;
+      oDataSet_h << "   assert( pEtaResIn.size() == n * nEta );" << endl;
+      oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
+      oDataSet_h << "   {" << endl;
+      oDataSet_h << "      data[i]->replacePEtaRes( pEtaResIn[ SPK_VA::slice(i*nEta, nEta, 1) ] );" << endl;
+      oDataSet_h << "   }" << endl;
+      oDataSet_h << "}" << endl;
+      oDataSet_h << endl;
+
+      // ------------------------
+      // replacePWEtaRes()
+      // ------------------------
+      oDataSet_h << "template <class spk_ValueType>" << endl;
+      oDataSet_h << "void DataSet<spk_ValueType>::replacePWEtaRes( const SPK_VA::valarray<double>& pWEtaResIn )" << endl;
+      oDataSet_h << "{" << endl;
+      oDataSet_h << "   const int n = data.size();" << endl;
+      oDataSet_h << "   const int nEta = " << myEtaLen << "; // the length of eta" << endl;
+      oDataSet_h << "   assert( pWEtaResIn.size() == n * nEta );" << endl;
+      oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
+      oDataSet_h << "   {" << endl;
+      oDataSet_h << "      data[i]->replacePWEtaRes( pWEtaResIn[ SPK_VA::slice(i*nEta, nEta, 1) ] );" << endl;
+      oDataSet_h << "   }" << endl;
+      oDataSet_h << "}" << endl;
+      oDataSet_h << endl;
+
+      // ------------------------
+      // replaceCEtaRes()
+      // ------------------------
+      oDataSet_h << "template <class spk_ValueType>" << endl;
+      oDataSet_h << "void DataSet<spk_ValueType>::replaceCEtaRes( const SPK_VA::valarray<double>& cEtaResIn )"  << endl;
+      oDataSet_h << "{" << endl;
+      oDataSet_h << "   const int n = data.size();" << endl;
+      oDataSet_h << "   const int nEta = " << myEtaLen << "; // the length of eta" << endl;
+      oDataSet_h << "   assert( cEtaResIn.size() == n * nEta );" << endl;
+      oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
+      oDataSet_h << "   {" << endl;
+      oDataSet_h << "      data[i]->replaceCEtaRes( cEtaResIn[ SPK_VA::slice(i*nEta, nEta, 1) ] );" << endl;
+      oDataSet_h << "   }" << endl;
+      oDataSet_h << "}" << endl;
+      oDataSet_h << endl;
+
+      // ------------------------
+      // replaceCWEtaRes()
+      // ------------------------
+      oDataSet_h << "template <class spk_ValueType>" << endl;
+      oDataSet_h << "void DataSet<spk_ValueType>::replaceCWEtaRes( const SPK_VA::valarray<double>& cWEtaResIn )" << endl;
+      oDataSet_h << "{" << endl;
+      oDataSet_h << "   const int n = data.size();" << endl;
+      oDataSet_h << "   const int nEta = " << myEtaLen << "; // the length of eta" << endl;
+      oDataSet_h << "   assert( cWEtaResIn.size() == n * nEta );" << endl;
+      oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
+      oDataSet_h << "   {" << endl;
+      oDataSet_h << "      data[i]->replaceCWEtaRes( cWEtaResIn[ SPK_VA::slice(i*nEta, nEta, 1) ] );" << endl;
       oDataSet_h << "   }" << endl;
       oDataSet_h << "}" << endl;
       oDataSet_h << endl;
@@ -4415,6 +5189,12 @@ void NonmemTranslator::generateDataSet( ) const
                + (ourTarget==POP? (myEpsLen - 1) : 0 ) // for EPS
                + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for ETARES
                + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for WETARES
+               + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for IETARES
+               + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for IWETARES
+               + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for PETARES
+               + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for PWETARES
+               + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for CETARES
+               + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for CWETARES
                - (table->findi(KeyStr.OMEGA)   == Symbol::empty()? 0 : 1 )
                - (table->findi(KeyStr.SIGMA)   == Symbol::empty()? 0 : 1 );
   
@@ -4469,7 +5249,13 @@ void NonmemTranslator::generateDataSet( ) const
               // So, all elements values have to be printed out individually.
 	      else if( pEntry->first == KeyStr.ETA
 		       || pEntry->first == KeyStr.ETARES 
-		       || pEntry->first == KeyStr.WETARES ) 
+		       || pEntry->first == KeyStr.WETARES
+		       || pEntry->first == KeyStr.IETARES 
+		       || pEntry->first == KeyStr.IWETARES
+		       || pEntry->first == KeyStr.PETARES 
+		       || pEntry->first == KeyStr.PWETARES
+		       || pEntry->first == KeyStr.CETARES 
+		       || pEntry->first == KeyStr.CWETARES )
 		{
 		  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
 		    {
@@ -4545,7 +5331,13 @@ void NonmemTranslator::generateDataSet( ) const
 	}
       else if( keyWhatGoesIn == KeyStr.ETA
 	       || keyWhatGoesIn == KeyStr.ETARES
-	       || keyWhatGoesIn == KeyStr.WETARES )
+	       || keyWhatGoesIn == KeyStr.WETARES
+	       || keyWhatGoesIn == KeyStr.IETARES
+	       || keyWhatGoesIn == KeyStr.IWETARES
+	       || keyWhatGoesIn == KeyStr.PETARES
+	       || keyWhatGoesIn == KeyStr.PWETARES
+	       || keyWhatGoesIn == KeyStr.CETARES
+	       || keyWhatGoesIn == KeyStr.CWETARES )
 	{
 	  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
 	    {
@@ -4792,17 +5584,31 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       const string keyLabel = SymbolTable::key( label );
 
       // Ignore if the label is of the NONMEM required variable names.
-      // They have to be declared in the body of PRED() because
-      // they (theta, eta, eps) have to be "const" double array.
       if( keyLabel != KeyStr.THETA 
 	  && keyLabel != KeyStr.ETA 
 	  && keyLabel != KeyStr.EPS 
+	  //	  && keyLabel != KeyStr.PRED
 	  && keyLabel != KeyStr.SIGMA
-	  && keyLabel != KeyStr.OMEGA 
+	  && keyLabel != KeyStr.OMEGA
 	  && keyLabel != KeyStr.RES
 	  && keyLabel != KeyStr.WRES
 	  && keyLabel != KeyStr.ETARES
-	  && keyLabel != KeyStr.WETARES 
+	  && keyLabel != KeyStr.WETARES
+          && keyLabel != KeyStr.IPRED
+	  && keyLabel != KeyStr.IRES
+	  && keyLabel != KeyStr.IWRES
+	  && keyLabel != KeyStr.IETARES
+	  && keyLabel != KeyStr.IWETARES 
+	  && keyLabel != KeyStr.PPRED
+	  && keyLabel != KeyStr.PRES
+	  && keyLabel != KeyStr.PWRES
+	  && keyLabel != KeyStr.PETARES
+	  && keyLabel != KeyStr.PWETARES
+	  && keyLabel != KeyStr.CPRED
+	  && keyLabel != KeyStr.CRES
+	  && keyLabel != KeyStr.CWRES
+	  && keyLabel != KeyStr.CETARES
+	  && keyLabel != KeyStr.CWETARES
 	  && keyLabel != KeyStr.ORGDV )
 	{
 	  // Ignore if the label is of the data item's.
@@ -4983,10 +5789,26 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 	}
       else if( keyLabel == KeyStr.OMEGA 
 	       || keyLabel == KeyStr.SIGMA
-	       || keyLabel == KeyStr.WRES
+	       //	       || keyLabel == KeyStr.PRED
 	       || keyLabel == KeyStr.RES 
+	       || keyLabel == KeyStr.WRES
 	       || keyLabel == KeyStr.ETARES
 	       || keyLabel == KeyStr.WETARES
+	       || keyLabel == KeyStr.IPRED
+	       || keyLabel == KeyStr.IRES 
+	       || keyLabel == KeyStr.IWRES
+	       || keyLabel == KeyStr.IETARES
+	       || keyLabel == KeyStr.IWETARES
+	       || keyLabel == KeyStr.PPRED
+	       || keyLabel == KeyStr.PRES 
+	       || keyLabel == KeyStr.PWRES
+	       || keyLabel == KeyStr.PETARES
+	       || keyLabel == KeyStr.PWETARES
+	       || keyLabel == KeyStr.CPRED
+	       || keyLabel == KeyStr.CRES 
+	       || keyLabel == KeyStr.CWRES
+	       || keyLabel == KeyStr.CETARES
+	       || keyLabel == KeyStr.CWETARES
 	       || keyLabel == KeyStr.ORGDV )
 	{
 	  // ignore.  These values are only computed outside at the final estimate.
@@ -5023,10 +5845,26 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       const string keyLabel = SymbolTable::key( label );
       if( keyLabel == KeyStr.OMEGA 
           || keyLabel == KeyStr.SIGMA 
-          || keyLabel == KeyStr.WRES 
+	  //          || keyLabel == KeyStr.PRED 
           || keyLabel == KeyStr.RES 
+          || keyLabel == KeyStr.WRES 
 	  || keyLabel == KeyStr.ETARES
 	  || keyLabel == KeyStr.WETARES
+          || keyLabel == KeyStr.IPRED 
+          || keyLabel == KeyStr.IRES 
+          || keyLabel == KeyStr.IWRES 
+	  || keyLabel == KeyStr.IETARES
+	  || keyLabel == KeyStr.IWETARES
+          || keyLabel == KeyStr.PPRED 
+          || keyLabel == KeyStr.PRES 
+          || keyLabel == KeyStr.PWRES 
+	  || keyLabel == KeyStr.PETARES
+	  || keyLabel == KeyStr.PWETARES
+          || keyLabel == KeyStr.CPRED 
+          || keyLabel == KeyStr.CRES 
+          || keyLabel == KeyStr.CWRES 
+	  || keyLabel == KeyStr.CETARES
+	  || keyLabel == KeyStr.CWETARES
 	  || keyLabel == KeyStr.ORGDV )
 	continue;
 
@@ -5351,14 +6189,8 @@ void NonmemTranslator::generateODEPred( const char* fPkEqn_cpp,
 	  // they (theta, eta, eps) have to be "const" double array.
 	  if( keyLabel != KeyStr.THETA 
 	      && keyLabel != KeyStr.ETA 
-	      && keyLabel != KeyStr.EPS 
-	      && keyLabel != KeyStr.SIGMA
-	      && keyLabel != KeyStr.OMEGA
-	      && keyLabel != KeyStr.RES
-	      && keyLabel != KeyStr.WRES
-	      && keyLabel != KeyStr.ETARES
-	      && keyLabel != KeyStr.WETARES
-	      && keyLabel != KeyStr.ORGDV )	    
+	      && keyLabel != KeyStr.EPS )
+              //&& keyLabel != KeyStr.PRED )
 	    {
 	      if( keyLabel == KeyStr.DADT 
 		  || keyLabel == KeyStr.A
@@ -5453,10 +6285,26 @@ void NonmemTranslator::generateODEPred( const char* fPkEqn_cpp,
       const string keyLabel = SymbolTable::key( label );
       if( keyLabel == KeyStr.OMEGA 
 	       || keyLabel == KeyStr.SIGMA 
-	       || keyLabel == KeyStr.WRES 
+               || keyLabel == KeyStr.PRED
 	       || keyLabel == KeyStr.RES
+	       || keyLabel == KeyStr.WRES 
 	       || keyLabel == KeyStr.ETARES 
 	       || keyLabel == KeyStr.WETARES
+	       || keyLabel == KeyStr.IPRED
+	       || keyLabel == KeyStr.IRES
+	       || keyLabel == KeyStr.IWRES 
+	       || keyLabel == KeyStr.IETARES 
+	       || keyLabel == KeyStr.IWETARES
+	       || keyLabel == KeyStr.PPRED
+	       || keyLabel == KeyStr.PRES
+	       || keyLabel == KeyStr.PWRES 
+	       || keyLabel == KeyStr.PETARES 
+	       || keyLabel == KeyStr.PWETARES
+	       || keyLabel == KeyStr.CPRED
+	       || keyLabel == KeyStr.CRES
+	       || keyLabel == KeyStr.CWRES 
+	       || keyLabel == KeyStr.CETARES 
+	       || keyLabel == KeyStr.CWETARES
 	       || keyLabel == KeyStr.ORGDV
 	       || keyLabel == KeyStr.THETA
 	       || keyLabel == KeyStr.ETA
@@ -5524,7 +6372,7 @@ void NonmemTranslator::generateODEPred( const char* fPkEqn_cpp,
   ///////////////////////////////////////////////////////////////////////////////////
   // Store the current values in temporary storage
   // : the user defined variable values and the NONMEM required variable values.
-  oODEPred_h << "   " << UserStr.PRED << " = " << UserStr.F << ";" << endl;
+  //  oODEPred_h << "   " << UserStr.PRED << " = " << UserStr.F << ";" << endl;
 
   for( pT = t->begin(); pT != t->end(); pT++ )
     {
@@ -5549,11 +6397,27 @@ void NonmemTranslator::generateODEPred( const char* fPkEqn_cpp,
           oODEPred_h << "   temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
 	}
       else if( keyLabel == KeyStr.OMEGA 
-	       || keyLabel == KeyStr.SIGMA 
-	       || keyLabel == KeyStr.WRES 
+	       || keyLabel == KeyStr.SIGMA
+               || keyLabel == KeyStr.PRED 
 	       || keyLabel == KeyStr.RES
+	       || keyLabel == KeyStr.WRES 
 	       || keyLabel == KeyStr.ETARES 
 	       || keyLabel == KeyStr.WETARES
+	       || keyLabel == KeyStr.IPRED 
+	       || keyLabel == KeyStr.IRES
+	       || keyLabel == KeyStr.IWRES 
+	       || keyLabel == KeyStr.IETARES 
+	       || keyLabel == KeyStr.IWETARES
+	       || keyLabel == KeyStr.PPRED 
+	       || keyLabel == KeyStr.PRES
+	       || keyLabel == KeyStr.PWRES 
+	       || keyLabel == KeyStr.PETARES 
+	       || keyLabel == KeyStr.PWETARES
+	       || keyLabel == KeyStr.CPRED 
+	       || keyLabel == KeyStr.CRES
+	       || keyLabel == KeyStr.CWRES 
+	       || keyLabel == KeyStr.CETARES 
+	       || keyLabel == KeyStr.CWETARES
 	       || keyLabel == KeyStr.ORGDV )
 	{
 	  // ignore.  These values are only computed outside at the final estimate.
@@ -5595,11 +6459,27 @@ void NonmemTranslator::generateODEPred( const char* fPkEqn_cpp,
       const string label    = pT->second.name;
       const string keyLabel = SymbolTable::key( label );
       if( keyLabel == KeyStr.OMEGA 
-          || keyLabel == KeyStr.SIGMA 
-          || keyLabel == KeyStr.WRES 
+          || keyLabel == KeyStr.SIGMA
+          || keyLabel == KeyStr.PRED 
           || keyLabel == KeyStr.RES
+          || keyLabel == KeyStr.WRES 
 	  || keyLabel == KeyStr.ETARES
 	  || keyLabel == KeyStr.WETARES
+          || keyLabel == KeyStr.IPRED 
+          || keyLabel == KeyStr.IRES
+          || keyLabel == KeyStr.IWRES 
+	  || keyLabel == KeyStr.IETARES
+	  || keyLabel == KeyStr.IWETARES
+          || keyLabel == KeyStr.PPRED 
+          || keyLabel == KeyStr.PRES
+          || keyLabel == KeyStr.PWRES 
+	  || keyLabel == KeyStr.PETARES
+	  || keyLabel == KeyStr.PWETARES
+          || keyLabel == KeyStr.CPRED 
+          || keyLabel == KeyStr.CRES
+          || keyLabel == KeyStr.CWRES 
+	  || keyLabel == KeyStr.CETARES
+	  || keyLabel == KeyStr.CWETARES
 	  || keyLabel == KeyStr.ORGDV )
 	continue;
 
@@ -6382,9 +7262,9 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "valarray<double> RInvOut( nY * nY );"     << endl;
   oIndDriver << endl;
 
-  oIndDriver << "valarray<double> predOut     ( nY );"      << endl;
-  oIndDriver << "valarray<double> resOut      ( nY );"      << endl;
-  oIndDriver << "valarray<double> resWtdOut   ( nY );"    << endl;
+  oIndDriver << "valarray<double> iPredOut     ( nY );"      << endl;
+  oIndDriver << "valarray<double> iResOut      ( nY );"      << endl;
+  oIndDriver << "valarray<double> iResWtdOut   ( nY );"    << endl;
   oIndDriver << endl;
 
   oIndDriver << "ofstream oResults;" << endl;
@@ -6538,14 +7418,17 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "      if( isOptRequested && isOptSuccess )" << endl;
   oIndDriver << "      {" << endl;
   oIndDriver << "         indResiduals( modelForDisposal, y, bOut, "    << endl;
-  oIndDriver << "                      &predOut, "          << endl;
-  oIndDriver << "                      &resOut, "           << endl;
-  oIndDriver << "                      &resWtdOut, "        << endl;
-  oIndDriver << "                       NULL, "              << endl;
-  oIndDriver << "                       NULL );"             << endl;
-  oIndDriver << "         set.replaceAllRes ( resOut );"     << endl;
-  oIndDriver << "         set.replaceAllWRes( resWtdOut );"  << endl;
-  oIndDriver << "         set.replaceAllPred( predOut );"    << endl;
+  oIndDriver << "                      &iPredOut, "        << endl;
+  oIndDriver << "                      &iResOut, "         << endl;
+  oIndDriver << "                      &iResWtdOut, "      << endl;
+  oIndDriver << "                       NULL, "            << endl;
+  oIndDriver << "                       NULL );"           << endl;
+  oIndDriver << "         set.replaceIPred( iPredOut );"   << endl;
+  oIndDriver << "         set.replaceIRes ( iResOut );"    << endl;
+  oIndDriver << "         set.replaceIWRes( iResWtdOut );" << endl;
+  oIndDriver << "         set.replacePred ( iPredOut );"   << endl;
+  oIndDriver << "         set.replaceRes  ( iResOut );"    << endl;
+  oIndDriver << "         set.replaceWRes ( iResWtdOut );" << endl;
   oIndDriver << "      }" << endl;
   oIndDriver << "      //" << endl;
   oIndDriver << "      //////////////////////////////////////////////////////////////////////" << endl;    
@@ -7083,7 +7966,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "const int nRepeats            = " << mySubproblemsN << ";" << endl;
   oPopDriver << endl;
 
-  oPopDriver << "const bool isPostHoc          = " << (myIsEtaOut? "true" : "false") << ";" << endl;
+  oPopDriver << "const bool isPostHoc          = " << (myIsPosthoc? "true" : "false") << ";" << endl;
   oPopDriver << endl;
 
   oPopDriver << "DataSet< CppAD::AD<double> > set;" << endl;
@@ -7223,25 +8106,37 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "valarray<double> stdPar( nAlp );"                          << endl;
   oPopDriver << "valarray<double> stdPar_alp( nAlp * nAlp );"               << endl;
   oPopDriver << "const int nDegOfFreedom = nY - nAlp;"                      << endl;
-  oPopDriver << "bool isCovOut         = " << ( myIsCov?    "true" : "false" ) << ";" << endl;
-  oPopDriver << "bool isInvCovOut      = " << ( myIsInvCov? "true" : "false" ) << ";" << endl;
-  oPopDriver << "bool isStdErrOut      = " << ( myIsStderr? "true" : "false" ) << ";" << endl;
+  oPopDriver << "bool isCovOut         = " << ( myIsCov?    "true" : "false" ) << ";"      << endl;
+  oPopDriver << "bool isInvCovOut      = " << ( myIsInvCov? "true" : "false" ) << ";"      << endl;
+  oPopDriver << "bool isStdErrOut      = " << ( myIsStderr? "true" : "false" ) << ";"      << endl;
   oPopDriver << "bool isCorrelationOut = " << ( myIsCorrelation? "true" : "false" ) << ";" << endl;
   oPopDriver << "bool isCoefficientOut = " << ( myIsCoefficient? "true" : "false" ) << ";" << endl;
-  oPopDriver << "bool isConfidenceOut  = " << ( myIsConfidence? "true" : "false" ) << ";" << endl;
-  oPopDriver << "valarray<double> stdParCovOut        ( nAlp * nAlp );"           << endl;
-  oPopDriver << "valarray<double> stdParSEOut         ( nAlp );"                   << endl;
-  oPopDriver << "valarray<double> stdParCorrelationOut( nAlp * nAlp );"   << endl;
-  oPopDriver << "valarray<double> stdParCoefficientOut( nAlp );"          << endl;
-  oPopDriver << "valarray<double> stdParConfidenceOut ( 2 * nAlp );"       << endl;
-  oPopDriver << "valarray<double> stdParInvCovOut     ( nAlp * nAlp );"        << endl;
+  oPopDriver << "bool isConfidenceOut  = " << ( myIsConfidence?  "true" : "false" ) << ";" << endl;
+  oPopDriver << "valarray<double> stdParCovOut        ( nAlp * nAlp );"     << endl;
+  oPopDriver << "valarray<double> stdParSEOut         ( nAlp );"            << endl;
+  oPopDriver << "valarray<double> stdParCorrelationOut( nAlp * nAlp );"     << endl;
+  oPopDriver << "valarray<double> stdParCoefficientOut( nAlp );"            << endl;
+  oPopDriver << "valarray<double> stdParConfidenceOut ( 2 * nAlp );"        << endl;
+  oPopDriver << "valarray<double> stdParInvCovOut     ( nAlp * nAlp );"     << endl;
   oPopDriver << endl;
 
-  oPopDriver << "valarray<double> predOut     ( nY );"      << endl;
-  oPopDriver << "valarray<double> resOut      ( nY );"      << endl;
-  oPopDriver << "valarray<double> resWtdOut   ( nY );"    << endl;
-  oPopDriver << "valarray<double> parResOut   ( nB*nPop );"    << endl;
-  oPopDriver << "valarray<double> parResWtdOut( nB*nPop );" << endl;
+  oPopDriver << "valarray<double> iPredOut     ( nY );"      << endl;
+  oPopDriver << "valarray<double> iResOut      ( nY );"      << endl;
+  oPopDriver << "valarray<double> iResWtdOut   ( nY );"      << endl;
+  oPopDriver << "valarray<double> iParResOut   ( nB*nPop );" << endl;
+  oPopDriver << "valarray<double> iParResWtdOut( nB*nPop );" << endl;
+  oPopDriver << endl;
+  oPopDriver << "valarray<double> pPredOut     ( nY );"      << endl;
+  oPopDriver << "valarray<double> pResOut      ( nY );"      << endl;
+  oPopDriver << "valarray<double> pResWtdOut   ( nY );"      << endl;
+  oPopDriver << "valarray<double> pParResOut   ( nB*nPop );" << endl;
+  oPopDriver << "valarray<double> pParResWtdOut( nB*nPop );" << endl;
+  oPopDriver << endl;
+  oPopDriver << "valarray<double> cPredOut     ( nY );"      << endl;
+  oPopDriver << "valarray<double> cResOut      ( nY );"      << endl;
+  oPopDriver << "valarray<double> cResWtdOut   ( nY );"      << endl;
+  oPopDriver << "valarray<double> cParResOut   ( nB*nPop );" << endl;
+  oPopDriver << "valarray<double> cParResWtdOut( nB*nPop );" << endl;
   oPopDriver << endl;
 
   oPopDriver << "ofstream oResults;" << endl;
@@ -7371,7 +8266,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "      model.getTheta( thetaOut );" << endl;
   oPopDriver << "      model.getOmega( omegaOut );" << endl;
   oPopDriver << "      model.getSigma( sigmaOut );" << endl;
-  oPopDriver << "      set.replaceAllEta( bOut );" << endl;
+  oPopDriver << "      set.replaceEta( bOut );" << endl;
   oPopDriver << endl;
   oPopDriver << "      if( !isOptSuccess )" << endl;
   oPopDriver << "      {" << endl;
@@ -7424,60 +8319,108 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "      //   NONMEM Specific" << endl;
   oPopDriver << "      if( isOptRequested && isOptSuccess )" << endl;
   oPopDriver << "      {" << endl;
+  oPopDriver << "         Objective objForDisposal = FIRST_ORDER;" << endl;
+  oPopDriver << "         valarray<double> yi;"                    << endl;
+  oPopDriver << "         valarray<double> bi( nB );"              << endl;
+  oPopDriver << "         valarray<double> iiPredOut;"             << endl;
+  oPopDriver << "         valarray<double> iiResOut; "             << endl;
+  oPopDriver << "         valarray<double> iiResWtdOut;"           << endl;
+  oPopDriver << "         valarray<double> iiParResOut( nB );"     << endl;
+  oPopDriver << "         valarray<double> iiParResWtdOut( nB );"  << endl;
+  oPopDriver << "         modelForDisposal.setPopPar( alpOut );"   << endl;
+  oPopDriver << "         for( int i=0, k=0; i<nPop; k+=N[i++] )"  << endl;
+  oPopDriver << "         {" << endl;
+  oPopDriver << "            yi.resize( N[i] );"                   << endl;
+  oPopDriver << "            iiPredOut.resize( N[i] );"            << endl;
+  oPopDriver << "            iiResOut.resize( N[i] );"             << endl;
+  oPopDriver << "            iiResWtdOut.resize( N[i] );"          << endl;
+  oPopDriver << "            yi = y[ slice( k, N[i], 1 ) ]; "      << endl;
+  oPopDriver << "            bi = bOut[ slice( i*nB, nB, 1 ) ];"   << endl;
+  oPopDriver << "            modelForDisposal.selectIndividual( i );" << endl;
+  oPopDriver << "            modelForDisposal.setIndPar( bi );"       << endl;
+  oPopDriver << "            indResiduals( modelForDisposal,"         << endl;
+  oPopDriver << "                          yi, "                   << endl;
+  oPopDriver << "                          bi,"                    << endl;
+  oPopDriver << "                         &iiPredOut,"             << endl;
+  oPopDriver << "                         &iiResOut,"              << endl;
+  oPopDriver << "                         &iiResWtdOut, "          << endl;
+  oPopDriver << "                         &iiParResOut, "          << endl;
+  oPopDriver << "                         &iiParResWtdOut );"      << endl;
+  oPopDriver << "            iPredOut     [ slice( k, N[i], 1 ) ]  = iiPredOut;"      << endl;
+  oPopDriver << "            iResOut      [ slice( k, N[i], 1 ) ]  = iiResOut;"       << endl;
+  oPopDriver << "            iResWtdOut   [ slice( k, N[i], 1 ) ]  = iiResWtdOut;"    << endl;
+  oPopDriver << "            iParResOut   [ slice( nB*i, nB, 1 ) ] = iiParResOut;"    << endl;
+  oPopDriver << "            iParResWtdOut[ slice( nB*i, nB, 1 ) ] = iiParResWtdOut;" << endl;
+  oPopDriver << "         }" << endl;
+  oPopDriver << "         set.replaceIPred   ( iPredOut );"        << endl;
+  oPopDriver << "         set.replaceIRes    ( iResOut );"         << endl;
+  oPopDriver << "         set.replaceIWRes   ( iResWtdOut );"      << endl;
+  oPopDriver << "         set.replaceIEtaRes ( iParResOut );"      << endl;
+  oPopDriver << "         set.replaceIWEtaRes( iParResWtdOut );"   << endl;
+  oPopDriver << endl;
+  oPopDriver << "         objForDisposal = FIRST_ORDER;"           << endl;
+  oPopDriver << "         popResiduals( modelForDisposal, "        << endl;
+  oPopDriver << "                       objForDisposal, "          << endl;
+  oPopDriver << "                       N,"                        << endl;
+  oPopDriver << "                       y,"                        << endl;
+  oPopDriver << "                       alpOut,"                   << endl;
+  oPopDriver << "                       bOut,"                     << endl;
+  oPopDriver << "                      &pPredOut, "                << endl;
+  oPopDriver << "                      &pResOut, "                 << endl;
+  oPopDriver << "                      &pResWtdOut, "              << endl;
+  oPopDriver << "                      &pParResOut, "              << endl;
+  oPopDriver << "                      &pParResWtdOut );"          << endl;
+  oPopDriver << "         set.replacePPred   ( pPredOut );"        << endl;
+  oPopDriver << "         set.replacePRes    ( pResOut );"         << endl;
+  oPopDriver << "         set.replacePWRes   ( pResWtdOut );"      << endl;
+  oPopDriver << "         set.replacePEtaRes ( pParResOut );"      << endl;
+  oPopDriver << "         set.replacePWEtaRes( pParResWtdOut );"   << endl;
+  oPopDriver << endl;
+  oPopDriver << "         objForDisposal = EXPECTED_HESSIAN;"      << endl;
+  oPopDriver << "         popResiduals( modelForDisposal, "        << endl;
+  oPopDriver << "                       objForDisposal, "          << endl;
+  oPopDriver << "                       N,"                        << endl;
+  oPopDriver << "                       y,"                        << endl;
+  oPopDriver << "                       alpOut,"                   << endl;
+  oPopDriver << "                       bOut,"                     << endl;
+  oPopDriver << "                      &cPredOut, "                << endl;
+  oPopDriver << "                      &cResOut, "                 << endl;
+  oPopDriver << "                      &cResWtdOut, "              << endl;
+  oPopDriver << "                      &cParResOut, "              << endl;
+  oPopDriver << "                      &cParResWtdOut );"          << endl;
+  oPopDriver << "         set.replaceCPred   ( cPredOut );"        << endl;
+  oPopDriver << "         set.replaceCRes    ( cResOut );"         << endl;
+  oPopDriver << "         set.replaceCWRes   ( cResWtdOut );"      << endl;
+  oPopDriver << "         set.replaceCEtaRes ( cParResOut );"      << endl;
+  oPopDriver << "         set.replaceCWEtaRes( cParResWtdOut );"   << endl;
+  oPopDriver << endl;
   oPopDriver << "         if( isPostHoc )" << endl;
   oPopDriver << "         {" << endl;
-  oPopDriver << "            valarray<double> yi;"                   << endl;
-  oPopDriver << "            valarray<double> bi( nB );"             << endl;
-  oPopDriver << "            valarray<double> iPredOut;"             << endl;
-  oPopDriver << "            valarray<double> iResOut; "             << endl;
-  oPopDriver << "            valarray<double> iResWtdOut;"           << endl;
-  oPopDriver << "            valarray<double> iParResOut( nB );"     << endl;
-  oPopDriver << "            valarray<double> iParResWtdOut( nB );"  << endl;
-  oPopDriver << "            modelForDisposal.setPopPar( alpOut );"  << endl;
-  oPopDriver << "            for( int i=0, k=0; i<nPop; k+=N[i++] )" << endl;
-  oPopDriver << "            {" << endl;
-  oPopDriver << "               yi.resize( N[i] );"                  << endl;
-  oPopDriver << "               iPredOut.resize( N[i] );"            << endl;
-  oPopDriver << "               iResOut.resize( N[i] );"             << endl;
-  oPopDriver << "               iResWtdOut.resize( N[i] );"          << endl;
-  oPopDriver << "               yi = y[ slice( k, N[i], 1 ) ]; "     << endl;
-  oPopDriver << "               bi = bOut[ slice( i*nB, nB, 1 ) ];"  << endl;
-  oPopDriver << "               modelForDisposal.selectIndividual( i );" << endl;
-  oPopDriver << "               modelForDisposal.setIndPar( bi );"       << endl;
-  oPopDriver << "               indResiduals( modelForDisposal,"         << endl;
-  oPopDriver << "                             yi, "                  << endl;
-  oPopDriver << "                             bi,"                   << endl;
-  oPopDriver << "                            &iPredOut,"             << endl;
-  oPopDriver << "                            &iResOut,"              << endl;
-  oPopDriver << "                            &iResWtdOut, "          << endl;
-  oPopDriver << "                            &iParResOut, "          << endl;
-  oPopDriver << "                            &iParResWtdOut );"      << endl;
-  oPopDriver << "               predOut     [ slice( k, N[i], 1 ) ]  = iPredOut;"      << endl;
-  oPopDriver << "               resOut      [ slice( k, N[i], 1 ) ]  = iResOut;"       << endl;
-  oPopDriver << "               resWtdOut   [ slice( k, N[i], 1 ) ]  = iResWtdOut;"    << endl;
-  oPopDriver << "               parResOut   [ slice( nB*i, nB, 1 ) ] = iParResOut;"    << endl;
-  oPopDriver << "               parResWtdOut[ slice( nB*i, nB, 1 ) ] = iParResWtdOut;" << endl;
-  oPopDriver << "            }" << endl;
+  oPopDriver << "            set.replacePred    ( iPredOut );"        << endl;
+  oPopDriver << "            set.replaceRes     ( iResOut );"         << endl;
+  oPopDriver << "            set.replaceWRes    ( iResWtdOut );"      << endl;
+  oPopDriver << "            set.replaceEtaRes  ( iParResOut );"      << endl;
+  oPopDriver << "            set.replaceWEtaRes ( iParResWtdOut );"   << endl;
   oPopDriver << "         }" << endl;
   oPopDriver << "         else" << endl;
   oPopDriver << "         {" << endl;
-  oPopDriver << "            popResiduals( modelForDisposal, "    << endl;
-  oPopDriver << "                          objective, "           << endl;
-  oPopDriver << "                          N,"                    << endl;
-  oPopDriver << "                          y,"                    << endl;
-  oPopDriver << "                          alpOut,"               << endl;
-  oPopDriver << "                          bOut,"                 << endl;
-  oPopDriver << "                         &predOut, "             << endl;
-  oPopDriver << "                         &resOut, "              << endl;
-  oPopDriver << "                         &resWtdOut, "           << endl;
-  oPopDriver << "                         &parResOut, "           << endl;
-  oPopDriver << "                         &parResWtdOut );"       << endl;
+  oPopDriver << "            if( objective == FIRST_ORDER )" << endl;
+  oPopDriver << "            {" << endl;
+  oPopDriver << "               set.replacePred    ( pPredOut );"        << endl;
+  oPopDriver << "               set.replaceRes     ( pResOut );"         << endl;
+  oPopDriver << "               set.replaceWRes    ( pResWtdOut );"      << endl;
+  oPopDriver << "               set.replaceEtaRes  ( pParResOut );"      << endl;
+  oPopDriver << "               set.replaceWEtaRes ( pParResWtdOut );"   << endl;
+  oPopDriver << "            }" << endl;
+  oPopDriver << "            else // conditional" << endl;
+  oPopDriver << "            {" << endl;
+  oPopDriver << "               set.replacePred    ( cPredOut );"        << endl;
+  oPopDriver << "               set.replaceRes     ( cResOut );"         << endl;
+  oPopDriver << "               set.replaceWRes    ( cResWtdOut );"      << endl;
+  oPopDriver << "               set.replaceEtaRes  ( cParResOut );"      << endl;
+  oPopDriver << "               set.replaceWEtaRes ( cParResWtdOut );"   << endl;
+  oPopDriver << "            }" << endl;
   oPopDriver << "         }" << endl;
-  oPopDriver << "         set.replaceAllPred   ( predOut );"      << endl;
-  oPopDriver << "         set.replaceAllRes    ( resOut );"       << endl;
-  oPopDriver << "         set.replaceAllWRes   ( resWtdOut );"    << endl;
-  oPopDriver << "         set.replaceAllEtaRes ( parResOut );"    << endl;
-  oPopDriver << "         set.replaceAllWEtaRes( parResWtdOut );" << endl;
   oPopDriver << "      }" << endl;
   oPopDriver << "     //" << endl;
   oPopDriver << "     //////////////////////////////////////////////////////////////////////" << endl;    
