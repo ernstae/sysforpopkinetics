@@ -962,15 +962,26 @@ namespace // [Begin: unnamed namespace]
       // Evaluate the MAP Bayesian objective function.
       double dMapObjCurr = 0.0;
       DoubleMatrix* pdmatNull = 0;
-      mapObj( 
-        *pModel, 
-        *pdvecY, 
-        dvecBCurr, 
-        &dMapObjCurr,
-        pdmatNull,
-        *pbWithD,
-        *pbIsFo, 
-        pdvecN );
+      try
+      {
+        mapObj( 
+          *pModel, 
+          *pdvecY, 
+          dvecBCurr, 
+          &dMapObjCurr,
+          pdmatNull,
+          *pbWithD,
+          *pbIsFo, 
+          pdvecN );
+      }
+      catch( SpkException& e )
+      {
+        throw e.push(
+          SpkError::SPK_OPT_ERR, 
+          "The individual's objective function could not be calculated.",
+          __LINE__, 
+          __FILE__ );
+      }
 
       // Set the objective function value.
       *pdMapObjOut = dMapObjCurr;
@@ -994,15 +1005,26 @@ namespace // [Begin: unnamed namespace]
       // Evaluate the gradient of the MAP Bayesian objective function.
       double* pdNull = 0;
       DoubleMatrix drowMapObj_bCurr( 1, nB );
-      mapObj(
-        *pModel,
-        *pdvecY,
-        dvecBCurr,
-        pdNull,
-        &drowMapObj_bCurr,
-        *pbWithD,
-        *pbIsFo,
-        pdvecN );
+      try
+      {
+        mapObj(
+          *pModel,
+          *pdvecY,
+          dvecBCurr,
+          pdNull,
+          &drowMapObj_bCurr,
+          *pbWithD,
+          *pbIsFo,
+          pdvecN );
+      }
+      catch( SpkException& e )
+      {
+        throw e.push(
+          SpkError::SPK_OPT_ERR, 
+          "The gradient of the individual's objective function could not be calculated.",
+          __LINE__, 
+          __FILE__ );
+      }
 
       // Set the gradient value.
       *pdrowMapObj_bOut = drowMapObj_bCurr;
