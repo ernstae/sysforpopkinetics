@@ -774,6 +774,7 @@ $codep
 #include "File.h"
 #include "allZero.h"
 #include "Optimizer.h"
+#include "WarningsManager.h"
 
 using std::string;
 
@@ -1316,12 +1317,7 @@ $end
  * Include files
  *------------------------------------------------------------------------*/
 
-#include <cmath>
-#include <cassert>
-#include <cerrno>
-#include <string>
-#include <vector>
-
+// SPK library header files.
 #include "firstOrderOpt.h"
 #include "ppkaOpt.h"
 #include "lTilde.h"
@@ -1329,6 +1325,7 @@ $end
 #include "quasiNewtonAnyBox.h"
 #include "QuasiNewtonAnyBoxObj.h"
 #include "matabs.h"
+#include "mulByScalar.h"
 #include "isDmatEpsEqual.h"
 #include "File.h"
 #include "broadCastEndOfSpk.h"
@@ -1336,7 +1333,49 @@ $end
 #include "SpkException.h"
 #include "System.h"
 #include "FpErrorChecker.h"
+#include "WarningsManager.h"
 #include "namespace_population_analysis.h"
+
+// SPK optimizer header files.
+#include <spkopt/PlusInfinity.h>
+
+// Standard library header files.
+#include <cmath>
+#include <cassert>
+#include <cerrno>
+#include <string>
+#include <vector>
+
+
+/*------------------------------------------------------------------------
+ * Local function declarations
+ *------------------------------------------------------------------------*/
+
+namespace // [Begin: unnamed namespace]
+{
+  // [Revisit - Potential DoubleMatrix Class Member Functions - Mitch]
+  // A function that performs deep copies should be made a member of
+  // the DoubleMatrix class.  If that happens, then this function can 
+  // be deleted from this file.
+
+  //**********************************************************************
+  //
+  // Function: deepCopyDM
+  //
+  //
+  // Performs a deep copy of the elements in dmatIn to dmatOut, 
+  // which means the elements of dmatOut will be stored in a
+  // different memory block than the elements of dmatIn.
+  //
+  //**********************************************************************
+
+  void deepCopyDM( const DoubleMatrix& dmatIn, DoubleMatrix& dmatOut ) 
+  {
+    // Force a deep copy by multiplying the input matrix elements by one.
+    dmatOut = mulByScalar( dmatIn, 1.0 );
+  };
+
+} // [End: unnamed namespace]
 
 
 /*------------------------------------------------------------------------
@@ -1362,8 +1401,7 @@ namespace // [Begin: unnamed namespace]
 
   public:
     PpkaOptObj( 
-      bool                 isLTildeBestSetIn,
-      const DoubleMatrix&  dvecAlpBestIn,
+      int                  nAlpIn,
       const DoubleMatrix&  dmatBBestIn,
       const File*          pSharedDirectoryIn,
       SpkModel*            pModelIn,
@@ -1378,10 +1416,12 @@ namespace // [Begin: unnamed namespace]
       bool                 isMultiProcessedIn )
       :
       nInd              ( dmatBBestIn.nc() ),
-      nAlp              ( dvecAlpBestIn.nr() ),
+      nAlp              ( nAlpIn ),
       nB                ( dmatBBestIn.nr() ),
-      isLTildeBestSet   ( isLTildeBestSetIn ),  
-      dvecAlpBest       ( dvecAlpBestIn ),      
+      dvecAlpCurr       ( nAlp, 1 ),
+      dmatBCurr         ( nB, nInd ),
+      isLTildeBestSet   ( false ),  
+      dvecAlpBest       ( nAlp, 1 ),
       dmatBBest         ( dmatBBestIn ),        
       pSharedDirectory  ( pSharedDirectoryIn ), 
       pModel            ( pModelIn ),           
@@ -1409,11 +1449,15 @@ namespace // [Begin: unnamed namespace]
     const int nAlp;
     const int nB;
 
-    DoubleMatrix dvecAlpCurr;
+    // These hold the current value for the population objective
+    // function, along with the corresponding alp and b values.
+    double            dLTildeCurr;
+    DoubleMatrix      dvecAlpCurr;
+    DoubleMatrix      dmatBCurr;
 
-    // These hold the best value for the population objective 
-    // function that has been computed by lTilde() so far, along
-    // with the corresponding alp and set of b values.
+    // These hold the best value for the population objective function
+    // that has been computed so far, along with the corresponding alp
+    // and b values.
     double            dLTildeBest;
     bool              isLTildeBestSet;
     DoubleMatrix      dvecAlpBest;
@@ -1490,25 +1534,50 @@ namespace // [Begin: unnamed namespace]
       // Preliminaries.
       //----------------------------------------------------------
 
-      // Set the current value for alp.
-      dvecAlpCurr = dvecAlpIn;
+      // See if the input alp value is equal to the current value.
+      DoubleMatrix dvecScale( nAlp, 1 );
+      dvecScale.fill( 0.0 );
+      if ( isDmatEpsEqual( dvecAlpCurr, dvecAlpIn, dvecScale ) )
+      {
+        // Set the output value equal to the current value for the
+        // objective function that was calculated previously.
+        *pdLTildeOut = dLTildeCurr;
+  
+        return;
+      }
+
+      // Set the current value for alp using a deep copy so that it
+      // won't change when dvecAlpIn changes.
+      deepCopyDM( dvecAlpIn, dvecAlpCurr );
       assert( dvecAlpIn.nr() == nAlp );
       assert( dvecAlpIn.nc() == 1 );
+
+      // See if the current alp value is equal to the best value.
+      if ( isLTildeBestSet )
+      {
+        if ( isDmatEpsEqual( dvecAlpCurr, dvecAlpBest, dvecScale ) )
+        {
+          // Set these equal to the best values that have been
+          // calculated so far.
+          dLTildeCurr     = dLTildeBest;
+          dmatBCurr       = dmatBBest;
+
+          // Set the output value equal to the best value for the
+          // objective function that has been calculated so far.
+          *pdLTildeOut = dLTildeBest;
+    
+          return;
+        }
+      }
 
     
       //----------------------------------------------------------
       // Evaluate the population objective function.
       //----------------------------------------------------------
 
-      // Use the best matrix of b values as the initial guess for b.
-      DoubleMatrix dmatBCurr( nB, nInd );
-      double dLTildeCurr = 0.0;
       DoubleMatrix* pdmatNull = 0;
-      //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      // [Revisit - Population Level Back Up when an Individual Objective Hessian is not Positive Definite - Mitch]
-      // Once the optimizer can do back ups, replace the existing code with the following:
-      //
-      /*
+
+      // Use the best matrix of b values as the initial guess for b.
       try
       {
         lTilde(
@@ -1530,36 +1599,35 @@ namespace // [Begin: unnamed namespace]
       }
       catch( SpkException& e )
       {
-        // If objective function is infinite, then tell the 
-        // optimizer to back up in the population level 
-        // optimization.
-        if ( e[ e.size()-1 ].code() == SpkError::SPK_INF_OBJ_ERR ) 
+        // See if there was a problem with the Hessian of an
+        // individual's objective function.
+        if ( e.find( SpkError::SPK_IND_OBJ_HESS_ERR ) >= 0 )
         {
-                ...;
-        }
+          const int max = SpkError::maxMessageLen();
+          char mess[max];
+          sprintf( mess, 
+            "Backed up population optimization at iteration %d because the population \nobjective could not be calculated.",
+            pPopOptInfo->getNIterCompleted() + 1 );
 
-        throw e;
+          // Issue a warning.
+          WarningsManager::addWarning( mess, __LINE__, __FILE__ );
+
+          // Set the population objective value that indicates
+          // to the population optimizer that it should back up.
+          *pdLTildeOut = PlusInfinity( double( 0 ) );
+
+          return;
+        }
+        else
+        {
+          throw e.push(
+            SpkError::SPK_OPT_ERR, 
+            "The population objective function could not be calculated.",
+            __LINE__, 
+            __FILE__ );
+        }
       }
-      */
-      //
-      //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      lTilde(
-        isMultiProcessed,
-        *pSharedDirectory,
-        *pModel,
-        objective,
-        *pdvecY,
-        *pdvecN,
-        *pIndOptInfo,
-        dvecAlpCurr,
-        *pdvecBLow,
-        *pdvecBUp,
-        *pdvecBStep,
-        dmatBBest,
-        &dmatBCurr,
-        &dLTildeCurr,
-        pdmatNull );
-    
+
       
       //----------------------------------------------------------
       // Finish up.
@@ -1568,15 +1636,21 @@ namespace // [Begin: unnamed namespace]
       // Save the best matrix of b values that has been determined so far. 
       if ( !isLTildeBestSet )
       {
-        dLTildeBest     = dLTildeCurr;
+        // Set the best value for alp using a deep copy so that it
+        // won't change when dvecAlpCurr changes.
+        deepCopyDM( dvecAlpCurr, dvecAlpBest );
+
         isLTildeBestSet = true;
-        dvecAlpBest     = dvecAlpCurr;
+        dLTildeBest     = dLTildeCurr;
         dmatBBest       = dmatBCurr;
       }
       else if ( dLTildeCurr < dLTildeBest )
       {
+        // Set the best value for alp using a deep copy so that it
+        // won't change when dvecAlpCurr changes.
+        deepCopyDM( dvecAlpCurr, dvecAlpBest );
+
         dLTildeBest     = dLTildeCurr;
-        dvecAlpBest     = dvecAlpCurr;
         dmatBBest       = dmatBCurr;
       }
     
@@ -1615,30 +1689,56 @@ namespace // [Begin: unnamed namespace]
       // to zero here since the only way the state variable alpha can
       // change is through function(), which finds the optimizal set
       // of b values for each alpha value when it calls lTilde itself?
+      //
+      // Answer: Yes.  Currently, however, it will not work because
+      // mapTilde() will not be able to calculate the bTilde values
+      // that correspond to the current bHat value if the number of
+      // individual level iterations is zero.
+      //      
+      // The best solution to this problem would be to make lTilde()
+      // treat bTilde the same way it treats bHat, i.e. make it take a
+      // best guess for the bTilde values as an input and return the
+      // calculated bTilde values as an output.
+      //
+      // An ok solution to this problem would be to have lTilde() take
+      // a special flag that means use the input bHat values without
+      // optimizing them but recalc the bTilde values starting at bHat.
       //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-      // Use the best matrix of b values as the initial guess for b.
-      DoubleMatrix dmatBCurr( nB, nInd );
       double* pdNull = 0;
       double dLTildeCurr = 0.0;
+      DoubleMatrix* pdmatNull = 0;
       DoubleMatrix drowLTilde_alpCurr( 1, nAlp );
-      lTilde(
-        isMultiProcessed,
-        *pSharedDirectory,
-        *pModel,
-        objective,
-        *pdvecY,
-        *pdvecN,
-        *pIndOptInfo,
-        dvecAlpCurr,
-        *pdvecBLow,
-        *pdvecBUp,
-        *pdvecBStep,
-        dmatBBest,
-        &dmatBCurr,
-        pdNull,
-        &drowLTilde_alpCurr );
-    
+
+      // Use the current matrix of b values as the initial values for b.
+      try
+      {
+        lTilde(
+          isMultiProcessed,
+          *pSharedDirectory,
+          *pModel,
+          objective,
+          *pdvecY,
+          *pdvecN,
+          *pIndOptInfo,
+          dvecAlpCurr,
+          *pdvecBLow,
+          *pdvecBUp,
+          *pdvecBStep,
+          dmatBCurr,
+          pdmatNull,
+          pdNull,
+          &drowLTilde_alpCurr );
+        }
+      catch( SpkException& e )
+      {
+        throw e.push(
+          SpkError::SPK_OPT_ERR, 
+          "The gradient of the population objective function could not be calculated.",
+          __LINE__, 
+          __FILE__ );
+      }
+  
       
       //----------------------------------------------------------
       // Finish up.
@@ -1895,14 +1995,11 @@ void ppkaOpt(
   // Prepare the population objective function.
   //------------------------------------------------------------
 
-  bool isLTildeBestSet = false;
-
-  // Construct the objective function, providing it with initial guesses
-  // for the best values for alp and for the best matrix of individual b
-  // values, with pointers to the ppkaOptParallel inputs, and with
-  // miscellaneous other information.
-  PpkaOptObj ppkaOptObj( isLTildeBestSet,
-                         dvecAlpIn,
+  // Construct the objective function, providing it with an initial
+  // guess for the best matrix of individual b values, with pointers
+  // to the ppkaOptParallel inputs, and with miscellaneous other
+  // information.
+  PpkaOptObj ppkaOptObj( nAlp,
                          dmatBIn,
                          &sharedDirectory,
                          &model,

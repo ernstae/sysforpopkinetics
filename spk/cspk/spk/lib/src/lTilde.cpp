@@ -773,74 +773,9 @@ void lTilde(
     }
     catch( SpkException& e )
       {         
-	//
-	// [ Comment by Sachiko - 11/20/02 ]
-	//
-	// If an individual's hessian turns out to be non positive definite,
-	// restore the previous values and let the line search try 
-	// a different direction.  This is known to be prominent in laplace.
-	//
-	if( e.find( SpkError::SPK_NOT_POS_DEF_ERR ) >= 0
-	       && cntPopItrs > 0 )
-	  {
-	    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	    // [Revisit - Population Level Back Up when an Individual Objective Hessian is not Positive Definite - Mitch]
-	    // Once the optimizer can do back ups, replace the existing code with the following:
-	    //
-	    /*
-	    // If an individual's Hessian is not positive definite,
-	    // then their contribution to the population objective is
-	    // not finite.  So, throw an exception that indicates this
-	    // situation to the population level objective function.
-	    const int max = SpkError::maxMessageLen();
-	    char message[max];
-	    sprintf( message, "The %s individual's contribution to the population objective was not finite.\n",
-	             intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
-
-	    throw e.push(
-			 SpkError::SPK_INFINITE_OBJ_ERR, 
-			 message,
-			 __LINE__, 
-			 __FILE__ );
-	    */
-	    //
-	    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-	    // Issue a warning.
-	    char mess[ SpkError::maxMessageLen() ];
-	    sprintf( mess, 
-		    "Backed up the population level search direction because the analysis \nfor the %s individual failed.",
-		    intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
-	    WarningsManager::addWarning( mess, __LINE__, __FILE__ );
-
-	    const double FACTOR = 1.0;
-	    if( isLTildeOut  )
-	      {
-		if( prevLogdetLambda2diff >= 0.0 )
-		  {
-		    *dLTildeOut = prevLogdetLambda2diff + prevLambda;
-		  }
-		else
-		  {
-		    *dLTildeOut = prevLambda;
-		  }
-		prevLambda *= FACTOR;
-	      }
-	    if( drowLTilde_alpOut )
-	      {
-		*drowLTilde_alpOut = prevLTilde_alp;
-	      }
-	    if( dmatLambdaTilde_alpOut )
-	      {
-		*dmatLambdaTilde_alpOut = prevLambdaTilde_alp;
-	      }
-	    ++cntPopItrs;
-	    return;
-	  }
-
 	const int max = SpkError::maxMessageLen();
 	char message[max];
-	sprintf( message, "The analysis for the %s individual failed.\n",
+	sprintf( message, "The population objective function calculation failed during the analysis for the %s individual.",
 		 intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
 
         throw e.push(
@@ -853,7 +788,7 @@ void lTilde(
       {
 	const int max = SpkError::maxMessageLen();
 	char message[max];
-	sprintf( message, "A standard exception was thrown during the analysis for the %s individual.\n",
+	sprintf( message, "The population objective function calculation failed because a standard exception \nwas thrown during the analysis for the %s individual.",
 		 intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
 
 	throw SpkException(
@@ -867,7 +802,7 @@ void lTilde(
       {
 	const int max = SpkError::maxMessageLen();
 	char message[max];
-	sprintf( message, "An unknown exception was thrown during the analysis for the %s individual.\n",
+	sprintf( message, "The population objective function calculation failed because an unknown exception \nwas thrown during the analysis for the %s individual.",
 		 intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
 
 	throw SpkException(
@@ -1175,70 +1110,9 @@ void lTilde(
       }
       catch( SpkException& e )
         {
-	  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	  // [Revisit - Population Level Back Up when an Individual Objective Hessian is not Positive Definite - Mitch]
-	  // Once the optimizer can do back ups, replace the existing code with the following:
-	  //
-	  /*
-	  // If an individual's Hessian is not positive definite,
-	  // then their contribution to the population objective is
-	  // not finite.  So, throw an exception that indicates this
-	  // situation to the population level objective function.
-	  const int max = SpkError::maxMessageLen();
-	  char message[max];
-	  sprintf( message, "The %s individual's contribution to the population objective was not finite.\n",
-	             intToOrdinalString( id, ZERO_IS_FIRST_INT ).c_str() );
-
-	  throw e.push(
-	  SpkError::SPK_INFINITE_OBJ_ERR, 
-	  message,
-	  __LINE__, 
-	  __FILE__ );
-	  */
-	  //
-	  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-	  //
-	  // [ Comment by Sachiko - 11/20/02 ]
-	  //
-	  // If an individual's hessian turns out to be non positive definite,
-	  // restore the previous values and let the line search try 
-	  // a different direction.  This can be known to happen with laplace.
-	  //
-	  if( e.find( SpkError::SPK_NOT_POS_DEF_ERR ) >= 0
-		 && cntPopItrs > 0 )
-            {
-	      // Issue a warning.
-	      char mess[ SpkError::maxMessageLen() ];
-	      sprintf( mess, 
-	               "Backed up the population level search direction because an attempt to \npost the %s individual's data failed.\n",
-	               intToOrdinalString( id, ZERO_IS_FIRST_INT ).c_str() );
-	      WarningsManager::addWarning( mess, __LINE__, __FILE__ );
-
-	      const double FACTOR = 1.0;
-	      if( isLTildeOut  )
-                {
-		  if( prevLogdetLambda2diff >= 0.0 )
-                    {
-		      *dLTildeOut = prevLogdetLambda2diff + prevLambda;
-                    }
-		  else
-                    {
-		      *dLTildeOut = prevLambda;
-                    }
-		  prevLambda *= FACTOR;
-                }
-	      if( drowLTilde_alpOut )
-		{
-		  *drowLTilde_alpOut = prevLTilde_alp;
-		}
-	      ++cntPopItrs;
-	      return;
-            }
-
             const int max = SpkError::maxMessageLen();
             char message[max];
-            sprintf( message, "An attempt to post the %s individual's data failed.\n",
+            sprintf( message, "An attempt to post the %s individual's data failed.",
 		     intToOrdinalString( id, ZERO_IS_FIRST_INT ).c_str() );
 
             throw e.push(
@@ -1251,7 +1125,7 @@ void lTilde(
         {
 	  const int max = SpkError::maxMessageLen();
 	  char message[max];
-          sprintf( message, "A standard:exception was thrown during an attempt to post the %s individual's data.\n",
+          sprintf( message, "A standard:exception was thrown during an attempt to post the %s individual's data.",
 		   intToOrdinalString( id, ZERO_IS_FIRST_INT ).c_str() );
           throw SpkException( SpkError::SPK_PARALLEL_ERR, message, __LINE__, __FILE__ );
         }
@@ -1259,7 +1133,7 @@ void lTilde(
         {
 	  const int max = SpkError::maxMessageLen();
 	  char message[max];
-          sprintf( message, "An unknown exception was thrown during an attempt to post the %s individual's data.\n",
+          sprintf( message, "An unknown exception was thrown during an attempt to post the %s individual's data.",
 		   intToOrdinalString( id, ZERO_IS_FIRST_INT ).c_str() );
           throw SpkException( SpkError::SPK_PARALLEL_ERR, message, __LINE__, __FILE__ );
         }
@@ -1314,21 +1188,21 @@ void lTilde(
 	  {
 	    const int max = SpkError::maxMessageLen();
 	    char mess[max];
-	    sprintf( mess, "A failure occured during an attempt to obtain an individual analysis result.\n" );
+	    sprintf( mess, "A failure occured during an attempt to obtain an individual analysis result." );
 	    throw e.push(SpkError::SPK_PARALLEL_ERR, mess, __LINE__, __FILE__ );
 	  }
 	catch( const std::exception & stde )
 	  {
 	    const int max = SpkError::maxMessageLen();
 	    char mess[max];
-	    sprintf( mess, "A standard exception was thrown during an attempt to obtain an individual \nanalysis result.\n" );
+	    sprintf( mess, "A standard exception was thrown during an attempt to obtain an individual \nanalysis result." );
 	    throw SpkException(SpkError::SPK_PARALLEL_ERR, mess, __LINE__, __FILE__ );
 	  }
 	catch( ... )
 	  {
 	    const int max = SpkError::maxMessageLen();
 	    char mess[max];
-	    sprintf( mess, "An unknown exception was thrown during an attempt to obtain an individual \nanalysis result.\n" );
+	    sprintf( mess, "An unknown exception was thrown during an attempt to obtain an individual \nanalysis result." );
 	    throw SpkException( SpkError::SPK_PARALLEL_ERR, mess, __LINE__, __FILE__ );
 	  }
             
@@ -1350,7 +1224,7 @@ void lTilde(
                   {
 		    const int max = SpkError::maxMessageLen();
 		    char mess[max];
-		    sprintf( mess, "Touble re-posting the %s individual's data.\n", 
+		    sprintf( mess, "Touble re-posting the %s individual's data.", 
 			     intToOrdinalString( toBeReIssued, ZERO_IS_FIRST_INT ).c_str() );
                     throw e.push(SpkError::SPK_PARALLEL_ERR, mess, __LINE__, __FILE__);
                   }
@@ -1611,6 +1485,7 @@ const IndOutputDataPackage indAnalysis(SpkModel &model, const IndInputDataPackag
   DoubleMatrix tmp1, tmp2;
   double p;
   long int q;
+  int j;
 
   //         ^
   // Compute bi (initial estimate of the ith subject's random population parameter).
@@ -1618,6 +1493,11 @@ const IndOutputDataPackage indAnalysis(SpkModel &model, const IndInputDataPackag
   estimateB(model, isFo, popConstVals.getOptimizer(), dvecY_i, dvecAlp, 
           dvecBin_i, dvecBlow, dvecBup, dvecBstep, 
           &dvecBhat_i, &dvecBTilde_i, (!isLTilde_alpOut? 0 : &dmatBTilde_alp_i));
+
+  const double* pdBlow     = dvecBlow    .data();
+  const double* pdBup      = dvecBup     .data();
+  const double* pdBhat_i   = dvecBhat_i  .data();
+  const double* pdBTilde_i = dvecBTilde_i.data();
 
   // Create the matrices to hold the output values from lambda2diff.
   dmatHessianTilde_i.resize( num_b, num_b );
@@ -1633,9 +1513,10 @@ const IndOutputDataPackage indAnalysis(SpkModel &model, const IndInputDataPackag
   dmatHessianTilde_alp_i.resize( nHessianTilde_xRows, nHessianTilde_alpCols );
   dmatHessianTilde_b_i.resize( nHessianTilde_xRows, nHessianTilde_bCols );
 
-  //                             ~
-  // Compute log det(Lambda(alp, bi(alp,yi), yi)_bi_bi)
-  // --- 2nd order approximation of lambda with respect to the ith subject's random population parameter.
+  //                      ~
+  // Compute (Lambda(alp, bi(alp,yi), yi)_bi_bi, the
+  // 2nd order derivative approximation of lambda with respect
+  // to the ith subject's random population parameter.
   //
   try{
       if( whichObjective == MODIFIED_LAPLACE )
@@ -1655,60 +1536,133 @@ const IndOutputDataPackage indAnalysis(SpkModel &model, const IndInputDataPackag
         {
          throw SpkException(SpkError::SPK_USER_INPUT_ERR, "Invalid objective.", __LINE__, __FILE__);
         }
-    
-      //                                           ~
-      // Compute p and q such that det(Lambda(alp, bi(alp,yi), yi)_bi_bi / 2PI) = p * 2^q.
-      //
-      // dmatHessianTilde_i may not be positive definite, especially when it was computed
-      // in lambda2diff.  det() which performs cholesky decomposition to get the determinant
-      // will throw an exception indicating the error.
-      //
-      det( ( divByScalar(dmatHessianTilde_i, PI2) ), &p, &q );
-      dLogdetLambda2diff_i = 0.5 * ( log( p ) + q * log( 2.0 ) );
-      
-      //                         ^
-      // Compute Lambda(alp, bi(alp,yi), yi)
-      drowLambda_alp_i.resize(1,num_alp);
-      
-      if( isLTildeOut )
-        dLambda_i = lambda(model, dvecY_i, dvecAlp, dvecBhat_i, true);
-      
-      if( isLTilde_alpOut )
-        drowLambda_alp_i = lambda_alp(model, dvecY_i, dvecAlp, dvecBhat_i, true);
-        
-      // Compute L_alp for this subject
-      if( isLTilde_alpOut )
-        {
-          //
-          // dmatHessianTilde_i could be singular.
-          // It should have been detected earlier when the determinant of
-          // the matrix is attempted to be computed.
-          //
-          tmp1 = mulByScalar(transpose( rvec(inverse(dmatHessianTilde_i)) ), 0.5);
-          tmp2 = (add(dmatHessianTilde_alp_i, multiply(dmatHessianTilde_b_i, dmatBTilde_alp_i)));
-          add(drowLambda_alp_i,multiply(tmp1, tmp2), drowLTilde_alp_i);
-        }
     }
   catch( SpkException& e )
     {
       const int max = SpkError::maxMessageLen();
       char mess[max];
-      sprintf( mess, "Calculation of an individual's contribution to the population objective \nfunction failed.\n" );
-      throw e.push(SpkError::SPK_UNKNOWN_ERR, mess, __LINE__, __FILE__ );
+      sprintf( mess, "The Hessian of the %s individual's objective function could not be calculated.",
+	       intToOrdinalString( who, ZERO_IS_FIRST_INT ).c_str() );
+
+      // Issue a warning.
+      WarningsManager::addWarning( mess, __LINE__, __FILE__ );
+
+      // Throw an exception that will cause the population
+      // objective to ask the population optimizer to back up.
+      throw e.push(
+		   SpkError::SPK_IND_OBJ_HESS_ERR, 
+		   mess,
+		   __LINE__, 
+		   __FILE__ );
     }
   catch( const std::exception & stde )
     {
       const int max = SpkError::maxMessageLen();
       char mess[max];
-      sprintf( mess, "A standard exception was thrown during the calculation of an individual's \ncontribution to the population objective function.\n" );
+      sprintf( mess, "A standard exception was thrown during the calculation of the Hessian of \nthe %s individual's objective.",
+	       intToOrdinalString( who, ZERO_IS_FIRST_INT ).c_str() );
       throw SpkException(SpkError::SPK_UNKNOWN_ERR, mess, __LINE__, __FILE__ );
     }
   catch( ... )
     {
       const int max = SpkError::maxMessageLen();
       char mess[max];
-      sprintf( mess, "An unknown exception was thrown during the calculation of an individual's \ncontribution to the population objective function.\n" );
+      sprintf( mess, "An unknown exception was thrown during the calculation of the Hessian of \nthe %s individual's objective.",
+	       intToOrdinalString( who, ZERO_IS_FIRST_INT ).c_str() );
       throw SpkException( SpkError::SPK_UNKNOWN_ERR, mess, __LINE__, __FILE__ );
+    }
+    
+  //                                           ~
+  // Compute p and q such that det(Lambda(alp, bi(alp,yi), yi)_bi_bi / 2PI) = p * 2^q.
+  //
+  // dmatHessianTilde_i may not be positive definite, especially when it was computed
+  // in lambda2diff.  det() which performs cholesky decomposition to get the determinant
+  // will throw an exception indicating the error.
+  //
+  try{
+      det( ( divByScalar(dmatHessianTilde_i, PI2) ), &p, &q );
+    }
+  catch( SpkException& e )
+    {
+      // See if the approximate Hessian is not positive definite.
+      if( e.find( SpkError::SPK_NOT_POS_DEF_ERR ) >= 0 )
+        {
+	  const int max = SpkError::maxMessageLen();
+	  char mess[max];
+	  sprintf( mess, "The Hessian of the %s individual's objective function was not positive definite.",
+		   intToOrdinalString( who, ZERO_IS_FIRST_INT ).c_str() );
+
+	  // Issue a warning.
+	  WarningsManager::addWarning( mess, __LINE__, __FILE__ );
+
+	  // Throw an exception that will cause the population
+	  // objective to ask the population optimizer to back up.
+	  throw e.push(
+		       SpkError::SPK_IND_OBJ_HESS_ERR, 
+		       mess,
+		       __LINE__, 
+		       __FILE__ );
+        }
+      else
+        {
+	  // If the calculation failed for some other reason, then
+	  // throw an exception that will not cause the population
+	  // objective to ask the population optimizer to back up.
+	  const int max = SpkError::maxMessageLen();
+	  char mess[max];
+	  sprintf( mess, "The calculation of the determinant of the Hessian of the %s \nindividual's objective function failed.",
+		   intToOrdinalString( who, ZERO_IS_FIRST_INT ).c_str() );
+	  throw SpkException(
+			     SpkError::SPK_UNKNOWN_ERR,
+			     mess,
+			     __LINE__,
+			     __FILE__ );
+        }
+
+    }
+  catch( const std::exception & stde )
+    {
+      const int max = SpkError::maxMessageLen();
+      char mess[max];
+      sprintf( mess, "A standard exception was thrown during the calculation of the determinant \nof the Hessian of the %s individual's objective.",
+	       intToOrdinalString( who, ZERO_IS_FIRST_INT ).c_str() );
+      throw SpkException(SpkError::SPK_UNKNOWN_ERR, mess, __LINE__, __FILE__ );
+    }
+  catch( ... )
+    {
+      const int max = SpkError::maxMessageLen();
+      char mess[max];
+      sprintf( mess, "An unknown exception was thrown during the calculation of the determinant \nof the Hessian of the %s individual's objective.",
+	       intToOrdinalString( who, ZERO_IS_FIRST_INT ).c_str() );
+      throw SpkException( SpkError::SPK_UNKNOWN_ERR, mess, __LINE__, __FILE__ );
+    }
+    
+  //                             ~
+  // Compute log det(Lambda(alp, bi(alp,yi), yi)_bi_bi)
+  //
+  dLogdetLambda2diff_i = 0.5 * ( log( p ) + q * log( 2.0 ) );
+      
+  //                         ^
+  // Compute Lambda(alp, bi(alp,yi), yi)
+  drowLambda_alp_i.resize(1,num_alp);
+  
+  if( isLTildeOut )
+    dLambda_i = lambda(model, dvecY_i, dvecAlp, dvecBhat_i, true);
+  
+  if( isLTilde_alpOut )
+    drowLambda_alp_i = lambda_alp(model, dvecY_i, dvecAlp, dvecBhat_i, true);
+    
+  // Compute L_alp for this subject
+  if( isLTilde_alpOut )
+    {
+      //
+      // dmatHessianTilde_i could be singular.
+      // It should have been detected earlier when the determinant of
+      // the matrix is attempted to be computed.
+      //
+      tmp1 = mulByScalar(transpose( rvec(inverse(dmatHessianTilde_i)) ), 0.5);
+      tmp2 = (add(dmatHessianTilde_alp_i, multiply(dmatHessianTilde_b_i, dmatBTilde_alp_i)));
+      add(drowLambda_alp_i,multiply(tmp1, tmp2), drowLTilde_alp_i);
     }
 
   IndResults results(who, dvecBhat_i, dvecBTilde_i, drowLTilde_alp_i, dLambda_i, dLogdetLambda2diff_i);

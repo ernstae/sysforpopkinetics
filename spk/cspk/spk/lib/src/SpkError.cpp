@@ -483,6 +483,14 @@
   indicates some error occurred during data simulation.
   $rend
 
+  SPK_IND_PAR_AT_BOUNDS_ERR $cend
+  indicates that the parameter estimates for one of the
+  individuals is at its lower or upper bound.
+
+  SPK_IND_OBJ_HESS_ERR $cend
+  indicates some error occurred that involved the Hessian 
+  of one of an individual's objective function.
+
   SPK_STATISTICS_ERR $cend
   indicates some error occurred during calculating statistics.
 
@@ -1058,6 +1066,11 @@ const SpkError::ErrorMap SpkError::fillErrorMap()
 				      "SPK_LIN_NOT_FEASIBLE") );
   tmpMap.insert( ErrorMap::value_type(SPK_NONLIN_NOT_FEASIBLE , 
 				      "SPK_NONLIN_NOT_FEASIBLE") );
+
+  tmpMap.insert( ErrorMap::value_type(SPK_IND_PAR_AT_BOUNDS_ERR, 
+				      "SPK_IND_PAR_AT_BOUNDS_ERR") );
+  tmpMap.insert( ErrorMap::value_type(SPK_IND_OBJ_HESS_ERR, 
+				      "SPK_IND_OBJ_HESS_ERR") );
 
   tmpMap.insert( ErrorMap::value_type(SPK_SIMULATION_ERR, 
 				      "SPK_SIMULATION_ERR") );

@@ -125,6 +125,10 @@ public:
       // Insufficient memory error
       SPK_INSUFFICIENT_MEM_ERR,
 
+      // Errors during parameter estimation
+      SPK_IND_PAR_AT_BOUNDS_ERR,
+      SPK_IND_OBJ_HESS_ERR,
+
       // Errors during statistics computation
       SPK_STATISTICS_ERR,
 
