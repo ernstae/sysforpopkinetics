@@ -536,6 +536,7 @@ $end
 #include <spkopt/QuasiNewton01Box.h>
 #include <spkopt/MaxAbs.h>
 #include <spkopt/Memory.h>
+#include <spkopt/PlusInfinity.h>
 
 // Standard library header files.
 #include <iostream>
@@ -1132,6 +1133,18 @@ void quasiNewtonAnyBox(
     }
   }
 
+  // Throw an exception if the initial value for the objective
+  // function is equal to positive infinity, which is a special value
+  // used to indicate to the optimizer that it should try to back up.
+  if ( fScaled == PlusInfinity( double( 0 ) ) )
+  {
+    throw SpkException(
+      SpkError::SPK_OPT_ERR, 
+      "The initial value for the objective function was equal to plus infinity.",
+      __LINE__,
+      __FILE__ );
+  }
+
   // Set this flag to indicate the main optimization loop has not yet
   // completed.  Note that this will be reset after the main
   // optimization loop if it does not cause an error.
@@ -1394,6 +1407,9 @@ void quasiNewtonAnyBox(
           __FILE__ );
       }
 
+      // The number of iterations completed is one less than the
+      // current iteration number.
+      optInfo.setNIterCompleted( iterCurr - 1 );
     }
   }
   catch( SpkException& e )
@@ -1428,10 +1444,6 @@ void quasiNewtonAnyBox(
 
   bool ok = false;
   SpkError::ErrorCode errorCode;
-
-  // The number of iterations completed is one less than the
-  // current iteration number.
-  optInfo.setNIterCompleted( iterCurr - 1 );
 
   if ( isWithinTol )
   {
