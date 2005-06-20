@@ -1,5 +1,5 @@
 #
-omhelp_dir=~/OMhelp
+omhelp_dir=~/tools/omhelp
 export omhelp_dir
 if [ -d 'Doc' ] 
 then 
