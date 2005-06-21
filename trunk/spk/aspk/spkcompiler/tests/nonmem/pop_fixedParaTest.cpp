@@ -179,16 +179,19 @@ if( actual != expected ) \\\n \
   //============================================
   // Define NONMEM keywords
   //============================================
-  const char *strTHETA = "THETA";
-  const char *strOMEGA = "OMEGA";
-  const char *strSIGMA = "SIGMA";
-  const char *strETA   = "ETA";
-  const char *strEPS   = "EPS";
-  const char *strPRED  = "PRED";
-  const char *strRES   = "RES";
-  const char *strWRES  = "WRES";
-  const char *strF     = "F";
-  const char *strY     = "Y";
+  const char *strTHETA    = "THETA";
+  const char *strOMEGA    = "OMEGA";
+  const char *strSIGMA    = "SIGMA";
+  const char *strETA      = "ETA";
+  const char *strEPS      = "EPS";
+  const char *strPRED     = "PRED";
+  const char *strIPRED    = "IPRED";
+  const char *strIRES     = "IRES";
+  const char *strIWRES    = "IWRES";
+  const char *strIETARES  = "IETARES";
+  const char *strIWETARES = "IWETARES";
+  const char *strF        = "F";
+  const char *strY        = "Y";
 
   //============================================
   // User defined words
