@@ -138,18 +138,24 @@ if( actual != expected ) \\\n \
   //============================================
   // Define NONMEM keywords
   //============================================
-  const char *strTHETA   = "THETA";
-  const char *strOMEGA   = "OMEGA";
-  const char *strSIGMA   = "SIGMA";
-  const char *strETA     = "ETA";
-  const char *strEPS     = "EPS";
-  const char *strPRED    = "PRED";
-  const char *strRES     = "RES";
-  const char *strWRES    = "WRES";
-  const char *strETARES  = "ETARES";
-  const char *strWETARES = "WETARES";
-  const char *strF       = "F";
-  const char *strY       = "Y";
+  const char *strTHETA    = "THETA";
+  const char *strOMEGA    = "OMEGA";
+  const char *strSIGMA    = "SIGMA";
+  const char *strETA      = "ETA";
+  const char *strEPS      = "EPS";
+  const char *strPRED     = "PRED";
+  const char *strIPRED    = "IPRED";
+  const char *strIRES     = "IRES";
+  const char *strIWRES    = "IWRES";
+  const char *strIETARES  = "IETARES";
+  const char *strIWETARES = "IWETARES";
+  const char *strPPRED    = "PPRED";
+  const char *strPRES     = "PRES";
+  const char *strPWRES    = "PWRES";
+  const char *strPETARES  = "PETARES";
+  const char *strPWETARES = "PWETARES";
+  const char *strF        = "F";
+  const char *strY        = "Y";
 
   //============================================
   // User defined words
@@ -179,15 +185,25 @@ if( actual != expected ) \\\n \
   const double eta_in  [ etaLen ] = { 0.0, 0.0 };
   const bool   eta_fix [ etaLen ] = { false, false };
 
-  const double eta_res [ etaLen * nIndividuals ] = { 1.1, 1.2,   /* for the 1st patient */
-			                             2.1, 2.2,   /* 2nd patient */
-                                                     3.1, 3.2,   /* 3rd patient */
-                                                     4.1, 4.2 }; /* 4th patient */
+  const double i_eta_res [ etaLen * nIndividuals ] = { 1.1, 1.2,   /* for the 1st patient */
+			                               2.1, 2.2,   /* 2nd patient */
+                                                       3.1, 3.2,   /* 3rd patient */
+                                                       4.1, 4.2 }; /* 4th patient */
 
-  const double eta_wres[ etaLen * nIndividuals ] = { 1.1, 1.2,
-                                                     2.1, 2.2,
-                                                     3.1, 3.2,
-                                                     4.1, 4.2 };
+  const double i_eta_wres[ etaLen * nIndividuals ] = { 1.1, 1.2,
+                                                       2.1, 2.2,
+                                                       3.1, 3.2,
+                                                       4.1, 4.2 };
+
+  const double p_eta_res [ etaLen * nIndividuals ] = { 11.1, 11.2,   /* for the 1st patient */
+			                               12.1, 12.2,   /* 2nd patient */
+                                                       13.1, 13.2,   /* 3rd patient */
+                                                       14.1, 14.2 }; /* 4th patient */
+
+  const double p_eta_wres[ etaLen * nIndividuals ] = { 11.1, 11.2,
+                                                       12.1, 12.2,
+                                                       13.1, 13.2,
+                                                       14.1, 14.2 };
 
   //============================================
   // The SPK Compiler decides the constraints
@@ -516,7 +532,7 @@ void pop_mdvTest::createSourceML()
       
   oSource << "<constraint>" << endl;
 
-  // default: is_eta_out=no, is_restart=yes
+  // default: is_eta_out=yes, is_restart=yes
   oSource << "<pop_analysis ";
   oSource << "mitr=\"" << mitr << "\" ";
   oSource << "is_estimation=\"" << (isEstimate? "yes" : "no") << "\" ";
@@ -723,18 +739,45 @@ void pop_mdvTest::parse()
   // THETA, OMEGA, ETA must be registered for individual analysis.
   Symbol * theta = table->findi( strTHETA );
   CPPUNIT_ASSERT( theta != Symbol::empty() );
+
   Symbol * omega = table->findi( strOMEGA );
   CPPUNIT_ASSERT( omega != Symbol::empty() );
+
   Symbol * eta = table->findi( strETA );
   CPPUNIT_ASSERT( eta != Symbol::empty() );
-  Symbol * res = table->findi( strRES );
-  CPPUNIT_ASSERT( res != Symbol::empty() );
-  Symbol * wres = table->findi( strWRES );
-  CPPUNIT_ASSERT( wres != Symbol::empty() );
-  Symbol * etares = table->findi( strETARES );
-  CPPUNIT_ASSERT( etares != Symbol::empty() );
-  Symbol * wetares = table->findi( strWETARES );
-  CPPUNIT_ASSERT( wetares != Symbol::empty() );
+
+  Symbol * pred = table->findi( strPRED );
+  CPPUNIT_ASSERT( pred != Symbol::empty() );
+
+  Symbol * ipred = table->findi( strIPRED );
+  CPPUNIT_ASSERT( ipred != Symbol::empty() );
+
+  Symbol * ires = table->findi( strIRES );
+  CPPUNIT_ASSERT( ires != Symbol::empty() );
+
+  Symbol * iwres = table->findi( strIWRES );
+  CPPUNIT_ASSERT( iwres != Symbol::empty() );
+
+  Symbol * ietares = table->findi( strIETARES );
+  CPPUNIT_ASSERT( ietares != Symbol::empty() );
+
+  Symbol * iwetares = table->findi( strIWETARES );
+  CPPUNIT_ASSERT( iwetares != Symbol::empty() );
+
+  Symbol * ppred = table->findi( strPPRED );
+  CPPUNIT_ASSERT( ppred != Symbol::empty() );
+
+  Symbol * pres = table->findi( strPRES );
+  CPPUNIT_ASSERT( pres != Symbol::empty() );
+
+  Symbol * pwres = table->findi( strPWRES );
+  CPPUNIT_ASSERT( pwres != Symbol::empty() );
+
+  Symbol * petares = table->findi( strPETARES );
+  CPPUNIT_ASSERT( petares != Symbol::empty() );
+
+  Symbol * pwetares = table->findi( strPWETARES );
+  CPPUNIT_ASSERT( pwetares != Symbol::empty() );
 
   //============================================
   // Check existence/absence of generated files
@@ -762,9 +805,9 @@ void pop_mdvTest::parse()
   CPPUNIT_ASSERT_MESSAGE( "Missing DataSet.h", dataSet != NULL );
   fclose( dataSet );
 
-  FILE * pred = fopen( fPred_h, "r" );
-  CPPUNIT_ASSERT_MESSAGE( "Missing Pred.h", pred != NULL );
-  fclose( pred );
+  FILE * fpred = fopen( fPred_h, "r" );
+  CPPUNIT_ASSERT_MESSAGE( "Missing Pred.h", fpred != NULL );
+  fclose( fpred );
 
   FILE * makeSPK = fopen( fMakefile, "r" );
   CPPUNIT_ASSERT_MESSAGE( "Missing Makefile.SPK", makeSPK != NULL );
@@ -794,9 +837,9 @@ void pop_mdvTest::testNonmemPars_h()
   o << "   MY_ASSERT_EQUAL( NonmemPars::nTheta, " << thetaLen << " );" << endl;
   for( int i=0; i<thetaLen; i++ )
     {
-      o << "   MY_ASSERT_EQUAL( NonmemPars::thetaUp [" << i << "], " << theta_up [i] << " );" << endl;
-      o << "   MY_ASSERT_EQUAL( NonmemPars::thetaLow[" << i << "], " << theta_low[i] << " );" << endl;
-      o << "   MY_ASSERT_EQUAL( NonmemPars::thetaIn [" << i << "], " << theta_in [i] << " );" << endl;
+      o << "   MY_ASSERT_EQUAL( NonmemPars::thetaUp [" << i << "], "   << theta_up [i] << " );" << endl;
+      o << "   MY_ASSERT_EQUAL( NonmemPars::thetaLow[" << i << "], "   << theta_low[i] << " );" << endl;
+      o << "   MY_ASSERT_EQUAL( NonmemPars::thetaIn [" << i << "], "   << theta_in [i] << " );" << endl;
       o << "   MY_ASSERT_EQUAL( NonmemPars::thetaFixed[" << i << "], " << theta_fix[i] << " );" << endl;
     }						  
   o << "   MY_ASSERT_EQUAL( NonmemPars::omegaDim, " << omegaDim << " );" << endl;
@@ -866,10 +909,16 @@ void pop_mdvTest::testIndDataClass()
   //
   // Check other registered-by-the-compiler variables
   // * PRED
-  // * WRES
-  // * RES
-  // * ETARES
-  // * WETARES
+  // * IPRED
+  // * IWRES
+  // * IRES
+  // * IETARES
+  // * IWETARES
+  // * PPRED
+  // * PWRES
+  // * PRES
+  // * PETARES
+  // * PWETARES
   //============================================
   printf( "\n--- %s ---\n", fIndDataDriver );
   ofstream o( fIndDataDriver_cpp );
@@ -916,38 +965,58 @@ void pop_mdvTest::testIndDataClass()
     }
   o << endl;  
 
-  // The current values of RES/WRES/PRED should be always kept in memory
-  // for displaying tables/scatterplots.
-  o << "   MY_ASSERT_EQUAL( n, A." << strRES     << ".size() );" << endl;
-  o << "   MY_ASSERT_EQUAL( n, A." << strWRES    << ".size() );" << endl;
-  o << "   MY_ASSERT_EQUAL( n, A." << strPRED    << ".size() );" << endl;
-  o << "   MY_ASSERT_EQUAL( n, A." << strETARES  << ".size() );" << endl;
-  o << "   MY_ASSERT_EQUAL( n, A." << strWETARES << ".size() );" << endl;
+  // Ixxx for individualized residuals
+  // Pxxx for population residuals
+  o << "   MY_ASSERT_EQUAL( n, A." << strIRES     << ".size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( n, A." << strIWRES    << ".size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( n, A." << strIPRED    << ".size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( n, A." << strIETARES  << ".size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( n, A." << strIWETARES << ".size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( n, A." << strPRES     << ".size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( n, A." << strPWRES    << ".size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( n, A." << strPPRED    << ".size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( n, A." << strPETARES  << ".size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( n, A." << strPWETARES << ".size() );" << endl;
   for( int i=0; i<nRecords; i++ )
     {
-      o << "   MY_ASSERT_EQUAL( etaLen, A." << strETARES  << "[" << i << "].size() );" << endl;
-      o << "   MY_ASSERT_EQUAL( etaLen, A." << strWETARES << "[" << i << "].size() );" << endl;
+      o << "   MY_ASSERT_EQUAL( etaLen, A." << strIETARES  << "[" << i << "].size() );" << endl;
+      o << "   MY_ASSERT_EQUAL( etaLen, A." << strIWETARES << "[" << i << "].size() );" << endl;
+      o << "   MY_ASSERT_EQUAL( etaLen, A." << strPETARES  << "[" << i << "].size() );" << endl;
+      o << "   MY_ASSERT_EQUAL( etaLen, A." << strPWETARES << "[" << i << "].size() );" << endl;
     }
   o << "   MY_ASSERT_EQUAL( n, A." << strF       << ".size() );" << endl;
   o << "   MY_ASSERT_EQUAL( n, A." << strY       << ".size() );" << endl;
   o << endl;
 
-  o << "   valarray<double> etaRes   ( etaLen );" << endl;
-  o << "   valarray<double> etaResWtd( etaLen );" << endl;
+  o << "   valarray<double> iEtaRes   ( etaLen );" << endl;
+  o << "   valarray<double> iEtaResWtd( etaLen );" << endl;
+  o << "   valarray<double> pEtaRes   ( etaLen );" << endl;
+  o << "   valarray<double> pEtaResWtd( etaLen );" << endl;
   for( int i=0; i<etaLen; i++ )
   {
-     o << "   etaRes   [" << i << "] = " << eta_res[i] << ";" << endl;
-     o << "   etaResWtd[" << i << "] = " << eta_wres[i] << ";" << endl;
+     o << "   iEtaRes   [" << i << "] = " << i_eta_res[i] << ";" << endl;
+     o << "   iEtaResWtd[" << i << "] = " << i_eta_wres[i] << ";" << endl;
+     o << "   pEtaRes   [" << i << "] = " << p_eta_res[i] << ";" << endl;
+     o << "   pEtaResWtd[" << i << "] = " << p_eta_wres[i] << ";" << endl;
   }
-  o << "   A.replaceEtaRes ( etaRes );" << endl;
-  o << "   A.replaceWEtaRes( etaResWtd );" << endl;
+  o << "   A.replaceIEtaRes ( iEtaRes );" << endl;
+  o << "   A.replaceIWEtaRes( iEtaResWtd );" << endl;
+  o << "   A.replacePEtaRes ( pEtaRes );" << endl;
+  o << "   A.replacePWEtaRes( pEtaResWtd );" << endl;
 
   for( int i=0; i<nRecords; i++ )
   {
      for( int j=0; j<etaLen; j++ )
      {
-        o << "   MY_ASSERT_EQUAL( etaRes   [" << j << "]" << ", A." << strETARES  << "[" << i << "][" << j << "] );" << endl;
-        o << "   MY_ASSERT_EQUAL( etaResWtd[" << j << "]" << ", A." << strWETARES << "[" << i << "][" << j << "] );" << endl;
+        o << "   MY_ASSERT_EQUAL( iEtaRes   [" << j << "]" << ", A." << strIETARES;
+	o << "[" << i << "][" << j << "] );" << endl;
+        o << "   MY_ASSERT_EQUAL( iEtaResWtd[" << j << "]" << ", A." << strIWETARES;
+	o << "[" << i << "][" << j << "] );" << endl;
+
+        o << "   MY_ASSERT_EQUAL( pEtaRes   [" << j << "]" << ", A." << strPETARES;
+	o << "[" << i << "][" << j << "] );" << endl;
+        o << "   MY_ASSERT_EQUAL( pEtaResWtd[" << j << "]" << ", A." << strPWETARES;
+	o << "[" << i << "][" << j << "] );" << endl;
      }
   }
 
@@ -1010,65 +1079,6 @@ void pop_mdvTest::testDataSetClass()
   o << "   const int nIndividuals = " << nIndividuals << ";" << endl;
   o << "   DataSet<double> set;" << endl;
   o << "   valarray<int> N = set.getN();" << endl;
-  // { ID, DV=CP, TIME, MDV }
-  for( int j=0, k=0; j<nIndividuals; j++ )
-  {
-     for( int i=0; i<N[j]; i++, k++ )
-     {
-       o << "   assert( strcmp( set.data[" << j << "]->" << strID << "[" << i << "], \"" << record[k][0] << "\" ) == 0 );" << endl;
-       o << "   MY_ASSERT_EQUAL(  " << record[k][1] << ", set.data[" << j << "]->" << strCP   << "[" << i << "] );" << endl;
-       o << "   MY_ASSERT_EQUAL(  " << record[k][1] << ", set.data[" << j << "]->" << strDV   << "[" << i << "] );" << endl;
-       o << "   MY_ASSERT_EQUAL(  " << record[k][2] << ", set.data[" << j << "]->" << strTIME << "[" << i << "] );" << endl;
-       o << "   MY_ASSERT_EQUAL(  " << record[k][3] << ", set.data[" << j << "]->" << strMDV  << "[" << i << "] );" << endl;
-     }
-  }
-
-  o << "for( int j=0; j<nIndividuals; j++ )" << endl;
-  o << "{" << endl;
-  o << "   for( int i=0; i<N[j]; i++ )" << endl;
-  o << "   {" << endl;
-  o << "      MY_ASSERT_EQUAL( thetaLen, set.data[j]->" << strTHETA   << "[i].size() );" << endl;
-  o << "      MY_ASSERT_EQUAL( etaLen, set.data[j]->"   << strETA     << "[i].size() );" << endl;
-  o << "      MY_ASSERT_EQUAL( etaLen, set.data[j]->"   << strETARES  << "[i].size() );" << endl;
-  o << "      MY_ASSERT_EQUAL( etaLen, set.data[j]->"   << strWETARES << "[i].size() );" << endl;
-  o << "   }" << endl;
-  o << "}" << endl;
-
-  // The current values of RES/WRES/PRED and ETARES/WETARES (for pop) should be always kept in memory
-  // for displaying tables/scatterplots.
-  for( int j=0; j<nIndividuals; j++ )
-    {
-      o << "MY_ASSERT_EQUAL( N[" << j << "], set.data[" << j << "]->" << strRES     << ".size() );" << endl;
-      o << "MY_ASSERT_EQUAL( N[" << j << "], set.data[" << j << "]->" << strWRES    << ".size() );" << endl;
-      o << "MY_ASSERT_EQUAL( N[" << j << "], set.data[" << j << "]->" << strPRED    << ".size() );" << endl;
-      o << "MY_ASSERT_EQUAL( N[" << j << "], set.data[" << j << "]->" << strETARES  << ".size() );" << endl;
-      o << "MY_ASSERT_EQUAL( N[" << j << "], set.data[" << j << "]->" << strWETARES << ".size() );" << endl;
-      o << "MY_ASSERT_EQUAL( N[" << j << "], set.data[" << j << "]->" << strF       << ".size() );" << endl;
-      o << "MY_ASSERT_EQUAL( N[" << j << "], set.data[" << j << "]->" << strY       << ".size() );" << endl;
-      o << endl;
-    }
-
-  o << "   valarray<double> etaRes   ( etaLen * nIndividuals );" << endl;
-  o << "   valarray<double> etaResWtd( etaLen * nIndividuals );" << endl;
-  for( int i=0; i<etaLen*nIndividuals; i++ )
-  {
-     o << "   etaRes   [" << i << "] = " << eta_res[i] << ";" << endl;
-     o << "   etaResWtd[" << i << "] = " << eta_wres[i] << ";" << endl;
-  }
-  o << "   set.replaceAllEtaRes ( etaRes );" << endl;
-  o << "   set.replaceAllWEtaRes( etaResWtd );" << endl;
-
-  for( int k=0; k<nIndividuals; k++ )
-  {
-     for( int i=0; i<N[k]; i++ )
-     {
-        for( int j=0; j<etaLen; j++ )
-        {
-           o << "   MY_ASSERT_EQUAL( etaRes   [" << j + k*etaLen << "]" << ", set.data[" << k << "]->" << strETARES  << "[" << i << "][" << j << "] );" << endl;
-           o << "   MY_ASSERT_EQUAL( etaResWtd[" << j + k*etaLen << "]" << ", set.data[" << k << "]->" << strWETARES << "[" << i << "][" << j << "] );" << endl;
-        }
-     }
-  }
   o << "const valarray<double> y = set.getAllMeasurements();" << endl;
   o << "for( int j=0, k=0, l=0; j<nIndividuals; j++ )" << endl;
   o << "{" << endl;

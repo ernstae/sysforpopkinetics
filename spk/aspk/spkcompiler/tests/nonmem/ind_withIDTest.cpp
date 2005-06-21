@@ -247,16 +247,17 @@ if( actual != expected ) \\\n \
   //============================================
   // Define NONMEM keywords
   //============================================
-  const char *strTHETA = "THETA";
-  const char *strOMEGA = "OMEGA";
-  const char *strSIGMA = "SIGMA";
-  const char *strETA   = "ETA";
-  const char *strEPS   = "EPS";
-  const char *strPRED  = "PRED";
-  const char *strRES   = "RES";
-  const char *strWRES  = "WRES";
-  const char *strF     = "F";
-  const char *strY     = "Y";
+  const char *strTHETA  = "THETA";
+  const char *strOMEGA  = "OMEGA";
+  const char *strSIGMA  = "SIGMA";
+  const char *strETA    = "ETA";
+  const char *strEPS    = "EPS";
+  const char *strPRED   = "PRED";
+  const char *strIPRED  = "IPRED";
+  const char *strIRES   = "IRES";
+  const char *strIWRES  = "IWRES";
+  const char *strF      = "F";
+  const char *strY      = "Y";
 
   //============================================
   // The user is requested to feed in
@@ -983,9 +984,9 @@ void ind_withIDTest::testIndDataClass()
   // * f
   //
   // Check other registered-by-the-compiler variables
-  // * PRED
-  // * WRES
-  // * RES
+  // * IPRED
+  // * IWRES
+  // * IRES
   //============================================
   printf( "\n--- %s ---\n", fIndDataDriver );
   ofstream o( fIndDataDriver_cpp );
@@ -1034,9 +1035,9 @@ void ind_withIDTest::testIndDataClass()
 
   // The current values of RES/WRES/PRED should be always kept in memory
   // for displaying tables/scatterplots.
-  o << "   MY_ASSERT_EQUAL( n, A." << strRES  << ".size() );" << endl;
-  o << "   MY_ASSERT_EQUAL( n, A." << strWRES << ".size() );" << endl;
-  o << "   MY_ASSERT_EQUAL( n, A." << strPRED << ".size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( n, A." << strIRES  << ".size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( n, A." << strIWRES << ".size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( n, A." << strIPRED << ".size() );" << endl;
 
   o << "   MY_ASSERT_EQUAL( n, A." << strF    << ".size() );" << endl;
   o << "   MY_ASSERT_EQUAL( n, A." << strY    << ".size() );" << endl;
@@ -1116,9 +1117,9 @@ void ind_withIDTest::testDataSetClass()
 
   // The current values of RES/WRES/PRED should be always kept in memory
   // for displaying tables/scatterplots.
-  o << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strRES  << ".size() );" << endl;
-  o << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strWRES << ".size() );" << endl;
-  o << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strPRED << ".size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strIRES  << ".size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strIWRES << ".size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strIPRED << ".size() );" << endl;
   o << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strF    << ".size() );" << endl;
   o << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strY    << ".size() );" << endl;
   o << endl;

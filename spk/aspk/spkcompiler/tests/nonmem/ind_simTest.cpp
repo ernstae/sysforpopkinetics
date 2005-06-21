@@ -231,16 +231,17 @@ if( actual != expected ) \\\n \
   //============================================
   // Define NONMEM keywords
   //============================================
-  const char *strTHETA = "THETA";
-  const char *strOMEGA = "OMEGA";
-  const char *strSIGMA = "SIGMA";
-  const char *strETA   = "ETA";
-  const char *strEPS   = "EPS";
-  const char *strPRED  = "PRED";
-  const char *strRES   = "RES";
-  const char *strWRES  = "WRES";
-  const char *strF     = "F";
-  const char *strY     = "Y";
+  const char *strTHETA  = "THETA";
+  const char *strOMEGA  = "OMEGA";
+  const char *strSIGMA  = "SIGMA";
+  const char *strETA    = "ETA";
+  const char *strEPS    = "EPS";
+  const char *strPRED   = "PRED";
+  const char *strIPRED  = "IPRED";
+  const char *strIRES   = "IRES";
+  const char *strIWRES  = "IWRES";
+  const char *strF      = "F";
+  const char *strY      = "Y";
 
   //============================================
   // The user is requested to feed in
@@ -920,9 +921,9 @@ void ind_simTest::testDataSetClass()
 
   // The current values of RES/WRES/PRED should be always kept in memory
   // for displaying tables/scatterplots.
-  o << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strRES  << ".size() );" << endl;
-  o << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strWRES << ".size() );" << endl;
-  o << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strPRED << ".size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strIRES  << ".size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strIWRES << ".size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strIPRED << ".size() );" << endl;
   o << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strF    << ".size() );" << endl;
   o << "   MY_ASSERT_EQUAL( n, set.data[0]->" << strY    << ".size() );" << endl;
   o << endl;
