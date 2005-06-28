@@ -64,8 +64,10 @@ private:
   // Test cases for this unit test.
   void OneExpF_ModelBasedExpY_Test();
   void OneExpF_AdditivePlusThetaDepY_Test();
-  void isCachingProperlyTest();
 
+  void OneExpF_AdditivePlusThetaDepY_NotAllRecAreObsRec_Test();
+
+  void isCachingProperlyTest();
 };
 
 #endif
