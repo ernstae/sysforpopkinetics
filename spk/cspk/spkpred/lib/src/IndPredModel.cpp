@@ -324,9 +324,11 @@ void IndPredModel::doSelectIndividual( int iIn )
   // Set the individual's index .
   iCurr = iIn;
 
-  // Set the number of events for this individual.  Note that
-  // for now all events are assumed to be observation events.
-  nEventCurr = predEvaluator.getNObservs( iCurr );
+  // Set the number of data records for this individual.
+  nDataRecordCurr = predEvaluator.getNRecords( iCurr );
+
+  // Set the number of observation records for this individual.
+  nObsRecordCurr  = predEvaluator.getNObservs( iCurr );
 
 
   //------------------------------------------------------------
@@ -344,8 +346,8 @@ void IndPredModel::doSelectIndividual( int iIn )
   //
   // This vector contains quantities that are set when the 
   // expressions in the Pred block are evaluated.
-  nW         = 2 * nEventCurr;
-  yOffsetInW = nEventCurr;
+  nW         = 2 * nObsRecordCurr;
+  yOffsetInW = nObsRecordCurr;
 
   // Set the size of the vector of dependent variables.
   wCurr.resize( nW );
@@ -588,10 +590,11 @@ bool IndPredModel::getUsedCachedOmega_omegaPar() const
  *
  *//**
  * This function evaluates the predicted values for the data for
- * all of the events for the current individual.
+ * all of the observation records for the current individual.
  *
- * It does this by evaluating the expressions from the Pred block
- * for each event.
+ * It does this by evaluating the expressions from the Pred block for
+ * every data record and then setting the predicted value if the data
+ * record is an observation record.
  *
  * Note that this function combines the parameters theta and eta
  * into a single vector of independent variables,
@@ -683,27 +686,29 @@ void IndPredModel::evalAllPred() const
   // This message will be used if an error occurs.
   string taskMessage;
 
-  bool isObsEvent;
+  bool isObsRecord;
   double fCurr;
   double yCurr;
   int j;
 
+  // This will keep track of the number of predicted values
+  // that have been set for the current individual.
+  int nPredValSet = 0;
+
   // Evaluate the expressions from the Pred block for all of
-  // events for the current individual.
-  for ( j = 0; j < nEventCurr; j++ )
+  // the data records for the current individual.
+  for ( j = 0; j < nDataRecordCurr; j++ )
   {
-    //----------------------------------------------------------
-    // Evaluate the predicted value for the data for this event.
-    //----------------------------------------------------------
-
-    taskMessage = "during the evaluation of the " +
+    taskMessage = "during the evaluation of the predicted value for the \n" + 
       intToOrdinalString( j, ZERO_IS_FIRST_INT ) +
-      " predicted value for the individual's data.";
+       " data record for the individual.";
 
-    // Evaluate the Pred block expressions for this event.
+    // Evaluate the Pred block expressions for this data record.
+    // The predicted value will be set during the call to eval()
+    // if this data record is an observation record.
     try
     {
-      isObsEvent = predEvaluator.eval(
+      isObsRecord = predEvaluator.eval(
         thetaOffsetInZ,
         nTheta,
         etaOffsetInZ,
@@ -711,9 +716,9 @@ void IndPredModel::evalAllPred() const
         epsOffsetInZ,
         nEps,
         fOffsetInW,
-        nEventCurr,
+        nObsRecordCurr,
         yOffsetInW,
-        nEventCurr,
+        nObsRecordCurr,
         iCurr,
         j,
         zCurr,
@@ -746,23 +751,22 @@ void IndPredModel::evalAllPred() const
         __FILE__ );
     }
 
-    // [Revisit - Only Observation Events are Currently Allowed - Mitch]
-    // Eventually this class will need to handle more than just
-    // observation events.
-    //
-    // For now, all events are assumed to be observation events.
-    if ( !isObsEvent )
+    // If the current record is an observation record,
+    // then increment the counter.
+    if ( isObsRecord )
     {
-      // [Revisit - SPK Error Codes Don't Really Apply - Mitch]
-      // This error code should be replaced with one that is accurate.
-      throw SpkException(
-        SpkError::SPK_MODEL_DATA_MEAN_ERR,
-        ( "A non-observation event was encountered " + 
-          taskMessage ).c_str(),
-        __LINE__,
-        __FILE__ );
+      nPredValSet++;
     }
+  }
 
+  // See if there was the correct number of observation records.
+  if ( nPredValSet != nObsRecordCurr )
+  {
+    throw SpkException(
+      SpkError::SPK_USER_INPUT_ERR, 
+      "The number of data records that are observation records does not match the expected \nnumber of observation records.",
+      __LINE__, 
+      __FILE__ );
   }
 
 
@@ -844,14 +848,14 @@ void IndPredModel::evalPredFirstDeriv() const
   // Prepare to calculate the first derivatives.
   //------------------------------------------------------------
 
-  // Before first derivatives can be calculated, the predicted
-  // values for all of the events for the current individual 
+  // Before first derivatives can be calculated, the predicted values
+  // for all of the observation records for the current individual
   // must be evaluated.
   evalAllPred();
 
   // Make sure these are the proper sizes.
-  f_thetaCurr.resize( nEventCurr * nTheta );
-  hCurr      .resize( nEventCurr * nEta );
+  f_thetaCurr.resize( nObsRecordCurr * nTheta );
+  hCurr      .resize( nObsRecordCurr * nEta );
 
   // Set the lengths of the Taylor coefficient column vectors.
   std::vector<double> u1( pPredADFunCurr->Domain() );
@@ -923,9 +927,9 @@ void IndPredModel::evalPredFirstDeriv() const
     //     d       f   ( theta )  .
     //      theta   (j)
     //
-    for ( j = 0; j < nEventCurr; j++ )
+    for ( j = 0; j < nObsRecordCurr; j++ )
     {
-      f_thetaCurr[j + k * nEventCurr] = v1[j + fOffsetInW];
+      f_thetaCurr[j + k * nObsRecordCurr] = v1[j + fOffsetInW];
     }
 
     u1[k + thetaOffsetInZ] = 0.0;
@@ -950,9 +954,9 @@ void IndPredModel::evalPredFirstDeriv() const
     //     h     ( theta )  =  d     y   ( theta, eta )  |          .
     //      (j,k)               eta   (j)                | eta = 0
     //
-    for ( j = 0; j < nEventCurr; j++ )
+    for ( j = 0; j < nObsRecordCurr; j++ )
     {
-      hCurr[j + k * nEventCurr] = v1[j + yOffsetInW];
+      hCurr[j + k * nObsRecordCurr] = v1[j + yOffsetInW];
     }
 
     u1[k + etaOffsetInZ] = 0.0;
@@ -1026,8 +1030,8 @@ void IndPredModel::evalPredSecondDeriv() const
   //------------------------------------------------------------
 
   // Before first or second derivatives can be calculated, the
-  // predicted values for all of the events for the current 
-  // individual must be evaluated.
+  // predicted values for all of the observation records for the
+  // current individual must be evaluated.
   evalAllPred();
 
   // Set the number of rows in the second derivatives that will 
@@ -1035,12 +1039,12 @@ void IndPredModel::evalPredSecondDeriv() const
   // calculated, the first derivatives are converted to a column
   // vector that contains the derivative's elements in row major
   // order, i.e., an rvec operation is performed on them.
-  int nH_thetaRow = nEventCurr * nEta;
+  int nH_thetaRow = nObsRecordCurr * nEta;
 
   // Make sure these are the proper sizes.
-  f_thetaCurr.resize( nEventCurr * nTheta );
-  hCurr      .resize( nEventCurr * nEta );
-  h_thetaCurr.resize( nEventCurr * nEta * nTheta );
+  f_thetaCurr.resize( nObsRecordCurr * nTheta );
+  hCurr      .resize( nObsRecordCurr * nEta );
+  h_thetaCurr.resize( nObsRecordCurr * nEta * nTheta );
 
   // Set the lengths of the Taylor coefficient column vectors.
   std::vector<double> u1( pPredADFunCurr->Domain() );
@@ -1050,8 +1054,8 @@ void IndPredModel::evalPredSecondDeriv() const
 
   // These will hold one-half times the diagonal elements of
   // the second derivatives.
-  std::vector<double> y_theta_thetaDiagTerm( nTheta * nEventCurr );
-  std::vector<double> y_eta_etaDiagTerm    ( nEta   * nEventCurr );
+  std::vector<double> y_theta_thetaDiagTerm( nTheta * nObsRecordCurr );
+  std::vector<double> y_eta_etaDiagTerm    ( nEta   * nObsRecordCurr );
 
 
   //------------------------------------------------------------
@@ -1146,9 +1150,9 @@ void IndPredModel::evalPredSecondDeriv() const
     //     d       f   ( theta )  .
     //      theta   (j)
     //
-    for ( j = 0; j < nEventCurr; j++ )
+    for ( j = 0; j < nObsRecordCurr; j++ )
     {
-      f_thetaCurr[j + k * nEventCurr] = v1[j + fOffsetInW];
+      f_thetaCurr[j + k * nObsRecordCurr] = v1[j + fOffsetInW];
     }
 
     // Evaluate the second order Taylor coefficients for pred(U).
@@ -1161,7 +1165,7 @@ void IndPredModel::evalPredSecondDeriv() const
     //     y_theta_thetaDiagTerm        =  --- d      d       y   ( theta, eta )  .
     //                          (k, p)      2   theta  theta   (p)
     //
-    for ( p = 0; p < nEventCurr; p++ )
+    for ( p = 0; p < nObsRecordCurr; p++ )
     {
       y_theta_thetaDiagTerm[k + p * nTheta] = v2[p + yOffsetInW];
     }
@@ -1194,9 +1198,9 @@ void IndPredModel::evalPredSecondDeriv() const
     //     h     ( theta )  =  d     y   ( theta, eta )  |          .
     //      (j,k)               eta   (j)                | eta = 0
     //
-    for ( j = 0; j < nEventCurr; j++ )
+    for ( j = 0; j < nObsRecordCurr; j++ )
     {
-      hCurr[j + k * nEventCurr] = v1[j + yOffsetInW];
+      hCurr[j + k * nObsRecordCurr] = v1[j + yOffsetInW];
     }
 
     // Evaluate the second order Taylor coefficients for pred(U).
@@ -1209,7 +1213,7 @@ void IndPredModel::evalPredSecondDeriv() const
     //     y_eta_etaDiagTerm        =  --- d    d     y   ( theta, eta )  .
     //                      (k, p)      2   eta  eta   (p)
     //
-    for ( p = 0; p < nEventCurr; p++ )
+    for ( p = 0; p < nObsRecordCurr; p++ )
     {
       y_eta_etaDiagTerm[k + p * nEta] = v2[p + yOffsetInW];
     }
@@ -1333,7 +1337,7 @@ void IndPredModel::evalPredSecondDeriv() const
       //
       // Note that an rvec operation is performed on the first
       // derivatives before the second derivatives are calculated.
-      for ( p = 0; p < nEventCurr; p++ )
+      for ( p = 0; p < nObsRecordCurr; p++ )
       {
         // Set the position of this element in the matrix of 
         // second derivatives
@@ -1385,7 +1389,7 @@ void IndPredModel::doDataMean( SPK_VA::valarray<double>& ret ) const
 
   using namespace std;
 
-  int nRow = nEventCurr;
+  int nRow = nObsRecordCurr;
   int nCol = 1;
 
 
@@ -1414,8 +1418,8 @@ void IndPredModel::doDataMean( SPK_VA::valarray<double>& ret ) const
   // Prepare to calculate the value.
   //------------------------------------------------------------
 
-  // Evaluate the predicted values for all of the events 
-  // for the current individual.
+  // Evaluate the predicted values for all of the observation 
+  // records for the current individual.
   evalAllPred();
 
 
@@ -1432,7 +1436,7 @@ void IndPredModel::doDataMean( SPK_VA::valarray<double>& ret ) const
   //     f    ( b  )  =  f   ( theta )  .
   //      i(j)   i        (j)
   //
-  for ( j = 0; j < nEventCurr; j++ )
+  for ( j = 0; j < nObsRecordCurr; j++ )
   {
     // Set this element.
     dataMeanCurr[j] = Value( wCurr[j + fOffsetInW] );
@@ -1511,7 +1515,7 @@ bool IndPredModel::doDataMean_indPar( SPK_VA::valarray<double>& ret ) const
   // Preliminaries.
   //------------------------------------------------------------
 
-  int nRow = nEventCurr;
+  int nRow = nObsRecordCurr;
   int nCol = nIndPar;
 
 
@@ -1565,7 +1569,7 @@ bool IndPredModel::doDataMean_indPar( SPK_VA::valarray<double>& ret ) const
   //     d     f    ( b  )  .
   //      b     i(j)   i
   //
-  for ( j = 0; j < nEventCurr; j++ )
+  for ( j = 0; j < nObsRecordCurr; j++ )
   {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //
@@ -1649,8 +1653,8 @@ void IndPredModel::doDataVariance( SPK_VA::valarray<double>& ret ) const
 
   using namespace std;
 
-  int nRow = nEventCurr;
-  int nCol = nEventCurr;
+  int nRow = nObsRecordCurr;
+  int nCol = nObsRecordCurr;
 
 
   //------------------------------------------------------------
@@ -1704,16 +1708,16 @@ void IndPredModel::doDataVariance( SPK_VA::valarray<double>& ret ) const
   //                       ----
   //                        m,n
   //
-  for ( j = 0; j < nEventCurr; j++ )
+  for ( j = 0; j < nObsRecordCurr; j++ )
   {
     // Set this element.
     for ( m = 0; m < nEta; m++ )
     {
       for ( n = 0; n < nEta; n++ )
       {
-        dataVarianceCurr[j + j * nEventCurr] += 
-          hCurr[j + m * nEventCurr] * omegaCurr[m + n * nEta] *
-          hCurr[j + n * nEventCurr];
+        dataVarianceCurr[j + j * nObsRecordCurr] += 
+          hCurr[j + m * nObsRecordCurr] * omegaCurr[m + n * nEta] *
+          hCurr[j + n * nObsRecordCurr];
       }
     }
   }
@@ -1732,7 +1736,7 @@ void IndPredModel::doDataVariance( SPK_VA::valarray<double>& ret ) const
   //     R      ( b  )  .
   //      i(j,j)
   //
-  for ( j = 0; j < nEventCurr; j++ )
+  for ( j = 0; j < nObsRecordCurr; j++ )
   {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // [Revisit - Infinite Macro Does Not Seem to Work - Mitch]
@@ -1740,7 +1744,7 @@ void IndPredModel::doDataVariance( SPK_VA::valarray<double>& ret ) const
     // how to detect values of -inf or +inf
     /*
     // Make sure that the value is not infinite.
-    if ( fabs( dataVarianceCurr[j + j * nEventCurr] ) == 
+    if ( fabs( dataVarianceCurr[j + j * nObsRecordCurr] ) == 
          numeric_limits<double>::infinity() )
     {
       // [Revisit - SPK Error Codes Don't Really Apply - Mitch]
@@ -1755,8 +1759,8 @@ void IndPredModel::doDataVariance( SPK_VA::valarray<double>& ret ) const
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // Make sure that the value is not a NaN.
-    if ( dataVarianceCurr[j + j * nEventCurr] != 
-         dataVarianceCurr[j + j * nEventCurr] )
+    if ( dataVarianceCurr[j + j * nObsRecordCurr] != 
+         dataVarianceCurr[j + j * nObsRecordCurr] )
     {
       // [Revisit - SPK Error Codes Don't Really Apply - Mitch]
       // This error code should be replaced with one that is accurate.
@@ -1806,7 +1810,7 @@ bool IndPredModel::doDataVariance_indPar( SPK_VA::valarray<double>& ret ) const
   // Preliminaries.
   //------------------------------------------------------------
 
-  int nRow = nEventCurr * nEventCurr;
+  int nRow = nObsRecordCurr * nObsRecordCurr;
   int nCol = nIndPar;
 
 
@@ -1844,12 +1848,13 @@ bool IndPredModel::doDataVariance_indPar( SPK_VA::valarray<double>& ret ) const
   pOmegaCurr->cov( omegaCurr );
   pOmegaCurr->cov_par( omega_omegaParCurr );
 
-  // These will hold the columns of h that correspond to each event.
+  // These will hold the columns of h that correspond to each
+  // observation record.
   valarray<double> hColTrans ( nEta );
   valarray<double> hCol_theta( nEta * nTheta );
 
   // Set the number of rows in the derivative of h.
-  int nH_thetaRow = nEventCurr * nEta;
+  int nH_thetaRow = nObsRecordCurr * nEta;
 
   // These are temporary variables used below.
   valarray<double> hColTransTimesOmega      ( nEta );
@@ -1881,13 +1886,13 @@ bool IndPredModel::doDataVariance_indPar( SPK_VA::valarray<double>& ret ) const
   //     d     R      ( b  )  .
   //      b     i(j,j)   i
   //
-  for ( j = 0; j < nEventCurr; j++ )
+  for ( j = 0; j < nObsRecordCurr; j++ )
   {
     // Set the row for this element in the rvec version of R.
-    row = j * nEventCurr + j;
+    row = j * nObsRecordCurr + j;
 
     // Set the transpose and the derivative of the column of h
-    // that corresponds to this event,
+    // that corresponds to this observation record,
     //
     //               -                       -
     //              |     h      ( theta )    |
@@ -1903,7 +1908,7 @@ bool IndPredModel::doDataVariance_indPar( SPK_VA::valarray<double>& ret ) const
     for ( m = 0; m < nEta; m++ )
     {
       // Set the transpose of this column.
-      hColTrans[m] = hCurr[j + m * nEventCurr];
+      hColTrans[m] = hCurr[j + m * nObsRecordCurr];
 
       // Set the derivative with respect to theta of this column.
       for ( k = 0; k < nTheta; k++ )
@@ -2054,8 +2059,8 @@ void IndPredModel::doDataVarianceInv( SPK_VA::valarray<double>& ret ) const
   // Preliminaries.
   //------------------------------------------------------------
 
-  int nRow = nEventCurr;
-  int nCol = nEventCurr;
+  int nRow = nObsRecordCurr;
+  int nCol = nObsRecordCurr;
 
 
   //------------------------------------------------------------
@@ -2099,12 +2104,12 @@ void IndPredModel::doDataVarianceInv( SPK_VA::valarray<double>& ret ) const
   //                        R      ( b  )
   //                         i(j,j)   i
   //
-  for ( j = 0; j < nEventCurr; j++ )
+  for ( j = 0; j < nObsRecordCurr; j++ )
   {
-    assert( dataVarianceInvCurr[j + j * nEventCurr] != 0.0 );
+    assert( dataVarianceInvCurr[j + j * nObsRecordCurr] != 0.0 );
 
-    dataVarianceInvCurr[j + j * nEventCurr] = 
-      1.0 / dataVarianceInvCurr[j + j * nEventCurr];
+    dataVarianceInvCurr[j + j * nObsRecordCurr] = 
+      1.0 / dataVarianceInvCurr[j + j * nObsRecordCurr];
   }
 
 
@@ -2144,7 +2149,7 @@ bool IndPredModel::doDataVarianceInv_indPar( SPK_VA::valarray<double>& ret ) con
   // Preliminaries.
   //------------------------------------------------------------
 
-  int nRow = nEventCurr * nEventCurr;
+  int nRow = nObsRecordCurr * nObsRecordCurr;
   int nCol = nIndPar;
 
 
@@ -2179,7 +2184,7 @@ bool IndPredModel::doDataVarianceInv_indPar( SPK_VA::valarray<double>& ret ) con
   // not been calculated already.
   if ( isDataVarianceCurrOk )
   {
-    valarray<double> dataVarianceTemp( nEventCurr * nEventCurr );
+    valarray<double> dataVarianceTemp( nObsRecordCurr * nObsRecordCurr );
     doDataVariance( dataVarianceTemp );
   }
 
@@ -2209,21 +2214,21 @@ bool IndPredModel::doDataVarianceInv_indPar( SPK_VA::valarray<double>& ret ) con
   //                                   R      ( b  )
   //                                    i(j,j)   i
   //
-  for ( j = 0; j < nEventCurr; j++ )
+  for ( j = 0; j < nObsRecordCurr; j++ )
   {
     // Set the row for this element in the rvec version of the 
     // inverse of R.
-    row = j * nEventCurr + j;
+    row = j * nObsRecordCurr + j;
 
     // Set the partial derivatives.
     for ( q = 0; q < nIndPar; q++ )
     {
-      assert( dataVarianceCurr[j + j * nEventCurr] != 0.0 );
+      assert( dataVarianceCurr[j + j * nObsRecordCurr] != 0.0 );
 
       dataVarianceInv_indParCurr[row + q * nRow] = 
         - dataVariance_indParCurr[row + q * nRow]
-        / ( dataVarianceCurr[j + j * nEventCurr] * 
-            dataVarianceCurr[j + j * nEventCurr] );
+        / ( dataVarianceCurr[j + j * nObsRecordCurr] * 
+            dataVarianceCurr[j + j * nObsRecordCurr] );
     }
   }
 

@@ -67,11 +67,11 @@ private:
 
   void OneExpF_ModelBasedExpY_Test();
   void OneExpF_AdditivePlusThetaDepY_Test();
-
   void OneExpF_AdditivePlusThetaDepY_FullSigma_Test();
 
-  void isCachingProperlyTest();
+  void OneExpF_AdditivePlusThetaDepY_NotAllRecAreObsRec_Test();
 
+  void isCachingProperlyTest();
 };
 
 #endif

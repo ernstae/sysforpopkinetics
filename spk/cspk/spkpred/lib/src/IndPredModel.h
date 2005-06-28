@@ -217,7 +217,8 @@ protected:
   const int fOffsetInW;                        ///< Offset for f in the vector of dependent variables.
   int       yOffsetInW;                        ///< Offset for y in the vector of dependent variables.
 
-  int       nEventCurr;                        ///< Number of events for current individual.
+  int       nDataRecordCurr;                   ///< Number of data records for current individual.
+  int       nObsRecordCurr;                    ///< Number of data records that are observation records for current individual.
 
   PredBase< CppAD::AD<double> >&  predEvaluator;   ///< Pred block expression evaluator.
 
