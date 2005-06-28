@@ -7270,7 +7270,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "ofstream oResults;" << endl;
   oIndDriver << "string warningsOut;" << endl;
   oIndDriver << "int seed = NonmemPars::seed;" << endl;
-  oIndDriver << "int i;" << endl;
+  oIndDriver << "int iSub = 0;" << endl;
   oIndDriver << endl;
 
   oIndDriver << "if( ret != SUCCESS )" << endl;
@@ -7281,7 +7281,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "thetaOut = thetaIn;" << endl;
   oIndDriver << "omegaOut = omegaIn;" << endl;
   oIndDriver << "remove( \"result.xml\" );" << endl;
-  oIndDriver << "for( i=0; i<nRepeats; i++, seed=rand() )" << endl;
+  oIndDriver << "for( iSub=0; iSub<nRepeats; iSub++, seed=rand() )" << endl;
   oIndDriver << "{" << endl;
   oIndDriver << "   bIn = bOut;" << endl;
   oIndDriver << "   thetaIn = thetaOut;" << endl;
@@ -7515,15 +7515,19 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "   if( !oResults.good() )" << endl;
   oIndDriver << "   {" << endl;
   oIndDriver << "      fprintf( stderr, \"Failed to open a file, %s, for writing output!!!\"," << endl;
-  oIndDriver << "              \"" << fResult_xml << "\" );" << endl;
+  oIndDriver << "\"" << fResult_xml << "\" );" << endl;
   oIndDriver << "      ret = FILE_ACCESS_FAILURE;" << endl;
+  oIndDriver << "      oResults << \"</spkreport>\" << endl;" << endl;
+  oIndDriver << "      oResults.close();" << endl;
   oIndDriver << "      goto END;" << endl;
   oIndDriver << "   }" << endl;
 
-  oIndDriver << "   if( i == 0 )" << endl;
+  //  oIndDriver << "   if( iSub == 0 )" << endl;
+  oIndDriver << "   {" << endl;
   oIndDriver << "      oResults << \"<?xml version=\\\"1.0\\\"?>\" << endl;" << endl;
-  oIndDriver << "   oResults << \"<spkreport>\" << endl;" << endl;
-  oIndDriver << endl;
+  oIndDriver << "      oResults << \"<spkreport>\" << endl;" << endl;
+  oIndDriver << "   }" << endl;
+  //  oIndDriver << endl;
 
   // Print out <error_list> even when it is empty.
   oIndDriver << "   oResults << \"<error_list length=\\\"\" << errors.size() << \"\\\">\" << endl;" << endl;
@@ -7559,7 +7563,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << endl;
 
   oIndDriver << "   if( isSimRequested )" << endl;
-  oIndDriver << "      oResults << \"<simulation seed=\\\"\" << seed << \"\\\" subproblem=\\\"\" << i+1 << \"\\\"/>\" << endl;" << endl;
+  oIndDriver << "      oResults << \"<simulation seed=\\\"\" << seed << \"\\\" subproblem=\\\"\" << iSub+1 << \"\\\"/>\" << endl;" << endl;
   oIndDriver << endl;
 
   oIndDriver << "   if( isOptRequested )" << endl;
@@ -7829,20 +7833,16 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << endl;
   oIndDriver << "      }" << endl;
   oIndDriver << "      oResults << \"</ind_analysis_result>\" << endl;" << endl;
-  oIndDriver << endl;
+  oIndDriver << "      if( iSub == nRepeats-1 )" << endl;
+  oIndDriver << "         oResults << set << endl;" << endl;
+  oIndDriver << "      oResults << \"</spkreport>\" << endl;" << endl;
+  oIndDriver << "      oResults.close();" << endl;
   oIndDriver << "   }" << endl;
-
-  // If this is the last subproblem, print out <presentation_data></presentation_data>
-  oIndDriver << "   if( i==nRepeats-1 )" << endl;
-  oIndDriver << "      oResults << set << endl;" << endl;
-  
-  oIndDriver << "   oResults << \"</spkreport>\" << endl;" << endl;
-  oIndDriver << "   oResults.close();" << endl;
-  oIndDriver << endl;
-
   oIndDriver << "}" << endl;
-  oIndDriver << endl;
   oIndDriver << "END:" << endl;
+  //  oIndDriver << "   oResults << \"</spkreport>\" << endl;" << endl;
+  //  oIndDriver << "   oResults.close();" << endl;
+  oIndDriver << endl;
   oIndDriver << "   cout << \"exit code = \" << ret << endl;" << endl;
   oIndDriver << "   return ret;" << endl;
   oIndDriver << "}" << endl;
@@ -8142,7 +8142,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "ofstream oResults;" << endl;
   oPopDriver << "string warningsOut;" << endl;
   oPopDriver << "int seed = NonmemPars::seed; " << endl;
-  oPopDriver << "int i;" << endl;
+  oPopDriver << "int iSub = 0;" << endl;
   oPopDriver << endl;
 
   // do data simulation first to replace DV data in IndData objects
@@ -8156,7 +8156,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "omegaOut = omegaIn;" << endl;
   oPopDriver << "sigmaOut = sigmaIn;" << endl;
   oPopDriver << "remove( \"result.xml\" );" << endl;
-  oPopDriver << "for( i=0; i<nRepeats; i++, seed = rand() )" << endl;
+  oPopDriver << "for( iSub=0; iSub<nRepeats; iSub++, seed = rand() )" << endl;
   oPopDriver << "{" << endl;
   oPopDriver << "   alpIn   = alpOut;" << endl;
   oPopDriver << "   bIn     = bOut;" << endl;
@@ -8512,13 +8512,18 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "   if( !oResults.good() )" << endl;
   oPopDriver << "   {" << endl;
   oPopDriver << "      fprintf( stderr, \"Failed to open a file, %s, for writing output!!!\", \"";
-  oPopDriver << "               " << fResult_xml << "\" );" << endl;
+  oPopDriver << fResult_xml << "\" );" << endl;
   oPopDriver << "      ret = FILE_ACCESS_FAILURE;" << endl;
+  oPopDriver << "      oResults << \"</spkreport>\" << endl;" << endl;
+  oPopDriver << "      oResults.close();" << endl;
   oPopDriver << "      goto END;" << endl;
   oPopDriver << "   }" << endl;
 
-  oPopDriver << "   oResults << \"<?xml version=\\\"1.0\\\"?>\" << endl;" << endl;
-  oPopDriver << "   oResults << \"<spkreport>\" << endl;" << endl;
+  //  oPopDriver << "   if( iSub == 0 )" << endl;
+  oPopDriver << "   {" << endl;
+  oPopDriver << "      oResults << \"<?xml version=\\\"1.0\\\"?>\" << endl;" << endl;
+  oPopDriver << "      oResults << \"<spkreport>\" << endl;" << endl;
+  oPopDriver << "   }" << endl;
   oPopDriver << endl;
 
   // Print out <error_list> even when it is empty.
@@ -8555,7 +8560,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << endl;
 
   oPopDriver << "   if( isSimRequested )" << endl;
-  oPopDriver << "      oResults << \"<simulation seed=\\\"\" << seed << \"\\\" subproblem=\\\"\" << i+1 << \"\\\"/>\" << endl;" << endl;
+  oPopDriver << "      oResults << \"<simulation seed=\\\"\" << seed << \"\\\" subproblem=\\\"\" << iSub+1 << \"\\\"/>\" << endl;" << endl;
   oPopDriver << endl;
 
   oPopDriver << "   if( isOptRequested )" << endl;
@@ -8785,19 +8790,20 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "      }" << endl;
   
   oPopDriver << "      oResults << \"</pop_analysis_result>\" << endl;" << endl;
+  oPopDriver << "      if( iSub == nRepeats-1 )" << endl;
+  oPopDriver << "         oResults << set << endl;" << endl;
+  oPopDriver << "      oResults << \"</spkreport>\" << endl;" << endl;
+  oPopDriver << "      oResults.close();" << endl;
   oPopDriver << "   }" << endl;
   oPopDriver << endl;
 
   // Print out <presentation_data> if this is the last subproblem.
-  oPopDriver << "   if( i==nRepeats-1 )" << endl;
-  oPopDriver << "      oResults << set << endl;" << endl;
- 
-  oPopDriver << "   oResults << \"</spkreport>\" << endl;" << endl;
-  oPopDriver << "   oResults.close();" << endl;
   oPopDriver << "}" << endl;
   oPopDriver << endl;
-
   oPopDriver << "END:" << endl;
+ 
+  //  oPopDriver << "   oResults << \"</spkreport>\" << endl;" << endl;
+  //  oPopDriver << "   oResults.close();" << endl;
   oPopDriver << "   cout << \"exit code = \" << ret << endl;" << endl;
   oPopDriver << "   return ret;" << endl;
   oPopDriver << "}" << endl;
