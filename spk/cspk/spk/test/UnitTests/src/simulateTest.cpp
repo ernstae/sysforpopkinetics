@@ -44,6 +44,7 @@
 
 using SPK_VA::valarray;
 using namespace CppUnit;
+using namespace std;
 
 static valarray<double> sampleCovariance(const valarray<double> &V, int nCols);
 
@@ -63,21 +64,21 @@ static int myseed()
   return (val - RAND_MAX/2);		// range is now: [-RAND_MAX/2, RAND_MAX/2]
 }
 //-----------------------------------------------------------------------------
-// A simple model for testing purposes only
+// A simple population model for testing purposes only
 //-----------------------------------------------------------------------------
-class simulateTestModel : public SpkModel
+class simulateTestPopModel : public SpkModel
 {
   valarray<double> alp, b;
   valarray<int>   N;
   int who;
   
 public:
-  simulateTestModel(int nAlp, int nB, const valarray<int> & NIn )
+  simulateTestPopModel(int nAlp, int nB, const valarray<int> & NIn )
     : alp( nAlp ), b( nB ), N( NIn )
     
   {
   }
-  ~simulateTestModel(){}
+  ~simulateTestPopModel(){}
 protected:
   void doSelectIndividual(int i)
   {
@@ -135,21 +136,21 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-// A complex model for testing purposes only
+// A complex population model for testing purposes only
 //-----------------------------------------------------------------------------
 
-class simulateTestModelComplex : public SpkModel
+class simulateTestPopModelComplex : public SpkModel
 {
   valarray<double> alp, b;
   valarray<int>    N;
   int who;
   
 public:
-  simulateTestModelComplex( int nAlp, int nB, valarray<int> & NIn )
+  simulateTestPopModelComplex( int nAlp, int nB, valarray<int> & NIn )
   : alp( nAlp ), b( nB ), N( NIn )
   {
   }
-  ~simulateTestModelComplex(){}
+  ~simulateTestPopModelComplex(){}
 protected:
   void doSelectIndividual(int i)
   {
@@ -237,6 +238,48 @@ protected:
     return false;
   }
 };
+//-----------------------------------------------------------------------------
+// A simple individual model for testing purposes only
+//-----------------------------------------------------------------------------
+class simulateTestIndModel : public SpkModel
+{
+  valarray<double>  b;
+  int nY, nB;
+  
+public:
+  simulateTestIndModel( int nBIn, int nYIn )
+    : nB( nBIn ), b( nBIn ), nY( nYIn )
+  {
+  }
+  ~simulateTestIndModel(){}
+protected:
+  void doSetIndPar( const valarray<double>& bIn )
+  {
+    b = bIn;
+  }
+  void doDataMean( valarray<double>& fOut ) const 
+  {
+    fOut.resize( nY );
+    fOut = 0.0;
+  }
+  bool doDataMean_indPar( valarray<double>& f_bOut ) const
+  {
+    f_bOut.resize( nY * nB );
+    f_bOut = 0.0;
+    //f_bOut[ slice( 0, nY, 1 ) ] = 1.0;
+  }
+  void doDataVariance( valarray<double>& ROut ) const
+  {
+    ROut.resize( nY * nY );
+    identity( nY, ROut );
+  }
+  bool doDataVariance_indPar( valarray<double>& R_bOut ) const
+  {
+    R_bOut.resize( nY * nY * nB );
+    R_bOut = 0.0;
+    return false;
+  }
+};
 
 void simulateTest::setUp()
 {
@@ -251,22 +294,103 @@ Test* simulateTest::suite()
   TestSuite *suiteOfTests = new TestSuite("simulateTest");
 
   // duplicate the following example for each test case, replacing the case name.
-  suiteOfTests->addTest(new TestCaller<simulateTest>("simulate",  &simulateTest::test_with_simplemodel));
-  suiteOfTests->addTest(new TestCaller<simulateTest>("simulate",  &simulateTest::test_with_complexmodel));
+  suiteOfTests->addTest(new TestCaller<simulateTest>(
+	       "pop_simple_seed",  &simulateTest::pop_simple_seed));
+  suiteOfTests->addTest(new TestCaller<simulateTest>(
+               "pop_complex_seed", &simulateTest::pop_complex_seed));
+
+  suiteOfTests->addTest(new TestCaller<simulateTest>(
+               "ind_simple_seed",  &simulateTest::ind_simple_seed));
+  
+  suiteOfTests->addTest(new TestCaller<simulateTest>(
+               "ind_simple_noseed",  &simulateTest::ind_simple_noseed));
   
   return suiteOfTests;
 }
+void simulateTest::ind_simple_seed()
+{
+  int nB = 1;
+  int nY = 1000;
+
+  simulateTestIndModel model( nB, nY );
+
+  // y(i) = f(b) + e, where e~N(0, R(b))
+
+  valarray<double> b( 1.0, nB );
+  valarray<double> f( nY );
+  valarray<double> R( nY * nY );
+  valarray<double> yOut( nY );
+  int seed = 1;
+
+  model.setIndPar( b );
+  model.dataMean( f );
+
+  simulate( model, nY, b, yOut, seed );
+
+  valarray<double> e = yOut - f;
+  double std = sqrt( (e * e).sum()/nY );
+
+  // The standard deviation should converge to 1.0 because the diagonal elements
+  // of R are all one: sqrt( var ) = sqrt( 1.0 ) = 1.0 = std.
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.0, std, 0.05 );
+  
+
+  // With the same seed, simulation results should be always the same.
+  valarray<double> yn( nY );
+  int n = 5;
+
+  for( int i=0; i<n; i++ )
+    simulate( model, nY, b, yn, seed );
+
+  for( int i=0; i<nY; i++ )
+    CPPUNIT_ASSERT_EQUAL( yOut[i], yn[i] );
+  
+}
+void simulateTest::ind_simple_noseed()
+{
+  int nB = 1;
+  int nY = 10;
+
+  simulateTestIndModel model( nB, nY );
+
+  // y(i) = f(b) + e, where e~N(0, R(b))
+
+  valarray<double> b( 1.0, nB );
+  valarray<double> f( nY );
+  valarray<double> R( nY * nY );
+  valarray<double> y0( nY );
+  valarray<double> yn( nY );
+  int seed = 3;
+  int n    = 5;
+
+  model.setIndPar( b );
+  model.dataMean( f );
+
+  srand( seed );
+  simulate( model, nY, b, y0 );
+
+  for( int i=0; i<n; i++ )
+    simulate( model, nY, b, yn );
+
+  bool ok = false;
+  for( int i=0; i<nY; i++ )
+    ok |= y0[i] != yn[i];
+  CPPUNIT_ASSERT_MESSAGE( "Two sets of simulated data did not differ", ok );
+}
+
 #include <spk/printInMatrix.h>
-void simulateTest::test_with_simplemodel()
+void simulateTest::pop_simple_seed()
 {
   using namespace std;
   int nAlp = 2;
   int nB   = 1;
   int nInd = 1000;
   int npts = 10;
+  int nRepeats = 3;
   
   // Measurement values, y.
   valarray<double> yOut( nInd * npts );
+  valarray<double> ynOut( nInd * npts );
   
   // Number of measurements for each individual. 
   valarray<int> N( npts, nInd );
@@ -285,16 +409,24 @@ void simulateTest::test_with_simplemodel()
   valarray<double> bAllOut( nB * nInd );
   
   // Seed value
-  int seed = 1;
+  int seed = 3;
   
   //-------------------------------------------------------------------------
-  simulateTestModel model(nAlp, nB, N);		// Simple Model -- 2 runs 
+  simulateTestPopModel model(nAlp, nB, N);
   //-------------------------------------------------------------------------
   
   //-------------------------------------------------------------------------
-  //	First run:  With random seed set
+  //	First run:  With a specific seed
   //
   simulate(model, alp, N, bLow, bUp, yOut, bAllOut, seed);
+  for( int i=0; i<nRepeats; i++ )
+    {
+      simulate( model, alp, N, bLow, bUp, ynOut, bAllOut, seed );
+    }
+  for( int i=0; i<nInd*npts; i++ )
+    {
+      CPPUNIT_ASSERT_EQUAL( yOut[i], ynOut[i] );
+    }
   //-------------------------------------------------------------------------
 
   valarray<double> mean(nB);
@@ -307,7 +439,7 @@ void simulateTest::test_with_simplemodel()
   CPPUNIT_ASSERT_DOUBLES_EQUAL( 5.0, cov[0],  5.0*0.1 );  // should converge to alp[1] = 5.0
   
   //-------------------------------------------------------------------------
-  //	Second run:  Without random seed set
+  //	Second run:  With a random seed set
   //
   simulate(model, alp, N, bLow, bUp, yOut, bAllOut, myseed() );
   //-------------------------------------------------------------------------
@@ -317,12 +449,30 @@ void simulateTest::test_with_simplemodel()
   cov = sampleCovariance(bAllOut, nInd);
   
   // Assert answers
-  CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, mean[0], 0.1 );      // should converge to zero
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, mean[0], 0.11 );     // should converge to zero
   CPPUNIT_ASSERT_DOUBLES_EQUAL( 5.0, cov[0],  5.0*0.1 );  // should converge to alp[1] = 5.0
   
+
+  //-------------------------------------------------------------------------
+  // Third run: A seed set only once
+  //
+  bool ok = false;
+  srand( seed );
+  simulate( model, alp, N, bLow, bUp, yOut, bAllOut );
+  for( int i=0; i<nRepeats; i++ )
+    {
+      simulate( model, alp, N, bLow, bUp, ynOut, bAllOut );
+    }
+  for( int i=0; i<nInd*npts; i++ )
+    {
+      ok |= yOut[i] != ynOut[i];
+    }
+  CPPUNIT_ASSERT_MESSAGE( "Two sets of simulated data did not differ!", ok );
+  //-------------------------------------------------------------------------
+
   return;
 }
-void simulateTest::test_with_complexmodel()
+void simulateTest::pop_complex_seed()
 {
   using namespace std;
   
@@ -365,7 +515,7 @@ void simulateTest::test_with_complexmodel()
   int seed = 1;
 
   //-------------------------------------------------------------------------
-  simulateTestModelComplex modelcomplex( nAlp, nB, N );// Complex Model -- 2 runs 
+  simulateTestPopModelComplex modelcomplex( nAlp, nB, N );// Complex Model -- 2 runs 
   //-------------------------------------------------------------------------
     
   //-------------------------------------------------------------------------
