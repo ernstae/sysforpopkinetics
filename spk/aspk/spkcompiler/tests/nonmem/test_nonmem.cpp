@@ -17,6 +17,8 @@
 #include "ind_mdvTest.h"
 #include "pop_mdvTest.h"
 //#include "pop_diffeqnTest.h"
+#include "ind_subprobTest.h"
+#include "pop_subprobTest.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -61,7 +63,12 @@ int main( int argc, const char * argv[] )
   master[ "pop_mdvTest" ] = pop_mdvTest::suite();
 
   // test for NonmemTranslator: ability to handle Differential Equations
-//  master[ "pop_diffeqnTest" ] = pop_diffeqnTest::suite();
+  //  master[ "pop_diffeqnTest" ] = pop_diffeqnTest::suite();
+
+  // test for NonmemTranslator: ability to handle a request 
+  // to repeat the whole process.
+  master[ "ind_subprobTest" ] = ind_subprobTest::suite();
+  master[ "pop_subprobTest" ] = pop_subprobTest::suite();
 
   if( argc == 1 )
     {
