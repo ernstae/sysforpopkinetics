@@ -7270,6 +7270,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "ofstream oResults;" << endl;
   oIndDriver << "string warningsOut;" << endl;
   oIndDriver << "int seed = NonmemPars::seed;" << endl;
+  oIndDriver << "srand( seed );" << endl;
   oIndDriver << "int iSub = 0;" << endl;
   oIndDriver << endl;
 
@@ -7277,15 +7278,19 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "  goto REPORT_GEN;" << endl;
   oIndDriver << endl;
 
+  /*
   oIndDriver << "bOut     = bIn;" << endl;
   oIndDriver << "thetaOut = thetaIn;" << endl;
   oIndDriver << "omegaOut = omegaIn;" << endl;
+  */
   oIndDriver << "remove( \"result.xml\" );" << endl;
-  oIndDriver << "for( iSub=0; iSub<nRepeats; iSub++, seed=rand() )" << endl;
+  oIndDriver << "for( iSub=0; iSub<nRepeats; iSub++ )" << endl;
   oIndDriver << "{" << endl;
+  /*
   oIndDriver << "   bIn = bOut;" << endl;
   oIndDriver << "   thetaIn = thetaOut;" << endl;
   oIndDriver << "   omegaIn = omegaOut;" << endl;
+  */
   oIndDriver << "   /*******************************************************************/" << endl;
   oIndDriver << "   /*                                                                 */" << endl;
   oIndDriver << "   /*   Data Initialization                                           */" << endl;
@@ -7296,7 +7301,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "      valarray<double> yOut( nY );" << endl;
   oIndDriver << "      try" << endl;
   oIndDriver << "      {" << endl;
-  oIndDriver << "         simulate( model, nY, bIn, yOut, NonmemPars::seed );" << endl;
+  oIndDriver << "         simulate( model, nY, bIn, yOut );" << endl;
   oIndDriver << "         set.replaceAllMeasurements( yOut );" << endl;
   oIndDriver << "         y = yOut;" << endl;
   oIndDriver << "         haveCompleteData = true;" << endl;
@@ -7563,7 +7568,14 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << endl;
 
   oIndDriver << "   if( isSimRequested )" << endl;
-  oIndDriver << "      oResults << \"<simulation seed=\\\"\" << seed << \"\\\" subproblem=\\\"\" << iSub+1 << \"\\\"/>\" << endl;" << endl;
+  oIndDriver << "   {" << endl;
+  oIndDriver << "      oResults << \"<simulation \";" << endl;
+  oIndDriver << "      if( iSub == 0 )" << endl;
+  oIndDriver << "      {" << endl;
+  oIndDriver << "         oResults << \"seed=\\\"\" << seed << \"\\\" \";" << endl;
+  oIndDriver << "      }" << endl;
+  oIndDriver << "      oResults << \"subproblem=\\\"\" << iSub+1 << \"\\\"/>\" << endl;" << endl;
+  oIndDriver << "   }" << endl;
   oIndDriver << endl;
 
   oIndDriver << "   if( isOptRequested )" << endl;
@@ -7578,89 +7590,7 @@ void NonmemTranslator::generateIndDriver( ) const
   
   oIndDriver << "      //////////////////////////////////////////////////////////////////////" << endl;
   oIndDriver << "      //    NONMEM Specific" << endl;
-  /*
-  // theta (b)
-  oIndDriver << "      oResults << \"<theta length=\\\"\" << NonmemPars::nTheta << \"\\\">\" << endl;" << endl;
-  oIndDriver << "      oResults << \"<in>\" << endl;" << endl;
-  oIndDriver << "      for( int i=0; i<NonmemPars::nTheta; i++ )" << endl;
-  oIndDriver << "      {" << endl;
-  oIndDriver << "         oResults << \"<value>\" << thetaIn[i] << \"</value>\" << endl;" << endl;
-  oIndDriver << "      }" << endl;
-  oIndDriver << "      oResults << \"</in>\" << endl;" << endl;
-  oIndDriver << "      oResults << \"<out>\" << endl;" << endl;
-  oIndDriver << "      for( int i=0; i<NonmemPars::nTheta; i++ )" << endl;
-  oIndDriver << "      {" << endl;
-  oIndDriver << "         oResults << \"<value>\" << thetaOut[i] << \"</value>\" << endl;" << endl;
-  oIndDriver << "      }" << endl;
-  oIndDriver << "      oResults << \"</out>\" << endl;" << endl;
-  oIndDriver << "      oResults << \"</theta>\" << endl;" << endl;
 
-  // omega 
-  oIndDriver << "      oResults << \"<omega dimension=\" << \"\\\"\" << NonmemPars::omegaDim << \"\\\"\";" << endl;
-  oIndDriver << "      oResults << \" struct=\" << \"\\\"\";" << endl;
-  oIndDriver << "      if( NonmemPars::omegaStruct==IndPredModel::DIAGONAL )" << endl;
-  oIndDriver << "         oResults << \"diagonal\";" << endl;
-  oIndDriver << "      else" << endl;
-  oIndDriver << "         oResults << \"block\";" << endl;
-  oIndDriver << "      oResults << \"\\\"\" << \">\" << endl;" << endl;
-  oIndDriver << "      oResults << \"<in>\" << endl;" << endl;
-  oIndDriver << "      if( NonmemPars::omegaStruct==IndPredModel::DIAGONAL )" << endl;
-  oIndDriver << "      {" << endl;
-  oIndDriver << "         for( int i=0; i<NonmemPars::omegaDim; i++ )" << endl;
-  oIndDriver << "         {" << endl;
-  oIndDriver << "            oResults << \"<value>\" << NonmemPars::omegaIn[i] << \"</value>\" << endl;" << endl;
-  oIndDriver << "         }" << endl;
-  oIndDriver << "      }" << endl;
-  oIndDriver << "      else // full" << endl;
-  oIndDriver << "      {" << endl;
-  oIndDriver << "         valarray<double> omegaFullTemp( (NonmemPars::omegaDim * (NonmemPars::omegaDim+1)) / 2 );" << endl;
-  oIndDriver << "         for( int j=0, cnt=0; j<NonmemPars::omegaDim; j++ )" << endl;
-  oIndDriver << "         {" << endl;
-  oIndDriver << "            for( int i=j; i<NonmemPars::omegaDim; i++, cnt++ ) // lower only" << endl;
-  oIndDriver << "            {" << endl;
-  oIndDriver << "               omegaFullTemp[ i + j * NonmemPars::omegaDim ] = NonmemPars::omegaIn[cnt];" << endl;
-  oIndDriver << "            }" << endl;
-  oIndDriver << "         }" << endl;
-  oIndDriver << "         for( int j=0, cnt=0; j<NonmemPars::omegaDim; j++ )" << endl;
-  oIndDriver << "         {" << endl;
-  oIndDriver << "            for( int i=0; i<=j; i++, cnt++ )" << endl;
-  oIndDriver << "            {" << endl;
-  oIndDriver << "               oResults << \"<value>\" << omegaFullTemp[ j+i*NonmemPars::omegaDim ];" << endl;
-  oIndDriver << "               oResults << \"</value>\" << endl;" << endl;
-  oIndDriver << "            }" << endl;
-  oIndDriver << "         }" << endl;
-  oIndDriver << "      }" << endl;
-  oIndDriver << "      oResults << \"</in>\" << endl;" << endl;
-  oIndDriver << "      oResults << \"<out>\" << endl;" << endl;
-  oIndDriver << "      if( NonmemPars::omegaStruct==IndPredModel::DIAGONAL )" << endl;
-  oIndDriver << "      {" << endl;
-  oIndDriver << "         for( int i=0; i<NonmemPars::omegaDim; i++ )" << endl;
-  oIndDriver << "         {" << endl;
-  oIndDriver << "            oResults << \"<value>\" << omegaOut[i] << \"</value>\" << endl;" << endl;
-  oIndDriver << "         }" << endl;
-  oIndDriver << "      }" << endl;
-  oIndDriver << "      else // full" << endl;
-  oIndDriver << "      {" << endl;
-  oIndDriver << "         valarray<double> omegaFullTemp( (NonmemPars::omegaDim * (NonmemPars::omegaDim+1)) / 2 );" << endl;
-  oIndDriver << "         for( int j=0, cnt=0; j<NonmemPars::omegaDim; j++ )" << endl;
-  oIndDriver << "         {" << endl;
-  oIndDriver << "            for( int i=j; i<NonmemPars::omegaDim; i++, cnt++ ) // lower only" << endl;
-  oIndDriver << "            {" << endl;
-  oIndDriver << "               omegaFullTemp[ i + j * NonmemPars::omegaDim ] = omegaOut[cnt];" << endl;
-  oIndDriver << "            }" << endl;
-  oIndDriver << "         }" << endl;
-  oIndDriver << "         for( int j=0, cnt=0; j<NonmemPars::omegaDim; j++ )" << endl;
-  oIndDriver << "         {" << endl;
-  oIndDriver << "            for( int i=0; i<=j; i++, cnt++ )" << endl;
-  oIndDriver << "            {" << endl;
-  oIndDriver << "               oResults << \"<value>\" << omegaFullTemp[ j+i*NonmemPars::omegaDim ];" << endl;
-  oIndDriver << "               oResults << \"</value>\" << endl;" << endl;
-  oIndDriver << "            }" << endl;
-  oIndDriver << "         }" << endl;
-  oIndDriver << "      }" << endl;
-  oIndDriver << "      oResults << \"</out>\" << endl;" << endl;
-  oIndDriver << "      oResults << \"</omega>\" << endl;" << endl;
-  */
   // theta in
   oIndDriver << "      oResults << \"<theta_in length=\\\"\" << NonmemPars::nTheta << \"\\\">\" << endl;" << endl;
   oIndDriver << "      for( int i=0; i<NonmemPars::nTheta; i++ )" << endl;
@@ -7833,15 +7763,13 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << endl;
   oIndDriver << "      }" << endl;
   oIndDriver << "      oResults << \"</ind_analysis_result>\" << endl;" << endl;
-  oIndDriver << "      if( iSub == nRepeats-1 )" << endl;
-  oIndDriver << "         oResults << set << endl;" << endl;
-  oIndDriver << "      oResults << \"</spkreport>\" << endl;" << endl;
-  oIndDriver << "      oResults.close();" << endl;
   oIndDriver << "   }" << endl;
+  oIndDriver << "   if( iSub == nRepeats-1 )" << endl;
+  oIndDriver << "      oResults << set << endl;" << endl;
+  oIndDriver << "   oResults << \"</spkreport>\" << endl;" << endl;
+  oIndDriver << "   oResults.close();" << endl;
   oIndDriver << "}" << endl;
   oIndDriver << "END:" << endl;
-  //  oIndDriver << "   oResults << \"</spkreport>\" << endl;" << endl;
-  //  oIndDriver << "   oResults.close();" << endl;
   oIndDriver << endl;
   oIndDriver << "   cout << \"exit code = \" << ret << endl;" << endl;
   oIndDriver << "   return ret;" << endl;
@@ -8142,6 +8070,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "ofstream oResults;" << endl;
   oPopDriver << "string warningsOut;" << endl;
   oPopDriver << "int seed = NonmemPars::seed; " << endl;
+  oPopDriver << "srand( seed );" << endl;
   oPopDriver << "int iSub = 0;" << endl;
   oPopDriver << endl;
 
@@ -8149,20 +8078,23 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "if( ret != SUCCESS )" << endl;
   oPopDriver << "  goto REPORT_GEN;" << endl;
   oPopDriver << endl;
-
+  /*
   oPopDriver << "alpOut   = alpIn;" << endl;
   oPopDriver << "bOut     = bIn;" << endl;
   oPopDriver << "thetaOut = thetaIn;" << endl;
   oPopDriver << "omegaOut = omegaIn;" << endl;
   oPopDriver << "sigmaOut = sigmaIn;" << endl;
+  */
   oPopDriver << "remove( \"result.xml\" );" << endl;
-  oPopDriver << "for( iSub=0; iSub<nRepeats; iSub++, seed = rand() )" << endl;
+  oPopDriver << "for( iSub=0; iSub<nRepeats; iSub++ )" << endl;
   oPopDriver << "{" << endl;
+  /*
   oPopDriver << "   alpIn   = alpOut;" << endl;
   oPopDriver << "   bIn     = bOut;" << endl;
   oPopDriver << "   thetaIn = thetaOut;" << endl;
   oPopDriver << "   omegaIn = omegaOut;" << endl;
   oPopDriver << "   sigmaIn = sigmaOut;" << endl;
+  */
   oPopDriver << "   /*******************************************************************/" << endl;
   oPopDriver << "   /*                                                                 */" << endl;
   oPopDriver << "   /*   Data Initialization                                           */" << endl;
@@ -8173,7 +8105,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "      valarray<double> yOut( nY );" << endl;
   oPopDriver << "      try" << endl;
   oPopDriver << "      {" << endl;
-  oPopDriver << "         simulate( model, alpIn, N, bLow, bUp, yOut, bOut, NonmemPars::seed );" << endl;
+  oPopDriver << "         simulate( model, alpIn, N, bLow, bUp, yOut, bOut );" << endl;
   oPopDriver << "         bIn = bOut;" << endl;
   oPopDriver << "         set.replaceAllMeasurements( yOut );" << endl;
   oPopDriver << "         y   = yOut;" << endl;
@@ -8559,8 +8491,16 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "   }" << endl;
   oPopDriver << endl;
 
+
   oPopDriver << "   if( isSimRequested )" << endl;
-  oPopDriver << "      oResults << \"<simulation seed=\\\"\" << seed << \"\\\" subproblem=\\\"\" << iSub+1 << \"\\\"/>\" << endl;" << endl;
+  oPopDriver << "   {" << endl;
+  oPopDriver << "      oResults << \"<simulation \";" << endl;
+  oPopDriver << "      if( iSub == 0 )" << endl;
+  oPopDriver << "      {" << endl;
+  oPopDriver << "         oResults << \"seed=\\\"\" << seed << \"\\\" \";" << endl;
+  oPopDriver << "      }" << endl;
+  oPopDriver << "      oResults << \"subproblem=\\\"\" << iSub+1 << \"\\\"/>\" << endl;" << endl;
+  oPopDriver << "   }" << endl;
   oPopDriver << endl;
 
   oPopDriver << "   if( isOptRequested )" << endl;
@@ -8576,69 +8516,6 @@ void NonmemTranslator::generatePopDriver() const
   
   oPopDriver << "      ///////////////////////////////////////////////////////////////////" << endl;
   oPopDriver << "      //   NONMEM Specific" << endl;
-  /*
-  // theta <in> and <out>
-  oPopDriver << "      oResults << \"<theta length=\\\"\" << NonmemPars::nTheta << \"\\\">\" << endl;" << endl;
-  oPopDriver << "      oResults << \"<in>\" << endl;" << endl;
-  oPopDriver << "      for( int i=0; i<NonmemPars::nTheta; i++ )" << endl;
-  oPopDriver << "      {" << endl;
-  oPopDriver << "         oResults << \"<value>\" << thetaIn[i] << \"</value>\" << endl;" << endl;
-  oPopDriver << "      }" << endl;
-  oPopDriver << "      oResults << \"</in>\" << endl;" << endl;
-  oPopDriver << "      oResults << \"<out>\" << endl;" << endl;
-  oPopDriver << "      for( int i=0; i<NonmemPars::nTheta; i++ )" << endl;
-  oPopDriver << "      {" << endl;
-  oPopDriver << "         oResults << \"<value>\" << thetaOut[i] << \"</value>\" << endl;" << endl;
-  oPopDriver << "      }" << endl;
-  oPopDriver << "      oResults << \"</out>\" << endl;" << endl;
-  oPopDriver << "      oResults << \"</theta>\" << endl;" << endl;
-
-  // Omega <in> and <out>
-  oPopDriver << "      oResults << \"<omega dimension=\" << \"\\\"\" << NonmemPars::omegaDim << \"\\\"\";" << endl;
-  oPopDriver << "      oResults << \" struct=\" << \"\\\"\";" << endl;
-  oPopDriver << "      if( NonmemPars::omegaStruct==PopPredModel::DIAGONAL )" << endl;
-  oPopDriver << "         oResults << \"diagonal\";" << endl;
-  oPopDriver << "      else" << endl;
-  oPopDriver << "         oResults << \"block\";" << endl;
-  oPopDriver << "      oResults << \"\\\"\" << \">\" << endl;" << endl;
-
-  oPopDriver << "      oResults << \"<in>\" << endl;" << endl;
-  oPopDriver << "      for( int i=0; i<NonmemPars::omegaOrder; i++ )" << endl;
-  oPopDriver << "      {" << endl;
-  oPopDriver << "         oResults << \"<value>\" << omegaIn[i] << \"</value>\" << endl;" << endl;
-  oPopDriver << "      }" << endl;
-  oPopDriver << "      oResults << \"</in>\" << endl;" << endl;
-  oPopDriver << "      oResults << \"<out>\" << endl;" << endl;
-  oPopDriver << "      for( int i=0; i<NonmemPars::omegaOrder; i++ )" << endl;
-  oPopDriver << "      {" << endl;
-  oPopDriver << "         oResults << \"<value>\" << omegaOut[i] << \"</value>\" << endl;" << endl;
-  oPopDriver << "      }" << endl;
-  oPopDriver << "      oResults << \"</out>\" << endl;" << endl;
-  oPopDriver << "      oResults << \"</omega>\" << endl;" << endl;
-
-  // Sigma <in> and <out>
-  oPopDriver << "      oResults << \"<sigma dimension=\" << \"\\\"\" << NonmemPars::sigmaDim << \"\\\"\";" << endl;
-  oPopDriver << "      oResults << \" struct=\" << \"\\\"\";" << endl;
-  oPopDriver << "      if( NonmemPars::sigmaStruct==PopPredModel::DIAGONAL )" << endl;
-  oPopDriver << "         oResults << \"diagonal\";" << endl;
-  oPopDriver << "      else" << endl;
-  oPopDriver << "         oResults << \"block\";" << endl;
-  oPopDriver << "      oResults << \"\\\"\" << \">\" << endl;" << endl;
-  oPopDriver << "      oResults << \"<in>\" << endl;" << endl;
-  oPopDriver << "      for( int i=0; i<NonmemPars::sigmaOrder; i++ )" << endl;
-  oPopDriver << "      {" << endl;
-  oPopDriver << "         oResults << \"<value>\" << sigmaIn[i] << \"</value>\" << endl;" << endl;
-  oPopDriver << "      }" << endl;
-  oPopDriver << "      oResults << \"</in>\" << endl;" << endl;
-  oPopDriver << "      oResults << \"<out>\" << endl;" << endl;
-  oPopDriver << "      for( int i=0; i<NonmemPars::sigmaOrder; i++ )" << endl;
-  oPopDriver << "      {" << endl;
-  oPopDriver << "         oResults << \"<value>\" << sigmaOut[i] << \"</value>\" << endl;" << endl;
-  oPopDriver << "      }" << endl;
-  oPopDriver << "      oResults << \"</out>\" << endl;" << endl;
-  oPopDriver << "      oResults << \"</sigma>\" << endl;" << endl;
-  */
-
   // theta in
   oPopDriver << "      oResults << \"<theta_in length=\\\"\" << NonmemPars::nTheta << \"\\\">\" << endl;" << endl;
   oPopDriver << "      for( int i=0; i<NonmemPars::nTheta; i++ )" << endl;
@@ -8790,14 +8667,13 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "      }" << endl;
   
   oPopDriver << "      oResults << \"</pop_analysis_result>\" << endl;" << endl;
-  oPopDriver << "      if( iSub == nRepeats-1 )" << endl;
-  oPopDriver << "         oResults << set << endl;" << endl;
-  oPopDriver << "      oResults << \"</spkreport>\" << endl;" << endl;
-  oPopDriver << "      oResults.close();" << endl;
   oPopDriver << "   }" << endl;
   oPopDriver << endl;
-
   // Print out <presentation_data> if this is the last subproblem.
+  oPopDriver << "   if( iSub == nRepeats-1 )" << endl;
+  oPopDriver << "      oResults << set << endl;" << endl;
+  oPopDriver << "   oResults << \"</spkreport>\" << endl;" << endl;
+  oPopDriver << "   oResults.close();" << endl;
   oPopDriver << "}" << endl;
   oPopDriver << endl;
   oPopDriver << "END:" << endl;
