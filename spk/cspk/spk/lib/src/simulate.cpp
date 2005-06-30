@@ -729,9 +729,6 @@ void simulate( SpkModel &model,
   bool
   Spk
   Modelwith
-  Covariances
-  Covariance
-  covariance
   sqrt
   ith
   const
@@ -864,78 +861,89 @@ void simulate( SpkModel &model,
   #include <spk/allZero.h>
 
   using std::string;
+  using SPK_VA::valarray;
+  using namespace std;
 
-  class IndModel : public SpkModel
+  class SimulateExampleIndModel : public SpkModel
   {
-  valarray<double>  _b;
-  const int nB, nY;
+    valarray<double>  _b;
+    const int nB, nY;
 
-  public:
-  IndModel( int nBIn, int nYIn )
-  : nB(nBIn), nY(nYIn)
-  {}
-  ~IndModel(){}
-  protected:
-  void doSetIndPar(const valarray<double>& b)
-  {
-  _b = b;
-  }
-  void doDataMean( valarray<double> & fOut ) const 
-  {
-  //--------------------------------------------------------------
-  //
-  // Calculates
-  //
-  //            /       \ 
-  //     f(b) = |  b(1)  |  .
-  //            \       / 
-  //
-  //--------------------------------------------------------------
-  fOut = b[0];
-  }
+    public:
+    SimulateExampleIndModel( int nBIn, int nYIn )
+    : nB(nBIn), nY(nYIn), _b(nBIn)
+    {}
+    ~SimulateExampleIndModel(){}
+    protected:
+    void doSetIndPar(const valarray<double>& b)
+    {
+      _b = b;
+    }
+    void doDataMean( valarray<double> & fOut ) const 
+    {
+      //--------------------------------------------------------------
+      //
+      // Calculates
+      //
+      //            /       \ 
+      //     f(b) = |  b(1)  |  .
+      //            \       / 
+      //
+      //--------------------------------------------------------------
+      fOut = _b[0];
+    }
 
-  bool doDataMean_indPar( valarray<double> & f_bOut ) const
-  {
-  //--------------------------------------------------------------
-  //
-  // Calculates
-  //
-  //              /     \ 
-  //     f_b(b) = |  1  |  .
-  //              \     / 
-  //
-  //--------------------------------------------------------------
-  f_bOut = 1.0;
-  return true;
-  }
-  void doDataVariance( valarray<double> & ROut ) const
-  {
-  //--------------------------------------------------------------
-  //
-  // Calculates
-  //
-  //            /     \ 
-  //     R(b) = |  1  |  .
-  //            \     / 
-  //
-  //--------------------------------------------------------------
-  ROut = 1.0;
-  return true;
-  }
-  bool doDataVariance_indPar( valarray<double> & R_bOut ) const
-  {
-  //--------------------------------------------------------------
-  //
-  // Calculates
-  //
-  //              /     \ 
-  //     R_b(b) = |  0  |  .
-  //              \     / 
-  //
-  //--------------------------------------------------------------
-  R_bOut = 0.0;
-  return false;
-  }
+    bool doDataMean_indPar( valarray<double> & f_bOut ) const
+    {
+      //--------------------------------------------------------------
+      //
+      // Calculates
+      // 
+      //              /     \ 
+      //     f_b(b) = |  1  |  .
+      //              \     / 
+      //
+      //--------------------------------------------------------------
+      f_bOut = 1.0;
+      return true;
+    }
+    void doDataVariance( valarray<double> & ROut ) const
+    {
+      //--------------------------------------------------------------
+      //
+      // Calculates
+      //
+      //            /                                \ 
+      //     R(b) = |  1  0  0  0  0  0  0  0  0  0  |
+      //            |  0  1  0  0  0  0  0  0  0  0  |
+      //            |  0  0  1  0  0  0  0  0  0  0  |
+      //            |  0  0  0  1  0  0  0  0  0  0  |
+      //            |  0  0  0  0  1  0  0  0  0  0  |
+      //            |  0  0  0  0  0  1  0  0  0  0  |
+      //            |  0  0  0  0  0  0  1  0  0  0  |
+      //            |  0  0  0  0  0  0  0  1  0  0  |
+      //            |  0  0  0  0  0  0  0  0  1  0  |
+      //            |  0  0  0  0  0  0  0  0  0  1  |
+      //            \                                / 
+      //
+      //--------------------------------------------------------------
+      ROut = 0.0;
+      ROut[ slice( 0, nY, nY+1 ) ] = 1.0;
+    }
+    bool doDataVariance_indPar( valarray<double> & R_bOut ) const
+    {
+      //--------------------------------------------------------------
+      //
+      // Calculates
+      //
+      //              /     \ 
+      //     R_b(b) = |  0  |  .
+      //              \     / 
+      //
+      //--------------------------------------------------------------
+      R_bOut = 0.0;
+      return false;
+    }
   };
 
   //--------------------------------------------------------------
@@ -944,67 +952,55 @@ void simulate( SpkModel &model,
   //
   //--------------------------------------------------------------
 
-  void main()
+  int main()
   {
-  //------------------------------------------------------------
-  // Preliminaries.
-  //------------------------------------------------------------
+    //------------------------------------------------------------
+    // Quantities related to the data vector, y.
+    //------------------------------------------------------------
   
-  using namespace std;
+    // Number of measurements.
+    int nY = 10;
   
-  //------------------------------------------------------------
-  // Quantities related to the data vector, y.
-  //------------------------------------------------------------
+    // size of b vector
+    int nB = 1;
   
-  // Number of measurements.
-  int nY = 10;
-  
-  // size of b vector
-  int nB = 1;
-  
-  // Measurement values, y.
-  valarray<double> y( nY );
-  
-  //------------------------------------------------------------
-  // Quantities related to the random population parameters, b.
-  //------------------------------------------------------------
-  
-  valarray<double> b ( 0.0, nB );
+    // Measurement values, y.
+    valarray<double> y( nY );
+
+    // Seed
+    int seed = 3;
     
-  //------------------------------------------------------------
-  // Quantities related to the user-provided model.
-  //------------------------------------------------------------
+    //------------------------------------------------------------
+    // Quantities related to the random population parameters, b.
+    //------------------------------------------------------------
   
-  IndModel model( nB, nY );
+    valarray<double> b ( 0.0, nB );
+    
+    //------------------------------------------------------------
+    // Quantities related to the user-provided model.
+    //------------------------------------------------------------
   
-  //------------------------------------------------------------
-  // Simulate measurements for each individual.
-  //------------------------------------------------------------
-  simulate(model, n, b, y, bTrue, 1);
+    SimulateExampleIndModel model( nB, nY );
   
-  //------------------------------------------------------------
-  // Print the results.
-  //------------------------------------------------------------
+    //------------------------------------------------------------
+    // Simulate measurements for each individual.
+    //------------------------------------------------------------
   
-  cout << "yOut:" << y << endl;
-  cout << endl;
-      }
+    simulate(model, nY, b, y, 1);
+
+    //------------------------------------------------------------
+    // Print the results.
+    //------------------------------------------------------------
+  
+    cout << "yOut:" << y << endl;
+    cout << endl;
+  }
 
   $$
 
   the matrices
   $math%
-  yOut:
-  [ 1.99088 ]
-  [ -2.83752 ]
-  [ 3.47354 ]
-  [ -1.60409 ]
-  [ -1.90355 ]
-  [ 0.750448 ]
-  [ 4.56466 ]
-  [ 1.50014 ]
-  [ 0.698962 ]
-  [ 4.66475 ]
+  yOut:{ 1.11227, 0.608056, -0.712082, -1.71895, -0.400054, -2.27172, 0.866331, -1.03258, -0.358203, -1.11381 }
 
   %$$
   will be printed.
