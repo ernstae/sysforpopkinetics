@@ -33,15 +33,22 @@ void simulate( SpkModel &popModel,
 	       SPK_VA::valarray<double>       &yOut,
 	       SPK_VA::valarray<double>       &bAllOut,
 	       int seed );
+void simulate( SpkModel &popModel,		
+	       const SPK_VA::valarray<double> &alp,
+	       const SPK_VA::valarray<int>    &N,
+	       const SPK_VA::valarray<double> &bLow,
+	       const SPK_VA::valarray<double> &bUp,
+	       SPK_VA::valarray<double>       &yOut,
+	       SPK_VA::valarray<double>       &bAllOut );
 
 void simulate( SpkModel &indModel,
-	       int                    n,
+	       int                             n,
 	       const SPK_VA::valarray<double> &b,
 	       SPK_VA::valarray<double>       &yOut,
 	       int seed );
 
 void simulate( SpkModel &indModel,
-	       int                    n,
+	       int                             n,
 	       const SPK_VA::valarray<double> &b,
 	       SPK_VA::valarray<double>       &yOut );
 #endif

@@ -44,9 +44,9 @@
  *
  *************************************************************************/
 /*
-  $begin simulate$$
+  $begin simulatePop$$
 
-  $section Simulation of Measurements and Random Effects for a given Model$$
+  $section Simulation of Measurements and Random Effects for a given Population Model$$
 
   $spell
   Model model
@@ -82,22 +82,29 @@
   redimensioned
   Ri
   $$
-  $index simulate testing model $$
+  $index simulate population$$
 
   $table
   $bold Prototype:$$ $cend 
-  $syntax/void simulate(
-  SPK_Model &/model/, 
-  const valarray<double> &/alp/, 
-  const valarray<int>    &/N/,		
-  const valarray<double> &/bLow/,
-  const valarray<double> &/bUp/,
-  valarray<double>       &/yOut/,
-  valarray<double>       &/bAllOut/
-  int                    /seed/)/$$
+  $syntax/void simulate( SPK_Model              &/model/, 
+               const valarray<double> &/alp/, 
+               const valarray<int>    &/N/,		
+               const valarray<double> &/bLow/,
+               const valarray<double> &/bUp/,
+               valarray<double>       &/yOut/,
+               valarray<double>       &/bAllOut/
+               int                    /seed/ )/$$ $rend
+  $cend
+  $syntax/void simulate( SPK_Model             &/model/, 
+               const valarray<double> &/alp/, 
+               const valarray<int>    &/N/,		
+               const valarray<double> &/bLow/,
+               const valarray<double> &/bUp/,
+               valarray<double>       &/yOut/,
+               valarray<double>       &/bAllOut/ )/$$ $rend
   $tend
 
-  $fend 35$$
+  $fend 45$$
 
   $center
   $italic
@@ -232,8 +239,8 @@
 
   /seed/
   /$$
-  The default value of $italic seed$$ is random.  The user can pass an 
-  $code integer$$ if a different starting seed value for the random number 
+  (optional) The user can pass an  $code integer$$
+  if a different starting seed value for the random number 
   generators is desired.
 
 
@@ -559,7 +566,22 @@ void simulate( SpkModel &model,
 {		
   // *** Random number seeding - Default value is random ***
   srand( seed );
-  
+  simulate( model,
+	    alp,
+	    N,
+	    bLow,
+	    bUp,
+	    yOut,
+	    bAllOut );
+}
+void simulate( SpkModel &model,
+	       const valarray<double> &alp,
+	       const valarray<int>    &N,
+	       const valarray<double> &bLow,
+	       const valarray<double> &bUp,
+	       valarray<double>       &yOut,
+	       valarray<double>       &bAllOut )
+{
   // *** Constants/Iterators ***
   int i, j, k;	      // Iterators
   int nIndividuals = N.size();     // Get the number of subjects
@@ -696,6 +718,300 @@ void simulate( SpkModel &model,
  *	Return Value:	void
  *
  **************************************************************************/
+/*
+  $begin simulateInd$$
+
+  $section Simulation of Measurements for a given Individual Model$$
+
+  $spell
+  Model model
+  valarray
+  bool
+  Spk
+  Modelwith
+  Covariances
+  Covariance
+  covariance
+  sqrt
+  ith
+  const
+  cout
+  endl
+  Cov
+  std
+  namespace
+  dmat
+  dvec
+  pd
+  ppkaoptexample
+  Ind
+  pdmat
+  var
+  drow
+  doSetPopPar
+  doSetIndPar
+  fi
+  Covariances
+  iostream
+  nd
+  redimensioned
+  Ri
+  $$
+  $index simulate population$$
+
+  $table
+  $bold Prototype:$$ $cend 
+  $syntax/void simulate( SPK_Model              &/model/,
+               int                     /n/,
+               const valarray<double> &/bIn/,
+               valarray<double>       &/yOut/,
+               int                     /seed/ )/$$ $rend
+  $cend
+  $syntax/void simulate( SPK_Model              &/model/,
+               int                     /n/,
+               const valarray<double> &/bIn/,
+               valarray<double>       &/yOut/ )/$$ $rend
+  $tend
+
+  $fend 30$$
+
+  $center
+  $italic
+  $include shortCopyright.txt$$
+  $$
+  $$
+  $pre
+  $$
+  $head Description$$
+
+  Generates a set of measurements for the individual $italic model$$.
+
+  $pre
+
+  $$
+
+  The simulated measurements are controlled by the parameter
+  $italic b$$ and drown from the distribution:
+  $pre
+
+  y[i] = f(b) + e
+  e ~ N(0, R(b))
+
+  $$
+  where R(b) is the model's R function, evaluating on the random effects in $italic b$$.
+
+  The set of data created are placed in the matrix $italic yOut$$.  The input values
+  of the matrix $italic yOut$$ does not matter, as it
+  will be changed and any previous information stored in it will be overwritten.
+
+  $head Assumptions$$
+
+  $head Notation$$
+
+  If A is a $code DoubleMatrix$$ we use A[i] to denote the ith element of A.  Unless noted
+  otherwise, the indexing begins at zero.
+
+  $head Arguments$$
+
+  $syntax/
+  /model/
+  /$$
+  A user implementation of the $code SpkModel$$ class that is dependent on
+  $italic b$$.
+
+  $syntax/
+
+  /n/
+  /$$
+  The number of measurements to be simulated.
+
+  $syntax/
+
+  /bIn/
+  /$$
+  The $code valarray<double>$$ $italic bLow$$ contains the random effects.
+
+  $syntax/
+
+  /yOut/
+  /$$
+  Simulated data is placed in the $code valarray<double>$$ 
+  $italic yOut$$.  The input size of $italic yOut$$ must be the same as $math%n%$$.
+
+  $syntax/
+
+  /seed/
+  /$$
+  (optional) The user can pass an  $code integer$$
+  if a different starting seed value for the random number 
+  generators is desired.
+
+
+  $head Example$$
+
+  If you compile, link, and run the following program,
+  $codep
+
+  // In the following example, simulate() takes in parameters and calculates
+  // yOut and bAllOut.
+	
+  #include <iostream>
+  #include <spk/SpkValarray.h>
+  #include <spk/identity.h>
+
+  #include <spk/simulate.h>
+  #include <spk/randNormal.h>
+  #include <spk/allZero.h>
+
+  using std::string;
+
+  class IndModel : public SpkModel
+  {
+  valarray<double>  _b;
+  const int nB, nY;
+
+  public:
+  IndModel( int nBIn, int nYIn )
+  : nB(nBIn), nY(nYIn)
+  {}
+  ~IndModel(){}
+  protected:
+  void doSetIndPar(const valarray<double>& b)
+  {
+  _b = b;
+  }
+  void doDataMean( valarray<double> & fOut ) const 
+  {
+  //--------------------------------------------------------------
+  //
+  // Calculates
+  //
+  //            /       \ 
+  //     f(b) = |  b(1)  |  .
+  //            \       / 
+  //
+  //--------------------------------------------------------------
+  fOut = b[0];
+  }
+
+  bool doDataMean_indPar( valarray<double> & f_bOut ) const
+  {
+  //--------------------------------------------------------------
+  //
+  // Calculates
+  //
+  //              /     \ 
+  //     f_b(b) = |  1  |  .
+  //              \     / 
+  //
+  //--------------------------------------------------------------
+  f_bOut = 1.0;
+  return true;
+  }
+  void doDataVariance( valarray<double> & ROut ) const
+  {
+  //--------------------------------------------------------------
+  //
+  // Calculates
+  //
+  //            /     \ 
+  //     R(b) = |  1  |  .
+  //            \     / 
+  //
+  //--------------------------------------------------------------
+  ROut = 1.0;
+  return true;
+  }
+  bool doDataVariance_indPar( valarray<double> & R_bOut ) const
+  {
+  //--------------------------------------------------------------
+  //
+  // Calculates
+  //
+  //              /     \ 
+  //     R_b(b) = |  0  |  .
+  //              \     / 
+  //
+  //--------------------------------------------------------------
+  R_bOut = 0.0;
+  return false;
+  }
+  };
+
+  //--------------------------------------------------------------
+  //
+  // Function: main
+  //
+  //--------------------------------------------------------------
+
+  void main()
+  {
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+  
+  using namespace std;
+  
+  //------------------------------------------------------------
+  // Quantities related to the data vector, y.
+  //------------------------------------------------------------
+  
+  // Number of measurements.
+  int nY = 10;
+  
+  // size of b vector
+  int nB = 1;
+  
+  // Measurement values, y.
+  valarray<double> y( nY );
+  
+  //------------------------------------------------------------
+  // Quantities related to the random population parameters, b.
+  //------------------------------------------------------------
+  
+  valarray<double> b ( 0.0, nB );
+    
+  //------------------------------------------------------------
+  // Quantities related to the user-provided model.
+  //------------------------------------------------------------
+  
+  IndModel model( nB, nY );
+  
+  //------------------------------------------------------------
+  // Simulate measurements for each individual.
+  //------------------------------------------------------------
+  simulate(model, n, b, y, bTrue, 1);
+  
+  //------------------------------------------------------------
+  // Print the results.
+  //------------------------------------------------------------
+  
+  cout << "yOut:" << y << endl;
+  cout << endl;
+      }
+
+  $$
+
+  the matrices
+  $math%
+  yOut:
+  [ 1.99088 ]
+  [ -2.83752 ]
+  [ 3.47354 ]
+  [ -1.60409 ]
+  [ -1.90355 ]
+  [ 0.750448 ]
+  [ 4.56466 ]
+  [ 1.50014 ]
+  [ 0.698962 ]
+  [ 4.66475 ]
+
+  %$$
+  will be printed.
+
+  $end
+
+*/
 void simulate( SpkModel               &indModel,
 	       int                     n,
 	       const valarray<double> &b,
