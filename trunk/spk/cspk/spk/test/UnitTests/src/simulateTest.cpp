@@ -43,6 +43,7 @@
 
 
 using SPK_VA::valarray;
+using SPK_VA::slice;
 using namespace CppUnit;
 using namespace std;
 
@@ -266,7 +267,6 @@ protected:
   {
     f_bOut.resize( nY * nB );
     f_bOut = 0.0;
-    //f_bOut[ slice( 0, nY, 1 ) ] = 1.0;
   }
   void doDataVariance( valarray<double>& ROut ) const
   {
@@ -281,6 +281,152 @@ protected:
   }
 };
 
+class SimulateExampleIndModel : public SpkModel
+{
+  valarray<double>  _b;
+  const int nB, nY;
+
+public:
+  SimulateExampleIndModel( int nBIn, int nYIn )
+    : nB(nBIn), nY(nYIn), _b(nBIn)
+  {}
+  ~SimulateExampleIndModel(){}
+protected:
+  void doSetIndPar(const valarray<double>& b)
+  {
+    _b = b;
+  }
+  void doDataMean( valarray<double> & fOut ) const 
+  {
+    //--------------------------------------------------------------
+    //
+    // Calculates
+    //
+    //            /       \ 
+    //     f(b) = |  b(1)  |  .
+    //            \       / 
+    //
+    //--------------------------------------------------------------
+    fOut = _b[0];
+  }
+
+  bool doDataMean_indPar( valarray<double> & f_bOut ) const
+  {
+    //--------------------------------------------------------------
+    //
+    // Calculates
+    //
+    //              /     \ 
+    //     f_b(b) = |  1  |  .
+    //              \     / 
+    //
+    //--------------------------------------------------------------
+    f_bOut = 1.0;
+    return true;
+  }
+  void doDataVariance( valarray<double> & ROut ) const
+  {
+    //--------------------------------------------------------------
+    //
+    // Calculates
+    //
+    //            /                                \ 
+    //     R(b) = |  1  0  0  0  0  0  0  0  0  0  |
+    //            |  0  1  0  0  0  0  0  0  0  0  |
+    //            |  0  0  1  0  0  0  0  0  0  0  |
+    //            |  0  0  0  1  0  0  0  0  0  0  |
+    //            |  0  0  0  0  1  0  0  0  0  0  |
+    //            |  0  0  0  0  0  1  0  0  0  0  |
+    //            |  0  0  0  0  0  0  1  0  0  0  |
+    //            |  0  0  0  0  0  0  0  1  0  0  |
+    //            |  0  0  0  0  0  0  0  0  1  0  |
+    //            |  0  0  0  0  0  0  0  0  0  1  |
+    //            \                                / 
+    //
+    //--------------------------------------------------------------
+    ROut = 0.0;
+    ROut[ slice( 0, nY, nY+1 ) ] = 1.0;
+  }
+  bool doDataVariance_indPar( valarray<double> & R_bOut ) const
+  {
+    //--------------------------------------------------------------
+    //
+    // Calculates
+    //
+    //              /     \ 
+    //     R_b(b) = |  0  |  .
+    //              \     / 
+    //
+    //--------------------------------------------------------------
+    R_bOut = 0.0;
+    return false;
+  }
+};
+
+//--------------------------------------------------------------
+//
+// Function: main
+//
+//--------------------------------------------------------------
+
+void simulateTest::ind_example()
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+  
+  using namespace std;
+  
+  //------------------------------------------------------------
+  // Quantities related to the data vector, y.
+  //------------------------------------------------------------
+  
+  // Number of measurements.
+  int nY = 10;
+  
+  // size of b vector
+  int nB = 1;
+  
+  // Measurement values, y.
+  valarray<double> y( nY );
+
+  // Seed
+  int seed = 3;
+  //------------------------------------------------------------
+  // Quantities related to the random population parameters, b.
+  //------------------------------------------------------------
+  
+  valarray<double> b ( 0.0, nB );
+    
+  //------------------------------------------------------------
+  // Quantities related to the user-provided model.
+  //------------------------------------------------------------
+  
+  SimulateExampleIndModel model( nB, nY );
+  
+  //------------------------------------------------------------
+  // Simulate measurements for each individual.
+  //------------------------------------------------------------
+  simulate(model, nY, b, y, 1);
+
+  //------------------------------------------------------------
+  // Print the results.
+  //------------------------------------------------------------
+  // {1.11227, 0.608056, -0.712082, -1.71895, -0.400054, -2.27172, 0.866331, -1.03258, -0.358203, -1.11381}
+//  cout << "yOut:" << y << endl;
+//  cout << endl;
+
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(  1.11227,  y[0], 0.001 ); 
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(  0.608056, y[1], 0.001 ); 
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.712082, y[2], 0.001 ); 
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( -1.71895,  y[3], 0.001 ); 
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.400054, y[4], 0.001 ); 
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( -2.27172,  y[5], 0.001 ); 
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(  0.86631,  y[6], 0.001 ); 
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( -1.03258,  y[7], 0.001 ); 
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.358203, y[8], 0.001 ); 
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( -1.11381,  y[9], 0.001 ); 
+}
 void simulateTest::setUp()
 {
 }
@@ -295,6 +441,9 @@ Test* simulateTest::suite()
 
   // duplicate the following example for each test case, replacing the case name.
   suiteOfTests->addTest(new TestCaller<simulateTest>(
+	       "ind_example",  &simulateTest::ind_example));
+  /*
+  suiteOfTests->addTest(new TestCaller<simulateTest>(
 	       "pop_simple_seed",  &simulateTest::pop_simple_seed));
   suiteOfTests->addTest(new TestCaller<simulateTest>(
                "pop_complex_seed", &simulateTest::pop_complex_seed));
@@ -304,7 +453,7 @@ Test* simulateTest::suite()
   
   suiteOfTests->addTest(new TestCaller<simulateTest>(
                "ind_simple_noseed",  &simulateTest::ind_simple_noseed));
-  
+  */  
   return suiteOfTests;
 }
 void simulateTest::ind_simple_seed()
