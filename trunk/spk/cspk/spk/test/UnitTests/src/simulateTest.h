@@ -44,8 +44,10 @@ public:
     void setUp();
     void tearDown();
 
-    void test_with_simplemodel();
-    void test_with_complexmodel();
+    void pop_simple_seed();
+    void pop_complex_seed();
+    void ind_simple_seed();
+    void ind_simple_noseed();
 };
 
 #endif
