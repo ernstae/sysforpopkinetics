@@ -32,6 +32,14 @@ MOSTLYCLEANFILES     = Pred.h \
 
 testall_SOURCES      = \
 	               test_nonmem.cpp \
+                       DOMPrint.h \
+                       DOMPrint.cpp \
+                       DOMPrintErrorHandler.cpp \
+                       DOMPrintErrorHandler.hpp \
+                       DOMPrintFilter.cpp \
+                       DOMPrintFilter.hpp \ 
+                       DOMTreeErrorReporter.cpp \
+                       DOMTreeErrorReporter.hpp \
 	               lex_explangTest.cpp \
 	               lex_explangTest.h \
 	               explangTest.cpp \
@@ -42,6 +50,8 @@ testall_SOURCES      = \
                        ind_withIDTest.h \
 	               ind_withoutIDTest.cpp \
 	               ind_withoutIDTest.h \
+	               ind_subprobTest.cpp \
+                       ind_subprobTest.h \
 	               ind_simTest.cpp \
                        ind_simTest.h \
 	               ind_simNoEstTest.cpp \
@@ -56,6 +66,8 @@ testall_SOURCES      = \
 	               pop_monteTest.h \
 	               pop_fixedParaTest.cpp \
 	               pop_fixedParaTest.h \
+	               pop_subprobTest.cpp \
+                       pop_subprobTest.h \
                        pop_diffeqnTest.cpp \
                        pop_diffeqnTest.h
 

@@ -1,17 +1,17 @@
 /**
- * \file ind_simNoEstTest.h
+ * \file pop_subprobTest.h
  * \brief Tests the NonmemTranslator's ability to handle
  * data sets containing the ID values.
  */
-#ifndef IND_SIM_NO_EST_TEST_H
-#define IND_SIM_NO_EST_TEST_H
+#ifndef POP_SUBPROB_TEST_H
+#define POP_SUBPROB_TEST_H
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestSuite.h>
 
 #include <xercesc/dom/DOMDocument.hpp>
 
-class ind_simNoEstTest : public CppUnit::TestFixture {
+class pop_subprobTest : public CppUnit::TestFixture {
 
   xercesc::DOMDocument *source;
   xercesc::DOMDocument *data;
