@@ -3594,6 +3594,7 @@ void NonmemTranslator::generateIndData( ) const
   // Public member declarations
   //----------------------------------------
   oIndData_h << "   int getNRecords() const;" << endl;
+  oIndData_h << "   int getNObservs() const;" << endl;
   oIndData_h << "   const SPK_VA::valarray<double> getMeasurements() const;"          << endl;
   oIndData_h << "   int getRecordIndex( int measurementIndex ) const;"                << endl;
   oIndData_h << "   int getMeasurementIndex( int recordIndex ) const;"                << endl;
@@ -3932,6 +3933,16 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "int IndData<spk_ValueType>::getNRecords() const " << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   return nRecords;" << endl;
+  oIndData_h << "}" << endl;
+
+  //------------------
+  // getNObservs()
+  //------------------
+  oIndData_h << "// return the number of measurements (only ones with MDV=0)" << endl;
+  oIndData_h << "template <class spk_ValueType>" << endl;
+  oIndData_h << "int IndData<spk_ValueType>::getNObservs() const " << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "   return nY;" << endl;
   oIndData_h << "}" << endl;
 
   //----------------------------------------
@@ -4514,11 +4525,13 @@ void NonmemTranslator::generateDataSet( ) const
   // -----------------------
   // Public member functions
   // -----------------------
-  oDataSet_h << "   const SPK_VA::valarray<double> getAllMeasurements() const;" << endl;
   oDataSet_h << "   int getMeasurementIndex( int recordIndex ) const;" << endl;
   oDataSet_h << "   int getRecordIndex( int measurementIndex ) const;" << endl;
   oDataSet_h << "   int getPopSize() const;" << endl;
   oDataSet_h << "   const SPK_VA::valarray<int> getN() const;" << endl;
+  oDataSet_h << "   int getNObservs( int i ) const;" << endl;
+  oDataSet_h << "   int getNRecords( int i ) const;" << endl;
+  oDataSet_h << "   const SPK_VA::valarray<double> getAllMeasurements() const;" << endl;
   oDataSet_h << "   void replaceAllMeasurements( const SPK_VA::valarray<double> & yy );"    << endl;
   oDataSet_h << "   void replaceEta     ( const SPK_VA::valarray<double>& EtaIn );"      << endl;
   oDataSet_h << "   void replacePred    ( const SPK_VA::valarray<double>& PredIn );"        << endl;
@@ -4723,6 +4736,8 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "            jTojPrime[j] = jPrime;" << endl;
   oDataSet_h << "            jPrime++;" << endl;
   oDataSet_h << "         }" << endl;
+  oDataSet_h << "         else" << endl;
+  oDataSet_h << "            jTojPrime[j] = -1;" << endl;
   oDataSet_h << "      }" << endl;
   oDataSet_h << "   }" << endl;
 
@@ -4821,6 +4836,26 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "   return N;" << endl;
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
+
+  // -------------
+  // getNObservs()
+  // -------------
+  oDataSet_h << "// Return the number of measurements (DVs) of the i-th individual." << endl;
+  oDataSet_h << "template <class spk_ValueType>" << endl;
+  oDataSet_h << "int DataSet<spk_ValueType>::getNObservs( int i ) const" << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   return data[i]->getNObservs();" << endl;
+  oDataSet_h << "}" << endl;
+
+  // -------------
+  // getNRecords()
+  // -------------
+  oDataSet_h << "// Return the number of data records (including MDV=1) of the i-th individual." << endl;
+  oDataSet_h << "template <class spk_ValueType>" << endl;
+  oDataSet_h << "int DataSet<spk_ValueType>::getNRecords( int i ) const" << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   return data[i]->getNRecords();" << endl;
+  oDataSet_h << "}" << endl;
 
   // ------------------------
   // replaceAllMeasurements()
@@ -5521,14 +5556,27 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   // Public member functions
   // -----------------------
   oPred_h << "   int getNObservs( int ) const;" << endl;
-
-  oPred_h << "   bool eval( int spk_thetaOffset, int spk_thetaLen," << endl;
-  oPred_h << "              int spk_etaOffset,   int spk_etaLen," << endl;
-  oPred_h << "              int spk_epsOffset,   int spk_epsLen," << endl;
-  oPred_h << "              int spk_fOffset,     int spk_fLen," << endl;
-  oPred_h << "              int spk_yOffset,     int spk_yLen," << endl;
-  oPred_h << "              int spk_i," << endl;
-  oPred_h << "              int spk_j," << endl;
+  oPred_h << "   int getNRecords( int ) const;" << endl;
+  oPred_h << "   int getMeasurementIndex( int ) const;" << endl;
+  oPred_h << "   int getRecordIndex( int ) const;" << endl;
+  oPred_h << "   bool eval( int  spk_thetaOffset, int spk_thetaLen," << endl;
+  oPred_h << "              int  spk_etaOffset,   int spk_etaLen," << endl;
+  oPred_h << "              int  spk_epsOffset,   int spk_epsLen," << endl;
+  oPred_h << "              int  spk_fOffset,     int spk_fLen,"   << endl;
+  oPred_h << "              int  spk_yOffset,     int spk_yLen,"   << endl;
+  oPred_h << "              int  spk_i," << endl;
+  oPred_h << "              int  spk_j," << endl;
+  oPred_h << "              int &spk_m," << endl;
+  oPred_h << "              const std::vector<spk_ValueType>& spk_indepVar," << endl;
+  oPred_h << "              std::vector<spk_ValueType>& spk_depVar );" << endl;
+  oPred_h << endl;
+  oPred_h << "   bool eval( int  spk_thetaOffset, int spk_thetaLen," << endl;
+  oPred_h << "              int  spk_etaOffset,   int spk_etaLen," << endl;
+  oPred_h << "              int  spk_epsOffset,   int spk_epsLen," << endl;
+  oPred_h << "              int  spk_fOffset,     int spk_fLen," << endl;
+  oPred_h << "              int  spk_yOffset,     int spk_yLen," << endl;
+  oPred_h << "              int  spk_i," << endl;
+  oPred_h << "              int  spk_j," << endl;
   oPred_h << "              const std::vector<spk_ValueType>& spk_indepVar," << endl;
   oPred_h << "              std::vector<spk_ValueType>& spk_depVar );" << endl;
   oPred_h << endl;
@@ -5657,23 +5705,80 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   oPred_h << "template <class spk_ValueType>" << endl;
   oPred_h << "int Pred<spk_ValueType>::getNObservs( int spk_i ) const" << endl;
   oPred_h << "{" << endl;
-  oPred_h << "  return perm->data[spk_i]->" << UserStr.ID << ".size();" << endl;
+  oPred_h << "  return perm->getNObservs( spk_i );" << endl;
   oPred_h << "}" << endl;
   oPred_h << endl;
 
-  // ------
-  // eval()
-  // ------
+  // -------------
+  // getNRecords()
+  // -------------
+  oPred_h << "template <class spk_ValueType>" << endl;
+  oPred_h << "int Pred<spk_ValueType>::getNRecords( int spk_i ) const" << endl;
+  oPred_h << "{" << endl;
+  oPred_h << "  return perm->getNRecords( spk_i );" << endl;
+  oPred_h << "}" << endl;
+  oPred_h << endl;
+
+  // ----------------------
+  // getMeasurementIndex()
+  // ----------------------
+  oPred_h << "template <class spk_ValueType>" << endl;
+  oPred_h << "int Pred<spk_ValueType>::getMeasurementIndex( int recordIndex ) const" << endl;
+  oPred_h << "{" << endl;
+  oPred_h << "   return perm->getMeasurementIndex( recordIndex );" << endl;
+  oPred_h << "}" << endl;
+
+  // -----------------
+  // getRecordIndex()
+  // -----------------
+  oPred_h << "template <class spk_ValueType>" << endl;
+  oPred_h << "int Pred<spk_ValueType>::getRecordIndex( int measurementIndex ) const" << endl;
+  oPred_h << "{" << endl;
+  oPred_h << "   return perm->getRecordIndex( measurementIndex );" << endl;
+  oPred_h << "}" << endl;
+
+  // -------------------------------------
+  // eval(): no spk_m, no MDV=1 versions
+  // --------------------------------------
   oPred_h << "template <class spk_ValueType>" << endl;
   oPred_h << "bool Pred<spk_ValueType>::eval( int spk_thetaOffset, int spk_thetaLen," << endl;
-  oPred_h << "                        int spk_etaOffset,   int spk_etaLen," << endl;
-  oPred_h << "                        int spk_epsOffset,   int spk_epsLen," << endl;
-  oPred_h << "                        int spk_fOffset,     int spk_fLen," << endl;
-  oPred_h << "                        int spk_yOffset,     int spk_yLen," << endl;
-  oPred_h << "                        int spk_i," << endl;
-  oPred_h << "                        int spk_j," << endl;
-  oPred_h << "                        const std::vector<spk_ValueType>& spk_indepVar," << endl;
-  oPred_h << "                        std::vector<spk_ValueType>& spk_depVar )" << endl;
+  oPred_h << "                                int spk_etaOffset,   int spk_etaLen," << endl;
+  oPred_h << "                                int spk_epsOffset,   int spk_epsLen," << endl;
+  oPred_h << "                                int spk_fOffset,     int spk_fLen,"   << endl;
+  oPred_h << "                                int spk_yOffset,     int spk_yLen,"   << endl;
+  oPred_h << "                                int spk_i," << endl;
+  oPred_h << "                                int spk_j," << endl;
+  oPred_h << "                                const std::vector<spk_ValueType>& spk_indepVar," << endl;
+  oPred_h << "                                std::vector<spk_ValueType>& spk_depVar )"        << endl;
+  oPred_h << "{" << endl;
+  oPred_h << "   int spk_m;" << endl;
+  oPred_h << "   return eval( spk_thetaOffset, spk_thetaLen," << endl;
+  oPred_h << "                spk_etaOffset,   spk_etaLen,"   << endl;
+  oPred_h << "                spk_epsOffset,   spk_epsLen,"   << endl;
+  oPred_h << "                spk_fOffset,     spk_fLen,"     << endl;
+  oPred_h << "                spk_yOffset,     spk_yLen,"     << endl;
+  oPred_h << "                spk_i," << endl;
+  oPred_h << "                spk_j," << endl;
+  oPred_h << "                spk_m," << endl;
+  oPred_h << "                spk_indepVar," << endl;
+  oPred_h << "                spk_depVar );" << endl;
+  oPred_h << "}" << endl;
+  oPred_h << endl;
+
+  // ------------------------------------
+  // eval(): with spk_m, possible MDV=1
+  // ------------------------------------
+  oPred_h << "template <class spk_ValueType>" << endl;
+  oPred_h << "bool Pred<spk_ValueType>::eval( int  spk_thetaOffset, int spk_thetaLen," << endl;
+  oPred_h << "                                int  spk_etaOffset,   int spk_etaLen," << endl;
+  oPred_h << "                                int  spk_epsOffset,   int spk_epsLen," << endl;
+  oPred_h << "                                int  spk_fOffset,     int spk_fLen,"   << endl;
+  oPred_h << "                                int  spk_yOffset,     int spk_yLen,"   << endl;
+  oPred_h << "                                int  spk_i," << endl;
+  oPred_h << "                                int  spk_j," << endl;
+  oPred_h << "                                int &spk_m," << endl;
+  oPred_h << "                                const std::vector<spk_ValueType>& spk_indepVar," << endl;
+  oPred_h << "                                std::vector<spk_ValueType>& spk_depVar )" << endl;
   oPred_h << "{" << endl;
 
   oPred_h << "  assert( spk_thetaLen == " << myThetaLen << " );" << endl;
@@ -5885,17 +5990,20 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 
   ///////////////////////////////////////////////////////////////////////////////////
 
-  // Set the output values
-  oPred_h << "   spk_depVar[ spk_fOffset+spk_j ] = " << UserStr.F << ";" << endl;
-  oPred_h << "   spk_depVar[ spk_yOffset+spk_j ] = " << UserStr.Y << ";" << endl;
-
   // Pred::eval() returns true if MDV(i,j)=0, 
   // where MDV=0 is interpreted that the statement "Missing Dependent Variable" is false.
   // In ver 0.1, it is assumed that MDV=true for all data records, 
   // so return true unconditionally.
   oPred_h << "   if( perm->data[ spk_i ]->" << UserStr.MDV << "[ spk_j ] == 0 )" << endl;
+  oPred_h << "   {" << endl;
+  // Set the output values
+  oPred_h << "      spk_depVar[ spk_fOffset+spk_j ] = " << UserStr.F << ";" << endl;
+  oPred_h << "      spk_depVar[ spk_yOffset+spk_j ] = " << UserStr.Y << ";" << endl;
+  oPred_h << "      spk_m = perm->getMeasurementIndex( spk_j );" << endl;
   oPred_h << "      return true;" << endl;
-  oPred_h << "   else return false;" << endl;
+  oPred_h << "   }" << endl;
+  oPred_h << "   else" << endl;
+  oPred_h << "      return false;" << endl;
 
   oPred_h << "}" << endl;
 
