@@ -7667,14 +7667,6 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "   oResults << warningsOut;" << endl;
   oIndDriver << endl;
 
-  oIndDriver << "   if( ret != SUCCESS )" << endl;
-  oIndDriver << "   {" << endl;
-  oIndDriver << "      oResults << \"</spkreport>\" << endl;" << endl;
-  oIndDriver << "      oResults.close();" << endl;
-  oIndDriver << "      goto END;" << endl;
-  oIndDriver << "   }" << endl;
-  oIndDriver << endl;
-
   oIndDriver << "   if( isSimRequested )" << endl;
   oIndDriver << "   {" << endl;
   oIndDriver << "      oResults << \"<simulation \";" << endl;
@@ -7789,13 +7781,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << endl;
   oIndDriver << "      oResults << \"</ind_opt_result>\" << endl;" << endl;
   oIndDriver << endl;
-
-  oIndDriver << "      if( isCovOut " << endl;
-  oIndDriver << "          || isInvCovOut " << endl;
-  oIndDriver << "          || isStdErrOut " << endl;
-  oIndDriver << "          || isCorrelationOut " << endl;
-  oIndDriver << "          || isConfidenceOut " << endl;
-  oIndDriver << "          || isCoefficientOut )" << endl;
+  oIndDriver << "      if( isStatRequested )" << endl;
   oIndDriver << "      {" << endl;
   oIndDriver << "         oResults << \"<ind_stat_result elapsedtime=\\\"\" << statTimeSec << \"\\\">\" << endl;" << endl;
   oIndDriver << "         if( isCovOut )" << endl;
@@ -8526,7 +8512,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "         errors.cat( e );" << endl;
   oPopDriver << "         isStatSuccess = false;" << endl;
   oPopDriver << "         ret = STAT_FAILURE;" << endl;
-  oPopDriver << "         goto REPORT_GEN;" << endl;
+  //  oPopDriver << "         goto REPORT_GEN;" << endl;
   oPopDriver << "      }" << endl;
   oPopDriver << "      catch( ... )" << endl;
   oPopDriver << "      {" << endl;
@@ -8535,7 +8521,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "         errors.push( e );" << endl;
   oPopDriver << "         isStatSuccess = false;" << endl;
   oPopDriver << "         ret = STAT_FAILURE;" << endl;
-  oPopDriver << "         goto REPORT_GEN;" << endl;
+  //  oPopDriver << "         goto REPORT_GEN;" << endl;
   oPopDriver << "      }" << endl;
   oPopDriver << "      gettimeofday( &statEnd, NULL );" << endl;
   oPopDriver << "      statTimeSec = difftime( statEnd.tv_sec, statBegin.tv_sec );" << endl;
@@ -8590,15 +8576,6 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "   WarningsManager::getAllWarnings( warningsOut );" << endl;
   oPopDriver << "   oResults << warningsOut;" << endl;
   oPopDriver << endl;
-
-  oPopDriver << "   if( ret != SUCCESS )" << endl;
-  oPopDriver << "   {" << endl;
-  oPopDriver << "      oResults << \"</spkreport>\" << endl;" << endl;
-  oPopDriver << "      oResults.close();" << endl;
-  oPopDriver << "      goto END;" << endl;
-  oPopDriver << "   }" << endl;
-  oPopDriver << endl;
-
 
   oPopDriver << "   if( isSimRequested )" << endl;
   oPopDriver << "   {" << endl;
@@ -8698,7 +8675,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "      oResults << \"</pop_opt_result>\" << endl;" << endl;
   oPopDriver << endl;
   
-  oPopDriver << "      if( isCovOut || isInvCovOut || isStdErrOut || isCorrelationOut || isConfidenceOut || isCoefficientOut )" << endl;
+  oPopDriver << "      if( isStatRequested )" << endl;
   oPopDriver << "      {" << endl;
   oPopDriver << "         oResults << \"<pop_stat_result elapsedtime=\\\"\" << statTimeSec << \"\\\">\" << endl;" << endl;
   oPopDriver << "         if( isCovOut )" << endl;
