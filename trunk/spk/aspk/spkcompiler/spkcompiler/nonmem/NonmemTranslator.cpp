@@ -7474,7 +7474,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "         errors.cat( e );" << endl;
   oIndDriver << "         isOptSuccess = false;" << endl;
   oIndDriver << "         ret = CONVERGENCE_FAILURE;" << endl;
-  oIndDriver << "         goto REPORT_GEN;" << endl;
+  //  oIndDriver << "         goto REPORT_GEN;" << endl;
   oIndDriver << "      }" << endl;
   oIndDriver << "      catch( ... )" << endl;
   oIndDriver << "      {" << endl;
@@ -7483,7 +7483,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "         errors.push( e );" << endl;
   oIndDriver << "         isOptSuccess = false;" << endl;
   oIndDriver << "         ret = CONVERGENCE_FAILURE;" << endl;
-  oIndDriver << "         goto REPORT_GEN;" << endl;
+  //  oIndDriver << "         goto REPORT_GEN;" << endl;
   oIndDriver << "      }" << endl;
   oIndDriver << endl;
   oIndDriver << "      // Get the latest value of theta and Omega." << endl;
@@ -7600,7 +7600,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "         errors.cat( e );" << endl;
   oIndDriver << "         isStatSuccess = false;" << endl;
   oIndDriver << "         ret = STAT_FAILURE;" << endl;
-  oIndDriver << "         goto REPORT_GEN;" << endl;
+  //  oIndDriver << "         goto REPORT_GEN;" << endl;
   oIndDriver << "      }" << endl;
   oIndDriver << "      catch( ... )" << endl;
   oIndDriver << "      {" << endl;
@@ -7609,7 +7609,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "         errors.push( e );" << endl;
   oIndDriver << "         isStatSuccess = false;" << endl;
   oIndDriver << "         ret = STAT_FAILURE;" << endl;
-  oIndDriver << "         goto REPORT_GEN;" << endl;
+  //  oIndDriver << "         goto REPORT_GEN;" << endl;
   oIndDriver << "      }" << endl;
   oIndDriver << endl;
 
@@ -8273,7 +8273,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "         errors.cat( e );" << endl;
   oPopDriver << "         isOptSuccess = false;" << endl;
   oPopDriver << "         ret = CONVERGENCE_FAILURE;" << endl;
-  oPopDriver << "         goto REPORT_GEN;" << endl;
+  //  oPopDriver << "         goto REPORT_GEN;" << endl;
   oPopDriver << "      }" << endl;
   oPopDriver << "      catch( ... )" << endl;
   oPopDriver << "      {" << endl;
@@ -8282,7 +8282,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "         errors.push( e );" << endl;
   oPopDriver << "         isOptSuccess = false;" << endl;
   oPopDriver << "         ret = CONVERGENCE_FAILURE;" << endl;
-  oPopDriver << "         goto REPORT_GEN;" << endl;
+  //  oPopDriver << "         goto REPORT_GEN;" << endl;
   oPopDriver << "      }" << endl;
   oPopDriver << "      gettimeofday( &optEnd, NULL );" << endl;
   oPopDriver << "      optTimeSec = difftime( optEnd.tv_sec, optBegin.tv_sec );" << endl;
