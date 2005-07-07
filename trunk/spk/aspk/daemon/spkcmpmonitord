@@ -7,23 +7,45 @@
 # By Sachiko Honda
 # July 07, 2005
 #
-LOCK_FILE=/tmp/lock_spkcmpd
+DB_BASE=spkdb
+PRODUCTION=prod
+SERVICE_NAME=spkcmpd
+LOCK_FILE=/tmp/lock_$SERVICE_NAME
 
-while [ 1 ]
-do
-   VAL=`ps -elf | awk '/\/usr\/local\/bin\/spkprod\/spkcmpd.pl spkdb/ {print $4}' | wc -l`
+start(){
+   echo "started"
+   while [ 1 ]
+   do
+      VAL=`ps -elf | awk '/\/usr\/local\/bin\/spkprod\/spkcmpd.pl spkdb/ {print $4}' | wc -l`
 
-   if [ $VAL = 0 ]
-      then
-         echo "The spkcmp deamon desn't seem running..."
-         if [ -f $LOCK_FILE ]
-            then
-               echo "Deleting $LOCK_FILE..."
-               rm $LOCK_FILE
-         fi
-         echo "Starting the daemon..."
-         /etc/rc.d/init.d/spkcmpd start
-         echo "spkcmpd re-started." | mail -s "SPK Compiler Daemon was found dead in the production environment." honda99@u.washington.edu
-   fi
-   sleep 300 
-done
+      if [ $VAL = 0 ]
+         then
+            echo "The $SERVICE_NAME deamon desn't seem running... (`date`)"
+            if [ -f $LOCK_FILE ]
+               then
+                  echo "Deleting $LOCK_FILE..."
+                  rm $LOCK_FILE
+            fi
+            echo "Starting the daemon..."
+            /etc/rc.d/init.d/$SERVICE_NAME start
+            echo "$SERVICE_NAME re-started at `date`." | mail -s "SPK Compiler Daemon was found dead in the production environment." honda99@u.washington.edu
+      fi
+      sleep 30 
+   done
+}
+stop(){
+   echo "stopped"
+}
+
+case $1 in
+   restart)
+      stop
+      start
+      ;;
+   start)
+      start
+      ;;
+   stop)
+      stop
+      ;;
+esac
