@@ -16,25 +16,49 @@
 /**
  * NonmemTranslator is an implementation of ClientTranslator abstract class.
  *
- * This class encapsulates functionarities necessary to parse, analysize
- * and translate a pair of an SpkSourceML and an SpkDataML documents
+ * This class encapsulates functionarities necessary for parsing, analysing
+ * and translating a pair of an SpkSourceML and an SpkDataML documents
  * written from the view point of NONMEM users.
  */
 class NonmemTranslator : public ClientTranslator
 {
  public:
 
+  /**
+   * Model specification types
+   */
   enum MODEL_SPEC { PRED=0, 
-		    ADVAN1=1, ADVAN2, ADVAN3, ADVAN4, 
-		    ADVAN5, ADVAN6, ADVAN7, ADVAN8, ADVAN9, 
-		    ADVAN10, ADVAN11, ADVAN12 };
-  enum TRANS { TRANS1=1, TRANS2, TRANS3, TRANS4, TRANS5, TRANS6 };
+		    ADVAN1=1, 
+		    ADVAN2, 
+		    ADVAN3,
+		    ADVAN4, 
+		    ADVAN5, 
+		    ADVAN6,
+		    ADVAN7, 
+		    ADVAN8, 
+		    ADVAN9, 
+		    ADVAN10, 
+		    ADVAN11, 
+		    ADVAN12 };
+  /**
+   * Predefined variable sets
+   */
+  enum TRANS { TRANS1=1, 
+	       TRANS2, 
+	       TRANS3, 
+	       TRANS4, 
+	       TRANS5, 
+	       TRANS6 };
 
 //==============================================================
 // REVISIT SACHIKO
 // Remove MONTE from the following enumulator
   enum INTEG_METHOD { ANALYTIC, GRID, PLAIN, MISER, MONTE };
 //==============================================================
+
+  /**
+   * Predefined words
+   */
   struct NonmemKeyword{
     std::string THETA;
     std::string ETA;
@@ -146,6 +170,11 @@ class NonmemTranslator : public ClientTranslator
    *     <dd>A template class, Pred, is declared and defined in this file.
    *         This class encapusulates the NONMEM PRED block.
    *     </dd>
+   *     <dt>NonmemPars.h</dt>
+   *     <dd>A namespace, NonmemPars, is declared in this file.
+   *        The namespace defines the user given values such as
+   *        the initial parameter estimates.
+   *     </dd>
    *     <dt>Makefile</dt>
    *     <dd>A Makefile that builds an executable, driver, from the above files.
    *     </dd>
@@ -154,6 +183,15 @@ class NonmemTranslator : public ClientTranslator
    */
   virtual void parseSource();
 
+ protected:
+  /**
+   * Determine the type of analysis, population or individual, and
+   * the number of subjects.  The parent class variable, ourTarget 
+   * is set to either enum values POP or IND indicating population
+   * or individual analysis, respectively.  Another parent class
+   * variable ourPopSize is set to the number of subjects.
+   * The number of subjects is also returned as the function value.
+   */
   virtual int detAnalysisType();
 
  protected:
@@ -161,6 +199,209 @@ class NonmemTranslator : public ClientTranslator
   NonmemTranslator( const NonmemTranslator & );
   NonmemTranslator& operator=( const NonmemTranslator& );
   
+
+ protected:
+  // The filename for a Make that builds a runtime.
+  static const char * fMakefile;
+
+  // The header file name for the IndData template class.
+  static const char * fIndData_h;
+
+  // The header file name for the DataSet template class.
+  static const char * fDataSet_h;
+
+  // The name of file that contains fortran (ie. NONMEM TRAN) version of
+  // the user defined $PRED.
+  static const char * fPredEqn_fortran;
+
+  // The name of file that contains C++ version of the user defined $PRED 
+  // (equations only) model.
+  static const char * fPredEqn_cpp;
+  
+  // The header file for the Pred template class.
+  static const char * fPred_h;
+
+  // The name of file that contains fortran (ie. NONMEM TRAN) version of
+  // the user defined $DES.
+  static const char * fDiffEqn_fortran;
+
+  // The name of file that contains C++ version of the user defined $DES 
+  // (equations only) model.
+  static const char * fDiffEqn_cpp;
+  
+  // The header file for the ODEPred template class.
+  static const char * fODEPred_h;
+
+  // The name of file that contains fortran (ie. NONMEM TRAN) version of
+  // the user defined $PK.
+  static const char * fPkEqn_fortran;
+
+  // The name of file that contains C++ version of the user defined $PK 
+  // (equations only) model.
+  static const char * fPkEqn_cpp;
+
+  // The name of file that contains fortran (ie. NONMEM TRAN) version of
+  // the user defined $ERROR.
+  static const char * fErrorEqn_fortran;
+
+  // The name of file that contains C++ version of the user defined $DES 
+  // (equations only) model.
+  static const char * fErrorEqn_cpp;
+
+  // The NonmemPars namespace definition.
+  static const char * fNonmemPars_h;
+
+  // The MontePars namespace definition.
+  static const char * fMontePars_h;
+
+  // The halfCvec template function definition.
+  static const char * fHalfCvec_h;
+
+  // The SPK optimization driver definition.
+  static const char * fFitDriver_cpp;
+
+  // The Monte Carlo driver definition.
+  static const char * fMonteDriver_cpp;
+
+  // A temporary file for storing (long) runtime error messages.  The
+  // compiler use only the name of the file, which will be inserted
+  // into the generated driver.cpp.
+  static const char * fSpkRuntimeLongError_tmp;
+
+  // The checkpoint file.
+  static const char * fCheckpoint_xml;
+
+  // The result XML
+  static const char * fResult_xml;
+
+ protected:
+  //=========================================================
+  // constant strings used as <tag> names and values
+  //---------------------------------------------------------
+  // SpkSourceML attributes  
+  XMLCh* X_DESCRIPTION;                static const char* C_DESCRIPTION;
+  XMLCh* X_YES;                        static const char* C_YES;             
+  XMLCh* X_NO;                         static const char* C_NO;
+  XMLCh* X_FIXED;                      static const char* C_FIXED;
+  XMLCh* X_IN;                         static const char* C_IN;
+  XMLCh* X_LOW;                        static const char* C_LOW;
+  XMLCh* X_UP;                         static const char* C_UP;
+  XMLCh* X_DIAGONAL;                   static const char* C_DIAGONAL;
+  XMLCh* X_BLOCK;                      static const char* C_BLOCK;
+  XMLCh* X_VALUE;                      static const char* C_VALUE;
+  XMLCh* X_STRUCT;                     static const char* C_STRUCT;
+  XMLCh* X_DIMENSION;                  static const char* C_DIMENSION;
+  XMLCh* X_LABEL;                      static const char* C_LABEL;
+  XMLCh* X_LABELS;                     static const char* C_LABELS;
+  XMLCh* X_COV_R;                      static const char* C_COV_R;
+  XMLCh* X_COV_RSR;                    static const char* C_COV_RSR;
+  XMLCh* X_COV_S;                      static const char* C_COV_S;
+  XMLCh* X_COV_H;                      static const char* C_COV_H;
+  XMLCh* X_COV_HSH;                    static const char* C_COV_HSH;
+  XMLCh* X_IS_ERR_OUT;                 static const char* C_IS_STDERROR_OUT;
+  XMLCh* X_IS_CORR_OUT;                static const char* C_IS_CORRELATION_OUT;
+  XMLCh* X_IS_COV_OUT;                 static const char* C_IS_COVARIANCE_OUT;
+  XMLCh* X_IS_INV_COV_OUT;             static const char* C_IS_INVERSE_COVARIANCE_OUT;
+  XMLCh* X_IS_COEF_OUT;                static const char* C_IS_COEFFICIENT_OUT;
+  XMLCh* X_IS_CONF_OUT;                static const char* C_IS_CONFIDENCE_OUT;
+  
+  // SpkSourceML tags
+  XMLCh* X_NONMEM;                     static const char* C_NONMEM;
+  XMLCh* X_POP_ANALYSIS;               static const char* C_POP_ANALYSIS;
+  XMLCh* X_IND_ANALYSIS;               static const char* C_IND_ANALYSIS;
+  XMLCh* X_CONSTRAINT;                 static const char* C_CONSTRAINT;
+  XMLCh* X_MODEL;                      static const char* C_MODEL;
+  XMLCh* X_ADVAN;                      static const char* C_ADVAN;
+  XMLCh* X_TRANS;                      static const char* C_TRANS;
+  XMLCh* X_PRED;                       static const char* C_PRED;
+  XMLCh* X_COMP_MODEL;                 static const char* C_COMP_MODEL;
+  XMLCh* X_DIFFEQN;                    static const char* C_DIFFEQN;
+  XMLCh* X_PK;                         static const char* C_PK;
+  XMLCh* X_ERROR;                      static const char* C_ERROR;
+  XMLCh* X_MONTE_CARLO;                static const char* C_MONTE_CARLO;
+  XMLCh* X_PRESENTATION;               static const char* C_PRESENTATION;
+  XMLCh* X_TABLE;                      static const char* C_TABLE;
+  XMLCh* X_SCATTERPLOT;                static const char* C_SCATTERPLOT;
+  XMLCh* X_COLUMN;                     static const char* C_COLUMN;
+  XMLCh* X_X;                          static const char* C_X;
+  XMLCh* X_Y;                          static const char* C_Y;
+  XMLCh* X_SPLIT;                      static const char* C_SPLIT;
+  XMLCh* X_APPROXIMATION;              static const char* C_APPROXIMATION;
+  XMLCh* X_FO;                         static const char* C_FO;
+  XMLCh* X_FOCE;                       static const char* C_FOCE;
+  XMLCh* X_LAPLACE;                    static const char* C_LAPLACE;
+  XMLCh* X_METHOD;                     static const char* C_METHOD;
+  XMLCh* X_ANALYTIC;                   static const char* C_ANALYTIC;
+  XMLCh* X_GRID;                       static const char* C_GRID;
+  XMLCh* X_MISER;                      static const char* C_MISER;
+  XMLCh* X_PLAIN;                      static const char* C_PLAIN;
+  XMLCh* X_NUMBEREVAL;                 static const char* C_NUMBEREVAL;
+  XMLCh* X_POP_SIZE;                   static const char* C_POP_SIZE;
+  XMLCh* X_IS_ESTIMATION;              static const char* C_IS_ESTIMATION;
+  XMLCh* X_IS_ETA_OUT;                 static const char* C_IS_ETA_OUT;
+  XMLCh* X_IS_RESTART;                 static const char* C_IS_RESTART;
+  XMLCh* X_DATA_LABELS;                static const char* C_DATA_LABELS;
+  XMLCh* X_FILENAME;                   static const char* C_FILENAME;
+  XMLCh* X_NAME;                       static const char* C_NAME;
+  XMLCh* X_SYNONYM;                    static const char* C_SYNONYM;
+  XMLCh* X_THETA;                      static const char* C_THETA;
+  XMLCh* X_LENGTH;                     static const char* C_LENGTH;
+  XMLCh* X_OMEGA;                      static const char* C_OMEGA;
+  XMLCh* X_SIGMA;                      static const char* C_SIGMA;
+  XMLCh* X_SIMULATION;                 static const char* C_SIMULATION;
+  XMLCh* X_SEED;                       static const char* C_SEED;
+  XMLCh* X_POP_STAT;                   static const char* C_POP_STAT;
+  XMLCh* X_COVARIANCE_FORM;            static const char* C_COVARIANCE_FORM;
+  XMLCh* X_MITR;                       static const char* C_MITR;
+  XMLCh* X_IND_STAT;                   static const char* C_IND_STAT;
+  XMLCh* X_SIG_DIGITS;                 static const char* C_SIG_DIGITS;
+  XMLCh* X_SUBPROBLEMS;                static const char* C_SUBPROBLEMS;
+
+  // SpkReportML attributes
+  XMLCh* X_ELAPSEDTIME;                static const char* C_ELAPSEDTIME;
+  XMLCh* X_NEMBER_EVAL;                static const char* C_NUMBER_EVAL;
+  XMLCh* X_SUBPROBLEM;                 static const char* C_SUBPROBLEM;
+ 
+  // SpkReportML tags
+  XMLCh* X_SPKREPORT;                  static const char* C_SPKREPORT;
+  XMLCh* X_ERROR_LIST;                 static const char* C_ERROR_LIST;
+  XMLCh* X_WARNING_LIST;               static const char* C_WARNING_LIST;
+  XMLCh* X_PRESENTATION_DATA;          static const char* C_PRESENTATION_DATA;
+  XMLCh* X_POP_ANALYSIS_RESULT;        static const char* C_POP_ANALYSIS_RESULT;
+  XMLCh* X_IND_ANALYSIS_RESULT;        static const char* C_IND_ANALYSIS_RESULT;
+  XMLCh* X_OPT_TRACE_OUT;              static const char* C_OPT_TRACE_OUT;
+  XMLCh* X_POP_MONTE_RESULT;           static const char* C_POP_MONTE_RESULT;
+  XMLCh* X_MESSAGE;                    static const char* C_MESSAGE;
+  XMLCh* X_FILE_NAME;                  static const char* C_FILE_NAME;
+  XMLCh* X_LINE_NUMBER;                static const char* C_LINE_NUMBER;
+  XMLCh* X_WARNING;                    static const char* C_WARNING;
+  XMLCh* X_POP_OPT_RESULT;             static const char* C_POP_OPT_RESULT;
+  XMLCh* X_IND_OPT_RESULT;             static const char* C_IND_OPT_RESULT;
+  XMLCh* X_POP_STAT_RESULT;            static const char* C_POP_STAT_RESULT;
+  XMLCh* X_IND_STAT_RESULT;            static const char* C_IND_STAT_RESULT;
+  XMLCh* X_POP_OBJ_OUT;                static const char* C_POP_OBJ_OUT;
+  XMLCh* X_IND_OBJ_OUT;                static const char* C_IND_OBJ_OUT;
+  XMLCh* X_THETA_IN;                   static const char* C_THETA_IN;
+  XMLCh* X_THETA_OUT;                  static const char* C_THETA_OUT;
+  XMLCh* X_OMEGA_IN;                   static const char* C_OMEGA_IN;
+  XMLCh* X_OMEGA_OUT;                  static const char* C_OMEGA_OUT;
+  XMLCh* X_SIGMA_IN;                   static const char* C_SIGMA_IN;
+  XMLCh* X_SIGMA_OUT;                  static const char* C_SIGMA_OUT;
+  XMLCh* X_POP_STDERROR_OUT;           static const char* C_POP_STDERROR_OUT;
+  XMLCh* X_POP_COVARIANCE_OUT;         static const char* C_POP_COVARIANCE_OUT;
+  XMLCh* X_POP_INVERSE_COVARIANCE_OUT; static const char* C_POP_INVERSE_COVARIANCE_OUT;
+  XMLCh* X_POP_CORRELATION_OUT;        static const char* C_POP_CORRELATION_OUT;
+  XMLCh* X_POP_COEFFICIENT_OUT;        static const char* C_POP_COEFFICIENT_OUT;
+  XMLCh* X_POP_CONFIDENCE_OUT;         static const char* C_POP_CONFIDENCE_OUT;
+  XMLCh* X_IND_STDERROR_OUT;           static const char* C_IND_STDERROR_OUT;
+  XMLCh* X_IND_COVARIANCE_OUT;         static const char* C_IND_COVARIANCE_OUT;
+  XMLCh* X_IND_INVERSE_COVARIANCE_OUT; static const char* C_IND_INVERSE_COVARIANCE_OUT;
+  XMLCh* X_IND_CORRELATION_OUT;        static const char* C_IND_CORRELATION_OUT;
+  XMLCh* X_IND_COEFFICIENT_OUT;        static const char* C_IND_COEFFICIENT_OUT;
+  XMLCh* X_IND_CONFIDENCE_OUT;         static const char* C_IND_CONFIDENCE_OUT;
+
+  //========================================
+
  private:
   //
   // Analyze the <pop_analysis> subtree.
@@ -298,162 +539,11 @@ class NonmemTranslator : public ClientTranslator
   //
   void generateMakefile() const;
 
-  // The filename for a Make that builds a runtime.
-  const char * fMakefile;
-
-  // The header file name for the IndData template class.
-  const char * fIndData_h;
-
-  // The header file name for the DataSet template class.
-  const char * fDataSet_h;
-
-  // The name of file that contains fortran (ie. NONMEM TRAN) version of
-  // the user defined $PRED.
-  const char * fPredEqn_fortran;
-
-  // The name of file that contains C++ version of the user defined $PRED 
-  // (equations only) model.
-  const char * fPredEqn_cpp;
-  
-  // The header file for the Pred template class.
-  const char * fPred_h;
-
-  // The name of file that contains fortran (ie. NONMEM TRAN) version of
-  // the user defined $DES.
-  const char * fDiffEqn_fortran;
-
-  // The name of file that contains C++ version of the user defined $DES 
-  // (equations only) model.
-  const char * fDiffEqn_cpp;
-  
-  // The header file for the ODEPred template class.
-  const char * fODEPred_h;
-
-  // The name of file that contains fortran (ie. NONMEM TRAN) version of
-  // the user defined $PK.
-  const char * fPkEqn_fortran;
-
-  // The name of file that contains C++ version of the user defined $PK 
-  // (equations only) model.
-  const char * fPkEqn_cpp;
-
-  // The name of file that contains fortran (ie. NONMEM TRAN) version of
-  // the user defined $ERROR.
-  const char * fErrorEqn_fortran;
-
-  // The name of file that contains C++ version of the user defined $DES 
-  // (equations only) model.
-  const char * fErrorEqn_cpp;
-
-  // The NonmemPars namespace definition.
-  const char * fNonmemPars_h;
-
-  // The MontePars namespace definition.
-  const char * fMontePars_h;
-
-  // The halfCvec template function definition.
-  const char * fHalfCvec_h;
-
-  // The SPK optimization driver definition.
-  const char * fFitDriver_cpp;
-
-  // The Monte Carlo driver definition.
-  const char * fMonteDriver_cpp;
-
-  // A temporary file for storing (long) runtime error messages.  The
-  // compiler use only the name of the file, which will be inserted
-  // into the generated driver.cpp.
-  const char * fSpkRuntimeLongError_tmp;
-
-  // The checkpoint file.
-  const char * fCheckpoint_xml;
-
-  // The result XML
-  const char * fResult_xml;
-
+private:
+  //
   // Pointer to the central symbol tabel held in the super class
+  //
   SymbolTable * table;
-
-  //=========================================================
-  // constant strings used as <tag> names and values
-  //---------------------------------------------------------
-  XMLCh* X_DESCRIPTION;         static const char* C_DESCRIPTION;
-  XMLCh* X_YES;                 static const char* C_YES;             
-  XMLCh* X_NO;                  static const char* C_NO;
-  XMLCh* X_FIXED;               static const char* C_FIXED;
-  XMLCh* X_IN;                  static const char* C_IN;
-  XMLCh* X_LOW;                 static const char* C_LOW;
-  XMLCh* X_UP;                  static const char* C_UP;
-  XMLCh* X_DIAGONAL;            static const char* C_DIAGONAL;
-  XMLCh* X_BLOCK;               static const char* C_BLOCK;
-  XMLCh* X_VALUE;               static const char* C_VALUE;
-  XMLCh* X_STRUCT;              static const char* C_STRUCT;
-  XMLCh* X_DIMENSION;           static const char* C_DIMENSION;
-  XMLCh* X_LABEL;               static const char* C_LABEL;
-  XMLCh* X_LABELS;              static const char* C_LABELS;
-  XMLCh* X_COV_R;               static const char* C_COV_R;
-  XMLCh* X_COV_RSR;             static const char* C_COV_RSR;
-  XMLCh* X_COV_S;               static const char* C_COV_S;
-  XMLCh* X_COV_H;               static const char* C_COV_H;
-  XMLCh* X_COV_HSH;             static const char* C_COV_HSH;
-  XMLCh* X_IS_ERR_OUT;          static const char* C_IS_STDERROR_OUT;
-  XMLCh* X_IS_CORR_OUT;         static const char* C_IS_CORRELATION_OUT;
-  XMLCh* X_IS_COV_OUT;          static const char* C_IS_COVARIANCE_OUT;
-  XMLCh* X_IS_INV_COV_OUT;      static const char* C_IS_INVERSE_COVARIANCE_OUT;
-  XMLCh* X_IS_COEF_OUT;         static const char* C_IS_COEFFICIENT_OUT;
-  XMLCh* X_IS_CONF_OUT;         static const char* C_IS_CONFIDENCE_OUT;
-  
-  XMLCh* X_NONMEM;              static const char* C_NONMEM;
-  XMLCh* X_POP_ANALYSIS;        static const char* C_POP_ANALYSIS;
-  XMLCh* X_IND_ANALYSIS;        static const char* C_IND_ANALYSIS;
-  XMLCh* X_CONSTRAINT;          static const char* C_CONSTRAINT;
-  XMLCh* X_MODEL;               static const char* C_MODEL;
-  XMLCh* X_ADVAN;               static const char* C_ADVAN;
-  XMLCh* X_TRANS;               static const char* C_TRANS;
-  XMLCh* X_PRED;                static const char* C_PRED;
-  XMLCh* X_COMP_MODEL;          static const char* C_COMP_MODEL;
-  XMLCh* X_DIFFEQN;             static const char* C_DIFFEQN;
-  XMLCh* X_PK;                  static const char* C_PK;
-  XMLCh* X_ERROR;               static const char* C_ERROR;
-  XMLCh* X_MONTE_CARLO;         static const char* C_MONTE_CARLO;
-  XMLCh* X_PRESENTATION;        static const char* C_PRESENTATION;
-  XMLCh* X_TABLE;               static const char* C_TABLE;
-  XMLCh* X_SCATTERPLOT;         static const char* C_SCATTERPLOT;
-  XMLCh* X_COLUMN;              static const char* C_COLUMN;
-  XMLCh* X_X;                   static const char* C_X;
-  XMLCh* X_Y;                   static const char* C_Y;
-  XMLCh* X_SPLIT;               static const char* C_SPLIT;
-  XMLCh* X_APPROXIMATION;       static const char* C_APPROXIMATION;
-  XMLCh* X_FO;                  static const char* C_FO;
-  XMLCh* X_FOCE;                static const char* C_FOCE;
-  XMLCh* X_LAPLACE;             static const char* C_LAPLACE;
-  XMLCh* X_METHOD;              static const char* C_METHOD;
-  XMLCh* X_ANALYTIC;            static const char* C_ANALYTIC;
-  XMLCh* X_GRID;                static const char* C_GRID;
-  XMLCh* X_MISER;               static const char* C_MISER;
-  XMLCh* X_PLAIN;               static const char* C_PLAIN;
-  XMLCh* X_NUMBEREVAL;          static const char* C_NUMBEREVAL;
-  XMLCh* X_POP_SIZE;            static const char* C_POP_SIZE;
-  XMLCh* X_IS_ESTIMATION;       static const char* C_IS_ESTIMATION;
-  XMLCh* X_IS_ETA_OUT;          static const char* C_IS_ETA_OUT;
-  XMLCh* X_IS_RESTART;          static const char* C_IS_RESTART;
-  XMLCh* X_DATA_LABELS;         static const char* C_DATA_LABELS;
-  XMLCh* X_FILENAME;            static const char* C_FILENAME;
-  XMLCh* X_NAME;                static const char* C_NAME;
-  XMLCh* X_SYNONYM;             static const char* C_SYNONYM;
-  XMLCh* X_THETA;               static const char* C_THETA;
-  XMLCh* X_LENGTH;              static const char* C_LENGTH;
-  XMLCh* X_OMEGA;               static const char* C_OMEGA;
-  XMLCh* X_SIGMA;               static const char* C_SIGMA;
-  XMLCh* X_SIMULATION;          static const char* C_SIMULATION;
-  XMLCh* X_SEED;                static const char* C_SEED;
-  XMLCh* X_POP_STAT;            static const char* C_POP_STAT;
-  XMLCh* X_COVARIANCE_FORM;     static const char* C_COVARIANCE_FORM;
-  XMLCh* X_MITR;                static const char* C_MITR;
-  XMLCh* X_IND_STAT;            static const char* C_IND_STAT;
-  XMLCh* X_SIG_DIGITS;          static const char* C_SIG_DIGITS;
-  XMLCh* X_SUBPROBLEMS;         static const char* C_SUBPROBLEMS;
-  //========================================
 
   //
   // Place holders to hold values/info gathered through parsings.

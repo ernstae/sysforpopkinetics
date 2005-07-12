@@ -13,8 +13,6 @@ using namespace std;
 using namespace xercesc;
 
 //========================================
-
-//========================================
 // The global variables used by
 // yyparse() and yylex() (or equivalent).
 //----------------------------------------
@@ -33,6 +31,9 @@ extern "C"{
 };
 //========================================
 
+//==================================================================================
+// XML tag names and attribute names in C string
+//==================================================================================
 const char* NonmemTranslator::C_DESCRIPTION                ( "description" );
 const char* NonmemTranslator::C_YES                        ( "yes" );
 const char* NonmemTranslator::C_NO                         ( "no" );
@@ -108,265 +109,347 @@ const char* NonmemTranslator::C_IS_COVARIANCE_OUT          ( "is_covariance_out"
 const char* NonmemTranslator::C_IS_INVERSE_COVARIANCE_OUT  ( "is_inverse_covariance_out" );
 const char* NonmemTranslator::C_IS_COEFFICIENT_OUT         ( "is_coefficient_out" );
 const char* NonmemTranslator::C_IS_CONFIDENCE_OUT          ( "is_confidence_out" );
+const char* NonmemTranslator::C_SPKREPORT                  ( "spkreport" );
+const char* NonmemTranslator::C_ELAPSEDTIME                ( "elapsedtime" );
+const char* NonmemTranslator::C_NUMBER_EVAL                ( "number_eval" );
+const char* NonmemTranslator::C_SUBPROBLEM                 ( "subproblem" );
+const char* NonmemTranslator::C_ERROR_LIST                 ( "error_list" );
+const char* NonmemTranslator::C_WARNING_LIST               ( "warning_list" );
+const char* NonmemTranslator::C_POP_ANALYSIS_RESULT        ( "pop_analysis_result" );
+const char* NonmemTranslator::C_IND_ANALYSIS_RESULT        ( "ind_analysis_result" );
+const char* NonmemTranslator::C_OPT_TRACE_OUT              ( "opt_trace_out" );
+const char* NonmemTranslator::C_POP_MONTE_RESULT           ( "pop_monte_result" );
+const char* NonmemTranslator::C_MESSAGE                    ( "message" );
+const char* NonmemTranslator::C_FILE_NAME                  ( "file_name" );
+const char* NonmemTranslator::C_LINE_NUMBER                ( "line_number" );
+const char* NonmemTranslator::C_WARNING                    ( "warning" );
+const char* NonmemTranslator::C_POP_OPT_RESULT             ( "pop_opt_result" );
+const char* NonmemTranslator::C_POP_STAT_RESULT            ( "pop_stat_result" );
+const char* NonmemTranslator::C_IND_OPT_RESULT             ( "ind_opt_result" );
+const char* NonmemTranslator::C_IND_STAT_RESULT            ( "ind_stat_result" );
+const char* NonmemTranslator::C_POP_OBJ_OUT                ( "pop_obj_out" );
+const char* NonmemTranslator::C_IND_OBJ_OUT                ( "ind_obj_out" );
+const char* NonmemTranslator::C_THETA_IN                   ( "theta_in" );
+const char* NonmemTranslator::C_THETA_OUT                  ( "theta_out" );
+const char* NonmemTranslator::C_OMEGA_IN                   ( "omega_in" );
+const char* NonmemTranslator::C_OMEGA_OUT                  ( "omega_out" );
+const char* NonmemTranslator::C_SIGMA_IN                   ( "sigma_in" );
+const char* NonmemTranslator::C_SIGMA_OUT                  ( "sigma_out" );
+const char* NonmemTranslator::C_POP_STDERROR_OUT           ( "pop_stderror_out" );
+const char* NonmemTranslator::C_POP_COVARIANCE_OUT         ( "pop_convariance_out" );
+const char* NonmemTranslator::C_POP_INVERSE_COVARIANCE_OUT ( "pop_inverse_covariance_out" );
+const char* NonmemTranslator::C_POP_CORRELATION_OUT        ( "pop_correlation_out" );
+const char* NonmemTranslator::C_POP_COEFFICIENT_OUT        ( "pop_coefficient_out" );
+const char* NonmemTranslator::C_POP_CONFIDENCE_OUT         ( "pop_confidence_out" );
+const char* NonmemTranslator::C_IND_STDERROR_OUT           ( "ind_stderror_out" );
+const char* NonmemTranslator::C_IND_COVARIANCE_OUT         ( "ind_covariance_out" );
+const char* NonmemTranslator::C_IND_INVERSE_COVARIANCE_OUT ( "ind_inverse_covariance_out" );
+const char* NonmemTranslator::C_IND_CORRELATION_OUT        ( "ind_correlation_out" );
+const char* NonmemTranslator::C_IND_COEFFICIENT_OUT        ( "ind_coefficient_out" );
+const char* NonmemTranslator::C_IND_CONFIDENCE_OUT         ( "ind_confidence_out" );
+const char* NonmemTranslator::C_PRESENTATION_DATA          ( "presentation_data" );
 
+const char* NonmemTranslator::fMakefile               ( "Makefile.SPK" );
+const char* NonmemTranslator::fIndData_h              ( "IndData.h" );
+const char* NonmemTranslator::fDataSet_h              ( "DataSet.h" );
+const char* NonmemTranslator::fPredEqn_fortran        ( "predEqn.fortran" );
+const char* NonmemTranslator::fPredEqn_cpp            ( "predEqn.cpp" );
+const char* NonmemTranslator::fPred_h                 ( "Pred.h" );
+const char* NonmemTranslator::fDiffEqn_fortran        ( "diffEqn.fortran" );
+const char* NonmemTranslator::fDiffEqn_cpp            ( "diffEqn.cpp" );
+const char* NonmemTranslator::fODEPred_h              ( "Pred.h" );
+const char* NonmemTranslator::fPkEqn_fortran          ( "pkEqn.fortran" );
+const char* NonmemTranslator::fPkEqn_cpp              ( "pkEqn.cpp" );
+const char* NonmemTranslator::fErrorEqn_fortran       ( "errorEqn.fortran" );
+const char* NonmemTranslator::fErrorEqn_cpp           ( "errorEqn.cpp" );   
+const char* NonmemTranslator::fNonmemPars_h           ( "NonmemPars.h" );
+const char* NonmemTranslator::fMontePars_h            ( "MontePars.h" );
+const char* NonmemTranslator::fFitDriver_cpp          ( "fitDriver.cpp" );
+const char* NonmemTranslator::fMonteDriver_cpp        ( "monteDriver.cpp" );
+const char* NonmemTranslator::fSpkRuntimeLongError_tmp( "scratch.tmp" );
+const char* NonmemTranslator::fResult_xml             ( "result.xml" );
+const char* NonmemTranslator::fCheckpoint_xml         ( "checkpoint.xml" );
 
 NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
-  : ClientTranslator    ( sourceIn, dataIn ),
-    fMakefile           ( "Makefile.SPK" ),
-    fIndData_h          ( "IndData.h" ),
-    fDataSet_h          ( "DataSet.h" ),
-    fPredEqn_fortran    ( "predEqn.fortran" ),
-    fPredEqn_cpp        ( "predEqn.cpp" ),
-    fPred_h             ( "Pred.h" ),
-    fDiffEqn_fortran    ( "diffEqn.fortran" ),
-    fDiffEqn_cpp        ( "diffEqn.cpp" ),
-    fODEPred_h          ( "Pred.h" ), // Use the same as for PRED so that Makefile doesn't have to be adjusted.
-    fPkEqn_fortran      ( "pkEqn.fortran" ),
-    fPkEqn_cpp          ( "pkEqn.cpp" ),
-    fErrorEqn_fortran   ( "errorEqn.fortran" ),
-    fErrorEqn_cpp       ( "errorEqn.cpp" ),   
-    fNonmemPars_h       ( "NonmemPars.h" ),
-    fMontePars_h        ( "MontePars.h" ),
-    fFitDriver_cpp      ( "fitDriver.cpp" ),
-    fMonteDriver_cpp    ( "monteDriver.cpp" ),
-    fSpkRuntimeLongError_tmp( "scratch.tmp" ),
-    fResult_xml         ( "result.xml" ),
-    fCheckpoint_xml     ( "checkpoint.xml" ),
-    myDescription       ( NULL ),
-    myModelSpec         ( PRED ),
-    myTrans             ( TRANS1 ),
-    myIsEstimate        ( true ),
-    myIsSimulate        ( false ),
-    myIsMonte           ( false ),
-    myIsStat            ( false ),
-    mySubproblemsN      ( 1 ),
-    myIntegMethod       ( PLAIN ),
-    myIntegNumberEvals  ( 1 ), // this is a vector
-    myIntegNEvals       ( 1 ),
-    myIsPosthoc         ( true ),
-    myIsRestart         ( false ),
-    myIndWriteCheckpoint( true ),
-    myPopWriteCheckpoint( true ),
-    myThetaLen          ( 0 ),
-    myOmegaDim          ( 0 ),
-    myOmegaOrder        ( 0 ),
-    myOmegaStruct       ( Symbol::TRIANGLE ),
-    mySigmaDim          ( 0 ),
-    mySigmaOrder        ( 0 ),
-    mySigmaStruct       ( Symbol::TRIANGLE ),
-    myEtaLen            ( 0 ),
-    myEpsLen            ( 0 ),
-    mySigDigits         ( 3 ),
-    myPopMitr           ( 100 ),
-    myIndMitr           ( 100 ),
-    myPopEpsilon        ( pow( 10.0, -(mySigDigits+1.0) ) ),
-    myIndEpsilon        ( pow( 10.0, -(mySigDigits+1.0) ) ),
-    myPopTraceLevel     ( 1 ),
-    myIndTraceLevel     ( 1 ),
-    mySeed              ( 0 ),
-    myCovForm           ( "RSR" ), // default for population level
-    myIsStderr          ( true ),
-    myIsCorrelation     ( true ),
-    myIsCov             ( true ),
-    myIsInvCov          ( true ),
-    myIsConfidence      ( true ),
-    myIsCoefficient     ( true ),
-    myRecordNums        ( 1 )
+  : ClientTranslator        ( sourceIn, dataIn ),
+    myDescription           ( NULL ),
+    myModelSpec             ( PRED ),
+    myTrans                 ( TRANS1 ),
+    myIsEstimate            ( true ),
+    myIsSimulate            ( false ),
+    myIsMonte               ( false ),
+    myIsStat                ( false ),
+    mySubproblemsN          ( 1 ),
+    myIntegMethod           ( PLAIN ),
+    myIntegNumberEvals      ( 1 ), // this is a vector
+    myIntegNEvals           ( 1 ),
+    myIsPosthoc             ( true ),
+    myIsRestart             ( false ),
+    myIndWriteCheckpoint    ( true ),
+    myPopWriteCheckpoint    ( true ),
+    myThetaLen              ( 0 ),
+    myOmegaDim              ( 0 ),
+    myOmegaOrder            ( 0 ),
+    myOmegaStruct           ( Symbol::TRIANGLE ),
+    mySigmaDim              ( 0 ),
+    mySigmaOrder            ( 0 ),
+    mySigmaStruct           ( Symbol::TRIANGLE ),
+    myEtaLen                ( 0 ),
+    myEpsLen                ( 0 ),
+    mySigDigits             ( 3 ),
+    myPopMitr               ( 100 ),
+    myIndMitr               ( 100 ),
+    myPopEpsilon            ( pow    ( 10.0, -(mySigDigits+1.0) ) ),
+    myIndEpsilon            ( pow    ( 10.0, -(mySigDigits+1.0) ) ),
+    myPopTraceLevel         ( 1 ),
+    myIndTraceLevel         ( 1 ),
+    mySeed                  ( 0 ),
+    myCovForm               ( "RSR" ), // default for population level
+    myIsStderr              ( true ),
+    myIsCorrelation         ( true ),
+    myIsCov                 ( true ),
+    myIsInvCov              ( true ),
+    myIsConfidence          ( true ),
+    myIsCoefficient         ( true ),
+    myRecordNums            ( 1 )
 
 {
   table = ClientTranslator::getSymbolTable();
 
-  DefaultStr.THETA    = "THETA";
-  DefaultStr.ETA      = "ETA";
-  DefaultStr.EPS      = "EPS";
-  DefaultStr.OMEGA    = "OMEGA";
-  DefaultStr.SIGMA    = "SIGMA";
-  DefaultStr.PRED     = "PRED";
-  DefaultStr.RES      = "RES";
-  DefaultStr.WRES     = "WRES";
-  DefaultStr.ETARES   = "ETARES";
-  DefaultStr.WETARES  = "WETARES";
-  DefaultStr.IPRED    = "IPRED";
-  DefaultStr.IRES     = "IRES";
-  DefaultStr.IWRES    = "IWRES";
-  DefaultStr.IETARES  = "IETARES";
-  DefaultStr.IWETARES = "IWETARES";
-  DefaultStr.PPRED    = "PPRED";
-  DefaultStr.PRES     = "PRES";
-  DefaultStr.PWRES    = "PWRES";
-  DefaultStr.PETARES  = "PETARES";
-  DefaultStr.PWETARES = "PWETARES";
-  DefaultStr.CPRED    = "CPRED";
-  DefaultStr.CRES     = "CRES";
-  DefaultStr.CWRES    = "CWRES";
-  DefaultStr.CETARES  = "CETARES";
-  DefaultStr.CWETARES = "CWETARES";
-  DefaultStr.DV       = "DV";
-  DefaultStr.ORGDV    = "ORGDV";
-  DefaultStr.MDV      = "MDV";
-  DefaultStr.ID       = "ID";
-  DefaultStr.F        = "F";
-  DefaultStr.Y        = "Y";
-  DefaultStr.T        = "T";
-  DefaultStr.P        = "P";
-  DefaultStr.A        = "A";
-  DefaultStr.DADT     = "DADT";
+  DefaultStr.THETA             = "THETA";
+  DefaultStr.ETA               = "ETA";
+  DefaultStr.EPS               = "EPS";
+  DefaultStr.OMEGA             = "OMEGA";
+  DefaultStr.SIGMA             = "SIGMA";
+  DefaultStr.PRED              = "PRED";
+  DefaultStr.RES               = "RES";
+  DefaultStr.WRES              = "WRES";
+  DefaultStr.ETARES            = "ETARES";
+  DefaultStr.WETARES           = "WETARES";
+  DefaultStr.IPRED             = "IPRED";
+  DefaultStr.IRES              = "IRES";
+  DefaultStr.IWRES             = "IWRES";
+  DefaultStr.IETARES           = "IETARES";
+  DefaultStr.IWETARES          = "IWETARES";
+  DefaultStr.PPRED             = "PPRED";
+  DefaultStr.PRES              = "PRES";
+  DefaultStr.PWRES             = "PWRES";
+  DefaultStr.PETARES           = "PETARES";
+  DefaultStr.PWETARES          = "PWETARES";
+  DefaultStr.CPRED             = "CPRED";
+  DefaultStr.CRES              = "CRES";
+  DefaultStr.CWRES             = "CWRES";
+  DefaultStr.CETARES           = "CETARES";
+  DefaultStr.CWETARES          = "CWETARES";
+  DefaultStr.DV                = "DV";
+  DefaultStr.ORGDV             = "ORGDV";
+  DefaultStr.MDV               = "MDV";
+  DefaultStr.ID                = "ID";
+  DefaultStr.F                 = "F";
+  DefaultStr.Y                 = "Y";
+  DefaultStr.T                 = "T";
+  DefaultStr.P                 = "P";
+  DefaultStr.A                 = "A";
+  DefaultStr.DADT              = "DADT";
 
-  UserStr.THETA       = DefaultStr.THETA;
-  UserStr.ETA         = DefaultStr.ETA;
-  UserStr.EPS         = DefaultStr.EPS;
-  UserStr.OMEGA       = DefaultStr.OMEGA;
-  UserStr.SIGMA       = DefaultStr.SIGMA;
-  UserStr.PRED        = DefaultStr.PRED;
-  UserStr.RES         = DefaultStr.RES;
-  UserStr.WRES        = DefaultStr.WRES;
-  UserStr.ETARES      = DefaultStr.ETARES;
-  UserStr.WETARES     = DefaultStr.WETARES;
-  UserStr.IPRED       = DefaultStr.IPRED;
-  UserStr.IRES        = DefaultStr.IRES;
-  UserStr.IWRES       = DefaultStr.IWRES;
-  UserStr.IETARES     = DefaultStr.IETARES;
-  UserStr.IWETARES    = DefaultStr.IWETARES;
-  UserStr.PPRED       = DefaultStr.PPRED;
-  UserStr.PRES        = DefaultStr.PRES;
-  UserStr.PWRES       = DefaultStr.PWRES;
-  UserStr.PETARES     = DefaultStr.PETARES;
-  UserStr.PWETARES    = DefaultStr.PWETARES;
-  UserStr.CPRED       = DefaultStr.CPRED;
-  UserStr.CRES        = DefaultStr.CRES;
-  UserStr.CWRES       = DefaultStr.CWRES;
-  UserStr.CETARES     = DefaultStr.CETARES;
-  UserStr.CWETARES    = DefaultStr.CWETARES;
-  UserStr.DV          = DefaultStr.DV;
-  UserStr.ORGDV       = DefaultStr.ORGDV;
-  UserStr.MDV         = DefaultStr.MDV;
-  UserStr.ID          = DefaultStr.ID;
-  UserStr.F           = DefaultStr.F;
-  UserStr.Y           = DefaultStr.Y;
-  UserStr.T           = DefaultStr.T;
-  UserStr.P           = DefaultStr.P;
-  UserStr.A           = DefaultStr.A;
-  UserStr.DADT        = DefaultStr.DADT;
+  UserStr.THETA                = DefaultStr.THETA;
+  UserStr.ETA                  = DefaultStr.ETA;
+  UserStr.EPS                  = DefaultStr.EPS;
+  UserStr.OMEGA                = DefaultStr.OMEGA;
+  UserStr.SIGMA                = DefaultStr.SIGMA;
+  UserStr.PRED                 = DefaultStr.PRED;
+  UserStr.RES                  = DefaultStr.RES;
+  UserStr.WRES                 = DefaultStr.WRES;
+  UserStr.ETARES               = DefaultStr.ETARES;
+  UserStr.WETARES              = DefaultStr.WETARES;
+  UserStr.IPRED                = DefaultStr.IPRED;
+  UserStr.IRES                 = DefaultStr.IRES;
+  UserStr.IWRES                = DefaultStr.IWRES;
+  UserStr.IETARES              = DefaultStr.IETARES;
+  UserStr.IWETARES             = DefaultStr.IWETARES;
+  UserStr.PPRED                = DefaultStr.PPRED;
+  UserStr.PRES                 = DefaultStr.PRES;
+  UserStr.PWRES                = DefaultStr.PWRES;
+  UserStr.PETARES              = DefaultStr.PETARES;
+  UserStr.PWETARES             = DefaultStr.PWETARES;
+  UserStr.CPRED                = DefaultStr.CPRED;
+  UserStr.CRES                 = DefaultStr.CRES;
+  UserStr.CWRES                = DefaultStr.CWRES;
+  UserStr.CETARES              = DefaultStr.CETARES;
+  UserStr.CWETARES             = DefaultStr.CWETARES;
+  UserStr.DV                   = DefaultStr.DV;
+  UserStr.ORGDV                = DefaultStr.ORGDV;
+  UserStr.MDV                  = DefaultStr.MDV;
+  UserStr.ID                   = DefaultStr.ID;
+  UserStr.F                    = DefaultStr.F;
+  UserStr.Y                    = DefaultStr.Y;
+  UserStr.T                    = DefaultStr.T;
+  UserStr.P                    = DefaultStr.P;
+  UserStr.A                    = DefaultStr.A;
+  UserStr.DADT                 = DefaultStr.DADT;
 
   // These are used as insensitive search keys to find the values of
   // NONMEM-predefined variables in the symbol table or to be extracted
   // as C++ variable names when cases are supposed to be insensitive.
-  KeyStr.THETA        = SymbolTable::key( DefaultStr.THETA );
-  KeyStr.ETA          = SymbolTable::key( DefaultStr.ETA );
-  KeyStr.EPS          = SymbolTable::key( DefaultStr.EPS );
-  KeyStr.OMEGA        = SymbolTable::key( DefaultStr.OMEGA );
-  KeyStr.SIGMA        = SymbolTable::key( DefaultStr.SIGMA );
-  KeyStr.PRED         = SymbolTable::key( DefaultStr.PRED );
-  KeyStr.RES          = SymbolTable::key( DefaultStr.RES );
-  KeyStr.WRES         = SymbolTable::key( DefaultStr.WRES );
-  KeyStr.ETARES       = SymbolTable::key( DefaultStr.ETARES );
-  KeyStr.WETARES      = SymbolTable::key( DefaultStr.WETARES );
-  KeyStr.IPRED        = SymbolTable::key( DefaultStr.IPRED );
-  KeyStr.IRES         = SymbolTable::key( DefaultStr.IRES );
-  KeyStr.IWRES        = SymbolTable::key( DefaultStr.IWRES );
-  KeyStr.IETARES      = SymbolTable::key( DefaultStr.IETARES );
-  KeyStr.IWETARES     = SymbolTable::key( DefaultStr.IWETARES );
-  KeyStr.PPRED        = SymbolTable::key( DefaultStr.PPRED );
-  KeyStr.PRES         = SymbolTable::key( DefaultStr.PRES );
-  KeyStr.PWRES        = SymbolTable::key( DefaultStr.PWRES );
-  KeyStr.PETARES      = SymbolTable::key( DefaultStr.PETARES );
-  KeyStr.PWETARES     = SymbolTable::key( DefaultStr.PWETARES );
-  KeyStr.CPRED        = SymbolTable::key( DefaultStr.CPRED );
-  KeyStr.CRES         = SymbolTable::key( DefaultStr.CRES );
-  KeyStr.CWRES        = SymbolTable::key( DefaultStr.CWRES );
-  KeyStr.CETARES      = SymbolTable::key( DefaultStr.CETARES );
-  KeyStr.CWETARES     = SymbolTable::key( DefaultStr.CWETARES );
-  KeyStr.DV           = SymbolTable::key( DefaultStr.DV );
-  KeyStr.ORGDV        = SymbolTable::key( DefaultStr.ORGDV );
-  KeyStr.MDV          = SymbolTable::key( DefaultStr.MDV );
-  KeyStr.ID           = SymbolTable::key( DefaultStr.ID );
-  KeyStr.F            = SymbolTable::key( DefaultStr.F );
-  KeyStr.Y            = SymbolTable::key( DefaultStr.Y );
-  KeyStr.T            = SymbolTable::key( DefaultStr.T );
-  KeyStr.P            = SymbolTable::key( DefaultStr.P );
-  KeyStr.A            = SymbolTable::key( DefaultStr.A );
-  KeyStr.DADT         = SymbolTable::key( DefaultStr.DADT );
+  KeyStr.THETA                 = SymbolTable::key( DefaultStr.THETA );
+  KeyStr.ETA                   = SymbolTable::key( DefaultStr.ETA );
+  KeyStr.EPS                   = SymbolTable::key( DefaultStr.EPS );
+  KeyStr.OMEGA                 = SymbolTable::key( DefaultStr.OMEGA );
+  KeyStr.SIGMA                 = SymbolTable::key( DefaultStr.SIGMA );
+  KeyStr.PRED                  = SymbolTable::key( DefaultStr.PRED );
+  KeyStr.RES                   = SymbolTable::key( DefaultStr.RES );
+  KeyStr.WRES                  = SymbolTable::key( DefaultStr.WRES );
+  KeyStr.ETARES                = SymbolTable::key( DefaultStr.ETARES );
+  KeyStr.WETARES               = SymbolTable::key( DefaultStr.WETARES );
+  KeyStr.IPRED                 = SymbolTable::key( DefaultStr.IPRED );
+  KeyStr.IRES                  = SymbolTable::key( DefaultStr.IRES );
+  KeyStr.IWRES                 = SymbolTable::key( DefaultStr.IWRES );
+  KeyStr.IETARES               = SymbolTable::key( DefaultStr.IETARES );
+  KeyStr.IWETARES              = SymbolTable::key( DefaultStr.IWETARES );
+  KeyStr.PPRED                 = SymbolTable::key( DefaultStr.PPRED );
+  KeyStr.PRES                  = SymbolTable::key( DefaultStr.PRES );
+  KeyStr.PWRES                 = SymbolTable::key( DefaultStr.PWRES );
+  KeyStr.PETARES               = SymbolTable::key( DefaultStr.PETARES );
+  KeyStr.PWETARES              = SymbolTable::key( DefaultStr.PWETARES );
+  KeyStr.CPRED                 = SymbolTable::key( DefaultStr.CPRED );
+  KeyStr.CRES                  = SymbolTable::key( DefaultStr.CRES );
+  KeyStr.CWRES                 = SymbolTable::key( DefaultStr.CWRES );
+  KeyStr.CETARES               = SymbolTable::key( DefaultStr.CETARES );
+  KeyStr.CWETARES              = SymbolTable::key( DefaultStr.CWETARES );
+  KeyStr.DV                    = SymbolTable::key( DefaultStr.DV );
+  KeyStr.ORGDV                 = SymbolTable::key( DefaultStr.ORGDV );
+  KeyStr.MDV                   = SymbolTable::key( DefaultStr.MDV );
+  KeyStr.ID                    = SymbolTable::key( DefaultStr.ID );
+  KeyStr.F                     = SymbolTable::key( DefaultStr.F );
+  KeyStr.Y                     = SymbolTable::key( DefaultStr.Y );
+  KeyStr.T                     = SymbolTable::key( DefaultStr.T );
+  KeyStr.P                     = SymbolTable::key( DefaultStr.P );
+  KeyStr.A                     = SymbolTable::key( DefaultStr.A );
+  KeyStr.DADT                  = SymbolTable::key( DefaultStr.DADT );
 
-  // TAG names
-  X_DESCRIPTION       = XMLString::transcode( C_DESCRIPTION );
-  X_IN                = XMLString::transcode( C_IN );
-  X_NONMEM            = XMLString::transcode( C_NONMEM );
-  X_POP_ANALYSIS      = XMLString::transcode( C_POP_ANALYSIS );
-  X_IND_ANALYSIS      = XMLString::transcode( C_IND_ANALYSIS );
-  X_CONSTRAINT        = XMLString::transcode( C_CONSTRAINT );
-  X_MONTE_CARLO       = XMLString::transcode( C_MONTE_CARLO );
-  X_MODEL             = XMLString::transcode( C_MODEL );
-  X_ADVAN             = XMLString::transcode( C_ADVAN );
-  X_TRANS             = XMLString::transcode( C_TRANS );
-  X_PRED              = XMLString::transcode( C_PRED );
-  X_COMP_MODEL        = XMLString::transcode( C_COMP_MODEL );
-  X_DIFFEQN           = XMLString::transcode( C_DIFFEQN );
-  X_PK                = XMLString::transcode( C_PK );
-  X_ERROR             = XMLString::transcode( C_ERROR );
-  X_PRESENTATION      = XMLString::transcode( C_PRESENTATION );
-  X_TABLE             = XMLString::transcode( C_TABLE );
-  X_SCATTERPLOT       = XMLString::transcode( C_SCATTERPLOT );
-  X_COLUMN            = XMLString::transcode( C_COLUMN );
-  X_LOW               = XMLString::transcode( C_LOW );
-  X_UP                = XMLString::transcode( C_UP );
-  X_LABEL             = XMLString::transcode( C_LABEL );
-  X_LABELS            = XMLString::transcode( C_LABELS );
-  X_X                 = XMLString::transcode( C_X );
-  X_Y                 = XMLString::transcode( C_Y );
-  X_SPLIT             = XMLString::transcode( C_SPLIT );
-  X_THETA             = XMLString::transcode( C_THETA );
-  X_OMEGA             = XMLString::transcode( C_OMEGA );
-  X_SIGMA             = XMLString::transcode( C_SIGMA );
-  X_SIMULATION        = XMLString::transcode( C_SIMULATION );
-  X_POP_STAT          = XMLString::transcode( C_POP_STAT );
-  X_IND_STAT          = XMLString::transcode( C_IND_STAT );
+  // SpkSourceML tags
+  X_DESCRIPTION                = XMLString::transcode( C_DESCRIPTION );
+  X_IN                         = XMLString::transcode( C_IN );
+  X_NONMEM                     = XMLString::transcode( C_NONMEM );
+  X_POP_ANALYSIS               = XMLString::transcode( C_POP_ANALYSIS );
+  X_IND_ANALYSIS               = XMLString::transcode( C_IND_ANALYSIS );
+  X_CONSTRAINT                 = XMLString::transcode( C_CONSTRAINT );
+  X_MONTE_CARLO                = XMLString::transcode( C_MONTE_CARLO );
+  X_MODEL                      = XMLString::transcode( C_MODEL );
+  X_ADVAN                      = XMLString::transcode( C_ADVAN );
+  X_TRANS                      = XMLString::transcode( C_TRANS );
+  X_PRED                       = XMLString::transcode( C_PRED );
+  X_COMP_MODEL                 = XMLString::transcode( C_COMP_MODEL );
+  X_DIFFEQN                    = XMLString::transcode( C_DIFFEQN );
+  X_PK                         = XMLString::transcode( C_PK );
+  X_ERROR                      = XMLString::transcode( C_ERROR );
+  X_PRESENTATION               = XMLString::transcode( C_PRESENTATION );
+  X_TABLE                      = XMLString::transcode( C_TABLE );
+  X_SCATTERPLOT                = XMLString::transcode( C_SCATTERPLOT );
+  X_COLUMN                     = XMLString::transcode( C_COLUMN );
+  X_LOW                        = XMLString::transcode( C_LOW );
+  X_UP                         = XMLString::transcode( C_UP );
+  X_LABEL                      = XMLString::transcode( C_LABEL );
+  X_LABELS                     = XMLString::transcode( C_LABELS );
+  X_X                          = XMLString::transcode( C_X );
+  X_Y                          = XMLString::transcode( C_Y );
+  X_SPLIT                      = XMLString::transcode( C_SPLIT );
+  X_THETA                      = XMLString::transcode( C_THETA );
+  X_OMEGA                      = XMLString::transcode( C_OMEGA );
+  X_SIGMA                      = XMLString::transcode( C_SIGMA );
+  X_SIMULATION                 = XMLString::transcode( C_SIMULATION );
+  X_POP_STAT                   = XMLString::transcode( C_POP_STAT );
+  X_IND_STAT                   = XMLString::transcode( C_IND_STAT );
 
-  // Attribute names 
-  X_FIXED             = XMLString::transcode( C_FIXED );
-  X_VALUE             = XMLString::transcode( C_VALUE );
-  X_STRUCT            = XMLString::transcode( C_STRUCT );
-  X_DIMENSION         = XMLString::transcode( C_DIMENSION );
-  X_IS_ERR_OUT        = XMLString::transcode( C_IS_STDERROR_OUT );
-  X_IS_CORR_OUT       = XMLString::transcode( C_IS_CORRELATION_OUT );
-  X_IS_COV_OUT        = XMLString::transcode( C_IS_COVARIANCE_OUT );
-  X_IS_INV_COV_OUT    = XMLString::transcode( C_IS_INVERSE_COVARIANCE_OUT );
-  X_IS_COEF_OUT       = XMLString::transcode( C_IS_COEFFICIENT_OUT );
-  X_IS_CONF_OUT       = XMLString::transcode( C_IS_CONFIDENCE_OUT );
-  X_APPROXIMATION     = XMLString::transcode( C_APPROXIMATION );
-  X_METHOD            = XMLString::transcode( C_METHOD );
-  X_NUMBEREVAL        = XMLString::transcode( C_NUMBEREVAL );
-  X_POP_SIZE          = XMLString::transcode( C_POP_SIZE  );
-  X_IS_ESTIMATION     = XMLString::transcode( C_IS_ESTIMATION );
-  X_IS_ETA_OUT        = XMLString::transcode( C_IS_ETA_OUT );
-  X_IS_RESTART        = XMLString::transcode( C_IS_RESTART );
-  X_DATA_LABELS       = XMLString::transcode( C_DATA_LABELS );
-  X_FILENAME          = XMLString::transcode( C_FILENAME );
-  X_NAME              = XMLString::transcode( C_NAME );
-  X_SYNONYM           = XMLString::transcode( C_SYNONYM );
-  X_LENGTH            = XMLString::transcode( C_LENGTH );
-  X_SEED              = XMLString::transcode( C_SEED );
-  X_SUBPROBLEMS       = XMLString::transcode( C_SUBPROBLEMS );
-  X_COVARIANCE_FORM   = XMLString::transcode( C_COVARIANCE_FORM );
-  X_MITR              = XMLString::transcode( C_MITR );
-  X_SIG_DIGITS        = XMLString::transcode( C_SIG_DIGITS );
+  // SpkSourceML attributes
+  X_FIXED                      = XMLString::transcode( C_FIXED );
+  X_VALUE                      = XMLString::transcode( C_VALUE );
+  X_STRUCT                     = XMLString::transcode( C_STRUCT );
+  X_DIMENSION                  = XMLString::transcode( C_DIMENSION );
+  X_IS_ERR_OUT                 = XMLString::transcode( C_IS_STDERROR_OUT );
+  X_IS_CORR_OUT                = XMLString::transcode( C_IS_CORRELATION_OUT );
+  X_IS_COV_OUT                 = XMLString::transcode( C_IS_COVARIANCE_OUT );
+  X_IS_INV_COV_OUT             = XMLString::transcode( C_IS_INVERSE_COVARIANCE_OUT );
+  X_IS_COEF_OUT                = XMLString::transcode( C_IS_COEFFICIENT_OUT );
+  X_IS_CONF_OUT                = XMLString::transcode( C_IS_CONFIDENCE_OUT );
+  X_APPROXIMATION              = XMLString::transcode( C_APPROXIMATION );
+  X_METHOD                     = XMLString::transcode( C_METHOD );
+  X_NUMBEREVAL                 = XMLString::transcode( C_NUMBEREVAL );
+  X_POP_SIZE                   = XMLString::transcode( C_POP_SIZE  );
+  X_IS_ESTIMATION              = XMLString::transcode( C_IS_ESTIMATION );
+  X_IS_ETA_OUT                 = XMLString::transcode( C_IS_ETA_OUT );
+  X_IS_RESTART                 = XMLString::transcode( C_IS_RESTART );
+  X_DATA_LABELS                = XMLString::transcode( C_DATA_LABELS );
+  X_FILENAME                   = XMLString::transcode( C_FILENAME );
+  X_NAME                       = XMLString::transcode( C_NAME );
+  X_SYNONYM                    = XMLString::transcode( C_SYNONYM );
+  X_LENGTH                     = XMLString::transcode( C_LENGTH );
+  X_SEED                       = XMLString::transcode( C_SEED );
+  X_SUBPROBLEMS                = XMLString::transcode( C_SUBPROBLEMS );
+  X_COVARIANCE_FORM            = XMLString::transcode( C_COVARIANCE_FORM );
+  X_MITR                       = XMLString::transcode( C_MITR );
+  X_SIG_DIGITS                 = XMLString::transcode( C_SIG_DIGITS );
 
-  // Attribute values
-  X_YES               = XMLString::transcode( C_YES );
-  X_NO                = XMLString::transcode( C_NO );
-  X_DIAGONAL          = XMLString::transcode( C_DIAGONAL );
-  X_BLOCK             = XMLString::transcode( C_BLOCK );
-  X_COV_R             = XMLString::transcode( C_COV_R );
-  X_COV_RSR           = XMLString::transcode( C_COV_RSR );
-  X_COV_S             = XMLString::transcode( C_COV_S );
-  X_COV_H             = XMLString::transcode( C_COV_H );
-  X_COV_HSH           = XMLString::transcode( C_COV_HSH );
-  X_FO                = XMLString::transcode( C_FO );
-  X_FOCE              = XMLString::transcode( C_FOCE );
-  X_LAPLACE           = XMLString::transcode( C_LAPLACE );
-  X_ANALYTIC          = XMLString::transcode( C_ANALYTIC );
-  X_GRID              = XMLString::transcode( C_GRID );
-  X_PLAIN             = XMLString::transcode( C_PLAIN );
-  X_MISER             = XMLString::transcode( C_MISER );
+  // SpkSourceML attribute values
+  X_YES                        = XMLString::transcode( C_YES );
+  X_NO                         = XMLString::transcode( C_NO );
+  X_DIAGONAL                   = XMLString::transcode( C_DIAGONAL );
+  X_BLOCK                      = XMLString::transcode( C_BLOCK );
+  X_COV_R                      = XMLString::transcode( C_COV_R );
+  X_COV_RSR                    = XMLString::transcode( C_COV_RSR );
+  X_COV_S                      = XMLString::transcode( C_COV_S );
+  X_COV_H                      = XMLString::transcode( C_COV_H );
+  X_COV_HSH                    = XMLString::transcode( C_COV_HSH );
+  X_FO                         = XMLString::transcode( C_FO );
+  X_FOCE                       = XMLString::transcode( C_FOCE );
+  X_LAPLACE                    = XMLString::transcode( C_LAPLACE );
+  X_ANALYTIC                   = XMLString::transcode( C_ANALYTIC );
+  X_GRID                       = XMLString::transcode( C_GRID );
+  X_PLAIN                      = XMLString::transcode( C_PLAIN );
+  X_MISER                      = XMLString::transcode( C_MISER );
+
+  // SpkReportML attribute
+  X_SPKREPORT                  = XMLString::transcode( C_SPKREPORT );
+  X_ELAPSEDTIME                = XMLString::transcode( C_ELAPSEDTIME );
+  X_NEMBER_EVAL                = XMLString::transcode( C_NUMBER_EVAL );
+  X_SUBPROBLEM                 = XMLString::transcode( C_SUBPROBLEM );
+ 
+  // SpkReportML tags
+  X_ERROR_LIST                 = XMLString::transcode( C_ERROR_LIST );
+  X_WARNING_LIST               = XMLString::transcode( C_WARNING_LIST );
+  X_POP_ANALYSIS_RESULT        = XMLString::transcode( C_POP_ANALYSIS_RESULT );
+  X_IND_ANALYSIS_RESULT        = XMLString::transcode( C_IND_ANALYSIS_RESULT );
+  X_OPT_TRACE_OUT              = XMLString::transcode( C_OPT_TRACE_OUT );
+  X_POP_MONTE_RESULT           = XMLString::transcode( C_POP_MONTE_RESULT );
+  X_MESSAGE                    = XMLString::transcode( C_MESSAGE );
+  X_FILE_NAME                  = XMLString::transcode( C_FILE_NAME );
+  X_LINE_NUMBER                = XMLString::transcode( C_LINE_NUMBER );
+  X_WARNING                    = XMLString::transcode( C_WARNING );
+  X_POP_OPT_RESULT             = XMLString::transcode( C_POP_OPT_RESULT );
+  X_IND_OPT_RESULT             = XMLString::transcode( C_IND_OPT_RESULT );
+  X_POP_STAT_RESULT            = XMLString::transcode( C_POP_STAT_RESULT );
+  X_IND_STAT_RESULT            = XMLString::transcode( C_IND_STAT_RESULT );
+  X_POP_OBJ_OUT                = XMLString::transcode( C_POP_OBJ_OUT );
+  X_IND_OBJ_OUT                = XMLString::transcode( C_IND_OBJ_OUT );
+  X_THETA_IN                   = XMLString::transcode( C_THETA_IN );
+  X_THETA_OUT                  = XMLString::transcode( C_THETA_OUT );
+  X_OMEGA_IN                   = XMLString::transcode( C_OMEGA_IN );
+  X_OMEGA_OUT                  = XMLString::transcode( C_OMEGA_OUT );
+  X_SIGMA_IN                   = XMLString::transcode( C_SIGMA_IN );
+  X_SIGMA_OUT                  = XMLString::transcode( C_SIGMA_OUT );
+  X_POP_STDERROR_OUT           = XMLString::transcode( C_POP_STDERROR_OUT );
+  X_POP_COVARIANCE_OUT         = XMLString::transcode( C_POP_COVARIANCE_OUT );
+  X_POP_INVERSE_COVARIANCE_OUT = XMLString::transcode( C_POP_INVERSE_COVARIANCE_OUT );
+  X_POP_CORRELATION_OUT        = XMLString::transcode( C_POP_CORRELATION_OUT );
+  X_POP_COEFFICIENT_OUT        = XMLString::transcode( C_POP_COEFFICIENT_OUT );
+  X_POP_CONFIDENCE_OUT         = XMLString::transcode( C_POP_CONFIDENCE_OUT );
+  X_IND_STDERROR_OUT           = XMLString::transcode( C_IND_STDERROR_OUT );
+  X_IND_COVARIANCE_OUT         = XMLString::transcode( C_IND_COVARIANCE_OUT );
+  X_IND_INVERSE_COVARIANCE_OUT = XMLString::transcode( C_IND_INVERSE_COVARIANCE_OUT );
+  X_IND_CORRELATION_OUT        = XMLString::transcode( C_IND_CORRELATION_OUT );
+  X_IND_COEFFICIENT_OUT        = XMLString::transcode( C_IND_COEFFICIENT_OUT );
+  X_IND_CONFIDENCE_OUT         = XMLString::transcode( C_IND_CONFIDENCE_OUT );
+  X_PRESENTATION_DATA          = XMLString::transcode( C_PRESENTATION_DATA );
 
   myPopEpsilon = pow( 10.0, -(mySigDigits+1.0) );
   myIndEpsilon = pow( 10.0, -(mySigDigits+1.0) );
@@ -471,6 +554,48 @@ NonmemTranslator::~NonmemTranslator()
   XMLString::release( &X_IND_STAT );
   XMLString::release( &X_SIG_DIGITS );
   XMLString::release( &X_SUBPROBLEMS );
+
+  // SpkReportML attribute
+  XMLString::release( &X_ELAPSEDTIME );
+  XMLString::release( &X_NEMBER_EVAL );
+  XMLString::release( &X_SUBPROBLEM );
+ 
+  // SpkReportML tags
+  XMLString::release( &X_ERROR_LIST );
+  XMLString::release( &X_WARNING_LIST );
+  XMLString::release( &X_POP_ANALYSIS_RESULT );
+  XMLString::release( &X_IND_ANALYSIS_RESULT );
+  XMLString::release( &X_OPT_TRACE_OUT );
+  XMLString::release( &X_POP_MONTE_RESULT );
+  XMLString::release( &X_MESSAGE );
+  XMLString::release( &X_FILE_NAME );
+  XMLString::release( &X_LINE_NUMBER );
+  XMLString::release( &X_WARNING );
+  XMLString::release( &X_POP_OPT_RESULT );
+  XMLString::release( &X_IND_OPT_RESULT );
+  XMLString::release( &X_POP_STAT_RESULT );
+  XMLString::release( &X_IND_STAT_RESULT );
+  XMLString::release( &X_POP_OBJ_OUT );
+  XMLString::release( &X_IND_OBJ_OUT );
+  XMLString::release( &X_THETA_IN );
+  XMLString::release( &X_THETA_OUT );
+  XMLString::release( &X_OMEGA_IN );
+  XMLString::release( &X_OMEGA_OUT );
+  XMLString::release( &X_SIGMA_IN );
+  XMLString::release( &X_SIGMA_OUT );
+  XMLString::release( &X_POP_STDERROR_OUT );
+  XMLString::release( &X_POP_COVARIANCE_OUT );
+  XMLString::release( &X_POP_INVERSE_COVARIANCE_OUT );
+  XMLString::release( &X_POP_CORRELATION_OUT );
+  XMLString::release( &X_POP_COEFFICIENT_OUT );
+  XMLString::release( &X_POP_CONFIDENCE_OUT );
+  XMLString::release( &X_IND_STDERROR_OUT );
+  XMLString::release( &X_IND_COVARIANCE_OUT );
+  XMLString::release( &X_IND_INVERSE_COVARIANCE_OUT );
+  XMLString::release( &X_IND_CORRELATION_OUT );
+  XMLString::release( &X_IND_COEFFICIENT_OUT );
+  XMLString::release( &X_IND_CONFIDENCE_OUT );
+  XMLString::release( &X_PRESENTATION_DATA );
 }
 NonmemTranslator::NonmemTranslator( const NonmemTranslator& )
 {
@@ -7474,7 +7599,6 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "         errors.cat( e );" << endl;
   oIndDriver << "         isOptSuccess = false;" << endl;
   oIndDriver << "         ret = CONVERGENCE_FAILURE;" << endl;
-  //  oIndDriver << "         goto REPORT_GEN;" << endl;
   oIndDriver << "      }" << endl;
   oIndDriver << "      catch( ... )" << endl;
   oIndDriver << "      {" << endl;
@@ -7483,7 +7607,6 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "         errors.push( e );" << endl;
   oIndDriver << "         isOptSuccess = false;" << endl;
   oIndDriver << "         ret = CONVERGENCE_FAILURE;" << endl;
-  //  oIndDriver << "         goto REPORT_GEN;" << endl;
   oIndDriver << "      }" << endl;
   oIndDriver << endl;
   oIndDriver << "      // Get the latest value of theta and Omega." << endl;
@@ -8273,7 +8396,6 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "         errors.cat( e );" << endl;
   oPopDriver << "         isOptSuccess = false;" << endl;
   oPopDriver << "         ret = CONVERGENCE_FAILURE;" << endl;
-  //  oPopDriver << "         goto REPORT_GEN;" << endl;
   oPopDriver << "      }" << endl;
   oPopDriver << "      catch( ... )" << endl;
   oPopDriver << "      {" << endl;
@@ -8282,7 +8404,6 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "         errors.push( e );" << endl;
   oPopDriver << "         isOptSuccess = false;" << endl;
   oPopDriver << "         ret = CONVERGENCE_FAILURE;" << endl;
-  //  oPopDriver << "         goto REPORT_GEN;" << endl;
   oPopDriver << "      }" << endl;
   oPopDriver << "      gettimeofday( &optEnd, NULL );" << endl;
   oPopDriver << "      optTimeSec = difftime( optEnd.tv_sec, optBegin.tv_sec );" << endl;
