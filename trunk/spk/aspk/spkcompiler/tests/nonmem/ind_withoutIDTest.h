@@ -10,8 +10,11 @@
 #include <cppunit/TestSuite.h>
 
 #include <xercesc/dom/DOMDocument.hpp>
+#include "../../spkcompiler/nonmem/NonmemTranslator.h"
 
-class ind_withoutIDTest : public CppUnit::TestFixture {
+class ind_withoutIDTest 
+: public CppUnit::TestFixture,
+  public NonmemTranslator {
 
   xercesc::DOMDocument *source;
   xercesc::DOMDocument *data;
@@ -26,12 +29,9 @@ public:
     void createDataML();
     void createSourceML();
     void parse();
-    void testNonmemPars_h();
     void testIndDataClass();
     void testDataSetClass();
-    void testPredClass();
     void testDriver();
-    void testReportML();
 };
 
 #endif

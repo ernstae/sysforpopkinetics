@@ -10,8 +10,12 @@
 #include <cppunit/TestSuite.h>
 
 #include <xercesc/dom/DOMDocument.hpp>
+#include "../../spkcompiler/nonmem/NonmemTranslator.h"
 
-class pop_subprobTest : public CppUnit::TestFixture {
+class pop_subprobTest 
+: public CppUnit::TestFixture,
+  public NonmemTranslator
+{
 
   xercesc::DOMDocument *source;
   xercesc::DOMDocument *data;

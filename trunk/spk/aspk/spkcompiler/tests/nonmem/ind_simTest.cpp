@@ -7,7 +7,6 @@
 #include <map>
 
 #include "ind_simTest.h"
-#include "spkcompiler/series.h"
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestSuite.h>
@@ -19,8 +18,10 @@
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
-#include "spkcompiler/nonmem/NonmemTranslator.h"
-#include "spkcompiler/SymbolTable.h"
+#include "../../spkcompiler/nonmem/NonmemTranslator.h"
+#include "../../spkcompiler/SymbolTable.h"
+#include "../../spkcompiler/series.h"
+#include "../../spkcompiler/SpkCompilerException.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -33,19 +34,11 @@ namespace{
   const unsigned int MAXCHARS = 64;
 
   const char * testName;
-  char fIndData_h[]       = "IndData.h";
-  char fDataSet_h[]       = "DataSet.h";
-  char fPred_h[]          = "Pred.h";
-  char fPredEqn_cpp[]     = "predEqn.cpp";
-  char fNonmemPars_h[]    = "NonmemPars.h";
-  char fMontePars_h[]     = "MontePars.h";
-  char fMonteDriver_cpp[] = "monteDriver.cpp";
-  char fFitDriver_cpp[]   = "fitDriver.cpp";
-  char fMakefile[]        = "Makefile.SPK";
-  char fDriver[]          = "driver";
-  char fReportML[]        = "result.xml";
+
   char fSavedReportML[]   = "saved_result.xml";
   char fTraceOut[]        = "trace_output";
+  char fFitDriver[]       = "driver";
+  char fReportML[]        = "result.xml";
 
   char fPrefix              [MAXCHARS];
   char fDataML              [MAXCHARS];
@@ -309,7 +302,7 @@ if( actual != expected ) \\\n \
   // F = b0 + b1 ** x
   // Y = F + ETA(1)
   //============================================
-  const char PRED[] = "b0 = THETA(1)\nb1 = THETA(2)\nx = TiMe\nF = b0 + b1 ** x\nY = F + ETA(1)\n";
+  const char PREDEQN[] = "b0 = THETA(1)\nb1 = THETA(2)\nx = TiMe\nF = b0 + b1 ** x\nY = F + ETA(1)\n";
 
 
   //============================================
@@ -321,86 +314,6 @@ if( actual != expected ) \\\n \
   const double nm_obj       =  46.4087;
   const double nm_theta[]   = { 0.02, 1.00171 };
   const double nm_omega[]   = { 0.771353 };
-
-  // Standard error
-  // With SPK's parameterization:
-  //
-  // theta(1)    0.2311  
-  // theta(2)    0.000426625  
-  // Omega(1,1)  0.117851
-  // 
-  //                            theta(1)  theta(2)  Omega(1,1)
-  //const double nm_stderr[]  = {  }; 
-                              
-  //
-  // Covariance
-  // With SPK's parameterization:
-  //
-  //                theta(1)     theta(2)     Omega(1,1)
-  //            /                                         \
-  // theta(1)   |   0.0534072   -7.62941e-05  0.0         |
-  // theta(2)   |  -7.62941e-05  1.82009e-07  0.0         |
-  // Omega(1,1) |   0.0          0.0          0.0138889   |
-  //            \                                         /
-  //
-  //const double nm_cov[]     = {   };
-
-  // Inverse of covariance
-  //
-  //               theta(1)      theta(2)     Omega(1,1)
-  //            /                                         \
-  // theta(1)   |  0.0534072    -7.62941e-05  0.0         |
-  // theta(2)   | -7.62941e-05   1.82009e-07  0.0         |
-  // Omega(1,1) |  0.0           0.0          0.0138889   |
-  //            \                                         /
-  // 
-  //const double nm_inv_cov[] = {  };
-
-
-  // Correlation matrix
-  // With SPK's parameterization:
-  //
-  //               theta(1)      theta(2)     Omega(1,1)
-  //            /                                        \
-  // theta(1)   |   1.0         -0.773828     0.0        |
-  // theta(2)   |  -0.773828     1.0          0.0        |
-  // Omega(1,1) |   0.0          0.0          0.0        |
-  //            \                                        /
-  //
-  //const double nm_corr[];
-
-  // Coefficient of variation
-  // With SPK's parameterization
-  //
-  // theta(1)   1155.5
-  // theta(2)      0.0425895
-  // Omega(1,1)  -90.791
-  //
-  //const double nm_cv[];
-
-  // Confidence interval
-  // with SPK's parameterization:
-  //
-  // theta(1)    -0.45045  ~ 0.49045
-  // theta(2)    -1.00085  ~ 1.00258
-  // Omega(1,1)  -0.369714 ~ 0.110105
-  // 
-  // const double nm_ci[];
-
-  const double nm_pred[]    = {  };
-  //============================================
-  // XML strings
-  //============================================
-  XMLCh * X_ERROR_MESSAGES;
-  XMLCh * X_IND_ANALYSIS_RESULT;
-  XMLCh * X_PRESENTATION_DATA;
-  XMLCh * X_IND_STDERROR_OUT;
-  XMLCh * X_IND_COVARIANCE_OUT;
-  XMLCh * X_IND_INVERSE_COVARIANCE_OUT;
-  XMLCh * X_IND_CORRELATION_OUT;
-  XMLCh * X_IND_COEFFICIENT_OUT;
-  XMLCh * X_IND_CONFIDENCE_OUT;
-  XMLCh * X_VALUE;
 };
 
 void ind_simTest::setUp()
@@ -462,6 +375,20 @@ void ind_simTest::setUp()
   // MDV doesn't have an alias.
   label_alias[strMDV]  = NULL;
 
+  X_ERROR_LIST                 = XMLString::transcode( C_ERROR_LIST );
+  X_VALUE                      = XMLString::transcode( C_VALUE );
+  X_IND_OBJ_OUT                = XMLString::transcode( C_IND_OBJ_OUT );
+  X_THETA_OUT                  = XMLString::transcode( C_THETA_OUT );
+  X_OMEGA_OUT                  = XMLString::transcode( C_OMEGA_OUT );
+  X_IND_ANALYSIS_RESULT        = XMLString::transcode( C_IND_ANALYSIS_RESULT );
+  X_IND_STDERROR_OUT           = XMLString::transcode( C_IND_STDERROR_OUT );
+  X_IND_COVARIANCE_OUT         = XMLString::transcode( C_IND_COVARIANCE_OUT );
+  X_IND_INVERSE_COVARIANCE_OUT = XMLString::transcode( C_IND_INVERSE_COVARIANCE_OUT );
+  X_IND_CONFIDENCE_OUT         = XMLString::transcode( C_IND_CONFIDENCE_OUT );
+  X_IND_COEFFICIENT_OUT        = XMLString::transcode( C_IND_COEFFICIENT_OUT );
+  X_IND_CORRELATION_OUT        = XMLString::transcode( C_IND_CORRELATION_OUT );
+  X_PRESENTATION_DATA          = XMLString::transcode( C_PRESENTATION_DATA );
+
   record[0]   = record0;
   record[1]   = record1;
   record[2]   = record2;
@@ -500,38 +427,33 @@ void ind_simTest::setUp()
   record[35]  = record35;
   //  record[36]  = record36;
 
-  X_IND_ANALYSIS_RESULT        = XMLString::transcode( "ind_analysis_result" );
-  X_PRESENTATION_DATA          = XMLString::transcode( "presentation_data" );
-  X_IND_STDERROR_OUT           = XMLString::transcode( "ind_stderror_out" );
-  X_IND_COVARIANCE_OUT         = XMLString::transcode( "ind_covariance_out" );
-  X_IND_INVERSE_COVARIANCE_OUT = XMLString::transcode( "ind_inverse_covariance_out" );
-  X_IND_CORRELATION_OUT        = XMLString::transcode( "ind_correlation_out" );
-  X_IND_COEFFICIENT_OUT        = XMLString::transcode( "ind_coefficient_out" );
-  X_IND_CONFIDENCE_OUT         = XMLString::transcode( "ind_confidence_out" );
-  X_VALUE                      = XMLString::transcode( "value" );
-  X_ERROR_MESSAGES             = XMLString::transcode( "error_messages" );
-
   createDataML();
   createSourceML();
   parse();
 }
 void ind_simTest::tearDown()
 {
-  XMLString::release( &X_ERROR_MESSAGES );
+  XMLString::release( &X_ERROR_LIST );
+  XMLString::release( &X_VALUE );
+  XMLString::release( &X_IND_OBJ_OUT );
+  XMLString::release( &X_THETA_OUT );
+  XMLString::release( &X_OMEGA_OUT );
   XMLString::release( &X_IND_ANALYSIS_RESULT );
-  XMLString::release( &X_PRESENTATION_DATA );
   XMLString::release( &X_IND_STDERROR_OUT );
   XMLString::release( &X_IND_COVARIANCE_OUT );
   XMLString::release( &X_IND_INVERSE_COVARIANCE_OUT );
-  XMLString::release( &X_IND_CORRELATION_OUT );
-  XMLString::release( &X_IND_COEFFICIENT_OUT );
   XMLString::release( &X_IND_CONFIDENCE_OUT );
-  XMLString::release( &X_VALUE );
-  
+  XMLString::release( &X_IND_COEFFICIENT_OUT );
+  XMLString::release( &X_IND_CORRELATION_OUT );
+  XMLString::release( &X_PRESENTATION_DATA );
+
   if( okToClean )
     {
       remove( fDataML );
       remove( fSourceML );
+      remove( fReportML );
+      remove( fFitDriver );
+      remove( fFitDriver_cpp );
       remove( fMonteParsDriver );
       remove( fMonteParsDriver_cpp );
       remove( fNonmemParsDriver );
@@ -544,17 +466,14 @@ void ind_simTest::tearDown()
       remove( fPredDriver_cpp );
       remove( fMontePars_h );
       remove( fNonmemPars_h );
-      remove( fDriver );
-      remove( fFitDriver_cpp );
-      remove( fMonteDriver_cpp );
       remove( fIndData_h );
       remove( fDataSet_h );
       remove( fPred_h );
       remove( fPredEqn_cpp );
       remove( fMakefile );
-      remove( fReportML );
       remove( fSavedReportML );
       remove( fTraceOut );
+      remove( fCheckpoint_xml );
     }
   XMLPlatformUtils::Terminate();
 }
@@ -722,7 +641,7 @@ void ind_simTest::createSourceML()
 
   oSource << "<model>" << endl;
   oSource << "<pred>" << endl;
-  oSource << "   " << PRED << endl;
+  oSource << "   " << PREDEQN << endl;
   oSource << "</pred>" << endl;
   oSource << "</model>" << endl;
 
@@ -791,87 +710,14 @@ void ind_simTest::parse()
   // document tree and the dataML document tree.
   //============================================
   NonmemTranslator xlator( source, data );
-
-  //============================================
-  // Determine the type of analysis and 
-  // the number of subjects.
-  //============================================
-  xlator.detAnalysisType();
-
-  //============================================
-  // Parse the dataML document
-  //============================================
-  xlator.parseData();
-  SymbolTable *table = xlator.getSymbolTable();
-
-  // ID, TIME, DV were in the data set.  So, they should be in the symbol table already.
-  Symbol * id   = table->findi( strID );
-  CPPUNIT_ASSERT( id != Symbol::empty() );
-  Symbol * time = table->findi( strTIME );
-  CPPUNIT_ASSERT( time != Symbol::empty() );
-  Symbol * dv   = table->findi( strDV );
-  CPPUNIT_ASSERT( dv != Symbol::empty() );
-
-  //============================================
-  // Parse the sourceML document
-  //============================================
-  xlator.parseSource();
-
-  // MDV and CP (=DV) were not in the data set; they must be added to the symbol table.
-  Symbol * mdv   = table->findi( strMDV );
-  CPPUNIT_ASSERT( mdv != Symbol::empty() );
-  Symbol * cp   = table->findi( strCP );
-  CPPUNIT_ASSERT( cp != Symbol::empty() );
-
-  // THETA, OMEGA, ETA must be registered for individual analysis.
-  Symbol * theta = table->findi( strTHETA );
-  CPPUNIT_ASSERT( theta != Symbol::empty() );
-  Symbol * omega = table->findi( strOMEGA );
-  CPPUNIT_ASSERT( omega != Symbol::empty() );
-  Symbol * eta = table->findi( strETA );
-  CPPUNIT_ASSERT( eta != Symbol::empty() );
-
-  //============================================
-  // Check existence/absence of generated files
-  // NonmemPars.h
-  // MontePars.h
-  // IndData.h
-  // DataSet.h
-  // Pred.h
-  // Makefile.SPK
-  // Makefile.MC
-  // fitDriver.cpp
-  // monteDriver.cpp
-  // ==========================================
-  FILE * nonmemPars = fopen( fNonmemPars_h, "r" );
-  CPPUNIT_ASSERT( nonmemPars != NULL );
-  fclose( nonmemPars );
-
-  FILE * montePars = fopen( fMontePars_h, "r" );
-  CPPUNIT_ASSERT( montePars == NULL );
-  
-  FILE * indData = fopen( fIndData_h, "r" );
-  CPPUNIT_ASSERT( indData != NULL );
-  fclose( indData );
-
-  FILE * dataSet = fopen( fDataSet_h, "r" );
-  CPPUNIT_ASSERT( dataSet != NULL );
-  fclose( dataSet );
-
-  FILE * pred = fopen( fPred_h, "r" );
-  CPPUNIT_ASSERT( pred != NULL );
-  fclose( pred );
-
-  FILE * makeSPK = fopen( fMakefile, "r" );
-  CPPUNIT_ASSERT( makeSPK != NULL );
-  fclose( makeSPK );
- 
-  FILE * fitDriver = fopen( fFitDriver_cpp, "r" );
-  CPPUNIT_ASSERT( fitDriver != NULL );
-  fclose( fitDriver );
-
-  FILE * monteDriver = fopen( fMonteDriver_cpp, "r" );
-  CPPUNIT_ASSERT( monteDriver == NULL );
+  try{
+    xlator.translate();
+  }
+  catch ( const SpkCompilerException & e )
+    {
+      cerr << e << endl;
+      CPPUNIT_ASSERT_MESSAGE( "Failed to compile.", false );
+    }
 }
 void ind_simTest::testDataSetClass()
 {
@@ -966,7 +812,7 @@ void ind_simTest::testDriver()
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Test driver.cpp to see if it compiles/links successfully.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  printf( "\n--- %s ---\n", fDriver );
+  printf( "\n--- %s ---\n", fFitDriver );
   int  exitcode      = 0;
   char command[256];
   sprintf( command, "make -f %s test", fMakefile );
@@ -977,7 +823,7 @@ void ind_simTest::testDriver()
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
-  sprintf( command, "./%s > %s", fDriver, fTraceOut );
+  sprintf( command, "./%s > %s", fFitDriver, fTraceOut );
 
   // The exist code of 0 indicates success.  1 indicates convergence problem.
   // 2 indicates some file access problem.
@@ -987,14 +833,14 @@ void ind_simTest::testDriver()
   if( exitcode == 1 )
     {
       char message[256];
-      sprintf( message, "%s failed for convergence problem <%d>!", fDriver, exitcode );
+      sprintf( message, "%s failed for convergence problem <%d>!", fFitDriver, exitcode );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   if( exitcode == 2 )
     {
       char message[256];
-      sprintf( message, "%s failed due to inproper file access permission <%d>!", fDriver, exitcode );
+      sprintf( message, "%s failed due to inproper file access permission <%d>!", fFitDriver, exitcode );
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   if( exitcode > 2 )
@@ -1002,7 +848,7 @@ void ind_simTest::testDriver()
       char message[256];
       sprintf( message, 
                "%s failed for reasons other than convergence propblem or access permission <%d>!", 
-               fDriver, 
+               fFitDriver, 
                exitcode );
       
       CPPUNIT_ASSERT_MESSAGE( message, true );
@@ -1013,262 +859,6 @@ void ind_simTest::testDriver()
      sprintf( message, "Failed to rename %s to %s!", fReportML, fSavedReportML );
      CPPUNIT_ASSERT_MESSAGE( message, false );
   }
-}
-void ind_simTest::testReportML()
-{
-  const double scale = 0.05;
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Parse the generated reportML document.
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  xercesc::XercesDOMParser *reportParser = new xercesc::XercesDOMParser;
-  reportParser->setValidationScheme( XercesDOMParser::Val_Auto );
-  reportParser->setDoNamespaces( true );
-  reportParser->setDoSchema( true );
-  reportParser->setValidationSchemaFullChecking( true );
-  reportParser->setCreateEntityReferenceNodes( true );
-  
-  try{
-    reportParser->parse( fSavedReportML );
-  }
-  catch( const XMLException& e )
-    {
-      XMLPlatformUtils::Terminate();
-      char buf[MAXCHARS + 1];
-      sprintf( buf, "An error occurred during parsing %s.\n   Message: %s\n",
-	       fReportML, XMLString::transcode(e.getMessage() ) );
-      
-      CPPUNIT_ASSERT_MESSAGE( buf, false );
-    }
-  catch( const DOMException& e )
-    {
-      
-      XMLCh errText[MAXCHARS + 1]; 
-      if (DOMImplementation::loadDOMExceptionMsg(e.code, errText, MAXCHARS))
-	{
-          XMLPlatformUtils::Terminate();
-          char buf[MAXCHARS + 1];
-          sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
-                   fReportML, e.code, XMLString::transcode(errText) );
-          CPPUNIT_ASSERT_MESSAGE( buf, false );
-	}
-    }
-  catch( ... )
-    {
-      XMLPlatformUtils::Terminate();
-      char buf[MAXCHARS + 1];
-      sprintf( buf, "An unknown error occurred during parsing %s.\n", fSavedReportML );
-      
-      CPPUNIT_ASSERT_MESSAGE( buf, false );
-    }
-  
-  report = reportParser->getDocument();
-  CPPUNIT_ASSERT( report );
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Verify if any error was caught during the runtime.
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  DOMNodeList *error_messages;
-  
-  error_messages = report->getElementsByTagName( X_ERROR_MESSAGES );
-  CPPUNIT_ASSERT( error_messages->getLength() == 0 );
-   
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Verify the objective value.
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  double obj_out = 0.0;
-  DOMNodeList * objOut_list = report->getElementsByTagName( XMLString::transcode( "ind_obj_out" ) );
-  if( objOut_list->getLength() > 0 )
-    {
-      DOMElement* objOut = dynamic_cast<DOMElement*>( objOut_list->item(0) );
-      DOMNodeList* value_list = objOut->getElementsByTagName( X_VALUE );
-      int n = value_list->getLength();
-      CPPUNIT_ASSERT_EQUAL( 1, n );
-      obj_out = atof( XMLString::transcode( value_list->item(0)->getFirstChild()->getNodeValue() ) );      
-      // CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_obj, obj_out, scale * nm_obj );
-    }
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Verify the final estimate for theta
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  double theta_out[thetaLen];
-  DOMNodeList * thetaOut_list = report->getElementsByTagName( XMLString::transcode("theta_out" ) );
-  if( thetaOut_list->getLength() > 0 )
-    {
-      DOMElement* thetaOut = dynamic_cast<DOMElement*>( thetaOut_list->item(0) );
-      DOMNodeList* value_list = thetaOut->getElementsByTagName( X_VALUE );
-      int n = value_list->getLength();
-      CPPUNIT_ASSERT_EQUAL( thetaLen, n );
-      for( int i=0; i<n; i++ )
-	{
-	  theta_out[i] = atof( XMLString::transcode( value_list->item(i)->getFirstChild()->getNodeValue() ) );
-	  //CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_theta[i], theta_out[i], scale * nm_theta[i] );
-	}
-    }
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Verify the final estimate for Omega
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  double omega_out[omegaOrder];
-  DOMNodeList * omegaOut_list = report->getElementsByTagName( XMLString::transcode("omega_out" ) );
-  if( omegaOut_list->getLength() > 0 )
-    {
-      DOMElement* omegaOut = dynamic_cast<DOMElement*>( omegaOut_list->item(0) );
-      DOMNodeList* value_list = omegaOut->getElementsByTagName( X_VALUE );
-      int n = value_list->getLength();
-      CPPUNIT_ASSERT_EQUAL( omegaOrder, n );
-      for( int i=0; i<+n; i++ )
-	{
-	  omega_out[i] = atof( XMLString::transcode( value_list->item(i)->getFirstChild()->getNodeValue() ) );
-	  //CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_omega[i], omega_out[i], scale * nm_omega[i] );
-	}
-    }
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Grab a pointer to the top of "ind_stat_result" sub-tree.
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  DOMNodeList *ind_analysis_result = report->getElementsByTagName( X_IND_ANALYSIS_RESULT );
-  CPPUNIT_ASSERT( ind_analysis_result->getLength() == 1 );
-  DOMElement *ind_stat_result = dynamic_cast<DOMElement*>( ind_analysis_result->item( 0 ) );
-  CPPUNIT_ASSERT( ind_stat_result != NULL );
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Verify the standard error of the final estimate of parameters
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  vector<double> se_val;
-  DOMNodeList * se_list = ind_stat_result->getElementsByTagName( X_IND_STDERROR_OUT );
-  if( se_list->getLength() == 1 )
-    {
-      DOMElement * se = dynamic_cast<DOMElement*>( se_list->item(0) );
-      CPPUNIT_ASSERT( se != NULL );
-      DOMNodeList * value_list = se->getElementsByTagName( X_VALUE );
-      int n = value_list->getLength();
-      se_val.resize( n );
-      for( int i=0; i<n; i++ )
-      {
-	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
-	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
-	if( x_val != NULL )
-	  se_val[i] = atof( XMLString::transcode( x_val ) );
-	//printf( "se[%d] = %f\n", i, se_val[i] );
-	//	CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_stderr[i], se_val[i], scale * nm_stderr[i] );
-      }
-    }
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Verify the covariance of the final estimate of parameters
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  vector<double> cov_val;
-  vector<double> inv_cov_val;
-  int covLen = series(1,1,omegaOrder+thetaLen);
-  DOMNodeList * cov_list =ind_stat_result->getElementsByTagName(  X_IND_COVARIANCE_OUT ) ;
-  if( cov_list->getLength() == 1 )
-    {
-      DOMElement * cov = dynamic_cast<DOMElement*>( cov_list->item(0) );
-      CPPUNIT_ASSERT( cov != NULL );
-      DOMNodeList * value_list = cov->getElementsByTagName( X_VALUE );
-      int n = value_list->getLength();
-      cov_val.resize( n );
-      for( int i=0; i<n; i++ )
-      {
-	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
-	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
-	if( x_val != NULL )
-	  cov_val[i] = atof( XMLString::transcode( x_val ) );
-	CPPUNIT_ASSERT_EQUAL( covLen, n );
-
-	//printf( "cov[%d] = %f\n", i, cov_val[i] );
-
-//CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_cov[i], cov_val[i], scale * nm_cov[i] );
-      }
-    }
-  DOMNodeList * invcov_list =ind_stat_result->getElementsByTagName(  X_IND_INVERSE_COVARIANCE_OUT ) ;
-  if( invcov_list->getLength() == 1 )
-    {
-      DOMElement * invcov = dynamic_cast<DOMElement*>( invcov_list->item(0) );
-      CPPUNIT_ASSERT( invcov != NULL );
-      DOMNodeList * value_list = invcov->getElementsByTagName( X_VALUE );
-      int n = value_list->getLength();
-      inv_cov_val.resize( n );
-      for( int i=0; i<n; i++ )
-      {
-	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
-	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
-	if( x_val != NULL )
-	  inv_cov_val[i] = atof( XMLString::transcode( x_val ) );
-	//printf( "inv_cov[%d] = %f\n", i, inv_cov_val[i] );
-      }
-    }
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Verify the confidence interval for the final estimate of parameters
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  vector<double> ci_val;
-  DOMNodeList * ci_list =ind_stat_result->getElementsByTagName(  X_IND_CONFIDENCE_OUT ) ;
-  if( ci_list->getLength() == 1 )
-    {
-      DOMElement * ci = dynamic_cast<DOMElement*>( ci_list->item(0) );
-      CPPUNIT_ASSERT( ci != NULL );
-      DOMNodeList * value_list = ci->getElementsByTagName( X_VALUE );
-      int n = value_list->getLength();
-      ci_val.resize( n );
-      for( int i=0; i<n; i++ )
-      {
-	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
-	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
-	if( x_val != NULL )
-	  ci_val[i] = atof( XMLString::transcode( x_val ) );
-	//printf( "ci[%d] = %f\n", i, ci_val[i] );
-      }
-    }
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Verify the coefficient of variation for the final estimate of parameters
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  vector<double> cv_val;
-  DOMNodeList * cv_list =ind_stat_result->getElementsByTagName(  X_IND_COEFFICIENT_OUT ) ;
-  if( cv_list->getLength() == 1 )
-    {
-      DOMElement * cv = dynamic_cast<DOMElement*>( cv_list->item(0) );
-      CPPUNIT_ASSERT( cv != NULL );
-      DOMNodeList * value_list = cv->getElementsByTagName( X_VALUE );
-      int n = value_list->getLength();
-      cv_val.resize( n );
-      for( int i=0; i<n; i++ )
-      {
-	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
-	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
-	if( x_val != NULL )
-	  cv_val[i] = atof( XMLString::transcode( x_val ) );
-	//printf( "cv[%d] = %f\n", i, cv_val[i] );
-      }
-    }
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Verify the correlation matrix for the final estimate of parameters
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  vector<double> cor_val;
-  DOMNodeList * cor_list =ind_stat_result->getElementsByTagName(  X_IND_CORRELATION_OUT ) ;
-  if( cor_list->getLength() == 1 )
-    {
-      DOMElement * cor = dynamic_cast<DOMElement*>( cor_list->item(0) );
-      CPPUNIT_ASSERT( cor != NULL );
-      DOMNodeList * value_list = cor->getElementsByTagName( X_VALUE );
-      int n = value_list->getLength();
-      cor_val.resize( n );
-      for( int i=0; i<n; i++ )
-      {
-	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
-	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
-	if( x_val != NULL )
-	  cor_val[i] = atof( XMLString::transcode( x_val ) );
-	//printf( "cor[%d] = %f\n", i, cor_val[i] );
-      }
-    }
-
-  DOMNodeList *presentation_data = report->getElementsByTagName( X_PRESENTATION_DATA );
-  CPPUNIT_ASSERT( presentation_data->getLength() == 1 );
-
   okToClean = true;
 }
 
@@ -1283,10 +873,6 @@ CppUnit::Test * ind_simTest::suite()
      new CppUnit::TestCaller<ind_simTest>(
          "testDriver", 
 	 &ind_simTest::testDriver ) );
-  suiteOfTests->addTest( 
-     new CppUnit::TestCaller<ind_simTest>(
-         "testReportML", 
-	 &ind_simTest::testReportML ) );
   return suiteOfTests;
 }
 

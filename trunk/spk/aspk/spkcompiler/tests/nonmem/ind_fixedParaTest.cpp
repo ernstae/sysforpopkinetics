@@ -7,7 +7,6 @@
 #include <map>
 
 #include "ind_fixedParaTest.h"
-#include "spkcompiler/series.h"
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestSuite.h>
@@ -19,73 +18,23 @@
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
-#include "spkcompiler/nonmem/NonmemTranslator.h"
-#include "spkcompiler/SymbolTable.h"
-#include "spkcompiler/SpkCompilerException.h"
+#include "../../spkcompiler/nonmem/NonmemTranslator.h"
+#include "../../spkcompiler/series.h"
+#include "../../spkcompiler/SymbolTable.h"
+#include "../../spkcompiler/SpkCompilerException.h"
 
 using namespace std;
 using namespace CppUnit;
 using namespace xercesc;
-/*
-Job Identification number: 100
-
-Job Description: y(t) =  a * exp( - b * t ) + e(t) <single compartment with loss>
-
-            Low   In   Up
-THETA(1) = { 0.1, 1.0, 10.0 }
-THETA(2) = { 0.1, 1.0, 10.0 }
-
-OMEGA(1) = 0.001
-
-PRED
-   A = THETA(1)
-   B = THETA(2)
-   T = TIME
-   E = ETA(1)
-   F = A * EXP( - B * T  ) 
-   Y = F + E
-
-DATA
-
-   TIME    DV
-   0.00    1.00
-   0.20    0.81873
-   0.40    0.67032
-   0.60    0.54881
-   0.80    0.44933
-   1.00    0.36788
-
-Objective: -11.5207
-
-Final estimate of Theta: { 0.974, 0.880 }
-Final estimate of Omega: { 0.00126 }
-
-                         THATA(1)   THATA(2)   THETA(3)
-Standard error:         { 2.93e-2,  6.91e-2,   7.26e-4 }
-Coef of Var:            { 3.00e+0,  7.84e+0,   5.77e+1 }
-95% Conf interval(low): { 8.80e-1,  6.61e-1,  -1.05e-3 }
-                 (up) : { 1.07e+1,  1.10e+1,   3.57e-3 }
-
-
-=====================================================================================   
- */
 
 namespace{
   const unsigned int MAXCHARS = 64;
 
   const char * testName;
-  char fIndData_h[]       = "IndData.h";
-  char fDataSet_h[]       = "DataSet.h";
-  char fPred_h[]          = "Pred.h";
-  char fPredEqn_cpp[]     = "predEqn.cpp";
-  char fNonmemPars_h[]    = "NonmemPars.h";
-  char fMontePars_h[]     = "MontePars.h";
-  char fMakefile[]        = "Makefile.SPK";
-  char fDriver_cpp[]      = "fitDriver.cpp";
-  char fDriver[]          = "driver";
-  char fReportML[]        = "result.xml";
   char fSavedReportML[]   = "saved_result.xml";
   char fTraceOut[]        = "trace_output";
+  char fFitDriver[]       = "driver";
+  char fReportML[]        = "result.xml";
 
   char fPrefix              [MAXCHARS];
   char fDataML              [MAXCHARS];
@@ -242,7 +191,7 @@ if( actual != expected ) \\\n \
   // F = A * EXP( - B * T  ) 
   // Y = F + E
   //============================================
-  const char PRED[] = "   A = THETA(1)\n \
+  const char PREDEQN[] = "   A = THETA(1)\n \
    B = THETA(2)\n \
    T = TIME\n \
    E = ETA(1)\n \
@@ -266,19 +215,7 @@ if( actual != expected ) \\\n \
   const double nm_invcov[]  = { 275807,    -79136.3,     47168.4,     0,          0,           3e10 };
   const double nm_corr[]    = { 1,          0.693822,    1,           0,          0,           1 };
   const double nm_pred[]    = {  };
-  //============================================
-  // XML strings
-  //============================================
-  XMLCh * X_ERROR_MESSAGES;
-  XMLCh * X_IND_ANALYSIS_RESULT;
-  XMLCh * X_PRESENTATION_DATA;
-  XMLCh * X_IND_STDERROR_OUT;
-  XMLCh * X_IND_COVARIANCE_OUT;
-  XMLCh * X_IND_INVERSE_COVARIANCE_OUT;
-  XMLCh * X_IND_CORRELATION_OUT;
-  XMLCh * X_IND_COEFFICIENT_OUT;
-  XMLCh * X_IND_CONFIDENCE_OUT;
-  XMLCh * X_VALUE;
+
 };
 
 void ind_fixedParaTest::setUp()
@@ -312,6 +249,8 @@ void ind_fixedParaTest::setUp()
   testName = typeid( *this ).name();
 
   strcpy ( fPrefix,               testName );
+
+  strcpy ( fPrefix,               testName );
   sprintf( fMonteParsDriver,      "%s_MonteParsDriver",      fPrefix );
   sprintf( fMonteParsDriver_cpp,  "%s_MonteParsDriver.cpp",  fPrefix );
   sprintf( fNonmemParsDriver,     "%s_NonmemParsDriver",     fPrefix );
@@ -334,6 +273,19 @@ void ind_fixedParaTest::setUp()
   // DV is aliased to CP
   label_alias[strDV]   = NULL;
 
+  X_ERROR_LIST                 = XMLString::transcode( C_ERROR_LIST );
+  X_VALUE                      = XMLString::transcode( C_VALUE );
+  X_IND_OBJ_OUT                = XMLString::transcode( C_IND_OBJ_OUT );
+  X_THETA_OUT                  = XMLString::transcode( C_THETA_OUT );
+  X_OMEGA_OUT                  = XMLString::transcode( C_OMEGA_OUT );
+  X_IND_ANALYSIS_RESULT        = XMLString::transcode( C_IND_ANALYSIS_RESULT );
+  X_IND_STDERROR_OUT           = XMLString::transcode( C_IND_STDERROR_OUT );
+  X_IND_COVARIANCE_OUT         = XMLString::transcode( C_IND_COVARIANCE_OUT );
+  X_IND_INVERSE_COVARIANCE_OUT = XMLString::transcode( C_IND_INVERSE_COVARIANCE_OUT );
+  X_IND_CONFIDENCE_OUT         = XMLString::transcode( C_IND_CONFIDENCE_OUT );
+  X_IND_COEFFICIENT_OUT        = XMLString::transcode( C_IND_COEFFICIENT_OUT );
+  X_IND_CORRELATION_OUT        = XMLString::transcode( C_IND_CORRELATION_OUT );
+  X_PRESENTATION_DATA          = XMLString::transcode( C_PRESENTATION_DATA );
 
   record[0]   = record0;
   record[1]   = record1;
@@ -341,39 +293,34 @@ void ind_fixedParaTest::setUp()
   record[3]   = record3;
   record[4]   = record4;
   record[5]   = record5;
-
-  X_IND_ANALYSIS_RESULT        = XMLString::transcode( "ind_analysis_result" );
-  X_PRESENTATION_DATA          = XMLString::transcode( "presentation_data" );
-  X_IND_STDERROR_OUT           = XMLString::transcode( "ind_stderror_out" );
-  X_IND_COVARIANCE_OUT         = XMLString::transcode( "ind_covariance_out" );
-  X_IND_INVERSE_COVARIANCE_OUT = XMLString::transcode( "ind_inverse_covariance_out" );
-  X_IND_CORRELATION_OUT        = XMLString::transcode( "ind_correlation_out" );
-  X_IND_COEFFICIENT_OUT        = XMLString::transcode( "ind_coefficient_out" );
-  X_IND_CONFIDENCE_OUT         = XMLString::transcode( "ind_confidence_out" );
-  X_VALUE                      = XMLString::transcode( "value" );
-  X_ERROR_MESSAGES             = XMLString::transcode( "error_messages" );
-
+  
   createDataML();
   createSourceML();
   parse();
 }
 void ind_fixedParaTest::tearDown()
 {
-  XMLString::release( &X_ERROR_MESSAGES );
+  XMLString::release( &X_ERROR_LIST );
+  XMLString::release( &X_VALUE );
+  XMLString::release( &X_IND_OBJ_OUT );
+  XMLString::release( &X_THETA_OUT );
+  XMLString::release( &X_OMEGA_OUT );
   XMLString::release( &X_IND_ANALYSIS_RESULT );
-  XMLString::release( &X_PRESENTATION_DATA );
   XMLString::release( &X_IND_STDERROR_OUT );
   XMLString::release( &X_IND_COVARIANCE_OUT );
   XMLString::release( &X_IND_INVERSE_COVARIANCE_OUT );
-  XMLString::release( &X_IND_CORRELATION_OUT );
-  XMLString::release( &X_IND_COEFFICIENT_OUT );
   XMLString::release( &X_IND_CONFIDENCE_OUT );
-  XMLString::release( &X_VALUE );
-  
+  XMLString::release( &X_IND_COEFFICIENT_OUT );
+  XMLString::release( &X_IND_CORRELATION_OUT );
+  XMLString::release( &X_PRESENTATION_DATA );
+
   if( okToClean )
     {
       remove( fDataML );
       remove( fSourceML );
+      remove( fReportML );
+      remove( fFitDriver );
+      remove( fFitDriver_cpp );
       remove( fMonteParsDriver );
       remove( fMonteParsDriver_cpp );
       remove( fNonmemParsDriver );
@@ -386,15 +333,14 @@ void ind_fixedParaTest::tearDown()
       remove( fPredDriver_cpp );
       remove( fMontePars_h );
       remove( fNonmemPars_h );
-      remove( fDriver );
       remove( fIndData_h );
       remove( fDataSet_h );
       remove( fPred_h );
       remove( fPredEqn_cpp );
       remove( fMakefile );
-      remove( fReportML );
       remove( fSavedReportML );
       remove( fTraceOut );
+      remove( fCheckpoint_xml );
     }
   XMLPlatformUtils::Terminate();
 }
@@ -562,7 +508,7 @@ void ind_fixedParaTest::createSourceML()
 
   oSource << "<model>" << endl;
   oSource << "<pred>" << endl;
-  oSource << "   " << PRED << endl;
+  oSource << "   " << PREDEQN << endl;
   oSource << "</pred>" << endl;
   oSource << "</model>" << endl;
 
@@ -631,95 +577,14 @@ void ind_fixedParaTest::parse()
   // document tree and the dataML document tree.
   //============================================
   NonmemTranslator xlator( source, data );
-
-  //============================================
-  // Determine the type of analysis and 
-  // the number of subjects.
-  //============================================
-  xlator.detAnalysisType();
-
-  //============================================
-  // Parse the dataML document
-  //============================================
   try{
-    xlator.parseData();
+    xlator.translate();
   }
   catch( const SpkCompilerException & e )
     {
       cerr << e << endl;
-      throw;
+      CPPUNIT_ASSERT_MESSAGE( "Failed to compile.", false ); 
     }
-  SymbolTable *table = xlator.getSymbolTable();
-
-  // ID, TIME, DV were in the data set.  So, they should be in the symbol table already.
-  Symbol * id   = table->findi( strID );
-  CPPUNIT_ASSERT( id != Symbol::empty() );
-  Symbol * dv   = table->findi( strDV );
-  CPPUNIT_ASSERT( dv != Symbol::empty() );
-  Symbol * time   = table->findi( strTIME );
-  CPPUNIT_ASSERT( time != Symbol::empty() );
-
-  //============================================
-  // Parse the sourceML document
-  //============================================
-  try{
-    xlator.parseSource();
-  }
-  catch( const SpkCompilerError & e )
-    {
-      cerr << e << endl;
-      throw;
-    }
-
-  // MDV and CP (=DV) were not in the data set; they must be added to the symbol table.
-  Symbol * mdv   = table->findi( strMDV );
-  CPPUNIT_ASSERT( mdv != Symbol::empty() );
-
-  // THETA, OMEGA, ETA must be registered for individual analysis.
-  Symbol * theta = table->findi( strTHETA );
-  CPPUNIT_ASSERT( theta != Symbol::empty() );
-  Symbol * omega = table->findi( strOMEGA );
-  CPPUNIT_ASSERT( omega != Symbol::empty() );
-  Symbol * eta = table->findi( strETA );
-  CPPUNIT_ASSERT( eta != Symbol::empty() );
-
-  //============================================
-  // Check existence/absence of generated files
-  // NonmemPars.h
-  // MontePars.h
-  // IndData.h
-  // DataSet.h
-  // Pred.h
-  // Makefile.SPK
-  // Makefile.MC
-  // driver.cpp
-  // ==========================================
-  FILE * nonmemPars = fopen( fNonmemPars_h, "r" );
-  CPPUNIT_ASSERT_MESSAGE( "Missing NonmemPars.h", nonmemPars != NULL );
-  fclose( nonmemPars );
-
-  FILE * montePars = fopen( fMontePars_h, "r" );
-  CPPUNIT_ASSERT_MESSAGE( "Missing MontePars.h", montePars == NULL );
-  
-  FILE * indData = fopen( fIndData_h, "r" );
-  CPPUNIT_ASSERT_MESSAGE( "Missing IndData.h", indData != NULL );
-  fclose( indData );
-
-  FILE * dataSet = fopen( fDataSet_h, "r" );
-  CPPUNIT_ASSERT_MESSAGE( "Missing DataSet.h", dataSet != NULL );
-  fclose( dataSet );
-
-  FILE * pred = fopen( fPred_h, "r" );
-  CPPUNIT_ASSERT_MESSAGE( "Missing Pred.h", pred != NULL );
-  fclose( pred );
-
-  FILE * makeSPK = fopen( fMakefile, "r" );
-  CPPUNIT_ASSERT_MESSAGE( "Missing Makefile.SPK", makeSPK != NULL );
-  fclose( makeSPK );
- 
-  FILE * fitDriver = fopen( fDriver_cpp, "r" );
-  CPPUNIT_ASSERT_MESSAGE( "Missing fitDriver.cpp", fitDriver != NULL );
-  fclose( fitDriver );
 }
 
 void ind_fixedParaTest::testDriver()
@@ -727,18 +592,18 @@ void ind_fixedParaTest::testDriver()
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Test driver.cpp to see if it compiles/links successfully.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  printf( "\n--- %s ---\n", fDriver );
+  printf( "\n--- %s ---\n", fFitDriver );
   int  exitcode      = 0;
   char command[256];
   sprintf( command, "make -f %s test", fMakefile );
   if( system( command ) != 0 )
     {
       char message[256];
-      sprintf( message, "Compilation of the generated %s failed!", fDriver_cpp );
+      sprintf( message, "Compilation of the generated %s.cpp failed!", fFitDriver );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
-  sprintf( command, "./%s > %s", fDriver, fTraceOut );
+  sprintf( command, "./%s > %s", fFitDriver, fTraceOut );
 
   // The exist code of 0 indicates success.  1 indicates convergence problem.
   // 2 indicates some file access problem.
@@ -748,14 +613,14 @@ void ind_fixedParaTest::testDriver()
   if( exitcode == 1 )
     {
       char message[256];
-      sprintf( message, "%s failed for convergence problem <%d>!", fDriver, exitcode );
+      sprintf( message, "%s failed for convergence problem <%d>!", fFitDriver, exitcode );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   if( exitcode == 2 )
     {
       char message[256];
-      sprintf( message, "%s failed due to inproper file access permission <%d>!", fDriver, exitcode );
+      sprintf( message, "%s failed due to inproper file access permission <%d>!", fFitDriver, exitcode );
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   if( exitcode > 2 )
@@ -763,7 +628,7 @@ void ind_fixedParaTest::testDriver()
       char message[256];
       sprintf( message, 
                "%s failed for reasons other than convergence propblem or access permission <%d>!", 
-               fDriver, 
+               fFitDriver, 
                exitcode );
       
       CPPUNIT_ASSERT_MESSAGE( message, true );
@@ -826,19 +691,25 @@ void ind_fixedParaTest::testReportML()
   report = reportParser->getDocument();
   CPPUNIT_ASSERT( report );
 
+
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Verify if any error was caught during the runtime.
+  // The <eroor_list> tag should appear even when there's no error.
+  // However, it should not contain any error message.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  DOMNodeList *error_messages;
+  DOMNodeList *error_list;
   
-  error_messages = report->getElementsByTagName( X_ERROR_MESSAGES );
-  CPPUNIT_ASSERT( error_messages->getLength() == 0 );
+  error_list = report->getElementsByTagName( X_ERROR_LIST );
+  CPPUNIT_ASSERT_EQUAL( 1, (int)error_list->getLength() );
+  DOMElement* error = dynamic_cast<DOMElement*>( error_list->item(0) );
+  const XMLCh* error_message = error->getFirstChild()->getNodeValue();
+  CPPUNIT_ASSERT_MESSAGE( "<error_list> should have been empty.", XMLString::isAllWhiteSpace( error_message ) );
    
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Verify the objective value.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   double obj_out = 0.0;
-  DOMNodeList * objOut_list = report->getElementsByTagName( XMLString::transcode( "ind_obj_out" ) );
+  DOMNodeList * objOut_list = report->getElementsByTagName( X_IND_OBJ_OUT );
   if( objOut_list->getLength() > 0 )
     {
       DOMElement* objOut = dynamic_cast<DOMElement*>( objOut_list->item(0) );
@@ -853,7 +724,7 @@ void ind_fixedParaTest::testReportML()
   // Verify the final estimate for theta
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   double theta_out[thetaLen];
-  DOMNodeList * thetaOut_list = report->getElementsByTagName( XMLString::transcode("theta_out" ) );
+  DOMNodeList * thetaOut_list = report->getElementsByTagName( X_THETA_OUT );
   if( thetaOut_list->getLength() > 0 )
     {
       DOMElement* thetaOut = dynamic_cast<DOMElement*>( thetaOut_list->item(0) );
@@ -871,7 +742,7 @@ void ind_fixedParaTest::testReportML()
   // Verify the final estimate for Omega
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   double omega_out[omegaOrder];
-  DOMNodeList * omegaOut_list = report->getElementsByTagName( XMLString::transcode("omega_out" ) );
+  DOMNodeList * omegaOut_list = report->getElementsByTagName( X_OMEGA_OUT );
   if( omegaOut_list->getLength() > 0 )
     {
       DOMElement* omegaOut = dynamic_cast<DOMElement*>( omegaOut_list->item(0) );

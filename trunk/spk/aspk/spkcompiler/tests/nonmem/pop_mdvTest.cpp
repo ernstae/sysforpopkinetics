@@ -7,7 +7,6 @@
 #include <map>
 
 #include "pop_mdvTest.h"
-#include "spkcompiler/series.h"
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestSuite.h>
@@ -19,9 +18,10 @@
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
-#include "spkcompiler/nonmem/NonmemTranslator.h"
-#include "spkcompiler/SymbolTable.h"
-#include "spkcompiler/SpkCompilerException.h"
+#include "../../spkcompiler/nonmem/NonmemTranslator.h"
+#include "../../spkcompiler/series.h"
+#include "../../spkcompiler/SymbolTable.h"
+#include "../../spkcompiler/SpkCompilerException.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -31,18 +31,10 @@ namespace{
   const unsigned int MAXCHARS = 64;
 
   const char * testName;
-  char fIndData_h[]       = "IndData.h";
-  char fDataSet_h[]       = "DataSet.h";
-  char fPred_h[]          = "Pred.h";
-  char fPredEqn_cpp[]     = "predEqn.cpp";
-  char fNonmemPars_h[]    = "NonmemPars.h";
-  char fMontePars_h[]     = "MontePars.h";
-  char fMakefile[]        = "Makefile.SPK";
-  char fDriver_cpp[]      = "fitDriver.cpp";
-  char fDriver[]          = "driver";
-  char fReportML[]        = "result.xml";
   char fSavedReportML[]   = "saved_result.xml";
   char fTraceOut[]        = "trace_output";
+  char fFitDriver[]       = "driver";
+  char fReportML[]        = "result.xml";
 
   char fPrefix              [MAXCHARS];
   char fDataML              [MAXCHARS];
@@ -94,12 +86,16 @@ if( actual != expected ) \\\n \
   // <Data Set>
   //
   //   ID      TIME     CP=DV    (MDV)
+  //   1       0.0       0.0      1
   //   1       0.0       0.0      0
+  //   2       0.0       0.0      1
   //   2       0.0       0.0      0
   //   2       1.0      10.0      0
+  //   3       0.0       0.0      1
   //   3       0.0       0.0      0
   //   3       1.0      10.0      0
   //   3       2.0      20.0      0
+  //   4       0.0       0.0      1
   //   4       0.0       0.0      0
   //   4       1.0      10.0      0
   //   4       2.0      20.0      0
@@ -185,26 +181,6 @@ if( actual != expected ) \\\n \
   const double eta_in  [ etaLen ] = { 0.0, 0.0 };
   const bool   eta_fix [ etaLen ] = { false, false };
 
-  const double i_eta_res [ etaLen * nIndividuals ] = { 1.1, 1.2,   /* for the 1st patient */
-			                               2.1, 2.2,   /* 2nd patient */
-                                                       3.1, 3.2,   /* 3rd patient */
-                                                       4.1, 4.2 }; /* 4th patient */
-
-  const double i_eta_wres[ etaLen * nIndividuals ] = { 1.1, 1.2,
-                                                       2.1, 2.2,
-                                                       3.1, 3.2,
-                                                       4.1, 4.2 };
-
-  const double p_eta_res [ etaLen * nIndividuals ] = { 11.1, 11.2,   /* for the 1st patient */
-			                               12.1, 12.2,   /* 2nd patient */
-                                                       13.1, 13.2,   /* 3rd patient */
-                                                       14.1, 14.2 }; /* 4th patient */
-
-  const double p_eta_wres[ etaLen * nIndividuals ] = { 11.1, 11.2,
-                                                       12.1, 12.2,
-                                                       13.1, 13.2,
-                                                       14.1, 14.2 };
-
   //============================================
   // The SPK Compiler decides the constraints
   // of Omega matrix. Just feed the initial
@@ -264,36 +240,9 @@ if( actual != expected ) \\\n \
   // F=KE*KA
   // Y=F+EPS(1)+EPS(2)
   //============================================
-  const char PRED[]     = "ka = THETA(1) + ETA(1)\nke = THETA(2) + ETA(2)\nF = ke * ka\nY = F + EPS(1) + EPS(2)\n";
+  const char PREDEQN[]     = "ka = THETA(1) + ETA(1)\nke = THETA(2) + ETA(2)\nF = ke * ka\nY = F + EPS(1) + EPS(2)\n";
 
-  //============================================
-  // NONMEM's answers
-  //
-  // NOTE: NONMEM's matrices are placed
-  // in the row-major order.
-  //============================================
-  /*
-  const double nm_obj       =  46.4087;
-  const double nm_theta[]   = { 0.02, 1.00171 };
-  const double nm_omega[]   = { 0.771353 };
-  */
-
-  const double nm_pred[]    = {  };
-  //============================================
-  // XML strings
-  //============================================
-  XMLCh * X_ERROR_MESSAGES;
-  XMLCh * X_POP_ANALYSIS_RESULT;
-  XMLCh * X_PRESENTATION_DATA;
-  XMLCh * X_POP_STDERROR_OUT;
-  XMLCh * X_POP_COVARIANCE_OUT;
-  XMLCh * X_POP_INVERSE_COVARIANCE_OUT;
-  XMLCh * X_POP_CORRELATION_OUT;
-  XMLCh * X_POP_COEFFICIENT_OUT;
-  XMLCh * X_POP_CONFIDENCE_OUT;
-  XMLCh * X_VALUE;
 };
-
 void pop_mdvTest::setUp()
 {
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -337,6 +286,19 @@ void pop_mdvTest::setUp()
   sprintf( fDataSetDriver_cpp,    "%s_DataSetDriver.cpp",    fPrefix );
   sprintf( fPredDriver,           "%s_PredDriver",           fPrefix );
   sprintf( fPredDriver_cpp,       "%s_PredDriver.cpp",       fPrefix );
+  X_ERROR_LIST                 = XMLString::transcode( C_ERROR_LIST );
+  X_VALUE                      = XMLString::transcode( C_VALUE );
+  X_POP_OBJ_OUT                = XMLString::transcode( C_POP_OBJ_OUT );
+  X_THETA_OUT                  = XMLString::transcode( C_THETA_OUT );
+  X_OMEGA_OUT                  = XMLString::transcode( C_OMEGA_OUT );
+  X_POP_ANALYSIS_RESULT        = XMLString::transcode( C_POP_ANALYSIS_RESULT );
+  X_POP_STDERROR_OUT           = XMLString::transcode( C_POP_STDERROR_OUT );
+  X_POP_COVARIANCE_OUT         = XMLString::transcode( C_POP_COVARIANCE_OUT );
+  X_POP_INVERSE_COVARIANCE_OUT = XMLString::transcode( C_POP_INVERSE_COVARIANCE_OUT );
+  X_POP_CONFIDENCE_OUT         = XMLString::transcode( C_POP_CONFIDENCE_OUT );
+  X_POP_COEFFICIENT_OUT        = XMLString::transcode( C_POP_COEFFICIENT_OUT );
+  X_POP_CORRELATION_OUT        = XMLString::transcode( C_POP_CORRELATION_OUT );
+  X_PRESENTATION_DATA          = XMLString::transcode( C_PRESENTATION_DATA );
 
   sprintf( LDFLAG, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
 	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
@@ -374,38 +336,33 @@ void pop_mdvTest::setUp()
   record[12]  = record12;
   record[13]  = record13;
 
-  X_POP_ANALYSIS_RESULT        = XMLString::transcode( "pop_analysis_result" );
-  X_PRESENTATION_DATA          = XMLString::transcode( "presentation_data" );
-  X_POP_STDERROR_OUT           = XMLString::transcode( "ind_stderror_out" );
-  X_POP_COVARIANCE_OUT         = XMLString::transcode( "ind_covariance_out" );
-  X_POP_INVERSE_COVARIANCE_OUT = XMLString::transcode( "ind_inverse_covariance_out" );
-  X_POP_CORRELATION_OUT        = XMLString::transcode( "ind_correlation_out" );
-  X_POP_COEFFICIENT_OUT        = XMLString::transcode( "ind_coefficient_out" );
-  X_POP_CONFIDENCE_OUT         = XMLString::transcode( "ind_confidence_out" );
-  X_VALUE                      = XMLString::transcode( "value" );
-  X_ERROR_MESSAGES             = XMLString::transcode( "error_messages" );
-
   createDataML();
   createSourceML();
   parse();
 }
 void pop_mdvTest::tearDown()
 {
-  XMLString::release( &X_ERROR_MESSAGES );
+  XMLString::release( &X_ERROR_LIST );
+  XMLString::release( &X_VALUE );
+  XMLString::release( &X_POP_OBJ_OUT );
+  XMLString::release( &X_THETA_OUT );
+  XMLString::release( &X_OMEGA_OUT );
   XMLString::release( &X_POP_ANALYSIS_RESULT );
-  XMLString::release( &X_PRESENTATION_DATA );
   XMLString::release( &X_POP_STDERROR_OUT );
   XMLString::release( &X_POP_COVARIANCE_OUT );
   XMLString::release( &X_POP_INVERSE_COVARIANCE_OUT );
-  XMLString::release( &X_POP_CORRELATION_OUT );
-  XMLString::release( &X_POP_COEFFICIENT_OUT );
   XMLString::release( &X_POP_CONFIDENCE_OUT );
-  XMLString::release( &X_VALUE );
-  
+  XMLString::release( &X_POP_COEFFICIENT_OUT );
+  XMLString::release( &X_POP_CORRELATION_OUT );
+  XMLString::release( &X_PRESENTATION_DATA );
+
   if( okToClean )
     {
       remove( fDataML );
       remove( fSourceML );
+      remove( fReportML );
+      remove( fFitDriver );
+      remove( fFitDriver_cpp );
       remove( fMonteParsDriver );
       remove( fMonteParsDriver_cpp );
       remove( fNonmemParsDriver );
@@ -418,15 +375,14 @@ void pop_mdvTest::tearDown()
       remove( fPredDriver_cpp );
       remove( fMontePars_h );
       remove( fNonmemPars_h );
-      remove( fDriver );
       remove( fIndData_h );
       remove( fDataSet_h );
       remove( fPred_h );
       remove( fPredEqn_cpp );
       remove( fMakefile );
-      remove( fReportML );
       remove( fSavedReportML );
       remove( fTraceOut );
+      remove( fCheckpoint_xml );
     }
   XMLPlatformUtils::Terminate();
 }
@@ -622,7 +578,7 @@ void pop_mdvTest::createSourceML()
 
   oSource << "<model>" << endl;
   oSource << "<pred>" << endl;
-  oSource << "   " << PRED << endl;
+  oSource << "   " << PREDEQN << endl;
   oSource << "</pred>" << endl;
   oSource << "</model>" << endl;
 
@@ -691,197 +647,16 @@ void pop_mdvTest::parse()
   // document tree and the dataML document tree.
   //============================================
   NonmemTranslator xlator( source, data );
-  //============================================
-  // Determine the type of analysis and 
-  // the number of subjects.
-  //============================================
-  xlator.detAnalysisType();
-
-  //============================================
-  // Parse the dataML document
-  //============================================
   try{
-    xlator.parseData();
+    xlator.translate();
   }
   catch( const SpkCompilerException & e )
     {
       cerr << e << endl;
-      CPPUNIT_ASSERT_MESSAGE( "Failed to parse the data xml.", false );
-    }
-  SymbolTable *table = xlator.getSymbolTable();
-
-  // ID, TIME, DV were in the data set.  So, they should be in the symbol table already.
-  Symbol * id   = table->findi( strID );
-  CPPUNIT_ASSERT( id != Symbol::empty() );
-  Symbol * time = table->findi( strTIME );
-  CPPUNIT_ASSERT( time != Symbol::empty() );
-  Symbol * dv   = table->findi( strDV );
-  CPPUNIT_ASSERT( dv != Symbol::empty() );
-
-  //============================================
-  // Parse the sourceML document
-  //============================================
-  try{
-    xlator.parseSource();
-  }
-  catch( const SpkCompilerException& e )
-    {
-      cerr << e << endl;
-      CPPUNIT_ASSERT_MESSAGE( "Failed to parse the source xml.", false );
-    }
-
-  // MDV and CP (=DV) were not in the data set; they must be added to the symbol table.
-  Symbol * mdv   = table->findi( strMDV );
-  CPPUNIT_ASSERT( mdv != Symbol::empty() );
-  Symbol * cp   = table->findi( strCP );
-  CPPUNIT_ASSERT( cp != Symbol::empty() );
-
-  // THETA, OMEGA, ETA must be registered for individual analysis.
-  Symbol * theta = table->findi( strTHETA );
-  CPPUNIT_ASSERT( theta != Symbol::empty() );
-
-  Symbol * omega = table->findi( strOMEGA );
-  CPPUNIT_ASSERT( omega != Symbol::empty() );
-
-  Symbol * eta = table->findi( strETA );
-  CPPUNIT_ASSERT( eta != Symbol::empty() );
-
-  Symbol * pred = table->findi( strPRED );
-  CPPUNIT_ASSERT( pred != Symbol::empty() );
-
-  Symbol * ipred = table->findi( strIPRED );
-  CPPUNIT_ASSERT( ipred != Symbol::empty() );
-
-  Symbol * ires = table->findi( strIRES );
-  CPPUNIT_ASSERT( ires != Symbol::empty() );
-
-  Symbol * iwres = table->findi( strIWRES );
-  CPPUNIT_ASSERT( iwres != Symbol::empty() );
-
-  Symbol * ietares = table->findi( strIETARES );
-  CPPUNIT_ASSERT( ietares != Symbol::empty() );
-
-  Symbol * iwetares = table->findi( strIWETARES );
-  CPPUNIT_ASSERT( iwetares != Symbol::empty() );
-
-  Symbol * ppred = table->findi( strPPRED );
-  CPPUNIT_ASSERT( ppred != Symbol::empty() );
-
-  Symbol * pres = table->findi( strPRES );
-  CPPUNIT_ASSERT( pres != Symbol::empty() );
-
-  Symbol * pwres = table->findi( strPWRES );
-  CPPUNIT_ASSERT( pwres != Symbol::empty() );
-
-  Symbol * petares = table->findi( strPETARES );
-  CPPUNIT_ASSERT( petares != Symbol::empty() );
-
-  Symbol * pwetares = table->findi( strPWETARES );
-  CPPUNIT_ASSERT( pwetares != Symbol::empty() );
-
-  //============================================
-  // Check existence/absence of generated files
-  // NonmemPars.h
-  // MontePars.h
-  // IndData.h
-  // DataSet.h
-  // Pred.h
-  // Makefile.SPK
-  // Makefile.MC
-  // driver.cpp
-  // ==========================================
-  FILE * nonmemPars = fopen( fNonmemPars_h, "r" );
-  CPPUNIT_ASSERT_MESSAGE( "Missing NonmemPars.h", nonmemPars != NULL );
-  fclose( nonmemPars );
-
-  FILE * montePars = fopen( fMontePars_h, "r" );
-  CPPUNIT_ASSERT_MESSAGE( "Missing MontePars.h", montePars == NULL );
-  
-  FILE * indData = fopen( fIndData_h, "r" );
-  CPPUNIT_ASSERT_MESSAGE( "Missing IndData.h", indData != NULL );
-  fclose( indData );
-
-  FILE * dataSet = fopen( fDataSet_h, "r" );
-  CPPUNIT_ASSERT_MESSAGE( "Missing DataSet.h", dataSet != NULL );
-  fclose( dataSet );
-
-  FILE * fpred = fopen( fPred_h, "r" );
-  CPPUNIT_ASSERT_MESSAGE( "Missing Pred.h", fpred != NULL );
-  fclose( fpred );
-
-  FILE * makeSPK = fopen( fMakefile, "r" );
-  CPPUNIT_ASSERT_MESSAGE( "Missing Makefile.SPK", makeSPK != NULL );
-  fclose( makeSPK );
- 
-  FILE * fitDriver = fopen( fDriver_cpp, "r" );
-  CPPUNIT_ASSERT_MESSAGE( "Missing fitDriver.cpp", fitDriver != NULL );
-  fclose( fitDriver );
-}
-void pop_mdvTest::testNonmemPars_h()
-{
-  //============================================
-  // Test if NonmemPars declares/defines
-  // variables as required.
-  //============================================
-  printf( "\n--- %s ---\n", fNonmemParsDriver );
-  ofstream o ( fNonmemParsDriver_cpp );
-  CPPUNIT_ASSERT( o.good() );
-
-  o << "#include <iostream>" << endl;
-  o << "#include \"NonmemPars.h\"" << endl;
-  o << MY_ASSERT_EQUAL << endl;
-  o << "using namespace std;" << endl;
-  o << endl;
-  o << "int main()" << endl;
-  o << "{" << endl;
-  o << "   MY_ASSERT_EQUAL( NonmemPars::nTheta, " << thetaLen << " );" << endl;
-  for( int i=0; i<thetaLen; i++ )
-    {
-      o << "   MY_ASSERT_EQUAL( NonmemPars::thetaUp [" << i << "], "   << theta_up [i] << " );" << endl;
-      o << "   MY_ASSERT_EQUAL( NonmemPars::thetaLow[" << i << "], "   << theta_low[i] << " );" << endl;
-      o << "   MY_ASSERT_EQUAL( NonmemPars::thetaIn [" << i << "], "   << theta_in [i] << " );" << endl;
-      o << "   MY_ASSERT_EQUAL( NonmemPars::thetaFixed[" << i << "], " << theta_fix[i] << " );" << endl;
-    }						  
-  o << "   MY_ASSERT_EQUAL( NonmemPars::omegaDim, " << omegaDim << " );" << endl;
-  o << "   MY_ASSERT_EQUAL( NonmemPars::omegaOrder, " << omegaOrder << " );" << endl;
-  for( int i=0; i<omegaOrder; i++ )
-    {
-      o << "   MY_ASSERT_EQUAL( NonmemPars::omegaIn [" << i << "], " << omega_in [i] << " );" << endl;
-    }						  
-  o << "   MY_ASSERT_EQUAL( NonmemPars::nEta, " << etaLen << " );" << endl;
-  for( int i=0; i<etaLen; i++ )
-    {
-      o << "   MY_ASSERT_EQUAL( NonmemPars::etaIn [" << i << "], 0.0 );" << endl;
-    }						  
-  o << "   MY_ASSERT_EQUAL( NonmemPars::seed, " << seed << " );" << endl;
-  o << "}" << endl;
-
-  o.close();
-
-  char command[512];
-
-  // Build the test driver.
-  sprintf( command, "g++ %s -o %s %s %s",
-           fNonmemParsDriver_cpp, 
-           fNonmemParsDriver, 
-           LDFLAG, 
-	   CPPFLAG );
-  if( system( command ) != 0 )
-    {
-      char mess[128];
-      sprintf( mess, "Failed to build %s.", fNonmemParsDriver );
-      CPPUNIT_ASSERT_MESSAGE( mess, false );
-    }
-
-  // Run the test driver
-  sprintf( command, "./%s", fNonmemParsDriver );
-  if( system( command ) != 0 )
-    {
-      char mess[128];
-      sprintf( mess, "%s abnormally terminated.", fNonmemParsDriver );
-      CPPUNIT_ASSERT_MESSAGE( mess, false );      
+      CPPUNIT_ASSERT_MESSAGE( "Failed to compile.", false );
     }
 }
+
 void pop_mdvTest::testIndDataClass()
 {
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -891,35 +666,6 @@ void pop_mdvTest::testIndDataClass()
   //
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-  //============================================
-  // Check read-only Data Item values
-  // * ID
-  // * TIME
-  // * CP/DV
-  // * MDV (registered by the Compiler)
-  //
-  // Check PK Parameters
-  // * theta
-  // * Omega
-  // * eta (registered by the Compiler)
-  //
-  // Check the variables appeared on the left hand side 
-  // of equations in the PRED definition.
-  // * f
-  //
-  // Check other registered-by-the-compiler variables
-  // * PRED
-  // * IPRED
-  // * IWRES
-  // * IRES
-  // * IETARES
-  // * IWETARES
-  // * PPRED
-  // * PWRES
-  // * PRES
-  // * PETARES
-  // * PWETARES
-  //============================================
   printf( "\n--- %s ---\n", fIndDataDriver );
   ofstream o( fIndDataDriver_cpp );
   CPPUNIT_ASSERT( o.good() );
@@ -953,72 +699,10 @@ void pop_mdvTest::testIndDataClass()
   for( int i=0; i<nRecords; i++ )
     {
       o << "   assert( strcmp( A." << strID << "[" << i << "], \"" << record[i][0] << "\" ) == 0 );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", A." << strCP   << "[" << i << "] );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", A." << strDV   << "[" << i << "] );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][2] << ", A." << strTIME << "[" << i << "] );" << endl;
       o << "   MY_ASSERT_EQUAL(  " << record[i][3] << ", A." << strMDV  << "[" << i << "] );" << endl;
-      // There have to be placeholders for the current values of theta/eta for
-      // each call to Pred::eval().
-      o << "   MY_ASSERT_EQUAL( thetaLen, A." << strTHETA << "[" << i << "].size() );" << endl;
-      o << "   MY_ASSERT_EQUAL( etaLen,   A." << strETA   << "[" << i << "].size() );" << endl;
       o << endl;
     }
   o << endl;  
-
-  // Ixxx for individualized residuals
-  // Pxxx for population residuals
-  o << "   MY_ASSERT_EQUAL( n, A." << strIRES     << ".size() );" << endl;
-  o << "   MY_ASSERT_EQUAL( n, A." << strIWRES    << ".size() );" << endl;
-  o << "   MY_ASSERT_EQUAL( n, A." << strIPRED    << ".size() );" << endl;
-  o << "   MY_ASSERT_EQUAL( n, A." << strIETARES  << ".size() );" << endl;
-  o << "   MY_ASSERT_EQUAL( n, A." << strIWETARES << ".size() );" << endl;
-  o << "   MY_ASSERT_EQUAL( n, A." << strPRES     << ".size() );" << endl;
-  o << "   MY_ASSERT_EQUAL( n, A." << strPWRES    << ".size() );" << endl;
-  o << "   MY_ASSERT_EQUAL( n, A." << strPPRED    << ".size() );" << endl;
-  o << "   MY_ASSERT_EQUAL( n, A." << strPETARES  << ".size() );" << endl;
-  o << "   MY_ASSERT_EQUAL( n, A." << strPWETARES << ".size() );" << endl;
-  for( int i=0; i<nRecords; i++ )
-    {
-      o << "   MY_ASSERT_EQUAL( etaLen, A." << strIETARES  << "[" << i << "].size() );" << endl;
-      o << "   MY_ASSERT_EQUAL( etaLen, A." << strIWETARES << "[" << i << "].size() );" << endl;
-      o << "   MY_ASSERT_EQUAL( etaLen, A." << strPETARES  << "[" << i << "].size() );" << endl;
-      o << "   MY_ASSERT_EQUAL( etaLen, A." << strPWETARES << "[" << i << "].size() );" << endl;
-    }
-  o << "   MY_ASSERT_EQUAL( n, A." << strF       << ".size() );" << endl;
-  o << "   MY_ASSERT_EQUAL( n, A." << strY       << ".size() );" << endl;
-  o << endl;
-
-  o << "   valarray<double> iEtaRes   ( etaLen );" << endl;
-  o << "   valarray<double> iEtaResWtd( etaLen );" << endl;
-  o << "   valarray<double> pEtaRes   ( etaLen );" << endl;
-  o << "   valarray<double> pEtaResWtd( etaLen );" << endl;
-  for( int i=0; i<etaLen; i++ )
-  {
-     o << "   iEtaRes   [" << i << "] = " << i_eta_res[i] << ";" << endl;
-     o << "   iEtaResWtd[" << i << "] = " << i_eta_wres[i] << ";" << endl;
-     o << "   pEtaRes   [" << i << "] = " << p_eta_res[i] << ";" << endl;
-     o << "   pEtaResWtd[" << i << "] = " << p_eta_wres[i] << ";" << endl;
-  }
-  o << "   A.replaceIEtaRes ( iEtaRes );" << endl;
-  o << "   A.replaceIWEtaRes( iEtaResWtd );" << endl;
-  o << "   A.replacePEtaRes ( pEtaRes );" << endl;
-  o << "   A.replacePWEtaRes( pEtaResWtd );" << endl;
-
-  for( int i=0; i<nRecords; i++ )
-  {
-     for( int j=0; j<etaLen; j++ )
-     {
-        o << "   MY_ASSERT_EQUAL( iEtaRes   [" << j << "]" << ", A." << strIETARES;
-	o << "[" << i << "][" << j << "] );" << endl;
-        o << "   MY_ASSERT_EQUAL( iEtaResWtd[" << j << "]" << ", A." << strIWETARES;
-	o << "[" << i << "][" << j << "] );" << endl;
-
-        o << "   MY_ASSERT_EQUAL( pEtaRes   [" << j << "]" << ", A." << strPETARES;
-	o << "[" << i << "][" << j << "] );" << endl;
-        o << "   MY_ASSERT_EQUAL( pEtaResWtd[" << j << "]" << ", A." << strPWETARES;
-	o << "[" << i << "][" << j << "] );" << endl;
-     }
-  }
 
   o << "   const valarray<double> y = A.getMeasurements();" << endl;
   o << "   MY_ASSERT_EQUAL( " << nDVs-nFixed << ", y.size() );" << endl;
@@ -1027,6 +711,8 @@ void pop_mdvTest::testIndDataClass()
   o << "      if( A." << strMDV << "[j] != 1 )" << endl;
   o << "      {" << endl;
   o << "         MY_ASSERT_EQUAL( A." << strDV << "[j], y[k] );" << endl;
+  o << "         MY_ASSERT_EQUAL( j, A.getRecordIndex( k ) );" << endl;
+  o << "         MY_ASSERT_EQUAL( k, A.getMeasurementIndex( j ) );" << endl;
   o << "         k++;" << endl;
   o << "      }" << endl;
   o << "   }" << endl;
@@ -1088,6 +774,7 @@ void pop_mdvTest::testDataSetClass()
   o << "      {" << endl;
   o << "         MY_ASSERT_EQUAL( set.data[j]->" << strDV << "[i], y[k] );" << endl;
   o << "         MY_ASSERT_EQUAL( k, set.getMeasurementIndex(l) );" << endl;
+  o << "         MY_ASSERT_EQUAL( l, set.getRecordIndex(k) );" << endl;
   o << "         MY_ASSERT_EQUAL( set.data[j]->" << strDV << "[i], y[ set.getMeasurementIndex(l)] );" << endl;
   o << "         k++;" << endl;
   o << "      }" << endl;
@@ -1150,9 +837,6 @@ void pop_mdvTest::testPredClass()
   o << "   DataSet< CppAD::AD<double> > set;" << endl;
   o << "   const valarray<int> N = set.getN();" << endl;
   o << "   Pred< CppAD::AD<double> > pred( &set );" << endl;
-  o << "   const double C1 = 1.0;" << endl;
-  o << "   const double C2 = 2.0;" << endl;
-  o << "   const double C3 = 3.0;" << endl;
   o << "   const int thetaLen    = " << thetaLen << ";" << endl;
   o << "   const int etaLen      = " << etaLen << ";" << endl;
   o << "   const int epsLen      = " << epsLen << ";" << endl;
@@ -1160,132 +844,26 @@ void pop_mdvTest::testPredClass()
   o << "   const int etaOffset   = thetaLen;" << endl;
   o << "   const int epsOffset   = thetaLen + etaLen;" << endl;
   o << "   vector< CppAD::AD<double> > indepVar( thetaLen + etaLen + epsLen );" << endl;
-  o << "   double expectedF1[N.sum()];" << endl;
-  o << "   double expectedY1[N.sum()];" << endl;
   o << endl;
-  o << endl;
-
-  o << "   for( int who=0, k=0; who<nIndividuals; who++ )" << endl;
+  o << "   for( int i=0, k=0, l=0; i<nIndividuals; i++ )" << endl;
   o << "   {" << endl;
-  o << "      for( int j=0; j<N[who]; j++, k++ )" << endl;
+  o << "      int nRecords = i+2;" << endl;
+  o << "      int nObservs = i+1;" << endl;
+  o << "      MY_ASSERT_EQUAL( nRecords, pred.getNRecords( i ) );" << endl;
+  o << "      MY_ASSERT_EQUAL( nObservs, pred.getNObservs( i ) );" << endl;
+  o << "      for( int j=0; j<nRecords; j++, l++ )" << endl;
   o << "      {" << endl;
-  o << "         const int n           = N[who];" << endl;
-  o << "         const int fOffset     = 0;" << endl;
-  o << "         const int yOffset     = n;" << endl;
-  o << "         vector< CppAD::AD<double> > depVar( n*2 );" << endl;
-  o << "         fill( indepVar.begin(), indepVar.end(), 0.0 );" << endl;
-  o << "         fill( depVar.begin(), depVar.end(), 0.0 );" << endl;
-  //---------------------------------------------------------------------------------
-  // A complete iteration over j
-  //
-  o << endl;
-  o << "         indepVar[thetaOffset+0] = C1*j; // theta(1)" << endl;
-  o << "         indepVar[thetaOffset+1] = C1*j; // theta(2)" << endl;
-  o << "         indepVar[thetaOffset+2] = C1*j; // theta(3)" << endl;
-  o << "         indepVar[etaOffset  +0] = C1*j; // eta(1)" << endl;
-  o << "         indepVar[etaOffset  +1] = C1*j; // eta(2)" << endl;
-  o << "         indepVar[epsOffset  +0] = C1*j; // eps(1)" << endl;
-  o << "         indepVar[epsOffset  +1] = C1*j; // eps(2)" << endl;
-  o << "         pred.eval( thetaOffset, thetaLen," << endl;
-  o << "                    etaOffset,   etaLen," << endl;
-  o << "                    epsOffset,   epsLen ," << endl;
-  o << "                    fOffset,     n, " << endl;
-  o << "                    yOffset,     n, " << endl;
-  o << "                    who, j, " << endl;
-  o << "                    indepVar, depVar );" << endl;
-  // Test if F(j) gets placed in the proper location in the depVar vector.
-  o << "         double actualF = CppAD::Value(depVar[ fOffset + j ]);" << endl;
-  o << "         double KA = CppAD::Value( indepVar[thetaOffset+0] + indepVar[etaOffset+0] );" << endl;
-  o << "         double KE = CppAD::Value( indepVar[thetaOffset+1] + indepVar[etaOffset+1] );" << endl;
-  o << "         expectedF1[k]  = KE*KA;" << endl;
-  o << "         MY_ASSERT_EQUAL( expectedF1[k], actualF );" << endl;
-  // Test if Y(j) gets placed in the proper location in the depVar vector.
-  o << "         double actualY = CppAD::Value(depVar[ yOffset + j ]);" << endl;
-  o << "         expectedY1[k]  = expectedF1[k] + CppAD::Value( indepVar[epsOffset+0] + indepVar[epsOffset+1] );" << endl;
-  o << "         MY_ASSERT_EQUAL( expectedY1[k], actualY );" << endl;
-  o << "      }" << endl;
-  o << "   } // End of the first complete iteration over j" << endl;
-
-  // Test if the DataSet objects hold the complete set of computed values from the just-finished iteration.
-  o << "   for( int who=0, k=0; who<nIndividuals; who++ )" << endl;
-  o << "   {" << endl;
-  o << "      for( int j=0; j<N[who]; j++, k++ )" << endl;
-  o << "      {" << endl;
-  o << "         MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][0] );" << endl;
-  o << "         MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][1] );" << endl;
-  o << "         MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][2] );" << endl;
-  o << "         MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA   << "[j][0] );" << endl;
-  o << "         MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA   << "[j][1] );" << endl;
-  o << "         MY_ASSERT_EQUAL( expectedF1[k], set.data[who]->" << strPRED << "[j] );" << endl;
-  o << "         MY_ASSERT_EQUAL( expectedF1[k], set.data[who]->" << strF << "[j] );" << endl;
-  o << "         MY_ASSERT_EQUAL( expectedY1[k], set.data[who]->" << strY<< "[j] );" << endl;
+  o << "         if( set.data[i]->" << strMDV << "[j] != 1 )" << endl;
+  o << "         {" << endl;
+  o << "            MY_ASSERT_EQUAL( k, pred.getMeasurementIndex( l ) );" << endl;
+  o << "            MY_ASSERT_EQUAL( l, pred.getRecordIndex( k ) );" << endl;
+  o << "            k++;" << endl;
+  o << "         }" << endl;
   o << "      }" << endl;
   o << "   }" << endl;
 
 
-  //
-  // End of a complete iteration over j
-  //---------------------------------------------------------------------------------
 
-  //---------------------------------------------------------------------------------
-  // Incomplete iteration over j
-  //
-  o << "   double expectedF2[N.sum()];" << endl;
-  o << "   double expectedY2[N.sum()];" << endl;
-  o << "   for( int who=1, k=0; who<nIndividuals; who++ )" << endl;
-  o << "   {" << endl;
-  o << "      for( int j=0; j<1; j++, k++ )" << endl;
-  o << "      {" << endl;
-  o << "         const int n           = N[who];" << endl;
-  o << "         assert( n>1 );" << endl;
-  o << "         const int fOffset     = 0;" << endl;
-  o << "         const int yOffset     = n;" << endl;
-  o << "         vector< CppAD::AD<double> > depVar( n*2 );" << endl;
-  o << "         fill( indepVar.begin(), indepVar.end(), 0.0 );" << endl;
-  o << "         fill( depVar.begin(), depVar.end(), 0.0 );" << endl;
-  o << "         indepVar[thetaOffset+0] = C2*j; // theta(0)" << endl;
-  o << "         indepVar[thetaOffset+1] = C2*j; // theta(1)" << endl;
-  o << "         indepVar[thetaOffset+2] = C2*j; // theta(2)" << endl;
-  o << "         indepVar[etaOffset  +0] = C2*j; // eta(0)" << endl;
-  o << "         indepVar[etaOffset  +1] = C2*j; // eta(1)" << endl;
-  o << "         indepVar[epsOffset  +0] = C2*j; // eps(0)" << endl;
-  o << "         indepVar[epsOffset  +1] = C2*j; // eps(1)" << endl;
-  o << endl;
-  o << "         pred.eval( thetaOffset, thetaLen," << endl;
-  o << "                    etaOffset,   etaLen," << endl;
-  o << "                    epsOffset,   epsLen ," << endl;
-  o << "                    fOffset,     n, " << endl;
-  o << "                    yOffset,     n, " << endl;
-  o << "                    who, j, " << endl;
-  o << "                    indepVar, depVar );" << endl;
-  // Test if F(j) gets placed in the proper location in the depVar vector.
-  o << "         double actualF = CppAD::Value(depVar[ fOffset + j ]);" << endl;
-  o << "         double KA = CppAD::Value( indepVar[thetaOffset+0] + indepVar[etaOffset+0] );" << endl;
-  o << "         double KE = CppAD::Value( indepVar[thetaOffset+1] + indepVar[etaOffset+1] );" << endl;
-  o << "         expectedF2[k]  = KE*KA;" << endl;
-  o << "         MY_ASSERT_EQUAL( expectedF2[k], actualF );" << endl;
-  // Test if Y(j) gets placed in the proper location in the depVar vector.
-  o << "         double actualY = CppAD::Value(depVar[ yOffset + j ]);" << endl;
-  o << "         expectedY2[k]  = expectedF2[k] + CppAD::Value( indepVar[epsOffset+0] + indepVar[epsOffset+1] );" << endl;
-  o << "         MY_ASSERT_EQUAL( expectedY2[k], actualY );" << endl;
-  o << "      }" << endl;
-  o << "   } // End of the first complete iteration over j" << endl;
-  // Test if the DataSet objects hold the complete set of computed values from the most recent complete iteration.
-  o << "   for( int who=0, k=0; who<nIndividuals; who++ )" << endl;
-  o << "   {" << endl;
-  o << "      for( int j=0; j<N[who]; j++, k++ )" << endl;
-  o << "      {" << endl;
-  o << "         MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][0] );" << endl;
-  o << "         MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][1] );" << endl;
-  o << "         MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA   << "[j][0] );" << endl;
-  o << "         MY_ASSERT_EQUAL( expectedF1[k], set.data[who]->" << strPRED << "[j] );" << endl;
-  o << "         MY_ASSERT_EQUAL( expectedF1[k], set.data[who]->" << strF << "[j] );" << endl;
-  o << "         MY_ASSERT_EQUAL( expectedY1[k], set.data[who]->" << strY << "[j] );" << endl;
-  o << "      }" << endl;
-  o << "   }" << endl;
-  //
-  //  End of an incomplete iteration over j
-  //---------------------------------------------------------------------------------
   o << "   return !ok;" << endl;
   o << "}" << endl;
   o.close();
@@ -1307,314 +885,6 @@ void pop_mdvTest::testPredClass()
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
-}
-void pop_mdvTest::testDriver()
-{
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Test driver.cpp to see if it compiles/links successfully.
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  printf( "\n--- %s ---\n", fDriver );
-  int  exitcode      = 0;
-  char command[256];
-  sprintf( command, "make -f %s test", fMakefile );
-  if( system( command ) != 0 )
-    {
-      char message[256];
-      sprintf( message, "Compilation of the generated %s failed!", fDriver_cpp );
-      
-      CPPUNIT_ASSERT_MESSAGE( message, false );
-    }
-  sprintf( command, "./%s > %s", fDriver, fTraceOut );
-
-  // The exist code of 0 indicates success.  1 indicates convergence problem.
-  // 2 indicates some file access problem.
-  // Since I didn't set the problem so that it makes sense in either scientifically
-  // or mathematially, the return code of anything other than 2 is ignored here.
-  exitcode = system( command );
-  if( exitcode == 1 )
-    {
-      char message[256];
-      sprintf( message, "%s failed for convergence problem <%d>!", fDriver, exitcode );
-      
-      CPPUNIT_ASSERT_MESSAGE( message, false );
-    }
-  if( exitcode == 2 )
-    {
-      char message[256];
-      sprintf( message, "%s failed due to inproper file access permission <%d>!", fDriver, exitcode );
-      CPPUNIT_ASSERT_MESSAGE( message, false );
-    }
-  if( exitcode > 2 )
-    {
-      char message[256];
-      sprintf( message, 
-               "%s failed for reasons other than convergence propblem or access permission <%d>!", 
-               fDriver, 
-               exitcode );
-      
-      CPPUNIT_ASSERT_MESSAGE( message, true );
-    }
-  if( rename( fReportML, fSavedReportML ) != 0 )
-  {
-     char message[256];
-     sprintf( message, "Failed to rename %s to %s!", fReportML, fSavedReportML );
-     CPPUNIT_ASSERT_MESSAGE( message, false );
-  }
-}
-void pop_mdvTest::testReportML()
-{
-  const double scale = 0.05;
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Parse the generated reportML document.
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  xercesc::XercesDOMParser *reportParser = new xercesc::XercesDOMParser;
-  reportParser->setValidationScheme( XercesDOMParser::Val_Auto );
-  reportParser->setDoNamespaces( true );
-  reportParser->setDoSchema( true );
-  reportParser->setValidationSchemaFullChecking( true );
-  reportParser->setCreateEntityReferenceNodes( true );
-  
-  try{
-    reportParser->parse( fSavedReportML );
-  }
-  catch( const XMLException& e )
-    {
-      XMLPlatformUtils::Terminate();
-      char buf[MAXCHARS + 1];
-      sprintf( buf, "An error occurred during parsing %s.\n   Message: %s\n",
-	       fReportML, XMLString::transcode(e.getMessage() ) );
-      
-      CPPUNIT_ASSERT_MESSAGE( buf, false );
-    }
-  catch( const DOMException& e )
-    {
-      
-      XMLCh errText[MAXCHARS + 1]; 
-      if (DOMImplementation::loadDOMExceptionMsg(e.code, errText, MAXCHARS))
-	{
-          XMLPlatformUtils::Terminate();
-          char buf[MAXCHARS + 1];
-          sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
-                   fReportML, e.code, XMLString::transcode(errText) );
-          CPPUNIT_ASSERT_MESSAGE( buf, false );
-	}
-    }
-  catch( ... )
-    {
-      XMLPlatformUtils::Terminate();
-      char buf[MAXCHARS + 1];
-      sprintf( buf, "An unknown error occurred during parsing %s.\n", fSavedReportML );
-      
-      CPPUNIT_ASSERT_MESSAGE( buf, false );
-    }
-  
-  report = reportParser->getDocument();
-  CPPUNIT_ASSERT( report );
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Verify if any error was caught during the runtime.
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  DOMNodeList *error_messages;
-  
-  error_messages = report->getElementsByTagName( X_ERROR_MESSAGES );
-  CPPUNIT_ASSERT( error_messages->getLength() == 0 );
-   
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Verify the objective value.
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  double obj_out = 0.0;
-  DOMNodeList * objOut_list = report->getElementsByTagName( XMLString::transcode( "ind_obj_out" ) );
-  if( objOut_list->getLength() > 0 )
-    {
-      DOMElement* objOut = dynamic_cast<DOMElement*>( objOut_list->item(0) );
-      DOMNodeList* value_list = objOut->getElementsByTagName( X_VALUE );
-      int n = value_list->getLength();
-      CPPUNIT_ASSERT_EQUAL( 1, n );
-      obj_out = atof( XMLString::transcode( value_list->item(0)->getFirstChild()->getNodeValue() ) );      
-      // CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_obj, obj_out, scale * nm_obj );
-    }
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Verify the final estimate for theta
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  double theta_out[thetaLen];
-  DOMNodeList * thetaOut_list = report->getElementsByTagName( XMLString::transcode("theta_out" ) );
-  if( thetaOut_list->getLength() > 0 )
-    {
-      DOMElement* thetaOut = dynamic_cast<DOMElement*>( thetaOut_list->item(0) );
-      DOMNodeList* value_list = thetaOut->getElementsByTagName( X_VALUE );
-      int n = value_list->getLength();
-      CPPUNIT_ASSERT_EQUAL( thetaLen, n );
-      for( int i=0; i<n; i++ )
-	{
-	  theta_out[i] = atof( XMLString::transcode( value_list->item(i)->getFirstChild()->getNodeValue() ) );
-	  //CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_theta[i], theta_out[i], scale * nm_theta[i] );
-	}
-    }
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Verify the final estimate for Omega
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  double omega_out[omegaOrder];
-  DOMNodeList * omegaOut_list = report->getElementsByTagName( XMLString::transcode("omega_out" ) );
-  if( omegaOut_list->getLength() > 0 )
-    {
-      DOMElement* omegaOut = dynamic_cast<DOMElement*>( omegaOut_list->item(0) );
-      DOMNodeList* value_list = omegaOut->getElementsByTagName( X_VALUE );
-      int n = value_list->getLength();
-      CPPUNIT_ASSERT_EQUAL( omegaOrder, n );
-      for( int i=0; i<+n; i++ )
-	{
-	  omega_out[i] = atof( XMLString::transcode( value_list->item(i)->getFirstChild()->getNodeValue() ) );
-	  //CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_omega[i], omega_out[i], scale * nm_omega[i] );
-	}
-    }
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Grab a pointer to the top of "ind_stat_result" sub-tree.
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  DOMNodeList *ind_analysis_result = report->getElementsByTagName( X_POP_ANALYSIS_RESULT );
-  CPPUNIT_ASSERT( ind_analysis_result->getLength() == 1 );
-  DOMElement *ind_stat_result = dynamic_cast<DOMElement*>( ind_analysis_result->item( 0 ) );
-  CPPUNIT_ASSERT( ind_stat_result != NULL );
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Verify the standard error of the final estimate of parameters
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  vector<double> se_val;
-  DOMNodeList * se_list = ind_stat_result->getElementsByTagName( X_POP_STDERROR_OUT );
-  if( se_list->getLength() == 1 )
-    {
-      DOMElement * se = dynamic_cast<DOMElement*>( se_list->item(0) );
-      CPPUNIT_ASSERT( se != NULL );
-      DOMNodeList * value_list = se->getElementsByTagName( X_VALUE );
-      int n = value_list->getLength();
-      se_val.resize( n );
-      for( int i=0; i<n; i++ )
-      {
-	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
-	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
-	if( x_val != NULL )
-	  se_val[i] = atof( XMLString::transcode( x_val ) );
-	//printf( "se[%d] = %f\n", i, se_val[i] );
-	//	CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_stderr[i], se_val[i], scale * nm_stderr[i] );
-      }
-    }
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Verify the covariance of the final estimate of parameters
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  vector<double> cov_val;
-  vector<double> inv_cov_val;
-  int covLen = series(1,1,omegaOrder+thetaLen);
-  DOMNodeList * cov_list =ind_stat_result->getElementsByTagName(  X_POP_COVARIANCE_OUT ) ;
-  if( cov_list->getLength() == 1 )
-    {
-      DOMElement * cov = dynamic_cast<DOMElement*>( cov_list->item(0) );
-      CPPUNIT_ASSERT( cov != NULL );
-      DOMNodeList * value_list = cov->getElementsByTagName( X_VALUE );
-      int n = value_list->getLength();
-      cov_val.resize( n );
-      for( int i=0; i<n; i++ )
-      {
-	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
-	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
-	if( x_val != NULL )
-	  cov_val[i] = atof( XMLString::transcode( x_val ) );
-	CPPUNIT_ASSERT_EQUAL( covLen, n );
-
-	//printf( "cov[%d] = %f\n", i, cov_val[i] );
-
-//CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_cov[i], cov_val[i], scale * nm_cov[i] );
-      }
-    }
-  DOMNodeList * invcov_list =ind_stat_result->getElementsByTagName(  X_POP_INVERSE_COVARIANCE_OUT ) ;
-  if( invcov_list->getLength() == 1 )
-    {
-      DOMElement * invcov = dynamic_cast<DOMElement*>( invcov_list->item(0) );
-      CPPUNIT_ASSERT( invcov != NULL );
-      DOMNodeList * value_list = invcov->getElementsByTagName( X_VALUE );
-      int n = value_list->getLength();
-      inv_cov_val.resize( n );
-      for( int i=0; i<n; i++ )
-      {
-	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
-	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
-	if( x_val != NULL )
-	  inv_cov_val[i] = atof( XMLString::transcode( x_val ) );
-	//printf( "inv_cov[%d] = %f\n", i, inv_cov_val[i] );
-      }
-    }
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Verify the confidence interval for the final estimate of parameters
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  vector<double> ci_val;
-  DOMNodeList * ci_list =ind_stat_result->getElementsByTagName(  X_POP_CONFIDENCE_OUT ) ;
-  if( ci_list->getLength() == 1 )
-    {
-      DOMElement * ci = dynamic_cast<DOMElement*>( ci_list->item(0) );
-      CPPUNIT_ASSERT( ci != NULL );
-      DOMNodeList * value_list = ci->getElementsByTagName( X_VALUE );
-      int n = value_list->getLength();
-      ci_val.resize( n );
-      for( int i=0; i<n; i++ )
-      {
-	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
-	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
-	if( x_val != NULL )
-	  ci_val[i] = atof( XMLString::transcode( x_val ) );
-	//printf( "ci[%d] = %f\n", i, ci_val[i] );
-      }
-    }
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Verify the coefficient of variation for the final estimate of parameters
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  vector<double> cv_val;
-  DOMNodeList * cv_list =ind_stat_result->getElementsByTagName(  X_POP_COEFFICIENT_OUT ) ;
-  if( cv_list->getLength() == 1 )
-    {
-      DOMElement * cv = dynamic_cast<DOMElement*>( cv_list->item(0) );
-      CPPUNIT_ASSERT( cv != NULL );
-      DOMNodeList * value_list = cv->getElementsByTagName( X_VALUE );
-      int n = value_list->getLength();
-      cv_val.resize( n );
-      for( int i=0; i<n; i++ )
-      {
-	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
-	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
-	if( x_val != NULL )
-	  cv_val[i] = atof( XMLString::transcode( x_val ) );
-	//printf( "cv[%d] = %f\n", i, cv_val[i] );
-      }
-    }
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Verify the correlation matrix for the final estimate of parameters
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  vector<double> cor_val;
-  DOMNodeList * cor_list =ind_stat_result->getElementsByTagName(  X_POP_CORRELATION_OUT ) ;
-  if( cor_list->getLength() == 1 )
-    {
-      DOMElement * cor = dynamic_cast<DOMElement*>( cor_list->item(0) );
-      CPPUNIT_ASSERT( cor != NULL );
-      DOMNodeList * value_list = cor->getElementsByTagName( X_VALUE );
-      int n = value_list->getLength();
-      cor_val.resize( n );
-      for( int i=0; i<n; i++ )
-      {
-	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
-	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
-	if( x_val != NULL )
-	  cor_val[i] = atof( XMLString::transcode( x_val ) );
-	//printf( "cor[%d] = %f\n", i, cor_val[i] );
-      }
-    }
-
-  DOMNodeList *presentation_data = report->getElementsByTagName( X_PRESENTATION_DATA );
-  CPPUNIT_ASSERT( presentation_data->getLength() == 1 );
 
   okToClean = true;
 }
@@ -1622,10 +892,6 @@ void pop_mdvTest::testReportML()
 CppUnit::Test * pop_mdvTest::suite()
 {
   CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite( "pop_mdvTest"  );
-  suiteOfTests->addTest( 
-     new CppUnit::TestCaller<pop_mdvTest>(
-         "testNonmemPars_h", 
-	 &pop_mdvTest::testNonmemPars_h ) );
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<pop_mdvTest>(
          "testIndDataClass", 
@@ -1638,16 +904,7 @@ CppUnit::Test * pop_mdvTest::suite()
      new CppUnit::TestCaller<pop_mdvTest>(
          "testPredClass", 
 	 &pop_mdvTest::testPredClass ) );
-  /*
-  suiteOfTests->addTest( 
-     new CppUnit::TestCaller<pop_mdvTest>(
-         "testDriver", 
-	 &pop_mdvTest::testDriver ) );
-  suiteOfTests->addTest( 
-     new CppUnit::TestCaller<pop_mdvTest>(
-         "testReportML", 
-	 &pop_mdvTest::testReportML ) );
-  */
+
   return suiteOfTests;
 }
 

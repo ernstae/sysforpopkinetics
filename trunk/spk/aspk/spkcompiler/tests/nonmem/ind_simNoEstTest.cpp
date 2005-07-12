@@ -7,7 +7,6 @@
 #include <map>
 
 #include "ind_simNoEstTest.h"
-#include "spkcompiler/series.h"
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestSuite.h>
@@ -19,8 +18,10 @@
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
-#include "spkcompiler/nonmem/NonmemTranslator.h"
-#include "spkcompiler/SymbolTable.h"
+#include "../../spkcompiler/nonmem/NonmemTranslator.h"
+#include "../../spkcompiler/SymbolTable.h"
+#include "../../spkcompiler/series.h"
+#include "../../spkcompiler/SpkCompilerException.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -33,19 +34,10 @@ namespace{
   const unsigned int MAXCHARS = 64;
 
   const char * testName;
-  char fIndData_h[]       = "IndData.h";
-  char fDataSet_h[]       = "DataSet.h";
-  char fPred_h[]          = "Pred.h";
-  char fPredEqn_cpp[]     = "predEqn.cpp";
-  char fNonmemPars_h[]    = "NonmemPars.h";
-  char fMontePars_h[]     = "MontePars.h";
-  char fMonteDriver_cpp[] = "monteDriver.cpp";
-  char fFitDriver_cpp[]   = "fitDriver.cpp";
-  char fMakefile[]        = "Makefile.SPK";
-  char fDriver[]          = "driver";
-  char fReportML[]        = "result.xml";
   char fSavedReportML[]   = "saved_result.xml";
   char fTraceOut[]        = "trace_output";
+  char fFitDriver[]       = "driver";
+  char fReportML[]        = "result.xml";
 
   char fPrefix              [MAXCHARS];
   char fDataML              [MAXCHARS];
@@ -309,7 +301,7 @@ if( actual != expected ) \\\n \
   // F = b0 + b1 * x = THETA(1) + THETA(2)*TIME
   // Y = F + ETA(1)
   //============================================
-  const char PRED[] = "b0 = THETA(1)\nb1 = THETA(2)\nx = TiMe\nF = b0 + b1 * x\nY = F + ETA(1)\n";
+  const char PREDEQN[] = "b0 = THETA(1)\nb1 = THETA(2)\nx = TiMe\nF = b0 + b1 * x\nY = F + ETA(1)\n";
 
 
   //============================================
@@ -321,86 +313,6 @@ if( actual != expected ) \\\n \
   const double nm_obj       =  46.4087;
   const double nm_theta[]   = { 0.02, 1.00171 };
   const double nm_omega[]   = { 0.771353 };
-
-  // Standard error
-  // With SPK's parameterization:
-  //
-  // theta(1)    0.2311  
-  // theta(2)    0.000426625  
-  // Omega(1,1)  0.117851
-  // 
-  //                            theta(1)  theta(2)  Omega(1,1)
-  //const double nm_stderr[]  = {  }; 
-                              
-  //
-  // Covariance
-  // With SPK's parameterization:
-  //
-  //                theta(1)     theta(2)     Omega(1,1)
-  //            /                                         \
-  // theta(1)   |   0.0534072   -7.62941e-05  0.0         |
-  // theta(2)   |  -7.62941e-05  1.82009e-07  0.0         |
-  // Omega(1,1) |   0.0          0.0          0.0138889   |
-  //            \                                         /
-  //
-  //const double nm_cov[]     = {   };
-
-  // Inverse of covariance
-  //
-  //               theta(1)      theta(2)     Omega(1,1)
-  //            /                                         \
-  // theta(1)   |  0.0534072    -7.62941e-05  0.0         |
-  // theta(2)   | -7.62941e-05   1.82009e-07  0.0         |
-  // Omega(1,1) |  0.0           0.0          0.0138889   |
-  //            \                                         /
-  // 
-  //const double nm_inv_cov[] = {  };
-
-
-  // Correlation matrix
-  // With SPK's parameterization:
-  //
-  //               theta(1)      theta(2)     Omega(1,1)
-  //            /                                        \
-  // theta(1)   |   1.0         -0.773828     0.0        |
-  // theta(2)   |  -0.773828     1.0          0.0        |
-  // Omega(1,1) |   0.0          0.0          0.0        |
-  //            \                                        /
-  //
-  //const double nm_corr[];
-
-  // Coefficient of variation
-  // With SPK's parameterization
-  //
-  // theta(1)   1155.5
-  // theta(2)      0.0425895
-  // Omega(1,1)  -90.791
-  //
-  //const double nm_cv[];
-
-  // Confidence interval
-  // with SPK's parameterization:
-  //
-  // theta(1)    -0.45045  ~ 0.49045
-  // theta(2)    -1.00085  ~ 1.00258
-  // Omega(1,1)  -0.369714 ~ 0.110105
-  // 
-  // const double nm_ci[];
-
-  const double nm_pred[]    = {  };
-  //============================================
-  // XML strings
-  //============================================
-  XMLCh * X_ERROR_MESSAGES;
-  XMLCh * X_IND_ANALYSIS_RESULT;
-  XMLCh * X_PRESENTATION_DATA;
-  XMLCh * X_IND_STDERROR_OUT;
-  XMLCh * X_IND_COVARIANCE_OUT;
-  XMLCh * X_IND_INVERSE_COVARIANCE_OUT;
-  XMLCh * X_IND_CORRELATION_OUT;
-  XMLCh * X_IND_COEFFICIENT_OUT;
-  XMLCh * X_IND_CONFIDENCE_OUT;
-  XMLCh * X_VALUE;
 };
 
 void ind_simNoEstTest::setUp()
@@ -441,7 +353,7 @@ void ind_simNoEstTest::setUp()
   sprintf( fNonmemParsDriver_cpp, "%s_NonmemParsDriver.cpp", fPrefix );
   sprintf( fIndDataDriver,        "%s_IndDataDriver",        fPrefix );
   sprintf( fIndDataDriver_cpp,    "%s_IndDataDriver.cpp",    fPrefix );
-  sprintf( fDataML,               "%s_dataML",               fPrefix );
+  sprintf( fDataML,               "%s_dataML.xml",           fPrefix );
   sprintf( fSourceML,             "%s_sourceML.xml",         fPrefix );
   sprintf( fDataSetDriver,        "%s_DataSetDriver",        fPrefix );
   sprintf( fDataSetDriver_cpp,    "%s_DataSetDriver.cpp",    fPrefix );
@@ -462,6 +374,20 @@ void ind_simNoEstTest::setUp()
 
   // MDV doesn't have an alias.
   label_alias[strMDV]  = NULL;
+
+  X_ERROR_LIST                 = XMLString::transcode( C_ERROR_LIST );
+  X_VALUE                      = XMLString::transcode( C_VALUE );
+  X_IND_OBJ_OUT                = XMLString::transcode( C_IND_OBJ_OUT );
+  X_THETA_OUT                  = XMLString::transcode( C_THETA_OUT );
+  X_OMEGA_OUT                  = XMLString::transcode( C_OMEGA_OUT );
+  X_IND_ANALYSIS_RESULT        = XMLString::transcode( C_IND_ANALYSIS_RESULT );
+  X_IND_STDERROR_OUT           = XMLString::transcode( C_IND_STDERROR_OUT );
+  X_IND_COVARIANCE_OUT         = XMLString::transcode( C_IND_COVARIANCE_OUT );
+  X_IND_INVERSE_COVARIANCE_OUT = XMLString::transcode( C_IND_INVERSE_COVARIANCE_OUT );
+  X_IND_CONFIDENCE_OUT         = XMLString::transcode( C_IND_CONFIDENCE_OUT );
+  X_IND_COEFFICIENT_OUT        = XMLString::transcode( C_IND_COEFFICIENT_OUT );
+  X_IND_CORRELATION_OUT        = XMLString::transcode( C_IND_CORRELATION_OUT );
+  X_PRESENTATION_DATA          = XMLString::transcode( C_PRESENTATION_DATA );
 
   record[0]   = record0;
   record[1]   = record1;
@@ -501,38 +427,33 @@ void ind_simNoEstTest::setUp()
   record[35]  = record35;
   //  record[36]  = record36;
 
-  X_IND_ANALYSIS_RESULT        = XMLString::transcode( "ind_analysis_result" );
-  X_PRESENTATION_DATA          = XMLString::transcode( "presentation_data" );
-  X_IND_STDERROR_OUT           = XMLString::transcode( "ind_stderror_out" );
-  X_IND_COVARIANCE_OUT         = XMLString::transcode( "ind_covariance_out" );
-  X_IND_INVERSE_COVARIANCE_OUT = XMLString::transcode( "ind_inverse_covariance_out" );
-  X_IND_CORRELATION_OUT        = XMLString::transcode( "ind_correlation_out" );
-  X_IND_COEFFICIENT_OUT        = XMLString::transcode( "ind_coefficient_out" );
-  X_IND_CONFIDENCE_OUT         = XMLString::transcode( "ind_confidence_out" );
-  X_VALUE                      = XMLString::transcode( "value" );
-  X_ERROR_MESSAGES             = XMLString::transcode( "error_messages" );
-
   createDataML();
   createSourceML();
   parse();
 }
 void ind_simNoEstTest::tearDown()
 {
-  XMLString::release( &X_ERROR_MESSAGES );
+  XMLString::release( &X_ERROR_LIST );
+  XMLString::release( &X_VALUE );
+  XMLString::release( &X_IND_OBJ_OUT );
+  XMLString::release( &X_THETA_OUT );
+  XMLString::release( &X_OMEGA_OUT );
   XMLString::release( &X_IND_ANALYSIS_RESULT );
-  XMLString::release( &X_PRESENTATION_DATA );
   XMLString::release( &X_IND_STDERROR_OUT );
   XMLString::release( &X_IND_COVARIANCE_OUT );
   XMLString::release( &X_IND_INVERSE_COVARIANCE_OUT );
-  XMLString::release( &X_IND_CORRELATION_OUT );
-  XMLString::release( &X_IND_COEFFICIENT_OUT );
   XMLString::release( &X_IND_CONFIDENCE_OUT );
-  XMLString::release( &X_VALUE );
-  
+  XMLString::release( &X_IND_COEFFICIENT_OUT );
+  XMLString::release( &X_IND_CORRELATION_OUT );
+  XMLString::release( &X_PRESENTATION_DATA );
+
   if( okToClean )
     {
       remove( fDataML );
       remove( fSourceML );
+      remove( fReportML );
+      remove( fFitDriver );
+      remove( fFitDriver_cpp );
       remove( fMonteParsDriver );
       remove( fMonteParsDriver_cpp );
       remove( fNonmemParsDriver );
@@ -545,17 +466,14 @@ void ind_simNoEstTest::tearDown()
       remove( fPredDriver_cpp );
       remove( fMontePars_h );
       remove( fNonmemPars_h );
-      remove( fDriver );
-      remove( fFitDriver_cpp );
-      remove( fMonteDriver_cpp );
       remove( fIndData_h );
       remove( fDataSet_h );
       remove( fPred_h );
       remove( fPredEqn_cpp );
       remove( fMakefile );
-      remove( fReportML );
       remove( fSavedReportML );
       remove( fTraceOut );
+      remove( fCheckpoint_xml );
     }
   XMLPlatformUtils::Terminate();
 }
@@ -732,7 +650,7 @@ void ind_simNoEstTest::createSourceML()
 
   oSource << "<model>" << endl;
   oSource << "<pred>" << endl;
-  oSource << "   " << PRED << endl;
+  oSource << "   " << PREDEQN << endl;
   oSource << "</pred>" << endl;
   oSource << "</model>" << endl;
 
@@ -802,30 +720,21 @@ void ind_simNoEstTest::parse()
   //============================================
   NonmemTranslator xlator( source, data );
 
-  //============================================
-  // Determine the type of analysis and 
-  // the number of subjects.
-  //============================================
-  xlator.detAnalysisType();
-
-  //============================================
-  // Parse the dataML document
-  //============================================
-  xlator.parseData();
-  SymbolTable *table = xlator.getSymbolTable();
-
-  //============================================
-  // Parse the sourceML document
-  //============================================
-  xlator.parseSource();
-
+  try{
+    xlator.translate();
+  }
+  catch( const SpkCompilerException & e )
+    {
+      cerr << e << endl;
+      CPPUNIT_ASSERT_MESSAGE( "Failed to compile." , false );
+    }
 }
 void ind_simNoEstTest::testDriver()
 {
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Test driver.cpp to see if it compiles/links successfully.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  printf( "\n--- %s ---\n", fDriver );
+  printf( "\n--- %s ---\n", fFitDriver );
   int  exitcode      = 0;
   char command[256];
   sprintf( command, "make -f %s test", fMakefile );
@@ -836,7 +745,7 @@ void ind_simNoEstTest::testDriver()
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
-  sprintf( command, "./%s > %s", fDriver, fTraceOut );
+  sprintf( command, "./%s > %s", fFitDriver, fTraceOut );
 
   // The exist code of 0 indicates success.  1 indicates convergence problem.
   // 2 indicates some file access problem.
@@ -846,14 +755,14 @@ void ind_simNoEstTest::testDriver()
   if( exitcode == 1 )
     {
       char message[256];
-      sprintf( message, "%s failed for convergence problem <%d>!", fDriver, exitcode );
+      sprintf( message, "%s failed for convergence problem <%d>!", fFitDriver, exitcode );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   if( exitcode == 2 )
     {
       char message[256];
-      sprintf( message, "%s failed due to inproper file access permission <%d>!", fDriver, exitcode );
+      sprintf( message, "%s failed due to inproper file access permission <%d>!", fFitDriver, exitcode );
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   if( exitcode > 2 )
@@ -861,7 +770,7 @@ void ind_simNoEstTest::testDriver()
       char message[256];
       sprintf( message, 
                "%s failed for reasons other than convergence propblem or access permission <%d>!", 
-               fDriver, 
+               fFitDriver, 
                exitcode );
       
       CPPUNIT_ASSERT_MESSAGE( message, true );
@@ -924,11 +833,16 @@ void ind_simNoEstTest::testReportML()
 
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Verify if any error was caught during the runtime.
+  // The <eroor_list> tag should appear even when there's no error.
+  // However, it should not contain any error message.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  DOMNodeList *error_messages;
+  DOMNodeList *error_list;
   
-  error_messages = report->getElementsByTagName( X_ERROR_MESSAGES );
-  CPPUNIT_ASSERT( error_messages->getLength() == 0 );
+  error_list = report->getElementsByTagName( X_ERROR_LIST );
+  CPPUNIT_ASSERT_EQUAL( 1, (int)error_list->getLength() );
+  DOMElement* error = dynamic_cast<DOMElement*>( error_list->item(0) );
+  const XMLCh* error_message = error->getFirstChild()->getNodeValue();
+  CPPUNIT_ASSERT_MESSAGE( "<error_list> should have been empty.", XMLString::isAllWhiteSpace( error_message ) );
 
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Verify the generated data
@@ -939,7 +853,7 @@ void ind_simNoEstTest::testReportML()
   CPPUNIT_ASSERT( presentation_data_sets->getLength() == 1 );
 
 
-  okToClean = false;
+  okToClean = true;
 }
 
 CppUnit::Test * ind_simNoEstTest::suite()
