@@ -9,7 +9,6 @@
 
 #include "DOMPrint.h"
 #include "ind_subprobTest.h"
-#include "spkcompiler/series.h"
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestSuite.h>
@@ -21,9 +20,10 @@
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
-#include "spkcompiler/nonmem/NonmemTranslator.h"
-#include "spkcompiler/SymbolTable.h"
-#include "spkcompiler/SpkCompilerException.h"
+#include "../../spkcompiler/nonmem/NonmemTranslator.h"
+#include "../../spkcompiler/series.h"
+#include "../../spkcompiler/SymbolTable.h"
+#include "../../spkcompiler/SpkCompilerException.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -33,18 +33,10 @@ namespace{
   const unsigned int MAXCHARS = 64;
 
   const char * testName;
-  char fIndData_h[]       = "IndData.h";
-  char fDataSet_h[]       = "DataSet.h";
-  char fPred_h[]          = "Pred.h";
-  char fPredEqn_cpp[]     = "predEqn.cpp";
-  char fNonmemPars_h[]    = "NonmemPars.h";
-  char fMontePars_h[]     = "MontePars.h";
-  char fMakefile[]        = "Makefile.SPK";
-  char fDriver_cpp[]      = "fitDriver.cpp";
-  char fDriver[]          = "driver";
-  char fReportML[]        = "result.xml";
   char fSavedReportML[]   = "saved_result.xml";
   char fTraceOut[]        = "trace_output";
+  char fFitDriver[]       = "driver";
+  char fReportML[]        = "result.xml";
 
   char fPrefix              [MAXCHARS];
   char fDataML              [MAXCHARS];
@@ -59,6 +51,9 @@ namespace{
   char fDataSetDriver_cpp   [MAXCHARS];
   char fPredDriver          [MAXCHARS];
   char fPredDriver_cpp      [MAXCHARS];
+  char fXml1_xml            [MAXCHARS];
+  char fXml2_xml            [MAXCHARS];
+  char fXml3_xml            [MAXCHARS];
 
   char SPKLIB[]     = "spk";
   char SPKPREDLIB[] = "spkpred";
@@ -201,7 +196,7 @@ if( actual != expected ) \\\n \
   // F = A * EXP( - B * T  ) 
   // Y = F + E
   //============================================
-  const char PRED[] = "   A = THETA(1)\n \
+  const char PREDEQN[] = "   A = THETA(1)\n \
    B = THETA(2)\n \
    T = TIME\n \
    E = ETA(1)\n \
@@ -225,15 +220,6 @@ if( actual != expected ) \\\n \
   const double nm_invcov[]  = { 275807,    -79136.3,     47168.4,     0,          0,           3e10 };
   const double nm_corr[]    = { 1,          0.693822,    1,           0,          0,           1 };
   const double nm_pred[]    = {  };
-  //============================================
-  // XML strings
-  //============================================
-  XMLCh * X_SPKREPORT;
-  XMLCh * X_SIMULATION;
-  XMLCh * X_IND_OPT_RESULT;
-  XMLCh * X_IND_STAT_RESULT;
-  XMLCh * X_PRESENTATION_DATA;
-  XMLCh * X_SUBPROBLEM;
 };
 
 void ind_subprobTest::setUp()
@@ -273,12 +259,16 @@ void ind_subprobTest::setUp()
   sprintf( fNonmemParsDriver_cpp, "%s_NonmemParsDriver.cpp", fPrefix );
   sprintf( fIndDataDriver,        "%s_IndDataDriver",        fPrefix );
   sprintf( fIndDataDriver_cpp,    "%s_IndDataDriver.cpp",    fPrefix );
-  sprintf( fDataML,               "%s_dataML",               fPrefix );
+  sprintf( fDataML,               "%s_dataML.xml",           fPrefix );
   sprintf( fSourceML,             "%s_sourceML.xml",         fPrefix );
   sprintf( fDataSetDriver,        "%s_DataSetDriver",        fPrefix );
   sprintf( fDataSetDriver_cpp,    "%s_DataSetDriver.cpp",    fPrefix );
   sprintf( fPredDriver,           "%s_PredDriver",           fPrefix );
-  sprintf( fPredDriver_cpp,       "%s_PredDriver.cpp",       fPrefix );
+  sprintf( fPredDriver_cpp,       "%s_PredDriver.cpp",       fPrefix );  
+  sprintf( fXml1_xml,             "%s_xml1.xml",             fPrefix );
+  sprintf( fXml2_xml,             "%s_xml2.xml",             fPrefix );
+  sprintf( fXml3_xml,             "%s_xml3.xml",             fPrefix );
+
 
   sprintf( LDFLAG, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
 	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
@@ -289,6 +279,23 @@ void ind_subprobTest::setUp()
   // DV is aliased to CP
   label_alias[strDV]   = NULL;
 
+  X_ERROR_LIST                 = XMLString::transcode( C_ERROR_LIST );
+  X_VALUE                      = XMLString::transcode( C_VALUE );
+  X_IND_OBJ_OUT                = XMLString::transcode( C_IND_OBJ_OUT );
+  X_THETA_OUT                  = XMLString::transcode( C_THETA_OUT );
+  X_OMEGA_OUT                  = XMLString::transcode( C_OMEGA_OUT );
+  X_IND_ANALYSIS_RESULT        = XMLString::transcode( C_IND_ANALYSIS_RESULT );
+  X_IND_STDERROR_OUT           = XMLString::transcode( C_IND_STDERROR_OUT );
+  X_IND_COVARIANCE_OUT         = XMLString::transcode( C_IND_COVARIANCE_OUT );
+  X_IND_INVERSE_COVARIANCE_OUT = XMLString::transcode( C_IND_INVERSE_COVARIANCE_OUT );
+  X_IND_CONFIDENCE_OUT         = XMLString::transcode( C_IND_CONFIDENCE_OUT );
+  X_IND_COEFFICIENT_OUT        = XMLString::transcode( C_IND_COEFFICIENT_OUT );
+  X_IND_CORRELATION_OUT        = XMLString::transcode( C_IND_CORRELATION_OUT );
+  X_PRESENTATION_DATA          = XMLString::transcode( C_PRESENTATION_DATA );
+  X_SPKREPORT                  = XMLString::transcode( C_SPKREPORT );
+  X_SIMULATION                 = XMLString::transcode( C_SIMULATION );
+  X_SUBPROBLEM                 = XMLString::transcode( C_SUBPROBLEM );
+
 
   record[0]   = record0;
   record[1]   = record1;
@@ -297,30 +304,36 @@ void ind_subprobTest::setUp()
   record[4]   = record4;
   record[5]   = record5;
 
-  X_SPKREPORT         = XMLString::transcode( "spkreport" );
-  X_IND_OPT_RESULT    = XMLString::transcode( "ind_opt_result" );
-  X_PRESENTATION_DATA = XMLString::transcode( "presentation_data" );
-  X_IND_STAT_RESULT   = XMLString::transcode( "ind_stat_result" );
-  X_SIMULATION        = XMLString::transcode( "simulation" );
-  X_SUBPROBLEM        = XMLString::transcode( "subproblem" );
-
   createDataML();
   createSourceML();
   parse();
 }
 void ind_subprobTest::tearDown()
 {
+  XMLString::release( &X_ERROR_LIST );
+  XMLString::release( &X_VALUE );
+  XMLString::release( &X_IND_OBJ_OUT );
+  XMLString::release( &X_THETA_OUT );
+  XMLString::release( &X_OMEGA_OUT );
+  XMLString::release( &X_IND_ANALYSIS_RESULT );
+  XMLString::release( &X_IND_STDERROR_OUT );
+  XMLString::release( &X_IND_COVARIANCE_OUT );
+  XMLString::release( &X_IND_INVERSE_COVARIANCE_OUT );
+  XMLString::release( &X_IND_CONFIDENCE_OUT );
+  XMLString::release( &X_IND_COEFFICIENT_OUT );
+  XMLString::release( &X_IND_CORRELATION_OUT );
+  XMLString::release( &X_PRESENTATION_DATA );
   XMLString::release( &X_SPKREPORT );
   XMLString::release( &X_SIMULATION );
-  XMLString::release( &X_IND_OPT_RESULT );
-  XMLString::release( &X_PRESENTATION_DATA );
-  XMLString::release( &X_IND_STAT_RESULT );
   XMLString::release( &X_SUBPROBLEM );
-  
+
   if( okToClean )
     {
       remove( fDataML );
       remove( fSourceML );
+      remove( fReportML );
+      remove( fFitDriver );
+      remove( fFitDriver_cpp );
       remove( fMonteParsDriver );
       remove( fMonteParsDriver_cpp );
       remove( fNonmemParsDriver );
@@ -333,19 +346,19 @@ void ind_subprobTest::tearDown()
       remove( fPredDriver_cpp );
       remove( fMontePars_h );
       remove( fNonmemPars_h );
-      remove( fDriver );
       remove( fIndData_h );
       remove( fDataSet_h );
       remove( fPred_h );
       remove( fPredEqn_cpp );
       remove( fMakefile );
-      remove( fReportML );
       remove( fSavedReportML );
       remove( fTraceOut );
-      remove( "xml1.xml" );
-      remove( "xml2.xml" );
-      remove( "xml3.xml" );
+      remove( fCheckpoint_xml );
+      remove( fXml1_xml );
+      remove( fXml2_xml );
+      remove( fXml3_xml );
     }
+
   XMLPlatformUtils::Terminate();
 }
 //******************************************************************************
@@ -512,7 +525,7 @@ void ind_subprobTest::createSourceML()
 
   oSource << "<model>" << endl;
   oSource << "<pred>" << endl;
-  oSource << "   " << PRED << endl;
+  oSource << "   " << PREDEQN << endl;
   oSource << "</pred>" << endl;
   oSource << "</model>" << endl;
 
@@ -582,34 +595,13 @@ void ind_subprobTest::parse()
   //============================================
   NonmemTranslator xlator( source, data );
 
-  //============================================
-  // Determine the type of analysis and 
-  // the number of subjects.
-  //============================================
-  xlator.detAnalysisType();
-
-  //============================================
-  // Parse the dataML document
-  //============================================
   try{
-    xlator.parseData();
+    xlator.translate();
   }
   catch( const SpkCompilerException & e )
     {
       cerr << e << endl;
-      throw;
-    }
-
-  //============================================
-  // Parse the sourceML document
-  //============================================
-  try{
-    xlator.parseSource();
-  }
-  catch( const SpkCompilerError & e )
-    {
-      cerr << e << endl;
-      throw;
+      CPPUNIT_ASSERT_MESSAGE( "Failed to compile.", false );
     }
 }
 
@@ -618,18 +610,18 @@ void ind_subprobTest::testDriver()
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Test driver.cpp to see if it compiles/links successfully.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  printf( "\n--- %s ---\n", fDriver );
+  printf( "\n--- %s ---\n", fFitDriver );
   int  exitcode      = 0;
   char command[256];
   sprintf( command, "make -f %s test", fMakefile );
   if( system( command ) != 0 )
     {
       char message[256];
-      sprintf( message, "Compilation of the generated %s failed!", fDriver_cpp );
+      sprintf( message, "Compilation of the generated %s failed!", fFitDriver_cpp );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
-  sprintf( command, "./%s > %s", fDriver, fTraceOut );
+  sprintf( command, "./%s > %s", fFitDriver, fTraceOut );
 
   // The exist code of 0 indicates success.  1 indicates convergence problem.
   // 2 indicates some file access problem.
@@ -639,14 +631,14 @@ void ind_subprobTest::testDriver()
   if( exitcode == 1 )
     {
       char message[256];
-      sprintf( message, "%s failed for convergence problem <%d>!", fDriver, exitcode );
+      sprintf( message, "%s failed for convergence problem <%d>!", fFitDriver, exitcode );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   if( exitcode == 2 )
     {
       char message[256];
-      sprintf( message, "%s failed due to inproper file access permission <%d>!", fDriver, exitcode );
+      sprintf( message, "%s failed due to inproper file access permission <%d>!", fFitDriver, exitcode );
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   if( exitcode > 2 )
@@ -654,7 +646,7 @@ void ind_subprobTest::testDriver()
       char message[256];
       sprintf( message, 
                "%s failed for reasons other than convergence propblem or access permission <%d>!", 
-               fDriver, 
+               fFitDriver, 
                exitcode );
       
       CPPUNIT_ASSERT_MESSAGE( message, true );
@@ -688,15 +680,15 @@ void ind_subprobTest::testReportML()
   char* c2 = strstr( c1+5,  "<?xml" );
   char* c3 = strstr( c2+5,  "<?xml" );
 
-  FILE * xml1 = fopen( "xml1.xml", "w" );
+  FILE * xml1 = fopen( fXml1_xml, "w" );
   fprintf( xml1, "%s\n", c1 );
   fclose( xml1 );
 
-  FILE * xml2 = fopen( "xml2.xml", "w" );
+  FILE * xml2 = fopen( fXml2_xml, "w" );
   fprintf( xml2, "%s\n", c2 );
   fclose( xml2 );
 
-  FILE * xml3 = fopen( "xml3.xml", "w" );
+  FILE * xml3 = fopen( fXml3_xml, "w" );
   fprintf( xml3, "%s\n", c3 );
   fclose( xml3 );
 
@@ -749,7 +741,7 @@ void ind_subprobTest::testReportML()
       doc = parser->getDocument();
       CPPUNIT_ASSERT( doc );
 
-      // DOMPrint( doc );
+      //DOMPrint( doc );
 
       DOMNodeList * report_list = doc->getElementsByTagName( X_SPKREPORT );
       int nReports = report_list->getLength();
@@ -767,6 +759,7 @@ void ind_subprobTest::testReportML()
  
       DOMNodeList * presentation_data_list = doc->getElementsByTagName( X_PRESENTATION_DATA );
       int nPresentations = presentation_data_list->getLength();
+
     }
 
   okToClean = true;

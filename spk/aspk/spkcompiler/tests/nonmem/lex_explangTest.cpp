@@ -10,8 +10,8 @@
 #include <cppunit/TestSuite.h>
 #include <cppunit/TextTestResult.h>
 #include <cppunit/ui/text/TestRunner.h>
-#include "spkcompiler/nonmem/explang.h"
-#include "spkcompiler/SymbolTable.h"
+#include "../../spkcompiler/nonmem/explang.h"
+#include "../../spkcompiler/SymbolTable.h"
 
 using namespace std;
 using namespace CppUnit;

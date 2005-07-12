@@ -10,14 +10,18 @@
 #include <cppunit/TestSuite.h>
 
 #include <xercesc/dom/DOMDocument.hpp>
+#include "../../spkcompiler/nonmem/NonmemTranslator.h"
 
-class ind_fixedParaTest : public CppUnit::TestFixture {
+class ind_fixedParaTest 
+: public CppUnit::TestFixture, 
+  public NonmemTranslator {
 
   xercesc::DOMDocument *source;
   xercesc::DOMDocument *data;
   xercesc::DOMDocument *report;
   
   bool okToClean;
+
 public:
     static CppUnit::Test * suite();
     virtual void setUp();

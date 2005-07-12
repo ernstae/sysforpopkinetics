@@ -7,7 +7,7 @@
 #include <map>
 
 #include "pop_subprobTest.h"
-#include "spkcompiler/series.h"
+#include "../../spkcompiler/series.h"
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestSuite.h>
@@ -19,9 +19,9 @@
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
-#include "spkcompiler/nonmem/NonmemTranslator.h"
-#include "spkcompiler/SymbolTable.h"
-#include "spkcompiler/SpkCompilerException.h"
+#include "../../spkcompiler/nonmem/NonmemTranslator.h"
+#include "../../spkcompiler/SymbolTable.h"
+#include "../../spkcompiler/SpkCompilerException.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -31,18 +31,10 @@ namespace{
   const unsigned int MAXCHARS = 64;
 
   const char * testName;
-  char fIndData_h[]       = "IndData.h";
-  char fDataSet_h[]       = "DataSet.h";
-  char fPred_h[]          = "Pred.h";
-  char fPredEqn_cpp[]     = "predEqn.cpp";
-  char fNonmemPars_h[]    = "NonmemPars.h";
-  char fMontePars_h[]     = "MontePars.h";
-  char fMakefile[]        = "Makefile.SPK";
-  char fDriver_cpp[]      = "fitDriver.cpp";
-  char fDriver[]          = "driver";
-  char fReportML[]        = "result.xml";
   char fSavedReportML[]   = "saved_result.xml";
   char fTraceOut[]        = "trace_output";
+  char fFitDriver[]       = "driver";
+  char fReportML[]        = "result.xml";
 
   char fPrefix              [MAXCHARS];
   char fDataML              [MAXCHARS];
@@ -259,31 +251,8 @@ if( actual != expected ) \\\n \
   // F=KE*KA
   // Y=F+EPS(1)+EPS(2)
   //============================================
-  const char PRED[]     = "ka = THETA(1) + ETA(1)\nke = THETA(2) + ETA(2)\nF = ke * ka\nY = F + EPS(1) + EPS(2)\n";
+  const char PREDEQN[]     = "ka = THETA(1) + ETA(1)\nke = THETA(2) + ETA(2)\nF = ke * ka\nY = F + EPS(1) + EPS(2)\n";
 
-  //============================================
-  // NONMEM's answers
-  //
-  // NOTE: NONMEM's matrices are placed
-  // in the row-major order.
-  //============================================
-  /*
-  const double nm_obj       =  46.4087;
-  const double nm_theta[]   = { 0.02, 1.00171 };
-  const double nm_omega[]   = { 0.771353 };
-  */
-
-  const double nm_pred[]    = {  };
-  //============================================
-  // XML strings
-  //============================================
-  XMLCh * X_POP_ANALYSIS_RESULT;
-  XMLCh * X_SPKREPORT;
-  XMLCh * X_SIMULATION;
-  XMLCh * X_SUBPROBLEM;
-  XMLCh * X_POP_STAT_RESULT;
-  XMLCh * X_PRESENTATION_DATA;
-  XMLCh * X_POP_OPT_RESULT;
 };
 
 void pop_subprobTest::setUp()
@@ -330,6 +299,23 @@ void pop_subprobTest::setUp()
   sprintf( fPredDriver,           "%s_PredDriver",           fPrefix );
   sprintf( fPredDriver_cpp,       "%s_PredDriver.cpp",       fPrefix );
 
+  X_ERROR_LIST                 = XMLString::transcode( C_ERROR_LIST );
+  X_VALUE                      = XMLString::transcode( C_VALUE );
+  X_POP_OBJ_OUT                = XMLString::transcode( C_POP_OBJ_OUT );
+  X_THETA_OUT                  = XMLString::transcode( C_THETA_OUT );
+  X_OMEGA_OUT                  = XMLString::transcode( C_OMEGA_OUT );
+  X_POP_ANALYSIS_RESULT        = XMLString::transcode( C_POP_ANALYSIS_RESULT );
+  X_POP_STDERROR_OUT           = XMLString::transcode( C_POP_STDERROR_OUT );
+  X_POP_COVARIANCE_OUT         = XMLString::transcode( C_POP_COVARIANCE_OUT );
+  X_POP_INVERSE_COVARIANCE_OUT = XMLString::transcode( C_POP_INVERSE_COVARIANCE_OUT );
+  X_POP_CONFIDENCE_OUT         = XMLString::transcode( C_POP_CONFIDENCE_OUT );
+  X_POP_COEFFICIENT_OUT        = XMLString::transcode( C_POP_COEFFICIENT_OUT );
+  X_POP_CORRELATION_OUT        = XMLString::transcode( C_POP_CORRELATION_OUT );
+  X_PRESENTATION_DATA          = XMLString::transcode( C_PRESENTATION_DATA );
+  X_SPKREPORT                  = XMLString::transcode( C_SPKREPORT );
+  X_SIMULATION                 = XMLString::transcode( C_SIMULATION );
+  X_SUBPROBLEM                 = XMLString::transcode( C_SUBPROBLEM );
+
   sprintf( LDFLAG, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
 	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
 
@@ -362,32 +348,36 @@ void pop_subprobTest::setUp()
   record[8]   = record8;
   record[9]   = record9;
 
-  X_POP_ANALYSIS_RESULT      = XMLString::transcode( "pop_analysis_result" );
-  X_SPKREPORT                = XMLString::transcode( "spkreport" );
-  X_SIMULATION               = XMLString::transcode( "simulation" );
-  X_SUBPROBLEM               = XMLString::transcode( "subproblem" );
-  X_POP_OPT_RESULT           = XMLString::transcode( "pop_opt_result" );
-  X_POP_STAT_RESULT          = XMLString::transcode( "pop_stat_result" );
-  X_PRESENTATION_DATA        = XMLString::transcode( "presentation_data" );
-
   createDataML();
   createSourceML();
   parse();
 }
 void pop_subprobTest::tearDown()
 {
+  XMLString::release( &X_ERROR_LIST );
+  XMLString::release( &X_VALUE );
+  XMLString::release( &X_POP_OBJ_OUT );
+  XMLString::release( &X_THETA_OUT );
+  XMLString::release( &X_OMEGA_OUT );
   XMLString::release( &X_POP_ANALYSIS_RESULT );
+  XMLString::release( &X_POP_STDERROR_OUT );
+  XMLString::release( &X_POP_COVARIANCE_OUT );
+  XMLString::release( &X_POP_INVERSE_COVARIANCE_OUT );
+  XMLString::release( &X_POP_CONFIDENCE_OUT );
+  XMLString::release( &X_POP_COEFFICIENT_OUT );
+  XMLString::release( &X_POP_CORRELATION_OUT );
+  XMLString::release( &X_PRESENTATION_DATA );
   XMLString::release( &X_SPKREPORT );
   XMLString::release( &X_SIMULATION );
   XMLString::release( &X_SUBPROBLEM );
-  XMLString::release( &X_POP_OPT_RESULT );
-  XMLString::release( &X_POP_STAT_RESULT );
-  XMLString::release( &X_PRESENTATION_DATA );
-  
+
   if( okToClean )
     {
       remove( fDataML );
       remove( fSourceML );
+      remove( fReportML );
+      remove( fFitDriver );
+      remove( fFitDriver_cpp );
       remove( fMonteParsDriver );
       remove( fMonteParsDriver_cpp );
       remove( fNonmemParsDriver );
@@ -400,15 +390,14 @@ void pop_subprobTest::tearDown()
       remove( fPredDriver_cpp );
       remove( fMontePars_h );
       remove( fNonmemPars_h );
-      remove( fDriver );
       remove( fIndData_h );
       remove( fDataSet_h );
       remove( fPred_h );
       remove( fPredEqn_cpp );
       remove( fMakefile );
-      remove( fReportML );
       remove( fSavedReportML );
       remove( fTraceOut );
+      remove( fCheckpoint_xml );
     }
   XMLPlatformUtils::Terminate();
 }
@@ -603,7 +592,7 @@ void pop_subprobTest::createSourceML()
 
   oSource << "<model>" << endl;
   oSource << "<pred>" << endl;
-  oSource << "   " << PRED << endl;
+  oSource << "   " << PREDEQN << endl;
   oSource << "</pred>" << endl;
   oSource << "</model>" << endl;
 
@@ -672,35 +661,13 @@ void pop_subprobTest::parse()
   // document tree and the dataML document tree.
   //============================================
   NonmemTranslator xlator( source, data );
-  //============================================
-  // Determine the type of analysis and 
-  // the number of subjects.
-  //============================================
-  xlator.detAnalysisType();
-
-  //============================================
-  // Parse the dataML document
-  //============================================
   try{
-    xlator.parseData();
+    xlator.translate();
   }
   catch( const SpkCompilerException & e )
     {
       cerr << e << endl;
-      CPPUNIT_ASSERT_MESSAGE( "Failed to parse the data xml.", false );
-    }
-  SymbolTable *table = xlator.getSymbolTable();
-
-  //============================================
-  // Parse the sourceML document
-  //============================================
-  try{
-    xlator.parseSource();
-  }
-  catch( const SpkCompilerException& e )
-    {
-      cerr << e << endl;
-      CPPUNIT_ASSERT_MESSAGE( "Failed to parse the source xml.", false );
+      CPPUNIT_ASSERT_MESSAGE( "Failed to compile.", false );
     }
 }
 
@@ -709,18 +676,18 @@ void pop_subprobTest::testDriver()
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Test driver.cpp to see if it compiles/links successfully.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  printf( "\n--- %s ---\n", fDriver );
+  printf( "\n--- %s ---\n", fFitDriver );
   int  exitcode      = 0;
   char command[256];
   sprintf( command, "make -f %s test", fMakefile );
   if( system( command ) != 0 )
     {
       char message[256];
-      sprintf( message, "Compilation of the generated %s failed!", fDriver_cpp );
+      sprintf( message, "Compilation of the generated %s failed!", fFitDriver );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
-  sprintf( command, "./%s > %s", fDriver, fTraceOut );
+  sprintf( command, "./%s > %s", fFitDriver, fTraceOut );
 
   // The exist code of 0 indicates success.  1 indicates convergence problem.
   // 2 indicates some file access problem.
@@ -730,14 +697,14 @@ void pop_subprobTest::testDriver()
   if( exitcode == 1 )
     {
       char message[256];
-      sprintf( message, "%s failed for convergence problem <%d>!", fDriver, exitcode );
+      sprintf( message, "%s failed for convergence problem <%d>!", fFitDriver, exitcode );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   if( exitcode == 2 )
     {
       char message[256];
-      sprintf( message, "%s failed due to inproper file access permission <%d>!", fDriver, exitcode );
+      sprintf( message, "%s failed due to inproper file access permission <%d>!", fFitDriver, exitcode );
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   if( exitcode > 2 )
@@ -745,7 +712,7 @@ void pop_subprobTest::testDriver()
       char message[256];
       sprintf( message, 
                "%s failed for reasons other than convergence propblem or access permission <%d>!", 
-               fDriver, 
+               fFitDriver, 
                exitcode );
       
       CPPUNIT_ASSERT_MESSAGE( message, true );

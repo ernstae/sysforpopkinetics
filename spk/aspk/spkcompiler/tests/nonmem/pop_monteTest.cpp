@@ -7,7 +7,6 @@
 #include <map>
 
 #include "pop_monteTest.h"
-#include "spkcompiler/series.h"
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestSuite.h>
@@ -19,9 +18,10 @@
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
-#include "spkcompiler/nonmem/NonmemTranslator.h"
-#include "spkcompiler/SymbolTable.h"
-#include "spkcompiler/SpkCompilerException.h"
+#include "../../spkcompiler/nonmem/NonmemTranslator.h"
+#include "../../spkcompiler/series.h"
+#include "../../spkcompiler/SymbolTable.h"
+#include "../../spkcompiler/SpkCompilerException.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -31,18 +31,10 @@ namespace{
   const unsigned int MAXCHARS = 64;
 
   const char * testName;
-  char fIndData_h[]       = "IndData.h";
-  char fDataSet_h[]       = "DataSet.h";
-  char fPred_h[]          = "Pred.h";
-  char fPredEqn_cpp[]     = "predEqn.cpp";
-  char fNonmemPars_h[]    = "NonmemPars.h";
-  char fMontePars_h[]     = "MontePars.h";
-  char fMakefile[]        = "Makefile.SPK";
-  char fDriver_cpp[]      = "monteDriver.cpp";
-  char fDriver[]          = "driver";
-  char fReportML[]        = "result.xml";
   char fSavedReportML[]   = "saved_result.xml";
   char fTraceOut[]        = "trace_output";
+  char fFitDriver[]       = "driver";
+  char fReportML[]        = "result.xml";
 
   char fPrefix              [MAXCHARS];
   char fDataML              [MAXCHARS];
@@ -243,35 +235,7 @@ if( actual != expected ) \\\n \
   // F=KE*KA
   // Y=F+EPS(1)+EPS(2)
   //============================================
-  const char PRED[]     = "ka = THETA(1) + ETA(1)\nke = THETA(2) + ETA(2)\nF = ke * ka\nY = F + EPS(1) + EPS(2)\n";
-
-  //============================================
-  // NONMEM's answers
-  //
-  // NOTE: NONMEM's matrices are placed
-  // in the row-major order.
-  //============================================
-  /*
-  const double nm_obj       =  46.4087;
-  const double nm_theta[]   = { 0.02, 1.00171 };
-  const double nm_omega[]   = { 0.771353 };
-  */
-
-  const double nm_pred[]    = {  };
-  //============================================
-  // XML strings
-  //============================================
-  XMLCh * X_ERROR_MESSAGES;
-  XMLCh * X_POP_ANALYSIS_RESULT;
-  XMLCh * X_POP_MONTE_RESULT;
-  XMLCh * X_PRESENTATION_DATA;
-  XMLCh * X_POP_STDERROR_OUT;
-  XMLCh * X_POP_COVARIANCE_OUT;
-  XMLCh * X_POP_INVERSE_COVARIANCE_OUT;
-  XMLCh * X_POP_CORRELATION_OUT;
-  XMLCh * X_POP_COEFFICIENT_OUT;
-  XMLCh * X_POP_CONFIDENCE_OUT;
-  XMLCh * X_VALUE;
+  const char PREDEQN[]     = "ka = THETA(1) + ETA(1)\nke = THETA(2) + ETA(2)\nF = ke * ka\nY = F + EPS(1) + EPS(2)\n";
 };
 
 void pop_monteTest::setUp()
@@ -303,6 +267,21 @@ void pop_monteTest::setUp()
 
   // The first element of the char array returned by type_info.name() is the number of characters that follows.
   testName = typeid( *this ).name();
+
+  X_ERROR_LIST                 = XMLString::transcode( C_ERROR_LIST );
+  X_VALUE                      = XMLString::transcode( C_VALUE );
+  X_POP_OBJ_OUT                = XMLString::transcode( C_POP_OBJ_OUT );
+  X_THETA_OUT                  = XMLString::transcode( C_THETA_OUT );
+  X_OMEGA_OUT                  = XMLString::transcode( C_OMEGA_OUT );
+  X_POP_ANALYSIS_RESULT        = XMLString::transcode( C_POP_ANALYSIS_RESULT );
+  X_POP_STDERROR_OUT           = XMLString::transcode( C_POP_STDERROR_OUT );
+  X_POP_COVARIANCE_OUT         = XMLString::transcode( C_POP_COVARIANCE_OUT );
+  X_POP_INVERSE_COVARIANCE_OUT = XMLString::transcode( C_POP_INVERSE_COVARIANCE_OUT );
+  X_POP_CONFIDENCE_OUT         = XMLString::transcode( C_POP_CONFIDENCE_OUT );
+  X_POP_COEFFICIENT_OUT        = XMLString::transcode( C_POP_COEFFICIENT_OUT );
+  X_POP_CORRELATION_OUT        = XMLString::transcode( C_POP_CORRELATION_OUT );
+  X_PRESENTATION_DATA          = XMLString::transcode( C_PRESENTATION_DATA );
+  X_POP_MONTE_RESULT           = XMLString::transcode( C_POP_MONTE_RESULT );
 
   strcpy ( fPrefix,               testName );
   sprintf( fMonteParsDriver,      "%s_MonteParsDriver",      fPrefix );
@@ -350,18 +329,6 @@ void pop_monteTest::setUp()
   record[8]   = record8;
   record[9]   = record9;
 
-  X_POP_ANALYSIS_RESULT        = XMLString::transcode( "pop_analysis_result" );
-  X_POP_MONTE_RESULT           = XMLString::transcode( "pop_monte_result" );
-  X_PRESENTATION_DATA          = XMLString::transcode( "presentation_data" );
-  X_POP_STDERROR_OUT           = XMLString::transcode( "ind_stderror_out" );
-  X_POP_COVARIANCE_OUT         = XMLString::transcode( "ind_covariance_out" );
-  X_POP_INVERSE_COVARIANCE_OUT = XMLString::transcode( "ind_inverse_covariance_out" );
-  X_POP_CORRELATION_OUT        = XMLString::transcode( "ind_correlation_out" );
-  X_POP_COEFFICIENT_OUT        = XMLString::transcode( "ind_coefficient_out" );
-  X_POP_CONFIDENCE_OUT         = XMLString::transcode( "ind_confidence_out" );
-  X_VALUE                      = XMLString::transcode( "value" );
-  X_ERROR_MESSAGES             = XMLString::transcode( "error_messages" );
-
   int defaultEvals = 0;
   if( strcmp( monteMethod, "grid" ) == 0 )
   {
@@ -387,22 +354,28 @@ void pop_monteTest::setUp()
 }
 void pop_monteTest::tearDown()
 {
-  XMLString::release( &X_ERROR_MESSAGES );
+  XMLString::release( &X_ERROR_LIST );
+  XMLString::release( &X_VALUE );
+  XMLString::release( &X_POP_OBJ_OUT );
+  XMLString::release( &X_THETA_OUT );
+  XMLString::release( &X_OMEGA_OUT );
   XMLString::release( &X_POP_ANALYSIS_RESULT );
-  XMLString::release( &X_POP_MONTE_RESULT );
-  XMLString::release( &X_PRESENTATION_DATA );
   XMLString::release( &X_POP_STDERROR_OUT );
   XMLString::release( &X_POP_COVARIANCE_OUT );
   XMLString::release( &X_POP_INVERSE_COVARIANCE_OUT );
-  XMLString::release( &X_POP_CORRELATION_OUT );
-  XMLString::release( &X_POP_COEFFICIENT_OUT );
   XMLString::release( &X_POP_CONFIDENCE_OUT );
-  XMLString::release( &X_VALUE );
-  
+  XMLString::release( &X_POP_COEFFICIENT_OUT );
+  XMLString::release( &X_POP_CORRELATION_OUT );
+  XMLString::release( &X_PRESENTATION_DATA );
+  XMLString::release( &X_POP_MONTE_RESULT );
+
   if( okToClean )
     {
       remove( fDataML );
       remove( fSourceML );
+      remove( fReportML );
+      remove( fFitDriver );
+      remove( fFitDriver_cpp );
       remove( fMonteParsDriver );
       remove( fMonteParsDriver_cpp );
       remove( fNonmemParsDriver );
@@ -415,15 +388,14 @@ void pop_monteTest::tearDown()
       remove( fPredDriver_cpp );
       remove( fMontePars_h );
       remove( fNonmemPars_h );
-      remove( fDriver );
       remove( fIndData_h );
       remove( fDataSet_h );
       remove( fPred_h );
       remove( fPredEqn_cpp );
       remove( fMakefile );
-      remove( fReportML );
       remove( fSavedReportML );
       remove( fTraceOut );
+      remove( fCheckpoint_xml );
 
       remove( "MapMonte.h" );
       remove( "MapMonte.cpp" );
@@ -641,7 +613,7 @@ void pop_monteTest::createSourceML()
 
   oSource << "<model>" << endl;
   oSource << "<pred>" << endl;
-  oSource << "   " << PRED << endl;
+  oSource << "   " << PREDEQN << endl;
   oSource << "</pred>" << endl;
   oSource << "</model>" << endl;
 
@@ -711,156 +683,13 @@ void pop_monteTest::parse()
   //============================================
   NonmemTranslator xlator( source, data );
 
-  //============================================
-  // Determine the type of analysis and 
-  // the number of subjects.
-  //============================================
-  xlator.detAnalysisType();
-
-  //============================================
-  // Parse the dataML document
-  //============================================
   try{
-    xlator.parseData();
+    xlator.translate();
   }
   catch( const SpkCompilerException & e )
     {
       cerr << e << endl;
-      CPPUNIT_ASSERT_MESSAGE( "Failed to parse the data xml.", false );
-    }
-  SymbolTable *table = xlator.getSymbolTable();
-
-  // ID, TIME, DV were in the data set.  So, they should be in the symbol table already.
-  Symbol * id   = table->findi( strID );
-  CPPUNIT_ASSERT( id != Symbol::empty() );
-  Symbol * time = table->findi( strTIME );
-  CPPUNIT_ASSERT( time != Symbol::empty() );
-  Symbol * dv   = table->findi( strDV );
-  CPPUNIT_ASSERT( dv != Symbol::empty() );
-
-  //============================================
-  // Parse the sourceML document
-  //============================================
-  try{
-    xlator.parseSource();
-  }
-  catch( const SpkCompilerException& e )
-    {
-      cerr << e << endl;
-      CPPUNIT_ASSERT_MESSAGE( "Failed to parse the source xml.", false );
-    }
-
-  // MDV and CP (=DV) were not in the data set; they must be added to the symbol table.
-  Symbol * mdv   = table->findi( strMDV );
-  CPPUNIT_ASSERT( mdv != Symbol::empty() );
-  Symbol * cp   = table->findi( strCP );
-  CPPUNIT_ASSERT( cp != Symbol::empty() );
-
-  // THETA, OMEGA, ETA must be registered for individual analysis.
-  Symbol * theta = table->findi( strTHETA );
-  CPPUNIT_ASSERT( theta != Symbol::empty() );
-  Symbol * omega = table->findi( strOMEGA );
-  CPPUNIT_ASSERT( omega != Symbol::empty() );
-  Symbol * eta = table->findi( strETA );
-  CPPUNIT_ASSERT( eta != Symbol::empty() );
-
-  //============================================
-  // Check existence/absence of generated files
-  // NonmemPars.h
-  // MontePars.h
-  // IndData.h
-  // DataSet.h
-  // Pred.h
-  // Makefile.SPK
-  // Makefile.MC
-  // driver.cpp
-  // ==========================================
-  FILE * nonmemPars = fopen( fNonmemPars_h, "r" );
-  CPPUNIT_ASSERT_MESSAGE( "Missing NonmemPars.h", nonmemPars != NULL );
-  fclose( nonmemPars );
-
-  FILE * montePars = fopen( fMontePars_h, "r" );
-  CPPUNIT_ASSERT_MESSAGE( "Missing MontePars.h", montePars != NULL );
-  
-  FILE * indData = fopen( fIndData_h, "r" );
-  CPPUNIT_ASSERT_MESSAGE( "Missing IndData.h", indData != NULL );
-  fclose( indData );
-
-  FILE * dataSet = fopen( fDataSet_h, "r" );
-  CPPUNIT_ASSERT_MESSAGE( "Missing DataSet.h", dataSet != NULL );
-  fclose( dataSet );
-
-  FILE * pred = fopen( fPred_h, "r" );
-  CPPUNIT_ASSERT_MESSAGE( "Missing Pred.h", pred != NULL );
-  fclose( pred );
-
-  FILE * makeSPK = fopen( fMakefile, "r" );
-  CPPUNIT_ASSERT_MESSAGE( "Missing Makefile.SPK", makeSPK != NULL );
-  fclose( makeSPK );
-}
-void pop_monteTest::testNonmemPars_h()
-{
-  //============================================
-  // Test if NonmemPars declares/defines
-  // variables as required.
-  //============================================
-  printf( "\n--- %s ---\n", fNonmemParsDriver );
-  ofstream o ( fNonmemParsDriver_cpp );
-  CPPUNIT_ASSERT( o.good() );
-
-  o << "#include <iostream>" << endl;
-  o << "#include \"NonmemPars.h\"" << endl;
-  o << MY_ASSERT_EQUAL << endl;
-  o << "using namespace std;" << endl;
-  o << endl;
-  o << "int main()" << endl;
-  o << "{" << endl;
-  o << "   MY_ASSERT_EQUAL( NonmemPars::nTheta, " << thetaLen << " );" << endl;
-  for( int i=0; i<thetaLen; i++ )
-    {
-      o << "   MY_ASSERT_EQUAL( NonmemPars::thetaUp [" << i << "], " << theta_up [i] << " );" << endl;
-      o << "   MY_ASSERT_EQUAL( NonmemPars::thetaLow[" << i << "], " << theta_low[i] << " );" << endl;
-      o << "   MY_ASSERT_EQUAL( NonmemPars::thetaIn [" << i << "], " << theta_in [i] << " );" << endl;
-      o << "   MY_ASSERT_EQUAL( NonmemPars::thetaFixed[" << i << "], " << theta_fix[i] << " );" << endl;
-    }						  
-  o << "   MY_ASSERT_EQUAL( NonmemPars::omegaDim, " << omegaDim << " );" << endl;
-  o << "   MY_ASSERT_EQUAL( NonmemPars::omegaOrder, " << omegaOrder << " );" << endl;
-  for( int i=0; i<omegaOrder; i++ )
-    {
-      o << "   MY_ASSERT_EQUAL( NonmemPars::omegaIn [" << i << "], " << omega_in [i] << " );" << endl;
-    }						  
-  o << "   MY_ASSERT_EQUAL( NonmemPars::nEta, " << etaLen << " );" << endl;
-  for( int i=0; i<etaLen; i++ )
-    {
-      o << "   MY_ASSERT_EQUAL( NonmemPars::etaIn [" << i << "], 0.0 );" << endl;
-    }						  
-  o << "   MY_ASSERT_EQUAL( NonmemPars::seed, " << seed << " );" << endl;
-  o << "}" << endl;
-
-  o.close();
-
-  char command[512];
-
-  // Build the test driver.
-  sprintf( command, "g++ %s -o %s %s %s",
-           fNonmemParsDriver_cpp, 
-           fNonmemParsDriver, 
-           LDFLAG, 
-	   CPPFLAG );
-  if( system( command ) != 0 )
-    {
-      char mess[128];
-      sprintf( mess, "Failed to build %s.", fNonmemParsDriver );
-      CPPUNIT_ASSERT_MESSAGE( mess, false );
-    }
-
-  // Run the test driver
-  sprintf( command, "./%s", fNonmemParsDriver );
-  if( system( command ) != 0 )
-    {
-      char mess[128];
-      sprintf( mess, "%s abnormally terminated.", fNonmemParsDriver );
-      CPPUNIT_ASSERT_MESSAGE( mess, false );      
+      CPPUNIT_ASSERT_MESSAGE( "Failed to compile.", false );
     }
 }
 void pop_monteTest::testMontePars_h()
@@ -914,18 +743,18 @@ void pop_monteTest::testDriver()
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Test driver.cpp to see if it compiles/links successfully.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  printf( "\n--- %s ---\n", fDriver );
+  printf( "\n--- %s ---\n", fMonteDriver_cpp );
   int  exitcode      = 0;
   char command[256];
   sprintf( command, "make -f %s test", fMakefile );
   if( system( command ) != 0 )
     {
       char message[256];
-      sprintf( message, "Compilation of the generated %s failed!", fDriver_cpp );
+      sprintf( message, "Compilation of the generated %s failed!", fMonteDriver_cpp );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
-  sprintf( command, "./%s > %s", fDriver, fTraceOut );
+  sprintf( command, "./%s > %s", fFitDriver, fTraceOut );
 
   // The exist code of 0 indicates success.  1 indicates convergence problem.
   // 2 indicates some file access problem.
@@ -937,14 +766,14 @@ void pop_monteTest::testDriver()
   if( exitcode == 1 )
     {
       char message[256];
-      sprintf( message, "%s failed for computation problem <%d>!", fDriver, exitcode );
+      sprintf( message, "%s failed for computation problem <%d>!", fMonteDriver_cpp, exitcode );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   if( exitcode == 2 )
     {
       char message[256];
-      sprintf( message, "%s failed due to inproper file access permission <%d>!", fDriver, exitcode );
+      sprintf( message, "%s failed due to inproper file access permission <%d>!", fMonteDriver_cpp, exitcode );
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   if( exitcode > 2 )
@@ -952,7 +781,7 @@ void pop_monteTest::testDriver()
       char message[256];
       sprintf( message, 
                "%s failed for reasons other than convergence propblem or access permission <%d>!", 
-               fDriver, 
+               fFitDriver, 
                exitcode );
       
       CPPUNIT_ASSERT_MESSAGE( message, true );
@@ -1018,17 +847,28 @@ void pop_monteTest::testReportML()
 
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Verify if any error was caught during the runtime.
+  // The <eroor_list> tag should appear even when there's no error.
+  // However, it should not contain any error message.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  DOMNodeList *error_messages;
-  
-  error_messages = report->getElementsByTagName( X_ERROR_MESSAGES );
-  CPPUNIT_ASSERT( error_messages->getLength() == 0 );
+  DOMNodeList *error_list;
+  error_list = report->getElementsByTagName( X_ERROR_LIST );
+  CPPUNIT_ASSERT_EQUAL( 1, (int)error_list->getLength() );
+  DOMElement* error = dynamic_cast<DOMElement*>( error_list->item(0) );
+  if( error->hasChildNodes() )
+  {
+     const XMLCh* error_message = error->getFirstChild()->getNodeValue();
+     CPPUNIT_ASSERT_MESSAGE( "<error_list> should have been empty.", XMLString::isAllWhiteSpace( error_message ) );
+  }
+  else
+  {
+     CPPUNIT_ASSERT( true );
+  }
    
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Verify the objective value.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   double obj_out = 0.0;
-  DOMNodeList * objOut_list = report->getElementsByTagName( XMLString::transcode( "ind_obj_out" ) );
+  DOMNodeList * objOut_list = report->getElementsByTagName( X_POP_OBJ_OUT );
   if( objOut_list->getLength() > 0 )
     {
       DOMElement* objOut = dynamic_cast<DOMElement*>( objOut_list->item(0) );
@@ -1043,7 +883,7 @@ void pop_monteTest::testReportML()
   // Verify the final estimate for theta
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   double theta_out[thetaLen];
-  DOMNodeList * thetaOut_list = report->getElementsByTagName( XMLString::transcode("theta_out" ) );
+  DOMNodeList * thetaOut_list = report->getElementsByTagName( X_THETA_OUT );
   if( thetaOut_list->getLength() > 0 )
     {
       DOMElement* thetaOut = dynamic_cast<DOMElement*>( thetaOut_list->item(0) );
@@ -1061,7 +901,7 @@ void pop_monteTest::testReportML()
   // Verify the final estimate for Omega
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   double omega_out[omegaOrder];
-  DOMNodeList * omegaOut_list = report->getElementsByTagName( XMLString::transcode("omega_out" ) );
+  DOMNodeList * omegaOut_list = report->getElementsByTagName( X_OMEGA_OUT );
   if( omegaOut_list->getLength() > 0 )
     {
       DOMElement* omegaOut = dynamic_cast<DOMElement*>( omegaOut_list->item(0) );
@@ -1082,17 +922,12 @@ void pop_monteTest::testReportML()
   CPPUNIT_ASSERT( pop_monte_result->getLength() == 1 );
   DOMElement *ind_stat_result = dynamic_cast<DOMElement*>( pop_monte_result->item( 0 ) );
   CPPUNIT_ASSERT( ind_stat_result != NULL );
-
   okToClean = true;
 }
 
 CppUnit::Test * pop_monteTest::suite()
 {
   CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite( "pop_monteTest"  );
-  suiteOfTests->addTest( 
-     new CppUnit::TestCaller<pop_monteTest>(
-         "testNonmemPars_h", 
-	 &pop_monteTest::testNonmemPars_h ) );
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<pop_monteTest>(
          "testMontePars_h", 

@@ -10,8 +10,12 @@
 #include <cppunit/TestSuite.h>
 
 #include <xercesc/dom/DOMDocument.hpp>
+#include "../../spkcompiler/nonmem/NonmemTranslator.h"
 
-class ind_simTest : public CppUnit::TestFixture {
+class ind_simTest 
+: public CppUnit::TestFixture,
+  public NonmemTranslator
+ {
 
   xercesc::DOMDocument *source;
   xercesc::DOMDocument *data;
@@ -28,7 +32,6 @@ public:
     void parse();
     void testDataSetClass();
     void testDriver();
-    void testReportML();
 };
 
 #endif
