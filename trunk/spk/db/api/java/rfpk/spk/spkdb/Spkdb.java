@@ -15,18 +15,19 @@ public abstract class Spkdb {
     private static Pattern pattern1;
     private static Pattern pattern2;
     private static Pattern pattern3;
-    /**
-     Open a connection to a database. The object returned  must be passed as a parameter
-     to other methods of the Spkdb class.  A process may have several connections open
-     at the same time.  When a connection is no longer used, it should be closed
-     using the Spkdb.disconnect() method.
-     @param dbName name of a database
-     @param hostName domain name of host on which database resides
-     @param dbUser username of a valid user of the database
-     @param dbPassword user's password
-     @return an object of type java.sql.Connection
-     @see #disconnect
-     @see java.sql.Connection
+    /** Open a connection to a database. The object returned  must be passed as a parameter
+     *      to other methods of the Spkdb class.  A process may have several connections open
+     *      at the same time.  When a connection is no longer used, it should be closed
+     *      using the Spkdb.disconnect() method.
+     * @return an object of type java.sql.Connection
+     * @see #disconnect
+     * @see java.sql.Connection
+     * @param dbName name of a database
+     * @param hostName domain name of host on which database resides
+     * @param dbUser username of a valid user of the database
+     * @param dbPassword user's password
+     * @throws SQLException a SQL exception.
+     * @throws SpkdbException a Spkdb exception.
      */
     public static Connection connect(String dbName, String hostName, String dbUser, String dbPassword) 
 	throws SQLException, SpkdbException
@@ -44,31 +45,33 @@ public abstract class Spkdb {
 						      "&password=" + dbPassword);
 	return conn;
     }
-    /**
-       Close a database connection.
-       @param conn open connection to a database
-       @return true
-       @see #connect
+    /**        Close a database connection.
+     * @return true
+     * @see #connect
+     * @param conn open connection to a database
+     * @throws SQLException a SQL exception.
      */
     public static boolean disconnect(Connection conn) throws SQLException {
 	conn.close();
 	return true;
     }
-    /**
-       Submit a job
-       @param conn open connection to the database
-       @param userId key to a row in the user table
-       @param abstraction short description of the job
-       @param datasetId key to a row in the dataset table
-       @param datasetVersion rcs version code for the dataset
-       @param modelId key to a rew in the model table
-       @param modelVersion rcs version code for the model
-       @param xmlSource source code for the job
-       @param methodCode key to a row in the method table
-       @param owner owner of the job
-       @param parent the job_id of the job that is the parent; otherwise 0
-       @param isWarmStart true for being a warm start job; false for otherwise
-       @return key to the new row in the job table
+    /**        Submit a job
+     * @return key to the new row in the job table
+     * @param conn open connection to the database
+     * @param userId key to a row in the user table
+     * @param abstraction short description of the job
+     * @param datasetId key to a row in the dataset table
+     * @param datasetVersion rcs version code for the dataset
+     * @param modelId key to a rew in the model table
+     * @param modelVersion rcs version code for the model
+     * @param xmlSource source code for the job
+     * @param methodCode key to a row in the method table
+     * @param owner owner of the job
+     * @param parent the job_id of the job that is the parent; otherwise 0
+     * @param isWarmStart true for being a warm start job; false for otherwise
+     * @throws SQLException a SQL exception.
+     * @throws SpkdbException a Spkdb exception.
+     * @throws FileNotFoundException a file not found exception
      */
     public static long newJob(Connection conn, 
 			      long userId,
@@ -133,12 +136,13 @@ public abstract class Spkdb {
 	addToHistory(conn, jobId, stateCode, "unknown");
 	return jobId;
     }
-    /**
-       Get the state transition history for a given job.
-       @param conn open connection to the database
-       @param jobId key to the given job in the job table
-       @return Object of type java.sql.Resultset, containing a sequence of rows of the
-       hhistory table, related to a given job.
+    /**        Get the state transition history for a given job.
+     * @return Object of type java.sql.Resultset, containing a sequence of rows of the
+     *        hhistory table, related to a given job.
+     * @param conn open connection to the database
+     * @param jobId key to the given job in the job table
+     * @throws SQLException a SQL exception.
+     * @throws SpkdbException a Spkdb exception.
      */
     public static ResultSet jobHistory(Connection conn, long jobId)
 	throws SQLException, SpkdbException
@@ -150,12 +154,13 @@ public abstract class Spkdb {
 
 	return rs;
     }
-    /**
-       Get a given job.
-       @param conn open connection to the database
-       @param jobId key to the given job in the job table
-       @return Object of type java.sql.ResultSet interface, containing a single row 
-       of the job table.
+    /**        Get a given job.
+     * @return Object of type java.sql.ResultSet interface, containing a single row
+     *        of the job table.
+     * @param conn open connection to the database
+     * @param jobId key to the given job in the job table
+     * @throws SQLException a SQL exception.
+     * @throws SpkdbException a Spkdb exception.
      */
     public static ResultSet getJob(Connection conn, long jobId)
 	throws SQLException, SpkdbException
@@ -167,16 +172,17 @@ public abstract class Spkdb {
 
 	return rs;
     }
-    /**
-       Get a sequence of jobs for a given user.
-       @param conn open connection to the database 
-       @param userId key to the given user in user table
-       @param maxNum maximum number of jobs to provide status for
-       @param leftOff least jobId previously returned (0 if first call in sequence)
-       @return Object of type java.sql.Resultset, containing a sequence of rows of the
-       job table, belonging to a given user. Three fields, xml_source, cpp_source, and
-       report, which are defined in the SQL schema to have type "longblob" are returned
-       as java.sql.Blob types.
+    /**        Get a sequence of jobs for a given user.
+     * @return Object of type java.sql.Resultset, containing a sequence of rows of the
+     *        job table, belonging to a given user. Three fields, xml_source, cpp_source, and
+     *        report, which are defined in the SQL schema to have type "longblob" are returned
+     *        as java.sql.Blob types.
+     * @param conn open connection to the database
+     * @param userId key to the given user in user table
+     * @param maxNum maximum number of jobs to provide status for
+     * @param leftOff least jobId previously returned (0 if first call in sequence)
+     * @throws SQLException a SQL exception.
+     * @throws SpkdbException a Spkdb exception.
      */
     public static ResultSet userJobs(Connection conn, long userId, int maxNum, long leftOff)
 	throws SQLException, SpkdbException 
@@ -195,13 +201,57 @@ public abstract class Spkdb {
 
 	return rs;
     }
-    /**
-       Record the end status of a job. 
-       @param conn open connection to the database
-       @param jobId key to the given job in the job table
-       @param endCode the type of end that this job reached
-       @param report final report 
-       @return true if the job's state_code is set to "end" by this method, otherwise false.
+    /** If the state code is 'q2c', set the job's state code to 'end' and end code to 'abrt'.
+     * If the state code is 'cmp', set the job's state code to 'q2ac'.
+     * If the state code is 'q2r', set the job's state code to 'end' and the end code to 'abrt'.
+     * If the state code is 'run', set the job's state code to 'q2ar'.
+     * Set the job's event time and add the state change event to the job's history.
+     * @return true if the job's state_code is set to "q2a" by this method, otherwise false.
+     * @param conn open connection to the database
+     * @param jobId key to the given job in the job table
+     * @throws SQLException a SQL exception.
+     * @throws SpkdbException a Spkdb exception.
+     */
+    public static boolean abortJob(Connection conn, long jobId)
+	throws SQLException, SpkdbException
+    {
+        java.util.Date date = new java.util.Date(); 
+	long eventTime = date.getTime()/1000;
+        Statement stmt = conn.createStatement();
+        String state = "end";
+        String sql ="update job set state_code='" + state +"', end_code='abrt', event_time=" +
+                    eventTime + " where job_id ='" + jobId + "' and state_code='q2c';";
+        if(stmt.executeUpdate(sql) != 1)
+        {
+            state = "q2ac";
+            sql ="update job set state_code='" + state +"', event_time=" + eventTime +
+                 " where job_id ='" + jobId + "' and state_code='cmp';";
+            if(stmt.executeUpdate(sql) != 1)
+            {
+                state = "end";
+                sql ="update job set state_code='" + state +"', end_code='abrt', event_time=" + 
+                     eventTime + " where job_id ='" + jobId + "' and state_code='q2r';";
+                if(stmt.executeUpdate(sql) != 1)
+                {
+                    state = "q2ar";
+                    sql ="update job set state_code='" + state +"', event_time=" + 
+                         eventTime + " where job_id ='" + jobId + "' and state_code='run';";
+                    if(stmt.executeUpdate(sql) != 1)
+                        return false;
+                }
+            }
+        }
+        addToHistory(conn, jobId, state, "unknown");
+	return true;
+    }
+    /**        Record the end status of a job.
+     * @return true if the job's state_code is set to "end" by this method, otherwise false.
+     * @param conn open connection to the database
+     * @param jobId key to the given job in the job table
+     * @param endCode the type of end that this job reached
+     * @param report final report
+     * @throws SQLException a SQL exception.
+     * @throws SpkdbException a Spkdb exception.
      */
     public static boolean endJob(Connection conn, long jobId, String endCode, String report)
 	throws SQLException, SpkdbException
@@ -222,15 +272,16 @@ public abstract class Spkdb {
         else
             return false;
 	return true;
-    }
-    /**
-       Add a new scientific dataset to the database.
-       @param conn open connection to the database
-       @param userId key to a user in the user table
-       @param name name of this dataset (must be unique for the given user)
-       @param abstraction short description of the dataset
-       @param archive the entire data set in rcs-compatible format
-       @return unique number, which is the key to the new row in the dataset table
+    }    
+    /**        Add a new scientific dataset to the database.
+     * @return unique number, which is the key to the new row in the dataset table
+     * @param conn open connection to the database
+     * @param userId key to a user in the user table
+     * @param name name of this dataset (must be unique for the given user)
+     * @param abstraction short description of the dataset
+     * @param archive the entire data set in rcs-compatible format
+     * @throws SQLException a SQL exception.
+     * @throws SpkdbException a Spkdb exception.
      */
     public static long 
 	newDataset(Connection conn, long userId, String name, String abstraction, String archive)
@@ -252,13 +303,14 @@ public abstract class Spkdb {
 	}
 	return datasetId;
     }       
-    /**
-       Get a dataset.
-       @param conn open connection to the database
-       @param datasetId key to a row in the dataset table
-       @return Object of type java.sql.ResultSet, containing a row of the dataset table.
-       The archive field, defined in the SQL schema as having type "longblob", is
-       returned as type java.sql.Blob.
+    /**        Get a dataset.
+     * @return Object of type java.sql.ResultSet, containing a row of the dataset table.
+     *        The archive field, defined in the SQL schema as having type "longblob", is
+     *        returned as type java.sql.Blob.
+     * @param conn open connection to the database
+     * @param datasetId key to a row in the dataset table
+     * @throws SQLException a SQL exception.
+     * @throws SpkdbException a Spkdb exception.
      */
     public static ResultSet getDataset(Connection conn, long datasetId)
 	throws SQLException, SpkdbException
@@ -268,13 +320,14 @@ public abstract class Spkdb {
 	ResultSet rs = stmt.executeQuery(sql);
 	return rs;
     }       
-    /**
-       Update a row in the dataset table.
-       @param conn open connection to the database
-       @param datasetId key to a row in the database table
-       @param name array of column names (cannot contain "dataset_id")
-       @param value array of column values
-       @return true or false
+    /**        Update a row in the dataset table.
+     * @return true or false
+     * @param conn open connection to the database
+     * @param datasetId key to a row in the database table
+     * @param name array of column names (cannot contain "dataset_id")
+     * @param value array of column values
+     * @throws SQLException a SQL exception.
+     * @throws SpkdbException a Spkdb exception.
      */
     public static boolean updateDataset(Connection conn, long datasetId, String name[], String value[])
 	throws SQLException, SpkdbException
@@ -297,16 +350,17 @@ public abstract class Spkdb {
 	 stmt.executeUpdate(sql);
 	 return stmt.getUpdateCount() == 1;
     }
-    /**
-       Get datasets belonging to a given user
-       @param conn open connection to the database
-       @param userId key to the given user in the user table
-       @param maxNum maximum number of datasets to return
-       @param leftOff least datasetId previously returned (0 if first call in sequence)
-       @return Object of a class which implements the java.sql.ResultSet interface, containing
-       a sequence of rows of the job table belonging to the given user. Each row contains 
-       all columns of the dataset table.  The archive field, which is defined in the SQL
-       schema to have type "longblob", is returned as a java.sql.Blob type.
+    /**        Get datasets belonging to a given user
+     * @return Object of a class which implements the java.sql.ResultSet interface, containing
+     *        a sequence of rows of the job table belonging to the given user. Each row contains
+     *        all columns of the dataset table.  The archive field, which is defined in the SQL
+     *        schema to have type "longblob", is returned as a java.sql.Blob type.
+     * @param conn open connection to the database
+     * @param userId key to the given user in the user table
+     * @param maxNum maximum number of datasets to return
+     * @param leftOff least datasetId previously returned (0 if first call in sequence)
+     * @throws SQLException a SQL exception.
+     * @throws SpkdbException a Spkdb exception.
      */
     public static ResultSet userDatasets(Connection conn, long userId, int maxNum, long leftOff)
 	throws SQLException, SpkdbException 
@@ -323,14 +377,15 @@ public abstract class Spkdb {
 
 	return rs;
     }
-    /**
-       Add a new scientific model to the database.
-       @param conn open connection to the database
-       @param userId key to a user in the user table
-       @param name name of this model (must be unique for the given user)
-       @param abstraction short description of the model
-       @param archive the entire model in rcs-compatible format
-       @return unique number, which is the key to the new row in the model table
+    /**        Add a new scientific model to the database.
+     * @return unique number, which is the key to the new row in the model table
+     * @param conn open connection to the database
+     * @param userId key to a user in the user table
+     * @param name name of this model (must be unique for the given user)
+     * @param abstraction short description of the model
+     * @param archive the entire model in rcs-compatible format
+     * @throws SQLException a SQL exception.
+     * @throws SpkdbException a Spkdb exception.
      */
     public static long 
 	newModel(Connection conn, long userId, String name, String abstraction, String archive)
@@ -352,13 +407,14 @@ public abstract class Spkdb {
 	}
 	return modelId;
     }       
-    /**
-       Get a model
-       @param conn open connection to the database
-       @param modelId key to a row in the model table
-       @return Object of type java.sql.ResultSet, containing a single row of the
-       model table.  The archive field, defined in the SQL schema has having
-       type "longblob" is returned with type java.sql.Blob.
+    /**        Get a model
+     * @return Object of type java.sql.ResultSet, containing a single row of the
+     *        model table.  The archive field, defined in the SQL schema has having
+     *        type "longblob" is returned with type java.sql.Blob.
+     * @param conn open connection to the database
+     * @param modelId key to a row in the model table
+     * @throws SQLException a SQL exception.
+     * @throws SpkdbException a Spkdb exception.
      */
     public static ResultSet getModel(Connection conn, long modelId)
 	throws SQLException, SpkdbException
@@ -368,13 +424,14 @@ public abstract class Spkdb {
 	ResultSet rs = stmt.executeQuery(sql);
 	return rs;
     }       
-    /**
-       Update a row in the model table.
-       @param conn open connection to the database
-       @param modelId key to a row in the model table
-       @param name array of column names (cannot contain "model_id")
-       @param value array of column values
-       @return true or false
+    /**        Update a row in the model table.
+     * @return true or false
+     * @param conn open connection to the database
+     * @param modelId key to a row in the model table
+     * @param name array of column names (cannot contain "model_id")
+     * @param value array of column values
+     * @throws SQLException a SQL exception.
+     * @throws SpkdbException a Spkdb exception.
      */
     public static boolean updateModel(Connection conn, long modelId, String name[], String value[])
 	throws SQLException, SpkdbException
@@ -397,16 +454,17 @@ public abstract class Spkdb {
 	 stmt.executeUpdate(sql);
 	 return stmt.getUpdateCount() == 1;
     }
-    /**
-       Get a sequence of  models belonging to a given user
-       @param conn open connection to the database
-       @param userId key to the given user in the user table
-       @param maxNum maximum number of models to return
-       @param leftOff least modelId previously returned (0 if first call in sequence)
-       @return Object of a class which implements the java.sql.ResultSet interface, containing
-       a sequence of rows of the job table belonging to the given user. Each row contains 
-       all columns of the model table.  The archive field, which is defined in the SQL
-       schema to have type "longblob" is returned as a java.sql.Blob type.
+    /**        Get a sequence of  models belonging to a given user
+     * @return Object of a class which implements the java.sql.ResultSet interface, containing
+     *        a sequence of rows of the job table belonging to the given user. Each row contains
+     *        all columns of the model table.  The archive field, which is defined in the SQL
+     *        schema to have type "longblob" is returned as a java.sql.Blob type.
+     * @param conn open connection to the database
+     * @param userId key to the given user in the user table
+     * @param maxNum maximum number of models to return
+     * @param leftOff least modelId previously returned (0 if first call in sequence)
+     * @throws SQLException a SQL exception.
+     * @throws SpkdbException a Spkdb exception.
      */
     public static ResultSet userModels(Connection conn, long userId, int maxNum, long leftOff)
 	throws SQLException, SpkdbException 
@@ -423,13 +481,14 @@ public abstract class Spkdb {
 
 	return rs;
     }
-    /**
-       Inserts a new user in the database, returning a unique key.
-       @param conn open connection to the database
-       @param name array of strings containing field names
-       @param value array of values corresponding to field names in name
-       @return long integer which is the unique key of the new row 
-       @see #connect
+    /**        Inserts a new user in the database, returning a unique key.
+     * @return long integer which is the unique key of the new row
+     * @see #connect
+     * @param conn open connection to the database
+     * @param name array of strings containing field names
+     * @param value array of values corresponding to field names in name
+     * @throws SQLException a SQL exception.
+     * @throws SpkdbException a Spkdb exception.
      */
     public static long newUser(Connection conn, String name[], String value[])
 	throws SQLException, SpkdbException
@@ -465,13 +524,14 @@ public abstract class Spkdb {
 	}
 	return userId;
     }
-    /**
-       Update a row in the user table.
-       @param conn open connection to the database
-       @param userId key to a row in the user table
-       @param name array of column names (cannot include "user_id" or "username")
-       @param value array of column values
-       @return true or false
+    /**        Update a row in the user table.
+     * @return true or false
+     * @param conn open connection to the database
+     * @param userId key to a row in the user table
+     * @param name array of column names (cannot include "user_id" or "username")
+     * @param value array of column values
+     * @throws SQLException a SQL exception.
+     * @throws SpkdbException a Spkdb exception.
      */
     public static boolean updateUser(Connection conn, long userId, String name[], String value[])
 	throws SQLException, SpkdbException
@@ -499,12 +559,13 @@ public abstract class Spkdb {
 	 stmt.executeUpdate(sql);
 	 return stmt.getUpdateCount() == 1;
     }
-    /**
-       Get a row from the user table
-       @param conn open connection to the database
-       @param username name which is an alternate key to the user table
-       @return Object of a class which implements the java.sql.ResultSet interface, 
-       containing one complete row of the user table.
+    /**        Get a row from the user table
+     * @return Object of a class which implements the java.sql.ResultSet interface,
+     *        containing one complete row of the user table.
+     * @param conn open connection to the database
+     * @param username name which is an alternate key to the user table
+     * @throws SQLException a SQL exception.
+     * @throws SpkdbException a Spkdb exception.
      */
     public static ResultSet getUser(Connection conn, String username)
 	throws SQLException, SpkdbException
@@ -515,11 +576,12 @@ public abstract class Spkdb {
 	ResultSet rs = stmt.getResultSet();
 	return rs;
     }
-    /**
-       Get the entire end table
-       @param conn open connection to the database
-       @return Object of a class which implements the java.sql.ResultSet interface,
-       containing a row for each row of the table.
+    /**        Get the entire end table
+     * @return Object of a class which implements the java.sql.ResultSet interface,
+     *        containing a row for each row of the table.
+     * @param conn open connection to the database
+     * @throws SQLException a SQL exception.
+     * @throws SpkdbException a Spkdb exception.
      */
     public static ResultSet getEndTable(Connection conn)
 	throws SQLException, SpkdbException
@@ -530,11 +592,12 @@ public abstract class Spkdb {
 	ResultSet rs = stmt.getResultSet();
 	return rs;
     }
-    /**
-       Get the entire method table
-       @param conn open connection to the database
-       @return Object of a class which implements the java.sql.ResultSet interface,
-       containing a row for each row of the table.
+    /**        Get the entire method table
+     * @return Object of a class which implements the java.sql.ResultSet interface,
+     *        containing a row for each row of the table.
+     * @param conn open connection to the database
+     * @throws SQLException a SQL exception.
+     * @throws SpkdbException a Spkdb exception.
      */
     public static ResultSet getMethodTable(Connection conn)
 	throws SQLException, SpkdbException
@@ -545,11 +608,12 @@ public abstract class Spkdb {
 	ResultSet rs = stmt.getResultSet();
 	return rs;
     }
-    /**
-       Get the entire state table
-       @param conn open connection to the database
-       @return Object of a class which implements the java.sql.ResultSet interface,
-       containing a row for each row of the table.
+    /**        Get the entire state table
+     * @return Object of a class which implements the java.sql.ResultSet interface,
+     *        containing a row for each row of the table.
+     * @param conn open connection to the database
+     * @throws SQLException a SQL exception.
+     * @throws SpkdbException a Spkdb exception.
      */
     public static ResultSet getStateTable(Connection conn)
 	throws SQLException, SpkdbException
@@ -560,6 +624,15 @@ public abstract class Spkdb {
 	ResultSet rs = stmt.getResultSet();
 	return rs;
     }
+    /** Add the job state to the history table
+     * @return true
+     * @param conn open connection to the database
+     * @param jobId key to the given job in the job table
+     * @param stateCode state code of the job
+     * @param host domain name of host on which the job resides
+     * @throws SQLException a SQL exception.
+     * @throws SpkdbException a Spkdb exception.
+     */
     public static boolean addToHistory(Connection conn, long jobId, String stateCode, String host)
 	throws SQLException, SpkdbException
     {
@@ -572,6 +645,11 @@ public abstract class Spkdb {
 	stmt.execute(sql);
 	return true;
     }
+    /**
+     * Digest a text using MD5 algorithm
+     * @param password text to be digested
+     * @return digested text
+     */
     public static String md5sum(String password) {
 	String pd = "";
 	try {
@@ -591,4 +669,44 @@ public abstract class Spkdb {
 	}
 	return pd;
     }
+    /** Set state code to a job
+     * @return true if successfull, false otherwise
+     * @param conn open connection to the database
+     * @param jobId key to the given job in the job table
+     * @param stateCode state code to set
+     * @throws SQLException a SQL exception.
+     * @throws SpkdbException a Spkdb exception.
+     */
+    public static boolean setStateCode(Connection conn, long jobId, String stateCode)
+        throws SQLException, SpkdbException
+    {
+        if(stateCode == null || stateCode.equals(""))
+            throw new SpkdbException("State code is missing.");
+        String sql = "update job set state_code='" + stateCode + "' where job_id=" +
+                     jobId + ";";
+        Statement stmt = conn.createStatement();
+	if(stmt.executeUpdate(sql) != 1)
+            return false;
+        return true;   
+    }
+    /** Set checkpoint to a job
+     * @return true if successfull, false otherwise
+     * @param conn open connection to the database
+     * @param jobId key to the given job in the job table
+     * @param checkpoint to set
+     * @throws SQLException a SQL exception.
+     * @throws SpkdbException a Spkdb exception.
+     */
+    public static boolean setCheckpoint(Connection conn, long jobId, String checkpoint)
+        throws SQLException, SpkdbException
+    {
+        if(checkpoint == null || checkpoint.equals(""))
+            throw new SpkdbException("Checkpoint is missing.");
+        String sql = "update job set checkpoint='" + checkpoint + "' where job_id=" +
+                     jobId + ";";
+        Statement stmt = conn.createStatement();
+	if(stmt.executeUpdate(sql) != 1)
+            return false;
+        return true;   
+    }    
 }
