@@ -74,6 +74,19 @@ The "stop" subroutine is designated to catch the TERM signal, when it
 is received. As explained below, this will allow for an orderly
 shutdown of the daemon and its sub-processes.
 
+The next step is to select from the database all jobs with a state 
+code field set to 'q2ar'.  These jobs, if any exist, had been in the 
+abort-run queue when the daemon last shut down. All such jobs are 
+set to be aborted by setting the state code field to 'end' and the 
+end code field to 'abrt'.
+
+The next step is to select from the database all jobs with a state 
+code field set to 'arun'.  These jobs, if any exist, had been in the 
+process of aborting run when the daemon last shut down. All such jobs 
+are set to be aborted by setting the state code field to 'end' and the 
+end code field to 'abrt'.  If checkpoint file exists in any of these 
+jobs' working directory, its text content is copied to the database.
+
 The last major step in the start-up sequence is to select from the
 database all jobs with a state_code field set to 'run'.  These jobs,
 if any exist, had been in the process of running when the daemon last
@@ -83,10 +96,17 @@ At this point, the program enters an endless loop from which it will
 escape only upon receipt of a signal. It queries the database to
 discover whether or not a job has been added to the run queue.  If so,
 a copy of the job's driver is started as an independent sub-process,
-working in its own directory.  The daemon then checks to see if any
-child processes have terminated. If so, it moves them to "end" status
-and stores the results in the database. The daemon sleeps a second,
-before continuing its loop.
+working in its own directory.  
+
+The program also queries the database to discover whether or not a
+job has been added to the abort-run queue.  If so, a 'TERM' signal is
+sent to the child process of the job to terminate the child process. 
+To avoid the "stop" subroutine, which is for the termination of the 
+daemon, being called, the signal mask is temporarily set.
+
+The daemon then checks to see if any child processes have terminated.
+If so, it moves them to "end" status and stores the results in the 
+database. The daemon sleeps a second, before continuing its loop.
 
 The normal way in which spkcmp.pl is terminated is by using the Unix
 "kill" command to send it the TERM signal.  When TERM is received,
@@ -114,20 +134,14 @@ NOTE: Life-Cycle of the Working Directory Name
      of the row for this job in the job table of the database. In effect,
      it recreates the working directory as it was on the server which
      hosts the SPK compiler at the time that compiler finished its
-     work with the job. In addition to the source code and data needed
-     for the run, there is a file called "job_id" which contains only
-     the job_id, placed there for convenient future reference.
+     work with the job. The source code and data needed for the run
+     are placed there.
   3. When the process is forked into a parent process and a child
      process, the Linux or Unix operating system assigns a process
      identifier (pid) number to the child.  Process identifiers are
      recycled, but only after a long time or when the system is 
-     rebooted.  The parent could find the working directories of its
-     children by maintaining a table relating pid to job_id. We take
-     a slightly different approach, which is simple and robust. As
-     soon as it is forked, the child changes the name of its working
-     directory to reflect its pid rather than its job_id.  The 
-     directory is renamed so that the name suffix is "-pid-pppp" where
-     "pppp" is the pid.
+     rebooted.  The parent finds the working directories of its
+     children by maintaining a table relating pid to job_id. 
   4. When a child process dies, the parent receives its pid as the 
      value returned from the waitpid system call.  Using this, it
      easily constructs the name of the working directory. After 
@@ -136,10 +150,7 @@ NOTE: Life-Cycle of the Working Directory Name
      $retain_working_directory has been initialized to be true, or
      in case the run died due to an internal error. So that the
      retained working directory can be easily identified by software
-     maintainers, the directory name is once again changed to 
-     have "-job-jjjj" as its suffix.  The parent gets the job_id by
-     reading the contents of a file in the working directory, called
-     job_id, which was placed there by the SPK compiler daemon.
+     maintainers.
 
 =head2 END_CODE AND ERROR REPORTING
 
@@ -200,7 +211,7 @@ use File::Path;
 use POSIX qw(:signal_h);
 use Proc::Daemon;
 use Spkdb('connect', 'disconnect', 'de_q2r', 'en_q2r', 'get_run_jobs', 'end_job',
-	  'job_history', 'email_for_job');
+	  'job_history', 'email_for_job', 'de_q2ar', 'get_job_ids');
 use Sys::Syslog('openlog', 'syslog', 'closelog');
 use Sys::Hostname;
 
@@ -229,6 +240,7 @@ my $filename_checkpoint = "checkpoint.xml";
 my $filename_data = "data.xml";
 my $filename_driver = "driver";
 my $filename_job_id = "job_id";
+my %jobid_pid = ();
 my $filename_makefile = "Makefile.SPK";
 my $filename_optimizer_trace = "optimizer_trace.txt";
 my $filename_results = "result.xml";
@@ -279,8 +291,8 @@ sub death {
 	unlink($lockfile_path);
     } 
 
-    # log final message, then close the
-    system log syslog("info", "stop"); 
+    # log final message, then close the system log
+    syslog("info", "stop"); 
     closelog();
 
     die;
@@ -337,8 +349,11 @@ sub fork_driver {
   FORK: {
       if ($pid = fork) {
 	  # This is the parent (fork returned a nonzero value)
+          syslog("info", "forked process with pid=$pid for job_id=$job_id");
 	  $concurrent++;
-	  syslog("info", "forked process with pid=$pid for job_id=$job_id");
+
+          # Add the child process to jobid_pid hash
+          $jobid_pid{$job_id} = $pid;
       }
       elsif (defined $pid) {
 	  # This is the child (fork returned zero).
@@ -353,16 +368,16 @@ sub fork_driver {
 	  # When the child terminates, the parent will be provided with this pid,
 	  # and hence will be able to identify the working directory of the
 	  # child.
-	  my $old_working_dir = $working_dir;
-	  $working_dir = "$tmp_dir/$prefix_working_dir" . "-pid-" . $$;
-	  if (-d $working_dir) {
-	      File::Path::rmtree($working_dir, 0, 0);
-	  }
-	  rename $old_working_dir, $working_dir
-	      or do {
-		  syslog('emerg', "can't rename working directory");
-		  die;
-	      };
+#	  my $old_working_dir = $working_dir;
+#	  $working_dir = "$tmp_dir/$prefix_working_dir" . "-pid-" . $$;
+#	  if (-d $working_dir) {
+#	      File::Path::rmtree($working_dir, 0, 0);
+#	  }
+#	  rename $old_working_dir, $working_dir
+#	      or do {
+#		  syslog('emerg', "can't rename working directory");
+#		  die;
+#	      };
 	  # Compile and link the runner
 
           if ($mode =~ "test"){
@@ -458,7 +473,6 @@ sub insert_optimizer_trace {
 sub reaper {
     my $child_pid = shift;
     my $value = shift;
-
     my $child_exit_value    = $value >> 8;
     my $child_signal_number = $value & 0x7f;
     my $child_dumped_core   = $value & 0x80;
@@ -473,23 +487,32 @@ sub reaper {
 
     # Get the job_id from the file spkcmpd.pl wrote to the working
     # directory of this process
-    my $unique_name = "$prefix_working_dir" . "-pid-" . $child_pid;
-    my $working_dir = "$tmp_dir/$unique_name";
-    chdir $working_dir;
-    open(FH, $filename_job_id)
-	or death('emerg', "can't open $working_dir/job_id");
-    read(FH, $job_id, -s FH);
-    close(FH);
+#    my $unique_name = "$prefix_working_dir" . "-pid-" . $child_pid;
+#    my $working_dir = "$tmp_dir/$unique_name";
+#    chdir $working_dir;
+#    open(FH, $filename_job_id)
+#	or death('emerg', "can't open $working_dir/job_id");
+#    read(FH, $job_id, -s FH);
+#    close(FH);
 
     # Rename working directory to make evidence easier to find
-    my $old_working_dir = $working_dir;
-    $unique_name = $prefix_working_dir . "-job-" . $job_id;
-    $working_dir = "$tmp_dir/$unique_name";
-    if (-d $working_dir) {
-	File::Path::rmtree($working_dir, 0, 0);
-    }
-    rename $old_working_dir, $working_dir
-	or death('emerg', "couldn't rename working directory");
+#    my $old_working_dir = $working_dir;
+#    $unique_name = $prefix_working_dir . "-job-" . $job_id;
+#    $working_dir = "$tmp_dir/$unique_name";
+#    if (-d $working_dir) {
+#	File::Path::rmtree($working_dir, 0, 0);
+#    }
+#    rename $old_working_dir, $working_dir
+#	or death('emerg', "couldn't rename working directory");
+
+    # Get the job_id from the child pid
+    my %pid_jobid = reverse %jobid_pid;
+    $job_id = $pid_jobid{$child_pid};
+
+    # Change to working directory
+    my $unique_name = "$prefix_working_dir" . "-job-" . $job_id;
+    my $working_dir = "$tmp_dir/$unique_name";
+    chdir $working_dir;
 
     # Get optimizer trace 
     if (-f $filename_optimizer_trace) {
@@ -537,7 +560,7 @@ sub reaper {
 	$err_msg .= "software bug asserted; ";
     }
     elsif ($child_signal_number == SIGTERM) {
-	$end_code = "serr";
+	$end_code = "abrt";
 	$err_msg .= "killed by operator; ";
     }
     elsif ($child_signal_number == SIGSEGV) {
@@ -641,7 +664,6 @@ sub reaper {
     if (length($optimizer_trace) > 0) {
 	$report = insert_optimizer_trace($optimizer_trace, $report);
     }
-
     &end_job($dbh, $job_id, $end_code, $report, $checkpoint)
 	or death('emerg', "job_id=$job_id: $Spkdb::errstr");
 }
@@ -715,6 +737,50 @@ $SIG{'QUIT'} = 'IGNORE';
 # Designate a handler for the "terminate" signal
 $SIG{'TERM'} = \&stop;
 
+# Abort any jobs of queued to abort run or aborting run
+# state, which was left by the last termination of this daemon.
+my @jobs = &get_job_ids($dbh, "q2ar");
+my $jobid;
+if(!(@jobs == 1 && not defined $jobs[0])) {
+    foreach $jobid (@jobs) {
+        &end_job($dbh, $jobid, "abrt", undef, undef)
+            or death('emerg', "job_id=$jobid: $Spkdb::errstr");
+    }
+}
+else {
+    death("emerg", "error reading database: $Spkdb::errstr");
+}
+@jobs = &get_job_ids($dbh, "arun");
+if(!(@jobs == 1 && not defined $jobs[0])) {
+    my $checkpoint;
+    foreach $jobid (@jobs) {
+        # Change to the working directory of the job
+        my $unique_name = "$prefix_working_dir" . "-job-" . $jobid;
+        my $working_dir = "$tmp_dir/$unique_name";
+        chdir $working_dir;
+
+        # Read checkpoint file to $checkpoint variable
+        if( -f $filename_checkpoint && -s $filename_checkpoint > 0 ){
+	    # Read the checkpoint file into the checkpoint variable
+	    open(FH, $filename_checkpoint)
+	        or death('emerg', "can't open $working_dir/$filename_checkpoint");
+	    read(FH, $checkpoint, -s FH);
+	    close(FH);
+        }
+
+        # Remove working directory if it is not needed
+        if (!$retain_working_dir) {
+            File::Path::rmtree($working_dir);
+        }
+
+        &end_job($dbh, $jobid, "abrt", undef, $checkpoint)
+            or death('emerg', "job_id=$jobid: $Spkdb::errstr");
+    }
+}
+else {
+    death("emerg", "error reading database: $Spkdb::errstr");
+}
+
 # rerun any jobs that were interrupted when we last terminated
 my $job_array = &get_run_jobs($dbh);
 syslog('info', "looking for interrupted computational runs");
@@ -750,9 +816,25 @@ while(1) {
 	    death("emerg", "error reading database: $Spkdb::errstr");
 	}
     }
+
+    # If there is a job queued-to-abort-run, kill the process
+    my $jobid = &de_q2ar($dbh);
+    if (defined $jobid) {
+	if ($jobid) {
+            my $cpid = $jobid_pid{jobid};
+            $SIG{'TERM'} = 'IGNORE';            
+	    kill('TERM', $cpid);
+            $SIG{'TERM'} = \&stop;
+	}
+    }
+    else {
+	death("emerg", "error reading database: $Spkdb::errstr");
+    }
+
     # process child processes that have terminated
-    while (($child_pid = waitpid(-1, &WNOHANG)) > 0) {    
+    while (($child_pid = waitpid(-1, &WNOHANG)) > 0) { 
 	reaper($child_pid, $?);
+        delete($jobid_pid{'jobid'});
     }
     # sleep for a second
     sleep(1); # DO NOT REMOVE THIS LINE

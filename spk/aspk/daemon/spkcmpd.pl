@@ -72,6 +72,18 @@ The "stop" subroutine is designated to catch the TERM signal,
 when it is received. As explained below, this will allow for
 an orderly shutdown of the daemon and its sub-processes.
 
+The next step is to select from the database all jobs with a state 
+code field set to 'q2ac'.  These jobs, if any exist, had been in the 
+abort-compile queue when the daemon last shut down. All such jobs are 
+set to be aborted by setting the state code field to 'end' and the end 
+code field to 'abrt'.
+
+The next step is to select from the database all jobs with a state 
+code field set to 'acmp'.  These jobs, if any exist, had been in the 
+process of aborting compilation when the daemon last shut down. All 
+such jobs are set to be aborted by setting the state code field to 'end' 
+and the end code field to 'abrt'.
+
 The last major step in the start-up sequence is to select from the
 database all jobs with a state_code field set to 'cmp'.  These
 jobs, if any exist, had been in the process of being compiled when 
@@ -82,7 +94,15 @@ escape only upon receipt of a signal. It queries the
 database to discover whether or not a job has been added to the compiler
 queue.  If so, a copy of spkcompiler is started as an independent
 sub-process, working in its own directory on input provided by the
-job. The daemon then checks to see if any child processes have 
+job. 
+
+The program also queries the database to discover whether or not a
+job has been added to the abort-compilation queue.  If so, a 'TERM' 
+signal is sent to the child process of the job to terminate the child 
+process.  To avoid the "stop" subroutine, which is for the termination 
+of the daemon, being called, the signal mask is temporarily set.
+
+The daemon then checks to see if any child processes have 
 terminated. If so, it moves them either to the run queue or to 
 "end" status, depending on whether the compilation was successful
 or not.  The daemon sleeps a second, before continuing the
@@ -152,8 +172,8 @@ use Fcntl qw(:DEFAULT :flock);
 use File::Path;
 use POSIX qw(:signal_h);
 use Proc::Daemon;
-use Spkdb('connect', 'disconnect', 'de_q2c', 'en_q2r', 'end_job',
-	  'get_cmp_jobs', 'get_dataset', 'email_for_job');
+use Spkdb('connect', 'disconnect', 'de_q2c', 'de_q2ac', 'en_q2r', 'get_job_ids',
+          'end_job', 'get_cmp_jobs', 'get_dataset', 'email_for_job');
 use Sys::Syslog('openlog', 'syslog', 'closelog');
 
 
@@ -175,6 +195,7 @@ my $dbh;
 my $database_open = 0;
 my $filename_cerr_report = "compilation_error.xml";
 my $filename_job_id = "job_id";
+my %jobid_pid = ();
 my $filename_serr = "software_error";
 
 my $lockfile_exists = 0;
@@ -314,6 +335,9 @@ sub fork_compiler {
       if ($pid = fork) {
 	  # This is the parent (fork returned a nonzero value)
 	  syslog("info", "forked process with pid=$pid for job_id=$job_id");
+
+          # Add the child process to jobid_pid hash
+          $jobid_pid{$job_id} = $pid;
       }
       elsif (defined $pid) {
 	  # This is the child. (fork returned zero)
@@ -469,7 +493,7 @@ sub reaper {
 	    $err_msg .= "compiler bug asserted; ";
 	}
 	elsif ($child_signal_number == SIGTERM) {
-	    $end_code = "serr";
+	    $end_code = "abrt";
 	    $err_msg .= "killed by operator; ";
 	}
 	elsif ($child_signal_number == SIGSEGV) {
@@ -491,7 +515,7 @@ sub reaper {
 	    $remove_working_dir = 1;
 	}
 	# Did the compiler die because of a software fault?
-	elsif (-f $filename_serr){
+	elsif (-f $filename_serr && -s $filename_serr > 0){
 	    open(FH, $filename_serr);
 	    read(FH, $err_rpt, -s FH);
 	    close(FH);
@@ -618,6 +642,22 @@ $SIG{'QUIT'} = 'IGNORE';
 # Designate a handler for the "terminate" signal
 $SIG{'TERM'} = \&stop;
 
+# Abort any jobs of 'queued to abort compile' or 'aborting compilation'
+# state, which was left by the last temination of this daemon.
+my @jobs = &get_job_ids($dbh, "q2ac");
+my $job;
+if (@jobs) {
+    foreach $job (@jobs) {
+        &end_job($dbh, $job, "abrt", undef, undef)
+    }
+}
+@jobs = &get_job_ids($dbh, "acmp");
+if (@jobs) {
+    foreach $job (@jobs) {
+        &end_job($dbh, $job, "abrt", undef, undef)
+    }
+}
+
 # Rerun any compiles that were interrupted when we last terminated
 $row_array = &get_cmp_jobs($dbh);
 syslog('info', "looking for interrupted compiler jobs");
@@ -648,9 +688,23 @@ while(1) {
     else {
 	death("emerg", "error reading database: $Spkdb::errstr");
     }
+    # If there is a job queued-to-abort-compile, kill the process
+    my $jobid = &de_q2ac($dbh);
+    if (defined $jobid) {
+	if ($jobid) {
+            my $cpid = $jobid_pid{jobid};
+            $SIG{'TERM'} = 'IGNORE';
+	    kill('TERM', $cpid);
+            $SIG{'TERM'} = \&stop;
+	}
+    }
+    else {
+	death("emerg", "error reading database: $Spkdb::errstr");
+    }
     # Process any child processes which have terminated
-    while (($child_pid = waitpid(-1, &WNOHANG)) > 0) {    
+    while (($child_pid = waitpid(-1, &WNOHANG)) > 0) {   
 	reaper($child_pid, $?);
+        delete($jobid_pid{'jobid'});
     }
     # Sleep for a second
     sleep(1); # DO NOT REMOVE THIS LINE 
