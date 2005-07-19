@@ -2,11 +2,11 @@
 
 use strict;
 
-use Test::Simple tests => 56;  # number of ok() tests
+use Test::Simple tests => 61;  # number of ok() tests
 
 use Spkdb (
     'connect', 'disconnect', 'new_job', 'job_status', 
-    'de_q2c', 
+    'de_q2c', 'set_state_code', 'de_q2ac', 'de_q2ar', 'get_job_ids',
     'en_q2r', 'de_q2r', 'get_job', 'end_job', 'job_report', 'job_checkpoint', 'job_history',
     'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
     'new_model', 'get_model', 'update_model', 'user_models',
@@ -117,6 +117,24 @@ sleep(1);
 $row = &de_q2c($dbh);
 ok($row && $row->{"job_id"} == $job_id + 1
              && $row->{"xml_source"},       "de_q2c, second job");
+sleep(1);
+&set_state_code($dbh, $job_id, "q2ac");
+&set_state_code($dbh, $job_id + 1, "q2ac");
+my $jobId = &de_q2ac($dbh);
+ok($jobId && $jobId == $job_id,             "de_q2ac, first job");
+sleep(1);
+$jobId = &de_q2ac($dbh);
+ok($jobId && $jobId == $job_id + 1,         "de_q2ac, second job");
+sleep(1);
+&set_state_code($dbh, $job_id, "q2ar");
+&set_state_code($dbh, $job_id + 1, "q2ar");
+$jobId = &de_q2ar($dbh);
+ok($jobId && $jobId == $job_id,             "de_q2ar, first job");
+sleep(1);
+$jobId = &de_q2ar($dbh);
+ok($jobId && $jobId == $job_id + 1,         "de_q2ar, second job");
+&set_state_code($dbh, $job_id, "q2c");
+&set_state_code($dbh, $job_id + 1, "q2c");
 
 $row_array = &Spkdb::get_cmp_jobs($dbh);
 my $j_id = $job_id;
@@ -137,7 +155,6 @@ $row = &de_q2r($dbh);
 ok($row && $row->{"job_id"} == $job_id + 1, "de_q2r");
 $row = &de_q2r($dbh);
 ok($row && $row->{"job_id"} == $job_id, "de_q2r");
-
 
 $row_array = &Spkdb::get_run_jobs($dbh);
 $j_id = $job_id;
@@ -254,8 +271,13 @@ ok($flag, "user_models");
 
 ok($row_array->[1]->{'name'} =~ /^Model-T$/, "user_models, sorting");
 
+&set_state_code($dbh, $job_id, "acmp");
+&set_state_code($dbh, $job_id + 1, "acmp");
+my @jobs = &get_job_ids($dbh, "acmp");
+ok(@jobs && $jobs[0] == 1 && $jobs[1] == 2, "get_job_ids");
+
 $row_array = &job_history($dbh, 2);
-ok (@$row_array == 5, "job_history");
+ok (@$row_array == 11, "job_history");
 
 ok(!defined &disconnect($dbh), "disconnect");			 
 

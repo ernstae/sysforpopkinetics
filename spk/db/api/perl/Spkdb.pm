@@ -29,9 +29,9 @@ use Sys::Hostname;
 use Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = (
-    'connect', 'disconnect', 'new_job', 'get_job', 'job_status', 'user_jobs', 
-    'de_q2c', 'get_cmp_jobs', 'get_run_jobs',
-    'en_q2r', 'de_q2r', 'end_job', 'job_report', 'job_checkpoint', 'job_history',
+    'connect', 'disconnect', 'new_job', 'get_job', 'job_status', 'user_jobs', 'set_state_code',
+    'de_q2c', 'de_q2ac', 'get_job_ids', 'get_cmp_jobs', 'get_run_jobs', 'en_q2r', 
+    'de_q2r', 'de_q2ar', 'end_job', 'job_report', 'job_checkpoint', 'job_history',
     'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
     'new_model', 'get_model', 'update_model', 'user_models',
     'new_user', 'update_user', 'get_user', 'email_for_job'
@@ -441,6 +441,52 @@ sub user_jobs() {
     return $array_row_ref;
 }
 
+=head2 set_state_code -- set job state_code
+ 
+Set the state_code of a specified job. 
+
+    $r = &Spkdb::set_state_code($dbh, $job_id, $state_code);
+
+$dbh is the handle to an open database connection.
+
+$job_id is the key to the job table
+
+$state_code is the state_code to set.
+
+Returns
+
+  success: 1 if state_code of the job is set, 0 otherwise
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::UPDATE_FAILED
+
+=cut
+
+sub set_state_code() {
+    my $dbh = shift;
+    my $job_id = shift;
+    my $state_code = shift;
+    $err = 0;
+    $errstr = "";
+
+    my $sql = "update job set state_code='$state_code' where job_id='$job_id';";
+
+    my $nrows = $dbh->do($sql);
+    unless ($nrows)
+    {
+	$err = $UPDATE_FAILED;
+	$errstr = "could not execute $sql; error returned ";
+	$dbh->rollback;        
+        return undef;
+    }
+    unless ($nrows == 1)
+    {
+        return 0;
+    }
+    &add_to_history($dbh, $job_id, $state_code);
+    return 1;
+}
+
 =head2 de_q2c -- remove highest priority job from compile queue
 
 Remove the highest priority job from the compiler queue, so that
@@ -517,6 +563,131 @@ sub de_q2c() {
     return $row;
 }
 
+=head2 de_q2ac -- remove highest priority job from aborting compile queue
+
+Remove the highest priority job from the aborting compiler queue, so that
+it can be aborted by compiler daemon.
+
+    $job_id = &Spkdb::de_q2ac($dbh);
+
+$dbh is the handle to an open database connection.
+
+Returns
+
+  success: 
+    job_id of highest priority aborting compile, 
+    false if aborting compiler queue is empty   
+
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed
+
+=cut
+
+sub de_q2ac() {
+    my $dbh = shift;
+    $err = 0;
+    $errstr = "";
+    
+    $dbh->begin_work;
+
+    my $sql = "select job_id from job "
+	    .       "where state_code='q2ac' "
+            .       "order by event_time "
+            .       "limit 1 "
+            .       "for update; ";
+
+    my $sth = $dbh->prepare($sql);
+    unless ($sth) {
+	$err = $PREPARE_FAILED;
+	$errstr = "could not prepare statement: $sql";
+	$dbh->rollback;
+	return undef;
+    }
+    unless ($sth->execute())
+    {
+	$err = $EXECUTE_FAILED;
+	$errstr = "could not execute $sql; error returned "
+	    . $sth->errstr;
+	$dbh->rollback;
+        return undef;
+    }
+    my $row = $sth->fetchrow_hashref();
+    unless ($row) {
+	$dbh->rollback;
+	return 0;
+    }
+    my $job_id = $row->{"job_id"};
+    my $state_code = "acmp";
+    my $event_time = time();
+    
+    $sql = "update job set state_code = '$state_code', event_time = '$event_time' where job_id=$job_id;";
+    unless ($dbh->do($sql)) {
+	$err = $UPDATE_FAILED;
+	$errstr = "could not execute $sql; error returned ";
+	$dbh->rollback;
+	return undef;
+    }
+    $dbh->commit;
+    &add_to_history($dbh, $job_id, $state_code);
+    return $job_id;
+}
+
+=head2 get_job_ids -- get job_ids of all jobs with a given state_code
+
+Get job_ids of all jobs as an array with a given state_code.
+
+    @array_job_ids = &Spkdb::get_job_ids($dbh);
+
+$dbh is the handle to an open database connection.
+
+Returns
+
+  success: 
+    an array of job_ids of all the jobs with state_code "acmp",
+    0 if there is no job with state_code "acmp"   
+
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed
+
+=cut
+
+sub get_job_ids() {
+    my $dbh = shift;
+    my $state_code = shift;
+    $err = 0;
+    $errstr = "";
+
+    my $sql = "select job_id from job where state_code='$state_code';";
+    my $sth = $dbh->prepare($sql);
+    unless ($sth) {
+	$err = $PREPARE_FAILED;
+	$errstr = "could not prepare statement: $sql";
+	$dbh->rollback;
+	return undef;
+    }
+    unless ($sth->execute())
+    {
+	$err = $EXECUTE_FAILED;
+	$errstr = "could not execute $sql; error returned "
+	    . $sth->errstr;
+	$dbh->rollback;
+        return undef;
+    }
+    my $job;
+    my @jobs;
+    while(($job) = $sth->fetchrow_array) {
+        push(@jobs, $job);
+    }
+    my $count = @jobs;
+    if ($count == 0) {
+	return 0;
+    }
+    return @jobs;
+}
 
 =head2 get_cmp_jobs -- get all jobs currently being compiled
 
@@ -642,7 +813,7 @@ Returns
     containing the following fields:
         job_id
         cpp_source
-    false if compiler queue is empty   
+    false if ready to run queue is empty   
 
   failure: undef
     $Spkdb::errstr contains an error message string
@@ -700,6 +871,78 @@ sub de_q2r() {
     return $row;
 }
 
+=head2 de_q2ar -- remove the highest priority job from the aborting run queue
+
+Remove the highest priority job from the aborting run queue, so
+that it can be aborted by run daemon.
+
+    $job_id = &Spkdb::de_q2ar($dbh);
+
+$dbh is the handle to an open database connection.
+
+Returns
+
+  success: 
+
+    job_id of highest priority aborting run job 
+    false if aborting run queue is empty   
+
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed
+
+=cut
+
+sub de_q2ar() {
+    my $dbh = shift;
+    $err = 0;
+    $errstr = "";
+    
+    $dbh->begin_work;
+
+    my $sql = "select job_id from job "
+	    .       "where state_code='q2ar' "
+            .       "order by event_time "
+            .       "limit 1 "
+            .       "for update; ";
+
+    my $sth = $dbh->prepare($sql);
+    unless ($sth) {
+	$err = $PREPARE_FAILED;
+	$errstr = "could not prepare statement: $sql";
+	$dbh->rollback;
+	return undef;
+    }
+    unless ($sth->execute())
+    {
+	$err = $EXECUTE_FAILED;
+	$errstr = "could not execute $sql; error returned "
+	    . $sth->errstr;
+	$dbh->rollback;
+        return undef;
+    }
+    my $row = $sth->fetchrow_hashref();
+    unless ($row) {
+	$dbh->rollback;
+	return 0;
+    }
+    my $job_id = $row->{"job_id"};
+    my $event_time = time();
+    
+    my $state_code = "arun";
+    $sql = "update job set state_code = '$state_code', event_time = '$event_time' where job_id=$job_id;";
+    unless ($dbh->do($sql)) {
+	$err = $UPDATE_FAILED;
+	$errstr = "could not execute $sql; error returned ";
+	$dbh->rollback;
+	return;
+    }
+    $dbh->commit;
+    &add_to_history($dbh, $job_id, $state_code);
+    return $job_id;
+}
+
 =head2 get_run_jobs -- get all jobs with state_code 'run'
 
 Returns a reference to an array of rows.  Each row is a reference
@@ -751,7 +994,6 @@ sub get_run_jobs() {
 
     return $array_row_ref;
 }
-
 
 =head2 end_job -- end a job, whether successful or not
 
@@ -833,6 +1075,7 @@ sub end_job() {
     &add_to_history($dbh, $job_id, $state_code);
     return 1;
 } 
+
 =head2 job_report -- retrieve final report for a job
 
 Retrieve the report string for a job in the 'end' state.
