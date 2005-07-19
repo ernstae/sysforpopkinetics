@@ -44,12 +44,20 @@ public:
 		  DIAGONAL  /** Diagonal matrix */};
 
   /**
-   * Return a Symbol object that defines "empty".
+   * Return a Symbol object that defines "empty" or "undefined".
    *
    * A Symbol object which lacks of the name (ie. the <em>name</em> field is empty)
    * is considered empty no matter how the other fields are defined.
    */
    static const Symbol* empty();
+
+
+   /**
+    * Tests if this Symbol object is defined as "undefined".
+    *
+    * @return true if this is undefined.  false otherwise.
+    **/
+   //bool isUndefined() const;
 
   /**
    * The default constructor.  This initializes the object as an empty Symbol.
@@ -122,7 +130,8 @@ public:
    *
    * @param var The name of the user-defined (scalar) variable.
    */
-   static Symbol createUserVar(  const std::string& var );
+   static Symbol createUserVar(  const std::string& var ){ return createScalar( var ); }
+   static Symbol createScalar(  const std::string& var );
 
   /** 
    * Create and return a Symbol object that represents a NONMEM (vector) variable.
@@ -140,7 +149,8 @@ public:
    * @param var The name of the NONMEM (vector) variable.
    * @param length The length of the vector.
    */
-   static Symbol createNMVector( const std::string& var, int length );
+   static Symbol createNMVector( const std::string& var, int length ){ return createVector(var,length);}
+   static Symbol createVector( const std::string& var, int length );
 
   /** 
    * Create and return a Symbol object that represents a NONMEM (matrix) variable.
@@ -159,7 +169,9 @@ public:
    * @param structure  The matrix structure (ie. sparseness).
    * @param dim The dimension of the square matrix.
    */
-   static Symbol createNMMatrix( const std::string& var, enum Structure structure, int dim );
+   static Symbol createNMMatrix( const std::string& var, enum Structure structure, int dim )
+     { return createMatrix( var, structure, dim ); }
+   static Symbol createMatrix( const std::string& var, enum Structure structure, int dim );
 
   /** 
    * Create and return a Symbol object that represents a data (as in Data Set) label.

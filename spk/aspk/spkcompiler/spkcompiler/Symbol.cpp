@@ -4,11 +4,11 @@
 
 using namespace std;
 
-static Symbol empty_ob;
 const Symbol* Symbol::empty()
 {
-   return &(empty_ob);
+  return NULL;
 }
+
 Symbol::Symbol()
 {
 }
@@ -221,19 +221,19 @@ bool Symbol::operator!=( const Symbol& right ) const
 {
   return !(*this == right);
 }
-Symbol Symbol::createUserVar( const string& var )
+Symbol Symbol::createScalar( const string& var )
 {
    valarray<int> one( 1 );
    one[0] = 1;
    return Symbol( var, "", USERDEF, SCALAR, FULL, one );
 }
-Symbol Symbol::createNMVector( const string& var, int veclen )
+Symbol Symbol::createVector( const string& var, int veclen )
 {
    valarray<int> len( 1 );
    len[0] = veclen;
    return Symbol( var, "", NONMEMDEF, VECTOR, FULL, len );
 }
-Symbol Symbol::createNMMatrix( const string& var, enum Structure mt, int matdim )
+Symbol Symbol::createMatrix( const string& var, enum Structure mt, int matdim )
 {
    valarray<int> dim( 1 );
    dim[0] = matdim;

@@ -15,11 +15,24 @@
 #include "Symbol.h"
 
 /**
- * The symbol table used during compilation.
+ * This represents the symbol table used during compilation.
+ * Do not get confused with a data set or a table containing
+ * actual values.  This is only a table for registering and
+ * keeping track of new variable names appeared in the 
+ * source XML file (i.e. an instance of SpkSourceML document).
  *
- * The table entries are accessed by the names associated with
- * Symbol objects.  The table is guaranteed to have no duplicate names
- * (ie. keys).
+ * The table guanranteers no duplicate keys.
+ *
+ * The table has the following fields per entry:
+ *
+ * - key               : the search key
+ * - name              : the variable name being registered
+ * - alias             : an alias for the variable if any
+ * - user-/pre-defined : a flag indicating as to whether the variable is user-defined or pre-defined.
+ * - read/write        : a flag indicating as to whether the variable is read only or write permitted.
+ * - structure         : the structure of the variable { scalar, vector, matrix }
+ * - matrix structure  : the structure of the "matrix" variable { full, triangle, diagonal }
+ *
  */
 class SymbolTable{
 
@@ -36,60 +49,53 @@ class SymbolTable{
   SymbolTable();
 
    /**
-    * Make a search key word for the string.
+    * Return the search key for the variable you will be looking for.
+    * Each table entry has a key associated with it, which may be
+    * different from the original variable name.
     *
-    * @param str The source string of which the key is generated.
+    * @param str The source string for which the key is generated.
     */
    static const std::string key( const std::string& str );
 
   /**
-   * Search the table by the given name [case sensitive].
-   * 
+   * Search the table for the string [case sensitive].
    *
-   * @return A pointer to the found Symbol object that has
-   *         either the name or the synonym (ie. alias) field string
-   *         matches.  If no entry is found, it returns the reference
-   *         to an empty Symbol object.
+   * @return A pointer to the Symbol object that has str as 
+   *         the variable name or the alias name.
+   *         If no matching is found, it returns NULL.
    *
    * @param str The string by which a search is performed.
-   *         Both the name and the synonym (ie. alias) are compared.
    */
   Symbol* find( const std::string& str );
 
   /**
-   * Search a Symbol object in the table by the name [case sensitive].
+   * Search the table for the string [case sensitive].
    *
    * @return A (constant) pointer to the found Symbol object that has
-   *         either the name or the synonym (ie. alias) field string
-   *         matches.  If no entry is found, it returns the reference
-   *         to an empty Symbol object.
+   *         str as either the variable name or the alias name.
+   *         If no entry matches, it returns NULL.
    *
    * @param str The string by which a search is performed.
-   *         Both the name and the synonym (ie. alias) are compared.
    */
   const Symbol* find( const std::string& str ) const;
 
   /**
-   * Search a Symbol object in the table by the name [case INsensitive].
-   * @return A  pointer to the found Symbol object that has
-   *         either the name or the synonym (ie. alias) field string
-   *         matches.  If no entry is found, it returns the reference
-   *         to an empty Symbol object.
+   * Search the table for the string [case INsensitive].
+   * @return A pointer to the found Symbol object that has str as 
+   *         either the variable name or the alias.
+   *         If no entry matches, it returns NULL.
    *
    * @param str The string by which a search is performed.
-   *         Both the name and the synonym (ie. alias) are compared.
    */
   Symbol* findi( const std::string& str );
 
   /**
-   * Search a Symbol object in the table by the name [case INsensitive].
+   * Search the table for the string [case INsensitive].
    * @return A (constant) pointer to the found Symbol object that has
-   *         either the name or the synonym (ie. alias) field string
-   *         matches.  If no entry is found, it returns the reference
-   *         to an empty Symbol object.
+   *         str as either the variable name or the alias name.  
+   *         If no entry matches, it returns NULL.
    *
    * @param str The string by which a search is performed.
-   *         Both the name and the synonym (ie. alias) are compared.
    */
   const Symbol* findi( const std::string& str ) const;
 
@@ -103,10 +109,10 @@ class SymbolTable{
    * @param name The name of the user-defined (scalar) variable.
    *
    */
-  Symbol* insertUserVar(  const std::string& name );
+  Symbol* insertScalar( const std::string& name );
 
   /**
-   * Create and insert a NONMEM vector variable into the table.
+   * Create and insert a vector variable into the table.
    * If the label already exists in the table, the new object replaces
    * the existing entry.
    *
@@ -115,10 +121,10 @@ class SymbolTable{
    * @param name The name of the NONMEM vector variable.
    * @param len The length of the vector.
    */
-  Symbol* insertNMVector( const std::string& name, int len );
+  Symbol* insertVector( const std::string& name, int len );
 
   /**
-   * Create and insert a NONMEM (square) matrix variable into the table.
+   * Create and insert a square matrix variable into the table.
    * If the label already exists in the table, the new object replaces
    * the existing entry.
    *
@@ -129,7 +135,7 @@ class SymbolTable{
    * Symbol::FULL, Symbol::TRIANGLE, Symbol::DIAGONAL.
    * @param dim The dimension of the <em>square</em> matrix.
    */
-  Symbol* insertNMMatrix( const std::string& name, 
+  Symbol* insertMatrix( const std::string& name, 
                           const Symbol::Structure structure, 
                           int dim );
 
