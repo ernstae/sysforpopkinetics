@@ -660,7 +660,7 @@ NAME {
      }
      else
      {
-        gSpkExpSymbolTable->insertUserVar( $1 );
+        gSpkExpSymbolTable->insertScalar( $1 );
      }
   }
   $$ = $1;
@@ -700,7 +700,7 @@ NAME '(' slice ')' {
       }
       else
       {
-         gSpkExpSymbolTable->insertUserVar( $1 );
+         gSpkExpSymbolTable->insertScalar( $1 );
       }
    }
 

@@ -26,7 +26,7 @@ Symbol* SymbolTable::find( const string& name )
        p++;
      }
    
-   return (const_cast<Symbol*>( Symbol::empty() ) );
+   return NULL;
 }
 const Symbol* SymbolTable::find( const string& name ) const
 {
@@ -37,7 +37,7 @@ const Symbol* SymbolTable::find( const string& name ) const
 	 return &(p->second);
        p++;
      }
-   return Symbol::empty();
+   return NULL;
 }
 
 Symbol* SymbolTable::findi( const string& name )
@@ -50,7 +50,7 @@ Symbol* SymbolTable::findi( const string& name )
        return &(p->second);
      p++;
    }
-   return (const_cast<Symbol*>( Symbol::empty() ) );
+   return NULL;
 }
 const Symbol* SymbolTable::findi( const string& name ) const
 {
@@ -62,30 +62,31 @@ const Symbol* SymbolTable::findi( const string& name ) const
        return &(p->second);
      p++;
    }
-   return Symbol::empty();
+   return NULL;
 }
 const string SymbolTable::key( const string& str )
 {
   return lower( str );
 }
-Symbol* SymbolTable::insertUserVar( const string& name )
+Symbol* SymbolTable::insertScalar( const string& name )
 {
-   Symbol a = Symbol::createUserVar( name );
+   Symbol a = Symbol::createScalar( name );
    const string NAME = key(name);
    table[ NAME ] = a;
    return &(table[ NAME ]); 
 }
-Symbol* SymbolTable::insertNMVector( const string& name, int len )
+Symbol* SymbolTable::insertVector( const string& name, int len )
 {
-   Symbol a = Symbol::createNMVector( name, len );
+   Symbol a = Symbol::createVector( name, len );
    const string NAME = key(name);
    table[ NAME ] = a;
    return &(table[ NAME ]);
 }
-Symbol* SymbolTable::insertNMMatrix( const string& name, 
+
+Symbol* SymbolTable::insertMatrix( const string& name, 
                                 Symbol::Structure mt, int dim )
 {
-   Symbol a = Symbol::createNMMatrix( name, mt, dim );
+   Symbol a = Symbol::createMatrix( name, mt, dim );
    const string NAME = key(name);
    table[ NAME ] = a;
    return &(table[ NAME ]);

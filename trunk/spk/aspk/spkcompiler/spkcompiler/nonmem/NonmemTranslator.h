@@ -50,11 +50,7 @@ class NonmemTranslator : public ClientTranslator
 	       TRANS5, 
 	       TRANS6 };
 
-//==============================================================
-// REVISIT SACHIKO
-// Remove MONTE from the following enumulator
-  enum INTEG_METHOD { ANALYTIC, GRID, PLAIN, MISER, MONTE };
-//==============================================================
+  enum INTEG_METHOD { ANALYTIC, GRID, PLAIN, MISER };
 
   /**
    * Predefined words

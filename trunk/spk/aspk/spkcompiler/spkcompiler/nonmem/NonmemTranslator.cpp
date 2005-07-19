@@ -886,7 +886,7 @@ void NonmemTranslator::parseSource()
 
   // ORGDV is a place for the original data set to be kept
   // if a new data set is simulated.
-  Symbol * s = table->insertUserVar( DefaultStr.ORGDV );
+  Symbol * s = table->insertScalar( DefaultStr.ORGDV );
  
   // Keep the user-typed Nonmem Keyword strings
   Symbol * p;
@@ -925,7 +925,7 @@ void NonmemTranslator::parseSource()
     UserStr.PRED = p->name;
   else
     {
-      table->insertUserVar( DefaultStr.PRED );
+      table->insertScalar( DefaultStr.PRED );
       UserStr.PRED = DefaultStr.PRED;
     }
 
@@ -934,7 +934,7 @@ void NonmemTranslator::parseSource()
     UserStr.RES = p->name;
   else
     {
-      table->insertUserVar( DefaultStr.RES );
+      table->insertScalar( DefaultStr.RES );
       UserStr.RES = DefaultStr.RES;
     }
 
@@ -943,7 +943,7 @@ void NonmemTranslator::parseSource()
     UserStr.WRES = p->name;
   else
     {
-      table->insertUserVar( DefaultStr.WRES );
+      table->insertScalar( DefaultStr.WRES );
       UserStr.WRES = DefaultStr.WRES;
     }
 
@@ -952,7 +952,7 @@ void NonmemTranslator::parseSource()
     UserStr.IPRED = p->name;
   else
     {
-      table->insertUserVar( DefaultStr.IPRED );
+      table->insertScalar( DefaultStr.IPRED );
       UserStr.IPRED = DefaultStr.IPRED;
     }
 
@@ -961,7 +961,7 @@ void NonmemTranslator::parseSource()
     UserStr.IRES = p->name;
   else
     {
-      table->insertUserVar( DefaultStr.IRES );
+      table->insertScalar( DefaultStr.IRES );
       UserStr.IRES = DefaultStr.IRES;
     }
 
@@ -970,7 +970,7 @@ void NonmemTranslator::parseSource()
     UserStr.IWRES = p->name;
   else
     {
-      table->insertUserVar( DefaultStr.IWRES );
+      table->insertScalar( DefaultStr.IWRES );
       UserStr.IWRES = DefaultStr.IWRES;
     }
 
@@ -981,7 +981,7 @@ void NonmemTranslator::parseSource()
 	UserStr.ETARES = p->name;
       else
 	{
-	  table->insertNMVector( DefaultStr.ETARES, myEtaLen );
+	  table->insertVector( DefaultStr.ETARES, myEtaLen );
 	  UserStr.ETARES = DefaultStr.ETARES;
 	}
 
@@ -990,7 +990,7 @@ void NonmemTranslator::parseSource()
 	UserStr.WETARES = p->name;
       else
 	{
-	  table->insertNMVector( DefaultStr.WETARES, myEtaLen );
+	  table->insertVector( DefaultStr.WETARES, myEtaLen );
 	  UserStr.WETARES = DefaultStr.WETARES;
 	}
 
@@ -999,7 +999,7 @@ void NonmemTranslator::parseSource()
 	UserStr.IETARES = p->name;
       else
 	{
-	  table->insertNMVector( DefaultStr.IETARES, myEtaLen );
+	  table->insertVector( DefaultStr.IETARES, myEtaLen );
 	  UserStr.IETARES = DefaultStr.IETARES;
 	}
 
@@ -1008,7 +1008,7 @@ void NonmemTranslator::parseSource()
 	UserStr.IWETARES = p->name;
       else
 	{
-	  table->insertNMVector( DefaultStr.IWETARES, myEtaLen );
+	  table->insertVector( DefaultStr.IWETARES, myEtaLen );
 	  UserStr.IWETARES = DefaultStr.IWETARES;
 	}
       // PPRED
@@ -1016,7 +1016,7 @@ void NonmemTranslator::parseSource()
 	UserStr.PPRED = p->name;
       else
 	{
-	  table->insertUserVar( DefaultStr.PPRED );
+	  table->insertScalar( DefaultStr.PPRED );
 	  UserStr.PPRED = DefaultStr.PPRED;
 	}
       
@@ -1025,7 +1025,7 @@ void NonmemTranslator::parseSource()
 	UserStr.PRES = p->name;
       else
 	{
-	  table->insertUserVar( DefaultStr.PRES );
+	  table->insertScalar( DefaultStr.PRES );
 	  UserStr.PRES = DefaultStr.PRES;
 	}
       
@@ -1034,7 +1034,7 @@ void NonmemTranslator::parseSource()
 	UserStr.PWRES = p->name;
       else
 	{
-	  table->insertUserVar( DefaultStr.PWRES );
+	  table->insertScalar( DefaultStr.PWRES );
 	  UserStr.PWRES = DefaultStr.PWRES;
 	}
 
@@ -1043,7 +1043,7 @@ void NonmemTranslator::parseSource()
 	UserStr.PETARES = p->name;
       else
 	{
-	  table->insertNMVector( DefaultStr.PETARES, myEtaLen );
+	  table->insertVector( DefaultStr.PETARES, myEtaLen );
 	  UserStr.PETARES = DefaultStr.PETARES;
 	}
 
@@ -1052,7 +1052,7 @@ void NonmemTranslator::parseSource()
 	UserStr.PWETARES = p->name;
       else
 	{
-	  table->insertNMVector( DefaultStr.PWETARES, myEtaLen );
+	  table->insertVector( DefaultStr.PWETARES, myEtaLen );
 	  UserStr.PWETARES = DefaultStr.PWETARES;
 	}
 
@@ -1061,7 +1061,7 @@ void NonmemTranslator::parseSource()
 	UserStr.CPRED = p->name;
       else
 	{
-	  table->insertUserVar( DefaultStr.CPRED );
+	  table->insertScalar( DefaultStr.CPRED );
 	  UserStr.CPRED = DefaultStr.CPRED;
 	}
       
@@ -1070,7 +1070,7 @@ void NonmemTranslator::parseSource()
 	UserStr.CRES = p->name;
       else
 	{
-	  table->insertUserVar( DefaultStr.CRES );
+	  table->insertScalar( DefaultStr.CRES );
 	  UserStr.CRES = DefaultStr.CRES;
 	}
       
@@ -1079,7 +1079,7 @@ void NonmemTranslator::parseSource()
 	UserStr.CWRES = p->name;
       else
 	{
-	  table->insertUserVar( DefaultStr.CWRES );
+	  table->insertScalar( DefaultStr.CWRES );
 	  UserStr.CWRES = DefaultStr.CWRES;
 	}
 
@@ -1088,7 +1088,7 @@ void NonmemTranslator::parseSource()
 	UserStr.CETARES = p->name;
       else
 	{
-	  table->insertNMVector( DefaultStr.CETARES, myEtaLen );
+	  table->insertVector( DefaultStr.CETARES, myEtaLen );
 	  UserStr.CETARES = DefaultStr.CETARES;
 	}
 
@@ -1097,7 +1097,7 @@ void NonmemTranslator::parseSource()
 	UserStr.CWETARES = p->name;
       else
 	{
-	  table->insertNMVector( DefaultStr.CWETARES, myEtaLen );
+	  table->insertVector( DefaultStr.CWETARES, myEtaLen );
 	  UserStr.CWETARES = DefaultStr.CWETARES;
 	}
     }
@@ -1646,7 +1646,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
-  Symbol * sym_theta = table->insertNMVector( DefaultStr.THETA, myThetaLen );
+  Symbol * sym_theta = table->insertVector( DefaultStr.THETA, myThetaLen );
   {
     //<in>
     DOMNodeList * theta_in_list = theta->getElementsByTagName( X_IN );
@@ -1885,7 +1885,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
-  Symbol * sym_omega = table->insertNMMatrix( DefaultStr.OMEGA, myOmegaStruct, myOmegaDim );
+  Symbol * sym_omega = table->insertMatrix( DefaultStr.OMEGA, myOmegaStruct, myOmegaDim );
   {
     //<in>
     DOMNodeList * omega_in_list = omega->getElementsByTagName( X_IN );
@@ -2078,7 +2078,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       throw e;
     }
 
-  Symbol * sym_sigma = table->insertNMMatrix( DefaultStr.SIGMA, mySigmaStruct, mySigmaDim ); 
+  Symbol * sym_sigma = table->insertMatrix( DefaultStr.SIGMA, mySigmaStruct, mySigmaDim ); 
   {
     //<in>
     DOMNodeList * sigma_in_list = sigma->getElementsByTagName( X_IN );
@@ -2209,7 +2209,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   //---------------------------------------------------------------------------------------
   myEtaLen = myOmegaDim;
   char etaDefault[] = "0.0";
-  Symbol * sym_eta = table->insertNMVector( DefaultStr.ETA, myEtaLen );
+  Symbol * sym_eta = table->insertVector( DefaultStr.ETA, myEtaLen );
   for( int i=0; i<myEtaLen; i++ ) sym_eta->initial[0][i] = etaDefault;
   sym_eta->fixed[0] = false;
 
@@ -2220,7 +2220,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   //---------------------------------------------------------------------------------------
   myEpsLen = mySigmaDim;
   char epsDefault[] = "0.0";
-  Symbol * sym_eps = table->insertNMVector( DefaultStr.EPS, myEpsLen );
+  Symbol * sym_eps = table->insertVector( DefaultStr.EPS, myEpsLen );
   for( int i=0; i<myEpsLen; i++ ) sym_eps->initial[0][i] = epsDefault;
   sym_eta->fixed[0] = false;
 
@@ -2676,7 +2676,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
-  Symbol * sym_theta = table->insertNMVector( DefaultStr.THETA, myThetaLen );
+  Symbol * sym_theta = table->insertVector( DefaultStr.THETA, myThetaLen );
   {
     //<in>
     DOMNodeList * theta_in_list = theta->getElementsByTagName( X_IN );
@@ -2888,7 +2888,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   myOmegaStruct = Symbol::DIAGONAL;
   myOmegaOrder = myOmegaDim;
 
-  Symbol * sym_omega = table->insertNMMatrix( DefaultStr.OMEGA, myOmegaStruct, myOmegaDim );
+  Symbol * sym_omega = table->insertMatrix( DefaultStr.OMEGA, myOmegaStruct, myOmegaDim );
   {
     //<in>
     DOMNodeList * omega_in_list = omega->getElementsByTagName( X_IN );
@@ -3017,7 +3017,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   char etaDefault[] = "0.0";
   //  myEtaLen = myOmegaOrder;
   myEtaLen = myOmegaDim;
-  Symbol * sym_eta = table->insertNMVector( DefaultStr.ETA, myEtaLen );
+  Symbol * sym_eta = table->insertVector( DefaultStr.ETA, myEtaLen );
   for( int i=0; i<myEtaLen; i++ ) sym_eta->initial[0][i] = etaDefault;
   sym_eta->fixed[0] = false;
   
@@ -3308,7 +3308,7 @@ void NonmemTranslator::parsePK( const DOMElement* pk )
   int nPkParams = countStrInLhs( UserStr.P.c_str(), c_pk_def );
 
   UserStr.P    = DefaultStr.P;
-  table->insertNMVector( UserStr.P, nPkParams );
+  table->insertVector( UserStr.P, nPkParams );
 
   nm_in = fopen( fPkEqn_fortran, "w" );
   fprintf( nm_in, "%s", c_pk_def );
@@ -3360,9 +3360,9 @@ void NonmemTranslator::parseDiffEqn( const DOMElement* diffeqn )
   UserStr.DADT = DefaultStr.DADT;  // this is a vector
   UserStr.A    = DefaultStr.A;
   UserStr.T    = DefaultStr.T;
-  table->insertNMVector( UserStr.DADT, nComps );
-  table->insertNMVector( UserStr.A, nComps );
-  table->insertUserVar ( UserStr.T );
+  table->insertVector( UserStr.DADT, nComps );
+  table->insertVector( UserStr.A, nComps );
+  table->insertScalar ( UserStr.T );
   
   nm_in = fopen( fDiffEqn_fortran, "w" );
   fprintf( nm_in, "%s", c_des_def );
