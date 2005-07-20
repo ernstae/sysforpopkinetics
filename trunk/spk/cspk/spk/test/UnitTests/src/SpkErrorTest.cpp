@@ -331,11 +331,15 @@ void SpkErrorTest::serializeTest()
 
     SpkError e3;
     fstream fs("dummy", std::ios::out);
+    CPPUNIT_ASSERT_MESSAGE( "Failed to open a temporary file <dummy> as output", fs.good() );
     fs << e1;
     fs.close();
+
     fs.open("dummy", ios::in);
+    CPPUNIT_ASSERT_MESSAGE( "Failed to open a temporary file <dummy> as input.", fs.good() );
     fs >> e3;
     fs.close();
+    remove( "dummy" );
 
     CPPUNIT_ASSERT_MESSAGE( "e1.code()==e3.code()", e1.code()==e3.code() );
     CPPUNIT_ASSERT_MESSAGE( "e1.linenum()==e3.linenum()", e1.linenum()==e3.linenum() );
