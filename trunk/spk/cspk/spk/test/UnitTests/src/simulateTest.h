@@ -48,6 +48,7 @@ public:
     void pop_complex_seed();
     void ind_simple_seed();
     void ind_simple_noseed();
+    void ind_example();
 };
 
 #endif
