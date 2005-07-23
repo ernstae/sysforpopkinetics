@@ -31,26 +31,17 @@ $$
 
 $section CppAD Utilities that are Used by QuasiNewton01Box$$
 
-The following files included below copied directly from version 03-12-11
-of the CppAD distribution with the following changes:
-$codep
-	@xref     -> @code
-	@children -> @code
-$$
-$contents%
-	ErrMacro.h%
-	ADDefine.h%
-	LuSolve.h%
-	vector.h
-%$$
+$codep */
+# include <iostream>
+# include <CppAD/CppAD_vector.h>
+# include <CppAD/LuSolve.h>
 
+// make sure CppADvector is defined
+# ifndef CppADvector
+# define CppADvector CppAD::vector
+# endif
+/* $$
 $end
 */
-
-# include <iostream>
-# include "ADDefine.h"
-# include "ErrMacro.h"
-# include "vector.h"
-# include "LuSolve.h"
 
 # endif

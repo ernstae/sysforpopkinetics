@@ -559,11 +559,10 @@ $end
 $end
 */
 
+# include <algorithm>
 
 # include "QuadBox.h"
 # include "MaxAbs.h"
-# include "min.h"
-# include "max.h"
 # include "Bfgs.h"
 # include "Memory.h"
 # include "PlusInfinity.h"
@@ -668,8 +667,8 @@ namespace {
 			bTmp 
 		); 
 		// check for case where cannot achieve accuracy
-		if( deltaScaled > max( rCur * delta, 1e-3 * gProjNorm) ) msg = 
-			"QuasiNewton01Box: cannot achieve requested accuracy";
+		if( deltaScaled > std::max( rCur * delta, 1e-3 * gProjNorm) ) 
+		msg = "QuasiNewton01Box: cannot achieve requested accuracy";
 		return msg;
 	}
 }
@@ -762,8 +761,8 @@ const char * QuasiNewton01Box(
 		HTmp.resize(n * n);
 
 	// initial trust region radius
-	rCur = min(rCur, MaxRadius);
-	rCur = max(rCur, MinRadius);
+	rCur = std::min(rCur, MaxRadius);
+	rCur = std::max(rCur, MinRadius);
 
 	// check initial x value
 	for(i = 0; i < n; i++)
@@ -780,14 +779,14 @@ const char * QuasiNewton01Box(
 
 			xi       = xCur[i];
 			xCur[i]  = xi + StepSize;
-			xCur[i]  = xp = min(1., xCur[i] );
+			xCur[i]  = xp = std::min(1., xCur[i] );
 			msg = "objective is +infinity at input value of xCur";
 			msg = EvaluateFunction(os, msg, obj, level, xCur, fp);
 			if( strcmp(msg, "ok") != 0 )
 				return msg;
 
 			xCur[i]  = xi - StepSize;
-			xCur[i]  = max(0., xCur[i] );
+			xCur[i]  = std::max(0., xCur[i] );
 			msg = "objective is +infinity near input value of xCur";
 			msg = EvaluateFunction(os, msg, obj, level, xCur, fm);
 			if( strcmp(msg, "ok") != 0 )
@@ -1004,7 +1003,7 @@ const char * QuasiNewton01Box(
 			for(j = 0; j < n; j++)
 				sum += HCur[i*n+j]*(xNext[j]-xCur[j]);
 			sum = gNext[i] - gCur[i] - sum;
-			Herr = max(fabs(sum), Herr);
+			Herr = std::max(fabs(sum), Herr);
 		}
 
 		// finish up level 1 tracing
@@ -1030,11 +1029,11 @@ const char * QuasiNewton01Box(
 		}
 		if( dq < 0. && df < ExpandRatio * dq && rCur < MaxRadius )
 		{	change = true;
-			rCur = min( 2. * rCur, MaxRadius);
+			rCur = std::min( 2. * rCur, MaxRadius);
 		}
 		if( (dq >= 0. || df >= ShrinkRatio * dq) && rCur > MinRadius )
 		{	change = true;
-			rCur   = max( rCur / 5., MinRadius);
+			rCur   = std::max( rCur / 5., MinRadius);
 		}
 		if( eta > 0. )
 		{	change = true;
