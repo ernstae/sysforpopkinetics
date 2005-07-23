@@ -5,7 +5,7 @@ INST_BASE = /usr/local
 libdir        = $(INST_BASE)/lib/spktest
 pkgincludedir = $(INST_BASE)/include/spktest/spkopt
 
-AM_CPPFLAGS = -I$(INST_BASE)/include/spktest
+AM_CPPFLAGS = -I$(INST_BASE)/include/spktest -I$(INST_BASE)/include/spktest/CppAD
 AM_LDFLAGS  = -llapack -lg2c
 
 CXXFLAGS   =
@@ -30,13 +30,10 @@ libspkopt_la_SOURCES = \
 	QuadFixed.cpp \
 	QuasiNewton01Box.cpp \
 	Residual.cpp \
-        ADDefine.h \
 	Bfgs.h \
 	c2dsyev.h \
         CppADUtil.h \
 	Delta.h \
-        ErrMacro.h \
-        LuSolve.h \
 	MaxAbs.h \
         max.h \
 	Memory.h \
@@ -47,8 +44,7 @@ libspkopt_la_SOURCES = \
 	QuadBox.h \
 	QuadFixed.h \
 	QuasiNewton01Box.h \
-	Residual.h \
-        vector.h
+	Residual.h 
 
 libspkopt_release_la_SOURCES = \
 	Bfgs.cpp \
@@ -62,13 +58,10 @@ libspkopt_release_la_SOURCES = \
 	QuadFixed.cpp \
 	QuasiNewton01Box.cpp \
 	Residual.cpp \
-        ADDefine.h \
 	Bfgs.h \
 	c2dsyev.h \
         CppADUtil.h \
 	Delta.h \
-        ErrMacro.h \
-        LuSolve.h \
 	MaxAbs.h \
         max.h \
 	Memory.h \
@@ -79,17 +72,13 @@ libspkopt_release_la_SOURCES = \
 	QuadBox.h \
 	QuadFixed.h \
 	QuasiNewton01Box.h \
-	Residual.h \
-        vector.h
+	Residual.h 
 
 pkginclude_HEADERS = \
-        ADDefine.h \
 	Bfgs.h \
 	c2dsyev.h \
         CppADUtil.h \
 	Delta.h \
-        ErrMacro.h \
-        LuSolve.h \
 	MaxAbs.h \
         max.h \
 	Memory.h \
@@ -100,5 +89,4 @@ pkginclude_HEADERS = \
 	QuadBox.h \
 	QuadFixed.h \
 	QuasiNewton01Box.h \
-	Residual.h \
-        vector.h
+	Residual.h 
