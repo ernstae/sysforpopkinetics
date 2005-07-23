@@ -4,7 +4,7 @@ INST_BASE = /usr/local
 
 libdir = $(INST_BASE)/lib/spktest
 
-AM_CPPFLAGS = -I$(INST_BASE)/include/spktest -I/$(INST_BASE)/cppunit/include
+AM_CPPFLAGS = -I$(INST_BASE)/include/spktest -I$(INST_BASE)/cppunit/include -I$(INST_BASE)/include/spktest/CppAD
 AM_LDFLAGS  = -L/usr/local/lib -L$(INST_BASE)/lib/spktest -lspkpred -lspk -lspkopt -llapack -latlas_lapack -lcblas -latlas -lpthread -lm -lcppunit -lxerces-c
 
 testall_SOURCES = \

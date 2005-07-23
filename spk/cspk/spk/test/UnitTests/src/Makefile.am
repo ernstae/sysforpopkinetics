@@ -4,8 +4,8 @@ INST_BASE = /usr/local
 
 libdir = $(INST_BASE)/lib/spktest
 
-AM_CPPFLAGS = -I$(INST_BASE)/include/spktest -I/$(INST_BASE)/cppunit/include
-AM_LDFLAGS  = -L/usr/local/lib -L$(INST_BASE)/lib/spktest -lspk -lspkopt -llapack -latlas_lapack -lcblas -latlas -lpthread -lm -lcppunit -lxerces-c
+AM_CPPFLAGS = -I$(INST_BASE)/include/spktest -I/$(INST_BASE)/cppunit/include -I/$(INST_BASE)/CppAD
+AM_LDFLAGS  = -L/usr/local/lib -L$(INST_BASE)/lib/spktest -L$(INST_BASE)/lib/spktest/CppAD -lspk -lspkopt -lCppAD -llapack -latlas_lapack -lcblas -latlas -lpthread -lm -lcppunit -lxerces-c
 
 CXXFLAGS   = -g
 CFLAGS     = -g

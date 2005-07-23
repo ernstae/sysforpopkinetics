@@ -5,7 +5,7 @@ INST_BASE = /usr/local
 libdir        = $(INST_BASE)/lib/spktest
 pkgincludedir = $(INST_BASE)/include/spktest/spkpred
 
-AM_CPPFLAGS = -I$(INST_BASE)/include/spktest
+AM_CPPFLAGS = -I$(INST_BASE)/include/spktest -I$(INST_BASE)/include/spktest/CppAD
 
 CXXFLAGS   =
 CXXCOMPILE =
