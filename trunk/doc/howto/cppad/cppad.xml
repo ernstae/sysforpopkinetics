@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"[
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+]>
+<article><title>CppAD</title>
+  <articleinfo>
+    <abstract>
+      <para>
+      This document demonstrates how to install/update CppAD for SPK
+      that is different from the procedure given by the author of 
+      the package.  Our procedure enables us to treat CppAD
+      as part of SPK so that it is installed into our test environment
+      first.
+      </para>
+      <para>
+	The information in this document is targeted primarily towards
+	the RFPK Software Team and associates and is specific to the
+	computer systems and network installed in the RFPK Laboratory
+	of the &dept; of the &uw;.  RFPK is the Resource for
+	Population Kinetics.  Its work is supported, in part, by grant
+	P41 EB-001975 of the National Institutes of Health (NIH) of
+	the U.S.  Department of Health and Human Services.
+      </para>
+      <para>
+	<link linkend="copyright">Copyright</link> (c) 2005, by the &uw;.
+      </para>
+    </abstract>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>July 4, 1776</date>
+	<authorinitials></authorinitials>
+	<revremark></revremark>
+      </revision>
+    </revhistory>
+  </articleinfo>
+  <sect1>
+    <title></title>
+    <para>
+    </para>
+  </sect1>
+  <sect1>
+    <title id="copyright">Copyright Notice</title>
+    <para>
+      Copyright (c) 2005,  by the University of Washington.
+      This material may be distributed only subject to the terms and conditions 
+      set forth in the Open Publication License, V1.0 or later
+      (the latest version is presently available
+      <ulink url="http://www.opencontent.org/openpub/">here</ulink>.
+    </para>
+    <para>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Installation (specific to SPK)</title>
+    <para>
+    If we follow the original author's installation procedure, CppAD is 
+    installed in the following directories:
+    <screen>
+    headers      - $PREFIX/include/CppAD/
+    libraries    - $PREFIX/lib/
+    </screen>
+    $PREFIX is an arbitrary path.
+    </para>
+    <para>
+    On the other hand, SPK components installation requires the following
+    directory structures:
+    <screen>
+    headers      - $PREFIX/include/$INST_ENV/CppAD/
+    libraries    - $PREFIX/lib/$INST_ENV/
+    </screen>
+    $INST_ENV is either "spktest" for the test environment or
+    "spkprod" for the production environment.
+    </para>
+    <para>
+    We like to install CppAD just like other SPK components so that
+    we can test fully under the test environment and move it to
+    the production when it is really ready.  To do that, we ignore 
+    the author's installation procedure and follow the procedure below:
+    </para>
+    <orderedlist>
+      <listitem>
+        <para>
+        Download a copy of CppAD (CppAD.unix.tar.gz) from 
+        <ulink url="http://www.seanet.com/~bradbell">
+        http://www.seanet.com/~bradbell</ulink> into /tmp on the
+        installation machine.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        Unpack the downloaded package:
+        <screen>
+  cd /tmp
+  tar xvzf CppAD.unix.tar.gz
+        </screen>
+        This will extract files into a new directory 
+        whose name begins with "cppad" followed by a release date/version.
+        We denote it as "cppadXXX" for the rest of the document.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        Create Makefiles tuned to the installation machine:
+        <screen>
+        cd cppadXXX
+        ./configure
+        </screen>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        Build the package:
+        <screen>
+        make
+        </screen>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        We copy the headers along with its containing directory into
+        /usr/local/include/spktest/:
+        <screen>
+        su
+        cp -r CppAD /usr/local/include/spktest/CppAD
+        </screen>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        Since CppAD is entirely templated, that's all we have to do.
+        Ignore the library (libCppAD.a) created by running Make. 
+        </para>
+      </listitem>
+    </orderedlist>
+  </sect1>
+</article>
+
+
+<!--  LocalWords:  xml DOCTYPE DocBook uw articleinfo SPK RFPK RFPK's linkend
+ -->
+<!--  LocalWords:  ulink url
+ -->
