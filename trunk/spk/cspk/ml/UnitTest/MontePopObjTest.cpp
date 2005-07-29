@@ -5,8 +5,9 @@
 # include "../MontePopObj.h"
 # include "../AnalyticIntegral.h"
 
+# include "MontePars.h"
 # include "LinearModel.h"
-# include "NearEqual.h"
+# include <CppAD/NearEqual.h>
 
 #include <stdlib.h>
 #include <gsl/gsl_sf_erf.h>
@@ -73,21 +74,6 @@ bool MontePopObjTest(void)
 	// number of Map Bayesian evaluations for each individual
 	size_t numberEval = 1000;
 
-	// values returned by MontePopObj
-	double integralEstimate;
-	double estimateStd;
-	MontePopObj(
-		Model               , 
-		N                   ,
-		y                   ,
-		alpha               ,
-		L                   ,
-		U                   ,
-		numberEval          ,
-		//
-		integralEstimate    ,
-		estimateStd
-	);
 
 	// value to check against
 	double integral = 0;
@@ -104,8 +90,35 @@ bool MontePopObjTest(void)
 		) );
 	}
 
-	ok  &= NearEqual( integral, integralEstimate, 0., 3 * estimateStd);
-	ok  &= ( (0. < estimateStd) & (estimateStd / integral < 1e-2) ); 
+	// monte carlo method used
+	enum MontePars::METHOD method[] = {
+		MontePars::plain, 
+		MontePars::miser
+	};
+
+	// values returned by MontePopObj
+	double integralEstimate;
+	double estimateStd;
+	for(i = 0; i < 2; i++)
+	{	MontePopObj(
+			method[i]           ,
+			Model               , 
+			N                   ,
+			y                   ,
+			alpha               ,
+			L                   ,
+			U                   ,
+			numberEval          ,
+			//
+			integralEstimate    ,
+			estimateStd
+		);
+
+		ok  &= CppAD::NearEqual( 
+			integral, integralEstimate, 0., 3 * estimateStd
+		);
+		ok  &=  (0. < estimateStd) & (estimateStd / integral < 1e-2); 
+	}
 
 	return ok;
 }
