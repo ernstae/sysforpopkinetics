@@ -28,6 +28,7 @@ extern bool MapBayTest(void);
 extern bool MapMonteTest(void);
 extern bool MontePopObjTest(void);
 extern bool GridIntegralTest(void);
+extern bool ExpModelTest(void);
 
 static bool RunTest(bool TestOk(void), char *name)
 {	bool ok;
@@ -47,6 +48,7 @@ int main(void)
 	ok &= RunTest(MapMonteTest   ,  "MapMonte");
 	ok &= RunTest(MontePopObjTest,  "MontePopObj");
 	ok &= RunTest(GridIntegralTest, "GridIntegralTest");
+	ok &= RunTest(ExpModelTest,     "ExpModelTest");
 
 	if( ok )
 		return 0;
