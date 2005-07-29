@@ -19,6 +19,7 @@ $section Monte Carlo Integration of Map Bayesian Objective$$
 $table
 $bold Syntax$$ $cnext
 $syntax%void MapMonte(
+	enum MontePars::METHOD      %method%           ,
 	SpkModel                    &%model%           ,
 	const std::valarray<int>    &%N%               , 
 	const std::valarray<double> &%y%               ,
@@ -65,6 +66,11 @@ $latex f_i ( b , \alpha )$$ is the mean, given the fixed and random effects,
 of this individuals measurements, and
 $latex R_i ( b , \alpha )$$ is the variance, given the fixed and random effects,
 of this individuals measurements.
+
+$head method$$
+The argument $italic method$$ can either be 
+$code MontePars::plain$$ or $code MontePars::miser$$.
+It determines which GSL monte carlo integration method is used.
 
 $head model$$
 is a $xref/MonteSpkModel//Monte-Carlo model/$$ 
@@ -148,6 +154,7 @@ namespace {
 }
 
 void MapMonte(
+	enum MontePars::METHOD       method          ,
 	SpkModel                    &model           ,
 	const std::valarray<int>    &N               , 
 	const std::valarray<double> &y               ,
@@ -231,7 +238,7 @@ void MapMonte(
 	// error flag
 	int GslError;
 
-	if( MontePars::method == MontePars::plain )
+	if( method == MontePars::plain )
 	{	// very simple monte carlo integration
 		gsl_monte_plain_state *state = 
 			gsl_monte_plain_alloc (numberRandomEffects);
@@ -250,7 +257,7 @@ void MapMonte(
 			ThrowGsl2SpkError();
 		gsl_monte_plain_free(state);
 	}
-	else if ( MontePars::method == MontePars::miser )
+	else if ( method == MontePars::miser )
 	{	// The miser MonteCarlo integrator (see Numerical Recipies)
 		gsl_monte_miser_state *state = 
 			gsl_monte_miser_alloc (numberRandomEffects);

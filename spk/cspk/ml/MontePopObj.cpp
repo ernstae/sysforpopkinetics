@@ -19,6 +19,7 @@ $section Using Monte Carlo Integration to Estimate Population Objective$$
 $table
 $bold Syntax$$ $cnext
 $syntax%void MontePopObj(
+	enum MontePars::METHOD      %method%           ,
 	SpkModel                    &%model%           ,
 	const std::valarray<int>    &%N%               , 
 	const std::valarray<double> &%y%               ,
@@ -66,6 +67,11 @@ $latex f_i ( b , \alpha )$$ is the mean, given the fixed and random effects,
 of this individuals measurements, and
 $latex R_i ( b , \alpha )$$ is the variance, given the fixed and random effects,
 of this individuals measurements.
+
+$head method$$
+The argument $italic method$$ can either be 
+$code MontePars::plain$$ or $code MontePars::miser$$.
+It determines which GSL monte carlo integration method is used.
 
 $head model$$
 is a $xref/MonteSpkModel//Monte-Carlo model/$$ 
@@ -133,6 +139,7 @@ $end
 # include "MontePopObj.h"
 
 void MontePopObj(
+	enum MontePars::METHOD       method          ,
 	SpkModel                    &model           ,
 	const std::valarray<int>    &N               , 
 	const std::valarray<double> &y               ,
@@ -150,7 +157,7 @@ void MontePopObj(
 	for(i = 0; i < N.size(); i++)
 	{	double estimateOne;
 		double stdOne;
-		MapMonte(model, N, y, alpha, L, U, i, 
+		MapMonte(method, model, N, y, alpha, L, U, i, 
 			numberEval, estimateOne, stdOne);
 		negLogLikeEstimate  -= log( estimateOne );
 		estimateVariance    += stdOne * stdOne 
