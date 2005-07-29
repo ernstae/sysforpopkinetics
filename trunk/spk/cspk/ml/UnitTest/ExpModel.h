@@ -127,7 +127,7 @@ public:
 			Time[j] = Time_[j]; 
 
 		// independent variaiable vector = (alpha, b, t)
-		CppAD::vector< AD<double> > pop_ind_time(nPop + 1);
+		CppAD::vector< AD<double> > pop_ind_time(nPop + nInd + 1);
 		for(j = 0; j < nPop + nInd + 1; j++)
 			pop_ind_time[j] = 1.;
 		Independent(pop_ind_time); 
