@@ -15,8 +15,8 @@ INCLUDES = \
 	MapMonte.h \
 	MontePars.h \
 	LinearModel.h \
-	NearEqual.h \
-	Gsl2SpkError.h
+	Gsl2SpkError.h \
+	ExpModel.h
 
 OBJECTS = \
 	GridIntegral.o \
@@ -30,6 +30,7 @@ OBJECTS = \
 	MontePopObjTest.o \
 	NearEqual.o \
 	Gsl2SpkError.o \
+	ExpModelTest.o \
 	RunTest.o
 
 
@@ -42,4 +43,4 @@ OBJECTS = \
 	gcc $(CPPFLAGS) $< -o $@
 
 RunTest: $(OBJECTS) $(INCLUDES)
-	g++ $(OBJECTS) -Wl,--rpath -Wl,/usr/local/lib -L/usr/local/lib -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -lspk -lspkopt -lgsl -latlas_lapack -lcblas -latlas -lxerces-c -o RunTest
+	g++ $(OBJECTS) -Wl,--rpath -Wl,/usr/local/lib -L/usr/local/lib -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -lCppAD -lspk -lspkopt -lgsl -latlas_lapack -lcblas -latlas -lxerces-c -o RunTest
