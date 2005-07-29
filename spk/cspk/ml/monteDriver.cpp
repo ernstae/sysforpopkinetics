@@ -392,6 +392,7 @@ namespace {
 		{	double estimate;
 			double error;
 			MapMonte(
+				MontePars::method,
 				model,
 				N,
 				y,
