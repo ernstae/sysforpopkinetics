@@ -3,8 +3,10 @@
 
 # include <valarray>
 # include <spk/SpkModel.h>
+# include "MontePars.h"
 
 extern void MontePopObj(
+	enum MontePars::METHOD       method          ,
 	SpkModel                    &model           ,
 	const std::valarray<int>    &N               , 
 	const std::valarray<double> &y               ,
