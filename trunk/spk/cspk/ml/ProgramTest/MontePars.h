@@ -22,7 +22,7 @@ namespace MontePars {
    };
 
    // users choice for this numerical integration run
-   const enum METHOD method = grid;
+   const enum METHOD method = miser;
 
    // number of components to number of function evaluations
    // If method = grid, this must be the number of random effects
@@ -35,7 +35,7 @@ namespace MontePars {
    // the product of the elements of numberEval.
    // If method != grid, numberEval[0] is the total number of functions 
    // evaluations.
-   const int c_numberEval[nEval] = { 60 };
+   const int c_numberEval[nEval] = { 5000 };
    const std::valarray<int> numberEval(c_numberEval, nEval);
 };
 
