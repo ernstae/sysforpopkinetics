@@ -3,7 +3,7 @@
 # include "../MapBay.h"
 
 # include "LinearModel.h"
-# include "NearEqual.h"
+# include <CppAD/NearEqual.h>
 
 bool MapBayTest(void)
 {	using std::valarray;
@@ -70,7 +70,7 @@ bool MapBayTest(void)
 	                  + .5 * residual * residual / Rvar
 	                  + .5 * log( 2 * Pi * Rvar); 
 	
-	ok &= NearEqual( MapBayValue, CheckValue, 1e-10, 1e-10);
+	ok &= CppAD::NearEqual( MapBayValue, CheckValue, 1e-10, 1e-10);
 
 	return ok;
 }
