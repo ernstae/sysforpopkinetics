@@ -6,7 +6,7 @@
 # include "../AnalyticIntegral.h"
 
 # include "LinearModel.h"
-# include "NearEqual.h"
+# include <CppAD/NearEqual.h>
 
 #include <stdlib.h>
 #include <gsl/gsl_sf_erf.h>
@@ -72,22 +72,11 @@ bool MapMonteTest(void)
 	// number of evaluations of the Map Bayesian objective
 	size_t numberEval = 1000;
 
-	// values returned by MapMonte
-	double integralEstimate;
-	double estimateStd;
-	MapMonte(
-		Model               , 
-		Ndata               ,
-		Measurement         ,
-		alpha               ,
-		L                   ,
-		U                   ,
-		individual          ,
-		numberEval          ,
-		//
-		integralEstimate    ,
-		estimateStd
-	);
+	// monte carlo method used
+	enum MontePars::METHOD method[] = {
+		MontePars::plain, 
+		MontePars::miser
+	};
 
 	// value to check against
 	double integral = AnalyticIntegral(
@@ -100,8 +89,31 @@ bool MapMonteTest(void)
 		individual 
 	);
 
-	ok  &= NearEqual( integral, integralEstimate, 0., 3 * estimateStd);
-	ok  &= ( (0. < estimateStd) & (estimateStd < 1e-2) ); 
+	// values returned by MapMonte
+	double integralEstimate;
+	double estimateStd;
+	size_t i;
+	for(i = 0; i < 2; i++)
+	{	MapMonte(
+			method[i]           ,
+			Model               , 
+			Ndata               ,
+			Measurement         ,
+			alpha               ,
+			L                   ,
+			U                   ,
+			individual          ,
+			numberEval          ,
+			//
+			integralEstimate    ,
+			estimateStd
+		);
+
+		ok  &= CppAD::NearEqual( 
+			integral, integralEstimate, 0., 3 * estimateStd
+		);
+		ok  &= ( (0. < estimateStd) & (estimateStd < 1e-2) ); 
+	}
 
 	return ok;
 }
