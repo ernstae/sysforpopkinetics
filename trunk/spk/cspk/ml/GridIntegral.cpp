@@ -61,7 +61,7 @@ The space between grid points in the $th i$$ component direction is
 $latex \[
 	( U_i - L_i ) / N_i
 \] $$
-(All the elements of $italic N$$ must be greater than one.)
+(All the elements of $italic N$$ must be greater than or equal 3.)
 Note that $code GridIntegral$$ may use up to 
 $latex \[
 	2 * N[0] * N[1] *  \cdots  * N[m-1]
@@ -84,6 +84,7 @@ $end
 # include "GridIntegral.h"
 # include <iostream>
 # include <valarray>
+# include <cassert>
 
 namespace {
 
@@ -140,7 +141,7 @@ namespace {
 			Ntot   *= N[i];
 			assert( N[i] > 0 );
 		}
-		double *F = new double[Ntot];
+		double F;
 
 		bool    more = true;
 		size_t count = 0;
@@ -152,8 +153,8 @@ namespace {
 				L[i] + (I[i] + .5) * (U[i] - L[i]) / N[i];
 
 			// add function value at this grid point
-			F[count] = Feval(X, m, p);
-			sumF    += F[count];
+			F     = Feval(X, m, p);
+			sumF += F;
 			count++;
 
 			// next grid point index
@@ -161,7 +162,6 @@ namespace {
 		}
 		assert( count == Ntot );
 
-		delete [] F;
 		delete [] X;
 		delete [] I;
 
@@ -182,7 +182,12 @@ void GridIntegral(
 {
 	integralEstimate  = GridIntegral(Feval, m, p, N, L, U);
 
-	std::valarray<int> M = N - N / 2;
+	std::valarray<int> N3 = N / 3;
+	size_t i;
+	for(i = 0; i < N.size(); i++)
+		assert( N3[i] > 0 );
+
+	std::valarray<int> M = N - N3;
 	double compareEstimate = GridIntegral(Feval, m, p, M, L, U);
 	estimateStd            = fabs(integralEstimate - compareEstimate);
 
