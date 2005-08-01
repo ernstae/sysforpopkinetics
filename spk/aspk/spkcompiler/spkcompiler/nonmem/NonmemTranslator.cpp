@@ -199,8 +199,8 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     mySigDigits             ( 3 ),
     myPopMitr               ( 100 ),
     myIndMitr               ( 100 ),
-    myPopEpsilon            ( pow    ( 10.0, -(mySigDigits+.3) ) ),
-    myIndEpsilon            ( pow    ( 10.0, -(mySigDigits+.3) ) ),
+    myPopEpsilon            ( pow    ( 10.0, -(mySigDigits+1.0) ) ),
+    myIndEpsilon            ( pow    ( 10.0, -(mySigDigits+1.0) ) ),
     myPopTraceLevel         ( 1 ),
     myIndTraceLevel         ( 1 ),
     mySeed                  ( 0 ),
@@ -3673,7 +3673,7 @@ void NonmemTranslator::generateIndData( ) const
       // The NONMEM pred variables are vectors whose elements
       // would be replaced by computed values.  So they have to be
       // declared writable.
-      else if( type == Symbol::NONMEMDEF )
+      else if( type == Symbol::PREDEFINED )
 	{
 	  if( keyVarName == KeyStr.THETA 
 	      || keyVarName == KeyStr.ETA 
