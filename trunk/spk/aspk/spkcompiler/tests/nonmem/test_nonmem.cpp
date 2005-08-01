@@ -23,6 +23,20 @@
 using namespace std;
 using namespace CppUnit;
 
+// List all the available tests
+void printall( const map<string, CppUnit::Test*>& list )
+{
+  printf( "Usage: testall [--list] [TESTS]\n" );
+  printf( "\n" );
+  printf( "--list - Displays the list of all available tests\n" ); 
+  printf( "TESTS  - The space delimited list of unit test names\n" );
+  printf( "\n" );
+  map<string, CppUnit::Test*>::const_iterator p = list.begin();
+  for( p; p != list.end(); p++ )
+    printf( "\t%s\n", p->first.c_str() );
+  return;
+}
+
 int main( int argc, const char * argv[] )
 {
   map<string, CppUnit::Test*> master;
@@ -59,7 +73,7 @@ int main( int argc, const char * argv[] )
   master[ "pop_fixedParaTest" ] = pop_fixedParaTest::suite();
 
   // test for NonmemTranslator: ability to handle a data set with rows without DVs.
-  master[ "ind_mdvTest" ] = ind_mdvTest::suite();
+  //  master[ "ind_mdvTest" ] = ind_mdvTest::suite();
   master[ "pop_mdvTest" ] = pop_mdvTest::suite();
 
   // test for NonmemTranslator: ability to handle Differential Equations
@@ -75,20 +89,28 @@ int main( int argc, const char * argv[] )
       map<string, CppUnit::Test*>::const_iterator p = master.begin();
       for( p; p != master.end(); p++ )
 	subset.push_back( p->second );
+      printall( master );
     }
   else
     {
-      for( int i=1; i<argc; i++ )
+      if( strcmp( argv[1], "--list" ) == 0 )
 	{
-	  map<string, CppUnit::Test*>::const_iterator p = master.find( argv[i] );
-	  if( p != master.end() )
-	    {
-	      subset.push_back( p->second );
-	    }
-	  else
-	    {
-	      fprintf( stderr, "!!! Can't find %s in the master list (type?) !!! \n",
-		       argv[i] );
+	  printall( master );
+	}
+      else
+	{
+	  for( int i=1; i<argc; i++ )
+	    {  
+	      map<string, CppUnit::Test*>::const_iterator p = master.find( argv[i] );
+	      if( p != master.end() )
+		{
+		  subset.push_back( p->second );
+		}
+	      else
+		{
+		  fprintf( stderr, "!!! Can't find %s in the master list (type?) !!! \n",
+			   argv[i] );
+		}
 	    }
 	}
     }
