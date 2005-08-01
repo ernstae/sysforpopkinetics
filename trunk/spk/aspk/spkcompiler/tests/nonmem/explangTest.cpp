@@ -289,14 +289,16 @@ void explangTest::testFunctions()
   fputs( "A = LOG(1)\n", pInput );
   fputs( "A = LOG10(100)\n", pInput );
   fputs( "A = SQRT(4.0)\n", pInput );
+  fputs( "A = SIN(0.0)\n", pInput );
+  fputs( "A = COS(0.0)\n", pInput );
   fputs( "A = B( X**Y )\n", pInput );
   fputs( "A = EXP(X) * SQRT(Y)\n", pInput );
   fputs( "A = 1.0 * ( EXP(X) + Y )\n", pInput ); 
   
   fclose( pInput );
 
-  table.insertUserVar( "X" );
-  table.insertUserVar( "Y" );
+  table.insertScalar( "X" );
+  table.insertScalar( "Y" );
   
   pInput = fopen( input, "r" );
   CPPUNIT_ASSERT( pInput != NULL );
@@ -313,7 +315,7 @@ void explangTest::testFunctions()
 
   nm_parse();
 
-  CPPUNIT_ASSERT_EQUAL( 8, gSpkExpLines );
+  CPPUNIT_ASSERT_EQUAL( 10, gSpkExpLines );
   CPPUNIT_ASSERT( table.findi( "A" ) != Symbol::empty() );
   CPPUNIT_ASSERT( table.findi( "B" ) != Symbol::empty() );
   
@@ -405,6 +407,28 @@ void explangTest::testFunctions()
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "sin(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "(double)0.0" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "cos(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "(double)0.0" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "B[" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "(" );
@@ -485,9 +509,9 @@ void explangTest::testIfStmt()
   fputs( "IF( X.NE.Y ) A = B(1) ;comment\n", pInput );
   fclose( pInput );
 
-  table.insertUserVar( "X" );
-  table.insertUserVar( "Y" );
-  table.insertUserVar( "B" );
+  table.insertScalar( "X" );
+  table.insertScalar( "Y" );
+  table.insertScalar( "B" );
   
   pInput = fopen( input, "r" );
   CPPUNIT_ASSERT( pInput != NULL );
@@ -614,10 +638,10 @@ void explangTest::testIfThenStmt()
   fputs( "ENDIF\n", pInput );
   fclose( pInput );
 
-  table.insertUserVar( "X" );
-  table.insertUserVar( "Y");
-  table.insertUserVar( "B" );
-  table.insertUserVar( "D" );
+  table.insertScalar( "X" );
+  table.insertScalar( "Y");
+  table.insertScalar( "B" );
+  table.insertScalar( "D" );
 
   pInput = fopen( input, "r" );
   CPPUNIT_ASSERT( pInput != NULL );
@@ -724,20 +748,20 @@ void explangTest::testHAHN1_1()
 */
   fputs( "x=EXP((x)**(x))\n", pInput );  // but this fails
   fputs( "x=EXP((x+x)**x)\n", pInput );  // this passes 
-  table.insertUserVar( "b1" );
-  table.insertUserVar( "b2" );
-  table.insertUserVar( "b3" );
-  table.insertUserVar( "b4" );
-  table.insertUserVar( "b5" );
-  table.insertUserVar( "b6" );
-  table.insertUserVar( "b7" );
-  table.insertUserVar( "x" );
+  table.insertScalar( "b1" );
+  table.insertScalar( "b2" );
+  table.insertScalar( "b3" );
+  table.insertScalar( "b4" );
+  table.insertScalar( "b5" );
+  table.insertScalar( "b6" );
+  table.insertScalar( "b7" );
+  table.insertScalar( "x" );
   fputs ("x=(b1+b2*x+b3*x**2+b4*x**3) /(1+b5*x+b6*x**2+b7*x**3)\n", pInput );
   fclose( pInput );
   
-  table.insertUserVar( "THETA" );
-  table.insertUserVar( "TIME" );
-  table.insertUserVar( "ETA" );
+  table.insertScalar( "THETA" );
+  table.insertScalar( "TIME" );
+  table.insertScalar( "ETA" );
 
   pInput = fopen( input, "r" );
   CPPUNIT_ASSERT( pInput != NULL );
