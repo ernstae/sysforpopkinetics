@@ -1151,8 +1151,10 @@ DEFINED_UNARY_FUNCTION '(' arithmatic_expr ')' {
        sprintf( buf, "exp( %s )",   $3 );
    else if( strcmp( lowercase, STR_SQRT ) == 0 )
        sprintf( buf, "sqrt( %s )",  $3 );
-   else if( strcmp( lowercase, STR_ATAN ) == 0 )
-       sprintf( buf, "atan( %s )",  $3 );
+   else if( strcmp( lowercase, STR_SIN ) == 0 )
+       sprintf( buf, "sin( (double)%s )",  $3 );
+   else if( strcmp( lowercase, STR_COS ) == 0 )
+       sprintf( buf, "cos( (double)%s )",  $3 );
    else
    {
       char err[128];
