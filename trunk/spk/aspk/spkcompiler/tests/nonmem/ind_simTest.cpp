@@ -64,7 +64,7 @@ namespace{
   char MLIB[]       = "m";
   char XERCESCLIB[] = "xerces-c";
   char LDPATH[]     = "-Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest";
-  char CPPFLAG[]    = "-g -I/usr/local/include/spktest";
+  char CPPFLAG[]    = "-g -I/usr/local/include/spktest -I/usr/local/include/spktest/CppAD";
   char LDFLAG[514];
 
   char MY_ASSERT_EQUAL[] =
