@@ -26,38 +26,36 @@ public:
   /**
    * The types of symbols.
    */
-  enum SymbolType      {DATALABEL, /** Data label */
-			USERDEF,   /** User defined variable */
-			NONMEMDEF  /** NONMEM keyword or predefined parameter variable */ };
+  enum SymbolType { DATALABEL,   /** Data label **/
+		    USERDEFINED, /** User defined variable **/
+		    PREDEFINED   /** Predefined variable **/ };
   /**
    * The types of data object associated with symbols.
    */
-  enum ObjectType      {SCALAR,   /** Scalar **/
-			VECTOR,   /** Vector **/
-			MATRIX    /** Matrix **/ };
+  enum ObjectType { SCALAR,      /** Scalar **/
+		    VECTOR,      /** Vector **/
+		    MATRIX       /** Matrix **/ };
 
   /**
    * The types of object structures.  For objects other than matrix, use FULL.
    */
-  enum Structure {FULL,     /** Full matrix */
-		  TRIANGLE, /** Triangle (half) matrix */
-		  DIAGONAL  /** Diagonal matrix */};
+  enum Structure  { FULL,        /** Full matrix **/
+		    TRIANGLE,    /** Triangle (symmetrical) matrix **/
+		    DIAGONAL     /** Diagonal matrix **/ };
 
   /**
-   * Return a Symbol object that defines "empty" or "undefined".
+   * The access permissions.
+   **/
+  enum Permission { READONLY,    /** Read only **/
+                    READWRITE    /** Read and write **/ };
+
+  /**
+   * Return a Symbol object that defines "empty".
    *
    * A Symbol object which lacks of the name (ie. the <em>name</em> field is empty)
    * is considered empty no matter how the other fields are defined.
    */
    static const Symbol* empty();
-
-
-   /**
-    * Tests if this Symbol object is defined as "undefined".
-    *
-    * @return true if this is undefined.  false otherwise.
-    **/
-   //bool isUndefined() const;
 
   /**
    * The default constructor.  This initializes the object as an empty Symbol.
@@ -130,7 +128,6 @@ public:
    *
    * @param var The name of the user-defined (scalar) variable.
    */
-   static Symbol createUserVar(  const std::string& var ){ return createScalar( var ); }
    static Symbol createScalar(  const std::string& var );
 
   /** 
@@ -149,7 +146,6 @@ public:
    * @param var The name of the NONMEM (vector) variable.
    * @param length The length of the vector.
    */
-   static Symbol createNMVector( const std::string& var, int length ){ return createVector(var,length);}
    static Symbol createVector( const std::string& var, int length );
 
   /** 
@@ -169,8 +165,6 @@ public:
    * @param structure  The matrix structure (ie. sparseness).
    * @param dim The dimension of the square matrix.
    */
-   static Symbol createNMMatrix( const std::string& var, enum Structure structure, int dim )
-     { return createMatrix( var, structure, dim ); }
    static Symbol createMatrix( const std::string& var, enum Structure structure, int dim );
 
   /** 

@@ -225,19 +225,19 @@ Symbol Symbol::createScalar( const string& var )
 {
    valarray<int> one( 1 );
    one[0] = 1;
-   return Symbol( var, "", USERDEF, SCALAR, FULL, one );
+   return Symbol( var, "", USERDEFINED, SCALAR, FULL, one );
 }
 Symbol Symbol::createVector( const string& var, int veclen )
 {
    valarray<int> len( 1 );
    len[0] = veclen;
-   return Symbol( var, "", NONMEMDEF, VECTOR, FULL, len );
+   return Symbol( var, "", PREDEFINED, VECTOR, FULL, len );
 }
 Symbol Symbol::createMatrix( const string& var, enum Structure mt, int matdim )
 {
    valarray<int> dim( 1 );
    dim[0] = matdim;
-   return Symbol( var, "", NONMEMDEF, MATRIX, mt, dim );
+   return Symbol( var, "", PREDEFINED, MATRIX, mt, dim );
 }
 Symbol Symbol::createLabel( const string& label, 
                             const string& alias, 
@@ -268,11 +268,11 @@ std::ostream& operator<<( std::ostream& o, const Symbol& s )
 	  o << " }" << endl;
 	}
     }
-  else if( s.symbol_type == Symbol::USERDEF )
+  else if( s.symbol_type == Symbol::USERDEFINED )
     {
       o << "user defined" << endl;
     }
-  else if( s.symbol_type == Symbol::NONMEMDEF )
+  else if( s.symbol_type == Symbol::PREDEFINED )
     {
       o << "NONMEM defined" << endl;
       int n = s.initial.size();
