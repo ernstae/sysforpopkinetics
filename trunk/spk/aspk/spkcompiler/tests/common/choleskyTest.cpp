@@ -9,7 +9,7 @@
 #include <cppunit/ui/text/TestRunner.h>
 
 
-#include "spkcompiler/cholesky.h"
+#include "../../spkcompiler/cholesky.h"
 #include "choleskyTest.h"
 
 using namespace std;

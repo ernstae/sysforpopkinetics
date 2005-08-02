@@ -10,7 +10,7 @@
 #include <cppunit/ui/text/TestRunner.h>
 
 
-#include "spkcompiler/client.h"
+#include "../../spkcompiler/client.h"
 #include "clientTest.h"
 
 using namespace std;
