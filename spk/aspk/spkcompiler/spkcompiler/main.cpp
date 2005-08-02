@@ -40,13 +40,13 @@
  *       the above files.
  * 
  * - Generated files (upon <em>abnormal</em> completion):
- *   - <code>compilation_error.xml</code> --- An SpkReportML document containing only the 
- *                                            <code>error_message</code> element which contains
- *                                            the error messages.  This file may no be generated
- *                                            if the return code is <code>ACCESS_ERR</code>
- *                                            or the program is terminated abruptly 
- *                                            (ex. by asynchronous signals such as 
- *                                            <code>SIG_ABRT</code>, <code>SIG_TERM</code> ...).
+ *   - <code>compilation_error.xml</code> --- An SpkResult instance containing the list of
+ *                                        error messages.  
+ *                                        This file may no be generated
+ *                                        if the return code is <code>ACCESS_ERR</code>
+ *                                        or the program is terminated abruptly 
+ *                                        (ex. by asynchronous signals such as 
+ *                                        <code>SIG_ABRT</code>, <code>SIG_TERM</code> ...).
  * 
  */
 
@@ -111,7 +111,7 @@ namespace{
   }
 
   /**
-   * Generate a legal SpkReportML document containing error messages.
+   * Generate an SpkReport document.
    */
   void genCompilationErrorML( const SpkCompilerException& e )
   {
@@ -124,12 +124,8 @@ namespace{
      }
      o << "<?xml version=\"1.0\"?>" << endl;
      o << "<spkreport>" << endl;
-     o << "<error_list>" << endl;
-
-     o << e << endl;
-     o << "</error_list>" << endl;
+     o << e.getXml() << endl;
      o << "</spkreport>" << endl;
-     o << e << endl;
      o.close();
      return;
   }
