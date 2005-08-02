@@ -7,7 +7,7 @@
 #include <cppunit/TextTestResult.h>
 #include <cppunit/ui/text/TestRunner.h>
 
-#include "spkcompiler/SymbolTable.h"
+#include "../../spkcompiler/SymbolTable.h"
 #include "SymbolTableTest.h"
 
 using namespace std;
@@ -29,8 +29,8 @@ void SymbolTableTest::testInsertUserVar()
 {
    string empty_string( "" ); 
    enum Symbol::SymbolType datalabel = Symbol::DATALABEL;
-   enum Symbol::SymbolType nonmem    = Symbol::NONMEMDEF;
-   enum Symbol::SymbolType user      = Symbol::USERDEF;
+   enum Symbol::SymbolType nonmem    = Symbol::PREDEFINED;
+   enum Symbol::SymbolType user      = Symbol::USERDEFINED;
    enum Symbol::ObjectType scalar    = Symbol::SCALAR;
    enum Symbol::ObjectType vec       = Symbol::VECTOR;
    enum Symbol::ObjectType matrix    = Symbol::MATRIX;
@@ -42,7 +42,7 @@ void SymbolTableTest::testInsertUserVar()
    string aaa_name( "aaa" );
    vector<int> aaa_dim( 1 );
    aaa_dim[0] = 1;
-   Symbol *aaa = table.insertUserVar( aaa_name );
+   Symbol *aaa = table.insertScalar( aaa_name );
    CPPUNIT_ASSERT( table.find( aaa_name ) != Symbol::empty() );
    CPPUNIT_ASSERT( table.find( aaa_name ) == aaa );
 
@@ -53,8 +53,8 @@ void SymbolTableTest::testInsertLabel()
 {
    string empty_string( "" ); 
    enum Symbol::SymbolType datalabel = Symbol::DATALABEL;
-   enum Symbol::SymbolType nonmem    = Symbol::NONMEMDEF;
-   enum Symbol::SymbolType user      = Symbol::USERDEF;
+   enum Symbol::SymbolType nonmem    = Symbol::PREDEFINED;
+   enum Symbol::SymbolType user      = Symbol::USERDEFINED;
    enum Symbol::ObjectType scalar    = Symbol::SCALAR;
    enum Symbol::ObjectType vec       = Symbol::VECTOR;
    enum Symbol::ObjectType matrix    = Symbol::MATRIX;
@@ -80,8 +80,8 @@ void SymbolTableTest::testInsertNMVector()
 {
    string empty_string( "" ); 
    enum Symbol::SymbolType datalabel = Symbol::DATALABEL;
-   enum Symbol::SymbolType nonmem    = Symbol::NONMEMDEF;
-   enum Symbol::SymbolType user      = Symbol::USERDEF;
+   enum Symbol::SymbolType nonmem    = Symbol::PREDEFINED;
+   enum Symbol::SymbolType user      = Symbol::USERDEFINED;
    enum Symbol::ObjectType scalar    = Symbol::SCALAR;
    enum Symbol::ObjectType vec       = Symbol::VECTOR;
    enum Symbol::ObjectType matrix    = Symbol::MATRIX;
@@ -92,7 +92,7 @@ void SymbolTableTest::testInsertNMVector()
    SymbolTable table;
    string aaa_name( "aaa" );
    int aaa_dim = 2;
-   Symbol *aaa = table.insertNMVector( aaa_name, aaa_dim );
+   Symbol *aaa = table.insertVector( aaa_name, aaa_dim );
    CPPUNIT_ASSERT( table.find( aaa_name ) != Symbol::empty() );
    CPPUNIT_ASSERT( table.find( aaa_name ) == aaa );
 
@@ -103,8 +103,8 @@ void SymbolTableTest::testInsertNMMatrix()
 {
    string empty_string( "" ); 
    enum Symbol::SymbolType datalabel = Symbol::DATALABEL;
-   enum Symbol::SymbolType nonmem    = Symbol::NONMEMDEF;
-   enum Symbol::SymbolType user      = Symbol::USERDEF;
+   enum Symbol::SymbolType nonmem    = Symbol::PREDEFINED;
+   enum Symbol::SymbolType user      = Symbol::USERDEFINED;
    enum Symbol::ObjectType scalar    = Symbol::SCALAR;
    enum Symbol::ObjectType vec       = Symbol::VECTOR;
    enum Symbol::ObjectType matrix    = Symbol::MATRIX;
@@ -115,13 +115,13 @@ void SymbolTableTest::testInsertNMMatrix()
    SymbolTable table;
    string aaa_name( "aaa" );
    int aaa_dim = 2;
-   Symbol *aaa = table.insertNMMatrix( aaa_name, diagonal, aaa_dim );
+   Symbol *aaa = table.insertMatrix( aaa_name, diagonal, aaa_dim );
    CPPUNIT_ASSERT( table.find( aaa_name ) != Symbol::empty() );
    CPPUNIT_ASSERT( table.find( aaa_name ) == aaa );
 
    string bbb_name( "bbb" );
    int bbb_dim = 2;
-   Symbol *bbb = table.insertNMMatrix( bbb_name, triangle, bbb_dim );
+   Symbol *bbb = table.insertMatrix( bbb_name, triangle, bbb_dim );
    CPPUNIT_ASSERT( table.find( bbb_name ) != Symbol::empty() );
    CPPUNIT_ASSERT( table.find( bbb_name ) == bbb );
 

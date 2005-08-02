@@ -8,7 +8,7 @@
 #include <cppunit/ui/text/TestRunner.h>
 
 
-#include "spkcompiler/series.h"
+#include "../../spkcompiler/series.h"
 #include "seriesTest.h"
 
 using namespace std;

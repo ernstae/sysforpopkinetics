@@ -8,7 +8,7 @@
 #include <cppunit/TextTestResult.h>
 #include <cppunit/ui/text/TestRunner.h>
 
-#include "spkcompiler/Symbol.h"
+#include "../../spkcompiler/Symbol.h"
 #include "SymbolTest.h"
 
 using namespace std;
@@ -31,8 +31,8 @@ void SymbolTest::testConstructor()
 {
    string empty_string( "" );
    enum Symbol::SymbolType datalabel = Symbol::DATALABEL;
-   enum Symbol::SymbolType nonmem    = Symbol::NONMEMDEF;
-   enum Symbol::SymbolType user      = Symbol::USERDEF;
+   enum Symbol::SymbolType nonmem    = Symbol::PREDEFINED;
+   enum Symbol::SymbolType user      = Symbol::USERDEFINED;
    enum Symbol::ObjectType scalar    = Symbol::SCALAR;
    enum Symbol::ObjectType vec       = Symbol::VECTOR;
    enum Symbol::ObjectType matrix    = Symbol::MATRIX;
@@ -130,8 +130,8 @@ void SymbolTest::testCopy()
 {
    string empty_string( "" ); 
    enum Symbol::SymbolType datalabel = Symbol::DATALABEL;
-   enum Symbol::SymbolType nonmem    = Symbol::NONMEMDEF;
-   enum Symbol::SymbolType user      = Symbol::USERDEF;
+   enum Symbol::SymbolType nonmem    = Symbol::PREDEFINED;
+   enum Symbol::SymbolType user      = Symbol::USERDEFINED;
    enum Symbol::ObjectType scalar    = Symbol::SCALAR;
    enum Symbol::ObjectType vec       = Symbol::VECTOR;
    enum Symbol::ObjectType matrix    = Symbol::MATRIX;
@@ -260,8 +260,8 @@ void SymbolTest::testAssign()
 {
    string empty_string( "" );
    enum Symbol::SymbolType datalabel = Symbol::DATALABEL;
-   enum Symbol::SymbolType nonmem    = Symbol::NONMEMDEF;
-   enum Symbol::SymbolType user      = Symbol::USERDEF;
+   enum Symbol::SymbolType nonmem    = Symbol::PREDEFINED;
+   enum Symbol::SymbolType user      = Symbol::USERDEFINED;
    enum Symbol::ObjectType scalar    = Symbol::SCALAR;
    enum Symbol::ObjectType vec       = Symbol::VECTOR;
    enum Symbol::ObjectType matrix    = Symbol::MATRIX;
@@ -390,8 +390,8 @@ void SymbolTest::testCreateLabel()
 {  
    string empty_string( "" );
    enum Symbol::SymbolType datalabel      = Symbol::DATALABEL;
-   enum Symbol::SymbolType nonmem         = Symbol::NONMEMDEF;
-   enum Symbol::SymbolType user           = Symbol::USERDEF;
+   enum Symbol::SymbolType nonmem         = Symbol::PREDEFINED;
+   enum Symbol::SymbolType user           = Symbol::USERDEFINED;
    enum Symbol::ObjectType scalar         = Symbol::SCALAR;
    enum Symbol::ObjectType vec            = Symbol::VECTOR;
    enum Symbol::ObjectType matrix         = Symbol::MATRIX;
@@ -420,8 +420,8 @@ void SymbolTest::testCreateNMVar()
 {  
    string empty_string( "" );
    enum Symbol::SymbolType datalabel = Symbol::DATALABEL;
-   enum Symbol::SymbolType nonmem    = Symbol::NONMEMDEF;
-   enum Symbol::SymbolType user      = Symbol::USERDEF;
+   enum Symbol::SymbolType nonmem    = Symbol::PREDEFINED;
+   enum Symbol::SymbolType user      = Symbol::USERDEFINED;
    enum Symbol::ObjectType scalar    = Symbol::SCALAR;
    enum Symbol::ObjectType vec       = Symbol::VECTOR;
    enum Symbol::ObjectType matrix    = Symbol::MATRIX;
@@ -432,7 +432,7 @@ void SymbolTest::testCreateNMVar()
   // vector
    string theta_name( "THETA" );
    int theta_len = 5;
-   Symbol theta = Symbol::createNMVector( theta_name, theta_len );
+   Symbol theta = Symbol::createVector( theta_name, theta_len );
    CPPUNIT_ASSERT_EQUAL( theta_name,   theta.name );
    CPPUNIT_ASSERT_EQUAL( empty_string, theta.synonym );
    CPPUNIT_ASSERT_EQUAL( nonmem,       theta.symbol_type );
@@ -444,7 +444,7 @@ void SymbolTest::testCreateNMVar()
    // triangle matrix
    string omega_name( "OMEGA" );
    int omega_dim = 3;
-   Symbol omega = Symbol::createNMMatrix( omega_name, triangle, omega_dim );
+   Symbol omega = Symbol::createMatrix( omega_name, triangle, omega_dim );
    CPPUNIT_ASSERT_EQUAL( omega_name,   omega.name );
    CPPUNIT_ASSERT_EQUAL( empty_string, omega.synonym );
    CPPUNIT_ASSERT_EQUAL( nonmem,       omega.symbol_type );
@@ -460,7 +460,7 @@ void SymbolTest::testCreateNMVar()
    // diagonal matrix
    string sigma_name( "sigma" );
    int sigma_dim = 3;
-   Symbol sigma = Symbol::createNMMatrix( sigma_name, diagonal, sigma_dim );
+   Symbol sigma = Symbol::createMatrix( sigma_name, diagonal, sigma_dim );
    CPPUNIT_ASSERT_EQUAL( sigma_name,   sigma.name );
    CPPUNIT_ASSERT_EQUAL( empty_string, sigma.synonym );
    CPPUNIT_ASSERT_EQUAL( nonmem,       sigma.symbol_type );
@@ -478,8 +478,8 @@ void SymbolTest::testCreateUserVar()
 {  
    string empty_string( "" );
    enum Symbol::SymbolType datalabel = Symbol::DATALABEL;
-   enum Symbol::SymbolType nonmem    = Symbol::NONMEMDEF;
-   enum Symbol::SymbolType user      = Symbol::USERDEF;
+   enum Symbol::SymbolType nonmem    = Symbol::PREDEFINED;
+   enum Symbol::SymbolType user      = Symbol::USERDEFINED;
    enum Symbol::ObjectType scalar    = Symbol::SCALAR;
    enum Symbol::ObjectType vec       = Symbol::VECTOR;
    enum Symbol::ObjectType matrix    = Symbol::MATRIX;
@@ -490,7 +490,7 @@ void SymbolTest::testCreateUserVar()
    string var( "aaa" );
    valarray<int> dim(1);
    dim[0] = 1;
-   Symbol aaa = Symbol::createUserVar( var );
+   Symbol aaa = Symbol::createScalar( var );
    CPPUNIT_ASSERT_EQUAL( var,          aaa.name );
    CPPUNIT_ASSERT_EQUAL( empty_string, aaa.synonym );
    CPPUNIT_ASSERT_EQUAL( user,         aaa.symbol_type );
@@ -507,8 +507,8 @@ void SymbolTest::testEquality()
 {
    string empty_string( "" );
    enum Symbol::SymbolType datalabel = Symbol::DATALABEL;
-   enum Symbol::SymbolType nonmem    = Symbol::NONMEMDEF;
-   enum Symbol::SymbolType user      = Symbol::USERDEF;
+   enum Symbol::SymbolType nonmem    = Symbol::PREDEFINED;
+   enum Symbol::SymbolType user      = Symbol::USERDEFINED;
    enum Symbol::ObjectType scalar    = Symbol::SCALAR;
    enum Symbol::ObjectType vec       = Symbol::VECTOR;
    enum Symbol::ObjectType matrix    = Symbol::MATRIX;
@@ -533,13 +533,10 @@ void SymbolTest::testEquality()
 
 void SymbolTest::testEmpty()
 {
-  string empty_string("");
-  const Symbol *empty = Symbol::empty();
-  Symbol shallBeEmpty;
+  Symbol nonEmpty;
 
-  CPPUNIT_ASSERT_EQUAL( empty_string, empty->name );
-  CPPUNIT_ASSERT( *empty == shallBeEmpty );
-  CPPUNIT_ASSERT( !( *empty != shallBeEmpty ) );
+  CPPUNIT_ASSERT( Symbol::empty()==Symbol::empty() );
+  CPPUNIT_ASSERT( Symbol::empty() != &(nonEmpty) );
 }
 CppUnit::Test * SymbolTest::suite()
 {
