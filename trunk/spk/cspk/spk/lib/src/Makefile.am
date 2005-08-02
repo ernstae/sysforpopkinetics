@@ -5,16 +5,12 @@ INST_BASE = /usr/local
 libdir        = $(INST_BASE)/lib/spktest
 pkgincludedir = $(INST_BASE)/include/spktest/spk
 
-AM_CPPFLAGS = -I$(INST_BASE)/include/spktest
+AM_CPPFLAGS = -I$(INST_BASE)/include/spktest \
+              -I$(INST_BASE)/include/spktest/CppAD
 AM_LDFLAGS  = -llapack -lg2c
 
-CXXFLAGS   =
-CXXCOMPILE =
-CFLAGS     =
+libspk_la_CXXFLAGS = -g
 
-libspk_la_CXXFLAGS         = -g
-
-FFLAGS =
 F77COMPILE = -g
 
 libspk_la_SOURCES = \
