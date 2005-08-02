@@ -1310,6 +1310,7 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/local/lib/$(PROD_DIR) ";
       oMakefile << "-I/usr/local/include/$(PROD_DIR) ";
+      oMakefile << "-I/usr/local/include/$(PROD_DIR)/CppAD ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(PROD_DIR) ";
       oMakefile << "$(LIBS)" << endl;
@@ -1320,6 +1321,7 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
       oMakefile << "-I/usr/local/include/$(TEST_DIR) ";
+      oMakefile << "-I/usr/local/include/$(TEST_DIR)/CppAD ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(TEST_DIR) ";
       oMakefile << "$(LIBS)" << endl;
@@ -1363,6 +1365,7 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/local/lib/$(PROD_DIR) ";
       oMakefile << "-I/usr/local/include/$(PROD_DIR) ";
+      oMakefile << "-I/usr/local/include/$(PROD_DIR)/CppAD ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(PROD_DIR) ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
       oMakefile << "$(LIBS)" << endl;
@@ -1375,6 +1378,7 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
       oMakefile << "-I/usr/local/include/$(TEST_DIR) ";
+      oMakefile << "-I/usr/local/include/$(TEST_DIR)/CppAD ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(TEST_DIR) ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
       oMakefile << "$(LIBS)" << endl;
