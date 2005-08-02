@@ -29,62 +29,281 @@ using namespace xercesc;
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //
-// A test based upon a linear regression problem defined at
-// http://http://www.itl.nist.gov/div898/strd/lls/data/Norris.shtml.
+// A test based upon a non-linear regression problem defined in job# 299.
 //
-// This test requests parameter estimation and statistics but not Monte Carlo.
-// 
-// Procedure: 	Linear Least Squares Regression
-// Certification Method & Definitions
-// Data: 	1 Response Variable (y)
-// 1 Predictor Variable (x)
-// 36 Observations
-// Lower Level of Difficulty
-// Observed Data
-// Data file (ASCII Format)
-// Additional Information
-//
-// Model: 	Linear Class
-// 2 Parameters ( beta0, beta1 )
-//
-//     y = beta0 + beta1 * x + e
-// 
-// --- Certified Regression Statistics ---
-//
-// Parameter 	
-//           Estimate 	    Standard Deviation
-//           of Estimate
-//    -0.262323073774029    0.232818234301152
-//     1.00211681802045     0.429796848199937E-03
-//
-// Residual
-// Standard Deviation 	    0.884796396144373 		
-// R-Squared 	            0.999993745883712 		
-//
-// 
-// --- Certified Analysis of Variance Table ---
-//
-//   Source   | Degrees |                       |                          |
-//     of     |   of    |    Sum of Squares     |      Mean Squares        |    F Statistics
-// Variation  | Freedom |                       |                          |
-// -----------+---------+-----------------------+--------------------------+-------------------
-// Regression |    1 	| 4255954.13232369 	|  4255954.13232369        |  5436385.54079785
-// Residual   |   34 	|      26.6173985294224 |        0.782864662630069 |	
-//
-//
-// --- Data:     y     x
-//             130    60
-//             131    61
-//             132    62
-//             133    63
-//             134    64
-//             135    65
-//             136    66
-//             137    67
-//             138    68
-//             139    69
-//             140    70
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// NONMEM Control file
+/*
+  $PROBLEM y(t) =  a * exp( - b * t ) + e(t)
+  $DATA indSingleExpSim.dat
+  $INPUT TIME DV
+  $PRED 
+  A = THETA(1)
+  B = THETA(2)
+  T = TIME
+  E = ETA(1)
+
+  F = A * EXP( - B * T  ) 
+  Y = F + E
+  $THETA 
+  (.1,1,10)
+  (.1,1,10)
+  $OMEGA DIAGONAL(1) .001
+  $ESTIMATION METHOD=0 NOPOSTHOC SIGDIGITS=3 MAXEVALS=450 PRINT=5
+  $TABLE TIME DV FILE=junk.dat
+*/
+// NONMEM data file  
+/*
+  0.0000E+00  1.0352E+00
+  2.0000E-01  8.3796E-01
+  4.0000E-01  6.4780E-01
+  6.0000E-01  4.9445E-01
+  8.0000E-01  4.3668E-01
+  1.0000E+00  2.9604E-01
+*/
+// NONMEM results
+/*
+1NONLINEAR MIXED EFFECTS MODEL PROGRAM (NONMEM)    DOUBLE PRECISION NONMEM    VERSION V LEVEL 1.1  
+ DEVELOPED AND PROGRAMMED BY STUART BEAL AND LEWIS SHEINER
+ 
+ PROBLEM NO.:         1
+ y(t) =  a * exp( - b * t ) + e(t)                                       
+0DATA CHECKOUT RUN:              NO 
+ DATA SET LOCATED ON UNIT NO.:    2
+ THIS UNIT TO BE REWOUND:        NO 
+ NO. OF DATA RECS IN DATA SET:    6
+ NO. OF DATA ITEMS IN DATA SET:   3
+ ID DATA ITEM IS DATA ITEM NO.:   3
+ DEP VARIABLE IS DATA ITEM NO.:   2
+0LABELS FOR DATA ITEMS:
+ TIME      DV    .ID.
+0FORMAT FOR DATA:
+ (2E11.0,1F2.0)                                                                  
+ 
+ TOT. NO. OF OBS RECS:       6
+ TOT. NO. OF INDIVIDUALS:    6
+0LENGTH OF THETA:  2
+0OMEGA HAS SIMPLE DIAGONAL FORM WITH DIMENSION:  1
+0INITIAL ESTIMATE OF THETA:
+ LOWER BOUND    INITIAL EST    UPPER BOUND
+  0.1000E+00     0.1000E+01     0.1000E+02
+  0.1000E+00     0.1000E+01     0.1000E+02
+0INITIAL ESTIMATE OF OMEGA:
+ 0.1000E-02
+0ESTIMATION STEP OMITTED:           NO 
+ NO. OF FUNCT. EVALS. ALLOWED:     450
+ NO. OF SIG. FIGURES REQUIRED:       3
+ INTERMEDIATE PRINTOUT:            YES 
+ ESTIMATE OUTPUT TO MSF:            NO 
+0COVARIANCE STEP OMITTED:    NO 
+ EIGENVLS. PRINTED:    NO 
+ SPECIAL COMPUTATION:  NO 
+ COMPRESSED FORMAT:    NO 
+0TABLES STEP OMITTED:    NO 
+ NO. OF TABLES:           1
+0-- TABLE  1 --
+ PRINTED:               YES 
+ FOR TABLE FILE,
+ HEADER:                YES 
+ FILE TO BE FORWARDED:   NO 
+0USER-CHOSEN ITEMS 
+ IN THE ORDER THEY WILL APPEAR IN THE TABLE:
+ TIME
+1
+ MONITORING OF SEARCH:
+
+0ITERATION NO.:    0     OBJECTIVE VALUE: -0.3105E+02     NO. OF FUNC. EVALS.: 4
+ CUMULATIVE NO. OF FUNC. EVALS.:    4
+ PARAMETER:  0.1000E+00  0.1000E+00  0.1000E+00
+ GRADIENT:   0.9943E+03 -0.1790E+04 -0.8759E+02
+0ITERATION NO.:    5     OBJECTIVE VALUE: -0.4052E+02     NO. OF FUNC. EVALS.: 5
+ CUMULATIVE NO. OF FUNC. EVALS.:   39
+ PARAMETER:  0.1022E+00  0.1110E+00  0.5340E-01
+ GRADIENT:  -0.2268E+04  0.1235E+04 -0.9116E+02
+0ITERATION NO.:   10     OBJECTIVE VALUE: -0.4151E+02     NO. OF FUNC. EVALS.: 0
+ CUMULATIVE NO. OF FUNC. EVALS.:   66
+ PARAMETER:  0.1024E+00  0.1102E+00  0.6040E-01
+ GRADIENT:  -0.1078E+02  0.1856E+01  0.3287E+00
+0MINIMIZATION SUCCESSFUL
+ NO. OF FUNCTION EVALUATIONS USED:   66
+ NO. OF SIG. DIGITS IN FINAL EST.:  3.1
+1
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ ************************************************************************************************************************
+ ********************                                                                                ********************
+ ********************                           MINIMUM VALUE OF OBJECTIVE FUNCTION                  ********************
+ ********************                                                                                ********************
+ ************************************************************************************************************************
+ 
+
+
+
+
+
+ **************************************************        -41.506     **************************************************
+1
+ ************************************************************************************************************************
+ ********************                                                                                ********************
+ ********************                                  FINAL PARAMETER ESTIMATE                      ********************
+ ********************                                                                                ********************
+ ************************************************************************************************************************
+ 
+
+
+ THETA - VECTOR OF FIXED EFFECTS PARAMETERS   *********
+
+
+            TH 1      TH 2
+ 
+         1.04E+00  1.19E+00
+ 
+
+
+ OMEGA - COV MATRIX FOR RANDOM EFFECTS - ETAS  ********
+
+
+            ETA1
+ 
+ ETA1
++        3.65E-04
+ 
+1
+ ************************************************************************************************************************
+ ********************                                                                                ********************
+ ********************                             STANDARD ERROR OF ESTIMATE                         ********************
+ ********************                                                                                ********************
+ ************************************************************************************************************************
+ 
+
+
+ THETA - VECTOR OF FIXED EFFECTS PARAMETERS   *********
+
+
+            TH 1      TH 2
+ 
+         9.60E-03  4.45E-02
+ 
+
+
+ OMEGA - COV MATRIX FOR RANDOM EFFECTS - ETAS  ********
+
+
+            ETA1
+ 
+ ETA1
++        1.46E-04
+ 
+1
+ ************************************************************************************************************************
+ ********************                                                                                ********************
+ ********************                          COVARIANCE MATRIX OF ESTIMATE                         ********************
+ ********************                                                                                ********************
+ ************************************************************************************************************************
+ 
+
+            TH 1      TH 2      OM11
+ 
+ TH 1
++        9.21E-05
+ 
+ TH 2
++        2.90E-04  1.98E-03
+ 
+ OM11
++       -1.71E-07 -2.98E-06  2.12E-08
+ 
+1
+ ************************************************************************************************************************
+ ********************                                                                                ********************
+ ********************                         CORRELATION MATRIX OF ESTIMATE                         ********************
+ ********************                                                                                ********************
+ ************************************************************************************************************************
+ 
+
+            TH 1      TH 2      OM11
+ 
+ TH 1
++        1.00E+00
+ 
+ TH 2
++        6.78E-01  1.00E+00
+ 
+ OM11
++       -1.22E-01 -4.60E-01  1.00E+00
+ 
+1
+ ************************************************************************************************************************
+ ********************                                                                                ********************
+ ********************                  INVERSE COVARIANCE MATRIX OF ESTIMATE                         ********************
+ ********************                                                                                ********************
+ ************************************************************************************************************************
+ 
+
+            TH 1      TH 2      OM11
+ 
+ TH 1
++        2.20E+04
+ 
+ TH 2
++       -3.74E+03  1.28E+03
+ 
+ OM11
++       -3.48E+05  1.49E+05  6.52E+07
+ 
+1
+ 
+ ************************************************************************************************************************
+ ********************                                                                                ********************
+ ********************                          TABLES OF DATA AND PREDICTIONS                        ********************
+ ********************                                                                                ********************
+ ************************************************************************************************************************
+ 
+1TABLE NO.  1
+
+
+
+ LINE NO.   TIME        DV      PRED      RES       WRES
+ 
+    1
++        0.00E+00  1.04E+00  1.04E+00 -7.94E-03 -4.16E-01
+ 
+    2
++        2.00E-01  8.38E-01  8.23E-01  1.50E-02  7.88E-01
+ 
+    3
++        4.00E-01  6.48E-01  6.49E-01 -1.38E-03 -7.24E-02
+ 
+    4
++        6.00E-01  4.94E-01  5.12E-01 -1.77E-02 -9.26E-01
+ 
+    5
++        8.00E-01  4.37E-01  4.04E-01  3.27E-02  1.71E+00
+ 
+    6
++        1.00E+00  2.96E-01  3.19E-01 -2.27E-02 -1.19E+00
+ 
+
+  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  */
 namespace{
   const unsigned int MAXCHARS = 64;
 
@@ -122,14 +341,14 @@ namespace{
   char LDFLAG[514];
 
   char MY_ASSERT_EQUAL[] =
-"#include <iostream> \n \
-#include <sys/signal.h> \n \
-#define MY_ASSERT_EQUAL( expected, actual ) \\\n \
-if( actual != expected ) \\\n \
- { \\\n \
-   std::cerr << __FILE__ << \"(\" << __LINE__ << \"): Expected \" << expected << \" but was \" << actual << std::endl; \\\n \
-   raise( SIGABRT ); \\\n \
-} \\\n\n";
+  "#include <iostream> \n \
+  #include <sys/signal.h> \n \
+  #define MY_ASSERT_EQUAL( expected, actual ) \\\n \
+  if( actual != expected ) \\\n \
+  { \\\n \
+  std::cerr << __FILE__ << \"(\" << __LINE__ << \"): Expected \" << expected << \" but was \" << actual << std::endl; \\\n \
+  raise( SIGABRT ); \\\n \
+  } \\\n\n";
 
   
   //============================================
@@ -154,86 +373,24 @@ if( actual != expected ) \\\n \
   //============================================
   // <Data Set>
   //
-  //   ID     DV=CP    TIME    MDV
-  /*
-        1       0.1     0.2      0
-        1     338.8   337.4      0
-        1     118.1   118.2      0
-        1     888.0   884.6      0
-        1       9.2    10.1      0
-        1     228.1   226.5      0
-        1     668.5   666.3      0
-        1     998.5   996.3      0
-        1     449.1   448.6      0
-        1     778.9   777.0      0
-        1     559.2   558.2      0
-        1       0.3     0.4      0
-        1       0.1     0.6      0 
-        1     778.1   775.5      0
-        1     668.8   666.9      0
-        1     339.3   338.0      0
-        1     448.9   447.5      0
-        1      10.8    11.6      0
-        1     557.7   556.0      0
-        1     228.3   228.1      0
-        1     998.0   995.8      0
-        1     888.0   887.6      0
-        1     119.6   120.2      0
-        1       0.3     0.3      0
-        1       0.6     0.3      0
-        1     557.6   556.8      0
-        1     339.3   339.1      0
-        1     888.0   887.2      0
-        1     998.5   999.0      0
-        1     778.9   779.0      0
-        1      10.2    11.1      0
-        1     117.6   118.3      0
-        1     228.9   229.2      0
-        1     668.4   669.1      0
-        1     449.2   448.9      0
-        1       0.2     0.5      0
-   */
+  // ID      TIME        DV=CP
+  // 1    0.0000E+00  1.0352E+00
+  // 1    2.0000E-01  8.3796E-01
+  // 1    4.0000E-01  6.4780E-01
+  // 1    6.0000E-01  4.9445E-01
+  // 1    8.0000E-01  4.3668E-01
+  // 1    1.0000E+00  2.9604E-01
+  //
   //============================================
-  const int    nRecords   =  36;
+  const int    nRecords   =  6;
   const int    nFixed     =  0;
   const int    nItems     =  4;
-  const double record0[]  = { 1, 0.1, 0.2, 0 };
-  const double record1[]  = { 1, 338.8, 337.4, 0 };
-  const double record2[]  = { 1, 118.1, 118.2, 0 };
-  const double record3[]  = { 1, 888.0, 884.6, 0 };
-  const double record4[]  = { 1, 9.2, 10.1, 0 };
-  const double record5[]  = { 1, 228.1, 226.5, 0 };
-  const double record6[]  = { 1, 668.5, 666.3, 0 };
-  const double record7[]  = { 1, 998.5, 996.3, 0 };
-  const double record8[]  = { 1, 449.1, 448.6, 0 };
-  const double record9[]  = { 1, 778.9, 777.0, 0 };
-  const double record10[] = { 1, 559.2, 558.2, 0 };
-  const double record11[] = { 1, 0.3, 0.4, 0 };
-  const double record12[] = { 1, 0.1, 0.6, 0 };
-  const double record13[] = { 1, 778.1, 775.5, 0 };
-  const double record14[] = { 1, 668.8, 666.9, 0 };
-  const double record15[] = { 1, 339.3, 338.0, 0 };
-  const double record16[] = { 1, 448.9, 447.5, 0 };
-  const double record17[] = { 1, 10.8, 11.6, 0 };
-  const double record18[] = { 1, 557.7, 556.0, 0 };
-  const double record19[] = { 1, 228.3, 228.1, 0 };
-  const double record20[] = { 1, 998.0, 995.8, 0 };
-  const double record21[] = { 1, 888.8, 887.6, 0 };
-  const double record22[] = { 1, 119.6, 120.2, 0 };
-  const double record23[] = { 1, 0.3, 0.3, 0 };
-  const double record24[] = { 1, 0.6, 0.3, 0 };
-  const double record25[] = { 1, 557.6, 556.8, 0 };
-  const double record26[] = { 1, 339.3, 339.1, 0 };
-  const double record27[] = { 1, 888.0, 887.2, 0 };
-  const double record28[] = { 1, 998.5, 999.0, 0 };
-  const double record29[] = { 1, 778.9, 779.0, 0 };
-  const double record30[] = { 1, 10.2, 11.1, 0 };
-  const double record31[] = { 1, 117.6, 118.3, 0 };
-  const double record32[] = { 1, 228.9, 229.2, 0 };
-  const double record33[] = { 1, 668.4, 669.1, 0 };
-  const double record34[] = { 1, 449.2, 448.9, 0 };
-  const double record35[] = { 1, 0.2, 0.5, 0 };
-  //  const double record36[] = { 1, 0.0, 0.0, 1 };
+  const double record0[]  = { 1, 0.0000E+00,  1.0352E+00, 0 };
+  const double record1[]  = { 1, 2.0000E-01,  8.3796E-01, 0 };
+  const double record2[]  = { 1, 4.0000E-01,  6.4780E-01, 0 };
+  const double record3[]  = { 1, 6.0000E-01,  4.9445E-01, 0 };
+  const double record4[]  = { 1, 8.0000E-01,  4.3668E-01, 0 };
+  const double record5[]  = { 1, 1.0000E+00,  2.9604E-01, 0 };
 
   double const * record[nRecords];
 
@@ -258,9 +415,9 @@ if( actual != expected ) \\\n \
   // theta.
   //============================================
   const int    thetaLen = 2;
-  const double theta_in [ thetaLen ]   = { 0.2,  1.0 };
-  const double theta_up [ thetaLen ]   = { 2.0, 10.0 };
-  const double theta_low[ thetaLen ]   = { 0.02, 0.1 };
+  const double theta_low[ thetaLen ]   = {  0.1,  0.1 };
+  const double theta_in [ thetaLen ]   = {  1.0,  1.0 };
+  const double theta_up [ thetaLen ]   = { 10.0, 10.0 };
   const bool   theta_fix[ thetaLen ]   = { false, false };
 
   //============================================
@@ -272,7 +429,7 @@ if( actual != expected ) \\\n \
   const int    omegaDim                = 1;
   const Symbol::Structure omegaStruct  = Symbol::DIAGONAL;
   const int    omegaOrder              = 1;
-  const double omega_in[ omegaOrder ]  = { 1.0 };
+  const double omega_in[ omegaOrder ]  = { 0.001 };
   const bool   omega_fix[ omegaOrder ] = { false };
 
   //============================================
@@ -312,14 +469,20 @@ if( actual != expected ) \\\n \
   //============================================
   // PRED model based on Norris
   //
-  // b0 = THETA(1)
-  // b1 = THETA(2)
-  // x = TIME
-  // F = b0 + b1 * x = THETA(1) + THETA(2)*TIME
-  // Y = F + ETA(1)
+  // A = THETA(1)
+  // B = THETA(2)
+  // T = TIME
+  // E = ETA(1)
+  // 
+  // F = A * EXP( - B * T  ) 
+  // Y = F + E
   //============================================
-  const char PREDEQN[] = "b0 = THETA(1)\nb1 = THETA(2)\nx = TiMe\nF = b0 + b1 * x\nY = F + ETA(1)\n";
-
+  const char PREDEQN[] = "A = THETA(1)\n \
+  B = THETA(2) \n \
+  T = TiMe \n \
+  E = ETA(1) \n \
+  F = A * EXP( - B * T  ) \n \
+  Y = F + E\n";
 
   //============================================
   // NONMEM's answers
@@ -327,19 +490,19 @@ if( actual != expected ) \\\n \
   // NOTE: NONMEM's matrices are placed
   // in the row-major order.
   //============================================
-  const double nm_obj       =  46.4087;
-  const double nm_theta[]   = { 0.02, 1.00171 };
-  const double nm_omega[]   = { 0.771353 };
+  const double nm_obj       =  -41.506;
+  const double nm_theta[]   = { 1.04E+00, 1.19E+00 };
+  const double nm_omega[]   = { 3.64E-04 };
 
   // Standard error
   // With SPK's parameterization:
   //
-  // theta(1)    0.2311  
-  // theta(2)    0.000426625  
-  // Omega(1,1)  0.117851
+  // theta(1)    9.60E-03  
+  // theta(2)    4.45E-02  
+  // Omega(1,1)  1.46E-04
   // 
   //                            theta(1)  theta(2)  Omega(1,1)
-  //const double nm_stderr[]  = {  }; 
+  const double nm_stderr[]  = { 9.60E-03, 4.45E-02, 1.46E-04 }; 
                               
   //
   // Covariance
@@ -347,23 +510,23 @@ if( actual != expected ) \\\n \
   //
   //                theta(1)     theta(2)     Omega(1,1)
   //            /                                         \
-  // theta(1)   |   0.0534072   -7.62941e-05  0.0         |
-  // theta(2)   |  -7.62941e-05  1.82009e-07  0.0         |
-  // Omega(1,1) |   0.0          0.0          0.0138889   |
+  // theta(1)   |   9.21E-05         0            0       |
+  // theta(2)   |   2.90E-04     1.98E-03         0       |
+  // Omega(1,1) |  -1.71E-07    -2.98E-06     2.12E-08    |
   //            \                                         /
   //
-  //const double nm_cov[]     = {   };
+  const double nm_cov[]     = { 9.21E-05, 2.90E-04, 1.98E-03, -1.71E-07, -2.98E-06, 2.12E-08 };
 
   // Inverse of covariance
   //
   //               theta(1)      theta(2)     Omega(1,1)
   //            /                                         \
-  // theta(1)   |  0.0534072    -7.62941e-05  0.0         |
-  // theta(2)   | -7.62941e-05   1.82009e-07  0.0         |
-  // Omega(1,1) |  0.0           0.0          0.0138889   |
+  // theta(1)   |  2.20E+04                               |
+  // theta(2)   | -3.74E+03      1.28E+03                 |
+  // Omega(1,1) | -3.48E+05      1.49E+05     6.52E+07    |
   //            \                                         /
   // 
-  //const double nm_inv_cov[] = {  };
+  const double nm_inv_cov[] = { 2.20E+04, -3.74E+03, 1.28E+03, -3.48E+05, 1.49E+05, 6.52E+07 };
 
 
   // Correlation matrix
@@ -371,32 +534,16 @@ if( actual != expected ) \\\n \
   //
   //               theta(1)      theta(2)     Omega(1,1)
   //            /                                        \
-  // theta(1)   |   1.0         -0.773828     0.0        |
-  // theta(2)   |  -0.773828     1.0          0.0        |
-  // Omega(1,1) |   0.0          0.0          0.0        |
+  // theta(1)   |   1.00E-00                             |
+  // theta(2)   |   6.78E-01     1.00E+00     0.0        |
+  // Omega(1,1) |  -1.22E-01    -4.60E-01     1.0E+00    |
   //            \                                        /
   //
-  //const double nm_corr[];
+  const double nm_corr[] = { 1.00E+00, 6.78E+01, 1.00+00, -1.22E-01, -4.60E+01, 1.0E+00 };
 
-  // Coefficient of variation
-  // With SPK's parameterization
-  //
-  // theta(1)   1155.5
-  // theta(2)      0.0425895
-  // Omega(1,1)  -90.791
-  //
-  //const double nm_cv[];
-
-  // Confidence interval
-  // with SPK's parameterization:
-  //
-  // theta(1)    -0.45045  ~ 0.49045
-  // theta(2)    -1.00085  ~ 1.00258
-  // Omega(1,1)  -0.369714 ~ 0.110105
-  // 
-  // const double nm_ci[];
-
-  const double nm_pred[]    = {  };
+  const double nm_pred[] = {  1.04E+00,  8.23E-01,  6.49E-01,  5.12E-01,  4.04E-01,  3.19E-01 };
+  const double nm_RES[]  = { -7.94E-03,  1.50E-02, -1.38E-03, -1.77E-02,  3.27E-02, -2.27E-02 };
+  const double nm_WRES[] = { -4.16E-01,  7.88E-01, -7.24E-02, -9.26E-01,  1.71E+00, -1.19E+00 };
 };
 
 void ind_withIDTest::setUp()
@@ -414,7 +561,7 @@ void ind_withIDTest::setUp()
     {
       char buf[MAXCHARS + 1];
       sprintf( buf, "Error during Xerces-c initialization.\nException message: %s.\n", 
-               XMLString::transcode( toCatch.getMessage() ) );
+	       XMLString::transcode( toCatch.getMessage() ) );
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
   catch( ... )
@@ -478,37 +625,6 @@ void ind_withIDTest::setUp()
   record[3]   = record3;
   record[4]   = record4;
   record[5]   = record5;
-  record[6]   = record6;
-  record[7]   = record7;
-  record[8]   = record8;
-  record[9]   = record9;
-  record[10]  = record10;
-  record[11]  = record11;
-  record[12]  = record12;
-  record[13]  = record13;
-  record[14]  = record14;
-  record[15]  = record15;
-  record[16]  = record16;
-  record[17]  = record17;
-  record[18]  = record18;
-  record[19]  = record19;
-  record[20]  = record20;
-  record[21]  = record21;
-  record[22]  = record22;
-  record[23]  = record23;
-  record[24]  = record24;
-  record[25]  = record25;
-  record[26]  = record26;
-  record[27]  = record27;
-  record[28]  = record28;
-  record[29]  = record29;
-  record[30]  = record30;
-  record[31]  = record31;
-  record[32]  = record32;
-  record[33]  = record33;
-  record[34]  = record34;
-  record[35]  = record35;
-  //  record[36]  = record36;
 
   createDataML();
   createSourceML();
@@ -630,12 +746,12 @@ void ind_withIDTest::createDataML()
       XMLCh errText[MAXCHARS + 1]; 
       if (DOMImplementation::loadDOMExceptionMsg(e.code, errText, MAXCHARS))
 	{
-          XMLPlatformUtils::Terminate();
-          char buf[MAXCHARS + 1];
-          sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
-                   fDataML, e.code, XMLString::transcode(errText) );
+	  XMLPlatformUtils::Terminate();
+	  char buf[MAXCHARS + 1];
+	  sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
+		   fDataML, e.code, XMLString::transcode(errText) );
 	  
-          CPPUNIT_ASSERT_MESSAGE( buf, false );
+	  CPPUNIT_ASSERT_MESSAGE( buf, false );
 	}
     }
   catch( ... )
@@ -732,7 +848,7 @@ void ind_withIDTest::createSourceML()
       if( onlySimulation )
 	oSource << " only_simulation=\"yes\"";
       if( subproblems > 1 )
-        oSource << " subproblems=\"" << subproblems << "\"";
+	oSource << " subproblems=\"" << subproblems << "\"";
       oSource << "/>" << endl;
     }
   oSource << "</ind_analysis>" << endl;
@@ -773,18 +889,18 @@ void ind_withIDTest::createSourceML()
 	       fSourceML, XMLString::transcode(e.getMessage() ) );
       
       CPPUNIT_ASSERT_MESSAGE( buf, false );
-     }
+    }
   catch( const DOMException& e )
     {
       
       XMLCh errText[MAXCHARS + 1]; 
       if (DOMImplementation::loadDOMExceptionMsg(e.code, errText, MAXCHARS))
 	{
-          XMLPlatformUtils::Terminate();
-          char buf[MAXCHARS + 1];
-          sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
-                   fSourceML, e.code, XMLString::transcode(errText) );
-          CPPUNIT_ASSERT_MESSAGE( buf, false );
+	  XMLPlatformUtils::Terminate();
+	  char buf[MAXCHARS + 1];
+	  sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
+		   fSourceML, e.code, XMLString::transcode(errText) );
+	  CPPUNIT_ASSERT_MESSAGE( buf, false );
 	}
     }
   catch( ... )
@@ -931,9 +1047,9 @@ void ind_withIDTest::testNonmemPars_h()
 
   // Build the test driver.
   sprintf( command, "g++ %s -o %s %s %s",
-           fNonmemParsDriver_cpp, 
-           fNonmemParsDriver, 
-           LDFLAG, 
+	   fNonmemParsDriver_cpp, 
+	   fNonmemParsDriver, 
+	   LDFLAG, 
 	   CPPFLAG );
   if( system( command ) != 0 )
     {
@@ -1001,12 +1117,12 @@ void ind_withIDTest::testIndDataClass()
   o << "   vector<double> a_mdv(n);" << endl;
 
   for( int i=0; i<nRecords; i++ )
-  {
-    o << "   a_id  [" << i << "] = \"" << record[i][0] << "\";" << endl;
-    o << "   a_dv  [" << i << "] = "   << record[i][1] << ";" << endl;
-    o << "   a_time[" << i << "] = "   << record[i][2] << ";" << endl;
-    o << "   a_mdv [" << i << "] = "   << record[i][3] << ";" << endl;
-  }
+    {
+      o << "   a_id  [" << i << "] = \"" << record[i][0] << "\";" << endl;
+      o << "   a_dv  [" << i << "] = "   << record[i][1] << ";" << endl;
+      o << "   a_time[" << i << "] = "   << record[i][2] << ";" << endl;
+      o << "   a_mdv [" << i << "] = "   << record[i][3] << ";" << endl;
+    }
 
   o << "   IndData<double> A( n, a_id, a_dv, a_time, a_mdv );" << endl;
 
@@ -1068,7 +1184,7 @@ void ind_withIDTest::testIndDataClass()
       sprintf( message, "A test driver, %s, failed!", fIndDataDriver );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
-   }
+    }
 }
 void ind_withIDTest::testDataSetClass()
 {
@@ -1217,7 +1333,7 @@ void ind_withIDTest::testPredClass()
   o << "                 indepVar, depVar );" << endl;
   // Test if F(j) gets placed in the proper location in the depVar vector.
   o << "      double actualF = CppAD::Value(depVar[ fOffset + j ]);"  << endl;
-  o << "      expectedF1[j]   = CppAD::Value(indepVar[thetaOffset+0] + indepVar[thetaOffset+1] * set.data[who]->" << strTIME << "[j] );" << endl;
+  o << "      expectedF1[j]   = CppAD::Value(indepVar[thetaOffset+0] * exp( -indepVar[thetaOffset+1] * set.data[who]->" << strTIME << "[j] ) );" << endl;
   o << "      MY_ASSERT_EQUAL( expectedF1[j], actualF );" << endl;
   // Test if Y(j) gets placed in the proper location in the depVar vector.
   o << "      double actualY = CppAD::Value(depVar[ yOffset + j ]);" << endl;
@@ -1257,8 +1373,9 @@ void ind_withIDTest::testPredClass()
   o << "                 indepVar, depVar );" << endl;
   // Test if F(j) gets placed in the proper location in the depVar vector.
   o << "      double actualF = CppAD::Value(depVar[ fOffset + j ]);" << endl;
-  o << "      expectedF2[j]  = CppAD::Value(indepVar[thetaOffset+0] + indepVar[thetaOffset+1] * set.data[who]->";
-  o << strTIME << "[j] );" << endl;
+  o << "      expectedF2[j]   = CppAD::Value(indepVar[thetaOffset+0] * exp( -indepVar[thetaOffset+1] * set.data[who]->" << strTIME << "[j] ) );" << endl;
+  //o << "      expectedF2[j]  = CppAD::Value(indepVar[thetaOffset+0] + indepVar[thetaOffset+1] * set.data[who]->";
+  //o << strTIME << "[j] );" << endl;
   o << "      MY_ASSERT_EQUAL( expectedF2[j], actualF );" << endl;
   // Test if Y(j) gets placed in the proper location in the depVar vector.
   o << "      double actualY   = CppAD::Value(depVar[ yOffset + j ]);" << endl;
@@ -1340,18 +1457,18 @@ void ind_withIDTest::testDriver()
     {
       char message[256];
       sprintf( message, 
-               "%s failed for reasons other than convergence propblem or access permission <%d>!", 
-               fFitDriver, 
-               exitcode );
+	       "%s failed for reasons other than convergence propblem or access permission <%d>!", 
+	       fFitDriver, 
+	       exitcode );
       
       CPPUNIT_ASSERT_MESSAGE( message, true );
     }
   if( rename( fReportML, fSavedReportML ) != 0 )
-  {
-     char message[256];
-     sprintf( message, "Failed to rename %s to %s!", fReportML, fSavedReportML );
-     CPPUNIT_ASSERT_MESSAGE( message, false );
-  }
+    {
+      char message[256];
+      sprintf( message, "Failed to rename %s to %s!", fReportML, fSavedReportML );
+      CPPUNIT_ASSERT_MESSAGE( message, false );
+    }
 }
 void ind_withIDTest::testReportML()
 {
@@ -1385,11 +1502,11 @@ void ind_withIDTest::testReportML()
       XMLCh errText[MAXCHARS + 1]; 
       if (DOMImplementation::loadDOMExceptionMsg(e.code, errText, MAXCHARS))
 	{
-          XMLPlatformUtils::Terminate();
-          char buf[MAXCHARS + 1];
-          sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
-                   fReportML, e.code, XMLString::transcode(errText) );
-          CPPUNIT_ASSERT_MESSAGE( buf, false );
+	  XMLPlatformUtils::Terminate();
+	  char buf[MAXCHARS + 1];
+	  sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
+		   fReportML, e.code, XMLString::transcode(errText) );
+	  CPPUNIT_ASSERT_MESSAGE( buf, false );
 	}
     }
   catch( ... )
@@ -1489,14 +1606,14 @@ void ind_withIDTest::testReportML()
       int n = value_list->getLength();
       se_val.resize( n );
       for( int i=0; i<n; i++ )
-      {
-	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
-	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
-	if( x_val != NULL )
-	  se_val[i] = atof( XMLString::transcode( x_val ) );
-	//printf( "se[%d] = %f\n", i, se_val[i] );
-	//	CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_stderr[i], se_val[i], scale * nm_stderr[i] );
-      }
+	{
+	  DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
+	  const XMLCh * x_val = value->getFirstChild()->getNodeValue();
+	  if( x_val != NULL )
+	    se_val[i] = atof( XMLString::transcode( x_val ) );
+	  //printf( "se[%d] = %f\n", i, se_val[i] );
+	  //	CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_stderr[i], se_val[i], scale * nm_stderr[i] );
+	}
     }
 
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1514,17 +1631,17 @@ void ind_withIDTest::testReportML()
       int n = value_list->getLength();
       cov_val.resize( n );
       for( int i=0; i<n; i++ )
-      {
-	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
-	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
-	if( x_val != NULL )
-	  cov_val[i] = atof( XMLString::transcode( x_val ) );
-	CPPUNIT_ASSERT_EQUAL( covLen, n );
+	{
+	  DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
+	  const XMLCh * x_val = value->getFirstChild()->getNodeValue();
+	  if( x_val != NULL )
+	    cov_val[i] = atof( XMLString::transcode( x_val ) );
+	  CPPUNIT_ASSERT_EQUAL( covLen, n );
 
-	//printf( "cov[%d] = %f\n", i, cov_val[i] );
+	  //printf( "cov[%d] = %f\n", i, cov_val[i] );
 
-//CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_cov[i], cov_val[i], scale * nm_cov[i] );
-      }
+	  //CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_cov[i], cov_val[i], scale * nm_cov[i] );
+	}
     }
   DOMNodeList * invcov_list =ind_stat_result->getElementsByTagName(  X_IND_INVERSE_COVARIANCE_OUT ) ;
   if( invcov_list->getLength() == 1 )
@@ -1535,13 +1652,13 @@ void ind_withIDTest::testReportML()
       int n = value_list->getLength();
       inv_cov_val.resize( n );
       for( int i=0; i<n; i++ )
-      {
-	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
-	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
-	if( x_val != NULL )
-	  inv_cov_val[i] = atof( XMLString::transcode( x_val ) );
-	//printf( "inv_cov[%d] = %f\n", i, inv_cov_val[i] );
-      }
+	{
+	  DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
+	  const XMLCh * x_val = value->getFirstChild()->getNodeValue();
+	  if( x_val != NULL )
+	    inv_cov_val[i] = atof( XMLString::transcode( x_val ) );
+	  //printf( "inv_cov[%d] = %f\n", i, inv_cov_val[i] );
+	}
     }
 
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1557,13 +1674,13 @@ void ind_withIDTest::testReportML()
       int n = value_list->getLength();
       ci_val.resize( n );
       for( int i=0; i<n; i++ )
-      {
-	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
-	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
-	if( x_val != NULL )
-	  ci_val[i] = atof( XMLString::transcode( x_val ) );
-	//printf( "ci[%d] = %f\n", i, ci_val[i] );
-      }
+	{
+	  DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
+	  const XMLCh * x_val = value->getFirstChild()->getNodeValue();
+	  if( x_val != NULL )
+	    ci_val[i] = atof( XMLString::transcode( x_val ) );
+	  //printf( "ci[%d] = %f\n", i, ci_val[i] );
+	}
     }
 
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1579,13 +1696,13 @@ void ind_withIDTest::testReportML()
       int n = value_list->getLength();
       cv_val.resize( n );
       for( int i=0; i<n; i++ )
-      {
-	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
-	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
-	if( x_val != NULL )
-	  cv_val[i] = atof( XMLString::transcode( x_val ) );
-	//printf( "cv[%d] = %f\n", i, cv_val[i] );
-      }
+	{
+	  DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
+	  const XMLCh * x_val = value->getFirstChild()->getNodeValue();
+	  if( x_val != NULL )
+	    cv_val[i] = atof( XMLString::transcode( x_val ) );
+	  //printf( "cv[%d] = %f\n", i, cv_val[i] );
+	}
     }
 
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1601,13 +1718,13 @@ void ind_withIDTest::testReportML()
       int n = value_list->getLength();
       cor_val.resize( n );
       for( int i=0; i<n; i++ )
-      {
-	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
-	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
-	if( x_val != NULL )
-	  cor_val[i] = atof( XMLString::transcode( x_val ) );
-	//printf( "cor[%d] = %f\n", i, cor_val[i] );
-      }
+	{
+	  DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
+	  const XMLCh * x_val = value->getFirstChild()->getNodeValue();
+	  if( x_val != NULL )
+	    cor_val[i] = atof( XMLString::transcode( x_val ) );
+	  //printf( "cor[%d] = %f\n", i, cor_val[i] );
+	}
     }
 
   DOMNodeList *presentation_data = report->getElementsByTagName( X_PRESENTATION_DATA );
@@ -1620,29 +1737,29 @@ CppUnit::Test * ind_withIDTest::suite()
 {
   CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite( "ind_withIDTest"  );
   suiteOfTests->addTest( 
-     new CppUnit::TestCaller<ind_withIDTest>(
-         "testNonmemPars_h", 
-	 &ind_withIDTest::testNonmemPars_h ) );
+			new CppUnit::TestCaller<ind_withIDTest>(
+								"testNonmemPars_h", 
+								&ind_withIDTest::testNonmemPars_h ) );
   suiteOfTests->addTest( 
-     new CppUnit::TestCaller<ind_withIDTest>(
-         "testIndDataClass", 
-	 &ind_withIDTest::testIndDataClass ) );
+			new CppUnit::TestCaller<ind_withIDTest>(
+								"testIndDataClass", 
+								&ind_withIDTest::testIndDataClass ) );
   suiteOfTests->addTest( 
-     new CppUnit::TestCaller<ind_withIDTest>(
-         "testDataSetClass", 
-	 &ind_withIDTest::testDataSetClass ) );
+			new CppUnit::TestCaller<ind_withIDTest>(
+								"testDataSetClass", 
+								&ind_withIDTest::testDataSetClass ) );
   suiteOfTests->addTest( 
-     new CppUnit::TestCaller<ind_withIDTest>(
-         "testPredClass", 
-	 &ind_withIDTest::testPredClass ) );
+			new CppUnit::TestCaller<ind_withIDTest>(
+								"testPredClass", 
+								&ind_withIDTest::testPredClass ) );
   suiteOfTests->addTest( 
-     new CppUnit::TestCaller<ind_withIDTest>(
-         "testDriver", 
-	 &ind_withIDTest::testDriver ) );
+			new CppUnit::TestCaller<ind_withIDTest>(
+								"testDriver", 
+								&ind_withIDTest::testDriver ) );
   suiteOfTests->addTest( 
-     new CppUnit::TestCaller<ind_withIDTest>(
-         "testReportML", 
-	 &ind_withIDTest::testReportML ) );
+			new CppUnit::TestCaller<ind_withIDTest>(
+								"testReportML", 
+								&ind_withIDTest::testReportML ) );
 
   return suiteOfTests;
 }
