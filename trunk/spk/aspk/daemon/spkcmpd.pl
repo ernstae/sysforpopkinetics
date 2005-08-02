@@ -197,6 +197,7 @@ my $filename_cerr_report = "compilation_error.xml";
 my $filename_job_id = "job_id";
 my %jobid_pid = ();
 my $filename_serr = "software_error";
+my $filename_results = "result.xml";
 
 my $lockfile_exists = 0;
 my $pathname_bugzilla_submit = "/usr/local/bin/bugzilla-submit";
@@ -390,19 +391,35 @@ sub fork_compiler {
   }
 }
 sub insert_error {
-    my $caught_mess = shift;
-    my $xml_errors  = shift;
+    my $daemon_text = shift;
+    my $driver_text = shift;
     my $report      = shift;
-                                                                                
-    my $caught_err  = '<error>';
-    $caught_err    .= "\n<description>Exit status from the SPK Compiler</description>\n";
-    $caught_err    .= "<file_name>N/A</file_name>\n";
-    $caught_err    .= "<line_number>N/A</line_number>\n";
-    $caught_err    .= "<message>$caught_mess</message>\n";
-    $caught_err    .= "</error>\n";
-                                                                                
-    $report =~ s/<\/error_list>/$caught_err $xml_errors<\/error_list>\n/;
-    syslog('info', "$report !!!");
+                                                                                               
+    my $daemon_text_xml  = '<error>';
+    $daemon_text_xml    .= "\n<description>Exit status from the driver</description>\n";
+    $daemon_text_xml    .= "<file_name>N/A</file_name>\n";
+    $daemon_text_xml    .= "<line_number>N/A</line_number>\n";
+    $daemon_text_xml    .= "<message>";
+    if ( $daemon_text ){
+       $daemon_text_xml .= $daemon_text;
+    }
+    else{
+       $daemon_text_xml .= "N/A";
+    }
+    $daemon_text_xml    .= "</message>\n";
+    $daemon_text_xml    .= "</error>\n";
+                                                                                               
+    my $driver_text_xml  = "";
+    if( $driver_text ){
+       $driver_text_xml .= '<error>';
+       $driver_text_xml .= "\n<description>Assertion text from driver</description>\n";
+       $driver_text_xml .= "<file_name>N/A</file_name>\n";
+       $driver_text_xml .= "<line_number>N/A</line_number>\n";
+       $driver_text_xml .= "<message>$driver_text</message>\n";
+       $driver_text_xml .= "</error>\n";
+    }
+                                                                                               
+    $report =~ s/<\/error_list>/$daemon_text_xml $driver_text_xml<\/error_list>\n/;
     return $report;
 }
 sub format_error_report {
@@ -507,12 +524,14 @@ sub reaper {
 
 	# Did the compiler find errors in the user's source?
 	if (-f $filename_cerr_report && -s $filename_cerr_report != 0) {
-	    open(FH, $filename_cerr_report);
-	    read(FH, $err_rpt, -s FH);
+	    open(FH, $filename_cerr_report)
+               or death('emerg', "can't open $working_dir/$filename_cerr_report");
+	    read(FH, $report, -s FH);
 	    close(FH);
-	    $err_msg .= "failed compilation do to source errors; ";
+	    $err_msg .= "compiler bug caught as exception; ";
 	    $end_code = "cerr";
-	    $remove_working_dir = 1;
+	    $remove_working_dir = 0;
+            $report = insert_error($err_msg, "", $report);
 	}
 	# Did the compiler die because of a software fault?
 	elsif (-f $filename_serr && -s $filename_serr > 0){
@@ -520,21 +539,38 @@ sub reaper {
 	    read(FH, $err_rpt, -s FH);
 	    close(FH);
 	    $end_code = "serr";
-	    $err_msg .= "compiler bug caught as exception; ";
+	    $err_msg .= "software bug caught as assertion; ";
+            $remove_working_dir = 0;
+            $report = format_error_report( "$err_msg $err_rpt" );     
 	} 
-	# Get email address of user
-	my $email = &email_for_job($dbh, $job_id);
-	
-	#format error report and place a message in the system log
-	$report = format_error_report("$err_msg $err_rpt");
+        # Core dump?
+        if( $child_dumped_core ){
+           $end_code = "cerr";
+           $err_msg .= "core dump in $working_dir; ";
+           $remove_working_dir = 0;
+           $report = format_error_report( "$err_msg $err_rpt" );     
+        }
+        # Remove the empty STDERR captured file
+        else {
+           unlink($filename_serr);
+        }
+       
+        open(FH, ">result.xml")
+           or death( 'emerg', "can't open $working_dir/result.xml");
+        print FH $report;
+        close(FH);
 
+	# Get email address of user
+	my $email = &email_for_job($dbh, $job_id);	
+
+        # End the job
 	&end_job($dbh, $job_id, $end_code, $report)
 	    or death('emerg', "job_id=$job_id: $Spkdb::errstr");
 	syslog('info', "job_id=$job_id $err_msg");
 
 	# Submit compiler bugs to bugzilla
-	if ($submit_to_bugzilla && ($end_code == "serr" || $end_code == "herr")) {
-	    my $summary = $end_code == "serr" ? "soft" : "hard";
+	if ($submit_to_bugzilla && ($end_code == "cerr" || $end_code == "serr")) {
+	    my $summary = $end_code == "cerr" ? "comp" : "soft";
 	    my @args = ($pathname_bugzilla_submit);
 	    push @args, "--product",     $bugzilla_product;
 	    push @args, "--version",     $spk_version;
