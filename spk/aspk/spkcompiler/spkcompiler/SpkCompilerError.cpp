@@ -229,6 +229,13 @@ const SpkCompilerError& SpkCompilerError::operator=(const SpkCompilerError& righ
     }
 }
 
+std::string& operator<<(std::string& s, const SpkCompilerError& e)
+{
+  std::ostringstream stream;
+  stream << e;
+  s = stream.str();
+  return s;
+}
 std::ostream& operator<<(std::ostream& stream, const SpkCompilerError& e)
 {
     stream.flush();
@@ -255,6 +262,17 @@ const std::string SpkCompilerError::getXml() const
 {
     ostringstream o;
     string m = myMessage;
+
+    //
+    // escape XML sensitive characters { <, >, & }
+    // '&' must be replaced first because < and > will be replaced by
+    // words containing '&'.
+    // 
+    for( int i = m.find( '&', 0 ); i != string::npos; i = m.find( '&', i+1 ) )
+      {
+	m.erase( i, 1 );
+	m.insert( i, "&amp;" );
+      }
     for( int i = m.find( '<', 0 ); i != string::npos; i = m.find( '<', i ) )
       {
 	m.erase( i, 1 );
@@ -265,6 +283,7 @@ const std::string SpkCompilerError::getXml() const
 	m.erase( i, 1 );
 	m.insert( i, "&gt;" );
       }
+
 
     o << "<error>"          << endl;
     o << "   <code>"        << this->describe(myErrorCode) << "</code>"        << endl;

@@ -58,6 +58,9 @@ class SpkCompilerError
     /** ASPK Compiler implemntator's programming error */
     ASPK_PROGRAMMER_ERR,
 
+    /** User input error */
+    ASPK_USER_ERR,
+
     /** Unknown */
     ASPK_UNKNOWN_ERR
   };
@@ -133,6 +136,7 @@ class SpkCompilerError
   // serialize
   const std::string getXml() const;
   friend std::ostream& operator<<(std::ostream& stream, const SpkCompilerError& e);
+  friend std::string& operator<<(std::string& stream, const SpkCompilerError& e);
 
 };
 

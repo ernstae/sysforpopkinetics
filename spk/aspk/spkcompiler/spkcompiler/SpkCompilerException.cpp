@@ -257,7 +257,7 @@ std::ostream& operator<<(std::ostream& stream, const SpkCompilerException& e)
     stream << e.size() << endl;
     for( int i=0; i<e.size(); i++)
     {
-        stream << e.myError_list[i] << endl;
+      stream << e.myError_list[i];
     }
     stream.flush();
     return stream;
