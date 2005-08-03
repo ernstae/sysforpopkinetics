@@ -24,9 +24,10 @@ class ClientTranslatorTest : public CppUnit::TestFixture {
     xercesc::DOMDocument* data;
     std::ifstream iData;
 
-    void createDataWithID( const char* );
-    void createDataNoID( const char* );
+    void createDataWithID( const char * );
+    void createDataNoID( const char * );
     void createDataIDShuffled( const char * );
+    void createDataWithDuplicateLabel( const char * );
 public:
     virtual void setUp();
     virtual void tearDown();
@@ -35,6 +36,7 @@ public:
     void testDataShuffledID();
     void testIndDataNoID();
     void testPopDataNoID();
+    void testDuplicateLabel();
 
     static CppUnit::Test * suite();
 };

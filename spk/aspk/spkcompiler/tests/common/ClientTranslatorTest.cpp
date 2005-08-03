@@ -13,6 +13,7 @@
 
 #include "../../spkcompiler/ClientTranslator.h"
 #include "../../spkcompiler/SymbolTable.h"
+#include "../../spkcompiler/SpkCompilerException.h"
 #include "ClientTranslatorTest.h"
 
 using namespace std;
@@ -173,6 +174,39 @@ void ClientTranslatorTest::createDataNoID( const char* dataFile )
        oData << "<row position=\"4\">" << endl;
        oData << "<value type=\"numeric\">0.2</value>\n" << endl;
        oData << "<value type=\"numeric\">0.2</value>\n" << endl;
+       oData << "</row>" << endl;
+       oData << "</table>" << endl;
+       oData << "</spkdata>" << endl;
+       oData.close();
+     }
+   else
+     {
+       CPPUNIT_ASSERT_MESSAGE( "Faild to open a new file for writing a data set!", false );
+     }
+}
+
+void ClientTranslatorTest::createDataWithDuplicateLabel( const char *dataFile )
+{
+   ofstream oData( dataFile );
+   if( oData.good() )
+     {
+       oData << "<spkdata version=\"0.1\">\n" << endl;
+       oData << "<table columns=\"3\" rows=\"7\">\n" << endl;
+       oData << "<description>ClientTranslator Test Data Set</description>\n" << endl;
+       oData << "<row position=\"1\">\n" << endl;
+       oData << "<value type=\"string\">ID</value>\n" << endl;
+       oData << "<value type=\"string\">TIME</value>\n" << endl;
+       oData << "<value type=\"string\">TIME</value>\n" << endl;
+       oData << "</row>" << endl;
+       oData << "<row position=\"2\">" << endl;
+       oData << "<value type=\"string\">Sachiko</value>\n" << endl;
+       oData << "<value type=\"numeric\">0.0</value>\n" << endl;
+       oData << "<value type=\"numeric\">0.0</value>\n" << endl;
+       oData << "</row>" << endl;
+       oData << "<row position=\"3\">" << endl;
+       oData << "<value type=\"string\">Sachiko</value>\n" << endl;
+       oData << "<value type=\"numeric\">0.1</value>\n" << endl;
+       oData << "<value type=\"numeric\">0.1</value>\n" << endl;
        oData << "</row>" << endl;
        oData << "</table>" << endl;
        oData << "</spkdata>" << endl;
@@ -578,6 +612,90 @@ void ClientTranslatorTest::testPopDataNoID()
   delete [] gData;
   XMLPlatformUtils::Terminate();
 }
+void ClientTranslatorTest::testDuplicateLabel()
+{
+   gData   = new char[256];
+   strcpy( gData, "duplicateLabel.dat" );
+   createDataWithDuplicateLabel( gData );
+
+   try
+   {
+      XMLPlatformUtils::Initialize();
+   }
+   catch( const XMLException& toCatch )
+   {
+      char buf[maxChars + 1];
+      sprintf( buf, "Error during Xerces-c initialization.\nException message: %s.\n", 
+               XMLString::transcode( toCatch.getMessage() ) );
+      CPPUNIT_ASSERT_MESSAGE( buf, false );
+   }
+
+   xercesc::XercesDOMParser *parser = new xercesc::XercesDOMParser;
+   parser->setValidationScheme( XercesDOMParser::Val_Auto );
+   parser->setDoNamespaces( true );
+   parser->setDoSchema( true );
+   parser->setValidationSchemaFullChecking( true );
+   parser->setCreateEntityReferenceNodes( true );
+
+    try{
+       ifstream iData( gData );
+       if( !iData.good() )
+       {
+          XMLPlatformUtils::Terminate();
+          char buf[maxChars + 1];
+          sprintf( buf, "Failed to open %s!\n", gData );
+          CPPUNIT_ASSERT_MESSAGE( buf, false );
+       }
+       parser->parse( gData );
+       data = parser->getDocument();
+    }
+    catch( const XMLException& e )
+    {
+       XMLPlatformUtils::Terminate();
+       char buf[maxChars + 1];
+       sprintf( buf, "An error occurred during parsing\n   Message: %s\n",
+                XMLString::transcode(e.getMessage() ) );
+       CPPUNIT_ASSERT_MESSAGE( buf, false );
+    }
+    catch( const DOMException& e )
+    {
+       XMLCh errText[maxChars + 1]; 
+       if (DOMImplementation::loadDOMExceptionMsg(e.code, errText, maxChars))
+       {
+          XMLPlatformUtils::Terminate();
+          char buf[maxChars + 1];
+          sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
+                   gData, e.code, XMLString::transcode(errText) );
+          CPPUNIT_ASSERT_MESSAGE( buf, false );
+       }
+    }
+    catch( ... )
+    {
+       XMLPlatformUtils::Terminate();
+       char buf[maxChars + 1];
+       sprintf( buf, "An unknown error occurred during parsing.\n" );
+       CPPUNIT_ASSERT_MESSAGE( buf, false );
+    }
+
+
+   ClientTranslatorSubclass xlator( source, data, 3 );
+   xlator.detAnalysisType();
+   try{
+     xlator.parseData();
+   }
+   catch( const SpkCompilerException& e )
+     {
+       string m = e[0].message();
+       if( m.find( "TIME is already defined" ) == string::npos )
+	 CPPUNIT_ASSERT( true );
+       else
+	 CPPUNIT_ASSERT_MESSAGE( "parseData() should have complained about duplicated labels", false );
+     }
+
+  remove( gData );
+  delete [] gData;
+  XMLPlatformUtils::Terminate();
+}
 CppUnit::Test * ClientTranslatorTest::suite()
 {
   CppUnit::TestSuite *suiteOfTests 
@@ -591,6 +709,8 @@ CppUnit::Test * ClientTranslatorTest::suite()
 			 ("testIndDataNoID", &ClientTranslatorTest::testIndDataNoID ) );
   suiteOfTests->addTest( new CppUnit::TestCaller<ClientTranslatorTest>
 			 ("testPopDataNoID", &ClientTranslatorTest::testPopDataNoID ) );
+  suiteOfTests->addTest( new CppUnit::TestCaller<ClientTranslatorTest>
+			 ("testDuplicateLabel", &ClientTranslatorTest::testDuplicateLabel ) );
 
  return suiteOfTests;
 }
