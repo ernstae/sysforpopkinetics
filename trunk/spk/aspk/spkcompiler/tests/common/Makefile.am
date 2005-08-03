@@ -3,6 +3,7 @@ AM_LDFLAGS           = -lxerces-c -lcppunit ../../spkcompiler/libcommon.a
 AM_CPPFLAGS          = -I@top_srcdir@
 MOSTLYCLEANFILES     = IndData.h 
 MAINTEINERCLEANFILES = Makefile.in
+testall_DEPENDENCIES = ../../spkcompiler/libcommon.a 
 
 testall_SOURCES = \
 	test_common.cpp \
@@ -18,6 +19,10 @@ testall_SOURCES = \
         SymbolTest.h \
         SymbolTableTest.cpp \
 	SymbolTableTest.h \
+        SpkCompilerErrorTest.cpp \
+        SpkCompilerErrorTest.h \
+        SpkCompilerExceptionTest.cpp \
+        SpkCompilerExceptionTest.h \
 	ClientTranslatorTest.cpp \
 	ClientTranslatorTest.h 
 
