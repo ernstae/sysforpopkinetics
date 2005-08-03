@@ -241,7 +241,7 @@ int ClientTranslator::insertID()
     {
       char m[ SpkCompilerError::maxMessageLen() ];
       sprintf( m, "Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_COLUMNS );
-      throw SpkCompilerException( SpkCompilerError::ASPK_DATAML_ERR, m, __LINE__, __FILE__ );
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
     }
   XMLString::textToBin( dataset->getAttribute( X_COLUMNS ),
 			    nItems );
@@ -295,7 +295,7 @@ void ClientTranslator::parseData()
     {
       char m[ SpkCompilerError::maxMessageLen() ];
       sprintf( m, "Version %s is not supported yet!", version );
-      throw SpkCompilerException( SpkCompilerError::ASPK_SOURCEML_ERR, m, __LINE__, __FILE__ );
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
      }
 
   //
@@ -308,13 +308,13 @@ void ClientTranslator::parseData()
     {
       char m[ SpkCompilerError::maxMessageLen() ];
       sprintf( m, "Missing a data set!" );
-      throw SpkCompilerException( SpkCompilerError::ASPK_SOURCEML_ERR, m, __LINE__, __FILE__ );
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
     }
   if( nDataSets > 1 )
     {
       char m[ SpkCompilerError::maxMessageLen() ];
       sprintf( m, "Multiple data sets not supported!" );
-      throw SpkCompilerException( SpkCompilerError::ASPK_SOURCEML_ERR, m, __LINE__, __FILE__ );
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
     }
 
   int nSubjects = 0;
@@ -326,7 +326,7 @@ void ClientTranslator::parseData()
 	{
 	  char m[ SpkCompilerError::maxMessageLen() ];
 	  sprintf( m, "Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_COLUMNS );
-	  throw SpkCompilerException( SpkCompilerError::ASPK_DATAML_ERR, m, __LINE__, __FILE__ );
+	  throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
 	}     
       XMLString::textToBin( dataset->getAttribute( X_COLUMNS ), nFields );
 
@@ -335,7 +335,7 @@ void ClientTranslator::parseData()
 	{
 	  char m[ SpkCompilerError::maxMessageLen() ];
 	  sprintf( m, "Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_ROWS );
-	  throw SpkCompilerException( SpkCompilerError::ASPK_DATAML_ERR, m, __LINE__, __FILE__ );
+	  throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
 	} 
       XMLString::textToBin( dataset->getAttribute( X_ROWS ), nRecords );
 
@@ -346,7 +346,7 @@ void ClientTranslator::parseData()
          // For ver 0.1, this is an error!
 	char m[ SpkCompilerError::maxMessageLen() ];
 	sprintf( m, "Empty data set!" );
-	SpkCompilerException e( SpkCompilerError::ASPK_DATAML_ERR, m, __LINE__, __FILE__ );
+	SpkCompilerException e( SpkCompilerError::ASPK_USER_ERR, m, __LINE__, __FILE__ );
 	throw e;
       }
 
@@ -362,7 +362,7 @@ void ClientTranslator::parseData()
 	{
 	  char m[ SpkCompilerError::maxMessageLen() ];
 	  sprintf( m, "The number of &lt;row&gt;s does not match with the value of &lt;table::rows&gt; attribute!" );
-	  throw SpkCompilerException( SpkCompilerError::ASPK_SOURCEML_ERR, m, __LINE__, __FILE__ );
+	  throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
 	}
 
       for( int j=0; j<nRecords; j++ )
@@ -372,14 +372,14 @@ void ClientTranslator::parseData()
 	    {
 	      char m[ SpkCompilerError::maxMessageLen() ];
 	      sprintf( m, "An attribute, %s, is missing from &lt;%s&gt; tag.", X_POSITION, X_ROW );
-	      throw SpkCompilerException( SpkCompilerError::ASPK_SOURCEML_ERR, m, __LINE__, __FILE__ );	      
+	      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );	      
 	    }
 	  const XMLCh* xml_position = row->getAttribute( X_POSITION );
 	  if( !XMLString::textToBin( xml_position, pos ) )
 	    {
 	      char m[ SpkCompilerError::maxMessageLen() ];
 	      sprintf( m, "Failed to convert an alphanumeric value to an integer!" );
-	      throw SpkCompilerException( SpkCompilerError::ASPK_UNKNOWN_ERR, m, __LINE__, __FILE__ );
+	      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
 	    }
 	  DOMNodeList * values = row->getElementsByTagName( X_VALUE );
 	  if( values->getLength() != nFields )
@@ -387,7 +387,7 @@ void ClientTranslator::parseData()
 	      char m[ SpkCompilerError::maxMessageLen() ];
 	      sprintf( m, "The number of &lt;%s&gt; elements does not match with the value of &lt;%s&gt; attribute!",
 		       X_VALUE, X_COLUMNS );
-	      throw SpkCompilerException( SpkCompilerError::ASPK_UNKNOWN_ERR, m, __LINE__, __FILE__ );
+	      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
 	    }
 
 	  //
@@ -412,6 +412,12 @@ void ClientTranslator::parseData()
 		  XMLCh* xml_label_noWS = XMLString::replicate( xml_label );
 		  XMLString::removeWS( xml_label_noWS );
                   char * delme = XMLString::transcode( xml_label_noWS );
+		  if( find( tmp_labels.begin(), tmp_labels.end(), string(delme) ) != tmp_labels.end() )
+		    {
+		      char m[ SpkCompilerError::maxMessageLen() ];
+		      sprintf( m, "%s is already defined!", delme );
+		      throw SpkCompilerException( SpkCompilerError::ASPK_USER_ERR, m, __LINE__, __FILE__ );
+		    }
 		  tmp_labels[k] = string( delme );
                   delete delme;
 		  XMLString::release( &xml_label_noWS );
