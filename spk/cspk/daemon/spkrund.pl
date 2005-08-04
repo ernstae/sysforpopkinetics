@@ -64,7 +64,8 @@ atomic.  If the lock-file already exists, the program writes an error
 message to the system log and terminates, because only one copy of
 spkrund.pl can be allowed to run at any given time.
 
-Next, it opens the database.
+Next, it opens the database and attach a sensor for monitoring. The 
+sensor is a server written in java.
 
 The program designates itself to be a process group leader. This way
 it will be able to send signals to all of its descendents without
@@ -231,6 +232,7 @@ my $service_root = "spkrun";
 my $bugzilla_product = "SPK";
 my $submit_to_bugzilla = 1;
 my $retain_working_dir = 0;
+my $attach_sensor = 1;
 
 my $dbh;
 my $build_failure_exit_value = 101;
@@ -249,6 +251,9 @@ my $filename_source = "source.xml";
 
 my $spk_library_path = "/usr/local/lib/spkprod";
 my $cpath = "/usr/local/include/spkprod";
+my $sensor_classpath = "-cp /usr/local/bin/spkmonitor:.";
+my $sensor_port = "9001";
+my $sensor_pid;
 
 if ($mode =~ "test") {
     $submit_to_bugzilla = !$bugzilla_production_only;
@@ -257,6 +262,7 @@ if ($mode =~ "test") {
     $retain_working_dir = 1;
     $spk_library_path = "/usr/local/lib/spktest";
     $cpath = "/usr/local/include/spktest";
+    $attach_sensor = 0;
 }
 my $service_name = "$service_root" . "d";
 my $prefix_working_dir = $service_root;
@@ -687,6 +693,32 @@ sub start {
 	or death("emerg", "can't connect to database=$database, host=$host");
     syslog("info", "connected to database=$database, host=$host");
     $database_open = 1;
+
+    # Attach a sensor
+    if($attach_sensor == 1)
+    {
+        FORK: {
+            if ($sensor_pid = fork) {
+            }
+            elsif (defined $sensor_pid) {
+	        my @args = ("java $sensor_classpath uw.rfpk.monitor.Sensor $sensor_port");
+	        my $e = exec(@args);
+
+	        # This statement will never be reached, unless the exec failed
+	        if (!$e) {
+	            syslog("emerg", "couldn't attach a sensor");
+	            die;
+	        };
+            }
+            elsif ($! == EAGAIN) {
+                sleep 5;
+                redo FORK;
+            }
+            else { 
+                die "can't fork: $! to attach a sensor\n";
+            }
+        }
+    }
 }
 sub stop {
     # We have received the TERM signal. 
@@ -703,6 +735,7 @@ sub stop {
 
     # send the TERM signal to every member of our process group
     kill('TERM', -$$);
+    kill('TERM', $sensor_pid);
 
     # wait for all of our children to die
     my $child_pid;
