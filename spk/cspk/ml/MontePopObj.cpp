@@ -1,6 +1,7 @@
 /*
 $begin MontePopObj$$
 $spell
+	enum
 	Eval
 	Obj
 	Spk

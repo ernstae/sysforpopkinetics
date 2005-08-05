@@ -1,6 +1,7 @@
 /*
 $begin MapMonte$$
 $spell
+	enum
 	Eval
 	Spk
 	std
@@ -68,8 +69,10 @@ $latex R_i ( b , \alpha )$$ is the variance, given the fixed and random effects,
 of this individuals measurements.
 
 $head method$$
-The argument $italic method$$ can either be 
-$code MontePars::plain$$ or $code MontePars::miser$$.
+The argument $italic method$$ must be one of the following: 
+$code MontePars::plain$$, 
+$code MontePars::miser$$ or
+$code MontePars::vegas$$.
 It determines which GSL monte carlo integration method is used.
 
 $head model$$
@@ -142,6 +145,7 @@ $end
 #include <gsl/gsl_monte.h>
 #include <gsl/gsl_monte_plain.h>
 #include <gsl/gsl_monte_miser.h>
+#include <gsl/gsl_monte_vegas.h>
 
 # define MapMonteDebug false
 
@@ -289,6 +293,26 @@ void MapMonte(
 		if( GslError != 0 )
 			ThrowGsl2SpkError();
 		gsl_monte_miser_free(state);
+	}
+	else if ( method == MontePars::vegas )
+	{	// The vegas MonteCarlo integrator (see Numerical Recipies)
+		gsl_monte_vegas_state *state = 
+			gsl_monte_vegas_alloc (numberRandomEffects);
+
+		GslError = gsl_monte_vegas_integrate(
+			&Integrand                    , 
+			Lower                         , 
+			Upper                         , 
+			numberRandomEffects           , 
+			numberEval                    , 
+			rngRange                      , 
+			state                         , 
+			&integralEstimate             , 
+			&estimateStd
+		);
+		if( GslError != 0 )
+			ThrowGsl2SpkError();
+		gsl_monte_vegas_free(state);
 	}
 	else	assert(0);	// should not happen
 

@@ -18,33 +18,33 @@
 namespace {
 	double Data[]= {
 		3.000, 9.300,
-		4.000, 8.600,
+//		4.000, 8.600,
 		5.000, 6.700,
-		6.000, 6.100,
+//		6.000, 6.100,
 		7.000, 5.800,
-		8.000, 5.100,
+//		8.000, 5.100,
 		9.000,   4.400,
-		10.000,  4.500,
+//		10.000,  4.500,
 		11.000,  4.000,
-		14.000,  2.800,
+//		14.000,  2.800,
 		17.000,  2.900,
-		20.000,  2.400,
+//		20.000,  2.400,
 		25.000,  1.880,
-		30.000,  1.580,
+//		30.000,  1.580,
 		35.000,  1.200,
-		40.000,  1.050,
+//		40.000,  1.050,
 		45.000,  0.950,
-		50.000,  0.790,
+//		50.000,  0.790,
 		55.000,  0.720,
-		60.000,  0.580,
+//		60.000,  0.580,
 		70.000,  0.520,
-		80.000,  0.410,
+//		80.000,  0.410,
 		90.000,  0.330,
-		100.000, 0.290,
+//		100.000, 0.290,
 		110.000, 0.260,
-		120.000, 0.210,
+//		120.000, 0.210,
 		140.000, 0.160,
-		160.000, 0.110,
+//		160.000, 0.110,
 		180.000, 0.090
 	};
 }
@@ -109,7 +109,7 @@ bool ExpModelTest(void)
 	void *null = 0;
 	double estimate_grid;
 	double error_grid;
-	std::valarray<int> number_grid(12, nInd);
+	std::valarray<int> number_grid(11, nInd);
 	GridIntegral(
 		ExpNegMapBay ,
 		nInd         , 
@@ -149,7 +149,34 @@ bool ExpModelTest(void)
 	ok &= error_plain < .5;
 	ok &= fabs(estimate_grid-estimate_plain) < error_plain+error_grid;
 
+	double estimate_vegas;
+	double error_vegas;
+	MapMonte(
+		MontePars::vegas ,
+		model            ,
+		N                ,
+		y                ,
+		alpha            ,
+		L                ,
+		U                ,
+		individual       ,
+		number_monte     ,
+		estimate_vegas   ,
+		error_vegas
+	);
+	error_vegas = error_vegas / estimate_vegas;
+	estimate_vegas = log( estimate_vegas ),
+
+	ok &= error_vegas < .05;
+	ok &= fabs(estimate_grid-estimate_vegas) < error_vegas+error_grid;
+
 # if MISER
+	std::cout << "estimate_grid = " << estimate_grid << std::endl;
+	std::cout << "error_grid    = " << error_grid    << std::endl;
+	std::cout << "estimate_plain = " << estimate_plain << std::endl;
+	std::cout << "error_plain    = " << error_plain    << std::endl;
+	std::cout << "estimate_vegas = " << estimate_vegas << std::endl;
+	std::cout << "error_vegas    = " << error_vegas    << std::endl;
 	double estimate_miser;
 	double error_miser;
 	MapMonte(
@@ -167,8 +194,6 @@ bool ExpModelTest(void)
 	);
 	error_miser = error_miser / estimate_miser;
 	estimate_miser = log( estimate_miser ),
-	std::cout << "estimate_grid = " << estimate_grid << std::endl;
-	std::cout << "error_grid    = " << error_grid    << std::endl;
 	std::cout << "estimate_miser = " << estimate_miser << std::endl;
 	std::cout << "error_miser    = " << error_miser    << std::endl;
 

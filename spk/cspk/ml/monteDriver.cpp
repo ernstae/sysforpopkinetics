@@ -1,6 +1,9 @@
 /*
 $begin monteDriver$$
 $spell
+	elapsedtime
+	Spk
+	spkrecord
 	nrows
 	ncols
 	stderror
@@ -54,8 +57,8 @@ contains the following records.
 
 $head error_list$$
 $index error_list$$
-This record contains a list of error messages acccumulated during 
-the execution of program.  If no error occured, this record is still
+This record contains a list of error messages accumulated during 
+the execution of program.  If no error occurred, this record is still
 present but as empty.
 
 $head pop_monte_result$$
@@ -452,9 +455,15 @@ int main(int argc, const char *argv[])
 		MethodName = "miser";
 		break;
 
+		case MontePars::vegas:
+		monte      = true;
+		MethodName = "vegas";
+		break;
+
 		default:
 		cerr << "monteDriver: ";
-		cerr << "method is no analytic, grid, plain, or miser" << endl;
+		cerr << "method is not one of the following:" << endl;
+		cerr << "analytic, grid, plain, miser, or vegas" << endl;
 		return UnknownFailure;
 	}
 	if( analytic && NonmemPars::nEta != 1 )
