@@ -1,3 +1,7 @@
+                  2  
+
+ 
+ 
 <!---------------------------------------------------------------------
 From:   Resource Facility for Population Kinetics                    
         Department of Bioengineering Box 352255                      
@@ -24,6 +28,11 @@ author: Jiaji Du
 <%@page contentType="text/html"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
+<%-- Verify that the user is useradmin when SPK is not available --%>
+<c:if test="${notice == '1' && validUser.userName != 'useradmin'}">
+  <jsp:forward page="index.jsp" />
+</c:if>
 
 <%-- Verify that the user is logged in --%>
 <c:if test="${validUser == null}">
@@ -63,10 +72,29 @@ author: Jiaji Du
             <c:choose>
               <c:when test="${validUser.userName == 'useradmin'}">
                 <a href="chpassword.jsp">Change my password</a><br>
-                <a href="userlist.jsp?goal=enter">View all user list</a><br>
+                <a href="userlistenter.jsp">View all user list</a><br>
                 <a href="enteruser.jsp?">Add new user account</a><br>
-                <a href="userlist.jsp?goal=update">Update user account</a><br>
+                <a href="userlistupdate.jsp">Update user account</a><br>
                 <a href="searchuser.jsp">Search in user database</a><br>
+                <form action="notice.jsp" method="post">
+                  <c:choose>
+                    <c:when test="${notice == '1'}">
+                      <input type="checkbox" name="alert" checked value="1">Display maintenance notice&nbsp
+                    </c:when>
+                    <c:otherwise>
+                      <input type="checkbox" name="alert" value="1">Display maintenance notice&nbsp
+                    </c:otherwise>
+                  </c:choose>
+                  <input type="submit" value="Set"<br>
+                </form>
+                <c:choose>
+                  <c:when test="${notice == '1'}">
+                    <c:out value="Maintenance Notice is ON." />
+                  </c:when>
+                  <c:otherwise>
+                    <c:out value="Maintenance Notice is OFF." />
+                  </c:otherwise>
+                </c:choose>
               </c:when>
               <c:otherwise>
                 <a href="chpassword.jsp">Change my password</a><br>

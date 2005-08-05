@@ -175,11 +175,11 @@ public class Simulation extends javax.swing.JPanel implements WizardStep {
 
         jTextPane4.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane4.setEditable(false);
-        jTextPane4.setText("Repeatedly run the problem.  In each run, use the simulated data\nobtained from the previous run as the current random source.");
+        jTextPane4.setText("Repeatedly run the problem.  In each run, use the simulated data\nobtained from the previous run as the current random source.\nIf you want the parameters to be estimated from each simulated\ndataset, select the  \"Parameter Estimation\" option in the first step. ");
         jTextPane4.setFocusable(false);
         jTextPane4.setMaximumSize(new java.awt.Dimension(420, 35));
         jTextPane4.setMinimumSize(new java.awt.Dimension(420, 35));
-        jTextPane4.setPreferredSize(new java.awt.Dimension(320, 35));
+        jTextPane4.setPreferredSize(new java.awt.Dimension(320, 64));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;

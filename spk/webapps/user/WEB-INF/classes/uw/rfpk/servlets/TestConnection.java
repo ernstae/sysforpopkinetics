@@ -26,7 +26,7 @@ import java.sql.*;
 import rfpk.spk.spkdb.*;
 import java.util.HashMap;
 
-/** This servlet is to test connection between the Model Design Agent and the associated
+/** This servlet is to test the connection between the Model Design Agent and the associated
  * web server and get the content of the method table from the database for MDA.  
  * It receives a String object that is the secret code used to check authentication.
  * The servlet calls database API method getMethodTable to get the content of the table

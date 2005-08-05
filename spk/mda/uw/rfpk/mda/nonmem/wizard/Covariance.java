@@ -21,6 +21,7 @@ package uw.rfpk.mda.nonmem.wizard;
 import uw.rfpk.mda.nonmem.Utility;
 import org.netbeans.ui.wizard.*;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -58,6 +59,8 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
         jRadioButton1 = new javax.swing.JRadioButton();
         jRadioButton2 = new javax.swing.JRadioButton();
         jRadioButton3 = new javax.swing.JRadioButton();
+        jRadioButton4 = new javax.swing.JRadioButton();
+        jRadioButton5 = new javax.swing.JRadioButton();
         jSeparator1 = new javax.swing.JSeparator();
 
         setLayout(new java.awt.GridBagLayout());
@@ -71,7 +74,7 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
         jTextArea1.setMinimumSize(new java.awt.Dimension(360, 30));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 8;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(6, 12, 12, 12);
@@ -79,11 +82,11 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("You can use one of the  three formulations for estimating \ncovariance matrix, as listed below.  Select a formulation or \nuse the default. ");
+        jTextPane1.setText("You can use one of the formulations to calculate the statistics\nof the parameter estimates.   Select one or use the default.  \nThe last two formulations apply only to individual analysis.\n");
         jTextPane1.setFocusable(false);
         jTextPane1.setMaximumSize(new java.awt.Dimension(360, 51));
         jTextPane1.setMinimumSize(new java.awt.Dimension(360, 51));
-        jTextPane1.setPreferredSize(new java.awt.Dimension(360, 51));
+        jTextPane1.setPreferredSize(new java.awt.Dimension(370, 52));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -97,12 +100,12 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
         jTextPane2.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.insets = new java.awt.Insets(16, 12, 0, 12);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         add(jTextPane2, gridBagConstraints);
 
-        jRadioButton1.setText("R -- The Hessian matrix");
+        jRadioButton1.setText("R -- The Hessian Matrix");
         buttonGroup1.add(jRadioButton1);
         jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -117,7 +120,7 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(0, 18, 0, 12);
         add(jRadioButton1, gridBagConstraints);
 
-        jRadioButton2.setText("S -- The Cross-Product matrix");
+        jRadioButton2.setText("S -- The Cross-Product Matrix");
         buttonGroup1.add(jRadioButton2);
         jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -133,7 +136,7 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
         add(jRadioButton2, gridBagConstraints);
 
         jRadioButton3.setSelected(true);
-        jRadioButton3.setText("Default -- The Sandwich matrix");
+        jRadioButton3.setText("Default -- The Sandwich Matrix");
         buttonGroup1.add(jRadioButton3);
         jRadioButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -145,18 +148,60 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 18, 42, 105);
+        gridBagConstraints.insets = new java.awt.Insets(0, 18, 0, 12);
         add(jRadioButton3, gridBagConstraints);
+
+        jRadioButton4.setText("H -- The Expected Hessian Matrix");
+        buttonGroup1.add(jRadioButton4);
+        jRadioButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton4ActionPerformed(evt);
+            }
+        });
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 18, 0, 12);
+        add(jRadioButton4, gridBagConstraints);
+
+        jRadioButton5.setText("HSH -- The Expected Hessian Cross-Product Matrix");
+        buttonGroup1.add(jRadioButton5);
+        jRadioButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton5ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.insets = new java.awt.Insets(0, 18, 14, 12);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        add(jRadioButton5, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         add(jSeparator1, gridBagConstraints);
 
     }//GEN-END:initComponents
+
+    private void jRadioButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton5ActionPerformed
+        jTextArea1.setText("$COVARIANCE MATRIX=HSH");
+        JOptionPane.showMessageDialog(null, "This formulation is not compatible with NONOMEM.",
+                                      "Warning Message", JOptionPane.WARNING_MESSAGE);
+    }//GEN-LAST:event_jRadioButton5ActionPerformed
+
+    private void jRadioButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton4ActionPerformed
+        jTextArea1.setText("$COVARIANCE MATRIX=H");
+        JOptionPane.showMessageDialog(null, "This formulation is not compatible with NONOMEM.",
+                                      "Warning Message", JOptionPane.WARNING_MESSAGE);
+    }//GEN-LAST:event_jRadioButton4ActionPerformed
 
     private void jRadioButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton3ActionPerformed
         jTextArea1.setText("$COVARIANCE");
@@ -176,6 +221,8 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JRadioButton jRadioButton3;
+    private javax.swing.JRadioButton jRadioButton4;
+    private javax.swing.JRadioButton jRadioButton5;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextPane jTextPane1;
@@ -204,7 +251,9 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
 	    return "Estimate Statistics";
 	}
 
-	public void showingStep(JWizardPane wizard){           
+	public void showingStep(JWizardPane wizard){
+            jRadioButton4.setEnabled(iterator.getIsInd());
+            jRadioButton5.setEnabled(iterator.getIsInd());
             if(iterator.getIsReload())
             {
                 String text = iterator.getReload().getProperty("COVARIANCE");
@@ -215,6 +264,10 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
                         jRadioButton1.setSelected(true);
                     else if(text.indexOf("MATRIX=S") != -1)
                         jRadioButton2.setSelected(true);
+                    else if(text.indexOf("MATRIX=H") != -1)
+                        jRadioButton4.setSelected(true);
+                    else if(text.indexOf("MATRIX=HSH") != -1)
+                        jRadioButton5.setSelected(true);
                     else
                         jRadioButton3.setSelected(true);
                     if(text.length() > 11)
@@ -234,11 +287,15 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
             String record = jTextArea1.getText().trim();
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             object.getRecords().setProperty("Covariance", record);
-            // Find method
+            // Find formulation
             if(record.equals("$COVARIANCE MATRIX=R"))
                 object.getSource().covariance = "r";
             else if(record.equals("$COVARIANCE MATRIX=S"))
                 object.getSource().covariance = "s";
+            else if(record.equals("$COVARIANCE MATRIX=H"))
+                object.getSource().covariance = "h";
+            else if(record.equals("$COVARIANCE MATRIX=HSH"))
+                object.getSource().covariance = "hsh";
             else
                 object.getSource().covariance = "rsr";
 	}

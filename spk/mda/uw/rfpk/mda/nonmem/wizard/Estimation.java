@@ -25,6 +25,8 @@ import javax.swing.JOptionPane;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  * This class defines a step to create the $ESTIMATION record.
@@ -50,7 +52,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         initComponents();
         iterator = iter;
     }
-    
+     
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -83,6 +85,8 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         jComboBox1 = new javax.swing.JComboBox();
         jTextField1 = new javax.swing.JTextField();
         jTextField2 = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -92,9 +96,9 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         jTextPane1.setMaximumSize(new java.awt.Dimension(377, 21));
         jTextPane1.setMinimumSize(new java.awt.Dimension(377, 21));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.gridwidth = 4;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         add(jTextPane1, gridBagConstraints);
 
         jTextPane2.setBackground(new java.awt.Color(204, 204, 204));
@@ -229,7 +233,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         jPanel2.add(jCheckBox2, gridBagConstraints);
 
@@ -243,7 +247,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         jPanel2.add(jCheckBox3, gridBagConstraints);
 
@@ -256,7 +260,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         jPanel2.add(jCheckBox4, gridBagConstraints);
 
@@ -308,6 +312,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 4, 0, 12);
@@ -316,10 +321,10 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         jTextField1.setText("450");
         jTextField1.setMaximumSize(new java.awt.Dimension(60, 20));
         jTextField1.setMinimumSize(new java.awt.Dimension(60, 20));
-        jTextField1.setPreferredSize(new java.awt.Dimension(60, 20));
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+        jTextField1.setPreferredSize(new java.awt.Dimension(80, 20));
+        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextField1KeyReleased(evt);
             }
         });
 
@@ -328,16 +333,16 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(3, 4, 3, 12);
+        gridBagConstraints.insets = new java.awt.Insets(3, 4, 3, 2);
         jPanel3.add(jTextField1, gridBagConstraints);
 
         jTextField2.setText("5");
         jTextField2.setMaximumSize(new java.awt.Dimension(60, 20));
         jTextField2.setMinimumSize(new java.awt.Dimension(60, 20));
         jTextField2.setPreferredSize(new java.awt.Dimension(60, 20));
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+        jTextField2.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextField2KeyReleased(evt);
             }
         });
 
@@ -346,8 +351,29 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 5, 12);
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 5, 2);
         jPanel3.add(jTextField2, gridBagConstraints);
+
+        jLabel4.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel4.setForeground(java.awt.Color.red);
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uw/rfpk/mda/right.png")));
+        jLabel4.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/uw/rfpk/mda/wrong.png")));
+        jLabel4.setPreferredSize(new java.awt.Dimension(11, 15));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 12);
+        jPanel3.add(jLabel4, gridBagConstraints);
+
+        jLabel5.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel5.setForeground(java.awt.Color.red);
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uw/rfpk/mda/right.png")));
+        jLabel5.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/uw/rfpk/mda/wrong.png")));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 2, 12);
+        jPanel3.add(jLabel5, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -357,17 +383,23 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
 
     }//GEN-END:initComponents
 
+    private void grayOutNoabort()
+    {
+        jCheckBox4.setEnabled(false);
+        jCheckBox4.setSelected(false);
+    }
+    
+    private void jTextField2KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField2KeyReleased
+        setRecord();
+    }//GEN-LAST:event_jTextField2KeyReleased
+
+    private void jTextField1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyReleased
+        setRecord();
+    }//GEN-LAST:event_jTextField1KeyReleased
+
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         setRecord();
     }//GEN-LAST:event_jComboBox1ActionPerformed
-
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        setRecord();
-    }//GEN-LAST:event_jTextField1ActionPerformed
-
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
-        setRecord();
-    }//GEN-LAST:event_jTextField2ActionPerformed
 
     private void jCheckBox4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox4ActionPerformed
         if (jCheckBox4.isSelected()) noabort = "NOABORT ";
@@ -429,48 +461,49 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
     
     private void setRecord()
     {
+        isValid = true;
         String maxEvals = jTextField1.getText();
         if(maxEvals.startsWith("+"))
-            maxEvals = maxEvals.substring(1); 
-        if(!Utility.isPosIntNumber(maxEvals))
+            maxEvals = maxEvals.substring(1).trim(); 
+        if(!Utility.isNonNegIntNumber(maxEvals))
         {
-            JOptionPane.showMessageDialog(null, 
-                                          "The maximum number of evaluations " +
-                                          "is not a positive integer number.",   
-                                          "Input Error",    
-                                          JOptionPane.ERROR_MESSAGE);           
-            return;
+            jLabel4.setEnabled(false);
+            jLabel4.setToolTipText("It must be a >= 0 integer.");
+            isValid = false;
         }
-        String print = jTextField2.getText();
+        else
+        {
+            jLabel4.setEnabled(true);
+            jLabel4.setToolTipText(null);
+        }
+        String print = jTextField2.getText().trim();
         if(print.startsWith("+"))
             print = print.substring(1); 
-        if(!Utility.isPosIntNumber(print) && print.equals("0"))
+        if(!Utility.isPosIntNumber(print))
         {
-            JOptionPane.showMessageDialog(null, 
-                                          "The iteration summary print out interval steps " +
-                                          "is not a positive integer number.",   
-                                          "Input Error",    
-                                          JOptionPane.ERROR_MESSAGE);           
-            return;
+            jLabel5.setEnabled(false);
+            jLabel5.setToolTipText("It must be a positive integer.");
+            isValid = false;
         }
-        else if(Integer.parseInt(print) > 9999)
+        else if(Utility.isPosIntNumber(print) && Integer.parseInt(print) > 9999)
         {
-            JOptionPane.showMessageDialog(null, 
-                                          "The iteration summary print out interval steps " +
-                                          "is greater than 9999.",   
-                                          "Input Error",    
-                                          JOptionPane.ERROR_MESSAGE);           
-            return;
-        }            
-        jTextArea1.setText("$ESTIMATION " + method + posthoc + interaction + 
-                            centering + noabort +
-                            "SIGDIGITS=" + (String)jComboBox1.getSelectedItem() 
-                            + " MAXEVALS=" + maxEvals + " PRINT=" + print);   
-        if(!isValid)
+            jLabel5.setEnabled(false);
+            jLabel5.setToolTipText("It must be smaller than 10000.");
+            isValid = false;
+        }
+        else
         {
-            isValid = true;
-            wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray()); 
-        }     
+            jLabel5.setEnabled(true);
+            jLabel5.setToolTipText(null);
+        }
+        if(isValid)
+            jTextArea1.setText("$ESTIMATION " + method + posthoc + interaction + 
+                               centering + noabort +
+                               "SIGDIGITS=" + (String)jComboBox1.getSelectedItem() 
+                               + " MAXEVALS=" + maxEvals + " PRINT=" + print);   
+
+        wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
+        grayOutNoabort();
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -483,6 +516,8 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -499,7 +534,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JTextPane jTextPane2;
     private javax.swing.JTextPane jTextPane3;
     // End of variables declaration//GEN-END:variables
-
+    
     /**
      * This method is to return the StepDescriptor object.
      * @return a StepDescriptor object.
@@ -595,7 +630,8 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
                 jSeparator1.setEnabled(true);
             }               
             isValid = true;
-            wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());            
+            wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
+            grayOutNoabort();
      	}
 
 	public void hidingStep(JWizardPane wizard){

@@ -288,7 +288,7 @@ public class PlotShow extends JFrame {
                                           plot[0][2].equals("show"),
                                           plot[0][3].equals("show"),
                                           plot[0][4].equals("show"),
-                                          false, false, true, true, null, null,
+                                          false, false, true, true, 0, 0, null, null,
                                           new Color[]{Color.green, Color.green, Color.green, null, null}, 
                                           null,
                                           5, 5, 6, 6, 4, 4, 4, 4, 0, 0, 0, 0,
@@ -296,7 +296,8 @@ public class PlotShow extends JFrame {
                                           new Font("SansSerif", Font.BOLD, 12),
                                           new Font("SansSerif", Font.BOLD, 11),
                                           new Font("SansSerif", Font.BOLD, 10),
-                                          0, 0, 0, 0, true, true, false, false, 2, 2, frame);                                          
+                                          0, 0, 0, 0, true, true, false, false,
+                                          false, 0, false, null, 2, 2, frame);                                          
             plotter.setToolTipText("");
             frame.getContentPane().add(plotter);
             frame.setLocation(50 * j, 40 * j);

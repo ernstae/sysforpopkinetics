@@ -16,7 +16,7 @@ Washington Free-Fork License as a public service.  A copy of the
 License can be found in the COPYING file in the root directory of this
 distribution.
 **********************************************************************/
-package uw.rfpk.mda.nonmem.display;
+package uw.rfpk.mda;
 
 import java.awt.*;
 import java.awt.print.*;

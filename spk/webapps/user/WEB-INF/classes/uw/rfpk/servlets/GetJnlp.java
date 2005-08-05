@@ -23,16 +23,16 @@ import javax.servlet.http.*;
 import java.io.*;
 import java.nio.*;
 
-/** This servlet sends back the version's text of model or dataset that was selected by 
- * the user from version list by the immediately previous call to the servlet GetVersions.
- * The servlet receives a String array containing two String objects from the client.
- * The first String object is the secret code to identify the client.  The second String  
- * object is the version number.  The servlet retrieves the archive from the session object
- * and then calls JRCS API methods, getRevision and arrayToString, to get the archive text.
- * The servlet sends back two objects.  The first object is a String containing the error 
- * message if there is an error or an empty String if there is not any error.  The second 
- * object is the returning archive text as a String object.
- *
+/** This servlet receives five parameters: host, port, secret, jnlp_dir and type.
+ *  The host and port are the web server parameters, the secret is the secret code 
+ *  to identify the user, the jnlp_dir is the path name of the jnlp file, the type
+ *  is the type of Model Design Agent the user selected to download.  First, the
+ *  servlet uses the host and the port to form a url to the login page. Then, the 
+ *  sevlet checks if the session is open.  If the session is not open, the servlet
+ *  redirects to the login page.  Then the servlet uses the secret code to check 
+ *  the user.  If the secret code is correct, it opens the jnlp file and modify it 
+ *  according to the parameter "type", and then save the file back and sends out
+ *  the modified jnlp_file to the client.  Otherwise it redirects to the login page.
  * @author Jiaji Du
  */
 public class GetJnlp extends HttpServlet
@@ -53,18 +53,18 @@ public class GetJnlp extends HttpServlet
         
         if(req.getSession(false) == null)
         {           
-            // Redirect to the login page            
+            // Redirect to the login page.        
             resp.sendRedirect(login);
             return;
         }
        
         String secret = req.getParameter("secret");
-        String jnlp = req.getParameter("jnlp_dir") + "/" + secret + ".jnlp";
+        String filePath = req.getParameter("jnlp_dir") + "/" + secret + ".jnlp";
 
         if(secret.equals((String)req.getSession().getAttribute("SECRET")))             
         {                                    
  	    // Read from the jnlp file.
-            BufferedReader in = new BufferedReader(new FileReader(jnlp));
+            BufferedReader in = new BufferedReader(new FileReader(filePath));
             StringBuffer buffer = new StringBuffer();
             boolean done = false;
             while(!done)
@@ -77,15 +77,28 @@ public class GetJnlp extends HttpServlet
                     buffer.append(line).append("\n");
 	    }
             in.close();
-             
+            String jnlp = buffer.toString();
+            
+            // Modify the jnlp file according to the MDA type.
+            if(req.getParameter("type").equals("saamii"))
+                jnlp = jnlp.replaceFirst("nonmem", "saamii").replaceFirst("MDAn.jar", "MDAs.jar");
+            if(req.getParameter("type").equals("nonmem"))
+                jnlp = jnlp.replaceFirst("saamii", "nonmem").replaceFirst("MDAs.jar", "MDAn.jar");
+            
+            // Save the jnlp file.
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));            
+            writer.write(jnlp);
+            writer.flush();
+            writer.close();
+            
             // Set the header parameters
             resp.setContentType("application/x-java-jnlp-file; charset=utf-8");
-            resp.setContentLength(buffer.length());
+            resp.setContentLength(jnlp.length());
             resp.setHeader("Content-Disposition", "filename=" + secret + ".jnlp");
             
-            // Write the file content to the output
+            // Write the file content to the output.
             PrintWriter out = resp.getWriter();
-            out.print(buffer.toString());
+            out.print(jnlp);
             out.flush();
             out.close();              
         }

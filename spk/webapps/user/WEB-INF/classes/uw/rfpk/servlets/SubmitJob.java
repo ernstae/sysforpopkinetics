@@ -29,12 +29,12 @@ import org.apache.commons.jrcs.diff.*;
 import uw.rfpk.beans.UserInfo;
 
 /** This servlet assemblies and then submits the job, the model and the dataset to the database.
- * The servlet receives a String array containing twenty-one String objects from the client.
+ * The servlet receives a String array containing twenty-two String objects from the client.
  * The first String object is the secret code to identify the client.  The other twenty
  * Strings are source, dataset, model archive, job_abstract, model_abstract, model_log, 
  * model_name, model_version, model_id, is_new_model, is_new_model_version, dataset_abstract, 
  * dataset_log, dataset_name, dataset_version, dataset_id, is_new_dataset, is_new_dataset_version,
- * job_method_code and job_parent.
+ * job_method_code, job_parent and is_warm_start.
  * If the model is new the servlet calls database API method, newModle, to get model_id.
  * If the model is old but the version is new the servlet calls database API methods, getModel
  * and updateModel, to update the model archive.  The servlet does the same operations for the
@@ -113,6 +113,7 @@ public class SubmitJob extends HttpServlet
                 String jobMethodCode = messageIn[19];
                 long jobParent = Long.parseLong(messageIn[20]);
                 String isWarmStart = messageIn[21];
+                String author = messageIn[22];
                 
                 // Connect to the database
                 ServletContext context = getServletContext();
@@ -131,7 +132,7 @@ public class SubmitJob extends HttpServlet
                 {                   
                     Archive arch = new Archive(modelArchive.split("\n"), "");
                     Node node = arch.findNode(new Version("1.1"));
-                    node.setAuthor(username);
+                    node.setAuthor(author);
                     node.setLog(modelLog);
                     which = "model";
                     modelId = Spkdb.newModel(con,
@@ -155,7 +156,7 @@ public class SubmitJob extends HttpServlet
                         String strAr = new String(blobArchive.getBytes(1L, (int)length));                        
                         Archive arch = new Archive("", new ByteArrayInputStream(strAr.getBytes()));                       
                         arch.addRevision(modelArchive.split("\n"), modelLog);                        
-                        arch.findNode(arch.getRevisionVersion()).setAuthor(username);
+                        arch.findNode(arch.getRevisionVersion()).setAuthor(author);
                          
                         Spkdb.updateModel(con, 
                                           modelId, 
@@ -173,7 +174,7 @@ public class SubmitJob extends HttpServlet
                 {
                     Archive arch = new Archive(dataset.split("\n"), "");
                     Node node = arch.findNode(new Version("1.1"));
-                    node.setAuthor(username);
+                    node.setAuthor(author);
                     node.setLog(datasetLog);
                     which = "dataset";
                     datasetId = Spkdb.newDataset(con, 
@@ -197,7 +198,7 @@ public class SubmitJob extends HttpServlet
                         String strAr = new String(blobArchive.getBytes(1L, (int)length));                        
                         Archive arch = new Archive("", new ByteArrayInputStream(strAr.getBytes()));
                         arch.addRevision(dataset.split("\n"), datasetLog);
-                        arch.findNode(arch.getRevisionVersion()).setAuthor(username);                       
+                        arch.findNode(arch.getRevisionVersion()).setAuthor(author);                       
                         Spkdb.updateDataset(con, 
                                             datasetId, 
                                             new String[]{"archive", "abstract"}, 
@@ -220,6 +221,7 @@ public class SubmitJob extends HttpServlet
                                  modelVersion, 
                                  source,
                                  jobMethodCode,
+                                 author,
                                  jobParent,                                 
                                  isWarmStart.equals("true"));
                     messages += "A new job, " + jobAbstract +

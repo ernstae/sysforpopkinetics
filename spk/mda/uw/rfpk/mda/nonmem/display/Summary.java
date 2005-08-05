@@ -221,7 +221,9 @@ public class Summary {
         String submissionTime = output.submissionTime != null ? formatTime(output.submissionTime) : NA;
         String completionTime = output.completionTime != null ? formatTime(output.completionTime) : NA;        
         String analysis = output.analysis != null ? output.analysis : NA;
-        String jobMethod = NA + " due to offline (Job Code: " + output.methodCode + ")"; 
+        String subProblem = output.subProblem != null ? output.subProblem : NA;
+        String simulationSeed = output.simulationSeed != null ? output.simulationSeed : NA;
+        String jobMethod = NA + " due to offline (Job Code: " + output.methodCode + ")";
         if(isOnline)
         {
             jobMethod = output.methodCode != null ? ((String[])methodTable.get(output.methodCode))[0] : NA;
@@ -279,10 +281,12 @@ public class Summary {
         String summary = "Summary Report\n" +
                          "\n\nJob Identification number: " + jobId +
                          "\n\nJob Description: " + jobAbstract + 
-                         "\n\nTime of Job Submisison: " + submissionTime + 
+                         "\n\nTime of Job Submission: " + submissionTime + 
                          "\n\nTime of Job Completion: " + completionTime +
                          "\n\nSPK Computing Time: " + computingTime +
                          "\n\nAnalysis Type: " + analysis +
+                         "\n\nSub-problem Number: " + subProblem +
+                         "\n\nSeed for Simulation: " + simulationSeed +
                          "\n\nAnalysis Method: " + jobMethod +                      
                          "\n\nModel Name: " + modelName +
                          "\n\nModel Version: " + modelVersion +
@@ -298,9 +302,10 @@ public class Summary {
             summary += NA;
         else
         {
-            String variability = "*It is residual variability.";
+            String variability = "*This column indicates RUV in standard deviation units.";
             if(output.analysis.equals("population"))
-                variability = "*For OMEGA, it is interindividual variability. For SIGMA, it is residual variability.";
+                variability = "*For OMEGA, this column indicates BSV in standard deviation units.\n" +
+                              " For SIGMA, this column indicates RUV in standard deviation units.";
             summary += "\n" +
                          "=====================================================================================" + "\n\n" +
                          "Parameter  Estimate  Std. Error  Coef. of Var.  95% Confidence Interval  Variability*" + "\n" +

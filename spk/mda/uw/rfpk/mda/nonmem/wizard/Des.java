@@ -178,8 +178,11 @@ public class Des extends javax.swing.JPanel implements WizardStep {
                 String value = ((MDAObject)wizard.getCustomizedObject()).getRecords().getProperty("Des");
                 if(value.equals(""))
                 {
-                    String ls = System.getProperty("line.separator");
-                    jTextArea1.setText("DADT(1)=" + ls + "DADT(2)=");
+                    String initCode = "";
+                    for(int i = 0; i < iterator.getNComp(); i++)
+                        initCode += "DADT(" + (i + 1) + ")\n";
+                    jTextArea1.setText(initCode);
+                    jTextArea1.setCaretPosition(8);
                 }
             }
             jTextArea1.requestFocusInWindow();

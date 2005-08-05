@@ -46,13 +46,11 @@ author: Jiaji Du
 	  <td colspan=1 vAlign=top>
 	    <h3>Instructions for Installing JRE</h3>
 	    <p> 
-              1.  To use the MDA, you need first to download and install the Java
-                  Runtime Environment (JRE) from Sun Microsystems. Access the following
-                  website:<br>
+              1.  To use the MDA, you need the Java Runtime Environment (JRE) from Sun Microsystems. 
+                  To download and install the JRE, access the following website:<br>
                   <a href="http://java.sun.com/j2se/1.4.2/download.html" target="_blank">http://java.sun.com/j2se/1.4.2/download.html</a>.
             </p><p>
-              2.  Scroll down to "Download J2SE" and choose your operating system from
-                  the "JRE" column.
+              2.  Scroll down to "Download J2SE JRE" and click the link.
             </p><p>
               3.  Accept the License Agreement (by scrolling down and clicking on
                   "Accept").
@@ -62,10 +60,10 @@ author: Jiaji Du
             </p><p>
               5.  Under the "Linux Platform" choose the RPM version.  When the downloading 
                   is complete, bring up a terminal window and enter:<br>
-                  chmod a+x j2re-1_4_2_05-linux-i586-rpm.bin<br>
-                  ./j2re-1_4_2_05-linux-i586-rpm.bin<br>
+                  chmod a+x j2re-1_4_2_08-linux-i586-rpm.bin<br>
+                  ./j2re-1_4_2_08-linux-i586-rpm.bin<br>
                   Then, becoming root, enter:<br>
-                  rpm -iv j2re-1_4_2_05-linux-i586.rpm<br>
+                  rpm -iv j2re-1_4_2_08-linux-i586.rpm<br>
                   Delete the bin and rpm file if you want to save disk space.
             </p><p>
               6.  FOR MOZILLA OR NETSCAPE USERS: If you use Mozilla or Netscape as your
@@ -74,7 +72,7 @@ author: Jiaji Du
                   Enter FileExtension as "jnlp"<br>
                   Enter MIME type as "Application/x-java-jnlp-file"<br>
                   Enter Handled by Application as<br>
-                  "/usr/java/j2re1.4.2_04/javaws/javaws", then click the "OK" buttons.
+                  "/usr/java/j2re1.4.2_08/javaws/javaws", then click the "OK" buttons.
             </p><p>
                   Note that the JRE version number may be different in the future.
 	    </p>

@@ -27,7 +27,7 @@ import javax.swing.JFrame;
 import javax.swing.DefaultListModel;
 import javax.help.*;
 
-/** This class's instance displays likelihood vs. parameter relationship.
+/** This class's instance displays likelihood versus parameter relationship.
  *
  * @author  Jiaji
  */
@@ -55,7 +55,7 @@ public class LikelihoodShow extends javax.swing.JDialog {
         double x2, dx, y1, y2, y3, s1, s2, s3;
         for(int i = 0; i < nAlpha; i++)
         {
-            String x = output.alpha[0][i];
+          
             x2 = Double.parseDouble(output.alpha[0][i]);
             dx = Double.parseDouble(output.alpha[1][i]);
             y1 = Double.parseDouble(output.likelihood[i][0]);
@@ -150,6 +150,7 @@ public class LikelihoodShow extends javax.swing.JDialog {
                                           "Negative Log Likelihood",
                                           name, symbol, color,
                                           false, false, false, false, false, true, true,
+                                          0, 0,
                                           null, null, null,
                                           "Top",
                                           5, 5, 6, 6, 4, 4, 4, 4,                                          
@@ -159,6 +160,7 @@ public class LikelihoodShow extends javax.swing.JDialog {
                                           new Font("SansSerif", Font.BOLD, 11),
                                           new Font("SansSerif", Font.BOLD, 10),
                                           0, 0, 0, 0, true, true, false, false,
+                                          false, 0, false, null,
                                           2, 2, frame);
 
             plotter.setToolTipText("");

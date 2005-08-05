@@ -126,7 +126,7 @@ author: Jiaji Du
                 </tr>
                 <tr>
                   <td>Password:</td>
-                  <td><input type="text" name="password" value="${fn:escapeXml(param.password)}"></td>
+                  <td><input type="password" name="password" value="${fn:escapeXml(param.password)}"></td>
                   <td><font color="red">${fn:escapeXml(passwordError)}</font></td>
                 </tr>
                 <tr>

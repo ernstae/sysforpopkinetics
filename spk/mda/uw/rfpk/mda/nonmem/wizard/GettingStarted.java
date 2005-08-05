@@ -537,7 +537,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jRadioButton1.setEnabled(isSelected);
         jRadioButton2.setEnabled(isSelected);
         jRadioButton3.setEnabled(isSelected);
-        jRadioButton4.setEnabled(isSelected);
+        if(iterator.getIsDeveloper()) jRadioButton4.setEnabled(isSelected);
         jRadioButton5.setEnabled(isCheckBox1);
         if(!isCheckBox1) jRadioButton5.setSelected(false);         
         jCheckBox3.setEnabled(isCheckBox1);
@@ -729,6 +729,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
             control.splotSim = null;
             control.tableEst = null;
             control.tableSim = null;
+            jRadioButton4.setEnabled(iterator.getIsDeveloper());
 	}
 
 	public void hidingStep(JWizardPane wizard){
