@@ -108,7 +108,10 @@ public class UserDatasets extends HttpServlet
  
                 // Get user datasetss
                 ResultSet userDatasetsRS = Spkdb.userDatasets(con, userId, maxNum, leftOff);  
-             
+                
+                // Disconnect to the database
+                Spkdb.disconnect(con);
+                    
                 // Fill in the List
                 while(userDatasetsRS.next())
                 {                  
@@ -130,10 +133,7 @@ public class UserDatasets extends HttpServlet
                     dataset[4] = userDatasetsRS.getString("abstract");
                     datasetList.add(dataset);
                 }
-                
-                // Disconnect to the database
-                Spkdb.disconnect(con);
-                
+         
                 // Put the list in the String[][]
                 int nDataset = datasetList.size(); 
                 if(nDataset > 0)

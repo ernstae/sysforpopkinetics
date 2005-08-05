@@ -16,7 +16,7 @@ Washington Free-Fork License as a public service.  A copy of the
 License can be found in the COPYING file in the root directory of this
 distribution.
 **********************************************************************/
-package uw.rfpk.mda.saamii;
+package uw.rfpk.mda.nonmem;
 
 import java.util.ArrayList;
 import java.util.Properties;
@@ -41,6 +41,10 @@ public class Output {
     public String completionTime = null;    
     /** The computing times (estimation, statistics). */
     public String[] computingTimes = null;
+    /** The sub-problem number. */
+    public String subProblem = null;
+    /** The simulation seed. */
+    public String simulationSeed = null;
     /** The number of evaluations. */
     public String nEvaluation = null;
     /** The analysis type: population or individual. */
@@ -73,7 +77,7 @@ public class Output {
     public String[][] alpha = null;
     /** The likelihood. (left, center, right)s */
     public String[][] likelihood = null;    
-    /** The likelihood standard error. left, center, right)s */
+    /** The likelihood standard error. (left, center, right)s */
     public String[][] likelihood_std = null;    
     /** The THETA vector. */
     public String[] theta = null;

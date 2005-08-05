@@ -53,7 +53,8 @@ public class MatrixShow extends javax.swing.JFrame {
         point.translate(x,  y);
         setLocation(point);
         jTextPane1.setText(text);
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(width - 40, height - 100));
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(width - 20, height - 100));
+        jTable1.setPreferredSize(new java.awt.Dimension(width - 100, height - 100));
         
         // Format the data
         int dimension = data.length;
@@ -146,8 +147,6 @@ public class MatrixShow extends javax.swing.JFrame {
         jTable1 = new javax.swing.JTable();
         jTextPane1 = new javax.swing.JTextPane();
 
-        getContentPane().setLayout(new java.awt.GridBagLayout());
-
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(jTextPane1);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -175,23 +174,17 @@ public class MatrixShow extends javax.swing.JFrame {
             }
         });
         jTable1.setName("");
+        jTable1.setPreferredScrollableViewportSize(new java.awt.Dimension(600, 600));
+        jTable1.setPreferredSize(new java.awt.Dimension(600, 600));
         jTable1.setRowHeight(20);
         jTable1.setRowSelectionAllowed(false);
         jScrollPane1.setViewportView(jTable1);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(11, 11, 11, 11);
-        getContentPane().add(jScrollPane1, gridBagConstraints);
+        getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
         jTextPane1.setEditable(false);
         jTextPane1.setPreferredSize(null);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
-        getContentPane().add(jTextPane1, gridBagConstraints);
+        getContentPane().add(jTextPane1, java.awt.BorderLayout.NORTH);
 
         pack();
     }//GEN-END:initComponents

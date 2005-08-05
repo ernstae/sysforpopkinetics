@@ -58,7 +58,7 @@ author: Jiaji Du
 /*          StringBuffer buf = new StringBuffer(b.length * 8); // binary
             for(int i = 0; i < b.length; i++)
 	    {
-                int m = 0x80;
+                int m = 0xF0;
                 for(int j = 0; j < 8; j++)
                 {
                     char c = '0';                   
@@ -103,8 +103,8 @@ author: Jiaji Du
               "<resources>\n"+
               "<j2se version=\"1.4+\" />\n"+
               "<jar href=\"MDAn.jar\"/>\n"+
-              "<jar href=\"xercesImpl.jar\"/>\n"+
-              "<jar href=\"xmlParserAPIs.jar\"/>\n"+
+        //      "<jar href=\"xercesImpl.jar\"/>\n"+
+        //      "<jar href=\"xmlParserAPIs.jar\"/>\n"+
               "<jar href=\"jhall.jar\"/>\n"+
               "<jar href=\"JavaHelp.jar\"/>\n"+
               "</resources>\n"+
@@ -153,12 +153,13 @@ author: Jiaji Du
 	  <td colspan=1 vAlign=top>
             <h3>Model Design Agent Download</h3>
             <p>
-               Model Design Agent has various user interface types. <br>
-               Please select one to download.  You should see a
+               The Model Design Agent (MDA) is the user link to SPK modeling capabilities.
+               To accommodate as many users as possible, the MDA has various user interface types.
+               Please select one to download.  When the MDA is downloading, you should see a
                window that says "Java Loading..." and then "Model Design Agent RFPK
                UW". The MDA will automatically check for the latest version. Answer
                "Yes" if you are asked another security question. Windows user can choose to have
-               the MDA on your desktop or not (it's up to you).<br>
+               a link to the MDA on their desktop.<br>
 
             <form action="servlet/uw.rfpk.servlets.GetJnlp" method="post">
               <input type="hidden" name="host" value=<%=host%>>
@@ -166,7 +167,8 @@ author: Jiaji Du
               <input type="hidden" name="secret" value=<%=session.getAttribute("SECRET")%>>
               <input type="hidden" name="jnlp_dir" value=<%=jnlp_dir%>>
               <input type="hidden" name="type" value="nonmem">
-              Model Design Agent - NONMEM Compatible<input type="Submit" value="Download">
+              Model Design Agent - NONMEM Compatible<input type="Submit" value="Download"><br>
+              Model Design Agent - SAAM II Compatible - COMING SOON!
             </form>
                <br><br>
             </p><p>

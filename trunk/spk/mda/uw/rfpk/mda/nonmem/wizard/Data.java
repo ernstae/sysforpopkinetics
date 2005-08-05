@@ -92,8 +92,8 @@ public class Data extends javax.swing.JPanel implements WizardStep {
         jTextArea4 = new javax.swing.JTextArea();
         jButton5 = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
-        jTextArea1 = new javax.swing.JTextArea();
         jButton1 = new javax.swing.JButton();
+        jTextField1 = new javax.swing.JTextField();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -313,14 +313,6 @@ public class Data extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(2, 30, 0, 12);
         add(jLabel6, gridBagConstraints);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 11;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 0);
-        add(jTextArea1, gridBagConstraints);
-
         jButton1.setText("Browse");
         jButton1.setMaximumSize(new java.awt.Dimension(90, 25));
         jButton1.setMinimumSize(new java.awt.Dimension(90, 25));
@@ -336,6 +328,16 @@ public class Data extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridy = 11;
         gridBagConstraints.insets = new java.awt.Insets(2, 6, 2, 12);
         add(jButton1, gridBagConstraints);
+
+        jTextField1.setMaximumSize(new java.awt.Dimension(300, 19));
+        jTextField1.setMinimumSize(new java.awt.Dimension(300, 19));
+        jTextField1.setPreferredSize(new java.awt.Dimension(300, 19));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 11;
+        gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 0);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        add(jTextField1, gridBagConstraints);
 
     }//GEN-END:initComponents
 
@@ -375,6 +377,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
         }
         Vector data = new Vector(); 
         String dataXML = iterator.getDataXML(1);
+        if(dataXML == null) return;
         int nDataCol = Utility.parseDataXML(dataXML, data, iterator.getIsInd());
         ((MDAObject)wizardPane.getCustomizedObject()).setData(data);
         jButton4.setEnabled(true);
@@ -401,7 +404,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
         jTextArea3.setEnabled(radioButton == 2);
         jButton4.setEnabled(false);
         jLabel1.setEnabled(radioButton == 3);
-        jTextArea1.setEnabled(radioButton == 3);
+        jTextField1.setEnabled(radioButton == 3);
         jButton1.setEnabled(radioButton == 3);
         jLabel3.setEnabled(radioButton == 3);
         jButton2.setEnabled(radioButton == 3);
@@ -413,7 +416,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
         if(result == files.APPROVE_OPTION)
 	{
             File file = files.getSelectedFile(); 
-            jTextArea1.setText(file.getPath());
+            jTextField1.setText(file.getPath());
         }        
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -431,6 +434,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
         }
         Vector data = new Vector();
         String dataXML = iterator.getDataXML(1);
+        if(dataXML == null) return;
         int nDataCol = Utility.parseDataXML(dataXML, data, iterator.getIsInd());
         ((MDAObject)wizardPane.getCustomizedObject()).setData(data);
         jButton3.setEnabled(true);
@@ -448,8 +452,10 @@ public class Data extends javax.swing.JPanel implements WizardStep {
         // Initialize GUI components
         initialize(0);
         // Get the data object as an Vector and the number of columns in the data file
-        Vector data = new Vector(); 
-        int nDataCol = Utility.parseDataXML(iterator.getDataXML(0), data, iterator.getIsInd());                    
+        Vector data = new Vector();
+        String dataXML = iterator.getDataXML(0);
+        if(dataXML == null) return;
+        int nDataCol = Utility.parseDataXML(dataXML, data, iterator.getIsInd());                    
         ((MDAObject)wizardPane.getCustomizedObject()).setData(data);
         jButton5.setEnabled(true);
         iterator.setIsNewData(true);
@@ -468,17 +474,17 @@ public class Data extends javax.swing.JPanel implements WizardStep {
         selectedRadioButton = 3;
         isValid = false;
         wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
-        jTextArea1.requestFocusInWindow();
+        jTextField1.requestFocusInWindow();
     }//GEN-LAST:event_jRadioButton2ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        String path = jTextArea1.getText().trim();
+        String path = jTextField1.getText().trim();
         Vector data = new Vector();
         int nDataCol = Utility.parseDataFile(path, data, iterator.getIsInd());
         iterator.setIsNewData(true);
         if(nDataCol <= 0)
         {
-            jTextArea1.setText("");
+            jTextField1.setText("");
             radioButtons[selectedRadioButton].setSelected(true);
             initialize(selectedRadioButton);
             if(selectedRadioButton == 0) iterator.setIsDataXML(true);
@@ -513,10 +519,10 @@ public class Data extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JRadioButton jRadioButton4;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextArea jTextArea2;
     private javax.swing.JTextArea jTextArea3;
     private javax.swing.JTextArea jTextArea4;
+    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 
     /**

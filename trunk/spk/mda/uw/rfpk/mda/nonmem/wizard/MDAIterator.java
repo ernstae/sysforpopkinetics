@@ -20,9 +20,9 @@ package uw.rfpk.mda.nonmem.wizard;
 
 import uw.rfpk.mda.nonmem.MDAFrame;
 import uw.rfpk.mda.nonmem.XMLReader;
-import uw.rfpk.mda.nonmem.Server;
+import uw.rfpk.mda.Server;
 import uw.rfpk.mda.nonmem.Utility;
-import uw.rfpk.mda.nonmem.display.Output;
+import uw.rfpk.mda.nonmem.Output;
 import org.netbeans.ui.wizard.*;
 import java.util.Vector;
 import java.util.Properties;
@@ -57,6 +57,7 @@ public class MDAIterator implements StepIterator{
     private int nTheta = 0;
     private int nEta = 0;
     private int nEps = 0;
+    private int nComp = 0;
     private String trans = null;
     private Vector beginningSteps = new Vector();
     private GettingStarted gettingStarted = new GettingStarted(this);
@@ -97,11 +98,13 @@ public class MDAIterator implements StepIterator{
     protected MDAFrame frame = null;
     
     /** Constructor to create a MDAIterator object.
-     * @param the web server associated with the MDA.
+     * @param server the web server associated with the MDA.
      * @param isOnline true if the MDA is online, false otherwise.
      * @param frame a reference to the MDA main window class.
      * @param isTester true if the user is a SPK tester, false otherwise.
      * @param isDeveloper true if the user is a SPK developer, false otherwise.
+     * @param files the JFileChooer reference.
+     * @param jobId the job identification number.
      */  
     public MDAIterator(Server server, boolean isOnline, MDAFrame frame,
                        boolean isTester, boolean isDeveloper, JFileChooser files, long jobId)
@@ -233,6 +236,11 @@ public class MDAIterator implements StepIterator{
      */    
     public void setNEps(int i) { nEps = i; }
 
+    /** Set the number of compartments.
+     * @param i an int, number of compartments.
+     */    
+    public void setNComp(int i) { nComp = i; }
+    
     /** Get if a control file is reloaded.
      * @return a boolean, true if a control file is reloaded, false if otherwise.
      */    
@@ -297,7 +305,12 @@ public class MDAIterator implements StepIterator{
      * @return an int, the number of ETAs.
      */    
     public int getNEta() { return nEta; }
-    
+  
+    /** Get the number of compartments.
+     * @return an int, the number of compartments.
+     */    
+    public int getNComp() { return nComp; }
+  
     /** Get the number of EPSs in $ERROR record.
      * @return an int, the number of EPSs.
      */    
@@ -515,11 +528,11 @@ public class MDAIterator implements StepIterator{
         if(text.indexOf("<spksource>") != -1 && text.indexOf("<spkdata") != -1 && 
            text.indexOf("<spkmodel>") != -1)
         {
-            int index1 = text.indexOf("<spkdata");
-            int index2 = text.indexOf("<spkmodel");        
-            dataXML[0] = text.substring(index1 - 22, index2 - 22);
+            int indexData = text.lastIndexOf("<?xml ", text.indexOf("<spkdata"));
+            int indexModel = text.lastIndexOf("<?xml ", text.indexOf("<spkmodel"));
+            dataXML[0] = text.substring(indexData, indexModel);
             isDataXML = true;
-            parseControl(XMLReader.getModelArchive(text.substring(index2 - 22)));           
+            parseControl(XMLReader.getModelArchive(text.substring(indexModel)));           
         }
         else if(text.indexOf("$PROBLEM") != -1 && text.indexOf("$DATA") != -1 &&
                 text.indexOf("$INPUT") != -1)
@@ -541,7 +554,7 @@ public class MDAIterator implements StepIterator{
      */
     public void parseControl(String text)
     {
-        StringTokenizer records = new StringTokenizer(text, "$");
+        StringTokenizer records = new StringTokenizer(text.trim(), "$");
         int nTokens = records.countTokens();
         reload = new Properties();
         int state = 0;

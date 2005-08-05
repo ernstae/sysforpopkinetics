@@ -47,7 +47,21 @@ author: Jiaji Du
 	  </td>
 	  <td colspan=1 vAlign=top width=10><img alt="trans gif" height=5 src="./images/white.gif" width=10/>
 	  <td colspan=1 vAlign=top>
-	    <h3>Welcome.  Please Log In</h1>
+          <c:choose>
+            <c:when test="${notice == '1'}"><font color="red">
+              <h3><c:out value="The SPK service is temporarily unavailable for maintenance. 
+                 Please try again later.  We are sorry for the inconvenience." /></h3>
+                 <form action="addemail.jsp" method="post">
+                   If you enter your email address here:<br> 
+                   <input type="text" name="email" size="40">&nbsp<input type="Submit" value="Enter"><br>
+                   we will notify you when the SPK service is available.
+                 </form>
+            </font>
+            </c:when>
+            <c:otherwise>
+	      <h3>Welcome.  Please Log In</h3>
+            </c:otherwise>
+          </c:choose>
             <p>
             <font color="red">
               ${fn:escapeXml(param.errorMsg)}
@@ -71,7 +85,17 @@ author: Jiaji Du
                 Advanced tab and selecting "Environment Variables".
             </p>
 	    <p>
-                Please log into MySPK, the "members only" section of SPK. When you are done, please <a href="logout.jsp">log out</a>.
+              <c:choose>
+                <c:when test="${notice != '1'}">
+                  Please log into MySPK, the "members only" section of SPK. When you are done, 
+                  please <a href="logout.jsp">log out</a>.  If you are a first time user, 
+                  view this <a href="WebHelp/gettingstartedspk.htm" target="_blank">Getting Started</a> 
+                  example first.
+                </c:when>
+                <c:otherwise>
+                  <font color="blue">User account administrator log in:</font>
+                </c:otherwise>
+              </c:choose>
             </p>
 
             <form action="checkuser.jsp" method="post">

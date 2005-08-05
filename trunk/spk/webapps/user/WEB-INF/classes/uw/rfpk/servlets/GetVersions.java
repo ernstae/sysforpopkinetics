@@ -40,9 +40,9 @@ import uw.rfpk.beans.UserInfo;
  * that is either model or data.  The fourth String object is a flag that specified if 
  * this call is from a library patron.  The servlet first checks if this id belongs to the user
  * using ,database API method, getUser, to get the user_id and using database API method, 
- * getJob, to get user_id, then comparing them.  If they are the same,
- * the servlet calls database API methods, getModel or getDataset, to get the archive.  
- * Then the servlet uses the JRCS API methods to get the status of the versions including 
+ * getModel or getDataset, to get user_id, then comparing them.  If they are the same,
+ * the servlet uses the archive from the previous database API method call and 
+ * the JRCS API methods to get the status of the versions including 
  * version number, author name, revision time and log of the versions.  The servlet puts 
  * these data into a String[][] object. 
  * The servlet sends back two objects.  The first object is a String containing the error 
@@ -119,6 +119,9 @@ public class GetVersions extends HttpServlet
                     archiveRS = Spkdb.getDataset(con, id);
                 archiveRS.next();
                 
+                // Disconnect to the database
+                Spkdb.disconnect(con);
+                
                 // Check if the job belongs to the user
                 if(archiveRS.getLong("user_id") == userId)
                 {                
@@ -126,8 +129,7 @@ public class GetVersions extends HttpServlet
 	            long length = blobArchive.length(); 
 	            String archive = new String(blobArchive.getBytes(1L, (int)length));                  
                             
-                    // Disconnect to the database
-                    Spkdb.disconnect(con);
+
             
                     // Generate version list for the model or the dataset
                     Archive arch = new Archive("", new ByteArrayInputStream(archive.getBytes())); 

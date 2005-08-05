@@ -16,13 +16,14 @@ Washington Free-Fork License as a public service.  A copy of the
 License can be found in the COPYING file in the root directory of this
 distribution.
 **********************************************************************/
-package uw.rfpk.mda.saamii;
+package uw.rfpk.mda.nonmem;
 
-import uw.rfpk.mda.saamii.Output;
+import uw.rfpk.mda.nonmem.Output;
 import javax.swing.JButton;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import java.util.Vector;
+import java.util.regex.*;
 import java.util.StringTokenizer;
 import java.io.*;
 import javax.jnlp.*;
@@ -66,12 +67,27 @@ public class Utility {
         
     /** Find substrings that has the patten of s(i), where s is a character string 
      * i is an integer number.  Than find the largest i among all the substrings.
-     * @param record a String object containing the text to search in.
+     * @param input a String object containing the text to search in.
      * @param s a String object containing the character string described above. 
      * @return an int, the largest number found as described above.
      */    
-    public static int find(String record, String s)
+    public static int find(String input, String s)
     {
+        String regExp = "\\b" + s + "\\s*\\(?(\\d+)\\)?[\\s|\\)|+|-|*|/|\n|$]";
+        Pattern pattern = Pattern.compile(regExp, Pattern.UNIX_LINES);
+        Matcher matcher = pattern.matcher(" " + input);
+        Vector list = new Vector();
+        if(matcher.find())
+        {
+            list.add(matcher.group(1));
+            while(matcher.find())
+                if(list.indexOf(matcher.group(1)) == -1)
+                    list.add(matcher.group(1));
+        }
+        return list.size();
+    }
+        
+/*        
         String[] strs = ("a" + record).split(s); 
         int m = 0, n = 0;
         for(int i = 1; i < strs.length; i++)
@@ -103,7 +119,7 @@ public class Utility {
         }      
         return n;
     }
-    
+*/
     /** Prepare the default $PK code.
      * @param advan an int, the ADVAN number.
      * @param trans an int, the TRANS number.
@@ -219,27 +235,44 @@ public class Utility {
         return true;
     }
     
-    /** Determine if a character sting represents an integer number.
+    /** Determine if a character sting represents an positive integer number.
      * @param s a String object containing the character string.
-     * @return a boolean, true for the string is an integer number,
+     * @return a boolean, true for the string is an positive integer number,
      * false for otherwise.
      */    
     public static boolean isPosIntNumber(String s)
     {
-        // Check string length
-        if(s.length() == 0) return false; 
-        // Check sign
-        if(s.startsWith("+"))
-            s = s.substring(1); 
-        // Check other characters
-        for(int i = 0; i < s.length(); i++)
+        int i;
+        try
         {
-            char ch = s.charAt(i);
-            if(!Character.isDigit(ch) && ch != '+')
-                return false;
+            i = Integer.parseInt(s);   
         }
-        // Check '0'
-        if(s.startsWith("0"))
+        catch(NumberFormatException e)
+        {
+            return false;   
+        }
+        if(i <= 0)
+            return false;
+        return true;
+    }
+
+    /** Determine if a character sting represents a  non-negative integer number.
+     * @param s a String object containing the character string.
+     * @return a boolean, true for the string is a non-negative integer number,
+     * false for otherwise.
+     */    
+    public static boolean isNonNegIntNumber(String s)
+    {
+        int i;
+        try
+        {
+            i = Integer.parseInt(s);   
+        }
+        catch(NumberFormatException e)
+        {
+            return false;   
+        }
+        if(i < 0)
             return false;
         return true;
     }
@@ -644,8 +677,8 @@ public class Utility {
      */
     public static Vector checkMathFunction(String text, String step)
     {
-        String[] functions = {"ABS", "ACOS", "ASIN", "ATAN", "ATAN2", "COS", "COSH",
-                              "MAX", "MIN", "MOD", "SIN", "SINH", "TAN", "TANH"};
+        String[] functions = {"ABS", "ACOS", "ASIN", "ATAN", "ATAN2", "COSH",
+                              "MAX", "MIN", "MOD", "SINH", "TAN", "TANH"};
         Vector names = new Vector();                   
         for(int i = 0; i < functions.length; i++)
         {
@@ -822,6 +855,10 @@ public class Utility {
      */    
     public static void main(String[] args)
     {
+        String input = "ETA(4)*ETA(2) +  (ETA(5)\nETA(3) /BETA(1)\n";
+        System.out.println(find(input, "ETA"));
+        
+/*        
         String[] colList = {"11", "21", "22"};
         String list = colList[0];
         for(int i = 1; i < colList.length; i++)
@@ -851,6 +888,7 @@ public class Utility {
         list = rowList[0];
         for(int i = 1; i < rowList.length; i++)
             list += " " + rowList[i];
-        System.out.println(list);        
+        System.out.println(list);
+*/
     }
 }

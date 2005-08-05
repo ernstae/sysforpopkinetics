@@ -16,7 +16,7 @@ Washington Free-Fork License as a public service.  A copy of the
 License can be found in the COPYING file in the root directory of this
 distribution.
 **********************************************************************/
-package uw.rfpk.mda.saamii;
+package uw.rfpk.mda.nonmem;
 
 import uw.rfpk.mda.*;
 import javax.help.*; 
@@ -29,6 +29,8 @@ import javax.print.attribute.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.nio.*;
+import java.nio.channels.FileChannel;
 import java.net.URL; 
 import java.util.Vector;
 import java.util.Properties;
@@ -36,7 +38,8 @@ import java.util.HashMap;
 import java.awt.print.*;
 import java.awt.font.*;
 import org.netbeans.ui.wizard.*;
-import uw.rfpk.mda.saamii.display.*;
+import uw.rfpk.mda.nonmem.wizard.*;
+import uw.rfpk.mda.nonmem.display.*;
 import javax.swing.table.*;  
 import java.text.DecimalFormat;
 
@@ -286,6 +289,7 @@ public class MDAFrame extends JFrame
         DatasetLibraryButton = new javax.swing.JButton();
         CompareFilesButton = new javax.swing.JButton();
         HelpButton = new javax.swing.JButton();
+        jLabel16 = new javax.swing.JLabel();
         jInternalFrame1 = new javax.swing.JInternalFrame();
         jScrollPane1 = new javax.swing.JScrollPane();
         textArea = new javax.swing.JTextArea();
@@ -369,11 +373,10 @@ public class MDAFrame extends JFrame
         traceMenu = new javax.swing.JMenuItem();
         indIDMenu = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
-        useMDAMenu = new javax.swing.JMenuItem();
-        jSeparator1 = new javax.swing.JSeparator();
         dataMenu = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JSeparator();
+        useMDAMenu = new javax.swing.JMenuItem();
         useRMenu = new javax.swing.JMenuItem();
-        jLabel16 = new javax.swing.JLabel();
 
         archiveDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
 
@@ -1297,7 +1300,7 @@ public class MDAFrame extends JFrame
         jTextPane3.setBackground(new java.awt.Color(0, 204, 204));
         jTextPane3.setEditable(false);
         jTextPane3.setFont(new java.awt.Font("Dialog", 0, 14));
-        jTextPane3.setText("SAAMII  Style  Version:  0.1");
+        jTextPane3.setText("NONMEM  Compatible  Version:  0.1");
         jTextPane3.setFocusable(false);
         jTextPane3.setMinimumSize(new java.awt.Dimension(240, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1506,6 +1509,17 @@ public class MDAFrame extends JFrame
         gridBagConstraints.insets = new java.awt.Insets(6, 12, 0, 12);
         jPanel1.add(HelpButton, gridBagConstraints);
 
+        jLabel16.setBackground(new java.awt.Color(0, 204, 204));
+        jLabel16.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel16.setText("Status:  On Line");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 14;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(2, 12, 14, 12);
+        jPanel1.add(jLabel16, gridBagConstraints);
+
+        jInternalFrame1.setBackground(new java.awt.Color(255, 255, 255));
         jInternalFrame1.setMinimumSize(new java.awt.Dimension(603, 460));
         jInternalFrame1.setPreferredSize(new java.awt.Dimension(603, 460));
         jInternalFrame1.setVisible(true);
@@ -1837,19 +1851,6 @@ public class MDAFrame extends JFrame
         jMenuBar1.add(jMenu9);
 
         jMenu1.setText("Plot");
-        useMDAMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
-        useMDAMenu.setMnemonic('l');
-        useMDAMenu.setText("Use MDA Plotter");
-        useMDAMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                useMDAMenuActionPerformed(evt);
-            }
-        });
-
-        jMenu1.add(useMDAMenu);
-
-        jMenu1.add(jSeparator1);
-
         dataMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
         dataMenu.setMnemonic('d');
         dataMenu.setText("Report Data");
@@ -1860,6 +1861,19 @@ public class MDAFrame extends JFrame
         });
 
         jMenu1.add(dataMenu);
+
+        jMenu1.add(jSeparator1);
+
+        useMDAMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
+        useMDAMenu.setMnemonic('l');
+        useMDAMenu.setText("Use MDA Plotter");
+        useMDAMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                useMDAMenuActionPerformed(evt);
+            }
+        });
+
+        jMenu1.add(useMDAMenu);
 
         useRMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.CTRL_MASK));
         useRMenu.setMnemonic('g');
@@ -1886,16 +1900,6 @@ public class MDAFrame extends JFrame
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 12, 12);
         jPanel1.add(jInternalFrame1, gridBagConstraints);
-
-        jLabel16.setBackground(new java.awt.Color(0, 204, 204));
-        jLabel16.setFont(new java.awt.Font("Dialog", 0, 12));
-        jLabel16.setText("Status:  On Line");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 14;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(2, 12, 14, 12);
-        jPanel1.add(jLabel16, gridBagConstraints);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
@@ -2097,16 +2101,11 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_useRMenuActionPerformed
 
     private void useMDAMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useMDAMenuActionPerformed
-        if(dataBlock != null)
-        {
-            textArea.setText(dataBlock);
-            textArea.setCaretPosition(0);
-            String title = "Report Data: Job-" + jobInfo.id;
-            jInternalFrame1.setTitle(title);
-            new PlotTool(dataBlock, true);
-        }
+        String dataText = textArea.getText();
+        if(!dataText.trim().equals(""))
+            new PlotTool(dataText, false);
         else
-            JOptionPane.showMessageDialog(null, "Report data were not found.", "Input Error",
+            JOptionPane.showMessageDialog(null, "Report data were not found.", "Input Error", 
                                           JOptionPane.ERROR_MESSAGE);
     }//GEN-LAST:event_useMDAMenuActionPerformed
 
@@ -2646,7 +2645,7 @@ public class MDAFrame extends JFrame
             modelArchive.id = recentModel.id;
             return;
         }
-        jTextField1.setEditable(false);
+        jTextField1.setEditable(false);      
         listType = "model";
         isLibrary = false;
         showVersions = true;
@@ -2667,7 +2666,7 @@ public class MDAFrame extends JFrame
             jTextField1.setEditable(false);
             jTextField1.setText(recentModel.name);
             jTextArea8.setText(recentModel.description);
-            jTextField3.setText(String.valueOf(Integer.parseInt(recentModel.version) + 1));
+            jTextField3.setText(String.valueOf(Integer.parseInt(server.getLastVersion(recentModel.id, "model")) + 1));
             modelArchive.id = recentModel.id;
             modelRadioButtonState = 2;
         }
@@ -2795,30 +2794,23 @@ public class MDAFrame extends JFrame
                     {
                         if(isWizard)
                         {
-//                            if(!iterator.getIsInd() && archive.indexOf(">ID</value>") == -1)
-//                            {
-//                                JOptionPane.showMessageDialog(null, "Data item 'ID' was not found in the dataset." +
-//                                                              "\nIt is required for the population analysis.",
-//                                                              "Input Error", JOptionPane.ERROR_MESSAGE);
-//                                iterator.setIsNewData(false);
-//                                versionDialog.dispose();
-//                                reportDialog.dispose();
-//                                return;
-//                            }                            
-//                            iterator.setDataXML(archive, 1);
-//                            iterator.setDatasetName(archiveName, 1);
-//                            iterator.setIsNewData(true);
-                        }                        
-                        if(!isLibrary)
-                        {
-                            recentDataset.id = archiveId;
-                            recentDataset.name = archiveName;
-                            recentDataset.text = archive;                    
-                            recentDataset.version = version;
-                            recentDataset.description = archiveDescription;
+                            if(!iterator.getIsInd() && archive.indexOf(">ID</value>") == -1)
+                            {
+                                JOptionPane.showMessageDialog(null, "Data item 'ID' was not found in the dataset." +
+                                                              "\nIt is required for the population analysis.",
+                                                              "Input Error", JOptionPane.ERROR_MESSAGE);
+                                iterator.setIsNewData(false);
+                                versionDialog.dispose();
+                                reportDialog.dispose();
+                                return;
+                            }                            
+                            iterator.setDataXML(archive, 1);
+                            iterator.setDatasetName(archiveName, 1);
+                            iterator.setIsNewData(true);
                         }
                         else
                         {
+
                             String text = XMLReader.parseDataXML(archive);
                             if(text != null)
                             {
@@ -2827,6 +2819,14 @@ public class MDAFrame extends JFrame
                                 jInternalFrame1.setTitle(title);
                                 file = null;
                             }
+                        }
+                        if(!isLibrary)
+                        {
+                            recentDataset.id = archiveId;
+                            recentDataset.name = archiveName;
+                            recentDataset.text = archive;                    
+                            recentDataset.version = version;
+                            recentDataset.description = archiveDescription;
                         }
                     }
                 }
@@ -2942,13 +2942,15 @@ public class MDAFrame extends JFrame
 
     private void jRadioButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton6ActionPerformed
         jTextField4.setEditable(false);
-        if(recentDataset.name != null && recentDataset.text.equals(dataArchive.text.trim()))
+        if(recentDataset.name != null && 
+           XMLReader.parseDataXML(recentDataset.text.substring(recentDataset.text.indexOf("<spkdata ")))
+           .equals(XMLReader.parseDataXML(dataArchive.text.substring(dataArchive.text.indexOf("<spkdata ")))))
         {
             datasetRadioButtonState = 3;
             jTextField4.setText(recentDataset.name);
             jTextArea9.setText(recentDataset.description);
             jTextField6.setText(recentDataset.version);
-            dataArchive.id = recentDataset.id;            
+            dataArchive.id = recentDataset.id;
             return;   
         }
         listType = "data";
@@ -2971,7 +2973,7 @@ public class MDAFrame extends JFrame
             jTextField4.setEditable(false);            
             jTextField4.setText(recentDataset.name);
             jTextArea9.setText(recentDataset.description);
-            jTextField6.setText(String.valueOf(Integer.parseInt(recentDataset.version) + 1));
+            jTextField6.setText(String.valueOf(Integer.parseInt(server.getLastVersion(recentDataset.id, "data")) + 1));
             dataArchive.id = recentDataset.id;
             datasetRadioButtonState = 2;            
         }
@@ -3078,7 +3080,15 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_summaryMenuActionPerformed
     
     private void ReadOutputButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ReadOutputButtonActionPerformed
-        readOutput(textArea.getText());
+        if(jobInfo.subReport.equals("Parameter-All"))
+        {
+            String text = textArea.getText();
+            int index = text.lastIndexOf("<?xml ");
+            dataBlock = ParameterAll.getParameterAll(text.substring(index), text.substring(0, index));
+            dataMenu.doClick();
+        }
+        else
+            readOutput(textArea.getText());
     }//GEN-LAST:event_ReadOutputButtonActionPerformed
 
     private void GetReportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GetReportButtonActionPerformed
@@ -3114,22 +3124,31 @@ public class MDAFrame extends JFrame
         // If the user is going to use a likelihhod evaluation method modify the input file
         jobMethodClass = "";        
         if(jobId != 0 && text.indexOf("<pop_analysis ") != -1 && text.indexOf(" is_estimation=\"yes\" ") != -1 && 
-           JOptionPane.showConfirmDialog(null, "Are you going to use a likelihood evaluation only method?",
-                                         "Question", JOptionPane.YES_NO_OPTION) == 0)
+           jobInfo.endCode.equals("srun"))
         {
-            // Get report
-            String report = server.getOutput(jobId, isLibrary).getProperty("report");
-            if(report.indexOf("<error_message>") != -1)
+            if(JOptionPane.showConfirmDialog(null, "Are you going to use a likelihood evaluation only method?",
+                                             "Question", JOptionPane.YES_NO_OPTION) == 0)
             {
-                JOptionPane.showMessageDialog(null, "The parent job, Job ID = " + jobId + ", has error.",
-                                              "Input Error", JOptionPane.ERROR_MESSAGE);
-                return;
+                // Get report
+                String[] reports = server.getOutput(jobId, isLibrary).getProperty("report").split("<spkreport");
+                // Use the last report
+                if(reports.length > 2)
+                    JOptionPane.showMessageDialog(null, "The parent job has multiple reports.\n" +
+                                                  "The final estimates of the parameters from\n" +
+                                                  "the last report will be used to initialze this job.");
+                String report = "<?xml version=\"1.0\">\n<spkreport" + reports[reports.length - 1];
+                if(report.indexOf("<error_message>") != -1)
+                {
+                    JOptionPane.showMessageDialog(null, "The parent job, Job ID = " + jobId + ", has error.",
+                                                  "Input Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                hasSimulation = text.indexOf("<simulation ") != -1;
+                text = Likelihood.changeInput(text, report, jobId, isLibrary);
+                textArea.setText(text);
+                textArea.setCaretPosition(0);
+                jobMethodClass = "le";
             }
-            hasSimulation = text.indexOf("<simulation ") != -1;
-            text = Likelihood.changeInput(text, report, jobId, isLibrary);
-            textArea.setText(text);
-            textArea.setCaretPosition(0);
-            jobMethodClass = "le";
         }
                 
         // Find $PROBLEM
@@ -3239,7 +3258,9 @@ public class MDAFrame extends JFrame
                 jRadioButton3.doClick();
             else
                 jRadioButton1.doClick();
-            if(recentDataset.name != null && recentDataset.text.equals(dataset.trim()))
+            if(recentDataset.name != null && 
+               XMLReader.parseDataXML(recentDataset.text.substring(recentDataset.text.indexOf("<spkdata ")))
+               .equals(XMLReader.parseDataXML(dataset.substring(dataset.indexOf("<spkdata ")))))
                 jRadioButton6.doClick();
             else
                 jRadioButton4.doClick();
@@ -3292,8 +3313,8 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_SubmitJobButtonActionPerformed
 
     private void WriteInputButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_WriteInputButtonActionPerformed
-//        iterator = new MDAIterator(server, isOnline, this, isTester, isDeveloper, files, jobId);
-//        writeInput(iterator);
+        iterator = new MDAIterator(server, isOnline, this, isTester, isDeveloper, files, jobId);
+        writeInput(iterator);
     }//GEN-LAST:event_WriteInputButtonActionPerformed
 
     private void scatterPlot(int type)
@@ -3543,7 +3564,7 @@ public class MDAFrame extends JFrame
             }
             jTextArea1.setText(error);
             jTextArea1.setCaretPosition(0);            
-            errorMessageDialog.setSize(400, 300);
+            errorMessageDialog.setSize(600, 400);
             errorMessageDialog.show();
         }
         else
@@ -3773,26 +3794,19 @@ public class MDAFrame extends JFrame
                 file = files.getSelectedFile();
             try
 	    {
-                BufferedReader in = new BufferedReader(new FileReader(files.getSelectedFile()));
                 StringBuffer buffer = new StringBuffer();
-                boolean done = false;
-                while(!done)
-                {
-                    // Read a line
-                    String line = in.readLine();                            
-                    if(line == null) 
-                        done = true;
-                    else
-                        buffer.append(line).append("\n");
-	        }
+                BufferedReader in = new BufferedReader(new FileReader(files.getSelectedFile()));
+                String line;
+                while((line = in.readLine()) != null)
+                    buffer.append(line).append("\n");
                 in.close();
                 text = new String[2];
                 text[0] = files.getSelectedFile().getPath();
                 text[1] = buffer.toString();
             }
-            catch(IOException ioe )
+            catch(IOException e)
 	    {
-                System.err.println(ioe);
+                System.err.println(e);
                 JOptionPane.showMessageDialog(null, "Error opening file",  // Display opening file 
                                               "File Error",                // error message
                                               JOptionPane.ERROR_MESSAGE);
@@ -3807,10 +3821,22 @@ public class MDAFrame extends JFrame
      */
     public void saveOperation(String text, File file)
     {
+        text = text.replaceAll("\n", ls);
+        FileOutputStream out = null;
         try
         {
-            BufferedWriter out = new BufferedWriter(new FileWriter(file));
-            out.write(text.replaceAll("\n", ls));
+            out = new FileOutputStream(file);
+        }
+        catch(FileNotFoundException e){}
+        ByteBuffer buffer = ByteBuffer.allocate(text.length());
+        FileChannel channel = out.getChannel();
+        buffer.put(text.getBytes());
+        buffer.flip();
+        try
+        {
+            channel.write(buffer);
+//            BufferedWriter out = new BufferedWriter(new FileWriter(file));
+//            out.write(text.replaceAll("\n", ls));
             out.close();
         }
         catch(IOException e )
@@ -3822,14 +3848,14 @@ public class MDAFrame extends JFrame
     /** Write input.
      * @param iterator a MDAIterator object for the wizard.
      */    
-//    protected void writeInput(MDAIterator iterator)
-//    {
-//        wp = new JWizardPane(iterator, object); 
-//        wp.getContentPanel().setBackground(new Color(240, 245, 255));   
+    protected void writeInput(MDAIterator iterator)
+    {
+        wp = new JWizardPane(iterator, object); 
+        wp.getContentPanel().setBackground(new Color(240, 245, 255));   
 //        wp.setContentImage((new javax.swing.ImageIcon(getClass().getResource("/uw/rfpk/mda/nonmem/wizard/nonmem-spk.gif"))).getImage()); 
-//        wp.createDialog(this, "Model Design Agent Input File Generation Tool").show();
-//        WriteInputButton.setEnabled(false);
-//    }
+        wp.createDialog(this, "Model Design Agent Input File Generation Tool").show();
+        WriteInputButton.setEnabled(false);
+    }
     
     /** Enable Prepare Input button.
      *
@@ -3846,8 +3872,8 @@ public class MDAFrame extends JFrame
     {
         if(wp.getCustomizedObject() == null)
             return;
-//        object = (MDAObject)wp.getCustomizedObject();
-//        Properties records = object.getRecords();
+        object = (MDAObject)wp.getCustomizedObject();
+        Properties records = object.getRecords();
         String[] names = {"Problem", "Data", "Input", "Pred", "Subroutines", "Aes", 
                           "Aesinitial", "Model", "PK", "Theta", "Omega", "Des", 
                           "Error", "Sigma", "Simulation", "TableSim", "ScatterPlotSim",
@@ -3855,8 +3881,8 @@ public class MDAFrame extends JFrame
         control = "";
         for(int i = 0; i < 21; i++)
         {
-//            if(!records.getProperty(names[i]).equals("")) 
-//                control = control + records.getProperty(names[i]) + "\n";
+            if(!records.getProperty(names[i]).equals("")) 
+                control = control + records.getProperty(names[i]) + "\n";
         }
         if(JOptionPane.showConfirmDialog(null, 
                                          "Do you want to save the NONMEM control file?",   
@@ -3876,18 +3902,18 @@ public class MDAFrame extends JFrame
         files.setSelectedFile(new File(""));
  
         // Write SPK input file in XML format
-//        if(object.getSource() == null || object.getData() == null || control == null)
-//        {
-//            JOptionPane.showMessageDialog(null, "Input information is not complete.", 
-//                                          "Input Error", JOptionPane.ERROR_MESSAGE);
-//        }
-//        else
-//        {
-//            XMLWriter writer = new XMLWriter(control, object);
-//            textArea.setText(writer.getDocument()); 
-//            textArea.setCaretPosition(0);        
-//            jInternalFrame1.setTitle("SPK input");
-//        }
+        if(object.getSource() == null || object.getData() == null || control == null)
+        {
+            JOptionPane.showMessageDialog(null, "Input information is not complete.", 
+                                          "Input Error", JOptionPane.ERROR_MESSAGE);
+        }
+        else
+        {
+            XMLWriter writer = new XMLWriter(control, object);
+            textArea.setText(writer.getDocument()); 
+            textArea.setCaretPosition(0);        
+            jInternalFrame1.setTitle("SPK input");
+        }
         WriteInputButton.setEnabled(true);
     }
    
@@ -4000,7 +4026,8 @@ public class MDAFrame extends JFrame
             }
             else
             {
-                JOptionPane.showMessageDialog(null, "The data is not available", 
+                if(!output.methodCode.equals("ml"))
+                JOptionPane.showMessageDialog(null, "The data for user specified tables are unavailable", 
                                               "Data Not Found Error",               
                                               JOptionPane.ERROR_MESSAGE);                
             }
@@ -4016,7 +4043,7 @@ public class MDAFrame extends JFrame
             {
                 String label = (String)output.dataItems.get(i); 
                 sb.append(getSpace(12 - label.length()));
-                 sb.append(label);                            
+                sb.append(label);                            
             }
             sb.append(ls);
             DecimalFormat f = new DecimalFormat("0.0000E00");
@@ -4080,16 +4107,16 @@ public class MDAFrame extends JFrame
         file = null;
     }
     
-    // This function return spaces
+    // This method returns spaces
     private String getSpace(int n)
     {
-        String s = "";
+        StringBuffer sb = new StringBuffer();
         for(int i = 0; i < n; i++)
-            s += " ";
-        return s;  
+            sb.append(" ");
+        return sb.toString();  
     }
 
-    // This function returns matrix width
+    // This method returns matrix width
     private int width(int dimension) 
     {
         if(dimension < 3)
@@ -4100,7 +4127,7 @@ public class MDAFrame extends JFrame
         return width;
     }
     
-    // This function returns matrix height
+    // This method returns matrix height
     private int height(int dimension)
     {
         int height = (dimension + 1) * 20 + 120;
@@ -4109,7 +4136,7 @@ public class MDAFrame extends JFrame
         return height;
     }  
     
-    /** This function asks the user wether to save the text in the editor text area to a file.
+    /** This method asks the user wether to save the text in the editor text area to a file.
      */
     protected void saveFile()
     {
@@ -4278,7 +4305,7 @@ public class MDAFrame extends JFrame
             TableColumnModel columnModel = jTable2.getColumnModel();
             columnModel.getColumn(0).setPreferredWidth(80);
             columnModel.getColumn(2).setPreferredWidth(200);
-            columnModel.getColumn(3).setPreferredWidth(400);
+            columnModel.getColumn(3).setPreferredWidth(500);
             String title;
             if(listType.equals("model"))
                 title = "Version List - Model ID: " + id;
@@ -4288,7 +4315,7 @@ public class MDAFrame extends JFrame
                 return;
             versionDialog.setTitle(title);
             versionDialog.setLocation(200, 200);
-            versionDialog.setSize(800, 16 * versionList.length + 43); 
+            versionDialog.setSize(800, 16 * versionList.length + 46); 
             versionDialog.show();
         }
     }    
@@ -4326,10 +4353,10 @@ public class MDAFrame extends JFrame
         }
 
         // Table data array
-        private String[][] data = null;
+        String[][] data = null;
         
         // Table header array
-        private String[] header = null;
+        String[] header = null;
     }    
 
     private class CellRenderer extends DefaultTableCellRenderer 
@@ -4539,7 +4566,7 @@ public class MDAFrame extends JFrame
     private javax.swing.JButton refreshButton;
     private javax.swing.JDialog replaceDialog;
     private javax.swing.JMenuItem replaceMenu;
-    private javax.swing.JDialog reportDialog;
+    protected javax.swing.JDialog reportDialog;
     private javax.swing.JMenuItem savaAsMenu;
     private javax.swing.JMenuItem saveMenu;
     private javax.swing.JMenuItem scatterPlotMenu;
@@ -4560,7 +4587,7 @@ public class MDAFrame extends JFrame
     // End of variables declaration//GEN-END:variables
 
     /** The username. */
-    private String username = null;
+    protected String username = null;
     
     /** The HelpBroker. */
     protected HelpBroker helpBroker = null;
@@ -4614,7 +4641,7 @@ public class MDAFrame extends JFrame
     private String control = null;
     
     // MDA object
-//    private MDAObject object = new MDAObject();
+    private MDAObject object = new MDAObject();
     
     // Spk output
     private Output output = null;
@@ -4704,11 +4731,11 @@ public class MDAFrame extends JFrame
     private boolean isVersionListOn = false;
     
     /** MDA iterator */
-//    protected MDAIterator iterator = null;
+    protected MDAIterator iterator = null;
     
     // Undo Manager
     private UndoManager undo = new UndoManager();
     
-    // Data block
-    private String dataBlock = null;
+    /** Presentation data block */
+    protected String dataBlock = null;
 }

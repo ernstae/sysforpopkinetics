@@ -23,11 +23,11 @@
         <url-pattern>/servlet/*</url-pattern>
     </servlet-mapping>
    
-    <!-- Used by Web Start jnlp file -->
+    <!-- Used by Web Start jnlp file and other temporary files -->
     <context-param>
         <param-name>jnlp_directory</param-name>
         <param-value>/home/jiaji/jakarta-tomcat-5.0.19/webapps/user/jnlp/</param-value>
-        <description>The directory for the jnlp file</description>
+        <description>The directory for the jnlp file and other temporary files</description>
     </context-param>
 
     <!-- Servlet database calls -->
@@ -73,7 +73,7 @@
 
     <context-param>
         <param-name>timeLimit</param-name>
-        <param-value>10</param-value>
+        <param-value>1000</param-value>
         <description>The time limit for running diff in seconds</description>
     </context-param>
 
@@ -81,6 +81,18 @@
         <param-name>bugzillaURL</param-name>
         <param-value>http://192.168.2.2:8081/index.cgi</param-value>
         <description>The URL of the Bugzilla main page</description>
+    </context-param>
+
+    <context-param>
+        <param-name>emailAddress</param-name>
+        <param-value>rfpksoft@u.washington.edu</param-value>
+        <description>The email address of the SPK service</description>
+    </context-param>
+
+    <context-param>
+        <param-name>emailServer</param-name>
+        <param-value>smtp.washington.edu</param-value>
+        <description>The SMTP email server</description>
     </context-param>
 
     <context-param>

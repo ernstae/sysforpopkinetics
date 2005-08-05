@@ -16,12 +16,12 @@ Washington Free-Fork License as a public service.  A copy of the
 License can be found in the COPYING file in the root directory of this
 distribution.
 **********************************************************************/
-package uw.rfpk.mda.saamii;
+package uw.rfpk.mda.nonmem;
 
-//import uw.rfpk.mda.nonmem.wizard.Source;
-//import uw.rfpk.mda.nonmem.wizard.MDAIterator;
-//import uw.rfpk.mda.nonmem.wizard.MDAObject;
-import uw.rfpk.mda.saamii.Utility;
+import uw.rfpk.mda.nonmem.wizard.Source;
+import uw.rfpk.mda.nonmem.wizard.MDAIterator;
+import uw.rfpk.mda.nonmem.wizard.MDAObject;
+import uw.rfpk.mda.nonmem.Utility;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Attr;

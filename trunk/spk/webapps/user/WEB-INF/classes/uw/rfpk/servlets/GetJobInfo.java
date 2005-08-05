@@ -32,13 +32,14 @@ import uw.rfpk.beans.UserInfo;
  * The servlet receives a String array containing three String objects from the client.
  * The first String object is the secret code to identify the client.  The second String 
  * is the job_id.  The third String object is a flag that specified if this call is from 
- * a library patron.  The servlet first checks if this id belongs to the user using database 
+ * a library patron.  The servlet first checks if this job belongs to the user using database 
  * API method, getUser, to get the user_id and using database API method, getJob, to get 
  * user_id, then comparing them.  If they are the same, the servlet calls database 
- * API method, getJob, to get model_id, model_version, dataset_id, dataset_version,
+ * API method, getJob, to get abstract, state_code, end_code, model_id, model_version, dataset_id, dataset_version,
  * method_code and parent. Then, the model_id is passed in the database API method getModel
- * to get model name and the dataset_id is passed in the database API method getDataset to 
- * get dataset name.  The servlet  puts model_name, model_version, dataset_name, dataset_version,
+ * to get model_name and model_abstract; and the dataset_id is passed in the database API method getDataset to 
+ * get dataset_name and dataset_abstract.  The servlet puts job_abstract, owner, model_id, model_name, model_version,
+ * model_abstract, dataset_id, dataset_name, dataset_version, dataset_abstract, state_code, end_code,
  * parent(id) and method_code into a java.util.Properties object.  The servlet sends back 
  * two objects.  The first object is a String containing the error message if there 
  * is an error or an empty String if there is not any error.  The second object is the 
@@ -112,7 +113,8 @@ public class GetJobInfo extends HttpServlet
                 if(jobRS.getLong("user_id") == userId)
                 {            
                     // Get job information
-                    String jobAbstract = jobRS.getString("abstract"); 
+                    String jobAbstract = jobRS.getString("abstract");
+                    String jobOwner = jobRS.getString("owner");
                     long parent = jobRS.getLong("parent");
                     String methodCode = jobRS.getString("method_code");
                     String endCode = "";
@@ -137,6 +139,7 @@ public class GetJobInfo extends HttpServlet
              
                     // Put returning objects into the Properties
                     jobInfo.setProperty("jobAbstract", jobAbstract);
+                    jobInfo.setProperty("jobOwner", jobOwner);
                     jobInfo.setProperty("modelId", String.valueOf(modelId));
                     jobInfo.setProperty("modelName", modelName);
                     jobInfo.setProperty("modelAbstract", modelAbstract);
@@ -147,6 +150,7 @@ public class GetJobInfo extends HttpServlet
                     jobInfo.setProperty("datasetVersion", datasetVersion.substring(2));
                     jobInfo.setProperty("parent", String.valueOf(parent));
                     jobInfo.setProperty("methodCode", methodCode);
+                    jobInfo.setProperty("stateCode", stateCode);
                     jobInfo.setProperty("endCode", endCode);
                 }
                 else

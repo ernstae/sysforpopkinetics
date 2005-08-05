@@ -108,7 +108,10 @@ public class UserModels extends HttpServlet
  
                 // Get user models
                 ResultSet userModelsRS = Spkdb.userModels(con, userId, maxNum, leftOff);  
-             
+                             
+                // Disconnect to the database
+                Spkdb.disconnect(con);
+                
                 // Fill in the List
                 while(userModelsRS.next())
                 {                  
@@ -130,10 +133,7 @@ public class UserModels extends HttpServlet
                     model[4] = userModelsRS.getString("abstract");
                     modelList.add(model);
                 }
-                
-                // Disconnect to the database
-                Spkdb.disconnect(con);
-                
+
                 // Put the list in the String[][]
                 int nModel = modelList.size(); 
                 if(nModel > 0)

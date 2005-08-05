@@ -309,7 +309,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         jDialog1.getContentPane().add(jLabel4, gridBagConstraints);
 
         jTextPane6.setBackground(new java.awt.Color(204, 204, 204));
-        jTextPane6.setText("List 3: splitted by");
+        jTextPane6.setText("List 3: plot for each");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 6;

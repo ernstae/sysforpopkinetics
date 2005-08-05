@@ -59,7 +59,7 @@ public class TableShow extends javax.swing.JFrame {
     public void showTableList()
     {
         // Display the window
-        setSize(500, 500);
+        setSize(500, 400);
         initComponents();
         setVisible(true);
 

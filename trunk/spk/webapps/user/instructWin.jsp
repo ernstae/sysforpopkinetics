@@ -46,13 +46,11 @@ author: Jiaji Du
 	  <td colspan=1 vAlign=top>
 	    <h3>Instructions for Installing JRE</h3>
 	    <p> 
-              1.  To use the MDA, you need first to download and install the Java
-                  Runtime Environment (JRE) from Sun Microsystems. Access the following
-                  website:<br>
+              1.  To use the MDA, you need the Java Runtime Environment (JRE) from Sun Microsystems. 
+                  To download and install the JRE, access the following website:<br>
                   <a href="http://java.sun.com/j2se/1.4.2/download.html" target="_blank">http://java.sun.com/j2se/1.4.2/download.html</a>.
             </p><p>
-              2.  Scroll down to "Download J2SE" and choose your operating system from
-                  the "JRE" column.
+              2.  Scroll down to "Download J2SE JRE" and click the link.
             </p><p>
               3.  Accept the License Agreement (by scrolling down and clicking on
                   "Accept").
@@ -60,12 +58,10 @@ author: Jiaji Du
               4.  You should see "Java(TM) 2 Runtime Environment, Standard
                   Edition", and then the version number.
             </p><p>
-              5.  Under the "Windows Platform" choose "Windows Installation...", and 
-                  choose "Open" when prompted by the File Download window.
+              5.  Under the "Windows Platform" choose "Windows Installation...",  
+                  choose "Run" when prompted by the File Download window, and choose "Run" when prompted by the Security Warning window.
             </p><p>
-              6.  The InstallShield Wizard should start. Accept the License Agreement,
-                  choose the Typical installation and wait for the installation process
-                  to end. Click "Finish" when the installation is complete.
+              6.  The InstallShield Wizard should start. Click "Finish" when the installation is complete.
             </p><p>
               7.  FOR MOZILLA OR NETSCAPE USERS: If you use Mozilla or Netscape as your
                   web browser, you must set the helper application to be Java Web Start.<br>

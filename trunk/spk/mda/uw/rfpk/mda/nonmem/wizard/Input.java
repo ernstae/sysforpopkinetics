@@ -45,9 +45,11 @@ public class Input extends javax.swing.JPanel implements WizardStep {
     private String[] input = null; 
     private Vector data = null;
     private String[][] dataArray = null;
+    private String[][] dataTemp = null;
     private int nDataRow = 0;    
     private JWizardPane wizardPane = null;
     private TableModel tableModel = new ATableModel();
+    private DefaultTableModel tableEditModel;
     private String[] items = null;
     private String[] stdItems = new String[] { "DV", "MDV", "EVID", "TIME", "DATE", 
                                 "DATE1", "DATE2", "DATE3", "AMT", "RATE", "SS", 
@@ -71,6 +73,13 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         java.awt.GridBagConstraints gridBagConstraints;
 
         buttonGroup1 = new javax.swing.ButtonGroup();
+        dataEditor = new javax.swing.JDialog();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
+        jPanel1 = new javax.swing.JPanel();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox();
         jTextField1 = new javax.swing.JTextField();
         jTextField2 = new javax.swing.JTextField();
@@ -84,9 +93,59 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         jLabel1 = new javax.swing.JLabel();
         jRadioButton3 = new javax.swing.JRadioButton();
         jCheckBox1 = new javax.swing.JCheckBox();
-        jCheckBox2 = new javax.swing.JCheckBox();
         jButton1 = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JSeparator();
+        jButton4 = new javax.swing.JButton();
+
+        dataEditor.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        dataEditor.setTitle("Dataset Editor");
+        dataEditor.setModal(true);
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(400, 500));
+        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jTable2.setPreferredScrollableViewportSize(new java.awt.Dimension(150, 400));
+        jTable2.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTable2KeyPressed(evt);
+            }
+        });
+
+        jScrollPane2.setViewportView(jTable2);
+
+        dataEditor.getContentPane().add(jScrollPane2, java.awt.BorderLayout.CENTER);
+
+        jButton2.setText("OK");
+        jButton2.setPreferredSize(new java.awt.Dimension(75, 25));
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jButton2);
+
+        jButton3.setText("Cancel");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jButton3);
+
+        dataEditor.getContentPane().add(jPanel1, java.awt.BorderLayout.SOUTH);
+
+        jLabel2.setText("You may change any data element value in this table.");
+        dataEditor.getContentPane().add(jLabel2, java.awt.BorderLayout.NORTH);
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -129,6 +188,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         add(jTextField2, gridBagConstraints);
 
         addButton.setText("Enter");
+        addButton.setPreferredSize(new java.awt.Dimension(83, 25));
         addButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addButtonActionPerformed(evt);
@@ -139,12 +199,13 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(2, 14, 10, 12);
+        gridBagConstraints.insets = new java.awt.Insets(2, 12, 10, 12);
         add(addButton, gridBagConstraints);
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("Enter the name of the data items in the same order as the data columns\nlocated in the data file.  A data item may be standard or non-standard.\nThe standard data item may have alias.  The first data item must be  \"ID\" \nif it exists in the data file.  Data item \"DV\"(data values) is always required.");
+        jTextPane1.setText("Enter the name of the data items in the same order as the data columns\nlocated in the data file.  A data item may be standard or non-standard.\nA standard data item may have alias.  The first data item must be  \"ID\" if\nit exists in the data file.  Data item \"DV\"(data values) is always required.");
+        jTextPane1.setPreferredSize(new java.awt.Dimension(435, 66));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
@@ -260,20 +321,6 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(6, 10, 12, 0);
         add(jCheckBox1, gridBagConstraints);
 
-        jCheckBox2.setText("Categorical");
-        jCheckBox2.setEnabled(false);
-        jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox2ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.insets = new java.awt.Insets(6, 10, 12, 12);
-        add(jCheckBox2, gridBagConstraints);
-
         jButton1.setText("Remove");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -294,39 +341,172 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         add(jSeparator2, gridBagConstraints);
 
+        jButton4.setText("Edit Data");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 5, 12);
+        add(jButton4, gridBagConstraints);
+
     }//GEN-END:initComponents
 
+    private void jTable2KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTable2KeyPressed
+        if(evt.getKeyCode() == 10)
+            jButton2.setEnabled(true);
+        else
+            jButton2.setEnabled(false);
+    }//GEN-LAST:event_jTable2KeyPressed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        String[] header;
+        if(!exist(input, "MDV") && JOptionPane.showConfirmDialog(null, 
+                                         "Do you want to add a data column as MDV?",   
+                                         "Question Dialog",
+                                         JOptionPane.YES_NO_OPTION,
+                                         JOptionPane.QUESTION_MESSAGE) == 0)
+        {
+            header = new String[nDataCol + 1];
+            for(int i = 0; i < nDataCol; i++)
+                header[i] = input[i];
+            header[nDataCol] = "MDV";
+            dataTemp= new String[dataArray.length][nDataCol + 1];
+            for(int j = 0; j < dataArray.length; j++)
+            {
+                for(int i = 0; i < nDataCol; i++)
+                    dataTemp[j][i] = dataArray[j][i];
+                dataTemp[j][nDataCol] = "0";
+            }
+        }
+        else
+        {
+            /*
+            header = new String[nDataCol];
+            for(int i = 0; i < nDataCol; i++)
+                header[i] = input[i];
+            dataTemp = new String[dataArray.length][nDataCol];
+            for(int j = 0; j < dataArray.length; j++)
+            {
+                for(int i = 0; i < nDataCol; i++)
+                    dataTemp[j][i] = dataArray[j][i];
+            }
+             */
+            header = input;
+            dataTemp = (String[][])dataArray.clone();
+        }
+        tableEditModel = new DefaultTableModel(dataTemp, header);
+        jTable2.setModel(tableEditModel);
+        jTable2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        dataEditor.setSize(500, 400);
+        dataEditor.setVisible(true);
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        dataTemp = null;
+        dataEditor.dispose();
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        dataArray = dataTemp;
+        for(int i = 0; i < dataTemp.length; i++)
+            for(int j = 0; j < dataTemp[0].length; j++)
+                dataArray[i][j] = (String)tableEditModel.getValueAt(i, j);
+        if(dataArray[0].length > nDataCol)
+        {
+            String[] temp = new String[nDataCol + 1];
+            for(int i = 0; i < nDataCol; i++)
+                temp[i] = input[i];
+            temp[nDataCol] = "MDV";
+            input = temp;
+        }
+        dataTemp = null;
+        dataEditor.dispose();
+        
+        setTable();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void setTable()
+    {
+           // Create a column model for the main table.  
+        TableColumnModel cm = new DefaultTableColumnModel() {
+            public void addColumn(TableColumn tc) {
+                tc.setMinWidth(80);
+                super.addColumn(tc);
+            }
+        };
+            
+        // Set table model and column model.
+        jTable1.setModel(tableModel);  
+        jTable1.setColumnModel(cm);
+            
+        // Shut off autoResizeMode.
+        jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+         
+        // Create columns.
+        jTable1.createDefaultColumnsFromModel();
+        jTable1.setColumnSelectionAllowed(true);
+            
+        // Set table cell renderer.
+        TableCellRenderer cellRenderer = new CellRenderer(); 
+        for(int i = 0; i < input.length; i++)
+            cm.getColumn(i).setCellRenderer(cellRenderer);
+    }
+    
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if(!iterator.getIsInd() && index == 0)
             return;
-        input[index] = "";
         
-        // Repaint the table
-        jTable1.repaint();  
+        if(!input[index].equals("MDV"))
+        {
+            input[index] = "";
         
-        // If input is empty, gray out the Remove button
-        int j = 0;
-        if(!iterator.getIsInd())
-            j = 1;
-        for(int i = j; i < input.length; i++)
-            if(!input[i].equals(""))
-                return;
+            // Repaint the table
+            jTable1.repaint();
+            
+            // Disable the left options 
+            isValid = false;
+            wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
+                    
+            // If input is empty, gray out the Remove button
+            int j = 0;
+            if(!iterator.getIsInd())
+                j = 1;
+            for(int i = j; i < input.length; i++)
+                if(!input[i].equals(""))
+                    return;
+            jButton1.setEnabled(false);
+        }
+        else
+        {
+            String[] temp = new String[input.length - 1];
+            for(int i = 0; i < temp.length; i++)
+                temp[i] = input[i];
+            input = temp;
+            for(int j = 0; j < dataArray.length; j++)
+            {
+                temp = new String[input.length];
+                for(int i = 0; i < temp.length; i++)
+                    temp[i] = dataArray[j][i];
+                dataArray[j] = temp;
+            }
+            setTable();
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
-        jCheckBox1.setSelected(false);
-    }//GEN-LAST:event_jCheckBox2ActionPerformed
-
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
-        jCheckBox2.setSelected(false);
+
     }//GEN-LAST:event_jCheckBox1ActionPerformed
 
     private void jRadioButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton3ActionPerformed
         jLabel1.setEnabled(false);
         jComboBox1.setEnabled(false);
         jTextField1.setEnabled(false);
-        jCheckBox1.setEnabled(false);
-        jCheckBox2.setEnabled(false);        
+        jCheckBox1.setEnabled(false);       
     }//GEN-LAST:event_jRadioButton3ActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
@@ -344,7 +524,6 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         jTextField1.setText("");        
         jTextField2.setEnabled(true);  
         jCheckBox1.setEnabled(true);
-        jCheckBox2.setEnabled(true);        
     }//GEN-LAST:event_jRadioButton2ActionPerformed
 
     private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
@@ -355,8 +534,6 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         jTextField2.setText("");
         jCheckBox1.setEnabled(false); 
         jCheckBox1.setSelected(false);
-        jCheckBox2.setEnabled(false); 
-        jCheckBox2.setSelected(false);
     }//GEN-LAST:event_jRadioButton1ActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
@@ -386,9 +563,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
             }
             element = jTextField2.getText().trim(); 
             if(jCheckBox1.isSelected())
-                element = element + "=CENTERED";
-            if(jCheckBox2.isSelected())
-                element = element + "=CAT";           
+                element = element + "=CENTERED";           
         }
         else
             element = "DROP";
@@ -450,7 +625,6 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         jTextField1.setText("");
         jTextField2.setText("");
         jCheckBox1.setSelected(false);
-        jCheckBox2.setSelected(false);
 
         // Repaint the table
         jTable1.repaint();
@@ -465,7 +639,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
             return String.class; 
         }
         public int getColumnCount() {
-            return nDataCol;
+            return input.length;
         }
         public int getRowCount() {
 //            return ((Vector)data.get(0)).size() + 1;    // Show first individual data only
@@ -520,21 +694,69 @@ public class Input extends javax.swing.JPanel implements WizardStep {
                 return true;
         return false;
     }
+    
+    private void setDataObject()
+    {
+        Vector dataObject = new Vector();
+        Vector indData = new Vector();
+        String[] row;
+        int nDataRow = dataArray.length;
+        if(iterator.getIsInd())
+        {
+            for(int i = 0; i < nDataRow; i++)
+            {
+                row = new String[nDataCol];
+                for(int j = 0; j < nDataCol; j++)
+                    row[j] = (String)tableEditModel.getValueAt(i, j);
+                indData.add(row);
+            }
+            dataObject.add(indData);
+        }
+        else
+        {
+            String id = "";
+            for(int i = 0; i < nDataRow; i++)
+            {
+                row = new String[nDataCol];
+                for(int j = 0; j < nDataCol; j++)
+                    row[j] = (String)tableEditModel.getValueAt(i, j);
+                if(row[0].equals(id))
+                    indData.add(row);
+                else
+                {
+                    id = row[0];
+                    if(i != 0) dataObject.add(indData);
+                    indData = new Vector();
+                    indData.add(row);
+                }
+            }
+            dataObject.add(indData);            
+        }
+        ((MDAObject)wizardPane.getCustomizedObject()).setData(dataObject);
+    }
+        
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JDialog dataEditor;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTable2;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextPane jTextPane1;
@@ -609,29 +831,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
             if(iterator.getIsDataXML())
                 input = items;
             
-            // Create a column model for the main table.  
-            TableColumnModel cm = new DefaultTableColumnModel() {
-                public void addColumn(TableColumn tc) {
-                    tc.setMinWidth(80);
-                    super.addColumn(tc);
-                }
-            };
-            
-            // Set table model and column model
-            jTable1.setModel(tableModel);  
-            jTable1.setColumnModel(cm);
-            
-            // Shut off autoResizeMode.
-            jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-            
-            // Create columns
-            jTable1.createDefaultColumnsFromModel();
-            jTable1.setColumnSelectionAllowed(true);
-            
-            // Set table cell renderer
-            TableCellRenderer cellRenderer = new CellRenderer(); 
-            for(int i = 0; i < nDataCol; i++)
-                cm.getColumn(i).setCellRenderer(cellRenderer);
+            setTable();
 
             if(items != null)
             {
@@ -671,6 +871,11 @@ public class Input extends javax.swing.JPanel implements WizardStep {
             String record = "$INPUT " + inputs.replaceAll("\r", "");
             object.getRecords().setProperty("Input", record);
             object.getSource().input = record.substring(7).split(" ");
+            if(input.length > nDataCol)
+            {
+                iterator.setNDataCol(input.length);
+                setDataObject();
+            }
 	}
 
 	public boolean isValid(){

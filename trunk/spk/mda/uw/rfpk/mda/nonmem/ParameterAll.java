@@ -46,13 +46,17 @@ public class ParameterAll {
     {
         String report = "<?xml version=\"1.0\"?>\n<report_parameter_all>";
         String theta, omega, sigma;
+        theta = omega = sigma = "";
         int beginIndex, endIndex;
         for(int i = first; i < reports.length; i++)
         {
             // Find Theta.
             beginIndex = reports[i].indexOf("<theta_out ") - 1;
-            endIndex = reports[i].indexOf("</theta_out>") + 12;
-            theta = reports[i].substring(beginIndex, endIndex);
+            if(beginIndex != -2)
+            {
+                endIndex = reports[i].indexOf("</theta_out>") + 12;
+                theta = reports[i].substring(beginIndex, endIndex);
+            }
             // Find Omega.
             omega = "";
             endIndex = 0;
@@ -83,19 +87,22 @@ public class ParameterAll {
         return report += "\n</report_parameter_all>\n";
     }
     
-    /** This method parses a integrated report to generate a String containg a data block
-     * of the parameter estimates.
-     * @param report a integrated report of a job.
+    /** This method parses the sourec and the integrated report to generate a String 
+     * containg a data block of the parameter estimates.
+     * @param source the source of a job.
+     * @param report the integrated report of a job.
      * @return a String containing a data block of the parameter estimates.
      */
-    protected static String getParameterAll(String report)
+    protected static String getParameterAll(String source, String report)
     {
-        Document docDataAll;
+        Document docSource, docReport;
+        DecimalFormat f = new DecimalFormat("0.0000E00");
         try
         {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            docDataAll = builder.parse(new InputSource(new ByteArrayInputStream(report.getBytes())));
+            docSource = builder.parse(new InputSource(new ByteArrayInputStream(source.getBytes())));
+            docReport = builder.parse(new InputSource(new ByteArrayInputStream(report.getBytes())));
         }
         catch(ParserConfigurationException e)
         {
@@ -111,93 +118,138 @@ public class ParameterAll {
         {
             JOptionPane.showMessageDialog(null, e, "IOException", JOptionPane.ERROR_MESSAGE);
             return null;
-        }        
-        Element parameter_all = docDataAll.getDocumentElement();
+        }
+        Element parameter_ini = docSource.getDocumentElement();
+        Element parameter_all = docReport.getDocumentElement();
         String label,id;
         String header = "Sub-ID";
+        String init = "     0";
         String value = "     1";
         String struct = "diagonal";
         int row, col;
-        Element problem, parameter;
-        NodeList paramList, valueList;
+        Element problem, parameter, in;
+        NodeList paramList, valueList, inList;        
+        
+        // Get initial theta.
+        paramList = parameter_ini.getElementsByTagName("theta");
+        parameter = (Element)paramList.item(0);
+        inList = parameter.getElementsByTagName("in");
+        in = (Element)inList.item(0);
+        valueList = in.getElementsByTagName("value");
+        for(int i = 0; i < valueList.getLength(); i++)
+        {
+            label = "TH-" + (i + 1);
+            header += getSpace(12 - label.length()) + label;
+            init += " " + Utility.formatData(8, f.format(Double.parseDouble(
+                    valueList.item(i).getFirstChild().getNodeValue())));
+        }
+        
+        // Get initial omega.
+        paramList = parameter_ini.getElementsByTagName("omega");
+        for(int j = 0; j < paramList.getLength(); j++)
+        {
+            parameter = (Element)paramList.item(j);
+            inList = parameter.getElementsByTagName("in");
+            in = (Element)inList.item(0);
+            valueList = in.getElementsByTagName("value");
+            row = 1;
+            col = 1;
+            for(int i = 0; i < valueList.getLength(); i++)
+            {
+                if(struct.equals("block"))
+                {
+                    label = "OM[" + (j + 1) + "]-" + row + "," + col;
+                    if(col == row)
+                    {
+                        row++;
+                        col = 1;
+                    }
+                    else
+                        col++;
+                }
+                else
+                    label = "OM[" + (j + 1) + "]-" + (i + 1) + "," + (i + 1);
+                header += getSpace(12 - label.length()) + label;
+                                        
+                init += " " + Utility.formatData(8, f.format(Double.parseDouble(
+                        valueList.item(i).getFirstChild().getNodeValue())));
+            }
+        }
+        
+        // Get initial sigma.
+        paramList = parameter_ini.getElementsByTagName("sigma");
+        for(int j = 0; j < paramList.getLength(); j++)
+        {
+            parameter = (Element)paramList.item(j);
+            inList = parameter.getElementsByTagName("in");
+            in = (Element)inList.item(0);
+            valueList = in.getElementsByTagName("value");
+            row = 1;
+            col = 1;
+            for(int i = 0; i < valueList.getLength(); i++)
+            {
+                if(struct.equals("block"))
+                {
+                    label = "SG[" + (j + 1) + "]-" + row + "," + col;
+                    if(col == row)
+                    {
+                        row++;
+                        col = 1;
+                    }
+                    else
+                        col++;
+                }
+                else
+                    label = "SG[" + (j + 1) + "]-" + (i + 1) + "," + (i + 1);
+                    header += getSpace(12 - label.length()) + label;              
+                init += " " + Utility.formatData(8, f.format(Double.parseDouble(
+                        valueList.item(i).getFirstChild().getNodeValue())));
+            }
+        }
+        
+        // Get sub-problems.
         NodeList problemList = parameter_all.getElementsByTagName("sub_problem");
-        DecimalFormat f = new DecimalFormat("0.0000E00");
+        
+        // Get theta out.
         for(int i = 0; i < problemList.getLength(); i++)
         {
             problem = (Element)problemList.item(i);
             paramList = problem.getElementsByTagName("theta_out");
-            parameter = (Element)paramList.item(0);
-            valueList = parameter.getElementsByTagName("value");
-            for(int k = 0; k < valueList.getLength(); k++)
+            if(paramList.getLength() > 0)
             {
-                if(i == 0)
-                {
-                    label = "TH-" + (k + 1);
-                    header += getSpace(12 - label.length()) + label;
-                }
-                value += " " + Utility.formatData(8, f.format(Double.parseDouble(valueList.item(k)
-                         .getFirstChild().getNodeValue())));
+                parameter = (Element)paramList.item(0);
+                valueList = parameter.getElementsByTagName("value");
+                for(int k = 0; k < valueList.getLength(); k++)
+                    value += " " + Utility.formatData(8, f.format(Double.parseDouble(valueList.item(k)
+                             .getFirstChild().getNodeValue())));
             }
+            // Get omega out.
             paramList = problem.getElementsByTagName("omega_out");
-            for(int j = 0; j < paramList.getLength(); j++)
+            if(paramList.getLength() > 0)
             {
-                parameter = (Element)paramList.item(j);
-                struct = parameter.getAttribute("struct");
-                valueList = parameter.getElementsByTagName("value");
-                row = 1;
-                col = 1;
-                for(int k = 0; k < valueList.getLength(); k++)
+                for(int j = 0; j < paramList.getLength(); j++)
                 {
-                    if(i == 0) 
-                    {
-                        if(struct.equals("block"))
-                        {
-                            label = "OM[" + j + "]-" + row + "," + col;
-                            if(col == row)
-                            {
-                                row++;
-                                col = 1;
-                            }
-                            else
-                                col++;
-                        }
-                        else
-                            label = "OM[" + j + "]-" + (k + 1) + "," + (k + 1);
-                        header += getSpace(12 - label.length()) + label;
-                    }
-                    value += " " + Utility.formatData(8, f.format(Double.parseDouble(valueList.item(k)
-                             .getFirstChild().getNodeValue())));
+                    parameter = (Element)paramList.item(j);
+                    struct = parameter.getAttribute("struct");
+                    valueList = parameter.getElementsByTagName("value");
+                    for(int k = 0; k < valueList.getLength(); k++)
+                        value += " " + Utility.formatData(8, f.format(Double.parseDouble(valueList.item(k)
+                                 .getFirstChild().getNodeValue())));
                 }
             }
+            
+            // Get sigma out.
             paramList = problem.getElementsByTagName("sigma_out");
-            for(int j = 0; j < paramList.getLength(); j++)
+            if(paramList.getLength() > 0)
             {
-                parameter = (Element)paramList.item(j);
-                struct = parameter.getAttribute("struct");
-                valueList = parameter.getElementsByTagName("value");
-                row = 1;
-                col = 1;                
-                for(int k = 0; k < valueList.getLength(); k++)
+                for(int j = 0; j < paramList.getLength(); j++)
                 {
-                    if(i == 0) 
-                    {
-                        if(struct.equals("block"))
-                        {
-                            label = "SG[" + j + "]-" + row + "," + col;
-                            if(col == row)
-                            {
-                                row++;
-                                col = 1;
-                            }
-                            else
-                                col++;
-                        }
-                        else
-                            label = "SG[" + j + "]-" + (k + 1) + "," + (k + 1);
-                        header += getSpace(12 - label.length()) + label;
-                    }
-                    value += " " + Utility.formatData(8, f.format(Double.parseDouble(valueList.item(k)
-                             .getFirstChild().getNodeValue())));
+                    parameter = (Element)paramList.item(j);
+                    struct = parameter.getAttribute("struct");
+                    valueList = parameter.getElementsByTagName("value");
+                    for(int k = 0; k < valueList.getLength(); k++)
+                        value += " " + Utility.formatData(8, f.format(Double.parseDouble(valueList.item(k)
+                                 .getFirstChild().getNodeValue())));
                 }
             }            
             if(i < problemList.getLength() - 1)
@@ -206,7 +258,7 @@ public class ParameterAll {
                 value += "\n" + getSpace(6 - id.length()) + id;
             }
         }
-        return header + "\n" + value;
+        return header + "\n" + init + "\n" + value;
     }
 
     // This method returns spaces.

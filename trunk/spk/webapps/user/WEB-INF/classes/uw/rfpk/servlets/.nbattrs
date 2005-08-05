@@ -19,6 +19,9 @@
     <fileobject name="UserModels.java">
         <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="UserModels"/>
     </fileobject>
+    <fileobject name="AbortJob.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="AbortJob"/>
+    </fileobject>
     <fileobject name="GetArchive.java">
         <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="GetArchive"/>
     </fileobject>
@@ -33,6 +36,9 @@
     </fileobject>
     <fileobject name="GetJnlp.java">
         <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="GetJnlp"/>
+    </fileobject>
+    <fileobject name="GetLastVersion.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="GetLastVersion"/>
     </fileobject>
     <fileobject name="GetHistory.java">
         <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="GetHistory"/>

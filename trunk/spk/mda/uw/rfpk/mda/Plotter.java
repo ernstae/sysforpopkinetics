@@ -16,9 +16,8 @@ Washington Free-Fork License as a public service.  A copy of the
 License can be found in the COPYING file in the root directory of this
 distribution.
 **********************************************************************/
-package uw.rfpk.mda.nonmem.display;
+package uw.rfpk.mda;
 
-import uw.rfpk.mda.nonmem.Utility;
 import javax.swing.JPanel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -39,6 +38,7 @@ import java.awt.event.MouseEvent;
 import javax.print.attribute.*;
 import java.awt.Polygon;
 import java.util.Vector;
+import java.util.Arrays;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -59,21 +59,23 @@ public class Plotter extends JPanel
      * @param labelX the label for the x axis.
      * @param labelY the label for the y axis.
      * @param name the name of the curve.
-     * @param xLine the flag specifies if x = 0 line is required.
-     * @param yLine the flag specifies if y = 0 line is required.
-     * @param uLine the flag specifies if unit slope line is required.
+     * @param xLine the flag specifies if a vertical line is required.
+     * @param yLine the flag specifies if a horizontal line is required.
+     * @param uLine the flag specifies if a unit slope line is required.
      * @param rLine the flag specifies if regression line is required.
      * @param pLine the flag specifies if percentile line is required.
      * @param hGrid the flag specifies if horizontal grid lines are required.
      * @param vGrid the flag specifies if vertical grid lines are required.
+     * @param xLineX the X value at which the vertical line intersects the X axis.
+     * @param xLineX the Y value of which the horizontal line intersects the Y axis
      * @param regression the name of the selected curve for regression.
      * @param percentage the percentage of the percentiles for the regression.
-     * @param addedLineColor the colors of the added lines in a Color array. Each element represents:
+     * @param addedLineColor the colors of the five added lines in a Color array. Each element represents:
      *        "red", "yellow", "orange", "blue", "pink", "magenta", "cyan", "green", "gray", or "black".
      * @param symbol the symbol types of the curves in an int array. Each element represents:
      *        "dot", "circle", "filled square", "square", "filled up triangle", "up triangle",
      *        "filled down triangle", "down triangle", "cross", "check mark", "thick solid line",
-     *        "thin solid line" or "dashed line".
+     *        "thin solid line", "thin dashed line" or "thick dashed line".
      * @param color the colors of the curves in a Color array. Each element represents:
      *        "red", "yellow", "orange", "blue", "pink", "magenta", "cyan", "green", "gray", or "black".
      * @param legendLocation the location of the legend: "Inside", "Top", "Right", or null if
@@ -82,8 +84,8 @@ public class Plotter extends JPanel
      * @param nVDivi number of vertical divisions.
      * @param markLengthX length of division marks on X axis.
      * @param markLengthY length of division marks on Y axis.
-     * @param nTicksX number of ticks on X axis between adjacent vertical grid.
-     * @param nTicksY number of ticks on X axis between adjacent horizontal grid.
+     * @param nTickX number of ticks on X axis between adjacent vertical grid.
+     * @param nTickY number of ticks on X axis between adjacent horizontal grid.
      * @param tickLengthX length of ticks on X axis.
      * @param tickLengthY length of ticks on Y axis.
      * @param maxX the upper bound of X.
@@ -98,16 +100,21 @@ public class Plotter extends JPanel
      * @param bottomInset the additional bottom inset.
      * @param leftInset the additional left inset.
      * @param rightInset the additional right inset.
-     * @param isExpX the flag specifies if the X numerical lables use exponential expression.
-     * @param isExpY the flag specifies if the Y numerical lables use exponential expression.
-     * @param isLogX the flag specifies if X axis is in log scale.
-     * @param isLogY the flag specifies if X axis is in log scale.
+     * @param isExpX the flag that specifies if the X numerical lables use exponential expression.
+     * @param isExpY the flag that specifies if the Y numerical lables use exponential expression.
+     * @param isLogX the flag that specifies if X axis is in log scale.
+     * @param isLogY the flag that specifies if Y axis is in log scale.
+     * @param isHistogram the flag that specifies if plotting a histogram.
+     * @param intervalSize the size of intervals of the histogram.
+     * @param baseline the flag that specifies the baseline should be drawn in the histogram.
+     * @param baseLabel the label for the baseline of the histogram.
      * @param nDigitX number of digits right to the decimal point of the X numerical lable.
      * @param nDigitY number of digits right to the decimal point of the Y numerical lable.
      */
     public Plotter(double[][] dataX, double[][] dataY, String title, String labelX, String labelY, 
                    String[] name, int[] symbol, Color[] color, boolean xLine, boolean yLine, 
-                   boolean uLine, boolean rLine, boolean pLine, boolean hGrid, boolean vGrid, 
+                   boolean uLine, boolean rLine, boolean pLine, boolean hGrid, boolean vGrid,
+                   double xLineX, double yLineY,
                    String regression, String percentage, Color[] addedLineColor, 
                    String legendLocation, int nHDivi, int nVDivi, int markLengthX, int markLengthY, 
                    int nTickX, int nTickY, int tickLengthX, int tickLengthY, 
@@ -115,6 +122,7 @@ public class Plotter extends JPanel
                    Font titleFont, Font labelFont, Font legendFont, Font numberFont, 
                    int topInset, int bottomInset, int leftInset, int rightInset, 
                    boolean isExpX, boolean isExpY, boolean isLogX, boolean isLogY, 
+                   boolean isHistogram, double intervalSize, boolean baseline, String baseLabel,
                    int nDigitX, int nDigitY, JFrame frame)
     {
         this.frame = frame;
@@ -144,13 +152,13 @@ public class Plotter extends JPanel
             more = nCurve;
             if(xLine)
             {
-                this.name[more] = "X = 0";
+                this.name[more] = "X = " + xLineX;
                 this.symbol[more] = 11;
                 legendColor[more++] = addedLineColor[0];
             }
             if(yLine)
             {
-                this.name[more] = "Y = 0";
+                this.name[more] = "Y = " + yLineY;
                 this.symbol[more] = 11;
                 legendColor[more++] = addedLineColor[1];
             }
@@ -176,6 +184,23 @@ public class Plotter extends JPanel
                 legendColor[more] = addedLineColor[4];
             }            
         }
+        else if(isHistogram)
+        {
+            this.name = new String[]{"Mean", "Median"};
+            this.symbol = new int[]{11, 13};
+            legendColor = new Color[]{Color.red, Color.blue};
+            if(baseline)
+            {
+                this.name = new String[]{"Mean", "Median", baseLabel};
+                this.symbol = new int[]{11, 13, 10};
+                legendColor = new Color[]{Color.red, Color.blue, Color.black};
+                double[] temp = new double[dataX[0].length - 1];
+                for(int i = 0; i < temp.length; i++)
+                    temp[i] = dataX[0][i + 1];
+                baselineX = dataX[0][0];
+                this.dataX[0] = temp;
+            }
+        }
         else
         {
             this.name = name;
@@ -192,6 +217,12 @@ public class Plotter extends JPanel
         this.vGrid = vGrid;
         this.isLogX = isLogX;
         this.isLogY = isLogY;
+        this.isHistogram = isHistogram;
+        this.baseline = baseline;
+        this.intervalSize = intervalSize;
+        this.baseLabel = baseLabel;
+        this.xLineX = xLineX;
+        this.yLineY = yLineY;
         this.regression = regression;
         this.percentage = percentage;
         this.addedLineColor = addedLineColor;
@@ -214,7 +245,7 @@ public class Plotter extends JPanel
         this.numberFont = numberFont;
         this.topInset += topInset;
         this.bottomInset += bottomInset;
-        if(rLine) this.bottomInset += 20;
+        if(rLine || isHistogram) this.bottomInset += 20;
         this.leftInset += leftInset;
         this.rightInset += rightInset;        
         if(legendLocation != null)
@@ -491,7 +522,7 @@ public class Plotter extends JPanel
         String type;
     }
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        jDialog1.hide();
+        jDialog1.setVisible(false);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -508,7 +539,7 @@ public class Plotter extends JPanel
         }
 
         PrintPreview preview = new PrintPreview(frame, new Printer(), pageFormat);
-        preview.show();
+        preview.setVisible(true);
         if(!preview.isCancelled)
         {
             // Close print setting dialog.
@@ -569,7 +600,7 @@ public class Plotter extends JPanel
         if(pageFormat != null)
         {
             jDialog1.setSize(227, 205);
-            jDialog1.show();
+            jDialog1.setVisible(true);
         }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
@@ -672,13 +703,13 @@ public class Plotter extends JPanel
         double[] range = new double[2];
         if(maxX ==0 && minX == 0)
         {
-            range = getDefaultRange(dataX);
+            range = getDefaultRange(dataX, isLogX);
             minX = range[0];
             maxX = range[1];
         }
-        if(maxY == 0 && minY == 0)
+        if(!isHistogram && maxY == 0 && minY == 0)
         {
-            range = getDefaultRange(dataY);
+            range = getDefaultRange(dataY, isLogY);
             minY = range[0];
             maxY = range[1];
         }
@@ -753,17 +784,17 @@ public class Plotter extends JPanel
         }
         
         // Draw x = 0 line, y = 0 line, slope = 1 line
-        if(xLine && minX < 0 && maxX > 0)
+        if(xLine && minX < xLineX && maxX > xLineX)
         {
             gc2D.setColor(addedLineColor[0]);
-            gc2D.drawLine(leftInset - (int)(minX * width / spanX), top, 
-                          leftInset - (int)(minX * width / spanX), top + height);
+            gc2D.drawLine(leftInset - (int)((minX - xLineX) * width / spanX), top, 
+                          leftInset - (int)((minX - xLineX) * width / spanX), top + height);
         }
-        if(yLine && minY < 0 && maxY > 0)
+        if(yLine && minY < yLineY && maxY > yLineY)
         {
             gc2D.setColor(addedLineColor[1]);
-            gc2D.drawLine(leftInset,         top + (int)(maxY * height / spanY), 
-                          leftInset + width, top + (int)(maxY * height / spanY));
+            gc2D.drawLine(leftInset,         top + (int)((maxY - yLineY) * height / spanY), 
+                          leftInset + width, top + (int)((maxY - yLineY) * height / spanY));
         }
         if(uLine)
         {
@@ -786,61 +817,30 @@ public class Plotter extends JPanel
                           leftInset + (int)((point2 - minX) * width / spanX), 
                           top + height - (int)((point2 - minY) * height / spanY));
         }
-                	         
-	// Draw the data curves
-        if(isLogX)
-        {   
-            double log10 = Math.log(10);
-            for(int i = 0; i < nCurve; i++)
-                for(int j = 0; j < dataX[i].length; j++)
-                    dataX[i][j] = Math.log(dataX[i][j]) / log10;
-            minX = Math.log(minX) / log10;
-            maxX = Math.log(maxX) / log10;
-            isLogX = false;
-        }
-        if(isLogY)
-        {    
-            double log10 = Math.log(10);
-            for(int i = 0; i < nCurve; i++)
-                for(int j = 0; j < dataY[i].length; j++)
-                    dataY[i][j] = Math.log(dataY[i][j]) / log10;
-            minY = Math.log(minY) / log10;
-            maxY = Math.log(maxY) / log10;
-            isLogY = false;
-        }
-        newX = new int[nCurve][];
-        newY = new int[nCurve][];        
-        for(int i = 0; i < nCurve; i++)
+                	         	
+	// Draw numbers for not being histogram
+        if(!isHistogram)
         {
-            newX[i] = new int[dataX[i].length];
-            newY[i] = new int[dataY[i].length];
-            gc2D.setColor(color[i]);          
-            for(int j = 0; j < dataX[i].length; j++)
+            gc2D.setFont(numberFont);
+            gc2D.setColor(Color.black);
+            String value;
+            for(int i = 0; i <= nHDivi; i++)
             {
-	        newX[i][j] = (int)(leftInset + (dataX[i][j] - minX)/spanX * width); 
-                newY[i][j] = (int)(height + top - (dataY[i][j] - minY)/spanY * height);
+                value = formatX.format(minX + spanX*i/nHDivi);
+                gc2D.drawString(value,
+                                leftInset + width*i/nHDivi - gc.getFontMetrics().stringWidth(value)/2, 
+                                top + height + 18);
             }
-            drawCurve(gc2D, symbol[i], i);
-        }
-	
-	// Draw numbers
-        gc2D.setFont(numberFont);
-        gc2D.setColor(Color.black);
-        for(int i = 0; i <= nHDivi; i++)
-        {
-            String value = formatX.format(minX + spanX*i/nHDivi);
-            gc2D.drawString(value,
-                            leftInset + width*i/nHDivi - gc.getFontMetrics().stringWidth(value)/2, 
-                            top + height + 18);
-        }
-        for(int i = 0; i <= nVDivi; i++)
-        {
-            String value = formatY.format(maxY - spanY*i/nVDivi);
-            gc2D.drawString(value,
-                            leftInset - gc.getFontMetrics().stringWidth(value) - 2, 
-                            top + height*i/nVDivi + 5);
-        }
 
+            for(int i = 0; i <= nVDivi; i++)
+            {
+                value = formatY.format(maxY - spanY*i/nVDivi);
+                gc2D.drawString(value,
+                                leftInset - gc.getFontMetrics().stringWidth(value) - 2, 
+                                top + height*i/nVDivi + 5);
+            }
+        }
+        
 	// Draw titles
         gc2D.setColor(Color.black);
         gc2D.setFont(titleFont);
@@ -855,9 +855,9 @@ public class Plotter extends JPanel
         int labelXWidth = gc.getFontMetrics().stringWidth(labelX);
         int labelYWidth = gc.getFontMetrics().stringWidth(labelY);        
         gc2D.drawString(labelX, leftInset + (width - labelXWidth)/2, top + height + 40);      
+        gc2D.rotate(-Math.PI/2);
+        gc2D.drawString(labelY, -top - (height + labelYWidth)/2, 26);
         gc2D.rotate(Math.PI/2);
-        gc2D.drawString(labelY, top + (height - labelYWidth)/2, -16);
-        gc2D.rotate(Math.PI/-2);
        
         // Draw regression line
         if(rLine)
@@ -896,7 +896,6 @@ public class Plotter extends JPanel
             
             gc2D.setColor(fg);
             gc2D.setFont(numberFont);
-            String secondTerm = "";
             String regressionLine = "Regression Line Y = (" + dFormat.format(intersect) + ") + (" +
                                     dFormat.format(slope) + ") X,   Sample Size = " + nRegressionData;
             int labelWidth = gc.getFontMetrics().stringWidth(regressionLine);
@@ -914,6 +913,136 @@ public class Plotter extends JPanel
             if(start == null)
                 legendArea = new Rectangle2D.Double(legendX, legendY, legendWidth, legendHeight);
             drawLegend(gc2D);
+        }
+        
+        // Draw the data curves
+        if(isHistogram)
+        {
+            double min = dataX[0][0];
+            double max = min;
+            for(int i = 0; i < dataX[0].length; i++)
+            {
+                max = Math.max(max, dataX[0][i]);
+                min = Math.min(min, dataX[0][i]);
+            }
+            if(baseline && min >= baselineX) min = baselineX - 0.05 * (max - baselineX);
+            double span = max - min + intervalSize;
+            double size = intervalSize * width/span;
+            int[] frequencies = getFrequency(dataX[0], min, max, intervalSize);
+            int nInterval = frequencies.length;
+            max = frequencies[0];
+            for(int i = 0; i < nInterval; i++)
+                max = Math.max(max, frequencies[i]);
+            double unit = 0.8 * height / max;
+            gc2D.setColor(Color.black);
+            for(int i = 0; i < nInterval; i++)
+                gc2D.drawRect(leftInset + (int)(i * size), height + top - (int)(frequencies[i] * unit), 
+                              (int)size, (int)(frequencies[i] * unit));
+            
+            // Draw data mean
+            meanX = leftInset + (int)((getMean(dataX[0]) - min)/span * width);
+            gc2D.setColor(Color.red);
+            gc2D.drawLine(meanX, height + top, meanX, top);
+                        
+            // Draw data median
+            medianX = leftInset + (int)((getMedian(dataX[0]) - min)/span * width);
+            gc2D.setColor(Color.blue);
+            gc2D.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, 
+                                           BasicStroke.JOIN_BEVEL, 0, 
+                                           new float[]{5.0f, 2.0f}, 0));
+            gc2D.drawLine(medianX, height + top, medianX, top);
+                        
+            // Draw baseline
+            if(baseline)
+            {
+                baseX = leftInset + (int)((baselineX - min)/span * width);
+                gc2D.setColor(Color.black);
+                gc2D.setStroke(new BasicStroke(2.0f));
+                gc2D.drawLine(baseX, height + top, baseX, top);
+                gc2D.setStroke(new BasicStroke());
+            }
+            
+            // Draw numbers for histogram
+            gc2D.setFont(numberFont);
+            gc2D.setColor(Color.black);
+            String value;
+            for(int i = 0; i <= nHDivi; i++)
+            {
+                value = formatX.format(min + span*i/nHDivi);
+                gc2D.drawString(value,
+                                leftInset + width*i/nHDivi - gc.getFontMetrics().stringWidth(value)/2, 
+                                top + height + 18);
+            }
+            for(int i = 0; i <= nVDivi; i++)
+            {
+                value = formatY.format(max*i/nVDivi * 5 / 4);
+                gc2D.drawString(value,
+                                leftInset - gc.getFontMetrics().stringWidth(value) - 2, 
+                                top + height - height*i/nVDivi + 5);
+            }
+            
+            String parameters = "Sample Size = " + dataX[0].length +
+                                ",   Interval Size = " + dFormat.format(intervalSize);
+            if(baseline)
+                parameters += ",   True Value = " + dFormat.format(baselineX);
+            gc2D.drawString(parameters, (d.width - gc.getFontMetrics().stringWidth(parameters))/2,
+                            top + height + bottomInset - 20);
+            parameters = "Mean = " + dFormat.format(getMean(dataX[0])) +
+                         ",   Median = " + dFormat.format(getMedian(dataX[0])) +
+                         ",   Std. Deviation = " + dFormat.format(getStdDev(dataX[0]));
+            gc2D.drawString(parameters, (d.width - gc.getFontMetrics().stringWidth(parameters))/2,
+                            top + height + bottomInset - 10);
+            return;
+        }
+        
+        if(isLogX)
+        {   
+            double log10 = Math.log(10);
+            for(int i = 0; i < nCurve; i++)
+                for(int j = 0; j < dataX[i].length; j++)
+                    dataX[i][j] = Math.log(dataX[i][j]) / log10;
+            minX = Math.log(minX) / log10;
+            maxX = Math.log(maxX) / log10;
+            isLogX = false;
+        }
+        if(isLogY)
+        {    
+            double log10 = Math.log(10);
+            for(int i = 0; i < nCurve; i++)
+                for(int j = 0; j < dataY[i].length; j++)
+                    dataY[i][j] = Math.log(dataY[i][j]) / log10;
+            minY = Math.log(minY) / log10;
+            maxY = Math.log(maxY) / log10;
+            isLogY = false;
+        }
+        newX = new int[nCurve][];
+        newY = new int[nCurve][];        
+        for(int i = 0; i < nCurve; i++)
+        {
+            Vector selectedX = new Vector(dataX[i].length);
+            Vector selectedY = new Vector(dataY[i].length);
+            for(int j = 0; j < dataX[i].length; j++)
+                if(dataX[i][j] >= minX && dataX[i][j] <= maxX &&
+                   dataY[i][j] >= minY && dataY[i][j] <= maxY)
+                {
+                    selectedX.add(new Double(dataX[i][j]));
+                    selectedY.add(new Double(dataY[i][j]));
+                }
+            int size = selectedX.size();
+            for(int j = 0; j < size; j++)
+            {
+                dataX[i][j] = ((Double)selectedX.get(j)).doubleValue();
+                dataY[i][j] = ((Double)selectedY.get(j)).doubleValue();
+            }
+            newX[i] = new int[size];
+            newY[i] = new int[size];
+            gc2D.setColor(color[i]);          
+            for(int j = 0; j < size; j++)
+            {
+	        newX[i][j] = (int)(leftInset + (dataX[i][j] - minX)/spanX * width); 
+                newY[i][j] = (int)(height + top - (dataY[i][j] - minY)/spanY * height);
+            }
+            drawCurve(gc2D, symbol[i], i);
         }
     }
     
@@ -943,17 +1072,29 @@ public class Plotter extends JPanel
     {
         String toolTip = null;
         Point mousePoint = e.getPoint();
-        for(int i = 0; i < nCurve; i++)
-        {	
-            for(int j = 0; j < dataX[i].length; j++)
-            {
-                if(mousePoint.distance((double)newX[i][j], (double)newY[i][j]) <= 4) 
+        if(isHistogram)
+        {
+            if(baseline && Math.abs(mousePoint.x - baseX) < 2)
+                toolTip = baseLabel + " = " + dFormat.format(baselineX);
+            if(Math.abs(mousePoint.x - meanX) < 2)
+                toolTip = "Mean = " + dFormat.format(getMean(dataX[0]));
+            if(Math.abs(mousePoint.x - medianX) < 2)
+                toolTip = "Median = " + dFormat.format(getMedian(dataX[0]));
+        }
+        else
+        {
+            for(int i = 0; i < nCurve; i++)
+            {	
+                for(int j = 0; j < dataX[i].length; j++)
                 {
-                    toolTip = String.valueOf(dataX[i][j]) + ", " + String.valueOf(dataY[i][j]);
-                    break;
-                }
-            }   
-        }       
+                    if(mousePoint.distance((double)newX[i][j], (double)newY[i][j]) <= 4) 
+                    {
+                        toolTip = String.valueOf(dataX[i][j]) + ", " + String.valueOf(dataY[i][j]);
+                        break;
+                    }
+                }   
+            }
+        }
         return toolTip;    
     }
     
@@ -1055,17 +1196,17 @@ public class Plotter extends JPanel
             double spanX = maxX - minX;        
             double spanY = maxY - minY;
             
-            if(xLine && minX < 0 && maxX > 0)
+            if(xLine && minX < xLineX && maxX > xLineX)
             {
                 gc2D.setColor(addedLineColor[0]);
-                gc2D.drawLine(left - (int)(minX * width / spanX), top, 
-                              left - (int)(minX * width / spanX), top + height);
+                gc2D.drawLine(left - (int)((minX - xLineX) * width / spanX), top, 
+                              left - (int)((minX - xLineX) * width / spanX), top + height);
             }
-            if(yLine && minY < 0 && maxY > 0)
+            if(yLine && minY < yLineY && maxY > yLineY)
             {
                 gc2D.setColor(addedLineColor[1]);
-                gc2D.drawLine(left,         top + (int)(maxY * height / spanY), 
-                              left + width, top + (int)(maxY * height / spanY));
+                gc2D.drawLine(left,         top + (int)((maxY - yLineY) * height / spanY), 
+                              left + width, top + (int)((maxY - yLineY) * height / spanY));
             }
             if(uLine)
             {
@@ -1153,37 +1294,29 @@ public class Plotter extends JPanel
                                   left + width,               top + i * spacingY);
                 }
             }
-                        
-            // Draw the data curves
-            for(int i = 0; i < nCurve; i++)
+                                   
+            // Draw numbers for not being histogram
+            if(!isHistogram)
             {
-                gc2D.setColor(color[i]);
-                for(int j = 0; j < dataX[i].length; j++)
+                gc2D.setFont(numberFont);
+                gc2D.setColor(Color.black);
+                String value;
+                for(int i = 0; i <= nHDivi; i++)
                 {
-	            newX[i][j] = (int)(left + (dataX[i][j] - minX)/spanX * width); 
-                    newY[i][j] = (int)(height + top - (dataY[i][j] - minY)/spanY * height);
+                    value = formatX.format(minX + spanX*i/nHDivi);
+                    gc2D.drawString(value, 
+                                    left + width*i/nHDivi - gc.getFontMetrics().stringWidth(value)/2, 
+                                    top + height + 18);
                 }
-                drawCurve(gc2D, symbol[i], i);
+                for(int i = 0; i <= nVDivi; i++)
+                {            
+                    value = formatY.format(maxY - spanY*i/nVDivi);
+                    gc2D.drawString(value, 
+                                    left - gc.getFontMetrics().stringWidth(value) - 2, 
+                                    top + height*i/nVDivi + 5);            
+                }
             }
             
-            // Draw numbers
-            gc2D.setFont(numberFont);
-            gc2D.setColor(Color.black);
-            for(int i = 0; i <= nHDivi; i++)
-            {
-                String value = formatX.format(minX + spanX*i/nHDivi);
-                gc2D.drawString(value, 
-                                left + width*i/nHDivi - gc.getFontMetrics().stringWidth(value)/2, 
-                                top + height + 18);
-            }
-            for(int i = 0; i <= nVDivi; i++)
-            {            
-                String value = formatY.format(maxY - spanY*i/nVDivi);
-                gc2D.drawString(value, 
-                                left - gc.getFontMetrics().stringWidth(value) - 2, 
-                                top + height*i/nVDivi + 5);            
-            }
-
 	    // Draw titles
             gc2D.setFont(titleFont);
             int titleWidth = gc.getFontMetrics().stringWidth(title);
@@ -1197,9 +1330,9 @@ public class Plotter extends JPanel
             int labelXWidth = gc.getFontMetrics().stringWidth(labelX);
             int labelYWidth = gc.getFontMetrics().stringWidth(labelY);
             gc2D.drawString(labelX, left + (width - labelXWidth)/2, top + height + 40);        
-            gc2D.rotate(Math.PI/2);            
-            gc2D.drawString(labelY, top + (height - labelYWidth)/2, -16 - lineInsetX);
-            gc2D.rotate(Math.PI/-2);
+            gc2D.rotate(-Math.PI/2);            
+            gc2D.drawString(labelY, -top - (height + labelYWidth)/2, 26 + lineInsetX);
+            gc2D.rotate(Math.PI/2);
          
             // Draw regression line
             if(rLine)
@@ -1267,6 +1400,93 @@ public class Plotter extends JPanel
                 legendArea.setRect(x, y, legendArea.width, legendArea.height);                
             }
             
+            // Draw the data curves
+            if(isHistogram)
+            {
+                double min = dataX[0][0];
+                double max = min;
+                for(int i = 0; i < dataX[0].length; i++)
+                {
+                    max = Math.max(max, dataX[0][i]);
+                    min = Math.min(min, dataX[0][i]);
+                }
+                if(baseline && min >= baselineX) min = baselineX - 0.05 * (max - baselineX);
+                double span = max - min + intervalSize;
+                double size = intervalSize * width/span;
+                int[] frequencies = getFrequency(dataX[0], min, max, intervalSize);
+                int nInterval = frequencies.length;
+                max = frequencies[0];
+                for(int i = 0; i < nInterval; i++)
+                    max = Math.max(max, frequencies[i]);
+                double unit = 0.8 * height / max;
+                gc2D.setColor(Color.black);
+                for(int i = 0; i < nInterval; i++)
+                    gc2D.drawRect(left + (int)(i * size), height + top - (int)(frequencies[i] * unit), 
+                                  (int)size, (int)(frequencies[i] * unit));
+            
+                // Draw data mean
+                gc2D.setColor(Color.red);
+                gc2D.drawLine(meanX + left - leftInset, height + top, meanX + left - leftInset, top);
+
+                // Draw data median
+                gc2D.setColor(Color.blue);
+                gc2D.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, 
+                                               BasicStroke.JOIN_BEVEL, 0, 
+                                               new float[]{5.0f, 2.0f}, 0));
+                gc2D.drawLine(medianX + left - leftInset, height + top, medianX + left - leftInset, top);            
+                                
+                // Draw baseline
+                if(baseline)
+                {
+                    gc2D.setColor(Color.black);
+                    gc2D.setStroke(new BasicStroke(2.0f));
+                    gc2D.drawLine(baseX + left - leftInset, height + top, baseX + left - leftInset, top);
+                    gc2D.setStroke(new BasicStroke());
+                }
+            
+                // Draw numbers for histogram
+                gc2D.setFont(numberFont);
+                gc2D.setColor(Color.black);
+                String value;
+                for(int i = 0; i <= nHDivi; i++)
+                {
+                    value = formatX.format(min + span*i/nHDivi);
+                    gc2D.drawString(value,
+                                    left + width*i/nHDivi - gc.getFontMetrics().stringWidth(value)/2, 
+                                    top + height + 18);
+                }
+                for(int i = 0; i <= nVDivi; i++)
+                {
+                    value = formatY.format(max*i/nVDivi * 5 / 4);
+                    gc2D.drawString(value,
+                                    left - gc.getFontMetrics().stringWidth(value) - 2, 
+                                    top + height - height*i/nVDivi + 5);
+                }
+                String parameters = "Sample Size = " + dataX[0].length +
+                                    ",   Interval Size = " + dFormat.format(intervalSize);
+                if(baseline)
+                    parameters += ",   True Value = " + dFormat.format(baselineX);
+                gc2D.drawString(parameters, (d.width - gc.getFontMetrics().stringWidth(parameters))/2 +
+                                lineInsetX, top + height + bottomInset - 20);
+                parameters = "Mean = " + dFormat.format(getMean(dataX[0])) +
+                             ",   Median = " + dFormat.format(getMedian(dataX[0])) +
+                             ",   Std. Deviation = " + dFormat.format(getStdDev(dataX[0]));
+                gc2D.drawString(parameters, (d.width - gc.getFontMetrics().stringWidth(parameters))/2 +
+                                lineInsetX, top + height + bottomInset - 10);
+            }
+            else
+            {
+                for(int i = 0; i < nCurve; i++)
+                {
+                    gc2D.setColor(color[i]);
+                    for(int j = 0; j < dataX[i].length; j++)
+                    {
+	                newX[i][j] = (int)(left + (dataX[i][j] - minX)/spanX * width); 
+                        newY[i][j] = (int)(height + top - (dataY[i][j] - minY)/spanY * height);
+                    }
+                    drawCurve(gc2D, symbol[i], i);
+                }
+            }
             return PAGE_EXISTS;
         } 
     }
@@ -1346,6 +1566,13 @@ public class Plotter extends JPanel
                                                new float[]{5.0f, 2.0f}, 0));
                 gc2D.drawLine(x - 20, y, x + 20, y);
                 gc2D.setStroke(new BasicStroke());
+                break;
+            case 13:
+                gc2D.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, 
+                                               BasicStroke.JOIN_BEVEL, 0, 
+                                               new float[]{5.0f, 2.0f}, 0));
+                gc2D.drawLine(x - 20, y, x + 20, y);
+                gc2D.setStroke(new BasicStroke());           
         }
     }
 
@@ -1354,7 +1581,7 @@ public class Plotter extends JPanel
         switch(symbolType)
         {
             case 0:
-                for(int j = 0; j < dataX[i].length; j++)
+                for(int j = 0; j < newX[i].length; j++)
                 {                
                     Ellipse2D.Double circle = new Ellipse2D.Double(newX[i][j] - 4, newY[i][j] - 4, 8, 8); 
                     gc2D.draw(circle);
@@ -1362,14 +1589,14 @@ public class Plotter extends JPanel
                 }
                 break;
             case 1:
-                for(int j = 0; j < dataX[i].length; j++)
+                for(int j = 0; j < newX[i].length; j++)
                 {                
                     Ellipse2D.Double circle = new Ellipse2D.Double(newX[i][j] - 4, newY[i][j] - 4, 8, 8); 
                     gc2D.draw(circle);
                 }
                 break;                    
             case 2:
-                for(int j = 0; j < dataX[i].length; j++)
+                for(int j = 0; j < newX[i].length; j++)
                 {
                     Rectangle2D.Double square = new Rectangle2D.Double(newX[i][j]- 3, newY[i][j] - 3, 6, 6);
                     gc2D.draw(square);
@@ -1377,14 +1604,14 @@ public class Plotter extends JPanel
                 }
                 break;
             case 3:
-                for(int j = 0; j < dataX[i].length; j++)
+                for(int j = 0; j < newX[i].length; j++)
                 {
                     Rectangle2D.Double square = new Rectangle2D.Double(newX[i][j]- 3, newY[i][j] - 3, 6, 6);
                     gc2D.draw(square);
                 }
                 break;
             case 4:
-                for(int j = 0; j < dataX[i].length; j++)
+                for(int j = 0; j < newX[i].length; j++)
                 {   
                     Polygon triangle = new Polygon(new int[]{newX[i][j] - 4, newX[i][j] + 4, newX[i][j]}, 
                                                    new int[]{newY[i][j] + 3, newY[i][j] + 3, newY[i][j] - 3}, 3);
@@ -1393,7 +1620,7 @@ public class Plotter extends JPanel
                 }
                 break;
             case 5:
-                for(int j = 0; j < dataX[i].length; j++)
+                for(int j = 0; j < newX[i].length; j++)
                 {   
                     Polygon triangle = new Polygon(new int[]{newX[i][j] - 4, newX[i][j] + 4, newX[i][j]}, 
                                            new int[]{newY[i][j] + 3, newY[i][j] + 3, newY[i][j] - 3}, 3);
@@ -1401,7 +1628,7 @@ public class Plotter extends JPanel
                 }
                 break;
             case 6:
-                for(int j = 0; j < dataX[i].length; j++)
+                for(int j = 0; j < newX[i].length; j++)
                 {   
                     Polygon triangle = new Polygon(new int[]{newX[i][j] - 4, newX[i][j] + 4, newX[i][j]}, 
                                                    new int[]{newY[i][j] - 3, newY[i][j] - 3, newY[i][j] + 3}, 3);
@@ -1410,7 +1637,7 @@ public class Plotter extends JPanel
                 }
                 break;
             case 7:
-                for(int j = 0; j < dataX[i].length; j++)
+                for(int j = 0; j < newX[i].length; j++)
                 {   
                     Polygon triangle = new Polygon(new int[]{newX[i][j] - 4, newX[i][j] + 4, newX[i][j]}, 
                                                    new int[]{newY[i][j] - 3, newY[i][j] - 3, newY[i][j] + 3}, 3);
@@ -1418,14 +1645,14 @@ public class Plotter extends JPanel
                 }
                 break;                
             case 8:
-                for(int j = 0; j < dataX[i].length; j++)
+                for(int j = 0; j < newX[i].length; j++)
                 {
                     gc2D.drawLine(newX[i][j] - 3, newY[i][j], newX[i][j] + 3, newY[i][j]);
                     gc2D.drawLine(newX[i][j], newY[i][j] - 3, newX[i][j], newY[i][j] + 3);
                 }
                 break;
             case 9:
-                for(int j = 0; j < dataX[i].length; j++)
+                for(int j = 0; j < newX[i].length; j++)
                 {
                     gc2D.drawLine(newX[i][j] - 3, newY[i][j] - 3, newX[i][j] + 3, newY[i][j] + 3);
                     gc2D.drawLine(newX[i][j] - 3, newY[i][j] + 3, newX[i][j] + 3, newY[i][j] - 3);
@@ -1433,17 +1660,23 @@ public class Plotter extends JPanel
                 break;
             case 10:
                 gc2D.setStroke(new BasicStroke(2.0f)); 
-                gc2D.drawPolyline(newX[i], newY[i], dataX[i].length);
+                gc2D.drawPolyline(newX[i], newY[i], newX[i].length);
                 gc2D.setStroke(new BasicStroke());
                 break;
             case 11: 
-                gc2D.drawPolyline(newX[i], newY[i], dataX[i].length);
+                gc2D.drawPolyline(newX[i], newY[i], newX[i].length);
                 break;                
             case 12:
                 gc2D.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, 
                                BasicStroke.JOIN_BEVEL, 0, new float[]{5.0f, 2.0f}, 0));
-                gc2D.drawPolyline(newX[i], newY[i], dataX[i].length);
+                gc2D.drawPolyline(newX[i], newY[i], newX[i].length);
                 gc2D.setStroke(new BasicStroke());
+                break;
+            case 13:
+                gc2D.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, 
+                               BasicStroke.JOIN_BEVEL, 0, new float[]{5.0f, 2.0f}, 0));
+                gc2D.drawPolyline(newX[i], newY[i], newX[i].length);
+                gc2D.setStroke(new BasicStroke());    
         }        
     }
     
@@ -1451,7 +1684,7 @@ public class Plotter extends JPanel
      * @param data a double[][] containing the data.
      * @return a double array containing minimum value and maximum value of the data in order.
      */
-    public static double[] getDefaultRange(double[][] data)
+    public static double[] getDefaultRange(double[][] data, boolean isLog)
     {
         double min = data[0][0];
         double max = min;
@@ -1460,17 +1693,26 @@ public class Plotter extends JPanel
             {
                 max = Math.max(max, data[i][j]);
                 min = Math.min(min, data[i][j]);
-            }    
+            }
+        double[] range = new double[2];
         if(max == min)
         {
-                max += 1;
-                min -= 1;
+            range[0] = min - 1;
+            range[1] = max + 1;
         }
-
-        min = min - (max - min) / 20;
-        max = max + (max - min) / 20;
-        
-        double[] range = {min, max};
+        else
+        {
+            if(!isLog)
+            {
+                range[0] = min - (max - min) / 20;
+                range[1] = max + (max - min) / 20;
+            }
+            else
+            {
+                range[0] = Math.pow(10, 0.05 * (21 * Math.log(min) - Math.log(max)) / Math.log(10));
+                range[1] = Math.pow(10, 0.05 * (21 * Math.log(max) - Math.log(min)) / Math.log(10));
+            }
+        }
         return range;
     }
 
@@ -1562,15 +1804,58 @@ public class Plotter extends JPanel
         return xy;
     }
 
-    //-----------------------------------------------------------------------	
+    private static int[] getFrequency(double[] data, double min, double max, double interSize)
+    {
+        int nInter = (int)((max - min) /interSize) + 1;
+        int frequency, index;
+        int[] frequencies = new int[nInter];
+        for(int i = 0; i < nInter; i++)
+            frequencies[i] = 0;
+        for(int i = 0; i < data.length; i++)
+        {
+            index = (int)((data[i] - min) / interSize); 
+            frequencies[index] = frequencies[index] + 1;
+        }
+        return frequencies;
+    }
+    
+    private static double getMean(double[] data)
+    {
+        int n = data.length;
+        double x = data[0];
+        for(int i = 1; i < n; i++) 
+            x += data[i];
+        return x / n;
+    }
+    
+    private static double getMedian(double[] data)
+    {
+        int n = data.length;
+        double[] temp = (double[])data.clone();
+        Arrays.sort(temp);        
+        if(n % 2 == 0)
+            return 0.5 * (temp[n / 2] + temp[n / 2 + 1]);
+        return temp[(n + 1) / 2];
+    }
+    
+    private static double getStdDev(double[] data)
+    {
+        int n = data.length;
+        double x = data[0] * data[0];
+        for(int i = 1; i < n; i++)
+            x += data[i] * data[i];
+        return Math.sqrt((x - n * getMean(data)) / (n - 1));
+    }
+    
+    //--------------------------------------------------------------------------
     private double[][] dataX, dataY;
-    private double maxX, maxY, minX, minY;
+    private double maxX, maxY, minX, minY, xLineX, yLineY;
     private int[][] newX, newY;    
     private String title, labelX, labelY, regression, percentage;
     private String[] name;
     private int[] symbol;
     private Color[] color, legendColor, addedLineColor;
-    private boolean xLine, yLine, uLine, rLine, pLine, hGrid, vGrid, isLogX, isLogY;
+    private boolean xLine, yLine, uLine, rLine, pLine, hGrid, vGrid, isLogX, isLogY, isHistogram;
     private Rectangle2D.Double legendArea = null;
     private final static Color bg = Color.white;
     private final static Color fg = Color.black;
@@ -1601,6 +1886,11 @@ public class Plotter extends JPanel
     private PrinterJob printerJob;
     private PageFormat pageFormat;
     private PrintRequestAttributeSet attributes;
+    private double intervalSize;
+    private boolean baseline;
+    private String baseLabel;
+    private int baseX, meanX, medianX;
+    private double baselineX;
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

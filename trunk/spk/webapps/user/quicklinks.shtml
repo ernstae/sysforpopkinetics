@@ -18,7 +18,7 @@ distribution.
 ---------------------------------------------------------------------->
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 
-<font size=3>
+<font size=2>
 <p class=quick>Quick Links</p>
 <p>
     <a class=quick href="http://depts.washington.edu/rfpk/">RFPK Home</a>
@@ -39,7 +39,13 @@ distribution.
     <a class=quick href="getmda.jsp">Download</a>
 </p>
 <p>
-    <a class=quick href="HelpFile.pdf">User Manual</a>
+    <a class=quick href="RFPK_SPK_TERMS_OF_SERVICE.html" target="_blank">Terms of Service</a>
+</p>
+<p>
+    <a class=quick href="WebHelp/gettingstartedspk.htm" target="_blank">Getting Started</a>
+</p>
+<p>
+    <a class=quick href="SPK_Manual.pdf">User Manual</a>
 </p>
 <p>
     <a class=quick href="userjobs.jsp">My Jobs</a>

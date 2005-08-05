@@ -24,6 +24,11 @@ author: Jiaji Du
 <%@ taglib prefix="ora" uri="orataglib" %>
 <%@ page isErrorPage="true" %>
 
+<%
+    String emailAddress = getServletContext().getInitParameter("emailAddress");
+    String link = "<a href="mailto:" + emailAddress + ">Let us know</a>";
+%>
+
 <html>
   <head>
     <title>Sorry</title>
@@ -33,9 +38,7 @@ author: Jiaji Du
     Detailed information about the error has been logged so we will
     analyze it and correct whatever is causing it as soon as possible.
     <p>
-    Please try again, and 
-    <a href="mailto:jjdu@u.washington.edu">let us know</a> if the
-    problem persists.
+    Please try again, and <%=link%> if the problem persists.
 
     <ora:fileWrite fileName="log">
       Error in: ${pageContext.errorData.requestURI}

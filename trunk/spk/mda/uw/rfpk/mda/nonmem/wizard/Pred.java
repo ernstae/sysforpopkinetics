@@ -217,7 +217,7 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
                     JOptionPane.showMessageDialog(null, "The number of fixed effect parameters is 0.\n",
                                                   "Input Error", JOptionPane.ERROR_MESSAGE);
                 // Find number of ETAs
-                iterator.setNEta(Utility.find(code.replaceAll("THETA", ""), "ETA"));
+                iterator.setNEta(Utility.find(code, "ETA"));
                 if(iterator.getNEta() == 0)
                     JOptionPane.showMessageDialog(null, "The number of random effect parameters is 0.\n",
                                                   "Input Error", JOptionPane.ERROR_MESSAGE);      

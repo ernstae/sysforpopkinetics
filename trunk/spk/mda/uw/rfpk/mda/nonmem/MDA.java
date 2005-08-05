@@ -16,7 +16,7 @@ Washington Free-Fork License as a public service.  A copy of the
 License can be found in the COPYING file in the root directory of this
 distribution.
 **********************************************************************/
-package uw.rfpk.mda.saamii;
+package uw.rfpk.mda.nonmem;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -26,7 +26,7 @@ import javax.net.ssl.*;
 import javax.swing.JOptionPane;
 
 /**
- * This is the main class of the Model Design Agent application.
+ * This is the main class of the Model Design Agent application. 
  * @author  Jiaji Du
  */
 public class MDA
@@ -42,7 +42,7 @@ public class MDA
         if(args.length != 0)
         {
             // Create a lock file if there is none
-            String path = System.getProperty("user.home") + System.getProperty("file.separator") +
+            String path = System.getProperty("user.home").trim() + System.getProperty("file.separator") +
                           "." + args[2] + "_lock";
 
             File lockFile = null;
@@ -53,8 +53,8 @@ public class MDA
                     lockFile.deleteOnExit();
                 else
                 {
-                    JOptionPane.showMessageDialog(null, "A MDA is already runing in the session.",
-                                                  "Staring MDA Error",
+                    JOptionPane.showMessageDialog(null, "The MDA is already active.",
+                                                  "Starting MDA Error",
                                                   JOptionPane.ERROR_MESSAGE);
                     System.exit(0);
                 }

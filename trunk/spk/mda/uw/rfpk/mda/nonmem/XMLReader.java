@@ -16,10 +16,10 @@ Washington Free-Fork License as a public service.  A copy of the
 License can be found in the COPYING file in the root directory of this
 distribution.
 **********************************************************************/
-package uw.rfpk.mda.saamii;
+package uw.rfpk.mda.nonmem;
 
-import uw.rfpk.mda.saamii.Utility;
-import uw.rfpk.mda.saamii.Output;
+import uw.rfpk.mda.nonmem.Utility;
+import uw.rfpk.mda.nonmem.Output;
 import javax.xml.parsers.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -115,7 +115,7 @@ public class XMLReader
         output.submissionTime = spkjob.getAttribute("submission_time");
         output.completionTime = spkjob.getAttribute("completion_time");
         output.jobId = spkjob.getAttribute("id");
-        output.jobAbstract = spkjob.getAttribute("abstract");
+        output.jobAbstract = spkjob.getAttribute("abstract");        
         output.methodCode = spkjob.getAttribute("method_code");
         NodeList modelList = spkjob.getElementsByTagName("model");
         if(modelList.getLength() > 0)
@@ -164,7 +164,7 @@ public class XMLReader
         {
             Element constraint = (Element)constraintList.item(0);
             NodeList pop_analysisList = constraint.getElementsByTagName("pop_analysis");
-            NodeList ind_analysisList = constraint.getElementsByTagName("ind_analysis"); 
+            NodeList ind_analysisList = constraint.getElementsByTagName("ind_analysis");
             Element analysis = null;
             if(pop_analysisList.getLength() > 0)
             {
@@ -232,9 +232,10 @@ public class XMLReader
             String[][] tableI = output.table[i];
             Element table = (Element)tableList.item(i);
             tableI[0] = new String[4];
-            tableI[0][0] = table.getAttribute("save_as"); 
-            tableI[0][1] = table.getAttribute("header"); 
-            tableI[0][2] = table.getAttribute("process");                
+            tableI[0][0] = table.getAttribute("save_as");
+            if(tableI[0][0].equals("")) tableI[0][0] = "untitled";
+            tableI[0][1] = table.getAttribute("header");
+            tableI[0][2] = table.getAttribute("process");
             NodeList columnList = table.getElementsByTagName("column");
             tableI[1] = new String[columnList.getLength()];
             int nSortingCols = 0;
@@ -243,7 +244,7 @@ public class XMLReader
                 Element column = (Element)columnList.item(j);
                 int k = Integer.parseInt(column.getAttribute("appearance_order"));
                 tableI[1][k - 1] = column.getAttribute("label");
-                if(!column.getAttribute("sort_order").equals("0") && 
+                if(!column.getAttribute("sort_order").equals("0") &&
                    !column.getAttribute("sort_order").equals(""))
                     nSortingCols++;
             }
@@ -302,6 +303,14 @@ public class XMLReader
         NodeList warning_messageList = spkreport.getElementsByTagName("warning_list");
         if(warning_messageList.getLength() > 0)
             getWarningMessage((Element)warning_messageList.item(0));         
+        
+        // Get simulation data
+        NodeList simulationList = spkreport.getElementsByTagName("simulation");
+        if(simulationList.getLength() > 0)
+        {
+            output.subProblem = ((Element)simulationList.item(0)).getAttribute("subproblem");
+            output.simulationSeed = ((Element)simulationList.item(0)).getAttribute("seed");
+        }
         
         // Get population analysis result
         NodeList pop_analysis_resultList = spkreport.getElementsByTagName("pop_analysis_result");
@@ -969,15 +978,24 @@ public class XMLReader
             // Get all output data
             output.indIDs = new String[nRows]; 
             output.dataAll = new double[nRows][nColumns]; 
-            for(int i = 0; i < nRows; i++)
+            try
             {
-                Element dataRow = (Element)rowList.item(i);
-                NodeList valueList = dataRow.getElementsByTagName("value");
-                if(valueList.getLength() != nColumns)
-                    return;
-                output.indIDs[i] = valueList.item(0).getFirstChild().getNodeValue();
-                for(int j = 0; j < nColumns; j++)
-                    output.dataAll[i][j] = Double.parseDouble(valueList.item(j).getFirstChild().getNodeValue());
+                for(int i = 0; i < nRows; i++)
+                {
+                    Element dataRow = (Element)rowList.item(i);
+                    NodeList valueList = dataRow.getElementsByTagName("value");
+                    if(valueList.getLength() != nColumns)
+                        return;
+                    output.indIDs[i] = valueList.item(0).getFirstChild().getNodeValue();
+                    for(int j = 0; j < nColumns; j++)
+                        output.dataAll[i][j] = Double.parseDouble(valueList.item(j).getFirstChild().getNodeValue());
+                }
+            }
+            catch(NumberFormatException e)
+            {
+                JOptionPane.showMessageDialog(null, "An error was found in presentation data",
+                                              "Number Format Error", JOptionPane.ERROR_MESSAGE);
+                output.dataAll = null;
             }
         }
     }
@@ -1024,7 +1042,6 @@ public class XMLReader
         NodeList rowList = spkdata.getElementsByTagName("row"); 
         if(rowList.getLength() > 1)
         {
-            String ls = System.getProperty("line.separator");
             for(int i = 1; i < rowList.getLength(); i++)
             {
                 row = (Element)rowList.item(i);
@@ -1037,10 +1054,10 @@ public class XMLReader
                         if(value.getAttribute("type").equals("string"))
                             data += formatString(value.getFirstChild().getNodeValue());
                         else
-                            data += formatNumeric(value.getFirstChild().getNodeValue());
+                            data += " " + formatNumeric(value.getFirstChild().getNodeValue());
                     }
                 } 
-                data += ls;
+                data += "\n";
             }
         }        
         return data;
@@ -1223,6 +1240,11 @@ public class XMLReader
         return dataAll;
     }
     
+    /** Get parameters from an XML document containing the parameters.
+     * @param parameter_out a String object representing an XML document containing the parameters.
+     * @param output an Output object contaaining the parameters.
+     * @return true if successful, false otherwise.
+     */  
     public boolean getParameters(String parameter_out, Output output)
     {
         this.output = output;
