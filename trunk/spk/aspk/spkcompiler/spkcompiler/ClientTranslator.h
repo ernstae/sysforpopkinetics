@@ -50,7 +50,21 @@ class ClientTranslator{
    * Insert the ID field (ie. node) in each record (subtree) if the data set lacks of it.
    * Returns the location in which the ID field can be found.
    */
-  int insertID();
+  int insertID( xercesc::DOMElement* dataset );
+
+  /**
+   * Insert the MDV field (ie. node) in each record (subtree) if the data set lacks of it.
+   * Returns the location in which the MDV field can be found.
+   */
+  int insertMDV( xercesc::DOMElement* dataset );
+
+  /**
+   * Insert the EVID field (ie. node) in each record (subtree) if the data set lacks of it.
+   * Returns the location in which the EVID field can be found.
+   * This routine assumes MDV is present or has been inserted by SPK Compiler in the data set.
+   */
+  int insertEVID( xercesc::DOMElement* dataset );
+
   /**
    * Parse the DOMDocument tree that represents
    * the SpkDataML document and register the foundings into the symbol table.
@@ -154,6 +168,8 @@ public:
 
  private:
 
+  int whereis( const XMLCh* label ) const;
+
   static const char * C_SPKDATA;     XMLCh* X_SPKDATA;
   static const char * C_VERSION;     XMLCh* X_VERSION;
   static const char * C_POINTONE;    XMLCh* X_POINTONE;
@@ -167,5 +183,7 @@ public:
   static const char * C_TYPE;        XMLCh* X_TYPE;
   static const char * C_NUMERIC;     XMLCh* X_NUMERIC;
   static const char * C_ID;          XMLCh* X_ID;
+  static const char * C_MDV;         XMLCh* X_MDV;
+  static const char * C_EVID;        XMLCh* X_EVID;
 };
 #endif

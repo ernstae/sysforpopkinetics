@@ -85,17 +85,17 @@ if( actual != expected ) \\\n \
   //============================================
   // <Data Set>
   //
-  //   ID      TIME     CP=DV    (MDV)
-  //   1       0.0       0.0      0
-  //   2       0.0       0.0      0
-  //   2       1.0      10.0      0
-  //   3       0.0       0.0      0
-  //   3       1.0      10.0      0
-  //   3       2.0      20.0      0
-  //   4       0.0       0.0      0
-  //   4       1.0      10.0      0
-  //   4       2.0      20.0      0
-  //   4       3.0      25.0      0
+  //   ID      TIME     CP=DV    MDV   EVID
+  //   1       0.0       0.0      0      0
+  //   2       0.0       0.0      0      0
+  //   2       1.0      10.0      0      0
+  //   3       0.0       0.0      0      0
+  //   3       1.0      10.0      0      0
+  //   3       2.0      20.0      0      0
+  //   4       0.0       0.0      0      0
+  //   4       1.0      10.0      0      0
+  //   4       2.0      20.0      0      0
+  //   4       3.0      25.0      0      0
   //============================================
   map<const char*, const char*> label_alias;
   const char *strID         = "ID";
@@ -103,23 +103,24 @@ if( actual != expected ) \\\n \
   const char *strDV         = "DV";
   const char *strCP         = "CP";
   const char *strMDV        = "MDV";
-  const char *label[]       = { strID, strDV, strTIME, strMDV };
+  const char *strEVID       = "EVID";
+  const char *label[]       = { strID, strDV, strTIME, strMDV, strEVID };
   const int    nLabels      = 4;
   const int    nIndividuals = 4;
   const int    nRecords     = 10;
   const int    nFixed       = 0;
   const int    nItems       = nLabels;
   valarray<int> N( nIndividuals );
-  const double record0[] = { 1, 0.0,  0.0, 0 };
-  const double record1[] = { 2, 0.0,  0.0, 0 };
-  const double record2[] = { 2, 1.0, 10.0, 0 };
-  const double record3[] = { 3, 0.0,  0.0, 0 };
-  const double record4[] = { 3, 1.0, 10.0, 0 };
-  const double record5[] = { 3, 2.0, 20.0, 0 };
-  const double record6[] = { 4, 0.0,  0.0, 0 };
-  const double record7[] = { 4, 1.0, 10.0, 0 };
-  const double record8[] = { 4, 2.0, 20.0, 0 };
-  const double record9[] = { 4, 3.0, 25.0, 0 };
+  const double record0[] = { 1, 0.0,  0.0, 0, 0 };
+  const double record1[] = { 2, 0.0,  0.0, 0, 0 };
+  const double record2[] = { 2, 1.0, 10.0, 0, 0 };
+  const double record3[] = { 3, 0.0,  0.0, 0, 0 };
+  const double record4[] = { 3, 1.0, 10.0, 0, 0 };
+  const double record5[] = { 3, 2.0, 20.0, 0, 0 };
+  const double record6[] = { 4, 0.0,  0.0, 0, 0 };
+  const double record7[] = { 4, 1.0, 10.0, 0, 0 };
+  const double record8[] = { 4, 2.0, 20.0, 0, 0 };
+  const double record9[] = { 4, 3.0, 25.0, 0, 0 };
   double const * record[nRecords];
 
   //============================================
@@ -719,6 +720,7 @@ void pop_basicTest::testIndDataClass()
   o << "   vector<double> a_time(n);" << endl;
   o << "   vector<double> a_dv(n);" << endl;
   o << "   vector<double> a_mdv(n);" << endl;
+  o << "   vector<double> a_evid(n);" << endl;
 
   for( int i=0; i<nRecords; i++ )
   {
@@ -726,9 +728,10 @@ void pop_basicTest::testIndDataClass()
     o << "   a_dv  [" << i << "] = "   << record[i][1] << ";" << endl;
     o << "   a_time[" << i << "] = "   << record[i][2] << ";" << endl;
     o << "   a_mdv [" << i << "] = "   << record[i][3] << ";" << endl;
+    o << "   a_mdv [" << i << "] = "   << record[i][4] << ";" << endl;
   }
 
-  o << "   IndData<double> A( n, a_id, a_dv, a_time, a_mdv );" << endl;
+  o << "   IndData<double> A( n, a_id, a_dv, a_time, a_mdv, a_evid );" << endl;
 
   // { ID, DV=CP, TIME, MDV }
   for( int i=0; i<nRecords; i++ )
@@ -738,6 +741,7 @@ void pop_basicTest::testIndDataClass()
       o << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", A." << strDV   << "[" << i << "] );" << endl;
       o << "   MY_ASSERT_EQUAL(  " << record[i][2] << ", A." << strTIME << "[" << i << "] );" << endl;
       o << "   MY_ASSERT_EQUAL(  " << record[i][3] << ", A." << strMDV  << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL(  " << record[i][4] << ", A." << strEVID << "[" << i << "] );" << endl;
       // There have to be placeholders for the current values of theta/eta for
       // each call to Pred::eval().
       o << "   MY_ASSERT_EQUAL( thetaLen, A." << strTHETA << "[" << i << "].size() );" << endl;
