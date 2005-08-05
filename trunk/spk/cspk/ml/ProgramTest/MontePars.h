@@ -18,11 +18,12 @@ namespace MontePars {
 	analytic, // analytic solution when FO model and one random effect
 	grid,     // numerical integration using a uniform grid
 	plain,    // plain and simple monte carlo sampling of integrand
-	miser     // miser algorithm (see Seciton 7.8 of Numerical Recipies)
+	miser,    // miser algorithm (see Seciton 7.8 of Numerical Recipies)
+	vegas     // vegas algorithm (see Seciton 7.8 of Numerical Recipies)
    };
 
    // users choice for this numerical integration run
-   const enum METHOD method = miser;
+   const enum METHOD method = vegas;
 
    // number of components to number of function evaluations
    // If method = grid, this must be the number of random effects
@@ -35,7 +36,7 @@ namespace MontePars {
    // the product of the elements of numberEval.
    // If method != grid, numberEval[0] is the total number of functions 
    // evaluations.
-   const int c_numberEval[nEval] = { 5000 };
+   const int c_numberEval[nEval] = { 1000 };
    const std::valarray<int> numberEval(c_numberEval, nEval);
 };
 
