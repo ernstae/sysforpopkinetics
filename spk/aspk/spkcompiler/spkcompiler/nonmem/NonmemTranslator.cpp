@@ -1,3 +1,23 @@
+/*
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+*/
 #include <fstream>
 
 #include "NonmemTranslator.h"
@@ -884,42 +904,39 @@ void NonmemTranslator::parseSource()
       myRecordNums[i] = id->initial[i].size();
     }
 
-  // ORGDV is a place for the original data set to be kept
-  // if a new data set is simulated.
-  Symbol * s = table->insertScalar( DefaultStr.ORGDV );
- 
-  // Keep the user-typed Nonmem Keyword strings
+  //---------------------------------------------------------------------------------------
+  //
+  // Check predefined words and register in the symbol table if appropriate
+  // before generating C++ source code files.
+  //
+  //---------------------------------------------------------------------------------------
+  assert( isAnalysisDone );
   Symbol * p;
-  if( (p = table->findi( KeyStr.ID )) != Symbol::empty() )
-    UserStr.ID = p->name;
-  else
-    UserStr.ID = DefaultStr.ID;
 
-  if( (p = table->findi( KeyStr.THETA )) != Symbol::empty() )
-    UserStr.THETA = p->name;
-  else
-    UserStr.THETA = DefaultStr.THETA;
+  //+++++++++++++++++++++++++++++++++++++
+  // Ones that are definitely going in.
+  //+++++++++++++++++++++++++++++++++++++
 
-  if( (p = table->findi( KeyStr.OMEGA )) != Symbol::empty() )
-    UserStr.OMEGA = p->name;
+  // ORGDV is a placeholder for the original data set.
+  // The original data set should be copied into this placeholder
+  // in case a new data set is simulated and replaces the oridinary DV field.
+  if( ( p = table->findi( KeyStr.ORGDV )) == Symbol::empty() )
+    {  
+      table->insertScalar( DefaultStr.ORGDV );
+    }
   else
-    UserStr.OMEGA = DefaultStr.OMEGA;
+    {
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, 
+				  "ORGDV should NOT have been defined yet!",
+				  __LINE__,
+				  __FILE__ );
+    }
 
-  if( (p = table->findi( KeyStr.SIGMA )) != Symbol::empty() )
-    UserStr.SIGMA = p->name;
-  else
-    UserStr.SIGMA = DefaultStr.SIGMA;
 
-  if( (p = table->findi( KeyStr.ETA )) != Symbol::empty() )
-    UserStr.ETA = p->name;
-  else
-    UserStr.ETA = DefaultStr.ETA;
-
-  if( (p = table->findi( KeyStr.EPS )) != Symbol::empty() )
-    UserStr.EPS = p->name;
-  else
-    UserStr.EPS = DefaultStr.EPS;
-
+  //+++++++++++++++++++++++++++++++++++++
+  // Ones that may have been appeared 
+  // in the model definition.
+  //+++++++++++++++++++++++++++++++++++++
   // PRED
   if( (p = table->findi( KeyStr.PRED )) != Symbol::empty() )
     UserStr.PRED = p->name;
@@ -1100,63 +1117,199 @@ void NonmemTranslator::parseSource()
 	  table->insertVector( DefaultStr.CWETARES, myEtaLen );
 	  UserStr.CWETARES = DefaultStr.CWETARES;
 	}
+    } 
+
+  //+++++++++++++++++++++++++++++++++++++
+  // Ones that should have been 
+  // registered by now. 
+  // Thus, not going in!
+  //+++++++++++++++++++++++++++++++++++++
+
+  // ID is required in a data set.
+  // The field should have been inserted even if
+  // the original data set lacked it.
+  if( (p = table->findi( KeyStr.ID )) != Symbol::empty() )
+    UserStr.ID = p->name;
+  else
+    {
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, 
+				  "ID should have been defined by now!",
+				  __LINE__,
+				  __FILE__ );
     }
 
-  // MDV
+  // MDV is required in a data set.
+  // The field should have been inserted even if 
+  // the original data set lacked it.
+
   if( (p = table->findi( KeyStr.MDV )) != Symbol::empty() )
     UserStr.MDV = p->name;
   else
     {
-      Symbol * s = table->insertLabel( DefaultStr.MDV, "", myRecordNums );
-      for( int i=0; i<ourPopSize; i++ )
-	s->initial[i] = "0";
-      UserStr.MDV = DefaultStr.MDV;
-    }
-  if( (p = table->findi( KeyStr.ORGDV )) != Symbol::empty() )
-    UserStr.ORGDV = p->name;
-  else
-    {
-      UserStr.ORGDV = DefaultStr.ORGDV; 
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, 
+				  "MDV should have been defined by now!",
+				  __LINE__,
+				  __FILE__ );
     }
 
+  // EVID is required in a data set.
+  // The field should have been inserted even if 
+  // the original data set lacked it.
+
+  if( (p = table->findi( KeyStr.EVID )) != Symbol::empty() )
+    UserStr.EVID = p->name;
+  else
+    {
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, 
+				  "EVID should have been defined by now!",
+				  __LINE__,
+				  __FILE__ );
+    }
+
+  // DV is always required in a data set and
+  // should have appeared in the model definition as well.
   if( (p = table->findi( KeyStr.DV )) != Symbol::empty() )
     UserStr.DV = p->name;
   else
-    UserStr.DV = DefaultStr.DV;
+    {
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, 
+				  "DV should have been defined by now!",
+				  __LINE__,
+				  __FILE__ );
+    }
 
+  // F should have appeared in the model definition.
+  // If not, it's a user input error.
   if( (p = table->findi( KeyStr.F )) != Symbol::empty() )
     UserStr.F = p->name;
   else
-    UserStr.F = DefaultStr.F;
+    {
+      throw SpkCompilerException( SpkCompilerError::ASPK_USER_ERR, 
+				  "F should have been defined by now!",
+				  __LINE__,
+				  __FILE__ );
+    }
   
+  // F should have appeared in the model definition.
+  // If not, it's a user input error.
   if( (p = table->findi( KeyStr.Y )) != Symbol::empty() )
     UserStr.Y = p->name;
   else
-    UserStr.Y = DefaultStr.Y;
-  
+    {
+      throw SpkCompilerException( SpkCompilerError::ASPK_USER_ERR, 
+				  "Y should have been defined by now!",
+				  __LINE__,
+				  __FILE__ );
+    }
+
+
+  // THETA is always required.
+  // It should have been registered while parsing <pop_analysis> or <ind_analysis>.
+  if( (p = table->findi( KeyStr.THETA )) != Symbol::empty() )
+    UserStr.THETA = p->name;
+  else
+    {
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, 
+				  "THETA should have been defined by now!",
+				  __LINE__,
+				  __FILE__ );
+    }
+
+  // OMEGA is always required.
+  // It should have been registered while parsing <pop_analysis> or <ind_analysis>.
+  if( (p = table->findi( KeyStr.OMEGA )) != Symbol::empty() )
+    UserStr.OMEGA = p->name;
+  else
+    {
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, 
+				  "OMEGA should have been defined by now!",
+				  __LINE__,
+				  __FILE__ );
+    }
+
+  // ETA is always required.
+  // It should have been registered while parsing <pop_analysis> or <ind_analysis>.
+  if( (p = table->findi( KeyStr.ETA )) != Symbol::empty() )
+    UserStr.ETA = p->name;
+  else
+    {
+      UserStr.ETA = DefaultStr.ETA;
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, 
+				  "ETA should have been defined by now!",
+				  __LINE__,
+				  __FILE__ );
+    }
+
+  // Predefined words required only for POPULATION analysis.
+  if( ourTarget == POP )
+    {
+      // SIGMA
+      if( (p = table->findi( KeyStr.SIGMA )) != Symbol::empty() )
+	UserStr.SIGMA = p->name;
+      else
+	{
+	  throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, 
+				      "SIGMA should have been defined by now!",
+				      __LINE__,
+				      __FILE__ );
+	}
+      // EPS
+      if( (p = table->findi( KeyStr.EPS )) != Symbol::empty() )
+	UserStr.EPS = p->name;
+      else
+	{
+	  throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, 
+				      "EPS should have been defined by now!",
+				      __LINE__,
+				      __FILE__ );
+	}
+    }
+
+  //---------------------------------------------------------------------------------------
   //
-  // Generate the headers and definition files for IndData class and
+  // Generate source code files
+  //
+  //---------------------------------------------------------------------------------------
+
+  //*************************************
+  // Generate the headers and definition 
+  // files for IndData class and
   // DataSet class.
   //
-  // The symbol table (ie. the order of data labels in the list) must not change
-  // in between the following two routines.
-  //
+  // The symbol table (ie. the order of 
+  // data labels in the list) must not 
+  // change between the following two
+  // calls
+  //*************************************
   generateDataSet();
   generateIndData();
 
+
+  //*************************************
+  // Generate model-related source.
+  //*************************************
   if( myModelSpec == PRED )
-    generatePred( fPredEqn_cpp );
-  else //( myModelSpec == PRED )
     {
-      //    generateODEPred( fPkEqn_cpp, fDiffEqn_cpp, fErrorEqn_cpp );
+      generatePred( fPredEqn_cpp );
+    }
+  /*
+  else if( myModelSpec == ADVAN6 )
+    {
+      generateOdePred( fPkEqn_cpp, fDiffEqn_cpp, fErrorEqn_cpp );
+    }
+  */
+  else
+    {
       char mess[ SpkCompilerError::maxMessageLen() ];
       sprintf( mess, "Invalid model specification!." );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess,
 			      __LINE__, __FILE__ );
       throw e;
-
     }
-
+  
+  //*************************************
+  // Generate namespace files.
+  //*************************************
   generateNonmemParsNamespace();
   if( myIsMonte )
     generateMonteParsNamespace();
@@ -1168,6 +1321,9 @@ void NonmemTranslator::parseSource()
       else 
 	generateIndDriver();
     }
+  //*************************************
+  // Generate Makefile.
+  //*************************************
   generateMakefile();
 }
 //=============================================================================
@@ -1495,14 +1651,14 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
 	    }
 	}
       /*
-      else{
+	else{
 	char mess[ SpkCompilerError::maxMessageLen() ];
 	sprintf( mess, "Missing <%s::%s> attribute.", 
-		 C_POP_ANALYSIS, C_MITR );
+	C_POP_ANALYSIS, C_MITR );
 	SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, 
-				__LINE__, __FILE__ );
+	__LINE__, __FILE__ );
 	throw e;
-      }
+	}
       */
       const XMLCh* xml_sig_digits;
       if( pop_analysis->hasAttribute( X_SIG_DIGITS ) )
@@ -1915,101 +2071,101 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
     // Omega specification contains the minimal representation of the matrix.
     //
     //     /                 \
-    //     |  a11  a12  a13  |
-    // A = |  a21  a22  a23  |
-    //     |  a31  a32  a33  |
-    //     \                 /
-    //
-    // For full, the list contains the LOWER half in the row major order.
-    // For diagonal, only the diagonal elements.
-    //
-    // If A is full, the user-given list will contain elements in the following order:
-    // A' = { a11, a21, a22, a31, a32, a33 }
-    //
-    // xxxPredModel's constructor expects the list containing elements of
-    // the UPPER half in the row major order.
-    //
-    // Thus, A has to be reorganized and stored in an internal array in the following order:
-    // A" = { a11, a21, a31, a22, a32, a33 }
-    //
-    DOMNodeList * value_list = omega_in->getElementsByTagName( X_VALUE );
-    if( myOmegaOrder != value_list->getLength() )
-      {
-	char mess[ SpkCompilerError::maxMessageLen() ];
-	sprintf( mess,
-		 "The number of <%s> elements does not match with the <%s::%s> attribute value.", 
-		 C_VALUE, C_OMEGA, C_LENGTH );
-	SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
-	throw e;
-      }
-    if( myOmegaStruct == Symbol::TRIANGLE )
-      {
-	// First construct a full n by n matrix.
-	valarray<string> omega_in_full ( myOmegaDim * myOmegaDim );
-	valarray<bool> omega_fix_full( myOmegaDim * myOmegaDim );
-	for( int i=0, cnt=0; i<myOmegaDim; i++ )
-	  {
-	    for( int j=0; j<=i; j++, cnt++ )
-	      {
-		char str_val[128];
-		bool isFixed = false;
-		DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(cnt) );
-		if( value->hasAttribute( X_FIXED ) )
-		  {
-		    const XMLCh* xml_fixed = value->getAttribute( X_FIXED );
-		    isFixed = (XMLString::equals( xml_fixed, X_YES )? true : false );
-		  }
-		const XMLCh* xml_val = value->getFirstChild()->getNodeValue();
+      //     |  a11  a12  a13  |
+      // A = |  a21  a22  a23  |
+      //     |  a31  a32  a33  |
+      //     \                 /
+      //
+      // For full, the list contains the LOWER half in the row major order.
+      // For diagonal, only the diagonal elements.
+      //
+      // If A is full, the user-given list will contain elements in the following order:
+      // A' = { a11, a21, a22, a31, a32, a33 }
+      //
+      // xxxPredModel's constructor expects the list containing elements of
+      // the UPPER half in the row major order.
+      //
+      // Thus, A has to be reorganized and stored in an internal array in the following order:
+      // A" = { a11, a21, a31, a22, a32, a33 }
+      //
+      DOMNodeList * value_list = omega_in->getElementsByTagName( X_VALUE );
+      if( myOmegaOrder != value_list->getLength() )
+	{
+	  char mess[ SpkCompilerError::maxMessageLen() ];
+	  sprintf( mess,
+		   "The number of <%s> elements does not match with the <%s::%s> attribute value.", 
+		   C_VALUE, C_OMEGA, C_LENGTH );
+	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+	  throw e;
+	}
+      if( myOmegaStruct == Symbol::TRIANGLE )
+	{
+	  // First construct a full n by n matrix.
+	  valarray<string> omega_in_full ( myOmegaDim * myOmegaDim );
+	  valarray<bool> omega_fix_full( myOmegaDim * myOmegaDim );
+	  for( int i=0, cnt=0; i<myOmegaDim; i++ )
+	    {
+	      for( int j=0; j<=i; j++, cnt++ )
+		{
+		  char str_val[128];
+		  bool isFixed = false;
+		  DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(cnt) );
+		  if( value->hasAttribute( X_FIXED ) )
+		    {
+		      const XMLCh* xml_fixed = value->getAttribute( X_FIXED );
+		      isFixed = (XMLString::equals( xml_fixed, X_YES )? true : false );
+		    }
+		  const XMLCh* xml_val = value->getFirstChild()->getNodeValue();
 
-		if( XMLString::stringLen( xml_val ) == 0 )
-		  strcpy( str_val, valueDefault );
-		else
-		  {
-		    char * tmp_c_val = XMLString::transcode( xml_val );
-		    strcpy( str_val, tmp_c_val );
-		    delete tmp_c_val;
-		  }
-		//omega_in_full[ j + i*dim ] = a[cnt]; // filling a lower triangle element
-		omega_in_full [ i + j*myOmegaDim ] = str_val; // filling a upper triangle element
-		omega_fix_full[ i + j*myOmegaDim ] = isFixed;
-	      }
-	  }
-	// Then, extract only the upper half in the row major order.
-	for( int i=0, cnt=0; i<myOmegaDim; i++ )
-	  {
-	    for( int j=i; j<myOmegaDim; j++, cnt++ )
-	      {
-		sym_omega->initial[0][cnt] = omega_in_full [ j + i * myOmegaDim ];
-		sym_omega->fixed  [0][cnt] = omega_fix_full[ j + i * myOmegaDim ];
-	      }
-	  }
-      }
-    else // diagonal case
-      {
-	for( int i=0; i<myOmegaDim; i++ )
-	  {
-	    char str_val[128];
-	    bool isFixed = false;
-	    DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(i) );
-	    if( value->hasAttribute( X_FIXED ) )
-	      {
-		const XMLCh* xml_fixed = value->getAttribute( X_FIXED );
-		isFixed = (XMLString::equals( xml_fixed, X_YES )? true : false );
-	      }
-	    const XMLCh* xml_val = value->getFirstChild()->getNodeValue();
+		  if( XMLString::stringLen( xml_val ) == 0 )
+		    strcpy( str_val, valueDefault );
+		  else
+		    {
+		      char * tmp_c_val = XMLString::transcode( xml_val );
+		      strcpy( str_val, tmp_c_val );
+		      delete tmp_c_val;
+		    }
+		  //omega_in_full[ j + i*dim ] = a[cnt]; // filling a lower triangle element
+		  omega_in_full [ i + j*myOmegaDim ] = str_val; // filling a upper triangle element
+		  omega_fix_full[ i + j*myOmegaDim ] = isFixed;
+		}
+	    }
+	  // Then, extract only the upper half in the row major order.
+	  for( int i=0, cnt=0; i<myOmegaDim; i++ )
+	    {
+	      for( int j=i; j<myOmegaDim; j++, cnt++ )
+		{
+		  sym_omega->initial[0][cnt] = omega_in_full [ j + i * myOmegaDim ];
+		  sym_omega->fixed  [0][cnt] = omega_fix_full[ j + i * myOmegaDim ];
+		}
+	    }
+	}
+      else // diagonal case
+	{
+	  for( int i=0; i<myOmegaDim; i++ )
+	    {
+	      char str_val[128];
+	      bool isFixed = false;
+	      DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(i) );
+	      if( value->hasAttribute( X_FIXED ) )
+		{
+		  const XMLCh* xml_fixed = value->getAttribute( X_FIXED );
+		  isFixed = (XMLString::equals( xml_fixed, X_YES )? true : false );
+		}
+	      const XMLCh* xml_val = value->getFirstChild()->getNodeValue();
 
-	    if( XMLString::stringLen( xml_val ) == 0 )
-	      strcpy( str_val, valueDefault );
-	    else
-	      {
-		char * tmp_c_val = XMLString::transcode( xml_val );
-		strcpy( str_val, tmp_c_val );
-		delete tmp_c_val;
-	      }
-	    sym_omega->initial[0][i] = str_val;
-	    sym_omega->fixed[0][i]   = isFixed;
-	  }
-      }
+	      if( XMLString::stringLen( xml_val ) == 0 )
+		strcpy( str_val, valueDefault );
+	      else
+		{
+		  char * tmp_c_val = XMLString::transcode( xml_val );
+		  strcpy( str_val, tmp_c_val );
+		  delete tmp_c_val;
+		}
+	      sym_omega->initial[0][i] = str_val;
+	      sym_omega->fixed[0][i]   = isFixed;
+	    }
+	}
 
   }
 
@@ -2108,101 +2264,101 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
     // Sigma specification contains the minimal representation of the matrix.
     //
     //     /                 \
-    //     |  a11  a12  a13  |
-    // A = |  a21  a22  a23  |
-    //     |  a31  a32  a33  |
-    //     \                 /
-    //
-    // For full, the list contains the LOWER half in the row major order.
-    // For diagonal, only the diagonal elements.
-    //
-    // If A is full, the user-given list will contain elements in the following order:
-    // A' = { a11, a21, a22, a31, a32, a33 }
-    //
-    // xxxPredModel's constructor expects the list containing elements of
-    // the UPPER half in the row major order.
-    //
-    // Thus, A has to be reorganized and stored in an internal array in the following order:
-    // A" = { a11, a21, a31, a22, a32, a33 }
-    //
-    DOMNodeList * value_list = sigma_in->getElementsByTagName( X_VALUE );
-    if( mySigmaOrder != value_list->getLength() )
-      {
-	char mess[ SpkCompilerError::maxMessageLen() ];
-	sprintf( mess,
-		 "The number of <%s> elements does not match with the <%s::%s> attribute value.", 
-		 C_VALUE, C_SIGMA, C_LENGTH );
-	SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
-	throw e;
-      }
-    if( mySigmaStruct == Symbol::TRIANGLE )
-      {
-	// First construct a full n by n matrix.
-	valarray<string> sigma_in_full ( mySigmaDim * mySigmaDim );
-	valarray<bool>   sigma_fix_full( mySigmaDim * mySigmaDim );
-	for( int i=0, cnt=0; i<mySigmaDim; i++ )
-	  {
-	    for( int j=0; j<=i; j++, cnt++ )
-	      {
-		char str_val[128];
-		bool isFixed = false;
-		DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(cnt) );
-		if( value->hasAttribute( X_FIXED ) )
-		  {
-		    const XMLCh* xml_fixed = value->getAttribute( X_FIXED );
-		    isFixed = (XMLString::equals( xml_fixed, X_YES )? true : false );
-		  }
-		const XMLCh* xml_val = value->getFirstChild()->getNodeValue();
+      //     |  a11  a12  a13  |
+      // A = |  a21  a22  a23  |
+      //     |  a31  a32  a33  |
+      //     \                 /
+      //
+      // For full, the list contains the LOWER half in the row major order.
+      // For diagonal, only the diagonal elements.
+      //
+      // If A is full, the user-given list will contain elements in the following order:
+      // A' = { a11, a21, a22, a31, a32, a33 }
+      //
+      // xxxPredModel's constructor expects the list containing elements of
+      // the UPPER half in the row major order.
+      //
+      // Thus, A has to be reorganized and stored in an internal array in the following order:
+      // A" = { a11, a21, a31, a22, a32, a33 }
+      //
+      DOMNodeList * value_list = sigma_in->getElementsByTagName( X_VALUE );
+      if( mySigmaOrder != value_list->getLength() )
+	{
+	  char mess[ SpkCompilerError::maxMessageLen() ];
+	  sprintf( mess,
+		   "The number of <%s> elements does not match with the <%s::%s> attribute value.", 
+		   C_VALUE, C_SIGMA, C_LENGTH );
+	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+	  throw e;
+	}
+      if( mySigmaStruct == Symbol::TRIANGLE )
+	{
+	  // First construct a full n by n matrix.
+	  valarray<string> sigma_in_full ( mySigmaDim * mySigmaDim );
+	  valarray<bool>   sigma_fix_full( mySigmaDim * mySigmaDim );
+	  for( int i=0, cnt=0; i<mySigmaDim; i++ )
+	    {
+	      for( int j=0; j<=i; j++, cnt++ )
+		{
+		  char str_val[128];
+		  bool isFixed = false;
+		  DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(cnt) );
+		  if( value->hasAttribute( X_FIXED ) )
+		    {
+		      const XMLCh* xml_fixed = value->getAttribute( X_FIXED );
+		      isFixed = (XMLString::equals( xml_fixed, X_YES )? true : false );
+		    }
+		  const XMLCh* xml_val = value->getFirstChild()->getNodeValue();
 
-		if( XMLString::stringLen( xml_val ) == 0 )
-		  strcpy( str_val, valueDefault );
-		else
-		  {
-		    char * tmp_c_val = XMLString::transcode( xml_val );
-		    strcpy( str_val, tmp_c_val );
-		    delete tmp_c_val;
-		  }
-		//sigma_in_full[ j + i*dim ] = str_val; // filling a lower triangle element
-		sigma_in_full [ i + j*mySigmaDim ] = str_val; // filling a upper triangle element
-		sigma_fix_full[ i + j*mySigmaDim ] = isFixed;
-	      }
-	  }
-	// Then, extract only the upper half in the row major order.
-	for( int i=0, cnt=0; i<mySigmaDim; i++ )
-	  {
-	    for( int j=i; j<mySigmaDim; j++, cnt++ )
-	      {
-		sym_sigma->initial[0][cnt] = sigma_in_full [ j + i * mySigmaDim ];
-		sym_sigma->fixed  [0][cnt] = sigma_fix_full[ j + i * mySigmaDim ];
-	      }
-	  }
-      }
-    else // diagonal case
-      {
-	for( int i=0; i<mySigmaDim; i++ )
-	  {
-	    char str_val[128];
-	    bool isFixed = false;
-	    DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(i) );
-	    if( value->hasAttribute( X_FIXED ) )
-	      {
-		const XMLCh* xml_fixed = value->getAttribute( X_FIXED );
-		isFixed = (XMLString::equals( xml_fixed, X_YES )? true : false );
-	      }
-	    const XMLCh* xml_val = value->getFirstChild()->getNodeValue();
+		  if( XMLString::stringLen( xml_val ) == 0 )
+		    strcpy( str_val, valueDefault );
+		  else
+		    {
+		      char * tmp_c_val = XMLString::transcode( xml_val );
+		      strcpy( str_val, tmp_c_val );
+		      delete tmp_c_val;
+		    }
+		  //sigma_in_full[ j + i*dim ] = str_val; // filling a lower triangle element
+		  sigma_in_full [ i + j*mySigmaDim ] = str_val; // filling a upper triangle element
+		  sigma_fix_full[ i + j*mySigmaDim ] = isFixed;
+		}
+	    }
+	  // Then, extract only the upper half in the row major order.
+	  for( int i=0, cnt=0; i<mySigmaDim; i++ )
+	    {
+	      for( int j=i; j<mySigmaDim; j++, cnt++ )
+		{
+		  sym_sigma->initial[0][cnt] = sigma_in_full [ j + i * mySigmaDim ];
+		  sym_sigma->fixed  [0][cnt] = sigma_fix_full[ j + i * mySigmaDim ];
+		}
+	    }
+	}
+      else // diagonal case
+	{
+	  for( int i=0; i<mySigmaDim; i++ )
+	    {
+	      char str_val[128];
+	      bool isFixed = false;
+	      DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(i) );
+	      if( value->hasAttribute( X_FIXED ) )
+		{
+		  const XMLCh* xml_fixed = value->getAttribute( X_FIXED );
+		  isFixed = (XMLString::equals( xml_fixed, X_YES )? true : false );
+		}
+	      const XMLCh* xml_val = value->getFirstChild()->getNodeValue();
 
-	    if( XMLString::stringLen( xml_val ) == 0 )
-	      strcpy( str_val, valueDefault );
-	    else
-	      {
-		char * tmp_c_val = XMLString::transcode( xml_val );
-		strcpy( str_val, tmp_c_val );
-		delete tmp_c_val;
-	      }
-	    sym_sigma->initial[0][i] = str_val;
-	    sym_sigma->fixed[0][i]   = isFixed;
-	  }
-      }
+	      if( XMLString::stringLen( xml_val ) == 0 )
+		strcpy( str_val, valueDefault );
+	      else
+		{
+		  char * tmp_c_val = XMLString::transcode( xml_val );
+		  strcpy( str_val, tmp_c_val );
+		  delete tmp_c_val;
+		}
+	      sym_sigma->initial[0][i] = str_val;
+	      sym_sigma->fixed[0][i]   = isFixed;
+	    }
+	}
   }
   
   //---------------------------------------------------------------------------------------
@@ -2917,102 +3073,102 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
     // Omega specification contains the minimal representation of the matrix.
     //
     //     /                 \
-    //     |  a11  a12  a13  |
-    // A = |  a21  a22  a23  |
-    //     |  a31  a32  a33  |
-    //     \                 /
-    //
-    // For full, the list contains the LOWER half in the row major order.
-    // For diagonal, only the diagonal elements.
-    //
-    // If A is full, the user-given list will contain elements in the following order:
-    // A' = { a11, a21, a22, a31, a32, a33 }
-    //
-    // xxxPredModel's constructor expects the list containing elements of
-    // the UPPER half in the row major order.
-    //
-    // Thus, A has to be reorganized and stored in an internal array in the following order:
-    // A" = { a11, a21, a31, a22, a32, a33 }
-    //
-    char valueDefault[] = "0.0";
-    DOMNodeList * value_list = omega_in->getElementsByTagName( X_VALUE );
-    if( myOmegaOrder != value_list->getLength() )
-      {
-	char mess[ SpkCompilerError::maxMessageLen() ];
-	sprintf( mess,
-		 "The number of <%s> elements does not match with the <%s::%s> attribute value.", 
-		 C_VALUE, C_OMEGA, C_LENGTH );
-	SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
-	throw e;
-      }
-    if( myOmegaStruct == Symbol::TRIANGLE )
-      {
-	// First construct a full n by n matrix.
-	valarray<string> omega_in_full ( myOmegaDim * myOmegaDim );
-	valarray<bool> omega_fix_full( myOmegaDim * myOmegaDim );
-	for( int i=0, cnt=0; i<myOmegaDim; i++ )
-	  {
-	    for( int j=0; j<=i; j++, cnt++ )
-	      {
-		char str_val[128];
-		bool isFixed = false;
-		DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(cnt) );
-		if( value->hasAttribute( X_FIXED ) )
-		  {
-		    const XMLCh* xml_fixed = value->getAttribute( X_FIXED );
-		    isFixed = (XMLString::equals( xml_fixed, X_YES )? true : false );
-		  }
-		const XMLCh* xml_val = value->getFirstChild()->getNodeValue();
+      //     |  a11  a12  a13  |
+      // A = |  a21  a22  a23  |
+      //     |  a31  a32  a33  |
+      //     \                 /
+      //
+      // For full, the list contains the LOWER half in the row major order.
+      // For diagonal, only the diagonal elements.
+      //
+      // If A is full, the user-given list will contain elements in the following order:
+      // A' = { a11, a21, a22, a31, a32, a33 }
+      //
+      // xxxPredModel's constructor expects the list containing elements of
+      // the UPPER half in the row major order.
+      //
+      // Thus, A has to be reorganized and stored in an internal array in the following order:
+      // A" = { a11, a21, a31, a22, a32, a33 }
+      //
+      char valueDefault[] = "0.0";
+      DOMNodeList * value_list = omega_in->getElementsByTagName( X_VALUE );
+      if( myOmegaOrder != value_list->getLength() )
+	{
+	  char mess[ SpkCompilerError::maxMessageLen() ];
+	  sprintf( mess,
+		   "The number of <%s> elements does not match with the <%s::%s> attribute value.", 
+		   C_VALUE, C_OMEGA, C_LENGTH );
+	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+	  throw e;
+	}
+      if( myOmegaStruct == Symbol::TRIANGLE )
+	{
+	  // First construct a full n by n matrix.
+	  valarray<string> omega_in_full ( myOmegaDim * myOmegaDim );
+	  valarray<bool> omega_fix_full( myOmegaDim * myOmegaDim );
+	  for( int i=0, cnt=0; i<myOmegaDim; i++ )
+	    {
+	      for( int j=0; j<=i; j++, cnt++ )
+		{
+		  char str_val[128];
+		  bool isFixed = false;
+		  DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(cnt) );
+		  if( value->hasAttribute( X_FIXED ) )
+		    {
+		      const XMLCh* xml_fixed = value->getAttribute( X_FIXED );
+		      isFixed = (XMLString::equals( xml_fixed, X_YES )? true : false );
+		    }
+		  const XMLCh* xml_val = value->getFirstChild()->getNodeValue();
 
-		if( XMLString::stringLen( xml_val ) == 0 )
-		  strcpy( str_val, valueDefault );
-		else
-		  {
-		    char * tmp_c_val = XMLString::transcode( xml_val );
-		    strcpy( str_val, tmp_c_val );
-		    delete tmp_c_val;
-		  }
-		//omega_in_full[ j + i*dim ] = a[cnt]; // filling a lower triangle element
-		omega_in_full [ i + j*myOmegaDim ] = str_val; // filling a upper triangle element
-		omega_fix_full[ i + j*myOmegaDim ] = isFixed;
-	      }
-	  }
-	// Then, extract only the upper half in the row major order.
-	for( int i=0, cnt=0; i<myOmegaDim; i++ )
-	  {
-	    for( int j=i; j<myOmegaDim; j++, cnt++ )
-	      {
-		sym_omega->initial[0][cnt] = omega_in_full [ j + i * myOmegaDim ];
-		sym_omega->fixed  [0][cnt] = omega_fix_full[ j + i * myOmegaDim ];
-	      }
-	  }
-      }
-    else // diagonal case
-      {
-	for( int i=0; i<myOmegaDim; i++ )
-	  {
-	    char str_val[128];
-	    bool isFixed = false;
-	    DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(i) );
-	    if( value->hasAttribute( X_FIXED ) )
-	      {
-		const XMLCh* xml_fixed = value->getAttribute( X_FIXED );
-		isFixed = (XMLString::equals( xml_fixed, X_YES )? true : false );
-	      }
-	    const XMLCh* xml_val = value->getFirstChild()->getNodeValue();
+		  if( XMLString::stringLen( xml_val ) == 0 )
+		    strcpy( str_val, valueDefault );
+		  else
+		    {
+		      char * tmp_c_val = XMLString::transcode( xml_val );
+		      strcpy( str_val, tmp_c_val );
+		      delete tmp_c_val;
+		    }
+		  //omega_in_full[ j + i*dim ] = a[cnt]; // filling a lower triangle element
+		  omega_in_full [ i + j*myOmegaDim ] = str_val; // filling a upper triangle element
+		  omega_fix_full[ i + j*myOmegaDim ] = isFixed;
+		}
+	    }
+	  // Then, extract only the upper half in the row major order.
+	  for( int i=0, cnt=0; i<myOmegaDim; i++ )
+	    {
+	      for( int j=i; j<myOmegaDim; j++, cnt++ )
+		{
+		  sym_omega->initial[0][cnt] = omega_in_full [ j + i * myOmegaDim ];
+		  sym_omega->fixed  [0][cnt] = omega_fix_full[ j + i * myOmegaDim ];
+		}
+	    }
+	}
+      else // diagonal case
+	{
+	  for( int i=0; i<myOmegaDim; i++ )
+	    {
+	      char str_val[128];
+	      bool isFixed = false;
+	      DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(i) );
+	      if( value->hasAttribute( X_FIXED ) )
+		{
+		  const XMLCh* xml_fixed = value->getAttribute( X_FIXED );
+		  isFixed = (XMLString::equals( xml_fixed, X_YES )? true : false );
+		}
+	      const XMLCh* xml_val = value->getFirstChild()->getNodeValue();
 
-	    if( XMLString::stringLen( xml_val ) == 0 )
-	      strcpy( str_val, valueDefault );
-	    else
-	      {
-		char * tmp_c_val = XMLString::transcode( xml_val );
-		strcpy( str_val, tmp_c_val );
-		delete tmp_c_val;
-	      }
-	    sym_omega->initial[0][i] = str_val;
-	    sym_omega->fixed[0][i]   = isFixed;
-	  }
-      }
+	      if( XMLString::stringLen( xml_val ) == 0 )
+		strcpy( str_val, valueDefault );
+	      else
+		{
+		  char * tmp_c_val = XMLString::transcode( xml_val );
+		  strcpy( str_val, tmp_c_val );
+		  delete tmp_c_val;
+		}
+	      sym_omega->initial[0][i] = str_val;
+	      sym_omega->fixed[0][i]   = isFixed;
+	    }
+	}
   }
 
   // ETA
@@ -3071,7 +3227,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
       const XMLCh* xml_stderr = ind_stat->getAttribute( X_IS_ERR_OUT );
       const XMLCh* cov_form = X_COV_H;
       if( ind_stat->hasAttribute( X_COVARIANCE_FORM ) )
-          cov_form = ind_stat->getAttribute( X_COVARIANCE_FORM );
+	cov_form = ind_stat->getAttribute( X_COVARIANCE_FORM );
       if( XMLString::equals( cov_form, X_COV_S ) )
 	myCovForm = "S";
       else if( XMLString::equals( cov_form, X_COV_RSR ) )
@@ -3187,12 +3343,12 @@ int NonmemTranslator::countStrInLhs( const char* str, const char * equations )
   char * lhs  = NULL;
   line = strtok( dup, "=" );
   while( line != NULL )
-  {
-     if( strstr( line, str ) != NULL )
+    {
+      if( strstr( line, str ) != NULL )
         ++n;
-     line = strtok( NULL, "\n" );
-     line = strtok( NULL, "=" );
-  }
+      line = strtok( NULL, "\n" );
+      line = strtok( NULL, "=" );
+    }
   delete [] dup;
   return n;
 
@@ -3221,7 +3377,7 @@ void NonmemTranslator::parseAdvan(
   DOMElement  * error       = NULL;
 
   //
-  // Get <pk> and <error> which are needed for any modeling framework besides $PRED.
+  // Get <pk> and <error> are needed for any ADVAN.
   //
   // REVISIT Sachiko 05/12/2005
   // There are times when $PK is not specified.  
@@ -3239,9 +3395,23 @@ void NonmemTranslator::parseAdvan(
     }
   
   pk      = dynamic_cast<DOMElement*>( pks->item(0) );
+  if( !pk )
+    {
+      char m[ SpkCompilerError::maxMessageLen() ];
+      sprintf( m, "<%s> block is missing!", C_PK );
+      throw SpkCompilerException( SpkCompilerError::ASPK_SOURCEML_ERR,
+				  m, __LINE__, __FILE__ );
+    }
   error   = dynamic_cast<DOMElement*>( errors->item(0) );
+  if( !error )
+    {
+      char m[ SpkCompilerError::maxMessageLen() ];
+      sprintf( m, "<%s> block is missing!", C_ERROR );
+      throw SpkCompilerException( SpkCompilerError::ASPK_SOURCEML_ERR,
+				  m, __LINE__, __FILE__ );
+    }
   
-  // ADVAN 5-9 needs the compartmental model definiton, <comp_model>.
+  // ADVAN 5-9 needs an additional model, the compartmental model definition <comp_model>.
   if( myModelSpec >= ADVAN5 && myModelSpec <= ADVAN9 )
     {
       if( comp_models->getLength() < 1 )
@@ -3250,7 +3420,7 @@ void NonmemTranslator::parseAdvan(
 	  sprintf( mess, "<comp_model> must be specified when ADVAN 5-9 is used!" );
 	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR,
 				  mess, __LINE__, __FILE__ );
-	      throw e;
+	  throw e;
 	}
       comp_model = dynamic_cast<DOMElement*>( comp_models->item(0) );
 
@@ -3268,26 +3438,25 @@ void NonmemTranslator::parseAdvan(
 	  diffeqn = dynamic_cast<DOMElement*>( diffeqns->item(0) );
 	}
     }
-  // Other ADVANs don't need more than <pk> and <error>
-  else
-    {
-      // nothing to do.
-    }
 
+  // Now, switch to a specific ADVAN parsing.
+      char m[ SpkCompilerError::maxMessageLen() ];
   switch( advan )
     {
     case ADVAN6: // nonlinear ODE model.
       parseAdvan6( trans, comp_model, pk, diffeqn, error );
       break;
     default:
+      sprintf( m, "ADVAN%d is not supported yet!", static_cast<int>( advan ) );
+      throw SpkCompilerException( SpkCompilerError::ASPK_USER_ERR, m, __LINE__, __FILE__ );
       break;
     }
 }
 void NonmemTranslator::parseAdvan6( enum TRANS trans,
-		    const xercesc::DOMElement* comp_model,
-		    const xercesc::DOMElement* pk,
-		    const xercesc::DOMElement* diffeqn,
-		    const xercesc::DOMElement* error )
+				    const xercesc::DOMElement* comp_model,
+				    const xercesc::DOMElement* pk,
+				    const xercesc::DOMElement* diffeqn,
+				    const xercesc::DOMElement* error )
 {
   parseCompModel( comp_model );
   parsePK( pk );
@@ -3741,17 +3910,17 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "   void replaceCRes   ( const SPK_VA::valarray<double>& cResIn );"   << endl;
   oIndData_h << "   void replaceCWRes  ( const SPK_VA::valarray<double>& cWresIn );"  << endl;
   if( ourTarget == POP )
-  {
-     oIndData_h << "   void replaceEta     ( const SPK_VA::valarray<double>& etaIn );"      << endl;
-     oIndData_h << "   void replaceEtaRes  ( const SPK_VA::valarray<double>& EtaresIn );"  << endl;
-     oIndData_h << "   void replaceWEtaRes ( const SPK_VA::valarray<double>& WetaresIn );" << endl;
-     oIndData_h << "   void replaceIEtaRes ( const SPK_VA::valarray<double>& iEtaresIn );"  << endl;
-     oIndData_h << "   void replaceIWEtaRes( const SPK_VA::valarray<double>& iWetaresIn );" << endl;
-     oIndData_h << "   void replacePEtaRes ( const SPK_VA::valarray<double>& pEtaResIn );"  << endl;
-     oIndData_h << "   void replacePWEtaRes( const SPK_VA::valarray<double>& pWEtaResIn );" << endl;
-     oIndData_h << "   void replaceCEtaRes ( const SPK_VA::valarray<double>& cEtaResIn );"  << endl;
-     oIndData_h << "   void replaceCWEtaRes( const SPK_VA::valarray<double>& cWEtaResIn );" << endl;
-  }
+    {
+      oIndData_h << "   void replaceEta     ( const SPK_VA::valarray<double>& etaIn );"      << endl;
+      oIndData_h << "   void replaceEtaRes  ( const SPK_VA::valarray<double>& EtaresIn );"  << endl;
+      oIndData_h << "   void replaceWEtaRes ( const SPK_VA::valarray<double>& WetaresIn );" << endl;
+      oIndData_h << "   void replaceIEtaRes ( const SPK_VA::valarray<double>& iEtaresIn );"  << endl;
+      oIndData_h << "   void replaceIWEtaRes( const SPK_VA::valarray<double>& iWetaresIn );" << endl;
+      oIndData_h << "   void replacePEtaRes ( const SPK_VA::valarray<double>& pEtaResIn );"  << endl;
+      oIndData_h << "   void replacePWEtaRes( const SPK_VA::valarray<double>& pWEtaResIn );" << endl;
+      oIndData_h << "   void replaceCEtaRes ( const SPK_VA::valarray<double>& cEtaResIn );"  << endl;
+      oIndData_h << "   void replaceCWEtaRes( const SPK_VA::valarray<double>& cWEtaResIn );" << endl;
+    }
   oIndData_h << endl;
 
   //----------------------------------------
@@ -3975,14 +4144,22 @@ void NonmemTranslator::generateIndData( ) const
 	  oIndData_h << "      " << UserStr.PWETARES << "[j].resize( " << myEtaLen << " );" << endl;
 	  oIndData_h << "      " << UserStr.CETARES  << "[j].resize( " << myEtaLen << " );" << endl;
 	  oIndData_h << "      " << UserStr.CWETARES << "[j].resize( " << myEtaLen << " );" << endl;
-	  oIndData_h << "      " << "fill( " << UserStr.ETARES   << "[j].begin(), " << UserStr.ETARES   << "[j].end(), -99999 );" << endl;
-	  oIndData_h << "      " << "fill( " << UserStr.WETARES  << "[j].begin(), " << UserStr.WETARES  << "[j].end(), -99999 );" << endl;
-	  oIndData_h << "      " << "fill( " << UserStr.IETARES  << "[j].begin(), " << UserStr.IETARES  << "[j].end(), -99999 );" << endl;
-	  oIndData_h << "      " << "fill( " << UserStr.IWETARES << "[j].begin(), " << UserStr.IWETARES << "[j].end(), -99999 );" << endl;
-	  oIndData_h << "      " << "fill( " << UserStr.PETARES  << "[j].begin(), " << UserStr.PETARES  << "[j].end(), -99999 );" << endl;
-	  oIndData_h << "      " << "fill( " << UserStr.PWETARES << "[j].begin(), " << UserStr.PWETARES << "[j].end(), -99999 );" << endl;
-	  oIndData_h << "      " << "fill( " << UserStr.CETARES  << "[j].begin(), " << UserStr.CETARES  << "[j].end(), -99999 );" << endl;
-	  oIndData_h << "      " << "fill( " << UserStr.CWETARES << "[j].begin(), " << UserStr.CWETARES << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << UserStr.ETARES   << "[j].begin(), ";
+          oIndData_h << UserStr.ETARES   << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << UserStr.WETARES  << "[j].begin(), ";
+	  oIndData_h << UserStr.WETARES  << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << UserStr.IETARES  << "[j].begin(), ";
+	  oIndData_h << UserStr.IETARES  << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << UserStr.IWETARES << "[j].begin(), ";
+	  oIndData_h << UserStr.IWETARES << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << UserStr.PETARES  << "[j].begin(), ";
+	  oIndData_h << UserStr.PETARES  << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << UserStr.PWETARES << "[j].begin(), ";
+	  oIndData_h << UserStr.PWETARES << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << UserStr.CETARES  << "[j].begin(), ";
+	  oIndData_h << UserStr.CETARES  << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << UserStr.CWETARES << "[j].begin(), ";
+	  oIndData_h << UserStr.CWETARES << "[j].end(), -99999 );" << endl;
 	}
     }
   if( myEpsLen > 0 )
@@ -4267,7 +4444,7 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "}" << endl;
   oIndData_h << endl;
 
-   // --------------------
+  // --------------------
   // replaceCPred()
   // --------------------
   oIndData_h << "template <class spk_ValueType>" << endl;
@@ -4312,7 +4489,7 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "}" << endl;
   oIndData_h << endl;
 
- if( ourTarget == POP )
+  if( ourTarget == POP )
     {
       // --------------------
       // replaceEta()
@@ -5348,19 +5525,19 @@ void NonmemTranslator::generateDataSet( ) const
   // So, we increment the country by (2-1)=1. 
   const int nItems = t->size();
   int nColumns = nItems 
-               + myThetaLen-1
-               + myEtaLen-1 
-               + (ourTarget==POP? (myEpsLen - 1) : 0 ) // for EPS
-               + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for ETARES
-               + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for WETARES
-               + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for IETARES
-               + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for IWETARES
-               + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for PETARES
-               + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for PWETARES
-               + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for CETARES
-               + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for CWETARES
-               - (table->findi(KeyStr.OMEGA)   == Symbol::empty()? 0 : 1 )
-               - (table->findi(KeyStr.SIGMA)   == Symbol::empty()? 0 : 1 );
+    + myThetaLen-1
+    + myEtaLen-1 
+    + (ourTarget==POP? (myEpsLen - 1) : 0 ) // for EPS
+    + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for ETARES
+    + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for WETARES
+    + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for IETARES
+    + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for IWETARES
+    + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for PETARES
+    + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for PWETARES
+    + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for CETARES
+    + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for CWETARES
+    - (table->findi(KeyStr.OMEGA)   == Symbol::empty()? 0 : 1 )
+    - (table->findi(KeyStr.SIGMA)   == Symbol::empty()? 0 : 1 );
   
   map<const string, Symbol>::const_iterator pEntry = t->begin();
   const vector<string>::const_iterator pLabelBegin = table->getLabels()->begin();
@@ -5394,7 +5571,7 @@ void NonmemTranslator::generateDataSet( ) const
 	  // Skip Omega and Sigma.
           // These values are not computed by Pred::eval().
 	  if(    pEntry->first != KeyStr.OMEGA 
-	      && pEntry->first != KeyStr.SIGMA )
+		 && pEntry->first != KeyStr.SIGMA )
 	    {
 	      whatGoesIn.push_back( pEntry->second.name );
 	      
@@ -6218,10 +6395,10 @@ void NonmemTranslator::generateMonteParsNamespace() const
   oMontePars << "#endif" << endl;
 }
 /*
-void NonmemTranslator::generateODEPred( const char* fPkEqn_cpp, 
-                                        const char* fDiffEqn_cpp, 
-					const char* fErrorEqn_cpp ) const
-{
+  void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp, 
+  const char* fDiffEqn_cpp, 
+  const char* fErrorEqn_cpp ) const
+  {
   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   //
   // Preliminaries
@@ -6261,12 +6438,12 @@ void NonmemTranslator::generateODEPred( const char* fPkEqn_cpp,
   // 
   ofstream oODEPred_h( fODEPred_h );
   if( !oODEPred_h.good() )
-    {
-      char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Failed to create %s file.", fODEPred_h );
-      SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
-      throw e;
-    }
+  {
+  char mess[ SpkCompilerError::maxMessageLen() ];
+  sprintf( mess, "Failed to create %s file.", fODEPred_h );
+  SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
+  throw e;
+  }
 
   //---------------------------------------------------------------------------------------
   //
@@ -6391,18 +6568,18 @@ void NonmemTranslator::generateODEPred( const char* fPkEqn_cpp,
   // otherwise all numeric, spk_ValueType.
   pLabel = labels->begin();
   for( int i=0; i<nLabels, pLabel != labels->end(); i++, pLabel++ )
-    {
-      bool isID = (SymbolTable::key( *pLabel ) == KeyStr.ID );
+  {
+  bool isID = (SymbolTable::key( *pLabel ) == KeyStr.ID );
 
-      const Symbol* s = table->findi( *pLabel );
-      oODEPred_h << "   mutable " << ( isID? "std::string" : "spk_ValueType" );
-      oODEPred_h << " " << s->name << ";" << endl;
-      if( !s->synonym.empty() )
-	{
-	  oODEPred_h << "   mutable " << ( isID? "std::string" : "spk_ValueType" );
-	  oODEPred_h << " " << s->synonym << ";" << endl;
-	}
-    }
+  const Symbol* s = table->findi( *pLabel );
+  oODEPred_h << "   mutable " << ( isID? "std::string" : "spk_ValueType" );
+  oODEPred_h << " " << s->name << ";" << endl;
+  if( !s->synonym.empty() )
+  {
+  oODEPred_h << "   mutable " << ( isID? "std::string" : "spk_ValueType" );
+  oODEPred_h << " " << s->synonym << ";" << endl;
+  }
+  }
 
   // Taking care of the user defined scalar variables.
   // The entries in the symbol table include everything,
@@ -6414,36 +6591,36 @@ void NonmemTranslator::generateODEPred( const char* fPkEqn_cpp,
   // The NONMEM variables are given to
   // ODEPred::eval() every time the iteration advances.
   for( pT = t->begin(); pT != t->end(); pT++ )
-    {
-      const string label    = pT->second.name;
-      const string keyLabel = SymbolTable::key( label );
-      // Ignore if the label is of the data item's.
-      if( find( labels->begin(), labels->end(), label ) 
-	      == labels->end() )
-	{
-	  // Ignore if the label is of the NONMEM required variable names.
-	  // They have to be declared in the body of PRED() because
-	  // they (theta, eta, eps) have to be "const" double array.
-	  if( keyLabel != KeyStr.THETA 
-	      && keyLabel != KeyStr.ETA 
-	      && keyLabel != KeyStr.EPS )
-              //&& keyLabel != KeyStr.PRED )
-	    {
-	      if( keyLabel == KeyStr.DADT 
-		  || keyLabel == KeyStr.A
-		  || keyLabel == KeyStr.P )
-		{
-		  oODEPred_h << "   typename std::vector<spk_ValueType>::iterator " << label;
-		  oODEPred_h << ";" << endl;
-		}
-	      else
-		{
-		  oODEPred_h << "   mutable spk_ValueType " << label;
-		  oODEPred_h << ";" << endl;
-		}
-	    }
-	}
-    }
+  {
+  const string label    = pT->second.name;
+  const string keyLabel = SymbolTable::key( label );
+  // Ignore if the label is of the data item's.
+  if( find( labels->begin(), labels->end(), label ) 
+  == labels->end() )
+  {
+  // Ignore if the label is of the NONMEM required variable names.
+  // They have to be declared in the body of PRED() because
+  // they (theta, eta, eps) have to be "const" double array.
+  if( keyLabel != KeyStr.THETA 
+  && keyLabel != KeyStr.ETA 
+  && keyLabel != KeyStr.EPS )
+  //&& keyLabel != KeyStr.PRED )
+  {
+  if( keyLabel == KeyStr.DADT 
+  || keyLabel == KeyStr.A
+  || keyLabel == KeyStr.P )
+  {
+  oODEPred_h << "   typename std::vector<spk_ValueType>::iterator " << label;
+  oODEPred_h << ";" << endl;
+  }
+  else
+  {
+  oODEPred_h << "   mutable spk_ValueType " << label;
+  oODEPred_h << ";" << endl;
+  }
+  }
+  }
+  }
 
   oODEPred_h << "};" << endl;
   oODEPred_h << endl;
@@ -6514,81 +6691,81 @@ void NonmemTranslator::generateODEPred( const char* fPkEqn_cpp,
   // ...like "aaa = cp * 10.0".
   //
   for( pT = t->begin(); pT != t->end(); pT++ )
-    {
-      // THETA, ETA, EPS are given ODEPred::eval() as vectors by the caller.
-      // So, we have to treat these guys a bit different from the user variables
-      // which are scalar values.
-      const string label    = pT->second.name;
-      const string keyLabel = SymbolTable::key( label );
-      if( keyLabel == KeyStr.OMEGA 
-	       || keyLabel == KeyStr.SIGMA 
-               || keyLabel == KeyStr.PRED
-	       || keyLabel == KeyStr.RES
-	       || keyLabel == KeyStr.WRES 
-	       || keyLabel == KeyStr.ETARES 
-	       || keyLabel == KeyStr.WETARES
-	       || keyLabel == KeyStr.IPRED
-	       || keyLabel == KeyStr.IRES
-	       || keyLabel == KeyStr.IWRES 
-	       || keyLabel == KeyStr.IETARES 
-	       || keyLabel == KeyStr.IWETARES
-	       || keyLabel == KeyStr.PPRED
-	       || keyLabel == KeyStr.PRES
-	       || keyLabel == KeyStr.PWRES 
-	       || keyLabel == KeyStr.PETARES 
-	       || keyLabel == KeyStr.PWETARES
-	       || keyLabel == KeyStr.CPRED
-	       || keyLabel == KeyStr.CRES
-	       || keyLabel == KeyStr.CWRES 
-	       || keyLabel == KeyStr.CETARES 
-	       || keyLabel == KeyStr.CWETARES
-	       || keyLabel == KeyStr.ORGDV
-	       || keyLabel == KeyStr.THETA
-	       || keyLabel == KeyStr.ETA
-	       || keyLabel == KeyStr.EPS )
-	{
-	}
-      else if( keyLabel == KeyStr.DADT 
-	       || keyLabel == KeyStr.A
-	       || keyLabel == KeyStr.P )
-	{
-	  oODEPred_h << "   " << label << " = perm->data[spk_i]->" << label << "[spk_j].begin();" << endl;
-	}
-      else
-	{
-	  oODEPred_h << "   " << label << " = perm->data[spk_i]->" << label << "[spk_j];" << endl;
-	}
-    }
+  {
+  // THETA, ETA, EPS are given ODEPred::eval() as vectors by the caller.
+  // So, we have to treat these guys a bit different from the user variables
+  // which are scalar values.
+  const string label    = pT->second.name;
+  const string keyLabel = SymbolTable::key( label );
+  if( keyLabel == KeyStr.OMEGA 
+  || keyLabel == KeyStr.SIGMA 
+  || keyLabel == KeyStr.PRED
+  || keyLabel == KeyStr.RES
+  || keyLabel == KeyStr.WRES 
+  || keyLabel == KeyStr.ETARES 
+  || keyLabel == KeyStr.WETARES
+  || keyLabel == KeyStr.IPRED
+  || keyLabel == KeyStr.IRES
+  || keyLabel == KeyStr.IWRES 
+  || keyLabel == KeyStr.IETARES 
+  || keyLabel == KeyStr.IWETARES
+  || keyLabel == KeyStr.PPRED
+  || keyLabel == KeyStr.PRES
+  || keyLabel == KeyStr.PWRES 
+  || keyLabel == KeyStr.PETARES 
+  || keyLabel == KeyStr.PWETARES
+  || keyLabel == KeyStr.CPRED
+  || keyLabel == KeyStr.CRES
+  || keyLabel == KeyStr.CWRES 
+  || keyLabel == KeyStr.CETARES 
+  || keyLabel == KeyStr.CWETARES
+  || keyLabel == KeyStr.ORGDV
+  || keyLabel == KeyStr.THETA
+  || keyLabel == KeyStr.ETA
+  || keyLabel == KeyStr.EPS )
+  {
+  }
+  else if( keyLabel == KeyStr.DADT 
+  || keyLabel == KeyStr.A
+  || keyLabel == KeyStr.P )
+  {
+  oODEPred_h << "   " << label << " = perm->data[spk_i]->" << label << "[spk_j].begin();" << endl;
+  }
+  else
+  {
+  oODEPred_h << "   " << label << " = perm->data[spk_i]->" << label << "[spk_j];" << endl;
+  }
+  }
 
   for( int i=0; i<myThetaLen; i++ )
-    {
-      oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.THETA << i+1;
-      oODEPred_h << " = spk_indepVar.begin() + spk_thetaOffset + " << i << ";" << endl;
-    }
+  {
+  oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.THETA << i+1;
+  oODEPred_h << " = spk_indepVar.begin() + spk_thetaOffset + " << i << ";" << endl;
+  }
   for( int i=0; i<myEtaLen; i++ )
-    {
-      oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.ETA << i+1;
-      oODEPred_h << " = spk_indepVar.begin() + spk_etaOffset + " << i << ";" << endl;
-    }
+  {
+  oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.ETA << i+1;
+  oODEPred_h << " = spk_indepVar.begin() + spk_etaOffset + " << i << ";" << endl;
+  }
 
   // EPS is only applicable to the population analysis.
   // The size of EPS vector is the order of SIGMA which is only apparent in
   // the population analysis.  So, if this is the individual level,
   // "myEpsLen" has been set to zero; thus the following loop loops zero times.
   for( int i=0; i<myEpsLen; i++ )
-    {
-      oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.EPS << i+1;
-      oODEPred_h << " = spk_indepVar.begin() + spk_epsOffset + " << i << ";" << endl;
-    }
+  {
+  oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.EPS << i+1;
+  oODEPred_h << " = spk_indepVar.begin() + spk_epsOffset + " << i << ";" << endl;
+  }
   oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.THETA;
   oODEPred_h << " = spk_indepVar.begin() + spk_thetaOffset;" << endl;
   oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.ETA;
   oODEPred_h << " = spk_indepVar.begin() + spk_etaOffset;" << endl;
   if( ourTarget == POP )
-    {
-      oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.EPS;
-      oODEPred_h << " = spk_indepVar.begin() + spk_epsOffset;" << endl;
-    }
+  {
+  oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.EPS;
+  oODEPred_h << " = spk_indepVar.begin() + spk_epsOffset;" << endl;
+  }
 
   oODEPred_h << "   spk_ValueType "                            << UserStr.F << " = 0.0;"  << endl;
   oODEPred_h << "   evalPK(   spk_thetaOffset, spk_thetaLen,"  << endl;
@@ -6612,70 +6789,70 @@ void NonmemTranslator::generateODEPred( const char* fPkEqn_cpp,
   //  oODEPred_h << "   " << UserStr.PRED << " = " << UserStr.F << ";" << endl;
 
   for( pT = t->begin(); pT != t->end(); pT++ )
-    {
-      // THETA, ETA, EPS are given ODEPred::eval() as vectors by the caller.
-      // So, we have to treat these guys a bit different from the user variables
-      // which are scalar values.
-      const string label    = pT->second.name;
-      const string keyLabel = SymbolTable::key( label );
-      if( keyLabel == KeyStr.THETA )
-	{
-	  oODEPred_h << "   copy( " << label << ", " << label << "+spk_thetaLen, ";
-          oODEPred_h << "   temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
-	}
-      else if( keyLabel == KeyStr.ETA )
-	{
-	  oODEPred_h << "   copy( " << label << ", " << label << "+spk_etaLen, ";
-          oODEPred_h << "   temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
-	}
-      else if( keyLabel == KeyStr.EPS )
-	{
-	  oODEPred_h << "   copy( " << label << ", " << label << "+spk_epsLen, ";
-          oODEPred_h << "   temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
-	}
-      else if( keyLabel == KeyStr.OMEGA 
-	       || keyLabel == KeyStr.SIGMA
-               || keyLabel == KeyStr.PRED 
-	       || keyLabel == KeyStr.RES
-	       || keyLabel == KeyStr.WRES 
-	       || keyLabel == KeyStr.ETARES 
-	       || keyLabel == KeyStr.WETARES
-	       || keyLabel == KeyStr.IPRED 
-	       || keyLabel == KeyStr.IRES
-	       || keyLabel == KeyStr.IWRES 
-	       || keyLabel == KeyStr.IETARES 
-	       || keyLabel == KeyStr.IWETARES
-	       || keyLabel == KeyStr.PPRED 
-	       || keyLabel == KeyStr.PRES
-	       || keyLabel == KeyStr.PWRES 
-	       || keyLabel == KeyStr.PETARES 
-	       || keyLabel == KeyStr.PWETARES
-	       || keyLabel == KeyStr.CPRED 
-	       || keyLabel == KeyStr.CRES
-	       || keyLabel == KeyStr.CWRES 
-	       || keyLabel == KeyStr.CETARES 
-	       || keyLabel == KeyStr.CWETARES
-	       || keyLabel == KeyStr.ORGDV )
-	{
-	  // ignore.  These values are only computed outside at the final estimate.
-	}
-      else if( keyLabel == KeyStr.DADT || keyLabel == KeyStr.A || keyLabel == KeyStr.P )
-	{
-	  oODEPred_h << "   copy( " << label << ", " << label << "+";
-	  oODEPred_h << "temp.data[ spk_i ]->" << label << "[ spk_j ].size(), ";
-          oODEPred_h << "temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
-	}
-      else
-	{
-	  if( find( labels->begin(), labels->end(), label ) 
-	      == labels->end() )
-	    {
-	      oODEPred_h << "   temp.data[ spk_i ]->" << label;
-	      oODEPred_h << "[ spk_j ]";
-	      oODEPred_h << " = " << label << ";" << endl;
-	    }
-	}
-    }   
+  {
+  // THETA, ETA, EPS are given ODEPred::eval() as vectors by the caller.
+  // So, we have to treat these guys a bit different from the user variables
+  // which are scalar values.
+  const string label    = pT->second.name;
+  const string keyLabel = SymbolTable::key( label );
+  if( keyLabel == KeyStr.THETA )
+  {
+  oODEPred_h << "   copy( " << label << ", " << label << "+spk_thetaLen, ";
+  oODEPred_h << "   temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
+  }
+  else if( keyLabel == KeyStr.ETA )
+  {
+  oODEPred_h << "   copy( " << label << ", " << label << "+spk_etaLen, ";
+  oODEPred_h << "   temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
+  }
+  else if( keyLabel == KeyStr.EPS )
+  {
+  oODEPred_h << "   copy( " << label << ", " << label << "+spk_epsLen, ";
+  oODEPred_h << "   temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
+  }
+  else if( keyLabel == KeyStr.OMEGA 
+  || keyLabel == KeyStr.SIGMA
+  || keyLabel == KeyStr.PRED 
+  || keyLabel == KeyStr.RES
+  || keyLabel == KeyStr.WRES 
+  || keyLabel == KeyStr.ETARES 
+  || keyLabel == KeyStr.WETARES
+  || keyLabel == KeyStr.IPRED 
+  || keyLabel == KeyStr.IRES
+  || keyLabel == KeyStr.IWRES 
+  || keyLabel == KeyStr.IETARES 
+  || keyLabel == KeyStr.IWETARES
+  || keyLabel == KeyStr.PPRED 
+  || keyLabel == KeyStr.PRES
+  || keyLabel == KeyStr.PWRES 
+  || keyLabel == KeyStr.PETARES 
+  || keyLabel == KeyStr.PWETARES
+  || keyLabel == KeyStr.CPRED 
+  || keyLabel == KeyStr.CRES
+  || keyLabel == KeyStr.CWRES 
+  || keyLabel == KeyStr.CETARES 
+  || keyLabel == KeyStr.CWETARES
+  || keyLabel == KeyStr.ORGDV )
+  {
+  // ignore.  These values are only computed outside at the final estimate.
+  }
+  else if( keyLabel == KeyStr.DADT || keyLabel == KeyStr.A || keyLabel == KeyStr.P )
+  {
+  oODEPred_h << "   copy( " << label << ", " << label << "+";
+  oODEPred_h << "temp.data[ spk_i ]->" << label << "[ spk_j ].size(), ";
+  oODEPred_h << "temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
+  }
+  else
+  {
+  if( find( labels->begin(), labels->end(), label ) 
+  == labels->end() )
+  {
+  oODEPred_h << "   temp.data[ spk_i ]->" << label;
+  oODEPred_h << "[ spk_j ]";
+  oODEPred_h << " = " << label << ";" << endl;
+  }
+  }
+  }   
   oODEPred_h << endl;
 
   // Saving/moving computed values to ensure a complete set of values
@@ -6692,41 +6869,41 @@ void NonmemTranslator::generateODEPred( const char* fPkEqn_cpp,
   // User defined variables temp(current) => permanent
   // The user defined scalar variables
   for( pT = t->begin(); pT != t->end(); pT++ )
-    {
-      const string label    = pT->second.name;
-      const string keyLabel = SymbolTable::key( label );
-      if( keyLabel == KeyStr.OMEGA 
-          || keyLabel == KeyStr.SIGMA
-          || keyLabel == KeyStr.PRED 
-          || keyLabel == KeyStr.RES
-          || keyLabel == KeyStr.WRES 
-	  || keyLabel == KeyStr.ETARES
-	  || keyLabel == KeyStr.WETARES
-          || keyLabel == KeyStr.IPRED 
-          || keyLabel == KeyStr.IRES
-          || keyLabel == KeyStr.IWRES 
-	  || keyLabel == KeyStr.IETARES
-	  || keyLabel == KeyStr.IWETARES
-          || keyLabel == KeyStr.PPRED 
-          || keyLabel == KeyStr.PRES
-          || keyLabel == KeyStr.PWRES 
-	  || keyLabel == KeyStr.PETARES
-	  || keyLabel == KeyStr.PWETARES
-          || keyLabel == KeyStr.CPRED 
-          || keyLabel == KeyStr.CRES
-          || keyLabel == KeyStr.CWRES 
-	  || keyLabel == KeyStr.CETARES
-	  || keyLabel == KeyStr.CWETARES
-	  || keyLabel == KeyStr.ORGDV )
-	continue;
+  {
+  const string label    = pT->second.name;
+  const string keyLabel = SymbolTable::key( label );
+  if( keyLabel == KeyStr.OMEGA 
+  || keyLabel == KeyStr.SIGMA
+  || keyLabel == KeyStr.PRED 
+  || keyLabel == KeyStr.RES
+  || keyLabel == KeyStr.WRES 
+  || keyLabel == KeyStr.ETARES
+  || keyLabel == KeyStr.WETARES
+  || keyLabel == KeyStr.IPRED 
+  || keyLabel == KeyStr.IRES
+  || keyLabel == KeyStr.IWRES 
+  || keyLabel == KeyStr.IETARES
+  || keyLabel == KeyStr.IWETARES
+  || keyLabel == KeyStr.PPRED 
+  || keyLabel == KeyStr.PRES
+  || keyLabel == KeyStr.PWRES 
+  || keyLabel == KeyStr.PETARES
+  || keyLabel == KeyStr.PWETARES
+  || keyLabel == KeyStr.CPRED 
+  || keyLabel == KeyStr.CRES
+  || keyLabel == KeyStr.CWRES 
+  || keyLabel == KeyStr.CETARES
+  || keyLabel == KeyStr.CWETARES
+  || keyLabel == KeyStr.ORGDV )
+  continue;
 
-      if( find( labels->begin(), labels->end(), label ) == labels->end() )
-	{
-	  oODEPred_h << "       perm->data[ i ]->" << label;
-	  oODEPred_h << " = temp.data[ i ]->";
-	  oODEPred_h << label << ";" << endl;
-	}
-    }      
+  if( find( labels->begin(), labels->end(), label ) == labels->end() )
+  {
+  oODEPred_h << "       perm->data[ i ]->" << label;
+  oODEPred_h << " = temp.data[ i ]->";
+  oODEPred_h << label << ";" << endl;
+  }
+  }      
   oODEPred_h << "     }" << endl;
   oODEPred_h << "   }" << endl;
   oODEPred_h << "   else" << endl;
@@ -6771,30 +6948,30 @@ void NonmemTranslator::generateODEPred( const char* fPkEqn_cpp,
   // ...like "aaa = cp * 10.0".
   //
   for( pLabel = labels->begin(); pLabel != labels->end(); pLabel++ )
-    {
-      const Symbol *s = table->findi( *pLabel );
-      // label
-      oODEPred_h << "   " << s->name;
-      oODEPred_h << " = perm->data[spk_i]->";
-      oODEPred_h << s->name << "[spk_j];" << endl;
-      // synonym
-      if( !s->synonym.empty() )
-	{
-	  oODEPred_h << "   " << s->synonym;
-	  oODEPred_h << " = perm->data[spk_i]->";
-	  oODEPred_h << s->synonym << "[spk_j];" << endl;
-	}
-    }
+  {
+  const Symbol *s = table->findi( *pLabel );
+  // label
+  oODEPred_h << "   " << s->name;
+  oODEPred_h << " = perm->data[spk_i]->";
+  oODEPred_h << s->name << "[spk_j];" << endl;
+  // synonym
+  if( !s->synonym.empty() )
+  {
+  oODEPred_h << "   " << s->synonym;
+  oODEPred_h << " = perm->data[spk_i]->";
+  oODEPred_h << s->synonym << "[spk_j];" << endl;
+  }
+  }
   for( int i=0; i<myThetaLen; i++ )
-    {
-      oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.THETA << i+1;
-      oODEPred_h << " = spk_indepVar.begin() + spk_thetaOffset + " << i << ";" << endl;
-    }
+  {
+  oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.THETA << i+1;
+  oODEPred_h << " = spk_indepVar.begin() + spk_thetaOffset + " << i << ";" << endl;
+  }
   for( int i=0; i<myEtaLen; i++ )
-    {
-      oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.ETA << i+1;
-      oODEPred_h << " = spk_indepVar.begin() + spk_etaOffset + " << i << ";" << endl;
-    }
+  {
+  oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.ETA << i+1;
+  oODEPred_h << " = spk_indepVar.begin() + spk_etaOffset + " << i << ";" << endl;
+  }
 
   oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.THETA;
   oODEPred_h << " = spk_indepVar.begin() + spk_thetaOffset;" << endl;
@@ -6808,14 +6985,14 @@ void NonmemTranslator::generateODEPred( const char* fPkEqn_cpp,
   oODEPred_h << "//-----------------------------------------" << endl;
   ifstream iPkEqn( fPkEqn_cpp );
   if( !iPkEqn.good() )
-    {
-      char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Failed to open %s file.", fPkEqn_cpp );
-      SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
-      throw e;
-    }
+  {
+  char mess[ SpkCompilerError::maxMessageLen() ];
+  sprintf( mess, "Failed to open %s file.", fPkEqn_cpp );
+  SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
+  throw e;
+  }
   while( iPkEqn.get(ch) )
-    oODEPred_h.put(ch);
+  oODEPred_h.put(ch);
   iPkEqn.close();
   remove( fPkEqn_cpp );
   oODEPred_h << "//-----------------------------------------" << endl;
@@ -6849,25 +7026,25 @@ void NonmemTranslator::generateODEPred( const char* fPkEqn_cpp,
   // ...like "aaa = cp * 10.0".
   //
   for( pLabel = labels->begin(); pLabel != labels->end(); pLabel++ )
-    {
-      const Symbol *s = table->findi( *pLabel );
-      // label
-      oODEPred_h << "   " << s->name;
-      oODEPred_h << " = perm->data[spk_i]->";
-      oODEPred_h << s->name << "[spk_j];" << endl;
-      // synonym
-      if( !s->synonym.empty() )
-	{
-	  oODEPred_h << "   " << s->synonym;
-	  oODEPred_h << " = perm->data[spk_i]->";
-	  oODEPred_h << s->synonym << "[spk_j];" << endl;
-	}
-    }
+  {
+  const Symbol *s = table->findi( *pLabel );
+  // label
+  oODEPred_h << "   " << s->name;
+  oODEPred_h << " = perm->data[spk_i]->";
+  oODEPred_h << s->name << "[spk_j];" << endl;
+  // synonym
+  if( !s->synonym.empty() )
+  {
+  oODEPred_h << "   " << s->synonym;
+  oODEPred_h << " = perm->data[spk_i]->";
+  oODEPred_h << s->synonym << "[spk_j];" << endl;
+  }
+  }
   for( int i=0; i<myThetaLen; i++ )
-    {
-      oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.THETA << i+1;
-      oODEPred_h << " = spk_indepVar.begin() + spk_thetaOffset + " << i << ";" << endl;
-    }
+  {
+  oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.THETA << i+1;
+  oODEPred_h << " = spk_indepVar.begin() + spk_thetaOffset + " << i << ";" << endl;
+  }
   oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.THETA;
   oODEPred_h << " = spk_indepVar.begin() + spk_thetaOffset;" << endl;
   //
@@ -6878,14 +7055,14 @@ void NonmemTranslator::generateODEPred( const char* fPkEqn_cpp,
   oODEPred_h << "//-----------------------------------------" << endl;
   ifstream iDiffEqn( fDiffEqn_cpp );
   if( !iDiffEqn.good() )
-    {
-      char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Failed to open %s file.", fDiffEqn_cpp );
-      SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
-      throw e;
-    }
+  {
+  char mess[ SpkCompilerError::maxMessageLen() ];
+  sprintf( mess, "Failed to open %s file.", fDiffEqn_cpp );
+  SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
+  throw e;
+  }
   while( iDiffEqn.get(ch) )
-    oODEPred_h.put(ch);
+  oODEPred_h.put(ch);
   iDiffEqn.close();
   remove( fDiffEqn_cpp );
   oODEPred_h << "//-----------------------------------------" << endl;
@@ -6927,49 +7104,49 @@ void NonmemTranslator::generateODEPred( const char* fPkEqn_cpp,
   // ...like "aaa = cp * 10.0".
   //
   for( pLabel = labels->begin(); pLabel != labels->end(); pLabel++ )
-    {
-      const Symbol *s = table->findi( *pLabel );
-      // label
-      oODEPred_h << "   " << s->name;
-      oODEPred_h << " = perm->data[spk_i]->";
-      oODEPred_h << s->name << "[spk_j];" << endl;
-      // synonym
-      if( !s->synonym.empty() )
-	{
-	  oODEPred_h << "   " << s->synonym;
-	  oODEPred_h << " = perm->data[spk_i]->";
-	  oODEPred_h << s->synonym << "[spk_j];" << endl;
-	}
-    }
+  {
+  const Symbol *s = table->findi( *pLabel );
+  // label
+  oODEPred_h << "   " << s->name;
+  oODEPred_h << " = perm->data[spk_i]->";
+  oODEPred_h << s->name << "[spk_j];" << endl;
+  // synonym
+  if( !s->synonym.empty() )
+  {
+  oODEPred_h << "   " << s->synonym;
+  oODEPred_h << " = perm->data[spk_i]->";
+  oODEPred_h << s->synonym << "[spk_j];" << endl;
+  }
+  }
   for( int i=0; i<myThetaLen; i++ )
-    {
-      oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.THETA << i+1;
-      oODEPred_h << " = spk_indepVar.begin() + spk_thetaOffset + " << i << ";" << endl;
-    }
+  {
+  oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.THETA << i+1;
+  oODEPred_h << " = spk_indepVar.begin() + spk_thetaOffset + " << i << ";" << endl;
+  }
   for( int i=0; i<myEtaLen; i++ )
-    {
-      oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.ETA << i+1;
-      oODEPred_h << " = spk_indepVar.begin() + spk_etaOffset + " << i << ";" << endl;
-    }
+  {
+  oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.ETA << i+1;
+  oODEPred_h << " = spk_indepVar.begin() + spk_etaOffset + " << i << ";" << endl;
+  }
 
   // EPS is only applicable to the population analysis.
   // The size of EPS vector is the order of SIGMA which is only apparent in
   // the population analysis.  So, if this is the individual level,
   // "myEpsLen" has been set to zero; thus the following loop loops zero times.
   for( int i=0; i<myEpsLen; i++ )
-    {
-      oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.EPS << i+1;
-      oODEPred_h << " = spk_indepVar.begin() + spk_epsOffset + " << i << ";" << endl;
-    }
+  {
+  oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.EPS << i+1;
+  oODEPred_h << " = spk_indepVar.begin() + spk_epsOffset + " << i << ";" << endl;
+  }
   oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.THETA;
   oODEPred_h << " = spk_indepVar.begin() + spk_thetaOffset;" << endl;
   oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.ETA;
   oODEPred_h << " = spk_indepVar.begin() + spk_etaOffset;" << endl;
   if( ourTarget == POP )
-    {
-      oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.EPS;
-      oODEPred_h << " = spk_indepVar.begin() + spk_epsOffset;" << endl;
-    }
+  {
+  oODEPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.EPS;
+  oODEPred_h << " = spk_indepVar.begin() + spk_epsOffset;" << endl;
+  }
 
   oODEPred_h << "   spk_ValueType " << UserStr.Y << " = 0.0;" << endl;
   //
@@ -6980,14 +7157,14 @@ void NonmemTranslator::generateODEPred( const char* fPkEqn_cpp,
   oODEPred_h << "//-----------------------------------------" << endl;
   ifstream iErrorEqn( fErrorEqn_cpp );
   if( !iErrorEqn.good() )
-    {
-      char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Failed to open %s file.", fErrorEqn_cpp );
-      SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
-      throw e;
-    }
+  {
+  char mess[ SpkCompilerError::maxMessageLen() ];
+  sprintf( mess, "Failed to open %s file.", fErrorEqn_cpp );
+  SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
+  throw e;
+  }
   while( iErrorEqn.get(ch) )
-    oODEPred_h.put(ch);
+  oODEPred_h.put(ch);
   iErrorEqn.close();
   remove( fErrorEqn_cpp );
   oODEPred_h << "//-----------------------------------------" << endl;
@@ -7014,7 +7191,7 @@ void NonmemTranslator::generateODEPred( const char* fPkEqn_cpp,
 
   oODEPred_h << "#endif" << endl;
   oODEPred_h.close();
-}
+  }
 */
 void NonmemTranslator::generateNonmemParsNamespace() const
 {
@@ -8306,21 +8483,21 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "        goto REPORT_GEN;" << endl;
   oPopDriver << endl;
   /*
-  oPopDriver << "      alpOut   = alpIn;" << endl;
-  oPopDriver << "      bOut     = bIn;" << endl;
-  oPopDriver << "      thetaOut = thetaIn;" << endl;
-  oPopDriver << "      omegaOut = omegaIn;" << endl;
-  oPopDriver << "      sigmaOut = sigmaIn;" << endl;
+    oPopDriver << "      alpOut   = alpIn;" << endl;
+    oPopDriver << "      bOut     = bIn;" << endl;
+    oPopDriver << "      thetaOut = thetaIn;" << endl;
+    oPopDriver << "      omegaOut = omegaIn;" << endl;
+    oPopDriver << "      sigmaOut = sigmaIn;" << endl;
   */
   oPopDriver << "      remove( \"result.xml\" );" << endl;
   oPopDriver << "      for( iSub=0; iSub<nRepeats; iSub++ )" << endl;
   oPopDriver << "      {" << endl;
   /*
-  oPopDriver << "         alpIn   = alpOut;" << endl;
-  oPopDriver << "         bIn     = bOut;" << endl;
-  oPopDriver << "         thetaIn = thetaOut;" << endl;
-  oPopDriver << "         omegaIn = omegaOut;" << endl;
-  oPopDriver << "         sigmaIn = sigmaOut;" << endl;
+    oPopDriver << "         alpIn   = alpOut;" << endl;
+    oPopDriver << "         bIn     = bOut;" << endl;
+    oPopDriver << "         thetaIn = thetaOut;" << endl;
+    oPopDriver << "         omegaIn = omegaOut;" << endl;
+    oPopDriver << "         sigmaIn = sigmaOut;" << endl;
   */
   oPopDriver << "         /*******************************************************************/" << endl;
   oPopDriver << "         /*                                                                 */" << endl;

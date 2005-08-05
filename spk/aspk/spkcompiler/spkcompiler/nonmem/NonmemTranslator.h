@@ -84,6 +84,7 @@ class NonmemTranslator : public ClientTranslator
     std::string DV;
     std::string ORGDV;
     std::string MDV;
+    std::string EVID;
     std::string ID;
     std::string F;
     std::string Y;
@@ -499,9 +500,9 @@ class NonmemTranslator : public ClientTranslator
   void generatePred( const char* predDefFilename ) const;
 
   //
-  // Generate C++ soruce code for ODEPred class.
+  // Generate C++ soruce code for OdePred class.
   //
-  void generateODEPred( const char* fPkEqn_cpp, 
+  void generateOdePred( const char* fPkEqn_cpp, 
 	                const char* fDiffEqn_cpp, 
 			const char* fErrorEqn_cpp ) const;
   //

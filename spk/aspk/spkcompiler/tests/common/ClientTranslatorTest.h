@@ -28,6 +28,11 @@ class ClientTranslatorTest : public CppUnit::TestFixture {
     void createDataNoID( const char * );
     void createDataIDShuffled( const char * );
     void createDataWithDuplicateLabel( const char * );
+    void createDataWithMdv( const char * );
+    void createDataWithEvid( const char * );
+    void createDataNoMdvNoEvid( const char * );
+    void createDataWithMdvWithEvid( const char * );
+
 public:
     virtual void setUp();
     virtual void tearDown();
@@ -37,6 +42,10 @@ public:
     void testIndDataNoID();
     void testPopDataNoID();
     void testDuplicateLabel();
+    void testMdv();
+    void testEvid();
+    void testNoMdvNoEvid();
+    void testWithMdvWithEvid();
 
     static CppUnit::Test * suite();
 };

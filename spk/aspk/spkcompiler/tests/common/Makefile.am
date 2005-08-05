@@ -1,9 +1,11 @@
 noinst_PROGRAMS      = testall
 AM_LDFLAGS           = -lxerces-c -lcppunit ../../spkcompiler/libcommon.a
-AM_CPPFLAGS          = -I@top_srcdir@
+AM_CPPFLAGS          = -g -I@top_srcdir@
 MOSTLYCLEANFILES     = IndData.h 
 MAINTEINERCLEANFILES = Makefile.in
 testall_DEPENDENCIES = ../../spkcompiler/libcommon.a 
+
+AM_CXXFLAGS = -g
 
 testall_SOURCES = \
 	test_common.cpp \

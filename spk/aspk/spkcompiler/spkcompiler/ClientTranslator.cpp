@@ -27,6 +27,8 @@ const char* ClientTranslator::C_VALUE      ( "value" );
 const char* ClientTranslator::C_TYPE       ( "type" );
 const char* ClientTranslator::C_NUMERIC    ( "numeric" );
 const char* ClientTranslator::C_ID         ( "ID" );
+const char* ClientTranslator::C_MDV        ( "MDV" );
+const char* ClientTranslator::C_EVID       ( "EVID" );
 
 class TestTranslator : public ClientTranslator
 {
@@ -43,11 +45,11 @@ ClientTranslator & ClientTranslator::operator=( const ClientTranslator& )
 {
 }
 ClientTranslator::ClientTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
-  : source       ( sourceIn ), 
-    data         ( dataIn ),
-    ourPopSize   ( 0 ),
+  : source          ( sourceIn ), 
+    data            ( dataIn ),
+    ourPopSize      ( 0 ),
     ourApproximation( FO ),
-    ourTarget    ( POP )
+    ourTarget       ( POP )
 {
     X_SPKDATA    = XMLString::transcode( C_SPKDATA );
     X_VERSION    = XMLString::transcode( C_VERSION );
@@ -62,6 +64,8 @@ ClientTranslator::ClientTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     X_TYPE       = XMLString::transcode( C_TYPE );
     X_NUMERIC    = XMLString::transcode( C_NUMERIC );
     X_ID         = XMLString::transcode( C_ID );
+    X_MDV        = XMLString::transcode( C_MDV );
+    X_EVID       = XMLString::transcode( C_EVID );
 }
 ClientTranslator::~ClientTranslator()
 {
@@ -78,6 +82,7 @@ ClientTranslator::~ClientTranslator()
   XMLString::release( &X_TYPE );
   XMLString::release( &X_NUMERIC );
   XMLString::release( &X_ID );
+  XMLString::release( &X_MDV );
 }
 const SymbolTable* ClientTranslator::getSymbolTable() const
 {
@@ -119,11 +124,10 @@ void ClientTranslator::translate()
 //***************************************************************************************
 
 /*
- * Insert the ID field if the data set lacks the field.
- * Returns the location (>=0) in which the ID field can be found.
+ * Look for a label/item.  If the label is found, return the position from the left (>=0).
+ * If not found, return -1.
  */
-
-int ClientTranslator::insertID()
+int ClientTranslator::whereis( const XMLCh* X_label ) const
 {
   //
   // Precondition: The number of individuals has been determined.
@@ -153,21 +157,20 @@ int ClientTranslator::insertID()
   assert( datasets->getLength() == 1 );
   DOMElement  * dataset  = dynamic_cast<DOMElement*>( datasets->item(0) );
   DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
-  unsigned int pos = 0;
-  const XMLCh * x_id_val;
+  unsigned int recordNum = 0;
   for( int i=0; i<records->getLength(); i++ )
     {
       const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( X_POSITION );
-      XMLString::textToBin( x_position, pos );
-      if( pos == 1 )
+      XMLString::textToBin( x_position, recordNum );
+      if( recordNum == 1 )
 	{
 	  DOMNodeList * values = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
 	  for( int j=0; j<values->getLength(); j++ )
 	    {
 	      const XMLCh* x_value = values->item(j)->getFirstChild()->getNodeValue();
 
-	      // If there's the label, ID, return immediately.
-	      if( XMLString::compareIString( x_value, X_ID ) == 0 )
+	      // If there's the label, return immediately.
+	      if( XMLString::compareIString( x_value, X_label ) == 0 )
 		{
 		  // The ID field is found in the j-th column.
 		  return j;
@@ -176,26 +179,41 @@ int ClientTranslator::insertID()
 	  break;
 	}      
     }
+  return -1;
+}
+/*
+ * Insert the ID field if the data set lacks the field.
+ * Returns the location (>=0) in which the ID field can be found.
+ */
 
+int ClientTranslator::insertID( DOMElement * dataset )
+{
+  // If ID is defined in the data set, don't need to do anything.
+  int posID;
+  if( ( posID = whereis( X_ID ) ) >= 0 )
+    return posID;
 
+  DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
   //
   // If the data set is a population data and lacks the ID field,
   // then every record should be assigned to a different ID.
   //
+  unsigned int recordNum = 0;
+  const XMLCh * x_id_val;
   char id[ 56 ];
   if( ourTarget == POP )
     {
       for( int i=0; i<records->getLength(); i++ )
 	{
 	  const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( X_POSITION );
-	  XMLString::textToBin( x_position, pos );
-	  if( pos == 1 )
+	  XMLString::textToBin( x_position, recordNum );
+	  if( recordNum == 1 )
 	    {
 	      x_id_val = X_ID;
 	    }
 	  else
 	    {
-	      sprintf( id, "%d", pos-1 );
+	      sprintf( id, "%d", recordNum-1 );
 	      x_id_val = XMLString::transcode( id );
 	    }
 	  DOMNodeList * values          = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
@@ -216,8 +234,8 @@ int ClientTranslator::insertID()
       for( int i=0; i<records->getLength(); i++ )
 	{
 	  const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( X_POSITION );
-	  XMLString::textToBin( x_position, pos );
-	  if( pos == 1 )
+	  XMLString::textToBin( x_position, recordNum );
+	  if( recordNum == 1 )
 	    {
 	      x_id_val = X_ID;
 	    }
@@ -248,9 +266,173 @@ int ClientTranslator::insertID()
   sprintf( c_nItemsPlus1, "%d", nItems + 1 );
   dataset->setAttribute( X_COLUMNS, XMLString::transcode( c_nItemsPlus1)  );
 
-  // The ID is found in the 1st column.
+  // The ID was inserted into the 1st column.
   return 0;
 }
+/*
+ * Insert the MDV field if the data set lacks the field.
+ *
+ * MDV(i) = 0 for no EVID.
+ * MDV(i) = (EVID(i)==0? 0 : 1) if EVID is given.
+ *
+ * Returns the location (>=0) in which the ID field can be found.
+ */
+int ClientTranslator::insertMDV( DOMElement * dataset )
+{
+  // If MDV is defined in the data set, don't need to do anything.
+  int posMDV;
+  if( (posMDV = whereis( X_MDV ) ) >= 0 )
+    return posMDV;
+
+  // Determine if EVID exists in the data set.  If exists, where?
+  int posEVID = whereis( X_EVID );
+
+  DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
+  //
+  // Case 1: no EVID in the data set
+  // Assign 0 (no) to all values of MDV.
+  // 
+  // Case 2: EVID presents
+  // Assign 0 to these MDV values if the corresponding EVID!=0 (EVID=0 is observation)
+  // and 1 to the rest (i.e. non-observations).
+  //
+  unsigned int recordNum=0;
+  const XMLCh* x_mdv_val;
+  const XMLCh* X_0 = XMLString::transcode( "0" );
+  const XMLCh* X_1 = XMLString::transcode( "1" );
+  for( int i=0; i<records->getLength(); i++ )
+    {
+      const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( X_POSITION );
+      XMLString::textToBin( x_position, recordNum );
+      DOMNodeList * values     = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
+      if( recordNum == 1 )
+	{
+	  x_mdv_val = X_MDV;
+	}
+      else
+	{
+	  if( posEVID >= 0 )
+	  {
+	    unsigned int evid = 0;
+	    // Converting the value of EVID on i-th record to an integer.
+	    XMLString::textToBin( dynamic_cast<DOMElement*>(values->item(posEVID))->getFirstChild()->getNodeValue(), evid );
+	    if( evid == 1 )
+	      x_mdv_val = X_1;
+	  }
+	  else
+	    {
+	      x_mdv_val = X_0;
+	    }
+	}
+
+      //  values  -> item(0)          
+      //             <value>ID</value>
+      //          -> item(1)
+      //             <value>TIME</value>
+      //          -> item(2)
+      //             <value>DV</value>
+      //          -> item(3)
+      //             <value>EVID</value>
+      DOMNode     * firstValueNode  = values->item(0);
+      DOMElement  * newValueNode    = data->createElement( X_VALUE );
+      DOMText     * newTerminalNode = data->createTextNode( x_mdv_val );
+      newValueNode->appendChild( newTerminalNode );
+      records->item(i)->appendChild( newValueNode );
+    }
+  
+  unsigned int nItems = 0;
+  char c_nItemsPlus1[ 56 ];
+  if( !dataset->hasAttribute( X_COLUMNS ) )
+    {
+      char m[ SpkCompilerError::maxMessageLen() ];
+      sprintf( m, "Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_COLUMNS );
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+    }
+  XMLString::textToBin( dataset->getAttribute( X_COLUMNS ),
+			    nItems );
+  sprintf( c_nItemsPlus1, "%d", nItems + 1 );
+  dataset->setAttribute( X_COLUMNS, XMLString::transcode( c_nItemsPlus1)  );
+
+  // The MDV was appended at the last.
+  return nItems;
+}
+/*
+ * Insert the EVID field if the data set lacks the field.
+ *
+ * EVID(i) = 0 if no MDV
+ * EVID(i) = MDV(i) if MDV is given.
+ *
+ * Returns the location (>=0) in which the EVID field can be found.
+ */
+int ClientTranslator::insertEVID( DOMElement * dataset )
+{
+  // If EVID is defined in the data set, don't need to do anything.
+  int posEVID;
+  if( (posEVID = whereis( X_EVID ) ) >= 0 )
+    return posEVID;
+
+  // Determine if MDV exists in the data set.  MDV must exist when EVID is not present.
+  int posMDV = whereis( X_MDV );
+  if( posMDV < 0 )
+    {
+      char m[ SpkCompilerError::maxMessageLen() ];
+      sprintf( m, "MDV must be present (or inserted by SPK Compiler) in the data set when EVID is not given by the user!" );
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+    }
+
+  DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
+  unsigned int recordNum=0;
+  const XMLCh* x_evid_val;
+  const XMLCh* X_0 = XMLString::transcode( "0" );
+  const XMLCh* X_1 = XMLString::transcode( "1" );
+  for( int i=0; i<records->getLength(); i++ )
+    {
+      const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( X_POSITION );
+      XMLString::textToBin( x_position, recordNum );
+      DOMNodeList * values     = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
+      if( recordNum == 1 )
+	{
+	  x_evid_val = X_EVID;
+	}
+      else
+	{
+	  unsigned int mdv = 0;
+	  // Copy the value of MDV on i-th record to an integer.
+	  x_evid_val = dynamic_cast<DOMElement*>(values->item(posMDV))->getFirstChild()->getNodeValue();
+	}
+
+      //  values  -> item(0)          
+      //             <value>ID</value>
+      //          -> item(1)
+      //             <value>TIME</value>
+      //          -> item(2)
+      //             <value>DV</value>
+      //          -> item(3)
+      //             <value>MDV</value>
+      DOMNode     * firstValueNode  = values->item(0);
+      DOMElement  * newValueNode    = data->createElement( X_VALUE );
+      DOMText     * newTerminalNode = data->createTextNode( x_evid_val );
+      newValueNode->appendChild( newTerminalNode );
+      records->item(i)->appendChild( newValueNode );
+    }
+  
+  unsigned int nItems = 0;
+  char c_nItemsPlus1[ 56 ];
+  if( !dataset->hasAttribute( X_COLUMNS ) )
+    {
+      char m[ SpkCompilerError::maxMessageLen() ];
+      sprintf( m, "Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_COLUMNS );
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+    }
+  XMLString::textToBin( dataset->getAttribute( X_COLUMNS ),
+			    nItems );
+  sprintf( c_nItemsPlus1, "%d", nItems + 1 );
+  dataset->setAttribute( X_COLUMNS, XMLString::transcode( c_nItemsPlus1 )  );
+
+  // The EVID was appended at the last.
+  return nItems;
+}
+
 void ClientTranslator::parseData()
 {
 
@@ -273,9 +455,6 @@ void ClientTranslator::parseData()
       sprintf( m, "Programming error!  The analysis type (individual/population) must have been determined!" );
       throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
     }
-
-  const int locID = insertID();  
-  // Post condition: There's one and only one ID field in the data set parse tree.
 
   //
   // Precondition: The symbol table has no entry yet for data labels.
@@ -321,6 +500,12 @@ void ClientTranslator::parseData()
   for( int i=0; i<nDataSets; i++ )
     {
       DOMElement * dataset = dynamic_cast<DOMElement*>( datasets->item(i) );
+
+      // Warning: Do not change the order of the following three calls.
+      const int locID   = insertID( dataset );   // if no ID
+      const int locMDV  = insertMDV( dataset );  // if no MDV
+      const int locEVID = insertEVID( dataset ); // if no EVID 
+
       unsigned int nFields;
       if( !dataset->hasAttribute( X_COLUMNS ) )
 	{
