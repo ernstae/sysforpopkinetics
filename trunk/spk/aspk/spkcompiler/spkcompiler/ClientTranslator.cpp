@@ -49,7 +49,9 @@ ClientTranslator::ClientTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     data            ( dataIn ),
     ourPopSize      ( 0 ),
     ourApproximation( FO ),
-    ourTarget       ( POP )
+    ourTarget       ( POP ),
+    ourN            ( 1 )
+
 {
     X_SPKDATA    = XMLString::transcode( C_SPKDATA );
     X_VERSION    = XMLString::transcode( C_VERSION );
@@ -539,7 +541,6 @@ void ClientTranslator::parseData()
       vector<string> tmp_ids;
       vector<string> tmp_labels(nFields);
       vector<string> tmp_types (nFields);
-      valarray<int>  nDataRecords;
 
       unsigned int pos;      
       DOMNodeList * rows = dataset->getElementsByTagName( X_ROW );
@@ -671,29 +672,29 @@ void ClientTranslator::parseData()
 	}
       assert( nSubjects == ourPopSize ); 
       assert( nSubjects == tmp_ids.size() );
-      nDataRecords.resize( nSubjects );
+      ourN.resize( nSubjects );
 
 
       vector<string>::const_iterator pID = tmp_ids.begin();
       for( int k=0; pID != tmp_ids.end(), k<nSubjects; k++, pID++ )
 	{
-	  nDataRecords[k] = tmp_values[*pID][tmp_labels[0]].size();
+	  ourN[k] = tmp_values[*pID][tmp_labels[0]].size();
 	}
       
       //
       // Register the data labels without any attributes yet.
       //
       int nLabels = tmp_labels.size();
-       for( int k=0; k<nLabels; k++ )
+      for( int k=0; k<nLabels; k++ )
 	{
-	  table.insertLabel( tmp_labels[k], "", nDataRecords );  
+	  table.insertLabel( tmp_labels[k], "", ourN );  
 	}
 
+      // Store the data item values permanently.
+      // A Symbol object for a label maintains three vectors: initial, upper and lower.
+      // Use "initial" vector to store the data item values for the label. 
       //
-      // Move the extracted (from the parse tree) info into the symbol table.
-      //
-      // NOTE: The actual values in tmp_ids are stored in the same order they appeared
-      // in the table specification.  ie. tmp_ids[0] contains the first individual's ID.
+      // label ---> initial[i] ---> data for the i-th individual's "label" data item.
       //
       int who=0;
       for( vector<string>::const_iterator pID = tmp_ids.begin(); pID != tmp_ids.end(); pID++, who++ )

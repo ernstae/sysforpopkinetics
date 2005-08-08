@@ -91,10 +91,9 @@ Symbol* SymbolTable::insertMatrix( const string& name,
    table[ NAME ] = a;
    return &(table[ NAME ]);
 }
-Symbol* SymbolTable::insertLabel( const string& label, const string& alias,
-                                  valarray<int>& len )
+Symbol* SymbolTable::insertLabel( const string& label, const string& alias, const valarray<int>& N )
 {
-   Symbol a = Symbol::createLabel( label, alias, len );
+   Symbol a = Symbol::createLabel( label, alias, N );
    const string LABEL = key(label);
    table[ LABEL ] = a;
    labels.push_back( label );

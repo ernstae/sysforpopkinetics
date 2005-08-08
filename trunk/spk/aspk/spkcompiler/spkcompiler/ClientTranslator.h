@@ -149,6 +149,11 @@ public:
   enum APPROX ourApproximation;
 
   /**
+   * The number of data recoreds for each individual.
+   */
+  std::valarray<int> ourN;
+
+  /**
    * The symbol table.
    */
   SymbolTable table;

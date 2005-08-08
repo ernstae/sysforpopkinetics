@@ -22,7 +22,8 @@ Symbol::Symbol( const string& nameIn,
   synonym( synonymIn ),
   symbol_type( stIn ),
   object_type( otIn ),
-  structure( msIn )
+  structure( msIn ),
+  permission( READWRITE )
 {
    if( dimIn.size() <= 0 )
      return;
@@ -67,11 +68,12 @@ Symbol::Symbol( const string& nameIn,
      }
 }
 Symbol::Symbol( const Symbol& right )
-: name( right.name ),
-  synonym( right.synonym ),
+: name       ( right.name ),
+  synonym    ( right.synonym ),
   symbol_type( right.symbol_type ),
   object_type( right.object_type ),
-  structure( right.structure )
+  structure  ( right.structure ),
+  permission ( right.permission ) 
 {
    if( right.dimension.size() <= 0 )
      return;
@@ -128,6 +130,7 @@ Symbol& Symbol::operator=( const Symbol& right )
    symbol_type = right.symbol_type;
    object_type = right.object_type;
    structure   = right.structure;
+   permission  = right.permission;
    if( right.dimension.size() <= 0 )
      return *this;
 
@@ -198,6 +201,8 @@ bool Symbol::operator==( const Symbol& right ) const
      return false;
    if( structure   != right.structure )
      return false;
+   if( permission  != right.permission )
+     return false;
    if( dimension.size() != right.dimension.size() )
      return false;
 
@@ -240,10 +245,10 @@ Symbol Symbol::createMatrix( const string& var, enum Structure mt, int matdim )
    return Symbol( var, "", PREDEFINED, MATRIX, mt, dim );
 }
 Symbol Symbol::createLabel( const string& label, 
-                            const string& alias, 
-                            const valarray<int>& dims )
+                            const string& alias,
+			    const valarray<int>& N )
 {
-  return Symbol( label, alias, DATALABEL, VECTOR, FULL, dims );
+  return Symbol( label, alias, DATALABEL, VECTOR, FULL, N );
 }
 std::ostream& operator<<( std::ostream& o, const Symbol& s )
 {
@@ -343,3 +348,11 @@ std::ostream& operator<<( std::ostream& o, const Symbol& s )
   o << endl;
   return o;
 }
+/*
+enum Symbol::Permission Symbol::setPermission( enum Permission current )
+{
+  enum Permission prev = permission;
+  permission = current;
+  return prev;
+}
+*/
