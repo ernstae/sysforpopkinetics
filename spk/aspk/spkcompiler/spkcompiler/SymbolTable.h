@@ -148,11 +148,11 @@ class SymbolTable{
    *
    * @param label The label for the data subsets.
    * @param synonym An alias for the label.
-   * @param lengths The lengths of data subsets associated with the label.
+   * @param N The number of data records for each individual.
    */
   Symbol* insertLabel( const std::string& label, 
-                       const std::string& synonym, 
-                       std::valarray<int>& lengths );
+                       const std::string& synonym,
+		       const std::valarray<int>& N );
 
   /**
    * Return a list of data labels.

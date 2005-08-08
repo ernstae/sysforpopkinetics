@@ -47,7 +47,8 @@ public:
    * The access permissions.
    **/
   enum Permission { READONLY,    /** Read only **/
-                    READWRITE    /** Read and write **/ };
+                    READWRITE,   /** Read and write **/
+                    HIDDEN       /** Hidden **/ };
 
   /**
    * Return a Symbol object that defines "empty".
@@ -178,17 +179,23 @@ public:
    *   <dt>symbol type</dt>     <dd>SymbolType::DATALABEL</dd>
    *   <dt>data object type</dt><dd>ObjectType::VECTOR</dd>
    *   <dt>data structure</dt>  <dd>Structure::FULL</dd>
-   *   <dt>dimension</dt>       <dd>The values of <em>lengths</em></dd>
+   *   <dt>dimension</dt>       <dd>N</dd>
    * </dl>
    * @param label The label for the data subset.
    * @param alias  The synonym/alias for the data label.
-   * @param lengths The lengths of the data subsets (ie. vectors).
+   * @param N The number of data records for each individual.
    */
    static Symbol createLabel( const std::string& label, 
                               const std::string& alias,
-                              const std::valarray<int>& lengths );
+			      const std::valarray<int>& N );
 
 public:
+
+   /**
+    * Set the access permission associated with the symbol.
+    * Returns the previous permission value.
+    */
+   //   enum Permission setPermission( enum Permission p );
 
    /**
     * The name/symbol/identifier that refers to the object.
@@ -215,6 +222,11 @@ public:
     */
    enum Structure  structure;
   
+   /**
+    * The access permission.
+    */
+   enum Permission permission;
+
    /**
     * The dimension(s) of the data object(s) refered by the symbol.
     *
