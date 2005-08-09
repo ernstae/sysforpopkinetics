@@ -19,6 +19,8 @@
 //#include "pop_diffeqnTest.h"
 #include "ind_subprobTest.h"
 #include "pop_subprobTest.h"
+#include "CompartmentInfoTest.h"
+#include "CompModelInfoTest.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -83,6 +85,12 @@ int main( int argc, const char * argv[] )
   // to repeat the whole process.
   master[ "ind_subprobTest" ] = ind_subprobTest::suite();
   master[ "pop_subprobTest" ] = pop_subprobTest::suite();
+
+  // Test for CompartmentInfo
+  master[ "CompartmentInfoTest" ] = CompartmentInfoTest::suite();
+
+  // Test for CompModelInfo
+  master[ "CompModelInfoTest" ] = CompModelInfoTest::suite();
 
   if( argc == 1 )
     {

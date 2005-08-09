@@ -14,6 +14,10 @@ dist_libnonmem_a_SOURCES = \
         lex_explang.l \
 	nonmem.cpp \
 	nonmem.h \
+        CompartmentInfo.cpp \
+        CompartmentInfo.h \
+        CompModelInfo.cpp \
+        CompModelInfo.h \
         NonmemTranslator.cpp \
         NonmemTranslator.h
 
