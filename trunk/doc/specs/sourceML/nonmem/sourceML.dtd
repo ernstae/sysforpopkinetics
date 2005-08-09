@@ -341,11 +341,13 @@ If this element appears when the population analysis is chosen, a data set for n
    </html:li>
    <html:li>The following math functions are supported:
       <html:ul>
+         <html:li>ATAN</html:li>
+         <html:li>COS</html:li>
          <html:li>EXP</html:li>
          <html:li>LOG</html:li>
          <html:li>LOG10</html:li>
+         <html:li>SIN</html:li>
          <html:li>SQRT</html:li>
-         <html:li>ATAN</html:li>
       </html:ul>
    </html:li>
    <html:li>The following additional functions are going to be supported:
@@ -354,12 +356,10 @@ If this element appears when the population analysis is chosen, a data set for n
          <html:li>ACOS</html:li>
          <html:li>ASIN</html:li>
          <html:li>ATAN2</html:li>
-         <html:li>COS</html:li>
          <html:li>COSH</html:li>
          <html:li>MAX</html:li>
          <html:li>MIN</html:li>
          <html:li>MOD</html:li>
-         <html:li>SIN</html:li>
          <html:li>SINH</html:li>
          <html:li>TAN</html:li>
          <html:li>TANH</html:li>
@@ -391,7 +391,7 @@ The valid combinations of PREDPP library model and TRANS:
       <html:dd>Trans1</html:dd>
 </html:dl>
 -->
-<!ELEMENT model ( description? | (pred | (pk | diffeqn | error) | (pk | comp_model | error ) ) ) >
+<!ELEMENT model ( description? | (pred | (comp_model | pk | diffeqn | error) ) ) >
 
 <!-- <model advan=""> The number that corresponds to PREDPP library model from ADVAN1 - ADVAN10.  Currently supported models are { 6 }.  If this attribute is omitted, <pred> must be defined.  The attribute setting will be ignored if <pred> is specified.  -->
 <!ATTLIST model advan ( 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 ) #IMPLIED>
@@ -439,8 +439,8 @@ The order in which the <compartment>s appear is interpreted as the compartment n
 <!-- <comp_model ncompartments="n"> Total number of compartments other than the output compartment.  The default is the number of <compartment>s. -->
 <!ATTLIST comp_model ncompartments CDATA #IMPLIED>
 
-<!-- <comp_model nequilibrium="0"> The number of equilibrium compartments, default to 0.  -->
-<!ATTLIST comp_model nequilibrium  CDATA #IMPLIED>
+<!-- <comp_model nequilibriums="0"> The number of equilibrium compartments, default to 0.  -->
+<!ATTLIST comp_model nequilibriums  CDATA #IMPLIED>
 
 <!-- <comp_model nparameters="n"> The number of basic PK parameters. The default is the number of bsic PK parameters defined in the <pk> block.-->
 <!ATTLIST comp_model nparameters   CDATA #IMPLIED>
