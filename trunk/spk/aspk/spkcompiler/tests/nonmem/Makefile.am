@@ -37,7 +37,7 @@ testall_SOURCES      = \
                        DOMPrintErrorHandler.cpp \
                        DOMPrintErrorHandler.hpp \
                        DOMPrintFilter.cpp \
-                       DOMPrintFilter.hpp \ 
+		       DOMPrintFilter.hpp \
                        DOMTreeErrorReporter.cpp \
                        DOMTreeErrorReporter.hpp \
 	               lex_explangTest.cpp \
@@ -69,6 +69,10 @@ testall_SOURCES      = \
 	               pop_subprobTest.cpp \
                        pop_subprobTest.h \
                        pop_diffeqnTest.cpp \
-                       pop_diffeqnTest.h
+                       pop_diffeqnTest.h \
+                       CompartmentInfoTest.cpp \
+                       CompartmentInfoTest.h \
+                       CompModelInfoTest.cpp \
+                       CompModelInfoTest.h
 
 
