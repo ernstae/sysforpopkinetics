@@ -129,7 +129,7 @@ void ClientTranslator::translate()
  * Look for a label/item.  If the label is found, return the position from the left (>=0).
  * If not found, return -1.
  */
-int ClientTranslator::whereis( const XMLCh* X_label ) const
+int ClientTranslator::whereis( const XMLCh* x_label ) const
 {
   //
   // Precondition: The number of individuals has been determined.
@@ -172,7 +172,7 @@ int ClientTranslator::whereis( const XMLCh* X_label ) const
 	      const XMLCh* x_value = values->item(j)->getFirstChild()->getNodeValue();
 
 	      // If there's the label, return immediately.
-	      if( XMLString::compareIString( x_value, X_label ) == 0 )
+	      if( XMLString::compareIString( x_value, x_label ) == 0 )
 		{
 		  // The ID field is found in the j-th column.
 		  return j;
@@ -274,8 +274,11 @@ int ClientTranslator::insertID( DOMElement * dataset )
 /*
  * Insert the MDV field if the data set lacks the field.
  *
- * MDV(i) = 0 for no EVID.
- * MDV(i) = (EVID(i)==0? 0 : 1) if EVID is given.
+ * Initialize MDV in the following way:
+ *    MDV(i) = 0 for no EVID.
+ *    MDV(i) = (EVID(i)==0? 0 : 1) if EVID is given.
+ * The initial values may be altered later once this data is
+ * passed to a specific client translator.
  *
  * Returns the location (>=0) in which the ID field can be found.
  */
