@@ -12,8 +12,16 @@
 
 /**
  * Abstract class that provides interfaces to execute translations from
- * XML to C++.  Generated C++ source code files are stored in the
- * current working directory.
+ * XML to C++.
+ *
+ * Parsing of SpkDataML documents are done by methods implemented
+ * within this class.
+ * ID, MDV and EVID data items are added to the parse tree when they
+ * are found missing in the data set.
+ *
+ * Parsing of SpkSourceML documents are done by derived classes 
+ * because the documents are client-specific.
+ * 
  */
 class ClientTranslator{
  public:
