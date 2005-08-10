@@ -1741,7 +1741,7 @@ void ind_withIDTest::testReportML()
   DOMNodeList *presentation_data = report->getElementsByTagName( X_PRESENTATION_DATA );
   CPPUNIT_ASSERT( presentation_data->getLength() == 1 );
 
-  //  okToClean = true;
+  okToClean = true;
 }
 
 CppUnit::Test * ind_withIDTest::suite()
@@ -1751,7 +1751,6 @@ CppUnit::Test * ind_withIDTest::suite()
 			new CppUnit::TestCaller<ind_withIDTest>(
 								"testNonmemPars_h", 
 								&ind_withIDTest::testNonmemPars_h ) );
-  /*
   suiteOfTests->addTest( 
 			new CppUnit::TestCaller<ind_withIDTest>(
 								"testIndDataClass", 
@@ -1772,7 +1771,6 @@ CppUnit::Test * ind_withIDTest::suite()
 			new CppUnit::TestCaller<ind_withIDTest>(
 								"testReportML", 
 								&ind_withIDTest::testReportML ) );
-  */
 
   return suiteOfTests;
 }
