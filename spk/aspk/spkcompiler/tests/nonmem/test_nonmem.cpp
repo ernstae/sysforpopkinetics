@@ -16,11 +16,15 @@
 #include "pop_monteTest.h"
 #include "ind_mdvTest.h"
 #include "pop_mdvTest.h"
-//#include "pop_diffeqnTest.h"
 #include "ind_subprobTest.h"
 #include "pop_subprobTest.h"
 #include "CompartmentInfoTest.h"
 #include "CompModelInfoTest.h"
+#include "pop_advan6Test.h"
+//#include "NonmemSourceMLElementsTest.h"
+//#include "NonmemReportMLElementsTest.h"
+#include "countStrInLhsTest.h"
+#include "countStrInRhsTest.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -79,7 +83,7 @@ int main( int argc, const char * argv[] )
   master[ "pop_mdvTest" ] = pop_mdvTest::suite();
 
   // test for NonmemTranslator: ability to handle Differential Equations
-  //  master[ "pop_diffeqnTest" ] = pop_diffeqnTest::suite();
+  master[ "pop_advan6Test" ] = pop_advan6Test::suite();
 
   // test for NonmemTranslator: ability to handle a request 
   // to repeat the whole process.
@@ -91,6 +95,12 @@ int main( int argc, const char * argv[] )
 
   // Test for CompModelInfo
   master[ "CompModelInfoTest" ] = CompModelInfoTest::suite();
+
+  //master[ "NonmemSourceMLElementsTest" ] = NonmemSourceMLElementsTest::suite();
+  //master[ "NonmemReportMLElementsTest" ] = NonmemSourceMLElementsTest::suite();
+
+  master[ "countStrInLhsTest" ] = countStrInLhsTest::suite();
+  master[ "countStrInRhsTest" ] = countStrInRhsTest::suite();
 
   if( argc == 1 )
     {
