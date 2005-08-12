@@ -46,7 +46,7 @@ public:
   /**
    * The access permissions.
    **/
-  enum Permission { READONLY,    /** Read only **/
+  enum Access     { READONLY,    /** Read only **/
                     READWRITE,   /** Read and write **/
                     HIDDEN       /** Hidden **/ };
 
@@ -193,9 +193,9 @@ public:
 
    /**
     * Set the access permission associated with the symbol.
-    * Returns the previous permission value.
+    * Returns the previous access value.
     */
-   //   enum Permission setPermission( enum Permission p );
+   //   enum Access setAccess( enum Access p );
 
    /**
     * The name/symbol/identifier that refers to the object.
@@ -225,7 +225,7 @@ public:
    /**
     * The access permission.
     */
-   enum Permission permission;
+   enum Access access;
 
    /**
     * The dimension(s) of the data object(s) refered by the symbol.
