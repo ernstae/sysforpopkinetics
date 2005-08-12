@@ -68,11 +68,14 @@ testall_SOURCES      = \
 	               pop_fixedParaTest.h \
 	               pop_subprobTest.cpp \
                        pop_subprobTest.h \
-                       pop_diffeqnTest.cpp \
-                       pop_diffeqnTest.h \
+                       pop_advan6Test.cpp \
+                       pop_advan6Test.h \
                        CompartmentInfoTest.cpp \
                        CompartmentInfoTest.h \
                        CompModelInfoTest.cpp \
-                       CompModelInfoTest.h
-
+                       CompModelInfoTest.h \
+                       countStrInLhsTest.cpp \
+                       countStrInLhsTest.h \
+                       countStrInRhsTest.cpp \
+                       countStrInRhsTest.h
 
