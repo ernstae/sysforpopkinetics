@@ -23,7 +23,7 @@ Symbol::Symbol( const string& nameIn,
   symbol_type( stIn ),
   object_type( otIn ),
   structure( msIn ),
-  permission( READWRITE )
+  access( READWRITE )
 {
    if( dimIn.size() <= 0 )
      return;
@@ -73,7 +73,7 @@ Symbol::Symbol( const Symbol& right )
   symbol_type( right.symbol_type ),
   object_type( right.object_type ),
   structure  ( right.structure ),
-  permission ( right.permission ) 
+  access ( right.access ) 
 {
    if( right.dimension.size() <= 0 )
      return;
@@ -130,7 +130,7 @@ Symbol& Symbol::operator=( const Symbol& right )
    symbol_type = right.symbol_type;
    object_type = right.object_type;
    structure   = right.structure;
-   permission  = right.permission;
+   access  = right.access;
    if( right.dimension.size() <= 0 )
      return *this;
 
@@ -201,7 +201,7 @@ bool Symbol::operator==( const Symbol& right ) const
      return false;
    if( structure   != right.structure )
      return false;
-   if( permission  != right.permission )
+   if( access  != right.access )
      return false;
    if( dimension.size() != right.dimension.size() )
      return false;
@@ -349,10 +349,10 @@ std::ostream& operator<<( std::ostream& o, const Symbol& s )
   return o;
 }
 /*
-enum Symbol::Permission Symbol::setPermission( enum Permission current )
+enum Symbol::Access Symbol::setAccess( enum Access current )
 {
-  enum Permission prev = permission;
-  permission = current;
+  enum Access prev = access;
+  access = current;
   return prev;
 }
 */
