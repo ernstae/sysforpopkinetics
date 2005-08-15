@@ -158,6 +158,9 @@ NOTE: Life-Cycle of the Working Directory Name
      reading the contents of the file named "job_id", which it created
      shortly after it created the directory.
 
+In the case of error ending, if the end_code is not "abrt", the daemon 
+sends an end-job email notice to the user on the user's request.
+
 =head1 RETURNS
 
 Nothing, because it has no parent (other than init) to which an exit
@@ -174,15 +177,20 @@ use File::Path;
 use POSIX qw(:signal_h);
 use Proc::Daemon;
 use Spkdb('connect', 'disconnect', 'de_q2c', 'de_q2ac', 'en_q2r', 'get_job_ids',
-          'end_job', 'get_cmp_jobs', 'get_dataset', 'email_for_job');
+          'end_job', 'get_cmp_jobs', 'get_dataset', 'email_for_job', 'get_mail_notice');
 use Sys::Syslog('openlog', 'syslog', 'closelog');
-
+use IO::Socket::INET;
+use Sys::Hostname;
 
 my $database = shift;
 my $host     = shift;
 my $dbuser   = shift;
 my $dbpasswd = shift;
 my $mode     = shift;
+
+my $mailserver = "smtp.washington.edu:25";
+my $hostname = hostname();
+my $from = "rfpksoft\@u.washington.edu";
 
 my $bugzilla_production_only = 1;
 my $bugzilla_url = "http://192.168.2.2:8081/";
@@ -236,6 +244,12 @@ sub death {
 
     # Log the reason for termination
     syslog($level, $msg);
+
+    # Stop the sensor
+    if (defined $sensor_pid) {
+        $SIG{'TERM'} = 'IGNORE';
+        kill('TERM', $sensor_pid);
+    }
 
     # Close the connection to the database
     if ($database_open) {
@@ -596,11 +610,35 @@ sub reaper {
 		syslog('emerg', "bugzilla-submit failed with exit_status=$exit_status");
 	    }
 	}
+
+        # Send end-job email notice to the user if it is requested
+        if ($end_code ne "abrt") {
+            my $mail_notice = &get_mail_notice($dbh, $job_id);
+            if (defined $mail_notice && $mail_notice == 1) {
+                sendmail($job_id, $email);
+                syslog('info', "end-job email notice sent for job_id=$job_id from spkcmpd");
+            }
+        }
     }
     # Remove working directory if not needed
     if ($remove_working_dir && !$retain_working_dir) {
 	File::Path::rmtree($working_dir);
       }
+}
+sub sendmail {
+    my $job_id = shift;
+    my $to = shift;
+    my $status = "Your SPK job has ended due to an error in compilation.";
+    my $subject = "SPK job finished - Job ID: $job_id";
+    my $message = "This message was sent by the SPK service provider.\n$status";
+    my $socket = IO::Socket::INET->new($mailserver);
+    print $socket "HELO $hostname\r\n";
+    print $socket "MAIL FROM: <$from>\r\n";
+    print $socket "RCPT TO: <$to>\r\n";
+    print $socket "DATA\r\n";
+    print $socket "To: $to\nSubject: $subject\n$message\r\n";
+    print $socket ".\r\n";
+    close($socket);
 }
 sub start {
     # Open the system log and record that we have started

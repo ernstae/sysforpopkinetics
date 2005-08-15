@@ -34,7 +34,7 @@ our @EXPORT_OK = (
     'de_q2r', 'de_q2ar', 'end_job', 'job_report', 'job_checkpoint', 'job_history',
     'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
     'new_model', 'get_model', 'update_model', 'user_models',
-    'new_user', 'update_user', 'get_user', 'email_for_job'
+    'new_user', 'update_user', 'get_user', 'set_mail_notice', 'get_mail_notice', 'email_for_job'
     );
 
 our $VERSION = '0.01';
@@ -833,7 +833,7 @@ sub de_q2r() {
 	    .       "where state_code='q2r' "
             .       "order by event_time "
             .       "limit 1 "
-            .       "for update; ";
+            .       "for update;";
 
     my $sth = $dbh->prepare($sql);
     unless ($sth) {
@@ -905,7 +905,7 @@ sub de_q2ar() {
 	    .       "where state_code='q2ar' "
             .       "order by event_time "
             .       "limit 1 "
-            .       "for update; ";
+            .       "for update;";
 
     my $sth = $dbh->prepare($sql);
     unless ($sth) {
@@ -1875,11 +1875,101 @@ sub get_user() {
 	$err = $EXECUTE_FAILED;
 	$errstr = "could not execute state: $sql; error returned "
 	    . $sth->errstr;
+	return undef;
     }
     unless ($sth->rows == 1) {
 	return undef;
     }
     return $sth->fetchrow_hashref();
+}
+
+=head2 set_mail_notice -- set end-job email notice request option
+Given a job_id, set end-job email notice request option for the job.
+    
+    $r = &Spkdb::set_mail_notice($dbh, $job_id, $email);
+
+$dbh is the handle to an open database connection
+
+$job_id is the key to a row in the job table
+
+$email is true if end-job email notice is requested, false if otherwise
+
+Returns
+
+  success: true if end-job email notice request option is set, false if otherwise
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::UPDATE_FAILED
+
+=cut
+
+sub set_mail_notice() {
+    my $dbh = shift;
+    my $job_id = shift;
+    my $email = shift;
+    $err = 0;
+    $errstr = "";
+
+    my $sql = "update job set mail='$email' where job_id='$job_id';";
+
+    my $nrows = $dbh->do($sql);
+    unless ($nrows)
+    {
+	$err = $UPDATE_FAILED;
+	$errstr = "could not execute $sql; error returned ";
+	$dbh->rollback;        
+        return undef;
+    }
+    unless ($nrows == 1)
+    {
+        return 0;
+    }
+    return 1;
+}
+
+=head2 get_mail_notice -- get end-job email notice request option
+Given a job_id, get end-job email notice request option for the job.
+    
+    $r = &Spkdb::get_mail_notice($dbh, $job_id);
+
+$dbh is the handle to an open database connection
+
+$job_id is the key to a row in the job table
+
+Returns
+
+  success: true if end-job email notice request option is set, false if otherwise
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::UPDATE_FAILED
+
+=cut
+
+sub get_mail_notice() {
+    my $dbh = shift;
+    my $job_id = shift;
+    $err = 0;
+    $errstr = "";
+
+    my $sql = "select mail from job where job_id='$job_id';";
+    my $sth = $dbh->prepare($sql);
+    unless ($sth) {
+	$err = $PREPARE_FAILED;
+	$errstr = "could not prepare statement: $sql";
+	return undef;
+    }
+    unless ($sth->execute())
+    {
+	$err = $EXECUTE_FAILED;
+	$errstr = "could not execute state: $sql; error returned "
+	    . $sth->errstr;
+        return undef;
+    }
+    unless ($sth->rows == 1) {
+	return undef;
+    }
+    my $row = $sth->fetchrow_hashref();
+    return $row->{"mail"};
 }
 
 =head2 email_for_job -- get email address for a job
@@ -1921,6 +2011,7 @@ sub email_for_job() {
 	$err = $EXECUTE_FAILED;
 	$errstr = "could not execute state: $sql; error returned "
 	    . $sth->errstr;
+	return undef;
     }
     unless ($sth->rows == 1) {
 	return undef;
