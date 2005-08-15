@@ -419,8 +419,9 @@ For the terms,
                      <term><literal>const bool nCompartments</literal></term>
                      <listitem>
                         <para>
-                        specifies the number of (user) compartments; i.e. excluding the output compartment
-                        that NONMEM implicitely adds.
+                        specifies the number of compartments 
+                        (including the output compartment that 
+                        NONMEM implicitely adds).
                         </para>
                      </listitem>
                   </varlistentry>
