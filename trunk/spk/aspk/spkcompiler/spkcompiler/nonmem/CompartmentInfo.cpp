@@ -104,6 +104,7 @@ bool CompartmentInfo::is_default_dose() const
 }
 void CompartmentInfo::setName( const std::string& nameIn )
 {
+  name = nameIn;
   copy( nameIn.begin(), nameIn.end(), name.begin() );
 }
 void CompartmentInfo::set_initial_off( bool initial_offIn )
