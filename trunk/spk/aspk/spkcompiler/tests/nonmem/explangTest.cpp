@@ -29,6 +29,7 @@ extern int                gSpkExpLines;
 extern int                gSpkExpErrors;
 extern SymbolTable      * gSpkExpSymbolTable;
 extern FILE             * gSpkExpOutput;
+extern bool               gSpkIsTInRhs;
 extern FILE             * nm_in;
 extern int                nm_debug;
 
@@ -212,7 +213,8 @@ void explangTest::testVectorElementAssignmentToScalar()
   
   char input[]        = "testVectorElementAssignmentToScalar.in";
   char output[]       = "testVectorElementAssignmentToScalar.out";
-  char statementIn[]  = "A(1) = 1\n\n";
+  char statementIn[]  = "A(1) = 1\n \
+                         A(2) = 2.0 * A(1)\n";
 
   FILE * pInput = fopen( input, "w" );
   CPPUNIT_ASSERT( pInput != NULL );
@@ -271,6 +273,40 @@ void explangTest::testVectorElementAssignmentToScalar()
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "1;" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A[" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "2" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "-" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "]" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "2.0" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "*" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A[" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "-" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "1" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "];" );
 
   pOutput.close();
   remove( input );
@@ -795,7 +831,58 @@ void explangTest::testHAHN1_1()
   remove( input );
   remove( output );
 }
+void explangTest::testIsTInRhs()
+{
+  // Attention!!! nm_lex() converts any capitalized letter to lower case.
 
+  SymbolTable table;
+  char input[]        = "testIsTInRhs.in";
+  char output[]       = "testIsTInRhs.out";
+
+  FILE * pInput = fopen( input, "w" );
+  CPPUNIT_ASSERT( pInput != NULL );
+  fprintf( pInput, "CL=THETA(1)*EXP(ETA(1))\nV=THETA(2)\nK=CL/V\nS1=V\n" ); 
+  fclose( pInput );
+  
+  table.insertVector( "THETA", 2 );
+  table.insertVector( "ETA", 2 );
+
+  pInput = fopen( input, "r" );
+  CPPUNIT_ASSERT( pInput != NULL );
+
+  nm_in = pInput;
+  CPPUNIT_ASSERT( nm_in != NULL );
+
+  gSpkExpErrors = 0;
+  gSpkExpLines  = 0;
+  gSpkExpSymbolTable = &table;
+  CPPUNIT_ASSERT( gSpkExpSymbolTable != NULL );
+  gSpkExpOutput = fopen( output, "w" );
+  nm_debug = 0;
+
+  nm_parse();
+
+  CPPUNIT_ASSERT_EQUAL( 4, gSpkExpLines );
+  CPPUNIT_ASSERT( !gSpkIsTInRhs );
+  CPPUNIT_ASSERT( table.findi( "CL" ) != Symbol::empty() );
+  CPPUNIT_ASSERT( table.findi( "V" )  != Symbol::empty() );
+  CPPUNIT_ASSERT( table.findi( "K" )  != Symbol::empty() );
+  CPPUNIT_ASSERT( table.findi( "S1" ) != Symbol::empty() );
+  fclose( pInput );
+  fclose( gSpkExpOutput );
+
+  CPPUNIT_ASSERT( gSpkExpErrors==0 );
+  if( gSpkExpErrors == 0 )
+  {
+    //expTreeUtil.printToStdout( gSpkExpTree );
+  }
+
+  //cout << endl;
+  //gSpkExpSymbolTable->dump();
+
+  remove( input );
+  remove( output );
+}
 CppUnit::Test * explangTest::suite()
 {
   CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite( "explangTest" );
@@ -824,7 +911,10 @@ CppUnit::Test * explangTest::suite()
      new CppUnit::TestCaller<explangTest>(
          "testIfThenStmt",
 	 &explangTest::testIfThenStmt) );
-
+  suiteOfTests->addTest( 
+     new CppUnit::TestCaller<explangTest>(
+         "testIsTInRhs",
+	 &explangTest::testIsTInRhs) );
   return suiteOfTests;
 }
 
