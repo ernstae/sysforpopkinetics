@@ -27,24 +27,6 @@ class CompModelInfo{
 
   /**
    * Constructor.  Initialize the model with the given attribute values and dummy compartments.
-   * The model is assumed to contain no equilibrim compartment.
-   *
-   * @param nCompartmentsIn The number of compartments in this system.
-   * @param nParametersIn   The number of basic PK parameters.
-   */
-  CompModelInfo( int nCompartmentsIn, int nParametersIn );
-  /**
-   * Constructor.  Initialize the model with the given attribute values.
-   * The model is assumed to contain no equilibrim compartment.
-   *
-   * @param nCompartmentsIn The number of compartments in this system.
-   * @param nParametersIn   The number of basic PK parameters.
-   * @param compartmentsIn  Compartments making up the system.
-   */
-  CompModelInfo( int nCompartmentsIn, int nParametersIn, const std::vector<CompartmentInfo>& compartmentsIn );
-
-  /**
-   * Constructor.  Initialize the model with the given attribute values and dummy compartments.
    *
    * @param nCompartmentsIn The number of compartments in this system.
    * @param nParametersIn   The number of basic PK parameters.
@@ -80,7 +62,7 @@ class CompModelInfo{
   /**
    * True if the PK block is a function of T (continuous time).
    */
-  bool is_pkFunctionOfT() const;
+  bool isPkFunctionOfT() const;
 
   /**
    * Set as to whether the PK block is a function of T or not.
@@ -127,11 +109,14 @@ class CompModelInfo{
    * @param i The number/order of the object.
    */
   const CompartmentInfo& operator[]( int i ) const;
+  const CompartmentInfo& getCompartment( int i ) const;
   /**
    * Get the i-th CompartmentInfo object.
    * @param i The number/order of the object.
    */
   CompartmentInfo& operator[]( int i );
+  CompartmentInfo& getCompartment( int i );
+
   /**
    *
    */
@@ -143,7 +128,7 @@ class CompModelInfo{
   int nCompartments;
   int nParameters;
   int nEquilibrims;
-  bool isPkFunctionOfT;
+  bool is_pkFunctionOfT;
   std::vector<CompartmentInfo> compartments;
 };
 
