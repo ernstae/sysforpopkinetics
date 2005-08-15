@@ -9,6 +9,14 @@
    <articleinfo>
       <revhistory>
          <revision>
+            <revnumber>1.21</revnumber>
+            <date>June 10, 2005</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>
+            ADVAN6 specific outputs
+            </revremark>
+         </revision>
+         <revision>
             <revnumber>1.20</revnumber>
             <date>June 10, 2005</date>
             <authorinitials>sh</authorinitials>
@@ -392,6 +400,90 @@ For the terms,
                </para>
             </listitem>
          </varlistentry>
+
+         <!-- Begin ONLY APPEAR in ADVAN6 -------------------------------------------------------------------- -->
+         <varlistentry>
+            <term>----- ADVAN6 ONLY -----</term>
+            <listitem>
+              <variablelist>
+                  <varlistentry>
+                     <term><literal>const bool isPkFunctionofT</literal></term>
+                     <listitem>
+                        <para>
+                        inidicates as to whether the user's PK model is a function of T (continuous time variable).
+                        A value, true, indicates it does.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                     <term><literal>const bool nCompartments</literal></term>
+                     <listitem>
+                        <para>
+                        specifies the number of (user) compartments; i.e. excluding the output compartment
+                        that NONMEM implicitely adds.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                     <term><literal>const bool nParameters</literal></term>
+                     <listitem>
+                        <para>
+                        specifies the number of PK parameters.  Currently this is equal to the length
+                        of P vector variable appearing in the user's model.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                     <term><literal>const bool defaultDoseComp</literal></term>
+                     <listitem>
+                        <para>
+                        specifies the default compartment that receives dose.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                     <term><literal>const bool defaultObservationComp</literal></term>
+                     <listitem>
+                        <para>
+                        specifies the default observation compartment.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                     <term><literal>const std::valarray&lt;bool&gt; initialOff</literal></term>
+                     <listitem>
+                        <para>
+                        is a vector of boolean values where the i-th value indicates
+                        as to whether the corresponding compartment is initiall off or not.
+                        True inidicates initially off.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                     <term><literal>const std::valarray&lt;bool&gt; noOff</literal></term>
+                     <listitem>
+                        <para>
+                        is a vector of boolean values where the i-th value indicates
+                        as to whether the corresponding compartment can be turned off or not.
+                        True indicates no turn-off.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                     <term><literal>const std::valarray&lt;bool&gt; noDose</literal></term>
+                     <listitem>
+                        <para>
+                        is a vector of boolean values where the i-th value indicates
+                        as to whehter the corresponding compartment would ever receive a dose or not.
+                        True indicates no dose at all.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+
+               </variablelist>
+            </listitem>
+         </varlistentry>
+         <!-- End ONLY APPEAR in ADVAN6 -------------------------------------------------------------------- -->
       </variablelist>
    </sect1>
    <sect1>
