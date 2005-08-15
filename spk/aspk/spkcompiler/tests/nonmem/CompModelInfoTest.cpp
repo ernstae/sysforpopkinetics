@@ -40,11 +40,24 @@ void CompModelInfoTest::testConstructorsWithCompartments()
   CompModelInfo model_no_equilibrim  ( nComps, nParams, compartments );
   CompModelInfo model_with_equilibrim( nComps, nParams, nEquilibrims, compartments );
   
+  vector<bool> initial_off( nComps );
+  model_no_equilibrim.getInitialOff( initial_off );
+  CPPUNIT_ASSERT( initial_off[0] == false );
+  CPPUNIT_ASSERT( initial_off[1] == true );
+  vector<bool> no_off( nComps );
+  model_no_equilibrim.getNoOff( no_off );
+  CPPUNIT_ASSERT( no_off[0] == false );
+  CPPUNIT_ASSERT( no_off[1] == true );
+  vector<bool> no_dose( nComps );
+  model_no_equilibrim.getNoDose( no_dose );
+  CPPUNIT_ASSERT( no_dose[0] == false );
+  CPPUNIT_ASSERT( no_dose[1] == true );
   CPPUNIT_ASSERT_EQUAL( nComps,  model_no_equilibrim.getNCompartments() );
   CPPUNIT_ASSERT_EQUAL( nParams, model_no_equilibrim.getNParameters() );
   CPPUNIT_ASSERT_EQUAL( 0,       model_no_equilibrim.getNEquilibrims() );
   CPPUNIT_ASSERT( "dummy1" == model_no_equilibrim[0].getName() );
   CPPUNIT_ASSERT( "dummy2" == model_no_equilibrim[1].getName() );
+  CPPUNIT_ASSERT( model_no_equilibrim.is_pkFunctionOfT()           == true  );
   CPPUNIT_ASSERT( model_no_equilibrim[0].is_initial_off()          == false );
   CPPUNIT_ASSERT( model_no_equilibrim[1].is_initial_off()          == true );
   CPPUNIT_ASSERT( model_no_equilibrim[0].is_no_off()               == false );
@@ -77,6 +90,7 @@ void CompModelInfoTest::testConstructorsWithoutCompartments()
   CPPUNIT_ASSERT_EQUAL( 0,       model_no_equilibrim.getNEquilibrims() );
   CPPUNIT_ASSERT( "COMP1" == model_no_equilibrim[0].getName() );
   CPPUNIT_ASSERT( "COMP2" == model_no_equilibrim[1].getName() );
+  CPPUNIT_ASSERT( model_no_equilibrim.is_pkFunctionOfT()           == true  );
   CPPUNIT_ASSERT( model_no_equilibrim[0].is_initial_off()          == false );
   CPPUNIT_ASSERT( model_no_equilibrim[1].is_initial_off()          == false );
   CPPUNIT_ASSERT( model_no_equilibrim[0].is_no_off()               == false );
@@ -119,6 +133,7 @@ void CompModelInfoTest::testCopy()
   CPPUNIT_ASSERT_EQUAL( model1.getNCompartments(), model_copy.getNCompartments() );
   CPPUNIT_ASSERT_EQUAL( model1.getNParameters(),   model_copy.getNParameters() );
   CPPUNIT_ASSERT_EQUAL( model1.getNEquilibrims(),  model_copy.getNEquilibrims() );
+  CPPUNIT_ASSERT( model1.is_pkFunctionOfT()           == model_copy.is_pkFunctionOfT()  );
   CPPUNIT_ASSERT( model1[0].getName() == model_copy[0].getName() );
   CPPUNIT_ASSERT( model1[1].getName() == model_copy[1].getName() );
   CPPUNIT_ASSERT( model1[0].is_initial_off()          == model_copy[0].is_initial_off() );
@@ -159,6 +174,7 @@ void CompModelInfoTest::testDestruct()
      CPPUNIT_ASSERT_EQUAL( nComps,        model_copy.getNCompartments() );
      CPPUNIT_ASSERT_EQUAL( nParams,       model_copy.getNParameters() );
      CPPUNIT_ASSERT_EQUAL( nEquilibrims,  model_copy.getNEquilibrims() );
+     CPPUNIT_ASSERT( model_copy.is_pkFunctionOfT()           == true );
      CPPUNIT_ASSERT( model_copy[0].getName() == "dummy1" );
      CPPUNIT_ASSERT( model_copy[1].getName() == "dummy2" );
      CPPUNIT_ASSERT( model_copy[0].is_initial_off()          == false );
@@ -180,6 +196,7 @@ void CompModelInfoTest::testDestruct()
      CPPUNIT_ASSERT_EQUAL( nComps,        model_copy.getNCompartments() );
      CPPUNIT_ASSERT_EQUAL( nParams,       model_copy.getNParameters() );
      CPPUNIT_ASSERT_EQUAL( nEquilibrims,  model_copy.getNEquilibrims() );
+     CPPUNIT_ASSERT( model_copy.is_pkFunctionOfT()           == true );
      CPPUNIT_ASSERT( model_copy[0].getName() == "dummy1" );
      CPPUNIT_ASSERT( model_copy[1].getName() == "dummy2" );
      CPPUNIT_ASSERT( model_copy[0].is_initial_off()          == false );
