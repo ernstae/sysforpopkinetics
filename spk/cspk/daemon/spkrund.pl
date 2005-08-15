@@ -196,6 +196,9 @@ database, to be made available to the end user, as well as to the
 system log, where it is available to developers and system
 adminstrators.
 
+If the end_code is not "abrt", the daemon sends an end-job email notice 
+to the user on the user's request.
+
 =head1 RETURNS
 
 Nothing, because it has no parent (other than init) to which an exit
@@ -212,8 +215,9 @@ use File::Path;
 use POSIX qw(:signal_h);
 use Proc::Daemon;
 use Spkdb('connect', 'disconnect', 'de_q2r', 'en_q2r', 'get_run_jobs', 'end_job',
-	  'job_history', 'email_for_job', 'de_q2ar', 'get_job_ids');
+	  'job_history', 'email_for_job', 'de_q2ar', 'get_job_ids', 'get_mail_notice');
 use Sys::Syslog('openlog', 'syslog', 'closelog');
+use IO::Socket::INET;
 use Sys::Hostname;
 
 my $database = shift;
@@ -221,6 +225,10 @@ my $host     = shift;
 my $dbuser   = shift;
 my $dbpasswd = shift;
 my $mode     = shift;
+
+my $mailserver = "smtp.washington.edu:25";
+my $hostname = hostname();
+my $from = "rfpksoft\@u.washington.edu";
 
 my $bugzilla_production_only = 1;
 my $bugzilla_url = "http://192.168.2.2:8081/";
@@ -286,6 +294,12 @@ sub death {
 
     # log the reason for termination
     syslog($level, $msg);
+
+    # stop the sensor
+    if(defined $sensor_pid) {
+        $SIG{'TERM'} = 'IGNORE';
+        kill('TERM', $sensor_pid);
+    }
 
     # close the connection to the database
     if ($database_open) {
@@ -488,6 +502,7 @@ sub reaper {
     my $report;
     my $checkpoint;
     my $end_code;
+    my $email;
 
     $concurrent--;
 
@@ -615,7 +630,7 @@ sub reaper {
     } 
     else {
 	# Get email address of user
-	my $email = &email_for_job($dbh, $job_id);
+	$email = &email_for_job($dbh, $job_id);
 
         if( -f $filename_results && -s $filename_results > 0 ){
            # Read the results file, if it exists, into the report variable.
@@ -672,6 +687,40 @@ sub reaper {
     }
     &end_job($dbh, $job_id, $end_code, $report, $checkpoint)
 	or death('emerg', "job_id=$job_id: $Spkdb::errstr");
+
+    # Send end-job email notice to the user if it is requested
+    if ($end_code ne "abrt") {
+        my $mail_notice = &get_mail_notice($dbh, $job_id);
+        if (defined $mail_notice && $mail_notice == 1) {
+            if(!defined $email) {
+                $email = &email_for_job($dbh, $job_id);
+            }
+            sendmail($job_id, $email, $end_code);
+            syslog('info', "end-job email notice sent for job_id=$job_id from spkrund");
+        }
+    }
+}
+sub sendmail {
+    my $job_id = shift;
+    my $to = shift;
+    my $end_code = shift;
+    my $status;
+    if ($end_code =~ "srun") {
+        $status = "Your job has run to completion.";
+    }
+    else {
+        $status = "Your job has not run to completion due to an error.";
+    }
+    my $subject = "SPK job finished - Job ID: $job_id";
+    my $message = "This message was sent by the SPK service provider.\n$status";
+    my $socket = IO::Socket::INET->new($mailserver);
+    print $socket "HELO $hostname\r\n";
+    print $socket "MAIL FROM: <$from>\r\n";
+    print $socket "RCPT TO: <$to>\r\n";
+    print $socket "DATA\r\n";
+    print $socket "To: $to\nSubject: $subject\n$message\r\n";
+    print $socket ".\r\n";
+    close($socket);
 }
 sub start {
     # open the system log and record that we have started
@@ -855,10 +904,10 @@ while(1) {
     if (defined $jobid) {
 	if ($jobid) {
             my $cpid = $jobid_pid{jobid};
-            $SIG{'TERM'} = 'IGNORE';            
+            $SIG{'TERM'} = 'IGNORE';
 	    kill('TERM', $cpid);
             $SIG{'TERM'} = \&stop;
-	}
+        }
     }
     else {
 	death("emerg", "error reading database: $Spkdb::errstr");
