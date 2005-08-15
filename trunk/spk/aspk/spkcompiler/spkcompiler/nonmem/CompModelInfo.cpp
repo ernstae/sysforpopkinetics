@@ -9,7 +9,7 @@ CompModelInfo::CompModelInfo()
   nParameters  ( 0 ),
   nEquilibrims ( 0 ),
   compartments ( 1 ),
-  isPkFunctionOfT( true )
+  is_pkFunctionOfT( true )
 {
 }
 CompModelInfo::CompModelInfo( const CompModelInfo& right )
@@ -17,7 +17,7 @@ CompModelInfo::CompModelInfo( const CompModelInfo& right )
   nParameters  ( right.nParameters ),
   nEquilibrims ( right.nEquilibrims ),
   compartments ( right.nCompartments ),
-  isPkFunctionOfT( right.isPkFunctionOfT )
+  is_pkFunctionOfT( right.is_pkFunctionOfT )
 {
   for( int i=0; i<nCompartments; i++ )
   {
@@ -32,50 +32,12 @@ CompModelInfo& CompModelInfo::operator=( const CompModelInfo& right )
   nCompartments = right.nCompartments;
   nParameters   = right.nParameters;
   nEquilibrims  = right.nEquilibrims;
-  isPkFunctionOfT = right.isPkFunctionOfT;
+  is_pkFunctionOfT = right.is_pkFunctionOfT;
   compartments.resize( right.nCompartments );
 
   for( int i=0; i<nCompartments; i++ )
   {
     compartments[i] = right.compartments[i];
-  }
-}
-
-CompModelInfo::CompModelInfo( int nCompartmentsIn,
-                      int nParametersIn,
-                      const std::vector<CompartmentInfo>& compartmentsIn )
-: nCompartments( nCompartmentsIn ),
-  nParameters  ( nParametersIn ),
-  nEquilibrims ( 0 ),
-  compartments ( compartmentsIn ),
-  isPkFunctionOfT( true )
-{
-  for( int i=0; i<nCompartments; i++ )
-  {
-     if( compartments[i].getName() == "CENTRAL" )
-        compartments[i].set_default_observation( true );
-     if( compartments[i].getName() == "DOSE" )
-        compartments[i].set_default_dose( true );
-  }
-}
-CompModelInfo::CompModelInfo( int nCompartmentsIn,
-                      int nParametersIn )
-: nCompartments( nCompartmentsIn ),
-  nParameters  ( nParametersIn ),
-  nEquilibrims ( 0 ),
-  compartments ( nCompartmentsIn ),
-  isPkFunctionOfT( true )
-{
-  for( int i=0; i<nCompartments; i++ )
-  {
-     char *name = new char[ 10 ];
-     sprintf( name, "COMP%d", i+1 );
-     compartments[i].setName( name );
-     if( i==0 )
-     {
-        compartments[i].set_default_observation( true );
-        compartments[i].set_default_dose( true );
-     }
   }
 }
 CompModelInfo::CompModelInfo( int nCompartmentsIn,
@@ -86,7 +48,7 @@ CompModelInfo::CompModelInfo( int nCompartmentsIn,
   nParameters  ( nParametersIn ),
   nEquilibrims ( nEquilibrimsIn ),
   compartments ( compartmentsIn ),
-  isPkFunctionOfT( true )
+  is_pkFunctionOfT( true )
 {
   for( int i=0; i<nCompartments; i++ )
   {
@@ -96,6 +58,7 @@ CompModelInfo::CompModelInfo( int nCompartmentsIn,
         compartments[i].set_default_dose( true );
   }
 }
+
 CompModelInfo::CompModelInfo( int nCompartmentsIn,
                       int nParametersIn,
                       int nEquilibrimsIn )
@@ -103,7 +66,7 @@ CompModelInfo::CompModelInfo( int nCompartmentsIn,
   nParameters  ( nParametersIn ),
   nEquilibrims ( nEquilibrimsIn ),
   compartments ( nCompartmentsIn ),
-  isPkFunctionOfT( true )
+  is_pkFunctionOfT( true )
 {
   for( int i=0; i<nCompartments; i++ )
   {
@@ -117,6 +80,7 @@ CompModelInfo::CompModelInfo( int nCompartmentsIn,
      }
   }
 }
+
 int CompModelInfo::getNCompartments() const
 {
   return nCompartments;
@@ -129,13 +93,13 @@ int CompModelInfo::getNEquilibrims() const
 {
   return nEquilibrims;
 }
-bool CompModelInfo::is_pkFunctionOfT() const
+bool CompModelInfo::isPkFunctionOfT() const
 {
-  return isPkFunctionOfT;
+  return is_pkFunctionOfT;
 }
-void CompModelInfo::setPkFunctionOfT( bool isPkFunctionOfTIn )
+void CompModelInfo::setPkFunctionOfT( bool is_pkFunctionOfTIn )
 {
-  isPkFunctionOfT = isPkFunctionOfTIn;
+  is_pkFunctionOfT = is_pkFunctionOfTIn;
 }
   
 int CompModelInfo::getDefaultDose() const
@@ -184,7 +148,15 @@ const CompartmentInfo& CompModelInfo::operator[]( int i ) const
 {
   return compartments[i];
 }
+const CompartmentInfo& CompModelInfo::getCompartment( int i ) const
+{
+  return compartments[i];
+}
 CompartmentInfo& CompModelInfo::operator[]( int i ) 
+{
+  return compartments[i];
+}
+CompartmentInfo& CompModelInfo::getCompartment( int i ) 
 {
   return compartments[i];
 }
