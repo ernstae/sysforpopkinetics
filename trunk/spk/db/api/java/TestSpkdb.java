@@ -8,7 +8,7 @@ public class TestSpkdb {
 	String password = "codered";
 	String firstName = "Mike";
 	String surname = "Jordan";
-	final int maxTests = 54;
+	final int maxTests = 56;
 	String xmlSource = "<spksource>\n\tline1\n\tline2\n</spksource>";
 	boolean b = true;
 	boolean target = true;
@@ -157,7 +157,8 @@ public class TestSpkdb {
 				         "fo",
                                          "owner",
 					 0,
-					 false);
+					 false,
+                                         false);
 		    b = jobId != 0;
 		    s += ": job number " + jobId;
 		    break;
@@ -190,7 +191,8 @@ public class TestSpkdb {
 					      "la",
                                               "owner",
 					      0,
-					      false);
+					      false,
+                                              false);
 		    b = newerJobId != 0;
 		    s += ": job number " + newerJobId;
 
@@ -210,6 +212,7 @@ public class TestSpkdb {
 					       "eh",
                                                "owner",
 					       0,
+                                               false,
                                                false);
 		    b = newestJobId != 0;
 		    s += ": job number " + newestJobId;
@@ -590,7 +593,7 @@ public class TestSpkdb {
 		    s = "newJob(warm start)";
 		    jobId = Spkdb.newJob(conn,
 					 userId,
-					 "Abstract: Job 1",
+					 "Abstract: Job 4",
 					 33,
 					 "1.01",
 					 44,
@@ -599,7 +602,8 @@ public class TestSpkdb {
 					 "fo",
                                          "owner",
 					 2,
-					 true);
+					 true,
+                                         true);
 		    b = jobId != 0;
 		    s += ": job number " + jobId;
 		    break;
@@ -706,6 +710,24 @@ public class TestSpkdb {
                     rs = Spkdb.getJob(conn, 3L);
                     if(rs.next())
                         b = !b && rs.getString("state_code").equals("arun");
+                    else
+                        b = false;
+		    break;
+                case 55:
+                    target = true;
+                    s = "end-job mail notice 0";
+                    rs = Spkdb.getJob(conn, 3L);
+                    if(rs.next())
+                        b = rs.getInt("mail") == 0;
+                    else
+                        b = false;
+		    break;
+                case 56:
+                    target = true;
+                    s = "end-job mail notice 1";
+                    rs = Spkdb.getJob(conn, 4L);
+                    if(rs.next())
+                        b = rs.getInt("mail") == 1;
                     else
                         b = false;
 		    break;
