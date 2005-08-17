@@ -24,7 +24,6 @@
 #include "SpkCompilerException.h"
 #include "explang.h"
 #include "countStrInLhs.h"
-#include "countStrInRhs.h"
 #include "../upper.h"
 #include "../lower.h"
 #include "../series.h"
