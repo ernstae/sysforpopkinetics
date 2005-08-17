@@ -1,6 +1,7 @@
 #include "Symbol.h"
 #include "series.h"
 #include <valarray>
+#include <iostream>
 
 using namespace std;
 
@@ -12,19 +13,105 @@ const Symbol* Symbol::empty()
 Symbol::Symbol()
 {
 }
+Symbol::Symbol( const string&   nameIn,
+                const string&   synonymIn,
+                enum Ownership  ownerIn,
+                enum Access     accessIn,
+                enum ObjectType objectTypeIn,
+                enum Structure  structureIn,
+                const valarray<int>& dimIn )
+
+: name       ( nameIn ),
+  synonym    ( synonymIn ),
+  object_type( objectTypeIn ),
+  structure  ( structureIn ),
+  access     ( accessIn ),
+  owner      ( ownerIn )
+{
+   if( owner == USER && access == READONLY )
+     {  
+       symbol_type = DATALABEL;
+     }
+   else if( owner == USER && access == READWRITE )
+     {
+       symbol_type = USERDEFINED;
+     }
+   else // SYSTEM
+     {
+       symbol_type = PREDEFINED;
+     }
+
+
+   if( dimIn.size() <= 0 )
+     return;
+   dimension.resize( dimIn.size() );
+   dimension = dimIn;
+
+   int n = dimension.size();
+   assert( n > 0 );
+   initial.resize( n );
+   upper.resize( n );
+   lower.resize( n );
+   step.resize( n );
+   fixed.resize( n );
+
+   for( int i=0, len=0; i<n; i++ )
+     {
+       if( object_type == MATRIX )
+	 {
+	   if( structure == TRIANGLE )
+	     {
+	       len = series( 1, 1, dimension[i] );
+	     }
+	   else if( structure == FULL )
+	     {
+	       len = dimension[i] * dimension[i];
+	     }
+	   else
+	     {
+	       len = dimension[i];
+	     }
+	 }
+       else
+	 {
+	   len = dimension[i];
+	 }
+       initial[i].resize( len );
+       upper[i].resize( len );
+       lower[i].resize( len );
+       step[i].resize( len );
+       fixed[i].resize( len );
+     }
+}
+
 Symbol::Symbol( const string& nameIn,
                 const string& synonymIn,
                 enum SymbolType stIn,
                 enum ObjectType otIn,
                 enum Structure msIn,
                 const valarray<int>& dimIn )
-: name( nameIn ),
-  synonym( synonymIn ),
+: name       ( nameIn ),
+  synonym    ( synonymIn ),
   symbol_type( stIn ),
   object_type( otIn ),
-  structure( msIn ),
-  access( READWRITE )
+  structure  ( msIn )
 {
+   if( symbol_type == DATALABEL )
+     {  
+       owner = USER;
+       access = READONLY;
+     }
+   else if( symbol_type == USERDEFINED )
+     {
+       owner = USER;
+       access = READWRITE;
+     }
+   else // PRE-DEFINED
+     {
+       owner = SYSTEM;
+       access = READONLY;  // from the user's model code's point of view
+     }
+
    if( dimIn.size() <= 0 )
      return;
 
@@ -73,7 +160,8 @@ Symbol::Symbol( const Symbol& right )
   symbol_type( right.symbol_type ),
   object_type( right.object_type ),
   structure  ( right.structure ),
-  access ( right.access ) 
+  access     ( right.access ),
+  owner      ( right.owner )
 {
    if( right.dimension.size() <= 0 )
      return;
@@ -130,7 +218,9 @@ Symbol& Symbol::operator=( const Symbol& right )
    symbol_type = right.symbol_type;
    object_type = right.object_type;
    structure   = right.structure;
-   access  = right.access;
+   access      = right.access;
+   owner       = right.owner;
+
    if( right.dimension.size() <= 0 )
      return *this;
 
@@ -201,7 +291,9 @@ bool Symbol::operator==( const Symbol& right ) const
      return false;
    if( structure   != right.structure )
      return false;
-   if( access  != right.access )
+   if( access      != right.access )
+     return false;
+   if( owner       != right.owner )
      return false;
    if( dimension.size() != right.dimension.size() )
      return false;
@@ -232,11 +324,23 @@ Symbol Symbol::createScalar( const string& var )
    one[0] = 1;
    return Symbol( var, "", USERDEFINED, SCALAR, FULL, one );
 }
+Symbol Symbol::createScalar( const string& var, enum Ownership owner, enum Access access )
+{
+   valarray<int> one( 1 );
+   one[0] = 1;
+   return Symbol( var, "", owner, access, SCALAR, FULL, one );
+}
 Symbol Symbol::createVector( const string& var, int veclen )
 {
    valarray<int> len( 1 );
    len[0] = veclen;
    return Symbol( var, "", PREDEFINED, VECTOR, FULL, len );
+}
+Symbol Symbol::createVector( const string& var, int veclen, enum Ownership ownerIn, enum Access accessIn )
+{
+   valarray<int> len( 1 );
+   len[0] = veclen;
+   return Symbol( var, "", ownerIn, accessIn, VECTOR, FULL, len );
 }
 Symbol Symbol::createMatrix( const string& var, enum Structure mt, int matdim )
 {
@@ -244,12 +348,20 @@ Symbol Symbol::createMatrix( const string& var, enum Structure mt, int matdim )
    dim[0] = matdim;
    return Symbol( var, "", PREDEFINED, MATRIX, mt, dim );
 }
+Symbol Symbol::createMatrix( const string& var, enum Structure mt, int matdim, enum Ownership ownerIn, enum Access accessIn )
+{
+   valarray<int> dim( 1 );
+   dim[0] = matdim;
+   return Symbol( var, "", ownerIn, accessIn, MATRIX, mt, dim );
+}
 Symbol Symbol::createLabel( const string& label, 
                             const string& alias,
 			    const valarray<int>& N )
 {
   return Symbol( label, alias, DATALABEL, VECTOR, FULL, N );
+  //return Symbol( label, alias, USER, READONLY, VECTOR, FULL, N );
 }
+
 std::ostream& operator<<( std::ostream& o, const Symbol& s )
 {
   o << "Symbol         : " << s.name << endl;
@@ -330,22 +442,38 @@ std::ostream& operator<<( std::ostream& o, const Symbol& s )
   else
     o << "unknown";
   o << endl;
+
   o << "Data Structure : ";
   if( s.structure == Symbol::FULL )
-    {
       o << "full";
-    }
   else if( s.structure == Symbol::TRIANGLE )
-    {
       o << "triangle";
-    }
   else if( s.structure == Symbol::DIAGONAL )
-    {
 	  o << "diagonal";
-    }
   else
     o << "unknown";
   o << endl;
+
+  o << "Access         : ";
+  if( s.access == Symbol::READONLY )
+    o << "read-only";
+  else if( s.access == Symbol::READWRITE )
+    o << "read & write";
+  else if( s.access == Symbol::HIDDEN )
+    o << "hidden";
+  else
+    o << "unknown";
+  o << endl;
+
+  o << "Ownership      : ";
+  if( s.owner == Symbol::SYSTEM )
+    o << "system";
+  else if( s.owner == Symbol::USER )
+    o << "user";
+  else
+    o << "unknown";
+  o << endl;
+
   return o;
 }
 /*

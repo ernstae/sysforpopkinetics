@@ -49,7 +49,12 @@ public:
   enum Access     { READONLY,    /** Read only **/
                     READWRITE,   /** Read and write **/
                     HIDDEN       /** Hidden **/ };
-
+  /**
+   * Ownership, indicating who defines it.
+   */
+  enum Ownership  { SYSTEM,      /** System-defined **/
+                    USER         /** User-defined **/ };
+                 
   /**
    * Return a Symbol object that defines "empty".
    *
@@ -89,6 +94,13 @@ public:
            enum Structure msIn,
            const std::valarray<int>& dimIn );
 
+   Symbol( const std::string& nameIn,
+	   const std::string& synonymIn,
+	   enum  Ownership    ownerIn,
+	   enum  Access       accessIn,
+	   enum  ObjectType   objectTypeIn,
+	   enum  Structure    structureIn,
+	   const std::valarray<int>& dimIn );
   /**
    * The copy constructor. 
    * The values in the given Symbol object are all copied to this object.
@@ -129,7 +141,10 @@ public:
    *
    * @param var The name of the user-defined (scalar) variable.
    */
-   static Symbol createScalar(  const std::string& var );
+   static Symbol createScalar( const std::string& var );
+   static Symbol createScalar( const std::string& var, 
+			       enum Symbol::Ownership owner, 
+			       enum Symbol::Access access );
 
   /** 
    * Create and return a Symbol object that represents a NONMEM (vector) variable.
@@ -148,6 +163,9 @@ public:
    * @param length The length of the vector.
    */
    static Symbol createVector( const std::string& var, int length );
+   static Symbol createVector( const std::string& var, int veclen, 
+			       enum Symbol::Ownership owner, 
+			       enum Symbol::Access access );
 
   /** 
    * Create and return a Symbol object that represents a NONMEM (matrix) variable.
@@ -167,6 +185,11 @@ public:
    * @param dim The dimension of the square matrix.
    */
    static Symbol createMatrix( const std::string& var, enum Structure structure, int dim );
+   static Symbol createMatrix( const std::string& var, 
+			       enum Structure structure, 
+			       int matdim, 
+			       enum Symbol::Ownership owner, 
+			       enum Symbol::Access access );
 
   /** 
    * Create and return a Symbol object that represents a data (as in Data Set) label.
@@ -188,7 +211,6 @@ public:
    static Symbol createLabel( const std::string& label, 
                               const std::string& alias,
 			      const std::valarray<int>& N );
-
 public:
 
    /**
@@ -226,6 +248,11 @@ public:
     * The access permission.
     */
    enum Access access;
+
+   /**
+    * Ownership
+    */
+   enum Ownership owner;
 
    /**
     * The dimension(s) of the data object(s) refered by the symbol.

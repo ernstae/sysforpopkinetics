@@ -110,6 +110,9 @@ class SymbolTable{
    *
    */
   Symbol* insertScalar( const std::string& name );
+  Symbol* insertScalar( const std::string& name, 
+			enum Symbol::Ownership owner, 
+			enum Symbol::Access access );
 
   /**
    * Create and insert a vector variable into the table.
@@ -122,6 +125,9 @@ class SymbolTable{
    * @param len The length of the vector.
    */
   Symbol* insertVector( const std::string& name, int len );
+  Symbol* insertVector( const std::string& name, int len,
+			enum Symbol::Ownership owner, 
+			enum Symbol::Access access );
 
   /**
    * Create and insert a square matrix variable into the table.
@@ -138,6 +144,11 @@ class SymbolTable{
   Symbol* insertMatrix( const std::string& name, 
                           const Symbol::Structure structure, 
                           int dim );
+  Symbol* insertMatrix( const std::string& name, 
+			const Symbol::Structure structure, 
+			int dim,
+			enum Symbol::Ownership owner, 
+			enum Symbol::Access access );
 
   /**
    * Create and insert a data label into the table.

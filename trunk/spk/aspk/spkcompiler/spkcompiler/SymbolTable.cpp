@@ -75,6 +75,15 @@ Symbol* SymbolTable::insertScalar( const string& name )
    table[ NAME ] = a;
    return &(table[ NAME ]); 
 }
+Symbol* SymbolTable::insertScalar( const string& name, 
+				   enum Symbol::Ownership owner, 
+				   enum Symbol::Access access )
+{
+  Symbol a = Symbol::createScalar( name, owner, access );
+   const string NAME = key(name);
+   table[ NAME ] = a;
+   return &(table[ NAME ]); 
+}
 Symbol* SymbolTable::insertVector( const string& name, int len )
 {
    Symbol a = Symbol::createVector( name, len );
@@ -82,7 +91,15 @@ Symbol* SymbolTable::insertVector( const string& name, int len )
    table[ NAME ] = a;
    return &(table[ NAME ]);
 }
-
+Symbol* SymbolTable::insertVector( const string& name, int len, 
+				   enum Symbol::Ownership owner, 
+				   enum Symbol::Access access )
+{
+   Symbol a = Symbol::createVector( name, len, owner, access );
+   const string NAME = key(name);
+   table[ NAME ] = a;
+   return &(table[ NAME ]);
+}
 Symbol* SymbolTable::insertMatrix( const string& name, 
                                 Symbol::Structure mt, int dim )
 {
@@ -91,7 +108,19 @@ Symbol* SymbolTable::insertMatrix( const string& name,
    table[ NAME ] = a;
    return &(table[ NAME ]);
 }
-Symbol* SymbolTable::insertLabel( const string& label, const string& alias, const valarray<int>& N )
+Symbol* SymbolTable::insertMatrix( const string& name, 
+				   Symbol::Structure mt, int dim,
+				   enum Symbol::Ownership owner,
+				   enum Symbol::Access access )
+{
+   Symbol a = Symbol::createMatrix( name, mt, dim, owner, access );
+   const string NAME = key(name);
+   table[ NAME ] = a;
+   return &(table[ NAME ]);
+}
+Symbol* SymbolTable::insertLabel( const string& label, 
+				  const string& alias, 
+				  const valarray<int>& N )
 {
    Symbol a = Symbol::createLabel( label, alias, N );
    const string LABEL = key(label);
