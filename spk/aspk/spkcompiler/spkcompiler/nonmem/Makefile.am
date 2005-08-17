@@ -20,7 +20,5 @@ dist_libnonmem_a_SOURCES = \
         CompModelInfo.h \
         NonmemTranslator.cpp \
         NonmemTranslator.h \
-        countStrInRhs.cpp \
-        countStrInRhs.h \
         countStrInLhs.cpp \
         countStrInLhs.h
