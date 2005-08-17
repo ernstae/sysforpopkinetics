@@ -326,5 +326,6 @@ const SpkCompilerError::ErrorMap SpkCompilerError::fillErrorMap()
     tmpMap.insert( ErrorMap::value_type(ASPK_UNKNOWN_ERR,    "ASPK_UNKNOWN_ERR") );
     tmpMap.insert( ErrorMap::value_type(ASPK_PROGRAMMER_ERR, "ASPK_PROGRAMMER_ERR") );
     tmpMap.insert( ErrorMap::value_type(ASPK_XMLDOM_ERR,     "ASPK_XMLDOM_ERR") );
+    tmpMap.insert( ErrorMap::value_type(ASPK_USER_ERR,       "ASPK_USER_ERR" ) );
     return tmpMap;
 }
