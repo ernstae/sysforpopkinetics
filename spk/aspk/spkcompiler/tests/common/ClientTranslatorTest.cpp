@@ -1265,6 +1265,7 @@ CppUnit::Test * ClientTranslatorTest::suite()
 
   suiteOfTests->addTest( new CppUnit::TestCaller<ClientTranslatorTest>
 			 ("testDataWithID", &ClientTranslatorTest::testDataWithID ) );
+  /*
   suiteOfTests->addTest( new CppUnit::TestCaller<ClientTranslatorTest>
 			 ("testDataShuffledID", &ClientTranslatorTest::testDataShuffledID ) );
   suiteOfTests->addTest( new CppUnit::TestCaller<ClientTranslatorTest>
@@ -1281,7 +1282,7 @@ CppUnit::Test * ClientTranslatorTest::suite()
 			 ("testNoMdvNoEvid", &ClientTranslatorTest::testNoMdvNoEvid ) );
   suiteOfTests->addTest( new CppUnit::TestCaller<ClientTranslatorTest>
 			 ("testWithMdvWithEvid", &ClientTranslatorTest::testWithMdvWithEvid ) );
-
+  */
  return suiteOfTests;
 }
 
