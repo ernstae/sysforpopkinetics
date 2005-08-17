@@ -1121,7 +1121,7 @@ void ind_withIDTest::testIndDataClass()
   o << "   vector<double> a_time(n);" << endl;
   o << "   vector<double> a_dv(n);" << endl;
   o << "   vector<double> a_mdv(n);" << endl;
-  o << "   vector<double> a_evid(n);" << endl;
+  o << "   vector<int>    a_evid(n);" << endl;
 
   for( int i=0; i<nRecords; i++ )
     {

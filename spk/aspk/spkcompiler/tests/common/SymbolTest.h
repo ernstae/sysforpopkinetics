@@ -8,11 +8,27 @@
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestSuite.h>
+#include "../../spkcompiler/Symbol.h"
 
 /**
  * A class that organizes a suite of tests for Symbol class.
  */
 class SymbolTest : public CppUnit::TestFixture {
+
+   enum Symbol::SymbolType datalabel;
+   enum Symbol::SymbolType nonmem;
+   enum Symbol::SymbolType userdef;
+   enum Symbol::ObjectType scalar;
+   enum Symbol::ObjectType vec;
+   enum Symbol::ObjectType matrix;
+   enum Symbol::Structure  full;
+   enum Symbol::Structure  diagonal;
+   enum Symbol::Structure  triangle;
+   enum Symbol::Ownership  user;
+   enum Symbol::Ownership  system;
+   enum Symbol::Access     readonly;
+   enum Symbol::Access     readwrite;
+                                                                                                           
 public:
     virtual void setUp();
     virtual void tearDown();
@@ -27,10 +43,7 @@ public:
      */
     void testConstructor();
 
-    /**
-     * @test Tests the copy constructor
-     */
-    void testCopy();
+    void testCopyConstructor();
 
     /**
      * @test Tests the assignment operator

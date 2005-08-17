@@ -114,6 +114,7 @@ if( actual != expected ) \\\n \
   const int    nRecords     = 14;
   const int    nFixed       = 0;
   const int    nDVs         = 10;
+  const int    nMDVs        = 4;
   const int    nItems       = nLabels;
   valarray<int> N( nIndividuals );
   const double record0 [] = { 1, 0.0,  0.0, 1, 1 };
@@ -685,8 +686,8 @@ void pop_mdvTest::testIndDataClass()
   o << "   vector<double> a_time(n);" << endl;
   o << "   vector<double> a_dv(n);" << endl;
   o << "   vector<double> a_mdv(n);" << endl;
-  o << "   vector<double> a_evid(n);" << endl;
-
+  o << "   vector<int>    a_evid(n);" << endl;
+ 
   for( int i=0; i<nRecords; i++ )
   {
     o << "   a_id  [" << i << "] = \"" << record[i][0] << "\";" << endl;
@@ -768,22 +769,22 @@ void pop_mdvTest::testDataSetClass()
   o << "   const int nIndividuals = " << nIndividuals << ";" << endl;
   o << "   DataSet<double> set;" << endl;
   o << "   valarray<int> N = set.getN();" << endl;
-  o << "const valarray<double> y = set.getAllMeasurements();" << endl;
-  o << "for( int j=0, k=0, l=0; j<nIndividuals; j++ )" << endl;
-  o << "{" << endl;
-  o << "   for( int i=0; i<N[j]; i++, l++)" << endl;
+  o << "   const valarray<double> y = set.getAllMeasurements();" << endl;
+  o << "   MY_ASSERT_EQUAL( " << nRecords-nMDVs << ", y.size() );" << endl;
+  o << "   for( int j=0, k=0, l=0; j<nIndividuals; j++ )" << endl;
   o << "   {" << endl;
-  o << "      if( set.data[j]->" << strMDV << "[i] != 1 )" << endl;
+  o << "      for( int i=0; i<set.getNRecords(j); i++, l++)" << endl;
   o << "      {" << endl;
-  o << "         MY_ASSERT_EQUAL( set.data[j]->" << strDV << "[i], y[k] );" << endl;
-  o << "         MY_ASSERT_EQUAL( k, set.getMeasurementIndex(l) );" << endl;
-  o << "         MY_ASSERT_EQUAL( l, set.getRecordIndex(k) );" << endl;
-  o << "         MY_ASSERT_EQUAL( set.data[j]->" << strDV << "[i], y[ set.getMeasurementIndex(l)] );" << endl;
-  o << "         k++;" << endl;
+  o << "         if( set.data[j]->" << strMDV << "[i] == 0 )" << endl;
+  o << "         {" << endl;
+  o << "            MY_ASSERT_EQUAL( set.data[j]->" << strDV << "[i], y[k] );" << endl;
+  o << "            MY_ASSERT_EQUAL( k, set.getMeasurementIndex(l) );" << endl;
+  o << "            MY_ASSERT_EQUAL( l, set.getRecordIndex(k) );" << endl;
+  o << "            MY_ASSERT_EQUAL( set.data[j]->" << strDV << "[i], y[ set.getMeasurementIndex(l)] );" << endl;
+  o << "            k++;" << endl;
+  o << "         }" << endl;
   o << "      }" << endl;
   o << "   }" << endl;
-  o << "}" << endl;
-
   o << endl;
   o << "return 0;" << endl;
   o << "}" << endl;
@@ -848,12 +849,15 @@ void pop_mdvTest::testPredClass()
   o << "   const int epsOffset   = thetaLen + etaLen;" << endl;
   o << "   vector< CppAD::AD<double> > indepVar( thetaLen + etaLen + epsLen );" << endl;
   o << endl;
+  o << "   const valarray<double> y = set.getAllMeasurements();" << endl;
+  o << "   MY_ASSERT_EQUAL( " << nRecords-nMDVs << ", y.size() );" << endl;
   o << "   for( int i=0, k=0, l=0; i<nIndividuals; i++ )" << endl;
   o << "   {" << endl;
   o << "      int nRecords = i+2;" << endl;
   o << "      int nObservs = i+1;" << endl;
   o << "      MY_ASSERT_EQUAL( nRecords, pred.getNRecords( i ) );" << endl;
   o << "      MY_ASSERT_EQUAL( nObservs, pred.getNObservs( i ) );" << endl;
+  o << "      MY_ASSERT_EQUAL( nObservs, N[i] );" << endl;
   o << "      for( int j=0; j<nRecords; j++, l++ )" << endl;
   o << "      {" << endl;
   o << "         if( set.data[i]->" << strMDV << "[j] != 1 )" << endl;

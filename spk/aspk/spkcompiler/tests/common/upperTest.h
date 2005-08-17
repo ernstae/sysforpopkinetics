@@ -3,8 +3,8 @@
  * @brief A test suite for upper().
  *
  */
-#ifndef TEST_UPPER_NAMESPACE_H
-#define TEST_UPPER_NAMESPACE_H
+#ifndef TEST_UPPER_H
+#define TEST_UPPER_H
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestSuite.h>

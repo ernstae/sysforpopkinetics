@@ -141,6 +141,7 @@ if( actual != expected ) \\\n \
   //============================================
   const int    nRecords   =  38;
   int          nDVs       =  36;
+  int          nMDVs      =  nRecords - nDVs;
   const int    nFixed     =  0;
   const int    nItems     =  4;
   const double record0[]  = {   0.0,   0.0, 1, 1 };
@@ -793,6 +794,7 @@ void ind_mdvTest::testDataSetClass()
   o << "   DataSet<double> set;" << endl;
   o << "   const int nRecords = " << nRecords << ";" << endl;
   o << "   int nObservs = " << nDVs << ";" << endl;
+  o << "   const valarray<int> N = set.getN();" << endl;
   o << endl;
 
   // { ID, DV=CP, TIME, MDV }
@@ -805,6 +807,8 @@ void ind_mdvTest::testDataSetClass()
   o << "   MY_ASSERT_EQUAL( nObservs, set.getNObservs( 0 ) );" << endl;
   o << "   MY_ASSERT_EQUAL( nRecords, set.getNRecords( 0 ) );" << endl;
   o << "   const valarray<double> y = set.getAllMeasurements();" << endl;
+  o << "   MY_ASSERT_EQUAL( N.sum(), y.size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( " << nRecords-nMDVs << ", y.size() );" << endl;
   o << "   for( int j=0, k=0; j<nRecords; j++ )" << endl;
   o << "   {" << endl;
   o << "      if( set.data[0]->" << strMDV << "[j] != 1 )" << endl;
