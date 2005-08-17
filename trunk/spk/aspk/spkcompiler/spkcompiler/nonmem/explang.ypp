@@ -48,12 +48,16 @@ FILE * gSpkExpOutput;
 
 /**
  * @var SymbolTable * gSpkExpSymbolTable
-
+ *
  * Global pointer to a SymbolTable object.
  *
  * This pointer has to be initialized to point to a valid object
  * in the caller (of nm_parse()) space.  The allocated resource
  * must be released by the caller too.
+ *
+ * The names of variables that are considered System-variable
+ * (i.e. predefined/keyword) must be in the symbol table
+ * prior to a call.
  *
  * @note If the pointer is found to be pointing to NULL at
  * the very beginning of parsing, nm_parse() will call
@@ -61,6 +65,16 @@ FILE * gSpkExpOutput;
  * a non-zero value.
  */
 SymbolTable * gSpkExpSymbolTable;
+
+
+/**
+ * @var bool gSpkIsTInRhs
+ *
+ * Global flag indicating as to whether a variable T appear in the right
+ * hand side of assignment statements.
+ *
+ */
+bool gSpkIsTInRhs = false;
 
 extern "C"{
    /**
@@ -660,8 +674,19 @@ NAME {
      }
      else
      {
-        gSpkExpSymbolTable->insertScalar( $1 );
+        // Variables that appear on the left hand side of assignment
+        // statements are either user defined or system defined.
+        // System defined variables are assumed to have been registered already.
+        gSpkExpSymbolTable->insertScalar( $1, Symbol::USER, Symbol::READWRITE );
      }
+  }
+  else
+  {
+    if( inRHS )
+    {
+       if ( strcmp( $1, "T" ) == 0 )
+          gSpkIsTInRhs = true;
+    }
   }
   $$ = $1;
 }

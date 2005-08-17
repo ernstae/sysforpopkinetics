@@ -31,8 +31,12 @@ class CompModelInfo{
    * @param nCompartmentsIn The number of compartments in this system.
    * @param nParametersIn   The number of basic PK parameters.
    * @param nEquilibrimIn   The number of quilibrim compartments.
+   * @param relTolIn        The relative tolerance (10^-(TOL+1)) where TOL is the #of sigs user provide.
    */
-  CompModelInfo( int nCompartmentsIn, int nParametersIn, int nEquilibrimsIn );
+  CompModelInfo( int nCompartmentsIn, 
+		 int nParametersIn, 
+		 int nEquilibrimsIn,
+		 double relTol );
 
   /**
    * Constructor.  Initialize the model with the given attribute values.
@@ -41,8 +45,13 @@ class CompModelInfo{
    * @param nParametersIn   The number of basic PK parameters.
    * @param nEquilibrimIn   The number of quilibrim compartments.
    * @param compartmentsIn  Compartments making up the system.
+   * @param relTolIn        The relative tolerance (10^-(TOL+1)) where TOL is the #of sigs user provide.
    */
-  CompModelInfo( int nCompartmentsIn, int nParametersIn, int nEquilibrimsIn, const std::vector<CompartmentInfo>& compartmentsIn );
+  CompModelInfo( int nCompartmentsIn, 
+		 int nParametersIn, 
+		 int nEquilibrimsIn, 
+		 double relTol,
+		 const std::vector<CompartmentInfo>& compartmentsIn );
 
   /**
    * Get the number of compartments in this system.
@@ -71,13 +80,23 @@ class CompModelInfo{
   
   /**
    * Returns the number of compartment that is set to receive dose.
-   * The first compartment (=0) is set by default.
+   * The first compartment (=1) is set by default.
    */
   int getDefaultDose() const;
 
   /**
+   * Set the relative tolerance.
+   */
+  void setRelTol( double );
+
+  /**
+   * Returns the relative tolerance.
+   */
+  double getRelTol() const;
+
+  /**
    * Returns the number of compartment that is set to be the
-   * observation compartment.  The first compartment (=0)
+   * observation compartment.  The first compartment (=1)
    * is set by default.
    */
   int getDefaultObservation() const;
@@ -128,6 +147,7 @@ class CompModelInfo{
   int nCompartments;
   int nParameters;
   int nEquilibrims;
+  double relTol;
   bool is_pkFunctionOfT;
   std::vector<CompartmentInfo> compartments;
 };

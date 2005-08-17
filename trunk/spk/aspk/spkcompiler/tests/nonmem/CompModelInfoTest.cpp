@@ -25,6 +25,7 @@ void CompModelInfoTest::testConstructorsWithCompartments()
   int nComps       = 2;
   int nParams      = 3;
   int nEquilibrims = 1;
+  double relTol    = pow( 10.0, -2 );
   bool isPkFunctionOfT = true;
   CompartmentInfo comp1( "dummy1" );
   CompartmentInfo comp2( "dummy2", 
@@ -38,7 +39,7 @@ void CompModelInfoTest::testConstructorsWithCompartments()
   vector<CompartmentInfo> compartments;
   compartments.push_back( comp1 );
   compartments.push_back( comp2 );
-  CompModelInfo model( nComps, nParams, nEquilibrims, compartments );
+  CompModelInfo model( nComps, nParams, nEquilibrims, relTol, compartments );
   model.setPkFunctionOfT ( isPkFunctionOfT );
   
   vector<bool> initial_off( nComps );
@@ -101,13 +102,17 @@ void CompModelInfoTest::testConstructorsWithoutCompartments()
   int nComps          = 2;
   int nParams         = 3;
   int nEquilibrims    = 1;
+  double relTol    = pow( 10.0, -2 );
   int isPkFunctionOfT = true;
-  CompModelInfo model( nComps, nParams, nEquilibrims );
+  CompModelInfo model( nComps, nParams, nEquilibrims, relTol );
   model.setPkFunctionOfT( isPkFunctionOfT );
   
   CPPUNIT_ASSERT_EQUAL( nComps,          model.getNCompartments() );
   CPPUNIT_ASSERT_EQUAL( nParams,         model.getNParameters() );
   CPPUNIT_ASSERT_EQUAL( nEquilibrims,    model.getNEquilibrims() );
+  CPPUNIT_ASSERT_EQUAL( 1,               model.getDefaultObservation() );
+  CPPUNIT_ASSERT_EQUAL( 1,               model.getDefaultDose() );
+
   CPPUNIT_ASSERT( isPkFunctionOfT == model.isPkFunctionOfT() );
 
   vector<bool> initial_off( nComps );
@@ -161,6 +166,7 @@ void CompModelInfoTest::testCopy()
   int nComps           = 2;
   int nParams          = 3;
   int nEquilibrims     = 1;
+  double relTol    = pow( 10.0, -2 );
   bool isPkFunctionOfT = false;
   CompartmentInfo comp1( "dummy1" );
   CompartmentInfo comp2( "dummy2", 
@@ -174,7 +180,7 @@ void CompModelInfoTest::testCopy()
   vector<CompartmentInfo> compartments;
   compartments.push_back( comp1 );
   compartments.push_back( comp2 );
-  CompModelInfo model1( nComps, nParams, nEquilibrims, compartments );
+  CompModelInfo model1( nComps, nParams, nEquilibrims, relTol, compartments );
   model1.setPkFunctionOfT( isPkFunctionOfT );
 
   CompModelInfo model_copy( model1 );
@@ -222,6 +228,7 @@ void CompModelInfoTest::testDestruct()
   int nComps       = 2;
   int nParams      = 3;
   int nEquilibrims = 1;
+  double relTol    = pow( 10.0, -2 );
   CompartmentInfo comp1( "dummy1" );
   CompartmentInfo comp2( "dummy2", 
                          true, /* initial_off */
@@ -235,7 +242,7 @@ void CompModelInfoTest::testDestruct()
   compartments.push_back( comp1 );
   compartments.push_back( comp2 );
   {
-     CompModelInfo *model = new CompModelInfo( nComps, nParams, nEquilibrims, compartments );
+     CompModelInfo *model = new CompModelInfo( nComps, nParams, nEquilibrims, relTol, compartments );
      CompModelInfo model_copy( *model );
      CPPUNIT_ASSERT_EQUAL( nComps,        model_copy.getNCompartments() );
      CPPUNIT_ASSERT_EQUAL( nParams,       model_copy.getNParameters() );
