@@ -24,7 +24,6 @@
 //#include "NonmemSourceMLElementsTest.h"
 //#include "NonmemReportMLElementsTest.h"
 #include "countStrInLhsTest.h"
-#include "countStrInRhsTest.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -100,7 +99,6 @@ int main( int argc, const char * argv[] )
   //master[ "NonmemReportMLElementsTest" ] = NonmemSourceMLElementsTest::suite();
 
   master[ "countStrInLhsTest" ] = countStrInLhsTest::suite();
-  master[ "countStrInRhsTest" ] = countStrInRhsTest::suite();
 
   if( argc == 1 )
     {

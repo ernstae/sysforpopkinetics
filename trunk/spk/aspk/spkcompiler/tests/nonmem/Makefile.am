@@ -75,7 +75,5 @@ testall_SOURCES      = \
                        CompModelInfoTest.cpp \
                        CompModelInfoTest.h \
                        countStrInLhsTest.cpp \
-                       countStrInLhsTest.h \
-                       countStrInRhsTest.cpp \
-                       countStrInRhsTest.h
+                       countStrInLhsTest.h 
 

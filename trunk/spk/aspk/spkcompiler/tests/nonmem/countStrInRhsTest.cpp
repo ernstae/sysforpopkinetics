@@ -40,6 +40,9 @@ void countStrInRhsTest::testSimple()
                                                                                 
    char str5[] = "A[1] = x;\nB=y;\nA[2]=A[1];";
    CPPUNIT_ASSERT_EQUAL( 1, countStrInRhs( "A", str5 ) );
+
+   char str6[] = "CL=THETA(1)*EXP(ETA(1))\nV=THETA(2)\nK=CL/V\nS1=V\n";
+   CPPUNIT_ASSERT_EQUAL( 0, countStrInRhs( "T", str6 ) );
 }
 
 CppUnit::Test * countStrInRhsTest::suite()

@@ -16,6 +16,19 @@ using namespace CppUnit;
 
 void SymbolTableTest::setUp()
 {
+   datalabel  = Symbol::DATALABEL;
+   nonmem     = Symbol::PREDEFINED;
+   userdef    = Symbol::USERDEFINED;
+   scalar     = Symbol::SCALAR;
+   vec        = Symbol::VECTOR;
+   matrix     = Symbol::MATRIX;
+   full       = Symbol::FULL;
+   diagonal   = Symbol::DIAGONAL;
+   triangle   = Symbol::TRIANGLE;
+   user       = Symbol::USER;
+   system     = Symbol::SYSTEM;
+   readonly   = Symbol::READONLY;
+   readwrite  = Symbol::READWRITE;
 }
 void SymbolTableTest::tearDown()
 {
@@ -28,21 +41,11 @@ void SymbolTableTest::testEnd()
 void SymbolTableTest::testInsertUserVar()
 {
    string empty_string( "" ); 
-   enum Symbol::SymbolType datalabel = Symbol::DATALABEL;
-   enum Symbol::SymbolType nonmem    = Symbol::PREDEFINED;
-   enum Symbol::SymbolType user      = Symbol::USERDEFINED;
-   enum Symbol::ObjectType scalar    = Symbol::SCALAR;
-   enum Symbol::ObjectType vec       = Symbol::VECTOR;
-   enum Symbol::ObjectType matrix    = Symbol::MATRIX;
-   enum Symbol::Structure full       = Symbol::FULL;
-   enum Symbol::Structure diagonal   = Symbol::DIAGONAL;
-   enum Symbol::Structure triangle   = Symbol::TRIANGLE;
-
    SymbolTable table;
    string aaa_name( "aaa" );
    vector<int> aaa_dim( 1 );
    aaa_dim[0] = 1;
-   Symbol *aaa = table.insertScalar( aaa_name );
+   Symbol *aaa = table.insertScalar( aaa_name, user, readwrite );
    CPPUNIT_ASSERT( table.find( aaa_name ) != Symbol::empty() );
    CPPUNIT_ASSERT( table.find( aaa_name ) == aaa );
 
@@ -52,16 +55,6 @@ void SymbolTableTest::testInsertUserVar()
 void SymbolTableTest::testInsertLabel()
 {
    string empty_string( "" ); 
-   enum Symbol::SymbolType datalabel = Symbol::DATALABEL;
-   enum Symbol::SymbolType nonmem    = Symbol::PREDEFINED;
-   enum Symbol::SymbolType user      = Symbol::USERDEFINED;
-   enum Symbol::ObjectType scalar    = Symbol::SCALAR;
-   enum Symbol::ObjectType vec       = Symbol::VECTOR;
-   enum Symbol::ObjectType matrix    = Symbol::MATRIX;
-   enum Symbol::Structure full       = Symbol::FULL;
-   enum Symbol::Structure diagonal   = Symbol::DIAGONAL;
-   enum Symbol::Structure triangle   = Symbol::TRIANGLE;
-
    SymbolTable table;
    string aaa_name( "aaa" );
    string aaa_alias( "AAA" );
@@ -79,20 +72,10 @@ void SymbolTableTest::testInsertLabel()
 void SymbolTableTest::testInsertNMVector()
 {
    string empty_string( "" ); 
-   enum Symbol::SymbolType datalabel = Symbol::DATALABEL;
-   enum Symbol::SymbolType nonmem    = Symbol::PREDEFINED;
-   enum Symbol::SymbolType user      = Symbol::USERDEFINED;
-   enum Symbol::ObjectType scalar    = Symbol::SCALAR;
-   enum Symbol::ObjectType vec       = Symbol::VECTOR;
-   enum Symbol::ObjectType matrix    = Symbol::MATRIX;
-   enum Symbol::Structure full       = Symbol::FULL;
-   enum Symbol::Structure diagonal   = Symbol::DIAGONAL;
-   enum Symbol::Structure triangle   = Symbol::TRIANGLE;
-
    SymbolTable table;
    string aaa_name( "aaa" );
    int aaa_dim = 2;
-   Symbol *aaa = table.insertVector( aaa_name, aaa_dim );
+   Symbol *aaa = table.insertVector( aaa_name, aaa_dim, system, readonly );
    CPPUNIT_ASSERT( table.find( aaa_name ) != Symbol::empty() );
    CPPUNIT_ASSERT( table.find( aaa_name ) == aaa );
 
@@ -102,26 +85,16 @@ void SymbolTableTest::testInsertNMVector()
 void SymbolTableTest::testInsertNMMatrix()
 {
    string empty_string( "" ); 
-   enum Symbol::SymbolType datalabel = Symbol::DATALABEL;
-   enum Symbol::SymbolType nonmem    = Symbol::PREDEFINED;
-   enum Symbol::SymbolType user      = Symbol::USERDEFINED;
-   enum Symbol::ObjectType scalar    = Symbol::SCALAR;
-   enum Symbol::ObjectType vec       = Symbol::VECTOR;
-   enum Symbol::ObjectType matrix    = Symbol::MATRIX;
-   enum Symbol::Structure full       = Symbol::FULL;
-   enum Symbol::Structure diagonal   = Symbol::DIAGONAL;
-   enum Symbol::Structure triangle   = Symbol::TRIANGLE;
-
    SymbolTable table;
    string aaa_name( "aaa" );
    int aaa_dim = 2;
-   Symbol *aaa = table.insertMatrix( aaa_name, diagonal, aaa_dim );
+   Symbol *aaa = table.insertMatrix( aaa_name, diagonal, aaa_dim, system, readonly );
    CPPUNIT_ASSERT( table.find( aaa_name ) != Symbol::empty() );
    CPPUNIT_ASSERT( table.find( aaa_name ) == aaa );
 
    string bbb_name( "bbb" );
    int bbb_dim = 2;
-   Symbol *bbb = table.insertMatrix( bbb_name, triangle, bbb_dim );
+   Symbol *bbb = table.insertMatrix( bbb_name, triangle, bbb_dim, system, readonly );
    CPPUNIT_ASSERT( table.find( bbb_name ) != Symbol::empty() );
    CPPUNIT_ASSERT( table.find( bbb_name ) == bbb );
 

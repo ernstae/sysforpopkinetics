@@ -22,6 +22,7 @@ public:
     void testFunctions();
     void testIfStmt();
     void testIfThenStmt();
+    void testIsTInRhs();
 };
 
 #endif

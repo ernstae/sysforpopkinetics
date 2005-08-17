@@ -111,8 +111,8 @@ of SPK Compiler and links to related documents.
      <para>
      The unit level specifications of components making up 
      <filename>spkcompiler</filename> are available at
-     <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkcompiler/html/index.html">
-     http://192.168.2.2:8080/soft/v0.1/specs/spkcompiler/html/index.html</ulink>.
+     <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkcompiler/common/html/index.html">
+     http://192.168.2.2:8080/soft/v0.1/specs/spkcompiler/common/html/index.html</ulink>.
      </para>
      <para>
      In a nut shell, the 

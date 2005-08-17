@@ -7,7 +7,7 @@
 
 #include "../ClientTranslator.h"
 #include "../SymbolTable.h"
-
+#include "CompModelInfo.h"
 #include <iostream>
 #include <vector>
 
@@ -93,6 +93,18 @@ class NonmemTranslator : public ClientTranslator
     std::string P;
     std::string A;
     std::string DADT;
+    std::string CMT;
+    std::string PCMT;
+    std::string AMT;
+    std::string R;
+    std::string D;
+    std::string S;
+    std::string ALAG;
+    std::string FO;
+    std::string SO;
+    std::string RATE;
+    std::string TIME;
+    std::string TSCALE;
   };
 
   /**
@@ -180,6 +192,12 @@ class NonmemTranslator : public ClientTranslator
    */
   virtual void parseSource();
 
+ /**
+  * Returns a pointer handler to the CompModelInfo object that captures the information
+  * necessary to define a compartmental model.
+  */
+ inline const CompModelInfo& getCompModel() const { return *myCompModel; };
+ 
  protected:
   /**
    * Determine the type of analysis, population or individual, and
@@ -226,8 +244,8 @@ class NonmemTranslator : public ClientTranslator
   // (equations only) model.
   static const char * fDiffEqn_cpp;
   
-  // The header file for the ODEPred template class.
-  static const char * fODEPred_h;
+  // The header file for the OdePred template class.
+  static const char * fOdePred_h;
 
   // The name of file that contains fortran (ie. NONMEM TRAN) version of
   // the user defined $PK.
@@ -272,6 +290,7 @@ class NonmemTranslator : public ClientTranslator
   static const char * fResult_xml;
 
  protected:
+ 
   //=========================================================
   // constant strings used as <tag> names and values
   //---------------------------------------------------------
@@ -301,7 +320,18 @@ class NonmemTranslator : public ClientTranslator
   XMLCh* X_IS_INV_COV_OUT;             static const char* C_IS_INVERSE_COVARIANCE_OUT;
   XMLCh* X_IS_COEF_OUT;                static const char* C_IS_COEFFICIENT_OUT;
   XMLCh* X_IS_CONF_OUT;                static const char* C_IS_CONFIDENCE_OUT;
-  
+  XMLCh* X_NCOMPARTMENTS;              static const char* C_NCOMPARTMENTS;
+  XMLCh* X_NPARAMETERS;                static const char* C_NPARAMETERS;
+  XMLCh* X_NEQUILIBRIMS;               static const char* C_NEQUILIBRIMS;
+  XMLCh* X_INITIAL_OFF;                static const char* C_INITIAL_OFF;
+  XMLCh* X_NO_OFF;                     static const char* C_NO_OFF;
+  XMLCh* X_NO_DOSE;                    static const char* C_NO_DOSE;
+  XMLCh* X_EQUILIBRIM;                 static const char* C_EQUILIBRIM;
+  XMLCh* X_EXCLUDE;                    static const char* C_EXCLUDE;
+  XMLCh* X_DEFAULT_OBSERVATION;        static const char* C_DEFAULT_OBSERVATION;
+  XMLCh* X_DEFAULT_DOSE;               static const char* C_DEFAULT_DOSE;  
+  XMLCh* X_TOLERANCE;                  static const char* C_TOLERANCE;
+
   // SpkSourceML tags
   XMLCh* X_NONMEM;                     static const char* C_NONMEM;
   XMLCh* X_POP_ANALYSIS;               static const char* C_POP_ANALYSIS;
@@ -312,6 +342,7 @@ class NonmemTranslator : public ClientTranslator
   XMLCh* X_TRANS;                      static const char* C_TRANS;
   XMLCh* X_PRED;                       static const char* C_PRED;
   XMLCh* X_COMP_MODEL;                 static const char* C_COMP_MODEL;
+  XMLCh* X_COMPARTMENT;                static const char* C_COMPARTMENT;
   XMLCh* X_DIFFEQN;                    static const char* C_DIFFEQN;
   XMLCh* X_PK;                         static const char* C_PK;
   XMLCh* X_ERROR;                      static const char* C_ERROR;
@@ -432,26 +463,14 @@ class NonmemTranslator : public ClientTranslator
 		   enum TRANS      trans,
 		   const xercesc::DOMElement* model );
   //
-  // Specialized to analyze ADVAN 6 - nonlinear ODE
-  //
-  // @param trans A translation method
-  // @param comp_model The compartmental model definition - equivalent of $MODEL
-  // @param pk The pharmacokinetic parameters definition - equivalent of $PK
-  // @param diffeqn The system of differential equations - equivalent of $DES
-  // @param error The error model definition - equivalent of $ERROR
-  //
-  void parseAdvan6( enum TRANS trans,
-		    const xercesc::DOMElement* comp_model,
-		    const xercesc::DOMElement* pk,
-		    const xercesc::DOMElement* diffeqn,
-		    const xercesc::DOMElement* error );
-
-  //
   // Analyze <comp_model>, i.e. $MODEL
-  //
+  // @return #of compartments.
   // @param comp_model A pointer to <comp_model> tree.
+  // @param tolRel The relative toleranace as for the number of digits
+  //               that are required to be accurate in the computation of 
+  //               the drug amount in compartment.
   //
-  void parseCompModel( const xercesc:: DOMElement* comp_model );
+  int parseCompModel( const xercesc:: DOMElement* comp_model, double tolRel );
 
   //
   // Analyze <pk>, i.e. $PK.
@@ -526,11 +545,6 @@ class NonmemTranslator : public ClientTranslator
   void generateIndDriver( ) const;
 
   //
-  // Count the number of occurences of the text on the LHS of equations.
-  //
-  int countStrInLhs( const char * str,  const char * para );
-
-  //
   // Generate a Makefile that builds an executable called, driver, 
   // from all the generated files.
   //
@@ -559,6 +573,11 @@ private:
   bool              myIsMonte;
   bool              myIndWriteCheckpoint;
   bool              myPopWriteCheckpoint;
+  bool              myIsMissingMdv;
+  bool              myIsMissingEvid;
+  bool              myIsMissingCmt;  // for ADVANs
+  bool              myIsMissingPcmt; // for ADVANs
+  bool              myIsMissingRate; // for ADVANs
 
   unsigned int      mySubproblemsN;   
   bool              myIsPosthoc;
@@ -591,6 +610,8 @@ private:
   bool              myIsConfidence;
   bool              myIsCoefficient;
   std::valarray<int> myRecordNums;
+
+  CompModelInfo    *myCompModel;
 };
 
 #endif
