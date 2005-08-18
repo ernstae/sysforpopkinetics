@@ -6817,6 +6817,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   // so return true unconditionally.
   if( !myIsMissingMdv )
   {
+    oPred_h << "   // MDV data item found in the data set." << endl;
     oPred_h << "   if( perm->data[ spk_i ]->" << UserStr.MDV << "[ spk_j ] == 0 )" << endl;
     oPred_h << "   {" << endl;
     // Set the output values
@@ -6830,10 +6831,30 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   }
   else
     {
-      oPred_h << "      spk_depVar[ spk_fOffset+spk_j ] = " << UserStr.F << ";" << endl;
-      oPred_h << "      spk_depVar[ spk_yOffset+spk_j ] = " << UserStr.Y << ";" << endl;
-      oPred_h << "      spk_m = perm->getMeasurementIndex( spk_j );" << endl;
-      oPred_h << "      return true;" << endl;
+      if( table->findi( KeyStr.AMT ) )
+	{
+	  oPred_h << "   // No MDV data item found in the data set but AMT was found." << endl;
+	  oPred_h << "   // Assume MDV = 0 if AMT = 0 and MDV = 1 if AMT > 0." << endl;
+	  oPred_h << "   if( perm->data[ spk_i ]->" << UserStr.AMT << "[ spk_j ] == 0 )" << endl;
+	  oPred_h << "   {" << endl;
+	  oPred_h << "      spk_depVar[ spk_fOffset+spk_j ] = " << UserStr.F << ";" << endl;
+	  oPred_h << "      spk_depVar[ spk_yOffset+spk_j ] = " << UserStr.Y << ";" << endl;
+	  oPred_h << "      spk_m = perm->getMeasurementIndex( spk_j );" << endl;
+	  oPred_h << "      return true;" << endl;
+	  oPred_h << "   }" << endl;
+	  oPred_h << "   else" << endl;
+	  oPred_h << "   {" << endl;
+	  oPred_h << "      return false;" << endl;
+	  oPred_h << "   }" << endl;
+	}
+      else
+	{
+	  oPred_h << "   // No MDV or AMT found in the data set.  Asuume all MDV=0." << endl;
+	  oPred_h << "   spk_depVar[ spk_fOffset+spk_j ] = " << UserStr.F << ";" << endl;
+	  oPred_h << "   spk_depVar[ spk_yOffset+spk_j ] = " << UserStr.Y << ";" << endl;
+	  oPred_h << "   spk_m = perm->getMeasurementIndex( spk_j );" << endl;
+	  oPred_h << "   return true;" << endl;
+	}
     }
 
   oPred_h << "}" << endl;
