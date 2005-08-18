@@ -445,7 +445,7 @@ void explangTest::testFunctions()
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "sin(" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "(double)0.0" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "0.0" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
 
@@ -456,7 +456,7 @@ void explangTest::testFunctions()
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "cos(" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "(double)0.0" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "0.0" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
 
