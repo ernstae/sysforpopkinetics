@@ -13,6 +13,12 @@
 	<authorinitials>afw</authorinitials>
 	<revremark>Initial version.</revremark>
       </revision>
+      <revision>
+	<revnumber>1.1</revnumber>
+	<date>August 19, 2005</date>
+	<authorinitials>Jiaji Du</authorinitials>
+	<revremark>Added job abortion.</revremark>
+      </revision>
     </revhistory>
   <abstract>
       <para>
@@ -90,7 +96,7 @@
     <para>
       <glosslist>
 	<glossentry>
-	  <glossterm>Begin</glossterm>
+	 <glossterm>Begin</glossterm>
 	  <glossdef>
 	    <para>
 	      This state is purely formal.  The job is in this state
@@ -99,7 +105,7 @@
 	    <para>
 	      <glosslist>
 		<glossentry>
-		  <glossterm>submitted by MDA</glossterm>
+		 <glossterm>submitted by MDA</glossterm>
 		  <glossdef>
 		    <para>
 		      This event occurs when the user commands the MDA
@@ -114,7 +120,7 @@
 	  </glossdef>
 	</glossentry>
 	<glossentry>
-	  <glossterm>Queued to compile</glossterm>
+	 <glossterm>Queued to compile</glossterm>
 	  <glossdef>
 	    <para>
 	      The job is waiting in a prioritized queue until sufficient
@@ -122,7 +128,7 @@
 	      it from model specifications to computer source code.
 	      <glosslist>
 		<glossentry>
-		  <glossterm>selected by ASPK compiler</glossterm>
+		 <glossterm>selected by ASPK compiler</glossterm>
 		  <glossdef>
 		    <para>
 		      occurs when compilation resources
@@ -132,17 +138,33 @@
 		    </para>
 		  </glossdef>
 		</glossentry>
+		<glossentry>
+		 <glossterm>aborted by user</glossterm>
+		  <glossdef>
+		    <para>
+		      occurs when user has asked to abort the job through the MDA.
+		    </para>
+		  </glossdef>
+		</glossentry>
+		<glossentry>
+		 <glossterm>aborted</glossterm>
+		  <glossdef>
+		    <para>
+		      When aborted the job comes to its <emphasis>End</emphasis> state. 
+		    </para>
+		  </glossdef>
+		</glossentry>
 	      </glosslist>
 	    </para>
 	  </glossdef>
 	</glossentry>
 	<glossentry>
-	  <glossterm>Compiling</glossterm>
+	 <glossterm>Compiling</glossterm>
 	  <glossdef>
 	    <para>
 	      The compiler is processing the model specification.<glosslist>
 		<glossentry>
-		  <glossterm>compiled error-free</glossterm>
+		 <glossterm>compiled error-free</glossterm>
 		  <glossdef>
 		    <para>
 		      When this event occurs, the job is ready to be
@@ -163,19 +185,36 @@
 		    </para>
 		  </glossdef>
 		</glossentry>
+		<glossentry>
+		 <glossterm>aborted by user</glossterm>
+		  <glossdef>
+		    <para>
+		      occurs when user has asked to abort the job through the MDA.
+                      The next state is <emphasis>Queued to abort compiling</emphasis>.
+		    </para>
+		  </glossdef>
+		</glossentry>
+		<glossentry>
+		 <glossterm>aborted</glossterm>
+		  <glossdef>
+		    <para>
+		      When aborted the job comes to its <emphasis>End</emphasis> state. 
+		    </para>
+		  </glossdef>
+		</glossentry>
 	      </glosslist>
 	    </para>
 	  </glossdef>
 	</glossentry>
 	<glossentry>
-	  <glossterm>Queued to run</glossterm>
+	 <glossterm>Queued to run</glossterm>
 	  <glossdef>
 	    <para>
 	      The job is waiting in a prioritized queue for resources
 	      to assigned to it so that it can run.
 	      <glosslist>
 		<glossentry>
-		  <glossterm>selected to run</glossterm>
+		 <glossterm>selected to run</glossterm>
 		  <glossdef>
 		    <para>
 		      The job is selected when sufficient resources
@@ -196,18 +235,34 @@
 		    </para>
 		  </glossdef>
 		</glossentry>
+		<glossentry>
+		 <glossterm>aborted by user</glossterm>
+		  <glossdef>
+		    <para>
+		      occurs when user has asked to abort the job through the MDA.
+		    </para>
+		  </glossdef>
+		</glossentry>
+		<glossentry>
+		 <glossterm>aborted</glossterm>
+		  <glossdef>
+		    <para>
+		      When aborted the job comes to its <emphasis>End</emphasis> state. 
+		    </para>
+		  </glossdef>
+		</glossentry>
 	      </glosslist>
 	    </para>
 	  </glossdef>
 	</glossentry>
 	<glossentry>
-	  <glossterm>Running</glossterm>
+	 <glossterm>Running</glossterm>
 	  <glossdef>
 	    <para>
 	      The Computational Server (CSPK) is executing the job.
 	      <glosslist>
 		<glossentry>
-		  <glossterm>finished</glossterm>
+		 <glossterm>finished</glossterm>
 		  <glossdef>
 		    <para>
 		      When finished (whether the problem converges
@@ -216,6 +271,93 @@
 		    </para>
 		    <para>
 		      A report is output on this final transition.
+		    </para>
+		  </glossdef>
+		</glossentry>
+		<glossentry>
+		 <glossterm>aborted by user</glossterm>
+		  <glossdef>
+		    <para>
+		      occurs when user has asked to abort the job through the MDA.
+                      The next state is <emphasis>Queued to abort computation</emphasis>.
+		    </para>
+		  </glossdef>
+		</glossentry>
+	      </glosslist>
+	    </para>
+	  </glossdef>
+	</glossentry>
+	<glossentry>
+	 <glossterm>Queued to Abort Compiling</glossterm>
+	  <glossdef>
+	    <para>
+	      The job is waiting in a prioritized queue until sufficient
+	      resources become available for the compiler daemon to end the compilation.
+	      <glosslist>
+		<glossentry>
+		 <glossterm>selected by compiler daemon</glossterm>
+		  <glossdef>
+		    <para>
+		      occurs when compiler daemon is available, there is 
+                      no aborting job of higher priority and there is no aborting 
+                      job of equal priority that has been waiting longer.
+		    </para>
+		  </glossdef>
+		</glossentry>
+	      </glosslist>
+	    </para>
+	  </glossdef>
+	</glossentry>
+        <glossentry>
+	 <glossterm>Aborting Compilation</glossterm>
+	  <glossdef>
+	    <para>
+	      The compiler daemon is aborting the job.  
+	      <glosslist>
+		<glossentry>
+		 <glossterm>aborted</glossterm>
+		  <glossdef>
+		    <para>
+		      When aborted the job comes to its <emphasis>End</emphasis> state.
+		    </para>
+		  </glossdef>
+		</glossentry>
+	      </glosslist>
+	    </para>
+	  </glossdef>
+	</glossentry>
+	<glossentry>
+	 <glossterm>Queued to Abort Running</glossterm>
+	  <glossdef>
+	    <para>
+	      The job is waiting in a prioritized queue until sufficient
+	      resources become available for the run-time daemon to end the computation.
+	      <glosslist>
+		<glossentry>
+		 <glossterm>selected by run-time daemon</glossterm>
+		  <glossdef>
+		    <para>
+		      occurs when run-time daemon is available, there is 
+                      no aborting job of higher priority and there is no aborting 
+                      job of equal priority that has been waiting longer.
+		    </para>
+		  </glossdef>
+		</glossentry>
+	      </glosslist>
+	    </para>
+	  </glossdef>
+	</glossentry>
+        <glossentry>
+	 <glossterm>Aborting Computation</glossterm>
+	  <glossdef>
+	    <para>
+	      The run-time daemon is aborting the job.  
+	      <glosslist>
+		<glossentry>
+		 <glossterm>aborted</glossterm>
+		  <glossdef>
+		    <para>
+		      When aborted the job comes to its <emphasis>End</emphasis> state.
 		    </para>
 		  </glossdef>
 		</glossentry>
