@@ -638,15 +638,17 @@ sub de_q2ac() {
 
 Get job_ids of all jobs as an array with a given state_code.
 
-    @array_job_ids = &Spkdb::get_job_ids($dbh);
+    @array_job_ids = &Spkdb::get_job_ids($dbh, $state_code);
 
 $dbh is the handle to an open database connection.
+
+$state_code is the given state_code of the jobs.
 
 Returns
 
   success: 
-    an array of job_ids of all the jobs with state_code "acmp",
-    0 if there is no job with state_code "acmp"   
+    an array of job_ids of all the jobs with the given state_code,
+    0 if there is no job with the given state_code   
 
   failure: undef
     $Spkdb::errstr contains an error message string
