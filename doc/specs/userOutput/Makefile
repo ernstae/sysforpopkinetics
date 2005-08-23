@@ -1,5 +1,5 @@
 include ../../webdir.mk
-T = userOutput
+T = spkUser
 HTML_OPS = --nochunks
 STYLE = ../../stylesheet
 WEB = $(WEBDIR)/v0.1/specs/$T
