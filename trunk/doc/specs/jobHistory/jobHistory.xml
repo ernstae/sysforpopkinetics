@@ -16,7 +16,7 @@
       <revision>
 	<revnumber>1.1</revnumber>
 	<date>August 19, 2005</date>
-	<authorinitials>Jiaji Du</authorinitials>
+	<authorinitials>jiaji</authorinitials>
 	<revremark>Added job abortion.</revremark>
       </revision>
     </revhistory>
@@ -142,7 +142,7 @@
 		 <glossterm>aborted by user</glossterm>
 		  <glossdef>
 		    <para>
-		      occurs when user has asked to abort the job through the MDA.
+		      occurs when the user has requested to abort the job through the MDA.
 		    </para>
 		  </glossdef>
 		</glossentry>
@@ -189,7 +189,7 @@
 		 <glossterm>aborted by user</glossterm>
 		  <glossdef>
 		    <para>
-		      occurs when user has asked to abort the job through the MDA.
+		      occurs when the user has requested to abort the job through the MDA.
                       The next state is <emphasis>Queued to abort compiling</emphasis>.
 		    </para>
 		  </glossdef>
@@ -239,7 +239,7 @@
 		 <glossterm>aborted by user</glossterm>
 		  <glossdef>
 		    <para>
-		      occurs when user has asked to abort the job through the MDA.
+		      occurs when the user has requested to abort the job through the MDA.
 		    </para>
 		  </glossdef>
 		</glossentry>
@@ -278,7 +278,7 @@
 		 <glossterm>aborted by user</glossterm>
 		  <glossdef>
 		    <para>
-		      occurs when user has asked to abort the job through the MDA.
+		      occurs when the user has requested to abort the job through the MDA.
                       The next state is <emphasis>Queued to abort computation</emphasis>.
 		    </para>
 		  </glossdef>
