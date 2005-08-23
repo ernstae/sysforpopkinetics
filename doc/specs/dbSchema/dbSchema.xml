@@ -31,6 +31,12 @@
 	<authorinitials>afw</authorinitials>
 	<revremark>Various modifications to schema.</revremark>
       </revision>
+      <revision>
+	<revnumber>1.04</revnumber>
+	<date>November 19, 2003</date>
+	<authorinitials>jiaji</authorinitials>
+	<revremark>More additions to schema.</revremark>
+      </revision>
     </revhistory>
   <abstract>
       <para>
@@ -342,6 +348,8 @@ CREATE TABLE job (
   end_code varchar(4) default NULL,
   method_code char(2) default NULL,
   parent int(10) unsigned default '0',
+  owner varchar(40) NOT NULL default '',
+  mail tinyint(1) default '0',
   PRIMARY KEY  (job_id)
 ) TYPE=InnoDB;
 
@@ -378,7 +386,7 @@ CREATE TABLE user (
   company varchar(30) NOT NULL default '',
   country varchar(20) NOT NULL default '',
   state varchar(20) NOT NULL default '',
-  email varchar(30) default NULL,
+  email varchar(40) default NULL,
   test tinyint(1) default '0',
   dev tinyint(1) default '0',
   PRIMARY KEY  (user_id),
@@ -397,11 +405,13 @@ CREATE TABLE user (
       <screen>
 INSERT INTO class (class_code, class_name, parent_required) VALUES ('al','Approx. Likelihood',0);
 INSERT INTO class (class_code, class_name, parent_required) VALUES ('le','Likelihood Eval.',1);
+INSERT INTO class (class_code, class_name, parent_required) VALUES ('so','Simulation Only',0);
 
 INSERT INTO end (end_code, end_name) VALUES ('cerr','Compiler Error');
 INSERT INTO end (end_code, end_name) VALUES ('herr','Hard Fault');
 INSERT INTO end (end_code, end_name) VALUES ('serr','Software Error');
 INSERT INTO end (end_code, end_name) VALUES ('srun','Successful Run');
+INSERT INTO end (end_code, end_name) VALUES ('abrt','User Abort');
 
 INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('fo','First Order','al',0);
 INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('eh','Expected Hessian','al',0);
@@ -410,6 +420,9 @@ INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('ml
 INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('mc','Markov Chain M.C.','al',0);
 INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('gr','Grid','le',1);
 INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('an','Analytical','le',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('so','Simulation Only','so',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('ia','Individual Analysis','al',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('mi','Miser Likelihood','le',0);
 
 INSERT INTO state (state_code, state_name) VALUES ('q2c','Queued to compile');
 INSERT INTO state (state_code, state_name) VALUES ('q2ml','Queued to M.L.');
@@ -417,6 +430,10 @@ INSERT INTO state (state_code, state_name) VALUES ('cmp','Compiling');
 INSERT INTO state (state_code, state_name) VALUES ('q2r','Queued to run');
 INSERT INTO state (state_code, state_name) VALUES ('run','Running');
 INSERT INTO state (state_code, state_name) VALUES ('end','End');
+INSERT INTO state (state_code, state_name) VALUES ('q2ac','Queued to abort cmp');
+INSERT INTO state (state_code, state_name) VALUES ('q2ar','Queued to abort run');
+INSERT INTO state (state_code, state_name) VALUES ('acmp','Aborting compilation');
+INSERT INTO state (state_code, state_name) VALUES ('arun','Aborting run');
       </screen>
     </para>
   </sect1>
@@ -834,6 +851,21 @@ INSERT INTO state (state_code, state_name) VALUES ('end','End');
 		  a previous one. A foreign key to the job table.
 		</entry>
 	      </row>
+	      <row>
+		<entry>owner</entry>
+		<entry>varchar(40)</entry>
+		<entry>
+		  The job owner, the username of the person on the computer 
+                  system by which the job was submitted.
+		</entry>
+	      </row>
+	      <row>
+		<entry>mail</entry>
+		<entry>tinyInt(1)</entry>
+		<entry>
+		  Whether or not the user wants an end-job email notice.
+		</entry>
+	      </row>
 	    </tbody>
 	  </tgroup>
 	</table>
@@ -1116,7 +1148,7 @@ INSERT INTO state (state_code, state_name) VALUES ('end','End');
 	      </row>
 	      <row>
 		<entry>email</entry>
-		<entry>varchar(30)</entry>
+		<entry>varchar(40)</entry>
 		<entry>
 		  The user's electronic mail address.
 		</entry>

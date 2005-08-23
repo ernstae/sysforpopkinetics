@@ -27,10 +27,16 @@
 	<revremark>Added two functions: get_cmp_jobs and get_run_jobs</revremark>
       </revision>
       <revision>
-	<revnumber></revnumber>
+	<revnumber>1.03</revnumber>
 	<date>June 16, 2004</date>
 	<authorinitials>afw</authorinitials>
 	<revremark>Added two arguments to new_job; added get_method_table function.</revremark>
+      </revision>
+      <revision>
+	<revnumber>1.04</revnumber>
+	<date>August 19, 2005</date>
+	<authorinitials>jiaji</authorinitials>
+	<revremark>Added 'Aborting Job' section and five API functions.</revremark>
       </revision>
     </revhistory>
   <abstract>
@@ -218,6 +224,62 @@
       When it discovers that one has, it retrieves the 
       contents of the <emphasis>report</emphasis> field
       and presents them to the user.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Aborting Job</title>
+    <para>
+      When a user decides to abort a job, the MDA sets the 
+      <emphasis>state_code</emphasis> field of the job row to indicate 
+      that the job is aborted or should be aborted by one of the daemons. 
+    </para>
+    <para>
+      If the current <emphasis>state_code</emphasis> is 'q2c', the MDA sets
+      the job's <emphasis>state_code</emphasis> to 'end' and the job's
+      <emphasis>end_code</emphasis> to 'abrt'. 
+    </para>
+    <para>
+      If the current <emphasis>state_code</emphasis> is 'cmp', the MDA sets 
+      the job's <emphasis>state_code</emphasis> to 'q2ac'.  The compiler 
+      daemon visits the database every second.  When the compiler daemon  
+      finds the job, it changes the <emphasis>state_code</emphasis> to
+      'acmp' and sends a termination signal to the process executing the
+      compiler instance for the job.  When the process terminates, the 
+      compiler daemon sets the job's <emphasis>state_code</emphasis> to 'end' 
+      and the job's end_code to 'abrt'.
+    </para>
+    <para>
+      If the current <emphasis>state_code</emphasis> is 'q2r', the MDA sets
+      the job's <emphasis>state_code</emphasis> to 'end' and the job's
+      <emphasis>end_code</emphasis> to 'abrt'. 
+    </para>
+    <para>
+      If the current <emphasis>state_code</emphasis> is 'run', the MDA sets 
+      the job's <emphasis>state_code</emphasis> to 'q2ar'.  The run-time 
+      daemon visits the database every second.  When the run-time
+ daemon  
+      finds the job, it changes the <emphasis>state_code</emphasis> to
+      'arun' and sends a termination signal to the process executing the
+      SPK driver instance for the job.  When the process terminates, the 
+      run-time daemon sets the job's <emphasis>state_code</emphasis> to 'end' 
+      and the job's end_code to 'abrt'.
+    </para>
+    <para>
+      If the compiler daemon is shutdown in the middle of a job abortion,
+      it may leave jobs with <emphasis>state_code</emphasis> 'q2ac' or 
+      'acmp'.  When the compiler daemon is restarted,  it sets the job's
+      <emphasis>state_code</emphasis> to 'end' and the job's 
+      <emphasis>end_code</emphasis> to 'abrt'.
+    </para>
+    <para>
+      If the run-time daemon is shutdown in the middle of a job abortion,
+      it may leave jobs with <emphasis>state_code</emphasis> 'q2ar' or 
+      'arun'.  When the run-time daemon is restarted,  it sets the job's
+      <emphasis>state_code</emphasis> to 'end' and the job's 
+      <emphasis>end_code</emphasis> to 'abrt'.  In the later case, there may
+      be a checkpoint file in the working directory of the job.  The daemon 
+      copies the text content of the checkpoint file to the database if there
+      is one.
     </para>
   </sect1>
   <sect1>
@@ -1131,7 +1193,7 @@
 	    </glossdef>
 	    <glossdef>
 	      <para>
-		The event_time field is updated to the time of this state transition.		      
+		The event_time field is updated to the time of this state transition.  
 	      </para>
 	    </glossdef>
 	    <glossdef>
@@ -3358,6 +3420,553 @@
 	  </table>
 	</para>
       </sect3>
+      <sect3>
+	<title id="abort_job">abort job -- abort a job</title>
+	<glosslist>
+	  <glossentry>
+	    <glossterm>Synopsis</glossterm>
+	    <glossdef>
+	      <para>
+		r = abort_job handle job_id
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Description</glossterm>
+	    <glossdef>
+	      <para>
+               	Abort a job when the job is in one of the four possible states.
+                If the job's state_code equals to 'q2c', set the job's 
+                state_code to 'end' and the job's end_code to 'abrt'.
+                If the job's state_code equals to 'cmp', set the job's 
+                state_code to 'q2ac'- queued to abort compiling.
+                If the job's state_code equals to 'q2r', set the job's 
+                state_code to 'end' and the job's end_code to 'abrt'.
+                If the job's state_code equals to 'run', set the job's 
+                state_code to 'q2ar' - queued to abort running. 
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Side Effects</glossterm>
+	    <glossdef>
+	      <para>
+		The event_time field is updated to the time of this transition.
+	      </para>
+	    </glossdef>
+	    <glossdef>
+	      <para>
+		A state transition record is appended to the 
+		<emphasis>history</emphasis> table.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Transaction Processing Considerations</glossterm>
+	    <glossdef>
+	      <para>
+		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB) and that
+		the <emphasis>job_id</emphasis> field carries the auto_increment
+		modifier.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	</glosslist>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Values returned by abort_job</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="1*"/>
+	      <colspec colname="c2" colwidth="1*"/>
+	      <colspec colname="c3" colwidth="5*"/>
+	      <thead>
+		<row>
+		  <entry>Condition</entry>
+		  <entry>Values</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>success</entry>
+		  <entry>true</entry>
+		  <entry>The job's state_code has been set to either 'end, 'q2ac' or q2ar'.</entry>
+		</row>
+		<row>
+		  <entry>failure</entry>
+		  <entry>false</entry>
+		  <entry>
+		    The job's state_code has not been set to either 'end, 'q2ac' or q2ar' 
+		  </entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Arguments to abort_job</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="1*"/>
+	      <colspec colname="c2" colwidth="1*"/>
+	      <colspec colname="c3" colwidth="5*"/>
+	      <thead>
+		<row>
+		  <entry>Name of Argument</entry>
+		  <entry>Data Type</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>handle</entry>
+		  <entry>database handle</entry>
+		  <entry>Handle to an open database connection.</entry>
+		</row>
+                <row>
+		  <entry>job_id</entry>
+		  <entry>positive integer</entry>
+		  <entry>A valid key to the job table.</entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+      </sect3>
+      <sect3>
+	<title id="get_job_ids">get job ids -- get all job ids with a given state_code</title>
+	<glosslist>
+	  <glossentry>
+	    <glossterm>Synopsis</glossterm>
+	    <glossdef>
+	      <para>
+		list = get_job_ids handle state_code
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Description</glossterm>
+	    <glossdef>
+	      <para>
+                Get job_ids of all jobs as an array with a given state_code.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Side Effects</glossterm>
+	    <glossdef>
+	      <para>
+		None.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Transaction Processing Considerations</glossterm>
+	    <glossdef>
+	      <para>
+		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB) and that
+		the <emphasis>job_id</emphasis> field carries the auto_increment
+		modifier.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	</glosslist>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Values returned by get_job_ids</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="1*"/>
+	      <colspec colname="c2" colwidth="1*"/>
+	      <colspec colname="c3" colwidth="5*"/>
+	      <thead>
+		<row>
+		  <entry>Condition</entry>
+		  <entry>Values</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>success</entry>
+		  <entry>integer array</entry>
+		  <entry>
+                    An array of job_ids of all the jobs with the given state_code,
+                    0 if there is no job with the given state_code
+                  </entry>
+		</row>
+		<row>
+		  <entry>failure</entry>
+		  <entry>null or undefined</entry>
+		  <entry>
+		    Failure occurs if the handle or job_id is invalid. Additional
+                    error information is available in the individual language bindings.
+		  </entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Arguments to get_job_ids</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="1*"/>
+	      <colspec colname="c2" colwidth="1*"/>
+	      <colspec colname="c3" colwidth="5*"/>
+	      <thead>
+		<row>
+		  <entry>Name of Argument</entry>
+		  <entry>Data Type</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>handle</entry>
+		  <entry>database handle</entry>
+		  <entry>Handle to an open database connection.</entry>
+		</row>
+                <row>
+		  <entry>state_code</entry>
+		  <entry>string</entry>
+		  <entry>state_code of the jobs to get.</entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+      </sect3>
+      <sect3>
+	<title id="de_q2ac">de_q2ac -- remove highest priority job from aborting 
+               compiler queue</title>
+	<glosslist>
+	  <glossentry>
+	    <glossterm>Synopsis</glossterm>
+	    <glossdef>
+	      <para>
+		job_id = de_q2ac handle
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Description</glossterm>
+	    <glossdef>
+	      <para>
+                Remove the highest priority job from the aborting compiler queue, 
+                so that it can be aborted by the compiler daemon.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Side Effects</glossterm>
+	    <glossdef>
+	      <para>
+		The state_code field of the job is set to acmp.
+	      </para>
+	    </glossdef>
+	    <glossdef>
+	      <para>
+		The event_time field is updated to the time of this state transition.  
+	      </para>
+	    </glossdef>
+	    <glossdef>
+	      <para>
+		A state transition record is added to the 
+		<emphasis>history</emphasis> table.
+	      </para>
+	    </glossdef>	  
+          </glossentry>
+	  <glossentry>
+	    <glossterm>Transaction Processing Considerations</glossterm>
+	    <glossdef>
+	      <para>
+		The work of this function is performed within transaction state,
+		between a <command>begin</command> database command and a 
+		<command>commit</command>.  The job is found by using a 
+		<command>select for update</command> command. In case of error,
+		the functions performs a <command>rollback</command> before
+		exiting.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	</glosslist>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Values returned by de_q2ac</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="1*"/>
+	      <colspec colname="c2" colwidth="1*"/>
+	      <colspec colname="c3" colwidth="5*"/>
+	      <thead>
+		<row>
+		  <entry>Condition</entry>
+		  <entry>Values</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>success</entry>
+		  <entry>integer</entry>
+		  <entry>
+                    job_id of highest priority aborting compilation job, 
+                    false if aborting compiler queue is empty
+                  </entry>
+		</row>
+		<row>
+		  <entry>failure</entry>
+		  <entry>null or undefined</entry>
+		  <entry>
+		    Failure occurs if the handle is invalid. Additional
+                    error information is available in the individual language bindings.
+		  </entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Arguments to de_q2ac</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="1*"/>
+	      <colspec colname="c2" colwidth="1*"/>
+	      <colspec colname="c3" colwidth="5*"/>
+	      <thead>
+		<row>
+		  <entry>Name of Argument</entry>
+		  <entry>Data Type</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>handle</entry>
+		  <entry>database handle</entry>
+		  <entry>Handle to an open database connection.</entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+      </sect3>
+      <sect3>
+	<title id="de_q2ar">de_q2ar -- remove highest priority job from aborting 
+               run queue</title>
+	<glosslist>
+	  <glossentry>
+	    <glossterm>Synopsis</glossterm>
+	    <glossdef>
+	      <para>
+		job_id = de_q2ar handle
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Description</glossterm>
+	    <glossdef>
+	      <para>
+                Remove the highest priority job from the aborting run queue, 
+                so that it can be aborted by the run-time daemon.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Side Effects</glossterm>
+	    <glossdef>
+	      <para>
+		The state_code field of the job is set to arun.
+	      </para>
+	    </glossdef>
+	    <glossdef>
+	      <para>
+		The event_time field is updated to the time of this state transition.  
+	      </para>
+	    </glossdef>
+	    <glossdef>
+	      <para>
+		A state transition record is added to the 
+		<emphasis>history</emphasis> table.
+	      </para>
+	    </glossdef>	  
+          </glossentry>
+	  <glossentry>
+	    <glossterm>Transaction Processing Considerations</glossterm>
+	    <glossdef>
+	      <para>
+		The work of this function is performed within transaction state,
+		between a <command>begin</command> database command and a 
+		<command>commit</command>.  The job is found by using a 
+		<command>select for update</command> command. In case of error,
+		the functions performs a <command>rollback</command> before
+		exiting.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	</glosslist>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Values returned by de_q2ar</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="1*"/>
+	      <colspec colname="c2" colwidth="1*"/>
+	      <colspec colname="c3" colwidth="5*"/>
+	      <thead>
+		<row>
+		  <entry>Condition</entry>
+		  <entry>Values</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>success</entry>
+		  <entry>integer</entry>
+		  <entry>
+                    job_id of highest priority aborting run job, 
+                    false if aborting run queue is empty
+                  </entry>
+		</row>
+		<row>
+		  <entry>failure</entry>
+		  <entry>null or undefined</entry>
+		  <entry>
+		    Failure occurs if the handle is invalid. Additional
+                    error information is available in the individual language bindings.
+		  </entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Arguments to de_q2ar</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="1*"/>
+	      <colspec colname="c2" colwidth="1*"/>
+	      <colspec colname="c3" colwidth="5*"/>
+	      <thead>
+		<row>
+		  <entry>Name of Argument</entry>
+		  <entry>Data Type</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>handle</entry>
+		  <entry>database handle</entry>
+		  <entry>Handle to an open database connection.</entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+      </sect3>
+      <sect3>
+	<title id="get_mail_notice">get_mail_notice -- get end-job email notice 
+            request option</title>
+	<glosslist>
+	  <glossentry>
+	    <glossterm>Synopsis</glossterm>
+	    <glossdef>
+	      <para>
+		r = get_mail_notice handle job_id
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Description</glossterm>
+	    <glossdef>
+	      <para>
+                 Given a job_id, get end-job email notice request option for the job.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Side Effects</glossterm>
+	    <glossdef>
+	      <para>
+		None.
+	      </para>
+	    </glossdef>  
+          </glossentry>
+	  <glossentry>
+	    <glossterm>Transaction Processing Considerations</glossterm>
+	    <glossdef>
+	      <para>
+                None, as long as the job_id is valid.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	</glosslist>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Values returned by get_mail_notice</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="1*"/>
+	      <colspec colname="c2" colwidth="1*"/>
+	      <colspec colname="c3" colwidth="5*"/>
+	      <thead>
+		<row>
+		  <entry>Condition</entry>
+		  <entry>Values</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>success</entry>
+		  <entry>true or false</entry>
+		  <entry>
+                     true if the end-job email notice request option is set, false if otherwise
+                  </entry>
+		</row>
+		<row>
+		  <entry>failure</entry>
+		  <entry>null or undefined</entry>
+		  <entry>
+		    Failure occurs if the handle is invalid. Additional
+                    error information is available in the individual language bindings.
+		  </entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Arguments to get_mail_notice</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="1*"/>
+	      <colspec colname="c2" colwidth="1*"/>
+	      <colspec colname="c3" colwidth="5*"/>
+	      <thead>
+		<row>
+		  <entry>Name of Argument</entry>
+		  <entry>Data Type</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>handle</entry>
+		  <entry>database handle</entry>
+		  <entry>Handle to an open database connection.</entry>
+		</row>
+                <row>
+		  <entry>job_id</entry>
+		  <entry>integer</entry>
+		  <entry>The key to a row in the job table.</entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+      </sect3>
 <!--
       <sect3>
 	<title id="blah">blah - - blah blah</title>
@@ -3601,6 +4210,32 @@
 		<entry></entry>
 		<entry>x</entry>
 	      </row>
+	      <row>
+		<entry><link linkend="abort_job">abort_job</link></entry>
+		<entry></entry>
+		<entry>x</entry>
+	      </row>
+	      <row>
+		<entry><link linkend="get_job_ids">get_job_ids</link></entry>
+		<entry>x</entry>
+		<entry></entry>
+	      </row>
+              <row>
+		<entry><link linkend="de_q2ac">de_q2ac</link></entry>
+		<entry>x</entry>
+		<entry></entry>
+	      </row>
+	      <row>
+		<entry><link linkend="de_q2ar">de_q2ar</link></entry>
+		<entry>x</entry>
+		<entry></entry>
+	      </row>
+	      <row>
+		<entry><link linkend="get_mail_notice">get_mail_notice</link></entry>
+		<entry>x</entry>
+		<entry></entry>
+	      </row>
+
 <!--
 	      <row>
 		<entry><link linkend="blah">blah</link></entry>
