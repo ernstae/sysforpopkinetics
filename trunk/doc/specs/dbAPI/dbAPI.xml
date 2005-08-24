@@ -602,7 +602,7 @@
 	    <glossterm>Synopsis</glossterm>
 	    <glossdef>
 	      <para>
-		job_id = new_job handle user_id abstract dataset_id dataset_version model_id model_version xml_source method_code parent
+		job_id = new_job handle user_id abstract dataset_id dataset_version model_id model_version xml_source method_code owner parent is_warm_start is_mail_notice
 	      </para>
 	    </glossdef>
 	  </glossentry>
@@ -713,6 +713,13 @@
 		  </entry>
 		</row>
 		<row>
+		  <entry>abstract</entry>
+		  <entry>string</entry>
+		  <entry>
+		    Short description of the job.
+		  </entry>
+		</row>
+		<row>
 		  <entry>dataset_id</entry>
 		  <entry>positive integer</entry>
 		  <entry>
@@ -762,11 +769,32 @@
 		  </entry>
 		</row>
 		<row>
+		  <entry>owner</entry>
+		  <entry>string</entry>
+		  <entry>
+		    The name of the job owner.
+		  </entry>
+		</row>
+		<row>
 		  <entry>parent</entry>
 		  <entry>non-negative integer</entry>
 		  <entry>
 		    The job_id of the job which is the parent of this one.  If the
 		    job has no parent, this value should be zero.
+		  </entry>
+		</row>
+		<row>
+		  <entry>is_warm_start</entry>
+		  <entry>true or false</entry>
+		  <entry>
+		    True for being a warm start job; false for otherwise.
+		  </entry>
+		</row>
+		<row>
+		  <entry>is_mail_notice</entry>
+		  <entry>true or false</entry>
+		  <entry>
+		    True for requesting end-job mail notice; false for otherwise.
 		  </entry>
 		</row>
 	      </tbody>
