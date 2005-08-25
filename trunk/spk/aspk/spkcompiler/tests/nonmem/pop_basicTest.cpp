@@ -85,42 +85,40 @@ if( actual != expected ) \\\n \
   //============================================
   // <Data Set>
   //
-  //   ID      TIME     CP=DV    MDV   EVID
-  //   1       0.0       0.0      0      0
-  //   2       0.0       0.0      0      0
-  //   2       1.0      10.0      0      0
-  //   3       0.0       0.0      0      0
-  //   3       1.0      10.0      0      0
-  //   3       2.0      20.0      0      0
-  //   4       0.0       0.0      0      0
-  //   4       1.0      10.0      0      0
-  //   4       2.0      20.0      0      0
-  //   4       3.0      25.0      0      0
+  //   ID      TIME     CP=DV
+  //   1       0.0       0.0
+  //   2       0.0       0.0
+  //   2       1.0      10.0
+  //   3       0.0       0.0
+  //   3       1.0      10.0
+  //   3       2.0      20.0
+  //   4       0.0       0.0
+  //   4       1.0      10.0
+  //   4       2.0      20.0
+  //   4       3.0      25.0
   //============================================
   map<const char*, const char*> label_alias;
   const char *strID         = "ID";
   const char *strTIME       = "TiMe";
   const char *strDV         = "DV";
   const char *strCP         = "CP";
-  const char *strMDV        = "MDV";
-  const char *strEVID       = "EVID";
-  const char *label[]       = { strID, strDV, strTIME, strMDV, strEVID };
-  const int    nLabels      = 4;
+  const char *label[]       = { strID, strDV, strTIME };
+  const int    nLabels      = 3;
   const int    nIndividuals = 4;
   const int    nRecords     = 10;
   const int    nFixed       = 0;
   const int    nItems       = nLabels;
   valarray<int> N( nIndividuals );
-  const double record0[] = { 1, 0.0,  0.0, 0, 0 };
-  const double record1[] = { 2, 0.0,  0.0, 0, 0 };
-  const double record2[] = { 2, 1.0, 10.0, 0, 0 };
-  const double record3[] = { 3, 0.0,  0.0, 0, 0 };
-  const double record4[] = { 3, 1.0, 10.0, 0, 0 };
-  const double record5[] = { 3, 2.0, 20.0, 0, 0 };
-  const double record6[] = { 4, 0.0,  0.0, 0, 0 };
-  const double record7[] = { 4, 1.0, 10.0, 0, 0 };
-  const double record8[] = { 4, 2.0, 20.0, 0, 0 };
-  const double record9[] = { 4, 3.0, 25.0, 0, 0 };
+  const double record0[] = { 1, 0.0,  0.0 };
+  const double record1[] = { 2, 0.0,  0.0 };
+  const double record2[] = { 2, 1.0, 10.0 };
+  const double record3[] = { 3, 0.0,  0.0 };
+  const double record4[] = { 3, 1.0, 10.0 };
+  const double record5[] = { 3, 2.0, 20.0 };
+  const double record6[] = { 4, 0.0,  0.0 };
+  const double record7[] = { 4, 1.0, 10.0 };
+  const double record8[] = { 4, 2.0, 20.0 };
+  const double record9[] = { 4, 3.0, 25.0 };
   double const * record[nRecords];
 
   //============================================
@@ -310,9 +308,6 @@ void pop_basicTest::setUp()
 
   // DV is aliased to CP
   label_alias[strDV]   = strCP;
-
-  // MDV doesn't have an alias.
-  label_alias[strMDV]  = NULL;
 
   X_ERROR_LIST                 = XMLString::transcode( C_ERROR_LIST );
   X_VALUE                      = XMLString::transcode( C_VALUE );
@@ -678,7 +673,6 @@ void pop_basicTest::testIndDataClass()
   // * ID
   // * TIME
   // * CP/DV
-  // * MDV (registered by the Compiler)
   //
   // Check PK Parameters
   // * theta
@@ -719,29 +713,23 @@ void pop_basicTest::testIndDataClass()
   o << "   vector<char*>  a_id(n);" << endl;
   o << "   vector<double> a_time(n);" << endl;
   o << "   vector<double> a_dv(n);" << endl;
-  o << "   vector<double> a_mdv(n);" << endl;
-  o << "   vector<int>    a_evid(n);" << endl;
 
   for( int i=0; i<nRecords; i++ )
   {
     o << "   a_id  [" << i << "] = \"" << record[i][0] << "\";" << endl;
     o << "   a_dv  [" << i << "] = "   << record[i][1] << ";" << endl;
     o << "   a_time[" << i << "] = "   << record[i][2] << ";" << endl;
-    o << "   a_mdv [" << i << "] = "   << record[i][3] << ";" << endl;
-    o << "   a_mdv [" << i << "] = "   << record[i][4] << ";" << endl;
   }
 
-  o << "   IndData<double> A( n, a_id, a_dv, a_time, a_mdv, a_evid );" << endl;
+  o << "   IndData<double> A( n, a_id, a_dv, a_time );" << endl;
 
-  // { ID, DV=CP, TIME, MDV }
+  // { ID, DV=CP, TIME }
   for( int i=0; i<nRecords; i++ )
     {
       o << "   assert( strcmp( A." << strID << "[" << i << "], \"" << record[i][0] << "\" ) == 0 );" << endl;
       o << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", A." << strCP   << "[" << i << "] );" << endl;
       o << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", A." << strDV   << "[" << i << "] );" << endl;
       o << "   MY_ASSERT_EQUAL(  " << record[i][2] << ", A." << strTIME << "[" << i << "] );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][3] << ", A." << strMDV  << "[" << i << "] );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][4] << ", A." << strEVID << "[" << i << "] );" << endl;
       // There have to be placeholders for the current values of theta/eta for
       // each call to Pred::eval().
       o << "   MY_ASSERT_EQUAL( thetaLen, A." << strTHETA << "[" << i << "].size() );" << endl;
@@ -808,11 +796,7 @@ void pop_basicTest::testIndDataClass()
   o << "   MY_ASSERT_EQUAL( " << nRecords-nFixed << ", y.size() );" << endl;
   o << "   for( int j=0, k=0; j<n; j++ )" << endl;
   o << "   {" << endl;
-  o << "      if( A." << strMDV << "[j] != 1 )" << endl;
-  o << "      {" << endl;
-  o << "         MY_ASSERT_EQUAL( A." << strDV << "[j], y[k] );" << endl;
-  o << "         k++;" << endl;
-  o << "      }" << endl;
+  o << "      MY_ASSERT_EQUAL( A." << strDV << "[j], y[j] );" << endl;
   o << "   }" << endl;
   o << endl;
 
@@ -863,7 +847,7 @@ void pop_basicTest::testDataSetClass()
   o << "   const int nIndividuals = " << nIndividuals << ";" << endl;
   o << "   DataSet<double> set;" << endl;
   o << "   valarray<int> N = set.getN();" << endl;
-  // { ID, DV=CP, TIME, MDV }
+  // { ID, DV=CP, TIME }
   for( int j=0, k=0; j<nIndividuals; j++ )
   {
      for( int i=0; i<N[j]; i++, k++ )
@@ -874,8 +858,6 @@ void pop_basicTest::testDataSetClass()
        o << "   MY_ASSERT_EQUAL(  " << record[k][1] << ", set.data[" << j << "]->" << strDV;
        o << "[" << i << "] );" << endl;
        o << "   MY_ASSERT_EQUAL(  " << record[k][2] << ", set.data[" << j << "]->" << strTIME;
-       o << "[" << i << "] );" << endl;
-       o << "   MY_ASSERT_EQUAL(  " << record[k][3] << ", set.data[" << j << "]->" << strMDV;
        o << "[" << i << "] );" << endl;
      }
   }
@@ -950,10 +932,7 @@ void pop_basicTest::testDataSetClass()
   o << "{" << endl;
   o << "   for( int i=0; i<N[j]; i++, k++ )" << endl;
   o << "   {" << endl;
-  o << "      if( set.data[j]->" << strMDV << "[i] != 1 )" << endl;
-  o << "      {" << endl;
-  o << "         MY_ASSERT_EQUAL( set.data[j]->" << strDV << "[i], y[k] );" << endl;
-  o << "      }" << endl;
+  o << "      MY_ASSERT_EQUAL( set.data[j]->" << strDV << "[i], y[k] );" << endl;
   o << "   }" << endl;
   o << "}" << endl;
 
@@ -1494,6 +1473,7 @@ CppUnit::Test * pop_basicTest::suite()
      new CppUnit::TestCaller<pop_basicTest>(
          "testIndDataClass", 
 	 &pop_basicTest::testIndDataClass ) );
+/*
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<pop_basicTest>(
          "testDataSetClass", 
@@ -1510,6 +1490,7 @@ CppUnit::Test * pop_basicTest::suite()
      new CppUnit::TestCaller<pop_basicTest>(
          "testReportML", 
 	 &pop_basicTest::testReportML ) );
+*/
   return suiteOfTests;
 }
 

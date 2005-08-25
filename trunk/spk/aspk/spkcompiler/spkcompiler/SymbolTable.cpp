@@ -79,10 +79,13 @@ Symbol* SymbolTable::insertScalar( const string& name,
 				   enum Symbol::Ownership owner, 
 				   enum Symbol::Access access )
 {
+  //return insertScalar( name );
+  
   Symbol a = Symbol::createScalar( name, owner, access );
-   const string NAME = key(name);
-   table[ NAME ] = a;
-   return &(table[ NAME ]); 
+  const string NAME = key(name);
+  table[ NAME ] = a;
+  return &(table[ NAME ]); 
+  
 }
 Symbol* SymbolTable::insertVector( const string& name, int len )
 {
@@ -108,12 +111,12 @@ Symbol* SymbolTable::insertMatrix( const string& name,
    table[ NAME ] = a;
    return &(table[ NAME ]);
 }
-Symbol* SymbolTable::insertMatrix( const string& name, 
+Symbol* SymbolTable::insertSymmetricMatrix( const string& name, 
 				   Symbol::Structure mt, int dim,
 				   enum Symbol::Ownership owner,
 				   enum Symbol::Access access )
 {
-   Symbol a = Symbol::createMatrix( name, mt, dim, owner, access );
+   Symbol a = Symbol::createSymmetricMatrix( name, mt, dim, owner, access );
    const string NAME = key(name);
    table[ NAME ] = a;
    return &(table[ NAME ]);

@@ -32,11 +32,11 @@ public:
   virtual void setUp();
   virtual void tearDown();
 
-  void testInsertNMVector();
-  void testInsertNMMatrix();
-  void testInsertUserVar();
+  void testInsertVector();
+  void testInsertSymmetricMatrix();
+  void testInsertScalar();
   void testInsertLabel();
-  void testEnd(); 
+  void testEmpty(); 
 
   static CppUnit::Test * suite();
 };

@@ -33,24 +33,66 @@ void SymbolTableTest::setUp()
 void SymbolTableTest::tearDown()
 {
 }
-void SymbolTableTest::testEnd()
+void SymbolTableTest::testEmpty()
 {
   SymbolTable table;
   CPPUNIT_ASSERT( Symbol::empty() == Symbol::empty() );
 }
-void SymbolTableTest::testInsertUserVar()
+void SymbolTableTest::testInsertScalar()
 {
-   string empty_string( "" ); 
    SymbolTable table;
+
+   // User & read-write
    string aaa_name( "aaa" );
-   vector<int> aaa_dim( 1 );
-   aaa_dim[0] = 1;
-   Symbol *aaa = table.insertScalar( aaa_name, user, readwrite );
-   CPPUNIT_ASSERT( table.find( aaa_name ) != Symbol::empty() );
-   CPPUNIT_ASSERT( table.find( aaa_name ) == aaa );
+   table.insertScalar( aaa_name, Symbol::USER, Symbol::READWRITE );
+   Symbol * aaa = table.find( aaa_name );
+   CPPUNIT_ASSERT( aaa != Symbol::empty() );
+   CPPUNIT_ASSERT( aaa->name == aaa_name );
+   CPPUNIT_ASSERT( aaa->object_type == Symbol::SCALAR );
+   CPPUNIT_ASSERT( aaa->access == Symbol::READWRITE );
+   CPPUNIT_ASSERT( aaa->owner == Symbol::USER );
 
    aaa->initial[0][0] = "3.0";
    CPPUNIT_ASSERT( "3.0" ==  aaa->initial[0][0] );
+
+   // User & read only
+   string bbb_name( "bbb" );
+   table.insertScalar( bbb_name, Symbol::USER, Symbol::READONLY );
+   Symbol * bbb = table.find( bbb_name );
+   CPPUNIT_ASSERT( bbb != Symbol::empty() );
+   CPPUNIT_ASSERT( bbb->name == bbb_name );
+   CPPUNIT_ASSERT( bbb->object_type == Symbol::SCALAR );
+   CPPUNIT_ASSERT( bbb->access == Symbol::READONLY );
+   CPPUNIT_ASSERT( bbb->owner == Symbol::USER );
+
+   bbb->initial[0][0] = "3.0";
+   CPPUNIT_ASSERT( "3.0" ==  bbb->initial[0][0] );
+
+   // System & read-write
+   string ccc_name( "ccc" );
+   table.insertScalar( ccc_name, Symbol::SYSTEM, Symbol::READWRITE );
+   Symbol * ccc = table.find( ccc_name );
+   CPPUNIT_ASSERT( ccc != Symbol::empty() );
+   CPPUNIT_ASSERT( ccc->name == ccc_name );
+   CPPUNIT_ASSERT( ccc->object_type == Symbol::SCALAR );
+   CPPUNIT_ASSERT( ccc->access == Symbol::READWRITE );
+   CPPUNIT_ASSERT( ccc->owner == Symbol::SYSTEM );
+
+   ccc->initial[0][0] = "3.0";
+   CPPUNIT_ASSERT( "3.0" ==  ccc->initial[0][0] );
+
+   // System & read only
+   string ddd_name( "ddd" );
+   table.insertScalar( ddd_name, Symbol::SYSTEM, Symbol::READONLY );
+   Symbol * ddd = table.find( ddd_name );
+   CPPUNIT_ASSERT( ddd != Symbol::empty() );
+   CPPUNIT_ASSERT( ddd->name == ddd_name );
+   CPPUNIT_ASSERT( ddd->object_type == Symbol::SCALAR );
+   CPPUNIT_ASSERT( ddd->access == Symbol::READONLY );
+   CPPUNIT_ASSERT( ddd->owner == Symbol::SYSTEM );
+
+   ddd->initial[0][0] = "3.0";
+   CPPUNIT_ASSERT( "3.0" ==  ddd->initial[0][0] );
 }
 void SymbolTableTest::testInsertLabel()
 {
@@ -58,10 +100,10 @@ void SymbolTableTest::testInsertLabel()
    SymbolTable table;
    string aaa_name( "aaa" );
    string aaa_alias( "AAA" );
-   valarray<int> aaa_dim( 2 );
-   aaa_dim[0] = 2;
-   aaa_dim[1] = 1;
-   Symbol *aaa = table.insertLabel( aaa_name, aaa_alias, aaa_dim );
+   valarray<int> aaa_len( 2 );
+   aaa_len[0] = 2;
+   aaa_len[1] = 1;
+   Symbol *aaa = table.insertLabel( aaa_name, aaa_alias, aaa_len );
    CPPUNIT_ASSERT( table.find( aaa_name ) != Symbol::empty() );
    CPPUNIT_ASSERT( table.find( aaa_name ) == aaa );
 
@@ -69,57 +111,251 @@ void SymbolTableTest::testInsertLabel()
    CPPUNIT_ASSERT( "3.0" == aaa->initial[0][0] );
 
 }
-void SymbolTableTest::testInsertNMVector()
+void SymbolTableTest::testInsertVector()
 {
-   string empty_string( "" ); 
    SymbolTable table;
+
+   // User & read-write
    string aaa_name( "aaa" );
-   int aaa_dim = 2;
-   Symbol *aaa = table.insertVector( aaa_name, aaa_dim, system, readonly );
-   CPPUNIT_ASSERT( table.find( aaa_name ) != Symbol::empty() );
-   CPPUNIT_ASSERT( table.find( aaa_name ) == aaa );
+   int aaa_len = 2;
+   table.insertVector( aaa_name, aaa_len, Symbol::USER, Symbol::READWRITE );
+   Symbol *aaa = table.find( aaa_name );
+   CPPUNIT_ASSERT( aaa != Symbol::empty() );
+   CPPUNIT_ASSERT( aaa->name == aaa_name );
+   CPPUNIT_ASSERT( aaa->object_type == Symbol::VECTOR );
+   CPPUNIT_ASSERT( aaa->access == Symbol::READWRITE );
+   CPPUNIT_ASSERT( aaa->owner == Symbol::USER );
+   CPPUNIT_ASSERT( aaa->dimension[0] == aaa_len );
 
    aaa->initial[0][0] = "3.0";
+   aaa->initial[0][1] = "2.0";
    CPPUNIT_ASSERT( "3.0" == aaa->initial[0][0] );
+   CPPUNIT_ASSERT( "2.0" == aaa->initial[0][1] );
+
+   // User & read only
+   string bbb_name( "bbb" );
+   int bbb_len = 2;
+   table.insertVector( bbb_name, bbb_len, Symbol::USER, Symbol::READONLY );
+   Symbol *bbb = table.find( bbb_name );
+   CPPUNIT_ASSERT( bbb != Symbol::empty() );
+   CPPUNIT_ASSERT( bbb->name == bbb_name );
+   CPPUNIT_ASSERT( bbb->object_type == Symbol::VECTOR );
+   CPPUNIT_ASSERT( bbb->access == Symbol::READONLY );
+   CPPUNIT_ASSERT( bbb->owner == Symbol::USER );
+   CPPUNIT_ASSERT( bbb->dimension[0] == bbb_len );
+
+   bbb->initial[0][0] = "3.0";
+   bbb->initial[0][1] = "2.0";
+   CPPUNIT_ASSERT( "3.0" == bbb->initial[0][0] );
+   CPPUNIT_ASSERT( "2.0" == bbb->initial[0][1] );
+
+   // System & read-write
+   string ccc_name( "ccc" );
+   int ccc_len = 2;
+   table.insertVector( ccc_name, ccc_len, Symbol::SYSTEM, Symbol::READWRITE );
+   Symbol *ccc = table.find( ccc_name );
+   CPPUNIT_ASSERT( ccc != Symbol::empty() );
+   CPPUNIT_ASSERT( ccc->name == ccc_name );
+   CPPUNIT_ASSERT( ccc->object_type == Symbol::VECTOR );
+   CPPUNIT_ASSERT( ccc->access == Symbol::READWRITE );
+   CPPUNIT_ASSERT( ccc->owner == Symbol::SYSTEM );
+   CPPUNIT_ASSERT( ccc->dimension[0] == ccc_len );
+
+   ccc->initial[0][0] = "3.0";
+   ccc->initial[0][1] = "2.0";
+   CPPUNIT_ASSERT( "3.0" == ccc->initial[0][0] );
+   CPPUNIT_ASSERT( "2.0" == ccc->initial[0][1] );
+
+   // System & read only
+   string ddd_name( "ddd" );
+   int ddd_len = 2;
+   table.insertVector( ddd_name, ddd_len, Symbol::SYSTEM, Symbol::READONLY );
+   Symbol *ddd = table.find( ddd_name );
+   CPPUNIT_ASSERT( ddd != Symbol::empty() );
+   CPPUNIT_ASSERT( ddd->name == ddd_name );
+   CPPUNIT_ASSERT( ddd->object_type == Symbol::VECTOR );
+   CPPUNIT_ASSERT( ddd->access == Symbol::READONLY );
+   CPPUNIT_ASSERT( ddd->owner == Symbol::SYSTEM );
+   CPPUNIT_ASSERT( ddd->dimension[0] == ddd_len );
+
+   ddd->initial[0][0] = "3.0";
+   ddd->initial[0][1] = "2.0";
+   CPPUNIT_ASSERT( "3.0" == ddd->initial[0][0] );
+   CPPUNIT_ASSERT( "2.0" == ddd->initial[0][1] );
 }
-void SymbolTableTest::testInsertNMMatrix()
+void SymbolTableTest::testInsertSymmetricMatrix()
 {
-   string empty_string( "" ); 
    SymbolTable table;
+
+   // User & read-write, diagonal
    string aaa_name( "aaa" );
    int aaa_dim = 2;
-   Symbol *aaa = table.insertMatrix( aaa_name, diagonal, aaa_dim, system, readonly );
-   CPPUNIT_ASSERT( table.find( aaa_name ) != Symbol::empty() );
-   CPPUNIT_ASSERT( table.find( aaa_name ) == aaa );
+   table.insertSymmetricMatrix( aaa_name, Symbol::DIAGONAL, aaa_dim, Symbol::USER, Symbol::READWRITE );
+   Symbol *aaa = table.find( aaa_name );
+   CPPUNIT_ASSERT( aaa != Symbol::empty() );
+   CPPUNIT_ASSERT( aaa->name == aaa_name );
+   CPPUNIT_ASSERT( aaa->object_type == Symbol::MATRIX );
+   CPPUNIT_ASSERT( aaa->structure == Symbol::DIAGONAL );
+   CPPUNIT_ASSERT( aaa->access == Symbol::READWRITE );
+   CPPUNIT_ASSERT( aaa->owner == Symbol::USER );
+   CPPUNIT_ASSERT( aaa->dimension[0] == aaa_dim );
 
+   aaa->initial[0][0] = "3.0";
+   aaa->initial[0][1] = "2.0";
+   CPPUNIT_ASSERT( "3.0" == aaa->initial[0][0] );
+   CPPUNIT_ASSERT( "2.0" == aaa->initial[0][1] );
+
+   // User & read only, diagonal
    string bbb_name( "bbb" );
    int bbb_dim = 2;
-   Symbol *bbb = table.insertMatrix( bbb_name, triangle, bbb_dim, system, readonly );
-   CPPUNIT_ASSERT( table.find( bbb_name ) != Symbol::empty() );
-   CPPUNIT_ASSERT( table.find( bbb_name ) == bbb );
+   table.insertSymmetricMatrix( bbb_name, Symbol::DIAGONAL, bbb_dim, Symbol::USER, Symbol::READONLY );
+   Symbol *bbb = table.find( bbb_name );
+   CPPUNIT_ASSERT( bbb != Symbol::empty() );
+   CPPUNIT_ASSERT( bbb->name == bbb_name );
+   CPPUNIT_ASSERT( bbb->object_type == Symbol::MATRIX );
+   CPPUNIT_ASSERT( bbb->structure == Symbol::DIAGONAL );
+   CPPUNIT_ASSERT( bbb->access == Symbol::READONLY );
+   CPPUNIT_ASSERT( bbb->owner == Symbol::USER );
+   CPPUNIT_ASSERT( bbb->dimension[0] == bbb_dim );
 
-   aaa->initial[0][0] = "3.0";
-   CPPUNIT_ASSERT( "3.0" == aaa->initial[0][0] );
+   bbb->initial[0][0] = "3.0";
+   bbb->initial[0][1] = "2.0";
+   CPPUNIT_ASSERT( "3.0" == bbb->initial[0][0] );
+   CPPUNIT_ASSERT( "2.0" == bbb->initial[0][1] );
 
-   bbb->initial[0][0] = "4.0";
-   CPPUNIT_ASSERT( "4.0" == bbb->initial[0][0] );
+   // System & read-write, diagonal
+   string ccc_name( "ccc" );
+   int ccc_dim = 2;
+   table.insertSymmetricMatrix( ccc_name, Symbol::DIAGONAL, ccc_dim, Symbol::SYSTEM, Symbol::READWRITE );
+   Symbol *ccc = table.find( ccc_name );
+   CPPUNIT_ASSERT( ccc != Symbol::empty() );
+   CPPUNIT_ASSERT( ccc->name == ccc_name );
+   CPPUNIT_ASSERT( ccc->object_type == Symbol::MATRIX );
+   CPPUNIT_ASSERT( ccc->structure == Symbol::DIAGONAL );
+   CPPUNIT_ASSERT( ccc->access == Symbol::READWRITE );
+   CPPUNIT_ASSERT( ccc->owner == Symbol::SYSTEM );
+   CPPUNIT_ASSERT( ccc->dimension[0] == ccc_dim );
+
+   ccc->initial[0][0] = "3.0";
+   ccc->initial[0][1] = "2.0";
+   CPPUNIT_ASSERT( "3.0" == ccc->initial[0][0] );
+   CPPUNIT_ASSERT( "2.0" == ccc->initial[0][1] );
+
+   // System & read only, diagonal
+   string ddd_name( "ddd" );
+   int ddd_dim = 2;
+   table.insertSymmetricMatrix( ddd_name, Symbol::DIAGONAL, ddd_dim, Symbol::SYSTEM, Symbol::READONLY );
+   Symbol *ddd = table.find( ddd_name );
+   CPPUNIT_ASSERT( ddd != Symbol::empty() );
+   CPPUNIT_ASSERT( ddd->name == ddd_name );
+   CPPUNIT_ASSERT( ddd->object_type == Symbol::MATRIX );
+   CPPUNIT_ASSERT( ddd->structure == Symbol::DIAGONAL );
+   CPPUNIT_ASSERT( ddd->access == Symbol::READONLY );
+   CPPUNIT_ASSERT( ddd->owner == Symbol::SYSTEM );
+   CPPUNIT_ASSERT( ddd->dimension[0] == ddd_dim );
+
+   ddd->initial[0][0] = "3.0";
+   ddd->initial[0][1] = "2.0";
+   CPPUNIT_ASSERT( "3.0" == ddd->initial[0][0] );
+   CPPUNIT_ASSERT( "2.0" == ddd->initial[0][1] );
+
+
+
+   // User & read-write, full
+   string eee_name( "eee" );
+   int eee_dim = 2;
+   table.insertSymmetricMatrix( eee_name, Symbol::FULL, eee_dim, Symbol::USER, Symbol::READWRITE );
+   Symbol *eee = table.find( eee_name );
+   CPPUNIT_ASSERT( eee != Symbol::empty() );
+   CPPUNIT_ASSERT( eee->name == eee_name );
+   CPPUNIT_ASSERT( eee->object_type == Symbol::MATRIX );
+   CPPUNIT_ASSERT( eee->structure == Symbol::FULL );
+   CPPUNIT_ASSERT( eee->access == Symbol::READWRITE );
+   CPPUNIT_ASSERT( eee->owner == Symbol::USER );
+   CPPUNIT_ASSERT( eee->dimension[0] == eee_dim );
+
+   eee->initial[0][0] = "3.0";
+   eee->initial[0][1] = "2.0";
+   eee->initial[0][2] = "1.0";
+   CPPUNIT_ASSERT( "3.0" == eee->initial[0][0] );
+   CPPUNIT_ASSERT( "2.0" == eee->initial[0][1] );
+   CPPUNIT_ASSERT( "1.0" == eee->initial[0][2] );
+
+   // User & read only, full
+   string fff_name( "fff" );
+   int fff_dim = 2;
+   table.insertSymmetricMatrix( fff_name, Symbol::FULL, fff_dim, Symbol::USER, Symbol::READONLY );
+   Symbol *fff = table.find( fff_name );
+   CPPUNIT_ASSERT( fff != Symbol::empty() );
+   CPPUNIT_ASSERT( fff->name == fff_name );
+   CPPUNIT_ASSERT( fff->object_type == Symbol::MATRIX );
+   CPPUNIT_ASSERT( fff->structure == Symbol::FULL );
+   CPPUNIT_ASSERT( fff->access == Symbol::READONLY );
+   CPPUNIT_ASSERT( fff->owner == Symbol::USER );
+   CPPUNIT_ASSERT( fff->dimension[0] == fff_dim );
+
+   fff->initial[0][0] = "3.0";
+   fff->initial[0][1] = "2.0";
+   fff->initial[0][2] = "1.0";
+   CPPUNIT_ASSERT( "3.0" == fff->initial[0][0] );
+   CPPUNIT_ASSERT( "2.0" == fff->initial[0][1] );
+   CPPUNIT_ASSERT( "1.0" == fff->initial[0][2] );
+
+   // System & read-write, full
+   string ggg_name( "ggg" );
+   int ggg_dim = 2;
+   table.insertSymmetricMatrix( ggg_name, Symbol::FULL, ggg_dim, Symbol::SYSTEM, Symbol::READWRITE );
+   Symbol *ggg = table.find( ggg_name );
+   CPPUNIT_ASSERT( ggg != Symbol::empty() );
+   CPPUNIT_ASSERT( ggg->name == ggg_name );
+   CPPUNIT_ASSERT( ggg->object_type == Symbol::MATRIX );
+   CPPUNIT_ASSERT( ggg->structure == Symbol::FULL );
+   CPPUNIT_ASSERT( ggg->access == Symbol::READWRITE );
+   CPPUNIT_ASSERT( ggg->owner == Symbol::SYSTEM );
+   CPPUNIT_ASSERT( ggg->dimension[0] == ggg_dim );
+
+   ggg->initial[0][0] = "3.0";
+   ggg->initial[0][1] = "2.0";
+   ggg->initial[0][2] = "1.0";
+   CPPUNIT_ASSERT( "3.0" == ggg->initial[0][0] );
+   CPPUNIT_ASSERT( "2.0" == ggg->initial[0][1] );
+   CPPUNIT_ASSERT( "1.0" == ggg->initial[0][2] );
+
+   // System & read only, full
+   string hhh_name( "hhh" );
+   int hhh_dim = 2;
+   table.insertSymmetricMatrix( hhh_name, Symbol::FULL, hhh_dim, Symbol::SYSTEM, Symbol::READONLY );
+   Symbol *hhh = table.find( hhh_name );
+   CPPUNIT_ASSERT( hhh != Symbol::empty() );
+   CPPUNIT_ASSERT( hhh->name == hhh_name );
+   CPPUNIT_ASSERT( hhh->object_type == Symbol::MATRIX );
+   CPPUNIT_ASSERT( hhh->structure == Symbol::FULL );
+   CPPUNIT_ASSERT( hhh->access == Symbol::READONLY );
+   CPPUNIT_ASSERT( hhh->owner == Symbol::SYSTEM );
+   CPPUNIT_ASSERT( hhh->dimension[0] == hhh_dim );
+
+   hhh->initial[0][0] = "3.0";
+   hhh->initial[0][1] = "2.0";
+   hhh->initial[0][2] = "1.0";
+   CPPUNIT_ASSERT( "3.0" == hhh->initial[0][0] );
+   CPPUNIT_ASSERT( "2.0" == hhh->initial[0][1] );
+   CPPUNIT_ASSERT( "1.0" == hhh->initial[0][2] );
 }
 
 CppUnit::Test * SymbolTableTest::suite()
 {
   CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite( "SymbolTableTest" );
 
-  suiteOfTests->addTest( new CppUnit::TestCaller<SymbolTableTest>("testEnd",
-						    &SymbolTableTest::testEnd ) );
-  suiteOfTests->addTest( new CppUnit::TestCaller<SymbolTableTest>("testInsertNMMatrix",
-						    &SymbolTableTest::testInsertNMMatrix ) );
-  suiteOfTests->addTest( new CppUnit::TestCaller<SymbolTableTest>("testInsertNMVector",
-						    &SymbolTableTest::testInsertNMVector ) );
-  suiteOfTests->addTest( new CppUnit::TestCaller<SymbolTableTest>("testInsertUserVar",
-						    &SymbolTableTest::testInsertUserVar ) );
-
+  suiteOfTests->addTest( new CppUnit::TestCaller<SymbolTableTest>("testEmpty",
+						    &SymbolTableTest::testEmpty ) );
   suiteOfTests->addTest( new CppUnit::TestCaller<SymbolTableTest>("testInsertLabel",
 						    &SymbolTableTest::testInsertLabel ) );
+  suiteOfTests->addTest( new CppUnit::TestCaller<SymbolTableTest>("testInsertScalar",
+						    &SymbolTableTest::testInsertScalar ) );
+  suiteOfTests->addTest( new CppUnit::TestCaller<SymbolTableTest>("testInsertVector",
+						    &SymbolTableTest::testInsertVector ) );
+  suiteOfTests->addTest( new CppUnit::TestCaller<SymbolTableTest>("testInsertSymmetricMatrix",
+						    &SymbolTableTest::testInsertSymmetricMatrix ) );
 
   return suiteOfTests;
 }

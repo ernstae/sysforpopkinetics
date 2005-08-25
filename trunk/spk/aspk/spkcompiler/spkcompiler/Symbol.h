@@ -47,13 +47,13 @@ public:
    * The access permissions.
    **/
   enum Access     { READONLY,    /** Read only **/
-                    READWRITE,   /** Read and write **/
-                    HIDDEN       /** Hidden **/ };
+                    READWRITE,   /** Read and write **/ };
   /**
    * Ownership, indicating who defines it.
    */
-  enum Ownership  { SYSTEM,      /** System-defined **/
-                    USER         /** User-defined **/ };
+  enum Ownership  { SYSTEM,      /** System defined **/
+                    USER,        /** User defined **/ 
+                    DATASET      /** Bound to Data Set **/ };
                  
   /**
    * Return a Symbol object that defines "empty".
@@ -185,9 +185,9 @@ public:
    * @param dim The dimension of the square matrix.
    */
    static Symbol createMatrix( const std::string& var, enum Structure structure, int dim );
-   static Symbol createMatrix( const std::string& var, 
+   static Symbol createSymmetricMatrix( const std::string& var, 
 			       enum Structure structure, 
-			       int matdim, 
+			       int dim,
 			       enum Symbol::Ownership owner, 
 			       enum Symbol::Access access );
 
@@ -258,7 +258,7 @@ public:
     * The dimension(s) of the data object(s) refered by the symbol.
     *
     * For scalars, the first element of <em>dimension</em> is set to one.
-    * For NONMEM vectors, the first element of <em>dimension</em> is set to the length of vector.
+    * For vectors, the first element of <em>dimension</em> is set to the length of vector.
     * For data subsets (ie. vectors), the i-th element of <em>dimension</em> is set to the
     * length of the i-th data subset.
     * For matrices, the first element of <em>dimension</em> is set to the dimension.  
@@ -272,11 +272,7 @@ public:
     * This is a list (ie. vector) of vectors.  For symbols like data labels,
     * there are n number of data subsets associated with the label, 
     * where n is the number of subjects.  For other symbols, the list will have
-    * only a single vector.  The list itself and the vectors in the list shall
-    * be properly sized as long as a createXXX(...) or the non-default constructor
-    * is used to create the object.  The list size is set to one for all data objects
-    * but the data subset.  If the default constructor were used,
-    * you're responsible for sizing the list and its vectors.
+    * only a single vector, namely the first element (vector) of initial, initial[0].
     */
    std::vector< std::valarray<std::string> > initial;
 

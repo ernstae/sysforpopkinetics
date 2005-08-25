@@ -216,6 +216,8 @@ void explangTest::testVectorElementAssignmentToScalar()
   char statementIn[]  = "A(1) = 1\n \
                          A(2) = 2.0 * A(1)\n";
 
+  table.insertVector( "A", 2, Symbol::USER, Symbol::READWRITE );
+
   FILE * pInput = fopen( input, "w" );
   CPPUNIT_ASSERT( pInput != NULL );
   fputs( statementIn, pInput );
@@ -331,10 +333,12 @@ void explangTest::testFunctions()
   fputs( "A = EXP(X) * SQRT(Y)\n", pInput );
   fputs( "A = 1.0 * ( EXP(X) + Y )\n", pInput ); 
   
+  table.insertVector( "B", 1, Symbol::USER, Symbol::READWRITE );
+
   fclose( pInput );
 
-  table.insertScalar( "X" );
-  table.insertScalar( "Y" );
+  table.insertScalar( "X", Symbol::USER, Symbol::READWRITE );
+  table.insertScalar( "Y", Symbol::USER, Symbol::READWRITE );
   
   pInput = fopen( input, "r" );
   CPPUNIT_ASSERT( pInput != NULL );
@@ -545,9 +549,9 @@ void explangTest::testIfStmt()
   fputs( "IF( X.NE.Y ) A = B(1) ;comment\n", pInput );
   fclose( pInput );
 
-  table.insertScalar( "X" );
-  table.insertScalar( "Y" );
-  table.insertScalar( "B" );
+  table.insertScalar( "X", Symbol::USER, Symbol::READWRITE );
+  table.insertScalar( "Y", Symbol::USER, Symbol::READWRITE );
+  table.insertVector( "B", 1, Symbol::USER, Symbol::READONLY );
   
   pInput = fopen( input, "r" );
   CPPUNIT_ASSERT( pInput != NULL );
@@ -674,10 +678,10 @@ void explangTest::testIfThenStmt()
   fputs( "ENDIF\n", pInput );
   fclose( pInput );
 
-  table.insertScalar( "X" );
-  table.insertScalar( "Y");
-  table.insertScalar( "B" );
-  table.insertScalar( "D" );
+  table.insertScalar( "X", Symbol::USER, Symbol::READWRITE );
+  table.insertScalar( "Y", Symbol::USER, Symbol::READWRITE);
+  table.insertVector( "B", 1, Symbol::USER, Symbol::READONLY );
+  table.insertScalar( "D", Symbol::USER, Symbol::READWRITE );
 
   pInput = fopen( input, "r" );
   CPPUNIT_ASSERT( pInput != NULL );
@@ -784,20 +788,20 @@ void explangTest::testHAHN1_1()
 */
   fputs( "x=EXP((x)**(x))\n", pInput );  // but this fails
   fputs( "x=EXP((x+x)**x)\n", pInput );  // this passes 
-  table.insertScalar( "b1" );
-  table.insertScalar( "b2" );
-  table.insertScalar( "b3" );
-  table.insertScalar( "b4" );
-  table.insertScalar( "b5" );
-  table.insertScalar( "b6" );
-  table.insertScalar( "b7" );
-  table.insertScalar( "x" );
+  table.insertScalar( "b1", Symbol::USER, Symbol::READWRITE );
+  table.insertScalar( "b2", Symbol::USER, Symbol::READWRITE );
+  table.insertScalar( "b3", Symbol::USER, Symbol::READWRITE );
+  table.insertScalar( "b4", Symbol::USER, Symbol::READWRITE );
+  table.insertScalar( "b5", Symbol::USER, Symbol::READWRITE );
+  table.insertScalar( "b6", Symbol::USER, Symbol::READWRITE );
+  table.insertScalar( "b7", Symbol::USER, Symbol::READWRITE );
+  table.insertScalar( "x", Symbol::USER, Symbol::READWRITE );
   fputs ("x=(b1+b2*x+b3*x**2+b4*x**3) /(1+b5*x+b6*x**2+b7*x**3)\n", pInput );
   fclose( pInput );
   
-  table.insertScalar( "THETA" );
-  table.insertScalar( "TIME" );
-  table.insertScalar( "ETA" );
+  table.insertScalar( "THETA", Symbol::USER, Symbol::READWRITE );
+  table.insertScalar( "TIME", Symbol::USER, Symbol::READWRITE );
+  table.insertScalar( "ETA", Symbol::USER, Symbol::READWRITE );
 
   pInput = fopen( input, "r" );
   CPPUNIT_ASSERT( pInput != NULL );
@@ -844,8 +848,8 @@ void explangTest::testIsTInRhs()
   fprintf( pInput, "CL=THETA(1)*EXP(ETA(1))\nV=THETA(2)\nK=CL/V\nS1=V\n" ); 
   fclose( pInput );
   
-  table.insertVector( "THETA", 2 );
-  table.insertVector( "ETA", 2 );
+  table.insertVector( "THETA", 2, Symbol::SYSTEM, Symbol::READONLY );
+  table.insertVector( "ETA", 2, Symbol::SYSTEM, Symbol::READONLY );
 
   pInput = fopen( input, "r" );
   CPPUNIT_ASSERT( pInput != NULL );

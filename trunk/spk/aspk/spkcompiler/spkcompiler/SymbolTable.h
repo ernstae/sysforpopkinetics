@@ -144,7 +144,7 @@ class SymbolTable{
   Symbol* insertMatrix( const std::string& name, 
                           const Symbol::Structure structure, 
                           int dim );
-  Symbol* insertMatrix( const std::string& name, 
+  Symbol* insertSymmetricMatrix( const std::string& name, 
 			const Symbol::Structure structure, 
 			int dim,
 			enum Symbol::Ownership owner, 

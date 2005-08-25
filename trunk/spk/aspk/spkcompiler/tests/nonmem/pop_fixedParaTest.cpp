@@ -184,7 +184,6 @@ if( actual != expected ) \\\n \
   const char *strTIME       = "TIME";
   const char *strDV         = "DV";
   const char *strCP         = "CP";
-  const char *strMDV        = "MDV";
   const char *label[]       = { strID, strTIME, strDV };
   const int    nLabels      = 3;
   const int    nIndividuals = 10;
@@ -492,8 +491,6 @@ void pop_fixedParaTest::setUp()
   // DV is aliased to CP
   label_alias[strDV]   = strCP;
 
-  // MDV doesn't have an alias.
-  label_alias[strMDV]  = NULL;
 
   // #of records for each individual
   N[0] = 1;

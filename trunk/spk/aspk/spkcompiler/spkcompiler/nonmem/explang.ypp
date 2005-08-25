@@ -725,7 +725,13 @@ NAME '(' slice ')' {
       }
       else
       {
-         gSpkExpSymbolTable->insertScalar( $1 );
+	// As of August 24, 2005, users are not allowed to use/create
+        // arbitrary vector variables.  All vector variables appearing on
+        // the left hand side must be pre-registered by the caller.
+        //gSpkExpSymbolTable->insertVector( $1, Symbol::USER, Symbol::READWRITE, 1 );
+    	char err[128];
+      	sprintf( err, "%s is a vector variable.  All vector variables need to be pre-registered in the symbol table!\n", $1 );
+      	nm_error( err );
       }
    }
 

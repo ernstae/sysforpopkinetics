@@ -33,46 +33,15 @@ public:
     virtual void setUp();
     virtual void tearDown();
 
-    /**
-     * @test Tests the default constructor.
-     */
     void testDefaultConstructor();
-
-    /**
-     * @test Tests the non-default constructors
-     */
     void testConstructor();
-
     void testCopyConstructor();
-
-    /**
-     * @test Tests the assignment operator
-     */
     void testAssign();
-
-    /**
-     * @test Tests the static function that creates a Symbol object for a data label.
-     */
     void testCreateLabel();
-
-    /**
-     * @test Tests the static function that creates a Symbol object for a NM variable.
-     */
-    void testCreateNMVar();
-
-    /**
-     * @test Tests the static function that creates a Symbol object for a user variable.
-     */
-    void testCreateUserVar();
-
-    /**
-     * @test Test the == and !- operators.
-     */
+    void testCreateScalar();
+    void testCreateVector();
+    void testCreateSymmetricMatrix();
     void testEquality();
-
-    /**
-     * @test Test the empty() function.
-     */
     void testEmpty();
 
     static CppUnit::Test * suite();

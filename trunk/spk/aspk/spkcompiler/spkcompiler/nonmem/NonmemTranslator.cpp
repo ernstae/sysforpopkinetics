@@ -1011,7 +1011,8 @@ void NonmemTranslator::parseSource()
   // in case a new data set is simulated and replaces the oridinary DV field.
   if( ( p = table->findi( KeyStr.ORGDV )) == Symbol::empty() )
     {  
-      table->insertScalar( DefaultStr.ORGDV );
+      table->insertScalar( DefaultStr.ORGDV, Symbol::SYSTEM, Symbol::READONLY );
+      assert( table->findi( KeyStr.ORGDV ) != Symbol::empty() );
     }
   else
     {
@@ -1052,7 +1053,7 @@ void NonmemTranslator::parseSource()
     UserStr.PRED = p->name;
   else
     {
-      table->insertScalar( DefaultStr.PRED );
+      table->insertScalar( DefaultStr.PRED, Symbol::SYSTEM, Symbol::READONLY );
       UserStr.PRED = DefaultStr.PRED;
     }
 
@@ -1061,7 +1062,7 @@ void NonmemTranslator::parseSource()
     UserStr.RES = p->name;
   else
     {
-      table->insertScalar( DefaultStr.RES );
+      table->insertScalar( DefaultStr.RES, Symbol::SYSTEM, Symbol::READONLY );
       UserStr.RES = DefaultStr.RES;
     }
 
@@ -1070,7 +1071,7 @@ void NonmemTranslator::parseSource()
     UserStr.WRES = p->name;
   else
     {
-      table->insertScalar( DefaultStr.WRES );
+      table->insertScalar( DefaultStr.WRES, Symbol::SYSTEM, Symbol::READONLY );
       UserStr.WRES = DefaultStr.WRES;
     }
 
@@ -1079,7 +1080,7 @@ void NonmemTranslator::parseSource()
     UserStr.IPRED = p->name;
   else
     {
-      table->insertScalar( DefaultStr.IPRED );
+      table->insertScalar( DefaultStr.IPRED, Symbol::SYSTEM, Symbol::READONLY );
       UserStr.IPRED = DefaultStr.IPRED;
     }
 
@@ -1088,7 +1089,7 @@ void NonmemTranslator::parseSource()
     UserStr.IRES = p->name;
   else
     {
-      table->insertScalar( DefaultStr.IRES );
+      table->insertScalar( DefaultStr.IRES, Symbol::SYSTEM, Symbol::READONLY );
       UserStr.IRES = DefaultStr.IRES;
     }
 
@@ -1097,7 +1098,7 @@ void NonmemTranslator::parseSource()
     UserStr.IWRES = p->name;
   else
     {
-      table->insertScalar( DefaultStr.IWRES );
+      table->insertScalar( DefaultStr.IWRES, Symbol::SYSTEM, Symbol::READONLY );
       UserStr.IWRES = DefaultStr.IWRES;
     }
 
@@ -1108,7 +1109,7 @@ void NonmemTranslator::parseSource()
 	UserStr.ETARES = p->name;
       else
 	{
-	  table->insertVector( DefaultStr.ETARES, myEtaLen );
+	  table->insertVector( DefaultStr.ETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
 	  UserStr.ETARES = DefaultStr.ETARES;
 	}
 
@@ -1117,7 +1118,7 @@ void NonmemTranslator::parseSource()
 	UserStr.WETARES = p->name;
       else
 	{
-	  table->insertVector( DefaultStr.WETARES, myEtaLen );
+	  table->insertVector( DefaultStr.WETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
 	  UserStr.WETARES = DefaultStr.WETARES;
 	}
 
@@ -1126,7 +1127,7 @@ void NonmemTranslator::parseSource()
 	UserStr.IETARES = p->name;
       else
 	{
-	  table->insertVector( DefaultStr.IETARES, myEtaLen );
+	  table->insertVector( DefaultStr.IETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
 	  UserStr.IETARES = DefaultStr.IETARES;
 	}
 
@@ -1135,7 +1136,7 @@ void NonmemTranslator::parseSource()
 	UserStr.IWETARES = p->name;
       else
 	{
-	  table->insertVector( DefaultStr.IWETARES, myEtaLen );
+	  table->insertVector( DefaultStr.IWETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
 	  UserStr.IWETARES = DefaultStr.IWETARES;
 	}
       // PPRED
@@ -1143,7 +1144,7 @@ void NonmemTranslator::parseSource()
 	UserStr.PPRED = p->name;
       else
 	{
-	  table->insertScalar( DefaultStr.PPRED );
+	  table->insertScalar( DefaultStr.PPRED, Symbol::SYSTEM, Symbol::READONLY );
 	  UserStr.PPRED = DefaultStr.PPRED;
 	}
       
@@ -1152,7 +1153,7 @@ void NonmemTranslator::parseSource()
 	UserStr.PRES = p->name;
       else
 	{
-	  table->insertScalar( DefaultStr.PRES );
+	  table->insertScalar( DefaultStr.PRES, Symbol::SYSTEM, Symbol::READONLY );
 	  UserStr.PRES = DefaultStr.PRES;
 	}
       
@@ -1161,7 +1162,7 @@ void NonmemTranslator::parseSource()
 	UserStr.PWRES = p->name;
       else
 	{
-	  table->insertScalar( DefaultStr.PWRES );
+	  table->insertScalar( DefaultStr.PWRES, Symbol::SYSTEM, Symbol::READONLY );
 	  UserStr.PWRES = DefaultStr.PWRES;
 	}
 
@@ -1170,7 +1171,7 @@ void NonmemTranslator::parseSource()
 	UserStr.PETARES = p->name;
       else
 	{
-	  table->insertVector( DefaultStr.PETARES, myEtaLen );
+	  table->insertVector( DefaultStr.PETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
 	  UserStr.PETARES = DefaultStr.PETARES;
 	}
 
@@ -1179,7 +1180,7 @@ void NonmemTranslator::parseSource()
 	UserStr.PWETARES = p->name;
       else
 	{
-	  table->insertVector( DefaultStr.PWETARES, myEtaLen );
+	  table->insertVector( DefaultStr.PWETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
 	  UserStr.PWETARES = DefaultStr.PWETARES;
 	}
 
@@ -1188,7 +1189,7 @@ void NonmemTranslator::parseSource()
 	UserStr.CPRED = p->name;
       else
 	{
-	  table->insertScalar( DefaultStr.CPRED );
+	  table->insertScalar( DefaultStr.CPRED, Symbol::SYSTEM, Symbol::READONLY );
 	  UserStr.CPRED = DefaultStr.CPRED;
 	}
       
@@ -1197,7 +1198,7 @@ void NonmemTranslator::parseSource()
 	UserStr.CRES = p->name;
       else
 	{
-	  table->insertScalar( DefaultStr.CRES );
+	  table->insertScalar( DefaultStr.CRES, Symbol::SYSTEM, Symbol::READONLY );
 	  UserStr.CRES = DefaultStr.CRES;
 	}
       
@@ -1206,7 +1207,7 @@ void NonmemTranslator::parseSource()
 	UserStr.CWRES = p->name;
       else
 	{
-	  table->insertScalar( DefaultStr.CWRES );
+	  table->insertScalar( DefaultStr.CWRES, Symbol::SYSTEM, Symbol::READONLY );
 	  UserStr.CWRES = DefaultStr.CWRES;
 	}
 
@@ -1215,7 +1216,7 @@ void NonmemTranslator::parseSource()
 	UserStr.CETARES = p->name;
       else
 	{
-	  table->insertVector( DefaultStr.CETARES, myEtaLen );
+	  table->insertVector( DefaultStr.CETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
 	  UserStr.CETARES = DefaultStr.CETARES;
 	}
 
@@ -1224,7 +1225,7 @@ void NonmemTranslator::parseSource()
 	UserStr.CWETARES = p->name;
       else
 	{
-	  table->insertVector( DefaultStr.CWETARES, myEtaLen );
+	  table->insertVector( DefaultStr.CWETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
 	  UserStr.CWETARES = DefaultStr.CWETARES;
 	}
     } 
@@ -1920,7 +1921,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
-  Symbol * sym_theta = table->insertVector( DefaultStr.THETA, myThetaLen );
+  Symbol * sym_theta = table->insertVector( DefaultStr.THETA, myThetaLen, Symbol::SYSTEM, Symbol::READONLY );
   {
     //<in>
     DOMNodeList * theta_in_list = theta->getElementsByTagName( X_IN );
@@ -2159,7 +2160,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
-  Symbol * sym_omega = table->insertMatrix( DefaultStr.OMEGA, myOmegaStruct, myOmegaDim );
+  Symbol * sym_omega = table->insertSymmetricMatrix( DefaultStr.OMEGA, myOmegaStruct, myOmegaDim, Symbol::SYSTEM, Symbol::READONLY );
   {
     //<in>
     DOMNodeList * omega_in_list = omega->getElementsByTagName( X_IN );
@@ -2352,7 +2353,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       throw e;
     }
 
-  Symbol * sym_sigma = table->insertMatrix( DefaultStr.SIGMA, mySigmaStruct, mySigmaDim ); 
+  Symbol * sym_sigma = table->insertSymmetricMatrix( DefaultStr.SIGMA, mySigmaStruct, mySigmaDim, Symbol::SYSTEM, Symbol::READONLY ); 
   {
     //<in>
     DOMNodeList * sigma_in_list = sigma->getElementsByTagName( X_IN );
@@ -2483,7 +2484,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   //---------------------------------------------------------------------------------------
   myEtaLen = myOmegaDim;
   char etaDefault[] = "0.0";
-  Symbol * sym_eta = table->insertVector( DefaultStr.ETA, myEtaLen );
+  Symbol * sym_eta = table->insertVector( DefaultStr.ETA, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
   for( int i=0; i<myEtaLen; i++ ) sym_eta->initial[0][i] = etaDefault;
   sym_eta->fixed[0] = false;
 
@@ -2494,7 +2495,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   //---------------------------------------------------------------------------------------
   myEpsLen = mySigmaDim;
   char epsDefault[] = "0.0";
-  Symbol * sym_eps = table->insertVector( DefaultStr.EPS, myEpsLen );
+  Symbol * sym_eps = table->insertVector( DefaultStr.EPS, myEpsLen, Symbol::SYSTEM, Symbol::READONLY );
   for( int i=0; i<myEpsLen; i++ ) sym_eps->initial[0][i] = epsDefault;
   sym_eta->fixed[0] = false;
 
@@ -2950,7 +2951,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
-  Symbol * sym_theta = table->insertVector( DefaultStr.THETA, myThetaLen );
+  Symbol * sym_theta = table->insertVector( DefaultStr.THETA, myThetaLen, Symbol::SYSTEM, Symbol::READONLY );
   {
     //<in>
     DOMNodeList * theta_in_list = theta->getElementsByTagName( X_IN );
@@ -3162,7 +3163,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   myOmegaStruct = Symbol::DIAGONAL;
   myOmegaOrder = myOmegaDim;
 
-  Symbol * sym_omega = table->insertMatrix( DefaultStr.OMEGA, myOmegaStruct, myOmegaDim );
+  Symbol * sym_omega = table->insertSymmetricMatrix( DefaultStr.OMEGA, myOmegaStruct, myOmegaDim, Symbol::SYSTEM, Symbol::READONLY );
   {
     //<in>
     DOMNodeList * omega_in_list = omega->getElementsByTagName( X_IN );
@@ -3291,7 +3292,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   char etaDefault[] = "0.0";
   //  myEtaLen = myOmegaOrder;
   myEtaLen = myOmegaDim;
-  Symbol * sym_eta = table->insertVector( DefaultStr.ETA, myEtaLen );
+  Symbol * sym_eta = table->insertVector( DefaultStr.ETA, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
   for( int i=0; i<myEtaLen; i++ ) sym_eta->initial[0][i] = etaDefault;
   sym_eta->fixed[0] = false;
   
@@ -3541,7 +3542,7 @@ void NonmemTranslator::parseAdvan(
 	}
     }
 
-  assert( table->findi( KeyStr.EVID ) );
+  //assert( table->findi( KeyStr.EVID ) );
   assert( table->findi( KeyStr.AMT ) );
   assert( table->findi( KeyStr.TIME ) );
   //assert( table->findi( "RATE" ) );       // optional
@@ -3551,7 +3552,7 @@ void NonmemTranslator::parseAdvan(
   // For all compartmental models, i.e. PREDPP library routines, 
   // F is declared in CompPredBase class and computed within its
   // derived object (on SPK-side).
-  table->insertScalar( UserStr.F );
+  table->insertScalar( UserStr.F, Symbol::SYSTEM, Symbol::READWRITE );
  
   // REVISIT - Sachiko 08/09/2005
   // For ODE models (ADVAN 6, 8 and 9),
@@ -3584,14 +3585,14 @@ void NonmemTranslator::parseAdvan(
       // the size of a vector as it parses through.
       // So, provide the vectors before hand. 
       //  
-      table->insertVector( UserStr.P, max( myCompModel->getNParameters(), myCompModel->getNCompartments() ) );
-      table->insertVector( UserStr.A, myCompModel->getNCompartments() );
-      table->insertVector( UserStr.DADT, myCompModel->getNCompartments() );
+      table->insertVector( UserStr.P, max( myCompModel->getNParameters(), myCompModel->getNCompartments() ), Symbol::SYSTEM, Symbol::READWRITE );
+      table->insertVector( UserStr.A, myCompModel->getNCompartments(), Symbol::SYSTEM, Symbol::READWRITE );
+      table->insertVector( UserStr.DADT, myCompModel->getNCompartments(), Symbol::SYSTEM, Symbol::READWRITE );
 
-      table->insertScalar( UserStr.T ); // may or may not appear in the user's PK.
-      table->insertScalar( UserStr.TSCALE );
-      table->insertScalar( UserStr.FO ); // ef-oh - alternative name for fraction for output comp
-      table->insertScalar( UserStr.SO ); // es-oh - alternative name for scale for output comp
+      table->insertScalar( UserStr.T, Symbol::SYSTEM, Symbol::READWRITE ); // may or may not appear in the user's PK.
+      table->insertScalar( UserStr.TSCALE, Symbol::SYSTEM, Symbol::READWRITE );
+      table->insertScalar( UserStr.FO, Symbol::SYSTEM, Symbol::READWRITE ); // ef-oh - alternative name for fraction for output comp
+      table->insertScalar( UserStr.SO, Symbol::SYSTEM, Symbol::READWRITE ); // es-oh - alternative name for scale for output comp
       for( int i=0; i<myCompModel->getNCompartments(); i++ )
 	{
 	  char tmp_s[ 32 ], tmp_f[ 32 ], tmp_r[ 32 ], tmp_d[ 32 ], tmp_alag[ 32 ];
@@ -3604,11 +3605,11 @@ void NonmemTranslator::parseAdvan(
 	      // bioavailablity for i-th comp; N/A for the output comp.
 	      sprintf( tmp_f,  "%s%d", UserStr.F.c_str(), i+1 ); 
 	    }
-	  table->insertScalar( tmp_r );
-	  table->insertScalar( tmp_d ); 
-	  table->insertScalar( tmp_alag ); 
-	  table->insertScalar( tmp_s ); 
-	  table->insertScalar( tmp_f ); 
+	  table->insertScalar( tmp_r, Symbol::SYSTEM, Symbol::READWRITE );
+	  table->insertScalar( tmp_d, Symbol::SYSTEM, Symbol::READWRITE ); 
+	  table->insertScalar( tmp_alag, Symbol::SYSTEM, Symbol::READWRITE ); 
+	  table->insertScalar( tmp_s, Symbol::SYSTEM, Symbol::READWRITE ); 
+	  table->insertScalar( tmp_f, Symbol::SYSTEM, Symbol::READWRITE ); 
 	}
 
       parsePK( pk );
@@ -4110,7 +4111,7 @@ void NonmemTranslator::generateIndData( ) const
     {
       const string keyVarName = SymbolTable::key( *pLabel );
       bool isID  = ( *pLabel == pID->name );
-      bool isInt = (keyVarName==KeyStr.EVID || keyVarName == KeyStr.CMT || keyVarName == KeyStr.PCMT);
+      bool isInt = (keyVarName==KeyStr.EVID || keyVarName == KeyStr.CMT || keyVarName == KeyStr.PCMT );
       oIndData_h << "," << endl;
 	  
       //
@@ -4142,14 +4143,64 @@ void NonmemTranslator::generateIndData( ) const
       const string keyVarName      = SymbolTable::key( varName );
       const string keyVarAlias     = SymbolTable::key( varAlias );
       enum Symbol::SymbolType type = pInternalTable->second.symbol_type;
+      enum Symbol::ObjectType objectType = pInternalTable->second.object_type;
+      enum Symbol::Ownership  owner      = pInternalTable->second.owner;
+      
+      if( keyVarName == KeyStr.EVID || keyVarName == KeyStr.CMT || keyVarName == KeyStr.PCMT )
+	{
+	  oIndData_h << "   std::vector<int> " << varName << ";" << endl;
+	  if( varAlias != "" )
+	    oIndData_h << "   std::vector<int> " << varAlias << ";" << endl;
+	  continue;
+	}
+      else if( keyVarName == KeyStr.ID )
+	{
+	  oIndData_h << "   std::vector<char*> " << varName << ";" << endl;
+	  if( varAlias != "" )
+	    oIndData_h << "   std::vector<char*> " << varAlias << ";" << endl;
+	  continue;
+	}
 
+      if( objectType == Symbol::VECTOR )
+	{
+	  if( type == Symbol::DATALABEL )
+	    {
+	      oIndData_h << "   std::vector<spk_ValueType> " << varName << ";" << endl;
+	      if( varAlias != "" )
+		oIndData_h << "   std::vector<spk_ValueType> " << varAlias << ";" << endl;
+	    }
+	  else
+	    {
+	      oIndData_h << "   std::vector< std::vector<spk_ValueType> > " << varName << ";" << endl;
+	      if( varAlias != "" )
+		oIndData_h << "   std::vector< std::vector<spk_ValueType> > " << varAlias << ";" << endl;
+	    }
+	}
+      else if( objectType == Symbol::SCALAR )
+	{
+	  oIndData_h << "   std::vector<spk_ValueType> " << varName << ";" << endl;
+	  if( varAlias != "" )
+	    oIndData_h << "   std::vector<spk_ValueType> " << varAlias << ";" << endl;
+	  
+	}
+      else // Matrix
+	{
+	  // OMEGA and SIGMA are the only legal matrices.
+	  if( !( keyVarName == KeyStr.OMEGA || keyVarName == KeyStr.SIGMA ) )
+	    {
+	      char m[ SpkCompilerError::maxMessageLen() ];
+	      sprintf( m, "Matrix(%s) is not allowed here!", varName.c_str() );
+	      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+	    }
+	}
+      /*
+      
        // Handling data labels.
       if( type == Symbol::DATALABEL )
 	{
 	  bool isID    = ( varName == pID->name?    true : false );
           bool isDV    = ( varName == pDV->name?    true : false );
-          bool isORGDV = ( varName == pORGDV->name? true : false );
-	  bool isInt   = ( keyVarName == KeyStr.EVID || keyVarName == KeyStr.CMT || keyVarName == KeyStr.PCMT);
+	  bool isInt   = ( keyVarName == KeyStr.EVID || keyVarName == KeyStr.CMT || keyVarName == KeyStr.PCMT );
 
 	  // If data simulation is requested, DV values are replaced by simulated
 	  // measurements and the original DV values are moved/stored in ORGDV.
@@ -4218,6 +4269,10 @@ void NonmemTranslator::generateIndData( ) const
 	  else if( keyVarName == KeyStr.OMEGA 
               || keyVarName == KeyStr.SIGMA )
 	    {}
+	  else
+	    {
+	      oIndData_h << "   std::vector<spk_ValueType> " << varName << ";" << endl;
+	    }
 	}
 
       // These may appear in the data set or not appear.
@@ -4236,6 +4291,7 @@ void NonmemTranslator::generateIndData( ) const
 	{
 	  oIndData_h << "   std::vector<spk_ValueType> " << varName << ";" << endl;
 	}
+      */
     }
 
   oIndData_h << endl;
@@ -4438,21 +4494,35 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << endl;
 
   oIndData_h << "{" << endl;
+
   if( myIsMissingMdv )
     {
-      oIndData_h << "   nY = nRecords;" << endl;
-      oIndData_h << "   measreuments.resize( nY );" << endl;
+      if( table->findi( KeyStr.AMT ) == Symbol::empty() )
+	{
+	  oIndData_h << "   nY = nRecords;" << endl;
+	}
+      else
+	{
+	  oIndData_h << "   for( int j=0; j<nRecords; j++ )" << endl;
+	  oIndData_h << "   {" << endl;
+	  oIndData_h << "      if( " << UserStr.AMT << "[j] == 0 )" << endl;
+	  oIndData_h << "      {" << endl;
+	  oIndData_h << "         nY++;" << endl;
+	  oIndData_h << "      }" << endl;
+	  oIndData_h << "   }" << endl;
+	}
     }
   else
     {
-      oIndData_h << "   for( int i=0; i<nRecords; i++ )" << endl;
+      oIndData_h << "   for( int j=0; j<nRecords; j++ )" << endl;
       oIndData_h << "   {" << endl;
-      oIndData_h << "      if( " << UserStr.MDV << "[i] == 0 )" << endl; 
-      oIndData_h << "          ++nY;" << endl;
+      oIndData_h << "      if( " << UserStr.MDV << "[j] == 0 )" << endl;
+      oIndData_h << "      {" << endl;
+      oIndData_h << "         nY++;" << endl;
+      oIndData_h << "      }" << endl;
       oIndData_h << "   }" << endl;
-      oIndData_h << "   measurements.resize( nY ); " << endl;
     }
-  oIndData_h << endl;
+  oIndData_h << "   measurements.resize( nY );" << endl;
 
   // Initialize place holders for scalar variables.
   //
@@ -4464,8 +4534,11 @@ void NonmemTranslator::generateIndData( ) const
   pInternalTable = internalTable->begin();
   for( ; pInternalTable != internalTable->end(); pInternalTable++ )
     {
-      const string label    = pInternalTable->second.name;
-      const string keyLabel = SymbolTable::key( label );
+      const string varName    = pInternalTable->second.name;
+      const string keyVarName = SymbolTable::key( varName );
+      enum Symbol::ObjectType objectType = pInternalTable->second.object_type;
+      enum Symbol::SymbolType symbolType = pInternalTable->second.symbol_type;
+      /*
       if( keyLabel == KeyStr.OMEGA 
 	  || keyLabel == KeyStr.SIGMA
 	  || keyLabel == KeyStr.THETA
@@ -4491,6 +4564,11 @@ void NonmemTranslator::generateIndData( ) const
       if( find( labels->begin(), labels->end(), pInternalTable->second.name ) 
 	  == labels->end() )
 	oIndData_h << "fill( " << label << ".begin(), " << label << ".end(), -99999 );" << endl;
+      */
+      if( symbolType != Symbol::DATALABEL && objectType != Symbol::VECTOR && objectType != Symbol::MATRIX )
+	{
+	  oIndData_h << "fill( " << varName << ".begin(), " << varName << ".end(), -99999 );" << endl;
+	}
     }
   oIndData_h << endl;
 
@@ -4573,10 +4651,27 @@ void NonmemTranslator::generateIndData( ) const
   
   if( myIsMissingMdv )
     {
-      oIndData_h << "        assign( measurements[jPrime], " << UserStr.DV << "[j] );" << endl;
-      oIndData_h << "        jPrimeToj[jPrime] = j;" << endl;
-      oIndData_h << "        jTojPrime[j] = jPrime;" << endl;
-      oIndData_h << "        jPrime++;" << endl;
+      if( table->findi( KeyStr.AMT ) == Symbol::empty() )
+	{
+	  oIndData_h << "        assign( measurements[jPrime], " << UserStr.DV << "[j] );" << endl;
+	  oIndData_h << "        jPrimeToj[jPrime] = j;" << endl;
+	  oIndData_h << "        jTojPrime[j] = jPrime;" << endl;
+	  oIndData_h << "        jPrime++;" << endl;
+	}
+      else
+	{
+	  oIndData_h << "        if( " << UserStr.AMT << "[j] == 0 )" << endl;
+	  oIndData_h << "        {" << endl;
+	  oIndData_h << "           assign( measurements[jPrime], " << UserStr.DV << "[j] );" << endl;
+	  oIndData_h << "           jPrimeToj[jPrime] = j;" << endl;
+	  oIndData_h << "           jTojPrime[j] = jPrime;" << endl;
+	  oIndData_h << "           jPrime++;" << endl;
+	  oIndData_h << "        }" << endl;
+	  oIndData_h << "        else" << endl;
+	  oIndData_h << "        {" << endl;
+	  oIndData_h << "           jTojPrime[j] = -1;" << endl;
+	  oIndData_h << "        }" << endl;
+	}
     }
   else
     {
