@@ -109,7 +109,6 @@ class SymbolTable{
    * @param name The name of the user-defined (scalar) variable.
    *
    */
-  Symbol* insertScalar( const std::string& name );
   Symbol* insertScalar( const std::string& name, 
 			enum Symbol::Ownership owner, 
 			enum Symbol::Access access );
@@ -124,7 +123,6 @@ class SymbolTable{
    * @param name The name of the NONMEM vector variable.
    * @param len The length of the vector.
    */
-  Symbol* insertVector( const std::string& name, int len );
   Symbol* insertVector( const std::string& name, int len,
 			enum Symbol::Ownership owner, 
 			enum Symbol::Access access );
@@ -141,9 +139,6 @@ class SymbolTable{
    * Symbol::FULL, Symbol::TRIANGLE, Symbol::DIAGONAL.
    * @param dim The dimension of the <em>square</em> matrix.
    */
-  Symbol* insertMatrix( const std::string& name, 
-                          const Symbol::Structure structure, 
-                          int dim );
   Symbol* insertSymmetricMatrix( const std::string& name, 
 			const Symbol::Structure structure, 
 			int dim,

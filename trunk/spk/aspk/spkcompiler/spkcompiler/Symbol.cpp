@@ -28,20 +28,6 @@ Symbol::Symbol( const string&   nameIn,
   access     ( accessIn ),
   owner      ( ownerIn )
 {
-   if( owner == USER && access == READONLY )
-     {  
-       symbol_type = DATALABEL;
-     }
-   else if( owner == USER && access == READWRITE )
-     {
-       symbol_type = USERDEFINED;
-     }
-   else // SYSTEM
-     {
-       symbol_type = PREDEFINED;
-     }
-
-
    if( dimIn.size() <= 0 )
      return;
    dimension.resize( dimIn.size() );
@@ -84,80 +70,9 @@ Symbol::Symbol( const string&   nameIn,
      }
 }
 
-Symbol::Symbol( const string& nameIn,
-                const string& synonymIn,
-                enum SymbolType stIn,
-                enum ObjectType otIn,
-                enum Structure msIn,
-                const valarray<int>& dimIn )
-: name       ( nameIn ),
-  synonym    ( synonymIn ),
-  symbol_type( stIn ),
-  object_type( otIn ),
-  structure  ( msIn )
-{
-   if( symbol_type == DATALABEL )
-     {  
-       owner = USER;
-       access = READONLY;
-     }
-   else if( symbol_type == USERDEFINED )
-     {
-       owner = USER;
-       access = READWRITE;
-     }
-   else // PRE-DEFINED
-     {
-       owner = SYSTEM;
-       access = READONLY;  // from the user's model code's point of view
-     }
-
-   if( dimIn.size() <= 0 )
-     return;
-
-   dimension.resize( dimIn.size() );
-   dimension = dimIn;
-
-   int n = dimension.size();
-   assert( n > 0 );
-   initial.resize( n );
-   upper.resize( n );
-   lower.resize( n );
-   step.resize( n );
-   fixed.resize( n );
-
-   for( int i=0, len=0; i<n; i++ )
-     {
-       if( object_type == MATRIX )
-	 {
-	   if( structure == TRIANGLE )
-	     {
-	       len = series( 1, 1, dimension[i] );
-	     }
-	   else if( structure == FULL )
-	     {
-	       len = dimension[i] * dimension[i];
-	     }
-	   else
-	     {
-	       len = dimension[i];
-	     }
-	 }
-       else
-	 {
-	   len = dimension[i];
-	 }
-       initial[i].resize( len );
-       upper[i].resize( len );
-       lower[i].resize( len );
-       step[i].resize( len );
-       fixed[i].resize( len );
-     }
-}
 Symbol::Symbol( const Symbol& right )
 : name       ( right.name ),
   synonym    ( right.synonym ),
-  symbol_type( right.symbol_type ),
   object_type( right.object_type ),
   structure  ( right.structure ),
   access     ( right.access ),
@@ -215,7 +130,6 @@ Symbol& Symbol::operator=( const Symbol& right )
 {
    name        = right.name;
    synonym     = right.synonym;
-   symbol_type = right.symbol_type;
    object_type = right.object_type;
    structure   = right.structure;
    access      = right.access;
@@ -285,8 +199,6 @@ bool Symbol::operator==( const Symbol& right ) const
      return false;
    if( synonym     != right.synonym )
      return false;
-   if( symbol_type != right.symbol_type )
-     return false;
    if( object_type != right.object_type )
      return false;
    if( structure   != right.structure )
@@ -318,36 +230,21 @@ bool Symbol::operator!=( const Symbol& right ) const
 {
   return !(*this == right);
 }
-Symbol Symbol::createScalar( const string& var )
-{
-   valarray<int> one( 1 );
-   one[0] = 1;
-   return Symbol( var, "", USERDEFINED, SCALAR, FULL, one );
-}
+
 Symbol Symbol::createScalar( const string& var, enum Ownership owner, enum Access access )
 {
    valarray<int> one( 1 );
    one[0] = 1;
    return Symbol( var, "", owner, access, SCALAR, FULL, one );
 }
-Symbol Symbol::createVector( const string& var, int veclen )
-{
-   valarray<int> len( 1 );
-   len[0] = veclen;
-   return Symbol( var, "", PREDEFINED, VECTOR, FULL, len );
-}
+
 Symbol Symbol::createVector( const string& var, int veclen, enum Ownership ownerIn, enum Access accessIn )
 {
    valarray<int> len( 1 );
    len[0] = veclen;
    return Symbol( var, "", ownerIn, accessIn, VECTOR, FULL, len );
 }
-Symbol Symbol::createMatrix( const string& var, enum Structure mt, int matdim )
-{
-   valarray<int> dim( 1 );
-   dim[0] = matdim;
-   return Symbol( var, "", PREDEFINED, MATRIX, mt, dim );
-}
+
 Symbol Symbol::createSymmetricMatrix( const string& var, 
 				   enum Structure mt, 
 				   int matdim, 
@@ -362,15 +259,15 @@ Symbol Symbol::createLabel( const string& label,
                             const string& alias,
 			    const valarray<int>& N )
 {
-  return Symbol( label, alias, DATALABEL, VECTOR, FULL, N );
-  //return Symbol( label, alias, USER, READONLY, VECTOR, FULL, N );
+  //return Symbol( label, alias, DATALABEL, VECTOR, FULL, N );
+  return Symbol( label, alias, DATASET, READONLY, VECTOR, FULL, N );
 }
 
 std::ostream& operator<<( std::ostream& o, const Symbol& s )
 {
   o << "Symbol         : " << s.name << endl;
   o << "Symbol Type    : ";
-  if( s.symbol_type == Symbol::DATALABEL )
+  if( s.owner == Symbol::DATASET )
     {
       o << "data label" << endl;
       o << "Alias (if any) : " << s.synonym << endl;
@@ -389,13 +286,13 @@ std::ostream& operator<<( std::ostream& o, const Symbol& s )
 	  o << " }" << endl;
 	}
     }
-  else if( s.symbol_type == Symbol::USERDEFINED )
+  else if( s.owner == Symbol::USER ) // all scalars
     {
       o << "user defined" << endl;
     }
-  else if( s.symbol_type == Symbol::PREDEFINED )
+  else if( s.owner == Symbol::SYSTEM )
     {
-      o << "NONMEM defined" << endl;
+      o << "System defined" << endl;
       int n = s.initial.size();
       o << "#Data Subsets  : " << n << endl;
       for( int i=0; i<n; i++ )
@@ -478,11 +375,3 @@ std::ostream& operator<<( std::ostream& o, const Symbol& s )
 
   return o;
 }
-/*
-enum Symbol::Access Symbol::setAccess( enum Access current )
-{
-  enum Access prev = access;
-  access = current;
-  return prev;
-}
-*/

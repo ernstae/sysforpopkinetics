@@ -4142,7 +4142,6 @@ void NonmemTranslator::generateIndData( ) const
       const string varAlias        = pInternalTable->second.synonym;
       const string keyVarName      = SymbolTable::key( varName );
       const string keyVarAlias     = SymbolTable::key( varAlias );
-      enum Symbol::SymbolType type = pInternalTable->second.symbol_type;
       enum Symbol::ObjectType objectType = pInternalTable->second.object_type;
       enum Symbol::Ownership  owner      = pInternalTable->second.owner;
       
@@ -4163,7 +4162,7 @@ void NonmemTranslator::generateIndData( ) const
 
       if( objectType == Symbol::VECTOR )
 	{
-	  if( type == Symbol::DATALABEL )
+	  if( owner == Symbol::DATASET )
 	    {
 	      oIndData_h << "   std::vector<spk_ValueType> " << varName << ";" << endl;
 	      if( varAlias != "" )
@@ -4537,7 +4536,7 @@ void NonmemTranslator::generateIndData( ) const
       const string varName    = pInternalTable->second.name;
       const string keyVarName = SymbolTable::key( varName );
       enum Symbol::ObjectType objectType = pInternalTable->second.object_type;
-      enum Symbol::SymbolType symbolType = pInternalTable->second.symbol_type;
+      enum Symbol::Ownership  owner      = pInternalTable->second.owner;
       /*
       if( keyLabel == KeyStr.OMEGA 
 	  || keyLabel == KeyStr.SIGMA
@@ -4565,7 +4564,7 @@ void NonmemTranslator::generateIndData( ) const
 	  == labels->end() )
 	oIndData_h << "fill( " << label << ".begin(), " << label << ".end(), -99999 );" << endl;
       */
-      if( symbolType != Symbol::DATALABEL && objectType != Symbol::VECTOR && objectType != Symbol::MATRIX )
+      if( owner != Symbol::DATASET && objectType != Symbol::VECTOR && objectType != Symbol::MATRIX )
 	{
 	  oIndData_h << "fill( " << varName << ".begin(), " << varName << ".end(), -99999 );" << endl;
 	}
