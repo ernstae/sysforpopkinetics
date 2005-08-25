@@ -2,6 +2,7 @@ AC_INIT(spkcompiler, 0.1, honda99@u.washington.edu)
 AC_CONFIG_SRCDIR(spkcompiler/main.cpp)
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
+AC_SUBST(CXXFLAGS, "")
 AC_PROG_CC
 AC_PROG_CXX
 AM_PROG_LEX(flex)
