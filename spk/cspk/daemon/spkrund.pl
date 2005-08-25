@@ -564,7 +564,7 @@ sub reaper {
         $err_msg .= "post-integration method failed; ";
     }
     elsif($child_exit_value == 4) {
-        $end_code = "serr";
+        $end_code = "staf";
         $err_msg .= "statistics failed; ";
     }
     elsif($child_exit_value == 5) {
