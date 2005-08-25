@@ -650,8 +650,8 @@ sub reaper {
         syslog('info', "job_id=$job_id: $err_msg");
 
 	# Submit runtime bugs to bugzilla
-	if ($submit_to_bugzilla && ($end_code == "serr" || $end_code == "herr")) {
-	    my $summary = $end_code == "serr" ? "soft" : "hard";
+	if ($submit_to_bugzilla && ($end_code eq "serr" || $end_code eq "herr")) {
+	    my $summary = $end_code eq "serr" ? "soft" : "hard";
 	    my @args = ($pathname_bugzilla_submit);
 	    push @args, "--product",     $bugzilla_product;
 	    push @args, "--version",     $spk_version;
