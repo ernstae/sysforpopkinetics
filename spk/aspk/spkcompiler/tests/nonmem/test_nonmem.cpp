@@ -20,7 +20,7 @@
 #include "pop_subprobTest.h"
 #include "CompartmentInfoTest.h"
 #include "CompModelInfoTest.h"
-#include "pop_advan6Test.h"
+//#include "pop_advan6Test.h"
 //#include "NonmemSourceMLElementsTest.h"
 //#include "NonmemReportMLElementsTest.h"
 #include "countStrInLhsTest.h"
@@ -82,7 +82,7 @@ int main( int argc, const char * argv[] )
   master[ "pop_mdvTest" ] = pop_mdvTest::suite();
 
   // test for NonmemTranslator: ability to handle Differential Equations
-  master[ "pop_advan6Test" ] = pop_advan6Test::suite();
+//  master[ "pop_advan6Test" ] = pop_advan6Test::suite();
 
   // test for NonmemTranslator: ability to handle a request 
   // to repeat the whole process.

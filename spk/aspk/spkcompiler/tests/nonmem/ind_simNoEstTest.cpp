@@ -91,95 +91,93 @@ if( actual != expected ) \\\n \
   const char *strTIME  = "TiMe";
   const char *strDV    = "DV";
   const char *strCP    = "CP";
-  const char *strMDV   = "MDV";
   const char *strORGDV = "ORGDV";
-  const char *label[]  = { strID, strDV, strTIME, strMDV };
+  const char *label[]  = { strID, strDV, strTIME };
   map<const char*, const char*> label_alias;
-  int nLabels          = 4;
+  int nLabels          = 3;
 
   //============================================
   // <Data Set>
   //
-  //   ID     DV=CP     SIMDV       TIME    MDV
+  //   ID     DV=CP     SIMDV       TIME
   /*
-        1       0.1     1.51227      0.2      0
-        1     338.8   338.208      337.4      0
-        1     118.1   117.688      118.2      0
-        1     888.0   883.081      884.6      0
-        1       9.2     9.89995     10.1      0
-        1     228.1   224.428      226.5      0
-        1     668.5   667.366      666.3      0
-        1     998.5   955.467      996.3      0
-        1     449.1   448.442      448.6      0
-        1     778.9   776.086      777.0      0
-        1     559.2   558.447      558.2      0
-        1       0.3     1.44485      0.4      0
-        1       0.1     3.02414      0.6      0 
-        1     778.1   775.694      775.5      0
-        1     668.8   666.35       666.9      0
-        1     339.3   338.354      338.0      0
-        1     448.9   447.472      447.5      0
-        1      10.8    10.4716      11.6      0
-        1     557.7   556.254      556.0      0
-        1     228.3   227.238      228.1      0
-        1     998.0   996.787      995.8      0
-        1     888.0   887.73       887.6      0
-        1     119.6   118.695      120.2      0
-        1       0.3    -0.141019     0.3      0
-        1       0.6     0.65588      0.3      0
-        1     557.6   557.039      556.8      0
-        1     339.3   339.194      339.1      0
-        1     888.0   887.719      887.2      0
-        1     998.5   998.309      999.0      0
-        1     778.9   780.517      779.0      0
-        1      10.2    11.8056      11.1      0
-        1     117.6   118.341      118.3      0
-        1     228.9   230.374      229.2      0
-        1     668.4   669.058      669.1      0
-        1     449.2   448.026      448.9      0
-        1       0.2     1.2894       0.5      0
+        1       0.1     1.51227      0.2
+        1     338.8   338.208      337.4
+        1     118.1   117.688      118.2
+        1     888.0   883.081      884.6
+        1       9.2     9.89995     10.1
+        1     228.1   224.428      226.5
+        1     668.5   667.366      666.3
+        1     998.5   955.467      996.3
+        1     449.1   448.442      448.6
+        1     778.9   776.086      777.0
+        1     559.2   558.447      558.2
+        1       0.3     1.44485      0.4
+        1       0.1     3.02414      0.6 
+        1     778.1   775.694      775.5
+        1     668.8   666.35       666.9
+        1     339.3   338.354      338.0
+        1     448.9   447.472      447.5
+        1      10.8    10.4716      11.6
+        1     557.7   556.254      556.0
+        1     228.3   227.238      228.1
+        1     998.0   996.787      995.8
+        1     888.0   887.73       887.6
+        1     119.6   118.695      120.2
+        1       0.3    -0.141019     0.3
+        1       0.6     0.65588      0.3
+        1     557.6   557.039      556.8
+        1     339.3   339.194      339.1
+        1     888.0   887.719      887.2
+        1     998.5   998.309      999.0
+        1     778.9   780.517      779.0
+        1      10.2    11.8056      11.1
+        1     117.6   118.341      118.3
+        1     228.9   230.374      229.2
+        1     668.4   669.058      669.1
+        1     449.2   448.026      448.9
+        1       0.2     1.2894       0.5
    */
   //============================================
   const int    nRecords   =  36;
   const int    nFixed     =  0;
-  const int    nItems     =  4;
-  const double record0[]  = { 1,   0.1,   0.2, 0 };
-  const double record1[]  = { 1, 338.8, 337.4, 0 };
-  const double record2[]  = { 1, 118.1, 118.2, 0 };
-  const double record3[]  = { 1, 888.0, 884.6, 0 };
-  const double record4[]  = { 1,   9.2,  10.1, 0 };
-  const double record5[]  = { 1, 228.1, 226.5, 0 };
-  const double record6[]  = { 1, 668.5, 666.3, 0 };
-  const double record7[]  = { 1, 998.5, 996.3, 0 };
-  const double record8[]  = { 1, 449.1, 448.6, 0 };
-  const double record9[]  = { 1, 778.9, 777.0, 0 };
-  const double record10[] = { 1, 559.2, 558.2, 0 };
-  const double record11[] = { 1,   0.3,   0.4, 0 };
-  const double record12[] = { 1,   0.1,   0.6, 0 };
-  const double record13[] = { 1, 778.1, 775.5, 0 };
-  const double record14[] = { 1, 668.8, 666.9, 0 };
-  const double record15[] = { 1, 339.3, 338.0, 0 };
-  const double record16[] = { 1, 448.9, 447.5, 0 };
-  const double record17[] = { 1,  10.8,  11.6, 0 };
-  const double record18[] = { 1, 557.7, 556.0, 0 };
-  const double record19[] = { 1, 228.3, 228.1, 0 };
-  const double record20[] = { 1, 998.0, 995.8, 0 };
-  const double record21[] = { 1, 888.8, 887.6, 0 };
-  const double record22[] = { 1, 119.6, 120.2, 0 };
-  const double record23[] = { 1,   0.3,   0.3, 0 };
-  const double record24[] = { 1,   0.6,   0.3, 0 };
-  const double record25[] = { 1, 557.6, 556.8, 0 };
-  const double record26[] = { 1, 339.3, 339.1, 0 };
-  const double record27[] = { 1, 888.0, 887.2, 0 };
-  const double record28[] = { 1, 998.5, 999.0, 0 };
-  const double record29[] = { 1, 778.9, 779.0, 0 };
-  const double record30[] = { 1,  10.2,  11.1, 0 };
-  const double record31[] = { 1, 117.6, 118.3, 0 };
-  const double record32[] = { 1, 228.9, 229.2, 0 };
-  const double record33[] = { 1, 668.4, 669.1, 0 };
-  const double record34[] = { 1, 449.2, 448.9, 0 };
-  const double record35[] = { 1,   0.2  , 0.5, 0 };
-  //  const double record36[] = { 1, 0.0, 0.0, 1 };
+  const int    nItems     =  3;
+  const double record0[]  = { 1,   0.1,   0.2 };
+  const double record1[]  = { 1, 338.8, 337.4 };
+  const double record2[]  = { 1, 118.1, 118.2 };
+  const double record3[]  = { 1, 888.0, 884.6 };
+  const double record4[]  = { 1,   9.2,  10.1 };
+  const double record5[]  = { 1, 228.1, 226.5 };
+  const double record6[]  = { 1, 668.5, 666.3 };
+  const double record7[]  = { 1, 998.5, 996.3 };
+  const double record8[]  = { 1, 449.1, 448.6 };
+  const double record9[]  = { 1, 778.9, 777.0 };
+  const double record10[] = { 1, 559.2, 558.2 };
+  const double record11[] = { 1,   0.3,   0.4 };
+  const double record12[] = { 1,   0.1,   0.6 };
+  const double record13[] = { 1, 778.1, 775.5 };
+  const double record14[] = { 1, 668.8, 666.9 };
+  const double record15[] = { 1, 339.3, 338.0 };
+  const double record16[] = { 1, 448.9, 447.5 };
+  const double record17[] = { 1,  10.8,  11.6 };
+  const double record18[] = { 1, 557.7, 556.0 };
+  const double record19[] = { 1, 228.3, 228.1 };
+  const double record20[] = { 1, 998.0, 995.8 };
+  const double record21[] = { 1, 888.8, 887.6 };
+  const double record22[] = { 1, 119.6, 120.2 };
+  const double record23[] = { 1,   0.3,   0.3 };
+  const double record24[] = { 1,   0.6,   0.3 };
+  const double record25[] = { 1, 557.6, 556.8 };
+  const double record26[] = { 1, 339.3, 339.1 };
+  const double record27[] = { 1, 888.0, 887.2 };
+  const double record28[] = { 1, 998.5, 999.0 };
+  const double record29[] = { 1, 778.9, 779.0 };
+  const double record30[] = { 1,  10.2,  11.1 };
+  const double record31[] = { 1, 117.6, 118.3 };
+  const double record32[] = { 1, 228.9, 229.2 };
+  const double record33[] = { 1, 668.4, 669.1 };
+  const double record34[] = { 1, 449.2, 448.9 };
+  const double record35[] = { 1,   0.2,   0.5 };
 
   double const * record[nRecords];
 
@@ -371,9 +369,6 @@ void ind_simNoEstTest::setUp()
 
   // DV is aliased to CP
   label_alias[strDV]   = strCP;
-
-  // MDV doesn't have an alias.
-  label_alias[strMDV]  = NULL;
 
   X_ERROR_LIST                 = XMLString::transcode( C_ERROR_LIST );
   X_VALUE                      = XMLString::transcode( C_VALUE );

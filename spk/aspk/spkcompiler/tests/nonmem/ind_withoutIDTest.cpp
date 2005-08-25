@@ -88,95 +88,92 @@ if( actual != expected ) \\\n \
   const char *strTIME = "TiMe";
   const char *strDV   = "DV";
   const char *strCP   = "CP";
-  const char *strMDV  = "MDV";
-  const char *strEVID = "EVID";
-  const char *label[] = { strDV, strTIME, strMDV, strEVID };
+  const char *label[] = { strDV, strTIME };
   map<const char*, const char*> label_alias;
-  int nLabels         = 4;
+  int nLabels         = 2;
 
   //============================================
   // <Data Set>  --- SKIP ID
   //
-  //   ID       DV=CP    TIME    MDV   EVID
+  //   ID       DV=CP    TIME
   /*
-        (1)       0.1     0.2      0      0
-        (1)     338.8   337.4      0      0
-        (1)     118.1   118.2      0      0
-        (1)     888.0   884.6      0      0
-        (1)       9.2    10.1      0      0
-        (1)     228.1   226.5      0      0
-        (1)     668.5   666.3      0      0
-        (1)     998.5   996.3      0      0
-        (1)     449.1   448.6      0      0
-        (1)     778.9   777.0      0      0
-        (1)     559.2   558.2      0      0
-        (1)       0.3     0.4      0      0
-        (1)       0.1     0.6      0      0
-        (1)     778.1   775.5      0      0
-        (1)     668.8   666.9      0      0
-        (1)     339.3   338.0      0      0
-        (1)     448.9   447.5      0      0
-        (1)      10.8    11.6      0      0
-        (1)     557.7   556.0      0      0
-        (1)     228.3   228.1      0      0
-        (1)     998.0   995.8      0      0
-        (1)     888.0   887.6      0      0
-        (1)     119.6   120.2      0      0
-        (1)       0.3     0.3      0      0
-        (1)       0.6     0.3      0      0
-        (1)     557.6   556.8      0      0
-        (1)     339.3   339.1      0      0
-        (1)     888.0   887.2      0      0
-        (1)     998.5   999.0      0      0
-        (1)     778.9   779.0      0      0
-        (1)      10.2    11.1      0      0
-        (1)     117.6   118.3      0      0
-        (1)     228.9   229.2      0      0
-        (1)     668.4   669.1      0      0
-        (1)     449.2   448.9      0      0
-        (1)       0.2     0.5      0      0
+        (1)       0.1     0.2
+        (1)     338.8   337.4
+        (1)     118.1   118.2
+        (1)     888.0   884.6
+        (1)       9.2    10.1
+        (1)     228.1   226.5
+        (1)     668.5   666.3
+        (1)     998.5   996.3
+        (1)     449.1   448.6
+        (1)     778.9   777.0
+        (1)     559.2   558.2
+        (1)       0.3     0.4
+        (1)       0.1     0.6
+        (1)     778.1   775.5
+        (1)     668.8   666.9
+        (1)     339.3   338.0
+        (1)     448.9   447.5
+        (1)      10.8    11.6
+        (1)     557.7   556.0
+        (1)     228.3   228.1
+        (1)     998.0   995.8
+        (1)     888.0   887.6
+        (1)     119.6   120.2
+        (1)       0.3     0.3
+        (1)       0.6     0.3
+        (1)     557.6   556.8
+        (1)     339.3   339.1
+        (1)     888.0   887.2
+        (1)     998.5   999.0
+        (1)     778.9   779.0
+        (1)      10.2    11.1
+        (1)     117.6   118.3
+        (1)     228.9   229.2
+        (1)     668.4   669.1
+        (1)     449.2   448.9
+        (1)       0.2     0.5
    */
   //============================================
   const int    nRecords   =  36;
   const int    nFixed     =  0;
-  const int    nItems     =  4;
-  const double record0[]  = {   0.1,   0.2, 0, 0 };
-  const double record1[]  = { 338.8, 337.4, 0, 0 };
-  const double record2[]  = { 118.1, 118.2, 0, 0 };
-  const double record3[]  = { 888.0, 884.6, 0, 0 };
-  const double record4[]  = {   9.2,  10.1, 0, 0 };
-  const double record5[]  = { 228.1, 226.5, 0, 0 };
-  const double record6[]  = { 668.5, 666.3, 0, 0 };
-  const double record7[]  = { 998.5, 996.3, 0, 0 };
-  const double record8[]  = { 449.1, 448.6, 0, 0 };
-  const double record9[]  = { 778.9, 777.0, 0, 0 };
-  const double record10[] = { 559.2, 558.2, 0, 0 };
-  const double record11[] = {   0.3,   0.4, 0, 0 };
-  const double record12[] = {   0.1,   0.6, 0, 0 };
-  const double record13[] = { 778.1, 775.5, 0, 0 };
-  const double record14[] = { 668.8, 666.9, 0, 0 };
-  const double record15[] = { 339.3, 338.0, 0, 0 };
-  const double record16[] = { 448.9, 447.5, 0, 0 };
+  const int    nItems     =  2;
+  const double record0[]  = {   0.1,   0.2 };
+  const double record1[]  = { 338.8, 337.4 };
+  const double record2[]  = { 118.1, 118.2 };
+  const double record3[]  = { 888.0, 884.6 };
+  const double record4[]  = {   9.2,  10.1 };
+  const double record5[]  = { 228.1, 226.5 };
+  const double record6[]  = { 668.5, 666.3 };
+  const double record7[]  = { 998.5, 996.3 };
+  const double record8[]  = { 449.1, 448.6 };
+  const double record9[]  = { 778.9, 777.0 };
+  const double record10[] = { 559.2, 558.2 };
+  const double record11[] = {   0.3,   0.4 };
+  const double record12[] = {   0.1,   0.6 };
+  const double record13[] = { 778.1, 775.5 };
+  const double record14[] = { 668.8, 666.9 };
+  const double record15[] = { 339.3, 338.0 };
+  const double record16[] = { 448.9, 447.5 };
   const double record17[] = {  10.8, 11.6,  0 };
-  const double record18[] = { 557.7, 556.0, 0, 0 };
-  const double record19[] = { 228.3, 228.1, 0, 0 };
-  const double record20[] = { 998.0, 995.8, 0, 0 };
-  const double record21[] = { 888.8, 887.6, 0, 0 };
-  const double record22[] = { 119.6, 120.2, 0, 0 };
-  const double record23[] = {   0.3,   0.3, 0, 0 };
-  const double record24[] = {   0.6,   0.3, 0, 0 };
-  const double record25[] = { 557.6, 556.8, 0, 0 };
-  const double record26[] = { 339.3, 339.1, 0, 0 };
-  const double record27[] = { 888.0, 887.2, 0, 0 };
-  const double record28[] = { 998.5, 999.0, 0, 0 };
-  const double record29[] = { 778.9, 779.0, 0, 0 };
-  const double record30[] = {  10.2 , 11.1, 0, 0 };
-  const double record31[] = { 117.6, 118.3, 0, 0 };
-  const double record32[] = { 228.9, 229.2, 0, 0 };
-  const double record33[] = { 668.4, 669.1, 0, 0 };
-  const double record34[] = { 449.2, 448.9, 0, 0 };
-  const double record35[] = {  0.2,   0.5, 0, 0 };
-  //  const double record36[] = { 0.0, 0.0, 1 };
+  const double record18[] = { 557.7, 556.0 };
+  const double record19[] = { 228.3, 228.1 };
+  const double record20[] = { 998.0, 995.8 };
+  const double record21[] = { 888.8, 887.6 };
+  const double record22[] = { 119.6, 120.2 };
+  const double record23[] = {   0.3,   0.3 };
+  const double record24[] = {   0.6,   0.3 };
+  const double record25[] = { 557.6, 556.8 };
+  const double record26[] = { 339.3, 339.1 };
+  const double record27[] = { 888.0, 887.2 };
+  const double record28[] = { 998.5, 999.0 };
+  const double record29[] = { 778.9, 779.0 };
+  const double record30[] = {  10.2 , 11.1 };
+  const double record31[] = { 117.6, 118.3 };
+  const double record32[] = { 228.9, 229.2 };
+  const double record33[] = { 668.4, 669.1 };
+  const double record34[] = { 449.2, 448.9 };
+  const double record35[] = {  0.2,   0.5 };
 
   double const * record[nRecords];
 
@@ -323,9 +320,6 @@ void ind_withoutIDTest::setUp()
 
   // DV is aliased to CP
   label_alias[strDV]   = strCP;
-
-  // MDV doesn't have an alias.
-  label_alias[strMDV]  = NULL;
 
   X_ERROR_LIST                 = XMLString::transcode( C_ERROR_LIST );
   X_VALUE                      = XMLString::transcode( C_VALUE );
@@ -701,7 +695,6 @@ void ind_withoutIDTest::testIndDataClass()
   // * ID
   // * TIME
   // * CP/DV
-  // * MDV (registered by the Compiler)
   //
   // Check PK Parameters
   // * theta
@@ -735,29 +728,23 @@ void ind_withoutIDTest::testIndDataClass()
   o << "   vector<char*>  a_id(n);" << endl;
   o << "   vector<double> a_time(n);" << endl;
   o << "   vector<double> a_dv(n);" << endl;
-  o << "   vector<double> a_mdv(n);" << endl;
-  o << "   vector<int>    a_evid(n);" << endl;
 
   for( int i=0; i<nRecords; i++ )
   {
     o << "   a_id  [" << i << "] = \"" << 1 << "\";" << endl;
     o << "   a_dv  [" << i << "] = "   << record[i][0] << ";" << endl;
     o << "   a_time[" << i << "] = "   << record[i][1] << ";" << endl;
-    o << "   a_mdv [" << i << "] = "   << record[i][2] << ";" << endl;
-    o << "   a_evid[" << i << "] = "   << record[i][3] << ";" << endl;
   }
 
-  o << "   IndData<double> A( n, a_id, a_dv, a_time, a_mdv, a_evid );" << endl;
+  o << "   IndData<double> A( n, a_id, a_dv, a_time );" << endl;
 
-  // { ID, DV=CP, TIME, MDV }
+  // { ID, DV=CP, TIME }
   for( int i=0; i<nRecords; i++ )
     {
       o << "   assert( strcmp( A." << strID << "[" << i << "], \"" << 1 << "\" ) == 0 );" << endl;
       o << "   MY_ASSERT_EQUAL(  " << record[i][0] << ", A." << strCP   << "[" << i << "] );" << endl;
       o << "   MY_ASSERT_EQUAL(  " << record[i][0] << ", A." << strDV   << "[" << i << "] );" << endl;
       o << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", A." << strTIME << "[" << i << "] );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][2] << ", A." << strMDV  << "[" << i << "] );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][3] << ", A." << strEVID << "[" << i << "] );" << endl;
       // There have to be placeholders for the current values of theta/eta for
       // each call to Pred::eval().
       o << "   MY_ASSERT_EQUAL( thetaLen, A." << strTHETA << "[" << i << "].size() );" << endl;
@@ -779,13 +766,9 @@ void ind_withoutIDTest::testIndDataClass()
 
   o << "   const valarray<double> y = A.getMeasurements();" << endl;
   o << "   MY_ASSERT_EQUAL( " << nRecords-nFixed << ", y.size() );" << endl;
-  o << "   for( int j=0, k=0; j<n; j++ )" << endl;
+  o << "   for( int j=0; j<n; j++ )" << endl;
   o << "   {" << endl;
-  o << "      if( A." << strMDV << "[j] != 1 )" << endl;
-  o << "      {" << endl;
-  o << "         MY_ASSERT_EQUAL( A." << strDV << "[j], y[k] );" << endl;
-  o << "         k++;" << endl;
-  o << "      }" << endl;
+  o << "      MY_ASSERT_EQUAL( A." << strDV << "[j], y[j] );" << endl;
   o << "   }" << endl;
   o << endl;
 
@@ -834,15 +817,13 @@ void ind_withoutIDTest::testDataSetClass()
   o << "   const int n = set.getN()[0];" << endl;
   o << endl;
 
-  // { ID, DV=CP, TIME, MDV }
+  // { ID, DV=CP, TIME }
   for( int i=0; i<nRecords; i++ )
     {
       o << "   assert( strcmp( set.data[0]->" << strID << "[" << i << "], \"" << 1 << "\" ) == 0 );" << endl;
       o << "   MY_ASSERT_EQUAL(  " << record[i][0] << ", set.data[0]->" << strCP   << "[" << i << "] );" << endl;
       o << "   MY_ASSERT_EQUAL(  " << record[i][0] << ", set.data[0]->" << strDV   << "[" << i << "] );" << endl;
       o << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", set.data[0]->" << strTIME << "[" << i << "] );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][2] << ", set.data[0]->" << strMDV  << "[" << i << "] );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][3] << ", set.data[0]->" << strEVID << "[" << i << "] );" << endl;
     }
 
   o << "   for( int j=0; j<n; j++ )" << endl;
@@ -864,11 +845,7 @@ void ind_withoutIDTest::testDataSetClass()
   o << "   const valarray<double> y = set.getAllMeasurements();" << endl;
   o << "   for( int j=0, k=0; j<n; j++ )" << endl;
   o << "   {" << endl;
-  o << "      if( set.data[0]->" << strMDV << "[j] != 1 )" << endl;
-  o << "      {" << endl;
-  o << "         MY_ASSERT_EQUAL( set.data[0]->" << strDV << "[j], y[k] );" << endl;
-  o << "         k++;" << endl;
-  o << "      }" << endl;
+  o << "      MY_ASSERT_EQUAL( set.data[0]->" << strDV << "[j], y[j] );" << endl;
   o << "   }" << endl;
 
   o << endl;

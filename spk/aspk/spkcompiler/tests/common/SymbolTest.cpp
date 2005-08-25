@@ -16,19 +16,19 @@ using namespace CppUnit;
 
 void SymbolTest::setUp()
 {
-   datalabel  = Symbol::DATALABEL;
-   nonmem     = Symbol::PREDEFINED;
-   userdef    = Symbol::USERDEFINED;
-   scalar     = Symbol::SCALAR;
-   vec        = Symbol::VECTOR;
-   matrix     = Symbol::MATRIX;
-   full       = Symbol::FULL;
-   diagonal   = Symbol::DIAGONAL;
-   triangle   = Symbol::TRIANGLE;
-   user       = Symbol::USER;
-   system     = Symbol::SYSTEM;
-   readonly   = Symbol::READONLY;
-   readwrite  = Symbol::READWRITE;
+  datalabel  = Symbol::DATALABEL;
+  nonmem     = Symbol::PREDEFINED;
+  userdef    = Symbol::USERDEFINED;
+  scalar     = Symbol::SCALAR;
+  vec        = Symbol::VECTOR;
+  matrix     = Symbol::MATRIX;
+  full       = Symbol::FULL;
+  diagonal   = Symbol::DIAGONAL;
+  triangle   = Symbol::TRIANGLE;
+  user       = Symbol::USER;
+  system     = Symbol::SYSTEM;
+  readonly   = Symbol::READONLY;
+  readwrite  = Symbol::READWRITE;
 }
 
 void SymbolTest::tearDown()
@@ -42,528 +42,588 @@ void SymbolTest::testDefaultConstructor()
 }
 void SymbolTest::testConstructor()
 {
-   string empty_string( "" );
+  //=================================
+  // SCALAR
+  //=================================
+  // User, read-write, scalar
+  string aaa_name = "aaa";
+  string aaa_synonym = "AAA";
+  valarray<int> aaa_dim( 1, 1 );
+  Symbol aaa( aaa_name, aaa_synonym, Symbol::USER, Symbol::READWRITE, Symbol::SCALAR, Symbol::FULL, aaa_dim );
+  CPPUNIT_ASSERT_EQUAL( aaa_name, aaa.name );
+  CPPUNIT_ASSERT_EQUAL( aaa_synonym, aaa.synonym );
+  CPPUNIT_ASSERT_EQUAL( Symbol::USER, aaa.owner );
+  CPPUNIT_ASSERT_EQUAL( Symbol::READWRITE, aaa.access );
+  CPPUNIT_ASSERT_EQUAL( Symbol::SCALAR, aaa.object_type );
+  CPPUNIT_ASSERT_EQUAL( Symbol::FULL, aaa.structure );
+  CPPUNIT_ASSERT_EQUAL( aaa_dim[0], aaa.dimension[0] );
 
-   // Test a label entry
-   string label( "CP" );
-   string synonym( "DV" );
-   valarray<int> label_dim( 3 );
-   label_dim[0] = 5;
-   label_dim[1] = 3;
-   label_dim[2] = 2;
-   Symbol cp( label, synonym, user, readonly, vec, full, label_dim );
-   
-   CPPUNIT_ASSERT_EQUAL( label,    cp.name );
-   CPPUNIT_ASSERT_EQUAL( synonym,  cp.synonym );
-   CPPUNIT_ASSERT_EQUAL( vec,      cp.object_type );
-   CPPUNIT_ASSERT_EQUAL( full,     cp.structure );
-   CPPUNIT_ASSERT_EQUAL( user,     cp.owner );
-   CPPUNIT_ASSERT_EQUAL( readonly, cp.access );
+  // User, read only, scalar
+  string bbb_name = "bbb";
+  string bbb_synonym = "BBB";
+  valarray<int> bbb_dim( 1, 1 );
+  Symbol bbb( bbb_name, bbb_synonym, Symbol::USER, Symbol::READONLY, Symbol::SCALAR, Symbol::FULL, bbb_dim );
+  CPPUNIT_ASSERT_EQUAL( bbb_name, bbb.name );
+  CPPUNIT_ASSERT_EQUAL( bbb_synonym, bbb.synonym );
+  CPPUNIT_ASSERT_EQUAL( Symbol::USER, bbb.owner );
+  CPPUNIT_ASSERT_EQUAL( Symbol::READONLY, bbb.access );
+  CPPUNIT_ASSERT_EQUAL( Symbol::SCALAR, bbb.object_type );
+  CPPUNIT_ASSERT_EQUAL( Symbol::FULL, bbb.structure );
+  CPPUNIT_ASSERT_EQUAL( bbb_dim[0], bbb.dimension[0] );
 
-   // Test a user defined scalar variable entry
-   string aaa_name( "aaa" );
-   valarray<int> aaa_dim( 1 );
-   aaa_dim[0] = 1;
-   Symbol aaa( aaa_name, "", user, readwrite, scalar, full, aaa_dim );
-   Symbol aaa2( aaa );
+  // System, read-write, scalar
+  string ccc_name = "ccc";
+  string ccc_synonym = "CCC";
+  valarray<int> ccc_dim( 1, 1 );
+  Symbol ccc( ccc_name, ccc_synonym, Symbol::SYSTEM, Symbol::READWRITE, Symbol::SCALAR, Symbol::FULL, ccc_dim );
+  CPPUNIT_ASSERT_EQUAL( ccc_name, ccc.name );
+  CPPUNIT_ASSERT_EQUAL( ccc_synonym, ccc.synonym );
+  CPPUNIT_ASSERT_EQUAL( Symbol::SYSTEM, ccc.owner );
+  CPPUNIT_ASSERT_EQUAL( Symbol::READWRITE, ccc.access );
+  CPPUNIT_ASSERT_EQUAL( Symbol::SCALAR, ccc.object_type );
+  CPPUNIT_ASSERT_EQUAL( Symbol::FULL, ccc.structure );
+  CPPUNIT_ASSERT_EQUAL( ccc_dim[0], ccc.dimension[0] );
 
-   CPPUNIT_ASSERT_EQUAL( aaa_name,  aaa.name );
-   CPPUNIT_ASSERT_EQUAL( string(""),        aaa.synonym );
-   CPPUNIT_ASSERT_EQUAL( scalar,    aaa.object_type );
-   CPPUNIT_ASSERT_EQUAL( full,      aaa.structure );
-   CPPUNIT_ASSERT_EQUAL( user,      aaa.owner );
-   CPPUNIT_ASSERT_EQUAL( readwrite, aaa.access );
+  // System, read only, scalar
+  string ddd_name = "ddd";
+  string ddd_synonym = "DDD";
+  valarray<int> ddd_dim( 1, 1 );
+  Symbol ddd( ddd_name, ddd_synonym, Symbol::SYSTEM, Symbol::READONLY, Symbol::SCALAR, Symbol::FULL, ddd_dim );
+  CPPUNIT_ASSERT_EQUAL( ddd_name, ddd.name );
+  CPPUNIT_ASSERT_EQUAL( ddd_synonym, ddd.synonym );
+  CPPUNIT_ASSERT_EQUAL( Symbol::SYSTEM, ddd.owner );
+  CPPUNIT_ASSERT_EQUAL( Symbol::READONLY, ddd.access );
+  CPPUNIT_ASSERT_EQUAL( Symbol::SCALAR, ddd.object_type );
+  CPPUNIT_ASSERT_EQUAL( Symbol::FULL, ddd.structure );
+  CPPUNIT_ASSERT_EQUAL( ddd_dim[0], ddd.dimension[0] );
 
-   // Test a system defined scalar variable
-   string bbb_name( "bbb" );
-   valarray<int> bbb_dim( 1 );
-   bbb_dim[0] = 1;
-   Symbol bbb( bbb_name, "", system, readonly, scalar, full, bbb_dim );
-   Symbol bbb2( bbb );
-                                                                                                           
-   CPPUNIT_ASSERT_EQUAL( bbb_name, bbb.name );
-   CPPUNIT_ASSERT_EQUAL( string(""),       bbb.synonym );
-   CPPUNIT_ASSERT_EQUAL( scalar,   bbb.object_type );
-   CPPUNIT_ASSERT_EQUAL( full,     bbb.structure );
-   CPPUNIT_ASSERT_EQUAL( system,   bbb.owner );
-   CPPUNIT_ASSERT_EQUAL( readonly, bbb.access );
-   /*
-   // Test a triangle matrix entry
-   string omega_name( "omega" );
-   valarray<int> omega_dim( 1 );
-   omega_dim[0] = 3;
-   Symbol omega( omega_name, "", nonmem, matrix, triangle, omega_dim );
-   Symbol omega2( omega );
+  // User, read-write, vector
+  // User, read only , vector
+  // System, read-wite, vector
+  // System, read only, vector
   
-   CPPUNIT_ASSERT_EQUAL( omega.name,        omega2.name );
-   CPPUNIT_ASSERT_EQUAL( omega.synonym,     omega2.synonym );
-   CPPUNIT_ASSERT_EQUAL( omega.object_type, omega2.object_type );
-   CPPUNIT_ASSERT_EQUAL( omega.structure,   omega2.structure );
-   CPPUNIT_ASSERT_EQUAL( omega.owner,       omega2.owner );
-   CPPUNIT_ASSERT_EQUAL( omega.access,      omega2.access );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(  omega .dimension.size() ), 
-			 static_cast<int>(  omega2.dimension.size() ) );
-   CPPUNIT_ASSERT_EQUAL( omega.dimension[0],omega2.dimension[0] );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(  omega. initial[0].size() ), 
-			 static_cast<int>(  omega2.initial[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(  omega. upper[0].size() ), 
-			 static_cast<int>(  omega2.upper[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(  omega. lower[0].size() ), 
-			 static_cast<int>(  omega2.lower[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(  omega. fixed[0].size() ), 
-			 static_cast<int>(  omega2.fixed[0].size() ) );
-   
-   // Test a diagonal matrix entry
-   string sigma_name( "sigma" );
-   valarray<int> sigma_dim( 1 );
-   sigma_dim[0] = 3;
-   Symbol sigma( sigma_name, "", nonmem, matrix, diagonal, sigma_dim );
-   Symbol sigma2( sigma );
+  // User, read-write, matrix, diagonal
+  // User, read only , matrix, diagonal
+  // System, read-wite, matrix, diagonal
+  // System, read only, matrix, diagonal
 
-   CPPUNIT_ASSERT_EQUAL( sigma.name,         sigma2.name );
-   CPPUNIT_ASSERT_EQUAL( sigma.synonym,      sigma2.synonym );
-   CPPUNIT_ASSERT_EQUAL( sigma.object_type,  sigma2.object_type );
-   CPPUNIT_ASSERT_EQUAL( sigma.structure,    sigma2.structure );
-   CPPUNIT_ASSERT_EQUAL( sigma.owner,        sigma2.owner );
-   CPPUNIT_ASSERT_EQUAL( sigma.access,       sigma2.access );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   sigma .dimension.size() ), 
-			 static_cast<int>(   sigma2.dimension.size() ) );
-   CPPUNIT_ASSERT_EQUAL( sigma.dimension[0], sigma2.dimension[0] );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   sigma .initial[0].size() ), 
-			 static_cast<int>(   sigma2.initial[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   sigma .upper[0].size() ), 
-			 static_cast<int>(   sigma2.upper[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   sigma .lower[0].size() ), 
-			 static_cast<int>(   sigma2.lower[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   sigma .fixed[0].size() ), 
-			 static_cast<int>(   sigma2.fixed[0].size() ) );
-
-   // Test a vector variable entry
-   string theta_name( "theta" );
-   valarray<int> theta_dim( 1 );
-   theta_dim[0] = 3;
-   Symbol theta( theta_name, "", nonmem, vec, full, theta_dim );
-   Symbol theta2( theta );
-
-   CPPUNIT_ASSERT_EQUAL( theta.name,         theta2.name );
-   CPPUNIT_ASSERT_EQUAL( theta.synonym,      theta2.synonym );
-   CPPUNIT_ASSERT_EQUAL( theta.object_type,  theta2.object_type );
-   CPPUNIT_ASSERT_EQUAL( theta.structure ,   theta2.structure );
-   CPPUNIT_ASSERT_EQUAL( theta.owner,        theta2.owner );
-   CPPUNIT_ASSERT_EQUAL( theta.access,       theta2.access );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   theta .dimension.size() ), 
-			 static_cast<int>(   theta2.dimension.size() ) );
-   CPPUNIT_ASSERT_EQUAL( theta.dimension[0], theta2.dimension[0] );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   theta .initial[0].size() ), 
-			 static_cast<int>(   theta2.initial[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   theta .upper[0].size() ), 
-			 static_cast<int>(   theta2.upper[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   theta .lower[0].size() ), 
-			 static_cast<int>(   theta2.lower[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   theta .fixed[0].size() ), 
-			 static_cast<int>(   theta2.fixed[0].size() ) );
-   */
+  // User, read-write, matrix, full
+  // User, read only , matrix, full
+  // System, read-wite, matrix, full
+  // System, read only, matrix, full
 }
 void SymbolTest::testCopyConstructor()
 {
-   string empty_string( "" );
+  //=================================
+  // SCALAR
+  //=================================
+  // User, read-write, scalar
+  string aaa_name = "aaa";
+  string aaa_synonym = "AAA";
+  valarray<int> aaa_dim( 1, 1 );
+  Symbol aaa( aaa_name, aaa_synonym, Symbol::USER, Symbol::READWRITE, Symbol::SCALAR, Symbol::FULL, aaa_dim );
+  Symbol a( aaa );
+  CPPUNIT_ASSERT_EQUAL( aaa_name, aaa.name );
+  CPPUNIT_ASSERT_EQUAL( aaa_synonym, aaa.synonym );
+  CPPUNIT_ASSERT_EQUAL( Symbol::USER, aaa.owner );
+  CPPUNIT_ASSERT_EQUAL( Symbol::READWRITE, aaa.access );
+  CPPUNIT_ASSERT_EQUAL( Symbol::SCALAR, aaa.object_type );
+  CPPUNIT_ASSERT_EQUAL( Symbol::FULL, aaa.structure );
+  CPPUNIT_ASSERT_EQUAL( aaa_dim[0], aaa.dimension[0] );
 
-   // Test a label entry
-   string label( "CP" );
-   string synonym( "DV" );
-   valarray<int> label_dim( 3 );
-   label_dim[0] = 5;
-   label_dim[1] = 3;
-   label_dim[2] = 2;
-   Symbol cp( label, synonym, datalabel, vec, full, label_dim );
-   Symbol cp2(cp);
-   
-   CPPUNIT_ASSERT_EQUAL( cp.name,          cp2.name );
-   CPPUNIT_ASSERT_EQUAL( cp.synonym,       cp2.synonym );
-   CPPUNIT_ASSERT_EQUAL( cp.object_type,   cp2.object_type );
-   CPPUNIT_ASSERT_EQUAL( cp.structure,     cp2.structure );
-   CPPUNIT_ASSERT_EQUAL( cp.owner,         cp2.owner );
-   CPPUNIT_ASSERT_EQUAL( cp.access,        cp2.access );
-/*
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>( cp. dimension.size() ), 
-			 static_cast<int>( cp2.dimension.size() ) );
-   CPPUNIT_ASSERT_EQUAL( cp. dimension[0], cp2.dimension[0] );
-   CPPUNIT_ASSERT_EQUAL( cp. dimension[1], cp2.dimension[1] );
-   CPPUNIT_ASSERT_EQUAL( cp. dimension[2], cp2.dimension[2] );
-*/   
-   // Test a triangle matrix entry
-   string omega_name( "omega" );
-   valarray<int> omega_dim( 1 );
-   omega_dim[0] = 3;
-   Symbol omega( omega_name, "", nonmem, matrix, triangle, omega_dim );
-   Symbol omega2( omega );
+  CPPUNIT_ASSERT_EQUAL( aaa.name, a.name );
+  CPPUNIT_ASSERT_EQUAL( aaa.synonym, a.synonym );
+  CPPUNIT_ASSERT_EQUAL( aaa.owner, a.owner );
+  CPPUNIT_ASSERT_EQUAL( aaa.access, a.access );
+  CPPUNIT_ASSERT_EQUAL( aaa.object_type, a.object_type );
+  CPPUNIT_ASSERT_EQUAL( aaa.structure, a.structure );
+  CPPUNIT_ASSERT_EQUAL( aaa.dimension[0], a.dimension[0] );
+
+
+  // User, read only, scalar
+  string bbb_name = "bbb";
+  string bbb_synonym = "BBB";
+  valarray<int> bbb_dim( 1, 1 );
+  Symbol bbb( bbb_name, bbb_synonym, Symbol::USER, Symbol::READONLY, Symbol::SCALAR, Symbol::FULL, bbb_dim );
+  Symbol b( bbb );
+  CPPUNIT_ASSERT_EQUAL( bbb_name, bbb.name );
+  CPPUNIT_ASSERT_EQUAL( bbb_synonym, bbb.synonym );
+  CPPUNIT_ASSERT_EQUAL( Symbol::USER, bbb.owner );
+  CPPUNIT_ASSERT_EQUAL( Symbol::READONLY, bbb.access );
+  CPPUNIT_ASSERT_EQUAL( Symbol::SCALAR, bbb.object_type );
+  CPPUNIT_ASSERT_EQUAL( Symbol::FULL, bbb.structure );
+  CPPUNIT_ASSERT_EQUAL( bbb_dim[0], bbb.dimension[0] );
+
+  CPPUNIT_ASSERT_EQUAL( bbb.name, b.name );
+  CPPUNIT_ASSERT_EQUAL( bbb.synonym, b.synonym );
+  CPPUNIT_ASSERT_EQUAL( bbb.owner, b.owner );
+  CPPUNIT_ASSERT_EQUAL( bbb.access, b.access );
+  CPPUNIT_ASSERT_EQUAL( bbb.object_type, b.object_type );
+  CPPUNIT_ASSERT_EQUAL( bbb.structure, b.structure );
+  CPPUNIT_ASSERT_EQUAL( bbb.dimension[0], b.dimension[0] );
+
+
+  // System, read-write, scalar
+  string ccc_name = "ccc";
+  string ccc_synonym = "CCC";
+  valarray<int> ccc_dim( 1, 1 );
+  Symbol ccc( ccc_name, ccc_synonym, Symbol::SYSTEM, Symbol::READWRITE, Symbol::SCALAR, Symbol::FULL, ccc_dim );
+  Symbol c( ccc );
+  CPPUNIT_ASSERT_EQUAL( ccc_name, ccc.name );
+  CPPUNIT_ASSERT_EQUAL( ccc_synonym, ccc.synonym );
+  CPPUNIT_ASSERT_EQUAL( Symbol::SYSTEM, ccc.owner );
+  CPPUNIT_ASSERT_EQUAL( Symbol::READWRITE, ccc.access );
+  CPPUNIT_ASSERT_EQUAL( Symbol::SCALAR, ccc.object_type );
+  CPPUNIT_ASSERT_EQUAL( Symbol::FULL, ccc.structure );
+  CPPUNIT_ASSERT_EQUAL( ccc_dim[0], ccc.dimension[0] );
+
+  CPPUNIT_ASSERT_EQUAL( ccc.name, c.name );
+  CPPUNIT_ASSERT_EQUAL( ccc.synonym, c.synonym );
+  CPPUNIT_ASSERT_EQUAL( ccc.owner, c.owner );
+  CPPUNIT_ASSERT_EQUAL( ccc.access, c.access );
+  CPPUNIT_ASSERT_EQUAL( ccc.object_type, c.object_type );
+  CPPUNIT_ASSERT_EQUAL( ccc.structure, c.structure );
+  CPPUNIT_ASSERT_EQUAL( ccc.dimension[0], c.dimension[0] );
+
+
+  // System, read only, scalar
+  string ddd_name = "ddd";
+  string ddd_synonym = "DDD";
+  valarray<int> ddd_dim( 1, 1 );
+  Symbol ddd( ddd_name, ddd_synonym, Symbol::SYSTEM, Symbol::READONLY, Symbol::SCALAR, Symbol::FULL, ddd_dim );
+  Symbol d( ddd );
+  CPPUNIT_ASSERT_EQUAL( ddd_name, ddd.name );
+  CPPUNIT_ASSERT_EQUAL( ddd_synonym, ddd.synonym );
+  CPPUNIT_ASSERT_EQUAL( Symbol::SYSTEM, ddd.owner );
+  CPPUNIT_ASSERT_EQUAL( Symbol::READONLY, ddd.access );
+  CPPUNIT_ASSERT_EQUAL( Symbol::SCALAR, ddd.object_type );
+  CPPUNIT_ASSERT_EQUAL( Symbol::FULL, ddd.structure );
+  CPPUNIT_ASSERT_EQUAL( ddd_dim[0], ddd.dimension[0] );
+
+  CPPUNIT_ASSERT_EQUAL( ddd.name, d.name );
+  CPPUNIT_ASSERT_EQUAL( ddd.synonym, d.synonym );
+  CPPUNIT_ASSERT_EQUAL( ddd.owner, d.owner );
+  CPPUNIT_ASSERT_EQUAL( ddd.access, d.access );
+  CPPUNIT_ASSERT_EQUAL( ddd.object_type, d.object_type );
+  CPPUNIT_ASSERT_EQUAL( ddd.structure, d.structure );
+  CPPUNIT_ASSERT_EQUAL( ddd.dimension[0], d.dimension[0] );
+
+  // User, read-write, vector
+  // User, read only , vector
+  // System, read-wite, vector
+  // System, read only, vector
   
-   CPPUNIT_ASSERT_EQUAL( omega.name,        omega2.name );
-   CPPUNIT_ASSERT_EQUAL( omega.synonym,     omega2.synonym );
-   CPPUNIT_ASSERT_EQUAL( omega.object_type, omega2.object_type );
-   CPPUNIT_ASSERT_EQUAL( omega.structure,   omega2.structure );
-   CPPUNIT_ASSERT_EQUAL( omega.owner,       omega2.owner );
-   CPPUNIT_ASSERT_EQUAL( omega.access,      omega2.access );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(  omega .dimension.size() ), 
-			 static_cast<int>(  omega2.dimension.size() ) );
-   CPPUNIT_ASSERT_EQUAL( omega.dimension[0],omega2.dimension[0] );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(  omega. initial[0].size() ), 
-			 static_cast<int>(  omega2.initial[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(  omega. upper[0].size() ), 
-			 static_cast<int>(  omega2.upper[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(  omega. lower[0].size() ), 
-			 static_cast<int>(  omega2.lower[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(  omega. fixed[0].size() ), 
-			 static_cast<int>(  omega2.fixed[0].size() ) );
-   
-   // Test a diagonal matrix entry
-   string sigma_name( "sigma" );
-   valarray<int> sigma_dim( 1 );
-   sigma_dim[0] = 3;
-   Symbol sigma( sigma_name, "", nonmem, matrix, diagonal, sigma_dim );
-   Symbol sigma2( sigma );
+  // User, read-write, matrix, diagonal
+  // User, read only , matrix, diagonal
+  // System, read-wite, matrix, diagonal
+  // System, read only, matrix, diagonal
 
-   CPPUNIT_ASSERT_EQUAL( sigma.name,         sigma2.name );
-   CPPUNIT_ASSERT_EQUAL( sigma.synonym,      sigma2.synonym );
-   CPPUNIT_ASSERT_EQUAL( sigma.object_type,  sigma2.object_type );
-   CPPUNIT_ASSERT_EQUAL( sigma.structure,    sigma2.structure );
-   CPPUNIT_ASSERT_EQUAL( sigma.owner,        sigma2.owner );
-   CPPUNIT_ASSERT_EQUAL( sigma.access,       sigma2.access );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   sigma .dimension.size() ), 
-			 static_cast<int>(   sigma2.dimension.size() ) );
-   CPPUNIT_ASSERT_EQUAL( sigma.dimension[0], sigma2.dimension[0] );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   sigma .initial[0].size() ), 
-			 static_cast<int>(   sigma2.initial[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   sigma .upper[0].size() ), 
-			 static_cast<int>(   sigma2.upper[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   sigma .lower[0].size() ), 
-			 static_cast<int>(   sigma2.lower[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   sigma .fixed[0].size() ), 
-			 static_cast<int>(   sigma2.fixed[0].size() ) );
-
-   // Test a vector variable entry
-   string theta_name( "theta" );
-   valarray<int> theta_dim( 1 );
-   theta_dim[0] = 3;
-   Symbol theta( theta_name, "", nonmem, vec, full, theta_dim );
-   Symbol theta2( theta );
-
-   CPPUNIT_ASSERT_EQUAL( theta.name,         theta2.name );
-   CPPUNIT_ASSERT_EQUAL( theta.synonym,      theta2.synonym );
-   CPPUNIT_ASSERT_EQUAL( theta.object_type,  theta2.object_type );
-   CPPUNIT_ASSERT_EQUAL( theta.structure ,   theta2.structure );
-   CPPUNIT_ASSERT_EQUAL( theta.owner,        theta2.owner );
-   CPPUNIT_ASSERT_EQUAL( theta.access,       theta2.access );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   theta .dimension.size() ), 
-			 static_cast<int>(   theta2.dimension.size() ) );
-   CPPUNIT_ASSERT_EQUAL( theta.dimension[0], theta2.dimension[0] );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   theta .initial[0].size() ), 
-			 static_cast<int>(   theta2.initial[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   theta .upper[0].size() ), 
-			 static_cast<int>(   theta2.upper[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   theta .lower[0].size() ), 
-			 static_cast<int>(   theta2.lower[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   theta .fixed[0].size() ), 
-			 static_cast<int>(   theta2.fixed[0].size() ) );
-
-   // Test a user defined variable entry
-   string aaa_name( "aaa" );
-   valarray<int> aaa_dim( 1 );
-   aaa_dim[0] = 1;
-   Symbol aaa( aaa_name, "", userdef, scalar, full, aaa_dim );
-   Symbol aaa2( aaa );
-
-   CPPUNIT_ASSERT_EQUAL( aaa.name,         aaa2.name );
-   CPPUNIT_ASSERT_EQUAL( aaa.synonym,      aaa2.synonym );
-   CPPUNIT_ASSERT_EQUAL( aaa.object_type,  aaa2.object_type );
-   CPPUNIT_ASSERT_EQUAL( aaa.structure,    aaa2.structure );
-   CPPUNIT_ASSERT_EQUAL( aaa.owner,        aaa2.owner );
-   CPPUNIT_ASSERT_EQUAL( aaa.access,       aaa2.access );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>( aaa .dimension.size() ), 
-			 static_cast<int>( aaa2.dimension.size() ) );
-   CPPUNIT_ASSERT_EQUAL( aaa.dimension[0], aaa2.dimension[0] );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>( aaa .initial[0].size() ), 
-			 static_cast<int>( aaa2.initial[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>( aaa. upper[0].size() ), 
-			 static_cast<int>( aaa2.upper[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>( aaa. lower[0].size() ), 
-			 static_cast<int>( aaa2.lower[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>( aaa. fixed[0].size() ), 
-			 static_cast<int>( aaa2.fixed[0].size() ) );
-
-   // Test a system defined scalar variable
-   string bbb_name( "bbb" );
-   valarray<int> bbb_dim( 1 );
-   bbb_dim[0] = 1;
-   Symbol bbb( bbb_name, "", system, readonly, scalar, full, bbb_dim );
-   Symbol bbb2( bbb );
-                                                                                                           
-   CPPUNIT_ASSERT_EQUAL( bbb.name,         bbb2.name );
-   CPPUNIT_ASSERT_EQUAL( bbb.synonym,      bbb2.synonym );
-   CPPUNIT_ASSERT_EQUAL( bbb.object_type,  bbb2.object_type );
-   CPPUNIT_ASSERT_EQUAL( bbb.structure,    bbb2.structure );
-   CPPUNIT_ASSERT_EQUAL( bbb.owner,        bbb2.owner );
-   CPPUNIT_ASSERT_EQUAL( bbb.access,       bbb2.access );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>( bbb .dimension.size() ),
-                         static_cast<int>( bbb2.dimension.size() ) );
-   CPPUNIT_ASSERT_EQUAL( bbb.dimension[0], bbb2.dimension[0] );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>( bbb .initial[0].size() ),
-                         static_cast<int>( bbb2.initial[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>( bbb. upper[0].size() ),
-                         static_cast<int>( bbb2.upper[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>( bbb. lower[0].size() ),
-                         static_cast<int>( bbb2.lower[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>( bbb. fixed[0].size() ),
-                         static_cast<int>( bbb2.fixed[0].size() ) );
+  // User, read-write, matrix, full
+  // User, read only , matrix, full
+  // System, read-wite, matrix, full
+  // System, read only, matrix, full
 }
 void SymbolTest::testAssign()
 {
-   string empty_string( "" );
+  //=================================
+  // SCALAR
+  //=================================
+  // User, read-write, scalar
+  string aaa_name = "aaa";
+  string aaa_synonym = "AAA";
+  valarray<int> aaa_dim( 1, 1 );
+  Symbol aaa( aaa_name, aaa_synonym, Symbol::USER, Symbol::READWRITE, Symbol::SCALAR, Symbol::FULL, aaa_dim );
+  Symbol a = aaa;
+  CPPUNIT_ASSERT_EQUAL( aaa_name, aaa.name );
+  CPPUNIT_ASSERT_EQUAL( aaa_synonym, aaa.synonym );
+  CPPUNIT_ASSERT_EQUAL( Symbol::USER, aaa.owner );
+  CPPUNIT_ASSERT_EQUAL( Symbol::READWRITE, aaa.access );
+  CPPUNIT_ASSERT_EQUAL( Symbol::SCALAR, aaa.object_type );
+  CPPUNIT_ASSERT_EQUAL( Symbol::FULL, aaa.structure );
+  CPPUNIT_ASSERT_EQUAL( aaa_dim[0], aaa.dimension[0] );
 
-   // Test a label entry
-   string label( "CP" );
-   string synonym( "DV" );
-   valarray<int> label_dim( 3 );
-   label_dim[0] = 5;
-   label_dim[1] = 3;
-   label_dim[2] = 2;
-   Symbol cp( label, synonym, datalabel, vec, full, label_dim );
-   Symbol cp2 = cp;
-   
-   CPPUNIT_ASSERT_EQUAL( cp.name,          cp2.name );
-   CPPUNIT_ASSERT_EQUAL( cp.synonym,       cp2.synonym );
-   CPPUNIT_ASSERT_EQUAL( cp.object_type,   cp2.object_type );
-   CPPUNIT_ASSERT_EQUAL( cp.structure,     cp2.structure );
-   CPPUNIT_ASSERT_EQUAL( cp.owner,         cp2.owner );
-   CPPUNIT_ASSERT_EQUAL( cp.access,        cp2.access );
-/*
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>( cp. dimension.size() ), 
-			 static_cast<int>( cp2.dimension.size() ) );
-   CPPUNIT_ASSERT_EQUAL( cp. dimension[0], cp2.dimension[0] );
-   CPPUNIT_ASSERT_EQUAL( cp. dimension[1], cp2.dimension[1] );
-   CPPUNIT_ASSERT_EQUAL( cp. dimension[2], cp2.dimension[2] );
-*/ 
-   // Test a triangle matrix entry
-   string omega_name( "omega" );
-   valarray<int> omega_dim( 1 );
-   omega_dim[0] = 3;
-   Symbol omega( omega_name, "", nonmem, matrix, triangle, omega_dim );
-   Symbol omega2 = omega;
+  CPPUNIT_ASSERT_EQUAL( aaa.name, a.name );
+  CPPUNIT_ASSERT_EQUAL( aaa.synonym, a.synonym );
+  CPPUNIT_ASSERT_EQUAL( aaa.owner, a.owner );
+  CPPUNIT_ASSERT_EQUAL( aaa.access, a.access );
+  CPPUNIT_ASSERT_EQUAL( aaa.object_type, a.object_type );
+  CPPUNIT_ASSERT_EQUAL( aaa.structure, a.structure );
+  CPPUNIT_ASSERT_EQUAL( aaa.dimension[0], a.dimension[0] );
+
+
+  // User, read only, scalar
+  string bbb_name = "bbb";
+  string bbb_synonym = "BBB";
+  valarray<int> bbb_dim( 1, 1 );
+  Symbol bbb( bbb_name, bbb_synonym, Symbol::USER, Symbol::READONLY, Symbol::SCALAR, Symbol::FULL, bbb_dim );
+  Symbol b = bbb;
+  CPPUNIT_ASSERT_EQUAL( bbb_name, bbb.name );
+  CPPUNIT_ASSERT_EQUAL( bbb_synonym, bbb.synonym );
+  CPPUNIT_ASSERT_EQUAL( Symbol::USER, bbb.owner );
+  CPPUNIT_ASSERT_EQUAL( Symbol::READONLY, bbb.access );
+  CPPUNIT_ASSERT_EQUAL( Symbol::SCALAR, bbb.object_type );
+  CPPUNIT_ASSERT_EQUAL( Symbol::FULL, bbb.structure );
+  CPPUNIT_ASSERT_EQUAL( bbb_dim[0], bbb.dimension[0] );
+
+  CPPUNIT_ASSERT_EQUAL( bbb.name, b.name );
+  CPPUNIT_ASSERT_EQUAL( bbb.synonym, b.synonym );
+  CPPUNIT_ASSERT_EQUAL( bbb.owner, b.owner );
+  CPPUNIT_ASSERT_EQUAL( bbb.access, b.access );
+  CPPUNIT_ASSERT_EQUAL( bbb.object_type, b.object_type );
+  CPPUNIT_ASSERT_EQUAL( bbb.structure, b.structure );
+  CPPUNIT_ASSERT_EQUAL( bbb.dimension[0], b.dimension[0] );
+
+
+  // System, read-write, scalar
+  string ccc_name = "ccc";
+  string ccc_synonym = "CCC";
+  valarray<int> ccc_dim( 1, 1 );
+  Symbol ccc( ccc_name, ccc_synonym, Symbol::SYSTEM, Symbol::READWRITE, Symbol::SCALAR, Symbol::FULL, ccc_dim );
+  Symbol c = ccc;
+  CPPUNIT_ASSERT_EQUAL( ccc_name, ccc.name );
+  CPPUNIT_ASSERT_EQUAL( ccc_synonym, ccc.synonym );
+  CPPUNIT_ASSERT_EQUAL( Symbol::SYSTEM, ccc.owner );
+  CPPUNIT_ASSERT_EQUAL( Symbol::READWRITE, ccc.access );
+  CPPUNIT_ASSERT_EQUAL( Symbol::SCALAR, ccc.object_type );
+  CPPUNIT_ASSERT_EQUAL( Symbol::FULL, ccc.structure );
+  CPPUNIT_ASSERT_EQUAL( ccc_dim[0], ccc.dimension[0] );
+
+  CPPUNIT_ASSERT_EQUAL( ccc.name, c.name );
+  CPPUNIT_ASSERT_EQUAL( ccc.synonym, c.synonym );
+  CPPUNIT_ASSERT_EQUAL( ccc.owner, c.owner );
+  CPPUNIT_ASSERT_EQUAL( ccc.access, c.access );
+  CPPUNIT_ASSERT_EQUAL( ccc.object_type, c.object_type );
+  CPPUNIT_ASSERT_EQUAL( ccc.structure, c.structure );
+  CPPUNIT_ASSERT_EQUAL( ccc.dimension[0], c.dimension[0] );
+
+
+  // System, read only, scalar
+  string ddd_name = "ddd";
+  string ddd_synonym = "DDD";
+  valarray<int> ddd_dim( 1, 1 );
+  Symbol ddd( ddd_name, ddd_synonym, Symbol::SYSTEM, Symbol::READONLY, Symbol::SCALAR, Symbol::FULL, ddd_dim );
+  Symbol d = ddd;
+  CPPUNIT_ASSERT_EQUAL( ddd_name, ddd.name );
+  CPPUNIT_ASSERT_EQUAL( ddd_synonym, ddd.synonym );
+  CPPUNIT_ASSERT_EQUAL( Symbol::SYSTEM, ddd.owner );
+  CPPUNIT_ASSERT_EQUAL( Symbol::READONLY, ddd.access );
+  CPPUNIT_ASSERT_EQUAL( Symbol::SCALAR, ddd.object_type );
+  CPPUNIT_ASSERT_EQUAL( Symbol::FULL, ddd.structure );
+  CPPUNIT_ASSERT_EQUAL( ddd_dim[0], ddd.dimension[0] );
+
+  CPPUNIT_ASSERT_EQUAL( ddd.name, d.name );
+  CPPUNIT_ASSERT_EQUAL( ddd.synonym, d.synonym );
+  CPPUNIT_ASSERT_EQUAL( ddd.owner, d.owner );
+  CPPUNIT_ASSERT_EQUAL( ddd.access, d.access );
+  CPPUNIT_ASSERT_EQUAL( ddd.object_type, d.object_type );
+  CPPUNIT_ASSERT_EQUAL( ddd.structure, d.structure );
+  CPPUNIT_ASSERT_EQUAL( ddd.dimension[0], d.dimension[0] );
+
+  // User, read-write, vector
+  // User, read only , vector
+  // System, read-wite, vector
+  // System, read only, vector
   
-   CPPUNIT_ASSERT_EQUAL( omega.name,        omega2.name );
-   CPPUNIT_ASSERT_EQUAL( omega.synonym,     omega2.synonym );
-   CPPUNIT_ASSERT_EQUAL( omega.object_type, omega2.object_type );
-   CPPUNIT_ASSERT_EQUAL( omega.structure,   omega2.structure );
-   CPPUNIT_ASSERT_EQUAL( omega.owner,       omega2.owner );
-   CPPUNIT_ASSERT_EQUAL( omega.access,      omega2.access );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(  omega .dimension.size() ), 
-			 static_cast<int>(  omega2.dimension.size() ) );
-   CPPUNIT_ASSERT_EQUAL( omega.dimension[0],omega2.dimension[0] );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(  omega. initial[0].size() ), 
-			 static_cast<int>(  omega2.initial[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(  omega. upper[0].size() ), 
-			 static_cast<int>(  omega2.upper[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(  omega. lower[0].size() ), 
-			 static_cast<int>(  omega2.lower[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(  omega. fixed[0].size() ), 
-			 static_cast<int>(  omega2.fixed[0].size() ) );
-   
-   // Test a diagonal matrix entry
-   string sigma_name( "sigma" );
-   valarray<int> sigma_dim( 1 );
-   sigma_dim[0] = 3;
-   Symbol sigma( sigma_name, "", nonmem, matrix, diagonal, sigma_dim );
-   Symbol sigma2 = sigma;
+  // User, read-write, matrix, diagonal
+  // User, read only , matrix, diagonal
+  // System, read-wite, matrix, diagonal
+  // System, read only, matrix, diagonal
 
-   CPPUNIT_ASSERT_EQUAL( sigma.name,         sigma2.name );
-   CPPUNIT_ASSERT_EQUAL( sigma.synonym,      sigma2.synonym );
-   CPPUNIT_ASSERT_EQUAL( sigma.object_type,  sigma2.object_type );
-   CPPUNIT_ASSERT_EQUAL( sigma.structure,    sigma2.structure );
-   CPPUNIT_ASSERT_EQUAL( sigma.owner,        sigma2.owner );
-   CPPUNIT_ASSERT_EQUAL( sigma.access,       sigma2.access );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   sigma .dimension.size() ), 
-			 static_cast<int>(   sigma2.dimension.size() ) );
-   CPPUNIT_ASSERT_EQUAL( sigma.dimension[0], sigma2.dimension[0] );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   sigma .initial[0].size() ), 
-			 static_cast<int>(   sigma2.initial[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   sigma .upper[0].size() ), 
-			 static_cast<int>(   sigma2.upper[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   sigma .lower[0].size() ), 
-			 static_cast<int>(   sigma2.lower[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   sigma .fixed[0].size() ), 
-			 static_cast<int>(   sigma2.fixed[0].size() ) );
-
-   // Test a vector variable entry
-   string theta_name( "theta" );
-   valarray<int> theta_dim( 1 );
-   theta_dim[0] = 3;
-   Symbol theta( theta_name, "", nonmem, vec, full, theta_dim );
-   Symbol theta2 = theta;
-
-   CPPUNIT_ASSERT_EQUAL( theta.name,         theta2.name );
-   CPPUNIT_ASSERT_EQUAL( theta.synonym,      theta2.synonym );
-   CPPUNIT_ASSERT_EQUAL( theta.object_type,  theta2.object_type );
-   CPPUNIT_ASSERT_EQUAL( theta.structure ,   theta2.structure );
-   CPPUNIT_ASSERT_EQUAL( theta.owner ,       theta2.owner );
-   CPPUNIT_ASSERT_EQUAL( theta.access,       theta2.access );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   theta .dimension.size() ), 
-			 static_cast<int>(   theta2.dimension.size() ) );
-   CPPUNIT_ASSERT_EQUAL( theta.dimension[0], theta2.dimension[0] );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   theta .initial[0].size() ), 
-			 static_cast<int>(   theta2.initial[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   theta .upper[0].size() ), 
-			 static_cast<int>(   theta2.upper[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   theta .lower[0].size() ), 
-			 static_cast<int>(   theta2.lower[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>(   theta .fixed[0].size() ), 
-			 static_cast<int>(   theta2.fixed[0].size() ) );
-
-   // Test a user defined variable entry
-   string aaa_name( "aaa" );
-   valarray<int> aaa_dim( 1 );
-   aaa_dim[0] = 1;
-   Symbol aaa( aaa_name, "", userdef, scalar, full, aaa_dim );
-   Symbol aaa2 = aaa;
-
-   CPPUNIT_ASSERT_EQUAL( aaa.name,         aaa2.name );
-   CPPUNIT_ASSERT_EQUAL( aaa.synonym,      aaa2.synonym );
-   CPPUNIT_ASSERT_EQUAL( aaa.object_type,  aaa2.object_type );
-   CPPUNIT_ASSERT_EQUAL( aaa.structure,    aaa2.structure );
-   CPPUNIT_ASSERT_EQUAL( aaa.owner ,       aaa2.owner );
-   CPPUNIT_ASSERT_EQUAL( aaa.access,       aaa2.access );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>( aaa .dimension.size() ), 
-			 static_cast<int>( aaa2.dimension.size() ) );
-   CPPUNIT_ASSERT_EQUAL( aaa.dimension[0], aaa2.dimension[0] );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>( aaa .initial[0].size() ), 
-			 static_cast<int>( aaa2.initial[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>( aaa. upper[0].size() ), 
-			 static_cast<int>( aaa2.upper[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>( aaa. lower[0].size() ), 
-			 static_cast<int>( aaa2.lower[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( static_cast<int>( aaa. fixed[0].size() ), 
-			 static_cast<int>( aaa2.fixed[0].size() ) );
+  // User, read-write, matrix, full
+  // User, read only , matrix, full
+  // System, read-wite, matrix, full
+  // System, read only, matrix, full
 }
 void SymbolTest::testCreateLabel()
 {  
-   string empty_string( "" );
-
-   string label( "CP" );
-   string synonym( "DV" );
-   valarray<int> dim(3);
-   dim[0] = 5;
-   dim[1] = 2;
-   dim[2] = 3;
-   Symbol cp = Symbol::createLabel( label, synonym, dim );
-   CPPUNIT_ASSERT_EQUAL( label,     cp.name );
-   CPPUNIT_ASSERT_EQUAL( synonym,   cp.synonym );
-   CPPUNIT_ASSERT_EQUAL( vec,       cp.object_type );
-   CPPUNIT_ASSERT_EQUAL( full,      cp.structure );
-   CPPUNIT_ASSERT_EQUAL( user ,     cp.owner );
-   CPPUNIT_ASSERT_EQUAL( readonly,  cp.access );
-   CPPUNIT_ASSERT_EQUAL( 3,         static_cast<int>( cp.dimension.size() ) );
-   CPPUNIT_ASSERT_EQUAL( 5,         cp.dimension[0] );
-   CPPUNIT_ASSERT_EQUAL( 2,         cp.dimension[1] );
-   CPPUNIT_ASSERT_EQUAL( 3,         cp.dimension[2] );
+  string label( "CP" );
+  string synonym( "DV" );
+  valarray<int> dim(3);
+  dim[0] = 5;
+  dim[1] = 2;
+  dim[2] = 3;
+  Symbol cp = Symbol::createLabel( label, synonym, dim );
+  CPPUNIT_ASSERT_EQUAL( label,     cp.name );
+  CPPUNIT_ASSERT_EQUAL( synonym,   cp.synonym );
+  CPPUNIT_ASSERT_EQUAL( vec,       cp.object_type );
+  CPPUNIT_ASSERT_EQUAL( full,      cp.structure );
+  CPPUNIT_ASSERT_EQUAL( user ,     cp.owner );
+  CPPUNIT_ASSERT_EQUAL( readonly,  cp.access );
+  CPPUNIT_ASSERT_EQUAL( 3,         static_cast<int>( cp.dimension.size() ) );
+  CPPUNIT_ASSERT_EQUAL( 5,         cp.dimension[0] );
+  CPPUNIT_ASSERT_EQUAL( 2,         cp.dimension[1] );
+  CPPUNIT_ASSERT_EQUAL( 3,         cp.dimension[2] );
 }
-void SymbolTest::testCreateNMVar()
+void SymbolTest::testCreateScalar()
 {  
-   string empty_string( "" );
+  // User & read-write
+  string aaa_name( "aaa" );
+  Symbol aaa = Symbol::createScalar( aaa_name, Symbol::USER, Symbol::READWRITE );
+  CPPUNIT_ASSERT( aaa.name == aaa_name );
+  CPPUNIT_ASSERT( aaa.object_type == Symbol::SCALAR );
+  CPPUNIT_ASSERT( aaa.access == Symbol::READWRITE );
+  CPPUNIT_ASSERT( aaa.owner == Symbol::USER );
 
-  // vector
-   string theta_name( "THETA" );
-   int theta_len = 5;
-   Symbol theta = Symbol::createVector( theta_name, theta_len, system, readonly );
-   CPPUNIT_ASSERT_EQUAL( theta_name,   theta.name );
-   CPPUNIT_ASSERT_EQUAL( empty_string, theta.synonym );
-   CPPUNIT_ASSERT_EQUAL( vec,          theta.object_type );
-   CPPUNIT_ASSERT_EQUAL( full,         theta.structure );
-   CPPUNIT_ASSERT_EQUAL( system,       theta.owner );
-   CPPUNIT_ASSERT_EQUAL( readonly,     theta.access );
-   CPPUNIT_ASSERT_EQUAL( 1, static_cast<int>( theta.dimension.size() ) );
-   CPPUNIT_ASSERT_EQUAL( theta_len, theta.dimension[0] );
-   
-   // triangle matrix
-   string omega_name( "OMEGA" );
-   int omega_dim = 3;
-   Symbol omega = Symbol::createMatrix( omega_name, triangle, omega_dim, system, readonly );
-   CPPUNIT_ASSERT_EQUAL( omega_name,   omega.name );
-   CPPUNIT_ASSERT_EQUAL( empty_string, omega.synonym );
-   CPPUNIT_ASSERT_EQUAL( matrix,       omega.object_type );
-   CPPUNIT_ASSERT_EQUAL( triangle,     omega.structure );
-   CPPUNIT_ASSERT_EQUAL( system,       omega.owner );
-   CPPUNIT_ASSERT_EQUAL( readonly,     omega.access );
-   CPPUNIT_ASSERT_EQUAL( 1, static_cast<int>( omega.dimension.size() ) );
-   CPPUNIT_ASSERT_EQUAL( omega_dim, omega.dimension[0] );
-   CPPUNIT_ASSERT_EQUAL( 6, static_cast<int>( omega.initial[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( 6, static_cast<int>( omega.upper[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( 6, static_cast<int>( omega.lower[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( 6, static_cast<int>( omega.fixed[0].size() ) );
+  aaa.initial[0][0] = "3.0";
+  CPPUNIT_ASSERT( "3.0" ==  aaa.initial[0][0] );
 
-   // diagonal matrix
-   string sigma_name( "sigma" );
-   int sigma_dim = 3;
-   Symbol sigma = Symbol::createMatrix( sigma_name, diagonal, sigma_dim, system, readonly );
-   CPPUNIT_ASSERT_EQUAL( sigma_name,   sigma.name );
-   CPPUNIT_ASSERT_EQUAL( empty_string, sigma.synonym );
-   CPPUNIT_ASSERT_EQUAL( matrix,       sigma.object_type );
-   CPPUNIT_ASSERT_EQUAL( diagonal,     sigma.structure );
-   CPPUNIT_ASSERT_EQUAL( system,       sigma.owner );
-   CPPUNIT_ASSERT_EQUAL( readonly,     sigma.access );
-   CPPUNIT_ASSERT_EQUAL( 1, static_cast<int>( sigma.dimension.size() ) );
-   CPPUNIT_ASSERT_EQUAL( sigma_dim, sigma.dimension[0] );
-   CPPUNIT_ASSERT_EQUAL( sigma_dim, static_cast<int>( sigma.initial[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( sigma_dim, static_cast<int>( sigma.upper[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( sigma_dim, static_cast<int>( sigma.lower[0].size() ) );
-   CPPUNIT_ASSERT_EQUAL( sigma_dim, static_cast<int>( sigma.fixed[0].size() ) );
+  // User & read only
+  string bbb_name( "bbb" );
+  Symbol bbb = Symbol::createScalar( bbb_name, Symbol::USER, Symbol::READONLY );
+  CPPUNIT_ASSERT( bbb.name == bbb_name );
+  CPPUNIT_ASSERT( bbb.object_type == Symbol::SCALAR );
+  CPPUNIT_ASSERT( bbb.access == Symbol::READONLY );
+  CPPUNIT_ASSERT( bbb.owner == Symbol::USER );
 
-   // scalar 
-   string orgdv_name( "ORGDV" );
-   Symbol orgdv = Symbol::createScalar( orgdv_name, system, readonly );
-   CPPUNIT_ASSERT_EQUAL( orgdv_name,   orgdv.name );
-   CPPUNIT_ASSERT_EQUAL( empty_string, orgdv.synonym );
-   CPPUNIT_ASSERT_EQUAL( matrix,       orgdv.object_type );
-   CPPUNIT_ASSERT_EQUAL( diagonal,     orgdv.structure );
-   CPPUNIT_ASSERT_EQUAL( system,       orgdv.owner );
-   CPPUNIT_ASSERT_EQUAL( readonly,     orgdv.access );
+  bbb.initial[0][0] = "3.0";
+  CPPUNIT_ASSERT( "3.0" ==  bbb.initial[0][0] );
+
+  // System & read-write
+  string ccc_name( "ccc" );
+  Symbol ccc = Symbol::createScalar( ccc_name, Symbol::SYSTEM, Symbol::READWRITE );
+  CPPUNIT_ASSERT( ccc.name == ccc_name );
+  CPPUNIT_ASSERT( ccc.object_type == Symbol::SCALAR );
+  CPPUNIT_ASSERT( ccc.access == Symbol::READWRITE );
+  CPPUNIT_ASSERT( ccc.owner == Symbol::SYSTEM );
+
+  ccc.initial[0][0] = "3.0";
+  CPPUNIT_ASSERT( "3.0" ==  ccc.initial[0][0] );
+
+  // System & read only
+  string ddd_name( "ddd" );
+  Symbol ddd = Symbol::createScalar( ddd_name, Symbol::SYSTEM, Symbol::READONLY );
+  CPPUNIT_ASSERT( ddd.name == ddd_name );
+  CPPUNIT_ASSERT( ddd.object_type == Symbol::SCALAR );
+  CPPUNIT_ASSERT( ddd.access == Symbol::READONLY );
+  CPPUNIT_ASSERT( ddd.owner == Symbol::SYSTEM );
+
+  ddd.initial[0][0] = "3.0";
+  CPPUNIT_ASSERT( "3.0" ==  ddd.initial[0][0] );
 }
-void SymbolTest::testCreateUserVar()
+void SymbolTest::testCreateVector()
 {  
-   string empty_string( "" );
+  // User & read-write
+  string aaa_name( "aaa" );
+  int aaa_len = 2;
+  Symbol aaa = Symbol::createVector( aaa_name, aaa_len, Symbol::USER, Symbol::READWRITE );
+  CPPUNIT_ASSERT( aaa.name == aaa_name );
+  CPPUNIT_ASSERT( aaa.object_type == Symbol::VECTOR );
+  CPPUNIT_ASSERT( aaa.access == Symbol::READWRITE );
+  CPPUNIT_ASSERT( aaa.owner == Symbol::USER );
+  CPPUNIT_ASSERT( aaa.dimension[0] == aaa_len );
 
-   string var( "aaa" );
-   valarray<int> dim(1);
-   dim[0] = 1;
-   Symbol aaa = Symbol::createScalar( var, user, readwrite );
-   CPPUNIT_ASSERT_EQUAL( var,          aaa.name );
-   CPPUNIT_ASSERT_EQUAL( empty_string, aaa.synonym );
-   CPPUNIT_ASSERT_EQUAL( scalar,       aaa.object_type );
-   CPPUNIT_ASSERT_EQUAL( full,         aaa.structure );
-   CPPUNIT_ASSERT_EQUAL( user,         aaa.owner );
-   CPPUNIT_ASSERT_EQUAL( readwrite,    aaa.access );
-   CPPUNIT_ASSERT_EQUAL( 1,            static_cast<int>( aaa.dimension.size() ) );
-   CPPUNIT_ASSERT_EQUAL( 1,            aaa.dimension[0] );
-   CPPUNIT_ASSERT_EQUAL( 1,            static_cast<int>( aaa.upper.size() ) );
-   CPPUNIT_ASSERT_EQUAL( 1,            static_cast<int>( aaa.initial.size() ) );
-   CPPUNIT_ASSERT_EQUAL( 1,            static_cast<int>( aaa.lower.size() ) );
-   CPPUNIT_ASSERT_EQUAL( 1,            static_cast<int>( aaa.fixed.size() ) );
+  aaa.initial[0][0] = "3.0";
+  aaa.initial[0][1] = "2.0";
+  CPPUNIT_ASSERT( "3.0" == aaa.initial[0][0] );
+  CPPUNIT_ASSERT( "2.0" == aaa.initial[0][1] );
+
+  // User & read only
+  string bbb_name( "bbb" );
+  int bbb_len = 2;
+  Symbol bbb = Symbol::createVector( bbb_name, bbb_len, Symbol::USER, Symbol::READONLY );
+  CPPUNIT_ASSERT( bbb.name == bbb_name );
+  CPPUNIT_ASSERT( bbb.object_type == Symbol::VECTOR );
+  CPPUNIT_ASSERT( bbb.access == Symbol::READONLY );
+  CPPUNIT_ASSERT( bbb.owner == Symbol::USER );
+  CPPUNIT_ASSERT( bbb.dimension[0] == bbb_len );
+
+  bbb.initial[0][0] = "3.0";
+  bbb.initial[0][1] = "2.0";
+  CPPUNIT_ASSERT( "3.0" == bbb.initial[0][0] );
+  CPPUNIT_ASSERT( "2.0" == bbb.initial[0][1] );
+
+  // System & read-write
+  string ccc_name( "ccc" );
+  int ccc_len = 2;
+  Symbol ccc = Symbol::createVector( ccc_name, ccc_len, Symbol::SYSTEM, Symbol::READWRITE );
+  CPPUNIT_ASSERT( ccc.name == ccc_name );
+  CPPUNIT_ASSERT( ccc.object_type == Symbol::VECTOR );
+  CPPUNIT_ASSERT( ccc.access == Symbol::READWRITE );
+  CPPUNIT_ASSERT( ccc.owner == Symbol::SYSTEM );
+  CPPUNIT_ASSERT( ccc.dimension[0] == ccc_len );
+
+  ccc.initial[0][0] = "3.0";
+  ccc.initial[0][1] = "2.0";
+  CPPUNIT_ASSERT( "3.0" == ccc.initial[0][0] );
+  CPPUNIT_ASSERT( "2.0" == ccc.initial[0][1] );
+
+  // System & read only
+  string ddd_name( "ddd" );
+  int ddd_len = 2;
+  Symbol ddd = Symbol::createVector( ddd_name, ddd_len, Symbol::SYSTEM, Symbol::READONLY );
+  CPPUNIT_ASSERT( ddd.name == ddd_name );
+  CPPUNIT_ASSERT( ddd.object_type == Symbol::VECTOR );
+  CPPUNIT_ASSERT( ddd.access == Symbol::READONLY );
+  CPPUNIT_ASSERT( ddd.owner == Symbol::SYSTEM );
+  CPPUNIT_ASSERT( ddd.dimension[0] == ddd_len );
+
+  ddd.initial[0][0] = "3.0";
+  ddd.initial[0][1] = "2.0";
+  CPPUNIT_ASSERT( "3.0" == ddd.initial[0][0] );
+  CPPUNIT_ASSERT( "2.0" == ddd.initial[0][1] );
 }
+void SymbolTest::testCreateSymmetricMatrix()
+{
+  //==================================
+  // DIAGONAL
+  //==================================
+  // User & read-write, diagonal
+  string aaa_name( "aaa" );
+  int aaa_dim = 2;
+  Symbol aaa = Symbol::createSymmetricMatrix( aaa_name, Symbol::DIAGONAL, aaa_dim, Symbol::USER, Symbol::READWRITE );
+  CPPUNIT_ASSERT( aaa.name == aaa_name );
+  CPPUNIT_ASSERT( aaa.object_type == Symbol::MATRIX );
+  CPPUNIT_ASSERT( aaa.structure == Symbol::DIAGONAL );
+  CPPUNIT_ASSERT( aaa.access == Symbol::READWRITE );
+  CPPUNIT_ASSERT( aaa.owner == Symbol::USER );
+  CPPUNIT_ASSERT( aaa.dimension[0] == aaa_dim );
+
+  aaa.initial[0][0] = "3.0";
+  aaa.initial[0][1] = "2.0";
+  CPPUNIT_ASSERT( "3.0" == aaa.initial[0][0] );
+  CPPUNIT_ASSERT( "2.0" == aaa.initial[0][1] );
+
+  // User & read only, diagonal
+  string bbb_name( "bbb" );
+  int bbb_dim = 2;
+  Symbol bbb = Symbol::createSymmetricMatrix( bbb_name, Symbol::DIAGONAL, bbb_dim, Symbol::USER, Symbol::READONLY );
+  CPPUNIT_ASSERT( bbb.name == bbb_name );
+  CPPUNIT_ASSERT( bbb.object_type == Symbol::MATRIX );
+  CPPUNIT_ASSERT( bbb.structure == Symbol::DIAGONAL );
+  CPPUNIT_ASSERT( bbb.access == Symbol::READONLY );
+  CPPUNIT_ASSERT( bbb.owner == Symbol::USER );
+  CPPUNIT_ASSERT( bbb.dimension[0] == bbb_dim );
+
+  bbb.initial[0][0] = "3.0";
+  bbb.initial[0][1] = "2.0";
+  CPPUNIT_ASSERT( "3.0" == bbb.initial[0][0] );
+  CPPUNIT_ASSERT( "2.0" == bbb.initial[0][1] );
+
+  // System & read-write, diagonal
+  string ccc_name( "ccc" );
+  int ccc_dim = 2;
+  Symbol ccc = Symbol::createSymmetricMatrix( ccc_name, Symbol::DIAGONAL, ccc_dim, Symbol::SYSTEM, Symbol::READWRITE );
+  CPPUNIT_ASSERT( ccc.name == ccc_name );
+  CPPUNIT_ASSERT( ccc.object_type == Symbol::MATRIX );
+  CPPUNIT_ASSERT( ccc.structure == Symbol::DIAGONAL );
+  CPPUNIT_ASSERT( ccc.access == Symbol::READWRITE );
+  CPPUNIT_ASSERT( ccc.owner == Symbol::SYSTEM );
+  CPPUNIT_ASSERT( ccc.dimension[0] == ccc_dim );
+
+  ccc.initial[0][0] = "3.0";
+  ccc.initial[0][1] = "2.0";
+  CPPUNIT_ASSERT( "3.0" == ccc.initial[0][0] );
+  CPPUNIT_ASSERT( "2.0" == ccc.initial[0][1] );
+
+  // System & read only, diagonal
+  string ddd_name( "ddd" );
+  int ddd_dim = 2;
+  Symbol ddd = Symbol::createSymmetricMatrix( ddd_name, Symbol::DIAGONAL, ddd_dim, Symbol::SYSTEM, Symbol::READONLY );
+  CPPUNIT_ASSERT( ddd.name == ddd_name );
+  CPPUNIT_ASSERT( ddd.object_type == Symbol::MATRIX );
+  CPPUNIT_ASSERT( ddd.structure == Symbol::DIAGONAL );
+  CPPUNIT_ASSERT( ddd.access == Symbol::READONLY );
+  CPPUNIT_ASSERT( ddd.owner == Symbol::SYSTEM );
+  CPPUNIT_ASSERT( ddd.dimension[0] == ddd_dim );
+
+  ddd.initial[0][0] = "3.0";
+  ddd.initial[0][1] = "2.0";
+  CPPUNIT_ASSERT( "3.0" == ddd.initial[0][0] );
+  CPPUNIT_ASSERT( "2.0" == ddd.initial[0][1] );
+
+  //==================================
+  // FULL
+  //==================================
+  // User & read-write, full
+  string eee_name( "eee" );
+  int eee_dim = 2;
+  Symbol eee = Symbol::createSymmetricMatrix( eee_name, Symbol::FULL, eee_dim, Symbol::USER, Symbol::READWRITE );
+  CPPUNIT_ASSERT( eee.name == eee_name );
+  CPPUNIT_ASSERT( eee.object_type == Symbol::MATRIX );
+  CPPUNIT_ASSERT( eee.structure == Symbol::FULL );
+  CPPUNIT_ASSERT( eee.access == Symbol::READWRITE );
+  CPPUNIT_ASSERT( eee.owner == Symbol::USER );
+  CPPUNIT_ASSERT( eee.dimension[0] == eee_dim );
+
+  eee.initial[0][0] = "3.0";
+  eee.initial[0][1] = "2.0";
+  eee.initial[0][2] = "1.0";
+  CPPUNIT_ASSERT( "3.0" == eee.initial[0][0] );
+  CPPUNIT_ASSERT( "2.0" == eee.initial[0][1] );
+  CPPUNIT_ASSERT( "1.0" == eee.initial[0][2] );
+
+  // User & read only, full
+  string fff_name( "fff" );
+  int fff_dim = 2;
+  Symbol fff = Symbol::createSymmetricMatrix( fff_name, Symbol::FULL, fff_dim, Symbol::USER, Symbol::READONLY );
+  CPPUNIT_ASSERT( fff.name == fff_name );
+  CPPUNIT_ASSERT( fff.object_type == Symbol::MATRIX );
+  CPPUNIT_ASSERT( fff.structure == Symbol::FULL );
+  CPPUNIT_ASSERT( fff.access == Symbol::READONLY );
+  CPPUNIT_ASSERT( fff.owner == Symbol::USER );
+  CPPUNIT_ASSERT( fff.dimension[0] == fff_dim );
+
+  fff.initial[0][0] = "3.0";
+  fff.initial[0][1] = "2.0";
+  fff.initial[0][2] = "1.0";
+  CPPUNIT_ASSERT( "3.0" == fff.initial[0][0] );
+  CPPUNIT_ASSERT( "2.0" == fff.initial[0][1] );
+  CPPUNIT_ASSERT( "1.0" == fff.initial[0][2] );
+
+  // System & read-write, full
+  string ggg_name( "ggg" );
+  int ggg_dim = 2;
+  Symbol ggg = Symbol::createSymmetricMatrix( ggg_name, Symbol::FULL, ggg_dim, Symbol::SYSTEM, Symbol::READWRITE );
+  CPPUNIT_ASSERT( ggg.name == ggg_name );
+  CPPUNIT_ASSERT( ggg.object_type == Symbol::MATRIX );
+  CPPUNIT_ASSERT( ggg.structure == Symbol::FULL );
+  CPPUNIT_ASSERT( ggg.access == Symbol::READWRITE );
+  CPPUNIT_ASSERT( ggg.owner == Symbol::SYSTEM );
+  CPPUNIT_ASSERT( ggg.dimension[0] == ggg_dim );
+
+  ggg.initial[0][0] = "3.0";
+  ggg.initial[0][1] = "2.0";
+  ggg.initial[0][2] = "1.0";
+  CPPUNIT_ASSERT( "3.0" == ggg.initial[0][0] );
+  CPPUNIT_ASSERT( "2.0" == ggg.initial[0][1] );
+  CPPUNIT_ASSERT( "1.0" == ggg.initial[0][2] );
+
+  // System & read only, full
+  string hhh_name( "hhh" );
+  int hhh_dim = 2;
+  Symbol hhh = Symbol::createSymmetricMatrix( hhh_name, Symbol::FULL, hhh_dim, Symbol::SYSTEM, Symbol::READONLY );
+  CPPUNIT_ASSERT( hhh.name == hhh_name );
+  CPPUNIT_ASSERT( hhh.object_type == Symbol::MATRIX );
+  CPPUNIT_ASSERT( hhh.structure == Symbol::FULL );
+  CPPUNIT_ASSERT( hhh.access == Symbol::READONLY );
+  CPPUNIT_ASSERT( hhh.owner == Symbol::SYSTEM );
+  CPPUNIT_ASSERT( hhh.dimension[0] == hhh_dim );
+
+  hhh.initial[0][0] = "3.0";
+  hhh.initial[0][1] = "2.0";
+  hhh.initial[0][2] = "1.0";
+  CPPUNIT_ASSERT( "3.0" == hhh.initial[0][0] );
+  CPPUNIT_ASSERT( "2.0" == hhh.initial[0][1] );
+  CPPUNIT_ASSERT( "1.0" == hhh.initial[0][2] );
+}
+
 void SymbolTest::testEquality()
 {
-   string empty_string( "" );
+  string empty_string( "" );
 
-   string str_aaa( "aaa" );
-   string str_AAA( "AAA" );
-   string str_bbb( "bbb" );
-   string str_BBB( "BBB" );
-   valarray<int> dims( 3 );
-   dims[0] = 1;
-   dims[1] = 2;
-   dims[2] = 3;
-   Symbol aaa = Symbol::createLabel( str_aaa, str_AAA, dims );
-   Symbol bbb = Symbol::createLabel( str_bbb, str_BBB, dims );
+  string str_aaa( "aaa" );
+  string str_AAA( "AAA" );
+  string str_bbb( "bbb" );
+  string str_BBB( "BBB" );
+  valarray<int> dims( 3 );
+  dims[0] = 1;
+  dims[1] = 2;
+  dims[2] = 3;
+  Symbol aaa = Symbol::createLabel( str_aaa, str_AAA, dims );
+  Symbol bbb = Symbol::createLabel( str_bbb, str_BBB, dims );
 
-   CPPUNIT_ASSERT( aaa == aaa );
-   CPPUNIT_ASSERT( aaa != bbb );
+  CPPUNIT_ASSERT( aaa == aaa );
+  CPPUNIT_ASSERT( aaa != bbb );
 }
 
 void SymbolTest::testEmpty()
@@ -576,26 +636,27 @@ void SymbolTest::testEmpty()
 CppUnit::Test * SymbolTest::suite()
 {
   CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite( "SymbolTableTest" );
-  /*
+  
   suiteOfTests->addTest( new CppUnit::TestCaller<SymbolTest>("testDefaultConstructor",
-						    &SymbolTest::testDefaultConstructor ) );
+							     &SymbolTest::testDefaultConstructor ) );
   suiteOfTests->addTest( new CppUnit::TestCaller<SymbolTest>("testConstructor",
-						    &SymbolTest::testConstructor ) );
+							     &SymbolTest::testConstructor ) );
   suiteOfTests->addTest( new CppUnit::TestCaller<SymbolTest>("testCopyConstructor",
-						    &SymbolTest::testCopyConstructor ) );
+							     &SymbolTest::testCopyConstructor ) );
   suiteOfTests->addTest( new CppUnit::TestCaller<SymbolTest>("testAssign",
-						    &SymbolTest::testAssign ) );
+							     &SymbolTest::testAssign ) );
   suiteOfTests->addTest( new CppUnit::TestCaller<SymbolTest>("testCreateLabel",
-						    &SymbolTest::testCreateLabel ) );
-  suiteOfTests->addTest( new CppUnit::TestCaller<SymbolTest>("testCreateUserVar",
-						    &SymbolTest::testCreateUserVar ) );
-  suiteOfTests->addTest( new CppUnit::TestCaller<SymbolTest>("testCreateNMVar",
-						    &SymbolTest::testCreateNMVar ) );
+							     &SymbolTest::testCreateLabel ) );
+  suiteOfTests->addTest( new CppUnit::TestCaller<SymbolTest>("testCreateScalar",
+							     &SymbolTest::testCreateScalar ) );
+  suiteOfTests->addTest( new CppUnit::TestCaller<SymbolTest>("testCreateVector",
+							     &SymbolTest::testCreateVector ) );
+  suiteOfTests->addTest( new CppUnit::TestCaller<SymbolTest>("testCreateSymmetricMatrix",
+							     &SymbolTest::testCreateSymmetricMatrix ) );
   suiteOfTests->addTest( new CppUnit::TestCaller<SymbolTest>("testEquality",
-						    &SymbolTest::testEquality ) );
+							     &SymbolTest::testEquality ) );
   suiteOfTests->addTest( new CppUnit::TestCaller<SymbolTest>("testEmpty",
-						    &SymbolTest::testEmpty ) );
-  */
+							     &SymbolTest::testEmpty ) );
   return suiteOfTests;
 }
 

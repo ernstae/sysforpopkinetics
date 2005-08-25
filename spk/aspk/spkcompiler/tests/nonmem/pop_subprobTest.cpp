@@ -85,41 +85,40 @@ if( actual != expected ) \\\n \
   //============================================
   // <Data Set>
   //
-  //   ID      TIME     CP=DV    (MDV)
-  //   1       0.0       0.0      0
-  //   2       0.0       0.0      0
-  //   2       1.0      10.0      0
-  //   3       0.0       0.0      0
-  //   3       1.0      10.0      0
-  //   3       2.0      20.0      0
-  //   4       0.0       0.0      0
-  //   4       1.0      10.0      0
-  //   4       2.0      20.0      0
-  //   4       3.0      25.0      0
+  //   ID      TIME     CP=DV
+  //   1       0.0       0.0
+  //   2       0.0       0.0
+  //   2       1.0      10.0
+  //   3       0.0       0.0
+  //   3       1.0      10.0
+  //   3       2.0      20.0 
+  //   4       0.0       0.0
+  //   4       1.0      10.0 
+  //   4       2.0      20.0
+  //   4       3.0      25.0
   //============================================
   map<const char*, const char*> label_alias;
   const char *strID         = "ID";
   const char *strTIME       = "TiMe";
   const char *strDV         = "DV";
   const char *strCP         = "CP";
-  const char *strMDV        = "MDV";
-  const char *label[]       = { strID, strDV, strTIME, strMDV };
-  const int    nLabels      = 4;
+  const char *label[]       = { strID, strDV, strTIME };
+  const int    nLabels      = 3;
   const int    nIndividuals = 4;
   const int    nRecords     = 10;
   const int    nFixed       = 0;
   const int    nItems       = nLabels;
   valarray<int> N( nIndividuals );
-  const double record0[] = { 1, 0.0,  0.0, 0 };
-  const double record1[] = { 2, 0.0,  0.0, 0 };
-  const double record2[] = { 2, 1.0, 10.0, 0 };
-  const double record3[] = { 3, 0.0,  0.0, 0 };
-  const double record4[] = { 3, 1.0, 10.0, 0 };
-  const double record5[] = { 3, 2.0, 20.0, 0 };
-  const double record6[] = { 4, 0.0,  0.0, 0 };
-  const double record7[] = { 4, 1.0, 10.0, 0 };
-  const double record8[] = { 4, 2.0, 20.0, 0 };
-  const double record9[] = { 4, 3.0, 25.0, 0 };
+  const double record0[] = { 1, 0.0,  0.0 };
+  const double record1[] = { 2, 0.0,  0.0 };
+  const double record2[] = { 2, 1.0, 10.0 };
+  const double record3[] = { 3, 0.0,  0.0 };
+  const double record4[] = { 3, 1.0, 10.0 };
+  const double record5[] = { 3, 2.0, 20.0 };
+  const double record6[] = { 4, 0.0,  0.0 };
+  const double record7[] = { 4, 1.0, 10.0 };
+  const double record8[] = { 4, 2.0, 20.0 };
+  const double record9[] = { 4, 3.0, 25.0 };
   double const * record[nRecords];
 
   //============================================
@@ -328,8 +327,6 @@ void pop_subprobTest::setUp()
   // DV is aliased to CP
   label_alias[strDV]   = strCP;
 
-  // MDV doesn't have an alias.
-  label_alias[strMDV]  = NULL;
 
   // #of records for each individual
   N[0] = 1;

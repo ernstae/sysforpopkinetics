@@ -348,7 +348,11 @@ Symbol Symbol::createMatrix( const string& var, enum Structure mt, int matdim )
    dim[0] = matdim;
    return Symbol( var, "", PREDEFINED, MATRIX, mt, dim );
 }
-Symbol Symbol::createMatrix( const string& var, enum Structure mt, int matdim, enum Ownership ownerIn, enum Access accessIn )
+Symbol Symbol::createSymmetricMatrix( const string& var, 
+				   enum Structure mt, 
+				   int matdim, 
+				   enum Ownership ownerIn, 
+				   enum Access accessIn )
 {
    valarray<int> dim( 1 );
    dim[0] = matdim;
@@ -459,8 +463,6 @@ std::ostream& operator<<( std::ostream& o, const Symbol& s )
     o << "read-only";
   else if( s.access == Symbol::READWRITE )
     o << "read & write";
-  else if( s.access == Symbol::HIDDEN )
-    o << "hidden";
   else
     o << "unknown";
   o << endl;

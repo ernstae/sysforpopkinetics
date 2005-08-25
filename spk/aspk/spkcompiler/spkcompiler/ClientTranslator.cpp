@@ -508,8 +508,8 @@ void ClientTranslator::parseData()
 
       // Warning: Do not change the order of the following three calls.
       const int locID   = insertID( dataset );   // if no ID
-      const int locMDV  = insertMDV( dataset );  // if no MDV
-      const int locEVID = insertEVID( dataset ); // if no EVID 
+      //      const int locMDV  = insertMDV( dataset );  // if no MDV
+      //      const int locEVID = insertEVID( dataset ); // if no EVID 
 
       unsigned int nFields;
       if( !dataset->hasAttribute( X_COLUMNS ) )

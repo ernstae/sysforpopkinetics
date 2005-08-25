@@ -18,7 +18,6 @@ class ind_subprobTest
 
   xercesc::DOMDocument *source;
   xercesc::DOMDocument *data;
-  xercesc::DOMDocument *doc;
   
   bool okToClean;
 public:

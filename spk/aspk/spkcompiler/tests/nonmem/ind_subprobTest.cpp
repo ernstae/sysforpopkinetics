@@ -92,7 +92,6 @@ if( actual != expected ) \\\n \
   const char *strID   = "ID";
   const char *strTIME = "TIME";
   const char *strDV   = "DV";
-  const char *strMDV  = "MDV";
   const char *label[] = { strTIME, strDV };
   map<const char*, const char*> label_alias;
   int nLabels         = 2;
@@ -665,44 +664,23 @@ void ind_subprobTest::testReportML()
   // contains multiple instances of SpkReportML.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   
-  ifstream in( fSavedReportML );
-  char ch;
-  stringstream all;
+  system( "cat saved_result.xml > xml1.xml" );
+  system( "cat saved_result.xml > xml2.xml" ); 
+  system( "cat saved_result.xml >> xml2.xml" );
+  system( "cat saved_result.xml > xml3.xml" ); 
+  system( "cat saved_result.xml >> xml3.xml" );
+  system( "cat saved_result.xml >> xml3.xml" );
 
-  int i = 0;
-  while( in.get(ch) )
-    {
-      all.put(ch);
-    }
-  in.close();
-  const char* str = all.str().c_str();
-  char* c1 = strstr( str, "<?xml" );
-  char* c2 = strstr( c1+5,  "<?xml" );
-  char* c3 = strstr( c2+5,  "<?xml" );
-
-  FILE * xml1 = fopen( fXml1_xml, "w" );
-  fprintf( xml1, "%s\n", c1 );
-  fclose( xml1 );
-
-  FILE * xml2 = fopen( fXml2_xml, "w" );
-  fprintf( xml2, "%s\n", c2 );
-  fclose( xml2 );
-
-  FILE * xml3 = fopen( fXml3_xml, "w" );
-  fprintf( xml3, "%s\n", c3 );
-  fclose( xml3 );
-
-  xercesc::XercesDOMParser *parser = new xercesc::XercesDOMParser;
-  parser->setValidationScheme( XercesDOMParser::Val_Auto );
-  parser->setDoNamespaces( true );
-  parser->setDoSchema( true );
-  parser->setValidationSchemaFullChecking( true );
-  parser->setCreateEntityReferenceNodes( true );
-  
   for( int i=0; i<3; i++ )
     {
+      xercesc::XercesDOMParser *parser = new xercesc::XercesDOMParser;
+      parser->setValidationScheme( XercesDOMParser::Val_Auto );
+      parser->setDoNamespaces( true );
+      parser->setDoSchema( true );
+      parser->setValidationSchemaFullChecking( true );
+      parser->setCreateEntityReferenceNodes( true );
+      char filename[56];
       try{
-	char filename[56];
         sprintf( filename, "xml%d.xml", i+1 );
 	parser->reset();
 	parser->parse( filename );
@@ -738,18 +716,13 @@ void ind_subprobTest::testReportML()
 	  CPPUNIT_ASSERT_MESSAGE( buf, false );
 	}
   
-      doc = parser->getDocument();
-      CPPUNIT_ASSERT( doc );
+      DOMDocument* doc = parser->getDocument();
+      CPPUNIT_ASSERT_MESSAGE( filename, doc );
 
       //DOMPrint( doc );
 
       DOMNodeList * report_list = doc->getElementsByTagName( X_SPKREPORT );
       int nReports = report_list->getLength();
-
-      DOMNodeList * simulation_list = doc->getElementsByTagName( X_SIMULATION );
-      unsigned int order;
-      XMLString::textToBin( dynamic_cast<DOMElement*>(simulation_list->item(0))->getAttribute( X_SUBPROBLEM ), order );
-      CPPUNIT_ASSERT_EQUAL( i+1, static_cast<int>(order) );
 
       DOMNodeList * opt_result_list = doc->getElementsByTagName( X_IND_OPT_RESULT );
       int nOpts = opt_result_list->getLength();
@@ -761,7 +734,6 @@ void ind_subprobTest::testReportML()
       int nPresentations = presentation_data_list->getLength();
 
     }
-
   okToClean = true;
 }
 

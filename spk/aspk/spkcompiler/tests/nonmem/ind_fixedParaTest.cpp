@@ -87,7 +87,6 @@ if( actual != expected ) \\\n \
   const char *strID   = "ID";
   const char *strTIME = "TIME";
   const char *strDV   = "DV";
-  const char *strMDV  = "MDV";
   const char *label[] = { strTIME, strDV };
   map<const char*, const char*> label_alias;
   int nLabels         = 2;

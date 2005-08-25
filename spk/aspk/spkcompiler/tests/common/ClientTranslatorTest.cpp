@@ -449,7 +449,6 @@ void ClientTranslatorTest::testDataWithID()
    CPPUNIT_ASSERT( (pId   = table->findi( "id" ) )   != Symbol::empty() );
    CPPUNIT_ASSERT( (pTime = table->findi( "time" ) ) != Symbol::empty() );
    CPPUNIT_ASSERT( (pDv   = table->findi( "dv" ) )   != Symbol::empty() );
-   CPPUNIT_ASSERT( (pMdv  = table->findi( "mdv" ) )  != Symbol::empty() );
 
    CPPUNIT_ASSERT( pId->initial[0][0]   == "Sachiko" );
    CPPUNIT_ASSERT( pId->initial[0][1]   == "Sachiko" );
@@ -460,9 +459,6 @@ void ClientTranslatorTest::testDataWithID()
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, atof( pDv  ->initial[0][0].c_str() ), 0.0 );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.1, atof( pDv  ->initial[0][1].c_str() ), 0.1 );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.2, atof( pDv  ->initial[0][2].c_str() ), 0.2 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, atof( pMdv ->initial[0][0].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, atof( pMdv ->initial[0][1].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, atof( pMdv ->initial[0][2].c_str() ), 0.0 );
 
    CPPUNIT_ASSERT( pId->initial[1][0]   == "Minoru" );
    CPPUNIT_ASSERT( pId->initial[1][1]   == "Minoru" );
@@ -470,13 +466,10 @@ void ClientTranslatorTest::testDataWithID()
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 10.1, atof( pTime->initial[1][1].c_str() ), 10.1 );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 10.0, atof( pDv  ->initial[1][0].c_str() ), 10.0 );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 10.1, atof( pDv  ->initial[1][1].c_str() ), 10.1 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL(  0.0, atof( pMdv ->initial[1][0].c_str() ),  0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL(  0.0, atof( pMdv ->initial[1][1].c_str() ),  0.0 );
 
    CPPUNIT_ASSERT( pId->initial[2][0]   == "Noriko" );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 20.0, atof( pTime->initial[2][0].c_str() ), 20.0 );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 20.0, atof( pDv  ->initial[2][0].c_str() ), 20.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL(  0.0, atof( pMdv ->initial[2][0].c_str() ),  0.0 );
 
   remove( gData );
   delete [] gData;
@@ -558,7 +551,6 @@ void ClientTranslatorTest::testDataShuffledID()
    CPPUNIT_ASSERT( (pId   = table->findi( "id" ) )   != Symbol::empty() );
    CPPUNIT_ASSERT( (pTime = table->findi( "time" ) ) != Symbol::empty() );
    CPPUNIT_ASSERT( (pDv   = table->findi( "dv" ) )   != Symbol::empty() );
-   CPPUNIT_ASSERT( (pMdv  = table->findi( "mdv" ) )  != Symbol::empty() );
 
    CPPUNIT_ASSERT( pId->initial[0][0]   == "Sachiko" );
    CPPUNIT_ASSERT( pId->initial[0][1]   == "Sachiko" );
@@ -569,9 +561,6 @@ void ClientTranslatorTest::testDataShuffledID()
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, atof( pDv  ->initial[0][0].c_str() ), 0.0 );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.1, atof( pDv  ->initial[0][1].c_str() ), 0.0 );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.2, atof( pDv  ->initial[0][2].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, atof( pMdv ->initial[0][0].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, atof( pMdv ->initial[0][1].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, atof( pMdv ->initial[0][2].c_str() ), 0.0 );
    
    CPPUNIT_ASSERT( pId->initial[1][0]   == "Minoru" );
    CPPUNIT_ASSERT( pId->initial[1][1]   == "Minoru" );
@@ -579,13 +568,10 @@ void ClientTranslatorTest::testDataShuffledID()
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 10.1, atof( pTime->initial[1][1].c_str() ), 0.0 );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 10.0, atof( pDv  ->initial[1][0].c_str() ), 0.0 );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 10.1, atof( pDv  ->initial[1][1].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL(  0.0, atof( pMdv ->initial[1][0].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL(  0.0, atof( pMdv ->initial[1][1].c_str() ), 0.0 );
 		   
    CPPUNIT_ASSERT( pId->initial[2][0]   == "Noriko" );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 20.0, atof( pTime->initial[2][0].c_str() ), 0.0 );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 20.0, atof( pDv  ->initial[2][0].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL(  0.0, atof( pMdv ->initial[2][0].c_str() ), 0.0 );
    
    remove( gData );
    delete [] gData;
@@ -667,7 +653,6 @@ void ClientTranslatorTest::testIndDataNoID()
    CPPUNIT_ASSERT( (pId   = table->findi( "id" ) )   != Symbol::empty() );
    CPPUNIT_ASSERT( (pTime = table->findi( "time" ) ) != Symbol::empty() );
    CPPUNIT_ASSERT( (pDv   = table->findi( "dv" ) )   != Symbol::empty() );
-   CPPUNIT_ASSERT( (pMdv  = table->findi( "mdv" ) )  != Symbol::empty() );
 
    CPPUNIT_ASSERT( pId->initial[0][0]   == "1" );
    CPPUNIT_ASSERT( pId->initial[0][1]   == "1" );
@@ -678,9 +663,6 @@ void ClientTranslatorTest::testIndDataNoID()
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.5, atof( pDv  ->initial[0][0].c_str() ), 0.0 );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.6, atof( pDv  ->initial[0][1].c_str() ), 0.0 );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.7, atof( pDv  ->initial[0][2].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, atof( pMdv ->initial[0][0].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, atof( pMdv ->initial[0][1].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, atof( pMdv ->initial[0][2].c_str() ), 0.0 );
 
   remove( gData );
   delete [] gData;
@@ -762,7 +744,6 @@ void ClientTranslatorTest::testPopDataNoID()
    CPPUNIT_ASSERT( (pId   = table->findi( "id" ) )   != Symbol::empty() );
    CPPUNIT_ASSERT( (pTime = table->findi( "time" ) ) != Symbol::empty() );
    CPPUNIT_ASSERT( (pDv   = table->findi( "dv" ) )   != Symbol::empty() );
-   CPPUNIT_ASSERT( (pMdv  = table->findi( "mdv" ) )  != Symbol::empty() );
 
    CPPUNIT_ASSERT( pId->initial[0][0]   == "1" );
    CPPUNIT_ASSERT( pId->initial[1][0]   == "2" );
@@ -773,9 +754,6 @@ void ClientTranslatorTest::testPopDataNoID()
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.5, atof( pDv  ->initial[0][0].c_str() ), 0.0 );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.6, atof( pDv  ->initial[1][0].c_str() ), 0.0 );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.7, atof( pDv  ->initial[2][0].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, atof( pMdv ->initial[0][0].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, atof( pMdv ->initial[1][0].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, atof( pMdv ->initial[2][0].c_str() ), 0.0 );
 
   remove( gData );
   delete [] gData;
@@ -941,7 +919,6 @@ void ClientTranslatorTest::testMdv()
    CPPUNIT_ASSERT( (pId   = table->findi( "id" ) )   != Symbol::empty() );
    CPPUNIT_ASSERT( (pTime = table->findi( "time" ) ) != Symbol::empty() );
    CPPUNIT_ASSERT( (pDv   = table->findi( "dv" ) )   != Symbol::empty() );
-   CPPUNIT_ASSERT( (pMdv  = table->findi( "mdv" ) )  != Symbol::empty() );
 
    CPPUNIT_ASSERT( pId->initial[0][0]   == "1" );
    CPPUNIT_ASSERT( pId->initial[0][1]   == "1" );
@@ -952,9 +929,6 @@ void ClientTranslatorTest::testMdv()
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.5, atof( pDv  ->initial[0][0].c_str() ), 0.0 );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.6, atof( pDv  ->initial[0][1].c_str() ), 0.0 );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.7, atof( pDv  ->initial[0][2].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, atof( pMdv ->initial[0][0].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.0, atof( pMdv ->initial[0][1].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.0, atof( pMdv ->initial[0][2].c_str() ), 0.0 );
 
   remove( gData );
   delete [] gData;
@@ -1037,7 +1011,6 @@ void ClientTranslatorTest::testEvid()
    CPPUNIT_ASSERT( (pTime = table->findi( "time" ) ) != Symbol::empty() );
    CPPUNIT_ASSERT( (pDv   = table->findi( "dv" ) )   != Symbol::empty() );
    CPPUNIT_ASSERT( (pEvid = table->findi( "evid" ) ) != Symbol::empty() );
-   CPPUNIT_ASSERT( (pMdv  = table->findi( "mdv" ) )  != Symbol::empty() );
 
    CPPUNIT_ASSERT( pId->initial[0][0]   == "1" );
    CPPUNIT_ASSERT( pId->initial[0][1]   == "1" );
@@ -1051,9 +1024,6 @@ void ClientTranslatorTest::testEvid()
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, atof( pEvid->initial[0][0].c_str() ), 0.0 );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.0, atof( pEvid->initial[0][1].c_str() ), 0.0 );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 2.0, atof( pEvid->initial[0][2].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, atof( pMdv ->initial[0][0].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.0, atof( pMdv ->initial[0][1].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.0, atof( pMdv ->initial[0][2].c_str() ), 0.0 );
 
   remove( gData );
   delete [] gData;
@@ -1234,8 +1204,6 @@ void ClientTranslatorTest::testNoMdvNoEvid()
    CPPUNIT_ASSERT( (pId   = table->findi( "id" ) )   != Symbol::empty() );
    CPPUNIT_ASSERT( (pTime = table->findi( "time" ) ) != Symbol::empty() );
    CPPUNIT_ASSERT( (pDv   = table->findi( "dv" ) )   != Symbol::empty() );
-   CPPUNIT_ASSERT( (pEvid = table->findi( "evid" ) ) != Symbol::empty() );
-   CPPUNIT_ASSERT( (pMdv  = table->findi( "mdv" ) )  != Symbol::empty() );
 
    CPPUNIT_ASSERT( pId->initial[0][0]   == "1" );
    CPPUNIT_ASSERT( pId->initial[0][1]   == "1" );
@@ -1246,12 +1214,6 @@ void ClientTranslatorTest::testNoMdvNoEvid()
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.5, atof( pDv  ->initial[0][0].c_str() ), 0.0 );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.6, atof( pDv  ->initial[0][1].c_str() ), 0.0 );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.7, atof( pDv  ->initial[0][2].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, atof( pMdv ->initial[0][0].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, atof( pMdv ->initial[0][1].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, atof( pMdv ->initial[0][2].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, atof( pEvid->initial[0][0].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, atof( pEvid->initial[0][1].c_str() ), 0.0 );
-   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, atof( pEvid->initial[0][2].c_str() ), 0.0 );
 
   remove( gData );
   delete [] gData;
@@ -1265,7 +1227,6 @@ CppUnit::Test * ClientTranslatorTest::suite()
 
   suiteOfTests->addTest( new CppUnit::TestCaller<ClientTranslatorTest>
 			 ("testDataWithID", &ClientTranslatorTest::testDataWithID ) );
-  /*
   suiteOfTests->addTest( new CppUnit::TestCaller<ClientTranslatorTest>
 			 ("testDataShuffledID", &ClientTranslatorTest::testDataShuffledID ) );
   suiteOfTests->addTest( new CppUnit::TestCaller<ClientTranslatorTest>
@@ -1282,7 +1243,6 @@ CppUnit::Test * ClientTranslatorTest::suite()
 			 ("testNoMdvNoEvid", &ClientTranslatorTest::testNoMdvNoEvid ) );
   suiteOfTests->addTest( new CppUnit::TestCaller<ClientTranslatorTest>
 			 ("testWithMdvWithEvid", &ClientTranslatorTest::testWithMdvWithEvid ) );
-  */
  return suiteOfTests;
 }
 
