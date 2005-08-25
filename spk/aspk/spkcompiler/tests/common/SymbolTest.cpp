@@ -347,7 +347,7 @@ void SymbolTest::testCreateLabel()
   CPPUNIT_ASSERT_EQUAL( synonym,   cp.synonym );
   CPPUNIT_ASSERT_EQUAL( vec,       cp.object_type );
   CPPUNIT_ASSERT_EQUAL( full,      cp.structure );
-  CPPUNIT_ASSERT_EQUAL( user ,     cp.owner );
+  CPPUNIT_ASSERT_EQUAL( Symbol::DATASET,     cp.owner );
   CPPUNIT_ASSERT_EQUAL( readonly,  cp.access );
   CPPUNIT_ASSERT_EQUAL( 3,         static_cast<int>( cp.dimension.size() ) );
   CPPUNIT_ASSERT_EQUAL( 5,         cp.dimension[0] );

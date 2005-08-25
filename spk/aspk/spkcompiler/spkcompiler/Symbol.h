@@ -24,12 +24,6 @@ class Symbol{
 public:
 
   /**
-   * The types of symbols.
-   */
-  enum SymbolType { DATALABEL,   /** Data label **/
-		    USERDEFINED, /** User defined variable **/
-		    PREDEFINED   /** Predefined variable **/ };
-  /**
    * The types of data object associated with symbols.
    */
   enum ObjectType { SCALAR,      /** Scalar **/
@@ -88,13 +82,6 @@ public:
    *                  the square matrix is 3 by 3.
    */
    Symbol( const std::string& nameIn,
-           const std::string& synonymIn,
-           enum SymbolType stIn,
-           enum ObjectType otIn,
-           enum Structure msIn,
-           const std::valarray<int>& dimIn );
-
-   Symbol( const std::string& nameIn,
 	   const std::string& synonymIn,
 	   enum  Ownership    ownerIn,
 	   enum  Access       accessIn,
@@ -141,7 +128,6 @@ public:
    *
    * @param var The name of the user-defined (scalar) variable.
    */
-   static Symbol createScalar( const std::string& var );
    static Symbol createScalar( const std::string& var, 
 			       enum Symbol::Ownership owner, 
 			       enum Symbol::Access access );
@@ -162,7 +148,6 @@ public:
    * @param var The name of the NONMEM (vector) variable.
    * @param length The length of the vector.
    */
-   static Symbol createVector( const std::string& var, int length );
    static Symbol createVector( const std::string& var, int veclen, 
 			       enum Symbol::Ownership owner, 
 			       enum Symbol::Access access );
@@ -184,7 +169,6 @@ public:
    * @param structure  The matrix structure (ie. sparseness).
    * @param dim The dimension of the square matrix.
    */
-   static Symbol createMatrix( const std::string& var, enum Structure structure, int dim );
    static Symbol createSymmetricMatrix( const std::string& var, 
 			       enum Structure structure, 
 			       int dim,
@@ -228,11 +212,6 @@ public:
     * The alias/synonym for the symbol.  This can be empty.
     */
    std::string synonym;
-
-   /**
-    * The symbol type.
-    */
-   enum SymbolType symbol_type;
 
    /**
     * The data object type.
