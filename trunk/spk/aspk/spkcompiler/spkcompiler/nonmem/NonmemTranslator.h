@@ -101,7 +101,8 @@ class NonmemTranslator : public ClientTranslator
     std::string S;
     std::string ALAG;
     std::string FO;
-    std::string SO;
+    std::string F0;
+    std::string S0;
     std::string RATE;
     std::string TIME;
     std::string TSCALE;
