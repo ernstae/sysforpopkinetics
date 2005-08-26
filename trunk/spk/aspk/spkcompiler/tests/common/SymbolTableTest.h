@@ -13,9 +13,6 @@
  */
 class SymbolTableTest : public CppUnit::TestFixture {
 
-   enum Symbol::SymbolType datalabel;
-   enum Symbol::SymbolType nonmem;
-   enum Symbol::SymbolType userdef;
    enum Symbol::ObjectType scalar;
    enum Symbol::ObjectType vec;
    enum Symbol::ObjectType matrix;
