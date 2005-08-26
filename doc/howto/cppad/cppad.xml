@@ -130,8 +130,10 @@
       </listitem>
       <listitem>
         <para>
-        Since CppAD is entirely templated, that's all we have to do.
-        Ignore the library (libCppAD.a) created by running Make. 
+        Finally copy the library, libCppAD.a, to /usr/local/lib/spktest/:
+        <screen>
+        cp lib/lib* /usr/local/lib/spktest/
+        </screen>
         </para>
       </listitem>
     </orderedlist>
