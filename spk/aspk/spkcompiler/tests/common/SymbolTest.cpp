@@ -16,9 +16,6 @@ using namespace CppUnit;
 
 void SymbolTest::setUp()
 {
-  datalabel  = Symbol::DATALABEL;
-  nonmem     = Symbol::PREDEFINED;
-  userdef    = Symbol::USERDEFINED;
   scalar     = Symbol::SCALAR;
   vec        = Symbol::VECTOR;
   matrix     = Symbol::MATRIX;
