@@ -12,12 +12,16 @@ testall_SOURCES = \
 	DiagCovTest.cpp \
 	FullCovTest.cpp \
 	IndPredModelTest.cpp \
+	OdeBreakTest.cpp \
+	OdePredBaseTest.cpp \
 	PopPredModelTest.cpp \
 	testall.cpp \
 	compareToKnown.h \
 	DiagCovTest.h \
 	FullCovTest.h \
 	IndPredModelTest.h \
+	OdeBreakTest.h \
+	OdePredBaseTest.h \
 	PopPredModelTest.h \
 	../config.h
 
@@ -26,4 +30,6 @@ pkginclude_HEADERS = \
 	DiagCovTest.h \
 	FullCovTest.h \
 	IndPredModelTest.h \
+	OdeBreakTest.h \
+	OdePredBaseTest.h \
 	PopPredModelTest.h

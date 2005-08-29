@@ -7,6 +7,8 @@
 #include "src/DiagCovTest.h"
 #include "src/FullCovTest.h"
 #include "src/IndPredModelTest.h"
+#include "src/OdeBreakTest.h"
+#include "src/OdePredBaseTest.h"
 #include "src/PopPredModelTest.h"
 
 using namespace std;
@@ -30,10 +32,12 @@ int main( int argc, const char * argv[] )
   map<string, CppUnit::Test*> master_list_of_tests;
   vector<CppUnit::Test*> tests_to_be_executed;
 
-  master_list_of_tests[ "DiagCovTest" ]               = DiagCovTest::suite();
-  master_list_of_tests[ "FullCovTest" ]               = FullCovTest::suite();
-  master_list_of_tests[ "IndPredModelTest  " ]        = IndPredModelTest  ::suite();
-  master_list_of_tests[ "PopPredModelTest  " ]        = PopPredModelTest  ::suite();
+  master_list_of_tests[ "DiagCovTest" ]               = DiagCovTest       ::suite();
+  master_list_of_tests[ "FullCovTest" ]               = FullCovTest       ::suite();
+  master_list_of_tests[ "IndPredModelTest" ]          = IndPredModelTest  ::suite();
+  master_list_of_tests[ "OdeBreakTest" ]              = OdeBreakTest      ::suite();
+  master_list_of_tests[ "OdePredBaseTest" ]           = OdePredBaseTest   ::suite();
+  master_list_of_tests[ "PopPredModelTest" ]          = PopPredModelTest  ::suite();
 
   //
   // This is the case where user didn't select specific unit tests.
