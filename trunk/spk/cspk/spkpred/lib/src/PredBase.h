@@ -1,18 +1,55 @@
-/**
+/*
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+*/
+/*************************************************************************
+ *//**
  * @file PredBase.h
  * 
+ * 
  * Declares PredBase class.
- */
+ *//*
+ * Author: Sachiko Honda
+ *
+ *************************************************************************/
+
 #ifndef PREDBASE_H
 #define PREDBASE_H
+
+/*------------------------------------------------------------------------
+ * Include files
+ *------------------------------------------------------------------------*/
 
 #include <vector>
 
 
-/**
- * Abstract class prividing only the interfaces needed to evaluate
- * the user's PRED definition. 
- */
+/*************************************************************************
+ *
+ * Class: PredBase
+ *
+ *//**
+ * This abstract base class provides the interfaces needed to evaluate
+ * Pred block based models.
+ *//*
+ *************************************************************************/
+
 template <class Value>
 class PredBase
 {
@@ -31,6 +68,10 @@ public:
    * The variable <code>F</code> is the model for the expected value
    * for the DV data item, and the variable <code>Y</code> is the full
    * statistical model for the DV that includes the noise in the data.
+   *
+   * This function should set the value for DV, and it should also set
+   * the values for all of the other data items that appear in the
+   * $INPUT record.
    *
    * @param thetaOffset     The index to the head of THETA vector within indepVar.
    * @param thetaLen        The length of THETA vector.
@@ -79,14 +120,14 @@ public:
    *                        data record was missing.
    */
   virtual bool eval( int thetaOffset, int thetaLen,
-		     int etaOffset,   int etaLen,
-		     int epsOffset,   int epsLen,
-		     int fOffset,     int fLen,
-		     int yOffset,     int yLen,
-		     int i,
-		     int j,
-		     const std::vector<Value>& indepVar,
-		     std::vector<Value>& depVar ) = 0;
+                     int etaOffset,   int etaLen,
+                     int epsOffset,   int epsLen,
+                     int fOffset,     int fLen,
+                     int yOffset,     int yLen,
+                     int i,
+                     int j,
+                     const std::vector<Value>& indepVar,
+                     std::vector<Value>& depVar ) = 0;
 
   /**
    * getNRecords( int i ) returns the number of data records
@@ -98,13 +139,14 @@ public:
    * function.
    *
    * In order to be backward compatible, the implementation for this
-   * function provided here in this abstract base class returns the
-   * number of observation records as the number of data records.
+   * function provided in this abstract base class returns the number
+   * of observation records as the number of data records.
    *
    * Since there are usually more data records than observation
-   * records, this function's implementation will usually be wrong,
-   * and so it should be replaced in concrete subclasses by an
-   * implementation that returns the right number of data records.
+   * records, this function's implementation will usually be wrong.
+   * If that is the case, then its implementation should be replaced
+   * in the concrete subclass by an implementation that returns the
+   * right number of data records.
    *
    * @param i The index to the individual of interest.
    *          0 indicates the first individual in the population.

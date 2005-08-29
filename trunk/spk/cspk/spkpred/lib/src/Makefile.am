@@ -22,6 +22,8 @@ libspkpred_la_SOURCES = \
 	FullCov.h \
 	IndPredModel.h \
 	isEqual.h \
+	OdeBreak.h \
+	OdePredBase.h \
 	PopPredModel.h \
 	PredBase.h
 
@@ -37,6 +39,8 @@ libspkpred_release_la_SOURCES = \
 	FullCov.h \
 	IndPredModel.h \
 	isEqual.h \
+	OdeBreak.h \
+	OdePredBase.h \
 	PopPredModel.h \
 	PredBase.h
 
@@ -46,6 +50,8 @@ pkginclude_HEADERS = \
 	FullCov.h \
 	IndPredModel.h \
 	isEqual.h \
+	OdeBreak.h \
+	OdePredBase.h \
 	PopPredModel.h \
 	PredBase.h
 
