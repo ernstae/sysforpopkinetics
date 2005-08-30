@@ -254,19 +254,16 @@ $end
 # include <CppAD/OdeErrControl.h>
 # include <CppAD/Runge45.h>
 # include <cmath>
+# include <spk/SpkException.h>
 
 # define MaxNumberOdeStep 1000
 # define MinNumberOdeStep   10
 
 namespace {
-	// [Revisit - Double Version of Abs Func is Currently Commented Out - Mitch] 
-
-	// This function was commented out because it was causing the
-	// compiler confusion as to which abs function to user.
-	/*
+	// local abs funciton for use of OdeBreak.h without all of CppAD
+	// will cause a conflict if "using namespace CppAD" is also used. 
 	double abs(double x)
 	{	return	std::fabs(x); }
-	*/
 }
 
 template <typename Scalar, typename Vector, typename Eval>
@@ -285,7 +282,7 @@ public:
 		Vector &xb      ,
 		Vector &eb      )
 	{	size_t M = 1;
-		xb = Runge45(*F, M, ta, tb, xa, eb); 
+		xb = CppAD::Runge45(*F, M, ta, tb, xa, eb); 
 	};
 };
 
@@ -302,29 +299,80 @@ void OdeBreak(
 	const size_t K = btime.size();
 	const size_t J = otime.size();
 	const size_t N = eabs.size();
-	assert( K > 0 );
-	assert( J > 0 );
-	assert( N > 0 );
-	assert( N * J == xout.size() );
+	if( K <= 0 )  // number of break times must be greater than zero
+        {
+		char m[ SpkError::maxMessageLen() ];
+  		sprintf( m, "The number of break times must be greater than zero: it was %d.", K );
+		throw SpkException( SpkError::SPK_USER_INPUT_ERR, m, __LINE__, __FILE__ );
+	}
+	if( J <= 0 )  // number of output times must be greater than zero
+	{
+		char m[ SpkError::maxMessageLen() ];
+  		sprintf( m, "The number of output times must be greater than zero: it was %d.", J );
+		throw SpkException( SpkError::SPK_USER_INPUT_ERR, m, __LINE__, __FILE__ );
+	}
+	if( N <= 0 )  // state space dimension msut be greater than zero
+	{
+		char m[ SpkError::maxMessageLen() ];
+  		sprintf( m, "The state space dimension must be greater than zero: it was %d.", N );
+		throw SpkException( SpkError::SPK_USER_INPUT_ERR, m, __LINE__, __FILE__ );
+	}
+	// result vector must have size equal to state space dimension
+	// times the number of output times
+	if( N * J != xout.size() )
+	{
+		char m[ SpkError::maxMessageLen() ];
+  		sprintf( m, "The result vector must have size equal to the product of the state space dimesion and the number of output times." );
+		throw SpkException( SpkError::SPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+	}
 
 	// local vectors with same length as x 
 	Vector x(N), g(N), e(N), enext(N), xnext(N);
 
+	size_t k, j;
+#ifndef NDEBUG
 	// break point times 
-	size_t k;
 	if( K > 1 )
+	{	// values in btime array must be monatone non-decreasing
 		for(k = 0; k < K-2; k++)
-			assert( btime[k] <= btime[k+1] );
+		{
+			if( btime[k] > btime[k+1] )
+			{
+				char m[ SpkError::maxMessageLen() ];
+		  		sprintf( m, "The values in btime array must be monatone non-decreasing." );
+				throw SpkException( SpkError::SPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+			}
+		}
+	}
 
-	// output point times
-	size_t j;
-	assert( btime[0] < otime[0] );
+	
+	// first break time must be less than first output time
+	if( btime[0] >= otime[0] )
+	{
+		char m[ SpkError::maxMessageLen() ];
+  		sprintf( m, "The first brak time must be less than first output time." );
+		throw SpkException( SpkError::SPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+	}
 	if( J > 1 )
+	{	// values in the otime array must be monatone increasing
 		for(j = 0; j < J-2; j++)
-			assert( otime[j] < otime[j+1] );
-
-	assert( btime[0]   < otime[0]  );
-	assert( btime[K-1] < otime[J-1] );
+		{
+			if( otime[j] >= otime[j+1] )
+			{
+				char m[ SpkError::maxMessageLen() ];
+		  		sprintf( m, "The values in otime array must be monatone increasing." );
+				throw SpkException( SpkError::SPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+			}
+		}
+	}
+	// last break time must be less than last output time
+	if( btime[K-1] >= otime[J-1] )
+	{
+		char m[ SpkError::maxMessageLen() ];
+		sprintf( m, "The last break time must be less than last output time." );
+		throw SpkException( SpkError::SPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+	}
+#endif
 
 	// integration method
 	Method<Scalar, Vector, Eval> method(&eval);
@@ -347,9 +395,21 @@ void OdeBreak(
 
 	// repeat until all output points are calculated
 	while( j < J )
-	{	assert( t < otime[j] );
+	{	// internal consistency check in OdeBreak
+		if( t >= otime[j] )
+		{
+			char m[ SpkError::maxMessageLen() ];
+		  	sprintf( m, "assert( t >= otime[%d] ) failed: t was %f, otime[%d] was %f.", j, CppAD::Value(t), j, CppAD::Value(otime[j]) );
+			throw SpkException( SpkError::SPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+		}
 		if( k < K )
-		{	assert( t <= btime[k] );	
+		{	// internal consistency check in OdeBreak
+			if( t > btime[k] )
+			{
+				char m[ SpkError::maxMessageLen() ];
+			  	sprintf( m, "assert( t >= btime[%d] ) failed: t was %f, btime[%d] was %f.", j, CppAD::Value(t), j, CppAD::Value(btime[j]) );
+				throw SpkException( SpkError::SPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+			}
 
 			// check if this is a break point
 			while( k < K && btime[k] == t )
@@ -366,8 +426,15 @@ void OdeBreak(
 			tnext = btime[k];
 		else	tnext = otime[j];
 
+		// internal consistency check in OdeBreak
+		if( tnext <= t )
+		{
+			char m[ SpkError::maxMessageLen() ];
+			sprintf( m, "tnext must be greater than t: tnext was %f, t was %f.", CppAD::Value(tnext), CppAD::Value(t) );
+			throw SpkException( SpkError::SPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+		}
+
 		// absolute error bound for this step
-		assert( tnext > t );
 		Scalar fraction = (tnext - t) / total;
 		for(i = 0; i < N; i++)
 			e[i] = fraction * eabs[i];
@@ -375,7 +442,7 @@ void OdeBreak(
 		// solve the ODE from t to tnext
 		bool ok = false;
 		while( ! ok )
-		{	xnext = OdeErrControl(method, 
+		{	xnext = CppAD::OdeErrControl(method, 
 				t, 
 				tnext, 
 				x, 
@@ -401,8 +468,15 @@ void OdeBreak(
 			if( shrink )
 				smin = smin / 2;
 
+			// internal consistency check in OdeBreak
+			if( !( ok | shrink ) )
+			{
+				char m[ SpkError::maxMessageLen() ];
+				sprintf( m, "assert( ok | shrink ): ok was %d, shrink was %d.", ok, shrink );
+				throw SpkException( SpkError::SPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+			}
+
 			// avoid infinite loop
-			assert( ok | shrink );
 			if( ! ok )
 				if( ! shrink )
 					ok = true;
