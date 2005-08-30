@@ -493,6 +493,7 @@
 
   SPK_STATISTICS_ERR $cend
   indicates some error occurred during calculating statistics.
+  $rend
 
   SPK_USER_INPUT_ERR      $cend
   This constant value is to be used to indicate an invalid parameter value given by the end user.
@@ -504,6 +505,10 @@
 
   SPK_PARALLEL_END_SIGNAL  $cend
   indicates the end of Spk.  This is not an error; it is a signal generated in an exceptional circumstance. 
+  $rend
+
+  SPK_PROGRAMMER_ERR $cend
+  indicates the libarary implementator's programming error.
   $rend
 
   SPK_INSUFFICIENT_MEM_ERR     $cend
@@ -1135,6 +1140,7 @@ const SpkError::ErrorMap SpkError::fillErrorMap()
   tmpMap.insert( ErrorMap::value_type(SPK_NOT_SYMMETRIC_ERR,  "SPK_NOT_SYMMETRIC_ERR") );
 
   tmpMap.insert( ErrorMap::value_type(SPK_USER_INPUT_ERR,     "SPK_USER_INPUT_ERR") );
+  tmpMap.insert( ErrorMap::value_type(SPK_PROGRAMMER_ERR,     "SPK_PROGRAMMER_ERR") );
   tmpMap.insert( ErrorMap::value_type(SPK_PARALLEL_ERR,       "SPK_PARALLEL_ERR") );
   tmpMap.insert( ErrorMap::value_type(SPK_PARALLEL_END_SIGNAL,"SPK_PARALLEL_END_SIGNAL") );
 
