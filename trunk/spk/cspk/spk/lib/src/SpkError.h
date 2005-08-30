@@ -116,6 +116,9 @@ public:
       // Invalid User input errors
       SPK_USER_INPUT_ERR,
 
+      // Programmer errors
+      SPK_PROGRAMMER_ERR,
+
       // Parallel communication error
       SPK_PARALLEL_ERR,
 
