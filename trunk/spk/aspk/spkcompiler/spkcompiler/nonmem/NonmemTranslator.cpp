@@ -7455,7 +7455,7 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
      sprintf( ALAGi, "ALAG%d", i+1 );
      sprintf( Si, "S%d", i+1 );
      oOdePred_h << "  " << Ri << "               ( getCompInfusRate(" << i << ") )," << endl;
-     oOdePred_h << "  " << Di << "               ( getCompInfusDuration(" << i << ") )," << endl;
+     oOdePred_h << "  " << Di << "               ( getCompInfusDurat(" << i << ") )," << endl;
      oOdePred_h << "  " << ALAGi << "            ( getCompAbsorpLagTime(" << i << ") )," << endl;
      oOdePred_h << "  " << Si << "               ( getCompScaleParam(" << i << ") )," << endl;
 
@@ -7605,7 +7605,7 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
      sprintf( ALAGi, "ALAG%d", i+1 );
      sprintf( Si, "S%d", i+1 );
      oOdePred_h << "   " << Ri << "    = getCompInfusRate    ( " << i << " );" << endl;
-     oOdePred_h << "   " << Di << "    = getCompInfusDuration( " << i << " );" << endl;
+     oOdePred_h << "   " << Di << "    = getCompInfusDurat ( " << i << " );" << endl;
      oOdePred_h << "   " << ALAGi << " = getCompAbsorpLagTime( " << i << " );" << endl;
      oOdePred_h << "   " << Si << "    = getCompScaleParam   ( " << i << " );" << endl;
 
@@ -8685,7 +8685,8 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "            }" << endl;
   oIndDriver << "            catch( const SpkException& e )" << endl;
   oIndDriver << "            {" << endl;
-  oIndDriver << "               isStatSuccess = false;" << endl;
+  oIndDriver << "               errors.cat( e );" << endl;
+  oIndDriver << "               isStatSuccess &= false;" << endl;
   oIndDriver << "               ret = STAT_FAILURE;" << endl;
   //  oIndDriver << "               goto REPORT_GEN;" << endl;
   oIndDriver << "            }" << endl;
@@ -8694,7 +8695,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "               char message[] = \"Unknown exception: failed in residuals calculation!!!\";" << endl;
   oIndDriver << "               SpkError e( SpkError::SPK_UNKNOWN_ERR, message, __LINE__, __FILE__ );" << endl;
   oIndDriver << "               errors.push( e );" << endl;
-  oIndDriver << "               isStatSuccess = false;" << endl;
+  oIndDriver << "               isStatSuccess &= false;" << endl;
   oIndDriver << "               ret = STAT_FAILURE;" << endl;
   //  oIndDriver << "               goto REPORT_GEN;" << endl;
   oIndDriver << "            }" << endl;
@@ -8741,12 +8742,12 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "                                (isCoefficientOut?        &stdParCoefficientOut: NULL)," << endl;
   oIndDriver << "                                (isConfidenceOut?         &stdParConfidenceOut : NULL) " << endl;
   oIndDriver << "                               );" << endl;
-  oIndDriver << "               isStatSuccess = true;" << endl;
+  oIndDriver << "               isStatSuccess &= true;" << endl;
   oIndDriver << "            }" << endl;
   oIndDriver << "            catch( const SpkException& e )" << endl;
   oIndDriver << "            {" << endl;
   oIndDriver << "               errors.cat( e );" << endl;
-  oIndDriver << "               isStatSuccess = false;" << endl;
+  oIndDriver << "               isStatSuccess &= false;" << endl;
   oIndDriver << "               ret = STAT_FAILURE;" << endl;
   //  oIndDriver << "               goto REPORT_GEN;" << endl;
   oIndDriver << "            }" << endl;
@@ -8755,7 +8756,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "               char message[] = \"Unknown exception: failed in statistics calculation!!!\";" << endl;
   oIndDriver << "               SpkError e( SpkError::SPK_UNKNOWN_ERR, message, __LINE__, __FILE__ );" << endl;
   oIndDriver << "               errors.push( e );" << endl;
-  oIndDriver << "               isStatSuccess = false;" << endl;
+  oIndDriver << "               isStatSuccess &= false;" << endl;
   oIndDriver << "               ret = STAT_FAILURE;" << endl;
   //  oIndDriver << "               goto REPORT_GEN;" << endl;
   oIndDriver << "            }" << endl;
@@ -9061,7 +9062,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "#include <CppAD/CppAD.h>"              << endl;
   oPopDriver << endl;
  
-  oPopDriver << "// For parameter esitimate " << endl;
+  oPopDriver << "// For parameter estimate " << endl;
   oPopDriver << "#include <spk/fitPopulation.h>"    << endl;
   oPopDriver << "#include <spk/Optimizer.h>"        << endl;
   oPopDriver << endl;
@@ -9446,9 +9447,6 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            }" << endl;
   oPopDriver << "            catch( SpkException& e )" << endl;
   oPopDriver << "            {" << endl;
-  oPopDriver << "               char mess[ SpkError::maxMessageLen() ];" << endl;
-  oPopDriver << "               sprintf( mess, \"Failed in population parameter estimation.\\n\" );" << endl;
-  oPopDriver << "               e.push( SpkError::SPK_OPT_ERR, mess, __LINE__, __FILE__ );" << endl;
   oPopDriver << "               errors.cat( e );" << endl;
   oPopDriver << "               isOptSuccess = false;" << endl;
   oPopDriver << "               ret = CONVERGENCE_FAILURE;" << endl;
@@ -9563,10 +9561,11 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "               catch( SpkException& e )" << endl;
   oPopDriver << "               {" << endl;
   oPopDriver << "                  char message[256];" << endl;
-  oPopDriver << "                  sprintf( message, \"Failed during the calculation of %i-th individual's residuals!!!\", i );" << endl;
-  oPopDriver << "                  SpkError e( SpkError::SPK_STATISTICS_ERR, message, __LINE__, __FILE__ );" << endl;
-  oPopDriver << "                  errors.push( e );" << endl;
-  oPopDriver << "                  isStatSuccess = false;" << endl;
+  oPopDriver << "                  sprintf( message, \"Failed during the calculation of %i-th individual's residuals!\", i );" << endl;
+  oPopDriver << "                  SpkError ee( SpkError::SPK_STATISTICS_ERR, message, __LINE__, __FILE__ );" << endl;
+  oPopDriver << "                  e.push( ee );" << endl;
+  oPopDriver << "                  errors.cat( e );" << endl;
+  oPopDriver << "                  isStatSuccess &= false;" << endl;
   oPopDriver << "                  ret = STAT_FAILURE;" << endl;
   //  oPopDriver << "                  goto REPORT_GEN;" << endl;
   oPopDriver << "               }" << endl;
@@ -9576,7 +9575,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "                  sprintf( message, \"Unknown exception: failed during the calculation of %i-th individual's residuals!!!\", i );" << endl;
   oPopDriver << "                  SpkError e( SpkError::SPK_UNKNOWN_ERR, message, __LINE__, __FILE__ );" << endl;
   oPopDriver << "                  errors.push( e );" << endl;
-  oPopDriver << "                  isStatSuccess = false;" << endl;
+  oPopDriver << "                  isStatSuccess &= false;" << endl;
   oPopDriver << "                  ret = STAT_FAILURE;" << endl;
   //  oPopDriver << "                  goto REPORT_GEN;" << endl;
   oPopDriver << "               }" << endl;
@@ -9609,9 +9608,10 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            catch( SpkException& e )" << endl;
   oPopDriver << "            {" << endl;
   oPopDriver << "               char message[] = \"Failed during the calculation of population (non-conditional) residuals!!!\";" << endl;
-  oPopDriver << "               SpkError e( SpkError::SPK_STATISTICS_ERR, message, __LINE__, __FILE__ );" << endl;
-  oPopDriver << "               errors.push( e );" << endl;
-  oPopDriver << "               isStatSuccess = false;" << endl;
+  oPopDriver << "               SpkError ee( SpkError::SPK_STATISTICS_ERR, message, __LINE__, __FILE__ );" << endl;
+  oPopDriver << "               e.push( ee );" << endl;
+  oPopDriver << "               errors.cat( e );" << endl;
+  oPopDriver << "               isStatSuccess &= false;" << endl;
   oPopDriver << "               ret = STAT_FAILURE;" << endl;
   //  oPopDriver << "               goto REPORT_GEN;" << endl;
   oPopDriver << "            }" << endl;
@@ -9620,7 +9620,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "               char message[] = \"Unknown exception: failed during the calculation of population (non-conditional) residuals!!!\";" << endl;
   oPopDriver << "               SpkError e( SpkError::SPK_UNKNOWN_ERR, message, __LINE__, __FILE__ );" << endl;
   oPopDriver << "               errors.push( e );" << endl;
-  oPopDriver << "               isStatSuccess = false;" << endl;
+  oPopDriver << "               isStatSuccess &= false;" << endl;
   oPopDriver << "               ret = STAT_FAILURE;" << endl;
   //  oPopDriver << "               goto REPORT_GEN;" << endl;
   oPopDriver << "            }" << endl;
@@ -9647,9 +9647,10 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            catch( SpkException& e )" << endl;
   oPopDriver << "            {" << endl;
   oPopDriver << "               char message[] = \"Failed during the calculation of conditional residuals!!!\";" << endl;
-  oPopDriver << "               SpkError e( SpkError::SPK_STATISTICS_ERR, message, __LINE__, __FILE__ );" << endl;
-  oPopDriver << "               errors.push( e );" << endl;
-  oPopDriver << "               isStatSuccess = false;" << endl;
+  oPopDriver << "               SpkError ee( SpkError::SPK_STATISTICS_ERR, message, __LINE__, __FILE__ );" << endl;
+  oPopDriver << "               e.push( ee );" << endl;
+  oPopDriver << "               errors.cat( e );" << endl;
+  oPopDriver << "               isStatSuccess &= false;" << endl;
   oPopDriver << "               ret = STAT_FAILURE;" << endl;
   //  oPopDriver << "               goto REPORT_GEN;" << endl;
   oPopDriver << "            }" << endl;
@@ -9658,7 +9659,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "               char message[] = \"Unknown exception: failed during the calculation of conditional residuals!!!\";" << endl;
   oPopDriver << "               SpkError e( SpkError::SPK_UNKNOWN_ERR, message, __LINE__, __FILE__ );" << endl;
   oPopDriver << "               errors.push( e );" << endl;
-  oPopDriver << "               isStatSuccess = false;" << endl;
+  oPopDriver << "               isStatSuccess &= false;" << endl;
   oPopDriver << "               ret = STAT_FAILURE;" << endl;
   //  oPopDriver << "               goto REPORT_GEN;" << endl;
   oPopDriver << "            }" << endl;
@@ -9741,7 +9742,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "                                (isCoefficientOut?        &stdParCoefficientOut: NULL)," << endl;
   oPopDriver << "                                (isConfidenceOut?         &stdParConfidenceOut : NULL) " << endl;
   oPopDriver << "                               );" << endl;
-  oPopDriver << "               isStatSuccess = true;" << endl;
+  oPopDriver << "               isStatSuccess &= true;" << endl;
   oPopDriver << "            }" << endl;
   oPopDriver << "            catch( SpkException& e )" << endl;
   oPopDriver << "            {" << endl;
@@ -9749,7 +9750,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "               sprintf( mess, \"Failed to compute statistics value(s).\\n\" );" << endl;
   oPopDriver << "               e.push( SpkError::SPK_STATISTICS_ERR, mess, __LINE__, __FILE__ );" << endl;
   oPopDriver << "               errors.cat( e );" << endl;
-  oPopDriver << "               isStatSuccess = false;" << endl;
+  oPopDriver << "               isStatSuccess &= false;" << endl;
   oPopDriver << "               ret = STAT_FAILURE;" << endl;
   //oPopDriver << "               goto REPORT_GEN;" << endl;
   oPopDriver << "            }" << endl;
@@ -9758,7 +9759,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "               char message[] = \"Unknown exception: failed in statistics calculation!!!\";" << endl;
   oPopDriver << "               SpkError e( SpkError::SPK_UNKNOWN_ERR, message, __LINE__, __FILE__ );" << endl;
   oPopDriver << "               errors.push( e );" << endl;
-  oPopDriver << "               isStatSuccess = false;" << endl;
+  oPopDriver << "               isStatSuccess &= false;" << endl;
   oPopDriver << "               ret = STAT_FAILURE;" << endl;
   //oPopDriver << "               goto REPORT_GEN;" << endl;
   oPopDriver << "            }" << endl;
