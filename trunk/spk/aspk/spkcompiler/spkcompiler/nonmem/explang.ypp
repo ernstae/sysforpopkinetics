@@ -259,6 +259,9 @@ namespace{
    const char * const STR_SQRT     = "sqrt";
    const char * const STR_TAN      = "tan";
    const char * const STR_TANH     = "tanh";
+
+   const char * const STR_LININTERP= "lininterp";
+
    const char * const STR_ADD      = "add";
    const char * const STR_SUBTRACT = "subtract";
    const char * const STR_MULTIPLY = "multiply";
@@ -282,6 +285,7 @@ namespace{
    const char * const STR_SEMICOLON= ";";
    const char * const STR_NEWLINE  = "\n";
    const char * const STR_TAB      = "\t";
+
    bool inRHS = false;
 };
 %}
@@ -306,6 +310,7 @@ namespace{
 %token <c_str>  CLOSE_ARRAY_ELEM_LIST
 %token <c_str>  POWER_OP
 %token <c_str>  DEFINED_UNARY_FUNCTION
+%token <c_str>  DEFINED_BINARY_FUNCTION
 %token <c_str>  DIGIT_STRING
 %token <c_str>  ENG_NOTATION
 %token <c_str>  SIGNIFICAND
@@ -1154,11 +1159,11 @@ array_element_list ',' expr {
 //
 // A function_ref is a reference to an existing function.
 // NONMEM abbriviated code supports only sqrt, exp, log and log10.
-// However, SPK Compiler will support more:
+// SPK Compiler will support the following extra functions:
 //   abs, acos, asin, atan, atan2, cos, cosh, exp, log, log10, max, min
 //   mod, sin sinh, sqrt, tan tanh
-// At this point, atan is the one extra function being supported.
-// It retrurns a tree topped with label "function".
+// Plus, a binary function:
+//   lininterp
 //
 //==================================================================================
 function_ref :
@@ -1186,6 +1191,31 @@ DEFINED_UNARY_FUNCTION '(' arithmatic_expr ')' {
        sprintf( buf, "sin( %s )",  $3 );
    else if( strcmp( lowercase, STR_COS ) == 0 )
        sprintf( buf, "cos( %s )",  $3 );
+
+   else if( strcmp( lowercase, STR_ABS ) == 0 )
+       sprintf( buf, "fabs( %s )",  $3 );
+   else if( strcmp( lowercase, STR_ACOS ) == 0 )
+       sprintf( buf, "acos( %s )",  $3 );
+   else if( strcmp( lowercase, STR_ASIN ) == 0 )
+       sprintf( buf, "asin( %s )",  $3 );
+   else if( strcmp( lowercase, STR_ATAN ) == 0 )
+       sprintf( buf, "atan( %s )",  $3 );
+   else if( strcmp( lowercase, STR_ATAN2 ) == 0 )
+       sprintf( buf, "atan2( %s )",  $3 );
+   else if( strcmp( lowercase, STR_COSH ) == 0 )
+       sprintf( buf, "cosh( %s )",  $3 );
+   else if( strcmp( lowercase, STR_MAX ) == 0 )
+       sprintf( buf, "max( %s )",  $3 );
+   else if( strcmp( lowercase, STR_MIN ) == 0 )
+       sprintf( buf, "min( %s )",  $3 );
+   else if( strcmp( lowercase, STR_MOD ) == 0 )
+       sprintf( buf, "mod( %s )",  $3 );
+   else if( strcmp( lowercase, STR_SINH ) == 0 )
+       sprintf( buf, "sinh( %s )",  $3 );
+   else if( strcmp( lowercase, STR_TAN ) == 0 )
+       sprintf( buf, "tan( %s )",  $3 );
+   else if( strcmp( lowercase, STR_TANH ) == 0 )
+       sprintf( buf, "tanh( %s )",  $3 );
    else
    {
       char err[128];
@@ -1193,6 +1223,28 @@ DEFINED_UNARY_FUNCTION '(' arithmatic_expr ')' {
       nm_error( err );
    }
    delete $3;
+   $$ = (char*)strdup(buf);
+}
+|
+DEFINED_BINARY_FUNCTION '(' variable ',' variable ')' {
+
+   int n = strlen( $1 ); 
+   char buf[ n + strlen( "(  )" ) + strlen( $3 ) + 1 ];
+   char lowercase[ n + 1 ];
+   strcpy( lowercase, $1 );
+   for( int i=0; i<n; i++ )
+      lowercase[ i ] = tolower( lowercase[i] );
+
+   if( strcmp( lowercase, STR_LININTERP ) == 0 )
+       sprintf( buf, "lininterp( %s, %s )", $3, $5 );
+   else
+   {
+      char err[128];
+      sprintf( err, "%s is not a supported operation!\n", lowercase );
+      nm_error( err );
+   }
+   delete $3;
+   delete $5;
    $$ = (char*)strdup(buf);
 }
 ;

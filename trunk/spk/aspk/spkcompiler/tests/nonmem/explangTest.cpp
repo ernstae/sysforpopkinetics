@@ -331,7 +331,21 @@ void explangTest::testFunctions()
   fputs( "A = COS(0.0)\n", pInput );
   fputs( "A = B( X**Y )\n", pInput );
   fputs( "A = EXP(X) * SQRT(Y)\n", pInput );
-  fputs( "A = 1.0 * ( EXP(X) + Y )\n", pInput ); 
+  fputs( "A = 1.0 * ( EXP(X) + Y )\n", pInput );
+  fputs( "A = ABS(0.0)\n", pInput );
+  fputs( "A = ACOS(0.0)\n", pInput );
+  fputs( "A = ASIN(0.0)\n", pInput );
+  fputs( "A = ATAN(0.0)\n", pInput );
+  fputs( "A = ATAN2(0.0)\n", pInput );
+  fputs( "A = COSH(0.0)\n", pInput );
+  fputs( "A = MAX(0.0)\n", pInput );
+  fputs( "A = MIN(0.0)\n", pInput );
+  fputs( "A = MOD(0.0)\n", pInput );
+  fputs( "A = SINH(0.0)\n", pInput );
+  fputs( "A = TAN(0.0)\n", pInput );
+  fputs( "A = TANH(0.0)\n", pInput );
+  fputs( "A = LININTERP(X,Y)\n", pInput );
+
   
   table.insertVector( "B", 1, Symbol::USER, Symbol::READWRITE );
 
@@ -355,7 +369,7 @@ void explangTest::testFunctions()
 
   nm_parse();
 
-  CPPUNIT_ASSERT_EQUAL( 10, gSpkExpLines );
+  CPPUNIT_ASSERT_EQUAL( 23, gSpkExpLines );
   CPPUNIT_ASSERT( table.findi( "A" ) != Symbol::empty() );
   CPPUNIT_ASSERT( table.findi( "B" ) != Symbol::empty() );
   
@@ -526,6 +540,152 @@ void explangTest::testFunctions()
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ")" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "+" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "Y" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "fabs(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "0.0" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "acos(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "0.0" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "asin(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "0.0" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "atan(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "0.0" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "atan2(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "0.0" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "cosh(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "0.0" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "max(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "0.0" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "min(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "0.0" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
+
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "mod(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "0.0" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "sinh(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "0.0" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "tan(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "0.0" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "tanh(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "0.0" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
+
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "lininterp(" );
+  pOutput >> buf;
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X," );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "Y" );
   pOutput >> buf;
