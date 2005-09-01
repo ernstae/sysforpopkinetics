@@ -25,7 +25,9 @@ libspkpred_la_SOURCES = \
 	OdeBreak.h \
 	OdePredBase.h \
 	PopPredModel.h \
-	PredBase.h
+	PredBase.h \
+	OdePredBase.h \
+	OdeBreak.h
 
 libspkpred_release_la_SOURCES = \
 	Cov.cpp \
@@ -42,7 +44,9 @@ libspkpred_release_la_SOURCES = \
 	OdeBreak.h \
 	OdePredBase.h \
 	PopPredModel.h \
-	PredBase.h
+	PredBase.h \
+	OdePredBase.h \
+	OdeBreak.h
 
 pkginclude_HEADERS = \
 	Cov.h \
@@ -53,5 +57,7 @@ pkginclude_HEADERS = \
 	OdeBreak.h \
 	OdePredBase.h \
 	PopPredModel.h \
-	PredBase.h
+	PredBase.h \
+	OdePredBase.h \
+	OdeBreak.h
 

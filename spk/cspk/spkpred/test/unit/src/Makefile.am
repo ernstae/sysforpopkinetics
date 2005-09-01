@@ -5,7 +5,7 @@ INST_BASE = /usr/local
 libdir = $(INST_BASE)/lib/spktest
 
 AM_CPPFLAGS = -I$(INST_BASE)/include/spktest -I$(INST_BASE)/cppunit/include -I$(INST_BASE)/include/spktest/CppAD
-AM_LDFLAGS  = -L/usr/local/lib -L$(INST_BASE)/lib/spktest -lspkpred -lspk -lspkopt -llapack -latlas_lapack -lcblas -latlas -lpthread -lm -lcppunit -lxerces-c
+AM_LDFLAGS  = -L/usr/local/lib -L$(INST_BASE)/lib/spktest -lspkpred -lCppAD -lspk -lspkopt -llapack -latlas_lapack -lcblas -latlas -lpthread -lm -lcppunit -lxerces-c
 
 testall_SOURCES = \
 	compareToKnown.cpp \
@@ -15,6 +15,7 @@ testall_SOURCES = \
 	OdeBreakTest.cpp \
 	OdePredBaseTest.cpp \
 	PopPredModelTest.cpp \
+        linearInterpolateTest.cpp \
 	testall.cpp \
 	compareToKnown.h \
 	DiagCovTest.h \
@@ -23,6 +24,7 @@ testall_SOURCES = \
 	OdeBreakTest.h \
 	OdePredBaseTest.h \
 	PopPredModelTest.h \
+        linearInterpolateTest.h \
 	../config.h
 
 pkginclude_HEADERS = \
@@ -32,4 +34,5 @@ pkginclude_HEADERS = \
 	IndPredModelTest.h \
 	OdeBreakTest.h \
 	OdePredBaseTest.h \
-	PopPredModelTest.h
+	PopPredModelTest.h \
+	linearInterpolateTest.h
