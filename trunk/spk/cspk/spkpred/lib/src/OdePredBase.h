@@ -474,8 +474,8 @@ protected:
   ///< Gets a non-const reference to the p-th value for compInfusRate.
   Value& getCompInfusRate( int p ) { return compInfusRate[p]; }
 
-  ///< Gets a non-const reference to the p-th value for compInfusDuration.
-  Value& getCompInfusDuration( int p ) { return compInfusDuration[p]; }
+  ///< Gets a non-const reference to the p-th value for compInfusDurat.
+  Value& getCompInfusDurat( int p ) { return compInfusDurat[p]; }
 
   ///< Gets a non-const reference to the p-th value for compAbsorpLagTime.
   Value& getCompAbsorpLagTime( int p ) { return compAbsorpLagTime[p]; }
