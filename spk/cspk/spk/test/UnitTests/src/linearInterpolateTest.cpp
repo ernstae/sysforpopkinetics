@@ -36,7 +36,6 @@
 
 // SPK Pred test suite header files.
 #include "linearInterpolateTest.h"
-#include "compareToKnown.h"
 
 // SPK Pred library header files.
 #include "../../lib/src/linearInterpolate.h"

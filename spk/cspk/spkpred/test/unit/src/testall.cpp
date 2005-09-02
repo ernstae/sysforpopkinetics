@@ -10,7 +10,6 @@
 #include "src/OdeBreakTest.h"
 #include "src/OdePredBaseTest.h"
 #include "src/PopPredModelTest.h"
-#include "src/linearInterpolateTest.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -39,7 +38,6 @@ int main( int argc, const char * argv[] )
   master_list_of_tests[ "OdeBreakTest" ]              = OdeBreakTest      ::suite();
   master_list_of_tests[ "OdePredBaseTest" ]           = OdePredBaseTest   ::suite();
   master_list_of_tests[ "PopPredModelTest" ]          = PopPredModelTest  ::suite();
-  master_list_of_tests[ "linearInterpolateTest" ]     = linearInterpolateTest::suite();
 
   //
   // This is the case where user didn't select specific unit tests.
