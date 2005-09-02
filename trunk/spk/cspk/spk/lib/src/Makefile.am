@@ -189,6 +189,7 @@ libspk_la_SOURCES = \
 	lambda.h \
 	lambdaDiff.h \
 	lambda2diff.h \
+        linearInterpolate.h \
 	mapObjDiff.h \
 	mapObj.h \
 	mapOpt.h \
@@ -312,6 +313,7 @@ pkginclude_HEADERS = \
 	lambda.h \
 	lambdaDiff.h \
 	lambda2diff.h \
+        linearInterpolate.h \
 	mapObjDiff.h \
 	mapObj.h \
 	mapOpt.h \

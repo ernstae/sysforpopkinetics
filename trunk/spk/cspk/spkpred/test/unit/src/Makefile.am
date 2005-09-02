@@ -15,7 +15,6 @@ testall_SOURCES = \
 	OdeBreakTest.cpp \
 	OdePredBaseTest.cpp \
 	PopPredModelTest.cpp \
-        linearInterpolateTest.cpp \
 	testall.cpp \
 	compareToKnown.h \
 	DiagCovTest.h \
@@ -24,7 +23,6 @@ testall_SOURCES = \
 	OdeBreakTest.h \
 	OdePredBaseTest.h \
 	PopPredModelTest.h \
-        linearInterpolateTest.h \
 	../config.h
 
 pkginclude_HEADERS = \
@@ -35,4 +33,3 @@ pkginclude_HEADERS = \
 	OdeBreakTest.h \
 	OdePredBaseTest.h \
 	PopPredModelTest.h \
-	linearInterpolateTest.h

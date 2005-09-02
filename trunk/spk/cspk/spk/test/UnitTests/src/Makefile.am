@@ -117,6 +117,8 @@ testall_SOURCES = \
 	lambda2diffTest.h \
 	lambdaTest.cpp \
 	lambdaTest.h \
+        linearInterpolateTest.cpp \
+	linearInterpolateTest.h \
 	lTildeTest.cpp \
 	lTildeTest.h \
 	mapObjDiffTest.cpp \
@@ -256,6 +258,7 @@ pkginclude_HEADERS = \
 	isSymmetricTest.h \
 	lambda2diffTest.h \
 	lambdaTest.h \
+	linearInterpolateTest.h \
 	lTildeTest.h \
 	mapObjDiffTest.h \
 	mapObjTest.h \

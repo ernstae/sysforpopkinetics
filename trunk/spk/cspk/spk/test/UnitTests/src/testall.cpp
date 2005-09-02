@@ -57,6 +57,7 @@
 #include "src/isSymmetricTest.h"
 #include "src/lambda2diffTest.h"
 #include "src/lambdaTest.h"
+#include "src/linearInterpolateTest.h"
 #include "src/lTildeTest.h"
 #include "src/mapObjDiffTest.h"
 #include "src/mapObjTest.h"
@@ -173,6 +174,7 @@ int main( int argc, const char * argv[] )
   master_list_of_tests[ "isSymmetricTest" ]                  = isSymmetricTest::suite();
   master_list_of_tests[ "lambda2diffTest" ]                  = lambda2diffTest::suite();
   master_list_of_tests[ "lambdaTest" ]                       = lambdaTest::suite();
+  master_list_of_tests[ "linearInterpolateTest" ]            = linearInterpolateTest::suite();
   master_list_of_tests[ "lTildeTest" ]                       = lTildeTest::suite();
   master_list_of_tests[ "mapObjDiffTest" ]                   = mapObjDiffTest::suite();
   master_list_of_tests[ "mapObjTest" ]                       = mapObjTest::suite();
