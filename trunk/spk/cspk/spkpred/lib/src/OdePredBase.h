@@ -1983,16 +1983,49 @@ private:
     // ordinary differential equations equal to zero.
     std::vector<Value> tolAbs( nComp, 0.0 );
 
+    // This message will be used if an error occurs.
+    string message = "during the evaluation of the compartment amounts for \nall of the requested times for the " +
+      intToOrdinalString( iCurr, ZERO_IS_FIRST_INT ) +
+      " individual.";
+
     // Calculate the amounts in all of the compartments at all of the
     // ODE solution times by solving the differential equations from
     // the DES block numerically.
-    OdeBreak(
-      odeBreakEvalClass,
-      breakTime,
-      odeSolnTime,
-      tolAbs,
-      tolRel,
-      compAmountAllOdeSoln );
+    try
+    {
+      OdeBreak(
+        odeBreakEvalClass,
+        breakTime,
+        odeSolnTime,
+        tolAbs,
+        tolRel,
+        compAmountAllOdeSoln );
+    }
+    catch( SpkException& e )
+    {
+      throw e.push(
+        SpkError::SPK_UNKNOWN_ERR, 
+        ( "An error occurred " + message ).c_str(),
+        __LINE__,
+        __FILE__ );
+    }
+    catch( const std::exception& stde )
+    {
+      throw SpkException(
+        stde,
+        ( "A standard exception was thrown " + message ).c_str(),
+        __LINE__, 
+        __FILE__ );
+    }  
+    catch( ... )
+    {
+      throw SpkException(
+        SpkError::SPK_UNKNOWN_ERR, 
+        ( "An unknown exception was thrown " + message ).c_str(),
+        __LINE__, 
+        __FILE__ );
+    }
+
   }
 
 
