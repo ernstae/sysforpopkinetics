@@ -55,7 +55,6 @@
 #include <cassert>
 #include <vector>
 
-using namespace CppAD;
 using namespace CppUnit;
 using std::vector;
 using SPK_VA::valarray;
