@@ -27,6 +27,7 @@
  * Unit test for the class OdeBreak.
  *
  * Author: Mitch Watrous
+ * Author: Brad Bell
  *
  *************************************************************************/
 
@@ -60,6 +61,9 @@ public:
 private:
   // Test cases for this unit test.
   void FourBolus_OneInfus_Test();
+  void OdeBreakOk_Test();
+  void OneBreakOk_Test();
+  void ZeroBreakOk_Test();
 };
 
 #endif

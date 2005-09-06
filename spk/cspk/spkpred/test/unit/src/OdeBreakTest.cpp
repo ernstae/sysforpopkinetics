@@ -27,6 +27,7 @@
  * Unit test for the class OdeBreak.
  *
  * Author: Mitch Watrous
+ * Author: Brad Bell
  *
  *************************************************************************/
 
@@ -36,7 +37,6 @@
 
 // SPK Pred test suite header files.
 #include "OdeBreakTest.h"
-#include "compareToKnown.h"
 
 // SPK Pred library header files.
 #include <spkpred/OdeBreak.h>
@@ -107,27 +107,41 @@ Test* OdeBreakTest::suite()
     "FourBolus_OneInfus_Test", 
     &OdeBreakTest::FourBolus_OneInfus_Test ));
 
+  suiteOfTests->addTest(new TestCaller<OdeBreakTest>(
+    "OdeBreakOk_Test", 
+    &OdeBreakTest::OdeBreakOk_Test ));
+
+  suiteOfTests->addTest(new TestCaller<OdeBreakTest>(
+    "OneBreakOk_Test", 
+    &OdeBreakTest::OneBreakOk_Test ));
+
+  suiteOfTests->addTest(new TestCaller<OdeBreakTest>(
+    "ZeroBreakOk_Test", 
+    &OdeBreakTest::ZeroBreakOk_Test ));
+
   return suiteOfTests;
 }
 
 
-/*------------------------------------------------------------------------
- * Local class declarations
- *------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
+//
+// Test Case: FourBolus_OneInfus
+//
+//
+// This test checks that OdeBreak works for the case of an
+// experimental design that includes four instantaneous bolus doses
+// and one regular infusion dose.
+//
+//------------------------------------------------------------------------
+
+/*************************************************************************
+ *
+ * Class:  FourBolus_OneInfus_Eval
+ *
+ *************************************************************************/
 
 namespace // [Begin: unnamed namespace]
 {
-
-  //**********************************************************************
-  //
-  // Class:  FourBolus_OneInfus_Eval
-  //
-  //
-  // The experimental design implemented by this Eval class includes
-  // four instantaneous bolus doses and one regular infusion dose.
-  //
-  //**********************************************************************
-
   class FourBolus_OneInfus_Eval
   {
   private:
@@ -197,11 +211,6 @@ namespace // [Begin: unnamed namespace]
 /*************************************************************************
  *
  * Function: FourBolus_OneInfus_Test
- *
- *
- * This test checks that OdeBreak works for the case of an
- * experimental design that includes four instantaneous bolus doses
- * and one regular infusion dose.
  *
  *************************************************************************/
 
@@ -302,3 +311,560 @@ void OdeBreakTest::FourBolus_OneInfus_Test()
 
 }
 
+
+//------------------------------------------------------------------------
+//
+// Test Case: OdeBreakOk
+//
+//------------------------------------------------------------------------
+
+/*
+$begin OdeBreakOk$$
+$spell
+	namespace
+	std
+	endl
+	exp
+	Dirac
+	Cpp
+	Eval
+	const
+	bool
+	eabs
+	erel
+	vector vector
+	xout
+	btime
+	Eval eval
+	otime
+$$
+
+$section Example Using OdeBreak$$
+
+$head Differential Equation$$
+Suppose that we wish to solve the following differential equation:
+$latex \[
+\begin{array}{rcl}
+x_0 ( 0 ) & = & 0.9 \\
+x_1 ( 0 ) & = & 0. \\
+x_0^\prime (t) & = & \left\{ \begin{array}{ll}
+	- x_0 (t) + .6 * \delta( t - .7) + .8 & {\rm if} \; t \leq .7 \\
+	- x_0 (t) + .6 * \delta( t - .7)     & {\rm otherwise} 
+\end{array} \right.
+\\
+x_1^\prime (t) & = & \left\{ \begin{array}{ll}
+	x_0 (t) - x_1 (t) & {\rm if} \; t \leq .7 \\
+	- x_1 (t)         & {\rm otherwise}
+\end{array} \right.
+\end{array}
+\] $$
+where $latex .6 * \delta ( t - .7) $$ is the Dirac delta function 
+representation of a step increase of .6 in the value of
+$latex x_0 (t)$$ at $latex t = .7$$
+
+$head Analytic Solution$$
+
+$head X_0 (t)$$
+For $latex 0 < t \leq .7$$, the function $latex X_0 (t)$$ satisfies
+the ordinary differential equation
+$latex \[
+\begin{array}{rcl}
+X_0 ( 0 ) & = & 0.9 \\
+X_0^\prime (t) & = & - X_0 (t) + .8 
+\end{array}
+\] $$
+The solution of this initial value problem is
+$latex \[
+X_0 (t) = .1 * e^{-t} + .8 
+\] $$ 
+For $latex .7 < t \leq 1.$$, the function $latex X_0 (t)$$ satisfies
+the ordinary differential equation
+$latex \[
+\begin{array}{rcl}
+X_0 ( .7 ) & = & .1 * e^{-.7} + 1.4 \\
+X_0^\prime (t) & = & - X_0 (t) 
+\end{array}
+\] $$
+The solution of this initial value problem is
+$latex \[
+X_0 (t) = ( .1 * e^{-.7} + 1.4) * e^{.7 - t} 
+\] $$ 
+
+
+$head X_1 (t)$$
+For $latex 0 < t \leq .7$$, the function $latex X_1 (t)$$ satisfies
+the ordinary differential equation
+$latex \[
+\begin{array}{rcl}
+X_1 ( 0 ) & = & 0.0 \\
+X_1^\prime (t) 
+& = & + X_0 (t) - X_1 (t) \\
+& = & .1 * e^{-t} + .8 - X_1 (t) 
+\end{array}
+\] $$
+The solution of this initial value problem is
+$latex \[
+X_1 (t) = .1 * t * e^{-t} + .8 * ( 1 - e^{-t} ) 
+\] $$ 
+For $latex .7 < t \leq 1.$$, the function $latex X_1 (t)$$ satisfies
+the ordinary differential equation
+$latex \[
+\begin{array}{rcl}
+X_1 ( .7 ) & = & .07 * e^{-.7} + .8 * ( 1 - e^{-.7} )\\
+X_1^\prime (t) & = & - X_1 (t) 
+\end{array}
+\] $$
+The solution of this initial value problem is
+$latex \[
+X_1 (t) = [ .07 * e^{-.7} + .8 * (1 - e^{-.7}) ]  * e^{.7 - t} 
+\] $$ 
+
+
+$codep */
+
+/*************************************************************************
+ *
+ * Class:  OdeBreakOk_Eval
+ *
+ *************************************************************************/
+
+# include <assert.h>
+# include <CppAD/CppAD_vector.h>
+# include <CppAD/NearEqual.h>
+
+using CppAD::vector;
+
+namespace { // Begin empty namespace
+
+class OdeBreakOk_Eval {
+private:
+	size_t k;  // previous index passed to Break method
+public:
+	OdeBreakOk_Eval(void)
+	{	k = 3; } // initialize as invalid break point index value
+	void Break(size_t k_, const vector<double> &x, vector<double> &g)
+	{	assert( g.size() == 2 );
+		assert( x.size() == 2 );
+		k = k_;
+		g[0] = g[1] = 0.;
+		switch(k)
+		{	case 0:
+			g[0] = .9;
+			break;
+
+			case 1:
+			break;
+
+			case 2:
+			g[0] = .6;
+			break;
+
+			default:
+			assert(0);
+		}
+		return;
+	}
+	void Ode(double t, const vector<double> &x, vector<double> &f)
+	{	assert( f.size() == 2 );
+		assert( x.size() == 2 );
+		switch(k)
+		{	case 0:
+			f[0] = - x[0] + .8;
+			f[1] =   x[0] - x[1];
+			break;
+
+			case 1:
+			// should never happen because btime[1] = btime[2]
+			assert( 0 );
+
+			case 2:
+			f[0] = - x[0];
+			f[1] = - x[1];
+			break;
+
+			default:
+			assert(0);
+		}
+		return;
+	}
+};
+
+
+} // End empty namespace
+
+
+/*************************************************************************
+ *
+ * Function: OdeBreakOk_Test
+ *
+ *************************************************************************/
+
+void OdeBreakTest::OdeBreakOk_Test()
+{	bool ok = true;
+	size_t K = 3;  // number of break point times
+	size_t J = 10; // number of output point times
+
+	// evaluation method
+	OdeBreakOk_Eval eval;
+
+	// break point times
+	vector<double> btime(K);
+	btime[0] = 0.;
+	btime[1] = .7;
+	btime[2] = .7;
+
+	// output grid
+	vector<double> otime(J);
+	size_t j;
+	for(j = 0; j < J; j++)
+	otime[j] = double(j+1) / double(J);
+
+	// absolute error 
+	vector<double> eabs(2);
+	eabs[0] = 1e-6;
+	eabs[1] = 1e-6;
+
+	// relative error
+	double erel = 0.;
+
+	// results vector
+	vector<double> xout(2 * J);
+
+	// numerical solution of differential equation
+	OdeBreak(eval, btime, otime, eabs, erel, xout);
+
+	// check the output values
+	for(j = 0; j < J; j++)
+	{	double t, x0, x1;
+		t = otime[j];
+		if( t <= .7 )
+		{	x0 = .1 * exp(-t) + .8;
+			x1 = .1 * t * exp(-t) + .8 * (1. - exp(-t));
+		}
+		else
+		{	x0 = (.1 * exp(-.7) ) + 1.4;
+			x0 *= exp(.7 - t);
+			//
+			x1 = .07 * exp(-.7) + .8 * (1 - exp(-.7));
+			x1 *= exp(.7 - t);
+		}
+		ok &= CppAD::NearEqual(xout[0+j*2], x0, 1e-6, 1e-6);
+		ok &= CppAD::NearEqual(xout[1+j*2], x1, 1e-6, 1e-6);
+	}  
+
+	CPPUNIT_ASSERT_MESSAGE( 
+		"The calculated and known values for the ODE solution do not agree.",
+		ok );
+
+}
+
+/* $$
+$end
+*/
+
+
+//------------------------------------------------------------------------
+//
+// Test Case: OneBreakOk
+//
+//------------------------------------------------------------------------
+
+/*
+$begin OneBreakOk$$
+$spell
+	otime
+$$
+
+$section Test OdeBreak With One Break Point$$
+
+$head Differential Equation$$
+Suppose that we wish to solve the following differential equation
+for $latex x : \R \rightarrow \R^n$$ :
+$latex \[
+\begin{array}{rcll}
+	x ( 0 )        & = & 0              \\
+	x_0^\prime (t) & = & 2 * t           \\
+	x_i^\prime (t) & = & i \cdot x_{i-1} (t) & (i > 0)
+\end{array}
+\] $$
+
+$head Analytic Solution$$
+$latex \[
+	x_i (t)  =  t^{i+1}
+\] $$
+
+$codep */
+
+/*************************************************************************
+ *
+ * Class:  OneBreakOk_Eval
+ *
+ *************************************************************************/
+
+# include <assert.h>
+# include <CppAD/CppAD_vector.h>
+# include <CppAD/NearEqual.h>
+
+using CppAD::vector;
+
+namespace { // Begin empty namespace
+
+class OneBreakOk_Eval {
+private:
+	size_t n;  // dimension of this problem
+	size_t k;  // previous index passed to Break method
+public:
+	OneBreakOk_Eval(size_t n_)
+	{	n = n_;	 // dimension of this problem
+		k = 3;   // invalid index value 
+	} 
+	void Break(size_t k_, const vector<double> &x, vector<double> &g)
+	{	assert( g.size() == n );
+		assert( x.size() == n );
+		k = k_;
+		switch(k)
+		{	size_t i;
+
+			case 0:
+			for(i = 0; i < n; i++)
+				g[i] = 0.;
+			break;
+
+			default:
+			assert(0);
+		}
+		return;
+	}
+	void Ode(double t, const vector<double> &x, vector<double> &f)
+	{	assert( f.size() == n );
+		assert( x.size() == n );
+		switch(k)
+		{	size_t i;
+
+			case 0:
+			f[0] = 2. * t;
+			for(i = 1; i < n; i++)
+				f[i] = (2 + i) * x[i-1];
+			break;
+
+			default:
+			assert(0);
+		}
+		return;
+	}
+};
+
+} // End empty namespace
+
+
+/*************************************************************************
+ *
+ * Function: OneBreakOk_Test
+ *
+ *************************************************************************/
+
+void OdeBreakTest::OneBreakOk_Test()
+{	bool ok = true;
+	size_t K = 1; // number of break point times
+	size_t J = 1; // number of output point times
+	size_t n = 5; // number of components in x 
+
+	// evaluation method
+	OneBreakOk_Eval eval(n);
+
+	// break point times
+	vector<double> btime(1);
+	btime[0] = 0.;
+
+	// output grid
+	vector<double> otime(J);
+	size_t j;
+	otime[0] = .5;
+
+	// absolute error 
+	vector<double> eabs(n);
+	size_t i;
+	for(i = 0; i < n; i++)
+		eabs[i] = 0.;
+
+	// relative error
+	double erel = 1e-10;
+
+	// results vector
+	vector<double> xout(n);
+
+	// numerical solution of differential equation
+	OdeBreak(eval, btime, otime, eabs, erel, xout);
+
+	// check the output values
+	double tip2 = otime[0];
+	for(i = 0; i < n; i++)
+	{	tip2 *= otime[0]; 
+		ok &= CppAD::NearEqual(xout[i], tip2, erel, eabs[i]);
+	}
+
+	CPPUNIT_ASSERT_MESSAGE( 
+		"The calculated and known values for the ODE solution do not agree.",
+		ok );
+
+}
+/* $$
+$end
+*/
+
+
+//------------------------------------------------------------------------
+//
+// Test Case: ZeroBreakOk
+//
+//------------------------------------------------------------------------
+
+/*
+$begin ZeroBreakOk$$
+$spell
+	otime
+$$
+
+$section Test OdeBreak With an Identically Zero Component$$
+
+$head Differential Equation$$
+Suppose that we wish to solve the following differential equation
+for $latex x : \R \rightarrow \R^n$$ :
+$latex \[
+\begin{array}{rcll}
+	x ( 0 )        & = & 0             \\
+	x_0^\prime (t) & = & 0             \\
+	x_1^\prime (t) & = & 1             \\
+	x_i^\prime (t) & = & i \cdot x_{i-1} (t)  \; ( i > 1 )
+\end{array}
+\] $$
+
+$head Analytic Solution$$
+$latex \[
+\begin{array}{rcl}
+	x_0      & = &  0            \\
+	x_i (t)  & = & t^i
+\end{array}
+\] $$
+
+$codep */
+
+/*************************************************************************
+ *
+ * Class:  ZeroBreakOk_Eval
+ *
+ *************************************************************************/
+
+# include <assert.h>
+# include <CppAD/CppAD_vector.h>
+# include <CppAD/NearEqual.h>
+
+using CppAD::vector;
+
+namespace { // Begin empty namespace
+
+class ZeroBreakOk_Eval {
+private:
+	size_t n;  // dimension of this problem
+	size_t k;  // previous index passed to Break method
+public:
+	ZeroBreakOk_Eval(size_t n_)
+	{	n = n_;	 // dimension of this problem
+		k = 3;   // invalid index value 
+	} 
+	void Break(size_t k_, const vector<double> &x, vector<double> &g)
+	{	assert( g.size() == n );
+		assert( x.size() == n );
+		k = k_;
+		switch(k)
+		{	size_t i;
+
+			case 0:
+			for(i = 0; i < n; i++)
+				g[i] = 0.;
+			break;
+
+			default:
+			assert(0);
+		}
+		return;
+	}
+	void Ode(double t, const vector<double> &x, vector<double> &f)
+	{	assert( f.size() == n );
+		assert( x.size() == n );
+		switch(k)
+		{	size_t i;
+
+			case 0:
+			f[0] = 0.;
+			f[1] = 1.;
+			for(i = 2; i < n; i++)
+				f[i] = i * x[i-1];
+			break;
+
+			default:
+			assert(0);
+		}
+		return;
+	}
+};
+
+} // End empty namespace
+
+
+/*************************************************************************
+ *
+ * Function: ZeroBreakOk_Test
+ *
+ *************************************************************************/
+
+void OdeBreakTest::ZeroBreakOk_Test()
+{	bool ok = true;
+	size_t K = 1; // number of break point times
+	size_t J = 1; // number of output point times
+	size_t n = 6; // number of components in x 
+
+	// evaluation method
+	ZeroBreakOk_Eval eval(n);
+
+	// break point times
+	vector<double> btime(1);
+	btime[0] = 0.;
+
+	// output grid
+	vector<double> otime(J);
+	size_t j;
+	otime[0] = .5;
+
+	// absolute error 
+	vector<double> eabs(n);
+	size_t i;
+	for(i = 0; i < n; i++)
+		eabs[i] = 0.;
+
+	// relative error
+	double erel = 1e-10;
+
+	// results vector
+	vector<double> xout(n);
+
+	// numerical solution of differential equation
+	OdeBreak(eval, btime, otime, eabs, erel, xout);
+
+	// check the output values
+	double tpower = 0.;
+	for(i = 0; i < n; i++)
+	{	ok &= CppAD::NearEqual(xout[i], tpower, erel, eabs[i]);
+		if( i == 0 )
+			tpower = 1.;
+		tpower *= otime[0];
+	}
+
+	CPPUNIT_ASSERT_MESSAGE( 
+		"The calculated and known values for the ODE solution do not agree.",
+		ok );
+
+}
+/* $$
+$end
+*/
