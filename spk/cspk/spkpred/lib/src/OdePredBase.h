@@ -388,8 +388,11 @@ private:
   //------------------------------------------------------------
 
 protected:
-  Value& getF() { return f_i_j; }              ///< Gets a non-const reference to the value for F.
-  Value& getY() { return y_i_j; }              ///< Gets a non-const reference to the value for Y.
+  Value& getT()      { return tCurr;  }  ///< Gets a non-const reference to the value for T.
+  Value& getF()      { return f_i_j;  }  ///< Gets a non-const reference to the value for F.
+  Value& getY()      { return y_i_j;  }  ///< Gets a non-const reference to the value for Y.
+  Value& getFO()     { return fo;     }  ///< Gets a non-const reference to the value for FO.
+  Value& getTSCALE() { return tscale; }  ///< Gets a non-const reference to the value for TSCALE.
 
   void getT     ( Value& tOut      ) const { tOut      = tCurr;      }  ///< Gets the value for T.
   void getF     ( Value& fOut      ) const { fOut      = f_i_j;      }  ///< Gets the value for F.
