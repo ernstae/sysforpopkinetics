@@ -557,7 +557,7 @@ int main(int argc, const char *argv[])
 	valarray<double> obj_value(nAlp * 3);
 	valarray<double> obj_std(nAlp * 3);
 	try
-	{	// loop over two indices in fixed effects vector
+	{	// loop over indices in fixed effects vector
 		size_t index;
 		valarray<double> alp (nAlp);
 		for(i = 0; i < nAlp; i++) 
