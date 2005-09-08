@@ -42,14 +42,14 @@ is an approximation for the standard deviation of $italic estimateIntegral$$.
 $head Feval$$
 The syntax
 $syntax%
-	Feval(%X%, %d%, %p%)
+	Feval(%X%, %m%, %p%)
 %$$
 returns the value of the function $latex f$$ at the point
 specified by $italic X$$ where $italic X$$ is a vector
 of length $italic m$$. Both $italic m$$ and $italic p$$ are
 the same value as in the call to $code GridIntegral$$.
 
-$head d$$
+$head m$$
 The argument $italic m$$ to both $code GridIntegral$$ and
 to $italic Feval$$ is the dimension of the space we are integrating
 with respect to.
