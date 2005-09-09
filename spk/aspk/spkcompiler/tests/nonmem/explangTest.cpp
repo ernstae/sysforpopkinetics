@@ -30,6 +30,7 @@ extern int                gSpkExpErrors;
 extern SymbolTable      * gSpkExpSymbolTable;
 extern FILE             * gSpkExpOutput;
 extern bool               gSpkIsTInRhs;
+extern char             * gSpkExpErrorMessages;
 extern FILE             * nm_in;
 extern int                nm_debug;
 
@@ -344,7 +345,6 @@ void explangTest::testFunctions()
   fputs( "A = SINH(0.0)\n", pInput );
   fputs( "A = TAN(0.0)\n", pInput );
   fputs( "A = TANH(0.0)\n", pInput );
-  fputs( "A = LININTERP(X,Y)\n", pInput );
 
   
   table.insertVector( "B", 1, Symbol::USER, Symbol::READWRITE );
@@ -369,14 +369,17 @@ void explangTest::testFunctions()
 
   nm_parse();
 
-  CPPUNIT_ASSERT_EQUAL( 23, gSpkExpLines );
+  CPPUNIT_ASSERT_EQUAL( 22, gSpkExpLines );
   CPPUNIT_ASSERT( table.findi( "A" ) != Symbol::empty() );
   CPPUNIT_ASSERT( table.findi( "B" ) != Symbol::empty() );
   
   fclose( pInput );
   fclose( gSpkExpOutput );
 
+  if( gSpkExpErrors > 0 )
+    cerr << gSpkExpErrorMessages << endl;
   CPPUNIT_ASSERT( gSpkExpErrors==0 );
+
   if( gSpkExpErrors == 0 )
   {
     //expTreeUtil.printToStdout( gSpkExpTree );
@@ -678,14 +681,70 @@ void explangTest::testFunctions()
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
 
+  pOutput.close();
+  remove( input );
+  remove( output );
+}
+void explangTest::testLinInterp()
+{
+  SymbolTable table;
+  char input[]        = "testLinInterp.in";
+  char output[]       = "testLinInterp.out";
+
+  FILE * pInput = fopen( input, "w" );
+  CPPUNIT_ASSERT( pInput != NULL );
+  fputs( "Z = LININTERP(Y)\n", pInput );
+
+  
+  table.insertVector( "B", 1, Symbol::USER, Symbol::READWRITE );
+
+  fclose( pInput );
+
+  table.insertScalar( "Y", Symbol::USER, Symbol::READWRITE );
+  
+  pInput = fopen( input, "r" );
+  CPPUNIT_ASSERT( pInput != NULL );
+
+  nm_in = pInput;
+  CPPUNIT_ASSERT( nm_in != NULL );
+
+  gSpkExpErrors = 0;
+  gSpkExpLines  = 0;
+  gSpkExpSymbolTable = &table;
+  CPPUNIT_ASSERT( gSpkExpSymbolTable != NULL );
+  gSpkExpOutput = fopen( output, "w" );
+  nm_debug = 0;
+
+  nm_parse();
+
+  CPPUNIT_ASSERT_EQUAL( 1, gSpkExpLines );
+  CPPUNIT_ASSERT( table.findi( "Z" ) != Symbol::empty() );
+  
+  fclose( pInput );
+  fclose( gSpkExpOutput );
+
+  if( gSpkExpErrors > 0 )
+    cerr << gSpkExpErrorMessages << endl;
+  CPPUNIT_ASSERT( gSpkExpErrors==0 );
+
+  if( gSpkExpErrors == 0 )
+  {
+    //expTreeUtil.printToStdout( gSpkExpTree );
+  }
+
+  //cout << endl;
+  //gSpkExpSymbolTable->dump();
+
+  string buf;
+  ifstream pOutput( output );
+  CPPUNIT_ASSERT( pOutput.good() );
+
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "A" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "Z" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "=" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "lininterp(" );
-  pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "X," );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "Y" );
   pOutput >> buf;
@@ -1050,7 +1109,7 @@ void explangTest::testIsTInRhs()
 CppUnit::Test * explangTest::suite()
 {
   CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite( "explangTest" );
-
+  /*
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<explangTest>(
          "testHAHN1_1", 
@@ -1063,10 +1122,16 @@ CppUnit::Test * explangTest::suite()
      new CppUnit::TestCaller<explangTest>(
          "testVectorElementAssignmentToScalar", 
 	 &explangTest::testVectorElementAssignmentToScalar ) );
+  */
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<explangTest>(
          "testFunctions",
 	 &explangTest::testFunctions ) );
+  suiteOfTests->addTest( 
+     new CppUnit::TestCaller<explangTest>(
+         "testLinInterp",
+	 &explangTest::testLinInterp ) );
+  /*
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<explangTest>(
          "testIfStmt",
@@ -1079,6 +1144,7 @@ CppUnit::Test * explangTest::suite()
      new CppUnit::TestCaller<explangTest>(
          "testIsTInRhs",
 	 &explangTest::testIsTInRhs) );
+  */
   return suiteOfTests;
 }
 

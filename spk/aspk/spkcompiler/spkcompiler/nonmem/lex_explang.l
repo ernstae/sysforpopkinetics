@@ -73,8 +73,7 @@ tok_false                   ".FALSE."
 
 tok_extended_intrinsic_op   {tok_intrinsic_operator}
 tok_defined_operator        ({tok_defined_unary_op}|{tok_defined_binary_op}|{tok_extended_intrinsic_op})
-tok_unary_function          ("ABS"|"ACOS"|"ASIN"|"ATAN"|"ATAN2"|"COS"|"COSH"|"EXP"|"LOG"|"LOG10"|"MAX"|"MIN"|"MOD"|"SIN"|"SINH"|"SQRT"|"TAN"|"TANH")
-tok_binary_function         "LININTERP"
+tok_unary_function          ("ABS"|"ACOS"|"ASIN"|"ATAN"|"ATAN2"|"COS"|"COSH"|"EXP"|"LOG"|"LOG10"|"MAX"|"MIN"|"MOD"|"SIN"|"SINH"|"SQRT"|"TAN"|"TANH"|"LININTERP")
 
 tok_open_array_elem_list    "(/"
 tok_close_array_elem_list   "/)"
@@ -105,7 +104,6 @@ tok_endif                   "ENDIF"
 {tok_close_array_elem_list} { return CLOSE_ARRAY_ELEM_LIST; }
 {tok_power_op}              { return POWER_OP; }
 {tok_digit_string}          { nm_lval.c_str = (char*)strdup(nm_text);  return DIGIT_STRING; }
-{tok_binary_function}       { nm_lval.c_str = (char*)strdup(nm_text);  return DEFINED_BINARY_FUNCTION; }
 {tok_unary_function}        { nm_lval.c_str = (char*)strdup(nm_text);  return DEFINED_UNARY_FUNCTION; }
 {tok_true}                  { return TRUE; }
 {tok_false}                 { return FALSE; }
