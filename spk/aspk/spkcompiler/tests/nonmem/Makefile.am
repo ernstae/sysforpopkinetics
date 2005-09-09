@@ -75,5 +75,8 @@ testall_SOURCES      = \
                        CompModelInfoTest.cpp \
                        CompModelInfoTest.h \
                        countStrInLhsTest.cpp \
-                       countStrInLhsTest.h 
+                       countStrInLhsTest.h \
+                       linInterpTest.cpp \
+		       linInterpTest.h \
+		       ../../config.h
 

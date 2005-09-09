@@ -20,10 +20,14 @@
 #include "pop_subprobTest.h"
 #include "CompartmentInfoTest.h"
 #include "CompModelInfoTest.h"
+//#include "ind_advan6Test.h"
 #include "pop_advan6Test.h"
+
 //#include "NonmemSourceMLElementsTest.h"
 //#include "NonmemReportMLElementsTest.h"
 #include "countStrInLhsTest.h"
+#include "linInterpTest.h"
+#include "linInterpTest.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -82,6 +86,7 @@ int main( int argc, const char * argv[] )
   master[ "pop_mdvTest" ] = pop_mdvTest::suite();
 
   // test for NonmemTranslator: ability to handle Differential Equations
+  //  master[ "ind_advan6Test" ] = ind_advan6Test::suite();
   master[ "pop_advan6Test" ] = pop_advan6Test::suite();
 
   // test for NonmemTranslator: ability to handle a request 
@@ -97,8 +102,10 @@ int main( int argc, const char * argv[] )
 
   //master[ "NonmemSourceMLElementsTest" ] = NonmemSourceMLElementsTest::suite();
   //master[ "NonmemReportMLElementsTest" ] = NonmemSourceMLElementsTest::suite();
-
   master[ "countStrInLhsTest" ] = countStrInLhsTest::suite();
+
+  // Test for Linear Interpolation
+  master[ "linInterpTest" ] = linInterpTest::suite();
 
   if( argc == 1 )
     {
