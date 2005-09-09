@@ -184,15 +184,40 @@ int nm_wrap()
 int nm_error( char * err_message )
 { 
   ++gSpkExpErrors;
-  assert( gSpkExpErrorMessages != 0 );
-  char m[ SpkCompilerError::maxMessageLen() ];
-  sprintf( m, 
+  assert( gSpkExpErrors != 0 );
+
+  char a_errors[256];
+  snprintf( a_errors, 256, "%d", gSpkExpErrors );
+  int len_error = strlen( a_errors );
+  char a_lines[256];
+  snprintf( a_lines,   256, "%d", gSpkExpLines );
+  int len_line  = strlen( a_lines );
+  int len_mess  = strlen( err_message );
+  int len_whole = len_error + len_line + len_mess + strlen( "!!! Error () at line : \n\t\n" );
+
+  char m[ len_whole + 1 ];
+  snprintf( m, len_whole, 
            "!!! Error (%d) at line %d: \n\t%s\n", 
            gSpkExpErrors, gSpkExpLines, err_message );
-  if( strlen( gSpkExpErrorMessages ) > 0 )
-      strcat( gSpkExpErrorMessages, m );
+
+  int len_original = ( gSpkExpErrorMessages != 0 ? strlen( gSpkExpErrorMessages ) : 0 );
+
+  if( gSpkExpErrorMessages == 0 )
+  {
+     int len =  ( SpkCompilerError::maxMessageLen() >= len_original+len_whole+1 ? 
+	SpkCompilerError::maxMessageLen() : len_original + len_whole + 1 );
+     gSpkExpErrorMessages = new char[ len ];
+     strcpy( gSpkExpErrorMessages, m );
+  }
   else
-      strcpy( gSpkExpErrorMessages, m );
+  {
+     char tmp[ len_original + 1 ];
+     strcpy( tmp, gSpkExpErrorMessages );
+     int len = ( SpkCompilerError::maxMessageLen() >= len_original+len_whole+1 ? 
+	SpkCompilerError::maxMessageLen() : len_original + len_whole + 1 );
+     gSpkExpErrorMessages = new char[ len ];
+     snprintf( gSpkExpErrorMessages, len, "%s%s", tmp, m );
+  }
 
   return -1;
 }
@@ -1216,6 +1241,8 @@ DEFINED_UNARY_FUNCTION '(' arithmatic_expr ')' {
        sprintf( buf, "tan( %s )",  $3 );
    else if( strcmp( lowercase, STR_TANH ) == 0 )
        sprintf( buf, "tanh( %s )",  $3 );
+   else if( strcmp( lowercase, STR_LININTERP ) == 0 )
+       sprintf( buf, "lininterp( \"%s\" )",  $3 );
    else
    {
       char err[128];
@@ -1233,16 +1260,12 @@ DEFINED_BINARY_FUNCTION '(' variable ',' variable ')' {
    char lowercase[ n + 1 ];
    strcpy( lowercase, $1 );
    for( int i=0; i<n; i++ )
-      lowercase[ i ] = tolower( lowercase[i] );
+   lowercase[ i ] = tolower( lowercase[i] );
 
-   if( strcmp( lowercase, STR_LININTERP ) == 0 )
-       sprintf( buf, "lininterp( %s, %s )", $3, $5 );
-   else
-   {
-      char err[128];
-      sprintf( err, "%s is not a supported operation!\n", lowercase );
-      nm_error( err );
-   }
+   char err[128];
+   sprintf( err, "%s is not a supported operation!\n", lowercase );
+   nm_error( err );
+
    delete $3;
    delete $5;
    $$ = (char*)strdup(buf);

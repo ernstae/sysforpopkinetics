@@ -23,6 +23,7 @@ public:
     void testIfStmt();
     void testIfThenStmt();
     void testIsTInRhs();
+    void testLinInterp();
 };
 
 #endif
