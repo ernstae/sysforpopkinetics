@@ -1702,7 +1702,7 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
   if( !pop_analysis->hasAttribute( X_IS_ESTIMATION ) )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Missing <%s::%s> attribute.", C_IS_ESTIMATION, C_POP_ANALYSIS );
+      sprintf( mess, "Missing <%s::%s> attribute.", C_POP_ANALYSIS, C_IS_ESTIMATION );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
       throw e;
     }
@@ -3592,7 +3592,7 @@ void NonmemTranslator::parseAdvan(
 
       parseCompModel( comp_model, relTol );
       assert( myCompModel != NULL );
-
+      
       // P(n), A(m) and DADT(m) may appear on the left hand side of
       // assignment statements in model equations, where 
       // n = NPARAMETERS (assumed so for now), m = NCOMPARTMENTS+1.
@@ -4502,7 +4502,7 @@ void NonmemTranslator::generateIndData( ) const
 
   oIndData_h << "{" << endl;
 
-  if( myIsMissingMdv )
+  if( myIsMissingMdv && myIsMissingEvid )
     {
       if( table->findi( KeyStr.AMT ) == Symbol::empty() )
 	{
@@ -4519,7 +4519,27 @@ void NonmemTranslator::generateIndData( ) const
 	  oIndData_h << "   }" << endl;
 	}
     }
-  else
+  else if( !myIsMissingMdv && myIsMissingEvid )
+    {
+      oIndData_h << "   for( int j=0; j<nRecords; j++ )" << endl;
+      oIndData_h << "   {" << endl;
+      oIndData_h << "      if( " << UserStr.MDV << "[j] == 0 )" << endl;
+      oIndData_h << "      {" << endl;
+      oIndData_h << "         nY++;" << endl;
+      oIndData_h << "      }" << endl;
+      oIndData_h << "   }" << endl;
+    }
+  else if( myIsMissingMdv && !myIsMissingEvid )
+    {
+      oIndData_h << "   for( int j=0; j<nRecords; j++ )" << endl;
+      oIndData_h << "   {" << endl;
+      oIndData_h << "      if( " << UserStr.EVID << "[j] == 0 )" << endl;
+      oIndData_h << "      {" << endl;
+      oIndData_h << "         nY++;" << endl;
+      oIndData_h << "      }" << endl;
+      oIndData_h << "   }" << endl;
+    }
+  else // !myIsMissingMdv && !myIsMissingEvid
     {
       oIndData_h << "   for( int j=0; j<nRecords; j++ )" << endl;
       oIndData_h << "   {" << endl;
@@ -7098,37 +7118,42 @@ void NonmemTranslator::generateMonteParsNamespace() const
 //=========================================================================================
 // generateOdePred - geneate the source code for OdePred class
 //
-// In this class, the following variables are declared in its super classes.
-//    PredBase<spk_ValueType>::DV         // come from data set
-//    PredBase<spk_ValueType>::MDV        // come from data set
-//    CompPredBase<spk_ValueType>EVID   // come from data set
-//    CompPredBase<spk_ValueType>::CMT    // come from data set
-//    CompPredBase<spk_ValueType>::PCMT   // come from data set
-//    CompPredBase<spk_ValueType>::AMT    // come from data set
-//    CompPredBase<spk_ValueType>::RATE   // come from data set
-//    CompPredBase<spk_ValueType>::TIME   // come from data set
-//    CompPredBase<spk_ValueType>::T      // CompPred computes
-//    CompPredBase<spk_ValueType>::F      // CompPred computes
-//    CompPredBase<spk_ValueType>::Y      // CompPred computes
+// The followings have special meanings to the ODE models (ADVAN6, 8, 9):
 //
-// IMPORTANT NOTE about these ones (above) declared in super classes:
-// These ones that are NOT coming from the data set, in other words
-// the ones that are not constant, shall not be re-declared in this class.
+// <from data set>
 //
+//    DV
+//    MDV
+//    EVID
+//    CMT
+//    PCMT
+//    AMT
+//    RATE
+//    TIME
 //
-// The followings are extra predefined variables that shall be declared in this class.
-// The actual quantities of these guys are comptued by the CompPredBase class members.
+// <system's responsibility to compute>
+//
+//    T
+//    F
+//    FO  (ef-oh)
+//    F0  (ef-zero)
+//    S0  (es-zero)
+//
+// <user's responsiblity to compute>
+//
+//    Y
+//    DADT(1) .. .DADT(n)
+//
+// <user's option to compute>
 //
 //    R1 ... Rn  // n is #of compartments + the output compartment
 //    D1 ... Dn
 //    ALAG1 ... ALAGn
 //    S1 ... Sn
-//    F1 .. .Fm  // m = n-1
-//    FO  (ef-oh)
-//    SO  (es-oh)
+//    F1 ... Fm  // m = n-1
 //    P(1) ... P(x)
 //    A(1) ... A(n)
-//    DADT(1) .. .DADT(n)
+//
 //=========================================================================================
 void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp, 
 					const char* fDiffEqn_cpp, 
@@ -7201,6 +7226,7 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "#include <spkpred/OdePredBase.h>" << endl;
   oOdePred_h << "#include <CppAD/CppAD.h>" << endl;
   oOdePred_h << "#include <spkpred/OdeBreak.h>" << endl;
+  oOdePred_h << "#include <spk/linearInterpolate.h>" << endl;
   oOdePred_h << "#include \"DataSet.h\"" << endl;
   oOdePred_h << endl;
   
@@ -7254,7 +7280,7 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   // -----------------------
   oOdePred_h << "   int getNObservs( int ) const;" << endl;
   oOdePred_h << "   int getNRecords( int ) const;" << endl;
-  oOdePred_h << "   const spk_ValueType lininterp();" << endl;
+  oOdePred_h << "   const spk_ValueType lininterp( const std::string & depVar );" << endl;
   oOdePred_h << "   virtual void readDataRecord( int i, int j );" << endl;
 
   oOdePred_h << "   virtual void initUserEnv( int spk_thetaOffset, int spk_thetaLen,"     << endl;
@@ -7321,6 +7347,8 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "   bool                          spk_isIterCompleted;"  << endl;
   oOdePred_h << "   const int                     spk_nCompartments; /* with Output*/" << endl;
   oOdePred_h << "   const int                     spk_nParameters;"              << endl;
+  oOdePred_h << "   int                           spk_curWho;" << endl;
+  oOdePred_h << "   int                           spk_curWhichRecord;" << endl;
   oOdePred_h << endl;
 
   //
@@ -7446,8 +7474,8 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "                              noDoseIn,"                    << endl; 
   oOdePred_h << "                              tolRelIn"                     << endl;
   oOdePred_h << "                            )," << endl;
-  oOdePred_h << "  F                ( getF() )," << endl;
-  oOdePred_h << "  Y                ( getY() )," << endl;
+  oOdePred_h << "  F                 ( getF() )," << endl;
+  oOdePred_h << "  Y                 ( getY() )," << endl;
   for( int i=0; i<myCompModel->getNCompartments(); i++ )
   {
      char Ri[64];
@@ -7459,10 +7487,10 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
      sprintf( Di, "D%d", i+1 );
      sprintf( ALAGi, "ALAG%d", i+1 );
      sprintf( Si, "S%d", i+1 );
-     oOdePred_h << "  " << Ri << "               ( getCompInfusRate(" << i << ") )," << endl;
-     oOdePred_h << "  " << Di << "               ( getCompInfusDurat(" << i << ") )," << endl;
+     oOdePred_h << "  " << Ri << "               ( getCompInfusRate("     << i << ") )," << endl;
+     oOdePred_h << "  " << Di << "               ( getCompInfusDurat("    << i << ") )," << endl;
      oOdePred_h << "  " << ALAGi << "            ( getCompAbsorpLagTime(" << i << ") )," << endl;
-     oOdePred_h << "  " << Si << "               ( getCompScaleParam(" << i << ") )," << endl;
+     oOdePred_h << "  " << Si << "               ( getCompScaleParam("    << i << ") )," << endl;
 
      if( i < myCompModel->getNCompartments()-1 )
      {
@@ -7474,14 +7502,16 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "  spk_nIndividuals   ( nPopSizeIn ),"                << endl;
   oOdePred_h << "  spk_isIterCompleted( true ),"                      << endl;
   oOdePred_h << "  spk_nCompartments  ( nCompartmentsWithOutputIn )," << endl;
-  oOdePred_h << "  spk_nParameters    ( nParametersIn )"              << endl;
+  oOdePred_h << "  spk_nParameters    ( nParametersIn ),"             << endl;
+  oOdePred_h << "  spk_curWho         ( 0 ),"                         << endl;
+  oOdePred_h << "  spk_curWhichRecord ( 0 )"                          << endl;
   oOdePred_h << "{" << endl;
   oOdePred_h << "}" << endl;
   oOdePred_h << endl;
 
   // ----------
   // Destructor
- // ----------
+  // ----------
   oOdePred_h << "template <class spk_ValueType>" << endl;
   oOdePred_h << "OdePred<spk_ValueType>::~OdePred()" << endl;
   oOdePred_h << "{" << endl;
@@ -7508,12 +7538,105 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "}" << endl;
   oOdePred_h << endl;
 
+  // -------------
+  // lininterp()
+  // -------------
+  oOdePred_h << "// This uses TIME and DV values" << endl;
+  oOdePred_h << "template <class spk_ValueType>" << endl;
+  oOdePred_h << "const spk_ValueType OdePred<spk_ValueType>::lininterp( const std::string& depVarName )" << endl;
+  oOdePred_h << "{" << endl;
+  oOdePred_h << "   const int nObservs  = getNObservs( spk_curWho );" << endl;
+  oOdePred_h << "   const int nRecords  = getNRecords( spk_curWho );" << endl;
+  oOdePred_h << "   std::vector<spk_ValueType> indVar( nObservs );" << endl;
+  oOdePred_h << "   std::vector<spk_ValueType> depVar( nObservs );" << endl;
+  oOdePred_h << "   std::vector<spk_ValueType> depVarRecords( nRecords );" << endl;
+  pLabel = labels->begin();
+  while( pLabel != labels->end() )
+    {
+      oOdePred_h << "   if( depVarName == \"" << *pLabel << "\" )" << endl;
+      if( *pLabel == UserStr.ID )
+	{
+	  oOdePred_h << "      throw SpkException( SpkError::SPK_USER_INPUT_ERR, " << endl;
+          oOdePred_h << "                         \"ID cannot be interpolated!\", " << endl;
+          oOdePred_h << "                           __LINE__, __FILE__ );" << endl;
+	}
+      else
+	{
+	  oOdePred_h << "         depVarRecords = spk_perm->data[spk_curWho]->" << *pLabel << ";" << endl;
+	}
+      
+      pLabel++;
+    }
+  if( myIsMissingMdv && myIsMissingEvid )
+    {
+      if( table->findi( KeyStr.AMT ) == Symbol::empty() )
+	{
+	  oOdePred_h << "   assert( nRecords == nObservs );" << endl;
+	  oOdePred_h << "   depVar = depVarRecords;" << endl;
+	}
+      else
+	{
+	  oOdePred_h << "   for( int j=0, k=0; j<nRecords; j++ )" << endl;
+	  oOdePred_h << "   {" << endl;
+	  oOdePred_h << "      if( spk_perm->data[spk_curWho]->" << UserStr.AMT << "[j] == 0 )" << endl;
+	  oOdePred_h << "      {" << endl;
+	  oOdePred_h << "         indVar[k] = spk_perm->data[spk_curWho]->" << UserStr.TIME << "[j];" << endl;
+	  oOdePred_h << "         depVar[k] = depVarRecords[j];" << endl;
+          oOdePred_h << "         k++;" << endl;
+	  oOdePred_h << "      }" << endl;
+	  oOdePred_h << "   }" << endl;
+	}
+    }
+  else if( !myIsMissingMdv && myIsMissingEvid )
+    {
+      oOdePred_h << "   for( int j=0, k=0; j<nRecords; j++ )" << endl;
+      oOdePred_h << "   {" << endl;
+      oOdePred_h << "      if( " << UserStr.MDV << "[j] == 0 )" << endl;
+      oOdePred_h << "      {" << endl;
+      oOdePred_h << "         indVar[k] = spk_perm->data[spk_curWho]->" << UserStr.TIME << "[j];" << endl;
+      oOdePred_h << "         depVar[k] = depVarRecords[i];" << endl;
+      oOdePred_h << "         k++;" << endl;
+      oOdePred_h << "      }" << endl;
+      oOdePred_h << "   }" << endl;
+    }
+  else if( myIsMissingMdv && !myIsMissingEvid )
+    {
+      oOdePred_h << "   for( int j=0, k=0; j<nRecords; j++ )" << endl;
+      oOdePred_h << "   {" << endl;
+      oOdePred_h << "      if( " << UserStr.EVID << "[j] == 0 )" << endl;
+      oOdePred_h << "      {" << endl;
+      oOdePred_h << "         indVar[k] = spk_perm->data[spk_curWho]->" << UserStr.TIME << "[j];" << endl;
+      oOdePred_h << "         depVar[k] = depVarRecords[i];" << endl;
+      oOdePred_h << "         k++;" << endl;
+      oOdePred_h << "      }" << endl;
+      oOdePred_h << "   }" << endl;
+    }
+  else // !myIsMissingMdv && !myIsMissingEvid
+    {
+      oOdePred_h << "   for( int j=0, k=0; j<nRecords; j++ )" << endl;
+      oOdePred_h << "   {" << endl;
+      oOdePred_h << "      if( " << UserStr.MDV << "[j] == 0 )" << endl;
+      oOdePred_h << "      {" << endl;
+      oOdePred_h << "         indVar[k] = spk_perm->data[spk_curWho]->" << UserStr.TIME << "[j];" << endl;
+      oOdePred_h << "         depVar[k] = depVarRecords[i];" << endl;
+      oOdePred_h << "         k++;" << endl;
+      oOdePred_h << "      }" << endl;
+      oOdePred_h << "   }" << endl;
+    }
+  oOdePred_h << "   linearInterpolate( TIME, " << endl;
+  oOdePred_h << "                      indVar," << endl;
+  oOdePred_h << "                      depVar );" << endl;
+  oOdePred_h << "}" << endl;
+
   // ----------------
   // readDataRecord()
   // ----------------
   oOdePred_h << "template <class spk_ValueType>" << endl;
   oOdePred_h << "void OdePred<spk_ValueType>::readDataRecord( int spk_i, int spk_j )" << endl;
   oOdePred_h << "{" << endl;
+  oOdePred_h << "  spk_curWho = spk_i;" << endl;
+  oOdePred_h << "  spk_curWhichRecord = spk_j;" << endl;
+  oOdePred_h << endl;
   oOdePred_h << "  // these ones are absolutely necessary." << endl;
   oOdePred_h << "  setDV  ( spk_perm->data[spk_i]->DV[spk_j] );"   << endl;
   oOdePred_h << "  setTIME( spk_perm->data[spk_i]->TIME[spk_j] );" << endl;
@@ -7589,6 +7712,8 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "                              const std::vector<spk_ValueType>& spk_indepVar,"    << endl;
   oOdePred_h << "                              std::vector<spk_ValueType>& spk_depVar )"           << endl;
   oOdePred_h << "{" << endl;
+  oOdePred_h << "   spk_curWho = spk_i;" << endl;
+  oOdePred_h << "   spk_curWhichRecord = spk_j;" << endl;
   oOdePred_h << "   assert( spk_thetaLen == " << myThetaLen << " );" << endl;
   oOdePred_h << "   assert( spk_etaLen   == " << myEtaLen << " );"   << endl;
   oOdePred_h << "   assert( spk_epsLen   == " << myEpsLen << " );"   << endl;
@@ -7630,24 +7755,70 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "   // Get system computed values" << endl;
   oOdePred_h << "   getFO    ( " << UserStr.FO << " );" << endl;
   oOdePred_h << "   getFO    ( " << UserStr.F0 << " );" << endl;
-  oOdePred_h << "   getFO    ( F" << myCompModel->getNCompartments() << ");" << endl;
+  oOdePred_h << "   getFO    ( F" << myCompModel->getNCompartments() << " );" << endl;
   oOdePred_h << "   getTSCALE( " << UserStr.TSCALE << " );" << endl;
   oOdePred_h << "   getT     ( " << UserStr.T  << " );" << endl; 
   oOdePred_h << endl;
 
+  Symbol * s;
   oOdePred_h << "   // Get current data record items" << endl;
-  oOdePred_h << "   getDV    ( DV );" << endl;
-  oOdePred_h << "   getAMT   ( AMT );" << endl;
-  oOdePred_h << "   getTIME  ( TIME );" << endl;
+  s = table->findi( KeyStr.DV );
+  oOdePred_h << "   getDV    ( " << s->name << " );" << endl;
+  if( s->synonym != "" )
+    {
+      oOdePred_h << "   getDV( " << s->synonym << " );" << endl;
+    }
+
+  s = table->findi( KeyStr.AMT );
+  oOdePred_h << "   getAMT   ( " << s->name << " );" << endl;
+  if( s->synonym != "" )
+    {
+      oOdePred_h << "   getAMT   ( " << s->synonym << " );" << endl;
+    }
+
+  s = table->findi( KeyStr.TIME );
+  oOdePred_h << "   getTIME  ( " << s->name << " );" << endl;
+  if( s->synonym != "" )
+    {
+      oOdePred_h << "   getTIME  ( " << s->synonym << " );" << endl;
+    }
+
   if( !myIsMissingMdv )
-    oOdePred_h << "   getMDV   ( MDV );" << endl;
+    {
+      s = table->findi( KeyStr.MDV );
+      oOdePred_h << "   getMDV   ( " << s->name << " );" << endl;
+      if( s->synonym != "" )
+	{
+	  oOdePred_h << "   getMDV   ( " << s->synonym << " );" << endl;
+	}
+    }
   if( !myIsMissingEvid )
-    oOdePred_h << "   EVID = getEVID();" << endl;
+    {
+      s = table->findi( KeyStr.EVID );
+      oOdePred_h << "   " << s->name << " = getEVID();" << endl;
+      if( s->synonym != "" )
+	{
+	  oOdePred_h << "   getEVID  ( " << s->synonym << " );" << endl;
+	}
+    }
   if( !myIsMissingCmt )
-    oOdePred_h << "   CMT  = getCMT();" << endl;
+    {
+      s = table->findi( KeyStr.CMT );
+      oOdePred_h << "   " << s->name << " = getCMT();" << endl;
+      if( s->synonym != "" )
+	{
+	  oOdePred_h << "   getCMT   ( " << s->synonym << " );" << endl;
+	}
+    }
   if( !myIsMissingPcmt )
-    oOdePred_h << "   PCMT = getPCMT();" << endl;
-  oOdePred_h << "   ID  = spk_perm->data[spk_i]->ID[spk_j];" << endl;
+    {
+      s = table->findi( KeyStr.PCMT );
+      oOdePred_h << "   " << s->name << " = getPCMT();" << endl;
+      if( s->synonym != "" )
+	{
+	  oOdePred_h << "   getPCMT  ( " << s->synonym << " );" << endl;
+	}
+    }
   oOdePred_h << endl;
 
 
@@ -7698,6 +7869,42 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
 	  oOdePred_h << " = spk_indepVar.begin() + spk_epsOffset + " << i << ";" << endl;
 	}
     }
+  oOdePred_h << endl;
+
+  for( pT = t->begin(); pT != t->end(); pT++ )
+    {
+      const string varName            = pT->second.name;
+      const string keyVarName         = SymbolTable::key( varName );
+      const string synonym            = pT->second.synonym;
+      const string keySynonym         = SymbolTable::key( synonym );
+      enum Symbol::Ownership  owner   = pT->second.owner;
+      enum Symbol::ObjectType objType = pT->second.object_type;
+      enum Symbol::Access     access  = pT->second.access;
+      
+      if( owner == Symbol::DATASET )
+        {
+	  if(    !( keyVarName == KeyStr.TIME
+		    || keyVarName == KeyStr.DV
+		    || keyVarName == KeyStr.AMT
+		    || keyVarName == KeyStr.CMT
+		    || keyVarName == KeyStr.PCMT )
+	      && !( keySynonym == KeyStr.TIME
+		    || keySynonym == KeyStr.DV
+		    || keySynonym == KeyStr.AMT
+		    || keySynonym == KeyStr.CMT
+		    || keySynonym == KeyStr.PCMT ) )
+	    {
+                oOdePred_h << "   " << varName << "= spk_perm->data[spk_i]->" << varName << "[spk_j];" << endl;
+                if( pT->second.synonym != "" )
+                   oOdePred_h << "   " << pT->second.synonym << " = spk_perm->data[spk_i]->" << pT->second.synonym << "[spk_j];" << endl;
+             }
+	   else
+	     {
+	       // ignore.
+	     }
+        }
+    }
+
   oOdePred_h << "}" << endl;
   oOdePred_h << endl;
 
@@ -7715,6 +7922,9 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "                              const std::vector<spk_ValueType>& spk_indepVar,"    << endl;
   oOdePred_h << "                              const std::vector<spk_ValueType>& spk_depVar )"     << endl;
   oOdePred_h << "{" << endl;
+
+  oOdePred_h << "   assert( spk_curWho == spk_i );" << endl;
+  oOdePred_h << "   assert( spk_curWhichRecord == spk_j );" << endl;
 
   // Store the current values in temporary storage and also copy into the supper classes.
   oOdePred_h << "   " << UserStr.PRED << " = " << UserStr.F << ";" << endl;
@@ -7861,6 +8071,9 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "                                const std::vector<spk_ValueType>& spk_indepVar )" << endl;
   oOdePred_h << "{" << endl;
 
+  oOdePred_h << "   assert( spk_curWho == spk_i );" << endl;
+  oOdePred_h << "   //assert( spk_curWhichRecord == spk_j );" << endl;
+
   oOdePred_h << "   assert( spk_thetaLen == " << myThetaLen << " );" << endl;
   oOdePred_h << "   assert( spk_etaLen   == " << myEtaLen << " );"   << endl;
   oOdePred_h << endl;
@@ -7896,6 +8109,8 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "                                   const std::vector<spk_ValueType>& spk_indepVar )" << endl;
   oOdePred_h << "{" << endl;
 
+  oOdePred_h << "   assert( spk_curWho == spk_i );" << endl;
+  oOdePred_h << "   //assert( spk_curWhichRecord == spk_j );" << endl;
   oOdePred_h << "   assert( spk_thetaLen == " << myThetaLen << " );" << endl;
   oOdePred_h << endl;
   oOdePred_h << "   //=========================================" << endl;
@@ -7934,6 +8149,8 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "                                   const std::vector<spk_ValueType>& spk_indepVar )" << endl;
   oOdePred_h << "{" << endl;
 
+  oOdePred_h << "   assert( spk_curWho == spk_i );" << endl;
+  oOdePred_h << "   assert( spk_curWhichRecord == spk_j );" << endl;
   oOdePred_h << "   assert( spk_thetaLen == " << myThetaLen << " );" << endl;
   oOdePred_h << "   assert( spk_etaLen   == " << myEtaLen << " );"   << endl;
   oOdePred_h << "   assert( spk_epsLen   == " << myEpsLen << " );"   << endl;
