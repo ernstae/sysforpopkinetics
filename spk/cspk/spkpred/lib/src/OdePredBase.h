@@ -161,22 +161,21 @@ public:
    *//**
    * Performs any initializations of the environment for the users of
    * this class, i.e., the concrete subclasses of this abstract base
-   * class, that are required for new values of i and j before calls
-   * to evalPk(), evalDes(), and evalError() will work properly.
+   * class, that are required for new values of i before calls to
+   * evalPk(), evalDes(), and evalError() will work properly.
    */
   /***********************************************************************/
 
 public:
-  virtual void initUserEnv(
-             int thetaOffset, int thetaLen,
-             int etaOffset,   int etaLen,
-             int epsOffset,   int epsLen,
-             int fOffset,     int fLen,
-             int yOffset,     int yLen,
-             int i,
-             int j,
-             const std::vector<Value>& indepVar,
-             std::vector<Value>& depVar )
+  virtual void initUserEnv( int thetaOffset, int thetaLen,
+                            int etaOffset,   int etaLen,
+                            int epsOffset,   int epsLen,
+                            int fOffset,     int fLen,
+                            int yOffset,     int yLen,
+                            int i,
+                            int j,
+                            const std::vector<Value>& indepVar,
+                            std::vector<Value>& depVar )
   {
   }
 
@@ -192,16 +191,15 @@ public:
    */
   /***********************************************************************/
 
-  virtual void saveUserEnv(
-             int thetaOffset, int thetaLen,
-             int etaOffset,   int etaLen,
-             int epsOffset,   int epsLen,
-             int fOffset,     int fLen,
-             int yOffset,     int yLen,
-             int i,
-             int j,
-             const std::vector<Value>& indepVar,
-             const std::vector<Value>& depVar )
+  virtual void saveUserEnv( int thetaOffset, int thetaLen,
+                            int etaOffset,   int etaLen,
+                            int epsOffset,   int epsLen,
+                            int fOffset,     int fLen,
+                            int yOffset,     int yLen,
+                            int i,
+                            int j,
+                            const std::vector<Value>& indepVar,
+                            const std::vector<Value>& depVar )
   {
   }
 
@@ -234,13 +232,15 @@ protected:
    * Function: evalPk
    *
    *//**
-   * Before evaluating the expressions from the Des block, this
-   * function should call the function readDataRecord() with the i and
-   * j values passed in as arguments.
+   * Evaluates the expressions from the PK block.
+   *
+   * The i and j values passed in as arguments correspond to the
+   * values used for the previous call to readDataRecord() that was
+   * made before this function was called.
    *
    * Note that for SPK the continuous time variable T is a member of
    * this class so that it can, for example, be passed to the linear
-   * interpolator in the $PK block expressions like this
+   * interpolator in the PK block expressions like this
    *
    *     KA = THETA(1) * linearInterpolation( DATA_ITEM_NAME, T )
    */
@@ -259,9 +259,11 @@ protected:
    * Function: evalDes
    *
    *//**
-   * Before evaluating the expressions from the Des block, this
-   * function should call the function readDataRecord() with the i and
-   * j values passed in as arguments.
+   * Evaluates the expressions from the DES block.
+   *
+   * The i and j values passed in as arguments correspond to the
+   * values used for the previous call to readDataRecord() that was
+   * made before this function was called.
    */
   /***********************************************************************/
 
@@ -277,9 +279,11 @@ protected:
    * Function: evalError 
    *
    *//**
-   * Before evaluating the expressions from the Des block, this
-   * function should call the function readDataRecord() with the i and
-   * j values passed in as arguments.
+   * Evaluates the expressions from the ERROR block.
+   *
+   * The i and j values passed in as arguments correspond to the
+   * values used for the previous call to readDataRecord() that was
+   * made before this function was called.
    */
   /***********************************************************************/
 
@@ -817,7 +821,10 @@ private:
   /***********************************************************************/
 
 protected:
-  void getExpDesign( int i )
+  void getExpDesign( int thetaOffset, int thetaLen,
+                     int etaOffset,   int etaLen,
+                     int i,
+                     const std::vector<Value>& indepVar )
   {
     //----------------------------------------------------------
     // Preliminaries.
@@ -880,8 +887,25 @@ protected:
     int j;
     for ( j = 0; j < nDataRec; j++ )
     {
+      //--------------------------------------------------------
+      // Prepare the data items and PK parameters.
+      //--------------------------------------------------------
+
       // Get the data items for the current data record.
       readDataRecord( i, j );
+
+      // Evaluate the current values for the PK parameters because the
+      // rates and durations of zero-order bolus doses can be set in
+      // the PK block.
+      evalPk(
+        thetaOffset,
+        thetaLen,
+        etaOffset,
+        etaLen,
+        i,
+        j,
+        indepVar );
+
 
       //--------------------------------------------------------
       // Handle observation events.
@@ -1244,7 +1268,7 @@ protected:
     {
       infusOffPoint.resize( 0 );
 
-      // Save this regular infusion dose off time and its index.
+      // Save the regular infusion dose off times and their indices.
       for ( q = 0; q < nInfus; q++ )
       {
         infusOffPoint.push_back( 
@@ -1266,7 +1290,7 @@ protected:
     {
       zeroOrderBolusOffPoint.resize( 0 );
 
-      // Save this zero-order bolus dose off time and its index.
+      // Save the zero-order bolus dose off times and their indices.
       for ( q = 0; q < nZeroOrderBolus; q++ )
       {
         zeroOrderBolusOffPoint.push_back( 
@@ -1530,11 +1554,15 @@ public:
     // Set the current break point index.
     kCurr = kIn;
 
-    // If this break point corresponds to a data record, then set the
-    // current individual's data record index.
+    // If this break point corresponds to a data record, then do
+    // preparations related to the data record.
     if ( breakPoint[kCurr].isDataRec )
     {
+      // Set the current individual's data record index.
       jCurr = breakPoint[kCurr].indDataRecIndex;
+
+      // Get the data items for the current data record.
+      readDataRecord( iCurr, jCurr );
     }
 
 
@@ -1907,15 +1935,6 @@ public:
    * Evaluates the amounts in all of the compartments for all of the
    * ODE solution times for the i-th individual at the given values
    * for the independent variables.
-   *
-   * Because the rates and durations of zero-order bolus doses can be
-   * functions of theta and can be set in the PK block, this function
-   * evaluates the current values for the PK parameters before getting
-   * the experiment design information.
-   *
-   * The index j specifies which data record for this individual to
-   * use when evaluating the expressions in the PK block before
-   * determining the experimental design for the individual.
    */
   /***********************************************************************/
 
@@ -1926,7 +1945,6 @@ private:
     int etaOffset,
     int etaLen,
     int i,
-    int j,
     const std::vector<Value>& indepVar )
   {
     //----------------------------------------------------------
@@ -1937,32 +1955,25 @@ private:
 
 
     //----------------------------------------------------------
-    // Get the individual's experiment design information.
+    // Prepare the individual's information.
     //----------------------------------------------------------
 
-    // Evaluate the current values for the PK parameters before
-    // getting the experiment design information because the rates
-    // and durations of zero-order bolus doses can be functions of
-    // theta and can be set in the PK block.
-    evalPk(
+    // Set the current individual index.
+    iCurr = i;
+
+    // Get the individual's experiment design information.
+    getExpDesign(
       thetaOffset,
       thetaLen,
       etaOffset,
       etaLen,
-      i,
-      j,
+      iCurr,
       indepVar );
-
-    // Get the individual's experiment design information.
-    getExpDesign( i );
 
 
     //----------------------------------------------------------
     // Set local copies of variables needed by the function Ode().
     //----------------------------------------------------------
-
-    iCurr             = i;
-    jCurr             = j;
 
     thetaOffsetForOde = thetaOffset;
     thetaLenForOde    = thetaLen;
@@ -2064,39 +2075,39 @@ protected:
 
 
     //----------------------------------------------------------
-    // Calculate the compartment amounts for all of the times.
+    // Do preparations related to new individuals.
     //----------------------------------------------------------
-
-    // Perform initializations for subclasses of this base class that
-    // are required for new values of i and j before calls to
-    // evalPk(), evalDes(), and evalError() will work properly.
-    initUserEnv(
-      thetaOffset,
-      thetaLen,
-      etaOffset,
-      etaLen,
-      epsOffset,
-      epsLen,
-      fOffset,
-      fLen,
-      yOffset,
-      yLen,
-      i,
-      j,
-      indepVar,
-      depVar);
 
     // If this is the first data record for this individual, then
     // calculate all of their compartment amounts.
     if ( j == 0 )
     {
+      // Perform initializations required for new values of i before
+      // calls to evalPk(), evalDes(), and evalError() will work.
+      initUserEnv(
+        thetaOffset,
+        thetaLen,
+        etaOffset,
+        etaLen,
+        epsOffset,
+        epsLen,
+        fOffset,
+        fLen,
+        yOffset,
+        yLen,
+        i,
+        j,
+        indepVar,
+        depVar);
+
+      // Calculate the amounts in all of the compartments for all of
+      // the ODE solution times for this individual.
       evalAllAmounts(
         thetaOffset,
         thetaLen,
         etaOffset,
         etaLen,
         i,
-        j,
         indepVar );
     }
 
