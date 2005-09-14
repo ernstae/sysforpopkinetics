@@ -226,7 +226,7 @@ for $latex X_i ( otime[j] )$$
 (see $italic erel$$ above for more details).
 
 $children%
-	OdeBreakOk.cpp
+	test/unit/src/OdeBreakTest.cpp
 %$$
 $head Example$$
 The routine $xref/OdeBreakOk/$$ is an example and test of $code OdeBreak$$.
