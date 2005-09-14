@@ -2783,9 +2783,9 @@ void OdePredBaseTest::OneExpF_OneBolus_NonObservPred_AdditivePlusThetaDepY_Test(
     "bCurr",
     tol );
 
-  // Set the tolerance for the model function comparisions to be 100
-  // times less than the tolerance for the integration of the ODE's.
-  tol = tolRel / 10.0;
+  // Set the tolerance for the model function comparisions to be 
+  // the tolerance for the integration of the ODE's.
+  tol = tolRel;
 
   compareToKnown( 
     dataMean,

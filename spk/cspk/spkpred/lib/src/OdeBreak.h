@@ -256,7 +256,12 @@ $end
 # include <cmath>
 # include <spk/SpkException.h>
 
+// Maximum number of Ode steps per time interval where the time intervals
+// are defined by the union of the break point times and output times.
 # define MaxNumberOdeStep 1000
+
+
+// Minimum number of Ode steps between the initial and final time.
 # define MinNumberOdeStep   10
 
 namespace {
@@ -299,29 +304,37 @@ void OdeBreak(
 	const size_t K = btime.size();
 	const size_t J = otime.size();
 	const size_t N = eabs.size();
+
+	// has a step size warning already been issued
+	static bool OdeBreakWarning = false; 
+
+	// message
+	const char *message;
+
+
 	if( K == 0 )  // number of break times must be greater than zero
-	{
+	{	message = "Number of break times for the ODE solver is zero.";
 		throw SpkException(
 			SpkError::SPK_USER_INPUT_ERR,
-			"The number of break times for the ODE solver was equal to zero.",
+			message ,
 			__LINE__,
 			__FILE__
 		);
 	}
 	if( J == 0 )  // number of output times must be greater than zero
-	{
+	{	message = "Number of output times for the ODE solver is zero.";
 		throw SpkException(
 			SpkError::SPK_USER_INPUT_ERR,
-			"The number of output times for the ODE solver was equal to zero.",
+			message ,
 			__LINE__,
 			__FILE__
 		);
 	}
 	if( N == 0 )  // state space dimension must be greater than zero
-	{
+	{	message = "Number of ODE dependent variables is zero.";
 		throw SpkException(
 			SpkError::SPK_USER_INPUT_ERR,
-			"The number of ODE solutions for the ODE solver was equal to zero.",
+			message ,
 			__LINE__,
 			__FILE__
 		);
@@ -329,10 +342,10 @@ void OdeBreak(
 	// result vector must have size equal to state space dimension
 	// times the number of output times
 	if( N * J != xout.size() )
-	{
+	{	message = "ODE solution vector has the wrong size.";
 		throw SpkException(
 			SpkError::SPK_PROGRAMMER_ERR,
-			"The vector of ODE solutions for all of the output times had the wrong size.",
+			message ,
 			__LINE__,
 			__FILE__
 		);
@@ -342,17 +355,17 @@ void OdeBreak(
 	Vector x(N), g(N), e(N), enext(N), xnext(N);
 
 	size_t k, j;
-#ifndef NDEBUG
 	// break point times 
 	if( K > 1 )
 	{	// values in btime vector must be monatone non-decreasing
 		for(k = 0; k < K-2; k++)
 		{
 			if( btime[k] > btime[k+1] )
-			{
+			{	message = "Ode break times must be"
+					" in non-decreasing order.";
 				throw SpkException(
 					SpkError::SPK_PROGRAMMER_ERR,
-					"The break times for the ODE solver were not in non-decreasing order.",
+					message ,
 					__LINE__,
 					__FILE__
 				);
@@ -363,10 +376,11 @@ void OdeBreak(
 	
 	// first break time must be less than first output time
 	if( btime[0] >= otime[0] )
-	{
+	{	message =
+		"Ode first break time must be less than first output time.";
 		throw SpkException(
 			SpkError::SPK_PROGRAMMER_ERR,
-			"The first break time for the ODE solver was less than the first output time.",
+			message ,
 			__LINE__,
 			__FILE__
 		);
@@ -376,10 +390,11 @@ void OdeBreak(
 		for(j = 0; j < J-2; j++)
 		{
 			if( otime[j] >= otime[j+1] )
-			{
+			{	message = "Ode output times must be"
+					" in increasing order.";
 				throw SpkException(
 					SpkError::SPK_PROGRAMMER_ERR,
-					"The output times for the ODE solver were not in increasing order.",
+					message ,
 					__LINE__,
 					__FILE__
 				);
@@ -388,15 +403,15 @@ void OdeBreak(
 	}
 	// last break time must be less than last output time
 	if( btime[K-1] >= otime[J-1] )
-	{
+	{	message = "Last Ode break time must be"
+				" less than last output time.";
 		throw SpkException(
 			SpkError::SPK_PROGRAMMER_ERR,
-			"The last break time for the ODE solver was not less than the last output time.",
+			message ,
 			__LINE__,
 			__FILE__
 		);
 	}
-#endif
 
 	// integration method
 	Method<Scalar, Vector, Eval> method(&eval);
@@ -419,23 +434,24 @@ void OdeBreak(
 
 	// repeat until all output points are calculated
 	while( j < J )
-	{	// internal consistency check in OdeBreak
+	{	message = "An OdeBreak internal consistency check failed.";
+
+		// internal consistency check in OdeBreak
 		if( t >= otime[j] )
-		{
-			throw SpkException(
+		{	throw SpkException(
 				SpkError::SPK_PROGRAMMER_ERR,
-		  		"The time for the ODE integration went beyond the current output time.",
+		  		message ,
 				__LINE__,
 				__FILE__
 			);
 		}
+
 		if( k < K )
 		{	// internal consistency check in OdeBreak
 			if( t > btime[k] )
-			{
-				throw SpkException(
+			{	throw SpkException(
 					SpkError::SPK_PROGRAMMER_ERR,
-			  		"The time for the ODE integration went beyond the current break time.",
+			  		message ,
 					__LINE__,
 					__FILE__
 				);
@@ -458,10 +474,9 @@ void OdeBreak(
 
 		// internal consistency check in OdeBreak
 		if( tnext <= t )
-		{
-			throw SpkException(
+		{	throw SpkException(
 				SpkError::SPK_PROGRAMMER_ERR,
-				"The time for the ODE integration went beyond the integration time limit.",
+				message ,
 				__LINE__,
 				__FILE__
 			);
@@ -495,27 +510,21 @@ void OdeBreak(
 				Scalar reli = 
 				(abs(x[i]) + abs(xnext[i])) * erel * fraction;
 				ok     &= ( enext[i] <= reli + e[i]);
-				shrink |= ( enext[i] > (reli + e[i]) / 10. );
 			}
-			shrink &= ( total / smin ) < MaxNumberOdeStep;
+			shrink  = ! ok;
+			shrink &= ( (tnext - t) / smin) < MaxNumberOdeStep;
 			if( shrink )
 				smin = smin / 2;
 
-			// internal consistency check in OdeBreak
+			// check for minimum step size
 			if( !( ok | shrink ) )
-			{
-				throw SpkException(
-					SpkError::SPK_PROGRAMMER_ERR,
-					"The desired integration accuracy could not be achieved in the ODE solver.",
-					__LINE__,
-					__FILE__
-				);
+			{	ok      = true;
+				message =
+				"Ode solver cannot obtain desired accuracy";	
+				if( ! OdeBreakWarning )
+					std::cout << message << std::endl;	
+				OdeBreakWarning = true;
 			}
-
-			// avoid infinite loop
-			if( ! ok )
-				if( ! shrink )
-					ok = true;
 		}
 
 		// advance t
