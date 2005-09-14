@@ -320,6 +320,7 @@ void OdeBreakTest::FourBolus_OneInfus_Test()
 
 /*
 $begin OdeBreakOk$$
+$latex \newcommand{\R}{{\bf R}}$$
 $spell
 	namespace
 	std
@@ -571,8 +572,19 @@ $end
 
 /*
 $begin OneBreakOk$$
+$latex \newcommand{\R}{{\bf R}}$$
 $spell
 	otime
+	Eval eval
+	eabs
+	vector vector
+	xout
+	Cpp
+	namespace
+	const
+	bool
+	btime
+	erel
 $$
 
 $section Test OdeBreak With One Break Point$$
@@ -721,8 +733,20 @@ $end
 
 /*
 $begin ZeroBreakOk$$
+$latex \newcommand{\R}{{\bf R}}$$
 $spell
 	otime
+	Eval eval
+	btime
+	erel
+	Cpp
+	namespace
+	const
+	bool
+	vector vector
+	tpower
+	xout
+	eabs
 $$
 
 $section Test OdeBreak With an Identically Zero Component$$
