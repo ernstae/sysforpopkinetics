@@ -61,7 +61,7 @@ The space between grid points in the $th i$$ component direction is
 $latex \[
 	( U_i - L_i ) / N_i
 \] $$
-(All the elements of $italic N$$ must be greater than or equal 3.)
+(All the elements of $italic N$$ must be greater than or equal 2.)
 Note that $code GridIntegral$$ may use up to 
 $latex \[
 	2 * N[0] * N[1] *  \cdots  * N[m-1]
@@ -182,12 +182,15 @@ void GridIntegral(
 {
 	integralEstimate  = GridIntegral(Feval, m, p, N, L, U);
 
-	std::valarray<int> N3 = N / 3;
+        // Brad changed this to 3 but he doesn't remember why he did so.
+        // Since it breaks the regression test, Sachiko retrieved
+        // the original scheme (i.e. devide by 2).
+	std::valarray<int> N2 = N / 2;
 	size_t i;
 	for(i = 0; i < N.size(); i++)
-		assert( N3[i] > 0 );
+		assert( N2[i] > 0 );
 
-	std::valarray<int> M = N - N3;
+	std::valarray<int> M = N - N2;
 	double compareEstimate = GridIntegral(Feval, m, p, M, L, U);
 	estimateStd            = fabs(integralEstimate - compareEstimate);
 
