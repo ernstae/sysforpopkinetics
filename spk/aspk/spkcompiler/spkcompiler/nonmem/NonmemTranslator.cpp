@@ -7086,7 +7086,7 @@ void NonmemTranslator::generateMonteParsNamespace() const
   oMontePars << endl;
 
   oMontePars << "namespace MontePars{" << endl;
-  oMontePars << "   enum METHOD { analytic, grid, plain, miser, monte };" << endl;
+  oMontePars << "   enum METHOD { analytic, grid, plain, miser, monte, vegas };" << endl;
   oMontePars << "   const enum METHOD method = ";
   if( myIntegMethod == GRID )
     oMontePars << "grid;" << endl;
