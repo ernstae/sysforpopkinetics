@@ -1022,28 +1022,94 @@ public:
 		g[1] = 0.;
 		return;
 	}
-	void Ode(double t, const vector<double> &x, vector<double> &f)
+
+	// template so can use with Scalar equal to both double and AD<double>
+	template <class Scalar>
+	void Ode(Scalar t, const vector<Scalar> &x, vector<Scalar> &f)
 	{	assert( f.size() == 2 );
 		assert( x.size() == 2 );
 		f[0] = - a[0] * x[0];
 		f[1] = + a[0] * x[0] - a[1] * x[1];
 		return;
 	}
+
+	// compute partial of f(t, x) with respect to t
 	void Ode_ind(double t, const vector<double> &x, vector<double> &f_ind)
-	{	assert(0); }
+	{
+		size_t n = x.size();
+		vector< CppAD::AD<double> > T(1);
+		vector< CppAD::AD<double> > X(n);
+		vector< CppAD::AD<double> > F(n);
+
+		// set inputs to Ode_ind
+		T[0] = t;
+		size_t i;
+		for(i = 0; i < n; i++)
+			X[i] = x[i];
+
+		// declare independent variables
+		Independent(T);
+
+		// compute f(t, x)
+		this->Ode(T[0], X, F);
+
+		// define AD function object
+		CppAD::ADFun<double> Fun(T, F);
+
+		// compute partial of f w.r.t. t
+		vector<double> dt(1);
+		dt[0] = 1.;
+		f_ind = Fun.Forward(1, dt);
+	}
+
+	// compute partial of f(t, x) with respect to x
 	void Ode_dep(double t, const vector<double> &x, vector<double> &f_dep)
-	{	assert(0); }
+	{
+		size_t n = x.size();
+		vector< CppAD::AD<double> > T(1);
+		vector< CppAD::AD<double> > X(n);
+		vector< CppAD::AD<double> > F(n);
+
+		// set inputs to Ode_ind
+		T[0] = t;
+		size_t j;
+		for(j = 0; j < n; j++)
+			X[j] = x[j];
+
+		// declare independent variables
+		Independent(X);
+
+		// compute f(t, x)
+		this->Ode(T[0], X, F);
+
+		// define AD function object
+		CppAD::ADFun<double> Fun(X, F);
+
+		// compute partial of f w.r.t. x
+		vector<double> dx(n);
+		vector<double> df(n);
+		for(j = 0; j < n; j++)
+			dx[j] = 0.;
+		for(j = 0; j < n; j++)
+		{	dx[j] = 1.;
+			df    = Fun.Forward(1, dx);
+			size_t i;
+			for(i = 0; i < n; i++)
+				f_dep[ i * n + j ] = df[i];
+			dx[j] = 0.;
+		}
+	}
 };
 
 } // End empty namespace
 void OdeBreakTest::OdeBreakStiff_Test()
 {	bool ok = true;
 	size_t K = 1; // number of break point times
-	size_t J = 1; // number of output point times
+	size_t J = 2; // number of output point times
 
 	// evaluation method
 	vector<double> a(2);
-	a[0] = 10;  // use a[0] =  1e3 to get non-stiff solver to fail
+	a[0] = 1e3;
 	a[1] = 1.;
 	OdeBreakStiff_Eval eval(a);
 
@@ -1053,7 +1119,8 @@ void OdeBreakTest::OdeBreakStiff_Test()
 
 	// output grid
 	vector<double> otime(J);
-	otime[0] = 1.;
+	otime[0] = 1. / a[0];
+	otime[1] = 1. / a[1];
 
 	// absolute error 
 	vector<double> eabs(2);
@@ -1061,7 +1128,7 @@ void OdeBreakTest::OdeBreakStiff_Test()
 	eabs[1] = 0.;
 
 	// relative error
-	double erel = 1e-6;
+	double erel = 1e-3;
 
 	// results vector
 	vector<double> xout(2 * J);
@@ -1076,9 +1143,9 @@ void OdeBreakTest::OdeBreakStiff_Test()
 	{	double t, x0, x1;
 		t  = otime[j];
 		x0 = exp(-a[0] * t);
-		x1 = a[0] * (exp(-a[1] * t) - exp(-a[0]) * t) / (a[0] - a[1]);
-		ok &= CppAD::NearEqual(xout[0+j*2], x0, erel, eabs[0]);
-		ok &= CppAD::NearEqual(xout[1+j*2], x1, erel, eabs[0]);
+		x1 = a[0] * (exp(-a[1] * t) - exp(-a[0] * t)) / (a[0] - a[1]);
+		ok &= CppAD::NearEqual(xout[0+j*2], x0, erel, erel);
+		ok &= CppAD::NearEqual(xout[1+j*2], x1, erel, erel);
 	}  
 
 	CPPUNIT_ASSERT_MESSAGE( 
