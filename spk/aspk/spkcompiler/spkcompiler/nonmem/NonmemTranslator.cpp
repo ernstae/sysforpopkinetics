@@ -185,26 +185,26 @@ const char* NonmemTranslator::C_DEFAULT_OBSERVATION        ( "default_observatio
 const char* NonmemTranslator::C_DEFAULT_DOSE               ( "default_dose" );
 const char* NonmemTranslator::C_TOLERANCE                  ( "tolerance" );
 
-const char* NonmemTranslator::fMakefile               ( "Makefile.SPK" );
-const char* NonmemTranslator::fIndData_h              ( "IndData.h" );
-const char* NonmemTranslator::fDataSet_h              ( "DataSet.h" );
-const char* NonmemTranslator::fPredEqn_fortran        ( "predEqn.fortran" );
-const char* NonmemTranslator::fPredEqn_cpp            ( "predEqn.cpp" );
-const char* NonmemTranslator::fPred_h                 ( "Pred.h" );
-const char* NonmemTranslator::fDiffEqn_fortran        ( "diffEqn.fortran" );
-const char* NonmemTranslator::fDiffEqn_cpp            ( "diffEqn.cpp" );
-const char* NonmemTranslator::fOdePred_h              ( "OdePred.h" );
-const char* NonmemTranslator::fPkEqn_fortran          ( "pkEqn.fortran" );
-const char* NonmemTranslator::fPkEqn_cpp              ( "pkEqn.cpp" );
-const char* NonmemTranslator::fErrorEqn_fortran       ( "errorEqn.fortran" );
-const char* NonmemTranslator::fErrorEqn_cpp           ( "errorEqn.cpp" );   
-const char* NonmemTranslator::fNonmemPars_h           ( "NonmemPars.h" );
-const char* NonmemTranslator::fMontePars_h            ( "MontePars.h" );
-const char* NonmemTranslator::fFitDriver_cpp          ( "fitDriver.cpp" );
-const char* NonmemTranslator::fMonteDriver_cpp        ( "monteDriver.cpp" );
-const char* NonmemTranslator::fSpkRuntimeLongError_tmp( "scratch.tmp" );
-const char* NonmemTranslator::fResult_xml             ( "result.xml" );
-const char* NonmemTranslator::fCheckpoint_xml         ( "checkpoint.xml" );
+const char* NonmemTranslator::fMakefile                    ( "Makefile.SPK" );
+const char* NonmemTranslator::fIndData_h                   ( "IndData.h" );
+const char* NonmemTranslator::fDataSet_h                   ( "DataSet.h" );
+const char* NonmemTranslator::fPredEqn_fortran             ( "predEqn.fortran" );
+const char* NonmemTranslator::fPredEqn_cpp                 ( "predEqn.cpp" );
+const char* NonmemTranslator::fPred_h                      ( "Pred.h" );
+const char* NonmemTranslator::fDiffEqn_fortran             ( "diffEqn.fortran" );
+const char* NonmemTranslator::fDiffEqn_cpp                 ( "diffEqn.cpp" );
+const char* NonmemTranslator::fOdePred_h                   ( "OdePred.h" );
+const char* NonmemTranslator::fPkEqn_fortran               ( "pkEqn.fortran" );
+const char* NonmemTranslator::fPkEqn_cpp                   ( "pkEqn.cpp" );
+const char* NonmemTranslator::fErrorEqn_fortran            ( "errorEqn.fortran" );
+const char* NonmemTranslator::fErrorEqn_cpp                ( "errorEqn.cpp" );   
+const char* NonmemTranslator::fNonmemPars_h                ( "NonmemPars.h" );
+const char* NonmemTranslator::fMontePars_h                 ( "MontePars.h" );
+const char* NonmemTranslator::fFitDriver_cpp               ( "fitDriver.cpp" );
+const char* NonmemTranslator::fMonteDriver_cpp             ( "monteDriver.cpp" );
+const char* NonmemTranslator::fSpkRuntimeLongError_tmp     ( "scratch.tmp" );
+const char* NonmemTranslator::fResult_xml                  ( "result.xml" );
+const char* NonmemTranslator::fCheckpoint_xml              ( "checkpoint.xml" );
 
 NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   : ClientTranslator        ( sourceIn, dataIn ),
@@ -8919,7 +8919,9 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "         {" << endl;
   oIndDriver << "            assert( haveCompleteData );" << endl;
   oIndDriver << "            try{" << endl;
-  oIndDriver << "               indResiduals( modelForDisposal, y, bOut, "    << endl;
+  oIndDriver << "               indResiduals( modelForDisposal," << endl;
+  oIndDriver << "                             y, "               << endl;
+  oIndDriver << "                             bOut, "            << endl;
   oIndDriver << "                            &iPredOut, "        << endl;
   oIndDriver << "                            &iResOut, "         << endl;
   oIndDriver << "                            &iResWtdOut, "      << endl;
@@ -8929,8 +8931,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "            catch( const SpkException& e )" << endl;
   oIndDriver << "            {" << endl;
   oIndDriver << "               errors.cat( e );" << endl;
-  oIndDriver << "               isStatSuccess &= false;" << endl;
-  oIndDriver << "               ret = STAT_FAILURE;" << endl;
+  oIndDriver << "               ret = OTHER_FAILURE;" << endl;
   //  oIndDriver << "               goto REPORT_GEN;" << endl;
   oIndDriver << "            }" << endl;
   oIndDriver << "            catch( ... )" << endl;
@@ -8938,8 +8939,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "               char message[] = \"Unknown exception: failed in residuals calculation!!!\";" << endl;
   oIndDriver << "               SpkError e( SpkError::SPK_UNKNOWN_ERR, message, __LINE__, __FILE__ );" << endl;
   oIndDriver << "               errors.push( e );" << endl;
-  oIndDriver << "               isStatSuccess &= false;" << endl;
-  oIndDriver << "               ret = STAT_FAILURE;" << endl;
+  oIndDriver << "               ret = OTHER_FAILURE;" << endl;
   //  oIndDriver << "               goto REPORT_GEN;" << endl;
   oIndDriver << "            }" << endl;
   oIndDriver << "            set.replaceIPred( iPredOut );"   << endl;
@@ -9854,8 +9854,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "               SpkError ee( SpkError::SPK_STATISTICS_ERR, message, __LINE__, __FILE__ );" << endl;
   oPopDriver << "               e.push( ee );" << endl;
   oPopDriver << "               errors.cat( e );" << endl;
-  oPopDriver << "               isStatSuccess &= false;" << endl;
-  oPopDriver << "               ret = STAT_FAILURE;" << endl;
+  oPopDriver << "               ret = OTHER_FAILURE;" << endl;
   //  oPopDriver << "               goto REPORT_GEN;" << endl;
   oPopDriver << "            }" << endl;
   oPopDriver << "            catch( ... )" << endl;
@@ -9863,8 +9862,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "               char message[] = \"Unknown exception: failed during the calculation of population (non-conditional) residuals!!!\";" << endl;
   oPopDriver << "               SpkError e( SpkError::SPK_UNKNOWN_ERR, message, __LINE__, __FILE__ );" << endl;
   oPopDriver << "               errors.push( e );" << endl;
-  oPopDriver << "               isStatSuccess &= false;" << endl;
-  oPopDriver << "               ret = STAT_FAILURE;" << endl;
+  oPopDriver << "               ret = OTHER_FAILURE;" << endl;
   //  oPopDriver << "               goto REPORT_GEN;" << endl;
   oPopDriver << "            }" << endl;
   oPopDriver << "            set.replacePPred   ( pPredOut );"           << endl;
