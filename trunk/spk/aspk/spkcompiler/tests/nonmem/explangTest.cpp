@@ -746,7 +746,7 @@ void explangTest::testLinInterp()
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == "lininterp(" );
   pOutput >> buf;
-  CPPUNIT_ASSERT_MESSAGE( buf, buf == "Y" );
+  CPPUNIT_ASSERT_MESSAGE( buf, buf == "\"Y\"" );
   pOutput >> buf;
   CPPUNIT_ASSERT_MESSAGE( buf, buf == ");" );
 
