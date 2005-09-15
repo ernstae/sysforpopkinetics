@@ -17,13 +17,16 @@ $spell
 	eval
 	eabs
 	xout
+	std
+	ind
+	dep
 $$
 
 $section Multiple Break Point and Output Point Ode Integrator$$
 
 $table
-$bold Syntax$$
-$syntax%OdeBreak(%eval%, %btime%, %otime%, %eabs%, %erel%, %xout%)%$$ 
+$bold Syntax$$ $cnext
+$syntax%OdeBreak(%method%, %eval%, %btime%, %otime%, %eabs%, %erel%, %xout%)%$$ 
 $tend
 
 $fend 20$$
@@ -81,7 +84,33 @@ class with elements of type $italic Scalar$$.
 
 $head Scalar$$
 The type $italic Scalar$$ is either 
-$code double$$ or $code CppAD::AD<double>$$.
+$code double$$, $code CppAD::AD<double>$$ or
+$code CppAD::AD< CppAD::AD<double> >$$.
+
+$head method$$
+The argument $italic method$$ has prototype
+$syntax%
+	const std::string &%method%
+%$$ 
+It's value must be equal to one of the following
+$table
+$bold method$$    $cnext $bold Description$$
+$rnext
+$code "Runge45"$$ $cnext 
+	a 5-th order Runge-Kutta solver with 4-th order error estimation 
+$rnext
+$code "Rosen34"$$ $cnext 
+	a 4-th order Rosenbrock solver with 3-rd order error estimation 
+$tend
+Note that if $italic method$$ is equal to $code "Runge45"$$,
+the functions 
+$syntax%%eval%.Ode_ind%$$ and $syntax%%eval%.Ode_dep%$$ 
+will not be called.
+In this case these functions only need have the correct prototypes; i.e.,
+it is not necessary to compute the corresponding derivatives
+$italic f_ind$$ and $italic f_dep$$.
+(One could use an assert in the corresponding functions
+to assure they are not called.)
 
 $head eval$$
 The class $italic Eval$$ and 
@@ -89,6 +118,8 @@ the object $italic eval$$ satisfy the prototype
 $syntax%
 	%Eval% &%eval%
 %$$
+
+$subhead eval.Break$$
 The object $italic eval$$ must have a member function named
 $code Break$$ that supports the syntax
 $syntax%
@@ -96,15 +127,16 @@ $syntax%
 %$$
 which sets the vector $italic g$$ equal to
 $latex G^k(x)$$.
-The object $italic eval$$ must also have a member function
-$code Ode$$ that supports the syntax
+
+$subhead g$$
+The argument $italic g$$ to $syntax%%eval%.Break%$$ 
+is a vector with $latex N$$ elements and has prototype
 $syntax%
-	%eval%.Ode(%t%, %x%, %f%)
-%$$ 
-This sets the vector $italic f$$ equal to
-$latex F^k (t, x)$$ where
-$italic k$$ corresponds to the previous call to
-$syntax%%eval%.Break(%k%, %x%, %g%)%$$.
+	%Vector% &%g%
+%$$
+The input value of its elements does not matter.
+The output value of its elements is equal to 
+$latex G^k(x)$$.
 
 $subhead k$$
 The argument $italic k$$ to $syntax%%eval%.Break%$$
@@ -119,23 +151,16 @@ $syntax%%eval%.Ode%$$.
 The value of $italic k$$ 
 will be between 0 and $latex K-1$$ inclusive.
 
-$subhead t$$
-The argument $italic t$$ to $syntax%%eval%.Ode%$$ 
-has prototype
+$subhead eval.Ode$$
+The object $italic eval$$ must also have a member function
+$code Ode$$ that supports the syntax
 $syntax%
-	const %Scalar% &%t%
-%$$
-and $latex b_k \leq t \leq b_{k+1}$$ 
-where $latex k$$ corresponds to the previous call to 
+	%eval%.Ode(%t%, %x%, %f%)
+%$$ 
+This sets the vector $italic f$$ equal to
+$latex F^k (t, x)$$ where
+$italic k$$ corresponds to the previous call to
 $syntax%%eval%.Break(%k%, %x%, %g%)%$$.
-
-$subhead x$$
-The argument $italic x$$ to $syntax%%eval%.Ode%$$ 
-and $syntax%%eval%.Break%$$ 
-is a vector with $latex N$$ elements and has prototype
-$syntax%
-	const %Vector% &%x%
-%$$
 
 $subhead f$$
 The argument $italic f$$ to $syntax%%eval%.Ode%$$ 
@@ -149,15 +174,77 @@ $latex F^k (t, x)$$
 where $latex k$$ corresponds to the previous call to 
 $syntax%%eval%.Break(%k%, %x%, %g%)%$$.
 
-$subhead g$$
-The argument $italic g$$ to $syntax%%eval%.Break%$$ 
+$subhead eval.Ode_ind$$
+The object $italic eval$$ must also have a member function
+$code Ode_ind$$ that supports the syntax
+$syntax%
+	%eval%.Ode_ind(%t%, %x%, %f_ind%)
+%$$ 
+This sets the vector $italic f_ind$$ equal to
+$latex \partial_t F^k (t, x)$$ where
+$italic k$$ corresponds to the previous call to
+$syntax%%eval%.Break(%k%, %x%, %g%)%$$.
+
+$subhead f_ind$$
+The argument $italic f_ind$$ to $syntax%%eval%.Ode_ind%$$ 
 is a vector with $latex N$$ elements and has prototype
 $syntax%
-	%Vector% &%g%
+	%Vector% &%f_ind%
 %$$
 The input value of its elements does not matter.
 The output value of its elements is equal to 
-$latex G^k(x)$$.
+$latex \partial_t F^k (t, x)$$
+where $latex k$$ corresponds to the previous call to 
+$syntax%%eval%.Break(%k%, %x%, %g%)%$$.
+
+$subhead eval.Ode_dep$$
+The object $italic eval$$ must also have a member function
+$code Ode_dep$$ that supports the syntax
+$syntax%
+	%eval%.Ode_dep(%t%, %x%, %f_dep%)
+%$$ 
+This sets the vector $italic f_dep$$ equal to
+$latex \partial_x F^k (t, x)$$ where
+$italic k$$ corresponds to the previous call to
+$syntax%%eval%.Break(%k%, %x%, %g%)%$$.
+
+$subhead f_dep$$
+The argument $italic f_dep$$ to $syntax%%eval%.Ode_dep%$$ 
+is a vector with $latex N^2$$ elements and has prototype
+$syntax%
+	%Vector% &%f_dep%
+%$$
+The input value of its elements does not matter.
+The output value of the element 
+$latex \[
+	f\_{dep} [i * N + j] = \partial_{x(j)} F_i^k (t, x)
+\] $$
+where $latex k$$ corresponds to the previous call to 
+$syntax%%eval%.Break(%k%, %x%, %g%)%$$.
+
+$subhead t$$
+The argument $italic t$$ to 
+$syntax%%eval%.Ode%$$, 
+$syntax%%eval%.Ode_ind%$$,  and
+$syntax%%eval%.Ode_dep%$$, 
+has prototype
+$syntax%
+	const %Scalar% &%t%
+%$$
+and $latex b_k \leq t \leq b_{k+1}$$ 
+where $latex k$$ corresponds to the previous call to 
+$syntax%%eval%.Break(%k%, %x%, %g%)%$$.
+
+$subhead x$$
+The argument $italic x$$ to 
+and $syntax%%eval%.Break%$$,
+$syntax%%eval%.Ode%$$, 
+$syntax%%eval%.Ode_ind%$$,  and
+$syntax%%eval%.Ode_dep%$$, 
+is a vector with $latex N$$ elements and has prototype
+$syntax%
+	const %Vector% &%x%
+%$$
 
 $head btime$$
 The argument $italic btime$$ 
@@ -233,33 +320,22 @@ The routine $xref/OdeBreakOk/$$ is an example and test of $code OdeBreak$$.
 It returns true if the test passes and false otherwise.
 
 $head Wish List$$
-This is a preliminary version of this routine.
-Below is a wish list for future enhancements
-(feel free to suggest additions to this list):
-$list number$$
-Add a method option, name the current method $code Runge45$$
-(a Runge-Kutta method),
-and include the $code Rosen34$$ method 
-(a Rosenbrock method) as an option.
-$lnext
-Add error detection for special cases such as
-the error criteria could not be met or the 
-evaluation of $latex F^k$$, or $latex G^k$$ failed.
-$lend
-
+Add an estimate of the accuracy of the solution to be used when
+evaluating a integration solution from a CppAD ADFun<double> object.
+This would enable one to know when it is necessary to re-tape for accuracy.
 
 $end
 */
 
 # include <CppAD/OdeErrControl.h>
 # include <CppAD/Runge45.h>
+# include <CppAD/Rosen34.h>
 # include <cmath>
 # include <spk/SpkException.h>
 
 // Maximum number of Ode steps per time interval where the time intervals
 // are defined by the union of the break point times and output times.
 # define MaxNumberOdeStep 1000
-
 
 // Minimum number of Ode steps between the initial and final time.
 # define MinNumberOdeStep   10
@@ -272,14 +348,31 @@ namespace {
 }
 
 template <typename Scalar, typename Vector, typename Eval>
-class Method {
+class StepMethod {
 private:
 	Eval *F;
+	enum { runge45, rosen34 } method;
 public:
-	Method(Eval *eval)
-	{	F = eval; }
+	StepMethod(Eval *eval, const std::string &method_)
+	{	F = eval; 
+		if( method_ == "Runge45" )
+			method = runge45;
+		else if( method_ == "Rosen34" )
+			method = rosen34;
+		else
+		{	throw SpkException(
+				SpkError::SPK_USER_INPUT_ERR,
+				"Invalid Ode Integration method",
+				__LINE__,
+				__FILE__
+			);
+		}
+	}
 	size_t order(void)
-	{	return 4; }
+	{	if( method == runge45 )
+			return 4; 
+		else	return 3;
+	}
 	void step(
 		const Scalar &ta, 
 		const Scalar &tb, 
@@ -287,12 +380,15 @@ public:
 		Vector &xb      ,
 		Vector &eb      )
 	{	size_t M = 1;
-		xb = CppAD::Runge45(*F, M, ta, tb, xa, eb); 
+		if( method == runge45 )
+			xb = CppAD::Runge45(*F, M, ta, tb, xa, eb); 
+		else	xb = CppAD::Rosen34(*F, M, ta, tb, xa, eb); 
 	};
 };
 
 template <typename Scalar, typename Vector, typename Eval>
 void OdeBreak(
+	const std::string &method,
 	Eval &eval, 
 	const Vector &btime, 
 	const Vector &otime , 
@@ -414,7 +510,7 @@ void OdeBreak(
 	}
 
 	// integration method
-	Method<Scalar, Vector, Eval> method(&eval);
+	StepMethod<Scalar, Vector, Eval> stepMethod(&eval, method);
 
 	// total integration time
 	Scalar total = otime[J-1] - btime[0];
@@ -490,7 +586,7 @@ void OdeBreak(
 		// solve the ODE from t to tnext
 		bool ok = false;
 		while( ! ok )
-		{	xnext = CppAD::OdeErrControl(method, 
+		{	xnext = CppAD::OdeErrControl(stepMethod, 
 				t, 
 				tnext, 
 				x, 
@@ -512,15 +608,20 @@ void OdeBreak(
 				ok     &= ( enext[i] <= reli + e[i]);
 			}
 			shrink  = ! ok;
-			shrink &= ( (tnext - t) / smin) < MaxNumberOdeStep;
 			if( shrink )
+			{	if( smin > tnext - t )
+				{	// actual step during last call was 
+					smin = tnext - t;
+				}
 				smin = smin / 2;
+			}
+			shrink &= ( (tnext - t) / smin) < MaxNumberOdeStep;
 
 			// check for minimum step size
 			if( !( ok | shrink ) )
 			{	ok      = true;
 				message =
-				"Ode solver cannot obtain desired accuracy";	
+				"Ode solver cannot obtain desired accuracy";
 				if( ! OdeBreakWarning )
 					std::cout << message << std::endl;	
 				OdeBreakWarning = true;
