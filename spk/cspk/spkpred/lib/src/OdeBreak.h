@@ -600,7 +600,10 @@ void OdeBreak(
 		// solve the ODE from t to tnext
 		bool ok = false;
 		while( ! ok )
-		{	xnext = CppAD::OdeErrControl(stepMethod, 
+		{
+# if 0
+			// Use new version of CppAD
+			xnext = CppAD::OdeErrControl(stepMethod, 
 				t, 
 				tnext, 
 				x, 
@@ -612,6 +615,23 @@ void OdeBreak(
 				enext,
 				maxnext
 			);
+			// End use new version CppAD
+# endif
+			// Begin use old version of CppAD
+			xnext = CppAD::OdeErrControl(stepMethod, 
+				t, 
+				tnext, 
+				x, 
+				smin, 
+				smax, 
+				scur, 
+				e, 
+				fraction * erel / Scalar(2), 
+				enext
+			);
+			for(i = 0; i < N; i++)
+				maxnext[i] = abs(xnext[i]);
+			// End use old version CppAD
 
 			// check if error criteria is satisfied at time tnext
 			bool shrink = false;
