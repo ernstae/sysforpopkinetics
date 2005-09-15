@@ -1109,7 +1109,7 @@ void OdeBreakTest::OdeBreakStiff_Test()
 
 	// evaluation method
 	vector<double> a(2);
-	a[0] = 1e3;
+	a[0] = 1e1;
 	a[1] = 1.;
 	OdeBreakStiff_Eval eval(a);
 
