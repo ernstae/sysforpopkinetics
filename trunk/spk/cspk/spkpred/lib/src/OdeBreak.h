@@ -448,7 +448,7 @@ void OdeBreak(
 	}
 
 	// local vectors with same length as x 
-	Vector x(N), g(N), e(N), enext(N), xnext(N);
+	Vector x(N), g(N), e(N), enext(N), xnext(N), maxnext(N), maxabs(N);
 
 	size_t k, j;
 	// break point times 
@@ -526,7 +526,9 @@ void OdeBreak(
 	Scalar t = btime[0];
 	size_t i;
 	for(i = 0; i < N; i++)
-		x[i] = 0.;
+	{	x[i] =      Scalar(0);
+		maxabs[i] = Scalar(0);
+	}
 
 	// repeat until all output points are calculated
 	while( j < J )
@@ -557,7 +559,10 @@ void OdeBreak(
 			while( k < K && btime[k] == t )
 			{	eval.Break(k, x, g);
 				for(i = 0; i < N; i++)
-					x[i] += g[i];
+				{	x[i] += g[i];
+					if( abs(x[i]) > maxabs[i] )
+						maxabs[i] = abs(x[i]);
+				}
 				k++;
 			}
 		}
@@ -567,6 +572,10 @@ void OdeBreak(
 		if( k < K && btime[k] < otime[j] )
 			tnext = btime[k];
 		else	tnext = otime[j];
+
+		// max sure smin is not to small for next interval
+		if( smin < (tnext - t) / Scalar(MaxNumberOdeStep) )
+			smin = (tnext - t) / Scalar(MaxNumberOdeStep);
 
 		// internal consistency check in OdeBreak
 		if( tnext <= t )
@@ -578,10 +587,15 @@ void OdeBreak(
 			);
 		}
 
-		// absolute error bound for this step
-		Scalar fraction = (tnext - t) / total;
+		// absolute error bound for this interval (number of intervals
+		// must be less than or equal btime.size() + otime.size() )
+		Scalar fraction = total / Scalar(btime.size() + otime.size());
 		for(i = 0; i < N; i++)
-			e[i] = fraction * eabs[i];
+		{	if( erel * maxabs[i] > eabs[i] )
+				e[i] = erel * maxabs[i];
+			else	e[i] = eabs[i];
+			e[i] *= fraction / Scalar(2);
+		}
 
 		// solve the ODE from t to tnext
 		bool ok = false;
@@ -594,18 +608,22 @@ void OdeBreak(
 				smax, 
 				scur, 
 				e, 
-				fraction * erel, 
-				enext
+				fraction * erel / Scalar(2), 
+				enext,
+				maxnext
 			);
 
 			// check if error criteria is satisfied at time tnext
 			bool shrink = false;
 			ok          = true;
 			for(i = 0; i < N; i++)
-			{	// assume that x(t) is monatone over interval
-				Scalar reli = 
-				(abs(x[i]) + abs(xnext[i])) * erel * fraction;
-				ok     &= ( enext[i] <= reli + e[i]);
+			{	// update maxabs
+				if( maxnext[i] > maxabs[i] )
+					maxabs[i] = maxnext[i];
+
+				// assume that x(t) is monatone over interval
+				Scalar bnd = maxabs[i] * erel + eabs[i];
+				ok         &= (enext[i] <= bnd * fraction);
 			}
 			shrink  = ! ok;
 			if( shrink )
@@ -615,7 +633,7 @@ void OdeBreak(
 				}
 				smin = smin / 2;
 			}
-			shrink &= ( (tnext - t) / smin) < MaxNumberOdeStep;
+			shrink &= smin > (tnext - t)/Scalar(MaxNumberOdeStep);
 
 			// check for minimum step size
 			if( !( ok | shrink ) )
