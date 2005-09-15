@@ -119,6 +119,10 @@ Test* OdeBreakTest::suite()
     "ZeroBreakOk_Test", 
     &OdeBreakTest::ZeroBreakOk_Test ));
 
+  suiteOfTests->addTest(new TestCaller<OdeBreakTest>(
+    "OdeBreakStiff_Test", 
+    &OdeBreakTest::OdeBreakStiff_Test ));
+
   return suiteOfTests;
 }
 
@@ -889,6 +893,149 @@ void OdeBreakTest::ZeroBreakOk_Test()
 		ok );
 
 }
+/* $$
+$end
+*/
+
+//------------------------------------------------------------------------
+//
+// Test Case: OdeBreakStiff
+//
+//------------------------------------------------------------------------
+
+/*
+$begin OdeBreakStiff$$
+$latex \newcommand{\R}{{\bf R}}$$
+$spell
+	Eval eval
+	CppAD
+	namespace
+	const
+	bool
+	btime
+	otime
+	xout
+	vector vector
+	eabs
+	erel
+	exp
+$$
+
+$section Test OdeBreak With Stiff Equations$$
+
+$head Differential Equation$$
+Suppose that we wish to solve the following differential equation
+with $latex a_0 \gg a_1 > 0$$:
+$latex \[
+\begin{array}{rcl}
+x_0 ( 0 ) & = & 1. \\
+x_1 ( 0 ) & = & 0. \\
+x_0^\prime (t) & = &  - a_0  x_0 (t) \\
+x_1^\prime (t) & = &  + a_0  x_0 (t) - a_1 x_1 (t) 
+\end{array}
+\] $$
+
+$head Analytic Solution$$
+
+$head x_0 (t)$$
+The following $latex x (t)$$ satisfies
+the ordinary differential equation above
+$latex \[
+\begin{array}{rcl}
+x_0 ( t ) & = & \exp( -a_0 t ) \\
+x_1 ( t ) & = & a_0 [ \exp( - a_1 t ) - \exp( - a_0 t )  ] / ( a_0 - a_1 )
+\end{array}
+\] $$
+$codep */
+
+/*************************************************************************
+ *
+ * Class:  OdeBreakStiff_Eval
+ *
+ *************************************************************************/
+
+# include <assert.h>
+# include <CppAD/CppAD_vector.h>
+# include <CppAD/NearEqual.h>
+
+using CppAD::vector;
+
+namespace { // Begin empty namespace
+
+class OdeBreakStiff_Eval {
+private:
+	const vector<double> a;
+public:
+	OdeBreakStiff_Eval(const vector<double> &a_) : a(a_) 
+	{ } 
+	void Break(size_t k, const vector<double> &x, vector<double> &g)
+	{	assert( g.size() == 2 );
+		assert( x.size() == 2 );
+		assert( k == 0 );
+		g[0] = 1.;
+		g[1] = 0.;
+		return;
+	}
+	void Ode(double t, const vector<double> &x, vector<double> &f)
+	{	assert( f.size() == 2 );
+		assert( x.size() == 2 );
+		f[0] = - a[0] * x[0];
+		f[1] = + a[0] * x[0] - a[1] * x[1];
+		return;
+	}
+};
+
+} // End empty namespace
+void OdeBreakTest::OdeBreakStiff_Test()
+{	bool ok = true;
+	size_t K = 1; // number of break point times
+	size_t J = 1; // number of output point times
+
+	// evaluation method
+	vector<double> a(2);
+	a[0] = 10;  // use a[0] =  1e3 to get non-stiff solver to fail
+	a[1] = 1.;
+	OdeBreakStiff_Eval eval(a);
+
+	// break point times
+	vector<double> btime(K);
+	btime[0] = 0.;
+
+	// output grid
+	vector<double> otime(J);
+	otime[0] = 1.;
+
+	// absolute error 
+	vector<double> eabs(2);
+	eabs[0] = 0.;
+	eabs[1] = 0.;
+
+	// relative error
+	double erel = 1e-6;
+
+	// results vector
+	vector<double> xout(2 * J);
+
+	// numerical solution of differential equation
+	OdeBreak(eval, btime, otime, eabs, erel, xout);
+
+	// check the output values
+	size_t j;
+	for(j = 0; j < J; j++)
+	{	double t, x0, x1;
+		t  = otime[j];
+		x0 = exp(-a[0] * t);
+		x1 = a[0] * (exp(-a[1] * t) - exp(-a[0]) * t) / (a[0] - a[1]);
+		ok &= CppAD::NearEqual(xout[0+j*2], x0, erel, eabs[0]);
+		ok &= CppAD::NearEqual(xout[1+j*2], x1, erel, eabs[0]);
+	}  
+
+	CPPUNIT_ASSERT_MESSAGE( 
+	"Numerical ODE solution does not agree with analytic solution.",
+	ok
+	);
+}
+
 /* $$
 $end
 */

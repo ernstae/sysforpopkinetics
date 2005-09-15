@@ -64,6 +64,7 @@ private:
   void OdeBreakOk_Test();
   void OneBreakOk_Test();
   void ZeroBreakOk_Test();
+  void OdeBreakStiff_Test();
 };
 
 #endif
