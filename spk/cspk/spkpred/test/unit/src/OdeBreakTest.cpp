@@ -198,14 +198,27 @@ namespace // [Begin: unnamed namespace]
                 // amounts, at the beginning of this interval.
                 bolusOut[0] = bolus[k];
         }
-
-        void Ode(double t, const std::vector<double> &concen, std::vector<double> &concen_tOut)
+        void Ode(
+		double                     t           ,
+		const std::vector<double> &concen      , 
+		std::vector<double>       &concen_tOut )
         {       assert( concen     .size() == N );
                 assert( concen_tOut.size() == N );
 
                 // Set the derivatives with respect to time.
-                concen_tOut[0] = rate[k] / volume - concen[0] * clearance / volume;
+                concen_tOut[0] = rate[k] / volume 
+		               - concen[0] * clearance / volume;
         }
+        void Ode_ind(
+		double                     t           ,
+		const std::vector<double> &concen      , 
+		std::vector<double>       &concen_tOut_ind )
+        {	assert(0); }
+        void Ode_dep(
+		double                     t           ,
+		const std::vector<double> &concen      , 
+		std::vector<double>       &concen_tOut_ind )
+        {	assert(0); }
   };
 
 
@@ -259,7 +272,9 @@ void OdeBreakTest::FourBolus_OneInfus_Test()
         std::vector<double> concenOut(N * J);
 
         // numerical solution of differential equation
-        OdeBreak(eval, breakTime, outputTime, errorAbs, errorRel, concenOut);
+	std::string method = "Runge45";
+        OdeBreak(method,
+		eval, breakTime, outputTime, errorAbs, errorRel, concenOut);
 
         // get the pharmacokinetic parameters
         double clearance = eval.clearance;
@@ -326,6 +341,10 @@ void OdeBreakTest::FourBolus_OneInfus_Test()
 $begin OdeBreakOk$$
 $latex \newcommand{\R}{{\bf R}}$$
 $spell
+	ind
+	dep
+	Runge
+	std
 	namespace
 	std
 	endl
@@ -492,6 +511,10 @@ public:
 		}
 		return;
 	}
+	void Ode_ind(double t, const vector<double> &x, vector<double> &f_ind)
+	{	assert(0); }
+	void Ode_dep(double t, const vector<double> &x, vector<double> &f_dep)
+	{	assert(0); }
 };
 
 
@@ -536,7 +559,8 @@ void OdeBreakTest::OdeBreakOk_Test()
 	vector<double> xout(2 * J);
 
 	// numerical solution of differential equation
-	OdeBreak(eval, btime, otime, eabs, erel, xout);
+	std::string method = "Runge45";
+	OdeBreak(method, eval, btime, otime, eabs, erel, xout);
 
 	// check the output values
 	for(j = 0; j < J; j++)
@@ -578,6 +602,10 @@ $end
 $begin OneBreakOk$$
 $latex \newcommand{\R}{{\bf R}}$$
 $spell
+	ind
+	dep
+	std
+	Runge
 	otime
 	Eval eval
 	eabs
@@ -668,6 +696,10 @@ public:
 		}
 		return;
 	}
+	void Ode_ind(double t, const vector<double> &x, vector<double> &f_ind)
+	{	assert(0); }
+	void Ode_dep(double t, const vector<double> &x, vector<double> &f_dep)
+	{	assert(0); }
 };
 
 } // End empty namespace
@@ -710,7 +742,8 @@ void OdeBreakTest::OneBreakOk_Test()
 	vector<double> xout(n);
 
 	// numerical solution of differential equation
-	OdeBreak(eval, btime, otime, eabs, erel, xout);
+	std::string method = "Runge45";
+	OdeBreak(method, eval, btime, otime, eabs, erel, xout);
 
 	// check the output values
 	double tip2 = otime[0];
@@ -739,6 +772,10 @@ $end
 $begin ZeroBreakOk$$
 $latex \newcommand{\R}{{\bf R}}$$
 $spell
+	ind
+	dep
+	std
+	Runge
 	otime
 	Eval eval
 	btime
@@ -835,6 +872,10 @@ public:
 		}
 		return;
 	}
+	void Ode_ind(double t, const vector<double> &x, vector<double> &f_ind)
+	{	assert(0); }
+	void Ode_dep(double t, const vector<double> &x, vector<double> &f_dep)
+	{	assert(0); }
 };
 
 } // End empty namespace
@@ -877,7 +918,8 @@ void OdeBreakTest::ZeroBreakOk_Test()
 	vector<double> xout(n);
 
 	// numerical solution of differential equation
-	OdeBreak(eval, btime, otime, eabs, erel, xout);
+	std::string method = "Runge45";
+	OdeBreak(method, eval, btime, otime, eabs, erel, xout);
 
 	// check the output values
 	double tpower = 0.;
@@ -907,6 +949,10 @@ $end
 $begin OdeBreakStiff$$
 $latex \newcommand{\R}{{\bf R}}$$
 $spell
+	ind
+	dep
+	std
+	Runge
 	Eval eval
 	CppAD
 	namespace
@@ -983,6 +1029,10 @@ public:
 		f[1] = + a[0] * x[0] - a[1] * x[1];
 		return;
 	}
+	void Ode_ind(double t, const vector<double> &x, vector<double> &f_ind)
+	{	assert(0); }
+	void Ode_dep(double t, const vector<double> &x, vector<double> &f_dep)
+	{	assert(0); }
 };
 
 } // End empty namespace
@@ -1017,7 +1067,8 @@ void OdeBreakTest::OdeBreakStiff_Test()
 	vector<double> xout(2 * J);
 
 	// numerical solution of differential equation
-	OdeBreak(eval, btime, otime, eabs, erel, xout);
+	std::string method = "Runge45";
+	OdeBreak(method, eval, btime, otime, eabs, erel, xout);
 
 	// check the output values
 	size_t j;

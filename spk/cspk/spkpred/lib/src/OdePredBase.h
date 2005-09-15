@@ -1762,6 +1762,33 @@ public:
    */
   /***********************************************************************/
 
+  // Empty stub functions put in by Brad on 05-09-15 so Runge45 method would 
+  // work with new version of OdeBreak. These should eventually use
+  // Ode together with CppAD to get the derivatives necessary for Rosen34.
+
+  void Ode_ind(
+    Value                     tIn                 ,
+    const std::vector<Value>& compAmountIn        ,
+    std::vector<Value>&       compAmount_tOut_ind )
+  { throw SpkException(
+      SpkError::SPK_UNKNOWN_ERR                  , 
+      "Stiff integration is not yet implemented" ,
+        __LINE__                                 , 
+        __FILE__                                 
+    );
+  }
+  void Ode_dep(
+    Value                     tIn                 ,
+    const std::vector<Value>& compAmountIn        ,
+    std::vector<Value>&       compAmount_tOut_dep )
+  { throw SpkException(
+      SpkError::SPK_UNKNOWN_ERR                  , 
+      "Stiff integration is not yet implemented" ,
+        __LINE__                                 , 
+        __FILE__                                 
+    );
+  }
+
   void Ode(
     Value                     tIn,
     const std::vector<Value>& compAmountIn,
@@ -2006,8 +2033,9 @@ private:
     // ODE solution times by solving the differential equations from
     // the DES block numerically.
     try
-    {
+    {	std::string method = "Runge45";
       OdeBreak(
+	method,
         odeBreakEvalClass,
         breakTime,
         odeSolnTime,
