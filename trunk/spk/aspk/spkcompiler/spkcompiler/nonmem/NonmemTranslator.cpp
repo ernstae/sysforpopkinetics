@@ -7560,6 +7560,30 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
           oOdePred_h << "                         \"ID cannot be interpolated!\", " << endl;
           oOdePred_h << "                           __LINE__, __FILE__ );" << endl;
 	}
+      else if( *pLabel == UserStr.MDV )
+	{
+	  oOdePred_h << "      throw SpkException( SpkError::SPK_USER_INPUT_ERR, " << endl;
+          oOdePred_h << "                         \"MDV cannot be interpolated!\", " << endl;
+          oOdePred_h << "                           __LINE__, __FILE__ );" << endl;
+	}
+      else if( *pLabel == UserStr.EVID )
+	{
+	  oOdePred_h << "      throw SpkException( SpkError::SPK_USER_INPUT_ERR, " << endl;
+          oOdePred_h << "                         \"EVID cannot be interpolated!\", " << endl;
+          oOdePred_h << "                           __LINE__, __FILE__ );" << endl;
+	}
+      else if( *pLabel == UserStr.CMT )
+	{
+	  oOdePred_h << "      throw SpkException( SpkError::SPK_USER_INPUT_ERR, " << endl;
+          oOdePred_h << "                         \"CMT cannot be interpolated!\", " << endl;
+          oOdePred_h << "                           __LINE__, __FILE__ );" << endl;
+	}
+      else if( *pLabel == UserStr.PCMT )
+	{
+	  oOdePred_h << "      throw SpkException( SpkError::SPK_USER_INPUT_ERR, " << endl;
+          oOdePred_h << "                         \"PCMT cannot be interpolated!\", " << endl;
+          oOdePred_h << "                           __LINE__, __FILE__ );" << endl;
+	}
       else
 	{
 	  oOdePred_h << "         depVarRecords = spk_perm->data[spk_curWho]->" << *pLabel << ";" << endl;
@@ -7591,10 +7615,10 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
     {
       oOdePred_h << "   for( int j=0, k=0; j<nRecords; j++ )" << endl;
       oOdePred_h << "   {" << endl;
-      oOdePred_h << "      if( " << UserStr.MDV << "[j] == 0 )" << endl;
+      oOdePred_h << "      if( spk_perm->data[spk_curWho]->" << UserStr.MDV << "[j] == 0 )" << endl;
       oOdePred_h << "      {" << endl;
       oOdePred_h << "         indVar[k] = spk_perm->data[spk_curWho]->" << UserStr.TIME << "[j];" << endl;
-      oOdePred_h << "         depVar[k] = depVarRecords[i];" << endl;
+      oOdePred_h << "         depVar[k] = depVarRecords[j];" << endl;
       oOdePred_h << "         k++;" << endl;
       oOdePred_h << "      }" << endl;
       oOdePred_h << "   }" << endl;
@@ -7603,10 +7627,10 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
     {
       oOdePred_h << "   for( int j=0, k=0; j<nRecords; j++ )" << endl;
       oOdePred_h << "   {" << endl;
-      oOdePred_h << "      if( " << UserStr.EVID << "[j] == 0 )" << endl;
+      oOdePred_h << "      if( spk_perm->data[spk_curWho]->" << UserStr.EVID << "[j] == 0 )" << endl;
       oOdePred_h << "      {" << endl;
       oOdePred_h << "         indVar[k] = spk_perm->data[spk_curWho]->" << UserStr.TIME << "[j];" << endl;
-      oOdePred_h << "         depVar[k] = depVarRecords[i];" << endl;
+      oOdePred_h << "         depVar[k] = depVarRecords[j];" << endl;
       oOdePred_h << "         k++;" << endl;
       oOdePred_h << "      }" << endl;
       oOdePred_h << "   }" << endl;
@@ -7615,10 +7639,10 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
     {
       oOdePred_h << "   for( int j=0, k=0; j<nRecords; j++ )" << endl;
       oOdePred_h << "   {" << endl;
-      oOdePred_h << "      if( " << UserStr.MDV << "[j] == 0 )" << endl;
+      oOdePred_h << "      if( spk_perm->data[spk_curWho]->" << UserStr.MDV << "[j] == 0 )" << endl;
       oOdePred_h << "      {" << endl;
       oOdePred_h << "         indVar[k] = spk_perm->data[spk_curWho]->" << UserStr.TIME << "[j];" << endl;
-      oOdePred_h << "         depVar[k] = depVarRecords[i];" << endl;
+      oOdePred_h << "         depVar[k] = depVarRecords[j];" << endl;
       oOdePred_h << "         k++;" << endl;
       oOdePred_h << "      }" << endl;
       oOdePred_h << "   }" << endl;
@@ -8594,8 +8618,8 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "      const int nPop = 1;" << endl;
   oIndDriver << endl;
 
-  oIndDriver << "      const int nY = " << myRecordNums[0] << ";" << endl;
   oIndDriver << "      DataSet< CppAD::AD<double> > set;" << endl;
+  oIndDriver << "      const int nY = set.getNObservs( 0 );" << endl;
   oIndDriver << "      valarray<double> y( nY );" << endl;
   oIndDriver << endl;
   
