@@ -9,6 +9,8 @@ extern "C" void Gsl2SpkError(
 	int line           ,
 	int gsl_errno      );
 
-extern void ThrowGsl2SpkError(void);
+extern void ThrowGsl2SpkError(
+	const char * routine               ,
+	enum SpkError::ErrorCode errorCode );
 
 # endif

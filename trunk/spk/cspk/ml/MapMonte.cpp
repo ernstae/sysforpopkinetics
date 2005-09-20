@@ -257,9 +257,10 @@ void MapMonte(
 			&integralEstimate             , 
 			&estimateStd
 		);
-		if( GslError != 0 )
-			ThrowGsl2SpkError();
 		gsl_monte_plain_free(state);
+		if( GslError != 0 ) ThrowGsl2SpkError(
+			"Plain Monte-Carlo", SpkError::SPK_USER_INPUT_ERR
+		);
 	}
 	else if ( method == MontePars::miser )
 	{	// The miser MonteCarlo integrator (see Numerical Recipies)
@@ -290,9 +291,10 @@ void MapMonte(
 			&integralEstimate             , 
 			&estimateStd
 		);
-		if( GslError != 0 )
-			ThrowGsl2SpkError();
 		gsl_monte_miser_free(state);
+		if( GslError != 0 ) ThrowGsl2SpkError(
+			"Miser Monte-Carlo", SpkError::SPK_USER_INPUT_ERR
+		);
 	}
 	else if ( method == MontePars::vegas )
 	{	// The vegas MonteCarlo integrator (see Numerical Recipies)
@@ -310,9 +312,10 @@ void MapMonte(
 			&integralEstimate             , 
 			&estimateStd
 		);
-		if( GslError != 0 )
-			ThrowGsl2SpkError();
 		gsl_monte_vegas_free(state);
+		if( GslError != 0 ) ThrowGsl2SpkError(
+			"Vegas Monte-Carlo", SpkError::SPK_USER_INPUT_ERR
+		);
 	}
 	else	assert(0);	// should not happen
 

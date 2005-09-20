@@ -8,6 +8,7 @@
 # define MaxErrorNumberLen 20
 
 namespace {
+	char * Buffer  = 0;
 	char * Message = 0;
 	char * File    = 0;
 	int    Line    = 0;
@@ -43,11 +44,19 @@ extern "C" void Gsl2SpkError(
 	std::cerr << Message << std::endl;
 }
 
-void ThrowGsl2SpkError()
+void ThrowGsl2SpkError(
+	const char * routine               ,
+	enum SpkError::ErrorCode errorCode )
 {
+	// can only handel one error
+	assert( Buffer == 0 );
+
+	int Len = strlen(routine) + 2 + strlen(Message) + 1;
+	Buffer = new char[Len];
+	sprintf(Buffer, "\n%s:\n%s", routine, Message);
 	throw SpkException(
-		SpkError::SPK_UNKNOWN_ERR    , 
-		Message                      , 
+		errorCode                    , 
+		Buffer                       , 
 		Line                         , 
 		File 
 	);
