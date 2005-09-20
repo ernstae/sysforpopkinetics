@@ -282,7 +282,7 @@ void wres( const valarray<double>& y,
   {
     throw SpkException(
       SpkError::SPK_USER_INPUT_ERR, 
-      "The number of model predicted values for the data does not match the number of data values.",
+      "The number of model predicted values for the data does not match the number \nof data values.",
       __LINE__,
       __FILE__ );
   }
@@ -291,7 +291,7 @@ void wres( const valarray<double>& y,
   {
     throw SpkException(
       SpkError::SPK_USER_INPUT_ERR, 
-      "The dimensions of the covarianc of the data are not consistent with the number of data values.",
+      "The dimensions of the covariance of the data are not consistent with the number \nof data values.",
       __LINE__,
       __FILE__ );
   }
@@ -391,7 +391,7 @@ void wres( const valarray<double>& y,
     {
       throw SpkException(
         SpkError::SPK_UNKNOWN_ERR,  
-        "The weighted residuals calculation failed while evaluating the eigenvalues of the covariance inverse.",
+        "The weighted residuals calculation failed while evaluating the eigenvalues \nof the covariance inverse.",
         __LINE__, 
         __FILE__ );
     }
@@ -423,7 +423,7 @@ void wres( const valarray<double>& y,
   {
     throw SpkException(
       SpkError::SPK_UNKNOWN_ERR,  
-      "The weighted residuals calculation failed while evaluating the square root of the covariance inverse.",
+      "The weighted residuals calculation failed while evaluating the square root \nof the covariance inverse.",
       __LINE__, 
       __FILE__ );
   }
