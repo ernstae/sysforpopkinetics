@@ -1,10 +1,9 @@
 /**
- * \file ind_mdvTest.h
- * \brief Tests the NonmemTranslator's ability to handle
- * data sets containing no ID.
+ * \file dataSetTest.h
+ * \brief Tests the geneated DataSet class member functions
  */
-#ifndef IND_MDV_TEST_H
-#define IND_MDV_TEST_H
+#ifndef DATASET_TEST_H
+#define DATASET_TEST_H
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestSuite.h>
@@ -12,7 +11,7 @@
 #include <xercesc/dom/DOMDocument.hpp>
 #include "../../spkcompiler/nonmem/NonmemTranslator.h"
 
-class ind_mdvTest 
+class dataSetTest 
 : public CppUnit::TestFixture,
   public NonmemTranslator
 {
@@ -30,11 +29,8 @@ public:
     void createDataML();
     void createSourceML();
     void parse();
-    void testIndDataClass();
-    void testDataSetClass();
-    void testPredClass();
-    void testDriver();
-    void testReportML();
+    void testExpand();
+    void testGetMeasurementIndex();
 };
 
 #endif

@@ -424,6 +424,7 @@ if( actual != expected ) \\\n \
   // What is basic PK parameters???
   // The length of P vector?
   const int nPkParams = 0;
+//  const char PK[] = "CL=THETA(1)*EXP(ETA(1))\nV=THETA(2)\nK=CL/V\nS1=V\nIF( AMT.EQ.0 ) THEN\nZ = LININTERP(DV)\nENDIF\n";
   const char PK[] = "CL=THETA(1)*EXP(ETA(1))\nV=THETA(2)\nK=CL/V\nS1=V\n";
 
   //============================================
@@ -436,6 +437,7 @@ if( actual != expected ) \\\n \
   // user defined comps + 1 (NONMEM adds the output comp)
   const int  nonmemNComps = nComps + 1;
   const int  nEquilibrims = 0;
+//  const char DIFFEQN[]    = "DADT(1) = -K*A(1)\nIF( AMT.EQ.0 ) THEN\nZ = LININTERP(DV)\nENDIF\n";
   const char DIFFEQN[]    = "DADT(1) = -K*A(1)\n";
 
   //============================================
@@ -443,6 +445,7 @@ if( actual != expected ) \\\n \
   //
   // Y = F*(1 + EPS(1) )
   //============================================
+//  const char ERROR[] = "Y = F*(1+EPS(1))\n";
   const char ERROR[] = "Y = F*(1+EPS(1))\nIF( AMT.EQ.0 ) THEN\nZ = LININTERP(DV)\nENDIF\n";
 
   //============================================
