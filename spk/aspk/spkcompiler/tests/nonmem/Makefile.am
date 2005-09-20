@@ -78,5 +78,7 @@ testall_SOURCES      = \
                        countStrInLhsTest.h \
                        linInterpTest.cpp \
 		       linInterpTest.h \
+                       dataSetTest.cpp \
+                       dataSetTest.h \
 		       ../../config.h
 

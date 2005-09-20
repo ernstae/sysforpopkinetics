@@ -4715,7 +4715,6 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "        }" << endl;
     }
   oIndData_h << "   } // end of FOR loop over vector variables" << endl;
-
   oIndData_h << "}" << endl;
   oIndData_h << endl;
 
@@ -5358,6 +5357,7 @@ void NonmemTranslator::generateDataSet( ) const
   // Public member functions
   // -----------------------
   oDataSet_h << "   int getMeasurementIndex( int recordIndex ) const;" << endl;
+  oDataSet_h << "   void expand( const SPK_VA::valarray<double>& measurements, SPK_VA::valarray<double>& records ) const;" << endl;
   oDataSet_h << "   int getRecordIndex( int measurementIndex ) const;" << endl;
   oDataSet_h << "   int getPopSize() const;" << endl;
   oDataSet_h << "   const SPK_VA::valarray<int> getN() const;" << endl;
@@ -5590,9 +5590,25 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "      {" << endl;
   if( myIsMissingMdv )
     {
-      oDataSet_h << "      jPrimeToj[jPrime] = j;" << endl;
-      oDataSet_h << "      jTojPrime[j] = jPrime;" << endl;
-      oDataSet_h << "      jPrime++;" << endl;
+      if( table->findi( KeyStr.AMT ) == Symbol::empty() )
+	{
+	  oDataSet_h << "        jPrimeToj[jPrime] = j;" << endl;
+	  oDataSet_h << "        jTojPrime[j] = jPrime;" << endl;
+	  oDataSet_h << "        jPrime++;" << endl;
+	}
+      else
+	{
+	  oDataSet_h << "        if( " << UserStr.AMT << "[j] == 0 )" << endl;
+	  oDataSet_h << "        {" << endl;
+	  oDataSet_h << "           jPrimeToj[jPrime] = j;" << endl;
+	  oDataSet_h << "           jTojPrime[j] = jPrime;" << endl;
+	  oDataSet_h << "           jPrime++;" << endl;
+	  oDataSet_h << "        }" << endl;
+	  oDataSet_h << "        else" << endl;
+	  oDataSet_h << "        {" << endl;
+	  oDataSet_h << "           jTojPrime[j] = -1;" << endl;
+	  oDataSet_h << "        }" << endl;
+	}
     }
   else
     {
@@ -5678,7 +5694,28 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
 
-  // ------------
+
+  //----------------------------------------------------------
+  // expand( const valarray& measurements, valarray& records )
+  // ----------------------------------------------------------
+  oDataSet_h << "template <class spk_ValueType>" << endl;
+  oDataSet_h << "void DataSet<spk_ValueType>::expand( " << endl;
+  oDataSet_h << "       const SPK_VA::valarray<double> & measurements," << endl;  
+  oDataSet_h << "       SPK_VA::valarray<double> & records ) const" << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   const int n = Ny.sum();" << endl;
+  oDataSet_h << "   int m = 0;" << endl;
+  oDataSet_h << "   for( int i=0; i<popSize; i++ )" << endl;
+  oDataSet_h << "      m += getNRecords(i);" << endl;
+  oDataSet_h << "   records.resize( m );" << endl;
+  oDataSet_h << "   records = 0.0;" << endl;
+  oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
+  oDataSet_h << "   {" << endl;
+  oDataSet_h << "      records[ getRecordIndex( i ) ] = measurements[i];" << endl;
+  oDataSet_h << "   }" << endl;
+  oDataSet_h << "}" << endl;
+                                                                                
+  //------------
   // getPopSize()
   // ------------
   // Return the size of population.
@@ -6566,44 +6603,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       const string    keyVarName      = SymbolTable::key( varName );
       enum Symbol::Ownership  owner   = pT->second.owner;
       enum Symbol::ObjectType objType = pT->second.object_type;
-      /*
-      // Ignore if the label is of the NONMEM required variable names.
-      if( keyLabel != KeyStr.THETA 
-	  && keyLabel != KeyStr.ETA 
-	  && keyLabel != KeyStr.EPS 
-	  //	  && keyLabel != KeyStr.PRED
-	  && keyLabel != KeyStr.SIGMA
-	  && keyLabel != KeyStr.OMEGA
-	  && keyLabel != KeyStr.RES
-	  && keyLabel != KeyStr.WRES
-	  && keyLabel != KeyStr.ETARES
-	  && keyLabel != KeyStr.WETARES
-          && keyLabel != KeyStr.IPRED
-	  && keyLabel != KeyStr.IRES
-	  && keyLabel != KeyStr.IWRES
-	  && keyLabel != KeyStr.IETARES
-	  && keyLabel != KeyStr.IWETARES 
-	  && keyLabel != KeyStr.PPRED
-	  && keyLabel != KeyStr.PRES
-	  && keyLabel != KeyStr.PWRES
-	  && keyLabel != KeyStr.PETARES
-	  && keyLabel != KeyStr.PWETARES
-	  && keyLabel != KeyStr.CPRED
-	  && keyLabel != KeyStr.CRES
-	  && keyLabel != KeyStr.CWRES
-	  && keyLabel != KeyStr.CETARES
-	  && keyLabel != KeyStr.CWETARES
-	  && keyLabel != KeyStr.ORGDV )
-	{
-	  // Ignore if the label is of the data item's.
-	  if( find( labels->begin(), labels->end(), label ) 
-	      == labels->end() )
-	    {
-	      oPred_h << "spk_ValueType " << label;
-	      oPred_h << ";" << endl;
-	    }
-	}
-      */
+
       if( objType == Symbol::VECTOR )
 	{
 	  if( keyVarName == KeyStr.THETA || keyVarName == KeyStr.ETA || keyVarName == KeyStr.EPS )
@@ -6939,7 +6939,6 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
     oPred_h << "   if( spk_perm->data[ spk_i ]->" << UserStr.MDV << "[ spk_j ] == 0 )" << endl;
     oPred_h << "   {" << endl;
     oPred_h << "      spk_m = spk_perm->getMeasurementIndex( spk_j );" << endl;
-    // Set the output values
     oPred_h << "      spk_depVar[ spk_fOffset+spk_m ] = " << UserStr.F << ";" << endl;
     oPred_h << "      spk_depVar[ spk_yOffset+spk_m ] = " << UserStr.Y << ";" << endl;
     oPred_h << "      return true;" << endl;
@@ -6955,9 +6954,9 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 	  oPred_h << "   // Assume MDV = 0 if AMT = 0 and MDV = 1 if AMT > 0." << endl;
 	  oPred_h << "   if( spk_perm->data[ spk_i ]->" << UserStr.AMT << "[ spk_j ] == 0 )" << endl;
 	  oPred_h << "   {" << endl;
-	  oPred_h << "      spk_depVar[ spk_fOffset+spk_j ] = " << UserStr.F << ";" << endl;
-	  oPred_h << "      spk_depVar[ spk_yOffset+spk_j ] = " << UserStr.Y << ";" << endl;
 	  oPred_h << "      spk_m = spk_perm->getMeasurementIndex( spk_j );" << endl;
+	  oPred_h << "      spk_depVar[ spk_fOffset+spk_m ] = " << UserStr.F << ";" << endl;
+	  oPred_h << "      spk_depVar[ spk_yOffset+spk_m ] = " << UserStr.Y << ";" << endl;
 	  oPred_h << "      return true;" << endl;
 	  oPred_h << "   }" << endl;
 	  oPred_h << "   else" << endl;
@@ -6968,9 +6967,9 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       else
 	{
 	  oPred_h << "   // No MDV or AMT found in the data set.  Asuume all MDV=0." << endl;
-	  oPred_h << "   spk_depVar[ spk_fOffset+spk_j ] = " << UserStr.F << ";" << endl;
-	  oPred_h << "   spk_depVar[ spk_yOffset+spk_j ] = " << UserStr.Y << ";" << endl;
 	  oPred_h << "   spk_m = spk_perm->getMeasurementIndex( spk_j );" << endl;
+	  oPred_h << "   spk_depVar[ spk_fOffset+spk_m ] = " << UserStr.F << ";" << endl;
+	  oPred_h << "   spk_depVar[ spk_yOffset+spk_m ] = " << UserStr.Y << ";" << endl;
 	  oPred_h << "   return true;" << endl;
 	}
     }
@@ -7454,9 +7453,9 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "}" << endl;
   oOdePred_h << endl;
 
-  // ----------
+  // ------------
   // Destructor
-  // ----------
+  // ------------
   oOdePred_h << "template <class spk_ValueType>" << endl;
   oOdePred_h << "OdePred<spk_ValueType>::~OdePred()" << endl;
   oOdePred_h << "{" << endl;
@@ -7572,7 +7571,8 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
     {
       oOdePred_h << "   for( int j=0, k=0; j<nRecords; j++ )" << endl;
       oOdePred_h << "   {" << endl;
-      oOdePred_h << "      if( spk_perm->data[spk_curWho]->" << UserStr.EVID << "[j] == 0 )" << endl;
+      oOdePred_h << "      if( spk_perm->data[spk_curWho]->" << UserStr.EVID << "[j] == 0" << endl;
+      oOdePred_h << "         || spk_perm->data[spk_curWho]->" << UserStr.EVID << "[j] == 2 )" << endl;
       oOdePred_h << "      {" << endl;
       oOdePred_h << "         indVar[k] = spk_perm->data[spk_curWho]->" << UserStr.TIME << "[j];" << endl;
       oOdePred_h << "         depVar[k] = depVarRecords[j];" << endl;
@@ -7584,7 +7584,9 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
     {
       oOdePred_h << "   for( int j=0, k=0; j<nRecords; j++ )" << endl;
       oOdePred_h << "   {" << endl;
-      oOdePred_h << "      if( spk_perm->data[spk_curWho]->" << UserStr.MDV << "[j] == 0 )" << endl;
+      oOdePred_h << "      if( spk_perm->data[spk_curWho]->" << UserStr.EVID << "[j] == 0" << endl;
+      oOdePred_h << "         && (spk_perm->data[spk_curWho]->" << UserStr.EVID << "[j] == 0" << endl;
+      oOdePred_h << "             || spk_perm->data[spk_curWho]->" << UserStr.EVID << "[j] == 2 ) )" << endl;
       oOdePred_h << "      {" << endl;
       oOdePred_h << "         indVar[k] = spk_perm->data[spk_curWho]->" << UserStr.TIME << "[j];" << endl;
       oOdePred_h << "         depVar[k] = depVarRecords[j];" << endl;
@@ -8738,9 +8740,13 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "      valarray<double> RInvOut( nY * nY );"     << endl;
   oIndDriver << endl;
 
-  oIndDriver << "      valarray<double> iPredOut     ( nY );"      << endl;
-  oIndDriver << "      valarray<double> iResOut      ( nY );"      << endl;
-  oIndDriver << "      valarray<double> iResWtdOut   ( nY );"    << endl;
+  oIndDriver << "      const int nRecords = set.getNRecords(0);" << endl;
+  oIndDriver << "      valarray<double> iPredOut              ( nRecords );"      << endl;
+  oIndDriver << "      valarray<double> iResOut               ( nRecords );"      << endl;
+  oIndDriver << "      valarray<double> iResWtdOut            ( nRecords );"    << endl;
+  oIndDriver << "      valarray<double> iPredTrancatedOut     ( nY );"      << endl;
+  oIndDriver << "      valarray<double> iResTrancatedOut      ( nY );"      << endl;
+  oIndDriver << "      valarray<double> iResWtdTrancatedOut   ( nY );"    << endl;
   oIndDriver << endl;
 
   oIndDriver << "      ofstream oResults;" << endl;
@@ -8888,20 +8894,22 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "         {" << endl;
   oIndDriver << "            assert( haveCompleteData );" << endl;
   oIndDriver << "            try{" << endl;
-  oIndDriver << "               indResiduals( modelForDisposal," << endl;
-  oIndDriver << "                             y, "               << endl;
-  oIndDriver << "                             bOut, "            << endl;
-  oIndDriver << "                            &iPredOut, "        << endl;
-  oIndDriver << "                            &iResOut, "         << endl;
-  oIndDriver << "                            &iResWtdOut, "      << endl;
-  oIndDriver << "                             NULL, "            << endl;
-  oIndDriver << "                             NULL );"           << endl;
+  oIndDriver << "               indResiduals( modelForDisposal,"     << endl;
+  oIndDriver << "                             y, "                   << endl;
+  oIndDriver << "                             bOut, "                << endl;
+  oIndDriver << "                            &iPredTrancatedOut, "   << endl;
+  oIndDriver << "                            &iResTrancatedOut, "    << endl;
+  oIndDriver << "                            &iResWtdTrancatedOut, " << endl;
+  oIndDriver << "                             NULL, "                << endl;
+  oIndDriver << "                             NULL );"               << endl;
+  oIndDriver << "               dataForDisposal.expand( iPredTrancatedOut,   iPredOut );"   << endl;
+  oIndDriver << "               dataForDisposal.expand( iResTrancatedOut,    iResOut );"    << endl;
+  oIndDriver << "               dataForDisposal.expand( iResWtdTrancatedOut, iResWtdOut );" << endl;
   oIndDriver << "            }" << endl;
   oIndDriver << "            catch( const SpkException& e )" << endl;
   oIndDriver << "            {" << endl;
   oIndDriver << "               errors.cat( e );" << endl;
   oIndDriver << "               ret = OTHER_FAILURE;" << endl;
-  //  oIndDriver << "               goto REPORT_GEN;" << endl;
   oIndDriver << "            }" << endl;
   oIndDriver << "            catch( ... )" << endl;
   oIndDriver << "            {" << endl;
@@ -8909,7 +8917,6 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "               SpkError e( SpkError::SPK_UNKNOWN_ERR, message, __LINE__, __FILE__ );" << endl;
   oIndDriver << "               errors.push( e );" << endl;
   oIndDriver << "               ret = OTHER_FAILURE;" << endl;
-  //  oIndDriver << "               goto REPORT_GEN;" << endl;
   oIndDriver << "            }" << endl;
   oIndDriver << "            set.replaceIPred( iPredOut );"   << endl;
   oIndDriver << "            set.replaceIRes ( iResOut );"    << endl;
@@ -8920,7 +8927,6 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "         }" << endl;
   oIndDriver << "         if( isStatRequested && isOptRequested && isOptSuccess )" << endl;
   oIndDriver << "         {" << endl;
-  // indStatistics
   oIndDriver << "            gettimeofday( &statBegin, NULL );"     << endl;
   oIndDriver << "            try" << endl;
   oIndDriver << "            {" << endl;
@@ -8961,7 +8967,6 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "               errors.cat( e );" << endl;
   oIndDriver << "               isStatSuccess &= false;" << endl;
   oIndDriver << "               ret = STAT_FAILURE;" << endl;
-  //  oIndDriver << "               goto REPORT_GEN;" << endl;
   oIndDriver << "            }" << endl;
   oIndDriver << "            catch( ... )" << endl;
   oIndDriver << "            {" << endl;
@@ -8970,7 +8975,6 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "               errors.push( e );" << endl;
   oIndDriver << "               isStatSuccess &= false;" << endl;
   oIndDriver << "               ret = STAT_FAILURE;" << endl;
-  //  oIndDriver << "               goto REPORT_GEN;" << endl;
   oIndDriver << "            }" << endl;
   oIndDriver << endl;
 
@@ -9551,23 +9555,35 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "      valarray<double> stdParInvCovOut     ( nAlp * nAlp );"     << endl;
   oPopDriver << endl;
 
-  oPopDriver << "      valarray<double> iPredOut     ( nY );"      << endl;
-  oPopDriver << "      valarray<double> iResOut      ( nY );"      << endl;
-  oPopDriver << "      valarray<double> iResWtdOut   ( nY );"      << endl;
-  oPopDriver << "      valarray<double> iParResOut   ( nB*nPop );" << endl;
-  oPopDriver << "      valarray<double> iParResWtdOut( nB*nPop );" << endl;
+  oPopDriver << "      int nTotalRecords = 0;" << endl;
+  oPopDriver << "      for( int i=0; i<nPop; i++ )" << endl;
+  oPopDriver << "         nTotalRecords += set.getNRecords(i);" << endl;
+  oPopDriver << "      valarray<double> iPredOut              ( nTotalRecords );"      << endl;
+  oPopDriver << "      valarray<double> iResOut               ( nTotalRecords );"      << endl;
+  oPopDriver << "      valarray<double> iResWtdOut            ( nTotalRecords );"      << endl;
+  oPopDriver << "      valarray<double> iParResOut            ( nB*nPop );" << endl;
+  oPopDriver << "      valarray<double> iParResWtdOut         ( nB*nPop );" << endl;
+  oPopDriver << "      valarray<double> iPredTrancatedOut     ( nY );"      << endl;
+  oPopDriver << "      valarray<double> iResTrancatedOut      ( nY );"      << endl;
+  oPopDriver << "      valarray<double> iResWtdTrancatedOut   ( nY );"      << endl;
   oPopDriver << endl;
-  oPopDriver << "      valarray<double> pPredOut     ( nY );"      << endl;
-  oPopDriver << "      valarray<double> pResOut      ( nY );"      << endl;
-  oPopDriver << "      valarray<double> pResWtdOut   ( nY );"      << endl;
-  oPopDriver << "      valarray<double> pParResOut   ( nB*nPop );" << endl;
-  oPopDriver << "      valarray<double> pParResWtdOut( nB*nPop );" << endl;
+  oPopDriver << "      valarray<double> pPredOut              ( nTotalRecords );"      << endl;
+  oPopDriver << "      valarray<double> pResOut               ( nTotalRecords );"      << endl;
+  oPopDriver << "      valarray<double> pResWtdOut            ( nTotalRecords );"      << endl;
+  oPopDriver << "      valarray<double> pParResOut            ( nB*nPop );" << endl;
+  oPopDriver << "      valarray<double> pParResWtdOut         ( nB*nPop );" << endl;
+  oPopDriver << "      valarray<double> pPredTrancatedOut     ( nY );"      << endl;
+  oPopDriver << "      valarray<double> pResTrancatedOut      ( nY );"      << endl;
+  oPopDriver << "      valarray<double> pResWtdTrancatedOut   ( nY );"      << endl;
   oPopDriver << endl;
-  oPopDriver << "      valarray<double> cPredOut     ( nY );"      << endl;
-  oPopDriver << "      valarray<double> cResOut      ( nY );"      << endl;
-  oPopDriver << "      valarray<double> cResWtdOut   ( nY );"      << endl;
-  oPopDriver << "      valarray<double> cParResOut   ( nB*nPop );" << endl;
-  oPopDriver << "      valarray<double> cParResWtdOut( nB*nPop );" << endl;
+  oPopDriver << "      valarray<double> cPredOut              ( nTotalRecords );"      << endl;
+  oPopDriver << "      valarray<double> cResOut               ( nTotalRecords );"      << endl;
+  oPopDriver << "      valarray<double> cResWtdOut            ( nTotalRecords );"      << endl;
+  oPopDriver << "      valarray<double> cParResOut            ( nB*nPop );" << endl;
+  oPopDriver << "      valarray<double> cParResWtdOut         ( nB*nPop );" << endl;
+  oPopDriver << "      valarray<double> cPredTrancatedOut     ( nY );"      << endl;
+  oPopDriver << "      valarray<double> cResTrancatedOut      ( nY );"      << endl;
+  oPopDriver << "      valarray<double> cResWtdTrancatedOut   ( nY );"      << endl;
   oPopDriver << endl;
 
   oPopDriver << "      ofstream oResults;" << endl;
@@ -9741,35 +9757,44 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "         if( isOptRequested && isOptSuccess )" << endl;
   oPopDriver << "         {" << endl;
   oPopDriver << "            assert( haveCompleteData );" << endl;
-  oPopDriver << "            Objective objForDisposal = FIRST_ORDER;" << endl;
-  oPopDriver << "            valarray<double> yi;"                    << endl;
-  oPopDriver << "            valarray<double> bi( nB );"              << endl;
-  oPopDriver << "            valarray<double> iiPredOut;"             << endl;
-  oPopDriver << "            valarray<double> iiResOut; "             << endl;
-  oPopDriver << "            valarray<double> iiResWtdOut;"           << endl;
-  oPopDriver << "            valarray<double> iiParResOut( nB );"     << endl;
-  oPopDriver << "            valarray<double> iiParResWtdOut( nB );"  << endl;
-  oPopDriver << "            modelForDisposal.setPopPar( alpOut );"   << endl;
-  oPopDriver << "            for( int i=0, k=0; i<nPop; k+=N[i++] )"  << endl;
+  oPopDriver << "            Objective objForDisposal = FIRST_ORDER;"    << endl;
+  oPopDriver << "            valarray<double> yi;"                       << endl;
+  oPopDriver << "            valarray<double> bi( nB );"                 << endl;
+  oPopDriver << "            valarray<double> iiPredOut;"                << endl;
+  oPopDriver << "            valarray<double> iiResOut; "                << endl;
+  oPopDriver << "            valarray<double> iiResWtdOut;"              << endl;
+  oPopDriver << "            valarray<double> iiParResOut( nB );"        << endl;
+  oPopDriver << "            valarray<double> iiParResWtdOut( nB );"     << endl;
+  oPopDriver << "            valarray<double> iiPredTrancatedOut;"       << endl;
+  oPopDriver << "            valarray<double> iiResTrancatedOut; "       << endl;
+  oPopDriver << "            valarray<double> iiResWtdTrancatedOut;"     << endl;
+  oPopDriver << "            modelForDisposal.setPopPar( alpOut );"      << endl;
+  oPopDriver << "            for( int i=0, k=0; i<nPop; k+=N[i++] )"     << endl;
   oPopDriver << "            {" << endl;
-  oPopDriver << "               yi.resize( N[i] );"                   << endl;
-  oPopDriver << "               iiPredOut.resize( N[i] );"            << endl;
-  oPopDriver << "               iiResOut.resize( N[i] );"             << endl;
-  oPopDriver << "               iiResWtdOut.resize( N[i] );"          << endl;
-  oPopDriver << "               yi = y[ slice( k, N[i], 1 ) ]; "      << endl;
-  oPopDriver << "               bi = bOut[ slice( i*nB, nB, 1 ) ];"   << endl;
+  oPopDriver << "               yi.resize         ( N[i] );"             << endl;
+  oPopDriver << "               iiPredOut.resize  ( dataForDisposal.getNRecords(i) );" << endl;
+  oPopDriver << "               iiResOut.resize   ( dataForDisposal.getNRecords(i) );" << endl;
+  oPopDriver << "               iiResWtdOut.resize( dataForDisposal.getNRecords(i) );" << endl;
+  oPopDriver << "               iiPredTrancatedOut.resize  ( N[i] );"    << endl;
+  oPopDriver << "               iiResTrancatedOut.resize   ( N[i] );"    << endl;
+  oPopDriver << "               iiResWtdTrancatedOut.resize( N[i] );"    << endl;
+  oPopDriver << "               yi = y[ slice( k, N[i], 1 ) ]; "         << endl;
+  oPopDriver << "               bi = bOut[ slice( i*nB, nB, 1 ) ];"      << endl;
   oPopDriver << "               modelForDisposal.selectIndividual( i );" << endl;
   oPopDriver << "               modelForDisposal.setIndPar( bi );"       << endl;
   oPopDriver << "               try{" << endl;
-  oPopDriver << "                  indResiduals( modelForDisposal,"         << endl;
+  oPopDriver << "                  indResiduals( modelForDisposal,"      << endl;
   oPopDriver << "                                yi, "                   << endl;
   oPopDriver << "                                bi,"                    << endl;
-  oPopDriver << "                               &iiPredOut,"             << endl;
-  oPopDriver << "                               &iiResOut,"              << endl;
-  oPopDriver << "                               &iiResWtdOut, "          << endl;
+  oPopDriver << "                               &iiPredTrancatedOut,"    << endl;
+  oPopDriver << "                               &iiResTrancatedOut,"     << endl;
+  oPopDriver << "                               &iiResWtdTrancatedOut, " << endl;
   oPopDriver << "                               &iiParResOut, "          << endl;
   oPopDriver << "                               &iiParResWtdOut );"      << endl;
-  oPopDriver << "               }" << endl;
+  oPopDriver << "                  dataForDisposal.expand( iiPredTrancatedOut,   iiPredOut );"   << endl;
+  oPopDriver << "                  dataForDisposal.expand( iiResTrancatedOut,    iiResOut );"    << endl;
+  oPopDriver << "                  dataForDisposal.expand( iiResWtdTrancatedOut, iiResWtdOut );" << endl;
+   oPopDriver << "               }" << endl;
   oPopDriver << "               catch( SpkException& e )" << endl;
   oPopDriver << "               {" << endl;
   oPopDriver << "                  char message[256];" << endl;
@@ -9779,7 +9804,6 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "                  errors.cat( e );" << endl;
   oPopDriver << "                  isStatSuccess &= false;" << endl;
   oPopDriver << "                  ret = STAT_FAILURE;" << endl;
-  //  oPopDriver << "                  goto REPORT_GEN;" << endl;
   oPopDriver << "               }" << endl;
   oPopDriver << "               catch( ... )" << endl;
   oPopDriver << "               {" << endl;
@@ -9789,11 +9813,10 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "                  errors.push( e );" << endl;
   oPopDriver << "                  isStatSuccess &= false;" << endl;
   oPopDriver << "                  ret = STAT_FAILURE;" << endl;
-  //  oPopDriver << "                  goto REPORT_GEN;" << endl;
   oPopDriver << "               }" << endl;
-  oPopDriver << "               iPredOut     [ slice( k, N[i], 1 ) ]  = iiPredOut;"      << endl;
-  oPopDriver << "               iResOut      [ slice( k, N[i], 1 ) ]  = iiResOut;"       << endl;
-  oPopDriver << "               iResWtdOut   [ slice( k, N[i], 1 ) ]  = iiResWtdOut;"    << endl;
+  oPopDriver << "               iPredOut     [ slice( k, set.getNRecords(i), 1 ) ]  = iiPredOut;"      << endl;
+  oPopDriver << "               iResOut      [ slice( k, set.getNRecords(i), 1 ) ]  = iiResOut;"       << endl;
+  oPopDriver << "               iResWtdOut   [ slice( k, set.getNRecords(i), 1 ) ]  = iiResWtdOut;"    << endl;
   oPopDriver << "               iParResOut   [ slice( nB*i, nB, 1 ) ] = iiParResOut;"    << endl;
   oPopDriver << "               iParResWtdOut[ slice( nB*i, nB, 1 ) ] = iiParResWtdOut;" << endl;
   oPopDriver << "            }" << endl;
@@ -9811,11 +9834,14 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "                             y,"                        << endl;
   oPopDriver << "                             alpOut,"                   << endl;
   oPopDriver << "                             bOut,"                     << endl;
-  oPopDriver << "                            &pPredOut, "                << endl;
-  oPopDriver << "                            &pResOut, "                 << endl;
-  oPopDriver << "                            &pResWtdOut, "              << endl;
+  oPopDriver << "                            &pPredTrancatedOut, "       << endl;
+  oPopDriver << "                            &pResTrancatedOut, "        << endl;
+  oPopDriver << "                            &pResWtdTrancatedOut, "     << endl;
   oPopDriver << "                            &pParResOut, "              << endl;
   oPopDriver << "                            &pParResWtdOut );"          << endl;
+  oPopDriver << "               dataForDisposal.expand( pPredTrancatedOut,   pPredOut );"   << endl;
+  oPopDriver << "               dataForDisposal.expand( pResTrancatedOut,    pResOut );"    << endl;
+  oPopDriver << "               dataForDisposal.expand( pResWtdTrancatedOut, pResWtdOut );" << endl;
   oPopDriver << "               }" << endl;
   oPopDriver << "            catch( SpkException& e )" << endl;
   oPopDriver << "            {" << endl;
@@ -9824,7 +9850,6 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "               e.push( ee );" << endl;
   oPopDriver << "               errors.cat( e );" << endl;
   oPopDriver << "               ret = OTHER_FAILURE;" << endl;
-  //  oPopDriver << "               goto REPORT_GEN;" << endl;
   oPopDriver << "            }" << endl;
   oPopDriver << "            catch( ... )" << endl;
   oPopDriver << "            {" << endl;
@@ -9832,7 +9857,6 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "               SpkError e( SpkError::SPK_UNKNOWN_ERR, message, __LINE__, __FILE__ );" << endl;
   oPopDriver << "               errors.push( e );" << endl;
   oPopDriver << "               ret = OTHER_FAILURE;" << endl;
-  //  oPopDriver << "               goto REPORT_GEN;" << endl;
   oPopDriver << "            }" << endl;
   oPopDriver << "            set.replacePPred   ( pPredOut );"           << endl;
   oPopDriver << "            set.replacePRes    ( pResOut );"            << endl;
@@ -9848,11 +9872,14 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "                             y,"                        << endl;
   oPopDriver << "                             alpOut,"                   << endl;
   oPopDriver << "                             bOut,"                     << endl;
-  oPopDriver << "                            &cPredOut, "                << endl;
-  oPopDriver << "                            &cResOut, "                 << endl;
-  oPopDriver << "                            &cResWtdOut, "              << endl;
+  oPopDriver << "                            &cPredTrancatedOut, "       << endl;
+  oPopDriver << "                            &cResTrancatedOut, "        << endl;
+  oPopDriver << "                            &cResWtdTrancatedOut, "     << endl;
   oPopDriver << "                            &cParResOut, "              << endl;
   oPopDriver << "                            &cParResWtdOut );"          << endl;
+  oPopDriver << "               dataForDisposal.expand( cPredTrancatedOut,   cPredOut );"   << endl;
+  oPopDriver << "               dataForDisposal.expand( cResTrancatedOut,    cResOut );"    << endl;
+  oPopDriver << "               dataForDisposal.expand( cResWtdTrancatedOut, cResWtdOut );" << endl;
   oPopDriver << "               }" << endl;
   oPopDriver << "            catch( SpkException& e )" << endl;
   oPopDriver << "            {" << endl;
@@ -9862,7 +9889,6 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "               errors.cat( e );" << endl;
   oPopDriver << "               isStatSuccess &= false;" << endl;
   oPopDriver << "               ret = STAT_FAILURE;" << endl;
-  //  oPopDriver << "               goto REPORT_GEN;" << endl;
   oPopDriver << "            }" << endl;
   oPopDriver << "            catch( ... )" << endl;
   oPopDriver << "            {" << endl;
@@ -9871,7 +9897,6 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "               errors.push( e );" << endl;
   oPopDriver << "               isStatSuccess &= false;" << endl;
   oPopDriver << "               ret = STAT_FAILURE;" << endl;
-  //  oPopDriver << "               goto REPORT_GEN;" << endl;
   oPopDriver << "            }" << endl;
   oPopDriver << "            set.replaceCPred   ( cPredOut );"        << endl;
   oPopDriver << "            set.replaceCRes    ( cResOut );"         << endl;
@@ -9962,7 +9987,6 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "               errors.cat( e );" << endl;
   oPopDriver << "               isStatSuccess &= false;" << endl;
   oPopDriver << "               ret = STAT_FAILURE;" << endl;
-  //oPopDriver << "               goto REPORT_GEN;" << endl;
   oPopDriver << "            }" << endl;
   oPopDriver << "            catch( ... )" << endl;
   oPopDriver << "            {" << endl;
@@ -9971,7 +9995,6 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "               errors.push( e );" << endl;
   oPopDriver << "               isStatSuccess &= false;" << endl;
   oPopDriver << "               ret = STAT_FAILURE;" << endl;
-  //oPopDriver << "               goto REPORT_GEN;" << endl;
   oPopDriver << "            }" << endl;
   oPopDriver << "            gettimeofday( &statEnd, NULL );" << endl;
   oPopDriver << "            statTimeSec = difftime( statEnd.tv_sec, statBegin.tv_sec );" << endl;
@@ -9995,14 +10018,12 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            goto END;" << endl;
   oPopDriver << "         }" << endl;
 
-  //  oPopDriver << "         if( iSub == 0 )" << endl;
   oPopDriver << "         {" << endl;
   oPopDriver << "            oResults << \"<?xml version=\\\"1.0\\\"?>\" << endl;" << endl;
   oPopDriver << "            oResults << \"<spkreport>\" << endl;" << endl;
   oPopDriver << "         }" << endl;
   oPopDriver << endl;
 
-  // Print out <error_list> even when it is empty.
   oPopDriver << "         oResults << \"<error_list length=\\\"\" << errors.size() << \"\\\">\" << endl;" << endl;
   oPopDriver << "         if( !(haveCompleteData && isOptSuccess && isStatSuccess) )" << endl;
   oPopDriver << "         {" << endl;

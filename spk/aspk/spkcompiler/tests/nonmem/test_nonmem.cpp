@@ -22,9 +22,8 @@
 #include "CompModelInfoTest.h"
 //#include "ind_advan6Test.h"
 #include "pop_advan6Test.h"
+#include "dataSetTest.h"
 
-//#include "NonmemSourceMLElementsTest.h"
-//#include "NonmemReportMLElementsTest.h"
 #include "countStrInLhsTest.h"
 #include "linInterpTest.h"
 #include "linInterpTest.h"
@@ -82,12 +81,12 @@ int main( int argc, const char * argv[] )
   master[ "pop_fixedParaTest" ] = pop_fixedParaTest::suite();
 
   // test for NonmemTranslator: ability to handle a data set with rows without DVs.
-  //  master[ "ind_mdvTest" ] = ind_mdvTest::suite();
+  master[ "ind_mdvTest" ] = ind_mdvTest::suite();
   master[ "pop_mdvTest" ] = pop_mdvTest::suite();
 
   // test for NonmemTranslator: ability to handle Differential Equations
   //  master[ "ind_advan6Test" ] = ind_advan6Test::suite();
-  master[ "pop_advan6Test" ] = pop_advan6Test::suite();
+  //  master[ "pop_advan6Test" ] = pop_advan6Test::suite();
 
   // test for NonmemTranslator: ability to handle a request 
   // to repeat the whole process.
@@ -105,7 +104,10 @@ int main( int argc, const char * argv[] )
   master[ "countStrInLhsTest" ] = countStrInLhsTest::suite();
 
   // Test for Linear Interpolation
-  master[ "linInterpTest" ] = linInterpTest::suite();
+//  master[ "linInterpTest" ] = linInterpTest::suite();
+
+  // Test for Linear Interpolation
+  master[ "dataSetTest" ] = dataSetTest::suite();
 
   if( argc == 1 )
     {
